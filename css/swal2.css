@@ -1,4 +1,3 @@
-
 .alert-confirm {
   border: 1px solid var(--highlight-color) !important;
   background-image: linear-gradient(#2991FF, #057AFF) !important;
@@ -11,31 +10,14 @@
 }
 
 .alert-neutral {
-  border: 1px solid rgb(190, 190, 190) !important;
-  background-color: rgb(236, 236, 236) !important;
+  border: 1px solid #c6c6c6 !important;
+  background-image: linear-gradient(#f6f6f6, #dedede) !important;
   color: black !important;
 }
 
 .alert-neutral:active {
-  background-image: none !important;
-  background-color: rgb(220, 220, 220) !important;
+  background-image: linear-gradient(#e6e6e6, #cecece) !important;
   color: rgb(32, 32, 32) !important;
-}
-
-.alert-danger {
-  border: 1px solid transparent !important;
-  background-color: var(--control-bg-color) !important;
-  color: red !important;
-}
-
-.alert-danger:hover {
-  background-image: none !important;
-  background-color: var(--control-bg-color) !important;
-}
-
-.alert-danger:active {
-  background-image: none !important;
-  background-color: var(--control-button-active-bg-color) !important;
 }
 
 div:where(.swal2-container) {

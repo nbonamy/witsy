@@ -70,7 +70,6 @@ const onRetry = (message: Message) => {
   Dialog.show({
     title: t('message.actions.retryConfirm.title'),
     text: t('message.actions.retryConfirm.text'),
-    customClass: { denyButton: 'alert-neutral' },
     confirmButtonText: t('message.actions.retryConfirm.confirmButton'),
     denyButtonText: t('message.actions.retryConfirm.denyButton'),
     showCancelButton: true,

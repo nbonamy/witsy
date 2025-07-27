@@ -82,7 +82,7 @@ const Dialog = {
       popup: 'form form-large',
       confirmButton: opts.showCancelButton ? 'alert-confirm' : 'alert-neutral',
       cancelButton: 'alert-neutral',
-      denyButton: 'alert-danger',
+      denyButton: 'alert-neutral',
       ...opts.customClass
     }
 
