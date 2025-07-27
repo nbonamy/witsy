@@ -14,6 +14,12 @@ vi.mock('../../src/composables/dialog', async () => {
   return createDialogMock()
 })
 
+vi.mock('../../src/voice/stt-whisper', async (importOriginal) => {
+  const { default: STTWhisper } = await importOriginal<typeof import('../../src/voice/stt-whisper')>()
+  STTWhisper.prototype.isModelDownloaded = vi.fn(() => Promise.resolve(true))
+  return { default: STTWhisper }
+})
+
 beforeAll(() => {
   useWindowMock()
   useBrowserMock()

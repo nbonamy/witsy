@@ -101,9 +101,9 @@ export const getSTTEngines = () => {
     //{ id: 'huggingface', label: engineNames.huggingface },
     { id: 'groq', label: engineNames.groq },
     { id: 'mistralai', label: engineNames.mistralai },
+    { id: 'soniox', label: engineNames.soniox },
     { id: 'whisper', label: engineNames.whisper },
     { id: 'custom', label: 'Custom OpenAI' },
-    { id: 'soniox', label: engineNames.soniox },
   ]
 }
 
@@ -160,8 +160,7 @@ export const getSTTEngine = (config: Configuration): STTEngine => {
   } else if (engine === 'custom') {
     return new STTOpenAI(config, config.stt.customOpenAI.baseURL)
   } else if (engine === 'soniox') {
-  return new STTSoniox(config)
-  }
+    return new STTSoniox(config)
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }
@@ -192,7 +191,6 @@ export const requiresDownload = (engine: string): boolean => {
     return STTOpenAI.requiresDownload()
   } else if (engine === 'soniox') {
   return STTSoniox.requiresDownload()
-  }
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }

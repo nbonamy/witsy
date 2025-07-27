@@ -221,8 +221,6 @@ export type STTConfig = {
     gpu: boolean
   }
   soniox?: {
-    realtimeModel?: string
-    asyncModel?: string
     languageHints?: string[]
     endpointDetection?: boolean
     cleanup?: boolean

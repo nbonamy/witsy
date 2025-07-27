@@ -2,15 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-### Added
-- Soniox STT (async + realtime): REST + WebSocket, Token‑Aggregation partial/final, Endpoint-Detection, Temporary API Keys als Default, Settings + Tests. 
-
 ## [2.12.2] - WIP
 
 ### Added
 - Tooltips (https://github.com/nbonamy/witsy/discussions/344)
 - OpenAI responses API integration (https://github.com/nbonamy/witsy/issues/338)
 - Allow specifying allowed providers for OpenRouter (https://github.com/nbonamy/witsy/issues/350)
+- Soniox STT (https://github.com/nbonamy/witsy/pull/353) 
 
 ### Changed
 - Specific models to create chat title

@@ -7,6 +7,7 @@ import { ListDirectoryResponse } from '../../src/types/filesystem'
 import { FilePickParams } from '../../src/types/file'
 import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
 import defaultSettings from '../../defaults/settings.json'
+import { match } from 'assert'
 
 const listeners: ((signal: string) => void)[] = []
 
@@ -411,6 +412,16 @@ const useBrowserMock = () => {
     })),
     close: vi.fn(),
   }))
+
+  window.caches = {
+    open: vi.fn(() => Promise.resolve({
+      keys: vi.fn(() => Promise.resolve([])),
+      delete: vi.fn(() => Promise.resolve(true)),
+    } as unknown as Cache)),
+    keys: vi.fn(() => Promise.resolve([])),
+    has: vi.fn(() => Promise.resolve(true)),
+    delete: vi.fn(() => Promise.resolve(true)),
+  } as unknown as CacheStorage
 
 }
 

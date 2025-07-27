@@ -1,5 +1,6 @@
 
 import { MessageSendParams, Task, TaskArtifactUpdateEvent, TaskStatusUpdateEvent } from '@a2a-js/sdk'
+// @ts-expect-error unknown why this is a linting error
 import { A2AClient as Client } from '@a2a-js/sdk/client'
 import { LlmChunk } from 'multi-llm-ts'
 
