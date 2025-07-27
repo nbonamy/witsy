@@ -5,10 +5,6 @@
         <BIconChevronLeft class="icon back" @click="selectRepo(null)" />
         <div class="title">{{ t('docRepo.create.title') }}</div>
       </header>
-      <header v-else-if="mode === 'config'">
-        <BIconChevronLeft class="icon back" @click="selectRepo(null)" />
-        <div class="title">{{ t('docRepo.config.title') }}</div>
-      </header>
       <header v-else-if="mode === 'view'">
         <BIconChevronLeft class="icon back" @click="selectRepo(null)" />
         <div class="title">{{ selectedRepo?.name }}</div>
@@ -25,10 +21,8 @@
       <main class="sliding-pane editor" :class="{ visible: mode === 'create' }" @transitionend="onTransitionEnd">
         <Create @cancel="onCreateCancel" @save="onCreateSave" />
       </main>
-      <main class="sliding-pane editor" :class="{ visible: mode === 'config' }" @transitionend="onTransitionEnd">
-        <Config @close="onConfigClose" />
-      </main>
     </div>
+    <Config ref="configDialog" />
   </div>
 </template>
 
@@ -47,12 +41,13 @@ import Create from '../docrepo/Create.vue'
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
-type DocRepoMode = 'list' | 'view' | 'create' | 'config'
+type DocRepoMode = 'list' | 'view' | 'create'
 
 const mode = ref<DocRepoMode>('list')
 const prevMode = ref<DocRepoMode>('list')
 const docRepos = ref(null)
 const selectedRepo = ref<DocumentBase | null>(null)
+const configDialog = ref(null)
 
 const onTransitionEnd = async () => {
   prevMode.value = null
@@ -119,11 +114,7 @@ const onDeleteRepo = (docRepo: DocumentBase) => {
 }
 
 const onConfig = () => {
-  mode.value = 'config'
-}
-
-const onConfigClose = () => {
-  selectRepo(null)
+  configDialog.value.show()
 }
 
 const onChangeRepoName = (event: Event) => {

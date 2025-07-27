@@ -1,9 +1,9 @@
 <template>
-  
-  <div class="form docrepo-config form-large form-vertical">
-
-    <div class="form-field-container">
-
+  <ModalDialog id="docrepo-config" ref="dialog" @save="onSave">
+    <template #header>
+      {{ t('docRepo.config.title') }}
+    </template>
+    <template #body>
       <div class="form-field">
         <label>{{ t('docRepo.config.maxDocumentSize') }}</label>
         <div class="input-with-suffix">
@@ -29,11 +29,6 @@
       </div>
       
       <div class="form-field">
-        <label>{{ t('docRepo.config.searchResultCount') }}</label>
-        <input name="searchResultCount" v-model="searchResultCount" />
-      </div>
-      
-      <div class="form-field">
         <label>{{ t('docRepo.config.relevanceCutOff') }}</label>
         <div class="input-with-suffix">
           <input name="relevanceCutOff" v-model="relevanceCutOff" />
@@ -41,16 +36,23 @@
         </div>
       </div>
 
+      <div class="form-field">
+        <label>{{ t('docRepo.config.searchResultCount') }}</label>
+        <div class="input-with-suffix">
+          <input name="searchResultCount" v-model="searchResultCount" />
+          <span class="suffix">&nbsp;</span>
+        </div>
       </div>
-
-    <div class="buttons">
-      <button type="button" class="cancel" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
-      <button type="button" class="reset" @click="onReset" formnovalidate>{{ t('common.reset') }}</button>
-      <button type="submit" class="default" @click="onSave">{{ t('common.save') }}</button>
-    </div>
-
-  </div>
-
+      
+    </template>
+    <template #footer>
+      <div class="buttons">
+        <button name="cancel" @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="reset" @click="onReset" class="alert-neutral" formnovalidate>{{ t('common.reset') }}</button>
+        <button name="save" @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
+      </div>
+    </template>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -58,10 +60,14 @@
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import ModalDialog from '../components/ModalDialog.vue'
 import defaultSettings from '../../defaults/settings.json'
 
-const emit = defineEmits(['close'])
+defineOptions({
+  name: 'Config'
+})
 
+const dialog = ref(null)
 const maxDocumentSizeMB = ref(null)
 const chunkSize = ref(null)
 const chunkOverlap = ref(null)
@@ -69,8 +75,11 @@ const searchResultCount = ref(null)
 const relevanceCutOff = ref(null)
 
 onMounted(() => {
-  load()
 })
+
+const close = () => {
+  dialog.value.close()
+}
 
 const load = () => {
   maxDocumentSizeMB.value = store.config.rag.maxDocumentSizeMB
@@ -95,43 +104,46 @@ const onSave = () => {
   store.config.rag.searchResultCount = parseInt(searchResultCount.value)
   store.config.rag.relevanceCutOff = parseFloat(relevanceCutOff.value)
   store.saveSettings()
-  emit('close')
+  close()
 }
 
 const onCancel = () => {
-  load() // Reset values
-  emit('close')
+  close()
 }
+
+defineExpose({
+  show: () => {
+    load()
+    dialog.value.show()
+  },
+  close,
+})
 
 </script>
 
-<style scoped>
+<style>
 
-.docrepo-config {
-
-  padding: 4rem;
-  margin: 0 auto;
-  
-  .input-with-suffix {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .input-with-suffix input {
-    max-width: 100px;
-    text-align: right;
-  }
-  
-  .suffix {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-  }
-  
-  input[name="searchResultCount"] {
-    max-width: 100px;
-    text-align: right;
-  }
-
+#docrepo-config .swal2-popup {
+  max-width: 32rem !important;
 }
+
+#docrepo-config .input-with-suffix {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+#docrepo-config .input-with-suffix input {  
+  text-align: right;
+  flex: 1;
+}
+
+#docrepo-config .suffix {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  flex: 1;
+  text-align: left;
+}
+
 </style>
