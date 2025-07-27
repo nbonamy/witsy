@@ -110,7 +110,6 @@ div:where(.swal2-container):has(.swal2-icon.hidden) h2:where(.swal2-title) {
 }
 
 div:where(.swal2-container):has(.swal2-html-container:empty) h2:where(.swal2-title) {
-  margin-top: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
@@ -129,7 +128,7 @@ div:where(.swal2-container) input:where(.swal2-input),
 div:where(.swal2-container) input:where(.swal2-file),
 div:where(.swal2-container) select:where(.swal2-select),
 div:where(.swal2-container) textarea:where(.swal2-textarea) {
-  margin: 2rem;
+  margin: 0.5rem 2rem 1rem 2rem;
   background-color: var(--control-bg-color) !important;
   border: 1px solid var(--control-border-color) !important;
   border-radius: var(--control-border-radius) !important;
