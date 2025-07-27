@@ -11,6 +11,7 @@ import STTOpenAI from './stt-openai'
 import STTSpeechmatics from './stt-speechmatics'
 import STTMistral from './stt-mistral'
 import STTWhisper from './stt-whisper'
+import STTSoniox from './stt-soniox'
 
 export type DownloadStatus = {
   state: 'initiate'|'download'|'done'
@@ -102,6 +103,7 @@ export const getSTTEngines = () => {
     { id: 'mistralai', label: engineNames.mistralai },
     { id: 'whisper', label: engineNames.whisper },
     { id: 'custom', label: 'Custom OpenAI' },
+    { id: 'soniox', label: engineNames.soniox },
   ]
 }
 
@@ -128,7 +130,9 @@ export const getSTTModels = (engine: string) => {
     return STTWhisper.models
   } else if (engine === 'custom') {
     return []
-  }
+  } else if (engine === 'soniox') {
+  return STTSoniox.models
+}
 }
 
 export const getSTTEngine = (config: Configuration): STTEngine => {
@@ -155,6 +159,9 @@ export const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTMistral(config)
   } else if (engine === 'custom') {
     return new STTOpenAI(config, config.stt.customOpenAI.baseURL)
+  } else if (engine === 'soniox') {
+  return new STTSoniox(config)
+  }
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }
@@ -183,6 +190,9 @@ export const requiresDownload = (engine: string): boolean => {
     return STTMistral.requiresDownload()
   } else if (engine === 'custom') {
     return STTOpenAI.requiresDownload()
+  } else if (engine === 'soniox') {
+  return STTSoniox.requiresDownload()
+  }
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }
