@@ -20,43 +20,42 @@
       </div>
     </div>
     <div class="actions">
-    <BIconTerminal 
-        v-if="enableInstructions"
+    <BIconTerminal v-if="enableInstructions"
         v-tooltip="{ text: t('prompt.instructions.title'), position: 'top-right' }"
         :class="{ icon: true, instructions: true }" 
         @click="onClickInstructions" 
       />
-      <BIconDatabase 
-        v-if="enableDocRepo"
+      <BIconDatabase v-if="enableDocRepo"
         v-tooltip="{ text: t('prompt.docRepos.tooltip'), position: 'top-right' }"
         :class="{ icon: true, docrepo: true, active: docRepoActive }" 
         @click="onDocRepo" 
       />
-      <BIconMortarboard 
-        v-if="enableExperts"
+      <BIconMortarboard v-if="enableExperts"
         v-tooltip="{ text: t('prompt.experts.tooltip'), position: 'top' }"
         class="icon experts" 
         @click="onClickExperts" 
       />
-      <BIconPaperclip 
-        v-if="enableAttachments"
+      <BIconPaperclip v-if="enableAttachments"
         v-tooltip="{ text: t('prompt.attachment.tooltip'), position: 'top' }"
         class="icon attach" 
         @click="onAttach" 
       />
-      <BIconMic 
-        v-if="hasDictation"
+      <BIconMic v-if="hasDictation"
         v-tooltip="{ text: t('prompt.conversation.tooltip'), position: 'top' }"
         :class="{ icon: true, dictate: true, active: dictating }" 
         @click="onDictate" 
         @contextmenu="onConversationMenu" 
       />
       <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
-      <BIconBinoculars
-        v-if="enableDeepResearch"
+      <BIconBinoculars v-if="enableDeepResearch"
         v-tooltip="{ text: t('common.deepResearch'), position: 'top' }"
         class="icon research" :class="{ active: deepResearchActive }"
         @click="onDeepResearch"
+      />
+      <LogoA2A v-if="store.config.features.a2a"
+        v-tooltip="{ text: 'A2A Integration', position: 'top' }"
+        class="icon research" :class="{ active: a2aActive }"
+        @click="onA2A"
       />
       <slot name="actions" />
     </div>
@@ -83,14 +82,15 @@ import { BIconBinoculars, BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
+import ContextMenu, { MenuPosition, type MenuAction } from './ContextMenu.vue'
 import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
+import LogoA2A from '../../assets/a2a.svg?component'
 import ImageUtils from '../composables/image_utils'
-import Dialog from '../composables/dialog'
 import Waveform from '../components/Waveform.vue'
-import ContextMenu, { MenuPosition, type MenuAction } from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
+import Dialog from '../composables/dialog'
 import Message from '../models/message'
 import Loader from './Loader.vue'
 import Chat from '../models/chat'
@@ -102,6 +102,7 @@ export type SendPromptParams = {
   docrepo?: string,
   expert?: Expert,
   deepResearch?: boolean
+  a2a?: boolean
 }
 
 export type HistoryProvider = (event: KeyboardEvent) => string[]
@@ -195,6 +196,7 @@ const showActiveExpert = ref(false)
 const showCommands = ref(false)
 const showConversationMenu = ref(false)
 const deepResearchActive = ref(false)
+const a2aActive = ref(false)
 const hasDictation = ref(false)
 const dictating = ref(false)
 const processing = ref(false)
@@ -349,6 +351,10 @@ const setDeepResearch = (active: boolean) => {
   deepResearchActive.value = active
 }
 
+const onA2A = () => {
+  a2aActive.value = !a2aActive.value
+}
+
 const initDictation = async () => {
 
   // needed?
@@ -462,6 +468,7 @@ const onSendPrompt = () => {
       docrepo: docrepo.value,
       expert: expert.value,
       deepResearch: deepResearchActive.value,
+      a2a: a2aActive.value
     } as SendPromptParams)
     attachments.value = []
   })
@@ -1116,6 +1123,7 @@ defineExpose({
     color: var(--prompt-icon-color);
 
     &.active {
+      fill: var(--highlight-color);
       color: var(--highlight-color);
     }
 
