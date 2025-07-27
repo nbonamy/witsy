@@ -3,6 +3,7 @@ import { vi, beforeAll, beforeEach, expect, test, afterAll, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { createDialogMock, createI18nMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
+import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import DocRepos from '../../src/screens/DocRepos.vue'
 import Dialog from '../../src/composables/dialog'
@@ -79,18 +80,16 @@ test('Shows configuration', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.panel .panel-header .icon.config').trigger('click')
-  expect(wrapper.vm.mode).toBe('config')
-  await vi.waitUntil(() => wrapper.find('.sliding-pane.editor.visible').exists())
-  expect(wrapper.find('.docrepo-config').exists()).toBe(true)
+  expect(wrapper.findComponent({ name: 'Config' }).exists()).toBe(true)
 })
 
 test('Updates configuration', async () => {
-  const wrapper: VueWrapper<any> = mount(DocRepos)
+  const wrapper: VueWrapper<any> = mount(DocRepos, { ...stubTeleport })
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.panel .panel-header .icon.config').trigger('click')
-  await vi.waitUntil(() => wrapper.find('.sliding-pane.editor.visible').exists())
-
+  await wrapper.vm.$nextTick()
   const config = wrapper.findComponent({ name: 'Config' })
+  console.log(config.html())
 
   expect(config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').element.value).toBe('1')
   expect(config.find<HTMLInputElement>('[name=chunkSize]').element.value).toBe('500')
@@ -100,7 +99,7 @@ test('Updates configuration', async () => {
 
   // Test reset
   await config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').setValue('2')
-  await config.find<HTMLButtonElement>('.docrepo-config button.reset').trigger('click')
+  await config.find<HTMLButtonElement>('button[name=reset]').trigger('click')
   expect(config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').element.value).toBe('1')
 
   // Update values and save
@@ -109,10 +108,7 @@ test('Updates configuration', async () => {
   await config.find<HTMLInputElement>('[name=chunkOverlap]').setValue('60')
   await config.find<HTMLInputElement>('[name=searchResultCount]').setValue('6')
   await config.find<HTMLInputElement>('[name=relevanceCutOff]').setValue('0.3')
-  await config.find('button[type=submit]').trigger('click')
-
-  // Wait for save to complete and mode to change back to list
-  await vi.waitUntil(() => wrapper.vm.mode === 'list')
+  await config.find('button[name=save]').trigger('click')
 
   expect(store.config.rag.maxDocumentSizeMB).toBe(2)
   expect(store.config.rag.chunkSize).toBe(600)
@@ -122,9 +118,8 @@ test('Updates configuration', async () => {
 
   // Test cancel behavior  
   await wrapper.find('.panel .panel-header .icon.config').trigger('click')
-  await vi.waitUntil(() => wrapper.find('.sliding-pane.editor.visible').exists())
   await config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').setValue('3')
-  await config.find<HTMLButtonElement>('.docrepo-config button.cancel').trigger('click')
+  await config.find<HTMLButtonElement>('button[name=cancel]').trigger('click')
   expect(store.config.rag.maxDocumentSizeMB).toBe(2)
 })
 
