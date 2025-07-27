@@ -52,7 +52,7 @@
         class="icon research" :class="{ active: deepResearchActive }"
         @click="onDeepResearch"
       />
-      <LogoA2A v-if="store.config.features.a2a"
+      <LogoA2A v-if="store.config.features?.a2a"
         v-tooltip="{ text: 'A2A Integration', position: 'top' }"
         class="icon research" :class="{ active: a2aActive }"
         @click="onA2A"
