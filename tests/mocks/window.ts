@@ -7,7 +7,6 @@ import { ListDirectoryResponse } from '../../src/types/filesystem'
 import { FilePickParams } from '../../src/types/file'
 import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
 import defaultSettings from '../../defaults/settings.json'
-import { match } from 'assert'
 
 const listeners: ((signal: string) => void)[] = []
 
