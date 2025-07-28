@@ -1193,26 +1193,33 @@ defineExpose({
       overflow: hidden;
 
       .icon.left {
-        margin-left: 16px;
+        color: var(--control-placeholder-text-color);
+      }
+
+      .icon.left:first-child {
+        margin-left: 0.25rem;
       }
 
       .icon.left.expert {
-        margin-top: 2px;
-        margin-right: 4px;
-        color: var(--prompt-input-text-color);
+        position: relative;
+        top: 2px;
         cursor: pointer;
         svg {
           height: 12pt;
         }
       }
 
-      .icon.left:not(:first-of-type).expert {
-        margin-left: 4px;
+      .icon.left.command {
+        position: relative;
+        top: 2px;
+        transform: scale(0.9);
       }
 
       .icon.left.loader-wrapper {
-        margin-left: 4px;
-        margin-top: -8px;
+        position: relative;
+        top: -4px;
+        margin-left: 0;
+        margin-right: -8px;
         height: 24px;
         display: flex;
         justify-content: center;
@@ -1239,7 +1246,7 @@ defineExpose({
       }
 
       .icon.left + textarea {
-        padding-left: 8px;
+        padding-left: 0px;
       }
 
       textarea::placeholder {
@@ -1284,6 +1291,7 @@ defineExpose({
     .icon.experts {
       padding-left: 2px;
       padding-right: 2px;
+      transform: scaleY(1.05);
     }
 
     .icon.dictate {
