@@ -59,20 +59,20 @@ test('Actions', async () => {
 })
 
 test('Server enablement', async () => {
-  await mcp.find<HTMLInputElement>('.list .panel-item:nth-child(1) .stop').trigger('click')
+  await mcp.find<HTMLInputElement>('.mcp-server-list .panel-item:nth-child(1) .stop').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith(expect.objectContaining({ uuid: '1', state: 'disabled' }))
-  await mcp.find<HTMLInputElement>('.list .panel-item:nth-child(5) .start').trigger('click')
+  await mcp.find<HTMLInputElement>('.mcp-server-list .panel-item:nth-child(5) .start').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith(expect.objectContaining({ uuid: 'mcp2', state: 'enabled' }))
 })
 
 test('Server delete', async () => {
-  await mcp.find<HTMLTableRowElement>('.list .panel-item:nth-child(4) .delete').trigger('click')
+  await mcp.find<HTMLTableRowElement>('.mcp-server-list .panel-item:nth-child(4) .delete').trigger('click')
   await mcp.vm.$nextTick()
   expect(window.api.mcp.deleteServer).toHaveBeenLastCalledWith('@mcp1')
 })
 
 test('Server edit', async () => {
-  await mcp.find<HTMLTableRowElement>('.list .panel-item:nth-child(1) .info').trigger('click')
+  await mcp.find<HTMLTableRowElement>('.mcp-server-list .panel-item:nth-child(1) .info').trigger('click')
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('node')

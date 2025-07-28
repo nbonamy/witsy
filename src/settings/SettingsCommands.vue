@@ -1,5 +1,5 @@
 <template>
-  <div class="form commands tab-content form-vertical form-large"  @keyup.escape.prevent="onEdit(null)">
+  <div class="commands tab-content"  @keyup.escape.prevent="onEdit(null)">
     <header v-if="edited">
       <BIconChevronLeft class="icon back" @click="onEdit(null)" />
       <div class="title">{{ edited.label || commandI18n(edited, 'label') }}</div>
@@ -7,7 +7,7 @@
     <header v-else>
       <div class="title">{{ t('settings.tabs.commands') }}</div>
     </header>
-    <main class="list sliding-root" :class="{ visible: !edited }">
+    <main class="sliding-root" :class="{ visible: !edited }">
       <CommandsList ref="list" @edit="onEdit" @create="onCreate" />
     </main>
     <main class="editor sliding-pane" :class="{ visible: edited }"> 

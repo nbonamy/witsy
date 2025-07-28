@@ -1,5 +1,5 @@
 <template>
-  <div class="mcp-server-editor" @keydown.enter.prevent="onSave">
+  <div class="mcp-server-editor form form-vertical form-large" @keydown.enter.prevent="onSave">
     <div class="form-field">
       <label>{{ t('common.type') }}</label>
       <select name="type" v-model="type">

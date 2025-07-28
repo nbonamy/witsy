@@ -190,15 +190,13 @@ body[data-tint=blue] .mx-context-menu {
 
 .menubar-wrapper {
   
-  --menubar-width: 3rem;
-
   display: flex;
   flex-direction: column;
 
   .corner {
     background-color: var(--window-decoration-color);
     border-bottom: 1px solid var(--toolbar-border-color);
-    width: var(--menubar-width);
+    width: var(--window-menubar-width);
     height: var(--window-toolbar-height);
     display: flex;
     justify-content: center;

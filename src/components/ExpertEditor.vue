@@ -1,5 +1,5 @@
 <template>
-  <div class="expert-editor" @keydown.enter="onSave">
+  <div class="expert-editor form form-vertical form-large" @keydown.enter="onSave">
     <div class="form-field" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
       <label class="no-colon"><BIconExclamationCircle /></label>
       <div>{{ t('common.differentLocales') }}</div>
