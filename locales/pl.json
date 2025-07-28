@@ -39,6 +39,7 @@
     "deepResearch": "Deep Research",
     "default": "Domyślny",
     "delete": "Usuń",
+    "description": "Opis",
     "differentLocales": "Język modelu LLM różni się od języka interfejsu. Teksty mogą być wyświetlane w języku modelu lub w Twoim języku, jeśli zostały przetłumaczone.",
     "disabled": "Wyłączony",
     "documents": "Dokumenty",
@@ -1924,7 +1925,6 @@
     },
     "commands": {
       "confirmDelete": "Czy na pewno chcesz usunąć to polecenie?",
-      "defaults": "Ustawienia domyślne",
       "export": "Eksport",
       "exportError": "Nie udało się wyeksportować pliku poleceń",
       "exportSuccess": "Plik poleceń wyeksportowany pomyślnie",

@@ -11,7 +11,7 @@ import path from 'node:path'
 import fs from 'node:fs'
 import os from 'node:os'
 
-// Files to backup with their respective path functions
+// files to backup with their respective paths
 const filesToBackup = (app: App) => ([
   { name: 'settings.json', path: settingsFilePath(app) },
   { name: 'history.json', path: historyFilePath(app) },
@@ -19,8 +19,9 @@ const filesToBackup = (app: App) => ([
   { name: 'commands.json', path: commandsFilePath(app) }
 ])
 
-// Folders to backup
+// Folders to backup with their respective paths
 const foldersToBackup = (app: App) => ([
+  { name: 'agents', path: path.join(app.getPath('userData'), 'agents') },
   { name: 'engines', path: path.join(app.getPath('userData'), 'engines') },
   { name: 'images', path: path.join(app.getPath('userData'), 'images') }
 ])

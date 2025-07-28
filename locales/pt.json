@@ -39,6 +39,7 @@
     "deepResearch": "Deep Research",
     "default": "Padrão",
     "delete": "Excluir",
+    "description": "Descrição",
     "differentLocales": "Seu LLM locale é diferente do seu locale de interface. Os textos exibidos estão no locale do LLM ou no seu locale se você os customizou.",
     "disabled": "Desativado",
     "documents": "Documentos",
@@ -1924,7 +1925,6 @@
     },
     "commands": {
       "confirmDelete": "Tem certeza de que deseja excluir este comando?",
-      "defaults": "Padrões",
       "export": "Exportar",
       "exportError": "Falha ao exportar arquivo de comandos",
       "exportSuccess": "Arquivo de comandos exportado com sucesso",

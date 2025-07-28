@@ -39,6 +39,7 @@
     "deepResearch": "Deep Research",
     "default": "Standard",
     "delete": "Löschen",
+    "description": "Beschreibung",
     "differentLocales": "Ihre LLM-Lokalisierung ist anders als Ihre Schnittstellenlokalisierung. Die angezeigten Texte sind in der LLM-Lokalisierung oder Ihrer Lokalisierung, wenn Sie sie angepasst haben.",
     "disabled": "Deaktiviert",
     "documents": "Dokumente",
@@ -1902,7 +1903,6 @@
     },
     "commands": {
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Befehl löschen möchten?",
-      "defaults": "Standardwerte",
       "export": "Exportieren",
       "exportError": "Fehler beim Exportieren der Befehlsdatei",
       "exportSuccess": "Befehlsdatei erfolgreich exportiert",

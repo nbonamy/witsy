@@ -3,14 +3,16 @@
   <div class="panel" v-if="visible">
     <div class="panel-header">
       <slot name="header"></slot>
-      <BIconChevronDoubleDown v-if="!expanded" />
     </div>
-    <div class="panel-body" v-if="expanded">
+    <div class="panel-body">
       <slot name="content"></slot>
       <div class="footer form-field">
         <slot name="footer">
           <div class="error" v-if="error">{{ error }}</div>
-          <button @click.prevent.stop="emit('next')">{{ t('common.wizard.next') }}</button>
+          <button @click="emit('cancel')" v-if="backIsCancel">{{ t('common.cancel') }}</button>
+          <button @click="emit('prev')" v-else>{{ t('common.wizard.prev') }}</button>
+          <slot name="buttons" />
+          <button class="default" @click="emit('next')">{{ t('common.wizard.next') }}</button>
         </slot>
       </div>
     </div>
@@ -19,23 +21,22 @@
 
 <script setup lang="ts">
 
-import { BIconChevronDoubleDown } from 'bootstrap-icons-vue';
 import { t } from '../services/i18n'
 
-const emit = defineEmits(['click', 'next'])
+const emit = defineEmits(['cancel', 'prev', 'next'])
 
 defineProps({
   visible: {
     type: Boolean,
     default: true
   },
-  expanded: {
-    type: Boolean,
-    default: true
-  },
   error: {
     type: String,
     default: ''
+  },
+  backIsCancel: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -47,47 +48,28 @@ defineProps({
 
 .panel {
 
-  margin: 0 !important;
-  padding: 0.75rem 0 !important;
-
-  &:first-child {
-    padding-top: 0 !important;
+  .panel-header {
+    padding: 1.25rem;
   }
 
-  .header {
-    padding: 1rem;
-  }
+  .panel-body {
 
-  .header, .header:deep() label {
-    cursor: pointer;
-  }
-
-  &:not(:has(.list)) .header {
-    border-bottom-width: initial;
-    border-bottom-left-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
-  }
-
-  .list {
     gap: 0rem;
-  }
 
-  .footer {
+    .footer {
 
-    margin-top: 1rem;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
 
-    button {
-      padding: 0.375rem 0.75rem;
-      font-size: 1em;
+      .error {
+        color: red;
+        margin-right: 1rem;
+      }
     }
 
-    &:deep() .error {
-      color: red;
-      margin-right: 1rem;
-    }
   }
 
 }
