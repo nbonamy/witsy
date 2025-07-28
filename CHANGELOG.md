@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.12.2] - WIP
+## [2.12.2] - 2025-07-27
 
 ### Added
 - Tooltips (https://github.com/nbonamy/witsy/discussions/344)
