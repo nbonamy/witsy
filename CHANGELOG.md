@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.12.3] - 2025-07-28
+
+### Added
+- N/A
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- Soniox STT support (https://github.com/nbonamy/witsy/issues/355)
+
+
 ## [2.12.2] - 2025-07-27
 
 ### Added

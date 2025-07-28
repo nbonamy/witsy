@@ -101,7 +101,7 @@ export const getSTTEngines = () => {
     //{ id: 'huggingface', label: engineNames.huggingface },
     { id: 'groq', label: engineNames.groq },
     { id: 'mistralai', label: engineNames.mistralai },
-    { id: 'soniox', label: engineNames.soniox },
+    // { id: 'soniox', label: engineNames.soniox },
     { id: 'whisper', label: engineNames.whisper },
     { id: 'custom', label: 'Custom OpenAI' },
   ]
@@ -128,11 +128,11 @@ export const getSTTModels = (engine: string) => {
     return STTMistral.models
   } else if (engine === 'whisper') {
     return STTWhisper.models
+  } else if (engine === 'soniox') {
+    return STTSoniox.models
   } else if (engine === 'custom') {
     return []
-  } else if (engine === 'soniox') {
-  return STTSoniox.models
-}
+  }
 }
 
 export const getSTTEngine = (config: Configuration): STTEngine => {
