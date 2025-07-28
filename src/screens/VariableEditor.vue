@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog :id="id" class="variable-editor" :icon="false" ref="dialog" @save="onSave">
+  <ModalDialog :id="id" class="variable-editor" ref="dialog" @save="onSave">
     <template #header>
       <div class="title">{{ t(title) }}</div>
     </template>
@@ -99,9 +99,3 @@ defineExpose({
 })
 
 </script>
-
-<style>
-.variable-editor {
-  width: 200px !important;
-}
-</style>
