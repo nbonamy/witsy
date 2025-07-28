@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mcp-server-list">
     <!-- <div class="description">
       {{ t('settings.mcp.description') }}
       <a href="https://docs.anthropic.com/en/docs/build-with-claude/mcp" target="_blank">{{ t('settings.mcp.modelContextProtocol') }}</a> (MCP)

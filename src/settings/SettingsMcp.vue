@@ -1,5 +1,5 @@
 <template>
-  <div class="form mcp tab-content form-vertical form-large" @keyup.escape.prevent="onEdit(null)">
+  <div class="mcp tab-content" @keyup.escape.prevent="onEdit(null)">
     <header v-if="selected">
       <BIconChevronLeft class="icon back" @click="onEdit(null)" />
       <div class="title">{{ t('mcp.serverEditor.title') }}</div>
@@ -7,7 +7,7 @@
     <header v-else>
       <div class="title">{{ t('settings.mcp.modelContextProtocol') }}</div>
     </header>
-    <main class="list sliding-root" :class="{ visible: !selected }">
+    <main class="sliding-root" :class="{ visible: !selected }">
       <McpServerList ref="list" @edit="onEdit" @create="onCreate" />
     </main>
     <main class="editor sliding-pane" :class="{ visible: selected }"> 
@@ -169,23 +169,6 @@ defineExpose({ load })
 
 main {
   width: calc(100% - 4rem);
-  &.editor {
-    width: 100%;
-    align-self: center !important;
-  }
 }
-
-/* .slide-enter-active,
-.slide-leave-active {
-  transition: all 0.1s ease;
-}
-
-.slide-enter-from {
-  transform: translateX(100%);
-}
-
-.slide-leave-to {
-  transform: translateX(-100%);
-} */
 
 </style>

@@ -26,6 +26,7 @@
   --link-color: #0000ee;
 
   --window-decoration-color: #f4f4f4;
+  --window-menubar-width: 3rem;
   --window-toolbar-height: 3rem;
 
   --menubar-bg-color: var(--window-decoration-color);
@@ -605,4 +606,20 @@ button.destructive {
 
 table th.center, table td.center {
   text-align: center;
+}
+
+svg.scale105 {
+  transform: scale(1.05);
+}
+
+svg.scale110 {
+  transform: scale(1.1);
+}
+
+svg.scale115 {
+  transform: scale(1.15);
+}
+
+svg.scale120 {
+  transform: scale(1.2);
 }

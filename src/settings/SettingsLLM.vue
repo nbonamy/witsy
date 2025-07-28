@@ -1,5 +1,5 @@
 <template>
-  <div class="form tab-content form-vertical form-large" @keyup.escape.prevent="onEditInstruction(null)">
+  <div class="tab-content" @keyup.escape.prevent="onEditInstruction(null)">
     <header v-if="selectedInstruction">
       <BIconChevronLeft class="icon back" @click="onEditInstruction(null)" />
       <div class="title">{{ t('settings.llm.instructions.editor.title') }}</div>
@@ -7,7 +7,7 @@
     <header v-else>
       <div class="title">{{ t('settings.tabs.llm') }}</div>
     </header>
-    <main class="list sliding-root" :class="{ visible: !selectedInstruction }">
+    <main class="sliding-root form form-vertical form-large" :class="{ visible: !selectedInstruction }">
       <div class="form-field chat-prompt">
         <label>{{ t('settings.llm.instructions.label') }}</label>
         <select v-model="instructions" @change="save">
@@ -238,10 +238,6 @@ defineExpose({ load })
 </script>
 
 <style scoped>
-
-.editor {
-  width: 90%;
-}
 
 .localeLLM div.checkbox {
   display: flex;

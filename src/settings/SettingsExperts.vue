@@ -1,5 +1,5 @@
 <template>
-  <div class="form experts tab-content "  @keyup.escape.prevent="onEdit(null)">
+  <div class="experts tab-content"  @keyup.escape.prevent="onEdit(null)">
     <header v-if="edited">
       <BIconChevronLeft class="icon back" @click="onEdit(null)" />
       <div class="title">{{ edited.name || expertI18n(edited, 'name') }}</div>
@@ -7,7 +7,7 @@
     <header v-else>
       <div class="title">{{ t('settings.tabs.experts') }}</div>
     </header>
-    <main class="list sliding-root" :class="{ visible: !edited }">
+    <main class="sliding-root" :class="{ visible: !edited }">
       <ExpertsList ref="list" @edit="onEdit" @create="onCreate" />
     </main>
     <main class="editor sliding-pane" :class="{ visible: edited }"> 

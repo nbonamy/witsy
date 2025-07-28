@@ -1,10 +1,11 @@
 <template>
   <div class="list-actions">
-    <div class="list-action new" @click.prevent="onNew"><BIconPlusLg />{{ t('settings.commands.new') }}</div>
-    <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><BIconPencil />{{ t('common.edit') }}</div>
-    <div class="list-action delete" @click.prevent="onDelete" v-if="selected"><BIconTrash />{{ t('common.delete') }}</div>
+    <div class="list-action new" @click="onNew"><BIconPlusLg />{{ t('settings.commands.new') }}</div>
+    <div class="list-action edit" @click="onEdit(selected)" v-if="selected"><BIconPencil />{{ t('common.edit') }}</div>
+    <div class="list-action delete" @click="onDelete" v-if="selected"><BIconTrash />{{ t('common.delete') }}</div>
     <div class="push" /> 
-    <div class="list-action menu" @click.prevent.stop="onMore" ref="moreButton"><div></div><div></div><div></div></div>
+    <div class="list-action defaults" @click="onDefaults"><BIconSliders /></div>
+    <div class="list-action menu" @click.stop="onMore" ref="moreButton"><div></div><div></div><div></div></div>
   </div>
   <div class="commands sticky-table-container">
     <table>
@@ -61,7 +62,6 @@ const reorderCommands = useReorderTable((ids: string[]) => {
 const emit = defineEmits([ 'create', 'edit' ])
 
 const contextMenuActions = [
-  { label: t('settings.commands.defaults'), action: 'defaults' },
   { label: t('settings.commands.export'), action: 'export' },
   { label: t('settings.commands.import'), action: 'import' },
   { label: t('settings.commands.selectAll'), action: 'select' },

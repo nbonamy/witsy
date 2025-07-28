@@ -1,5 +1,5 @@
 <template>
-  <div class="instruction-editor">
+  <div class="instruction-editor form form-vertical form-large">
     <div class="form-field">
       <label>{{ t('settings.llm.instructions.editor.label') }}</label>
       <input type="text" v-model="localInstruction.label" :disabled="isDefaultInstruction" />

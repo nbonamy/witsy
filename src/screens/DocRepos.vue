@@ -12,7 +12,7 @@
       <header v-else>
         <div class="title">{{ t('docRepo.list.title') }}</div>
       </header>
-      <main class="list sliding-root" :class="{ visible: mode === 'list' }">
+      <main class="sliding-root" :class="{ visible: mode === 'list' }">
         <List :docRepos="docRepos || []" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" @delete="onDeleteRepo" />
       </main>
       <main class="sliding-pane" :class="{ visible: mode === 'view' }" @transitionend="onTransitionEnd">
@@ -127,16 +127,9 @@ const onChangeRepoName = (event: Event) => {
 <style scoped>
 
 .split-pane {
-  
   .sp-main {
-  
     position: relative;
-  
-    .sliding-pane {
-      width: 100%;
-    }
-
   }
-
 }
+
 </style>
