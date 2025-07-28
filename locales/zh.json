@@ -39,6 +39,7 @@
     "deepResearch": "深度研究",
     "default": "默认",
     "delete": "删除",
+    "description": "描述",
     "differentLocales": "您的语言模型语言与界面语言不同。显示的文本为语言模型的语言或您自定义的语言。",
     "disabled": "已禁用",
     "documents": "文档",
@@ -1924,7 +1925,6 @@
     },
     "commands": {
       "confirmDelete": "你确定要删除这个命令吗？",
-      "defaults": "默认值",
       "export": "导出",
       "exportError": "导出命令文件失败",
       "exportSuccess": "命令文件导出成功",

@@ -39,6 +39,7 @@
     "deepResearch": "ディープリサーチ",
     "default": "デフォルト",
     "delete": "削除",
+    "description": "説明",
     "differentLocales": "LLMのロケールがインターフェースのロケールと異なります。表示されるテキストはLLMロケールまたはカスタマイズした場合はそのロケールです。",
     "disabled": "無効",
     "documents": "ドキュメント",
@@ -1924,7 +1925,6 @@
     },
     "commands": {
       "confirmDelete": "このコマンドを削除してもよろしいですか？",
-      "defaults": "デフォルト",
       "export": "エクスポート",
       "exportError": "コマンドファイルのエクスポートに失敗しました",
       "exportSuccess": "コマンドファイルが正常にエクスポートされました",

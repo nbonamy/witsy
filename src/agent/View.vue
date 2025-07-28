@@ -3,13 +3,12 @@
 
   <div class="agent-view" v-if="agent">
 
-    <div class="viewer" v-if="!editing">
+    <div class="viewer">
     
       <div class="header panel">
         <div class="panel-header">
           <label>{{ t('agent.view.header') }}</label>
           <BIconPlayCircle v-if="agent.type === 'runnable'" class="icon run" @click="onRun" />
-          <BIconPencil class="icon edit" @click="onEdit" />
           <BIconTrash class="icon delete" @click="onDelete" />
         </div>
         <div class="form panel-body form-large">
@@ -47,9 +46,6 @@
       </div>
     
     </div>
-
-    <Editor class="editor" mode="create" :agent="agent" @cancel="editing = false;" @save="editing = false" />
-  
   </div>
 
 </template>
@@ -61,11 +57,9 @@ import { Agent, AgentRun } from '../types/index'
 import { ref, PropType, onMounted, watch, computed } from 'vue'
 import { t } from '../services/i18n'
 import { CronExpressionParser } from 'cron-parser'
-import Editor from './Editor.vue'
 import History from './History.vue'
 
-const runs= ref<AgentRun[]>([])
-const editing = ref(false)
+const runs = ref<AgentRun[]>([])
 
 const props = defineProps({
   agent: {
@@ -92,17 +86,12 @@ const nextRun = computed(() => {
 onMounted(() => {
   watch(() => props.agent, () => {
     if (!props.agent) return
-    editing.value = false
     runs.value = window.api.agents.getRuns(props.agent.id)
   }, { immediate: true })
 })
 
 const onRun = () => {
   emit('run', props.agent)
-}
-
-const onEdit = () => {
-  editing.value = true
 }
 
 const onClearHistory = () => {
@@ -156,11 +145,6 @@ const onDelete = () => {
       overflow-x: scroll;
     }
 
-  }
-
-  .editor {
-    flex: 1;
-    width: 100%;
   }
 
 }

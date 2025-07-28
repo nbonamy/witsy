@@ -39,6 +39,7 @@
     "deepResearch": "Deep Research",
     "default": "Default",
     "delete": "Delete",
+    "description": "Description",
     "differentLocales": "Your LLM locale is different than your interface locale. The texts displayed are im the LLM locale or your locale if you customized them.",
     "disabled": "Disabled",
     "documents": "Documents",
@@ -177,16 +178,48 @@
   },
   "agent": {
     "create": {
-      "information": "General Information",
-      "invocation": "Agent Triggers",
-      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-      "llm": "Model Configuration",
-      "settings": "Model Settings",
+      "agents": {
+        "title": "Support Agents",
+        "help": "Agents can delegate tasks to other agents. Select one or more agents to handle specific tasks."
+      },
+      "goal": {
+        "title": "Agent Goal"
+      },
+      "information": {
+        "help": {
+          "name": "Descriptive name for your agent.",
+          "description": "Short description of your agent purpose. When this agent is used inside a workflow, this will be shared with the LLM to help it understand the agent and eventually decide to call it.",
+          "goal": "The goal of the agent. This will be used as the system instructions sent to the LLM. Do not include execution specific information here as these wil be set in the prompt.",
+          "prompt": "Prompt template that will be used to execute the agent. You can include \"variables\" that will be substituted with the values provided by the user when the agent is executed. Use the format {'{'}{'{'}name:descripton{'}'}{'}'} to define a variable (the description will guide the user when prompted for a value)."
+        },
+        "title": "General Information"
+      },
+      "invocation": {
+        "title": "Agent Triggers"
+      },
+      "llm": {
+        "help": {
+          "warning": "Agent execution is highly dependent on the capabilities of each model. Make sure you select a model that supports agentic capabilities."
+        },
+        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+        "title": "Model Configuration",
+        "showModelSettings": "Advanced Settings"
+      },
+      "settings": {
+        "title": "Model Settings"
+      },
       "tools": {
-        "custom": "Restrict access to specific tools",
+        "help": "Narrowing down the number of tools exposed to the LLM will help it focus on the task at hand. You can always allow all tools later if needed.",
+        "allowAll": "Allow access to all plugins and MCP servers",
         "selectAll": "@:{'common.selectAll'}",
         "selectNone": "@:{'common.selectNone'}",
         "title": "Tools Access"
+      },
+      "workflow": {
+        "title": "Workflow",
+        "help": {
+          "singleOnly": "Witsy currently only supports single step workflows. You can add multiple steps in the future."
+        }
       }
     },
     "description": "@:{'common.description'}",
@@ -1924,7 +1957,6 @@
     },
     "commands": {
       "confirmDelete": "Are you sure you want to delete this command?",
-      "defaults": "Defaults",
       "export": "Export",
       "exportError": "Failed to export commands file",
       "exportSuccess": "Commands file exported successfully",

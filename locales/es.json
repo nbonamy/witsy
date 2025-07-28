@@ -39,6 +39,7 @@
     "deepResearch": "Deep Research",
     "default": "Predeterminado",
     "delete": "Eliminar",
+    "description": "Descripción",
     "differentLocales": "Tu configuración regional del LLM es diferente de la de tu interfaz. Los textos mostrados están en la configuración regional del LLM o en tu configuración regional si los has personalizado.",
     "disabled": "Desactivado",
     "documents": "Documentos",
@@ -1902,7 +1903,6 @@
     },
     "commands": {
       "confirmDelete": "¿Está seguro de que desea eliminar este comando?",
-      "defaults": "Valores predeterminados",
       "export": "Exportar",
       "exportError": "Error al exportar el archivo de comandos",
       "exportSuccess": "Archivo de comandos exportado con éxito",

@@ -2,10 +2,10 @@
   <div class="split-pane">
     <div class="sp-main">
       <header v-if="mode === 'create'">
-        <BIconChevronLeft class="icon back" @click="selectAgent(null)" />
+        <BIconChevronLeft class="icon back" @click="closeCreate" />
         <div class="title">{{ t('agent.forge.create') }}</div>
       </header>
-      <header v-else-if="mode === 'view'">
+      <header v-else-if="mode === 'view' || mode === 'edit'">
         <BIconChevronLeft class="icon back" @click="selectAgent(null)" />
         <div class="title">{{ selected.name }}</div>
       </header>
@@ -16,14 +16,15 @@
         <BIconRobot @click="onCreate" />
         {{ t('agent.forge.empty') }}
       </main>
-      <main class="list sliding-root" :class="{ visible: mode === 'list' }" v-else>
-        <List :agents="store.agents" @create="onCreate" @run="onRun" @view="viewAgent" @delete="deleteAgent" />
+      <main class="sliding-root" :class="{ visible: mode === 'list' }" v-else>
+        <List :agents="store.agents" @create="onCreate" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
       </main>
       <main class="sliding-pane" :class="{ visible: mode !== 'list' }" @transitionend="onTransitionEnd">
-        <Editor :style="{ display: isPaneVisible('create') ? 'flex' : 'none' }" mode="create" :agent="selected" @cancel="selectAgent(null)" @save="onSaved" />
-        <View :style="{ display: isPaneVisible('view') ? 'flex' : 'none' }" :agent="selected" @run="onRun" @delete="deleteAgent" />
+        <Editor :style="{ display: isPaneVisible('create') || isPaneVisible('edit') ? 'flex' : 'none' }" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
+        <View :style="{ display: isPaneVisible('view') ? 'flex' : 'none' }" :agent="selected" @run="runAgent" @delete="deleteAgent" />
       </main>
     </div>
+    <PromptBuilder :title="running?.name" ref="builder" />
   </div>
 </template>
 
@@ -32,6 +33,7 @@ import { ref, onMounted } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
+import PromptBuilder from '../components/PromptBuilder.vue'
 import List from '../agent/List.vue'
 import View from '../agent/View.vue'
 import Editor from '../agent/Editor.vue'
@@ -42,11 +44,13 @@ defineProps({
   extra: Object
 })
 
-type AgentForgeMode = 'list' | 'create' | 'view'
+type AgentForgeMode = 'list' | 'create' | 'view' | 'edit'
 
 const mode = ref<AgentForgeMode>('list')
 const prevMode = ref<AgentForgeMode>('list')
 const selected = ref<Agent|null>(null)
+const running = ref<Agent|null>(null)
+const builder = ref(null)
 
 const isPaneVisible = (paneMode: AgentForgeMode) => {
   return mode.value === paneMode || prevMode.value === paneMode
@@ -77,18 +81,32 @@ const onCreate = () => {
   selected.value = new Agent()
 }
 
-const onSaved = async (agent: Agent) => {
-  viewAgent(agent)
+const closeCreate = () => {
+  selectAgent(null)
 }
 
-const onRun = (agent: Agent) => {
-  const runner = new AgentRunner(store.config, agent)
-  runner.run('manual')
+const onSaved = async (agent: Agent) => {
+  store.loadAgents()
+  viewAgent(agent)
 }
 
 const viewAgent = (agent: Agent) => {
   mode.value = 'view'
   selected.value = agent
+}
+
+const editAgent = (agent: Agent) => {
+  mode.value = 'edit'
+  selected.value = agent
+}
+
+const runAgent = (agent: Agent, opts?: Record<string, string>) => {
+  running.value = agent
+  builder.value.show(agent.prompt, opts || {}, async (prompt: string) => {
+    const runner = new AgentRunner(store.config, agent)
+    await runner.run('manual', prompt)
+    running.value = null
+  })
 }
 
 const deleteAgent = (agent: Agent) => {
@@ -100,6 +118,7 @@ const deleteAgent = (agent: Agent) => {
   }).then((result) => {
     if (result.isConfirmed) {
       window.api.agents.delete(agent.id)
+      store.loadAgents()
     }
   })
 }
@@ -115,9 +134,6 @@ const deleteAgent = (agent: Agent) => {
 
     main {
     
-      padding: 2rem;
-      width: calc(100% - 4rem);
-
       &.empty {
 
         padding: 10% 25%;
@@ -129,6 +145,10 @@ const deleteAgent = (agent: Agent) => {
         text-align: center;
 
         color: var(--faded-text-color);
+        font-family: var(--font-family-serif);
+        font-size: 16pt;
+        font-weight: 500;
+        line-height: 1.5;
 
         svg {
           cursor: pointer;
@@ -138,17 +158,12 @@ const deleteAgent = (agent: Agent) => {
         }
       }
 
-      &:deep() .panel {
-        padding: 1rem 0;
-
-        &:first-child {
-          padding-top: 0;
-        }
-
-        &:last-child {
-          padding-bottom: 3rem;
-        }
+      &.sliding-pane {
+        /* not sure why the default 100% makes it too wide here */
+        /* as this does not happen for DocRepos who have the same structure */
+        width: calc(100% - var(--window-menubar-width));
       }
+
     }
   }
 }
