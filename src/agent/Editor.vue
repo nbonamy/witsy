@@ -498,8 +498,6 @@ const save = async () => {
 
       .md-master-list {
 
-        padding: 0.5rem;
-
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
@@ -557,6 +555,7 @@ const save = async () => {
 
       textarea {
         min-height: 5lh;
+        resize: vertical;
       }
 
       &:deep() .sticky-table-container {

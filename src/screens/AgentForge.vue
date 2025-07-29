@@ -87,11 +87,7 @@ const closeCreate = () => {
 
 const onSaved = async (agent: Agent) => {
   store.loadAgents()
-  if (mode.value === 'create') {
-    viewAgent(agent)
-  } else if (mode.value === 'edit') {
-    selectAgent(null)
-  }
+  selectAgent(null)
 }
 
 const viewAgent = (agent: Agent) => {
@@ -124,6 +120,7 @@ const deleteAgent = (agent: Agent) => {
   }).then((result) => {
     if (result.isConfirmed) {
       window.api.agents.delete(agent.id)
+      store.loadAgents()
       selectAgent(null)
     }
   })
