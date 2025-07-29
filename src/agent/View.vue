@@ -4,7 +4,7 @@
   <div class="agent-view master-detail" v-if="agent">
 
     <div class="master-main">
-      <Info :agent="agent" :runs="runs" @run="emit('run', $event)" @edit="emit('edit', $event)" @delete="emit('delete', $event)" />
+      <Info class="agent-info" :agent="agent" :runs="runs" @run="emit('run', $event)" @edit="emit('edit', $event)" @delete="emit('delete', $event)" />
       <History :agent="agent" :runs="runs" :run="run" @click="run = $event" @clear="clearHistory" />
     </div>
 
@@ -92,19 +92,29 @@ const clearHistory = () => {
 
   --agent-font-size: 11pt;
 
-  margin: 1rem;
+  margin: 2rem;
+  gap: 2rem;
 
   .master-main, .master-detail {
     flex: 1;
     max-width: 50%;
+    height: calc(100vh - var(--window-toolbar-height) - 4rem);
   }
 
-  .master-detail {
-    height: calc(100vh - 6rem);
+  .master-main {
+
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .agent-info {
+      flex-shrink: 0;
+    }
   }
 
   .panel {
-    padding: 1rem;
+    margin: 0rem;
+    padding: 0rem;
 
     &:deep()  .panel-body {
       gap: 0rem;

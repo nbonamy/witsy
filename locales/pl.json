@@ -38,6 +38,7 @@
     "customize": "Dostosuj…",
     "deepResearch": "Deep Research",
     "default": "Domyślny",
+    "defaultValue": "Wartość domyślna",
     "delete": "Usuń",
     "description": "Opis",
     "differentLocales": "Język modelu LLM różni się od języka interfejsu. Teksty mogą być wyświetlane w języku modelu lub w Twoim języku, jeśli zostały przetłumaczone.",
@@ -190,7 +191,7 @@
           "description": "Krótki opis celu twojego agenta. Gdy agent jest używany w przebiegu pracy, ta informacja jest przekazywana do LLM, aby pomóc mu zrozumieć agenta i ewentualnie zdecydować o jego wywołaniu.",
           "goal": "Cel agenta. Będzie on używany jako instrukcje systemowe wysyłane do LLM. Nie umieszczaj tutaj informacji dotyczących wykonania, ponieważ zostaną one ustawione w prompt.",
           "name": "Opisowa nazwa twojego agenta.",
-          "prompt": "Szablon promptu używany do wykonania agenta. Możesz dołączyć \"zmienne\", które zostaną zastąpione wartościami podanymi przez użytkownika podczas wykonania agenta. Użyj formatu {'{'}{'{'}nazwa:opis{'}'}{'}'} do zdefiniowania zmiennej (opis pomoże użytkownikowi podczas podawania wartości)."
+          "prompt": "Szablon promptu, który zostanie użyty do wykonania agenta. Możesz uwzględnić \"zmienne\", które zostaną zastąpione wartościami podanymi przez użytkownika podczas wykonywania agenta. Użyj formatu {'{'}{'{'}nazwa:opis:wartość{'}'}{'}'} do zdefiniowania zmiennej (opis pomoże użytkownikowi przy wprowadzaniu wartości). Zarówno opis, jak i wartość domyślna są opcjonalne."
         },
         "promptInputs": "Wykryte zmienne",
         "title": "Informacje ogólne"
