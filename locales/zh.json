@@ -192,6 +192,7 @@
           "name": "您代理的描述性名称。",
           "prompt": "将用于执行代理的提示模板。您可以包含“变量”，这些变量将在代理执行时用用户提供的值替换。使用格式 {'{'}{'{'}name:描述{'}'}{'}'} 来定义变量（描述将引导用户填写值）。"
         },
+        "promptInputs": "检测到的变量",
         "title": "基本信息"
       },
       "invocation": {
@@ -253,6 +254,7 @@
       "duration": "持续时间",
       "error": "@:{'common.error'}",
       "id": "运行 ID",
+      "notCompleted": "进行中…",
       "output": "输出",
       "prompt": "@:{'common.prompt'}",
       "status": "状态",

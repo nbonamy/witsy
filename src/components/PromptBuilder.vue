@@ -84,7 +84,7 @@ defineExpose({
       inputs.value = getMissingInputs(prompt.value, opts)
       for (const input of inputs.value) {
         if (!values.value[input.name]) {
-          values.value[input.name] = ''
+          values.value[input.name] = input.defaultValue || ''
         }
       }
 

@@ -192,6 +192,7 @@
           "name": "Opisowa nazwa twojego agenta.",
           "prompt": "Szablon promptu używany do wykonania agenta. Możesz dołączyć \"zmienne\", które zostaną zastąpione wartościami podanymi przez użytkownika podczas wykonania agenta. Użyj formatu {'{'}{'{'}nazwa:opis{'}'}{'}'} do zdefiniowania zmiennej (opis pomoże użytkownikowi podczas podawania wartości)."
         },
+        "promptInputs": "Wykryte zmienne",
         "title": "Informacje ogólne"
       },
       "invocation": {
@@ -253,6 +254,7 @@
       "duration": "Czas trwania",
       "error": "@:{'common.error'}",
       "id": "ID wykonania",
+      "notCompleted": "W trakcie...",
       "output": "Wynik",
       "prompt": "@:{'common.prompt'}",
       "status": "Status",

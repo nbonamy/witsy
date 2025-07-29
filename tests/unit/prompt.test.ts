@@ -93,6 +93,69 @@ test('extractPromptInputs - malformed inputs are ignored', () => {
   })
 })
 
+test('extractPromptInputs - input with default value but no description', () => {
+  const prompt = 'Hello {{name::John}}, how are you?'
+  const inputs = extractPromptInputs(prompt)
+  
+  expect(inputs).toHaveLength(1)
+  expect(inputs[0]).toEqual({
+    name: 'name',
+    description: undefined,
+    defaultValue: 'John'
+  })
+})
+
+test('extractPromptInputs - input with description and default value', () => {
+  const prompt = 'Hello {{name:Your name:John}}, how are you?'
+  const inputs = extractPromptInputs(prompt)
+  
+  expect(inputs).toHaveLength(1)
+  expect(inputs[0]).toEqual({
+    name: 'name',
+    description: 'Your name',
+    defaultValue: 'John'
+  })
+})
+
+test('extractPromptInputs - multiple inputs with various combinations', () => {
+  const prompt = 'Hello {{name:Your name:John}}, you are {{age::25}} years old and work as {{job:Your profession}}.'
+  const inputs = extractPromptInputs(prompt)
+  
+  expect(inputs).toHaveLength(3)
+  expect(inputs[0]).toEqual({
+    name: 'name',
+    description: 'Your name',
+    defaultValue: 'John'
+  })
+  expect(inputs[1]).toEqual({
+    name: 'age',
+    description: undefined,
+    defaultValue: '25'
+  })
+  expect(inputs[2]).toEqual({
+    name: 'job',
+    description: 'Your profession',
+    defaultValue: undefined
+  })
+})
+
+test('extractPromptInputs - handles whitespace in default values', () => {
+  const prompt = 'Hello {{ name : Your name : John Doe }}, you work at {{  company  ::  Acme Corp  }}.'
+  const inputs = extractPromptInputs(prompt)
+  
+  expect(inputs).toHaveLength(2)
+  expect(inputs[0]).toEqual({
+    name: 'name',
+    description: 'Your name',
+    defaultValue: 'John Doe'
+  })
+  expect(inputs[1]).toEqual({
+    name: 'company',
+    description: undefined,
+    defaultValue: 'Acme Corp'
+  })
+})
+
 // test('extractPromptInputs - nested braces are handled correctly', () => {
 //   const prompt = 'Use {{template:A template with {nested} braces}} here.'
 //   const inputs = extractPromptInputs(prompt)
@@ -176,6 +239,30 @@ test('replacePromptInputs - special characters in replacement values', () => {
   expect(result).toBe('Hello John, your email is john@example.com.')
 })
 
+test('replacePromptInputs - replacement with default values', () => {
+  const prompt = 'Hello {{name::John}}, you are {{age:Your age:25}} years old.'
+  const inputs = { name: 'Alice', age: '30' }
+  const result = replacePromptInputs(prompt, inputs)
+  
+  expect(result).toBe('Hello Alice, you are 30 years old.')
+})
+
+test('replacePromptInputs - missing inputs with default values are left unchanged', () => {
+  const prompt = 'Hello {{name::John}}, you are {{age:Your age:25}} years old.'
+  const inputs = { name: 'Alice' }
+  const result = replacePromptInputs(prompt, inputs)
+  
+  expect(result).toBe('Hello Alice, you are {{age:Your age:25}} years old.')
+})
+
+test('replacePromptInputs - handles mixed formats', () => {
+  const prompt = 'Hello {{name}}, you are {{age::25}} years old and work as {{job:Your job:Developer}}.'
+  const inputs = { name: 'Alice', job: 'Designer' }
+  const result = replacePromptInputs(prompt, inputs)
+  
+  expect(result).toBe('Hello Alice, you are {{age::25}} years old and work as Designer.')
+})
+
 test('getMissingInputs - returns inputs not provided', () => {
   const prompt = 'Hello {{name}}, you are {{age}} years old and live in {{city}}.'
   const inputs = { name: 'John' }
@@ -246,6 +333,42 @@ test('getMissingInputs - empty string values are not considered missing', () => 
   const missing = getMissingInputs(prompt, inputs)
   
   expect(missing).toHaveLength(0)
+})
+
+test('getMissingInputs - inputs with default values are still considered missing', () => {
+  const prompt = 'Hello {{name::John}}, you are {{age:Your age:25}} years old.'
+  const inputs = { name: 'Alice' }
+  const missing = getMissingInputs(prompt, inputs)
+  
+  expect(missing).toHaveLength(1)
+  expect(missing[0]).toEqual({
+    name: 'age',
+    description: 'Your age',
+    defaultValue: '25'
+  })
+})
+
+test('getMissingInputs - returns all inputs when none provided, including default values', () => {
+  const prompt = 'Hello {{name::John}}, you are {{age:Your age:25}} years old and work as {{job}}.'
+  const inputs = {}
+  const missing = getMissingInputs(prompt, inputs)
+  
+  expect(missing).toHaveLength(3)
+  expect(missing[0]).toEqual({
+    name: 'name',
+    description: undefined,
+    defaultValue: 'John'
+  })
+  expect(missing[1]).toEqual({
+    name: 'age',
+    description: 'Your age',
+    defaultValue: '25'
+  })
+  expect(missing[2]).toEqual({
+    name: 'job',
+    description: undefined,
+    defaultValue: undefined
+  })
 })
 
 test('complex scenario - multiple functions working together', () => {
