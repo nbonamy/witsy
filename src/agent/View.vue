@@ -5,15 +5,14 @@
 
     <div class="master-main">
       <Info class="agent-info" :agent="agent" :runs="runs" @run="emit('run', $event)" @edit="emit('edit', $event)" @delete="emit('delete', $event)" />
-      <History :agent="agent" :runs="runs" :run="run" @click="run = $event" @clear="clearHistory" />
+      <History class="agent-history" :agent="agent" :runs="runs" :run="run" @click="run = $event" @clear="clearHistory" />
     </div>
 
     <div class="master-detail">
-      <Run v-if="run" :run="run" @close="run = null" @delete="deleteRun"/>
+      <Run v-if="run" :agent-id="agent.id" :run-id="run.id" @close="run = null" @delete="deleteRun"/>
     </div>
 
   </div>
-
 
 </template>
 
@@ -21,7 +20,7 @@
 <script setup lang="ts">
 
 import { Agent, AgentRun } from '../types/index'
-import { ref, PropType, onMounted, watch } from 'vue'
+import { ref, PropType, onMounted, watch, onUnmounted } from 'vue'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import Info from './Info.vue'
@@ -41,16 +40,33 @@ const props = defineProps({
 const emit = defineEmits(['run', 'edit', 'clearHistory', 'delete'])
 
 onMounted(() => {
-  watch(() => props.agent, () => {
-    if (!props.agent) return
-    runs.value = window.api.agents.getRuns(props.agent.id)
-    if (runs.value.length > 0) {
-      run.value = runs.value[runs.value.length - 1]
-    } else {
-      run.value = null
-    }
-  }, { immediate: true })
+  watch(() => props.agent, reload, { immediate: true })
+  window.api.on('agent-run-update', onAgentRunUpdate)
 })
+
+onUnmounted(() => {
+  window.api.off('agent-run-update', onAgentRunUpdate)
+})
+
+const onAgentRunUpdate = (data: { agentId: string, runId: string }) => {
+  if (props.agent && props.agent.id === data.agentId) {
+    reload()
+  }
+}
+
+const reload = () => {
+  if (!props.agent) return
+  runs.value = window.api.agents.getRuns(props.agent.id)
+  selectLatestRun()
+}
+
+const selectLatestRun = () => {
+  if (runs.value.length > 0) {
+    run.value = runs.value[runs.value.length - 1]
+  } else {
+    run.value = null
+  }
+}
 
 const deleteRun = () => {
 
@@ -63,7 +79,7 @@ const deleteRun = () => {
     if (result.isConfirmed) {
       window.api.agents.deleteRun(props.agent.id, run.value.id)
       runs.value = runs.value.filter(r => r.id !== run.value.id)
-      run.value = null
+      selectLatestRun()
     }
   })
 }
@@ -96,8 +112,8 @@ const clearHistory = () => {
   gap: 2rem;
 
   .master-main, .master-detail {
-    flex: 1;
-    max-width: 50%;
+    flex: 1 0 calc(50% - 1rem);
+    max-width: calc(50% - 1rem);
     height: calc(100vh - var(--window-toolbar-height) - 4rem);
   }
 
@@ -109,6 +125,10 @@ const clearHistory = () => {
 
     .agent-info {
       flex-shrink: 0;
+    }
+
+    .agent-history {
+      flex-grow: 1;
     }
   }
 

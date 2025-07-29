@@ -393,6 +393,7 @@ declare global {
         save(agent: Agent): boolean
         delete(agentId: string): boolean
         getRuns(agentId: string): AgentRun[]
+        getRun(agentId: string, runId: string): AgentRun|null
         saveRun(run: AgentRun): boolean
         deleteRun(agentId: string, runId: string): boolean
         deleteRuns(agentId: string): boolean
