@@ -27,7 +27,7 @@
       </div>
       <div class="form-field">
         <label>{{ t('agent.run.updatedAt') }}</label>
-        {{ formatDate(run.updatedAt) }}
+        {{ run.status === 'running' ? t('agent.run.notCompleted') : formatDate(run.updatedAt) }}
       </div>
       <div class="form-field">
         <label>{{ t('agent.run.duration') }}</label>
@@ -41,7 +41,7 @@
         <label>{{ t('agent.run.error') }}</label>
         <div class="error-text">{{ run.error }}</div>
       </div>
-      <div class="form-field message" v-if="run.messages.length === 3">
+      <div class="form-field message" v-if="run.messages?.length === 3">
         <label>{{ t('agent.run.output') }}</label>
         <div class="output">
           <MessageItemBody :message="run.messages[run.messages.length - 1] as Message" show-tool-calls="always" />
@@ -57,26 +57,56 @@
 <script setup lang="ts">
 
 import { AgentRun, Message } from '../types/index'
-import { computed, PropType } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { t } from '../services/i18n'
 import MessageItemBody from '../components/MessageItemBody.vue'
 import { BIconCalendar2X } from 'bootstrap-icons-vue'
 
 const props = defineProps({
-  run: {
-    type: Object as PropType<AgentRun>,
+  agentId: {
+    type: String,
+    required: true
+  },
+  runId: {
+    type: String,
     required: true
   }
 })
+
+const run = ref<AgentRun | null>(null)
+
+let refreshTimeout: NodeJS.Timeout
+
+onMounted(() => {
+  loadAgentRun()
+  watch(() => props || {}, async () => {
+    clearTimeout(refreshTimeout)
+    loadAgentRun()
+  }, { deep: true, immediate: true })
+})
+
+const loadAgentRun = async () => {
+  try {
+    clearTimeout(refreshTimeout)
+    run.value = window.api.agents.getRun(props.agentId, props.runId)
+    if (run.value.status === 'running') {
+      setTimeout(() => {
+        loadAgentRun()
+      }, 2500)
+    }
+  } catch (error) {
+    console.error('Failed to load agent run:', error)
+  }
+}
 
 const formatDate = (date: number) => {
   return new Date(date).toString().split(' ').slice(0, 5).join(' ')
 }
 
 const duration = computed(() => {
-  if (!props.run || !props.run.createdAt || !props.run.updatedAt) return null
-  const start = new Date(props.run.createdAt).getTime()
-  const end = new Date(props.run.updatedAt).getTime()
+  if (!run.value || !run.value.createdAt || !run.value.updatedAt) return null
+  const start = new Date(run.value.createdAt).getTime()
+  const end = run.value.status === 'running' ? Date.now() : new Date(run.value.updatedAt).getTime()
   return end - start
 })
 

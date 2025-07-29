@@ -1,9 +1,10 @@
 
 import { AgentRun, anyDict } from '../types/index'
 import { App } from 'electron'
+import { notifyBrowserWindows } from './windows'
+import Agent from '../models/agent'
 import path from 'path'
 import fs from 'fs'
-import Agent from '../models/agent'
 
 export const agentsDirPath = (app: App): string => {
   const userDataPath = app.getPath('userData')
@@ -99,6 +100,21 @@ export const deleteAgent = (source: App|string, agentId: string): boolean => {
 
 }
 
+export const getAgentRun = (source: App|string, agentId: string, runId: string): AgentRun|null => {
+
+  // init
+  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
+  const runPath = path.join(agentsDir, agentId, runId + '.json')
+
+  try {
+    const content = fs.readFileSync(runPath, 'utf-8')
+    return JSON.parse(content)
+  } catch (error) {
+    console.log('Error reading agent run file', runPath, error)
+    return null
+  }
+}
+
 export const getAgentRuns = (source: App|string, agentId: string): AgentRun[]|null => {
 
   // init
@@ -148,6 +164,7 @@ export const saveAgentRun = (source: App|string, run: AgentRun): boolean => {
   // write file
   try {
     fs.writeFileSync(filePath, JSON.stringify(run, null, 2))
+    notifyBrowserWindows('agent-run-update', { agentId: run.agentId, runId: run.id })
     return true
   } catch (error) {
     console.log('Error saving agent run', filePath, error)

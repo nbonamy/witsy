@@ -147,6 +147,7 @@ contextBridge.exposeInMainWorld(
       save(agent: Agent): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE, JSON.stringify(agent)) },
       delete(agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE, agentId) },
       getRuns(agentId: string): AgentRun[] { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.GET_RUNS, agentId)) },
+      getRun(agentId: string, runId: string): AgentRun|null { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.GET_RUN, JSON.stringify({ agentId, runId }))) },
       saveRun(run: AgentRun): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE_RUN, JSON.stringify(run)) },
       deleteRun(agentId: string, runId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUN, JSON.stringify({ agentId, runId })) },
       deleteRuns(agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUNS, agentId); },

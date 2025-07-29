@@ -91,6 +91,7 @@ export const AGENTS = {
   SAVE: 'agents-save',
   DELETE: 'agents-delete',
   GET_RUNS: 'agents-get-runs',
+  GET_RUN: 'agents-get-run',
   SAVE_RUN: 'agents-save-run',
   DELETE_RUN: 'agents-delete-run',
   DELETE_RUNS: 'agents-delete-runs',

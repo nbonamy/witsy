@@ -259,6 +259,11 @@ export const installIpc = (
     event.returnValue = JSON.stringify(agents.getAgentRuns(app, agentId));
   });
 
+  ipcMain.on(IPC.AGENTS.GET_RUN, (event, payload) => {
+    const { agentId, runId } = JSON.parse(payload);
+    event.returnValue = JSON.stringify(agents.getAgentRun(app, agentId, runId));
+  });
+
   ipcMain.on(IPC.AGENTS.SAVE_RUN, (event, payload) => {
     event.returnValue = agents.saveAgentRun(app, JSON.parse(payload));
   });
