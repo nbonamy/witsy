@@ -42,7 +42,7 @@
 <script setup lang="ts">
 
 import { ChatToolMode } from '../types/config'
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, PropType, watch } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
@@ -70,11 +70,11 @@ const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({
   chat: {
-    type: Chat,
+    type: Object as PropType<Chat>,
     // required: true,
   },
   message: {
-    type: Message,
+    type: Object as PropType<Message>,
     required: true,
   },
   showRole: { type: Boolean, default: true },

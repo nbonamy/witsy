@@ -178,16 +178,48 @@
   },
   "agent": {
     "create": {
-      "information": "Informações Gerais",
-      "invocation": "Gatilhos do Agente",
-      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-      "llm": "Configuração do Modelo",
-      "settings": "Configurações do Modelo",
+      "agents": {
+        "help": "Agentes podem delegar tarefas a outros agentes. Selecione um ou mais agentes para lidar com tarefas específicas.",
+        "title": "Agentes de Suporte"
+      },
+      "goal": {
+        "title": "Objetivo do Agente"
+      },
+      "information": {
+        "help": {
+          "description": "Descrição breve do propósito do seu agente. Quando este agente for usado dentro de um fluxo de trabalho, isso será compartilhado com o LLM para ajudá-lo a entender o agente e eventualmente decidir chamá-lo.",
+          "goal": "O objetivo do agente. Isso será usado como as instruções do sistema enviadas ao LLM. Não inclua informações específicas de execução aqui, pois elas serão definidas no prompt.",
+          "name": "Nome descritivo para seu agente.",
+          "prompt": "Modelo de prompt que será usado para executar o agente. Você pode incluir \"variáveis\" que serão substituídas pelos valores fornecidos pelo usuário quando o agente for executado. Use o formato {'{'}{'{'}nome:descrição{'}'}{'}'} para definir uma variável (a descrição guiará o usuário quando solicitado um valor)."
+        },
+        "title": "Informações Gerais"
+      },
+      "invocation": {
+        "title": "Acionadores do Agente"
+      },
+      "llm": {
+        "help": {
+          "warning": "A execução do agente depende muito das capacidades de cada modelo. Certifique-se de selecionar um modelo que suporte capacidades agentivas."
+        },
+        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+        "showModelSettings": "Configurações Avançadas",
+        "title": "Configuração do Modelo"
+      },
+      "settings": {
+        "title": "Configurações do Modelo"
+      },
       "tools": {
-        "custom": "Restringir acesso a ferramentas específicas",
+        "allowAll": "Permitir acesso a todos os plugins e servidores MCP",
+        "help": "Limitar o número de ferramentas expostas ao LLM ajudará a focar na tarefa em questão. Você pode sempre permitir todas as ferramentas depois, se necessário.",
         "selectAll": "@:{'common.selectAll'}",
         "selectNone": "@:{'common.selectNone'}",
         "title": "Acesso às Ferramentas"
+      },
+      "workflow": {
+        "help": {
+          "singleOnly": "O Witsy atualmente suporta apenas fluxos de trabalho de uma única etapa. Você pode adicionar múltiplas etapas no futuro."
+        },
+        "title": "Fluxo de Trabalho"
       }
     },
     "description": "@:{'common.description'}",
@@ -203,12 +235,11 @@
     },
     "goal": "Objetivo",
     "history": {
+      "confirmClear": "Tem certeza de que deseja limpar o histórico deste agente?",
       "date": "Data",
-      "duration": "Duração",
       "empty": "Ainda sem histórico…",
       "log": "Log",
       "neverRun": "Nunca",
-      "prompt": "@:{'common.prompt'}",
       "status": "Status",
       "trigger": "Acionador"
     },
@@ -216,12 +247,20 @@
     "name": "@:{'common.name'}",
     "nextRun": "Agendado para",
     "prompt": "Prompt Padrão",
-    "run": "Executar agora",
-    "runCount": "Total de execuções",
-    "tools": {
-      "description": "@:{'common.description'}",
-      "name": "@:{'common.name'}"
+    "run": {
+      "confirmDelete": "Tem certeza de que deseja deletar esta execução?",
+      "createdAt": "Hora de Início",
+      "duration": "Duração",
+      "error": "@:{'common.error'}",
+      "id": "ID da Execução",
+      "output": "Saída",
+      "prompt": "@:{'common.prompt'}",
+      "status": "Status",
+      "title": "Execução do Agente",
+      "trigger": "Acionador",
+      "updatedAt": "Hora de Conclusão"
     },
+    "runCount": "Total de execuções",
     "trigger": {
       "manual": "Manual",
       "manual_description": "Agentes podem sempre ser acionados manualmente",

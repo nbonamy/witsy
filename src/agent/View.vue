@@ -1,52 +1,19 @@
 
 <template>
 
-  <div class="agent-view" v-if="agent">
+  <div class="agent-view master-detail" v-if="agent">
 
-    <div class="viewer">
-    
-      <div class="header panel">
-        <div class="panel-header">
-          <label>{{ t('agent.view.header') }}</label>
-          <BIconPlayCircle v-if="agent.type === 'runnable'" class="icon run" @click="onRun" />
-          <BIconTrash class="icon delete" @click="onDelete" />
-        </div>
-        <div class="form panel-body form-large">
-          <div class="form-field">
-            <label>{{ t('agent.description') }}</label>
-            {{ agent.description }}
-          </div>
-          <div class="form-field">
-            <label>{{ t('agent.runCount') }}</label>
-            {{ runs.length }}
-          </div>
-          <div class="form-field">
-            <label>{{ t('agent.lastRun') }}</label>
-            {{ lastRun }}
-          </div>
-          <div class="form-field" v-if="agent.schedule">
-            <label>{{ t('agent.nextRun') }}</label>
-            {{ nextRun }}
-          </div>
-        </div>
-
-      </div>
-
-      <div class="runs panel">
-        <div class="header">
-          <label>{{ t('agent.view.history') }}</label>
-          <BIconCalendarX class="icon clear" v-if="agent.schedule" @click="onClearHistory" />
-        </div>
-        <div class="list">
-          <History :agent="agent" :runs="runs" v-if="runs.length"/>
-          <div class="empty" v-else>
-            {{ t('agent.history.empty') }}
-          </div>
-        </div>
-      </div>
-    
+    <div class="master-main">
+      <Info :agent="agent" :runs="runs" @run="emit('run', $event)" @edit="emit('edit', $event)" @delete="emit('delete', $event)" />
+      <History :agent="agent" :runs="runs" :run="run" @click="run = $event" @clear="clearHistory" />
     </div>
+
+    <div class="master-detail">
+      <Run v-if="run" :run="run" @close="run = null" @delete="deleteRun"/>
+    </div>
+
   </div>
+
 
 </template>
 
@@ -54,12 +21,15 @@
 <script setup lang="ts">
 
 import { Agent, AgentRun } from '../types/index'
-import { ref, PropType, onMounted, watch, computed } from 'vue'
+import { ref, PropType, onMounted, watch } from 'vue'
 import { t } from '../services/i18n'
-import { CronExpressionParser } from 'cron-parser'
+import Dialog from '../composables/dialog'
+import Info from './Info.vue'
 import History from './History.vue'
+import Run from './Run.vue'
 
 const runs = ref<AgentRun[]>([])
+const run = ref<AgentRun|null>(null)
 
 const props = defineProps({
   agent: {
@@ -70,38 +40,48 @@ const props = defineProps({
 
 const emit = defineEmits(['run', 'edit', 'clearHistory', 'delete'])
 
-const lastRun = computed(() => {
-  if (runs.value.length === 0) return t('agent.history.neverRun')
-  const lastRun = runs.value[runs.value.length - 1]
-  return new Date(lastRun.createdAt).toLocaleString()
-})
-
-const nextRun = computed(() => {
-  if (!props.agent.schedule) return ''
-  const schedule = CronExpressionParser.parse(props.agent.schedule)
-  const next = schedule.next().toDate()
-  return next.toLocaleString(Intl.DateTimeFormat().resolvedOptions().locale, { dateStyle: 'full', timeStyle: 'short' })
-})
-
 onMounted(() => {
   watch(() => props.agent, () => {
     if (!props.agent) return
     runs.value = window.api.agents.getRuns(props.agent.id)
+    if (runs.value.length > 0) {
+      run.value = runs.value[runs.value.length - 1]
+    } else {
+      run.value = null
+    }
   }, { immediate: true })
 })
 
-const onRun = () => {
-  emit('run', props.agent)
+const deleteRun = () => {
+
+  Dialog.show({
+    title: t('agent.run.confirmDelete'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.api.agents.deleteRun(props.agent.id, run.value.id)
+      runs.value = runs.value.filter(r => r.id !== run.value.id)
+      run.value = null
+    }
+  })
 }
 
-const onClearHistory = () => {
-  window.api.agents.deleteRuns(props.agent.id)
+const clearHistory = () => {
+  Dialog.show({
+    title: t('agent.history.confirmClear'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.clear'),
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.api.agents.deleteRuns(props.agent.id)
+      runs.value = []
+      run.value = null
+    }
+  })
 }
-
-const onDelete = () => {
-  emit('delete', props.agent)
-}
-
 
 </script>
 
@@ -109,40 +89,26 @@ const onDelete = () => {
 <style scoped>
 
 .agent-view {
-  
-  display: flex;
-  flex-direction: row;
-  height: 100%;
 
-  .viewer {
-  
-    .header {
+  --agent-font-size: 11pt;
 
-      .list {
-        gap: 0px;
-      }
+  margin: 1rem;
 
-      .form-field {
-        align-items: flex-start;
-        font-size: 10.5pt;
+  .master-main, .master-detail {
+    flex: 1;
+    max-width: 50%;
+  }
 
-        label {
-          min-width: 120px;
-          margin-right: 16px;
-          font-weight: bold;
-          text-align: right;
-        }
+  .master-detail {
+    height: calc(100vh - 6rem);
+  }
 
-        label::after {
-          content: none !important;
-        }
-        
-      }
+  .panel {
+    padding: 1rem;
 
-    }
-
-    .runs .list {
-      overflow-x: scroll;
+    &:deep()  .panel-body {
+      gap: 0rem;
+      font-size: var(--agent-font-size);
     }
 
   }

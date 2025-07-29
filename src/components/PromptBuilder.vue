@@ -6,7 +6,8 @@
     <template #body>
       <div v-for="field in fields" :key="field.name" class="form-field">
         <label>{{ field.description ?? field.name }}</label>
-        <input :name="field.name" v-model="values[field.name]" />
+        <textarea :name="field.name" v-model="values[field.name]" v-if="field.control === 'textarea'"></textarea>
+        <input :name="field.name" v-model="values[field.name]" v-else />
       </div>
     </template>
     <template #footer>
@@ -44,8 +45,7 @@ const callback = ref<((prompt: string) => void) | null>(null)
 
 const fields = computed(() => [
   ...inputs.value.map(input => ({
-    name: input.name,
-    description: input.description,
+    ...input,
     value: values.value[input.name] || '',
   }))
 ])
@@ -67,28 +67,36 @@ const onSave = () => {
 defineExpose({
   show: (template: string, opts: Record<string, string>, cb: (prompt: string) => void) => {
 
-    values.value = opts
-    prompt.value = template
-    callback.value = cb
 
-    inputs.value = getMissingInputs(prompt.value, opts)
-    for (const input of inputs.value) {
-      if (!values.value[input.name]) {
-        values.value[input.name] = ''
+    if (!template) {
+
+      callback.value = cb
+      inputs.value = [
+        { name: 'prompt', description: t('common.prompt'), control: 'textarea' },
+      ]
+
+    } else {
+
+      values.value = opts
+      prompt.value = template
+      callback.value = cb
+
+      inputs.value = getMissingInputs(prompt.value, opts)
+      for (const input of inputs.value) {
+        if (!values.value[input.name]) {
+          values.value[input.name] = ''
+        }
       }
+
+      if (inputs.value.length === 0) {
+        onSave()
+        return
+      }
+
     }
 
-    console.log('Prompt inputs:', values.value)
-
-
-
-
-
-    if (inputs.value.length === 0) {
-      onSave()
-      return
-    }
     dialog.value.show()
+
   },
   close,
 })
@@ -100,6 +108,11 @@ defineExpose({
 
 #prompt-builder .swal2-popup {
   max-width: 24rem !important;
+}
+
+textarea {
+  min-height: 8lh;
+  resize: vertical;
 }
 
 </style>

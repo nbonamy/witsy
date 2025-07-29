@@ -159,16 +159,48 @@
   },
   "agent": {
     "create": {
-      "information": "Informations générales",
-      "invocation": "Déclencheurs de l'agent",
-      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-      "llm": "Configuration du modèle",
-      "settings": "Paramètres du modèle",
+      "agents": {
+        "help": "Les agents peuvent déléguer des tâches à d'autres agents. Sélectionnez un ou plusieurs agents pour gérer des tâches spécifiques.",
+        "title": "Agents de Support"
+      },
+      "goal": {
+        "title": "Objectif de l'Agent"
+      },
+      "information": {
+        "help": {
+          "description": "Brève description de l'objectif de votre agent. Lorsque cet agent est utilisé dans un flux de travail, cela sera partagé avec le LLM pour l'aider à comprendre l'agent et éventuellement décider de l'appeler.",
+          "goal": "L'objectif de l'agent. Ceci sera utilisé comme instructions système envoyées au LLM. N'incluez pas d'informations spécifiques à l'exécution ici car elles seront définies dans l'invite.",
+          "name": "Nom descriptif pour votre agent.",
+          "prompt": "Modèle d'invite qui sera utilisé pour exécuter l'agent. Vous pouvez inclure des \"variables\" qui seront substituées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}nom:description{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lors de la saisie de la valeur)."
+        },
+        "title": "Informations Générales"
+      },
+      "invocation": {
+        "title": "Déclencheurs de l'Agent"
+      },
+      "llm": {
+        "help": {
+          "warning": "L'exécution de l'agent dépend fortement des capacités de chaque modèle. Assurez-vous de sélectionner un modèle qui supporte les capacités agentiques."
+        },
+        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+        "showModelSettings": "Paramètres Avancés",
+        "title": "Configuration du Modèle"
+      },
+      "settings": {
+        "title": "Paramètres du Modèle"
+      },
       "tools": {
-        "custom": "Restreindre l'accès à certains outils",
+        "allowAll": "Autoriser l'accès à tous les plugins et serveurs MCP",
+        "help": "Limiter le nombre d'outils accessibles au LLM aidera ce dernier à se concentrer sur la tâche à accomplir. Vous pouvez toujours autoriser tous les outils plus tard si nécessaire.",
         "selectAll": "@:{'common.selectAll'}",
         "selectNone": "@:{'common.selectNone'}",
         "title": "Accès aux outils"
+      },
+      "workflow": {
+        "help": {
+          "singleOnly": "Witsy ne supporte actuellement que les flux de travail à étape unique. Vous pourrez ajouter plusieurs étapes à l'avenir."
+        },
+        "title": "Flux de Travail"
       }
     },
     "description": "@:{'common.description'}",
@@ -184,12 +216,11 @@
     },
     "goal": "Objectif",
     "history": {
+      "confirmClear": "Êtes-vous sûr de vouloir effacer l'historique de cet agent ?",
       "date": "Date",
-      "duration": "Durée",
       "empty": "Pas encore d'historique…",
       "log": "Journal",
       "neverRun": "Jamais",
-      "prompt": "@:{'common.prompt'}",
       "status": "Statut",
       "trigger": "Déclencheur"
     },
@@ -197,12 +228,20 @@
     "name": "@:{'common.name'}",
     "nextRun": "Planifié pour le",
     "prompt": "Invite par défaut",
-    "run": "Exécuter maintenant",
-    "runCount": "Exécutions totales",
-    "tools": {
-      "description": "@:{'common.description'}",
-      "name": "@:{'common.name'}"
+    "run": {
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette exécution ?",
+      "createdAt": "Heure de début",
+      "duration": "Durée",
+      "error": "@:{'common.error'}",
+      "id": "ID d'Exécution",
+      "output": "Sortie",
+      "prompt": "@:{'common.prompt'}",
+      "status": "Statut",
+      "title": "Exécution de l'Agent",
+      "trigger": "Déclencheur",
+      "updatedAt": "Heure de fin"
     },
+    "runCount": "Exécutions totales",
     "trigger": {
       "manual": "Manuel",
       "manual_description": "Les agents peuvent toujours être déclenchés manuellement",

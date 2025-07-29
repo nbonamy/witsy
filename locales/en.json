@@ -179,17 +179,17 @@
   "agent": {
     "create": {
       "agents": {
-        "title": "Support Agents",
-        "help": "Agents can delegate tasks to other agents. Select one or more agents to handle specific tasks."
+        "help": "Agents can delegate tasks to other agents. Select one or more agents to handle specific tasks.",
+        "title": "Support Agents"
       },
       "goal": {
         "title": "Agent Goal"
       },
       "information": {
         "help": {
-          "name": "Descriptive name for your agent.",
           "description": "Short description of your agent purpose. When this agent is used inside a workflow, this will be shared with the LLM to help it understand the agent and eventually decide to call it.",
           "goal": "The goal of the agent. This will be used as the system instructions sent to the LLM. Do not include execution specific information here as these wil be set in the prompt.",
+          "name": "Descriptive name for your agent.",
           "prompt": "Prompt template that will be used to execute the agent. You can include \"variables\" that will be substituted with the values provided by the user when the agent is executed. Use the format {'{'}{'{'}name:descripton{'}'}{'}'} to define a variable (the description will guide the user when prompted for a value)."
         },
         "title": "General Information"
@@ -202,24 +202,24 @@
           "warning": "Agent execution is highly dependent on the capabilities of each model. Make sure you select a model that supports agentic capabilities."
         },
         "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-        "title": "Model Configuration",
-        "showModelSettings": "Advanced Settings"
+        "showModelSettings": "Advanced Settings",
+        "title": "Model Configuration"
       },
       "settings": {
         "title": "Model Settings"
       },
       "tools": {
-        "help": "Narrowing down the number of tools exposed to the LLM will help it focus on the task at hand. You can always allow all tools later if needed.",
         "allowAll": "Allow access to all plugins and MCP servers",
+        "help": "Narrowing down the number of tools exposed to the LLM will help it focus on the task at hand. You can always allow all tools later if needed.",
         "selectAll": "@:{'common.selectAll'}",
         "selectNone": "@:{'common.selectNone'}",
         "title": "Tools Access"
       },
       "workflow": {
-        "title": "Workflow",
         "help": {
           "singleOnly": "Witsy currently only supports single step workflows. You can add multiple steps in the future."
-        }
+        },
+        "title": "Workflow"
       }
     },
     "description": "@:{'common.description'}",
@@ -235,12 +235,11 @@
     },
     "goal": "Goal",
     "history": {
+      "confirmClear": "Are you sure you want to clear the history of this agent?",
       "date": "Date",
-      "duration": "Duration",
       "empty": "No history yet…",
       "log": "Log",
       "neverRun": "Never",
-      "prompt": "@:{'common.prompt'}",
       "status": "Status",
       "trigger": "Trigger"
     },
@@ -248,12 +247,20 @@
     "name": "@:{'common.name'}",
     "nextRun": "Scheduled on",
     "prompt": "Default Prompt",
-    "run": "Run now",
-    "runCount": "Total executions",
-    "tools": {
-      "description": "@:{'common.description'}",
-      "name": "@:{'common.name'}"
+    "run": {
+      "confirmDelete": "Are you sure you want to delete this run?",
+      "createdAt": "Start time",
+      "duration": "Duration",
+      "error": "@:{'common.error'}",
+      "id": "Run ID",
+      "output": "Output",
+      "prompt": "@:{'common.prompt'}",
+      "status": "Status",
+      "title": "Agent Run",
+      "trigger": "Trigger",
+      "updatedAt": "Completion time"
     },
+    "runCount": "Total executions",
     "trigger": {
       "manual": "Manual",
       "manual_description": "Agents can always be manually triggered",

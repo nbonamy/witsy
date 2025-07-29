@@ -159,16 +159,48 @@
   },
   "agent": {
     "create": {
-      "information": "Allgemeine Informationen",
-      "invocation": "Agent-Auslöser",
-      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-      "llm": "Modellkonfiguration",
-      "settings": "Modelleinstellungen",
+      "agents": {
+        "help": "Agenten können Aufgaben an andere Agenten delegieren. Wählen Sie einen oder mehrere Agenten aus, um bestimmte Aufgaben zu übernehmen.",
+        "title": "Unterstützende Agenten"
+      },
+      "goal": {
+        "title": "Agentenziel"
+      },
+      "information": {
+        "help": {
+          "description": "Kurzbeschreibung des Zwecks Ihres Agenten. Wenn dieser Agent in einem Arbeitsablauf verwendet wird, wird diese Beschreibung mit dem LLM geteilt, um das Verständnis des Agenten zu verbessern und gegebenenfalls dessen Aufruf zu entscheiden.",
+          "goal": "Das Ziel des Agenten. Dies wird als Systemanweisung an das LLM gesendet. Fügen Sie hier keine ausführungsspezifischen Informationen ein, da diese im Prompt gesetzt werden.",
+          "name": "Beschreibender Name für Ihren Agenten.",
+          "prompt": "Prompt-Vorlage, die zur Ausführung des Agenten verwendet wird. Sie können \"Variablen\" einschließen, die durch vom Benutzer bei Ausführung des Agenten angegebene Werte ersetzt werden. Verwenden Sie das Format {'{'}{'{'}name:beschreibung{'}'}{'}'}, um eine Variable zu definieren (die Beschreibung hilft dem Benutzer bei der Eingabe eines Wertes)."
+        },
+        "title": "Allgemeine Informationen"
+      },
+      "invocation": {
+        "title": "Agenten-Auslöser"
+      },
+      "llm": {
+        "help": {
+          "warning": "Die Ausführung des Agenten hängt stark von den Fähigkeiten des jeweiligen Modells ab. Stellen Sie sicher, dass Sie ein Modell auswählen, das agentische Fähigkeiten unterstützt."
+        },
+        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+        "showModelSettings": "Erweiterte Einstellungen",
+        "title": "Modellkonfiguration"
+      },
+      "settings": {
+        "title": "Modelleinstellungen"
+      },
       "tools": {
-        "custom": "Zugriff auf bestimmte Werkzeuge beschränken",
+        "allowAll": "Zugriff auf alle Plugins und MCP-Server erlauben",
+        "help": "Die Beschränkung der Anzahl der dem LLM verfügbaren Werkzeuge hilft ihm, sich auf die jeweilige Aufgabe zu konzentrieren. Sie können später bei Bedarf alle Werkzeuge freigeben.",
         "selectAll": "@:{'common.selectAll'}",
         "selectNone": "@:{'common.selectNone'}",
         "title": "Werkzeugzugriff"
+      },
+      "workflow": {
+        "help": {
+          "singleOnly": "Witsy unterstützt derzeit nur mehrstufige Workflows. Zukünftig können Sie mehrere Schritte hinzufügen."
+        },
+        "title": "Arbeitsablauf"
       }
     },
     "description": "@:{'common.description'}",
@@ -184,12 +216,11 @@
     },
     "goal": "Ziel",
     "history": {
+      "confirmClear": "Sind Sie sicher, dass Sie den Verlauf dieses Agenten löschen möchten?",
       "date": "Datum",
-      "duration": "Dauer",
       "empty": "Noch keine Historie…",
       "log": "Protokoll",
       "neverRun": "Nie",
-      "prompt": "@:{'common.prompt'}",
       "status": "Status",
       "trigger": "Auslöser"
     },
@@ -197,12 +228,20 @@
     "name": "@:{'common.name'}",
     "nextRun": "Geplant für",
     "prompt": "Standard-Prompt",
-    "run": "Jetzt ausführen",
-    "runCount": "Gesamtausführungen",
-    "tools": {
-      "description": "@:{'common.description'}",
-      "name": "@:{'common.name'}"
+    "run": {
+      "confirmDelete": "Sind Sie sicher, dass Sie diese Ausführung löschen möchten?",
+      "createdAt": "Startzeit",
+      "duration": "Dauer",
+      "error": "@:{'common.error'}",
+      "id": "Ausführungs-ID",
+      "output": "Ausgabe",
+      "prompt": "@:{'common.prompt'}",
+      "status": "Status",
+      "title": "Agentenausführung",
+      "trigger": "Auslöser",
+      "updatedAt": "Abschlusszeit"
     },
+    "runCount": "Gesamtausführungen",
     "trigger": {
       "manual": "Manuell",
       "manual_description": "Agenten können jederzeit manuell ausgelöst werden",

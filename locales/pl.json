@@ -178,16 +178,48 @@
   },
   "agent": {
     "create": {
-      "information": "Informacje ogólne",
-      "invocation": "Wyzwalacze agenta",
-      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-      "llm": "Konfiguracja modelu",
-      "settings": "Ustawienia modelu",
+      "agents": {
+        "help": "Agenci mogą delegować zadania innym agentom. Wybierz jednego lub więcej agentów do obsługi konkretnych zadań.",
+        "title": "Wspierający agenci"
+      },
+      "goal": {
+        "title": "Cel agenta"
+      },
+      "information": {
+        "help": {
+          "description": "Krótki opis celu twojego agenta. Gdy agent jest używany w przebiegu pracy, ta informacja jest przekazywana do LLM, aby pomóc mu zrozumieć agenta i ewentualnie zdecydować o jego wywołaniu.",
+          "goal": "Cel agenta. Będzie on używany jako instrukcje systemowe wysyłane do LLM. Nie umieszczaj tutaj informacji dotyczących wykonania, ponieważ zostaną one ustawione w prompt.",
+          "name": "Opisowa nazwa twojego agenta.",
+          "prompt": "Szablon promptu używany do wykonania agenta. Możesz dołączyć \"zmienne\", które zostaną zastąpione wartościami podanymi przez użytkownika podczas wykonania agenta. Użyj formatu {'{'}{'{'}nazwa:opis{'}'}{'}'} do zdefiniowania zmiennej (opis pomoże użytkownikowi podczas podawania wartości)."
+        },
+        "title": "Informacje ogólne"
+      },
+      "invocation": {
+        "title": "Wyzwalacze agenta"
+      },
+      "llm": {
+        "help": {
+          "warning": "Wykonanie agenta w dużej mierze zależy od możliwości wybranego modelu. Upewnij się, że wybierasz model obsługujący funkcje agentowe."
+        },
+        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+        "showModelSettings": "Ustawienia zaawansowane",
+        "title": "Konfiguracja modelu"
+      },
+      "settings": {
+        "title": "Ustawienia modelu"
+      },
       "tools": {
-        "custom": "Ogranicz dostęp do konkretnych narzędzi",
+        "allowAll": "Zezwól na dostęp do wszystkich wtyczek i serwerów MCP",
+        "help": "Ograniczenie liczby narzędzi dostępnych dla LLM pomoże mu skupić się na konkretnym zadaniu. W razie potrzeby zawsze możesz zezwolić na wszystkie narzędzia później.",
         "selectAll": "@:{'common.selectAll'}",
         "selectNone": "@:{'common.selectNone'}",
         "title": "Dostęp do narzędzi"
+      },
+      "workflow": {
+        "help": {
+          "singleOnly": "Witsy obecnie obsługuje tylko przebiegi pracy jednokrokowe. Możesz dodać wiele kroków w przyszłości."
+        },
+        "title": "Przebieg pracy"
       }
     },
     "description": "@:{'common.description'}",
@@ -203,12 +235,11 @@
     },
     "goal": "Cel",
     "history": {
+      "confirmClear": "Czy na pewno chcesz wyczyścić historię tego agenta?",
       "date": "Data",
-      "duration": "Czas trwania",
       "empty": "Brak historii…",
       "log": "Dziennik",
       "neverRun": "Nigdy",
-      "prompt": "@:{'common.prompt'}",
       "status": "Status",
       "trigger": "Wyzwalacz"
     },
@@ -216,12 +247,20 @@
     "name": "@:{'common.name'}",
     "nextRun": "Zaplanowano na",
     "prompt": "Domyślny prompt",
-    "run": "Uruchom teraz",
-    "runCount": "Łączna liczba wykonań",
-    "tools": {
-      "description": "@:{'common.description'}",
-      "name": "@:{'common.name'}"
+    "run": {
+      "confirmDelete": "Czy na pewno chcesz usunąć to wykonanie?",
+      "createdAt": "Czas rozpoczęcia",
+      "duration": "Czas trwania",
+      "error": "@:{'common.error'}",
+      "id": "ID wykonania",
+      "output": "Wynik",
+      "prompt": "@:{'common.prompt'}",
+      "status": "Status",
+      "title": "Wykonanie agenta",
+      "trigger": "Wyzwalacz",
+      "updatedAt": "Czas zakończenia"
     },
+    "runCount": "Łączna liczba wykonań",
     "trigger": {
       "manual": "Ręczny",
       "manual_description": "Agenci mogą być zawsze wyzwalani ręcznie",

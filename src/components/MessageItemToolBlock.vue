@@ -157,6 +157,7 @@ const toggleOpen = () => {
 
         .value-value {
           color: var(--tool-value-text-color);
+          word-break: break-all;
         }
       }
     }

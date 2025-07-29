@@ -4,6 +4,7 @@ import { Configuration } from '../types/config'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin from './plugin'
 import { t } from '../services/i18n'
+import { extractPromptInputs, replacePromptInputs } from '../services/prompt'
 import Runner, { RunnerCompletionOpts } from '../services/runner'
 
 const kStoreIdPrefix = 'storeId:'
@@ -38,7 +39,7 @@ export default class extends Plugin {
     this.model = model
     this.storage = storage
     this.opts = {
-      ephemeral: true,
+      ephemeral: false,
       engine: this.engine,
       model: this.model,
       storeData: true,
@@ -52,7 +53,7 @@ export default class extends Plugin {
   }
 
   getName(): string {
-    return `run_agent_${this.agent.name}`
+    return `run_agent_${this.agent.id.replace(/-/g, '_')}`
   }
 
   getDescription(): string {
@@ -95,10 +96,23 @@ export default class extends Plugin {
   }
 
   getParameters(): PluginParameter[] {
-    
+
+    // if we have a prompt...
     if (this.agent.prompt) {
 
-      return this.agent.parameters ?? []
+      // if parameters are defined, we return them
+      if (this.agent.parameters.length) {
+        return this.agent.parameters
+      }
+
+      // else we try to extract inputs from the prompt
+      const inputs = extractPromptInputs(this.agent.prompt)
+      return inputs.map(input => ({
+        name: input.name,
+        type: 'string',
+        description: input.description,
+        required: true,
+      }))
 
     } else {
 
@@ -139,11 +153,12 @@ export default class extends Plugin {
       }
 
       // we need to build the prompt
-      const prompt = this.agent.buildPrompt(parameters) || parameters.prompt
+      const prompt = replacePromptInputs(this.agent.prompt || '', parameters)
 
       // now call the agent through the runner
       const runner = new Runner(this.config, this.agent)
       const run = await runner.run('workflow', prompt, this.opts)
+      
       if (run.status === 'success') {
 
         // the result

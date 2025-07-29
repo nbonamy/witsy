@@ -255,10 +255,6 @@
 
         .sticky-table-container {
           
-          th, td {
-            font-size: var(--settings-font-size);
-          }
-
           th {
             font-weight: 600;
           }
