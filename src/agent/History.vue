@@ -26,6 +26,7 @@
             </tr>
           </thead>
           <tbody>
+            <tr class="spacer"></tr>
             <tr :class="{ selected: run.id === props.run?.id }" v-for="run in [...runs].reverse()" :key="run.id" @click="$emit('click', run)">
               <td class="date">{{ timeAgo.format(new Date(run.createdAt)) }}</td>
               <td class="trigger">{{ run.trigger }}</td>
@@ -106,6 +107,21 @@ const emit = defineEmits(['clear', 'click'])
         position: relative;
         top: 2px;
       }
+    }
+
+    tr.selected td:first-child {
+      border-top-left-radius: 0.5rem;
+      border-bottom-left-radius: 0.5rem;
+    }
+
+    tr.selected td:last-child {
+      border-top-right-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+    }
+
+    tr.spacer {
+      height: 0.25rem;
+      background-color: var(--background-color);
     }
 
   }
