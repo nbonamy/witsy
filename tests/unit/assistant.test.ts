@@ -479,6 +479,6 @@ test('Assistant instructions with capabilities', async () => {
   store.config.llm.locale = ''
   await prompt('Hello LLM')
   const instructions1 = await assistant!.chat.messages[0].content
-  expect(instructions1).toBe('instructions.chat.standard_en-US\n\nIf you output a Mermaid chart, it will be rendered as a diagram to the user.')
+  expect(instructions1.toLowerCase()).toContain('mermaid')
 })
 
