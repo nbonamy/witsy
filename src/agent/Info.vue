@@ -1,7 +1,7 @@
 
 <template>
 
-  <div class="header panel">
+  <div class="agent-info panel">
   
     <div class="panel-header">
       <label>{{ t('agent.view.header') }}</label>

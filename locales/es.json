@@ -38,6 +38,7 @@
     "customize": "Personalizar…",
     "deepResearch": "Deep Research",
     "default": "Predeterminado",
+    "defaultValue": "Valor predeterminado",
     "delete": "Eliminar",
     "description": "Descripción",
     "differentLocales": "Tu configuración regional del LLM es diferente de la de tu interfaz. Los textos mostrados están en la configuración regional del LLM o en tu configuración regional si los has personalizado.",
@@ -171,7 +172,7 @@
           "description": "Breve descripción del propósito de su agente. Cuando se use este agente dentro de un flujo de trabajo, esto se compartirá con el LLM para ayudarle a entender el agente y eventualmente decidir llamarlo.",
           "goal": "El objetivo del agente. Esto se utilizará como instrucciones del sistema enviadas al LLM. No incluya información específica de ejecución aquí ya que esto se establecerá en el prompt.",
           "name": "Nombre descriptivo para su agente.",
-          "prompt": "Plantilla de prompt que se usará para ejecutar el agente. Puede incluir \"variables\" que serán sustituidas por los valores proporcionados por el usuario cuando se ejecute el agente. Use el formato {'{'}{'{'}nombre:descripción{'}'}{'}'} para definir una variable (la descripción guiará al usuario cuando se le solicite un valor)."
+          "prompt": "Plantilla de indicación que se utilizará para ejecutar el agente. Puedes incluir \"variables\" que se sustituirán con los valores proporcionados por el usuario cuando se ejecute el agente. Usa el formato {'{'}{'{'}nombre:descripción:valor{'}'}{'}'} para definir una variable (la descripción guiará al usuario cuando se le solicite un valor). Tanto la descripción como el valor predeterminado son opcionales."
         },
         "promptInputs": "Variables detectadas",
         "title": "Información General"

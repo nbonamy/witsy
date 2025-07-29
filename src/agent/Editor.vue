@@ -99,7 +99,7 @@
                 <thead><tr>
                   <th>{{ t('common.name') }}</th>
                   <th>{{ t('common.description') }}</th>
-                  <th>{{ t('common.value') }}</th>
+                  <th>{{ t('common.defaultValue') }}</th>
                 </tr></thead>
                 <tbody><tr v-for="(input, index) in promptInputs" :key="index">
                   <td>{{ input.name }}</td>

@@ -38,6 +38,7 @@
     "customize": "Personnaliser…",
     "deepResearch": "Deep Research",
     "default": "Défaut",
+    "defaultValue": "Valeur par défaut",
     "delete": "Supprimer",
     "description": "Description",
     "differentLocales": "La langue de votre LLM est différente de la langue de votre interface. Les textes affichés sont dans la langue du LLM ou votre langue si vous les avez personnalisés",
@@ -171,7 +172,7 @@
           "description": "Brève description de l'objectif de votre agent. Lorsque cet agent est utilisé dans un flux de travail, cela sera partagé avec le LLM pour l'aider à comprendre l'agent et éventuellement décider de l'appeler.",
           "goal": "L'objectif de l'agent. Ceci sera utilisé comme instructions système envoyées au LLM. N'incluez pas d'informations spécifiques à l'exécution ici car elles seront définies dans l'invite.",
           "name": "Nom descriptif pour votre agent.",
-          "prompt": "Modèle d'invite qui sera utilisé pour exécuter l'agent. Vous pouvez inclure des \"variables\" qui seront substituées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}nom:description{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lors de la saisie de la valeur)."
+          "prompt": "Modèle d'invite qui sera utilisé pour exécuter l'agent. Vous pouvez inclure des « variables » qui seront remplacées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}nom:description:valeur{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lorsqu'on lui demandera une valeur). La description et la valeur par défaut sont toutes deux optionnelles."
         },
         "promptInputs": "Variables détectées",
         "title": "Informations Générales"

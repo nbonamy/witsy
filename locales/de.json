@@ -38,6 +38,7 @@
     "customize": "Anpassen…",
     "deepResearch": "Deep Research",
     "default": "Standard",
+    "defaultValue": "Standardwert",
     "delete": "Löschen",
     "description": "Beschreibung",
     "differentLocales": "Ihre LLM-Lokalisierung ist anders als Ihre Schnittstellenlokalisierung. Die angezeigten Texte sind in der LLM-Lokalisierung oder Ihrer Lokalisierung, wenn Sie sie angepasst haben.",
@@ -171,7 +172,7 @@
           "description": "Kurzbeschreibung des Zwecks Ihres Agenten. Wenn dieser Agent in einem Arbeitsablauf verwendet wird, wird diese Beschreibung mit dem LLM geteilt, um das Verständnis des Agenten zu verbessern und gegebenenfalls dessen Aufruf zu entscheiden.",
           "goal": "Das Ziel des Agenten. Dies wird als Systemanweisung an das LLM gesendet. Fügen Sie hier keine ausführungsspezifischen Informationen ein, da diese im Prompt gesetzt werden.",
           "name": "Beschreibender Name für Ihren Agenten.",
-          "prompt": "Prompt-Vorlage, die zur Ausführung des Agenten verwendet wird. Sie können \"Variablen\" einschließen, die durch vom Benutzer bei Ausführung des Agenten angegebene Werte ersetzt werden. Verwenden Sie das Format {'{'}{'{'}name:beschreibung{'}'}{'}'}, um eine Variable zu definieren (die Beschreibung hilft dem Benutzer bei der Eingabe eines Wertes)."
+          "prompt": "Prompt-Vorlage, die zur Ausführung des Agenten verwendet wird. Sie können \"Variablen\" einfügen, die durch die vom Benutzer bereitgestellten Werte ersetzt werden, wenn der Agent ausgeführt wird. Verwenden Sie das Format {'{'}{'{'}name:Beschreibung:Wert{'}'}{'}'}, um eine Variable zu definieren (die Beschreibung hilft dem Benutzer bei der Eingabe eines Wertes). Sowohl die Beschreibung als auch der Standardwert sind optional."
         },
         "promptInputs": "Erkannte Variablen",
         "title": "Allgemeine Informationen"
