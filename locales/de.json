@@ -173,6 +173,7 @@
           "name": "Beschreibender Name für Ihren Agenten.",
           "prompt": "Prompt-Vorlage, die zur Ausführung des Agenten verwendet wird. Sie können \"Variablen\" einschließen, die durch vom Benutzer bei Ausführung des Agenten angegebene Werte ersetzt werden. Verwenden Sie das Format {'{'}{'{'}name:beschreibung{'}'}{'}'}, um eine Variable zu definieren (die Beschreibung hilft dem Benutzer bei der Eingabe eines Wertes)."
         },
+        "promptInputs": "Erkannte Variablen",
         "title": "Allgemeine Informationen"
       },
       "invocation": {
@@ -234,6 +235,7 @@
       "duration": "Dauer",
       "error": "@:{'common.error'}",
       "id": "Ausführungs-ID",
+      "notCompleted": "In Bearbeitung…",
       "output": "Ausgabe",
       "prompt": "@:{'common.prompt'}",
       "status": "Status",

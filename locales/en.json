@@ -190,8 +190,9 @@
           "description": "Short description of your agent purpose. When this agent is used inside a workflow, this will be shared with the LLM to help it understand the agent and eventually decide to call it.",
           "goal": "The goal of the agent. This will be used as the system instructions sent to the LLM. Do not include execution specific information here as these wil be set in the prompt.",
           "name": "Descriptive name for your agent.",
-          "prompt": "Prompt template that will be used to execute the agent. You can include \"variables\" that will be substituted with the values provided by the user when the agent is executed. Use the format {'{'}{'{'}name:descripton{'}'}{'}'} to define a variable (the description will guide the user when prompted for a value)."
+          "prompt": "Prompt template that will be used to execute the agent. You can include \"variables\" that will be substituted with the values provided by the user when the agent is executed. Use the format {'{'}{'{'}name:description{'}'}{'}'} to define a variable (the description will guide the user when prompted for a value)."
         },
+        "promptInputs": "Detected Variables",
         "title": "General Information"
       },
       "invocation": {
@@ -253,6 +254,7 @@
       "duration": "Duration",
       "error": "@:{'common.error'}",
       "id": "Run ID",
+      "notCompleted": "In progress…",
       "output": "Output",
       "prompt": "@:{'common.prompt'}",
       "status": "Status",

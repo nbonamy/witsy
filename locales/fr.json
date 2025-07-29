@@ -173,6 +173,7 @@
           "name": "Nom descriptif pour votre agent.",
           "prompt": "Modèle d'invite qui sera utilisé pour exécuter l'agent. Vous pouvez inclure des \"variables\" qui seront substituées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}nom:description{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lors de la saisie de la valeur)."
         },
+        "promptInputs": "Variables détectées",
         "title": "Informations Générales"
       },
       "invocation": {
@@ -234,6 +235,7 @@
       "duration": "Durée",
       "error": "@:{'common.error'}",
       "id": "ID d'Exécution",
+      "notCompleted": "En cours…",
       "output": "Sortie",
       "prompt": "@:{'common.prompt'}",
       "status": "Statut",

@@ -93,6 +93,21 @@
               <div class="help">{{ t('agent.create.information.help.prompt') }}</div>
               <textarea v-model="agent.prompt" name="prompt"></textarea>
             </div>
+            <div class="form-field" v-if="promptInputs.length">
+              <label for="prompt">{{ t('agent.create.information.promptInputs') }}</label>
+              <table class="prompt-inputs">
+                <thead><tr>
+                  <th>{{ t('common.name') }}</th>
+                  <th>{{ t('common.description') }}</th>
+                  <th>{{ t('common.value') }}</th>
+                </tr></thead>
+                <tbody><tr v-for="(input, index) in promptInputs" :key="index">
+                  <td>{{ input.name }}</td>
+                  <td>{{ input.description }}</td>
+                  <td>{{ input.defaultValue }}</td>
+                </tr></tbody>
+              </table>
+            </div>
           </template>
         </WizardStep>
 
@@ -272,6 +287,7 @@ import { ref, onMounted, computed, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { CronExpressionParser } from 'cron-parser'
+import { extractPromptInputs } from '../services/prompt'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
@@ -325,17 +341,9 @@ const steps = [
   kStepInvocation
 ]
 
-const stepIndex = (step: string) => {
-  return steps.indexOf(step)
-}
-
-const isStepCompleted = (step: string) => {
-  return stepIndex(step) <= completedStep.value + 1
-}
-
-const isStepVisible = (step: string) => {
-  return stepIndex(step) === currentStep.value
-}
+const promptInputs = computed(() => {
+  return extractPromptInputs(agent.value.prompt)
+})
 
 const supportAgents = computed(() => {
   return store.agents.filter(a => a.id !== agent.value.id).sort((a, b) => a.name.localeCompare(b.name))
@@ -351,6 +359,18 @@ const nextRuns = computed(() => {
     return ''
   }
 })
+
+const stepIndex = (step: string) => {
+  return steps.indexOf(step)
+}
+
+const isStepCompleted = (step: string) => {
+  return stepIndex(step) <= completedStep.value + 1
+}
+
+const isStepVisible = (step: string) => {
+  return stepIndex(step) === currentStep.value
+}
 
 const onPrevStep = () => {
   if (currentStep.value == stepIndex(kStepModel) + 2) {
@@ -554,6 +574,29 @@ const save = async () => {
         }
       }
  
+    }
+
+    .prompt-inputs {
+      
+      padding: 0.5rem 1rem;
+      width: 100%;
+      
+      th, td {
+        padding: 0.25rem;
+        vertical-align: middle;
+      }
+
+      th {
+        text-align: left;
+        border-bottom: 1px solid var(--text-color);
+      }
+
+      td:first-child {
+        width: 25%;
+      }
+      td:last-child {
+        width: 25%;
+      }
     }
 
   }

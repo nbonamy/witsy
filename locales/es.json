@@ -173,6 +173,7 @@
           "name": "Nombre descriptivo para su agente.",
           "prompt": "Plantilla de prompt que se usará para ejecutar el agente. Puede incluir \"variables\" que serán sustituidas por los valores proporcionados por el usuario cuando se ejecute el agente. Use el formato {'{'}{'{'}nombre:descripción{'}'}{'}'} para definir una variable (la descripción guiará al usuario cuando se le solicite un valor)."
         },
+        "promptInputs": "Variables detectadas",
         "title": "Información General"
       },
       "invocation": {
@@ -234,6 +235,7 @@
       "duration": "Duración",
       "error": "@:{'common.error'}",
       "id": "ID de Ejecución",
+      "notCompleted": "En progreso…",
       "output": "Salida",
       "prompt": "@:{'common.prompt'}",
       "status": "Estado",
