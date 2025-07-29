@@ -333,7 +333,7 @@ export type GenerationResult =
 
     // add info about capabilities
     if (Generator.addCapabilitiesToSystemInstr) {
-      instr += '\n\nIf you output a Mermaid chart, it will be rendered as a diagram to the user.'
+      instr += '\n\nIf you are asked to output a Mermaid chart, its code will be rendered as a diagram to the user.'
     }
 
     // add date and time
