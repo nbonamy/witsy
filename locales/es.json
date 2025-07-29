@@ -159,16 +159,48 @@
   },
   "agent": {
     "create": {
-      "information": "Información General",
-      "invocation": "Disparadores del Agente",
-      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-      "llm": "Configuración del Modelo",
-      "settings": "Configuración del Modelo",
+      "agents": {
+        "help": "Los agentes pueden delegar tareas a otros agentes. Seleccione uno o más agentes para manejar tareas específicas.",
+        "title": "Agentes de Soporte"
+      },
+      "goal": {
+        "title": "Objetivo del Agente"
+      },
+      "information": {
+        "help": {
+          "description": "Breve descripción del propósito de su agente. Cuando se use este agente dentro de un flujo de trabajo, esto se compartirá con el LLM para ayudarle a entender el agente y eventualmente decidir llamarlo.",
+          "goal": "El objetivo del agente. Esto se utilizará como instrucciones del sistema enviadas al LLM. No incluya información específica de ejecución aquí ya que esto se establecerá en el prompt.",
+          "name": "Nombre descriptivo para su agente.",
+          "prompt": "Plantilla de prompt que se usará para ejecutar el agente. Puede incluir \"variables\" que serán sustituidas por los valores proporcionados por el usuario cuando se ejecute el agente. Use el formato {'{'}{'{'}nombre:descripción{'}'}{'}'} para definir una variable (la descripción guiará al usuario cuando se le solicite un valor)."
+        },
+        "title": "Información General"
+      },
+      "invocation": {
+        "title": "Disparadores del Agente"
+      },
+      "llm": {
+        "help": {
+          "warning": "La ejecución del agente depende en gran medida de las capacidades de cada modelo. Asegúrese de seleccionar un modelo que soporte capacidades agéncicas."
+        },
+        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+        "showModelSettings": "Configuraciones Avanzadas",
+        "title": "Configuración del Modelo"
+      },
+      "settings": {
+        "title": "Configuraciones del Modelo"
+      },
       "tools": {
-        "custom": "Restringir acceso a herramientas específicas",
+        "allowAll": "Permitir acceso a todos los plugins y servidores MCP",
+        "help": "Reducir el número de herramientas expuestas al LLM ayudará a que se enfoque en la tarea en cuestión. Siempre puede permitir todas las herramientas más tarde si es necesario.",
         "selectAll": "@:{'common.selectAll'}",
         "selectNone": "@:{'common.selectNone'}",
         "title": "Acceso a Herramientas"
+      },
+      "workflow": {
+        "help": {
+          "singleOnly": "Witsy actualmente solo soporta flujos de trabajo de un solo paso. En el futuro podrá agregar múltiples pasos."
+        },
+        "title": "Flujo de trabajo"
       }
     },
     "description": "@:{'common.description'}",
@@ -184,12 +216,11 @@
     },
     "goal": "Objetivo",
     "history": {
+      "confirmClear": "¿Está seguro de que desea borrar el historial de este agente?",
       "date": "Fecha",
-      "duration": "Duración",
       "empty": "Aún sin historial…",
       "log": "Registro",
       "neverRun": "Nunca",
-      "prompt": "@:{'common.prompt'}",
       "status": "Estado",
       "trigger": "Disparador"
     },
@@ -197,12 +228,20 @@
     "name": "@:{'common.name'}",
     "nextRun": "Programado para",
     "prompt": "Mensaje Predeterminado",
-    "run": "Ejecutar ahora",
-    "runCount": "Ejecuciones totales",
-    "tools": {
-      "description": "@:{'common.description'}",
-      "name": "@:{'common.name'}"
+    "run": {
+      "confirmDelete": "¿Está seguro de que desea eliminar esta ejecución?",
+      "createdAt": "Hora de inicio",
+      "duration": "Duración",
+      "error": "@:{'common.error'}",
+      "id": "ID de Ejecución",
+      "output": "Salida",
+      "prompt": "@:{'common.prompt'}",
+      "status": "Estado",
+      "title": "Ejecución del Agente",
+      "trigger": "Disparador",
+      "updatedAt": "Hora de finalización"
     },
+    "runCount": "Ejecuciones totales",
     "trigger": {
       "manual": "Manual",
       "manual_description": "Los agentes siempre pueden activarse manualmente",

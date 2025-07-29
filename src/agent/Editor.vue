@@ -2,56 +2,65 @@
 <template>
   <div class="agent-editor" @keydown.enter="onSave">
 
-      <div class="master-detail">
-        <div class="md-master">
+    <div class="master-detail">
+      
+      <div class="md-master">
 
-          <div class="md-master-header">
-            <div class="md-master-header-title">Welcome to the Create&nbsp;Agent assistant</div>
-            <div class="md-master-header-desc">
-              Agents are autonomous entities used to automate workflows, answer questions, or interact with other systems.
-            </div>
+        <div class="md-master-header" v-if="mode === 'create'">
+          <div class="md-master-header-title">Welcome to the Create&nbsp;Agent assistant</div>
+          <div class="md-master-header-desc">
+            Agents are autonomous entities used to automate workflows, answer questions, or interact with other systems.
+          </div>
+        </div>
+
+        <div class="md-master-list">
+
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGeneral), disabled: !isStepCompleted(kStepGeneral) }" @click="onStepClick(kStepGeneral)">
+            <BIconCardHeading class="logo" /> {{ t('agent.create.information.title') }}
           </div>
 
-          <div class="md-master-list">
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGoal), disabled: !isStepCompleted(kStepGoal) }" @click="onStepClick(kStepGoal)">
+            <BIconBullseye class="logo" /> {{ t('agent.create.goal.title') }}
+          </div>
 
-            <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGeneral), disabled: !isStepCompleted(kStepGeneral) }" @click="onStepClick(kStepGeneral)">
-              <BIconCardHeading class="logo" /> {{ t('agent.create.information.title') }}
-            </div>
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepModel) || isStepVisible(kStepSettings), disabled: !isStepCompleted(kStepModel) }" @click="onStepClick(kStepModel)">
+            <BIconCpu class="logo" /> {{ t('agent.create.llm.title') }}
+          </div>
 
-            <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGoal), disabled: !isStepCompleted(kStepGoal) }" @click="onStepClick(kStepGoal)">
-              <BIconBullseye class="logo" /> {{ t('agent.create.goal.title') }}
-            </div>
+          <!-- <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepSettings), disabled: !isStepCompleted(kStepSettings) }" @click="onStepClick(kStepSettings)">
+            <BIconSliders class="logo" /> {{ t('agent.create.settings') }}
+          </div> -->
 
-            <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepModel) || isStepVisible(kStepSettings), disabled: !isStepCompleted(kStepModel) }" @click="onStepClick(kStepModel)">
-              <BIconCpu class="logo" /> {{ t('agent.create.llm.title') }}
-            </div>
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepWorkflow), disabled: !isStepCompleted(kStepWorkflow) }" @click="onStepClick(kStepWorkflow)">
+            <BIconDiagram2 class="logo scale120" /> {{ t('agent.create.workflow.title') }}
+          </div>
 
-            <!-- <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepSettings), disabled: !isStepCompleted(kStepSettings) }" @click="onStepClick(kStepSettings)">
-              <BIconSliders class="logo" /> {{ t('agent.create.settings') }}
-            </div> -->
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepTools), disabled: !isStepCompleted(kStepTools) }" @click="onStepClick(kStepTools)">
+            <BIconTools class="logo" /> {{ t('agent.create.tools.title') }}
+          </div>
 
-            <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepWorkflow), disabled: !isStepCompleted(kStepWorkflow) }" @click="onStepClick(kStepWorkflow)">
-              <BIconDiagram2 class="logo scale120" /> {{ t('agent.create.workflow.title') }}
-            </div>
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepAgents), disabled: !isStepCompleted(kStepAgents) }" @click="onStepClick(kStepAgents)">
+            <BIconRobot class="logo" /> {{ t('agent.create.agents.title') }}
+          </div>
 
-            <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepTools), disabled: !isStepCompleted(kStepTools) }" @click="onStepClick(kStepTools)">
-              <BIconTools class="logo" /> {{ t('agent.create.tools.title') }}
-            </div>
-
-            <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepAgents), disabled: !isStepCompleted(kStepAgents) }" @click="onStepClick(kStepAgents)">
-              <BIconRobot class="logo" /> {{ t('agent.create.agents.title') }}
-            </div>
-
-            <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepInvocation), disabled: !isStepCompleted(kStepInvocation) }" @click="onStepClick(kStepInvocation)">
-              <BIconLightningCharge class="logo" /> {{ t('agent.create.invocation.title') }}
-            </div>
-
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepInvocation), disabled: !isStepCompleted(kStepInvocation) }" @click="onStepClick(kStepInvocation)">
+            <BIconLightningCharge class="logo" /> {{ t('agent.create.invocation.title') }}
           </div>
 
         </div>
+
+        <div class="md-master-footer" v-if="mode === 'edit'">
+          <div class="buttons">
+            <button class="large" @click="emit('cancel')">{{ t('common.cancel') }}</button>
+            <button class="large" @click="save">{{ t('common.save') }}</button>
+          </div>
+        </div>
+
+      </div>
+      
       <div class="md-detail form form-large form-vertical">
 
-        <WizardStep :visible="isStepVisible(kStepGeneral)" :back-is-cancel="true" :error="informationError" @cancel="$emit('cancel')" @next="validateInformation">
+        <WizardStep :visible="isStepVisible(kStepGeneral)" :prev-button-text="t('common.cancel')" :error="informationError" @prev="onPrevStep" @next="validateInformation">
           <template #header>
             <label>{{ t('agent.create.information.title') }}</label>
           </template>
@@ -205,7 +214,7 @@
           </template>
         </WizardStep>
 
-        <WizardStep :visible="isStepVisible(kStepInvocation)" @prev="onPrevStep" @next="validateInvocation">
+        <WizardStep :visible="isStepVisible(kStepInvocation)" :next-button-text="t('common.save')" @prev="onPrevStep" @next="validateInvocation">
           <template #header>
             <label>{{ t('agent.create.invocation.title') }}</label>
           </template>
@@ -230,10 +239,11 @@
               <input type="text" name="webhook" v-model="webhook" />
             </div>
 
-            <div class="form-field">
+            <!-- <div class="form-field">
               <label for="prompt">{{ t('agent.prompt') }}</label>
               <textarea v-model="agent.prompt" name="prompt" rows="4"></textarea>
-            </div>
+            </div> -->
+
           </template>
         </WizardStep>
 
@@ -347,6 +357,8 @@ const onPrevStep = () => {
     currentStep.value = stepIndex(kStepModel)
   } else if (currentStep.value > 0) {
     currentStep.value--
+  } else {
+    emit('cancel')
   }
 }
 
@@ -437,6 +449,7 @@ const toggleAgent = (support: Agent) => {
 onMounted(async () => {
   watch(() => props || {}, async () => {
     agent.value = props.agent ? JSON.parse(JSON.stringify(props.agent)) : new Agent()
+    allToolsAllowed.value = (agent.value.tools === null)
     await toolTable.value?.initTools()
     currentStep.value = stepIndex(kStepGeneral)
     completedStep.value = props.mode === 'edit' ? steps.length - 1 : -1
@@ -484,6 +497,19 @@ const save = async () => {
         }
       }
 
+      .md-master-footer {
+
+        padding-top: 2rem;
+        border-top: 1px solid var(--sidebar-border-color);
+        margin-top: 1rem;
+
+        .buttons {
+          display: flex;
+          justify-content: center;
+        }
+
+      }
+
 
     }
 
@@ -515,7 +541,7 @@ const save = async () => {
 
       &:deep() .sticky-table-container {
         margin-top: 2rem;
-        max-height: 400px;
+        max-height: 20rem;
         th, td {
           vertical-align: top;
           padding: 0.5rem;

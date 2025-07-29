@@ -12,7 +12,7 @@
             <div class="panel-item" @click="$emit('view', agent)">
               <div class="info">
                 <div class="text">{{ agent.name }}</div>
-                <div class="subtext">{{ agent.name }}</div>
+                <div class="subtext">{{ agent.description }}</div>
               </div>
               <div class="actions">
                 <BIconPlayCircle v-if="type === 'runnable'" class="run" @click.stop="$emit('run', agent)" />

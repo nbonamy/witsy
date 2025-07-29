@@ -40,7 +40,7 @@ const userToggleReasoning = inject('onToggleReasoning', (value: boolean) => {
 
 const props = defineProps({
   message: {
-    type: Message,
+    type: Object as PropType<Message>,
     required: true,
   },
   showToolCalls: {

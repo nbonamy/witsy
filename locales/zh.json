@@ -178,16 +178,48 @@
   },
   "agent": {
     "create": {
-      "information": "基本信息",
-      "invocation": "代理触发器",
-      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-      "llm": "模型配置",
-      "settings": "模型设置",
+      "agents": {
+        "help": "代理可以将任务委托给其他代理。请选择一个或多个代理处理特定任务。",
+        "title": "支持代理"
+      },
+      "goal": {
+        "title": "代理目标"
+      },
+      "information": {
+        "help": {
+          "description": "代理用途的简短描述。当此代理在工作流程中使用时，该描述将与大语言模型共享，帮助其理解代理并最终决定调用它。",
+          "goal": "代理的目标。该目标将作为发送给大语言模型的系统指令。请勿在此包含执行的具体信息，这些将在提示中设置。",
+          "name": "您代理的描述性名称。",
+          "prompt": "将用于执行代理的提示模板。您可以包含“变量”，这些变量将在代理执行时用用户提供的值替换。使用格式 {'{'}{'{'}name:描述{'}'}{'}'} 来定义变量（描述将引导用户填写值）。"
+        },
+        "title": "基本信息"
+      },
+      "invocation": {
+        "title": "代理触发器"
+      },
+      "llm": {
+        "help": {
+          "warning": "代理执行高度依赖于各模型的能力。请选择支持代理功能的模型。"
+        },
+        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+        "showModelSettings": "高级设置",
+        "title": "模型配置"
+      },
+      "settings": {
+        "title": "模型设置"
+      },
       "tools": {
-        "custom": "限制访问特定工具",
+        "allowAll": "允许访问所有插件和 MCP 服务器",
+        "help": "缩小暴露给大语言模型的工具数量，有助于其专注于当前任务。如有需要您可以稍后允许使用所有工具。",
         "selectAll": "@:{'common.selectAll'}",
         "selectNone": "@:{'common.selectNone'}",
         "title": "工具访问"
+      },
+      "workflow": {
+        "help": {
+          "singleOnly": "Witsy 目前仅支持单步工作流程。未来可添加多步骤。"
+        },
+        "title": "工作流程"
       }
     },
     "description": "@:{'common.description'}",
@@ -203,12 +235,11 @@
     },
     "goal": "目标",
     "history": {
+      "confirmClear": "您确定要清除此代理的历史记录吗？",
       "date": "日期",
-      "duration": "持续时间",
       "empty": "暂无历史记录…",
       "log": "日志",
       "neverRun": "从未",
-      "prompt": "@:{'common.prompt'}",
       "status": "状态",
       "trigger": "触发器"
     },
@@ -216,12 +247,20 @@
     "name": "@:{'common.name'}",
     "nextRun": "计划执行于",
     "prompt": "默认提示",
-    "run": "立即运行",
-    "runCount": "执行总数",
-    "tools": {
-      "description": "@:{'common.description'}",
-      "name": "@:{'common.name'}"
+    "run": {
+      "confirmDelete": "您确定要删除此运行记录吗？",
+      "createdAt": "开始时间",
+      "duration": "持续时间",
+      "error": "@:{'common.error'}",
+      "id": "运行 ID",
+      "output": "输出",
+      "prompt": "@:{'common.prompt'}",
+      "status": "状态",
+      "title": "代理运行",
+      "trigger": "触发器",
+      "updatedAt": "完成时间"
     },
+    "runCount": "执行总数",
     "trigger": {
       "manual": "手动",
       "manual_description": "代理始终可手动触发",

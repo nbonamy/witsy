@@ -2,6 +2,7 @@
 export type PromptInput = {
   name: string
   description?: string
+  control?: 'text' | 'textarea' | 'select'
 }
 
 export const extractPromptInputs = (prompt: string): PromptInput[] => {

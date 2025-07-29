@@ -1,33 +1,42 @@
 
 <template>
 
-  <div class="runs sticky-table-container">
-    
-    <table>
-      <thead>
-        <tr>
-          <th>{{ t('agent.history.date') }}</th>
-          <th>{{ t('agent.history.trigger') }}</th>
-          <th>{{ t('agent.history.prompt') }}</th>
-          <th>{{ t('agent.history.status') }}</th>
-          <th>{{ t('agent.history.duration') }}</th>
-          <th>{{ t('agent.history.log') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="run in [...runs].reverse()" :key="run.id">
-          <td>{{ new Date(run.createdAt).toLocaleString() }}</td>
-          <td>{{ run.trigger }}</td>
-          <td>{{ run.prompt }}</td>
-          <td>{{ run.status }}</td>
-          <td>{{ Math.ceil((run.updatedAt - run.createdAt) / 1000) }} s</td>
-          <td>{{ t('agent.history.log') }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="runs panel">
 
-    <div class="empty" v-if="runs.length === 0">
-      {{ t('agent.history.empty') }}
+    <div class="panel-header">
+      <label>{{ t('agent.view.history') }}</label>
+      <BIconCalendarX class="icon clear" @click="$emit('clear')" />
+    </div>
+
+    <div class="panel-body">
+
+      <div class="empty" v-if="runs.length === 0">
+        {{ t('agent.history.empty') }}
+      </div>
+
+      <div class="sticky-table-container" v-else>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>{{ t('agent.history.date') }}</th>
+              <th>{{ t('agent.history.trigger') }}</th>
+              <th>{{ t('agent.history.status') }}</th>
+              <th>{{ t('agent.history.log') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :class="{ selected: run.id === props.run?.id }" v-for="run in [...runs].reverse()" :key="run.id" @click="$emit('click', run)">
+              <td class="date">{{ timeAgo.format(new Date(run.createdAt)) }}</td>
+              <td class="trigger">{{ run.trigger }}</td>
+              <td class="status">{{ run.status }}</td>
+              <td class="view"><BIconSearch /> </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
     </div>
 
   </div>
@@ -39,6 +48,9 @@
 import { Agent, AgentRun } from '../types/index';
 import { PropType } from 'vue'
 import { t } from '../services/i18n'
+import { useTimeAgo } from '../composables/ago'
+
+const timeAgo = useTimeAgo()
 
 const props = defineProps({
   agent: {
@@ -48,34 +60,54 @@ const props = defineProps({
   runs: {
     type: Array as PropType<AgentRun[]>,
     required: true,
-  }
+  },
+  run: {
+    type: Object as PropType<AgentRun|null>,
+    default: null,
+  },
 })
+
+const emit = defineEmits(['clear', 'click'])
 
 </script>
 
 
 <style scoped>
 
+.empty {
+  padding: 3rem;
+  text-align: center;
+  font-size: 18pt;
+  color: var(--faded-text-color);
+  font-family: var(--font-family-serif);
+}
+
 .sticky-table-container {
   
   table {
 
+    tr {
+      cursor: pointer;
+    }
+
     th, td {
-      font-size: 10.5pt !important;
+      padding: 0.375rem 0.5rem;
+      border: none;
+      vertical-align: middle;
     }
 
     th {
       font-weight: bold;
+      border-bottom: 1px solid var(--text-color);
     }
 
-  }
+    td.view {
+      svg {
+        position: relative;
+        top: 2px;
+      }
+    }
 
-  .empty {
-    padding-top: 64px;
-    text-align: center;
-    font-size: 18pt;
-    opacity: 0.5;
-    font-family: var(--serif-font);
   }
 
 

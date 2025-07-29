@@ -21,10 +21,10 @@
       </main>
       <main class="sliding-pane" :class="{ visible: mode !== 'list' }" @transitionend="onTransitionEnd">
         <Editor :style="{ display: isPaneVisible('create') || isPaneVisible('edit') ? 'flex' : 'none' }" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
-        <View :style="{ display: isPaneVisible('view') ? 'flex' : 'none' }" :agent="selected" @run="runAgent" @delete="deleteAgent" />
+        <View :style="{ display: isPaneVisible('view') ? 'flex' : 'none' }" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" />
       </main>
     </div>
-    <PromptBuilder :title="running?.name" ref="builder" />
+    <PromptBuilder :title="running?.name ?? ''" ref="builder" />
   </div>
 </template>
 
@@ -87,15 +87,21 @@ const closeCreate = () => {
 
 const onSaved = async (agent: Agent) => {
   store.loadAgents()
-  viewAgent(agent)
+  if (mode.value === 'create') {
+    viewAgent(agent)
+  } else if (mode.value === 'edit') {
+    selectAgent(null)
+  }
 }
 
 const viewAgent = (agent: Agent) => {
+  prevMode.value = mode.value
   mode.value = 'view'
   selected.value = agent
 }
 
 const editAgent = (agent: Agent) => {
+  prevMode.value = mode.value
   mode.value = 'edit'
   selected.value = agent
 }
@@ -118,7 +124,7 @@ const deleteAgent = (agent: Agent) => {
   }).then((result) => {
     if (result.isConfirmed) {
       window.api.agents.delete(agent.id)
-      store.loadAgents()
+      selectAgent(null)
     }
   })
 }

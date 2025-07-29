@@ -9,10 +9,9 @@
       <div class="footer form-field">
         <slot name="footer">
           <div class="error" v-if="error">{{ error }}</div>
-          <button @click="emit('cancel')" v-if="backIsCancel">{{ t('common.cancel') }}</button>
-          <button @click="emit('prev')" v-else>{{ t('common.wizard.prev') }}</button>
+          <button @click="emit('prev')" v-else>{{ prevButtonText }}</button>
           <slot name="buttons" />
-          <button class="default" @click="emit('next')">{{ t('common.wizard.next') }}</button>
+          <button class="default" @click="emit('next')">{{ nextButtonText }}</button>
         </slot>
       </div>
     </div>
@@ -34,10 +33,14 @@ defineProps({
     type: String,
     default: ''
   },
-  backIsCancel: {
-    type: Boolean,
-    default: false
-  }
+  prevButtonText: {
+    type: String,
+    default: t('common.wizard.prev')
+  },
+  nextButtonText: {
+    type: String,
+    default: t('common.wizard.next')
+  },
 })
 
 </script>

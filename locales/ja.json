@@ -178,16 +178,48 @@
   },
   "agent": {
     "create": {
-      "information": "一般情報",
-      "invocation": "エージェントのトリガー",
-      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-      "llm": "モデル設定",
-      "settings": "モデル詳細設定",
+      "agents": {
+        "help": "エージェントは他のエージェントにタスクを委任できます。特定のタスクを担当するエージェントを1つ以上選択してください。",
+        "title": "サポートエージェント"
+      },
+      "goal": {
+        "title": "エージェントの目標"
+      },
+      "information": {
+        "help": {
+          "description": "エージェントの目的の簡単な説明。このエージェントがワークフロー内で使用されると、LLMと共有され、エージェントの理解と呼び出しの判断に役立ちます。",
+          "goal": "エージェントの目標。これはLLMに送信されるシステム指示として使用されます。プロンプト内で設定される実行固有情報はここに含めないでください。",
+          "name": "エージェントの説明的な名前。",
+          "prompt": "エージェントの実行に使用されるプロンプトテンプレート。エージェント実行時にユーザーから提供される値で置き換えられる「変数」を含めることができます。変数の定義は{'{'}{'{'}name:説明{'}'}{'}'}の形式を使用してください（説明は値入力時にユーザーを案内します）。"
+        },
+        "title": "一般情報"
+      },
+      "invocation": {
+        "title": "エージェントトリガー"
+      },
+      "llm": {
+        "help": {
+          "warning": "エージェントの実行はモデルごとの機能に大きく依存します。エージェント機能をサポートするモデルを選択してください。"
+        },
+        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+        "showModelSettings": "詳細設定",
+        "title": "モデル設定"
+      },
+      "settings": {
+        "title": "モデル設定"
+      },
       "tools": {
-        "custom": "特定のツールへのアクセスを制限",
+        "allowAll": "全てのプラグインとMCPサーバーへのアクセスを許可する",
+        "help": "LLMに公開するツールの数を絞ることで、タスクに集中しやすくなります。必要に応じて後で全ツールを許可できます。",
         "selectAll": "@:{'common.selectAll'}",
         "selectNone": "@:{'common.selectNone'}",
         "title": "ツールアクセス"
+      },
+      "workflow": {
+        "help": {
+          "singleOnly": "Witsyは現在、単一ステップのワークフローのみをサポートしています。将来的に複数ステップを追加可能です。"
+        },
+        "title": "ワークフロー"
       }
     },
     "description": "@:{'common.description'}",
@@ -203,12 +235,11 @@
     },
     "goal": "目標",
     "history": {
+      "confirmClear": "このエージェントの履歴を削除してもよろしいですか？",
       "date": "日付",
-      "duration": "所要時間",
       "empty": "履歴はまだありません…",
       "log": "ログ",
       "neverRun": "未実行",
-      "prompt": "@:{'common.prompt'}",
       "status": "ステータス",
       "trigger": "トリガー"
     },
@@ -216,12 +247,20 @@
     "name": "@:{'common.name'}",
     "nextRun": "次回予定",
     "prompt": "デフォルトプロンプト",
-    "run": "今すぐ実行",
-    "runCount": "総実行回数",
-    "tools": {
-      "description": "@:{'common.description'}",
-      "name": "@:{'common.name'}"
+    "run": {
+      "confirmDelete": "この実行を削除してもよろしいですか？",
+      "createdAt": "開始時間",
+      "duration": "所要時間",
+      "error": "@:{'common.error'}",
+      "id": "実行ID",
+      "output": "出力",
+      "prompt": "@:{'common.prompt'}",
+      "status": "ステータス",
+      "title": "エージェント実行",
+      "trigger": "トリガー",
+      "updatedAt": "完了時間"
     },
+    "runCount": "総実行回数",
     "trigger": {
       "manual": "手動",
       "manual_description": "エージェントは常に手動でトリガーできます",
