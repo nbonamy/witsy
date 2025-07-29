@@ -108,11 +108,11 @@ defineExpose({
 
 #prompt-builder .swal2-popup {
   max-width: 24rem !important;
-}
 
-textarea {
-  min-height: 8lh;
-  resize: vertical;
+  textarea {
+    min-height: 8lh;
+    resize: vertical;
+  }
 }
 
 </style>

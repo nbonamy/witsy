@@ -53,7 +53,7 @@ export default class extends Plugin {
   }
 
   getName(): string {
-    return `run_agent_${this.agent.id.replace(/-/g, '_')}`
+    return `agent_${this.agent.name.replace(/ /g, '_').toLowerCase()}`
   }
 
   getDescription(): string {

@@ -656,7 +656,7 @@ test('DeepResearchMultiAgent generator call', async () => {
     chat.messages,
     expect.objectContaining({
       ...mockOpts,
-      toolChoice: { type: 'tool', name: 'run_agent_planning' }
+      toolChoice: { type: 'tool', name: 'agent_planning' }
     })
   )
   expect(result).toBe('success')

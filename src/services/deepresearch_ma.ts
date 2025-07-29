@@ -60,7 +60,7 @@ export default class DeepResearchMultiAgent implements dr.DeepResearch, AgentSto
     return await this.generator.generate(engine, chat.messages, {
       ...opts,
       ...chat.modelOpts,
-      toolChoice: { type: 'tool', name: 'run_agent_planning'}
+      toolChoice: { type: 'tool', name: 'agent_planning'}
     })
 
   }
