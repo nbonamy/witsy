@@ -285,6 +285,10 @@
       "workflow": "⚙️ 工作流"
     },
     "view": {
+      "filter": {
+        "all": "所有运行",
+        "exclude_workflow": "排除工作流"
+      },
       "header": "代理摘要",
       "history": "历史"
     }

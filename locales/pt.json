@@ -285,6 +285,10 @@
       "workflow": "⚙️ Fluxo de trabalho"
     },
     "view": {
+      "filter": {
+        "all": "Todas as execuções",
+        "exclude_workflow": "Excluir fluxos de trabalho"
+      },
       "header": "Resumo do Agente",
       "history": "Histórico"
     }

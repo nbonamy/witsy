@@ -5,6 +5,10 @@
 
     <div class="panel-header">
       <label>{{ t('agent.view.history') }}</label>
+      <select v-model="showWorkflows" class="history-filter">
+        <option value="all">{{ t('agent.view.filter.all') }}</option>
+        <option value="exclude">{{ t('agent.view.filter.exclude_workflow') }}</option>
+      </select>
       <BIconCalendarX 
         class="icon clear" 
         v-tooltip="{ text: t('agent.help.clearHistory'), position: 'bottom-left' }" 
@@ -14,7 +18,7 @@
 
     <div class="panel-body">
 
-      <div class="empty" v-if="runs.length === 0">
+      <div class="empty" v-if="filteredRuns.length === 0">
         {{ t('agent.history.empty') }}
       </div>
 
@@ -31,7 +35,7 @@
           </thead>
           <tbody>
             <tr class="spacer"></tr>
-            <tr :class="{ selected: run.id === props.run?.id }" v-for="run in [...runs].reverse()" :key="run.id" @click="$emit('click', run)">
+            <tr :class="{ selected: run.id === props.run?.id }" v-for="run in filteredRuns" :key="run.id" @click="$emit('click', run)">
               <td class="date">{{ timeAgo.format(new Date(run.createdAt)) }}</td>
               <td class="trigger">{{ t(`agent.trigger.${run.trigger}`) }}</td>
               <td class="status">{{ t(`agent.status.${run.status}`) }}</td>
@@ -51,7 +55,7 @@
 <script setup lang="ts">
 
 import { Agent, AgentRun } from '../types/index';
-import { PropType } from 'vue'
+import { PropType, ref, computed } from 'vue'
 import { t } from '../services/i18n'
 import { useTimeAgo } from '../composables/ago'
 
@@ -70,14 +74,43 @@ const props = defineProps({
     type: Object as PropType<AgentRun|null>,
     default: null,
   },
+  showWorkflows: {
+    type: String as PropType<'all' | 'exclude'>,
+    required: true,
+  },
 })
 
-const emit = defineEmits(['clear', 'click'])
+const emit = defineEmits(['clear', 'click', 'update:show-workflows'])
+
+// Computed property for two-way binding with parent
+const showWorkflows = computed({
+  get: () => props.showWorkflows,
+  set: (value: 'all' | 'exclude') => emit('update:show-workflows', value)
+})
+
+// Computed property to filter runs
+const filteredRuns = computed(() => {
+  const runsToShow = props.showWorkflows === 'all' 
+    ? props.runs 
+    : props.runs.filter(run => run.trigger !== 'workflow')
+  
+  return [...runsToShow].reverse()
+})
 
 </script>
 
-
 <style scoped>
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-filter {
+  width: auto;
+  flex: 0 1 auto;
+}
 
 .empty {
   padding: 3rem;

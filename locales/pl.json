@@ -285,6 +285,10 @@
       "workflow": "⚙️ Przepływ pracy"
     },
     "view": {
+      "filter": {
+        "all": "Wszystkie uruchomienia",
+        "exclude_workflow": "Wyklucz przepływy pracy"
+      },
       "header": "Podsumowanie agenta",
       "history": "Historia"
     }

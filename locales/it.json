@@ -266,6 +266,10 @@
       "workflow": "⚙️ Flusso di lavoro"
     },
     "view": {
+      "filter": {
+        "all": "Tutte le esecuzioni",
+        "exclude_workflow": "Escludi i flussi di lavoro"
+      },
       "header": "Riepilogo Agente",
       "history": "Cronologia"
     }

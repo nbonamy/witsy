@@ -266,6 +266,10 @@
       "workflow": "⚙️ Arbeitsablauf"
     },
     "view": {
+      "filter": {
+        "all": "Alle Läufe",
+        "exclude_workflow": "Workflows ausschließen"
+      },
       "header": "Agentenübersicht",
       "history": "Verlauf"
     }

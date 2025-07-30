@@ -5,7 +5,7 @@
 
     <div class="master-main">
       <Info class="agent-info" :agent="agent" :runs="runs" @run="emit('run', $event)" @edit="emit('edit', $event)" @delete="emit('delete', $event)" />
-      <History class="agent-history" :agent="agent" :runs="runs" :run="run" @click="run = $event" @clear="clearHistory" />
+      <History class="agent-history" :agent="agent" :runs="runs" :run="run" :show-workflows="showWorkflows" @click="run = $event" @clear="clearHistory" @update:show-workflows="showWorkflows = $event" />
     </div>
 
     <div class="master-detail">
@@ -29,6 +29,7 @@ import Run from './Run.vue'
 
 const runs = ref<AgentRun[]>([])
 const run = ref<AgentRun|null>(null)
+const showWorkflows = ref<'all' | 'exclude'>('exclude')
 
 const props = defineProps({
   agent: {
@@ -41,6 +42,7 @@ const emit = defineEmits(['run', 'edit', 'clearHistory', 'delete'])
 
 onMounted(() => {
   watch(() => props.agent, reload, { immediate: true })
+  watch(() => showWorkflows.value, selectLatestRun)
   window.api.on('agent-run-update', onAgentRunUpdate)
 })
 
@@ -57,12 +59,25 @@ const onAgentRunUpdate = (data: { agentId: string, runId: string }) => {
 const reload = () => {
   if (!props.agent) return
   runs.value = window.api.agents.getRuns(props.agent.id)
+  
+  // auto-adjust showWorkflows based on available runs
+  const nonWorkflowRuns = runs.value.filter(run => run.trigger !== 'workflow')
+  if (runs.value.length > 0 && nonWorkflowRuns.length === 0) {
+    showWorkflows.value = 'all'
+  } else if (nonWorkflowRuns.length > 0) {
+    showWorkflows.value = 'exclude'
+  }
+  
   selectLatestRun()
 }
 
 const selectLatestRun = () => {
-  if (runs.value.length > 0) {
-    run.value = runs.value[runs.value.length - 1]
+  const filteredRuns = showWorkflows.value === 'all' 
+    ? runs.value 
+    : runs.value.filter(run => run.trigger !== 'workflow')
+  
+  if (filteredRuns.length > 0) {
+    run.value = filteredRuns[filteredRuns.length - 1]
   } else {
     run.value = null
   }
