@@ -5,9 +5,22 @@
   
     <div class="panel-header">
       <label>{{ t('agent.view.header') }}</label>
-      <BIconPlayCircle v-if="agent.type === 'runnable'" class="icon run" @click="onRun" />
-      <BIconPencil class="icon edit" @click="onEdit" />
-      <BIconTrash class="icon delete" @click="onDelete" />
+      <BIconPlayCircle 
+        v-if="agent.type === 'runnable'" 
+        class="icon run" 
+        v-tooltip="{ text: t('agent.help.run'), position: 'bottom-left' }" 
+        @click="onRun" 
+      />
+      <BIconPencil 
+        class="icon edit" 
+        v-tooltip="{ text: t('agent.help.edit'), position: 'bottom-left' }" 
+        @click="onEdit" 
+      />
+      <BIconTrash 
+        class="icon delete" 
+        v-tooltip="{ text: t('agent.help.delete'), position: 'bottom-left' }" 
+        @click="onDelete" 
+      />
     </div>
     
     <div class="panel-body form form-vertical form-large">

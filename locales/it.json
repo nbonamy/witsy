@@ -217,6 +217,15 @@
       "title": "Forgia Agente"
     },
     "goal": "Obiettivo",
+    "help": {
+      "clearHistory": "Cancella tutta la cronologia per questo agente",
+      "create": "Crea un nuovo agente",
+      "delete": "Elimina questo agente",
+      "deleteRun": "Elimina questa esecuzione",
+      "edit": "Modifica questo agente",
+      "run": "Esegui questo agente",
+      "view": "Visualizza i dettagli dell'agente"
+    },
     "history": {
       "confirmClear": "Sei sicuro di voler cancellare la cronologia di questo agente?",
       "date": "Data",

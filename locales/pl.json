@@ -236,6 +236,15 @@
       "title": "Kuźnia agentów"
     },
     "goal": "Cel",
+    "help": {
+      "clearHistory": "Wyczyść całą historię tego agenta",
+      "create": "Utwórz nowego agenta",
+      "delete": "Usuń tego agenta",
+      "deleteRun": "Usuń to uruchomienie",
+      "edit": "Edytuj tego agenta",
+      "run": "Uruchom tego agenta",
+      "view": "Zobacz szczegóły agenta"
+    },
     "history": {
       "confirmClear": "Czy na pewno chcesz wyczyścić historię tego agenta?",
       "date": "Data",

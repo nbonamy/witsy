@@ -236,6 +236,15 @@
       "title": "代理锻造"
     },
     "goal": "目标",
+    "help": {
+      "clearHistory": "清除此代理的所有历史记录",
+      "create": "创建新代理",
+      "delete": "删除此代理",
+      "deleteRun": "删除此次运行",
+      "edit": "编辑此代理",
+      "run": "运行此代理",
+      "view": "查看代理详情"
+    },
     "history": {
       "confirmClear": "您确定要清除此代理的历史记录吗？",
       "date": "日期",

@@ -236,6 +236,15 @@
       "title": "Agent Forge"
     },
     "goal": "Goal",
+    "help": {
+      "clearHistory": "Clear all history for this agent",
+      "create": "Create a new agent",
+      "delete": "Delete this agent",
+      "deleteRun": "Delete this run",
+      "edit": "Edit this agent",
+      "run": "Run this agent",
+      "view": "View agent details"
+    },
     "history": {
       "confirmClear": "Are you sure you want to clear the history of this agent?",
       "date": "Date",
