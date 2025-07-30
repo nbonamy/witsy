@@ -285,6 +285,10 @@
       "workflow": "⚙️ Workflow"
     },
     "view": {
+      "filter": {
+        "all": "All runs",
+        "exclude_workflow": "Exclude workflows"
+      },
       "header": "Agent Summary",
       "history": "History"
     }

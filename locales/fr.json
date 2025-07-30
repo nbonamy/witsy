@@ -266,6 +266,10 @@
       "workflow": "⚙️ Flux de travail"
     },
     "view": {
+      "filter": {
+        "all": "Tous les lancements",
+        "exclude_workflow": "Exclure les workflows"
+      },
       "header": "Résumé de l'agent",
       "history": "Historique"
     }

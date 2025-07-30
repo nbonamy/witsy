@@ -24,6 +24,12 @@ vi.mock('fs', async (importOriginal) => {
   }}
 })
 
+vi.mock('../../src/main/windows/index', async () => {
+  return {
+    notifyBrowserWindows: vi.fn(),
+  }
+})
+
 beforeAll(() => {
   useWindowMock()
 })

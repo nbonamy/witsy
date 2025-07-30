@@ -285,6 +285,10 @@
       "workflow": "⚙️ ワークフロー"
     },
     "view": {
+      "filter": {
+        "all": "すべての実行",
+        "exclude_workflow": "ワークフローを除外"
+      },
       "header": "エージェント概要",
       "history": "履歴"
     }
