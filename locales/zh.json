@@ -245,7 +245,6 @@
       "status": "状态",
       "trigger": "触发器"
     },
-    "lastRun": "上次执行",
     "name": "@:{'common.name'}",
     "nextRun": "计划执行于",
     "prompt": "默认提示",
@@ -263,13 +262,18 @@
       "trigger": "触发器",
       "updatedAt": "完成时间"
     },
-    "runCount": "执行总数",
+    "status": {
+      "error": "❌ 错误",
+      "running": "⏳ 运行中",
+      "success": "✅ 成功"
+    },
     "trigger": {
-      "manual": "手动",
+      "manual": "🖐️ 手动",
       "manual_description": "代理始终可手动触发",
       "nextRuns": "下一次运行",
-      "schedule": "计划",
-      "webhook": "Webhook URL"
+      "schedule": "⏰ 计划",
+      "webhook": "🌐 Webhook URL",
+      "workflow": "⚙️ 工作流"
     },
     "view": {
       "header": "代理摘要",

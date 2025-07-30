@@ -226,7 +226,6 @@
       "status": "Status",
       "trigger": "Auslöser"
     },
-    "lastRun": "Zuletzt ausgeführt",
     "name": "@:{'common.name'}",
     "nextRun": "Geplant für",
     "prompt": "Standard-Prompt",
@@ -244,13 +243,18 @@
       "trigger": "Auslöser",
       "updatedAt": "Abschlusszeit"
     },
-    "runCount": "Gesamtausführungen",
+    "status": {
+      "error": "❌ Fehler",
+      "running": "⏳ Läuft",
+      "success": "✅ Erfolg"
+    },
     "trigger": {
-      "manual": "Manuell",
+      "manual": "🖐️ Manuell",
       "manual_description": "Agenten können jederzeit manuell ausgelöst werden",
       "nextRuns": "Nächste Ausführungen",
-      "schedule": "Zeitplan",
-      "webhook": "Webhook-URL"
+      "schedule": "⏰ Zeitplan",
+      "webhook": "🌐 Webhook-URL",
+      "workflow": "⚙️ Arbeitsablauf"
     },
     "view": {
       "header": "Agentenübersicht",

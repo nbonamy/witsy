@@ -245,7 +245,6 @@
       "status": "Status",
       "trigger": "Acionador"
     },
-    "lastRun": "Última execução",
     "name": "@:{'common.name'}",
     "nextRun": "Agendado para",
     "prompt": "Prompt Padrão",
@@ -263,13 +262,18 @@
       "trigger": "Acionador",
       "updatedAt": "Hora de Conclusão"
     },
-    "runCount": "Total de execuções",
+    "status": {
+      "error": "❌ Erro",
+      "running": "⏳ Em execução",
+      "success": "✅ Sucesso"
+    },
     "trigger": {
-      "manual": "Manual",
+      "manual": "🖐️ Manual",
       "manual_description": "Agentes podem sempre ser acionados manualmente",
       "nextRuns": "Próximas Execuções",
-      "schedule": "Agendamento",
-      "webhook": "URL do Webhook"
+      "schedule": "⏰ Agenda",
+      "webhook": "🌐 URL do Webhook",
+      "workflow": "⚙️ Fluxo de trabalho"
     },
     "view": {
       "header": "Resumo do Agente",

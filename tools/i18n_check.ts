@@ -434,7 +434,9 @@ async function checkUnusedTranslations(): Promise<Set<string>> {
         !key.match(/^commands\.commands\..*$/) &&
         !key.match(/^experts\.experts\..*$/) &&
         !key.match(/^tray\.notification\..*$/) &&
-        !key.match(/^agent\.forge\.list\..*$/)
+        !key.match(/^agent\.forge\.list\..*$/) &&
+        !key.match(/^agent\.status\..*$/) &&
+        !key.match(/^agent\.trigger\..*$/)
       ))
 
       // also the translation file itself can reference other keys using "@:{'id'}" syntax

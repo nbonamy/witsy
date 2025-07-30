@@ -15,11 +15,11 @@
       </div>
       <div class="form-field">
         <label>{{ t('agent.run.trigger') }}</label>
-        {{ run.trigger }}
+        {{ t(`agent.trigger.${run.trigger}`) }}
       </div>
       <div class="form-field">
         <label>{{ t('agent.run.status') }}</label>
-        {{ run.status }}
+        {{ t(`agent.status.${run.status}`) }}
       </div>
       <div class="form-field">
         <label>{{ t('agent.run.createdAt') }}</label>
@@ -31,7 +31,7 @@
       </div>
       <div class="form-field">
         <label>{{ t('agent.run.duration') }}</label>
-        {{ duration ? `${duration} ms` : t('agent.run.notCompleted') }}
+        {{ duration || t('agent.run.notCompleted') }}
       </div>
       <div class="form-field">
         <label>{{ t('agent.run.prompt') }}</label>
@@ -107,7 +107,8 @@ const duration = computed(() => {
   if (!run.value || !run.value.createdAt || !run.value.updatedAt) return null
   const start = new Date(run.value.createdAt).getTime()
   const end = run.value.status === 'running' ? Date.now() : new Date(run.value.updatedAt).getTime()
-  return end - start
+  const durationMs = end - start
+  return durationMs < 1000 ? `${durationMs} ms` : `${Math.round(durationMs / 1000)} s`
 })
 
 const emit = defineEmits(['delete'])
