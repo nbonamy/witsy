@@ -226,7 +226,6 @@
       "status": "Statut",
       "trigger": "Déclencheur"
     },
-    "lastRun": "Dernière exécution",
     "name": "@:{'common.name'}",
     "nextRun": "Planifié pour le",
     "prompt": "Invite par défaut",
@@ -244,13 +243,18 @@
       "trigger": "Déclencheur",
       "updatedAt": "Heure de fin"
     },
-    "runCount": "Exécutions totales",
+    "status": {
+      "error": "❌ Erreur",
+      "running": "⏳ En cours",
+      "success": "✅ Succès"
+    },
     "trigger": {
-      "manual": "Manuel",
+      "manual": "🖐️ Manuel",
       "manual_description": "Les agents peuvent toujours être déclenchés manuellement",
       "nextRuns": "Prochaines exécutions",
-      "schedule": "Planification",
-      "webhook": "URL du webhook"
+      "schedule": "⏰ Programmation",
+      "webhook": "🌐 URL Webhook",
+      "workflow": "⚙️ Flux de travail"
     },
     "view": {
       "header": "Résumé de l'agent",

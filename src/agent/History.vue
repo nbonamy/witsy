@@ -29,8 +29,8 @@
             <tr class="spacer"></tr>
             <tr :class="{ selected: run.id === props.run?.id }" v-for="run in [...runs].reverse()" :key="run.id" @click="$emit('click', run)">
               <td class="date">{{ timeAgo.format(new Date(run.createdAt)) }}</td>
-              <td class="trigger">{{ run.trigger }}</td>
-              <td class="status">{{ run.status }}</td>
+              <td class="trigger">{{ t(`agent.trigger.${run.trigger}`) }}</td>
+              <td class="status">{{ t(`agent.status.${run.status}`) }}</td>
               <td class="view"><BIconSearch /> </td>
             </tr>
           </tbody>

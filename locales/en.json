@@ -245,7 +245,6 @@
       "status": "Status",
       "trigger": "Trigger"
     },
-    "lastRun": "Last executed",
     "name": "@:{'common.name'}",
     "nextRun": "Scheduled on",
     "prompt": "Default Prompt",
@@ -263,13 +262,18 @@
       "trigger": "Trigger",
       "updatedAt": "Completion time"
     },
-    "runCount": "Total executions",
+    "status": {
+      "error": "❌ Error",
+      "running": "⏳ Running",
+      "success": "✅ Success"
+    },
     "trigger": {
-      "manual": "Manual",
+      "manual": "🖐️ Manual",
       "manual_description": "Agents can always be manually triggered",
       "nextRuns": "Next Runs",
-      "schedule": "Schedule",
-      "webhook": "Webhook URL"
+      "schedule": "⏰ Schedule",
+      "webhook": "🌐 Webhook URL",
+      "workflow": "⚙️ Workflow"
     },
     "view": {
       "header": "Agent Summary",

@@ -245,7 +245,6 @@
       "status": "Status",
       "trigger": "Wyzwalacz"
     },
-    "lastRun": "Ostatnie wykonanie",
     "name": "@:{'common.name'}",
     "nextRun": "Zaplanowano na",
     "prompt": "Domyślny prompt",
@@ -263,13 +262,18 @@
       "trigger": "Wyzwalacz",
       "updatedAt": "Czas zakończenia"
     },
-    "runCount": "Łączna liczba wykonań",
+    "status": {
+      "error": "❌ Błąd",
+      "running": "⏳ Uruchomiono",
+      "success": "✅ Sukces"
+    },
     "trigger": {
-      "manual": "Ręczny",
+      "manual": "🖐️ Ręczny",
       "manual_description": "Agenci mogą być zawsze wyzwalani ręcznie",
       "nextRuns": "Następne wykonania",
-      "schedule": "Harmonogram",
-      "webhook": "Adres URL webhook"
+      "schedule": "⏰ Harmonogram",
+      "webhook": "🌐 URL webhooka",
+      "workflow": "⚙️ Przepływ pracy"
     },
     "view": {
       "header": "Podsumowanie agenta",

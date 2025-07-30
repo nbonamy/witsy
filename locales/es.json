@@ -226,7 +226,6 @@
       "status": "Estado",
       "trigger": "Disparador"
     },
-    "lastRun": "Última ejecución",
     "name": "@:{'common.name'}",
     "nextRun": "Programado para",
     "prompt": "Mensaje Predeterminado",
@@ -244,13 +243,18 @@
       "trigger": "Disparador",
       "updatedAt": "Hora de finalización"
     },
-    "runCount": "Ejecuciones totales",
+    "status": {
+      "error": "❌ Error",
+      "running": "⏳ En ejecución",
+      "success": "✅ Éxito"
+    },
     "trigger": {
-      "manual": "Manual",
+      "manual": "🖐️ Manual",
       "manual_description": "Los agentes siempre pueden activarse manualmente",
       "nextRuns": "Próximas ejecuciones",
-      "schedule": "Programación",
-      "webhook": "URL del Webhook"
+      "schedule": "⏰ Programar",
+      "webhook": "🌐 URL del Webhook",
+      "workflow": "⚙️ Flujo de trabajo"
     },
     "view": {
       "header": "Resumen del Agente",

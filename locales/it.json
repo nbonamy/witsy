@@ -226,7 +226,6 @@
       "status": "Stato",
       "trigger": "Attivatore"
     },
-    "lastRun": "Ultima esecuzione",
     "name": "@:{'common.name'}",
     "nextRun": "Programmato per",
     "prompt": "Prompt predefinito",
@@ -244,13 +243,18 @@
       "trigger": "Trigger",
       "updatedAt": "Ora di completamento"
     },
-    "runCount": "Esecuzioni totali",
+    "status": {
+      "error": "❌ Errore",
+      "running": "⏳ In esecuzione",
+      "success": "✅ Successo"
+    },
     "trigger": {
-      "manual": "Manuale",
+      "manual": "🖐️ Manuale",
       "manual_description": "Gli agenti possono sempre essere attivati manualmente",
       "nextRuns": "Prossime esecuzioni",
-      "schedule": "Programma",
-      "webhook": "URL Webhook"
+      "schedule": "⏰ Pianifica",
+      "webhook": "🌐 URL Webhook",
+      "workflow": "⚙️ Flusso di lavoro"
     },
     "view": {
       "header": "Riepilogo Agente",

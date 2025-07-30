@@ -14,45 +14,45 @@
 
     <template v-if="interval === 'm'">
       <span>{{ t('common.schedule.every') }}</span>
-      <input type="text" name="every" v-model="every" @change="save" />
+      <input type="text" name="every" v-model="every" @input="save" />
       <span>{{ t('common.schedule.minutes') }}</span>
     </template>
 
     <template v-else-if="interval === 'h'">
       <span>{{ t('common.schedule.every') }}</span>
-      <input type="text" name="every" v-model="every" @change="save" />
+      <input type="text" name="every" v-model="every" @input="save" />
       <span>{{ t('common.schedule.hours_on_minute') }}</span>  
-      <input type="text" name="on" v-model="on" @change="save" />
+      <input type="text" name="on" v-model="on" @input="save" />
     </template>
 
     <template v-else-if="interval === 'd'">
       <span>{{ t('common.schedule.every') }}</span>
-      <input type="text" name="every" v-model="every" @change="save" />
+      <input type="text" name="every" v-model="every" @input="save" />
       <span>{{ t('common.schedule.days_at') }}</span>
-      <input type="text" class="time" name="at" v-model="at" placeholder="HH:MM" @change="save" />
+      <input type="text" class="time" name="at" v-model="at" placeholder="HH:MM" @input="save" />
     </template>
 
     <table v-else-if="interval === 'w'"><tbody>
       <tr>
         <td>{{ t('common.schedule.every') }}</td>
         <td>
-          <input type="checkbox" name="mon" :checked="on.includes('1')" @change="onDay(1)" /><label class="no-colon">{{ t('common.schedule.monday') }}</label>
-          <input type="checkbox" name="tue" :checked="on.includes('2')" @change="onDay(2)" /><label class="no-colon">{{ t('common.schedule.tuesday') }}</label>
-          <input type="checkbox" name="wed" :checked="on.includes('3')" @change="onDay(3)" /><label class="no-colon">{{ t('common.schedule.wednesday') }}</label>
-          <input type="checkbox" name="thu" :checked="on.includes('4')" @change="onDay(4)" /><label class="no-colon">{{ t('common.schedule.thursday') }}</label>
+          <input type="checkbox" name="mon" :checked="on.includes('1')" @input="onDay(1)" /><label class="no-colon">{{ t('common.schedule.monday') }}</label>
+          <input type="checkbox" name="tue" :checked="on.includes('2')" @input="onDay(2)" /><label class="no-colon">{{ t('common.schedule.tuesday') }}</label>
+          <input type="checkbox" name="wed" :checked="on.includes('3')" @input="onDay(3)" /><label class="no-colon">{{ t('common.schedule.wednesday') }}</label>
+          <input type="checkbox" name="thu" :checked="on.includes('4')" @input="onDay(4)" /><label class="no-colon">{{ t('common.schedule.thursday') }}</label>
         </td>
       </tr>
       <tr>
         <td>&nbsp;</td>
         <td>
-          <input type="checkbox" name="fri" :checked="on.includes('5')" @change="onDay(5)" /><label class="no-colon">{{ t('common.schedule.friday') }}</label>
-          <input type="checkbox" name="sat" :checked="on.includes('6')" @change="onDay(6)" /><label class="no-colon">{{ t('common.schedule.saturday') }}</label>
-          <input type="checkbox" name="sun" :checked="on.includes('0')" @change="onDay(0)" /><label class="no-colon">{{ t('common.schedule.sunday') }}</label>
+          <input type="checkbox" name="fri" :checked="on.includes('5')" @input="onDay(5)" /><label class="no-colon">{{ t('common.schedule.friday') }}</label>
+          <input type="checkbox" name="sat" :checked="on.includes('6')" @input="onDay(6)" /><label class="no-colon">{{ t('common.schedule.saturday') }}</label>
+          <input type="checkbox" name="sun" :checked="on.includes('0')" @input="onDay(0)" /><label class="no-colon">{{ t('common.schedule.sunday') }}</label>
         </td>
       </tr>
       <tr>
         <td>{{ t('common.schedule.at') }}</td>
-        <td><input type="text" class="time" name="at" v-model="at" placeholder="HH:MM" @change="save" /></td>
+        <td><input type="text" class="time" name="at" v-model="at" placeholder="HH:MM" @input="save" /></td>
       </tr>
     </tbody></table>
 
@@ -60,15 +60,15 @@
       <tr>
         <td><span>{{ t('common.schedule.on_the') }}</span></td>
         <td>
-          <input type="text" name="on" v-model="on" @change="save" />
+          <input type="text" name="on" v-model="on" @input="save" />
           <span>{{ t('common.schedule.day_of_every') }}</span>
-          <input type="text" name="every" v-model="every" @change="save" />
+          <input type="text" name="every" v-model="every" @input="save" />
           <span>{{ t('common.schedule.months') }}</span>
         </td>
       </tr>
       <tr>
         <td><span>{{ t('common.schedule.at') }}</span></td>
-        <td><input type="text" class="time" name="at" v-model="at" placeholder="HH:MM" @change="save" /></td>
+        <td><input type="text" class="time" name="at" v-model="at" placeholder="HH:MM" @input="save" /></td>
       </tr>
     </tbody></table>
 
