@@ -45,13 +45,13 @@
         <label>{{ t('agent.run.error') }}</label>
         <div class="error-text">{{ run.error }}</div>
       </div>
-      <div class="form-field message" v-if="run.messages?.length === 3">
+      <div class="form-field message">
         <label>{{ t('agent.run.output') }}</label>
         <div class="output">
-          <MessageItemBody :message="run.messages[run.messages.length - 1] as Message" show-tool-calls="always" />
+          <MessageItemBody :message="response" show-tool-calls="always"  v-if="response && response.content"/>
+          <span v-else>{{ t('agent.run.notCompleted') }}</span>
         </div>
       </div>
-      
     </div>
 
   </div>
@@ -81,6 +81,19 @@ const run = ref<AgentRun | null>(null)
 
 let refreshTimeout: NodeJS.Timeout
 
+const duration = computed(() => {
+  if (!run.value || !run.value.createdAt || !run.value.updatedAt) return null
+  const start = new Date(run.value.createdAt).getTime()
+  const end = run.value.status === 'running' ? Date.now() : new Date(run.value.updatedAt).getTime()
+  const durationMs = end - start
+  return durationMs < 1000 ? `${durationMs} ms` : `${Math.round(durationMs / 1000)} s`
+})
+
+const response = computed(() => {
+  if (!run.value || !run.value.messages || run.value.messages.length !== 3) return null
+  return run.value.messages[run.value.messages.length - 1]
+})
+
 onMounted(() => {
   loadAgentRun()
   watch(() => props || {}, async () => {
@@ -106,14 +119,6 @@ const loadAgentRun = async () => {
 const formatDate = (date: number) => {
   return new Date(date).toString().split(' ').slice(0, 5).join(' ')
 }
-
-const duration = computed(() => {
-  if (!run.value || !run.value.createdAt || !run.value.updatedAt) return null
-  const start = new Date(run.value.createdAt).getTime()
-  const end = run.value.status === 'running' ? Date.now() : new Date(run.value.updatedAt).getTime()
-  const durationMs = end - start
-  return durationMs < 1000 ? `${durationMs} ms` : `${Math.round(durationMs / 1000)} s`
-})
 
 const emit = defineEmits(['delete'])
 
