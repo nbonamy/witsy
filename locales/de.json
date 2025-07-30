@@ -217,6 +217,15 @@
       "title": "Agenten-Werkstatt"
     },
     "goal": "Ziel",
+    "help": {
+      "clearHistory": "Verlauf für diesen Agenten löschen",
+      "create": "Neuen Agenten erstellen",
+      "delete": "Diesen Agenten löschen",
+      "deleteRun": "Diesen Lauf löschen",
+      "edit": "Diesen Agenten bearbeiten",
+      "run": "Diesen Agenten ausführen",
+      "view": "Agentendetails anzeigen"
+    },
     "history": {
       "confirmClear": "Sind Sie sicher, dass Sie den Verlauf dieses Agenten löschen möchten?",
       "date": "Datum",

@@ -236,6 +236,15 @@
       "title": "Forja do Agente"
     },
     "goal": "Objetivo",
+    "help": {
+      "clearHistory": "Limpar todo o histórico deste agente",
+      "create": "Criar um novo agente",
+      "delete": "Excluir este agente",
+      "deleteRun": "Excluir esta execução",
+      "edit": "Editar este agente",
+      "run": "Executar este agente",
+      "view": "Ver detalhes do agente"
+    },
     "history": {
       "confirmClear": "Tem certeza de que deseja limpar o histórico deste agente?",
       "date": "Data",

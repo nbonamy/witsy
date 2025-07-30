@@ -5,7 +5,11 @@
 
     <div class="panel-header">
       <label>{{ t('agent.run.title') }}</label>
-      <BIconCalendar2X class="icon delete" @click="$emit('delete')" />
+      <BIconCalendar2X 
+        class="icon delete" 
+        v-tooltip="{ text: t('agent.help.deleteRun'), position: 'bottom-left' }" 
+        @click="$emit('delete')" 
+      />
     </div>
 
     <div class="panel-body form form-vertical form-large">

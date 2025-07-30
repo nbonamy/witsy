@@ -5,7 +5,11 @@
       <div class="agents panel" v-if="agents.length">
         <div class="panel-header">
           <label>{{ t(`agent.forge.list.${type}`) }}</label>
-          <BIconPlusLg class="icon create" @click.prevent="$emit('create')" />
+          <BIconPlusLg 
+            class="icon create" 
+            v-tooltip="{ text: t('agent.help.create'), position: 'bottom-left' }" 
+            @click.prevent="$emit('create')" 
+          />
         </div>
         <div class="panel-body" v-if="agents.length">
           <template v-for="agent in agents" :key="agent.uuid">
@@ -15,10 +19,27 @@
                 <div class="subtext">{{ agent.description }}</div>
               </div>
               <div class="actions">
-                <BIconPlayCircle v-if="type === 'runnable'" class="run" @click.stop="$emit('run', agent)" />
-                <BIconSearch class="view" @click.stop="$emit('view', agent)" />
-                <BIconPencil class="edit" @click.stop="$emit('edit', agent)" />
-                <BIconTrash class="delete" @click.stop="$emit('delete', agent)" />
+                <BIconPlayCircle 
+                  v-if="type === 'runnable'" 
+                  class="run" 
+                  v-tooltip="{ text: t('agent.help.run'), position: 'top-left' }" 
+                  @click.stop="$emit('run', agent)" 
+                />
+                <BIconSearch 
+                  class="view" 
+                  v-tooltip="{ text: t('agent.help.view'), position: 'top-left' }" 
+                  @click.stop="$emit('view', agent)" 
+                />
+                <BIconPencil 
+                  class="edit" 
+                  v-tooltip="{ text: t('agent.help.edit'), position: 'top-left' }" 
+                  @click.stop="$emit('edit', agent)" 
+                />
+                <BIconTrash 
+                  class="delete" 
+                  v-tooltip="{ text: t('agent.help.delete'), position: 'top-left' }" 
+                  @click.stop="$emit('delete', agent)" 
+                />
               </div>
             </div>
           </template>

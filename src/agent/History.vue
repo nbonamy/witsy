@@ -5,7 +5,11 @@
 
     <div class="panel-header">
       <label>{{ t('agent.view.history') }}</label>
-      <BIconCalendarX class="icon clear" @click="$emit('clear')" />
+      <BIconCalendarX 
+        class="icon clear" 
+        v-tooltip="{ text: t('agent.help.clearHistory'), position: 'bottom-left' }" 
+        @click="$emit('clear')" 
+      />
     </div>
 
     <div class="panel-body">

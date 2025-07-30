@@ -217,6 +217,15 @@
       "title": "Forge d'agent"
     },
     "goal": "Objectif",
+    "help": {
+      "clearHistory": "Effacer tout l'historique pour cet agent",
+      "create": "Créer un nouvel agent",
+      "delete": "Supprimer cet agent",
+      "deleteRun": "Supprimer cette exécution",
+      "edit": "Modifier cet agent",
+      "run": "Exécuter cet agent",
+      "view": "Voir les détails de l'agent"
+    },
     "history": {
       "confirmClear": "Êtes-vous sûr de vouloir effacer l'historique de cet agent ?",
       "date": "Date",
