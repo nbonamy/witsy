@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.12.4] - 2025-07-28
+## [2.12.4] - WIP
 
 ### Added
 - N/A
@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Dialogs in settings can be cut-off (https://github.com/nbonamy/witsy/issues/359)
+- Checkboxes always look checked in dark mode (https://github.com/nbonamy/witsy/issues/361)
 
 ### Removed
 - N/A
