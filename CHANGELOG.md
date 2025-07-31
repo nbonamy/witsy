@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Dialogs in settings can be cut-off (https://github.com/nbonamy/witsy/issues/359)
 - Checkboxes always look checked in dark mode (https://github.com/nbonamy/witsy/issues/361)
+- Plugins that are disabled in app settings, are still available and enabled in chat settings (https://github.com/nbonamy/witsy/issues/362)
 
 ### Removed
 - N/A
