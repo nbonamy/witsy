@@ -69,7 +69,6 @@ test('Send on click', async () => {
     docrepo: null,
     expert: null,
     deepResearch: false,
-    a2a: false,
   })
   expect(prompt.element.value).toBe('')
 })
@@ -86,7 +85,6 @@ test('Sends on enter', async () => {
     docrepo: null,
     expert: null,
     deepResearch: false,
-    a2a: false,
   })
   expect(prompt.element.value).toBe('')
 })
@@ -106,7 +104,6 @@ test('Sends with right parameters', async () => {
     expert: { id: 'uuid3', name: 'actor3', prompt: 'prompt3', type: 'user', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
     docrepo: 'docrepo',
     deepResearch: false,
-    a2a: false,
   }])
   expect(prompt.element.value).toBe('')
 })
@@ -295,7 +292,6 @@ test('Stores command for later', async () => {
     expert: null,
     docrepo: null,
     deepResearch: false,
-    a2a: false,
   })
 })
 
@@ -317,7 +313,6 @@ test('Selects command and run', async () => {
     expert: null,
     docrepo: null,
     deepResearch: false,
-    a2a: false,
   })
 })
 

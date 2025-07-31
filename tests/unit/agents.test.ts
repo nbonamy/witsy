@@ -43,6 +43,7 @@ test('Load agents', () => {
   expect(agents).toHaveLength(2)
   expect(agents[0]).toMatchObject({
     id: 'agent1',
+    source: 'witsy',
     createdAt: 1000000000000,
     updatedAt: 1000000005000,
     name: 'Name1',
@@ -84,6 +85,7 @@ test('Load agents', () => {
 test('Save agent', () => {
   const agent = {
     id: 'agent3',
+    source: 'witsy',
     createdAt: 1000000000000,
     updatedAt: 1000000005000,
     name: 'Name3',
