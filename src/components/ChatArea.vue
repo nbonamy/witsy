@@ -3,7 +3,7 @@
     <header :class="{ 'is-left-most': isLeftMost }">
       <IconSideBar class="icon toggle-sidebar" @click="toggleSideBar" />
       <IconNewChat class="icon new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat" />
-      <IconRunAgent class="icon scale120 run-agent" :class="{ hidden: !isLeftMost }" @click="onRunAgent" />
+      <IconRunAgent class="icon scale120 run-agent" :class="{ hidden: !isLeftMost }" @click="onRunAgent" v-if="store.config.features?.agents" />
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
       <div class="spacer"></div>
       <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" />

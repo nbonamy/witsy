@@ -5,7 +5,7 @@
         <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" />
         <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
       </div></div>
-      <IconRunAgent id="run-agent" class="icon scale120" @click="onRunAgent" />
+      <IconRunAgent id="run-agent" class="icon scale120" @click="onRunAgent" v-if="store.config.features?.agents" />
       <IconNewChat id="new-chat" class="icon" @click="onNewChat" />
     </header>
     <main>
