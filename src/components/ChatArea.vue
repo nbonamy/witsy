@@ -117,7 +117,7 @@ const showChatMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
-const emit = defineEmits(['prompt', 'run-agent', 'stop'])
+const emit = defineEmits(['prompt', 'run-agent', 'stop-generation'])
 
 onMounted(() => {
   onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
@@ -132,7 +132,7 @@ const onRunAgent = () => {
 }
 
 const onStopGeneration = () => {
-  emit('stop', null)
+  emit('stop-generation', null)
 }
 
 const toggleSideBar = () => {

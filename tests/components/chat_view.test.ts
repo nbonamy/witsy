@@ -219,7 +219,7 @@ test('Sends prompt with expert', async () => {
 
 test('Stop assistant', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  await wrapper.vm.chatArea.$emit('stop', null)
+  await wrapper.vm.chatArea.$emit('stop-generation', null)
   expect(Assistant.prototype.stop).toHaveBeenCalled()
 })
 
