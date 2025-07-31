@@ -8,8 +8,8 @@
     </template>
     <template #footer>
       <div class="buttons">
-        <button name="all" @click.prevent="selection = null">{{ t('common.selectAll') }}</button>
-        <button name="none" @click.prevent="selection = []">{{ t('common.selectNone') }}</button>
+        <button name="all" @click="selection = null">{{ t('common.selectAll') }}</button>
+        <button name="none" @click="selection = []">{{ t('common.selectNone') }}</button>
         <button name="cancel" @click="onCancel" class="push" formnovalidate>{{ t('common.cancel') }}</button>
         <button name="save" @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
       </div>

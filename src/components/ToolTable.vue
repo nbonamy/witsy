@@ -53,6 +53,7 @@ const initTools = async () => {
     
     const pluginClass = availablePlugins[pluginName]
     const plugin: PluginInstance = new pluginClass(store.config.plugins[pluginName])
+    if (!plugin.isEnabled()) continue
     if ('getTools' in plugin) {
 
       const pluginTools = await plugin.getTools()
@@ -82,7 +83,20 @@ const initTools = async () => {
 }
 
 const isToolActive = (tool: Tool) => {
-  return !selection.value || selection.value.includes(tool.id)
+
+  // if we have a selection then check if the tool is in it
+  if (selection.value) {
+    return selection.value.includes(tool.id)
+  }
+
+  // default
+  return true
+
+  // // else we check the global enabled state
+  // const t = tools.value.find(t => t.id === tool.id)
+  // if (!t) return false
+  // return t.plugin.isEnabled()
+
 }
 
 // we cannot toggle tool on selection.value as it can be initialized to null
