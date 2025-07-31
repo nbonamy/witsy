@@ -15,15 +15,15 @@
 
         <div class="md-master-list">
 
-          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGeneral), disabled: !isStepCompleted(kStepGeneral) }" @click="onStepClick(kStepGeneral)">
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGeneral), disabled: !isStepCompleted(kStepGeneral) }" @click="onStepClick(kStepGeneral)" v-if="hasStep(kStepGeneral)">
             <BIconCardHeading class="logo" /> {{ t('agent.create.information.title') }}
           </div>
 
-          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGoal), disabled: !isStepCompleted(kStepGoal) }" @click="onStepClick(kStepGoal)">
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGoal), disabled: !isStepCompleted(kStepGoal) }" @click="onStepClick(kStepGoal)" v-if="hasStep(kStepGoal)">
             <BIconBullseye class="logo" /> {{ t('agent.create.goal.title') }}
           </div>
 
-          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepModel) || isStepVisible(kStepSettings), disabled: !isStepCompleted(kStepModel) }" @click="onStepClick(kStepModel)">
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepModel) || isStepVisible(kStepSettings), disabled: !isStepCompleted(kStepModel) }" @click="onStepClick(kStepModel)" v-if="hasStep(kStepModel)">
             <BIconCpu class="logo" /> {{ t('agent.create.llm.title') }}
           </div>
 
@@ -31,19 +31,19 @@
             <BIconSliders class="logo" /> {{ t('agent.create.settings') }}
           </div> -->
 
-          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepWorkflow), disabled: !isStepCompleted(kStepWorkflow) }" @click="onStepClick(kStepWorkflow)">
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepWorkflow), disabled: !isStepCompleted(kStepWorkflow) }" @click="onStepClick(kStepWorkflow)" v-if="hasStep(kStepWorkflow)">
             <BIconDiagram2 class="logo scale120" /> {{ t('agent.create.workflow.title') }}
           </div>
 
-          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepTools), disabled: !isStepCompleted(kStepTools) }" @click="onStepClick(kStepTools)">
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepTools), disabled: !isStepCompleted(kStepTools) }" @click="onStepClick(kStepTools)" v-if="hasStep(kStepTools)">
             <BIconTools class="logo" /> {{ t('agent.create.tools.title') }}
           </div>
 
-          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepAgents), disabled: !isStepCompleted(kStepAgents) }" @click="onStepClick(kStepAgents)">
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepAgents), disabled: !isStepCompleted(kStepAgents) }" @click="onStepClick(kStepAgents)" v-if="hasStep(kStepAgents)">
             <BIconRobot class="logo" /> {{ t('agent.create.agents.title') }}
           </div>
 
-          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepInvocation), disabled: !isStepCompleted(kStepInvocation) }" @click="onStepClick(kStepInvocation)">
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepInvocation), disabled: !isStepCompleted(kStepInvocation) }" @click="onStepClick(kStepInvocation)" v-if="hasStep(kStepInvocation)">
             <BIconLightningCharge class="logo" /> {{ t('agent.create.invocation.title') }}
           </div>
 
@@ -87,27 +87,7 @@
               <label for="goal">{{ t('agent.goal') }}</label>
               <div class="help">{{ t('agent.create.information.help.goal') }}</div>
               <textarea v-model="agent.instructions" name="goal" required></textarea>
-            </div>
-            <div class="form-field">
-              <label for="prompt">{{ t('agent.prompt') }}</label>
-              <div class="help">{{ t('agent.create.information.help.prompt') }}</div>
-              <textarea v-model="agent.prompt" name="prompt"></textarea>
-            </div>
-            <div class="form-field" v-if="promptInputs.length">
-              <label for="prompt">{{ t('agent.create.information.promptInputs') }}</label>
-              <table class="prompt-inputs">
-                <thead><tr>
-                  <th>{{ t('common.name') }}</th>
-                  <th>{{ t('common.description') }}</th>
-                  <th>{{ t('common.defaultValue') }}</th>
-                </tr></thead>
-                <tbody><tr v-for="(input, index) in promptInputs" :key="index">
-                  <td>{{ input.name }}</td>
-                  <td>{{ input.description }}</td>
-                  <td>{{ input.defaultValue }}</td>
-                </tr></tbody>
-              </table>
-            </div>
+            </div>            
           </template>
         </WizardStep>
 
@@ -131,7 +111,7 @@
             </div>
           </template>
           <template #buttons>
-            <button @click="showSettings">{{ t('agent.create.llm.showModelSettings') }}</button>
+            <button @click="showSettings" v-if="hasSettings">{{ t('agent.create.llm.showModelSettings') }}</button>
           </template>
         </WizardStep>
 
@@ -176,6 +156,26 @@
             <div class="help">{{ t('agent.create.workflow.help.singleOnly') }}</div>
           </template>
           <template #content>
+            <div class="form-field">
+              <label for="prompt">{{ t('agent.prompt') }}</label>
+              <div class="help">{{ t('agent.create.information.help.prompt') }}</div>
+              <textarea v-model="agent.prompt" name="prompt"></textarea>
+            </div>
+            <div class="form-field" v-if="promptInputs.length">
+              <label for="prompt">{{ t('agent.create.information.promptInputs') }}</label>
+              <table class="prompt-inputs">
+                <thead><tr>
+                  <th>{{ t('common.name') }}</th>
+                  <th>{{ t('common.description') }}</th>
+                  <th>{{ t('common.defaultValue') }}</th>
+                </tr></thead>
+                <tbody><tr v-for="(input, index) in promptInputs" :key="index">
+                  <td>{{ input.name }}</td>
+                  <td>{{ input.description }}</td>
+                  <td>{{ input.defaultValue }}</td>
+                </tr></tbody>
+              </table>
+            </div>
           </template>
         </WizardStep>
 
@@ -283,7 +283,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, computed, watch, PropType } from 'vue'
+import { ref, onMounted, computed, watch, PropType, h } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { CronExpressionParser } from 'cron-parser'
@@ -330,19 +330,39 @@ const kStepTools = 'tools'
 const kStepAgents = 'agents'
 const kStepInvocation = 'invocation'
 
-const steps = [
-  kStepGeneral,
-  kStepGoal,
-  kStepModel,
-  kStepSettings,
-  kStepWorkflow,
-  kStepTools,
-  kStepAgents,
-  kStepInvocation
-]
+const steps = (): string[] => {
+
+  // a2a set-up is limited
+  if (agent.value.source === 'a2a') {
+    return [
+      kStepGeneral,
+      kStepModel,
+      kStepSettings,
+      kStepWorkflow,
+      kStepInvocation
+    ]
+  }
+
+  // default
+  return [
+    kStepGeneral,
+    kStepGoal,
+    kStepModel,
+    kStepSettings,
+    kStepWorkflow,
+    kStepTools,
+    kStepAgents,
+    kStepInvocation
+  ]
+
+}
 
 const promptInputs = computed(() => {
   return extractPromptInputs(agent.value.prompt)
+})
+
+const hasSettings = computed(() => {
+  return hasStep(kStepSettings)
 })
 
 const supportAgents = computed(() => {
@@ -361,7 +381,11 @@ const nextRuns = computed(() => {
 })
 
 const stepIndex = (step: string) => {
-  return steps.indexOf(step)
+  return steps().indexOf(step)
+}
+
+const hasStep = (step: string) => {
+  return stepIndex(step) >= 0
 }
 
 const isStepCompleted = (step: string) => {
@@ -390,15 +414,21 @@ const onStepClick = (step: string) => {
   currentStep.value = stepIndex(step)
 }
 
+const goToStepAfter = (step: string, stepSize: number = 1) => {
+  informationError.value = ''
+  const currentIndex = stepIndex(step)
+  currentStep.value = currentIndex + stepSize
+  completedStep.value = Math.max(completedStep.value, currentIndex)
+}
+
+
 const validateInformation = () => {
   if (!agent.value.name.trim().length ||
       !agent.value.description.trim().length) {
     informationError.value = t('common.required.fieldsRequired')
     return
   }
-  informationError.value = ''
-  currentStep.value = stepIndex(kStepGeneral) + 1
-  completedStep.value = Math.max(completedStep.value, stepIndex(kStepGeneral))
+  goToStepAfter(kStepGeneral)
 }
 
 const validateGoal = () => {
@@ -406,34 +436,27 @@ const validateGoal = () => {
     informationError.value = t('common.required.fieldsRequired')
     return
   }
-  informationError.value = ''
-  currentStep.value = stepIndex(kStepGoal) + 1
-  completedStep.value = Math.max(completedStep.value, stepIndex(kStepGoal))
+  goToStepAfter(kStepGoal)
 }
 
 const validateModel = () => {
-  currentStep.value = stepIndex(kStepModel) + 2
-  completedStep.value = Math.max(completedStep.value, stepIndex(kStepSettings))
+  goToStepAfter(kStepModel, hasSettings.value ? 2 : 1)
 }
 
 const validateSettings = () => {
-  currentStep.value = stepIndex(kStepModel) + 2
-  completedStep.value = Math.max(completedStep.value, stepIndex(kStepSettings))
+  goToStepAfter(kStepSettings)
 }
 
 const validateWorkflow = () => {
-  currentStep.value = stepIndex(kStepWorkflow) + 1
-  completedStep.value = Math.max(completedStep.value, stepIndex(kStepWorkflow))
+  goToStepAfter(kStepWorkflow)
 }
 
 const validateTools = () => {
-  currentStep.value = stepIndex(kStepTools) + 1
-  completedStep.value = Math.max(completedStep.value, stepIndex(kStepTools))
+  goToStepAfter(kStepTools)
 }
 
 const validateAgents = () => {
-  currentStep.value = stepIndex(kStepAgents) + 1
-  completedStep.value = Math.max(completedStep.value, stepIndex(kStepAgents))
+  goToStepAfter(kStepAgents)
 }
 
 const validateInvocation = () => {

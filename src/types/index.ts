@@ -92,10 +92,12 @@ export interface Chat {
   delete(): void
 }
 
+export type AgentSource = 'witsy' | 'a2a'
 export type AgentType = 'runnable' | 'support'
 
 export interface Agent {
   id: string
+  source: AgentSource
   createdAt: number
   updatedAt: number
   name: string

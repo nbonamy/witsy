@@ -1,5 +1,6 @@
 
 import { MessageSendParams, Task, TaskArtifactUpdateEvent, TaskStatusUpdateEvent } from '@a2a-js/sdk'
+import Agent from '../models/agent'
 // @ts-expect-error unknown why this is a linting error
 import { A2AClient as Client } from '@a2a-js/sdk/client'
 import { LlmChunk } from 'multi-llm-ts'
@@ -20,10 +21,26 @@ export type A2AChunk = LlmChunk | A2AChunkStatus | A2AChunkArtifact
 
 export default class A2AClient {
 
-  client: Client
+  baseUrl: string
 
   constructor(baseUrl: string) {
-    this.client = new Client(baseUrl)
+    this.baseUrl = baseUrl
+  }
+
+  async getAgent(): Promise<Agent> {
+
+    const response = await fetch(`${this.baseUrl}/.well-known/agent.json`)
+    const agent = await response.json()
+
+    return Agent.fromJson({
+      source: 'a2a',
+      name: agent.name,
+      description: agent.description,
+      instructions: this.baseUrl,
+      tools: [],
+      agents: [],
+    })
+
   }
 
   async *execute(prompt: string): AsyncGenerator<A2AChunk> {
@@ -56,7 +73,8 @@ export default class A2AClient {
       };
 
       // Use the `sendMessageStream` method.
-      const stream = this.client.sendMessageStream(streamParams);
+      const client = new Client(this.baseUrl)
+      const stream = client.sendMessageStream(streamParams);
       let currentTaskId: string | undefined;
 
       for await (const event of stream) {

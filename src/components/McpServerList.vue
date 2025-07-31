@@ -227,6 +227,7 @@ const onImportJson = async () => {
     inputPlaceholder: '"mcp-server-name": {\n  "command": "",\n  "args": [ … ]\n}',
     customClass: { input: 'auto-height' },
     inputValue: '',
+    confirmButtonText: t('common.import'),
     showCancelButton: true,
     preConfirm: (json: any) => {
       try {

@@ -5,9 +5,8 @@
         <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" />
         <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
       </div></div>
-      <div id="new-chat" class="icon" @click="onNewChat">
-        <IconNewChat />
-      </div>
+      <IconRunAgent id="run-agent" class="icon scale120" @click="onRunAgent" />
+      <IconNewChat id="new-chat" class="icon" @click="onNewChat" />
     </header>
     <main>
       <ChatList :displayMode="chatListDisplayMode" :chat="chat" :filter="filter" :select-mode="selectMode" ref="chatList" />
@@ -37,6 +36,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { v4 as uuidv4 } from 'uuid'
 import IconNewChat from './IconNewChat.vue'
+import IconRunAgent from '../../assets/robot_run.svg?component'
 import Dialog from '../composables/dialog'
 import ChatList from './ChatList.vue'
 import Chat from '../models/chat'
@@ -47,7 +47,7 @@ const tipsManager = useTipsManager(store)
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
 
-const props = defineProps({
+defineProps({
   chat: {
     type: Chat,
   },
@@ -60,6 +60,8 @@ const chatListDisplayMode= ref<ChatListMode>('timeline')
 const chatList= ref<typeof ChatList|null>(null)
 const filter= ref<string>('')
 const selectMode= ref<boolean>(false)
+
+const emit = defineEmits(['new-chat', 'run-agent'])
 
 let panelOffet = 0
 
@@ -91,7 +93,13 @@ const setChatListMode = (mode: ChatListMode) => {
 const onNewChat = () => {
   onClearFilter()
   onCancelSelect()
-  emitEvent('new-chat', null)
+  emit('new-chat')
+}
+
+const onRunAgent = () => {
+  onClearFilter()
+  onCancelSelect()
+  emit('run-agent')
 }
 
 const onFilterChange = () => {
@@ -192,6 +200,7 @@ defineExpose({
     }
 
     header {
+      
       .form {
         .search input {
           background-color: var(--sidebar-search-bg-color);

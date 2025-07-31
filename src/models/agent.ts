@@ -1,11 +1,12 @@
 
 import { LlmModelOpts, PluginParameter } from 'multi-llm-ts'
-import { AgentType, anyDict, type Agent as AgentBase } from '../types/index'
+import { AgentSource, AgentType, anyDict, type Agent as AgentBase } from '../types/index'
 import { ZodType } from 'zod'
 
 export default class Agent implements AgentBase {
 
   id: string
+  source: AgentSource
   createdAt: number
   updatedAt: number
   name: string
@@ -30,6 +31,7 @@ export default class Agent implements AgentBase {
 
   constructor() {
     this.id = crypto.randomUUID()
+    this.source = 'witsy'
     this.createdAt = Date.now()
     this.updatedAt = Date.now()
     this.name = ''
@@ -58,6 +60,7 @@ export default class Agent implements AgentBase {
   ): Agent {
     const agent = new Agent()
     agent.id = obj.id || crypto.randomUUID()
+    agent.source = obj.source || 'witsy'
     agent.createdAt = obj.createdAt ?? Date.now()
     agent.updatedAt = obj.updatedAt ?? Date.now()
     agent.name = obj.name

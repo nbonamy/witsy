@@ -1,15 +1,17 @@
 <template>
   <div class="chat split-pane">
-    <ChatSidebar :chat="assistant.chat" ref="sidebar" />
-    <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" @prompt="onSendPrompt" @stop="onStopGeneration" />
+    <ChatSidebar :chat="assistant.chat" @new-chat="onNewChat" @run-agent="onRunAgent" ref="sidebar" />
+    <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" />
     <ChatEditor :chat="assistant.chat" :dialog-title="chatEditorTitle" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
+    <PromptBuilder :title="agent?.name ?? ''" ref="builder" />
+    <AgentPicker ref="picker" />
   </div>
 </template>
 
 <script setup lang="ts">
 
 import { LlmChunkContent } from 'multi-llm-ts'
-import { strDict } from '../types'
+import { strDict, Agent } from '../types'
 import { MenuBarMode } from '../components/MenuBar.vue'
 import { ref, onMounted, nextTick, watch } from 'vue'
 import { store } from '../services/store'
@@ -20,9 +22,11 @@ import Dialog from '../composables/dialog'
 import useTipsManager from '../composables/tips_manager'
 import ChatSidebar from '../components/ChatSidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
+import PromptBuilder from '../components/PromptBuilder.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
+import AgentPicker from './AgentPicker.vue'
 import Assistant, { GenerationEvent } from '../services/assistant'
-import A2AAssistant from '../services/a2a-assistant'
+import AgentRunner from '../services/runner'
 import Message from '../models/message'
 import Chat from '../models/chat'
 import LlmFactory from '../llms/llm'
@@ -42,6 +46,9 @@ const sidebar= ref<typeof ChatSidebar>(null)
 const chatEditorTitle = ref('')
 const chatEditorConfirmButtonText = ref('common.save')
 const chatEditorCallback= ref<ChatEditorCallback>(() => {})
+const builder = ref<typeof PromptBuilder>(null)
+const picker = ref<typeof AgentPicker>(null)
+const agent = ref<Agent|null>(null)
 
 const props = defineProps({
   extra: Object
@@ -442,7 +449,7 @@ const onDeleteFolder = async (folderId: string) => {
 const onSendPrompt = async (params: SendPromptParams) => {
 
   // deconstruct params
-  const { instructions, prompt, attachments, docrepo, expert, deepResearch, a2a } = params
+  const { instructions, prompt, attachments, docrepo, expert, deepResearch } = params
 
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
@@ -461,11 +468,6 @@ const onSendPrompt = async (params: SendPromptParams) => {
         attachment.url = fileUrl
       }
     }
-  }
-
-  // a2a?
-  if (a2a) {
-    return await onA2APrompt(params)
   }
 
   // we will need that (function because chat may be updated later)
@@ -535,40 +537,68 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
 }
 
-const onA2APrompt = async (params: SendPromptParams) => {
+const onRunAgent = async () => {
 
-  // deconstruct params
-  const { prompt } = params
+  // show agent picker
+  agent.value = await picker.value.pick()
+  if (!agent.value) {
+    return
+  }
 
-  const a2aa = new A2AAssistant(store.config, 'http://localhost:41241')
-  a2aa.setChat(assistant.value.chat)
-  await a2aa.prompt(prompt, (chunk) => {
-  
-    emitEvent('new-llm-chunk', chunk)
-  
-  }, async (event: GenerationEvent) => {
+  builder.value.show(agent.value.prompt, {}, async (prompt: string) => {
 
-    if (event === 'before_generation') {
+    // we need a new chat
+    assistant.value.initChat()
+    updateChatEngineModel()
 
-      // not very nice but gets the message list scrolling
-      emitEvent('new-llm-chunk', {
-        type: 'content',
-        text: '',
-        done: false,
-      } as LlmChunkContent)
+    // now we can run it with streaming
+    const runner = new AgentRunner(store.config, agent.value)
+    await runner.run('manual', prompt, {
+      streaming: true,
+      ephemeral: false,
+      model: assistant.value.chat.model,
+      messages: assistant.value.chat.messages,
+    })
 
-      // make sure the chat is part of history
-      if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
-        assistant.value.chat.initTitle()
-        store.addChat(assistant.value.chat)
-      }
-    }
   })
 
-  // save
-  store.saveHistory()
-
 }
+
+
+// const onA2APrompt = async (params: SendPromptParams) => {
+
+//   // deconstruct params
+//   const { prompt } = params
+
+//   const a2aa = new A2AAssistant(store.config, 'http://localhost:41241')
+//   a2aa.setChat(assistant.value.chat)
+//   await a2aa.prompt(prompt, (chunk) => {
+  
+//     emitEvent('new-llm-chunk', chunk)
+  
+//   }, async (event: GenerationEvent) => {
+
+//     if (event === 'before_generation') {
+
+//       // not very nice but gets the message list scrolling
+//       emitEvent('new-llm-chunk', {
+//         type: 'content',
+//         text: '',
+//         done: false,
+//       } as LlmChunkContent)
+
+//       // make sure the chat is part of history
+//       if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
+//         assistant.value.chat.initTitle()
+//         store.addChat(assistant.value.chat)
+//       }
+//     }
+//   })
+
+//   // save
+//   store.saveHistory()
+
+// }
 
 const onRetryGeneration = async (message: Message) => {
 

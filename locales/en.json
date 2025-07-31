@@ -61,6 +61,7 @@
     "fork": "Fork",
     "high": "High",
     "icon": "Icon",
+    "import": "Import",
     "insert": "Insert",
     "install": "Install",
     "instructions": "Model instructions",
@@ -226,6 +227,11 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "a2a": {
+        "import": {
+          "title": "Enter URL of A2A"
+        }
+      },
       "confirmDelete": "Are you sure you want to delete this agent?",
       "create": "Create Agent",
       "empty": "Unlock the agentic power of Witsy by creating your first agent! Click the robot head to get started.",
@@ -256,6 +262,10 @@
     },
     "name": "@:{'common.name'}",
     "nextRun": "Scheduled on",
+    "picker": {
+      "noAgents": "No agents available",
+      "title": "Select agent to run"
+    },
     "prompt": "Default Prompt",
     "run": {
       "confirmDelete": "Are you sure you want to delete this run?",
@@ -1840,6 +1850,9 @@
     }
   },
   "prompt": {
+    "agent": {
+      "tooltip": "Run an agent"
+    },
     "attachment": {
       "emptyError": {
         "text": "Please try again with another file.",
@@ -1987,7 +2000,7 @@
       "export": "Export",
       "exportError": "Failed to export commands file",
       "exportSuccess": "Commands file exported successfully",
-      "import": "Import",
+      "import": "@:{'common.import'}",
       "importError": "Failed to import commands file",
       "importSuccess": "Commands file imported successfully",
       "new": "New",
@@ -2096,7 +2109,7 @@
       "export": "Export",
       "exportError": "Failed to export experts file",
       "exportSuccess": "Experts file exported successfully",
-      "import": "Import",
+      "import": "@:{'common.import'}",
       "importError": "Failed to import experts file",
       "importSuccess": "Experts file imported successfully",
       "new": "New",

@@ -8,7 +8,12 @@
           <BIconPlusLg 
             class="icon create" 
             v-tooltip="{ text: t('agent.help.create'), position: 'bottom-left' }" 
-            @click.prevent="$emit('create')" 
+            @click="emit('create')" 
+          />
+          <LogoA2A
+            class="icon a2a"
+            v-tooltip="{ text: 'A2A Integration', position: 'bottom-left' }"
+            @click="emit('importA2A')"
           />
         </div>
         <div class="panel-body" v-if="agents.length">
@@ -53,11 +58,13 @@
 
 import { Agent } from '../types/index'
 import { computed, PropType } from 'vue'
+import { store } from '../services/store'
 import { t } from '../services/i18n'
+import LogoA2A from '../../assets/a2a.svg?component'
 
 let type: string = ''
 
-const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete']) 
+const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'importA2A']) 
 
 const runnableAgents = computed(() => {
   return props.agents.filter(agent => agent.type === 'runnable')
@@ -81,6 +88,14 @@ const props = defineProps({
   display: flex;
   flex-direction: column;
   gap: 2rem;
+
+  .panel-header {
+    .a2a {
+      position: relative;
+      transform: scaleY(110%);
+      top: 1.5px;
+    }
+  }
 
   .agents {
     .create {

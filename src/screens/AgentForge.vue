@@ -17,7 +17,7 @@
         {{ t('agent.forge.empty') }}
       </main>
       <main class="sliding-root" :class="{ visible: mode === 'list' }" v-else>
-        <List :agents="store.agents" @create="onCreate" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
+        <List :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A"  @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
       </main>
       <main class="sliding-pane" :class="{ visible: mode !== 'list' }" @transitionend="onTransitionEnd">
         <Editor :style="{ display: isPaneVisible('create') || isPaneVisible('edit') ? 'flex' : 'none' }" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
@@ -32,6 +32,7 @@
 import { ref, onMounted } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
+import A2AClient from '../services/a2a-client'
 import Dialog from '../composables/dialog'
 import PromptBuilder from '../components/PromptBuilder.vue'
 import List from '../agent/List.vue'
@@ -81,11 +82,27 @@ const onCreate = () => {
   selected.value = new Agent()
 }
 
+const onImportA2A = async () => {
+  const { value: url } = await Dialog.show({
+    title: t('agent.forge.a2a.import.title'),
+    input: 'text',
+    inputValue: 'http://localhost:41241',
+    confirmButtonText: t('common.import'),
+    showCancelButton: true,
+  })
+  if (url) {
+    const client = new A2AClient(url)
+    const agent = await client.getAgent()
+    window.api.agents.save(agent)
+    editAgent(agent)
+  }
+}
+
 const closeCreate = () => {
   selectAgent(null)
 }
 
-const onSaved = async (agent: Agent) => {
+const onSaved = async () => {
   store.loadAgents()
   selectAgent(null)
 }
@@ -105,9 +122,11 @@ const editAgent = (agent: Agent) => {
 const runAgent = (agent: Agent, opts?: Record<string, string>) => {
   running.value = agent
   builder.value.show(agent.prompt, opts || {}, async (prompt: string) => {
+    
     const runner = new AgentRunner(store.config, agent)
     await runner.run('manual', prompt)
     running.value = null
+
   })
 }
 
