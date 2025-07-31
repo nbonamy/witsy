@@ -27,19 +27,26 @@ export default class A2AClient {
     this.baseUrl = baseUrl
   }
 
-  async getAgent(): Promise<Agent> {
+  async getAgent(): Promise<Agent|null> {
 
-    const response = await fetch(`${this.baseUrl}/.well-known/agent.json`)
-    const agent = await response.json()
+    try {
+    
+      const response = await fetch(`${this.baseUrl}/.well-known/agent.json`)
+      const agent = await response.json()
 
-    return Agent.fromJson({
-      source: 'a2a',
-      name: agent.name,
-      description: agent.description,
-      instructions: this.baseUrl,
-      tools: [],
-      agents: [],
-    })
+      return Agent.fromJson({
+        source: 'a2a',
+        name: agent.name,
+        description: agent.description,
+        instructions: this.baseUrl,
+        tools: [],
+        agents: [],
+      })
+
+    } catch (error) {
+      console.error(`Error fetching agent definition from A2A client:`, error)
+      return null
+    }
 
   }
 

@@ -150,6 +150,15 @@ const Dialog = {
     return Swal.fire(opts)
   },
 
+  waitUntilClosed: async (): Promise<void> => {
+    while (true) {
+      if (!Swal.isVisible()) {
+        break
+      }
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+  }
+
 }
 
 export default Dialog

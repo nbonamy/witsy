@@ -229,6 +229,10 @@
     "forge": {
       "a2a": {
         "import": {
+          "error": {
+            "text": "请检查URL，并确保A2A服务器正在运行。",
+            "title": "导入A2A时出错"
+          },
           "title": "输入 A2A 的 URL"
         }
       },
