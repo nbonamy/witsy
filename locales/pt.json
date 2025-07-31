@@ -61,6 +61,7 @@
     "fork": "Fork",
     "high": "Alto",
     "icon": "Ícone",
+    "import": "Importar",
     "insert": "Inserir",
     "install": "Instalar",
     "instructions": "Instruções do modelo",
@@ -226,6 +227,11 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "a2a": {
+        "import": {
+          "title": "Digite a URL do A2A"
+        }
+      },
       "confirmDelete": "Tem certeza de que deseja excluir este agente?",
       "create": "Criar Agente",
       "empty": "Selecione um agente existente ou crie um novo.",
@@ -256,6 +262,10 @@
     },
     "name": "@:{'common.name'}",
     "nextRun": "Agendado para",
+    "picker": {
+      "noAgents": "Nenhum agente disponível",
+      "title": "Selecione o agente para executar"
+    },
     "prompt": "Prompt Padrão",
     "run": {
       "confirmDelete": "Tem certeza de que deseja deletar esta execução?",
@@ -266,6 +276,7 @@
       "notCompleted": "Em progresso…",
       "output": "Saída",
       "prompt": "@:{'common.prompt'}",
+      "selectRun": "Selecione uma execução para ver detalhes",
       "status": "Status",
       "title": "Execução do Agente",
       "trigger": "Acionador",
@@ -1987,7 +1998,7 @@
       "export": "Exportar",
       "exportError": "Falha ao exportar arquivo de comandos",
       "exportSuccess": "Arquivo de comandos exportado com sucesso",
-      "import": "Importar",
+      "import": "@:{'common.import'}",
       "importError": "Falha ao importar arquivo de comandos",
       "importSuccess": "Arquivo de comandos importado com sucesso",
       "new": "Novo",
@@ -2096,7 +2107,7 @@
       "export": "Exportar",
       "exportError": "Falha ao exportar arquivo de especialistas",
       "exportSuccess": "Arquivo de especialistas exportado com sucesso",
-      "import": "Importar",
+      "import": "@:{'common.import'}",
       "importError": "Falha ao importar arquivo de especialistas",
       "importSuccess": "Arquivo de especialistas importado com sucesso",
       "new": "Novo",

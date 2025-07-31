@@ -276,6 +276,7 @@
       "notCompleted": "In progress…",
       "output": "Output",
       "prompt": "@:{'common.prompt'}",
+      "selectRun": "Select a run to view details",
       "status": "Status",
       "title": "Agent Run",
       "trigger": "Trigger",
@@ -1850,9 +1851,6 @@
     }
   },
   "prompt": {
-    "agent": {
-      "tooltip": "Run an agent"
-    },
     "attachment": {
       "emptyError": {
         "text": "Please try again with another file.",

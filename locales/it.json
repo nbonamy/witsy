@@ -61,6 +61,7 @@
     "fork": "Fork",
     "high": "Alto",
     "icon": "Icona",
+    "import": "Importa",
     "insert": "Inserisci",
     "install": "Installa",
     "instructions": "Istruzioni del modello",
@@ -207,6 +208,11 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "a2a": {
+        "import": {
+          "title": "Inserisci l'URL di A2A"
+        }
+      },
       "confirmDelete": "Sei sicuro di voler eliminare questo agente?",
       "create": "Crea agente",
       "empty": "Seleziona un agente esistente o creane uno nuovo.",
@@ -237,6 +243,10 @@
     },
     "name": "@:{'common.name'}",
     "nextRun": "Programmato per",
+    "picker": {
+      "noAgents": "Nessun agente disponibile",
+      "title": "Seleziona l'agente da eseguire"
+    },
     "prompt": "Prompt predefinito",
     "run": {
       "confirmDelete": "Sei sicuro di voler eliminare questa esecuzione?",
@@ -247,6 +257,7 @@
       "notCompleted": "In corso…",
       "output": "Output",
       "prompt": "@:{'common.prompt'}",
+      "selectRun": "Seleziona un'esecuzione per visualizzare i dettagli",
       "status": "Stato",
       "title": "Esecuzione Agente",
       "trigger": "Trigger",
@@ -1965,7 +1976,7 @@
       "export": "Esporta",
       "exportError": "Errore durante l'esportazione del file dei comandi",
       "exportSuccess": "File dei comandi esportato con successo",
-      "import": "Importa",
+      "import": "@:{'common.import'}",
       "importError": "Errore durante l'importazione del file dei comandi",
       "importSuccess": "File dei comandi importato con successo",
       "new": "Nuovo",
@@ -2074,7 +2085,7 @@
       "export": "Esporta",
       "exportError": "Errore durante l'esportazione del file esperti",
       "exportSuccess": "File esperti esportato con successo",
-      "import": "Importa",
+      "import": "@:{'common.import'}",
       "importError": "Errore durante l'importazione del file esperti",
       "importSuccess": "File esperti importato con successo",
       "new": "Nuovo",

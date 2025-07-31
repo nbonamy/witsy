@@ -61,6 +61,7 @@
     "fork": "Bifurcar",
     "high": "Alto",
     "icon": "Ícono",
+    "import": "Importar",
     "insert": "Insertar",
     "install": "Instalar",
     "instructions": "Instrucciones del modelo",
@@ -207,6 +208,11 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "a2a": {
+        "import": {
+          "title": "Ingrese la URL de A2A"
+        }
+      },
       "confirmDelete": "¿Estás seguro de que quieres eliminar este agente?",
       "create": "Crear Agente",
       "empty": "Selecciona un agente existente o crea uno nuevo.",
@@ -237,6 +243,10 @@
     },
     "name": "@:{'common.name'}",
     "nextRun": "Programado para",
+    "picker": {
+      "noAgents": "No hay agentes disponibles",
+      "title": "Seleccione un agente para ejecutar"
+    },
     "prompt": "Mensaje Predeterminado",
     "run": {
       "confirmDelete": "¿Está seguro de que desea eliminar esta ejecución?",
@@ -247,6 +257,7 @@
       "notCompleted": "En progreso…",
       "output": "Salida",
       "prompt": "@:{'common.prompt'}",
+      "selectRun": "Seleccione una ejecución para ver detalles",
       "status": "Estado",
       "title": "Ejecución del Agente",
       "trigger": "Disparador",
@@ -1965,7 +1976,7 @@
       "export": "Exportar",
       "exportError": "Error al exportar el archivo de comandos",
       "exportSuccess": "Archivo de comandos exportado con éxito",
-      "import": "Importar",
+      "import": "@:{'common.import'}",
       "importError": "Error al importar el archivo de comandos",
       "importSuccess": "Archivo de comandos importado con éxito",
       "new": "Nuevo",
@@ -2074,7 +2085,7 @@
       "export": "Exportar",
       "exportError": "Error al exportar el archivo de expertos",
       "exportSuccess": "Archivo de expertos exportado con éxito",
-      "import": "Importar",
+      "import": "@:{'common.import'}",
       "importError": "Error al importar el archivo de expertos",
       "importSuccess": "Archivo de expertos importado con éxito",
       "new": "Nuevo",
