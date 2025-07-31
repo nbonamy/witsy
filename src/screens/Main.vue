@@ -64,9 +64,10 @@ onMounted(() => {
     processQueryParams(props.extra)
   }
 
-  // new chat
-  onEvent('new-chat', () => {
-    onMode('chat')
+  // internal messages
+  onEvent('new-chat', () => onMode('chat'))
+  onEvent('set-main-window-mode', (next: MenuBarMode) => {
+    onMode(next)
   })
 
   // dictation
@@ -120,7 +121,7 @@ const onMode = async (next: MenuBarMode) => {
 
   // for menu update
   if (mode.value !== 'computer-use' && mode.value !== 'scratchpad' && mode.value !== 'debug') {
-    window.api.main.setMode(mode.value)
+    window.api.main.updateMode(mode.value)
   }
 
 }

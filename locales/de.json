@@ -163,7 +163,7 @@
     "create": {
       "agents": {
         "help": "Agenten können Aufgaben an andere Agenten delegieren. Wählen Sie einen oder mehrere Agenten aus, um bestimmte Aufgaben zu übernehmen.",
-        "title": "Unterstützende Agenten"
+        "title": "Beauftragte Agenten"
       },
       "goal": {
         "title": "Agentenziel"
@@ -176,7 +176,8 @@
           "prompt": "Prompt-Vorlage, die zur Ausführung des Agenten verwendet wird. Sie können \"Variablen\" einfügen, die durch die vom Benutzer bereitgestellten Werte ersetzt werden, wenn der Agent ausgeführt wird. Verwenden Sie das Format {'{'}{'{'}name:Beschreibung:Wert{'}'}{'}'}, um eine Variable zu definieren (die Beschreibung hilft dem Benutzer bei der Eingabe eines Wertes). Sowohl die Beschreibung als auch der Standardwert sind optional."
         },
         "promptInputs": "Erkannte Variablen",
-        "title": "Allgemeine Informationen"
+        "title": "Allgemeine Informationen",
+        "type": "Ausführungsmodell"
       },
       "invocation": {
         "title": "Agenten-Auslöser"
@@ -249,6 +250,8 @@
     "nextRun": "Geplant für",
     "picker": {
       "noAgents": "Keine Agenten verfügbar",
+      "noAgentsText": "Möchten Sie jetzt einen erstellen?",
+      "noAgentsTitle": "Sie haben noch keine ausführbaren Agenten erstellt",
       "title": "Agenten zum Ausführen auswählen"
     },
     "prompt": "Standard-Prompt",
@@ -279,6 +282,10 @@
       "schedule": "⏰ Zeitplan",
       "webhook": "🌐 Webhook-URL",
       "workflow": "⚙️ Arbeitsablauf"
+    },
+    "type": {
+      "runnable": "Vom Benutzer ausführbar",
+      "support": "Support-Agent"
     },
     "view": {
       "filter": {

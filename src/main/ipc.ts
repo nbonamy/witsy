@@ -55,7 +55,7 @@ export const installIpc = (
   quitApp: () => void,
 ): void => {
 
-  ipcMain.on(IPC.MAIN_WINDOW.SET_MODE, (event, mode) => {
+  ipcMain.on(IPC.MAIN_WINDOW.UPDATE_MODE, (event, mode) => {
     window.setMainWindowMode(mode);
     installMenu();
   });

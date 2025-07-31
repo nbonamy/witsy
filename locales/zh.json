@@ -182,7 +182,7 @@
     "create": {
       "agents": {
         "help": "代理可以将任务委托给其他代理。请选择一个或多个代理处理特定任务。",
-        "title": "支持代理"
+        "title": "代理代理"
       },
       "goal": {
         "title": "代理目标"
@@ -195,7 +195,8 @@
           "prompt": "执行代理时使用的提示模板。您可以包含“变量”，这些变量将在执行代理时被替换为用户提供的值。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示用户输入值时提供指导）。描述和默认值都是可选的。"
         },
         "promptInputs": "检测到的变量",
-        "title": "基本信息"
+        "title": "基本信息",
+        "type": "执行模型"
       },
       "invocation": {
         "title": "代理触发器"
@@ -268,6 +269,8 @@
     "nextRun": "计划执行于",
     "picker": {
       "noAgents": "没有可用的代理",
+      "noAgentsText": "您想现在创建一个吗？",
+      "noAgentsTitle": "您还没有创建任何可执行的代理",
       "title": "选择要运行的代理"
     },
     "prompt": "默认提示",
@@ -298,6 +301,10 @@
       "schedule": "⏰ 计划",
       "webhook": "🌐 Webhook URL",
       "workflow": "⚙️ 工作流"
+    },
+    "type": {
+      "runnable": "用户可执行",
+      "support": "支持代理"
     },
     "view": {
       "filter": {

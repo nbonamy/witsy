@@ -67,11 +67,11 @@ let type: string = ''
 const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'importA2A']) 
 
 const runnableAgents = computed(() => {
-  return props.agents.filter(agent => agent.type === 'runnable')
+  return props.agents.filter(agent => agent.type === 'runnable').sort((a, b) => b.updatedAt - a.updatedAt)
 })
 
 const supportAgents = computed(() => {
-  return props.agents.filter(agent => agent.type === 'support')
+  return props.agents.filter(agent => agent.type === 'support').sort((a, b) => b.updatedAt - a.updatedAt)
 })
 
 const props = defineProps({

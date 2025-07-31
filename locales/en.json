@@ -182,7 +182,7 @@
     "create": {
       "agents": {
         "help": "Agents can delegate tasks to other agents. Select one or more agents to handle specific tasks.",
-        "title": "Support Agents"
+        "title": "Delegate Agents"
       },
       "goal": {
         "title": "Agent Goal"
@@ -195,7 +195,8 @@
           "prompt": "Prompt template that will be used to execute the agent. You can include \"variables\" that will be substituted with the values provided by the user when the agent is executed. Use the format {'{'}{'{'}name:description:value{'}'}{'}'} to define a variable (the description will guide the user when prompted for a value). Both the description and the default value are optional."
         },
         "promptInputs": "Detected Variables",
-        "title": "General Information"
+        "title": "General Information",
+        "type": "Execution Model"
       },
       "invocation": {
         "title": "Agent Triggers"
@@ -267,7 +268,8 @@
     "name": "@:{'common.name'}",
     "nextRun": "Scheduled on",
     "picker": {
-      "noAgents": "No agents available",
+      "noAgentsText": "Do you want to create one now?",
+      "noAgentsTitle": "You haven't created any executable agents yet",
       "title": "Select agent to run"
     },
     "prompt": "Default Prompt",
@@ -298,6 +300,10 @@
       "schedule": "⏰ Schedule",
       "webhook": "🌐 Webhook URL",
       "workflow": "⚙️ Workflow"
+    },
+    "type": {
+      "runnable": "User executable",
+      "support": "Support agent"
     },
     "view": {
       "filter": {

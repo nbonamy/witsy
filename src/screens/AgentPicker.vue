@@ -15,9 +15,6 @@
             <div class="agent-description">{{ agent.description }}</div>
           </div>
         </div>
-        <div v-if="!runnableAgents.length" class="no-agents">
-          {{ t('agent.picker.noAgents') }}
-        </div>
       </div>
     </template>
     <template #footer>
@@ -34,8 +31,12 @@ import { ref, computed } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Agent } from '../types/index'
+import Dialog from '../composables/dialog'
 import ModalDialog from '../components/ModalDialog.vue'
 import LogoA2A from '../../assets/a2a.svg?component'
+
+import useEventBus from '../composables/event_bus'
+const { emitEvent } = useEventBus()
 
 const dialog = ref(null)
 let resolveCallback: ((agent: Agent | null) => void) | null = null
@@ -66,6 +67,22 @@ const onCancel = () => {
 
 defineExpose({
   pick: (): Promise<Agent | null> => {
+
+    if (runnableAgents.value.length === 0) {
+      Dialog.show({
+        title: t('agent.picker.noAgentsTitle'),
+        text: t('agent.picker.noAgentsText'),
+        confirmButtonText: t('common.yes'),
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          emitEvent('set-main-window-mode', 'agents')
+        }
+      })
+      return Promise.resolve(null)
+    }
+
+    // show the dialog
     return new Promise((resolve) => {
       resolveCallback = resolve
       dialog.value.show()

@@ -75,6 +75,13 @@
               <div class="help">{{ t('agent.create.information.help.description') }}</div>
               <textarea v-model="agent.description" name="description" required></textarea>
             </div>
+            <div class="form-field">
+              <label for="type">{{ t('agent.create.information.type') }}</label>
+              <select v-model="agent.type" name="type">
+                <option value="runnable">{{ t('agent.type.runnable') }}</option>
+                <option value="support">{{ t('agent.type.support') }}</option>
+              </select>
+            </div>
           </template>
         </WizardStep>
 
@@ -495,7 +502,7 @@ onMounted(async () => {
     allToolsAllowed.value = (agent.value.tools === null)
     await toolTable.value?.initTools()
     currentStep.value = stepIndex(kStepGeneral)
-    completedStep.value = props.mode === 'edit' ? steps.length - 1 : -1
+    completedStep.value = props.mode === 'edit' ? steps().length - 1 : -1
   }, { deep: true, immediate: true })
 })
 
