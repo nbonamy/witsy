@@ -15,7 +15,6 @@ import EngineModelPicker from '../../src/screens/EngineModelPicker.vue'
 import LlmManager from '../../src/llms/manager'
 import { defaultCapabilities } from 'multi-llm-ts'
 
-// mock llm
 vi.mock('../../src/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
