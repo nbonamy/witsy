@@ -52,11 +52,6 @@
         class="icon research" :class="{ active: deepResearchActive }"
         @click="onDeepResearch"
       />
-      <LogoA2A v-if="store.config.features?.a2a"
-        v-tooltip="{ text: 'A2A Integration', position: 'top' }"
-        class="icon research" :class="{ active: a2aActive }"
-        @click="onA2A"
-      />
       <slot name="actions" />
     </div>
     <slot name="between" />
@@ -85,7 +80,6 @@ import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audi
 import ContextMenu, { MenuPosition, type MenuAction } from './ContextMenu.vue'
 import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
-import LogoA2A from '../../assets/a2a.svg?component'
 import ImageUtils from '../composables/image_utils'
 import Waveform from '../components/Waveform.vue'
 import AttachmentView from './Attachment.vue'
@@ -102,7 +96,10 @@ export type SendPromptParams = {
   docrepo?: string,
   expert?: Expert,
   deepResearch?: boolean
-  a2a?: boolean
+}
+
+export type RunAgentParams = {
+  agentId: string,
 }
 
 export type HistoryProvider = (event: KeyboardEvent) => string[]
@@ -196,7 +193,6 @@ const showActiveExpert = ref(false)
 const showCommands = ref(false)
 const showConversationMenu = ref(false)
 const deepResearchActive = ref(false)
-const a2aActive = ref(false)
 const hasDictation = ref(false)
 const dictating = ref(false)
 const processing = ref(false)
@@ -204,7 +200,7 @@ const isDragOver = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
-const emit = defineEmits(['prompt', 'stop'])
+const emit = defineEmits(['prompt', 'run-agent','stop'])
 
 const engine = () => props.chat?.engine || llmManager.getChatEngineModel().engine
 const model = () => props.chat?.model || llmManager.getChatEngineModel().model
@@ -351,10 +347,6 @@ const setDeepResearch = (active: boolean) => {
   deepResearchActive.value = active
 }
 
-const onA2A = () => {
-  a2aActive.value = !a2aActive.value
-}
-
 const initDictation = async () => {
 
   // needed?
@@ -468,7 +460,6 @@ const onSendPrompt = () => {
       docrepo: docrepo.value,
       expert: expert.value,
       deepResearch: deepResearchActive.value,
-      a2a: a2aActive.value
     } as SendPromptParams)
     attachments.value = []
   })

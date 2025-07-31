@@ -3,6 +3,7 @@
     <header :class="{ 'is-left-most': isLeftMost }">
       <IconSideBar class="icon toggle-sidebar" @click="toggleSideBar" />
       <IconNewChat class="icon new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat" />
+      <IconRunAgent class="icon scale120 run-agent" :class="{ hidden: !isLeftMost }" @click="onRunAgent" />
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
       <div class="spacer"></div>
       <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" />
@@ -18,7 +19,7 @@
             <BIconXLg />
           </div>
         </div>
-        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @prompt="onSendPrompt" @stop="onStopGeneration" ref="prompt" />
+        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" ref="prompt" />
       </div>
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
     </main>
@@ -35,12 +36,13 @@ import { t } from '../services/i18n'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
 import EmptyChat from './EmptyChat.vue'
-import Prompt, { SendPromptParams } from './Prompt.vue'
+import Prompt, { RunAgentParams, SendPromptParams } from './Prompt.vue'
 import ModelSettings from '../screens/ModelSettings.vue'
 import Chat from '../models/chat'
 import html2canvas from 'html2canvas'
 import html2pdf from 'html2pdf.js'
 import IconSideBar from '../../assets/sidebar.svg?component'
+import IconRunAgent from '../../assets/robot_run.svg?component'
 import IconNewChat from './IconNewChat.vue'
 import IconMenu from './IconMenu.vue'
 import Dialog from '../composables/dialog'
@@ -115,7 +117,7 @@ const showChatMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
-const emit = defineEmits(['prompt', 'stop'])
+const emit = defineEmits(['prompt', 'run-agent', 'stop'])
 
 onMounted(() => {
   onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
@@ -123,6 +125,10 @@ onMounted(() => {
 
 const onSendPrompt = (payload: SendPromptParams) => {
   emit('prompt', payload)
+}
+
+const onRunAgent = () => {
+  emit('run-agent')
 }
 
 const onStopGeneration = () => {
@@ -366,7 +372,7 @@ defineExpose({
         transform: scaleY(120%);
       }
 
-      .new-chat {
+      .icon {
         &.hidden {
           display: none;
         }

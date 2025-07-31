@@ -30,7 +30,7 @@ export default class extends Plugin {
 
   constructor(
     config: Configuration, agent: Agent,
-    engine: string, model: string, opts?: Omit<AgentPluginOpts, 'ephemeral'|'engine'|'model'>,
+    engine: string, model: string, opts?: Omit<AgentPluginOpts, 'engine'|'model'>,
     storage?: AgentStorage, 
   ) {
     super(config)
@@ -39,7 +39,7 @@ export default class extends Plugin {
     this.model = model
     this.storage = storage
     this.opts = {
-      ephemeral: false,
+      ephemeral: opts?.ephemeral ?? false,
       engine: this.engine,
       model: this.model,
       storeData: true,

@@ -59,7 +59,8 @@ const onCancel = () => {
 }
 
 const onSave = () => {
-  const result = replacePromptInputs(prompt.value, values.value)
+  const result = prompt.value.length ? replacePromptInputs(prompt.value, values.value) : values.value.prompt || ''
+  if (!result.trim().length) return
   callback.value(result)
   close()
 }

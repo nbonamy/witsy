@@ -1,23 +1,26 @@
 
 import { Configuration } from 'types/config'
 import { AgentRun, AgentRunTrigger } from '../types/index'
-import { LlmChunk, MultiToolPlugin } from 'multi-llm-ts'
+import { LlmChunk, LlmChunkContent, MultiToolPlugin } from 'multi-llm-ts'
 import { getLlmLocale, setLlmLocale } from './i18n'
 import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback } from './generator'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { availablePlugins } from '../plugins/plugins'
 import Agent from '../models/agent'
 import Message from '../models/message'
+import Attachment from '../models/attachment'
 import AgentPlugin from '../plugins/agent'
+import A2AClient from './a2a-client'
 
 export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title'
 
 export type GenerationCallback = (event: GenerationEvent) => void
 
 export interface RunnerCompletionOpts extends GenerationOpts {
-  ephemeral: boolean
+  ephemeral?: boolean
   engine?: string
   agents?: Agent[]
+  messages?: Message[]
   callback?: LlmChunkCallback
 }
 
@@ -51,7 +54,7 @@ export default class extends Generator {
       trigger: trigger,
       status: 'running',
       prompt: prompt,
-      messages: [],
+      messages: opts?.messages || [],
       toolCalls: [],
     }
 
@@ -59,7 +62,7 @@ export default class extends Generator {
 
       // save it
       if (!opts?.ephemeral) {
-        window.api.agents.saveRun(run)
+        this.saveRun(run)
       }
       
       // set llm locale
@@ -86,7 +89,7 @@ export default class extends Generator {
       run.messages.push(system)
 
       // disable streaming
-      //opts.streaming = opts.streaming ?? (this.agent.disableStreaming !== true)
+      opts.streaming = opts.streaming ?? (this.agent.disableStreaming !== true)
 
       // we need a llm
       opts.engine = this.agent.engine || opts.engine
@@ -162,16 +165,25 @@ export default class extends Generator {
 
       // save again
       if (!opts?.ephemeral) {
-        window.api.agents.saveRun(run)
+        this.saveRun(run)
       }
 
-      // generate text
-      let rc: GenerationResult = await this._prompt(run, opts)
+      // now depends on the type of agent
+      if (this.agent.source === 'a2a') {
 
-      // check if streaming is not supported
-      if (rc === 'streaming_not_supported') {
-        this.agent.disableStreaming = true
-        rc = await this._prompt(run, opts)
+        await this.runA2A(run, opts)
+
+      } else {
+
+        // generate text
+        let rc: GenerationResult = await this.prompt(run, opts)
+
+        // check if streaming is not supported
+        if (rc === 'streaming_not_supported') {
+          this.agent.disableStreaming = true
+          rc = await this.prompt(run, opts)
+        }
+
       }
 
       // restore llm locale
@@ -184,7 +196,7 @@ export default class extends Generator {
       run.status = 'success'
       run.updatedAt = Date.now()
       if (!opts?.ephemeral) {
-        window.api.agents.saveRun(run)
+        this.saveRun(run)
       }
 
     } catch (error) {
@@ -193,7 +205,7 @@ export default class extends Generator {
       run.error = error.message
       run.updatedAt = Date.now()
       if (!opts?.ephemeral) {
-        window.api.agents.saveRun(run)
+        this.saveRun(run)
       }
 
     }
@@ -203,7 +215,8 @@ export default class extends Generator {
 
   }
 
-  async _prompt(run: AgentRun, opts: RunnerCompletionOpts): Promise<GenerationResult> {
+  private async prompt(run: AgentRun, opts: RunnerCompletionOpts): Promise<GenerationResult> {
+
     return await this.generate(this.llm, run.messages, {
       ...opts,
       ...this.agent.modelOpts,
@@ -225,6 +238,62 @@ export default class extends Generator {
         opts.callback(chunk)
       }
 
+    })
+  }
+
+  private async runA2A(run: AgentRun, opts: RunnerCompletionOpts): Promise<void> {
+
+    // init A2A client
+    const client = new A2AClient(this.agent.instructions)
+
+    // now process chunks
+    const prompt = run.messages.find(m => m.role === 'user')?.content || ''
+    for await (const chunk of client.execute(prompt)) {
+
+      // get the current assistant message (last in the array) to ensure reactivity
+      const assistantMessage = run.messages[run.messages.length - 1]
+
+      if (chunk.type === 'content') {
+        
+        assistantMessage.appendText(chunk)
+        opts?.callback?.(chunk)
+      
+      } else if (chunk.type === 'status') {
+
+        // for now emit text status
+        const textChunk: LlmChunkContent = {
+          type: 'content',
+          text: `${chunk.status}\n\n`,
+          done: false,
+        }
+        assistantMessage.appendText(textChunk)
+        opts?.callback?.(textChunk)
+
+      } else if (chunk.type === 'artifact') {
+
+        // debug: emit test
+        const textChunk: LlmChunkContent = {
+          type: 'content',
+          text: `artifact \`${chunk.name}\`:\n\n\`\`\`${chunk.content}\`\`\`\n\n`,
+          done: false,
+        }
+        assistantMessage.appendText(textChunk)
+        opts?.callback?.(textChunk)
+
+        // attach
+        assistantMessage.attach(new Attachment(chunk.content, 'text/plain', chunk.name))
+
+      }
+
+
+    }
+
+  }
+
+  private saveRun(run: AgentRun): void {
+    window.api.agents.saveRun({
+      ...run,
+      messages: run.messages.map(m => JSON.parse(JSON.stringify(m))),
     })
   }
 
