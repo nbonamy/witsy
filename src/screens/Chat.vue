@@ -678,6 +678,7 @@ const onMainViewChanged = (mode: MenuBarMode) => {
 }
 
 defineExpose({
+  newChat: onNewChat,
   startDictation: () => chatArea.value?.startDictation(),
 })
 
