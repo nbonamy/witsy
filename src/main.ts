@@ -74,7 +74,7 @@ const installMenu = () => {
     quit: app.quit,
     checkForUpdates: autoUpdater.check,
     quickPrompt: PromptAnywhere.open,
-    newChat: window.openMainWindow,
+    openMain: window.openMainWindow,
     scratchpad: window.openScratchPad,
     settings: window.openSettingsWindow,
     studio: window.openDesignStudioWindow,

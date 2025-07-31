@@ -80,7 +80,7 @@
     "defaults": []
   },
   "shortcuts": {
-    "chat": {
+    "main": {
       "key": "Space",
       "ctrl": true
     },

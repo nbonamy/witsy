@@ -23,7 +23,7 @@ test('installMenu', () => {
     quit: vi.fn(),
     checkForUpdates: vi.fn(),
     quickPrompt: vi.fn(),
-    newChat: vi.fn(),
+    openMain: vi.fn(),
     scratchpad: vi.fn(),
     settings: vi.fn(),
     studio: vi.fn(),

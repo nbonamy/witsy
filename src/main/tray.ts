@@ -104,8 +104,8 @@ export default class {
     // @ts-expect-error unknown with config.features
     menuItems = menuItems.concat([
       {
-        label: t('tray.menu.newChat'),
-        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat),
+        label: t('tray.menu.mainWindow'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.main),
         click: () => window.openMainWindow({ queryParams: { view: 'chat'} }),
       },
       {

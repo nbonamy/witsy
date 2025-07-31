@@ -116,6 +116,15 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
     }
   }
 
+  // backwards compatibility
+  // @ts-expect-error backwards compatibility
+  if (config.shortcuts.chat) {
+    // @ts-expect-error backwards compatibility
+    config.shortcuts.main = config.shortcuts.chat
+    // @ts-expect-error backwards compatibility
+    delete config.shortcuts.chat
+  }
+
   // nullify defaults
   nullifyDefaults(config)
 

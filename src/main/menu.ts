@@ -1,4 +1,6 @@
+
 import { ShortcutsConfig } from 'types/config'
+import { CreateWindowOpts } from '../types/window'
 import { App, BrowserWindow, Menu, shell } from 'electron'
 import { shortcutAccelerator } from './shortcuts'
 import { loadSettings } from './config'
@@ -10,7 +12,7 @@ export type MenuCallbacks = {
   settings: () => void
   quit: () => void
   quickPrompt: () => void
-  newChat: () => void
+  openMain: (opts?: CreateWindowOpts) => void
   scratchpad: () => void
   studio: () => void
   forge: () => void
@@ -31,10 +33,11 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
 
   // get focused window
   const focusedWindow = BrowserWindow.getFocusedWindow()
+  const isMainFocused = focusedWindow && focusedWindow === window.mainWindow
 
   // dictation
   const hasDictation = focusedWindow && (
-    (focusedWindow === window.mainWindow && window.mainWindowCanDictate()) ||
+    (isMainFocused && window.mainWindowCanDictate()) ||
     focusedWindow === window.promptAnywhereWindow ||
     focusedWindow.title.includes(t('tray.menu.scratchpad'))
   )
@@ -77,15 +80,30 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
     {
       label: t('menu.file.title'),
       submenu: [
+        ...(isMainFocused ? [
+          {
+            label: t('menu.file.newChat'),
+            accelerator: shortcutAccelerator({
+              ctrl: !isMac,
+              meta: isMac,
+              key: 'N'
+            }),
+            click: () => {
+              window.notifyFocusedWindow('new-chat')
+              callbacks.openMain({ queryParams: { view: 'chat' } })
+            },
+          },
+          { type: 'separator' },
+        ] : []),
+        {
+          label: t('menu.file.mainWindow'),
+          accelerator: shortcutAccelerator(shortcuts?.main),
+          click: () => callbacks.openMain()
+        },
         {
           label: t('menu.file.quickPrompt'),
           accelerator: shortcutAccelerator(shortcuts?.prompt),
           click: () => callbacks.quickPrompt()
-        },
-        {
-          label: t('menu.file.newChat'),
-          accelerator: shortcutAccelerator(shortcuts?.chat),
-          click: () => callbacks.newChat()
         },
         {
           label: t('menu.file.scratchpad'),
