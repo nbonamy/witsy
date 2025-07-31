@@ -210,6 +210,10 @@
     "forge": {
       "a2a": {
         "import": {
+          "error": {
+            "text": "Vérifiez l'URL et assurez-vous que le serveur A2A est actif et fonctionne.",
+            "title": "Erreur lors de l'importation A2A"
+          },
           "title": "Entrez l'URL de A2A"
         }
       },

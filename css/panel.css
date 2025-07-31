@@ -32,6 +32,8 @@
       cursor: pointer;
       width: 1.125rem;
       height: 1.125rem;
+      opacity: 0.8;
+      fill: var(--text-color);
     }
 
     .spinner {

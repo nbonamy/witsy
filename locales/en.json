@@ -229,6 +229,10 @@
     "forge": {
       "a2a": {
         "import": {
+          "error": {
+            "text": "Check the URL and ensure the A2A server is up and running.",
+            "title": "Error while importing A2A"
+          },
           "title": "Enter URL of A2A"
         }
       },

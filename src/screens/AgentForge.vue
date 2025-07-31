@@ -83,18 +83,42 @@ const onCreate = () => {
 }
 
 const onImportA2A = async () => {
-  const { value: url } = await Dialog.show({
-    title: t('agent.forge.a2a.import.title'),
-    input: 'text',
-    inputValue: 'http://localhost:41241',
-    confirmButtonText: t('common.import'),
-    showCancelButton: true,
-  })
-  if (url) {
+
+  let url = 'http://localhost:41241'
+
+  while (true) {
+
+    const value = await Dialog.show({
+      title: t('agent.forge.a2a.import.title'),
+      input: 'text',
+      inputValue: url,
+      confirmButtonText: t('common.import'),
+      showCancelButton: true,
+    })
+
+    if (value.isDismissed) {
+      break;
+    }
+
+    await Dialog.waitUntilClosed()
+
+    url = value.value.trim()
     const client = new A2AClient(url)
     const agent = await client.getAgent()
-    window.api.agents.save(agent)
-    editAgent(agent)
+
+    if (agent) {
+      window.api.agents.save(agent)
+      editAgent(agent)
+      break
+    }
+
+    await Dialog.show({
+      title: t('agent.forge.a2a.import.error.title'),
+      text: t('agent.forge.a2a.import.error.text'),
+      confirmButtonText: t('common.ok'),
+    })
+    await Dialog.waitUntilClosed()
+
   }
 }
 
