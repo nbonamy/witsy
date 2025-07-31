@@ -358,6 +358,9 @@
       "makeTemporary": "临时聊天",
       "saveChat": "保存聊天"
     },
+    "agent": {
+      "notFound": "用于生成该消息的代理不再可用。"
+    },
     "editor": {
       "title": "标题",
       "validation": {
@@ -1666,12 +1669,12 @@
       }
     },
     "extendedThinking": "扩展思考",
+    "instructions": "@:{'common.instructions'}",
+    "instructionsPlaceholder": "留空则使用默认说明",
     "locale": "聊天语言",
     "localeDefault": "🤖 默认语言",
     "maxCompletionTokens": "最大完成令牌数",
     "plugins": "插件",
-    "prompt": "提示",
-    "promptPlaceholder": "留空以使用默认提示",
     "reasoningEffort": "推理努力",
     "streaming": "流媒体",
     "temperature": "温度 [0.0 … 2.0]",

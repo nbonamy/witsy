@@ -358,6 +358,9 @@
       "makeTemporary": "Tymczasowy czat",
       "saveChat": "Zapisz czat"
     },
+    "agent": {
+      "notFound": "Agent użyty do wygenerowania tej wiadomości nie jest już dostępny."
+    },
     "editor": {
       "title": "Tytuł",
       "validation": {
@@ -1666,12 +1669,12 @@
       }
     },
     "extendedThinking": "Rozszerzone myślenie",
+    "instructions": "@:{'common.instructions'}",
+    "instructionsPlaceholder": "Pozostaw puste, aby użyć domyślnych poleceń",
     "locale": "Język",
     "localeDefault": "Domyślny",
     "maxCompletionTokens": "Maksymalna liczba tokenów odpowiedzi",
     "plugins": "Wtyczki",
-    "prompt": "Podpowiedź",
-    "promptPlaceholder": "Napisz swoją podpowiedź tutaj...",
     "reasoningEffort": "Wysiłek rozumowania",
     "streaming": "Streaming",
     "temperature": "Temperatura",

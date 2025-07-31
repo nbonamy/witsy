@@ -339,6 +339,9 @@
       "makeTemporary": "Conversation temporaire",
       "saveChat": "Sauvegarder la conversation"
     },
+    "agent": {
+      "notFound": "L'agent utilisé pour générer ce message n'est plus disponible."
+    },
     "editor": {
       "title": "Titre",
       "validation": {
@@ -1647,12 +1650,12 @@
       }
     },
     "extendedThinking": "Réflexion étendue",
+    "instructions": "@:{'common.instructions'}",
+    "instructionsPlaceholder": "Laissez vide pour utiliser les instructions par défaut",
     "locale": "Langue de la conversation",
     "localeDefault": "🤖 Langue par défaut",
     "maxCompletionTokens": "Tokens maximum de complétion",
     "plugins": "Plugins",
-    "prompt": "Prompt",
-    "promptPlaceholder": "Laisser vide pour utiliser le prompt par défault",
     "reasoningEffort": "Effort de raisonnement",
     "streaming": "Streaming",
     "temperature": "Température [0.0 … 2.0]",

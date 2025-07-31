@@ -26,8 +26,8 @@
         <LangSelect name="locale" v-model="locale" default-text="modelSettings.localeDefault" @change="save" />
       </div>
       <div class="form-field">
-        <label>{{ t('modelSettings.prompt') }}</label>
-        <textarea name="instructions" v-model="instructions" :placeholder="t('modelSettings.promptPlaceholder')" rows="4" @change="save"></textarea>
+        <label>{{ t('modelSettings.instructions') }}</label>
+        <textarea name="instructions" v-model="instructions" :placeholder="t('modelSettings.instructionsPlaceholder')" rows="4" @change="save"></textarea>
       </div>
       <div class="form-field" v-if="isReasoningFlagSupported">
         <label>{{ t('modelSettings.extendedThinking') }}</label>

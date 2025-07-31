@@ -358,6 +358,9 @@
       "makeTemporary": "一時チャット",
       "saveChat": "チャットを保存"
     },
+    "agent": {
+      "notFound": "そのメッセージを生成するために使用されたエージェントはもう利用できません。"
+    },
     "editor": {
       "title": "タイトル",
       "validation": {
@@ -1666,12 +1669,12 @@
       }
     },
     "extendedThinking": "拡張思考",
+    "instructions": "@:{'common.instructions'}",
+    "instructionsPlaceholder": "デフォルトの指示を使用するには空欄のままにしてください",
     "locale": "チャット言語",
     "localeDefault": "🤖 デフォルト言語",
     "maxCompletionTokens": "最大完了トークン数",
     "plugins": "プラグイン",
-    "prompt": "プロンプト",
-    "promptPlaceholder": "デフォルトのプロンプトを使用するには空のままにしてください",
     "reasoningEffort": "推論の労力",
     "streaming": "ストリーミング",
     "temperature": "温度 [0.0 … 2.0]",

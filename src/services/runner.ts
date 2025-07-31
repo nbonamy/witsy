@@ -81,9 +81,19 @@ export default class extends Generator {
       }
       opts = {...defaults, ...opts }
 
-      // we need a chat
-      const system: Message = new Message('system', this.getSystemInstructions(this.agent.instructions))
-      run.messages.push(system)
+      // create system message if not exists
+      let prevSystemMessage: string
+      if (run.messages.length === 0) {
+        run.messages.push(new Message('system', ''))
+        if (opts?.chat) {
+          prevSystemMessage = this.getSystemInstructions()
+        }
+      } else {
+        prevSystemMessage = run.messages[0].content
+      }
+
+      // update agent instructions
+      run.messages[0].content = this.getSystemInstructions(this.agent.instructions)
 
       // disable streaming
       opts.streaming = opts.streaming ?? (this.agent.disableStreaming !== true)
@@ -92,6 +102,15 @@ export default class extends Generator {
       opts.engine = this.agent.engine || opts.engine
       opts.model = this.agent.model || this.llmManager.getChatModel(opts.engine, opts.model).id
       this.llm = this.llmManager.igniteEngine(opts.engine)
+
+      // update chat if relevant
+      if (opts?.chat) {
+        // opts.chat.instructions = this.agent.instructions
+        opts.chat.setEngineModel(opts.engine, opts.model)
+        opts.chat.locale = this.agent.locale || opts.chat.locale
+        // opts.chat.tools = this.agent.tools || null
+        opts.chat.modelOpts = this.agent.modelOpts || null
+      }
 
       // make sure llm has latest tools
       this.llm.clearPlugins()
@@ -158,6 +177,7 @@ export default class extends Generator {
       const assistantMessage = new Message('assistant')
       assistantMessage.engine = opts.engine
       assistantMessage.model = opts.model
+      assistantMessage.agentId = this.agent.id
       run.messages.push(assistantMessage)
 
       // callback
@@ -205,6 +225,11 @@ export default class extends Generator {
       run.updatedAt = Date.now()
       if (!opts?.ephemeral) {
         this.saveRun(run)
+      }
+
+      // restore system instructions
+      if (prevSystemMessage) {
+        run.messages[0].content = prevSystemMessage
       }
 
     } catch (error) {

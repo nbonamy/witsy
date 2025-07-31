@@ -12,6 +12,7 @@ export default class Message extends MessageBase implements IMessage {
   createdAt: number
   type: MessageType
   expert?: Expert
+  agentId?: string
   deepResearch?: boolean
   toolCalls?: ToolCall[]
   usage?: LlmUsage
@@ -27,6 +28,7 @@ export default class Message extends MessageBase implements IMessage {
     this.createdAt = Date.now()
     this.type = 'text'
     this.expert = null
+    this.agentId = null
     this.deepResearch = false
     this.toolCalls = []
     this.attachments = []
@@ -53,6 +55,7 @@ export default class Message extends MessageBase implements IMessage {
     message.reasoning = obj.reasoning || null
     message.transient = false
     message.expert = obj.expert ? Expert.fromJson(obj.expert) : null
+    message.agentId = obj.agentId || null
     message.deepResearch = obj.deepResearch || false
     message.toolCalls = obj.toolCalls || obj.toolCall?.calls?.map((tc: any, idx: number) => ({
       ...tc,
@@ -68,10 +71,9 @@ export default class Message extends MessageBase implements IMessage {
   get contentForModel(): string {
     if (this.uiOnly) {
       return null
-    } else if (this.expert == null) {
-      return this.content
     } else {
-      return `${this.expert.prompt}\n${this.content}`
+      const content = this.content.replaceAll(/<tool id="([^"]+)"><\/tool>/g, '')
+      return this.expert?.prompt ? `${this.expert.prompt}\n${content}` : content
     }
   }
 

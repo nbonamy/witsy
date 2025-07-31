@@ -553,35 +553,43 @@ const onRunAgent = async () => {
     assistant.value.initChat()
     updateChatEngineModel()
 
-    // now we can run it with streaming
-    const runner = new AgentRunner(store.config, agent.value)
-    await runner.run('manual', prompt, {
-      streaming: true,
-      ephemeral: false,
-      model: assistant.value.chat.model,
-      chat: assistant.value.chat,
-    }, async (event: GenerationEvent) => {
+    // and run it
+    runAgent(agent.value, prompt)
 
-      if (event === 'before_generation') {
+  })
 
-        // not very nice but gets the message list scrolling
-        emitEvent('new-llm-chunk', {
-          type: 'content',
-          text: '',
-          done: false,
-        } as LlmChunkContent)
+}
 
-        // make sure the chat is part of history
-        if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
-          assistant.value.chat.initTitle()
-          store.addChat(assistant.value.chat)
-        }
+const runAgent = async (agent: Agent, prompt: string) => {
 
-      } else if (event === 'before_title') {
-        store.saveHistory()
+  // now we can run it with streaming
+  const runner = new AgentRunner(store.config, agent)
+  await runner.run('manual', prompt, {
+    streaming: true,
+    ephemeral: false,
+    model: assistant.value.chat.model,
+    chat: assistant.value.chat,
+  }, async (event: GenerationEvent) => {
+
+    if (event === 'before_generation') {
+
+      // not very nice but gets the message list scrolling
+      emitEvent('new-llm-chunk', {
+        type: 'content',
+        text: '',
+        done: false,
+      } as LlmChunkContent)
+
+      // make sure the chat is part of history
+      if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
+        assistant.value.chat.initTitle()
+        store.addChat(assistant.value.chat)
       }
 
-    })
+    } else if (event === 'before_title') {
+      store.saveHistory()
+    }
+
   })
 
 }
@@ -600,15 +608,32 @@ const onRetryGeneration = async (message: Message) => {
   // now pop the last message
   const lastMessage = assistant.value.chat.messages.pop()
 
-  // and retry
-  onSendPrompt({
-    instructions: assistant.value.chat.instructions,
-    prompt: lastMessage.content,
-    attachments: lastMessage.attachments,
-    docrepo: assistant.value.chat.docrepo,
-    expert: lastMessage.expert,
-    deepResearch: lastMessage.deepResearch || false,
-  })
+  // depends if this is an agent response or not
+  if (message.agentId) {
+
+    // make sure the agent still exists
+    const agent = store.agents.find((a) => a.id === message.agentId)
+    if (!agent) {
+      await Dialog.waitUntilClosed()
+      Dialog.alert(t('chat.agent.notFound'))
+      return
+    }
+
+    // now we can run it
+    runAgent(agent, lastMessage.content)
+
+  } else {
+
+    onSendPrompt({
+      instructions: assistant.value.chat.instructions,
+      prompt: lastMessage.content,
+      attachments: lastMessage.attachments,
+      docrepo: assistant.value.chat.docrepo,
+      expert: lastMessage.expert,
+      deepResearch: lastMessage.deepResearch || false,
+    })
+
+  }
 
 }
 

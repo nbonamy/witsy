@@ -163,7 +163,7 @@ export default class extends Plugin {
       if (run.status === 'success') {
 
         // the result
-        const result = run.messages[run.messages.length - 1]?.content || ''
+        const result = run.messages[run.messages.length - 1]?.contentForModel || ''
 
         // if no storage, we return the result directly
         if (!this.storage || !this.opts.storeData) {
