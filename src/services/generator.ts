@@ -31,7 +31,7 @@ export type GenerationResult =
   'streaming_not_supported' |
   'error'
 
-  export default class Generator {
+export default class Generator {
 
   config: Configuration
   stopGeneration: boolean

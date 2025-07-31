@@ -1,7 +1,7 @@
 <template>
   <div class="chat split-pane">
     <ChatSidebar :chat="assistant.chat" @new-chat="onNewChat" @run-agent="onRunAgent" ref="sidebar" />
-    <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" />
+    <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop-generation="onStopGeneration" />
     <ChatEditor :chat="assistant.chat" :dialog-title="chatEditorTitle" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
     <PromptBuilder :title="agent?.name ?? ''" ref="builder" />
     <AgentPicker ref="picker" />
@@ -25,7 +25,7 @@ import ChatArea from '../components/ChatArea.vue'
 import PromptBuilder from '../components/PromptBuilder.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import AgentPicker from './AgentPicker.vue'
-import { GenerationEvent } from '../services/generator'
+import Generator, { GenerationEvent } from '../services/generator'
 import Assistant from '../services/assistant'
 import AgentRunner from '../services/runner'
 import Message from '../models/message'
@@ -54,6 +54,9 @@ const agent = ref<Agent|null>(null)
 const props = defineProps({
   extra: Object
 })
+
+// to stop generation
+let activeGenerator: Generator = assistant.value as unknown as Generator
 
 onMounted(() => {
 
@@ -477,6 +480,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
     return llmManager.isComputerUseModel(assistant.value.chat.engine, assistant.value.chat.model)
   }
 
+  // save it to stop it
+  activeGenerator = assistant.value as unknown as Generator
+
   // prompt
   const rc = await assistant.value.prompt(prompt, {
     model: assistant.value.chat.model,
@@ -564,6 +570,7 @@ const runAgent = async (agent: Agent, prompt: string) => {
 
   // now we can run it with streaming
   const runner = new AgentRunner(store.config, agent)
+  activeGenerator = runner
   await runner.run('manual', prompt, {
     streaming: true,
     ephemeral: false,
@@ -638,7 +645,7 @@ const onRetryGeneration = async (message: Message) => {
 }
 
 const onStopGeneration = async () => {
-  await assistant.value.stop()
+  await activeGenerator?.stop()
 }
 
 const onUpdateAvailable = () => {
