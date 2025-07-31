@@ -21,7 +21,7 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks): void 
   // now register
   console.info('Registering shortcuts')
   registerShortcut('prompt', config.shortcuts.prompt, callbacks.prompt);
-  registerShortcut('chat', config.shortcuts.chat, callbacks.chat);
+  registerShortcut('chat', config.shortcuts.main, callbacks.chat);
   registerShortcut('scratchpad', config.shortcuts.scratchpad, callbacks.scratchpad);
   registerShortcut('command', config.shortcuts.command, callbacks.command);
   registerShortcut('readaloud', config.shortcuts.readaloud, callbacks.readaloud);

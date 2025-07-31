@@ -175,8 +175,8 @@ export type ChatListAppearance = {
 }
 
 export type ShortcutsConfig = {
+  main: Shortcut
   prompt: Shortcut
-  chat: Shortcut
   scratchpad: Shortcut
   command: Shortcut
   readaloud: Shortcut

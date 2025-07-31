@@ -5,12 +5,12 @@
     </header>
     <main>
       <div class="form-field">
-        <label>{{ t('settings.shortcuts.quickPrompt') }}</label>
-        <InputShortcut v-model="prompt" @change="save" />
+        <label>{{ t('settings.shortcuts.mainWindow') }}</label>
+        <InputShortcut v-model="chat" @change="save "/>
       </div>
       <div class="form-field">
-        <label>{{ t('settings.shortcuts.newChat') }}</label>
-        <InputShortcut v-model="chat" @change="save "/>
+        <label>{{ t('settings.shortcuts.quickPrompt') }}</label>
+        <InputShortcut v-model="prompt" @change="save" />
       </div>
       <div class="form-field">
         <label>{{ t('settings.shortcuts.scratchpad') }}</label>
@@ -64,7 +64,7 @@ const studio = ref(null)
 
 const load = () => {
   prompt.value = store.config.shortcuts.prompt
-  chat.value = store.config.shortcuts.chat
+  chat.value = store.config.shortcuts.main
   scratchpad.value = store.config.shortcuts.scratchpad
   command.value = store.config.shortcuts.command
   readaloud.value = store.config.shortcuts.readaloud
@@ -75,7 +75,7 @@ const load = () => {
 
 const save = () => {
   store.config.shortcuts.prompt = prompt.value
-  store.config.shortcuts.chat = chat.value
+  store.config.shortcuts.main = chat.value
   store.config.shortcuts.scratchpad = scratchpad.value
   store.config.shortcuts.command = command.value
   store.config.shortcuts.readaloud = readaloud.value
