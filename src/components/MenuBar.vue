@@ -88,7 +88,7 @@ const hasComputerUse = computed(() => {
   return store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
 })
 
-const emit = defineEmits(['change', 'run-onboarding'])
+const emit = defineEmits(['change', 'new-chat', 'run-onboarding'])
 
 const mode = ref('chat')
 
@@ -119,6 +119,7 @@ const onAppMenu = (event: Event) => {
       { 
         label: t('menu.file.title'),
         children: [
+          { label: t('menu.file.newChat'), divided: 'down', onClick: () => emit('new-chat') },
           { label: t('menu.app.about'), onClick: () => window.api.app.showAbout() },
           ...(window.api.update.isAvailable() ?
             [{ label: t('tray.menu.installUpdate'), onClick: () => window.api.update.apply() }] :

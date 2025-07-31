@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <MenuBar :mode="mode" @change="onMode" @run-onboarding="onRunOnboarding" />
+    <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
     <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
     <Chat ref="chat" :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
     <DesignStudio :style="{ display: mode === 'studio' ? 'flex' : 'none' }" />
@@ -133,6 +133,11 @@ const onDictate = () => {
   } else if (mode.value === 'voice-mode') {
     realtime.value?.startDictation()
   }
+}
+
+const onNewChat = () => {
+  chat.value?.newChat()
+  onMode('chat')
 }
 
 const onRunOnboarding = () => {
