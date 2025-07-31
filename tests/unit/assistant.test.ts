@@ -1,5 +1,5 @@
 
-import { LlmChunk } from 'multi-llm-ts'
+import { defaultCapabilities, LlmChunk } from 'multi-llm-ts'
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
@@ -10,6 +10,23 @@ import Generator from '../../src/services/generator'
 import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
 import LlmMock, { installMockModels } from '../mocks/llm'
+
+vi.mock('../../src/llms/manager.ts', async () => {
+  const LlmManager = vi.fn()
+  LlmManager.prototype.initModels = vi.fn()
+  LlmManager.prototype.isEngineReady = vi.fn(() => true)
+  LlmManager.prototype.getEngineName = () => 'mock'
+  LlmManager.prototype.getCustomEngines = () => []
+  LlmManager.prototype.getFavoriteId = () => 'favid'
+  LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
+  LlmManager.prototype.getChatModel = vi.fn(() => ({ id: 'chat', name: 'chat', ...defaultCapabilities }))
+  LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
+  LlmManager.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
+  LlmManager.prototype.isComputerUseModel = vi.fn(() => false)
+  LlmManager.prototype.checkModelListsVersion = vi.fn()
+  LlmManager.prototype.loadTools = vi.fn()
+	return { default: LlmManager }
+})
 
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock(() => ({
@@ -27,7 +44,7 @@ vi.mock('../../src/services/download.ts', async () => {
   return {
     saveFileContents: vi.fn(() => 'local_file.png'),
   }
-})  
+})
 
 beforeAll(() => {
   Generator.addCapabilitiesToSystemInstr = false
