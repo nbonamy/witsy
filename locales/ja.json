@@ -61,6 +61,7 @@
     "fork": "フォーク",
     "high": "高い",
     "icon": "アイコン",
+    "import": "インポート",
     "insert": "挿入",
     "install": "インストール",
     "instructions": "モデル指示",
@@ -226,6 +227,11 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "a2a": {
+        "import": {
+          "title": "A2AのURLを入力してください"
+        }
+      },
       "confirmDelete": "このエージェントを削除してもよろしいですか？",
       "create": "エージェント作成",
       "empty": "最初のエージェントを作成してWitsyのエージェント機能を解放しましょう！ロボットのアイコンをクリックして始めてください。",
@@ -256,6 +262,10 @@
     },
     "name": "@:{'common.name'}",
     "nextRun": "次回予定",
+    "picker": {
+      "noAgents": "利用可能なエージェントがありません",
+      "title": "実行するエージェントを選択"
+    },
     "prompt": "デフォルトプロンプト",
     "run": {
       "confirmDelete": "この実行を削除してもよろしいですか？",
@@ -266,6 +276,7 @@
       "notCompleted": "進行中…",
       "output": "出力",
       "prompt": "@:{'common.prompt'}",
+      "selectRun": "実行を選択して詳細を表示",
       "status": "ステータス",
       "title": "エージェント実行",
       "trigger": "トリガー",
@@ -1987,7 +1998,7 @@
       "export": "エクスポート",
       "exportError": "コマンドファイルのエクスポートに失敗しました",
       "exportSuccess": "コマンドファイルが正常にエクスポートされました",
-      "import": "インポート",
+      "import": "@:{'common.import'}",
       "importError": "コマンドファイルのインポートに失敗しました",
       "importSuccess": "コマンドファイルが正常にインポートされました",
       "new": "新規",
@@ -2096,7 +2107,7 @@
       "export": "エクスポート",
       "exportError": "エキスパートファイルのエクスポートに失敗しました",
       "exportSuccess": "エキスパートファイルが正常にエクスポートされました",
-      "import": "インポート",
+      "import": "@:{'common.import'}",
       "importError": "エキスパートファイルのインポートに失敗しました",
       "importSuccess": "エキスパートファイルが正常にインポートされました",
       "new": "新規",

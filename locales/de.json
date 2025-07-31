@@ -61,6 +61,7 @@
     "fork": "Fork",
     "high": "Hoch",
     "icon": "Symbol",
+    "import": "Importieren",
     "insert": "Einfügen",
     "install": "Installieren",
     "instructions": "Modellanweisungen",
@@ -207,6 +208,11 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "a2a": {
+        "import": {
+          "title": "Geben Sie die URL von A2A ein"
+        }
+      },
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Agenten löschen möchten?",
       "create": "Agent erstellen",
       "empty": "Wählen Sie einen bestehenden Agenten aus oder erstellen Sie einen neuen.",
@@ -237,6 +243,10 @@
     },
     "name": "@:{'common.name'}",
     "nextRun": "Geplant für",
+    "picker": {
+      "noAgents": "Keine Agenten verfügbar",
+      "title": "Agenten zum Ausführen auswählen"
+    },
     "prompt": "Standard-Prompt",
     "run": {
       "confirmDelete": "Sind Sie sicher, dass Sie diese Ausführung löschen möchten?",
@@ -247,6 +257,7 @@
       "notCompleted": "In Bearbeitung…",
       "output": "Ausgabe",
       "prompt": "@:{'common.prompt'}",
+      "selectRun": "Wählen Sie einen Lauf zur Anzeige der Details aus",
       "status": "Status",
       "title": "Agentenausführung",
       "trigger": "Auslöser",
@@ -1965,7 +1976,7 @@
       "export": "Exportieren",
       "exportError": "Fehler beim Exportieren der Befehlsdatei",
       "exportSuccess": "Befehlsdatei erfolgreich exportiert",
-      "import": "Importieren",
+      "import": "@:{'common.import'}",
       "importError": "Fehler beim Importieren der Befehlsdatei",
       "importSuccess": "Befehlsdatei erfolgreich importiert",
       "new": "Neu",
@@ -2074,7 +2085,7 @@
       "export": "Exportieren",
       "exportError": "Fehler beim Exportieren der Expertendatei",
       "exportSuccess": "Experten-Datei erfolgreich exportiert",
-      "import": "Importieren",
+      "import": "@:{'common.import'}",
       "importError": "Fehler beim Importieren der Experten-Datei",
       "importSuccess": "Experten-Datei erfolgreich importiert",
       "new": "Neu",

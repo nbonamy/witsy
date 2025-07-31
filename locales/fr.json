@@ -61,6 +61,7 @@
     "fork": "Dupliquer",
     "high": "Élevé",
     "icon": "Icône",
+    "import": "Importer",
     "insert": "Insérer",
     "install": "Installer",
     "instructions": "Instructions du modèle",
@@ -207,6 +208,11 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "a2a": {
+        "import": {
+          "title": "Entrez l'URL de A2A"
+        }
+      },
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet agent ?",
       "create": "Créer un agent",
       "empty": "Sélectionnez un agent existant ou créez-en un nouveau.",
@@ -237,6 +243,10 @@
     },
     "name": "@:{'common.name'}",
     "nextRun": "Planifié pour le",
+    "picker": {
+      "noAgents": "Aucun agent disponible",
+      "title": "Sélectionnez l'agent à exécuter"
+    },
     "prompt": "Invite par défaut",
     "run": {
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette exécution ?",
@@ -247,6 +257,7 @@
       "notCompleted": "En cours…",
       "output": "Sortie",
       "prompt": "@:{'common.prompt'}",
+      "selectRun": "Sélectionnez une exécution pour voir les détails",
       "status": "Statut",
       "title": "Exécution de l'Agent",
       "trigger": "Déclencheur",
@@ -1965,7 +1976,7 @@
       "export": "Exporter",
       "exportError": "Échec de l'exportation du fichier de commandes",
       "exportSuccess": "Fichier de commandes exporté avec succès",
-      "import": "Importer",
+      "import": "@:{'common.import'}",
       "importError": "Échec de l'importation du fichier de commandes",
       "importSuccess": "Fichier de commandes importé avec succès",
       "new": "Nouveau",
@@ -2074,7 +2085,7 @@
       "export": "Exporter",
       "exportError": "Échec de l'exportation du fichier d'experts",
       "exportSuccess": "Fichier d'experts exporté avec succès",
-      "import": "Importer",
+      "import": "@:{'common.import'}",
       "importError": "Échec de l'importation du fichier d'experts",
       "importSuccess": "Fichier d'experts importé avec succès",
       "new": "Nouveau",

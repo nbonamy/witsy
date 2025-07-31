@@ -10,6 +10,13 @@
 
     <div class="master-detail">
       <Run v-if="run" :agent-id="agent.id" :run-id="run.id" @close="run = null" @delete="deleteRun"/>
+      <div v-else class="panel no-run">
+        <div class="panel-header">
+        </div>
+        <div class="panel-body empty-state">
+          {{ t('agent.run.selectRun') }}
+        </div>
+      </div>
     </div>
 
   </div>
@@ -126,9 +133,15 @@ const clearHistory = () => {
   margin: 2rem;
   gap: 2rem;
 
-  .master-main, .master-detail {
+  .master-main {
     flex: 1 0 calc(50% - 1rem);
-    max-width: calc(50% - 1rem);
+    max-width: min(calc(50% - 1rem), 450px);
+    height: calc(100vh - var(--window-toolbar-height) - 4rem);
+  }
+
+  .master-detail {
+    flex: 1 1 auto;
+    min-width: 0;
     height: calc(100vh - var(--window-toolbar-height) - 4rem);
   }
 
@@ -154,6 +167,18 @@ const clearHistory = () => {
     &:deep()  .panel-body {
       gap: 0rem;
       font-size: var(--agent-font-size);
+    }
+
+    &.no-run {
+      width: 100%;
+      .panel-body {
+        justify-content: center;
+        padding: 3rem;
+        text-align: center;
+        font-size: 18pt;
+        color: var(--faded-text-color);
+        font-family: var(--font-family-serif);
+      }
     }
 
   }

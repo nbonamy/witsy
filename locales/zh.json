@@ -61,6 +61,7 @@
     "fork": "分叉",
     "high": "高",
     "icon": "图标",
+    "import": "导入",
     "insert": "插入",
     "install": "安装",
     "instructions": "模型说明",
@@ -226,6 +227,11 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "a2a": {
+        "import": {
+          "title": "输入 A2A 的 URL"
+        }
+      },
       "confirmDelete": "您确定要删除此代理吗？",
       "create": "创建代理",
       "empty": "请选择现有代理或创建新代理。",
@@ -256,6 +262,10 @@
     },
     "name": "@:{'common.name'}",
     "nextRun": "计划执行于",
+    "picker": {
+      "noAgents": "没有可用的代理",
+      "title": "选择要运行的代理"
+    },
     "prompt": "默认提示",
     "run": {
       "confirmDelete": "您确定要删除此运行记录吗？",
@@ -266,6 +276,7 @@
       "notCompleted": "进行中…",
       "output": "输出",
       "prompt": "@:{'common.prompt'}",
+      "selectRun": "选择运行以查看详细信息",
       "status": "状态",
       "title": "代理运行",
       "trigger": "触发器",
@@ -1987,7 +1998,7 @@
       "export": "导出",
       "exportError": "导出命令文件失败",
       "exportSuccess": "命令文件导出成功",
-      "import": "导入",
+      "import": "@:{'common.import'}",
       "importError": "导入命令文件失败",
       "importSuccess": "命令文件导入成功",
       "new": "新建",
@@ -2096,7 +2107,7 @@
       "export": "导出",
       "exportError": "导出专家文件失败",
       "exportSuccess": "专家文件导出成功",
-      "import": "导入",
+      "import": "@:{'common.import'}",
       "importError": "导入专家文件失败",
       "importSuccess": "专家文件导入成功",
       "new": "新建",

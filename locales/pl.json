@@ -61,6 +61,7 @@
     "fork": "Utwórz forka",
     "high": "Wysoki",
     "icon": "Ikona",
+    "import": "Importuj",
     "insert": "Wstaw",
     "install": "Zainstaluj",
     "instructions": "Instrukcje modelu",
@@ -226,6 +227,11 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "a2a": {
+        "import": {
+          "title": "Wprowadź URL A2A"
+        }
+      },
       "confirmDelete": "Czy na pewno chcesz usunąć tego agenta?",
       "create": "Utwórz agenta",
       "empty": "Wybierz istniejącego agenta lub stwórz nowego.",
@@ -256,6 +262,10 @@
     },
     "name": "@:{'common.name'}",
     "nextRun": "Zaplanowano na",
+    "picker": {
+      "noAgents": "Brak dostępnych agentów",
+      "title": "Wybierz agenta do uruchomienia"
+    },
     "prompt": "Domyślny prompt",
     "run": {
       "confirmDelete": "Czy na pewno chcesz usunąć to wykonanie?",
@@ -266,6 +276,7 @@
       "notCompleted": "W trakcie...",
       "output": "Wynik",
       "prompt": "@:{'common.prompt'}",
+      "selectRun": "Wybierz uruchomienie, aby zobaczyć szczegóły",
       "status": "Status",
       "title": "Wykonanie agenta",
       "trigger": "Wyzwalacz",
@@ -1987,7 +1998,7 @@
       "export": "Eksport",
       "exportError": "Nie udało się wyeksportować pliku poleceń",
       "exportSuccess": "Plik poleceń wyeksportowany pomyślnie",
-      "import": "Import",
+      "import": "@:{'common.import'}",
       "importError": "Nie udało się zaimportować pliku poleceń",
       "importSuccess": "Plik poleceń zaimportowany pomyślnie",
       "new": "Nowość",
@@ -2096,7 +2107,7 @@
       "export": "Eksport",
       "exportError": "Nie udało się wyeksportować pliku ekspertów",
       "exportSuccess": "Plik eksperta został pomyślnie wyeksportowany",
-      "import": "Import",
+      "import": "@:{'common.import'}",
       "importError": "Nie udało się zaimportować pliku ekspertów",
       "importSuccess": "Plik eksperta zaimportowany pomyślnie",
       "new": "Nowość",
