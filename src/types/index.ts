@@ -290,7 +290,7 @@ declare global {
         fullscreen(window: string, state: boolean): void
       }
       main: {
-        setMode(mode: MainWindowMode): void
+        updateMode(mode: MainWindowMode): void
         setContextMenuContext(id: string): void
         close(): void
       }

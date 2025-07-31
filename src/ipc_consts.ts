@@ -13,7 +13,7 @@ export const APP = {
 } as const;
 
 export const MAIN_WINDOW = {
-  SET_MODE: 'main-window-set-mode',
+  UPDATE_MODE: 'main-window-update-mode',
   SET_CONTEXT_MENU_CONTEXT: 'main-window-set-menu-context',
   CLOSE: 'main-window-close',
 } as const;

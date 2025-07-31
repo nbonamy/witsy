@@ -163,7 +163,7 @@
     "create": {
       "agents": {
         "help": "Les agents peuvent déléguer des tâches à d'autres agents. Sélectionnez un ou plusieurs agents pour gérer des tâches spécifiques.",
-        "title": "Agents de Support"
+        "title": "Déléguer des agents"
       },
       "goal": {
         "title": "Objectif de l'Agent"
@@ -176,7 +176,8 @@
           "prompt": "Modèle d'invite qui sera utilisé pour exécuter l'agent. Vous pouvez inclure des « variables » qui seront remplacées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}nom:description:valeur{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lorsqu'on lui demandera une valeur). La description et la valeur par défaut sont toutes deux optionnelles."
         },
         "promptInputs": "Variables détectées",
-        "title": "Informations Générales"
+        "title": "Informations Générales",
+        "type": "Modèle d'exécution"
       },
       "invocation": {
         "title": "Déclencheurs de l'Agent"
@@ -249,6 +250,8 @@
     "nextRun": "Planifié pour le",
     "picker": {
       "noAgents": "Aucun agent disponible",
+      "noAgentsText": "Voulez-vous en créer un maintenant ?",
+      "noAgentsTitle": "Vous n'avez pas encore créé d'agents exécutables",
       "title": "Sélectionnez l'agent à exécuter"
     },
     "prompt": "Invite par défaut",
@@ -279,6 +282,10 @@
       "schedule": "⏰ Programmation",
       "webhook": "🌐 URL Webhook",
       "workflow": "⚙️ Flux de travail"
+    },
+    "type": {
+      "runnable": "Exécutable par l'utilisateur",
+      "support": "Agent de support"
     },
     "view": {
       "filter": {

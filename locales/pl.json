@@ -182,7 +182,7 @@
     "create": {
       "agents": {
         "help": "Agenci mogą delegować zadania innym agentom. Wybierz jednego lub więcej agentów do obsługi konkretnych zadań.",
-        "title": "Wspierający agenci"
+        "title": "Delegowani Agenci"
       },
       "goal": {
         "title": "Cel agenta"
@@ -195,7 +195,8 @@
           "prompt": "Szablon promptu, który zostanie użyty do wykonania agenta. Możesz uwzględnić \"zmienne\", które zostaną zastąpione wartościami podanymi przez użytkownika podczas wykonywania agenta. Użyj formatu {'{'}{'{'}nazwa:opis:wartość{'}'}{'}'} do zdefiniowania zmiennej (opis pomoże użytkownikowi przy wprowadzaniu wartości). Zarówno opis, jak i wartość domyślna są opcjonalne."
         },
         "promptInputs": "Wykryte zmienne",
-        "title": "Informacje ogólne"
+        "title": "Informacje ogólne",
+        "type": "Model Wykonania"
       },
       "invocation": {
         "title": "Wyzwalacze agenta"
@@ -268,6 +269,8 @@
     "nextRun": "Zaplanowano na",
     "picker": {
       "noAgents": "Brak dostępnych agentów",
+      "noAgentsText": "Czy chcesz utworzyć jeden teraz?",
+      "noAgentsTitle": "Nie utworzyłeś jeszcze żadnych wykonywalnych agentów",
       "title": "Wybierz agenta do uruchomienia"
     },
     "prompt": "Domyślny prompt",
@@ -298,6 +301,10 @@
       "schedule": "⏰ Harmonogram",
       "webhook": "🌐 URL webhooka",
       "workflow": "⚙️ Przepływ pracy"
+    },
+    "type": {
+      "runnable": "Wykonywalny przez użytkownika",
+      "support": "Agent wsparcia"
     },
     "view": {
       "filter": {

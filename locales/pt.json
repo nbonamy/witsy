@@ -182,7 +182,7 @@
     "create": {
       "agents": {
         "help": "Agentes podem delegar tarefas a outros agentes. Selecione um ou mais agentes para lidar com tarefas específicas.",
-        "title": "Agentes de Suporte"
+        "title": "Delegar Agentes"
       },
       "goal": {
         "title": "Objetivo do Agente"
@@ -195,7 +195,8 @@
           "prompt": "Modelo de prompt que será usado para executar o agente. Você pode incluir \"variáveis\" que serão substituídas pelos valores fornecidos pelo usuário quando o agente for executado. Use o formato {'{'}{'{'}nome:descrição:valor{'}'}{'}'} para definir uma variável (a descrição guiará o usuário quando for solicitado um valor). Tanto a descrição quanto o valor padrão são opcionais."
         },
         "promptInputs": "Variáveis Detectadas",
-        "title": "Informações Gerais"
+        "title": "Informações Gerais",
+        "type": "Modelo de Execução"
       },
       "invocation": {
         "title": "Acionadores do Agente"
@@ -268,6 +269,8 @@
     "nextRun": "Agendado para",
     "picker": {
       "noAgents": "Nenhum agente disponível",
+      "noAgentsText": "Quer criar um agora?",
+      "noAgentsTitle": "Você ainda não criou nenhum agente executável",
       "title": "Selecione o agente para executar"
     },
     "prompt": "Prompt Padrão",
@@ -298,6 +301,10 @@
       "schedule": "⏰ Agenda",
       "webhook": "🌐 URL do Webhook",
       "workflow": "⚙️ Fluxo de trabalho"
+    },
+    "type": {
+      "runnable": "Executável pelo usuário",
+      "support": "Agente de suporte"
     },
     "view": {
       "filter": {

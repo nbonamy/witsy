@@ -39,7 +39,7 @@ contextBridge.exposeInMainWorld(
       fullscreen: (window: string, state: boolean): void => { return ipcRenderer.send(IPC.APP.FULLSCREEN, { window, state }) },
     },
     main: {
-      setMode: (mode: MainWindowMode): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.SET_MODE, mode) },
+      updateMode: (mode: MainWindowMode): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.UPDATE_MODE, mode) },
       setContextMenuContext: (id: string): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.SET_CONTEXT_MENU_CONTEXT, id) },
       close: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.CLOSE) },
     },
