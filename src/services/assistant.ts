@@ -2,21 +2,17 @@
 import { Expert } from 'types'
 import { Configuration } from 'types/config'
 import { LlmEngine } from 'multi-llm-ts'
-import { expertI18n, getLlmLocale, i18nInstructions, setLlmLocale } from './i18n'
-import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback } from './generator'
-import { removeMarkdown } from '@excalidraw/markdown-to-text'
+import { expertI18n, getLlmLocale, setLlmLocale } from './i18n'
+import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, GenerationCallback } from './generator'
 import { availablePlugins } from '../plugins/plugins'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
 import LlmFactory, { ILlmManager } from '../llms/llm'
+import LlmUtils from './llm_utils'
 import DeepResearchMultiAgent from './deepresearch_ma'
 import DeepResearchMultiStep from './deepresearch_ms'
 import { DeepResearch } from './deepresearch'
-
-export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title'
-
-export type GenerationCallback = (event: GenerationEvent) => void
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
@@ -175,7 +171,7 @@ export default class extends Generator {
     llmCallback?.call(null, null)
 
     // callback
-    generationCallback?.call(null, 'before_generation')
+    generationCallback?.('before_generation')
 
     // deep research will come with its own instructions
     let rc: GenerationResult = 'error'
@@ -213,13 +209,13 @@ export default class extends Generator {
 
     // check if generator disabled plugins
     if (hadPlugins && this.llm.plugins.length === 0) {
-      generationCallback?.call(null, 'plugins_disabled')
+      generationCallback?.('plugins_disabled')
       this.chat.disableTools()
     }
 
     // check if we need to update title
     if (opts.titling && !this.chat.hasTitle()) {
-      generationCallback?.call(null, 'before_title')
+      generationCallback?.('before_title')
       this.chat.title = await this.getTitle() || this.chat.title
     }
 
@@ -230,6 +226,7 @@ export default class extends Generator {
     }
 
     // done
+    generationCallback?.('generation_done')
     return rc
   
   }
@@ -253,75 +250,9 @@ export default class extends Generator {
 
   }
 
-  async getTitle() {
-
-    try {
-
-      // hard-coded (??)
-      const titlingModels: Record<string, string> = {
-        'anthropic': 'claude-3-5-haiku-20241022',
-        'cerebras': 'llama-3.3-70b',
-        'deepseek': 'deepseek-chat',
-        'google': 'gemini-2.5-flash-lite-preview-06-17',
-        'groq': 'meta-llama/llama-4-scout-17b-16e-instruct',
-        'mistralai': 'mistral-medium-latest',
-        'openai': 'gpt-4.1-mini',
-        'xai': 'grok-3-mini',
-      }
-
-      // we need to select a titling model
-      let titlingModel = titlingModels[this.chat.engine]
-      if (titlingModel) {
-        titlingModel = this.config.engines[this.chat.engine]?.models?.chat.find(m => m.id === titlingModel)?.id
-      }
-      if (!titlingModel) {
-        titlingModel = this.chat.model
-      }
-
-      // build messages
-      const messages = [
-        new Message('system', i18nInstructions(this.config, 'instructions.utils.titling')),
-        this.chat.messages[1],
-        this.chat.messages[2],
-        new Message('user', i18nInstructions(this.config, 'instructions.utils.titlingUser'))
-      ]
-
-      // now get it
-      this.initLlm(this.chat.engine)
-      const model = this.llmManager.getChatModel(this.chat.engine, titlingModel)
-      const response = await this.llm.complete(model, messages, { tools: false })
-      let title = response.content.trim()
-      if (title === '') {
-        return this.chat.messages[1].content
-      }
-
-      // ollama reasoning removal: everything between <think> and </think>
-      title = title.replace(/<think>[\s\S]*?<\/think>/g, '')
-
-      // remove html tags
-      title = title.replace(/<[^>]*>/g, '')
-
-      // and markdown
-      title = removeMarkdown(title)
-
-      // remove prefixes
-      if (title.startsWith('Title:')) {
-        title = title.substring(6)
-      }
-
-      // remove quotes
-      if (title.startsWith('"') && title.endsWith('"')) {
-        title = title.substring(1, title.length - 1)
-      }
-      
-      // done
-      return title
-
-    } catch (error) {
-      console.error('Error while trying to get title', error)
-      return null
-    }
-  
+  private async getTitle(): Promise<string> {
+    const llmUtils = new LlmUtils(this.config)
+    return await llmUtils.getTitle(this.chat.engine, this.chat.model, this.chat.messages)
   }
 
 }

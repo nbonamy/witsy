@@ -4,6 +4,10 @@ import { DocRepoQueryResponseItem } from '../types/rag'
 import { t , i18nInstructions, localeToLangName, getLlmLocale } from './i18n'
 import Message from '../models/message'
 
+export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title' | 'generation_done'
+
+export type GenerationCallback = (event: GenerationEvent) => void
+
 export interface GenerationOpts extends LlmCompletionOpts {
   model: string
   streaming?: boolean

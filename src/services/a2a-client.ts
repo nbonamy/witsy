@@ -167,7 +167,8 @@ export default class A2AClient {
 
     } catch (error) {
 
-      console.error(`Error during streaming for message ${messageId}:`, error);
+      console.error('Error during A2A streaming', error);
+      throw error
     
     } finally {
 
