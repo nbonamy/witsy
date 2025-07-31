@@ -6,6 +6,7 @@ import { store } from '../../src/services/store'
 import OllamaModelPull from '../../src/components/OllamaModelPull.vue'
 import Combobox from '../../src/components/Combobox.vue'
 import { Ollama } from 'multi-llm-ts'
+import { EngineConfig } from '../../src/types/config'
 
 enableAutoUnmount(afterAll)
 
@@ -42,11 +43,7 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
-  store.config.engines.ollama = {
-    models: {
-      chat: []
-    }
-  }
+  store.config.engines.ollama = { models: { chat: [] } } as unknown as EngineConfig
 })
 
 beforeEach(() => {
