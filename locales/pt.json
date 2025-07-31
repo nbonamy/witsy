@@ -358,6 +358,9 @@
       "makeTemporary": "Chat Temporário",
       "saveChat": "Salvar Chat"
     },
+    "agent": {
+      "notFound": "O agente usado para gerar essa mensagem não está mais disponível."
+    },
     "editor": {
       "title": "Título",
       "validation": {
@@ -1666,12 +1669,12 @@
       }
     },
     "extendedThinking": "Pensamento Extendido",
+    "instructions": "@:{'common.instructions'}",
+    "instructionsPlaceholder": "Deixe vazio para usar as instruções padrão",
     "locale": "Idioma do Chat",
     "localeDefault": "🤖 Idioma Padrão",
     "maxCompletionTokens": "Número máximo de tokens",
     "plugins": "Plugins",
-    "prompt": "Prompt",
-    "promptPlaceholder": "Deixe vazio para usar o prompt padrão",
     "reasoningEffort": "Esforço de Raciocínio",
     "streaming": "Streaming",
     "temperature": "Temperatura [0.0 … 2.0]",
