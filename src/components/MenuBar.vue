@@ -119,7 +119,7 @@ const onAppMenu = (event: Event) => {
       { 
         label: t('menu.file.title'),
         children: [
-          { label: t('menu.file.newChat'), divided: 'down', onClick: () => emit('new-chat') },
+          { label: `${t('menu.file.newChat')} (Ctrl+N)`, divided: 'down', onClick: () => emit('new-chat') },
           { label: t('menu.app.about'), onClick: () => window.api.app.showAbout() },
           ...(window.api.update.isAvailable() ?
             [{ label: t('tray.menu.installUpdate'), onClick: () => window.api.update.apply() }] :
@@ -157,6 +157,8 @@ const onAppMenu = (event: Event) => {
   border: 0.5px solid color-mix(in srgb, var(--control-border-color), transparent 25%);
 
   .mx-context-menu-item {
+
+    -webkit-app-region: no-drag;
 
     .label {
       color: var(--text-color);
