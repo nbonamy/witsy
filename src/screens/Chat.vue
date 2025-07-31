@@ -25,7 +25,8 @@ import ChatArea from '../components/ChatArea.vue'
 import PromptBuilder from '../components/PromptBuilder.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import AgentPicker from './AgentPicker.vue'
-import Assistant, { GenerationEvent } from '../services/assistant'
+import { GenerationEvent } from '../services/generator'
+import Assistant from '../services/assistant'
 import AgentRunner from '../services/runner'
 import Message from '../models/message'
 import Chat from '../models/chat'
@@ -558,48 +559,32 @@ const onRunAgent = async () => {
       streaming: true,
       ephemeral: false,
       model: assistant.value.chat.model,
-      messages: assistant.value.chat.messages,
-    })
+      chat: assistant.value.chat,
+    }, async (event: GenerationEvent) => {
 
+      if (event === 'before_generation') {
+
+        // not very nice but gets the message list scrolling
+        emitEvent('new-llm-chunk', {
+          type: 'content',
+          text: '',
+          done: false,
+        } as LlmChunkContent)
+
+        // make sure the chat is part of history
+        if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
+          assistant.value.chat.initTitle()
+          store.addChat(assistant.value.chat)
+        }
+
+      } else if (event === 'before_title') {
+        store.saveHistory()
+      }
+
+    })
   })
 
 }
-
-
-// const onA2APrompt = async (params: SendPromptParams) => {
-
-//   // deconstruct params
-//   const { prompt } = params
-
-//   const a2aa = new A2AAssistant(store.config, 'http://localhost:41241')
-//   a2aa.setChat(assistant.value.chat)
-//   await a2aa.prompt(prompt, (chunk) => {
-  
-//     emitEvent('new-llm-chunk', chunk)
-  
-//   }, async (event: GenerationEvent) => {
-
-//     if (event === 'before_generation') {
-
-//       // not very nice but gets the message list scrolling
-//       emitEvent('new-llm-chunk', {
-//         type: 'content',
-//         text: '',
-//         done: false,
-//       } as LlmChunkContent)
-
-//       // make sure the chat is part of history
-//       if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
-//         assistant.value.chat.initTitle()
-//         store.addChat(assistant.value.chat)
-//       }
-//     }
-//   })
-
-//   // save
-//   store.saveHistory()
-
-// }
 
 const onRetryGeneration = async (message: Message) => {
 

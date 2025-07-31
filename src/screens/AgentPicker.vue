@@ -90,15 +90,25 @@ defineExpose({
   }
 
   .agent-item {
+    
     display: flex;
     align-items: center;
     padding: 1rem 1.5rem;
     cursor: pointer;
     border-bottom: 1px solid var(--control-list-border-color);
+    transition: background-color 0.15s ease;
     gap: 1.5rem;
 
     &:last-child {
       border-bottom: none;
+    }
+
+    &:hover {
+      background-color: var(--highlight-color);
+      color: white;
+      .agent-icon svg {
+        fill: white;
+      }
     }
   }
 
@@ -107,6 +117,7 @@ defineExpose({
     svg {
       width: 1.5rem;
       height: 1.5rem;
+      fill: var(--text-color);
     }
   }
 
@@ -119,7 +130,6 @@ defineExpose({
 
     .agent-name {
       font-weight: 600;
-      color: var(--text-color);
       font-size: 11.5pt;
       white-space: nowrap;
       overflow: hidden;
@@ -127,8 +137,8 @@ defineExpose({
     }
 
     .agent-description {
-      color: var(--dimmed-text-color);
       font-size: 10.5pt;
+      opacity: 0.8;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

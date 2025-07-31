@@ -1,10 +1,11 @@
 
 import { Configuration } from 'types/config'
-import { AgentRun, AgentRunTrigger } from '../types/index'
+import { AgentRun, AgentRunTrigger, Chat } from '../types/index'
 import { LlmChunk, LlmChunkContent, MultiToolPlugin } from 'multi-llm-ts'
-import { getLlmLocale, setLlmLocale } from './i18n'
-import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback } from './generator'
+import { getLlmLocale, setLlmLocale, t } from './i18n'
+import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, GenerationCallback } from './generator'
 import LlmFactory, { ILlmManager } from '../llms/llm'
+import LlmUtils from './llm_utils'
 import { availablePlugins } from '../plugins/plugins'
 import Agent from '../models/agent'
 import Message from '../models/message'
@@ -12,15 +13,11 @@ import Attachment from '../models/attachment'
 import AgentPlugin from '../plugins/agent'
 import A2AClient from './a2a-client'
 
-export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title'
-
-export type GenerationCallback = (event: GenerationEvent) => void
-
 export interface RunnerCompletionOpts extends GenerationOpts {
   ephemeral?: boolean
   engine?: string
   agents?: Agent[]
-  messages?: Message[]
+  chat?: Chat
   callback?: LlmChunkCallback
 }
 
@@ -37,7 +34,7 @@ export default class extends Generator {
     this.agent = agent
   }
 
-  async run(trigger: AgentRunTrigger, prompt?: string, opts?: RunnerCompletionOpts): Promise<AgentRun> {
+  async run(trigger: AgentRunTrigger, prompt?: string, opts?: RunnerCompletionOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
 
     // check
     prompt = prompt?.trim() || this.agent.prompt
@@ -54,7 +51,7 @@ export default class extends Generator {
       trigger: trigger,
       status: 'running',
       prompt: prompt,
-      messages: opts?.messages || [],
+      messages: opts?.chat?.messages || [],
       toolCalls: [],
     }
 
@@ -163,20 +160,24 @@ export default class extends Generator {
       assistantMessage.model = opts.model
       run.messages.push(assistantMessage)
 
+      // callback
+      generationCallback?.('before_generation')
+
       // save again
       if (!opts?.ephemeral) {
         this.saveRun(run)
       }
 
       // now depends on the type of agent
+      let rc: GenerationResult = 'error'
       if (this.agent.source === 'a2a') {
 
-        await this.runA2A(run, opts)
+        rc = await this.runA2A(run, opts)
 
       } else {
 
         // generate text
-        let rc: GenerationResult = await this.prompt(run, opts)
+        rc = await this.prompt(run, opts)
 
         // check if streaming is not supported
         if (rc === 'streaming_not_supported') {
@@ -184,6 +185,13 @@ export default class extends Generator {
           rc = await this.prompt(run, opts)
         }
 
+      }
+
+      // titling
+      if (rc === 'success' && opts?.chat) {
+        generationCallback?.('before_title')
+        const title = await this.getTitle(opts.engine, opts.model, opts.chat.messages)
+        opts.chat.title = title
       }
 
       // restore llm locale
@@ -201,6 +209,11 @@ export default class extends Generator {
 
     } catch (error) {
 
+      // get the current assistant message (last in the array) to ensure reactivity
+      const assistantMessage = run.messages[run.messages.length - 1]
+      assistantMessage.appendText({ type: 'content', text: t('generator.errors.cannotContinue'), done: true })
+
+      // record the error
       run.status = 'error'
       run.error = error.message
       run.updatedAt = Date.now()
@@ -211,6 +224,7 @@ export default class extends Generator {
     }
 
     // done
+    generationCallback?.('generation_done')
     return run
 
   }
@@ -241,51 +255,60 @@ export default class extends Generator {
     })
   }
 
-  private async runA2A(run: AgentRun, opts: RunnerCompletionOpts): Promise<void> {
+  private async runA2A(run: AgentRun, opts: RunnerCompletionOpts): Promise<GenerationResult> {
 
-    // init A2A client
-    const client = new A2AClient(this.agent.instructions)
+    try {
+    
+      // init A2A client
+      const client = new A2AClient(this.agent.instructions)
 
-    // now process chunks
-    const prompt = run.messages.find(m => m.role === 'user')?.content || ''
-    for await (const chunk of client.execute(prompt)) {
+      // now process chunks
+      const prompt = run.messages.find(m => m.role === 'user')?.content || ''
+      for await (const chunk of client.execute(prompt)) {
 
-      // get the current assistant message (last in the array) to ensure reactivity
-      const assistantMessage = run.messages[run.messages.length - 1]
+        // get the current assistant message (last in the array) to ensure reactivity
+        const assistantMessage = run.messages[run.messages.length - 1]
 
-      if (chunk.type === 'content') {
+        if (chunk.type === 'content') {
+          
+          assistantMessage.appendText(chunk)
+          opts?.callback?.(chunk)
         
-        assistantMessage.appendText(chunk)
-        opts?.callback?.(chunk)
+        } else if (chunk.type === 'status') {
+
+          // for now emit text status
+          const textChunk: LlmChunkContent = {
+            type: 'content',
+            text: `${chunk.status}\n\n`,
+            done: false,
+          }
+          assistantMessage.appendText(textChunk)
+          opts?.callback?.(textChunk)
+
+        } else if (chunk.type === 'artifact') {
+
+          // debug: emit test
+          const textChunk: LlmChunkContent = {
+            type: 'content',
+            text: `artifact \`${chunk.name}\`:\n\n\`\`\`${chunk.content}\`\`\`\n\n`,
+            done: false,
+          }
+          assistantMessage.appendText(textChunk)
+          opts?.callback?.(textChunk)
+
+          // attach
+          assistantMessage.attach(new Attachment(chunk.content, 'text/plain', chunk.name))
+
+        }
       
-      } else if (chunk.type === 'status') {
-
-        // for now emit text status
-        const textChunk: LlmChunkContent = {
-          type: 'content',
-          text: `${chunk.status}\n\n`,
-          done: false,
-        }
-        assistantMessage.appendText(textChunk)
-        opts?.callback?.(textChunk)
-
-      } else if (chunk.type === 'artifact') {
-
-        // debug: emit test
-        const textChunk: LlmChunkContent = {
-          type: 'content',
-          text: `artifact \`${chunk.name}\`:\n\n\`\`\`${chunk.content}\`\`\`\n\n`,
-          done: false,
-        }
-        assistantMessage.appendText(textChunk)
-        opts?.callback?.(textChunk)
-
-        // attach
-        assistantMessage.attach(new Attachment(chunk.content, 'text/plain', chunk.name))
-
       }
 
+      // done
+      return 'success'
 
+    } catch (error) {
+      console.error('Error while running A2A client', error)
+      throw error
     }
 
   }
@@ -297,4 +320,8 @@ export default class extends Generator {
     })
   }
 
+  private async getTitle(engine: string, model: string, messages: Message[]): Promise<string> {
+    const llmUtils = new LlmUtils(this.config)
+    return await llmUtils.getTitle(engine, model, messages)
+  }
 }
