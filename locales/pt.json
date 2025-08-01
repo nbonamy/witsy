@@ -241,6 +241,7 @@
       "create": "Criar Agente",
       "empty": "Selecione um agente existente ou crie um novo.",
       "list": {
+        "empty": "Nenhum agente deste tipo criado ainda.",
         "runnable": "Agentes executáveis",
         "support": "Agentes de suporte"
       },
