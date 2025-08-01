@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.12.4] - WIP
+## [2.12.4] - 2025-07-31
 
 ### Added
 - On macOS, Cmd-N should start a new chat (https://github.com/nbonamy/witsy/issues/363)
