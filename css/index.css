@@ -611,6 +611,25 @@ table th.center, table td.center {
   text-align: center;
 }
 
+table.table-plain {
+  
+  th, td {
+    padding: 0.25rem;
+    vertical-align: middle;
+  }
+
+  th {
+    text-align: left;
+    border-bottom: 1px solid var(--text-color);
+  }
+
+  tr.spacer {
+    height: 0.25rem;
+    background-color: var(--background-color);
+  }
+
+}
+
 svg.scale105 {
   transform: scale(1.05);
 }
