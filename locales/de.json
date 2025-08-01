@@ -180,7 +180,16 @@
         "type": "Ausführungsmodell"
       },
       "invocation": {
-        "title": "Agenten-Auslöser"
+        "missingInput": "[{name} fehlt]",
+        "missingInputs": {
+          "cancelButtonText": "Trotzdem speichern",
+          "confirmButtonText": "Variablen bearbeiten",
+          "text": "Das Verhalten deines Agents bei Auslösung durch den Scheduler ist undefiniert. Du solltest entweder Werte für alle Variablen definieren oder sie aus dem Prompt entfernen.",
+          "title": "Einige deiner Prompt-Variablen sind nicht definiert"
+        },
+        "prompt": "Berechneter Prompt für geplante Ausführungen",
+        "title": "Agenten-Auslöser",
+        "variables": "Werte der Prompt-Variablen für geplante Ausführungen"
       },
       "llm": {
         "help": {

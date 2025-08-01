@@ -113,6 +113,7 @@ export interface Agent {
   docrepo: string|null
   instructions: string
   prompt: string|null
+  invocationValues: Record<string, string>
   parameters: PluginParameter[]
   schedule: string|null
   buildPrompt: (parameters: anyDict) => string|null
@@ -391,7 +392,7 @@ declare global {
       }
       agents: {
         forge(): void
-        load(): Agent[]
+        load(): any[]
         save(agent: Agent): boolean
         delete(agentId: string): boolean
         getRuns(agentId: string): AgentRun[]
@@ -432,7 +433,7 @@ declare global {
         render(markdown: string): string
       }
       interpreter: {
-        python(code: string): any
+        python(code: string): Promise<any>
       }
       mcp: {
         isAvailable(): boolean

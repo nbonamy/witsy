@@ -199,7 +199,16 @@
         "type": "执行模型"
       },
       "invocation": {
-        "title": "代理触发器"
+        "missingInput": "[{name} 缺失]",
+        "missingInputs": {
+          "cancelButtonText": "仍然保存",
+          "confirmButtonText": "修复变量",
+          "text": "当调度器触发您的代理时，行为未定义。您应定义所有变量的值或将其从提示中移除。",
+          "title": "您的部分提示变量未定义"
+        },
+        "prompt": "用于计划调用的计算提示",
+        "title": "代理触发器",
+        "variables": "计划调用的提示变量值"
       },
       "llm": {
         "help": {

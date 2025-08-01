@@ -199,7 +199,16 @@
         "type": "Model Wykonania"
       },
       "invocation": {
-        "title": "Wyzwalacze agenta"
+        "missingInput": "[{name} jest nieobecny]",
+        "missingInputs": {
+          "cancelButtonText": "Zapisz mimo to",
+          "confirmButtonText": "Napraw zmienne",
+          "text": "Zachowanie Twojego agenta wywołanego przez harmonogram jest niezdefiniowane. Powinieneś zdefiniować wartości dla wszystkich zmiennych lub usunąć je z promptu.",
+          "title": "Niektóre z Twoich zmiennych promptu nie są zdefiniowane"
+        },
+        "prompt": "Obliczony prompt używany dla zaplanowanych wywołań",
+        "title": "Wyzwalacze agenta",
+        "variables": "Wartości zmiennych promptu dla zaplanowanych wywołań"
       },
       "llm": {
         "help": {
