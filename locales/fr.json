@@ -222,6 +222,7 @@
       "create": "Créer un agent",
       "empty": "Sélectionnez un agent existant ou créez-en un nouveau.",
       "list": {
+        "empty": "Aucun agent de ce type créé pour le moment.",
         "runnable": "Agents exécutables",
         "support": "Agents de support"
       },

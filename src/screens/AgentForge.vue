@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import { AgentType } from '../types/index'
 import { ref, onMounted } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
@@ -77,12 +78,13 @@ const onTransitionEnd = async () => {
   }
 }
 
-const onCreate = () => {
+const onCreate = (type?: AgentType) => {
   mode.value = 'create'
   selected.value = new Agent()
+  selected.value.type = type || 'runnable'
 }
 
-const onImportA2A = async () => {
+const onImportA2A = async (type?: AgentType) => {
 
   let url = 'http://localhost:41241'
 
@@ -107,6 +109,7 @@ const onImportA2A = async () => {
     const agent = await client.getAgent()
 
     if (agent) {
+      agent.type = type || 'runnable'
       window.api.agents.save(agent)
       editAgent(agent)
       break

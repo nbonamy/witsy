@@ -241,6 +241,7 @@
       "create": "Create Agent",
       "empty": "Unlock the agentic power of Witsy by creating your first agent! Click the robot head to get started.",
       "list": {
+        "empty": "No agent of this type created yet.",
         "runnable": "Executable agents",
         "support": "Support agents"
       },

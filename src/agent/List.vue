@@ -1,19 +1,19 @@
 
 <template>
   <div class="agents-list">
-    <div v-for="agents in [runnableAgents, supportAgents]" :set="type = agents[0]?.type":key="type">
-      <div class="agents panel" v-if="agents.length">
+    <div v-for="type in ['runnable', 'support']" :key="type" :set="agents = getAgents(type as AgentType)" >
+      <div class="agents panel">
         <div class="panel-header">
           <label>{{ t(`agent.forge.list.${type}`) }}</label>
           <BIconPlusLg 
             class="icon create" 
             v-tooltip="{ text: t('agent.help.create'), position: 'bottom-left' }" 
-            @click="emit('create')" 
+            @click="emit('create', type)" 
           />
           <LogoA2A
             class="icon a2a"
             v-tooltip="{ text: 'A2A Integration', position: 'bottom-left' }"
-            @click="emit('importA2A')"
+            @click="emit('importA2A', type)"
           />
         </div>
         <div class="panel-body" v-if="agents.length">
@@ -49,6 +49,9 @@
             </div>
           </template>
         </div>
+        <div class="panel-empty" v-else>
+          {{ t('agent.forge.list.empty') }}
+        </div>
       </div>
     </div>
   </div>
@@ -56,23 +59,18 @@
 
 <script setup lang="ts">
 
-import { Agent } from '../types/index'
-import { computed, PropType } from 'vue'
-import { store } from '../services/store'
+import { Agent, AgentType } from '../types/index'
+import { PropType } from 'vue'
 import { t } from '../services/i18n'
 import LogoA2A from '../../assets/a2a.svg?component'
 
-let type: string = ''
+let agents: Agent[] = []
 
 const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'importA2A']) 
 
-const runnableAgents = computed(() => {
-  return props.agents.filter(agent => agent.type === 'runnable').sort((a, b) => b.updatedAt - a.updatedAt)
-})
-
-const supportAgents = computed(() => {
-  return props.agents.filter(agent => agent.type === 'support').sort((a, b) => b.updatedAt - a.updatedAt)
-})
+const getAgents = (type: AgentType) => {
+  return props.agents.filter(agent => agent.type === type).sort((a, b) => b.updatedAt - a.updatedAt)
+}
 
 const props = defineProps({
   agents: Array as PropType<Agent[]>,
