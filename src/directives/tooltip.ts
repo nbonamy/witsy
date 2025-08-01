@@ -137,7 +137,14 @@ export const vTooltip = {
     }
     
     const onMouseLeave = () => hideTooltip(el)
-    const onClick = () => hideTooltip(el)
+    const onClick = () => {
+      // Don't interfere with the original click event
+      // Just hide the tooltip if it's visible
+      const state = elementState.get(el)
+      if (state?.tooltipElement) {
+        hideTooltip(el)
+      }
+    }
     
     el.addEventListener('mouseenter', onMouseEnter)
     el.addEventListener('mouseleave', onMouseLeave)
