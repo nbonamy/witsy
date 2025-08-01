@@ -25,7 +25,6 @@
               </div>
               <div class="actions">
                 <BIconPlayCircle 
-                  v-if="type === 'runnable'" 
                   class="run" 
                   v-tooltip="{ text: t('agent.help.run'), position: 'top-left' }" 
                   @click.stop="$emit('run', agent)" 

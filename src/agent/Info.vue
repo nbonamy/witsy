@@ -6,7 +6,6 @@
     <div class="panel-header">
       <label>{{ t('agent.view.header') }}</label>
       <BIconPlayCircle 
-        v-if="agent.type === 'runnable'" 
         class="icon run" 
         v-tooltip="{ text: t('agent.help.run'), position: 'bottom-left' }" 
         @click="onRun" 
