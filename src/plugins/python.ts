@@ -62,7 +62,7 @@ export default class extends Plugin {
     }
 
     // now run it
-    const output = window.api.interpreter.python(script)
+    const output = await window.api.interpreter.python(script)
     if (output.error) return output
     else return { result: output.result.join('\n') }
   }  
