@@ -5,7 +5,7 @@
 <script setup lang="ts">
 
 import { strDict } from './types'
-import { ref, computed, onMounted, onUnmounted, WritableComputedRef } from 'vue'
+import { ref, computed, onMounted, WritableComputedRef } from 'vue'
 import { Locale } from 'vue-i18n'
 import useAppearanceTheme from './composables/appearance_theme'
 import Main from './screens/Main.vue'
