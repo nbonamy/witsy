@@ -180,7 +180,16 @@
         "type": "Modèle d'exécution"
       },
       "invocation": {
-        "title": "Déclencheurs de l'Agent"
+        "missingInput": "[{name} est manquant]",
+        "missingInputs": {
+          "cancelButtonText": "Enregistrer quand même",
+          "confirmButtonText": "Corriger les variables",
+          "text": "Le comportement de votre agent lorsqu'il est déclenché par le planificateur est indéfini. Vous devez soit définir des valeurs pour toutes les variables, soit les supprimer du prompt.",
+          "title": "Certaines de vos variables de prompt ne sont pas définies"
+        },
+        "prompt": "Prompt calculé utilisé pour les déclenchements programmés",
+        "title": "Déclencheurs de l'Agent",
+        "variables": "Valeurs des variables du prompt pour les déclenchements programmés"
       },
       "llm": {
         "help": {

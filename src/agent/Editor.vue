@@ -170,7 +170,7 @@
             </div>
             <div class="form-field" v-if="promptInputs.length">
               <label for="prompt">{{ t('agent.create.information.promptInputs') }}</label>
-              <table class="prompt-inputs">
+              <table class="table-plain prompt-inputs">
                 <thead><tr>
                   <th>{{ t('common.name') }}</th>
                   <th>{{ t('common.description') }}</th>
@@ -199,11 +199,11 @@
             </div>
 
             <div class="tools" v-if="!allToolsAllowed">
-              <ToolTable v-model="agent.tools" @toggle="agent.tools = toolTable.toggleTool(agent.tools, $event)" ref="toolTable" />
               <div class="form-field horizontal">
-                <button class="all" @click.prevent="agent.tools = null">{{ t('agent.create.tools.selectAll') }}</button>
-                <button class="none" @click.prevent="agent.tools = []">{{ t('agent.create.tools.selectNone') }}</button>
+                <button class="all" @click="agent.tools = null">{{ t('agent.create.tools.selectAll') }}</button>
+                <button class="none" @click="agent.tools = []">{{ t('agent.create.tools.selectNone') }}</button>
               </div>
+              <ToolTable v-model="agent.tools" @toggle="agent.tools = toolTable.toggleTool(agent.tools, $event)" ref="toolTable" />
             </div>
 
           </template>
@@ -256,15 +256,33 @@
               <span v-html="nextRuns"></span>
             </div>
 
-            <div class="form-field">
+            <!-- <div class="form-field">
               <label for="webhook">{{ t('agent.trigger.webhook') }}</label>
               <input type="text" name="webhook" v-model="webhook" />
+            </div> -->
+
+            <div class="form-field">
+              <label for="prompt">{{ t('agent.create.invocation.variables') }}</label>
+              <table class="table-plain variables">
+                <thead>
+                  <tr>
+                    <th>{{ t('common.name') }}</th>
+                    <th>{{ t('common.value') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="input in promptInputs" :key="input.name">
+                    <td>{{ input.name }}</td>
+                    <td><input type="text" v-model="invocationInputs[input.name]" :placeholder="input.defaultValue" @input="saveInvocationInputs"/></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
-            <!-- <div class="form-field">
-              <label for="prompt">{{ t('agent.prompt') }}</label>
-              <textarea v-model="agent.prompt" name="prompt" rows="4"></textarea>
-            </div> -->
+            <div class="form-field">
+              <label for="prompt">{{ t('agent.create.invocation.prompt') }}</label>
+              <textarea v-model="invocationPrompt" readonly></textarea>
+            </div>
 
           </template>
         </WizardStep>
@@ -295,6 +313,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { CronExpressionParser } from 'cron-parser'
 import { extractPromptInputs } from '../services/prompt'
+import Dialog from '../composables/dialog'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
@@ -327,6 +346,7 @@ const webhook = ref('')
 const currentStep = ref(0)
 const completedStep = ref(-1)
 const informationError = ref('')
+const invocationInputs = ref<Record<string, string>>({})
 
 const kStepGeneral = 'general'
 const kStepGoal = 'goal'
@@ -387,6 +407,17 @@ const nextRuns = computed(() => {
   }
 })
 
+const invocationPrompt = computed(() => {
+  const values = {...agent.value.invocationValues }
+  const inputs = extractPromptInputs(agent.value.prompt)
+  inputs.forEach(input => {
+    if (!values[input.name]?.length) {
+      values[input.name] = t('agent.create.invocation.missingInput', { name: input.name })
+    }
+  })
+  return agent.value.buildPrompt(values)
+})
+
 const stepIndex = (step: string) => {
   return steps().indexOf(step)
 }
@@ -428,6 +459,18 @@ const goToStepAfter = (step: string, stepSize: number = 1) => {
   completedStep.value = Math.max(completedStep.value, currentIndex)
 }
 
+// prepare inputs for the invocation screen
+const prepareAgentInvocationInputs = () => {
+  invocationInputs.value = {}
+  const inputs = extractPromptInputs(agent.value.prompt)
+  inputs.forEach(input => {
+    invocationInputs.value[input.name] = agent.value.invocationValues[input.name] || input.defaultValue|| ''
+  })
+}
+
+const saveInvocationInputs = () => {
+  agent.value.invocationValues = { ...invocationInputs.value }
+}
 
 const validateInformation = () => {
   if (!agent.value.name.trim().length ||
@@ -467,10 +510,6 @@ const validateAgents = () => {
 }
 
 const validateInvocation = () => {
-  if ((agent.value.schedule || webhook.value) && !agent.value.prompt) {
-    alert(t('agent.create.invocation.promptRequired'))
-    return false
-  }
   save()
 }
 
@@ -497,17 +536,48 @@ const toggleAgent = (support: Agent) => {
 }
 
 onMounted(async () => {
+
+  // watch props
   watch(() => props || {}, async () => {
-    agent.value = props.agent ? JSON.parse(JSON.stringify(props.agent)) : new Agent()
+    agent.value = props.agent ? Agent.fromJson(props.agent) : new Agent()
     allToolsAllowed.value = (agent.value.tools === null)
     await toolTable.value?.initTools()
     currentStep.value = stepIndex(kStepGeneral)
     completedStep.value = props.mode === 'edit' ? steps().length - 1 : -1
   }, { deep: true, immediate: true })
+
+  // watch step change
+  watch(currentStep, (newStep) => {
+    if (newStep === stepIndex(kStepInvocation)) {
+      prepareAgentInvocationInputs()
+    }
+  })
+
 })
 
 const save = async () => {
-  const rc = await window.api.agents.save(JSON.parse(JSON.stringify(agent.value)))
+
+  const inputs = extractPromptInputs(agent.value.prompt)
+  for (const input of inputs) {
+    if (agent.value.invocationValues[input.name] === undefined) {
+      
+      const rc = await Dialog.show({
+        title: t('agent.create.invocation.missingInputs.title'),
+        text: t('agent.create.invocation.missingInputs.text'),
+        customClass: { actions: 'actions-stacked' },
+        confirmButtonText: t('agent.create.invocation.missingInputs.confirmButtonText'),
+        cancelButtonText: t('agent.create.invocation.missingInputs.cancelButtonText'),
+        showCancelButton: true,
+      })
+
+      if (rc.isConfirmed) {
+        return
+      }
+    }
+  }
+
+  // we can save
+  const rc = window.api.agents.save(JSON.parse(JSON.stringify(agent.value)))
   if (rc) {
     emit('save', agent.value)
   }
@@ -606,26 +676,23 @@ const save = async () => {
  
     }
 
-    .prompt-inputs {
-      
+    .table-plain {
       padding: 0.5rem 1rem;
       width: 100%;
-      
-      th, td {
-        padding: 0.25rem;
-        vertical-align: middle;
-      }
+    }
 
-      th {
-        text-align: left;
-        border-bottom: 1px solid var(--text-color);
-      }
-
+    .prompt-inputs {
       td:first-child {
         width: 25%;
       }
       td:last-child {
         width: 25%;
+      }
+    }
+
+    .variables {
+      td:first-child {
+        width: 33%;
       }
     }
 

@@ -197,7 +197,8 @@ div:where(.swal2-container) div:where(.swal2-actions) {
   gap: 1rem;
 }
 
-div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style*="display: inline-block;"]) {
+div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style*="display: inline-block;"]),
+div:where(.swal2-container) div:where(.swal2-actions.actions-stacked) {
   flex-direction: column;
   align-items: stretch;
   gap: 0rem;

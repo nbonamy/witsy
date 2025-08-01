@@ -104,6 +104,7 @@ test('Save agent', () => {
     docrepo: null,
     instructions: 'instructions3',
     prompt: 'prompt3',
+    invocationValues: {},
     parameters: [],
     schedule: '*/5 * * * *'
   }

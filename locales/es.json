@@ -180,7 +180,16 @@
         "type": "Modelo de Ejecución"
       },
       "invocation": {
-        "title": "Disparadores del Agente"
+        "missingInput": "[{name} falta]",
+        "missingInputs": {
+          "cancelButtonText": "Guardar de todos modos",
+          "confirmButtonText": "Corregir variables",
+          "text": "El comportamiento de tu agente cuando es activado por el programador no está definido. Deberías definir valores para todas las variables o eliminarlas de la indicación.",
+          "title": "Algunas de tus variables de indicación no están definidas"
+        },
+        "prompt": "Indicación calculada utilizada para invocaciones programadas",
+        "title": "Disparadores del Agente",
+        "variables": "Valores de variables de indicación para invocaciones programadas"
       },
       "llm": {
         "help": {

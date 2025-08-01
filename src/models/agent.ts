@@ -1,6 +1,7 @@
 
 import { LlmModelOpts, PluginParameter } from 'multi-llm-ts'
-import { AgentSource, AgentType, anyDict, type Agent as AgentBase } from '../types/index'
+import { AgentSource, AgentType, type Agent as AgentBase } from '../types/index'
+import { extractPromptInputs, replacePromptInputs } from '../services/prompt'
 import { ZodType } from 'zod'
 
 export default class Agent implements AgentBase {
@@ -26,6 +27,7 @@ export default class Agent implements AgentBase {
   docrepo: string|null
   instructions: string
   prompt: string|null
+  invocationValues: Record<string, string>
   parameters: PluginParameter[]
   schedule: string|null
 
@@ -47,6 +49,7 @@ export default class Agent implements AgentBase {
     this.docrepo = null
     this.instructions = ''
     this.prompt = null
+    this.invocationValues = {}
     this.parameters = []
     this.schedule = null
   }
@@ -76,6 +79,7 @@ export default class Agent implements AgentBase {
     agent.docrepo = obj.docrepo ?? null
     agent.instructions = obj.instructions ?? ''
     agent.prompt = obj.prompt ?? null
+    agent.invocationValues = obj.invocationInputs ?? {}
     agent.parameters = obj.parameters ?? []
     agent.schedule = obj.schedule ?? null
     agent.getPreparationDescription = preparationDescription
@@ -85,17 +89,21 @@ export default class Agent implements AgentBase {
     return agent
   }
 
-  buildPrompt(parameters: anyDict): string|null {
+  buildPrompt(parameters: Record<string, any>): string|null {
+
+    // need a prompt
     if (!this.prompt) return null
-    let prompt = this.prompt
-    for (const param of Object.keys(parameters)) {
-      let value = parameters[param]
-      if (Array.isArray(value)) {
-        value = value.join(', ')
+
+    // make sure we have the value for each
+    const promptInputs = extractPromptInputs(this.prompt)
+    for (const promptInput of promptInputs) {
+      if (!parameters[promptInput.name]) {
+        parameters[promptInput.name] = promptInput.defaultValue ?? ''
       }
-      prompt = prompt.replace(new RegExp(`{{${param}}}`, 'g'), value)
     }
-    return prompt
+
+    return replacePromptInputs(this.prompt, parameters)
+
   }
   
   getPreparationDescription?: () => string

@@ -199,7 +199,16 @@
         "type": "Modelo de Execução"
       },
       "invocation": {
-        "title": "Acionadores do Agente"
+        "missingInput": "[{name} está ausente]",
+        "missingInputs": {
+          "cancelButtonText": "Salvar mesmo assim",
+          "confirmButtonText": "Corrigir variáveis",
+          "text": "O comportamento do seu agente quando acionado pelo agendador não está definido. Você deve definir valores para todas as variáveis ou removê-las do prompt.",
+          "title": "Algumas das suas variáveis de prompt não estão definidas"
+        },
+        "prompt": "Prompt calculado usado para invocações agendadas",
+        "title": "Acionadores do Agente",
+        "variables": "Valores das variáveis de prompt para invocações agendadas"
       },
       "llm": {
         "help": {

@@ -199,7 +199,16 @@
         "type": "Execution Model"
       },
       "invocation": {
-        "title": "Agent Triggers"
+        "missingInput": "[{name} is missing]",
+        "missingInputs": {
+          "cancelButtonText": "Save anyway",
+          "confirmButtonText": "Fix variables",
+          "text": "Behavior of your agent when triggered by the scheduler is undefined. You should either define values for all variables or remove them from the prompt.",
+          "title": "Some of your prompt variables are not defined"
+        },
+        "prompt": "Calculated prompt used for scheduled invocations",
+        "title": "Agent Triggers",
+        "variables": "Prompt variables values for scheduled invocations"
       },
       "llm": {
         "help": {

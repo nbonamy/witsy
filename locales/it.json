@@ -180,7 +180,16 @@
         "type": "Modello di Esecuzione"
       },
       "invocation": {
-        "title": "Trigger dell'Agente"
+        "missingInput": "[{name} è mancante]",
+        "missingInputs": {
+          "cancelButtonText": "Salva comunque",
+          "confirmButtonText": "Correggi variabili",
+          "text": "Il comportamento del tuo agente quando attivato dal pianificatore non è definito. Dovresti definire valori per tutte le variabili o rimuoverle dal prompt.",
+          "title": "Alcune delle tue variabili del prompt non sono definite"
+        },
+        "prompt": "Prompt calcolato usato per invocazioni programmate",
+        "title": "Trigger dell'Agente",
+        "variables": "Valori delle variabili del prompt per invocazioni programmate"
       },
       "llm": {
         "help": {
