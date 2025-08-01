@@ -5,6 +5,7 @@
   scrollbar-color: var(--scrollbar-thumb-color) var(--dialog-body-bg-color);
 
   table {
+    
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -35,6 +36,24 @@
 
     td.enabled {
       width: 1rem;
+    }
+
+    &.table-plain {
+      td {
+        border: none;
+      }
+      th {
+        border: none;
+        border-bottom: 1px solid var(--text-color);
+      }
+      tr.selected td:first-child {
+        border-top-left-radius: 0.5rem;
+        border-bottom-left-radius: 0.5rem;
+      }
+      tr.selected td:last-child {
+        border-top-right-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+      }
     }
   
   }

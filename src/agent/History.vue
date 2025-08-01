@@ -23,8 +23,7 @@
       </div>
 
       <div class="sticky-table-container" v-else>
-        
-        <table>
+        <table class="table-plain">
           <thead>
             <tr>
               <th>{{ t('agent.history.date') }}</th>
@@ -43,7 +42,6 @@
             </tr>
           </tbody>
         </table>
-
       </div>
 
     </div>
@@ -130,14 +128,8 @@ const filteredRuns = computed(() => {
 
     th, td {
       padding: 0.375rem 0.5rem;
-      border: none;
-      vertical-align: middle;
     }
-
-    th {
-      font-weight: bold;
-      border-bottom: 1px solid var(--text-color);
-    }
+    
 
     td.view {
       svg {
@@ -146,23 +138,7 @@ const filteredRuns = computed(() => {
       }
     }
 
-    tr.selected td:first-child {
-      border-top-left-radius: 0.5rem;
-      border-bottom-left-radius: 0.5rem;
-    }
-
-    tr.selected td:last-child {
-      border-top-right-radius: 0.5rem;
-      border-bottom-right-radius: 0.5rem;
-    }
-
-    tr.spacer {
-      height: 0.25rem;
-      background-color: var(--background-color);
-    }
-
   }
-
 
 }
 </style>
