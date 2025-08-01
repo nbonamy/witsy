@@ -390,17 +390,13 @@ export const installIpc = (
     event.returnValue = markdown.renderMarkdown(payload);
   });
 
-  ipcMain.on(IPC.INTERPRETER.PYTHON_RUN, async (event, payload) => {
+  ipcMain.handle(IPC.INTERPRETER.PYTHON_RUN, async (event, payload) => {
     try {
       const result = await interpreter.runPython(payload);
-      event.returnValue = {
-        result: result
-      }
+      return { result: result }
     } catch (error) {
       console.log('Error while running python', error);
-      event.returnValue = {
-        error: error || 'Unknown error'
-      }
+      return { error: error || 'Unknown error' }
     }
   })
 

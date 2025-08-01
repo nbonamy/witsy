@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron'
-import { Command, ComputerAction, Expert, ExternalApp, anyDict, strDict, NetworkRequest, OpenSettingsPayload, MainWindowMode, Agent, AgentRun } from './types';
+import { Command, ComputerAction, Expert, ExternalApp, anyDict, strDict, NetworkRequest, OpenSettingsPayload, MainWindowMode, AgentRun } from './types';
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './types/file';
 import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem } from './types/rag';
@@ -12,6 +12,7 @@ import { ListDirectoryResponse } from './types/filesystem';
 import { LocalSearchResult } from './main/search';
 import { Size } from './main/computer';
 import { LlmChunk, LlmTool } from 'multi-llm-ts';
+import Agent from './models/agent';
 import * as IPC from './ipc_consts';
 
 contextBridge.exposeInMainWorld(
@@ -143,7 +144,7 @@ contextBridge.exposeInMainWorld(
     },
     agents: {
       forge(): void { return ipcRenderer.send(IPC.AGENTS.OPEN_FORGE) },
-      load: (): Agent[] => { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.LOAD)) },
+      load: (): any[] => { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.LOAD)).map((a: any) => Agent.fromJson(a)) },
       save(agent: Agent): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE, JSON.stringify(agent)) },
       delete(agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE, agentId) },
       getRuns(agentId: string): AgentRun[] { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.GET_RUNS, agentId)) },
@@ -175,7 +176,7 @@ contextBridge.exposeInMainWorld(
       render: (markdown: string): string => { return ipcRenderer.sendSync(IPC.MARKDOWN.RENDER, markdown) },
     },
     interpreter: {
-      python: (code: string): string => { return ipcRenderer.sendSync(IPC.INTERPRETER.PYTHON_RUN, code) },
+      python: (code: string): Promise<any> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYTHON_RUN, code) },
     },
     mcp: {
       isAvailable: (): boolean => { return ipcRenderer.sendSync(IPC.MCP.IS_AVAILABLE) },
