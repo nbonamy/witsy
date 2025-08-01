@@ -7,17 +7,23 @@ import { I18n, Locale } from 'vue-i18n'
 let i18n: I18n|null = null
 let i18nLlm: I18n|null = null
 
-if (!i18n && typeof window !== 'undefined') {
-  const locale = window.api?.config?.localeUI() || 'en-US'
-  const messages = window.api?.config?.getI18nMessages()
-  i18n = createI18n(messages, locale)
+const initI18n = (): void => {
+
+  if (!i18n && typeof window !== 'undefined') {
+    const locale = window.api?.config?.localeUI() || 'en-US'
+    const messages = window.api?.config?.getI18nMessages()
+    i18n = createI18n(messages, locale)
+  }
+
+  if (!i18nLlm && typeof window !== 'undefined') {
+    const locale = window.api?.config?.localeLLM() || 'en-US'
+    const messages = window.api?.config?.getI18nMessages()
+    i18nLlm = createI18n(messages, locale)
+  }
+
 }
 
-if (!i18nLlm && typeof window !== 'undefined') {
-  const locale = window.api?.config?.localeLLM() || 'en-US'
-  const messages = window.api?.config?.getI18nMessages()
-  i18nLlm = createI18n(messages, locale)
-}
+initI18n()
 
 const localeToLangName = (locale: string): string => {
   const t = i18nLlm.global.t as CallableFunction
@@ -49,8 +55,10 @@ const setLlmLocale = (locale: string): void => {
   i18nLlmLocale.value = locale
 }
 
-const t: CallableFunction = i18n?.global?.t
-const tllm: CallableFunction = i18nLlm?.global?.t
+// @ts-expect-error this is callable!
+const t: CallableFunction = (...args: any[]) => i18n?.global?.t(...args)
+// @ts-expect-error this is callable!
+const tllm: CallableFunction = (...args: any[]) => i18nLlm?.global?.t(...args)
 
 type i18nCommandAttr = 'label' | 'template'
 type i18nExpertAttr = 'name' | 'prompt'
@@ -83,6 +91,7 @@ export {
   i18nCommandAttr,
   i18nExpertAttr,
   i18nLlm,
+  initI18n,
   t,
   tllm,
   getLlmLocale,

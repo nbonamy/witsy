@@ -5,6 +5,10 @@ import { CronExpressionParser } from 'cron-parser'
 import { loadSettings } from './config'
 import { loadAgents } from './agents'
 import { runPython } from './interpreter'
+import { wait } from './utils'
+import { initI18n } from '../services/i18n'
+import { getLocaleMessages } from './i18n'
+import * as agents from './agents'
 import Runner from '../services/runner'
 import Mcp from './mcp'
 import LocalSearch from './search'
@@ -19,6 +23,7 @@ export default class Scheduler {
     this.app = app
     this.mcp = mcp
     this.mock()
+    initI18n()
   }
 
   stop() {
@@ -26,26 +31,20 @@ export default class Scheduler {
     this.timeout = null
   }
 
-  start() {
+  async start(): Promise<void> {
 
     // clear previous
     this.stop()
 
-    // we want to on next minute
+    // we want to run on next minute
     const now = new Date()
     const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
-    setTimeout(() => this.check(), delay)
+    await wait(delay)
+    return this.check()
 
   }
 
-  check() {
-
-    return
-
-    if (this.mcp.getStatus().servers.length === 0) {
-      this.start()
-      return
-    }
+  async check(): Promise<void> {
 
     // we need to check is we where 30 seconds before to make sure we don't miss
     const tolerance = 30 * 1000
@@ -53,6 +52,10 @@ export default class Scheduler {
 
     // we need a config
     const config = loadSettings(this.app)
+    if (!(config.features?.agents)) {
+      setTimeout(() => this.start(), 5000)
+      return
+    }
 
     // load agents
     const agents: Agent[] = loadAgents(this.app)
@@ -75,8 +78,14 @@ export default class Scheduler {
           console.log(`Agent ${agent.name} is due to run`)
 
           try {
+            
+            // build a prompt
+            const prompt = agent.buildPrompt(agent.invocationValues)
+            
+            // now run it
             const runner = new Runner(config, agent)
-            runner.run('schedule')
+            runner.run('schedule', prompt)
+          
           } catch (error) {
             console.log(`Error running agent ${agent.name}`, error)
             continue
@@ -104,27 +113,45 @@ export default class Scheduler {
 
     global.window = {
       api: {
+
+        // @ts-expect-error partial mock
+        config: {
+          localeUI: () => {
+            const config = loadSettings(this.app)
+            return config.general.locale || 'en-US'
+          },
+          localeLLM: () => {
+            const config = loadSettings(this.app)
+            return config.llm.locale || 'en-US'
+          },
+          getI18nMessages: () => {
+            return getLocaleMessages(this.app)
+          }
+        },
+
         // @ts-expect-error partial mock
         agents: {
+          load: (): Agent[] => {
+            return agents.loadAgents(this.app)
+          },
           saveRun: (run: AgentRun): boolean =>  {
-            return window.api.agents.saveRun(run);
+            return agents.saveAgentRun(this.app, run)
           },
         },
+
         interpreter: {
-          python: async (script: string) => {
+          python: async (script: string): Promise<any> => {
             try {
               const result = await runPython(script);
-              return {
-                result: result
-              }
+              return { result: result }
             } catch (error) {
               console.log('Error while running python', error);
-              return {
-                error: error || 'Unknown error'
-              }
+              return { error: error || 'Unknown error' }
             }
           },
         },
+
+
         search: {
           query: (payload: any) => {
             const { query, num } = payload
@@ -133,11 +160,12 @@ export default class Scheduler {
             return results
           },
         },
+        
         // @ts-expect-error partial mock
         mcp: {
           isAvailable: () => true,
-          getTools: this.mcp.getTools,
-          callTool: this.mcp.callTool,
+          getTools: this.mcp?.getTools,
+          callTool: this.mcp?.callTool,
         },
       }
     }
