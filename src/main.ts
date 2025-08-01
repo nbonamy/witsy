@@ -13,8 +13,9 @@ import ReadAloud from './automations/readaloud';
 import Transcriber from './automations/transcriber';
 import DocumentRepository from './rag/docrepo';
 import MemoryManager from './main/memory';
-import Mcp from './main/mcp';
 import TrayIconManager from './main/tray';
+import Scheduler from './main/scheduler';
+import Mcp from './main/mcp';
 
 import { fixPath } from './main/utils';
 import { useI18n } from './main/i18n';
@@ -27,6 +28,7 @@ import * as menu from './main/menu';
 import * as backup from './main/backup';
 
 let mcp: Mcp = null
+let scheduler: Scheduler = null;
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -180,6 +182,10 @@ app.whenReady().then(async () => {
     mcp = new Mcp(app);
     mcp.connect();
   }
+
+  // and now scheduler
+  scheduler = new Scheduler(app, mcp);
+  scheduler.start();
 
   // create the main window
   if (!settings.general.hideOnStartup || process.env.TEST) {
