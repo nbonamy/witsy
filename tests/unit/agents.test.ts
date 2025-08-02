@@ -50,16 +50,18 @@ test('Load agents', () => {
     description: 'Description1',
     engine: 'engine1',
     model: 'model1',
-    locale: 'locale1',
     modelOpts: {},
     disableStreaming: true,
-    tools: [ 'tool1', 'tool2' ],
-    agents: [],
-    docrepo: null,
+    locale: 'locale1',
     instructions: 'instructions1',
-    prompt: 'prompt1',
     parameters: [ { name: 'param1', type: 'string', description: 'Description1', required: true } ],
-    schedule: '*/5 * * * *'
+    schedule: '*/5 * * * *',
+    steps: [{
+      tools: [ 'tool1', 'tool2' ],
+      agents: [],
+      docrepo: null,
+      prompt: 'prompt1',
+    }]
   })
   expect(agents[1]).toMatchObject({
     id: 'agent2',
@@ -69,16 +71,18 @@ test('Load agents', () => {
     description: 'Description2',
     engine: 'engine2',
     model: 'model2',
-    locale: 'locale2',
     modelOpts: {},
     disableStreaming: true,
-    tools: [ 'tool1', 'tool2' ],
-    agents: [ 'agent1' ],
-    docrepo: null,
+    locale: 'locale2',
     instructions: 'instructions2',
-    prompt: 'prompt2',
     parameters: [],
-    schedule: '*/5 * * * *'
+    schedule: '*/5 * * * *',
+    steps: [{
+      tools: [ 'tool1', 'tool2' ],
+      agents: [ 'agent1' ],
+      docrepo: null,
+      prompt: 'prompt2',
+    }]
   })
 })
 
@@ -93,20 +97,22 @@ test('Save agent', () => {
     type: 'runnable',
     engine: 'engine3',
     model: 'model3',
-    locale: 'locale3',
     modelOpts: {},
     disableStreaming: true,
-    tools: [
-      'tool1',
-      'tool2'
-    ],
-    agents: [],
-    docrepo: null,
+    locale: 'locale3',
     instructions: 'instructions3',
-    prompt: 'prompt3',
-    invocationValues: {},
     parameters: [],
-    schedule: '*/5 * * * *'
+    steps: [{
+      tools: [
+        'tool1',
+        'tool2'
+      ],
+      agents: [],
+      docrepo: null,
+      prompt: 'prompt3'
+    }],
+    schedule: '*/5 * * * *',
+    invocationValues: {},
   }
   const result = main.saveAgent(app, agent)
   expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/agents/agent3.json', JSON.stringify(agent, null, 2))

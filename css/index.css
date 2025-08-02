@@ -630,6 +630,14 @@ table.table-plain {
 
 }
 
+svg.scale90 {
+  transform: scale(0.9);
+}
+
+svg.scale95 {
+  transform: scale(0.95);
+}
+
 svg.scale105 {
   transform: scale(1.05);
 }

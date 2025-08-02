@@ -1,8 +1,7 @@
 
 import { LlmModelOpts, PluginParameter } from 'multi-llm-ts'
-import { AgentSource, AgentType, type Agent as AgentBase } from '../types/index'
+import { AgentSource, AgentType, Agent as AgentBase, AgentStep } from '../types/index'
 import { extractPromptInputs, replacePromptInputs } from '../services/prompt'
-import { ZodType } from 'zod'
 
 export default class Agent implements AgentBase {
 
@@ -13,23 +12,16 @@ export default class Agent implements AgentBase {
   name: string
   description: string
   type: AgentType
-  engine: string
-  model: string
-  locale: string
+  engine: string|null
+  model: string|null
   modelOpts: LlmModelOpts|null
-  structuredOutput?: {
-    name: string
-    structure: ZodType
-  }
   disableStreaming: boolean
-  tools: string[]|null
-  agents: string[]|null
-  docrepo: string|null
+  locale: string
   instructions: string
-  prompt: string|null
-  invocationValues: Record<string, string>
   parameters: PluginParameter[]
+  steps: AgentStep[] = []
   schedule: string|null
+  invocationValues: Record<string, string>
 
   constructor() {
     this.id = crypto.randomUUID()
@@ -41,17 +33,19 @@ export default class Agent implements AgentBase {
     this.type = 'runnable'
     this.engine = ''
     this.model = ''
-    this.modelOpts = {}
     this.disableStreaming = true
+    this.modelOpts = {}
     this.locale = ''
-    this.tools = null
-    this.agents = []
-    this.docrepo = null
     this.instructions = ''
-    this.prompt = null
-    this.invocationValues = {}
     this.parameters = []
     this.schedule = null
+    this.invocationValues = {}
+    this.steps = [{
+      tools: null,
+      agents: [],
+      docrepo: null,
+      prompt: null,
+    }]
   }
 
   static fromJson(
@@ -71,17 +65,14 @@ export default class Agent implements AgentBase {
     agent.type = obj.type ?? 'runnable'
     agent.engine = obj.engine ?? ''
     agent.model = obj.model ?? ''
-    agent.modelOpts = obj.modelOpts ?? null
+    agent.modelOpts = obj.modelOpts ?? {}
     agent.disableStreaming = obj.disableStreaming ?? true
     agent.locale = obj.locale ?? ''
-    agent.tools = obj.tools ?? null
-    agent.agents = obj.agents ?? []
-    agent.docrepo = obj.docrepo ?? null
     agent.instructions = obj.instructions ?? ''
-    agent.prompt = obj.prompt ?? null
-    agent.invocationValues = obj.invocationInputs ?? {}
     agent.parameters = obj.parameters ?? []
+    agent.steps = obj.steps ?? []
     agent.schedule = obj.schedule ?? null
+    agent.invocationValues = obj.invocationValues ?? {}
     agent.getPreparationDescription = preparationDescription
     agent.getRunningDescription = runningDescription
     agent.getCompletedDescription = completedDescription
@@ -89,20 +80,20 @@ export default class Agent implements AgentBase {
     return agent
   }
 
-  buildPrompt(parameters: Record<string, any>): string|null {
+  buildPrompt(step: number, parameters: Record<string, any>): string|null {
 
     // need a prompt
-    if (!this.prompt) return null
+    if (!this.steps[step] || !this.steps[step].prompt) return null
 
     // make sure we have the value for each
-    const promptInputs = extractPromptInputs(this.prompt)
+    const promptInputs = extractPromptInputs(this.steps[step].prompt)
     for (const promptInput of promptInputs) {
       if (!parameters[promptInput.name]) {
         parameters[promptInput.name] = promptInput.defaultValue ?? ''
       }
     }
 
-    return replacePromptInputs(this.prompt, parameters)
+    return replacePromptInputs(this.steps[step].prompt, parameters)
 
   }
   

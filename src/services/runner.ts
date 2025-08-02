@@ -1,6 +1,6 @@
 
-import { Configuration } from 'types/config'
-import { AgentRun, AgentRunTrigger, Chat } from '../types/index'
+import { Configuration } from '../types/config'
+import { AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
 import { LlmChunk, LlmChunkContent, MultiToolPlugin } from 'multi-llm-ts'
 import { getLlmLocale, setLlmLocale, t } from './i18n'
 import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, GenerationCallback } from './generator'
@@ -12,6 +12,7 @@ import Message from '../models/message'
 import Attachment from '../models/attachment'
 import AgentPlugin from '../plugins/agent'
 import A2AClient from './a2a-client'
+import { replacePromptInputs } from './prompt'
 
 export interface RunnerCompletionOpts extends GenerationOpts {
   ephemeral?: boolean
@@ -36,12 +37,6 @@ export default class extends Generator {
 
   async run(trigger: AgentRunTrigger, prompt?: string, opts?: RunnerCompletionOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
 
-    // check
-    prompt = prompt?.trim() || this.agent.prompt
-    if (!prompt.length) {
-      return null
-    }
-
     // create a run
     const run: AgentRun = {
       id: crypto.randomUUID(),
@@ -51,35 +46,14 @@ export default class extends Generator {
       trigger: trigger,
       status: 'running',
       prompt: prompt,
-      messages: opts?.chat?.messages || [],
+      messages: [],
       toolCalls: [],
     }
 
+    // we need to store each step output
+    const outputs: string[] = []
+
     try {
-
-      // save it
-      if (!opts?.ephemeral) {
-        this.saveRun(run)
-      }
-      
-      // set llm locale
-      let llmLocale = null
-      const forceLocale = this.config.llm.forceLocale
-      if (this.agent.locale) {
-        llmLocale = getLlmLocale()
-        setLlmLocale(this.agent.locale)
-        this.config.llm.forceLocale = true
-      }
-
-      // merge with defaults
-      const defaults: GenerationOpts = {
-        ... this.llmManager.getChatEngineModel(),
-        structuredOutput: this.agent.structuredOutput,
-        docrepo: null,
-        sources: true,
-        citations: true,
-      }
-      opts = {...defaults, ...opts }
 
       // create system message if not exists
       let prevSystemMessage: string
@@ -95,123 +69,185 @@ export default class extends Generator {
       // update agent instructions
       run.messages[0].content = this.getSystemInstructions(this.agent.instructions)
 
-      // disable streaming
-      opts.streaming = opts.streaming ?? (this.agent.disableStreaming !== true)
-
-      // we need a llm
-      opts.engine = this.agent.engine || opts.engine
-      opts.model = this.agent.model || this.llmManager.getChatModel(opts.engine, opts.model).id
-      this.llm = this.llmManager.igniteEngine(opts.engine)
-
-      // update chat if relevant
-      if (opts?.chat) {
-        // opts.chat.instructions = this.agent.instructions
-        opts.chat.setEngineModel(opts.engine, opts.model)
-        opts.chat.locale = this.agent.locale || opts.chat.locale
-        // opts.chat.tools = this.agent.tools || null
-        opts.chat.modelOpts = this.agent.modelOpts || null
-      }
-
-      // make sure llm has latest tools
-      this.llm.clearPlugins()
-      const multiPluginsAdded: Record<string, MultiToolPlugin> = {}
-      for (const pluginName in availablePlugins) {
-        
-        const pluginClass = availablePlugins[pluginName]
-        const plugin = new pluginClass(this.config.plugins[pluginName])
-
-        // if no filters add
-        if (this.agent.tools === null) {
-          this.llm.addPlugin(plugin)
-          continue
-        }
-
-        // single-tool plugins is easy
-        if (!(plugin instanceof MultiToolPlugin)) {
-          if (this.agent.tools.includes(plugin.getName())) {
-            this.llm.addPlugin(plugin)
-          }
-          continue
-        }
-
-        // multi-tool plugins are more complex
-        const pluginTools = await plugin.getTools()
-        for (const pluginTool of pluginTools) {
-          if (this.agent.tools.includes(pluginTool.function.name)) {
-
-            let instance = multiPluginsAdded[pluginName]
-            if (!instance) {
-              instance = plugin
-              this.llm.addPlugin(instance)
-              multiPluginsAdded[pluginName] = instance
-            }
-
-            // enable this tool
-            instance.enableTool(pluginTool.function.name)
-          }
-
-        }
-
-      }
-
-      // and now add tools for running agents
-      const agents = [
-        ...window.api.agents.load(),
-        ...(opts?.agents || [])
-      ]
-      for (const agentId of this.agent.agents) {
-        const agent = agents.find(a => a.id === agentId)
-        if (agent) {
-          const plugin = new AgentPlugin(this.config, agent, agent.engine || opts.engine, agent.model || opts.model)
-          this.llm.addPlugin(plugin)
-        }
-      }
-
-      // add user message
-      const userMessage = new Message('user', prompt)
-      userMessage.engine = opts.engine
-      userMessage.model = opts.model
-      run.messages.push(userMessage)
-
-      // add assistant message
-      const assistantMessage = new Message('assistant')
-      assistantMessage.engine = opts.engine
-      assistantMessage.model = opts.model
-      assistantMessage.agentId = this.agent.id
-      run.messages.push(assistantMessage)
-
-      // callback
-      generationCallback?.('before_generation')
-
-      // save again
+      // save it
       if (!opts?.ephemeral) {
         this.saveRun(run)
       }
+      
+      // set llm locale
+      let llmLocale = null
+      const forceLocale = this.config.llm.forceLocale
+      if (this.agent.locale) {
+        llmLocale = getLlmLocale()
+        setLlmLocale(this.agent.locale)
+        this.config.llm.forceLocale = true
+      }
 
-      // now depends on the type of agent
+      // now we can loop on steps
       let rc: GenerationResult = 'error'
-      if (this.agent.source === 'a2a') {
+      for (let stepIdx = 0; stepIdx < this.agent.steps.length; stepIdx++) {
 
-        rc = await this.runA2A(run, opts)
+        // get step
+        const step: AgentStep = this.agent.steps[stepIdx]
 
-      } else {
-
-        // generate text
-        rc = await this.prompt(run, opts)
-
-        // check if streaming is not supported
-        if (rc === 'streaming_not_supported') {
-          this.agent.disableStreaming = true
-          rc = await this.prompt(run, opts)
+        // check
+        const stepPrompt = stepIdx === 0 ? (prompt?.trim() || step.prompt) : replacePromptInputs(step.prompt,
+          outputs.reduce((acc: Record<string, string>, output, idx) => {
+            acc[`output.${idx + 1}`] = output
+            return acc
+          }, {})
+        )
+        if (!stepPrompt.length) {
+          return null
         }
+
+        // merge with defaults
+        const defaults: GenerationOpts = {
+          ... this.llmManager.getChatEngineModel(),
+          structuredOutput: step.structuredOutput,
+          docrepo: null,
+          sources: true,
+          citations: true,
+        }
+        opts = {...defaults, ...opts }
+
+        // disable streaming
+        opts.streaming = opts.streaming ?? (this.agent.disableStreaming !== true)
+
+        // we need a llm
+        opts.engine = this.agent.engine || opts.engine
+        opts.model = this.agent.model || this.llmManager.getChatModel(opts.engine, opts.model).id
+        this.llm = this.llmManager.igniteEngine(opts.engine)
+
+        // update chat if relevant
+        if (opts?.chat && stepIdx === 0) {
+            opts.chat.setEngineModel(opts.engine, opts.model)
+            opts.chat.locale = this.agent.locale || opts.chat.locale
+           opts.chat.modelOpts = this.agent.modelOpts || null
+        }
+
+        // make sure llm has latest tools
+        this.llm.clearPlugins()
+        const multiPluginsAdded: Record<string, MultiToolPlugin> = {}
+        for (const pluginName in availablePlugins) {
+          
+          const pluginClass = availablePlugins[pluginName]
+          const plugin = new pluginClass(this.config.plugins[pluginName])
+
+          // if no filters add
+          if (step.tools === null) {
+            this.llm.addPlugin(plugin)
+            continue
+          }
+
+          // single-tool plugins is easy
+          if (!(plugin instanceof MultiToolPlugin)) {
+            if (step.tools.includes(plugin.getName())) {
+              this.llm.addPlugin(plugin)
+            }
+            continue
+          }
+
+          // multi-tool plugins are more complex
+          const pluginTools = await plugin.getTools()
+          for (const pluginTool of pluginTools) {
+            if (step.tools.includes(pluginTool.function.name)) {
+
+              let instance = multiPluginsAdded[pluginName]
+              if (!instance) {
+                instance = plugin
+                this.llm.addPlugin(instance)
+                multiPluginsAdded[pluginName] = instance
+              }
+
+              // enable this tool
+              instance.enableTool(pluginTool.function.name)
+            }
+
+          }
+
+        }
+
+        // and now add tools for running agents
+        const agents = [
+          ...window.api.agents.load(),
+          ...(opts?.agents || [])
+        ]
+        for (const agentId of step.agents) {
+          const agent = agents.find(a => a.id === agentId)
+          if (agent) {
+            const plugin = new AgentPlugin(this.config, agent, agent.engine || opts.engine, agent.model || opts.model)
+            this.llm.addPlugin(plugin)
+          }
+        }
+
+        // add user message
+        const userMessage = new Message('user', stepPrompt)
+        userMessage.engine = opts.engine
+        userMessage.model = opts.model
+        run.messages.push(userMessage)
+
+        // add messages to chat
+        if (stepIdx === 0 && opts?.chat) {
+
+          // user
+          opts.chat.addMessage(userMessage)
+
+          // we need the assistant one for the ui to update properly
+          const responseMessage = new Message('assistant')
+          responseMessage.agentId = this.agent.id
+          responseMessage.agentRunId = run.id
+          opts.chat.addMessage(responseMessage)
+        
+        }
+
+        // add assistant message
+        const assistantMessage = (stepIdx === this.agent.steps.length - 1 && opts.chat) ? opts.chat.lastMessage() : new Message('assistant')
+        assistantMessage.engine = opts.engine
+        assistantMessage.model = opts.model
+        run.messages.push(assistantMessage)
+
+        // callback
+        generationCallback?.('before_generation')
+
+        // save again
+        if (!opts?.ephemeral) {
+          this.saveRun(run)
+        }
+
+        // now depends on the type of agent
+        if (this.agent.source === 'a2a') {
+
+          rc = await this.runA2A(run, opts)
+
+        } else {
+
+          // generate text
+          rc = await this.prompt(run, opts)
+
+          // check if streaming is not supported
+          if (rc === 'streaming_not_supported') {
+            opts.streaming = false
+            rc = await this.prompt(run, opts)
+          }
+
+        }
+
+        // if error break now
+        if (rc !== 'success') {
+          break
+        }
+
+        // save output
+        outputs.push(assistantMessage.contentForModel)
 
       }
 
       // titling
       if (rc === 'success' && opts?.chat) {
         generationCallback?.('before_title')
-        const title = await this.getTitle(opts.engine, opts.model, opts.chat.messages)
-        opts.chat.title = title
+        // const title = await this.getTitle(opts.engine, opts.model, opts.chat.messages)
+        // opts.chat.title = title
       }
 
       // restore llm locale
@@ -256,7 +292,11 @@ export default class extends Generator {
 
   private async prompt(run: AgentRun, opts: RunnerCompletionOpts): Promise<GenerationResult> {
 
-    return await this.generate(this.llm, run.messages, {
+    return await this.generate(this.llm, [
+      run.messages[0],                       // instructions
+      run.messages[run.messages.length - 2], // user message
+      run.messages[run.messages.length - 1], // assistant message
+    ], {
       ...opts,
       ...this.agent.modelOpts,
     }, (chunk: LlmChunk) => {

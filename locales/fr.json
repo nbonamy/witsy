@@ -161,10 +161,6 @@
   },
   "agent": {
     "create": {
-      "agents": {
-        "help": "Les agents peuvent déléguer des tâches à d'autres agents. Sélectionnez un ou plusieurs agents pour gérer des tâches spécifiques.",
-        "title": "Déléguer des agents"
-      },
       "goal": {
         "title": "Objectif de l'Agent"
       },
@@ -172,8 +168,7 @@
         "help": {
           "description": "Brève description de l'objectif de votre agent. Lorsque cet agent est utilisé dans un flux de travail, cela sera partagé avec le LLM pour l'aider à comprendre l'agent et éventuellement décider de l'appeler.",
           "goal": "L'objectif de l'agent. Ceci sera utilisé comme instructions système envoyées au LLM. N'incluez pas d'informations spécifiques à l'exécution ici car elles seront définies dans l'invite.",
-          "name": "Nom descriptif pour votre agent.",
-          "prompt": "Modèle d'invite qui sera utilisé pour exécuter l'agent. Vous pouvez inclure des « variables » qui seront remplacées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}nom:description:valeur{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lorsqu'on lui demandera une valeur). La description et la valeur par défaut sont toutes deux optionnelles."
+          "name": "Nom descriptif pour votre agent."
         },
         "promptInputs": "Variables détectées",
         "title": "Informations Générales",
@@ -202,17 +197,20 @@
       "settings": {
         "title": "Paramètres du Modèle"
       },
-      "tools": {
-        "allowAll": "Autoriser l'accès à tous les plugins et serveurs MCP",
-        "help": "Limiter le nombre d'outils accessibles au LLM aidera ce dernier à se concentrer sur la tâche à accomplir. Vous pouvez toujours autoriser tous les outils plus tard si nécessaire.",
-        "selectAll": "@:{'common.selectAll'}",
-        "selectNone": "@:{'common.selectNone'}",
-        "title": "Accès aux outils"
-      },
       "workflow": {
-        "help": {
-          "singleOnly": "Witsy ne supporte actuellement que les flux de travail à étape unique. Vous pourrez ajouter plusieurs étapes à l'avenir."
+        "addStep": "Ajouter une étape",
+        "confirmDeleteStep": "Êtes-vous sûr de vouloir supprimer cette étape ?",
+        "customAgents": "Déléguer les agents…",
+        "customTools": "Sélection d'outil…",
+        "error": {
+          "emptyStepPrompt": "L'invite de l'étape #{step} ne peut pas être vide."
         },
+        "help": {
+          "connect": "Connectez la sortie des étapes précédentes en utilisant les variables {'{'}{'{'}output.#{'}'}{'}'} (par exemple {'{'}{'{'}output.1{'}'}{'}'} pour la sortie de l'étape 1)",
+          "outputVarDesc": "Sortie de l'étape #{step}",
+          "title": "Concevez votre flux de travail en plusieurs étapes. Des modèles d'invite seront utilisés pour exécuter chaque étape. Vous pouvez inclure des \"variables\" qui seront remplacées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}name:description:valeur{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lorsqu'une valeur sera demandée). La description et la valeur par défaut sont optionnelles."
+        },
+        "step": "Étape #{step}",
         "title": "Flux de Travail"
       }
     },
@@ -264,7 +262,6 @@
       "noAgentsTitle": "Vous n'avez pas encore créé d'agents exécutables",
       "title": "Sélectionnez l'agent à exécuter"
     },
-    "prompt": "Invite par défaut",
     "run": {
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette exécution ?",
       "createdAt": "Heure de début",
@@ -305,6 +302,9 @@
       "header": "Résumé de l'agent",
       "history": "Historique"
     }
+  },
+  "agentSelector": {
+    "title": "Sélectionnez les agents délégués"
   },
   "automation": {
     "commander": {

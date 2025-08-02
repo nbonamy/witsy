@@ -46,6 +46,14 @@
 
   }
 
+  &:not(:has(.panel-body)) {
+    .panel-header {
+      border-bottom-width: 1px;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+    }
+  }
+
   .panel-body, .panel-empty {
     flex-grow: 1;
     border: 1px solid var(--control-border-color);

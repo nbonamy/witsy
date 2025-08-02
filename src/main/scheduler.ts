@@ -80,7 +80,7 @@ export default class Scheduler {
           try {
             
             // build a prompt
-            const prompt = agent.buildPrompt(agent.invocationValues)
+            const prompt = agent.buildPrompt(0, agent.invocationValues)
             
             // now run it
             const runner = new Runner(config, agent)

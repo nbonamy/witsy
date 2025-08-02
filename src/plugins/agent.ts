@@ -98,7 +98,7 @@ export default class extends Plugin {
   getParameters(): PluginParameter[] {
 
     // if we have a prompt...
-    if (this.agent.prompt) {
+    if (this.agent.steps[0].prompt) {
 
       // if parameters are defined, we return them
       if (this.agent.parameters.length) {
@@ -106,7 +106,7 @@ export default class extends Plugin {
       }
 
       // else we try to extract inputs from the prompt
-      const inputs = extractPromptInputs(this.agent.prompt)
+      const inputs = extractPromptInputs(this.agent.steps[0].prompt)
       return inputs.map(input => ({
         name: input.name,
         type: 'string',
@@ -140,20 +140,20 @@ export default class extends Plugin {
           if (Array.isArray(value)) {
             parameters[key] = await Promise.all(value.map(async (v) => {
               if (typeof v === 'string' && v.startsWith(kStoreIdPrefix)) {
-                console.log(`Retrieving value from storage for agent ${this.agent.name}`, v)
+                // console.log(`Retrieving value from storage for agent ${this.agent.name}`, v)
                 return await this.storage.retrieve(v.substring(kStoreIdPrefix.length))
               }
               return v
             }))
           } else if (typeof value === 'string' && value.startsWith(kStoreIdPrefix)) {
-            console.log(`Retrieving value from storage for agent ${this.agent.name}`, value)
+            // console.log(`Retrieving value from storage for agent ${this.agent.name}`, value)
             parameters[key] = await this.storage.retrieve(value.substring(kStoreIdPrefix.length))
           }
         }
       }
 
       // we need to build the prompt
-      const prompt = replacePromptInputs(this.agent.prompt || '', parameters)
+      const prompt = replacePromptInputs(this.agent.steps[0].prompt || '', parameters)
       //console.log(`Running agent ${this.agent.name} with prompt:`, prompt)
 
       // now call the agent through the runner
@@ -176,7 +176,7 @@ export default class extends Plugin {
 
         // else store
         const key = await this.storage.store(result)
-        console.log(`Stored result for agent ${this.agent.name}`, key, result.substring(0, 100))
+        // console.log(`Stored result for agent ${this.agent.name}`, key, result.substring(0, 100))
         return {
           status: run.status,
           storeId: `${kStoreIdPrefix}${key}`,

@@ -21,12 +21,6 @@ export interface DeepResearch {
 export const planningAgent = Agent.fromJson({
   name: 'planning',
   description: 'Strategic research planner specialized in query decomposition and research methodology design. Creates comprehensive research strategies and identifies optimal information gathering approaches.',
-  tools: [
-    'search_internet',
-    'extract_webpage_content',
-  ],
-  agents: [],
-  //docrepo: 'research_strategies',
   instructions: `You are a planning agent, the strategic planner for deep research investigations.
 
 Given a user research query, your goal is to identify the different sections of the final report. The number of sections will be provided by the user. You have a tolerance of plus or minus 1 section depending on how you interpret the topic and evaluate its complexity.
@@ -55,7 +49,6 @@ Your output will ONLY consist of the list of sections as a JSON object with no m
 }
 
   `,
-  prompt: `Plan the research report structure for the following query: {{userQuery}}. Aim for {{numSections}} sections, with {{numQueriesPerSection}} search queries per section.`,
   parameters: [
     {
       name: 'userQuery',
@@ -78,13 +71,22 @@ Your output will ONLY consist of the list of sections as a JSON object with no m
       minimum: 1
     }
   ],
+  steps: [{
+    prompt: `Plan the research report structure for the following query: {{userQuery}}. Aim for {{numSections}} sections, with {{numQueriesPerSection}} search queries per section.`,
+    tools: [
+      'search_internet',
+      'extract_webpage_content',
+    ],
+    agents: [],
+    //docrepo: 'research_strategies',
+  }]
 },
   () => t('deepResearch.planning.starting'),
   () => t('deepResearch.planning.running'),
   () => t('deepResearch.planning.completed'),
   () => t('deepResearch.planning.error'),
 )
-planningAgent.structuredOutput = {
+planningAgent.steps[0].structuredOutput = {
   name: 'planning',
   structure: z.object({
     sections: z.array(z.object({
@@ -98,13 +100,6 @@ planningAgent.structuredOutput = {
 export const searchAgent = Agent.fromJson({
   name: 'search',
   description: 'Expert information retrieval specialist optimized for comprehensive web search and content extraction',
-  tools: [
-    'search_internet',
-    'extract_webpage_content',
-    'get_youtube_transcript'
-  ],
-  agents: [],
-  //docrepo: 'search_results',
   instructions: `You are a search agent, responsible for executing targeted web searches and extracting relevant content.
   
 Your sole responsibility is to run the search_internet tool with the provided search query and extract relevant content from the results.
@@ -114,8 +109,6 @@ When running the search_internet tool, forward the value of the maxResults param
 Do not summarize of analyze the content, just return the raw search results and extracted content.
 
 Remove all <tool> tags from the content and return it as plain text.`,
-  prompt: `Execute targeted search for: {{searchQuery}}.
-maxResults to return: {{maxResults}}`,
   parameters: [
     {
       name: 'searchQuery',
@@ -130,6 +123,16 @@ maxResults to return: {{maxResults}}`,
       required: true,
     },
   ],
+  steps: [{
+    prompt: `Execute targeted search for: {{searchQuery}}.\nmaxResults to return: {{maxResults}}`,
+    tools: [
+      'search_internet',
+      'extract_webpage_content',
+      'get_youtube_transcript'
+    ],
+    agents: [],
+    //docrepo: 'search_results',
+  }]
 },
   () => t('deepResearch.search.starting'),
   (args) => t('deepResearch.search.running', { query: args.searchQuery }),
@@ -140,12 +143,6 @@ maxResults to return: {{maxResults}}`,
 export const analysisAgent = Agent.fromJson({
   name: 'analysis',
   description: 'Advanced information processor specialized in extracting insights, identifying patterns, and synthesizing knowledge from raw research data. Performs critical analysis and fact verification.',
-  tools: [
-    'run_python_code',
-    'extract_webpage_content'
-  ],
-  agents: [],
-  //docrepo: 'analyzed_knowledge',
   instructions: `You are an analyst agent, responsible for processing raw research data and extracting meaningful insights.
 
 From the content provided, your task is to identify 5 to 10 key learnings that are relevant to the section objective.
@@ -161,10 +158,6 @@ Your output will ONLY consist of the list of learnings as a JSON object with no 
   ]
 }
   `,
-  prompt: `Analyze the following information for the section:
-- Section Objective: {{sectionObjective}}
-- Raw Information: {{rawInformation}}
-  `,
   parameters: [
     {
       name: 'sectionObjective',
@@ -178,14 +171,26 @@ Your output will ONLY consist of the list of learnings as a JSON object with no 
       description: 'Information to be analyzed',
       required: true
     }
-  ]
+  ],
+  steps: [{
+    prompt: `Analyze the following information for the section:
+  - Section Objective: {{sectionObjective}}
+  - Raw Information: {{rawInformation}}
+    `,
+    tools: [
+      'run_python_code',
+      'extract_webpage_content'
+    ],
+    agents: [],
+    //docrepo: 'analyzed_knowledge',
+  }]
 },
   () => t('deepResearch.analysis.starting'),
   () => t('deepResearch.analysis.running'),
   () => t('deepResearch.analysis.completed'),
   () => t('deepResearch.analysis.error'),
 )
-analysisAgent.structuredOutput = {
+analysisAgent.steps[0].structuredOutput = {
   name: 'analysis',
   structure: z.object({
     learnings: z.array(z.string())
@@ -195,10 +200,6 @@ analysisAgent.structuredOutput = {
 export const writerAgent = Agent.fromJson({
   name: 'writer',
   description: 'Section generator that creates detailed, coherent sections of research reports based on analyzed information and section objectives. Ensures each section is well-structured and contributes to the overall narrative.',
-  tools: [
-    'run_python_code'
-  ],
-  agents: [],
   //docrepo: 'research_sections',
   instructions: `You are the SectionAgent, responsible for generating detailed sections of research reports based on analyzed information and section objectives.
 
@@ -225,11 +226,6 @@ Very succinct conclusion on this section
 </EXAMPLE>
 
   `,
-  prompt: `Generate a detailed section based on the following information:
-Section Number: {{sectionNumber}}
-Section Title: {{sectionTitle}}
-Section Objective: {{sectionObjective}}
-Key Learnings: {{keyLearnings}}`,
   parameters: [
     {
       name: 'sectionNumber',
@@ -258,8 +254,18 @@ Key Learnings: {{keyLearnings}}`,
       },
       required: true
     }
-  ]
-
+  ],
+  steps: [{
+    prompt: `Generate a detailed section based on the following information:
+  Section Number: {{sectionNumber}}
+  Section Title: {{sectionTitle}}
+  Section Objective: {{sectionObjective}}
+  Key Learnings: {{keyLearnings}}`,
+    tools: [
+      'run_python_code'
+    ],
+    agents: [],
+  }],
 },
   () => t('deepResearch.writer.starting'),
   (args) => t('deepResearch.writer.running', { title: args.sectionTitle }),
@@ -270,11 +276,6 @@ Key Learnings: {{keyLearnings}}`,
 export const synthesisAgent = Agent.fromJson({
   name: 'synthesis',
   description: 'Expert report synthesizer that transforms analyzed information into comprehensive, coherent reports. Integrates findings, constructs narratives, and generates executive summaries or conclusions.',
-  tools: [
-    'run_python_code'
-  ],
-  agents: [],
-  //docrepo: 'research_reports',
   instructions: `You are a synthesis agent, responsible summarizing information for executive summaries or conclusions.
 
 Your task is to synthesize the provided key learnings into a comprehensive executive summary or conclusion based on the user request: do not generate both.
@@ -285,11 +286,6 @@ When generating the conclusion, summarize the overall findings and implications 
 
 Start your content with "# Executive Summary" or "# Conclusion" as appropriate, and then provide the content of the summary or conclusion. Don't say things like "I'll synthesize" or "I'll summarize" or "This is the executive summary" or "This is the conclusion". Just provide the content directly. Make sure the executive summary or conclusion is in the same language as the research topic and key learnings.
   `,
-  prompt: `Synthesize research findings into a comprehensive report:
-
-Research Topic: {{researchTopic}}
-Key Learnings: {{keyLearnings}}
-Output Type: {{outputType}}`,
   parameters: [
     {
       name: 'researchTopic',
@@ -313,7 +309,19 @@ Output Type: {{outputType}}`,
       enum: ['executive_summary', 'conclusion'],
       required: true
     }
-  ]
+  ],
+  steps: [{
+    prompt: `Synthesize research findings into a comprehensive report:
+
+  Research Topic: {{researchTopic}}
+  Key Learnings: {{keyLearnings}}
+  Output Type: {{outputType}}`,
+    tools: [
+      'run_python_code'
+    ],
+    agents: [],
+    //docrepo: 'research_reports',
+  }]
 }, () => t('deepResearch.synthesis.starting'),
   (args) => args.outputType === 'conclusion' ? t('deepResearch.synthesis.conclusion.running') : t('deepResearch.synthesis.execsum.running'),
   (args) => args.outputType === 'conclusion' ? t('deepResearch.synthesis.conclusion.completed') : t('deepResearch.synthesis.execsum.completed'),

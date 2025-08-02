@@ -47,10 +47,10 @@
       </div>
       <div class="form-field message">
         <label>{{ t('agent.run.output') }}</label>
-        <div class="output">
-          <MessageItemBody :message="response" show-tool-calls="always"  v-if="response && response.content"/>
-          <span v-else>{{ t('agent.run.notCompleted') }}</span>
+        <div class="output" v-for="response in outputs" v-if="outputs">
+          <MessageItemBody :message="response" show-tool-calls="always"/>
         </div>
+        <span v-else>{{ t('agent.run.notCompleted') }}</span>
       </div>
     </div>
 
@@ -89,9 +89,9 @@ const duration = computed(() => {
   return durationMs < 1000 ? `${durationMs} ms` : `${Math.round(durationMs / 1000)} s`
 })
 
-const response = computed(() => {
-  if (!run.value || !run.value.messages || run.value.messages.length !== 3) return null
-  return run.value.messages[run.value.messages.length - 1]
+const outputs = computed(() => {
+  if (!run.value || !run.value.messages || run.value.messages.length < 3) return null
+  return run.value.messages.slice(2)
 })
 
 onMounted(() => {
@@ -148,8 +148,14 @@ const emit = defineEmits(['delete'])
 
   .output {
 
+    border-bottom: 1px solid var(--text-color);
+    padding-bottom: 0.75rem;
     margin-top: 0.5rem;
     width: 100%;
+    
+    &:last-child {
+      border-bottom: none;
+    }
   
     &:deep() {
       .text {
