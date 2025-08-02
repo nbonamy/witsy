@@ -59,7 +59,7 @@ const onCancel = () => {
 }
 
 const onSave = () => {
-  const result = prompt.value.length ? replacePromptInputs(prompt.value, values.value) : values.value.prompt || ''
+  const result = prompt.value?.length ? replacePromptInputs(prompt.value, values.value) : values.value.prompt || ''
   if (!result.trim().length) return
   callback.value(result)
   close()
@@ -68,19 +68,19 @@ const onSave = () => {
 defineExpose({
   show: (template: string, opts: Record<string, string>, cb: (prompt: string) => void) => {
 
+    prompt.value = template
+    callback.value = cb
 
     if (!template) {
 
-      callback.value = cb
       inputs.value = [
         { name: 'prompt', description: t('common.prompt'), control: 'textarea' },
       ]
+      values.value = { prompt: opts.prompt || '' }
 
     } else {
 
       values.value = opts
-      prompt.value = template
-      callback.value = cb
 
       inputs.value = getMissingInputs(prompt.value, opts)
       for (const input of inputs.value) {
