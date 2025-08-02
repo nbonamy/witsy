@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.x.y] - WIP
+
+### Added
+- N/A
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
 ## [2.12.4] - 2025-07-31
 
 ### Added
