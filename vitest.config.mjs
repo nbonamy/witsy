@@ -49,11 +49,6 @@ export default defineConfig({
         'src/types/**/*',
         'src/vendor/**/*',
         'tools/**/*',
-        // temporary exclusions for agent tests
-        '**/*Agent*',
-        '**/*agent*',
-        'src/services/runner.ts',
-        'src/main/scheduler.ts',
       ]
     },
   },

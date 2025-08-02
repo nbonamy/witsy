@@ -8,13 +8,13 @@
             <img src="/assets/icon.png" />
           </div>
         </div>
-        <h2 class="swal2-title" ref="title">
+        <h2 class="dialog-title swal2-title" ref="title">
           <slot name="header"></slot>
         </h2>
-        <div class="swal2-html-container" ref="content">
+        <div class="dialog-body swal2-html-container" ref="content">
           <slot name="body"></slot>
         </div>
-        <div class="swal2-actions" ref="actions">
+        <div class="dialog-footer swal2-actions" ref="actions">
           <slot name="footer"></slot>
         </div>
       </div>

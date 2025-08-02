@@ -1,12 +1,13 @@
 
 import { vi } from 'vitest'
 import { renderMarkdown } from '../../src/main/markdown'
-import { Command, Expert } from '../../src/types/index'
+import { AgentRunStatus, AgentRunTrigger, Command, Expert } from '../../src/types/index'
 import { McpInstallStatus } from '../../src/types/mcp'
 import { ListDirectoryResponse } from '../../src/types/filesystem'
 import { FilePickParams } from '../../src/types/file'
 import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
 import defaultSettings from '../../defaults/settings.json'
+import Agent from '../../src/models/agent'
 
 const listeners: ((signal: string) => void)[] = []
 
@@ -49,7 +50,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       fullscreen: vi.fn(),
     },
     main: {
-      setMode: vi.fn(),
+      updateMode: vi.fn(),
       setContextMenuContext: vi.fn(),
       close: vi.fn(),
     },
@@ -173,6 +174,141 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       save: vi.fn(),
       import: vi.fn(),
       export: vi.fn(),
+    },
+    agents: {
+      forge: vi.fn(),
+      load: vi.fn(() => [
+        Agent.fromJson({
+          id: 'agent1',
+          source: 'witsy',
+          name: 'Test Agent 1',
+          description: 'A test runnable agent',
+          type: 'runnable',
+          createdAt: Date.now() - 86400000,
+          updatedAt: Date.now() - 3600000,
+          engine: 'mock',
+          model: 'chat',
+          modelOpts: {},
+          disableStreaming: false,
+          locale: null,
+          instructions: 'Test instructions for agent 1',
+          parameters: [],
+          steps: [
+            {
+              prompt: 'Hello {{name}}, how can I help you?',
+              tools: null,
+              agents: [],
+              docrepo: null
+            },
+            {
+              prompt: 'Based on the previous response {{output.1}}, here is more help',
+              tools: null,
+              agents: [],
+              docrepo: null
+            }
+          ],
+          schedule: null,
+          invocationValues: { name: 'World' }
+        }),
+        Agent.fromJson({
+          id: 'agent2',
+          source: 'witsy',
+          name: 'Test Agent 2',
+          description: 'A test support agent',
+          type: 'support',
+          createdAt: Date.now() - 172800000,
+          updatedAt: Date.now() - 7200000,
+          engine: 'mock',
+          model: 'chat',
+          modelOpts: {},
+          disableStreaming: false,
+          locale: null,
+          instructions: 'Test support instructions',
+          parameters: [],
+          steps: [{
+            prompt: 'I am a support agent ready to help',
+            tools: null,
+            agents: [],
+            docrepo: null
+          }],
+          schedule: '0 9 * * *',
+          invocationValues: {}
+        }),
+        Agent.fromJson({
+          id: 'agent3',
+          source: 'a2a',
+          name: 'Test Agent 3',
+          description: 'Another test runnable agent',
+          type: 'runnable',
+          createdAt: Date.now() - 259200000,
+          updatedAt: Date.now() - 10800000,
+          engine: 'mock',
+          model: 'chat',
+          modelOpts: {},
+          disableStreaming: false,
+          locale: null,
+          instructions: 'Test a2a instructions',
+          parameters: [],
+          steps: [{
+            prompt: 'A2A agent {{input}}',
+            tools: null,
+            agents: [],
+            docrepo: null
+          }],
+          schedule: null,
+          invocationValues: { input: 'test' }
+        })
+      ]),
+      save: vi.fn(),
+      delete: vi.fn(),
+      getRuns: vi.fn((agentId: string) => {
+        if (agentId === 'agent1') {
+          return [
+            {
+              id: 'run1',
+              agentId: 'agent1',
+              createdAt: Date.now() - 86400000, // 1 day ago
+              updatedAt: Date.now() - 86400000,
+              trigger: 'manual' as AgentRunTrigger,
+              status: 'success' as AgentRunStatus,
+              prompt: 'Test prompt 1',
+              messages: [],
+              toolCalls: []
+            },
+            {
+              id: 'run2',
+              agentId: 'agent1',
+              createdAt: Date.now() - 43200000, // 12 hours ago
+              updatedAt: Date.now() - 43200000,
+              trigger: 'workflow' as AgentRunTrigger,
+              status: 'success' as AgentRunStatus,
+              prompt: 'Test prompt 2',
+              messages: [],
+              toolCalls: []
+            },
+            {
+              id: 'run3',
+              agentId: 'agent1',
+              createdAt: Date.now() - 3600000, // 1 hour ago
+              updatedAt: Date.now() - 3600000,
+              trigger: 'schedule' as AgentRunTrigger,
+              status: 'error' as AgentRunStatus,
+              prompt: 'Test prompt 3',
+              error: 'Test error message',
+              messages: [],
+              toolCalls: []
+            }
+          ]
+        }
+        return []
+      }),
+      getRun: vi.fn((agentId: string, runId: string) => {
+        const runs = window.api?.agents?.getRuns(agentId) || []
+        return runs.find((run: any) => run.id === runId) || null
+      }),
+      saveRun: vi.fn(),
+      deleteRuns: vi.fn(),
+      deleteRun: vi.fn(),
     },
     history: {
       load: vi.fn(() => ({ folders: [ ], chats: [ ], quickPrompts: [ ] })),
@@ -307,7 +443,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       resize: vi.fn(),
     },
     interpreter: {
-      python: vi.fn(() => ({ result: ['bonjour'] }))
+      python: vi.fn(async () => ({ result: ['bonjour'] }))
     },
     markdown: {
       render: vi.fn(renderMarkdown),
