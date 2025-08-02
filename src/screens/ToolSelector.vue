@@ -20,7 +20,7 @@
 <script setup lang="ts">
 
 import { ToolSelection } from '../types/llm'
-import { ref, onMounted, watch, PropType } from 'vue'
+import { ref } from 'vue'
 import { t } from '../services/i18n'
 import ModalDialog from '../components/ModalDialog.vue'
 import ToolTable from '../components/ToolTable.vue'
@@ -29,20 +29,7 @@ const dialog = ref(null)
 const toolTable = ref(null)
 const selection = ref<string[]>([])
 
-const props = defineProps({
-  tools: {
-    type: null as unknown as PropType<ToolSelection>,
-    required: true,
-  },
-})
-
 const emit = defineEmits(['save'])
-
-onMounted(async () => {
-  watch(() => props.tools, () => {
-    selection.value = props.tools
-  }, { immediate: true }) 
-})
 
 const close = () => {
   dialog.value.close()
@@ -58,7 +45,8 @@ const onSave = () => {
 }
 
 defineExpose({
-  show: async () => {
+  show: async (tools: ToolSelection) => {
+    selection.value = JSON.parse(JSON.stringify(tools))
     await toolTable.value.initTools()
     dialog.value.show()
   },

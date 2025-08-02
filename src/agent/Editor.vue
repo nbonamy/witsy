@@ -1,4 +1,3 @@
-
 <template>
   <div class="agent-editor" @keydown.enter="onSave">
 
@@ -33,14 +32,6 @@
 
           <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepWorkflow), disabled: !isStepCompleted(kStepWorkflow) }" @click="onStepClick(kStepWorkflow)" v-if="hasStep(kStepWorkflow)">
             <BIconDiagram2 class="logo scale120" /> {{ t('agent.create.workflow.title') }}
-          </div>
-
-          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepTools), disabled: !isStepCompleted(kStepTools) }" @click="onStepClick(kStepTools)" v-if="hasStep(kStepTools)">
-            <BIconTools class="logo" /> {{ t('agent.create.tools.title') }}
-          </div>
-
-          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepAgents), disabled: !isStepCompleted(kStepAgents) }" @click="onStepClick(kStepAgents)" v-if="hasStep(kStepAgents)">
-            <BIconRobot class="logo" /> {{ t('agent.create.agents.title') }}
           </div>
 
           <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepInvocation), disabled: !isStepCompleted(kStepInvocation) }" @click="onStepClick(kStepInvocation)" v-if="hasStep(kStepInvocation)">
@@ -157,82 +148,54 @@
           </template>
         </WizardStep>
 
-        <WizardStep :visible="isStepVisible(kStepWorkflow)" @prev="onPrevStep" @next="validateWorkflow">
+        <WizardStep class="workflow" :visible="isStepVisible(kStepWorkflow)" :error="informationError" @prev="onPrevStep" @next="validateWorkflow">
           <template #header>
             <label>{{ t('agent.create.workflow.title') }}</label>
-            <div class="help">{{ t('agent.create.workflow.help.singleOnly') }}</div>
+            <div class="help">{{ t('agent.create.workflow.help.title') }}</div>
           </template>
           <template #content>
-            <div class="form-field">
-              <label for="prompt">{{ t('agent.prompt') }}</label>
-              <div class="help">{{ t('agent.create.information.help.prompt') }}</div>
-              <textarea v-model="agent.prompt" name="prompt"></textarea>
-            </div>
-            <div class="form-field" v-if="promptInputs.length">
-              <label for="prompt">{{ t('agent.create.information.promptInputs') }}</label>
-              <table class="table-plain prompt-inputs">
-                <thead><tr>
-                  <th>{{ t('common.name') }}</th>
-                  <th>{{ t('common.description') }}</th>
-                  <th>{{ t('common.defaultValue') }}</th>
-                </tr></thead>
-                <tbody><tr v-for="(input, index) in promptInputs" :key="index">
-                  <td>{{ input.name }}</td>
-                  <td>{{ input.description }}</td>
-                  <td>{{ input.defaultValue }}</td>
-                </tr></tbody>
-              </table>
-            </div>
-          </template>
-        </WizardStep>
-
-        <WizardStep :visible="isStepVisible(kStepTools)" @prev="onPrevStep" @next="validateTools">
-          <template #header>
-            <label>{{ t('agent.create.tools.title') }}</label>
-            <div class="help">{{ t('agent.create.tools.help') }}</div>
-          </template>
-          <template #content>
-
-            <div class="form-field horizontal">
-              <input type="checkbox" v-model="allToolsAllowed" @change="onCustomTools"/>
-              {{ t('agent.create.tools.allowAll') }}
-            </div>
-
-            <div class="tools" v-if="!allToolsAllowed">
-              <div class="form-field horizontal">
-                <button class="all" @click="agent.tools = null">{{ t('agent.create.tools.selectAll') }}</button>
-                <button class="none" @click="agent.tools = []">{{ t('agent.create.tools.selectNone') }}</button>
+            <template v-for="(step, index) in agent.steps" :key="index">
+              <div class="panel step-panel">
+                <div class="panel-header" @click="toggleStepExpansion(index)">
+                  <BIconCaretDownFill v-if="expandedStep === index" class="icon caret" />
+                  <BIconCaretRightFill v-else class="icon caret" />
+                  <label>{{ t('agent.create.workflow.step', { step: index + 1 }) }}</label>
+                  <BIconTrash class="icon delete" @click.stop="onDeleteStep(index)" v-if="index > 0 && expandedStep === index"/>
+                </div>
+                <div class="panel-body" v-if="expandedStep === index">
+                  <div class="form-field">
+                    <label for="prompt">{{ t('common.prompt') }}</label>
+                    <textarea v-model="agent.steps[index].prompt"></textarea>
+                    <div class="help" v-if="index > 0">{{ t('agent.create.workflow.help.connect') }}</div>
+                  </div>
+                <div class="form-field" v-if="promptInputs(index).length">
+                  <label for="prompt">{{ t('agent.create.information.promptInputs') }}</label>
+                  <table class="table-plain prompt-inputs">
+                    <thead><tr>
+                      <th>{{ t('common.name') }}</th>
+                      <th>{{ t('common.description') }}</th>
+                      <th>{{ t('common.defaultValue') }}</th>
+                    </tr></thead>
+                    <tbody><tr v-for="(input, idx2) in promptInputs(index)" :key="idx2">
+                      <td>{{ input.name }}</td>
+                      <td>{{ input.description }}</td>
+                      <td>{{ input.defaultValue }}</td>
+                    </tr></tbody>
+                  </table>
+                </div>
+                  <div class="step-actions">
+                    <button class="tools" @click="onToolsStep(index)">{{ t('agent.create.workflow.customTools') }}</button>
+                    <button class="agents" @click="onAgentsStep(index)">{{ t('agent.create.workflow.customAgents') }}</button>
+                  </div>
+                </div>
               </div>
-              <ToolTable v-model="agent.tools" @toggle="agent.tools = toolTable.toggleTool(agent.tools, $event)" ref="toolTable" />
-            </div>
-
+              <div class="workflow-arrow" v-if="index < agent.steps.length - 1">
+                <BIconThreeDotsVertical  />
+              </div>
+            </template>
           </template>
-        </WizardStep>
-
-        <WizardStep :visible="isStepVisible(kStepAgents)" @prev="onPrevStep" @next="validateAgents">
-          <template #header>
-            <label>{{ t('agent.create.agents.title') }}</label>
-            <div class="help">{{ t('agent.create.agents.help') }}</div>
-          </template>
-          <template #content>
-            <div class="agents sticky-table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>&nbsp;</th>
-                    <th>{{ t('common.name') }}</th>
-                    <th>{{ t('common.description') }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="support in supportAgents" :key="support.id" class="tool" @click="toggleAgent(support)">
-                    <td class="agent-enabled"><input type="checkbox" :checked="agent.agents.includes(support.id)" /></td>
-                    <td class="agent-name">{{ support.name }}</td>
-                    <td class="agent-description"><div>{{ support.description }}</div></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          <template #buttons>
+            <button @click="onAddStep(agent.steps.length+1)">{{ t('agent.create.workflow.addStep') }}</button>
           </template>
         </WizardStep>
 
@@ -261,7 +224,7 @@
               <input type="text" name="webhook" v-model="webhook" />
             </div> -->
 
-            <template v-if="promptInputs.length">
+            <template v-if="promptInputs(0).length">
 
               <div class="form-field">
                 <label for="prompt">{{ t('agent.create.invocation.variables') }}</label>
@@ -273,7 +236,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="input in promptInputs" :key="input.name">
+                    <tr v-for="input in promptInputs(0)" :key="input.name">
                       <td>{{ input.name }}</td>
                       <td><input type="text" v-model="invocationInputs[input.name]" :placeholder="input.defaultValue" @input="saveInvocationInputs"/></td>
                     </tr>
@@ -307,7 +270,10 @@
 
     </div>
 
-  </div>
+    <ToolSelector ref="toolSelector" :tools="agent.steps[expandedStep]?.tools" @save="onSaveStepTools" />
+    <AgentSelector ref="agentSelector" :exclude-agent-id="agent.id" @save="onSaveStepAgents" />
+
+</div>
 </template>
 
 <script setup lang="ts">
@@ -323,10 +289,11 @@ import ModelSelect from '../components/ModelSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
 import Scheduler from '../components/Scheduler.vue'
 import WizardStep from '../components/WizardStep.vue'
-import ToolTable from '../components/ToolTable.vue'
+import ToolSelector from '../screens/ToolSelector.vue'
+import AgentSelector from '../screens/AgentSelector.vue'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Agent from '../models/agent'
-import { BIconBullseye } from 'bootstrap-icons-vue'
+import { BIconChevronCompactDown, BIconChevronDown, BIconThreeDotsVertical } from 'bootstrap-icons-vue'
 
 const props = defineProps({
   agent: {
@@ -343,22 +310,21 @@ const emit = defineEmits(['cancel', 'save'])
 
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
+const toolSelector = ref<typeof ToolSelector|null>(null)
+const agentSelector = ref<typeof AgentSelector|null>(null)
 const agent = ref<Agent>(new Agent())
-const allToolsAllowed = ref(true)
-const toolTable = ref(null)
 const webhook = ref('')
 const currentStep = ref(0)
 const completedStep = ref(-1)
 const informationError = ref('')
 const invocationInputs = ref<Record<string, string>>({})
+const expandedStep = ref<number>(0)
 
 const kStepGeneral = 'general'
 const kStepGoal = 'goal'
 const kStepModel = 'model'
 const kStepSettings = 'settings'
 const kStepWorkflow = 'workflow'
-const kStepTools = 'tools'
-const kStepAgents = 'agents'
 const kStepInvocation = 'invocation'
 
 const steps = (): string[] => {
@@ -381,23 +347,22 @@ const steps = (): string[] => {
     kStepModel,
     kStepSettings,
     kStepWorkflow,
-    kStepTools,
-    kStepAgents,
     kStepInvocation
   ]
 
 }
 
-const promptInputs = computed(() => {
-  return extractPromptInputs(agent.value.prompt)
-})
+const promptInputs = (step: number) => {
+  return extractPromptInputs(agent.value.steps[step].prompt).map((input) => {
+    if (input.name.startsWith('output.')) {
+      input.description = t('agent.create.workflow.help.outputVarDesc', { step: input.name.split('.')[1] })
+    }
+    return input
+  })
+}
 
 const hasSettings = computed(() => {
   return hasStep(kStepSettings)
-})
-
-const supportAgents = computed(() => {
-  return store.agents.filter(a => a.id !== agent.value.id).sort((a, b) => a.name.localeCompare(b.name))
 })
 
 const nextRuns = computed(() => {
@@ -413,13 +378,13 @@ const nextRuns = computed(() => {
 
 const invocationPrompt = computed(() => {
   const values = {...agent.value.invocationValues }
-  const inputs = extractPromptInputs(agent.value.prompt)
+  const inputs = extractPromptInputs(agent.value.steps[0].prompt)
   inputs.forEach(input => {
     if (!values[input.name]?.length) {
       values[input.name] = t('agent.create.invocation.missingInput', { name: input.name })
     }
   })
-  return agent.value.buildPrompt(values)
+  return agent.value.buildPrompt(0, values)
 })
 
 const stepIndex = (step: string) => {
@@ -466,7 +431,7 @@ const goToStepAfter = (step: string, stepSize: number = 1) => {
 // prepare inputs for the invocation screen
 const prepareAgentInvocationInputs = () => {
   invocationInputs.value = {}
-  const inputs = extractPromptInputs(agent.value.prompt)
+  const inputs = extractPromptInputs(agent.value.steps[0].prompt)
   inputs.forEach(input => {
     invocationInputs.value[input.name] = agent.value.invocationValues[input.name] || input.defaultValue|| ''
   })
@@ -474,6 +439,46 @@ const prepareAgentInvocationInputs = () => {
 
 const saveInvocationInputs = () => {
   agent.value.invocationValues = { ...invocationInputs.value }
+}
+
+const onAddStep = (index: number) => {
+  agent.value.steps.push({
+    prompt: `{{output.${index-1}}}`,
+    tools: null,
+    agents: [],
+    docrepo: null,
+  })
+}
+
+const onToolsStep = (index: number) => {
+  toolSelector.value?.show(agent.value.steps[index].tools)
+}
+
+const onSaveStepTools = (tools: string[]) => {
+  agent.value.steps[expandedStep.value].tools = tools
+}
+
+const onAgentsStep = (index: number) => {
+  agentSelector.value?.show(agent.value.steps[index].agents)
+}
+
+const onSaveStepAgents = (agents: string[]) => {
+  agent.value.steps[expandedStep.value].agents = agents
+}
+
+const toggleStepExpansion = (index: number) => {
+  expandedStep.value = expandedStep.value === index ? -1 : index
+}
+
+const onDeleteStep = async (index: number) => {
+  const rc = await Dialog.show({
+    title: t('agent.create.workflow.confirmDeleteStep'),
+    text: t('common.confirmation.cannotUndo'),
+    showCancelButton: true,
+  })
+  if (rc.isConfirmed) {
+    agent.value.steps.splice(index, 1)
+  }
 }
 
 const validateInformation = () => {
@@ -502,15 +507,19 @@ const validateSettings = () => {
 }
 
 const validateWorkflow = () => {
+
+  // constraints on the workflow
+  if (agent.value.steps.length > 1) {
+    for (let i = 1; i < agent.value.steps.length; i++) {
+      if (!agent.value.steps[i].prompt.trim().length) {
+        informationError.value = t('agent.create.workflow.error.emptyStepPrompt', { step: i + 1 })
+        return
+      }
+    }
+  }
+
+  // next
   goToStepAfter(kStepWorkflow)
-}
-
-const validateTools = () => {
-  goToStepAfter(kStepTools)
-}
-
-const validateAgents = () => {
-  goToStepAfter(kStepAgents)
 }
 
 const validateInvocation = () => {
@@ -525,30 +534,24 @@ const onChangeEngine = () => {
 const onChangeModel = () => {
 }
 
-const onCustomTools = () => {
-  if (allToolsAllowed.value) {
-    agent.value.tools = null
-  }
-}
-
-const toggleAgent = (support: Agent) => {
-  if (agent.value.agents.includes(support.id)) {
-    agent.value.agents = agent.value.agents.filter(a => a !== support.id)
-  } else {
-    agent.value.agents.push(support.id)
-  }
+const resetWizard = () => {
+  currentStep.value = stepIndex(kStepGeneral)
+  completedStep.value = props.mode === 'edit' ? steps().length - 1 : -1
+  expandedStep.value = props.mode === 'edit' ? -1 : 0
+  informationError.value = ''
 }
 
 onMounted(async () => {
 
-  // watch props
-  watch(() => props || {}, async () => {
+  // watch mode
+  watch(() => props.mode, resetWizard, { immediate: true })
+
+  // watch agent
+  watch(() => props.agent || {}, () => {
     agent.value = props.agent ? Agent.fromJson(props.agent) : new Agent()
-    allToolsAllowed.value = (agent.value.tools === null)
-    await toolTable.value?.initTools()
-    currentStep.value = stepIndex(kStepGeneral)
-    completedStep.value = props.mode === 'edit' ? steps().length - 1 : -1
-  }, { deep: true, immediate: true })
+    resetWizard()
+  
+  }, { deep: false, immediate: true })
 
   // watch step change
   watch(currentStep, (newStep) => {
@@ -561,7 +564,7 @@ onMounted(async () => {
 
 const save = async () => {
 
-  const inputs = extractPromptInputs(agent.value.prompt)
+  const inputs = extractPromptInputs(agent.value.steps[0].prompt)
   for (const input of inputs) {
     if (agent.value.invocationValues[input.name] === undefined) {
       
@@ -638,11 +641,13 @@ const save = async () => {
     .md-detail {
 
       margin-top: 1rem;
+      margin-bottom: 2rem;
 
       &:deep() .panel {
         .panel-header {
           flex-direction: column;
           align-items: flex-start;
+          gap: 0.5rem;
         }
         .help {
           font-size: 11pt;
@@ -661,6 +666,10 @@ const save = async () => {
         flex: auto;
         min-height: 5lh;
         resize: vertical;
+
+        &[name=goal] {
+          min-height: 15lh;
+        }
       }
 
       &:deep() .sticky-table-container {
@@ -698,6 +707,60 @@ const save = async () => {
       td:first-child {
         width: 33%;
       }
+    }
+
+    .workflow:deep() {
+
+      .panel-body {
+        
+        padding-top: 2rem;
+        gap: 1rem;
+        overflow: auto;
+        align-items: center;
+
+        .step-panel {
+          
+          margin: 0;
+          padding: 0;
+          flex-shrink: 0;
+          width: 600px;
+
+          .panel-header {
+            cursor: pointer;
+            flex-direction: row !important;
+            padding: 0.5rem 1rem;
+            label {
+              cursor: pointer;
+            }
+          }
+
+          .panel-body {
+            padding: 0.5rem 1rem;
+            gap: 0rem;
+          }
+        }
+
+        .step-actions {
+          width: 100%;
+          margin: 0.25rem 0rem;
+          display: flex;
+          justify-content: flex-end;
+        }
+
+      }
+
+      .workflow-arrow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+      }
+
     }
 
   }

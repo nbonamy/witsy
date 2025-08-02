@@ -180,10 +180,6 @@
   },
   "agent": {
     "create": {
-      "agents": {
-        "help": "代理可以将任务委托给其他代理。请选择一个或多个代理处理特定任务。",
-        "title": "代理代理"
-      },
       "goal": {
         "title": "代理目标"
       },
@@ -191,8 +187,7 @@
         "help": {
           "description": "代理用途的简短描述。当此代理在工作流程中使用时，该描述将与大语言模型共享，帮助其理解代理并最终决定调用它。",
           "goal": "代理的目标。该目标将作为发送给大语言模型的系统指令。请勿在此包含执行的具体信息，这些将在提示中设置。",
-          "name": "您代理的描述性名称。",
-          "prompt": "执行代理时使用的提示模板。您可以包含“变量”，这些变量将在执行代理时被替换为用户提供的值。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示用户输入值时提供指导）。描述和默认值都是可选的。"
+          "name": "您代理的描述性名称。"
         },
         "promptInputs": "检测到的变量",
         "title": "基本信息",
@@ -221,17 +216,20 @@
       "settings": {
         "title": "模型设置"
       },
-      "tools": {
-        "allowAll": "允许访问所有插件和 MCP 服务器",
-        "help": "缩小暴露给大语言模型的工具数量，有助于其专注于当前任务。如有需要您可以稍后允许使用所有工具。",
-        "selectAll": "@:{'common.selectAll'}",
-        "selectNone": "@:{'common.selectNone'}",
-        "title": "工具访问"
-      },
       "workflow": {
-        "help": {
-          "singleOnly": "Witsy 目前仅支持单步工作流程。未来可添加多步骤。"
+        "addStep": "添加步骤",
+        "confirmDeleteStep": "您确定要删除此步骤吗？",
+        "customAgents": "委派代理…",
+        "customTools": "工具选择…",
+        "error": {
+          "emptyStepPrompt": "步骤 #{step} 的提示不能为空。"
         },
+        "help": {
+          "connect": "使用 {'{'}{'{'}output.#{'}'}{'}'} 变量连接前一步骤的输出（例如，步骤1的输出使用 {'{'}{'{'}output.1{'}'}{'}'}）",
+          "outputVarDesc": "步骤 #{step} 的输出",
+          "title": "设计您的多步骤工作流程。提示模板将用于执行每个步骤。您可以包含“变量”，当代理执行时，这些变量将替换为用户提供的值。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示用户输入值时提供指导）。描述和默认值都是可选的。"
+        },
+        "step": "步骤 #{step}",
         "title": "工作流程"
       }
     },
@@ -283,7 +281,6 @@
       "noAgentsTitle": "您还没有创建任何可执行的代理",
       "title": "选择要运行的代理"
     },
-    "prompt": "默认提示",
     "run": {
       "confirmDelete": "您确定要删除此运行记录吗？",
       "createdAt": "开始时间",
@@ -324,6 +321,9 @@
       "header": "代理摘要",
       "history": "历史"
     }
+  },
+  "agentSelector": {
+    "title": "选择委派代理"
   },
   "automation": {
     "commander": {

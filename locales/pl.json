@@ -180,10 +180,6 @@
   },
   "agent": {
     "create": {
-      "agents": {
-        "help": "Agenci mogą delegować zadania innym agentom. Wybierz jednego lub więcej agentów do obsługi konkretnych zadań.",
-        "title": "Delegowani Agenci"
-      },
       "goal": {
         "title": "Cel agenta"
       },
@@ -191,8 +187,7 @@
         "help": {
           "description": "Krótki opis celu twojego agenta. Gdy agent jest używany w przebiegu pracy, ta informacja jest przekazywana do LLM, aby pomóc mu zrozumieć agenta i ewentualnie zdecydować o jego wywołaniu.",
           "goal": "Cel agenta. Będzie on używany jako instrukcje systemowe wysyłane do LLM. Nie umieszczaj tutaj informacji dotyczących wykonania, ponieważ zostaną one ustawione w prompt.",
-          "name": "Opisowa nazwa twojego agenta.",
-          "prompt": "Szablon promptu, który zostanie użyty do wykonania agenta. Możesz uwzględnić \"zmienne\", które zostaną zastąpione wartościami podanymi przez użytkownika podczas wykonywania agenta. Użyj formatu {'{'}{'{'}nazwa:opis:wartość{'}'}{'}'} do zdefiniowania zmiennej (opis pomoże użytkownikowi przy wprowadzaniu wartości). Zarówno opis, jak i wartość domyślna są opcjonalne."
+          "name": "Opisowa nazwa twojego agenta."
         },
         "promptInputs": "Wykryte zmienne",
         "title": "Informacje ogólne",
@@ -221,17 +216,20 @@
       "settings": {
         "title": "Ustawienia modelu"
       },
-      "tools": {
-        "allowAll": "Zezwól na dostęp do wszystkich wtyczek i serwerów MCP",
-        "help": "Ograniczenie liczby narzędzi dostępnych dla LLM pomoże mu skupić się na konkretnym zadaniu. W razie potrzeby zawsze możesz zezwolić na wszystkie narzędzia później.",
-        "selectAll": "@:{'common.selectAll'}",
-        "selectNone": "@:{'common.selectNone'}",
-        "title": "Dostęp do narzędzi"
-      },
       "workflow": {
-        "help": {
-          "singleOnly": "Witsy obecnie obsługuje tylko przebiegi pracy jednokrokowe. Możesz dodać wiele kroków w przyszłości."
+        "addStep": "Dodaj krok",
+        "confirmDeleteStep": "Czy na pewno chcesz usunąć ten krok?",
+        "customAgents": "Deleguj agentów…",
+        "customTools": "Wybór narzędzi…",
+        "error": {
+          "emptyStepPrompt": "Prompt kroku #{step} nie może być pusty."
         },
+        "help": {
+          "connect": "Połącz wyniki poprzednich kroków używając zmiennych {'{'}{'{'}output.#{'}'}{'}'} (np. {'{'}{'{'}output.1{'}'}{'}'} dla wyniku kroku 1)",
+          "outputVarDesc": "Wynik kroku #{step}",
+          "title": "Zaprojektuj swój wieloetapowy workflow. Szablony promptów będą używane do wykonania każdego kroku. Możesz dołączyć \"zmienne\", które zostaną zastąpione wartościami podanymi przez użytkownika podczas wykonywania agenta. Użyj formatu {'{'}{'{'}name:opis:wartość{'}'}{'}'} do zdefiniowania zmiennej (opis będzie wskazówką dla użytkownika podczas podawania wartości). Zarówno opis, jak i wartość domyślna są opcjonalne."
+        },
+        "step": "Krok #{step}",
         "title": "Przebieg pracy"
       }
     },
@@ -283,7 +281,6 @@
       "noAgentsTitle": "Nie utworzyłeś jeszcze żadnych wykonywalnych agentów",
       "title": "Wybierz agenta do uruchomienia"
     },
-    "prompt": "Domyślny prompt",
     "run": {
       "confirmDelete": "Czy na pewno chcesz usunąć to wykonanie?",
       "createdAt": "Czas rozpoczęcia",
@@ -324,6 +321,9 @@
       "header": "Podsumowanie agenta",
       "history": "Historia"
     }
+  },
+  "agentSelector": {
+    "title": "Wybierz delegowanych agentów"
   },
   "automation": {
     "commander": {

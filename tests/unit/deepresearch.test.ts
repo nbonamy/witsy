@@ -117,12 +117,12 @@ beforeEach(() => {
 test('Planning agent configuration', () => {
   expect(dr.planningAgent.name).toBe('planning')
   expect(dr.planningAgent.description).toContain('Strategic research planner')
-  expect(dr.planningAgent.tools).toContain('search_internet')
-  expect(dr.planningAgent.tools).toContain('extract_webpage_content')
+  expect(dr.planningAgent.steps[0].tools).toContain('search_internet')
+  expect(dr.planningAgent.steps[0].tools).toContain('extract_webpage_content')
 })
 
 test('Planning agent prompt building', () => {
-  const prompt = dr.planningAgent.buildPrompt({
+  const prompt = dr.planningAgent.buildPrompt(0, {
     userQuery: 'quantum computing',
     numSections: 3,
     numQueriesPerSection: 2
@@ -146,13 +146,13 @@ test('Planning agent parameters', () => {
 test('Search agent configuration', () => {
   expect(dr.searchAgent.name).toBe('search')
   expect(dr.searchAgent.description).toContain('Expert information retrieval')
-  expect(dr.searchAgent.tools).toContain('search_internet')
-  expect(dr.searchAgent.tools).toContain('extract_webpage_content')
-  expect(dr.searchAgent.tools).toContain('get_youtube_transcript')
+  expect(dr.searchAgent.steps[0].tools).toContain('search_internet')
+  expect(dr.searchAgent.steps[0].tools).toContain('extract_webpage_content')
+  expect(dr.searchAgent.steps[0].tools).toContain('get_youtube_transcript')
 })
 
 test('Search agent prompt building', () => {
-  const prompt = dr.searchAgent.buildPrompt({
+  const prompt = dr.searchAgent.buildPrompt(0, {
     searchQuery: 'quantum entanglement',
     maxResults: 10
   })
@@ -174,12 +174,12 @@ test('Search agent parameters', () => {
 test('Analysis agent configuration', () => {
   expect(dr.analysisAgent.name).toBe('analysis')
   expect(dr.analysisAgent.description).toContain('Advanced information processor')
-  expect(dr.analysisAgent.tools).toContain('run_python_code')
-  expect(dr.analysisAgent.tools).toContain('extract_webpage_content')
+  expect(dr.analysisAgent.steps[0].tools).toContain('run_python_code')
+  expect(dr.analysisAgent.steps[0].tools).toContain('extract_webpage_content')
 })
 
 test('Analysis agent prompt building', () => {
-  const prompt = dr.analysisAgent.buildPrompt({
+  const prompt = dr.analysisAgent.buildPrompt(0, {
     sectionObjective: 'Understand quantum mechanics',
     rawInformation: 'Quantum particles exhibit wave-particle duality...'
   })
@@ -200,11 +200,11 @@ test('Analysis agent parameters', () => {
 test('Writer agent configuration', () => {
   expect(dr.writerAgent.name).toBe('writer')
   expect(dr.writerAgent.description).toContain('Section generator')
-  expect(dr.writerAgent.tools).toContain('run_python_code')
+  expect(dr.writerAgent.steps[0].tools).toContain('run_python_code')
 })
 
 test('Writer agent prompt building', () => {
-  const prompt = dr.writerAgent.buildPrompt({
+  const prompt = dr.writerAgent.buildPrompt(0, {
     sectionNumber: 1,
     sectionTitle: 'Quantum Entanglement',
     sectionObjective: 'Explain quantum entanglement',
@@ -234,11 +234,11 @@ test('Writer agent parameters', () => {
 test('Synthesis agent configuration', () => {
   expect(dr.synthesisAgent.name).toBe('synthesis')
   expect(dr.synthesisAgent.description).toContain('Expert report synthesizer')
-  expect(dr.synthesisAgent.tools).toContain('run_python_code')
+  expect(dr.synthesisAgent.steps[0].tools).toContain('run_python_code')
 })
 
 test('Synthesis agent prompt building for executive summary', () => {
-  const prompt = dr.synthesisAgent.buildPrompt({
+  const prompt = dr.synthesisAgent.buildPrompt(0, {
     researchTopic: 'Quantum Computing',
     keyLearnings: ['Quantum computers use qubits', 'They can solve certain problems exponentially faster'],
     outputType: 'executive_summary'
@@ -250,7 +250,7 @@ test('Synthesis agent prompt building for executive summary', () => {
 })
 
 test('Synthesis agent prompt building for conclusion', () => {
-  const prompt = dr.synthesisAgent.buildPrompt({
+  const prompt = dr.synthesisAgent.buildPrompt(0, {
     researchTopic: 'Quantum Computing',
     keyLearnings: ['Quantum computers use qubits'],
     outputType: 'conclusion'
@@ -678,10 +678,11 @@ test('Deep research agents consistency', () => {
     expect(agent.name).toBeTruthy()
     expect(agent.description).toBeTruthy()
     expect(agent.instructions).toBeTruthy()
-    expect(agent.prompt).toBeTruthy()
     expect(Array.isArray(agent.parameters)).toBe(true)
-    expect(Array.isArray(agent.tools)).toBe(true)
-    expect(Array.isArray(agent.agents)).toBe(true)
+    expect(agent.steps).toHaveLength(1)
+    expect(agent.steps[0].prompt).toBeTruthy()
+    expect(Array.isArray(agent.steps[0].tools)).toBe(true)
+    expect(Array.isArray(agent.steps[0].agents)).toBe(true)
   })
 })
 

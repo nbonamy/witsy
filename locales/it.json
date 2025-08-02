@@ -161,10 +161,6 @@
   },
   "agent": {
     "create": {
-      "agents": {
-        "help": "Gli agenti possono delegare compiti ad altri agenti. Seleziona uno o più agenti per gestire compiti specifici.",
-        "title": "Delegare Agenti"
-      },
       "goal": {
         "title": "Obiettivo dell'Agente"
       },
@@ -172,8 +168,7 @@
         "help": {
           "description": "Breve descrizione dello scopo del tuo agente. Quando questo agente viene usato all'interno di un flusso di lavoro, questa descrizione sarà condivisa con il LLM per aiutarlo a comprendere l'agente e, eventualmente, decidere di chiamarlo.",
           "goal": "L'obiettivo dell'agente. Questo sarà usato come istruzioni di sistema inviate al LLM. Non includere qui informazioni specifiche di esecuzione poiché queste saranno impostate nel prompt.",
-          "name": "Nome descrittivo per il tuo agente.",
-          "prompt": "Template di prompt che verrà utilizzato per eseguire l'agente. Puoi includere \"variabili\" che saranno sostituite con i valori forniti dall'utente quando l'agente viene eseguito. Usa il formato {'{'}{'{'}nome:descrizione:valore{'}'}{'}'} per definire una variabile (la descrizione guiderà l'utente quando verrà richiesto un valore). Sia la descrizione che il valore predefinito sono opzionali."
+          "name": "Nome descrittivo per il tuo agente."
         },
         "promptInputs": "Variabili rilevate",
         "title": "Informazioni Generali",
@@ -202,17 +197,20 @@
       "settings": {
         "title": "Impostazioni del Modello"
       },
-      "tools": {
-        "allowAll": "Consenti l'accesso a tutti i plugin e server MCP",
-        "help": "Limitare il numero di strumenti esposti al LLM aiuterà a concentrarsi sul compito. Potrai sempre consentire tutti gli strumenti in seguito se necessario.",
-        "selectAll": "@:{'common.selectAll'}",
-        "selectNone": "@:{'common.selectNone'}",
-        "title": "Accesso agli strumenti"
-      },
       "workflow": {
-        "help": {
-          "singleOnly": "Witsy attualmente supporta solo flussi di lavoro a passo singolo. Potrai aggiungere più passaggi in futuro."
+        "addStep": "Aggiungi fase",
+        "confirmDeleteStep": "Sei sicuro di voler eliminare questa fase?",
+        "customAgents": "Delegare agenti…",
+        "customTools": "Selezione strumenti…",
+        "error": {
+          "emptyStepPrompt": "Il prompt della fase #{step} non può essere vuoto."
         },
+        "help": {
+          "connect": "Collega l'output delle fasi precedenti usando le variabili {'{'}{'{'}output.#{'}'}{'}'} (es. {'{'}{'{'}output.1{'}'}{'}'} per l'output della fase 1)",
+          "outputVarDesc": "Output della fase #{step}",
+          "title": "Progetta il tuo flusso di lavoro multi-fase. I modelli di prompt saranno utilizzati per eseguire ogni fase. Puoi includere \"variabili\" che saranno sostituite con i valori forniti dall'utente quando l'agente viene eseguito. Usa il formato {'{'}{'{'}nome:descrizione:valore{'}'}{'}'} per definire una variabile (la descrizione guiderà l'utente quando gli verrà chiesto un valore). Sia la descrizione che il valore predefinito sono opzionali."
+        },
+        "step": "Fase #{step}",
         "title": "Flusso di Lavoro"
       }
     },
@@ -264,7 +262,6 @@
       "noAgentsTitle": "Non hai ancora creato agenti eseguibili",
       "title": "Seleziona l'agente da eseguire"
     },
-    "prompt": "Prompt predefinito",
     "run": {
       "confirmDelete": "Sei sicuro di voler eliminare questa esecuzione?",
       "createdAt": "Ora di inizio",
@@ -305,6 +302,9 @@
       "header": "Riepilogo Agente",
       "history": "Cronologia"
     }
+  },
+  "agentSelector": {
+    "title": "Seleziona agenti delegati"
   },
   "automation": {
     "commander": {

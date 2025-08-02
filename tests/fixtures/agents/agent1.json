@@ -6,17 +6,28 @@
   "description": "Description1",
   "engine": "engine1",
   "model": "model1",
-  "locale": "locale1",
   "modelOpts": {},
   "disableStreaming": true,
-  "tools": [
-    "tool1",
-    "tool2"
-  ],
-  "agents": [],
-  "docrepo": null,
+  "locale": "locale1",
   "instructions": "instructions1",
-  "prompt": "prompt1",
-  "parameters": [ { "name": "param1", "type": "string", "description": "Description1", "required": true } ],
-  "schedule": "*/5 * * * *"
+  "parameters": [
+    {
+      "name": "param1",
+      "type": "string",
+      "description": "Description1",
+      "required": true
+    }
+  ],
+  "schedule": "*/5 * * * *",
+  "steps": [
+    {
+      "tools": [
+        "tool1",
+        "tool2"
+      ],
+      "agents": [],
+      "docrepo": null,
+      "prompt": "prompt1"
+    }
+  ]
 }

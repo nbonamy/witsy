@@ -9,6 +9,7 @@ import { McpInstallStatus, McpServer, McpStatus, McpTool } from './mcp'
 import { ToolSelection } from './llm'
 import { ListDirectoryResponse } from './filesystem'
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './file'
+import { ZodType } from 'zod'
 
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
@@ -48,6 +49,9 @@ export interface Message extends IMessageBase {
   type: MessageType
   createdAt: number
   expert?: Expert
+  agentId?: string
+  agentRunId?: string
+  deepResearch?: boolean
   toolCalls?: ToolCall[]
   usage?: LlmUsage
   attachments: Attachment[]
@@ -95,6 +99,21 @@ export interface Chat {
 export type AgentSource = 'witsy' | 'a2a'
 export type AgentType = 'runnable' | 'support'
 
+export type AgentStep = {
+  // engine: string|null
+  // model: string|null
+  // modelOpts: LlmModelOpts|null
+  // disableStreaming: boolean
+  prompt: string|null
+  tools: string[]|null
+  agents: string[]|null
+  docrepo: string|null
+  structuredOutput?: {
+    name: string
+    structure: ZodType
+  }
+}
+
 export interface Agent {
   id: string
   source: AgentSource
@@ -108,15 +127,12 @@ export interface Agent {
   modelOpts: LlmModelOpts|null
   disableStreaming: boolean
   locale: string|null
-  tools: string[]|null
-  agents: string[]|null
-  docrepo: string|null
   instructions: string
-  prompt: string|null
-  invocationValues: Record<string, string>
   parameters: PluginParameter[]
+  steps: AgentStep[]
   schedule: string|null
-  buildPrompt: (parameters: anyDict) => string|null
+  invocationValues: Record<string, string>
+  buildPrompt: (step: number, parameters: anyDict) => string|null
   getPreparationDescription?: () => string
   getRunningDescription?: (args: any) => string
   getCompletedDescription?: (args: any, results: any) => string

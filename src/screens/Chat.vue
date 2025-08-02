@@ -553,7 +553,7 @@ const onRunAgent = async () => {
     return
   }
 
-  builder.value.show(agent.value.prompt, {}, async (prompt: string) => {
+  builder.value.show(agent.value.steps[0].prompt, {}, async (prompt: string) => {
 
     // we need a new chat
     assistant.value.initChat()

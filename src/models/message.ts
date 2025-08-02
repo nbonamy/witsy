@@ -13,6 +13,7 @@ export default class Message extends MessageBase implements IMessage {
   type: MessageType
   expert?: Expert
   agentId?: string
+  agentRunId?: string
   deepResearch?: boolean
   toolCalls?: ToolCall[]
   usage?: LlmUsage

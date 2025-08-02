@@ -69,7 +69,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
         
       // we start by running the planning agent
       const planner = new Runner(this.config, dr.planningAgent)
-      const run = await planner.run('workflow', dr.planningAgent.buildPrompt({
+      const run = await planner.run('workflow', dr.planningAgent.buildPrompt(0, {
         userQuery: researchTopic,
         numSections: opts.breadth,
         numQueriesPerSection: opts.depth
@@ -185,7 +185,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
           // now we can run the analysis agent on the results
           const analyzer = new Runner(this.config, dr.analysisAgent)
-          const analysis = await analyzer.run('workflow', dr.analysisAgent.buildPrompt({
+          const analysis = await analyzer.run('workflow', dr.analysisAgent.buildPrompt(0, {
             sectionObjective: section.description,
             rawInformation: searchResults[index].reduce((acc, result) => acc + `\n${result.title}\n${result.content}\n`, ''),
           }), {
@@ -216,7 +216,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
           // now we can run the section agent to generate the section content
           const sectionGenerator = new Runner(this.config, dr.writerAgent)
-          const sectionContent = await sectionGenerator.run('workflow', dr.writerAgent.buildPrompt({
+          const sectionContent = await sectionGenerator.run('workflow', dr.writerAgent.buildPrompt(0, {
             sectionNumber: index + 1,
             sectionTitle: section.title,
             sectionObjective: section.description,
@@ -244,12 +244,12 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
       // run agents
       const synthesis = new Runner(this.config, dr.synthesisAgent)
-      const execSummary = await synthesis.run('workflow', dr.synthesisAgent.buildPrompt({
+      const execSummary = await synthesis.run('workflow', dr.synthesisAgent.buildPrompt(0, {
         researchTopic: researchTopic,
         keyLearnings: allKeyLearnings.join('\n'),
         outputType: 'executive_summary',
       }), { ephemeral: true, ...opts })
-      const conclusion = await synthesis.run('workflow', dr.synthesisAgent.buildPrompt({
+      const conclusion = await synthesis.run('workflow', dr.synthesisAgent.buildPrompt(0, {
         researchTopic: researchTopic,
         keyLearnings: allKeyLearnings.join('\n'),
         outputType: 'conclusion',

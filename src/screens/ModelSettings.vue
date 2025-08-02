@@ -107,7 +107,7 @@
       </div>
     </div>
 
-    <ToolSelector ref="selector" :tools="tools" @save="onSaveTools" />
+    <ToolSelector ref="selector" @save="onSaveTools" />
     <VariableEditor ref="editor" id="model-variable-editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
 
   </div>
@@ -246,7 +246,7 @@ onMounted(async () => {
 })
 
 const onCustomizeTools = () => {
-  selector.value.show()
+  selector.value.show(tools.value)
 }
 
 const onSaveTools = (selected: string[]) => {
