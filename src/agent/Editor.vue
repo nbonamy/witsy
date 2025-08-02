@@ -261,28 +261,32 @@
               <input type="text" name="webhook" v-model="webhook" />
             </div> -->
 
-            <div class="form-field">
-              <label for="prompt">{{ t('agent.create.invocation.variables') }}</label>
-              <table class="table-plain variables">
-                <thead>
-                  <tr>
-                    <th>{{ t('common.name') }}</th>
-                    <th>{{ t('common.value') }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="input in promptInputs" :key="input.name">
-                    <td>{{ input.name }}</td>
-                    <td><input type="text" v-model="invocationInputs[input.name]" :placeholder="input.defaultValue" @input="saveInvocationInputs"/></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <template v-if="promptInputs.length">
 
-            <div class="form-field">
-              <label for="prompt">{{ t('agent.create.invocation.prompt') }}</label>
-              <textarea v-model="invocationPrompt" readonly></textarea>
-            </div>
+              <div class="form-field">
+                <label for="prompt">{{ t('agent.create.invocation.variables') }}</label>
+                <table class="table-plain variables">
+                  <thead>
+                    <tr>
+                      <th>{{ t('common.name') }}</th>
+                      <th>{{ t('common.value') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="input in promptInputs" :key="input.name">
+                      <td>{{ input.name }}</td>
+                      <td><input type="text" v-model="invocationInputs[input.name]" :placeholder="input.defaultValue" @input="saveInvocationInputs"/></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="form-field">
+                <label for="prompt">{{ t('agent.create.invocation.prompt') }}</label>
+                <textarea v-model="invocationPrompt" readonly></textarea>
+              </div>
+            
+            </template>
 
           </template>
         </WizardStep>
