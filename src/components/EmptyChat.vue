@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 
-import { ref, shallowReactive, computed, onMounted, onUnmounted, onBeforeUpdate, onUpdated } from 'vue'
+import { ref, shallowReactive, computed, onMounted, onUnmounted, onBeforeUpdate, onUpdated, watch } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import EngineLogo from './EngineLogo.vue'
@@ -107,6 +107,7 @@ onBeforeUpdate(() => {
 onMounted(() => {
   centerLogos()
   document.addEventListener('keydown', onKeyDown)
+  watch(() => store.config.llm.engine, loadApiKey, { immediate: true })
   loadApiKey()
 })
 
