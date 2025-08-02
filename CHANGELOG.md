@@ -11,7 +11,8 @@ All notable changes to this project will be documented in this file.
 - N/A
 
 ### Fixed
-- N/A
+- API key field for a new provider should start out empty (https://github.com/nbonamy/witsy/issues/368)
+- OpenAI responses API integration (https://github.com/nbonamy/witsy/issues/338)
 
 ### Removed
 - N/A
