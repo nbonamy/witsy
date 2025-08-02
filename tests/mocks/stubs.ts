@@ -1,2 +1,8 @@
 
-export const stubTeleport = { global: { stubs: { teleport: true } } }
+export const stubTeleport = { 
+  global: {
+    stubs: {
+      teleport: { template: '<div><slot /></div>'}
+    }
+  }
+}

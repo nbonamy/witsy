@@ -195,7 +195,7 @@
             </template>
           </template>
           <template #buttons>
-            <button @click="onAddStep(agent.steps.length+1)">{{ t('agent.create.workflow.addStep') }}</button>
+            <button name="add-step" @click="onAddStep(agent.steps.length+1)">{{ t('agent.create.workflow.addStep') }}</button>
           </template>
         </WizardStep>
 
