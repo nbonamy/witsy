@@ -5,7 +5,7 @@
     </template>
     <template #body>
       <div class="agent-list">
-        <div v-for="agent in runnableAgents" :key="agent.id" class="agent-item" @click="onSelectAgent(agent)">
+        <div v-for="agent in runnableAgents" :key="agent.uuid" class="agent-item" @click="onSelectAgent(agent)">
           <div class="agent-icon">
             <BIconRobot v-if="agent.source === 'witsy'" />
             <LogoA2A v-else-if="agent.source === 'a2a'" />

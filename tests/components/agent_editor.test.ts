@@ -252,8 +252,8 @@ test('Shows model step with engine and model selects', async () => {
 test('Shows workflow step with step panels', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Step 1 prompt', tools: null, agents: [], docrepo: null },
-    { prompt: 'Step 2 prompt', tools: null, agents: [], docrepo: null }
+    { prompt: 'Step 1 prompt', tools: null, agents: [] },
+    { prompt: 'Step 2 prompt', tools: null, agents: [] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -284,7 +284,7 @@ test('Shows workflow step with step panels', async () => {
 test('Can expand and collapse workflow steps', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Step 1 prompt', tools: null, agents: [], docrepo: null }
+    { prompt: 'Step 1 prompt', tools: null, agents: [] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -318,8 +318,8 @@ test('Can expand and collapse workflow steps', async () => {
 test('Shows step management buttons in workflow', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Step 1 prompt', tools: null, agents: [], docrepo: null },
-    { prompt: 'Step 2 prompt', tools: null, agents: [], docrepo: null }
+    { prompt: 'Step 1 prompt', tools: null, agents: [] },
+    { prompt: 'Step 2 prompt', tools: null, agents: [] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -354,7 +354,7 @@ test('Shows step management buttons in workflow', async () => {
 test('Shows invocation step with schedule and variables', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Hello {{name}}, how are you?', tools: null, agents: [], docrepo: null }
+    { prompt: 'Hello {{name}}, how are you?', tools: null, agents: [] }
   ]
   agent.schedule = '0 9 * * *'
   agent.invocationValues = { name: 'World' }
@@ -582,8 +582,8 @@ test('Workflow step handles multiple steps correctly', async () => {
   agent.description = 'Test Description'
   agent.instructions = 'Test Instructions'
   agent.steps = [
-    { prompt: 'First step', tools: null, agents: [], docrepo: null },
-    { prompt: 'Second step prompt', tools: null, agents: [], docrepo: null }
+    { prompt: 'First step', tools: null, agents: [] },
+    { prompt: 'Second step prompt', tools: null, agents: [] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -660,7 +660,7 @@ test('Previous button from first step emits cancel', async () => {
 test('Adds new workflow step', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Step 1', tools: null, agents: [], docrepo: null }
+    { prompt: 'Step 1', tools: null, agents: [] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -694,8 +694,8 @@ test('Adds new workflow step', async () => {
 test('Deletes workflow step with confirmation', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Step 1', tools: null, agents: [], docrepo: null },
-    { prompt: 'Step 2', tools: null, agents: [], docrepo: null }
+    { prompt: 'Step 1', tools: null, agents: [] },
+    { prompt: 'Step 2', tools: null, agents: [] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -733,7 +733,7 @@ test('Deletes workflow step with confirmation', async () => {
 test('Shows tools and agents buttons in workflow steps', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Step 1', tools: null, agents: [], docrepo: null }
+    { prompt: 'Step 1', tools: null, agents: [] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -793,7 +793,7 @@ test('Shows next runs when schedule is set', async () => {
   const agent = new Agent()
   agent.schedule = '0 9 * * *' // 9 AM daily
   agent.steps = [
-    { prompt: 'Hello', tools: null, agents: [], docrepo: null }
+    { prompt: 'Hello', tools: null, agents: [] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -816,10 +816,12 @@ test('Shows next runs when schedule is set', async () => {
 })
 
 test('Updates invocation variables when typing', async () => {
+  
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Hello {{name}}, welcome to {{place}}', tools: null, agents: [], docrepo: null }
+    { prompt: 'Hello {{name}}, welcome to {{place}}', tools: null, agents: [] }
   ]
+  agent.schedule = '0 9 * * *'
   agent.invocationValues = { name: 'John', place: 'Paris' }
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -855,7 +857,7 @@ test('Updates invocation variables when typing', async () => {
 test('Shows prompt inputs table in workflow steps', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Hello {{name}}, your age is {{age}}', tools: null, agents: [], docrepo: null }
+    { prompt: 'Hello {{name}}, your age is {{age}}', tools: null, agents: [] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -888,7 +890,7 @@ test('Save validation - calls save API when all required fields are present', as
   agent.name = 'Test Agent'
   agent.description = 'Test Description'
   agent.steps = [
-    { prompt: 'Hello {{name}}', tools: null, agents: [], docrepo: null }
+    { prompt: 'Hello {{name}}', tools: null, agents: [] }
   ]
   agent.invocationValues = { name: 'World' } // Provide required values
 

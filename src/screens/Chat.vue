@@ -11,7 +11,7 @@
 <script setup lang="ts">
 
 import { LlmChunkContent } from 'multi-llm-ts'
-import { strDict, Agent } from '../types'
+import { strDict, Agent, A2APromptOpts } from '../types'
 import { MenuBarMode } from '../components/MenuBar.vue'
 import { ref, onMounted, nextTick, watch } from 'vue'
 import { store } from '../services/store'
@@ -27,7 +27,7 @@ import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import AgentPicker from './AgentPicker.vue'
 import Generator, { GenerationEvent } from '../services/generator'
 import Assistant from '../services/assistant'
-import AgentRunner from '../services/runner'
+import AgentRunner, { isAgentConversation } from '../services/runner'
 import Message from '../models/message'
 import Chat from '../models/chat'
 import LlmFactory from '../llms/llm'
@@ -456,6 +456,13 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // deconstruct params
   const { instructions, prompt, attachments, docrepo, expert, deepResearch } = params
 
+  // if the chat is still in an agentic context then run the agent
+  const agent = isAgentConversation(assistant.value.chat)
+  if (agent) {
+    runAgent(agent, prompt, assistant.value.chat.lastMessage()?.a2aContext)
+    return
+  }
+
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
   if (!assistant.value.hasLlm()) {
@@ -566,7 +573,7 @@ const onRunAgent = async () => {
 
 }
 
-const runAgent = async (agent: Agent, prompt: string) => {
+const runAgent = async (agent: Agent, prompt: string, a2aContext?: A2APromptOpts) => {
 
   // now we can run it with streaming
   const runner = new AgentRunner(store.config, agent)
@@ -576,6 +583,7 @@ const runAgent = async (agent: Agent, prompt: string) => {
     ephemeral: false,
     model: assistant.value.chat.model,
     chat: assistant.value.chat,
+    a2aContext: a2aContext
   }, async (event: GenerationEvent) => {
 
     if (event === 'before_generation') {
@@ -622,7 +630,7 @@ const onRetryGeneration = async (message: Message) => {
   if (message.agentId) {
 
     // make sure the agent still exists
-    const agent = store.agents.find((a) => a.id === message.agentId)
+    const agent = store.agents.find((a) => a.uuid === message.agentId)
     if (!agent) {
       await Dialog.waitUntilClosed()
       Dialog.alert(t('chat.agent.notFound'))

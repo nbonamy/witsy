@@ -202,6 +202,7 @@
         "confirmDeleteStep": "Êtes-vous sûr de vouloir supprimer cette étape ?",
         "customAgents": "Déléguer les agents…",
         "customTools": "Sélection d'outil…",
+        "description": "Description : utilisé dans le chat pour fournir des mises à jour de progression",
         "error": {
           "emptyStepPrompt": "L'invite de l'étape #{step} ne peut pas être vide."
         },
@@ -211,6 +212,7 @@
           "title": "Concevez votre flux de travail en plusieurs étapes. Des modèles d'invite seront utilisés pour exécuter chaque étape. Vous pouvez inclure des \"variables\" qui seront remplacées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}name:description:valeur{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lorsqu'une valeur sera demandée). La description et la valeur par défaut sont optionnelles."
         },
         "step": "Étape #{step}",
+        "stepFull": "Étape #{step} : {text}",
         "title": "Flux de Travail"
       }
     },
@@ -222,6 +224,7 @@
             "text": "Vérifiez l'URL et assurez-vous que le serveur A2A est actif et fonctionne.",
             "title": "Erreur lors de l'importation A2A"
           },
+          "text": "FONCTIONNALITÉ EXPÉRIMENTALE !",
           "title": "Entrez l'URL de A2A"
         }
       },
@@ -351,7 +354,11 @@
       "saveChat": "Sauvegarder la conversation"
     },
     "agent": {
-      "notFound": "L'agent utilisé pour générer ce message n'est plus disponible."
+      "notFound": "L'agent utilisé pour générer ce message n'est plus disponible.",
+      "status": {
+        "inProgress": "Exécution de l’étape {step} sur {steps}...",
+        "starting": "Démarrage..."
+      }
     },
     "editor": {
       "title": "Titre",

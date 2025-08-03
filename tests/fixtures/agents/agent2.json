@@ -1,5 +1,5 @@
 {
-  "id": "agent2",
+  "uuid": "agent2",
   "createdAt": 1000000000000,
   "updatedAt": 1000000005000,
   "name": "Name2",

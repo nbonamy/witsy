@@ -1,11 +1,22 @@
 <template>
   <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false)">
     <div class="role" :class="message.role" v-if="showRole">
-      <EngineLogo :engine="message.engine || chat.engine!" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
-      <UserAvatar class="avatar" v-else />
-      <div class="name variable-font-size">{{ authorName }}</div>
+      <template v-if="agent">
+        <BIconRobot class="avatar" />
+        <div class="name variable-font-size">{{ agent.name }}</div>
+      </template>
+      <template v-else>
+        <EngineLogo :engine="message.engine || chat.engine!" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
+        <UserAvatar class="avatar" v-else />
+        <div class="name variable-font-size">{{ authorName }}</div>
+      </template>
     </div>
     <div class="body" @contextmenu="onContextMenu">
+
+      <!-- status -->
+      <div class="status-container" v-if="message.status && message.transient">
+        <BIconRobot /> <span class="status-text">{{ message.status }}</span>
+      </div>
 
       <!-- attachments -->
       <div class="attachments">
@@ -64,6 +75,7 @@ import EngineLogo from './EngineLogo.vue'
 
 // events
 import useEventBus from '../composables/event_bus'
+import { BIconRobot } from 'bootstrap-icons-vue'
 const { emitEvent, onEvent } = useEventBus()
 
 // init stuff
@@ -132,6 +144,14 @@ onUnmounted(() => {
   }
   audioPlayer.removeListener(onAudioPlayerStatus)
   // window.api.off('copy-as-markdown', onCopyMarkdown)
+})
+
+const agent = computed(() => {
+  if (props.message.agentId) {
+    const agent = store.agents.find(a => a.uuid === props.message.agentId)
+    return agent
+  }
+  return null
 })
 
 const authorName = computed(() => {

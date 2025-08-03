@@ -1,5 +1,6 @@
 
-import { MessageSendParams, Task, TaskArtifactUpdateEvent, TaskStatusUpdateEvent } from '@a2a-js/sdk'
+import { A2APromptOpts } from '../types/index'
+import { Message, MessageSendParams, Task, TaskArtifactUpdateEvent, TaskStatusUpdateEvent } from '@a2a-js/sdk'
 import Agent from '../models/agent'
 // @ts-expect-error unknown why this is a linting error
 import { A2AClient as Client } from '@a2a-js/sdk/client'
@@ -7,8 +8,9 @@ import { LlmChunk } from 'multi-llm-ts'
 
 export type A2AChunkStatus = {
   type: 'status'
-  taskId: string
-  status: string
+  taskId?: string
+  contextId?: string
+  status?: string
 }
 
 export type A2AChunkArtifact = {
@@ -39,8 +41,13 @@ export default class A2AClient {
         name: agent.name,
         description: agent.description,
         instructions: this.baseUrl,
-        tools: [],
-        agents: [],
+        steps: [{
+          description: '',
+          prompt: '',
+          tools: [],
+          agents: [],
+          docrepo: null,
+        }],
       })
 
     } catch (error) {
@@ -50,7 +57,7 @@ export default class A2AClient {
 
   }
 
-  async *execute(prompt: string): AsyncGenerator<A2AChunk> {
+  async *execute(prompt: string, opts?: A2APromptOpts): AsyncGenerator<A2AChunk> {
 
     const messageId = crypto.randomUUID()
     
@@ -63,68 +70,93 @@ export default class A2AClient {
       
       console.log(`[a2a] Starting streaming task for message ${messageId}`)
 
-      // yield {
-      //   type: 'content',
-      //   text: `Starting A2A client with prompt: ${prompt}\n\n`,
-      //   done: false,
-      // }
+      // init
+      let currentTaskId = opts?.currentTaskId
+      let currentContextId = opts?.currentContextId
 
       // Construct the `MessageSendParams` object.
       const streamParams: MessageSendParams = {
         message: {
           messageId: messageId,
+          kind: 'message',
           role: 'user',
           parts: [{ kind: 'text', text: prompt }],
-          kind: 'message',
+          taskId: currentTaskId,
+          contextId: currentContextId,
         },
-      };
+      }
 
       // Use the `sendMessageStream` method.
       const client = new Client(this.baseUrl)
-      const stream = client.sendMessageStream(streamParams);
-      let currentTaskId: string | undefined;
+      const stream = client.sendMessageStream(streamParams)
 
       for await (const event of stream) {
 
         // log
         console.log(`[a2a] Received event: ${JSON.stringify(event)}`);
         
-        // The first event is often the Task object itself, establishing the ID.
-        if ((event as Task).kind === 'task') {
-          
-          currentTaskId = (event as Task).id;
-          
+        // the first event is often the Task object itself, establishing the ID.
+        if (event.kind === 'task') {
+
+          const taskEvent = event as Task
+          currentTaskId = taskEvent.id
+          currentContextId = taskEvent.contextId
+
           yield {
             type: 'status',
             taskId: currentTaskId,
-            status: `Task created. Status: ${(event as Task).status.state}`
+            contextId: currentContextId,
           }
-          continue
         }
-
-        // Differentiate subsequent stream events.
-        if ((event as TaskStatusUpdateEvent).kind === 'status-update') {
+        
+        // differentiate subsequent stream events.
+        if (event.kind === 'status-update') {
 
           const statusEvent = event as TaskStatusUpdateEvent;
-          
-          if (statusEvent.status.message?.parts[0]?.kind === 'text') {
-            yield {
-              type: 'content',
-              text: statusEvent.status.message.parts[0].text,
-              done: false,
-            }
-          }
 
-          if (statusEvent.final) {
+          if ((statusEvent.taskId && statusEvent.taskId !== currentTaskId) ||
+              (statusEvent.contextId && statusEvent.contextId !== currentContextId)) {
+            currentTaskId = statusEvent.taskId ?? currentTaskId
+            currentContextId = statusEvent.contextId ?? currentContextId
             yield {
               type: 'status',
               taskId: currentTaskId,
-              status: `Stream marked as final.`
+              contextId: currentContextId,
             }
-            break
           }
 
-        } else if ((event as TaskArtifactUpdateEvent).kind === 'artifact-update') {
+          if (statusEvent.status.message?.parts[0]?.kind === 'text') {
+
+            if (statusEvent.status.state === 'working') {
+
+              yield {
+                type: 'status',
+                taskId: currentTaskId,
+                contextId: currentContextId,
+                status: statusEvent.status.message.parts[0].text
+              }
+
+            } else {
+            
+              yield {
+                type: 'content',
+                text: statusEvent.status.message.parts[0].text,
+                done: false,
+              }
+
+            }
+
+          }
+
+          if (statusEvent.status.state !== 'input-required' && statusEvent.final) {
+            currentTaskId = undefined
+            currentContextId = undefined
+            yield {
+              type: 'status',
+            }
+          }
+
+        } else if (event.kind === 'artifact-update') {
 
           const artifactEvent = event as TaskArtifactUpdateEvent;
           const artifactId = artifactEvent.artifact.artifactId;
@@ -148,13 +180,23 @@ export default class A2AClient {
             yield {
               type: 'artifact',
               ...artifacts[artifactId],
-            };
+            }
           }
 
-        } else {
+        } else if (event.kind === 'message') {
 
-          // This could be a direct Message response if the agent doesn't create a task.
-          console.log(`[a2a] received direct message response in stream: ${JSON.stringify(event)}`);
+          const messageEvent = event as Message
+
+          if ((messageEvent.taskId && messageEvent.taskId !== currentTaskId) ||
+              (messageEvent.contextId && messageEvent.contextId !== currentContextId)) {
+            currentTaskId = messageEvent.taskId ?? currentTaskId
+            currentContextId = messageEvent.contextId ?? currentContextId
+            yield {
+              type: 'status',
+              taskId: currentTaskId,
+              contextId: currentContextId,
+            }
+          }
 
           yield {
             type: 'content',

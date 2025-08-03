@@ -249,6 +249,20 @@
   background-image: url(https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png);
 }
 
+.message .status-container {
+  width: calc(100% - 2rem);
+  margin: 0 0 1rem 0;
+  background-color: var(--tool-bg-color);
+  border: 1px solid var(--tool-border-color);
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .message .message-transient {
   display: flex;
   flex-direction: column;

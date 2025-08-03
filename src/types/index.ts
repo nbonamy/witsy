@@ -44,19 +44,22 @@ export type MessageType = 'text' | 'image'
 
 export interface Message extends IMessageBase {
   uuid: string
+  type: MessageType
+  uiOnly: boolean
+  createdAt: number
   engine: string
   model: string
-  type: MessageType
-  createdAt: number
   expert?: Expert
   agentId?: string
   agentRunId?: string
-  deepResearch?: boolean
-  toolCalls?: ToolCall[]
+  a2aContext?: A2APromptOpts
+  deepResearch: boolean
+  transient: boolean
+  status?: string
+  toolCalls: ToolCall[]
   usage?: LlmUsage
   attachments: Attachment[]
-  transient: boolean
-  uiOnly: boolean
+  setStatus(status: string|null): void
   setExpert(expert: Expert, fallbackPrompt: string): void
   setText(text: string): void
   setImage(url: string): void
@@ -66,21 +69,26 @@ export interface Message extends IMessageBase {
   delete(): void
 }
 
+export type A2APromptOpts = {
+  currentTaskId?: string
+  currentContextId?: string
+}
+
 export interface Chat {
   uuid: string
-  title: string|null
+  title?: string
   createdAt: number
   lastModified: number
-  engine: string|null
-  model: string|null
-  instructions: string|null
-  messages: Message[]
-  temporary: boolean
+  engine?: string
+  model?: string
+  instructions?: string
   disableStreaming: boolean
   tools: ToolSelection
-  locale: string|null
-  docrepo: string|null
-  modelOpts: LlmModelOpts|null
+  locale?: string
+  docrepo?: string
+  modelOpts?: LlmModelOpts
+  messages: Message[]
+  temporary: boolean
   patchFromJson(jsonChat: any): boolean
   disableTools(): void
   enableAllTools(): void
@@ -104,10 +112,11 @@ export type AgentStep = {
   // model: string|null
   // modelOpts: LlmModelOpts|null
   // disableStreaming: boolean
-  prompt: string|null
-  tools: string[]|null
-  agents: string[]|null
-  docrepo: string|null
+  description?: string
+  prompt?: string
+  tools?: string[]|null
+  agents?: string[]
+  docrepo?: string
   structuredOutput?: {
     name: string
     structure: ZodType
@@ -115,7 +124,7 @@ export type AgentStep = {
 }
 
 export interface Agent {
-  id: string
+  uuid: string
   source: AgentSource
   createdAt: number
   updatedAt: number
@@ -143,7 +152,7 @@ export type AgentRunTrigger = 'manual' | 'schedule' | 'webhook' | 'workflow'
 export type AgentRunStatus = 'running' | 'success' | 'error'
 
 export type AgentRun = {
-  id: string
+  uuid: string
   agentId: string
   createdAt: number
   updatedAt: number

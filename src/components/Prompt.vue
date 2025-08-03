@@ -90,8 +90,8 @@ import Loader from './Loader.vue'
 import Chat from '../models/chat'
 
 export type SendPromptParams = {
-  instructions?: string,
   prompt: string,
+  instructions?: string,
   attachments?: Attachment[]
   docrepo?: string,
   expert?: Expert,
@@ -179,12 +179,12 @@ const llmManager: ILlmManager = LlmFactory.manager(store.config)
 let userStoppedDictation = false
 
 const prompt = ref('')
-const instructions = ref(null)
-const expert = ref<Expert|null>(null)
-const command = ref<Command|null>(null)
+const instructions = ref<string>(undefined)
+const expert = ref<Expert>(undefined)
+const command = ref<Command>(undefined)
 const attachments = ref<Attachment[]>([])
-const docrepo = ref(null)
-const input = ref(null)
+const docrepo = ref<string>(undefined)
+const input = ref<HTMLTextAreaElement>(null)
 const docRepos = ref<DocumentBase[]>([])
 const showInstructions = ref(false)
 const showDocRepo = ref(false)

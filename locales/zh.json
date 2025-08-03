@@ -221,6 +221,7 @@
         "confirmDeleteStep": "您确定要删除此步骤吗？",
         "customAgents": "委派代理…",
         "customTools": "工具选择…",
+        "description": "描述：用于聊天中提供进度更新",
         "error": {
           "emptyStepPrompt": "步骤 #{step} 的提示不能为空。"
         },
@@ -230,6 +231,7 @@
           "title": "设计您的多步骤工作流程。提示模板将用于执行每个步骤。您可以包含“变量”，当代理执行时，这些变量将替换为用户提供的值。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示用户输入值时提供指导）。描述和默认值都是可选的。"
         },
         "step": "步骤 #{step}",
+        "stepFull": "步骤 #{step}：{text}",
         "title": "工作流程"
       }
     },
@@ -241,6 +243,7 @@
             "text": "请检查URL，并确保A2A服务器正在运行。",
             "title": "导入A2A时出错"
           },
+          "text": "实验性功能！",
           "title": "输入 A2A 的 URL"
         }
       },
@@ -370,7 +373,11 @@
       "saveChat": "保存聊天"
     },
     "agent": {
-      "notFound": "用于生成该消息的代理不再可用。"
+      "notFound": "用于生成该消息的代理不再可用。",
+      "status": {
+        "inProgress": "正在执行第 {step} 步，共 {steps} 步…",
+        "starting": "正在启动..."
+      }
     },
     "editor": {
       "title": "标题",

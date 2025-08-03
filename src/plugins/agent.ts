@@ -170,7 +170,7 @@ export default class extends Plugin {
           return {
             status: run.status,
             result: result,
-            runId: run.id,
+            runId: run.uuid,
           }
         }
 

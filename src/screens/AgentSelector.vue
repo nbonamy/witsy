@@ -14,8 +14,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="support in supportAgents" :key="support.id" class="agent" @click="toggleAgent(support)">
-              <td class="agent-enabled"><input type="checkbox" :checked="selection.includes(support.id)" /></td>
+            <tr v-for="support in supportAgents" :key="support.uuid" class="agent" @click="toggleAgent(support)">
+              <td class="agent-enabled"><input type="checkbox" :checked="selection.includes(support.uuid)" /></td>
               <td class="agent-name">{{ support.name }}</td>
               <td class="agent-description"><div>{{ support.description }}</div></td>
             </tr>
@@ -55,15 +55,15 @@ const emit = defineEmits(['save'])
 
 const supportAgents = computed(() => {
   return store.agents
-    .filter(a => a.id !== props.excludeAgentId)
+    .filter(a => a.uuid !== props.excludeAgentId)
     .sort((a, b) => a.name.localeCompare(b.name))
 })
 
 const toggleAgent = (support: Agent) => {
-  if (selection.value.includes(support.id)) {
-    selection.value = selection.value.filter(a => a !== support.id)
+  if (selection.value.includes(support.uuid)) {
+    selection.value = selection.value.filter(a => a !== support.uuid)
   } else {
-    selection.value.push(support.id)
+    selection.value.push(support.uuid)
   }
 }
 

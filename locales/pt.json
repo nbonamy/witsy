@@ -221,6 +221,7 @@
         "confirmDeleteStep": "Tem certeza de que deseja excluir esta etapa?",
         "customAgents": "Delegar agentes…",
         "customTools": "Seleção de ferramenta…",
+        "description": "Descrição: usada no chat para fornecer atualizações de progresso",
         "error": {
           "emptyStepPrompt": "O prompt da etapa #{step} não pode estar vazio."
         },
@@ -230,6 +231,7 @@
           "title": "Projete seu fluxo de trabalho em várias etapas. Modelos de prompt serão usados para executar cada etapa. Você pode incluir \"variáveis\" que serão substituídas pelos valores fornecidos pelo usuário quando o agente for executado. Use o formato {'{'}{'{'}nome:descrição:valor{'}'}{'}'} para definir uma variável (a descrição guiará o usuário ao solicitar um valor). Tanto a descrição quanto o valor padrão são opcionais."
         },
         "step": "Etapa #{step}",
+        "stepFull": "Passo #{step}: {text}",
         "title": "Fluxo de Trabalho"
       }
     },
@@ -241,6 +243,7 @@
             "text": "Verifique a URL e certifique-se de que o servidor A2A está ativo e funcionando.",
             "title": "Erro ao importar A2A"
           },
+          "text": "RECURSO EXPERIMENTAL!",
           "title": "Digite a URL do A2A"
         }
       },
@@ -370,7 +373,11 @@
       "saveChat": "Salvar Chat"
     },
     "agent": {
-      "notFound": "O agente usado para gerar essa mensagem não está mais disponível."
+      "notFound": "O agente usado para gerar essa mensagem não está mais disponível.",
+      "status": {
+        "inProgress": "Executando passo {step} de {steps}…",
+        "starting": "Iniciando..."
+      }
     },
     "editor": {
       "title": "Título",

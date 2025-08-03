@@ -1,7 +1,7 @@
 
 import { vi } from 'vitest'
 import { renderMarkdown } from '../../src/main/markdown'
-import { AgentRunStatus, AgentRunTrigger, Command, Expert } from '../../src/types/index'
+import { AgentRun, AgentRunStatus, AgentRunTrigger, Command, Expert } from '../../src/types/index'
 import { McpInstallStatus } from '../../src/types/mcp'
 import { ListDirectoryResponse } from '../../src/types/filesystem'
 import { FilePickParams } from '../../src/types/file'
@@ -179,7 +179,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       forge: vi.fn(),
       load: vi.fn(() => [
         Agent.fromJson({
-          id: 'agent1',
+          uuid: 'agent1',
           source: 'witsy',
           name: 'Test Agent 1',
           description: 'A test runnable agent',
@@ -211,7 +211,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           invocationValues: { name: 'World' }
         }),
         Agent.fromJson({
-          id: 'agent2',
+          uuid: 'agent2',
           source: 'witsy',
           name: 'Test Agent 2',
           description: 'A test support agent',
@@ -235,7 +235,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           invocationValues: {}
         }),
         Agent.fromJson({
-          id: 'agent3',
+          uuid: 'agent3',
           source: 'a2a',
           name: 'Test Agent 3',
           description: 'Another test runnable agent',
@@ -265,7 +265,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         if (agentId === 'agent1') {
           return [
             {
-              id: 'run1',
+              uuid: 'run1',
               agentId: 'agent1',
               createdAt: Date.now() - 86400000, // 1 day ago
               updatedAt: Date.now() - 86400000,
@@ -276,7 +276,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
               toolCalls: []
             },
             {
-              id: 'run2',
+              uuid: 'run2',
               agentId: 'agent1',
               createdAt: Date.now() - 43200000, // 12 hours ago
               updatedAt: Date.now() - 43200000,
@@ -287,7 +287,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
               toolCalls: []
             },
             {
-              id: 'run3',
+              uuid: 'run3',
               agentId: 'agent1',
               createdAt: Date.now() - 3600000, // 1 hour ago
               updatedAt: Date.now() - 3600000,
@@ -301,12 +301,12 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           ]
         } else if (agentId === 'agent2') {
           return [{
-            id: 'workflow-run1',
+            uuid: 'workflow-run1',
             agentId: 'agent2',
             createdAt: Date.now(),
             updatedAt: Date.now(),
-            trigger: 'workflow',
-            status: 'success',
+            trigger: 'workflow' as AgentRunTrigger,
+            status: 'success' as AgentRunStatus,
             prompt: 'Workflow prompt',
             messages: [],
             toolCalls: []
@@ -316,7 +316,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       }),
       getRun: vi.fn((agentId: string, runId: string) => {
         const runs = window.api?.agents?.getRuns(agentId) || []
-        return runs.find((run: any) => run.id === runId) || null
+        return runs.find((run: AgentRun) => run.uuid === runId) || null
       }),
       saveRun: vi.fn(),
       deleteRuns: vi.fn(),

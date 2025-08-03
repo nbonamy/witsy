@@ -42,7 +42,7 @@ test('Load agents', () => {
   const agents = main.loadAgents(app)
   expect(agents).toHaveLength(2)
   expect(agents[0]).toMatchObject({
-    id: 'agent1',
+    uuid: 'agent1',
     source: 'witsy',
     createdAt: 1000000000000,
     updatedAt: 1000000005000,
@@ -64,7 +64,7 @@ test('Load agents', () => {
     }]
   })
   expect(agents[1]).toMatchObject({
-    id: 'agent2',
+    uuid: 'agent2',
     createdAt: 1000000000000,
     updatedAt: 1000000005000,
     name: 'Name2',
@@ -88,7 +88,7 @@ test('Load agents', () => {
 
 test('Save agent', () => {
   const agent = {
-    id: 'agent3',
+    uuid: 'agent3',
     source: 'witsy',
     createdAt: 1000000000000,
     updatedAt: 1000000005000,
@@ -129,8 +129,8 @@ test('Delete agent', () => {
 test('Get agent runs', () => {
   const runs1: AgentRun[]|null = main.getAgentRuns(app, 'agent1')
   expect(runs1).toHaveLength(2)
-  expect(runs1![0].id).toBe('run2')
-  expect(runs1![1].id).toBe('run1')
+  expect(runs1![0].uuid).toBe('run2')
+  expect(runs1![1].uuid).toBe('run1')
 
   const runs2: AgentRun[]|null = main.getAgentRuns(app, 'agent2')
   expect(runs2).toHaveLength(0)
@@ -138,7 +138,7 @@ test('Get agent runs', () => {
 
 test('Save agent run', () => {
   const run = {
-    id: 'run3',
+    uuid: 'run3',
     agentId: 'agent1',
   } as AgentRun
   const result = main.saveAgentRun(app, run)

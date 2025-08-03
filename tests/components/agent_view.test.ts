@@ -30,7 +30,6 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  store.agents = []
   store.loadAgents()
 })
 
@@ -130,7 +129,7 @@ test('Auto-selects latest run on load (excluding workflows)', async () => {
   // Check that a Run component is displayed (meaning a run was auto-selected)
   const runComponent = wrapper.findComponent({ name: 'Run' })
   expect(runComponent.exists()).toBe(true)
-  expect(runComponent.props('agentId')).toBe(agent.id)
+  expect(runComponent.props('agentId')).toBe(agent.uuid)
 })
 
 test('Shows Run component when run is selected', async () => {
@@ -142,8 +141,8 @@ test('Shows Run component when run is selected', async () => {
 
   const runComponent = wrapper.findComponent({ name: 'Run' })
   expect(runComponent.exists()).toBe(true)
-  expect(runComponent.props('agentId')).toBe(agent.id)
-  expect(runComponent.props('runId')).toBe('run3') // Latest non-workflow run
+  expect(runComponent.props('agentId')).toBe(agent.uuid)
+  expect(runComponent.props('runId')).toBe('run3')
 
   // Check Run component renders correctly
   expect(runComponent.find('.run').exists()).toBe(true)
@@ -366,11 +365,11 @@ test('Handles agent run update event', async () => {
   await nextTick()
 
   // Simulate agent run update event via eventBus
-  emitEvent('agent:run:update', { agentId: agent.id, runId: 'new-run' })
+  emitEvent('agent:run:update', { agentId: agent.uuid, runId: 'new-run' })
   await nextTick()
 
   // Should have reloaded runs
-  expect(window.api.agents.getRuns).toHaveBeenCalledWith(agent.id)
+  expect(window.api.agents.getRuns).toHaveBeenCalledWith(agent.uuid)
 })
 
 test('Ignores agent run update for different agent', async () => {
@@ -428,7 +427,7 @@ test('Context menu action deletes runs', async () => {
 
   // Check that delete was called for all selected runs (user confirms by default)
   expect(window.api.agents.deleteRun).toHaveBeenCalledTimes(3)
-  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(agent.id, 'run1')
-  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(agent.id, 'run2')
-  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(agent.id, 'run3')
+  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(agent.uuid, 'run1')
+  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(agent.uuid, 'run2')
+  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(agent.uuid, 'run3')
 })
