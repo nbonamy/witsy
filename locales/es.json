@@ -247,6 +247,8 @@
     },
     "history": {
       "confirmClear": "¿Está seguro de que desea borrar el historial de este agente?",
+      "confirmDeleteMultiple": "¿Está seguro de que desea eliminar estas ejecuciones?",
+      "confirmDeleteSingle": "¿Está seguro de que desea eliminar esta ejecución?",
       "date": "Fecha",
       "empty": "Aún sin historial…",
       "log": "Registro",
@@ -263,7 +265,6 @@
       "title": "Seleccione un agente para ejecutar"
     },
     "run": {
-      "confirmDelete": "¿Está seguro de que desea eliminar esta ejecución?",
       "createdAt": "Hora de inicio",
       "duration": "Duración",
       "error": "@:{'common.error'}",

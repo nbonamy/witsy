@@ -247,6 +247,8 @@
     },
     "history": {
       "confirmClear": "Sind Sie sicher, dass Sie den Verlauf dieses Agenten löschen möchten?",
+      "confirmDeleteMultiple": "Sind Sie sicher, dass Sie diese Durchläufe löschen möchten?",
+      "confirmDeleteSingle": "Sind Sie sicher, dass Sie diesen Durchlauf löschen möchten?",
       "date": "Datum",
       "empty": "Noch keine Historie…",
       "log": "Protokoll",
@@ -263,7 +265,6 @@
       "title": "Agenten zum Ausführen auswählen"
     },
     "run": {
-      "confirmDelete": "Sind Sie sicher, dass Sie diese Ausführung löschen möchten?",
       "createdAt": "Startzeit",
       "duration": "Dauer",
       "error": "@:{'common.error'}",

@@ -247,6 +247,8 @@
     },
     "history": {
       "confirmClear": "Êtes-vous sûr de vouloir effacer l'historique de cet agent ?",
+      "confirmDeleteMultiple": "Êtes-vous sûr de vouloir supprimer ces exécutions ?",
+      "confirmDeleteSingle": "Êtes-vous sûr de vouloir supprimer cette exécution ?",
       "date": "Date",
       "empty": "Pas encore d'historique…",
       "log": "Journal",
@@ -263,7 +265,6 @@
       "title": "Sélectionnez l'agent à exécuter"
     },
     "run": {
-      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette exécution ?",
       "createdAt": "Heure de début",
       "duration": "Durée",
       "error": "@:{'common.error'}",

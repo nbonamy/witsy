@@ -34,7 +34,7 @@
           </thead>
           <tbody>
             <tr class="spacer"></tr>
-            <tr :class="{ selected: run.id === props.run?.id }" v-for="run in filteredRuns" :key="run.id" @click="$emit('click', run)">
+            <tr :class="{ selected: selection.includes(run.id) }" v-for="run in filteredRuns" :key="run.id" @click="$emit('click', $event, run)" @contextmenu.prevent="showContextMenu($event, run)">
               <td class="date">{{ timeAgo.format(new Date(run.createdAt)) }}</td>
               <td class="trigger">{{ t(`agent.trigger.${run.trigger}`) }}</td>
               <td class="status">{{ t(`agent.status.${run.status}`) }}</td>
@@ -53,7 +53,7 @@
 <script setup lang="ts">
 
 import { Agent, AgentRun } from '../types/index';
-import { PropType, ref, computed } from 'vue'
+import { PropType, computed } from 'vue'
 import { t } from '../services/i18n'
 import { useTimeAgo } from '../composables/ago'
 
@@ -68,9 +68,9 @@ const props = defineProps({
     type: Array as PropType<AgentRun[]>,
     required: true,
   },
-  run: {
-    type: Object as PropType<AgentRun|null>,
-    default: null,
+  selection: {
+    type: Array as PropType<string[]>,
+    required: true,
   },
   showWorkflows: {
     type: String as PropType<'all' | 'exclude'>,
@@ -78,7 +78,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['clear', 'click', 'update:show-workflows'])
+const emit = defineEmits(['clear', 'click', 'update:show-workflows', 'context-menu'])
 
 // Computed property for two-way binding with parent
 const showWorkflows = computed({
@@ -94,6 +94,10 @@ const filteredRuns = computed(() => {
   
   return [...runsToShow].reverse()
 })
+
+const showContextMenu = (event: MouseEvent, run: AgentRun) => {
+  emit('context-menu', { event, run })
+}
 
 </script>
 
@@ -129,7 +133,6 @@ const filteredRuns = computed(() => {
     th, td {
       padding: 0.375rem 0.5rem;
     }
-    
 
     td.view {
       svg {

@@ -247,6 +247,8 @@
     },
     "history": {
       "confirmClear": "Sei sicuro di voler cancellare la cronologia di questo agente?",
+      "confirmDeleteMultiple": "Sei sicuro di voler eliminare queste esecuzioni?",
+      "confirmDeleteSingle": "Sei sicuro di voler eliminare questa esecuzione?",
       "date": "Data",
       "empty": "Nessuna cronologia ancora…",
       "log": "Registro",
@@ -263,7 +265,6 @@
       "title": "Seleziona l'agente da eseguire"
     },
     "run": {
-      "confirmDelete": "Sei sicuro di voler eliminare questa esecuzione?",
       "createdAt": "Ora di inizio",
       "duration": "Durata",
       "error": "@:{'common.error'}",

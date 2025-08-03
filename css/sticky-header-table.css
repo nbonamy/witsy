@@ -54,6 +54,27 @@
         border-top-right-radius: 0.5rem;
         border-bottom-right-radius: 0.5rem;
       }
+
+      tr.selected:has(+ tr.selected) td:first-child {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      tr.selected + tr.selected td:first-child {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }
+
+      tr.selected:has(+ tr.selected) td:last-child {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      tr.selected + tr.selected td:last-child {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }
+
     }
   
   }

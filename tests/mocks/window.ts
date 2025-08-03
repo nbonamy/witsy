@@ -299,6 +299,18 @@ const useWindowMock = (opts?: WindowMockOpts) => {
               toolCalls: []
             }
           ]
+        } else if (agentId === 'agent2') {
+          return [{
+            id: 'workflow-run1',
+            agentId: 'agent2',
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            trigger: 'workflow',
+            status: 'success',
+            prompt: 'Workflow prompt',
+            messages: [],
+            toolCalls: []
+          }]
         }
         return []
       }),
