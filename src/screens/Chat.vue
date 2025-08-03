@@ -599,6 +599,9 @@ const runAgent = async (agent: Agent, prompt: string) => {
 
   })
 
+  // save
+  store.saveHistory()
+
 }
 
 const onRetryGeneration = async (message: Message) => {

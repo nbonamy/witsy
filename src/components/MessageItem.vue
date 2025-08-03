@@ -10,7 +10,9 @@
       <!-- attachments -->
       <div class="attachments">
         <AttachmentView v-for="attachment in message.attachments"
-          :attachment="attachment" class="attachment" @image-click="onClickAttachment(attachment)"
+          :attachment="attachment" class="attachment"
+          @click="onClickAttachment(attachment)"
+          @image-click="onClickImageAttachment(attachment)"
           />
       </div>
 
@@ -167,6 +169,19 @@ const onHover = (value: boolean) => {
 }
 
 const onClickAttachment = (attachment: Attachment) => {
+  if (props.message.role === 'assistant') {
+    window.api.file.download({
+      url: attachment.url,
+      properties: {
+        prompt: true,
+        directory: 'downloads',
+        filename: attachment.title,
+      }
+    })
+  }
+}
+
+const onClickImageAttachment = (attachment: Attachment) => {
   emitEvent('fullscreen', attachment.url)
 }
 

@@ -231,9 +231,13 @@
   max-width: 200px;
 }
 
-.message .attachment.icon {
+.message .attachment .icon {
   width: 32px !important;
   height: 32px !important;
+}
+
+.message.assistant .attachment .icon {
+  cursor: pointer;
 }
 
 .message .media-container {

@@ -61,21 +61,21 @@ export default class A2AClient {
         content: string
       }> = {}
       
-      console.log(`\n--- Starting streaming task for message ${messageId} ---`)
+      console.log(`[a2a] Starting streaming task for message ${messageId}`)
 
-      yield {
-        type: 'content',
-        text: `Starting A2A client with prompt: ${prompt}\n\n`,
-        done: false,
-      }
+      // yield {
+      //   type: 'content',
+      //   text: `Starting A2A client with prompt: ${prompt}\n\n`,
+      //   done: false,
+      // }
 
       // Construct the `MessageSendParams` object.
       const streamParams: MessageSendParams = {
         message: {
           messageId: messageId,
-          role: "user",
-          parts: [{ kind: "text", text: prompt }],
-          kind: "message",
+          role: 'user',
+          parts: [{ kind: 'text', text: prompt }],
+          kind: 'message',
         },
       };
 
@@ -85,9 +85,12 @@ export default class A2AClient {
       let currentTaskId: string | undefined;
 
       for await (const event of stream) {
+
+        // log
+        console.log(`[a2a] Received event: ${JSON.stringify(event)}`);
         
         // The first event is often the Task object itself, establishing the ID.
-        if ((event as Task).kind === "task") {
+        if ((event as Task).kind === 'task') {
           
           currentTaskId = (event as Task).id;
           
@@ -100,15 +103,15 @@ export default class A2AClient {
         }
 
         // Differentiate subsequent stream events.
-        if ((event as TaskStatusUpdateEvent).kind === "status-update") {
+        if ((event as TaskStatusUpdateEvent).kind === 'status-update') {
 
           const statusEvent = event as TaskStatusUpdateEvent;
           
-          if (statusEvent.status.message?.parts[0]?.kind === "text") {
+          if (statusEvent.status.message?.parts[0]?.kind === 'text') {
             yield {
-              type: 'status',
-              taskId: currentTaskId,
-              status: `${statusEvent.status.state} - ${statusEvent.status.message.parts[0].text}`
+              type: 'content',
+              text: statusEvent.status.message.parts[0].text,
+              done: false,
             }
           }
 
@@ -121,7 +124,7 @@ export default class A2AClient {
             break
           }
 
-        } else if ((event as TaskArtifactUpdateEvent).kind === "artifact-update") {
+        } else if ((event as TaskArtifactUpdateEvent).kind === 'artifact-update') {
 
           const artifactEvent = event as TaskArtifactUpdateEvent;
           const artifactId = artifactEvent.artifact.artifactId;
@@ -141,7 +144,7 @@ export default class A2AClient {
             }
           }
 
-          if (artifactEvent.lastChunk && artifacts[artifactId]) {
+          if (artifactEvent.lastChunk && artifacts[artifactId] && artifacts[artifactId].content.length > 0) {
             yield {
               type: 'artifact',
               ...artifacts[artifactId],
@@ -151,7 +154,7 @@ export default class A2AClient {
         } else {
 
           // This could be a direct Message response if the agent doesn't create a task.
-          console.log("Received direct message response in stream:", event);
+          console.log(`[a2a] received direct message response in stream: ${JSON.stringify(event)}`);
 
           yield {
             type: 'content',
@@ -163,11 +166,11 @@ export default class A2AClient {
 
       }
 
-      console.log(`--- Streaming for message ${messageId} finished ---`);
+      console.log(`[a2a] streaming for message ${messageId} finished`);
 
     } catch (error) {
 
-      console.error('Error during A2A streaming', error);
+      console.error('[a2a] errror during streaming', error);
       throw error
     
     } finally {

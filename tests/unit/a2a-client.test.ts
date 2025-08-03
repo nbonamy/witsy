@@ -150,46 +150,36 @@ test('execute - Task Creation and Status Updates', async () => {
     }
   })
 
-  // Verify chunks
-  expect(chunks).toHaveLength(6) // start + task created + 2 status updates + final marker + done
-
-  // Initial content chunk
-  expect(chunks[0]).toEqual({
-    type: 'content',
-    text: `Starting A2A client with prompt: ${prompt}\n\n`,
-    done: false
-  })
-
   // Task creation status
-  expect(chunks[1]).toEqual({
+  expect(chunks[0]).toEqual({
     type: 'status',
     taskId: taskId,
     status: 'Task created. Status: running'
   })
 
   // Processing status
-  expect(chunks[2]).toEqual({
-    type: 'status',
-    taskId: taskId,
-    status: 'processing - Processing your request'
+  expect(chunks[1]).toEqual({
+    type: 'content',
+    text: 'Processing your request',
+    done: false,
   })
 
   // Completion status
-  expect(chunks[3]).toEqual({
-    type: 'status',
-    taskId: taskId,
-    status: 'completed - Task completed successfully'
+  expect(chunks[2]).toEqual({
+    type: 'content',
+    text: 'Task completed successfully',
+    done: false,
   })
 
   // Final marker status
-  expect(chunks[4]).toEqual({
+  expect(chunks[3]).toEqual({
     type: 'status',
     taskId: taskId,
     status: 'Stream marked as final.'
   })
 
   // Final done chunk
-  expect(chunks[5]).toEqual({
+  expect(chunks[4]).toEqual({
     type: 'content',
     text: '',
     done: true
@@ -304,7 +294,7 @@ test('execute - Direct Message Response', async () => {
   }
 
   // Should have start chunk, direct message chunk, and done chunk
-  expect(chunks).toHaveLength(3)
+  expect(chunks).toHaveLength(2)
 
   // Check direct message chunk
   const messageChunk = chunks.find(chunk => 
@@ -354,9 +344,7 @@ test('execute - Status Update Without Message', async () => {
     chunks.push(chunk)
   }
 
-  // Should handle status updates without messages
-  expect(chunks).toHaveLength(4) // start + task + final status + done
-
+  expect(chunks).toHaveLength(3)
   const statusChunks = chunks.filter(chunk => chunk.type === 'status')
   expect(statusChunks).toHaveLength(2)
 })
@@ -517,8 +505,7 @@ test('execute - Empty Prompt', async () => {
     chunks.push(chunk)
   }
 
-  // Should still work with empty prompt
-  expect(chunks).toHaveLength(3) // start + status + done
+  expect(chunks).toHaveLength(2)
 
   // Verify message params were sent with empty prompt
   expect(mockSendMessageStream).toHaveBeenCalledWith({
