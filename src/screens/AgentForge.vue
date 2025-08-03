@@ -92,6 +92,7 @@ const onImportA2A = async (type?: AgentType) => {
 
     const value = await Dialog.show({
       title: t('agent.forge.a2a.import.title'),
+      text: t('agent.forge.a2a.import.text'),
       input: 'text',
       inputValue: url,
       confirmButtonText: t('common.import'),
@@ -163,7 +164,7 @@ const deleteAgent = (agent: Agent) => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      window.api.agents.delete(agent.id)
+      window.api.agents.delete(agent.uuid)
       store.loadAgents()
       selectAgent(null)
     }

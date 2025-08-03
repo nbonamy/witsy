@@ -5,7 +5,7 @@ import { extractPromptInputs, replacePromptInputs } from '../services/prompt'
 
 export default class Agent implements AgentBase {
 
-  id: string
+  uuid: string
   source: AgentSource
   createdAt: number
   updatedAt: number
@@ -24,7 +24,7 @@ export default class Agent implements AgentBase {
   invocationValues: Record<string, string>
 
   constructor() {
-    this.id = crypto.randomUUID()
+    this.uuid = crypto.randomUUID()
     this.source = 'witsy'
     this.createdAt = Date.now()
     this.updatedAt = Date.now()
@@ -41,10 +41,8 @@ export default class Agent implements AgentBase {
     this.schedule = null
     this.invocationValues = {}
     this.steps = [{
-      tools: null,
+      tools: [],
       agents: [],
-      docrepo: null,
-      prompt: null,
     }]
   }
 
@@ -56,7 +54,7 @@ export default class Agent implements AgentBase {
     errorDescription?: (args: any, results: any) => string
   ): Agent {
     const agent = new Agent()
-    agent.id = obj.id || crypto.randomUUID()
+    agent.uuid = obj.uuid || crypto.randomUUID()
     agent.source = obj.source || 'witsy'
     agent.createdAt = obj.createdAt ?? Date.now()
     agent.updatedAt = obj.updatedAt ?? Date.now()

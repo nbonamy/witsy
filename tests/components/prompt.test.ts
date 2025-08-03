@@ -66,8 +66,6 @@ test('Send on click', async () => {
     instructions: null,
     prompt: 'this is my prompt',
     attachments: [],
-    docrepo: null,
-    expert: null,
     deepResearch: false,
   })
   expect(prompt.element.value).toBe('')
@@ -82,8 +80,6 @@ test('Sends on enter', async () => {
     instructions: null,
     prompt: 'this is my prompt',
     attachments: [],
-    docrepo: null,
-    expert: null,
     deepResearch: false,
   })
   expect(prompt.element.value).toBe('')
@@ -289,8 +285,6 @@ test('Stores command for later', async () => {
     instructions: null,
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
-    expert: null,
-    docrepo: null,
     deepResearch: false,
   })
 })
@@ -310,8 +304,6 @@ test('Selects command and run', async () => {
     instructions: null,
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
-    expert: null,
-    docrepo: null,
     deepResearch: false,
   })
 })

@@ -51,7 +51,7 @@ export const saveAgent = (source: App|string, json: anyDict): boolean => {
   // init
   const agent = Agent.fromJson(json);
   const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
-  const filePath = path.join(agentsDir, agent.id + '.json')
+  const filePath = path.join(agentsDir, agent.uuid + '.json')
 
   // create directory if it does not exist
   if (!fs.existsSync(agentsDir)) {
@@ -159,12 +159,12 @@ export const saveAgentRun = (source: App|string, run: AgentRun): boolean => {
     fs.mkdirSync(runPath, { recursive: true })
   }
 
-  const filePath = path.join(runPath, run.id + '.json')
+  const filePath = path.join(runPath, run.uuid + '.json')
 
   // write file
   try {
     fs.writeFileSync(filePath, JSON.stringify(run, null, 2))
-    notifyBrowserWindows('agent-run-update', { agentId: run.agentId, runId: run.id })
+    notifyBrowserWindows('agent-run-update', { agentId: run.agentId, runId: run.uuid })
     return true
   } catch (error) {
     console.log('Error saving agent run', filePath, error)

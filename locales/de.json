@@ -202,6 +202,7 @@
         "confirmDeleteStep": "Sind Sie sicher, dass Sie diesen Schritt löschen möchten?",
         "customAgents": "Delegierte Agenten…",
         "customTools": "Werkzeugauswahl…",
+        "description": "Beschreibung: Wird im Chat verwendet, um Fortschrittsaktualisierungen bereitzustellen",
         "error": {
           "emptyStepPrompt": "Die Eingabeaufforderung für Schritt #{step} darf nicht leer sein."
         },
@@ -211,6 +212,7 @@
           "title": "Entwerfen Sie Ihren mehrstufigen Workflow. Eingabevorlagen werden verwendet, um jeden Schritt auszuführen. Sie können \"Variablen\" einfügen, die mit den vom Benutzer beim Ausführen des Agenten angegebenen Werten ersetzt werden. Verwenden Sie das Format {'{'}{'{'}name:beschreibung:wert{'}'}{'}'}, um eine Variable zu definieren (die Beschreibung hilft dem Benutzer bei der Eingabe eines Werts). Sowohl die Beschreibung als auch der Standardwert sind optional."
         },
         "step": "Schritt #{step}",
+        "stepFull": "Schritt #{step}: {text}",
         "title": "Arbeitsablauf"
       }
     },
@@ -222,6 +224,7 @@
             "text": "Überprüfen Sie die URL und stellen Sie sicher, dass der A2A-Server läuft.",
             "title": "Fehler beim Importieren von A2A"
           },
+          "text": "EXPERIMENTELLES FEATURE!",
           "title": "Geben Sie die URL von A2A ein"
         }
       },
@@ -351,7 +354,11 @@
       "saveChat": "Chat speichern"
     },
     "agent": {
-      "notFound": "Der Agent, der zur Generierung dieser Nachricht verwendet wurde, ist nicht mehr verfügbar."
+      "notFound": "Der Agent, der zur Generierung dieser Nachricht verwendet wurde, ist nicht mehr verfügbar.",
+      "status": {
+        "inProgress": "Führe Schritt {step} von {steps} aus…",
+        "starting": "Starte..."
+      }
     },
     "editor": {
       "title": "Titel",

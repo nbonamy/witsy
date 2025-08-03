@@ -202,6 +202,7 @@
         "confirmDeleteStep": "Sei sicuro di voler eliminare questa fase?",
         "customAgents": "Delegare agenti…",
         "customTools": "Selezione strumenti…",
+        "description": "Descrizione: utilizzata nella chat per fornire aggiornamenti sui progressi",
         "error": {
           "emptyStepPrompt": "Il prompt della fase #{step} non può essere vuoto."
         },
@@ -211,6 +212,7 @@
           "title": "Progetta il tuo flusso di lavoro multi-fase. I modelli di prompt saranno utilizzati per eseguire ogni fase. Puoi includere \"variabili\" che saranno sostituite con i valori forniti dall'utente quando l'agente viene eseguito. Usa il formato {'{'}{'{'}nome:descrizione:valore{'}'}{'}'} per definire una variabile (la descrizione guiderà l'utente quando gli verrà chiesto un valore). Sia la descrizione che il valore predefinito sono opzionali."
         },
         "step": "Fase #{step}",
+        "stepFull": "Passaggio #{step}: {text}",
         "title": "Flusso di Lavoro"
       }
     },
@@ -222,6 +224,7 @@
             "text": "Controlla l'URL e assicurati che il server A2A sia attivo e funzionante.",
             "title": "Errore durante l'importazione A2A"
           },
+          "text": "FUNZIONE SPERIMENTALE!",
           "title": "Inserisci l'URL di A2A"
         }
       },
@@ -351,7 +354,11 @@
       "saveChat": "Salva chat"
     },
     "agent": {
-      "notFound": "L'agente utilizzato per generare quel messaggio non è più disponibile."
+      "notFound": "L'agente utilizzato per generare quel messaggio non è più disponibile.",
+      "status": {
+        "inProgress": "Esecuzione del passaggio {step} su {steps}…",
+        "starting": "Avvio in corso..."
+      }
     },
     "editor": {
       "title": "Titolo",

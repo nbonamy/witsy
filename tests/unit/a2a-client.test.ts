@@ -89,6 +89,7 @@ test('getAgent - Invalid JSON', async () => {
 
 test('execute - Task Creation and Status Updates', async () => {
   const taskId = 'task-123'
+  const contextId = 'context-456'
   const prompt = 'Test prompt for A2A agent'
 
   // Mock the stream events
@@ -97,7 +98,7 @@ test('execute - Task Creation and Status Updates', async () => {
     {
       kind: 'task',
       id: taskId,
-      status: { state: 'running' }
+      contextId: contextId,
     },
     // Status update event
     {
@@ -154,7 +155,7 @@ test('execute - Task Creation and Status Updates', async () => {
   expect(chunks[0]).toEqual({
     type: 'status',
     taskId: taskId,
-    status: 'Task created. Status: running'
+    contextId: contextId,
   })
 
   // Processing status
@@ -174,8 +175,6 @@ test('execute - Task Creation and Status Updates', async () => {
   // Final marker status
   expect(chunks[3]).toEqual({
     type: 'status',
-    taskId: taskId,
-    status: 'Stream marked as final.'
   })
 
   // Final done chunk

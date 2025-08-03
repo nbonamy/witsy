@@ -72,7 +72,7 @@ let testAgent: Agent
 
 const createTestAgent = (overrides: Partial<Agent> = {}): Agent => {
   const agent = new Agent()
-  agent.id = 'test-agent'
+  agent.uuid = 'test-agent'
   agent.name = 'Test Agent'
   agent.description = 'A test agent'
   agent.instructions = 'You are a helpful test assistant'
@@ -82,8 +82,6 @@ const createTestAgent = (overrides: Partial<Agent> = {}): Agent => {
     prompt: 'Hello {{name}}, how can I help you today?',
     tools: null,
     agents: [],
-    docrepo: null,
-    structuredOutput: undefined
   }]
   
   // Apply overrides
@@ -153,8 +151,8 @@ test('Basic Agent Run - Success', async () => {
   const run = await runAgent('manual', 'Hello there')
 
   expect(run).toBeDefined()
-  expect(run.id).toBeDefined()
-  expect(run.agentId).toBe(testAgent.id)
+  expect(run.uuid).toBeDefined()
+  expect(run.agentId).toBe(testAgent.uuid)
   expect(run.trigger).toBe('manual')
   expect(run.status).toBe('success')
   expect(run.prompt).toBe('Hello there')
@@ -185,15 +183,11 @@ test('Agent Run with Multiple Steps', async () => {
       prompt: 'Step 1: {{input}}',
       tools: null,
       agents: [],
-      docrepo: null,
-      structuredOutput: undefined
     },
     {
       prompt: 'Step 2: Based on {{output.1}}, provide more help',
       tools: null,
       agents: [],
-      docrepo: null,
-      structuredOutput: undefined
     }
   ]
 
@@ -216,8 +210,8 @@ test('Agent Run with Chat Integration', async () => {
   expect(run.status).toBe('success')
   expect(chat.messages).toHaveLength(3)
   expect(chat.messages[1].content).toBe('Chat integration test')
-  expect(chat.messages[2].agentId).toBe(testAgent.id)
-  expect(chat.messages[2].agentRunId).toBe(run.id)
+  expect(chat.messages[2].agentId).toBe(testAgent.uuid)
+  expect(chat.messages[2].agentRunId).toBe(run.uuid)
 })
 
 test('Agent Run with Engine Override', async () => {

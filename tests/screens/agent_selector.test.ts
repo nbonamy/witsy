@@ -17,17 +17,17 @@ beforeAll(() => {
   useWindowMock()
   store.agents = [
     Agent.fromJson({
-      id: 'agent-1',
+      uuid: 'agent-1',
       name: 'Alpha Agent',
       description: 'First agent in alphabetical order',
     }),
     Agent.fromJson({
-      id: 'agent-2',
+      uuid: 'agent-2',
       name: 'Zeta Agent',
       description: 'Last agent in alphabetical order',
     }),
     Agent.fromJson({
-      id: 'agent-3',
+      uuid: 'agent-3',
       name: 'Beta Agent',
       description: 'Middle agent with a longer description that might overflow and need to be truncated properly',
     }),

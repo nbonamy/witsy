@@ -1,6 +1,6 @@
 
 import { LlmModelOpts } from 'multi-llm-ts'
-import { type Chat as ChatBase } from '../types/index'
+import { Chat as ChatBase } from '../types/index'
 import { ToolSelection } from '../types/llm'
 import Message from './message'
 
@@ -9,17 +9,17 @@ const DEFAULT_TITLE = 'New Chat'
 export default class Chat implements ChatBase {
 
   uuid: string
-  title: string|null
+  title?: string
   createdAt: number
   lastModified: number
-  engine: string|null
-  model: string|null
-  instructions: string|null
-  disableStreaming: boolean = false
-  tools: ToolSelection = null
-  modelOpts: LlmModelOpts|null = null
-  locale: string|null
-  docrepo: string|null
+  engine?: string
+  model?: string
+  instructions?: string
+  disableStreaming: boolean
+  tools: ToolSelection
+  modelOpts?: LlmModelOpts
+  locale?: string
+  docrepo?: string
   messages: Message[]
   temporary: boolean
 
@@ -27,20 +27,13 @@ export default class Chat implements ChatBase {
 
     // default
     this.uuid = crypto.randomUUID()
-    this.title = title || null
+    this.title = title
     this.createdAt = Date.now()
     this.lastModified = Date.now()
-    this.engine = null
-    this.model = null
-    this.instructions = null
     this.disableStreaming = false
     this.tools = null
-    this.modelOpts = null
-    this.locale = null
-    this.docrepo = null
     this.messages = []
-    this.temporary = false
-  
+    this.temporary = false  
   }
 
   static fromJson(obj: any): Chat {
@@ -49,14 +42,14 @@ export default class Chat implements ChatBase {
     chat.title = obj.title
     chat.createdAt = obj.createdAt
     chat.lastModified = obj.lastModified || obj.createdAt
-    chat.engine = obj.engine || 'openai'
-    chat.model = obj.model
-    chat.instructions = obj.instructions || obj.prompt
+    chat.engine = obj.engine || undefined
+    chat.model = obj.model || undefined
+    chat.instructions = obj.instructions || obj.prompt || undefined
     chat.disableStreaming = obj.disableStreaming
     chat.tools = obj.disableTools === true ? [] : (obj.tools || null)
-    chat.modelOpts = obj.modelOpts
-    chat.locale = obj.locale
-    chat.docrepo = obj.docrepo
+    chat.modelOpts = obj.modelOpts || undefined
+    chat.locale = obj.locale || undefined
+    chat.docrepo = obj.docrepo || undefined
     chat.messages = []
     for (const msg of obj.messages) {
       const message = Message.fromJson(msg)
@@ -137,6 +130,9 @@ export default class Chat implements ChatBase {
   }
 
   lastMessage(): Message {
+    if (this.messages.length === 0) {
+      return null
+    }
     return this.messages[this.messages.length - 1]
   }
 

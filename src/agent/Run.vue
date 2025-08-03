@@ -15,7 +15,7 @@
     <div class="panel-body form form-vertical form-large">
       <div class="form-field">
         <label>{{ t('agent.run.id') }}</label>
-        {{ run.id }}
+        {{ run.uuid }}
       </div>
       <div class="form-field">
         <label>{{ t('agent.run.trigger') }}</label>

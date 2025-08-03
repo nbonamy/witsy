@@ -34,19 +34,19 @@ const createTestAgents = () => {
     new Agent(),
   ]
   
-  agents[0].id = 'agent-1'
+  agents[0].uuid = 'agent-1'
   agents[0].name = 'Witsy Agent'
   agents[0].description = 'A helpful Witsy agent'
   agents[0].type = 'runnable'
   agents[0].source = 'witsy'
   
-  agents[1].id = 'agent-2'
+  agents[1].uuid = 'agent-2'
   agents[1].name = 'A2A Agent'
   agents[1].description = 'An A2A agent'
   agents[1].type = 'runnable'
   agents[1].source = 'a2a'
   
-  agents[2].id = 'agent-3'
+  agents[2].uuid = 'agent-3'
   agents[2].name = 'Support Agent'
   agents[2].description = 'A support agent'
   agents[2].type = 'support'

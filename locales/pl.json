@@ -221,6 +221,7 @@
         "confirmDeleteStep": "Czy na pewno chcesz usunąć ten krok?",
         "customAgents": "Deleguj agentów…",
         "customTools": "Wybór narzędzi…",
+        "description": "Opis: używane na czacie do aktualizacji postępu",
         "error": {
           "emptyStepPrompt": "Prompt kroku #{step} nie może być pusty."
         },
@@ -230,6 +231,7 @@
           "title": "Zaprojektuj swój wieloetapowy workflow. Szablony promptów będą używane do wykonania każdego kroku. Możesz dołączyć \"zmienne\", które zostaną zastąpione wartościami podanymi przez użytkownika podczas wykonywania agenta. Użyj formatu {'{'}{'{'}name:opis:wartość{'}'}{'}'} do zdefiniowania zmiennej (opis będzie wskazówką dla użytkownika podczas podawania wartości). Zarówno opis, jak i wartość domyślna są opcjonalne."
         },
         "step": "Krok #{step}",
+        "stepFull": "Krok #{step}: {text}",
         "title": "Przebieg pracy"
       }
     },
@@ -241,6 +243,7 @@
             "text": "Sprawdź adres URL i upewnij się, że serwer A2A jest uruchomiony.",
             "title": "Błąd podczas importowania A2A"
           },
+          "text": "FUNKCJA EKSPERYMENTALNA!",
           "title": "Wprowadź URL A2A"
         }
       },
@@ -370,7 +373,11 @@
       "saveChat": "Zapisz czat"
     },
     "agent": {
-      "notFound": "Agent użyty do wygenerowania tej wiadomości nie jest już dostępny."
+      "notFound": "Agent użyty do wygenerowania tej wiadomości nie jest już dostępny.",
+      "status": {
+        "inProgress": "Wykonywanie kroku {step} z {steps}…",
+        "starting": "Uruchamianie..."
+      }
     },
     "editor": {
       "title": "Tytuł",

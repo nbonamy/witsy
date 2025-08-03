@@ -1,5 +1,5 @@
 
-import { ToolCall, MessageType, Message as IMessage } from '../types'
+import { ToolCall, MessageType, Message as IMessage, A2APromptOpts } from '../types'
 import { LlmRole, LlmChunkTool, LlmUsage, Message as MessageBase, LlmChunkContent } from 'multi-llm-ts'
 import Attachment from './attachment'
 import Expert from './expert'
@@ -7,18 +7,21 @@ import Expert from './expert'
 export default class Message extends MessageBase implements IMessage {
 
   uuid: string
+  type: MessageType
+  uiOnly: boolean
+  createdAt: number
   engine: string
   model: string
-  createdAt: number
-  type: MessageType
   expert?: Expert
   agentId?: string
   agentRunId?: string
-  deepResearch?: boolean
-  toolCalls?: ToolCall[]
-  usage?: LlmUsage
+  a2aContext?: A2APromptOpts
+  deepResearch: boolean
   transient: boolean
-  uiOnly: boolean
+  status?: string
+  toolCalls: ToolCall[]
+  usage?: LlmUsage
+
   declare attachments: Attachment[]
 
   constructor(role: LlmRole, content?: string) {
@@ -28,14 +31,10 @@ export default class Message extends MessageBase implements IMessage {
     this.model = null
     this.createdAt = Date.now()
     this.type = 'text'
-    this.expert = null
-    this.agentId = null
-    this.agentRunId = null
+    this.uiOnly = false
     this.deepResearch = false
     this.toolCalls = []
     this.attachments = []
-    this.usage = null
-    this.uiOnly = false
     this.transient = (content == null)
     if (content === undefined) {
       this.setText(null)
@@ -48,6 +47,7 @@ export default class Message extends MessageBase implements IMessage {
     const message = new Message(obj.role, obj.content)
     message.uuid = obj.uuid || crypto.randomUUID()
     message.type = obj.type || 'text'
+    message.uiOnly = obj.uiOnly || false
     message.engine = obj.engine || null
     message.model = obj.model || null
     message.createdAt = obj.createdAt
@@ -56,9 +56,10 @@ export default class Message extends MessageBase implements IMessage {
       (obj.attachments ? obj.attachments.map(Attachment.fromJson) : [])
     message.reasoning = obj.reasoning || null
     message.transient = false
-    message.expert = obj.expert ? Expert.fromJson(obj.expert) : null
-    message.agentId = obj.agentId || null
-    message.agentRunId = obj.agentRunId || null
+    message.expert = obj.expert ? Expert.fromJson(obj.expert) : undefined
+    message.agentId = obj.agentId || undefined
+    message.agentRunId = obj.agentRunId || undefined
+    message.a2aContext = obj.a2aContext || undefined
     message.deepResearch = obj.deepResearch || false
     message.toolCalls = obj.toolCalls || obj.toolCall?.calls?.map((tc: any, idx: number) => ({
       ...tc,
@@ -66,8 +67,7 @@ export default class Message extends MessageBase implements IMessage {
       done: true,
       status: undefined
     })) || []
-    message.usage = obj.usage || null
-    message.uiOnly = obj.uiOnly || false
+    message.usage = obj.usage || undefined
     return message
   }
 
@@ -91,6 +91,10 @@ export default class Message extends MessageBase implements IMessage {
 
   static isVideoUrl(url: string): boolean {
     return url && (url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.ogg'));
+  }
+
+  setStatus(status: string|null): void {
+    this.status = status
   }
 
   setExpert(expert: Expert, fallbackPrompt: string): void {

@@ -1,12 +1,13 @@
 
 import { Configuration } from '../types/config'
-import { AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
+import { A2APromptOpts, AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
 import { LlmChunk, LlmChunkContent, MultiToolPlugin } from 'multi-llm-ts'
 import { getLlmLocale, setLlmLocale, t } from './i18n'
 import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, GenerationCallback } from './generator'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { saveFileContents } from '../services/download'
 import { availablePlugins } from '../plugins/plugins'
+import { store } from '../services/store'
 import LlmUtils from './llm_utils'
 import Agent from '../models/agent'
 import Message from '../models/message'
@@ -20,7 +21,29 @@ export interface RunnerCompletionOpts extends GenerationOpts {
   engine?: string
   agents?: Agent[]
   chat?: Chat
+  a2aContext?: A2APromptOpts
   callback?: LlmChunkCallback
+}
+
+export const isAgentConversation = (chat: Chat): Agent|null => {
+
+  // check message
+  const message = chat.lastMessage()
+  if (!message) return null
+  if (!message.agentId) return null
+
+  // we need the agent anyway
+  const agent = store.agents.find((a) => a.uuid === message.agentId)
+  if (!agent) return null
+
+  // a2a agents are conversational
+  if (agent && agent.source === 'a2a') {
+    return agent
+  }
+
+  // nope
+  return null
+
 }
 
 export default class extends Generator {
@@ -40,8 +63,8 @@ export default class extends Generator {
 
     // create a run
     const run: AgentRun = {
-      id: crypto.randomUUID(),
-      agentId: this.agent.id,
+      uuid: crypto.randomUUID(),
+      agentId: this.agent.uuid,
       createdAt: Date.now(),
       updatedAt: Date.now(),
       trigger: trigger,
@@ -182,6 +205,9 @@ export default class extends Generator {
           }
         }
 
+        // should we provide status updates
+        const provideStatusUpdates = (this.agent.steps.length > 1 || step.description?.trim()?.length)
+
         // add user message
         const userMessage = new Message('user', stepPrompt)
         userMessage.engine = opts.engine
@@ -202,14 +228,18 @@ export default class extends Generator {
 
           // we need the assistant one for the ui to update properly
           const responseMessage = new Message('assistant')
-          responseMessage.agentId = this.agent.id
-          responseMessage.agentRunId = run.id
+          responseMessage.agentId = this.agent.uuid
+          responseMessage.agentRunId = run.uuid
+          responseMessage.status = provideStatusUpdates ? t('chat.agent.status.starting') : null
           opts.chat.addMessage(responseMessage)
         
         }
 
+        // we need this
+        const responseMessage = opts.chat?.lastMessage()
+
         // add assistant message
-        const assistantMessage = (stepIdx === this.agent.steps.length - 1 && opts.chat) ? opts.chat.lastMessage() : new Message('assistant')
+        const assistantMessage = (stepIdx === this.agent.steps.length - 1 && opts.chat) ? responseMessage : new Message('assistant')
         assistantMessage.engine = opts.engine
         assistantMessage.model = opts.model
         run.messages.push(assistantMessage)
@@ -220,6 +250,13 @@ export default class extends Generator {
         // save again
         if (!opts?.ephemeral) {
           this.saveRun(run)
+        }
+
+        // update status
+        if (responseMessage && provideStatusUpdates) {
+          responseMessage.status =
+            step.description?.trim() ||
+            t('chat.agent.status.inProgress', { step: stepIdx + 1, steps: this.agent.steps.length })
         }
 
         // now depends on the type of agent
@@ -336,7 +373,7 @@ export default class extends Generator {
 
       // now process chunks
       const prompt = run.messages.find(m => m.role === 'user')?.content || ''
-      for await (const chunk of client.execute(prompt)) {
+      for await (const chunk of client.execute(prompt, opts?.a2aContext)) {
 
         // get the current assistant message (last in the array) to ensure reactivity
         const assistantMessage = run.messages[run.messages.length - 1]
@@ -348,14 +385,21 @@ export default class extends Generator {
         
         } else if (chunk.type === 'status') {
 
-          // // for now emit text status
-          // const textChunk: LlmChunkContent = {
-          //   type: 'content',
-          //   text: `${chunk.status}\n\n`,
-          //   done: false,
-          // }
-          // assistantMessage.appendText(textChunk)
-          // opts?.callback?.(textChunk)
+          // update chat
+          if (chunk.taskId) {
+            assistantMessage.a2aContext = {
+              currentTaskId: chunk.taskId,
+              currentContextId: chunk.contextId,
+            }
+          } else {
+            delete assistantMessage.a2aContext
+          }
+
+          // update status
+          if (chunk.status) {
+            assistantMessage.setStatus(chunk.status)
+          }
+
 
         } else if (chunk.type === 'artifact') {
 

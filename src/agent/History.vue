@@ -34,7 +34,7 @@
           </thead>
           <tbody>
             <tr class="spacer"></tr>
-            <tr :class="{ selected: selection.includes(run.id) }" v-for="run in filteredRuns" :key="run.id" @click="$emit('click', $event, run)" @contextmenu.prevent="showContextMenu($event, run)">
+            <tr :class="{ selected: selection.includes(run.uuid) }" v-for="run in filteredRuns" :key="run.uuid" @click="$emit('click', $event, run)" @contextmenu.prevent="showContextMenu($event, run)">
               <td class="date">{{ timeAgo.format(new Date(run.createdAt)) }}</td>
               <td class="trigger">{{ t(`agent.trigger.${run.trigger}`) }}</td>
               <td class="status">{{ t(`agent.status.${run.status}`) }}</td>

@@ -5,11 +5,11 @@
 
     <div class="master-main">
       <Info class="agent-info" :agent="agent" :runs="runs" @run="emit('run', $event)" @edit="emit('edit', $event)" @delete="emit('delete', $event)" />
-      <History class="agent-history" :agent="agent" :runs="runs" :selection="selection.map(r => r.id)" :show-workflows="showWorkflows" @click="onClickRun" @clear="clearHistory" @update:show-workflows="showWorkflows = $event" @context-menu="showContextMenu" />
+      <History class="agent-history" :agent="agent" :runs="runs" :selection="selection.map(r => r.uuid)" :show-workflows="showWorkflows" @click="onClickRun" @clear="clearHistory" @update:show-workflows="showWorkflows = $event" @context-menu="showContextMenu" />
     </div>
 
     <div class="master-detail">
-      <Run v-if="selection.length === 1" :agent-id="agent.id" :run-id="selection[0].id" @close="selection = []" @delete="deleteRuns"/>
+      <Run v-if="selection.length === 1" :agent-id="agent.uuid" :run-id="selection[0].uuid" @close="selection = []" @delete="deleteRuns"/>
       <div v-else class="panel no-run">
         <div class="panel-header">
         </div>
@@ -66,14 +66,14 @@ onUnmounted(() => {
 })
 
 const onAgentRunUpdate = (data: { agentId: string, runId: string }) => {
-  if (props.agent && props.agent.id === data.agentId) {
+  if (props.agent && props.agent.uuid === data.agentId) {
     reload()
   }
 }
 
 const reload = () => {
   if (!props.agent) return
-  runs.value = window.api.agents.getRuns(props.agent.id)
+  runs.value = window.api.agents.getRuns(props.agent.uuid)
   
   // auto-adjust showWorkflows based on available runs
   const nonWorkflowRuns = runs.value.filter(run => run.trigger !== 'workflow')
@@ -122,7 +122,7 @@ const deleteRuns = () => {
   }).then((result) => {
     if (result.isConfirmed) {
       for (const run of selection.value) {
-        window.api.agents.deleteRun(props.agent.id, run.id)
+        window.api.agents.deleteRun(props.agent.uuid, run.uuid)
       }
       runs.value = runs.value.filter(r => !selection.value.includes(r))
       selectLatestRun()
@@ -171,7 +171,7 @@ const clearHistory = () => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      window.api.agents.deleteRuns(props.agent.id)
+      window.api.agents.deleteRuns(props.agent.uuid)
       runs.value = []
       selection.value = []
     }

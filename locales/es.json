@@ -202,6 +202,7 @@
         "confirmDeleteStep": "¿Estás seguro de que quieres eliminar este paso?",
         "customAgents": "Delegar agentes…",
         "customTools": "Selección de herramienta…",
+        "description": "Descripción: utilizada en el chat para proporcionar actualizaciones de progreso",
         "error": {
           "emptyStepPrompt": "La indicación del paso #{step} no puede estar vacía."
         },
@@ -211,6 +212,7 @@
           "title": "Diseña tu flujo de trabajo de varios pasos. Las plantillas de indicaciones se usarán para ejecutar cada paso. Puedes incluir \"variables\" que serán sustituidas por los valores proporcionados por el usuario cuando se ejecute el agente. Usa el formato {'{'}{'{'}nombre:descripción:valor{'}'}{'}'} para definir una variable (la descripción guiará al usuario cuando se le solicite un valor). Tanto la descripción como el valor predeterminado son opcionales."
         },
         "step": "Paso #{step}",
+        "stepFull": "Paso #{step}: {text}",
         "title": "Flujo de trabajo"
       }
     },
@@ -222,6 +224,7 @@
             "text": "Verifique la URL y asegúrese de que el servidor A2A esté activo y funcionando.",
             "title": "Error al importar A2A"
           },
+          "text": "¡FUNCIONALIDAD EXPERIMENTAL!",
           "title": "Ingrese la URL de A2A"
         }
       },
@@ -351,7 +354,11 @@
       "saveChat": "Guardar conversación"
     },
     "agent": {
-      "notFound": "El agente usado para generar ese mensaje ya no está disponible."
+      "notFound": "El agente usado para generar ese mensaje ya no está disponible.",
+      "status": {
+        "inProgress": "Ejecutando paso {step} de {steps}…",
+        "starting": "Iniciando..."
+      }
     },
     "editor": {
       "title": "Título",
