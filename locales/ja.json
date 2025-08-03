@@ -266,6 +266,8 @@
     },
     "history": {
       "confirmClear": "このエージェントの履歴を削除してもよろしいですか？",
+      "confirmDeleteMultiple": "これらの実行を削除してもよろしいですか？",
+      "confirmDeleteSingle": "この実行を削除してもよろしいですか？",
       "date": "日付",
       "empty": "履歴はまだありません…",
       "log": "ログ",
@@ -282,7 +284,6 @@
       "title": "実行するエージェントを選択"
     },
     "run": {
-      "confirmDelete": "この実行を削除してもよろしいですか？",
       "createdAt": "開始時間",
       "duration": "所要時間",
       "error": "@:{'common.error'}",

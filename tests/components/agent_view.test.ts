@@ -151,7 +151,7 @@ test('Shows Run component when run is selected', async () => {
 })
 
 test('Shows empty state when no run selected', async () => {
-  const agent = store.agents[1] // agent2 has no runs
+  const agent = store.agents[2] // agent3 has no runs
   const wrapper: VueWrapper<any> = mount(View, {
     props: { agent }
   })
@@ -163,22 +163,7 @@ test('Shows empty state when no run selected', async () => {
 })
 
 test('Adjusts showWorkflows when only workflow runs exist', async () => {
-  // Mock a scenario where only workflow runs exist
-  vi.mocked(window.api.agents.getRuns).mockReturnValue([
-    {
-      id: 'workflow-run1',
-      agentId: 'agent1',
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      trigger: 'workflow',
-      status: 'success',
-      prompt: 'Workflow prompt',
-      messages: [],
-      toolCalls: []
-    }
-  ])
-
-  const agent = store.agents[0]
+  const agent = store.agents[1]
   const wrapper: VueWrapper<any> = mount(View, {
     props: { agent }
   })
@@ -403,4 +388,47 @@ test('Ignores agent run update for different agent', async () => {
 
   // Should not have reloaded runs
   expect(window.api.agents.getRuns).not.toHaveBeenCalled()
+})
+
+test('Shows context menu when right-clicking on run', async () => {
+  const agent = store.agents[0]
+  const wrapper: VueWrapper<any> = mount(View, {
+    props: { agent }
+  })
+  await nextTick()
+
+  // Check initial state - context menu should be hidden
+  const vm = wrapper.vm as any
+  expect(vm.showMenu).toBe(false)
+
+  const historyComponent = wrapper.findComponent({ name: 'History' })
+  
+  // Find first table row
+  const tableRow = historyComponent.find('tbody tr:not(.spacer)')
+  expect(tableRow.exists()).toBe(true)
+  
+  // Right-click to trigger context menu
+  await tableRow.trigger('contextmenu', { preventDefault: vi.fn() })
+  await nextTick()
+
+  // Check that showMenu is now true
+  expect(vm.showMenu).toBe(true)
+})
+
+test('Context menu action deletes runs', async () => {
+  
+  const agent = store.agents[0]
+  const wrapper: VueWrapper<any> = mount(View, {
+    props: { agent }
+  })
+
+  const vm = wrapper.vm as any
+  vm.selection = vm.runs
+  await vm.handleActionClick('delete')
+
+  // Check that delete was called for all selected runs (user confirms by default)
+  expect(window.api.agents.deleteRun).toHaveBeenCalledTimes(3)
+  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(agent.id, 'run1')
+  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(agent.id, 'run2')
+  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(agent.id, 'run3')
 })

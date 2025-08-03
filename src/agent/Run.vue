@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 
-import { AgentRun, Message } from '../types/index'
+import { AgentRun } from '../types/index'
 import { computed, ref, onMounted, watch } from 'vue'
 import { t } from '../services/i18n'
 import MessageItemBody from '../components/MessageItemBody.vue'

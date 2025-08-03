@@ -266,6 +266,8 @@
     },
     "history": {
       "confirmClear": "Czy na pewno chcesz wyczyścić historię tego agenta?",
+      "confirmDeleteMultiple": "Czy na pewno chcesz usunąć te przebiegi?",
+      "confirmDeleteSingle": "Czy na pewno chcesz usunąć ten przebieg?",
       "date": "Data",
       "empty": "Brak historii…",
       "log": "Dziennik",
@@ -282,7 +284,6 @@
       "title": "Wybierz agenta do uruchomienia"
     },
     "run": {
-      "confirmDelete": "Czy na pewno chcesz usunąć to wykonanie?",
       "createdAt": "Czas rozpoczęcia",
       "duration": "Czas trwania",
       "error": "@:{'common.error'}",

@@ -266,6 +266,8 @@
     },
     "history": {
       "confirmClear": "Tem certeza de que deseja limpar o histórico deste agente?",
+      "confirmDeleteMultiple": "Tem certeza de que deseja excluir essas execuções?",
+      "confirmDeleteSingle": "Tem certeza de que deseja excluir esta execução?",
       "date": "Data",
       "empty": "Ainda sem histórico…",
       "log": "Log",
@@ -282,7 +284,6 @@
       "title": "Selecione o agente para executar"
     },
     "run": {
-      "confirmDelete": "Tem certeza de que deseja deletar esta execução?",
       "createdAt": "Hora de Início",
       "duration": "Duração",
       "error": "@:{'common.error'}",

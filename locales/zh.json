@@ -266,6 +266,8 @@
     },
     "history": {
       "confirmClear": "您确定要清除此代理的历史记录吗？",
+      "confirmDeleteMultiple": "您确定要删除这些运行吗？",
+      "confirmDeleteSingle": "您确定要删除此运行吗？",
       "date": "日期",
       "empty": "暂无历史记录…",
       "log": "日志",
@@ -282,7 +284,6 @@
       "title": "选择要运行的代理"
     },
     "run": {
-      "confirmDelete": "您确定要删除此运行记录吗？",
       "createdAt": "开始时间",
       "duration": "持续时间",
       "error": "@:{'common.error'}",

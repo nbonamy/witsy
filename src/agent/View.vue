@@ -5,11 +5,11 @@
 
     <div class="master-main">
       <Info class="agent-info" :agent="agent" :runs="runs" @run="emit('run', $event)" @edit="emit('edit', $event)" @delete="emit('delete', $event)" />
-      <History class="agent-history" :agent="agent" :runs="runs" :run="run" :show-workflows="showWorkflows" @click="run = $event" @clear="clearHistory" @update:show-workflows="showWorkflows = $event" />
+      <History class="agent-history" :agent="agent" :runs="runs" :selection="selection.map(r => r.id)" :show-workflows="showWorkflows" @click="onClickRun" @clear="clearHistory" @update:show-workflows="showWorkflows = $event" @context-menu="showContextMenu" />
     </div>
 
     <div class="master-detail">
-      <Run v-if="run" :agent-id="agent.id" :run-id="run.id" @close="run = null" @delete="deleteRun"/>
+      <Run v-if="selection.length === 1" :agent-id="agent.id" :run-id="selection[0].id" @close="selection = []" @delete="deleteRuns"/>
       <div v-else class="panel no-run">
         <div class="panel-header">
         </div>
@@ -20,6 +20,7 @@
     </div>
 
   </div>
+  <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
 
 </template>
 
@@ -33,10 +34,17 @@ import Dialog from '../composables/dialog'
 import Info from './Info.vue'
 import History from './History.vue'
 import Run from './Run.vue'
+import ContextMenu from '../components/ContextMenu.vue'
 
 const runs = ref<AgentRun[]>([])
-const run = ref<AgentRun|null>(null)
+const selection = ref<AgentRun[]>([])
 const showWorkflows = ref<'all' | 'exclude'>('exclude')
+
+// Context menu state
+const showMenu = ref(false)
+const menuX = ref(0)
+const menuY = ref(0)
+const targetRun = ref<AgentRun|null>(null)
 
 const props = defineProps({
   agent: {
@@ -84,26 +92,75 @@ const selectLatestRun = () => {
     : runs.value.filter(run => run.trigger !== 'workflow')
   
   if (filteredRuns.length > 0) {
-    run.value = filteredRuns[filteredRuns.length - 1]
+    selection.value = [filteredRuns[filteredRuns.length - 1]]
   } else {
-    run.value = null
+    selection.value = []
   }
 }
 
-const deleteRun = () => {
+const onClickRun = (event: MouseEvent, run: AgentRun) => {
+  if (event.ctrlKey || event.metaKey) {
+    if (selection.value.includes(run)) {
+      selection.value = selection.value.filter(r => r !== run)
+    } else {
+      selection.value.push(run)
+    }
+  } else {
+    selection.value = [run]
+  }
+}
+
+const deleteRuns = () => {
 
   Dialog.show({
-    title: t('agent.run.confirmDelete'),
+    title: selection.value.length > 1
+    ? t('agent.history.confirmDeleteMultiple')
+    : t('agent.history.confirmDeleteSingle'),
     text: t('common.confirmation.cannotUndo'),
     confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      window.api.agents.deleteRun(props.agent.id, run.value.id)
-      runs.value = runs.value.filter(r => r.id !== run.value.id)
+      for (const run of selection.value) {
+        window.api.agents.deleteRun(props.agent.id, run.id)
+      }
+      runs.value = runs.value.filter(r => !selection.value.includes(r))
       selectLatestRun()
     }
   })
+}
+
+const showContextMenu = ({ event, run }: { event: MouseEvent, run: AgentRun }) => {
+  showMenu.value = true
+  targetRun.value = run
+  if (!selection.value.includes(run)) {
+    selection.value = [run]
+  }
+  menuX.value = event.clientX
+  menuY.value = event.clientY
+}
+
+const closeContextMenu = () => {
+  showMenu.value = false
+}
+
+const contextMenuActions = () => {
+  const selectedCount = selection.value.length > 0 ? selection.value.length : (targetRun.value ? 1 : 0)
+  
+  return [
+    { label: t('common.delete'), action: 'delete', disabled: selectedCount === 0 },
+  ]
+}
+
+const handleActionClick = async (action: string) => {
+  
+  // close
+  closeContextMenu()
+
+  // process
+  if (action === 'delete') {
+    deleteRuns()
+  }
 }
 
 const clearHistory = () => {
@@ -116,7 +173,7 @@ const clearHistory = () => {
     if (result.isConfirmed) {
       window.api.agents.deleteRuns(props.agent.id)
       runs.value = []
-      run.value = null
+      selection.value = []
     }
   })
 }
