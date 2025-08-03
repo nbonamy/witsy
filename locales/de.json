@@ -102,6 +102,7 @@
     },
     "reset": "Zurücksetzen",
     "retry": "Erneut versuchen",
+    "runAgent": "Agent ausführen",
     "save": "Speichern",
     "schedule": {
       "at": "um",
@@ -1521,6 +1522,7 @@
     "message": {
       "confirmDelete": "Sind Sie sicher, dass Sie diese Nachricht löschen möchten? Diese Nachricht und alle nachfolgenden Nachrichten des Gesprächs werden gelöscht."
     },
+    "toggleSidebar": "Seitenleiste umschalten",
     "update": {
       "available": "Update verfügbar",
       "later": "Später",

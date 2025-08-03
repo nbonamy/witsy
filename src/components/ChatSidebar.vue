@@ -5,8 +5,12 @@
         <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" />
         <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
       </div></div>
-      <IconRunAgent id="run-agent" class="icon scale120" @click="onRunAgent" v-if="store.config.features?.agents" />
-      <IconNewChat id="new-chat" class="icon" @click="onNewChat" />
+      <div class="icon run-agent" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-left' }" @click="onRunAgent" v-if="store.config.features?.agents">
+        <IconRunAgent class="scale120"  />
+      </div>
+      <div class="icon new-chat" v-tooltip="{ text: t('common.newChat'), position: 'bottom-left' }" @click="onNewChat" >
+        <IconNewChat />
+      </div>
     </header>
     <main>
       <ChatList :displayMode="chatListDisplayMode" :chat="chat" :filter="filter" :select-mode="selectMode" ref="chatList" />

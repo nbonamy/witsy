@@ -121,6 +121,7 @@
     },
     "reset": "Resetuj",
     "retry": "Ponów próbę",
+    "runAgent": "Uruchom agenta",
     "save": "Zapisz",
     "schedule": {
       "at": "o",
@@ -1540,6 +1541,7 @@
     "message": {
       "confirmDelete": "Czy na pewno chcesz usunąć tę wiadomość? Ta wiadomość i wszystkie następne wiadomości rozmowy zostaną usunięte."
     },
+    "toggleSidebar": "Przełącz pasek boczny",
     "update": {
       "available": "Dostępna aktualizacja",
       "later": "Później",

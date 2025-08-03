@@ -121,6 +121,7 @@
     },
     "reset": "Reset",
     "retry": "Retry",
+    "runAgent": "Run agent",
     "save": "Save",
     "schedule": {
       "at": "at",
@@ -1534,13 +1535,14 @@
       "confirmDelete": "Are you sure you want to delete this folder?",
       "deleteConversations": "Delete conversations",
       "keepConversations": "Keep conversations",
-      "rename": "Rename Folder"
+      "rename": "Rename folder"
     },
     "message": {
       "confirmDelete": "Are you sure you want to delete this message? This message and all subsequent messages of the conversation will be deleted."
     },
+    "toggleSidebar": "Toggle sidebar",
     "update": {
-      "available": "Update Available",
+      "available": "Update available",
       "later": "Later",
       "restart": "An update is available. Restart to apply it.",
       "restartNow": "Restart now"

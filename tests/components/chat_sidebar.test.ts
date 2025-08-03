@@ -37,7 +37,7 @@ test('No chat', async () => {
 
 test('New Chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.sp-sidebar header #new-chat').trigger('click')
+  await wrapper.find('.sp-sidebar header .new-chat').trigger('click')
   expect(wrapper.emitted('new-chat')).toBeTruthy()
 })
 

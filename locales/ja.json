@@ -121,6 +121,7 @@
     },
     "reset": "リセット",
     "retry": "再試行",
+    "runAgent": "エージェントを実行",
     "save": "保存",
     "schedule": {
       "at": "時刻",
@@ -1540,6 +1541,7 @@
     "message": {
       "confirmDelete": "このメッセージを削除してもよろしいですか？このメッセージと以降の会話がすべて削除されます。"
     },
+    "toggleSidebar": "サイドバーの切り替え",
     "update": {
       "available": "アップデートがあります",
       "later": "後で",

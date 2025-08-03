@@ -102,6 +102,7 @@
     },
     "reset": "Ripristina",
     "retry": "Ripeti",
+    "runAgent": "Esegui agente",
     "save": "Salva",
     "schedule": {
       "at": "alle",
@@ -1521,6 +1522,7 @@
     "message": {
       "confirmDelete": "Sei sicuro di voler eliminare questo messaggio? Questo messaggio e tutti i successivi messaggi della conversazione verranno eliminati."
     },
+    "toggleSidebar": "Commutare la barra laterale",
     "update": {
       "available": "Aggiornamento disponibile",
       "later": "Più tardi",

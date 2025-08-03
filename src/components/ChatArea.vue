@@ -1,9 +1,19 @@
 <template>
   <div class="chat-area sp-main">
     <header :class="{ 'is-left-most': isLeftMost }">
-      <IconSideBar class="icon toggle-sidebar" @click="toggleSideBar" />
-      <IconNewChat class="icon new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat" />
-      <IconRunAgent class="icon scale120 run-agent" :class="{ hidden: !isLeftMost }" @click="onRunAgent" v-if="store.config.features?.agents" />
+      
+      <div class="icon toggle-sidebar" v-tooltip="{ text: t('main.toggleSidebar'), position: 'bottom-right' }" @click="toggleSideBar">
+        <IconSideBar />
+      </div>
+
+      <div class="icon new-chat" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.newChat'), position: 'bottom-right' }" @click="onNewChat">
+        <IconNewChat />
+      </div>
+
+      <div class="icon run-agent" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-right' }" @click="onRunAgent" v-if="store.config.features?.agents">
+        <IconRunAgent class="scale120" />
+      </div>
+
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
       <div class="spacer"></div>
       <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" />
@@ -340,7 +350,7 @@ defineExpose({
   padding-left: 40px;
 }
 
-.windows .split-pane .sp-main header .toggle-sidebar {
+.windows .split-pane .sp-main header .toggle-sidebar svg {
   top: -4.5px;
 }
 
@@ -370,7 +380,7 @@ defineExpose({
         margin-right: 8px;
       }
 
-      .toggle-sidebar {
+      .toggle-sidebar svg {
         position: relative;
         top: -1px;
         transform: scaleY(120%);
