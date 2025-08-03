@@ -5,8 +5,9 @@ import { LlmChunk, LlmChunkContent, MultiToolPlugin } from 'multi-llm-ts'
 import { getLlmLocale, setLlmLocale, t } from './i18n'
 import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, GenerationCallback } from './generator'
 import LlmFactory, { ILlmManager } from '../llms/llm'
-import LlmUtils from './llm_utils'
+import { saveFileContents } from '../services/download'
 import { availablePlugins } from '../plugins/plugins'
+import LlmUtils from './llm_utils'
 import Agent from '../models/agent'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
@@ -347,28 +348,35 @@ export default class extends Generator {
         
         } else if (chunk.type === 'status') {
 
-          // for now emit text status
-          const textChunk: LlmChunkContent = {
-            type: 'content',
-            text: `${chunk.status}\n\n`,
-            done: false,
-          }
-          assistantMessage.appendText(textChunk)
-          opts?.callback?.(textChunk)
+          // // for now emit text status
+          // const textChunk: LlmChunkContent = {
+          //   type: 'content',
+          //   text: `${chunk.status}\n\n`,
+          //   done: false,
+          // }
+          // assistantMessage.appendText(textChunk)
+          // opts?.callback?.(textChunk)
 
         } else if (chunk.type === 'artifact') {
 
           // debug: emit test
           const textChunk: LlmChunkContent = {
             type: 'content',
-            text: `artifact \`${chunk.name}\`:\n\n\`\`\`${chunk.content}\`\`\`\n\n`,
+            text: `\n\n\`${chunk.name}\`:\n\n\`\`\`${chunk.content}\`\`\`\n\n`,
             done: false,
           }
           assistantMessage.appendText(textChunk)
           opts?.callback?.(textChunk)
 
           // attach
-          assistantMessage.attach(new Attachment(chunk.content, 'text/plain', chunk.name))
+          const attachment = new Attachment(chunk.content, 'text/plain', chunk.name)
+          attachment.title = chunk.name
+          const fileUrl = saveFileContents(attachment.format(), attachment.b64Contents())
+          if (fileUrl) {
+            attachment.saved = true
+            attachment.url = fileUrl
+          }
+          assistantMessage.attach(attachment)
 
         }
       
