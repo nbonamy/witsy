@@ -121,6 +121,7 @@
     },
     "reset": "重置",
     "retry": "重试",
+    "runAgent": "运行代理",
     "save": "保存",
     "schedule": {
       "at": "在",
@@ -1540,6 +1541,7 @@
     "message": {
       "confirmDelete": "您确定要删除此消息吗？此消息及对话的所有后续消息将被删除。"
     },
+    "toggleSidebar": "切换侧边栏",
     "update": {
       "available": "有可用更新",
       "later": "稍后",
