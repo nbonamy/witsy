@@ -214,11 +214,10 @@ test('Agent Run with Chat Integration', async () => {
   const run = await runAgent('manual', 'Chat integration test', { chat })
 
   expect(run.status).toBe('success')
-  // Chat should have system message + user message + assistant message added
-  expect(chat.messages).toHaveLength(2) // user, assistant (system is in run.messages)
-  expect(chat.messages[0].content).toBe('Chat integration test')
-  expect(chat.messages[1].agentId).toBe(testAgent.id)
-  expect(chat.messages[1].agentRunId).toBe(run.id)
+  expect(chat.messages).toHaveLength(3)
+  expect(chat.messages[1].content).toBe('Chat integration test')
+  expect(chat.messages[2].agentId).toBe(testAgent.id)
+  expect(chat.messages[2].agentRunId).toBe(run.id)
 })
 
 test('Agent Run with Engine Override', async () => {
