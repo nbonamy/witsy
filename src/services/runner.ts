@@ -190,6 +190,12 @@ export default class extends Generator {
         // add messages to chat
         if (stepIdx === 0 && opts?.chat) {
 
+          // we add default system instructions to the chat
+          // so that the user can continue the conversation in the same style
+          if (opts.chat.messages.length === 0) {
+            opts.chat.addMessage(new Message('system', this.getSystemInstructions()))
+          }
+
           // user
           opts.chat.addMessage(userMessage)
 
@@ -244,10 +250,10 @@ export default class extends Generator {
       }
 
       // titling
-      if (rc === 'success' && opts?.chat) {
+      if (rc === 'success' && opts?.chat && !opts.chat.hasTitle()) {
         generationCallback?.('before_title')
-        // const title = await this.getTitle(opts.engine, opts.model, opts.chat.messages)
-        // opts.chat.title = title
+        const title = await this.getTitle(opts.engine, opts.model, opts.chat.messages)
+        opts.chat.title = title
       }
 
       // restore llm locale
