@@ -220,26 +220,32 @@
       },
       "workflow": {
         "addStep": "Adicionar Etapa",
-        "confirmDeleteStep": "Tem certeza de que deseja excluir esta etapa?",
-        "customAgents": "Delegar agentes…",
-        "customTools": "Seleção de ferramenta…",
-        "description": "Descrição: usada no chat para fornecer atualizações de progresso",
-        "docRepo": "Document Repository…",
-        "docRepoNone": "No Document Repository",
+        "confirmDeleteStep": "Tem certeza que deseja excluir esta etapa?",
+        "customAgents": "Delegados…",
+        "customTools": "Ferramentas…",
+        "description": "Descrição: usado no chat para fornecer atualizações de progresso",
+        "docRepo": "Repositório…",
+        "docRepoNone": "Nenhum Repositório de Documentos",
         "error": {
           "emptyStepPrompt": "O prompt da etapa #{step} não pode estar vazio.",
-          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt."
+          "missingDocRepo": "A etapa #{step} usa um Repositório de Documentos, mas nenhuma variável {'{'}{'{'}facts{'}'}{'}'} está definida no prompt. Por favor, adicione uma variável no formato {'{'}{'{'}facts{'}'}{'}'} ao seu prompt.",
+          "structuredOutput": "Erro ao analisar o esquema da saída estruturada."
         },
         "help": {
-          "connect": "Conecte a saída das etapas anteriores usando variáveis {'{'}{'{'}output.# { '}' }{'}'} (por exemplo, {'{'}{'{'}output.1{'}'}{'}'} para a saída da etapa 1)",
-          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
-          "factsVarDesc": "Facts extracted from the document repository",
+          "connect": "Conecte a saída das etapas anteriores usando variáveis {'{'}{'{'}output.#{'}'}{'}'} (exemplo: {'{'}{'{'}output.1{'}'}{'}'} para a saída da etapa 1)",
+          "docRepo": "Fatos extraídos do repositório de documentos serão adicionados ao seu prompt.",
+          "factsVarDesc": "Fatos extraídos do repositório de documentos",
           "outputVarDesc": "Saída da etapa #{step}",
-          "title": "Projete seu fluxo de trabalho em várias etapas. Modelos de prompt serão usados para executar cada etapa. Você pode incluir \"variáveis\" que serão substituídas pelos valores fornecidos pelo usuário quando o agente for executado. Use o formato {'{'}{'{'}nome:descrição:valor{'}'}{'}'} para definir uma variável (a descrição guiará o usuário ao solicitar um valor). Tanto a descrição quanto o valor padrão são opcionais."
+          "title": "Desenhe seu fluxo de trabalho em múltiplas etapas. Templates de prompt serão usados para executar cada etapa. Você pode incluir \"variáveis\" que serão substituídas pelos valores fornecidos pelo usuário quando o agente for executado. Use o formato {'{'}{'{'}nome:descrição:valor{'}'}{'}'} para definir uma variável (a descrição guiará o usuário quando solicitado um valor). Tanto a descrição quanto o valor padrão são opcionais."
         },
+        "jsonSchema": "JSON…",
         "step": "Etapa #{step}",
-        "stepFull": "Passo #{step}: {text}",
-        "title": "Fluxo de Trabalho"
+        "stepFull": "Etapa #{step}: {text}",
+        "structuredOutput": {
+          "text": "Especifique um esquema JSON simples para definir a saída esperada desta etapa.",
+          "title": "Esquema JSON"
+        },
+        "title": "Fluxo de trabalho"
       }
     },
     "description": "@:{'common.description'}",
@@ -1500,7 +1506,8 @@
   },
   "instructions": {
     "agent": {
-      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}"
+      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
+      "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "chat": {
       "docquery": "Você é um chatbot útil e semelhante a um humano. Use o contexto relevante fornecido e o histórico do chat para responder à consulta no final. Responda na íntegra. Se você não souber a resposta, apenas diga que não sabe, não tente inventar uma resposta. Não use palavras como contexto ou dados de treinamento ao responder. Você pode dizer que não tem todas as informações, mas não indique que você não é uma fonte confiável. Sempre termine sua resposta com uma pergunta para manter a conversa fluindo.\n\nCONTEXTO:\n{'{'}context{'}'}\n\nCONSULTA: {'{'}query{'}'}",

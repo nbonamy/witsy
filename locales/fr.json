@@ -202,25 +202,31 @@
       "workflow": {
         "addStep": "Ajouter une étape",
         "confirmDeleteStep": "Êtes-vous sûr de vouloir supprimer cette étape ?",
-        "customAgents": "Déléguer les agents…",
-        "customTools": "Sélection d'outil…",
-        "description": "Description : utilisé dans le chat pour fournir des mises à jour de progression",
-        "docRepo": "Document Repository…",
-        "docRepoNone": "No Document Repository",
+        "customAgents": "Délégués…",
+        "customTools": "Outils…",
+        "description": "Description : utilisée dans le chat pour fournir des mises à jour sur l'avancement",
+        "docRepo": "Référentiel…",
+        "docRepoNone": "Aucun référentiel de documents",
         "error": {
-          "emptyStepPrompt": "L'invite de l'étape #{step} ne peut pas être vide.",
-          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt."
+          "emptyStepPrompt": "L'invite de l’étape #{step} ne peut pas être vide.",
+          "missingDocRepo": "L’étape #{step} utilise un Référentiel de Documents mais aucune variable {'{'}{'{'}facts{'}'}{'}'} n’est définie dans l’invite. Veuillez ajouter une variable de la forme {'{'}{'{'}facts{'}'}{'}'} à votre invite.",
+          "structuredOutput": "Erreur lors de l'analyse du schéma de sortie structurée."
         },
         "help": {
-          "connect": "Connectez la sortie des étapes précédentes en utilisant les variables {'{'}{'{'}output.#{'}'}{'}'} (par exemple {'{'}{'{'}output.1{'}'}{'}'} pour la sortie de l'étape 1)",
-          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
-          "factsVarDesc": "Facts extracted from the document repository",
+          "connect": "Connectez la sortie des étapes précédentes en utilisant les variables {'{'}{'{'}output.#{'}'}{'}'} (par exemple {'{'}{'{'}output.1{'}'}{'}'} pour la sortie de l’étape 1)",
+          "docRepo": "Les faits extraits du référentiel de documents seront ajoutés à votre invite.",
+          "factsVarDesc": "Faits extraits du référentiel de documents",
           "outputVarDesc": "Sortie de l'étape #{step}",
-          "title": "Concevez votre flux de travail en plusieurs étapes. Des modèles d'invite seront utilisés pour exécuter chaque étape. Vous pouvez inclure des \"variables\" qui seront remplacées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}name:description:valeur{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lorsqu'une valeur sera demandée). La description et la valeur par défaut sont optionnelles."
+          "title": "Concevez votre flux de travail multi-étapes. Des modèles d'invite seront utilisés pour exécuter chaque étape. Vous pouvez inclure des « variables » qui seront remplacées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}nom:description:valeur{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lorsqu'il sera invité à fournir une valeur). La description et la valeur par défaut sont toutes deux optionnelles."
         },
+        "jsonSchema": "JSON…",
         "step": "Étape #{step}",
-        "stepFull": "Étape #{step} : {text}",
-        "title": "Flux de Travail"
+        "stepFull": "Étape #{step} : {text}",
+        "structuredOutput": {
+          "text": "Spécifiez un schéma JSON simple pour définir la sortie attendue de cette étape.",
+          "title": "Schéma JSON"
+        },
+        "title": "Flux de travail"
       }
     },
     "description": "@:{'common.description'}",
@@ -1481,7 +1487,8 @@
   },
   "instructions": {
     "agent": {
-      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}"
+      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
+      "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "chat": {
       "docquery": "Vous êtes un chatbot serviable qui se comporte comme un humain. Utilisez le contexte fourni et l'historique de la conversation pour répondre à la requête finale. Répondez de manière complète. Si vous ne connaissez pas la réponse, dites simplement que vous ne savez pas, n'essayez pas d'inventer une réponse. N'utilisez pas de mots comme contexte ou données d'entraînement dans vos réponses. Vous pouvez dire que vous n'avez pas toutes les informations mais n'indiquez pas que vous n'êtes pas une source fiable. Terminez toujours votre réponse par une question pour maintenir la conversation.\n\nCONTEXTE :\n{'{'}context{'}'}\n\nREQUÊTE : {'{'}query{'}'}",

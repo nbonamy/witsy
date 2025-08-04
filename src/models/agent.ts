@@ -33,7 +33,7 @@ export default class Agent implements AgentBase {
     this.type = 'runnable'
     this.engine = ''
     this.model = ''
-    this.disableStreaming = true
+    this.disableStreaming = false
     this.modelOpts = {}
     this.locale = ''
     this.instructions = ''
@@ -94,6 +94,7 @@ export default class Agent implements AgentBase {
     return replacePromptInputs(this.steps[step].prompt, parameters)
 
   }
+
   
   getPreparationDescription?: () => string
   getRunningDescription?: (args: any) => string

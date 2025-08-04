@@ -221,25 +221,31 @@
       "workflow": {
         "addStep": "添加步骤",
         "confirmDeleteStep": "您确定要删除此步骤吗？",
-        "customAgents": "委派代理…",
-        "customTools": "工具选择…",
+        "customAgents": "代理…",
+        "customTools": "工具…",
         "description": "描述：用于聊天中提供进度更新",
-        "docRepo": "Document Repository…",
-        "docRepoNone": "No Document Repository",
+        "docRepo": "存储库…",
+        "docRepoNone": "无文档库",
         "error": {
           "emptyStepPrompt": "步骤 #{step} 的提示不能为空。",
-          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt."
+          "missingDocRepo": "步骤 #{step} 使用了文档库，但提示中未定义 {'{'}{'{'}facts{'}'}{'}'} 变量。请在提示中添加形如 {'{'}{'{'}facts{'}'}{'}'} 的变量。",
+          "structuredOutput": "解析结构化输出 schema 时出错。"
         },
         "help": {
-          "connect": "使用 {'{'}{'{'}output.#{'}'}{'}'} 变量连接前一步骤的输出（例如，步骤1的输出使用 {'{'}{'{'}output.1{'}'}{'}'}）",
-          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
-          "factsVarDesc": "Facts extracted from the document repository",
+          "connect": "使用 {'{'}{'{'}output.#{'}'}{'}'} 变量连接前一步骤的输出（例如，第1步的输出为 {'{'}{'{'}output.1{'}'}{'}'}）",
+          "docRepo": "从文档库提取的事实将附加到您的提示中。",
+          "factsVarDesc": "从文档库提取的事实",
           "outputVarDesc": "步骤 #{step} 的输出",
-          "title": "设计您的多步骤工作流程。提示模板将用于执行每个步骤。您可以包含“变量”，当代理执行时，这些变量将替换为用户提供的值。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示用户输入值时提供指导）。描述和默认值都是可选的。"
+          "title": "设计您的多步骤工作流。提示模板将用于执行每个步骤。您可以包含“变量”，这些变量将在执行代理时用用户提供的值替换。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示输入值时指导用户）。描述和值都是可选的。"
         },
+        "jsonSchema": "JSON…",
         "step": "步骤 #{step}",
         "stepFull": "步骤 #{step}：{text}",
-        "title": "工作流程"
+        "structuredOutput": {
+          "text": "指定简单的 JSON schema 来定义此步骤的预期输出。",
+          "title": "JSON schema"
+        },
+        "title": "工作流"
       }
     },
     "description": "@:{'common.description'}",
@@ -1500,7 +1506,8 @@
   },
   "instructions": {
     "agent": {
-      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}"
+      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
+      "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "chat": {
       "docquery": "你是一个类似人类的聊天机器人。使用相关的上下文和聊天历史来回答最后的问题。完整回答。如果你不知道答案，就说你不知道，不要编造答案。回答时不要使用上下文或训练数据之类的词汇。始终以一个问题结束你的回答，以保持对话进行。\n\n上下文：\n{'{'}context{'}'}\n\n问题：{'{'}query{'}'}",

@@ -241,8 +241,9 @@ div:where(.swal2-container) div:where(.swal2-validation-message) {
   background-color: transparent;
   margin-top: 0px;
   justify-content: flex-start;
-  color: var(--text-color);
+  color: red;
   font-size: 10pt;
+  padding: 0rem 2rem;
 }
 
 div:where(.swal2-container) div:where(.swal2-validation-message)::before {

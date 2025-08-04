@@ -8,6 +8,8 @@ import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, Generati
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { saveFileContents } from '../services/download'
 import { availablePlugins } from '../plugins/plugins'
+import { replacePromptInputs } from '../services/prompt'
+import { processJsonSchema } from '../services/schema'
 import { store } from '../services/store'
 import LlmUtils from './llm_utils'
 import Agent from '../models/agent'
@@ -15,7 +17,6 @@ import Message from '../models/message'
 import Attachment from '../models/attachment'
 import AgentPlugin from '../plugins/agent'
 import A2AClient from './a2a-client'
-import { replacePromptInputs } from './prompt'
 
 export interface RunnerCompletionOpts extends GenerationOpts {
   ephemeral?: boolean
@@ -136,10 +137,17 @@ export default class extends Generator {
           }
         }
 
+        // structured output
+        const stepStructuredOutput = step.structuredOutput ?? processJsonSchema('response', step.jsonSchema) ?? undefined
+        if (step.jsonSchema) {
+          const instructions = i18nInstructions(this.config, 'instructions.agent.structuredOutput')
+          stepPrompt += `\n\n${instructions.replace('{jsonSchema}', step.jsonSchema)}`
+        }
+
         // merge with defaults
         const defaults: GenerationOpts = {
           ... this.llmManager.getChatEngineModel(),
-          structuredOutput: step.structuredOutput,
+          structuredOutput: stepStructuredOutput,
           docrepo: null,
           sources: true,
           citations: true,
