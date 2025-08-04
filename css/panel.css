@@ -46,7 +46,7 @@
 
   }
 
-  &:not(:has(.panel-body)) {
+  &:not(:has(.panel-body, .panel-empty)) {
     .panel-header {
       border-bottom-width: 1px;
       border-bottom-left-radius: 0.5rem;
