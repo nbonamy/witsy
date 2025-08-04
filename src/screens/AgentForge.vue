@@ -13,7 +13,7 @@
         <div class="title">{{ t('agent.forge.title') }}</div>
       </header>
       <main class="empty sliding-root" :class="{ visible: mode === 'list' }" v-if="store.agents.length === 0">
-        <BIconRobot @click="onCreate" />
+        <BIconRobot @click="onCreate()" />
         {{ t('agent.forge.empty') }}
       </main>
       <main class="sliding-root" :class="{ visible: mode === 'list' }" v-else>
@@ -81,7 +81,7 @@ const onTransitionEnd = async () => {
 const onCreate = (type?: AgentType) => {
   mode.value = 'create'
   selected.value = new Agent()
-  selected.value.type = type || 'runnable'
+  selected.value.type = type ?? 'runnable'
 }
 
 const onImportA2A = async (type?: AgentType) => {
