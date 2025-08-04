@@ -15,7 +15,7 @@
 
       <!-- status -->
       <div class="status-container" v-if="message.status && message.transient">
-        <BIconRobot /> <span class="status-text">{{ message.status }}</span>
+        <span class="status-text">{{ message.status }}</span>
       </div>
 
       <!-- attachments -->
