@@ -450,12 +450,6 @@ const removeFavorite = () => {
     gap: 0.5rem;
   }
 
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
 }
 
 .empty .models {
