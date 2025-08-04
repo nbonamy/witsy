@@ -93,14 +93,18 @@ defineExpose({ load })
 
 <style scoped>
 
-.settings form.tab-content:deep() main {
+.form.tab-content:deep() main {
 
   --label-width: 190px;
   
   max-width: 600px;
   
   .form-field {
+
+    align-items: center;
+
     label {
+      margin-top: 0rem;
       width: var(--label-width);
       font-weight: bold;
     }
