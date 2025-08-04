@@ -8,7 +8,7 @@ export const preventTabOnLastEngineGridInput = (event: KeyboardEvent) => {
     return style.display !== 'none'
   })
   const isLast = visibleInputs.indexOf(event.target as HTMLElement) === visibleInputs.length - 1
-  if (isLast) {
+  if (isLast && event.key === 'Tab' && !event.shiftKey) {
     event.preventDefault()
   }
 }
