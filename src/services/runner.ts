@@ -198,7 +198,7 @@ export default class extends Generator {
           ...(opts?.agents || [])
         ]
         for (const agentId of step.agents) {
-          const agent = agents.find(a => a.id === agentId)
+          const agent = agents.find((a: Agent) => a.uuid === agentId)
           if (agent) {
             const plugin = new AgentPlugin(this.config, agent, agent.engine || opts.engine, agent.model || opts.model)
             this.llm.addPlugin(plugin)
