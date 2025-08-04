@@ -110,6 +110,10 @@ export type AgentType = 'runnable' | 'support'
 export const kAgentStepVarOutputPrefix = 'output.'
 export const kAgentStepVarFacts = 'facts'
 
+export type AgentStepStructuredOutput = {
+  name: string
+  structure: ZodType
+}
 export type AgentStep = {
   // engine: string|null
   // model: string|null
@@ -120,10 +124,8 @@ export type AgentStep = {
   tools?: string[]|null
   agents?: string[]
   docrepo?: string
-  structuredOutput?: {
-    name: string
-    structure: ZodType
-  }
+  jsonSchema?: string
+  structuredOutput?: AgentStepStructuredOutput
 }
 
 export interface Agent {

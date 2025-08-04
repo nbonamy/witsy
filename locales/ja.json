@@ -220,25 +220,31 @@
       },
       "workflow": {
         "addStep": "ステップを追加",
-        "confirmDeleteStep": "このステップを削除してもよろしいですか？",
-        "customAgents": "代理エージェントを割り当てる…",
-        "customTools": "ツール選択…",
-        "description": "説明: チャットで進捗状況を提供するために使用されます",
-        "docRepo": "Document Repository…",
-        "docRepoNone": "No Document Repository",
+        "confirmDeleteStep": "このステップを本当に削除しますか？",
+        "customAgents": "代理人…",
+        "customTools": "ツール…",
+        "description": "説明：チャット内で進捗状況の更新に使用されます",
+        "docRepo": "リポジトリ…",
+        "docRepoNone": "ドキュメントリポジトリなし",
         "error": {
-          "emptyStepPrompt": "ステップ #{step} のプロンプトは空にできません。",
-          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt."
+          "emptyStepPrompt": "ステップ#{step}のプロンプトは空にできません。",
+          "missingDocRepo": "ステップ#{step}はドキュメントリポジトリを使用していますが、プロンプトに{'{'}{'{'}facts{'}'}{'}'}変数が定義されていません。プロンプトに{'{'}{'{'}facts{'}'}{'}'}の形式の変数を追加してください。",
+          "structuredOutput": "構造化出力スキーマの解析中にエラーが発生しました。"
         },
         "help": {
-          "connect": "{'{'}{'{'}output.#{'}'}{'}'} 変数を使って前のステップの出力を接続します（例：ステップ1の出力には {'{'}{'{'}output.1{'}'}{'}'} を使用）",
-          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
-          "factsVarDesc": "Facts extracted from the document repository",
-          "outputVarDesc": "ステップ #{step} の出力",
-          "title": "マルチステップのワークフローを設計します。各ステップの実行にはプロンプトテンプレートが使用されます。エージェント実行時にユーザーが提供した値で置換される「変数」を含めることができます。変数は{'{'}{'{'}name:説明:値{'}'}{'}'}の形式で定義してください（説明は値を入力する際にユーザーへのガイドとなります）。説明とデフォルト値はどちらも任意です。"
+          "connect": "前のステップの出力を{'{'}{'{'}output.#{'}'}{'}'}変数（例：ステップ1の出力には{'{'}{'{'}output.1{'}'}{'}'}）を使って接続します",
+          "docRepo": "ドキュメントリポジトリから抽出された事実がプロンプトに追加されます。",
+          "factsVarDesc": "ドキュメントリポジトリから抽出された事実",
+          "outputVarDesc": "ステップ#{step}の出力",
+          "title": "複数ステップのワークフローを設計します。各ステップの実行にはプロンプトテンプレートが使用されます。エージェント実行時にユーザーが提供した値に置き換えられる「変数」を含めることができます。変数は{'{'}{'{'}name:description:value{'}'}{'}'}の形式で定義してください（説明は値を入力する際のユーザーのガイドになります）。説明とデフォルト値はどちらも任意です。"
         },
-        "step": "ステップ #{step}",
+        "jsonSchema": "JSON…",
+        "step": "ステップ#{step}",
         "stepFull": "ステップ#{step}: {text}",
+        "structuredOutput": {
+          "text": "このステップの期待される出力を定義するための簡単なJSONスキーマを指定してください。",
+          "title": "JSONスキーマ"
+        },
         "title": "ワークフロー"
       }
     },
@@ -1500,7 +1506,8 @@
   },
   "instructions": {
     "agent": {
-      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}"
+      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
+      "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "chat": {
       "docquery": "あなたは親切な人間のようなチャットボットです。提供された関連コンテキストとチャット履歴を使用して、最後のクエリに回答してください。完全に回答してください。答えがわからない場合は、わからないとだけ言ってください。答えをでっち上げようとしないでください。応答時にコンテキストやトレーニングデータのような言葉を使用しないでください。すべての情報を持っているわけではないと言うことはできますが、信頼できる情報源ではないと示唆しないでください。会話を続けるために、常に質問で応答を終了してください。\n\nコンテキスト:\n{'{'}context{'}'}\n\nクエリ: {'{'}query{'}'}",

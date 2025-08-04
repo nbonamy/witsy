@@ -48,8 +48,13 @@ export const loadAgents = (source: App|string): Agent[] => {
 
 export const saveAgent = (source: App|string, json: anyDict): boolean => {
 
-  // init
+  // the agent
   const agent = Agent.fromJson(json);
+  agent.steps.forEach(step => {
+    delete step.structuredOutput
+  })
+
+  // init
   const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
   const filePath = path.join(agentsDir, agent.uuid + '.json')
 

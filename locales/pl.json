@@ -221,25 +221,31 @@
       "workflow": {
         "addStep": "Dodaj krok",
         "confirmDeleteStep": "Czy na pewno chcesz usunąć ten krok?",
-        "customAgents": "Deleguj agentów…",
-        "customTools": "Wybór narzędzi…",
-        "description": "Opis: używane na czacie do aktualizacji postępu",
-        "docRepo": "Document Repository…",
-        "docRepoNone": "No Document Repository",
+        "customAgents": "Delegaci…",
+        "customTools": "Narzędzia…",
+        "description": "Opis: używany na czacie do informacji o postępie",
+        "docRepo": "Repozytorium…",
+        "docRepoNone": "Brak repozytorium dokumentów",
         "error": {
           "emptyStepPrompt": "Prompt kroku #{step} nie może być pusty.",
-          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt."
+          "missingDocRepo": "Krok #{step} używa repozytorium dokumentów, ale w prompt nie zdefiniowano zmiennej {'{'}{'{'}facts{'}'}{'}'}. Dodaj do promptu zmienną w formie {'{'}{'{'}facts{'}'}{'}'}.",
+          "structuredOutput": "Błąd podczas parsowania schematu strukturalnego wyniku."
         },
         "help": {
-          "connect": "Połącz wyniki poprzednich kroków używając zmiennych {'{'}{'{'}output.#{'}'}{'}'} (np. {'{'}{'{'}output.1{'}'}{'}'} dla wyniku kroku 1)",
-          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
-          "factsVarDesc": "Facts extracted from the document repository",
+          "connect": "Połącz wynik poprzednich kroków za pomocą zmiennych {'{'}{'{'}output.#{'}'}{'}'} (np. {'{'}{'{'}output.1{'}'}{'}'} dla wyniku kroku 1)",
+          "docRepo": "Fakty wyodrębnione z repozytorium dokumentów zostaną dołączone do twojego promptu.",
+          "factsVarDesc": "Fakty wyodrębnione z repozytorium dokumentów",
           "outputVarDesc": "Wynik kroku #{step}",
-          "title": "Zaprojektuj swój wieloetapowy workflow. Szablony promptów będą używane do wykonania każdego kroku. Możesz dołączyć \"zmienne\", które zostaną zastąpione wartościami podanymi przez użytkownika podczas wykonywania agenta. Użyj formatu {'{'}{'{'}name:opis:wartość{'}'}{'}'} do zdefiniowania zmiennej (opis będzie wskazówką dla użytkownika podczas podawania wartości). Zarówno opis, jak i wartość domyślna są opcjonalne."
+          "title": "Zaprojektuj swój wieloetapowy przepływ pracy. Szablony promptów będą używane do wykonania każdego kroku. Możesz uwzględnić „zmienne”, które zostaną zastąpione wartościami podanymi przez użytkownika podczas uruchamiania agenta. Użyj formatu {'{'}{'{'}name:description:value{'}'}{'}'} do zdefiniowania zmiennej (opis będzie wskazówką dla użytkownika przy wprowadzaniu wartości). Zarówno opis, jak i domyślna wartość są opcjonalne."
         },
+        "jsonSchema": "JSON…",
         "step": "Krok #{step}",
         "stepFull": "Krok #{step}: {text}",
-        "title": "Przebieg pracy"
+        "structuredOutput": {
+          "text": "Określ prosty schemat JSON, aby zdefiniować oczekiwany wynik tego kroku.",
+          "title": "Schemat JSON"
+        },
+        "title": "Przepływ pracy"
       }
     },
     "description": "@:{'common.description'}",
@@ -1500,7 +1506,8 @@
   },
   "instructions": {
     "agent": {
-      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}"
+      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
+      "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "chat": {
       "docquery": "Jesteś pomocnym czatbotem przypominającym człowieka. Użyj odpowiedniego kontekstu i historii czatu, aby odpowiedzieć na zapytanie na końcu. Udzielaj pełnych odpowiedzi. Jeśli nie znasz odpowiedzi, po prostu powiedz, że nie wiesz, nie próbuj wymyślać odpowiedzi. Podczas udzielania odpowiedzi nie używaj słów takich jak kontekst lub dane szkoleniowe. Możesz powiedzieć, że nie masz wszystkich informacji, ale nie wskazuj, że nie jesteś wiarygodnym źródłem. Zawsze kończ swoją odpowiedź pytaniem, aby utrzymać rozmowę.\n\nKONTEKST:\n{'{'}context{'}'}\n\nQUERY: {'{'}query{'}'}",

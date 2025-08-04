@@ -15,6 +15,8 @@ export type DialogOptions = {
   inputOptions?: Record<string, any>
   inputAttributes?: Record<string, any>
   inputPlaceholder?: string
+  inputValidator?: (value: any) => string | Promise<string> | null
+  showConfirmButton?: boolean
   showCancelButton?: boolean
   showDenyButton?: boolean
   reverseButtons?: boolean

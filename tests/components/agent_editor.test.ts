@@ -1102,3 +1102,184 @@ test('Shows model settings fields', async () => {
     expect(temperatureField.exists()).toBe(true)
   }
 })
+
+// === JSON SCHEMA TESTS ===
+
+test('Shows JSON schema button in workflow steps', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.md-master-list-item')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Should show JSON schema button in step actions
+  const jsonSchemaButton = wrapper.find('.step-actions .structured-output')
+  expect(jsonSchemaButton.exists()).toBe(true)
+  expect(jsonSchemaButton.text()).toContain('agent.create.workflow.jsonSchema')
+})
+
+test('Updates step jsonSchema when valid JSON is provided', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.md-master-list-item')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Initially step should have no jsonSchema
+  expect(agent.steps[0].jsonSchema).toBeUndefined()
+
+  // Mock dialog to return valid JSON
+  const validJsonSchema = '{"name": "string", "age": "number"}'
+  vi.mocked(Dialog.show).mockResolvedValueOnce({ isConfirmed: true, value: validJsonSchema })
+
+  // Click JSON schema button
+  const jsonSchemaButton = wrapper.find('.step-actions .structured-output')
+  await jsonSchemaButton.trigger('click')
+  await nextTick()
+
+  // Dialog should have been called with proper options
+  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
+    title: 'agent.create.workflow.structuredOutput.title',
+    text: 'agent.create.workflow.structuredOutput.text',
+    input: 'textarea',
+    inputValue: undefined,
+    showCancelButton: true,
+    confirmButtonText: 'common.save',
+    inputValidator: expect.any(Function)
+  }))
+
+  // The step's jsonSchema should be updated with the dialog result
+  expect(agent.steps[0].jsonSchema).toBe(validJsonSchema)
+})
+
+test('Clears step jsonSchema when empty JSON is provided', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [], jsonSchema: '{"name": "string"}' }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.md-master-list-item')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Initially step should have jsonSchema
+  expect(agent.steps[0].jsonSchema).toBe('{"name": "string"}')
+
+  // Mock dialog to return empty string
+  vi.mocked(Dialog.show).mockResolvedValueOnce({ isConfirmed: true, value: '   ' })
+
+  // Click JSON schema button
+  const jsonSchemaButton = wrapper.find('.step-actions .structured-output')
+  await jsonSchemaButton.trigger('click')
+  await nextTick()
+
+  // The step's jsonSchema should be cleared
+  expect(agent.steps[0].jsonSchema).toBeUndefined()
+})
+
+test('Preserves existing jsonSchema when dialog is cancelled', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [], jsonSchema: '{"name": "string"}' }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.md-master-list-item')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Initially step should have jsonSchema
+  const originalSchema = agent.steps[0].jsonSchema
+  expect(originalSchema).toBe('{"name": "string"}')
+
+  // Mock dialog to be cancelled
+  vi.mocked(Dialog.show).mockResolvedValueOnce({ isConfirmed: false, value: 'new-schema' })
+
+  // Click JSON schema button
+  const jsonSchemaButton = wrapper.find('.step-actions .structured-output')
+  await jsonSchemaButton.trigger('click')
+  await nextTick()
+
+  // The step's jsonSchema should remain unchanged
+  expect(agent.steps[0].jsonSchema).toBe(originalSchema)
+})
+
+test('Shows existing jsonSchema in dialog input', async () => {
+  const existingSchema = '{"name": "string", "age": "number"}'
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [], jsonSchema: existingSchema }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.md-master-list-item')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Mock dialog to return the same schema (simulating no change)
+  vi.mocked(Dialog.show).mockResolvedValueOnce({ isConfirmed: true, value: existingSchema })
+
+  // Click JSON schema button
+  const jsonSchemaButton = wrapper.find('.step-actions .structured-output')
+  await jsonSchemaButton.trigger('click')
+  await nextTick()
+
+  // Dialog should be called with existing schema as inputValue
+  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
+    inputValue: existingSchema
+  }))
+})

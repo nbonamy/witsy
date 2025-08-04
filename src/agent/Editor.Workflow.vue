@@ -41,9 +41,10 @@
               </table>
             </div>
             <div class="step-actions">
-              <button class="docrepo" @click="onDocRepo(index)">{{ t('agent.create.workflow.docRepo') }}</button>
-              <button class="tools" @click="onTools(index)">{{ t('agent.create.workflow.customTools') }}</button>
-              <button class="agents" @click="onAgents(index)">{{ t('agent.create.workflow.customAgents') }}</button>
+              <button class="docrepo" @click="onDocRepo(index)"><BIconDatabase /> {{ t('agent.create.workflow.docRepo') }}</button>
+              <button class="tools" @click="onTools(index)"><BIconTools /> {{ t('agent.create.workflow.customTools') }}</button>
+              <button class="agents" @click="onAgents(index)"><BIconRobot /> {{ t('agent.create.workflow.customAgents') }}</button>
+              <button class="structured-output" @click="onStructuredOutput(index)"><BIconFiletypeJson /> {{ t('agent.create.workflow.jsonSchema') }}</button>
             </div>
           </div>
         </div>
@@ -71,6 +72,7 @@ import WizardStep from '../components/WizardStep.vue'
 import ToolSelector from '../screens/ToolSelector.vue'
 import AgentSelector from '../screens/AgentSelector.vue'
 import Agent from '../models/agent'
+import { BIconFiletypeJson } from 'bootstrap-icons-vue'
 
 const props = defineProps({
   agent: {
@@ -189,6 +191,49 @@ const onAgents = (index: number) => {
 
 const onSaveAgents = (agents: string[]) => {
   props.agent.steps[expandedStep.value].agents = agents
+}
+
+const onStructuredOutput = async (index: number) => {
+  
+  const rc = await Dialog.show({
+    title: t('agent.create.workflow.structuredOutput.title'),
+    text: t('agent.create.workflow.structuredOutput.text'),
+    input: 'textarea',
+    inputValue: props.agent.steps[index].jsonSchema,
+    showCancelButton: true,
+    confirmButtonText: t('common.save'),
+    inputValidator: (value: string) => {
+      if (!value.trim()) {
+        return null
+      }
+      
+      try {
+        const parsed = JSON.parse(value)
+        if (typeof parsed === 'object' && parsed !== null) {
+          return null // Valid JSON object structure
+        } else {
+          return t('agent.create.workflow.error.structuredOutput')
+        }
+      } catch (e) {
+        return t('agent.create.workflow.error.structuredOutput')
+      }
+    }
+  })
+
+  if (rc.isConfirmed) {
+    try {
+      if (!rc.value.trim()) {
+        props.agent.steps[index].jsonSchema = undefined
+      } else {
+        // Parse and set structured output - update both schema and structure
+        const schemaString = rc.value.trim()
+        props.agent.steps[index].jsonSchema = schemaString
+      }
+    } catch (e) {
+      // This shouldn't happen due to validation, but just in case
+      console.error('Failed to parse structured output:', e)
+    }
+  }
 }
 
 const onDeleteStep = async (index: number) => {
