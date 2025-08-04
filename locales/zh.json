@@ -43,6 +43,7 @@
     "description": "描述",
     "differentLocales": "您的语言模型语言与界面语言不同。显示的文本为语言模型的语言或您自定义的语言。",
     "disabled": "已禁用",
+    "docRepo": "Document Repository",
     "documents": "文档",
     "done": "完成！",
     "edit": "编辑",
@@ -223,11 +224,16 @@
         "customAgents": "委派代理…",
         "customTools": "工具选择…",
         "description": "描述：用于聊天中提供进度更新",
+        "docRepo": "Document Repository…",
+        "docRepoNone": "No Document Repository",
         "error": {
-          "emptyStepPrompt": "步骤 #{step} 的提示不能为空。"
+          "emptyStepPrompt": "步骤 #{step} 的提示不能为空。",
+          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt."
         },
         "help": {
           "connect": "使用 {'{'}{'{'}output.#{'}'}{'}'} 变量连接前一步骤的输出（例如，步骤1的输出使用 {'{'}{'{'}output.1{'}'}{'}'}）",
+          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the document repository",
           "outputVarDesc": "步骤 #{step} 的输出",
           "title": "设计您的多步骤工作流程。提示模板将用于执行每个步骤。您可以包含“变量”，当代理执行时，这些变量将替换为用户提供的值。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示用户输入值时提供指导）。描述和默认值都是可选的。"
         },
@@ -761,7 +767,7 @@
     },
     "view": {
       "noDocuments": "您还没有任何文档。点击上面的图标以添加文档或文件夹。",
-      "title": "文档库",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "添加文件",
         "addFolder": "添加文件夹",
@@ -1493,6 +1499,9 @@
     }
   },
   "instructions": {
+    "agent": {
+      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}"
+    },
     "chat": {
       "docquery": "你是一个类似人类的聊天机器人。使用相关的上下文和聊天历史来回答最后的问题。完整回答。如果你不知道答案，就说你不知道，不要编造答案。回答时不要使用上下文或训练数据之类的词汇。始终以一个问题结束你的回答，以保持对话进行。\n\n上下文：\n{'{'}context{'}'}\n\n问题：{'{'}query{'}'}",
       "empathic": "你是一个温暖、富有同理心和深思熟虑的AI助手。你的工作是帮助用户感到被倾听、支持和理解，同时提供有用、准确和相关的信息。\n\n目标：\n- 理解用户的情感或实际需求，即使这些需求没有直接表述。\n- 以关心、耐心和清晰的方式进行沟通。\n- 优先考虑在语气上支持人性化，同时保持信息性和实用性。\n\n语调与风格：\n- 使用温柔、安慰的语气，让用户感到轻松。\n- 避免冷漠或机械的语言。像一个富有同情心、深思熟虑的伴侣一样交流。\n- 在适当时可以使用轻微的鼓励或认可，但要避免空洞的陈词。\n- 不要夸大你的能力。保持脚踏实地、善良和诚实。\n\n结构：\n- 从一个柔和、热情的介绍开始，表明你理解用户的情况或目标。\n- 在解释复杂事物时使用简短的段落或要点，以增强清晰度。\n- 避免使用户感到信息过载。集中于最相关和易消化的内容。\n- 始终根据情感背景调整你的风格 - 在危机中保持冷静，在成功时庆祝，在困难时温柔。\n\n对话：\n- 始终以一个深思熟虑或关心的后续问题结束你的回答，以邀请继续对话。\n\n例子：\n- “听起来你有很多事情要处理 - 谢谢你信任我提出的问题。我们可以这样来分解。”\n- “你并不孤单，想知道这个。让我引导你考虑一些选项。”\n- “我听到你的担忧。让我们探索一些可能的选项，或许能帮助你。”\n\n你的目标不仅是回答，还有做一个支持性和情感智能的指南。总是以一个问题结束你的回答，以保持对话持续进行。",

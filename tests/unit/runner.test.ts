@@ -495,3 +495,134 @@ test('Runner Stop Functionality', async () => {
   // Run should still complete but may be interrupted
   expect(run).toBeDefined()
 })
+
+test('Agent Run with Docrepo - No Sources', async () => {
+  testAgent.steps[0].docrepo = 'uuid1'
+  
+  // Mock docrepo.query to return empty results
+  window.api.docrepo.query = vi.fn().mockResolvedValue([])
+  
+  const run = await runAgent('manual', 'Docrepo test')
+
+  expect(run.status).toBe('success')
+  expect(window.api.docrepo.query).toHaveBeenCalledWith('uuid1', 'Docrepo test')
+  
+  // Prompt should not be modified when no sources are found
+  expect(run.messages[1].content).toBe('Docrepo test')
+})
+
+test('Agent Run with Docrepo - With Sources', async () => {
+  testAgent.steps[0].docrepo = 'uuid2'
+  
+  // Mock docrepo.query to return sources
+  const mockSources = [
+    { content: 'Source 1 content', score: 0.9, metadata: { uuid: 'doc1' } },
+    { content: 'Source 2 content', score: 0.8, metadata: { uuid: 'doc2' } }
+  ]
+  window.api.docrepo.query = vi.fn().mockResolvedValue(mockSources)
+  
+  const run = await runAgent('manual', 'Docrepo query test')
+
+  expect(run.status).toBe('success')
+  expect(window.api.docrepo.query).toHaveBeenCalledWith('uuid2', 'Docrepo query test')
+  
+  // Prompt should be augmented with docrepo instructions
+  const userMessage = run.messages[1]
+  expect(userMessage.content).toContain('Docrepo query test')
+  expect(userMessage.content).toContain('instructions.agent.docquery')
+})
+
+test('Agent Run with Docrepo - Multiple Steps', async () => {
+  testAgent.steps = [
+    {
+      prompt: 'Step 1: {{input}}',
+      tools: null,
+      agents: [],
+      docrepo: 'uuid1'
+    },
+    {
+      prompt: 'Step 2: Based on {{output.1}}, provide more details',
+      tools: null,
+      agents: [],
+      docrepo: 'uuid2'
+    }
+  ]
+
+  // Mock docrepo.query for different repositories
+  window.api.docrepo.query = vi.fn()
+    .mockResolvedValueOnce([
+      { content: 'Step 1 context', score: 0.9, metadata: { uuid: 'doc1' } }
+    ])
+    .mockResolvedValueOnce([
+      { content: 'Step 2 context', score: 0.8, metadata: { uuid: 'doc2' } }
+    ])
+
+  const run = await runAgent('manual', 'Multi-step docrepo test')
+
+  expect(run.status).toBe('success')
+  
+  // Should have called docrepo.query for both steps
+  expect(window.api.docrepo.query).toHaveBeenCalledTimes(2)
+  expect(window.api.docrepo.query).toHaveBeenNthCalledWith(1, 'uuid1', 'Multi-step docrepo test')
+  expect(window.api.docrepo.query).toHaveBeenNthCalledWith(2, 'uuid2', expect.stringContaining('Step 2: Based on'))
+
+  // Messages should include docrepo instructions
+  expect(run.messages[1].content).toContain('instructions.agent.docquery')
+  expect(run.messages[3].content).toContain('instructions.agent.docquery')
+})
+
+test('Agent Run with Docrepo - Error Handling', async () => {
+  testAgent.steps[0].docrepo = 'invalid-uuid'
+  
+  // Mock docrepo.query to throw an error
+  window.api.docrepo.query = vi.fn().mockRejectedValue(new Error('Docrepo not found'))
+  
+  const run = await runAgent('manual', 'Docrepo error test')
+
+  expect(run.status).toBe('error')
+  expect(window.api.docrepo.query).toHaveBeenCalledWith('invalid-uuid', 'Docrepo error test')
+  expect(run.error).toBe('Docrepo not found')
+})
+
+test('Agent Run with Docrepo - Second Step Uses Output Variable', async () => {
+  testAgent.steps = [
+    {
+      prompt: 'Analyze: {{query}}',
+      tools: null,
+      agents: [],
+    },
+    {
+      prompt: 'Based on {{output.1}}, provide summary',
+      tools: null,
+      agents: [],
+      docrepo: 'uuid1'
+    }
+  ]
+
+  // Mock the generate method to return a specific output for the first step
+  spyGenerate.mockImplementation(async (_llm, messages) => {
+    const assistantMessage = messages[messages.length - 1]
+    if (messages[1]?.content.includes('Analyze:')) {
+      assistantMessage.appendText({ type: 'content', text: 'Analysis result from step 1', done: true })
+    } else {
+      assistantMessage.appendText({ type: 'content', text: 'Summary based on analysis', done: true })
+    }
+    return 'success'
+  })
+
+  window.api.docrepo.query = vi.fn().mockResolvedValue([
+    { content: 'Additional context from docrepo', score: 0.9, metadata: { uuid: 'doc1' } }
+  ])
+
+  const run = await runAgent('manual', 'Step output docrepo test')
+
+  expect(run.status).toBe('success')
+  
+  // The second step should have used the output from the first step in its docrepo query
+  expect(window.api.docrepo.query).toHaveBeenCalledWith('uuid1', expect.stringContaining('Summary based on analysis'))
+  
+  // The second step's message should contain the docrepo instructions
+  const secondStepMessage = run.messages[3]
+  expect(secondStepMessage.content).toContain('Summary based on analysis')
+  expect(secondStepMessage.content).toContain('instructions.agent.docquery')
+})

@@ -43,6 +43,7 @@
     "description": "Beschreibung",
     "differentLocales": "Ihre LLM-Lokalisierung ist anders als Ihre Schnittstellenlokalisierung. Die angezeigten Texte sind in der LLM-Lokalisierung oder Ihrer Lokalisierung, wenn Sie sie angepasst haben.",
     "disabled": "Deaktiviert",
+    "docRepo": "Document Repository",
     "documents": "Dokumente",
     "done": "Fertig!",
     "edit": "Bearbeiten",
@@ -204,11 +205,16 @@
         "customAgents": "Delegierte Agenten…",
         "customTools": "Werkzeugauswahl…",
         "description": "Beschreibung: Wird im Chat verwendet, um Fortschrittsaktualisierungen bereitzustellen",
+        "docRepo": "Document Repository…",
+        "docRepoNone": "No Document Repository",
         "error": {
-          "emptyStepPrompt": "Die Eingabeaufforderung für Schritt #{step} darf nicht leer sein."
+          "emptyStepPrompt": "Die Eingabeaufforderung für Schritt #{step} darf nicht leer sein.",
+          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt."
         },
         "help": {
           "connect": "Verbinden Sie die Ausgabe vorheriger Schritte mit {'{'}{'{'}output.#{'}'}{'}'} Variablen (z.B. {'{'}{'{'}output.1{'}'}{'}'} für die Ausgabe von Schritt 1)",
+          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the document repository",
           "outputVarDesc": "Ausgabe von Schritt #{step}",
           "title": "Entwerfen Sie Ihren mehrstufigen Workflow. Eingabevorlagen werden verwendet, um jeden Schritt auszuführen. Sie können \"Variablen\" einfügen, die mit den vom Benutzer beim Ausführen des Agenten angegebenen Werten ersetzt werden. Verwenden Sie das Format {'{'}{'{'}name:beschreibung:wert{'}'}{'}'}, um eine Variable zu definieren (die Beschreibung hilft dem Benutzer bei der Eingabe eines Werts). Sowohl die Beschreibung als auch der Standardwert sind optional."
         },
@@ -742,7 +748,7 @@
     },
     "view": {
       "noDocuments": "Sie haben noch keine Dokumente hinzugefügt. Klicken Sie auf die Symbole oben, um Dokumente oder Ordner hinzuzufügen.",
-      "title": "Dokumentenarchiv",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "Dateien hinzufügen",
         "addFolder": "Ordner hinzufügen",
@@ -1474,6 +1480,9 @@
     }
   },
   "instructions": {
+    "agent": {
+      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}"
+    },
     "chat": {
       "docquery": "Sie sind ein hilfreicher, menschenähnlicher Chatbot. Verwenden Sie den bereitgestellten relevanten Kontext und den Chatverlauf, um die abschließende Anfrage zu beantworten. Antworten Sie vollständig. Wenn Sie die Antwort nicht wissen, sagen Sie einfach, dass Sie es nicht wissen, und versuchen Sie nicht, eine Antwort zu erfinden. Verwenden Sie keine Wörter wie Kontext oder Trainingsdaten, wenn Sie antworten. Sie können sagen, dass Sie nicht alle Informationen haben, geben Sie jedoch nicht an, dass Sie keine zuverlässige Quelle sind. Beenden Sie Ihre Antwort immer mit einer Frage, um das Gespräch am Laufen zu halten.\n\nKONTEXT:\n{'{'}context{'}'}\n\nANFRAGE: {'{'}query{'}'}",
       "empathic": "Du bist ein warmer, empathischer und nachdenklicher KI-Assistent. Deine Aufgabe ist es, den Nutzern das Gefühl zu geben, gehört, unterstützt und verstanden zu werden, während du hilfreiche, akkurate und relevante Informationen bereitstellst.\n\nZiele:\n- Die emotionalen oder praktischen Bedürfnisse des Nutzers verstehen, auch wenn sie nicht direkt geäußert werden.\n- Mit Sorgfalt, Geduld und Klarheit kommunizieren.\n- Unterstützend und menschlich im Ton sein, während du trotzdem informativ und nützlich bleibst.\n\nTon & Stil:\n- Einen sanften, beruhigenden Ton verwenden, der den Nutzer entspannt.\n- Kalte oder robotermäßige Sprache vermeiden. Sprich als mitfühlender, nachdenklicher Begleiter.\n- Leichte Ermutigung oder Bestätigung verwenden, wenn es angebracht ist, aber leere Floskeln vermeiden.\n- Deine Fähigkeiten nicht übertreiben. Bodenständig, freundlich und ehrlich bleiben.\n\nStruktur:\n- Mit einer sanften, einladenden Einführung beginnen, die zeigt, dass du die Situation oder das Ziel des Nutzers verstehst.\n- Kurze Absätze oder Aufzählungspunkte zur Klarheit verwenden, wenn du etwas Komplexes erklärst.\n- Den Nutzer nicht mit Informationen überwältigen. Dich auf das Wesentlichste konzentrieren.\n- Deinen Stil immer dem emotionalen Kontext anpassen - ruhig in einer Krise, feierlich im Erfolg, sanft in Schwierigkeiten.\n\nGespräch:\n- Deine Antwort immer mit einer nachdenklichen oder fürsorglichen Folfrage beenden, um einen fortgesetzten Dialog einzuladen.\n\nBeispiele:\n- „Das klingt nach viel, um damit umzugehen – danke, dass du mir deine Frage anvertraust. Hier ist, wie wir es aufschlüsseln können.“\n- „Du bist nicht allein mit diesen Fragen. Lass mich dir zeigen, was du in Betracht ziehen kannst.“\n- „Ich höre deine Bedenken. Lass uns ein paar Optionen erkunden, die helfen könnten.“\n\nDein Ziel ist nicht nur zu antworten, sondern ein unterstützender und emotional intelligenter Leitfaden zu sein. Beende deine Antwort immer mit einer Frage, um das Gespräch fortzusetzen.",

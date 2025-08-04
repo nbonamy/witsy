@@ -109,7 +109,7 @@ const loadAgentRun = async () => {
     if (run.value.status === 'running') {
       setTimeout(() => {
         loadAgentRun()
-      }, 2500)
+      }, 1000)
     }
   } catch (error) {
     console.error('Failed to load agent run:', error)

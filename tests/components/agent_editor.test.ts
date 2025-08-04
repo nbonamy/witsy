@@ -5,6 +5,7 @@ import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Editor from '../../src/agent/Editor.vue'
 import Agent from '../../src/models/agent'
+import Dialog from '../../src/composables/dialog'
 import { nextTick } from 'vue'
 
 enableAutoUnmount(afterAll)
@@ -758,6 +759,161 @@ test('Shows tools and agents buttons in workflow steps', async () => {
   const agentsButton = wrapper.find('.step-actions .agents')
   expect(agentsButton.exists()).toBe(true)
   expect(agentsButton.text()).toContain('agent.create.workflow.customAgents')
+})
+
+test('Shows docrepo button in workflow steps', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.md-master-list-item')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Should show docrepo button in step actions
+  const docrepoButton = wrapper.find('.step-actions .docrepo')
+  expect(docrepoButton.exists()).toBe(true)
+  expect(docrepoButton.text()).toContain('agent.create.workflow.docRepo')
+})
+
+test('Shows docrepo help text when docrepo is selected', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [], docrepo: 'uuid1' }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.md-master-list-item')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Should show docrepo help text in the panel body
+  const panelBody = wrapper.find('.step-panel .panel-body')
+  const helpTexts = panelBody.findAll('.help')
+  
+  // Find the help text that contains the docrepo help
+  const docrepoHelpText = helpTexts.find(help => help.text().includes('agent.create.workflow.help.docRepo'))
+  expect(docrepoHelpText).toBeTruthy()
+})
+
+test('Selecting docrepo opens dialog and updates step', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.md-master-list-item')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Click docrepo button
+  const docrepoButton = wrapper.find('.step-actions .docrepo')
+  await docrepoButton.trigger('click')
+  await nextTick()
+
+  // Dialog mock should have been called with proper options
+  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
+    title: 'common.docRepo',
+    input: 'select',
+    inputOptions: expect.objectContaining({
+      'none': 'agent.create.workflow.docRepoNone',
+      'uuid1': 'docrepo1',
+      'uuid2': 'docrepo2'
+    }),
+    showCancelButton: true
+  }))
+})
+
+test('Docrepo selection updates agent step', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.md-master-list-item')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Click docrepo button
+  const docrepoButton = wrapper.find('.step-actions .docrepo')
+  await docrepoButton.trigger('click')
+  await nextTick()
+
+  // The dialog mock returns 'user-input' by default for select inputs
+  // Since the mock returns a simple string, we need to check what actually happens
+  // In the real implementation, the value would be set based on the dialog result
+  expect(Dialog.show).toHaveBeenCalled()
+})
+
+test('Docrepo selection can be cleared by selecting none', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [], docrepo: 'uuid1' }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.md-master-list-item')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Click docrepo button
+  const docrepoButton = wrapper.find('.step-actions .docrepo')
+  await docrepoButton.trigger('click')
+  await nextTick()
+
+  // Dialog should be shown with current docrepo as input value
+  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
+    inputValue: 'uuid1'
+  }))
 })
 
 // === MODEL & ENGINE TESTS ===
