@@ -1,8 +1,9 @@
 
-import { Configuration } from '../types/config'
 import { A2APromptOpts, AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
+import { DocRepoQueryResponseItem } from '../types/rag'
+import { Configuration } from '../types/config'
 import { LlmChunk, LlmChunkContent, MultiToolPlugin } from 'multi-llm-ts'
-import { getLlmLocale, setLlmLocale, t } from './i18n'
+import { getLlmLocale, i18nInstructions, setLlmLocale, t } from './i18n'
 import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, GenerationCallback } from './generator'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { saveFileContents } from '../services/download'
@@ -115,7 +116,7 @@ export default class extends Generator {
         const step: AgentStep = this.agent.steps[stepIdx]
 
         // check
-        const stepPrompt = stepIdx === 0 ? (prompt?.trim() || step.prompt) : replacePromptInputs(step.prompt,
+        let stepPrompt = stepIdx === 0 ? (prompt?.trim() || step.prompt) : replacePromptInputs(step.prompt,
           outputs.reduce((acc: Record<string, string>, output, idx) => {
             acc[`output.${idx + 1}`] = output
             return acc
@@ -123,6 +124,16 @@ export default class extends Generator {
         )
         if (!stepPrompt.length) {
           return null
+        }
+
+        // docrepo
+        if (step.docrepo) {
+          const sources: DocRepoQueryResponseItem[] = await window.api.docrepo.query(step.docrepo, stepPrompt);
+          if (sources.length) {
+            const context = sources.map((source) => source.content).join('\n\n');
+            const instructions = i18nInstructions(this.config, 'instructions.agent.docquery')
+            stepPrompt += `\n\n${instructions.replace('{context}', context)}`
+          }
         }
 
         // merge with defaults

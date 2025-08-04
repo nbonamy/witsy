@@ -67,9 +67,14 @@ defineProps({
       align-items: center;
       justify-content: flex-end;
 
+      &:deep() button {
+        flex-shrink: 0;
+      }
+
       .error {
         color: red;
         margin-right: 1rem;
+        text-align: right;
       }
     }
 

@@ -43,6 +43,7 @@
     "description": "Description",
     "differentLocales": "La langue de votre LLM est différente de la langue de votre interface. Les textes affichés sont dans la langue du LLM ou votre langue si vous les avez personnalisés",
     "disabled": "Désactivé",
+    "docRepo": "Document Repository",
     "documents": "Documents",
     "done": "Terminé !",
     "edit": "Modifier",
@@ -204,11 +205,16 @@
         "customAgents": "Déléguer les agents…",
         "customTools": "Sélection d'outil…",
         "description": "Description : utilisé dans le chat pour fournir des mises à jour de progression",
+        "docRepo": "Document Repository…",
+        "docRepoNone": "No Document Repository",
         "error": {
-          "emptyStepPrompt": "L'invite de l'étape #{step} ne peut pas être vide."
+          "emptyStepPrompt": "L'invite de l'étape #{step} ne peut pas être vide.",
+          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt."
         },
         "help": {
           "connect": "Connectez la sortie des étapes précédentes en utilisant les variables {'{'}{'{'}output.#{'}'}{'}'} (par exemple {'{'}{'{'}output.1{'}'}{'}'} pour la sortie de l'étape 1)",
+          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the document repository",
           "outputVarDesc": "Sortie de l'étape #{step}",
           "title": "Concevez votre flux de travail en plusieurs étapes. Des modèles d'invite seront utilisés pour exécuter chaque étape. Vous pouvez inclure des \"variables\" qui seront remplacées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}name:description:valeur{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lorsqu'une valeur sera demandée). La description et la valeur par défaut sont optionnelles."
         },
@@ -742,7 +748,7 @@
     },
     "view": {
       "noDocuments": "Vous n'avez pas encore de documents. Cliquez sur les icônes ci-dessus pour ajouter des documents ou des dossiers.",
-      "title": "Répertoire de documents",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "Ajouter des fichiers",
         "addFolder": "Ajouter un dossier",
@@ -1474,6 +1480,9 @@
     }
   },
   "instructions": {
+    "agent": {
+      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}"
+    },
     "chat": {
       "docquery": "Vous êtes un chatbot serviable qui se comporte comme un humain. Utilisez le contexte fourni et l'historique de la conversation pour répondre à la requête finale. Répondez de manière complète. Si vous ne connaissez pas la réponse, dites simplement que vous ne savez pas, n'essayez pas d'inventer une réponse. N'utilisez pas de mots comme contexte ou données d'entraînement dans vos réponses. Vous pouvez dire que vous n'avez pas toutes les informations mais n'indiquez pas que vous n'êtes pas une source fiable. Terminez toujours votre réponse par une question pour maintenir la conversation.\n\nCONTEXTE :\n{'{'}context{'}'}\n\nREQUÊTE : {'{'}query{'}'}",
       "empathic": "Vous êtes un assistant IA chaleureux, empathique et réfléchi. Votre travail est d'aider les utilisateurs à se sentir entendus, soutenus et compris tout en fournissant des informations utiles, précises et pertinentes.\n\nObjectifs :\n- Comprendre les besoins émotionnels ou pratiques de l'utilisateur, même s'ils ne sont pas exprimés directement.\n- Communiquer avec soin, patience et clarté.\n- Prioriser le soutien et le ton humain, tout en restant informatif et utile.\n\nTon et style :\n- Utiliser un ton doux et réconfortant qui met l'utilisateur à l'aise.\n- Éviter un langage froid ou robotique. Parler comme un compagnon compassionnel et réfléchi.\n- Vous pouvez utiliser un léger encouragement ou une validation lorsque cela est approprié, mais éviter les platitudes vides.\n- Ne pas exagérer vos capacités. Restez ancré, aimable et honnête.\n\nStructure :\n- Commencer par une introduction douce et accueillante qui montre que vous comprenez la situation ou l'objectif de l'utilisateur.\n- Utiliser des paragraphes courts ou des points pour plus de clarté lors de l'explication de concepts complexes.\n- Éviter de submerger l'utilisateur avec des informations. Se concentrer sur ce qui est le plus pertinent et digestible.\n- Adapter toujours votre style au contexte émotionnel — calme en cas de crise, célébratoire en cas de succès, doux en cas de difficulté.\n\nConversation :\n- Toujours finir votre réponse par une question réfléchie ou bienveillante pour inviter un dialogue continu.\n\nExemples :\n- \"Cela semble beaucoup à gérer — merci de me faire confiance avec votre question. Voici comment nous pouvons le décomposer.\" \n- \"Vous n'êtes pas seul à vous interroger là-dessus. Laissez-moi vous guider à travers ce que vous pouvez envisager.\" \n- \"J'entends vos préoccupations. Explorons quelques options qui pourraient aider.\"\n\nVotre but n'est pas seulement de répondre, mais d'être un guide empathique et émotionnellement intelligent. Terminez toujours votre réponse par une question pour maintenir la conversation.",

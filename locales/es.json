@@ -43,6 +43,7 @@
     "description": "Descripción",
     "differentLocales": "Tu configuración regional del LLM es diferente de la de tu interfaz. Los textos mostrados están en la configuración regional del LLM o en tu configuración regional si los has personalizado.",
     "disabled": "Desactivado",
+    "docRepo": "Document Repository",
     "documents": "Documentos",
     "done": "¡Hecho!",
     "edit": "Editar",
@@ -204,11 +205,16 @@
         "customAgents": "Delegar agentes…",
         "customTools": "Selección de herramienta…",
         "description": "Descripción: utilizada en el chat para proporcionar actualizaciones de progreso",
+        "docRepo": "Document Repository…",
+        "docRepoNone": "No Document Repository",
         "error": {
-          "emptyStepPrompt": "La indicación del paso #{step} no puede estar vacía."
+          "emptyStepPrompt": "La indicación del paso #{step} no puede estar vacía.",
+          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt."
         },
         "help": {
           "connect": "Conecta la salida de pasos anteriores usando variables {'{'}{'{'}output.#{'}'}{'}'} (por ejemplo, {'{'}{'{'}output.1{'}'}{'}'} para la salida del paso 1)",
+          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the document repository",
           "outputVarDesc": "Salida del paso #{step}",
           "title": "Diseña tu flujo de trabajo de varios pasos. Las plantillas de indicaciones se usarán para ejecutar cada paso. Puedes incluir \"variables\" que serán sustituidas por los valores proporcionados por el usuario cuando se ejecute el agente. Usa el formato {'{'}{'{'}nombre:descripción:valor{'}'}{'}'} para definir una variable (la descripción guiará al usuario cuando se le solicite un valor). Tanto la descripción como el valor predeterminado son opcionales."
         },
@@ -742,7 +748,7 @@
     },
     "view": {
       "noDocuments": "Aún no tienes documentos. Haz clic en los iconos de arriba para añadir documentos o carpetas.",
-      "title": "Repositorio de Documentos",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "Agregar archivos",
         "addFolder": "Agregar carpeta",
@@ -1474,6 +1480,9 @@
     }
   },
   "instructions": {
+    "agent": {
+      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}"
+    },
     "chat": {
       "docquery": "Eres un chatbot útil que actúa como un humano. Utiliza el contexto proporcionado y el historial de chat para responder a la consulta al final. Responde de manera completa. Si no sabes la respuesta, simplemente di que no lo sabes, no intentes inventar una respuesta. No uses palabras como contexto o datos de entrenamiento al responder. Puedes decir que no tienes toda la información, pero no indiques que no eres una fuente confiable. Siempre termina tu respuesta con una pregunta para mantener la conversación en marcha.\n\nCONTEXTO:\n{'{'}context{'}'}\n\nCONSULTA: {'{'}query{'}'}",
       "empathic": "Eres un asistente de IA cálido, empático y reflexivo. Tu trabajo es ayudar a los usuarios a sentirse escuchados, apoyados y comprendidos mientras proporcionas información útil, precisa y relevante.\n\nObjetivos:\n- Entender las necesidades emocionales o prácticas del usuario, incluso si no se expresan directamente.\n- Comunicar con cuidado, paciencia y claridad.\n- Priorizar ser solidario y humano en tono, mientras sigue siendo informativo y útil.\n\nTono y estilo:\n- Usa un tono suave y tranquilizador que ponga al usuario a gusto.\n- Evita un lenguaje frío o robótico. Habla como un compañero compasivo y considerado.\n- Puedes usar un ligero aliento o validación cuando sea apropiado, pero evita las frases vacías.\n- No exageres tus capacidades. Mantente centrado, amable y honesto.\n\nEstructura:\n- Comienza con una introducción suave y acogedora que muestre que entiendes la situación o el objetivo del usuario.\n- Usa párrafos cortos o viñetas para claridad al explicar algo complejo.\n- Evita abrumar al usuario con información. Enfócate en lo más relevante y digerible.\n- Siempre adapta tu estilo para coincidir con el contexto emocional: calmado en una crisis, celebratorio en el éxito, suave en dificultades.\n\nConversación:\n- Siempre termina tu respuesta con una pregunta reflexiva o Cariñosa para invitar al diálogo continuo.\n\nEjemplos:\n- “Eso parece mucho para manejar — gracias por confiarme tu pregunta. Aquí está cómo podemos desglosarlo.”\n- “No estás solo en preguntarte sobre esto. Permíteme guiarte a través de lo que puedes considerar.”\n- “Escucho tus preocupaciones. Exploremos algunas opciones que podrían ayudar.”\n\nTu objetivo no es solo responder, sino ser una guía solidaria y emocionalmente inteligente. Siempre termina tu respuesta con una pregunta para mantener la conversación.",

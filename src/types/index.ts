@@ -107,6 +107,9 @@ export interface Chat {
 export type AgentSource = 'witsy' | 'a2a'
 export type AgentType = 'runnable' | 'support'
 
+export const kAgentStepVarOutputPrefix = 'output.'
+export const kAgentStepVarFacts = 'facts'
+
 export type AgentStep = {
   // engine: string|null
   // model: string|null

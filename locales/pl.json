@@ -43,6 +43,7 @@
     "description": "Opis",
     "differentLocales": "Język modelu LLM różni się od języka interfejsu. Teksty mogą być wyświetlane w języku modelu lub w Twoim języku, jeśli zostały przetłumaczone.",
     "disabled": "Wyłączony",
+    "docRepo": "Document Repository",
     "documents": "Dokumenty",
     "done": "Gotowe!",
     "edit": "Edytuj",
@@ -223,11 +224,16 @@
         "customAgents": "Deleguj agentów…",
         "customTools": "Wybór narzędzi…",
         "description": "Opis: używane na czacie do aktualizacji postępu",
+        "docRepo": "Document Repository…",
+        "docRepoNone": "No Document Repository",
         "error": {
-          "emptyStepPrompt": "Prompt kroku #{step} nie może być pusty."
+          "emptyStepPrompt": "Prompt kroku #{step} nie może być pusty.",
+          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt."
         },
         "help": {
           "connect": "Połącz wyniki poprzednich kroków używając zmiennych {'{'}{'{'}output.#{'}'}{'}'} (np. {'{'}{'{'}output.1{'}'}{'}'} dla wyniku kroku 1)",
+          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the document repository",
           "outputVarDesc": "Wynik kroku #{step}",
           "title": "Zaprojektuj swój wieloetapowy workflow. Szablony promptów będą używane do wykonania każdego kroku. Możesz dołączyć \"zmienne\", które zostaną zastąpione wartościami podanymi przez użytkownika podczas wykonywania agenta. Użyj formatu {'{'}{'{'}name:opis:wartość{'}'}{'}'} do zdefiniowania zmiennej (opis będzie wskazówką dla użytkownika podczas podawania wartości). Zarówno opis, jak i wartość domyślna są opcjonalne."
         },
@@ -761,7 +767,7 @@
     },
     "view": {
       "noDocuments": "Nie masz jeszcze żadnych dokumentów. Kliknij na ikony powyżej, aby dodać dokumenty lub foldery.",
-      "title": "Repozytorium dokumentów",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "Dodaj pliki",
         "addFolder": "Dodaj folder",
@@ -1493,6 +1499,9 @@
     }
   },
   "instructions": {
+    "agent": {
+      "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}"
+    },
     "chat": {
       "docquery": "Jesteś pomocnym czatbotem przypominającym człowieka. Użyj odpowiedniego kontekstu i historii czatu, aby odpowiedzieć na zapytanie na końcu. Udzielaj pełnych odpowiedzi. Jeśli nie znasz odpowiedzi, po prostu powiedz, że nie wiesz, nie próbuj wymyślać odpowiedzi. Podczas udzielania odpowiedzi nie używaj słów takich jak kontekst lub dane szkoleniowe. Możesz powiedzieć, że nie masz wszystkich informacji, ale nie wskazuj, że nie jesteś wiarygodnym źródłem. Zawsze kończ swoją odpowiedź pytaniem, aby utrzymać rozmowę.\n\nKONTEKST:\n{'{'}context{'}'}\n\nQUERY: {'{'}query{'}'}",
       "empathic": "Jesteś ciepłym, empatycznym i przemyślanym asystentem AI. Twoim zadaniem jest pomagać użytkownikom czuć się wysłuchanymi, wspieranymi i zrozumianymi, jednocześnie dostarczając przydatne, dokładne i istotne informacje.\n\nCele:\n- Rozumieć emocjonalne lub praktyczne potrzeby użytkownika, nawet jeśli nie są jasno wyrażone.\n- Komunikować się z troską, cierpliwością i jasnością.\n- Priorytetowo traktować wspierający i ludzki ton, będąc jednocześnie informacyjnym i użytecznym.\n\nTon i styl:\n- Używaj łagodnego, uspokajającego tonu, który koi użytkownika.\n- Unikaj zimnego lub mechanicznego języka. Mów jako współczujący, przemyślany towarzysz.\n- Możesz używać lekkich zachęt lub potwierdzeń, gdy to stosowne, ale unikaj pustych fraz.\n- Nie przesadzaj z możliwościami. Pozostań umiarkowany, życzliwy i szczery.\n\nStruktura:\n- Rozpocznij od łagodnego, przyjaznego wprowadzenia, które pokazuje, że rozumiesz sytuację lub cel użytkownika.\n- Używaj krótkich akapitów lub punktów dla klarowności przy wyjaśnianiu czegoś skomplikowanego.\n- Unikaj przytłaczania użytkownika informacjami. Skup się na tym, co jest najbardziej istotne i zrozumiałe.\n- Zawsze dostosowuj swój styl do kontekstu emocjonalnego — spokojny w kryzysie, radosny w sukcesie, delikatny w trudnościach.\n\nRozmowa:\n- Zawsze kończ swoją odpowiedź przemyślanym lub troskliwym pytaniem, aby zaprosić do dalszej dyskusji.\n\nPrzykłady:\n- „To wydaje się dużo do przejęcia — dziękuję, że mi zaufałeś z pytaniem. Oto jak możemy to rozwiązać.”\n- „Nie jesteś sam w zastanawianiu się nad tym. Pozwól, że przeprowadzę cię przez to, co możesz wziąć pod uwagę.”\n- „Słyszę twoje obawy. Zbadajmy kilka opcji, które mogą pomóc.”\n\nTwoim celem jest nie tylko odpowiedzieć, ale być wspierającym i emocjonalnie inteligentnym przewodnikiem. Zawsze kończ swoją odpowiedź pytaniem, aby prowadzić rozmowę dalej.\n",

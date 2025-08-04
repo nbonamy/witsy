@@ -23,6 +23,7 @@
               <label for="prompt">{{ t('common.prompt') }}</label>
               <textarea v-model="agent.steps[index].prompt"></textarea>
               <div class="help" v-if="index > 0">{{ t('agent.create.workflow.help.connect') }}</div>
+              <div class="help" v-if="step.docrepo">{{ t('agent.create.workflow.help.docRepo') }}</div>
             </div>
             <div class="form-field" v-if="promptInputs(index).length">
               <label for="prompt">{{ t('agent.create.information.promptInputs') }}</label>
@@ -40,8 +41,9 @@
               </table>
             </div>
             <div class="step-actions">
-              <button class="tools" @click="onToolsStep(index)">{{ t('agent.create.workflow.customTools') }}</button>
-              <button class="agents" @click="onAgentsStep(index)">{{ t('agent.create.workflow.customAgents') }}</button>
+              <button class="docrepo" @click="onDocRepo(index)">{{ t('agent.create.workflow.docRepo') }}</button>
+              <button class="tools" @click="onTools(index)">{{ t('agent.create.workflow.customTools') }}</button>
+              <button class="agents" @click="onAgents(index)">{{ t('agent.create.workflow.customAgents') }}</button>
             </div>
           </div>
         </div>
@@ -55,11 +57,12 @@
     </template>
   </WizardStep>
 
-  <ToolSelector ref="toolSelector" :tools="currentStepTools" @save="onSaveStepTools" />
-  <AgentSelector ref="agentSelector" :exclude-agent-id="agent.uuid" @save="onSaveStepAgents" />
+  <ToolSelector ref="toolSelector" :tools="currentStepTools" @save="onSaveTools" />
+  <AgentSelector ref="agentSelector" :exclude-agent-id="agent.uuid" @save="onSaveAgents" />
 </template>
 
 <script setup lang="ts">
+import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from '../types/index'
 import { ref, watch, computed, PropType } from 'vue'
 import { t } from '../services/i18n'
 import { extractPromptInputs } from '../services/prompt'
@@ -105,8 +108,11 @@ watch(() => props.expandedStep, (newValue) => {
 
 const promptInputs = (step: number) => {
   return extractPromptInputs(props.agent.steps[step].prompt).map((input) => {
-    if (input.name.startsWith('output.')) {
+    if (input.name.startsWith(kAgentStepVarOutputPrefix)) {
       input.description = t('agent.create.workflow.help.outputVarDesc', { step: input.name.split('.')[1] })
+    }
+    if (input.name === kAgentStepVarFacts) {
+      input.description = t('agent.create.workflow.help.factsVarDesc')
     }
     return input
   })
@@ -119,7 +125,7 @@ const toggleStepExpansion = (index: number) => {
 
 const onAddStep = (index: number) => {
   props.agent.steps.push({
-    prompt: `{{output.${index-1}}}`,
+    prompt: `{{${kAgentStepVarOutputPrefix}${index-1}}}`,
     tools: [],
     agents: [],
   })
@@ -127,23 +133,61 @@ const onAddStep = (index: number) => {
   emit('update:expanded-step', expandedStep.value)
 }
 
-const onToolsStep = (index: number) => {
+const onDocRepo = async (index: number) => {
+
+  // get the list of doc repositories
+  const docRepos = window.api.docrepo.list()
+
+  const rc = await Dialog.show({
+    title: t('common.docRepo'),
+    input: 'select',
+    inputOptions: {
+      'none': t('agent.create.workflow.docRepoNone'),
+      ...docRepos.reduce((acc, repo) => {
+        acc[repo.uuid] = repo.name
+        return acc
+      }, {} as Record<string, any>),
+    },
+    inputValue: props.agent.steps[index].docrepo || 'none',
+    showCancelButton: true,
+  })
+
+  // save
+  if (rc.isConfirmed) {
+    props.agent.steps[index].docrepo = rc.value === 'none' ? undefined : rc.value
+
+    // // update prompt
+    // if (props.agent.steps[index].docrepo) {
+    //   if (!(props.agent.steps[index].prompt?.length)) {
+    //     props.agent.steps[index].prompt = `{{${kAgentStepVarFacts}}}`
+    //   } else if (!props.agent.steps[index].prompt.includes(`{{${kAgentStepVarFacts}}}`)) {
+    //     props.agent.steps[index].prompt += `\n\n{{${kAgentStepVarFacts}}}`
+    //   }
+    // } else if (props.agent.steps[index].prompt) {
+    //   props.agent.steps[index].prompt = props.agent.steps[index].prompt.replaceAll(`{{${kAgentStepVarFacts}}}`, '')
+    // }
+
+  }
+
+}
+
+const onTools = (index: number) => {
   expandedStep.value = index
   emit('update:expanded-step', expandedStep.value)
   toolSelector.value?.show(props.agent.steps[index].tools)
 }
 
-const onSaveStepTools = (tools: string[]) => {
+const onSaveTools = (tools: string[]) => {
   props.agent.steps[expandedStep.value].tools = tools
 }
 
-const onAgentsStep = (index: number) => {
+const onAgents = (index: number) => {
   expandedStep.value = index
   emit('update:expanded-step', expandedStep.value)
   agentSelector.value?.show(props.agent.steps[index].agents)
 }
 
-const onSaveStepAgents = (agents: string[]) => {
+const onSaveAgents = (agents: string[]) => {
   props.agent.steps[expandedStep.value].agents = agents
 }
 
@@ -159,15 +203,26 @@ const onDeleteStep = async (index: number) => {
 }
 
 const onNext = () => {
-  // constraints on the workflow
+
+  // all steps after one must have a prompt
   if (props.agent.steps.length > 1) {
     for (let i = 1; i < props.agent.steps.length; i++) {
-      if (!props.agent.steps[i].prompt.trim().length) {
+      const step = props.agent.steps[i]
+      if (props.agent.steps.length > 1 && !step.prompt.trim().length) {
         emit('next', { error: t('agent.create.workflow.error.emptyStepPrompt', { step: i + 1 }) })
         return
       }
     }
   }
+
+  // // now check individual steps
+  // for (let i = 0; i < props.agent.steps.length; i++) {
+  //   const step = props.agent.steps[i]
+  //   if (step.docrepo && !step.prompt?.includes(kAgentStepVarFacts)) {
+  //     emit('next', { error: t('agent.create.workflow.error.missingDocRepo', { step: i + 1 }) })
+  //     return
+  //   }
+  // }
 
   emit('next')
 }
