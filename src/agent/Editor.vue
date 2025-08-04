@@ -473,6 +473,7 @@ const onAddStep = (index: number) => {
     tools: [],
     agents: [],
   })
+  expandedStep.value = index-1
 }
 
 const onToolsStep = (index: number) => {
