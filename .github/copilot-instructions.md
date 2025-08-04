@@ -28,7 +28,7 @@ Tests should be written or updated as soon as possible and kept passing before m
 
 Linting can be done with `npm run lint`, which will also check for Vue type errors. It is mandatory to run this command before running tests to ensure code quality. When this command produces no output, it means that the code is properly formatted and does not contain any linting errors.
 
-Tests can be run using `npm test --run` followed by the test name or path. Don't forget the `--run` flag to execute the tests, otherwise the test runner will not stop and wait for user input.
+Tests can be run using `npm test -- --run` followed by the test name or path. Don't forget the `-- --run` flags to execute the tests, otherwise the test runner will not stop and wait for user input.
 
 Never run end-to-end tests during your process.
 Never try to build the application during your process.
