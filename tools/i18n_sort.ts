@@ -101,9 +101,12 @@ export function sortLocales(): void {
     process.exit(1)
   }
 
-  console.log(`Sorting JSON files in ${localesDir}`)
+  console.log(`⏭️ Sorting JSON files in ${localesDir}`)
   processDirectory(localesDir)
-  console.log('Done!')
+  console.log('✅ Done!')
 }
 
-sortLocales()
+// If this file is run directly (not imported), execute sortLocales
+if (require.main === module) {
+  sortLocales()
+}
