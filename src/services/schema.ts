@@ -1,7 +1,14 @@
-import { z } from 'zod'
+import { z, ZodType } from 'zod'
 import { AgentStepStructuredOutput } from '../types/index'
 
-export const parseSimpleFormatToZod = (structure: any): any => {
+export const parseSimpleFormatToZod = (structure: any): ZodType => {
+
+  // when we a get type object return its type
+  if (typeof structure === 'object' && Object.keys(structure ?? {}).includes('type')) {
+    if (structure['type'] !== 'object') {
+      return parseSimpleFormatToZod(structure['type'])
+    }
+  }
 
   // simple types
   if (typeof structure === 'string') {
@@ -27,11 +34,20 @@ export const parseSimpleFormatToZod = (structure: any): any => {
 
   // object
   if (typeof structure === 'object' && structure !== null) {
-    const zodObject: Record<string, any> = {}
+    
+    const zodObject: Record<string, ZodType> = {}
     for (const [key, value] of Object.entries(structure)) {
       zodObject[key] = parseSimpleFormatToZod(value)
     }
+
+    // if formal spec
+    if (Object.keys(zodObject).includes('type') && Object.keys(zodObject).includes('properties')) {
+      return zodObject['properties']
+    }
+
+    // default
     return z.object(zodObject)
+
   }
   
   // default
