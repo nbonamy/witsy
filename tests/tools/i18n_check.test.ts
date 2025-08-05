@@ -3,6 +3,9 @@ import { describe, test, expect, vi, beforeEach, beforeAll } from 'vitest'
 import fs from 'fs'
 import glob from 'glob'
 
+// fake api key for 18n_check translation
+process.env.API_KEY = 'apiKey'
+
 // Mock fs and glob to redirect to test fixtures
 vi.mock('fs')
 vi.mock('glob')
