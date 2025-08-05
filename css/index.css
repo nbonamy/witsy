@@ -591,6 +591,12 @@ button.destructive {
   color: red;
 }
 
+.button-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .button-group button {
   cursor: pointer;
   border-left: none;
