@@ -21,7 +21,7 @@
         <div class="lwa-list">
           <template v-for="app in triggerApps" :key="app.identifier">
           <div :class="{ item: true, selected: app.identifier == selectedApp?.identifier }" @click="selectApp(app)">
-            <img class="icon" :src="iconData(app)" />
+            <img class="icon" :src="iconData(app)" v-if="icons[app.identifier]" />
             <div class="name">{{ app.name }}</div>
           </div>
         </template>

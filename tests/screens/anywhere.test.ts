@@ -111,6 +111,14 @@ test('Initalizes Expert', async () => {
   expect((wrapper.findComponent(Prompt).vm as unknown as typeof Prompt).expert).toStrictEqual(store.experts[2])
 })
 
+test('Does not initalizes expert when disabled', async () => {
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  store.experts[2].state = 'disabled'
+  wrapper.vm.onShow({ sourceApp: { id: 'app' } })
+  await wrapper.vm.$nextTick()
+  expect((wrapper.findComponent(Prompt).vm as unknown as typeof Prompt).expert).toBeFalsy()
+})
+
 test('Changes engine model', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.onShow()

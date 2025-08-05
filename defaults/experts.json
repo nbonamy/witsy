@@ -125,14 +125,17 @@
     "state": "enabled",
     "triggerApps": [
       {
+        "name": "iTerm2",
         "identifier": "com.googlecode.iterm2",
         "icon": "/Applications/iTerm.app/Contents/Resources/AppIcon.icns"
       },
       {
+        "name": "Terminal",
         "identifier": "com.apple.Terminal",
         "icon": "/System/Applications/Utilities/Terminal.app/Contents/Resources/Terminal.icns"
       },
       {
+        "name": "Ghostty",
         "identifier": "com.mitchellh.ghostty",
         "icon": "/Applications/Ghostty.app/Contents/Resources/AppIcon.icns"
       }

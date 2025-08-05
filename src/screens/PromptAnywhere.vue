@@ -169,7 +169,7 @@ const processQueryParams = (params?: anyDict) => {
   // auto-select expert
   if (params?.sourceApp) {
     for (const expert of store.experts) {
-      if (expert.triggerApps?.find((app) => app.identifier == params.sourceApp.id)) {
+      if (expert.state === 'enabled' && expert.triggerApps?.find((app) => app.identifier == params.sourceApp.id)) {
         console.log(`Triggered on ${params.sourceApp.id}: filling prompt with expert ${expert.name}`)
         userExpert = expert
         break
