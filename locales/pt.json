@@ -241,7 +241,7 @@
         "step": "Etapa #{step}",
         "stepFull": "Etapa #{step}: {text}",
         "structuredOutput": {
-          "text": "Especifique um <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\">esquema JSON simples</a> para definir a saída esperada desta etapa.",
+          "text": "Especifique um <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\">esquema JSON simples</a> para definir o formato de saída esperado desta etapa.",
           "title": "Esquema JSON"
         },
         "title": "Fluxo de trabalho"

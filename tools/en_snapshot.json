@@ -195,7 +195,7 @@
   "agent.create.workflow.jsonSchema": "JSON…",
   "agent.create.workflow.step": "Step #{step}",
   "agent.create.workflow.stepFull": "Step #{step}: {text}",
-  "agent.create.workflow.structuredOutput.text": "Specify a <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\">simple JSON schema</a> to define the expected output of this step.",
+  "agent.create.workflow.structuredOutput.text": "Specify a <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\">simple JSON schema</a> to define the expected output format of this step.",
   "agent.create.workflow.structuredOutput.title": "JSON Schema",
   "agent.create.workflow.title": "Workflow",
   "agent.description": "@:{'common.description'}",
