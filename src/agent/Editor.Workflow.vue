@@ -41,10 +41,10 @@
               </table>
             </div>
             <div class="step-actions">
-              <button class="docrepo" @click="onDocRepo(index)"><BIconDatabase /> {{ t('agent.create.workflow.docRepo') }}</button>
-              <button class="tools" @click="onTools(index)"><BIconTools /> {{ t('agent.create.workflow.customTools') }}</button>
-              <button class="agents" @click="onAgents(index)"><BIconRobot /> {{ t('agent.create.workflow.customAgents') }}</button>
-              <button class="structured-output" @click="onStructuredOutput(index)"><BIconFiletypeJson /> {{ t('agent.create.workflow.jsonSchema') }}</button>
+              <button class="with-icon docrepo" @click="onDocRepo(index)"><BIconDatabase /> {{ t('agent.create.workflow.docRepo') }}</button>
+              <button class="with-icon tools" @click="onTools(index)"><BIconTools /> {{ t('agent.create.workflow.customTools') }}</button>
+              <button class="with-icon agents" @click="onAgents(index)"><BIconRobot /> {{ t('agent.create.workflow.customAgents') }}</button>
+              <button class="with-icon structured-output" @click="onStructuredOutput(index)"><BIconFiletypeJson /> {{ t('agent.create.workflow.jsonSchema') }}</button>
             </div>
           </div>
         </div>
