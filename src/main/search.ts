@@ -1,5 +1,10 @@
 
 import { BrowserWindow } from 'electron'
+import { getTextContent } from './text'
+import { deleteFile } from './file'
+import * as fs from 'fs'
+import * as path from 'path'
+import * as os from 'os'
 
 const grabGoogleResults = `
   const results = []
@@ -112,14 +117,88 @@ export default class LocalSearch {
       // open a new window
       const win = this.openHiddenWindow()
 
-      // get ready to grab the contents
+      // flag to track if we've already resolved
+      let hasResolved = false
+      
+      // handle downloads (for file URLs)
+      win.webContents.session.on('will-download', (event, item) => {
+        
+        // only handle if not already resolved
+        if (hasResolved) {
+          event.preventDefault()
+          return
+        }
+        
+        // we don't want to reuse tempPath
+        // use item/getSavePath() to ensure unique temp file
+        const tempPath = path.join(os.tmpdir(), `witsy-${crypto.randomUUID()}.tmp`)
+        item.setSavePath(tempPath)
+        
+        // handle download completion
+        item.once('done', async (event, state) => {
+
+          try {
+          
+            // only one resolve
+            if (hasResolved) {
+              deleteFile(item.getSavePath())
+              return
+            }
+
+            if (state === 'completed') {
+
+              // mark as resolved
+              hasResolved = true
+
+              // for an unkown reason we sometimes received two 'done'/'completed' events
+              if (!fs.existsSync(item.getSavePath())) {
+                return
+              }
+
+              try {
+                const content = fs.readFileSync(item.getSavePath(), 'base64')
+                const text = await getTextContent(content, item.getMimeType().split('/')[1])
+                resolve({ url, title: item.getFilename(), content: text })
+                deleteFile(item.getSavePath())
+              } catch (e) {
+                console.error(`[search] error reading downloaded file ${item.getSavePath()}: ${e}`)
+                hasResolved = true
+                reject(e)
+                deleteFile(item.getSavePath())
+              }
+            
+            } else if (state === 'cancelled') {
+
+              hasResolved = true
+              reject(new Error(`Download failed with state: ${state}`))
+              deleteFile(item.getSavePath())
+            }
+            
+
+          } finally {
+
+            this.tryCloseWindow(win)
+
+          }
+
+        })
+      })
+
+      // get ready to grab the contents (for regular HTML pages)
       win.webContents.on('dom-ready', async () => {
+        
+        // only one resolve
+        if (hasResolved) {
+          return
+        }
         
         try {
           const title = await win.webContents.executeJavaScript(`document.title`)
           const html = await win.webContents.executeJavaScript(`document.body.outerHTML`)
+          hasResolved = true
           resolve({ url, title, content: html })
         } catch (e) {
+          hasResolved = true
           reject(e)
         } finally {
           this.tryCloseWindow(win)
@@ -128,9 +207,20 @@ export default class LocalSearch {
 
       //  catch errors
       win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
-        console.error(`[search] failed to load ${url}: ${errorDescription} (${errorCode})`)
-        this.tryCloseWindow(win)
-        reject(new Error(errorDescription))
+
+        // only one resolve
+        if (hasResolved) {
+          return
+        }
+
+        try {
+          console.error(`[search] failed to load ${url}: ${errorDescription} (${errorCode})`)
+          hasResolved = true
+          reject(new Error(errorDescription))
+        } finally {
+          this.tryCloseWindow(win)
+        }
+        
       })
 
       // now load
@@ -155,9 +245,13 @@ export default class LocalSearch {
         nodeIntegration: false,
         contextIsolation: true,
         sandbox: true,
-        autoplayPolicy: 'user-gesture-required'
+        autoplayPolicy: 'user-gesture-required',
+        disableDialogs: true,
       },
     })
+
+    // prevent memory leaks
+    win.webContents.setMaxListeners(20)
 
     // done
     return win

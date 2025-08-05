@@ -311,7 +311,7 @@ export const installIpc = (
   });
 
   ipcMain.on(IPC.FILE.DELETE_FILE, (event, payload) => {
-    event.returnValue = file.deleteFile(app, payload);
+    event.returnValue = file.deleteFile(payload);
   });
 
   ipcMain.on(IPC.FILE.PICK_FILE, (event, payload) => {

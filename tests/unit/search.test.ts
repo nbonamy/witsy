@@ -5,6 +5,10 @@ import LocalSearch from '../../src/main/search'
 vi.mock('electron', async () => {
   const BrowserWindow = vi.fn(function() {
     this.webContents = {
+      setMaxListeners: vi.fn(),
+      session: {
+        on: vi.fn(),
+      },
       on: vi.fn((signal, callback) => {
         if (signal === 'dom-ready' || signal === 'did-finish-load') {
           callback()
