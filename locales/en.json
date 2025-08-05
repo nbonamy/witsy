@@ -172,7 +172,6 @@
     "voice": "Voice",
     "warning": "Warning",
     "wizard": {
-      "last": "Done",
       "next": "Next",
       "prev": "Back"
     },
