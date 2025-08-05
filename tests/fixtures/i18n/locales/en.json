@@ -1,0 +1,10 @@
+{
+  "unused_key": "This key is not used anywhere",
+  "wrong_linked": "@:{'common.ok'}",
+  "changed_english": "New English text",
+  "missing_key": "This key exists in English but not in French",
+  "normal_key": "This is a normal key",
+  "common": {
+    "ok": "OK"
+  }
+}
