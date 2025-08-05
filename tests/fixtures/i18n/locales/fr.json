@@ -1,0 +1,9 @@
+{
+  "unused_key": "Cette clé n'est utilisée nulle part",
+  "wrong_linked": "Valeur incorrecte au lieu de @:{'common.ok'}",
+  "changed_english": "Ancien texte français",
+  "normal_key": "Ceci est une clé normale",
+  "common": {
+    "ok": "D'accord"
+  }
+}

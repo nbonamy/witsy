@@ -44,7 +44,6 @@ const LINKED_TRANSLATION_MARKER = '@:{'
 
 // Parse command line arguments
 const args = process.argv.slice(2)
-const shouldFix = args.includes('--fix')
 const shouldDelete = !args.includes('--no-delete')
 
 // Helper types
@@ -483,8 +482,8 @@ async function getCandidatesForTranslation(unusedKeys: Set<string>): Promise<{
     }
 
     return {
-      keyUsages,
       locales,
+      keyUsages,
       candidateKeys,
       keysNeedingEnglish,
       keysWithChangedEnglish,
@@ -497,52 +496,33 @@ async function getCandidatesForTranslation(unusedKeys: Set<string>): Promise<{
   }
 }
 
-// Function to delete candidates for deletion
-async function deleteCandidatesForDeletion(unusedKeys: Set<string>): Promise<void> {
+// Function to delete candidates for deletion (in-memory only)
+function deleteCandidatesForDeletion(locales: { [locale: string]: LocaleData }, unusedKeys: Set<string>): void {
   if (unusedKeys.size === 0) {
     console.log('\n✅ No unused keys to delete.')
     return
   }
 
-  try {
-    // Get all locale files
-    const localeFiles = fs.readdirSync(LOCALES_DIR)
-      .filter(file => file.endsWith('.json'))
-      .map(file => path.join(LOCALES_DIR, file))
+  // Process each locale in memory
+  Object.keys(locales).forEach(localeName => {
+    const localeData = locales[localeName]
+    const flattenData = flatten(localeData)
+    const allKeys = Object.keys(flattenData)
 
-    // Load and process each locale file
-    for (const file of localeFiles) {
-      const localeName = path.basename(file, '.json')
-      const localeData = JSON.parse(fs.readFileSync(file, 'utf8'))
-      const flattenData = flatten(localeData)
-      const allKeys = Object.keys(flattenData)
+    // Find unused keys in this locale
+    const fileUnusedKeys = allKeys.filter(key => unusedKeys.has(key))
 
-      // Find unused keys in this locale file
-      const fileUnusedKeys = allKeys.filter(key => unusedKeys.has(key))
+    if (fileUnusedKeys.length > 0) {
+      console.log(`\n🔧 Removing ${fileUnusedKeys.length} unused keys from "${localeName}"...`)
 
-      if (fileUnusedKeys.length > 0) {
-        console.log(`\n🔧 Removing ${fileUnusedKeys.length} unused keys from "${localeName}"...`)
-
-        const updatedLocaleData = JSON.parse(JSON.stringify(localeData))
-        fileUnusedKeys.forEach(key => {
-          removeNestedKey(updatedLocaleData, key)
-          console.log(`  - Removed "${key}"`)
-        })
-
-        // Save the updated locale file
-        fs.writeFileSync(
-          file,
-          JSON.stringify(updatedLocaleData, null, 2) + '\n',
-          'utf8'
-        )
-      }
+      fileUnusedKeys.forEach(key => {
+        removeNestedKey(localeData, key)
+        console.log(`  - Removed "${key}"`)
+      })
     }
+  })
 
-    console.log('\n✅ Removed all unused translation keys.')
-  } catch (error) {
-    console.error('Error deleting unused translations:', error)
-    process.exit(1)
-  }
+  console.log('\n✅ Removed all unused translation keys.')
 }
 
 // Function to translate candidates for translation
@@ -601,13 +581,6 @@ async function translateCandidatesForTranslation(
         setNestedValue(locales[locale], key, translatedText);
         console.log(`  + Added "${key}" = "${translatedText}"`);
       });
-      
-      // Save the updated locale file
-      fs.writeFileSync(
-        path.join(LOCALES_DIR, `${locale}.json`),
-        JSON.stringify(locales[locale], null, 2) + '\n',
-        'utf8'
-      );
     }
   }
 
@@ -783,15 +756,12 @@ async function reportMissingTranslations(
 }
 
 // Function to get wrong linked translations data
-function getWrongLinkedTranslations(): {
+function getWrongLinkedTranslations(locales: { [locale: string]: LocaleData }): {
   enData: Record<string, string>
   linkedKeys: string[]
   wrongLinkedTranslations: Array<{locale: string, keys: string[]}>
 } {
-  // load en locale
-  const enLocalePath = path.join(LOCALES_DIR, 'en.json')
-  const enLocale = JSON.parse(fs.readFileSync(enLocalePath, 'utf8'))
-  const enData = flatten(enLocale)
+  const enData = flatten(locales.en)
 
   // get linked translations
   const linkedKeys: string[] = []
@@ -801,21 +771,15 @@ function getWrongLinkedTranslations(): {
     }
   })
 
-  // Get all locale files
-  const localeFiles = fs.readdirSync(LOCALES_DIR)
-    .filter(file => file.endsWith('.json'))
-    .map(file => path.join(LOCALES_DIR, file))
-
   const wrongLinkedTranslations: Array<{locale: string, keys: string[]}> = []
 
-  // Load and process each locale file
-  for (const file of localeFiles) {
-    const localeName = path.basename(file, '.json')
+  // Process each locale in memory
+  Object.keys(locales).forEach(localeName => {
     if (localeName === 'en') {
-      continue
+      return
     }
-    const localeData = JSON.parse(fs.readFileSync(file, 'utf8'))
-    const flattenedLocaleData = flatten(localeData)
+    
+    const flattenedLocaleData = flatten(locales[localeName])
 
     const wrongLinkedKeys = linkedKeys.filter(key => {
       const value = flattenedLocaleData[key]
@@ -825,7 +789,7 @@ function getWrongLinkedTranslations(): {
     if (wrongLinkedKeys.length > 0) {
       wrongLinkedTranslations.push({locale: localeName, keys: wrongLinkedKeys})
     }
-  }
+  })
 
   return { enData, linkedKeys, wrongLinkedTranslations }
 }
@@ -870,11 +834,12 @@ async function reportWrongLinkedTranslations(wrongLinkedTranslations: Array<{loc
   return badLocales.length > 0
 }
 
-// Function to fix wrong linked translations
-async function fixWrongLinkedTranslations(
+// Function to fix wrong linked translations (in-memory only)
+function fixWrongLinkedTranslations(
+  locales: { [locale: string]: LocaleData },
   enData: Record<string, string>,
   wrongLinkedTranslations: Array<{locale: string, keys: string[]}>
-): Promise<void> {
+): void {
   if (wrongLinkedTranslations.length === 0) {
     console.log('\n✅ No wrong linked translations to fix.')
     return
@@ -883,53 +848,62 @@ async function fixWrongLinkedTranslations(
   for (const wlt of wrongLinkedTranslations) {
     console.log(`\n🔧 Fixing ${wlt.keys.length} wrong linked translations in "${wlt.locale}"...`)
     
-    const filePath = path.join(LOCALES_DIR, `${wlt.locale}.json`)
-    const localeData = JSON.parse(fs.readFileSync(filePath, 'utf8'))
+    const localeData = locales[wlt.locale]
     
     wlt.keys.forEach(key => {
       setNestedValue(localeData, key, enData[key])
       console.log(`  - Fixed "${key}" with "${enData[key]}"`)
     })
-
-    // Save the updated locale file
-    fs.writeFileSync(filePath, JSON.stringify(localeData, null, 2) + '\n', 'utf8')
   }
 
   console.log('\n✅ Fixed all wrong linked translations.')
 }
 
-
+// Function to save all locale files
+function saveLocaleFiles(locales: { [locale: string]: LocaleData }): void {
+  Object.keys(locales).forEach(localeName => {
+    const filePath = path.join(LOCALES_DIR, `${localeName}.json`)
+    fs.writeFileSync(
+      filePath,
+      JSON.stringify(locales[localeName], null, 2) + '\n',
+      'utf8'
+    )
+  })
+}
 
 // Main execution function
-(async () => {
+export async function i18n_check(shouldFix: boolean = args.includes('--fix')) {
   
   // Step 1: Identify candidates for deletion (unused keys)
   const candidatesForDeletion = shouldDelete ? await getCandidatesForDeletion() : new Set<string>()
   
-  // Step 2: Identify candidates for translation
-  const { keyUsages, locales, keysNeedingEnglish, keysWithChangedEnglish, missingTranslations } = await getCandidatesForTranslation(candidatesForDeletion)
+  // Step 2: Load all locales once and identify candidates for translation
+  const { locales, keyUsages, keysNeedingEnglish, keysWithChangedEnglish, missingTranslations } = await getCandidatesForTranslation(candidatesForDeletion)
   
   // Step 3: Get wrong linked translations data
-  const { enData, wrongLinkedTranslations } = getWrongLinkedTranslations()
+  const { enData, wrongLinkedTranslations } = getWrongLinkedTranslations(locales)
   
   if (shouldFix) {
     
-    // Step 4: When --fix: delete candidates for deletion first
+    // Step 4: When --fix: delete candidates for deletion first (in-memory)
     if (shouldDelete && candidatesForDeletion.size > 0) {
-      await deleteCandidatesForDeletion(candidatesForDeletion)
+      deleteCandidatesForDeletion(locales, candidatesForDeletion)
     }
     
-    // Step 5: When --fix: fix wrong linked translations
-    await fixWrongLinkedTranslations(enData, wrongLinkedTranslations)
+    // Step 5: When --fix: fix wrong linked translations (in-memory)
+    fixWrongLinkedTranslations(locales, enData, wrongLinkedTranslations)
     
-    // Step 6: When --fix: translate candidates for translation in each language
+    // Step 6: When --fix: translate candidates for translation in each language (in-memory)
     await translateCandidatesForTranslation(locales, missingTranslations)
     
-    // Step 7: When --fix: update English snapshot
+    // Step 7: Save all modified locale files to disk
+    saveLocaleFiles(locales)
+    
+    // Step 8: When --fix: update English snapshot
     const currentEnData = flatten(locales.en)
     updateEnglishSnapshot(currentEnData)
     
-    // Step 8: When --fix: sort files after all operations
+    // Step 9: When --fix: sort files after all operations
     sortLocales()
 
   } else {
@@ -946,4 +920,9 @@ async function fixWrongLinkedTranslations(
     }
   }
 
-})()
+}
+
+// Only run main function if this file is executed directly (not imported for testing)
+if (require.main === module) {
+  i18n_check().catch(console.error)
+}
