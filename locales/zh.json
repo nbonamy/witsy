@@ -241,7 +241,7 @@
         "step": "步骤 #{step}",
         "stepFull": "步骤 #{step}：{text}",
         "structuredOutput": {
-          "text": "指定一个<a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\">简单的 JSON 模式</a>来定义此步骤的预期输出。",
+          "text": "指定一个<a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\">简单的JSON模式</a>来定义此步骤的预期输出格式。",
           "title": "JSON schema"
         },
         "title": "工作流"

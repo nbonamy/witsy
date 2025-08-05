@@ -241,7 +241,7 @@
         "step": "Step #{step}",
         "stepFull": "Step #{step}: {text}",
         "structuredOutput": {
-          "text": "Specify a <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\">simple JSON schema</a> to define the expected output of this step.",
+          "text": "Specify a <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\">simple JSON schema</a> to define the expected output format of this step.",
           "title": "JSON Schema"
         },
         "title": "Workflow"
