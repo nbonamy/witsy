@@ -242,7 +242,7 @@
         "step": "ステップ#{step}",
         "stepFull": "ステップ#{step}: {text}",
         "structuredOutput": {
-          "text": "このステップの期待される出力を定義するための簡単なJSONスキーマを指定してください。",
+          "text": "このステップの期待される出力を定義するために、<a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\">シンプルなJSONスキーマ</a>を指定してください。",
           "title": "JSONスキーマ"
         },
         "title": "ワークフロー"

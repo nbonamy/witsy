@@ -197,7 +197,7 @@ const onStructuredOutput = async (index: number) => {
   
   const rc = await Dialog.show({
     title: t('agent.create.workflow.structuredOutput.title'),
-    text: t('agent.create.workflow.structuredOutput.text'),
+    html: t('agent.create.workflow.structuredOutput.text'),
     input: 'textarea',
     inputValue: props.agent.steps[index].jsonSchema,
     showCancelButton: true,
