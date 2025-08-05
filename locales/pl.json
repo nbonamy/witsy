@@ -242,7 +242,7 @@
         "step": "Krok #{step}",
         "stepFull": "Krok #{step}: {text}",
         "structuredOutput": {
-          "text": "Określ prosty schemat JSON, aby zdefiniować oczekiwany wynik tego kroku.",
+          "text": "Określ <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\">prosty schemat JSON</a>, aby zdefiniować oczekiwany wynik tego kroku.",
           "title": "Schemat JSON"
         },
         "title": "Przepływ pracy"
