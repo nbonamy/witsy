@@ -26,10 +26,6 @@
             <BIconCpu class="logo" /> {{ t('agent.create.llm.title') }}
           </div>
 
-          <!-- <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepSettings), disabled: !isStepCompleted(kStepSettings) }" @click="onStepClick(kStepSettings)">
-            <BIconSliders class="logo" /> {{ t('agent.create.settings') }}
-          </div> -->
-
           <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepWorkflow), disabled: !isStepCompleted(kStepWorkflow) }" @click="onStepClick(kStepWorkflow)" v-if="hasStep(kStepWorkflow)">
             <BIconDiagram2 class="logo scale120" /> {{ t('agent.create.workflow.title') }}
           </div>
@@ -101,18 +97,6 @@
           @prev="onPrevStep" 
           @next="validateInvocation" 
         />
-
-        <!-- <template v-slot:footer="wizardProps">
-          <div class="wizard-footer-left">
-            <button @click.prevent="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
-            <button v-if="props.mode == 'edit'" @click.prevent="save" class="alert-confirm">{{ t('common.save') }}</button>
-          </div>
-          <div class="wizard-footer-right">
-            <button v-if="wizardProps.activeTabIndex > 0" @click.prevent="wizardProps.prevTab()">{{ t('common.wizard.prev') }}</button>
-            <button v-if="!wizardProps.isLastStep" @click.prevent="wizardProps.nextTab()">{{ t('common.wizard.next') }}</button>
-            <button v-else @click.prevent="save" class="finish-button alert-confirm">{{ t('common.wizard.last') }}</button>
-          </div>
-        </template> -->
 
       </div>
 
@@ -201,11 +185,6 @@ onMounted(async () => {
     resetWizard()
   
   }, { deep: false, immediate: true })
-
-  // watch step change
-  watch(currentStep, (newStep) => {
-    // Step change logic moved to individual components
-  })
 
 })
 
