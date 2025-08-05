@@ -121,7 +121,7 @@ const getModels = async (): Promise<boolean> => {
 
   // load
   const llmManager = LlmFactory.manager(store.config)
-  const success = await llmManager.loadModels('ollama')
+  const success = await llmManager.loadModels(engine.value)
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))
     return false

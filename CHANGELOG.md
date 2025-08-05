@@ -13,6 +13,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - API key field for a new provider should start out empty (https://github.com/nbonamy/witsy/issues/368)
 - OpenAI responses API integration (https://github.com/nbonamy/witsy/issues/338)
+- Deleted experts are still used when called from specific applications (https://github.com/nbonamy/witsy/issues/375)
+- Refresh of Gemini embedding model in Embedding selector (https://github.com/nbonamy/witsy/issues/374)
 
 ### Removed
 - N/A
