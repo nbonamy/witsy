@@ -66,13 +66,13 @@
 import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from '../types/index'
 import { ref, watch, computed, PropType } from 'vue'
 import { t } from '../services/i18n'
+import { processJsonSchema } from '../services/schema'
 import { extractPromptInputs } from '../services/prompt'
 import Dialog from '../composables/dialog'
 import WizardStep from '../components/WizardStep.vue'
 import ToolSelector from '../screens/ToolSelector.vue'
 import AgentSelector from '../screens/AgentSelector.vue'
 import Agent from '../models/agent'
-import { BIconFiletypeJson } from 'bootstrap-icons-vue'
 
 const props = defineProps({
   agent: {
@@ -203,15 +203,14 @@ const onStructuredOutput = async (index: number) => {
     showCancelButton: true,
     confirmButtonText: t('common.save'),
     inputValidator: (value: string) => {
+
       if (!value.trim()) {
         return null
       }
       
       try {
-        const parsed = JSON.parse(value)
-        if (typeof parsed === 'object' && parsed !== null) {
-          return null // Valid JSON object structure
-        } else {
+        const schema = processJsonSchema('response', value)
+        if (!schema) {
           return t('agent.create.workflow.error.structuredOutput')
         }
       } catch (e) {
@@ -225,9 +224,7 @@ const onStructuredOutput = async (index: number) => {
       if (!rc.value.trim()) {
         props.agent.steps[index].jsonSchema = undefined
       } else {
-        // Parse and set structured output - update both schema and structure
-        const schemaString = rc.value.trim()
-        props.agent.steps[index].jsonSchema = schemaString
+        props.agent.steps[index].jsonSchema = rc.value.trim()
       }
     } catch (e) {
       // This shouldn't happen due to validation, but just in case

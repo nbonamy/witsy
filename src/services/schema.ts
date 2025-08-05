@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { AgentStepStructuredOutput } from '../types/index'
 
-export function parseSimpleFormatToZod(structure: any): any {
+export const parseSimpleFormatToZod = (structure: any): any => {
 
   // simple types
   if (typeof structure === 'string') {
@@ -38,15 +38,22 @@ export function parseSimpleFormatToZod(structure: any): any {
   return z.string()
 }
 
-export function processJsonSchema(name: string, jsonSchema?: string): AgentStepStructuredOutput|null {
+export const processJsonSchema = (name: string, jsonSchema?: string): AgentStepStructuredOutput|null => {
 
   if (!jsonSchema) return null
 
+  let parsedSchema: any
   try {
-    const parsed = JSON.parse(jsonSchema)
+    parsedSchema = JSON.parse(jsonSchema)
+  } catch (e) {
+    console.warn('Provided schema is not valid JSON :', e)
+    return null
+  }
+
+  try {
     return {
       name,
-      structure: parseSimpleFormatToZod(parsed)
+      structure: parseSimpleFormatToZod(parsedSchema)
     }
   } catch (e) {
     console.error('Failed to parse structured output schema:', e)
