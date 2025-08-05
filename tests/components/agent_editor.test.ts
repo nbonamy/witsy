@@ -1166,7 +1166,7 @@ test('Updates step jsonSchema when valid JSON is provided', async () => {
   // Dialog should have been called with proper options
   expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
     title: 'agent.create.workflow.structuredOutput.title',
-    text: 'agent.create.workflow.structuredOutput.text',
+    html: 'agent.create.workflow.structuredOutput.text',
     input: 'textarea',
     inputValue: undefined,
     showCancelButton: true,
