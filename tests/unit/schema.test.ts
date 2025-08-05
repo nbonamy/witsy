@@ -2,6 +2,25 @@ import { test, expect } from 'vitest'
 import { parseSimpleFormatToZod, processJsonSchema } from '../../src/services/schema'
 import { z } from 'zod'
 
+test('parseSimpleFormatToZod handles simple string types', () => {
+  expect(parseSimpleFormatToZod('string')).toBeInstanceOf(z.ZodString)
+  expect(parseSimpleFormatToZod('number')).toBeInstanceOf(z.ZodNumber)
+  expect(parseSimpleFormatToZod('boolean')).toBeInstanceOf(z.ZodBoolean)
+})
+
+test('parseSimpleFormatToZod handles array types', () => {
+  expect(parseSimpleFormatToZod('string[]')).toBeInstanceOf(z.ZodArray)
+  expect(parseSimpleFormatToZod('number[]')).toBeInstanceOf(z.ZodArray)
+  expect(parseSimpleFormatToZod('boolean[]')).toBeInstanceOf(z.ZodArray)
+})
+
+test('parseSimpleFormatToZod handles literal values', () => {
+  expect(parseSimpleFormatToZod('some literal')).toBeInstanceOf(z.ZodString)
+  expect(parseSimpleFormatToZod(42)).toBeInstanceOf(z.ZodNumber)
+  expect(parseSimpleFormatToZod(true)).toBeInstanceOf(z.ZodBoolean)
+  expect(parseSimpleFormatToZod(false)).toBeInstanceOf(z.ZodBoolean)
+})
+
 test('parseSimpleFormatToZod handles complex nested object with all types', () => {
   const complexStructure = {
     user: {
@@ -111,25 +130,6 @@ test('parseSimpleFormatToZod handles complex nested object with all types', () =
   expect(() => result.parse(invalidData)).toThrow()
 })
 
-test('parseSimpleFormatToZod handles simple string types', () => {
-  expect(parseSimpleFormatToZod('string')).toBeInstanceOf(z.ZodString)
-  expect(parseSimpleFormatToZod('number')).toBeInstanceOf(z.ZodNumber)
-  expect(parseSimpleFormatToZod('boolean')).toBeInstanceOf(z.ZodBoolean)
-})
-
-test('parseSimpleFormatToZod handles array types', () => {
-  expect(parseSimpleFormatToZod('string[]')).toBeInstanceOf(z.ZodArray)
-  expect(parseSimpleFormatToZod('number[]')).toBeInstanceOf(z.ZodArray)
-  expect(parseSimpleFormatToZod('boolean[]')).toBeInstanceOf(z.ZodArray)
-})
-
-test('parseSimpleFormatToZod handles literal values', () => {
-  expect(parseSimpleFormatToZod('some literal')).toBeInstanceOf(z.ZodString)
-  expect(parseSimpleFormatToZod(42)).toBeInstanceOf(z.ZodNumber)
-  expect(parseSimpleFormatToZod(true)).toBeInstanceOf(z.ZodBoolean)
-  expect(parseSimpleFormatToZod(false)).toBeInstanceOf(z.ZodBoolean)
-})
-
 test('parseSimpleFormatToZod handles arrays with structure', () => {
   const arrayStructure = [{
     id: 'number',
@@ -172,6 +172,25 @@ test('parseSimpleFormatToZod handles empty arrays', () => {
   expect(result).toBeInstanceOf(z.ZodArray)
   // Empty array structure defaults to string array
   expect(() => result.parse(['test'])).not.toThrow()
+})
+
+test('parseSimpleFormatToZod handles formal JSON specifications', () => {
+
+  const formalSpec = {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      age: { type: 'number', minimum: 0 },
+    },
+    required: ['name', 'age'],
+  }
+
+  const result = parseSimpleFormatToZod(formalSpec)
+  expect(() => result.parse({
+    name: 'test',
+    age: 12
+  })).not.toThrow()
+
 })
 
 test('processJsonSchema returns structured output for valid JSON', () => {

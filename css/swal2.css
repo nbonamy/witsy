@@ -39,8 +39,13 @@ div:where(.swal2-container) div:where(.swal2-popup) {
     0 24px 24px 24px rgba(0,0,0,0.06);
 }
 
-div:where(.swal2-container) div:where(.swal2-popup):has(.swal2-input:not([style*="display: none;"])) {
+div:where(.swal2-container) div:where(.swal2-popup):has(.swal2-input:not([style*="display: none;"])),
+div:where(.swal2-container) div:where(.swal2-popup):has(.swal2-textarea:not([style*="display: none;"])) {
   max-width: 22rem;
+}
+
+div:where(.swal2-container) div:where(.swal2-popup.x-large) {
+  max-width: 26rem !important;
 }
 
 div:where(.swal2-container).swal2-backdrop-show, div:where(.swal2-container).swal2-noanimation {
@@ -151,6 +156,10 @@ div:where(.swal2-container) textarea:where(.swal2-textarea) {
 
 div:where(.swal2-container) textarea:where(.swal2-textarea).auto-height {
   height: auto !important;
+}
+
+div:where(.swal2-container) div:where(.swal2-popup.x-large) textarea:where(.swal2-textarea) {
+  height: 10lh !important;
 }
 
 div:where(.swal2-container) input:where(.swal2-input):focus,
