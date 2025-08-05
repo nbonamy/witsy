@@ -15,6 +15,7 @@ export default class OpenRouterEngine extends OpenRouter {
       const providers = providerOrder.split('\n').map(p => p.trim()).filter(p => p.length)
       if (providers.length) {
         if (!opts) opts = { customOpts: {} }
+        if (!opts.customOpts) opts.customOpts = {}
         opts.customOpts.provider = {
           allow_fallbacks: true,
           order: providers

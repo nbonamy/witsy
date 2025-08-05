@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - OpenAI responses API integration (https://github.com/nbonamy/witsy/issues/338)
 - Deleted experts are still used when called from specific applications (https://github.com/nbonamy/witsy/issues/375)
 - Refresh of Gemini embedding model in Embedding selector (https://github.com/nbonamy/witsy/issues/374)
+- Using “provider order” breaks OpenRouter (https://github.com/nbonamy/witsy/issues/372)
 
 ### Removed
 - N/A
