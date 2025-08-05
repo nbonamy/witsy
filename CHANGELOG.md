@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Deleted experts are still used when called from specific applications (https://github.com/nbonamy/witsy/issues/375)
 - Refresh of Gemini embedding model in Embedding selector (https://github.com/nbonamy/witsy/issues/374)
 - Using “provider order” breaks OpenRouter (https://github.com/nbonamy/witsy/issues/372)
+- Deep Research mode tries to download a PDF instead of reading it (https://github.com/nbonamy/witsy/issues/371)
 
 ### Removed
 - N/A

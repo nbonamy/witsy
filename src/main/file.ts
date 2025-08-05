@@ -92,7 +92,7 @@ export const getIconContents = (app: App, filepath: string): FileContents|null =
 
 }
 
-export const deleteFile = (app: App, filepath: string): boolean => {
+export const deleteFile = (filepath: string): boolean => {
 
   try {
     let path = filepath;
