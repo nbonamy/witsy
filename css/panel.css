@@ -107,6 +107,7 @@
           text-overflow: ellipsis;
           text-align: left;
           white-space: nowrap;
+          word-break: break-all;
           margin: 0;
           padding: 0;
         }
