@@ -142,23 +142,21 @@ defineExpose({ load })
   min-width: 600px;
 }
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+.form.form-vertical .form-field .form-subgroup {
 
-.form-subgroup select {
-  margin-bottom: 0.5rem;
-}
+  select {
+    margin-bottom: 0.5rem;
+  }
 
-.form-subgroup textarea {
-  height: 150px;
-  resize: vertical !important;
-}
+  textarea {
+    height: 150px;
+    resize: vertical !important;
+  }
 
-.form .form-field span, .form .form-field a {
-  display: block;
+  span, a {
+    display: block;
+  }
+
 }
 
 </style>
