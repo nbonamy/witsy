@@ -240,9 +240,8 @@ body[data-tint=blue] .mx-context-menu {
 
 }
 
-.macos .menubar-wrapper  {
-  margin-top: 4rem;
-  /* display: none; */
+.macos .menubar-wrapper .app-menu {
+  display: none;
 }
 
 </style>

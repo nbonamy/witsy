@@ -1151,53 +1151,50 @@ describe('OpenAI Import', () => {
       consoleSpy.mockRestore()
     })
 
-    test('should skip existing chats with same UUID', async () => {
-      // Pre-populate history with existing chat
+    test('should compare last modified for chats with same UUID', async () => {
+      
+      // Pre-populate history with existing chats
       mockHistory.chats.push({
         uuid: 'openai-conv-1',
-        title: 'Existing Chat',
+        title: 'Existing Chat 1',
+        lastModified: 1000,
+        messages: []
+      } as any)
+      mockHistory.chats.push({
+        uuid: 'openai-conv-2',
+        title: 'Existing Chat 2',
+        lastModified: 1000,
         messages: []
       } as any)
 
       const data = [{
         id: 'conv-1',
-        title: 'Duplicate Chat',
+        title: 'Duplicate Chat 1',
+        update_time: 1,
         mapping: {
           'client-created-root': { children: ['msg-1'] },
-          'msg-1': {
-            id: 'msg-1',
-            children: ['msg-2'],
-            message: {
-              author: { role: 'user' },
-              content: { parts: ['Hello'] }
-            }
-          },
-          'msg-2': {
-            id: 'msg-2',
-            children: ['msg-3'],
-            message: {
-              author: { role: 'assistant' },
-              end_turn: true,
-              content: { parts: ['Hi'] }
-            }
-          },
-          'msg-3': {
-            id: 'msg-3',
-            children: [],
-            message: {
-              author: { role: 'user' },
-              end_turn: true,
-              content: { parts: ['Bye'] }
-            }
-          }
+          'msg-1': { id: 'msg-1', children: ['msg-2'], message: { author: { role: 'user' }, content: { parts: ['Hello'] } } },
+          'msg-2': { id: 'msg-2', children: ['msg-3'], message: { author: { role: 'assistant' }, end_turn: true, content: { parts: ['Hi'] } } },
+          'msg-3': { id: 'msg-3', children: [], message: { author: { role: 'user' }, end_turn: true, content: { parts: ['Bye'] } } }
+        }
+      }, {
+        id: 'conv-2',
+        title: 'Duplicate Chat 2',
+        update_time: 2,
+        mapping: {
+          'client-created-root': { children: ['msg-1'] },
+          'msg-1': { id: 'msg-1', children: ['msg-2'], message: { author: { role: 'user' }, content: { parts: ['Hello'] } } },
+          'msg-2': { id: 'msg-2', children: ['msg-3'], message: { author: { role: 'assistant' }, end_turn: true, content: { parts: ['Hi'] } } },
+          'msg-3': { id: 'msg-3', children: [], message: { author: { role: 'user' }, end_turn: true, content: { parts: ['Bye'] } } }
         }
       }]
 
       const result = await importOai.importOpenAIConversations('user-123', data, mockHistory, '/mock', '/mock/attachments')
       
       expect(result).toBe(true)
-      expect(mockHistory.chats).toHaveLength(1) // Should still be 1 (existing chat)
-      expect(mockHistory.chats[0].title).toBe('Existing Chat') // Original chat remains
+      expect(mockHistory.chats).toHaveLength(2)
+      expect(mockHistory.chats[0].title).toBe('Existing Chat 1')
+      expect(mockHistory.chats[1].title).toBe('Duplicate Chat 2')
     })
 
     test('should handle messages with recipients other than "all"', async () => {
