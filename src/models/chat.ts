@@ -4,7 +4,7 @@ import { Chat as ChatBase } from '../types/index'
 import { ToolSelection } from '../types/llm'
 import Message from './message'
 
-const DEFAULT_TITLE = 'New Chat'
+export const DEFAULT_TITLE = 'New Chat'
 
 export default class Chat implements ChatBase {
 
