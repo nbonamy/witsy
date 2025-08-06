@@ -598,6 +598,9 @@ button.destructive {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--window-bg-color);
+  border-radius: var(--control-button-border-radius);
+  padding: 2px;
 }
 
 .button-group button {
@@ -609,7 +612,14 @@ button.destructive {
 }
 
 .button-group button:not(.active) {
-  background-color: var(--window-bg-color);
+  background-color: transparent;
+  border-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.button-group button.active {
+  border-radius: var(--control-button-border-radius) !important;
 }
 
 .button-group button:first-child {
