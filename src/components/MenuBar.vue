@@ -125,8 +125,11 @@ const onAppMenu = (event: Event) => {
             [{ label: t('tray.menu.installUpdate'), onClick: () => window.api.update.apply() }] :
             [{ label: t('menu.app.checkForUpdates'), onClick: () => window.api.update.check() }]
           ),
-          { label: t('menu.file.backupExport'), divided: 'up', onClick: () => window.api.backup.export() },
-          { label: t('menu.file.backupImport'), onClick: () => window.api.backup.import() },
+          { label: t('menu.file.backupExport'), divided: 'up', onClick: () => setTimeout(() => window.api.backup.export(), 0) },
+          { label: t('menu.file.backupImport'), onClick: () => setTimeout(() => window.api.backup.import(), 0) },
+          { label: t('menu.file.import.title'), divided: 'up', children: [
+            { label: t('menu.file.import.openai'), onClick: () => setTimeout(() => window.api.import.openai(), 0) }
+          ] },
           { label: t('menu.file.closeWindow'), divided: 'up', onClick: () => window.api.main.close() },
         ]
       },
@@ -237,8 +240,9 @@ body[data-tint=blue] .mx-context-menu {
 
 }
 
-.macos .menubar-wrapper .app-menu {
-  display: none;
+.macos .menubar-wrapper  {
+  margin-top: 4rem;
+  /* display: none; */
 }
 
 </style>

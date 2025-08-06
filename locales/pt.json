@@ -1503,6 +1503,18 @@
       "tryWithoutPlugins": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem plugins](#retry_without_plugins)?"
     }
   },
+  "import": {
+    "openai": {
+      "error": {
+        "title": "Erro durante a importação",
+        "unknown": "Por favor, selecione um arquivo de dados conversations.json do ChatGPT válido."
+      },
+      "success": {
+        "message": "Você pode encontrar suas conversas do ChatGPT na visualização da pasta de bate-papos.",
+        "title": "Importação bem-sucedida!"
+      }
+    }
+  },
   "instructions": {
     "agent": {
       "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
@@ -1618,6 +1630,10 @@
       "backupImport": "Restaurar backup…",
       "closeWindow": "Fechar Janela",
       "designStudio": "@:{'designStudio.title'}",
+      "import": {
+        "openai": "Exportação de dados do ChatGPT…",
+        "title": "Importar"
+      },
       "mainWindow": "Abrir Witsy",
       "newChat": "Novo Chat",
       "quickPrompt": "Novo Prompt",

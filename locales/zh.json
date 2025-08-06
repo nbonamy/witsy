@@ -1503,6 +1503,18 @@
       "tryWithoutPlugins": "抱歉，我无法为该提示生成文本。你想不想 [不使用插件再试一次](#retry_without_plugins)？"
     }
   },
+  "import": {
+    "openai": {
+      "error": {
+        "title": "导入时出错",
+        "unknown": "请选择有效的 ChatGPT conversations.json 数据文件。"
+      },
+      "success": {
+        "message": "您可以在聊天文件夹视图中找到您的 ChatGPT 对话。",
+        "title": "导入成功！"
+      }
+    }
+  },
   "instructions": {
     "agent": {
       "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
@@ -1618,6 +1630,10 @@
       "backupImport": "恢复备份…",
       "closeWindow": "关闭窗口",
       "designStudio": "@:{'designStudio.title'}",
+      "import": {
+        "openai": "ChatGPT 数据导出…",
+        "title": "导入"
+      },
       "mainWindow": "打开Witsy",
       "newChat": "新建聊天",
       "quickPrompt": "新建提示",

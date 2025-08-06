@@ -19,7 +19,8 @@ import Mcp from './main/mcp';
 
 import { fixPath } from './main/utils';
 import { useI18n } from './main/i18n';
-import { installIpc } from 'main/ipc';
+import { installIpc } from './main/ipc';
+import { importOpenAI } from './main/import_oai';
 
 import * as config from './main/config';
 import * as shortcuts from './main/shortcuts';
@@ -83,6 +84,7 @@ const installMenu = () => {
     forge: window.openAgentForgeWindow,
     backupExport: async () => await backup.exportBackup(app),
     backupImport: async () => await backup.importBackup(app, quitApp),
+    importOpenAI: async () => await importOpenAI(app),
   }, settings.shortcuts);
 }
 

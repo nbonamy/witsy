@@ -222,6 +222,10 @@ export const BACKUP = {
   IMPORT: 'backup-import',
 } as const;
 
+export const IMPORT = {
+  OPENAI: 'import-openai',
+} as const;
+
 export const OLLAMA = {
   DOWNLOAD_START: 'ollama-download-start',
   DOWNLOAD_PROGRESS: 'ollama-download-progress',

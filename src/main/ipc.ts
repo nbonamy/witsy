@@ -43,6 +43,7 @@ import * as interpreter from './interpreter';
 import * as backup from './backup';
 import * as ollama from './ollama';
 import * as google from './google';
+import { importOpenAI } from './import_oai';
 
 export const installIpc = (
   store: Store,
@@ -237,6 +238,10 @@ export const installIpc = (
 
   ipcMain.on(IPC.BACKUP.IMPORT, async (event) => {
     event.returnValue = await backup.importBackup(app, quitApp);
+  });
+
+  ipcMain.on(IPC.IMPORT.OPENAI, async (event) => {
+    event.returnValue = await importOpenAI(app);
   });
 
   ipcMain.on(IPC.AGENTS.OPEN_FORGE,  () => {

@@ -18,6 +18,7 @@ export type MenuCallbacks = {
   forge: () => void
   backupExport: () => void
   backupImport: () => void
+  importOpenAI: () => void
 }
 
 const isMac = process.platform === 'darwin'
@@ -131,6 +132,16 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
         {
           label: t('menu.file.backupImport'),
           click: () => callbacks.backupImport()
+        },
+        { type: 'separator' },
+        {
+          label: t('menu.file.import.title'),
+          submenu: [
+            {
+              label: t('menu.file.import.openai'),
+              click: () => callbacks.importOpenAI()
+            }
+          ]
         },
         { type: 'separator' },
         isMac ? { role: 'close' } : { role: 'quit' }

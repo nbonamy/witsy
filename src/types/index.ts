@@ -514,6 +514,9 @@ declare global {
         export(): boolean
         import(): boolean
       }
+      import: {
+        openai(): boolean
+      }
       ollama: {
         downloadStart(targetDirectory: string): Promise<{ success: boolean; downloadId?: string; error?: string }>
         downloadCancel(): Promise<{ success: boolean }>

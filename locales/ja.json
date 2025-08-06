@@ -1503,6 +1503,18 @@
       "tryWithoutPlugins": "申し訳ありませんが、そのプロンプトに対してテキストを生成できませんでした。[プラグインなしで再試行](#retry_without_plugins)しますか？"
     }
   },
+  "import": {
+    "openai": {
+      "error": {
+        "title": "インポート中のエラー",
+        "unknown": "有効なChatGPT conversations.jsonデータファイルを選択してください。"
+      },
+      "success": {
+        "message": "チャットのフォルダビューでChatGPTの会話を見つけることができます。",
+        "title": "インポート成功！"
+      }
+    }
+  },
   "instructions": {
     "agent": {
       "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
@@ -1618,6 +1630,10 @@
       "backupImport": "バックアップを復元…",
       "closeWindow": "ウィンドウを閉じる",
       "designStudio": "@:{'designStudio.title'}",
+      "import": {
+        "openai": "ChatGPTデータのエクスポート…",
+        "title": "インポート"
+      },
       "mainWindow": "Witsyを開く",
       "newChat": "新しいチャット",
       "quickPrompt": "クイックプロンプト",
