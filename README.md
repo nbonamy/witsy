@@ -203,7 +203,10 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] OpenAI API response (o3-pro)
+- [x] ChatGPT history import
 - [x] Onboarding experience
+- [x] Add, Edit & Delete System Prompts
 - [x] Backup/Restore of data and settings
 - [x] Transcribe Local Audio Files
 - [x] DeepResearch
