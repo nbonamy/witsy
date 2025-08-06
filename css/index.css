@@ -600,13 +600,14 @@ button.destructive {
   justify-content: center;
   background-color: var(--window-bg-color);
   border-radius: var(--control-button-border-radius);
-  padding: 2px;
+  padding: 1.5px;
 }
 
 .button-group button {
   cursor: pointer;
   border-left: none;
   border-radius: 0;
+  box-shadow: none;
   outline: none;
   margin: 0px;
 }
@@ -615,7 +616,6 @@ button.destructive {
   background-color: transparent;
   border-color: transparent;
   border-radius: 0;
-  box-shadow: none;
 }
 
 .button-group button.active {
