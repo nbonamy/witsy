@@ -6,9 +6,11 @@
         <BIconArrowCounterclockwise class="icon reset" @click="onReset" v-if="currentMedia" />
       </header>
       <main>
-        <div class="button-group">
-          <button :class="{active: mode === 'create'}" @click="mode = 'create'">{{ t('common.create') }}</button>
-          <button :class="{active: mode === 'history'}" @click="mode = 'history'">{{ t('designStudio.history.title') }}</button>
+        <div class="header">
+          <div class="button-group">
+            <button :class="{active: mode === 'create'}" @click="mode = 'create'">{{ t('common.create') }}</button>
+            <button :class="{active: mode === 'history'}" @click="mode = 'history'">{{ t('designStudio.history.title') }}</button>
+          </div>
         </div>
         <Settings :class="{ hidden: mode !== 'create' }" ref="settings" :current-media="currentMedia" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
         <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-messages="selection" @select-message="selectMessage" @context-menu="showContextMenu" />
@@ -716,8 +718,11 @@ const onFullScreen = (url: string) => {
       border-right: 1px solid var(--sidebar-border-color);
     }
 
-    main .button-group {
+    main .header {
       margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     main .hidden {
