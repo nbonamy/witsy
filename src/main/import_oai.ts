@@ -1,33 +1,58 @@
 
-import { History } from '../types/index'
+import { Folder, History } from '../types/index'
 import { extensionToMimeType } from 'multi-llm-ts'
-import { App } from 'electron'
+import { App, dialog } from 'electron'
 import { pickFile } from './file'
+import { useI18n } from '../main/i18n'
 import { loadHistory, saveHistory } from './history'
 import Chat, { DEFAULT_TITLE } from '../models/chat'
 import Message from '../models/message'
-import Attachment from 'models/attachment'
+import Attachment from '../models/attachment'
 import path from 'path'
 import fs from 'fs'
 
 export const importOpenAI = async (app: App): Promise<boolean> => {
 
+  // first pick file
+  const file = pickFile(app, {
+    location: true,
+    filters: [{
+      name: 'OpenAI Files',
+      extensions: ['conversations.json']
+    }]
+  })
+
+  if (!file) {
+    return false
+  }
+
+  const t = useI18n(app)
+
+  const rc = await processOpenAI(app, file as string)
+  if (rc) {
+    await dialog.showMessageBox({
+      type: 'info',
+      message: t('import.openai.success.title'),
+      detail: t('import.openai.success.message'),
+      buttons: [t('common.ok')],
+      defaultId: 0,
+    })    
+  } else {
+    await dialog.showMessageBox({
+      type: 'error',
+      message: t('import.openai.error.title'),
+      detail: t('import.openai.error.unknown'),
+      buttons: [t('common.ok')],
+      defaultId: 0,
+    })    
+  }
+
+}
+
+const processOpenAI = async (app: App, file: string): Promise<boolean> => {
+
   try {
-
-    // first pick file
-    const file = '/Users/nbonamy/Downloads/ded657c5c9cdd6870ff1dc5a4995ecb84f6851189a377c00b7d6eb5ddce7b32a-2025-08-05-12-22-42-bf52732b23d0434d9f9866cbd7648772/conversations.json'
-    // const file = pickFile(app, {
-    //   location: true,
-    //   filters: [{
-    //     name: 'OpenAI Files',
-    //     extensions: ['json']
-    //   }]
-    // })
-
-    if (!file) {
-      return false
-    }
-
+  
     // read file contents
     const contents = fs.readFileSync(file as string, 'utf-8')
     if (!contents) {
@@ -89,10 +114,39 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
     return false
   }
 
-  // we may need to look for files instead of the sourcePath
+  // check some basic stuff
+  const conversation = data[0]
+  if (typeof conversation !== 'object' || !conversation.title || !conversation.mapping) {
+    console.error('Invalid OpenAI conversation format', conversation)
+    return false
+  }
+
+  // we may need to look for files inside of the sourcePath
   const rootFiles = fs.readdirSync(sourcePath)
-  const dalleFiles = fs.readdirSync(path.join(sourcePath, 'dalle-generations'))
-  const userFiles = fs.readdirSync(path.join(sourcePath, userId))
+
+  // same for dalle generations
+  let dalleFiles: string[] = []
+  const dalleGenerationsPath = path.join(sourcePath, 'dalle-generations')
+  if (fs.existsSync(dalleGenerationsPath)) {
+    dalleFiles = fs.readdirSync(path.join(sourcePath, 'dalle-generations'))
+  }
+
+  // and for user files
+  let userFiles: string[] = []
+  const userFilesPath = path.join(sourcePath, userId)
+  if (fs.existsSync(userFilesPath)) {
+    userFiles = fs.readdirSync(userFilesPath)
+  }
+
+  // let's create a folder
+  let folder: Folder = history.folders.find(f => f.name === 'ChatGPT')
+  if (!folder) {
+    folder = {
+      id: `chatgpt-${crypto.randomUUID()}`,
+      name: `ChatGPT`,
+      chats: []
+    }
+  }
 
   // now iterate
   for (const index in data) {
@@ -122,9 +176,9 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
       const uuid = `openai-${conversation.id || conversation.conversation_id}`
       const existingChat = history.chats.find(chat => chat.uuid === uuid)
       if (existingChat) {
-        console.warn(`Chat with ID ${uuid} already exists, skipping import for this conversation`)
-        history.chats = history.chats.filter(chat => chat.uuid !== uuid)
-        // continue
+        // console.warn(`Chat with ID ${uuid} already exists, skipping import for this conversation`)
+        // history.chats = history.chats.filter(chat => chat.uuid !== uuid)
+        continue
       }
 
       // we need to find the first message
@@ -191,7 +245,7 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
         const createdAt = openaiMessage.create_time ? openaiMessage.create_time * 1000 : Date.now()
         const endsTurn = openaiMessage.end_turn ?? false
         const model = openaiMessage.metadata?.model_slug
-
+        
         // propagate model to chat and other message
         if (model) {
           chat.model = model
@@ -201,6 +255,11 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
               message.model = model
             }
           }
+        }
+
+        // if we already added the system message skip further one
+        if (role === 'system' && chat.messages.some(m => m.role === 'system')) {
+          continue
         }
 
         // message can be continuation of previous message
@@ -248,7 +307,8 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
 
             const filename = `${openaiAttachment.id}-${openaiAttachment.name}`
             const filepath = path.join(sourcePath, filename)
-            const attachment = createAttachment(openaiAttachment.name, filepath, openaiAttachment.mime_type, attachmentPath)
+            const mimeType = openaiAttachment.mime_type || openaiAttachment.mimeType || extensionToMimeType(path.extname(filename))
+            const attachment = createAttachment(openaiAttachment.name, filepath, mimeType, attachmentPath)
             if (attachment) {
               message.attach(attachment)
             } 
@@ -266,7 +326,7 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
         }
 
         // now iterate over the parts
-        for (const part of openaiContent.parts || []) {
+        for (let part of openaiContent.parts || []) {
 
           // if object
           if (typeof part === 'object' && part.content_type === 'image_asset_pointer') {
@@ -345,6 +405,60 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
 
           } else if (typeof part === 'string' && role !== 'tool' && (!openaiMessage.recipient || openaiMessage.recipient === 'all')) {
 
+            // process content references
+            for (const ref of openaiMessage.metadata?.content_references || []) {
+
+              // skip empty matched_text
+              if (!ref.matched_text?.trim()?.length) {
+                continue
+              }
+
+              // depends on type
+              if (ref.type === 'attribution' || ref.type === 'hidden') {
+              
+                // nop
+
+              } else if (['image_v2', 'grouped_webpages', 'products', 'product_entity', 'nav_list'].includes(ref.type)) {
+
+                if (ref.alt) {
+                  part = part.replace(ref.matched_text, ref.alt)
+                } else {
+                  part = part.replace(ref.matched_text, '')
+                }
+              
+              } else if (ref.type === 'grouped_webpages_model_predicted_fallback') {
+
+                if (ref.prompt_text) {
+                  part = part.replace(ref.matched_text, ref.prompt_text)
+                } else {
+                  part = part.replace(ref.matched_text, '')
+                }
+
+              } else if (ref.type === 'video') {
+
+                if (ref.alt) {
+                  if (ref.title && ref.thumbnail_url && ref.url) {
+                    part = part.replace(ref.matched_text, `[![${ref.title}](${ref.thumbnail_url})](${ref.url})`)
+                  } else {
+                    part = part.replace(ref.matched_text, ref.alt)
+                  }
+                } else {
+                  part = part.replace(ref.matched_text, '')
+                }
+
+              } else if (['webpage_extended', 'file', 'optimistic_image_citation', 'sports_schedule'].includes(ref.type)) {
+
+                part = part.replace(ref.matched_text, '')
+
+              } else {
+                console.log('Unknown content reference type:', ref.type)
+              }
+            }
+
+            // now remove all private use area characters
+            part = part.split('').filter((c: string) => c.charCodeAt(0) < 57344).join('')
+
+            // now add it
             message.appendText({
               type: 'content',
               text: part,
@@ -357,15 +471,22 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
 
       }
 
-      // add messages
-      history.chats.push(chat)
-
+      // only add if we have enough messages
+      if (chat.messages.length >= 3) {
+        history.chats.push(chat)
+        folder.chats.push(chat.uuid)
+      }
 
     } catch (error) {
       console.error(`Error processing conversation at index ${index}`, error)
       continue
     }
 
+  }
+
+  // add the folder only if it has chats
+  if (folder.chats.length > 0) {
+    history.folders.push(folder)
   }
 
   // done

@@ -1503,6 +1503,18 @@
       "tryWithoutPlugins": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz [spróbować ponownie bez wtyczek](#retry_without_plugins)?"
     }
   },
+  "import": {
+    "openai": {
+      "error": {
+        "title": "Błąd podczas importu",
+        "unknown": "Proszę wybrać prawidłowy plik danych ChatGPT conversations.json."
+      },
+      "success": {
+        "message": "Swoje rozmowy z ChatGPT znajdziesz w widoku folderów rozmów.",
+        "title": "Import zakończony sukcesem!"
+      }
+    }
+  },
   "instructions": {
     "agent": {
       "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
@@ -1618,6 +1630,10 @@
       "backupImport": "Przywróć kopię zapasową…",
       "closeWindow": "Zamknij okno",
       "designStudio": "@:{'designStudio.title'}",
+      "import": {
+        "openai": "Eksport danych ChatGPT…",
+        "title": "Importuj"
+      },
       "mainWindow": "Otwórz Witsy",
       "newChat": "Nowy czat",
       "quickPrompt": "Szybka podpowiedź",

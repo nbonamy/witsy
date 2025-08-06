@@ -227,6 +227,9 @@ contextBridge.exposeInMainWorld(
       export: (): boolean => { return ipcRenderer.sendSync(IPC.BACKUP.EXPORT) },
       import: (): boolean => { return ipcRenderer.sendSync(IPC.BACKUP.IMPORT) },
     },
+    import: {
+      openai: (): boolean => { return ipcRenderer.sendSync(IPC.IMPORT.OPENAI) },
+    },
     ollama: {
       downloadStart: (targetDirectory: string): Promise<{ success: boolean; downloadId?: string; error?: string }> => { 
         return ipcRenderer.invoke(IPC.OLLAMA.DOWNLOAD_START, targetDirectory) 
