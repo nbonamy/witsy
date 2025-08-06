@@ -47,7 +47,7 @@ const onFullscreen = () => {
 const onInfo = () => {
   Dialog.show({
     title: props.desc,
-    text: props.prompt,
+    text: props.desc == props.prompt ? '' : props.prompt,
   })
 }
 
