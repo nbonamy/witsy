@@ -11,6 +11,8 @@ import Attachment from '../models/attachment'
 import path from 'path'
 import fs from 'fs'
 
+const DEFAULT_FOLDER_NAME = 'ChatGPT'
+
 export const importOpenAI = async (app: App): Promise<boolean> => {
 
   // first pick file
@@ -139,16 +141,16 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
   }
 
   // let's create a folder
-  let folder: Folder = history.folders.find(f => f.name === 'ChatGPT')
+  let folder: Folder = history.folders.find(f => f.name === DEFAULT_FOLDER_NAME)
   if (!folder) {
     folder = {
       id: `chatgpt-${crypto.randomUUID()}`,
-      name: `ChatGPT`,
+      name: DEFAULT_FOLDER_NAME,
       chats: []
     }
   }
 
-  // now iterate
+  // if we have a folder with the same name, remove it  // now iterate
   for (const index in data) {
 
     try {
@@ -172,13 +174,21 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
         continue
       }
 
+      // we need that
+      const createTime = conversation.create_time ? Math.round(conversation.create_time * 1000) : Date.now()
+      const updateTime = conversation.update_time ? Math.round(conversation.update_time * 1000) : createTime
+
       // build the id
       const uuid = `openai-${conversation.id || conversation.conversation_id}`
       const existingChat = history.chats.find(chat => chat.uuid === uuid)
       if (existingChat) {
-        // console.warn(`Chat with ID ${uuid} already exists, skipping import for this conversation`)
-        // history.chats = history.chats.filter(chat => chat.uuid !== uuid)
-        continue
+        if (existingChat.lastModified >= updateTime) {
+          continue
+        } else {
+          console.log(`Chat with ID ${uuid} already exists but ChatGPT version is newer, updating it`)
+          history.chats = history.chats.filter(chat => chat.uuid !== uuid)
+          folder.chats = folder.chats.filter(chatId => chatId !== uuid)
+        }
       }
 
       // we need to find the first message
@@ -216,10 +226,10 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
       const chat = Chat.fromJson({
         uuid,
         title: conversation.title || DEFAULT_TITLE,
-        createdAt: conversation.create_time ? conversation.create_time * 1000 : Date.now(),
-        lastModified: conversation.update_time ? conversation.update_time * 1000 : conversation.create_time,
+        createdAt: createTime,
+        lastModified: updateTime,
         engine: 'openai',
-        model: conversation.model || 'gpt-3.5-turbo',
+        model: conversation.model || 'gpt-4o',
         messages: [],
       })
 
@@ -485,7 +495,7 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
   }
 
   // add the folder only if it has chats
-  if (folder.chats.length > 0) {
+  if (folder.chats.length > 0 && !history.folders.find(f => f.name === folder.name)) {
     history.folders.push(folder)
   }
 
