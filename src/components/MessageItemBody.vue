@@ -107,7 +107,9 @@ const computeBlocks = (content: string|null): Block[] => {
   // extract each special tags in a separate block
   let lastIndex = 0
   const blocks: Block[] = []
-  const regexMedia1 = /!\[([^\]]*)\]\(([^\)]*)\)/g
+  // Updated regex to exclude images that are inside markdown links [![alt](url)](link)
+  // Negative lookbehind (?<!\[) prevents matching when preceded by '[' 
+  const regexMedia1 = /(?<!\[)!\[([^\]]*)\]\(([^\)]*)\)/g
   const regexMedia2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
   const regexTool1 = /<tool (id|index)="([^\"]*)"><\/tool>/g
 
