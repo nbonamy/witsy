@@ -6,7 +6,6 @@ import Runner from '../../src/services/runner'
 import Agent from '../../src/models/agent'
 import * as configModule from '../../src/main/config'
 import * as agentsModule from '../../src/main/agents'
-import * as utilsModule from '../../src/main/utils'
 import * as interpreterModule from '../../src/main/interpreter'
 import * as i18nModule from '../../src/services/i18n'
 import * as mainI18nModule from '../../src/main/i18n'
@@ -15,7 +14,6 @@ import * as mainI18nModule from '../../src/main/i18n'
 vi.mock('cron-parser')
 vi.mock('../../src/main/config')
 vi.mock('../../src/main/agents')
-vi.mock('../../src/main/utils')
 vi.mock('../../src/main/interpreter')
 vi.mock('../../src/services/i18n')
 vi.mock('../../src/main/i18n')
@@ -44,7 +42,7 @@ describe('Scheduler', () => {
   const createMockAgent = (overrides: Partial<Agent> = {}): Agent => {
     const agent = new Agent()
     Object.assign(agent, {
-      id: 'test-agent-' + Math.random(),
+      uuid: 'test-agent-' + Math.random(),
       name: 'Test Agent',
       locale: 'en-US',
       schedule: null,
@@ -106,7 +104,6 @@ describe('Scheduler', () => {
     vi.mocked(configModule.loadSettings).mockReturnValue(mockConfig)
     vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
     vi.mocked(agentsModule.saveAgentRun).mockReturnValue(true)
-    vi.mocked(utilsModule.wait).mockResolvedValue(undefined)
     vi.mocked(interpreterModule.runPython).mockResolvedValue('python result')
     vi.mocked(i18nModule.initI18n).mockReturnValue(undefined)
     vi.mocked(mainI18nModule.getLocaleMessages).mockReturnValue({})
@@ -166,7 +163,7 @@ describe('Scheduler', () => {
     const window = (global as any).window
 
     expect(window.api.agents.load()).toEqual(mockAgents)
-    expect(window.api.agents.saveRun({ id: 'test' })).toBe(true)
+    expect(window.api.agents.saveRun({ uuid: 'test' })).toBe(true)
   })
 
   test('Window mock interpreter function works correctly', async () => {
@@ -214,7 +211,7 @@ describe('Scheduler', () => {
     await scheduler.start()
 
     // Should wait for (60 - 45) * 1000 - 500 = 14500ms
-    expect(utilsModule.wait).toHaveBeenCalledWith(14500)
+    expect(global.setTimeout).toHaveBeenCalledWith(expect.any(Function), 14500)
     expect(checkSpy).toHaveBeenCalled()
   })
 
@@ -229,13 +226,13 @@ describe('Scheduler', () => {
 
   test('check() skips agents without schedule', async () => {
     const agent1 = createMockAgent({
-      id: 'agent1',
+      uuid: 'agent1',
       name: 'Test Agent 1',
       schedule: null
     })
 
     const agent2 = createMockAgent({
-      id: 'agent2',
+      uuid: 'agent2',
       name: 'Test Agent 2',
       schedule: '0 * * * *'
     })
@@ -258,7 +255,7 @@ describe('Scheduler', () => {
   test('check() runs agent when schedule is due', async () => {
     const mockPrompt = 'Generated prompt for scheduled run'
     const agent = createMockAgent({
-      id: 'scheduled-agent',
+      uuid: 'scheduled-agent',
       name: 'Scheduled Agent',
       schedule: '0 * * * *',
       invocationValues: { param1: 'value1' },
@@ -289,7 +286,7 @@ describe('Scheduler', () => {
 
   test('check() handles agent execution errors gracefully', async () => {
     const agent = createMockAgent({
-      id: 'error-agent',
+      uuid: 'error-agent',
       name: 'Error Agent',
       schedule: '0 * * * *',
       invocationValues: {},
@@ -317,7 +314,7 @@ describe('Scheduler', () => {
 
   test('check() handles cron parsing errors gracefully', async () => {
     const agent = createMockAgent({
-      id: 'invalid-cron-agent',
+      uuid: 'invalid-cron-agent',
       name: 'Invalid Cron Agent',
       schedule: 'invalid cron'
     })
@@ -338,7 +335,7 @@ describe('Scheduler', () => {
 
   test('check() uses tolerance correctly for schedule detection', async () => {
     const agent = createMockAgent({
-      id: 'tolerance-agent',
+      uuid: 'tolerance-agent',
       name: 'Tolerance Agent',
       schedule: '0 * * * *',
       invocationValues: {},
@@ -369,7 +366,7 @@ describe('Scheduler', () => {
 
   test('check() does not run agent when schedule is not due', async () => {
     const agent = createMockAgent({
-      id: 'not-due-agent',
+      uuid: 'not-due-agent',
       name: 'Not Due Agent',
       schedule: '0 * * * *'
     })
@@ -395,7 +392,7 @@ describe('Scheduler', () => {
 
   test('check() processes multiple agents correctly', async () => {
     const agent1 = createMockAgent({
-      id: 'agent1',
+      uuid: 'agent1',
       name: 'Agent 1',
       schedule: '0 * * * *',
       invocationValues: {},
@@ -403,7 +400,7 @@ describe('Scheduler', () => {
     })
 
     const agent2 = createMockAgent({
-      id: 'agent2',
+      uuid: 'agent2',
       name: 'Agent 2',
       schedule: '30 * * * *',
       invocationValues: {},
@@ -411,7 +408,7 @@ describe('Scheduler', () => {
     })
 
     const agent3 = createMockAgent({
-      id: 'agent3',
+      uuid: 'agent3',
       name: 'Agent 3',
       schedule: null // No schedule
     })
@@ -475,7 +472,7 @@ describe('Scheduler', () => {
   test('Complex scenario - full scheduling workflow', async () => {
     // Setup multiple agents with different schedules
     const scheduledAgent = createMockAgent({
-      id: 'scheduled-1',
+      uuid: 'scheduled-1',
       name: 'Daily Report Agent',
       schedule: '0 9 * * *', // 9 AM daily
       invocationValues: { format: 'pdf' },
@@ -483,7 +480,7 @@ describe('Scheduler', () => {
     })
 
     const nonScheduledAgent = createMockAgent({
-      id: 'manual-1',
+      uuid: 'manual-1',
       name: 'Manual Agent',
       schedule: null
     })
