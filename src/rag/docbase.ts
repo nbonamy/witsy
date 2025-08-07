@@ -60,12 +60,12 @@ export default class DocumentBaseImpl {
     }
   }
 
-  async add(uuid: string, type: SourceType, url: string, callback: VoidFunction): Promise<string> {
+  async addDocumentSource(uuid: string, type: SourceType, url: string, callback: VoidFunction): Promise<string> {
 
     // check existing
     let source = this.documents.find(d => d.uuid === uuid)
     if (source) {
-      await this.delete(uuid)
+      await this.deleteDocumentSource(uuid)
     } else {
       source = new DocumentSourceImpl(uuid, type, url)
     }
@@ -88,6 +88,32 @@ export default class DocumentBaseImpl {
 
     // now store
     console.log(`[rag] Added document "${source.url}" to database "${this.name}"`)
+
+    // done
+    return source.uuid
+
+  }
+
+  async processChildDocumentSource(uuid: string, type: SourceType, url: string, callback: VoidFunction): Promise<string> {
+
+    // find existing child document in any folder
+    let source: DocumentSourceImpl | undefined
+    for (const parentDoc of this.documents) {
+      if (parentDoc.items) {
+        source = parentDoc.items.find(item => item.uuid === uuid)
+        if (source) break
+      }
+    }
+
+    if (!source) {
+      throw new Error('Child document not found in any folder')
+    }
+
+    // only process the content - don't add to root documents array
+    await this.addDocument(source, callback)
+
+    // log
+    console.log(`[rag] Processed child document "${source.url}" in database "${this.name}"`)
 
     // done
     return source.uuid
@@ -224,7 +250,7 @@ export default class DocumentBaseImpl {
 
   }
 
-  async delete(docId: string, callback?: VoidFunction): Promise<void> {
+  async deleteDocumentSource(docId: string, callback?: VoidFunction): Promise<void> {
 
     // find the document
     const index = this.documents.findIndex(d => d.uuid == docId)
@@ -271,6 +297,38 @@ export default class DocumentBaseImpl {
 
     // done
     await this.db.commitTransaction()
+    callback?.()
+
+  }
+
+  async deleteChildDocumentSource(docId: string, callback?: VoidFunction): Promise<void> {
+
+    // find the child document in any folder
+    let parentDoc: DocumentSourceImpl | undefined
+    let childIndex = -1
+    
+    for (const doc of this.documents) {
+      if (doc.items) {
+        childIndex = doc.items.findIndex(item => item.uuid === docId)
+        if (childIndex !== -1) {
+          parentDoc = doc
+          break
+        }
+      }
+    }
+
+    if (!parentDoc || childIndex === -1) {
+      throw new Error('Child document not found in any folder')
+    }
+
+    // delete from the database
+    await this.connect()
+    await this.db.delete(docId)
+
+    // remove from parent's items array
+    parentDoc.items.splice(childIndex, 1)
+
+    // done
     callback?.()
 
   }

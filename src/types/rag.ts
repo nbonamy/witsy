@@ -41,10 +41,16 @@ export interface DocumentQueueItem {
   baseId: string
   type: SourceType
   origin: string
+  isChild?: boolean
 }
 
 export type DocRepoAddDocResponse = {
   queueItem: DocumentQueueItem
   queueLength: number
   error?: string
+}
+
+export interface DocRepoListener {
+  onDocumentSourceAdded(baseId: string, sourceId: string, type: SourceType, origin: string): void
+  onDocumentSourceRemoved(baseId: string, sourceId: string, origin: string): void
 }

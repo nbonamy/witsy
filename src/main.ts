@@ -12,6 +12,7 @@ import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
 import Transcriber from './automations/transcriber';
 import DocumentRepository from './rag/docrepo';
+import DocumentMonitor from './rag/docmonitor';
 import MemoryManager from './main/memory';
 import TrayIconManager from './main/tray';
 import Scheduler from './main/scheduler';
@@ -112,6 +113,9 @@ const quitApp = () => {
 
 //  tray icon
 const trayIconManager = new TrayIconManager(app, autoUpdater, quitApp);
+
+// document monitor (will be initialized in app.on('ready'))
+let docMonitor: DocumentMonitor;
 
 // this needs to be done before onReady
 if (process.platform === 'darwin') {
@@ -230,6 +234,10 @@ app.whenReady().then(async () => {
   // create the document repository
   const docRepo = new DocumentRepository(app);
 
+  // create and start the document monitor
+  docMonitor = new DocumentMonitor(app, docRepo);
+  docMonitor.start();
+
   // create the memory manager
   const memoryManager = new MemoryManager(app);
 
@@ -296,6 +304,7 @@ app.on('will-quit', () => {
   try { Menu.setApplicationMenu(null)  } catch { /* empty */ }
   try { trayIconManager.destroy();  } catch { /* empty */ }
   try { shortcuts.unregisterShortcuts(); } catch { /* empty */ }
+  try { docMonitor.stop(); } catch { /* empty */ }
   try { mcp?.shutdown(); } catch { /* empty */ }
 })
 

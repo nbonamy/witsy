@@ -129,14 +129,14 @@ You can connect each chat with a document repository: Witsy will first search fo
 You can transcribe audio recorded on the microphone to text. Transcription can be done using a variety of state of the art speech to text models (which require API key) or using local Whisper model (requires download of large files).
 
 Currently Witsy supports the following speech to text models:
-GPT4o-Transcribe
-Gladia
-Speechmatics (Standards + Enhanced)
-Groq Whisper V3
-Fireworks.ai Realtime Transcription
-fal.ai Wizper V3
-fal.ai ElevenLabs
-nVidia Microsoft Phi-4 Multimodal 
+- GPT4o-Transcribe
+- Gladia
+- Speechmatics (Standards + Enhanced)
+- Groq Whisper V3
+- Fireworks.ai Realtime Transcription
+- fal.ai Wizper V3
+- fal.ai ElevenLabs
+- nVidia Microsoft Phi-4 Multimodal 
 
 Witsy supports quick shortcuts, so your transcript is always only one button press away. 
 
@@ -203,6 +203,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Document Repository file change monitoring
 - [x] OpenAI API response (o3-pro)
 - [x] ChatGPT history import
 - [x] Onboarding experience
