@@ -20,7 +20,7 @@ export const importOpenAI = async (app: App): Promise<boolean> => {
     location: true,
     filters: [{
       name: 'OpenAI Files',
-      extensions: ['conversations.json']
+      extensions: ['json']
     }]
   })
 

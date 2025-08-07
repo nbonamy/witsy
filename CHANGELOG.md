@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - N/A
 
 
-## [2.12.5] - 2025-08-06
+## [2.12.5 / 2.12.6] - 2025-08-06
 
 ### Added
 - ChatGPT History Import (https://github.com/nbonamy/witsy/issues/378)
