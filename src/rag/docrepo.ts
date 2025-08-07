@@ -1,6 +1,6 @@
 
 import { App } from 'electron'
-import { SourceType, DocumentBase, DocumentQueueItem, DocRepoQueryResponseItem } from 'types/rag'
+import { SourceType, DocumentBase, DocumentQueueItem, DocRepoQueryResponseItem, DocRepoListener } from 'types/rag'
 import { notifyBrowserWindows } from '../main/window'
 import { docrepoFilePath } from './utils'
 import DocumentBaseImpl from './docbase'
@@ -16,13 +16,38 @@ export default class DocumentRepository {
   contents: DocumentBaseImpl[] = []
   queue: DocumentQueueItem[] = []
   processing = false
+  listeners: DocRepoListener[] = []
 
   constructor(app: App) {
     this.app = app
     this.activeDb = null
     this.processing = false
     this.queue = []
+    this.listeners = []
     this.load()
+  }
+
+  addListener(listener: DocRepoListener): void {
+    this.listeners.push(listener)
+  }
+
+  removeListener(listener: DocRepoListener): void {
+    const index = this.listeners.indexOf(listener)
+    if (index !== -1) {
+      this.listeners.splice(index, 1)
+    }
+  }
+
+  private notifyDocumentAdded(baseId: string, docId: string, type: SourceType, origin: string): void {
+    for (const listener of this.listeners) {
+      listener.onDocumentSourceAdded(baseId, docId, type, origin)
+    }
+  }
+
+  private notifyDocumentRemoved(baseId: string, docId: string, origin: string): void {
+    for (const listener of this.listeners) {
+      listener.onDocumentSourceRemoved(baseId, docId, origin)
+    }
   }
 
   list(): DocumentBase[] {
@@ -147,7 +172,7 @@ export default class DocumentRepository {
     }
   }
 
-  async create(title: string, embeddingEngine: string, embeddingModel: string): Promise<string> {
+  async createDocBase(title: string, embeddingEngine: string, embeddingModel: string): Promise<string> {
 
     // now create the base
     const base = new DocumentBaseImpl(this.app, uuidv4(), title, embeddingEngine, embeddingModel)
@@ -164,7 +189,7 @@ export default class DocumentRepository {
   
   }
 
-  async rename(baseId: string, name: string): Promise<void> {
+  async renameDocBase(baseId: string, name: string): Promise<void> {
 
     // get the base
     const base = this.contents.find(b => b.uuid == baseId)
@@ -180,7 +205,7 @@ export default class DocumentRepository {
 
   }
 
-  async delete(baseId: string): Promise<void> {
+  async deleteDocBase(baseId: string): Promise<void> {
 
     // check (we need the index anyway)
     const index = this.contents.findIndex(b => b.uuid == baseId)
@@ -211,7 +236,7 @@ export default class DocumentRepository {
 
   }
 
-  async addDocument(baseId: string, type: SourceType, origin: string): Promise<string> {
+  async addDocumentSource(baseId: string, type: SourceType, origin: string): Promise<string> {
 
     // connect
     const base = await this.connect(baseId)
@@ -236,7 +261,106 @@ export default class DocumentRepository {
 
   }
 
-  async processQueue(): Promise<void> {
+  async addChildDocumentSource(baseId: string, parentDocId: string, type: SourceType, origin: string): Promise<string> {
+
+    // connect
+    const base = await this.connect(baseId)
+    
+    // find the parent document
+    const parentDoc = base.documents.find(d => d.uuid === parentDocId)
+    if (!parentDoc) {
+      throw new Error('Parent document not found')
+    }
+    
+    // check if child already exists
+    console.log('[rag] Adding child document', origin, 'to parent', parentDoc.origin)
+    let childDoc = parentDoc.items.find(item => item.origin === origin)
+    if (!childDoc) {
+      childDoc = new DocumentSourceImpl(uuidv4(), type, origin)
+      parentDoc.items.push(childDoc)
+    }
+
+    // add to queue (we still need to process the actual content)
+    this.queue.push({ uuid: childDoc.uuid, baseId, type, origin, isChild: true })
+
+    // process
+    if (!this.processing) {
+      this.processQueue()
+    }
+
+    // save the structure change immediately
+    this.save()
+
+    // done
+    return childDoc.uuid
+
+  }
+
+  async removeDocumentSource(baseId: string, sourceId: string): Promise<void> {
+
+    // get the base
+    const base = await this.connect(baseId)
+
+    // find the document before removing
+    const docSource = base.documents.find(doc => doc.uuid === sourceId)
+
+    // do it
+    await base.deleteDocumentSource(sourceId, () => this.save())
+
+    // notify
+    notifyBrowserWindows('docrepo-del-document-done')
+    
+    // Notify listeners about document removal
+    if (docSource) {
+      this.notifyDocumentRemoved(baseId, sourceId, docSource.origin)
+    }
+
+    // done
+    this.save()
+
+  }
+
+  async removeChildDocumentSource(baseId: string, sourceId: string): Promise<void> {
+
+    // get the base
+    const base = await this.connect(baseId)
+
+    // find the child document in any folder before removing
+    let docSource: DocumentSourceImpl | undefined
+    for (const doc of base.documents) {
+      if (doc.items) {
+        docSource = doc.items.find(item => item.uuid === sourceId)
+        if (docSource) break
+      }
+    }
+
+    // do it
+    await base.deleteChildDocumentSource(sourceId, () => this.save())
+
+    // notify
+    notifyBrowserWindows('docrepo-del-document-done')
+    
+    // Notify listeners about document removal
+    if (docSource) {
+      this.notifyDocumentRemoved(baseId, sourceId, docSource.origin)
+    }
+
+    // done
+    this.save()
+
+  }
+
+  async query(baseId: string, text: string): Promise<DocRepoQueryResponseItem[]> {
+
+    // get the base
+    const base = await this.connect(baseId, true)
+
+    // query
+    return await base.query(text)
+
+  }
+
+  private async processQueue(): Promise<void> {
 
     // set the flag
     this.processing = true
@@ -259,7 +383,11 @@ export default class DocumentRepository {
       // add the document
       let error = null
       try {
-        await base.add(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+        if (queueItem.isChild) {
+          await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+        } else {
+          await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+        }
       } catch (e) {
         console.error('Error adding document', e)
         error = e
@@ -283,38 +411,15 @@ export default class DocumentRepository {
           ...queueItem,
           queueLength: this.queueLength()
         })
+        
+        // Notify listeners about successful document addition
+        this.notifyDocumentAdded(queueItem.baseId, queueItem.uuid, queueItem.type, queueItem.origin)
       }
 
     }
 
     // done
     this.processing = false
-
-  }
-
-  async removeDocument(baseId: string, docId: string): Promise<void> {
-
-    // get the base
-    const base = await this.connect(baseId)
-
-    // do it
-    await base.delete(docId, () => this.save())
-
-    // notify
-    notifyBrowserWindows('docrepo-del-document-done')
-
-    // done
-    this.save()
-
-  }
-
-  async query(baseId: string, text: string): Promise<DocRepoQueryResponseItem[]> {
-
-    // get the base
-    const base = await this.connect(baseId, true)
-
-    // query
-    return await base.query(text)
 
   }
 

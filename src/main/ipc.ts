@@ -475,7 +475,7 @@ export const installIpc = (
   ipcMain.on(IPC.DOCREPO.CREATE, async (event, payload) => {
     try {
       const { title, embeddingEngine, embeddingModel } = payload;
-      event.returnValue = await docRepo.create(title, embeddingEngine, embeddingModel);
+      event.returnValue = await docRepo.createDocBase(title, embeddingEngine, embeddingModel);
     } catch (error) {
       console.error(error);
       event.returnValue = null
@@ -485,7 +485,7 @@ export const installIpc = (
   ipcMain.on(IPC.DOCREPO.RENAME, async (event, payload) => {
     try {
       const { baseId, title } = payload;
-      await docRepo.rename(baseId, title);
+      await docRepo.renameDocBase(baseId, title);
       event.returnValue = true
     } catch (error) {
       console.error(error);
@@ -495,7 +495,7 @@ export const installIpc = (
 
   ipcMain.on(IPC.DOCREPO.DELETE, async (event, baseId) => {
     try {
-      await docRepo.delete(baseId);
+      await docRepo.deleteDocBase(baseId);
       event.returnValue = true
     } catch (error) {
       console.error(error);
@@ -506,7 +506,7 @@ export const installIpc = (
   ipcMain.on(IPC.DOCREPO.ADD_DOCUMENT, async (_, payload) => {
     try {
       const { baseId, type, url } = payload;
-      await docRepo.addDocument(baseId, type, url);
+      await docRepo.addDocumentSource(baseId, type, url);
     } catch (error) {
       console.error(error);
     }
@@ -516,7 +516,7 @@ export const installIpc = (
     try {
       const { baseId, docId } = payload;
       console.log('docrepo-remove-document', baseId, docId);
-      await docRepo.removeDocument(baseId, docId);
+      await docRepo.removeDocumentSource(baseId, docId);
       event.returnValue = true
     } catch (error) {
       console.error(error);

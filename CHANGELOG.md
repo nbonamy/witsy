@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.13.0] - WIP
+
+### Added
+- Document Repository file change monitoring
+- Create you own agents (https://github.com/nbonamy/witsy/wiki/Creating-your-first-agents)
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
 ## [2.12.5] - 2025-08-06
 
 ### Added
