@@ -26,24 +26,24 @@
         <span>{{ t('scratchpad.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')">
-        <BIconMic />
-        <span>{{ t('transcribe.title') }}</span>
-      </MenuBarItem>
-
       <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')">
         <BIconRobot />
         <span>{{ t('agent.forge.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')">
-        <BIconChatSquareDots />
-        <span>{{ t('realtimeChat.title') }}</span>
+      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')">
+        <BIconMic />
+        <span>{{ t('transcribe.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')">
         <BIconDatabase />
         <span>{{ t('docRepo.list.title') }}</span>
+      </MenuBarItem>
+
+      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')">
+        <BIconChatSquareDots />
+        <span>{{ t('realtimeChat.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">

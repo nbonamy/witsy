@@ -25,7 +25,7 @@
       "deleteCustomInstruction": "Czy na pewno chcesz usunąć tę niestandardową instrukcję?",
       "deleteDocument": "Czy na pewno chcesz usunąć ten dokument?",
       "deleteMemory": "Czy na pewno chcesz usunąć tę pamięć?",
-      "deleteRepository": "Czy na pewno chcesz usunąć to repozytorium?",
+      "deleteRepository": "Czy na pewno chcesz usunąć tę bazę wiedzy?",
       "doNotClose": "Nie zamykaj",
       "unsavedChanges": "Masz niezapisane zmiany. Zamknięcie tego okna spowoduje utratę pracy."
     },
@@ -43,7 +43,7 @@
     "description": "Opis",
     "differentLocales": "Język modelu LLM różni się od języka interfejsu. Teksty mogą być wyświetlane w języku modelu lub w Twoim języku, jeśli zostały przetłumaczone.",
     "disabled": "Wyłączony",
-    "docRepo": "Document Repository",
+    "docRepo": "Baza wiedzy",
     "documents": "Dokumenty",
     "done": "Gotowe!",
     "edit": "Edytuj",
@@ -225,17 +225,17 @@
         "customAgents": "Delegaci…",
         "customTools": "Narzędzia…",
         "description": "Opis: używany na czacie do informacji o postępie",
-        "docRepo": "Repozytorium…",
-        "docRepoNone": "Brak repozytorium dokumentów",
+        "docRepo": "Baza…",
+        "docRepoNone": "Brak bazy wiedzy",
         "error": {
           "emptyStepPrompt": "Prompt kroku #{step} nie może być pusty.",
-          "missingDocRepo": "Krok #{step} używa repozytorium dokumentów, ale w prompt nie zdefiniowano zmiennej {'{'}{'{'}facts{'}'}{'}'}. Dodaj do promptu zmienną w formie {'{'}{'{'}facts{'}'}{'}'}.",
+          "missingDocRepo": "Krok #{step} korzysta z bazy wiedzy, ale w podpowiedzi nie zdefiniowano zmiennej {'{'}{'{'}facts{'}'}{'}'}. Proszę dodaj zmienną w formacie {'{'}{'{'}facts{'}'}{'}'} do swojej podpowiedzi.",
           "structuredOutput": "Błąd podczas parsowania schematu strukturalnego wyniku."
         },
         "help": {
           "connect": "Połącz wynik poprzednich kroków za pomocą zmiennych {'{'}{'{'}output.#{'}'}{'}'} (np. {'{'}{'{'}output.1{'}'}{'}'} dla wyniku kroku 1)",
-          "docRepo": "Fakty wyodrębnione z repozytorium dokumentów zostaną dołączone do twojego promptu.",
-          "factsVarDesc": "Fakty wyodrębnione z repozytorium dokumentów",
+          "docRepo": "Fakty wyodrębnione z bazy wiedzy zostaną dołączone do Twojego podpowiedzi.",
+          "factsVarDesc": "Fakty wyodrębnione z bazy wiedzy",
           "outputVarDesc": "Wynik kroku #{step}",
           "title": "Zaprojektuj swój wieloetapowy przepływ pracy. Szablony promptów będą używane do wykonania każdego kroku. Możesz uwzględnić „zmienne”, które zostaną zastąpione wartościami podanymi przez użytkownika podczas uruchamiania agenta. Użyj formatu {'{'}{'{'}name:description:value{'}'}{'}'} do zdefiniowania zmiennej (opis będzie wskazówką dla użytkownika przy wprowadzaniu wartości). Zarówno opis, jak i domyślna wartość są opcjonalne."
         },
@@ -754,22 +754,22 @@
       "millionCharacters": "milion znaków",
       "relevanceCutOff": "Granica trafności wyszukiwania",
       "searchResultCount": "Liczba wyników wyszukiwania",
-      "title": "Domyślne ustawienia repozytoriów dokumentów"
+      "title": "Domyślne ustawienia bazy wiedzy"
     },
     "create": {
-      "embeddingWarning": "Model osadzania nie może zostać zmieniony po utworzeniu repozytorium",
-      "title": "Tworzenie repozytorium dokumentów"
+      "embeddingWarning": "model osadzania nie może być zmieniony po utworzeniu bazy wiedzy",
+      "title": "Utwórz bazę wiedzy"
     },
     "list": {
       "clickToCreate": "Kliknij przycisk +, aby go utworzyć.",
       "documentsCount": "Brak dokumentów|1 dokument|{count} dokumentów",
-      "noRepositories": "Nie masz jeszcze żadnych repozytoriów.",
-      "title": "Repozytoria dokumentów",
+      "noRepositories": "Nie masz jeszcze żadnych baz wiedzy.",
+      "title": "Bazy wiedzy",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "create": "@:{'docRepo.create.title'}",
-        "delete": "Usuń repozytorium",
-        "edit": "Edytuj repozytorium"
+        "delete": "Usuń bazę wiedzy",
+        "edit": "Edytuj bazę wiedzy"
       }
     },
     "view": {
@@ -1943,8 +1943,8 @@
       "tooltip": "Dyktuj"
     },
     "docRepos": {
-      "none": "Brak dostępnego repozytorium dokumentów. Czy chcesz utworzyć jedno teraz?",
-      "tooltip": "Dołącz repozytorium dokumentów"
+      "none": "Brak dostępnej bazy wiedzy. Czy chcesz teraz utworzyć nową?",
+      "tooltip": "Połącz z bazą wiedzy"
     },
     "experts": {
       "clear": "Wyczyść",

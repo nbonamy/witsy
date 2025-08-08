@@ -25,7 +25,7 @@
       "deleteCustomInstruction": "このカスタム指示を削除してもよろしいですか？",
       "deleteDocument": "このドキュメントを削除してもよろしいですか？",
       "deleteMemory": "このメモリを削除してもよろしいですか？",
-      "deleteRepository": "このリポジトリを削除してもよろしいですか？",
+      "deleteRepository": "このナレッジベースを本当に削除しますか？",
       "doNotClose": "閉じない",
       "unsavedChanges": "未保存の変更があります。このウィンドウを閉じると作業内容が失われます。"
     },
@@ -43,7 +43,7 @@
     "description": "説明",
     "differentLocales": "LLMのロケールがインターフェースのロケールと異なります。表示されるテキストはLLMロケールまたはカスタマイズした場合はそのロケールです。",
     "disabled": "無効",
-    "docRepo": "Document Repository",
+    "docRepo": "ナレッジベース",
     "documents": "ドキュメント",
     "done": "完了！",
     "edit": "編集",
@@ -225,17 +225,17 @@
         "customAgents": "代理人…",
         "customTools": "ツール…",
         "description": "説明：チャット内で進捗状況の更新に使用されます",
-        "docRepo": "リポジトリ…",
-        "docRepoNone": "ドキュメントリポジトリなし",
+        "docRepo": "ベース…",
+        "docRepoNone": "ナレッジベースなし",
         "error": {
           "emptyStepPrompt": "ステップ#{step}のプロンプトは空にできません。",
-          "missingDocRepo": "ステップ#{step}はドキュメントリポジトリを使用していますが、プロンプトに{'{'}{'{'}facts{'}'}{'}'}変数が定義されていません。プロンプトに{'{'}{'{'}facts{'}'}{'}'}の形式の変数を追加してください。",
+          "missingDocRepo": "ステップ#{step}はナレッジベースを使用していますが、プロンプトに{'{'}{'{'}facts{'}'}{'}'}という変数が定義されていません。{'{'}{'{'}facts{'}'}{'}'}形式の変数をプロンプトに追加してください。",
           "structuredOutput": "構造化出力スキーマの解析中にエラーが発生しました。"
         },
         "help": {
           "connect": "前のステップの出力を{'{'}{'{'}output.#{'}'}{'}'}変数（例：ステップ1の出力には{'{'}{'{'}output.1{'}'}{'}'}）を使って接続します",
-          "docRepo": "ドキュメントリポジトリから抽出された事実がプロンプトに追加されます。",
-          "factsVarDesc": "ドキュメントリポジトリから抽出された事実",
+          "docRepo": "ナレッジベースから抽出された事実は、プロンプトに追加されます。",
+          "factsVarDesc": "ナレッジベースから抽出された事実",
           "outputVarDesc": "ステップ#{step}の出力",
           "title": "複数ステップのワークフローを設計します。各ステップの実行にはプロンプトテンプレートが使用されます。エージェント実行時にユーザーが提供した値に置き換えられる「変数」を含めることができます。変数は{'{'}{'{'}name:description:value{'}'}{'}'}の形式で定義してください（説明は値を入力する際のユーザーのガイドになります）。説明とデフォルト値はどちらも任意です。"
         },
@@ -754,22 +754,22 @@
       "millionCharacters": "100万文字",
       "relevanceCutOff": "検索関連性のカットオフ",
       "searchResultCount": "検索結果数",
-      "title": "ドキュメントリポジトリのデフォルト"
+      "title": "ナレッジベースのデフォルト設定"
     },
     "create": {
-      "embeddingWarning": "リポジトリ作成後は埋め込みモデルを変更できません",
-      "title": "リポジトリを作成"
+      "embeddingWarning": "ナレッジベース作成後は埋め込みモデルを変更できません",
+      "title": "ナレッジベースを作成"
     },
     "list": {
       "clickToCreate": "+ ボタンをクリックして作成してください。",
       "documentsCount": "ドキュメントなし|1 件のドキュメント|{count} 件のドキュメント",
-      "noRepositories": "まだリポジトリがありません。",
-      "title": "ドキュメントリポジトリ",
+      "noRepositories": "まだナレッジベースがありません。",
+      "title": "ナレッジベース",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "create": "@:{'docRepo.create.title'}",
-        "delete": "リポジトリを削除",
-        "edit": "リポジトリを編集"
+        "delete": "ナレッジベースを削除",
+        "edit": "ナレッジベースを編集"
       }
     },
     "view": {
@@ -1943,8 +1943,8 @@
       "tooltip": "口述する"
     },
     "docRepos": {
-      "none": "ドキュメントリポジトリがありません。今すぐ作成しますか？",
-      "tooltip": "ドキュメントリポジトリを添付"
+      "none": "利用可能なナレッジベースがありません。今すぐ作成しますか？",
+      "tooltip": "ナレッジベースに接続"
     },
     "experts": {
       "clear": "エキスパートをクリア",

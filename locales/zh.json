@@ -25,7 +25,7 @@
       "deleteCustomInstruction": "您确定要删除此自定义指令吗？",
       "deleteDocument": "您确定要删除此文档吗？",
       "deleteMemory": "您确定要删除此记忆吗？",
-      "deleteRepository": "您确定要删除此仓库吗？",
+      "deleteRepository": "您确定要删除此知识库吗？",
       "doNotClose": "不要关闭",
       "unsavedChanges": "您有未保存的更改。如果您关闭此窗口，您的工作将丢失。"
     },
@@ -43,7 +43,7 @@
     "description": "描述",
     "differentLocales": "您的语言模型语言与界面语言不同。显示的文本为语言模型的语言或您自定义的语言。",
     "disabled": "已禁用",
-    "docRepo": "Document Repository",
+    "docRepo": "知识库",
     "documents": "文档",
     "done": "完成！",
     "edit": "编辑",
@@ -225,17 +225,17 @@
         "customAgents": "代理…",
         "customTools": "工具…",
         "description": "描述：用于聊天中提供进度更新",
-        "docRepo": "存储库…",
-        "docRepoNone": "无文档库",
+        "docRepo": "基础…",
+        "docRepoNone": "无知识库",
         "error": {
           "emptyStepPrompt": "步骤 #{step} 的提示不能为空。",
-          "missingDocRepo": "步骤 #{step} 使用了文档库，但提示中未定义 {'{'}{'{'}facts{'}'}{'}'} 变量。请在提示中添加形如 {'{'}{'{'}facts{'}'}{'}'} 的变量。",
+          "missingDocRepo": "步骤 #{step} 使用了知识库，但提示中未定义 {'{'}{'{'}facts{'}'}{'}'} 变量。请在您的提示中添加形如 {'{'}{'{'}facts{'}'}{'}'} 的变量。",
           "structuredOutput": "解析结构化输出 schema 时出错。"
         },
         "help": {
           "connect": "使用 {'{'}{'{'}output.#{'}'}{'}'} 变量连接前一步骤的输出（例如，第1步的输出为 {'{'}{'{'}output.1{'}'}{'}'}）",
-          "docRepo": "从文档库提取的事实将附加到您的提示中。",
-          "factsVarDesc": "从文档库提取的事实",
+          "docRepo": "从知识库提取的事实将被添加到您的提示中。",
+          "factsVarDesc": "从知识库提取的事实",
           "outputVarDesc": "步骤 #{step} 的输出",
           "title": "设计您的多步骤工作流。提示模板将用于执行每个步骤。您可以包含“变量”，这些变量将在执行代理时用用户提供的值替换。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示输入值时指导用户）。描述和值都是可选的。"
         },
@@ -754,22 +754,22 @@
       "millionCharacters": "百万字符",
       "relevanceCutOff": "搜索相关性截止值",
       "searchResultCount": "搜索结果数量",
-      "title": "文档仓库默认设置"
+      "title": "知识库默认设置"
     },
     "create": {
-      "embeddingWarning": "创建仓库后无法更改嵌入模型",
-      "title": "创建仓库"
+      "embeddingWarning": "知识库创建后，嵌入模型无法更改",
+      "title": "创建知识库"
     },
     "list": {
       "clickToCreate": "点击 + 按钮创建。",
       "documentsCount": "无文档|1 个文档|{count} 个文档",
-      "noRepositories": "您还没有任何仓库。",
-      "title": "文档仓库",
+      "noRepositories": "您还没有任何知识库。",
+      "title": "知识库",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "create": "@:{'docRepo.create.title'}",
-        "delete": "删除仓库",
-        "edit": "编辑仓库"
+        "delete": "删除知识库",
+        "edit": "编辑知识库"
       }
     },
     "view": {
@@ -1943,8 +1943,8 @@
       "tooltip": "口述"
     },
     "docRepos": {
-      "none": "没有可用的文档库。您想现在创建一个吗？",
-      "tooltip": "附加文档库"
+      "none": "没有可用的知识库。您想现在创建一个吗？",
+      "tooltip": "连接到知识库"
     },
     "experts": {
       "clear": "清除专家",

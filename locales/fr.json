@@ -25,7 +25,7 @@
       "deleteCustomInstruction": "Êtes-vous sûr de vouloir supprimer cette instruction personnalisée ?",
       "deleteDocument": "Êtes-vous sûr de vouloir supprimer ce document ?",
       "deleteMemory": "Êtes-vous sûr de vouloir supprimer cette mémoire ?",
-      "deleteRepository": "Êtes-vous sûr de vouloir supprimer ce dépôt ?",
+      "deleteRepository": "Êtes-vous sûr de vouloir supprimer cette base de connaissances ?",
       "doNotClose": "Ne pas fermer",
       "unsavedChanges": "Vous avez des modifications non enregistrées. Vous perdrez votre travail si vous fermez cette fenêtre."
     },
@@ -43,7 +43,7 @@
     "description": "Description",
     "differentLocales": "La langue de votre LLM est différente de la langue de votre interface. Les textes affichés sont dans la langue du LLM ou votre langue si vous les avez personnalisés",
     "disabled": "Désactivé",
-    "docRepo": "Document Repository",
+    "docRepo": "Base de connaissances",
     "documents": "Documents",
     "done": "Terminé !",
     "edit": "Modifier",
@@ -206,17 +206,17 @@
         "customAgents": "Délégués…",
         "customTools": "Outils…",
         "description": "Description : utilisée dans le chat pour fournir des mises à jour sur l'avancement",
-        "docRepo": "Référentiel…",
-        "docRepoNone": "Aucun référentiel de documents",
+        "docRepo": "Base…",
+        "docRepoNone": "Pas de base de connaissances",
         "error": {
           "emptyStepPrompt": "L'invite de l’étape #{step} ne peut pas être vide.",
-          "missingDocRepo": "L’étape #{step} utilise un Référentiel de Documents mais aucune variable {'{'}{'{'}facts{'}'}{'}'} n’est définie dans l’invite. Veuillez ajouter une variable de la forme {'{'}{'{'}facts{'}'}{'}'} à votre invite.",
+          "missingDocRepo": "L'étape #{step} utilise une base de connaissances mais aucune variable {'{'}{'{'}facts{'}'}{'}'} n'est définie dans l'invite. Veuillez ajouter une variable de la forme {'{'}{'{'}facts{'}'}{'}'} à votre invite.",
           "structuredOutput": "Erreur lors de l'analyse du schéma de sortie structurée."
         },
         "help": {
           "connect": "Connectez la sortie des étapes précédentes en utilisant les variables {'{'}{'{'}output.#{'}'}{'}'} (par exemple {'{'}{'{'}output.1{'}'}{'}'} pour la sortie de l’étape 1)",
-          "docRepo": "Les faits extraits du référentiel de documents seront ajoutés à votre invite.",
-          "factsVarDesc": "Faits extraits du référentiel de documents",
+          "docRepo": "Les faits extraits de la base de connaissances seront ajoutés à votre invite.",
+          "factsVarDesc": "Faits extraits de la base de connaissances",
           "outputVarDesc": "Sortie de l'étape #{step}",
           "title": "Concevez votre flux de travail multi-étapes. Des modèles d'invite seront utilisés pour exécuter chaque étape. Vous pouvez inclure des « variables » qui seront remplacées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}nom:description:valeur{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lorsqu'il sera invité à fournir une valeur). La description et la valeur par défaut sont toutes deux optionnelles."
         },
@@ -735,22 +735,22 @@
       "millionCharacters": "millions de caractères",
       "relevanceCutOff": "Seuil de pertinence de recherche",
       "searchResultCount": "Nombre de résultats de recherche",
-      "title": "Paramètres par défaut des dépôts de documents"
+      "title": "Paramètres par défaut de la base de connaissances"
     },
     "create": {
-      "embeddingWarning": "le modèle ne peut pas être modifié une fois le dépôt créé",
-      "title": "Créer un dépôt"
+      "embeddingWarning": "Le modèle d'intégration ne peut pas être modifié une fois la base de connaissances créée",
+      "title": "Créer une base de connaissances"
     },
     "list": {
       "clickToCreate": "Cliquez sur le bouton + pour en créer un.",
       "documentsCount": "Aucun document|1 document|{count} documents",
-      "noRepositories": "Vous n'avez pas encore de dépôts.",
-      "title": "Dépôts de documents",
+      "noRepositories": "Vous n'avez pas encore de bases de connaissances.",
+      "title": "Bases de connaissances",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "create": "@:{'docRepo.create.title'}",
-        "delete": "Supprimer le dépôt",
-        "edit": "Modifier le dépôt"
+        "delete": "Supprimer la base de connaissances",
+        "edit": "Modifier la base de connaissances"
       }
     },
     "view": {
@@ -1921,8 +1921,8 @@
       "tooltip": "Dictée"
     },
     "docRepos": {
-      "none": "Aucun dépôt de document disponible. Voulez-vous en créer un maintenant ?",
-      "tooltip": "Joindre un dépôt de documents"
+      "none": "Aucune base de connaissances disponible. Voulez-vous en créer une maintenant ?",
+      "tooltip": "Se connecter à la base de connaissances"
     },
     "experts": {
       "clear": "Supprimer l'expert",

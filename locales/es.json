@@ -25,7 +25,7 @@
       "deleteCustomInstruction": "¿Estás seguro de que deseas eliminar esta instrucción personalizada?",
       "deleteDocument": "¿Estás seguro de que deseas eliminar este documento?",
       "deleteMemory": "¿Estás seguro de que deseas eliminar esta memoria?",
-      "deleteRepository": "¿Estás seguro de que deseas eliminar este repositorio?",
+      "deleteRepository": "¿Estás seguro de que deseas eliminar esta base de conocimientos?",
       "doNotClose": "No cerrar",
       "unsavedChanges": "Tienes cambios no guardados. Perderás tu trabajo si cierras esta ventana."
     },
@@ -43,7 +43,7 @@
     "description": "Descripción",
     "differentLocales": "Tu configuración regional del LLM es diferente de la de tu interfaz. Los textos mostrados están en la configuración regional del LLM o en tu configuración regional si los has personalizado.",
     "disabled": "Desactivado",
-    "docRepo": "Document Repository",
+    "docRepo": "Base de Conocimiento",
     "documents": "Documentos",
     "done": "¡Hecho!",
     "edit": "Editar",
@@ -206,17 +206,17 @@
         "customAgents": "Delegados…",
         "customTools": "Herramientas…",
         "description": "Descripción: usado en el chat para proporcionar actualizaciones de progreso",
-        "docRepo": "Repositorio…",
-        "docRepoNone": "Sin repositorio de documentos",
+        "docRepo": "Base…",
+        "docRepoNone": "Sin Base de Conocimiento",
         "error": {
           "emptyStepPrompt": "La indicación del paso #{step} no puede estar vacía.",
-          "missingDocRepo": "El paso #{step} usa un repositorio de documentos pero no hay una variable {'{'}{'{'}facts{'}'}{'}'} definida en la indicación. Por favor, agrega una variable con la forma {'{'}{'{'}facts{'}'}{'}'} a tu indicación.",
+          "missingDocRepo": "El paso #{step} usa una Base de Conocimiento pero no se ha definido una variable {'{'}{'{'}facts{'}'}{'}'} en la indicación. Por favor, añade una variable con la forma {'{'}{'{'}facts{'}'}{'}'} a tu indicación.",
           "structuredOutput": "Error al analizar el esquema de salida estructurada."
         },
         "help": {
           "connect": "Conecta la salida de pasos anteriores usando variables {'{'}{'{'}output.#{'}'}{'}'} (p. ej. {'{'}{'{'}output.1{'}'}{'}'} para la salida del paso 1)",
-          "docRepo": "Los hechos extraídos del repositorio de documentos se añadirán a tu indicación.",
-          "factsVarDesc": "Hechos extraídos del repositorio de documentos",
+          "docRepo": "Los hechos extraídos de la base de conocimientos se agregarán a tu indicación.",
+          "factsVarDesc": "Hechos extraídos de la base de conocimientos",
           "outputVarDesc": "Salida del paso #{step}",
           "title": "Diseña tu flujo de trabajo de múltiples pasos. Las plantillas de indicaciones se usarán para ejecutar cada paso. Puedes incluir \"variables\" que serán sustituidas por los valores proporcionados por el usuario cuando se ejecute el agente. Usa el formato {'{'}{'{'}nombre:descripción:valor{'}'}{'}'} para definir una variable (la descripción guiará al usuario cuando se le pida un valor). Tanto la descripción como el valor predeterminado son opcionales."
         },
@@ -735,22 +735,22 @@
       "millionCharacters": "millón de caracteres",
       "relevanceCutOff": "Límite de relevancia de búsqueda",
       "searchResultCount": "Número de resultados de búsqueda",
-      "title": "Configuraciones predeterminadas de los Repositorios de Documentos"
+      "title": "Valores predeterminados de la base de conocimientos"
     },
     "create": {
-      "embeddingWarning": "el modelo de incrustación no puede ser cambiado una vez que se crea el repositorio",
-      "title": "Crear Repositorio"
+      "embeddingWarning": "el modelo de incrustación no se puede cambiar una vez creada la base de conocimientos",
+      "title": "Crear base de conocimientos"
     },
     "list": {
       "clickToCreate": "Haga clic en el botón + para crear uno.",
       "documentsCount": "No hay documentos|1 documento|{count} documentos",
-      "noRepositories": "Aún no tienes ningún repositorio.",
-      "title": "Repositorios de Documentos",
+      "noRepositories": "Aún no tienes bases de conocimientos.",
+      "title": "Bases de Conocimiento",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "create": "@:{'docRepo.create.title'}",
-        "delete": "Eliminar repositorio",
-        "edit": "Editar repositorio"
+        "delete": "Eliminar base de conocimientos",
+        "edit": "Editar base de conocimientos"
       }
     },
     "view": {
@@ -1921,8 +1921,8 @@
       "tooltip": "Dictar"
     },
     "docRepos": {
-      "none": "No hay ningún repositorio de documentos disponible. ¿Quieres crear uno ahora?",
-      "tooltip": "Adjuntar repositorio de documentos"
+      "none": "No hay bases de conocimientos disponibles. ¿Quieres crear una ahora?",
+      "tooltip": "Conectar a la base de conocimientos"
     },
     "experts": {
       "clear": "Eliminar experto",
