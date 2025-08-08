@@ -1016,6 +1016,7 @@
   "modelSettings.toolsCount": "No tool selected | 1 tool selected | {count} tools selected",
   "modelSettings.topK": "TopK / Logprobs [0 … 100]",
   "modelSettings.topP": "TopP [0.0 … 1.0]",
+  "modelSettings.verbosity": "Verbosity",
   "onboarding.chat.already": "{engine} is already configured.",
   "onboarding.chat.count": "No model found.|1 model available!|{count} models available!",
   "onboarding.chat.error": "Please check your API key and try again.",

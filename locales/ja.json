@@ -1735,7 +1735,8 @@
     "temperature": "温度 [0.0 … 2.0]",
     "toolsCount": "ツールなし | ツール1つ | ツール{count}つ",
     "topK": "TopK / Logprobs [0 … 100]",
-    "topP": "TopP [0.0 … 1.0]"
+    "topP": "TopP [0.0 … 1.0]",
+    "verbosity": "冗長性"
   },
   "onboarding": {
     "chat": {

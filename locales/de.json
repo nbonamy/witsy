@@ -1716,7 +1716,8 @@
     "temperature": "Temperatur [0.0 … 2.0]",
     "toolsCount": "Kein Werkzeug ausgewählt | 1 Werkzeug ausgewählt | {count} Werkzeuge ausgewählt",
     "topK": "TopK / Logprobs [0 … 100]",
-    "topP": "TopP [0.0 … 1.0]"
+    "topP": "TopP [0.0 … 1.0]",
+    "verbosity": "Ausführlichkeit"
   },
   "onboarding": {
     "chat": {
