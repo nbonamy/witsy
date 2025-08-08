@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.13.0] - WIP
+## [2.13.0] - 2025-08-08
 
 ### Added
 - Document Repository file change monitoring
