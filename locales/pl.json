@@ -58,6 +58,7 @@
       "add": "Dodaj do ulubionych",
       "remove": "Usuń z ulubionych"
     },
+    "filename": "Nazwa pliku",
     "files": "Pliki",
     "fork": "Utwórz forka",
     "high": "Wysoki",
@@ -105,6 +106,7 @@
     "newChat": "Nowy czat",
     "no": "Nie",
     "ok": "OK",
+    "path": "Ścieżka",
     "pick": "Wybierz",
     "prompt": "Podpowiedź",
     "provider": "Dostawca",
@@ -777,7 +779,9 @@
         "addFile": "Dodaj pliki",
         "addFolder": "Dodaj folder",
         "embeddingNotReady": "Model osadzania niedostępny",
-        "removeDocument": "Usuń dokument"
+        "openInExplorer": "Otwórz w Finderze",
+        "removeDocument": "Usuń dokument",
+        "viewContents": "Pokaż zawartość folderu"
       }
     }
   },

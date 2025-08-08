@@ -58,6 +58,7 @@
       "add": "お気に入りに追加",
       "remove": "お気に入りから削除"
     },
+    "filename": "ファイル名",
     "files": "ファイル",
     "fork": "フォーク",
     "high": "高い",
@@ -105,6 +106,7 @@
     "newChat": "新しいチャット",
     "no": "いいえ",
     "ok": "OK",
+    "path": "パス",
     "pick": "選択",
     "prompt": "プロンプト",
     "provider": "プロバイダー",
@@ -777,7 +779,9 @@
         "addFile": "ファイルを追加",
         "addFolder": "フォルダーを追加",
         "embeddingNotReady": "埋め込みモデルは利用できません",
-        "removeDocument": "ドキュメントを削除"
+        "openInExplorer": "Finderで開く",
+        "removeDocument": "ドキュメントを削除",
+        "viewContents": "フォルダの内容を表示"
       }
     }
   },

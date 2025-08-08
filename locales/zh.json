@@ -58,6 +58,7 @@
       "add": "添加到收藏夹",
       "remove": "从收藏夹中移除"
     },
+    "filename": "文件名",
     "files": "文件",
     "fork": "分叉",
     "high": "高",
@@ -105,6 +106,7 @@
     "newChat": "新建聊天",
     "no": "否",
     "ok": "确定",
+    "path": "路径",
     "pick": "选择",
     "prompt": "提示",
     "provider": "提供者",
@@ -777,7 +779,9 @@
         "addFile": "添加文件",
         "addFolder": "添加文件夹",
         "embeddingNotReady": "嵌入模型不可用",
-        "removeDocument": "移除文档"
+        "openInExplorer": "在访达中打开",
+        "removeDocument": "移除文档",
+        "viewContents": "查看文件夹内容"
       }
     }
   },
