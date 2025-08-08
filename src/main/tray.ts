@@ -101,7 +101,6 @@ export default class {
     // }
   
     // add common stuff
-    // @ts-expect-error unknown with config.features
     menuItems = menuItems.concat([
       {
         label: t('tray.menu.mainWindow'),
@@ -131,13 +130,11 @@ export default class {
         accelerator: shortcuts.shortcutAccelerator(configShortcuts?.studio),
         click: () => window.openDesignStudioWindow(),
       },
-      ...(config.features?.agents ? [
-        {
-          label: t('tray.menu.agentForge'),
-          accelerator: shortcuts.shortcutAccelerator(configShortcuts?.forge),
-          click: () => window.openAgentForgeWindow(),
-        },
-      ]: []),
+      {
+        label: t('tray.menu.agentForge'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.forge),
+        click: () => window.openAgentForgeWindow(),
+      },
       {
         type: 'separator'
       },

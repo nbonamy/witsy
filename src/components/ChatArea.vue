@@ -10,7 +10,7 @@
         <IconNewChat />
       </div>
 
-      <div class="icon run-agent" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-right' }" @click="onRunAgent" v-if="store.config.features?.agents">
+      <div class="icon run-agent" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-right' }" @click="onRunAgent">
         <IconRunAgent class="scale120" />
       </div>
 
