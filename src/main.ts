@@ -233,10 +233,10 @@ app.whenReady().then(async () => {
 
   // create the document repository
   const docRepo = new DocumentRepository(app);
-
-  // create and start the document monitor
-  docMonitor = new DocumentMonitor(app, docRepo);
-  docMonitor.start();
+  docRepo.scanForUpdates(() => {
+    docMonitor = new DocumentMonitor(app, docRepo);
+    // docMonitor.start();
+  });
 
   // create the memory manager
   const memoryManager = new MemoryManager(app);

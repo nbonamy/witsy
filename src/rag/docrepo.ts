@@ -1,12 +1,11 @@
 
 import { App } from 'electron'
-import { SourceType, DocumentBase, DocumentQueueItem, DocRepoQueryResponseItem, DocRepoListener } from 'types/rag'
+import { SourceType, DocumentQueueItem, DocRepoQueryResponseItem, DocRepoListener } from 'types/rag'
 import { notifyBrowserWindows } from '../main/window'
 import { docrepoFilePath } from './utils'
 import DocumentBaseImpl from './docbase'
 import DocumentSourceImpl from './docsource'
 import { v4 as uuidv4 } from 'uuid'
-import path from 'path'
 import fs from 'fs'
 
 export default class DocumentRepository {
@@ -50,35 +49,8 @@ export default class DocumentRepository {
     }
   }
 
-  list(): DocumentBase[] {
-    return this.contents.map((db) => {
-      return {
-        uuid: db.uuid,
-        name: db.name,
-        embeddingEngine: db.embeddingEngine,
-        embeddingModel: db.embeddingModel,
-        documents: db.documents.map((doc) => {
-          return {
-            uuid: doc.uuid,
-            type: doc.type,
-            title: doc.title,
-            origin: doc.origin,
-            filename: path.basename(doc.origin),
-            url: doc.url,
-            items: doc.items.map((item) => {
-              return {
-                uuid: item.uuid,
-                type: item.type,
-                title: item.title,
-                origin: item.origin,
-                filename: path.basename(item.origin),
-                url: item.url,
-              }
-            })
-          }
-        })
-      }
-    })
+  list(): DocumentBaseImpl[] {
+    return this.contents.map((db) => DocumentBaseImpl.fromJSON(this.app, db))
   }
 
   queueLength(): number {
@@ -133,9 +105,18 @@ export default class DocumentRepository {
         const base = new DocumentBaseImpl(this.app, jsonDb.uuid, jsonDb.title, jsonDb.embeddingEngine, jsonDb.embeddingModel)
         for (const jsonDoc of jsonDb.documents) {
           const doc = new DocumentSourceImpl(jsonDoc.uuid, jsonDoc.type, jsonDoc.origin)
+          // Restore metadata if available
+          if (jsonDoc.lastModified) doc.lastModified = jsonDoc.lastModified
+          if (jsonDoc.fileSize) doc.fileSize = jsonDoc.fileSize
+          
           base.documents.push(doc)
           for (const jsonItem of jsonDoc.items) {
-            doc.items.push(new DocumentSourceImpl(jsonItem.uuid, jsonItem.type, jsonItem.origin))
+            const item = new DocumentSourceImpl(jsonItem.uuid, jsonItem.type, jsonItem.origin)
+            // Restore metadata for items too
+            if (jsonItem.lastModified) item.lastModified = jsonItem.lastModified
+            if (jsonItem.fileSize) item.fileSize = jsonItem.fileSize
+            
+            doc.items.push(item)
           }
         }
         this.contents.push(base)
@@ -358,6 +339,129 @@ export default class DocumentRepository {
     // query
     return await base.query(text)
 
+  }
+
+  async scanForUpdates(callback?: () => void): Promise<void> {
+
+    console.log('[rag] Starting offline change detection scan...')
+    
+    // Run asynchronously to avoid blocking app startup
+    setImmediate(async () => {
+      try {
+        for (const base of this.contents) {
+          try {
+            const changes = await base.scanForUpdates()
+            await this.processUpdates(base, changes)
+          } catch (error) {
+            console.error(`[rag] Error scanning database ${base.name} for offline changes:`, error)
+          }
+        }
+        
+        // Save any metadata updates
+        this.save()
+        
+      } catch (error) {
+        console.error('[rag] Error during offline change detection:', error)
+      } finally {
+        callback?.()
+      }
+    })
+  }
+
+  private async processUpdates(
+    base: DocumentBaseImpl, 
+    changes: {
+      added: Array<{docSource: DocumentSourceImpl, parentFolder?: DocumentSourceImpl}>,
+      modified: DocumentSourceImpl[],
+      deleted: DocumentSourceImpl[]
+    }
+  ): Promise<void> {
+    const { added, modified, deleted } = changes
+
+    // Process deleted documents first
+    for (const deletedDoc of deleted) {
+      console.log(`[rag] Removing deleted document: ${deletedDoc.origin}`)
+      
+      try {
+        if (deletedDoc.items && deletedDoc.items.length > 0) {
+          // It's a folder, remove from root documents
+          await base.deleteDocumentSource(deletedDoc.uuid)
+        } else {
+          // Check if it's a child item in a folder
+          let isChildItem = false
+          for (const rootDoc of base.documents) {
+            if (rootDoc.type === 'folder' && rootDoc.items) {
+              const itemIndex = rootDoc.items.findIndex(item => item.uuid === deletedDoc.uuid)
+              if (itemIndex !== -1) {
+                // Remove from folder items and database
+                await base.deleteChildDocumentSource(deletedDoc.uuid)
+                isChildItem = true
+                break
+              }
+            }
+          }
+          
+          if (!isChildItem) {
+            // It's a root document
+            await base.deleteDocumentSource(deletedDoc.uuid)
+          }
+        }
+      } catch (error) {
+        console.error(`[rag] Error removing deleted document ${deletedDoc.origin}:`, error)
+      }
+    }
+
+    // Process modified documents
+    for (const modifiedDoc of modified) {
+      console.log(`[rag] Reprocessing modified document: ${modifiedDoc.origin}`)
+      
+      try {
+        // Re-add the document to update its content in the database
+        if (modifiedDoc.items && modifiedDoc.items.length > 0) {
+          // It's a folder
+          await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, () => this.save())
+        } else {
+          // Check if it's a child item
+          let isChildItem = false
+          for (const rootDoc of base.documents) {
+            if (rootDoc.type === 'folder' && rootDoc.items) {
+              const childExists = rootDoc.items.some(item => item.uuid === modifiedDoc.uuid)
+              if (childExists) {
+                await base.processChildDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, () => this.save())
+                isChildItem = true
+                break
+              }
+            }
+          }
+          
+          if (!isChildItem) {
+            // It's a root document
+            await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, () => this.save())
+          }
+        }
+      } catch (error) {
+        console.error(`[rag] Error reprocessing modified document ${modifiedDoc.origin}:`, error)
+      }
+    }
+
+    // Process added documents
+    for (const { docSource: addedDoc, parentFolder } of added) {
+      console.log(`[rag] Adding new document: ${addedDoc.origin}`)
+      
+      try {
+        if (parentFolder) {
+          // Add as child to folder
+          parentFolder.items.push(addedDoc)
+          await base.processChildDocumentSource(addedDoc.uuid, addedDoc.type, addedDoc.origin, () => this.save())
+        } else {
+          // Add as root document
+          base.documents.push(addedDoc)
+          await base.addDocumentSource(addedDoc.uuid, addedDoc.type, addedDoc.origin, () => this.save())
+        }
+      } catch (error) {
+        console.error(`[rag] Error adding new document ${addedDoc.origin}:`, error)
+      }
+    }
   }
 
   private async processQueue(): Promise<void> {

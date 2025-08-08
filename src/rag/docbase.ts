@@ -38,6 +38,15 @@ export default class DocumentBaseImpl {
     this.documents = []
   }
 
+  static fromJSON(app: App, json: any): DocumentBaseImpl {
+    const base = new DocumentBaseImpl(app, json.uuid, json.name, json.embeddingEngine, json.embeddingModel)
+    for (const doc of json.documents) {
+      const source = DocumentSourceImpl.fromJSON(doc)
+      base.documents.push(source)
+    }
+    return base
+  }
+
   async create() {
     const dbPath = databasePath(this.app, this.uuid)
     fs.mkdirSync(dbPath, { recursive: true })
@@ -208,6 +217,17 @@ export default class DocumentBaseImpl {
     // finalize
     await this.db.commitTransaction()
 
+    // Update metadata after successful processing (for file system sources only)
+    if (source.type === 'file' || source.type === 'folder') {
+      try {
+        const stats = fs.statSync(source.origin)
+        source.lastModified = stats.mtime.getTime()
+        source.fileSize = stats.size
+      } catch {
+        // File might have been deleted during processing
+      }
+    }
+
     // done
     callback?.()
 
@@ -368,6 +388,82 @@ export default class DocumentBaseImpl {
     // done
     return filtered
 
+  }
+
+  /**
+   * Scan all documents for changes that occurred while the app was offline
+   * Returns arrays of documents that were added, modified, or deleted
+   */
+  async scanForUpdates(): Promise<{
+    added: Array<{docSource: DocumentSourceImpl, parentFolder?: DocumentSourceImpl}>,
+    modified: DocumentSourceImpl[],
+    deleted: DocumentSourceImpl[]
+  }> {
+    console.log(`[rag] Scanning for offline changes in database "${this.name}"`)
+    
+    const added: Array<{docSource: DocumentSourceImpl, parentFolder?: DocumentSourceImpl}> = []
+    const modified: DocumentSourceImpl[] = []
+    const deleted: DocumentSourceImpl[] = []
+
+    // Scan root documents and their items
+    for (const document of this.documents) {
+      await this.scanDocumentForChanges(document, added, modified, deleted)
+    }
+
+    console.log(`[rag] Offline scan complete: ${added.length} added, ${modified.length} modified, ${deleted.length} deleted`)
+    
+    return { added, modified, deleted }
+  }
+
+  private async scanDocumentForChanges(
+    document: DocumentSourceImpl,
+    added: Array<{docSource: DocumentSourceImpl, parentFolder?: DocumentSourceImpl}>,
+    modified: DocumentSourceImpl[],
+    deleted: DocumentSourceImpl[]
+  ): Promise<void> {
+    
+    if (!document.exists()) {
+      deleted.push(document)
+      return
+    }
+
+    if (document.type === 'file') {
+      if (document.hasChanged()) {
+        modified.push(document)
+      }
+    } else if (document.type === 'folder') {
+      await this.scanFolderForNewFiles(document, added)
+      for (const item of document.items) {
+        await this.scanDocumentForChanges(item, added, modified, deleted)
+      }
+    }
+  }
+
+  private async scanFolderForNewFiles(
+    folderDocument: DocumentSourceImpl,
+    added: Array<{docSource: DocumentSourceImpl, parentFolder?: DocumentSourceImpl}>
+  ): Promise<void> {
+    if (folderDocument.type !== 'folder') return
+
+    try {
+      // Get all files in the folder recursively
+      const existingPaths = new Set(folderDocument.items.map(item => item.origin))
+      const files = file.listFilesRecursively(folderDocument.origin)
+
+      for (const filePath of files) {
+        if (!existingPaths.has(filePath)) {
+          // Found a new file that wasn't tracked before
+          const newDocSource = new DocumentSourceImpl(uuidv4(), 'file', filePath)
+          
+          added.push({
+            docSource: newDocSource,
+            parentFolder: folderDocument
+          })
+        }
+      }
+    } catch (error) {
+      console.error(`[rag] Error scanning folder ${folderDocument.origin}:`, error)
+    }
   }
 
 }
