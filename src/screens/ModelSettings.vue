@@ -46,6 +46,15 @@
           <option value="high">{{ t('common.high') }}</option>
         </select>
       </div>
+      <div class="form-field" v-if="isVerbositySupported">
+        <label>{{ t('modelSettings.verbosity') }}</label>
+        <select name="verbosity" v-model="verbosity" @change="save">
+          <option :value="undefined">{{ t('common.default') }}</option>
+          <option value="low">{{ t('common.low') }}</option>
+          <option value="medium">{{ t('common.medium') }}</option>
+          <option value="high">{{ t('common.high') }}</option>
+        </select>
+      </div>
       <div class="toggle" @click="showAdvanced = !showAdvanced">
         <span>
           <span v-if="showAdvanced" class="expand">▼</span>
@@ -117,6 +126,7 @@
 <script setup lang="ts">
 
 import { anyDict } from '../types/index'
+import { LlmReasoningEffort, LlmVerbosity } from 'multi-llm-ts'
 import { ref, onMounted, computed, watch } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
@@ -129,7 +139,6 @@ import VariableEditor from '../screens/VariableEditor.vue'
 import ToolSelector from '../screens/ToolSelector.vue'
 import LlmFactory, { areToolsDisabled, areAllToolsEnabled, ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
-import { LlmReasoningEffort } from 'multi-llm-ts'
 import { Ollama } from 'ollama/dist/browser.cjs'
 
 const editor = ref(null)
@@ -150,6 +159,7 @@ const top_k = ref<number>(undefined)
 const top_p = ref<number>(undefined)
 const reasoning = ref<boolean>(undefined)
 const reasoningEffort = ref<LlmReasoningEffort>(undefined)
+const verbosity = ref<LlmVerbosity>(undefined)
 const customParams = ref<Record<string, string>>({})
 const selectedParam = ref(null)
 
@@ -178,6 +188,7 @@ const canSaveAsDefaults = computed(() => {
     top_p.value !== undefined ||
     reasoning.value !== undefined ||
     reasoningEffort.value !== undefined ||
+    verbosity.value !== undefined ||
     Object.keys(customParams.value).length > 0
   )
 })
@@ -218,6 +229,10 @@ const isReasoningFlagSupported = computed(() => {
 
 const isReasoningEffortSupported = computed(() => {
   return engine.value === 'openai'
+})
+
+const isVerbositySupported = computed(() => {
+  return engine.value === 'openai' && model.value.startsWith('gpt-5')
 })
 
 const modelHasCustomParams = computed(() => {
@@ -320,6 +335,7 @@ const loadDefaults = () => {
     top_p.value = defaults.top_p
     reasoning.value = defaults.reasoning
     reasoningEffort.value = defaults.reasoningEffort
+    verbosity.value = defaults.verbosity
     customParams.value = defaults.customOpts || {}
   } else {
     disableStreaming.value = false
@@ -334,6 +350,7 @@ const loadDefaults = () => {
     top_p.value = undefined
     reasoning.value = undefined
     reasoningEffort.value = undefined
+    verbosity.value = undefined
     customParams.value = {}
   }
 }
@@ -354,6 +371,7 @@ const saveAsDefaults = () => {
     top_p: top_p.value,
     reasoning: reasoning.value,
     reasoningEffort: reasoningEffort.value,
+    verbosity: verbosity.value,
     customOpts: Object.keys(customParams.value).length > 0 ? JSON.parse(JSON.stringify(customParams.value)) : undefined,
   }
   for (const key of Object.keys(modelDefaults)) {
@@ -446,6 +464,7 @@ const save = () => {
     const topPValue = parseUserInput('TopP', top_p, 'float', 0, 1)
     const reasoningValue = reasoning.value ?? undefined
     const reasoningEffortValue = reasoningEffort.value ?? undefined
+    const verbosityValue = verbosity.value ?? undefined
     const customOptsValue = Object.keys(customParams.value).length > 0 ? JSON.parse(JSON.stringify(customParams.value)) : undefined
 
     // update chat
@@ -462,6 +481,7 @@ const save = () => {
       top_p: topPValue,
       reasoning: reasoningValue,
       reasoningEffort: reasoningEffortValue,
+      verbosity: verbosityValue,
       customOpts: customOptsValue,
     }
 

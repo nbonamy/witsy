@@ -7,9 +7,10 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Document Repository file change monitoring
 - Create you own agents (https://github.com/nbonamy/witsy/wiki/Creating-your-first-agents)
+- OpenAI GPT-5 model support (vision flag, verbosity) (https://github.com/nbonamy/witsy/issues/379)
 
 ### Changed
-- OpenAI GPT-5 model support (vision flag)
+- N/A
 
 ### Fixed
 - N/A
