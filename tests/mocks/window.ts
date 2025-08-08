@@ -414,7 +414,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
             filename: 'filename',
           }
         } as DocRepoQueryResponseItem
-      ])
+      ]),
+      getCurrentQueueItem: vi.fn(async () => null)
     },
     scratchpad: {
       open: vi.fn(),

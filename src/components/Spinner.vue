@@ -24,11 +24,17 @@
   font-size: 12px;
   position: relative;
   display: inline-block;
-  width: 1em;
-  height: 1em;
+  width: 1em !important;
+  height: 1em !important;
 
   &.large {
     transform: scale(1.5);
+  }
+  &.xlarge {
+    transform: scale(1.75);
+  }
+  &.xxlarge {
+    transform: scale(1.2);
   }
 }
 

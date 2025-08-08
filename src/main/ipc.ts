@@ -547,6 +547,10 @@ export const installIpc = (
     }
   });
 
+  ipcMain.handle(IPC.DOCREPO.GET_CURRENT_QUEUE_ITEM, async() => {
+    return docRepo.getCurrentQueueItem()
+  });
+
   ipcMain.on(IPC.MCP.IS_AVAILABLE, (event) => {
     event.returnValue = mcp !== null;
   });
