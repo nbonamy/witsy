@@ -25,7 +25,7 @@
       "deleteCustomInstruction": "Tem certeza de que deseja excluir esta instrução personalizada?",
       "deleteDocument": "Você tem certeza que deseja excluir este documento?",
       "deleteMemory": "Você tem certeza que deseja excluir essa memória?",
-      "deleteRepository": "Você tem certeza que deseja excluir esse repositório?",
+      "deleteRepository": "Tem certeza de que deseja excluir esta base de conhecimento?",
       "doNotClose": "Não feche",
       "unsavedChanges": "Você tem alterações não salvas. Se fechar esta janela, perderá seu trabalho."
     },
@@ -43,7 +43,7 @@
     "description": "Descrição",
     "differentLocales": "Seu LLM locale é diferente do seu locale de interface. Os textos exibidos estão no locale do LLM ou no seu locale se você os customizou.",
     "disabled": "Desativado",
-    "docRepo": "Document Repository",
+    "docRepo": "Base de Conhecimento",
     "documents": "Documentos",
     "done": "Concluído!",
     "edit": "Editar",
@@ -225,17 +225,17 @@
         "customAgents": "Delegados…",
         "customTools": "Ferramentas…",
         "description": "Descrição: usado no chat para fornecer atualizações de progresso",
-        "docRepo": "Repositório…",
-        "docRepoNone": "Nenhum Repositório de Documentos",
+        "docRepo": "Base…",
+        "docRepoNone": "Nenhuma Base de Conhecimento",
         "error": {
           "emptyStepPrompt": "O prompt da etapa #{step} não pode estar vazio.",
-          "missingDocRepo": "A etapa #{step} usa um Repositório de Documentos, mas nenhuma variável {'{'}{'{'}facts{'}'}{'}'} está definida no prompt. Por favor, adicione uma variável no formato {'{'}{'{'}facts{'}'}{'}'} ao seu prompt.",
+          "missingDocRepo": "A etapa #{step} usa uma Base de Conhecimento, mas nenhuma variável {'{'}{'{'}facts{'}'}{'}'} está definida no prompt. Por favor, adicione uma variável no formato {'{'}{'{'}facts{'}'}{'}'} ao seu prompt.",
           "structuredOutput": "Erro ao analisar o esquema da saída estruturada."
         },
         "help": {
           "connect": "Conecte a saída das etapas anteriores usando variáveis {'{'}{'{'}output.#{'}'}{'}'} (exemplo: {'{'}{'{'}output.1{'}'}{'}'} para a saída da etapa 1)",
-          "docRepo": "Fatos extraídos do repositório de documentos serão adicionados ao seu prompt.",
-          "factsVarDesc": "Fatos extraídos do repositório de documentos",
+          "docRepo": "Os fatos extraídos da base de conhecimento serão adicionados ao seu prompt.",
+          "factsVarDesc": "Fatos extraídos da base de conhecimento",
           "outputVarDesc": "Saída da etapa #{step}",
           "title": "Desenhe seu fluxo de trabalho em múltiplas etapas. Templates de prompt serão usados para executar cada etapa. Você pode incluir \"variáveis\" que serão substituídas pelos valores fornecidos pelo usuário quando o agente for executado. Use o formato {'{'}{'{'}nome:descrição:valor{'}'}{'}'} para definir uma variável (a descrição guiará o usuário quando solicitado um valor). Tanto a descrição quanto o valor padrão são opcionais."
         },
@@ -754,22 +754,22 @@
       "millionCharacters": "milhões de caracteres",
       "relevanceCutOff": "Corte de relevância da pesquisa",
       "searchResultCount": "Contagem de resultados da pesquisa",
-      "title": "Padrões de Repositórios de Documentos"
+      "title": "Padrões da base de conhecimento"
     },
     "create": {
-      "embeddingWarning": "o modelo de embedding não pode ser alterado após a criação do repositório",
-      "title": "Criar Repositório"
+      "embeddingWarning": "o modelo de embedding não pode ser alterado após a criação da base de conhecimento",
+      "title": "Criar base de conhecimento"
     },
     "list": {
       "clickToCreate": "Clique no botão + para criar um.",
       "documentsCount": "Nenhum documento|1 documento|{count} documentos",
-      "noRepositories": "Você ainda não tem nenhum repositório.",
-      "title": "Repositórios de Documentos",
+      "noRepositories": "Você ainda não tem bases de conhecimento.",
+      "title": "Bases de Conhecimento",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "create": "@:{'docRepo.create.title'}",
-        "delete": "Excluir repositório",
-        "edit": "Editar repositório"
+        "delete": "Excluir base de conhecimento",
+        "edit": "Editar base de conhecimento"
       }
     },
     "view": {
@@ -1943,8 +1943,8 @@
       "tooltip": "Ditado"
     },
     "docRepos": {
-      "none": "Nenhum repositório de documentos disponível. Você gostaria de criar um agora?",
-      "tooltip": "Anexar repositório de documentos"
+      "none": "Nenhuma base de conhecimento disponível. Deseja criar uma agora?",
+      "tooltip": "Conectar à base de conhecimento"
     },
     "experts": {
       "clear": "Limpar especialista",

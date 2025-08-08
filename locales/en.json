@@ -25,7 +25,7 @@
       "deleteCustomInstruction": "Are you sure you want to delete this custom instruction?",
       "deleteDocument": "Are you sure you want to delete this document?",
       "deleteMemory": "Are you sure you want to delete this memory?",
-      "deleteRepository": "Are you sure you want to delete this repository?",
+      "deleteRepository": "Are you sure you want to delete this knowledge base?",
       "doNotClose": "Do not close",
       "unsavedChanges": "You have unsaved changes. You will lose your work if you close this window."
     },
@@ -43,7 +43,7 @@
     "description": "Description",
     "differentLocales": "Your LLM locale is different than your interface locale. The texts displayed are im the LLM locale or your locale if you customized them.",
     "disabled": "Disabled",
-    "docRepo": "Document Repository",
+    "docRepo": "Knowledge Base",
     "documents": "Documents",
     "done": "Done!",
     "edit": "Edit",
@@ -225,17 +225,17 @@
         "customAgents": "Delegates…",
         "customTools": "Tools…",
         "description": "Description: used in chat to provide progress updates",
-        "docRepo": "Repository…",
-        "docRepoNone": "No Document Repository",
+        "docRepo": "Base…",
+        "docRepoNone": "No Knowledge Base",
         "error": {
           "emptyStepPrompt": "Step #{step} prompt cannot be empty.",
-          "missingDocRepo": "Step #{step} uses a Document Repository but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt.",
+          "missingDocRepo": "Step #{step} uses a Knowledge Base but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt.",
           "structuredOutput": "Error while parsing structured output schema."
         },
         "help": {
           "connect": "Connect previous steps output using {'{'}{'{'}output.#{'}'}{'}'} variables (e.g. {'{'}{'{'}output.1{'}'}{'}'} for step 1 output)",
-          "docRepo": "Facts extracted from the document repository will be appended to your prompt.",
-          "factsVarDesc": "Facts extracted from the document repository",
+          "docRepo": "Facts extracted from the knowledge base will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the knowledge base",
           "outputVarDesc": "Output of step #{step}",
           "title": "Design your multi-step workflow. Prompt templates will be used to execute each step. You can include \"variables\" that will be substituted with the values provided by the user when the agent is executed. Use the format {'{'}{'{'}name:description:value{'}'}{'}'} to define a variable (the description will guide the user when prompted for a value). Both the description and the default value are optional."
         },
@@ -753,22 +753,22 @@
       "millionCharacters": "million characters",
       "relevanceCutOff": "Search relevance cut-off",
       "searchResultCount": "Search result count",
-      "title": "Repositories defaults"
+      "title": "Knowledge base defaults"
     },
     "create": {
-      "embeddingWarning": "embedding model cannot be changed once repository is created",
-      "title": "Create repository"
+      "embeddingWarning": "embedding model cannot be changed once knowledge base is created",
+      "title": "Create knowledge base"
     },
     "list": {
       "clickToCreate": "Click on the + button to create one.",
       "documentsCount": "No document|1 document|{count} documents",
-      "noRepositories": "You don't have any repositories yet.",
-      "title": "Document repositories",
+      "noRepositories": "You don't have any knowledge bases yet.",
+      "title": "Knowledge Bases",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "create": "@:{'docRepo.create.title'}",
-        "delete": "Delete repository",
-        "edit": "Edit repository"
+        "delete": "Delete knowledge base",
+        "edit": "Edit knowledge base"
       }
     },
     "view": {
@@ -1942,8 +1942,8 @@
       "tooltip": "Dictate"
     },
     "docRepos": {
-      "none": "No document repository available. Do you want to create one now?",
-      "tooltip": "Attach document repository"
+      "none": "No knowledge base available. Do you want to create one now?",
+      "tooltip": "Connect to knowledge base"
     },
     "experts": {
       "clear": "Clear expert",
