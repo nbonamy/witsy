@@ -199,10 +199,10 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
-- [ ] Agents (multi-step, scheduling...)
 
 ## DONE
 
+- [x] Agents (multi-step, scheduling...)
 - [x] Document Repository file change monitoring
 - [x] OpenAI API response (o3-pro)
 - [x] ChatGPT history import
