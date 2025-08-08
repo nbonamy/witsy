@@ -39,12 +39,11 @@ import ModalDialog from '../components/ModalDialog.vue'
 const props = defineProps({
   folder: {
     type: Object as () => DocumentSource | null,
-    required: true
   }
 })
 
 const dialog = ref(null)
-
+  
 const emit = defineEmits(['close'])
 
 // Computed

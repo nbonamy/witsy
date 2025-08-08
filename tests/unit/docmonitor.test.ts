@@ -365,7 +365,8 @@ test('DocMonitor handles processFileEvent for add operation', async () => {
     'test-base-id', 
     'folder-doc-id', 
     'file', 
-    '/path/to/folder/newfile.txt'
+    '/path/to/folder/newfile.txt',
+    false
   )
   
   // Should NOT call addDocumentSource (which would create a root-level document)
@@ -385,7 +386,7 @@ test('DocMonitor handles processFileEvent for change operation', async () => {
   await monitor['processFileEvent']('/path/to/file.txt', 'change')
   
   // For change events, it should re-add the document (which updates it)
-  expect(mockDocRepo.addDocumentSource).toHaveBeenCalledWith('test-base-id', 'file', '/path/to/file.txt')
+  expect(mockDocRepo.addDocumentSource).toHaveBeenCalledWith('test-base-id', 'file', '/path/to/file.txt', false)
 })
 
 test('DocMonitor handles processFileEvent for unlink operation', async () => {
@@ -478,7 +479,7 @@ test('DocMonitor adds files to folder as child items, not root documents', async
   await monitor['processFileEvent']('/path/to/folder/newfile.txt', 'add')
   
   // Should call addChildDocumentSource with correct parameters
-  expect(mockDocRepo.addChildDocumentSource).toHaveBeenCalledWith('test-base-id', 'folder-doc-id', 'file', '/path/to/folder/newfile.txt')
+  expect(mockDocRepo.addChildDocumentSource).toHaveBeenCalledWith('test-base-id', 'folder-doc-id', 'file', '/path/to/folder/newfile.txt', false)
   
   // Should NOT call addDocumentSource (which would create a root-level document)
   expect(mockDocRepo.addDocumentSource).not.toHaveBeenCalled()
@@ -521,7 +522,7 @@ test('DocMonitor calls correct methods for file move operations', async () => {
   await monitor['processFileEvent']('/path/to/folder/file.txt', 'add')
   
   // Should call addChildDocumentSource for the new location
-  expect(mockDocRepo.addChildDocumentSource).toHaveBeenCalledWith('test-base-id', 'folder-doc-id', 'file', '/path/to/folder/file.txt')
+  expect(mockDocRepo.addChildDocumentSource).toHaveBeenCalledWith('test-base-id', 'folder-doc-id', 'file', '/path/to/folder/file.txt', false)
 })
 
 test('DocMonitor calls cleanup methods for duplicate documents', async () => {
@@ -540,7 +541,7 @@ test('DocMonitor calls cleanup methods for duplicate documents', async () => {
   await monitor['processFileEvent']('/path/to/folder/newfile.txt', 'add')
   
   // Should call addChildDocumentSource for the folder
-  expect(mockDocRepo.addChildDocumentSource).toHaveBeenCalledWith('test-base-id', 'folder-doc-id', 'file', '/path/to/folder/newfile.txt')
+  expect(mockDocRepo.addChildDocumentSource).toHaveBeenCalledWith('test-base-id', 'folder-doc-id', 'file', '/path/to/folder/newfile.txt', false)
   
   // Note: duplicate cleanup logic should call removeDocumentSource for the root duplicate
   // This tests the method calls, not the actual state changes

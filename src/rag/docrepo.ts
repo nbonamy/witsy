@@ -57,7 +57,7 @@ export default class DocumentRepository {
     return this.queue.length
   }
 
-  async connect(baseId: string, replaceActive = false): Promise<DocumentBaseImpl> {
+  async connect(baseId: string, replaceActive = false, connectToDb: boolean = true): Promise<DocumentBaseImpl> {
 
     // if already connected, do nothing
     if (this.activeDb && this.activeDb.uuid == baseId) {
@@ -71,7 +71,9 @@ export default class DocumentRepository {
     }
 
     // connext
-    await base.connect()
+    if (connectToDb) {
+      await base.connect()
+    }
 
     // set it
     if (replaceActive) {
@@ -196,7 +198,7 @@ export default class DocumentRepository {
 
     // connect and delete
     try {
-      const base = await this.connect(baseId)
+      const base = await this.connect(baseId, false, false)
       base.destroy()
     } catch (error: unknown) {
       if (!(error instanceof Error && error.message.includes('Index does not exist'))) {
@@ -217,7 +219,7 @@ export default class DocumentRepository {
 
   }
 
-  async addDocumentSource(baseId: string, type: SourceType, origin: string): Promise<string> {
+  async addDocumentSource(baseId: string, type: SourceType, origin: string, fromUserAction: boolean): Promise<string> {
 
     // connect
     const base = await this.connect(baseId)
@@ -230,19 +232,17 @@ export default class DocumentRepository {
     }
 
     // add to queue
-    this.queue.push({ uuid: document.uuid, baseId, type, origin })
+    this.queue.push({ uuid: document.uuid, baseId, type, origin, operation: 'add', fromUserAction })
 
     // process
-    if (!this.processing) {
-      this.processQueue()
-    }
+    this.processQueue()
 
     // done
     return document.uuid
 
   }
 
-  async addChildDocumentSource(baseId: string, parentDocId: string, type: SourceType, origin: string): Promise<string> {
+  async addChildDocumentSource(baseId: string, parentDocId: string, type: SourceType, origin: string, fromUserAction: boolean): Promise<string> {
 
     // connect
     const base = await this.connect(baseId)
@@ -258,19 +258,16 @@ export default class DocumentRepository {
     let childDoc = parentDoc.items.find(item => item.origin === origin)
     if (!childDoc) {
       childDoc = new DocumentSourceImpl(uuidv4(), type, origin)
-      parentDoc.items.push(childDoc)
+      // Don't add to parent's items yet - wait for successful processing
     }
 
     // add to queue (we still need to process the actual content)
-    this.queue.push({ uuid: childDoc.uuid, baseId, type, origin, isChild: true })
+    this.queue.push({ uuid: childDoc.uuid, baseId, type, origin, parentDocId, operation: 'add', fromUserAction })
 
     // process
-    if (!this.processing) {
-      this.processQueue()
-    }
+    this.processQueue()
 
-    // save the structure change immediately
-    this.save()
+    // don't save yet - wait for successful processing
 
     // done
     return childDoc.uuid
@@ -282,22 +279,41 @@ export default class DocumentRepository {
     // get the base
     const base = await this.connect(baseId)
 
-    // find the document before removing
-    const docSource = base.documents.find(doc => doc.uuid === sourceId)
+    // first, try to find the document in top-level documents
+    let docSource = base.documents.find(doc => doc.uuid === sourceId)
+    let parentDocId: string | undefined
 
-    // do it
-    await base.deleteDocumentSource(sourceId, () => this.save())
-
-    // notify
-    notifyBrowserWindows('docrepo-del-document-done')
-    
-    // Notify listeners about document removal
-    if (docSource) {
-      this.notifyDocumentRemoved(baseId, sourceId, docSource.origin)
+    // if not found in top-level, look for it as a child document
+    if (!docSource) {
+      for (const doc of base.documents) {
+        if (doc.items) {
+          docSource = doc.items.find(item => item.uuid === sourceId)
+          if (docSource) {
+            parentDocId = doc.uuid
+            break
+          }
+        }
+      }
     }
 
-    // done
-    this.save()
+    if (!docSource) {
+      console.warn('[rag] Document not found for removal:', sourceId)
+      return
+    }
+
+    // add to queue for deletion
+    this.queue.push({ 
+      uuid: sourceId, 
+      baseId, 
+      type: docSource.type, 
+      origin: docSource.origin, 
+      parentDocId,
+      operation: 'delete', 
+      fromUserAction: true 
+    })
+
+    // process
+    this.processQueue()
 
   }
 
@@ -306,28 +322,103 @@ export default class DocumentRepository {
     // get the base
     const base = await this.connect(baseId)
 
-    // find the child document in any folder before removing
+    // find the child document in any folder before queueing removal
     let docSource: DocumentSourceImpl | undefined
+    let parentDocId: string | undefined
     for (const doc of base.documents) {
       if (doc.items) {
         docSource = doc.items.find(item => item.uuid === sourceId)
-        if (docSource) break
+        if (docSource) {
+          parentDocId = doc.uuid
+          break
+        }
       }
     }
 
-    // do it
-    await base.deleteChildDocumentSource(sourceId, () => this.save())
-
-    // notify
-    notifyBrowserWindows('docrepo-del-document-done')
-    
-    // Notify listeners about document removal
-    if (docSource) {
-      this.notifyDocumentRemoved(baseId, sourceId, docSource.origin)
+    if (!docSource) {
+      console.warn('[rag] Child document not found for removal:', sourceId)
+      return
     }
 
-    // done
-    this.save()
+    // add to queue for deletion
+    this.queue.push({ 
+      uuid: sourceId, 
+      baseId, 
+      type: docSource.type, 
+      origin: docSource.origin, 
+      parentDocId,
+      operation: 'delete', 
+      fromUserAction: true 
+    })
+
+    // process
+    this.processQueue()
+
+  }
+
+  async updateDocumentSource(baseId: string, sourceId: string): Promise<void> {
+
+    // get the base
+    const base = await this.connect(baseId)
+
+    // find the document before queueing update
+    const docSource = base.documents.find(doc => doc.uuid === sourceId)
+    if (!docSource) {
+      console.warn('[rag] Document not found for update:', sourceId)
+      return
+    }
+
+    // add to queue for update
+    this.queue.push({ 
+      uuid: sourceId, 
+      baseId, 
+      type: docSource.type, 
+      origin: docSource.origin, 
+      operation: 'update', 
+      fromUserAction: true 
+    })
+
+    // process
+    this.processQueue()
+
+  }
+
+  async updateChildDocumentSource(baseId: string, sourceId: string): Promise<void> {
+
+    // get the base
+    const base = await this.connect(baseId)
+
+    // find the child document in any folder before queueing update
+    let docSource: DocumentSourceImpl | undefined
+    let parentDocId: string | undefined
+    for (const doc of base.documents) {
+      if (doc.items) {
+        docSource = doc.items.find(item => item.uuid === sourceId)
+        if (docSource) {
+          parentDocId = doc.uuid
+          break
+        }
+      }
+    }
+
+    if (!docSource) {
+      console.warn('[rag] Child document not found for update:', sourceId)
+      return
+    }
+
+    // add to queue for update
+    this.queue.push({ 
+      uuid: sourceId, 
+      baseId, 
+      type: docSource.type, 
+      origin: docSource.origin, 
+      parentDocId,
+      operation: 'update', 
+      fromUserAction: true 
+    })
+
+    // process
+    this.processQueue()
 
   }
 
@@ -465,66 +556,158 @@ export default class DocumentRepository {
   }
 
   private async processQueue(): Promise<void> {
+    
+    // we are already processing
+    if (this.processing) {
+      return
+    }
 
     // set the flag
     this.processing = true
 
     // empty the queue
     while (this.queue.length > 0) {
-    
-      // get the first item
       const queueItem = this.queue[0]
 
       // get the base
       const base = await this.connect(queueItem.baseId)
       if (!base) {
+        this.queue.shift()
         continue
       }
 
       // log
-      console.log('[rag] Processing document', queueItem.origin)
+      console.log('[rag] Processing document', queueItem.operation, queueItem.origin)
 
-      // add the document
-      let error = null
-      try {
-        if (queueItem.isChild) {
-          await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
-        } else {
-          await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
-        }
-      } catch (e) {
-        console.error('Error adding document', e)
-        error = e
-      }
+      // process the document based on operation
+      const error = await this.processQueueItem(queueItem, base)
 
-      // now remove it from the queue
+      // remove item from queue and save
       this.queue.shift()
-
-      // done
       this.save()
       
-      // notify
-      if (error) {
-        notifyBrowserWindows('docrepo-add-document-error', {
-          ...queueItem,
-          error: error.message,
-          queueLength: this.queueLength()
-        })
-      } else {
-        notifyBrowserWindows('docrepo-add-document-done', {
-          ...queueItem,
-          queueLength: this.queueLength()
-        })
-        
-        // Notify listeners about successful document addition
-        this.notifyDocumentAdded(queueItem.baseId, queueItem.uuid, queueItem.type, queueItem.origin)
-      }
-
+      // notify about the result
+      this.notifyQueueItemResult(queueItem, error)
     }
 
     // done
     this.processing = false
+  }
 
+  private async processQueueItem(queueItem: DocumentQueueItem, base: DocumentBaseImpl): Promise<Error | null> {
+    try {
+      switch (queueItem.operation) {
+        case 'add':
+          await this.processAddOperation(queueItem, base)
+          break
+        case 'delete':
+          await this.processDeleteOperation(queueItem, base)
+          break
+        case 'update':
+          await this.processUpdateOperation(queueItem, base)
+          break
+      }
+      return null
+    } catch (e) {
+      console.error(`Error ${queueItem.operation} document`, e)
+      await this.handleOperationError(queueItem, base)
+      return e as Error
+    }
+  }
+
+  private async processAddOperation(queueItem: DocumentQueueItem, base: DocumentBaseImpl): Promise<void> {
+    if (queueItem.parentDocId) {
+      // First, find and add the child to the parent's items if not already there
+      const parentDoc = base.documents.find(d => d.uuid === queueItem.parentDocId)
+      if (parentDoc) {
+        const existingChild = parentDoc.items.find(item => item.uuid === queueItem.uuid)
+        if (!existingChild) {
+          const childDoc = new DocumentSourceImpl(queueItem.uuid, queueItem.type, queueItem.origin)
+          parentDoc.items.push(childDoc)
+        }
+      }
+      await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+    } else {
+      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+    }
+  }
+
+  private async processDeleteOperation(queueItem: DocumentQueueItem, base: DocumentBaseImpl): Promise<void> {
+    if (queueItem.parentDocId) {
+      await base.deleteChildDocumentSource(queueItem.uuid, () => this.save())
+      this.removeChildFromParent(queueItem, base)
+    } else {
+      await base.deleteDocumentSource(queueItem.uuid, () => this.save())
+      this.removeDocumentFromBase(queueItem, base)
+    }
+  }
+
+  private async processUpdateOperation(queueItem: DocumentQueueItem, base: DocumentBaseImpl): Promise<void> {
+    // For updates, we essentially re-add the document
+    if (queueItem.parentDocId) {
+      await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+    } else {
+      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+    }
+  }
+
+  private async handleOperationError(queueItem: DocumentQueueItem, base: DocumentBaseImpl): Promise<void> {
+    // If there was an error and it's a child document add operation, remove it from parent's items
+    if (queueItem.operation === 'add' && queueItem.parentDocId) {
+      this.removeChildFromParent(queueItem, base)
+    }
+    
+    // If there was an error during delete operation, still clean up in-memory structures
+    if (queueItem.operation === 'delete') {
+      if (queueItem.parentDocId) {
+        this.removeChildFromParent(queueItem, base)
+      } else {
+        this.removeDocumentFromBase(queueItem, base)
+      }
+    }
+  }
+
+  private removeChildFromParent(queueItem: DocumentQueueItem, base: DocumentBaseImpl): void {
+    const parentDoc = base.documents.find(d => d.uuid === queueItem.parentDocId)
+    if (parentDoc && parentDoc.items) {
+      const childIndex = parentDoc.items.findIndex(item => item.uuid === queueItem.uuid)
+      if (childIndex !== -1) {
+        parentDoc.items.splice(childIndex, 1)
+      }
+    }
+  }
+
+  private removeDocumentFromBase(queueItem: DocumentQueueItem, base: DocumentBaseImpl): void {
+    const docIndex = base.documents.findIndex(doc => doc.uuid === queueItem.uuid)
+    if (docIndex !== -1) {
+      base.documents.splice(docIndex, 1)
+    }
+  }
+
+  private notifyQueueItemResult(queueItem: DocumentQueueItem, error: Error | null): void {
+    if (error) {
+      if (queueItem.fromUserAction) {
+        const eventName = queueItem.operation === 'delete' ? 'docrepo-del-document-error' : 'docrepo-add-document-error'
+        notifyBrowserWindows(eventName, {
+          ...queueItem,
+          error: error.message,
+          queueLength: this.queueLength()
+        })
+      }
+    } else {
+      const eventName = queueItem.operation === 'delete' ? 'docrepo-del-document-done' : 'docrepo-add-document-done'
+      notifyBrowserWindows(eventName, {
+        ...queueItem,
+        queueLength: this.queueLength()
+      })
+      
+      // Notify listeners about document changes
+      if (queueItem.operation === 'delete') {
+        this.notifyDocumentRemoved(queueItem.baseId, queueItem.uuid, queueItem.origin)
+      } else {
+        this.notifyDocumentAdded(queueItem.baseId, queueItem.uuid, queueItem.type, queueItem.origin)
+      }
+    }
   }
 
 }

@@ -343,7 +343,9 @@ export default class DocumentBaseImpl {
 
     // delete from the database
     await this.connect()
+    await this.db.beginTransaction()
     await this.db.delete(docId)
+    await this.db.commitTransaction()
 
     // remove from parent's items array
     parentDoc.items.splice(childIndex, 1)

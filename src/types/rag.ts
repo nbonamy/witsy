@@ -72,7 +72,9 @@ export interface DocumentQueueItem {
   baseId: string
   type: SourceType
   origin: string
-  isChild?: boolean
+  parentDocId?: string
+  operation: 'add' | 'update' | 'delete'
+  fromUserAction: boolean
 }
 
 export type DocRepoAddDocResponse = {

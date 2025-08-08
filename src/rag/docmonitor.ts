@@ -219,9 +219,7 @@ export default class DocumentMonitor implements DocRepoListener {
             // For new files, add them to the docbase
             if (docSource.type === 'folder' && fs.existsSync(filePath)) {
               console.log(`[docmonitor] Adding new file to docbase ${docBase.name}: ${filePath}`)
-              await this.docRepo.addChildDocumentSource(docBase.uuid, docSource.uuid, 'file', filePath)
-              
-              // After adding to folder, check for and clean up any root duplicates
+              await this.docRepo.addChildDocumentSource(docBase.uuid, docSource.uuid, 'file', filePath, false)
               await this.cleanupDuplicateDocuments(docBase, filePath)
             }
             break
@@ -239,7 +237,7 @@ export default class DocumentMonitor implements DocRepoListener {
 
               if (targetDocSource) {
                 // Re-add the document (this will update it)
-                await this.docRepo.addDocumentSource(docBase.uuid, targetDocSource.type, targetDocSource.origin)
+                await this.docRepo.addDocumentSource(docBase.uuid, targetDocSource.type, targetDocSource.origin, false)
               }
             }
             break
