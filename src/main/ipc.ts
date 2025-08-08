@@ -506,7 +506,7 @@ export const installIpc = (
   ipcMain.on(IPC.DOCREPO.ADD_DOCUMENT, async (_, payload) => {
     try {
       const { baseId, type, url } = payload;
-      await docRepo.addDocumentSource(baseId, type, url);
+      await docRepo.addDocumentSource(baseId, type, url, true);
     } catch (error) {
       console.error(error);
     }
