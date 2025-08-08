@@ -235,7 +235,7 @@ app.whenReady().then(async () => {
   const docRepo = new DocumentRepository(app);
   docRepo.scanForUpdates(() => {
     docMonitor = new DocumentMonitor(app, docRepo);
-    // docMonitor.start();
+    docMonitor.start();
   });
 
   // create the memory manager

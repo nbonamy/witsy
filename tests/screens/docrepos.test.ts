@@ -22,6 +22,7 @@ beforeAll(() => {
   useWindowMock()
   window.api.file.pickFile = vi.fn(() => [ 'file4', 'file5' ])
   window.api.file.pickDirectory = vi.fn(() => 'folder2')
+  window.api.file.openInExplorer = vi.fn()
   store.loadSettings()
 })
 
@@ -61,12 +62,12 @@ test('Renders documents', async () => {
   expect(wrapper.find('.sliding-pane .documents .panel-item:nth-child(1) .text').text()).toBe('file1')
   expect(wrapper.find('.sliding-pane .documents .panel-item:nth-child(1) .subtext').text()).toBe('/tmp/file1')
   expect(wrapper.find('.sliding-pane .documents .panel-item:nth-child(1) .actions').exists()).toBe(true)
-  expect(wrapper.findAll('.sliding-pane .documents .panel-item:nth-child(1) .actions > *').length).toBe(1)
+  expect(wrapper.findAll('.sliding-pane .documents .panel-item:nth-child(1) .actions > *').length).toBe(2) // file has 2 actions: open in explorer + remove
   expect(wrapper.find('.sliding-pane .documents .panel-item:nth-child(2) .icon').exists()).toBe(true)
   expect(wrapper.find('.sliding-pane .documents .panel-item:nth-child(2) .text').text()).toBe('folder1 (2 common.files)')
   expect(wrapper.find('.sliding-pane .documents .panel-item:nth-child(2) .subtext').text()).toBe('/tmp/folder1')
   expect(wrapper.find('.sliding-pane .documents .panel-item:nth-child(2) .actions').exists()).toBe(true)
-  expect(wrapper.findAll('.sliding-pane .documents .panel-item:nth-child(2) .actions > *').length).toBe(1)
+  expect(wrapper.findAll('.sliding-pane .documents .panel-item:nth-child(2) .actions > *').length).toBe(3) // folder has 3 actions: open in explorer + view contents + remove
 })
 
 test('Shows create editor', async () => {
@@ -168,4 +169,42 @@ test('Deletes documents', async () => {
   // Wait for the second delete call
   await vi.waitUntil(() => (window.api.docrepo.removeDocument as Mock).mock.calls.length > 1)
   expect(window.api.docrepo.removeDocument).toHaveBeenLastCalledWith('uuid2', 'uuid4')
+})
+
+test('Opens files and folders in explorer', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  await wrapper.find('.panel .panel-item:nth-child(2)').trigger('click')
+  await vi.waitUntil(() => wrapper.find('.sliding-pane.visible').exists())
+  
+  // Test opening file in explorer
+  await wrapper.find('.sliding-pane .documents .panel-item:nth-child(1) .actions .icon.open-in-explorer').trigger('click')
+  expect(window.api.file.openInExplorer).toHaveBeenCalledWith('/tmp/file1')
+  
+  // Test opening folder in explorer
+  await wrapper.find('.sliding-pane .documents .panel-item:nth-child(2) .actions .icon.open-in-explorer').trigger('click')
+  expect(window.api.file.openInExplorer).toHaveBeenCalledWith('/tmp/folder1')
+})
+
+test('Shows folder contents modal', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  await wrapper.find('.panel .panel-item:nth-child(2)').trigger('click')
+  await vi.waitUntil(() => wrapper.find('.sliding-pane.visible').exists())
+  
+  // Check that folder has view contents action
+  expect(wrapper.find('.sliding-pane .documents .panel-item:nth-child(2) .actions .icon.view-contents').exists()).toBe(true)
+  
+  // Check that file does not have view contents action
+  expect(wrapper.find('.sliding-pane .documents .panel-item:nth-child(1) .actions .icon.view-contents').exists()).toBe(false)
+  
+  // Click view contents for folder
+  await wrapper.find('.sliding-pane .documents .panel-item:nth-child(2) .actions .icon.view-contents').trigger('click')
+  
+  // Check that the folder modal is displayed and has correct content
+  const folderComponent = wrapper.findComponent({ name: 'Folder' })
+  expect(folderComponent.exists()).toBe(true)
+  expect(folderComponent.props('folder')).toBeDefined()
+  expect(folderComponent.props('folder').type).toBe('folder')
+  expect(folderComponent.props('folder').title).toBe('folder1')
 })
