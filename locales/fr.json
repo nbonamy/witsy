@@ -58,6 +58,7 @@
       "add": "Ajouter aux favoris",
       "remove": "Retirer des favoris"
     },
+    "filename": "Nom de fichier",
     "files": "Fichiers",
     "fork": "Dupliquer",
     "high": "Élevé",
@@ -86,6 +87,7 @@
     "newChat": "Nouvelle conversation",
     "no": "Non",
     "ok": "OK",
+    "path": "Chemin",
     "pick": "Sélectionner",
     "prompt": "Prompt",
     "provider": "Fournisseur",
@@ -758,7 +760,9 @@
         "addFile": "Ajouter des fichiers",
         "addFolder": "Ajouter un dossier",
         "embeddingNotReady": "Modèle d'intégration non disponible",
-        "removeDocument": "Supprimer le document"
+        "openInExplorer": "Ouvrir dans le Finder",
+        "removeDocument": "Supprimer le document",
+        "viewContents": "Afficher le contenu du dossier"
       }
     }
   },

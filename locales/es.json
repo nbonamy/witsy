@@ -58,6 +58,7 @@
       "add": "Agregar a favoritos",
       "remove": "Eliminar de favoritos"
     },
+    "filename": "Nombre de archivo",
     "files": "Archivos",
     "fork": "Bifurcar",
     "high": "Alto",
@@ -86,6 +87,7 @@
     "newChat": "Nueva conversación",
     "no": "No",
     "ok": "OK",
+    "path": "Ruta",
     "pick": "Seleccionar",
     "prompt": "Sugerencia",
     "provider": "Proveedor",
@@ -758,7 +760,9 @@
         "addFile": "Agregar archivos",
         "addFolder": "Agregar carpeta",
         "embeddingNotReady": "Modelo de incrustación no disponible",
-        "removeDocument": "Eliminar documento"
+        "openInExplorer": "Abrir en Finder",
+        "removeDocument": "Eliminar documento",
+        "viewContents": "Ver contenido de la carpeta"
       }
     }
   },

@@ -58,6 +58,7 @@
       "add": "Add to favorites",
       "remove": "Remove from favorites"
     },
+    "filename": "Filename",
     "files": "Files",
     "fork": "Fork",
     "high": "High",
@@ -105,6 +106,7 @@
     "newChat": "New chat",
     "no": "No",
     "ok": "OK",
+    "path": "Path",
     "pick": "Pick",
     "prompt": "Prompt",
     "provider": "Provider",
@@ -776,7 +778,9 @@
         "addFile": "Add files",
         "addFolder": "Add folder",
         "embeddingNotReady": "Embedding model not available",
-        "removeDocument": "Remove document"
+        "openInExplorer": "Open in Finder",
+        "removeDocument": "Remove document",
+        "viewContents": "View folder contents"
       }
     }
   },

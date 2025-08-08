@@ -44,6 +44,18 @@
               <div class="subtext">{{ doc.origin }}</div>
             </div>
             <div class="actions">
+              <BIconSearch 
+                v-if="doc.type === 'folder'"
+                class="icon view-contents" 
+                v-tooltip="{ text: t('docRepo.view.tooltips.viewContents'), position: 'top-left' }"
+                @click="onViewFolderContents(doc)" 
+              />
+              <BIconFolder 
+                v-if="doc.type === 'file' || doc.type === 'folder'"
+                class="icon open-in-explorer" 
+                v-tooltip="{ text: t('docRepo.view.tooltips.openInExplorer'), position: 'top-left' }"
+                @click="onOpenInExplorer(doc)" 
+              />
               <BIconTrash 
                 class="icon remove" 
                 v-tooltip="{ text: t('docRepo.view.tooltips.removeDocument'), position: 'top-left' }"
@@ -57,8 +69,11 @@
         <div>{{ t('docRepo.view.noDocuments') }}</div>
       </div>
     </div>
+    <Folder ref="folderRef" :folder="selectedFolder" @close="selectedFolder = null" />
   </main>
-</template><script setup lang="ts">
+</template>
+
+<script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { DocumentBase, DocumentSource, DocRepoAddDocResponse } from '../types/rag'
 import { extensionToMimeType } from 'multi-llm-ts'
@@ -67,6 +82,7 @@ import { t } from '../services/i18n'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Dialog from '../composables/dialog'
 import Spinner from '../components/Spinner.vue'
+import Folder from './Folder.vue'
 
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
@@ -83,6 +99,8 @@ const emit = defineEmits<{
 // internal state
 const loading = ref(false)
 const modelReady = ref(true)
+const folderRef = ref<InstanceType<typeof Folder> | null>(null)
+const selectedFolder = ref<DocumentSource | null>(null)
 
 const updateModelReady = () => {
   if (props.selectedRepo) {
@@ -200,6 +218,18 @@ const onDelDoc = (doc: DocumentSource) => {
     }
   })
 }
+
+const onOpenInExplorer = (doc: DocumentSource) => {
+  if (doc.type === 'file' || doc.type === 'folder') {
+    window.api.file.openInExplorer(doc.origin)
+  }
+}
+
+const onViewFolderContents = (doc: DocumentSource) => {
+  if (doc.type !== 'folder') return
+  selectedFolder.value = doc
+  folderRef.value?.show()
+}
 </script>
 
 <style scoped>
@@ -237,6 +267,22 @@ main {
 
 .documents {
   flex-grow: 1;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.actions .icon {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.actions .icon:hover {
+  opacity: 1;
 }
 
 * {
