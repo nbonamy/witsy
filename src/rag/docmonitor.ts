@@ -127,6 +127,10 @@ export default class DocumentMonitor implements DocRepoListener {
           console.log(`[docmonitor] File removed: ${filePath}`)
           this.handleFileEvent(filePath, 'unlink')
         })
+        .on('unlinkDir', (dirPath: string) => {
+          console.log(`[docmonitor] Directory removed: ${dirPath}`)
+          this.handleDirectoryEvent(dirPath, 'unlinkDir')
+        })
         .on('error', (error: Error) => {
           console.error(`[docmonitor] Watcher error for ${watchPath}:`, error)
         })
@@ -168,6 +172,23 @@ export default class DocumentMonitor implements DocRepoListener {
     this.pendingOperations.set(filePath, {
       path: filePath,
       operation,
+      timer
+    })
+  }
+
+  private handleDirectoryEvent(dirPath: string, operation: 'unlinkDir'): void {
+    // Cancel any existing pending operation for this directory
+    this.clearPendingOperation(dirPath)
+
+    // Create debounced operation for directory events
+    const timer = setTimeout(() => {
+      this.processDirectoryEvent(dirPath, operation)
+      this.pendingOperations.delete(dirPath)
+    }, this.debounceDelay)
+
+    this.pendingOperations.set(dirPath, {
+      path: dirPath,
+      operation: 'unlink', // Reuse 'unlink' operation type for consistency
       timer
     })
   }
@@ -254,12 +275,63 @@ export default class DocumentMonitor implements DocRepoListener {
     }
   }
 
+  private async processDirectoryEvent(dirPath: string, operation: 'unlinkDir'): Promise<void> {
+    try {
+      console.log(`[docmonitor] Processing ${operation} for directory: ${dirPath}`)
+
+      // Find all docbases that have this directory as a document source
+      const affectedDocBases = this.findAffectedDocBasesForDirectory(dirPath)
+
+      if (affectedDocBases.length === 0) {
+        console.log(`[docmonitor] No affected docbases found for directory: ${dirPath}`)
+        return
+      }
+
+      for (const { docBase, docSource } of affectedDocBases) {
+        if (operation === 'unlinkDir') {
+          // Check if this is a root-level folder document that matches or is within the directory path
+          if (docSource.type === 'folder') {
+            if (docSource.origin === dirPath) {
+              // The main folder document was deleted
+              console.log(`[docmonitor] Removing folder document source: ${dirPath}`)
+              await this.docRepo.removeDocumentSource(docBase.uuid, docSource.uuid)
+            } else {
+              // This is a subdirectory that was affected by the parent directory deletion
+              const relativePath = path.relative(dirPath, docSource.origin)
+              if (!relativePath.startsWith('..') && relativePath !== '') {
+                console.log(`[docmonitor] Removing subdirectory document source: ${docSource.origin}`)
+                await this.docRepo.removeDocumentSource(docBase.uuid, docSource.uuid)
+              }
+            }
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error(`[docmonitor] Error processing ${operation} for directory ${dirPath}:`, error)
+    }
+  }
+
   private findAffectedDocBases(filePath: string): Array<{ docBase: any, docSource: DocumentSourceImpl }> {
     const affected: Array<{ docBase: any, docSource: DocumentSourceImpl }> = []
 
     for (const docBase of this.docRepo.contents) {
       for (const docSource of docBase.documents) {
         if (this.isFileAffectedByDocSource(filePath, docSource)) {
+          affected.push({ docBase, docSource })
+        }
+      }
+    }
+
+    return affected
+  }
+
+  private findAffectedDocBasesForDirectory(dirPath: string): Array<{ docBase: any, docSource: DocumentSourceImpl }> {
+    const affected: Array<{ docBase: any, docSource: DocumentSourceImpl }> = []
+
+    for (const docBase of this.docRepo.contents) {
+      for (const docSource of docBase.documents) {
+        if (this.isDirectoryAffectedByDocSource(dirPath, docSource)) {
           affected.push({ docBase, docSource })
         }
       }
@@ -283,6 +355,22 @@ export default class DocumentMonitor implements DocRepoListener {
     // Check sub-items for folder-type documents
     if (docSource.items && docSource.items.length > 0) {
       return docSource.items.some(item => item.origin === filePath)
+    }
+
+    return false
+  }
+
+  private isDirectoryAffectedByDocSource(dirPath: string, docSource: DocumentSourceImpl): boolean {
+    // Direct folder match - check if this document source is for the deleted directory
+    if (docSource.type === 'folder' && docSource.origin === dirPath) {
+      return true
+    }
+
+    // Check if this document source is a subdirectory of the deleted directory
+    if (docSource.type === 'folder') {
+      const relativePath = path.relative(dirPath, docSource.origin)
+      // If the relative path doesn't start with '..', then docSource.origin is within dirPath
+      return !relativePath.startsWith('..') && relativePath !== ''
     }
 
     return false

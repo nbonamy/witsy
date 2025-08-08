@@ -1,34 +1,46 @@
 
 export type SourceType = 'file'|'folder'|'url'|'text'
 
-export type DocumentSourceBase = {
+// export type DocumentSourceBase = {
+//   uuid: string
+//   title: string
+//   origin: string
+// }
+
+// export type DocumentSourceFile = DocumentSourceBase & {
+//   type: 'file'
+//   lastModified: number
+//   fileSize: number
+// }
+
+// export type DocumentSourceFolder = DocumentSourceBase & {
+//   type: 'folder'
+//   items: (DocumentSourceFile|DocumentSourceFolder)[]
+// }
+
+// export type DocumentSourceUrl = DocumentSourceBase & {
+//   type: 'url'
+//   url: string
+// }
+
+// export type DocumentSourceText = DocumentSourceBase & {
+//   type: 'text'
+//   text: string
+// }
+
+// export type DocumentSource =  DocumentSourceFile | DocumentSourceFolder | DocumentSourceUrl | DocumentSourceText
+
+export type DocumentSource = {
   uuid: string
+  type: SourceType
   title: string
   origin: string
-}
-
-export type DocumentSourceFile = DocumentSourceBase & {
-  type: 'file'
+  filename: string
+  url: string
   lastModified: number
   fileSize: number
+  items?: DocumentSource[]
 }
-
-export type DocumentSourceFolder = DocumentSourceBase & {
-  type: 'folder'
-  items: (DocumentSourceFile|DocumentSourceFolder)[]
-}
-
-export type DocumentSourceUrl = DocumentSourceBase & {
-  type: 'url'
-  url: string
-}
-
-export type DocumentSourceText = DocumentSourceBase & {
-  type: 'text'
-  text: string
-}
-
-export type DocumentSource =  DocumentSourceFile | DocumentSourceFolder | DocumentSourceUrl | DocumentSourceText
 
 export type DocumentMetadata = {
   uuid: string,
