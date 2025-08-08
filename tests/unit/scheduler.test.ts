@@ -215,15 +215,6 @@ describe('Scheduler', () => {
     expect(checkSpy).toHaveBeenCalled()
   })
 
-  test('check() reschedules when agents feature disabled', async () => {
-    mockConfig.features.agents = false
-    vi.mocked(configModule.loadSettings).mockReturnValue(mockConfig)
-
-    await scheduler.check()
-
-    expect(global.setTimeout).toHaveBeenCalledWith(expect.any(Function), 5000)
-  })
-
   test('check() skips agents without schedule', async () => {
     const agent1 = createMockAgent({
       uuid: 'agent1',

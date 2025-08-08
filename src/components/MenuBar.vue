@@ -31,7 +31,7 @@
         <span>{{ t('transcribe.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.config.features?.agents">
+      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')">
         <BIconRobot />
         <span>{{ t('agent.forge.title') }}</span>
       </MenuBarItem>

@@ -52,10 +52,6 @@ export default class Scheduler {
 
     // we need a config
     const config = loadSettings(this.app)
-    if (!(config.features?.agents)) {
-      setTimeout(() => this.start(), 5000)
-      return
-    }
 
     // load agents
     const agents: Agent[] = loadAgents(this.app)

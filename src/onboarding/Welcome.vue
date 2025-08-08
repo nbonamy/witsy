@@ -36,7 +36,7 @@
         <span class="feature-text">{{ t('transcribe.title') }}</span>
       </div>
 
-      <div class="feature" v-if="store.config.features?.agents" :style="{ '--delay': '1.0s' }">
+      <div class="feature" :style="{ '--delay': '1.0s' }">
         <BIconRobot class="feature-icon" />
         <span class="feature-text">{{ t('agent.forge.title') }}</span>
       </div>

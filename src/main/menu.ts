@@ -3,7 +3,6 @@ import { ShortcutsConfig } from 'types/config'
 import { CreateWindowOpts } from '../types/window'
 import { App, BrowserWindow, Menu, shell } from 'electron'
 import { shortcutAccelerator } from './shortcuts'
-import { loadSettings } from './config'
 import * as window from './window'
 import { useI18n } from './i18n';
 
@@ -28,9 +27,6 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
 
   // i18n
   const t = useI18n(app)
-
-  // config
-  const config = loadSettings(app)
 
   // get focused window
   const focusedWindow = BrowserWindow.getFocusedWindow()
@@ -117,13 +113,11 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
           accelerator: shortcutAccelerator(shortcuts?.studio),
           click: () => callbacks.studio()
         },
-        ...(config.features?.agents ? [
-          {
-            label: t('menu.file.agentForge'),
-            accelerator: shortcutAccelerator(shortcuts?.forge),
-            click: () => callbacks.forge()
-          }
-        ] : []),
+        {
+          label: t('menu.file.agentForge'),
+          accelerator: shortcutAccelerator(shortcuts?.forge),
+          click: () => callbacks.forge()
+        },
         { type: 'separator' },
         {
           label: t('menu.file.backupExport'),
