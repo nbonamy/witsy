@@ -4,9 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [2.13.0] - 2025-08-08
 
+This release introduces agents in Witsy! When Deep Research was relesed, it was built on top of an agent creation and execution framework that was not exposed through Witsy UI. This is now fixed. Head-over to the [Create you own agents](https://github.com/nbonamy/witsy/wiki/Creating-your-first-agents) tutorial to learn how to create multi-step workflow agents and have agents delegate tasks to other agents!
+
 ### Added
-- Document Repository file change monitoring
-- Create you own agents (https://github.com/nbonamy/witsy/wiki/Creating-your-first-agents)
+- [Create you own agents](https://github.com/nbonamy/witsy/wiki/Creating-your-first-agents)
+- Document Repository file change monitoring (https://github.com/nbonamy/witsy/discussions/304)
 - OpenAI GPT-5 model support (vision flag, verbosity) (https://github.com/nbonamy/witsy/issues/379)
 
 ### Changed
