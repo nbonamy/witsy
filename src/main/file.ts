@@ -186,6 +186,12 @@ export const listFilesRecursively = (directoryPath: string): string[] => {
     const files = fs.readdirSync(directoryPath)
 
     for (const file of files) {
+
+      // ignored files
+      if (file === '.DS_Store' || file === 'Thumbs.db') {
+        continue
+      }
+
       const filePath = path.join(directoryPath, file)
       const stat = fs.statSync(filePath);
 
