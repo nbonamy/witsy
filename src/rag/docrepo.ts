@@ -53,6 +53,10 @@ export default class DocumentRepository {
     return this.contents.map((db) => DocumentBaseImpl.fromJSON(this.app, db))
   }
 
+  getCurrentQueueItem(): DocumentQueueItem | null {
+    return this.queue.length > 0 ? this.queue[0] : null
+  }
+
   queueLength(): number {
     return this.queue.length
   }
@@ -596,6 +600,11 @@ export default class DocumentRepository {
 
   private async processQueueItem(queueItem: DocumentQueueItem, base: DocumentBaseImpl): Promise<Error | null> {
     try {
+
+      // 1st notify
+      notifyBrowserWindows('docrepo-process-item-start', queueItem)
+
+      // then process
       switch (queueItem.operation) {
         case 'add':
           await this.processAddOperation(queueItem, base)
@@ -612,6 +621,8 @@ export default class DocumentRepository {
       console.error(`Error ${queueItem.operation} document`, e)
       await this.handleOperationError(queueItem, base)
       return e as Error
+    } finally {
+      notifyBrowserWindows('docrepo-process-item-done', queueItem)
     }
   }
 

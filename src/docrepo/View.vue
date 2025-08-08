@@ -23,7 +23,7 @@
     <div class="documents panel">
       <div class="panel-header">
         <label>{{ t('common.documents') }}</label>
-        <Spinner v-if="loading" />
+        <Spinner class="large"v-if="loading" />
         <BIconFilePlus 
           class="icon add-file" 
           v-tooltip="{ text: t('docRepo.view.tooltips.addFile'), position: 'bottom-left' }"
@@ -44,6 +44,7 @@
               <div class="subtext">{{ doc.origin }}</div>
             </div>
             <div class="actions">
+              <Spinner class="large" v-if="processingItems.includes(doc.uuid)" />
               <BIconSearch 
                 v-if="doc.type === 'folder'"
                 class="icon view-contents" 
@@ -75,7 +76,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
-import { DocumentBase, DocumentSource, DocRepoAddDocResponse } from '../types/rag'
+import { DocumentBase, DocumentSource, DocRepoAddDocResponse, DocumentQueueItem } from '../types/rag'
 import { extensionToMimeType } from 'multi-llm-ts'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
@@ -99,6 +100,7 @@ const emit = defineEmits<{
 // internal state
 const loading = ref(false)
 const modelReady = ref(true)
+const processingItems = ref<string[]>([])
 const folderRef = ref<InstanceType<typeof Folder> | null>(null)
 const selectedFolder = ref<DocumentSource | null>(null)
 
@@ -116,10 +118,19 @@ const onModelReady = () => {
 }
 
 onMounted(() => {
+  window.api.on('docrepo-process-item-start', onProcessItemStart)
+  window.api.on('docrepo-process-item-done', onProcessItemDone)
   window.api.on('docrepo-add-document-done', onAddDocDone)
   window.api.on('docrepo-add-document-error', onAddDocError)
   window.api.on('docrepo-del-document-done', onDelDocDone)
   window.api.on('docrepo-model-downloaded', onModelReady)
+
+  window.api.docrepo.getCurrentQueueItem().then((item) => {
+    if (item) {
+      onProcessItemStart(item)
+    }
+  })
+
 })
 
 onUnmounted(() => {
@@ -133,6 +144,14 @@ onUnmounted(() => {
 watch(() => props.selectedRepo, () => {
   updateModelReady()
 }, { immediate: true })
+
+const onProcessItemStart = (payload: DocumentQueueItem) => {
+  processingItems.value.push(payload.parentDocId ?? payload.uuid)
+}
+
+const onProcessItemDone = (payload: DocumentQueueItem) => {
+  processingItems.value = processingItems.value.filter(id => id !== (payload.parentDocId ?? payload.uuid))
+}
 
 const onAddDocDone = (payload: DocRepoAddDocResponse) => {
   const queueLength = payload.queueLength
@@ -263,6 +282,10 @@ main {
 
   }
 
+}
+
+.spinner {
+  margin-right: 1rem;
 }
 
 .documents {

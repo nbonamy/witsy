@@ -5,7 +5,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { Command, ComputerAction, Expert, ExternalApp, anyDict, strDict, NetworkRequest, OpenSettingsPayload, MainWindowMode, AgentRun } from './types';
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './types/file';
 import { Configuration } from './types/config';
-import { DocRepoQueryResponseItem } from './types/rag';
+import { DocRepoQueryResponseItem, DocumentQueueItem } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
 import { McpServer, McpStatus, McpTool } from './types/mcp';
 import { ListDirectoryResponse } from './types/filesystem';
@@ -165,6 +165,7 @@ contextBridge.exposeInMainWorld(
       removeDocument(baseId: string, docId: string): void { return ipcRenderer.send(IPC.DOCREPO.REMOVE_DOCUMENT, { baseId, docId }) },
       query(baseId: string, text: string): Promise<DocRepoQueryResponseItem[]> { return ipcRenderer.invoke(IPC.DOCREPO.QUERY, { baseId, text }) },
       isEmbeddingAvailable(engine: string, model: string): boolean { return ipcRenderer.sendSync(IPC.DOCREPO.IS_EMBEDDING_AVAILABLE, { engine, model }) },
+      getCurrentQueueItem(): Promise<DocumentQueueItem|null> { return ipcRenderer.invoke(IPC.DOCREPO.GET_CURRENT_QUEUE_ITEM) },
     },
     readaloud: {
       closePalette: (sourceApp: Application): void => { return ipcRenderer.send(IPC.READALOUD.CLOSE_PALETTE, sourceApp) },
