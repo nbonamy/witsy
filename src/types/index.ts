@@ -1,5 +1,5 @@
 
-import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool, LlmChunk, PluginParameter, LlmUsage } from 'multi-llm-ts'
+import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool, LlmChunk, PluginParameter, LlmUsage, LlmStructuredOutput } from 'multi-llm-ts'
 import { Configuration } from './config'
 import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
@@ -9,7 +9,6 @@ import { McpInstallStatus, McpServer, McpStatus, McpTool } from './mcp'
 import { ToolSelection } from './llm'
 import { ListDirectoryResponse } from './filesystem'
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './file'
-import { ZodType } from 'zod'
 
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
@@ -110,10 +109,8 @@ export type AgentType = 'runnable' | 'support'
 export const kAgentStepVarOutputPrefix = 'output.'
 export const kAgentStepVarFacts = 'facts'
 
-export type AgentStepStructuredOutput = {
-  name: string
-  structure: ZodType
-}
+export type AgentStepStructuredOutput = LlmStructuredOutput
+
 export type AgentStep = {
   // engine: string|null
   // model: string|null
