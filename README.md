@@ -202,6 +202,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] OpenAI GPT-5 support
 - [x] Agents (multi-step, scheduling...)
 - [x] Document Repository file change monitoring
 - [x] OpenAI API response (o3-pro)
