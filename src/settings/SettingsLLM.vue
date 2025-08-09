@@ -21,10 +21,17 @@
           <option v-for="custom in customInstructions" :key="custom.id" :value="custom.id">{{ custom.label }}</option>
         </select>
         <div class="actions">
-          <button type="button" @click="onCreateInstruction">{{ t('common.add') }}</button>
+          <button type="button" @click="onCreateInstruction">{{ t('common.new') }}</button>
           <button type="button" @click="onEditCurrentInstruction()">{{ t('common.edit') }}</button>
           <button type="button" @click="onDeleteInstruction" :disabled="!isCustomInstructionSelected">{{ t('common.delete') }}</button>
         </div>
+      </div>
+      <div class="form-field capabilities">
+        <label>{{ t('settings.llm.capabilities.title') }}</label>
+          <div class="form-field horizontal">
+            <input type="checkbox" v-model="artifactsInstructions" @change="save" />
+            <div class="label">{{ t('settings.llm.capabilities.artifacts') }}</div>
+          </div>
       </div>
       <div class="form-field quick-prompt">
         <label>{{ t('settings.general.promptLLMModel') }}</label>
@@ -72,6 +79,7 @@ const localeLLM = ref(null)
 const isLocalized = ref(false)
 const forceLocale = ref(false)
 const conversationLength = ref(null)
+const artifactsInstructions = ref(false)
 const customInstructions = ref<CustomInstruction[]>([])
 const selectedInstruction = ref<CustomInstruction | null>(null)
 
@@ -106,6 +114,7 @@ const load = () => {
   model.value = store.config.prompt.model || ''
   localeLLM.value = store.config.llm.locale
   forceLocale.value = store.config.llm.forceLocale
+  artifactsInstructions.value = store.config.llm.additionalInstructions.artifacts
   conversationLength.value = store.config.llm.conversationLength || 5
   customInstructions.value = store.config.llm.customInstructions || []
   onChangeLocaleLLM()
@@ -117,6 +126,7 @@ const save = () => {
   store.config.prompt.model = model.value
   store.config.llm.locale = localeLLM.value
   store.config.llm.forceLocale = forceLocale.value
+  store.config.llm.additionalInstructions.artifacts = artifactsInstructions.value
   store.config.llm.conversationLength = conversationLength.value
   store.config.llm.customInstructions = customInstructions.value
   store.saveSettings()

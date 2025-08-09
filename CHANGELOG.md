@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [2.13.1] - WIP
 
 ### Added
-- N/A
+- Artifacts instructions option with specific display mode
 
 ### Changed
 - N/A

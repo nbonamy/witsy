@@ -81,7 +81,7 @@ test('Settings LLM basic functionality', async () => {
   
   const manager = LlmFactory.manager(store.config)
   const tab = await switchToTab(wrapper, tabs.indexOf('settingsLLM'))
-  expect(tab.findAll('.form-field')).toHaveLength(7)
+  expect(tab.findAll('.form-field')).toHaveLength(9)
   expect(tab.findAll('.form-field.localeLLM select option')).toHaveLength(21)
   expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
   expect(store.config.prompt.engine).toBe('')
@@ -152,7 +152,7 @@ test('Settings LLM custom instructions initialization', async () => {
   expect(tab.findAll('.actions button')).toHaveLength(3)
   
   const buttons = tab.findAll('.actions button')
-  expect(buttons[0].text()).toBe('common.add')
+  expect(buttons[0].text()).toBe('common.new')
   expect(buttons[1].text()).toBe('common.edit')
   expect(buttons[2].text()).toBe('common.delete')
   

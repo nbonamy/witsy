@@ -111,6 +111,7 @@ const computeBlocks = (content: string|null): Block[] => {
   // Negative lookbehind (?<!\[) prevents matching when preceded by '[' 
   const regexMedia1 = /(?<!\[)!\[([^\]]*)\]\(([^\)]*)\)/g
   const regexMedia2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
+  const regexArtifact1 = /<artifact title=\"([^\"]*)\">(.*)<\/artifact>/gms
   const regexTool1 = /<tool (id|index)="([^\"]*)"><\/tool>/g
 
   while (lastIndex < content.length) {
@@ -119,23 +120,28 @@ const computeBlocks = (content: string|null): Block[] => {
     const matches = []
     
     // Reset regex lastIndex to search from current position
-    regexTool1.lastIndex = lastIndex
     regexMedia1.lastIndex = lastIndex
     regexMedia2.lastIndex = lastIndex
+    regexArtifact1.lastIndex = lastIndex
+    regexTool1.lastIndex = lastIndex
     
-    const tool1Match = regexTool1.exec(content)
     const media1Match = regexMedia1.exec(content)
     const media2Match = regexMedia2.exec(content)
+    const artifact1Match = regexArtifact1.exec(content)
+    const tool1Match = regexTool1.exec(content)
     
     // Collect valid matches (not inside code blocks)
-    if (tool1Match && !codeBlocks.find(block => tool1Match.index >= block.start && tool1Match.index < block.end)) {
-      matches.push({ match: tool1Match, type: 'tool', regex: regexTool1 })
-    }
     if (media1Match && !codeBlocks.find(block => media1Match.index >= block.start && media1Match.index < block.end)) {
       matches.push({ match: media1Match, type: 'media1', regex: regexMedia1 })
     }
     if (media2Match && !codeBlocks.find(block => media2Match.index >= block.start && media2Match.index < block.end)) {
       matches.push({ match: media2Match, type: 'media2', regex: regexMedia2 })
+    }
+    if (artifact1Match && !codeBlocks.find(block => artifact1Match.index >= block.start && artifact1Match.index < block.end)) {
+      matches.push({ match: artifact1Match, type: 'artifact', regex: regexArtifact1 })
+    }
+    if (tool1Match && !codeBlocks.find(block => tool1Match.index >= block.start && tool1Match.index < block.end)) {
+      matches.push({ match: tool1Match, type: 'tool', regex: regexTool1 })
     }
     
     // If no matches found, add remaining content as text and break
@@ -195,6 +201,8 @@ const computeBlocks = (content: string|null): Block[] => {
       // done
       const desc = match.length === 3 ? match[1] : 'Video'
       blocks.push({ type: 'media', url: imageUrl, desc, prompt })
+    } else if (matchType === 'artifact') {
+      blocks.push({ type: 'artifact', title: match[1], content: match[2] })
     }
     
     // Update lastIndex to continue after this match

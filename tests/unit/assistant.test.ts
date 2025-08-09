@@ -4,9 +4,7 @@ import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
-import defaults from '../../defaults/settings.json'
 import Assistant, { AssistantCompletionOpts } from '../../src/services/assistant'
-import Generator from '../../src/services/generator'
 import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
 import LlmMock, { installMockModels } from '../mocks/llm'
@@ -34,23 +32,10 @@ vi.mock('../../src/services/i18n', async () => {
   }))
 })
 
-vi.mock('../../src/main/config.ts', async () => {
-  return {
-    loadSettings: () => JSON.parse(JSON.stringify(defaults)),
-  }
-})
-
 vi.mock('../../src/services/download.ts', async () => {
   return {
     saveFileContents: vi.fn(() => 'local_file.png'),
   }
-})
-
-beforeAll(() => {
-  Generator.addCapabilitiesToSystemInstr = false
-  Generator.addDateAndTimeToSystemInstr = false
-  useWindowMock()
-  store.loadExperts()
 })
 
 const spyMockStream = vi.spyOn(LlmMock.prototype, 'stream')
@@ -76,14 +61,18 @@ const prompt = async (prompt: string, opts: AssistantCompletionOpts = { model: '
 
 }
 
+beforeAll(() => {
+  useWindowMock({ noAdditionalInstructions: true })
+  store.loadExperts()
+})
+
 beforeEach(() => {
 
   // clear mock
   vi.clearAllMocks()
 
   // init store
-  // @ts-expect-error mocking
-  store.config = defaults
+  store.loadSettings()
   store.config.general.locale = 'en-US'
   store.config.llm.locale = 'fr-FR'
   store.config.llm.forceLocale = false
@@ -91,6 +80,11 @@ beforeEach(() => {
   // @ts-expect-error mocking
   store.config.instructions = {}
   installMockModels()
+
+  // disable all additional instructions
+  for (const key of Object.keys(store.config.llm.additionalInstructions)) {
+    store.config.llm.additionalInstructions[key] = false
+  }
 
   // init assistant
   assistant = new Assistant(store.config)
@@ -491,7 +485,7 @@ test('Custom instructions with chat override', async () => {
 })
 
 test('Assistant instructions with capabilities', async () => {
-  Generator.addCapabilitiesToSystemInstr = true
+  store.config.llm.additionalInstructions.mermaid = true
   store.config.llm.instructions = 'standard'
   store.config.llm.locale = ''
   await prompt('Hello LLM')

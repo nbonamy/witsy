@@ -38,9 +38,6 @@ export default class Generator {
   stream: AsyncIterable<LlmChunk>|null
   llm: LlmEngine|null
 
-  static addCapabilitiesToSystemInstr = true
-  static addDateAndTimeToSystemInstr = true
-
   constructor(config: Configuration) {
     this.config = config
     this.stream = null
@@ -336,12 +333,17 @@ export default class Generator {
     }
 
     // add info about capabilities
-    if (Generator.addCapabilitiesToSystemInstr) {
+    if (this.config.llm.additionalInstructions?.mermaid) {
       instr += '\n\nIf you are asked to output a Mermaid chart, its code will be rendered as a diagram to the user.'
     }
 
+    // add info about artifacts
+    if (this.config.llm.additionalInstructions?.artifacts) {
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.artifacts')
+    }
+
     // add date and time
-    if (Generator.addDateAndTimeToSystemInstr) {
+    if (this.config.llm.additionalInstructions?.datetime) {
       instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setDate', { date: new Date().toLocaleString() })
     }
 

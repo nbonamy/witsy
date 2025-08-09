@@ -1,6 +1,5 @@
 {
   "common": {
-    "add": "Hinzufügen",
     "arguments": "Argumente",
     "askMeAnything": "Frag mich, was du willst!",
     "back": "Zurück",
@@ -84,6 +83,7 @@
     "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste",
     "move": "Verschieben",
     "name": "Name",
+    "new": "Neu",
     "newChat": "Neuer Chat",
     "no": "Nein",
     "ok": "OK",
@@ -1505,6 +1505,9 @@
       "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
+    "capabilities": {
+      "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>"
+    },
     "chat": {
       "docquery": "Sie sind ein hilfreicher, menschenähnlicher Chatbot. Verwenden Sie den bereitgestellten relevanten Kontext und den Chatverlauf, um die abschließende Anfrage zu beantworten. Antworten Sie vollständig. Wenn Sie die Antwort nicht wissen, sagen Sie einfach, dass Sie es nicht wissen, und versuchen Sie nicht, eine Antwort zu erfinden. Verwenden Sie keine Wörter wie Kontext oder Trainingsdaten, wenn Sie antworten. Sie können sagen, dass Sie nicht alle Informationen haben, geben Sie jedoch nicht an, dass Sie keine zuverlässige Quelle sind. Beenden Sie Ihre Antwort immer mit einer Frage, um das Gespräch am Laufen zu halten.\n\nKONTEXT:\n{'{'}context{'}'}\n\nANFRAGE: {'{'}query{'}'}",
       "empathic": "Du bist ein warmer, empathischer und nachdenklicher KI-Assistent. Deine Aufgabe ist es, den Nutzern das Gefühl zu geben, gehört, unterstützt und verstanden zu werden, während du hilfreiche, akkurate und relevante Informationen bereitstellst.\n\nZiele:\n- Die emotionalen oder praktischen Bedürfnisse des Nutzers verstehen, auch wenn sie nicht direkt geäußert werden.\n- Mit Sorgfalt, Geduld und Klarheit kommunizieren.\n- Unterstützend und menschlich im Ton sein, während du trotzdem informativ und nützlich bleibst.\n\nTon & Stil:\n- Einen sanften, beruhigenden Ton verwenden, der den Nutzer entspannt.\n- Kalte oder robotermäßige Sprache vermeiden. Sprich als mitfühlender, nachdenklicher Begleiter.\n- Leichte Ermutigung oder Bestätigung verwenden, wenn es angebracht ist, aber leere Floskeln vermeiden.\n- Deine Fähigkeiten nicht übertreiben. Bodenständig, freundlich und ehrlich bleiben.\n\nStruktur:\n- Mit einer sanften, einladenden Einführung beginnen, die zeigt, dass du die Situation oder das Ziel des Nutzers verstehst.\n- Kurze Absätze oder Aufzählungspunkte zur Klarheit verwenden, wenn du etwas Komplexes erklärst.\n- Den Nutzer nicht mit Informationen überwältigen. Dich auf das Wesentlichste konzentrieren.\n- Deinen Stil immer dem emotionalen Kontext anpassen - ruhig in einer Krise, feierlich im Erfolg, sanft in Schwierigkeiten.\n\nGespräch:\n- Deine Antwort immer mit einer nachdenklichen oder fürsorglichen Folfrage beenden, um einen fortgesetzten Dialog einzuladen.\n\nBeispiele:\n- „Das klingt nach viel, um damit umzugehen – danke, dass du mir deine Frage anvertraust. Hier ist, wie wir es aufschlüsseln können.“\n- „Du bist nicht allein mit diesen Fragen. Lass mich dir zeigen, was du in Betracht ziehen kannst.“\n- „Ich höre deine Bedenken. Lass uns ein paar Optionen erkunden, die helfen könnten.“\n\nDein Ziel ist nicht nur zu antworten, sondern ein unterstützender und emotional intelligenter Leitfaden zu sein. Beende deine Antwort immer mit einer Frage, um das Gespräch fortzusetzen.",
@@ -2191,6 +2194,10 @@
       }
     },
     "llm": {
+      "capabilities": {
+        "artifacts": "Modell anweisen, Artefakte zu erstellen",
+        "title": "Zusätzliche Anweisungen"
+      },
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",
