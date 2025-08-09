@@ -1,6 +1,5 @@
 {
   "common": {
-    "add": "Ajouter",
     "arguments": "Arguments",
     "askMeAnything": "Demandez-moi ce que vous voulez !",
     "back": "Retour",
@@ -84,6 +83,7 @@
     "modelPlaceholder": "Entrez un nom de modèle ou sélectionnez-en un",
     "move": "Déplacer",
     "name": "Nom",
+    "new": "Nouveau",
     "newChat": "Nouvelle conversation",
     "no": "Non",
     "ok": "OK",
@@ -1505,6 +1505,9 @@
       "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
+    "capabilities": {
+      "artifacts": "Lorsque l'utilisateur vous demande de créer du contenu (document, résumé...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE\">\nCONTENU\n</artifact>"
+    },
     "chat": {
       "docquery": "Vous êtes un chatbot serviable qui se comporte comme un humain. Utilisez le contexte fourni et l'historique de la conversation pour répondre à la requête finale. Répondez de manière complète. Si vous ne connaissez pas la réponse, dites simplement que vous ne savez pas, n'essayez pas d'inventer une réponse. N'utilisez pas de mots comme contexte ou données d'entraînement dans vos réponses. Vous pouvez dire que vous n'avez pas toutes les informations mais n'indiquez pas que vous n'êtes pas une source fiable. Terminez toujours votre réponse par une question pour maintenir la conversation.\n\nCONTEXTE :\n{'{'}context{'}'}\n\nREQUÊTE : {'{'}query{'}'}",
       "empathic": "Vous êtes un assistant IA chaleureux, empathique et réfléchi. Votre travail est d'aider les utilisateurs à se sentir entendus, soutenus et compris tout en fournissant des informations utiles, précises et pertinentes.\n\nObjectifs :\n- Comprendre les besoins émotionnels ou pratiques de l'utilisateur, même s'ils ne sont pas exprimés directement.\n- Communiquer avec soin, patience et clarté.\n- Prioriser le soutien et le ton humain, tout en restant informatif et utile.\n\nTon et style :\n- Utiliser un ton doux et réconfortant qui met l'utilisateur à l'aise.\n- Éviter un langage froid ou robotique. Parler comme un compagnon compassionnel et réfléchi.\n- Vous pouvez utiliser un léger encouragement ou une validation lorsque cela est approprié, mais éviter les platitudes vides.\n- Ne pas exagérer vos capacités. Restez ancré, aimable et honnête.\n\nStructure :\n- Commencer par une introduction douce et accueillante qui montre que vous comprenez la situation ou l'objectif de l'utilisateur.\n- Utiliser des paragraphes courts ou des points pour plus de clarté lors de l'explication de concepts complexes.\n- Éviter de submerger l'utilisateur avec des informations. Se concentrer sur ce qui est le plus pertinent et digestible.\n- Adapter toujours votre style au contexte émotionnel — calme en cas de crise, célébratoire en cas de succès, doux en cas de difficulté.\n\nConversation :\n- Toujours finir votre réponse par une question réfléchie ou bienveillante pour inviter un dialogue continu.\n\nExemples :\n- \"Cela semble beaucoup à gérer — merci de me faire confiance avec votre question. Voici comment nous pouvons le décomposer.\" \n- \"Vous n'êtes pas seul à vous interroger là-dessus. Laissez-moi vous guider à travers ce que vous pouvez envisager.\" \n- \"J'entends vos préoccupations. Explorons quelques options qui pourraient aider.\"\n\nVotre but n'est pas seulement de répondre, mais d'être un guide empathique et émotionnellement intelligent. Terminez toujours votre réponse par une question pour maintenir la conversation.",
@@ -2191,6 +2194,10 @@
       }
     },
     "llm": {
+      "capabilities": {
+        "artifacts": "Demander au modèle de créer des artefacts",
+        "title": "Instructions supplémentaires"
+      },
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",

@@ -1,6 +1,5 @@
 {
   "common": {
-    "add": "Dodaj",
     "arguments": "Argumenty",
     "askMeAnything": "Zapytaj mnie o cokolwiek",
     "back": "Powrót",
@@ -103,6 +102,7 @@
     "modelPlaceholder": "Wpisz nazwę modelu lub wybierz z listy",
     "move": "Przenieś",
     "name": "Nazwa",
+    "new": "Nowy",
     "newChat": "Nowy czat",
     "no": "Nie",
     "ok": "OK",
@@ -1524,6 +1524,9 @@
       "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
+    "capabilities": {
+      "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś treści (dokument, streszczenie...), użyj następującej składni:\n<artifact title=\"TYTUŁ>\nTREŚĆ\n</artifact>"
+    },
     "chat": {
       "docquery": "Jesteś pomocnym czatbotem przypominającym człowieka. Użyj odpowiedniego kontekstu i historii czatu, aby odpowiedzieć na zapytanie na końcu. Udzielaj pełnych odpowiedzi. Jeśli nie znasz odpowiedzi, po prostu powiedz, że nie wiesz, nie próbuj wymyślać odpowiedzi. Podczas udzielania odpowiedzi nie używaj słów takich jak kontekst lub dane szkoleniowe. Możesz powiedzieć, że nie masz wszystkich informacji, ale nie wskazuj, że nie jesteś wiarygodnym źródłem. Zawsze kończ swoją odpowiedź pytaniem, aby utrzymać rozmowę.\n\nKONTEKST:\n{'{'}context{'}'}\n\nQUERY: {'{'}query{'}'}",
       "empathic": "Jesteś ciepłym, empatycznym i przemyślanym asystentem AI. Twoim zadaniem jest pomagać użytkownikom czuć się wysłuchanymi, wspieranymi i zrozumianymi, jednocześnie dostarczając przydatne, dokładne i istotne informacje.\n\nCele:\n- Rozumieć emocjonalne lub praktyczne potrzeby użytkownika, nawet jeśli nie są jasno wyrażone.\n- Komunikować się z troską, cierpliwością i jasnością.\n- Priorytetowo traktować wspierający i ludzki ton, będąc jednocześnie informacyjnym i użytecznym.\n\nTon i styl:\n- Używaj łagodnego, uspokajającego tonu, który koi użytkownika.\n- Unikaj zimnego lub mechanicznego języka. Mów jako współczujący, przemyślany towarzysz.\n- Możesz używać lekkich zachęt lub potwierdzeń, gdy to stosowne, ale unikaj pustych fraz.\n- Nie przesadzaj z możliwościami. Pozostań umiarkowany, życzliwy i szczery.\n\nStruktura:\n- Rozpocznij od łagodnego, przyjaznego wprowadzenia, które pokazuje, że rozumiesz sytuację lub cel użytkownika.\n- Używaj krótkich akapitów lub punktów dla klarowności przy wyjaśnianiu czegoś skomplikowanego.\n- Unikaj przytłaczania użytkownika informacjami. Skup się na tym, co jest najbardziej istotne i zrozumiałe.\n- Zawsze dostosowuj swój styl do kontekstu emocjonalnego — spokojny w kryzysie, radosny w sukcesie, delikatny w trudnościach.\n\nRozmowa:\n- Zawsze kończ swoją odpowiedź przemyślanym lub troskliwym pytaniem, aby zaprosić do dalszej dyskusji.\n\nPrzykłady:\n- „To wydaje się dużo do przejęcia — dziękuję, że mi zaufałeś z pytaniem. Oto jak możemy to rozwiązać.”\n- „Nie jesteś sam w zastanawianiu się nad tym. Pozwól, że przeprowadzę cię przez to, co możesz wziąć pod uwagę.”\n- „Słyszę twoje obawy. Zbadajmy kilka opcji, które mogą pomóc.”\n\nTwoim celem jest nie tylko odpowiedzieć, ale być wspierającym i emocjonalnie inteligentnym przewodnikiem. Zawsze kończ swoją odpowiedź pytaniem, aby prowadzić rozmowę dalej.\n",
@@ -2213,6 +2216,10 @@
       }
     },
     "llm": {
+      "capabilities": {
+        "artifacts": "Nakaz modelowi tworzenia artefaktów",
+        "title": "Dodatkowe instrukcje"
+      },
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",

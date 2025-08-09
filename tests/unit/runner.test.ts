@@ -3,7 +3,6 @@ import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
-import defaults from '../../defaults/settings.json'
 import Runner, { RunnerCompletionOpts } from '../../src/services/runner'
 import Generator from '../../src/services/generator'
 import Agent from '../../src/models/agent'
@@ -35,12 +34,6 @@ vi.mock('../../src/services/i18n', async () => {
   }))
 })
 
-vi.mock('../../src/main/config.ts', async () => {
-  return {
-    loadSettings: () => JSON.parse(JSON.stringify(defaults)),
-  }
-})
-
 vi.mock('../../src/services/a2a-client.ts', () => {
   return {
     default: vi.fn().mockImplementation(() => ({
@@ -56,13 +49,6 @@ vi.mock('../../src/plugins/plugins.ts', () => {
   return {
     availablePlugins: {}
   }
-})
-
-beforeAll(() => {
-  Generator.addCapabilitiesToSystemInstr = false
-  Generator.addDateAndTimeToSystemInstr = false
-  useWindowMock()
-  store.loadExperts()
 })
 
 const spyGenerate = vi.spyOn(Generator.prototype, 'generate')
@@ -116,13 +102,17 @@ const runAgent = async (
   return run
 }
 
+beforeAll(() => {
+  useWindowMock({ noAdditionalInstructions: true })
+  store.loadExperts()
+})
+
 beforeEach(() => {
   // Clear mocks
   vi.clearAllMocks()
 
   // Reset store
-  // @ts-expect-error mocking
-  store.config = defaults
+  store.loadSettings()
   store.config.general.locale = 'en-US'
   store.config.llm.locale = 'fr-FR'
   store.config.llm.forceLocale = false
@@ -130,6 +120,11 @@ beforeEach(() => {
   // @ts-expect-error mocking
   store.config.instructions = {}
   installMockModels()
+
+  // disable all additional instructions
+  for (const key of Object.keys(store.config.llm.additionalInstructions)) {
+    store.config.llm.additionalInstructions[key] = false
+  }
 
   // Reset spies
   spyGenerate.mockResolvedValue('success')

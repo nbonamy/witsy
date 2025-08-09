@@ -2,6 +2,7 @@
   <div ref="messageItemBodyBlock">
     <div v-if="block.type == 'empty'" class="text empty variable-font-size"><p>{{ t('message.content.empty') }}</p></div>
     <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
+    <MessageItemArtifactBlock v-else-if="block.type == 'artifact'" :title="block.title!" :content="block.content!" />
     <MessageItemMediaBlock v-else-if="block.type == 'media'" :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" />
     <MessageItemToolBlock v-else-if="block.type == 'tool'" :tool-call="block.toolCall!" />
     <MessageItemSearchResultBlock v-else-if="block.type == 'search'" :tool-call="block.toolCall!" />
@@ -12,6 +13,7 @@
 
 import { ToolCall } from '../types/index'
 import { nextTick, PropType, ref, h, render } from 'vue'
+import MessageItemArtifactBlock from './MessageItemArtifactBlock.vue'
 import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
@@ -19,14 +21,39 @@ import MessageItemSearchResultBlock from './MessageItemSearchResultBlock.vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 
-export type Block = {
-  type: 'empty'|'text'|'media'|'tool'|'search'
-  content?: string
-  url?: string
+type BlockEmpty = {
+  type: 'empty'
+}
+
+type BlockText = {
+  type: 'text'
+  content: string
+}
+
+type BlockMedia = {
+  type: 'media'
+  url: string
   desc?: string
   prompt?: string
-  toolCall?: ToolCall
 }
+
+type BlockArtifact = {
+  type: 'artifact'
+  title: string
+  content: string
+}
+
+type BlockTool = {
+  type: 'tool'
+  toolCall: ToolCall
+}
+
+type BlockSearch = {
+  type: 'search'
+  toolCall: ToolCall
+}
+
+export type Block = BlockEmpty | BlockText | BlockMedia | BlockArtifact | BlockTool | BlockSearch
 
 defineProps({
   block: {

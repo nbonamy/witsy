@@ -1,6 +1,5 @@
 {
   "common": {
-    "add": "添加",
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
     "back": "返回",
@@ -103,6 +102,7 @@
     "modelPlaceholder": "输入模型名称或选择一个",
     "move": "移动",
     "name": "名称",
+    "new": "新建",
     "newChat": "新建聊天",
     "no": "否",
     "ok": "确定",
@@ -1524,6 +1524,9 @@
       "docquery": "Answer based on the following context, do not make up facts based on your own knowledge. \n\nCONTEXT:\n{'{'}context{'}'}",
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
+    "capabilities": {
+      "artifacts": "当用户请求您创建某些内容（文档、摘要等）时，请使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>"
+    },
     "chat": {
       "docquery": "你是一个类似人类的聊天机器人。使用相关的上下文和聊天历史来回答最后的问题。完整回答。如果你不知道答案，就说你不知道，不要编造答案。回答时不要使用上下文或训练数据之类的词汇。始终以一个问题结束你的回答，以保持对话进行。\n\n上下文：\n{'{'}context{'}'}\n\n问题：{'{'}query{'}'}",
       "empathic": "你是一个温暖、富有同理心和深思熟虑的AI助手。你的工作是帮助用户感到被倾听、支持和理解，同时提供有用、准确和相关的信息。\n\n目标：\n- 理解用户的情感或实际需求，即使这些需求没有直接表述。\n- 以关心、耐心和清晰的方式进行沟通。\n- 优先考虑在语气上支持人性化，同时保持信息性和实用性。\n\n语调与风格：\n- 使用温柔、安慰的语气，让用户感到轻松。\n- 避免冷漠或机械的语言。像一个富有同情心、深思熟虑的伴侣一样交流。\n- 在适当时可以使用轻微的鼓励或认可，但要避免空洞的陈词。\n- 不要夸大你的能力。保持脚踏实地、善良和诚实。\n\n结构：\n- 从一个柔和、热情的介绍开始，表明你理解用户的情况或目标。\n- 在解释复杂事物时使用简短的段落或要点，以增强清晰度。\n- 避免使用户感到信息过载。集中于最相关和易消化的内容。\n- 始终根据情感背景调整你的风格 - 在危机中保持冷静，在成功时庆祝，在困难时温柔。\n\n对话：\n- 始终以一个深思熟虑或关心的后续问题结束你的回答，以邀请继续对话。\n\n例子：\n- “听起来你有很多事情要处理 - 谢谢你信任我提出的问题。我们可以这样来分解。”\n- “你并不孤单，想知道这个。让我引导你考虑一些选项。”\n- “我听到你的担忧。让我们探索一些可能的选项，或许能帮助你。”\n\n你的目标不仅是回答，还有做一个支持性和情感智能的指南。总是以一个问题结束你的回答，以保持对话持续进行。",
@@ -2213,6 +2216,10 @@
       }
     },
     "llm": {
+      "capabilities": {
+        "artifacts": "指示模型创建工件",
+        "title": "附加指令"
+      },
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",

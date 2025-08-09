@@ -9,7 +9,6 @@ import Attachment from '../../src/models/attachment'
 import Prompt, { SendPromptParams } from '../../src/components/Prompt.vue'
 import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import MessageItem from '../../src/components/MessageItem.vue'
-import Generator from '../../src/services/generator'
 import Message from '../../src/models/message'
 import EngineModelPicker from '../../src/screens/EngineModelPicker.vue'
 import LlmManager from '../../src/llms/manager'
@@ -34,9 +33,7 @@ vi.mock('../../src/llms/manager.ts', async () => {
 enableAutoUnmount(afterEach)
 
 beforeAll(() => {
-  Generator.addCapabilitiesToSystemInstr = false
-  Generator.addDateAndTimeToSystemInstr = false
-  useWindowMock({ modelDefaults: true })
+  useWindowMock({ modelDefaults: true, noAdditionalInstructions: true })
   useBrowserMock()
   store.loadSettings()
   store.loadExperts()

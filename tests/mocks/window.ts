@@ -16,6 +16,7 @@ interface WindowMockOpts {
   modelDefaults?: boolean
   favoriteModels?: boolean
   customEngine?: boolean
+  noAdditionalInstructions?: boolean
 }
 
 let clipboard = ''
@@ -86,6 +87,11 @@ const useWindowMock = (opts?: WindowMockOpts) => {
             { id: 'mock-chat', engine: 'mock', model: 'chat' },
             { id: 'mock-vision', engine: 'mock', model: 'vision' },
           ]
+        }
+        if (opts.noAdditionalInstructions) {
+          for (const key of Object.keys(config.llm.additionalInstructions)) {
+            config.llm.additionalInstructions[key] = false
+          }
         }
         if (opts.modelDefaults) {
           config.llm.defaults = [
