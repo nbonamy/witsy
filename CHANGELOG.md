@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.13.1] - WIP
+
+### Added
+- N/A
+
+### Changed
+- N/A
+
+### Fixed
+- Mistral vision does not work (https://github.com/nbonamy/witsy/issues/382)
+
+### Removed
+- N/A
+
+
 ## [2.13.0] - 2025-08-08
 
 This release introduces agents in Witsy! When Deep Research was relesed, it was built on top of an agent creation and execution framework that was not exposed through Witsy UI. This is now fixed. Head-over to the [Create you own agents](https://github.com/nbonamy/witsy/wiki/Creating-your-first-agents) tutorial to learn how to create multi-step workflow agents and have agents delegate tasks to other agents!
