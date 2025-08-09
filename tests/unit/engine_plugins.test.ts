@@ -34,7 +34,7 @@ global.fetch = vi.fn(async (url: string) => {
       headers: {
         get: () => 'application/pdf',
       },
-      arrayBuffer: () => new TextEncoder().encode('pdf').buffer
+      blob: () => new Blob([new TextEncoder().encode('pdf')], { type: 'application/pdf' })
     }
   } else {
     return {
