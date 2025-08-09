@@ -102,15 +102,24 @@ export default class extends Plugin {
 
   }
   async processDocument(response: Response): Promise<anyDict> {
-    const arrayBuffer = await response.arrayBuffer()
-    const uint8Array = new Uint8Array(arrayBuffer)
-    const b64 = btoa(String.fromCharCode(...uint8Array))
+    const blob = await response.blob()
+    const b64 = await this.blobToBase64(blob)
+    const content = b64.split(',')[1]
     const contentType = response.headers.get('content-type')
     const format = mimeTypeToExtension(contentType)
+    const text = window.api.file.extractText(content, format)
     return {
       title: response.url,
-      content: window.api.file.extractText(b64, format),
+      content: text,
     }
   }
 
+  async blobToBase64(blob: Blob): Promise<string>{
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onloadend = () => resolve(reader.result as string)
+        reader.onerror = reject
+        reader.readAsDataURL(blob)
+    })
+  }
 }
