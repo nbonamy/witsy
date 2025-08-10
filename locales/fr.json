@@ -2229,7 +2229,7 @@
         "errorFormat": "Erreur lors de l'analyse de la définition du serveur JSON.",
         "errorMultiple": "Plusieurs serveurs trouvés. Veuillez coller un serveur à la fois.",
         "menu": "@:{'settings.mcp.importJson.title'}…",
-        "title": "Importer depuis Json"
+        "title": "Importer depuis JSON"
       },
       "importSmitheryServer": "Importer un serveur Smithery.ai…",
       "mcpServers": "Serveurs MCP",
