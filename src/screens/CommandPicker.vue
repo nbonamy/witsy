@@ -218,9 +218,9 @@ const onUsage = () => {
   padding: 0.5rem;
   height: 100vh;
   /* box-shadow: var(--window-box-shadow); */
-  background-color: var(--window-bg-color);
+  background-color: var(--context-menu-bg-color);
+  color: var(--context-menu-text-color);
   border-radius: 0.5rem;
-  color: var(--text-color);
   display: flex;
   flex-direction: column;
 }
@@ -230,17 +230,17 @@ const onUsage = () => {
   flex-direction: row;
   background-color: var(--source-app-bg-color);
   color: var(--source-app-text-color);
-  border-radius: 6px;
+  border-radius: 0.5rem;
   align-items: center;
-  padding: 2px 8px;
-  margin-bottom: 8px;
-  font-size: 10pt;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 11pt;
   font-weight: 500;
 
   .icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 4px;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.5rem;
   }
 }
 
@@ -258,19 +258,14 @@ const onUsage = () => {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 4px 8px;
-  font-size: 10pt;
-  font-family: -apple-system;
-}
-
-.commands:has(.app) .command:first-child {
-  padding-top: 2px;
+  padding: 0.375rem;
+  font-size: 11pt;
 }
 
 .command.selected {
   background-color: var(--highlight-color);
   color: var(--highlighted-color);
-  border-radius: 6px;
+  border-radius: 0.375rem;
 }
 
 .icon {
@@ -326,7 +321,7 @@ const onUsage = () => {
   cursor: pointer;
   padding: 0.5rem 0.75rem;
   font-size: 9.5pt;
-  color: var(--dimmed-text-color);
+  color: var(--faded-text-color);
   svg {
     margin-right: 0.25rem;
     position: relative;
@@ -340,7 +335,7 @@ const onUsage = () => {
   display: flex;
   flex-direction: column;
   font-size: 11.5pt;
-  color: var(--text-color);
+  color: var(--faded-text-color);
   overflow: auto;
 
   .close {
@@ -351,8 +346,8 @@ const onUsage = () => {
     height: 1.5rem;
     padding-top: 1rem;
     padding-right: 1rem;
-    background-color: var(--window-bg-color );
-    color: var(--dimmed-text-color);
+    background-color: var(--context-menu-bg-color);
+    color: var(--faded-text-color);
     font-size: 10pt;
     text-align: right;
     cursor: pointer;
