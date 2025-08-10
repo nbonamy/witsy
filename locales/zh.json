@@ -2251,7 +2251,7 @@
         "errorFormat": "解析JSON服务器定义时出错。",
         "errorMultiple": "发现多个服务器。请一次粘贴一个服务器。",
         "menu": "@:{'settings.mcp.importJson.title'}…",
-        "title": "从Json导入"
+        "title": "从 JSON 导入"
       },
       "importSmitheryServer": "导入 Smithery.ai 服务器…",
       "mcpServers": "MCP 服务器",

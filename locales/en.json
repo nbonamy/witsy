@@ -2256,7 +2256,7 @@
         "errorFormat": "Error while parsing JSON server definition.",
         "errorMultiple": "Multiple servers found. Please paste one server at a time.",
         "menu": "@:{'settings.mcp.importJson.title'}…",
-        "title": "Import from Json"
+        "title": "Import from JSON"
       },
       "importSmitheryServer": "Import Smithery.ai server…",
       "mcpServers": "MCP Servers",
