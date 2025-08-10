@@ -15,6 +15,7 @@
       </div>
 
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
+      
       <div class="spacer"></div>
       <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" />
       <IconMenu class="icon" @click="onMenu" />

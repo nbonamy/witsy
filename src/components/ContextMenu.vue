@@ -221,10 +221,10 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
   max-height: 400px;
   max-width: 270px;
-  border-radius: 6px;
+  border-radius: 0.5rem;
   overflow: hidden;
   z-index: 50;
-  padding: 5px;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
 }
@@ -233,16 +233,16 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   flex: 1;
   width: 100%;
   overflow-y: auto;
-  padding-right: 20px;
+  padding-right: 21px;
   display: flex;
   flex-direction: column;
   margin: 0px !important;
 }
 
 .context-menu .item {
-  padding: 4px 12px;
+  padding: 0.5rem 0.75rem;
   cursor: pointer;
-  font-size: 10pt;
+  font-size: 11pt;
   white-space: nowrap;
   overflow-x: clip;
   text-overflow: ellipsis;
@@ -268,7 +268,7 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
 }
 
 .context-menu .item .icon {
-  margin-right: 4px;
+  margin-right: 0.25rem;
 }
 
 .context-menu .item .icon.text {
@@ -281,24 +281,25 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
 
 .context-menu .item.selected {
   background-color: var(--context-menu-selected-bg-color);
-  color: var(--highlighted-color);
-  border-radius: 4px;
+  color: var(--context-menu-selected-text-color);
+  border-radius: 0.375rem;
 }
 
 .filter {
   
   position: static;
-  padding: 0.25rem;
-  padding-bottom: 0.5rem;
-  width: calc(100% - 1rem);
+  margin-bottom: 0.5rem;
+  width: calc(100% - 18px);
 
   input {
     background-color: var(--context-menu-filter-bg-color);
     color: var(--context-menu-filter-text-color);
-    border-radius: 6px;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    font-size: 11pt;
 
     &:focus {
-      outline-width: 1px;
+      outline: none;
     }
   }
 }
