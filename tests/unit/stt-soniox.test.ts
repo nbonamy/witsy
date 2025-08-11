@@ -3,7 +3,8 @@ import STTSoniox from '../../src/voice/stt-soniox'
 
 const makeConfig = (overrides: any = {}) => ({
   stt: {
-    model: 'file-transcription',
+    model: 'async-transcription',
+    locale: 'en-US',
     vocabulary: [
       { text: 'test' },
       { text: 'vocabulary' }
@@ -26,24 +27,35 @@ describe('STTSoniox', () => {
 
   it('should have correct model definitions', () => {
     expect(STTSoniox.models).toEqual([
-      { id: 'file-transcription', label: 'File Transcription (async)' },
-      { id: 'realtime-transcription', label: 'Real-time Transcription' },
+      { id: 'async-transcription', label: 'Async Transcription' },
+      { id: 'realtime-transcription', label: 'Real-Time Transcription' },
     ])
   })
 
   it('should correctly identify streaming models', () => {
     const engine = new STTSoniox(makeConfig() as any)
     
-    expect(engine.isStreamingModel('file-transcription')).toBe(false)
+    expect(engine.isStreamingModel('async-transcription')).toBe(false)
     expect(engine.isStreamingModel('realtime-transcription')).toBe(true)
   })
 
-  it('should handle async transcription with direct API call', async () => {
+  it('should correctly identify PCM requirements', () => {
     const engine = new STTSoniox(makeConfig() as any)
     
-    // Mock the fetch calls for the new API workflow
+    expect(engine.requiresPcm16bits('async-transcription')).toBe(false)
+    expect(engine.requiresPcm16bits('realtime-transcription')).toBe(true)
+  })
+
+  it('should handle async transcription with file upload workflow', async () => {
+    const engine = new STTSoniox(makeConfig() as any)
+    
+    // Mock the fetch calls for the new file upload workflow
     const fetchMock = vi
       .fn()
+      .mockResolvedValueOnce({ 
+        ok: true, 
+        json: async () => ({ id: 'test-file-id' }) 
+      }) // File upload
       .mockResolvedValueOnce({ 
         ok: true, 
         json: async () => ({ transcription_id: 'test-transcription-id' }) 
@@ -58,37 +70,30 @@ describe('STTSoniox', () => {
       }) // Get transcript
 
     global.fetch = fetchMock
-    
-    // Mock FileReader for base64 conversion
-    const mockFileReader = {
-      readAsDataURL: vi.fn(),
-      result: 'data:audio/webm;base64,dGVzdGF1ZGlv', // 'testaudio' in base64
-      onload: null,
-      onerror: null
-    }
 
-    vi.stubGlobal('FileReader', vi.fn(() => mockFileReader))
-    
-    // Simulate FileReader completion
-    setTimeout(() => {
-      mockFileReader.onload()
-    }, 0)
-
-    const result = await engine.transcribe(new Blob(['test audio data']))
+    const result = await engine.transcribe(new Blob(['test audio data'], { type: 'audio/webm' }))
     
     expect(result.text).toBe('Hello world from async transcription')
-    expect(fetchMock).toHaveBeenCalledTimes(3)
+    expect(fetchMock).toHaveBeenCalledTimes(4)
     
-    // Verify first call (create transcription)
-    const [createUrl, createOptions] = fetchMock.mock.calls[0]
+    // Verify file upload call
+    const [uploadUrl, uploadOptions] = fetchMock.mock.calls[0]
+    expect(uploadUrl).toBe('https://api.soniox.com/v1/files')
+    expect(uploadOptions.method).toBe('POST')
+    expect(uploadOptions.headers['Authorization']).toBe('Bearer test-api-key')
+    expect(uploadOptions.body).toBeInstanceOf(FormData)
+    
+    // Verify transcription creation call
+    const [createUrl, createOptions] = fetchMock.mock.calls[1]
     expect(createUrl).toBe('https://api.soniox.com/v1/transcriptions')
     expect(createOptions.method).toBe('POST')
     expect(createOptions.headers['Authorization']).toBe('Bearer test-api-key')
     
     const createBody = JSON.parse(createOptions.body)
     expect(createBody.model).toBe('stt-async-preview')
-    expect(createBody.audio_data).toBe('dGVzdGF1ZGlv')
-    expect(createBody.language_hints).toEqual(['test', 'vocabulary'])
+    expect(createBody.file_id).toBe('test-file-id')
+    expect(createBody.language_hints).toEqual(['en']) // from locale 'en-US'
+    expect(createBody.context).toBe('test, vocabulary')
   })
 
   it('should handle transcription errors gracefully', async () => {
@@ -104,26 +109,11 @@ describe('STTSoniox', () => {
       })
 
     global.fetch = fetchMock
-    
-    // Mock FileReader for base64 conversion
-    const mockFileReader = {
-      readAsDataURL: vi.fn(),
-      result: 'data:audio/webm;base64,dGVzdA==', // 'test' in base64
-      onload: null,
-      onerror: null
-    }
-
-    vi.stubGlobal('FileReader', vi.fn(() => mockFileReader))
-    
-    // Simulate FileReader completion immediately
-    setTimeout(() => {
-      mockFileReader.onload()
-    }, 0)
 
     await expect(engine.transcribe(new Blob(['invalid']))).rejects.toThrow(
-      'Soniox transcription failed: 400 Bad Request - Invalid audio format'
+      'File upload failed: 400 Bad Request - Invalid audio format'
     )
-  }, 10000)
+  })
 
   it('should handle realtime streaming with proper token aggregation', async () => {
     const engine = new STTSoniox(makeConfig() as any)
@@ -190,9 +180,12 @@ describe('STTSoniox', () => {
           const config = JSON.parse(data)
           expect(config.api_key).toBe('test-api-key')
           expect(config.model).toBe('stt-rt-preview')
-          expect(config.audio_format).toBe('auto')
+          expect(config.audio_format).toBe('pcm_s16le')
+          expect(config.sample_rate).toBe(16000)
+          expect(config.num_channels).toBe(1)
           expect(config.enable_non_final_tokens).toBe(true)
-          expect(config.language_hints).toEqual(['test', 'vocabulary'])
+          expect(config.language_hints).toEqual(['en']) // from locale
+          expect(config.context).toBe('test, vocabulary')
         }
       }
       
@@ -224,8 +217,10 @@ describe('STTSoniox', () => {
     expect(textChunks.length).toBeGreaterThan(0)
     
     // Final text should aggregate all final tokens
-    const finalText = textChunks[textChunks.length - 1]?.content
-    expect(finalText).toBe('Hello from realtime')
+    const finalChunk = textChunks[textChunks.length - 1]
+    expect(finalChunk?.content).toBe('Hello from realtime')
+    expect(finalChunk?.finalText).toBe('Hello from realtime')
+    expect(finalChunk?.hasFinalContent).toBe(true)
   })
 
   it('should handle streaming connection errors', async () => {

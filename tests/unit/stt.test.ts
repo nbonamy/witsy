@@ -12,6 +12,7 @@ import STTNvidia from '../../src/voice/stt-nvidia'
 import STTOpenAI from '../../src/voice/stt-openai'
 import STTSpeechmatics from '../../src/voice/stt-speechmatics'
 import STTWhisper from '../../src/voice/stt-whisper'
+import STTSoniox from '../../src/voice/stt-soniox'
 import { fal } from '@fal-ai/client'
 import { Configuration } from '../../src/types/config'
 
@@ -100,6 +101,46 @@ global.fetch = vi.fn(async (url: string | Request, init?: any) => {
     }
   }
 
+  // Soniox file upload
+  if (url.includes('api.soniox.com/v1/files') && init?.method === 'POST') {
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ id: 'mock-soniox-file-id' }),
+      text: async () => ''
+    }
+  }
+
+  // Soniox transcription creation  
+  if (url.includes('api.soniox.com/v1/transcriptions') && init?.method === 'POST') {
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ transcription_id: 'mock-soniox-transcription-id' }),
+      text: async () => ''
+    }
+  }
+
+  // Soniox status check
+  if (url.includes('api.soniox.com/v1/transcriptions/mock-soniox-transcription-id') && !url.includes('transcript')) {
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ status: 'completed' }),
+      text: async () => ''
+    }
+  }
+
+  // Soniox transcript retrieval
+  if (url.includes('api.soniox.com/v1/transcriptions/mock-soniox-transcription-id/transcript')) {
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ text: 'transcribed' }),
+      text: async () => ''
+    }
+  }
+
   // Default fallback for unmatched requests
   return {
     ok: false,
@@ -185,6 +226,7 @@ beforeEach(() => {
 test('Requires download', () => {
   expect(requiresDownload('openai')).toBe(false)
   expect(requiresDownload('groq')).toBe(false)
+  expect(requiresDownload('soniox')).toBe(false)
   expect(requiresDownload('whisper')).toBe(true)
 })
 
@@ -361,6 +403,27 @@ test('Instantiates Custom OpenAI', async () => {
   await engine.initialize(initCallback)
   expect(initCallback).toHaveBeenLastCalledWith({ task: 'openai', status: 'ready', model: expect.any(String) })
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
+})
+
+test('Instantiates Soniox', async () => {
+  store.config.stt.engine = 'soniox'
+  store.config.engines.soniox = {
+    apiKey: 'test-soniox-key',
+    models: { chat: [] },
+    model: { chat: '' }
+  }
+  
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTSoniox)
+  expect(engine).toHaveProperty('transcribe')
+  expect(engine).toHaveProperty('transcribeFile')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  expect(engine.isStreamingModel('realtime-transcription')).toBe(true)
+  expect(engine.requiresPcm16bits('realtime-transcription')).toBe(true)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'soniox', status: 'ready', model: expect.any(String) })
 })
 
 test('Throws error on unknown engine', async () => {
