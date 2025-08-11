@@ -1,6 +1,6 @@
 <template>
   <section v-for="c in chats" :key="c.uuid" :set="chatDay=getDay(c)">
-    <div v-if="chatDay != currDay" :set="currDay = chatDay" class="day">{{ currDay }}</div>
+    <!-- <div v-if="chatDay != currDay" :set="currDay = chatDay" class="day">{{ currDay }}</div> -->
     <ChatListItem :chat="c" :selection="selection" :active="active" :selectMode="selectMode" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)" :data-day="chatDay" />
   </section>
 </template>

@@ -6,7 +6,6 @@ import { McpInstallStatus } from '../../src/types/mcp'
 import { ListDirectoryResponse } from '../../src/types/filesystem'
 import { FilePickParams } from '../../src/types/file'
 import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
-import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
 import defaultSettings from '../../defaults/settings.json'
 import Agent from '../../src/models/agent'
 
@@ -167,8 +166,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       cancel: vi.fn(),
       closePicker: vi.fn(),
       run: vi.fn(),
-      askMeAnythingId: vi.fn(() => DEFAULT_WORKSPACE_ID),
-      isPromptEditable: vi.fn((id) => id != DEFAULT_WORKSPACE_ID),
+      askMeAnythingId: vi.fn(() => '00000000-0000-0000-0000-000000000000'),
+      isPromptEditable: vi.fn((id) => id != '00000000-0000-0000-0000-000000000000'),
       import: vi.fn(),
       export: vi.fn(),
     },

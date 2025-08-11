@@ -1,15 +1,23 @@
 <template>
-  <div class="header">
-    <div class="button-group">
-      <button :class="{active: displayMode == 'timeline'}" @click="setDisplayMode('timeline')">{{ t('chatList.displayMode.timeline') }}</button>
-      <button :class="{active: displayMode == 'folder'}" @click="setDisplayMode('folder')">{{ t('chatList.displayMode.folders') }}</button>
+  <div class="chat-list">
+    <div class="header">
+      <!-- <div class="button-group">
+        <button :class="{active: displayMode == 'timeline'}" @click="setDisplayMode('timeline')">{{ t('chatList.displayMode.timeline') }}</button>
+        <button :class="{active: displayMode == 'folder'}" @click="setDisplayMode('folder')">{{ t('chatList.displayMode.folders') }}</button>
+      </div> -->
+      <div class="form"><div class="form-field search">
+        <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange">
+        </input>
+        <BIconSearch class="search-icon" />
+        <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
+      </div></div>
     </div>
+    <div class="chats" ref="divChats">
+      <ChatListTimeline v-if="displayMode == 'timeline'" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
+      <ChatListFolder v-if="displayMode == 'folder'" :filtered="filter != ''" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
+    </div>
+    <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
   </div>
-  <div class="chats" ref="divChats">
-    <ChatListTimeline v-if="displayMode == 'timeline'" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
-    <ChatListFolder v-if="displayMode == 'folder'" :filtered="filter != ''" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
-  </div>
-  <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
 </template>
 
 <script setup lang="ts">
@@ -24,6 +32,7 @@ import ChatListFolder from './ChatListFolder.vue'
 import Chat from '../models/chat'
 
 import useEventBus from '../composables/event_bus'
+import { BIconSearch } from 'bootstrap-icons-vue'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
@@ -65,7 +74,8 @@ const visibleChats = computed(() => store.history.chats.filter((c: Chat) => {
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
-const targetRow= ref<Chat|null>(null)
+const targetRow = ref<Chat|null>(null)
+const filter = ref<string>('')
 
 const contextMenuActions = () => [
   { label: t('common.rename'), action: 'rename' },
@@ -136,25 +146,59 @@ const handleActionClick = async (action: string) => {
 
 <style scoped>
 
-.header {
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+.chat-list {
 
-.chats {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  width: calc(100% - 3px);
-  padding-right: 0px;
-  scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
-}
+  padding: 1rem;
+  padding-top: 0rem;
 
-.chats.scrolling {
-  padding-right: 0px;
+  .header {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .form {
+      flex: 1;
+
+      input {
+        padding: 1rem;
+        font-size: 11pt;
+        padding-left: 3rem;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 2.5rem;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      .clear-filter {
+        position: relative;
+        cursor: pointer;
+        left: -2rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        fill: red;
+      }
+
+    }
+  }
+
+  .chats {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    width: calc(100% - 3px);
+    padding-right: 0px;
+    scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
+  }
+
+  .chats.scrolling {
+    padding-right: 0px;
+  }
+
 }
 
 </style>
