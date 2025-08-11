@@ -223,6 +223,8 @@ export type TranscribeState = {
   transcription: string
 }
 
+export type StoreEvent = 'workspaceSwitched'
+
 export interface Store {
 
   commands: Command[]
@@ -234,7 +236,11 @@ export interface Store {
 
   chatState: ChatState  
   transcribeState: TranscribeState
-  
+
+  listeners: Record<string, CallableFunction[]>
+  addListener: (event: StoreEvent, listener: CallableFunction) => void
+  removeListener: (event: StoreEvent, listener: CallableFunction) => void
+
   saveHistory(): void
   saveSettings(): void
   load(): void
@@ -249,6 +255,7 @@ export interface Store {
   addQuickPrompt(prompt: string): void
   // addPadPrompt(prompt: string): void
   // mergeHistory(chats: any[]): void
+  activateWorkspace(workspaceId: string): void
   dump?(): void
 }
 

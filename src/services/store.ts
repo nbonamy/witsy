@@ -1,13 +1,12 @@
 
 import { Configuration } from '../types/config'
-import { Folder, History, Store } from '../types/index'
+import { Folder, History, Store, StoreEvent } from '../types/index'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'
 import { loadAgents } from './agents'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
-
 
 export const kMediaChatId = '00000000-0000-0000-0000-000000000000'
 export const kReferenceParamValue = '<media>'
@@ -19,6 +18,7 @@ export const store: Store = reactive({
   experts: [],
   agents: [],
   history: null,
+  listeners: {},
   
   rootFolder: {
     id: 'root',
@@ -32,6 +32,35 @@ export const store: Store = reactive({
 
   transcribeState: {
     transcription: ''
+  },
+
+  addListener: (event: StoreEvent, listener: CallableFunction): void => {
+    if (!store.listeners[event]) {
+      store.listeners[event] = []
+    }
+    store.listeners[event].push(listener)
+  },
+
+  removeListener: (event: StoreEvent, listener: CallableFunction): void => {
+    if (!store.listeners[event]) return
+    store.listeners[event] = store.listeners[event].filter(l => l !== listener)
+  },
+
+  activateWorkspace: (workspaceId: string): void => {
+
+    // update settings
+    store.config.workspaceId = workspaceId
+    store.saveSettings()
+    
+    // reload data for the new workspace
+    store.loadHistory()
+    store.loadExperts()
+    store.loadAgents()
+
+    // notify listeners
+    for (const listener of store.listeners['workspaceSwitched'] || []) {
+      listener()
+    }
   },
 
   loadSettings: (): void => {

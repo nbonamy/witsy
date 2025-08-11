@@ -31,27 +31,27 @@
         <span>{{ t('agent.forge.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')">
+      <!-- <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')">
         <BIconMic />
         <span>{{ t('transcribe.title') }}</span>
-      </MenuBarItem>
+      </MenuBarItem> -->
+
+      <!-- <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')">
+        <BIconChatSquareDots />
+        <span>{{ t('realtimeChat.title') }}</span>
+      </MenuBarItem> -->
+
+      <!-- <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">
+        <BIconMouse2 />
+        <span>{{ t('computerUse.title') }}</span>
+      </MenuBarItem> -->
+
+      <div class="push"></div>
 
       <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')">
         <BIconDatabase />
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
-
-      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')">
-        <BIconChatSquareDots />
-        <span>{{ t('realtimeChat.title') }}</span>
-      </MenuBarItem>
-
-      <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">
-        <BIconMouse2 />
-        <span>{{ t('computerUse.title') }}</span>
-      </MenuBarItem>
-
-      <div class="push"></div>
 
       <MenuBarItem action="debug" :active="mode === 'debug'" @click="emit('change', 'debug')">
         <BIconActivity />
@@ -226,6 +226,7 @@ body[data-tint=blue] .mx-context-menu {
     gap: 0.65rem;
 
     border-right: 1px solid var(--menubar-border-color);
+    border-top: 1px solid var(--menubar-border-color);
 
     .push {
       flex: 1;

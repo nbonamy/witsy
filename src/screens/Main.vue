@@ -1,5 +1,6 @@
 <template>
   <div class="main">
+    <WorkspaceBar @workspace-changed="onWorkspaceChanged" />
     <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
     <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
     <Chat ref="chat" :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
@@ -18,6 +19,7 @@
 import { anyDict } from '../types/index'
 import { ref, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
+import WorkspaceBar from '../components/WorkspaceBar.vue'
 import MenuBar, { MenuBarMode } from '../components/MenuBar.vue'
 import Chat from '../screens/Chat.vue'
 import DesignStudio from '../screens/DesignStudio.vue'
@@ -151,6 +153,12 @@ const onOnboardingDone = () => {
   onboard.value = false
   store.config.general.onboardingDone = true
   store.saveSettings()
+}
+
+const onWorkspaceChanged = (workspaceId: string) => {
+  console.log('[main] workspace changed:', workspaceId)
+  // The store.activateWorkspace method is called from WorkspaceBar
+  // We can add any additional logic here if needed
 }
 
 </script>

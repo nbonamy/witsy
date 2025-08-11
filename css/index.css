@@ -30,7 +30,7 @@
   --window-toolbar-height: 3rem;
 
   --menubar-bg-color: var(--window-decoration-color);
-  --menubar-border-color: transparent;
+  --menubar-border-color: #d0d0d0;
   --menubar-icon-color: var(--icon-color);
   --menubar-highlight-color: var(--highlight-color);
 

@@ -2550,5 +2550,18 @@
       "linux": "You can activate Witsy from the fountain pen icon in the menu bar.",
       "windows": "You can activate Witsy from the fountain pen icon in the system tray."
     }
+  },
+  "workspace": {
+    "editor": {
+      "create": "Create New Workspace",
+      "edit": "Edit Workspace",
+      "createDescription": "Create a new workspace to organize your chats, agents, and settings.",
+      "editDescription": "Edit the details of your workspace.",
+      "name": "Name",
+      "namePlaceholder": "Enter workspace name",
+      "icon": "Icon",
+      "iconPlaceholder": "🎯",
+      "color": "Color"
+    }
   }
 }
