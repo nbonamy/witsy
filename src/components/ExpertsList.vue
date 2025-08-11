@@ -149,7 +149,7 @@ const handleActionClick = async (action: string) => {
 }
 
 const onImport = () => {
-  if (window.api.experts.import()) {
+  if (window.api.experts.import(store.config.workspaceId)) {
     store.loadExperts()
     load()
     Dialog.alert(t('settings.experts.importSuccess'))
@@ -159,7 +159,7 @@ const onImport = () => {
 }
 
 const onExport = () => {
-  if (window.api.experts.export()) {
+  if (window.api.experts.export(store.config.workspaceId)) {
     Dialog.alert(t('settings.experts.exportSuccess'))
   } else {
     Dialog.alert(t('settings.experts.exportError'))

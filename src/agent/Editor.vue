@@ -109,6 +109,7 @@
 
 import { ref, onMounted, computed, watch, PropType } from 'vue'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 import { extractPromptInputs } from '../services/prompt'
 import Dialog from '../composables/dialog'
 import EditorGeneral from './Editor.General.vue'
@@ -308,7 +309,7 @@ const save = async () => {
   }
 
   // we can save
-  const rc = window.api.agents.save(JSON.parse(JSON.stringify(agent.value)))
+  const rc = window.api.agents.save(store.config.workspaceId, JSON.parse(JSON.stringify(agent.value)))
   if (rc) {
     emit('save', agent.value)
   }

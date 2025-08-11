@@ -5,6 +5,7 @@ import { createDialogMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store, kMediaChatId } from '../../src/services/store'
+import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
 import { Configuration } from '../../src/types/config'
 import ImageCreator from '../../src/services/image'
 import DesignStudio from '../../src/screens/DesignStudio.vue'
@@ -457,6 +458,7 @@ test('Upload', async () => {
       filename: expect.any(String),
       directory: 'userData',
       subdir: 'images',
+      workspace: DEFAULT_WORKSPACE_ID,
       prompt: false
     }
   })

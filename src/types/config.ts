@@ -6,6 +6,7 @@ import { McpClaudeServer, McpServer, McpServerState } from './mcp'
 import { ToolSelection } from './llm'
 
 export type Configuration = {
+  workspaceId: string
   general: GeneralConfig
   llm: LLMConfig
   prompt: PromptConfig

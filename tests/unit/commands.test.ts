@@ -43,7 +43,7 @@ test('New command', () => {
 })
 
 test('Load default commands', () => {
-  const commands = main.loadCommands(app)
+  const commands = main.loadCommands(app, 'test-workspace')
   expect(commands).toHaveLength(41)
   commands.forEach((command) => {
     expect(command).toHaveProperty('id')
@@ -53,7 +53,7 @@ test('Load default commands', () => {
 })
 
 test('Load custom commands', () => {
-  const commands = main.loadCommands('./tests/fixtures/commands1.json')
+  const commands = main.loadCommands('./tests/fixtures/commands1.json', 'test-workspace')
   expect(commands).toHaveLength(42)
   expect(commands.filter(c => c.type === 'user')).toHaveLength(1)
   expect(commands.filter(c => c.type === 'system')).toHaveLength(41)

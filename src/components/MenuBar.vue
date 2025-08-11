@@ -128,7 +128,7 @@ const onAppMenu = (event: Event) => {
           { label: t('menu.file.backupExport'), divided: 'up', onClick: () => setTimeout(() => window.api.backup.export(), 0) },
           { label: t('menu.file.backupImport'), onClick: () => setTimeout(() => window.api.backup.import(), 0) },
           { label: t('menu.file.import.title'), divided: 'up', children: [
-            { label: t('menu.file.import.openai'), onClick: () => setTimeout(() => window.api.import.openai(), 0) }
+            { label: t('menu.file.import.openai'), onClick: () => setTimeout(() => window.api.import.openai(store.config.workspaceId), 0) }
           ] },
           { label: t('menu.file.closeWindow'), divided: 'up', onClick: () => window.api.main.close() },
         ]
