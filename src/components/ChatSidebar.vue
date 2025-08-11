@@ -1,7 +1,7 @@
 <template>
   <div class="sp-sidebar chat-sidebar" :class="{ 'manual-resize': manualResize }" :style="`flex-basis: ${visible ? width : 0}px`">
     <header>
-      <div class="form"><div class="form-field search">
+      <!-- <div class="form"><div class="form-field search">
         <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" />
         <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
       </div></div>
@@ -10,7 +10,7 @@
       </div>
       <div class="icon new-chat" v-tooltip="{ text: t('common.newChat'), position: 'bottom-left' }" @click="onNewChat" >
         <IconNewChat />
-      </div>
+      </div> -->
     </header>
     <main>
       <ChatList :displayMode="chatListDisplayMode" :chat="chat" :filter="filter" :select-mode="selectMode" ref="chatList" />
@@ -60,10 +60,10 @@ defineProps({
 const visible= ref<boolean>(true)
 const width= ref<number>(0)
 const manualResize = ref(true)
-const chatListDisplayMode= ref<ChatListMode>('timeline')
-const chatList= ref<typeof ChatList|null>(null)
-const filter= ref<string>('')
-const selectMode= ref<boolean>(false)
+const chatListDisplayMode = ref<ChatListMode>('timeline')
+const chatList = ref<typeof ChatList|null>(null)
+const filter = ref<string>('')
+const selectMode = ref<boolean>(false)
 
 const emit = defineEmits(['new-chat', 'run-agent'])
 
@@ -72,7 +72,7 @@ let panelOffet = 0
 onMounted(async () => {
   visible.value = window.api.store.get('sidebarVisible', true)
   width.value = window.api.store.get('sidebarWidth', 250)
-  chatListDisplayMode.value = store.config.appearance.chatList.mode
+  // chatListDisplayMode.value = store.config.appearance.chatList.mode
   onEvent('chat-list-mode', setChatListMode)
 
   const sidebar = document.querySelector('.chat-sidebar') as HTMLElement

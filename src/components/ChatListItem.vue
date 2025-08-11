@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <div class="chat" :class="[{ selected: chat.uuid == active?.uuid }, store.config.appearance.chatList.layout]">
-      <EngineLogo :engine="engine" :background="true" />
+      <!-- <EngineLogo :engine="engine" :background="true" /> -->
       <div class="info" @dblclick="onRenameChat">
         <div class="title">{{ chat.title }}</div>
-        <div class="subtitle">{{ chat.subtitle() }}</div>
+        <!-- <div class="subtitle">{{ chat.subtitle() }}</div> -->
       </div>
       <div v-if="selectMode" class="select">
         <BIconCheckCircleFill v-if="selection.includes(chat.uuid)" class="selected"/>
@@ -56,14 +56,14 @@ const onRenameChat = () => {
 <style scoped>
 
 .container {
-  margin: 0rem 0.5rem;
+  margin: 0rem;
+  padding: 0rem 0.5rem;
   margin-right: 1rem;
-  padding: 0rem;
   cursor: pointer;
 
   .chat {
     margin: 0;
-    padding: 0.5rem;
+    padding: 1rem;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -92,8 +92,8 @@ const onRenameChat = () => {
     }
 
     .title {
-      font-weight: bold;
-      font-size: 10.5pt;
+      font-weight: 500;
+      font-size: 11pt;
     }
 
     .subtitle {

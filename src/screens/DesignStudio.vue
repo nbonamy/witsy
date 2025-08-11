@@ -90,7 +90,28 @@ const history = computed(() => {
 })
 
 onMounted(() => {
+  
   // we need the media chat
+  initializeChat()
+  store.addListener('workspaceSwitched', initializeChat)
+
+  // events
+  window.api.on('delete-media', onDeleteMedia)
+  window.api.on('select-all-media', onSelectAll)
+  document.addEventListener('keydown', onKeyDown)
+  document.addEventListener('paste', onPaste)
+
+})
+
+onUnmounted(() => {
+  store.removeListener('workspaceSwitched', initializeChat)
+  document.removeEventListener('keydown', onKeyDown)
+  document.removeEventListener('paste', onPaste)
+  window.api.off('delete-media', onDeleteMedia)
+  window.api.off('select-all-media', onSelectAll)
+})
+
+const initializeChat = () => {
   chat.value = store.history.chats.find(chat => chat.uuid === kMediaChatId)
   if (!chat.value) {
     chat.value = Chat.fromJson({
@@ -102,21 +123,7 @@ onMounted(() => {
     chat.value.addMessage(new Message('system', 'Dummy chat to save created media'))
     store.history.chats.push(chat.value)
   }
-
-  // events
-  window.api.on('delete-media', onDeleteMedia)
-  window.api.on('select-all-media', onSelectAll)
-  document.addEventListener('keydown', onKeyDown)
-  document.addEventListener('paste', onPaste)
-
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', onKeyDown)
-  document.removeEventListener('paste', onPaste)
-  window.api.off('delete-media', onDeleteMedia)
-  window.api.off('select-all-media', onSelectAll)
-})
+}
 
 const isSelected = (msg: Message) => {
   return selection.value.some(m => m.uuid === msg.uuid)

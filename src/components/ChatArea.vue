@@ -2,17 +2,17 @@
   <div class="chat-area sp-main">
     <header :class="{ 'is-left-most': isLeftMost }">
       
-      <div class="icon toggle-sidebar" v-tooltip="{ text: t('main.toggleSidebar'), position: 'bottom-right' }" @click="toggleSideBar">
+      <!-- <div class="icon toggle-sidebar" v-tooltip="{ text: t('main.toggleSidebar'), position: 'bottom-right' }" @click="toggleSideBar">
         <IconSideBar />
-      </div>
+      </div> -->
 
-      <div class="icon new-chat" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.newChat'), position: 'bottom-right' }" @click="onNewChat">
+      <!-- <div class="icon new-chat" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.newChat'), position: 'bottom-right' }" @click="onNewChat">
         <IconNewChat />
-      </div>
+      </div> -->
 
-      <div class="icon run-agent" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-right' }" @click="onRunAgent">
+      <!-- <div class="icon run-agent" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-right' }" @click="onRunAgent">
         <IconRunAgent class="scale120" />
-      </div>
+      </div> -->
 
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
       
