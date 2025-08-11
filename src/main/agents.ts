@@ -2,21 +2,21 @@
 import { AgentRun, anyDict } from '../types/index'
 import { App } from 'electron'
 import { notifyBrowserWindows } from './windows'
+import { workspaceFolderPath } from './workspace'
 import Agent from '../models/agent'
 import path from 'path'
 import fs from 'fs'
 
-export const agentsDirPath = (app: App): string => {
-  const userDataPath = app.getPath('userData')
-  const agentsDirPath = path.join(userDataPath, 'agents')
-  return agentsDirPath
+export const agentsDirPath = (app: App, workspaceId: string): string => {
+  const workspacePath = workspaceFolderPath(app, workspaceId)
+  return path.join(workspacePath, 'agents')
 }
 
-export const loadAgents = (source: App|string): Agent[] => {
+export const loadAgents = (source: App|string, workspaceId: string): Agent[] => {
 
   // init
   const agents: Agent[] = []
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
+  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
 
   // iterate over all files
   try {
@@ -46,7 +46,7 @@ export const loadAgents = (source: App|string): Agent[] => {
 
 }
 
-export const saveAgent = (source: App|string, json: anyDict): boolean => {
+export const saveAgent = (source: App|string, workspaceId: string, json: anyDict): boolean => {
 
   // the agent
   const agent = Agent.fromJson(json);
@@ -55,7 +55,7 @@ export const saveAgent = (source: App|string, json: anyDict): boolean => {
   })
 
   // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
+  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
   const filePath = path.join(agentsDir, agent.uuid + '.json')
 
   // create directory if it does not exist
@@ -74,10 +74,10 @@ export const saveAgent = (source: App|string, json: anyDict): boolean => {
 
 }
 
-export const deleteAgent = (source: App|string, agentId: string): boolean => {
+export const deleteAgent = (source: App|string, workspaceId: string, agentId: string): boolean => {
 
   // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
+  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
   const filePath = path.join(agentsDir, agentId + '.json')
 
   // delete file
@@ -105,10 +105,10 @@ export const deleteAgent = (source: App|string, agentId: string): boolean => {
 
 }
 
-export const getAgentRun = (source: App|string, agentId: string, runId: string): AgentRun|null => {
+export const getAgentRun = (source: App|string, workspaceId: string, agentId: string, runId: string): AgentRun|null => {
 
   // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
+  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
   const runPath = path.join(agentsDir, agentId, runId + '.json')
 
   try {
@@ -120,10 +120,10 @@ export const getAgentRun = (source: App|string, agentId: string, runId: string):
   }
 }
 
-export const getAgentRuns = (source: App|string, agentId: string): AgentRun[]|null => {
+export const getAgentRuns = (source: App|string, workspaceId: string, agentId: string): AgentRun[]|null => {
 
   // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
+  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
   const runPath = path.join(agentsDir, agentId)
 
   // iterate over all files
@@ -155,10 +155,10 @@ export const getAgentRuns = (source: App|string, agentId: string): AgentRun[]|nu
 
 }
 
-export const saveAgentRun = (source: App|string, run: AgentRun): boolean => {
+export const saveAgentRun = (source: App|string, workspaceId: string, run: AgentRun): boolean => {
 
   // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
+  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
   const runPath = path.join(agentsDir, run.agentId)
   if (!fs.existsSync(runPath)) {
     fs.mkdirSync(runPath, { recursive: true })
@@ -178,10 +178,10 @@ export const saveAgentRun = (source: App|string, run: AgentRun): boolean => {
 
 }
 
-export const deleteAgentRuns = (source: App|string, agentId: string): boolean => {
+export const deleteAgentRuns = (source: App|string, workspaceId: string, agentId: string): boolean => {
 
   // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
+  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
   const runPath = path.join(agentsDir, agentId)
 
   // delete directory
@@ -200,10 +200,10 @@ export const deleteAgentRuns = (source: App|string, agentId: string): boolean =>
 
 }
 
-export const deleteAgentRun = (source: App|string, agentId: string, runId: string): boolean => {
+export const deleteAgentRun = (source: App|string, workspaceId: string, agentId: string, runId: string): boolean => {
 
   // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source)
+  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
   const runPath = path.join(agentsDir, agentId, runId + '.json')
 
   // delete file

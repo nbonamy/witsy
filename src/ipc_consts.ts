@@ -238,3 +238,9 @@ export const OLLAMA = {
 export const GOOGLE = {
   DOWNLOAD_MEDIA: 'google-download-media',
 } as const;
+
+export const WORKSPACE = {
+  LIST: 'workspace-list',
+  LOAD: 'workspace-load',
+  SAVE: 'workspace-save',
+} as const;

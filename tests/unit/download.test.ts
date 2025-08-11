@@ -2,10 +2,13 @@
 
 import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
+import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
+import { store } from '../../src/services/store'
 import * as download from '../../src/services/download'
 
 beforeAll(() => {
   useWindowMock()
+  store.loadSettings()
 })
 
 test('Get file contents', async () => {
@@ -21,6 +24,7 @@ test('Save file', async () => {
       filename: expect.stringMatching(/.txt/),
       directory: 'userData',
       subdir: 'images',
+      workspace: DEFAULT_WORKSPACE_ID,
       prompt: false,
     },
   })
@@ -34,6 +38,7 @@ test('Download file', async () => {
       filename: expect.stringMatching(/.jpg/),
       directory: 'userData',
       subdir: 'images',
+      workspace: DEFAULT_WORKSPACE_ID,
       prompt: false,
     },
   })

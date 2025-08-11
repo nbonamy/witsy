@@ -39,7 +39,7 @@ beforeEach(() => {
 })
 
 test('Load agents', () => {
-  const agents = main.loadAgents(app)
+  const agents = main.loadAgents(app, 'test-workspace')
   expect(agents).toHaveLength(2)
   expect(agents[0]).toMatchObject({
     uuid: 'agent1',
@@ -114,25 +114,25 @@ test('Save agent', () => {
     schedule: '*/5 * * * *',
     invocationValues: {},
   }
-  const result = main.saveAgent(app, agent)
-  expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/agents/agent3.json', JSON.stringify(agent, null, 2))
+  const result = main.saveAgent(app, 'test-workspace', agent)
+  expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/workspaces/test-workspace/agents/agent3.json', JSON.stringify(agent, null, 2))
   expect(result).toBe(true)
 })
 
 test('Delete agent', () => {
-  const result = main.deleteAgent(app, 'agent1')
-  expect(fs.unlinkSync).toHaveBeenCalledWith('tests/fixtures/agents/agent1.json')
-  expect(fs.rmSync).toHaveBeenCalledWith('tests/fixtures/agents/agent1', { recursive: true, force: true })
+  const result = main.deleteAgent(app, 'test-workspace', 'agent1')
+  expect(fs.unlinkSync).toHaveBeenCalledWith('tests/fixtures/workspaces/test-workspace/agents/agent1.json')
+  expect(fs.rmSync).toHaveBeenCalledWith('tests/fixtures/workspaces/test-workspace/agents/agent1', { recursive: true, force: true })
   expect(result).toBe(true)
 })
 
 test('Get agent runs', () => {
-  const runs1: AgentRun[]|null = main.getAgentRuns(app, 'agent1')
+  const runs1: AgentRun[]|null = main.getAgentRuns(app, 'test-workspace', 'agent1')
   expect(runs1).toHaveLength(2)
   expect(runs1![0].uuid).toBe('run2')
   expect(runs1![1].uuid).toBe('run1')
 
-  const runs2: AgentRun[]|null = main.getAgentRuns(app, 'agent2')
+  const runs2: AgentRun[]|null = main.getAgentRuns(app, 'test-workspace', 'agent2')
   expect(runs2).toHaveLength(0)
 })
 
@@ -141,20 +141,20 @@ test('Save agent run', () => {
     uuid: 'run3',
     agentId: 'agent1',
   } as AgentRun
-  const result = main.saveAgentRun(app, run)
-  expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/agents/agent1/run3.json', JSON.stringify(run, null, 2))
+  const result = main.saveAgentRun(app, 'test-workspace', run)
+  expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/workspaces/test-workspace/agents/agent1/run3.json', JSON.stringify(run, null, 2))
   expect(result).toBe(true)
 })
 
 test('Delete agent runs', () => {
-  const result = main.deleteAgentRuns(app, 'agent1')
-  expect(fs.rmSync).toHaveBeenCalledWith('tests/fixtures/agents/agent1', { recursive: true, force: true })
+  const result = main.deleteAgentRuns(app, 'test-workspace', 'agent1')
+  expect(fs.rmSync).toHaveBeenCalledWith('tests/fixtures/workspaces/test-workspace/agents/agent1', { recursive: true, force: true })
   expect(result).toBe(true)
 })
 
 test('Delete agent run', () => {
-  const result = main.deleteAgentRun(app, 'agent1', 'run1')
-  expect(fs.unlinkSync).toHaveBeenCalledWith('tests/fixtures/agents/agent1/run1.json')
+  const result = main.deleteAgentRun(app, 'test-workspace', 'agent1', 'run1')
+  expect(fs.unlinkSync).toHaveBeenCalledWith('tests/fixtures/workspaces/test-workspace/agents/agent1/run1.json')
   expect(result).toBe(true)
 })
 

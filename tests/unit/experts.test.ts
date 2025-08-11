@@ -40,7 +40,7 @@ test('New expert', () => {
 })
 
 test('Load default experts', () => {
-  const experts = main.loadExperts(app)
+  const experts = main.loadExperts(app, 'test-workspace')
   expect(experts).toHaveLength(165)
   experts.forEach((expert) => {
     expect(expert).toHaveProperty('id')
@@ -50,7 +50,7 @@ test('Load default experts', () => {
 })
 
 test('Load custom experts', () => {
-  const experts = main.loadExperts('./tests/fixtures/experts1.json')
+  const experts = main.loadExperts('./tests/fixtures/experts1.json', 'test-workspace')
   expect(experts).toHaveLength(166)
   expect(experts.filter(c => c.type === 'user')).toHaveLength(1)
   expect(experts.filter(c => c.type === 'system')).toHaveLength(165)

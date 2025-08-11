@@ -352,6 +352,7 @@ const updateMessage = (msg: Message) => {
         filename: a.url.split(/[\\/]/).pop(),
         directory: 'userData',
         subdir: 'images',
+        workspace: store.config.workspaceId,
         prompt: false
       }
     })

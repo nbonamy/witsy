@@ -3,6 +3,7 @@
 
 import { contextBridge, ipcRenderer } from 'electron'
 import { Command, ComputerAction, Expert, ExternalApp, anyDict, strDict, NetworkRequest, OpenSettingsPayload, MainWindowMode, AgentRun } from './types';
+import { WorkspaceHeader, Workspace } from './types/workspace';
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './types/file';
 import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem, DocumentQueueItem } from './types/rag';
@@ -104,8 +105,8 @@ contextBridge.exposeInMainWorld(
       save: (data: Configuration) => { return ipcRenderer.send(IPC.CONFIG.SAVE, JSON.stringify(data)) },
     },
     history: {
-      load: (): History => { return JSON.parse(ipcRenderer.sendSync(IPC.HISTORY.LOAD)) },
-      save: (data: History) => { return ipcRenderer.send(IPC.HISTORY.SAVE, JSON.stringify(data)) },
+      load: (workspaceId: string): History => { return JSON.parse(ipcRenderer.sendSync(IPC.HISTORY.LOAD, workspaceId)) },
+      save: (workspaceId: string, data: History) => { return ipcRenderer.send(IPC.HISTORY.SAVE, JSON.stringify({ workspaceId, history: data })) },
     },
     automation: {
       getText: (id: string): string => { return ipcRenderer.sendSync(IPC.AUTOMATION.GET_TEXT, id) },
@@ -124,8 +125,8 @@ contextBridge.exposeInMainWorld(
     commands: {
       load: (): Command[] => { return JSON.parse(ipcRenderer.sendSync(IPC.COMMANDS.LOAD)) },
       save: (data: Command[]) => { return ipcRenderer.send(IPC.COMMANDS.SAVE, JSON.stringify(data)) },
-      export: (): void => { return ipcRenderer.sendSync(IPC.COMMANDS.EXPORT) },
-      import: (): void => { return ipcRenderer.sendSync(IPC.COMMANDS.IMPORT) },
+      export: (): boolean => { return ipcRenderer.sendSync(IPC.COMMANDS.EXPORT) },
+      import: (): boolean => { return ipcRenderer.sendSync(IPC.COMMANDS.IMPORT) },
       askMeAnythingId: (): string => { return ipcRenderer.sendSync(IPC.COMMANDS.ASK_ME_ANYTHING_ID) },
       isPromptEditable: (id: string): boolean => { return ipcRenderer.sendSync(IPC.COMMANDS.IS_PROMPT_EDITABLE, id) },
       run: (params: RunCommandParams): void => { return ipcRenderer.send(IPC.COMMANDS.RUN, JSON.stringify(params)) },
@@ -137,21 +138,21 @@ contextBridge.exposeInMainWorld(
       resize: (deltaX : number, deltaY: number): void => { return ipcRenderer.send(IPC.ANYWHERE.RESIZE, { deltaX, deltaY }) },
     },
     experts: {
-      load: (): Expert[] => { return JSON.parse(ipcRenderer.sendSync(IPC.EXPERTS.LOAD)) },
-      save: (data: Expert[]): void => { return ipcRenderer.send(IPC.EXPERTS.SAVE, JSON.stringify(data)) },
-      export: (): void => { return ipcRenderer.sendSync(IPC.EXPERTS.EXPORT) },
-      import: (): void => { return ipcRenderer.sendSync(IPC.EXPERTS.IMPORT) },
+      load: (workspaceId: string): Expert[] => { return JSON.parse(ipcRenderer.sendSync(IPC.EXPERTS.LOAD, workspaceId)) },
+      save: (workspaceId: string, data: Expert[]): void => { return ipcRenderer.send(IPC.EXPERTS.SAVE, JSON.stringify({ workspaceId, experts: data })) },
+      export: (workspaceId: string): void => { return ipcRenderer.sendSync(IPC.EXPERTS.EXPORT, workspaceId) },
+      import: (workspaceId: string): void => { return ipcRenderer.sendSync(IPC.EXPERTS.IMPORT, workspaceId) },
     },
     agents: {
       forge(): void { return ipcRenderer.send(IPC.AGENTS.OPEN_FORGE) },
-      load: (): any[] => { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.LOAD)).map((a: any) => Agent.fromJson(a)) },
-      save(agent: Agent): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE, JSON.stringify(agent)) },
-      delete(agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE, agentId) },
-      getRuns(agentId: string): AgentRun[] { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.GET_RUNS, agentId)) },
-      getRun(agentId: string, runId: string): AgentRun|null { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.GET_RUN, JSON.stringify({ agentId, runId }))) },
-      saveRun(run: AgentRun): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE_RUN, JSON.stringify(run)) },
-      deleteRun(agentId: string, runId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUN, JSON.stringify({ agentId, runId })) },
-      deleteRuns(agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUNS, agentId); },
+      load: (workspaceId: string): any[] => { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.LOAD, workspaceId)).map((a: any) => Agent.fromJson(a)) },
+      save(workspaceId: string, agent: Agent): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE, JSON.stringify({ workspaceId, agent })) },
+      delete(workspaceId: string, agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE, JSON.stringify({ workspaceId, agentId })) },
+      getRuns(workspaceId: string, agentId: string): AgentRun[] { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.GET_RUNS, JSON.stringify({ workspaceId, agentId }))) },
+      getRun(workspaceId: string, agentId: string, runId: string): AgentRun|null { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.GET_RUN, JSON.stringify({ workspaceId, agentId, runId }))) },
+      saveRun(workspaceId: string, run: AgentRun): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE_RUN, JSON.stringify({ workspaceId, run })) },
+      deleteRun(workspaceId: string, agentId: string, runId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUN, JSON.stringify({ workspaceId, agentId, runId })) },
+      deleteRuns(workspaceId: string, agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUNS, JSON.stringify({ workspaceId, agentId })); },
     },
     docrepo: {
       open(): void { return ipcRenderer.send(IPC.DOCREPO.OPEN) },
@@ -229,7 +230,7 @@ contextBridge.exposeInMainWorld(
       import: (): boolean => { return ipcRenderer.sendSync(IPC.BACKUP.IMPORT) },
     },
     import: {
-      openai: (): boolean => { return ipcRenderer.sendSync(IPC.IMPORT.OPENAI) },
+      openai: (workspaceId: string): boolean => { return ipcRenderer.sendSync(IPC.IMPORT.OPENAI, workspaceId) },
     },
     ollama: {
       downloadStart: (targetDirectory: string): Promise<{ success: boolean; downloadId?: string; error?: string }> => { 
@@ -243,6 +244,11 @@ contextBridge.exposeInMainWorld(
       downloadMedia: (url: string, mimeType: string): Promise<string> => { 
         return ipcRenderer.invoke(IPC.GOOGLE.DOWNLOAD_MEDIA, { url, mimeType }) 
       },
+    },
+    workspace: {
+      list: (): WorkspaceHeader[] => { return JSON.parse(ipcRenderer.sendSync(IPC.WORKSPACE.LIST)) },
+      load: (workspaceId: string): Workspace|null => { return JSON.parse(ipcRenderer.sendSync(IPC.WORKSPACE.LOAD, workspaceId)) },
+      save: (workspace: Workspace): boolean => { return ipcRenderer.sendSync(IPC.WORKSPACE.SAVE, JSON.stringify(workspace)) },
     }
   },
 );

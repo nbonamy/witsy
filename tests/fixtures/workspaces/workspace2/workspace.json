@@ -1,0 +1,17 @@
+{
+  "uuid": "workspace-2",
+  "name": "Test Workspace 2",
+  "icon": "📊",
+  "color": "#00ff00",
+  "models": [
+    {
+      "engine": "anthropic",
+      "model": "claude-3-sonnet",
+      "label": "Claude 3 Sonnet"
+    }
+  ],
+  "experts": [],
+  "docrepos": [],
+  "tools": [],
+  "agents": []
+}
