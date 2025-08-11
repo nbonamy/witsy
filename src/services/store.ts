@@ -8,6 +8,7 @@ import { loadAgents } from './agents'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
 
+
 export const kMediaChatId = '00000000-0000-0000-0000-000000000000'
 export const kReferenceParamValue = '<media>'
 
@@ -65,7 +66,7 @@ export const store: Store = reactive({
     // subscribe to file changes
     window.api.on('file-modified', (file) => {
       if (file === 'history') {
-        mergeHistory(window.api.history.load())
+        mergeHistory(window.api.history.load(store.config.workspaceId))
       }
     })
 
@@ -214,7 +215,7 @@ export const store: Store = reactive({
       }
       
       // save
-      window.api.history.save(history)
+      window.api.history.save(store.config.workspaceId, history)
   
     } catch (error) {
       console.log('Error saving history data', error)
@@ -247,13 +248,14 @@ const loadSettings = (): void => {
     store.config[key] = updated[key]
   }
 
+
 }
 
 const loadHistory = (): void => {
 
   try {
     store.history = { folders: [], chats: [], quickPrompts: [], /*padPrompts: []*/ }
-    const history = window.api.history.load()
+    const history = window.api.history.load(store.config.workspaceId)
     store.history.folders = history.folders || []
     store.history.quickPrompts = history.quickPrompts || []
     //store.history.padPrompts = history.padPrompts || []

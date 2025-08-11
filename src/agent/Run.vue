@@ -63,6 +63,7 @@
 import { AgentRun } from '../types/index'
 import { computed, ref, onMounted, watch } from 'vue'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 import MessageItemBody from '../components/MessageItemBody.vue'
 import { BIconCalendar2X } from 'bootstrap-icons-vue'
 
@@ -105,7 +106,7 @@ onMounted(() => {
 const loadAgentRun = async () => {
   try {
     clearTimeout(refreshTimeout)
-    run.value = window.api.agents.getRun(props.agentId, props.runId)
+    run.value = window.api.agents.getRun(store.config.workspaceId, props.agentId, props.runId)
     if (run.value.status === 'running') {
       setTimeout(() => {
         loadAgentRun()

@@ -43,6 +43,7 @@ import * as interpreter from './interpreter';
 import * as backup from './backup';
 import * as ollama from './ollama';
 import * as google from './google';
+import * as workspace from './workspace';
 import { importOpenAI } from './import_oai';
 
 export const installIpc = (
@@ -167,12 +168,13 @@ export const installIpc = (
     config.saveSettings(app, JSON.parse(payload) as Configuration);
   });
 
-  ipcMain.on(IPC.HISTORY.LOAD, async (event) => {
-    event.returnValue = JSON.stringify(await history.loadHistory(app));
+  ipcMain.on(IPC.HISTORY.LOAD, async (event, workspaceId) => {
+    event.returnValue = JSON.stringify(await history.loadHistory(app, workspaceId));
   });
 
   ipcMain.on(IPC.HISTORY.SAVE, (event, payload) => {
-    event.returnValue = history.saveHistory(app, JSON.parse(payload) as History);
+    const { workspaceId, history: historyData } = JSON.parse(payload);
+    event.returnValue = history.saveHistory(app, workspaceId, historyData as History);
   });
 
   ipcMain.on(IPC.COMMANDS.LOAD, (event) => {
@@ -216,20 +218,21 @@ export const installIpc = (
     
   });
 
-  ipcMain.on(IPC.EXPERTS.LOAD, (event) => {
-    event.returnValue = JSON.stringify(experts.loadExperts(app));
+  ipcMain.on(IPC.EXPERTS.LOAD, (event, workspaceId) => {
+    event.returnValue = JSON.stringify(experts.loadExperts(app, workspaceId));
   });
 
   ipcMain.on(IPC.EXPERTS.SAVE, (event, payload) => {
-    event.returnValue = experts.saveExperts(app, JSON.parse(payload) as Expert[]);
+    const { workspaceId, experts: expertsData } = JSON.parse(payload);
+    event.returnValue = experts.saveExperts(app, workspaceId, expertsData as Expert[]);
   });
 
-  ipcMain.on(IPC.EXPERTS.EXPORT, (event) => {
-    event.returnValue = experts.exportExperts(app);
+  ipcMain.on(IPC.EXPERTS.EXPORT, (event, workspaceId) => {
+    event.returnValue = experts.exportExperts(app, workspaceId);
   });
 
-  ipcMain.on(IPC.EXPERTS.IMPORT, (event) => {
-    event.returnValue = experts.importExperts(app);
+  ipcMain.on(IPC.EXPERTS.IMPORT, (event, workspaceId) => {
+    event.returnValue = experts.importExperts(app, workspaceId);
   });
 
   ipcMain.on(IPC.BACKUP.EXPORT, async (event) => {
@@ -240,46 +243,63 @@ export const installIpc = (
     event.returnValue = await backup.importBackup(app, quitApp);
   });
 
-  ipcMain.on(IPC.IMPORT.OPENAI, async (event) => {
-    event.returnValue = await importOpenAI(app);
+  ipcMain.on(IPC.IMPORT.OPENAI, async (event, workspaceId: string) => {
+    event.returnValue = await importOpenAI(app, workspaceId);
   });
 
   ipcMain.on(IPC.AGENTS.OPEN_FORGE,  () => {
     //window.openAgentForgeWindow();
   });
 
-  ipcMain.on(IPC.AGENTS.LOAD, (event) => {
-    event.returnValue = JSON.stringify(agents.loadAgents(app));
+  ipcMain.on(IPC.AGENTS.LOAD, (event, workspaceId) => {
+    event.returnValue = JSON.stringify(agents.loadAgents(app, workspaceId));
   });
 
   ipcMain.on(IPC.AGENTS.SAVE, (event, payload) => {
-    event.returnValue = agents.saveAgent(app, JSON.parse(payload));
+    const { workspaceId, agent: agentData } = JSON.parse(payload);
+    event.returnValue = agents.saveAgent(app, workspaceId, agentData);
   });
 
   ipcMain.on(IPC.AGENTS.DELETE, (event, payload) => {
-    event.returnValue = agents.deleteAgent(app, payload);
+    const { workspaceId, agentId } = JSON.parse(payload);
+    event.returnValue = agents.deleteAgent(app, workspaceId, agentId);
   });
 
-  ipcMain.on(IPC.AGENTS.GET_RUNS, (event, agentId) => {
-    event.returnValue = JSON.stringify(agents.getAgentRuns(app, agentId));
+  ipcMain.on(IPC.AGENTS.GET_RUNS, (event, payload) => {
+    const { workspaceId, agentId } = JSON.parse(payload);
+    event.returnValue = JSON.stringify(agents.getAgentRuns(app, workspaceId, agentId));
   });
 
   ipcMain.on(IPC.AGENTS.GET_RUN, (event, payload) => {
-    const { agentId, runId } = JSON.parse(payload);
-    event.returnValue = JSON.stringify(agents.getAgentRun(app, agentId, runId));
+    const { workspaceId, agentId, runId } = JSON.parse(payload);
+    event.returnValue = JSON.stringify(agents.getAgentRun(app, workspaceId, agentId, runId));
   });
 
   ipcMain.on(IPC.AGENTS.SAVE_RUN, (event, payload) => {
-    event.returnValue = agents.saveAgentRun(app, JSON.parse(payload));
+    const { workspaceId, run: runData } = JSON.parse(payload);
+    event.returnValue = agents.saveAgentRun(app, workspaceId, runData);
   });
 
   ipcMain.on(IPC.AGENTS.DELETE_RUN, (event, payload) => {
-    const { agentId, runId } = JSON.parse(payload);
-    event.returnValue = agents.deleteAgentRun(app, agentId, runId);
+    const { workspaceId, agentId, runId } = JSON.parse(payload);
+    event.returnValue = agents.deleteAgentRun(app, workspaceId, agentId, runId);
   });
 
   ipcMain.on(IPC.AGENTS.DELETE_RUNS, (event, payload) => {
-    event.returnValue = agents.deleteAgentRuns(app, payload);
+    const { workspaceId, agentId } = JSON.parse(payload);
+    event.returnValue = agents.deleteAgentRuns(app, workspaceId, agentId);
+  });
+
+  ipcMain.on(IPC.WORKSPACE.LIST, (event) => {
+    event.returnValue = JSON.stringify(workspace.listWorkspaces(app));
+  });
+
+  ipcMain.on(IPC.WORKSPACE.LOAD, (event, workspaceId) => {
+    event.returnValue = JSON.stringify(workspace.loadWorkspace(app, workspaceId));
+  });
+
+  ipcMain.on(IPC.WORKSPACE.SAVE, (event, payload) => {
+    event.returnValue = workspace.saveWorkspace(app, JSON.parse(payload));
   });
 
   ipcMain.on(IPC.SETTINGS.OPEN, (event, payload) => {
