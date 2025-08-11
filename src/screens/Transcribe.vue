@@ -167,19 +167,11 @@ let previousTranscription = ''
 const meta = computed(() => window.api.platform === 'darwin' ? 'Cmd' : 'Ctrl')
 
 const models = computed(() => {
-  const models = getSTTModels(engine.value) ?? []
-  const currentModelId = store.config.stt.model
+  const availableModels = getSTTModels(engine.value) ?? []
   
-  // For Soniox, only show the defined models - don't add legacy model IDs
-  if (engine.value === 'soniox') {
-    return models
-  }
-  
-  // For other engines, preserve the old behavior of adding unrecognized models
-  if (!models.find(m => m.id === currentModelId)) {
-    models.unshift({ id: currentModelId, label: currentModelId })
-  }
-  return models
+  // Always return only the models defined for the current engine
+  // Don't add extra models from configuration that belong to other engines
+  return availableModels
 })
 
 const translateMenuActions = computed(() => ([
