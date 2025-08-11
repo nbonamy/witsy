@@ -80,7 +80,11 @@
         </div>
         
         <div class="result">
-          <textarea v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
+          <div v-if="isStreaming && (finalText || partialText)" class="transcription-display">
+            <span v-if="finalText" class="final-text">{{ finalText }}</span>
+            <span v-if="partialText" class="partial-text">{{ partialText }}</span>
+          </div>
+          <textarea v-else v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
         </div>
         
         <div class="actions">
@@ -164,8 +168,16 @@ const meta = computed(() => window.api.platform === 'darwin' ? 'Cmd' : 'Ctrl')
 
 const models = computed(() => {
   const models = getSTTModels(engine.value) ?? []
-  if (!models.find(m => m.id === store.config.stt.model)) {
-    models.unshift({ id: store.config.stt.model, label: store.config.stt.model })
+  const currentModelId = store.config.stt.model
+  
+  // For Soniox, only show the defined models - don't add legacy model IDs
+  if (engine.value === 'soniox') {
+    return models
+  }
+  
+  // For other engines, preserve the old behavior of adding unrecognized models
+  if (!models.find(m => m.id === currentModelId)) {
+    models.unshift({ id: currentModelId, label: currentModelId })
   }
   return models
 })
@@ -242,7 +254,20 @@ const load = () => {
   transcription.value = store.transcribeState.transcription
   locale.value = store.config.stt.locale || ''
   engine.value = store.config.stt.engine
-  model.value = store.config.stt.model
+  
+  // Validate that the current model is valid for the selected engine
+  const availableModels = getSTTModels(engine.value) ?? []
+  const configModel = store.config.stt.model
+  
+  if (availableModels.find(m => m.id === configModel)) {
+    model.value = configModel
+  } else if (availableModels.length > 0) {
+    // If the stored model is not valid for this engine, use the first available model
+    model.value = availableModels[0].id
+  } else {
+    model.value = ''
+  }
+  
   pushToTalk.value = store.config.stt.pushToTalk
   autoStart.value = store.config.stt.autoStart
 }

@@ -18,8 +18,8 @@ import { STTEngine, ProgressCallback, TranscribeResponse, StreamingCallback } fr
 export default class STTSoniox implements STTEngine {
 
   static readonly models = [
-    { id: 'file-transcription', label: 'File Transcription (async)' },
-    { id: 'realtime-transcription', label: 'Real-time Transcription' },
+    { id: 'async-transcription', label: 'Async Transcription' },
+    { id: 'realtime-transcription', label: 'Real-Time Transcription' },
   ]
 
   private config: Configuration
@@ -44,9 +44,10 @@ export default class STTSoniox implements STTEngine {
     return model === 'realtime-transcription'
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requiresPcm16bits(model: string): boolean {
-    return false
+    // For now, use PCM for realtime streaming (more reliable)
+    // Could be made configurable to allow WebM alternative
+    return model === 'realtime-transcription'
   }
   
   static requiresDownload(): boolean {
@@ -68,38 +69,59 @@ export default class STTSoniox implements STTEngine {
     }
 
     try {
-      // Convert blob to base64 for direct API submission
-      const base64Audio = await this.blobToBase64(audioBlob)
-      const audioFormat = this.detectAudioFormat(audioBlob)
-      const languageHints = this.config.stt?.vocabulary?.map(v => v.text) || []
+      // Step 1: Upload the audio file first
+      const fileId = await this.uploadAudioFile(audioBlob, apiKey)
       
-      // Create transcription with direct audio data
+      // Step 2: Create transcription with file_id and user settings
+      const requestBody: any = {
+        file_id: fileId,
+        model: 'stt-async-preview'
+      }
+      
+      // Add language hints for better recognition
+      const locale = this.config.stt?.locale
+      if (locale && locale.trim().length > 0) {
+        const langCode = locale.split('-')[0].toLowerCase()
+        requestBody.language_hints = [langCode]
+      }
+      
+      // Add vocabulary context for improved recognition
+      const vocabularyWords = this.config.stt?.vocabulary?.map(v => v.text)?.filter(text => text.trim().length > 0)
+      if (vocabularyWords && vocabularyWords.length > 0) {
+        requestBody.context = vocabularyWords.join(', ')
+      }
+      
       const response = await fetch('https://api.soniox.com/v1/transcriptions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          audio_data: base64Audio,
-          model: 'stt-async-preview',
-          audio_format: audioFormat,
-          ...(languageHints.length > 0 && { language_hints: languageHints })
-        })
+        body: JSON.stringify(requestBody)
       })
 
       if (!response.ok) {
         const errorText = await response.text()
+        console.error('Soniox transcription failed:', errorText)
         throw new Error(`Soniox transcription failed: ${response.status} ${response.statusText} - ${errorText}`)
       }
 
-      const { transcription_id } = await response.json()
-      if (!transcription_id) {
-        throw new Error('Soniox API response missing transcription_id')
+      const transcriptionData = await response.json()
+      
+      const transcriptionId = transcriptionData.transcription_id || transcriptionData.id
+      if (!transcriptionId) {
+        throw new Error(`Soniox API response missing transcription_id. Response: ${JSON.stringify(transcriptionData)}`)
       }
 
-      // Poll for completion
-      return await this.pollTranscriptionStatus(transcription_id, apiKey)
+      // Step 3: Poll for completion
+      const result = await this.pollTranscriptionStatus(transcriptionId, apiKey)
+      
+      // Step 4: Optionally clean up the uploaded file
+      if (this.config.stt?.soniox?.cleanup) {
+        await this.deleteUploadedFile(fileId, apiKey)
+      }
+      
+      return result
       
     } catch (error) {
       console.error('Soniox transcription error:', error)
@@ -181,6 +203,85 @@ export default class STTSoniox implements STTEngine {
     throw new Error('Transcription timed out - please try again with a shorter audio file')
   }
 
+  private async uploadAudioFile(audioBlob: Blob, apiKey: string): Promise<string> {
+    let finalBlob: Blob
+    let filename: string
+    
+    // Convert WebM to OGG Vorbis for universal compatibility 
+    if (audioBlob.type.includes('webm')) {
+      try {
+        // Convert WebM to WAV using Web Audio API for maximum compatibility
+        finalBlob = await this.convertWebmToOgg(audioBlob)
+        filename = 'audio.wav'
+        console.log('WebM to WAV conversion successful')
+      } catch (error) {
+        console.warn('WebM to OGG conversion failed, using original WebM:', error)
+        finalBlob = audioBlob
+        filename = 'audio.webm'
+      }
+    } else {
+      // For other audio formats, use as-is
+      finalBlob = audioBlob
+      const mimeType = finalBlob.type
+      if (mimeType.includes('wav')) {
+        filename = 'audio.wav'
+      } else if (mimeType.includes('mp3')) {
+        filename = 'audio.mp3'
+      } else if (mimeType.includes('mp4') || mimeType.includes('m4a')) {
+        filename = 'audio.m4a'
+      } else if (mimeType.includes('ogg')) {
+        filename = 'audio.ogg'
+      } else if (mimeType.includes('flac')) {
+        filename = 'audio.flac'
+      } else {
+        filename = 'audio.webm' // Default to WebM for unknown types
+      }
+    }
+    
+    const formData = new FormData()
+    formData.append('file', finalBlob, filename)
+    
+    // Add additional metadata to help Soniox process the file
+    if (filename === 'audio.webm' && (finalBlob as any)._audioDuration) {
+      console.log(`Uploading WebM with duration: ${(finalBlob as any)._audioDuration}ms`)
+    }
+    
+    const response = await fetch('https://api.soniox.com/v1/files', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: formData
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`File upload failed: ${response.status} ${response.statusText} - ${errorText}`)
+    }
+
+    const responseData = await response.json()
+    
+    // The response contains an 'id' field with the file identifier
+    const fileId = responseData.id
+    if (!fileId) {
+      throw new Error(`Upload response missing id field. Response: ${JSON.stringify(responseData)}`)
+    }
+
+    return fileId
+  }
+
+  private async deleteUploadedFile(fileId: string, apiKey: string): Promise<void> {
+    try {
+      await fetch(`https://api.soniox.com/v1/files/${fileId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${apiKey}` }
+      })
+    } catch (error) {
+      console.warn('Failed to delete uploaded file:', error)
+    }
+  }
+
+
   private async cleanupTranscription(transcriptionId: string, apiKey: string): Promise<void> {
     try {
       await fetch(`https://api.soniox.com/v1/transcriptions/${transcriptionId}`, {
@@ -215,20 +316,32 @@ export default class STTSoniox implements STTEngine {
       this.ws = new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket')
       
       this.ws.onopen = () => {
-        // Send initial configuration message
+        // Send initial configuration message with correct audio format for WebSocket
         const configMessage = {
-          api_key: apiKey, // Use direct API key, no temporary keys
+          api_key: apiKey,
           model: 'stt-rt-preview',
-          audio_format: 'auto',
-          enable_non_final_tokens: true
+          audio_format: 'pcm_s16le', // PCM 16-bit little-endian for WebSocket streaming
+          sample_rate: 16000, // Standard sample rate for speech recognition
+          num_channels: 1, // Mono audio (single channel)
+          enable_non_final_tokens: true,
+          enable_profanity_filter: false,
+          enable_dictation: true
         }
         
-        // Add language hints if available
-        const languageHints = this.config.stt?.vocabulary?.map(v => v.text)
-        if (languageHints && languageHints.length > 0) {
-          configMessage.language_hints = languageHints
+        // Add language hints for better recognition
+        const locale = this.config.stt?.locale
+        if (locale && locale.trim().length > 0) {
+          const langCode = locale.split('-')[0].toLowerCase()
+          configMessage.language_hints = [langCode]
         }
         
+        // Add vocabulary context for improved recognition
+        const vocabularyWords = this.config.stt?.vocabulary?.map(v => v.text)?.filter(text => text.trim().length > 0)
+        if (vocabularyWords && vocabularyWords.length > 0) {
+          configMessage.context = vocabularyWords.join(', ')
+        }
+        
+        console.log('Soniox realtime config:', configMessage)
         this.ws?.send(JSON.stringify(configMessage))
         callback({ type: 'status', status: 'connected' })
       }
@@ -236,6 +349,18 @@ export default class STTSoniox implements STTEngine {
       this.ws.onmessage = (event: MessageEvent) => {
         try {
           const data = JSON.parse(event.data)
+          
+          // Handle server errors
+          if (data.error_code || data.error_message) {
+            const errorMsg = `Soniox error ${data.error_code}: ${data.error_message}`
+            console.error('Soniox server error:', data)
+            callback({ 
+              type: 'error', 
+              status: 'error', 
+              error: errorMsg 
+            })
+            return
+          }
           
           // Handle tokens array
           if (data.tokens && Array.isArray(data.tokens)) {
@@ -293,30 +418,53 @@ export default class STTSoniox implements STTEngine {
   }
 
   private handleTokens(tokens: any[], callback: StreamingCallback): void {
+    if (tokens.length === 0) {
+      return
+    }
+    
     let partialText = ''
+    let hasFinalTokens = false
     
     // Process tokens: final tokens are added to permanent transcript,
     // non-final tokens are collected as temporary text
     for (const token of tokens) {
       if (token.is_final) {
         this.finalTranscript += token.text
+        hasFinalTokens = true
       } else {
         partialText += token.text
       }
     }
     
-    // Combine final transcript with current partial text
-    const content = (this.finalTranscript + partialText).trim()
-    
-    if (content) {
-      callback({ type: 'text', content })
+    // Send separate callbacks for final and partial text for better UI handling
+    if (hasFinalTokens || partialText) {
+      const finalContent = this.finalTranscript.trim()
+      const partialContent = partialText.trim()
+      
+      // Send enhanced text data with final/partial distinction
+      callback({ 
+        type: 'text', 
+        content: finalContent + (partialContent ? ' ' + partialContent : ''),
+        // Add metadata for UI to style final vs partial text
+        finalText: finalContent,
+        partialText: partialContent,
+        hasFinalContent: hasFinalTokens,
+        hasPartialContent: partialContent.length > 0
+      } as any)
     }
   }
 
   async sendAudioChunk(chunk: Blob): Promise<void> {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      const buf = await chunk.arrayBuffer()
-      this.ws.send(buf)
+      // For PCM streaming, we expect the chunk to be raw PCM data (ArrayBuffer or Uint8Array)
+      if (chunk instanceof ArrayBuffer) {
+        // Direct PCM data from audio worklet
+        this.ws.send(chunk)
+      } else {
+        // Convert Blob to ArrayBuffer if needed
+        const buf = await chunk.arrayBuffer()
+        this.ws.send(buf)
+      }
     }
   }
 
@@ -345,6 +493,340 @@ export default class STTSoniox implements STTEngine {
 
   deleteAllModels(): Promise<void> {
     return
+  }
+
+  async transcribeFile(file: File, opts?: object): Promise<TranscribeResponse> {
+    // Convert File to Blob and use the existing transcribe method
+    // Do NOT pass opts as it might contain conflicting audio_url field
+    const blob = new Blob([file], { type: file.type })
+    return this.transcribe(blob)
+  }
+
+  /**
+   * Convert WebM to OGG Vorbis for better compatibility
+   * Uses Web Audio API to decode WebM and re-encode as OGG
+   */
+  private async convertWebmToOgg(webmBlob: Blob): Promise<Blob> {
+    try {
+      // Decode WebM audio using Web Audio API
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      const arrayBuffer = await webmBlob.arrayBuffer()
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+      
+      console.log(`Converting WebM: ${audioBuffer.duration}s, ${audioBuffer.numberOfChannels} channels, ${audioBuffer.sampleRate}Hz`)
+      
+      // Create offline context for rendering
+      const offlineContext = new OfflineAudioContext(
+        audioBuffer.numberOfChannels,
+        audioBuffer.length,
+        audioBuffer.sampleRate
+      )
+      
+      // Create buffer source
+      const source = offlineContext.createBufferSource()
+      source.buffer = audioBuffer
+      source.connect(offlineContext.destination)
+      source.start(0)
+      
+      // Render audio
+      const renderedBuffer = await offlineContext.startRendering()
+      
+      // Convert to WAV format (more reliable than OGG for now)
+      const wavBlob = await this.audioBufferToWav(renderedBuffer)
+      
+      audioContext.close()
+      return wavBlob
+      
+    } catch (error) {
+      console.error('WebM to OGG conversion failed:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Convert AudioBuffer to WAV Blob
+   * This creates a proper WAV file with all metadata
+   */
+  private async audioBufferToWav(audioBuffer: AudioBuffer): Promise<Blob> {
+    const numberOfChannels = audioBuffer.numberOfChannels
+    const sampleRate = audioBuffer.sampleRate
+    const length = audioBuffer.length * numberOfChannels * 2 // 16-bit samples
+    
+    // Create WAV file buffer
+    const buffer = new ArrayBuffer(44 + length)
+    const view = new DataView(buffer)
+    
+    // WAV header
+    const writeString = (offset: number, string: string) => {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i))
+      }
+    }
+    
+    // RIFF header
+    writeString(0, 'RIFF')
+    view.setUint32(4, 36 + length, true) // file length - 8
+    writeString(8, 'WAVE')
+    
+    // fmt chunk
+    writeString(12, 'fmt ')
+    view.setUint32(16, 16, true) // fmt chunk length
+    view.setUint16(20, 1, true) // PCM format
+    view.setUint16(22, numberOfChannels, true)
+    view.setUint32(24, sampleRate, true)
+    view.setUint32(28, sampleRate * numberOfChannels * 2, true) // byte rate
+    view.setUint16(32, numberOfChannels * 2, true) // block align
+    view.setUint16(34, 16, true) // bits per sample
+    
+    // data chunk
+    writeString(36, 'data')
+    view.setUint32(40, length, true)
+    
+    // Convert audio data
+    let offset = 44
+    for (let i = 0; i < audioBuffer.length; i++) {
+      for (let channel = 0; channel < numberOfChannels; channel++) {
+        const sample = Math.max(-1, Math.min(1, audioBuffer.getChannelData(channel)[i]))
+        const intSample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF
+        view.setInt16(offset, intSample, true)
+        offset += 2
+      }
+    }
+    
+    return new Blob([buffer], { type: 'audio/wav' })
+  }
+
+  /**
+   * Fix WebM duration metadata by injecting EBML duration element
+   * MediaRecorder in browsers creates WebM files without duration metadata
+   * This method determines duration and writes it into the WebM file structure
+   */
+  private async fixWebmDurationMetadata(webmBlob: Blob): Promise<Blob> {
+    try {
+      // Get audio duration using Web Audio API
+      const durationSeconds = (await this.getAudioDuration(webmBlob)) / 1000
+      console.log(`WebM duration calculated: ${durationSeconds}s`)
+      
+      // Read the original WebM file as array buffer
+      const originalBuffer = await webmBlob.arrayBuffer()
+      const uint8Array = new Uint8Array(originalBuffer)
+      
+      // Try to inject duration metadata into WebM EBML structure
+      // If injection fails, fall back to original file
+      try {
+        const fixedBuffer = await this.injectWebmDuration(uint8Array, durationSeconds)
+        
+        const fixedBlob = new Blob([fixedBuffer], { 
+          type: 'audio/webm;codecs=opus'
+        })
+        
+        console.log(`WebM metadata injected - original: ${uint8Array.length}, fixed: ${fixedBuffer.length}`)
+        return fixedBlob
+      } catch (injectionError) {
+        console.warn('WebM EBML injection failed, using original with proper MIME type:', injectionError)
+        
+        const fixedBlob = new Blob([uint8Array], { 
+          type: 'audio/webm;codecs=opus'
+        })
+        
+        return fixedBlob
+      }
+      
+    } catch (error) {
+      console.error('Error fixing WebM metadata:', error)
+      // Fallback to original with corrected MIME type
+      return new Blob([webmBlob], { 
+        type: 'audio/webm;codecs=opus'
+      })
+    }
+  }
+
+  /**
+   * Inject duration metadata into WebM EBML structure
+   * This is a simplified implementation of WebM duration injection
+   */
+  private async injectWebmDuration(originalData: Uint8Array, durationSeconds: number): Promise<Uint8Array> {
+    // WebM EBML element IDs
+    const EBML_ID_SEGMENT = 0x18538067
+    const EBML_ID_INFO = 0x1549A966  
+    const EBML_ID_DURATION = 0x4489
+    
+    // Find the Segment element
+    const segmentOffset = this.findEbmlElement(originalData, EBML_ID_SEGMENT)
+    if (segmentOffset === -1) {
+      throw new Error('Could not find WebM Segment element')
+    }
+    
+    // Find the Info element within Segment
+    const infoOffset = this.findEbmlElement(originalData, EBML_ID_INFO, segmentOffset)
+    if (infoOffset === -1) {
+      throw new Error('Could not find WebM Info element')
+    }
+    
+    // Check if duration already exists
+    const existingDurationOffset = this.findEbmlElement(originalData, EBML_ID_DURATION, infoOffset)
+    if (existingDurationOffset !== -1) {
+      console.log('Duration already exists in WebM file')
+      return originalData
+    }
+    
+    // Create duration element (8-byte double)
+    const durationElement = new Uint8Array(12)
+    durationElement[0] = 0x44  // Duration ID byte 1
+    durationElement[1] = 0x89  // Duration ID byte 2
+    durationElement[2] = 0x88  // Size = 8 bytes
+    
+    // Convert duration to double (IEEE 754)
+    const durationBuffer = new ArrayBuffer(8)
+    const durationView = new DataView(durationBuffer)
+    durationView.setFloat64(0, durationSeconds * 1000, false) // WebM uses milliseconds
+    
+    durationElement.set(new Uint8Array(durationBuffer), 4)
+    
+    // Find insertion point (after Info element header)
+    const infoSizeOffset = infoOffset + 4
+    const infoSize = this.readEbmlSize(originalData, infoSizeOffset)
+    const infoContentOffset = infoSizeOffset + this.getEbmlSizeLength(originalData, infoSizeOffset)
+    
+    // Create new buffer with injected duration
+    const newSize = originalData.length + durationElement.length
+    const newData = new Uint8Array(newSize)
+    
+    // Copy data before insertion point
+    newData.set(originalData.subarray(0, infoContentOffset), 0)
+    
+    // Insert duration element
+    newData.set(durationElement, infoContentOffset)
+    
+    // Copy remaining data
+    newData.set(originalData.subarray(infoContentOffset), infoContentOffset + durationElement.length)
+    
+    // Update Info element size
+    const newInfoSize = infoSize + durationElement.length
+    this.writeEbmlSize(newData, infoSizeOffset, newInfoSize)
+    
+    return newData
+  }
+  
+  /**
+   * Find EBML element by ID
+   */
+  private findEbmlElement(data: Uint8Array, elementId: number, startOffset: number = 0): number {
+    const idBytes = this.numberToBytes(elementId)
+    
+    for (let i = startOffset; i < data.length - idBytes.length; i++) {
+      let match = true
+      for (let j = 0; j < idBytes.length; j++) {
+        if (data[i + j] !== idBytes[j]) {
+          match = false
+          break
+        }
+      }
+      if (match) {
+        return i
+      }
+    }
+    return -1
+  }
+  
+  /**
+   * Convert number to bytes for EBML element ID
+   */
+  private numberToBytes(num: number): Uint8Array {
+    const bytes = []
+    while (num > 0) {
+      bytes.unshift(num & 0xFF)
+      num = num >>> 8
+    }
+    return new Uint8Array(bytes)
+  }
+  
+  /**
+   * Read EBML variable-length size
+   */
+  private readEbmlSize(data: Uint8Array, offset: number): number {
+    const firstByte = data[offset]
+    if (firstByte === 0) return 0
+    
+    // Count leading zeros to determine size length
+    let sizeLength = 1
+    let mask = 0x80
+    while (!(firstByte & mask) && sizeLength < 8) {
+      sizeLength++
+      mask >>= 1
+    }
+    
+    let size = firstByte & (mask - 1)
+    for (let i = 1; i < sizeLength; i++) {
+      size = (size << 8) | data[offset + i]
+    }
+    
+    return size
+  }
+  
+  /**
+   * Get the length of an EBML size field
+   */
+  private getEbmlSizeLength(data: Uint8Array, offset: number): number {
+    const firstByte = data[offset]
+    if (firstByte === 0) return 1
+    
+    let sizeLength = 1
+    let mask = 0x80
+    while (!(firstByte & mask) && sizeLength < 8) {
+      sizeLength++
+      mask >>= 1
+    }
+    
+    return sizeLength
+  }
+  
+  /**
+   * Write EBML variable-length size
+   */
+  private writeEbmlSize(data: Uint8Array, offset: number, size: number): void {
+    // This is a simplified implementation - in practice, you'd need to handle
+    // cases where the new size requires more bytes than the original
+    const originalLength = this.getEbmlSizeLength(data, offset)
+    
+    // For now, just try to fit in the same space
+    if (size < 127 && originalLength >= 1) {
+      data[offset] = 0x80 | size
+    }
+    // Add more cases as needed for different size lengths
+  }
+
+  /**
+   * Get audio duration from blob using Web Audio API
+   */
+  private async getAudioDuration(audioBlob: Blob): Promise<number> {
+    return new Promise((resolve, reject) => {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+        const fileReader = new FileReader()
+        
+        fileReader.onload = async (event) => {
+          try {
+            const arrayBuffer = event.target?.result as ArrayBuffer
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+            const durationMs = audioBuffer.duration * 1000 // Convert to milliseconds
+            audioContext.close()
+            resolve(durationMs)
+          } catch (decodeError) {
+            audioContext.close()
+            reject(new Error(`Failed to decode audio for duration: ${decodeError.message}`))
+          }
+        }
+        
+        fileReader.onerror = () => {
+          reject(new Error('Failed to read audio file for duration calculation'))
+        }
+        
+        fileReader.readAsArrayBuffer(audioBlob)
+      } catch (error) {
+        reject(new Error(`Web Audio API error: ${error.message}`))
+      }
+    })
   }
 
 }
