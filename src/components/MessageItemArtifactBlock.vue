@@ -34,24 +34,39 @@ const props = defineProps({
 
 const message = computed(() => new Message('assistant', props.content))
 
+const content = () => {
+  let content = props.content.trim()
+  if (content.startsWith('```') && content.endsWith('```')) {
+    content = content.slice(3, -3).trim()
+  }
+  return content
+}
+
 const onCopy = () => {
   copying.value = true
-  navigator.clipboard.writeText(props.content)
+  navigator.clipboard.writeText(content())
   setTimeout(() => {
     copying.value = false
   }, 1000)
 }
 
 const onDownload = () => {
-  const blob = new Blob([props.content], { type: 'text/plain' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${props.title}.md`
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
+
+  // filename: if there is no extension, add .md
+  let filename = props.title
+  if (filename.lastIndexOf('.') <= filename.length - 5) {
+    filename += '.md'
+  }
+
+  // now download
+  window.api.file.save({
+    contents: window.api.base64.encode(content()),
+    properties: {
+      filename,
+      prompt: true
+    }
+  })
+
 }
 
 </script>

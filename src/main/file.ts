@@ -1,5 +1,5 @@
 import { ExternalApp } from '../types/index';
-import { FileContents, FileSaveParams, FileDownloadParams, FilePickParams } from '../types/file';
+import { FileContents, FileSaveParams, FileDownloadParams, FilePickParams, FileProperties } from '../types/file';
 import { DirectoryItem } from '../types/filesystem';
 import { App, dialog } from 'electron';
 import { extensionToMimeType as e2mt } from 'multi-llm-ts';
@@ -309,17 +309,23 @@ export const findProgram = (app: App, program: string) => {
 export const writeFileContents = (app: App, payload: FileSaveParams): string => {
 
   // defaults
+  const defaultPayload = {
+    contents: '',
+    properties: {
+      directory: 'downloads',
+      prompt: false,
+      subdir: false,
+    } as FileProperties,
+  };
+  
   payload = {
-    ...{
-      contents: '',
-      properties: {
-        directory: 'downloads',
-        prompt: false,
-        subdir: false,
-      },
-    },
-    ...payload
-  }
+    ...defaultPayload,
+    ...payload,
+    properties: {
+      ...defaultPayload.properties,
+      ...payload.properties
+    }
+  };
 
   // parse properties
   const properties = payload.properties;
