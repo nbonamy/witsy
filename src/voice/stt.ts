@@ -101,7 +101,7 @@ export const getSTTEngines = () => {
     //{ id: 'huggingface', label: engineNames.huggingface },
     { id: 'groq', label: engineNames.groq },
     { id: 'mistralai', label: engineNames.mistralai },
-    // { id: 'soniox', label: engineNames.soniox },
+    { id: 'soniox', label: engineNames.soniox },
     { id: 'whisper', label: engineNames.whisper },
     { id: 'custom', label: 'Custom OpenAI' },
   ]
