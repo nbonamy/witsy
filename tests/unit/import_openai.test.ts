@@ -65,13 +65,13 @@ describe('OpenAI Import', () => {
         }
 
         // import
-        const historyData = await history.loadHistory(app)
+        const historyData = await history.loadHistory(app, 'test-workspace')
         const attachmentPath = '/mock/userdata/images'
         const rc = await importOai.importOpenAIConversations(userData.id, data, historyData, sourcePath, attachmentPath)
 
         // save
         if (rc) {
-          history.saveHistory(app, historyData)
+          history.saveHistory(app, 'test-workspace', historyData)
         }
 
         // done
@@ -228,7 +228,7 @@ describe('OpenAI Import', () => {
       const result = await processOpenAI(app, '/mock/conversations.json')
 
       expect(result).toBe(true)
-      expect(history.saveHistory).toHaveBeenCalledWith(app, mockHistory)
+      expect(history.saveHistory).toHaveBeenCalledWith(app, 'test-workspace', mockHistory)
       expect(mockHistory.chats).toHaveLength(1)
       expect(mockHistory.folders).toHaveLength(1)
       

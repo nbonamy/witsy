@@ -9,6 +9,7 @@ import { McpInstallStatus, McpServer, McpStatus, McpTool } from './mcp'
 import { ToolSelection } from './llm'
 import { ListDirectoryResponse } from './filesystem'
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './file'
+import { WorkspaceHeader, Workspace } from './workspace'
 
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
@@ -377,8 +378,8 @@ declare global {
         save(config: Configuration): void
       }
       history: {
-        load(): History
-        save(history: History): void
+        load(workspaceId: string): History
+        save(workspaceId: string, history: History): void
       }
       automation: {
         getText(id: string): string
@@ -412,21 +413,21 @@ declare global {
         resize(deltaX: number, deltaY: number): void
       }
       experts: {
-        load(): Expert[]
-        save(experts: Expert[]): void
-        import(): boolean
-        export(): boolean
+        load(workspaceId: string): Expert[]
+        save(workspaceId: string, experts: Expert[]): void
+        import(workspaceId: string): boolean
+        export(workspaceId: string): boolean
       }
       agents: {
         forge(): void
-        load(): any[]
-        save(agent: Agent): boolean
-        delete(agentId: string): boolean
-        getRuns(agentId: string): AgentRun[]
-        getRun(agentId: string, runId: string): AgentRun|null
-        saveRun(run: AgentRun): boolean
-        deleteRun(agentId: string, runId: string): boolean
-        deleteRuns(agentId: string): boolean
+        load(workspaceId: string): any[]
+        save(workspaceId: string, agent: Agent): boolean
+        delete(workspaceId: string, agentId: string): boolean
+        getRuns(workspaceId: string, agentId: string): AgentRun[]
+        getRun(workspaceId: string, agentId: string, runId: string): AgentRun|null
+        saveRun(workspaceId: string, run: AgentRun): boolean
+        deleteRun(workspaceId: string, agentId: string, runId: string): boolean
+        deleteRuns(workspaceId: string, agentId: string): boolean
       }
       docrepo: {
         open(): void
@@ -513,7 +514,7 @@ declare global {
         import(): boolean
       }
       import: {
-        openai(): boolean
+        openai(workspaceId: string): boolean
       }
       ollama: {
         downloadStart(targetDirectory: string): Promise<{ success: boolean; downloadId?: string; error?: string }>
@@ -521,6 +522,11 @@ declare global {
       }
       google: {
         downloadMedia(url: string, mimeType: string): Promise<string>
+      }
+      workspace: {
+        list(): WorkspaceHeader[]
+        load(workspaceId: string): Workspace|null
+        save(workspace: Workspace): boolean
       }
     }
   }

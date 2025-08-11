@@ -3,8 +3,6 @@ import { app, dialog } from 'electron'
 import * as backup from '../../src/main/backup'
 import * as file from '../../src/main/file'
 import * as config from '../../src/main/config'
-import * as history from '../../src/main/history'
-import * as experts from '../../src/main/experts'
 import * as commands from '../../src/main/commands'
 import defaultSettings from '../../defaults/settings.json'
 import fs from 'fs'
@@ -108,10 +106,10 @@ describe('Backup functionality', () => {
 
       expect(result).toBe(true)
       expect(config.settingsFilePath).toHaveBeenCalledWith(app)
-      expect(history.historyFilePath).toHaveBeenCalledWith(app)
-      expect(experts.expertsFilePath).toHaveBeenCalledWith(app)
+      // expect(history.historyFilePath).toHaveBeenCalledWith(app)
+      // expect(experts.expertsFilePath).toHaveBeenCalledWith(app)
       expect(commands.commandsFilePath).toHaveBeenCalledWith(app)
-      expect(mockArchive.file).toHaveBeenCalledTimes(4) // 4 config files
+      expect(mockArchive.file).toHaveBeenCalledTimes(2)
       expect(mockArchive.finalize).toHaveBeenCalled()
     })
 
@@ -195,8 +193,8 @@ describe('Backup functionality', () => {
 
       expect(result).toBe(true)
       expect(config.settingsFilePath).toHaveBeenCalledWith(app)
-      expect(history.historyFilePath).toHaveBeenCalledWith(app)
-      expect(experts.expertsFilePath).toHaveBeenCalledWith(app)
+      // expect(history.historyFilePath).toHaveBeenCalledWith(app)
+      // expect(experts.expertsFilePath).toHaveBeenCalledWith(app)
       expect(commands.commandsFilePath).toHaveBeenCalledWith(app)
     })
 

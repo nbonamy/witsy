@@ -1,0 +1,33 @@
+{
+  "uuid": "run2",
+  "agentId": "agent1",
+  "createdAt": 1000000005000,
+  "updatedAt": 1000000015000,
+  "trigger": "manual",
+  "status": "success",
+  "prompt": "prompt2",
+  "messages": [
+    {
+      "role": "system",
+      "content": "instructions1"
+    },
+    {
+      "role": "user",
+      "content": "prompt"
+    },
+    {
+      "role": "assistant",
+      "content": "response2"
+    }
+  ],
+  "toolCalls": [
+    {
+      "name": "tool1",
+      "params": {
+        "param1": "value1",
+        "param2": "value2"
+      },
+      "result": "result"
+    }
+  ]
+}

@@ -15,7 +15,7 @@ import DocumentRepository from './rag/docrepo';
 import DocumentMonitor from './rag/docmonitor';
 import MemoryManager from './main/memory';
 import TrayIconManager from './main/tray';
-import Scheduler from './main/scheduler';
+// import Scheduler from './main/scheduler';
 import Mcp from './main/mcp';
 
 import { fixPath } from './main/utils';
@@ -28,9 +28,10 @@ import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
 import * as menu from './main/menu';
 import * as backup from './main/backup';
+import * as workspace from './main/workspace';
 
 let mcp: Mcp = null
-let scheduler: Scheduler = null;
+// const scheduler: Scheduler = null;
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -85,7 +86,7 @@ const installMenu = () => {
     forge: window.openAgentForgeWindow,
     backupExport: async () => await backup.exportBackup(app),
     backupImport: async () => await backup.importBackup(app, quitApp),
-    importOpenAI: async () => await importOpenAI(app),
+    importOpenAI: async () => await importOpenAI(app, settings.workspaceId),
   }, settings.shortcuts);
 }
 
@@ -143,6 +144,9 @@ app.whenReady().then(async () => {
   // we need settings
   const settings = config.loadSettings(app);
 
+  // initialize current workspace
+  workspace.initializeWorkspace(app, settings.workspaceId)
+
   // error
   if (config.settingsFileHadError()) {
     const t = useI18n(app)
@@ -189,9 +193,9 @@ app.whenReady().then(async () => {
     mcp.connect();
   }
 
-  // and now scheduler
-  scheduler = new Scheduler(app, mcp);
-  scheduler.start();
+  // // and now scheduler
+  // scheduler = new Scheduler(app, mcp);
+  // scheduler.start();
 
   // create the main window
   if (!settings.general.hideOnStartup || process.env.TEST) {

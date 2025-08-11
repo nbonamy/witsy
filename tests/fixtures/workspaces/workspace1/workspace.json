@@ -1,0 +1,22 @@
+{
+  "uuid": "workspace-1",
+  "name": "Test Workspace 1",
+  "icon": "🚀",
+  "color": "#ff0000",
+  "models": [
+    {
+      "engine": "openai",
+      "model": "gpt-4",
+      "label": "GPT-4"
+    }
+  ],
+  "experts": ["expert1", "expert2"],
+  "docrepos": ["repo1"],
+  "tools": [
+    {
+      "type": "python_code_interpreter",
+      "enabled": true
+    }
+  ],
+  "agents": ["agent1"]
+}

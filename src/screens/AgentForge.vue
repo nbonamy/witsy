@@ -111,7 +111,7 @@ const onImportA2A = async (type?: AgentType) => {
 
     if (agent) {
       agent.type = type || 'runnable'
-      window.api.agents.save(agent)
+      window.api.agents.save(store.config.workspaceId, agent)
       editAgent(agent)
       break
     }
@@ -164,7 +164,7 @@ const deleteAgent = (agent: Agent) => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      window.api.agents.delete(agent.uuid)
+      window.api.agents.delete(store.config.workspaceId, agent.uuid)
       store.loadAgents()
       selectAgent(null)
     }

@@ -1,5 +1,6 @@
 
 import { v4 as uuidv4 } from 'uuid'
+import { store } from './store'
 
 export const getFileContents = (url: string) => {
   return window.api.file.read(url.replace('file://', ''))
@@ -14,6 +15,7 @@ export const saveFileContents = (extension: string, contents: string) => {
       filename: `${uuidv4()}.${extension}`,
       directory: 'userData',
       subdir: 'images',
+      workspace: store.config.workspaceId,
       prompt: false
     }
   })
@@ -37,6 +39,7 @@ export const download = (url: string) => {
       filename: `${uuidv4()}.${extension}`,
       directory: 'userData',
       subdir: 'images',
+      workspace: store.config.workspaceId,
       prompt: false
     }
   })

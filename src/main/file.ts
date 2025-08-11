@@ -330,6 +330,16 @@ export const writeFileContents = (app: App, payload: FileSaveParams): string => 
   // parse properties
   const properties = payload.properties;
   let defaultPath = app.getPath(properties.directory);
+  
+  // handle workspace-specific paths
+  if (properties.workspace && properties.directory === 'userData') {
+    const workspaceFolder = path.join(defaultPath, 'workspaces', properties.workspace);
+    if (!fs.existsSync(workspaceFolder)) {
+      fs.mkdirSync(workspaceFolder, { recursive: true });
+    }
+    defaultPath = workspaceFolder;
+  }
+  
   const defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split(path.sep).pop();
   if (properties.subdir) {
     defaultPath = path.join(defaultPath, properties.subdir);

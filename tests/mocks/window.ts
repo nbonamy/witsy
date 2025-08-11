@@ -6,6 +6,7 @@ import { McpInstallStatus } from '../../src/types/mcp'
 import { ListDirectoryResponse } from '../../src/types/filesystem'
 import { FilePickParams } from '../../src/types/file'
 import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
+import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
 import defaultSettings from '../../defaults/settings.json'
 import Agent from '../../src/models/agent'
 
@@ -166,8 +167,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       cancel: vi.fn(),
       closePicker: vi.fn(),
       run: vi.fn(),
-      askMeAnythingId: vi.fn(() => '00000000-0000-0000-0000-000000000000'),
-      isPromptEditable: vi.fn((id) => id != '00000000-0000-0000-0000-000000000000'),
+      askMeAnythingId: vi.fn(() => DEFAULT_WORKSPACE_ID),
+      isPromptEditable: vi.fn((id) => id != DEFAULT_WORKSPACE_ID),
       import: vi.fn(),
       export: vi.fn(),
     },
@@ -267,7 +268,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       ]),
       save: vi.fn(),
       delete: vi.fn(),
-      getRuns: vi.fn((agentId: string) => {
+      getRuns: vi.fn((workspaceId: string, agentId: string) => {
         if (agentId === 'agent1') {
           return [
             {
@@ -320,8 +321,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         }
         return []
       }),
-      getRun: vi.fn((agentId: string, runId: string) => {
-        const runs = window.api?.agents?.getRuns(agentId) || []
+      getRun: vi.fn((workspaceId: string, agentId: string, runId: string) => {
+        const runs = window.api?.agents?.getRuns(workspaceId, agentId) || []
         return runs.find((run: AgentRun) => run.uuid === runId) || null
       }),
       saveRun: vi.fn(),

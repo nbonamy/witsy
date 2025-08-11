@@ -31,6 +31,7 @@
 import { Agent, AgentRun } from '../types/index'
 import { ref, PropType, onMounted, watch, onUnmounted } from 'vue'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 import Dialog from '../composables/dialog'
 import Info from './Info.vue'
 import History from './History.vue'
@@ -74,7 +75,7 @@ const onAgentRunUpdate = (data: { agentId: string, runId: string }) => {
 
 const reload = () => {
   if (!props.agent) return
-  runs.value = window.api.agents.getRuns(props.agent.uuid)
+  runs.value = window.api.agents.getRuns(store.config.workspaceId, props.agent.uuid)
   
   // auto-adjust showWorkflows based on available runs
   const nonWorkflowRuns = runs.value.filter(run => run.trigger !== 'workflow')
@@ -123,7 +124,7 @@ const deleteRuns = () => {
   }).then((result) => {
     if (result.isConfirmed) {
       for (const run of selection.value) {
-        window.api.agents.deleteRun(props.agent.uuid, run.uuid)
+        window.api.agents.deleteRun(store.config.workspaceId, props.agent.uuid, run.uuid)
       }
       runs.value = runs.value.filter(r => !selection.value.includes(r))
       selectLatestRun()
@@ -172,7 +173,7 @@ const clearHistory = () => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      window.api.agents.deleteRuns(props.agent.uuid)
+      window.api.agents.deleteRuns(store.config.workspaceId, props.agent.uuid)
       runs.value = []
       selection.value = []
     }
