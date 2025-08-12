@@ -1,6 +1,10 @@
 
 .split-pane {
 
+  --split-pane-sidebar-list-item-selected-bg-color: var(--tabs-header-selected-bg-color);
+  --split-pane-sidebar-list-item-selected-text-color: var(--tabs-header-selected-text-color);
+  --split-pane-sidebar-list-item-hover-bg-color: var(--hover-bg-color);
+
   display: flex;
   width: 100%;
   overflow: hidden;
@@ -87,7 +91,7 @@
 
       flex: 1;
       border-right: 1px solid var(--sidebar-border-color);
-      /* padding-top: 1rem; */
+      padding-top: 1rem;
       overflow-y: hidden;
       display: flex;
       flex-direction: column;
@@ -109,6 +113,23 @@
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
+
+      &:has(button:only-child) {
+        justify-content: center;
+        button {
+          width: 100%;
+          padding: 1rem;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 12pt;
+          font-weight: 600;
+          background-color: #1B4FB2;
+          color: white;
+        }
+      }
 
     }
 

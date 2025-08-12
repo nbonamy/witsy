@@ -391,10 +391,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         return [
           { uuid: 'uuid1', name: 'docrepo1', embeddingEngine: 'ollama', embeddingModel: 'all-minilm', workspaceId: workspaceId, documents: [] },
           { uuid: 'uuid2', name: 'docrepo2', embeddingEngine: 'openai', embeddingModel: 'text-embedding-ada-002', workspaceId: workspaceId, documents: [
-            { uuid: 'uuid3', type: 'file', title: 'file1', origin: '/tmp/file1', filename: 'file1', url: 'file:///tmp/file1', lastModified: 0, fileSize: 0 },
+            { uuid: 'uuid3', type: 'file', title: 'file1', origin: '/tmp/file1', filename: 'file1', url: 'file:///tmp/file1', lastModified: 0, fileSize: 1 },
             { uuid: 'uuid4', type: 'folder', title: 'folder1', origin: '/tmp/folder1', filename: 'folder1', url: 'file:///tmp/folder1', lastModified: 0, fileSize: 0, items: [
-              { uuid: 'uuid5', type: 'file', title: 'file2', origin: '/tmp/file2', filename: 'file2', url: 'file:///tmp/file2', lastModified: 0, fileSize: 0 },
-              { uuid: 'uuid6', type: 'file', title: 'file3', origin: '/tmp/file3', filename: 'file3', url: 'file:///tmp/file3', lastModified: 0, fileSize: 0 },
+              { uuid: 'uuid5', type: 'file', title: 'file2', origin: '/tmp/file2', filename: 'file2', url: 'file:///tmp/file2', lastModified: 0, fileSize: 2 },
+              { uuid: 'uuid6', type: 'file', title: 'file3', origin: '/tmp/file3', filename: 'file3', url: 'file:///tmp/file3', lastModified: 0, fileSize: 3 },
             ]},
           ]},
         ]

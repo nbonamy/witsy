@@ -2,9 +2,10 @@
   <main v-if="selectedRepo">
     <div class="info panel">
       <div class="panel-header">
-        {{ t('docRepo.view.title') }}
+        <label>{{ t('docRepo.view.title') }}</label>
+        <div class="icon" @click="togglePanel"><BIconChevronDown /></div>
       </div>
-      <div class="panel-body form form-large">
+      <div class="panel-body form form-large form-vertical">
         <div class="form-field name">
           <label>{{ t('common.name') }}</label>
           <input type="text" v-model="selectedRepo.name" @change="onChangeRepoName" />
@@ -22,44 +23,40 @@
     </div>
     <div class="documents panel">
       <div class="panel-header">
-        <label>{{ t('common.documents') }}</label>
-        <Spinner class="large"v-if="loading" />
-        <BIconFilePlus 
-          class="icon add-file" 
-          v-tooltip="{ text: t('docRepo.view.tooltips.addFile'), position: 'bottom-left' }"
-          @click="onAddDocs" 
-        />
-        <BIconFolderPlus 
-          class="icon add-folder" 
-          v-tooltip="{ text: t('docRepo.view.tooltips.addFolder'), position: 'bottom-left' }"
-          @click="onAddFolder" 
-        />
+        <label>
+          {{ t('common.documents') }}
+          <div class="tag info">{{ documentCount() }}</div>
+          <div class="subtitle">Add.pdf,.csv, .md, json, .epub, .docx, .rft, and .txt files</div>
+        </label>
+        <Spinner class="large" v-if="loading" />
       </div>
       <div class="panel-body" v-if="selectedRepo.documents.length">
         <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
           <div class="panel-item">
             <div class="icon leading"><Component :is="docIcon(doc)" /></div>
             <div class="info">
-              <div class="text">{{ docLabel(doc) }}</div>
-              <div class="subtext">{{ doc.origin }}</div>
+              <div class="text">{{ doc.origin }}</div>
+              <div class="subtext" v-if="doc.type === 'folder'">{{ t('docRepo.list.documentsCount', { count: docSourceCount(doc) } ) }}</div>
+              <div class="subtext" v-else>{{ filesize(doc.fileSize) }}</div>
             </div>
             <div class="actions">
-              <Spinner class="large" v-if="processingItems.includes(doc.uuid)" />
+              <div class="tag info" v-if="processingItems.includes(doc.uuid)">Indexing</div>
+              <div class="tag success" v-else>Ready</div>
               <BIconSearch 
-                v-if="doc.type === 'folder'"
+                :style="{ visibility: doc.type === 'folder' ? 'visible' : 'hidden' }"
                 class="icon view-contents" 
-                v-tooltip="{ text: t('docRepo.view.tooltips.viewContents'), position: 'top-left' }"
+                v-tooltip="{ text: t('docRepo.view.tooltips.viewContents'), position: 'left' }"
                 @click="onViewFolderContents(doc)" 
               />
-              <BIconFolder 
+              <BIconFolder
                 v-if="doc.type === 'file' || doc.type === 'folder'"
                 class="icon open-in-explorer" 
-                v-tooltip="{ text: t('docRepo.view.tooltips.openInExplorer'), position: 'top-left' }"
+                v-tooltip="{ text: t('docRepo.view.tooltips.openInExplorer'), position: 'left' }"
                 @click="onOpenInExplorer(doc)" 
               />
               <BIconTrash 
                 class="icon remove" 
-                v-tooltip="{ text: t('docRepo.view.tooltips.removeDocument'), position: 'top-left' }"
+                v-tooltip="{ text: t('docRepo.view.tooltips.removeDocument'), position: 'left' }"
                 @click="onDelDoc(doc)" 
               />
             </div>
@@ -68,6 +65,10 @@
       </div>
       <div class="panel-empty" v-else>
         <div>{{ t('docRepo.view.noDocuments') }}</div>
+      </div>
+      <div class="panel-footer">
+        <button name="addDocs" @click="onAddDocs"><BIconFilePlus /> {{ t('docRepo.view.tooltips.addFile') }}</button>
+        <button name="addFolder" @click="onAddFolder"><BIconFolderPlus /> {{ t('docRepo.view.tooltips.addFolder') }}</button>
       </div>
     </div>
     <Folder ref="folderRef" :folder="selectedFolder" @close="selectedFolder = null" />
@@ -78,8 +79,10 @@
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { DocumentBase, DocumentSource, DocRepoAddDocResponse, DocumentQueueItem } from '../types/rag'
 import { extensionToMimeType } from 'multi-llm-ts'
+import { filesize } from 'filesize'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import { togglePanel } from '../composables/panel'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Dialog from '../composables/dialog'
 import Spinner from '../components/Spinner.vue'
@@ -103,6 +106,14 @@ const modelReady = ref(true)
 const processingItems = ref<string[]>([])
 const folderRef = ref<InstanceType<typeof Folder> | null>(null)
 const selectedFolder = ref<DocumentSource | null>(null)
+
+const docSourceCount = (source: DocumentSource): number => {
+  return (source.type === 'folder' ? 0 : 1) + (source.items?.reduce((acc, item) => acc + docSourceCount(item), 0) ?? 0)
+}
+
+const documentCount = (): number => {
+  return props.selectedRepo.documents.reduce((acc, doc) => acc + docSourceCount(doc), 0)
+}
 
 const updateModelReady = () => {
   if (props.selectedRepo) {
@@ -255,19 +266,18 @@ const onViewFolderContents = (doc: DocumentSource) => {
 
 main {
   overflow: hidden;
-  margin: 2rem auto;
-  min-width: 800px;
+  height: 100%;
+  gap: 1rem;
+  padding: 1.5rem;
 }
 
 .info {
 
+  flex-shrink: 0;
+
   .form {
 
-    gap: 0px;
-
-    .embeddings {
-      margin-top: 0px;
-    }
+    gap: 0.25rem;
 
     .embeddings input {
       background-color: var(--control-bg-color);
@@ -292,23 +302,4 @@ main {
   flex-grow: 1;
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.actions .icon {
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.actions .icon:hover {
-  opacity: 1;
-}
-
-* {
-  color: var(--text-color);
-}
 </style>

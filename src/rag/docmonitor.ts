@@ -237,7 +237,13 @@ export default class DocumentMonitor implements DocRepoListener {
 
               if (targetDocSource) {
                 // Re-add the document (this will update it)
-                await this.docRepo.addDocumentSource(docBase.uuid, targetDocSource.type, targetDocSource.origin, false)
+                if (docSource.type === 'folder') {
+                  // If the parent is a folder, add as child document
+                  await this.docRepo.addChildDocumentSource(docBase.uuid, docSource.uuid, targetDocSource.type, targetDocSource.origin, false)
+                } else {
+                  // If it's a root-level document, use addDocumentSource
+                  await this.docRepo.addDocumentSource(docBase.uuid, targetDocSource.type, targetDocSource.origin, false)
+                }
               }
             }
             break
