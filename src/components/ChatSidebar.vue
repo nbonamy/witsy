@@ -67,7 +67,7 @@ const selectMode= ref<boolean>(false)
 
 const emit = defineEmits(['new-chat', 'run-agent'])
 
-let panelOffet = 0
+let panelOffset = 0
 
 onMounted(async () => {
   visible.value = window.api.store.get('sidebarVisible', true)
@@ -77,7 +77,7 @@ onMounted(async () => {
 
   const sidebar = document.querySelector('.chat-sidebar') as HTMLElement
   const rect = sidebar?.getBoundingClientRect()
-  panelOffet = rect?.left || 0
+  panelOffset = rect?.left || 0
 
   // we don't want animations when mounting
   // so init manualResize to true
@@ -164,7 +164,7 @@ const onResizeSidebarStart = async () => {
 }
 
 const onResizeSidebarMove = (event: MouseEvent) => {
-  width.value = Math.max(200, Math.min(400, event.clientX - panelOffet))
+  width.value = Math.max(200, Math.min(400, event.clientX - panelOffset))
 }
 
 const onResizeSidebarEnd = () => {
