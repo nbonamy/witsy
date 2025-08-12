@@ -9,9 +9,16 @@
         class="workspace-item" 
         :class="{ active: workspace.uuid === activeWorkspaceId }"
         @click="selectWorkspace(workspace.uuid)"
+        @contextmenu.prevent="showWorkspaceContextMenu($event, workspace)"
         :title="workspace.name"
       >
-        <div class="workspace-icon" :style="{ backgroundColor: workspace.color || '#007bff' }">
+        <div 
+          class="workspace-icon" 
+          :style="{ 
+            backgroundColor: workspace.color || '#007bff',
+            color: getContrastColor(workspace.color || '#007bff')
+          }"
+        >
           <component 
             v-if="workspace.icon && workspace.icon.startsWith('BIcon')" 
             :is="workspace.icon" 
@@ -31,7 +38,13 @@
       <div class="push"></div>
 
       <div class="workspace-item">
-        <div class="workspace-icon" :style="{ backgroundColor: '#1B4FB2' }">
+        <div 
+          class="workspace-icon" 
+          :style="{ 
+            backgroundColor: '#1B4FB2',
+            color: getContrastColor('#1B4FB2')
+          }"
+        >
           <BIconStarFill />
         </div>
       </div>
@@ -39,25 +52,45 @@
     </div>
 
     <WorkspaceEditor ref="workspaceEditor" @save="onWorkspaceSave" />
+    <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { BIconPlus, BIconStarFill } from 'bootstrap-icons-vue'
 import { WorkspaceHeader } from '../types/workspace'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import WorkspaceEditor from './WorkspaceEditor.vue'
+import ContextMenu from './ContextMenu.vue'
+import Dialog from '../composables/dialog'
 
 const workspaces = ref<WorkspaceHeader[]>([])
 const workspaceEditor = ref(null)
+const selectedWorkspace = ref<WorkspaceHeader | null>(null)
+const showMenu = ref(false)
+const menuX = ref(0)
+const menuY = ref(0)
 
 const activeWorkspaceId = computed(() => store.config.workspaceId)
 
 const emit = defineEmits(['workspace-changed'])
 
+const workspaceUpdateListener = () => {
+  loadWorkspaces()
+}
+
 onMounted(async () => {
   loadWorkspaces()
+  
+  // Listen for workspace updates
+  window.api.on('workspaces-updated', workspaceUpdateListener)
+})
+
+onUnmounted(() => {
+  // Clean up event listener
+  window.api.off('workspaces-updated', workspaceUpdateListener)
 })
 
 const loadWorkspaces = async () => {
@@ -86,6 +119,87 @@ const onWorkspaceSave = async (workspace: any) => {
   if (success) {
     await loadWorkspaces()
     workspaceEditor.value?.close()
+  }
+}
+
+const getContrastColor = (backgroundColor: string): string => {
+  // Remove # if present
+  const color = backgroundColor.replace('#', '')
+  
+  // Convert to RGB
+  const r = parseInt(color.substring(0, 2), 16)
+  const g = parseInt(color.substring(2, 4), 16)
+  const b = parseInt(color.substring(4, 6), 16)
+  
+  // Calculate luminance using the formula for relative luminance
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  
+  // Return black for light backgrounds, white for dark backgrounds
+  return luminance > 0.66 ? '#000000' : '#ffffff'
+}
+
+const contextMenuActions = [
+  { label: t('common.edit'), action: 'edit' },
+  { label: t('common.delete'), action: 'delete' }
+]
+
+const showWorkspaceContextMenu = (event: MouseEvent, workspace: WorkspaceHeader) => {
+  selectedWorkspace.value = workspace
+  showMenu.value = true
+  menuX.value = event.clientX
+  menuY.value = event.clientY
+}
+
+const closeContextMenu = () => {
+  showMenu.value = false
+}
+
+const handleActionClick = async (action: string) => {
+  closeContextMenu()
+  
+  if (action === 'edit') {
+    editWorkspace()
+  } else if (action === 'delete') {
+    await deleteWorkspace()
+  }
+}
+
+const editWorkspace = () => {
+  if (selectedWorkspace.value) {
+    // Convert WorkspaceHeader to full Workspace object
+    const workspace = window.api.workspace.load(selectedWorkspace.value.uuid)
+    if (workspace) {
+      workspaceEditor.value?.show(workspace)
+    }
+  }
+}
+
+const deleteWorkspace = async () => {
+  if (!selectedWorkspace.value) return
+  
+  const result = await Dialog.show({
+    title: t('workspace.delete.confirm'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
+    showCancelButton: true,
+  })
+
+  if (result.isDismissed) {
+    return
+  }
+
+  // Delete the workspace
+  const success = window.api.workspace.delete(selectedWorkspace.value.uuid)
+  if (success) {
+    await loadWorkspaces()
+    // If this was the active workspace, switch to another one
+    if (selectedWorkspace.value.uuid === activeWorkspaceId.value) {
+      const remainingWorkspaces = workspaces.value
+      if (remainingWorkspaces.length > 0) {
+        store.activateWorkspace(remainingWorkspaces[0].uuid)
+        emit('workspace-changed', remainingWorkspaces[0].uuid)
+      }
+    }
   }
 }
 </script>
@@ -154,7 +268,6 @@ const onWorkspaceSave = async (workspace: any) => {
         justify-content: center;
         font-weight: 600;
         font-size: 1rem;
-        color: white;
         
         svg {
           width: 1.25rem;

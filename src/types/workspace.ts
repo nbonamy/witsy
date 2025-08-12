@@ -13,5 +13,4 @@ export type Workspace = WorkspaceHeader & {
   experts?: string[]
   docrepos?: string[]
   tools?: ToolSelection[]
-  agents?: string[]
 }

@@ -243,4 +243,5 @@ export const WORKSPACE = {
   LIST: 'workspace-list',
   LOAD: 'workspace-load',
   SAVE: 'workspace-save',
+  DELETE: 'workspace-delete',
 } as const;

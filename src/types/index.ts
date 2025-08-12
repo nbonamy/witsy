@@ -536,6 +536,7 @@ declare global {
         list(): WorkspaceHeader[]
         load(workspaceId: string): Workspace|null
         save(workspace: Workspace): boolean
+        delete(workspaceId: string): boolean
       }
     }
   }
