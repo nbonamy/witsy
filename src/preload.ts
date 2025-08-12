@@ -156,10 +156,10 @@ contextBridge.exposeInMainWorld(
     },
     docrepo: {
       open(): void { return ipcRenderer.send(IPC.DOCREPO.OPEN) },
-      list(): strDict[] { return JSON.parse(ipcRenderer.sendSync(IPC.DOCREPO.LIST)) },
+      list(workspaceId: string): strDict[] { return JSON.parse(ipcRenderer.sendSync(IPC.DOCREPO.LIST, workspaceId)) },
       connect(baseId: string): void { return ipcRenderer.send(IPC.DOCREPO.CONNECT, baseId) },
       disconnect(): void { return ipcRenderer.send(IPC.DOCREPO.DISCONNECT) },
-      create(title: string, embeddingEngine: string, embeddingModel: string): string { return ipcRenderer.sendSync(IPC.DOCREPO.CREATE, { title, embeddingEngine, embeddingModel }) },
+      create(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): string { return ipcRenderer.sendSync(IPC.DOCREPO.CREATE, { workspaceId, title, embeddingEngine, embeddingModel }) },
       rename(baseId: string, title: string): void { return ipcRenderer.sendSync(IPC.DOCREPO.RENAME, { baseId, title }) },
       delete(baseId: string): void { return ipcRenderer.sendSync(IPC.DOCREPO.DELETE, baseId) },
       addDocument(baseId: string, type: string, url: string): void { return ipcRenderer.send(IPC.DOCREPO.ADD_DOCUMENT, { baseId, type, url }) },

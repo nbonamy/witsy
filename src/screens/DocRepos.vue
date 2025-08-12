@@ -30,6 +30,7 @@
 
 import { ref, onMounted, onUnmounted } from 'vue'
 import { DocumentBase } from '../types/rag'
+import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import Config from '../docrepo/Config.vue'
@@ -68,7 +69,7 @@ onUnmounted(() => {
 
 const loadDocRepos = () => {
   const selectedRepoId = selectedRepo.value?.uuid
-  const repos = window.api.docrepo?.list()
+  const repos = window.api.docrepo?.list(store.config.workspaceId)
   docRepos.value = repos ?? []
   if (selectedRepoId) {
     selectRepo(docRepos.value.find((repo: DocumentBase) => repo.uuid == selectedRepoId))

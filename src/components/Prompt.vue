@@ -381,7 +381,7 @@ const initDictation = async () => {
 
 const loadDocRepos = () => {
   if (props.enableDocRepo) {
-    docRepos.value = window.api.docrepo.list()
+    docRepos.value = window.api.docrepo.list(store.config.workspaceId)
   }
 }
 
