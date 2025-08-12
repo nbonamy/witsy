@@ -109,22 +109,6 @@ export default class DocumentRepository {
       const repoJson = fs.readFileSync(docrepoFile, 'utf-8')
       for (const jsonDb of JSON.parse(repoJson)) {
         const base = DocumentBaseImpl.fromJSON(this.app, jsonDb)
-        for (const jsonDoc of jsonDb.documents) {
-          const doc = new DocumentSourceImpl(jsonDoc.uuid, jsonDoc.type, jsonDoc.origin)
-          // Restore metadata if available
-          if (jsonDoc.lastModified) doc.lastModified = jsonDoc.lastModified
-          if (jsonDoc.fileSize) doc.fileSize = jsonDoc.fileSize
-          
-          base.documents.push(doc)
-          for (const jsonItem of jsonDoc.items) {
-            const item = new DocumentSourceImpl(jsonItem.uuid, jsonItem.type, jsonItem.origin)
-            // Restore metadata for items too
-            if (jsonItem.lastModified) item.lastModified = jsonItem.lastModified
-            if (jsonItem.fileSize) item.fileSize = jsonItem.fileSize
-            
-            doc.items.push(item)
-          }
-        }
         this.contents.push(base)
       }
 
@@ -141,12 +125,11 @@ export default class DocumentRepository {
 
       // save the file
       const docrepoFile = docrepoFilePath(this.app)
-      fs.writeFileSync(docrepoFile, JSON.stringify(this.contents.map((db) => {
-        return {
-          ...db,
-          app: undefined as unknown,
-        }
-      }), null, 2))
+      fs.writeFileSync(docrepoFile, JSON.stringify(this.contents.map((db: DocumentBaseImpl) => ({
+        ...db,
+        app: undefined,
+        db: undefined,
+      } as any)), null, 2))
 
       // notify
       notifyBrowserWindows('docrepo-modified')
@@ -442,16 +425,20 @@ export default class DocumentRepository {
       try {
         for (const base of this.contents) {
           try {
+
+            // detect and process
             const changes = await base.scanForUpdates()
             await this.processUpdates(base, changes)
+
+            // save if we had updates
+            if (changes.added.length > 0 || changes.modified.length > 0 || changes.deleted.length > 0) {
+              this.save()
+            }
+
           } catch (error) {
             console.error(`[rag] Error scanning database ${base.name} for offline changes:`, error)
           }
         }
-        
-        // Save any metadata updates
-        this.save()
-        
       } catch (error) {
         console.error('[rag] Error during offline change detection:', error)
       } finally {

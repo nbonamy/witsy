@@ -16,6 +16,7 @@
 
   --background-color: #fff;
   --background-color-light: var(--background-color);
+  --border-color: rgba(217, 217, 221, 0.70);
   --window-bg-color: #e0e0e0;
   --text-color: #000;
   --dimmed-text-color: #444;
@@ -54,7 +55,7 @@
 
   --sidebar-width: 300px;
   --sidebar-bg-color: var(--background-color);
-  --sidebar-border-color: rgba(217, 217, 221, 0.70);
+  --sidebar-border-color: var(--border-color);
   --sidebar-scroll-thumb-color: #888;
   --sidebar-text-color: var(--dimmed-text-color);
   --sidebar-icon-color: var(--icon-color);
@@ -106,7 +107,7 @@
 
   --tabs-header-normal-text-color: #555;
   --tabs-header-selected-bg-color: #e1e1e1;
-  --tabs-header-selected-text-color: var(--highlight-color);
+  --tabs-header-selected-text-color: var(--text-color);
 
   --context-menu-bg-color: var(--background-color);
   --context-menu-border-color: var(--dialog-border-color);
@@ -654,6 +655,26 @@ table.table-plain {
   }
 
 }
+
+.tag {
+  display: inline-flex;
+  padding: 0.125rem 0.5rem;
+  justify-content: center;
+  align-items: center;
+  font-size: 8pt;
+  border-radius: 0.75rem;
+
+  &.info {
+    background-color: #D8F1FF;
+    color: #0C72EE;
+  }
+
+  &.success {
+    background-color: #E8FDF3;
+    color: #079669;
+  }
+}
+
 
 svg.scale90 {
   transform: scale(0.9);

@@ -223,23 +223,6 @@ defineExpose({
 
     }
 
-    footer:has(.new-chat) {
-      justify-content: center;
-      button.new-chat {
-        width: 100%;
-        padding: 1rem;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 12pt;
-        font-weight: 600;
-        background-color: #1B4FB2;
-        color: white;
-      }
-    }
-
     .resizer {
       position: absolute;
       width: 8px;

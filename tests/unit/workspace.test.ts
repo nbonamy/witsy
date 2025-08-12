@@ -198,17 +198,17 @@ describe('migrateExistingItemsToWorkspace', () => {
     const workspaceId = DEFAULT_WORKSPACE_ID
     
     // Set up existing sources (in userData)
-    existingSources = ['agents', 'docrepo', 'images', 'commands.json', 'experts.json', 'history.json', 'docrepo.json']
+    existingSources = [ 'agents', 'images', 'history.json' ]
     existingDestinations = [] // No existing destinations
     
     const result = workspace.migrateExistingItemsToWorkspace(app, workspaceId)
     
     expect(result).toBe(true)
-    expect(renamedItems).toHaveLength(7)
+    expect(renamedItems).toHaveLength(existingSources.length)
     
     // Check that all expected items were renamed/moved
     const expectedMoves = [
-      'agents', 'docrepo', 'images', 'commands.json', 'docrepo.json', 'experts.json', 'history.json'
+      'agents', 'images', 'history.json'
     ]
     
     expectedMoves.forEach(item => {
@@ -255,16 +255,15 @@ describe('migrateExistingItemsToWorkspace', () => {
     const result = workspace.migrateExistingItemsToWorkspace(app, workspaceId)
     
     expect(result).toBe(true)
-    expect(renamedItems).toHaveLength(2)
+    expect(renamedItems).toHaveLength(1)
     
     // Check specific moves
     const agentMove = renamedItems.find(r => r.from.includes('agents'))
     const commandMove = renamedItems.find(r => r.from.includes('commands.json'))
     
     expect(agentMove).toBeDefined()
-    expect(commandMove).toBeDefined()
+    expect(commandMove).toBeUndefined()
     expect(agentMove?.from).toBe('tests/fixtures/agents')
-    expect(commandMove?.from).toBe('tests/fixtures/commands.json')
   })
 
   test('should continue migration even if some items fail', () => {
@@ -284,13 +283,14 @@ describe('migrateExistingItemsToWorkspace', () => {
     
     const result = workspace.migrateExistingItemsToWorkspace(app, workspaceId)
     
-    expect(result).toBe(true) // Still true because some items were migrated
-    expect(renamedItems).toHaveLength(2) // agents and experts.json, but not commands.json
+    expect(result).toBe(true)
+    expect(renamedItems).toHaveLength(1)
     
     const agentMove = renamedItems.find(r => r.from.includes('agents'))
-    const expertMove = renamedItems.find(r => r.from.includes('experts.json'))
-    
     expect(agentMove).toBeDefined()
-    expect(expertMove).toBeDefined()
+
+    const expertsMove = renamedItems.find(r => r.from.includes('experts.json'))
+    expect(expertsMove).toBeUndefined()
+
   })
 })

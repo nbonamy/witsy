@@ -7,6 +7,11 @@
   "voiceMode": false,
   "workspaces": true,
   "chat": {
-    "folders": false
+    "folders": false,
+    "dates": false,
+    "settings": false,
+    "temporary": false,
+    "exportMarkdown": false,
+    "exportPdf": false
   }
 }

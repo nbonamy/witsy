@@ -373,7 +373,7 @@ test('DocMonitor handles processFileEvent for add operation', async () => {
   expect(mockDocRepo.addDocumentSource).not.toHaveBeenCalled()
 })
 
-test('DocMonitor handles processFileEvent for change operation', async () => {
+test('DocMonitor handles processFileEvent for change operation on root-level file', async () => {
   // Setup: file document source exists in docrepo  
   const fileDoc = new DocumentSourceImpl('file-doc-id', 'file', '/path/to/file.txt')
   testDocBase.documents = [fileDoc]
@@ -385,8 +385,28 @@ test('DocMonitor handles processFileEvent for change operation', async () => {
   
   await monitor['processFileEvent']('/path/to/file.txt', 'change')
   
-  // For change events, it should re-add the document (which updates it)
+  // For change events on root-level files, it should use addDocumentSource
   expect(mockDocRepo.addDocumentSource).toHaveBeenCalledWith('test-base-id', 'file', '/path/to/file.txt', false)
+  expect(mockDocRepo.addChildDocumentSource).not.toHaveBeenCalled()
+})
+
+test('DocMonitor handles processFileEvent for change operation on folder-child file', async () => {
+  // Setup: folder document source with child file exists in docrepo
+  const childFileDoc = new DocumentSourceImpl('child-file-doc-id', 'file', '/path/to/folder/file.txt')
+  const folderDoc = new DocumentSourceImpl('folder-doc-id', 'folder', '/path/to/folder')
+  folderDoc.items = [childFileDoc]
+  testDocBase.documents = [folderDoc]
+  mockDocRepo.contents = [testDocBase]
+  
+  vi.mocked(fs.existsSync).mockReturnValue(true)
+  
+  const monitor = new DocumentMonitor(app, mockDocRepo as any)
+  
+  await monitor['processFileEvent']('/path/to/folder/file.txt', 'change')
+  
+  // For change events on folder-child files, it should use addChildDocumentSource
+  expect(mockDocRepo.addChildDocumentSource).toHaveBeenCalledWith('test-base-id', 'folder-doc-id', 'file', '/path/to/folder/file.txt', false)
+  expect(mockDocRepo.addDocumentSource).not.toHaveBeenCalled()
 })
 
 test('DocMonitor handles processFileEvent for unlink operation', async () => {

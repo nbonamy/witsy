@@ -758,12 +758,14 @@
     },
     "create": {
       "embeddingWarning": "embedding model cannot be changed once knowledge base is created",
-      "title": "Create knowledge base"
+      "title": "New Collection"
+    },
+    "empty": {
+      "title": "Select or create a collection",
+      "text": "Collections help you organize your documents."
     },
     "list": {
-      "clickToCreate": "Click on the + button to create one.",
       "documentsCount": "No document|1 document|{count} documents",
-      "noRepositories": "You don't have any knowledge bases yet.",
       "title": "Knowledge Bases",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
@@ -773,7 +775,7 @@
       }
     },
     "view": {
-      "noDocuments": "You don't have any documents yet. Click on the icons above to add documents or folders.",
+      "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "Add files",
