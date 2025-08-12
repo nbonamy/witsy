@@ -93,7 +93,7 @@ export default class A2AClient {
       for await (const event of stream) {
 
         // log
-        console.log(`[a2a] Received event: ${JSON.stringify(event)}`);
+        //console.log(`[a2a] Received event: ${JSON.stringify(event)}`);
         
         // the first event is often the Task object itself, establishing the ID.
         if (event.kind === 'task') {
