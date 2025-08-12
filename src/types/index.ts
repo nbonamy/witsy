@@ -440,11 +440,11 @@ declare global {
       }
       docrepo: {
         open(): void
-        list(): DocumentBase[]
+        list(workspaceId: string): DocumentBase[]
         connect(baseId: string): void
         disconnect(): void
         isEmbeddingAvailable(engine: string, model: string): boolean
-        create(title: string, embeddingEngine: string, embeddingModel: string): string
+        create(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): string
         rename(id: string, title: string): void
         delete(id: string): void
         addDocument(id: string, type: string, url: string): void
