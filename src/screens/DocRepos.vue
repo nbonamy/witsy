@@ -1,26 +1,32 @@
 <template>
   <div class="docrepo split-pane" v-bind="$attrs">
+    <div class="sp-sidebar">
+      <header>
+        <div class="title">{{ t('docRepo.list.title') }}</div>
+        <BIconSliders class="icon config" v-tooltip="{ text: t('docRepo.list.tooltips.config'), position: 'bottom-left' }" @click="onConfig" />
+      </header>
+      <main>
+        <List :docRepos="docRepos || []" :selectedRepo="selectedRepo" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" />
+      </main>
+      <footer>
+        <button class="new-chat" @click="onCreate"><BIconPlusLg /> {{ t('docRepo.create.title') }}</button>
+      </footer>
+    </div>
     <div class="sp-main">
       <header v-if="mode === 'create'">
-        <BIconChevronLeft class="icon back" @click="selectRepo(null)" />
         <div class="title">{{ t('docRepo.create.title') }}</div>
       </header>
       <header v-else-if="mode === 'view'">
-        <BIconChevronLeft class="icon back" @click="selectRepo(null)" />
         <div class="title">{{ selectedRepo?.name }}</div>
+        <BIconTrash 
+          class="icon delete" 
+          v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }"
+          @click="onDeleteRepo(selectedRepo)" 
+        />
       </header>
-      <header v-else>
-        <div class="title">{{ t('docRepo.list.title') }}</div>
-      </header>
-      <main class="sliding-root" :class="{ visible: mode === 'list' }">
-        <List :docRepos="docRepos || []" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" @delete="onDeleteRepo" />
-      </main>
-      <main class="sliding-pane" :class="{ visible: mode === 'view' }" @transitionend="onTransitionEnd">
-        <View :selectedRepo="selectedRepo" @rename="onChangeRepoName" />
-      </main>
-      <main class="sliding-pane editor" :class="{ visible: mode === 'create' }" @transitionend="onTransitionEnd">
-        <Create @cancel="onCreateCancel" @save="onCreateSave" />
-      </main>
+      <Empty v-if="!selectedRepo && mode !== 'create'" />
+      <View :selectedRepo="selectedRepo" @rename="onChangeRepoName" v-if="mode === 'view'"/>
+      <Create @cancel="onCreateCancel" @save="onCreateSave" v-if="mode === 'create'" class="editor" />
     </div>
     <Config ref="configDialog" />
   </div>
@@ -37,6 +43,7 @@ import Config from '../docrepo/Config.vue'
 import List from '../docrepo/List.vue'
 import View from '../docrepo/View.vue'
 import Create from '../docrepo/Create.vue'
+import Empty from '../docrepo/Empty.vue'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -45,17 +52,10 @@ const { onEvent } = useEventBus()
 type DocRepoMode = 'list' | 'view' | 'create'
 
 const mode = ref<DocRepoMode>('list')
-const prevMode = ref<DocRepoMode>('list')
 const docRepos = ref(null)
 const selectedRepo = ref<DocumentBase | null>(null)
 const configDialog = ref(null)
 
-const onTransitionEnd = async () => {
-  prevMode.value = null
-  if (mode.value === 'list') {
-    selectedRepo.value = null
-  }
-}
 
 onMounted(async () => {
   window.api.on('docrepo-modified', loadDocRepos)
@@ -78,9 +78,8 @@ const loadDocRepos = () => {
 
 const selectRepo = (repo: DocumentBase | null) => {
   if (!repo) {
-    prevMode.value = mode.value
+    selectedRepo.value = null
     mode.value = 'list'
-    // selected reset will be done in onTransitionEnd
   } else {
     selectedRepo.value = repo
     mode.value = 'view'
@@ -88,6 +87,7 @@ const selectRepo = (repo: DocumentBase | null) => {
 }
 
 const onCreate = async () => {
+  selectedRepo.value = null
   mode.value = 'create'
 }
 
@@ -128,6 +128,10 @@ const onChangeRepoName = (event: Event) => {
 <style scoped>
 
 .split-pane {
+  .sp-sidebar {
+    flex-basis: 360px;
+  }
+
   .sp-main {
     position: relative;
   }
