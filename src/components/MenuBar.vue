@@ -3,60 +3,63 @@
 
   <div class="menubar-wrapper">
 
-    <div class="corner">
+    <div class="menu">
+
       <div class="app-menu" @click.prevent="onAppMenu">
         <IconMenu />
       </div>
-    </div>
 
-    <div class="menu">
-
-      <MenuBarItem class="chat" action="chat" :active="mode === 'chat'" @click="emit('change', 'chat')">
+      <MenuBarItem class="chat" action="chat" :active="mode === 'chat'" @click="emit('new-chat')">
         <BIconChatSquareQuote />
         <span>{{ t('common.chat') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')">
+      <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')" v-if="store.isFeatureActivated('studio')">
         <BIconPalette />
         <span>{{ t('designStudio.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')">
+      <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')" v-if="store.isFeatureActivated('scratchpad')">
         <BIconJournalText />
         <span>{{ t('scratchpad.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')">
+      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.isFeatureActivated('agents')">
         <BIconRobot />
         <span>{{ t('agent.forge.title') }}</span>
       </MenuBarItem>
 
-      <!-- <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')">
+      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')" v-if="store.isFeatureActivated('dictation')">
         <BIconMic />
         <span>{{ t('transcribe.title') }}</span>
-      </MenuBarItem> -->
+      </MenuBarItem>
 
-      <!-- <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')">
+      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')" v-if="store.isFeatureActivated('voiceMode')">
         <BIconChatSquareDots />
         <span>{{ t('realtimeChat.title') }}</span>
-      </MenuBarItem> -->
+      </MenuBarItem>
 
-      <!-- <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">
+      <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">
         <BIconMouse2 />
         <span>{{ t('computerUse.title') }}</span>
-      </MenuBarItem> -->
+      </MenuBarItem>
 
       <div class="push"></div>
 
-      <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')">
-        <BIconDatabase />
+      <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')" v-if="store.isFeatureActivated('docrepo')">
+        <BIconLightbulb />
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="debug" :active="mode === 'debug'" @click="emit('change', 'debug')">
+      <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureActivated('experts')">
+        <BIconChatLeftText />
+        <span>{{ t('docRepo.list.title') }}</span>
+      </MenuBarItem>
+
+      <!-- <MenuBarItem action="debug" :active="mode === 'debug'" @click="emit('change', 'debug')">
         <BIconActivity />
         <span>{{ t('debugConsole.title') }}</span>
-      </MenuBarItem>
+      </MenuBarItem> -->
 
       <MenuBarItem action="settings" :active="mode === 'settings'" @click="emit('change', 'settings')">
         <BIconGear />
@@ -81,11 +84,12 @@ import IconMenu from './IconMenu.vue'
 import useAppearanceTheme from '../composables/appearance_theme' 
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
+import { BIconChatLeftText, BIconLightbulb } from 'bootstrap-icons-vue'
 
 export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug' | 'agents'
 
 const hasComputerUse = computed(() => {
-  return store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
+  return store.isFeatureActivated('voiceMode') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
 })
 
 const emit = defineEmits(['change', 'new-chat', 'run-onboarding'])
@@ -198,16 +202,8 @@ body[data-tint=blue] .mx-context-menu {
   
   display: flex;
   flex-direction: column;
-
-  .corner {
-    background-color: var(--window-decoration-color);
-    border-bottom: 1px solid var(--toolbar-border-color);
-    width: var(--window-menubar-width);
-    height: var(--window-toolbar-height);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  background-color: var(--menubar-bg-color);
+  width: var(--window-menubar-width);
 
   .app-menu {
     cursor: pointer;
@@ -223,10 +219,10 @@ body[data-tint=blue] .mx-context-menu {
     justify-content: flex-start;
     align-items: center;
     background-color: var(--menubar-bg-color);
-    gap: 0.65rem;
+    gap: 0.75rem;
 
-    border-right: 1px solid var(--menubar-border-color);
-    border-top: 1px solid var(--menubar-border-color);
+    border-right: 1px solid var(--sidebar-border-color);
+    border-top: 1px solid var(--sidebar-border-color);
 
     .push {
       flex: 1;

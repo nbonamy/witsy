@@ -1,32 +1,34 @@
 <template>
   <div class="sp-sidebar chat-sidebar" :class="{ 'manual-resize': manualResize }" :style="`flex-basis: ${visible ? width : 0}px`">
     <header>
-      <!-- <div class="form"><div class="form-field search">
-        <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" />
-        <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
-      </div></div>
-      <div class="icon run-agent" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-left' }" @click="onRunAgent">
+      <!-- <div class="icon run-agent" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-left' }" @click="onRunAgent">
         <IconRunAgent class="scale120"  />
       </div>
       <div class="icon new-chat" v-tooltip="{ text: t('common.newChat'), position: 'bottom-left' }" @click="onNewChat" >
         <IconNewChat />
       </div> -->
+      <div class="title">{{ t('chatList.title') }}</div>
     </header>
     <main>
-      <ChatList :displayMode="chatListDisplayMode" :chat="chat" :filter="filter" :select-mode="selectMode" ref="chatList" />
+      <ChatList :displayMode="chatListDisplayMode" :chat="chat" :select-mode="selectMode" ref="chatList" />
     </main>
-    <footer class="actions" v-if="selectMode">
-      <button id="cancel-delete" @click="onCancelSelect">{{ t('common.cancel') }}</button>
-      <button id="move" @click="onMove" v-if="chatListDisplayMode == 'folder'">{{ t('common.move') }}</button>
-      <button id="delete" @click="onDelete" class="destructive">{{ t('common.delete') }}</button>
-    </footer>
-    <footer v-else>
-      <div id="new-folder" class="icon" @click="onNewFolder" v-if="chatListDisplayMode == 'folder'">
-        <BIconFolderPlus />
-      </div>
-      <div id="select" class="icon" v-if="store.history.chats.length" @click="onSelect">
-        <BIconCheck2Square />
-      </div>
+    <template v-if="store.isFeatureActivated('chat.folders')">
+      <footer class="actions" v-if="selectMode">
+        <button id="cancel-delete" @click="onCancelSelect">{{ t('common.cancel') }}</button>
+        <button id="move" @click="onMove" v-if="chatListDisplayMode == 'folder'">{{ t('common.move') }}</button>
+        <button id="delete" @click="onDelete" class="destructive">{{ t('common.delete') }}</button>
+      </footer>
+      <footer v-else>
+        <div id="new-folder" class="icon" @click="onNewFolder" v-if="chatListDisplayMode == 'folder'">
+          <BIconFolderPlus />
+        </div>
+        <div id="select" class="icon" v-if="store.history.chats.length" @click="onSelect">
+          <BIconCheck2Square />
+        </div>
+      </footer>
+    </template>
+    <footer>
+      <button class="new-chat" @click="onNewChat"><BIconChatDots /> {{ t('common.newChat') }}</button>
     </footer>
     <div class="resizer" :style="`left: ${width-5}px`" @mousedown="onResizeSidebarStart" v-if="visible">&nbsp;</div>
   </div>
@@ -57,12 +59,11 @@ defineProps({
   },
 })
 
-const visible= ref<boolean>(true)
-const width= ref<number>(0)
+const visible = ref<boolean>(true)
+const width = ref<number>(0)
 const manualResize = ref(true)
 const chatListDisplayMode = ref<ChatListMode>('timeline')
 const chatList = ref<typeof ChatList|null>(null)
-const filter = ref<string>('')
 const selectMode = ref<boolean>(false)
 
 const emit = defineEmits(['new-chat', 'run-agent'])
@@ -72,8 +73,14 @@ let panelOffset = 0
 onMounted(async () => {
   visible.value = window.api.store.get('sidebarVisible', true)
   width.value = window.api.store.get('sidebarWidth', 250)
-  // chatListDisplayMode.value = store.config.appearance.chatList.mode
   onEvent('chat-list-mode', setChatListMode)
+
+  // depends on feature activation
+  if (store.isFeatureActivated('chat.folders')) {
+    chatListDisplayMode.value = store.config.appearance.chatList.mode
+  } else {
+    chatListDisplayMode.value = 'timeline'
+  }
 
   const sidebar = document.querySelector('.chat-sidebar') as HTMLElement
   const rect = sidebar?.getBoundingClientRect()
@@ -95,24 +102,13 @@ const setChatListMode = (mode: ChatListMode) => {
 }
 
 const onNewChat = () => {
-  onClearFilter()
   onCancelSelect()
   emit('new-chat')
 }
 
 const onRunAgent = () => {
-  onClearFilter()
   onCancelSelect()
   emit('run-agent')
-}
-
-const onFilterChange = () => {
-  store.chatState.filter = filter.value.trim()
-}
-
-const onClearFilter = () => {
-  filter.value = ''
-  store.chatState.filter = null
 }
 
 const onNewFolder = async () => {
@@ -225,6 +221,23 @@ defineExpose({
         color: var(--chatarea-toolbar-icon-color);
       }
 
+    }
+
+    footer:has(.new-chat) {
+      justify-content: center;
+      button.new-chat {
+        width: 100%;
+        padding: 1rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 12pt;
+        font-weight: 600;
+        background-color: #1B4FB2;
+        color: white;
+      }
     }
 
     .resizer {

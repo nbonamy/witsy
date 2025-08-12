@@ -1,8 +1,7 @@
 
 .split-pane {
-  
+
   display: flex;
-  height: 100vh;
   width: 100%;
   overflow: hidden;
   color: var(--text-color);
@@ -17,12 +16,13 @@
       the flex with their desired width */
     
     flex: 0 0 200px;
-    height: 100vh;
     overflow-x: hidden;
     background-color: var(--sidebar-bg-color);
     color: var(--sidebar-text-color);
     display: flex;
     flex-direction: column;
+
+    border-top: 1px solid var(--sidebar-border-color);
 
     * > .icon, .icon {
       margin: 0rem 0.5rem;
@@ -45,10 +45,11 @@
     
     header {
 
-      flex: 0 0 var(--window-toolbar-height);
+      flex: 0;
       background-color: var(--window-decoration-color);
-      border-bottom: 1px solid var(--toolbar-border-color);
-      padding: 0px 1rem;
+      border-bottom: 1px solid var(--sidebar-border-color);
+      border-right: 1px solid var(--sidebar-border-color);
+      padding: 1.5rem 2rem;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -64,7 +65,7 @@
 
       .title {
         flex: 1;
-        font-size: 10pt;
+        font-size: 14pt;
         font-weight: 600;
         color: var(--text-color);
       }
@@ -86,7 +87,7 @@
 
       flex: 1;
       border-right: 1px solid var(--sidebar-border-color);
-      padding-top: 1rem;
+      /* padding-top: 1rem; */
       overflow-y: hidden;
       display: flex;
       flex-direction: column;
@@ -116,19 +117,20 @@
   .sp-main {
     
     flex: 1;
-    height: 100vh;
     display: flex;
     flex-direction: column;
     background-color: var(--background-color);
     overflow: hidden;
     min-width: 0;
 
+    border-top: 1px solid var(--sidebar-border-color);
+
     header {
       
-      flex: 0 0 var(--window-toolbar-height);
-      background-color: var(--window-decoration-color);
-      border-bottom: 1px solid var(--toolbar-border-color);
-      padding: 0px 1rem;
+      padding: 1.5rem 2rem;
+
+      flex: 0;
+      border-bottom: 1px solid var(--sidebar-border-color);
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -137,7 +139,7 @@
       
       .title {
         flex: 1;
-        font-size: 12pt;
+        font-size: 14pt;
         font-weight: bold;
         white-space: nowrap;
         overflow: hidden;
