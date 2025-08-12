@@ -302,6 +302,10 @@ export const installIpc = (
     event.returnValue = workspace.saveWorkspace(app, JSON.parse(payload));
   });
 
+  ipcMain.on(IPC.WORKSPACE.DELETE, (event, workspaceId) => {
+    event.returnValue = workspace.deleteWorkspace(app, workspaceId);
+  });
+
   ipcMain.on(IPC.SETTINGS.OPEN, (event, payload) => {
     window.openSettingsWindow(payload);
   });

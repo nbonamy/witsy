@@ -3,8 +3,8 @@ import { WorkspaceHeader, Workspace } from '../types/workspace'
 import { App } from 'electron'
 import { agentsDirPath } from './agents'
 import { docrepoFilePath } from '../rag/utils'
-import { expertsFilePath } from './experts'
 import { attachmentsFilePath, historyFilePath } from './history'
+import { notifyBrowserWindows } from './windows'
 import WorkspaceModel from '../models/workspace'
 import path from 'path'
 import fs from 'fs'
@@ -82,6 +82,20 @@ export const saveWorkspace = (app: App, workspace: Workspace): boolean => {
   try {
     fs.mkdirSync(workspaceFolderPath, { recursive: true })
     fs.writeFileSync(workspaceJsonPath, JSON.stringify(workspace, null, 2))
+    notifyBrowserWindows('workspaces-updated')
+    return true
+  } catch {
+    return false
+  }
+}
+
+export const deleteWorkspace = (app: App, workspaceId: string): boolean => {
+  const workspacesFolderPath = workspacesFolder(app)
+  const workspaceFolderPath = path.join(workspacesFolderPath, workspaceId)
+  
+  try {
+    fs.rmSync(workspaceFolderPath, { recursive: true, force: true })
+    notifyBrowserWindows('workspaces-updated')
     return true
   } catch {
     return false
@@ -112,14 +126,9 @@ export const initializeWorkspace = (app: App, workspaceId: string): void => {
 export const migrateExistingItemsToWorkspace = (app: App, workspaceId: string): boolean => {
   
   const userDataPath = app.getPath('userData')
-  
-  // Items to migrate (folders and files)
   const itemsToMigrate = [
     { src: path.join(userDataPath, 'agents'), dest: agentsDirPath(app, workspaceId) },
-    // { src: path.join(userDataPath, 'docrepo'), dest: docrepoFilePath(app) },
     { src: path.join(userDataPath, 'images'), dest: attachmentsFilePath(app, workspaceId) },
-    // { src: path.join(userDataPath, 'docrepo.json'), dest: docrepoFilePath(app) },
-    { src: path.join(userDataPath, 'experts.json'), dest: expertsFilePath(app, workspaceId) },
     { src: path.join(userDataPath, 'history.json'), dest: historyFilePath(app, workspaceId) }
   ]
   
@@ -164,7 +173,9 @@ export const migrateExistingItemsToWorkspace = (app: App, workspaceId: string): 
 
     saveWorkspace(app, {
       uuid: workspaceId,
-      name: 'Default',
+      name: 'Witsy',
+      icon: 'BIconBox',
+      color: '#1B4FB2'
     })
     
     return migrationOccurred
