@@ -113,11 +113,11 @@ const onUsage = (message: Message) => {
     message.usage.completion_tokens_details?.reasoning_tokens ? 
       t('message.actions.usage.reasoning', { reasoning: message.usage.completion_tokens_details.reasoning_tokens }) : 
       null,
-  ].filter(Boolean).join('\n')
+  ].filter(Boolean).join('<br/>')
 
   Dialog.show({
     title: t('message.actions.usage.title', { total: totalTokens }),
-    text: text,
+    html: text,
   })
 }
 
