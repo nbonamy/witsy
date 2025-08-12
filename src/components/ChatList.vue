@@ -1,16 +1,16 @@
 <template>
   <div class="chat-list">
     <div class="header">
-      <!-- <div class="button-group">
-        <button :class="{active: displayMode == 'timeline'}" @click="setDisplayMode('timeline')">{{ t('chatList.displayMode.timeline') }}</button>
-        <button :class="{active: displayMode == 'folder'}" @click="setDisplayMode('folder')">{{ t('chatList.displayMode.folders') }}</button>
-      </div> -->
       <div class="form"><div class="form-field search">
         <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange">
         </input>
         <BIconSearch class="search-icon" />
         <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
       </div></div>
+    </div>
+    <div class="display-mode button-group" v-if="store.isFeatureActivated('chat.folders')">
+      <button :class="{active: displayMode == 'timeline'}" @click="setDisplayMode('timeline')">{{ t('chatList.displayMode.timeline') }}</button>
+      <button :class="{active: displayMode == 'folder'}" @click="setDisplayMode('folder')">{{ t('chatList.displayMode.folders') }}</button>
     </div>
     <div class="chats" ref="divChats">
       <ChatListTimeline v-if="displayMode == 'timeline'" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
@@ -45,18 +45,11 @@ const props = defineProps({
     default: null,
     // required: true,
   },
-  filter: {
-    type: String,
-    default: '',
-  },
   selectMode: {
     type: Boolean,
     default: false,
   }
 })
-
-const selection= ref<string[]>([])
-const divChats= ref<HTMLElement|null>(null)
 
 defineExpose({
   getSelection: () => selection.value,
@@ -65,17 +58,19 @@ defineExpose({
 
 const visibleChats = computed(() => store.history.chats.filter((c: Chat) => {
   if (c.uuid === kMediaChatId) return false
-  if (props.filter === null || props.filter.length === 0) return true
-  if (c.title?.toLowerCase().includes(props.filter.toLowerCase())) return true
-  if (c.messages.some(m => m.content?.toLowerCase().includes(props.filter.toLowerCase()))) return true
+  if (filter.value.trim().length === 0) return true
+  if (c.title?.toLowerCase().includes(filter.value.trim().toLowerCase())) return true
+  if (c.messages.some(m => m.content?.toLowerCase().includes(filter.value.trim().toLowerCase()))) return true
   return false
 }).toSorted((a: Chat, b: Chat) => b.lastModified - a.lastModified))
 
+const selection = ref<string[]>([])
+const divChats = ref<HTMLElement|null>(null)
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const targetRow = ref<Chat|null>(null)
-const filter = ref<string>('')
+const filter = ref('')
 
 const contextMenuActions = () => [
   { label: t('common.rename'), action: 'rename' },
@@ -142,6 +137,15 @@ const handleActionClick = async (action: string) => {
 
 }
 
+const onFilterChange = () => {
+  store.chatState.filter = filter.value.trim()
+}
+
+const onClearFilter = () => {
+  filter.value = ''
+  store.chatState.filter = null
+}
+
 </script>
 
 <style scoped>
@@ -150,6 +154,9 @@ const handleActionClick = async (action: string) => {
 
   padding: 1rem;
   padding-top: 0rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 
   .header {
     margin-bottom: 1rem;
@@ -179,9 +186,17 @@ const handleActionClick = async (action: string) => {
         left: -2rem;
         width: 1.25rem;
         height: 1.25rem;
-        fill: red;
+        opacity: 0.5;
       }
 
+    }
+  }
+
+  .display-mode {
+    margin-bottom: 2rem;
+    align-self: center;
+    button {
+      padding: 0.5rem 1rem;
     }
   }
 

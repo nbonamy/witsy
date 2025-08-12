@@ -5,6 +5,7 @@ import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'
 import { loadAgents } from './agents'
+import features from '../../defaults/features.json'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
 
@@ -32,6 +33,15 @@ export const store: Store = reactive({
 
   transcribeState: {
     transcription: ''
+  },
+
+  isFeatureActivated(feature: string): boolean {
+    const tokens = feature.split('.')
+    let current = (features as Record<string, any>)[tokens[0]]
+    for (let i=1; i<tokens.length; i++) {
+      current = current?.[tokens[i]]
+    }
+    return current !== false
   },
 
   addListener: (event: StoreEvent, listener: CallableFunction): void => {
