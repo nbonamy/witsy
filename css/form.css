@@ -42,12 +42,12 @@
     .form-field {
       input:not([type=checkbox]):not([type=range]) {
         padding: 5px 0.25rem;
-        margin: 0.25rem 0;
+        margin: 0.25rem 2px;
       }
 
       select {
         padding: 0.25rem 0.25rem;
-        margin: 0.25rem 0;
+        margin: 0.25rem 2px;
       }
 
       .control-group {
@@ -113,7 +113,7 @@
     }
 
     input, textarea {
-      width: calc(100% - 10px);
+      width: calc(100% - 14px);
     }
 
     span, a {
@@ -190,6 +190,10 @@
 
       [type=checkbox] + label {
         font-weight: normal;
+      }
+
+      *:disabled {
+        margin-top: 0rem !important;
       }
 
       select {

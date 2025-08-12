@@ -15,12 +15,12 @@
 }
 
 .tooltip-directive.right {
-  top: 0px;
+  top: 0;
   left: calc(100% + 0.5rem);
 }
 
 .tooltip-directive.left {
-  top: 0px;
+  top: -50%;
   right: calc(100% + 0.5rem);
 }
 

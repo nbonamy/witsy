@@ -15,19 +15,21 @@
       </div> -->
 
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
-      
       <div class="spacer"></div>
-      <!-- <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" /> -->
-      <BIconThreeDotsVertical class="icon" @click="onMenu" v-if="chat?.title" /> 
+      <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" v-if="store.isFeatureActivated('chat.settings')" />
+      <BIconThreeDotsVertical class="icon menu" @click="onMenu" v-if="chat?.title || store.isFeatureActivated('chat.temporary')" /> 
+    
     </header>
     <main>
       <div class="chat-content">
+        
         <!-- <div class="chat-content-title">
           <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
           <div class="spacer"></div> -->
           <!-- <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" /> -->
           <!-- <BIconThreeDotsVertical class="icon" @click="onMenu" />
         </div> -->
+        
         <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
         <EmptyChat class="chat-content-main" v-else />
         <div class="deep-research-usage" v-if="prompt?.isDeepResearchActive() && tipsManager.isTipAvailable('deepResearchUsage')">
@@ -87,10 +89,16 @@ const chatMenuPosition = computed((): MenuPosition => {
 
 const chatMenuActions = computed(() => {
   return [
-    // { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
+    ...(store.isFeatureActivated('chat.temporary') ? [
+      { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
+    ] : []),
     { label: t('common.rename'), action: 'rename', disabled: false },
-    // { label: t('chat.actions.exportMarkdown'), action: 'exportMarkdown', disabled: !hasMessages() },
-    // { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
+    ...(store.isFeatureActivated('chat.exportMarkdown') ? [
+      { label: t('chat.actions.exportMarkdown'), action: 'exportMarkdown', disabled: !hasMessages() },
+    ] : []),
+    ...(store.isFeatureActivated('chat.exportPdf') ? [
+      { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
+    ] : []),
     { label: t('common.delete'), action: 'delete', disabled: !isSaved() },
   ].filter((a) => a != null)
 })

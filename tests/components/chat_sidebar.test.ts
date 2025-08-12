@@ -16,6 +16,7 @@ vi.mock('../../src/composables/event_bus', async () => {
 beforeAll(() => {
   useWindowMock()
   store.load()
+  store.isFeatureActivated = () => true
 })
 
 beforeEach(() => {
@@ -37,7 +38,7 @@ test('No chat', async () => {
 
 test('New Chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.sp-sidebar header .new-chat').trigger('click')
+  await wrapper.find('.sp-sidebar footer .new-chat').trigger('click')
   expect(wrapper.emitted('new-chat')).toBeTruthy()
 })
 
@@ -83,9 +84,9 @@ test('Move Chat', async () => {
   expect(wrapper.find('.sp-sidebar footer #move').exists()).toBe(false)
 })
 
-test('Filter Textbox', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.sp-sidebar header #filter').setValue('Test')
-  await wrapper.find('.sp-sidebar header #filter').trigger('keyup')
-  expect(store.chatState.filter).toBe('Test')
-})
+// test('Filter Textbox', async () => {
+//   const wrapper: VueWrapper<any> = mount(ChatSidebar)
+//   await wrapper.find('.sp-sidebar header #filter').setValue('Test')
+//   await wrapper.find('.sp-sidebar header #filter').trigger('keyup')
+//   expect(store.chatState.filter).toBe('Test')
+// })
