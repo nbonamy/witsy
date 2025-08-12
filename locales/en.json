@@ -2556,7 +2556,7 @@
     "editor": {
       "create": "Create New Workspace",
       "edit": "Edit Workspace",
-      "createDescription": "Create a new workspace to organize your chats, agents, and settings.",
+      "createDescription": "Create a new workspace to organize your models, chats and agents.",
       "editDescription": "Edit the details of your workspace.",
       "name": "Name",
       "namePlaceholder": "Enter workspace name",
