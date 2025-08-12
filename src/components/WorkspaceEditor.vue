@@ -47,7 +47,7 @@ const editing = ref(false)
 const uuid = ref('')
 const name = ref('')
 const icon = ref('')
-const color = ref('#007bff')
+const color = ref('')
 
 const show = (workspace?: Workspace) => {
   if (workspace) {
@@ -55,13 +55,13 @@ const show = (workspace?: Workspace) => {
     uuid.value = workspace.uuid
     name.value = workspace.name
     icon.value = workspace.icon || ''
-    color.value = workspace.color || '#007bff'
+    color.value = workspace.color || '#006edb'
   } else {
     editing.value = false
     uuid.value = crypto.randomUUID()
     name.value = ''
     icon.value = ''
-    color.value = '#007bff'
+    color.value = '#006edb'
   }
   iconPicker.value?.resetFilter()
   dialog.value?.show()
