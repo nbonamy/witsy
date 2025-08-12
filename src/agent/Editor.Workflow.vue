@@ -65,6 +65,7 @@
 <script setup lang="ts">
 import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from '../types/index'
 import { ref, watch, computed, PropType } from 'vue'
+import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { processJsonSchema } from '../services/schema'
 import { extractPromptInputs } from '../services/prompt'
@@ -138,7 +139,7 @@ const onAddStep = (index: number) => {
 const onDocRepo = async (index: number) => {
 
   // get the list of doc repositories
-  const docRepos = window.api.docrepo.list()
+  const docRepos = window.api.docrepo.list(store.config.workspaceId)
 
   const rc = await Dialog.show({
     title: t('common.docRepo'),

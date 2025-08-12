@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { store } from '../services/store'
 import { t } from '../services/i18n'
 import EmbeddingSelector from '../components/EmbeddingSelector.vue'
 import Dialog from '../composables/dialog'
@@ -50,7 +51,7 @@ const onSave = () => {
   }
 
   // Create repository
-  const id = window.api.docrepo.create(name.value, engine.value, model.value)
+  const id = window.api.docrepo.create(store.config.workspaceId, name.value, engine.value, model.value)
   emit('save', id)
   reset()
 }

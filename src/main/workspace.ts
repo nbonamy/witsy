@@ -139,6 +139,16 @@ export const migrateExistingItemsToWorkspace = (app: App, workspaceId: string): 
       }
     }
 
+    // now we need to add the workspace to all existing docrepo
+    const docRepoFile = docrepoFilePath(app)
+    if (fs.existsSync(docRepoFile)) {
+      const docRepos = JSON.parse(fs.readFileSync(docRepoFile, 'utf8'))
+      for (const docRepo of docRepos) {
+        docRepo.workspaceId = workspaceId
+      }
+      fs.writeFileSync(docRepoFile, JSON.stringify(docRepos, null, 2))
+    }
+
     // now we need to migrate images url in history.json
     const historyFile = historyFilePath(app, workspaceId)
     if (fs.existsSync(historyFile)) {
