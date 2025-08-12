@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <WorkspaceBar @workspace-changed="onWorkspaceChanged" />
+    <WorkspaceBar v-if="store.isFeatureActivated('workspaces')" />
     <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
     <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
     <Chat ref="chat" :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
@@ -155,12 +155,6 @@ const onOnboardingDone = () => {
   store.saveSettings()
 }
 
-const onWorkspaceChanged = (workspaceId: string) => {
-  console.log('[main] workspace changed:', workspaceId)
-  // The store.activateWorkspace method is called from WorkspaceBar
-  // We can add any additional logic here if needed
-}
-
 </script>
 
 <style>
@@ -173,7 +167,13 @@ const onWorkspaceChanged = (workspaceId: string) => {
 .main {
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  -webkit-app-region: drag;
+  padding-top: var(--window-toolbar-height);
+  height: calc(100vh - var(--window-toolbar-height));
+
+  > * {
+    -webkit-app-region: no-drag;
+  }
 }
 
 </style>

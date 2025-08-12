@@ -56,19 +56,20 @@ const onRenameChat = () => {
 <style scoped>
 
 .container {
+  
   margin: 0rem;
   padding: 0rem 0.5rem;
-  margin-right: 1rem;
   cursor: pointer;
 
   .chat {
+    
     margin: 0;
     padding: 1rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     border-radius: 0.5rem;
-  
+
     &.selected {
       background-color: var(--sidebar-selected-color);
     }
@@ -76,12 +77,14 @@ const onRenameChat = () => {
     .info {
       display: flex;
       flex-direction: column;
+      justify-content: center;
       min-width: 0;
+      min-height: 2lh;
 
       * {
         overflow: hidden;
-        white-space: nowrap;
         text-overflow: ellipsis;
+        line-height: 1.5em;
       }
     }
 

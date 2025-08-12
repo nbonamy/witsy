@@ -103,7 +103,7 @@
     "move": "Move",
     "name": "Name",
     "new": "New",
-    "newChat": "New chat",
+    "newChat": "New Conversation",
     "no": "No",
     "ok": "OK",
     "path": "Path",
@@ -432,7 +432,8 @@
       "last7days": "Last 7 days",
       "today": "Today",
       "yesterday": "Yesterday"
-    }
+    },
+    "title": "Conversations"
   },
   "commands": {
     "commands": {
