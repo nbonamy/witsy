@@ -15,28 +15,30 @@ import { t } from '../services/i18n'
 
 <style scoped>
 .empty-state {
+  
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 20%;
   
   .empty-content {
     text-align: center;
-    opacity: 0.6;
     
     .empty-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
+      font-size: 7rem;
+      margin-bottom: 3rem;
+      fill: #1B4FB2;
     }
     
     h3 {
       margin: 0 0 0.5rem 0;
       font-size: 1.5rem;
+      font-weight: 600;
     }
     
     p {
       margin: 0;
-      opacity: 0.8;
+      color: var(--faded-text-color);
+      line-height: 1.5;
     }
   }
 }
