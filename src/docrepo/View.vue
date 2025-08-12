@@ -29,6 +29,7 @@
           <div class="subtitle">Add.pdf,.csv, .md, json, .epub, .docx, .rft, and .txt files</div>
         </label>
         <Spinner class="large" v-if="loading" />
+        <div class="icon" @click="togglePanel"><BIconChevronDown /></div>
       </div>
       <div class="panel-body" v-if="selectedRepo.documents.length">
         <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
@@ -298,7 +299,7 @@ main {
   margin-right: 1rem;
 }
 
-.documents {
+.documents:not(.collapsed) {
   flex-grow: 1;
 }
 
