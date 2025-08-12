@@ -2,9 +2,6 @@
 
   <div class="workspace-bar">
 
-    <div class="corner">
-    </div>
-
     <div class="workspaces">
       <div 
         v-for="workspace in workspaces" 
@@ -34,7 +31,7 @@
       <div class="push"></div>
 
       <div class="workspace-item">
-        <div class="workspace-icon" :style="{ backgroundColor: 'rgb(28, 79, 178)' }">
+        <div class="workspace-icon" :style="{ backgroundColor: '#1B4FB2' }">
           <BIconStarFill />
         </div>
       </div>
@@ -102,23 +99,13 @@ const onWorkspaceSave = async (workspace: any) => {
   background-color: var(--menubar-bg-color);
   width: var(--window-menubar-width);
 
-  .corner {
-    background-color: var(--window-decoration-color);
-    border-bottom: 1px solid var(--toolbar-border-color);
-    width: var(--window-menubar-width);
-    height: var(--window-toolbar-height);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
   .workspaces {
     
     flex: 1;
     display: flex;
     flex-direction: column;
-    border-right: 1px solid var(--menubar-border-color);
-    border-top: 1px solid var(--menubar-border-color);
+    border-right: 1px solid var(--sidebar-border-color);
+    border-top: 1px solid var(--sidebar-border-color);
     gap: 0.5rem;
     align-items: center;
     padding-top: 1rem;
@@ -135,13 +122,15 @@ const onWorkspaceSave = async (workspace: any) => {
       border-radius: 0.5rem;
       transition: all 0.2s ease;
       position: relative;
+      padding: 2px;
+      border: 2px solid transparent;
       
       &:hover {
         transform: scale(1.05);
       }
       
       &.active {
-        box-shadow: 0 0 0 2px var(--menubar-highlight-color);
+        border: 2px solid #A1A1AA;
       }
       
       &.add-workspace {
@@ -157,9 +146,9 @@ const onWorkspaceSave = async (workspace: any) => {
       }
 
       .workspace-icon {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 0.5rem;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.375rem;
         display: flex;
         align-items: center;
         justify-content: center;

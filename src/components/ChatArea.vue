@@ -17,11 +17,17 @@
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
       
       <div class="spacer"></div>
-      <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" />
-      <IconMenu class="icon" @click="onMenu" />
+      <!-- <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" /> -->
+      <BIconThreeDotsVertical class="icon" @click="onMenu" v-if="chat?.title" /> 
     </header>
     <main>
       <div class="chat-content">
+        <!-- <div class="chat-content-title">
+          <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
+          <div class="spacer"></div> -->
+          <!-- <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" /> -->
+          <!-- <BIconThreeDotsVertical class="icon" @click="onMenu" />
+        </div> -->
         <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
         <EmptyChat class="chat-content-main" v-else />
         <div class="deep-research-usage" v-if="prompt?.isDeepResearchActive() && tipsManager.isTipAvailable('deepResearchUsage')">
@@ -81,10 +87,10 @@ const chatMenuPosition = computed((): MenuPosition => {
 
 const chatMenuActions = computed(() => {
   return [
-    { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
+    // { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
     { label: t('common.rename'), action: 'rename', disabled: false },
-    { label: t('chat.actions.exportMarkdown'), action: 'exportMarkdown', disabled: !hasMessages() },
-    { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
+    // { label: t('chat.actions.exportMarkdown'), action: 'exportMarkdown', disabled: !hasMessages() },
+    // { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
     { label: t('common.delete'), action: 'delete', disabled: !isSaved() },
   ].filter((a) => a != null)
 })
@@ -160,8 +166,8 @@ const onRenameChat = () => {
 
 const onMenu = () => {
   showChatMenu.value = true
-  menuX.value = 16 + (chatMenuPosition.value == 'below' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
-  menuY.value = 32 + (window.api.platform == 'win32' ? 18 : 4)
+  menuX.value = 24 + (chatMenuPosition.value == 'below' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
+  menuY.value = 100 + (window.api.platform == 'win32' ? 18 : 4)
 }
 
 const closeChatMenu = () => {
@@ -359,7 +365,7 @@ defineExpose({
   
   .sp-main {
 
-    background-color: var(--message-list-bg-color);
+  background-color: var(--message-list-bg-color);
 
     header {
 
@@ -404,6 +410,7 @@ defineExpose({
         display: flex;
         flex-direction: column;
         max-width: 100%;
+        background-color: var(--message-list-bg-color);
 
         .deep-research-usage {
           padding: 1rem 1.5rem;
@@ -428,6 +435,7 @@ defineExpose({
 
         &:deep() .prompt {
           margin: 1rem;
+          
         }
       }
 

@@ -50,7 +50,7 @@ const onClick = () => {
   border-radius: 50%;
   padding: 0.5rem;
   cursor: pointer;
-  color: var(--chatarea-toolbar-text-color);
+  color: #848CAF;
   position: relative;
 
   &.active, &:hover {
@@ -64,8 +64,8 @@ const onClick = () => {
   &:deep() {
 
     svg {
-      width: 1.125rem;
-      height: 1.125rem;
+      width: 1.25rem;
+      height: 1.25rem;
     }
 
     span {

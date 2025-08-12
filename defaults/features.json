@@ -1,0 +1,12 @@
+
+{
+  "studio": false,
+  "scratchpad": false,
+  "transcribe": false,
+  "computerUse": false,
+  "voiceMode": false,
+  "workspaces": true,
+  "chat": {
+    "folders": false
+  }
+}
