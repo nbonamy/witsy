@@ -175,7 +175,7 @@ export const migrateExistingItemsToWorkspace = (app: App, workspaceId: string): 
       uuid: workspaceId,
       name: 'Witsy',
       icon: 'BIconBox',
-      color: '#1B4FB2'
+      color: '#006edb'
     })
     
     return migrationOccurred
