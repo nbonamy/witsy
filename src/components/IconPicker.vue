@@ -37,13 +37,14 @@ const emit = defineEmits<{
 }>()
 
 const searchQuery = ref('')
-const maxRows = computed(() => props.maxRows ?? 4)
 
-// Get all available icons dynamically
 const allIcons = computed(() => {
   const icons: string[] = []
   for (const [key, component] of Object.entries(BootstrapIcons)) {
     if (key.startsWith('BIcon') && typeof component === 'object') {
+      if (key.includes('Filetype')) {
+        continue
+      }
       icons.push(key)
     }
   }
@@ -101,7 +102,7 @@ defineExpose({
 .icon-grid {
   display: flex;
   flex-wrap: wrap;
-  height: calc(3 * (1.25rem + 2 * 0.25rem + 2 * 1px));
+  height: calc(4 * (1.25rem + 2 * 0.25rem + 2 * 1px));
   overflow-y: auto;
   align-content: flex-start;
   scrollbar-color: var(--scrollbar-thumb-color) var(--control-list-bg-color);
