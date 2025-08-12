@@ -49,8 +49,8 @@ export default class DocumentRepository {
     }
   }
 
-  list(): DocumentBaseImpl[] {
-    return this.contents.map((db) => DocumentBaseImpl.fromJSON(this.app, db))
+  list(workspaceId: string): DocumentBaseImpl[] {
+    return this.contents.filter(db => db.workspaceId === workspaceId).map((db) => DocumentBaseImpl.fromJSON(this.app, db))
   }
 
   getCurrentQueueItem(): DocumentQueueItem | null {
@@ -108,7 +108,7 @@ export default class DocumentRepository {
 
       const repoJson = fs.readFileSync(docrepoFile, 'utf-8')
       for (const jsonDb of JSON.parse(repoJson)) {
-        const base = new DocumentBaseImpl(this.app, jsonDb.uuid, jsonDb.title, jsonDb.embeddingEngine, jsonDb.embeddingModel)
+        const base = DocumentBaseImpl.fromJSON(this.app, jsonDb)
         for (const jsonDoc of jsonDb.documents) {
           const doc = new DocumentSourceImpl(jsonDoc.uuid, jsonDoc.type, jsonDoc.origin)
           // Restore metadata if available
@@ -143,11 +143,8 @@ export default class DocumentRepository {
       const docrepoFile = docrepoFilePath(this.app)
       fs.writeFileSync(docrepoFile, JSON.stringify(this.contents.map((db) => {
         return {
-          uuid: db.uuid,
-          title: db.name,
-          embeddingEngine: db.embeddingEngine,
-          embeddingModel: db.embeddingModel,
-          documents: db.documents
+          ...db,
+          app: undefined as unknown,
         }
       }), null, 2))
 
@@ -159,10 +156,10 @@ export default class DocumentRepository {
     }
   }
 
-  async createDocBase(title: string, embeddingEngine: string, embeddingModel: string): Promise<string> {
+  async createDocBase(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): Promise<string> {
 
     // now create the base
-    const base = new DocumentBaseImpl(this.app, uuidv4(), title, embeddingEngine, embeddingModel)
+    const base = new DocumentBaseImpl(this.app, uuidv4(), title, embeddingEngine, embeddingModel, workspaceId)
     await base.create()
     this.contents.push(base)
 

@@ -468,8 +468,8 @@ export const installIpc = (
     window.openMainWindow({ queryParams: { view: 'docrepo' } });
   });
 
-  ipcMain.on(IPC.DOCREPO.LIST, (event) => {
-    event.returnValue = JSON.stringify(docRepo.list());
+  ipcMain.on(IPC.DOCREPO.LIST, (event, workspaceId: string) => {
+    event.returnValue = JSON.stringify(docRepo.list(workspaceId));
   });
 
   ipcMain.on(IPC.DOCREPO.CONNECT, async (event, baseId) => {
@@ -494,8 +494,8 @@ export const installIpc = (
 
   ipcMain.on(IPC.DOCREPO.CREATE, async (event, payload) => {
     try {
-      const { title, embeddingEngine, embeddingModel } = payload;
-      event.returnValue = await docRepo.createDocBase(title, embeddingEngine, embeddingModel);
+      const { workspaceId, title, embeddingEngine, embeddingModel } = payload;
+      event.returnValue = await docRepo.createDocBase(workspaceId, title, embeddingEngine, embeddingModel);
     } catch (error) {
       console.error(error);
       event.returnValue = null

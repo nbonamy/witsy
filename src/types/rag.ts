@@ -54,6 +54,7 @@ export type DocumentBase = {
   name: string
   embeddingEngine: string
   embeddingModel: string
+  workspaceId: string
   documents: DocumentSource[]
 }
 
