@@ -188,6 +188,37 @@
         }
         
       }
+
+      &:has(input) {
+
+        padding-top: 1.025rem;
+        padding-bottom: 1.025rem;
+
+        .icon {
+          display: none
+        }
+
+        input {
+          flex: 1;
+          padding: 0.5rem;
+          background: #fafafa;
+          color: var(--color-text);
+          font-size: inherit;
+          font-family: inherit;
+        }
+
+        .actions {
+          display: flex;
+          gap: 0.25rem;
+          .icon {
+            display: block;
+            width: 1.5rem;
+            height: 1.5rem;
+            cursor: pointer;
+          }
+        }
+      }
+
     }
 
     main {

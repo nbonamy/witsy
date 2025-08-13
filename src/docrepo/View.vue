@@ -6,10 +6,6 @@
         <div class="icon" @click="togglePanel"><BIconChevronDown /></div>
       </div>
       <div class="panel-body form form-large form-vertical">
-        <div class="form-field name">
-          <label>{{ t('common.name') }}</label>
-          <input type="text" v-model="selectedRepo.name" @change="onChangeRepoName" />
-        </div>
         <div class="form-field embeddings">
           <label>{{ t('common.embeddings') }}</label>
           <input type="text" :value="embeddingModel" disabled />
@@ -94,11 +90,6 @@ const llmManager: ILlmManager = LlmFactory.manager(store.config)
 // props
 const props = defineProps<{
   selectedRepo: DocumentBase | null
-}>()
-
-// emits
-const emit = defineEmits<{
-  rename: [event: Event]
 }>()
 
 // internal state
@@ -212,10 +203,6 @@ const embeddingModel = computed(() => {
   if (!props.selectedRepo) return ''
   return llmManager.getEngineName(props.selectedRepo.embeddingEngine) + ' / ' + props.selectedRepo.embeddingModel
 })
-
-const onChangeRepoName = (event: Event) => {
-  emit('rename', event)
-}
 
 const onAddDocs = () => {
   if (!props.selectedRepo) return
