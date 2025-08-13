@@ -18,7 +18,7 @@ import { t } from '../services/i18n'
   
   flex: 1;
   display: flex;
-  padding: 20%;
+  padding: 30% 20%;
   
   .empty-content {
     text-align: center;
