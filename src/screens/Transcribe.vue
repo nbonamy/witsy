@@ -80,7 +80,10 @@
         </div>
         
         <div class="result">
-          <textarea v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
+          <div v-if="isStreaming && transcription" class="transcription-display">
+            <span class="final-text">{{ transcription }}</span>
+          </div>
+          <textarea v-else v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
         </div>
         
         <div class="actions">
@@ -128,7 +131,6 @@ import Dialog from '../composables/dialog'
 import Attachment from '../models/attachment'
 
 import useEventBus from '../composables/event_bus'
-import { id } from 'vega'
 const { emitEvent } = useEventBus()
 
 // init stuff
@@ -163,12 +165,10 @@ let previousTranscription = ''
 const meta = computed(() => window.api.platform === 'darwin' ? 'Cmd' : 'Ctrl')
 
 const models = computed(() => {
-  const models = getSTTModels(engine.value) ?? []
-  if (!models.find(m => m.id === store.config.stt.model)) {
-    models.unshift({ id: store.config.stt.model, label: store.config.stt.model })
-  }
-  return models
+  return getSTTModels(engine.value) ?? []
 })
+
+const isStreaming = computed(() => transcriber.streaming)
 
 const translateMenuActions = computed(() => ([
   { action: '', label: t('transcribe.translate'), disabled: true },
@@ -242,7 +242,20 @@ const load = () => {
   transcription.value = store.transcribeState.transcription
   locale.value = store.config.stt.locale || ''
   engine.value = store.config.stt.engine
-  model.value = store.config.stt.model
+  
+  // Validate that the current model is valid for the selected engine
+  const availableModels = getSTTModels(engine.value) ?? []
+  const configModel = store.config.stt.model
+  
+  if (availableModels.find(m => m.id === configModel)) {
+    model.value = configModel
+  } else if (availableModels.length > 0) {
+    // If the stored model is not valid for this engine, use the first available model
+    model.value = availableModels[0].id
+  } else {
+    model.value = ''
+  }
+  
   pushToTalk.value = store.config.stt.pushToTalk
   autoStart.value = store.config.stt.autoStart
 }
@@ -803,6 +816,23 @@ button {
             line-height: 140%;
             font-family: var(--font-family-serif);
             font-size: 14pt;
+          }
+        }
+
+        .transcription-display {
+          flex: 1;
+          background-color: var(--control-textarea-bg-color);
+          border: 0.25px solid var(--control-border-color);
+          color: var(--text-color);
+          border-radius: 6px;
+          font-size: 11.5pt;
+          padding: 8px;
+          min-height: 200px;
+          overflow-y: auto;
+
+          .final-text {
+            color: var(--text-color);
+            line-height: 1.4;
           }
         }
       }

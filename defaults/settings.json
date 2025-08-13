@@ -129,7 +129,7 @@
     "relevanceCutOff": 0.2
   },
   "stt": {
-    "engine": "openai",
+    "engine": "openai", 
     "model": "whisper-1",
     "locale": "",
     "vocabulary": [],
@@ -151,13 +151,8 @@
       "gpu": true
     },
     "soniox": {
-      "languageHints": [],
-      "endpointDetection": false,
-      "cleanup": true,
-      "audioFormat": "auto",
-      "proxy": "temporary_key",
-      "tempKeyExpiry": 600,
-      "speakerDiarization": false
+      "cleanup": false,
+      "audioFormat": "auto"
     }
   },
   "tts": {
