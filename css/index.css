@@ -38,6 +38,7 @@
   --toolbar-border-color: transparent;
 
   --control-bg-color: var(--background-color);
+  --control-disabled-bg-color: #fdfdfd;
   --control-border-color: #d0d0d0;
   --control-border-radius: 6px;
   --control-text-color: var(--text-color);

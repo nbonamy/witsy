@@ -257,8 +257,8 @@ test('Enters edit mode when pencil is clicked', async () => {
   expect(wrapper.find<HTMLInputElement>('.split-pane .sp-main header .title-edit input').element.value).toBe('docrepo1')
   
   // Check that action buttons are shown
-  expect(wrapper.find('.split-pane .sp-main header .title-edit .title-actions .icon.cancel').exists()).toBe(true)
-  expect(wrapper.find('.split-pane .sp-main header .title-edit .title-actions .icon.save').exists()).toBe(true)
+  expect(wrapper.find('.split-pane .sp-main header .title-edit .actions .icon.cancel').exists()).toBe(true)
+  expect(wrapper.find('.split-pane .sp-main header .title-edit .actions .icon.save').exists()).toBe(true)
 })
 
 test('Cancels editing when cancel button is clicked', async () => {
@@ -273,7 +273,7 @@ test('Cancels editing when cancel button is clicked', async () => {
   await wrapper.find('.split-pane .sp-main header .title-edit input').setValue('changed-name')
   
   // Click cancel
-  await wrapper.find('.split-pane .sp-main header .title-edit .title-actions .icon.cancel').trigger('click')
+  await wrapper.find('.split-pane .sp-main header .title-edit .actions .icon.cancel').trigger('click')
   
   // Should exit edit mode without saving
   expect(wrapper.vm.isEditingTitle).toBe(false)
@@ -293,7 +293,7 @@ test('Saves changes when save button is clicked', async () => {
   await wrapper.find('.split-pane .sp-main header .title-edit input').setValue('new-name')
   
   // Click save
-  await wrapper.find('.split-pane .sp-main header .title-edit .title-actions .icon.save').trigger('click')
+  await wrapper.find('.split-pane .sp-main header .title-edit .actions .icon.save').trigger('click')
   
   // Should exit edit mode and save
   expect(wrapper.vm.isEditingTitle).toBe(false)
