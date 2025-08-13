@@ -319,7 +319,7 @@ export default class STTSoniox implements STTEngine {
         // Send initial configuration message with correct audio format for WebSocket
         const configMessage = {
           api_key: apiKey,
-          model: 'stt-rt-preview',
+          model: 'stt-rt-preview-v2',
           audio_format: 'pcm_s16le', // PCM 16-bit little-endian for WebSocket streaming
           sample_rate: 16000, // Standard sample rate for speech recognition
           num_channels: 1, // Mono audio (single channel)
