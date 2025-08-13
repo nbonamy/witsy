@@ -38,6 +38,7 @@ beforeAll(() => {
   useWindowMock()
   store.loadSettings()
   store.load = () => {}
+  store.isFeatureEnabled = (feature: string) => feature !== 'workspaces'
 
   // override
   window.api.config.localeLLM = () => store.config.llm.locale || 'en-US'
