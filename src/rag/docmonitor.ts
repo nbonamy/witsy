@@ -1,5 +1,5 @@
 import { App } from 'electron'
-import { SourceType, DocRepoListener } from '../types/rag'
+import { DocRepoListener } from '../types/rag'
 import DocumentRepository from './docrepo'
 import DocumentSourceImpl from './docsource'
 import { watch, FSWatcher } from 'chokidar'
@@ -62,15 +62,13 @@ export default class DocumentMonitor implements DocRepoListener {
   }
 
   // DocRepoListener interface implementation
-  onDocumentSourceAdded(baseId: string, docId: string, type: SourceType, origin: string): void {
-    console.log(`[docmonitor] Document added notification: ${origin}`)
-    const docSource = new DocumentSourceImpl(docId, type, origin)
+  onDocumentSourceAdded(docSource: DocumentSourceImpl): void {
+    console.log(`[docmonitor] Document added notification: ${docSource.origin.substring(0, 50)}...`)
     this.addDocSourceWatcher(docSource)
   }
 
-  onDocumentSourceRemoved(baseId: string, docId: string, origin: string): void {
+  onDocumentSourceRemoved(origin: string): void {
     console.log(`[docmonitor] Document removed notification: ${origin}`)
-    // Remove the watcher for this document
     const watcher = this.watchers.get(origin)
     if (watcher) {
       console.log(`[docmonitor] Removing watcher for: ${origin}`)

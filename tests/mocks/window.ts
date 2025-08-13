@@ -405,8 +405,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       create: vi.fn(),
       rename: vi.fn(),
       delete: vi.fn(),
-      addDocument: vi.fn(),
-      removeDocument: vi.fn(),
+      addDocument: vi.fn(async () => {}),
+      removeDocument: vi.fn(async () => true),
       query: vi.fn(async () => [
         {
           content: 'content',

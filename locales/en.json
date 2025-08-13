@@ -15,6 +15,7 @@
       "help": "Select a model from the list or type a model name you know exists."
     },
     "command": "Command",
+    "content": "Content",
     "confirmation": {
       "cannotUndo": "You can't undo this action.",
       "closeAnyway": "Close anyway",
@@ -103,6 +104,7 @@
     "move": "Move",
     "name": "Name",
     "new": "New",
+    "notes": "Notes",
     "newChat": "New Conversation",
     "no": "No",
     "ok": "OK",
@@ -157,6 +159,7 @@
       "add": "Add to dictionary"
     },
     "stop": "Stop",
+    "title": "Title",
     "tools": "Tools",
     "tryAgain": "Please try again.",
     "type": "Type",
@@ -783,6 +786,16 @@
         "openInExplorer": "Open in Finder",
         "removeDocument": "Remove document",
         "viewContents": "View folder contents"
+      }
+    },
+    "note": {
+      "add": "Add Note",
+      "noNotes": "You don't have any notes yet. Click on the button below to add your first note.",
+      "create": {
+        "title": "New Note"
+      },
+      "edit": {
+        "title": "Edit Note"
       }
     }
   },
