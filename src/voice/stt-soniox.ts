@@ -608,7 +608,7 @@ export default class STTSoniox implements STTEngine {
       try {
         const fixedBuffer = await this.injectWebmDuration(uint8Array, durationSeconds)
         
-        // @ts-expect-error working fine
+        // warning in vscode but if we put a @ts-expect-error, tsc complains...
         const fixedBlob = new Blob([fixedBuffer], { 
           type: 'audio/webm;codecs=opus'
         })

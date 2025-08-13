@@ -66,7 +66,6 @@ const showContextMenu = (event: MouseEvent, msg: Message) => {
 }
 
 .history .message {
-  -webkit-app-region: no-drag;
   cursor: pointer;
   padding: 0.5rem !important;
   padding-right: 1rem !important;

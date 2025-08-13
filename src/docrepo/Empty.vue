@@ -18,6 +18,7 @@ import { t } from '../services/i18n'
   flex: 1;
   padding: 0rem 20%;
   padding-bottom: 20%;
+  border-top: 1px solid var(--sidebar-border-color);
   display: flex;
   flex-direction: column;
   justify-content: center;

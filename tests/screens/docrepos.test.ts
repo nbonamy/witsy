@@ -68,11 +68,36 @@ test('Renders documents', async () => {
   expect(wrapper.findAll('.split-pane .sp-main .documents .panel-item:nth-child(2) .actions > *').length).toBe(4)
 })
 
-test('Shows create editor', async () => {
-  const wrapper: VueWrapper<any> = mount(DocRepos)
+test('Shows create dialog', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos, { ...stubTeleport })
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.split-pane .sp-sidebar footer button').trigger('click')
-  expect(wrapper.vm.mode).toBe('create')
+  expect(wrapper.findComponent({ name: 'Create' }).exists()).toBe(true)
+})
+
+test('Creates a docrepo', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos, { ...stubTeleport })
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  
+  // Open create dialog
+  await wrapper.find('.split-pane .sp-sidebar footer button').trigger('click')
+  const createComponent = wrapper.findComponent({ name: 'Create' })
+  expect(createComponent.exists()).toBe(true)
+  
+  // Fill out the form
+  const nameInput = createComponent.find('input[type="text"]')
+  await nameInput.setValue('Test Repository')
+  
+  // Submit the form
+  await createComponent.find('button[name="save"]').trigger('click')
+  
+  // Verify that window.api.docrepo.create was called with correct parameters
+  expect(window.api.docrepo.create).toHaveBeenCalledWith(
+    store.config.workspaceId, // Use actual workspaceId from store
+    'Test Repository',
+    'openai',
+    'text-embedding-3-large'
+  )
 })
 
 test('Shows configuration', async () => {

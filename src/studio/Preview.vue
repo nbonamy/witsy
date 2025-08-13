@@ -209,7 +209,6 @@ const onDelete = () => {
     align-items: center;
     text-align: center;
     padding: var(--preview-padding);
-    -webkit-app-region: no-drag;
 
     img, video {
       max-width: 100%;
