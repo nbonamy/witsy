@@ -24,7 +24,7 @@
       "deleteCustomInstruction": "Sind Sie sicher, dass Sie diese benutzerdefinierte Anweisung löschen möchten?",
       "deleteDocument": "Sind Sie sicher, dass Sie dieses Dokument löschen möchten?",
       "deleteMemory": "Sind Sie sicher, dass Sie dieses Gedächtnis löschen möchten?",
-      "deleteRepository": "Sind Sie sicher, dass Sie diese Wissensdatenbank löschen möchten?",
+      "deleteRepository": "Are you sure you want to delete this collection?",
       "doNotClose": "Nicht schließen",
       "unsavedChanges": "Sie haben ungespeicherte Änderungen. Sie verlieren Ihre Arbeit, wenn Sie dieses Fenster schließen."
     },
@@ -84,7 +84,7 @@
     "move": "Verschieben",
     "name": "Name",
     "new": "Neu",
-    "newChat": "Neuer Chat",
+    "newChat": "New Conversation",
     "no": "Nein",
     "ok": "OK",
     "path": "Pfad",
@@ -215,8 +215,8 @@
         },
         "help": {
           "connect": "Verbinden Sie die Ausgabe vorheriger Schritte mithilfe von {'{'}{'{'}output.#{'}'}{'}'} Variablen (z. B. {'{'}{'{'}output.1{'}'}{'}'} für die Ausgabe von Schritt 1)",
-          "docRepo": "Fakten, die aus der Wissensdatenbank extrahiert wurden, werden an Ihre Eingabe angehängt.",
-          "factsVarDesc": "Fakten, die aus der Wissensdatenbank extrahiert wurden",
+          "docRepo": "Facts extracted from the collection will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "Ausgabe des Schritts #{step}",
           "title": "Entwerfen Sie Ihren mehrstufigen Arbeitsablauf. Vorlagen für Eingabeaufforderungen werden verwendet, um jeden Schritt auszuführen. Sie können \"Variablen\" einfügen, die durch die vom Benutzer beim Ausführen des Agenten bereitgestellten Werte ersetzt werden. Verwenden Sie das Format {'{'}{'{'}name:beschreibung:wert{'}'}{'}'}, um eine Variable zu definieren (die Beschreibung wird den Benutzer beim Abfragen eines Werts leiten). Sowohl die Beschreibung als auch der Standardwert sind optional."
         },
@@ -414,7 +414,8 @@
       "last7days": "Letzte 7 Tage",
       "today": "Heute",
       "yesterday": "Gestern"
-    }
+    },
+    "title": "Conversations"
   },
   "commands": {
     "commands": {
@@ -738,23 +739,24 @@
       "title": "Standardwerte der Wissensdatenbank"
     },
     "create": {
-      "embeddingWarning": "Embedding-Modell kann nach Erstellung der Wissensdatenbank nicht mehr geändert werden",
-      "title": "Wissensdatenbank erstellen"
+      "embeddingWarning": "embedding model cannot be changed once collection is created",
+      "title": "New Collection"
+    },
+    "empty": {
+      "create": "Add some knowledge",
+      "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
+      "title": "Welcome to the Knowledge Base"
     },
     "list": {
-      "clickToCreate": "Klicken Sie auf die Schaltfläche +, um eines zu erstellen.",
       "documentsCount": "Kein Dokument|1 Dokument|{count} Dokumente",
-      "noRepositories": "Sie haben noch keine Wissensdatenbanken.",
-      "title": "Wissensdatenbanken",
+      "title": "Knowledge Base",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
-        "create": "@:{'docRepo.create.title'}",
-        "delete": "Wissensdatenbank löschen",
-        "edit": "Wissensdatenbank bearbeiten"
+        "delete": "Delete collection"
       }
     },
     "view": {
-      "noDocuments": "Sie haben noch keine Dokumente hinzugefügt. Klicken Sie auf die Symbole oben, um Dokumente oder Ordner hinzuzufügen.",
+      "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "Dateien hinzufügen",
@@ -1929,8 +1931,8 @@
       "tooltip": "Diktieren"
     },
     "docRepos": {
-      "none": "Keine Wissensdatenbank verfügbar. Möchten Sie jetzt eine erstellen?",
-      "tooltip": "Mit Wissensdatenbank verbinden"
+      "none": "No collection available. Do you want to create one now?",
+      "tooltip": "Connect to collection"
     },
     "experts": {
       "clear": "Experte löschen",
@@ -2407,6 +2409,9 @@
         "threeSeconds": "3 Sekunden",
         "twoSeconds": "2 Sekunden"
       },
+      "soniox": {
+        "cleanup": "Auto-delete transcriptions after completion"
+      },
       "spokenLanguage": "Gesprochene Sprache",
       "tabs": {
         "speechToText": "Sprache zu Text",
@@ -2519,6 +2524,18 @@
       "darwin": "Sie können Witsy über das Füller-Symbol im Statusmenü aktivieren.",
       "linux": "Sie können Witsy über das Füller-Symbol in der Bedienungsleiste aktivieren.",
       "windows": "Sie können Witsy über das Füller-Symbol im System-Tray aktivieren."
+    }
+  },
+  "workspace": {
+    "editor": {
+      "color": "Color",
+      "create": "Create New Workspace",
+      "createDescription": "Create a new workspace to organize your models, chats and agents.",
+      "edit": "Edit Workspace",
+      "editDescription": "Edit the details of your workspace.",
+      "icon": "Icon",
+      "name": "Name",
+      "namePlaceholder": "Enter workspace name"
     }
   }
 }

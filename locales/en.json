@@ -761,17 +761,16 @@
       "title": "New Collection"
     },
     "empty": {
-      "title": "Welcome to the Knowledge Base",
-      "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials."
+      "create": "Add some knowledge",
+      "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
+      "title": "Welcome to the Knowledge Base"
     },
     "list": {
       "documentsCount": "No document|1 document|{count} documents",
       "title": "Knowledge Base",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
-        "create": "@:{'docRepo.create.title'}",
-        "delete": "Delete collection",
-        "edit": "Edit collection"
+        "delete": "Delete collection"
       }
     },
     "view": {
@@ -2428,9 +2427,6 @@
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
       "selectModel": "Select a model",
-      "soniox": {
-        "cleanup": "Auto-delete transcriptions after completion"
-      },
       "silenceDetection": "Silence Detection",
       "silenceOptions": {
         "disabled": "Disabled",
@@ -2439,6 +2435,9 @@
         "oneSecond": "1 second",
         "threeSeconds": "3 seconds",
         "twoSeconds": "2 seconds"
+      },
+      "soniox": {
+        "cleanup": "Auto-delete transcriptions after completion"
       },
       "spokenLanguage": "Spoken Language",
       "tabs": {
@@ -2556,15 +2555,14 @@
   },
   "workspace": {
     "editor": {
+      "color": "Color",
       "create": "Create New Workspace",
-      "edit": "Edit Workspace",
       "createDescription": "Create a new workspace to organize your models, chats and agents.",
+      "edit": "Edit Workspace",
       "editDescription": "Edit the details of your workspace.",
-      "name": "Name",
-      "namePlaceholder": "Enter workspace name",
       "icon": "Icon",
-      "iconPlaceholder": "🎯",
-      "color": "Color"
+      "name": "Name",
+      "namePlaceholder": "Enter workspace name"
     }
   }
 }

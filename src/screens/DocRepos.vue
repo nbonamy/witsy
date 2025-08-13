@@ -1,5 +1,6 @@
 <template>
-  <div class="docrepo split-pane" v-bind="$attrs">
+  <Empty v-if="!docRepos?.length && !selectedRepo && mode !== 'create'" @click="onCreate"/>
+  <div v-else class="docrepo split-pane" v-bind="$attrs">
     <div class="sp-sidebar">
       <header>
         <div class="title">{{ t('docRepo.list.title') }}</div>
@@ -24,7 +25,6 @@
           @click="onDeleteRepo(selectedRepo)" 
         />
       </header>
-      <Empty v-if="!selectedRepo && mode !== 'create'" />
       <View :selectedRepo="selectedRepo" @rename="onChangeRepoName" v-if="mode === 'view'"/>
       <Create @cancel="onCreateCancel" @save="onCreateSave" v-if="mode === 'create'" class="editor" />
     </div>

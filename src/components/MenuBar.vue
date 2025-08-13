@@ -51,10 +51,10 @@
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureActivated('experts')">
+      <!-- <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureActivated('experts')">
         <BIconChatLeftText />
         <span>{{ t('docRepo.list.title') }}</span>
-      </MenuBarItem>
+      </MenuBarItem> -->
 
       <!-- <MenuBarItem action="debug" :active="mode === 'debug'" @click="emit('change', 'debug')">
         <BIconActivity />
