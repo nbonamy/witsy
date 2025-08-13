@@ -1,5 +1,6 @@
 
-import { Configuration } from 'types/config'
+import { anyDict } from '../types/index'
+import { Configuration } from '../types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse, StreamingCallback } from './stt'
 
 /**
@@ -62,6 +63,7 @@ export default class STTSoniox implements STTEngine {
     callback?.({ status: 'ready', task: 'soniox', model: this.config.stt.model })
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async transcribe(audioBlob: Blob, opts?: Record<string, any>): Promise<TranscribeResponse> {
     const apiKey = this.config.engines?.soniox?.apiKey
     if (!apiKey) {
@@ -213,7 +215,6 @@ export default class STTSoniox implements STTEngine {
         // Convert WebM to WAV using Web Audio API for maximum compatibility
         finalBlob = await this.convertWebmToOgg(audioBlob)
         filename = 'audio.wav'
-        console.log('WebM to WAV conversion successful')
       } catch (error) {
         console.warn('WebM to OGG conversion failed, using original WebM:', error)
         finalBlob = audioBlob
@@ -293,6 +294,7 @@ export default class STTSoniox implements STTEngine {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async startStreaming(model: string, callback: StreamingCallback, opts?: Record<string, any>): Promise<void> {
     if (this.ws) {
       console.warn('WebSocket already active')
@@ -317,7 +319,7 @@ export default class STTSoniox implements STTEngine {
       
       this.ws.onopen = () => {
         // Send initial configuration message with correct audio format for WebSocket
-        const configMessage = {
+        const configMessage: anyDict = {
           api_key: apiKey,
           model: 'stt-rt-preview-v2',
           audio_format: 'pcm_s16le', // PCM 16-bit little-endian for WebSocket streaming
@@ -341,7 +343,7 @@ export default class STTSoniox implements STTEngine {
           configMessage.context = vocabularyWords.join(', ')
         }
         
-        console.log('Soniox realtime config:', configMessage)
+        //console.log('Soniox realtime config:', configMessage)
         this.ws?.send(JSON.stringify(configMessage))
         callback({ type: 'status', status: 'connected' })
       }
@@ -389,7 +391,7 @@ export default class STTSoniox implements STTEngine {
       }
 
       this.ws.onclose = (event: CloseEvent) => {
-        console.log('Soniox WebSocket closed:', event.code, event.reason)
+        // console.log('Soniox WebSocket closed:', event.code, event.reason)
         
         if (this.pendingError) {
           callback({ type: 'error', status: 'error', error: this.pendingError })
@@ -484,6 +486,7 @@ export default class STTSoniox implements STTEngine {
     return
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async transcribeFile(file: File, opts?: object): Promise<TranscribeResponse> {
     // Convert File to Blob and use the existing transcribe method
     // Do NOT pass opts as it might contain conflicting audio_url field
@@ -498,11 +501,11 @@ export default class STTSoniox implements STTEngine {
   private async convertWebmToOgg(webmBlob: Blob): Promise<Blob> {
     try {
       // Decode WebM audio using Web Audio API
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      const audioContext = new window.AudioContext()
       const arrayBuffer = await webmBlob.arrayBuffer()
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
       
-      console.log(`Converting WebM: ${audioBuffer.duration}s, ${audioBuffer.numberOfChannels} channels, ${audioBuffer.sampleRate}Hz`)
+      // console.log(`Converting WebM: ${audioBuffer.duration}s, ${audioBuffer.numberOfChannels} channels, ${audioBuffer.sampleRate}Hz`)
       
       // Create offline context for rendering
       const offlineContext = new OfflineAudioContext(
@@ -605,6 +608,7 @@ export default class STTSoniox implements STTEngine {
       try {
         const fixedBuffer = await this.injectWebmDuration(uint8Array, durationSeconds)
         
+        // @ts-expect-error working fine
         const fixedBlob = new Blob([fixedBuffer], { 
           type: 'audio/webm;codecs=opus'
         })
@@ -791,7 +795,7 @@ export default class STTSoniox implements STTEngine {
   private async getAudioDuration(audioBlob: Blob): Promise<number> {
     return new Promise((resolve, reject) => {
       try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+        const audioContext = new window.AudioContext()
         const fileReader = new FileReader()
         
         fileReader.onload = async (event) => {

@@ -131,7 +131,6 @@ import Dialog from '../composables/dialog'
 import Attachment from '../models/attachment'
 
 import useEventBus from '../composables/event_bus'
-import { id } from 'vega'
 const { emitEvent } = useEventBus()
 
 // init stuff
@@ -160,8 +159,6 @@ const showCommandsMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const isDragOver = ref(false)
-const finalText = ref('')
-const partialText = ref('')
 
 let previousTranscription = ''
 
