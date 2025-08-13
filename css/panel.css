@@ -67,6 +67,11 @@
     gap: 1rem;
     padding-right: 0.5rem;
 
+    &:has(.panel-item .actions) {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
     .panel-item {
 
       margin-left: 0.25rem;
@@ -152,7 +157,7 @@
   }
 
   main.empty, .panel-empty {
-    padding: 4rem 25%;
+    padding: 2rem 25%;
     text-align: center;
     font-size: 12pt;
     font-weight: 300;

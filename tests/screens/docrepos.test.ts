@@ -180,6 +180,56 @@ test('Adds documents', async () => {
   expect((window.api.docrepo.addDocument as Mock).mock.calls[2]).toStrictEqual(['uuid1', 'folder', 'folder2'])
 })
 
+test('Adds supported documents successfully', async () => {
+  // Mock pickFile to return supported file
+  window.api.file.pickFile = vi.fn(() => ['file'])
+  
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  await wrapper.find('.split-pane .list-item:nth-child(1)').trigger('click')
+  await wrapper.find('.split-pane .sp-main button[name=addDocs]').trigger('click')
+  
+  expect(window.api.docrepo.isSourceSupported).toHaveBeenCalledWith('file', 'file')
+  expect(window.api.docrepo.addDocument).toHaveBeenCalledWith('uuid1', 'file', 'file')
+  expect(Dialog.alert).not.toHaveBeenCalled()
+})
+
+test('Shows error for unsupported documents', async () => {
+  // Mock pickFile to return unsupported file
+  window.api.file.pickFile = vi.fn(() => ['invalid'])
+  
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  await wrapper.find('.split-pane .list-item:nth-child(1)').trigger('click')
+  await wrapper.find('.split-pane .sp-main button[name=addDocs]').trigger('click')
+  
+  expect(window.api.docrepo.isSourceSupported).toHaveBeenCalledWith('file', 'invalid')
+  expect(window.api.docrepo.addDocument).not.toHaveBeenCalled()
+  expect(Dialog.show).toHaveBeenCalledWith({
+    title: 'docRepo.file.error.formatNotSupported.title',
+    html: 'invalid'
+  })
+})
+
+test('Shows error for mixed supported and unsupported documents', async () => {
+  // Mock pickFile to return mix of supported and unsupported files
+  window.api.file.pickFile = vi.fn(() => ['file', 'invalid1', 'invalid2'])
+  
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  await wrapper.find('.split-pane .list-item:nth-child(1)').trigger('click')
+  await wrapper.find('.split-pane .sp-main button[name=addDocs]').trigger('click')
+  
+  expect(window.api.docrepo.isSourceSupported).toHaveBeenCalledWith('file', 'file')
+  expect(window.api.docrepo.isSourceSupported).toHaveBeenCalledWith('file', 'invalid1')
+  expect(window.api.docrepo.isSourceSupported).toHaveBeenCalledWith('file', 'invalid2')
+  expect(window.api.docrepo.addDocument).not.toHaveBeenCalled()
+  expect(Dialog.show).toHaveBeenCalledWith({
+    title: 'docRepo.file.error.formatNotSupported.title',
+    html: 'invalid1<br/>invalid2'
+  })
+})
+
 test('Deletes documents', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)

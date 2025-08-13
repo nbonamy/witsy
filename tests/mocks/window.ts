@@ -421,7 +421,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           }
         } as DocRepoQueryResponseItem
       ]),
-      getCurrentQueueItem: vi.fn(async () => null)
+      getCurrentQueueItem: vi.fn(async () => null),
+      isSourceSupported: vi.fn((type: string, origin: string) => origin.startsWith('file'))
     },
     scratchpad: {
       open: vi.fn(),

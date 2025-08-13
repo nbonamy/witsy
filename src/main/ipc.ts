@@ -576,6 +576,16 @@ export const installIpc = (
     return docRepo.getCurrentQueueItem()
   });
 
+  ipcMain.on(IPC.DOCREPO.IS_SOURCE_SUPPORTED, (event, payload) => {
+    try {
+      const { type, origin } = payload;
+      event.returnValue = docRepo.isSourceSupported(type, origin);
+    } catch (error) {
+      console.error('Error checking if file is supported:', error);
+      event.returnValue = false;
+    }
+  });
+
   ipcMain.on(IPC.MCP.IS_AVAILABLE, (event) => {
     event.returnValue = mcp !== null;
   });

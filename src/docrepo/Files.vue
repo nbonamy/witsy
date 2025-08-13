@@ -4,7 +4,7 @@
       <label>
         {{ t('common.documents') }}
         <div class="tag info">{{ documentCount() }}</div>
-        <div class="subtitle">Add.pdf,.csv, .md, json, .epub, .docx, .rft, and .txt files</div>
+        <div class="subtitle">{{ t('docRepo.file.help.formats') }}</div>
       </label>
       <Spinner class="large" v-if="loading" />
       <div class="icon" @click="togglePanel"><BIconChevronDown /></div>
@@ -35,7 +35,7 @@
             />
             <BIconTrash 
               class="icon remove" 
-              v-tooltip="{ text: t('docRepo.view.tooltips.removeDocument'), position: 'left' }"
+              v-tooltip="{ text: t('common.delete'), position: 'left' }"
               @click="onDelDoc(doc)" 
             />
           </div>
@@ -156,6 +156,25 @@ const onAddFiles = async () => {
   if (!props.selectedRepo) return
   const files = window.api.file.pickFile({ multiselection: true }) as string[]
   if (!files) return
+  
+  // Check if all files are supported
+  const unsupportedFiles: string[] = []
+  for (const file of files) {
+    if (!window.api.docrepo.isSourceSupported('file', file)) {
+      unsupportedFiles.push(file)
+    }
+  }
+  
+  // Show error for unsupported files
+  if (unsupportedFiles.length > 0) {
+    const fileNames = unsupportedFiles.map(f => f.split('/').pop() || f)
+    Dialog.show({
+      title: t('docRepo.file.error.formatNotSupported.title'),
+      html: fileNames.join('<br/>')
+    })
+    return
+  }
+  
   loading.value = true
   try {
     for (const file of files) {

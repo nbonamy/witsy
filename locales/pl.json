@@ -28,6 +28,7 @@
       "doNotClose": "Nie zamykaj",
       "unsavedChanges": "Masz niezapisane zmiany. Zamknięcie tego okna spowoduje utratę pracy."
     },
+    "content": "Content",
     "continue": "Kontynuuj",
     "copied": "Skopiowano",
     "copy": "Kopiuj",
@@ -46,7 +47,6 @@
     "documents": "Dokumenty",
     "done": "Gotowe!",
     "edit": "Edytuj",
-    "embeddings": "Embeddingi",
     "enabled": "Włączone",
     "error": "Błąd!",
     "errorCopyClipboard": "Wystąpił błąd podczas kopiowania tekstu do schowka.",
@@ -58,7 +58,6 @@
       "remove": "Usuń z ulubionych"
     },
     "filename": "Nazwa pliku",
-    "files": "Pliki",
     "fork": "Utwórz forka",
     "high": "Wysoki",
     "icon": "Ikona",
@@ -105,6 +104,7 @@
     "new": "Nowy",
     "newChat": "New Conversation",
     "no": "Nie",
+    "notes": "Notes",
     "ok": "OK",
     "path": "Ścieżka",
     "pick": "Wybierz",
@@ -157,6 +157,7 @@
       "add": "Dodaj do słownika"
     },
     "stop": "Stop",
+    "title": "Title",
     "tools": "Narzędzia",
     "tryAgain": "Proszę spróbować ponownie.",
     "type": "Typ",
@@ -766,6 +767,16 @@
       "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
       "title": "Welcome to the Knowledge Base"
     },
+    "file": {
+      "error": {
+        "formatNotSupported": {
+          "title": "File format not supported"
+        }
+      },
+      "help": {
+        "formats": "Add text files (including PDF and Microsoft Office documents)"
+      }
+    },
     "list": {
       "documentsCount": "Brak dokumentów|1 dokument|{count} dokumentów",
       "title": "Knowledge Base",
@@ -774,15 +785,23 @@
         "delete": "Delete collection"
       }
     },
+    "note": {
+      "add": "Add Note",
+      "create": {
+        "title": "New Note"
+      },
+      "edit": {
+        "title": "Edit Note"
+      },
+      "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
-      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "Dodaj pliki",
         "addFolder": "Dodaj folder",
         "embeddingNotReady": "Model osadzania niedostępny",
         "openInExplorer": "Otwórz w Finderze",
-        "removeDocument": "Usuń dokument",
         "viewContents": "Pokaż zawartość folderu"
       }
     }
@@ -2249,7 +2268,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "Dodaj niestandardowy serwer...",
+      "addCustomServer": "Add server",
       "confirmDelete": "Czy na pewno chcesz usunąć ten serwer?",
       "connectedToServers": "Połączono z {count} serwerem MCP{count > 1 ? 'ami' : ''}",
       "copyInstallCommand": "Możesz skopiować polecenie instalacji do schowka i wypróbować je w Terminalu.",
@@ -2262,13 +2281,13 @@
         "errorEmpty": "JSON nie może być pusty.",
         "errorFormat": "Błąd podczas analizowania definicji serwera JSON.",
         "errorMultiple": "Znaleziono wiele serwerów. Proszę wkleić jeden serwer naraz.",
-        "menu": "@:{'settings.mcp.importJson.title'}…",
+        "menu": "@:{'settings.mcp.importJson.title'}",
         "title": "Importuj z JSON"
       },
-      "importSmitheryServer": "Import serwera Smithery.ai...",
+      "importSmitheryServer": "Install from Smithery.ai",
       "mcpServers": "Serwery MCP",
       "modelContextProtocol": "Protokół Kontekstu Modelu",
-      "noServersFound": "Nie znaleziono serwerów MCP. Kliknij ikonę + powyżej, aby dodać nowy serwer lub odświeżyć listę.",
+      "noServersFound": "No MCP Servers found. Click on the buttons below to add a new server.",
       "noTools": "Brak dostępnych narzędzi",
       "retryWithApiKey": "Wygląda na to, że do zainstalowania tego serwera wymagany jest klucz API. Czy chcesz spróbować ponownie z swoim kluczem API? Możesz też skopiować polecenie i spróbować w Terminalu.",
       "serverLogs": "Dzienniki serwera MCP",
@@ -2277,7 +2296,6 @@
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
       "tooltips": {
-        "addServer": "Dodaj nowy serwer MCP",
         "deleteServer": "Usuń serwer",
         "editServer": "Edytuj serwer",
         "refreshServers": "Odśwież listę serwerów MCP",

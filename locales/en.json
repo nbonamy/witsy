@@ -15,7 +15,6 @@
       "help": "Select a model from the list or type a model name you know exists."
     },
     "command": "Command",
-    "content": "Content",
     "confirmation": {
       "cannotUndo": "You can't undo this action.",
       "closeAnyway": "Close anyway",
@@ -29,6 +28,7 @@
       "doNotClose": "Do not close",
       "unsavedChanges": "You have unsaved changes. You will lose your work if you close this window."
     },
+    "content": "Content",
     "continue": "Continue",
     "copied": "Copied",
     "copy": "Copy",
@@ -47,7 +47,6 @@
     "documents": "Documents",
     "done": "Done!",
     "edit": "Edit",
-    "embeddings": "Embeddings",
     "enabled": "Enabled",
     "error": "Error!",
     "errorCopyClipboard": "An error occured while copying the text to the clipboard.",
@@ -59,7 +58,6 @@
       "remove": "Remove from favorites"
     },
     "filename": "Filename",
-    "files": "Files",
     "fork": "Fork",
     "high": "High",
     "icon": "Icon",
@@ -104,9 +102,9 @@
     "move": "Move",
     "name": "Name",
     "new": "New",
-    "notes": "Notes",
     "newChat": "New Conversation",
     "no": "No",
+    "notes": "Notes",
     "ok": "OK",
     "path": "Path",
     "pick": "Pick",
@@ -768,6 +766,16 @@
       "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
       "title": "Welcome to the Knowledge Base"
     },
+    "file": {
+      "error": {
+        "formatNotSupported": {
+          "title": "File format not supported"
+        }
+      },
+      "help": {
+        "formats": "Add text files (including PDF and Microsoft Office documents)"
+      }
+    },
     "list": {
       "documentsCount": "No document|1 document|{count} documents",
       "title": "Knowledge Base",
@@ -776,26 +784,24 @@
         "delete": "Delete collection"
       }
     },
-    "view": {
-      "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
-      "title": "@:{'common.docRepo'}",
-      "tooltips": {
-        "addFile": "Add files",
-        "addFolder": "Add folder",
-        "embeddingNotReady": "Embedding model not available",
-        "openInExplorer": "Open in Finder",
-        "removeDocument": "Remove document",
-        "viewContents": "View folder contents"
-      }
-    },
     "note": {
       "add": "Add Note",
-      "noNotes": "You don't have any notes yet. Click on the button below to add your first note.",
       "create": {
         "title": "New Note"
       },
       "edit": {
         "title": "Edit Note"
+      },
+      "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
+    },
+    "view": {
+      "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
+      "tooltips": {
+        "addFile": "Add files",
+        "addFolder": "Add folder",
+        "embeddingNotReady": "Embedding model not available",
+        "openInExplorer": "Open in Finder",
+        "viewContents": "View folder contents"
       }
     }
   },
@@ -2289,7 +2295,6 @@
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
       "tooltips": {
-        "addServer": "Add a new MCP server",
         "deleteServer": "Delete server",
         "editServer": "Edit server",
         "refreshServers": "Refresh MCP servers list",

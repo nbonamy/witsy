@@ -28,6 +28,7 @@
       "doNotClose": "Ne pas fermer",
       "unsavedChanges": "Vous avez des modifications non enregistrées. Vous perdrez votre travail si vous fermez cette fenêtre."
     },
+    "content": "Content",
     "continue": "Continuer",
     "copied": "Copié",
     "copy": "Copier",
@@ -46,7 +47,6 @@
     "documents": "Documents",
     "done": "Terminé !",
     "edit": "Modifier",
-    "embeddings": "Vecteurs",
     "enabled": "Activé",
     "error": "Erreur !",
     "errorCopyClipboard": "Une erreur s'est produite lors de la copie du texte dans le presse-papiers.",
@@ -58,7 +58,6 @@
       "remove": "Retirer des favoris"
     },
     "filename": "Nom de fichier",
-    "files": "Fichiers",
     "fork": "Dupliquer",
     "high": "Élevé",
     "icon": "Icône",
@@ -86,6 +85,7 @@
     "new": "Nouveau",
     "newChat": "New Conversation",
     "no": "Non",
+    "notes": "Notes",
     "ok": "OK",
     "path": "Chemin",
     "pick": "Sélectionner",
@@ -138,6 +138,7 @@
       "add": "Ajouter au dictionnaire"
     },
     "stop": "Arrêter",
+    "title": "Title",
     "tools": "Outils",
     "tryAgain": "Veuillez réessayer.",
     "type": "Type",
@@ -747,6 +748,16 @@
       "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
       "title": "Welcome to the Knowledge Base"
     },
+    "file": {
+      "error": {
+        "formatNotSupported": {
+          "title": "File format not supported"
+        }
+      },
+      "help": {
+        "formats": "Add text files (including PDF and Microsoft Office documents)"
+      }
+    },
     "list": {
       "documentsCount": "Aucun document|1 document|{count} documents",
       "title": "Knowledge Base",
@@ -755,15 +766,23 @@
         "delete": "Delete collection"
       }
     },
+    "note": {
+      "add": "Add Note",
+      "create": {
+        "title": "New Note"
+      },
+      "edit": {
+        "title": "Edit Note"
+      },
+      "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
-      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "Ajouter des fichiers",
         "addFolder": "Ajouter un dossier",
         "embeddingNotReady": "Modèle d'intégration non disponible",
         "openInExplorer": "Ouvrir dans le Finder",
-        "removeDocument": "Supprimer le document",
         "viewContents": "Afficher le contenu du dossier"
       }
     }
@@ -2221,7 +2240,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "Ajouter un serveur personnalisé…",
+      "addCustomServer": "Add server",
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce serveur ?",
       "connectedToServers": "Connecté à {count} serveur{count > 1 ? 's' : ''} MCP",
       "copyInstallCommand": "Vous pouvez copier la commande d'installation dans le presse-papiers et l'essayer dans un Terminal.",
@@ -2234,13 +2253,13 @@
         "errorEmpty": "Le JSON ne peut pas être vide.",
         "errorFormat": "Erreur lors de l'analyse de la définition du serveur JSON.",
         "errorMultiple": "Plusieurs serveurs trouvés. Veuillez coller un serveur à la fois.",
-        "menu": "@:{'settings.mcp.importJson.title'}…",
+        "menu": "@:{'settings.mcp.importJson.title'}",
         "title": "Importer depuis JSON"
       },
-      "importSmitheryServer": "Importer un serveur Smithery.ai…",
+      "importSmitheryServer": "Install from Smithery.ai",
       "mcpServers": "Serveurs MCP",
       "modelContextProtocol": "Model Context Protocol",
-      "noServersFound": "Aucun serveur MCP trouvé. Cliquez sur l'icône + ci-dessus pour ajouter un nouveau serveur ou rafraîchir la liste.",
+      "noServersFound": "No MCP Servers found. Click on the buttons below to add a new server.",
       "noTools": "Aucun outil disponible",
       "retryWithApiKey": "Il semble qu'une clé API soit nécessaire pour installer ce serveur. Voulez-vous réessayer avec votre clé API ? Sinon, vous pouvez copier la commande et l'essayer dans un terminal.",
       "serverLogs": "Journaux du serveur MCP",
@@ -2249,7 +2268,6 @@
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
       "tooltips": {
-        "addServer": "Ajouter un nouveau serveur MCP",
         "deleteServer": "Supprimer le serveur",
         "editServer": "Modifier le serveur",
         "refreshServers": "Actualiser la liste des serveurs MCP",

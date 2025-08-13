@@ -1,7 +1,6 @@
 
 import { strDict } from '../types/index';
 import { execSync } from 'node:child_process'
-import { v4 as uuidv4 } from 'uuid'
 import fs from 'fs'
 
 const textCache: strDict = {}
@@ -122,7 +121,7 @@ export const getCachedText = (id: string): string => {
 }
 
 export const putCachedText = (text: string): string => {
-  const id = uuidv4()
+  const id = crypto.randomUUID()
   textCache[id] = text
   return id
 }

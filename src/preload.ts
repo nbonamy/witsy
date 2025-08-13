@@ -167,6 +167,7 @@ contextBridge.exposeInMainWorld(
       query(baseId: string, text: string): Promise<DocRepoQueryResponseItem[]> { return ipcRenderer.invoke(IPC.DOCREPO.QUERY, { baseId, text }) },
       isEmbeddingAvailable(engine: string, model: string): boolean { return ipcRenderer.sendSync(IPC.DOCREPO.IS_EMBEDDING_AVAILABLE, { engine, model }) },
       getCurrentQueueItem(): Promise<DocumentQueueItem|null> { return ipcRenderer.invoke(IPC.DOCREPO.GET_CURRENT_QUEUE_ITEM) },
+      isSourceSupported(type: SourceType, origin: string): boolean { return ipcRenderer.sendSync(IPC.DOCREPO.IS_SOURCE_SUPPORTED, { type, origin }) },
     },
     readaloud: {
       closePalette: (sourceApp: Application): void => { return ipcRenderer.send(IPC.READALOUD.CLOSE_PALETTE, sourceApp) },

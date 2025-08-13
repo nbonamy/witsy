@@ -28,6 +28,7 @@
       "doNotClose": "閉じない",
       "unsavedChanges": "未保存の変更があります。このウィンドウを閉じると作業内容が失われます。"
     },
+    "content": "Content",
     "continue": "続行",
     "copied": "コピーしました",
     "copy": "コピー",
@@ -46,7 +47,6 @@
     "documents": "ドキュメント",
     "done": "完了！",
     "edit": "編集",
-    "embeddings": "埋め込み",
     "enabled": "有効",
     "error": "エラー！",
     "errorCopyClipboard": "テキストのクリップボードへのコピー中にエラーが発生しました。",
@@ -58,7 +58,6 @@
       "remove": "お気に入りから削除"
     },
     "filename": "ファイル名",
-    "files": "ファイル",
     "fork": "フォーク",
     "high": "高い",
     "icon": "アイコン",
@@ -105,6 +104,7 @@
     "new": "新規",
     "newChat": "New Conversation",
     "no": "いいえ",
+    "notes": "Notes",
     "ok": "OK",
     "path": "パス",
     "pick": "選択",
@@ -157,6 +157,7 @@
       "add": "辞書に追加"
     },
     "stop": "停止",
+    "title": "Title",
     "tools": "ツール",
     "tryAgain": "もう一度お試しください。",
     "type": "タイプ",
@@ -766,6 +767,16 @@
       "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
       "title": "Welcome to the Knowledge Base"
     },
+    "file": {
+      "error": {
+        "formatNotSupported": {
+          "title": "File format not supported"
+        }
+      },
+      "help": {
+        "formats": "Add text files (including PDF and Microsoft Office documents)"
+      }
+    },
     "list": {
       "documentsCount": "ドキュメントなし|1 件のドキュメント|{count} 件のドキュメント",
       "title": "Knowledge Base",
@@ -774,15 +785,23 @@
         "delete": "Delete collection"
       }
     },
+    "note": {
+      "add": "Add Note",
+      "create": {
+        "title": "New Note"
+      },
+      "edit": {
+        "title": "Edit Note"
+      },
+      "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
-      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "ファイルを追加",
         "addFolder": "フォルダーを追加",
         "embeddingNotReady": "埋め込みモデルは利用できません",
         "openInExplorer": "Finderで開く",
-        "removeDocument": "ドキュメントを削除",
         "viewContents": "フォルダの内容を表示"
       }
     }
@@ -2249,7 +2268,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "カスタムサーバーを追加…",
+      "addCustomServer": "Add server",
       "confirmDelete": "このサーバーを削除してもよろしいですか？",
       "connectedToServers": "{count}台のMCPサーバーに接続済み",
       "copyInstallCommand": "インストールコマンドをクリップボードにコピーして、ターミナルで試すことができます。",
@@ -2262,13 +2281,13 @@
         "errorEmpty": "JSONは空にできません。",
         "errorFormat": "JSONサーバー定義の解析中にエラーが発生しました。",
         "errorMultiple": "複数のサーバーが見つかりました。一度に1つのサーバーを貼り付けてください。",
-        "menu": "@:{'settings.mcp.importJson.title'}…",
+        "menu": "@:{'settings.mcp.importJson.title'}",
         "title": "JSONからインポート"
       },
-      "importSmitheryServer": "Smithery.aiサーバーをインポート…",
+      "importSmitheryServer": "Install from Smithery.ai",
       "mcpServers": "MCPサーバー",
       "modelContextProtocol": "モデルコンテキストプロトコル",
-      "noServersFound": "MCPサーバーが見つかりません。新しいサーバーを追加するか、リストを更新するには、上部の+アイコンをクリックしてください。",
+      "noServersFound": "No MCP Servers found. Click on the buttons below to add a new server.",
       "noTools": "利用可能なツールはありません",
       "retryWithApiKey": "このサーバーのインストールにはAPIキーが必要なようです。APIキーで再試行しますか？それともコマンドをコピーしてターミナルで試しますか？",
       "serverLogs": "MCPサーバーログ",
@@ -2277,7 +2296,6 @@
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
       "tooltips": {
-        "addServer": "新しいMCPサーバーを追加",
         "deleteServer": "サーバーを削除",
         "editServer": "サーバーを編集",
         "refreshServers": "MCPサーバーリストを更新",

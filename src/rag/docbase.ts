@@ -11,7 +11,6 @@ import Loader from './loader'
 import Splitter from './splitter'
 import { databasePath } from './utils'
 import * as file from '../main/file'
-import { v4 as uuidv4 } from 'uuid'
 import fs from 'fs'
 
 const ADD_COMMIT_EVERY = 5
@@ -260,7 +259,7 @@ export default class DocumentBaseImpl {
       try {
 
         // do it
-        const doc = new DocumentSourceImpl(uuidv4(), 'file', file)
+        const doc = new DocumentSourceImpl(crypto.randomUUID(), 'file', file)
         await this.addDocument(doc)
         source.items.push(doc)
 
@@ -467,7 +466,7 @@ export default class DocumentBaseImpl {
       for (const filePath of files) {
         if (!existingPaths.has(filePath)) {
           // Found a new file that wasn't tracked before
-          const newDocSource = new DocumentSourceImpl(uuidv4(), 'file', filePath)
+          const newDocSource = new DocumentSourceImpl(crypto.randomUUID(), 'file', filePath)
           
           added.push({
             docSource: newDocSource,
