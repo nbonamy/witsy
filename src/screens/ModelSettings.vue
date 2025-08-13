@@ -55,6 +55,10 @@
           <option value="high">{{ t('common.high') }}</option>
         </select>
       </div>
+      <div class="form-field" v-if="isThinkingBudgetSupported">
+        <label>{{ t('modelSettings.thinkingBudget') }}</label>
+        <input name="thinkingBudget" v-model="thinkingBudget" @change="save" />
+      </div>
       <div class="toggle" @click="showAdvanced = !showAdvanced">
         <span>
           <span v-if="showAdvanced" class="expand">▼</span>
@@ -160,6 +164,7 @@ const top_p = ref<number>(undefined)
 const reasoning = ref<boolean>(undefined)
 const reasoningEffort = ref<LlmReasoningEffort>(undefined)
 const verbosity = ref<LlmVerbosity>(undefined)
+const thinkingBudget = ref<number>(undefined)
 const customParams = ref<Record<string, string>>({})
 const selectedParam = ref(null)
 
@@ -189,6 +194,7 @@ const canSaveAsDefaults = computed(() => {
     reasoning.value !== undefined ||
     reasoningEffort.value !== undefined ||
     verbosity.value !== undefined ||
+    thinkingBudget.value !== undefined ||
     Object.keys(customParams.value).length > 0
   )
 })
@@ -235,6 +241,10 @@ const isVerbositySupported = computed(() => {
   return engine.value === 'openai' && model.value.startsWith('gpt-5')
 })
 
+const isThinkingBudgetSupported = computed(() => {
+  return engine.value === 'google'
+})
+
 const modelHasCustomParams = computed(() => {
   return llmManager.isCustomEngine(engine.value)
 })
@@ -256,6 +266,8 @@ onMounted(async () => {
     top_p.value = props.chat.modelOpts?.top_p
     reasoning.value = props.chat.modelOpts?.reasoning,
     reasoningEffort.value = props.chat.modelOpts?.reasoningEffort,
+    verbosity.value = props.chat.modelOpts?.verbosity,
+    thinkingBudget.value = props.chat.modelOpts?.thinkingBudget,
     customParams.value = props.chat.modelOpts?.customOpts || {}
   }, { deep: true, immediate: true })
 })
@@ -336,6 +348,7 @@ const loadDefaults = () => {
     reasoning.value = defaults.reasoning
     reasoningEffort.value = defaults.reasoningEffort
     verbosity.value = defaults.verbosity
+    thinkingBudget.value = defaults.thinkingBudget
     customParams.value = defaults.customOpts || {}
   } else {
     disableStreaming.value = false
@@ -351,6 +364,7 @@ const loadDefaults = () => {
     reasoning.value = undefined
     reasoningEffort.value = undefined
     verbosity.value = undefined
+    thinkingBudget.value = undefined
     customParams.value = {}
   }
 }
@@ -372,6 +386,7 @@ const saveAsDefaults = () => {
     reasoning: reasoning.value,
     reasoningEffort: reasoningEffort.value,
     verbosity: verbosity.value,
+    thinkingBudget: thinkingBudget.value,
     customOpts: Object.keys(customParams.value).length > 0 ? JSON.parse(JSON.stringify(customParams.value)) : undefined,
   }
   for (const key of Object.keys(modelDefaults)) {
@@ -465,6 +480,7 @@ const save = () => {
     const reasoningValue = reasoning.value ?? undefined
     const reasoningEffortValue = reasoningEffort.value ?? undefined
     const verbosityValue = verbosity.value ?? undefined
+    const thinkingBudgetValue = parseUserInput('Thinking Budget', thinkingBudget, 'int', 0)
     const customOptsValue = Object.keys(customParams.value).length > 0 ? JSON.parse(JSON.stringify(customParams.value)) : undefined
 
     // update chat
@@ -482,6 +498,7 @@ const save = () => {
       reasoning: reasoningValue,
       reasoningEffort: reasoningEffortValue,
       verbosity: verbosityValue,
+      thinkingBudget: thinkingBudgetValue,
       customOpts: customOptsValue,
     }
 

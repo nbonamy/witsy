@@ -43,6 +43,10 @@ const onClick = () => {
 <style scoped>
 
 .item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
   border-radius: 50%;
   padding: 0.5rem;
   cursor: pointer;

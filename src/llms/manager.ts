@@ -3,6 +3,7 @@ import { Configuration } from '../types/config'
 import { getComputerInfo } from './anthropic'
 import LlmManagerBase from './base'
 import * as llm from 'multi-llm-ts'
+import Google from './google'
 import Ollama from './ollama'
 import OpenRouter from './openrouter'
 
@@ -28,7 +29,7 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'anthropic') return llm.Anthropic.isConfigured(this.config.engines.anthropic)
     if (engine === 'cerebras') return llm.Cerebras.isConfigured(this.config.engines.cerebras)
     if (engine === 'deepseek') return llm.DeepSeek.isConfigured(this.config.engines.deepseek)
-    if (engine === 'google') return llm.Google.isConfigured(this.config.engines.google)
+    if (engine === 'google') return Google.isConfigured(this.config.engines.google)
     if (engine === 'groq') return llm.Groq.isConfigured(this.config.engines.groq)
     if (engine === 'lmstudio') return llm.LMStudio.isConfigured(this.config.engines.lmstudio)
     if (engine === 'meta') return llm.Meta.isConfigured(this.config.engines.meta)
@@ -46,7 +47,7 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'anthropic') return llm.Anthropic.isReady(this.config.engines.anthropic, this.config.engines.anthropic?.models)
     if (engine === 'cerebras') return llm.Cerebras.isReady(this.config.engines.cerebras, this.config.engines.cerebras?.models)
     if (engine === 'deepseek') return llm.DeepSeek.isReady(this.config.engines.deepseek, this.config.engines.deepseek?.models)
-    if (engine === 'google') return llm.Google.isReady(this.config.engines.google, this.config.engines.google?.models)
+    if (engine === 'google') return Google.isReady(this.config.engines.google, this.config.engines.google?.models)
     if (engine === 'groq') return llm.Groq.isReady(this.config.engines.groq, this.config.engines.groq?.models)
     if (engine === 'lmstudio') return llm.LMStudio.isReady(this.config.engines.lmstudio, this.config.engines.lmstudio?.models)
     if (engine === 'meta') return llm.Meta.isReady(this.config.engines.meta, this.config.engines.meta?.models)
@@ -75,7 +76,7 @@ export default class LlmManager extends LlmManagerBase {
       if (engine === 'anthropic') return new llm.Anthropic(this.config.engines.anthropic, getComputerInfo())
       if (engine === 'cerebras') return new llm.Cerebras(this.config.engines.cerebras)
       if (engine === 'deepseek') return new llm.DeepSeek(this.config.engines.deepseek)
-      if (engine === 'google') return new llm.Google(this.config.engines.google)
+      if (engine === 'google') return new Google(this.config.engines.google)
       if (engine === 'groq') return new llm.Groq({ ...this.config.engines.groq, maxRetries: 0 })
       if (engine === 'lmstudio') return new llm.LMStudio(this.config.engines.lmstudio)
       if (engine === 'meta') return new llm.Meta(this.config.engines.meta)

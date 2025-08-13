@@ -101,7 +101,7 @@ test('User message', async () => {
   expect(wrapper.find('.body .message-transient').exists()).toBe(false)
   expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(false)
   expect(wrapper.find('.body .think').exists()).toBe(false)
-  expect(wrapper.find('.actions .copy').exists()).toBe(false)
+  expect(wrapper.find('.actions .copy').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(false)
   expect(wrapper.find('.actions .retry').exists()).toBe(false)
   expect(wrapper.find('.actions .fork').exists()).toBe(true)

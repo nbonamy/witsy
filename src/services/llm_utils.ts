@@ -50,7 +50,7 @@ export default class {
       const llmManager = LlmFactory.manager(this.config)
       const llm = llmManager.igniteEngine(engine)
       const model = llmManager.getChatModel(engine, titlingModel)
-      const response = await llm.complete(model, messages, { tools: false })
+      const response = await llm.complete(model, messages, { tools: false, thinkingBudget: 0 })
       let title = response.content.trim()
       if (title === '') {
         return thread[1].content

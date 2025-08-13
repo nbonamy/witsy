@@ -1,5 +1,5 @@
 <template>
-  <div class="action copy" v-if="message.role == 'assistant' && !message.transient" @click="onCopy">
+  <div class="action copy" v-if="!message.transient" @click="onCopy">
     <BIconClipboard /> {{ copyLabel }}
   </div>
 </template>

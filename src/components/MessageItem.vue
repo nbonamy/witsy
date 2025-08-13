@@ -1,6 +1,7 @@
 <template>
   <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false)">
-    <div class="role" :class="message.role" v-if="showRole">
+    
+    <div class="role" :class="message.role" v-if="showRole" v-tooltip="{ text: modelInfo, position: 'bottom-right' }">
       <template v-if="agent">
         <BIconRobot class="avatar" />
         <div class="name variable-font-size">{{ agent.name }}</div>
@@ -11,6 +12,7 @@
         <div class="name variable-font-size">{{ authorName }}</div>
       </template>
     </div>
+    
     <div class="body" @contextmenu="onContextMenu">
 
       <!-- status -->
@@ -158,6 +160,13 @@ const authorName = computed(() => {
   return props.message.role === 'assistant' ? t('chat.role.assistant') : t('chat.role.user')
 })
 
+const modelInfo = computed(() => {
+  if (props.message.role === 'assistant') {
+    return `${props.message.engine}/${props.message.model}`
+  }
+  return ''
+})
+
 const imageUrl = computed(() => {
 
   if (props.message.type !== 'image' || typeof props.message.content !== 'string') {
@@ -267,8 +276,10 @@ defineExpose({
 
 <style scoped>
 
-.name {
-  font-family: var(--messages-font);
+.role {
+  * {
+    font-family: var(--messages-font);
+  }
 }
 
 .expert {
