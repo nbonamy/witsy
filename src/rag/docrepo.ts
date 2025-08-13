@@ -50,7 +50,10 @@ export default class DocumentRepository {
   }
 
   list(workspaceId: string): DocumentBaseImpl[] {
-    return this.contents.filter(db => db.workspaceId === workspaceId).map((db) => DocumentBaseImpl.fromJSON(this.app, db))
+    return this.contents
+      .filter(db => db.workspaceId === workspaceId)
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((db) => DocumentBaseImpl.fromJSON(this.app, db))
   }
 
   getCurrentQueueItem(): DocumentQueueItem | null {

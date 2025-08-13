@@ -70,6 +70,9 @@ const loadDocRepos = () => {
   docRepos.value = repos ?? []
   if (selectedRepoId) {
     selectRepo(docRepos.value.find((repo: DocumentBase) => repo.uuid == selectedRepoId))
+  } else if (docRepos.value.length > 0) {
+    // Select the first repository if none is currently selected
+    selectRepo(docRepos.value[0])
   }
 }
 
