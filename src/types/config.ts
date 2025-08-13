@@ -226,13 +226,8 @@ export type STTConfig = {
     gpu: boolean
   }
   soniox?: {
-    languageHints?: string[]
-    endpointDetection?: boolean
     cleanup?: boolean
     audioFormat?: string
-    proxy?: 'temporary_key' | 'proxy_stream'
-    tempKeyExpiry?: number
-    speakerDiarization?: boolean
   }
   //silenceAction: SilenceAction
 }

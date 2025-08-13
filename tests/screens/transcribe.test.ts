@@ -25,6 +25,9 @@ vi.mock('../../src/composables/transcriber', () => {
       isReady: vi.fn(() => true),
       transcribe: vi.fn(async (): Promise<TranscribeResponse> => Promise.resolve({ text: 'transcribed' })),
       endStreaming: vi.fn(),
+      streaming: false,
+      requiresStreaming: false,
+      requiresPcm16bits: false,
     },
     processStreamingError: vi.fn(),
   })) }

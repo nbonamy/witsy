@@ -2425,6 +2425,9 @@
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
       "selectModel": "Select a model",
+      "soniox": {
+        "cleanup": "Auto-delete transcriptions after completion"
+      },
       "silenceDetection": "Silence Detection",
       "silenceOptions": {
         "disabled": "Disabled",

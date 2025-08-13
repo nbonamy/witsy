@@ -48,6 +48,11 @@ export type TranscribeResponse = {
 export type StreamingChunkText = {
   type: 'text'
   content: string
+  // Enhanced token support for better UI handling
+  finalText?: string        // Final/confirmed text (shown in black)
+  partialText?: string      // Partial/temporary text (shown in grey)
+  hasFinalContent?: boolean // True if this update contains final content
+  hasPartialContent?: boolean // True if this update contains partial content
 }
 
 export type StreamingChunkStatus = {
@@ -101,7 +106,7 @@ export const getSTTEngines = () => {
     //{ id: 'huggingface', label: engineNames.huggingface },
     { id: 'groq', label: engineNames.groq },
     { id: 'mistralai', label: engineNames.mistralai },
-    // { id: 'soniox', label: engineNames.soniox },
+    { id: 'soniox', label: engineNames.soniox },
     { id: 'whisper', label: engineNames.whisper },
     { id: 'custom', label: 'Custom OpenAI' },
   ]

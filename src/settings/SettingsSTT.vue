@@ -100,55 +100,10 @@
       <textarea v-model="mistralPrompt" @blur="save" />
     </div>
     
-    <template v-if="store.config.stt.engine === 'soniox'">
-
-      <div class="form-field">
-        <label>Language hints (comma separated)</label>
-        <input
-          :value="store.config.stt.soniox.languageHints?.join(',')"
-          @change="onLangHintsChange(($event.target as HTMLInputElement).value)"
-          placeholder="de,en"
-        />
-      </div>
-
-      <!-- <div class="form-field">
-        <label>Audio format</label>
-        <select v-model="store.config.stt.soniox.audioFormat">
-          <option value="auto">auto</option>
-          <option value="pcm_s16le">pcm_s16le</option>
-          <option value="opus">opus</option>
-        </select>
-      </div> -->
-
-      <!-- <div class="form-field horizontal">
-        <input type="checkbox" v-model="store.config.stt.soniox.endpointDetection" />
-        <label>Endpoint detection</label>
-      </div> -->
-
-      <div class="form-field horizontal">
-        <input type="checkbox" v-model="store.config.stt.soniox.speakerDiarization" />
-        <label>Speaker diarization</label>
-      </div>
-
-      <!-- <div class="form-field horizontal">
-        <input type="checkbox" v-model="store.config.stt.soniox.cleanup" />
-        <label>Cleanup after async transcription</label>
-      </div> -->
-
-      <div class="form-field">
-        <label>Realtime security mode</label>
-        <select v-model="store.config.stt.soniox.proxy">
-          <option value="temporary_key">temporary_key (default)</option>
-          <option value="proxy_stream">proxy_stream (own backend proxy)</option>
-        </select>
-      </div>
-
-      <div v-if="store.config.stt.soniox.proxy === 'temporary_key'" class="form-field">
-        <label>Temporary key expiry (seconds)</label>
-        <input type="number" v-model.number="store.config.stt.soniox.tempKeyExpiry" min="30" />
-      </div>
-    
-    </template>
+    <div class="form-field horizontal" v-if="engine == 'soniox'">
+      <input type="checkbox" v-model="sonioxCleanup" @change="save" />
+      <label>{{ t('settings.voice.soniox.cleanup') }}</label>
+    </div>
 
     <div class="form-field">
       <label>{{ t('settings.voice.silenceDetection') }}</label>
@@ -192,11 +147,6 @@ import { getSTTEngines, getSTTEngine, getSTTModels, requiresDownload, ProgressIn
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
 
-const onLangHintsChange = (value: string) => {
-  const arr = value.split(',').map(s => s.trim()).filter(Boolean)
-  store.config.stt.soniox.languageHints = arr
-}
-
 type InitModelMode = 'download' | 'verify'
 let initMode: InitModelMode = 'download'
 
@@ -212,6 +162,7 @@ const gladiaAPIKey = ref(null)
 const huggingFaceAPIKey = ref(null)
 const speechmaticsAPIKey = ref(null)
 const sonioxAPIKey = ref(null)
+const sonioxCleanup = ref(false)
 const nvidiaAPIKey = ref(null)
 const nvidiaPrompt = ref(null)
 const mistralPrompt = ref(null)
@@ -265,6 +216,7 @@ const load = () => {
   speechmaticsAPIKey.value = store.config.engines.speechmatics.apiKey || null
   huggingFaceAPIKey.value = store.config.engines.huggingface.apiKey || null
   sonioxAPIKey.value = store.config.engines.soniox?.apiKey || null
+  sonioxCleanup.value = store.config.stt.soniox?.cleanup ?? false
   baseURL.value = store.config.stt.customOpenAI.baseURL || ''
   nvidiaAPIKey.value = store.config.engines.nvidia?.apiKey || null
   nvidiaPrompt.value = store.config.stt.nvidia?.prompt || null
@@ -285,6 +237,8 @@ const save = () => {
   store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
   store.config.engines.soniox.apiKey = sonioxAPIKey.value
+  if (!store.config.stt.soniox) store.config.stt.soniox = {}
+  store.config.stt.soniox.cleanup = sonioxCleanup.value
   store.config.stt.customOpenAI.baseURL = baseURL.value
   store.config.stt.nvidia.prompt = nvidiaPrompt.value
   store.config.stt.mistralai.prompt = mistralPrompt.value
