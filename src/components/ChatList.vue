@@ -8,7 +8,7 @@
         <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
       </div></div>
     </div>
-    <div class="display-mode button-group" v-if="store.isFeatureActivated('chat.folders')">
+    <div class="display-mode button-group" v-if="store.isFeatureEnabled('chat.folders')">
       <button :class="{active: displayMode == 'timeline'}" @click="setDisplayMode('timeline')">{{ t('chatList.displayMode.timeline') }}</button>
       <button :class="{active: displayMode == 'folder'}" @click="setDisplayMode('folder')">{{ t('chatList.displayMode.folders') }}</button>
     </div>

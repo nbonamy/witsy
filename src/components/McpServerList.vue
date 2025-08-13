@@ -22,11 +22,13 @@
       <div class="panel-header">
         <label>{{ t('settings.mcp.mcpServers') }}</label>
         <Spinner v-if="loading" />
-        <BIconPlusLg class="icon add large" ref="addButton" v-tooltip="{ text: t('settings.mcp.tooltips.addServer'), position: 'bottom-left' }" @click.prevent="onAdd" />
         <BIconArrowClockwise class="icon reload" v-tooltip="{ text: t('settings.mcp.tooltips.refreshServers'), position: 'bottom-left' }" @click.prevent="onReload" />
         <BIconArrowRepeat class="icon restart" v-tooltip="{ text: t('settings.mcp.tooltips.restartServers'), position: 'bottom-left' }" @click.prevent="onRestart" />
       </div>
-      <div class="panel-body" v-if="servers.length">
+      <div class="panel-empty" v-if="!servers.length">
+        {{ t('settings.mcp.noServersFound') }}
+      </div>
+      <div class="panel-body" v-else>
         <template v-for="server in servers" :key="server.uuid">
           <div class="panel-item">
 
@@ -75,31 +77,29 @@
           </div>
         </template>
       </div>
-      <div class="panel-empty" v-else>
-        {{ t('settings.mcp.noServersFound') }}
+      <div class="panel-footer">
+        <button name="addCustom" @click="onCreate('stdio')"><BIconPlusLg /> {{ t('settings.mcp.addCustomServer') }}</button>
+        <button name="addSmithery" @click="onCreate('smithery')" v-if="store.isFeatureEnabled('mcp.smithery')"><BIconCloudPlus /> {{ t('settings.mcp.importSmitheryServer') }}</button>
+        <button name="addJson" @click="onImportJson" v-if="store.isFeatureEnabled('mcp.json')"><BIconBraces /> {{ t('settings.mcp.importJson.menu') }}</button>
       </div>
     </div>
   </div>
-  <ContextMenu v-if="showAddMenu" @close="closeAddMenu" :actions="addMenuActions" @action-clicked="handleAddAction" :x="addMenuX" :y="addMenuY" position="right"/>
 </template>
 
 <script setup lang="ts">
 
 import { ref, nextTick } from 'vue'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 import { McpServer, McpServerStatus } from '../types/mcp'
-import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
 import Spinner from '../components/Spinner.vue'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
+import { BIconPlusLg } from 'bootstrap-icons-vue'
 
-const addButton = ref(null)
 const servers = ref([])
 const status = ref(null)
 const selected = ref(null)
-const showAddMenu = ref(false)
-const addMenuX = ref(0)
-const addMenuY = ref(0)
 const loading = ref(false)
 
 const emit = defineEmits([ 'edit', 'create' ])
@@ -182,35 +182,6 @@ const onRestart = async () => {
     await window.api.mcp.reload()
     load()
   })
-}
-
-const addMenuActions = [
-  { label: t('settings.mcp.addCustomServer'), action: 'custom' },
-  { label: t('settings.mcp.importSmitheryServer'), action: 'smithery' },
-  { label: t('settings.mcp.importJson.menu'), action: 'json' },
-]
-
-const onAdd = () => {
-  const addButton = document.querySelector('.servers .icon.add')
-  const rc = addButton?.getBoundingClientRect()
-  addMenuX.value = 200
-  addMenuY.value = rc?.top - 32
-  showAddMenu.value = true
-}
-
-const closeAddMenu = () => {
-  showAddMenu.value = false
-}
-
-const handleAddAction = (action: string) => {
-  closeAddMenu()
-  if (action === 'custom') {
-    onCreate('stdio')
-  } else if (action === 'smithery') {
-    onCreate('smithery')
-  } else if (action === 'json') {
-    onImportJson()
-  }
 }
 
 const onCreate = (type: string) => {

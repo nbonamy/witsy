@@ -153,12 +153,11 @@
   }
 
   main.empty, .panel-empty {
-    padding: 4rem 15%;
+    padding: 4rem 25%;
     text-align: center;
-    * {
-      font-size: 11pt;
-      color: var(--faded-text-color);
-    }
+    font-size: 12pt;
+    font-weight: 300;
+    color: var(--faded-text-color);
   }
 
   footer, .panel-footer {

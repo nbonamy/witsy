@@ -26,6 +26,7 @@ beforeAll(() => {
   useWindowMock()
   useBrowserMock()
   store.loadSettings()
+  store.isFeatureEnabled = () => true
   store.load = () => {}
   
   // wrapper
@@ -97,14 +98,7 @@ test('Server edit', async () => {
 
 test('Normal server add - SSE', async () => {
 
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-  await mcp.find<HTMLElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.item').length).toBe(3)
-  await menu.find('.item[data-action=custom]').trigger('click')
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-
+  await mcp.find<HTMLElement>('button[name=addCustom]').trigger('click')
   const editor = mcp.findComponent(McpServerEditor)
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   await editor.find<HTMLInputElement>('input[name=command]').setValue('npx')
@@ -204,14 +198,7 @@ test('Normal server add - SSE', async () => {
 
 test('Normal server add - HTTP', async () => {
 
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-  await mcp.find<HTMLElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.item').length).toBe(3)
-  await menu.find('.item[data-action=custom]').trigger('click')
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-
+  await mcp.find<HTMLElement>('button[name=addCustom]').trigger('click')
   const editor = mcp.findComponent(McpServerEditor)
   await editor.find<HTMLSelectElement>('select[name=type]').setValue('http')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('http://www.mcp.com')
@@ -300,13 +287,7 @@ test('Normal server add - HTTP', async () => {
 
 test('Smithery server add', async () => {
 
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  expect(mcp.exists()).toBe(true)
-  await menu.find('.item[data-action=smithery]').trigger('click')
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-
+  await mcp.find<HTMLElement>('button[name=addSmithery]').trigger('click')
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('smithery')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('package')
@@ -318,10 +299,7 @@ test('Smithery server add', async () => {
 
 test('Error server add', async () => {
 
-  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  await menu.find('.item[data-action=custom]').trigger('click')
-
+  await mcp.find<HTMLButtonElement>('button[name=addCustom]').trigger('click')
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
@@ -388,13 +366,7 @@ test('JSON server parsing', async () => {
 
 test('JSON server add', async () => {
 
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  expect(mcp.exists()).toBe(true)
-  await menu.find('.item[data-action=json]').trigger('click')
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-
+  await mcp.find<HTMLElement>('button[name=addJson]').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,
@@ -409,9 +381,7 @@ test('JSON server add', async () => {
 
 test('Editor pickers', async () => {
 
-  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  await menu.find('.item[data-action=custom]').trigger('click')
+  await mcp.find<HTMLElement>('button[name=addCustom]').trigger('click')
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
 
   await editor.find<HTMLSelectElement>('select[name=source]').setValue('npx')

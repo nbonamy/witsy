@@ -241,7 +241,7 @@ export interface Store {
   addListener: (event: StoreEvent, listener: CallableFunction) => void
   removeListener: (event: StoreEvent, listener: CallableFunction) => void
 
-  isFeatureActivated(feature: string): boolean
+  isFeatureEnabled(feature: string): boolean
 
   saveHistory(): void
   saveSettings(): void

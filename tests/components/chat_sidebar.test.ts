@@ -16,7 +16,7 @@ vi.mock('../../src/composables/event_bus', async () => {
 beforeAll(() => {
   useWindowMock()
   store.load()
-  store.isFeatureActivated = () => true
+  store.isFeatureEnabled = () => true
 })
 
 beforeEach(() => {

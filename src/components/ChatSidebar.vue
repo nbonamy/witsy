@@ -12,7 +12,7 @@
     <main>
       <ChatList :displayMode="chatListDisplayMode" :chat="chat" :select-mode="selectMode" ref="chatList" />
     </main>
-    <template v-if="store.isFeatureActivated('chat.folders')">
+    <template v-if="store.isFeatureEnabled('chat.folders')">
       <footer class="actions" v-if="selectMode">
         <button id="cancel-delete" @click="onCancelSelect">{{ t('common.cancel') }}</button>
         <button id="move" @click="onMove" v-if="chatListDisplayMode == 'folder'">{{ t('common.move') }}</button>
@@ -76,7 +76,7 @@ onMounted(async () => {
   onEvent('chat-list-mode', setChatListMode)
 
   // depends on feature activation
-  if (store.isFeatureActivated('chat.folders')) {
+  if (store.isFeatureEnabled('chat.folders')) {
     chatListDisplayMode.value = store.config.appearance.chatList.mode
   } else {
     chatListDisplayMode.value = 'timeline'

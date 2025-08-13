@@ -35,7 +35,7 @@ export const store: Store = reactive({
     transcription: ''
   },
 
-  isFeatureActivated(feature: string): boolean {
+  isFeatureEnabled(feature: string): boolean {
     const tokens = feature.split('.')
     let current = (features as Record<string, any>)[tokens[0]]
     for (let i=1; i<tokens.length; i++) {

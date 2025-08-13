@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <WorkspaceBar v-if="store.isFeatureActivated('workspaces')" />
+    <WorkspaceBar v-if="store.isFeatureEnabled('workspaces')" />
     <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
     <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
     <Chat ref="chat" :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />

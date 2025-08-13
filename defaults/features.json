@@ -13,5 +13,9 @@
     "temporary": false,
     "exportMarkdown": false,
     "exportPdf": false
+  },
+  "mcp": {
+    "smithery": false,
+    "json": false
   }
 }
