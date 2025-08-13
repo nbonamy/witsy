@@ -132,13 +132,12 @@ describe('STTSoniox', () => {
           this.readyState = WebSocket.OPEN
           this.onopen?.()
           
-          // Simulate token stream with final and non-final tokens
+          // Simulate token stream with only final tokens (no partials)
           setTimeout(() => {
             this.onmessage?.({
               data: JSON.stringify({
                 tokens: [
-                  { text: 'Hello ', is_final: false },
-                  { text: 'world', is_final: false },
+                  { text: 'Hello ', is_final: true },
                 ],
               }),
             })
@@ -148,8 +147,7 @@ describe('STTSoniox', () => {
             this.onmessage?.({
               data: JSON.stringify({
                 tokens: [
-                  { text: 'Hello ', is_final: true },
-                  { text: 'from ', is_final: false },
+                  { text: 'from realtime', is_final: true },
                 ],
               }),
             })
@@ -157,21 +155,11 @@ describe('STTSoniox', () => {
           
           setTimeout(() => {
             this.onmessage?.({
-              data: JSON.stringify({
-                tokens: [
-                  { text: 'from realtime', is_final: true },
-                ],
-              }),
-            })
-          }, 30)
-          
-          setTimeout(() => {
-            this.onmessage?.({
               data: JSON.stringify({ finished: true })
             })
             this.readyState = WebSocket.CLOSED
             this.onclose?.({ code: 1000, reason: 'Normal closure' })
-          }, 40)
+          }, 30)
         }, 5)
       }
       
@@ -179,11 +167,11 @@ describe('STTSoniox', () => {
         if (typeof data === 'string') {
           const config = JSON.parse(data)
           expect(config.api_key).toBe('test-api-key')
-          expect(config.model).toBe('stt-rt-preview')
+          expect(config.model).toBe('stt-rt-preview-v2')
           expect(config.audio_format).toBe('pcm_s16le')
           expect(config.sample_rate).toBe(16000)
           expect(config.num_channels).toBe(1)
-          expect(config.enable_non_final_tokens).toBe(true)
+          expect(config.enable_non_final_tokens).toBe(false)
           expect(config.language_hints).toEqual(['en']) // from locale
           expect(config.context).toBe('test, vocabulary')
         }
@@ -219,8 +207,6 @@ describe('STTSoniox', () => {
     // Final text should aggregate all final tokens
     const finalChunk = textChunks[textChunks.length - 1]
     expect(finalChunk?.content).toBe('Hello from realtime')
-    expect(finalChunk?.finalText).toBe('Hello from realtime')
-    expect(finalChunk?.hasFinalContent).toBe(true)
   })
 
   it('should handle streaming connection errors', async () => {

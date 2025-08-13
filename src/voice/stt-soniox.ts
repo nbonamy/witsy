@@ -323,7 +323,7 @@ export default class STTSoniox implements STTEngine {
           audio_format: 'pcm_s16le', // PCM 16-bit little-endian for WebSocket streaming
           sample_rate: 16000, // Standard sample rate for speech recognition
           num_channels: 1, // Mono audio (single channel)
-          enable_non_final_tokens: true,
+          enable_non_final_tokens: false,
           enable_profanity_filter: false,
           enable_dictation: true
         }
@@ -422,35 +422,24 @@ export default class STTSoniox implements STTEngine {
       return
     }
     
-    let partialText = ''
+    let finalText = ''
     let hasFinalTokens = false
     
-    // Process tokens: final tokens are added to permanent transcript,
-    // non-final tokens are collected as temporary text
+    // Process only final tokens since enable_non_final_tokens is false
     for (const token of tokens) {
       if (token.is_final) {
-        this.finalTranscript += token.text
+        finalText += token.text
         hasFinalTokens = true
-      } else {
-        partialText += token.text
       }
     }
     
-    // Send separate callbacks for final and partial text for better UI handling
-    if (hasFinalTokens || partialText) {
-      const finalContent = this.finalTranscript.trim()
-      const partialContent = partialText.trim()
-      
-      // Send enhanced text data with final/partial distinction
+    // Send callback only for final tokens
+    if (hasFinalTokens) {
+      this.finalTranscript += finalText
       callback({ 
         type: 'text', 
-        content: finalContent + (partialContent ? ' ' + partialContent : ''),
-        // Add metadata for UI to style final vs partial text
-        finalText: finalContent,
-        partialText: partialContent,
-        hasFinalContent: hasFinalTokens,
-        hasPartialContent: partialContent.length > 0
-      } as any)
+        content: this.finalTranscript.trim()
+      })
     }
   }
 
