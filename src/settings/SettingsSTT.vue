@@ -147,8 +147,6 @@ import { getSTTEngines, getSTTEngine, getSTTModels, requiresDownload, ProgressIn
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
 
-// Removed onLangHintsChange - using standard vocabulary field instead
-
 type InitModelMode = 'download' | 'verify'
 let initMode: InitModelMode = 'download'
 
