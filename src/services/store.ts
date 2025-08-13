@@ -135,6 +135,7 @@ export const store: Store = reactive({
         reasoning: defaults.reasoning,
         reasoningEffort: defaults.reasoningEffort,
         verbosity: defaults.verbosity,
+        thinkingBudget: defaults.thinkingBudget,
       }
       if (defaults.customOpts) {
         chat.modelOpts.customOpts = defaults.customOpts
