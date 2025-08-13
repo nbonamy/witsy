@@ -47,6 +47,15 @@ test('Initializes correctly', async () => {
   expect(wrapper.find('.split-pane .list-item:nth-child(2) .text').text()).toBe('docrepo2')
 })
 
+test('Automatically selects first repository on load', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  // Verify that the first repository is automatically selected
+  expect(wrapper.vm.selectedRepo?.name).toBe('docrepo1')
+  expect(wrapper.vm.selectedRepo?.uuid).toBe('uuid1')
+  expect(wrapper.vm.mode).toBe('view')
+})
+
 test('Renders documents', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
