@@ -71,7 +71,7 @@ export default class DocumentBaseImpl {
     }
   }
 
-  async addDocumentSource(uuid: string, type: SourceType, url: string, title?: string, callback?: VoidFunction): Promise<string> {
+  async addDocumentSource(uuid: string, type: SourceType, url: string, title?: string, callback?: VoidFunction): Promise<string|null> {
 
     // check existing
     let source = this.documents.find(d => d.uuid === uuid)
@@ -91,9 +91,19 @@ export default class DocumentBaseImpl {
 
     } else {
 
-      // we add only when it's done
-      await this.addDocument(source, callback)
+      // we add first so container is visible
       this.documents.push(source)
+      callback?.()
+
+      // we add only when it's done
+      try {
+        await this.addDocument(source, callback)
+      } catch (error) {
+        console.error('[rag] Error adding document', error)
+        this.documents = this.documents.filter(d => d.uuid !== source.uuid)
+        callback?.()
+        return null
+      }
 
     }
 
