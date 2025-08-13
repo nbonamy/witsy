@@ -14,27 +14,27 @@
         <span>{{ t('common.chat') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')" v-if="store.isFeatureActivated('studio')">
+      <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')" v-if="store.isFeatureEnabled('studio')">
         <BIconPalette />
         <span>{{ t('designStudio.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')" v-if="store.isFeatureActivated('scratchpad')">
+      <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')" v-if="store.isFeatureEnabled('scratchpad')">
         <BIconJournalText />
         <span>{{ t('scratchpad.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.isFeatureActivated('agents')">
+      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.isFeatureEnabled('agents')">
         <BIconRobot />
         <span>{{ t('agent.forge.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')" v-if="store.isFeatureActivated('dictation')">
+      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')" v-if="store.isFeatureEnabled('dictation')">
         <BIconMic />
         <span>{{ t('transcribe.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')" v-if="store.isFeatureActivated('voiceMode')">
+      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')" v-if="store.isFeatureEnabled('voiceMode')">
         <BIconChatSquareDots />
         <span>{{ t('realtimeChat.title') }}</span>
       </MenuBarItem>
@@ -46,12 +46,12 @@
 
       <div class="push"></div>
 
-      <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')" v-if="store.isFeatureActivated('docrepo')">
+      <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')" v-if="store.isFeatureEnabled('docrepo')">
         <BIconLightbulb />
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
 
-      <!-- <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureActivated('experts')">
+      <!-- <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureEnabled('experts')">
         <BIconChatLeftText />
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem> -->
@@ -89,7 +89,7 @@ import { BIconChatLeftText, BIconLightbulb } from 'bootstrap-icons-vue'
 export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug' | 'agents'
 
 const hasComputerUse = computed(() => {
-  return store.isFeatureActivated('voiceMode') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
+  return store.isFeatureEnabled('voiceMode') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
 })
 
 const emit = defineEmits(['change', 'new-chat', 'run-onboarding'])

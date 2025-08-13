@@ -65,7 +65,7 @@
         </template>
       </div>
       <div class="panel-empty" v-else>
-        <div>{{ t('docRepo.view.noDocuments') }}</div>
+        {{ t('docRepo.view.noDocuments') }}
       </div>
       <div class="panel-footer">
         <button name="addDocs" @click="onAddDocs"><BIconFilePlus /> {{ t('docRepo.view.tooltips.addFile') }}</button>

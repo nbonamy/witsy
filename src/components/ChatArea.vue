@@ -16,8 +16,8 @@
 
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
       <div class="spacer"></div>
-      <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" v-if="store.isFeatureActivated('chat.settings')" />
-      <BIconThreeDotsVertical class="icon menu" @click="onMenu" v-if="chat?.title || store.isFeatureActivated('chat.temporary')" /> 
+      <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" v-if="store.isFeatureEnabled('chat.settings')" />
+      <BIconThreeDotsVertical class="icon menu" @click="onMenu" v-if="chat?.title || store.isFeatureEnabled('chat.temporary')" /> 
     
     </header>
     <main>
@@ -89,14 +89,14 @@ const chatMenuPosition = computed((): MenuPosition => {
 
 const chatMenuActions = computed(() => {
   return [
-    ...(store.isFeatureActivated('chat.temporary') ? [
+    ...(store.isFeatureEnabled('chat.temporary') ? [
       { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
     ] : []),
     { label: t('common.rename'), action: 'rename', disabled: false },
-    ...(store.isFeatureActivated('chat.exportMarkdown') ? [
+    ...(store.isFeatureEnabled('chat.exportMarkdown') ? [
       { label: t('chat.actions.exportMarkdown'), action: 'exportMarkdown', disabled: !hasMessages() },
     ] : []),
-    ...(store.isFeatureActivated('chat.exportPdf') ? [
+    ...(store.isFeatureEnabled('chat.exportPdf') ? [
       { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
     ] : []),
     { label: t('common.delete'), action: 'delete', disabled: !isSaved() },

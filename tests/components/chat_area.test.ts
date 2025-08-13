@@ -49,7 +49,7 @@ let chat: Chat|null = null
 beforeEach(() => {
   chat = new Chat('New Chat')
   chat.setEngineModel('mock', 'chat')
-  store.isFeatureActivated = () => true
+  store.isFeatureEnabled = () => true
 })
 
 const addMessagesToChat = () => {
@@ -58,7 +58,7 @@ const addMessagesToChat = () => {
 }
 
 test('Empty chat', async () => {
-  store.isFeatureActivated = (feature: string) => feature != 'chat.temporary'
+  store.isFeatureEnabled = (feature: string) => feature != 'chat.temporary'
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: new Chat() } } )
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.sp-main > header').exists()).toBe(true)
