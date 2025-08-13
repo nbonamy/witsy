@@ -131,6 +131,10 @@
     flex-direction: column;
     align-items: normal;
     color: var(--text-color);
+    
+    &.form-large {
+      gap: 0.5rem;
+    }
 
     .form-field-container {
       display: flex;
@@ -162,7 +166,7 @@
       width: 100%;
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.33rem;
+      gap: 0.5rem;
       margin-left: 0px;
       margin-right: 0px;
 

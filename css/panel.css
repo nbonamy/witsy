@@ -17,7 +17,6 @@
     font-weight: 500;
     gap: 1rem;
 
-    background-color: var(--window-decoration-color);
     margin-bottom: 0px !important;
 
     label {

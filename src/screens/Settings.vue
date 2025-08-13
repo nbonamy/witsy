@@ -26,7 +26,8 @@
       <SettingsLLM ref="settingsLLM" />
       <SettingsChat ref="settingsChat" />
       <SettingsDeepResearch ref="settingsDeepResearch" />
-      <SettingsModels ref="settingsModels" />
+      <SettingsModels2 ref="settingsModels" v-if="store.isFeatureEnabled('workspaces') "/>
+      <SettingsModels ref="settingsModels" v-else />
       <SettingsPlugins ref="settingsPlugins" />
       <SettingsMcp ref="settingsMcp" />
       <SettingsCommands ref="settingsCommands" />
@@ -42,8 +43,9 @@
 
 import { OpenSettingsPayload } from '../types/index'
 import { MenuBarMode } from '../components/MenuBar.vue'
-import { ref, onMounted, watch, nextTick, PropType, computed } from 'vue'
+import { ref, onMounted, watch, nextTick, PropType } from 'vue'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
@@ -53,6 +55,7 @@ import SettingsCommands from '../settings/SettingsCommands.vue'
 import SettingsExperts from '../settings/SettingsExperts.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
 import SettingsModels from '../settings/SettingsModels.vue'
+import SettingsModels2 from '../settings/SettingsModels2.vue'
 import SettingsPlugins from '../settings/SettingsPlugins.vue'
 import SettingsMcp from '../settings/SettingsMcp.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
