@@ -80,9 +80,8 @@
         </div>
         
         <div class="result">
-          <div v-if="isStreaming && (finalText || partialText)" class="transcription-display">
-            <span v-if="finalText" class="final-text">{{ finalText }}</span>
-            <span v-if="partialText" class="partial-text">{{ partialText }}</span>
+          <div v-if="isStreaming && transcription" class="transcription-display">
+            <span class="final-text">{{ transcription }}</span>
           </div>
           <textarea v-else v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
         </div>
@@ -161,18 +160,18 @@ const showCommandsMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const isDragOver = ref(false)
+const finalText = ref('')
+const partialText = ref('')
 
 let previousTranscription = ''
 
 const meta = computed(() => window.api.platform === 'darwin' ? 'Cmd' : 'Ctrl')
 
 const models = computed(() => {
-  const availableModels = getSTTModels(engine.value) ?? []
-  
-  // Always return only the models defined for the current engine
-  // Don't add extra models from configuration that belong to other engines
-  return availableModels
+  return getSTTModels(engine.value) ?? []
 })
+
+const isStreaming = computed(() => transcriber.streaming)
 
 const translateMenuActions = computed(() => ([
   { action: '', label: t('transcribe.translate'), disabled: true },
@@ -820,6 +819,23 @@ button {
             line-height: 140%;
             font-family: var(--font-family-serif);
             font-size: 14pt;
+          }
+        }
+
+        .transcription-display {
+          flex: 1;
+          background-color: var(--control-textarea-bg-color);
+          border: 0.25px solid var(--control-border-color);
+          color: var(--text-color);
+          border-radius: 6px;
+          font-size: 11.5pt;
+          padding: 8px;
+          min-height: 200px;
+          overflow-y: auto;
+
+          .final-text {
+            color: var(--text-color);
+            line-height: 1.4;
           }
         }
       }
