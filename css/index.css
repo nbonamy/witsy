@@ -577,6 +577,10 @@ button {
     font-size: 12pt;
     font-weight: bold;
     color: white;
+
+    &:active:enabled {
+      background-color: color-mix(in srgb, #1B4FB2 80%, transparent 20%);
+    }
   }
 
 }
