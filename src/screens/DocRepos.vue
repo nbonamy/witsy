@@ -15,14 +15,45 @@
     </div>
     <div class="sp-main">
       <header v-if="mode === 'view'">
-        <div class="title">{{ selectedRepo?.name }}</div>
-        <BIconTrash 
+        <div class="title-section">
+          <div v-if="!isEditingTitle" class="title-display">
+            <span class="title">{{ selectedRepo?.name }}</span>
+            <BIconPencil 
+              class="icon edit-title" 
+              v-tooltip="{ text: t('common.edit'), position: 'bottom' }"
+              @click="startEditingTitle" 
+            />
+          </div>
+          <div v-else class="title-edit">
+            <input 
+              ref="titleInput"
+              type="text" 
+              v-model="editingTitle"
+              @keyup.enter="saveTitle"
+              @keyup.escape="cancelEditingTitle"
+              class="title-input"
+            />
+            <div class="actions">
+              <BIconCheck 
+                class="icon save" 
+                v-tooltip="{ text: t('common.save'), position: 'bottom' }"
+                @click="saveTitle" 
+              />
+              <BIconX 
+                class="icon cancel" 
+                v-tooltip="{ text: t('common.cancel'), position: 'bottom' }"
+                @click="cancelEditingTitle" 
+              />
+            </div>
+          </div>
+        </div>
+        <BIconTrash
           class="icon delete" 
           v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }"
-          @click="onDeleteRepo(selectedRepo)" 
+          @click="onDeleteRepo(selectedRepo)"
         />
       </header>
-      <View :selectedRepo="selectedRepo" @rename="onChangeRepoName" v-if="mode === 'view'"/>
+      <View :selectedRepo="selectedRepo" v-if="mode === 'view'"/>
     </div>
     <Config ref="configDialog" />
   </div>
@@ -31,7 +62,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { DocumentBase } from '../types/rag'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
@@ -53,6 +84,11 @@ const docRepos = ref(null)
 const selectedRepo = ref<DocumentBase | null>(null)
 const configDialog = ref(null)
 const createDialog = ref(null)
+
+// Title editing state
+const isEditingTitle = ref(false)
+const editingTitle = ref('')
+const titleInput = ref<HTMLInputElement | null>(null)
 
 onMounted(async () => {
   window.api.on('docrepo-modified', loadDocRepos)
@@ -113,9 +149,24 @@ const onConfig = () => {
   configDialog.value.show()
 }
 
-const onChangeRepoName = (event: Event) => {
+const startEditingTitle = async () => {
   if (!selectedRepo.value) return
-  window.api.docrepo.rename(selectedRepo.value.uuid, (event.target as HTMLInputElement).value)
+  editingTitle.value = selectedRepo.value.name
+  isEditingTitle.value = true
+  await nextTick()
+  titleInput.value?.focus()
+  titleInput.value?.select()
+}
+
+const saveTitle = () => {
+  if (!selectedRepo.value || !editingTitle.value.trim()) return
+  window.api.docrepo.rename(selectedRepo.value.uuid, editingTitle.value.trim())
+  isEditingTitle.value = false
+}
+
+const cancelEditingTitle = () => {
+  isEditingTitle.value = false
+  editingTitle.value = ''
 }
 
 </script>
@@ -129,6 +180,43 @@ const onChangeRepoName = (event: Event) => {
 
   .sp-main {
     position: relative;
+  }
+
+  header {
+    .title-section {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      
+      .title-display {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .title {
+          flex: 1;
+        }
+        
+        .edit-title {
+          opacity: 0;
+          transition: opacity 0.2s;
+          cursor: pointer;
+        }
+
+        &:hover {
+          .edit-title {
+            opacity: 0.5;
+          }
+        }
+      }
+      
+      .title-edit {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+      }
+    }
   }
 }
 

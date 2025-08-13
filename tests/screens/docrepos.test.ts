@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterAll, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { createDialogMock, createI18nMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
@@ -63,7 +64,6 @@ test('Renders documents', async () => {
   await wrapper.find('.split-pane .list-item:nth-child(2)').trigger('click')
   expect(wrapper.vm.selectedRepo?.name).toBe('docrepo2')
   expect(wrapper.vm.mode).toBe('view')
-  expect(wrapper.find<HTMLInputElement>('.split-pane .sp-main input[type="text"]').element.value).toBe('docrepo2')
   expect(wrapper.findAll('.split-pane .sp-main .documents .panel-item')).toHaveLength(2)
   expect(wrapper.find('.split-pane .sp-main .documents .panel-item:nth-child(1) .icon').exists()).toBe(true)
   expect(wrapper.find('.split-pane .sp-main .documents .panel-item:nth-child(1) .text').text()).toBe('/tmp/file1')
@@ -165,14 +165,6 @@ test('Deletes base', async () => {
   expect(window.api.docrepo.delete).toHaveBeenLastCalledWith('uuid1')
 })
 
-test('Renames base', async () => {
-  const wrapper: VueWrapper<any> = mount(DocRepos)
-  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
-  await wrapper.find('.split-pane .list-item:nth-child(1)').trigger('click')
-  await wrapper.find('.split-pane .sp-main input[type="text"]').setValue('docrepo1-new')
-  expect(window.api.docrepo.rename).toHaveBeenLastCalledWith('uuid1', 'docrepo1-new')
-})
-
 test('Adds documents', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
@@ -239,4 +231,114 @@ test('Shows folder contents modal', async () => {
   expect(folderComponent.props('folder')).toBeDefined()
   expect(folderComponent.props('folder').type).toBe('folder')
   expect(folderComponent.props('folder').title).toBe('folder1')
+})
+
+test('Shows pencil icon for title editing', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  // First repo should be auto-selected
+  expect(wrapper.vm.selectedRepo?.name).toBe('docrepo1')
+  expect(wrapper.find('.split-pane .sp-main header .title-display .title').text()).toBe('docrepo1')
+  expect(wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').exists()).toBe(true)
+})
+
+test('Enters edit mode when pencil is clicked', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  // First repo should be auto-selected
+  expect(wrapper.vm.isEditingTitle).toBe(false)
+  
+  // Click the pencil icon
+  await wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').trigger('click')
+  expect(wrapper.vm.isEditingTitle).toBe(true)
+  
+  // Check that input field is shown
+  expect(wrapper.find('.split-pane .sp-main header .title-edit input').exists()).toBe(true)
+  expect(wrapper.find<HTMLInputElement>('.split-pane .sp-main header .title-edit input').element.value).toBe('docrepo1')
+  
+  // Check that action buttons are shown
+  expect(wrapper.find('.split-pane .sp-main header .title-edit .title-actions .icon.cancel').exists()).toBe(true)
+  expect(wrapper.find('.split-pane .sp-main header .title-edit .title-actions .icon.save').exists()).toBe(true)
+})
+
+test('Cancels editing when cancel button is clicked', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  
+  // Enter edit mode
+  await wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').trigger('click')
+  expect(wrapper.vm.isEditingTitle).toBe(true)
+  
+  // Change the input value
+  await wrapper.find('.split-pane .sp-main header .title-edit input').setValue('changed-name')
+  
+  // Click cancel
+  await wrapper.find('.split-pane .sp-main header .title-edit .title-actions .icon.cancel').trigger('click')
+  
+  // Should exit edit mode without saving
+  expect(wrapper.vm.isEditingTitle).toBe(false)
+  expect(wrapper.vm.selectedRepo?.name).toBe('docrepo1') // Should remain unchanged
+  expect(window.api.docrepo.rename).not.toHaveBeenCalled()
+})
+
+test('Saves changes when save button is clicked', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  
+  // Enter edit mode
+  await wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').trigger('click')
+  expect(wrapper.vm.isEditingTitle).toBe(true)
+  
+  // Change the input value
+  await wrapper.find('.split-pane .sp-main header .title-edit input').setValue('new-name')
+  
+  // Click save
+  await wrapper.find('.split-pane .sp-main header .title-edit .title-actions .icon.save').trigger('click')
+  
+  // Should exit edit mode and save
+  expect(wrapper.vm.isEditingTitle).toBe(false)
+  expect(window.api.docrepo.rename).toHaveBeenLastCalledWith('uuid1', 'new-name')
+})
+
+test('Saves changes when Enter key is pressed', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  
+  // Enter edit mode
+  await wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').trigger('click')
+  expect(wrapper.vm.isEditingTitle).toBe(true)
+  
+  // Change the input value
+  const input = wrapper.find('.split-pane .sp-main header .title-edit input')
+  await input.setValue('enter-save-name')
+  
+  // Press Enter
+  await input.trigger('keyup.enter')
+  await nextTick()
+  
+  // Should exit edit mode and save
+  expect(wrapper.vm.isEditingTitle).toBe(false)
+  expect(window.api.docrepo.rename).toHaveBeenLastCalledWith('uuid1', 'enter-save-name')
+})
+
+test('Cancels editing when Escape key is pressed', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  
+  // Enter edit mode
+  await wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').trigger('click')
+  expect(wrapper.vm.isEditingTitle).toBe(true)
+  
+  // Change the input value
+  const input = wrapper.find('.split-pane .sp-main header .title-edit input')
+  await input.setValue('escape-cancel-name')
+  
+  // Press Escape
+  await input.trigger('keyup.escape')
+  await nextTick()
+  
+  // Should exit edit mode without saving
+  expect(wrapper.vm.isEditingTitle).toBe(false)
+  expect(wrapper.vm.selectedRepo?.name).toBe('docrepo1') // Should remain unchanged
+  expect(window.api.docrepo.rename).not.toHaveBeenCalled()
 })
