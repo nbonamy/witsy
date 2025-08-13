@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add Support for Advanced Model Parameters like 'Thinking Mode' and 'Thinking Budget' for Gemini (https://github.com/nbonamy/witsy/issues/385)
 
 ### Changed
-- N/A
+- Soniox Real Time and Async Pull Request (https://github.com/nbonamy/witsy/pull/384)
 
 ### Fixed
 - Mistral vision does not work (https://github.com/nbonamy/witsy/issues/382)
