@@ -13,7 +13,6 @@ export default class Workspace {
   experts: string[]
   docrepos: string[]
   tools?: ToolSelection[]
-  agents: string[]
 
   constructor(name: string) {
     this.uuid = crypto.randomUUID()
@@ -29,7 +28,6 @@ export default class Workspace {
     workspace.experts = obj.experts;
     workspace.docrepos = obj.docrepos;
     workspace.tools = obj.tools;
-    workspace.agents = obj.agents;
     return workspace;
   }
 

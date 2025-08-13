@@ -25,6 +25,14 @@ export default class LlmManager extends LlmManagerBase {
     return [ 'huggingface', 'replicate', 'elevenlabs', 'sdwebui', 'falai', 'gladia', 'nvidia', 'fireworks', 'speechmatics', 'soniox' ]
   }
 
+  isEngineLocal = (engine: string): boolean => {
+    return engine === 'ollama' || engine === 'lmstudio'
+  }
+
+  isEngineOnline = (engine: string): boolean => {
+    return !this.isEngineLocal(engine)
+  }
+
   isEngineConfigured = (engine: string): boolean => {
     if (engine === 'anthropic') return llm.Anthropic.isConfigured(this.config.engines.anthropic)
     if (engine === 'cerebras') return llm.Cerebras.isConfigured(this.config.engines.cerebras)
