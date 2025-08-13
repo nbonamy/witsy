@@ -568,6 +568,17 @@ button {
   &.large {
     font-size: var(--form-large-font-size);
   }
+
+  &.cta {
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 1rem 1.5rem;
+    background-color: #1B4FB2;
+    font-size: 11.5pt;
+    font-weight: 500;
+    color: white;
+  }
+
 }
 
 button:disabled {

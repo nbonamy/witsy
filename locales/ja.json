@@ -24,7 +24,7 @@
       "deleteCustomInstruction": "このカスタム指示を削除してもよろしいですか？",
       "deleteDocument": "このドキュメントを削除してもよろしいですか？",
       "deleteMemory": "このメモリを削除してもよろしいですか？",
-      "deleteRepository": "このナレッジベースを本当に削除しますか？",
+      "deleteRepository": "Are you sure you want to delete this collection?",
       "doNotClose": "閉じない",
       "unsavedChanges": "未保存の変更があります。このウィンドウを閉じると作業内容が失われます。"
     },
@@ -103,7 +103,7 @@
     "move": "移動",
     "name": "名前",
     "new": "新規",
-    "newChat": "新しいチャット",
+    "newChat": "New Conversation",
     "no": "いいえ",
     "ok": "OK",
     "path": "パス",
@@ -234,8 +234,8 @@
         },
         "help": {
           "connect": "前のステップの出力を{'{'}{'{'}output.#{'}'}{'}'}変数（例：ステップ1の出力には{'{'}{'{'}output.1{'}'}{'}'}）を使って接続します",
-          "docRepo": "ナレッジベースから抽出された事実は、プロンプトに追加されます。",
-          "factsVarDesc": "ナレッジベースから抽出された事実",
+          "docRepo": "Facts extracted from the collection will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "ステップ#{step}の出力",
           "title": "複数ステップのワークフローを設計します。各ステップの実行にはプロンプトテンプレートが使用されます。エージェント実行時にユーザーが提供した値に置き換えられる「変数」を含めることができます。変数は{'{'}{'{'}name:description:value{'}'}{'}'}の形式で定義してください（説明は値を入力する際のユーザーのガイドになります）。説明とデフォルト値はどちらも任意です。"
         },
@@ -433,7 +433,8 @@
       "last7days": "過去7日間",
       "today": "今日",
       "yesterday": "昨日"
-    }
+    },
+    "title": "Conversations"
   },
   "commands": {
     "commands": {
@@ -757,23 +758,24 @@
       "title": "ナレッジベースのデフォルト設定"
     },
     "create": {
-      "embeddingWarning": "ナレッジベース作成後は埋め込みモデルを変更できません",
-      "title": "ナレッジベースを作成"
+      "embeddingWarning": "embedding model cannot be changed once collection is created",
+      "title": "New Collection"
+    },
+    "empty": {
+      "create": "Add some knowledge",
+      "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
+      "title": "Welcome to the Knowledge Base"
     },
     "list": {
-      "clickToCreate": "+ ボタンをクリックして作成してください。",
       "documentsCount": "ドキュメントなし|1 件のドキュメント|{count} 件のドキュメント",
-      "noRepositories": "まだナレッジベースがありません。",
-      "title": "ナレッジベース",
+      "title": "Knowledge Base",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
-        "create": "@:{'docRepo.create.title'}",
-        "delete": "ナレッジベースを削除",
-        "edit": "ナレッジベースを編集"
+        "delete": "Delete collection"
       }
     },
     "view": {
-      "noDocuments": "まだドキュメントがありません。上のアイコンをクリックしてドキュメントまたはフォルダを追加してください。",
+      "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "ファイルを追加",
@@ -1951,8 +1953,8 @@
       "tooltip": "口述する"
     },
     "docRepos": {
-      "none": "利用可能なナレッジベースがありません。今すぐ作成しますか？",
-      "tooltip": "ナレッジベースに接続"
+      "none": "No collection available. Do you want to create one now?",
+      "tooltip": "Connect to collection"
     },
     "experts": {
       "clear": "エキスパートをクリア",
@@ -2435,6 +2437,9 @@
         "threeSeconds": "3秒",
         "twoSeconds": "2秒"
       },
+      "soniox": {
+        "cleanup": "Auto-delete transcriptions after completion"
+      },
       "spokenLanguage": "話される言語",
       "tabs": {
         "speechToText": "音声認識",
@@ -2547,6 +2552,18 @@
       "darwin": "メニューバーの万年筆アイコンからWitsyをアクティブにできます。",
       "linux": "メニューバーの万年筆アイコンからWitsyをアクティブにできます。",
       "windows": "システムトレイの万年筆アイコンからWitsyをアクティブにできます。"
+    }
+  },
+  "workspace": {
+    "editor": {
+      "color": "Color",
+      "create": "Create New Workspace",
+      "createDescription": "Create a new workspace to organize your models, chats and agents.",
+      "edit": "Edit Workspace",
+      "editDescription": "Edit the details of your workspace.",
+      "icon": "Icon",
+      "name": "Name",
+      "namePlaceholder": "Enter workspace name"
     }
   }
 }

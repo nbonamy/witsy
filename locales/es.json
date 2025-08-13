@@ -24,7 +24,7 @@
       "deleteCustomInstruction": "¿Estás seguro de que deseas eliminar esta instrucción personalizada?",
       "deleteDocument": "¿Estás seguro de que deseas eliminar este documento?",
       "deleteMemory": "¿Estás seguro de que deseas eliminar esta memoria?",
-      "deleteRepository": "¿Estás seguro de que deseas eliminar esta base de conocimientos?",
+      "deleteRepository": "Are you sure you want to delete this collection?",
       "doNotClose": "No cerrar",
       "unsavedChanges": "Tienes cambios no guardados. Perderás tu trabajo si cierras esta ventana."
     },
@@ -84,7 +84,7 @@
     "move": "Mover",
     "name": "Nombre",
     "new": "Nuevo",
-    "newChat": "Nueva conversación",
+    "newChat": "New Conversation",
     "no": "No",
     "ok": "OK",
     "path": "Ruta",
@@ -215,8 +215,8 @@
         },
         "help": {
           "connect": "Conecta la salida de pasos anteriores usando variables {'{'}{'{'}output.#{'}'}{'}'} (p. ej. {'{'}{'{'}output.1{'}'}{'}'} para la salida del paso 1)",
-          "docRepo": "Los hechos extraídos de la base de conocimientos se agregarán a tu indicación.",
-          "factsVarDesc": "Hechos extraídos de la base de conocimientos",
+          "docRepo": "Facts extracted from the collection will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "Salida del paso #{step}",
           "title": "Diseña tu flujo de trabajo de múltiples pasos. Las plantillas de indicaciones se usarán para ejecutar cada paso. Puedes incluir \"variables\" que serán sustituidas por los valores proporcionados por el usuario cuando se ejecute el agente. Usa el formato {'{'}{'{'}nombre:descripción:valor{'}'}{'}'} para definir una variable (la descripción guiará al usuario cuando se le pida un valor). Tanto la descripción como el valor predeterminado son opcionales."
         },
@@ -414,7 +414,8 @@
       "last7days": "Últimos 7 días",
       "today": "Hoy",
       "yesterday": "Ayer"
-    }
+    },
+    "title": "Conversations"
   },
   "commands": {
     "commands": {
@@ -738,23 +739,24 @@
       "title": "Valores predeterminados de la base de conocimientos"
     },
     "create": {
-      "embeddingWarning": "el modelo de incrustación no se puede cambiar una vez creada la base de conocimientos",
-      "title": "Crear base de conocimientos"
+      "embeddingWarning": "embedding model cannot be changed once collection is created",
+      "title": "New Collection"
+    },
+    "empty": {
+      "create": "Add some knowledge",
+      "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
+      "title": "Welcome to the Knowledge Base"
     },
     "list": {
-      "clickToCreate": "Haga clic en el botón + para crear uno.",
       "documentsCount": "No hay documentos|1 documento|{count} documentos",
-      "noRepositories": "Aún no tienes bases de conocimientos.",
-      "title": "Bases de Conocimiento",
+      "title": "Knowledge Base",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
-        "create": "@:{'docRepo.create.title'}",
-        "delete": "Eliminar base de conocimientos",
-        "edit": "Editar base de conocimientos"
+        "delete": "Delete collection"
       }
     },
     "view": {
-      "noDocuments": "Aún no tienes documentos. Haz clic en los iconos de arriba para añadir documentos o carpetas.",
+      "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "Agregar archivos",
@@ -1929,8 +1931,8 @@
       "tooltip": "Dictar"
     },
     "docRepos": {
-      "none": "No hay bases de conocimientos disponibles. ¿Quieres crear una ahora?",
-      "tooltip": "Conectar a la base de conocimientos"
+      "none": "No collection available. Do you want to create one now?",
+      "tooltip": "Connect to collection"
     },
     "experts": {
       "clear": "Eliminar experto",
@@ -2407,6 +2409,9 @@
         "threeSeconds": "3 segundos",
         "twoSeconds": "2 segundos"
       },
+      "soniox": {
+        "cleanup": "Auto-delete transcriptions after completion"
+      },
       "spokenLanguage": "Idioma hablado",
       "tabs": {
         "speechToText": "Texto a voz",
@@ -2519,6 +2524,18 @@
       "darwin": "Puedes activar Witsy desde el icono de la pluma en la barra de menú.",
       "linux": "Puedes activar Witsy desde el icono de la pluma en la barra de menú.",
       "windows": "Puedes activar Witsy desde el icono de la pluma en la bandeja del sistema."
+    }
+  },
+  "workspace": {
+    "editor": {
+      "color": "Color",
+      "create": "Create New Workspace",
+      "createDescription": "Create a new workspace to organize your models, chats and agents.",
+      "edit": "Edit Workspace",
+      "editDescription": "Edit the details of your workspace.",
+      "icon": "Icon",
+      "name": "Name",
+      "namePlaceholder": "Enter workspace name"
     }
   }
 }
