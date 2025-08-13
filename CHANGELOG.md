@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Mistral vision does not work (https://github.com/nbonamy/witsy/issues/382)
 - PDF webpage content not extracted )https://github.com/nbonamy/witsy/issues/383)
 - Add a copy button for the user part of the conversation too (https://github.com/nbonamy/witsy/issues/388)
+- Hover selection highlight is smooshed, not centered (https://github.com/nbonamy/witsy/issues/390)
 
 ### Removed
 - N/A
