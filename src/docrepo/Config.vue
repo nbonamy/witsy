@@ -63,10 +63,6 @@ import { t } from '../services/i18n'
 import ModalDialog from '../components/ModalDialog.vue'
 import defaultSettings from '../../defaults/settings.json'
 
-defineOptions({
-  name: 'Config'
-})
-
 const dialog = ref(null)
 const maxDocumentSizeMB = ref(null)
 const chunkSize = ref(null)
@@ -76,6 +72,11 @@ const relevanceCutOff = ref(null)
 
 onMounted(() => {
 })
+
+const show = () => {
+  load()
+  dialog.value?.show()
+}
 
 const close = () => {
   dialog.value.close()
@@ -111,13 +112,7 @@ const onCancel = () => {
   close()
 }
 
-defineExpose({
-  show: () => {
-    load()
-    dialog.value.show()
-  },
-  close,
-})
+defineExpose({ show, close })
 
 </script>
 

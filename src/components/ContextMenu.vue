@@ -214,7 +214,6 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
 <style scoped>
 
 .context-menu {
-  -webkit-app-region: no-drag;
   position: absolute;
   background: var(--context-menu-bg-color);
   border: 1px solid var(--context-menu-border-color);

@@ -5,6 +5,9 @@
   flex-direction: row;
   align-items: center;
   gap: 0.25rem;
+  button {
+    flex-shrink: 0;
+  }
 }
 
 .form {

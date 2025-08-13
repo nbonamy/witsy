@@ -171,7 +171,7 @@ const onOnboardingDone = () => {
   padding-top: var(--window-toolbar-height);
   height: calc(100vh - var(--window-toolbar-height));
 
-  > * {
+  &:deep() * {
     -webkit-app-region: no-drag;
   }
 }

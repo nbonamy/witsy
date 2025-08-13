@@ -1,5 +1,5 @@
 <template>
-  <Empty v-if="!docRepos?.length && !selectedRepo && mode !== 'create'" @click="onCreate"/>
+  <Empty v-if="!docRepos?.length && !selectedRepo" @click="onCreate"/>
   <div v-else class="docrepo split-pane" v-bind="$attrs">
     <div class="sp-sidebar">
       <header>
@@ -14,10 +14,7 @@
       </footer>
     </div>
     <div class="sp-main">
-      <header v-if="mode === 'create'">
-        <div class="title">{{ t('docRepo.create.title') }}</div>
-      </header>
-      <header v-else-if="mode === 'view'">
+      <header v-if="mode === 'view'">
         <div class="title">{{ selectedRepo?.name }}</div>
         <BIconTrash 
           class="icon delete" 
@@ -26,10 +23,10 @@
         />
       </header>
       <View :selectedRepo="selectedRepo" @rename="onChangeRepoName" v-if="mode === 'view'"/>
-      <Create @cancel="onCreateCancel" @save="onCreateSave" v-if="mode === 'create'" class="editor" />
     </div>
     <Config ref="configDialog" />
   </div>
+  <Create ref="createDialog" @save="onCreateSave" />
 </template>
 
 <script setup lang="ts">
@@ -49,13 +46,13 @@ import Empty from '../docrepo/Empty.vue'
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
-type DocRepoMode = 'list' | 'view' | 'create'
+type DocRepoMode = 'list' | 'view'
 
 const mode = ref<DocRepoMode>('list')
 const docRepos = ref(null)
 const selectedRepo = ref<DocumentBase | null>(null)
 const configDialog = ref(null)
-
+const createDialog = ref(null)
 
 onMounted(async () => {
   window.api.on('docrepo-modified', loadDocRepos)
@@ -87,12 +84,7 @@ const selectRepo = (repo: DocumentBase | null) => {
 }
 
 const onCreate = async () => {
-  selectedRepo.value = null
-  mode.value = 'create'
-}
-
-const onCreateCancel = () => {
-  selectRepo(null)
+  createDialog.value?.show()
 }
 
 const onCreateSave = (id: string) => {
