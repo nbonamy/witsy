@@ -109,7 +109,8 @@ export const DOCREPO = {
   REMOVE_DOCUMENT: 'docrepo-remove-document',
   QUERY: 'docrepo-query',
   IS_EMBEDDING_AVAILABLE: 'docrepo-is-embedding-available',
-  GET_CURRENT_QUEUE_ITEM: 'docrepo-get-current-queue-item'
+  GET_CURRENT_QUEUE_ITEM: 'docrepo-get-current-queue-item',
+  IS_SOURCE_SUPPORTED: 'docrepo-is-source-supported'
 } as const;
 
 export const AUTOMATION = {

@@ -5,8 +5,10 @@ import { notifyBrowserWindows } from '../main/window'
 import { docrepoFilePath } from './utils'
 import DocumentBaseImpl from './docbase'
 import DocumentSourceImpl from './docsource'
-import { v4 as uuidv4 } from 'uuid'
 import fs from 'fs'
+import { loadSettings } from '../main/config'
+import { Configuration } from 'types/config'
+import Loader from './loader'
 
 export default class DocumentRepository {
 
@@ -145,7 +147,7 @@ export default class DocumentRepository {
   async createDocBase(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): Promise<string> {
 
     // now create the base
-    const base = new DocumentBaseImpl(this.app, uuidv4(), title, embeddingEngine, embeddingModel, workspaceId)
+    const base = new DocumentBaseImpl(this.app, crypto.randomUUID(), title, embeddingEngine, embeddingModel, workspaceId)
     await base.create()
     this.contents.push(base)
 
@@ -215,7 +217,7 @@ export default class DocumentRepository {
     console.log('[rag] Adding document', origin)
     let document: DocumentSourceImpl = base.documents.find(d => d.origin == origin)
     if (!document) {
-      document = new DocumentSourceImpl(uuidv4(), type, origin, title)
+      document = new DocumentSourceImpl(crypto.randomUUID(), type, origin, title)
     }
 
     // add to queue
@@ -244,7 +246,7 @@ export default class DocumentRepository {
     console.log('[rag] Adding child document', origin, 'to parent', parentDoc.origin)
     let childDoc = parentDoc.items.find(item => item.origin === origin)
     if (!childDoc) {
-      childDoc = new DocumentSourceImpl(uuidv4(), type, origin)
+      childDoc = new DocumentSourceImpl(crypto.randomUUID(), type, origin)
       // Don't add to parent's items yet - wait for successful processing
     }
 
@@ -446,6 +448,17 @@ export default class DocumentRepository {
     // not found
     return null
 
+  }
+
+  isSourceSupported(type: SourceType, origin: string): boolean {
+    try {
+      const config: Configuration = loadSettings(this.app)
+      const loader = new Loader(config)
+      return loader.isParseable(type, origin)
+    } catch (error) {
+      console.error('[rag] Error checking if file is supported:', error)
+      return false
+    }
   }
 
   async scanForUpdates(callback?: () => void): Promise<void> {

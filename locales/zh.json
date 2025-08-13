@@ -28,6 +28,7 @@
       "doNotClose": "不要关闭",
       "unsavedChanges": "您有未保存的更改。如果您关闭此窗口，您的工作将丢失。"
     },
+    "content": "Content",
     "continue": "继续",
     "copied": "已复制",
     "copy": "复制",
@@ -46,7 +47,6 @@
     "documents": "文档",
     "done": "完成！",
     "edit": "编辑",
-    "embeddings": "嵌入",
     "enabled": "已启用",
     "error": "错误！",
     "errorCopyClipboard": "复制文本到剪贴板时发生错误。",
@@ -58,7 +58,6 @@
       "remove": "从收藏夹中移除"
     },
     "filename": "文件名",
-    "files": "文件",
     "fork": "分叉",
     "high": "高",
     "icon": "图标",
@@ -105,6 +104,7 @@
     "new": "新建",
     "newChat": "New Conversation",
     "no": "否",
+    "notes": "Notes",
     "ok": "确定",
     "path": "路径",
     "pick": "选择",
@@ -157,6 +157,7 @@
       "add": "添加到字典"
     },
     "stop": "停止",
+    "title": "Title",
     "tools": "工具",
     "tryAgain": "请再试一次。",
     "type": "类型",
@@ -766,6 +767,16 @@
       "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
       "title": "Welcome to the Knowledge Base"
     },
+    "file": {
+      "error": {
+        "formatNotSupported": {
+          "title": "File format not supported"
+        }
+      },
+      "help": {
+        "formats": "Add text files (including PDF and Microsoft Office documents)"
+      }
+    },
     "list": {
       "documentsCount": "无文档|1 个文档|{count} 个文档",
       "title": "Knowledge Base",
@@ -774,15 +785,23 @@
         "delete": "Delete collection"
       }
     },
+    "note": {
+      "add": "Add Note",
+      "create": {
+        "title": "New Note"
+      },
+      "edit": {
+        "title": "Edit Note"
+      },
+      "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
-      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "addFile": "添加文件",
         "addFolder": "添加文件夹",
         "embeddingNotReady": "嵌入模型不可用",
         "openInExplorer": "在访达中打开",
-        "removeDocument": "移除文档",
         "viewContents": "查看文件夹内容"
       }
     }
@@ -2243,7 +2262,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "添加自定义服务器…",
+      "addCustomServer": "Add server",
       "confirmDelete": "你确定要删除这个服务器吗？",
       "connectedToServers": "已连接到 {count} 个 MCP 服务器",
       "copyInstallCommand": "你可以将安装命令复制到剪贴板，并在终端中尝试运行。",
@@ -2256,13 +2275,13 @@
         "errorEmpty": "JSON不能为空。",
         "errorFormat": "解析JSON服务器定义时出错。",
         "errorMultiple": "发现多个服务器。请一次粘贴一个服务器。",
-        "menu": "@:{'settings.mcp.importJson.title'}…",
+        "menu": "@:{'settings.mcp.importJson.title'}",
         "title": "从 JSON 导入"
       },
-      "importSmitheryServer": "导入 Smithery.ai 服务器…",
+      "importSmitheryServer": "Install from Smithery.ai",
       "mcpServers": "MCP 服务器",
       "modelContextProtocol": "模型上下文协议",
-      "noServersFound": "未找到MCP服务器。点击上面的+图标以添加新服务器或刷新列表。",
+      "noServersFound": "No MCP Servers found. Click on the buttons below to add a new server.",
       "noTools": "没有可用工具",
       "retryWithApiKey": "安装此服务器似乎需要一个 API 密钥。您想用您的 API 密钥重试吗？否则您可以复制命令并在终端中尝试。",
       "serverLogs": "MCP 服务器日志",
@@ -2271,7 +2290,6 @@
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
       "tooltips": {
-        "addServer": "添加新的MCP服务器",
         "deleteServer": "删除服务器",
         "editServer": "编辑服务器",
         "refreshServers": "刷新MCP服务器列表",

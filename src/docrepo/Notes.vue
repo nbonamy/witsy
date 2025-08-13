@@ -26,7 +26,7 @@
             />
             <BIconTrash 
               class="icon remove" 
-              v-tooltip="{ text: t('docRepo.view.tooltips.removeDocument'), position: 'left' }"
+              v-tooltip="{ text: t('common.delete'), position: 'left' }"
               @click="onDelNote(note)" 
             />
           </div>
@@ -175,17 +175,6 @@ const onDelNote = (note: DocumentSource) => {
 
 .spinner {
   margin-right: 1rem;
-}
-
-:deep(.note-content) {
-  max-height: 300px;
-  overflow-y: auto;
-  padding: 1rem;
-  background-color: var(--control-bg-color);
-  border-radius: 0.5rem;
-  text-align: left;
-  white-space: pre-wrap;
-  font-family: ui-monospace, 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
 }
 
 </style>

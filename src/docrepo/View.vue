@@ -83,38 +83,37 @@ main {
 
     gap: 0.25rem;
 
-    .embeddings input {
-      background-color: var(--control-bg-color);
-      outline: none;
-      border: none;
-    }
+    .embeddings {
 
-    .info {
-      
       align-self: flex-start;
-      border: 1px solid var(--control-border-color);
-      background-color: var(--control-disabled-bg-color);
-      border-radius: 0.5rem;
-      padding: 0.75rem 1.25rem;
+      
+      .info {
+        
+        border: 1px solid var(--control-border-color);
+        background-color: var(--control-disabled-bg-color);
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.25rem;
 
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
 
-      .engine {
-        width: 1.25rem;
-        height: 1.25rem;
+        .engine {
+          width: 1.25rem;
+          height: 1.25rem;
+        }
+
+        .model {
+          font-size: 11.5pt;
+          color: var(--faded-text-color);
+        }
       }
 
-      .model {
-        font-size: 11.5pt;
-        color: var(--faded-text-color);
+      .warning {
+        color: red;
+        margin-left: 4px;
       }
-    }
 
-    .warning {
-      color: red;
-      margin-left: 4px;
     }
 
   }

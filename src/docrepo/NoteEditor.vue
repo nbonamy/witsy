@@ -10,7 +10,7 @@
       </div>
       <div class="form-field content">
         <label>{{ t('common.content') }}</label>
-        <textarea v-model="content" rows="6" required></textarea>
+        <textarea v-model="content" required></textarea>
       </div>
     </template>
     <template #footer>
@@ -105,6 +105,11 @@ defineExpose({
 #note-editor .swal2-popup {
   max-width: 28rem;
   width: 28rem;
+
+  textarea {
+    flex: 1 0 10lh;
+    resize: none;
+  }
 }
 
 </style>

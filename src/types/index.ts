@@ -445,8 +445,9 @@ declare global {
         disconnect(): void
         isEmbeddingAvailable(engine: string, model: string): boolean
         create(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): string
-        rename(id: string, title: string): void
-        delete(id: string): void
+        rename(baseId: string, title: string): void
+        delete(baseId: string): void
+        isSourceSupported(type: SourceType, origin: string): boolean
         addDocument(id: string, type: SourceType, origin: string, title?: string): Promise<void>
         removeDocument(id: string, docId: string): Promise<boolean>
         query(id: string, text: string): Promise<DocRepoQueryResponseItem[]>
