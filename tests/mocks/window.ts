@@ -506,6 +506,12 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     backup: {
       export: vi.fn(() => true),
       import: vi.fn(() => true),
+    },
+    workspace: {
+      list: vi.fn(() => []),
+      load: vi.fn(() => null),
+      save: vi.fn(() => true),
+      delete: vi.fn(() => true),
     }
   }
 

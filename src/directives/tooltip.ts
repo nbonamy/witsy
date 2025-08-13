@@ -40,11 +40,16 @@ const getTooltipContainer = (el: HTMLElement): { container: HTMLElement, needsWr
     return { container: el, needsWrapper: false }
   }
 
+  let display
+  try {
+    display = getComputedStyle(el).display
+  } catch { /* empty */ }
+
   // Create wrapper for SVG or other elements that can't have children
   const wrapper = document.createElement('div')
   wrapper.style.cssText = `
     position: relative;
-    display: ${getComputedStyle(el)?.display} ?? 'block' };
+    display: ${display || 'inline-block'};
   `
   
   // Replace element with wrapper containing the element

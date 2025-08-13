@@ -31,6 +31,7 @@ beforeAll(() => {
   useBrowserMock()
   store.loadSettings()
   store.load = () => {}
+  store.isFeatureEnabled = (feature: string) => feature !== 'workspaces'
     
   // wrapper
   wrapper = mount(Settings, { ...stubTeleport })
