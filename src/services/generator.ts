@@ -26,6 +26,7 @@ export type GenerationResult =
   'quota_exceeded' |
   'context_too_long' |
   'invalid_model' |
+  'invalid_budget' |
   'function_description_too_long' |
   'function_call_not_supported' |
   'streaming_not_supported' |
@@ -246,6 +247,25 @@ export default class Generator {
           console.error('Provider reports invalid model:', status, message)
           response.setText(t('generator.errors.invalidModel'))
           rc = 'invalid_model'
+
+        // thinking cannot be disabled
+        } else if ([400].includes(status) && message.includes('only works in thinking mode')) {
+          console.error('Invalid budget:', status, message)
+          response.setText(t('generator.errors.onlyThinkingMode'))
+          rc = 'invalid_budget'
+
+        // invalid budget
+        } else if ([400].includes(status) && message.includes('thinking budget')) {
+          console.error('Invalid budget:', status, message)
+          const match = message.match(/between (\d*) and (\d*)/)
+          if (match) {
+            const min = parseInt(match[1], 10)
+            const max = parseInt(match[2], 10)
+            response.setText(t('generator.errors.invalidBudgetKnown', { min, max }))
+          } else {
+            response.setText(t('generator.errors.invalidBudgetUnknown'))
+          }
+          rc = 'invalid_budget'
 
         // final error: depends if we already have some content and if plugins are enabled
         } else {
