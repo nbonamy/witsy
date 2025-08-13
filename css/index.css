@@ -107,7 +107,7 @@
   --editor-body-bg-color: var(--background-color);
 
   --tabs-header-normal-text-color: #555;
-  --tabs-header-selected-bg-color: #e1e1e1;
+  --tabs-header-selected-bg-color: #f4f4f4;
   --tabs-header-selected-text-color: var(--text-color);
 
   --context-menu-bg-color: var(--background-color);
