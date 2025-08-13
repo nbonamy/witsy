@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Artifacts instructions option with specific display mode
+- Show the model that was used for each response (https://github.com/nbonamy/witsy/issues/387)
 
 ### Changed
 - N/A
