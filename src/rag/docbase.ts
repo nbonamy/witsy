@@ -71,14 +71,14 @@ export default class DocumentBaseImpl {
     }
   }
 
-  async addDocumentSource(uuid: string, type: SourceType, url: string, callback: VoidFunction): Promise<string> {
+  async addDocumentSource(uuid: string, type: SourceType, url: string, title?: string, callback?: VoidFunction): Promise<string> {
 
     // check existing
     let source = this.documents.find(d => d.uuid === uuid)
     if (source) {
       await this.deleteDocumentSource(uuid)
     } else {
-      source = new DocumentSourceImpl(uuid, type, url)
+      source = new DocumentSourceImpl(uuid, type, url, title)
     }
 
     // add if
@@ -205,7 +205,7 @@ export default class DocumentBaseImpl {
         await this.db.insert(source.uuid, batch[i], embeddings[i], {
           uuid: source.uuid,
           type: source.type,
-          title: source.getTitle(),
+          title: source.title,
           url: source.url
         })
         if (++transactionSize === 1000) {

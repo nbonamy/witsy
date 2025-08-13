@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 
+import { ac } from 'vitest/dist/chunks/reporters.d.DG9VKi4m'
 import { PropType, computed, nextTick, ref } from 'vue'
 
 export type DialogType = 'alert' | 'window'
@@ -133,6 +134,10 @@ const onKeyDown = (e: KeyboardEvent) => {
     e.preventDefault()
     close()
   } else if (e.key === 'Enter') {
+    const activeElement = document.activeElement
+    if (activeElement && activeElement.tagName === 'TEXTAREA' && !activeElement.classList.contains('text-textarea')) {
+      return
+    }
     e.preventDefault()
     emit('save')
   }

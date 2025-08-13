@@ -20,6 +20,7 @@
       </div>
     </div>
     <Files v-if="selectedRepo" :selectedRepo="selectedRepo" />
+    <Notes v-if="selectedRepo" :selectedRepo="selectedRepo" />
   </main>
 </template>
 
@@ -30,6 +31,7 @@ import { t } from '../services/i18n'
 import { togglePanel } from '../composables/panel'
 import EngineLogo from '../components/EngineLogo.vue'
 import Files from './Files.vue'
+import Notes from './Notes.vue'
 
 // props
 const props = defineProps<{

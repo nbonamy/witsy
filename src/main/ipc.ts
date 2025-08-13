@@ -527,24 +527,25 @@ export const installIpc = (
     }
   });
 
-  ipcMain.on(IPC.DOCREPO.ADD_DOCUMENT, async (_, payload) => {
+  ipcMain.handle(IPC.DOCREPO.ADD_DOCUMENT, async (_, payload) => {
     try {
-      const { baseId, type, url } = payload;
-      await docRepo.addDocumentSource(baseId, type, url, true);
+      const { baseId, type, origin, title } = payload;
+      await docRepo.addDocumentSource(baseId, type, origin, true, title);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   });
 
-  ipcMain.on(IPC.DOCREPO.REMOVE_DOCUMENT, async (event, payload) => {
+  ipcMain.handle(IPC.DOCREPO.REMOVE_DOCUMENT, async (_, payload) => {
     try {
       const { baseId, docId } = payload;
       console.log('docrepo-remove-document', baseId, docId);
       await docRepo.removeDocumentSource(baseId, docId);
-      event.returnValue = true
+      return true;
     } catch (error) {
       console.error(error);
-      event.returnValue = false
+      return false;
     }
   });
 

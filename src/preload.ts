@@ -6,7 +6,7 @@ import { Command, ComputerAction, Expert, ExternalApp, anyDict, strDict, Network
 import { WorkspaceHeader, Workspace } from './types/workspace';
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './types/file';
 import { Configuration } from './types/config';
-import { DocRepoQueryResponseItem, DocumentQueueItem } from './types/rag';
+import { DocRepoQueryResponseItem, DocumentQueueItem, SourceType } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
 import { McpServer, McpStatus, McpTool } from './types/mcp';
 import { ListDirectoryResponse } from './types/filesystem';
@@ -162,8 +162,8 @@ contextBridge.exposeInMainWorld(
       create(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): string { return ipcRenderer.sendSync(IPC.DOCREPO.CREATE, { workspaceId, title, embeddingEngine, embeddingModel }) },
       rename(baseId: string, title: string): void { return ipcRenderer.sendSync(IPC.DOCREPO.RENAME, { baseId, title }) },
       delete(baseId: string): void { return ipcRenderer.sendSync(IPC.DOCREPO.DELETE, baseId) },
-      addDocument(baseId: string, type: string, url: string): void { return ipcRenderer.send(IPC.DOCREPO.ADD_DOCUMENT, { baseId, type, url }) },
-      removeDocument(baseId: string, docId: string): void { return ipcRenderer.send(IPC.DOCREPO.REMOVE_DOCUMENT, { baseId, docId }) },
+      addDocument(baseId: string, type: SourceType, origin: string, title?: string): Promise<void> { return ipcRenderer.invoke(IPC.DOCREPO.ADD_DOCUMENT, { baseId, type, origin, title }) },
+      removeDocument(baseId: string, docId: string): Promise<boolean> { return ipcRenderer.invoke(IPC.DOCREPO.REMOVE_DOCUMENT, { baseId, docId }) },
       query(baseId: string, text: string): Promise<DocRepoQueryResponseItem[]> { return ipcRenderer.invoke(IPC.DOCREPO.QUERY, { baseId, text }) },
       isEmbeddingAvailable(engine: string, model: string): boolean { return ipcRenderer.sendSync(IPC.DOCREPO.IS_EMBEDDING_AVAILABLE, { engine, model }) },
       getCurrentQueueItem(): Promise<DocumentQueueItem|null> { return ipcRenderer.invoke(IPC.DOCREPO.GET_CURRENT_QUEUE_ITEM) },

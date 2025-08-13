@@ -51,6 +51,7 @@ const mockDocRepo = {
   addChildDocumentSource: vi.fn().mockResolvedValue('mock-child-doc-id'),
   removeDocumentSource: vi.fn().mockResolvedValue(undefined),
   removeChildDocumentSource: vi.fn().mockResolvedValue(undefined),
+  getDocumentSource: vi.fn().mockReturnValue(undefined),
   addListener: vi.fn(),
   removeListener: vi.fn(),
 }
@@ -325,22 +326,15 @@ test('DocMonitor registers and unregisters as listener', () => {
 test('DocMonitor onDocumentSourceAdded creates watcher', () => {
   const monitor = new DocumentMonitor(app, mockDocRepo as any)
   vi.mocked(fs.existsSync).mockReturnValue(true)
-  
-  monitor.onDocumentSourceAdded('base-id', 'doc-id', 'file', '/path/to/newfile.txt')
-  
+  monitor.onDocumentSourceAdded(new DocumentSourceImpl('doc-id', 'file', '/path/to/newfile.txt'))
   expect(vi.mocked(chokidarWatch)).toHaveBeenCalledWith('/path/to/newfile.txt', expect.any(Object))
 })
 
 test('DocMonitor onDocumentSourceRemoved removes watcher', () => {
   const monitor = new DocumentMonitor(app, mockDocRepo as any)
   vi.mocked(fs.existsSync).mockReturnValue(true)
-  
-  // First add a watcher
-  monitor.onDocumentSourceAdded('base-id', 'doc-id', 'file', '/path/to/file.txt')
-  
-  // Then remove it
-  monitor.onDocumentSourceRemoved('base-id', 'doc-id', '/path/to/file.txt')
-  
+  monitor.onDocumentSourceAdded(new DocumentSourceImpl('doc-id', 'file', '/path/to/file.txt'))
+  monitor.onDocumentSourceRemoved('/path/to/file.txt')
   expect(mockWatcher.close).toHaveBeenCalled()
 })
 

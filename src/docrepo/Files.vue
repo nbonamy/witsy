@@ -9,8 +9,8 @@
       <Spinner class="large" v-if="loading" />
       <div class="icon" @click="togglePanel"><BIconChevronDown /></div>
     </div>
-    <div class="panel-body" v-if="selectedRepo.documents.length">
-      <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
+    <div class="panel-body" v-if="files.length">
+      <template v-for="doc in files" :key="doc.uuid">
         <div class="panel-item">
           <div class="icon leading"><Component :is="docIcon(doc)" /></div>
           <div class="info">
@@ -46,7 +46,7 @@
       {{ t('docRepo.view.noDocuments') }}
     </div>
     <div class="panel-footer">
-      <button name="addDocs" @click="onAddDocs"><BIconFilePlus /> {{ t('docRepo.view.tooltips.addFile') }}</button>
+      <button name="addDocs" @click="onAddFiles"><BIconFilePlus /> {{ t('docRepo.view.tooltips.addFile') }}</button>
       <button name="addFolder" @click="onAddFolder"><BIconFolderPlus /> {{ t('docRepo.view.tooltips.addFolder') }}</button>
     </div>
     <Folder ref="folderRef" :folder="selectedFolder" @close="selectedFolder = null" />
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { DocumentBase, DocumentSource, DocRepoAddDocResponse, DocumentQueueItem } from '../types/rag'
 import { extensionToMimeType } from 'multi-llm-ts'
 import { filesize } from 'filesize'
@@ -75,12 +75,16 @@ const processingItems = ref<string[]>([])
 const folderRef = ref<InstanceType<typeof Folder> | null>(null)
 const selectedFolder = ref<DocumentSource | null>(null)
 
+const files = computed(() => {
+  return props.selectedRepo.documents.filter(doc => ['file', 'folder'].includes(doc.type))
+})
+
 const docSourceCount = (source: DocumentSource): number => {
   return (source.type === 'folder' ? 0 : 1) + (source.items?.reduce((acc, item) => acc + docSourceCount(item), 0) ?? 0)
 }
 
 const documentCount = (): number => {
-  return props.selectedRepo.documents.reduce((acc, doc) => acc + docSourceCount(doc), 0)
+  return files.value.reduce((acc, doc) => acc + docSourceCount(doc), 0)
 }
 
 onMounted(() => {
@@ -148,30 +152,32 @@ const docIcon = (doc: DocumentSource) => {
   return 'BIconFile'
 }
 
-const docLabel = (doc: DocumentSource) => {
-  if (doc.type === 'folder') {
-    return `${doc.filename} (${doc.items.length} ${t('common.files')})`
-  } else {
-    return doc.filename
-  }
-}
-
-const onAddDocs = () => {
+const onAddFiles = async () => {
   if (!props.selectedRepo) return
   const files = window.api.file.pickFile({ multiselection: true }) as string[]
   if (!files) return
-  for (const file of files) {
-    window.api.docrepo.addDocument(props.selectedRepo.uuid, 'file', file)
-  }
   loading.value = true
+  try {
+    for (const file of files) {
+      await window.api.docrepo.addDocument(props.selectedRepo.uuid, 'file', file)
+    }
+  } catch (error) {
+    console.error('Error adding files:', error)
+    loading.value = false
+  }
 }
 
-const onAddFolder = () => {
+const onAddFolder = async () => {
   if (!props.selectedRepo) return
   const folder = window.api.file.pickDirectory()
   if (!folder) return
-  window.api.docrepo.addDocument(props.selectedRepo.uuid, 'folder', folder)
   loading.value = true
+  try {
+    await window.api.docrepo.addDocument(props.selectedRepo.uuid, 'folder', folder)
+  } catch (error) {
+    console.error('Error adding folder:', error)
+    loading.value = false
+  }
 }
 
 const onDelDoc = (doc: DocumentSource) => {
@@ -181,10 +187,15 @@ const onDelDoc = (doc: DocumentSource) => {
     text: t('common.confirmation.cannotUndo'),
     confirmButtonText: t('common.delete'),
     showCancelButton: true,
-  }).then((result) => {
+  }).then(async (result) => {
     if (result.isConfirmed) {
       loading.value = true
-      window.api.docrepo.removeDocument(props.selectedRepo.uuid, doc.uuid)
+      try {
+        await window.api.docrepo.removeDocument(props.selectedRepo.uuid, doc.uuid)
+      } catch (error) {
+        console.error('Error removing document:', error)
+        loading.value = false
+      }
     }
   })
 }

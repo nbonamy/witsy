@@ -3,7 +3,7 @@ import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAtt
 import { Configuration } from './config'
 import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
-import { DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem } from './rag'
+import { DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
 import { LocalSearchResult } from '../main/search'
 import { McpInstallStatus, McpServer, McpStatus, McpTool } from './mcp'
 import { ToolSelection } from './llm'
@@ -447,8 +447,8 @@ declare global {
         create(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): string
         rename(id: string, title: string): void
         delete(id: string): void
-        addDocument(id: string, type: string, url: string): void
-        removeDocument(id: string, docId: string): void
+        addDocument(id: string, type: SourceType, origin: string, title?: string): Promise<void>
+        removeDocument(id: string, docId: string): Promise<boolean>
         query(id: string, text: string): Promise<DocRepoQueryResponseItem[]>
         getCurrentQueueItem(): Promise<DocumentQueueItem|null>
       },

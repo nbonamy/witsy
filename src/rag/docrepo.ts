@@ -37,15 +37,15 @@ export default class DocumentRepository {
     }
   }
 
-  private notifyDocumentAdded(baseId: string, docId: string, type: SourceType, origin: string): void {
+  private notifyDocumentAdded(docSource: DocumentSourceImpl): void {
     for (const listener of this.listeners) {
-      listener.onDocumentSourceAdded(baseId, docId, type, origin)
+      listener.onDocumentSourceAdded(docSource)
     }
   }
 
-  private notifyDocumentRemoved(baseId: string, docId: string, origin: string): void {
+  private notifyDocumentRemoved(origin: string): void {
     for (const listener of this.listeners) {
-      listener.onDocumentSourceRemoved(baseId, docId, origin)
+      listener.onDocumentSourceRemoved(origin)
     }
   }
 
@@ -206,7 +206,7 @@ export default class DocumentRepository {
 
   }
 
-  async addDocumentSource(baseId: string, type: SourceType, origin: string, fromUserAction: boolean): Promise<string> {
+  async addDocumentSource(baseId: string, type: SourceType, origin: string, fromUserAction: boolean, title?: string): Promise<string> {
 
     // connect
     const base = await this.connect(baseId)
@@ -215,11 +215,11 @@ export default class DocumentRepository {
     console.log('[rag] Adding document', origin)
     let document: DocumentSourceImpl = base.documents.find(d => d.origin == origin)
     if (!document) {
-      document = new DocumentSourceImpl(uuidv4(), type, origin)
+      document = new DocumentSourceImpl(uuidv4(), type, origin, title)
     }
 
     // add to queue
-    this.queue.push({ uuid: document.uuid, baseId, type, origin, operation: 'add', fromUserAction })
+    this.queue.push({ uuid: document.uuid, baseId, type, origin, title, operation: 'add', fromUserAction })
 
     // process
     this.processQueue()
@@ -419,6 +419,35 @@ export default class DocumentRepository {
 
   }
 
+  getDocumentSource(baseId: string, docId: string): DocumentSourceImpl | null {
+
+    // find the base
+    const base = this.contents.find(b => b.uuid === baseId)
+    if (!base) {
+      return null
+    }
+
+    // search in top-level documents
+    const topLevelDoc = base.documents.find(doc => doc.uuid === docId)
+    if (topLevelDoc) {
+      return topLevelDoc
+    }
+
+    // search in nested documents (folder items)
+    for (const doc of base.documents) {
+      if (doc.items && doc.items.length > 0) {
+        const nestedDoc = doc.items.find(item => item.uuid === docId)
+        if (nestedDoc) {
+          return nestedDoc
+        }
+      }
+    }
+
+    // not found
+    return null
+
+  }
+
   async scanForUpdates(callback?: () => void): Promise<void> {
 
     console.log('[rag] Starting offline change detection scan...')
@@ -501,7 +530,7 @@ export default class DocumentRepository {
         // Re-add the document to update its content in the database
         if (modifiedDoc.items && modifiedDoc.items.length > 0) {
           // It's a folder
-          await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, () => this.save())
+          await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, undefined, () => this.save())
         } else {
           // Check if it's a child item
           let isChildItem = false
@@ -518,7 +547,7 @@ export default class DocumentRepository {
           
           if (!isChildItem) {
             // It's a root document
-            await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, () => this.save())
+            await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, undefined, () => this.save())
           }
         }
       } catch (error) {
@@ -538,7 +567,7 @@ export default class DocumentRepository {
         } else {
           // Add as root document
           base.documents.push(addedDoc)
-          await base.addDocumentSource(addedDoc.uuid, addedDoc.type, addedDoc.origin, () => this.save())
+          await base.addDocumentSource(addedDoc.uuid, addedDoc.type, addedDoc.origin, undefined, () => this.save())
         }
       } catch (error) {
         console.error(`[rag] Error adding new document ${addedDoc.origin}:`, error)
@@ -556,29 +585,36 @@ export default class DocumentRepository {
     // set the flag
     this.processing = true
 
-    // empty the queue
-    while (this.queue.length > 0) {
-      const queueItem = this.queue[0]
+    try {
 
-      // get the base
-      const base = await this.connect(queueItem.baseId)
-      if (!base) {
+      // empty the queue
+      while (this.queue.length > 0) {
+        const queueItem = this.queue[0]
+
+        // get the base
+        const base = await this.connect(queueItem.baseId)
+        if (!base) {
+          this.queue.shift()
+          continue
+        }
+
+        // log
+        console.log('[rag] Processing document', queueItem.operation, queueItem.origin)
+
+        // process the document based on operation
+        const error = await this.processQueueItem(queueItem, base)
+
+        // remove item from queue and save
         this.queue.shift()
-        continue
-      }
-
-      // log
-      console.log('[rag] Processing document', queueItem.operation, queueItem.origin)
-
-      // process the document based on operation
-      const error = await this.processQueueItem(queueItem, base)
-
-      // remove item from queue and save
-      this.queue.shift()
-      this.save()
+        this.save()
+        
+        // notify about the result
+        this.notifyQueueItemResult(queueItem, error)
       
-      // notify about the result
-      this.notifyQueueItemResult(queueItem, error)
+      }
+    
+    } catch (error) {
+      console.error('[rag] Error processing document', error)
     }
 
     // done
@@ -626,7 +662,7 @@ export default class DocumentRepository {
       }
       await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
     } else {
-      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, queueItem.title, () => this.save())
     }
   }
 
@@ -645,7 +681,7 @@ export default class DocumentRepository {
     if (queueItem.parentDocId) {
       await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
     } else {
-      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, undefined, () => this.save())
     }
   }
 
@@ -683,7 +719,9 @@ export default class DocumentRepository {
   }
 
   private notifyQueueItemResult(queueItem: DocumentQueueItem, error: Error | null): void {
+    
     if (error) {
+      
       if (queueItem.fromUserAction) {
         const eventName = queueItem.operation === 'delete' ? 'docrepo-del-document-error' : 'docrepo-add-document-error'
         notifyBrowserWindows(eventName, {
@@ -692,7 +730,9 @@ export default class DocumentRepository {
           queueLength: this.queueLength()
         })
       }
+    
     } else {
+    
       const eventName = queueItem.operation === 'delete' ? 'docrepo-del-document-done' : 'docrepo-add-document-done'
       notifyBrowserWindows(eventName, {
         ...queueItem,
@@ -701,9 +741,10 @@ export default class DocumentRepository {
       
       // Notify listeners about document changes
       if (queueItem.operation === 'delete') {
-        this.notifyDocumentRemoved(queueItem.baseId, queueItem.uuid, queueItem.origin)
+        this.notifyDocumentRemoved(queueItem.origin)
       } else {
-        this.notifyDocumentAdded(queueItem.baseId, queueItem.uuid, queueItem.type, queueItem.origin)
+        const docSource = this.getDocumentSource(queueItem.baseId, queueItem.uuid)
+        this.notifyDocumentAdded(docSource)
       }
     }
   }
