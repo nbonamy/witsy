@@ -5,12 +5,14 @@
       class="side-drawer-overlay" 
       :class="{ visible: isVisible }"
       @click="close"
+      @transitionend="onOverlayTransitionEnd"
     ></div>
 
     <!-- Side Drawer -->
     <div 
       class="side-drawer form form-large form-vertical" 
       :class="{ visible: isVisible }"
+      @transitionend="onTransitionEnd"
     >
       <header>
         <label><slot name="header"></slot></label>
@@ -25,14 +27,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-
+import { ref, onMounted } from 'vue'
 
 const emit = defineEmits<{
   close: []
+  closed: []
 }>()
 
+const props = defineProps({
+  autoShow: {
+    type: Boolean,
+    default: true
+  }
+})
+
 const isVisible = ref(false)
+
+onMounted(() => {
+  if (props.autoShow) {
+    requestAnimationFrame(() => {
+      show()
+    })
+  }
+})
 
 const show = () => {
   isVisible.value = true
@@ -41,6 +58,16 @@ const show = () => {
 const close = () => {
   isVisible.value = false
   emit('close')
+}
+
+const onTransitionEnd = () => {
+  if (!isVisible.value) {
+    emit('closed')
+  }
+}
+
+const onOverlayTransitionEnd = () => {
+  // Handle overlay transition end if needed
 }
 
 defineExpose({
@@ -56,9 +83,12 @@ defineExpose({
   right: 0;
   bottom: 0;
   left: 0;
-  display: none;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.3s ease;
+  pointer-events: none;
   &.visible {
-    display: block;
+    background-color: rgba(0, 0, 0, 0.03);
+    pointer-events: all;
   }
 }
 

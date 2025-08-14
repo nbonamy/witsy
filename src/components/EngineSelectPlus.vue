@@ -18,7 +18,7 @@
 
     <template #option="{ option }">
       <div class="engine">
-        <EngineLogo class="logo" :engine="option.value" :grayscale="true" />
+        <EngineLogo class="logo" :engine="option.value" :grayscale="true" :background="true" />
         <span class="label">{{ option.label }}</span>
       </div>
     </template>

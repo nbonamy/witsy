@@ -6,6 +6,7 @@
       </header>
       <main>
         <ul>
+          <li class="separator" v-if="store.isFeatureEnabled('workspaces')">General Settings</li>
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
           <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BIconBox class="icon" /></SettingsTab>
           <SettingsTab class="chat" :title="t('settings.tabs.chat')"><BIconLayoutTextWindowReverse class="icon" /></SettingsTab>
@@ -18,6 +19,10 @@
           <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
           <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><BIconCommand class="icon" /></SettingsTab>
           <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BIconTools class="icon" /></SettingsTab>
+          <template v-if="store.isFeatureEnabled('workspaces')">
+            <li class="separator">Workspace Settings</li>
+            <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
+          </template>
         </ul>
       </main>
   </div>
@@ -26,8 +31,7 @@
       <SettingsLLM ref="settingsLLM" />
       <SettingsChat ref="settingsChat" />
       <SettingsDeepResearch ref="settingsDeepResearch" />
-      <SettingsModels2 ref="settingsModels" v-if="store.isFeatureEnabled('workspaces') "/>
-      <SettingsModels ref="settingsModels" v-else />
+      <SettingsModels ref="settingsModels" />
       <SettingsPlugins ref="settingsPlugins" />
       <SettingsMcp ref="settingsMcp" />
       <SettingsCommands ref="settingsCommands" />
@@ -35,6 +39,9 @@
       <SettingsVoice ref="settingsVoice" />
       <SettingsShortcuts ref="settingsShortcuts" />
       <SettingsAdvanced ref="settingsAdvanced" />
+      <template v-if="store.isFeatureEnabled('workspaces')">
+        <SettingsModels2 ref="settingsModels" />
+      </template>
     </div>
   </div>
 </template>

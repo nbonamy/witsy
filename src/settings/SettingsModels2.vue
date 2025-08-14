@@ -43,17 +43,21 @@
   </div>
 
   <SideModelList 
+    v-if="showOnlinePanelState"
     ref="onlinePanelRef"
     type="online"
     :workspace="workspace"
     @toggle-model="toggleModel"
+    @closed="onOnlinePanelClosed"
   />
 
   <SideModelList 
+    v-if="showLocalPanelState"
     ref="localPanelRef"
     type="local"
     :workspace="workspace"
     @toggle-model="toggleModel"
+    @closed="onLocalPanelClosed"
   />
 
 </template>
@@ -76,6 +80,8 @@ const onlinePanelRef = ref<InstanceType<typeof SideModelList>>()
 const localPanelRef = ref<InstanceType<typeof SideModelList>>()
 
 const workspace = ref<Workspace>(undefined)
+const showOnlinePanelState = ref(false)
+const showLocalPanelState = ref(false)
 
 const onlineModels = computed(() => {
   if (!workspace.value) {
@@ -96,11 +102,19 @@ const load = () => {
 }
 
 const showOnlinePanel = () => {
-  onlinePanelRef.value?.show()
+  showOnlinePanelState.value = true
 }
 
 const showLocalPanel = () => {
-  localPanelRef.value?.show()
+  showLocalPanelState.value = true
+}
+
+const onOnlinePanelClosed = () => {
+  showOnlinePanelState.value = false
+}
+
+const onLocalPanelClosed = () => {
+  showLocalPanelState.value = false
 }
 
 const removeModel = (model: any) => {
