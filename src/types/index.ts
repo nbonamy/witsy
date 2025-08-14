@@ -331,6 +331,8 @@ declare global {
         updateMode(mode: MainWindowMode): void
         setContextMenuContext(id: string): void
         close(): void
+        hideWindowButtons(): void
+        showWindowButtons(): void
       }
       debug: {
         showConsole(): void

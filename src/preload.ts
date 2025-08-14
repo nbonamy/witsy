@@ -44,6 +44,8 @@ contextBridge.exposeInMainWorld(
       updateMode: (mode: MainWindowMode): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.UPDATE_MODE, mode) },
       setContextMenuContext: (id: string): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.SET_CONTEXT_MENU_CONTEXT, id) },
       close: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.CLOSE) },
+      hideWindowButtons: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.HIDE_WINDOW_BUTTONS) },
+      showWindowButtons: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.SHOW_WINDOW_BUTTONS) },
     },
     debug: {
       showConsole: (): void => { return ipcRenderer.send(IPC.DEBUG.SHOW_CONSOLE) },

@@ -1,13 +1,13 @@
 <template>
   <div class="documents panel">
-    <div class="panel-header">
+    <div class="panel-header" @click="togglePanel">
       <label>
         {{ t('common.documents') }}
         <div class="tag info">{{ documentCount() }}</div>
         <div class="subtitle">{{ t('docRepo.file.help.formats') }}</div>
       </label>
       <Spinner class="large" v-if="loading" />
-      <div class="icon" @click="togglePanel"><BIconChevronDown /></div>
+      <div class="icon"><BIconChevronDown /></div>
     </div>
     <div class="panel-body" v-if="files.length">
       <template v-for="doc in files" :key="doc.uuid">

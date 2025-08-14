@@ -78,6 +78,7 @@
         -webkit-app-region: drag;
         display: flex;
         justify-content: flex-end;
+        opacity: 0.7;
         gap: 8px;
       }
 
@@ -167,11 +168,12 @@
         -webkit-app-region: no-drag;
         cursor: pointer;
         text-align: right;
-        width: 16px;
-        height: 16px;
+        width: 1rem;
+        height: 1rem;
         color: var(--chatarea-toolbar-icon-color);
         fill: var(--chatarea-toolbar-icon-color);
         margin-left: auto;
+        opacity: 0.7;
 
         &.disabled {
           opacity: 0.5;
@@ -378,4 +380,51 @@
       }
     }
   }
+}
+
+.fullscreen-drawer .split-pane {
+
+  --drawer-pane-bg-color: rgb(253, 253, 253);
+
+  .sp-sidebar {
+
+    background-color: var(--drawer-pane-bg-color);
+
+    header {
+      background-color: var(--drawer-pane-bg-color);
+      border: none;
+      .title {
+        font-weight: 500;
+        font-size: 15pt;
+      }
+    }
+
+    main {
+      border-right: none;
+    }
+
+  }
+
+  .sp-main {
+
+    header {
+      border: none;
+      gap: 1rem;
+      .title {
+        font-size: 16pt;
+      }
+      &:has(input) {
+        padding-top: 1.105rem;
+        padding-bottom: 1.105rem;
+      }
+      .icon {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
+
+
+
+
+
 }

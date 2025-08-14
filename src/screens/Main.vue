@@ -5,12 +5,12 @@
     <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
     <Chat ref="chat" :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
     <DesignStudio :style="{ display: mode === 'studio' ? 'flex' : 'none' }" />
-    <DocRepos v-if="mode === 'docrepo'" />
     <AgentForge v-if="mode === 'agents'" ref="agents" />
     <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
     <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
   </div>
   <Onboarding v-if="onboard" @close="onOnboardingDone" />
+  <DocRepos v-if="docrepos" @close="onDocReposClose" />
   <Fullscreen window="main" />
 </template>
 
@@ -38,6 +38,7 @@ const chat = ref<typeof Chat>(null)
 const transcribe = ref<typeof Transcribe>(null)
 const realtime = ref<typeof RealtimeChat>(null)
 const onboard = ref(false)
+const docrepos = ref(false)
 
 // init stuff
 store.load()
@@ -113,6 +114,8 @@ const onMode = async (next: MenuBarMode) => {
     mode.value = 'chat'
   } else if (next === 'debug') {
     window.api.debug.showConsole()
+  } else if (next === 'docrepo') {
+    docrepos.value = true
   } else {
     mode.value = next
   }
@@ -155,6 +158,10 @@ const onOnboardingDone = () => {
   store.saveSettings()
 }
 
+const onDocReposClose = () => {
+  docrepos.value = false
+}
+
 </script>
 
 <style>
@@ -170,6 +177,10 @@ const onOnboardingDone = () => {
   -webkit-app-region: drag;
   padding-top: var(--window-toolbar-height);
   height: calc(100vh - var(--window-toolbar-height));
+
+  &:has(~ .fullscreen-drawer.visible) {
+    -webkit-app-region: no-drag;
+  }
 
   &:deep() * {
     -webkit-app-region: no-drag;
