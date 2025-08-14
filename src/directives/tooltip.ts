@@ -31,45 +31,63 @@ const createTooltip = (text: string, position: string = 'right'): HTMLElement =>
   return tooltip
 }
 
-const getTooltipContainer = (el: HTMLElement): { container: HTMLElement, needsWrapper: boolean } => {
-  // Check if element can have children (SVG elements cannot)
-  const isSvg = el.tagName.toLowerCase() === 'svg' || el instanceof SVGElement
-  const canHaveChildren = !isSvg && el.appendChild !== undefined
-  
-  if (canHaveChildren) {
-    return { container: el, needsWrapper: false }
-  }
 
-  let display
-  try {
-    display = getComputedStyle(el).display
-  } catch { /* empty */ }
-
-  // Create wrapper for SVG or other elements that can't have children
-  const wrapper = document.createElement('div')
-  wrapper.style.cssText = `
-    position: relative;
-    display: ${display || 'inline-block'};
-  `
+const calculateTooltipPosition = (el: HTMLElement, position: string = 'right') => {
+  const rect = el.getBoundingClientRect()
+  const scrollX = window.scrollX || document.documentElement.scrollLeft
+  const scrollY = window.scrollY || document.documentElement.scrollTop
   
-  // Replace element with wrapper containing the element
-  const parent = el.parentNode
-  if (parent) {
-    parent.insertBefore(wrapper, el)
-    wrapper.appendChild(el)
+  const x = rect.left + scrollX
+  const y = rect.top + scrollY
+  const width = rect.width
+  const height = rect.height
+  
+  const spacing = 8 // Gap between tooltip and target element
+  
+  switch (position) {
+    case 'above':
+      return { left: x + 'px', bottom: (window.innerHeight - y + spacing) + 'px' }
+    case 'above-right':
+      return { right: (window.innerWidth - x - width) + 'px', bottom: (window.innerHeight - y + spacing) + 'px' }
+    case 'above-left':
+      return { left: x + 'px', bottom: (window.innerHeight - y + spacing) + 'px' }
+    case 'right':
+      return { left: (x + width + spacing) + 'px', top: y + 'px' }
+    case 'left':
+      return { right: (window.innerWidth - x + spacing) + 'px', top: y + 'px' }
+    case 'below-right':
+      return { right: (window.innerWidth - x - width) + 'px', top: (y + height + spacing) + 'px' }
+    case 'below-left':
+      return { left: x + 'px', top: (y + height + spacing) + 'px' }
+    case 'top':
+      return { bottom: (window.innerHeight - y + spacing) + 'px', left: (x + width/2) + 'px', transform: 'translateX(-50%)' }
+    case 'top-left':
+      return { bottom: (window.innerHeight - y + spacing) + 'px', right: (window.innerWidth - x - width/2 - 15) + 'px' }
+    case 'top-right':
+      return { bottom: (window.innerHeight - y + spacing) + 'px', left: (x + width/2 - 5) + 'px' }
+    case 'bottom':
+      return { top: (y + height + spacing) + 'px', left: (x + width/2) + 'px', transform: 'translateX(-50%)' }
+    case 'bottom-left':
+      return { top: (y + height + spacing) + 'px', right: (window.innerWidth - x - width/2 - 15) + 'px' }
+    case 'bottom-right':
+      return { top: (y + height + spacing) + 'px', left: (x + width/2 - 5) + 'px' }
+    case 'below':
+    default:
+      return { left: x + 'px', top: (y + height + spacing) + 'px' }
   }
-  
-  return { container: wrapper, needsWrapper: true }
 }
 
 const showTooltip = (el: HTMLElement) => {
   const state = elementState.get(el)
   if (!state || !state.options.text) return
   
-  const { container } = getTooltipContainer(el)
-  
+  // Create tooltip and teleport to body
   state.tooltipElement = createTooltip(state.options.text, state.options.position)
-  container.appendChild(state.tooltipElement)
+  document.body.appendChild(state.tooltipElement)
+  
+  // Calculate and apply position
+  const position = calculateTooltipPosition(el, state.options.position)
+  Object.assign(state.tooltipElement.style, position)
   
   // Trigger reflow and show
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -108,23 +126,13 @@ export const vTooltip = {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
     const options = parseBindingValue(binding)
     
-    // Check if we need a wrapper and create it
-    // console.log('vTooltip mounted', el, options)
-    const { container, needsWrapper } = getTooltipContainer(el)
-    
     // Initialize element state
     elementState.set(el, {
       options,
       tooltipElement: null,
       hideTimeout: null,
-      wrapper: needsWrapper ? container : null
+      wrapper: null
     })
-    
-    // Ensure container has relative positioning
-    const currentPosition = getComputedStyle(container).position
-    if (currentPosition === 'static') {
-      container.style.position = 'relative'
-    }
     
     const onMouseEnter = () => {
       const state = elementState.get(el)
@@ -174,16 +182,6 @@ export const vTooltip = {
     if (!state) return
     
     hideTooltip(el)
-    
-    // Clean up wrapper if we created one
-    if (state.wrapper) {
-      const parent = state.wrapper.parentNode
-      if (parent) {
-        parent.insertBefore(el, state.wrapper)
-        state.wrapper.remove()
-      }
-    }
-    
     elementState.delete(el)
   }
 }

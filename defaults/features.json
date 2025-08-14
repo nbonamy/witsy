@@ -10,7 +10,7 @@
   "chat": {
     "folders": false,
     "dates": false,
-    "settings": false,
+    "settings": true,
     "temporary": false,
     "exportMarkdown": false,
     "exportPdf": false

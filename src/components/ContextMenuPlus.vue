@@ -20,10 +20,10 @@
       <div class="actions" ref="list">        
         <!-- Show main menu or submenu content -->
         <div v-if="!currentSubmenu">
-          <slot :filter="filter" :selected="selected" :onItemClick="onItemClick" :onItemHover="onItemHover" />
+          <slot :filter="filter" :selected="selected" />
         </div>
         <div v-else>
-          <slot :name="currentSubmenu" :filter="filter" :selected="selected" :onItemClick="onItemClick" :onItemHover="onItemHover" :goBack="goBack" :withFilter="setSubmenuFilter" />
+          <slot :name="currentSubmenu" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
         </div>
       </div>
     </div>
@@ -121,9 +121,10 @@ onMounted(() => {
     })
   }
   
-  // Add chevron icons after content is rendered
+  // Add chevron icons and event listeners after content is rendered
   nextTick(() => {
     addChevronIcons()
+    addEventListeners()
   })
   
   document.addEventListener('keydown', onKeyUp)
@@ -142,10 +143,11 @@ watch(filter, (newFilter) => {
   })
 })
 
-// Watch for content changes to add chevron icons
+// Watch for content changes to add chevron icons and event listeners
 watch([currentSubmenu], () => {
   nextTick(() => {
     addChevronIcons()
+    addEventListeners()
   })
 }, { flush: 'post' })
 
@@ -190,6 +192,32 @@ const addChevronIcons = () => {
       // Add to item
       item.appendChild(clonedChevron)
     }
+  })
+}
+
+const addEventListeners = () => {
+  if (!list.value) return
+  
+  const items = list.value.querySelectorAll('.item')
+  
+  items.forEach((item: HTMLElement) => {
+    // Skip if already has listeners (check for a data attribute we set)
+    if (item.hasAttribute('data-listeners-added')) return
+    
+    // Add hover listener for all items
+    item.addEventListener('mousemove', (event) => {
+      onItemHover(event)
+    })
+    
+    // Add click listener for submenu items
+    if (item.hasAttribute('data-submenu-slot')) {
+      item.addEventListener('click', (event) => {
+        onItemClick(event)
+      })
+    }
+    
+    // Mark as processed
+    item.setAttribute('data-listeners-added', 'true')
   })
 }
 
@@ -363,6 +391,7 @@ defineExpose({
   flex-direction: column;
   margin: 0px !important;
   padding: 0.25rem 0rem;
+  scrollbar-color: var(--scrollbar-thumb-color) var(--control-textarea-bg-color);
 }
 
 .header {

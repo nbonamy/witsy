@@ -4,9 +4,9 @@
     :position="position"
     @close="$emit('close')"
   >
-    <template #default="{ onItemClick, onItemHover }">
+    <template #default>
       <!-- Static menu items -->
-      <div class="item" @click="handleAction('copy')" @mousemove="onItemHover">
+      <div class="item" @click="handleAction('copy')">
         <BIconClipboard class="icon" />
         Copy
       </div>
@@ -14,8 +14,6 @@
       <div 
         class="item" 
         data-submenu-slot="editSubmenu"
-        @click="onItemClick" 
-        @mousemove="onItemHover"
       >
         <BIconPencil class="icon" />
         Edit
@@ -32,8 +30,7 @@
         :key="item.id"
         class="item"
         :data-submenu-slot="item.hasSubmenu ? item.submenuSlot : undefined"
-        @click="item.hasSubmenu ? onItemClick($event) : handleAction(item.id)"
-        @mousemove="onItemHover"
+        @click="item.hasSubmenu ? undefined : handleAction(item.id)"
       >
         <component :is="item.icon" class="icon" />
         {{ item.label }}
@@ -45,45 +42,44 @@
       </div>
       
       <!-- Static item -->
-      <div class="item" @click="handleAction('delete')" @mousemove="onItemHover">
+      <div class="item" @click="handleAction('delete')">
         <BIconTrash class="icon" />
         Delete
       </div>
     </template>
     
     <!-- Static submenu with filter enabled -->
-    <template #editSubmenu="{ onItemHover, withFilter }">
+    <template #editSubmenu="{ withFilter }">
       {{ withFilter(true) }}
-      <div class="item" @click="handleSubmenuAction('undo')" @mousemove="onItemHover">
+      <div class="item" @click="handleSubmenuAction('undo')">
         <BIconArrowCounterclockwise class="icon" />
         Undo
       </div>
-      <div class="item" @click="handleSubmenuAction('redo')" @mousemove="onItemHover">
+      <div class="item" @click="handleSubmenuAction('redo')">
         <BIconArrowClockwise class="icon" />
         Redo
       </div>
       <div class="item separator">
         <hr />
       </div>
-      <div class="item" @click="handleSubmenuAction('cut')" @mousemove="onItemHover">
+      <div class="item" @click="handleSubmenuAction('cut')">
         <BIconScissors class="icon" />
         Cut
       </div>
-      <div class="item" @click="handleSubmenuAction('paste')" @mousemove="onItemHover">
+      <div class="item" @click="handleSubmenuAction('paste')">
         <BIconClipboard2 class="icon" />
         Paste
       </div>
     </template>
     
     <!-- Dynamic submenu: Recent Files with v-for and filter -->
-    <template #recentFilesSubmenu="{ onItemHover, withFilter }">
+    <template #recentFilesSubmenu="{ withFilter }">
       {{ withFilter(true) }}
       <div 
         v-for="file in recentFiles" 
         :key="file.id"
         class="item"
         @click="handleFileAction(file)"
-        @mousemove="onItemHover"
       >
         <BIconFileEarmark class="icon" />
         <div style="flex: 1;">
@@ -94,20 +90,19 @@
       <div class="item separator">
         <hr />
       </div>
-      <div class="item" @click="handleAction('browse')" @mousemove="onItemHover">
+      <div class="item" @click="handleAction('browse')">
         <BIconFolder class="icon" />
         Browse for file...
       </div>
     </template>
     
     <!-- Dynamic submenu: Settings with v-for -->
-    <template #settingsSubmenu="{ onItemHover }">
+    <template #settingsSubmenu>
       <div 
         v-for="setting in settingsCategories" 
         :key="setting.id"
         class="item"
         @click="handleSettingsAction(setting)"
-        @mousemove="onItemHover"
       >
         <component :is="setting.icon" class="icon" />
         {{ setting.label }}
