@@ -26,13 +26,23 @@
           <slot :name="currentSubmenu" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
         </div>
       </div>
+      
+      <!-- Footer section -->
+      <div v-if="hasFooter" class="footer" ref="footer">
+        <div v-if="!currentSubmenu">
+          <slot name="footer" :filter="filter" :selected="selected" />
+        </div>
+        <div v-else>
+          <slot :name="`${currentSubmenu}Footer`" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
+        </div>
+      </div>
     </div>
   </Teleport>
 </template>
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch, useSlots } from 'vue'
 import Overlay from '../components/Overlay.vue'
 import { t } from '../services/i18n'
 
@@ -59,7 +69,9 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
+const $slots = useSlots()
 const list = ref(null)
+const footer = ref(null)
 const filter = ref('')
 const selected = ref(null)
 const currentSubmenu = ref(null)
@@ -78,6 +90,13 @@ const shouldShowCurrentFilter = computed(() => {
 })
 
 const currentSubmenuHasFilter = ref(false)
+
+const hasFooter = computed(() => {
+  if (!currentSubmenu.value) {
+    return !!$slots.footer
+  }
+  return !!$slots[`${currentSubmenu.value}Footer`]
+})
 
 const position = computed(() => {
   if (!anchorElement.value) return { top: '0px', left: '0px' }
@@ -175,27 +194,35 @@ const applyFilter = (filterText: string) => {
 }
 
 const addClasses = () => {
-  if (!list.value) return
-  
-  // Find all elements that should be menu items but don't have the class yet
-  // Look for divs that are likely menu items (have content, click handlers, etc.)
-  const potentialItems = list.value.querySelectorAll('div:not(.item)')
-  
-  potentialItems.forEach((element: HTMLElement) => {
-
-
-
-
-    // Skip wrapper divs and other structural elements
-    if (!element.textContent?.trim() && !element.classList.contains('separator')) return
+  const processItems = (container: HTMLElement) => {
+    if (!container) return
     
-    // Skip if it's a container div (has only other divs as children)
-    const hasOnlyDivChildren = Array.from(element.children).every(child => child.tagName === 'DIV')
-    if (hasOnlyDivChildren && element.children.length > 0) return
+    // Find all elements that should be menu items but don't have the class yet
+    // Look for divs that are likely menu items (have content, click handlers, etc.)
+    const potentialItems = container.querySelectorAll('div:not(.item)')
     
-    // Add the item class to actual menu items
-    element.classList.add('item')
-  })
+    potentialItems.forEach((element: HTMLElement) => {
+      // Skip wrapper divs and other structural elements
+      if (!element.textContent?.trim() && !element.classList.contains('separator')) return
+      
+      // Skip if it's a container div (has only other divs as children)
+      const hasOnlyDivChildren = Array.from(element.children).every(child => child.tagName === 'DIV')
+      if (hasOnlyDivChildren && element.children.length > 0) return
+      
+      // Add the item class to actual menu items
+      element.classList.add('item')
+    })
+  }
+  
+  // Process items in the main actions area
+  if (list.value) {
+    processItems(list.value)
+  }
+  
+  // Process items in the footer area
+  if (footer.value) {
+    processItems(footer.value)
+  }
 }
 
 const addChevronIcons = () => {
@@ -222,29 +249,41 @@ const addChevronIcons = () => {
 }
 
 const addEventListeners = () => {
-  if (!list.value) return
-  
-  const items = list.value.querySelectorAll('.item')
-  
-  items.forEach((item: HTMLElement) => {
-    // Skip if already has listeners (check for a data attribute we set)
-    if (item.hasAttribute('data-listeners-added')) return
+  const processItems = (container: HTMLElement) => {
+    if (!container) return
     
-    // Add hover listener for all items
-    item.addEventListener('mousemove', (event) => {
-      onItemHover(event)
-    })
+    const items = container.querySelectorAll('.item')
     
-    // Add click listener for submenu items
-    if (item.hasAttribute('data-submenu-slot')) {
-      item.addEventListener('click', (event) => {
-        onItemClick(event)
+    items.forEach((item: HTMLElement) => {
+      // Skip if already has listeners (check for a data attribute we set)
+      if (item.hasAttribute('data-listeners-added')) return
+      
+      // Add hover listener for all items
+      item.addEventListener('mousemove', (event) => {
+        onItemHover(event)
       })
-    }
-    
-    // Mark as processed
-    item.setAttribute('data-listeners-added', 'true')
-  })
+      
+      // Add click listener for submenu items
+      if (item.hasAttribute('data-submenu-slot')) {
+        item.addEventListener('click', (event) => {
+          onItemClick(event)
+        })
+      }
+      
+      // Mark as processed
+      item.setAttribute('data-listeners-added', 'true')
+    })
+  }
+  
+  // Process items in the main actions area
+  if (list.value) {
+    processItems(list.value)
+  }
+  
+  // Process items in the footer area
+  if (footer.value) {
+    processItems(footer.value)
+  }
 }
 
 const onOverlay = () => {
@@ -326,7 +365,11 @@ const onKeyUp = (event: KeyboardEvent) => {
 const navigateVertical = (down: boolean, listElement: HTMLElement, selectedRef: any) => {
   if (!listElement) return
   
-  const items = Array.from(listElement.querySelectorAll('.item:not(.disabled):not(.separator)')) as HTMLElement[]
+  // Get items from both main actions and footer
+  const mainItems = Array.from(listElement.querySelectorAll('.item:not(.disabled):not(.separator)')) as HTMLElement[]
+  const footerItems = footer.value ? Array.from(footer.value.querySelectorAll('.item:not(.disabled):not(.separator)')) as HTMLElement[] : []
+  
+  const items = [...mainItems, ...footerItems]
   if (items.length === 0) return
   
   const currentIndex = selectedRef.value ? items.indexOf(selectedRef.value) : -1
@@ -526,6 +569,16 @@ defineExpose({
   align-items: center;
   opacity: 0.6;
   color: var(--context-menu-text-color);
+}
+
+.footer {
+  border-top: 1px solid var(--context-menu-border-color);
+  padding: 0.25rem 0rem;
+}
+
+/* Hide footer border when actions has no visible items */
+.actions:not(:has(.item:not([style*="display: none"]))) + .footer {
+  border-top: none;
 }
 
 </style>
