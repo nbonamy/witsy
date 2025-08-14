@@ -40,9 +40,9 @@
       <div v-for="expert in expertsMenuItems" :key="expert.id" @click="handleExpertClick(expert.id)" >
         {{ expert.name }}
       </div>
-      <template v-if="expertsMenuItems.length > 0">
-        <div class="separator"><hr></div>
-      </template>
+    </template>
+
+    <template #expertsSubmenuFooter>
       <div @click="handleManageExperts">
         <BIconPlusLg class="icon" /> {{ t('prompt.menu.experts.manage') }}
       </div>
@@ -53,9 +53,9 @@
       <div v-for="docRepo in docReposMenuItems" :key="docRepo.uuid" @click="handleDocRepoClick(docRepo.uuid)" >
         <BIconDatabase class="icon" /> {{ docRepo.name }}
       </div>
-      <template v-if="docReposMenuItems.length > 0">
-        <div class="separator"><hr></div>
-      </template>
+    </template>
+
+    <template #docReposSubmenuFooter>
       <div @click="handleManageDocRepo">
         <BIconGear class="icon" /> {{ t('prompt.menu.docRepos.manage') }}
       </div>
@@ -83,7 +83,7 @@ import { store } from '../services/store'
 import { t, expertI18n } from '../services/i18n'
 import { DocumentBase } from '../types/rag'
 import { Expert } from '../types/index'
-import { BIconLightbulb, BIconPlusLg } from 'bootstrap-icons-vue'
+import { BIconLightbulb, BIconPlusLg, BIconDatabase, BIconGear, BIconMortarboard, BIconFeather, BIconBinoculars, BIconPaperclip } from 'bootstrap-icons-vue'
 
 // Props
 interface Props {
