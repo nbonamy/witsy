@@ -47,7 +47,7 @@
       
       <PromptFeature
         v-if="docrepo"
-        :icon="BIconDatabase"
+        :icon="BIconLightbulb"
         :label="getActiveDocRepoName()"
         @clear="clearDocRepo"
       />
@@ -94,7 +94,7 @@ import { StreamingChunk } from '../voice/stt'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { expertI18n, commandI18n, t, i18nInstructions, getLlmLocale, setLlmLocale } from '../services/i18n'
-import { BIconPlusLg, BIconMortarboard, BIconDatabase, BIconTerminal, BIconBinoculars } from 'bootstrap-icons-vue'
+import { BIconPlusLg, BIconMortarboard, BIconLightbulb, BIconBinoculars } from 'bootstrap-icons-vue'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'

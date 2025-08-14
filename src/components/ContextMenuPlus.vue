@@ -440,7 +440,7 @@ defineExpose({
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
   max-height: 400px;
   max-width: 270px;
-  border-radius: 0.5rem;
+  border-radius: 0.375rem;
   overflow: hidden;
   z-index: 50;
   padding: 0;
