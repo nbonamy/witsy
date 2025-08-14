@@ -121,8 +121,9 @@ onMounted(() => {
     })
   }
   
-  // Add chevron icons and event listeners after content is rendered
+  // Add classes, chevron icons and event listeners after content is rendered
   nextTick(() => {
+    addClasses()
     addChevronIcons()
     addEventListeners()
   })
@@ -143,9 +144,10 @@ watch(filter, (newFilter) => {
   })
 })
 
-// Watch for content changes to add chevron icons and event listeners
+// Watch for content changes to add classes, chevron icons and event listeners
 watch([currentSubmenu], () => {
   nextTick(() => {
+    addClasses()
     addChevronIcons()
     addEventListeners()
   })
@@ -169,6 +171,30 @@ const applyFilter = (filterText: string) => {
     const shouldShow = textContent.toLowerCase().includes(filterText.toLowerCase())
     
     item.style.display = shouldShow ? '' : 'none'
+  })
+}
+
+const addClasses = () => {
+  if (!list.value) return
+  
+  // Find all elements that should be menu items but don't have the class yet
+  // Look for divs that are likely menu items (have content, click handlers, etc.)
+  const potentialItems = list.value.querySelectorAll('div:not(.item)')
+  
+  potentialItems.forEach((element: HTMLElement) => {
+
+
+
+
+    // Skip wrapper divs and other structural elements
+    if (!element.textContent?.trim() && !element.classList.contains('separator')) return
+    
+    // Skip if it's a container div (has only other divs as children)
+    const hasOnlyDivChildren = Array.from(element.children).every(child => child.tagName === 'DIV')
+    if (hasOnlyDivChildren && element.children.length > 0) return
+    
+    // Add the item class to actual menu items
+    element.classList.add('item')
   })
 }
 

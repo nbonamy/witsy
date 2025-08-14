@@ -8,138 +8,66 @@
   >
     <!-- Main menu template -->
     <template #default>
-      <!-- Experts -->
-      <div 
-        v-if="enableExperts && expertsMenuItems.length > 0" 
-        class="item experts" 
-        data-submenu-slot="expertsSubmenu"
-      >
-        <BIconMortarboard class="icon" />
-        {{ t('prompt.experts.title') }}
+
+      <div v-if="enableExperts && expertsMenuItems.length > 0" class="experts" data-submenu-slot="expertsSubmenu" >
+        <BIconMortarboard class="icon" /> {{ t('prompt.experts.title') }}
       </div>
       
-      <!-- Knowledge Documents -->
-      <div 
-        v-if="enableDocRepo" 
-        class="item docrepos" 
-        data-submenu-slot="docReposSubmenu"
-      >
-        <BIconDatabase class="icon" />
-        {{ t('prompt.docRepos.title') }}
+      <div v-if="enableDocRepo" class="docrepos" data-submenu-slot="docReposSubmenu" >
+        <BIconDatabase class="icon" /> {{ t('prompt.docRepos.title') }}
       </div>
       
-      <!-- Writing Style -->
-      <div 
-        v-if="enableInstructions" 
-        class="item instructions" 
-        data-submenu-slot="instructionsSubmenu"
-      >
-        <BIconTerminal class="icon" />
-        {{ t('prompt.instructions.title') }}
+      <div v-if="enableInstructions" class="instructions" data-submenu-slot="instructionsSubmenu" >
+        <BIconTerminal class="icon" /> {{ t('prompt.instructions.title') }}
       </div>
       
-      <!-- Deep Research -->
-      <div 
-        v-if="enableDeepResearch" 
-        class="item deepresearch" 
-        @click="handleDeepResearchClick"
-      >
-        <BIconBinoculars class="icon" />
-        {{ t('common.deepResearch') || 'Deep Research' }}
+      <div v-if="enableDeepResearch" class="deepresearch" @click="handleDeepResearchClick" >
+        <BIconBinoculars class="icon" /> {{ t('common.deepResearch') || 'Deep Research' }}
       </div>
 
-      <!-- Separator -->
-      <div 
-        v-if="enableAttachments && (enableExperts || enableDocRepo || enableInstructions)" 
-        class="item separator"
-      >
+      <div v-if="enableAttachments && (enableExperts || enableDocRepo || enableInstructions)" class="separator" >
         <hr>
       </div>
       
-      <!-- Add Photo & Files -->
-      <div 
-        v-if="enableAttachments" 
-        class="item attachments" 
-        @click="handleAttachmentClick"
-      >
-        <BIconPaperclip class="icon" />
-        {{ t('prompt.attachment.tooltip') || 'Add Photo & Files' }}
+      <div v-if="enableAttachments" class="attachments" @click="handleAttachmentClick" >
+        <BIconPaperclip class="icon" /> {{ t('prompt.attachment.tooltip') }}
       </div>
       
     </template>
 
-    <!-- Experts submenu -->
     <template #expertsSubmenu="{ withFilter }">
       {{ withFilter(true) }}
-      <div 
-        v-for="expert in expertsMenuItems" 
-        :key="expert.id"
-        class="item"
-        @click="handleExpertClick(expert.id)"
-      >
-        <!-- <BIconStars class="icon" /> -->
+      <div v-for="expert in expertsMenuItems" :key="expert.id" @click="handleExpertClick(expert.id)" >
         {{ expert.name }}
       </div>
-      
-      <div v-if="expertsMenuItems.length === 0" class="item disabled">
-        {{ t('prompt.experts.none') || 'No experts available' }}
+      <div v-if="expertsMenuItems.length === 0" class="disabled">
+        {{ t('prompt.experts.none') }}
       </div>
     </template>
 
-    <!-- Knowledge Documents submenu -->
     <template #docReposSubmenu="{ withFilter }">
       {{ withFilter(true) }}
-      <div 
-        v-for="docRepo in docReposMenuItems" 
-        :key="docRepo.uuid"
-        class="item"
-        @click="handleDocRepoClick(docRepo.uuid)"
-      >
-        <BIconDatabase class="icon" />
-        {{ docRepo.name }}
+      <div v-for="docRepo in docReposMenuItems" :key="docRepo.uuid" @click="handleDocRepoClick(docRepo.uuid)" >
+        <BIconDatabase class="icon" /> {{ docRepo.name }}
       </div>
-      
-      <!-- Manage Knowledge Base option -->
       <template v-if="docReposMenuItems.length > 0">
-        <div class="item separator"><hr></div>
+        <div class="separator"><hr></div>
       </template>
-      <div class="item" @click="handleManageDocRepo">
-        <BIconGear class="icon" />
-        {{ t('prompt.docRepos.manage') || 'Manage Knowledge Base' }}
+      <div @click="handleManageDocRepo">
+        <BIconGear class="icon" /> {{ t('prompt.docRepos.manage') }}
       </div>
     </template>
 
-    <!-- Writing Style (Instructions) submenu -->
     <template #instructionsSubmenu="{ withFilter }">
       {{ withFilter(true) }}
-      <!-- Default option -->
-      <div 
-        class="item"
-        @click="handleInstructionsClick('null')"
-      >
-        {{ t('prompt.instructions.default') || 'Default' }}
+      <div @click="handleInstructionsClick('null')" >
+        {{ t('prompt.instructions.default') }}
       </div>
-      
-      <!-- Built-in instruction styles -->
-      <div 
-        v-for="instructionId in instructionIds" 
-        :key="instructionId"
-        class="item"
-        @click="handleInstructionsClick(instructionId)"
-      >
-        {{ t(`settings.llm.instructions.${instructionId}`) || instructionId }}
+      <div v-for="instructionId in instructionIds" :key="instructionId" @click="handleInstructionsClick(instructionId)" >
+        {{ t(`settings.llm.instructions.${instructionId}`) }}
       </div>
-      
-      <!-- Custom instructions -->
-      <div 
-        v-for="custom in customInstructions" 
-        :key="custom.id"
-        class="item"
-        @click="handleInstructionsClick(`custom:${custom.id}`)"
-      >
-        <BIconPersonFill class="icon" />
+      <div v-for="custom in customInstructions" :key="custom.id" @click="handleInstructionsClick(`custom:${custom.id}`)" >
         {{ custom.label }}
-        <div class="description">{{ truncateText(custom.instructions, 100) }}</div>
       </div>
     </template>
   </ContextMenuPlus>
@@ -147,15 +75,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { 
-  BIconMortarboard, 
-  BIconDatabase, 
-  BIconTerminal, 
-  BIconPaperclip,
-  BIconBinoculars,
-  BIconPersonFill,
-  BIconGear
-} from 'bootstrap-icons-vue'
 import ContextMenuPlus from './ContextMenuPlus.vue'
 import { store } from '../services/store'
 import { t, expertI18n } from '../services/i18n'
@@ -274,10 +193,6 @@ const handleDeepResearchClick = () => {
   emit('close')
 }
 
-const truncateText = (text: string, maxLength: number): string => {
-  if (!text || text.length <= maxLength) return text
-  return text.substring(0, maxLength) + '...'
-}
 
 // Lifecycle
 onMounted(() => {

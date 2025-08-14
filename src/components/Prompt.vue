@@ -84,7 +84,6 @@
       @close="closePromptMenu"
       @expert-selected="handleExpertClick"
       @doc-repo-selected="handlePromptMenuDocRepo"
-      @doc-repo-disconnected="handlePromptMenuDocRepoDisconnect"
       @manage-doc-repo="handleManageDocRepo"
       @instructions-selected="handlePromptMenuInstructions"
       @attach-requested="onAttach"

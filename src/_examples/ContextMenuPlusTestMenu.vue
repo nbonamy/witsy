@@ -6,13 +6,12 @@
   >
     <template #default>
       <!-- Static menu items -->
-      <div class="item" @click="handleAction('copy')">
+      <div @click="handleAction('copy')">
         <BIconClipboard class="icon" />
         Copy
       </div>
       
       <div 
-        class="item" 
         data-submenu-slot="editSubmenu"
       >
         <BIconPencil class="icon" />
@@ -20,7 +19,7 @@
       </div>
       
       <!-- Separator -->
-      <div class="item separator">
+      <div class="separator">
         <hr />
       </div>
       
@@ -28,7 +27,6 @@
       <div 
         v-for="item in dynamicMenuItems" 
         :key="item.id"
-        class="item"
         :data-submenu-slot="item.hasSubmenu ? item.submenuSlot : undefined"
         @click="item.hasSubmenu ? undefined : handleAction(item.id)"
       >
@@ -37,12 +35,12 @@
       </div>
       
       <!-- Another separator -->
-      <div class="item separator">
+      <div class="separator">
         <hr />
       </div>
       
       <!-- Static item -->
-      <div class="item" @click="handleAction('delete')">
+      <div @click="handleAction('delete')">
         <BIconTrash class="icon" />
         Delete
       </div>
@@ -51,22 +49,22 @@
     <!-- Static submenu with filter enabled -->
     <template #editSubmenu="{ withFilter }">
       {{ withFilter(true) }}
-      <div class="item" @click="handleSubmenuAction('undo')">
+      <div @click="handleSubmenuAction('undo')">
         <BIconArrowCounterclockwise class="icon" />
         Undo
       </div>
-      <div class="item" @click="handleSubmenuAction('redo')">
+      <div @click="handleSubmenuAction('redo')">
         <BIconArrowClockwise class="icon" />
         Redo
       </div>
-      <div class="item separator">
+      <div class="separator">
         <hr />
       </div>
-      <div class="item" @click="handleSubmenuAction('cut')">
+      <div @click="handleSubmenuAction('cut')">
         <BIconScissors class="icon" />
         Cut
       </div>
-      <div class="item" @click="handleSubmenuAction('paste')">
+      <div @click="handleSubmenuAction('paste')">
         <BIconClipboard2 class="icon" />
         Paste
       </div>
@@ -78,7 +76,6 @@
       <div 
         v-for="file in recentFiles" 
         :key="file.id"
-        class="item"
         @click="handleFileAction(file)"
       >
         <BIconFileEarmark class="icon" />
@@ -87,10 +84,10 @@
           <div style="font-size: 10px; opacity: 0.6;">{{ file.modified }}</div>
         </div>
       </div>
-      <div class="item separator">
+      <div class="separator">
         <hr />
       </div>
-      <div class="item" @click="handleAction('browse')">
+      <div @click="handleAction('browse')">
         <BIconFolder class="icon" />
         Browse for file...
       </div>
@@ -101,7 +98,6 @@
       <div 
         v-for="setting in settingsCategories" 
         :key="setting.id"
-        class="item"
         @click="handleSettingsAction(setting)"
       >
         <component :is="setting.icon" class="icon" />
