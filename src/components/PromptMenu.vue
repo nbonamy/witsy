@@ -91,9 +91,6 @@ interface Props {
   enableInstructions?: boolean
   enableAttachments?: boolean
   enableDeepResearch?: boolean
-  workspaceId?: string
-  engine?: string
-  model?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -104,10 +101,6 @@ const props = withDefaults(defineProps<Props>(), {
   enableInstructions: true,
   enableAttachments: true,
   enableDeepResearch: true,
-  currentExpert: null,
-  activeDocRepo: null,
-  currentInstructions: null,
-  deepResearchActive: false
 })
 
 // Emits
@@ -156,7 +149,7 @@ const customInstructions = computed(() => {
 const loadDocRepos = () => {
   if (props.enableDocRepo) {
     try {
-      docRepos.value = window.api?.docrepo?.list(props.workspaceId || store.config.workspaceId) || []
+      docRepos.value = window.api?.docrepo?.list(store.config.workspaceId) || []
     } catch (error) {
       console.error('Failed to load document repositories:', error)
       docRepos.value = []
