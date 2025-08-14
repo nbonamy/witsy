@@ -116,6 +116,36 @@ test('Docrepo delete', async () => {
   expect(fs.existsSync(path.join(os.tmpdir(), 'docrepo', docbase))).toBe(false)
 })
 
+test('Docrepo delete notifies listeners', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+  
+  // Add some documents first
+  const tempdir = createTempDir()
+  const docid1 = await docrepo.addDocumentSource(docbase, 'file', path.join(tempdir, 'docrepo.json'), true)
+  const docid2 = await docrepo.addDocumentSource(docbase, 'folder', tempdir, true)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+  
+  // Create mock listener
+  const mockListener = {
+    onDocumentSourceAdded: vi.fn(),
+    onDocumentSourceRemoved: vi.fn()
+  }
+  docrepo.addListener(mockListener)
+  
+  // Delete the document base
+  await docrepo.deleteDocBase(docbase)
+  
+  // Verify listeners were notified of all document removals
+  expect(mockListener.onDocumentSourceRemoved).toHaveBeenCalledWith(path.join(tempdir, 'docrepo.json'))
+  expect(mockListener.onDocumentSourceRemoved).toHaveBeenCalledWith(tempdir)
+  expect(mockListener.onDocumentSourceRemoved).toHaveBeenCalledWith(path.join(tempdir, 'docrepo2.json'))
+  // The folder contains 2 supported files (both .json files), so total calls = 1 file + 1 folder + 2 child files = 4
+  expect(mockListener.onDocumentSourceRemoved).toHaveBeenCalledTimes(4)
+  
+  fs.rmSync(tempdir, { recursive: true, force: true })
+})
+
 test('Docrepo add document', async () => {
   
   const docrepo = new DocumentRepository(app)

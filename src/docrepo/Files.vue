@@ -6,7 +6,6 @@
         <div class="tag info">{{ documentCount() }}</div>
         <div class="subtitle">{{ t('docRepo.file.help.formats') }}</div>
       </label>
-      <Spinner class="large" v-if="loading" />
       <div class="icon"><BIconChevronDown /></div>
     </div>
     <div class="panel-body" v-if="files.length">
@@ -61,7 +60,6 @@ import { filesize } from 'filesize'
 import { t } from '../services/i18n'
 import { togglePanel } from '../composables/panel'
 import Dialog from '../composables/dialog'
-import Spinner from '../components/Spinner.vue'
 import Folder from './Folder.vue'
 
 // props
@@ -231,11 +229,3 @@ const onViewFolderContents = (doc: DocumentSource) => {
   folderRef.value?.show()
 }
 </script>
-
-<style scoped>
-
-.spinner {
-  margin-right: 1rem;
-}
-
-</style>
