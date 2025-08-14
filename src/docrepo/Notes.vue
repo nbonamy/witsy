@@ -6,7 +6,6 @@
         <div class="tag info">{{ noteCount() }}</div>
         <div class="subtitle">Add notes to be indexed and searchable</div>
       </label>
-      <Spinner class="large" v-if="loading" />
       <div class="icon"><BIconChevronDown /></div>
     </div>
     <div class="panel-body" v-if="notes.length">
@@ -49,7 +48,6 @@ import { DocumentBase, DocumentSource, DocRepoAddDocResponse, DocumentQueueItem 
 import { t } from '../services/i18n'
 import { togglePanel } from '../composables/panel'
 import Dialog from '../composables/dialog'
-import Spinner from '../components/Spinner.vue'
 import NoteEditor from './NoteEditor.vue'
 
 // props
@@ -170,11 +168,3 @@ const onDelNote = (note: DocumentSource) => {
   })
 }
 </script>
-
-<style scoped>
-
-.spinner {
-  margin-right: 1rem;
-}
-
-</style>

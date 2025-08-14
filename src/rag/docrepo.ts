@@ -185,10 +185,24 @@ export default class DocumentRepository {
       throw new Error('Database not found')
     }
 
+    // get the base to access its documents before deletion
+    const base = this.contents[index]
+
+    // notify listeners about removal of all document sources in this base
+    for (const document of base.documents) {
+      this.notifyDocumentRemoved(document.origin)
+      // also notify removal of child documents in folders
+      if (document.items && document.items.length > 0) {
+        for (const childDoc of document.items) {
+          this.notifyDocumentRemoved(childDoc.origin)
+        }
+      }
+    }
+
     // connect and delete
     try {
-      const base = await this.connect(baseId, false, false)
-      base.destroy()
+      const baseImpl = await this.connect(baseId, false, false)
+      baseImpl.destroy()
     } catch (error: unknown) {
       if (!(error instanceof Error && error.message.includes('Index does not exist'))) {
         throw error;
