@@ -384,7 +384,7 @@
 
 .fullscreen-drawer .split-pane {
 
-  --drawer-pane-bg-color: rgb(253, 253, 253);
+  --drawer-pane-bg-color: #FAFAFA;
 
   .sp-sidebar {
 
@@ -401,6 +401,11 @@
 
     main {
       border-right: none;
+      .list-item {
+        &.selected {
+          background-color: #F0F0F0 !important;
+        }
+      }
     }
 
   }
