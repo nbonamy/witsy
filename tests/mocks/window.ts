@@ -54,6 +54,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       updateMode: vi.fn(),
       setContextMenuContext: vi.fn(),
       close: vi.fn(),
+      showWindowButtons: vi.fn(),
+      hideWindowButtons: vi.fn(),
     },
     debug: {
       showConsole: vi.fn(),
