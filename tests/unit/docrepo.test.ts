@@ -122,8 +122,8 @@ test('Docrepo delete notifies listeners', async () => {
   
   // Add some documents first
   const tempdir = createTempDir()
-  const docid1 = await docrepo.addDocumentSource(docbase, 'file', path.join(tempdir, 'docrepo.json'), true)
-  const docid2 = await docrepo.addDocumentSource(docbase, 'folder', tempdir, true)
+  await docrepo.addDocumentSource(docbase, 'file', path.join(tempdir, 'docrepo.json'), true)
+  await docrepo.addDocumentSource(docbase, 'folder', tempdir, true)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   
   // Create mock listener
