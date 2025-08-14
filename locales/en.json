@@ -53,6 +53,7 @@
     "errorModelRefresh": "Error refreshing models. Check your connection and try again.",
     "esc": "Esc",
     "estimatedCost": "Estimated cost:",
+    "experts": "Experts",
     "favorites": {
       "add": "Add to favorites",
       "remove": "Remove from favorites"
@@ -1957,8 +1958,7 @@
       "formatError": {
         "text": "Please try again with another file.",
         "title": "This file format is not supported by this model."
-      },
-      "tooltip": "Attach file"
+      }
     },
     "conversation": {
       "placeholders": {
@@ -1970,17 +1970,27 @@
       "stop": "Stop conversation",
       "tooltip": "Dictate"
     },
-    "docRepos": {
-      "none": "No collection available. Do you want to create one now?",
-      "tooltip": "Connect to collection"
-    },
-    "experts": {
-      "clear": "Clear expert",
-      "tooltip": "Select expert"
-    },
     "instructions": {
-      "default": "⚙️ Use configuration default",
-      "title": "@:{'common.instructions'}"
+      "default": "⚙️ Use configuration default"
+    },
+    "menu": {
+      "attach": {
+        "title": "Add photos & files"
+      },
+      "deepResearch": {
+        "title": "@:{'common.deepResearch'}"
+      },
+      "docRepos": {
+        "manage": "Manage Knowledge Base",
+        "title": "Knowledge Collection"
+      },
+      "experts": {
+        "manage": "Create New Expert",
+        "title": "@:{'common.experts'}"
+      },
+      "instructions": {
+        "title": "Writing Style"
+      }
     },
     "placeholders": {
       "default": "Enter to submit, Shift+Enter to add a new line"
@@ -2412,7 +2422,7 @@
       "chat": "Chat",
       "commands": "Commands",
       "deepResearch": "@:{'common.deepResearch'}",
-      "experts": "Experts",
+      "experts": "@:{'common.experts'}",
       "general": "General",
       "llm": "LLM",
       "mcp": "MCP",

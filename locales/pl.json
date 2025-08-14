@@ -53,6 +53,7 @@
     "errorModelRefresh": "Błąd odświeżania modeli. Sprawdź swoje połączenie i spróbuj ponownie.",
     "esc": "Esc",
     "estimatedCost": "Szacowany koszt:",
+    "experts": "Eksperci",
     "favorites": {
       "add": "Dodaj do ulubionych",
       "remove": "Usuń z ulubionych"
@@ -1958,8 +1959,7 @@
       "formatError": {
         "text": "Spróbuj ponownie z innym plikiem.",
         "title": "Ten format pliku nie jest obsługiwany przez ten model."
-      },
-      "tooltip": "Dołącz plik"
+      }
     },
     "conversation": {
       "placeholders": {
@@ -1971,17 +1971,23 @@
       "stop": "Stop",
       "tooltip": "Dyktuj"
     },
-    "docRepos": {
-      "none": "No collection available. Do you want to create one now?",
-      "tooltip": "Connect to collection"
-    },
-    "experts": {
-      "clear": "Wyczyść",
-      "tooltip": "Wybierz eksperta"
-    },
     "instructions": {
-      "default": "⚙️ Użyj domyślnych ustawień",
-      "title": "@:{'common.instructions'}"
+      "default": "⚙️ Użyj domyślnych ustawień"
+    },
+    "menu": {
+      "attach": {
+        "title": "Dodaj zdjęcia i pliki"
+      },
+      "docRepos": {
+        "manage": "Zarządzaj Bazą Wiedzy",
+        "title": "Zbiór wiedzy"
+      },
+      "experts": {
+        "manage": "Utwórz Nowego Eksperta"
+      },
+      "instructions": {
+        "title": "Styl pisania"
+      }
     },
     "placeholders": {
       "default": "Naciśnij Enter, aby przesłać, Shift+Enter, aby dodać nową linię"
@@ -2413,7 +2419,7 @@
       "chat": "Czat",
       "commands": "Polecenia",
       "deepResearch": "@:{'common.deepResearch'}",
-      "experts": "Eksperci",
+      "experts": "@:{'common.experts'}",
       "general": "Ogólne",
       "llm": "LLM",
       "mcp": "MCP",

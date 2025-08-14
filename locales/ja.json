@@ -53,6 +53,7 @@
     "errorModelRefresh": "モデルの更新中にエラーが発生しました。接続を確認して再試行してください。",
     "esc": "Esc",
     "estimatedCost": "推定コスト：",
+    "experts": "専門家",
     "favorites": {
       "add": "お気に入りに追加",
       "remove": "お気に入りから削除"
@@ -1958,8 +1959,7 @@
       "formatError": {
         "text": "別のファイルでもう一度お試しください。",
         "title": "このファイル形式は、このモデルではサポートされていません。"
-      },
-      "tooltip": "ファイルを添付"
+      }
     },
     "conversation": {
       "placeholders": {
@@ -1971,17 +1971,23 @@
       "stop": "会話を停止",
       "tooltip": "口述する"
     },
-    "docRepos": {
-      "none": "No collection available. Do you want to create one now?",
-      "tooltip": "Connect to collection"
-    },
-    "experts": {
-      "clear": "エキスパートをクリア",
-      "tooltip": "専門家を選択"
-    },
     "instructions": {
-      "default": "⚙️ デフォルト設定を使用",
-      "title": "@:{'common.instructions'}"
+      "default": "⚙️ デフォルト設定を使用"
+    },
+    "menu": {
+      "attach": {
+        "title": "写真とファイルを追加"
+      },
+      "docRepos": {
+        "manage": "ナレッジベースを管理",
+        "title": "ナレッジコレクション"
+      },
+      "experts": {
+        "manage": "新しい専門家を作成"
+      },
+      "instructions": {
+        "title": "文体"
+      }
     },
     "placeholders": {
       "default": "Enterで送信、Shift+Enterで新しい行を追加"
@@ -2413,7 +2419,7 @@
       "chat": "チャット",
       "commands": "コマンド",
       "deepResearch": "@:{'common.deepResearch'}",
-      "experts": "エキスパート",
+      "experts": "@:{'common.experts'}",
       "general": "一般",
       "llm": "LLM",
       "mcp": "MCP",
