@@ -254,7 +254,8 @@ test('Selects expert', async () => {
   const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
   await menu.find('.experts').trigger('click')
   expect(menu.findAll('.filter-input').length).toBe(1)
-  expect(menu.findAll('.item').length).toBe(2)
+  expect(menu.findAll('.item').length).toBe(4)
+  expect(menu.find('.item:nth-child(4)').text()).toBe('prompt.menu.experts.manage')
   await menu.find('.item:nth-child(2)').trigger('click')
   expect(wrapper.vm.expert.id).toBe('uuid3')
   expect(wrapper.find('.prompt-feature').exists()).toBe(true)
@@ -320,18 +321,11 @@ test('Document repository', async () => {
   expect(menu.findAll('.item').length).toBe(4)
   expect(menu.find('.item:nth-child(1)').text()).toBe('docrepo1')
   expect(menu.find('.item:nth-child(2)').text()).toBe('docrepo2')
-  expect(menu.find('.item:nth-child(4)').text()).toBe('prompt.docRepos.manage')
+  expect(menu.find('.item:nth-child(4)').text()).toBe('prompt.menu.docRepos.manage')
 
   // connect
   await menu.find('.item:nth-child(1)').trigger('click')
   expect(window.api.docrepo.connect).toHaveBeenLastCalledWith('uuid1')
-
-  // trigger again
-  await wrapper.find('.icon.prompt-menu').trigger('click')
-  const menu2 = wrapper.findComponent({ name: 'ContextMenuPlus' })
-  await menu2.find('.docrepos').trigger('click')
-  expect(menu2.findAll('.item').length).toBe(4)
-  expect(menu2.find('.item:nth-child(4)').text()).toBe('prompt.docRepos.manage')
 
 })
 

@@ -53,6 +53,7 @@
     "errorModelRefresh": "刷新模型时出错。请检查您的连接并重试。",
     "esc": "Esc",
     "estimatedCost": "预估成本：",
+    "experts": "专家",
     "favorites": {
       "add": "添加到收藏夹",
       "remove": "从收藏夹中移除"
@@ -1958,8 +1959,7 @@
       "formatError": {
         "text": "请尝试使用其他文件。",
         "title": "此文件格式不被此模型支持。"
-      },
-      "tooltip": "附加文件"
+      }
     },
     "conversation": {
       "placeholders": {
@@ -1971,17 +1971,23 @@
       "stop": "停止对话",
       "tooltip": "口述"
     },
-    "docRepos": {
-      "none": "No collection available. Do you want to create one now?",
-      "tooltip": "Connect to collection"
-    },
-    "experts": {
-      "clear": "清除专家",
-      "tooltip": "选择专家"
-    },
     "instructions": {
-      "default": "⚙️ 使用配置默认",
-      "title": "@:{'common.instructions'}"
+      "default": "⚙️ 使用配置默认"
+    },
+    "menu": {
+      "attach": {
+        "title": "添加照片和文件"
+      },
+      "docRepos": {
+        "manage": "管理知识库",
+        "title": "知识集"
+      },
+      "experts": {
+        "manage": "创建新专家"
+      },
+      "instructions": {
+        "title": "写作风格"
+      }
     },
     "placeholders": {
       "default": "按回车提交，Shift+回车添加新行"
@@ -2407,7 +2413,7 @@
       "chat": "聊天",
       "commands": "命令",
       "deepResearch": "@:{'common.deepResearch'}",
-      "experts": "专家",
+      "experts": "@:{'common.experts'}",
       "general": "常规",
       "llm": "LLM",
       "mcp": "MCP",

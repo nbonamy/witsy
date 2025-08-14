@@ -10,19 +10,19 @@
     <template #default>
 
       <div v-if="enableExperts && expertsMenuItems.length > 0" class="experts" data-submenu-slot="expertsSubmenu" >
-        <BIconMortarboard class="icon" /> {{ t('prompt.experts.title') }}
+        <BIconMortarboard class="icon" /> {{ t('prompt.menu.experts.title') }}
       </div>
       
       <div v-if="enableDocRepo" class="docrepos" data-submenu-slot="docReposSubmenu" >
-        <BIconDatabase class="icon" /> {{ t('prompt.docRepos.title') }}
+        <BIconLightbulb class="icon" /> {{ t('prompt.menu.docRepos.title') }}
       </div>
       
       <div v-if="enableInstructions" class="instructions" data-submenu-slot="instructionsSubmenu" >
-        <BIconTerminal class="icon" /> {{ t('prompt.instructions.title') }}
+        <BIconFeather class="icon" /> {{ t('prompt.menu.instructions.title') }}
       </div>
       
       <div v-if="enableDeepResearch" class="deepresearch" @click="handleDeepResearchClick" >
-        <BIconBinoculars class="icon" /> {{ t('common.deepResearch') || 'Deep Research' }}
+        <BIconBinoculars class="icon" /> {{ t('prompt.menu.deepResearch.title') || 'Deep Research' }}
       </div>
 
       <div v-if="enableAttachments && (enableExperts || enableDocRepo || enableInstructions)" class="separator" >
@@ -30,7 +30,7 @@
       </div>
       
       <div v-if="enableAttachments" class="attachments" @click="handleAttachmentClick" >
-        <BIconPaperclip class="icon" /> {{ t('prompt.attachment.tooltip') }}
+        <BIconPaperclip class="icon" /> {{ t('prompt.menu.attach.title') }}
       </div>
       
     </template>
@@ -40,8 +40,11 @@
       <div v-for="expert in expertsMenuItems" :key="expert.id" @click="handleExpertClick(expert.id)" >
         {{ expert.name }}
       </div>
-      <div v-if="expertsMenuItems.length === 0" class="disabled">
-        {{ t('prompt.experts.none') }}
+      <template v-if="expertsMenuItems.length > 0">
+        <div class="separator"><hr></div>
+      </template>
+      <div @click="handleManageExperts">
+        <BIconPlusLg class="icon" /> {{ t('prompt.menu.experts.manage') }}
       </div>
     </template>
 
@@ -54,7 +57,7 @@
         <div class="separator"><hr></div>
       </template>
       <div @click="handleManageDocRepo">
-        <BIconGear class="icon" /> {{ t('prompt.docRepos.manage') }}
+        <BIconGear class="icon" /> {{ t('prompt.menu.docRepos.manage') }}
       </div>
     </template>
 
@@ -80,6 +83,7 @@ import { store } from '../services/store'
 import { t, expertI18n } from '../services/i18n'
 import { DocumentBase } from '../types/rag'
 import { Expert } from '../types/index'
+import { BIconLightbulb, BIconPlusLg } from 'bootstrap-icons-vue'
 
 // Props
 interface Props {
@@ -107,6 +111,7 @@ const props = withDefaults(defineProps<Props>(), {
 interface Emits {
   close: []
   expertSelected: [expertId: string]
+  manageExperts: []
   docRepoSelected: [docRepoUuid: string]
   manageDocRepo: []
   instructionsSelected: [instructionId: string]
@@ -160,6 +165,11 @@ const loadDocRepos = () => {
 const handleExpertClick = (expertId: string) => {
   emit('close')
   emit('expertSelected', expertId)
+}
+
+const handleManageExperts = () => {
+  emit('close')
+  emit('manageExperts')
 }
 
 const handleDocRepoClick = (docRepoUuid: string) => {

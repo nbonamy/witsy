@@ -76,6 +76,7 @@
       :enable-deep-research="enableDeepResearch"
       @close="closePromptMenu"
       @expert-selected="handleExpertClick"
+      @manage-experts="handleManageExperts"
       @doc-repo-selected="handlePromptMenuDocRepo"
       @manage-doc-repo="handleManageDocRepo"
       @instructions-selected="handlePromptMenuInstructions"
@@ -816,13 +817,13 @@ const handlePromptMenuDocRepo = (docRepoUuid: string) => {
   closePromptMenu()
 }
 
-const handlePromptMenuDocRepoDisconnect = () => {
-  setDocRepo(null)
+const handleManageDocRepo = () => {
+  window.api.docrepo.open()
   closePromptMenu()
 }
 
-const handleManageDocRepo = () => {
-  window.api.docrepo.open()
+const handleManageExperts = () => {
+  // window.api.docrepo.open()
   closePromptMenu()
 }
 

@@ -53,6 +53,7 @@
     "errorModelRefresh": "Error al actualizar los modelos. Verifica tu conexión e inténtalo de nuevo.",
     "esc": "Esc",
     "estimatedCost": "Costo estimado:",
+    "experts": "Expertos",
     "favorites": {
       "add": "Agregar a favoritos",
       "remove": "Eliminar de favoritos"
@@ -1936,8 +1937,7 @@
       "formatError": {
         "text": "Por favor, inténtalo de nuevo con otro archivo.",
         "title": "Este formato de archivo no es compatible con este modelo."
-      },
-      "tooltip": "Adjuntar archivo"
+      }
     },
     "conversation": {
       "placeholders": {
@@ -1949,17 +1949,23 @@
       "stop": "Detener conversación",
       "tooltip": "Dictar"
     },
-    "docRepos": {
-      "none": "No collection available. Do you want to create one now?",
-      "tooltip": "Connect to collection"
-    },
-    "experts": {
-      "clear": "Eliminar experto",
-      "tooltip": "Seleccionar experto"
-    },
     "instructions": {
-      "default": "⚙️ Usar configuración predeterminada",
-      "title": "@:{'common.instructions'}"
+      "default": "⚙️ Usar configuración predeterminada"
+    },
+    "menu": {
+      "attach": {
+        "title": "Agregar fotos y archivos"
+      },
+      "docRepos": {
+        "manage": "Gestionar base de conocimientos",
+        "title": "Colección de Conocimiento"
+      },
+      "experts": {
+        "manage": "Crear nuevo experto"
+      },
+      "instructions": {
+        "title": "Estilo de Escritura"
+      }
     },
     "placeholders": {
       "default": "Presiona Enter para enviar, Shift+Enter para agregar una nueva línea"
@@ -2385,7 +2391,7 @@
       "chat": "Chat",
       "commands": "Comandos",
       "deepResearch": "@:{'common.deepResearch'}",
-      "experts": "Expertos",
+      "experts": "@:{'common.experts'}",
       "general": "General",
       "llm": "LLM",
       "mcp": "MCP",
