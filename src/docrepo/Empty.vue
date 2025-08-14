@@ -1,23 +1,36 @@
 <template>
   <div class="docrepo-empty">
+    <div class="close" @click.stop="emit('close')"><BIconXLg /></div>
     <BIconLightbulb class="icon" />
     <h3>{{ t('docRepo.empty.title') }}</h3>
     <p>{{ t('docRepo.empty.text') }}</p>
-    <button class="cta with-icon" @click="$emit('click')"><BIconPlusLg /> {{ t('docRepo.empty.create') }}</button>
+    <button class="cta with-icon" @click="emit('click')"><BIconPlusLg /> {{ t('docRepo.empty.create') }}</button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { BIconLightbulb } from 'bootstrap-icons-vue';
 import { t } from '../services/i18n'
+
+const emit = defineEmits(['click', 'close'])
+
 </script>
 
 <style scoped>
+
+.close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  font-size: 14pt;
+  cursor: pointer;
+}
+
+
 .docrepo-empty {
   
   flex: 1;
   padding: 0rem 20%;
-  padding-bottom: 20%;
   border-top: 1px solid var(--sidebar-border-color);
   display: flex;
   flex-direction: column;

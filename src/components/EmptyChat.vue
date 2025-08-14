@@ -487,7 +487,6 @@ const removeFavorite = () => {
 }
 
 .empty .select-model {
-  z-index: 2;
   margin-top: 8px;
   padding: 4px 0px;
   font-size: 10.5pt;

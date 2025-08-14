@@ -16,6 +16,8 @@ export const MAIN_WINDOW = {
   UPDATE_MODE: 'main-window-update-mode',
   SET_CONTEXT_MENU_CONTEXT: 'main-window-set-menu-context',
   CLOSE: 'main-window-close',
+  HIDE_WINDOW_BUTTONS: 'main-window-hide-buttons',
+  SHOW_WINDOW_BUTTONS: 'main-window-show-buttons',
 } as const;
 
 export const DEBUG = {

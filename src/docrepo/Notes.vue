@@ -1,13 +1,13 @@
 <template>
   <div class="notes panel">
-    <div class="panel-header">
+    <div class="panel-header" @click="togglePanel">
       <label>
         {{ t('common.notes') }}
         <div class="tag info">{{ noteCount() }}</div>
         <div class="subtitle">Add notes to be indexed and searchable</div>
       </label>
       <Spinner class="large" v-if="loading" />
-      <div class="icon" @click="togglePanel"><BIconChevronDown /></div>
+      <div class="icon"><BIconChevronDown /></div>
     </div>
     <div class="panel-body" v-if="notes.length">
       <template v-for="note in notes" :key="note.uuid">

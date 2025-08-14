@@ -1,19 +1,20 @@
 <template>
-  <Empty v-if="!docRepos?.length && !selectedRepo" @click="onCreate"/>
-  <div v-else class="docrepo split-pane" v-bind="$attrs">
-    <div class="sp-sidebar">
-      <header>
-        <div class="title">{{ t('docRepo.list.title') }}</div>
-        <BIconSliders class="icon config" v-tooltip="{ text: t('docRepo.list.tooltips.config'), position: 'bottom-left' }" @click="onConfig" />
-      </header>
-      <main>
-        <List :docRepos="docRepos || []" :selectedRepo="selectedRepo" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" />
-      </main>
-      <footer>
-        <button class="new-collection cta with-icon" @click="onCreate"><BIconPlusLg /> {{ t('docRepo.create.title') }}</button>
-      </footer>
-    </div>
-    <div class="sp-main">
+  <FullScreenDrawer ref="drawer" @closed="emit('close')">
+    <Empty v-if="!docRepos?.length && !selectedRepo" @click="onCreate" @close="onClose" />
+    <div v-else class="docrepo split-pane">
+      <div class="sp-sidebar">
+        <header>
+          <div class="title">{{ t('docRepo.list.title') }}</div>
+          <BIconSliders class="icon config" v-tooltip="{ text: t('docRepo.list.tooltips.config'), position: 'left' }" @click="onConfig" />
+        </header>
+        <main>
+          <List :docRepos="docRepos || []" :selectedRepo="selectedRepo" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" />
+        </main>
+        <footer>
+          <button class="new-collection cta with-icon" @click="onCreate"><BIconPlusLg /> {{ t('docRepo.create.title') }}</button>
+        </footer>
+      </div>
+      <div class="sp-main">
       <header v-if="mode === 'view'">
         <div class="title-section">
           <div v-if="!isEditingTitle" class="title-display">
@@ -52,12 +53,18 @@
           v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }"
           @click="onDeleteRepo(selectedRepo)"
         />
+        <BIconXLg
+          class="icon close" 
+          v-tooltip="{ text: t('common.close'), position: 'bottom-left' }"
+          @click="onClose"
+        />
       </header>
-      <View :selectedRepo="selectedRepo" v-if="mode === 'view'"/>
+        <View :selectedRepo="selectedRepo" v-if="mode === 'view'"/>
+      </div>
+      <Config ref="configDialog" />
     </div>
-    <Config ref="configDialog" />
-  </div>
-  <Create ref="createDialog" @save="onCreateSave" />
+    <Create ref="createDialog" @save="onCreateSave" />
+  </FullScreenDrawer>
 </template>
 
 <script setup lang="ts">
@@ -66,6 +73,7 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { DocumentBase } from '../types/rag'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import FullScreenDrawer from '../components/FullScreenDrawer.vue'
 import Dialog from '../composables/dialog'
 import Config from '../docrepo/Config.vue'
 import List from '../docrepo/List.vue'
@@ -75,10 +83,12 @@ import Empty from '../docrepo/Empty.vue'
 
 // bus
 import useEventBus from '../composables/event_bus'
+import { BIconXLg } from 'bootstrap-icons-vue'
 const { onEvent } = useEventBus()
 
 type DocRepoMode = 'list' | 'view'
 
+const drawer = ref<typeof FullScreenDrawer|null>(null)
 const mode = ref<DocRepoMode>('list')
 const docRepos = ref(null)
 const selectedRepo = ref<DocumentBase | null>(null)
@@ -167,6 +177,12 @@ const saveTitle = () => {
 const cancelEditingTitle = () => {
   isEditingTitle.value = false
   editingTitle.value = ''
+}
+
+const emit = defineEmits(['close'])
+
+const onClose = () => {
+  drawer.value?.close()
 }
 
 </script>

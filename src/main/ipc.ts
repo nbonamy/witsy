@@ -71,6 +71,18 @@ export const installIpc = (
     window.mainWindow.close();
   });
 
+  ipcMain.on(IPC.MAIN_WINDOW.HIDE_WINDOW_BUTTONS, () => {
+    if (process.platform === 'darwin') {
+      window.mainWindow.setWindowButtonVisibility(false);
+    }
+  });
+
+  ipcMain.on(IPC.MAIN_WINDOW.SHOW_WINDOW_BUTTONS, () => {
+    if (process.platform === 'darwin') {
+      window.mainWindow.setWindowButtonVisibility(true);
+    }
+  });
+
   ipcMain.on(IPC.APP.SHOW_ABOUT, () => {
     app.showAboutPanel();
   });

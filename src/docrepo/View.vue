@@ -1,9 +1,9 @@
 <template>
   <main v-if="selectedRepo">
     <div class="info panel collapsed">
-      <div class="panel-header">
+      <div class="panel-header" @click="togglePanel">
         <label>{{ t('embedding.model') }}</label>
-        <div class="icon" @click="togglePanel"><BIconChevronDown /></div>
+        <div class="icon"><BIconChevronDown /></div>
       </div>
       <div class="panel-body">
         <div class="embeddings">
