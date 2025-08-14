@@ -5,7 +5,7 @@
       <div class="sp-sidebar">
         <header>
           <div class="title">{{ t('docRepo.list.title') }}</div>
-          <BIconSliders class="icon config" v-tooltip="{ text: t('docRepo.list.tooltips.config'), position: 'left' }" @click="onConfig" />
+          <BIconSliders class="icon config" v-tooltip="{ text: t('docRepo.list.tooltips.config'), position: 'bottom' }" @click="onConfig" />
         </header>
         <main>
           <List :docRepos="docRepos || []" :selectedRepo="selectedRepo" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" />

@@ -74,6 +74,12 @@ export type A2APromptOpts = {
   currentContextId?: string
 }
 
+export type CustomInstruction = {
+  id: string
+  label: string
+  instructions: string
+}
+
 export interface Chat {
   uuid: string
   title?: string

@@ -1,6 +1,6 @@
 
 import { ChatModel, EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
-import { DesignStudioMediaType, Shortcut, strDict, TTSVoice } from './index'
+import { CustomInstruction, DesignStudioMediaType, Shortcut, strDict, TTSVoice } from './index'
 import { PluginConfig } from '../plugins/plugin'
 import { McpClaudeServer, McpServer, McpServerState } from './mcp'
 import { ToolSelection } from './llm'
@@ -78,12 +78,6 @@ export type ModelDefaults = {
 } & LlmModelOpts
 
 export type InstructionsType = 'standard' | 'structured' | 'playful' | 'empathic' | 'uplifting' | 'reflective' | 'visionary' | string
-
-export type CustomInstruction = {
-  id: string
-  label: string
-  instructions: string
-}
 
 export type LLMConfig = {
   instructions: InstructionsType  
