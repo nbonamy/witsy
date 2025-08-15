@@ -1509,7 +1509,9 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Lorsque l'utilisateur vous demande de créer du contenu (document, résumé...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE\">\nCONTENU\n</artifact>"
+      "artifacts": "Lorsque l'utilisateur vous demande de créer du contenu (document, résumé...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE\">\nCONTENU\n</artifact>",
+      "mermaid": "Si l'on vous demande de produire un diagramme Mermaid, son code sera rendu en tant que diagramme pour l'utilisateur.",
+      "toolRetry": "Lors de l'appel des outils, si vous obtenez une erreur d'entrée, analysez l'erreur, essayez de la corriger, puis réessayez d'appeler l'outil."
     },
     "chat": {
       "docquery": "Vous êtes un chatbot serviable qui se comporte comme un humain. Utilisez le contexte fourni et l'historique de la conversation pour répondre à la requête finale. Répondez de manière complète. Si vous ne connaissez pas la réponse, dites simplement que vous ne savez pas, n'essayez pas d'inventer une réponse. N'utilisez pas de mots comme contexte ou données d'entraînement dans vos réponses. Vous pouvez dire que vous n'avez pas toutes les informations mais n'indiquez pas que vous n'êtes pas une source fiable. Terminez toujours votre réponse par une question pour maintenir la conversation.\n\nCONTEXTE :\n{'{'}context{'}'}\n\nREQUÊTE : {'{'}query{'}'}",

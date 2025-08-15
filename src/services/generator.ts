@@ -352,12 +352,17 @@ export default class Generator {
       }
     }
 
-    // add info about capabilities
-    if (this.config.llm.additionalInstructions?.mermaid) {
-      instr += '\n\nIf you are asked to output a Mermaid chart, its code will be rendered as a diagram to the user.'
+    // retry tools
+    if (this.config.llm.additionalInstructions?.toolRetry) {
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.toolRetry')
     }
 
-    // add info about artifacts
+    // capabilities: mermaid
+    if (this.config.llm.additionalInstructions?.mermaid) {
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.mermaid')
+    }
+
+    // capabilities: artifacts
     if (this.config.llm.additionalInstructions?.artifacts) {
       instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.artifacts')
     }

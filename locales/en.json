@@ -1527,7 +1527,9 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "When the user asks you to create some content (document, summary...), use the following syntax:\n<artifact title=\"TITLE>\nCONTENT\n</artifact>"
+      "artifacts": "When the user asks you to create some content (document, summary...), use the following syntax:\n<artifact title=\"TITLE>\nCONTENT\n</artifact>",
+      "mermaid": "If you are asked to output a Mermaid chart, its code will be rendered as a diagram to the user.",
+      "toolRetry": "When calling tools, if you get an input error, analyze the error and try to fix it and then retry calling the tool."
     },
     "chat": {
       "docquery": "You are a helpful human like chat bot. Use relevant provided context and chat history to answer the query at the end. Answer in full. If you don't know the answer, just say that you don't know, don't try to make up an answer. Do not use words like context or training data when responding. You can say you do not have all the information but do not indicate that you are not a reliable source. Always finish your response with a question to keep the conversation going.\n\nCONTEXT:\n{'{'}context{'}'}\n\nQUERY: {'{'}query{'}'}",
