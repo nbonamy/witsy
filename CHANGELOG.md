@@ -2,7 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.13.1] - WIP
+## [2.13.2] - WIP
+
+### Added
+- Add Support for Anthropic's 'thinking.budget_tokens' Parameter (https://github.com/nbonamy/witsy/issues/392)
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
+## [2.13.1] - 2025-08-13
 
 ### Added
 - Artifacts instructions option with specific display mode
