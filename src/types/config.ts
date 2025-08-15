@@ -95,6 +95,7 @@ export type LLMConfig = {
   defaults: ModelDefaults[]
   customInstructions: CustomInstruction[]
   additionalInstructions: {
+    toolRetry: boolean
     datetime: boolean
     mermaid: boolean
     artifacts: boolean
