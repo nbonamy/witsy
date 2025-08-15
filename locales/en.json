@@ -1735,6 +1735,7 @@
     "localeDefault": "🤖 Default language",
     "maxCompletionTokens": "Max Completion Tokens",
     "plugins": "Plugins",
+    "reasoningBudget": "Reasoning Budget (empty = 1024)",
     "reasoningEffort": "Reasoning Effort",
     "streaming": "Streaming",
     "temperature": "Temperature [0.0 … 2.0]",
@@ -2425,9 +2426,6 @@
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
       "selectModel": "Select a model",
-      "soniox": {
-        "cleanup": "Auto-delete transcriptions after completion"
-      },
       "silenceDetection": "Silence Detection",
       "silenceOptions": {
         "disabled": "Disabled",
@@ -2436,6 +2434,9 @@
         "oneSecond": "1 second",
         "threeSeconds": "3 seconds",
         "twoSeconds": "2 seconds"
+      },
+      "soniox": {
+        "cleanup": "Auto-delete transcriptions after completion"
       },
       "spokenLanguage": "Spoken Language",
       "tabs": {

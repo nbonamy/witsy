@@ -1717,6 +1717,7 @@
     "localeDefault": "🤖 Standardsprache",
     "maxCompletionTokens": "Maximale Abschluss-Tokens",
     "plugins": "Plugins",
+    "reasoningBudget": "Rechenbudget (leer = 1024)",
     "reasoningEffort": "Überlegungsaufwand",
     "streaming": "Streaming",
     "temperature": "Temperatur [0.0 … 2.0]",
@@ -2406,6 +2407,9 @@
         "oneSecond": "1 Sekunde",
         "threeSeconds": "3 Sekunden",
         "twoSeconds": "2 Sekunden"
+      },
+      "soniox": {
+        "cleanup": "Transkriptionen nach Abschluss automatisch löschen"
       },
       "spokenLanguage": "Gesprochene Sprache",
       "tabs": {

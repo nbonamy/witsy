@@ -1717,6 +1717,7 @@
     "localeDefault": "🤖 Idioma predeterminado",
     "maxCompletionTokens": "Tokens máximos de completado",
     "plugins": "Complementos",
+    "reasoningBudget": "Presupuesto de razonamiento (vacío = 1024)",
     "reasoningEffort": "Esfuerzo de razonamiento",
     "streaming": "Streaming",
     "temperature": "Temperatura [0.0 … 2.0]",
@@ -2406,6 +2407,9 @@
         "oneSecond": "1 segundo",
         "threeSeconds": "3 segundos",
         "twoSeconds": "2 segundos"
+      },
+      "soniox": {
+        "cleanup": "Eliminar transcripciones automáticamente después de completar"
       },
       "spokenLanguage": "Idioma hablado",
       "tabs": {
