@@ -29,14 +29,19 @@
         <label>{{ t('modelSettings.instructions') }}</label>
         <textarea name="instructions" v-model="instructions" :placeholder="t('modelSettings.instructionsPlaceholder')" rows="4" @change="save"></textarea>
       </div>
-      <div class="form-field" v-if="isReasoningFlagSupported">
-        <label>{{ t('modelSettings.extendedThinking') }}</label>
-        <select name="reasoning" v-model="reasoning" @change="save">
-          <option :value="undefined">{{ t('common.default') }}</option>
-          <option :value="true">{{ t('common.enabled') }}</option>
-          <option :value="false">{{ t('common.disabled') }}</option>
-        </select>
-      </div>
+      <template v-if="isReasoningFlagSupported">
+        <div class="form-field">
+          <label>{{ t('modelSettings.extendedThinking') }}</label>
+          <select name="reasoning" v-model="reasoning" @change="save">
+            <option :value="undefined">{{ t('common.default') }}</option>
+            <option :value="false">{{ t('common.disabled') }}</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>{{ t('modelSettings.reasoningBudget') }}</label>
+          <input name="reasoningBudget" v-model="reasoningBudget" @change="save" />
+        </div>
+      </template>
       <div class="form-field" v-if="isReasoningEffortSupported">
         <label>{{ t('modelSettings.reasoningEffort') }}</label>
         <select name="reasoningEffort" v-model="reasoningEffort" @change="save">
@@ -162,6 +167,7 @@ const temperature = ref<number>(undefined)
 const top_k = ref<number>(undefined)
 const top_p = ref<number>(undefined)
 const reasoning = ref<boolean>(undefined)
+const reasoningBudget = ref<number>(undefined)
 const reasoningEffort = ref<LlmReasoningEffort>(undefined)
 const verbosity = ref<LlmVerbosity>(undefined)
 const thinkingBudget = ref<number>(undefined)
@@ -192,6 +198,7 @@ const canSaveAsDefaults = computed(() => {
     top_k.value !== undefined ||
     top_p.value !== undefined ||
     reasoning.value !== undefined ||
+    reasoningBudget.value !== undefined ||
     reasoningEffort.value !== undefined ||
     verbosity.value !== undefined ||
     thinkingBudget.value !== undefined ||
@@ -264,10 +271,11 @@ onMounted(async () => {
     temperature.value = props.chat.modelOpts?.temperature
     top_k.value = props.chat.modelOpts?.top_k
     top_p.value = props.chat.modelOpts?.top_p
-    reasoning.value = props.chat.modelOpts?.reasoning,
-    reasoningEffort.value = props.chat.modelOpts?.reasoningEffort,
-    verbosity.value = props.chat.modelOpts?.verbosity,
-    thinkingBudget.value = props.chat.modelOpts?.thinkingBudget,
+    reasoning.value = props.chat.modelOpts?.reasoning
+    reasoningBudget.value = props.chat.modelOpts?.reasoningBudget
+    reasoningEffort.value = props.chat.modelOpts?.reasoningEffort
+    verbosity.value = props.chat.modelOpts?.verbosity
+    thinkingBudget.value = props.chat.modelOpts?.thinkingBudget
     customParams.value = props.chat.modelOpts?.customOpts || {}
   }, { deep: true, immediate: true })
 })
@@ -346,6 +354,7 @@ const loadDefaults = () => {
     top_k.value = defaults.top_k
     top_p.value = defaults.top_p
     reasoning.value = defaults.reasoning
+    reasoningBudget.value = defaults.reasoningBudget
     reasoningEffort.value = defaults.reasoningEffort
     verbosity.value = defaults.verbosity
     thinkingBudget.value = defaults.thinkingBudget
@@ -362,6 +371,7 @@ const loadDefaults = () => {
     top_k.value = undefined
     top_p.value = undefined
     reasoning.value = undefined
+    reasoningBudget.value = undefined
     reasoningEffort.value = undefined
     verbosity.value = undefined
     thinkingBudget.value = undefined
@@ -384,6 +394,7 @@ const saveAsDefaults = () => {
     top_k: top_k.value,
     top_p: top_p.value,
     reasoning: reasoning.value,
+    reasoningBudget: reasoningBudget.value,
     reasoningEffort: reasoningEffort.value,
     verbosity: verbosity.value,
     thinkingBudget: thinkingBudget.value,
@@ -478,6 +489,7 @@ const save = () => {
     const topKValue = parseUserInput('TopK', top_k, 'int', 0, 100)
     const topPValue = parseUserInput('TopP', top_p, 'float', 0, 1)
     const reasoningValue = reasoning.value ?? undefined
+    const reasoningBudgetValue = parseUserInput('Reasoning Budget', reasoningBudget, 'int', 1024)
     const reasoningEffortValue = reasoningEffort.value ?? undefined
     const verbosityValue = verbosity.value ?? undefined
     const thinkingBudgetValue = parseUserInput('Thinking Budget', thinkingBudget, 'int', 0)
@@ -496,6 +508,7 @@ const save = () => {
       top_k: topKValue,
       top_p: topPValue,
       reasoning: reasoningValue,
+      reasoningBudget: reasoningBudgetValue,
       reasoningEffort: reasoningEffortValue,
       verbosity: verbosityValue,
       thinkingBudget: thinkingBudgetValue,

@@ -1736,6 +1736,7 @@
     "localeDefault": "🤖 默认语言",
     "maxCompletionTokens": "最大完成令牌数",
     "plugins": "插件",
+    "reasoningBudget": "推理预算（为空则为1024）",
     "reasoningEffort": "推理努力",
     "streaming": "流媒体",
     "temperature": "温度 [0.0 … 2.0]",
@@ -2428,6 +2429,9 @@
         "oneSecond": "1 秒",
         "threeSeconds": "3 秒",
         "twoSeconds": "2 秒"
+      },
+      "soniox": {
+        "cleanup": "完成后自动删除转录内容"
       },
       "spokenLanguage": "口语语言",
       "tabs": {

@@ -215,7 +215,7 @@ test('Model settings init chat', async () => {
   await modelSelect.open()
   await modelSelect.select(0)
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('true')
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoning]').element.value).toBe('true')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoning]').element.value).toBe('')
   expect(chat?.tools).toStrictEqual([])
   expect(chat?.modelOpts?.contextWindowSize).toBe(512)
   expect(chat?.modelOpts?.maxTokens).toBe(150)

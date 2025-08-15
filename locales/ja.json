@@ -1736,6 +1736,7 @@
     "localeDefault": "🤖 デフォルト言語",
     "maxCompletionTokens": "最大完了トークン数",
     "plugins": "プラグイン",
+    "reasoningBudget": "推論予算（空欄の場合は1024）",
     "reasoningEffort": "推論の労力",
     "streaming": "ストリーミング",
     "temperature": "温度 [0.0 … 2.0]",
@@ -2434,6 +2435,9 @@
         "oneSecond": "1秒",
         "threeSeconds": "3秒",
         "twoSeconds": "2秒"
+      },
+      "soniox": {
+        "cleanup": "完了後に文字起こしを自動削除"
       },
       "spokenLanguage": "話される言語",
       "tabs": {
