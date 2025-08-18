@@ -196,7 +196,7 @@ const deleteAgent = (agent: Agent) => {
         color: var(--faded-text-color);
         font-family: var(--font-family-serif);
         font-size: 16pt;
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
         line-height: 1.5;
 
         svg {

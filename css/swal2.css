@@ -87,7 +87,7 @@ div:where(.swal2-container) h2:where(.swal2-title) {
   color: var(--text-color);
   font-size: 13.5pt;
   line-height: 150%;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   margin-top: 12px;
   max-width: unset;
 }

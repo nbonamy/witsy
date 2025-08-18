@@ -118,7 +118,7 @@ defineExpose({
   header {
     label {
       font-size: 14pt;
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
     }
 
     .icon.close svg {

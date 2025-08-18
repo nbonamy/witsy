@@ -71,7 +71,7 @@ const selectRepo = (repo: DocumentBase) => {
 }
 
 .list-item .info .text {
-  font-weight: 400;
+  font-weight: var(--font-weight-regular);
   margin-bottom: 0.25rem;
 }
 

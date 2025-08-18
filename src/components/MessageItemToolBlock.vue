@@ -106,7 +106,7 @@ const toggleOpen = () => {
     
     .tool-name {
       flex: 1;
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
     }
     
     .tool-loader {
@@ -136,7 +136,7 @@ const toggleOpen = () => {
     padding: 0.5rem;
 
     .tool-values-header {
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       margin-bottom: 0.5rem;
     }
 
@@ -151,7 +151,7 @@ const toggleOpen = () => {
         display: contents;
 
         .value-key {
-          font-weight: 500;
+          font-weight: var(--font-weight-medium);
           color: var(--tool-key-text-color);
         }
 

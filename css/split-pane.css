@@ -68,7 +68,7 @@
       .title {
         flex: 1;
         font-size: 14pt;
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
         color: var(--text-color);
       }
     
@@ -307,7 +307,7 @@
         .sticky-table-container {
           
           th {
-            font-weight: 600;
+            font-weight: var(--font-weight-semibold);
           }
         
           td button {
@@ -390,7 +390,7 @@
       background-color: var(--drawer-pane-bg-color);
       border: none;
       .title {
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
         font-size: 15pt;
       }
     }

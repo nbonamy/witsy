@@ -772,7 +772,7 @@ const onFullScreen = (url: string) => {
   gap: 2rem;
   text-align: center;
   font-size: 1.5rem;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: 150%;
 
   svg {

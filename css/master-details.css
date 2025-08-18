@@ -21,7 +21,7 @@
       color: var(--faded-text-color);
 
       .md-master-header-title {
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
         margin-bottom: 1rem;
         color: var(--dimmed-text-color);
       }

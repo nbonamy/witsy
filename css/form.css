@@ -185,7 +185,7 @@
       }
 
       label {
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
         min-width: auto !important;
         text-align: left;
         margin-left: 2px;

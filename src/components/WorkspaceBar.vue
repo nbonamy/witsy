@@ -266,7 +266,7 @@ const deleteWorkspace = async () => {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
         font-size: 1rem;
         
         svg {
@@ -276,7 +276,7 @@ const deleteWorkspace = async () => {
         
         span {
           font-size: 1.2rem;
-          font-weight: 700;
+          font-weight: var(--font-weight-bold);
         }
       }
 
