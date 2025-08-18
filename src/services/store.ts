@@ -1,6 +1,7 @@
 
 import { Configuration } from '../types/config'
 import { Folder, History, Store, StoreEvent } from '../types/index'
+import { Workspace } from '../types/workspace'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'
@@ -15,6 +16,7 @@ export const kReferenceParamValue = '<media>'
 export const store: Store = reactive({
 
   config: {} as Configuration,
+  workspace: {} as Workspace,
   commands: [], 
   experts: [],
   agents: [],
@@ -63,6 +65,7 @@ export const store: Store = reactive({
     store.saveSettings()
     
     // reload data for the new workspace
+    store.loadWorkspace()
     store.loadHistory()
     store.loadExperts()
     store.loadAgents()
@@ -73,10 +76,15 @@ export const store: Store = reactive({
     }
   },
 
+  loadWorkspace: (): void => {
+    loadWorkspace()
+  },
+
   loadSettings: (): void => {
     
     // load settings
     loadSettings()
+    loadWorkspace()
 
     // we need to check the model list versions
     const llmManager = LlmFactory.manager(store.config)
@@ -130,6 +138,7 @@ export const store: Store = reactive({
 
     // load data
     store.loadSettings()
+    store.loadWorkspace()
     store.loadCommands()
     store.loadHistory()
     store.loadExperts()
@@ -289,6 +298,10 @@ const loadSettings = (): void => {
   }
 
 
+}
+
+const loadWorkspace = (): void => {
+  store.workspace = window.api.workspace.load(store.config.workspaceId)
 }
 
 const loadHistory = (): void => {

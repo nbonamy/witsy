@@ -31,6 +31,7 @@ let chat: Chat|null = null
 beforeAll(() => {
   useBrowserMock()
   useWindowMock()
+  store.isFeatureEnabled = () => true
   store.loadSettings()
   store.loadExperts()
   store.loadCommands()
@@ -457,4 +458,28 @@ test('getActiveDocRepoName function works correctly', async () => {
   // Test with invalid docrepo (returns fallback)
   wrapper.vm.docrepo = 'invalid-uuid'
   expect(wrapper.vm.getActiveDocRepoName()).toBe('Knowledge Base')
+})
+
+test('Model menu button displays and opens menu', async () => {
+  // Setup chat with engine and model
+  if (chat) {
+    chat.engine = 'mock'
+    chat.model = 'chat'
+    
+    // Recreate wrapper with updated chat
+    wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat } } )
+    
+    // Check model menu button exists
+    const modelButton = wrapper.find('.model-menu-button')
+    expect(modelButton.exists()).toBe(true)
+    
+    // Check it shows model name - should show fallback since mock doesn't return a model name
+    expect(modelButton.text()).toContain('chat')
+    
+    // Click the button
+    await modelButton.trigger('click')
+    
+    // Check that showModelMenu is true
+    expect(wrapper.vm.showModelMenu).toBe(true)
+  }
 })

@@ -13,20 +13,10 @@
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
         <div v-if="command" class="icon left command" @click="onClickActiveCommand"><BIconCommand /></div>
         <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
-        <BIconMic v-if="hasDictation"
-          v-tooltip="{ text: t('prompt.conversation.tooltip'), position: 'top' }"
-          :class="{ icon: true, dictate: true, active: dictating }" 
-          @click="onDictate" 
-          @contextmenu="onConversationMenu" 
-        />
-        <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
-        <BIconMagic class="icon command right" @click="onCommands(true)" v-if="enableCommands && prompt" />
-        <BIconStopCircleFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
-        <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
       </div>
     </div>
     <div class="actions">
-      <BIconPlusLg 
+      <BIconPlusSquareFill 
         class="icon prompt-menu scale105"
         @click="onPromptMenu"
         ref="promptMenuAnchor"
@@ -58,12 +48,37 @@
         :label="t('common.deepResearch') || 'Deep Research'"
         @clear="clearDeepResearch"
       />
+
+      <div class="push"></div>
       
       <slot name="actions" />
+      
+      <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
+      <BIconMic v-if="hasDictation"
+        v-tooltip="{ text: t('prompt.conversation.tooltip'), position: 'top' }"
+        :class="{ icon: true, dictate: true, active: dictating }" 
+        @click="onDictate" 
+        @contextmenu="onConversationMenu" 
+      />
+
+      <div class="model-menu-button" @click="onModelMenu">
+        <BIconBox />
+        <div class="model-name">{{ modelName }}</div>
+        <BIconCaretDownFill />
+      </div>
+
+      <BIconMagic class="icon command right" @click="onCommands(true)" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')" />
+      
+      <BIconStopFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
+      <BIconArrowUpSquareFill class="icon send" @click="onSendPrompt" v-else />
+    
     </div>
+    
     <slot name="between" />
     <slot name="after" />
+    
     <ContextMenu v-if="showCommands" @close="closeContextMenu" :show-filter="true" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    
     <ContextMenu v-if="showConversationMenu" @close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <PromptMenu
       v-if="showPromptMenu"
@@ -83,6 +98,14 @@
       @attach-requested="onAttach"
       @deep-research-toggled="onDeepResearch"
     />
+    <PromptModelMenu
+      v-if="showModelMenu"
+      anchor=".model-menu-button"
+      position="above-right"
+      :chat="chat"
+      @close="closeModelMenu"
+      @model-selected="handleModelSelected"
+    />
   </div>
 </template>
 
@@ -94,12 +117,13 @@ import { StreamingChunk } from '../voice/stt'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { expertI18n, commandI18n, t, i18nInstructions, getLlmLocale, setLlmLocale } from '../services/i18n'
-import { BIconPlusLg, BIconMortarboard, BIconLightbulb, BIconBinoculars } from 'bootstrap-icons-vue'
+import { BIconMortarboard, BIconLightbulb, BIconBinoculars, BIconChevronDown } from 'bootstrap-icons-vue'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
 import PromptMenu from './PromptMenu.vue'
+import PromptModelMenu from './PromptModelMenu.vue'
 import PromptFeature from './PromptFeature.vue'
 import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
@@ -213,6 +237,7 @@ const showExperts = ref(false)
 const showCommands = ref(false)
 const showConversationMenu = ref(false)
 const showPromptMenu = ref(false)
+const showModelMenu = ref(false)
 const deepResearchActive = ref(false)
 const hasDictation = ref(false)
 const dictating = ref(false)
@@ -256,6 +281,11 @@ const conversationMenu = computed(() => {
       { label: t('prompt.conversation.startPTT'), action: 'ptt' },
     ]
   }
+})
+
+const modelName = computed(() => {  
+  const model = llmManager.getChatModel(props.chat?.engine, props.chat?.model)
+  return model?.name || props.chat?.model || 'Select Model'
 })
 
 onMounted(() => {
@@ -788,7 +818,7 @@ const stopConversation = () => {
 
 
 const isContextMenuOpen = () => {
-  return showExperts.value || showCommands.value || showConversationMenu.value || showPromptMenu.value
+  return showExperts.value || showCommands.value || showConversationMenu.value || showPromptMenu.value || showModelMenu.value
 }
 
 const closeContextMenu = () => {
@@ -796,6 +826,7 @@ const closeContextMenu = () => {
   showCommands.value = false
   showConversationMenu.value = false
   showPromptMenu.value = false
+  showModelMenu.value = false
   nextTick(() => {
     input.value.focus()
   })
@@ -806,8 +837,19 @@ const onPromptMenu = () => {
   showPromptMenu.value = true
 }
 
+const onModelMenu = () => {
+  closeContextMenu()
+  showModelMenu.value = true
+}
+
 const closePromptMenu = async () => {
   showPromptMenu.value = false
+  await nextTick()
+  input.value.focus()
+}
+
+const closeModelMenu = async () => {
+  showModelMenu.value = false
   await nextTick()
   input.value.focus()
 }
@@ -825,6 +867,15 @@ const handleManageDocRepo = () => {
 const handleManageExperts = () => {
   // window.api.docrepo.open()
   closePromptMenu()
+}
+
+const handleModelSelected = (engine: string, model: string) => {
+  llmManager.setChatModel(engine, model)
+  if (props.chat) {
+    props.chat.engine = engine
+    props.chat.model = model
+  }
+  closeModelMenu()
 }
 
 const setDocRepo = (docRepoUuid: string | null) => {
@@ -1118,13 +1169,14 @@ defineExpose({
 
 .prompt {
   
-  padding: 8px 12px;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   border: 1px solid var(--prompt-input-border-color);
   border-radius: 1rem;
   background-color: var(--prompt-input-bg-color);
+  gap: 1rem;
 
   &.drag-over {
     border: 1px dashed var(--highlight-color);
@@ -1133,7 +1185,6 @@ defineExpose({
   .icon {
     cursor: pointer;
     color: var(--prompt-icon-color);
-
     &.active {
       fill: var(--highlight-color);
       color: var(--highlight-color);
@@ -1232,7 +1283,7 @@ defineExpose({
         top: -4px;
         margin-left: 0;
         margin-right: -8px;
-        height: 24px;
+        height: 19px;
         display: flex;
         justify-content: center;
         gap: 8px;
@@ -1246,12 +1297,12 @@ defineExpose({
       }
 
       textarea {
+        padding: 0px;
         background-color: var(--prompt-input-bg-color);
         color: var(--prompt-input-text-color);
         border: none;
         resize: none;
         box-sizing: border-box;
-        border-radius: 16px;
         overflow-x: hidden;
         overflow-y: auto;
         width: 100%;
@@ -1282,17 +1333,42 @@ defineExpose({
   .actions {
     display: flex;
     gap: 0.25rem;
-    margin-top: 0.25rem;
-    margin-left: 0.25rem;
     align-items: center;
+
+    .push {
+      flex: 1;
+    }
 
     &:not(:has(*)) {
       display: none;
     }
     
+    .model-menu-button {
+      margin: 0 1rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      cursor: pointer;
+      gap: 0.5rem;
+      
+      .model-name {
+        font-size: 0.9rem;
+        color: var(--prompt-icon-color);
+        opacity: 0.8;
+      }
+      
+      &:hover .model-name {
+        opacity: 1;
+      }
+    }
+
     .icon {
-      width: 1rem;
-      height: 1rem;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .icon.prompt-menu {
+      opacity: 0.3;
     }
 
     .icon.instructions {
