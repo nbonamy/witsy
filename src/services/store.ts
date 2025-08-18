@@ -182,6 +182,7 @@ export const store: Store = reactive({
         top_k: defaults.top_k,
         top_p: defaults.top_p,
         reasoning: defaults.reasoning,
+        reasoningBudget: defaults.reasoningBudget,
         reasoningEffort: defaults.reasoningEffort,
         verbosity: defaults.verbosity,
         thinkingBudget: defaults.thinkingBudget,

@@ -1531,7 +1531,9 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>"
+      "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>",
+      "mermaid": "Wenn du gebeten wirst, ein Mermaid-Diagramm auszugeben, wird dessen Code als Diagramm für den Benutzer dargestellt.",
+      "toolRetry": "Wenn beim Aufrufen von Werkzeugen ein Eingabefehler auftritt, analysiere den Fehler, versuche ihn zu beheben und rufe das Werkzeug dann erneut auf."
     },
     "chat": {
       "docquery": "Sie sind ein hilfreicher, menschenähnlicher Chatbot. Verwenden Sie den bereitgestellten relevanten Kontext und den Chatverlauf, um die abschließende Anfrage zu beantworten. Antworten Sie vollständig. Wenn Sie die Antwort nicht wissen, sagen Sie einfach, dass Sie es nicht wissen, und versuchen Sie nicht, eine Antwort zu erfinden. Verwenden Sie keine Wörter wie Kontext oder Trainingsdaten, wenn Sie antworten. Sie können sagen, dass Sie nicht alle Informationen haben, geben Sie jedoch nicht an, dass Sie keine zuverlässige Quelle sind. Beenden Sie Ihre Antwort immer mit einer Frage, um das Gespräch am Laufen zu halten.\n\nKONTEXT:\n{'{'}context{'}'}\n\nANFRAGE: {'{'}query{'}'}",
@@ -1739,6 +1741,7 @@
     "localeDefault": "🤖 Standardsprache",
     "maxCompletionTokens": "Maximale Abschluss-Tokens",
     "plugins": "Plugins",
+    "reasoningBudget": "Rechenbudget (leer = 1024)",
     "reasoningEffort": "Überlegungsaufwand",
     "streaming": "Streaming",
     "temperature": "Temperatur [0.0 … 2.0]",
@@ -2434,7 +2437,7 @@
         "twoSeconds": "2 Sekunden"
       },
       "soniox": {
-        "cleanup": "Auto-delete transcriptions after completion"
+        "cleanup": "Transkriptionen nach Abschluss automatisch löschen"
       },
       "spokenLanguage": "Gesprochene Sprache",
       "tabs": {

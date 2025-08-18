@@ -1,4 +1,6 @@
 
+import { Anthropic, ChatModel, LlmCompletionOpts } from 'multi-llm-ts'
+import { MessageCreateParamsBase } from '@anthropic-ai/sdk/resources/beta/messages/messages'
 import { store } from '../services/store'
 import ComputerPlugin from '../plugins/computer'
 
@@ -18,6 +20,25 @@ const isSpecializedModel = (model: string): boolean => {
 
 const getFallbackModel = (): string => {
   return 'claude-3-5-sonnet-20241022'
+}
+
+export default class AnthropicEngine extends Anthropic {
+
+  getCompletionOpts(model: ChatModel, opts?: LlmCompletionOpts): Omit<MessageCreateParamsBase, 'model'|'messages'|'stream'|'tools'|'tool_choice'> {
+
+    // we need opts
+    if (!opts) opts = {} 
+
+    // activate reasoning by default
+    if (typeof opts.reasoning === 'undefined') {
+      opts.reasoning = true
+    }
+
+    // use default
+    return super.getCompletionOpts(model, opts)
+
+  }
+  
 }
 
 export { getComputerInfo, isSpecializedModel, getFallbackModel }

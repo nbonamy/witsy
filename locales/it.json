@@ -1531,7 +1531,9 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Quando l'utente ti chiede di creare del contenuto (documento, riassunto...), usa la seguente sintassi:\n<artifact title=\"TITOLO\">\nCONTENUTO\n</artifact>"
+      "artifacts": "Quando l'utente ti chiede di creare del contenuto (documento, riassunto...), usa la seguente sintassi:\n<artifact title=\"TITOLO\">\nCONTENUTO\n</artifact>",
+      "mermaid": "Se ti viene chiesto di generare un diagramma Mermaid, il suo codice sarà reso come diagramma all'utente.",
+      "toolRetry": "Quando si chiamano gli strumenti, se si riceve un errore di input, analizzare l'errore e cercare di correggerlo, quindi riprovare a chiamare lo strumento."
     },
     "chat": {
       "docquery": "Sei un chatbot utile che si comporta come un umano. Usa il contesto fornito e la cronologia della chat per rispondere alla richiesta finale. Rispondi in modo completo. Se non conosci la risposta, dì semplicemente che non lo sai, non cercare di inventare una risposta. Non usare parole come contesto o dati di addestramento quando rispondi. Puoi dire che non hai tutte le informazioni ma non indicare che non sei una fonte affidabile. Termina sempre la tua risposta con una domanda per mantenere la conversazione attiva.\n\nCONTESTO:\n{'{'}context{'}'}\n\nRICHIESTA: {'{'}query{'}'}",
@@ -1739,6 +1741,7 @@
     "localeDefault": "🤖 Lingua predefinita",
     "maxCompletionTokens": "Token massimi di completamento",
     "plugins": "Plugin",
+    "reasoningBudget": "Budget di ragionamento (vuoto = 1024)",
     "reasoningEffort": "Sforzo di ragionamento",
     "streaming": "Streaming",
     "temperature": "Temperatura [0.0 … 2.0]",
@@ -2434,7 +2437,7 @@
         "twoSeconds": "2 secondi"
       },
       "soniox": {
-        "cleanup": "Auto-delete transcriptions after completion"
+        "cleanup": "Elimina automaticamente le trascrizioni al completamento"
       },
       "spokenLanguage": "Lingua parlata",
       "tabs": {

@@ -1550,7 +1550,9 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約など）を作成するように依頼した場合、次の構文を使用してください:\n<artifact title=\"タイトル\">\n内容\n</artifact>"
+      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約など）を作成するように依頼した場合、次の構文を使用してください:\n<artifact title=\"タイトル\">\n内容\n</artifact>",
+      "mermaid": "Mermaidチャートの出力を求められた場合、そのコードはユーザーに図として表示されます。",
+      "toolRetry": "ツールを呼び出す際に入力エラーが発生した場合は、エラーを分析して修正を試み、その後ツールの呼び出しを再試行してください。"
     },
     "chat": {
       "docquery": "あなたは親切な人間のようなチャットボットです。提供された関連コンテキストとチャット履歴を使用して、最後のクエリに回答してください。完全に回答してください。答えがわからない場合は、わからないとだけ言ってください。答えをでっち上げようとしないでください。応答時にコンテキストやトレーニングデータのような言葉を使用しないでください。すべての情報を持っているわけではないと言うことはできますが、信頼できる情報源ではないと示唆しないでください。会話を続けるために、常に質問で応答を終了してください。\n\nコンテキスト:\n{'{'}context{'}'}\n\nクエリ: {'{'}query{'}'}",
@@ -1758,6 +1760,7 @@
     "localeDefault": "🤖 デフォルト言語",
     "maxCompletionTokens": "最大完了トークン数",
     "plugins": "プラグイン",
+    "reasoningBudget": "推論予算（空欄の場合は1024）",
     "reasoningEffort": "推論の労力",
     "streaming": "ストリーミング",
     "temperature": "温度 [0.0 … 2.0]",
@@ -2462,7 +2465,7 @@
         "twoSeconds": "2秒"
       },
       "soniox": {
-        "cleanup": "Auto-delete transcriptions after completion"
+        "cleanup": "完了後に文字起こしを自動削除"
       },
       "spokenLanguage": "話される言語",
       "tabs": {
