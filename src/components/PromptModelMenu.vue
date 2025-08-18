@@ -44,6 +44,7 @@ import EngineLogo from './EngineLogo.vue'
 import { store } from '../services/store'
 import LlmFactory from '../llms/llm'
 import type { ChatModel } from 'multi-llm-ts'
+import { engineNames } from '../llms/base'
 
 // Props
 interface Props {
@@ -71,7 +72,20 @@ const llmManager = LlmFactory.manager(store.config)
 
 // Computed properties
 const availableEngines = computed(() => {
-  return llmManager.getChatEngines().filter(engine => {
+  // If no workspace is defined, show all engines
+  if (!store.workspace?.models) {
+    return llmManager.getChatEngines().filter(engine => {
+      return llmManager.isEngineReady(engine) && llmManager.hasChatModels(engine) && !llmManager.isFavoriteEngine(engine)
+    }).sort((a, b) => {
+      const nameA = llmManager.getEngineName(a).toLowerCase()
+      const nameB = llmManager.getEngineName(b).toLowerCase()
+      return nameA.localeCompare(nameB)
+    })
+  }
+
+  // Filter engines based on workspace favorite models
+  const workspaceEngines = [...new Set(store.workspace.models.map(model => model.engine))]
+  return workspaceEngines.filter(engine => {
     return llmManager.isEngineReady(engine) && llmManager.hasChatModels(engine) && !llmManager.isFavoriteEngine(engine)
   }).sort((a, b) => {
     const nameA = llmManager.getEngineName(a).toLowerCase()
@@ -81,11 +95,23 @@ const availableEngines = computed(() => {
 })
 
 const getEngineName = (engine: string): string => {
-  return llmManager.getEngineName(engine)
+  return engineNames[engine]
 }
 
 const getEngineModels = (engine: string): ChatModel[] => {
-  return llmManager.getChatModels(engine)
+  const allModels = llmManager.getChatModels(engine)
+  
+  // If no workspace is defined, show all models
+  if (!store.workspace?.models) {
+    return allModels
+  }
+
+  // Filter models based on workspace favorite models
+  const workspaceModelIds = store.workspace.models
+    .filter(model => model.engine === engine)
+    .map(model => model.model)
+  
+  return allModels.filter(model => workspaceModelIds.includes(model.id))
 }
 
 // Methods
@@ -108,17 +134,11 @@ const handleModelClick = (engine: string, model: string) => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 1rem;
   cursor: pointer;
   font-size: 11pt;
   white-space: nowrap;
   overflow-x: clip;
   text-overflow: ellipsis;
-  color: var(--context-menu-text-color);
-}
-
-.engine-item:hover {
-  background-color: var(--context-menu-selected-bg-color);
 }
 
 .engine-logo {
@@ -129,21 +149,15 @@ const handleModelClick = (engine: string, model: string) => {
 
 .engine-name {
   flex: 1;
-  text-transform: capitalize;
 }
 
 .model-item {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 1rem;
+  padding: 0.25rem 0rem;
   cursor: pointer;
   font-size: 10pt;
-  color: var(--context-menu-text-color);
-}
-
-.model-item:hover {
-  background-color: var(--context-menu-selected-bg-color);
 }
 
 .model-info {
