@@ -65,13 +65,15 @@
       <div class="model-menu-button" @click="onModelMenu">
         <Box />
         <div class="model-name">{{ modelName }}</div>
-        <BIconCaretDownFill />
+        <BIconCaretDownFill class="icon caret" />
       </div>
 
       <BIconMagic class="icon command right" @click="onCommands(true)" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')" />
       
-      <Square class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
-      <ArrowUp class="icon send" @click="onSendPrompt" v-else />
+      <div class="send-stop">
+        <Square class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
+        <ArrowUp class="icon send" :class="{ disabled: !prompt.length }" @click="onSendPrompt" v-else />
+      </div>
     
     </div>
     
@@ -1352,16 +1354,51 @@ defineExpose({
       cursor: pointer;
       gap: 0.5rem;
 
+      .model-name {
+        font-size: 12px;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       svg {
-        width: 1.25rem;
-        height: 1.25rem;
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .icon.caret {
+        width: 0.5rem;
+        height: 0.75rem;
       }
       
     }
 
+    .send-stop {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.375rem;
+      background-color: var(--color-light-on-surface, #27272A);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+        color: white;
+      }
+
+      &:has(.disabled) {
+        background-color: rgb(229, 229, 229);
+      }
+
+
+    }
+
     .icon {
-      width: 1.25rem;
-      height: 1.25rem;
+      width: 1rem;
+      height: 1rem;
     }
 
     .icon.instructions {
