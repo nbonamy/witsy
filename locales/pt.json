@@ -1550,7 +1550,9 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Quando o usuário solicitar que você crie algum conteúdo (documento, resumo...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO\">\nCONTEÚDO\n</artifact>"
+      "artifacts": "Quando o usuário solicitar que você crie algum conteúdo (documento, resumo...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO\">\nCONTEÚDO\n</artifact>",
+      "mermaid": "Se for solicitado que você produza um diagrama Mermaid, seu código será exibido como um diagrama para o usuário.",
+      "toolRetry": "Ao chamar ferramentas, se você receber um erro de entrada, analise o erro e tente corrigi-lo e então tente chamar a ferramenta novamente."
     },
     "chat": {
       "docquery": "Você é um chatbot útil e semelhante a um humano. Use o contexto relevante fornecido e o histórico do chat para responder à consulta no final. Responda na íntegra. Se você não souber a resposta, apenas diga que não sabe, não tente inventar uma resposta. Não use palavras como contexto ou dados de treinamento ao responder. Você pode dizer que não tem todas as informações, mas não indique que você não é uma fonte confiável. Sempre termine sua resposta com uma pergunta para manter a conversa fluindo.\n\nCONTEXTO:\n{'{'}context{'}'}\n\nCONSULTA: {'{'}query{'}'}",
@@ -1758,6 +1760,7 @@
     "localeDefault": "🤖 Idioma Padrão",
     "maxCompletionTokens": "Número máximo de tokens",
     "plugins": "Plugins",
+    "reasoningBudget": "Orçamento de Raciocínio (vazio = 1024)",
     "reasoningEffort": "Esforço de Raciocínio",
     "streaming": "Streaming",
     "temperature": "Temperatura [0.0 … 2.0]",
@@ -2456,7 +2459,7 @@
         "twoSeconds": "2 segundos"
       },
       "soniox": {
-        "cleanup": "Auto-delete transcriptions after completion"
+        "cleanup": "Excluir automaticamente transcrições após conclusão"
       },
       "spokenLanguage": "Idioma Falado",
       "tabs": {

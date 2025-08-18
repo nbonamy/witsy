@@ -80,10 +80,7 @@
         </div>
         
         <div class="result">
-          <div v-if="isStreaming && transcription" class="transcription-display">
-            <span class="final-text">{{ transcription }}</span>
-          </div>
-          <textarea v-else v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
+          <textarea v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
         </div>
         
         <div class="actions">

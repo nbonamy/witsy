@@ -1,6 +1,6 @@
 
 import { Configuration } from '../types/config'
-import { getComputerInfo } from './anthropic'
+import Anthropic, { getComputerInfo } from './anthropic'
 import LlmManagerBase from './base'
 import * as llm from 'multi-llm-ts'
 import Google from './google'
@@ -34,7 +34,7 @@ export default class LlmManager extends LlmManagerBase {
   }
 
   isEngineConfigured = (engine: string): boolean => {
-    if (engine === 'anthropic') return llm.Anthropic.isConfigured(this.config.engines.anthropic)
+    if (engine === 'anthropic') return Anthropic.isConfigured(this.config.engines.anthropic)
     if (engine === 'cerebras') return llm.Cerebras.isConfigured(this.config.engines.cerebras)
     if (engine === 'deepseek') return llm.DeepSeek.isConfigured(this.config.engines.deepseek)
     if (engine === 'google') return Google.isConfigured(this.config.engines.google)
@@ -52,7 +52,7 @@ export default class LlmManager extends LlmManagerBase {
   }  
   
   isEngineReady = (engine: string): boolean => {
-    if (engine === 'anthropic') return llm.Anthropic.isReady(this.config.engines.anthropic, this.config.engines.anthropic?.models)
+    if (engine === 'anthropic') return Anthropic.isReady(this.config.engines.anthropic, this.config.engines.anthropic?.models)
     if (engine === 'cerebras') return llm.Cerebras.isReady(this.config.engines.cerebras, this.config.engines.cerebras?.models)
     if (engine === 'deepseek') return llm.DeepSeek.isReady(this.config.engines.deepseek, this.config.engines.deepseek?.models)
     if (engine === 'google') return Google.isReady(this.config.engines.google, this.config.engines.google?.models)
@@ -81,7 +81,7 @@ export default class LlmManager extends LlmManagerBase {
       }
 
       // select
-      if (engine === 'anthropic') return new llm.Anthropic(this.config.engines.anthropic, getComputerInfo())
+      if (engine === 'anthropic') return new Anthropic(this.config.engines.anthropic, getComputerInfo())
       if (engine === 'cerebras') return new llm.Cerebras(this.config.engines.cerebras)
       if (engine === 'deepseek') return new llm.DeepSeek(this.config.engines.deepseek)
       if (engine === 'google') return new Google(this.config.engines.google)

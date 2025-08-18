@@ -1550,7 +1550,9 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "当用户请求您创建某些内容（文档、摘要等）时，请使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>"
+      "artifacts": "当用户请求您创建某些内容（文档、摘要等）时，请使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>",
+      "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
+      "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
     },
     "chat": {
       "docquery": "你是一个类似人类的聊天机器人。使用相关的上下文和聊天历史来回答最后的问题。完整回答。如果你不知道答案，就说你不知道，不要编造答案。回答时不要使用上下文或训练数据之类的词汇。始终以一个问题结束你的回答，以保持对话进行。\n\n上下文：\n{'{'}context{'}'}\n\n问题：{'{'}query{'}'}",
@@ -1758,6 +1760,7 @@
     "localeDefault": "🤖 默认语言",
     "maxCompletionTokens": "最大完成令牌数",
     "plugins": "插件",
+    "reasoningBudget": "推理预算（为空则为1024）",
     "reasoningEffort": "推理努力",
     "streaming": "流媒体",
     "temperature": "温度 [0.0 … 2.0]",
@@ -2456,7 +2459,7 @@
         "twoSeconds": "2 秒"
       },
       "soniox": {
-        "cleanup": "Auto-delete transcriptions after completion"
+        "cleanup": "完成后自动删除转录内容"
       },
       "spokenLanguage": "口语语言",
       "tabs": {

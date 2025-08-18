@@ -27,6 +27,7 @@
     "defaults": [],
     "customInstructions": [],
     "additionalInstructions": {
+      "toolRetry": true,
       "datetime": true,
       "mermaid": true,
       "artifacts": false

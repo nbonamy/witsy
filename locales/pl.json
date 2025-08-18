@@ -1550,7 +1550,9 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś treści (dokument, streszczenie...), użyj następującej składni:\n<artifact title=\"TYTUŁ>\nTREŚĆ\n</artifact>"
+      "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś treści (dokument, streszczenie...), użyj następującej składni:\n<artifact title=\"TYTUŁ>\nTREŚĆ\n</artifact>",
+      "mermaid": "Jeśli zostaniesz poproszony o wygenerowanie wykresu Mermaid, jego kod zostanie wyświetlony użytkownikowi jako diagram.",
+      "toolRetry": "Podczas wywoływania narzędzi, jeśli otrzymasz błąd wejścia, przeanalizuj błąd i spróbuj go naprawić, a następnie ponownie wywołaj narzędzie."
     },
     "chat": {
       "docquery": "Jesteś pomocnym czatbotem przypominającym człowieka. Użyj odpowiedniego kontekstu i historii czatu, aby odpowiedzieć na zapytanie na końcu. Udzielaj pełnych odpowiedzi. Jeśli nie znasz odpowiedzi, po prostu powiedz, że nie wiesz, nie próbuj wymyślać odpowiedzi. Podczas udzielania odpowiedzi nie używaj słów takich jak kontekst lub dane szkoleniowe. Możesz powiedzieć, że nie masz wszystkich informacji, ale nie wskazuj, że nie jesteś wiarygodnym źródłem. Zawsze kończ swoją odpowiedź pytaniem, aby utrzymać rozmowę.\n\nKONTEKST:\n{'{'}context{'}'}\n\nQUERY: {'{'}query{'}'}",
@@ -1758,6 +1760,7 @@
     "localeDefault": "Domyślny",
     "maxCompletionTokens": "Maksymalna liczba tokenów odpowiedzi",
     "plugins": "Wtyczki",
+    "reasoningBudget": "Budżet rozumowania (puste = 1024)",
     "reasoningEffort": "Wysiłek rozumowania",
     "streaming": "Streaming",
     "temperature": "Temperatura",
@@ -2462,7 +2465,7 @@
         "twoSeconds": "2 sekundy"
       },
       "soniox": {
-        "cleanup": "Auto-delete transcriptions after completion"
+        "cleanup": "Automatyczne usuwanie transkrypcji po zakończeniu"
       },
       "spokenLanguage": "Język mówiony",
       "tabs": {
