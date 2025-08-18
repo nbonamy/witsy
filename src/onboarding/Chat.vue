@@ -146,7 +146,7 @@ const onKeyDown = (event: KeyboardEvent) => {
   cursor: pointer;
   color: var(--primary-color);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   border-radius: 0.5rem;
   transition: background-color 0.2s ease;
 }

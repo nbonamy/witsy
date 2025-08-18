@@ -640,7 +640,7 @@ const onResponseResize = (deltaX: number) => {
       padding: 2px 8px;
       margin-bottom: 8px;
       font-size: 11pt;
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       .icon {
         padding: 0px;
         margin: 0px;

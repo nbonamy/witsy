@@ -224,7 +224,7 @@ const notifyVisible = () => {
           padding: 0 4rem;
           text-align: center;
           color: var(--dimmed-text-color);
-          font-weight: 400;
+          font-weight: var(--font-weight-regular);
         }
       }
 

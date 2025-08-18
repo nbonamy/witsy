@@ -393,7 +393,7 @@ header {
   margin-top: 1rem;
   margin-bottom: 2rem;
   font-size: 1.2em;
-  font-weight: 400;
+  font-weight: var(--font-weight-regular);
   color: var(--dimmed-text-color);
   text-align: center;
 }
@@ -429,7 +429,7 @@ header {
     padding-top: 2rem;
     border-color: var(--highlight-color);
     .instruction-name {
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
     }
   }
 }
@@ -447,7 +447,7 @@ header {
 
 .instruction-name {
   font-size: 0.95em;
-  font-weight: 400;
+  font-weight: var(--font-weight-regular);
   flex: 1;
 }
 
@@ -459,7 +459,7 @@ header {
   background: var(--highlight-color);
   color: white;
   font-size: 0.7em;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   padding: 0.25rem 0.5rem;
   border-top-left-radius: 0.65rem;
   border-top-right-radius: 0.65rem;

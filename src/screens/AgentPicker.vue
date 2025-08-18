@@ -146,7 +146,7 @@ defineExpose({
     gap: 0.25rem;
 
     .agent-name {
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
       font-size: 11.5pt;
       white-space: nowrap;
       overflow: hidden;

@@ -235,7 +235,7 @@ const onUsage = () => {
   padding: 0.25rem 0.5rem;
   margin-bottom: 0.5rem;
   font-size: 11pt;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 
   .icon {
     width: 1.5rem;

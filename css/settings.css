@@ -53,7 +53,7 @@
       
       .title {
         font-size: var(--settings-menu-font-size);
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
       }
     
     }
@@ -86,7 +86,7 @@
     text-align: center;
     margin: 0.5rem 0;
     z-index: 100;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     display: flex;
     align-items: center;
 

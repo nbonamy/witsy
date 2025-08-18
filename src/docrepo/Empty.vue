@@ -48,7 +48,7 @@ const emit = defineEmits(['click', 'close'])
   h3 {
     margin: 0 0 0.5rem 0;
     font-size: 1.5rem;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   
   p {
