@@ -1993,7 +1993,7 @@
       }
     },
     "placeholders": {
-      "default": "Enterで送信、Shift+Enterで新しい行を追加"
+      "default": "ここにメッセージを入力してください…"
     }
   },
   "realtimeChat": {

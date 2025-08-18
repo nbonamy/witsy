@@ -146,6 +146,11 @@ const toggleModel = (engine: string, model: string) => {
     })
   }
 
+  // make it undefined if empty
+  if (workspace.value.models.length == 0) {
+    workspace.value.models = undefined
+  }
+
   // save
   window.api.workspace.save(JSON.parse(JSON.stringify(workspace.value)))
 

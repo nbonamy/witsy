@@ -10,7 +10,7 @@
       </div>
 
       <MenuBarItem class="chat" action="chat" :active="mode === 'chat'" @click="emit('new-chat')">
-        <MessageCircle />
+        <IconChat />
         <span>{{ t('common.chat') }}</span>
       </MenuBarItem>
 
@@ -25,7 +25,7 @@
       </MenuBarItem>
 
       <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.isFeatureEnabled('agents')">
-        <Bot />
+        <IconAgent />
         <span>{{ t('agent.forge.title') }}</span>
       </MenuBarItem>
 
@@ -56,11 +56,6 @@
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="debug" :active="mode === 'debug'" @click="emit('change', 'debug')">
-        <Activity />
-        <span>{{ t('debugConsole.title') }}</span>
-      </MenuBarItem>
-
       <MenuBarItem action="settings" :active="mode === 'settings'" @click="emit('change', 'settings')">
         <Settings />
         <span>{{ t('common.settings') }}</span>
@@ -84,7 +79,9 @@ import IconMenu from './IconMenu.vue'
 import useAppearanceTheme from '../composables/appearance_theme' 
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
-import { Activity, Bot, Brain, FileText, Headset, Lightbulb, MessageCircle, Mic, Mouse, Palette, Settings } from 'lucide-vue-next'
+import { Brain, FileText, Headset, Lightbulb, Mic, Mouse, Palette, Settings } from 'lucide-vue-next'
+import IconAgent from '../../assets/agent.svg?component'
+import IconChat from '../../assets/message-circle-3.svg?component'
 
 export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug' | 'agents'
 
@@ -222,7 +219,6 @@ body[data-tint=blue] .mx-context-menu {
     gap: 0.75rem;
 
     border-right: 1px solid var(--sidebar-border-color);
-    border-top: 1px solid var(--sidebar-border-color);
 
     .push {
       flex: 1;

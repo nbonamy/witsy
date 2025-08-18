@@ -1971,7 +1971,7 @@
       }
     },
     "placeholders": {
-      "default": "Appuyez sur Entrée pour soumettre, Maj+Entrée pour ajouter une nouvelle ligne"
+      "default": "Tapez votre message ici…"
     }
   },
   "realtimeChat": {

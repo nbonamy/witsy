@@ -13,7 +13,7 @@
         <div class="title">{{ t('agent.forge.title') }}</div>
       </header>
       <main class="empty sliding-root" :class="{ visible: mode === 'list' }" v-if="store.agents.length === 0">
-        <Bot @click="onCreate()" />
+        <IconAgent @click="onCreate()" />
         {{ t('agent.forge.empty') }}
       </main>
       <main class="sliding-root" :class="{ visible: mode === 'list' }" v-else>
@@ -41,7 +41,7 @@ import View from '../agent/View.vue'
 import Editor from '../agent/Editor.vue'
 import AgentRunner from '../services/runner'
 import Agent from '../models/agent'
-import { Bot } from 'lucide-vue-next'
+import IconAgent from '../../assets/agent.svg?component'
 
 defineProps({
   extra: Object

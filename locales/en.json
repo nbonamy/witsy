@@ -1996,7 +1996,7 @@
       }
     },
     "placeholders": {
-      "default": "Enter to submit, Shift+Enter to add a new line"
+      "default": "Type your message here…"
     }
   },
   "realtimeChat": {
