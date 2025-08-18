@@ -95,7 +95,8 @@ const availableEngines = computed(() => {
 })
 
 const getEngineName = (engine: string): string => {
-  return engineNames[engine]
+  const name = llmManager.getEngineName(engine)
+  return engineNames[name] ?? name
 }
 
 const getEngineModels = (engine: string): ChatModel[] => {
