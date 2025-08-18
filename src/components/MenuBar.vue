@@ -10,59 +10,59 @@
       </div>
 
       <MenuBarItem class="chat" action="chat" :active="mode === 'chat'" @click="emit('new-chat')">
-        <BIconChatSquareQuote />
+        <MessageCircle />
         <span>{{ t('common.chat') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')" v-if="store.isFeatureEnabled('studio')">
-        <BIconPalette />
+        <Palette />
         <span>{{ t('designStudio.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')" v-if="store.isFeatureEnabled('scratchpad')">
-        <BIconJournalText />
+        <FileText />
         <span>{{ t('scratchpad.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.isFeatureEnabled('agents')">
-        <BIconRobot />
+        <Bot />
         <span>{{ t('agent.forge.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')" v-if="store.isFeatureEnabled('dictation')">
-        <BIconMic />
+        <Mic />
         <span>{{ t('transcribe.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')" v-if="store.isFeatureEnabled('voiceMode')">
-        <BIconChatSquareDots />
+        <Headset />
         <span>{{ t('realtimeChat.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">
-        <BIconMouse2 />
+        <Mouse />
         <span>{{ t('computerUse.title') }}</span>
       </MenuBarItem>
 
       <div class="push"></div>
 
       <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')" v-if="store.isFeatureEnabled('docrepo')">
-        <BIconLightbulb />
+        <Lightbulb />
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
 
-      <!-- <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureEnabled('experts')">
-        <BIconChatLeftText />
+      <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureEnabled('experts')">
+        <Brain />
         <span>{{ t('docRepo.list.title') }}</span>
-      </MenuBarItem> -->
+      </MenuBarItem>
 
-      <!-- <MenuBarItem action="debug" :active="mode === 'debug'" @click="emit('change', 'debug')">
-        <BIconActivity />
+      <MenuBarItem action="debug" :active="mode === 'debug'" @click="emit('change', 'debug')">
+        <Activity />
         <span>{{ t('debugConsole.title') }}</span>
-      </MenuBarItem> -->
+      </MenuBarItem>
 
       <MenuBarItem action="settings" :active="mode === 'settings'" @click="emit('change', 'settings')">
-        <BIconGear />
+        <Settings />
         <span>{{ t('common.settings') }}</span>
       </MenuBarItem>
 
@@ -84,7 +84,7 @@ import IconMenu from './IconMenu.vue'
 import useAppearanceTheme from '../composables/appearance_theme' 
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
-import { BIconChatLeftText, BIconLightbulb } from 'bootstrap-icons-vue'
+import { Activity, Bot, Brain, FileText, Headset, Lightbulb, MessageCircle, Mic, Mouse, Palette, Settings } from 'lucide-vue-next'
 
 export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug' | 'agents'
 

@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="actions">
-      <BIconPlusSquareFill 
+      <Plus 
         class="icon prompt-menu scale105"
         @click="onPromptMenu"
         ref="promptMenuAnchor"
@@ -24,27 +24,28 @@
       
       <PromptFeature
         v-if="instructions"
+        :icon="Feather"
         :label="instructions.label"
         @clear="clearInstructions"
       />
       
       <PromptFeature
         v-if="expert"
-        :icon="BIconMortarboard"
+        :icon="Brain"
         :label="expert.name || expertI18n(expert, 'name')"
         @clear="clearExpert"
       />
       
       <PromptFeature
         v-if="docrepo"
-        :icon="BIconLightbulb"
+        :icon="Lightbulb"
         :label="getActiveDocRepoName()"
         @clear="clearDocRepo"
       />
       
       <PromptFeature
         v-if="deepResearchActive"
-        :icon="BIconBinoculars"
+        :icon="Telescope"
         :label="t('common.deepResearch') || 'Deep Research'"
         @clear="clearDeepResearch"
       />
@@ -54,7 +55,7 @@
       <slot name="actions" />
       
       <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
-      <BIconMic v-if="hasDictation"
+      <Mic v-if="hasDictation"
         v-tooltip="{ text: t('prompt.conversation.tooltip'), position: 'top' }"
         :class="{ icon: true, dictate: true, active: dictating }" 
         @click="onDictate" 
@@ -62,15 +63,15 @@
       />
 
       <div class="model-menu-button" @click="onModelMenu">
-        <BIconBox />
+        <Box />
         <div class="model-name">{{ modelName }}</div>
         <BIconCaretDownFill />
       </div>
 
       <BIconMagic class="icon command right" @click="onCommands(true)" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')" />
       
-      <BIconStopFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
-      <BIconArrowUpSquareFill class="icon send" @click="onSendPrompt" v-else />
+      <Square class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
+      <ArrowUp class="icon send" @click="onSendPrompt" v-else />
     
     </div>
     
@@ -117,7 +118,7 @@ import { StreamingChunk } from '../voice/stt'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { expertI18n, commandI18n, t, i18nInstructions, getLlmLocale, setLlmLocale } from '../services/i18n'
-import { BIconMortarboard, BIconLightbulb, BIconBinoculars, BIconChevronDown } from 'bootstrap-icons-vue'
+import { ArrowUp, Box, Brain, Feather, Lightbulb, Mic, Plus, Square, Telescope } from 'lucide-vue-next'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
@@ -1350,25 +1351,17 @@ defineExpose({
       align-items: center;
       cursor: pointer;
       gap: 0.5rem;
-      
-      .model-name {
-        font-size: 0.9rem;
-        color: var(--prompt-icon-color);
-        opacity: 0.8;
+
+      svg {
+        width: 1.25rem;
+        height: 1.25rem;
       }
       
-      &:hover .model-name {
-        opacity: 1;
-      }
     }
 
     .icon {
       width: 1.25rem;
       height: 1.25rem;
-    }
-
-    .icon.prompt-menu {
-      opacity: 0.3;
     }
 
     .icon.instructions {

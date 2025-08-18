@@ -31,7 +31,7 @@
       
       <div class="workspace-item add-workspace" @click="showWorkspaceEditor" title="Create new workspace">
         <div class="workspace-icon">
-          <BIconPlus />
+          <Grid2X2Plus />
         </div>
       </div>
 
@@ -65,6 +65,7 @@ import { t } from '../services/i18n'
 import WorkspaceEditor from './WorkspaceEditor.vue'
 import ContextMenu from './ContextMenu.vue'
 import Dialog from '../composables/dialog'
+import { Grid2X2Plus } from 'lucide-vue-next'
 
 const workspaces = ref<WorkspaceHeader[]>([])
 const workspaceEditor = ref(null)
@@ -249,7 +250,7 @@ const deleteWorkspace = async () => {
       
       &.add-workspace {
         .workspace-icon {
-          background-color: var(--control-border-color) !important;
+          border: 1px solid var(--control-border-color) !important;
           color: var(--text-color);
           
           &:hover {

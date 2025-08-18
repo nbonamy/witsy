@@ -9,6 +9,7 @@
 <script setup lang="ts">
 
 import { ref, computed } from 'vue'
+import { Eye, EyeOff } from 'lucide-vue-next'
 
 defineProps({
   name: {
@@ -24,7 +25,7 @@ const value = defineModel()
 const emit = defineEmits(['blur', 'change']);
 
 const icon = computed(() => {
-  return type.value === 'password' ? 'BIconEye' : 'BIconEyeSlash'
+  return type.value === 'password' ? Eye : EyeOff
 })
 
 const onToggleView = () => {
@@ -65,11 +66,13 @@ const onKeyUp = (event: KeyboardEvent) => {
   background-color: var(--control-bg-color);
   cursor: pointer;
   position: absolute;
-  top: calc(50% - 0.5rem + 1px);
+  top: calc(50% - 0.5rem);
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   right: 1px;
   z-index: 2;
+  width: 1rem;
+  height: 1rem;
 }
 
 </style>

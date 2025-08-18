@@ -540,6 +540,8 @@ defineExpose({
 
 :deep(.item .icon) {
   margin-right: 0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 :deep(.item .icon.text) {

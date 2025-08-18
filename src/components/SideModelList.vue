@@ -9,15 +9,15 @@
         <EngineSelectPlus v-model="selectedEngine" :favorites="false" :filter="type" />
       </div>
 
-      <div v-if="type === 'online'" class="form-field">
+      <!-- <div v-if="type === 'online'" class="form-field">
         <label>API Key</label>
         <InputObfuscated v-model="store.config.engines[selectedEngine].apiKey" />
-      </div>
+      </div> -->
 
       <div class="form-field">
         <div class="models-header">
           <label>Available models</label>
-          <BIconArrowClockwise 
+          <RotateCw 
             class="refresh-icon" 
             :class="{ spinning: isRefreshing }"
             @click="refreshModels"
@@ -48,7 +48,8 @@ import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
 import SideDrawer from './SideDrawer.vue'
 import EngineSelectPlus from './EngineSelectPlus.vue'
-import InputObfuscated from './InputObfuscated.vue'
+import { RotateCw } from 'lucide-vue-next'
+// import InputObfuscated from './InputObfuscated.vue'
 
 interface Props {
   type: 'online' | 'local'

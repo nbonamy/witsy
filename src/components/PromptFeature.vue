@@ -2,12 +2,13 @@
   <div class="prompt-feature">
     <component :is="icon" class="icon" />
     <span class="label">{{ label }}</span>
-    <BIconXLg class="clear" @click="onClear" />
+    <X class="clear" @click="onClear" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { BIconXLg } from 'bootstrap-icons-vue'
+
+import { X } from 'lucide-vue-next'
 
 interface Props {
   icon?: any
