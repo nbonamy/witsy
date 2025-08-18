@@ -201,13 +201,6 @@ vi.mock('@huggingface/inference', async () => {
   return { HfInference }
 })
 
-vi.mock('webm-to-wav-converter', async () => {
-  return {
-    getWaveBlob: async (blob) => {
-      return new Blob([blob], { type: 'audio/wav' })
-    }
-  }
-})
 
 beforeAll(() => {
   window.AudioContext = vi.fn()

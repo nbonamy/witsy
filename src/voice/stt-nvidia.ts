@@ -1,6 +1,5 @@
 import { Configuration } from 'types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
-import { getWaveBlob } from 'webm-to-wav-converter'
 
 export default class STTNvidia implements STTEngine {
 
@@ -44,9 +43,7 @@ export default class STTNvidia implements STTEngine {
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
     try {
       
-      // Convert blob to wav base64
-      const payloadBlob = await getWaveBlob(audioBlob, false)
-      const payloadBase64 = await this.blobToBase64(payloadBlob)
+      const payloadBase64 = await this.blobToBase64(audioBlob)
       
       const headers = {
         'Authorization': `Bearer ${this.config.engines.nvidia?.apiKey}`,
@@ -58,7 +55,7 @@ export default class STTNvidia implements STTEngine {
         model: this.config.stt.model,
         messages: [{
           role: 'user',
-          content: `${this.config.stt.nvidia.prompt}.\n<audio src="data:audio/wav;base64,${payloadBase64}" />`
+          content: `${this.config.stt.nvidia.prompt}.\n<audio src="data:${audioBlob.type.split(';')[0] || 'audio/webm'};base64,${payloadBase64}" />`
         }],
         stream: false
       }
