@@ -61,7 +61,8 @@
 
 <script setup lang="ts">
 
-import { InstructionsType, CustomInstruction } from '../types/config'
+import { CustomInstruction } from '../types/index'
+import { InstructionsType } from '../types/config'
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { hasLocalization, t, i18nInstructions } from '../services/i18n'
@@ -152,7 +153,7 @@ const onChangeLocaleLLM = () => {
 }
 
 const getSelectedCustomInstruction = () => {
-  return customInstructions.value.find(ci => ci.id === instructions.value) || null
+  return customInstructions.value.find((ci: CustomInstruction) => ci.id === instructions.value) || null
 }
 
 const onCreateInstruction = () => {
@@ -197,7 +198,7 @@ const onDeleteInstruction = async () => {
   })
   
   if (result.isConfirmed) {
-    const index = customInstructions.value.findIndex(ci => ci.id === instructions.value)
+    const index = customInstructions.value.findIndex((ci: CustomInstruction) => ci.id === instructions.value)
     if (index >= 0) {
       customInstructions.value.splice(index, 1)
       instructions.value = 'structured'
@@ -228,7 +229,7 @@ const onInstructionSaved = (instruction: CustomInstruction) => {
     }, store.config as any)
   } else {
     // Saving a custom instruction
-    const existingIndex = customInstructions.value.findIndex(ci => ci.id === instruction.id)
+    const existingIndex = customInstructions.value.findIndex((ci: CustomInstruction) => ci.id === instruction.id)
     
     if (existingIndex >= 0) {
       customInstructions.value[existingIndex] = instruction

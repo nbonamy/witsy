@@ -233,6 +233,8 @@ export type StoreEvent = 'workspaceSwitched'
 
 export interface Store {
 
+  workspace: Workspace
+
   commands: Command[]
   experts: Expert[]
   agents: Agent[]
@@ -252,6 +254,7 @@ export interface Store {
   saveHistory(): void
   saveSettings(): void
   load(): void
+  loadWorkspace(): void
   loadSettings(): void
   loadCommands(): void
   loadExperts(): void

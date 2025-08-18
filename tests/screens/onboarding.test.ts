@@ -33,6 +33,9 @@ vi.mock('../../src/llms/manager', async () => {
       getChatEngineModel() {
         return { engine: 'mock', model: 'test' }
       }
+      getChatModel() {
+        return { id: 'test', name: 'Test Model' }
+      }
       checkModelListsVersion() {
         // Mock implementation
       }

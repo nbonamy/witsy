@@ -98,7 +98,7 @@ const localModels = computed(() => {
 })
 
 const load = () => {
-  workspace.value = window.api.workspace.load(store.config.workspaceId)
+  workspace.value = store.workspace
 }
 
 const showOnlinePanel = () => {
