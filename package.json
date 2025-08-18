@@ -124,6 +124,7 @@
     "icns-lib": "^1.0.1",
     "javascript-time-ago": "^2.5.11",
     "katex": "^0.16.22",
+    "lucide-vue-next": "^0.540.0",
     "markdown-it": "^14.1.0",
     "markdown-it-diagram": "^1.0.3",
     "markdown-it-mark": "^4.0.0",

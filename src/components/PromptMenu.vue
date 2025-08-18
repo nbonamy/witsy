@@ -10,19 +10,19 @@
     <template #default>
 
       <div v-if="enableExperts && expertsMenuItems.length > 0" class="experts" data-submenu-slot="expertsSubmenu" >
-        <BIconMortarboard class="icon" /> {{ t('prompt.menu.experts.title') }}
+        <Brain class="icon" /> {{ t('prompt.menu.experts.title') }}
       </div>
       
       <div v-if="enableDocRepo" class="docrepos" data-submenu-slot="docReposSubmenu" >
-        <BIconLightbulb class="icon" /> {{ t('prompt.menu.docRepos.title') }}
+        <Lightbulb class="icon" /> {{ t('prompt.menu.docRepos.title') }}
       </div>
       
       <div v-if="enableInstructions" class="instructions" data-submenu-slot="instructionsSubmenu" >
-        <BIconFeather class="icon" /> {{ t('prompt.menu.instructions.title') }}
+        <Feather class="icon" /> {{ t('prompt.menu.instructions.title') }}
       </div>
       
       <div v-if="enableDeepResearch" class="deepresearch" @click="handleDeepResearchClick" >
-        <BIconBinoculars class="icon" /> {{ t('prompt.menu.deepResearch.title') || 'Deep Research' }}
+        <Telescope class="icon" /> {{ t('prompt.menu.deepResearch.title') || 'Deep Research' }}
       </div>
 
       <div v-if="enableAttachments && (enableExperts || enableDocRepo || enableInstructions)" class="separator" >
@@ -30,7 +30,7 @@
       </div>
       
       <div v-if="enableAttachments" class="attachments" @click="handleAttachmentClick" >
-        <BIconPaperclip class="icon" /> {{ t('prompt.menu.attach.title') }}
+        <Paperclip class="icon" /> {{ t('prompt.menu.attach.title') }}
       </div>
       
     </template>
@@ -38,26 +38,26 @@
     <template #expertsSubmenu="{ withFilter }">
       {{ withFilter(true) }}
       <div v-for="expert in expertsMenuItems" :key="expert.id" @click="handleExpertClick(expert.id)" >
-        {{ expert.name }}
+        <Brain class="icon" /> {{ expert.name }}
       </div>
     </template>
 
     <template #expertsSubmenuFooter>
       <div @click="handleManageExperts">
-        <BIconPlusLg class="icon" /> {{ t('prompt.menu.experts.manage') }}
+        <Plus class="icon" /> {{ t('prompt.menu.experts.manage') }}
       </div>
     </template>
 
     <template #docReposSubmenu="{ withFilter }">
       {{ withFilter(true) }}
       <div v-for="docRepo in docReposMenuItems" :key="docRepo.uuid" @click="handleDocRepoClick(docRepo.uuid)" >
-        <BIconDatabase class="icon" /> {{ docRepo.name }}
+        <Lightbulb class="icon" /> {{ docRepo.name }}
       </div>
     </template>
 
     <template #docReposSubmenuFooter>
       <div @click="handleManageDocRepo">
-        <BIconGear class="icon" /> {{ t('prompt.menu.docRepos.manage') }}
+        <Settings class="icon" /> {{ t('prompt.menu.docRepos.manage') }}
       </div>
     </template>
 
@@ -84,6 +84,7 @@ import { t, expertI18n } from '../services/i18n'
 import { DocumentBase } from '../types/rag'
 import { Expert } from '../types/index'
 import { BIconLightbulb, BIconPlusLg, BIconDatabase, BIconGear, BIconMortarboard, BIconFeather, BIconBinoculars, BIconPaperclip } from 'bootstrap-icons-vue'
+import { Brain, Feather, Lightbulb, Paperclip, Plus, Settings, Telescope } from 'lucide-vue-next'
 
 // Props
 interface Props {

@@ -34,9 +34,10 @@ import SettingsYouTube from './SettingsYouTube.vue'
 import SettingsMemory from './SettingsMemory.vue'
 import SettingsVega from './SettingsVega.vue'
 import SettingsFilesystem from './SettingsFilesystem.vue'
-import { BIconBinocularsFill, BIconCameraReelsFill, BIconCloudArrowDownFill, BIconPaletteFill, BIconYoutube, BIconPersonVcardFill, BIconFolderFill } from 'bootstrap-icons-vue'
+import { BIconYoutube } from 'bootstrap-icons-vue'
 import WIconPython from '../../assets/python.svg?component'
 import WIconVega from '../../assets/vega.svg?component'
+import { Binoculars, CloudDownload, Folder, IdCard, Palette, Video } from 'lucide-vue-next'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
 const pluginSettings = ref(null)
@@ -54,15 +55,15 @@ const plugins = computed((): PluginUI[] => {
       id: plugin,
       label: t(`settings.plugins.${plugin}.title`),
       logo: {
-        browse: { icon: BIconCloudArrowDownFill },
-        search: { icon: BIconBinocularsFill },
+        search: { icon: Binoculars },
+        browse: { icon: CloudDownload },
         python: { icon: WIconPython },
-        image: { icon: BIconPaletteFill },
-        video: { icon: BIconCameraReelsFill },
-        memory: { icon: BIconPersonVcardFill },
+        image: { icon: Palette },
+        video: { icon: Video },
+        memory: { icon: IdCard },
         youtube: { icon: BIconYoutube },
         vega: { icon: WIconVega },
-        filesystem: { icon: BIconFolderFill },
+        filesystem: { icon: Folder },
         // mcp: { icon: WIconMcp },
       }[plugin],
     }

@@ -16,7 +16,7 @@
     >
       <header>
         <label><slot name="header"></slot></label>
-        <div class="icon"><BIconXLg @click="close"/></div>
+        <div class="icon close"><X @click="close"/></div>
       </header>
 
       <main>
@@ -27,7 +27,9 @@
 </template>
 
 <script setup lang="ts">
+
 import { ref, onMounted } from 'vue'
+import { X } from 'lucide-vue-next'
 
 const emit = defineEmits<{
   close: []
@@ -117,6 +119,11 @@ defineExpose({
     label {
       font-size: 14pt;
       font-weight: 600;
+    }
+
+    .icon.close svg {
+      width: 1.25rem;
+      height: 1.25rem;
     }
   }
 

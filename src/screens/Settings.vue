@@ -7,21 +7,21 @@
       <main>
         <ul>
           <li class="separator" v-if="store.isFeatureEnabled('workspaces')">General Settings</li>
-          <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
-          <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BIconBox class="icon" /></SettingsTab>
+          <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><Settings class="icon" /></SettingsTab>
+          <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><Box class="icon" /></SettingsTab>
           <SettingsTab class="chat" :title="t('settings.tabs.chat')"><BIconLayoutTextWindowReverse class="icon" /></SettingsTab>
-          <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><BIconBinoculars class="icon" /></SettingsTab>
-          <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
-          <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
-          <SettingsTab class="mcp" :title="t('settings.tabs.mcp')" @change="load(settingsMcp)" :checked="initialTab == 'mcp'"><WIconMcp class="icon" /></SettingsTab>
-          <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><BIconMagic class="icon" /></SettingsTab>
-          <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><BIconMortarboard class="icon" /></SettingsTab>
-          <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
-          <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><BIconCommand class="icon" /></SettingsTab>
-          <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BIconTools class="icon" /></SettingsTab>
+          <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><Telescope class="icon" /></SettingsTab>
+          <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><Box class="icon" /></SettingsTab>
+          <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><Plug2 class="icon" /></SettingsTab>
+          <SettingsTab class="mcp" :title="t('settings.tabs.mcp')" @change="load(settingsMcp)" :checked="initialTab == 'mcp'"><Unplug class="icon" /></SettingsTab>
+          <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><Wand class="icon" /></SettingsTab>
+          <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><Brain class="icon" /></SettingsTab>
+          <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><Mic class="icon" /></SettingsTab>
+          <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><Command class="icon" /></SettingsTab>
+          <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BadgePlus class="icon" /></SettingsTab>
           <template v-if="store.isFeatureEnabled('workspaces')">
             <li class="separator">Workspace Settings</li>
-            <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
+            <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><Box class="icon" /></SettingsTab>
           </template>
         </ul>
       </main>
@@ -53,6 +53,7 @@ import { MenuBarMode } from '../components/MenuBar.vue'
 import { ref, onMounted, watch, nextTick, PropType } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
+import { BadgePlus, Box, Brain, Command, Mic, Plug2, Settings, Telescope, Unplug, Wand } from 'lucide-vue-next'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
@@ -67,7 +68,6 @@ import SettingsPlugins from '../settings/SettingsPlugins.vue'
 import SettingsMcp from '../settings/SettingsMcp.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
 import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
-import WIconMcp from '../../assets/mcp.svg?component'
 import { installTabs, showActiveTab } from '../composables/tabs'
 
 // bus
