@@ -112,9 +112,9 @@ const position = computed(() => {
   
   switch (props.position) {
     case 'above':
-      return { left: x + 'px', bottom: (window.innerHeight - y) + 'px' }
+      return { left: x + 'px', bottom: (window.innerHeight - y + 8) + 'px' }
     case 'above-right':
-      return { right: (window.innerWidth - x - width) + 'px', bottom: (window.innerHeight - y) + 'px' }
+      return { right: (window.innerWidth - x - width) + 'px', bottom: (window.innerHeight - y + 8) + 'px' }
     case 'above-left':
       return { left: x + 'px', bottom: (window.innerHeight - y) + 'px' }
     case 'right':
