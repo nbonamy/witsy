@@ -134,10 +134,10 @@ test('Records with push to talk', async () => {
 
 test('Transcribes', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
-  await wrapper.vm.transcribe([])
+  await wrapper.vm.transcribe(new Blob())
   expect(wrapper.vm.transcription).toBe('transcribed')
   wrapper.vm.transcription += '.'
-  await wrapper.vm.transcribe([])
+  await wrapper.vm.transcribe(new Blob())
   expect(wrapper.vm.transcription).toBe('transcribed. transcribed')
 })
 

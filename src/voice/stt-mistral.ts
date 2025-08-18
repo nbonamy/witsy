@@ -1,6 +1,5 @@
 import { Configuration } from '../types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
-import { getWaveBlob } from 'webm-to-wav-converter'
 
 export default class STTMistral implements STTEngine {
 
@@ -37,21 +36,13 @@ export default class STTMistral implements STTEngine {
     return STTMistral.requiresDownload()
   }
 
-  modelRequiresWav(model: string): boolean {
-    return !model.includes('transcribe')
-  }
    
   async initialize(callback?: ProgressCallback): Promise<void> {
     callback?.({ status: 'ready', task: 'mistralai', model: this.config.stt.model })
   }
 
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
-    if (this.modelRequiresWav(this.config.stt.model)) {
-      const wavBlob = await getWaveBlob(audioBlob, false)
-      return this.transcribeFile(new File([wavBlob], 'audio.wav', { type: 'audio/wav' }), opts)
-    } else {
-      return this.transcribeFile(new File([audioBlob], 'audio.webm', { type: audioBlob.type }), opts)
-    }
+    return this.transcribeFile(new File([audioBlob], 'audio.webm', { type: audioBlob.type }), opts)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
