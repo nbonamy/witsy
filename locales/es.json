@@ -1971,7 +1971,7 @@
       }
     },
     "placeholders": {
-      "default": "Presiona Enter para enviar, Shift+Enter para agregar una nueva línea"
+      "default": "Escribe tu mensaje aquí…"
     }
   },
   "realtimeChat": {

@@ -26,8 +26,6 @@
     display: flex;
     flex-direction: column;
 
-    border-top: 1px solid var(--sidebar-border-color);
-
     * > .icon, .icon {
       margin: 0rem 0.5rem;
       display: inline-block;
@@ -135,8 +133,6 @@
     background-color: var(--background-color);
     overflow: hidden;
     min-width: 0;
-
-    border-top: 1px solid var(--sidebar-border-color);
 
     header {
       

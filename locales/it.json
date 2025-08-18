@@ -1971,7 +1971,7 @@
       }
     },
     "placeholders": {
-      "default": "Premi Invio per inviare, Maiusc+Invio per aggiungere una nuova riga"
+      "default": "Digita il tuo messaggio qui…"
     }
   },
   "realtimeChat": {

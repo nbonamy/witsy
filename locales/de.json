@@ -1971,7 +1971,7 @@
       }
     },
     "placeholders": {
-      "default": "Drücken Sie Enter zum Senden, Shift+Enter um eine neue Zeile hinzuzufügen"
+      "default": "Geben Sie hier Ihre Nachricht ein…"
     }
   },
   "realtimeChat": {

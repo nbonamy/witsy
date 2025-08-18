@@ -1100,7 +1100,7 @@ const autoGrow = (element: HTMLElement) => {
   if (element) {
     // reset before calculating
     element.style.height = '0px'
-    element.style.height = Math.min(150, element.scrollHeight) + 'px'
+    element.style.height = Math.min(150, element.scrollHeight+1) + 'px'
     emitEvent('prompt-resize', element.style.height)
   }
 }

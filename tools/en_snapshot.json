@@ -1170,7 +1170,7 @@
   "prompt.menu.experts.manage": "Create New Expert",
   "prompt.menu.experts.title": "@:{'common.experts'}",
   "prompt.menu.instructions.title": "Writing Style",
-  "prompt.placeholders.default": "Enter to submit, Shift+Enter to add a new line",
+  "prompt.placeholders.default": "Type your message here…",
   "realtimeChat.errorPrefix": "Error: ",
   "realtimeChat.establishingConnection": "Establishing connection…",
   "realtimeChat.requestingMicrophone": "Requesting microphone access…",

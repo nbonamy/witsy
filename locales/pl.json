@@ -1993,7 +1993,7 @@
       }
     },
     "placeholders": {
-      "default": "Naciśnij Enter, aby przesłać, Shift+Enter, aby dodać nową linię"
+      "default": "Wpisz tutaj swoją wiadomość…"
     }
   },
   "realtimeChat": {

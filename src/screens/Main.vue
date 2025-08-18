@@ -1,13 +1,24 @@
 <template>
-  <div class="main">
-    <WorkspaceBar v-if="store.isFeatureEnabled('workspaces')" />
-    <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
-    <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
-    <Chat ref="chat" :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
-    <DesignStudio :style="{ display: mode === 'studio' ? 'flex' : 'none' }" />
-    <AgentForge v-if="mode === 'agents'" ref="agents" />
-    <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
-    <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
+  <div class="main-window">
+    <header></header>
+    <main>
+      <WorkspaceBar v-if="store.isFeatureEnabled('workspaces')" />
+      <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
+      <Settings :style="{ display: mode === 'settings' ? undefined : 'none' }" :extra="viewParams" />
+      <Chat ref="chat" :style="{ display: mode === 'chat' ? undefined : 'none' }" :extra="viewParams" />
+      <DesignStudio :style="{ display: mode === 'studio' ? undefined : 'none' }" />
+      <AgentForge v-if="mode === 'agents'" ref="agents" />
+      <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
+      <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
+    </main>
+    <footer>
+      <label>StationOne v0.0.1</label>
+      <div class="actions">
+        <Activity @click="onMode('debug')"/>
+        <Command />
+        <CircleQuestionMark />
+      </div>
+    </footer>
   </div>
   <Onboarding v-if="onboard" @close="onOnboardingDone" />
   <DocRepos v-if="docrepos" @close="onDocReposClose" />
@@ -32,6 +43,7 @@ import Onboarding from '../screens/Onboarding.vue'
 import Fullscreen from '../components/Fullscreen.vue'
 
 import useEventBus from '../composables/event_bus'
+import { Activity, CircleQuestionMark, Command } from 'lucide-vue-next'
 const { emitEvent, onEvent } = useEventBus()
 
 const chat = ref<typeof Chat>(null)
@@ -171,20 +183,56 @@ const onDocReposClose = () => {
 
 <style scoped>
 
-.main {
+.main-window {
+
   display: flex;
-  flex-direction: row;
-  -webkit-app-region: drag;
-  padding-top: var(--window-toolbar-height);
-  height: calc(100vh - var(--window-toolbar-height));
+  flex-direction: column;
+  height: 100vh;
+
+  header {
+    -webkit-app-region: drag;
+    flex: 0 0 var(--window-toolbar-height);
+    border-bottom: 1px solid var(--border-color);
+  }
 
   &:has(~ .fullscreen-drawer.visible) {
-    -webkit-app-region: no-drag;
+    header {
+      -webkit-app-region: no-drag;
+    }
   }
 
-  &:deep() * {
-    -webkit-app-region: no-drag;
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    max-height: calc(100vh - var(--window-toolbar-height) - 2.5rem);
   }
+
+  footer {
+
+    flex: 0 0 1rem;
+    padding: 0.75rem;
+    border-top: 1px solid var(--border-color);
+
+    display: flex;
+    flex-direction: row;
+    
+    font-size: 10pt;
+    color: var(--faded-text-color);
+
+    .actions {
+      margin-left: auto;
+      display: flex;
+      gap: 1rem;
+      svg {
+        cursor: pointer;
+      }
+    }
+
+
+
+  }
+
 }
 
 </style>

@@ -220,7 +220,6 @@ const deleteWorkspace = async () => {
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--sidebar-border-color);
-    border-top: 1px solid var(--sidebar-border-color);
     gap: 0.5rem;
     align-items: center;
     padding-top: 1rem;

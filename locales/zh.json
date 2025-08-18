@@ -1993,7 +1993,7 @@
       }
     },
     "placeholders": {
-      "default": "按回车提交，Shift+回车添加新行"
+      "default": "在此输入您的消息…"
     }
   },
   "realtimeChat": {
