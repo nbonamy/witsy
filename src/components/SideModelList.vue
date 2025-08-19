@@ -17,7 +17,7 @@
       <div class="form-field">
         <div class="models-header">
           <label>Available models</label>
-          <RotateCw 
+          <RotateCwIcon
             class="refresh-icon" 
             :class="{ spinning: isRefreshing }"
             @click="refreshModels"
@@ -39,16 +39,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { RotateCwIcon } from 'lucide-vue-next'
 import { ChatModel } from 'multi-llm-ts'
-import { Workspace } from '../types/workspace'
-import LlmFactory from '../llms/llm'
+import { ref } from 'vue'
 import Dialog from '../composables/dialog'
-import SideDrawer from './SideDrawer.vue'
+import LlmFactory from '../llms/llm'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { Workspace } from '../types/workspace'
 import EngineSelectPlus from './EngineSelectPlus.vue'
-import { RotateCw } from 'lucide-vue-next'
+import SideDrawer from './SideDrawer.vue'
 // import InputObfuscated from './InputObfuscated.vue'
 
 interface Props {

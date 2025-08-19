@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="usage" @click="onUsage">
-        <BIconInfoCircle /> {{ t(usageId) }}
+        <InfoIcon /> {{ t(usageId) }}
       </div>
     </template>
     <template v-else>
@@ -25,11 +25,12 @@
 
 <script setup lang="ts">
 
+import { InfoIcon } from 'lucide-vue-next'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { commandI18n, t } from '../services/i18n'
+import { store } from '../services/store'
 import { anyDict, Command, ExternalApp } from '../types'
 import { CommandAction } from '../types/automation'
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
-import { store } from '../services/store'
-import { t, commandI18n } from '../services/i18n'
 
 // load store
 store.loadSettings()

@@ -1,19 +1,20 @@
 <template>
   <header @mousedown="onMoveStart" ref="header" :class="{ movable: movable === 'drag' }">
     <div class="macos">
-      <div class="close" @click="onClose"><BIconX/></div>
+      <div class="close" @click="onClose"><XIcon/></div>
       <div class="minimize"></div>
       <div class="zoom"></div>
     </div>
     <div class="title">{{ title }}</div>
     <div class="windows" @click="onClose">
-      <BIconXLg class="close" />
+      <XIcon class="close" />
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
 
+import { XIcon } from 'lucide-vue-next'
 import { ref, PropType } from 'vue'
 
 export type MovableType = 'none' | 'drag' | 'position'

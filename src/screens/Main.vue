@@ -14,9 +14,9 @@
     <footer>
       <label>StationOne v0.0.1</label>
       <div class="actions">
-        <Activity @click="onMode('debug')"/>
-        <Command />
-        <CircleQuestionMark />
+        <ActivityIcon @click="onMode('debug')"/>
+        <CommandIcon />
+        <CircleQuestionMarkIcon />
       </div>
     </footer>
   </div>
@@ -27,23 +27,23 @@
 
 <script setup lang="ts">
 
-import { anyDict } from '../types/index'
-import { ref, onMounted, nextTick } from 'vue'
-import { store } from '../services/store'
-import WorkspaceBar from '../components/WorkspaceBar.vue'
+import { ActivityIcon, CircleQuestionMarkIcon, CommandIcon } from 'lucide-vue-next'
+import { nextTick, onMounted, ref } from 'vue'
+import Fullscreen from '../components/Fullscreen.vue'
 import MenuBar, { MenuBarMode } from '../components/MenuBar.vue'
+import WorkspaceBar from '../components/WorkspaceBar.vue'
+import AgentForge from '../screens/AgentForge.vue'
 import Chat from '../screens/Chat.vue'
 import DesignStudio from '../screens/DesignStudio.vue'
 import DocRepos from '../screens/DocRepos.vue'
-import AgentForge from '../screens/AgentForge.vue'
-import Settings from '../screens/Settings.vue'
-import RealtimeChat from '../screens/RealtimeChat.vue'
-import Transcribe from '../screens/Transcribe.vue'
 import Onboarding from '../screens/Onboarding.vue'
-import Fullscreen from '../components/Fullscreen.vue'
+import RealtimeChat from '../screens/RealtimeChat.vue'
+import Settings from '../screens/Settings.vue'
+import Transcribe from '../screens/Transcribe.vue'
+import { store } from '../services/store'
+import { anyDict } from '../types/index'
 
 import useEventBus from '../composables/event_bus'
-import { Activity, CircleQuestionMark, Command } from 'lucide-vue-next'
 const { emitEvent, onEvent } = useEventBus()
 
 const chat = ref<typeof Chat>(null)

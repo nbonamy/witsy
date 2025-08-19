@@ -4,15 +4,15 @@
     <div class="toolbar form-field">
     
       <button class="tool" @click="emitEvent('action', 'clear')">
-        <BIconFileEarmark /><span>{{ t('common.clear') }}</span>
+        <FileIcon /><span>{{ t('common.clear') }}</span>
       </button>
       
       <button class="tool" @click="emitEvent('action', 'load')">
-        <BIconFileArrowUp /><span>{{ t('common.load') }}</span>
+        <FolderOpenIcon /><span>{{ t('common.load') }}</span>
       </button>
       
       <button class="tool" @click="emitEvent('action', 'save')">
-        <BIconFileArrowDown /><span>{{ t('common.save') }}</span>
+        <SaveIcon /><span>{{ t('common.save') }}</span>
       </button>
       
       <EngineSelect class="tool" v-model="engine" @change="onChangeEngine" />
@@ -39,12 +39,13 @@
 
 <script setup lang="ts">
 
-import { ref, watch, onMounted } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import { FileIcon, FileUpIcon, FolderOpenIcon, SaveIcon } from 'lucide-vue-next'
+import { onMounted, ref, watch } from 'vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
+import LlmFactory from '../llms/llm'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
 
 // bus
 import useEventBus from '../composables/event_bus'

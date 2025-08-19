@@ -167,7 +167,6 @@
         width: 1rem;
         height: 1rem;
         color: var(--chatarea-toolbar-icon-color);
-        fill: var(--chatarea-toolbar-icon-color);
         margin-left: auto;
         opacity: 0.7;
 
@@ -182,7 +181,7 @@
 
         &.back {
           color: var(--text-color);
-          fill: var(--text-color);
+          transform: scale(150%);
         }
         
       }

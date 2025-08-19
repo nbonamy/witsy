@@ -1,10 +1,10 @@
 <template>
   <div class="list-actions">
-    <div class="list-action new" @click="onNew"><BIconPlusLg />{{ t('settings.commands.new') }}</div>
-    <div class="list-action edit" @click="onEdit(selected)" v-if="selected"><BIconPencil />{{ t('common.edit') }}</div>
-    <div class="list-action delete" @click="onDelete" v-if="selected"><BIconTrash />{{ t('common.delete') }}</div>
+    <div class="list-action new" @click="onNew"><PlusIcon />{{ t('settings.commands.new') }}</div>
+    <div class="list-action edit" @click="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
+    <div class="list-action delete" @click="onDelete" v-if="selected"><Trash2Icon />{{ t('common.delete') }}</div>
     <div class="push" /> 
-    <div class="list-action defaults" @click="onDefaults"><BIconSliders /></div>
+    <div class="list-action defaults" @click="onDefaults"><Settings2Icon /></div>
     <div class="list-action menu" @click.stop="onMore" ref="moreButton"><div></div><div></div><div></div></div>
   </div>
   <div class="commands sticky-table-container">
@@ -45,6 +45,7 @@ import useReorderTable from '../composables/reorder_table'
 import CommandDefaults from '../screens/CommandDefaults.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
+import { PencilIcon, PlusIcon, Settings2Icon, Trash2Icon } from 'lucide-vue-next'
 
 const commands= ref<Command[]>(null)
 const selected= ref<Command>(null)
@@ -106,8 +107,8 @@ const showContextMenu = () => {
   showMenu.value = true
   const rcButton = moreButton.value.getBoundingClientRect()
   const rcContent = moreButton.value.closest('.tab-content').getBoundingClientRect()
-  menuX.value = rcContent.right - rcButton.right
-  menuY.value = rcButton.bottom + 8
+  menuX.value = rcContent.right - rcButton.right - 8
+  menuY.value = rcButton.bottom - 32
 }
 
 const closeContextMenu = () => {

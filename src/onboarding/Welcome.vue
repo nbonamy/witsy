@@ -12,32 +12,32 @@
     <main>
 
       <div class="feature" :style="{ '--delay': '0s' }">
-        <BIconChatSquareQuote class="feature-icon" />
+        <MessageSquareQuoteIcon class="feature-icon" />
         <span class="feature-text">{{ t('common.chat') }}</span>
       </div>
 
       <div class="feature" :style="{ '--delay': '0.2s' }">
-        <BIconBinoculars class="feature-icon" />
+        <TelescopeIcon class="feature-icon" />
         <span class="feature-text">{{ t('common.deepResearch') }}</span>
       </div>
 
       <div class="feature" :style="{ '--delay': '0.4s' }">
-        <BIconPalette class="feature-icon" />
+        <PaletteIcon class="feature-icon" />
         <span class="feature-text">{{ t('designStudio.title') }}</span>
       </div>
 
       <div class="feature" :style="{ '--delay': '0.6s' }">
-        <BIconJournalText class="feature-icon" />
+        <NotebookPenIcon class="feature-icon" />
         <span class="feature-text">{{ t('scratchpad.title') }}</span>
       </div>
 
       <div class="feature" :style="{ '--delay': '0.8s' }">
-        <BIconMic class="feature-icon" />
+        <MicIcon class="feature-icon" />
         <span class="feature-text">{{ t('transcribe.title') }}</span>
       </div>
 
       <div class="feature" :style="{ '--delay': '1.0s' }">
-        <BIconRobot class="feature-icon" />
+        <BotIcon class="feature-icon" />
         <span class="feature-text">{{ t('agent.forge.title') }}</span>
       </div>
 
@@ -49,6 +49,7 @@
 
 <script setup lang="ts">
 
+import { BotIcon, MessageSquareQuoteIcon, MicIcon, NotebookPenIcon, PaletteIcon, TelescopeIcon } from 'lucide-vue-next';
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 

@@ -6,18 +6,19 @@
       </div>
     </div>
     <div v-if="overflown" class="overflow" @click="scrollDown">
-      <BIconArrowDown />
+      <ArrowDownIcon />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, useTemplateRef, nextTick, onUnmounted } from 'vue'
-import { store } from '../services/store'
+import { ArrowDownIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
-import MessageItem from './MessageItem.vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
 import Chat from '../models/chat'
+import { store } from '../services/store'
+import MessageItem from './MessageItem.vue'
 
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()

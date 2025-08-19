@@ -7,8 +7,8 @@
         <!-- <div class="subtitle">{{ chat.subtitle() }}</div> -->
       </div>
       <div v-if="selectMode" class="select">
-        <BIconCheckCircleFill v-if="selection.includes(chat.uuid)" class="selected"/>
-        <BIconCircle v-else />
+        <CircleCheckIcon v-if="selection.includes(chat.uuid)" class="selected"/>
+        <CircleIcon v-else />
       </div>
     </div>
   </div>
@@ -16,10 +16,10 @@
 
 <script setup lang="ts">
 
+import { CircleCheckIcon, CircleIcon } from 'lucide-vue-next'
 import { computed } from 'vue'
-import { store } from '../services/store'
-import EngineLogo from './EngineLogo.vue'
 import Chat from '../models/chat'
+import { store } from '../services/store'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()

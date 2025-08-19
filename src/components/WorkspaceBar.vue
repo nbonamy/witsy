@@ -31,7 +31,7 @@
       
       <div class="workspace-item add-workspace" @click="showWorkspaceEditor" title="Create new workspace">
         <div class="workspace-icon">
-          <Grid2X2Plus />
+          <Grid2X2PlusIcon />
         </div>
       </div>
 
@@ -45,7 +45,7 @@
             color: getContrastColor('#1B4FB2')
           }"
         >
-          <BIconStarFill />
+          <StarIcon />
         </div>
       </div>
 
@@ -57,15 +57,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { BIconPlus, BIconStarFill } from 'bootstrap-icons-vue'
-import { WorkspaceHeader } from '../types/workspace'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import WorkspaceEditor from './WorkspaceEditor.vue'
-import ContextMenu from './ContextMenu.vue'
+import { Grid2X2PlusIcon, StarIcon } from 'lucide-vue-next'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
-import { Grid2X2Plus } from 'lucide-vue-next'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { WorkspaceHeader } from '../types/workspace'
+import ContextMenu from './ContextMenu.vue'
+import WorkspaceEditor from './WorkspaceEditor.vue'
 
 const workspaces = ref<WorkspaceHeader[]>([])
 const workspaceEditor = ref(null)

@@ -2,9 +2,9 @@
   <div class="artifact panel">
     <div class="panel-header">
       <label>{{ title }}</label>
-      <ClipboardCheck class="icon" v-if="copying" />
-      <Clipboard class="icon" @click="onCopy" v-else />
-      <Download class="icon" @click="onDownload" />
+      <ClipboardCheckIcon class="icon" v-if="copying" />
+      <ClipboardIcon class="icon" @click="onCopy" v-else />
+      <DownloadIcon class="icon" @click="onDownload" />
     </div>
     <div class="panel-body">
       <MessageItemBody :message="message" show-tool-calls="never" />
@@ -14,10 +14,10 @@
 
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
-import MessageItemBody from './MessageItemBody.vue'
+import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
 import Message from '../models/message'
-import { Clipboard, ClipboardCheck, Download } from 'lucide-vue-next'
+import MessageItemBody from './MessageItemBody.vue'
 
 const copying = ref(false)
 
@@ -77,6 +77,7 @@ const onDownload = () => {
   
   margin: 1rem 0rem;
   padding: 0rem;
+  background-color: var(--background-color);
 
   .panel-header {
     padding: 0.75rem 1rem;
@@ -99,6 +100,7 @@ const onDownload = () => {
     padding: 1rem;
     padding-top: 0.25rem;
     padding-bottom: 0rem;
+    background-color: var(--background-color);
 
     &:deep() {
       .text hr:first-child, .text hr:last-child {

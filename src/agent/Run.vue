@@ -5,7 +5,7 @@
 
     <div class="panel-header">
       <label>{{ t('agent.run.title') }}</label>
-      <BIconCalendar2X 
+      <CalendarX2Icon 
         class="icon delete" 
         v-tooltip="{ text: t('agent.help.deleteRun'), position: 'bottom-left' }" 
         @click="$emit('delete')" 
@@ -60,12 +60,12 @@
 
 <script setup lang="ts">
 
-import { AgentRun } from '../types/index'
-import { computed, ref, onMounted, watch } from 'vue'
+import { CalendarX2Icon } from 'lucide-vue-next'
+import { computed, onMounted, ref, watch } from 'vue'
+import MessageItemBody from '../components/MessageItemBody.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import MessageItemBody from '../components/MessageItemBody.vue'
-import { BIconCalendar2X } from 'bootstrap-icons-vue'
+import { AgentRun } from '../types/index'
 
 const props = defineProps({
   agentId: {

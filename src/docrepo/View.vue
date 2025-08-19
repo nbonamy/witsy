@@ -3,7 +3,7 @@
     <div class="info panel collapsed">
       <div class="panel-header" @click="togglePanel">
         <label>{{ t('embedding.model') }}</label>
-        <div class="icon"><BIconChevronDown /></div>
+        <div class="icon"><ChevronDownIcon /></div>
       </div>
       <div class="panel-body">
         <div class="embeddings">
@@ -11,7 +11,7 @@
             <EngineLogo class="engine" :engine="selectedRepo.embeddingEngine" />
             <span class="model">{{ selectedRepo.embeddingModel }}</span>
           </div>
-          <BIconPatchExclamation 
+          <CircleAlertIcon
             class="warning" 
             v-if="!modelReady" 
             v-tooltip="{ text: t('docRepo.view.tooltips.embeddingNotReady'), position: 'right' }"
@@ -25,11 +25,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
-import { DocumentBase } from '../types/rag'
-import { t } from '../services/i18n'
-import { togglePanel } from '../composables/panel'
+import { ChevronDownIcon, CircleAlertIcon } from 'lucide-vue-next'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import EngineLogo from '../components/EngineLogo.vue'
+import { togglePanel } from '../composables/panel'
+import { t } from '../services/i18n'
+import { DocumentBase } from '../types/rag'
 import Files from './Files.vue'
 import Notes from './Notes.vue'
 

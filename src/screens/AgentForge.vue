@@ -2,11 +2,11 @@
   <div class="split-pane">
     <div class="sp-main">
       <header v-if="mode === 'create'">
-        <BIconChevronLeft class="icon back" @click="closeCreate" />
+        <ChevronLeftIcon class="icon back" @click="closeCreate" />
         <div class="title">{{ t('agent.forge.create') }}</div>
       </header>
       <header v-else-if="mode === 'view' || mode === 'edit'">
-        <BIconChevronLeft class="icon back" @click="selectAgent(null)" />
+        <ChevronLeftIcon class="icon back" @click="selectAgent(null)" />
         <div class="title">{{ selected.name }}</div>
       </header>
       <header v-else>
@@ -29,19 +29,20 @@
 </template>
 
 <script setup lang="ts">
-import { AgentType } from '../types/index'
-import { ref, onMounted } from 'vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
-import A2AClient from '../services/a2a-client'
-import Dialog from '../composables/dialog'
-import PromptBuilder from '../components/PromptBuilder.vue'
+import { ChevronLeftIcon } from 'lucide-vue-next'
+import { onMounted, ref } from 'vue'
+import IconAgent from '../../assets/agent.svg?component'
+import Editor from '../agent/Editor.vue'
 import List from '../agent/List.vue'
 import View from '../agent/View.vue'
-import Editor from '../agent/Editor.vue'
-import AgentRunner from '../services/runner'
+import PromptBuilder from '../components/PromptBuilder.vue'
+import Dialog from '../composables/dialog'
 import Agent from '../models/agent'
-import IconAgent from '../../assets/agent.svg?component'
+import A2AClient from '../services/a2a-client'
+import { t } from '../services/i18n'
+import AgentRunner from '../services/runner'
+import { store } from '../services/store'
+import { AgentType } from '../types/index'
 
 defineProps({
   extra: Object

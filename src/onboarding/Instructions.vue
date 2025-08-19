@@ -11,7 +11,7 @@
       
       <!-- Confirmation screen when system prompt is detected -->
       <div v-if="stage === 'confirm'" class="confirmation-area">
-        <BIconPersonVcard />
+        <IdCardLanyardIcon />
         <h2>{{ t('onboarding.instructions.done.title') }}</h2>
         <p>{{ t('onboarding.instructions.done.text') }}</p>
       </div>
@@ -85,17 +85,18 @@
 
 <script setup lang="ts">
 
+import { IdCardLanyardIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
+import Loader from '../components/Loader.vue'
+import MessageItemBody from '../components/MessageItemBody.vue'
+import Prompt from '../components/Prompt.vue'
+import Dialog from '../composables/dialog'
+import LlmManager from '../llms/manager'
+import Chat from '../models/chat'
+import Message from '../models/message'
+import Assistant from '../services/assistant'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import Dialog from '../composables/dialog'
-import Prompt from '../components/Prompt.vue'
-import MessageItemBody from '../components/MessageItemBody.vue'
-import Assistant from '../services/assistant'
-import Loader from '../components/Loader.vue'
-import LlmManager from '../llms/manager'
-import Message from '../models/message'
-import Chat from '../models/chat'
 
 // Constants
 const SYSTEM_PROMPT_MARKER = "SYSTEM PROMPT"

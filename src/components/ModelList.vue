@@ -15,7 +15,7 @@
           <div class="subtext">{{ getEngineName(model.engine) }}</div>
         </div>
         <div class="actions">
-          <div class="icon"><BIconXLg @click="$emit('remove-model', model)"/></div>
+          <div class="icon"><XIcon @click="$emit('remove-model', model)"/></div>
         </div>
       </div>
     </div>
@@ -26,10 +26,11 @@
 </template>
 
 <script setup lang="ts">
-import EngineLogo from './EngineLogo.vue'
-import { store } from '../services/store'
-import LlmFactory from '../llms/llm'
+import { XIcon } from 'lucide-vue-next'
 import { engineNames } from '../llms/base'
+import LlmFactory from '../llms/llm'
+import { store } from '../services/store'
+import EngineLogo from './EngineLogo.vue'
 
 interface Model {
   id: string

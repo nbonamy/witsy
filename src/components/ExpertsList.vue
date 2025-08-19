@@ -1,9 +1,9 @@
 <template>
   <div class="list-actions">
-    <div class="list-action new" @click.prevent="onNew"><BIconPlusLg />{{ t('settings.experts.new') }}</div>
-    <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><BIconPencil />{{ t('common.edit') }}</div>
-    <div class="list-action copy" @click.prevent="onCopy(selected)" v-if="selected"><BIconCopy />{{ t('settings.experts.copy') }}</div>
-    <div class="list-action delete" @click.prevent="onDelete" v-if="selected"><BIconTrash />{{ t('common.delete') }}</div>
+    <div class="list-action new" @click.prevent="onNew"><PlusIcon />{{ t('settings.experts.new') }}</div>
+    <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
+    <div class="list-action copy" @click.prevent="onCopy(selected)" v-if="selected"><CopyIcon />{{ t('settings.experts.copy') }}</div>
+    <div class="list-action delete" @click.prevent="onDelete" v-if="selected"><Trash2Icon />{{ t('common.delete') }}</div>
     <div class="push" /> 
     <div class="list-action menu" @click.prevent.stop="onMore" ref="moreButton"><div></div><div></div><div></div></div>
   </div>
@@ -32,15 +32,16 @@
 
 <script setup lang="ts">
 
-import { Expert } from '../types/index'
-import { ref, computed } from 'vue'
+import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
-import { store } from '../services/store'
-import { expertI18n, t } from '../services/i18n'
-import { newExpert, saveExperts } from '../services/experts'
-import useReorderTable from '../composables/reorder_table'
+import { computed, ref } from 'vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
+import useReorderTable from '../composables/reorder_table'
+import { newExpert, saveExperts } from '../services/experts'
+import { expertI18n, t } from '../services/i18n'
+import { store } from '../services/store'
+import { Expert } from '../types/index'
 
 const experts= ref<Expert[]>(null)
 const selected= ref<Expert>(null)
@@ -101,8 +102,8 @@ const showContextMenu = () => {
   showMenu.value = true
   const rcButton = moreButton.value.getBoundingClientRect()
   const rcContent = moreButton.value.closest('.tab-content').getBoundingClientRect()
-  menuX.value = rcContent.right - rcButton.right
-  menuY.value = rcButton.bottom + 8
+  menuX.value = rcContent.right - rcButton.right - 8
+  menuY.value = rcButton.bottom - 32
 }
 
 const closeContextMenu = () => {

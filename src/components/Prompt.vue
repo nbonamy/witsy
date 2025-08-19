@@ -11,12 +11,12 @@
     <div class="input" @paste="onPaste">
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
-        <div v-if="command" class="icon left command" @click="onClickActiveCommand"><BIconCommand /></div>
+        <div v-if="command" class="icon left command" @click="onClickActiveCommand"><CommandIcon /></div>
         <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
       </div>
     </div>
     <div class="actions">
-      <Plus 
+      <PlusIcon
         class="icon prompt-menu scale105"
         @click="onPromptMenu"
         ref="promptMenuAnchor"
@@ -24,28 +24,28 @@
       
       <PromptFeature
         v-if="instructions"
-        :icon="Feather"
+        :icon="FeatherIcon"
         :label="instructions.label"
         @clear="clearInstructions"
       />
       
       <PromptFeature
         v-if="expert"
-        :icon="Brain"
+        :icon="BrainIcon"
         :label="expert.name || expertI18n(expert, 'name')"
         @clear="clearExpert"
       />
       
       <PromptFeature
         v-if="docrepo"
-        :icon="Lightbulb"
+        :icon="LightbulbIcon"
         :label="getActiveDocRepoName()"
         @clear="clearDocRepo"
       />
       
       <PromptFeature
         v-if="deepResearchActive"
-        :icon="Telescope"
+        :icon="TelescopeIcon"
         :label="t('common.deepResearch') || 'Deep Research'"
         @clear="clearDeepResearch"
       />
@@ -55,7 +55,7 @@
       <slot name="actions" />
       
       <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
-      <Mic v-if="hasDictation"
+      <MicIcon v-if="hasDictation"
         v-tooltip="{ text: t('prompt.conversation.tooltip'), position: 'top' }"
         :class="{ icon: true, dictate: true, active: dictating }" 
         @click="onDictate" 
@@ -63,7 +63,7 @@
       />
 
       <div class="model-menu-button" @click="onModelMenu">
-        <Box />
+        <BoxIcon />
         <div class="model-name">{{ modelName }}</div>
         <BIconCaretDownFill class="icon caret" />
       </div>
@@ -71,8 +71,8 @@
       <BIconMagic class="icon command right" @click="onCommands(true)" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')" />
       
       <div class="send-stop">
-        <Square class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
-        <ArrowUp class="icon send" :class="{ disabled: !prompt.length }" @click="onSendPrompt" v-else />
+        <SquareIcon class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
+        <ArrowUpIcon class="icon send" :class="{ disabled: !prompt.length }" @click="onSendPrompt" v-else />
       </div>
     
     </div>
@@ -114,30 +114,30 @@
 
 <script setup lang="ts">
 
-import { Expert, Command, CustomInstruction } from '../types/index'
-import { DocumentBase } from '../types/rag'
-import { StreamingChunk } from '../voice/stt'
-import { ref, computed, onMounted, onUnmounted, nextTick, watch, PropType } from 'vue'
-import { store } from '../services/store'
-import { expertI18n, commandI18n, t, i18nInstructions, getLlmLocale, setLlmLocale } from '../services/i18n'
-import { ArrowUp, Box, Brain, Feather, Lightbulb, Mic, Plus, Square, Telescope } from 'lucide-vue-next'
-import LlmFactory, { ILlmManager } from '../llms/llm'
-import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
+import { ArrowUpIcon, BoxIcon, BrainIcon, CommandIcon, FeatherIcon, LightbulbIcon, MicIcon, PlusIcon, SquareIcon, TelescopeIcon } from 'lucide-vue-next'
+import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
+import { computed, nextTick, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
+import Waveform from '../components/Waveform.vue'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
-import ContextMenu, { MenuPosition } from './ContextMenu.vue'
-import PromptMenu from './PromptMenu.vue'
-import PromptModelMenu from './PromptModelMenu.vue'
-import PromptFeature from './PromptFeature.vue'
+import Dialog from '../composables/dialog'
+import ImageUtils from '../composables/image_utils'
 import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
-import ImageUtils from '../composables/image_utils'
-import Waveform from '../components/Waveform.vue'
-import AttachmentView from './Attachment.vue'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Attachment from '../models/attachment'
-import Dialog from '../composables/dialog'
-import Message from '../models/message'
-import Loader from './Loader.vue'
 import Chat from '../models/chat'
+import Message from '../models/message'
+import { commandI18n, expertI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from '../services/i18n'
+import { store } from '../services/store'
+import { Command, CustomInstruction, Expert } from '../types/index'
+import { DocumentBase } from '../types/rag'
+import { StreamingChunk } from '../voice/stt'
+import AttachmentView from './Attachment.vue'
+import ContextMenu, { MenuPosition } from './ContextMenu.vue'
+import Loader from './Loader.vue'
+import PromptFeature from './PromptFeature.vue'
+import PromptMenu from './PromptMenu.vue'
+import PromptModelMenu from './PromptModelMenu.vue'
 
 export type SendPromptParams = {
   prompt: string,

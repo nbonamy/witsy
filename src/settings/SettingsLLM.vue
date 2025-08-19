@@ -1,7 +1,7 @@
 <template>
   <div class="tab-content" @keyup.escape.prevent="onEditInstruction(null)">
     <header v-if="selectedInstruction">
-      <BIconChevronLeft class="icon back" @click="onEditInstruction(null)" />
+      <ChevronLeftIcon class="icon back" @click="onEditInstruction(null)" />
       <div class="title">{{ t('settings.llm.instructions.editor.title') }}</div>
     </header>
     <header v-else>
@@ -61,16 +61,17 @@
 
 <script setup lang="ts">
 
-import { CustomInstruction } from '../types/index'
-import { InstructionsType } from '../types/config'
-import { ref, computed } from 'vue'
-import { store } from '../services/store'
-import { hasLocalization, t, i18nInstructions } from '../services/i18n'
+import { ChevronLeftIcon } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
 import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelectPlus from '../components/ModelSelectPlus.vue'
-import LangSelect from '../components/LangSelect.vue'
 import InstructionEditor from '../components/InstructionEditor.vue'
+import LangSelect from '../components/LangSelect.vue'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import Dialog from '../composables/dialog'
+import { hasLocalization, i18nInstructions, t } from '../services/i18n'
+import { store } from '../services/store'
+import { InstructionsType } from '../types/config'
+import { CustomInstruction } from '../types/index'
 
 const isMas = ref(false)
 const instructions = ref<InstructionsType>('structured')

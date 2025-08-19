@@ -29,8 +29,8 @@
             </table>
           </div>
           <div class="actions">
-            <button class="button add" @click.prevent="addPath"><BIconPlus /></button>
-            <button class="button remove" @click.prevent="removePath" :disabled="selectedPath === null"><BIconDash /></button>
+            <button class="button add" @click.prevent="addPath"><PlusIcon /></button>
+            <button class="button remove" @click.prevent="removePath" :disabled="selectedPath === null"><MinusIcon /></button>
           </div>
         </div>
         <div class="note">
@@ -43,10 +43,11 @@
 
 <script setup lang="ts">
 
+import { MinusIcon, PlusIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
 
 const enabled = ref(false)
 const allowedPaths = ref<string[]>([])
