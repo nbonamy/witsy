@@ -201,6 +201,15 @@ vi.mock('@huggingface/inference', async () => {
   return { HfInference }
 })
 
+vi.mock('webm-to-wav-converter', async () => {
+  return {
+    getWaveBlob: vi.fn(async () => {
+      // Mock conversion - return a WAV blob
+      return new Blob(['mock wav data'], { type: 'audio/wav' })
+    })
+  }
+})
+
 
 beforeAll(() => {
   window.AudioContext = vi.fn()
@@ -422,4 +431,69 @@ test('Instantiates Soniox', async () => {
 test('Throws error on unknown engine', async () => {
   store.config.stt.engine = 'unknown'
   expect(() => getSTTEngine(store.config)).toThrowError('Unknown STT engine unknown')
+})
+
+test('Mistral STT converts WebM to WAV for transcription', async () => {
+  const { getWaveBlob } = await import('webm-to-wav-converter')
+  
+  store.config.stt.engine = 'mistralai'
+  store.config.stt.model = 'voxtral-mini-latest-transcribe'
+  store.config.engines.mistralai = {
+    apiKey: 'dummy-mistral-key',
+    models: { chat: [] },
+    model: { chat: '' }
+  }
+  
+  const engine = getSTTEngine(store.config)
+  await engine.initialize(initCallback)
+  
+  // Test with WebM blob
+  const webmBlob = new Blob(['mock webm data'], { type: 'audio/webm;codecs=opus' })
+  await expect(engine.transcribe(webmBlob)).resolves.toStrictEqual({ text: 'mock-transcription' })
+  
+  // Verify WAV conversion was called
+  expect(getWaveBlob).toHaveBeenCalledWith(webmBlob, false)
+})
+
+test('Mistral STT handles WAV conversion failure gracefully', async () => {
+  const { getWaveBlob } = await import('webm-to-wav-converter')
+  // Mock conversion to fail
+  ;(getWaveBlob as any).mockRejectedValueOnce(new Error('Conversion failed'))
+  
+  store.config.stt.engine = 'mistralai'
+  store.config.stt.model = 'voxtral-mini-latest-transcribe'
+  store.config.engines.mistralai = {
+    apiKey: 'dummy-mistral-key',
+    models: { chat: [] },
+    model: { chat: '' }
+  }
+  
+  const engine = getSTTEngine(store.config)
+  await engine.initialize(initCallback)
+  
+  // Should fallback to original file when conversion fails
+  const webmBlob = new Blob(['mock webm data'], { type: 'audio/webm' })
+  await expect(engine.transcribe(webmBlob)).resolves.toStrictEqual({ text: 'mock-transcription' })
+})
+
+test('Mistral STT handles MIME type conversion for WebM files', async () => {
+  store.config.stt.engine = 'mistralai'
+  store.config.stt.model = 'voxtral-mini-latest'
+  store.config.engines.mistralai = {
+    apiKey: 'dummy-mistral-key',
+    models: { chat: [] },
+    model: { chat: '' }
+  }
+  
+  const engine = getSTTEngine(store.config)
+  await engine.initialize(initCallback)
+  
+  // For completion API path, we need to mock the file's arrayBuffer method
+  const mockFile = {
+    type: 'audio/webm;codecs=opus',
+    arrayBuffer: async () => new ArrayBuffer(0),
+    name: 'audio.webm'
+  } as File
+  
+  await expect(engine.transcribe(mockFile)).resolves.toStrictEqual({ text: 'mock-completion' })
 })
