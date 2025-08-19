@@ -1,6 +1,6 @@
 import { Configuration } from '../types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
-import { getWaveBlob } from 'webm-to-wav-converter'
+import * as webmConverter from 'webm-to-wav-converter'
 
 export default class STTMistral implements STTEngine {
 
@@ -37,19 +37,20 @@ export default class STTMistral implements STTEngine {
     return STTMistral.requiresDownload()
   }
 
-  modelRequiresWav(model: string): boolean {
-    return !model.includes('transcribe')
-  }
    
   async initialize(callback?: ProgressCallback): Promise<void> {
     callback?.({ status: 'ready', task: 'mistralai', model: this.config.stt.model })
   }
 
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
-    if (this.modelRequiresWav(this.config.stt.model)) {
-      const wavBlob = await getWaveBlob(audioBlob, false)
-      return this.transcribeFile(new File([wavBlob], 'audio.wav', { type: 'audio/wav' }), opts)
-    } else {
+    // Convert to WAV format for Mistral compatibility
+    try {
+      const wavBlob = await webmConverter.getWaveBlob(audioBlob, false)
+      const file = new File([wavBlob], 'audio.wav', { type: 'audio/wav' })
+      return this.transcribeFile(file, opts)
+    } catch (error) {
+      console.error(`[STT-Mistral] WAV conversion failed:`, error)
+      // Fallback to original file
       return this.transcribeFile(new File([audioBlob], 'audio.webm', { type: audioBlob.type }), opts)
     }
   }
@@ -72,8 +73,17 @@ export default class STTMistral implements STTEngine {
   }
 
   private async transcribeWithTranscriptionAPI(file: File): Promise<TranscribeResponse> {
+    // Ensure the file has a proper audio MIME type
+    let audioFile = file
+    console.log(`[STT-Mistral] TranscriptionAPI - Input file MIME type: ${file.type}`)
+    // Convert any webm type to simple audio/webm to avoid codec-specific issues
+    if (file.type.includes('webm')) {
+      audioFile = new File([file], file.name, { type: 'audio/webm' })
+      console.log(`[STT-Mistral] TranscriptionAPI - Converted file MIME type to: ${audioFile.type}`)
+    }
+    
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('file', audioFile)
     //formData.append('model', this.config.stt.model) // Can't use this because it is voxtral-mini-latest-transcribe which is not actually a model name
     formData.append('model', 'voxtral-mini-latest')
     
@@ -101,10 +111,32 @@ export default class STTMistral implements STTEngine {
 
 
   private async transcribeWithCompletionAPI(file: File): Promise<TranscribeResponse> {
+    // Ensure the file has a proper audio MIME type
+    let audioFile = file
+    console.log(`[STT-Mistral] CompletionAPI - Input file MIME type: ${file.type}`)
+    // Convert any webm type to simple audio/webm to avoid codec-specific issues
+    if (file.type.includes('webm')) {
+      audioFile = new File([file], file.name.replace('.webm', '.webm'), { type: 'audio/webm' })
+      console.log(`[STT-Mistral] CompletionAPI - Converted file MIME type to: ${audioFile.type}`)
+    }
+    
     // Upload the file first
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('file', audioFile)
     formData.append('purpose', 'audio')
+
+    // Debug: Log what we're actually sending
+    console.log(`[STT-Mistral] FormData file name: ${audioFile.name}`)
+    console.log(`[STT-Mistral] FormData file type: ${audioFile.type}`)
+    console.log(`[STT-Mistral] FormData file size: ${audioFile.size}`)
+    
+    // Try to inspect the FormData
+    for (const [key, value] of formData.entries()) {
+      console.log(`[STT-Mistral] FormData entry: ${key} =`, value)
+      if (value instanceof File) {
+        console.log(`[STT-Mistral] FormData file details: name=${value.name}, type=${value.type}, size=${value.size}`)
+      }
+    }
 
     const uploadResponse = await fetch('https://api.mistral.ai/v1/files', {
       method: 'POST',

@@ -1,0 +1,15 @@
+diff --git a/node_modules/fix-webm-duration/fix-webm-duration.js b/node_modules/fix-webm-duration/fix-webm-duration.js
+index 546aa1a..7151174 100644
+--- a/node_modules/fix-webm-duration/fix-webm-duration.js
++++ b/node_modules/fix-webm-duration/fix-webm-duration.js
+@@ -471,7 +471,9 @@
+         return true;
+     };
+     WebmFile.prototype.toBlob = function(mimeType) {
+-        return new Blob([ this.source.buffer ], { type: mimeType || 'video/webm' });
++        // Preserve audio MIME types, only fallback to video/webm if no type provided
++        var fallbackType = mimeType && mimeType.includes('audio/') ? 'audio/webm' : 'video/webm';
++        return new Blob([ this.source.buffer ], { type: mimeType || fallbackType });
+     };
+ 
+     function fixWebmDuration(blob, duration, callback, options) {
