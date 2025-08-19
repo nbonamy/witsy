@@ -33,6 +33,38 @@ vi.mock('../../src/composables/transcriber', () => {
   })) }
 })
 
+vi.mock('../../src/composables/dialog', () => ({
+  default: {
+    alert: vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false })),
+    show: vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false })),
+  }
+}))
+
+vi.mock('../../src/composables/audio_recorder', () => ({
+  default: vi.fn(() => ({
+    initialize: vi.fn(async () => Promise.resolve()),
+    start: vi.fn(() => {
+      // Simulate MediaRecorder start call
+      window.MediaRecorder.prototype.start()
+    }),
+    stop: vi.fn(() => {
+      // Simulate MediaRecorder stop call  
+      window.MediaRecorder.prototype.stop()
+    }),
+    release: vi.fn(),
+    getAnalyser: vi.fn(() => ({
+      fftSize: 2048,
+      frequencyBinCount: 1024,
+      getFloatFrequencyData: vi.fn(),
+      getByteFrequencyData: vi.fn(),
+      getFloatTimeDomainData: vi.fn(), 
+      getByteTimeDomainData: vi.fn(),
+    })),
+    getBufferLength: vi.fn(() => 1024),
+    getDataArray: vi.fn(() => new Uint8Array(1024)),
+  }))
+}))
+
 beforeAll(() => {
   useWindowMock()
   useBrowserMock()
