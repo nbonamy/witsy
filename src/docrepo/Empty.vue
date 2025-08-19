@@ -1,16 +1,16 @@
 <template>
   <div class="docrepo-empty">
-    <div class="close" @click.stop="emit('close')"><BIconXLg /></div>
-    <BIconLightbulb class="icon" />
+    <div class="close" @click.stop="emit('close')"><XIcon /></div>
+    <LightbulbIcon class="icon" />
     <h3>{{ t('docRepo.empty.title') }}</h3>
     <p>{{ t('docRepo.empty.text') }}</p>
-    <button class="cta with-icon" @click="emit('click')"><BIconPlusLg /> {{ t('docRepo.empty.create') }}</button>
+    <button class="cta with-icon" @click="emit('click')"><PlusIcon /> {{ t('docRepo.empty.create') }}</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { BIconLightbulb } from 'bootstrap-icons-vue';
-import { t } from '../services/i18n'
+import { LightbulbIcon, PlusIcon, XIcon } from 'lucide-vue-next';
+import { t } from '../services/i18n';
 
 const emit = defineEmits(['click', 'close'])
 
@@ -26,7 +26,6 @@ const emit = defineEmits(['click', 'close'])
   cursor: pointer;
 }
 
-
 .docrepo-empty {
   
   flex: 1;
@@ -40,9 +39,10 @@ const emit = defineEmits(['click', 'close'])
   text-align: center;
       
   .icon {
-    font-size: 7rem;
     margin-bottom: 3rem;
-    fill: #1B4FB2;
+    width: 7rem;
+    height: 7rem;
+    color: #1B4FB2;
   }
   
   h3 {

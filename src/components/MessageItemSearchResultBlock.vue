@@ -7,7 +7,7 @@
   </div>
   <div v-else class="expanded">
     <div class="header" @click="expanded = false">
-      <BIconXLg class="close" />
+      <XIcon class="close" />
       {{ t('plugins.search.completed', { query: toolCall.params.query, count: toolCall.result.results.length }) }}
     </div>
     <MessageItemSearchToolBlock class="results" :tool-call="toolCall"  />
@@ -16,10 +16,11 @@
 
 <script setup lang="ts">
 
-import { ToolCall } from '../types/index'
+import { XIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { t } from '../services/i18n'
-import MessageItemSearchToolBlock from './MessageItemSearchToolBlock.vue' 
+import { ToolCall } from '../types/index'
+import MessageItemSearchToolBlock from './MessageItemSearchToolBlock.vue'
 
 defineProps({
   toolCall: {

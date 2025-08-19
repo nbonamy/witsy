@@ -2,14 +2,14 @@
   <div class="tab-content">
     <header>
       <div class="title">{{ t('settings.tabs.models') }}</div>
-      <BIconTrash class="icon delete" @click="onDeleteCustom" v-if="isCustom" />
+      <Trash2Icon class="icon delete" @click="onDeleteCustom" v-if="isCustom" />
     </header>
     <main>
       <div class="master-detail">
         <div class="md-master">
           <div class="md-master-list">
             <div class="md-master-list-item" @click="showCreateCustom()">
-              <BIconPlusCircle class="logo create" />
+              <CirclePlusIcon class="logo create" />
               {{ t('settings.engines.custom.create') }}
             </div>
             <div class="md-master-list-item" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
@@ -27,16 +27,19 @@
 
 <script setup lang="ts">
 
-import { CustomEngineConfig } from '../types/config'
-import { ref, computed, nextTick } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import Dialog from '../composables/dialog'
+import { CirclePlusIcon, Trash2Icon } from 'lucide-vue-next'
+import { computed, nextTick, ref } from 'vue'
 import EngineLogo from '../components/EngineLogo.vue'
+import Dialog from '../composables/dialog'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import CreateEngine from '../screens/CreateEngine.vue'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { CustomEngineConfig } from '../types/config'
 import SettingsAnthropic from './SettingsAnthropic.vue'
 import SettingsAzure from './SettingsAzure.vue'
 import SettingsCerebras from './SettingsCerebras.vue'
+import SettingsCustomLLM from './SettingsCustomLLM.vue'
 import SettingsDeepSeek from './SettingsDeepSeek.vue'
 import SettingsGoogle from './SettingsGoogle.vue'
 import SettingsGroq from './SettingsGroq.vue'
@@ -47,8 +50,6 @@ import SettingsOllama from './SettingsOllama.vue'
 import SettingsOpenAI from './SettingsOpenAI.vue'
 import SettingsOpenRouter from './SettingsOpenRouter.vue'
 import SettingsXAI from './SettingsXAI.vue'
-import SettingsCustomLLM from './SettingsCustomLLM.vue'
-import LlmFactory, { ILlmManager } from '../llms/llm'
 
 type Engine = {
   id: string,

@@ -4,7 +4,7 @@
     <div class="sp-sidebar">
       <header>
         <div class="title">{{ t('debugConsole.title') }}</div>
-        <BIconTrash class="icon" @click="clearRequests"/>
+        <Trash2Icon class="icon" @click="clearRequests"/>
       </header>
       <main class="list">
         <div v-if="requests.length === 0" class="empty">
@@ -98,13 +98,14 @@
 
 <script setup lang="ts">
 
-import { NetworkRequest, WebSocketFrame } from '../types'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import Loader from '../components/Loader.vue'
+import { Trash2Icon } from 'lucide-vue-next'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/vue3-json-viewer.css'
+import Loader from '../components/Loader.vue'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { NetworkRequest, WebSocketFrame } from '../types'
 
 // load store
 store.loadSettings()

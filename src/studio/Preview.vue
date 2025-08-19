@@ -4,26 +4,26 @@
       <template v-if="message">
         <div class="title">{{ message.content }}</div>
         <div class="icon undo" @click="$emit('undo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canUndo }">
-          <BIconArrowCounterclockwise />
+          <UndoIcon />
         </div>
         <div class="icon redo" @click="$emit('redo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canRedo }">
-          <BIconArrowClockwise />
+          <RedoIcon />
         </div>
         <div class="icon info" @click="onInfo">
-          <BIconInfoCircle />
+          <InfoIcon />
         </div>
         <div class="icon fullscreen" @click="onFullScreen" v-if="!message.isVideo()">
-          <BIconFullscreen />
+          <FullscreenIcon />
         </div>
         <div class="icon copy" @click="onCopy" v-if="!message.isVideo()">
-          <BIconClipboardCheck v-if="copying" />
-          <BIconClipboard v-else />
+          <ClipboardCheckIcon v-if="copying" />
+          <ClipboardIcon v-else />
         </div>
         <div class="icon save" @click="onDownload">
-          <BIconDownload />
+          <DownloadIcon />
         </div>
         <div class="icon delete" @click="onDelete">
-          <BIconTrash />
+          <Trash2Icon />
         </div>
       </template>
     </header>
@@ -49,11 +49,12 @@
 
 <script setup lang="ts">
 
-import { ref, watch, onMounted, nextTick } from 'vue'
-import { t } from '../services/i18n'
-import Message from '../models/message'
-import Dialog from '../composables/dialog'
+import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, FullscreenIcon, InfoIcon, RedoIcon, Trash2Icon, UndoIcon } from 'lucide-vue-next'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import Loader from '../components/Loader.vue'
+import Dialog from '../composables/dialog'
+import Message from '../models/message'
+import { t } from '../services/i18n'
 
 const props = defineProps({
   message: {

@@ -7,7 +7,7 @@
       <div class="agent-list">
         <div v-for="agent in runnableAgents" :key="agent.uuid" class="agent-item" @click="onSelectAgent(agent)">
           <div class="agent-icon">
-            <BIconRobot v-if="agent.source === 'witsy'" />
+            <BotIcon v-if="agent.source === 'witsy'" />
             <LogoA2A v-else-if="agent.source === 'a2a'" />
           </div>
           <div class="agent-info">
@@ -36,6 +36,7 @@ import ModalDialog from '../components/ModalDialog.vue'
 import LogoA2A from '../../assets/a2a.svg?component'
 
 import useEventBus from '../composables/event_bus'
+import { BotIcon } from 'lucide-vue-next'
 const { emitEvent } = useEventBus()
 
 const dialog = ref(null)

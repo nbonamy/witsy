@@ -6,24 +6,24 @@
         <div class="tag info">{{ noteCount() }}</div>
         <div class="subtitle">Add notes to be indexed and searchable</div>
       </label>
-      <div class="icon"><BIconChevronDown /></div>
+      <div class="icon"><ChevronDownIcon /></div>
     </div>
     <div class="panel-body" v-if="notes.length">
       <template v-for="note in notes" :key="note.uuid">
         <div class="panel-item">
-          <div class="icon leading"><BIconFileText /></div>
+          <div class="icon leading"><FileTextIcon /></div>
           <div class="info">
             <div class="text">{{ note.title }}</div>
           </div>
           <div class="actions">
             <div class="tag info" v-if="processingItems.includes(note.uuid)">Indexing</div>
             <div class="tag success" v-else>Ready</div>
-            <BIconPencil
+            <PencilIcon
               class="icon edit"
               v-tooltip="{ text: t('common.edit'), position: 'left' }"
               @click="onEditNote(note)"
             />
-            <BIconTrash 
+            <Trash2Icon
               class="icon remove" 
               v-tooltip="{ text: t('common.delete'), position: 'left' }"
               @click="onDelNote(note)" 
@@ -36,18 +36,19 @@
       {{ t('docRepo.note.noNotes') }}
     </div>
     <div class="panel-footer">
-      <button name="addNote" @click="onAddNote"><BIconJournalPlus /> {{ t('docRepo.note.add') }}</button>
+      <button name="addNote" @click="onAddNote"><FilePlusIcon /> {{ t('docRepo.note.add') }}</button>
     </div>
     <NoteEditor ref="noteEditorRef" @save="onNoteSave" @update="onNoteUpdate" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { DocumentBase, DocumentSource, DocRepoAddDocResponse, DocumentQueueItem } from '../types/rag'
-import { t } from '../services/i18n'
-import { togglePanel } from '../composables/panel'
+import { ChevronDownIcon, FilePlusIcon, FileTextIcon, PencilIcon, Trash2Icon } from 'lucide-vue-next'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
+import { togglePanel } from '../composables/panel'
+import { t } from '../services/i18n'
+import { DocRepoAddDocResponse, DocumentBase, DocumentQueueItem, DocumentSource } from '../types/rag'
 import NoteEditor from './NoteEditor.vue'
 
 // props

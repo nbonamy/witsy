@@ -3,9 +3,9 @@
   <div class="media-container" :class="theme" v-if="render">
     <div class="diagram" v-html="render.svg" @click="onFullscreen" />
     <div class="media-actions">
-      <BIconCircleHalf class="action theme" @click="onTheme" />
-      <BIconCodeSlash class="action code" @click="onViewCode" />
-      <BIconDownload class="action download" @click="onDownload" />
+      <SunMoonIcon class="action theme" @click="onTheme" />
+      <CodeXmlIcon class="action code" @click="onViewCode" />
+      <DownloadIcon class="action download" @click="onDownload" />
     </div>
   </div>
   <div v-if="viewCode">
@@ -16,9 +16,9 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue'
+import { CodeXmlIcon, DownloadIcon, SunMoonIcon } from 'lucide-vue-next'
 import mermaid, { RenderResult } from 'mermaid'
-import { BIconCircleHalf, BIconCodeSlash, BIconDownload } from 'bootstrap-icons-vue'
+import { onMounted, ref } from 'vue'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()

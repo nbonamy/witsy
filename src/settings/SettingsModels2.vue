@@ -9,13 +9,13 @@
         <HeroPanel variant="online" @button-click="showOnlinePanel">
           <template #title>Online Models</template>
           <template #subtitle>Connect your online model providers to access them within Wrkspace.</template>
-          <template #button><Plus /> Connect Online Models</template>
+          <template #button><PlusIcon /> Connect Online Models</template>
         </HeroPanel>
 
         <HeroPanel variant="local" @button-click="showLocalPanel">
           <template #title>Local Models</template>
           <template #subtitle>Run LLMs locally on your own device for greater flexibility and security.</template>
-          <template #button><Download /> Install Local Models</template>
+          <template #button><DownloadIcon /> Install Local Models</template>
         </HeroPanel>
       </div>
 
@@ -64,16 +64,16 @@
 
 <script setup lang="ts">
 
-import { Workspace } from '../types/workspace'
+import { DownloadIcon, PlusIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
-import LlmFactory from '../llms/llm'
-import LlmManager from '../llms/manager'
 import HeroPanel from '../components/HeroPanel.vue'
 import ModelList from '../components/ModelList.vue'
 import SideModelList from '../components/SideModelList.vue'
-import { Plus, Download } from 'lucide-vue-next'
+import LlmFactory from '../llms/llm'
+import LlmManager from '../llms/manager'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { Workspace } from '../types/workspace'
 
 const llmManager: LlmManager = LlmFactory.manager(store.config)
 

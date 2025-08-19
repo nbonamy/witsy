@@ -5,60 +5,60 @@
       <div class="sp-sidebar">
         <header>
           <div class="title">{{ t('docRepo.list.title') }}</div>
-          <BIconSliders class="icon config" v-tooltip="{ text: t('docRepo.list.tooltips.config'), position: 'bottom' }" @click="onConfig" />
+          <Settings2Icon class="icon config" v-tooltip="{ text: t('docRepo.list.tooltips.config'), position: 'bottom' }" @click="onConfig" />
         </header>
         <main>
           <List :docRepos="docRepos || []" :selectedRepo="selectedRepo" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" />
         </main>
         <footer>
-          <button class="new-collection cta with-icon" @click="onCreate"><BIconPlusLg /> {{ t('docRepo.create.title') }}</button>
+          <button class="new-collection cta with-icon" @click="onCreate"><PlusIcon /> {{ t('docRepo.create.title') }}</button>
         </footer>
       </div>
       <div class="sp-main">
-      <header v-if="mode === 'view'">
-        <div class="title-section">
-          <div v-if="!isEditingTitle" class="title-display">
-            <span class="title">{{ selectedRepo?.name }}</span>
-            <BIconPencil 
-              class="icon edit-title" 
-              v-tooltip="{ text: t('common.edit'), position: 'bottom' }"
-              @click="startEditingTitle" 
-            />
-          </div>
-          <div v-else class="title-edit">
-            <input 
-              ref="titleInput"
-              type="text" 
-              v-model="editingTitle"
-              @keyup.enter="saveTitle"
-              @keyup.escape="cancelEditingTitle"
-              class="title-input"
-            />
-            <div class="actions">
-              <BIconCheck 
-                class="icon save" 
-                v-tooltip="{ text: t('common.save'), position: 'bottom' }"
-                @click="saveTitle" 
-              />
-              <BIconX 
-                class="icon cancel" 
-                v-tooltip="{ text: t('common.cancel'), position: 'bottom' }"
-                @click="cancelEditingTitle" 
+        <header v-if="mode === 'view'">
+          <div class="title-section">
+            <div v-if="!isEditingTitle" class="title-display">
+              <span class="title">{{ selectedRepo?.name }}</span>
+              <PencilIcon
+                class="icon edit-title" 
+                v-tooltip="{ text: t('common.edit'), position: 'bottom' }"
+                @click="startEditingTitle" 
               />
             </div>
+            <div v-else class="title-edit">
+              <input 
+                ref="titleInput"
+                type="text" 
+                v-model="editingTitle"
+                @keyup.enter="saveTitle"
+                @keyup.escape="cancelEditingTitle"
+                class="title-input"
+              />
+              <div class="actions">
+                <CheckIcon
+                  class="icon save" 
+                  v-tooltip="{ text: t('common.save'), position: 'bottom' }"
+                  @click="saveTitle" 
+                />
+                <XIcon
+                  class="icon cancel" 
+                  v-tooltip="{ text: t('common.cancel'), position: 'bottom' }"
+                  @click="cancelEditingTitle" 
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        <BIconTrash
-          class="icon delete" 
-          v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }"
-          @click="onDeleteRepo(selectedRepo)"
-        />
-        <BIconXLg
-          class="icon close" 
-          v-tooltip="{ text: t('common.close'), position: 'bottom-left' }"
-          @click="onClose"
-        />
-      </header>
+          <Trash2
+            class="icon delete" 
+            v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }"
+            @click="onDeleteRepo(selectedRepo)"
+          />
+          <XIcon
+            class="icon close" 
+            v-tooltip="{ text: t('common.close'), position: 'bottom-left' }"
+            @click="onClose"
+          />
+        </header>
         <View :selectedRepo="selectedRepo" v-if="mode === 'view'"/>
       </div>
       <Config ref="configDialog" />
@@ -69,21 +69,21 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
-import { DocumentBase } from '../types/rag'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { CheckIcon, PencilIcon, PlusIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
+import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import FullScreenDrawer from '../components/FullScreenDrawer.vue'
 import Dialog from '../composables/dialog'
 import Config from '../docrepo/Config.vue'
-import List from '../docrepo/List.vue'
-import View from '../docrepo/View.vue'
 import Create from '../docrepo/Create.vue'
 import Empty from '../docrepo/Empty.vue'
+import List from '../docrepo/List.vue'
+import View from '../docrepo/View.vue'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { DocumentBase } from '../types/rag'
 
 // bus
 import useEventBus from '../composables/event_bus'
-import { BIconXLg } from 'bootstrap-icons-vue'
 const { onEvent } = useEventBus()
 
 type DocRepoMode = 'list' | 'view'

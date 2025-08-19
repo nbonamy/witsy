@@ -20,15 +20,15 @@
       </footer>
       <footer v-else>
         <div id="new-folder" class="icon" @click="onNewFolder" v-if="chatListDisplayMode == 'folder'">
-          <BIconFolderPlus />
+          <FolderPlus />
         </div>
         <div id="select" class="icon" v-if="store.history.chats.length" @click="onSelect">
-          <BIconCheck2Square />
+          <CheckSquareIcon />
         </div>
       </footer>
     </template>
     <footer>
-      <button class="new-chat cta with-icon" @click="onNewChat"><BIconChatDots /> {{ t('common.newChat') }}</button>
+      <button class="new-chat cta with-icon" @click="onNewChat"><MessageCircleMoreIcon /> {{ t('common.newChat') }}</button>
     </footer>
     <div class="resizer" :style="`left: ${width-5}px`" @mousedown="onResizeSidebarStart" v-if="visible">&nbsp;</div>
   </div>
@@ -36,16 +36,15 @@
 
 <script setup lang="ts">
 
-import { ChatListMode } from '../types/config'
-import { ref, onMounted, nextTick } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { CheckSquareIcon, FolderPlus, MessageCircleMoreIcon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
-import IconNewChat from './IconNewChat.vue'
-import IconRunAgent from '../../assets/robot_run.svg?component'
+import { nextTick, onMounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
-import ChatList from './ChatList.vue'
 import Chat from '../models/chat'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { ChatListMode } from '../types/config'
+import ChatList from './ChatList.vue'
 
 import useTipsManager from '../composables/tips_manager'
 const tipsManager = useTipsManager(store)

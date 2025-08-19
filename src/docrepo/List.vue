@@ -4,10 +4,14 @@
       <template v-for="repo in docRepos" :key="repo.uuid">
         <div class="list-item" :class="{ selected: props.selectedRepo?.uuid === repo.uuid }" @click="selectRepo(repo)">
           <div class="icon leading">
-            <BIconFolder />
+            <FolderOpenIcon v-if="selectedRepo?.uuid === repo.uuid" />
+            <FolderIconIcon v-else />
           </div>
           <div class="info">
             <div class="text">{{ repo.name }}</div>
+          </div>
+          <div class="icon trailing">
+            <ChevronRightIcon v-if="selectedRepo?.uuid === repo.uuid" />
           </div>
         </div>
       </template>
@@ -16,6 +20,7 @@
 </template>
 
 <script setup lang="ts">
+import { ChevronDown, ChevronRight, ChevronRightIcon, FolderIcon, FolderOpen, FolderOpenIcon } from 'lucide-vue-next';
 import { DocumentBase } from '../types/rag'
 
 // props  

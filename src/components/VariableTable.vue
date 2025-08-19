@@ -17,15 +17,16 @@
       </table>
     </div>
     <div class="lwa-actions">
-      <button ref="addButton" class="button add" @click.prevent="onAddVariable"><BIconPlus /></button>
-      <button class="button remove" @click.prevent="onDeleteVariable" :disabled="!selectedVariable"><BIconDash /></button>
+      <button ref="addButton" class="button add" @click.prevent="onAddVariable"><PlusIcon /></button>
+      <button class="button remove" @click.prevent="onDeleteVariable" :disabled="!selectedVariable"><MinusIcon /></button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { t } from '../services/i18n'
+import { MinusIcon, PlusIcon } from 'lucide-vue-next'
 import Dialog from '../composables/dialog'
+import { t } from '../services/i18n'
 
 const props = defineProps({
   variables: {

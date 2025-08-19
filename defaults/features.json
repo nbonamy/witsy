@@ -1,8 +1,8 @@
 
 {
   "appearance": false,
-  "studio": false,
-  "scratchpad": false,
+  "studio": true,
+  "scratchpad": true,
   "transcribe": false,
   "computerUse": false,
   "voiceMode": false,

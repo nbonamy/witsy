@@ -22,22 +22,22 @@
 
 <script setup lang="ts">
 
-import { ref, computed, nextTick } from 'vue'
+import { BIconYoutube } from 'bootstrap-icons-vue'
+import { BinocularsIcon, CloudDownloadIcon, FolderIcon, IdCardIcon, PaletteIcon, VideoIcon } from 'lucide-vue-next'
+import { computed, nextTick, ref } from 'vue'
+import WIconPython from '../../assets/python.svg?component'
+import WIconVega from '../../assets/vega.svg?component'
 import { availablePlugins } from '../plugins/plugins'
 import { t } from '../services/i18n'
 import SettingsBrowse from './SettingsBrowse.vue'
+import SettingsFilesystem from './SettingsFilesystem.vue'
+import SettingsImage from './SettingsImage.vue'
+import SettingsMemory from './SettingsMemory.vue'
 import SettingsPython from './SettingsPython.vue'
 import SettingsSearch from './SettingsSearch.vue'
-import SettingsImage from './SettingsImage.vue'
+import SettingsVega from './SettingsVega.vue'
 import SettingsVideo from './SettingsVideo.vue'
 import SettingsYouTube from './SettingsYouTube.vue'
-import SettingsMemory from './SettingsMemory.vue'
-import SettingsVega from './SettingsVega.vue'
-import SettingsFilesystem from './SettingsFilesystem.vue'
-import { BIconYoutube } from 'bootstrap-icons-vue'
-import WIconPython from '../../assets/python.svg?component'
-import WIconVega from '../../assets/vega.svg?component'
-import { Binoculars, CloudDownload, Folder, IdCard, Palette, Video } from 'lucide-vue-next'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
 const pluginSettings = ref(null)
@@ -55,15 +55,15 @@ const plugins = computed((): PluginUI[] => {
       id: plugin,
       label: t(`settings.plugins.${plugin}.title`),
       logo: {
-        search: { icon: Binoculars },
-        browse: { icon: CloudDownload },
+        search: { icon: BinocularsIcon },
+        browse: { icon: CloudDownloadIcon },
         python: { icon: WIconPython },
-        image: { icon: Palette },
-        video: { icon: Video },
-        memory: { icon: IdCard },
+        image: { icon: PaletteIcon },
+        video: { icon: VideoIcon },
+        memory: { icon: IdCardIcon },
         youtube: { icon: BIconYoutube },
         vega: { icon: WIconVega },
-        filesystem: { icon: Folder },
+        filesystem: { icon: FolderIcon },
         // mcp: { icon: WIconMcp },
       }[plugin],
     }

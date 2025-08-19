@@ -15,12 +15,12 @@
       </MenuBarItem>
 
       <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')" v-if="store.isFeatureEnabled('studio')">
-        <Palette />
+        <PaletteIcon />
         <span>{{ t('designStudio.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')" v-if="store.isFeatureEnabled('scratchpad')">
-        <FileText />
+        <FileTextIcon />
         <span>{{ t('scratchpad.title') }}</span>
       </MenuBarItem>
 
@@ -30,34 +30,34 @@
       </MenuBarItem>
 
       <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')" v-if="store.isFeatureEnabled('dictation')">
-        <Mic />
+        <MicIcon />
         <span>{{ t('transcribe.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')" v-if="store.isFeatureEnabled('voiceMode')">
-        <Headset />
+        <HeadsetIcon />
         <span>{{ t('realtimeChat.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">
-        <Mouse />
+        <MouseIcon />
         <span>{{ t('computerUse.title') }}</span>
       </MenuBarItem>
 
       <div class="push"></div>
 
       <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')" v-if="store.isFeatureEnabled('docrepo')">
-        <Lightbulb />
+        <LightbulbIcon />
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureEnabled('experts')">
-        <Brain />
+        <BrainIcon />
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="settings" :active="mode === 'settings'" @click="emit('change', 'settings')">
-        <Settings />
+        <SettingsIcon />
         <span>{{ t('common.settings') }}</span>
       </MenuBarItem>
 
@@ -70,18 +70,18 @@
 
 <script setup lang="ts">
 
-import { MainWindowMode } from '../types/index'
-import { onMounted, ref, computed, watch } from 'vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
-import MenuBarItem from './MenuBarItem.vue'
-import IconMenu from './IconMenu.vue'
-import useAppearanceTheme from '../composables/appearance_theme' 
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
-import { Brain, FileText, Headset, Lightbulb, Mic, Mouse, Palette, Settings } from 'lucide-vue-next'
+import { BrainIcon, FileTextIcon, HeadsetIcon, LightbulbIcon, MicIcon, MouseIcon, PaletteIcon, SettingsIcon } from 'lucide-vue-next'
+import { computed, onMounted, ref, watch } from 'vue'
 import IconAgent from '../../assets/agent.svg?component'
 import IconChat from '../../assets/message-circle-3.svg?component'
+import useAppearanceTheme from '../composables/appearance_theme'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { MainWindowMode } from '../types/index'
+import IconMenu from './IconMenu.vue'
+import MenuBarItem from './MenuBarItem.vue'
 
 export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug' | 'agents'
 

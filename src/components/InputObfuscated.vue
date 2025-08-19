@@ -9,7 +9,7 @@
 <script setup lang="ts">
 
 import { ref, computed } from 'vue'
-import { Eye, EyeOff } from 'lucide-vue-next'
+import { EyeIcon, EyeOffIcon } from 'lucide-vue-next'
 
 defineProps({
   name: {
@@ -25,7 +25,7 @@ const value = defineModel()
 const emit = defineEmits(['blur', 'change']);
 
 const icon = computed(() => {
-  return type.value === 'password' ? Eye : EyeOff
+  return type.value === 'password' ? EyeIcon : EyeOffIcon
 })
 
 const onToggleView = () => {

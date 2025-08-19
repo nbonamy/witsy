@@ -1,7 +1,7 @@
 <template>
   <div class="mcp tab-content" @keyup.escape.prevent="onEdit(null)">
     <header v-if="selected">
-      <BIconChevronLeft class="icon back" @click="onEdit(null)" />
+      <ChevronLeftIcon class="icon back" @click="onEdit(null)" />
       <div class="title">{{ t('mcp.serverEditor.title') }}</div>
     </header>
     <header v-else>
@@ -18,13 +18,14 @@
 
 <script setup lang="ts">
 
-import { McpInstallStatus, McpServer } from '../types/mcp'
-import { ref, nextTick } from 'vue'
+import { ChevronLeftIcon } from 'lucide-vue-next'
+import { nextTick, ref } from 'vue'
+import McpServerEditor, { McpCreateType } from '../components/McpServerEditor.vue'
+import McpServerList from '../components/McpServerList.vue'
+import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import Dialog from '../composables/dialog'
-import McpServerList from '../components/McpServerList.vue'
-import McpServerEditor, { McpCreateType } from '../components/McpServerEditor.vue'
+import { McpInstallStatus, McpServer } from '../types/mcp'
 
 const list = ref(null)
 const editor = ref(null)

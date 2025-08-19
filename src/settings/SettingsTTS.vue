@@ -44,8 +44,8 @@
           {{ t('common.refresh') }}
         </button>
         <button class="control" @click.prevent="onPlay">
-          <BIconPlayFill v-if="audioState.state === 'idle'"/>
-          <BIconStopFill v-else />
+          <PlayIcon v-if="audioState.state === 'idle'"/>
+          <SquareIcon v-else />
         </button>
       </div>
       <audio ref="audio" />
@@ -73,6 +73,7 @@ import TTSOpenAI from '../voice/tts-openai'
 import TTSGroq from '../voice/tts-groq'
 import TTSElevenLabs from '../voice/tts-elevenlabs'
 import TTSFalAi from '../voice/tts-falai'
+import { PlayIcon, SquareIcon } from 'lucide-vue-next'
 
 const engine = ref('openai')
 const voice = ref(null)

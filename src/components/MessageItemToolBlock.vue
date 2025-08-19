@@ -5,8 +5,8 @@
       <div v-if="!toolCall.done" class="tool-loader">
         <Loader /><Loader /><Loader />
       </div>
-      <BIconChevronDown v-else-if="!isOpen" class="tool-unfold"/>
-      <BIconChevronUp v-else class="tool-fold" />
+      <ChevronDownIcon v-else-if="!isOpen" class="tool-unfold"/>
+      <ChevronRightIcon v-else class="tool-fold" />
     </div>
     <div class="tool-results" v-if="isOpen">
       <MessageItemSearchToolBlock v-if="toolCall.name === 'search_internet' && toolCall.result?.results?.length" :toolCall="toolCall" /> 
@@ -42,11 +42,12 @@
 
 <script setup lang="ts">
 
-import { ToolCall } from '../types/index'
-import { ref, onMounted, computed } from 'vue'
+import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
+import { computed, onMounted, ref } from 'vue'
 import { t } from '../services/i18n'
-import MessageItemSearchToolBlock from './MessageItemSearchToolBlock.vue'
+import { ToolCall } from '../types/index'
 import Loader from './Loader.vue'
+import MessageItemSearchToolBlock from './MessageItemSearchToolBlock.vue'
 
 const props = defineProps({
   toolCall: {

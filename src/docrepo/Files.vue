@@ -6,7 +6,7 @@
         <div class="tag info">{{ documentCount() }}</div>
         <div class="subtitle">{{ t('docRepo.file.help.formats') }}</div>
       </label>
-      <div class="icon"><BIconChevronDown /></div>
+      <div class="icon"><ChevronDownIcon /></div>
     </div>
     <div class="panel-body" v-if="files.length">
       <template v-for="doc in files" :key="doc.uuid">
@@ -20,19 +20,19 @@
           <div class="actions">
             <div class="tag info" v-if="processingItems.includes(doc.uuid)">Indexing</div>
             <div class="tag success" v-else>Ready</div>
-            <BIconSearch 
+            <SearchIcon
               :style="{ visibility: doc.type === 'folder' ? 'visible' : 'hidden' }"
               class="icon view-contents" 
               v-tooltip="{ text: t('docRepo.view.tooltips.viewContents'), position: 'left' }"
               @click="onViewFolderContents(doc)" 
             />
-            <BIconFolder
+            <FolderIcon
               v-if="doc.type === 'file' || doc.type === 'folder'"
               class="icon open-in-explorer" 
               v-tooltip="{ text: t('docRepo.view.tooltips.openInExplorer'), position: 'left' }"
               @click="onOpenInExplorer(doc)" 
             />
-            <BIconTrash 
+            <Trash2Icon
               class="icon remove" 
               v-tooltip="{ text: t('common.delete'), position: 'left' }"
               @click="onDelDoc(doc)" 
@@ -45,21 +45,22 @@
       {{ t('docRepo.view.noDocuments') }}
     </div>
     <div class="panel-footer">
-      <button name="addDocs" @click="onAddFiles"><BIconFilePlus /> {{ t('docRepo.view.tooltips.addFile') }}</button>
-      <button name="addFolder" @click="onAddFolder"><BIconFolderPlus /> {{ t('docRepo.view.tooltips.addFolder') }}</button>
+      <button name="addDocs" @click="onAddFiles"><FilePlusIcon /> {{ t('docRepo.view.tooltips.addFile') }}</button>
+      <button name="addFolder" @click="onAddFolder"><FolderPlusIcon /> {{ t('docRepo.view.tooltips.addFolder') }}</button>
     </div>
     <Folder ref="folderRef" :folder="selectedFolder" @close="selectedFolder = null" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { DocumentBase, DocumentSource, DocRepoAddDocResponse, DocumentQueueItem } from '../types/rag'
-import { extensionToMimeType } from 'multi-llm-ts'
 import { filesize } from 'filesize'
-import { t } from '../services/i18n'
-import { togglePanel } from '../composables/panel'
+import { ChevronDownIcon, FileIcon, FileImageIcon, FilePlusIcon, FileSpreadsheetIcon, FileTextIcon, FolderIcon, FolderPlusIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
+import { extensionToMimeType } from 'multi-llm-ts'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
+import { togglePanel } from '../composables/panel'
+import { t } from '../services/i18n'
+import { DocRepoAddDocResponse, DocumentBase, DocumentQueueItem, DocumentSource } from '../types/rag'
 import Folder from './Folder.vue'
 
 // props
@@ -134,20 +135,20 @@ const docIcon = (doc: DocumentSource) => {
   if (doc.type === 'file') {
     const mimeType = extensionToMimeType(doc.filename.split('.').pop() ?? '')
     if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-      return 'BIconFileWord'
+      return FileTextIcon
     } else if (mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-      return 'BIconFileExcel'
+      return FileSpreadsheetIcon
     } else if (mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
-      return 'BIconFileSlides'
+      return FileImageIcon
     } else if (mimeType === 'application/pdf') {
-      return 'BIconFilePdf'
+      return FileTextIcon
     } else {
-      return 'BIconFileText'
+      return FileTextIcon
     }
   } else if (doc.type === 'folder') {
-    return 'BIconFolder'
+    return FolderIcon
   }
-  return 'BIconFile'
+  return FileIcon
 }
 
 const onAddFiles = async () => {

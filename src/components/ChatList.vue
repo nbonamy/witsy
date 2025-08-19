@@ -4,8 +4,8 @@
       <div class="form"><div class="form-field search">
         <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange">
         </input>
-        <BIconSearch class="search-icon" />
-        <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
+        <SearchIcon class="search-icon" />
+        <XCircleIcon class="clear-filter" v-if="filter" @click="onClearFilter" />
       </div></div>
     </div>
     <div class="display-mode button-group" v-if="store.isFeatureEnabled('chat.folders')">
@@ -22,17 +22,17 @@
 
 <script setup lang="ts">
 
-import { ChatListMode } from '../types/config'
-import { ref, computed, onMounted, PropType } from 'vue'
-import { store, kMediaChatId } from '../services/store'
-import { t } from '../services/i18n'
-import ContextMenu from './ContextMenu.vue'
-import ChatListTimeline from './ChatListTimeline.vue'
-import ChatListFolder from './ChatListFolder.vue'
+import { SearchIcon, XCircleIcon } from 'lucide-vue-next'
+import { computed, onMounted, PropType, ref } from 'vue'
 import Chat from '../models/chat'
+import { t } from '../services/i18n'
+import { kMediaChatId, store } from '../services/store'
+import { ChatListMode } from '../types/config'
+import ChatListFolder from './ChatListFolder.vue'
+import ChatListTimeline from './ChatListTimeline.vue'
+import ContextMenu from './ContextMenu.vue'
 
 import useEventBus from '../composables/event_bus'
-import { BIconSearch } from 'bootstrap-icons-vue'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({

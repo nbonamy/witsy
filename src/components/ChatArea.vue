@@ -16,8 +16,8 @@
 
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
       <div class="spacer"></div>
-      <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" v-if="store.isFeatureEnabled('chat.settings')" />
-      <BIconThreeDotsVertical class="icon menu" @click="onMenu" v-if="chat?.title || store.isFeatureEnabled('chat.temporary')" /> 
+      <SlidersHorizontalIcon class="icon settings" @click="showModelSettings = !showModelSettings" v-if="store.isFeatureEnabled('chat.settings')" />
+      <EllipsisVerticalIcon class="icon menu" @click="onMenu" v-if="chat?.title || store.isFeatureEnabled('chat.temporary')" /> 
     
     </header>
     <main>
@@ -26,8 +26,8 @@
         <!-- <div class="chat-content-title">
           <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
           <div class="spacer"></div> -->
-          <!-- <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" /> -->
-          <!-- <BIconThreeDotsVertical class="icon" @click="onMenu" />
+          <!-- <SlidersHorizontalIcon class="icon settings" @click="showModelSettings = !showModelSettings" /> -->
+          <!-- <EllipsisVerticalIcon class="icon" @click="onMenu" />
         </div> -->
         
         <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
@@ -35,7 +35,7 @@
         <div class="deep-research-usage" v-if="prompt?.isDeepResearchActive() && tipsManager.isTipAvailable('deepResearchUsage')">
           {{  t('deepResearch.usage') }}
           <div class="deep-research-usage-close" @click="onHideDeepResearchUsage">
-            <BIconXLg />
+            <X />
           </div>
         </div>
         <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" ref="prompt" />
@@ -48,23 +48,20 @@
 
 <script setup lang="ts">
 
-import { Expert, Message } from '../types/index'
-import { ref, computed, onMounted } from 'vue'
-import { kMediaChatId, store } from '../services/store'
-import { t } from '../services/i18n'
-import ContextMenu, { MenuPosition } from './ContextMenu.vue'
-import MessageList from './MessageList.vue'
-import EmptyChat from './EmptyChat.vue'
-import Prompt, { SendPromptParams } from './Prompt.vue'
-import ModelSettings from '../screens/ModelSettings.vue'
-import Chat from '../models/chat'
 import html2canvas from 'html2canvas'
 import html2pdf from 'html2pdf.js'
-import IconSideBar from '../../assets/sidebar.svg?component'
-import IconRunAgent from '../../assets/robot_run.svg?component'
-import IconNewChat from './IconNewChat.vue'
-import IconMenu from './IconMenu.vue'
+import { EllipsisVerticalIcon, SlidersHorizontalIcon, X } from 'lucide-vue-next'
+import { computed, onMounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
+import Chat from '../models/chat'
+import ModelSettings from '../screens/ModelSettings.vue'
+import { t } from '../services/i18n'
+import { kMediaChatId, store } from '../services/store'
+import { Expert, Message } from '../types/index'
+import ContextMenu, { MenuPosition } from './ContextMenu.vue'
+import EmptyChat from './EmptyChat.vue'
+import MessageList from './MessageList.vue'
+import Prompt, { SendPromptParams } from './Prompt.vue'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()

@@ -2,12 +2,12 @@
   <Teleport to="body" :disabled="!teleport">
     <Overlay @click="onOverlay" />
     <!-- Hidden chevron template for cloning -->
-    <BIconChevronRight ref="chevronTemplate" style="display: none;" class="chevron-template" />
+    <ChevronRightIcon ref="chevronTemplate" style="display: none;" class="chevron-template" />
     <div class="context-menu" :style="position" @keydown="onKeyDown" @keyup="onKeyUp">
       <!-- Top level filter or back/filter header -->
       <div v-if="showFilter || currentSubmenu" class="header">
         <div v-if="currentSubmenu" class="back-button" @click="goBack">
-          <BIconArrowLeft />
+          <MoveLeftIcon />
         </div>
         <div v-if="shouldShowCurrentFilter" class="filter-input">
           <input v-model="filter" :placeholder="t('common.search')" autofocus="true" @keydown.stop="onKeyDown" @keyup.stop="onKeyUp" />
@@ -45,6 +45,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, useSlots } from 'vue'
 import Overlay from '../components/Overlay.vue'
 import { t } from '../services/i18n'
+import { ChevronRightIcon, MoveLeftIcon } from 'lucide-vue-next'
 
 export type MenuPosition = 'below' | 'above' | 'right' | 'left' | 'above-right' | 'above-left' | 'below-right' | 'below-left'
 

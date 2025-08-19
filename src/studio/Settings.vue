@@ -24,8 +24,8 @@
         <template v-if="allowModelEntry">
           <ComboBox name="model" :items="models" v-model="model" @change="onChangeModel">
             <button name="favorite" @click.prevent="toggleFavorite">
-              <BIconStarFill v-if="isFavorite"/>
-              <BIconStar v-else/>
+              <StarOffIcon v-if="isFavorite"/>
+              <StarIcon v-else/>
             </button>
           </ComboBox>
           <RefreshButton :on-refresh="getModels" />
@@ -56,7 +56,7 @@
       </div>
 
       <div class="form-field">
-        <label>{{ t('common.prompt') }}<BIconMagic v-if="promptLibrary.length" @click="onShowPromptLibrary"/></label>
+        <label>{{ t('common.prompt') }}<WandIcon v-if="promptLibrary.length" @click="onShowPromptLibrary"/></label>
         <textarea v-model="prompt" name="prompt" class="prompt" :placeholder="t('designStudio.promptPlaceholder')">
         </textarea>
       </div>
@@ -135,26 +135,26 @@
 
 <script setup lang="ts">
 
-import { MediaCreator, DesignStudioMediaType } from '../types/index'
-import { onMounted, ref, computed, watch } from 'vue'
-import { t } from '../services/i18n'
-import { store, kReferenceParamValue } from '../services/store'
-import Message from '../models/message'
-import Dialog from '../composables/dialog'
-import RefreshButton from '../components/RefreshButton.vue'
-import VariableEditor from '../screens/VariableEditor.vue'
+import { StarIcon, StarOffIcon, WandIcon } from 'lucide-vue-next'
+import { Model } from 'multi-llm-ts'
+import { computed, onMounted, ref, watch } from 'vue'
 import ComboBox from '../components/Combobox.vue'
-import ImageCreator from '../services/image'
-import VideoCreator from '../services/video'
 import ContextMenu, { MenuAction } from '../components/ContextMenu.vue'
+import RefreshButton from '../components/RefreshButton.vue'
 import VariableTable from '../components/VariableTable.vue'
-import { baseURL as SDWebUIBaseURL } from '../services/sdwebui'
+import Dialog from '../composables/dialog'
+import Message from '../models/message'
+import VariableEditor from '../screens/VariableEditor.vue'
+import { t } from '../services/i18n'
+import ImageCreator from '../services/image'
 import ModelLoaderFactory from '../services/model_loader'
+import { baseURL as SDWebUIBaseURL } from '../services/sdwebui'
+import { kReferenceParamValue, store } from '../services/store'
+import VideoCreator from '../services/video'
+import { DesignStudioMediaType, MediaCreator } from '../types/index'
 import promptsLibrary from './prompts.json'
 
 import useEventBus from '../composables/event_bus'
-import { Model } from 'multi-llm-ts'
-import { BIconMagic } from 'bootstrap-icons-vue'
 const { onEvent } = useEventBus()
 
 type Parameter = {

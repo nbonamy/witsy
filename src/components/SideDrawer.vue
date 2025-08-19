@@ -16,7 +16,7 @@
     >
       <header>
         <label><slot name="header"></slot></label>
-        <div class="icon close"><X @click="close"/></div>
+        <div class="icon close"><XIcon @click="close"/></div>
       </header>
 
       <main>
@@ -28,8 +28,8 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue'
-import { X } from 'lucide-vue-next'
+import { XIcon } from 'lucide-vue-next';
+import { onMounted, ref } from 'vue';
 
 const emit = defineEmits<{
   close: []

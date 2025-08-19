@@ -24,7 +24,7 @@
           </template>
           <template #actions>
             <div class="info" v-if="chat"><span @click="onEngineModel">
-              <BIconGlobe /> {{ llmManager.getEngineName(chat.engine) }} / {{ chat.model }}
+              <GlobeIcon /> {{ llmManager.getEngineName(chat.engine) }} / {{ chat.model }}
             </span></div>
           </template>
         </Prompt>
@@ -39,21 +39,21 @@
 </template>
 
 <script setup lang="ts">
-import { expertI18n, i18nInstructions, t } from '../services/i18n'
-import { anyDict, ExternalApp } from '../types'
-import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
-import { store } from '../services/store'
-import { availablePlugins } from '../plugins/plugins'
+import { GlobeIcon } from 'lucide-vue-next'
 import { LlmEngine } from 'multi-llm-ts'
-import { SendPromptParams } from '../components/Prompt.vue'
-import ResizableHorizontal from '../components/ResizableHorizontal.vue'
-import EngineModelPicker from '../screens/EngineModelPicker.vue'
-import LlmFactory, { ILlmManager } from '../llms/llm'
-import Prompt from '../components/Prompt.vue'
+import { computed, onMounted, onUnmounted, provide, ref } from 'vue'
 import OutputPanel from '../components/OutputPanel.vue'
-import Generator from '../services/generator'
-import Message from '../models/message'
+import Prompt, { SendPromptParams } from '../components/Prompt.vue'
+import ResizableHorizontal from '../components/ResizableHorizontal.vue'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
+import Message from '../models/message'
+import { availablePlugins } from '../plugins/plugins'
+import EngineModelPicker from '../screens/EngineModelPicker.vue'
+import Generator from '../services/generator'
+import { expertI18n, i18nInstructions, t } from '../services/i18n'
+import { store } from '../services/store'
+import { anyDict, ExternalApp } from '../types'
 
 const promptChatTimeout = 1000 * 60 * 5
 

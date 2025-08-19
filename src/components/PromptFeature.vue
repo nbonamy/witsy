@@ -2,13 +2,13 @@
   <div class="prompt-feature">
     <component :is="icon" class="icon" />
     <span class="label">{{ label }}</span>
-    <X class="clear" @click="onClear" />
+    <XIcon class="clear" @click="onClear" />
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { X } from 'lucide-vue-next'
+import { XIcon } from 'lucide-vue-next';
 
 interface Props {
   icon?: any

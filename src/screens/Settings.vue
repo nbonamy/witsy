@@ -7,21 +7,21 @@
       <main>
         <ul>
           <li class="separator" v-if="store.isFeatureEnabled('workspaces')">General Settings</li>
-          <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><Settings class="icon" /></SettingsTab>
-          <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><Box class="icon" /></SettingsTab>
-          <SettingsTab class="chat" :title="t('settings.tabs.chat')"><BIconLayoutTextWindowReverse class="icon" /></SettingsTab>
-          <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><Telescope class="icon" /></SettingsTab>
-          <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><Box class="icon" /></SettingsTab>
-          <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><Plug2 class="icon" /></SettingsTab>
-          <SettingsTab class="mcp" :title="t('settings.tabs.mcp')" @change="load(settingsMcp)" :checked="initialTab == 'mcp'"><Unplug class="icon" /></SettingsTab>
-          <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><Wand class="icon" /></SettingsTab>
-          <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><Brain class="icon" /></SettingsTab>
-          <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><Mic class="icon" /></SettingsTab>
-          <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><Command class="icon" /></SettingsTab>
-          <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BadgePlus class="icon" /></SettingsTab>
+          <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><SettingsIcon class="icon" /></SettingsTab>
+          <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BoxIcon class="icon" /></SettingsTab>
+          <SettingsTab class="chat" :title="t('settings.tabs.chat')"><PanelsTopLeftIcon class="icon" /></SettingsTab>
+          <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
+          <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
+          <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><Plug2Icon class="icon" /></SettingsTab>
+          <SettingsTab class="mcp" :title="t('settings.tabs.mcp')" @change="load(settingsMcp)" :checked="initialTab == 'mcp'"><UnplugIcon class="icon" /></SettingsTab>
+          <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><WandIcon class="icon" /></SettingsTab>
+          <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><BrainIcon class="icon" /></SettingsTab>
+          <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
+          <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><CommandIcon class="icon" /></SettingsTab>
+          <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BadgePlusIcon class="icon" /></SettingsTab>
           <template v-if="store.isFeatureEnabled('workspaces')">
             <li class="separator">Workspace Settings</li>
-            <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><Box class="icon" /></SettingsTab>
+            <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
           </template>
         </ul>
       </main>
@@ -48,27 +48,27 @@
 
 <script setup lang="ts">
 
-import { OpenSettingsPayload } from '../types/index'
+import { BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, SettingsIcon, TelescopeIcon, UnplugIcon, WandIcon } from 'lucide-vue-next'
+import { nextTick, onMounted, PropType, ref, watch } from 'vue'
 import { MenuBarMode } from '../components/MenuBar.vue'
-import { ref, onMounted, watch, nextTick, PropType } from 'vue'
+import { installTabs, showActiveTab } from '../composables/tabs'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { BadgePlus, Box, Brain, Command, Mic, Plug2, Settings, Telescope, Unplug, Wand } from 'lucide-vue-next'
-import SettingsTab from '../settings/SettingsTab.vue'
+import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
+import SettingsChat from '../settings/SettingsChat.vue'
+import SettingsCommands from '../settings/SettingsCommands.vue'
+import SettingsDeepResearch from '../settings/SettingsDeepResearch.vue'
+import SettingsExperts from '../settings/SettingsExperts.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
-import SettingsChat from '../settings/SettingsChat.vue'
-import SettingsDeepResearch from '../settings/SettingsDeepResearch.vue'
-import SettingsCommands from '../settings/SettingsCommands.vue'
-import SettingsExperts from '../settings/SettingsExperts.vue'
-import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
+import SettingsMcp from '../settings/SettingsMcp.vue'
 import SettingsModels from '../settings/SettingsModels.vue'
 import SettingsModels2 from '../settings/SettingsModels2.vue'
 import SettingsPlugins from '../settings/SettingsPlugins.vue'
-import SettingsMcp from '../settings/SettingsMcp.vue'
+import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
+import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
-import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
-import { installTabs, showActiveTab } from '../composables/tabs'
+import { OpenSettingsPayload } from '../types/index'
 
 // bus
 import useEventBus from '../composables/event_bus'
