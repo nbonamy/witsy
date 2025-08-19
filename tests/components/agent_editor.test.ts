@@ -36,7 +36,7 @@ test('Renders editor in create mode', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
       mode: 'create',
-      agent: undefined
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -86,8 +86,8 @@ test('Shows different steps for witsy vs a2a agents', async () => {
 test('Allows navigation between steps by clicking', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: undefined
+      mode: 'edit',
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -111,7 +111,7 @@ test('Shows form fields for information step', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
       mode: 'create',
-      agent: undefined
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -163,8 +163,8 @@ test('Populates form fields with agent data in edit mode', async () => {
 test('Shows model step with engine and model selects', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: undefined
+      mode: 'edit',
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -226,7 +226,7 @@ test('Can expand and collapse workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -371,7 +371,7 @@ test('Shows ToolSelector and AgentSelector components', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
       mode: 'create',
-      agent: undefined
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -389,7 +389,7 @@ test('Updates form fields when typing', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
       mode: 'create',
-      agent: undefined
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -417,7 +417,7 @@ test('Shows model settings step when available', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
       mode: 'create',
-      agent: undefined
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -442,7 +442,7 @@ test('Validates information step - shows error for empty fields', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
       mode: 'create',
-      agent: undefined
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -468,7 +468,7 @@ test('Validates information step - proceeds when fields are filled', async () =>
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
       mode: 'create',
-      agent: undefined
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -504,7 +504,7 @@ test('Workflow step handles multiple steps correctly', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -525,13 +525,11 @@ test('Workflow step handles multiple steps correctly', async () => {
   expect(arrows.length).toBe(1)
 })
 
-// === STEP NAVIGATION TESTS ===
-
 test('Previous button functionality', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: undefined
+      mode: 'edit',
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -557,7 +555,7 @@ test('Previous button from first step emits cancel', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
       mode: 'create',
-      agent: undefined
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -581,7 +579,7 @@ test('Adds new workflow step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -616,7 +614,7 @@ test('Deletes workflow step with confirmation', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -654,7 +652,7 @@ test('Shows tools and agents buttons in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -684,7 +682,7 @@ test('Shows docrepo button in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -710,7 +708,7 @@ test('Shows docrepo help text when docrepo is selected', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -739,7 +737,7 @@ test('Selecting docrepo opens dialog and updates step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -777,7 +775,7 @@ test('Docrepo selection updates agent step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -808,7 +806,7 @@ test('Docrepo selection can be cleared by selecting none', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -836,8 +834,8 @@ test('Docrepo selection can be cleared by selecting none', async () => {
 test('Changing engine updates model selection', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: undefined
+      mode: 'edit',
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -932,7 +930,7 @@ test('Shows prompt inputs table in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -956,8 +954,8 @@ test('Shows prompt inputs table in workflow steps', async () => {
 test('Shows model settings fields', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: undefined
+      mode: 'edit',
+      agent: new Agent()
     }
   })
   await nextTick()
@@ -995,7 +993,7 @@ test('Shows JSON schema button in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -1021,7 +1019,7 @@ test('Updates step jsonSchema when valid JSON is provided', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -1068,7 +1066,7 @@ test('Clears step jsonSchema when empty JSON is provided', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -1103,7 +1101,7 @@ test('Preserves existing jsonSchema when dialog is cancelled', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
@@ -1140,7 +1138,7 @@ test('Shows existing jsonSchema in dialog input', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })

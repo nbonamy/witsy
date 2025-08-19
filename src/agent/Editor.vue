@@ -226,9 +226,9 @@ const showSettings = () => {
 }
 
 const onStepClick = (step: string) => {
-  // if (isStepCompleted(step)) {
+  if (isStepCompleted(step)) {
     currentStep.value = stepIndex(step)
-  // }
+  }
 }
 
 const goToStepAfter = (step: string, stepSize: number = 1) => {
