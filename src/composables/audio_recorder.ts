@@ -1,4 +1,5 @@
 import { type Configuration } from '../types/config'
+import fixWebmDuration from 'fix-webm-duration'
 
 export type AudioRecorderInitOptions = {
   listener: AudioRecorderListener
@@ -8,7 +9,7 @@ export type AudioRecorderInitOptions = {
 export interface AudioRecorderListener {
   onNoiseDetected: () => void
   onSilenceDetected: () => void
-  onRecordingComplete: (audioChunks: Blob[], noiseDetected: boolean) => void
+  onRecordingComplete: (audioBlob: Blob, noiseDetected: boolean) => void
   onAudioChunk: (chunk: Blob) => void
 }
 
@@ -96,8 +97,17 @@ class AudioRecorder {
       throw new Error('Failed to get audio stream')
     }
 
-    // the media recorder
-    this.mediaRecorder = new MediaRecorder(this.stream)
+    // the media recorder - prefer audio MIME types
+    const options: MediaRecorderOptions = {}
+    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+      options.mimeType = 'audio/webm;codecs=opus'
+    } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+      options.mimeType = 'audio/webm'
+    } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+      options.mimeType = 'audio/mp4'
+    }
+    
+    this.mediaRecorder = new MediaRecorder(this.stream, options)
     this.mediaRecorder.ondataavailable = (event) => {
 
       // in streaming: pcm16bits is handled in the worklet
@@ -110,9 +120,28 @@ class AudioRecorder {
       }
     }
 
-    this.mediaRecorder.onstop = () => {
+    this.mediaRecorder.onstop = async () => {
       console.log('[audio] recording stopped')
-      this.listener.onRecordingComplete(this.audioChunks, this.lastNoise != null)
+      const duration = new Date().getTime() - this.startRecordingTime
+      let mimeType = this.mediaRecorder.mimeType || 'audio/webm'
+      
+      // Ensure we use audio MIME type for better compatibility
+      if (mimeType === 'video/webm' || mimeType === 'video/webm;codecs=opus') {
+        mimeType = 'audio/webm'
+      }
+      let audioBlob = new Blob(this.audioChunks, { type: mimeType })
+      
+      if (audioBlob.type.includes('webm')) {
+        const originalMimeType = audioBlob.type
+        audioBlob = await fixWebmDuration(audioBlob, duration)
+        // Preserve original MIME type as fixWebmDuration may revert to video/webm
+        if (audioBlob.type !== originalMimeType) {
+          audioBlob = new Blob([audioBlob], { type: originalMimeType })
+        }
+        // store duration for debugging
+        ;(audioBlob as any)._audioDuration = duration
+      }
+      this.listener.onRecordingComplete(audioBlob, this.lastNoise != null)
     }
 
     // now connect the microphone

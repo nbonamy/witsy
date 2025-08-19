@@ -38,18 +38,13 @@ class Transcriber {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  transcribe(audioChunks: any[], opts?: object): Promise<TranscribeResponse> {
+  transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
 
-    // check
     if (!this.engine) {
       throw new Error('Transcriber not initialized')
     }
 
-    // get the chunks as audio/webm
-    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' })
-
-    // now transcribe
-    return this.engine.transcribe(audioBlob)
+    return this.engine.transcribe(audioBlob, opts)
 
   }
 
@@ -58,8 +53,7 @@ class Transcriber {
       return this.engine.transcribeFile(file, opts)
     } else {
       const blob = new Blob([file], { type: file.type })
-      const audioChunks = [blob]
-      return this.transcribe(audioChunks, opts)
+      return this.transcribe(blob, opts)
     }
   }
 
