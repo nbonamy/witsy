@@ -101,7 +101,7 @@
       @attach-requested="onAttach"
       @deep-research-toggled="onDeepResearch"
     />
-    <PromptModelMenu
+    <EngineModelMenu
       v-if="showModelMenu"
       anchor=".model-menu-button"
       position="above-right"
@@ -134,10 +134,10 @@ import { DocumentBase } from '../types/rag'
 import { StreamingChunk } from '../voice/stt'
 import AttachmentView from './Attachment.vue'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
+import EngineModelMenu from './EngineModelMenu.vue'
 import Loader from './Loader.vue'
 import PromptFeature from './PromptFeature.vue'
 import PromptMenu from './PromptMenu.vue'
-import PromptModelMenu from './PromptModelMenu.vue'
 
 export type SendPromptParams = {
   prompt: string,

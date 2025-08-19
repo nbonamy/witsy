@@ -25,8 +25,8 @@
     </template>
     <template #footer>
       <div class="buttons">
-        <button name="none" @click="selection = []">{{ t('common.selectNone') }}</button>
-        <button name="cancel" @click="onCancel" class="push" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="cancel" @click="onCancel" class="alert-cancel" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="none" @click="selection = []" class="alert-neutral">{{ t('common.selectNone') }}</button>
         <button name="save" @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
       </div>
     </template>

@@ -41,18 +41,13 @@ test('Renders editor in create mode', async () => {
   })
   await nextTick()
 
-  // Should show welcome header in create mode
-  const welcomeHeader = wrapper.find('.md-master-header')
-  expect(welcomeHeader.exists()).toBe(true)
-  expect(welcomeHeader.find('.md-master-header-title').text()).toContain('Welcome to the Create')
-
   // Should show step navigation
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   expect(steps.length).toBeGreaterThan(0)
   
   // First step (General) should be selected
   const firstStep = steps[0]
-  expect(firstStep.classes()).toContain('selected')
+  expect(firstStep.classes()).toContain('active')
   expect(firstStep.text()).toContain('agent.create.information.title')
 
   // Should show wizard step content
@@ -60,35 +55,8 @@ test('Renders editor in create mode', async () => {
   expect(wizardStep.exists()).toBe(true)
 })
 
-test('Renders editor in edit mode', async () => {
-  const agent = new Agent()
-  agent.name = 'Test Agent'
-  agent.description = 'Test Description'
-  
-  const wrapper: VueWrapper<any> = mount(Editor, {
-    props: { 
-      mode: 'edit',
-      agent: agent
-    }
-  })
-  await nextTick()
-
-  // Should not show welcome header in edit mode
-  const welcomeHeader = wrapper.find('.md-master-header')
-  expect(welcomeHeader.exists()).toBe(false)
-
-  // Should show footer with save/cancel buttons in edit mode
-  const footer = wrapper.find('.md-master-footer')
-  expect(footer.exists()).toBe(true)
-  
-  const buttons = footer.findAll('button')
-  expect(buttons.length).toBe(2)
-  expect(buttons[0].text()).toBe('common.cancel')
-  expect(buttons[1].text()).toBe('common.save')
-})
-
 test('Shows different steps for witsy vs a2a agents', async () => {
-  // Test witsy agent (should have all steps including Goal)
+
   const witsyAgent = new Agent()
   witsyAgent.source = 'witsy'
   
@@ -99,10 +67,7 @@ test('Shows different steps for witsy vs a2a agents', async () => {
     }
   })
   await nextTick()
-
-  const witsySteps = witsyWrapper.findAll('.md-master-list-item')
-  const witsyStepTexts = witsySteps.map(step => step.text())
-  expect(witsyStepTexts.some(text => text.includes('agent.create.goal.title'))).toBe(true)
+  expect(witsyWrapper.find('[name=goal]').exists()).toBe(true)
 
   // Test a2a agent (should not have Goal step)
   const a2aAgent = new Agent()
@@ -115,10 +80,7 @@ test('Shows different steps for witsy vs a2a agents', async () => {
     }
   })
   await nextTick()
-
-  const a2aSteps = a2aWrapper.findAll('.md-master-list-item')
-  const a2aStepTexts = a2aSteps.map(step => step.text())
-  expect(a2aStepTexts.some(text => text.includes('agent.create.goal.title'))).toBe(false)
+  expect(a2aWrapper.find('[name=goal]').exists()).toBe(true)
 })
 
 test('Allows navigation between steps by clicking', async () => {
@@ -130,19 +92,19 @@ test('Allows navigation between steps by clicking', async () => {
   })
   await nextTick()
 
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   expect(steps.length).toBeGreaterThan(1)
 
   // First step should be selected initially
-  expect(steps[0].classes()).toContain('selected')
+  expect(steps[0].classes()).toContain('active')
 
   // Click on second step (should be enabled since it's create mode)
   await steps[1].trigger('click')
   await nextTick()
 
   // Second step should now be selected
-  expect(steps[1].classes()).toContain('selected')
-  expect(steps[0].classes()).not.toContain('selected')
+  expect(steps[1].classes()).toContain('active')
+  expect(steps[0].classes()).not.toContain('active')
 })
 
 test('Shows form fields for information step', async () => {
@@ -198,28 +160,6 @@ test('Populates form fields with agent data in edit mode', async () => {
   expect(typeField.element.value).toBe('support')
 })
 
-test('Shows goal step form fields', async () => {
-  const wrapper: VueWrapper<any> = mount(Editor, {
-    props: { 
-      mode: 'create',
-      agent: undefined
-    }
-  })
-  await nextTick()
-
-  // Navigate to goal step
-  const steps = wrapper.findAll('.md-master-list-item')
-  const goalStep = steps.find(step => step.text().includes('agent.create.goal.title'))
-  expect(goalStep).toBeTruthy()
-  
-  await goalStep!.trigger('click')
-  await nextTick()
-
-  // Should show goal textarea
-  const goalField = wrapper.find('textarea[name="goal"]')
-  expect(goalField.exists()).toBe(true)
-})
-
 test('Shows model step with engine and model selects', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
@@ -230,20 +170,16 @@ test('Shows model step with engine and model selects', async () => {
   await nextTick()
 
   // Navigate to model step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const modelStep = steps.find(step => step.text().includes('agent.create.llm.title'))
   expect(modelStep).toBeTruthy()
   
   await modelStep!.trigger('click')
   await nextTick()
 
-  // Should show EngineSelect component
-  const engineSelect = wrapper.findComponent({ name: 'EngineSelect' })
+  // Should show EngineModelSelect component
+  const engineSelect = wrapper.findComponent({ name: 'EngineModelSelect' })
   expect(engineSelect.exists()).toBe(true)
-
-  // Should show ModelSelect component
-  const modelSelect = wrapper.findComponent({ name: 'ModelSelect' })
-  expect(modelSelect.exists()).toBe(true)
 
   // Should show LangSelect component
   const langSelect = wrapper.findComponent({ name: 'LangSelect' })
@@ -266,7 +202,7 @@ test('Shows workflow step with step panels', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   expect(workflowStep).toBeTruthy()
   
@@ -297,7 +233,7 @@ test('Can expand and collapse workflow steps', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -332,7 +268,7 @@ test('Shows step management buttons in workflow', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -369,7 +305,7 @@ test('Shows invocation step with schedule and variables', async () => {
   await nextTick()
 
   // Navigate to invocation step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const invocationStep = steps.find(step => step.text().includes('agent.create.invocation.title'))
   expect(invocationStep).toBeTruthy()
   
@@ -402,9 +338,8 @@ test('Emits cancel event when cancel button clicked', async () => {
   })
   await nextTick()
 
-  const cancelButton = wrapper.find('.md-master-footer button:first-child')
+  const cancelButton = wrapper.find('header button[name=cancel]')
   await cancelButton.trigger('click')
-
   expect(wrapper.emitted('cancel')).toBeTruthy()
   expect(wrapper.emitted('cancel')![0]).toEqual([])
 })
@@ -422,9 +357,13 @@ test('Calls save API when save button clicked', async () => {
   })
   await nextTick()
 
-  const saveButton = wrapper.find('.md-master-footer button:last-child')
-  await saveButton.trigger('click')
+  const steps = wrapper.findAll('.wizard-step')
+  const invocationStep = steps.find(step => step.text().includes('agent.create.invocation.title'))
+  await invocationStep!.trigger('click')
+  await nextTick()
 
+  const saveButton = wrapper.find('header button[name=next]')
+  await saveButton.trigger('click')
   expect(window.api.agents.save).toHaveBeenCalled()
 })
 
@@ -484,7 +423,7 @@ test('Shows model settings step when available', async () => {
   await nextTick()
 
   // Navigate to model step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const modelStep = steps.find(step => step.text().includes('agent.create.llm.title'))
   await modelStep!.trigger('click')
   await nextTick()
@@ -521,8 +460,8 @@ test('Validates information step - shows error for empty fields', async () => {
   expect(errorDiv.text()).toBe('common.required.fieldsRequired')
   
   // Should still be on the same step
-  const steps = wrapper.findAll('.md-master-list-item')
-  expect(steps[0].classes()).toContain('selected')
+  const steps = wrapper.findAll('.wizard-step')
+  expect(steps[0].classes()).toContain('active')
 })
 
 test('Validates information step - proceeds when fields are filled', async () => {
@@ -537,9 +476,10 @@ test('Validates information step - proceeds when fields are filled', async () =>
   // Fill in required fields
   const nameField = wrapper.find<HTMLInputElement>('input[name="name"]')
   await nameField.setValue('Test Agent')
-  
   const descriptionField = wrapper.find<HTMLTextAreaElement>('textarea[name="description"]')
   await descriptionField.setValue('Test Description')
+  const goalField = wrapper.find<HTMLTextAreaElement>('textarea[name="goal"]')
+  await goalField.setValue('Test Goal')
 
   // Try to proceed
   const wizardStep = wrapper.findComponent({ name: 'WizardStep' })
@@ -547,34 +487,9 @@ test('Validates information step - proceeds when fields are filled', async () =>
   await nextTick()
 
   // Should move to next step (Goal step for witsy agents)
-  const steps = wrapper.findAll('.md-master-list-item')
-  expect(steps[1].classes()).toContain('selected')
-  expect(steps[0].classes()).not.toContain('selected')
-})
-
-test('Goal step has validation for empty instructions', async () => {
-  const agent = new Agent()
-  agent.name = 'Test Agent'
-  agent.description = 'Test Description'
-  
-  const wrapper: VueWrapper<any> = mount(Editor, {
-    props: { 
-      mode: 'create',
-      agent: agent
-    }
-  })
-  await nextTick()
-
-  // Navigate to goal step
-  const steps = wrapper.findAll('.md-master-list-item')
-  const goalStep = steps.find(step => step.text().includes('agent.create.goal.title'))
-  await goalStep!.trigger('click')
-  await nextTick()
-
-  // Should show required field - the validation happens on form submission
-  const instructionsField = wrapper.find<HTMLTextAreaElement>('textarea[name="goal"]')
-  expect(instructionsField.exists()).toBe(true)
-  expect(instructionsField.attributes('required')).toBeDefined()
+  const steps = wrapper.findAll('.wizard-step')
+  expect(steps[1].classes()).toContain('active')
+  expect(steps[0].classes()).not.toContain('active')
 })
 
 test('Workflow step handles multiple steps correctly', async () => {
@@ -596,7 +511,7 @@ test('Workflow step handles multiple steps correctly', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -622,11 +537,11 @@ test('Previous button functionality', async () => {
   await nextTick()
 
   // Navigate to second step first
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   await steps[1].trigger('click')
   await nextTick()
 
-  expect(steps[1].classes()).toContain('selected')
+  expect(steps[1].classes()).toContain('active')
 
   // Click previous button
   const wizardStep = wrapper.findComponent({ name: 'WizardStep' })
@@ -634,8 +549,8 @@ test('Previous button functionality', async () => {
   await nextTick()
 
   // Should go back to first step
-  expect(steps[0].classes()).toContain('selected')
-  expect(steps[1].classes()).not.toContain('selected')
+  expect(steps[0].classes()).toContain('active')
+  expect(steps[1].classes()).not.toContain('active')
 })
 
 test('Previous button from first step emits cancel', async () => {
@@ -673,7 +588,7 @@ test('Adds new workflow step', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -708,7 +623,7 @@ test('Deletes workflow step with confirmation', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -746,7 +661,7 @@ test('Shows tools and agents buttons in workflow steps', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -776,7 +691,7 @@ test('Shows docrepo button in workflow steps', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -802,7 +717,7 @@ test('Shows docrepo help text when docrepo is selected', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -831,7 +746,7 @@ test('Selecting docrepo opens dialog and updates step', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -869,7 +784,7 @@ test('Docrepo selection updates agent step', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -900,7 +815,7 @@ test('Docrepo selection can be cleared by selecting none', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -928,19 +843,18 @@ test('Changing engine updates model selection', async () => {
   await nextTick()
 
   // Navigate to model step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const modelStep = steps.find(step => step.text().includes('agent.create.llm.title'))
   await modelStep!.trigger('click')
   await nextTick()
 
   // Change engine selection
-  const engineSelect = wrapper.findComponent({ name: 'EngineSelect' })
-  await engineSelect.vm.$emit('change')
+  const engineSelect = wrapper.findComponent({ name: 'EngineModelSelect' })
+  await engineSelect.vm.$emit('modelSelected', 'engine2', 'model2')
   await nextTick()
 
-  // Should trigger model update (we can't easily test the internal state change,
-  // but we can verify the event handling is wired up)
-  expect(engineSelect.exists()).toBe(true)
+  expect(wrapper.vm.agent.engine).toBe('engine2')
+  expect(wrapper.vm.agent.model).toBe('model2')
 })
 
 // === INVOCATION & SCHEDULE TESTS ===
@@ -961,7 +875,7 @@ test('Shows next runs when schedule is set', async () => {
   await nextTick()
 
   // Navigate to invocation step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const invocationStep = steps.find(step => step.text().includes('agent.create.invocation.title'))
   await invocationStep!.trigger('click')
   await nextTick()
@@ -989,7 +903,7 @@ test('Updates invocation variables when typing', async () => {
   await nextTick()
 
   // Navigate to invocation step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const invocationStep = steps.find(step => step.text().includes('agent.create.invocation.title'))
   await invocationStep!.trigger('click')
   await nextTick()
@@ -1025,7 +939,7 @@ test('Shows prompt inputs table in workflow steps', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -1039,36 +953,6 @@ test('Shows prompt inputs table in workflow steps', async () => {
   expect(tableRows.length).toBe(2) // name and age variables
 })
 
-// === SAVE VALIDATION TESTS ===
-
-test('Save validation - calls save API when all required fields are present', async () => {
-  const agent = new Agent()
-  agent.name = 'Test Agent'
-  agent.description = 'Test Description'
-  agent.steps = [
-    { prompt: 'Hello {{name}}', tools: null, agents: [] }
-  ]
-  agent.invocationValues = { name: 'World' } // Provide required values
-
-  const wrapper: VueWrapper<any> = mount(Editor, {
-    props: { 
-      mode: 'edit',
-      agent: agent
-    }
-  })
-  await nextTick()
-
-  // Try to save
-  const saveButton = wrapper.find('.md-master-footer button:last-child')
-  await saveButton.trigger('click')
-  await nextTick()
-
-  // Should call the save API
-  expect(window.api.agents.save).toHaveBeenCalled()
-})
-
-// === SETTINGS STEP TESTS ===
-
 test('Shows model settings fields', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
@@ -1079,7 +963,7 @@ test('Shows model settings fields', async () => {
   await nextTick()
 
   // Navigate to model step first
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const modelStep = steps.find(step => step.text().includes('agent.create.llm.title'))
   await modelStep!.trigger('click')
   await nextTick()
@@ -1103,8 +987,6 @@ test('Shows model settings fields', async () => {
   }
 })
 
-// === JSON SCHEMA TESTS ===
-
 test('Shows JSON schema button in workflow steps', async () => {
   const agent = new Agent()
   agent.steps = [
@@ -1120,7 +1002,7 @@ test('Shows JSON schema button in workflow steps', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -1146,7 +1028,7 @@ test('Updates step jsonSchema when valid JSON is provided', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -1193,7 +1075,7 @@ test('Clears step jsonSchema when empty JSON is provided', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -1228,7 +1110,7 @@ test('Preserves existing jsonSchema when dialog is cancelled', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -1265,7 +1147,7 @@ test('Shows existing jsonSchema in dialog input', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()

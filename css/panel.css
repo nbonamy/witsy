@@ -40,8 +40,7 @@
       cursor: pointer;
       width: 1.125rem;
       height: 1.125rem;
-      opacity: 0.8;
-      fill: var(--text-color);
+      color: var(--color-on-surface-variant);
     }
 
     .spinner {
@@ -65,6 +64,10 @@
     overflow: auto;
     gap: 1rem;
     padding-right: 0.5rem;
+
+    &:has(input, select, textarea) {
+      padding-left: 2px;
+    }
 
     &:has(.panel-item .actions) {
       padding-top: 0.5rem;

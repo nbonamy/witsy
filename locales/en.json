@@ -104,6 +104,7 @@
     "name": "Name",
     "new": "New",
     "newChat": "New Conversation",
+    "next": "Next",
     "no": "No",
     "notes": "Notes",
     "ok": "OK",
@@ -190,13 +191,14 @@
       },
       "information": {
         "help": {
-          "description": "Short description of your agent purpose. When this agent is used inside a workflow, this will be shared with the LLM to help it understand the agent and eventually decide to call it.",
-          "goal": "The goal of the agent. This will be used as the system instructions sent to the LLM. Do not include execution specific information here as these wil be set in the prompt.",
-          "name": "Descriptive name for your agent."
+          "description": "Short description of your agent purpose. Helps models understand the agent's intent.",
+          "goal": "The individual objective that guides the agent's decision-making.",
+          "name": "Give your agent a name. This will help you identify it later.",
+          "type": "The agent's function and relationship to other agents."
         },
         "promptInputs": "Detected Variables",
         "title": "General Information",
-        "type": "Execution Model"
+        "type": "Role"
       },
       "invocation": {
         "missingInput": "[{name} is missing]",
@@ -215,19 +217,19 @@
           "warning": "Agent execution is highly dependent on the capabilities of each model. Make sure you select a model that supports agentic capabilities."
         },
         "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-        "showModelSettings": "Advanced Settings",
+        "showModelSettings": "Advanced Options",
         "title": "Model Configuration"
       },
       "settings": {
-        "title": "Model Settings"
+        "title": "Advanced Model Settings"
       },
       "workflow": {
         "addStep": "Add Step",
         "confirmDeleteStep": "Are you sure you want to delete this step?",
-        "customAgents": "Delegates…",
-        "customTools": "Tools…",
-        "description": "Description: used in chat to provide progress updates",
-        "docRepo": "Base…",
+        "customAgents": "Assign Co-Agents",
+        "customTools": "Add Tools",
+        "description": "@:{'common.description'}",
+        "docRepo": "Add Knowledge",
         "docRepoNone": "No Knowledge Base",
         "error": {
           "emptyStepPrompt": "Step #{step} prompt cannot be empty.",
@@ -236,14 +238,15 @@
         },
         "help": {
           "connect": "Connect previous steps output using {'{'}{'{'}output.#{'}'}{'}'} variables (e.g. {'{'}{'{'}output.1{'}'}{'}'} for step 1 output)",
+          "description": "The description will be used to provide progress updates during agent execution",
           "docRepo": "Facts extracted from the collection will be appended to your prompt.",
           "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "Output of step #{step}",
+          "prompt": "The custom instructions for the agent",
           "title": "Design your multi-step workflow. Prompt templates will be used to execute each step. You can include \"variables\" that will be substituted with the values provided by the user when the agent is executed. Use the format {'{'}{'{'}name:description:value{'}'}{'}'} to define a variable (the description will guide the user when prompted for a value). Both the description and the default value are optional."
         },
         "jsonSchema": "JSON…",
-        "step": "Step #{step}",
-        "stepFull": "Step #{step}: {text}",
+        "step": "Step {step}",
         "structuredOutput": {
           "text": "Specify a <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">simple JSON schema</a> to define the expected output format of this step.",
           "title": "JSON Schema"
@@ -268,8 +271,8 @@
       "empty": "Unlock the agentic power of Witsy by creating your first agent! Click the robot head to get started.",
       "list": {
         "empty": "No agent of this type created yet.",
-        "runnable": "Executable agents",
-        "support": "Support agents"
+        "runnable": "User Initiated",
+        "support": "Utility"
       },
       "title": "Agent Forge"
     },
@@ -329,8 +332,8 @@
       "workflow": "⚙️ Workflow"
     },
     "type": {
-      "runnable": "User executable",
-      "support": "Support agent"
+      "runnable": "User Initiated",
+      "support": "Utility"
     },
     "view": {
       "filter": {
