@@ -77,13 +77,13 @@ const Dialog = {
     // }
 
     // add the icon
-    opts.iconHtml = opts.iconHtml ?? '<img src="">'
+    opts.iconHtml = undefined//opts.iconHtml ?? '<img src="">'
 
     // add custom classes
     opts.customClass = {
       popup: 'form form-large',
       confirmButton: opts.showCancelButton ? 'alert-confirm' : 'alert-neutral',
-      cancelButton: 'alert-neutral',
+      cancelButton: 'alert-cancel',
       denyButton: 'alert-neutral',
       ...opts.customClass
     }
@@ -105,23 +105,23 @@ const Dialog = {
       opts.denyButtonText = t('common.no')
     }
 
-    // setup
-    opts.willOpen = (e: any) => {
-      try {
-        // this is not very nice but don't want to go through the hassle
-        // of getting base64 from file through preload and all of this!
-        // also tried with a hardcoded base64 but it was ugly
-        const icon: Element =  e.querySelector('.swal2-icon .swal2-icon-content')
-        const logo: Element = document.querySelector('#logo')!.cloneNode() as Element
-        logo.removeAttribute('id')
-        logo.removeAttribute('style')
-        icon?.replaceChildren(logo)
-      } catch (err) {
-        if (!process.env.TEST) {
-          console.warn('Could not replace logo', err)
-        }
-      }
-    }
+    // // setup
+    // opts.willOpen = (e: any) => {
+    //   try {
+    //     // this is not very nice but don't want to go through the hassle
+    //     // of getting base64 from file through preload and all of this!
+    //     // also tried with a hardcoded base64 but it was ugly
+    //     const icon: Element =  e.querySelector('.swal2-icon .swal2-icon-content')
+    //     const logo: Element = document.querySelector('#logo')!.cloneNode() as Element
+    //     logo.removeAttribute('id')
+    //     logo.removeAttribute('style')
+    //     icon?.replaceChildren(logo)
+    //   } catch (err) {
+    //     if (!process.env.TEST) {
+    //       console.warn('Could not replace logo', err)
+    //     }
+    //   }
+    // }
 
     // setup
     opts.didOpen = (e: any) => {

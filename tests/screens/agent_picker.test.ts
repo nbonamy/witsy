@@ -121,7 +121,7 @@ describe('AgentPicker', () => {
     
     const cancelButton = wrapper.find('button[name="cancel"]')
     expect(cancelButton.exists()).toBe(true)
-    expect(cancelButton.classes()).toContain('alert-neutral')
+    expect(cancelButton.classes()).toContain('alert-cancel')
   })
 
   test('Filters only runnable agents', async () => {

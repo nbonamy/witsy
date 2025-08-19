@@ -1,17 +1,17 @@
 
 <template>
   <div class="panel" v-if="visible">
-    <div class="panel-header">
+    <!-- <div class="panel-header">
       <slot name="header"></slot>
-    </div>
+    </div> -->
     <div class="panel-body">
       <slot name="content"></slot>
       <div class="footer form-field">
         <slot name="footer">
           <div class="error" v-if="error">{{ error }}</div>
-          <button @click="emit('prev')">{{ prevButtonText }}</button>
+          <!-- <button @click="emit('prev')">{{ prevButtonText }}</button> -->
           <slot name="buttons" />
-          <button class="default" @click="emit('next')" @keydown.prevent>{{ nextButtonText }}</button>
+          <!-- <button class="default" @click="emit('next')" @keydown.prevent>{{ nextButtonText }}</button> -->
         </slot>
       </div>
     </div>
@@ -50,6 +50,8 @@ defineProps({
 
 
 .panel {
+
+  border: none;
 
   .panel-header {
     padding: 1.25rem;

@@ -1,25 +1,17 @@
 <template>
   <div class="split-pane">
     <div class="sp-main">
-      <header v-if="mode === 'create'">
-        <ChevronLeftIcon class="icon back" @click="closeCreate" />
-        <div class="title">{{ t('agent.forge.create') }}</div>
-      </header>
-      <header v-else-if="mode === 'view' || mode === 'edit'">
-        <ChevronLeftIcon class="icon back" @click="selectAgent(null)" />
-        <div class="title">{{ selected.name }}</div>
-      </header>
-      <header v-else>
+      <header v-if="mode === 'list'">
         <div class="title">{{ t('agent.forge.title') }}</div>
       </header>
-      <main class="empty sliding-root" :class="{ visible: mode === 'list' }" v-if="store.agents.length === 0">
+      <main class="empty" v-if="mode === 'list' && store.agents.length === 0">
         <IconAgent @click="onCreate()" />
         {{ t('agent.forge.empty') }}
       </main>
-      <main class="sliding-root" :class="{ visible: mode === 'list' }" v-else>
+      <main v-else-if="mode === 'list'">
         <List :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A"  @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
       </main>
-      <main class="sliding-pane" :class="{ visible: mode !== 'list' }" @transitionend="onTransitionEnd">
+      <main v-else>
         <Editor :style="{ display: isPaneVisible('create') || isPaneVisible('edit') ? 'flex' : 'none' }" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
         <View :style="{ display: isPaneVisible('view') ? 'flex' : 'none' }" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" />
       </main>
@@ -29,7 +21,6 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronLeftIcon } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import IconAgent from '../../assets/agent.svg?component'
 import Editor from '../agent/Editor.vue'
@@ -73,16 +64,20 @@ const selectAgent = async (agent: Agent|null) => {
   }
 }
 
-const onTransitionEnd = async () => {
-  if (mode.value === 'list') {
-    selected.value = null
-    prevMode.value = null
-  }
-}
-
 const onCreate = (type?: AgentType) => {
+  
+  const agent = new Agent()
+  if (store.workspace.models?.length) {
+    const model = store.workspace.models[0]
+    agent.engine = model.engine
+    agent.model = model.model
+  } else {
+    agent.engine = 'openai'
+    agent.model = 'gpt-4.1'
+  }
+  
   mode.value = 'create'
-  selected.value = new Agent()
+  selected.value = agent
   selected.value.type = type ?? 'runnable'
 }
 
@@ -206,12 +201,6 @@ const deleteAgent = (agent: Agent) => {
           height: 10rem;
           opacity: 20%;
         }
-      }
-
-      &.sliding-pane {
-        /* not sure why the default 100% makes it too wide here */
-        /* as this does not happen for DocRepos who have the same structure */
-        width: calc(100% - var(--window-menubar-width));
       }
 
     }

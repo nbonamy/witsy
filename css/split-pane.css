@@ -11,7 +11,7 @@
   color: var(--text-color);
 
   * {
-    scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
+    scrollbar-color: var(--sidebar-scroll-thumb-color) transparent;
   }
 
   .sp-sidebar {
@@ -56,10 +56,6 @@
       flex-direction: row;
       align-items: center;
       -webkit-app-region: drag;
-
-      .form, input, select, .icon {
-        -webkit-app-region: no-drag;
-      }
 
       .form {
         flex: 1;
@@ -242,7 +238,7 @@
       &.sliding-pane {
       
         position: absolute;
-        top: var(--window-toolbar-height);
+        top: calc(var(--window-toolbar-height) + 1);
         z-index: 20;
         display: flex;
 

@@ -130,12 +130,19 @@ const onNext = () => {
   emit('next')
 }
 
+const validate = (): string|null => {
+  return null
+}
+
 // Watch for visibility changes to prepare inputs
 watch(() => props.visible, (newVisible) => {
   if (newVisible) {
     prepareAgentInvocationInputs()
   }
 })
+
+defineExpose({ validate })
+
 </script>
 
 <style scoped>

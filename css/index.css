@@ -17,17 +17,17 @@
   --form-medium-font-size: 10pt;
   --form-large-font-size: 10.5pt;
 
-  --background-color: #fff;
-  --background-color-light: var(--background-color);
-  --border-color: rgba(217, 217, 221, 0.70);
+  --background-color: var(--color-surface-lowest);
+  --background-color-light: var(--color-surface);
+  --border-color: var(--color-outline-variant);
   --window-bg-color: #e0e0e0;
-  --text-color: #000;
-  --dimmed-text-color: #444;
-  --faded-text-color: #666;
-  --icon-color: #5b5b5b;
-  --highlight-color: #0366eb;
-  --highlighted-color: #fff;
-  --link-color: #0000ee;
+  --text-color: var(--color-on-surface);
+  --dimmed-text-color: color-mix(in srgb, var(--color-on-surface), var(--color-on-surface-variant) 50%);
+  --faded-text-color: var(--color-on-surface-variant);
+  --icon-color: var(--color-on-surface-variant);
+  --highlight-color: var(--primary-color);
+  --highlighted-color: var(--color-on-primary);
+  --link-color: var(--color-secondary);
 
   --window-decoration-color: var(--background-color);
   --window-menubar-width: 4.5rem;
@@ -43,7 +43,7 @@
   --control-bg-color: var(--background-color);
   --control-disabled-bg-color: #fdfdfd;
   --control-border-color: #d0d0d0;
-  --control-border-radius: 6px;
+  --control-border-radius: 4px;
   --control-text-color: var(--text-color);
   --control-button-border-color: #cacaca;
   --control-button-border-radius: var(--control-border-radius);
@@ -419,6 +419,10 @@ a, a:visited, a:active, a:focus {
   color: var(--control-placeholder-text-color);
 }
 
+input, select, button, .form, .icon {
+  -webkit-app-region: no-drag !important;
+}
+
 input, select, textarea {
   
   flex: 1;
@@ -439,7 +443,7 @@ input, select, textarea {
   }
 
   &:focus {
-    outline: 2px solid #83aaf2;
+    outline: none;
   }
 
   &:disabled {
@@ -465,24 +469,23 @@ input[type=checkbox] {
   outline: none;
   appearance: none;
   padding: 0;
-  border-radius: 4px;
+  border-radius: 0px;
   background: var(--control-checkbox-bg-color);
 
   &:after {
     position: relative;
     color: transparent;
     content: '\2713';
-    left: 2px;
-    font-size: 8pt;
-    font-weight: bold;
-    top: -1px;
+    font-size: 7.5pt;
+    font-weight: var(--font-weight-bold);
+    left: 2.5px;
   }
 
   &:checked {
     border: none;
-    background: linear-gradient(#2991FF, #057AFF);
+    background: var(--color-primary);
     &:after {
-      color: white;
+      color: var(--color-on-primary);
     }
   }
 
@@ -491,7 +494,7 @@ input[type=checkbox] {
   }
 
   &:disabled {
-    background: linear-gradient(#a0a0a0, #808080);
+    background: var(--color-outline);
   }
 }
 
@@ -555,7 +558,7 @@ button {
   border: 1px solid var(--control-button-border-color);
   cursor: pointer;
   color: var(--control-text-color);
-  box-shadow: 0px 2px 1.5px -2px rgba(0,0,0,.3);
+  /* box-shadow: 0px 2px 1.5px -2px rgba(0,0,0,.3); */
   font-size: var(--form-normal-font-size);
 
   &.with-icon {
@@ -578,14 +581,10 @@ button {
     gap: 0.5rem;
     margin-top: 1rem;
     padding: 1rem 1.5rem;
-    background-color: #1B4FB2;
     font-size: 12pt;
     font-weight: bold;
-    color: white;
-
-    &:active:enabled {
-      background-color: color-mix(in srgb, #1B4FB2 80%, transparent 20%);
-    }
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
   }
 
 }
@@ -602,14 +601,26 @@ button:active:enabled {
 }
 
 button.default {
-  border: none;
-  background: linear-gradient(#2991FF, #057AFF);
-  color: white !important;
+  border: 1px solid var(--color-primary) !important;
+  background-color: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+}
+
+button.secondary {
+  border: 1px solid var(--border-color) !important;
+  background-color: transparent!important;
+  color: var(--color-primary) !important;
+}
+
+button.tertiary {
+  border: 1px solid transparent !important;
+  background-color: transparent!important;
+  color: var(--color-on-surface-variant) !important;
 }
 
 button.default:active:enabled {
-  background: linear-gradient(#2280e4, #0469dc);
-  color: #e2e2e2;
+  background-color: var(--color-secondary) !important;
+  color: var(--color-on-secondary) !important;
 }
 
 button.destructive {
@@ -685,13 +696,23 @@ table.table-plain {
   border-radius: 0.75rem;
 
   &.info {
-    background-color: #D8F1FF;
-    color: #0C72EE;
+    background-color: var(--color-secondary-container);
+    color: var(--color-secondary);
   }
 
   &.success {
-    background-color: #E8FDF3;
-    color: #079669;
+    background-color: var(--color-success-container);
+    color: var(--color-success);
+  }
+
+  &.error {
+    background-color: var(--color-error-container);
+    color: var(--color-error);
+  }
+
+  &.warning {
+    background-color: var(--color-warning-container);
+    color: var(--color-warning);
   }
 }
 

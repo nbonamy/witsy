@@ -1,23 +1,28 @@
 .alert-confirm {
-  border: 1px solid var(--highlight-color) !important;
-  background-image: linear-gradient(#2991FF, #057AFF) !important;
-  color: white !important;
+  border: 1px solid var(--color-primary) !important;
+  background-color: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
 }
 
 .alert-confirm:active {
-  background-image: linear-gradient(#2280e4, #0469dc) !important;
-  color: #e2e2e2 !important;
+  background-color: var(--color-secondary) !important;
+  color: var(--color-on-secondary) !important;
 }
 
 .alert-neutral {
-  border: 1px solid #c6c6c6 !important;
-  background-image: linear-gradient(#f6f6f6, #dedede) !important;
-  color: black !important;
+  border: 1px solid var(--border-color) !important;
+  background-color: transparent!important;
+  color: var(--color-primary) !important;
 }
 
 .alert-neutral:active {
-  background-image: linear-gradient(#e6e6e6, #cecece) !important;
-  color: rgb(32, 32, 32) !important;
+  background-color: var(--border-color)!important;
+}
+
+.alert-cancel {
+  border: 1px solid transparent !important;
+  background-color: transparent!important;
+  color: var(--color-on-surface-variant) !important;
 }
 
 div:where(.swal2-container) {
@@ -40,12 +45,14 @@ div:where(.swal2-container) div:where(.swal2-popup) {
 }
 
 div:where(.swal2-container) div:where(.swal2-popup):has(.swal2-input:not([style*="display: none;"])),
-div:where(.swal2-container) div:where(.swal2-popup):has(.swal2-textarea:not([style*="display: none;"])) {
-  max-width: 22rem;
+div:where(.swal2-container) div:where(.swal2-popup):has(.swal2-textarea:not([style*="display: none;"])),
+div:where(.swal2-container) div:where(.swal2-popup):has(input:not([style*="display: none;"])),
+div:where(.swal2-container) div:where(.swal2-popup):has(textarea:not([style*="display: none;"])) {
+  max-width: 28rem;
 }
 
 div:where(.swal2-container) div:where(.swal2-popup.x-large) {
-  max-width: 26rem !important;
+  max-width: 32rem !important;
 }
 
 div:where(.swal2-container).swal2-backdrop-show, div:where(.swal2-container).swal2-noanimation {
@@ -80,10 +87,10 @@ div:where(.swal2-container) .swal2-icon-content img {
 }
 
 div:where(.swal2-container) h2:where(.swal2-title) {
-  padding: 3rem;
+  padding: 3rem 2rem;
   padding-top: calc(var(--icon-size) - 1.25rem);
   padding-bottom: 0rem;
-  text-align: center;
+  text-align: left;
   color: var(--text-color);
   font-size: 13.5pt;
   line-height: 150%;
@@ -93,7 +100,8 @@ div:where(.swal2-container) h2:where(.swal2-title) {
 }
 
 div:where(.swal2-container):not(:has(.swal2-icon)) h2:where(.swal2-title),
-div:where(.swal2-container):has(.swal2-icon.hidden) h2:where(.swal2-title) {
+div:where(.swal2-container):has(.swal2-icon.hidden) h2:where(.swal2-title),
+div:where(.swal2-container):has(.swal2-icon[style*="display: none"]) h2:where(.swal2-title) {
   padding-top: 2rem;
 }
 
@@ -102,27 +110,40 @@ div:where(.swal2-container):has(.swal2-html-container:empty) h2:where(.swal2-tit
 }
 
 div:where(.swal2-container) .swal2-html-container {
-  text-align: center;
+  text-align: left;
   color: var(--dimmed-text-color);
-  font-size: 11pt;
+  font-size: 10.5pt;
   font-weight: 300;
   line-height: 150%;
   padding-bottom: 1rem;
-  padding-left: 3rem;
-  padding-right: 3rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
-div:where(.swal2-container) input:where(.swal2-input),
-div:where(.swal2-container) input:where(.swal2-file),
-div:where(.swal2-container) select:where(.swal2-select),
-div:where(.swal2-container) textarea:where(.swal2-textarea) {
+/* div:where(.swal2-container):has(.swal2-actions) .swal2-html-container {
+  padding-bottom: 0px;
+} */
+
+div:where(.swal2-container) .form.form-vertical div:where(.swal2-html-container) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  .form-field {
+    gap: 0.25rem;
+  }
+}
+
+div:where(.swal2-container) input:not([type="checkbox"]),
+div:where(.swal2-container) select,
+div:where(.swal2-container) textarea {
   margin: 0.5rem 2rem 1rem 2rem;
-  background-color: var(--control-bg-color) !important;
+  background-color: var(--color-surface) !important;
   border: 1px solid var(--control-border-color) !important;
   border-radius: var(--control-border-radius) !important;
   color: var(--control-text-color) !important;
-  font-size: 12pt !important;
-  padding: 0.5rem;
+  font-size: 10.5pt !important;
+  padding: 0.5rem !important;
   box-shadow: none;
 }
 
@@ -193,17 +214,20 @@ div:where(.swal2-container) textarea:where(.swal2-textarea).swal2-inputerror {
 
 div:where(.swal2-container) div:where(.swal2-actions) {
   width: 100%;
-  padding-bottom: 1rem;
-  padding-top: 0.75rem;
-  background-color: color-mix(in srgb, var(--window-decoration-color), var(--background-color) 40%);
-  border-top: 1px solid var(--dialog-border-color);
+  padding-bottom: 1.5rem;
+  padding-top: 0rem;
   flex-direction: row-reverse;
+  justify-content: flex-start;
   border-bottom-left-radius: 2rem;
   border-bottom-right-radius: 2rem;
-  margin-top: 1rem;
+  margin-top: 0rem;
   padding-left: 2rem;
   padding-right: 2rem;
   gap: 1rem;
+
+  button {
+    margin: 0 !important;
+  }
 }
 
 div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style*="display: inline-block;"]),
@@ -231,9 +255,6 @@ div:where(.swal2-container) div:where(.swal2-actions.actions-stacked) {
 } */
 
 div:where(.swal2-container) button:where(.swal2-styled) {
-  flex: 1;
-  border-radius: 0.5rem !important;
-  padding: 0.5rem 0rem !important;
   font-size: 10.5pt !important;
   box-shadow: none !important;
 }
@@ -272,8 +293,8 @@ div:where(.swal2-container) .swal2-html-container.list {
 }
 
 div:where(.swal2-container) div:where(.swal2-popup):has(.sticky-table-container) {
-  width: 45rem;
-  max-width: 45rem;
+  width: 45rem !important;
+  max-width: 45rem !important;
 }
 
 div:where(.swal2-container) div:where(.swal2-html-container) div:where(.sticky-table-container) {

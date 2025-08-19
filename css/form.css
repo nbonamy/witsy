@@ -45,12 +45,10 @@
     .form-field {
       input:not([type=checkbox]):not([type=range]) {
         padding: 5px 0.25rem;
-        margin: 0.25rem 2px;
       }
 
       select {
         padding: 0.25rem 0.25rem;
-        margin: 0.25rem 2px;
       }
 
       .control-group {
@@ -185,7 +183,7 @@
       }
 
       label {
-        font-weight: var(--font-weight-semibold);
+        font-weight: 600;
         min-width: auto !important;
         text-align: left;
         margin-left: 2px;
@@ -193,6 +191,12 @@
         &::after {
           content: '' !important;
         }
+      }
+
+      .help {
+        font-size: 10pt;
+        color: var(--faded-text-color);
+        margin-top: -0.25rem;
       }
 
       [type=checkbox] + label {
