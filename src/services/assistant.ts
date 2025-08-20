@@ -2,7 +2,7 @@
 import { Expert } from 'types'
 import { Configuration } from 'types/config'
 import { LlmEngine } from 'multi-llm-ts'
-import { expertI18n, getLlmLocale, setLlmLocale } from './i18n'
+import { fullExpertI18n, getLlmLocale, setLlmLocale } from './i18n'
 import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, GenerationCallback } from './generator'
 import { availablePlugins } from '../plugins/plugins'
 import Chat from '../models/chat'
@@ -155,11 +155,7 @@ export default class extends Generator {
 
     // add user message
     const userMessage = new Message('user', prompt)
-    userMessage.setExpert({
-      ...opts.expert,
-      name: expertI18n(opts.expert, 'name'),
-      prompt: expertI18n(opts.expert, 'prompt')
-    })
+    userMessage.setExpert(fullExpertI18n(opts.expert))
     userMessage.engine = opts.engine
     userMessage.model = opts.model
     userMessage.deepResearch = deepReseach
