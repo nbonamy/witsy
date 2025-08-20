@@ -1179,7 +1179,6 @@ defineExpose({
   border: 1px solid var(--prompt-input-border-color);
   border-radius: 1rem;
   background-color: var(--prompt-input-bg-color);
-  gap: 1rem;
 
   &.drag-over {
     border: 1px dashed var(--highlight-color);
