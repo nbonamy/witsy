@@ -49,14 +49,3 @@ defineExpose({
   copy: onCopy,
 })
 </script>
-
-<style scoped>
-.action {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-svg {
-  margin-right: 4px;
-}
-</style>

@@ -145,24 +145,20 @@ const onTools = (message: Message) => {
 
 .actions {
 
-  .action {
+  &:deep() .action {
     display: flex;
     flex-direction: row;
     align-items: center;
     margin-left: 8px;
+    gap: 0.25rem;
 
     &:first-child {
       margin-left: 0px;
     }
 
     svg {
-      margin-right: 4px;
-      height: 12px;
-    }
-
-    &.read svg {
-      position: relative;
-      top: 1.5px;
+      width: 0.75rem;
+      height: 0.75rem;
     }
 
   }
