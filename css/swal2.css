@@ -236,7 +236,7 @@ div:where(.swal2-container) div:where(.swal2-actions) {
   }
 }
 
-div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style*="display: inline-block;"]),
+/* div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style*="display: inline-block;"]),
 div:where(.swal2-container) div:where(.swal2-actions.actions-stacked) {
   flex-direction: column;
   align-items: stretch;
@@ -245,7 +245,7 @@ div:where(.swal2-container) div:where(.swal2-actions.actions-stacked) {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
   }
-}
+} */
 
 /* div:where(.swal2-container) button:where(.swal2-styled) {
   box-sizing: border-box;
