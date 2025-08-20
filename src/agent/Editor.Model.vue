@@ -18,9 +18,7 @@
         <LangSelect name="locale" v-model="agent.locale" default-text="modelSettings.localeDefault" />
       </div>
       <div class="form-field">
-        <label class="settings-trigger" @click="showSettingsDialog">
-          {{ t('agent.create.llm.showModelSettings') }} <ChevronDownIcon />
-        </label>
+        <button class="secondary" @click="showSettingsDialog"><Settings2Icon />{{ t('agent.create.llm.showModelSettings') }}</button>
       </div>
     </template>
   </WizardStep>
@@ -29,14 +27,14 @@
 </template>
 
 <script setup lang="ts">
+import { Settings2Icon } from 'lucide-vue-next'
 import { PropType, ref } from 'vue'
 import EngineModelSelect from '../components/EngineModelSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
 import WizardStep from '../components/WizardStep.vue'
-import EditorSettings from './Editor.Settings.vue'
 import Agent from '../models/agent'
 import { t } from '../services/i18n'
-import { ChevronDownIcon } from 'lucide-vue-next'
+import EditorSettings from './Editor.Settings.vue'
 
 const props = defineProps({
   agent: {
