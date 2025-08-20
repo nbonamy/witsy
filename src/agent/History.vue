@@ -118,7 +118,7 @@ const showContextMenu = (event: MouseEvent, run: AgentRun) => {
 .empty {
   padding: 3rem;
   text-align: center;
-  font-size: 18pt;
+  font-size: 24px;
   color: var(--faded-text-color);
   font-family: var(--font-family-serif);
 }

@@ -217,7 +217,7 @@ const onSave = (event: Event) => {
 
 .windows .command-editor .icon {
   font-family: 'NotoColorEmojiLimited';
-  font-size: 9pt;
+  font-size: 12px;
 }
 
 </style>

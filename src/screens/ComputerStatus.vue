@@ -53,7 +53,7 @@ const onStop = () => {
   align-items: center;
   background-color: var(--window-bg-color);
   color: var(--text-color);
-  font-size: 11pt;
+  font-size: 14.5px;
   padding: 0px 16px;
   -webkit-app-region: drag;
   gap: 16px;
@@ -82,7 +82,7 @@ const onStop = () => {
     color: var(--icon-color);
     cursor: pointer;
     margin-left: auto;
-    font-size: 12pt;
+    font-size: 16px;
 
     &:hover {
       color: var(--text-color);

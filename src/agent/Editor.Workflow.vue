@@ -307,7 +307,7 @@ defineExpose({ validate })
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     font-family: monospace;
-    font-size: 9.5pt;
+    font-size: 12.5px;
   }
 
   .prompt-inputs {
@@ -319,7 +319,7 @@ defineExpose({ validate })
 
     th, td {
       font-family: monospace;
-      font-size: 9pt;
+      font-size: 12px;
     }
 
     td:first-child {

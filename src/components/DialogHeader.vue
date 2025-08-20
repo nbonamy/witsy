@@ -98,7 +98,7 @@ const onMoveEnd = () => {
 
 .dialog header .macos svg {
   font-weight: bold;
-  font-size: 10pt;
+  font-size: 13.5px;
   position: relative;
   top: -1px;
   left: -1px;

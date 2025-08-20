@@ -105,7 +105,7 @@ main {
         }
 
         .model {
-          font-size: 11.5pt;
+          font-size: 15.5px;
           color: var(--faded-text-color);
         }
       }

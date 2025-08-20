@@ -2,7 +2,7 @@
 .settings {
 
   --settings-font-size: var(--form-large-font-size);
-  --settings-menu-font-size: 11pt;
+  --settings-menu-font-size: 14.5px;
 
   --settings-normal-text-color: var(--tabs-header-normal-text-color);
   --settings-selected-text-color: var(--tabs-header-selected-text-color);

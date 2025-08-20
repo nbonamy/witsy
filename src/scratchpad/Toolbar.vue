@@ -128,7 +128,7 @@ const onChangeModel = () => {
     max-width: 128px;
     white-space: nowrap;
     padding: 6px 8px;
-    font-size: 11pt;
+    font-size: 14.5px;
     margin: 0;
 
     &:enabled {
@@ -145,7 +145,7 @@ const onChangeModel = () => {
 
   select.tool {
     border-radius: 6px;
-    font-size: 10pt;
+    font-size: 13.5px;
     padding-right: 0px;
     width: auto;
   }

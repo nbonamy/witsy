@@ -588,23 +588,23 @@ const onStopPrompting = async () => {
   }
 
   .document.size-1, .document.size-1 * {
-    font-size: 11pt;
+    font-size: 16px;
   }
 
   .document.size-2, .document.size-2 * {
-    font-size: 13pt;
+    font-size: 18px;
   }
 
   .document.size-3, .document.size-3 * {
-    font-size: 15pt;
+    font-size: 20px;
   }
 
   .document.size-4, .document.size-4 * {
-    font-size: 17pt;
+    font-size: 22px;
   }
 
   .document.size-5, .document.size-5 * {
-    font-size: 19pt;
+    font-size: 24px;
   }
 
   .prompt {

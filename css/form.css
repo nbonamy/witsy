@@ -154,7 +154,7 @@
     }
 
     .text {
-      font-size: 8.5pt;
+      font-size: 11px;
       margin-top: 12px;
       padding: 0px 32px;
       text-align: center;
@@ -194,7 +194,7 @@
       }
 
       .help {
-        font-size: 10pt;
+        font-size: 13.5px;
         color: var(--faded-text-color);
         margin-top: -0.25rem;
       }

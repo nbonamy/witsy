@@ -235,7 +235,7 @@ const onUsage = () => {
   align-items: center;
   padding: 0.25rem 0.5rem;
   margin-bottom: 0.5rem;
-  font-size: 11pt;
+  font-size: 14.5px;
   font-weight: var(--font-weight-medium);
 
   .icon {
@@ -260,7 +260,7 @@ const onUsage = () => {
   flex-direction: row;
   align-items: center;
   padding: 0.375rem;
-  font-size: 11pt;
+  font-size: 14.5px;
 }
 
 .command.selected {
@@ -271,13 +271,13 @@ const onUsage = () => {
 
 .icon {
   flex: 0 0 24px;
-  font-size: 13pt;
+  font-size: 17.5px;
   text-align: center;
   margin-right: 4px;
 }
 
 .windows .icon {
-  font-size: 12pt;
+  font-size: 16px;
   font-family: 'NotoColorEmojiLimited'
 }
 
@@ -294,7 +294,7 @@ const onUsage = () => {
   border: 1px solid var(--icon-color);
   color: var(--icon-color);
   border-radius: 4px;
-  font-size: 8pt;
+  font-size: 10.5px;
   text-transform: capitalize;
   padding: 0px 4px;
   margin-right: 8px
@@ -321,7 +321,7 @@ const onUsage = () => {
 .usage {
   cursor: pointer;
   padding: 0.5rem 0.75rem;
-  font-size: 9.5pt;
+  font-size: 12.5px;
   color: var(--faded-text-color);
   svg {
     margin-right: 0.25rem;
@@ -335,7 +335,7 @@ const onUsage = () => {
   padding-bottom: 1rem;
   display: flex;
   flex-direction: column;
-  font-size: 11.5pt;
+  font-size: 15.5px;
   color: var(--faded-text-color);
   overflow: auto;
 
@@ -349,7 +349,7 @@ const onUsage = () => {
     padding-right: 1rem;
     background-color: var(--context-menu-bg-color);
     color: var(--faded-text-color);
-    font-size: 10pt;
+    font-size: 13.5px;
     text-align: right;
     cursor: pointer;
   }

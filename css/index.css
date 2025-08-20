@@ -13,9 +13,9 @@
 
   --font-family-serif: Garamond, Georgia, Times, 'Times New Roman', serif;
 
-  --form-normal-font-size: 9.5pt;
-  --form-medium-font-size: 10pt;
-  --form-large-font-size: 10.5pt;
+  --form-normal-font-size: 12.5px;
+  --form-medium-font-size: 13.5px;
+  --form-large-font-size: 14px;
 
   --background-color: var(--color-surface-lowest);
   --background-color-light: var(--color-surface);
@@ -408,7 +408,7 @@ body {
 
 code, pre, code * {
   font-family: SF Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
-  font-size: 10pt;
+  font-size: 13.5px;
 }
 
 a, a:visited, a:active, a:focus {
@@ -472,7 +472,7 @@ input[type=checkbox] {
     position: relative;
     color: transparent;
     content: '\2713';
-    font-size: 7.5pt;
+    font-size: 10px;
     font-weight: var(--font-weight-bold);
     left: 2.5px;
   }
@@ -486,7 +486,7 @@ input[type=checkbox] {
   }
 
   &:not(:checked) {
-    font-size: 0pt;
+    font-size: 0px;
   }
 
   &:disabled {
@@ -615,10 +615,14 @@ button {
   &.cta {
     margin-top: 1rem;
     padding: 1rem 1.5rem;
-    font-size: 12pt;
+    font-size: 16px;
     font-weight: bold;
     background-color: var(--color-primary);
     color: var(--color-on-primary);
+    &:active:enabled {
+      background-color: var(--color-secondary) !important;
+      color: var(--color-on-secondary) !important;
+    }
   }
 
 }
@@ -674,7 +678,7 @@ table.table-plain {
     text-align: left;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-color);
-    font-size: 10.5pt;
+    font-size: 14px;
   }
 
   tr.spacer {
@@ -753,7 +757,7 @@ table.table-plain {
     display: flex;
     flex-direction: row;
     
-    font-size: 10pt;
+    font-size: 13.5px;
     color: var(--faded-text-color);
 
     .actions {
@@ -774,7 +778,7 @@ table.table-plain {
   padding: 0.125rem 0.5rem;
   justify-content: center;
   align-items: center;
-  font-size: 8pt;
+  font-size: 10.5px;
   border-radius: 0.75rem;
 
   &.info {

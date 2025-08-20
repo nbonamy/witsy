@@ -169,7 +169,7 @@ const onClearFilter = () => {
 
       input {
         padding: 1rem;
-        font-size: 11pt;
+        font-size: 14.5px;
         padding-left: 3rem;
       }
 

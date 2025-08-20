@@ -62,7 +62,7 @@
 
       .title {
         flex: 1;
-        font-size: 14pt;
+        font-size: 18.5px;
         font-weight: var(--font-weight-semibold);
         color: var(--text-color);
       }
@@ -103,7 +103,7 @@
       border-right: 1px solid var(--sidebar-border-color);
       padding: 1rem;
       padding-bottom: 1.25rem;
-      font-size: 11pt;
+      font-size: 14.5px;
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
@@ -141,7 +141,7 @@
       
       .title {
         flex: 1;
-        font-size: 14pt;
+        font-size: 18.5px;
         font-weight: bold;
         white-space: nowrap;
         overflow: hidden;
@@ -277,7 +277,7 @@
           }
           
           .list-action {
-            font-size: 10.5pt;
+            font-size: 14px;
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -301,7 +301,7 @@
           }
         
           td button {
-            font-size: 6pt !important;
+            font-size: 8px !important;
             padding: 2px 8px;
           }
 
@@ -381,7 +381,7 @@
       border: none;
       .title {
         font-weight: var(--font-weight-medium);
-        font-size: 15pt;
+        font-size: 20px;
       }
     }
 
@@ -402,7 +402,7 @@
       border: none;
       gap: 1rem;
       .title {
-        font-size: 16pt;
+        font-size: 22px;
       }
       &:has(input) {
         padding-top: 1.105rem;

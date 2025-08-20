@@ -148,14 +148,14 @@ defineExpose({
 
     .agent-name {
       font-weight: var(--font-weight-semibold);
-      font-size: 11.5pt;
+      font-size: 15.5px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .agent-description {
-      font-size: 10.5pt;
+      font-size: 14px;
       opacity: 0.8;
       white-space: nowrap;
       overflow: hidden;

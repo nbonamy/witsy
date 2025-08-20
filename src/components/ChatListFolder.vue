@@ -234,7 +234,7 @@ const handleActionClick = async (action: string) => {
   gap: .25rem;
   margin: 12px 0 8px;
   padding: 0 12px;
-  font-size: 9pt;
+  font-size: 12px;
   font-weight: bold;
   text-transform: uppercase;
   color: var(--sidebar-section-title-color);

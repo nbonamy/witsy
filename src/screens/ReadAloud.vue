@@ -108,7 +108,7 @@ const playChunk = (i: number) => {
   align-items: center;
   background-color: var(--window-bg-color);
   color: var(--text-color);
-  font-size: 18pt;
+  font-size: 24px;
   padding: 0px 8px;
   -webkit-app-region: drag;
 }

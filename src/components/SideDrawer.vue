@@ -117,7 +117,7 @@ defineExpose({
 
   header {
     label {
-      font-size: 14pt;
+      font-size: 18.5px;
       font-weight: var(--font-weight-semibold);
     }
 
