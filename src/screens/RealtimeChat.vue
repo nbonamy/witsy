@@ -390,7 +390,7 @@ defineExpose({
   height: 100vh;
   background-color: var(--window-bg-color);
   color: var(--text-color);
-  font-size: 14pt;
+  font-size: 18.5px;
 
   .sp-sidebar {
     flex-basis: 280px;
@@ -423,11 +423,11 @@ defineExpose({
       .cost-container {
         text-align: center;
         margin-top: 2rem;
-        font-size: 10pt;
+        font-size: 13.5px;
 
         .value {
           margin: 4px 0px;
-          font-size: 14pt;
+          font-size: 18.5px;
           font-weight: bold;
           font-variant-numeric: tabular-nums;
 
@@ -436,7 +436,7 @@ defineExpose({
           }
         }
         .note {
-          font-size: 9pt;
+          font-size: 12px;
         }
       }
 

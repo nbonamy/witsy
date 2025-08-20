@@ -145,7 +145,7 @@ const onMagicAction = (event: Event, action: string) => {
   
   .action {
     color: var(--scratchpad-actionbar-normal-icon-color);
-    font-size: 14pt;
+    font-size: 18.5px;
     cursor: pointer;
 
     &.disabled {

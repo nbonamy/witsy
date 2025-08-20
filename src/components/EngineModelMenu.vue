@@ -136,7 +136,7 @@ const handleModelClick = (engine: string, model: string) => {
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
-  font-size: 11pt;
+  font-size: 14.5px;
   white-space: nowrap;
   overflow-x: clip;
   text-overflow: ellipsis;
@@ -158,7 +158,7 @@ const handleModelClick = (engine: string, model: string) => {
   gap: 0.75rem;
   padding: 0.25rem 0rem;
   cursor: pointer;
-  font-size: 10pt;
+  font-size: 13.5px;
 }
 
 .model-info {

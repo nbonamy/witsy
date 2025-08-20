@@ -36,7 +36,7 @@
 
       .md-master-list-item {
 
-        --master-list--item-font-size: 11pt;
+        --master-list--item-font-size: 14.5px;
 
         flex-direction: row;
         align-items: center;

@@ -170,7 +170,7 @@ const onScroll = () => {
   border-radius: 11pt;
   background-color: var(--message-list-overflow-bg-color);
   border: 1px solid #ccc;
-  font-size: 14pt;
+  font-size: 18.5px;
   font-weight: bold;
   cursor: pointer;
 }

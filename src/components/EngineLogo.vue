@@ -173,7 +173,7 @@ const klass = computed(() => {
     position: absolute;
     background-color: var(--background-color);
     padding: 1px 0px 2px 0px;
-    font-size: 10pt;
+    font-size: 13.5px;
     min-width: 100%;
     text-align: center;
   }

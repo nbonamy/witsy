@@ -429,7 +429,7 @@ defineExpose({
 
           .deep-research-usage-close {
             cursor: pointer;
-            font-size: 14pt;
+            font-size: 18.5px;
           }
         }
 

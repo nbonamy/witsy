@@ -201,7 +201,7 @@ const clearHistory = () => {
 
 .agent-view {
 
-  --agent-font-size: 11pt;
+  --agent-font-size: 14.5px;
 
   main {
 
@@ -253,7 +253,7 @@ const clearHistory = () => {
           justify-content: center;
           padding: 3rem;
           text-align: center;
-          font-size: 18pt;
+          font-size: 24px;
           color: var(--faded-text-color);
           font-family: var(--font-family-serif);
         }

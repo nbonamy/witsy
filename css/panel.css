@@ -29,7 +29,7 @@
       }
 
       .subtitle {
-        font-size: 9pt;
+        font-size: 12px;
         margin-top: 0.25rem;
         font-weight: 200;
         color: var(--faded-text-color);
@@ -84,7 +84,7 @@
 
       .leading {
         flex: 0 0 1.5rem;
-        font-size: 13pt;
+        font-size: 17.5px;
         svg {
           width: 1.25rem;
           height: 1.25rem;
@@ -114,13 +114,13 @@
         }
 
         .text {
-          font-size: 10.5pt;
+          font-size: 14px;
           font-weight: var(--font-weight-medium);
         }
 
         .subtext {
           font-weight: 200;
-          font-size: 9pt;
+          font-size: 12px;
           color: var(--faded-text-color);
         }
       }
@@ -161,7 +161,7 @@
   main.empty, .panel-empty {
     padding: 2rem 25%;
     text-align: center;
-    font-size: 12pt;
+    font-size: 16px;
     font-weight: 300;
     color: var(--faded-text-color);
   }

@@ -490,7 +490,7 @@ defineExpose({
   color: var(--context-menu-text-color);
   border: none;
   padding: 0.5rem 0;
-  font-size: 11pt;
+  font-size: 14.5px;
   outline: none;
   min-width: 5rem;
   width: auto;
@@ -504,7 +504,7 @@ defineExpose({
 .back-label {
   flex: 1;
   color: var(--context-menu-text-color);
-  font-size: 11pt;
+  font-size: 14.5px;
   opacity: 0.8;
 }
 
@@ -513,7 +513,7 @@ defineExpose({
   position: relative;
   padding: 0.5rem 1rem;
   cursor: pointer;
-  font-size: 11pt;
+  font-size: 14.5px;
   white-space: nowrap;
   overflow-x: clip;
   text-overflow: ellipsis;
@@ -546,7 +546,7 @@ defineExpose({
 }
 
 :deep(.item .icon.text) {
-  font-size: 11pt;
+  font-size: 14.5px;
 }
 
 :deep(.item.disabled) {

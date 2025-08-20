@@ -211,7 +211,7 @@ defineExpose({
           position: relative;
           cursor: pointer;
           left: -20px;
-          font-size: 9pt;
+          font-size: 12px;
           color: var(--sidebar-search-icon-color);
         }
       }

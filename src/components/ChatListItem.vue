@@ -96,11 +96,11 @@ const onRenameChat = () => {
 
     .title {
       font-weight: var(--font-weight-medium);
-      font-size: 11pt;
+      font-size: 14.5px;
     }
 
     .subtitle {
-      font-size: 9pt;
+      font-size: 12px;
     }
 
     .select {
@@ -122,7 +122,7 @@ const onRenameChat = () => {
 
       .title {
         font-weight: normal;
-        font-size: 10.5pt;
+        font-size: 14px;
       }
 
       .subtitle {

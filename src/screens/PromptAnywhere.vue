@@ -639,7 +639,7 @@ const onResponseResize = (deltaX: number) => {
       align-items: center;
       padding: 2px 8px;
       margin-bottom: 8px;
-      font-size: 11pt;
+      font-size: 14.5px;
       font-weight: var(--font-weight-medium);
       .icon {
         padding: 0px;
@@ -665,7 +665,7 @@ const onResponseResize = (deltaX: number) => {
           max-height: 100px;
           background-color: var(--anywhere-bg-color);
           padding: 6px 16px 6px 8px;
-          font-size: 16pt;
+          font-size: 22px;
           &::placeholder {
             opacity: 0.5;
           }
@@ -674,7 +674,7 @@ const onResponseResize = (deltaX: number) => {
         .icon.left {
           margin: 4px 0px 0px 8px !important;
           svg {
-            font-size: 14pt;
+            font-size: 18.5px;
             height: auto;
           }
         }
@@ -703,12 +703,12 @@ const onResponseResize = (deltaX: number) => {
         color: var(--prompt-icon-color);
         cursor: pointer;
         opacity: 0.5;
-        font-size: 10pt;
+        font-size: 13.5px;
         margin-left: auto;
         svg {
           position: relative;
           top: 1px;
-          font-size: 10pt;
+          font-size: 13.5px;
           margin-right: 0.5rem;
         }
       }
@@ -718,7 +718,7 @@ const onResponseResize = (deltaX: number) => {
       cursor: pointer;
       margin-top: 4px;
       color: var(--prompt-icon-color);
-      font-size: 14pt;
+      font-size: 18.5px;
     }
 
     .icon.send, .icon.stop {

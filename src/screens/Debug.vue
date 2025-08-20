@@ -263,7 +263,7 @@ const selectRequest = (request: NetworkRequest) => {
     padding: 8px 16px;
     border-bottom: 1px solid var(--dialog-border-color);
     cursor: pointer;
-    font-size: 10pt;
+    font-size: 13.5px;
   }
 
   .item.selected {
@@ -311,7 +311,7 @@ const selectRequest = (request: NetworkRequest) => {
     border-radius: 0;
     cursor: pointer;
     color: var(--text-color, #666);
-    font-size: 10.5pt;
+    font-size: 14px;
 
     &:hover {
       background: none;
@@ -357,7 +357,7 @@ const selectRequest = (request: NetworkRequest) => {
     padding: 12px;
     padding-top: 36px;
     border-radius: 8px;
-    font-size: 10.5pt;
+    font-size: 14px;
 
     .copy {
       cursor: pointer;
@@ -365,7 +365,7 @@ const selectRequest = (request: NetworkRequest) => {
       right: 24px;
       top: 8px;
       font-family: SF Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
-      font-size: 10.5pt;
+      font-size: 14px;
       &.copying {
         opacity: 0.4;
       }
@@ -382,7 +382,7 @@ const selectRequest = (request: NetworkRequest) => {
       
       span, a {
         font-family: SF Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
-        font-size: 10.5pt;
+        font-size: 14px;
       }
 
       .jv-code {

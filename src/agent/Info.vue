@@ -129,7 +129,7 @@ const onDelete = () => {
   padding-top: 2px;
   text-align: center;
   font-weight: bold;
-  font-size: 10pt;
+  font-size: 13.5px;
 }
 
 .status-bar-segment.success {

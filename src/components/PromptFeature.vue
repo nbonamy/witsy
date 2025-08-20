@@ -47,7 +47,7 @@ const onClear = () => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 11pt;
+  font-size: 14.5px;
   color: #0C72EE;
 }
 

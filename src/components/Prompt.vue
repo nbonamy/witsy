@@ -1167,7 +1167,7 @@ defineExpose({
 <style scoped>
 
 .prompt, .prompt * {
-  font-size: 12pt;
+  font-size: 16px;
 }
 
 .prompt {

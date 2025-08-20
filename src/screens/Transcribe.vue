@@ -777,7 +777,7 @@ button {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
-        font-size: 18pt;
+        font-size: 24px;
         gap: 24px;
         align-items: center;
         color: var(--text-color);
@@ -800,7 +800,7 @@ button {
           border: 0.25px solid var(--control-border-color);
           color: var(--text-color);
           border-radius: 6px;
-          font-size: 11.5pt;
+          font-size: 15.5px;
           padding: 8px;
           resize: none;
 
@@ -812,7 +812,7 @@ button {
             text-align: center;
             line-height: 140%;
             font-family: var(--font-family-serif);
-            font-size: 14pt;
+            font-size: 18.5px;
           }
         }
 
@@ -822,7 +822,7 @@ button {
           border: 0.25px solid var(--control-border-color);
           color: var(--text-color);
           border-radius: 6px;
-          font-size: 11.5pt;
+          font-size: 15.5px;
           padding: 8px;
           min-height: 200px;
           overflow-y: auto;
@@ -851,7 +851,7 @@ button {
 
       .help {
         margin-top: 0.5rem;
-        font-size: 10pt;
+        font-size: 13.5px;
         text-align: right;
       }
 

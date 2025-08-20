@@ -233,7 +233,7 @@ defineExpose({
     .transient {
       margin-left: 4px;
       .tool-call {
-        font-size: 12pt !important;
+        font-size: 16px !important;
       }
     }
   }
@@ -270,7 +270,7 @@ defineExpose({
     padding: 8px 24px 8px 0px;
     padding-bottom: 2px;
     color: var(--icon-color);
-    font-size: 10pt;
+    font-size: 13.5px;
 
     .action {
       display: flex;

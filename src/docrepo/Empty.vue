@@ -22,7 +22,7 @@ const emit = defineEmits(['click', 'close'])
   position: absolute;
   top: 2rem;
   right: 2rem;
-  font-size: 14pt;
+  font-size: 18.5px;
   cursor: pointer;
 }
 

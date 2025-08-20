@@ -196,7 +196,7 @@ const onDelete = () => {
     span {
       font-family: var(--font-family-serif);
       font-style: italic;
-      font-size: 24pt;
+      font-size: 32px;
     }
 
   }

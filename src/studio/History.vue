@@ -61,7 +61,7 @@ const showContextMenu = (event: MouseEvent, msg: Message) => {
 }
 
 .history .empty {
-  font-size: 11pt;
+  font-size: 14.5px;
   opacity: 0.8;
 }
 
@@ -97,7 +97,7 @@ const showContextMenu = (event: MouseEvent, msg: Message) => {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 11pt;
+  font-size: 14.5px;
 }
 
 .history .message .description .prompt {
@@ -108,7 +108,7 @@ const showContextMenu = (event: MouseEvent, msg: Message) => {
 
 .history .message .description .info {
   display: none;
-  font-size: 10pt;
+  font-size: 13.5px;
   font-style: italic;
 }
 
