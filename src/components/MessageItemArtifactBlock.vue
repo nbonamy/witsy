@@ -81,7 +81,6 @@ const onDownload = () => {
 
   .panel-header {
     padding: 0.75rem 1rem;
-    background-color: var(--background-color);
     border-bottom: 1px solid var(--border-color);
     gap: 0.25rem;
 
@@ -100,7 +99,6 @@ const onDownload = () => {
     padding: 1rem;
     padding-top: 0.25rem;
     padding-bottom: 0rem;
-    background-color: var(--background-color);
 
     &:deep() {
       .text hr:first-child, .text hr:last-child {
