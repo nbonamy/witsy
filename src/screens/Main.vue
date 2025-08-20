@@ -1,5 +1,5 @@
 <template>
-  <div class="main-window">
+  <div class="main-window window">
     <header></header>
     <main>
       <WorkspaceBar v-if="store.isFeatureEnabled('workspaces')" />
@@ -179,60 +179,4 @@ const onDocReposClose = () => {
 <style>
 @import 'sweetalert2/dist/sweetalert2.css';
 @import '../../css/swal2.css';
-</style>
-
-<style scoped>
-
-.main-window {
-
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-
-  header {
-    -webkit-app-region: drag;
-    flex: 0 0 var(--window-toolbar-height);
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  &:has(~ .fullscreen-drawer.visible) {
-    header {
-      -webkit-app-region: no-drag;
-    }
-  }
-
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    max-height: calc(100vh - var(--window-toolbar-height) - 2.5rem);
-  }
-
-  footer {
-
-    flex: 0 0 1rem;
-    padding: 0.75rem;
-    border-top: 1px solid var(--border-color);
-
-    display: flex;
-    flex-direction: row;
-    
-    font-size: 10pt;
-    color: var(--faded-text-color);
-
-    .actions {
-      margin-left: auto;
-      display: flex;
-      gap: 1rem;
-      svg {
-        cursor: pointer;
-      }
-    }
-
-
-
-  }
-
-}
-
 </style>
