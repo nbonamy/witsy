@@ -218,7 +218,7 @@
           "warning": "Agent execution is highly dependent on the capabilities of each model. Make sure you select a model that supports agentic capabilities."
         },
         "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
-        "showModelSettings": "Advanced Options",
+        "showModelSettings": "Advanced Settings",
         "title": "Model Configuration"
       },
       "settings": {
