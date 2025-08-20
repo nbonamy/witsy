@@ -332,16 +332,6 @@
   }
 }
 
-.macos {
-  .window {
-    .sp-sidebar {
-      header {
-        padding-left: 5rem;
-      }
-    }
-  }
-}
-
 .windows {
   .split-pane {
     .sp-main {

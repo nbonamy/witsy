@@ -5,8 +5,8 @@
     <header>
       <div class="title">{{ t('agent.forge.title') }}</div>
       <div class="actions">
-        <button class="secondary" @click="emit('importA2A')"><LogoA2A />{{ t('agent.forge.a2a.title') }}</button>
-        <button class="primary" @click="emit('create')"><PlusIcon />{{ t('agent.forge.create') }}</button>
+        <button class="large secondary" @click="emit('importA2A')"><LogoA2A />{{ t('agent.forge.a2a.title') }}</button>
+        <button class="large primary" @click="emit('create')"><PlusIcon />{{ t('agent.forge.create') }}</button>
       </div>
     </header>
 
