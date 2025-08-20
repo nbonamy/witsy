@@ -548,7 +548,7 @@ button {
   box-sizing: border-box;
   width: auto;
   margin: 0 0.25rem;
-  padding: 0.5rem;
+  padding: 0.25rem 0.5rem;
   border-radius: var(--control-button-border-radius);
   background-color: var(--control-bg-color);
   border: 1px solid var(--control-button-border-color);
@@ -582,10 +582,12 @@ button {
 
   &.medium {
     font-size: var(--form-medium-font-size);
+    padding: 0.5rem;
   }
 
   &.large {
     font-size: var(--form-large-font-size);
+    padding: 0.5rem 0.75rem;
   }
 
   &.default, &.primary {
