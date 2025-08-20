@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - Agentic handling of MCP errors (https://github.com/nbonamy/witsy/issues/366)
 
 ### Fixed
-- N/A
+- Expert name display in chat
 
 ### Removed
 - N/A

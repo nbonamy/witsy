@@ -285,6 +285,13 @@ defineExpose({
 .expert {
   margin-top: 12px;
   margin-bottom: -12px;
+  p {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.9em;
+    gap: 0.25rem;
+  }
 }
 
 img {

@@ -75,11 +75,19 @@ export const createI18nMock = (callback?: () => Partial<{
     getLlmLocale: vi.fn(() => locale),
     setLlmLocale: vi.fn(l => locale = l),
 
-    expertI18n: vi.fn((expert, attr) => `expert_${expert?.id}_${attr}`),
+    expertI18n: vi.fn((expert, attr) => expert?.[attr] ?? `expert_${expert?.id}_${attr}`),
     expertI18nDefault: vi.fn((expert, attr) => `expert_default_${expert?.id}_${attr}`),
 
-    commandI18n: vi.fn((command, attr) => `command_${command?.id}_${attr}_{input}`),
+    commandI18n: vi.fn((command, attr) => command?.[attr] ?? `command_${command?.id}_${attr}_{input}`),
     commandI18nDefault: vi.fn((command, attr) => `command_default_${command?.id}_${attr}${attr == 'template' ? "-{input}" : ""}`),
+
+    fullExpertI18n: function(expert) {
+      return expert ? {
+        ...expert,
+        name: this.expertI18n(expert, 'name'),
+        prompt: this.expertI18n(expert, 'prompt')
+      } : undefined
+    },
 
     i18nInstructions: (config: any, key: string) => {
 
