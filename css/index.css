@@ -25,7 +25,7 @@
   --dimmed-text-color: color-mix(in srgb, var(--color-on-surface), var(--color-on-surface-variant) 50%);
   --faded-text-color: var(--color-on-surface-variant);
   --icon-color: var(--color-on-surface-variant);
-  --highlight-color: var(--primary-color);
+  --highlight-color: var(--color-primary);
   --highlighted-color: var(--color-on-primary);
   --link-color: var(--color-secondary);
 
@@ -547,21 +547,35 @@ datalist {
 button {
   box-sizing: border-box;
   width: auto;
-  margin: 0 4px;
-  padding: 4px 8px;
+  margin: 0 0.25rem;
+  padding: 0.5rem;
   border-radius: var(--control-button-border-radius);
   background-color: var(--control-bg-color);
   border: 1px solid var(--control-button-border-color);
   cursor: pointer;
   color: var(--control-text-color);
-  /* box-shadow: 0px 2px 1.5px -2px rgba(0,0,0,.3); */
   font-size: var(--form-normal-font-size);
+  outline: none;
 
-  &.with-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  &:active:enabled {
+    background-color: var(--control-button-active-bg-color);
+  }
+
+  &:disabled {
+    background-color: var(--control-button-disabled-bg-color);
+    border: 1px solid var(--control-button-disabled-border-color);
+    color: var(--control-button-disabled-text-color);
+    cursor: not-allowed;
   }
 
   &.medium {
@@ -572,9 +586,33 @@ button {
     font-size: var(--form-large-font-size);
   }
 
+  &.default, &.primary {
+    border: 1px solid var(--color-primary) !important;
+    background-color: var(--color-primary) !important;
+    color: var(--color-on-primary) !important;
+    &:active:enabled {
+      background-color: var(--color-secondary) !important;
+      color: var(--color-on-secondary) !important;
+    }
+  }
+
+  &.secondary {
+    border: 1px solid var(--border-color) !important;
+    background-color: transparent!important;
+    color: var(--color-primary) !important;
+  }
+
+  &.tertiary {
+    border: 1px solid transparent !important;
+    background-color: transparent!important;
+    color: var(--color-on-surface-variant) !important;
+  }
+
+  &.destructive {
+    color: red;
+  }
+
   &.cta {
-    outline: none;
-    gap: 0.5rem;
     margin-top: 1rem;
     padding: 1rem 1.5rem;
     font-size: 12pt;
@@ -583,44 +621,6 @@ button {
     color: var(--color-on-primary);
   }
 
-}
-
-button:disabled {
-  background-color: var(--control-button-disabled-bg-color);
-  border: 1px solid var(--control-button-disabled-border-color);
-  color: var(--control-button-disabled-text-color);
-  cursor: not-allowed;
-}
-
-button:active:enabled {
-  background-color: var(--control-button-active-bg-color);
-}
-
-button.default {
-  border: 1px solid var(--color-primary) !important;
-  background-color: var(--color-primary) !important;
-  color: var(--color-on-primary) !important;
-}
-
-button.secondary {
-  border: 1px solid var(--border-color) !important;
-  background-color: transparent!important;
-  color: var(--color-primary) !important;
-}
-
-button.tertiary {
-  border: 1px solid transparent !important;
-  background-color: transparent!important;
-  color: var(--color-on-surface-variant) !important;
-}
-
-button.default:active:enabled {
-  background-color: var(--color-secondary) !important;
-  color: var(--color-on-secondary) !important;
-}
-
-button.destructive {
-  color: red;
 }
 
 .button-group {
@@ -665,20 +665,51 @@ table th.center, table td.center {
 }
 
 table.table-plain {
+
+  border-collapse: collapse;
   
   th, td {
     padding: 0.25rem;
     vertical-align: middle;
-  }
-
-  th {
     text-align: left;
-    border-bottom: 1px solid var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-size: 10.5pt;
   }
 
   tr.spacer {
     height: 0.25rem;
     background-color: var(--background-color);
+  }
+
+  td {
+    .actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      svg {
+        cursor: pointer;
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+
+  &.table-plain-spaced {
+
+    td, th {
+      padding: 1rem;
+    }
+
+    td .actions {
+      gap: 1rem;
+      svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
+
   }
 
 }
@@ -706,6 +737,11 @@ table.table-plain {
     display: flex;
     flex-direction: row;
     max-height: calc(100vh - var(--window-toolbar-height) - 2.5rem);
+    -webkit-app-region: no-drag;
+
+    * {
+      -webkit-app-region: no-drag;
+    }
   }
 
   footer {

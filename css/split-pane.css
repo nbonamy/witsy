@@ -55,7 +55,6 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      -webkit-app-region: drag;
 
       .form {
         flex: 1;
@@ -69,7 +68,6 @@
       }
     
       .actions {
-        -webkit-app-region: drag;
         display: flex;
         justify-content: flex-end;
         opacity: 0.7;
@@ -139,7 +137,6 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      -webkit-app-region: drag;
       gap: 0.75rem;
       
       .title {
@@ -157,7 +154,6 @@
       }
 
       .icon {
-        -webkit-app-region: no-drag;
         cursor: pointer;
         text-align: right;
         width: 1rem;
@@ -220,7 +216,6 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      background-color: var(--background-color);
       transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s;
       box-sizing: border-box;
 

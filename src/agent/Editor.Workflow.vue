@@ -51,15 +51,15 @@
             </div>
           </div>
           <div class="panel-footer step-actions" v-if="expandedStep === index">
-            <button class="with-icon docrepo" @click="onDocRepo(index)"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
-            <button class="with-icon tools" @click="onTools(index)"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
-            <button class="with-icon agents" @click="onAgents(index)"><BotIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
-            <button class="with-icon structured-output" @click="onStructuredOutput(index)"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
+            <button class="docrepo" @click="onDocRepo(index)"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
+            <button class="tools" @click="onTools(index)"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
+            <button class="agents" @click="onAgents(index)"><BotIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
+            <button class="structured-output" @click="onStructuredOutput(index)"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
           </div>
         </div>
         <div class="step-footer">
           <div class="workflow-arrow" v-if="index < agent.steps.length - 1"></div>
-          <button class="add-step tertiary with-icon" name="add-step" @click="onAddStep(index+1)"><PlusIcon /> {{ t('agent.create.workflow.addStep') }}</button>
+          <button class="add-step tertiary" name="add-step" @click="onAddStep(index+1)"><PlusIcon /> {{ t('agent.create.workflow.addStep') }}</button>
         </div>
       </template>
     </template>
