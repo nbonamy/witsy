@@ -5,17 +5,17 @@
   
     <div class="panel-header">
       <label>{{ t('agent.view.header') }}</label>
-      <BIconPlayCircle 
+      <PlayIcon 
         class="icon run" 
         v-tooltip="{ text: t('agent.help.run'), position: 'bottom-left' }" 
         @click="onRun" 
       />
-      <BIconPencil 
+      <PencilIcon 
         class="icon edit" 
         v-tooltip="{ text: t('agent.help.edit'), position: 'bottom-left' }" 
         @click="onEdit" 
       />
-      <BIconTrash 
+      <Trash2Icon 
         class="icon delete" 
         v-tooltip="{ text: t('agent.help.delete'), position: 'bottom-left' }" 
         @click="onDelete" 
@@ -50,10 +50,11 @@
 </template>
 <script setup lang="ts">
 
-import { Agent, AgentRun } from '../types/index'
+import { CronExpressionParser } from 'cron-parser'
+import { PencilIcon, PlayIcon, Trash2Icon } from 'lucide-vue-next'
 import { PropType, computed } from 'vue'
 import { t } from '../services/i18n'
-import { CronExpressionParser } from 'cron-parser'
+import { Agent, AgentRun } from '../types/index'
 
 const props = defineProps({
   agent: {

@@ -5,7 +5,7 @@
 
     <div class="panel-header">
       <label>{{ t('agent.run.title') }}</label>
-      <CalendarX2Icon 
+      <CalendarMinus2Icon 
         class="icon delete" 
         v-tooltip="{ text: t('agent.help.deleteRun'), position: 'bottom-left' }" 
         @click="$emit('delete')" 
@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 
-import { CalendarX2Icon } from 'lucide-vue-next'
+import { CalendarMinus2Icon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import MessageItemBody from '../components/MessageItemBody.vue'
 import { t } from '../services/i18n'
