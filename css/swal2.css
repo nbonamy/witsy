@@ -137,7 +137,7 @@ div:where(.swal2-container) .form.form-vertical div:where(.swal2-html-container)
 div:where(.swal2-container) input:not([type="checkbox"]),
 div:where(.swal2-container) select,
 div:where(.swal2-container) textarea {
-  margin: 0.5rem 2rem 1rem 2rem;
+  margin: 0rem;
   background-color: var(--color-surface) !important;
   border: 1px solid var(--control-border-color) !important;
   border-radius: var(--control-border-radius) !important;
