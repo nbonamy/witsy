@@ -1,47 +1,72 @@
 
 <template>
-  <div class="debug split-pane window">
-    <div class="sp-sidebar">
-      <header>
-        <div class="title">{{ t('debugConsole.title') }}</div>
-        <Trash2Icon class="icon" @click="clearRequests"/>
-      </header>
-      <main class="list">
-        <div v-if="requests.length === 0" class="empty">
-          No network requests captured yet
-        </div>
-        <div v-else class="requests">
-          <div v-for="(request, index) in requests" :key="index" class="item" :class="{ selected: selected === request }" @click="selectRequest(request)"> <span class="url">{{ request.url.split('/').slice(0, 3).join('/') }}</span>
-            <span v-if="request.statusCode" class="status" :class="{ 'error': request.statusCode >= 400 }">
-              {{ request.statusCode }}
-            </span>
-            <span v-else class="status pending" >
-              <Loader />
-              <Loader />
-              <Loader />
-            </span>
+  <div class="debug-window window">
+    <header></header>
+    <main class="split-pane">
+      <div class="sp-sidebar">
+        <header>
+          <div class="title">{{ t('debugConsole.title') }}</div>
+          <Trash2Icon class="icon" @click="clearRequests"/>
+        </header>
+        <main class="list">
+          <div v-if="requests.length === 0" class="empty">
+            No network requests captured yet
           </div>
-        </div>
-      </main>
-    </div>
+          <div v-else class="requests">
+            <div v-for="(request, index) in requests" :key="index" class="item" :class="{ selected: selected === request }" @click="selectRequest(request)"> <span class="url">{{ request.url.split('/').slice(0, 3).join('/') }}</span>
+              <span v-if="request.statusCode" class="status" :class="{ 'error': request.statusCode >= 400 }">
+                {{ request.statusCode }}
+              </span>
+              <span v-else class="status pending" >
+                <Loader />
+                <Loader />
+                <Loader />
+              </span>
+            </div>
+          </div>
+        </main>
+      </div>
 
-    <div class="details sp-main">
-      <header>
-        <template v-if="selected">
-          <div class="title">{{ selected.method }} {{ selected.url }}</div>
-        </template>
-      </header>
-      <main v-if="selected && selected.type === 'http'">
-        <div class="tabs">
-          <button :class="{ active: activeTab === 'request' }" @click="activeTab = 'request'">Request</button>
-          <button :class="{ active: activeTab === 'response' }" @click="activeTab = 'response'">Response</button>
-        </div>
-        <div class="tab-content">
-          <div v-if="activeTab === 'response' && !selected.statusCode">
-            <pre>Waiting for response...</pre>
+      <div class="details sp-main">
+        <header>
+          <div class="title" v-if="selected">{{ selected.method }} {{ selected.url }}</div>
+          <div class="title" v-else>&nbsp;</div>
+        </header>
+        <main v-if="selected && selected.type === 'http'">
+          <div class="tabs">
+            <button :class="{ active: activeTab === 'request' }" @click="activeTab = 'request'">Request</button>
+            <button :class="{ active: activeTab === 'response' }" @click="activeTab = 'response'">Response</button>
           </div>
-          <template v-else>
-            <div class="section" v-if="activeTab === 'request' && parameters">
+          <div class="tab-content">
+            <div v-if="activeTab === 'response' && !selected.statusCode">
+              <pre>Waiting for response...</pre>
+            </div>
+            <template v-else>
+              <div class="section" v-if="activeTab === 'request' && parameters">
+                <h3>Query Parameters</h3>
+                <div class="json expanded">
+                  <JsonViewer :value="parameters" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
+                </div>
+              </div>
+              <div class="section" v-if="headers">
+                <h3>Headers</h3>
+                <div class="json expanded">
+                  <JsonViewer :value="headers" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
+                </div>
+              </div>
+              <div class="section" v-if="data">
+                <h3>Body</h3>
+                <div class="json" v-if="jsonData(data)">
+                  <JsonViewer :value="jsonData(data)" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
+                </div>
+                <pre v-else>{{ data }}<div class="copy" :class="{ copying: copying }" @click="copyData(data)">{{ t(copying ? 'common.copied' : 'common.copy').toLowerCase() }}</div></pre>
+              </div>
+            </template>
+          </div>
+        </main>
+        <main v-if="selected && selected.type === 'websocket'">
+          <div class="tab-content">
+            <div class="section" v-if="parameters">
               <h3>Query Parameters</h3>
               <div class="json expanded">
                 <JsonViewer :value="parameters" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
@@ -53,46 +78,26 @@
                 <JsonViewer :value="headers" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
               </div>
             </div>
-            <div class="section" v-if="data">
-              <h3>Body</h3>
-              <div class="json" v-if="jsonData(data)">
-                <JsonViewer :value="jsonData(data)" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
+            <div class="section" v-if="selected.frames.length > 0">
+              <div class="form header">
+                <h3>Frames</h3>
+                <input type="checkbox" v-model="showSent" /> Sent
+                &nbsp;&nbsp;&nbsp;
+                <input type="checkbox" v-model="showReceived" /> Received
               </div>
-              <pre v-else>{{ data }}<div class="copy" :class="{ copying: copying }" @click="copyData(data)">{{ t(copying ? 'common.copied' : 'common.copy').toLowerCase() }}</div></pre>
-            </div>
-          </template>
-        </div>
-      </main>
-      <main v-if="selected && selected.type === 'websocket'">
-        <div class="tab-content">
-          <div class="section" v-if="parameters">
-            <h3>Query Parameters</h3>
-            <div class="json expanded">
-              <JsonViewer :value="parameters" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
+              <template v-for="frame in selected.frames">
+                <div v-if="(showSent && frame.type === 'sent') || (showReceived && frame.type === 'received')" class="json">
+                  <JsonViewer :value="jsonFrame(frame)" :expand-depth="2" :copyable="copyable" theme="jv-dark" :expanded="true" />
+                </div>
+              </template>
             </div>
           </div>
-          <div class="section" v-if="headers">
-            <h3>Headers</h3>
-            <div class="json expanded">
-              <JsonViewer :value="headers" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
-            </div>
-          </div>
-          <div class="section" v-if="selected.frames.length > 0">
-            <div class="form header">
-              <h3>Frames</h3>
-              <input type="checkbox" v-model="showSent" /> Sent
-              &nbsp;&nbsp;&nbsp;
-              <input type="checkbox" v-model="showReceived" /> Received
-            </div>
-            <template v-for="frame in selected.frames">
-              <div v-if="(showSent && frame.type === 'sent') || (showReceived && frame.type === 'received')" class="json">
-                <JsonViewer :value="jsonFrame(frame)" :expand-depth="2" :copyable="copyable" theme="jv-dark" :expanded="true" />
-              </div>
-            </template>
-          </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </main>
+    <footer>
+      <label>StationOne v0.0.1</label>
+    </footer>
   </div>
 </template>
 
@@ -220,7 +225,7 @@ const selectRequest = (request: NetworkRequest) => {
 .split-pane {
 
   .sp-sidebar {
-    flex: 0 0 250px;
+    flex: 0 0 300px;
     main {
       padding-top: 0px;
     }
@@ -238,7 +243,6 @@ const selectRequest = (request: NetworkRequest) => {
   .list {
     padding: 0px 0px;
     overflow: hidden;
-    max-width: 280px;
   }
 
   .requests {
