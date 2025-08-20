@@ -155,7 +155,11 @@ export default class extends Generator {
 
     // add user message
     const userMessage = new Message('user', prompt)
-    userMessage.setExpert(opts.expert, expertI18n(opts.expert, 'prompt'))
+    userMessage.setExpert({
+      ...opts.expert,
+      name: expertI18n(opts.expert, 'name'),
+      prompt: expertI18n(opts.expert, 'prompt')
+    })
     userMessage.engine = opts.engine
     userMessage.model = opts.model
     userMessage.deepResearch = deepReseach
