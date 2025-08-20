@@ -60,7 +60,7 @@ export interface Message extends IMessageBase {
   usage?: LlmUsage
   attachments: Attachment[]
   setStatus(status: string|null): void
-  setExpert(expert: Expert, fallbackPrompt: string): void
+  setExpert(expert: Expert): void
   setText(text: string): void
   setImage(url: string): void
   addToolCall(toolCall: LlmChunkTool): void

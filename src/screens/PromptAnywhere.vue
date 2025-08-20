@@ -51,7 +51,7 @@ import Message from '../models/message'
 import { availablePlugins } from '../plugins/plugins'
 import EngineModelPicker from '../screens/EngineModelPicker.vue'
 import Generator from '../services/generator'
-import { expertI18n, i18nInstructions, t } from '../services/i18n'
+import { fullExpertI18n, i18nInstructions, t } from '../services/i18n'
 import { store } from '../services/store'
 import { anyDict, ExternalApp } from '../types'
 
@@ -454,7 +454,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
     // update thread
     const userMessage = new Message('user', finalPrompt)
-    userMessage.setExpert(expert, expertI18n(expert, 'prompt'))
+    userMessage.setExpert(fullExpertI18n(expert))
     for (const attachment of attachments ?? []) {
       attachment.loadContents()
       userMessage.attach(attachment)

@@ -65,8 +65,7 @@ type i18nExpertAttr = 'name' | 'prompt'
 
 const commandI18n = (command: Command|null, attr: i18nCommandAttr): string => {
   if (!command) return ''
-  if (attr === 'label' && command.label) return command.label
-  if (attr === 'template' && command.template) return command.template
+  if (command[attr]) return command[attr]
   return commandI18nDefault(command, attr)
 }
 
@@ -76,13 +75,20 @@ const commandI18nDefault = (command: Command|null, attr: i18nCommandAttr): strin
 
 const expertI18n = (expert: Expert|null, attr: i18nExpertAttr): string => {
   if (!expert) return ''
-  if (attr === 'name' && expert.name) return expert.name
-  if (attr === 'prompt' && expert.prompt) return expert.prompt
+  if (expert[attr]) return expert[attr]
   return expertI18nDefault(expert, attr)
 }
 
 const expertI18nDefault = (expert: Expert|null, attr: i18nExpertAttr): string => {
   return expert ? tllm(`experts.experts.${expert.id}.${attr}`) : ''
+}
+
+const fullExpertI18n = (expert: Expert|null): Expert => {
+  return expert ? {
+    ...expert,
+    name: expertI18n(expert, 'name'),
+    prompt: expertI18n(expert, 'prompt')
+  } : undefined
 }
 
 export {
@@ -103,4 +109,5 @@ export {
   commandI18nDefault,
   expertI18n,
   expertI18nDefault,
+  fullExpertI18n,
 }
