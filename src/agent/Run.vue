@@ -127,10 +127,6 @@ const emit = defineEmits(['delete'])
 
 <style scoped>
 
-.run {
-  width: 100%;
-}
-
 .prompt {
   min-height: 5lh;
   resize: vertical;

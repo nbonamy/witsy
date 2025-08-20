@@ -11,7 +11,7 @@
           <List :docRepos="docRepos || []" :selectedRepo="selectedRepo" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" />
         </main>
         <footer>
-          <button class="new-collection cta with-icon" @click="onCreate"><PlusIcon /> {{ t('docRepo.create.title') }}</button>
+          <button class="new-collection cta" @click="onCreate"><PlusIcon /> {{ t('docRepo.create.title') }}</button>
         </footer>
       </div>
       <div class="sp-main">

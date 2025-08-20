@@ -1,5 +1,6 @@
 {
   "common": {
+    "actions": "Actions",
     "arguments": "Arguments",
     "askMeAnything": "Ask me anything",
     "back": "Back",
@@ -264,10 +265,11 @@
           },
           "text": "EXPERIMENTAL FEATURE!",
           "title": "Enter URL of A2A"
-        }
+        },
+        "title": "Import A2A Agent"
       },
       "confirmDelete": "Are you sure you want to delete this agent?",
-      "create": "Create Agent",
+      "create": "New Agent",
       "empty": "Unlock the agentic power of Witsy by creating your first agent! Click the robot head to get started.",
       "list": {
         "empty": "No agent of this type created yet.",
@@ -292,6 +294,7 @@
       "confirmDeleteSingle": "Are you sure you want to delete this run?",
       "date": "Date",
       "empty": "No history yet…",
+      "lastRun": "Last Run",
       "log": "Log",
       "neverRun": "Never",
       "status": "Status",

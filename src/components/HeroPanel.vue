@@ -9,7 +9,7 @@
     <div class="panel-body">
       <slot name="body">
         <!-- If no body slot is provided, render button slot -->
-        <button v-if="$slots.button" class="cta with-icon" @click="handleButtonClick">
+        <button v-if="$slots.button" class="cta" @click="handleButtonClick">
           <slot name="button"></slot>
         </button>
       </slot>

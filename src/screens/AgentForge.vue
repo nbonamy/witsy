@@ -1,27 +1,39 @@
 <template>
   <div class="split-pane">
-    <div class="sp-main">
-      <header v-if="mode === 'list'">
-        <div class="title">{{ t('agent.forge.title') }}</div>
-      </header>
-      <main class="empty" v-if="mode === 'list' && store.agents.length === 0">
-        <IconAgent @click="onCreate()" />
-        {{ t('agent.forge.empty') }}
-      </main>
-      <main v-else-if="mode === 'list'">
-        <List :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A"  @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
-      </main>
-      <main v-else>
-        <Editor :style="{ display: isPaneVisible('create') || isPaneVisible('edit') ? 'flex' : 'none' }" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
-        <View :style="{ display: isPaneVisible('view') ? 'flex' : 'none' }" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" />
-      </main>
-    </div>
+
+    <template v-if="mode === 'list'">
+    
+      <template v-if="store.agents.length === 0">
+        <div class="sp-main">
+          <main class="empty">
+            <IconAgent @click="onCreate()" />
+            {{ t('agent.forge.empty') }}
+          </main>
+        </div>
+      </template>
+
+      <template v-else>
+        <List class="sp-main" :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A"  @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
+      </template>
+
+    </template>
+
+    <template v-else-if="mode === 'create' || mode === 'edit'">
+      <Editor class="sp-main" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
+    </template>
+
+    <template v-else-if="mode === 'view'">
+      <View class="sp-main" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)"/>
+    </template>
+
     <PromptBuilder :title="running?.name ?? ''" ref="builder" />
+  
   </div>
+
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import IconAgent from '../../assets/agent.svg?component'
 import Editor from '../agent/Editor.vue'
 import List from '../agent/List.vue'
@@ -46,13 +58,6 @@ const prevMode = ref<AgentForgeMode>('list')
 const selected = ref<Agent|null>(null)
 const running = ref<Agent|null>(null)
 const builder = ref(null)
-
-const isPaneVisible = (paneMode: AgentForgeMode) => {
-  return mode.value === paneMode || prevMode.value === paneMode
-}
-
-onMounted(() => {
-})
 
 const selectAgent = async (agent: Agent|null) => {
   if (!agent) {

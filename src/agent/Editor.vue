@@ -9,84 +9,88 @@
       <button class="large default" name="next" @click="onNextStep">{{ isStepVisible(kStepInvocation) ? t('common.save') : t('common.next') }}</button>
     </header>
 
-    <div class="wizard">
+    <main>
 
-      <div class="wizard-header">
+      <div class="wizard">
 
-        <div class="wizard-steps">
+        <div class="wizard-header">
 
-          <div class="wizard-step" :class="{ active: isStepVisible(kStepGeneral), completed: isStepCompleted(kStepGeneral) }" @click="onStepClick(kStepGeneral)" v-if="hasStep(kStepGeneral)">
-            <Settings2Icon class="icon" /> {{ t('agent.create.information.title') }}
+          <div class="wizard-steps">
+
+            <div class="wizard-step" :class="{ active: isStepVisible(kStepGeneral), completed: isStepCompleted(kStepGeneral) }" @click="onStepClick(kStepGeneral)" v-if="hasStep(kStepGeneral)">
+              <Settings2Icon class="icon" /> {{ t('agent.create.information.title') }}
+            </div>
+
+            <!-- <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGoal), disabled: !isStepCompleted(kStepGoal) }" @click="onStepClick(kStepGoal)" v-if="hasStep(kStepGoal)">
+              <BIconBullseye class="logo" /> {{ t('agent.create.goal.title') }}
+            </div> -->
+
+            <div class="wizard-step" :class="{ active: isStepVisible(kStepModel) || isStepVisible(kStepSettings), completed: isStepCompleted(kStepModel) }" @click="onStepClick(kStepModel)" v-if="hasStep(kStepModel)">
+              <BoxIcon class="icon" /> {{ t('agent.create.llm.title') }}
+            </div>
+
+            <div class="wizard-step" :class="{ active: isStepVisible(kStepWorkflow), completed: isStepCompleted(kStepWorkflow) }" @click="onStepClick(kStepWorkflow)" v-if="hasStep(kStepWorkflow)">
+              <FlowIcon class="icon scale120" /> {{ t('agent.create.workflow.title') }}
+            </div>
+
+            <div class="wizard-step" :class="{ active: isStepVisible(kStepInvocation), completed: isStepCompleted(kStepInvocation) }" @click="onStepClick(kStepInvocation)" v-if="hasStep(kStepInvocation)">
+              <TriggerIcon class="icon" /> {{ t('agent.create.invocation.title') }}
+            </div>
+
           </div>
 
-          <!-- <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGoal), disabled: !isStepCompleted(kStepGoal) }" @click="onStepClick(kStepGoal)" v-if="hasStep(kStepGoal)">
-            <BIconBullseye class="logo" /> {{ t('agent.create.goal.title') }}
-          </div> -->
+        </div>
+        
+        <div class="wizard-body form form-large form-vertical">
 
-          <div class="wizard-step" :class="{ active: isStepVisible(kStepModel) || isStepVisible(kStepSettings), completed: isStepCompleted(kStepModel) }" @click="onStepClick(kStepModel)" v-if="hasStep(kStepModel)">
-            <BoxIcon class="icon" /> {{ t('agent.create.llm.title') }}
-          </div>
+          <EditorGeneral ref="stepGeneral"
+            :agent="agent" 
+            :visible="isStepVisible(kStepGeneral)" 
+            :prev-button-text="t('common.cancel')" 
+            :error="informationError" 
+            @prev="onPrevStep" 
+            @next="validateInformation" 
+          />
 
-          <div class="wizard-step" :class="{ active: isStepVisible(kStepWorkflow), completed: isStepCompleted(kStepWorkflow) }" @click="onStepClick(kStepWorkflow)" v-if="hasStep(kStepWorkflow)">
-            <FlowIcon class="icon scale120" /> {{ t('agent.create.workflow.title') }}
-          </div>
+          <EditorModel ref="stepModel"
+            :agent="agent" 
+            :visible="isStepVisible(kStepModel)" 
+            :has-settings="hasSettings" 
+            @prev="onPrevStep" 
+            @next="validateModel" 
+            @show-settings="showSettings"
+          />
 
-          <div class="wizard-step" :class="{ active: isStepVisible(kStepInvocation), completed: isStepCompleted(kStepInvocation) }" @click="onStepClick(kStepInvocation)" v-if="hasStep(kStepInvocation)">
-            <TriggerIcon class="icon" /> {{ t('agent.create.invocation.title') }}
-          </div>
+          <EditorSettings ref="stepSettings"
+            :agent="agent" 
+            :visible="isStepVisible(kStepSettings)" 
+            @prev="onPrevStep" 
+            @next="validateSettings" 
+          />
+
+          <EditorWorkflow ref="stepWorkflow"
+            :agent="agent" 
+            :visible="isStepVisible(kStepWorkflow)" 
+            :error="informationError" 
+            :expanded-step="expandedStep"
+            @prev="onPrevStep" 
+            @next="validateWorkflow"
+            @update:expanded-step="expandedStep = $event"
+          />
+
+          <EditorInvocation ref="stepInvocation"
+            :agent="agent" 
+            :visible="isStepVisible(kStepInvocation)" 
+            :next-button-text="t('common.save')" 
+            @prev="onPrevStep" 
+            @next="validateInvocation" 
+          />
 
         </div>
 
       </div>
-      
-      <div class="wizard-body form form-large form-vertical">
 
-        <EditorGeneral ref="stepGeneral"
-          :agent="agent" 
-          :visible="isStepVisible(kStepGeneral)" 
-          :prev-button-text="t('common.cancel')" 
-          :error="informationError" 
-          @prev="onPrevStep" 
-          @next="validateInformation" 
-        />
-
-        <EditorModel ref="stepModel"
-          :agent="agent" 
-          :visible="isStepVisible(kStepModel)" 
-          :has-settings="hasSettings" 
-          @prev="onPrevStep" 
-          @next="validateModel" 
-          @show-settings="showSettings"
-        />
-
-        <EditorSettings ref="stepSettings"
-          :agent="agent" 
-          :visible="isStepVisible(kStepSettings)" 
-          @prev="onPrevStep" 
-          @next="validateSettings" 
-        />
-
-        <EditorWorkflow ref="stepWorkflow"
-          :agent="agent" 
-          :visible="isStepVisible(kStepWorkflow)" 
-          :error="informationError" 
-          :expanded-step="expandedStep"
-          @prev="onPrevStep" 
-          @next="validateWorkflow"
-          @update:expanded-step="expandedStep = $event"
-        />
-
-        <EditorInvocation ref="stepInvocation"
-          :agent="agent" 
-          :visible="isStepVisible(kStepInvocation)" 
-          :next-button-text="t('common.save')" 
-          @prev="onPrevStep" 
-          @next="validateInvocation" 
-        />
-
-      </div>
-
-    </div>
+    </main>
 
 </div>
 </template>
@@ -333,7 +337,6 @@ const save = async () => {
   overflow: hidden;
 
   header {
-    -webkit-app-region: no-drag;
     position: sticky;
     button {
       padding: 0.5rem 0.75rem;
@@ -341,28 +344,32 @@ const save = async () => {
     }
   }
 
-  .wizard {
+  main {
 
-    &:deep() {
+    .wizard {
 
-      textarea {
-        flex: auto;
-        min-height: 5lh;
-        resize: vertical;
-      }
+      &:deep() {
 
-      .sticky-table-container {
-        margin-top: 2rem;
-        max-height: 20rem;
-        th, td {
-          vertical-align: top;
-          padding: 0.5rem;
-          div {
-            white-space: wrap;
-            max-height: 3lh;
-            overflow-y: clip;
-            text-overflow: ellipsis;
+        textarea {
+          flex: auto;
+          min-height: 5lh;
+          resize: vertical;
+        }
+
+        .sticky-table-container {
+          margin-top: 2rem;
+          max-height: 20rem;
+          th, td {
+            vertical-align: top;
+            padding: 0.5rem;
+            div {
+              white-space: wrap;
+              max-height: 3lh;
+              overflow-y: clip;
+              text-overflow: ellipsis;
+            }
           }
+
         }
 
       }

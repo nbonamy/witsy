@@ -4,7 +4,7 @@
     <LightbulbIcon class="icon" />
     <h3>{{ t('docRepo.empty.title') }}</h3>
     <p>{{ t('docRepo.empty.text') }}</p>
-    <button class="cta with-icon" @click="emit('click')"><PlusIcon /> {{ t('docRepo.empty.create') }}</button>
+    <button class="cta" @click="emit('click')"><PlusIcon /> {{ t('docRepo.empty.create') }}</button>
   </div>
 </template>
 

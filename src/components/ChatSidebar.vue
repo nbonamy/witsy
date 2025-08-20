@@ -28,7 +28,7 @@
       </footer>
     </template>
     <footer>
-      <button class="new-chat cta with-icon" @click="onNewChat"><MessageCircleMoreIcon /> {{ t('common.newChat') }}</button>
+      <button class="new-chat cta" @click="onNewChat"><MessageCircleMoreIcon /> {{ t('common.newChat') }}</button>
     </footer>
     <div class="resizer" :style="`left: ${width-5}px`" @mousedown="onResizeSidebarStart" v-if="visible">&nbsp;</div>
   </div>
