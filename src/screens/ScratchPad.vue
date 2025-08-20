@@ -11,9 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { t, i18nInstructions, expertI18n } from '../services/i18n'
-
-// components
+import { t, i18nInstructions, fullExpertI18n } from '../services/i18n'
 import { FileContents } from '../types/file'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
@@ -477,7 +475,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   // add to thead
   const userMessage = new Message('user', finalPrompt)
-  userMessage.setExpert(expert, expertI18n(expert, 'prompt'))
+  userMessage.setExpert(fullExpertI18n(expert))
   for (const attachment of attachments ?? []) {
     attachment.loadContents()
     userMessage.attach(attachment)
