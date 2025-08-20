@@ -70,14 +70,14 @@ const onRetry = (message: Message) => {
   Dialog.show({
     title: t('message.actions.retryConfirm.title'),
     text: t('message.actions.retryConfirm.text'),
-    confirmButtonText: t('message.actions.retryConfirm.confirmButton'),
-    denyButtonText: t('message.actions.retryConfirm.denyButton'),
+    confirmButtonText: t('message.actions.retryConfirm.denyButton'),
+    denyButtonText: t('message.actions.retryConfirm.confirmButton'),
     showCancelButton: true,
     showDenyButton: true,
   }).then((result) => {
     
     // don't ask again
-    if (result.isConfirmed) {
+    if (result.isDenied) {
       store.config.general.confirm.retryGeneration = false
       store.saveSettings()
     }
