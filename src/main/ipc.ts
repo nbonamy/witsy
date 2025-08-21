@@ -648,6 +648,20 @@ export const installIpc = (
     event.returnValue = mcp ? mcp.originalToolName(payload) : null;
   });
 
+  ipcMain.handle(IPC.MCP.DETECT_OAUTH, async (_, url): Promise<any> => {
+    return mcp ? await mcp.detectOAuth(url) : { requiresOAuth: false };
+  });
+
+  ipcMain.handle(IPC.MCP.START_OAUTH_FLOW, async (_, payload): Promise<string> => {
+    const { url, clientMetadata, clientCredentials } = JSON.parse(payload);
+    return mcp ? await mcp.startOAuthFlow(url, clientMetadata, clientCredentials) : '';
+  });
+
+  ipcMain.handle(IPC.MCP.COMPLETE_OAUTH_FLOW, async (_, payload): Promise<boolean> => {
+    const { serverUuid, authCode } = JSON.parse(payload);
+    return mcp ? await mcp.completeOAuthFlow(serverUuid, authCode) : false;
+  });
+
   ipcMain.on(IPC.SCRATCHPAD.OPEN, async (_, payload) => {
     await window.openScratchPad(payload);
   });

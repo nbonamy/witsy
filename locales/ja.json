@@ -1614,6 +1614,25 @@
     "serverEditor": {
       "environmentVariables": "環境変数",
       "httpHeaders": "カスタムHTTPヘッダー",
+      "oauth": {
+        "authorizing": "認証を開始しています",
+        "authorizingText": "ブラウザが開き、Witsyの承認画面に移動します。承認を完了し、このウィンドウに戻ってください。",
+        "clientId": "クライアントID",
+        "clientSecret": "クライアントシークレット",
+        "error": "認証設定に失敗しました",
+        "errorText": "認証の設定に失敗しました。インターネット接続を確認して、再度お試しください。",
+        "notRequired": "このサーバーは認証を必要としません。",
+        "removeConfirm": "認証データを削除する",
+        "removeConfirmText": "認証データを削除してもよろしいですか？再度このサーバーを使用するには、再認証が必要です。",
+        "required": "このサーバーへの接続には認証が必要です",
+        "requiredText": "このサーバーを使用するには認証が必要です。今すぐ設定しますか？",
+        "setup": "設定",
+        "showAuthFields": "高度な認証（MCPサーバーのドキュメントを参照）",
+        "success": "認証設定が完了しました",
+        "successful": "このサーバーの認証が正常に設定されました。",
+        "successText": "このサーバーの認証が正常に設定されました。変更内容を保存できます。",
+        "title": "認証データ"
+      },
       "selectCommand": "コマンドを選択",
       "serverPackage": "サーバーパッケージ",
       "smitheryApiKey": "Smithery.ai APIキー",
@@ -2277,7 +2296,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "Add server",
+      "addCustomServer": "MCPサーバーを追加…",
       "confirmDelete": "このサーバーを削除してもよろしいですか？",
       "connectedToServers": "{count}台のMCPサーバーに接続済み",
       "copyInstallCommand": "インストールコマンドをクリップボードにコピーして、ターミナルで試すことができます。",

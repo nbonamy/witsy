@@ -409,7 +409,6 @@ test('Docrepo load', async () => {
   expect(list[0].documents[0].origin).toBe(tempdir)
   expect(list[0].documents[0].url).toBe('file://' + tempdir)
   expect(list[0].documents[0].items).toHaveLength(2)
-  console.log(list[0].documents[0].items)
   expect(list[0].documents[0].items[0].filename).toBe('docrepo.json')
   expect(list[0].documents[0].items[1].filename).toBe('docrepo2.json')
 
