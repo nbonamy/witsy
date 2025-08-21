@@ -1588,6 +1588,12 @@
     }
   },
   "mcp": {
+    "oauth": {
+      "success": {
+        "title": "Authorization Successful!",
+        "message": "You can close this window and return to Witsy."
+      }
+    },
     "serverEditor": {
       "environmentVariables": "Environment Variables",
       "httpHeaders": "Custom HTTP Headers",

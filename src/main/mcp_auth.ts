@@ -3,8 +3,9 @@ import { OAuthClientProvider, UnauthorizedError } from '@modelcontextprotocol/sd
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js"
 import { OAuthClientInformation, OAuthClientInformationFull, OAuthClientMetadata, OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js'
-import { App, shell } from 'electron'
-import { createServer } from 'node:http'
+import { app, App, shell } from 'electron'
+import { createServer as defaultCreateServer } from 'node:http'
+import { useI18n } from '../main/i18n'
 import * as portfinder from 'portfinder'
 
 export class McpOAuthClientProvider implements OAuthClientProvider {
@@ -80,14 +81,19 @@ class OAuthCallbackServer {
   private server: any = null
   private port: number | null = null
   private pendingCallbacks: Map<string, { resolve: (code: string) => void, reject: (error: Error) => void, timeout: NodeJS.Timeout }> = new Map()
+  private createServer: typeof defaultCreateServer
 
   get callbackPort(): number | null {
     return this.port
   }
 
-  static getInstance(): OAuthCallbackServer {
+  private constructor(createServer: typeof defaultCreateServer = defaultCreateServer) {
+    this.createServer = createServer
+  }
+
+  static getInstance(createServer?: typeof defaultCreateServer): OAuthCallbackServer {
     if (!OAuthCallbackServer.instance) {
-      OAuthCallbackServer.instance = new OAuthCallbackServer()
+      OAuthCallbackServer.instance = new OAuthCallbackServer(createServer)
     }
     return OAuthCallbackServer.instance
   }
@@ -120,10 +126,14 @@ class OAuthCallbackServer {
       return
     }
 
+    // localization
+    const t = useI18n(app);
+
     // Find an available port starting from 8090
     this.port = await portfinder.getPortPromise({ port: 8090 })
     console.log(`🚀 Starting OAuth callback server on port ${this.port}...`)
-    this.server = createServer((req, res) => {
+    this.server = this.createServer((req, res) => {
+
       // Ignore favicon requests
       if (req.url === '/favicon.ico') {
         res.writeHead(404)
@@ -143,10 +153,23 @@ class OAuthCallbackServer {
         console.log(`✅ Authorization code received for flow ${state}: ${code?.substring(0, 10)}...`)
         res.writeHead(200, { 'Content-Type': 'text/html' })
         res.end(`
-          <html>
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>OAuth Authorization Successful</title>
+              <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 60px 20px; background: rgb(252, 250, 248); color: black; text-align: center; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding-top: 12.5%; }
+                .logo { width: 8rem; height: 8rem; margin-bottom: 2rem;   transform: rotate(5deg); }
+                h1 { font-size: 28pt; font-weight: 600; margin: 0 0 1rem 0; }
+                p { font-size: 16pt; opacity: 0.8; margin: 0; line-height: 1.5; }
+              </style>
+            </head>
             <body>
-              <h1>Authorization Successful!</h1>
-              <p>You can close this window and return to Witsy.</p>
+              <img src="https://witsyai.com/img/logo.png" alt="Witsy" class="logo">
+              <h1>${t('mcp.oauth.success.title')}</h1>
+              <p>${t('mcp.oauth.success.message')}</p>
               <script>setTimeout(() => window.close(), 2000);</script>
             </body>
           </html>
@@ -165,10 +188,23 @@ class OAuthCallbackServer {
         console.log(`❌ Authorization error for flow ${state}: ${error}`)
         res.writeHead(400, { 'Content-Type': 'text/html' })
         res.end(`
-          <html>
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>OAuth Authorization Failed</title>
+              <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 60px 20px; background: #0f172a; color: #ffffff; text-align: center; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+                .logo { width: 64px; height: 64px; margin-bottom: 32px; }
+                h1 { font-size: 28px; font-weight: 600; margin: 0 0 16px 0; color: #ef4444; }
+                p { font-size: 16px; opacity: 0.8; margin: 0; line-height: 1.5; }
+              </style>
+            </head>
             <body>
-              <h1>Authorization Failed</h1>
-              <p>Error: ${error}</p>
+              <img src="https://witsyai.com/img/logo.png" alt="Witsy" class="logo">
+              <h1 data-i18n="oauth.error.title">Authorization Failed</h1>
+              <p data-i18n="oauth.error.message">Error: ${error}</p>
             </body>
           </html>
         `)

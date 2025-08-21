@@ -13,9 +13,14 @@ vi.mock('electron', async() => {
   return {
     app: {
       getPath: () => './tests/fixtures',
+      getLocale: () => 'en-US'
     },
   }
 })
+
+vi.mock('../../src/main/i18n', () => ({
+  useI18n: vi.fn(() => (key: string) => key)
+}))
 
 // mess with default / execSync so hack
 let command = null
