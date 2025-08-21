@@ -35,6 +35,7 @@ export default defineConfig({
         ...coverageConfigDefaults.exclude,
         '*.config.ts',
         'build/*',
+        'src/_examples/*',
         'src/ipc_consts.ts',
         'src/main.ts',
         'src/preload.ts',
