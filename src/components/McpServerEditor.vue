@@ -297,7 +297,7 @@ const onSaveVar = (variable: McpServerVariable) => {
 
 const checkOAuth = async (): Promise<void> => {
   if (await isOauthRequired()) {
-    await initOauth(false)
+    await initOauth(true)
   } else {
     Dialog.show({
       title: t('mcp.serverEditor.oauth.notRequired'),
@@ -320,7 +320,7 @@ const isOauthRequired = async (): Promise<boolean> => {
 
 }
 
-const initOauth = async (confirmWithUser: boolean): Promise<boolean> => {
+const initOauth = async (userInitiated: boolean): Promise<boolean> => {
 
   try {
     const oauthCheck = await window.api.mcp.detectOAuth(url.value)
@@ -335,7 +335,7 @@ const initOauth = async (confirmWithUser: boolean): Promise<boolean> => {
 
     // ask if required
     let result = { isConfirmed: true }
-    if (confirmWithUser) {
+    if (!userInitiated) {
       result = await Dialog.show({
         title: t('mcp.serverEditor.oauth.required'),
         text: t('mcp.serverEditor.oauth.requiredText'),
@@ -346,7 +346,7 @@ const initOauth = async (confirmWithUser: boolean): Promise<boolean> => {
     }
 
     if (result.isConfirmed) {
-      await setupOAuth()
+      await setupOAuth(userInitiated)
       return true
     } else {
       return false
@@ -358,7 +358,7 @@ const initOauth = async (confirmWithUser: boolean): Promise<boolean> => {
   }
 }
 
-const setupOAuth = async () => {
+const setupOAuth = async (userInitiated: boolean) => {
   
   if (!oauthStatus.value.metadata) {
     console.error('No OAuth metadata available')
@@ -400,7 +400,11 @@ const setupOAuth = async () => {
       text: t('mcp.serverEditor.oauth.successText'),
       confirmButtonText: t('common.ok'),
     })
-    
+
+    if (!userInitiated) {
+      setTimeout(onSave, 500)
+    }
+
   } catch (error) {
     console.error('OAuth setup failed:', error)
     await Dialog.show({
@@ -466,7 +470,7 @@ const onSave = async () => {
   // Check if OAuth setup is needed before saving
   const oauthNeeded = await isOauthRequired()
   if (oauthNeeded) {
-    initOauth(true)
+    initOauth(false)
     return
   }
 
