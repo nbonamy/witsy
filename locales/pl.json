@@ -1614,6 +1614,25 @@
     "serverEditor": {
       "environmentVariables": "Zmienne środowiskowe",
       "httpHeaders": "Niestandardowe nagłówki HTTP",
+      "oauth": {
+        "authorizing": "Rozpoczynanie uwierzytelniania",
+        "authorizingText": "Twoja przeglądarka otworzy się, by autoryzować Witsy. Proszę ukończyć autoryzację i wrócić do tego okna po zakończeniu.",
+        "clientId": "ID klienta",
+        "clientSecret": "Sekretny klucz klienta",
+        "error": "Konfiguracja uwierzytelniania nie powiodła się",
+        "errorText": "Nie udało się skonfigurować uwierzytelnienia. Sprawdź swoje połączenie internetowe i spróbuj ponownie.",
+        "notRequired": "Ten serwer nie wymaga uwierzytelniania.",
+        "removeConfirm": "Usuń dane uwierzytelniające",
+        "removeConfirmText": "Czy na pewno chcesz usunąć dane uwierzytelniające? Będziesz musiał ponownie autoryzować, aby ponownie korzystać z tego serwera.",
+        "required": "Do połączenia z tym serwerem wymagane jest uwierzytelnienie",
+        "requiredText": "Aby korzystać z tego serwera musisz się uwierzytelnić. Czy chcesz skonfigurować to teraz?",
+        "setup": "Konfiguracja",
+        "showAuthFields": "Zaawansowane uwierzytelnianie (zapoznaj się z dokumentacją serwera MCP)",
+        "success": "Konfiguracja uwierzytelniania zakończona",
+        "successful": "Uwierzytelnianie zostało pomyślnie skonfigurowane dla tego serwera.",
+        "successText": "Uwierzytelnianie zostało pomyślnie skonfigurowane dla tego serwera. Możesz zapisać swoje zmiany.",
+        "title": "Dane uwierzytelniające"
+      },
       "selectCommand": "Wybierz polecenie",
       "serverPackage": "Pakiet serwera",
       "smitheryApiKey": "Klucz API Smithery.ai",
@@ -2277,7 +2296,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "Add server",
+      "addCustomServer": "Dodaj serwer MCP…",
       "confirmDelete": "Czy na pewno chcesz usunąć ten serwer?",
       "connectedToServers": "Połączono z {count} serwerem MCP{count > 1 ? 'ami' : ''}",
       "copyInstallCommand": "Możesz skopiować polecenie instalacji do schowka i wypróbować je w Terminalu.",

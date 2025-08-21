@@ -2,7 +2,7 @@
 import { ChatModel, EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
 import { CustomInstruction, DesignStudioMediaType, Shortcut, strDict, TTSVoice } from './index'
 import { PluginConfig } from '../plugins/plugin'
-import { McpClaudeServer, McpServer, McpServerState } from './mcp'
+import { McpClaudeServer, McpServer, McpServerState, McpOAuthConfig } from './mcp'
 import { ToolSelection } from './llm'
 
 export type Configuration = {
@@ -278,6 +278,7 @@ export type RagConfig = {
 export type McpServerExtra = {
   label?: string
   state?: McpServerState
+  oauth?: McpOAuthConfig
 }
 
 export type McpConfig = {

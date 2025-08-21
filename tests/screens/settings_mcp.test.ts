@@ -93,19 +93,21 @@ test('Server edit', async () => {
     cwd: 'cwd1',
     env: {},
     headers: {},
+    oauth: null,
   })
 })
 
-test('Normal server add - SSE', async () => {
+test('Normal server add - Stdio', async () => {
 
   await mcp.find<HTMLElement>('button[name=addCustom]').trigger('click')
   const editor = mcp.findComponent(McpServerEditor)
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   await editor.find<HTMLInputElement>('input[name=command]').setValue('npx')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('script1.js')
-  
+
   // save
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
+  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,
@@ -117,9 +119,11 @@ test('Normal server add - SSE', async () => {
     cwd: '',
     env: {},
     headers: {},
+    oauth: null,
   })
 
   // fake select the server
+  await mcp.vm.$nextTick()
   mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
   await mcp.vm.$nextTick()
 
@@ -134,7 +138,7 @@ test('Normal server add - SSE', async () => {
   expect(editor.vm.cwd).toBe('picked_folder')
   
   // add variable
-  await editor.find<HTMLButtonElement>('button.add').trigger('click')
+  await editor.find<HTMLButtonElement>('.button.add').trigger('click')
   const editor2 = editor.findComponent({ name: 'VariableEditor' })
   expect(editor2.find<HTMLInputElement>('input[name=key]').element.value).toBe('')
   expect(editor2.find<HTMLInputElement>('input[name=value]').element.value).toBe('')
@@ -150,6 +154,7 @@ test('Normal server add - SSE', async () => {
 
   // save
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
+  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,
@@ -158,12 +163,14 @@ test('Normal server add - SSE', async () => {
     type: 'stdio',
     command: 'npx',
     url: 'script1.js',
-    cwd: '',//'picked_folder',
+    cwd: 'picked_folder',
     env: { key1: 'value1', key2: 'value2' },
     headers: {},
+    oauth: null,
   })
 
   // fake select the server 
+  await mcp.vm.$nextTick()
   mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
   await mcp.vm.$nextTick()
 
@@ -181,6 +188,7 @@ test('Normal server add - SSE', async () => {
   await editor.find<HTMLButtonElement>('button.remove').trigger('click')
 
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
+  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,
@@ -192,6 +200,7 @@ test('Normal server add - SSE', async () => {
     cwd: '',//'picked_folder',
     env: { key3: 'value3' },
     headers: {},
+    oauth: null,
   })
 
 })
@@ -202,9 +211,10 @@ test('Normal server add - HTTP', async () => {
   const editor = mcp.findComponent(McpServerEditor)
   await editor.find<HTMLSelectElement>('select[name=type]').setValue('http')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('http://www.mcp.com')
-  
+
   // save
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
+  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,
@@ -216,9 +226,11 @@ test('Normal server add - HTTP', async () => {
     cwd: '',
     env: {},
     headers: {},
+    oauth: null,
   })
 
   // fake select the server 
+  await mcp.vm.$nextTick()
   mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
   await mcp.vm.$nextTick()
 
@@ -239,6 +251,7 @@ test('Normal server add - HTTP', async () => {
 
   // save
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
+  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,
@@ -250,9 +263,11 @@ test('Normal server add - HTTP', async () => {
     cwd: '',
     env: {},
     headers: { key1: 'value1', key2: 'value2' },
+    oauth: null,
   })
 
   // fake select the server 
+  await mcp.vm.$nextTick()
   mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
   await mcp.vm.$nextTick()
 
@@ -270,6 +285,7 @@ test('Normal server add - HTTP', async () => {
   await editor.find<HTMLButtonElement>('button.remove').trigger('click')
 
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
+  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,
@@ -281,6 +297,7 @@ test('Normal server add - HTTP', async () => {
     cwd: '',
     env: {},
     headers: { key3: 'value3' },
+    oauth: null,
   })
 
 })

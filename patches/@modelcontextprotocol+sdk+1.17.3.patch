@@ -1,24 +1,24 @@
 diff --git a/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js b/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
-index c4038a9..b682444 100644
+index f713dd6..a8fd0a3 100644
 --- a/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
 +++ b/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
-@@ -73,7 +73,7 @@ class StdioClientTransport {
-             this._process = (0, cross_spawn_1.default)(this._serverParams.command, (_a = this._serverParams.args) !== null && _a !== void 0 ? _a : [], {
-                 env: (_b = this._serverParams.env) !== null && _b !== void 0 ? _b : getDefaultEnvironment(),
-                 stdio: ["pipe", "pipe", (_c = this._serverParams.stderr) !== null && _c !== void 0 ? _c : "inherit"],
+@@ -78,7 +78,7 @@ class StdioClientTransport {
+                     ...this._serverParams.env,
+                 },
+                 stdio: ["pipe", "pipe", (_b = this._serverParams.stderr) !== null && _b !== void 0 ? _b : "inherit"],
 -                shell: false,
 +                shell: node_process_1.default.platform === "win32",
                  signal: this._abortController.signal,
                  windowsHide: node_process_1.default.platform === "win32" && isElectron(),
                  cwd: this._serverParams.cwd,
 diff --git a/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js b/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
-index 0edafa5..8506213 100644
+index d0ce090..3291e4f 100644
 --- a/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
 +++ b/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
-@@ -66,7 +66,7 @@ export class StdioClientTransport {
-             this._process = spawn(this._serverParams.command, (_a = this._serverParams.args) !== null && _a !== void 0 ? _a : [], {
-                 env: (_b = this._serverParams.env) !== null && _b !== void 0 ? _b : getDefaultEnvironment(),
-                 stdio: ["pipe", "pipe", (_c = this._serverParams.stderr) !== null && _c !== void 0 ? _c : "inherit"],
+@@ -71,7 +71,7 @@ export class StdioClientTransport {
+                     ...this._serverParams.env,
+                 },
+                 stdio: ["pipe", "pipe", (_b = this._serverParams.stderr) !== null && _b !== void 0 ? _b : "inherit"],
 -                shell: false,
 +                shell: process.platform === "win32",
                  signal: this._abortController.signal,

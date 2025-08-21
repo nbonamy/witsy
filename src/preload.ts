@@ -196,6 +196,9 @@ contextBridge.exposeInMainWorld(
       getTools: (): Promise<LlmTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_TOOLS) },
       callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke(IPC.MCP.CALL_TOOL, { name, parameters }) },
       originalToolName(name: string): string { return ipcRenderer.sendSync(IPC.MCP.ORIGINAL_TOOL_NAME, name) },
+      detectOAuth: (url: string): Promise<any> => { return ipcRenderer.invoke(IPC.MCP.DETECT_OAUTH, url) },
+      startOAuthFlow: (url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string> => { return ipcRenderer.invoke(IPC.MCP.START_OAUTH_FLOW, JSON.stringify({ url, clientMetadata, clientCredentials })) },
+      completeOAuthFlow: (serverUuid: string, authCode: string): Promise<boolean> => { return ipcRenderer.invoke(IPC.MCP.COMPLETE_OAUTH_FLOW, JSON.stringify({ serverUuid, authCode })) },
     },
     scratchpad: {
       open: (textId?: string): void => { return ipcRenderer.send(IPC.SCRATCHPAD.OPEN, textId) },

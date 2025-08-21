@@ -1,6 +1,7 @@
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { strDict } from './index'
+import { OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js'
 
 export type McpServerType = 'stdio' | 'sse' | 'http'
 
@@ -19,6 +20,13 @@ export type McpServer = {
   cwd?: string
   env?: strDict
   headers?: strDict
+  oauth?: McpOAuthConfig
+}
+
+export type McpOAuthConfig = {
+  tokens?: OAuthTokens
+  clientId?: string
+  clientSecret?: string
 }
 
 export type McpClient = {

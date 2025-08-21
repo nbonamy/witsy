@@ -1595,6 +1595,25 @@
     "serverEditor": {
       "environmentVariables": "Variables d'environnement",
       "httpHeaders": "En-têtes HTTP personnalisés",
+      "oauth": {
+        "authorizing": "Démarrage de l'authentification",
+        "authorizingText": "Votre navigateur va s'ouvrir pour autoriser Witsy. Veuillez compléter l'autorisation et revenir à cette fenêtre une fois terminé.",
+        "clientId": "ID client",
+        "clientSecret": "Secret client",
+        "error": "Échec de la configuration de l'authentification",
+        "errorText": "Échec de la configuration de l'authentification. Veuillez vérifier votre connexion Internet et réessayer.",
+        "notRequired": "Ce serveur ne nécessite pas d'authentification.",
+        "removeConfirm": "Supprimer les données d'authentification",
+        "removeConfirmText": "Êtes-vous sûr de vouloir supprimer les données d'authentification ? Vous devrez réautoriser si vous souhaitez utiliser ce serveur à nouveau.",
+        "required": "L'authentification est requise pour se connecter à ce serveur",
+        "requiredText": "Vous devez vous authentifier pour utiliser ce serveur. Souhaitez-vous le configurer maintenant ?",
+        "setup": "Configurer",
+        "showAuthFields": "Authentification avancée (consultez la documentation du serveur MCP)",
+        "success": "Configuration de l'authentification terminée",
+        "successful": "L'authentification a été configurée avec succès pour ce serveur.",
+        "successText": "L'authentification a été configurée avec succès pour ce serveur. Vous pouvez enregistrer vos modifications.",
+        "title": "Données d'authentification"
+      },
       "selectCommand": "Sélectionner une commande",
       "serverPackage": "Package du serveur",
       "smitheryApiKey": "Clé API Smithery.ai",
@@ -2249,7 +2268,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "Add server",
+      "addCustomServer": "Ajouter un serveur MCP…",
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce serveur ?",
       "connectedToServers": "Connecté à {count} serveur{count > 1 ? 's' : ''} MCP",
       "copyInstallCommand": "Vous pouvez copier la commande d'installation dans le presse-papiers et l'essayer dans un Terminal.",

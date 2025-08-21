@@ -1614,6 +1614,25 @@
     "serverEditor": {
       "environmentVariables": "Variáveis de Ambiente",
       "httpHeaders": "Cabeçalhos HTTP Personalizados",
+      "oauth": {
+        "authorizing": "Iniciando autenticação",
+        "authorizingText": "Seu navegador será aberto para autorizar o Witsy. Por favor, complete a autorização e retorne a esta janela quando terminar.",
+        "clientId": "ID do cliente",
+        "clientSecret": "Segredo do cliente",
+        "error": "Falha na configuração da autenticação",
+        "errorText": "Falha ao configurar a autenticação. Por favor, verifique sua conexão com a internet e tente novamente.",
+        "notRequired": "Este servidor não requer autenticação.",
+        "removeConfirm": "Excluir dados de autenticação",
+        "removeConfirmText": "Tem certeza de que deseja excluir os dados de autenticação? Você precisará reautorizar se quiser usar este servidor novamente.",
+        "required": "A autenticação é necessária para conectar a este servidor",
+        "requiredText": "Você precisa se autenticar para usar este servidor. Gostaria de configurar agora?",
+        "setup": "Configurar",
+        "showAuthFields": "Autenticação avançada (consulte a documentação do servidor MCP)",
+        "success": "Configuração de autenticação concluída",
+        "successful": "A autenticação foi configurada com sucesso para este servidor.",
+        "successText": "A autenticação foi configurada com sucesso para este servidor. Você pode salvar suas alterações.",
+        "title": "Dados de autenticação"
+      },
       "selectCommand": "Selecionar comando",
       "serverPackage": "Pacote do Servidor",
       "smitheryApiKey": "Chave da API do Smithery.ai",
@@ -2271,7 +2290,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "Add server",
+      "addCustomServer": "Adicionar servidor MCP...",
       "confirmDelete": "Tem certeza de que deseja excluir este servidor?",
       "connectedToServers": "Conectado a {count} servidor MCP{count > 1 ? 'es' : ''}",
       "copyInstallCommand": "Você pode copiar o comando de instalação para sua área de transferência e experimentá-lo em um Terminal.",
