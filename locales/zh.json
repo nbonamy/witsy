@@ -1,5 +1,6 @@
 {
   "common": {
+    "actions": "操作",
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
     "back": "返回",
@@ -104,6 +105,7 @@
     "name": "名称",
     "new": "新建",
     "newChat": "New Conversation",
+    "next": "下一步",
     "no": "否",
     "notes": "Notes",
     "ok": "确定",
@@ -190,13 +192,14 @@
       },
       "information": {
         "help": {
-          "description": "代理用途的简短描述。当此代理在工作流程中使用时，该描述将与大语言模型共享，帮助其理解代理并最终决定调用它。",
-          "goal": "代理的目标。该目标将作为发送给大语言模型的系统指令。请勿在此包含执行的具体信息，这些将在提示中设置。",
-          "name": "您代理的描述性名称。"
+          "description": "代理目的的简短描述。帮助模型理解代理的意图。",
+          "goal": "指导代理决策的个人目标。",
+          "name": "给你的代理起一个名字。这将帮助你以后识别它。",
+          "type": "代理的功能及其与其他代理的关系。"
         },
         "promptInputs": "检测到的变量",
         "title": "基本信息",
-        "type": "执行模型"
+        "type": "角色"
       },
       "invocation": {
         "missingInput": "[{name} 缺失]",
@@ -214,20 +217,19 @@
         "help": {
           "warning": "代理执行高度依赖于各模型的能力。请选择支持代理功能的模型。"
         },
-        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
         "showModelSettings": "高级设置",
         "title": "模型配置"
       },
       "settings": {
-        "title": "模型设置"
+        "title": "高级模型设置"
       },
       "workflow": {
         "addStep": "添加步骤",
         "confirmDeleteStep": "您确定要删除此步骤吗？",
-        "customAgents": "代理…",
-        "customTools": "工具…",
-        "description": "描述：用于聊天中提供进度更新",
-        "docRepo": "基础…",
+        "customAgents": "分配协同代理",
+        "customTools": "添加工具",
+        "description": "@:{'common.description'}",
+        "docRepo": "添加知识",
         "docRepoNone": "无知识库",
         "error": {
           "emptyStepPrompt": "步骤 #{step} 的提示不能为空。",
@@ -236,14 +238,15 @@
         },
         "help": {
           "connect": "使用 {'{'}{'{'}output.#{'}'}{'}'} 变量连接前一步骤的输出（例如，第1步的输出为 {'{'}{'{'}output.1{'}'}{'}'}）",
+          "description": "描述将用于在代理执行过程中提供进度更新",
           "docRepo": "Facts extracted from the collection will be appended to your prompt.",
           "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "步骤 #{step} 的输出",
+          "prompt": "代理的自定义指令",
           "title": "设计您的多步骤工作流。提示模板将用于执行每个步骤。您可以包含“变量”，这些变量将在执行代理时用用户提供的值替换。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示输入值时指导用户）。描述和值都是可选的。"
         },
         "jsonSchema": "JSON…",
-        "step": "步骤 #{step}",
-        "stepFull": "步骤 #{step}：{text}",
+        "step": "步骤 {step}",
         "structuredOutput": {
           "text": "指定一个<a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">简单的JSON模式</a>来定义此步骤的预期输出格式。",
           "title": "JSON schema"
@@ -261,22 +264,22 @@
           },
           "text": "实验性功能！",
           "title": "输入 A2A 的 URL"
-        }
+        },
+        "title": "导入 A2A 代理"
       },
       "confirmDelete": "您确定要删除此代理吗？",
-      "create": "创建代理",
+      "create": "新建代理",
       "empty": "请选择现有代理或创建新代理。",
       "list": {
         "empty": "尚未创建此类型的代理。",
-        "runnable": "可执行代理",
-        "support": "支持代理"
+        "runnable": "用户发起",
+        "support": "工具"
       },
       "title": "代理锻造"
     },
     "goal": "目标",
     "help": {
       "clearHistory": "清除此代理的所有历史记录",
-      "create": "创建新代理",
       "delete": "删除此代理",
       "deleteRun": "删除此次运行",
       "edit": "编辑此代理",
@@ -289,6 +292,7 @@
       "confirmDeleteSingle": "您确定要删除此运行吗？",
       "date": "日期",
       "empty": "暂无历史记录…",
+      "lastRun": "上次运行",
       "log": "日志",
       "neverRun": "从未",
       "status": "状态",
@@ -330,8 +334,8 @@
       "workflow": "⚙️ 工作流"
     },
     "type": {
-      "runnable": "用户可执行",
-      "support": "支持代理"
+      "runnable": "用户发起",
+      "support": "工具"
     },
     "view": {
       "filter": {
@@ -1611,6 +1615,34 @@
     }
   },
   "mcp": {
+    "addCustomServer": "添加 MCP 服务器…",
+    "confirmDelete": "你确定要删除这个服务器吗？",
+    "copyInstallCommand": "你可以复制安装命令到剪贴板并尝试在终端中运行。",
+    "failedToInstall": "服务器安装失败",
+    "importJson": {
+      "details": "从 Claude 复制/粘贴 JSON MCP 服务器定义。",
+      "errorArgs": "无效的 MCP 服务器参数。",
+      "errorCommand": "未找到 MCP 服务器命令。",
+      "errorEmpty": "JSON 不能为空。",
+      "errorFormat": "解析 JSON 服务器定义时出错。",
+      "errorMultiple": "检测到多个服务器。请一次粘贴一个服务器。",
+      "title": "从 JSON 导入"
+    },
+    "importSmitheryServer": "从 Smithery.ai 安装",
+    "mcpServers": "MCP 服务器",
+    "modelContextProtocol": "模型上下文协议",
+    "noServersFound": "未找到 MCP 服务器。点击上方按钮添加新服务器。",
+    "noTools": "无可用工具",
+    "oauth": {
+      "success": {
+        "message": "你可以关闭此窗口并返回 Witsy。",
+        "title": "授权成功！"
+      }
+    },
+    "refreshServers": "刷新列表",
+    "restartServers": "重启服务器",
+    "retryWithApiKey": "看起来需要 API 密钥才能安装此服务器。你想用你的 API 密钥重试吗？否则你可以复制命令并尝试在终端中运行。",
+    "server": "服务器",
     "serverEditor": {
       "environmentVariables": "环境变量",
       "httpHeaders": "自定义 HTTP 头",
@@ -1636,7 +1668,6 @@
       "selectCommand": "选择命令",
       "serverPackage": "服务器包",
       "smitheryApiKey": "Smithery.ai API 密钥",
-      "title": "MCP 服务器配置",
       "type": {
         "http": "可流式传输的 HTTP",
         "smithery": "Smithery.ai",
@@ -1650,6 +1681,18 @@
         "urlRequired": "确保你为这个服务器输入了一个 URL。"
       },
       "workingDirectory": "工作目录"
+    },
+    "serverLogs": "MCP 服务器日志",
+    "serverNotFound": "你尝试连接的服务器不存在。",
+    "servers": "服务器。从以下位置发现并安装 MCP 服务器",
+    "smithery": "Smithery",
+    "tooltips": {
+      "deleteServer": "删除服务器",
+      "editServer": "编辑服务器",
+      "startServer": "启动服务器",
+      "stopServer": "停止服务器",
+      "viewLogs": "查看服务器日志",
+      "viewTools": "查看可用工具"
     },
     "variableEditor": {
       "title": "MCP 环境变量"
@@ -2289,46 +2332,6 @@
         "visionary": "🚀 前瞻性和富有远见"
       }
     },
-    "mcp": {
-      "addCustomServer": "添加 MCP 服务器…",
-      "confirmDelete": "你确定要删除这个服务器吗？",
-      "connectedToServers": "已连接到 {count} 个 MCP 服务器",
-      "copyInstallCommand": "你可以将安装命令复制到剪贴板，并在终端中尝试运行。",
-      "description": "此插件允许 LLM 引擎访问",
-      "failedToInstall": "服务器安装失败",
-      "importJson": {
-        "details": "在此粘贴来自Claude的JSON MCP服务器定义。",
-        "errorArgs": "无效的MCP服务器参数。",
-        "errorCommand": "未找到MCP服务器命令。",
-        "errorEmpty": "JSON不能为空。",
-        "errorFormat": "解析JSON服务器定义时出错。",
-        "errorMultiple": "发现多个服务器。请一次粘贴一个服务器。",
-        "menu": "@:{'mcp.importJson.title'}",
-        "title": "从 JSON 导入"
-      },
-      "importSmitheryServer": "Install from Smithery.ai",
-      "mcpServers": "MCP 服务器",
-      "modelContextProtocol": "模型上下文协议",
-      "noServersFound": "No MCP Servers found. Click on the buttons below to add a new server.",
-      "noTools": "没有可用工具",
-      "retryWithApiKey": "安装此服务器似乎需要一个 API 密钥。您想用您的 API 密钥重试吗？否则您可以复制命令并在终端中尝试。",
-      "serverLogs": "MCP 服务器日志",
-      "serverNotFound": "您尝试连接的服务器不存在。",
-      "servers": "服务器。从",
-      "smithery": "Smithery",
-      "tools": "@:{'common.tools'}",
-      "tooltips": {
-        "deleteServer": "删除服务器",
-        "editServer": "编辑服务器",
-        "refreshServers": "刷新MCP服务器列表",
-        "restartServers": "重启MCP服务器",
-        "startServer": "启动服务器",
-        "stopServer": "停止服务器",
-        "viewLogs": "查看服务器日志",
-        "viewTools": "查看可用工具"
-      },
-      "totalTools": "总共 {count} 个服务可用"
-    },
     "plugins": {
       "browse": {
         "description": "此插件允许 LLM 引擎从互联网下载内容，并使用它生成更准确的回答。",
@@ -2438,7 +2441,6 @@
       "experts": "@:{'common.experts'}",
       "general": "常规",
       "llm": "LLM",
-      "mcp": "MCP",
       "models": "模型",
       "plugins": "插件",
       "shortcuts": "快捷键",

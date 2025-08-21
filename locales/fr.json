@@ -1,5 +1,6 @@
 {
   "common": {
+    "actions": "Actions",
     "arguments": "Arguments",
     "askMeAnything": "Demandez-moi ce que vous voulez !",
     "back": "Retour",
@@ -85,6 +86,7 @@
     "name": "Nom",
     "new": "Nouveau",
     "newChat": "New Conversation",
+    "next": "Suivant",
     "no": "Non",
     "notes": "Notes",
     "ok": "OK",
@@ -171,13 +173,14 @@
       },
       "information": {
         "help": {
-          "description": "Brève description de l'objectif de votre agent. Lorsque cet agent est utilisé dans un flux de travail, cela sera partagé avec le LLM pour l'aider à comprendre l'agent et éventuellement décider de l'appeler.",
-          "goal": "L'objectif de l'agent. Ceci sera utilisé comme instructions système envoyées au LLM. N'incluez pas d'informations spécifiques à l'exécution ici car elles seront définies dans l'invite.",
-          "name": "Nom descriptif pour votre agent."
+          "description": "Brève description de l'objectif de votre agent. Aide les modèles à comprendre l'intention de l'agent.",
+          "goal": "L'objectif individuel qui guide la prise de décision de l'agent.",
+          "name": "Donnez un nom à votre agent. Cela vous aidera à l'identifier plus tard.",
+          "type": "La fonction de l'agent et sa relation avec les autres agents."
         },
         "promptInputs": "Variables détectées",
         "title": "Informations Générales",
-        "type": "Modèle d'exécution"
+        "type": "Rôle"
       },
       "invocation": {
         "missingInput": "[{name} est manquant]",
@@ -195,20 +198,19 @@
         "help": {
           "warning": "L'exécution de l'agent dépend fortement des capacités de chaque modèle. Assurez-vous de sélectionner un modèle qui supporte les capacités agentiques."
         },
-        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
         "showModelSettings": "Paramètres Avancés",
         "title": "Configuration du Modèle"
       },
       "settings": {
-        "title": "Paramètres du Modèle"
+        "title": "Paramètres Avancés du Modèle"
       },
       "workflow": {
         "addStep": "Ajouter une étape",
         "confirmDeleteStep": "Êtes-vous sûr de vouloir supprimer cette étape ?",
-        "customAgents": "Délégués…",
-        "customTools": "Outils…",
-        "description": "Description : utilisée dans le chat pour fournir des mises à jour sur l'avancement",
-        "docRepo": "Base…",
+        "customAgents": "Attribuer des Co-Agents",
+        "customTools": "Ajouter des Outils",
+        "description": "@:{'common.description'}",
+        "docRepo": "Ajouter des Connaissances",
         "docRepoNone": "Pas de base de connaissances",
         "error": {
           "emptyStepPrompt": "L'invite de l’étape #{step} ne peut pas être vide.",
@@ -217,14 +219,15 @@
         },
         "help": {
           "connect": "Connectez la sortie des étapes précédentes en utilisant les variables {'{'}{'{'}output.#{'}'}{'}'} (par exemple {'{'}{'{'}output.1{'}'}{'}'} pour la sortie de l’étape 1)",
+          "description": "La description sera utilisée pour fournir des mises à jour de progression durant l'exécution de l'agent",
           "docRepo": "Facts extracted from the collection will be appended to your prompt.",
           "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "Sortie de l'étape #{step}",
+          "prompt": "Les instructions personnalisées pour l'agent",
           "title": "Concevez votre flux de travail multi-étapes. Des modèles d'invite seront utilisés pour exécuter chaque étape. Vous pouvez inclure des « variables » qui seront remplacées par les valeurs fournies par l'utilisateur lors de l'exécution de l'agent. Utilisez le format {'{'}{'{'}nom:description:valeur{'}'}{'}'} pour définir une variable (la description guidera l'utilisateur lorsqu'il sera invité à fournir une valeur). La description et la valeur par défaut sont toutes deux optionnelles."
         },
         "jsonSchema": "JSON…",
-        "step": "Étape #{step}",
-        "stepFull": "Étape #{step} : {text}",
+        "step": "Étape {step}",
         "structuredOutput": {
           "text": "Spécifiez un <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">schéma JSON simple</a> pour définir le format de sortie attendu de cette étape.",
           "title": "Schéma JSON"
@@ -242,22 +245,22 @@
           },
           "text": "FONCTIONNALITÉ EXPÉRIMENTALE !",
           "title": "Entrez l'URL de A2A"
-        }
+        },
+        "title": "Importer un Agent A2A"
       },
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet agent ?",
-      "create": "Créer un agent",
+      "create": "Nouvel Agent",
       "empty": "Sélectionnez un agent existant ou créez-en un nouveau.",
       "list": {
         "empty": "Aucun agent de ce type créé pour le moment.",
-        "runnable": "Agents exécutables",
-        "support": "Agents de support"
+        "runnable": "Initié par l'utilisateur",
+        "support": "Utilitaire"
       },
       "title": "Forge d'agent"
     },
     "goal": "Objectif",
     "help": {
       "clearHistory": "Effacer tout l'historique pour cet agent",
-      "create": "Créer un nouvel agent",
       "delete": "Supprimer cet agent",
       "deleteRun": "Supprimer cette exécution",
       "edit": "Modifier cet agent",
@@ -270,6 +273,7 @@
       "confirmDeleteSingle": "Êtes-vous sûr de vouloir supprimer cette exécution ?",
       "date": "Date",
       "empty": "Pas encore d'historique…",
+      "lastRun": "Dernière Exécution",
       "log": "Journal",
       "neverRun": "Jamais",
       "status": "Statut",
@@ -311,8 +315,8 @@
       "workflow": "⚙️ Flux de travail"
     },
     "type": {
-      "runnable": "Exécutable par l'utilisateur",
-      "support": "Agent de support"
+      "runnable": "Initié par l'utilisateur",
+      "support": "Utilitaire"
     },
     "view": {
       "filter": {
@@ -1592,6 +1596,34 @@
     }
   },
   "mcp": {
+    "addCustomServer": "Ajouter un serveur MCP…",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce serveur ?",
+    "copyInstallCommand": "Vous pouvez copier la commande d'installation dans votre presse-papiers et l'essayer dans un terminal.",
+    "failedToInstall": "Échec de l'installation du serveur",
+    "importJson": {
+      "details": "Copiez/collez ici les définitions JSON de serveur MCP depuis Claude.",
+      "errorArgs": "Arguments du serveur MCP invalides.",
+      "errorCommand": "Commande du serveur MCP non trouvée.",
+      "errorEmpty": "Le JSON ne peut pas être vide.",
+      "errorFormat": "Erreur lors de l'analyse de la définition JSON du serveur.",
+      "errorMultiple": "Plusieurs serveurs trouvés. Veuillez coller un serveur à la fois.",
+      "title": "Importer depuis JSON"
+    },
+    "importSmitheryServer": "Installer depuis Smithery.ai",
+    "mcpServers": "Serveurs MCP",
+    "modelContextProtocol": "Protocole de Contexte du Modèle",
+    "noServersFound": "Aucun serveur MCP trouvé. Cliquez sur les boutons ci-dessus pour ajouter un nouveau serveur.",
+    "noTools": "Aucun outil disponible",
+    "oauth": {
+      "success": {
+        "message": "Vous pouvez fermer cette fenêtre et revenir à Witsy.",
+        "title": "Autorisation réussie !"
+      }
+    },
+    "refreshServers": "Rafraîchir la liste",
+    "restartServers": "Redémarrer les serveurs",
+    "retryWithApiKey": "Il semble qu'une clé API soit requise pour installer ce serveur. Voulez-vous réessayer avec votre clé API ? Sinon, vous pouvez copier la commande et l'essayer dans un terminal.",
+    "server": "Serveur",
     "serverEditor": {
       "environmentVariables": "Variables d'environnement",
       "httpHeaders": "En-têtes HTTP personnalisés",
@@ -1617,7 +1649,6 @@
       "selectCommand": "Sélectionner une commande",
       "serverPackage": "Package du serveur",
       "smitheryApiKey": "Clé API Smithery.ai",
-      "title": "Configuration du serveur MCP",
       "type": {
         "http": "HTTP diffusé",
         "smithery": "Smithery.ai",
@@ -1631,6 +1662,18 @@
         "urlRequired": "Assurez-vous d'entrer une URL pour ce serveur."
       },
       "workingDirectory": "Répertoire de travail"
+    },
+    "serverLogs": "Journaux du Serveur MCP",
+    "serverNotFound": "Le serveur auquel vous essayez de vous connecter n'existe pas.",
+    "servers": "serveurs. Découvrez et installez des serveurs MCP depuis le",
+    "smithery": "Smithery",
+    "tooltips": {
+      "deleteServer": "Supprimer le serveur",
+      "editServer": "Modifier le serveur",
+      "startServer": "Démarrer le serveur",
+      "stopServer": "Arrêter le serveur",
+      "viewLogs": "Voir les journaux du serveur",
+      "viewTools": "Voir les outils disponibles"
     },
     "variableEditor": {
       "title": "Variable d'environnement MCP"
@@ -2267,46 +2310,6 @@
         "visionary": "🚀 Futuriste et visionnaire"
       }
     },
-    "mcp": {
-      "addCustomServer": "Ajouter un serveur MCP…",
-      "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce serveur ?",
-      "connectedToServers": "Connecté à {count} serveur{count > 1 ? 's' : ''} MCP",
-      "copyInstallCommand": "Vous pouvez copier la commande d'installation dans le presse-papiers et l'essayer dans un Terminal.",
-      "description": "Ce plugin permet aux moteurs LLM d'accéder aux serveurs",
-      "failedToInstall": "Échec de l'installation du serveur",
-      "importJson": {
-        "details": "Copiez/collez les définitions JSON du serveur MCP de Claude ici.",
-        "errorArgs": "Arguments de serveur MCP invalides.",
-        "errorCommand": "Commande du serveur MCP introuvable.",
-        "errorEmpty": "Le JSON ne peut pas être vide.",
-        "errorFormat": "Erreur lors de l'analyse de la définition du serveur JSON.",
-        "errorMultiple": "Plusieurs serveurs trouvés. Veuillez coller un serveur à la fois.",
-        "menu": "@:{'mcp.importJson.title'}",
-        "title": "Importer depuis JSON"
-      },
-      "importSmitheryServer": "Install from Smithery.ai",
-      "mcpServers": "Serveurs MCP",
-      "modelContextProtocol": "Model Context Protocol",
-      "noServersFound": "No MCP Servers found. Click on the buttons below to add a new server.",
-      "noTools": "Aucun outil disponible",
-      "retryWithApiKey": "Il semble qu'une clé API soit nécessaire pour installer ce serveur. Voulez-vous réessayer avec votre clé API ? Sinon, vous pouvez copier la commande et l'essayer dans un terminal.",
-      "serverLogs": "Journaux du serveur MCP",
-      "serverNotFound": "Le serveur auquel vous essayez de vous connecter n'existe pas.",
-      "servers": ". Découvrez et installez des serveurs MCP depuis",
-      "smithery": "Smithery",
-      "tools": "@:{'common.tools'}",
-      "tooltips": {
-        "deleteServer": "Supprimer le serveur",
-        "editServer": "Modifier le serveur",
-        "refreshServers": "Actualiser la liste des serveurs MCP",
-        "restartServers": "Redémarrer les serveurs MCP",
-        "startServer": "Démarrer le serveur",
-        "stopServer": "Arrêter le serveur",
-        "viewLogs": "Voir les journaux du serveur",
-        "viewTools": "Voir les outils disponibles"
-      },
-      "totalTools": "Total de {count} service{count > 1 ? 's' : ''} disponible{count > 1 ? 's' : ''}"
-    },
     "plugins": {
       "browse": {
         "description": "Ce plugin permet aux moteurs LLM de télécharger du contenu depuis Internet et de l'utiliser pour générer des réponses plus précises.",
@@ -2416,7 +2419,6 @@
       "experts": "@:{'common.experts'}",
       "general": "Général",
       "llm": "LLM",
-      "mcp": "MCP",
       "models": "Modèles",
       "plugins": "Plugins",
       "shortcuts": "Raccourcis",

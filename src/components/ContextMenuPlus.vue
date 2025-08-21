@@ -523,6 +523,10 @@ defineExpose({
   gap: 0.25rem;
 }
 
+:deep(.item.danger) {
+  color: var(--color-error);
+}
+
 :deep(.item.wrap) {
   white-space: normal;
 }

@@ -67,11 +67,11 @@
                 <!-- Context menu for other actions -->
                 <ContextMenuTrigger position="below-left">
                   <template #menu="{ close }">
-                    <div class="item edit" @click="close(); onEdit(server)">
-                      {{ t('mcp.tooltips.editServer') }}
-                    </div>
                     <div class="item logs" @click="close(); showLogs(server)" v-if="hasLogs(server)">
                       {{ t('mcp.tooltips.viewLogs') }}
+                    </div>
+                    <div class="item edit" @click="close(); onEdit(server)">
+                      {{ t('mcp.tooltips.editServer') }}
                     </div>
                     <div class="item delete danger" @click="close(); onDelete(server)">
                       {{ t('mcp.tooltips.deleteServer') }}
