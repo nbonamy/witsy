@@ -1188,7 +1188,6 @@ defineExpose({
     cursor: pointer;
     color: var(--prompt-icon-color);
     &.active {
-      fill: var(--highlight-color);
       color: var(--highlight-color);
     }
 
