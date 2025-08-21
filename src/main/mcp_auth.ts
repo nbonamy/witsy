@@ -1,34 +1,31 @@
-import { App, shell } from 'electron'
-import { createServer } from 'node:http'
-import * as portfinder from 'portfinder'
+
+import { OAuthClientProvider, UnauthorizedError } from '@modelcontextprotocol/sdk/client/auth.js'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js"
 import { OAuthClientInformation, OAuthClientInformationFull, OAuthClientMetadata, OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js'
-import { OAuthClientProvider, UnauthorizedError } from '@modelcontextprotocol/sdk/client/auth.js'
+import { App, shell } from 'electron'
+import { createServer } from 'node:http'
+import * as portfinder from 'portfinder'
 
-
-
-/**
- * OAuth client provider for MCP servers that persists tokens to configuration
- */
 export class McpOAuthClientProvider implements OAuthClientProvider {
   private _codeVerifier?: string
   private _redirectUrl: string | URL
   private _clientMetadata: OAuthClientMetadata
   private _onRedirect: (url: URL) => void
+  private _onTokensUpdated: (tokens: OAuthTokens) => void
   private _clientInformation?: OAuthClientInformationFull
   private _tokens?: OAuthTokens
 
   constructor(
     redirectUrl: string | URL, 
-    clientMetadata: OAuthClientMetadata, 
-    onRedirect?: (url: URL) => void
+    clientMetadata: OAuthClientMetadata,
+    onRedirect: (url: URL) => void,
+    onTokensUpdated: (tokens: OAuthTokens) => void
   ) {
     this._redirectUrl = redirectUrl
     this._clientMetadata = clientMetadata
-    this._onRedirect = onRedirect || ((url) => {
-      console.log(`Redirect to: ${url.toString()}`)
-    })
+    this._onRedirect = onRedirect
+    this._onTokensUpdated = onTokensUpdated
   }
 
   get redirectUrl(): string | URL {
@@ -53,6 +50,7 @@ export class McpOAuthClientProvider implements OAuthClientProvider {
 
   saveTokens(tokens: OAuthTokens): void {
     this._tokens = tokens
+    this._onTokensUpdated(tokens)
   }
 
   redirectToAuthorization(authorizationUrl: URL): void {
@@ -77,6 +75,7 @@ export class McpOAuthClientProvider implements OAuthClientProvider {
  */
 // Global OAuth callback server singleton
 class OAuthCallbackServer {
+
   private static instance: OAuthCallbackServer | null = null
   private server: any = null
   private port: number | null = null
@@ -147,7 +146,7 @@ class OAuthCallbackServer {
           <html>
             <body>
               <h1>Authorization Successful!</h1>
-              <p>You can close this window and return to the application.</p>
+              <p>You can close this window and return to Witsy.</p>
               <script>setTimeout(() => window.close(), 2000);</script>
             </body>
           </html>
@@ -371,7 +370,8 @@ export default class McpOAuthManager {
         console.log(`📌 OAuth redirect handler called - opening browser`);
         console.log(`Opening browser to: ${urlWithState.toString()}`);
         this.openBrowser(urlWithState.toString());
-      }
+      },
+      () => {}
     );
     
     // Set client credentials if provided (for servers that don't support dynamic registration)
@@ -447,13 +447,6 @@ export default class McpOAuthManager {
    */
   async completeOAuthFlow(serverUuid: string, authorizationCode: string): Promise<boolean> {
     console.log(`Completing OAuth flow for server ${serverUuid} with code: ${authorizationCode.substring(0, 10)}...`)
-    
-    // In the new reference implementation pattern, OAuth completion is handled
-    // by the temporary callback server in waitForOAuthCallback()
-    // This method is mainly kept for backward compatibility with tests
-    
-    // The OAuth manager doesn't track individual server flows anymore,
-    // so we return false to let the Mcp class handle it via transport.finishAuth()
     return false
   }
 
@@ -463,19 +456,16 @@ export default class McpOAuthManager {
    */
   async createOAuthProvider(
     clientMetadata?: OAuthClientMetadata, 
-    onRedirect?: (url: URL) => void
+    onRedirect?: (url: URL) => void,
+    onTokensUpdated?: (tokens: OAuthTokens) => void
   ): Promise<McpOAuthClientProvider> {
-    // Use provided metadata or generate standardized Witsy client metadata
+    
     const metadata = clientMetadata || await this.getClientMetadata()
     const redirectUrl = metadata.redirect_uris?.[0] || `http://localhost:${this.callbackServer.callbackPort}/callback`
-    return new McpOAuthClientProvider(redirectUrl, metadata, onRedirect)
+    return new McpOAuthClientProvider(redirectUrl, metadata, onRedirect, onTokensUpdated)
   }
 
-  /**
-   * Clean up resources - simplified
-   */
   shutdown(): void {
-    // No persistent resources to clean up in the new implementation
   }
 
 }

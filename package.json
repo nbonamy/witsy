@@ -93,7 +93,7 @@
     "@imengyu/vue3-context-menu": "^1.5.0",
     "@langchain/textsplitters": "^0.0.3",
     "@mistralai/mistralai": "^1.1.0",
-    "@modelcontextprotocol/sdk": "^1.11.2",
+    "@modelcontextprotocol/sdk": "^1.17.3",
     "@nut-tree-fork/nut-js": "^4.2.6",
     "@speechmatics/auth": "^0.0.1",
     "@speechmatics/real-time-client": "^6.0.0",

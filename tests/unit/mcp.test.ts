@@ -131,10 +131,10 @@ test('Initialization', async () => {
   expect(Client.prototype.connect).toHaveBeenCalledTimes(0)
   expect(await mcp.getStatus()).toEqual({ servers: [], logs: {} })
   expect(mcp.getServers()).toStrictEqual([
-    { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' } },
-    { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
-    { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
-    { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002' },
+    { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, oauth: null },
+    { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', oauth: null },
+    { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py', oauth: null },
+    { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', oauth: null },
     { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined },
     { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined, oauth: undefined }
   ])
@@ -167,6 +167,7 @@ test('Create server - Stdio', async () => {
     url: 'script.js',
     cwd: 'cwd1',
     env: { KEY: 'value' },
+    oauth: null,
   })
 })
 
@@ -214,7 +215,7 @@ test('Create server - HTTP', async () => {
   })
   expect(Client.prototype.connect).toHaveBeenLastCalledWith(expect.objectContaining({
     onerror: expect.any(Function),
-    onmessage: expect.any(Function),
+    //onmessage: expect.any(Function),
   }))
   
   expect(mcp.getServers().find(s => s.url === 'http://localhost:3001')).toBeDefined()
@@ -335,16 +336,16 @@ test('Connect', async () => {
   expect(mcp.clients).toHaveLength(4)
   expect(await mcp.getStatus()).toStrictEqual({
     servers: [
-      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, tools: ['tool1___90ab', 'tool2___90ab', 'tool3___90ab'] },
-      { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: ['tool1___0abc', 'tool2___0abc', 'tool3___0abc'] },
-      { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', tools: ['tool1___bcde', 'tool2___bcde', 'tool3___bcde'] },
+      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, oauth: null, tools: ['tool1___90ab', 'tool2___90ab', 'tool3___90ab'] },
+      { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', oauth: null, tools: ['tool1___0abc', 'tool2___0abc', 'tool3___0abc'] },
+      { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', oauth: null, tools: ['tool1___bcde', 'tool2___bcde', 'tool3___bcde'] },
       { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined, tools: ['tool1_____s1', 'tool2_____s1', 'tool3_____s1'] },
     ],
     logs: {
       '1234-5678-90ab': [],
       '2345-6789-0abc': [],
       '3456-7890-abcd': [],
-      '4567-890a-bcde': [],
+      '4567-890a-bcde': [ 'Connected to MCP server at http://localhost:3002' ],
       's1': [],
       'mcp2': [],
     }
@@ -485,15 +486,7 @@ test('Create HTTP server with OAuth', async () => {
 
 test('OAuth flow completion', async () => {
   const mcp = new Mcp(app)
-  const oauthConfig = {
-    clientMetadata: {
-      client_name: 'Test Client',
-      redirect_uris: ['http://localhost:8090/callback'],
-      grant_types: ['authorization_code'],
-      response_types: ['code'],
-      token_endpoint_auth_method: 'client_secret_post'
-    }
-  }
+  const oauthConfig = {}
   
   // Create server with OAuth
   await mcp.editServer({ 

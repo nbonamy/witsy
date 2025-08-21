@@ -1573,6 +1573,25 @@
     "serverEditor": {
       "environmentVariables": "Umgebungsvariablen",
       "httpHeaders": "Benutzerdefinierte HTTP-Header",
+      "oauth": {
+        "authorizing": "Authentifizierung wird gestartet",
+        "authorizingText": "Ihr Browser wird geöffnet, um Witsy zu autorisieren. Bitte schließen Sie die Autorisierung ab und kehren Sie anschließend zu diesem Fenster zurück.",
+        "clientId": "Client-ID",
+        "clientSecret": "Client-Geheimnis",
+        "error": "Fehler bei der Einrichtung der Authentifizierung",
+        "errorText": "Die Authentifizierung konnte nicht konfiguriert werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+        "notRequired": "Für diesen Server ist keine Authentifizierung erforderlich.",
+        "removeConfirm": "Authentifizierungsdaten löschen",
+        "removeConfirmText": "Sind Sie sicher, dass Sie die Authentifizierungsdaten löschen möchten? Sie müssen sich erneut autorisieren, wenn Sie diesen Server wieder verwenden möchten.",
+        "required": "Authentifizierung ist erforderlich, um eine Verbindung zu diesem Server herzustellen",
+        "requiredText": "Sie müssen sich authentifizieren, um diesen Server nutzen zu können. Möchten Sie die Einrichtung jetzt vornehmen?",
+        "setup": "Einrichten",
+        "showAuthFields": "Erweiterte Authentifizierung (siehe MCP-Server-Dokumentation)",
+        "success": "Authentifizierung eingerichtet",
+        "successful": "Die Authentifizierung wurde für diesen Server erfolgreich konfiguriert.",
+        "successText": "Die Authentifizierung wurde für diesen Server erfolgreich konfiguriert. Sie können Ihre Änderungen speichern.",
+        "title": "Authentifizierungsdaten"
+      },
       "selectCommand": "Befehl auswählen",
       "serverPackage": "Serverpaket",
       "smitheryApiKey": "Smithery.ai API-Schlüssel",
@@ -2222,7 +2241,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "Benutzerdefinierten Server hinzufügen…",
+      "addCustomServer": "MCP-Server hinzufügen…",
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Server löschen möchten?",
       "connectedToServers": "Verbunden mit {count} MCP-Server{count > 1 ? 'n' : ''}",
       "copyInstallCommand": "Sie können den Installationsbefehl in Ihre Zwischenablage kopieren und im Terminal ausprobieren.",
