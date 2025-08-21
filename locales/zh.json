@@ -406,6 +406,9 @@
         "titleRequired": "请为此次聊天输入标题。"
       }
     },
+    "empty": {
+      "greeting": "您好，我能帮您什么？"
+    },
     "export": {
       "error": "尝试导出聊天时发生错误。"
     },

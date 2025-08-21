@@ -53,7 +53,7 @@
           <div class="panel-footer step-actions" v-if="expandedStep === index">
             <button class="docrepo" @click="onDocRepo(index)"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
             <button class="tools" @click="onTools(index)"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
-            <button class="agents" @click="onAgents(index)"><BotIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
+            <button class="agents" @click="onAgents(index)"><AgentIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
             <button class="structured-output" @click="onStructuredOutput(index)"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
           </div>
         </div>
@@ -70,8 +70,9 @@
 </template>
 
 <script setup lang="ts">
-import { BlocksIcon, BotIcon, BracesIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
+import { BlocksIcon, BracesIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed, PropType, ref, watch } from 'vue'
+import AgentIcon from '../../assets/agent.svg?component'
 import WizardStep from '../components/WizardStep.vue'
 import Dialog from '../composables/dialog'
 import Agent from '../models/agent'

@@ -32,7 +32,7 @@
         </div> -->
         
         <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
-        <EmptyChat class="chat-content-main" v-else />
+        <EmptyChat2 class="chat-content-main" @run-agent="onRunAgent" v-else />
         <div class="deep-research-usage" v-if="prompt?.isDeepResearchActive() && tipsManager.isTipAvailable('deepResearchUsage')">
           {{  t('deepResearch.usage') }}
           <div class="deep-research-usage-close" @click="onHideDeepResearchUsage">
@@ -60,7 +60,7 @@ import { t } from '../services/i18n'
 import { kMediaChatId, store } from '../services/store'
 import { Expert, Message } from '../types/index'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
-import EmptyChat from './EmptyChat.vue'
+import EmptyChat2 from './EmptyChat2.vue'
 import MessageList from './MessageList.vue'
 import Prompt, { SendPromptParams } from './Prompt.vue'
 
@@ -150,8 +150,8 @@ const onSendPrompt = (payload: SendPromptParams) => {
   emit('prompt', payload)
 }
 
-const onRunAgent = () => {
-  emit('run-agent')
+const onRunAgent = (...args: any[]) => {
+  emit('run-agent', ...args)
 }
 
 const onStopGeneration = () => {

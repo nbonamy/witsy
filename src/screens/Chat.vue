@@ -552,10 +552,17 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
 }
 
-const onRunAgent = async () => {
+const onRunAgent = async (agentId?: string) => {
 
-  // show agent picker
-  agent.value = await picker.value.pick()
+  // select agent
+  if (agentId) {
+    agent.value = store.agents.find((a) => a.uuid === agentId)
+  } else {
+    agent.value = await picker.value.pick()
+  }
+
+
+  // required
   if (!agent.value) {
     return
   }
