@@ -59,11 +59,12 @@ const onCreate = (createType: McpCreateType, url?: string) => {
 const onEdited = async ({ type, label, command, url, cwd, env, headers, oauth }) => {
 
   // build a dummy server
-  const baseServer: any = {
+  const server: McpServer = {
     uuid: selected.value.uuid,
     registryId: selected.value.registryId,
     state: selected.value.state,
     type,
+    label,
     command,
     url,
     cwd,
@@ -72,20 +73,18 @@ const onEdited = async ({ type, label, command, url, cwd, env, headers, oauth })
     oauth
   }
 
-  if (label !== undefined) {
-    baseServer.label = label
-  }
 
-  const server: McpServer = baseServer
+  if (label !== undefined) {
+    server.label = label
+  }
 
   selected.value = null
 
   // edit it
   list.value.setLoading(true)
-  nextTick(async () => {
-    await window.api.mcp.editServer(server)
-    load()
-  })
+  await nextTick()
+  await window.api.mcp.editServer(server)
+  load()
 
 }
 

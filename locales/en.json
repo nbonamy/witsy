@@ -14,7 +14,6 @@
     "comboBox": {
       "help": "Select a model from the list or type a model name you know exists."
     },
-    "setup": "Setup",
     "command": "Command",
     "confirmation": {
       "cannotUndo": "You can't undo this action.",
@@ -1593,19 +1592,23 @@
       "environmentVariables": "Environment Variables",
       "httpHeaders": "Custom HTTP Headers",
       "oauth": {
-        "title": "Authentication Data",
+        "authorizing": "Starting authentication",
+        "authorizingText": "Your browser will open to authorize Witsy. Please complete the authorization and return to this window once done.",
+        "clientId": "Client ID",
+        "clientSecret": "Client secret",
+        "error": "Authentication setup failed",
+        "errorText": "Failed to configure authentication. Please check your internet connection and try again.",
+        "notRequired": "This server does not require authentication.",
+        "removeConfirm": "Delete authentication data",
+        "removeConfirmText": "Are you sure you want to delete the authentication data? You will need to re-authorize if you want to use this server again.",
         "required": "Authentication is required to connect to this server",
         "requiredText": "You need to authenticate to use this server. Would you like to set it up now?",
-        "authorizing": "Starting Authentication",
-        "authorizingText": "Your browser will open to authorize Witsy. Please complete the authorization and return to this window once done.",
-        "success": "Authentication Setup Complete",
+        "setup": "Setup",
+        "showAuthFields": "Advanced authentication (consult MCP server documentation)",
+        "success": "Authentication setup complete",
+        "successful": "Authentication has been successfully configured for this server.",
         "successText": "Authentication has been successfully configured for this server. You can save your changes.",
-        "error": "Authentication Setup Failed",
-        "errorText": "Failed to configure authentication. Please check your internet connection and try again.",
-        "removeConfirm": "Delete Authentication data",
-        "removeConfirmText": "Are you sure you want to delete the authentication data? You will need to re-authorize if you want to use this server again.",
-        "notRequired": "This server does not require authentication.",
-        "setup": "@:{'common.setup'}"
+        "title": "Authentication data"
       },
       "selectCommand": "Select command",
       "serverPackage": "Server Package",
@@ -2265,7 +2268,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "Add custom server…",
+      "addCustomServer": "Add MCP server…",
       "confirmDelete": "Are you sure you want to delete this server?",
       "connectedToServers": "Connected to {count} MCP server{count > 1 ? 's' : ''}",
       "copyInstallCommand": "You can copy the install command to your clipboard and try it in a Terminal.",

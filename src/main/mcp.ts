@@ -1,17 +1,18 @@
 
-import { anyDict } from '../types/index'
-import { App } from 'electron'
-import { McpInstallStatus, McpServer, McpClient, McpStatus, McpTool } from '../types/mcp'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js"
+import { OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth'
 import { CompatibilityCallToolResultSchema } from '@modelcontextprotocol/sdk/types'
-import { loadSettings, saveSettings, settingsFilePath } from './config'
 import { exec } from 'child_process'
+import { App } from 'electron'
 import { LlmTool } from 'multi-llm-ts'
-import Monitor from './monitor'
+import { anyDict } from '../types/index'
+import { McpClient, McpInstallStatus, McpServer, McpStatus, McpTool } from '../types/mcp'
+import { loadSettings, saveSettings, settingsFilePath } from './config'
 import McpOAuthManager from './mcp_auth'
+import Monitor from './monitor'
 
 export default class {
 
@@ -301,6 +302,49 @@ export default class {
 
   }
 
+  updateTokens = async (server: McpServer, tokens: OAuthTokens): Promise<boolean> => {
+
+    // we need a config
+    const config = loadSettings(this.app)
+
+    // create?
+    if (server.uuid === null) {
+      return false
+    }
+
+    // save only if needed
+    let edited = false
+
+    // search for server in normal server
+    const original = config.mcp.servers.find((s: McpServer) => s.uuid === server.uuid)
+    if (original && original.oauth) {
+      if (JSON.stringify(original.oauth.tokens) !== JSON.stringify(tokens)) {
+        original.oauth.tokens = tokens
+        edited = true
+      }
+    }
+
+    // and in mcp servers
+    const originalMcp = config.mcpServers[server.registryId]
+    if (originalMcp && config.mcp.mcpServersExtra[server.registryId].oauth) {
+      if (JSON.stringify(config.mcp.mcpServersExtra[server.registryId].oauth.tokens) !== JSON.stringify(tokens)) {
+        config.mcp.mcpServersExtra[server.registryId].oauth.tokens = tokens
+        edited = true
+      }
+    }
+
+    // save
+    if (edited) {
+      this.monitor?.stop()
+      saveSettings(this.app, config)
+      this.startConfigMonitor()
+    }
+
+    // done
+    return true
+
+  }  
+
   shutdown = async (): Promise<void> => {
     for (const client of this.clients) {
       await client.client.close()
@@ -529,14 +573,19 @@ export default class {
 
       // add OAuth provider if configured
       if (server.oauth && (server.oauth.tokens || server.oauth.clientId)) {
+        
         const oauthProvider = await this.oauthManager.createOAuthProvider(undefined, (redirectUrl) => {
           console.log(`OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
           this.logs[server.uuid].push(`OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
+        }, (tokens: OAuthTokens) => {
+          this.updateTokens(server, tokens)
         })
+        
         // Set existing tokens if available
         if (server.oauth.tokens) {
           oauthProvider.saveTokens(server.oauth.tokens)
         }
+        
         // Set existing client registration if available
         if (server.oauth.clientId && server.oauth.clientSecret) {
           // Reconstruct clientInformation from compact format
@@ -560,9 +609,9 @@ export default class {
       transport.onerror = (e) => {
         this.logs[server.uuid].push(e.message)
       }
-      transport.onmessage = (message: any) => {
-        console.log('MCP HTTP message', message)
-      }
+      // transport.onmessage = (message: any) => {
+      //   console.log('MCP HTTP message', message)
+      // }
 
       // build the client
       const client = new Client({
@@ -576,8 +625,13 @@ export default class {
         this.logs[server.uuid].push(e.message)
       }
 
-      // connect (SDK handles OAuth token refresh automatically)
+      // connect
       await client.connect(transport)
+
+      // add some logs
+      if (this.logs[server.uuid].length === 0) {
+        this.logs[server.uuid].push(`Connected to MCP server at ${server.url}`)
+      }
 
       // done
       return client

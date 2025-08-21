@@ -65,7 +65,7 @@
       </div>
       <div class="form-field">
         <label>{{ t('mcp.serverEditor.environmentVariables') }}</label>
-        <VariableTable 
+        <VariableTable
           :variables="env"
           :selectedVariable="selectedVar"
           @select="onSelectVar('env', $event)"
@@ -89,17 +89,29 @@
       </div>
       <div class="form-field">
         <label>{{ t('mcp.serverEditor.oauth.title') }}</label>
-        <div v-if="oauthConfig"><a href="#" @click.prevent="removeOAuth">{{ t('common.delete') }}</a></div>
+        <template v-if="oauthConfig">
+          <div>{{ t('mcp.serverEditor.oauth.successful') }}</div>
+          <div><a href="#" @click.prevent="removeOAuth">{{ t('common.delete') }}</a></div>
+        </template>
         <template v-else>
           <div class="form-subgroup">
             <div class="form-field">
-              <label>{{ t('mcp.serverEditor.oauth.clientId') }}</label>
-              <input type="text" name="oauthClientId" v-model="oauthClientId" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+              <label @click="showAuthFields = !showAuthFields" class="show-auth-fields">
+                <BIconCaretRightFill v-if="!showAuthFields" />
+                <BIconCaretDownFill v-else />
+                {{ t('mcp.serverEditor.oauth.showAuthFields') }}
+              </label>
             </div>
-            <div class="form-field">
-              <label>{{ t('mcp.serverEditor.oauth.clientSecret') }}</label>
-              <input type="password" name="oauthClientSecret" v-model="oauthClientSecret" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-            </div>
+            <template  v-if="showAuthFields">
+              <div class="form-field">
+                <label>{{ t('mcp.serverEditor.oauth.clientId') }}</label>
+                <input type="text" name="oauthClientId" v-model="oauthClientId" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+              </div>
+              <div class="form-field">
+                <label>{{ t('mcp.serverEditor.oauth.clientSecret') }}</label>
+                <input type="password" name="oauthClientSecret" v-model="oauthClientSecret" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+              </div>
+            </template>
           </div>
           <div><a href="#" @click.prevent="checkOAuth">{{ t('mcp.serverEditor.oauth.setup') }}</a></div>
         </template>
@@ -145,6 +157,7 @@ const headers = ref<strDict>({})
 const apiKey = ref('')
 const selectedVar = ref<McpServerVariable>(null)
 const oauthConfig = ref(null)
+const showAuthFields = ref(false)
 const oauthClientId = ref('')
 const oauthClientSecret = ref('')
 const oauthStatus = ref({
@@ -174,6 +187,7 @@ const emit = defineEmits(['cancel', 'save', 'install'])
 onMounted(async () => {
   // Initialize values from props
   const initializeValues = async () => {
+    // console.log('Initializing McpServerEditor with props:', props)
     type.value = props.type || 'stdio'
     label.value = props.server?.label || ''
     command.value = props.server?.command || ''
@@ -183,8 +197,6 @@ onMounted(async () => {
     headers.value = props.server?.headers || {}
     oauthConfig.value = props.server?.oauth || null
     apiKey.value = props.apiKey || ''
-    
-    // OAuth detection now happens only on save, not during initialization
   }
 
   // Initialize immediately
@@ -195,7 +207,6 @@ onMounted(async () => {
   watch(() => props.type, initializeValues)
   watch(() => props.apiKey, initializeValues)
 
-  // OAuth detection now happens only on save, not on every keystroke
 })
 
 const onCancel = () => {
@@ -363,7 +374,7 @@ const setupOAuth = async () => {
     })
 
     // Start OAuth flow with optional client credentials
-    const clientCredentials = (oauthClientId.value && oauthClientSecret.value) ? {
+    const clientCredentials = (oauthClientId.value || oauthClientSecret.value) ? {
       client_id: oauthClientId.value,
       client_secret: oauthClientSecret.value
     } : undefined
@@ -443,19 +454,19 @@ const onSave = async () => {
     return
   }
 
-  // Check if OAuth setup is needed before saving
-  const oauthNeeded = await isOauthRequired()
-  if (oauthNeeded) {
-    initOauth(true)
-    return
-  }
-
   if (type.value === 'smithery' && !url.value.length) {
     await Dialog.show({
       title: t('mcp.serverEditor.validation.requiredFields'),
       text: t('mcp.serverEditor.validation.packageRequired'),
       confirmButtonText: t('common.ok'),
     })
+    return
+  }
+
+  // Check if OAuth setup is needed before saving
+  const oauthNeeded = await isOauthRequired()
+  if (oauthNeeded) {
+    initOauth(true)
     return
   }
 
@@ -473,13 +484,13 @@ const onSave = async () => {
 
     const payload: any = {
       type: type.value,
+      label: label.value.trim(),
       command: command.value,
       url: url.value,
       cwd: cwd.value,
       env: JSON.parse(JSON.stringify(env.value)),
       headers: JSON.parse(JSON.stringify(headers.value)),
       oauth: JSON.parse(JSON.stringify(oauthConfig.value)),
-      label: label.value.trim(),
     }
 
     // include label only when non-empty or when it existed before (allows deletion)
@@ -501,6 +512,13 @@ const onSave = async () => {
   
   .list-with-actions {
     width: 100%;
+  }
+
+  .show-auth-fields {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
   }
 }
 

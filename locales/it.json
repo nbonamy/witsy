@@ -1573,6 +1573,25 @@
     "serverEditor": {
       "environmentVariables": "Variabili di ambiente",
       "httpHeaders": "Header HTTP Personalizzati",
+      "oauth": {
+        "authorizing": "Avvio autenticazione",
+        "authorizingText": "Il tuo browser si aprirà per autorizzare Witsy. Completa l'autorizzazione e torna a questa finestra una volta terminato.",
+        "clientId": "ID cliente",
+        "clientSecret": "Segreto cliente",
+        "error": "Configurazione autenticazione fallita",
+        "errorText": "Impossibile configurare l'autenticazione. Controlla la tua connessione internet e riprova.",
+        "notRequired": "Questo server non richiede autenticazione.",
+        "removeConfirm": "Elimina dati di autenticazione",
+        "removeConfirmText": "Sei sicuro di voler eliminare i dati di autenticazione? Dovrai ri-autorizzarti se vorrai usare di nuovo questo server.",
+        "required": "L'autenticazione è richiesta per connettersi a questo server",
+        "requiredText": "Devi autenticarti per usare questo server. Vuoi configurarlo ora?",
+        "setup": "Configurazione",
+        "showAuthFields": "Autenticazione avanzata (consulta la documentazione del server MCP)",
+        "success": "Configurazione autenticazione completata",
+        "successful": "L'autenticazione è stata configurata con successo per questo server.",
+        "successText": "L'autenticazione è stata configurata con successo per questo server. Puoi salvare le modifiche.",
+        "title": "Dati di autenticazione"
+      },
       "selectCommand": "Seleziona comando",
       "serverPackage": "Pacchetto server",
       "smitheryApiKey": "Chiave API Smithery.ai",
@@ -2222,7 +2241,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "Aggiungi server personalizzato…",
+      "addCustomServer": "Aggiungi server MCP…",
       "confirmDelete": "Sei sicuro di voler eliminare questo server?",
       "connectedToServers": "Connesso a {count} server MCP{count > 1 ? 's' : ''}",
       "copyInstallCommand": "Puoi copiare il comando di installazione negli appunti e provarlo in un Terminale.",

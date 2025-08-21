@@ -1573,6 +1573,25 @@
     "serverEditor": {
       "environmentVariables": "Variables de entorno",
       "httpHeaders": "Encabezados HTTP personalizados",
+      "oauth": {
+        "authorizing": "Iniciando autenticación",
+        "authorizingText": "Su navegador se abrirá para autorizar a Witsy. Por favor, complete la autorización y regrese a esta ventana cuando haya terminado.",
+        "clientId": "ID de cliente",
+        "clientSecret": "Secreto de cliente",
+        "error": "Fallo en la configuración de autenticación",
+        "errorText": "No se pudo configurar la autenticación. Por favor, verifique su conexión a internet e intente de nuevo.",
+        "notRequired": "Este servidor no requiere autenticación.",
+        "removeConfirm": "Eliminar datos de autenticación",
+        "removeConfirmText": "¿Está seguro de que desea eliminar los datos de autenticación? Tendrá que volver a autorizarse si desea usar este servidor otra vez.",
+        "required": "Se requiere autenticación para conectarse a este servidor",
+        "requiredText": "Necesita autenticarse para usar este servidor. ¿Desea configurarlo ahora?",
+        "setup": "Configurar",
+        "showAuthFields": "Autenticación avanzada (consulte la documentación del servidor MCP)",
+        "success": "Configuración de autenticación completada",
+        "successful": "La autenticación se ha configurado correctamente para este servidor.",
+        "successText": "La autenticación se ha configurado correctamente para este servidor. Puede guardar sus cambios.",
+        "title": "Datos de autenticación"
+      },
       "selectCommand": "Seleccionar comando",
       "serverPackage": "Paquete del servidor",
       "smitheryApiKey": "Clave API de Smithery.ai",
@@ -2222,7 +2241,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "Agregar servidor personalizado…",
+      "addCustomServer": "Agregar servidor MCP…",
       "confirmDelete": "¿Está seguro de que desea eliminar este servidor?",
       "connectedToServers": "Conectado a {count} servidor{count > 1 ? 's' : ''} MCP",
       "copyInstallCommand": "Puede copiar el comando de instalación en su portapapeles e intentarlo en una Terminal.",

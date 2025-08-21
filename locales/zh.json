@@ -1592,6 +1592,25 @@
     "serverEditor": {
       "environmentVariables": "环境变量",
       "httpHeaders": "自定义 HTTP 头",
+      "oauth": {
+        "authorizing": "正在开始认证",
+        "authorizingText": "您的浏览器将打开以授权Witsy。请完成授权后返回此窗口。",
+        "clientId": "客户端ID",
+        "clientSecret": "客户端密钥",
+        "error": "认证设置失败",
+        "errorText": "配置认证失败。请检查您的网络连接并重试。",
+        "notRequired": "此服务器不需要认证。",
+        "removeConfirm": "删除认证数据",
+        "removeConfirmText": "您确定要删除认证数据吗？如果想再次使用此服务器，您需要重新授权。",
+        "required": "连接此服务器需要认证",
+        "requiredText": "您需要认证才能使用此服务器。要现在设置吗？",
+        "setup": "设置",
+        "showAuthFields": "高级认证（请参阅MCP服务器文档）",
+        "success": "认证设置完成",
+        "successful": "此服务器的认证已成功配置。",
+        "successText": "此服务器的认证已成功配置。您可以保存更改。",
+        "title": "认证数据"
+      },
       "selectCommand": "选择命令",
       "serverPackage": "服务器包",
       "smitheryApiKey": "Smithery.ai API 密钥",
@@ -2244,7 +2263,7 @@
       }
     },
     "mcp": {
-      "addCustomServer": "添加自定义服务器…",
+      "addCustomServer": "添加 MCP 服务器…",
       "confirmDelete": "你确定要删除这个服务器吗？",
       "connectedToServers": "已连接到 {count} 个 MCP 服务器",
       "copyInstallCommand": "你可以将安装命令复制到剪贴板，并在终端中尝试运行。",
