@@ -1,5 +1,6 @@
 {
   "common": {
+    "actions": "Ações",
     "arguments": "Parâmetros",
     "askMeAnything": "Pergunte-me qualquer coisa",
     "back": "Voltar",
@@ -104,6 +105,7 @@
     "name": "Nome",
     "new": "Novo",
     "newChat": "New Conversation",
+    "next": "Próximo",
     "no": "Não",
     "notes": "Notes",
     "ok": "OK",
@@ -190,13 +192,14 @@
       },
       "information": {
         "help": {
-          "description": "Descrição breve do propósito do seu agente. Quando este agente for usado dentro de um fluxo de trabalho, isso será compartilhado com o LLM para ajudá-lo a entender o agente e eventualmente decidir chamá-lo.",
-          "goal": "O objetivo do agente. Isso será usado como as instruções do sistema enviadas ao LLM. Não inclua informações específicas de execução aqui, pois elas serão definidas no prompt.",
-          "name": "Nome descritivo para seu agente."
+          "description": "Descrição curta do propósito do seu agente. Ajuda os modelos a entender a intenção do agente.",
+          "goal": "O objetivo individual que guia a tomada de decisão do agente.",
+          "name": "Dê um nome ao seu agente. Isso ajudará você a identificá-lo mais tarde.",
+          "type": "A função do agente e a relação com outros agentes."
         },
         "promptInputs": "Variáveis Detectadas",
         "title": "Informações Gerais",
-        "type": "Modelo de Execução"
+        "type": "Função"
       },
       "invocation": {
         "missingInput": "[{name} está ausente]",
@@ -214,20 +217,19 @@
         "help": {
           "warning": "A execução do agente depende muito das capacidades de cada modelo. Certifique-se de selecionar um modelo que suporte capacidades agentivas."
         },
-        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
         "showModelSettings": "Configurações Avançadas",
         "title": "Configuração do Modelo"
       },
       "settings": {
-        "title": "Configurações do Modelo"
+        "title": "Configurações Avançadas de Modelo"
       },
       "workflow": {
         "addStep": "Adicionar Etapa",
         "confirmDeleteStep": "Tem certeza que deseja excluir esta etapa?",
-        "customAgents": "Delegados…",
-        "customTools": "Ferramentas…",
-        "description": "Descrição: usado no chat para fornecer atualizações de progresso",
-        "docRepo": "Base…",
+        "customAgents": "Designar Co-Agentes",
+        "customTools": "Adicionar Ferramentas",
+        "description": "@:{'common.description'}",
+        "docRepo": "Adicionar Conhecimento",
         "docRepoNone": "Nenhuma Base de Conhecimento",
         "error": {
           "emptyStepPrompt": "O prompt da etapa #{step} não pode estar vazio.",
@@ -236,14 +238,15 @@
         },
         "help": {
           "connect": "Conecte a saída das etapas anteriores usando variáveis {'{'}{'{'}output.#{'}'}{'}'} (exemplo: {'{'}{'{'}output.1{'}'}{'}'} para a saída da etapa 1)",
+          "description": "A descrição será usada para fornecer atualizações de progresso durante a execução do agente",
           "docRepo": "Facts extracted from the collection will be appended to your prompt.",
           "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "Saída da etapa #{step}",
+          "prompt": "As instruções personalizadas para o agente",
           "title": "Desenhe seu fluxo de trabalho em múltiplas etapas. Templates de prompt serão usados para executar cada etapa. Você pode incluir \"variáveis\" que serão substituídas pelos valores fornecidos pelo usuário quando o agente for executado. Use o formato {'{'}{'{'}nome:descrição:valor{'}'}{'}'} para definir uma variável (a descrição guiará o usuário quando solicitado um valor). Tanto a descrição quanto o valor padrão são opcionais."
         },
         "jsonSchema": "JSON…",
-        "step": "Etapa #{step}",
-        "stepFull": "Etapa #{step}: {text}",
+        "step": "Passo {step}",
         "structuredOutput": {
           "text": "Especifique um <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">esquema JSON simples</a> para definir o formato de saída esperado desta etapa.",
           "title": "Esquema JSON"
@@ -261,22 +264,22 @@
           },
           "text": "RECURSO EXPERIMENTAL!",
           "title": "Digite a URL do A2A"
-        }
+        },
+        "title": "Importar Agente A2A"
       },
       "confirmDelete": "Tem certeza de que deseja excluir este agente?",
-      "create": "Criar Agente",
+      "create": "Novo Agente",
       "empty": "Selecione um agente existente ou crie um novo.",
       "list": {
         "empty": "Nenhum agente deste tipo criado ainda.",
-        "runnable": "Agentes executáveis",
-        "support": "Agentes de suporte"
+        "runnable": "Iniciado pelo Usuário",
+        "support": "Utilitário"
       },
       "title": "Forja do Agente"
     },
     "goal": "Objetivo",
     "help": {
       "clearHistory": "Limpar todo o histórico deste agente",
-      "create": "Criar um novo agente",
       "delete": "Excluir este agente",
       "deleteRun": "Excluir esta execução",
       "edit": "Editar este agente",
@@ -289,6 +292,7 @@
       "confirmDeleteSingle": "Tem certeza de que deseja excluir esta execução?",
       "date": "Data",
       "empty": "Ainda sem histórico…",
+      "lastRun": "Última Execução",
       "log": "Log",
       "neverRun": "Nunca",
       "status": "Status",
@@ -330,8 +334,8 @@
       "workflow": "⚙️ Fluxo de trabalho"
     },
     "type": {
-      "runnable": "Executável pelo usuário",
-      "support": "Agente de suporte"
+      "runnable": "Iniciado pelo Usuário",
+      "support": "Utilitário"
     },
     "view": {
       "filter": {
@@ -1611,6 +1615,34 @@
     }
   },
   "mcp": {
+    "addCustomServer": "Adicionar servidor MCP…",
+    "confirmDelete": "Tem certeza de que deseja excluir este servidor?",
+    "copyInstallCommand": "Você pode copiar o comando de instalação para a área de transferência e tentar em um Terminal.",
+    "failedToInstall": "Falha ao instalar o servidor",
+    "importJson": {
+      "details": "Copie/cole aqui as definições JSON do Servidor MCP vindas do Claude.",
+      "errorArgs": "Argumentos do Servidor MCP inválidos.",
+      "errorCommand": "Comando do Servidor MCP não encontrado.",
+      "errorEmpty": "JSON não pode estar vazio.",
+      "errorFormat": "Erro ao analisar a definição do servidor JSON.",
+      "errorMultiple": "Múltiplos servidores encontrados. Por favor, cole um servidor por vez.",
+      "title": "Importar de JSON"
+    },
+    "importSmitheryServer": "Instalar do Smithery.ai",
+    "mcpServers": "Servidores MCP",
+    "modelContextProtocol": "Protocolo de Contexto do Modelo",
+    "noServersFound": "Nenhum Servidor MCP encontrado. Clique nos botões acima para adicionar um novo servidor.",
+    "noTools": "Nenhuma ferramenta disponível",
+    "oauth": {
+      "success": {
+        "message": "Você pode fechar esta janela e retornar ao Witsy.",
+        "title": "Autorização bem-sucedida!"
+      }
+    },
+    "refreshServers": "Atualizar lista",
+    "restartServers": "Reiniciar servidores",
+    "retryWithApiKey": "Parece que uma chave API é necessária para instalar este servidor. Deseja tentar novamente com sua chave API? Caso contrário, você pode copiar o comando e tentar em um Terminal.",
+    "server": "Servidor",
     "serverEditor": {
       "environmentVariables": "Variáveis de Ambiente",
       "httpHeaders": "Cabeçalhos HTTP Personalizados",
@@ -1636,7 +1668,6 @@
       "selectCommand": "Selecionar comando",
       "serverPackage": "Pacote do Servidor",
       "smitheryApiKey": "Chave da API do Smithery.ai",
-      "title": "Configuração do Servidor MCP",
       "type": {
         "http": "HTTP transmissível",
         "smithery": "Smithery.ai",
@@ -1650,6 +1681,18 @@
         "urlRequired": "Certifique-se de inserir uma URL para este servidor."
       },
       "workingDirectory": "Diretório de Trabalho"
+    },
+    "serverLogs": "Logs do Servidor MCP",
+    "serverNotFound": "O servidor que você está tentando conectar não existe.",
+    "servers": "servidores. Descubra e instale servidores MCP a partir do",
+    "smithery": "Smithery",
+    "tooltips": {
+      "deleteServer": "Excluir servidor",
+      "editServer": "Editar servidor",
+      "startServer": "Iniciar servidor",
+      "stopServer": "Parar servidor",
+      "viewLogs": "Ver logs do servidor",
+      "viewTools": "Ver ferramentas disponíveis"
     },
     "variableEditor": {
       "title": "Variável de Ambiente MCP"
@@ -2289,46 +2332,6 @@
         "visionary": "🚀 Futurista e visionário"
       }
     },
-    "mcp": {
-      "addCustomServer": "Adicionar servidor MCP...",
-      "confirmDelete": "Tem certeza de que deseja excluir este servidor?",
-      "connectedToServers": "Conectado a {count} servidor MCP{count > 1 ? 'es' : ''}",
-      "copyInstallCommand": "Você pode copiar o comando de instalação para sua área de transferência e experimentá-lo em um Terminal.",
-      "description": "Este plugin permite que os mecanismos LLM acessem",
-      "failedToInstall": "Falha ao instalar servidor",
-      "importJson": {
-        "details": "Cole/cole aqui as definições do servidor JSON MCP do Claude.",
-        "errorArgs": "Argumentos de servidor MCP inválidos.",
-        "errorCommand": "Comando do servidor MCP não encontrado.",
-        "errorEmpty": "O JSON não pode estar vazio.",
-        "errorFormat": "Erro ao analisar a definição do servidor JSON.",
-        "errorMultiple": "Vários servidores encontrados. Por favor, cole um servidor de cada vez.",
-        "menu": "@:{'mcp.importJson.title'}",
-        "title": "Importar de JSON"
-      },
-      "importSmitheryServer": "Install from Smithery.ai",
-      "mcpServers": "Servidores MCP",
-      "modelContextProtocol": "Protocolo de Contexto de Modelo",
-      "noServersFound": "No MCP Servers found. Click on the buttons below to add a new server.",
-      "noTools": "Nenhuma ferramenta disponível",
-      "retryWithApiKey": "Parece que uma chave de API é necessária para instalar este servidor. Você deseja tentar novamente com sua chave de API? Caso contrário, você pode copiar o comando e tentar em um terminal.",
-      "serverLogs": "Logs do Servidor MCP",
-      "serverNotFound": "O servidor que você está tentando conectar não existe.",
-      "servers": "servidores. Descubra e instale servidores MCP do",
-      "smithery": "Smithery",
-      "tools": "@:{'common.tools'}",
-      "tooltips": {
-        "deleteServer": "Excluir servidor",
-        "editServer": "Editar servidor",
-        "refreshServers": "Atualizar lista de servidores MCP",
-        "restartServers": "Reiniciar servidores MCP",
-        "startServer": "Iniciar servidor",
-        "stopServer": "Parar servidor",
-        "viewLogs": "Visualizar logs do servidor",
-        "viewTools": "Visualizar ferramentas disponíveis"
-      },
-      "totalTools": "Total de {count} serviço{count > 1 ? 's' : ''} disponível{count > 1 ? 's' : ''}"
-    },
     "plugins": {
       "browse": {
         "description": "Este plugin permite que os mecanismos LLM baixem conteúdo da Internet e o usem para gerar respostas mais precisas.",
@@ -2438,7 +2441,6 @@
       "experts": "@:{'common.experts'}",
       "general": "Geral",
       "llm": "LLM",
-      "mcp": "MCP",
       "models": "Modelos",
       "plugins": "Plugins",
       "shortcuts": "Atalhos",

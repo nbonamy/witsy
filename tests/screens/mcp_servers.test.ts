@@ -58,20 +58,22 @@ test('Initialization', async () => {
   expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(1)
 })
 
-// test('Actions', async () => {
+test('Actions', async () => {
   
-//   const list = mcp.findComponent({ name: 'List' })
-//   await list.find('button[name=reload]').trigger('click')
-//   expect(window.api.mcp.getServers).toHaveBeenCalledTimes(2)
-//   expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(2)
-//   expect(window.api.mcp.reload).toHaveBeenCalledTimes(0)
 
-//   // restart
-//   console.log(list.find('button[name=restart]').html())
-//   await list.find('button[name=restart]').trigger('click')
-//   expect(window.api.mcp.reload).toHaveBeenCalledTimes(1)
+  const list = mcp.findComponent({ name: 'List' })
+  await vi.waitUntil(async () => !mcp.vm.loading, 2000)
+  await list.find('button[name=reload]').trigger('click')
+  expect(window.api.mcp.getServers).toHaveBeenCalledTimes(2)
+  expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(2)
+  expect(window.api.mcp.reload).toHaveBeenCalledTimes(0)
 
-// })
+  // restart
+  await vi.waitUntil(async () => !mcp.vm.loading, 2000)
+  await list.find('button[name=restart]').trigger('click')
+  expect(window.api.mcp.reload).toHaveBeenCalledTimes(1)
+
+})
 
 test('Server enablement', async () => {
   await mcp.find<HTMLInputElement>('.mcp-server-list .panel-item:nth-child(1) .stop').trigger('click')

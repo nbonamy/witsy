@@ -3,7 +3,7 @@
     <div class="mcp-servers split-pane">
       <div class="sp-main">
         <header>
-        <div class="title">{{ t('mcp.modelContextProtocol') }}</div>
+          <div class="title">{{ t('mcp.modelContextProtocol') }}</div>
           <XIcon
             class="icon close" 
             v-tooltip="{ text: t('common.close'), position: 'bottom-left' }"
@@ -55,6 +55,8 @@ const onClose = () => {
 }
 
 const load = async () => {
+
+  console.log('Loading MCP servers...')
   selected.value = null
   loading.value = true
   await nextTick()
@@ -62,6 +64,7 @@ const load = async () => {
   servers.value = window.api.mcp.getServers()
   status.value = window.api.mcp.getStatus()
   setTimeout(() => {
+    console.log('MCP servers loaded')
     loading.value = false
   }, 1000 - (new Date().getTime() - now))
 }
@@ -103,6 +106,10 @@ defineExpose({ load })
     header {
       padding-top: 1.5rem;
       padding-bottom: 1.5rem;
+      -webkit-app-region: drag;
+      .close {
+        -webkit-app-region: no-drag;
+      }
     }
   }
 }

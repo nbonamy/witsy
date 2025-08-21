@@ -1,5 +1,6 @@
 {
   "common": {
+    "actions": "アクション",
     "arguments": "引数",
     "askMeAnything": "何でも聞いてください",
     "back": "戻る",
@@ -104,6 +105,7 @@
     "name": "名前",
     "new": "新規",
     "newChat": "New Conversation",
+    "next": "次へ",
     "no": "いいえ",
     "notes": "Notes",
     "ok": "OK",
@@ -190,13 +192,14 @@
       },
       "information": {
         "help": {
-          "description": "エージェントの目的の簡単な説明。このエージェントがワークフロー内で使用されると、LLMと共有され、エージェントの理解と呼び出しの判断に役立ちます。",
-          "goal": "エージェントの目標。これはLLMに送信されるシステム指示として使用されます。プロンプト内で設定される実行固有情報はここに含めないでください。",
-          "name": "エージェントの説明的な名前。"
+          "description": "エージェントの目的の短い説明。モデルがエージェントの意図を理解するのに役立ちます。",
+          "goal": "エージェントの意思決定を導く個々の目標。",
+          "name": "エージェントに名前を付けてください。後で識別しやすくなります。",
+          "type": "エージェントの機能と他のエージェントとの関係。"
         },
         "promptInputs": "検出された変数",
         "title": "一般情報",
-        "type": "実行モデル"
+        "type": "役割"
       },
       "invocation": {
         "missingInput": "[{name} が不足しています]",
@@ -214,20 +217,19 @@
         "help": {
           "warning": "エージェントの実行はモデルごとの機能に大きく依存します。エージェント機能をサポートするモデルを選択してください。"
         },
-        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
         "showModelSettings": "詳細設定",
         "title": "モデル設定"
       },
       "settings": {
-        "title": "モデル設定"
+        "title": "高度なモデル設定"
       },
       "workflow": {
         "addStep": "ステップを追加",
         "confirmDeleteStep": "このステップを本当に削除しますか？",
-        "customAgents": "代理人…",
-        "customTools": "ツール…",
-        "description": "説明：チャット内で進捗状況の更新に使用されます",
-        "docRepo": "ベース…",
+        "customAgents": "協力エージェントを割り当てる",
+        "customTools": "ツールを追加",
+        "description": "@:{'common.description'}",
+        "docRepo": "知識を追加",
         "docRepoNone": "ナレッジベースなし",
         "error": {
           "emptyStepPrompt": "ステップ#{step}のプロンプトは空にできません。",
@@ -236,14 +238,15 @@
         },
         "help": {
           "connect": "前のステップの出力を{'{'}{'{'}output.#{'}'}{'}'}変数（例：ステップ1の出力には{'{'}{'{'}output.1{'}'}{'}'}）を使って接続します",
+          "description": "エージェント実行中の進捗状況の更新に説明が使われます。",
           "docRepo": "Facts extracted from the collection will be appended to your prompt.",
           "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "ステップ#{step}の出力",
+          "prompt": "エージェントのカスタム指示",
           "title": "複数ステップのワークフローを設計します。各ステップの実行にはプロンプトテンプレートが使用されます。エージェント実行時にユーザーが提供した値に置き換えられる「変数」を含めることができます。変数は{'{'}{'{'}name:description:value{'}'}{'}'}の形式で定義してください（説明は値を入力する際のユーザーのガイドになります）。説明とデフォルト値はどちらも任意です。"
         },
         "jsonSchema": "JSON…",
-        "step": "ステップ#{step}",
-        "stepFull": "ステップ#{step}: {text}",
+        "step": "ステップ {step}",
         "structuredOutput": {
           "text": "このステップの期待される出力形式を定義するために、<a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">簡単なJSONスキーマ</a>を指定してください。",
           "title": "JSONスキーマ"
@@ -261,22 +264,22 @@
           },
           "text": "実験的な機能です！",
           "title": "A2AのURLを入力してください"
-        }
+        },
+        "title": "A2Aエージェントをインポート"
       },
       "confirmDelete": "このエージェントを削除してもよろしいですか？",
-      "create": "エージェント作成",
+      "create": "新規エージェント",
       "empty": "最初のエージェントを作成してWitsyのエージェント機能を解放しましょう！ロボットのアイコンをクリックして始めてください。",
       "list": {
         "empty": "まだこのタイプのエージェントは作成されていません。",
-        "runnable": "実行可能エージェント",
-        "support": "サポートエージェント"
+        "runnable": "ユーザー起動型",
+        "support": "ユーティリティ"
       },
       "title": "エージェントフォージ"
     },
     "goal": "目標",
     "help": {
       "clearHistory": "このエージェントのすべての履歴をクリアする",
-      "create": "新しいエージェントを作成する",
       "delete": "このエージェントを削除する",
       "deleteRun": "この実行を削除する",
       "edit": "このエージェントを編集する",
@@ -289,6 +292,7 @@
       "confirmDeleteSingle": "この実行を削除してもよろしいですか？",
       "date": "日付",
       "empty": "履歴はまだありません…",
+      "lastRun": "最終実行",
       "log": "ログ",
       "neverRun": "未実行",
       "status": "ステータス",
@@ -330,8 +334,8 @@
       "workflow": "⚙️ ワークフロー"
     },
     "type": {
-      "runnable": "ユーザー実行可能",
-      "support": "サポートエージェント"
+      "runnable": "ユーザー起動型",
+      "support": "ユーティリティ"
     },
     "view": {
       "filter": {
@@ -1611,6 +1615,34 @@
     }
   },
   "mcp": {
+    "addCustomServer": "MCPサーバーを追加…",
+    "confirmDelete": "本当にこのサーバーを削除してもよろしいですか？",
+    "copyInstallCommand": "インストールコマンドをクリップボードにコピーして、ターミナルで試すことができます。",
+    "failedToInstall": "サーバーのインストールに失敗しました",
+    "importJson": {
+      "details": "ClaudeからのJSON MCPサーバー定義をここにコピー＆ペーストしてください。",
+      "errorArgs": "無効なMCPサーバー引数です。",
+      "errorCommand": "MCPサーバーコマンドが見つかりません。",
+      "errorEmpty": "JSONは空にできません。",
+      "errorFormat": "JSONサーバー定義の解析中にエラーが発生しました。",
+      "errorMultiple": "複数のサーバーが見つかりました。一度に1つのサーバーを貼り付けてください。",
+      "title": "JSONからインポート"
+    },
+    "importSmitheryServer": "Smithery.aiからインストール",
+    "mcpServers": "MCPサーバー",
+    "modelContextProtocol": "モデルコンテキストプロトコル",
+    "noServersFound": "MCPサーバーが見つかりません。新しいサーバーを追加するには上のボタンをクリックしてください。",
+    "noTools": "利用可能なツールがありません",
+    "oauth": {
+      "success": {
+        "message": "このウィンドウを閉じてWitsyに戻ることができます。",
+        "title": "認証成功！"
+      }
+    },
+    "refreshServers": "リストを更新",
+    "restartServers": "サーバーを再起動",
+    "retryWithApiKey": "このサーバーのインストールにはAPIキーが必要なようです。APIキーを使って再試行しますか？それ以外の場合は、コマンドをコピーしてターミナルで試すこともできます。",
+    "server": "サーバー",
     "serverEditor": {
       "environmentVariables": "環境変数",
       "httpHeaders": "カスタムHTTPヘッダー",
@@ -1636,7 +1668,6 @@
       "selectCommand": "コマンドを選択",
       "serverPackage": "サーバーパッケージ",
       "smitheryApiKey": "Smithery.ai APIキー",
-      "title": "MCPサーバー設定",
       "type": {
         "http": "ストリーム可能なHTTP",
         "smithery": "Smithery.ai",
@@ -1650,6 +1681,18 @@
         "urlRequired": "このサーバーのURLを入力してください。"
       },
       "workingDirectory": "作業ディレクトリ"
+    },
+    "serverLogs": "MCPサーバーログ",
+    "serverNotFound": "接続しようとしているサーバーは存在しません。",
+    "servers": "サーバー。MCPサーバーの発見とインストールは",
+    "smithery": "Smithery",
+    "tooltips": {
+      "deleteServer": "サーバーを削除",
+      "editServer": "サーバーを編集",
+      "startServer": "サーバーを起動",
+      "stopServer": "サーバーを停止",
+      "viewLogs": "サーバーログを見る",
+      "viewTools": "利用可能なツールを見る"
     },
     "variableEditor": {
       "title": "MCP環境変数"
@@ -2295,46 +2338,6 @@
         "title": "設定の読み込み中にエラーが発生しました。"
       }
     },
-    "mcp": {
-      "addCustomServer": "MCPサーバーを追加…",
-      "confirmDelete": "このサーバーを削除してもよろしいですか？",
-      "connectedToServers": "{count}台のMCPサーバーに接続済み",
-      "copyInstallCommand": "インストールコマンドをクリップボードにコピーして、ターミナルで試すことができます。",
-      "description": "このプラグインはLLMエンジンにアクセスを許可します。",
-      "failedToInstall": "サーバーのインストールに失敗しました",
-      "importJson": {
-        "details": "ClaudeからJSON MCPサーバー定義をここにコピー/ペーストしてください。",
-        "errorArgs": "無効なMCPサーバー引数。",
-        "errorCommand": "MCPサーバーコマンドが見つかりません。",
-        "errorEmpty": "JSONは空にできません。",
-        "errorFormat": "JSONサーバー定義の解析中にエラーが発生しました。",
-        "errorMultiple": "複数のサーバーが見つかりました。一度に1つのサーバーを貼り付けてください。",
-        "menu": "@:{'mcp.importJson.title'}",
-        "title": "JSONからインポート"
-      },
-      "importSmitheryServer": "Install from Smithery.ai",
-      "mcpServers": "MCPサーバー",
-      "modelContextProtocol": "モデルコンテキストプロトコル",
-      "noServersFound": "No MCP Servers found. Click on the buttons below to add a new server.",
-      "noTools": "利用可能なツールはありません",
-      "retryWithApiKey": "このサーバーのインストールにはAPIキーが必要なようです。APIキーで再試行しますか？それともコマンドをコピーしてターミナルで試しますか？",
-      "serverLogs": "MCPサーバーログ",
-      "serverNotFound": "接続しようとしているサーバーは存在しません。",
-      "servers": "サーバー。MCPサーバーを",
-      "smithery": "Smithery",
-      "tools": "@:{'common.tools'}",
-      "tooltips": {
-        "deleteServer": "サーバーを削除",
-        "editServer": "サーバーを編集",
-        "refreshServers": "MCPサーバーリストを更新",
-        "restartServers": "MCPサーバーを再起動",
-        "startServer": "サーバーを起動",
-        "stopServer": "サーバーを停止",
-        "viewLogs": "サーバーのログを見る",
-        "viewTools": "利用可能なツールを見る"
-      },
-      "totalTools": "利用可能なサービス総数：{count}件"
-    },
     "plugins": {
       "browse": {
         "description": "このプラグインを使用すると、LLMエンジンはインターネットからコンテンツをダウンロードし、それを使用してより正確な応答を生成できます。",
@@ -2444,7 +2447,6 @@
       "experts": "@:{'common.experts'}",
       "general": "一般",
       "llm": "LLM",
-      "mcp": "MCP",
       "models": "モデル",
       "plugins": "プラグイン",
       "shortcuts": "ショートカット",

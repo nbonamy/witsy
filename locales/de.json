@@ -1,5 +1,6 @@
 {
   "common": {
+    "actions": "Aktionen",
     "arguments": "Argumente",
     "askMeAnything": "Frag mich, was du willst!",
     "back": "Zurück",
@@ -85,6 +86,7 @@
     "name": "Name",
     "new": "Neu",
     "newChat": "New Conversation",
+    "next": "Weiter",
     "no": "Nein",
     "notes": "Notes",
     "ok": "OK",
@@ -171,13 +173,14 @@
       },
       "information": {
         "help": {
-          "description": "Kurzbeschreibung des Zwecks Ihres Agenten. Wenn dieser Agent in einem Arbeitsablauf verwendet wird, wird diese Beschreibung mit dem LLM geteilt, um das Verständnis des Agenten zu verbessern und gegebenenfalls dessen Aufruf zu entscheiden.",
-          "goal": "Das Ziel des Agenten. Dies wird als Systemanweisung an das LLM gesendet. Fügen Sie hier keine ausführungsspezifischen Informationen ein, da diese im Prompt gesetzt werden.",
-          "name": "Beschreibender Name für Ihren Agenten."
+          "description": "Kurze Beschreibung des Zwecks Ihres Agenten. Hilft Modellen, die Absicht des Agenten zu verstehen.",
+          "goal": "Das individuelle Ziel, das die Entscheidungsfindung des Agenten leitet.",
+          "name": "Geben Sie Ihrem Agenten einen Namen. Dies hilft Ihnen, ihn später zu identifizieren.",
+          "type": "Die Funktion des Agenten und seine Beziehung zu anderen Agenten."
         },
         "promptInputs": "Erkannte Variablen",
         "title": "Allgemeine Informationen",
-        "type": "Ausführungsmodell"
+        "type": "Rolle"
       },
       "invocation": {
         "missingInput": "[{name} fehlt]",
@@ -195,20 +198,19 @@
         "help": {
           "warning": "Die Ausführung des Agenten hängt stark von den Fähigkeiten des jeweiligen Modells ab. Stellen Sie sicher, dass Sie ein Modell auswählen, das agentische Fähigkeiten unterstützt."
         },
-        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
         "showModelSettings": "Erweiterte Einstellungen",
         "title": "Modellkonfiguration"
       },
       "settings": {
-        "title": "Modelleinstellungen"
+        "title": "Erweiterte Modelleinstellungen"
       },
       "workflow": {
         "addStep": "Schritt hinzufügen",
         "confirmDeleteStep": "Sind Sie sicher, dass Sie diesen Schritt löschen möchten?",
-        "customAgents": "Delegierte…",
-        "customTools": "Werkzeuge…",
-        "description": "Beschreibung: Wird im Chat verwendet, um Fortschrittsaktualisierungen bereitzustellen",
-        "docRepo": "Basis…",
+        "customAgents": "Co-Agenten zuweisen",
+        "customTools": "Werkzeuge hinzufügen",
+        "description": "@:{'common.description'}",
+        "docRepo": "Wissen hinzufügen",
         "docRepoNone": "Keine Wissensdatenbank",
         "error": {
           "emptyStepPrompt": "Die Eingabeaufforderung für Schritt #{step} darf nicht leer sein.",
@@ -217,14 +219,15 @@
         },
         "help": {
           "connect": "Verbinden Sie die Ausgabe vorheriger Schritte mithilfe von {'{'}{'{'}output.#{'}'}{'}'} Variablen (z. B. {'{'}{'{'}output.1{'}'}{'}'} für die Ausgabe von Schritt 1)",
+          "description": "Die Beschreibung wird verwendet, um während der Ausführung des Agenten Fortschrittsaktualisierungen bereitzustellen.",
           "docRepo": "Facts extracted from the collection will be appended to your prompt.",
           "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "Ausgabe des Schritts #{step}",
+          "prompt": "Die benutzerdefinierten Anweisungen für den Agenten",
           "title": "Entwerfen Sie Ihren mehrstufigen Arbeitsablauf. Vorlagen für Eingabeaufforderungen werden verwendet, um jeden Schritt auszuführen. Sie können \"Variablen\" einfügen, die durch die vom Benutzer beim Ausführen des Agenten bereitgestellten Werte ersetzt werden. Verwenden Sie das Format {'{'}{'{'}name:beschreibung:wert{'}'}{'}'}, um eine Variable zu definieren (die Beschreibung wird den Benutzer beim Abfragen eines Werts leiten). Sowohl die Beschreibung als auch der Standardwert sind optional."
         },
         "jsonSchema": "JSON…",
-        "step": "Schritt #{step}",
-        "stepFull": "Schritt #{step}: {text}",
+        "step": "Schritt {step}",
         "structuredOutput": {
           "text": "Geben Sie ein <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">einfaches JSON-Schema</a> an, um das erwartete Ausgabeformat dieses Schrittes zu definieren.",
           "title": "JSON-Schema"
@@ -242,22 +245,22 @@
           },
           "text": "EXPERIMENTELLES FEATURE!",
           "title": "Geben Sie die URL von A2A ein"
-        }
+        },
+        "title": "A2A-Agent importieren"
       },
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Agenten löschen möchten?",
-      "create": "Agent erstellen",
+      "create": "Neuer Agent",
       "empty": "Wählen Sie einen bestehenden Agenten aus oder erstellen Sie einen neuen.",
       "list": {
         "empty": "Noch kein Agent dieses Typs erstellt.",
-        "runnable": "Ausführbare Agenten",
-        "support": "Unterstützende Agenten"
+        "runnable": "Vom Benutzer initiiert",
+        "support": "Dienstprogramm"
       },
       "title": "Agenten-Werkstatt"
     },
     "goal": "Ziel",
     "help": {
       "clearHistory": "Verlauf für diesen Agenten löschen",
-      "create": "Neuen Agenten erstellen",
       "delete": "Diesen Agenten löschen",
       "deleteRun": "Diesen Lauf löschen",
       "edit": "Diesen Agenten bearbeiten",
@@ -270,6 +273,7 @@
       "confirmDeleteSingle": "Sind Sie sicher, dass Sie diesen Durchlauf löschen möchten?",
       "date": "Datum",
       "empty": "Noch keine Historie…",
+      "lastRun": "Letzte Ausführung",
       "log": "Protokoll",
       "neverRun": "Nie",
       "status": "Status",
@@ -311,8 +315,8 @@
       "workflow": "⚙️ Arbeitsablauf"
     },
     "type": {
-      "runnable": "Vom Benutzer ausführbar",
-      "support": "Support-Agent"
+      "runnable": "Vom Benutzer initiiert",
+      "support": "Dienstprogramm"
     },
     "view": {
       "filter": {
@@ -1592,6 +1596,34 @@
     }
   },
   "mcp": {
+    "addCustomServer": "MCP-Server hinzufügen…",
+    "confirmDelete": "Sind Sie sicher, dass Sie diesen Server löschen möchten?",
+    "copyInstallCommand": "Sie können den Installationsbefehl in Ihre Zwischenablage kopieren und in einem Terminal ausprobieren.",
+    "failedToInstall": "Installation des Servers fehlgeschlagen",
+    "importJson": {
+      "details": "Kopieren/Einfügen von JSON MCP Server-Definitionen von Claude hier.",
+      "errorArgs": "Ungültige MCP Server-Argumente.",
+      "errorCommand": "MCP Server-Befehl nicht gefunden.",
+      "errorEmpty": "JSON darf nicht leer sein.",
+      "errorFormat": "Fehler beim Parsen der JSON-Serverdefinition.",
+      "errorMultiple": "Mehrere Server gefunden. Bitte fügen Sie jeweils nur einen Server ein.",
+      "title": "Aus JSON importieren"
+    },
+    "importSmitheryServer": "Von Smithery.ai installieren",
+    "mcpServers": "MCP Server",
+    "modelContextProtocol": "Modell-Kontext-Protokoll",
+    "noServersFound": "Keine MCP-Server gefunden. Klicken Sie auf die obigen Schaltflächen, um einen neuen Server hinzuzufügen.",
+    "noTools": "Keine Werkzeuge verfügbar",
+    "oauth": {
+      "success": {
+        "message": "Sie können dieses Fenster schließen und zu Witsy zurückkehren.",
+        "title": "Autorisierung erfolgreich!"
+      }
+    },
+    "refreshServers": "Liste aktualisieren",
+    "restartServers": "Server neu starten",
+    "retryWithApiKey": "Es scheint, dass ein API-Schlüssel erforderlich ist, um diesen Server zu installieren. Möchten Sie es mit Ihrem API-Schlüssel erneut versuchen? Alternativ können Sie den Befehl kopieren und in einem Terminal ausprobieren.",
+    "server": "Server",
     "serverEditor": {
       "environmentVariables": "Umgebungsvariablen",
       "httpHeaders": "Benutzerdefinierte HTTP-Header",
@@ -1617,7 +1649,6 @@
       "selectCommand": "Befehl auswählen",
       "serverPackage": "Serverpaket",
       "smitheryApiKey": "Smithery.ai API-Schlüssel",
-      "title": "MCP-Serverkonfiguration",
       "type": {
         "http": "Streambares HTTP",
         "smithery": "Smithery.ai",
@@ -1631,6 +1662,18 @@
         "urlRequired": "Stellen Sie sicher, dass Sie eine URL für diesen Server eingeben."
       },
       "workingDirectory": "Arbeitsverzeichnis"
+    },
+    "serverLogs": "MCP Server-Protokolle",
+    "serverNotFound": "Der Server, mit dem Sie verbinden möchten, existiert nicht.",
+    "servers": "Server. Entdecken und installieren Sie MCP-Server von der",
+    "smithery": "Smithery",
+    "tooltips": {
+      "deleteServer": "Server löschen",
+      "editServer": "Server bearbeiten",
+      "startServer": "Server starten",
+      "stopServer": "Server stoppen",
+      "viewLogs": "Server-Protokolle anzeigen",
+      "viewTools": "Verfügbare Werkzeuge anzeigen"
     },
     "variableEditor": {
       "title": "MCP-Umgebungsvariable"
@@ -2267,46 +2310,6 @@
         "visionary": "🚀 Zukunftsorientiert und visionär"
       }
     },
-    "mcp": {
-      "addCustomServer": "MCP-Server hinzufügen…",
-      "confirmDelete": "Sind Sie sicher, dass Sie diesen Server löschen möchten?",
-      "connectedToServers": "Verbunden mit {count} MCP-Server{count > 1 ? 'n' : ''}",
-      "copyInstallCommand": "Sie können den Installationsbefehl in Ihre Zwischenablage kopieren und im Terminal ausprobieren.",
-      "description": "Dieses Plugin ermöglicht LLM-Engines den Zugriff auf",
-      "failedToInstall": "Fehler beim Installieren des Servers",
-      "importJson": {
-        "details": "Fügen Sie hier JSON-MCP-Serverdefinitionen von Claude ein.",
-        "errorArgs": "Ungültige MCP-Serverargumente.",
-        "errorCommand": "MCP-Serverbefehl nicht gefunden.",
-        "errorEmpty": "JSON darf nicht leer sein.",
-        "errorFormat": "Fehler beim Analysieren der JSON-Serverdefinition.",
-        "errorMultiple": "Mehrere Server gefunden. Bitte einen Server gleichzeitig einfügen.",
-        "menu": "@:{'mcp.importJson.title'}",
-        "title": "Importieren aus JSON"
-      },
-      "importSmitheryServer": "Install from Smithery.ai",
-      "mcpServers": "MCP-Server",
-      "modelContextProtocol": "Model Context Protocol",
-      "noServersFound": "No MCP Servers found. Click on the buttons below to add a new server.",
-      "noTools": "Keine Tools verfügbar",
-      "retryWithApiKey": "Es scheint, dass ein API-Schlüssel erforderlich ist, um diesen Server zu installieren. Möchten Sie es mit Ihrem API-Schlüssel erneut versuchen? Andernfalls können Sie den Befehl kopieren und es in einem Terminal versuchen.",
-      "serverLogs": "MCP-Serverprotokolle",
-      "serverNotFound": "Der Server, mit dem Sie sich verbinden möchten, existiert nicht.",
-      "servers": "Server. Entdecken und installieren Sie MCP-Server von der",
-      "smithery": "Smithery",
-      "tools": "@:{'common.tools'}",
-      "tooltips": {
-        "deleteServer": "Server löschen",
-        "editServer": "Server bearbeiten",
-        "refreshServers": "MCP-Serverliste aktualisieren",
-        "restartServers": "MCP-Server neu starten",
-        "startServer": "Server starten",
-        "stopServer": "Server stoppen",
-        "viewLogs": "Serverprotokolle anzeigen",
-        "viewTools": "Verfügbare Werkzeuge anzeigen"
-      },
-      "totalTools": "Insgesamt {count} Dienst{count > 1 ? 'e' : ''} verfügbar"
-    },
     "plugins": {
       "browse": {
         "description": "Dieses Plugin ermöglicht es LLM-Engines, Inhalte aus dem Internet herunterzuladen und zur Erzeugung genauerer Antworten zu verwenden.",
@@ -2416,7 +2419,6 @@
       "experts": "@:{'common.experts'}",
       "general": "Allgemein",
       "llm": "LLM",
-      "mcp": "MCP",
       "models": "Modelle",
       "plugins": "Plugins",
       "shortcuts": "Tastenkürzel",
