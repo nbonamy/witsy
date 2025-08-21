@@ -48,7 +48,7 @@
 
       <MenuBarItem action="mcp" :active="mode === 'mcp'" @click="emit('change', 'mcp')" v-if="hasMcp">
         <PlugIcon />
-        <span>{{ t('mcp.title') }}</span>
+        <span>{{ t('mcp.mcpServers') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')" v-if="store.isFeatureEnabled('docrepo')">

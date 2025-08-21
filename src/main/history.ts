@@ -90,7 +90,7 @@ const cleanAttachmentsFolder = (app: App, workspaceId: string, history: History)
   for (const attachment of unusedAttachments) {
     try {
       console.log(`Deleting unused file: ${attachment}`)
-      //fs.unlinkSync(attachment)
+      fs.unlinkSync(attachment)
     } catch (error) {
       console.error(`Error deleting file ${attachment}:`, error)
     }
