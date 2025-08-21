@@ -56,7 +56,7 @@ const onCreate = (createType: McpCreateType, url?: string) => {
 }
 
 // @ts-expect-error lazy
-const onEdited = async ({ type, command, url, cwd, env, headers, label }) => {
+const onEdited = async ({ type, label, command, url, cwd, env, headers, oauth }) => {
 
   // build a dummy server
   const baseServer: any = {
@@ -69,6 +69,7 @@ const onEdited = async ({ type, command, url, cwd, env, headers, label }) => {
     cwd,
     env,
     headers,
+    oauth
   }
 
   if (label !== undefined) {

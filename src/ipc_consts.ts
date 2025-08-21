@@ -175,6 +175,9 @@ export const MCP = {
   GET_TOOLS: 'mcp-get-tools',
   CALL_TOOL: 'mcp-call-tool',
   ORIGINAL_TOOL_NAME: 'mcp-original-tool-name',
+  DETECT_OAUTH: 'mcp-detect-oauth',
+  START_OAUTH_FLOW: 'mcp-start-oauth-flow',
+  COMPLETE_OAUTH_FLOW: 'mcp-complete-oauth-flow',
 } as const;
 
 export const SCRATCHPAD = {

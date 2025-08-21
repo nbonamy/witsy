@@ -87,6 +87,23 @@
           @delete="onDelVar('header')"
         />
       </div>
+      <div class="form-field">
+        <label>{{ t('mcp.serverEditor.oauth.title') }}</label>
+        <div v-if="oauthConfig"><a href="#" @click.prevent="removeOAuth">{{ t('common.delete') }}</a></div>
+        <template v-else>
+          <div class="form-subgroup">
+            <div class="form-field">
+              <label>{{ t('mcp.serverEditor.oauth.clientId') }}</label>
+              <input type="text" name="oauthClientId" v-model="oauthClientId" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+            </div>
+            <div class="form-field">
+              <label>{{ t('mcp.serverEditor.oauth.clientSecret') }}</label>
+              <input type="password" name="oauthClientSecret" v-model="oauthClientSecret" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+            </div>
+          </div>
+          <div><a href="#" @click.prevent="checkOAuth">{{ t('mcp.serverEditor.oauth.setup') }}</a></div>
+        </template>
+      </div>
     </template>
     <div class="buttons">
       <button name="cancel" @click.prevent="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
@@ -98,13 +115,13 @@
 
 <script setup lang="ts">
 
-import { strDict } from '../types/index'
-import { McpServer, McpServerType } from '../types/mcp'
-import { ref, onMounted, watch, PropType } from 'vue'
-import { t } from '../services/i18n'
+import { onMounted, PropType, ref, watch } from 'vue'
+import VariableTable from '../components/VariableTable.vue'
 import Dialog from '../composables/dialog'
 import VariableEditor from '../screens/VariableEditor.vue'
-import VariableTable from '../components/VariableTable.vue'
+import { t } from '../services/i18n'
+import { strDict } from '../types/index'
+import { McpServer, McpServerType } from '../types/mcp'
 
 export type McpCreateType = McpServerType | 'smithery'
 
@@ -127,6 +144,15 @@ const env = ref<strDict>({})
 const headers = ref<strDict>({})
 const apiKey = ref('')
 const selectedVar = ref<McpServerVariable>(null)
+const oauthConfig = ref(null)
+const oauthClientId = ref('')
+const oauthClientSecret = ref('')
+const oauthStatus = ref({
+  checking: false,
+  checked: false,
+  required: null,
+  metadata: null
+})
 
 const props = defineProps({
   server: {
@@ -146,7 +172,8 @@ const props = defineProps({
 const emit = defineEmits(['cancel', 'save', 'install'])
 
 onMounted(async () => {
-  watch(() => props || {}, async () => {
+  // Initialize values from props
+  const initializeValues = async () => {
     type.value = props.type || 'stdio'
     label.value = props.server?.label || ''
     command.value = props.server?.command || ''
@@ -154,8 +181,21 @@ onMounted(async () => {
     cwd.value = props.server?.cwd || ''
     env.value = props.server?.env || {}
     headers.value = props.server?.headers || {}
+    oauthConfig.value = props.server?.oauth || null
     apiKey.value = props.apiKey || ''
-  }, { deep: true, immediate: true })
+    
+    // OAuth detection now happens only on save, not during initialization
+  }
+
+  // Initialize immediately
+  await initializeValues()
+
+  // Watch for specific prop changes without deep watching the entire props object
+  watch(() => props.server, initializeValues)
+  watch(() => props.type, initializeValues)
+  watch(() => props.apiKey, initializeValues)
+
+  // OAuth detection now happens only on save, not on every keystroke
 })
 
 const onCancel = () => {
@@ -234,7 +274,6 @@ const onEditVar = (type: McpServerVariableType, key: string) => {
 }
 
 const onSaveVar = (variable: McpServerVariable) => {
-  console.log(variable)
   if (variable.key.length) {
     let dict = getVarDict(variable.type)
     if (variable.key != selectedVar.value.key) {
@@ -245,10 +284,140 @@ const onSaveVar = (variable: McpServerVariable) => {
   }
 }
 
-const onSave = () => {
+const checkOAuth = async (): Promise<void> => {
+  if (await isOauthRequired()) {
+    await initOauth(false)
+  } else {
+    Dialog.show({
+      title: t('mcp.serverEditor.oauth.notRequired'),
+    })
+  }
+}
+
+const isOauthRequired = async (): Promise<boolean> => {
+
+  if (type.value !== 'http' || !url.value || oauthConfig.value) {
+    return false
+  }
+
+  try {
+    const oauthCheck = await window.api.mcp.detectOAuth(url.value)
+    return oauthCheck.requiresOAuth
+  } catch {
+    return false
+  }
+
+}
+
+const initOauth = async (confirmWithUser: boolean): Promise<boolean> => {
+
+  try {
+    const oauthCheck = await window.api.mcp.detectOAuth(url.value)
+    if (!oauthCheck.requiresOAuth) {
+      return true
+    }
+
+    // Update OAuth status for UI
+    oauthStatus.value.required = true
+    oauthStatus.value.metadata = oauthCheck.metadata
+    oauthStatus.value.checked = true
+
+    // ask if required
+    let result = { isConfirmed: true }
+    if (confirmWithUser) {
+      result = await Dialog.show({
+        title: t('mcp.serverEditor.oauth.required'),
+        text: t('mcp.serverEditor.oauth.requiredText'),
+        confirmButtonText: t('common.yes'),
+        cancelButtonText: t('common.cancel'),
+        showCancelButton: true
+      })
+    }
+
+    if (result.isConfirmed) {
+      await setupOAuth()
+      return true
+    } else {
+      return false
+    }
+  
+  } catch (error) {
+    console.error('Failed to detect OAuth requirement during save:', error)
+    return true
+  }
+}
+
+const setupOAuth = async () => {
+  
+  if (!oauthStatus.value.metadata) {
+    console.error('No OAuth metadata available')
+    return
+  }
+
+  try {
+    // Show loading state
+    await Dialog.show({
+      title: t('mcp.serverEditor.oauth.authorizing'),
+      text: t('mcp.serverEditor.oauth.authorizingText'),
+      confirmButtonText: t('common.ok'),
+    })
+
+    // Start OAuth flow with optional client credentials
+    const clientCredentials = (oauthClientId.value && oauthClientSecret.value) ? {
+      client_id: oauthClientId.value,
+      client_secret: oauthClientSecret.value
+    } : undefined
+    
+    const oauthResult = await window.api.mcp.startOAuthFlow(
+      url.value, 
+      JSON.parse(JSON.stringify(oauthStatus.value.metadata)),
+      clientCredentials
+    )
+    
+    // Parse the returned OAuth configuration and set up local config
+    const oauthData = JSON.parse(oauthResult)
+    oauthConfig.value = {
+      // Only store essential OAuth data in compact form
+      tokens: oauthData.tokens,
+      clientId: oauthData.clientInformation?.client_id,
+      clientSecret: oauthData.clientInformation?.client_secret
+      // clientMetadata is standardized and regenerated each time
+    }
+
+    await Dialog.show({
+      title: t('mcp.serverEditor.oauth.success'),
+      text: t('mcp.serverEditor.oauth.successText'),
+      confirmButtonText: t('common.ok'),
+    })
+    
+  } catch (error) {
+    console.error('OAuth setup failed:', error)
+    await Dialog.show({
+      title: t('mcp.serverEditor.oauth.error'),
+      text: error.message || t('mcp.serverEditor.oauth.errorText'),
+      confirmButtonText: t('common.ok'),
+    })
+  }
+}
+
+const removeOAuth = async () => {
+  const result = await Dialog.show({
+    title: t('mcp.serverEditor.oauth.removeConfirm'),
+    text: t('mcp.serverEditor.oauth.removeConfirmText'),
+    confirmButtonText: t('common.delete'),
+    cancelButtonText: t('common.cancel'),
+    showCancelButton: true
+  })
+  
+  if (result.isConfirmed) {
+    oauthConfig.value = null
+  }
+}
+
+const onSave = async () => {
 
   if (type.value === 'stdio' && !command.value.length) {
-    Dialog.show({
+    await Dialog.show({
       title: t('mcp.serverEditor.validation.requiredFields'),
       text: t('mcp.serverEditor.validation.commandRequired'),
       confirmButtonText: t('common.ok'),
@@ -257,7 +426,7 @@ const onSave = () => {
   }
 
   if (type.value === 'sse' && !url.value.length) {
-    Dialog.show({
+    await Dialog.show({
       title: t('mcp.serverEditor.validation.requiredFields'),
       text: t('mcp.serverEditor.validation.urlRequired'),
       confirmButtonText: t('common.ok'),
@@ -265,8 +434,24 @@ const onSave = () => {
     return
   }
 
+  if (type.value === 'http' && !url.value.length) {
+    await Dialog.show({
+      title: t('mcp.serverEditor.validation.requiredFields'),
+      text: t('mcp.serverEditor.validation.urlRequired'),
+      confirmButtonText: t('common.ok'),
+    })
+    return
+  }
+
+  // Check if OAuth setup is needed before saving
+  const oauthNeeded = await isOauthRequired()
+  if (oauthNeeded) {
+    initOauth(true)
+    return
+  }
+
   if (type.value === 'smithery' && !url.value.length) {
-    Dialog.show({
+    await Dialog.show({
       title: t('mcp.serverEditor.validation.requiredFields'),
       text: t('mcp.serverEditor.validation.packageRequired'),
       confirmButtonText: t('common.ok'),
@@ -293,6 +478,7 @@ const onSave = () => {
       cwd: cwd.value,
       env: JSON.parse(JSON.stringify(env.value)),
       headers: JSON.parse(JSON.stringify(headers.value)),
+      oauth: JSON.parse(JSON.stringify(oauthConfig.value)),
       label: label.value.trim(),
     }
 
@@ -309,7 +495,6 @@ const onSave = () => {
 
 </script>
 
-
 <style scoped>
 
 .mcp-server-editor {
@@ -317,7 +502,6 @@ const onSave = () => {
   .list-with-actions {
     width: 100%;
   }
-
 }
 
 </style>

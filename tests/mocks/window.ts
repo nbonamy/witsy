@@ -454,6 +454,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         content: [ { text: 'result2' } ],
       } : { result: 'result' })),
       originalToolName: vi.fn((name: string) => name),
+      detectOAuth: vi.fn(async () => ({ requiresOAuth: false })),
     },
     anywhere: {
       prompt: vi.fn(),
