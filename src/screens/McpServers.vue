@@ -12,10 +12,10 @@
         </header>
         <main>
           <template v-if="!selected">
-            <McpServerList ref="list" :servers="servers" :status="status" :loading="loading" @edit="onEdit" @create="onCreate" @reload="load" @restart="onRestart" />
+            <List ref="list" :servers="servers" :status="status" :loading="loading" @edit="onEdit" @create="onCreate" @reload="load" @restart="onRestart" />
           </template>
           <template v-else>
-            <McpServerEditor ref="editor" :type="type" :server="selected" :apiKey="apiKey" @cancel="onEdit(null)" @saved="onEdited" />
+            <Editor ref="editor" :type="type" :server="selected" :apiKey="apiKey" @cancel="onEdit(null)" @saved="onEdited" />
           </template>
         </main>
       </div>
@@ -28,8 +28,8 @@
 import { XIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, ref } from 'vue'
 import FullScreenDrawer from '../components/FullScreenDrawer.vue'
-import McpServerEditor, { McpCreateType } from '../components/McpServerEditor.vue'
-import McpServerList from '../components/McpServerList.vue'
+import Editor, { McpCreateType } from '../mcp/Editor.vue'
+import List from '../mcp/List.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { McpServer } from '../types/mcp'

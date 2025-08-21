@@ -5,8 +5,8 @@ import { createDialogMock, createI18nMock } from '../mocks'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import McpServers from '../../src/screens/McpServers.vue'
-import McpServerList from '../../src/components/McpServerList.vue'
-import McpServerEditor from '../../src/components/McpServerEditor.vue'
+import List from '../../src/mcp/List.vue'
+import Editor from '../../src/mcp/Editor.vue'
 import Dialog from '../../src/composables/dialog'
 import { stubTeleport } from '../mocks/stubs'
 
@@ -53,14 +53,14 @@ beforeEach(async () => {
 
 test('Initialization', async () => {
   // expect(mcp.find('input[type=checkbox]').exists()).toBeTruthy()
-  expect(mcp.findComponent({ name: 'McpServerList' }).exists()).toBe(true)
+  expect(mcp.findComponent({ name: 'List' }).exists()).toBe(true)
   expect(window.api.mcp.getServers).toHaveBeenCalledTimes(1)
   expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(1)
 })
 
 // test('Actions', async () => {
   
-//   const list = mcp.findComponent({ name: 'McpServerList' })
+//   const list = mcp.findComponent({ name: 'List' })
 //   await list.find('button[name=reload]').trigger('click')
 //   expect(window.api.mcp.getServers).toHaveBeenCalledTimes(2)
 //   expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(2)
@@ -89,7 +89,7 @@ test('Server delete', async () => {
 test('Server edit', async () => {
   await mcp.find<HTMLTableRowElement>('.mcp-server-list table tbody tr:nth-child(1) .context-menu-trigger .trigger').trigger('click')
   await mcp.findComponent({ name: 'ContextMenuPlus' }).find('.edit').trigger('click')
-  const editor = mcp.findComponent({ name: 'McpServerEditor' })
+  const editor = mcp.findComponent({ name: 'Editor' })
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('node')
   expect(editor.find<HTMLInputElement>('input[name=url]').element.value).toBe('script.js')
@@ -114,7 +114,7 @@ test('Server edit', async () => {
 
 test('Normal server add - Stdio', async () => {
 
-  const editor: VueWrapper<any> = mount(McpServerEditor, { ...stubTeleport, props: { type: 'stdio' } })
+  const editor: VueWrapper<any> = mount(Editor, { ...stubTeleport, props: { type: 'stdio' } })
   await editor.vm.$nextTick()
 
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
@@ -206,7 +206,7 @@ test('Normal server add - Stdio', async () => {
 
 test('Normal server add - HTTP', async () => {
 
-  const editor: VueWrapper<any> = mount(McpServerEditor, { ...stubTeleport, props: { type: 'http' } })
+  const editor: VueWrapper<any> = mount(Editor, { ...stubTeleport, props: { type: 'http' } })
   await editor.vm.$nextTick()
 
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('http')
@@ -291,7 +291,7 @@ test('Normal server add - HTTP', async () => {
 
 test('Smithery server add', async () => {
 
-  const editor: VueWrapper<any> = mount(McpServerEditor, { ...stubTeleport, props: { type: 'smithery' }})
+  const editor: VueWrapper<any> = mount(Editor, { ...stubTeleport, props: { type: 'smithery' }})
   await editor.vm.$nextTick()
 
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('smithery')
@@ -304,7 +304,7 @@ test('Smithery server add', async () => {
 
 test('Error server add', async () => {
 
-  const editor: VueWrapper<any> = mount(McpServerEditor, { ...stubTeleport, props: { type: 'stdio' }})
+  const editor: VueWrapper<any> = mount(Editor, { ...stubTeleport, props: { type: 'stdio' }})
 
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
   expect(Dialog.show).toHaveBeenCalledTimes(1)
@@ -329,7 +329,7 @@ test('Error server add', async () => {
 test('JSON server parsing', async () => {
 
   // error cases
-  const list: VueWrapper<any> = mcp.findComponent(McpServerList)
+  const list: VueWrapper<any> = mcp.findComponent(List)
   expect(() => list.vm.validateServerJson('')).toThrowError('mcp.importJson.errorEmpty')
   expect(() => list.vm.validateServerJson('a')).toThrowError('mcp.importJson.errorFormat')
   expect(() => list.vm.validateServerJson('"hello"')).toThrowError('mcp.importJson.errorFormat')
@@ -385,7 +385,7 @@ test('JSON server add', async () => {
 
 test('Editor pickers', async () => {
 
-  const editor: VueWrapper<any> = mount(McpServerEditor, { ...stubTeleport, props: { type: 'stdio' }})
+  const editor: VueWrapper<any> = mount(Editor, { ...stubTeleport, props: { type: 'stdio' }})
 
   await editor.find<HTMLSelectElement>('select[name=source]').setValue('npx')
   expect(window.api.file.find).toHaveBeenCalledTimes(1)
