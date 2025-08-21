@@ -2303,7 +2303,7 @@
         "errorEmpty": "JSON不能为空。",
         "errorFormat": "解析JSON服务器定义时出错。",
         "errorMultiple": "发现多个服务器。请一次粘贴一个服务器。",
-        "menu": "@:{'settings.mcp.importJson.title'}",
+        "menu": "@:{'mcp.importJson.title'}",
         "title": "从 JSON 导入"
       },
       "importSmitheryServer": "Install from Smithery.ai",

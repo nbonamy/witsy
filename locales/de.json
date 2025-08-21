@@ -2281,7 +2281,7 @@
         "errorEmpty": "JSON darf nicht leer sein.",
         "errorFormat": "Fehler beim Analysieren der JSON-Serverdefinition.",
         "errorMultiple": "Mehrere Server gefunden. Bitte einen Server gleichzeitig einfügen.",
-        "menu": "@:{'settings.mcp.importJson.title'}",
+        "menu": "@:{'mcp.importJson.title'}",
         "title": "Importieren aus JSON"
       },
       "importSmitheryServer": "Install from Smithery.ai",

@@ -46,6 +46,11 @@
 
       <div class="push"></div>
 
+      <MenuBarItem action="mcp" :active="mode === 'mcp'" @click="emit('change', 'mcp')" v-if="hasMcp">
+        <PlugIcon />
+        <span>{{ t('mcp.title') }}</span>
+      </MenuBarItem>
+
       <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')" v-if="store.isFeatureEnabled('docrepo')">
         <LightbulbIcon />
         <span>{{ t('docRepo.list.title') }}</span>
@@ -72,7 +77,7 @@
 
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
-import { BrainIcon, FileTextIcon, HeadsetIcon, LightbulbIcon, MicIcon, MouseIcon, PaletteIcon, SettingsIcon } from 'lucide-vue-next'
+import { BrainIcon, FileTextIcon, HeadsetIcon, LightbulbIcon, MicIcon, MouseIcon, PaletteIcon, PlugIcon, SettingsIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import IconAgent from '../../assets/agent.svg?component'
 import IconChat from '../../assets/message-circle-3.svg?component'
@@ -87,6 +92,10 @@ export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debu
 
 const hasComputerUse = computed(() => {
   return store.isFeatureEnabled('voiceMode') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
+})
+
+const hasMcp = computed(() => {
+  return window.api.mcp.isAvailable()
 })
 
 const emit = defineEmits(['change', 'new-chat', 'run-onboarding'])

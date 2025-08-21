@@ -1,108 +1,125 @@
 <template>
   <div class="mcp-server-list">
-    <!-- <div class="description">
-      {{ t('settings.mcp.description') }}
-      <a href="https://docs.anthropic.com/en/docs/build-with-claude/mcp" target="_blank">{{ t('settings.mcp.modelContextProtocol') }}</a> (MCP)
-      {{ t('settings.mcp.servers') }}
-      <a href="https://smithery.ai" target="_blank">{{ t('settings.mcp.smithery') }}</a>.
-    </div> -->
-    <!--div class="description status" v-if="status">
-      <span v-if="status.servers == 0">{{ t('settings.mcp.noServersFound') }}</span>
-      <span v-else><b>
-        <span>{{ t('settings.mcp.connectedToServers', { count: status.servers }) }}</span>
-        <span v-if="status.tools > 0"><br/>{{ t('settings.mcp.totalTools', { count: status.tools }) }}</span>
-        <span v-else><br/>{{ t('settings.mcp.noTools') }}</span>
-      </b></span>
-    </div-->
-    <!-- <div class="form-field horizontal">
-      <input type="checkbox" v-model="enabled" @change="save" />
-      <label>{{ t('common.enabled') }}</label>
-    </div> -->
-    <div class="servers panel">
-      <div class="panel-header">
-        <label>{{ t('settings.mcp.mcpServers') }}</label>
-        <Spinner v-if="loading" />
-        <BIconArrowClockwise class="icon reload" v-tooltip="{ text: t('settings.mcp.tooltips.refreshServers'), position: 'bottom-left' }" @click.prevent="onReload" />
-        <BIconArrowRepeat class="icon restart" v-tooltip="{ text: t('settings.mcp.tooltips.restartServers'), position: 'bottom-left' }" @click.prevent="onRestart" />
+    
+    <header>
+      <div class="title">&nbsp;</div>
+      <div class="actions">
+        <button name="addSmithery" class="large secondary" @click="onCreate('smithery')" v-if="store.isFeatureEnabled('mcp.smithery')">
+          <BIconCloudPlus />{{ t('mcp.importSmitheryServer') }}
+        </button>
+        <button name="addJson" class="large secondary" @click="onImportJson" v-if="store.isFeatureEnabled('mcp.json')">
+          <BIconBraces />{{ t('mcp.importJson.menu') }}
+        </button>
+        <button name="addCustom" class="large primary" @click="onCreate('http')">
+          <PlusIcon />{{ t('mcp.addCustomServer') }}
+        </button>
       </div>
-      <div class="panel-empty" v-if="!servers.length">
-        {{ t('settings.mcp.noServersFound') }}
+    </header>
+
+    <main>
+      <div v-if="!props.servers?.length" class="empty-state">
+        {{ t('mcp.noServersFound') }}
       </div>
-      <div class="panel-body" v-else>
-        <template v-for="server in servers" :key="server.uuid">
-          <div class="panel-item">
+      
+      <table v-else class="table-plain table-plain-spaced">
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>{{ t('mcp.server') }}</th>
+            <th>{{ t('common.type') }}</th>
+            <th>{{ t('common.actions') }}</th>
+          </tr>
+        </thead>
 
-            <div class="icon leading center">
-              <a @click.prevent="showLogs(server)" v-if="hasLogs(server)">{{ getStatus(server) }}</a>
-              <span v-else>{{ getStatus(server) }}</span>
-            </div>
-
-            <div class="info" @click="onEdit(server)">
+        <tbody>
+          <tr v-for="server in props.servers" :key="server.uuid" class="panel-item">
+            <td>
+              <span class="status-indicator">{{ getStatus(server) }}</span>
+            </td>
+            <td @click="onEdit(server)" class="server-info clickable info">
               <div class="text">{{ getDescription(server) }}</div>
-              <div class="subtext">{{ getType(server) }}</div>
-            </div>
-
-            <div class="actions">
-              
-              <div class="start"
-                :style="{ display: server.state == 'disabled' ? 'block' : 'none' }"
-                v-tooltip="{ text: t('settings.mcp.tooltips.startServer'), position: 'top-left' }"
-                @click="onEnabled(server)"><BIconPlayCircle /></div>
-              
-              <div class="stop" 
-                :style="{ display: server.state == 'enabled' ? 'block' : 'none' }"
-                v-tooltip="{ text: t('settings.mcp.tooltips.stopServer'), position: 'top-left' }"
-                @click="onEnabled(server)"><BIconStopCircle /></div>
-              
-              <div class="logs"
-                :style="{ display: hasLogs(server) ? 'block' : 'none' }"
-                v-tooltip="{ text: t('settings.mcp.tooltips.viewLogs'), position: 'top-left' }"
-                @click="showLogs(server)"><BIconJournalText /></div>
-              
-              <BIconSearch class="tools" 
-                :class="{ 'disabled': !isRunning(server) }"
-                v-tooltip="{ text: t('settings.mcp.tooltips.viewTools'), position: 'top-left' }"
-                @click="showTools(server)" />
-              
-              <BIconPencil class="edit" 
-                v-tooltip="{ text: t('settings.mcp.tooltips.editServer'), position: 'top-left' }"
-                @click="onEdit(server)" />
-              
-              <BIconTrash class="delete" 
-                v-tooltip="{ text: t('settings.mcp.tooltips.deleteServer'), position: 'top-left' }"
-                @click="onDelete(server)" />
-            
+            </td>
+            <td>{{ getType(server) }}</td>
+            <td>
+              <div class="actions">
+                <!-- Start/Stop button -->
+                <PlayIcon 
+                  v-if="server.state === 'disabled'"
+                  class="start" 
+                  v-tooltip="{ text: t('mcp.tooltips.startServer'), position: 'top-left' }" 
+                  @click.stop="onEnabled(server)" 
+                />
+                <StopCircleIcon 
+                  v-else
+                  class="stop" 
+                  v-tooltip="{ text: t('mcp.tooltips.stopServer'), position: 'top-left' }" 
+                  @click.stop="onEnabled(server)" 
+                />
+                
+                <!-- View Tools button -->
+                <SearchIcon 
+                  class="tools"
+                  :class="{ 'disabled': !isRunning(server) }"
+                  v-tooltip="{ text: t('mcp.tooltips.viewTools'), position: 'top-left' }"
+                  @click.stop="showTools(server)" 
+                />
+                
+                <!-- Context menu for other actions -->
+                <ContextMenuTrigger position="below-left">
+                  <template #menu="{ close }">
+                    <div class="item edit" @click="close(); onEdit(server)">
+                      {{ t('mcp.tooltips.editServer') }}
+                    </div>
+                    <div class="item logs" @click="close(); showLogs(server)" v-if="hasLogs(server)">
+                      {{ t('mcp.tooltips.viewLogs') }}
+                    </div>
+                    <div class="item delete danger" @click="close(); onDelete(server)">
+                      {{ t('mcp.tooltips.deleteServer') }}
+                    </div>
+                  </template>
+                </ContextMenuTrigger>
               </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-          </div>
-        </template>
+      <div class="table-actions" v-if="props.servers?.length">
+        <button class="secondary" name="reload" @click="onReload" :disabled="props.loading">
+          <RefreshCwIcon />{{ t('mcp.refreshServers') }}
+        </button>
+        <button class="secondary" name="restart" @click="onRestart" :disabled="props.loading">
+          <PowerIcon />{{ t('mcp.restartServers') }}
+        </button>
+        <Spinner v-if="props.loading" />
       </div>
-      <div class="panel-footer">
-        <button name="addCustom" @click="onCreate('stdio')"><BIconPlusLg /> {{ t('settings.mcp.addCustomServer') }}</button>
-        <button name="addSmithery" @click="onCreate('smithery')" v-if="store.isFeatureEnabled('mcp.smithery')"><BIconCloudPlus /> {{ t('settings.mcp.importSmitheryServer') }}</button>
-        <button name="addJson" @click="onImportJson" v-if="store.isFeatureEnabled('mcp.json')"><BIconBraces /> {{ t('settings.mcp.importJson.menu') }}</button>
-      </div>
-    </div>
+    </main>
+    
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ref, nextTick } from 'vue'
+import { BIconBraces, BIconCloudPlus } from 'bootstrap-icons-vue'
+import { PlayIcon, PlusIcon, PowerIcon, RefreshCwIcon, SearchIcon, StopCircleIcon } from 'lucide-vue-next'
+import Swal from 'sweetalert2/dist/sweetalert2.js'
+import { nextTick, PropType, ref } from 'vue'
+import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
+import Spinner from '../components/Spinner.vue'
+import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { McpServer, McpServerStatus } from '../types/mcp'
-import Dialog from '../composables/dialog'
-import Spinner from '../components/Spinner.vue'
-import Swal from 'sweetalert2/dist/sweetalert2.js'
-import { BIconPlusLg } from 'bootstrap-icons-vue'
 
-const servers = ref([])
-const status = ref(null)
+const props = defineProps({
+  servers: Array as PropType<McpServer[]>,
+  status: Object,
+  loading: Boolean
+})
+
 const selected = ref(null)
-const loading = ref(false)
 
-const emit = defineEmits([ 'edit', 'create' ])
+const emit = defineEmits([ 'edit', 'create', 'reload', 'restart' ])
 
 const getType = (server: McpServer) => {
   if (server.url.includes('@smithery/cli')) return 'smithery'
@@ -121,7 +138,7 @@ const getDescription = (server: McpServer) => {
 
 const isRunning = (server: McpServer) => {
   if (server.state == 'disabled') return false
-  const s = status.value?.servers.find((s: McpServerStatus) => s.uuid == server.uuid)
+  const s = props.status?.servers.find((s: McpServerStatus) => s.uuid == server.uuid)
   return s ? true : false
 }
 
@@ -131,29 +148,17 @@ const getStatus = (server: McpServer) => {
 }
 
 const hasLogs = (server: McpServer) => {
-  return status.value?.logs?.[server.uuid]
-}
-
-const load = async () => {
-  loading.value = true
-  nextTick(async () => {
-    const now = new Date().getTime()
-    servers.value = await window.api.mcp.getServers()
-    status.value = await window.api.mcp.getStatus()
-    setTimeout(() => {
-      loading.value = false
-    }, 1000 - (new Date().getTime() - now))
-  })
+  return props.status?.logs?.[server.uuid]
 }
 
 const onReload = async () => {
-  load()
+  emit('reload')
 }
 
 const showLogs = (server: McpServer) => {
   Dialog.show({
-    title: t('settings.mcp.serverLogs'),
-    text: status.value.logs[server.uuid].join(''),
+    title: t('mcp.serverLogs'),
+    text: props.status.logs[server.uuid].join(''),
     confirmButtonText: t('common.close'),
   })
 }
@@ -162,26 +167,21 @@ const showTools = async (server: McpServer) => {
   const tools = await window.api.mcp.getServerTools(server.registryId)
   if (tools.length) {
     Dialog.show({
-      title: t('settings.mcp.tools'),
+      title: t('mcp.tools'),
       html: tools.map((tool: any) => `<li><b>${tool.name}</b><br/>${tool.description}</li>`).join(''),
       customClass: { confirmButton: 'alert-confirm', htmlContainer: 'list' },
       confirmButtonText: t('common.close'),
     })
   } else {
     Dialog.show({
-      title: t('settings.mcp.noTools'),
+      title: t('mcp.noTools'),
       confirmButtonText: t('common.close'),
     })
   }
 }
 
 const onRestart = async () => {
-  loading.value = true
-  status.value = { servers: [], logs: {} }
-  nextTick(async () => {
-    await window.api.mcp.reload()
-    load()
-  })
+  emit('restart')
 }
 
 const onCreate = (type: string) => {
@@ -191,8 +191,8 @@ const onCreate = (type: string) => {
 const onImportJson = async () => {
 
   const result = await Dialog.show({
-    title: t('settings.mcp.importJson.title'),
-    text: t('settings.mcp.importJson.details'),
+    title: t('mcp.importJson.title'),
+    text: t('mcp.importJson.details'),
     input: 'textarea',
     inputAttributes: { rows: 10 },
     inputPlaceholder: '"mcp-server-name": {\n  "command": "",\n  "args": [ … ]\n}',
@@ -224,10 +224,9 @@ const onImportJson = async () => {
     }
 
     // edit it
-    loading.value = true
     nextTick(async () => {
       await window.api.mcp.editServer(server)
-      load()
+      emit('reload')
     })
 
   }
@@ -238,28 +237,26 @@ const onDelete = async (server: McpServer) => {
   if (!server) return
   Dialog.show({
     target: document.querySelector('.settings .plugins'),
-    title: t('settings.mcp.confirmDelete'),
+    title: t('mcp.confirmDelete'),
     text: t('common.confirmation.cannotUndo'),
     confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then(async (result) => {
     if (result.isConfirmed) {
-      loading.value = true
       nextTick(async () => {
         await window.api.mcp.deleteServer(server.registryId)
         selected.value = null
-        load()
+        emit('reload')
       })
     }
   })
 }
 
 const onEnabled = async (server: McpServer) => {
-  loading.value = true
   nextTick(async () => {
     server.state = (server.state == 'enabled' ? 'disabled' : 'enabled')
     await window.api.mcp.editServer(JSON.parse(JSON.stringify(server)))
-    load()
+    emit('reload')
   })
 }
 
@@ -275,7 +272,7 @@ const validateServerJson = (json: string) => {
     json = json.slice(0, -1).trim()
   }
   if (!json.length) {
-    throw new Error(t('settings.mcp.importJson.errorEmpty'))
+    throw new Error(t('mcp.importJson.errorEmpty'))
   }
   if (!json.startsWith('{')) {
     json = `{${json}}`
@@ -286,37 +283,89 @@ const validateServerJson = (json: string) => {
   try {
     dict = JSON.parse(json)
   } catch {
-    throw new Error(t('settings.mcp.importJson.errorFormat'))
+    throw new Error(t('mcp.importJson.errorFormat'))
   }
   
   // need an object with exactly one key
-  if (typeof dict !== 'object') throw new Error(t('settings.mcp.importJson.errorFormat'))
-  if (Object.keys(dict).length != 1) throw new Error(t('settings.mcp.importJson.errorMultiple'))
+  if (typeof dict !== 'object') throw new Error(t('mcp.importJson.errorFormat'))
+  if (Object.keys(dict).length != 1) throw new Error(t('mcp.importJson.errorMultiple'))
 
   // get the server and check command and args
   const server = dict[Object.keys(dict)[0]]
-  if (typeof server.command !== 'string' || !server.command?.length) throw new Error(t('settings.mcp.importJson.errorCommand'))
-  if (!Array.isArray(server.args)) throw new Error(t('settings.mcp.importJson.errorArgs'))
+  if (typeof server.command !== 'string' || !server.command?.length) throw new Error(t('mcp.importJson.errorCommand'))
+  if (!Array.isArray(server.args)) throw new Error(t('mcp.importJson.errorArgs'))
   
   // done
   return server
 
 }
 
-defineExpose({
-  load,
-  setLoading: (value: boolean) => {
-    loading.value = value
-  },
-})
 
 </script>
 
 
 <style scoped>
 
-.servers {
-  font-size: 110%;
+.mcp-server-list {
+  
+  main {
+    padding: 4rem;
+  }
+  
+  .empty-state {
+    text-align: center;
+    color: var(--faded-text-color);
+    font-size: 1.1rem;
+    padding: 4rem;
+  }
+  
+  .server-info.clickable {
+    cursor: pointer;
+  }
+  
+  .server-info:hover {
+    background-color: var(--hover-background);
+  }
+  
+  .status-indicator {
+    font-size: 1.2rem;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .actions svg {
+    cursor: pointer;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  .actions svg.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  
+  .table-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 2rem;
+    padding: 0 1rem;
+  }
+  
+  .table-actions button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .subtext {
+    font-size: 0.9rem;
+    color: var(--faded-text-color);
+  }
 }
 
 </style>

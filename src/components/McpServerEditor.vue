@@ -1,5 +1,6 @@
 <template>
   <div class="mcp-server-editor form form-vertical form-large" @keydown.enter.prevent="onSave">
+    <main>
     <div class="form-field">
       <label>{{ t('common.type') }}</label>
       <select name="type" v-model="type">
@@ -117,23 +118,32 @@
         </template>
       </div>
     </template>
+    
     <div class="buttons">
-      <button name="cancel" @click.prevent="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
-      <button name="save" @click.prevent="onSave" class="alert-confirm">{{ type === 'smithery' ? t('common.install') : t('common.save') }}</button>
+      <Spinner v-if="loading" />
+      <template v-else>
+        <button name="cancel" @click.prevent="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="save" @click.prevent="onSave" class="primary">{{ type === 'smithery' ? t('common.install') : t('common.save') }}</button>
+      </template>
     </div>
+
+    <VariableEditor ref="editor" id="mcp-variable-editor" title="mcp.variableEditor.title" :variable="selectedVar" @save="onSaveVar" />
+
+    </main>
   </div>
-  <VariableEditor ref="editor" id="mcp-variable-editor" title="mcp.variableEditor.title" :variable="selectedVar" @save="onSaveVar" />
 </template>
 
 <script setup lang="ts">
 
-import { onMounted, PropType, ref, watch } from 'vue'
+import { nextTick, onMounted, PropType, ref } from 'vue'
 import VariableTable from '../components/VariableTable.vue'
 import Dialog from '../composables/dialog'
 import VariableEditor from '../screens/VariableEditor.vue'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 import { strDict } from '../types/index'
-import { McpServer, McpServerType } from '../types/mcp'
+import { McpInstallStatus, McpServer, McpServerType } from '../types/mcp'
+import Spinner from './Spinner.vue'
 
 export type McpCreateType = McpServerType | 'smithery'
 
@@ -146,7 +156,8 @@ export type McpServerVariable = {
 }
 
 const editor = ref(null)
-const type = ref('stdio')
+const loading = ref(false)
+const type = ref<McpServerType|'smithery'>('stdio')
 const label = ref('')
 const command = ref('')
 const source = ref('')
@@ -170,7 +181,6 @@ const oauthStatus = ref({
 const props = defineProps({
   server: {
     type: Object as PropType<McpServer>,
-    default: () => ({}),
   },
   type: {
     type: String as PropType<McpCreateType>,
@@ -182,31 +192,19 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['cancel', 'save', 'install'])
+const emit = defineEmits(['cancel', 'saved', 'install'])
 
 onMounted(async () => {
-  // Initialize values from props
-  const initializeValues = async () => {
-    // console.log('Initializing McpServerEditor with props:', props)
-    type.value = props.type || 'stdio'
-    label.value = props.server?.label || ''
-    command.value = props.server?.command || ''
-    url.value = props.server?.url || ''
-    cwd.value = props.server?.cwd || ''
-    env.value = props.server?.env || {}
-    headers.value = props.server?.headers || {}
-    oauthConfig.value = props.server?.oauth || null
-    apiKey.value = props.apiKey || ''
-  }
-
-  // Initialize immediately
-  await initializeValues()
-
-  // Watch for specific prop changes without deep watching the entire props object
-  watch(() => props.server, initializeValues)
-  watch(() => props.type, initializeValues)
-  watch(() => props.apiKey, initializeValues)
-
+  // console.log('Initializing McpServerEditor with props:', props)
+  type.value = props.type || 'stdio'
+  label.value = props.server?.label || ''
+  command.value = props.server?.command || ''
+  url.value = props.server?.url || ''
+  cwd.value = props.server?.cwd || ''
+  env.value = props.server?.env || {}
+  headers.value = props.server?.headers || {}
+  oauthConfig.value = props.server?.oauth || null
+  apiKey.value = props.apiKey || ''
 })
 
 const onCancel = () => {
@@ -467,52 +465,123 @@ const onSave = async () => {
     return
   }
 
-  // Check if OAuth setup is needed before saving
-  const oauthNeeded = await isOauthRequired()
-  if (oauthNeeded) {
-    initOauth(false)
-    return
-  }
+  try {
 
-  if (type.value === 'smithery') {
-
-    emit('install', {
-      registry: type.value,
-      server: url.value,
-      apiKey: apiKey.value,
-    })
-
-  } else {
-
-    const trimmedLabel = label.value.trim()
-
-    const payload: any = {
-      type: type.value,
-      label: label.value.trim(),
-      command: command.value,
-      url: url.value,
-      cwd: cwd.value,
-      env: JSON.parse(JSON.stringify(env.value)),
-      headers: JSON.parse(JSON.stringify(headers.value)),
-      oauth: JSON.parse(JSON.stringify(oauthConfig.value)),
+    // Check if OAuth setup is needed before saving
+    const oauthNeeded = await isOauthRequired()
+    if (oauthNeeded) {
+      loading.value = true
+      initOauth(false)
+      return
     }
 
-    // include label only when non-empty or when it existed before (allows deletion)
-    if (trimmedLabel.length || props.server?.label !== undefined) {
-      payload.label = trimmedLabel
+    if (type.value === 'smithery') {
+
+      loading.value = true
+      if (await install(type.value, url.value, apiKey.value)) {
+        emit('saved')
+      }
+
+    } else {
+
+      // build a dummy server
+      const server: McpServer = {
+        uuid: props.server?.uuid,
+        registryId: props.server?.registryId,
+        state: props.server?.state || 'enabled',
+        type: type.value,
+        label: label.value.trim(),
+        command: command.value,
+        url: url.value,
+        cwd: cwd.value,
+        env: JSON.parse(JSON.stringify(env.value)),
+        headers: JSON.parse(JSON.stringify(headers.value)),
+        oauth: JSON.parse(JSON.stringify(oauthConfig.value)),
+      }
+
+      // save it
+      loading.value = true
+      await window.api.mcp.editServer(server)
+      emit('saved')
+
     }
 
-    emit('save', payload)
-
+  } finally {
+    loading.value = false
   }
 
 }
 
+const install = async (registry: string, server: string, apiKey: string): Promise<boolean> => {
+
+  // save
+  if (registry === 'smithery') {
+    store.config.mcp.smitheryApiKey = apiKey
+    store.saveSettings()
+  }
+
+  await nextTick()
+  
+  const rc: McpInstallStatus = await window.api.mcp.installServer(registry, server, apiKey)
+
+  if (rc === 'success') {
+    return true
+  }
+
+  if (rc === 'not_found') {
+    await Dialog.show({
+      title: t('mcp.failedToInstall'),
+      text: t('mcp.serverNotFound'),
+      confirmButtonText: t('common.retry'),
+    })
+    return false
+  }
+
+  if (rc === 'api_key_missing') {
+    Dialog.show({
+      title: t('mcp.failedToInstall'),
+      text: t('mcp.retryWithApiKey'),
+      confirmButtonText: t('common.retry'),
+      denyButtonText: t('common.copy'),
+      showCancelButton: true,
+      showDenyButton: true,
+    }).then((result) => {
+      if (result.isDenied) {
+        const command = window.api.mcp.getInstallCommand(registry, server)
+        navigator.clipboard.writeText(command)
+        emit('cancel')
+      } else if (!result.isConfirmed) {
+        emit('cancel')
+      }
+    })
+    return false
+  }
+   
+  // general error  
+  Dialog.show({
+    title: t('mcp.failedToInstall'),
+    text: t('mcp.copyInstallCommand'),
+    confirmButtonText: t('common.copy'),
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const command = window.api.mcp.getInstallCommand(registry, server)
+      navigator.clipboard.writeText(command)
+    }
+  })
+
+}
 </script>
 
 <style scoped>
 
 .mcp-server-editor {
+
+  main {
+    padding: 2rem 0rem;
+    margin: 0 auto;
+    width: 500px;
+  }
   
   .list-with-actions {
     width: 100%;
