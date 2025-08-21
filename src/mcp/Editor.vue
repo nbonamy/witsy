@@ -136,6 +136,7 @@
 <script setup lang="ts">
 
 import { nextTick, onMounted, PropType, ref } from 'vue'
+import Spinner from '../components/Spinner.vue'
 import VariableTable from '../components/VariableTable.vue'
 import Dialog from '../composables/dialog'
 import VariableEditor from '../screens/VariableEditor.vue'
@@ -143,7 +144,6 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { strDict } from '../types/index'
 import { McpInstallStatus, McpServer, McpServerType } from '../types/mcp'
-import Spinner from './Spinner.vue'
 
 export type McpCreateType = McpServerType | 'smithery'
 
