@@ -52,7 +52,6 @@ defineExpose({
 <style scoped>
 
 .fullscreen-drawer {
-  -webkit-app-region: no-drag;
   position: fixed;
   top: 0;
   left: 0;
@@ -61,6 +60,7 @@ defineExpose({
   background-color: var(--background-color);
   transform: translateY(100%);
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  -webkit-app-region: no-drag;
 
   &.visible {
     transform: translateY(0);

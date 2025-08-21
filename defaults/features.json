@@ -17,7 +17,7 @@
     "exportPdf": false
   },
   "mcp": {
-    "smithery": false,
+    "smithery": true,
     "json": false
   }
 }

@@ -22,6 +22,7 @@
   </div>
   <Onboarding v-if="onboard" @close="onOnboardingDone" />
   <DocRepos v-if="docrepos" @close="onDocReposClose" />
+  <McpServers v-if="mcpservers" @close="onMcpServersClose" />
   <Fullscreen window="main" />
 </template>
 
@@ -36,6 +37,7 @@ import AgentForge from '../screens/AgentForge.vue'
 import Chat from '../screens/Chat.vue'
 import DesignStudio from '../screens/DesignStudio.vue'
 import DocRepos from '../screens/DocRepos.vue'
+import McpServers from '../screens/McpServers.vue'
 import Onboarding from '../screens/Onboarding.vue'
 import RealtimeChat from '../screens/RealtimeChat.vue'
 import Settings from '../screens/Settings.vue'
@@ -51,6 +53,7 @@ const transcribe = ref<typeof Transcribe>(null)
 const realtime = ref<typeof RealtimeChat>(null)
 const onboard = ref(false)
 const docrepos = ref(false)
+const mcpservers = ref(false)
 
 // init stuff
 store.load()
@@ -128,6 +131,8 @@ const onMode = async (next: MenuBarMode) => {
     window.api.debug.showConsole()
   } else if (next === 'docrepo') {
     docrepos.value = true
+  } else if (next === 'mcp') {
+    mcpservers.value = true
   } else {
     mode.value = next
   }
@@ -174,9 +179,24 @@ const onDocReposClose = () => {
   docrepos.value = false
 }
 
+const onMcpServersClose = () => {
+  mcpservers.value = false
+}
+
 </script>
 
 <style>
 @import 'sweetalert2/dist/sweetalert2.css';
 @import '../../css/swal2.css';
+</style>
+
+<style>
+
+/* hack! */
+.main-window:has(~ .fullscreen-drawer.visible) {
+  main .settings * {
+    z-index: -1 !important;
+  }
+}
+
 </style>

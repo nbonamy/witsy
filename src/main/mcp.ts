@@ -223,7 +223,7 @@ export default class {
     const config = loadSettings(this.app)
 
     // create?
-    if (server.uuid === null) {
+    if (!server.uuid) {
       server.uuid = crypto.randomUUID()
       server.registryId = server.uuid
       config.mcp.servers.push(server)

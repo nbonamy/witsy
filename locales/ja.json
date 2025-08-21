@@ -2309,7 +2309,7 @@
         "errorEmpty": "JSONは空にできません。",
         "errorFormat": "JSONサーバー定義の解析中にエラーが発生しました。",
         "errorMultiple": "複数のサーバーが見つかりました。一度に1つのサーバーを貼り付けてください。",
-        "menu": "@:{'settings.mcp.importJson.title'}",
+        "menu": "@:{'mcp.importJson.title'}",
         "title": "JSONからインポート"
       },
       "importSmitheryServer": "Install from Smithery.ai",
