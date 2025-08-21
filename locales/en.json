@@ -405,6 +405,9 @@
         "titleRequired": "Make sure you enter a title for this chat."
       }
     },
+    "empty": {
+      "greeting": "Hey, how can I assist you?"
+    },
     "export": {
       "error": "An error occurred while trying to export the chat."
     },

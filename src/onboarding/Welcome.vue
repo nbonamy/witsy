@@ -37,7 +37,7 @@
       </div>
 
       <div class="feature" :style="{ '--delay': '1.0s' }">
-        <BotIcon class="feature-icon" />
+        <AgentIcon class="feature-icon" />
         <span class="feature-text">{{ t('agent.forge.title') }}</span>
       </div>
 
@@ -49,9 +49,9 @@
 
 <script setup lang="ts">
 
-import { BotIcon, MessageSquareQuoteIcon, MicIcon, NotebookPenIcon, PaletteIcon, TelescopeIcon } from 'lucide-vue-next';
+import { MessageSquareQuoteIcon, MicIcon, NotebookPenIcon, PaletteIcon, TelescopeIcon } from 'lucide-vue-next'
+import AgentIcon from '../../assets/agent.svg?component'
 import { t } from '../services/i18n'
-import { store } from '../services/store'
 
 </script>
 

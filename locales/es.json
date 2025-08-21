@@ -387,6 +387,9 @@
         "titleRequired": "Asegúrate de ingresar un título para esta conversación."
       }
     },
+    "empty": {
+      "greeting": "Hola, ¿en qué puedo ayudarte?"
+    },
     "export": {
       "error": "Ocurrió un error al intentar exportar la conversación."
     },

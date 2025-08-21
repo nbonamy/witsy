@@ -3,7 +3,7 @@
     
     <div class="role" :class="message.role" v-if="showRole" v-tooltip="{ text: modelInfo, position: 'bottom-right' }">
       <template v-if="agent">
-        <BotIcon class="avatar" />
+        <AgentIcon class="avatar" />
         <div class="name variable-font-size">{{ agent.name }}</div>
       </template>
       <template v-else>
@@ -56,8 +56,9 @@
 
 <script setup lang="ts">
 
-import { BotIcon, BrainIcon } from 'lucide-vue-next'
+import { BrainIcon } from 'lucide-vue-next'
 import { computed, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
+import AgentIcon from '../../assets/agent.svg?component'
 import UserAvatar from '../../assets/person.crop.circle.svg?component'
 import useAppearanceTheme from '../composables/appearance_theme'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'

@@ -406,6 +406,9 @@
         "titleRequired": "Upewnij się, że wprowadziłeś tytuł tego czatu."
       }
     },
+    "empty": {
+      "greeting": "Cześć, jak mogę Ci pomóc?"
+    },
     "export": {
       "error": "Wystąpił błąd podczas próby wyeksportowania czatu."
     },

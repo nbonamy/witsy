@@ -387,6 +387,9 @@
         "titleRequired": "Assicurati di inserire un titolo per questa chat."
       }
     },
+    "empty": {
+      "greeting": "Ciao, come posso aiutarti?"
+    },
     "export": {
       "error": "Si è verificato un errore durante il tentativo di esportare la chat."
     },

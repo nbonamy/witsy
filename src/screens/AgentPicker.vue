@@ -7,7 +7,7 @@
       <div class="agent-list">
         <div v-for="agent in runnableAgents" :key="agent.uuid" class="agent-item" @click="onSelectAgent(agent)">
           <div class="agent-icon">
-            <BotIcon v-if="agent.source === 'witsy'" />
+            <AgentIcon v-if="agent.source === 'witsy'" />
             <LogoA2A v-else-if="agent.source === 'a2a'" />
           </div>
           <div class="agent-info">
@@ -27,16 +27,16 @@
 
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
+import LogoA2A from '../../assets/a2a.svg?component'
+import AgentIcon from '../../assets/agent.svg?component'
+import ModalDialog from '../components/ModalDialog.vue'
+import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Agent } from '../types/index'
-import Dialog from '../composables/dialog'
-import ModalDialog from '../components/ModalDialog.vue'
-import LogoA2A from '../../assets/a2a.svg?component'
 
 import useEventBus from '../composables/event_bus'
-import { BotIcon } from 'lucide-vue-next'
 const { emitEvent } = useEventBus()
 
 const dialog = ref(null)
@@ -135,7 +135,7 @@ defineExpose({
     svg {
       width: 1.5rem;
       height: 1.5rem;
-      fill: var(--text-color);
+      color: var(--text-color);
     }
   }
 
