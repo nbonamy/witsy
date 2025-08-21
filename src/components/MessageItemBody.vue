@@ -102,6 +102,10 @@ const computeBlocks = (content: string|null): Block[] => {
     content = closeOpenMarkdownTags(content)
   }
 
+  // we always close artifacts because the user may have interrupted
+  // and this is cheap
+  content = closeOpenArtifactTags(content)
+
   // now get the code blocks
   const codeBlocks: { start: number, end: number }[] = getCodeBlocks(content)
 
@@ -112,7 +116,7 @@ const computeBlocks = (content: string|null): Block[] => {
   // Negative lookbehind (?<!\[) prevents matching when preceded by '[' 
   const regexMedia1 = /(?<!\[)!\[([^\]]*)\]\(([^\)]*)\)/g
   const regexMedia2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
-  const regexArtifact1 = /<artifact title=\"([^\"]*)\">(.*)<\/artifact>/gms
+  const regexArtifact1 = /<artifact title=\"([^\"]*)\">(.*?)<\/artifact>/gms
   const regexTool1 = /<tool (id|index)="([^\"]*)"><\/tool>/g
 
   while (lastIndex < content.length) {
@@ -214,6 +218,16 @@ const computeBlocks = (content: string|null): Block[] => {
   // done
   //console.log('Computed blocks:', content, blocks)
   return blocks
+}
+
+const closeOpenArtifactTags = (content: string) => {
+
+  const index1 = content.lastIndexOf('<artifact')
+  const index2 = content.lastIndexOf('</artifact>')
+  if (index1 > index2) {
+    content += '</artifact>'
+  }
+  return content
 }
 
 </script>

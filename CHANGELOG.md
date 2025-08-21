@@ -13,6 +13,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Expert name display in chat
+- Multiple artifacts display fix
+- Partial artifacts display fix
 
 ### Removed
 - N/A
