@@ -129,7 +129,7 @@ onMounted(async () => {
   window.api.on('file-modified', (file: string) => {
     if (file === 'settings') {
       for (const setting of settings) {
-        setting.value.load()
+        setting.value?.load()
       }
     }
   })

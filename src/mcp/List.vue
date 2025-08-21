@@ -24,23 +24,23 @@
       <table v-else class="table-plain table-plain-spaced">
         <thead>
           <tr>
-            <th>&nbsp;</th>
-            <th>{{ t('mcp.server') }}</th>
-            <th>{{ t('common.type') }}</th>
-            <th>{{ t('common.actions') }}</th>
+            <th class="status-col">&nbsp;</th>
+            <th class="server-col">{{ t('mcp.server') }}</th>
+            <th class="type-col">{{ t('common.type') }}</th>
+            <th class="actions-col">{{ t('common.actions') }}</th>
           </tr>
         </thead>
 
         <tbody>
           <tr v-for="server in props.servers" :key="server.uuid" class="panel-item">
-            <td>
+            <td class="status-col">
               <span class="status-indicator">{{ getStatus(server) }}</span>
             </td>
-            <td @click="onEdit(server)" class="server-info clickable info">
+            <td class="server-col server-info clickable info" @click="onEdit(server)">
               <div class="text">{{ getDescription(server) }}</div>
             </td>
-            <td>{{ getType(server) }}</td>
-            <td>
+            <td class="type-col">{{ getType(server) }}</td>
+            <td class="actions-col">
               <div class="actions">
                 <!-- Start/Stop button -->
                 <PlayIcon 
@@ -310,6 +310,8 @@ const validateServerJson = (json: string) => {
   
   main {
     padding: 4rem;
+    max-width: 1000px;
+    margin: 0 auto;
   }
   
   .empty-state {
@@ -362,9 +364,27 @@ const validateServerJson = (json: string) => {
     gap: 0.5rem;
   }
   
-  .subtext {
-    font-size: 0.9rem;
-    color: var(--faded-text-color);
+  
+  /* Column width optimization */
+  table {
+    table-layout: fixed;
+  }
+  
+  .status-col {
+    width: 3rem;
+    text-align: center;
+  }
+  
+  .server-col {
+    width: auto;
+  }
+  
+  .type-col {
+    width: 6rem;
+  }
+  
+  .actions-col {
+    width: 6rem;
   }
 }
 
