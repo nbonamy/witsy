@@ -2,13 +2,14 @@
   <div class="chat-area sp-main">
     <header :class="{ 'is-left-most': isLeftMost }">
       
-      <!-- <div class="icon toggle-sidebar" v-tooltip="{ text: t('main.toggleSidebar'), position: 'bottom-right' }" @click="toggleSideBar">
-        <IconSideBar />
-      </div> -->
+      <div class="icon toggle-sidebar" v-tooltip="{ text: t('main.toggleSidebar'), position: 'bottom-right' }" @click="toggleSideBar">
+        <PanelRightCloseIcon v-if="isLeftMost" />
+        <PanelRightOpenIcon v-else />
+      </div>
 
-      <!-- <div class="icon new-chat" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.newChat'), position: 'bottom-right' }" @click="onNewChat">
-        <IconNewChat />
-      </div> -->
+      <div class="icon new-chat" v-if="isLeftMost"v-tooltip="{ text: t('common.newChat'), position: 'bottom-right' }" @click="onNewChat">
+        <MessageCirclePlusIcon />
+      </div>
 
       <!-- <div class="icon run-agent" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-right' }" @click="onRunAgent">
         <IconRunAgent class="scale120" />
@@ -19,7 +20,7 @@
       <SlidersHorizontalIcon class="icon settings" @click="showModelSettings = !showModelSettings" v-if="store.isFeatureEnabled('chat.settings')" />
       <EllipsisVerticalIcon class="icon menu" @click="onMenu" v-if="chat?.title || store.isFeatureEnabled('chat.temporary')" /> 
     
-    </header>
+  </header>
     <main>
       <div class="chat-content">
         
@@ -50,7 +51,7 @@
 
 import html2canvas from 'html2canvas'
 import html2pdf from 'html2pdf.js'
-import { EllipsisVerticalIcon, SlidersHorizontalIcon, X } from 'lucide-vue-next'
+import { EllipsisVerticalIcon, MessageCirclePlusIcon, PanelRightCloseIcon, PanelRightOpenIcon, SlidersHorizontalIcon, X } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
 import Chat from '../models/chat'
@@ -362,10 +363,6 @@ defineExpose({
   padding-left: 40px;
 }
 
-.windows .split-pane .sp-main header .toggle-sidebar svg {
-  top: -4.5px;
-}
-
 .split-pane {
   
   .sp-main {
@@ -391,16 +388,20 @@ defineExpose({
         margin-right: 8px;
       }
 
-      .toggle-sidebar svg {
-        position: relative;
-        top: -1px;
-        transform: scaleY(120%);
+      svg {
+        width: 1.25rem;
+        height: 1.25rem;
       }
 
       .icon {
         &.hidden {
           display: none;
         }
+      }
+
+      .new-chat {
+        position: relative;
+        top: -1px;
       }
 
     }

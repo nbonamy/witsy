@@ -623,6 +623,7 @@ button {
     font-weight: bold;
     background-color: var(--color-primary);
     color: var(--color-on-primary);
+    white-space: nowrap;
     &:active:enabled {
       background-color: var(--color-secondary) !important;
       color: var(--color-on-secondary) !important;
