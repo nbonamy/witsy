@@ -52,7 +52,7 @@
                 v-tooltip="{ text: t('settings.mcp.tooltips.stopServer'), position: 'top-left' }"
                 @click="onEnabled(server)"><BIconStopCircle /></div>
               
-              <div class="logs" :class="{ 'disabled': !isRunning(server) }"
+              <div class="logs"
                 :style="{ display: hasLogs(server) ? 'block' : 'none' }"
                 v-tooltip="{ text: t('settings.mcp.tooltips.viewLogs'), position: 'top-left' }"
                 @click="showLogs(server)"><BIconJournalText /></div>

@@ -14,6 +14,7 @@
     "comboBox": {
       "help": "Select a model from the list or type a model name you know exists."
     },
+    "setup": "Setup",
     "command": "Command",
     "confirmation": {
       "cannotUndo": "You can't undo this action.",
@@ -1591,6 +1592,21 @@
     "serverEditor": {
       "environmentVariables": "Environment Variables",
       "httpHeaders": "Custom HTTP Headers",
+      "oauth": {
+        "title": "Authentication Data",
+        "required": "Authentication is required to connect to this server",
+        "requiredText": "You need to authenticate to use this server. Would you like to set it up now?",
+        "authorizing": "Starting Authentication",
+        "authorizingText": "Your browser will open to authorize Witsy. Please complete the authorization and return to this window once done.",
+        "success": "Authentication Setup Complete",
+        "successText": "Authentication has been successfully configured for this server. You can save your changes.",
+        "error": "Authentication Setup Failed",
+        "errorText": "Failed to configure authentication. Please check your internet connection and try again.",
+        "removeConfirm": "Delete Authentication data",
+        "removeConfirmText": "Are you sure you want to delete the authentication data? You will need to re-authorize if you want to use this server again.",
+        "notRequired": "This server does not require authentication.",
+        "setup": "@:{'common.setup'}"
+      },
       "selectCommand": "Select command",
       "serverPackage": "Server Package",
       "smitheryApiKey": "Smithery.ai API Key",

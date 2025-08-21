@@ -92,6 +92,7 @@ test('Server edit', async () => {
     cwd: 'cwd1',
     env: {},
     headers: {},
+    oauth: null,
   })
 })
 
@@ -123,6 +124,7 @@ test('Normal server add - SSE', async () => {
     cwd: '',
     env: {},
     headers: {},
+    oauth: null,
   })
 
   // fake select the server
@@ -167,6 +169,7 @@ test('Normal server add - SSE', async () => {
     cwd: '',//'picked_folder',
     env: { key1: 'value1', key2: 'value2' },
     headers: {},
+    oauth: null,
   })
 
   // fake select the server 
@@ -229,6 +232,7 @@ test('Normal server add - HTTP', async () => {
     cwd: '',
     env: {},
     headers: {},
+    oauth: null,
   })
 
   // fake select the server 

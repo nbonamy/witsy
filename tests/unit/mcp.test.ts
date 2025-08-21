@@ -63,19 +63,45 @@ vi.mock('@modelcontextprotocol/sdk/client/sse.js', async () => {
 })
 
 vi.mock('@modelcontextprotocol/sdk/client/streamableHttp.js', async () => {
-  const StreamableHTTPClientTransport = vi.fn()
+  const StreamableHTTPClientTransport = vi.fn(function(url, options) {
+    this.options = options
+    this.finishAuth = vi.fn()
+  })
   StreamableHTTPClientTransport.prototype.start = vi.fn()
   StreamableHTTPClientTransport.prototype.close = vi.fn()
   StreamableHTTPClientTransport.prototype.send = vi.fn()
   return { StreamableHTTPClientTransport }
 })
 
+vi.mock('@modelcontextprotocol/sdk/client/auth.js', async () => {
+  const UnauthorizedError = class extends Error {
+    constructor(message: string) {
+      super(message)
+      this.name = 'UnauthorizedError'
+    }
+  }
+  return { UnauthorizedError }
+})
+
+vi.mock('@modelcontextprotocol/sdk/shared/auth.js', async () => {
+  return {
+    OAuthClientInformation: {},
+    OAuthClientInformationFull: {},
+    OAuthClientMetadata: {},
+    OAuthTokens: {}
+  }
+})
+
 let count = 1
+const mockConnect = vi.fn()
 vi.mock('@modelcontextprotocol/sdk/client/index.js', async () => {
   const Client = vi.fn(function() {
     this.id = count++
   })
-  Client.prototype.connect = vi.fn(function(transport) { this.transport = transport })
+  Client.prototype.connect = vi.fn(function(transport) { 
+    this.transport = transport 
+    return mockConnect()
+  })
   Client.prototype.close = vi.fn()
   Client.prototype.listTools = vi.fn(async () => ({
     tools: [
@@ -94,6 +120,7 @@ vi.mock('@modelcontextprotocol/sdk/client/index.js', async () => {
 beforeEach(() => {
   count = 1
   config = JSON.parse(JSON.stringify(mcpConfig))
+  mockConnect.mockResolvedValue(undefined)
   vi.clearAllMocks()
 })
   
@@ -108,8 +135,8 @@ test('Initialization', async () => {
     { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
     { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
     { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002' },
-    { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' } },
-    { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined }
+    { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined },
+    { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined, oauth: undefined }
   ])
 })
 
@@ -168,6 +195,7 @@ test('Create server - SSE', async () => {
     cwd: undefined,
     env: undefined,
     headers: undefined,
+    oauth: undefined,
   })
 })
 
@@ -184,10 +212,10 @@ test('Create server - HTTP', async () => {
       headers: { key: 'value' },
     }
   })
-  expect(Client.prototype.connect).toHaveBeenLastCalledWith({
+  expect(Client.prototype.connect).toHaveBeenLastCalledWith(expect.objectContaining({
     onerror: expect.any(Function),
     onmessage: expect.any(Function),
-  })
+  }))
   
   expect(mcp.getServers().find(s => s.url === 'http://localhost:3001')).toBeDefined()
   expect(config.mcp.servers.find(s => s.url === 'http://localhost:3001')).toStrictEqual({
@@ -200,6 +228,7 @@ test('Create server - HTTP', async () => {
     cwd: undefined,
     env: undefined,
     headers: { key: 'value' },
+    oauth: undefined,
   })
 })
 
@@ -309,7 +338,7 @@ test('Connect', async () => {
       { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, tools: ['tool1___90ab', 'tool2___90ab', 'tool3___90ab'] },
       { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: ['tool1___0abc', 'tool2___0abc', 'tool3___0abc'] },
       { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', tools: ['tool1___bcde', 'tool2___bcde', 'tool3___bcde'] },
-      { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, tools: ['tool1_____s1', 'tool2_____s1', 'tool3_____s1'] },
+      { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined, tools: ['tool1_____s1', 'tool2_____s1', 'tool3_____s1'] },
     ],
     logs: {
       '1234-5678-90ab': [],
@@ -419,4 +448,90 @@ test('Install smithery', async () => {
   expect(await mcp.getInstallCommand('smithery', 'server', 'key')).toBe('npx -y @smithery/cli@latest install server --client witsy --key key')
   expect(await mcp.installServer('smithery', 'server', 'key')).toBe('success')
   expect(command).toBe('npx -y @smithery/cli@latest install server --client witsy --key key')
+})
+
+test('Create HTTP server with OAuth', async () => {
+  const mcp = new Mcp(app)
+  const oauthConfig = {
+    tokens: {
+      access_token: 'test-access-token',
+      token_type: 'bearer'
+    },
+    clientId: 'test-client-id',
+    clientSecret: 'test-client-secret'
+  }
+  
+  expect(await mcp.editServer({ 
+    uuid: null, 
+    registryId: null, 
+    state: 'enabled', 
+    type: 'http', 
+    url: 'http://localhost:3001', 
+    oauth: oauthConfig 
+  })).toBe(true)
+  
+  expect(mcp.getServers()).toHaveLength(7)
+  expect(StreamableHTTPClientTransport).toHaveBeenLastCalledWith(new URL('http://localhost:3001/'), {
+    requestInit: {
+      headers: {},
+    },
+    authProvider: expect.any(Object)
+  })
+  
+  const server = mcp.getServers().find(s => s.url === 'http://localhost:3001')
+  expect(server?.oauth).toEqual(oauthConfig)
+  expect(config.mcp.servers.find(s => s.url === 'http://localhost:3001')?.oauth).toEqual(oauthConfig)
+})
+
+test('OAuth flow completion', async () => {
+  const mcp = new Mcp(app)
+  const oauthConfig = {
+    clientMetadata: {
+      client_name: 'Test Client',
+      redirect_uris: ['http://localhost:8090/callback'],
+      grant_types: ['authorization_code'],
+      response_types: ['code'],
+      token_endpoint_auth_method: 'client_secret_post'
+    }
+  }
+  
+  // Create server with OAuth
+  await mcp.editServer({ 
+    uuid: null, 
+    registryId: null, 
+    state: 'enabled', 
+    type: 'http', 
+    url: 'http://localhost:3001', 
+    oauth: oauthConfig 
+  })
+  
+  await mcp.connect()
+  
+  const server = mcp.getServers().find(s => s.url === 'http://localhost:3001')
+  const client = mcp.clients.find(c => c.server.uuid === server?.uuid)
+  
+  // Mock the finishAuth method
+  if (client?.client.transport && 'finishAuth' in client.client.transport) {
+    const finishAuthMock = client.client.transport.finishAuth as any
+    finishAuthMock.mockResolvedValue(undefined)
+    
+    const result = await mcp.completeOAuthFlow(server!.uuid!, 'test-auth-code')
+    expect(result).toBe(true)
+    expect(finishAuthMock).toHaveBeenCalledWith('test-auth-code')
+  }
+})
+
+test('OAuth flow completion - server not found', async () => {
+  const mcp = new Mcp(app)
+  const result = await mcp.completeOAuthFlow('non-existent', 'test-code')
+  expect(result).toBe(false)
+})
+
+test('OAuth flow completion - no OAuth config', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+  
+  const server = mcp.getServers()[0] // First server without OAuth
+  const result = await mcp.completeOAuthFlow(server.uuid!, 'test-code')
+  expect(result).toBe(false)
 })

@@ -41,26 +41,31 @@ const Dialog = {
     return Dialog.show({ title, text })
   },
 
-  show: (opts: DialogOptions): Promise<DialogResult|typeof SwalDialogResult> => {
+  show: async (opts: DialogOptions): Promise<DialogResult|typeof SwalDialogResult> => {
 
     // check if there is already one open
     if (Swal.isVisible()) {
-      if (opts.showDenyButton) {
-        throw new Error('Cannot open a new dialog while another one is open with deny button')
-      } else if (opts.showCancelButton) {
-        const rc = confirm(`${opts.title}\n\n${opts.text || ''}`)
-        return Promise.resolve({
-          isConfirmed: rc,
-          isDenied: false,
-          isDismissed: !rc
-        })
-      } else {
-        alert(`${opts.title}\n\n${opts.text || ''}`)
-        return Promise.resolve({
-          isConfirmed: true,
-          isDenied: false,
-          isDismissed: false
-        })
+
+      // let's try to wait
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      if (Swal.isVisible()) {
+        if (opts.showDenyButton) {
+          throw new Error('Cannot open a new dialog while another one is open with deny button')
+        } else if (opts.showCancelButton) {
+          const rc = confirm(`${opts.title}\n\n${opts.text || ''}`)
+          return Promise.resolve({
+            isConfirmed: rc,
+            isDenied: false,
+            isDismissed: !rc
+          })
+        } else {
+          alert(`${opts.title}\n\n${opts.text || ''}`)
+          return Promise.resolve({
+            isConfirmed: true,
+            isDenied: false,
+            isDismissed: false
+          })
+        }
       }
     }
 

@@ -11,6 +11,7 @@ import { loadSettings, saveSettings, settingsFilePath } from './config'
 import { exec } from 'child_process'
 import { LlmTool } from 'multi-llm-ts'
 import Monitor from './monitor'
+import McpOAuthManager from './mcp_auth'
 
 export default class {
 
@@ -19,6 +20,7 @@ export default class {
   currentConfig: string|null
   clients: McpClient[]
   logs: { [key: string]: string[] }
+  oauthManager: McpOAuthManager
   
   constructor(app: App) {
     this.app = app
@@ -26,6 +28,7 @@ export default class {
     this.monitor = null
     this.currentConfig = null
     this.logs = {}
+    this.oauthManager = new McpOAuthManager(app)
   }
 
   getStatus = (): McpStatus => {
@@ -76,7 +79,8 @@ export default class {
           command: config.mcpServers[key].command,
           url: config.mcpServers[key].args.join(' '),
           cwd: config.mcpServers[key].cwd,
-          env: config.mcpServers[key].env
+          env: config.mcpServers[key].env,
+          oauth: config.mcp.mcpServersExtra[key]?.oauth || undefined
         })
         return arr
       }, [])
@@ -248,6 +252,7 @@ export default class {
       original.cwd = server.cwd
       original.env = server.env
       original.headers = server.headers
+      original.oauth = server.oauth
       edited = true
     }
 
@@ -278,6 +283,7 @@ export default class {
       originalMcp.cwd = server.cwd
       originalMcp.env = server.env
       originalMcp.headers = server.headers
+      config.mcp.mcpServersExtra[server.registryId].oauth = server.oauth
       edited = true
     }
 
@@ -300,6 +306,7 @@ export default class {
       await client.client.close()
     }
     this.clients = []
+    this.oauthManager.shutdown()
   }
 
   reload = async (): Promise<void> => {
@@ -513,12 +520,43 @@ export default class {
 
     try {
 
-      // get transport
-      const transport = new StreamableHTTPClientTransport(new URL(server.url), {
+      // prepare transport options
+      const transportOptions: any = {
         requestInit: {
           headers: server.headers || {},
         }
-      })
+      }
+
+      // add OAuth provider if configured
+      if (server.oauth && (server.oauth.tokens || server.oauth.clientId)) {
+        const oauthProvider = await this.oauthManager.createOAuthProvider(undefined, (redirectUrl) => {
+          console.log(`OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
+          this.logs[server.uuid].push(`OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
+        })
+        // Set existing tokens if available
+        if (server.oauth.tokens) {
+          oauthProvider.saveTokens(server.oauth.tokens)
+        }
+        // Set existing client registration if available
+        if (server.oauth.clientId && server.oauth.clientSecret) {
+          // Reconstruct clientInformation from compact format
+          const clientInformation = {
+            client_id: server.oauth.clientId,
+            client_secret: server.oauth.clientSecret,
+            redirect_uris: ['http://localhost:8090/callback'],
+            token_endpoint_auth_method: 'client_secret_post',
+            grant_types: ['authorization_code', 'refresh_token'],
+            response_types: ['code'],
+            client_name: 'Witsy MCP Client',
+            scope: 'mcp:tools'
+          }
+          oauthProvider.saveClientInformation(clientInformation)
+        }
+        transportOptions.authProvider = oauthProvider
+      }
+
+      // get transport
+      const transport = new StreamableHTTPClientTransport(new URL(server.url), transportOptions)
       transport.onerror = (e) => {
         this.logs[server.uuid].push(e.message)
       }
@@ -538,7 +576,7 @@ export default class {
         this.logs[server.uuid].push(e.message)
       }
 
-      // connect
+      // connect (SDK handles OAuth token refresh automatically)
       await client.connect(transport)
 
       // done
@@ -612,6 +650,7 @@ export default class {
     return name.replace(/___....$/, '')
   }
 
+
   protected uniqueToolName(server: McpServer, name: string): string {
     return `${name}___${server.uuid.padStart(4, '_').slice(-4)}`
   }
@@ -637,6 +676,44 @@ export default class {
         }
       }
     }
+  }
+
+  // OAuth delegation methods
+  detectOAuth = async (url: string) => {
+    return this.oauthManager.detectOAuth(url)
+  }
+
+  startOAuthFlow = async (url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string> => {
+    return this.oauthManager.startOAuthFlow(url, clientMetadata, clientCredentials)
+  }
+
+  completeOAuthFlow = async (serverUuid: string, authorizationCode: string): Promise<boolean> => {
+    const server = this.getServers().find(s => s.uuid === serverUuid)
+    if (!server || !server.oauth) {
+      // Check if OAuth manager can handle it (for interactive flows)
+      return this.oauthManager.completeOAuthFlow(serverUuid, authorizationCode)
+    }
+
+    try {
+      // First try to complete through the OAuth manager (for interactive flows)
+      const managerResult = await this.oauthManager.completeOAuthFlow(serverUuid, authorizationCode)
+      if (managerResult) {
+        return true
+      }
+
+      // If that didn't work, try the transport method (for existing connected clients)
+      const client = this.clients.find(c => c.server.uuid === serverUuid)
+      if (client && client.client.transport && 'finishAuth' in client.client.transport) {
+        // Complete the OAuth flow
+        await (client.client.transport as any).finishAuth(authorizationCode)
+        return true
+      }
+    } catch (error) {
+      console.error(`Failed to complete OAuth flow for server ${serverUuid}:`, error)
+      this.logs[serverUuid]?.push(`Failed to complete OAuth flow: ${error.message}`)
+    }
+
+    return false
   }
 
 }
