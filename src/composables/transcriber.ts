@@ -37,15 +37,11 @@ class Transcriber {
     return this.requiresStreaming && this.engine.requiresPcm16bits(this.model)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
-
     if (!this.engine) {
       throw new Error('Transcriber not initialized')
     }
-
     return this.engine.transcribe(audioBlob, opts)
-
   }
 
   transcribeFile(file: File, opts?: object): Promise<TranscribeResponse> {
