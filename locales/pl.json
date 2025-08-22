@@ -2143,6 +2143,12 @@
       "systemInstructions": "Instrukcje systemowe"
     },
     "chat": {
+      "copyFormat": {
+        "help": "Przytrzymaj Shift podczas klikania ikony Kopiuj, aby odwrócić format kopiowania",
+        "markdown": "Markdown",
+        "text": "Zwykły tekst",
+        "title": "Kopiuj zawartość wiadomości jako"
+      },
       "font": "Czcionka czatu",
       "fontExample": {
         "text": "Tak wygląda wiadomość czatu.",

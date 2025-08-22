@@ -2121,6 +2121,12 @@
       "systemInstructions": "Istruzioni di sistema"
     },
     "chat": {
+      "copyFormat": {
+        "help": "Tieni premuto Shift mentre clicchi sull'icona Copia per invertire il formato di copia",
+        "markdown": "Markdown",
+        "text": "Testo semplice",
+        "title": "Copia il contenuto dei messaggi come"
+      },
       "font": "Carattere chat",
       "fontExample": {
         "text": "Ecco come appare un messaggio chat.",

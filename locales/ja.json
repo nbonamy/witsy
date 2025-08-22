@@ -2143,6 +2143,12 @@
       "systemInstructions": "システム指示"
     },
     "chat": {
+      "copyFormat": {
+        "help": "コピーアイコンをクリックする際にShiftキーを押すと、コピー形式が反転します",
+        "markdown": "マークダウン",
+        "text": "プレーンテキスト",
+        "title": "メッセージ内容をコピー形式として"
+      },
       "font": "チャットフォント",
       "fontExample": {
         "text": "これはチャットメッセージの見本です。",

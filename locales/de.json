@@ -2121,6 +2121,12 @@
       "systemInstructions": "System-Prompt"
     },
     "chat": {
+      "copyFormat": {
+        "help": "Halte die Umschalttaste gedrückt, während du auf das Kopieren-Symbol klickst, um das Kopierformat zu ändern",
+        "markdown": "Markdown",
+        "text": "Nur Text",
+        "title": "Nachrichteninhalt kopieren als"
+      },
       "font": "Chat-Schriftart",
       "fontExample": {
         "text": "So sieht eine Chatnachricht aus.",
