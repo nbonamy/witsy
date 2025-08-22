@@ -2606,6 +2606,9 @@
     }
   },
   "workspace": {
+    "delete": {
+      "confirm": "您确定要删除此工作区吗？"
+    },
     "editor": {
       "color": "Color",
       "create": "Create New Workspace",
