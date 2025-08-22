@@ -3,7 +3,7 @@ import { NetworkRequest } from '../types/index'
 import { BrowserWindow } from 'electron'
 import { debugWindow } from './windows/debug'
 
-const TTL = 1 * 60 * 1000
+const TTL = (process.env.DEBUG ? 10 : 3) * 60 * 1000
 
 const requests = new Map<string, NetworkRequest>()
 
@@ -112,6 +112,7 @@ export default (window: BrowserWindow) => {
     const { requestId, request } = params
     const networkRequest: NetworkRequest = {
       id: requestId,
+      startTime: Date.now(),
       type: 'http',
       url: request.url,
       method: request.method,
@@ -136,6 +137,7 @@ export default (window: BrowserWindow) => {
 
     const networkRequest: NetworkRequest = {
       id: requestId,
+      startTime: Date.now(),
       type: 'websocket',
       url: url,
       method: 'OPEN',
@@ -209,11 +211,11 @@ export default (window: BrowserWindow) => {
   }
 
   function handleWebSocketClosed(params: any) {
-    const { requestId, timestamp } = params
+    const { requestId } = params
     const request = requests.get(requestId)
     if (!request) return
 
-    request.endTime = timestamp
+    request.endTime = Date.now()
     debugWindow?.webContents?.send('network', request)
 
     // console.log('WS Done', JSON.stringify(request))
@@ -225,12 +227,12 @@ export default (window: BrowserWindow) => {
   }
 
   function handleWebSocketError(params: any) {
-    const { requestId, timestamp, errorMessage } = params
+    const { requestId, errorMessage } = params
     const request = requests.get(requestId)
     if (!request) return
 
     request.errorMessage = errorMessage
-    request.endTime = timestamp
+    request.endTime = Date.now()
     debugWindow?.webContents?.send('network', request)
   }
 
@@ -241,7 +243,7 @@ export default (window: BrowserWindow) => {
     const { response } = params
     const request = requests.get(requestId)
     if (!request) return
-      
+    
     request.statusCode = response.status
     request.statusText = response.statusText
     request.responseHeaders = response.headers
@@ -273,6 +275,8 @@ export default (window: BrowserWindow) => {
     if (method === 'Network.loadingFailed') {
       request.errorMessage = params.errorText
     }
+
+    request.endTime = Date.now()
 
     debugWindow?.webContents?.send('network', request)
 
