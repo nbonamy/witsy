@@ -2584,6 +2584,9 @@
     }
   },
   "workspace": {
+    "delete": {
+      "confirm": "Sind Sie sicher, dass Sie diesen Arbeitsbereich löschen möchten?"
+    },
     "editor": {
       "color": "Color",
       "create": "Create New Workspace",

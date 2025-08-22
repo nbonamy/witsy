@@ -2612,6 +2612,9 @@
     }
   },
   "workspace": {
+    "delete": {
+      "confirm": "このワークスペースを削除してもよろしいですか？"
+    },
     "editor": {
       "color": "Color",
       "create": "Create New Workspace",

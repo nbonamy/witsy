@@ -2612,6 +2612,9 @@
     }
   },
   "workspace": {
+    "delete": {
+      "confirm": "Czy na pewno chcesz usunąć to środowisko pracy?"
+    },
     "editor": {
       "color": "Color",
       "create": "Create New Workspace",
