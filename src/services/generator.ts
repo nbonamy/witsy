@@ -369,7 +369,17 @@ export default class Generator {
 
     // add date and time
     if (this.config.llm.additionalInstructions?.datetime) {
-      instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setDate', { date: new Date().toLocaleString() })
+
+      // get it basic
+      let date = new Date().toLocaleString()
+      try {
+        // try advanced (our locale may be wrong)
+        date = new Date().toLocaleString(window.api?.config?.localeLLM(), { dateStyle: 'long', timeStyle: 'long' })
+      } catch { /* empty */ }
+
+      // add it
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setDate', { date })
+      
     }
 
     // done
