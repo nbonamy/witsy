@@ -372,9 +372,15 @@ test('Run assistant text actions', async () => {
   botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
   
-  // copy
+  // copy as text
   await wrapper.find('.actions .copy').trigger('click')
   expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('Hi\n\n1. One\n\n2. Two')
+  expect(wrapper.find('.actions .copy').text()).toBe('common.copied')
+
+  // copy as markdown
+  store.config.appearance.chat.copyFormat = 'markdown'
+  await wrapper.find('.actions .copy').trigger('click')
+  expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('**Hi**\n\n1. One \n\n2. Two')
   expect(wrapper.find('.actions .copy').text()).toBe('common.copied')
 
   // usage

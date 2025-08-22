@@ -47,6 +47,7 @@
       "layout": "normal"
     },
     "chat": {
+      "copyFormat": "text",
       "showReasoning": true,
       "showToolCalls": "always",
       "theme": "openai",

@@ -199,6 +199,11 @@
       .wrapper {
         width: 100%;
       }
+
+      .help {
+        color: var(--faded-text-color);
+        font-size: 0.90em;
+      }
     }
 
     .buttons {

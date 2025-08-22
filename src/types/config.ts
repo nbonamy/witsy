@@ -163,12 +163,15 @@ export type AutomationConfig = {
 
 export type ChatToolMode = 'never' | 'calling' | 'always'
 
+export type TextFormat = 'text' | 'markdown'
+
 export type ChatAppearance = {
   showReasoning: boolean
   theme: string
   fontFamily: string
   fontSize: number
   showToolCalls: ChatToolMode
+  copyFormat: TextFormat
 }
 
 export type ChatListMode = 'timeline' | 'folder'

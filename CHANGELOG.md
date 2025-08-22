@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Add Support for Anthropic's 'thinking.budget_tokens' Parameter (https://github.com/nbonamy/witsy/issues/392)
 - MCP OAuth support (https://github.com/nbonamy/witsy/issues/398)
+- Preserve markdown when using copy (https://github.com/nbonamy/witsy/issues/400)
 
 ### Changed
 - Agentic handling of MCP errors (https://github.com/nbonamy/witsy/issues/366)
