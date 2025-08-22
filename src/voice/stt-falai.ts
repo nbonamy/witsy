@@ -2,7 +2,6 @@
 import { Configuration } from 'types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
 import { fal } from '@fal-ai/client'
-import { getWaveBlob } from 'webm-to-wav-converter'
 
 export default class STTFalAi implements STTEngine {
 
@@ -51,17 +50,9 @@ export default class STTFalAi implements STTEngine {
       credentials: this.config.engines.falai.apiKey
     });
 
-    // elevenlabs requires wav
-    let filename = 'audio.webm'
-    if (this.config.stt.model === 'fal-ai/elevenlabs/speech-to-text') {
-      audioBlob = await getWaveBlob(audioBlob, false)
-      filename = 'audio.wav'
-    }
-    
-    // call
     const response = await fal.subscribe(this.config.stt.model, {
       input: {
-        audio_url: new File([audioBlob], filename, { type: audioBlob.type }),
+        audio_url: new File([audioBlob], 'audio.webm', { type: audioBlob.type }),
         ...(this.config.stt.locale ? { language: this.config.stt.locale?.substring(0, 2) } : {})
       },
     });
