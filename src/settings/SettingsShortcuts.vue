@@ -42,6 +42,11 @@
         <label>{{ t('settings.shortcuts.voiceMode') }}</label>
         <InputShortcut v-model="realtime" @change="save" />
       </div>
+
+      <div class="form-field horizontal">
+        <input type="checkbox" v-model="enableGlobalShortcuts" @change="onToggleGlobalShortcuts" />
+        <label>Enable global shortcuts</label>
+      </div>
     </main>
   </div>
 </template>
@@ -61,6 +66,7 @@ const readaloud = ref(null)
 const transcribe = ref(null)
 const realtime = ref(null)
 const studio = ref(null)
+const enableGlobalShortcuts = ref(false)
 
 const load = () => {
   prompt.value = store.config.shortcuts.prompt
@@ -71,6 +77,7 @@ const load = () => {
   transcribe.value = store.config.shortcuts.transcribe
   realtime.value = store.config.shortcuts.realtime
   studio.value = store.config.shortcuts.studio
+  enableGlobalShortcuts.value = store.config.shortcuts.enableGlobalShortcuts ?? enableGlobalShortcuts.value
 }
 
 const save = () => {
@@ -82,6 +89,12 @@ const save = () => {
   store.config.shortcuts.transcribe = transcribe.value
   store.config.shortcuts.realtime = realtime.value
   store.config.shortcuts.studio = studio.value
+  store.saveSettings()
+  window.api.shortcuts.register()
+}
+
+const onToggleGlobalShortcuts = () => {
+  store.config.shortcuts.enableGlobalShortcuts = enableGlobalShortcuts.value
   store.saveSettings()
   window.api.shortcuts.register()
 }
