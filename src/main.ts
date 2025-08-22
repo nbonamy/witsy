@@ -18,10 +18,11 @@ import TrayIconManager from './main/tray';
 import Scheduler from './main/scheduler';
 import Mcp from './main/mcp';
 
-import { fixPath } from './main/utils';
+import { fixPath, putCachedText } from './main/utils';
 import { useI18n } from './main/i18n';
 import { installIpc } from './main/ipc';
 import { importOpenAI } from './main/import_oai';
+import * as httpServer from './main/httpServer';
 
 import * as config from './main/config';
 import * as shortcuts from './main/shortcuts';
@@ -31,6 +32,73 @@ import * as backup from './main/backup';
 
 let mcp: Mcp = null
 let scheduler: Scheduler = null;
+
+// minimal HTTP server state/config
+type HttpCfg = { enabled: boolean; port: number };
+let httpCfg: HttpCfg = { enabled: false, port: 18081 };
+
+const getHttpConfig = (settings: any): HttpCfg => {
+  const s = settings as any;
+  const enabled = s?.httpServerEnabled ?? s?.features?.httpServerEnabled ?? false;
+  const port = Number(s?.httpServerPort ?? s?.features?.httpServerPort ?? 18081);
+  return { enabled: !!enabled, port: isNaN(port) ? 18081 : port };
+};
+
+const handleHttpCmd = async (
+  cmd: string,
+  params?: { text?: string }
+): Promise<boolean> => {
+  try {
+    switch ((cmd || '').toLowerCase()) {
+      case 'prompt': {
+        if (params?.text) {
+          const promptId = putCachedText(params.text);
+          await window.openPromptAnywhere({ promptId });
+        } else {
+          await PromptAnywhere.open();
+        }
+        return true;
+      }
+      case 'chat':
+        await window.openMainWindow({ queryParams: { view: 'chat' } });
+        return true;
+      case 'scratchpad':
+        await window.openScratchPad();
+        return true;
+      case 'command': {
+        if (params?.text) {
+          const textId = putCachedText(params.text);
+          const automator = new Automator();
+          const sourceApp = await automator.getForemostApp();
+          await window.openCommandPicker({ textId, sourceApp, startTime: Date.now() });
+          return true;
+        }
+        await Commander.initCommand(app);
+        return true;
+      }
+      case 'readaloud':
+        await ReadAloud.read(app);
+        return true;
+      case 'transcribe':
+        await Transcriber.initTranscription();
+        return true;
+      case 'realtime':
+        await window.openRealtimeChatWindow();
+        return true;
+      case 'studio':
+        await window.openDesignStudioWindow();
+        return true;
+      case 'forge':
+        await window.openAgentForgeWindow();
+        return true;
+      default:
+        return false;
+    }
+  } catch (e) {
+    console.warn('HTTP trigger handler error:', e);
+    return false;
+  }
+};
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -182,6 +250,12 @@ app.whenReady().then(async () => {
   // register shortcuts
   registerShortcuts();
 
+  // start minimal HTTP server if enabled (no dependencies, localhost only)
+  httpCfg = getHttpConfig(settings);
+  if (httpCfg.enabled) {
+    httpServer.start(httpCfg.port, handleHttpCmd);
+  }
+
   // start mcp
   if (!process.mas) {
     await fixPath()
@@ -214,6 +288,21 @@ app.whenReady().then(async () => {
 
     // update main menu
     installMenu();
+
+    // (PR2) HTTP server: react to config changes (enable/port)
+    try {
+      const newSettings = config.loadSettings(app);
+      const newCfg = getHttpConfig(newSettings);
+      if (newCfg.enabled !== httpCfg.enabled || newCfg.port !== httpCfg.port) {
+        httpServer.stop();
+        if (newCfg.enabled) {
+          httpServer.start(newCfg.port, handleHttpCmd);
+        }
+        httpCfg = newCfg;
+      }
+    } catch (e) {
+      console.warn('HTTP server reconfigure failed:', e);
+    }
 
   });
 

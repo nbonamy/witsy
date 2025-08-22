@@ -34,6 +34,12 @@
           <option value="2048">{{ t('settings.advanced.imageResizeOptions.size', { size: 2048 }) }}</option>
         </select>
       </div>
+
+      <div class="form-field horizontal">
+        <input type="checkbox" v-model="httpServerEnabled" @change="save" />
+        <label>Enable local HTTP trigger</label>
+      </div>
+
       <div class="form-field instruction">
         <label>{{ t('settings.advanced.systemInstructions') }}</label>
         <div class="form-subgroup">
@@ -85,12 +91,14 @@ const autoSavePrompt = ref(null)
 const proxyMode = ref<ProxyMode>('default')
 const customProxy = ref('')
 const imageResize = ref(null)
+const httpServerEnabled = ref(false)
 
 const load = () => {
   autoSavePrompt.value = store.config.prompt.autosave
   proxyMode.value = store.config.general.proxyMode
   customProxy.value = store.config.general.customProxy
   imageResize.value = store.config.llm.imageResize ?? 768
+  httpServerEnabled.value = store.config.httpServerEnabled ?? false
   onChangeInstructions()
 }
 
@@ -111,6 +119,7 @@ const save = () => {
   store.config.general.proxyMode = proxyMode.value
   store.config.general.customProxy = customProxy.value
   store.config.llm.imageResize = parseInt(imageResize.value)
+  store.config.httpServerEnabled = httpServerEnabled.value
 
   // update prompt
   const defaultInstructions = i18nInstructions(null, instructions.value)
