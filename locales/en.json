@@ -2148,6 +2148,12 @@
       "systemInstructions": "System instructions"
     },
     "chat": {
+      "copyFormat": {
+        "help": "Hold Shift when clicking the Copy icon to invert the copy format",
+        "markdown": "Markdown",
+        "text": "Plain text",
+        "title": "Copy messages content as"
+      },
       "font": "Chat font",
       "fontExample": {
         "text": "This is how a chat message looks like.",

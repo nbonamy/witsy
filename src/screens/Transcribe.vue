@@ -326,7 +326,7 @@ const initializeAudio = async () => {
 
         },
 
-        onRecordingComplete: async (audioChunks: Blob[], noiseDetected: boolean) => {
+        onRecordingComplete: async (audioBlob: Blob, noiseDetected: boolean) => {
 
           // if no noise stop everything
           if (!noiseDetected) {
@@ -335,7 +335,7 @@ const initializeAudio = async () => {
           }
 
           // transcribe
-          await transcribe(audioChunks)
+          await transcribe(audioBlob)
 
           // execute?
           if (userStoppedDictation === false/* && store.config.stt.silenceAction === 'execute_continue'*/) {
@@ -445,11 +445,11 @@ const stopDictation = async (userStopped: boolean) => {
   audioRecorder.stop()
 }
 
-const transcribe = async (audioChunks: any[]) => {
+const transcribe = async (audioBlob: Blob) => {
 
   try {
 
-    const response = await transcriber.transcribe(audioChunks)
+    const response = await transcriber.transcribe(audioBlob)
 
     // add a space if needed
     if (transcription.value.length && ',;.?!'.indexOf(transcription.value[transcription.value.length - 1]) !== -1 && response.text[0] !== ' ') {

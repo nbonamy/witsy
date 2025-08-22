@@ -696,7 +696,7 @@ const startDictation = async () => {
 
       },
       
-      onRecordingComplete: async (audioChunks: Blob[], noiseDetected: boolean) => {
+      onRecordingComplete: async (audioBlob: Blob, noiseDetected: boolean) => {
 
         try {
 
@@ -705,7 +705,7 @@ const startDictation = async () => {
           dictating.value = false
 
           // if streaming we are all done
-          if (audioChunks.length) {
+          if (audioBlob.size) {
 
             // update
             prompt.value = defaultPrompt(props.conversationMode)
@@ -717,7 +717,7 @@ const startDictation = async () => {
 
             // transcribe
             processing.value = true
-            const response = await transcriber.transcribe(audioChunks)
+            const response = await transcriber.transcribe(audioBlob)
             if (response) {
               prompt.value = response.text
             }

@@ -12,6 +12,7 @@ import { ref } from 'vue'
 import Dialog from '../composables/dialog'
 import Message from '../models/message'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 
 const props = defineProps({
   message: {
@@ -22,14 +23,20 @@ const props = defineProps({
 
 const copyLabel = ref(t('common.copy'))
 
-const onCopy = () => {
+const onCopy = (event: MouseEvent) => {
   if (props.message.type == 'text') {
 
-    const textToCopy = removeMarkdown(props.message.content, {
-      listUnicodeChar: '',
-      stripListLeaders: false,
-    })
+    let textToCopy = removeMarkup(props.message.content)
 
+    const isShift = event ? event.shiftKey : false
+
+    if ((store.config.appearance.chat.copyFormat === 'text' && !isShift) || (store.config.appearance.chat.copyFormat === 'markdown' && isShift)) {
+      textToCopy = removeMarkdown(textToCopy, {
+        listUnicodeChar: '',
+        stripListLeaders: false,
+      })
+    }
+    
     // try both ways
     if (!window.api.clipboard.writeText(textToCopy)) {
       navigator.clipboard.writeText(textToCopy)
@@ -43,6 +50,16 @@ const onCopy = () => {
   }
   copyLabel.value = t('common.copied')
   setTimeout(() => copyLabel.value = t('common.copy'), 1000)
+}
+
+const removeMarkup = (text: string): string => {
+
+  // remove <tool id="call_r0SxqnSwl1FRo7alxseVpVDz"></tool>
+  let cleaned = text.replace(/<tool[^>]*>.*?<\/tool>/g, '')
+
+  // done
+  return cleaned
+
 }
 
 defineExpose({

@@ -571,6 +571,7 @@ export interface NetworkRequest {
   responseBody?: string
   errorMessage?: string
   frames?: WebSocketFrame[]
+  startTime: number
   endTime?: number
 }
 

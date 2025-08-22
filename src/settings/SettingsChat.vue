@@ -18,6 +18,14 @@
           <option value="conversation">{{ t('settings.chat.themes.conversation') }}</option>
         </select>
       </div>
+      <div class="form-field copy">
+        <label>{{ t('settings.chat.copyFormat.title') }}</label>
+        <select v-model="copyFormat" @change="save">
+          <option value="text">{{ t('settings.chat.copyFormat.text') }}</option>
+          <option value="markdown">{{ t('settings.chat.copyFormat.markdown') }}</option>
+        </select>
+        <div class="help">{{ t('settings.chat.copyFormat.help') }}</div>
+      </div>
       <div class="form-field tools">
         <label>{{ t('settings.chat.showToolCalls.title') }}</label>
         <select v-model="showToolCalls" @change="save">
@@ -72,7 +80,7 @@
 
 <script setup lang="ts">
 
-import { ChatListLayout, ChatToolMode } from '../types/config';
+import { ChatListLayout, ChatToolMode, TextFormat } from '../types/config';
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
@@ -83,6 +91,7 @@ const isMas = ref(false)
 const theme = ref(null)
 const fontSize = ref(null)
 const fontFamily = ref('')
+const copyFormat = ref<TextFormat>('text')
 const showToolCalls = ref<ChatToolMode>('calling')
 const layout = ref<ChatListLayout>('normal')
 const fonts = ref(window.api.app.listFonts())
@@ -98,6 +107,7 @@ const load = () => {
   isMas.value = window.api.isMasBuild
   theme.value = store.config.appearance.chat.theme || 'openai'
   layout.value = store.config.appearance.chatList.layout || 'normal'
+  copyFormat.value = store.config.appearance.chat.copyFormat || 'text'
   showToolCalls.value = store.config.appearance.chat.showToolCalls || 'calling'
   fontFamily.value = store.config.appearance.chat.fontFamily || ''
   fontSize.value = store.config.appearance.chat.fontSize || 3
@@ -109,6 +119,7 @@ const save = () => {
   store.config.appearance.chat.fontSize = fontSize.value
   store.config.appearance.chatList.layout = layout.value
   store.config.appearance.chat.showToolCalls = showToolCalls.value
+  store.config.appearance.chat.copyFormat = copyFormat.value
   store.saveSettings()
 }
 
