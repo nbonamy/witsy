@@ -1589,6 +1589,12 @@
     }
   },
   "mcp": {
+    "oauth": {
+      "success": {
+        "message": "Możesz zamknąć to okno i wrócić do Witsy.",
+        "title": "Autoryzacja zakończona sukcesem!"
+      }
+    },
     "serverEditor": {
       "environmentVariables": "Zmienne środowiskowe",
       "httpHeaders": "Niestandardowe nagłówki HTTP",
@@ -2070,6 +2076,12 @@
       "systemInstructions": "Instrukcje systemowe"
     },
     "chat": {
+      "copyFormat": {
+        "help": "Przytrzymaj Shift podczas klikania ikony Kopiuj, aby odwrócić format kopiowania",
+        "markdown": "Markdown",
+        "text": "Zwykły tekst",
+        "title": "Kopiuj zawartość wiadomości jako"
+      },
       "font": "Czcionka czatu",
       "fontExample": {
         "text": "Tak wygląda wiadomość czatu.",

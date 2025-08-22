@@ -1590,8 +1590,8 @@
   "mcp": {
     "oauth": {
       "success": {
-        "title": "Authorization Successful!",
-        "message": "You can close this window and return to Witsy."
+        "message": "You can close this window and return to Witsy.",
+        "title": "Authorization Successful!"
       }
     },
     "serverEditor": {
@@ -2075,6 +2075,12 @@
       "systemInstructions": "System instructions"
     },
     "chat": {
+      "copyFormat": {
+        "help": "Hold Shift when clicking the Copy icon to invert the copy format",
+        "markdown": "Markdown",
+        "text": "Plain text",
+        "title": "Copy messages content as"
+      },
       "font": "Chat font",
       "fontExample": {
         "text": "This is how a chat message looks like.",

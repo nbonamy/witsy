@@ -1589,6 +1589,12 @@
     }
   },
   "mcp": {
+    "oauth": {
+      "success": {
+        "message": "Você pode fechar esta janela e retornar ao Witsy.",
+        "title": "Autorização bem-sucedida!"
+      }
+    },
     "serverEditor": {
       "environmentVariables": "Variáveis de Ambiente",
       "httpHeaders": "Cabeçalhos HTTP Personalizados",
@@ -2070,6 +2076,12 @@
       "systemInstructions": "Instruções do sistema"
     },
     "chat": {
+      "copyFormat": {
+        "help": "Segure Shift ao clicar no ícone Copiar para inverter o formato de cópia",
+        "markdown": "Markdown",
+        "text": "Texto simples",
+        "title": "Copiar conteúdo das mensagens como"
+      },
       "font": "Fonte do chat",
       "fontExample": {
         "text": "Esta é a aparência de uma mensagem de chat.",

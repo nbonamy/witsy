@@ -1589,6 +1589,12 @@
     }
   },
   "mcp": {
+    "oauth": {
+      "success": {
+        "message": "你可以关闭此窗口并返回 Witsy。",
+        "title": "授权成功！"
+      }
+    },
     "serverEditor": {
       "environmentVariables": "环境变量",
       "httpHeaders": "自定义 HTTP 头",
@@ -2070,6 +2076,12 @@
       "systemInstructions": "系统指令"
     },
     "chat": {
+      "copyFormat": {
+        "help": "点击复制图标时按住 Shift 键可切换复制格式",
+        "markdown": "Markdown",
+        "text": "纯文本",
+        "title": "复制消息内容为"
+      },
       "font": "聊天字体",
       "fontExample": {
         "text": "这就是聊天信息的样子。",
