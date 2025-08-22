@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - MCP OAuth support (https://github.com/nbonamy/witsy/issues/398)
 - Preserve markdown when using copy (https://github.com/nbonamy/witsy/issues/400)
 - Improve the date/time value that is passed in system instructions (https://github.com/nbonamy/witsy/issues/401)
+- Add timestamps to the debug console (https://github.com/nbonamy/witsy/issues/402)
 
 ### Changed
 - Agentic handling of MCP errors (https://github.com/nbonamy/witsy/issues/366)
