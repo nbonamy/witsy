@@ -75,6 +75,7 @@ test('processes http requests', async () => {
 
   expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
     id: '123',
+    startTime: expect.any(Number),
     type: 'http',
     url: 'http://example.com',
     method: 'GET',
@@ -128,6 +129,8 @@ test('processes http requests', async () => {
 
   expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
     id: '123',
+    startTime: expect.any(Number),
+    endTime: expect.any(Number),
     type: 'http',
     url: 'http://example.com',
     method: 'GET',
@@ -197,6 +200,7 @@ test('processes websocket requests', async () => {
 
   expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
     id: 'ws-123',
+    startTime: expect.any(Number),
     type: 'websocket',
     url: 'wss://api.example.com/stream',
     method: 'OPEN',
@@ -221,6 +225,7 @@ test('processes websocket requests', async () => {
 
   expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
     id: 'ws-123',
+    startTime: expect.any(Number),
     type: 'websocket',
     url: 'wss://api.example.com/stream',
     method: 'OPEN',
@@ -249,6 +254,7 @@ test('processes websocket requests', async () => {
 
   expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
     id: 'ws-123',
+    startTime: expect.any(Number),
     type: 'websocket',
     url: 'wss://api.example.com/stream',
     method: 'OPEN',
@@ -306,6 +312,7 @@ test('processes websocket requests', async () => {
 
   expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
     id: 'ws-123',
+    startTime: expect.any(Number),
     type: 'websocket',
     url: 'wss://api.example.com/stream',
     method: 'OPEN',
@@ -362,6 +369,8 @@ test('processes websocket requests', async () => {
 
   expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
     id: 'ws-123',
+    startTime: expect.any(Number),
+    endTime: expect.any(Number),
     type: 'websocket',
     url: 'wss://api.example.com/stream',
     method: 'OPEN',
@@ -408,7 +417,6 @@ test('processes websocket requests', async () => {
       'connection': 'Upgrade',
       'authorization': '*** hidden ***'
     },
-    endTime: 1234567894
   })
 
 })
@@ -434,6 +442,8 @@ test('handles websocket errors', async () => {
 
   expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
     id: 'ws-error-123',
+    startTime: expect.any(Number),
+    endTime: expect.any(Number),
     type: 'websocket',
     url: 'wss://api.example.com/stream',
     method: 'OPEN',
@@ -441,7 +451,6 @@ test('handles websocket errors', async () => {
     postData: '',
     frames: [],
     errorMessage: 'Connection failed',
-    endTime: 1234567890
   })
 
 })
