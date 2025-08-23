@@ -1584,6 +1584,7 @@
         "authorizingText": "Votre navigateur va s'ouvrir pour autoriser Witsy. Veuillez compléter l'autorisation et revenir à cette fenêtre une fois terminé.",
         "clientId": "ID client",
         "clientSecret": "Secret client",
+        "dynamicClientRegistrationError": "Ce serveur ne prend pas en charge l'enregistrement dynamique des clients. Vous devez spécifier un ID client et un secret client.",
         "error": "Échec de la configuration de l'authentification",
         "errorText": "Échec de la configuration de l'authentification. Veuillez vérifier votre connexion Internet et réessayer.",
         "notRequired": "Ce serveur ne nécessite pas d'authentification.",

@@ -1603,6 +1603,7 @@
         "authorizingText": "Seu navegador será aberto para autorizar o Witsy. Por favor, complete a autorização e retorne a esta janela quando terminar.",
         "clientId": "ID do cliente",
         "clientSecret": "Segredo do cliente",
+        "dynamicClientRegistrationError": "Este servidor não suporta registro dinâmico de cliente. Você precisa especificar um ID de cliente e um segredo de cliente.",
         "error": "Falha na configuração da autenticação",
         "errorText": "Falha ao configurar a autenticação. Por favor, verifique sua conexão com a internet e tente novamente.",
         "notRequired": "Este servidor não requer autenticação.",
