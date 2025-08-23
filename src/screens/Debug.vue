@@ -37,6 +37,12 @@
           <button :class="{ active: activeTab === 'response' }" @click="activeTab = 'response'">Response</button>
         </div>
         <div class="tab-content">
+          <div class="section" v-if="info">
+            <h3>Information</h3>
+            <div class="json expanded">
+              <JsonViewer :value="info" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
+            </div>
+          </div>
           <div v-if="activeTab === 'response' && !selected.statusCode">
             <pre>Waiting for response...</pre>
           </div>
@@ -116,6 +122,18 @@ const showSent = ref(true)
 const showReceived = ref(true)
 const copying = ref(false)
 
+const info = computed(() => {
+  if (!selected.value) return null
+  return {
+    startTime: new Date(selected.value.startTime).toISOString(),
+    ...(selected.value.endTime ? {
+      endTime: new Date(selected.value.endTime).toISOString(),
+      duration_ms: selected.value.endTime - selected.value.startTime,
+    } : {}),
+    ...(selected.value.errorMessage ? { errorMessage: selected.value.errorMessage } : {})
+  }
+})
+
 const parameters = computed(() => {
   if (selected.value.url.includes('?')) {
     const urlParams = new URLSearchParams(selected.value.url.split('?')[1])
@@ -165,6 +183,9 @@ const onNetworkRequest = (request: NetworkRequest) => {
   const existingIndex = requests.value.findIndex((r) => r.id === request.id)
   if (existingIndex >= 0) {
     requests.value[existingIndex] = request
+    if (selected.value?.id === request.id) {
+      selected.value = request
+    }
   } else {
     requests.value.push(request)
   }
