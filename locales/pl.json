@@ -1603,6 +1603,7 @@
         "authorizingText": "Twoja przeglądarka otworzy się, by autoryzować Witsy. Proszę ukończyć autoryzację i wrócić do tego okna po zakończeniu.",
         "clientId": "ID klienta",
         "clientSecret": "Sekretny klucz klienta",
+        "dynamicClientRegistrationError": "Ten serwer nie obsługuje dynamicznej rejestracji klienta. Musisz podać identyfikator klienta i sekret klienta.",
         "error": "Konfiguracja uwierzytelniania nie powiodła się",
         "errorText": "Nie udało się skonfigurować uwierzytelnienia. Sprawdź swoje połączenie internetowe i spróbuj ponownie.",
         "notRequired": "Ten serwer nie wymaga uwierzytelniania.",
