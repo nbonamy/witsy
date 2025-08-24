@@ -18,6 +18,18 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks): void 
   // load the config
   const config = loadSettings(app);
 
+  // minimal Wayland/Toggle guard
+  // treat as Wayland on Linux if XDG_SESSION_TYPE says 'wayland' or WAYLAND_DISPLAY is present
+  const isWayland = process.platform === 'linux' && ((process.env.XDG_SESSION_TYPE?.toLowerCase?.() === 'wayland') || !!process.env.WAYLAND_DISPLAY);
+  const enableGlobalShortcuts = (config.shortcuts as any).enableGlobalShortcuts !== undefined
+    ? (config.shortcuts as any).enableGlobalShortcuts
+    : !isWayland;
+
+  if (!enableGlobalShortcuts) {
+    console.info('Global shortcuts disabled by settings/Wayland');
+    return;
+  }
+
   // now register
   console.info('Registering shortcuts')
   registerShortcut('prompt', config.shortcuts.prompt, callbacks.prompt);
