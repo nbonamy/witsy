@@ -23,6 +23,11 @@ vi.mock('electron', async() => {
       getLocale: vi.fn(() => 'en-US'),
       getPath: vi.fn(() => '')
     },
+    safeStorage: {
+      isEncryptionAvailable: vi.fn(() => true),
+      encryptString: vi.fn((data) => `encrypted-${data}`),
+      decryptString: vi.fn((data) => data.toString('latin1'))
+    },
     Notification
   }
 })
@@ -115,7 +120,7 @@ test('Error while grabbing', async () => {
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-  expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: 'automation.grabError' })
+  expect(Notification).toHaveBeenLastCalledWith({ title: 'StationOne', body: 'automation.grabError' })
 
 })
 
@@ -125,7 +130,7 @@ test('No text to grab', async () => {
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-  expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: 'automation.commander.emptyText' })
+  expect(Notification).toHaveBeenLastCalledWith({ title: 'StationOne', body: 'automation.commander.emptyText' })
 
 })
 

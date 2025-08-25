@@ -15,6 +15,11 @@ vi.mock('electron', () => ({
     getPath: vi.fn(() => '/mock/userdata'),
     getLocale: vi.fn(() => 'en-US'),
   },
+  safeStorage: {
+    isEncryptionAvailable: vi.fn(() => true),
+    encryptString: vi.fn((data) => `encrypted-${data}`),
+    decryptString: vi.fn((data) => data.toString('latin1'))
+  },
   dialog: {
     showMessageBox: vi.fn()
   }
@@ -27,6 +32,7 @@ vi.mock('../../src/main/file', () => ({
 
 vi.mock('../../src/main/config', () => ({
   settingsFilePath: vi.fn(() => '/mock/userdata/settings.json'),
+  apiKeysFilePath: vi.fn(() => '/mock/userdata/apiKeys.json'),
   loadSettings: vi.fn(() => defaultSettings),
 }))
 
@@ -109,7 +115,7 @@ describe('Backup functionality', () => {
       // expect(history.historyFilePath).toHaveBeenCalledWith(app)
       // expect(experts.expertsFilePath).toHaveBeenCalledWith(app)
       expect(commands.commandsFilePath).toHaveBeenCalledWith(app)
-      expect(mockArchive.file).toHaveBeenCalledTimes(2)
+      expect(mockArchive.file).toHaveBeenCalledTimes(3)
       expect(mockArchive.finalize).toHaveBeenCalled()
     })
 

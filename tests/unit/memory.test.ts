@@ -12,6 +12,11 @@ vi.mock('electron', async() => {
     app: {
       getPath: vi.fn(() => os.tmpdir())
     },
+    safeStorage: {
+      isEncryptionAvailable: vi.fn(() => true),
+      encryptString: vi.fn((data) => `encrypted-${data}`),
+      decryptString: vi.fn((data) => data.toString('latin1'))
+    },
   }
 })
 
