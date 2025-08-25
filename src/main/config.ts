@@ -1,16 +1,29 @@
 
 import { anyDict } from '../types/index'
 import { Configuration } from '../types/config'
-import { App } from 'electron'
+import { App, safeStorage } from 'electron'
 import { favoriteMockEngine } from '../llms/llm'
+import Store from 'electron-store'
 import defaultSettings from '../../defaults/settings.json'
 import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
 
+type ApiKeyEntry = {
+  name: string
+  apiKey: string
+}
+
 let firstLoad = true
 let errorLoadingConfig = false
 let onSettingsChange: CallableFunction = () => {}
+
+const safeStore = new Store<Record<string, string>>({
+  name: 'apiKeys',
+  accessPropertiesByDotNotation: false,
+  watch: false,
+  encryptionKey: 'witsy',
+});
 
 const monitor: Monitor = new Monitor(() => {
   onSettingsChange()
@@ -24,6 +37,12 @@ export const settingsFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
   const settingsFilePath = path.join(userDataPath, 'settings.json')
   return settingsFilePath
+}
+
+export const apiKeysFilePath = (app: App): string => {
+  const userDataPath = app.getPath('userData')
+  const apiKeysFilePath = path.join(userDataPath, 'apiKeys.json')
+  return apiKeysFilePath
 }
 
 const engineConfigFilePath = (app: App, engine: string): string => {
@@ -180,6 +199,15 @@ export const loadSettings = (source: App|string): Configuration => {
 
   }
 
+  // backwards compatibility
+  let apiKeys = extractApiKeys(jsonConfig)
+  if (apiKeys.length > 0) {
+    saveApiKeys(apiKeys)
+  } else {
+    apiKeys = loadApiKeys()
+    injectApiKeys(jsonConfig, apiKeys)
+  }
+
   // now load engine models
   if (typeof source !== 'string' && jsonConfig.engines) {
     
@@ -223,7 +251,7 @@ export const loadSettings = (source: App|string): Configuration => {
   return config
 }
 
-export const saveSettings = (dest: App|string, config: Configuration) => {
+export const saveSettings = (dest: App|string, config: Configuration): void => {
   try {
 
     // nullify defaults
@@ -233,6 +261,15 @@ export const saveSettings = (dest: App|string, config: Configuration) => {
     const clone: Configuration = JSON.parse(JSON.stringify(config))
     if (typeof dest !== 'string') {
 
+      // save api keys separately
+      const apiKeys = extractApiKeys(clone)
+      if (apiKeys.length > 0) {
+        if (saveApiKeys(apiKeys)) {
+          nullifyApiKeys(clone, apiKeys)
+        }
+      }
+
+      // save engines configuration separately
       for (const engine of Object.keys(clone.engines)) {
 
         // skip the favorite mock engine
@@ -280,4 +317,122 @@ const nullifyDefaults = (settings: anyDict) => {
   if (settings.engines.sdwebui && (settings.engines.sdwebui.baseURL == '' || settings.engines.sdwebui.baseURL === defaultSettings.engines.sdwebui.baseURL)) {
     delete settings.engines.sdwebui.baseURL
   }
+}
+
+export const loadApiKeys = (): ApiKeyEntry[] => {
+
+  // check
+  if (!safeStorage.isEncryptionAvailable()) {
+    return []
+  }
+
+  try {
+    const credentials = Object.entries(safeStore.store)
+    return credentials.reduce((apiKeys, [name, buffer]) => {
+      return [...apiKeys, { name, apiKey: safeStorage.decryptString(Buffer.from(buffer, 'latin1')) }];
+    }, [] as ApiKeyEntry[]);
+  } catch (error) {
+    console.log('Error loading API keys:', error)
+    return []
+  }
+}
+
+export const saveApiKeys = (apiKeys: ApiKeyEntry[]): boolean => {
+
+  // check
+  if (!safeStorage.isEncryptionAvailable()) {
+    return false
+  }
+
+  // First, delete all existing apiKey entries
+  try {
+    const credentials = loadApiKeys()
+    for (const credential of credentials) {
+      safeStore.delete(credential.name)
+    }
+  } catch (error) {
+    console.log('Error clearing existing API keys:', error)
+    return false
+  }
+  
+  // Save new entries
+  for (const entry of apiKeys) {
+    if (entry.apiKey.length > 0) {
+      try {
+      const buffer = safeStorage.encryptString(entry.apiKey);
+      safeStore.set(entry.name, buffer.toString('latin1'));
+      } catch (error) {
+        console.log(`Error saving API key for ${entry.name}:`, error)
+      }
+    }
+  }
+
+  // done
+  return true
+}
+
+export const extractApiKeys = (config: anyDict, path: string = ''): ApiKeyEntry[] => {
+  const apiKeys: ApiKeyEntry[] = []
+  
+  const traverse = (obj: anyDict, currentPath: string) => {
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        const value = obj[key]
+        const fullPath = currentPath ? `${currentPath}.${key}` : key
+        
+        if (key.toLowerCase().includes('apikey') && typeof value === 'string') {
+          apiKeys.push({ name: fullPath, apiKey: value })
+        } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          traverse(value, fullPath)
+        }
+      }
+    }
+  }
+  
+  traverse(config, path)
+  return apiKeys
+}
+
+
+export const injectApiKeys = (config: Configuration, apiKeys: ApiKeyEntry[]): void => {
+  
+  for (const entry of apiKeys) {
+    const pathParts = entry.name.split('.')
+    let current = config as anyDict
+    
+    // Navigate to the parent object
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      if (!current[pathParts[i]]) {
+        current[pathParts[i]] = {}
+      }
+      current = current[pathParts[i]]
+    }
+    
+    // Set the API key
+    const lastKey = pathParts[pathParts.length - 1]
+    current[lastKey] = entry.apiKey
+  }
+
+}
+
+export const nullifyApiKeys = (config: anyDict, apiKeys: ApiKeyEntry[]): void => {
+
+  for (const entry of apiKeys) {
+    const pathParts = entry.name.split('.')
+    let current = config
+    
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      if (current[pathParts[i]] && typeof current[pathParts[i]] === 'object') {
+        current = current[pathParts[i]]
+      } else {
+        break
+      }
+    }
+    
+    const lastKey = pathParts[pathParts.length - 1]
+    if (current && Object.prototype.hasOwnProperty.call(current, lastKey)) {
+      delete current[lastKey]
+    }
+  }
+  
 }
