@@ -1,0 +1,7 @@
+{
+  "engines": {
+    "openai": {
+      "apiKey": "openai-api-key2"
+    }
+  }
+}
