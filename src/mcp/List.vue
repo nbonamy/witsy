@@ -49,7 +49,7 @@
                   v-tooltip="{ text: t('mcp.tooltips.startServer'), position: 'top-left' }" 
                   @click.stop="onEnabled(server)" 
                 />
-                <StopCircleIcon 
+                <PauseIcon 
                   v-else
                   class="stop" 
                   v-tooltip="{ text: t('mcp.tooltips.stopServer'), position: 'top-left' }" 
@@ -101,7 +101,7 @@
 <script setup lang="ts">
 
 import { BIconBraces, BIconCloudPlus } from 'bootstrap-icons-vue'
-import { PlayIcon, PlusIcon, PowerIcon, RefreshCwIcon, SearchIcon, StopCircleIcon } from 'lucide-vue-next'
+import { PauseIcon, PlayIcon, PlusIcon, PowerIcon, RefreshCwIcon, SearchIcon, SquareIcon } from 'lucide-vue-next'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { nextTick, PropType, ref } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
