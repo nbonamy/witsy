@@ -92,12 +92,18 @@ vi.mock('electron', async () => {
   const Menu = {
     sendActionToFirstResponder: vi.fn(),
   }
+  const safeStorage = {
+    isEncryptionAvailable: vi.fn(() => true),
+    encryptString: vi.fn((data) => `encrypted-${data}`),
+    decryptString: vi.fn((data) => data.toString('latin1'))
+  }
   return {
     app,
     shell,
     screen,
     dialog,
     nativeTheme,
+    safeStorage,
     BrowserWindow,
     Menu
   }
