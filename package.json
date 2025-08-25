@@ -1,11 +1,11 @@
 {
-  "name": "witsy",
-  "productName": "Witsy",
-  "version": "2.13.2",
-  "description": "Witsy: desktop AI assistant",
+  "name": "station1",
+  "productName": "StationOne",
+  "version": "1.0.0",
+  "description": "StationOne: desktop AI assistant",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nbonamy/witsy.git"
+    "url": "https://github.com/Kochava/witsy.git"
   },
   "main": ".vite/build/main.js",
   "scripts": {

@@ -269,7 +269,7 @@
       },
       "confirmDelete": "Are you sure you want to delete this agent?",
       "create": "New Agent",
-      "empty": "Unlock the agentic power of Witsy by creating your first agent! Click the robot head to get started.",
+      "empty": "Unlock the agentic power of StationOne by creating your first agent! Click the robot head to get started.",
       "list": {
         "empty": "No agent of this type created yet.",
         "runnable": "User Initiated",
@@ -361,7 +361,7 @@
     "available": "A new version is available. Downloading now…",
     "downloading": "An update is in progress. Please wait for it to complete.",
     "error": "Error while checking for updates. Please try again later.",
-    "uptodate": "You are already using the latest version of Witsy."
+    "uptodate": "You are already using the latest version of StationOne."
   },
   "backup": {
     "restore": {
@@ -814,7 +814,7 @@
     }
   },
   "embedding": {
-    "apiKeyReminder": "Make sure you enter your API key in the Models pane of Witsy Settings.",
+    "apiKeyReminder": "Make sure you enter your API key in the Models pane of StationOne Settings.",
     "browse": "Browse models",
     "model": "Embedding Model",
     "provider": "Embedding Provider"
@@ -1638,7 +1638,7 @@
     "noTools": "No tools available",
     "oauth": {
       "success": {
-        "message": "You can close this window and return to Witsy.",
+        "message": "You can close this window and return to StationOne.",
         "title": "Authorization Successful!"
       }
     },
@@ -1651,7 +1651,7 @@
       "httpHeaders": "Custom HTTP Headers",
       "oauth": {
         "authorizing": "Starting authentication",
-        "authorizingText": "Your browser will open to authorize Witsy. Please complete the authorization and return to this window once done.",
+        "authorizingText": "Your browser will open to authorize StationOne. Please complete the authorization and return to this window once done.",
         "clientId": "Client ID",
         "clientSecret": "Client secret",
         "error": "Authentication setup failed",
@@ -1712,9 +1712,9 @@
   },
   "menu": {
     "app": {
-      "about": "About Witsy",
+      "about": "About StationOne",
       "checkForUpdates": "Check for Updates…",
-      "quit": "Quit Witsy",
+      "quit": "Quit StationOne",
       "settings": "@:{'common.settings'}…"
     },
     "edit": {
@@ -1734,7 +1734,7 @@
         "openai": "ChatGPT data export…",
         "title": "Import"
       },
-      "mainWindow": "Open Witsy",
+      "mainWindow": "Open StationOne",
       "newChat": "New Chat",
       "quickPrompt": "Quick Prompt",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1842,12 +1842,12 @@
       "count": "No model found.|1 model available!|{count} models available!",
       "error": "Please check your API key and try again.",
       "showMore": "Show more",
-      "subtitle": "You can chat with Witsy using language models from all major providers. Enter your API keys below to get started. If you don't have any API keys, no worries: in the next screen you'll be able to setup Witsy to use local models through Ollama!",
+      "subtitle": "You can chat with StationOne using language models from all major providers. Enter your API keys below to get started. If you don't have any API keys, no worries: in the next screen you'll be able to setup StationOne to use local models through Ollama!",
       "success": "{engine} key validated.",
       "title": "Your chat models providers"
     },
     "done": {
-      "subtitle": "You're all set up and ready to go!<br/>Start chatting with Witsy and explore its capabilities!",
+      "subtitle": "You're all set up and ready to go!<br/>Start chatting with StationOne and explore its capabilities!",
       "title": "All Done!"
     },
     "instructions": {
@@ -1861,8 +1861,8 @@
         "title": "You did not complete your personalization."
       },
       "selectStyle": "Now choose how you'd like your assistant to respond.<br/>This will be combined with your personal information to create the perfect instructions.",
-      "subtitle": "By answering a few questions, Witsy will be able to personalize your experience and provide better answers. You can skip this step if you want, but it is highly recommended to make Witsy feel more personal.",
-      "title": "Let Witsy know about you!"
+      "subtitle": "By answering a few questions, StationOne will be able to personalize your experience and provide better answers. You can skip this step if you want, but it is highly recommended to make StationOne feel more personal.",
+      "title": "Let StationOne know about you!"
     },
     "ollama": {
       "browseModels": "Discover more models at https://ollama.com/search",
@@ -1886,22 +1886,22 @@
     },
     "permissions": {
       "accessibility": {
-        "description": "Required for Witsy to read text from other applications and integrate seamlessly with your workflow.",
+        "description": "Required for StationOne to read text from other applications and integrate seamlessly with your workflow.",
         "title": "Accessibility"
       },
       "automation": {
-        "description": "Make sure you grant the \"System Events\" permission to Witsy in the Automation settings screen.",
+        "description": "Make sure you grant the \"System Events\" permission to StationOne in the Automation settings screen.",
         "title": "Automation"
       },
       "denied": "Not Granted",
       "granted": "Granted",
-      "info": "These permissions allow Witsy to provide its full range of features. You can grant them now or later in System Preferences.",
+      "info": "These permissions allow StationOne to provide its full range of features. You can grant them now or later in System Preferences.",
       "leave": {
         "message": "Are you sure you want to continue without granting all permissions? Some features may not work properly.",
         "title": "Permissions not fully granted"
       },
       "openSettings": "Open Settings",
-      "subtitle": "On macOS, Witsy needs certain permissions to provide the best experience.",
+      "subtitle": "On macOS, StationOne needs certain permissions to provide the best experience.",
       "title": "System Permissions"
     },
     "studio": {
@@ -1916,13 +1916,13 @@
       "already": "@:{'onboarding.chat.already'}",
       "count": "@:{'onboarding.chat.count'}",
       "error": "@:{'onboarding.chat.error'}",
-      "subtitle": "Interact with Witsy using your voice! Witsy can read aloud not only responses from your chat sessions with language models but also any text displayed on screen in other applications!",
+      "subtitle": "Interact with StationOne using your voice! StationOne can read aloud not only responses from your chat sessions with language models but also any text displayed on screen in other applications!",
       "success": "@:{'onboarding.chat.success'}",
       "title": "Voice Interaction"
     },
     "welcome": {
-      "subtitle": "Witsy is a powerful AI assistant that can help you with a wide range of tasks. You can chat with it, ask it to write documents, and even run code on your computer. Let's get started!",
-      "title": "Welcome to Witsy!"
+      "subtitle": "StationOne is a powerful AI assistant that can help you with a wide range of tasks. You can chat with it, ask it to write documents, and even run code on your computer. Let's get started!",
+      "title": "Welcome to StationOne!"
     }
   },
   "plugins": {
@@ -2100,7 +2100,7 @@
     },
     "generationError": "Error while generating text",
     "loadingError": "Error while loading scratchpad file",
-    "placeholder": "Start typing your document or\nask Witsy to write something for you!\n\nOnce you started you can ask Witsy\nto make modification on your document.\n\nIf you highligh a portion of your text,\nWitsy will only update this portion.\n\nAlso check out the Writing Assistant\nin the action bar in the lower right corner!\n\nGive it a go!",
+    "placeholder": "Start typing your document or\nask StationOne to write something for you!\n\nOnce you started you can ask StationOne\nto make modification on your document.\n\nIf you highligh a portion of your text,\nStationOne will only update this portion.\n\nAlso check out the Writing Assistant\nin the action bar in the lower right corner!\n\nGive it a go!",
     "title": "Scratchpad"
   },
   "settings": {
@@ -2203,7 +2203,7 @@
       "runtime": "Deep Research type",
       "runtimes": {
         "ma": "Multi-agent (full agentic, LLM-driven)",
-        "ms": "Multi-step (hybrid code/agent, Witsy-driven)"
+        "ms": "Multi-step (hybrid code/agent, StationOne-driven)"
       }
     },
     "engines": {
@@ -2370,7 +2370,7 @@
         "title": "Filesystem"
       },
       "image": {
-        "apiKeyReminder": "Make sure you enter your API key in the Models pane of Witsy Settings.",
+        "apiKeyReminder": "Make sure you enter your API key in the Models pane of StationOne Settings.",
         "description": "This plugin allows LLM engines to create images from a text description.",
         "falai": {
           "aboutModels": "More about fal.ai models"
@@ -2510,7 +2510,7 @@
       "tts": {
         "groqAcceptTermsReminder": "You need to <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accept the terms and conditions</a> to use the Groq model.",
         "kokoroReminder": "Provided",
-        "sampleText": "Welcome to Witsy, the ultimate AI desktop assistant.",
+        "sampleText": "Welcome to StationOne, the ultimate AI desktop assistant.",
         "serviceDisclaimer": "The service may stop working at any point in time.",
         "voice": "@:{'common.voice'}"
       },
@@ -2611,9 +2611,9 @@
       "voiceMode": "@:{'realtimeChat.title'}"
     },
     "notification": {
-      "darwin": "You can activate Witsy from the fountain pen icon in the menu bar.",
-      "linux": "You can activate Witsy from the fountain pen icon in the menu bar.",
-      "windows": "You can activate Witsy from the fountain pen icon in the system tray."
+      "darwin": "You can activate StationOne from the fountain pen icon in the menu bar.",
+      "linux": "You can activate StationOne from the fountain pen icon in the menu bar.",
+      "windows": "You can activate StationOne from the fountain pen icon in the system tray."
     }
   },
   "workspace": {

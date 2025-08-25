@@ -269,7 +269,7 @@
       },
       "confirmDelete": "Czy na pewno chcesz usunąć tego agenta?",
       "create": "Nowy agent",
-      "empty": "Wybierz istniejącego agenta lub stwórz nowego.",
+      "empty": "Odblokuj możliwości agentów StationOne, tworząc swojego pierwszego agenta! Kliknij ikonę głowy robota, aby zacząć.",
       "list": {
         "empty": "Nie utworzono jeszcze agenta tego typu.",
         "runnable": "Inicjowany przez użytkownika",
@@ -362,7 +362,7 @@
     "available": "Nowa wersja jest już dostępna. Do pobrania już teraz...",
     "downloading": "Aktualizacja jest w toku. Poczekaj na jej zakończenie.",
     "error": "Błąd podczas sprawdzania aktualizacji. Spróbuj ponownie później.",
-    "uptodate": "Korzystasz już z najnowszej wersji Witsy."
+    "uptodate": "Używasz już najnowszej wersji StationOne."
   },
   "backup": {
     "restore": {
@@ -815,7 +815,7 @@
     }
   },
   "embedding": {
-    "apiKeyReminder": "Upewnij się, że wprowadziłeś swój klucz API w panelu Modele w Ustawieniach Witsy.",
+    "apiKeyReminder": "Upewnij się, że wpisałeś swój klucz API w panelu Modele w ustawieniach StationOne.",
     "browse": "Przeglądaj modele",
     "model": "Model embeddingów",
     "provider": "Dostawca embeddingów"
@@ -1638,7 +1638,7 @@
     "noTools": "Brak dostępnych narzędzi",
     "oauth": {
       "success": {
-        "message": "Możesz zamknąć to okno i wrócić do Witsy.",
+        "message": "Możesz zamknąć to okno i wrócić do StationOne.",
         "title": "Autoryzacja zakończona sukcesem!"
       }
     },
@@ -1651,7 +1651,7 @@
       "httpHeaders": "Niestandardowe nagłówki HTTP",
       "oauth": {
         "authorizing": "Rozpoczynanie uwierzytelniania",
-        "authorizingText": "Twoja przeglądarka otworzy się, by autoryzować Witsy. Proszę ukończyć autoryzację i wrócić do tego okna po zakończeniu.",
+        "authorizingText": "Twoja przeglądarka otworzy się, aby autoryzować StationOne. Proszę dokończ autoryzację i wróć do tego okna po zakończeniu.",
         "clientId": "ID klienta",
         "clientSecret": "Sekretny klucz klienta",
         "error": "Konfiguracja uwierzytelniania nie powiodła się",
@@ -1693,7 +1693,7 @@
       "deleteServer": "Usuń serwer",
       "editServer": "Edytuj serwer",
       "startServer": "Uruchom serwer",
-      "stopServer": "Zatrzymaj serwer",
+      "stopServer": "Wstrzymaj serwer",
       "viewLogs": "Pokaż logi serwera",
       "viewTools": "Pokaż dostępne narzędzia"
     },
@@ -1711,9 +1711,9 @@
   },
   "menu": {
     "app": {
-      "about": "O Witsy",
+      "about": "O StationOne",
       "checkForUpdates": "Sprawdź aktualizacje...",
-      "quit": "Zamknij Witsy",
+      "quit": "Zamknij StationOne",
       "settings": "@:{'common.settings'}…"
     },
     "edit": {
@@ -1733,7 +1733,7 @@
         "openai": "Eksport danych ChatGPT…",
         "title": "Importuj"
       },
-      "mainWindow": "Otwórz Witsy",
+      "mainWindow": "Otwórz StationOne",
       "newChat": "Nowy czat",
       "quickPrompt": "Szybka podpowiedź",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1841,12 +1841,12 @@
       "count": "Nie znaleziono modelu.|Dostępny jest 1 model!|Dostępne są {count} modele!",
       "error": "Proszę sprawdzić swój klucz API i spróbować ponownie.",
       "showMore": "Pokaż więcej",
-      "subtitle": "Możesz rozmawiać z Witsy, korzystając z modeli językowych od wszystkich głównych dostawców. Wprowadź poniżej swoje klucze API, aby rozpocząć. Jeśli nie masz żadnych kluczy API, bez obaw: na następnym ekranie będziesz mógł skonfigurować Witsy do korzystania z lokalnych modeli przez Ollama!",
+      "subtitle": "Możesz rozmawiać ze StationOne, korzystając z modeli językowych od wszystkich głównych dostawców. Wpisz swoje klucze API poniżej, aby rozpocząć. Jeśli nie masz żadnych kluczy API, nie martw się: na następnym ekranie będziesz mógł ustawić StationOne do używania lokalnych modeli przez Ollama!",
       "success": "Klucz {engine} zweryfikowany.<br/>{count} modeli znaleziono!",
       "title": "Dostawcy modeli czatu"
     },
     "done": {
-      "subtitle": "Jesteś gotowy do działania!<br/>Zacznij rozmowę z Witsy i odkryj jego możliwości!",
+      "subtitle": "Jesteś gotowy do działania!<br/>Zacznij rozmawiać ze StationOne i odkrywaj jego możliwości!",
       "title": "Wszystko gotowe!"
     },
     "instructions": {
@@ -1860,8 +1860,8 @@
         "title": "Nie ukończyłeś personalizacji."
       },
       "selectStyle": "Wybierz teraz, jak chciałbyś, aby Twój asystent odpowiadał.<br/>Zostanie to połączone z Twoimi danymi osobowymi, aby stworzyć idealne instrukcje.",
-      "subtitle": "Odpowiadając na kilka pytań, Witsy będzie mógł spersonalizować Twoje doświadczenie i zapewnić lepsze odpowiedzi. Możesz pominąć ten krok, ale zdecydowanie zalecamy, aby Witsy był bardziej osobisty.",
-      "title": "Poznaj Witsy!"
+      "subtitle": "Odpowiadając na kilka pytań, StationOne będzie mógł spersonalizować Twoje doświadczenie i udzielać lepszych odpowiedzi. Możesz pominąć ten krok, ale zalecamy go wykonać, aby poczuć, że StationOne jest bardziej osobisty.",
+      "title": "Pozwól StationOne poznać Ciebie!"
     },
     "ollama": {
       "browseModels": "Odkryj więcej modeli na https://ollama.com/search",
@@ -1885,22 +1885,22 @@
     },
     "permissions": {
       "accessibility": {
-        "description": "Wymagane, aby Witsy mógł czytać tekst z innych aplikacji i płynnie integrować się z Twoim workflow.",
+        "description": "Wymagane, aby StationOne mógł czytać tekst z innych aplikacji i płynnie integrować się z Twoim workflow.",
         "title": "Dostępność"
       },
       "automation": {
-        "description": "Upewnij się, że przyznałeś Witsy uprawnienia „System Events” w ekranie ustawień Automatyzacji.",
+        "description": "Upewnij się, że przyznałeś uprawnienie \"System Events\" StationOne w ekranie ustawień Automatyzacji.",
         "title": "Automatyzacja"
       },
       "denied": "Nie przyznano",
       "granted": "Przyznano",
-      "info": "Te uprawnienia pozwalają Witsy korzystać z pełnego zakresu funkcji. Możesz je przyznać teraz lub później w Preferencjach systemowych.",
+      "info": "Te uprawnienia pozwalają StationOne oferować pełny zakres funkcji. Możesz je przyznać teraz lub później w Preferencjach systemowych.",
       "leave": {
         "message": "Czy na pewno chcesz kontynuować bez przyznania wszystkich uprawnień? Niektóre funkcje mogą nie działać poprawnie.",
         "title": "Uprawnienia nie zostały w pełni przyznane"
       },
       "openSettings": "Otwórz ustawienia",
-      "subtitle": "Na macOS Witsy potrzebuje pewnych uprawnień, aby zapewnić najlepsze doświadczenia.",
+      "subtitle": "Na macOS StationOne potrzebuje określonych uprawnień, aby zapewnić najlepsze wrażenia.",
       "title": "Uprawnienia systemowe"
     },
     "studio": {
@@ -1915,13 +1915,13 @@
       "already": "@:{'onboarding.chat.already'}",
       "count": "@:{'onboarding.chat.count'}",
       "error": "@:{'onboarding.chat.error'}",
-      "subtitle": "Rozmawiaj z Witsy za pomocą głosu! Witsy może czytać na głos nie tylko odpowiedzi z twoich sesji czatu z modelami językowymi, ale także dowolny tekst wyświetlany na ekranie w innych aplikacjach!",
+      "subtitle": "Wchodź w interakcję ze StationOne za pomocą głosu! StationOne może odczytywać na głos nie tylko odpowiedzi z twoich sesji czatu z modelami językowymi, ale także każdy tekst wyświetlany na ekranie w innych aplikacjach!",
       "success": "@:{'onboarding.chat.success'}",
       "title": "Interakcja głosowa"
     },
     "welcome": {
-      "subtitle": "Witsy to potężny asystent AI, który może pomóc Ci w szerokim zakresie zadań. Możesz z nim rozmawiać, prosić o pisanie dokumentów, a nawet uruchamiać kod na swoim komputerze. Zaczynajmy!",
-      "title": "Witamy w Witsy!"
+      "subtitle": "StationOne to potężny asystent AI, który pomoże Ci w wielu zadaniach. Możesz z nim rozmawiać, prosić o pisanie dokumentów, a nawet uruchamiać kod na swoim komputerze. Zacznijmy!",
+      "title": "Witamy w StationOne!"
     }
   },
   "plugins": {
@@ -2095,7 +2095,7 @@
     },
     "generationError": "Wystąpił błąd podczas generowania",
     "loadingError": "Wystąpił błąd podczas ładowania",
-    "placeholder": "Zacznij pisać tutaj...",
+    "placeholder": "Zacznij pisać swój dokument lub\npoproś StationOne, aby coś dla Ciebie napisał!\n\nGdy zaczniesz, możesz poprosić StationOne\no wprowadzenie zmian w swoim dokumencie.\n\nJeśli zaznaczysz fragment tekstu,\nStationOne zaktualizuje tylko ten fragment.\n\nSprawdź także Asystenta Pisania\nw pasku akcji w prawym dolnym rogu!\n\nSpróbuj!",
     "title": "Scratchpad"
   },
   "settings": {
@@ -2198,7 +2198,7 @@
       "runtime": "Typ głębokich badań",
       "runtimes": {
         "ma": "Multi-agent (pełny agentyczny, napędzany LLM)",
-        "ms": "Wieloetapowy (hybrydowy kod/agent, napędzany Witsy)"
+        "ms": "Wieloetapowy (hybrydowy kod/agent, sterowany przez StationOne)"
       }
     },
     "engines": {
@@ -2365,7 +2365,7 @@
         "title": "System plików"
       },
       "image": {
-        "apiKeyReminder": "Upewnij się, że wprowadziłeś swój klucz API w panelu Modele w Ustawieniach Witsy.",
+        "apiKeyReminder": "Upewnij się, że wpisałeś swój klucz API w panelu Modele w ustawieniach StationOne.",
         "description": "Ta wtyczka umożliwia silnikom LLM tworzenie obrazów na podstawie opisu tekstowego.",
         "falai": {
           "aboutModels": "Więcej informacji o modelach fal.ai"
@@ -2505,7 +2505,7 @@
       "tts": {
         "groqAcceptTermsReminder": "Musisz <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">zaakceptować warunki i zasady</a>, aby korzystać z modelu Groq.",
         "kokoroReminder": "Pod warunkiem",
-        "sampleText": "Witamy w Witsy, najlepszym asystencie biurkowym AI.",
+        "sampleText": "Witamy w StationOne, ostatecznym asystencie AI na pulpit.",
         "serviceDisclaimer": "Usługa może przestać działać w dowolnym momencie.",
         "voice": "@:{'common.voice'}"
       },
@@ -2606,9 +2606,9 @@
       "voiceMode": "@:{'realtimeChat.title'}"
     },
     "notification": {
-      "darwin": "Możesz aktywować Witsy z ikony pióra wiecznego na pasku menu.",
-      "linux": "Możesz aktywować Witsy z ikony pióra wiecznego na pasku menu.",
-      "windows": "Możesz aktywować Witsy z ikony pióra wiecznego w zasobniku systemowym."
+      "darwin": "Możesz aktywować StationOne z ikony pióra wiecznego na pasku menu.",
+      "linux": "Możesz aktywować StationOne z ikony pióra wiecznego na pasku menu.",
+      "windows": "Możesz aktywować StationOne z ikony pióra wiecznego w zasobniku systemowym."
     }
   },
   "workspace": {
