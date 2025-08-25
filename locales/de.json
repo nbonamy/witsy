@@ -1635,6 +1635,7 @@
         "authorizingText": "Ihr Browser wird geöffnet, um StationOne zu autorisieren. Bitte schließen Sie die Autorisierung ab und kehren Sie danach zu diesem Fenster zurück.",
         "clientId": "Client-ID",
         "clientSecret": "Client-Geheimnis",
+        "dynamicClientRegistrationError": "Dieser Server unterstützt keine dynamische Client-Registrierung. Sie müssen eine Client-ID und ein Client-Geheimnis angeben.",
         "error": "Fehler bei der Einrichtung der Authentifizierung",
         "errorText": "Die Authentifizierung konnte nicht konfiguriert werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
         "notRequired": "Für diesen Server ist keine Authentifizierung erforderlich.",

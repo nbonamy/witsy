@@ -1654,6 +1654,7 @@
         "authorizingText": "您的浏览器将打开以授权StationOne。请完成授权，完成后返回此窗口。",
         "clientId": "客户端ID",
         "clientSecret": "客户端密钥",
+        "dynamicClientRegistrationError": "该服务器不支持动态客户端注册。您需要指定客户端ID和客户端密钥。",
         "error": "认证设置失败",
         "errorText": "配置认证失败。请检查您的网络连接并重试。",
         "notRequired": "此服务器不需要认证。",

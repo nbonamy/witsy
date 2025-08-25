@@ -293,10 +293,18 @@ export default class McpOAuthManager {
   /**
    * Detect if a server requires OAuth by attempting to connect
    */
-  async detectOAuth(url: string): Promise<{ requiresOAuth: boolean, metadata?: OAuthClientMetadata }> {
+  async detectOAuth(url: string, headers: Record<string, string>): Promise<{ requiresOAuth: boolean, metadata?: OAuthClientMetadata }> {
     try {
+
+      // prepare transport options
+      const transportOptions: any = {
+        requestInit: {
+          headers: headers,
+        }
+      }
+      
       // Try to connect to the server without OAuth to see if it's required
-      const testTransport = new StreamableHTTPClientTransport(new URL(url))
+      const testTransport = new StreamableHTTPClientTransport(new URL(url), transportOptions)
       const testClient = new Client({
         name: 'witsy-oauth-detection',
         version: '1.0.0'

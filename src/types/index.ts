@@ -498,7 +498,7 @@ declare global {
         getTools(): Promise<LlmTool[]>
         callTool(name: string, parameters: anyDict): any
         originalToolName(name: string): string
-        detectOAuth(url: string): Promise<any>
+        detectOAuth(url: string, headers: Record<string, string>): Promise<any>
         startOAuthFlow(url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string>
         completeOAuthFlow(serverUuid: string, authCode: string): Promise<boolean>
       }

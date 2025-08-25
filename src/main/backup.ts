@@ -1,6 +1,6 @@
 import { App, dialog } from 'electron'
 import { useI18n } from '../main/i18n'
-import { settingsFilePath } from './config'
+import { settingsFilePath, apiKeysFilePath } from './config'
 import { commandsFilePath } from './commands'
 import * as file from './file'
 import archiver from 'archiver'
@@ -13,8 +13,7 @@ import { workspacesFolder } from './workspace'
 // files to backup with their respective paths
 const filesToBackup = (app: App) => ([
   { name: 'settings.json', path: settingsFilePath(app) },
-  // { name: 'history.json', path: historyFilePath(app) },
-  // { name: 'experts.json', path: expertsFilePath(app) },
+  { name: 'apiKeys.json', path: apiKeysFilePath(app) },
   { name: 'commands.json', path: commandsFilePath(app) }
 ])
 
@@ -22,8 +21,6 @@ const filesToBackup = (app: App) => ([
 const foldersToBackup = (app: App) => ([
   { name: 'engines', path: path.join(app.getPath('userData'), 'engines') },
   { name: 'workspaces', path: workspacesFolder(app) },
-  // { name: 'agents', path: path.join(app.getPath('userData'), 'agents') },
-  // { name: 'images', path: path.join(app.getPath('userData'), 'images') }
 ])
 
 export const exportBackup = async (app: App): Promise<boolean> => {

@@ -1654,6 +1654,7 @@
         "authorizingText": "Your browser will open to authorize StationOne. Please complete the authorization and return to this window once done.",
         "clientId": "Client ID",
         "clientSecret": "Client secret",
+        "dynamicClientRegistrationError": "This server does not support dynamic client registration. You need to specify a client ID and client secret.",
         "error": "Authentication setup failed",
         "errorText": "Failed to configure authentication. Please check your internet connection and try again.",
         "notRequired": "This server does not require authentication.",

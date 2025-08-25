@@ -963,6 +963,7 @@
   "mcp.serverEditor.oauth.authorizingText": "Your browser will open to authorize StationOne. Please complete the authorization and return to this window once done.",
   "mcp.serverEditor.oauth.clientId": "Client ID",
   "mcp.serverEditor.oauth.clientSecret": "Client secret",
+  "mcp.serverEditor.oauth.dynamicClientRegistrationError": "This server does not support dynamic client registration. You need to specify a client ID and client secret.",
   "mcp.serverEditor.oauth.error": "Authentication setup failed",
   "mcp.serverEditor.oauth.errorText": "Failed to configure authentication. Please check your internet connection and try again.",
   "mcp.serverEditor.oauth.notRequired": "This server does not require authentication.",
