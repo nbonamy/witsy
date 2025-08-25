@@ -2285,7 +2285,7 @@
       "localeUI": "UI-Sprache",
       "promptLLMModel": "Quick Prompt LLM-Modell",
       "resetTips": "Tipps zurücksetzen",
-      "runAtLogin": "Witsy mit Betriebssystem starten",
+      "runAtLogin": "StationOne mit Betriebssystem starten",
       "theme": "Erscheinungsbild",
       "themes": {
         "dark": "Dunkel",

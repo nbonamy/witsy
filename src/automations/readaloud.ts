@@ -27,7 +27,7 @@ export default class ReadAloud {
     if (text == null) {
       try {
         new Notification({
-          title: 'Witsy',
+          title: 'StationOne',
           body: t('automation.grabError')
         }).show()
       } catch (error) {
@@ -40,7 +40,7 @@ export default class ReadAloud {
     if (text.trim() === '') {
       try {
         new Notification({
-          title: 'Witsy',
+          title: 'StationOne',
           body: t('automation.readAloud.emptyText')
         }).show()
         console.log('No text selected');

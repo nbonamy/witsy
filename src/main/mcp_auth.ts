@@ -281,7 +281,7 @@ export default class McpOAuthManager {
     const callbackUrl = `http://localhost:${this.callbackServer.callbackPort}/callback`
     
     return {
-      client_name: 'Witsy MCP Client',
+      client_name: 'StationOne MCP Client',
       redirect_uris: [callbackUrl],
       grant_types: ['authorization_code', 'refresh_token'],
       response_types: ['code'],
@@ -428,7 +428,7 @@ export default class McpOAuthManager {
         token_endpoint_auth_method: 'client_secret_post',
         grant_types: ['authorization_code', 'refresh_token'],
         response_types: ['code'],
-        client_name: 'Witsy MCP Client',
+        client_name: 'StationOne MCP Client',
         scope: 'mcp:tools'
       }
       oauthProvider.saveClientInformation(clientInformation);
@@ -438,7 +438,7 @@ export default class McpOAuthManager {
 
     console.log('👤 Creating MCP client...');
     this.client = new Client({
-      name: 'witsy-oauth-client',
+      name: 'stationone-oauth-client',
       version: '1.0.0',
     }, { capabilities: {} });
     console.log('👤 Client created');

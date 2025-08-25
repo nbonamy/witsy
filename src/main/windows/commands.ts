@@ -25,7 +25,7 @@ export const prepareCommandPicker = (queryParams?: anyDict): void => {
   // open a new one
   commandPicker = createWindow({
     hash: '/commands',
-    title: 'WitsyCommandPicker',
+    title: 'StationOne Command Picker',
     x: 0, y: 0,
     width: width,
     height: height,
@@ -159,7 +159,7 @@ const activateCommandPicker = async () => {
     //   const automator = new MacosAutomator();
     //   await automator.focusApp({
     //     id: process.env.DEBUG ? 'com.github.Electron' : 'com.nabocorp.witsy',
-    //     name: 'Witsy',
+    //     name: 'StationOne',
     //     path: '',
     //     window: null//commandPicker.getTitle(),
     //   })

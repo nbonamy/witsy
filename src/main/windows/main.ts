@@ -41,7 +41,7 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
 
   // else open a new one
   mainWindow = createWindow({
-    title: 'Witsy',
+    title: 'StationOne',
     x: bounds?.x,
     y: bounds?.y,
     width: bounds?.width ?? 1400,

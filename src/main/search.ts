@@ -131,7 +131,7 @@ export default class LocalSearch {
         
         // we don't want to reuse tempPath
         // use item/getSavePath() to ensure unique temp file
-        const tempPath = path.join(os.tmpdir(), `witsy-${crypto.randomUUID()}.tmp`)
+        const tempPath = path.join(os.tmpdir(), `stationone-${crypto.randomUUID()}.tmp`)
         item.setSavePath(tempPath)
         
         // handle download completion
