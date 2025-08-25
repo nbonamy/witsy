@@ -310,9 +310,10 @@ const isOauthRequired = async (): Promise<boolean> => {
   }
 
   try {
-    const oauthCheck = await window.api.mcp.detectOAuth(url.value)
+    const oauthCheck = await window.api.mcp.detectOAuth(url.value, JSON.parse(JSON.stringify(headers.value)))
     return oauthCheck.requiresOAuth
-  } catch {
+  } catch (e) {
+    console.error('Failed to detect OAuth requirement:', e)
     return false
   }
 
@@ -321,7 +322,7 @@ const isOauthRequired = async (): Promise<boolean> => {
 const initOauth = async (userInitiated: boolean): Promise<boolean> => {
 
   try {
-    const oauthCheck = await window.api.mcp.detectOAuth(url.value)
+    const oauthCheck = await window.api.mcp.detectOAuth(url.value, JSON.parse(JSON.stringify(headers.value)))
     if (!oauthCheck.requiresOAuth) {
       return true
     }
@@ -404,10 +405,17 @@ const setupOAuth = async (userInitiated: boolean) => {
     }
 
   } catch (error) {
+
     console.error('OAuth setup failed:', error)
+
+    let text = error.message || t('mcp.serverEditor.oauth.errorText')
+    if (text.includes('does not support dynamic client registration')) {
+      text = t('mcp.serverEditor.oauth.dynamicClientRegistrationError')
+    }
+
     await Dialog.show({
       title: t('mcp.serverEditor.oauth.error'),
-      text: error.message || t('mcp.serverEditor.oauth.errorText'),
+      text: text,
       confirmButtonText: t('common.ok'),
     })
   }

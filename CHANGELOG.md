@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.13.2] - WIP
+## [2.13.2] - 2025-08-22
 
 ### Added
 - Add Support for Anthropic's 'thinking.budget_tokens' Parameter (https://github.com/nbonamy/witsy/issues/392)

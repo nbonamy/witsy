@@ -733,8 +733,8 @@ export default class {
   }
 
   // OAuth delegation methods
-  detectOAuth = async (url: string) => {
-    return this.oauthManager.detectOAuth(url)
+  detectOAuth = async (url: string, headers: Record<string, string>) => {
+    return this.oauthManager.detectOAuth(url, headers)
   }
 
   startOAuthFlow = async (url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string> => {
