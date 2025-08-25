@@ -17,6 +17,11 @@ vi.mock('electron', async() => {
       getPath: vi.fn(() => ''),
       getLocale: vi.fn(() => 'en-US'),
     },
+    safeStorage: {
+      isEncryptionAvailable: vi.fn(() => true),
+      encryptString: vi.fn((data) => `encrypted-${data}`),
+      decryptString: vi.fn((data) => data.toString('latin1'))
+    },
     Notification
   }
 })

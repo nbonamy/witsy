@@ -15,7 +15,12 @@ vi.mock('electron', () => ({
   Menu: {
     buildFromTemplate: vi.fn(() => { return {}}),
     setApplicationMenu: vi.fn()
-  }
+  },
+  safeStorage: {
+    isEncryptionAvailable: vi.fn(() => true),
+    encryptString: vi.fn((data) => `encrypted-${data}`),
+    decryptString: vi.fn((data) => data.toString('latin1'))
+  },
 }))
 
 test('installMenu', () => {
@@ -30,6 +35,7 @@ test('installMenu', () => {
     forge: vi.fn(),
     backupExport: vi.fn(),
     backupImport: vi.fn(),
+    importOpenAI: vi.fn(),
   }, null)
   expect(Menu.buildFromTemplate).toHaveBeenCalled()
   expect(Menu.setApplicationMenu).toHaveBeenLastCalledWith({})
