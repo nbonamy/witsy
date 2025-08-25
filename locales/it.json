@@ -250,7 +250,7 @@
       },
       "confirmDelete": "Sei sicuro di voler eliminare questo agente?",
       "create": "Nuovo Agente",
-      "empty": "Seleziona un agente esistente o creane uno nuovo.",
+      "empty": "Sblocca il potere agentico di StationOne creando il tuo primo agente! Clicca sulla testa del robot per iniziare.",
       "list": {
         "empty": "Nessun agente di questo tipo creato ancora.",
         "runnable": "Avviato dall'utente",
@@ -343,7 +343,7 @@
     "available": "Una nuova versione è disponibile. Download in corso…",
     "downloading": "Un aggiornamento è in corso. Si prega di attendere il completamento.",
     "error": "Errore durante il controllo degli aggiornamenti. Riprova più tardi.",
-    "uptodate": "Stai già utilizzando l'ultima versione di Witsy."
+    "uptodate": "Stai già utilizzando l'ultima versione di StationOne."
   },
   "backup": {
     "restore": {
@@ -796,7 +796,7 @@
     }
   },
   "embedding": {
-    "apiKeyReminder": "Assicurati di inserire la tua chiave API nel pannello Modelli delle impostazioni di Witsy.",
+    "apiKeyReminder": "Assicurati di inserire la tua chiave API nel pannello Modelli delle Impostazioni di StationOne.",
     "browse": "Sfoglia modelli",
     "model": "Modello di embedding",
     "provider": "Fornitore di embedding"
@@ -1619,7 +1619,7 @@
     "noTools": "Nessuno strumento disponibile",
     "oauth": {
       "success": {
-        "message": "Puoi chiudere questa finestra e tornare a Witsy.",
+        "message": "Puoi chiudere questa finestra e tornare a StationOne.",
         "title": "Autorizzazione Riuscita!"
       }
     },
@@ -1632,7 +1632,7 @@
       "httpHeaders": "Header HTTP Personalizzati",
       "oauth": {
         "authorizing": "Avvio autenticazione",
-        "authorizingText": "Il tuo browser si aprirà per autorizzare Witsy. Completa l'autorizzazione e torna a questa finestra una volta terminato.",
+        "authorizingText": "Il tuo browser si aprirà per autorizzare StationOne. Completa l'autorizzazione e torna a questa finestra una volta terminato.",
         "clientId": "ID cliente",
         "clientSecret": "Segreto cliente",
         "error": "Configurazione autenticazione fallita",
@@ -1674,7 +1674,7 @@
       "deleteServer": "Elimina server",
       "editServer": "Modifica server",
       "startServer": "Avvia server",
-      "stopServer": "Ferma server",
+      "stopServer": "Metti in pausa il server",
       "viewLogs": "Visualizza log del server",
       "viewTools": "Visualizza strumenti disponibili"
     },
@@ -1692,9 +1692,9 @@
   },
   "menu": {
     "app": {
-      "about": "Informazioni su Witsy",
+      "about": "Informazioni su StationOne",
       "checkForUpdates": "Controlla aggiornamenti…",
-      "quit": "Esci da Witsy",
+      "quit": "Esci da StationOne",
       "settings": "@:{'common.settings'}…"
     },
     "edit": {
@@ -1714,7 +1714,7 @@
         "openai": "Esportazione dati ChatGPT…",
         "title": "Importa"
       },
-      "mainWindow": "Apri Witsy",
+      "mainWindow": "Apri StationOne",
       "newChat": "Nuova chat",
       "quickPrompt": "Nuova richiesta",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1822,12 +1822,12 @@
       "count": "Nessun modello trovato.|1 modello disponibile!|{count} modelli disponibili!",
       "error": "Per favore controlla la tua chiave API e riprova.",
       "showMore": "Mostra di più",
-      "subtitle": "Puoi chattare con Witsy utilizzando modelli linguistici di tutti i principali fornitori. Inserisci le tue chiavi API qui sotto per iniziare. Se non hai chiavi API, nessun problema: nella schermata successiva potrai configurare Witsy per utilizzare modelli locali tramite Ollama!",
+      "subtitle": "Puoi chattare con StationOne usando modelli linguistici di tutti i principali fornitori. Inserisci le tue chiavi API qui sotto per iniziare. Se non hai chiavi API, nessun problema: nella schermata successiva potrai configurare StationOne per usare modelli locali tramite Ollama!",
       "success": "Chiave {engine} convalidata.<br/>{count} modelli trovati!",
       "title": "I fornitori dei modelli di chat"
     },
     "done": {
-      "subtitle": "Sei tutto configurato e pronto per iniziare!<br/>Inizia a chattare con Witsy ed esplora le sue capacità!",
+      "subtitle": "Sei tutto pronto per iniziare!<br/>Inizia a chattare con StationOne ed esplora le sue capacità!",
       "title": "Tutto fatto!"
     },
     "instructions": {
@@ -1841,8 +1841,8 @@
         "title": "Non hai completato la tua personalizzazione."
       },
       "selectStyle": "Ora scegli come vorresti che il tuo assistente rispondesse.<br/>Questo verrà combinato con le tue informazioni personali per creare le istruzioni perfette.",
-      "subtitle": "Rispondendo a qualche domanda, Witsy potrà personalizzare la tua esperienza e fornire risposte migliori. Puoi saltare questo passaggio se vuoi, ma è altamente consigliato per rendere Witsy più personale.",
-      "title": "Fai sapere a Witsy chi sei!"
+      "subtitle": "Rispondendo a qualche domanda, StationOne potrà personalizzare la tua esperienza e fornire risposte migliori. Puoi saltare questo passaggio se vuoi, ma è altamente consigliato per rendere StationOne più personale.",
+      "title": "Fai conoscere StationOne a te!"
     },
     "ollama": {
       "browseModels": "Scopri altri modelli su https://ollama.com/search",
@@ -1866,22 +1866,22 @@
     },
     "permissions": {
       "accessibility": {
-        "description": "Necessario per permettere a Witsy di leggere il testo da altre applicazioni e integrarsi perfettamente con il tuo flusso di lavoro.",
+        "description": "Necessario affinché StationOne possa leggere il testo da altre applicazioni e integrarsi perfettamente nel tuo flusso di lavoro.",
         "title": "Accessibilità"
       },
       "automation": {
-        "description": "Assicurati di concedere il permesso \"Eventi di sistema\" a Witsy nella schermata delle impostazioni di Automazione.",
+        "description": "Assicurati di concedere il permesso \"Eventi di sistema\" a StationOne nella schermata Impostazioni Automazione.",
         "title": "Automazione"
       },
       "denied": "Non Concesso",
       "granted": "Concesso",
-      "info": "Questi permessi permettono a Witsy di offrire l'intera gamma di funzionalità. Puoi concessi ora o più tardi nelle Preferenze di Sistema.",
+      "info": "Queste autorizzazioni permettono a StationOne di offrire l'intera gamma di funzionalità. Puoi concederle ora o in seguito nelle Preferenze di Sistema.",
       "leave": {
         "message": "Sei sicuro di voler continuare senza concedere tutti i permessi? Alcune funzionalità potrebbero non funzionare correttamente.",
         "title": "Permessi non completamente concessi"
       },
       "openSettings": "Apri Impostazioni",
-      "subtitle": "Su macOS, Witsy necessita di determinati permessi per offrire la migliore esperienza.",
+      "subtitle": "Su macOS, StationOne ha bisogno di alcune autorizzazioni per offrire la migliore esperienza.",
       "title": "Permessi di sistema"
     },
     "studio": {
@@ -1896,13 +1896,13 @@
       "already": "@:{'onboarding.chat.already'}",
       "count": "@:{'onboarding.chat.count'}",
       "error": "@:{'onboarding.chat.error'}",
-      "subtitle": "Interagisci con Witsy usando la tua voce! Witsy può leggere ad alta voce non solo le risposte dalle tue sessioni di chat con i modelli linguistici, ma anche qualsiasi testo visualizzato sullo schermo in altre applicazioni!",
+      "subtitle": "Interagisci con StationOne usando la tua voce! StationOne può leggere ad alta voce non solo le risposte delle tue chat con i modelli linguistici, ma anche qualsiasi testo visualizzato su schermo in altre applicazioni!",
       "success": "@:{'onboarding.chat.success'}",
       "title": "Interazione Vocale"
     },
     "welcome": {
-      "subtitle": "Witsy è un potente assistente AI che può aiutarti in una vasta gamma di compiti. Puoi chattare con lui, chiedergli di scrivere documenti, e persino eseguire codice sul tuo computer. Iniziamo!",
-      "title": "Benvenuto in Witsy!"
+      "subtitle": "StationOne è un potente assistente AI che può aiutarti con una vasta gamma di compiti. Puoi chattare con esso, chiedergli di scrivere documenti e persino eseguire codice sul tuo computer. Iniziamo!",
+      "title": "Benvenuto in StationOne!"
     }
   },
   "plugins": {
@@ -2073,7 +2073,7 @@
     },
     "generationError": "Errore durante la generazione del testo",
     "loadingError": "Errore durante il caricamento del file di appunti",
-    "placeholder": "Inizia a scrivere il tuo documento o\ndemanda a Witsy di scrivere qualcosa per te!\n\nUna volta iniziato, puoi chiedere a Witsy\ndi apportare modifiche al tuo documento.\n\nSe evidenzi una parte del tuo testo,\nWitsy aggiornerà solo quella parte.\n\nDai un'occhiata anche all'Assistente di Scrittura\nnella barra delle azioni in basso a destra!\n\nProvalo!",
+    "placeholder": "Inizia a scrivere il tuo documento o\nchiedi a StationOne di scrivere qualcosa per te!\n\nUna volta iniziato, puoi chiedere a StationOne\ndi apportare modifiche al tuo documento.\n\nSe evidenzi una parte del testo,\nStationOne aggiornerà solo quella porzione.\n\nDai anche un'occhiata all'Assistente di Scrittura\nnella barra azioni in basso a destra!\n\nProvalo ora!",
     "title": "Scratchpad"
   },
   "settings": {
@@ -2176,7 +2176,7 @@
       "runtime": "Tipo di ricerca approfondita",
       "runtimes": {
         "ma": "Multi-agente (completamente agentico, guidato da LLM)",
-        "ms": "Multi-step (ibrido codice/agente, guidato da Witsy)"
+        "ms": "Multi-step (ibrido codice/agente, guidato da StationOne)"
       }
     },
     "engines": {
@@ -2337,7 +2337,7 @@
         "title": "Filesystem"
       },
       "image": {
-        "apiKeyReminder": "Assicurati di inserire la tua chiave API nel pannello Modelli delle impostazioni di Witsy.",
+        "apiKeyReminder": "Assicurati di inserire la tua chiave API nel pannello Modelli delle Impostazioni di StationOne.",
         "description": "Questo plugin consente ai motori LLM di creare immagini a partire da una descrizione testuale.",
         "falai": {
           "aboutModels": "Ulteriori informazioni sui modelli fal.ai"
@@ -2477,7 +2477,7 @@
       "tts": {
         "groqAcceptTermsReminder": "Devi <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accettare i termini e le condizioni</a> per utilizzare il modello Groq.",
         "kokoroReminder": "Fornito",
-        "sampleText": "Benvenuto in Witsy, l'assistente AI definitivo per il tuo desktop.",
+        "sampleText": "Benvenuto in StationOne, l'ultimo assistente desktop AI.",
         "serviceDisclaimer": "Il servizio potrebbe smettere di funzionare in qualsiasi momento.",
         "voice": "@:{'common.voice'}"
       },
@@ -2578,9 +2578,9 @@
       "voiceMode": "@:{'realtimeChat.title'}"
     },
     "notification": {
-      "darwin": "Puoi attivare Witsy dall'icona della penna stilografica nella barra dei menu.",
-      "linux": "Puoi attivare Witsy dall'icona della penna stilografica nella barra dei menu.",
-      "windows": "Puoi attivare Witsy dall'icona della penna stilografica nella barra di sistema."
+      "darwin": "Puoi attivare StationOne dall'icona della penna stilografica nella barra dei menu.",
+      "linux": "Puoi attivare StationOne dall'icona della penna stilografica nella barra dei menu.",
+      "windows": "Puoi attivare StationOne dall'icona della penna stilografica nell'area di notifica di sistema."
     }
   },
   "workspace": {
