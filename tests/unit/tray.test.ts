@@ -30,6 +30,11 @@ vi.mock('electron', () => {
         }
       }),
     },
+    safeStorage: {
+      isEncryptionAvailable: vi.fn(() => true),
+      encryptString: vi.fn((data) => `encrypted-${data}`),
+      decryptString: vi.fn((data) => data.toString('latin1'))
+    },
     Tray,
     Menu,
   }
