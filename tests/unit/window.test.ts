@@ -146,7 +146,7 @@ test('Create main window', async () => {
   window.openMainWindow()
   expect(window.mainWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    title: 'Witsy'
+    title: 'StationOne'
   }))
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?#')
   expect(window.mainWindow.isVisible()).toBe(true)

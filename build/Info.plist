@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>Witsy tries to grab highlighted text in other applications for AI commands.</string>
+	<string>StationOne tries to grab highlighted text in other applications for AI commands.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Witsy searches for Nestor services on your local network</string>
+	<string>StationOne searches for Nestor services on your local network</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Witsy uses the microphone to transcribe your voice to text.</string>	
+	<string>StationOne uses the microphone to transcribe your voice to text.</string>	
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSMultipleInstancesProhibited</key>

@@ -483,7 +483,7 @@ export default class {
 
       // build the client
       const client = new Client({
-        name: 'witsy-mcp-client',
+        name: 'stationone-mcp-client',
         version: '1.0.0'
       }, {
         capabilities: { tools: {} }
@@ -536,7 +536,7 @@ export default class {
 
       // build the client
       const client = new Client({
-        name: 'witsy-mcp-client',
+        name: 'stationone-mcp-client',
         version: '1.0.0'
       }, {
         capabilities: { tools: {} }
@@ -596,7 +596,7 @@ export default class {
             token_endpoint_auth_method: 'client_secret_post',
             grant_types: ['authorization_code', 'refresh_token'],
             response_types: ['code'],
-            client_name: 'Witsy MCP Client',
+            client_name: 'StationOne MCP Client',
             scope: 'mcp:tools'
           }
           oauthProvider.saveClientInformation(clientInformation)
@@ -615,7 +615,7 @@ export default class {
 
       // build the client
       const client = new Client({
-        name: 'witsy-mcp-client',
+        name: 'stationone-mcp-client',
         version: '1.0.0'
       }, {
         capabilities: { tools: {} }
