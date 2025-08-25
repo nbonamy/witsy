@@ -1694,7 +1694,7 @@
       "deleteServer": "Delete server",
       "editServer": "Edit server",
       "startServer": "Start server",
-      "stopServer": "Stop server",
+      "stopServer": "Pause server",
       "viewLogs": "View server logs",
       "viewTools": "View available tools"
     },
