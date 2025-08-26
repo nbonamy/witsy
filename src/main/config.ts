@@ -203,6 +203,7 @@ export const loadSettings = (source: App|string): Configuration => {
   let apiKeys = extractApiKeys(jsonConfig)
   if (apiKeys.length > 0) {
     saveApiKeys(apiKeys)
+    save = true
   } else {
     apiKeys = loadApiKeys()
     injectApiKeys(jsonConfig, apiKeys)
@@ -240,7 +241,7 @@ export const loadSettings = (source: App|string): Configuration => {
 
   // save if needed
   if (save && !process.env.TEST) {
-    saveSettings(settingsFile, config)
+    saveSettings(source, config)
   }
 
   // start monitoring
