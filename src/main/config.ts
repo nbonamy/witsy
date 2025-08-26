@@ -330,7 +330,14 @@ export const loadApiKeys = (): ApiKeyEntry[] => {
   try {
     const credentials = Object.entries(safeStore.store)
     return credentials.reduce((apiKeys, [name, buffer]) => {
-      return [...apiKeys, { name, apiKey: safeStorage.decryptString(Buffer.from(buffer, 'latin1')) }];
+      try {
+        const apiKey = safeStorage.decryptString(Buffer.from(buffer, 'latin1'))
+        return [...apiKeys, { name, apiKey }]
+      } catch (error) {
+        console.log(`Error decrypting API key for ${name}:`, error)
+        safeStore.delete(name)
+        return apiKeys
+      }
     }, [] as ApiKeyEntry[]);
   } catch (error) {
     console.log('Error loading API keys:', error)
@@ -340,100 +347,129 @@ export const loadApiKeys = (): ApiKeyEntry[] => {
 
 export const saveApiKeys = (apiKeys: ApiKeyEntry[]): boolean => {
 
-  // check
-  if (!safeStorage.isEncryptionAvailable()) {
-    return false
-  }
-
-  // First, delete all existing apiKey entries
   try {
-    const credentials = loadApiKeys()
-    for (const credential of credentials) {
-      safeStore.delete(credential.name)
+
+    // check
+    if (!safeStorage.isEncryptionAvailable()) {
+      return false
     }
-  } catch (error) {
-    console.log('Error clearing existing API keys:', error)
-    return false
-  }
-  
-  // Save new entries
-  for (const entry of apiKeys) {
-    if (entry.apiKey.length > 0) {
-      try {
-      const buffer = safeStorage.encryptString(entry.apiKey);
-      safeStore.set(entry.name, buffer.toString('latin1'));
-      } catch (error) {
-        console.log(`Error saving API key for ${entry.name}:`, error)
+
+    // First, delete all existing apiKey entries
+    try {
+      const credentials = loadApiKeys()
+      for (const credential of credentials) {
+        safeStore.delete(credential.name)
       }
+    } catch (error) {
+      console.log('Error clearing existing API keys:', error)
+      return false
     }
-  }
-
-  // done
-  return true
-}
-
-export const extractApiKeys = (config: anyDict, path: string = ''): ApiKeyEntry[] => {
-  const apiKeys: ApiKeyEntry[] = []
-  
-  const traverse = (obj: anyDict, currentPath: string) => {
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        const value = obj[key]
-        const fullPath = currentPath ? `${currentPath}.${key}` : key
-        
-        if (key.toLowerCase().includes('apikey') && typeof value === 'string') {
-          apiKeys.push({ name: fullPath, apiKey: value })
-        } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-          traverse(value, fullPath)
+    
+    // Save new entries
+    for (const entry of apiKeys) {
+      if (entry.apiKey.length > 0) {
+        try {
+        const buffer = safeStorage.encryptString(entry.apiKey);
+        safeStore.set(entry.name, buffer.toString('latin1'));
+        } catch (error) {
+          console.log(`Error saving API key for ${entry.name}:`, error)
         }
       }
     }
+
+    // done
+    return true
+
+  } catch (error) {
+    console.log('Error saving API keys:', error)
+    return false
   }
+
+}
+
+export const extractApiKeys = (config: anyDict, path: string = ''): ApiKeyEntry[] => {
+
+  const apiKeys: ApiKeyEntry[] = []
   
-  traverse(config, path)
+  try {
+    
+    const traverse = (obj: anyDict, currentPath: string) => {
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          const value = obj[key]
+          const fullPath = currentPath ? `${currentPath}.${key}` : key
+          
+          if (key.toLowerCase().includes('apikey') && typeof value === 'string') {
+            apiKeys.push({ name: fullPath, apiKey: value })
+          } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+            traverse(value, fullPath)
+          }
+        }
+      }
+    }
+    
+    traverse(config, path)
+
+  } catch (error) {
+    console.log('Error extracting API keys:', error)
+  }
+
+  // done
   return apiKeys
 }
 
 
 export const injectApiKeys = (config: Configuration, apiKeys: ApiKeyEntry[]): void => {
   
-  for (const entry of apiKeys) {
-    const pathParts = entry.name.split('.')
-    let current = config as anyDict
-    
-    // Navigate to the parent object
-    for (let i = 0; i < pathParts.length - 1; i++) {
-      if (!current[pathParts[i]]) {
-        current[pathParts[i]] = {}
+  try {
+
+    for (const entry of apiKeys) {
+      const pathParts = entry.name.split('.')
+      let current = config as anyDict
+      
+      // Navigate to the parent object
+      for (let i = 0; i < pathParts.length - 1; i++) {
+        if (!current[pathParts[i]]) {
+          current[pathParts[i]] = {}
+        }
+        current = current[pathParts[i]]
       }
-      current = current[pathParts[i]]
+      
+      // Set the API key
+      const lastKey = pathParts[pathParts.length - 1]
+      current[lastKey] = entry.apiKey
     }
-    
-    // Set the API key
-    const lastKey = pathParts[pathParts.length - 1]
-    current[lastKey] = entry.apiKey
+
+  } catch (error) {
+    console.log('Error injecting API keys:', error)
   }
 
 }
 
 export const nullifyApiKeys = (config: anyDict, apiKeys: ApiKeyEntry[]): void => {
 
-  for (const entry of apiKeys) {
-    const pathParts = entry.name.split('.')
-    let current = config
-    
-    for (let i = 0; i < pathParts.length - 1; i++) {
-      if (current[pathParts[i]] && typeof current[pathParts[i]] === 'object') {
-        current = current[pathParts[i]]
-      } else {
-        break
+  try {
+
+    for (const entry of apiKeys) {
+      const pathParts = entry.name.split('.')
+      let current = config
+
+      for (let i = 0; i < pathParts.length - 1; i++) {
+        if (current[pathParts[i]] && typeof current[pathParts[i]] === 'object') {
+          current = current[pathParts[i]]
+        } else {
+          break
+        }
+      }
+      
+      const lastKey = pathParts[pathParts.length - 1]
+      if (current && Object.prototype.hasOwnProperty.call(current, lastKey)) {
+        delete current[lastKey]
       }
     }
-    
-    const lastKey = pathParts[pathParts.length - 1]
-    if (current && Object.prototype.hasOwnProperty.call(current, lastKey)) {
-      delete current[lastKey]
-    }
+
+  } catch (error) {
+    console.log('Error nullifying API keys:', error)
   }
   
 }

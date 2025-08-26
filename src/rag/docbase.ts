@@ -401,7 +401,7 @@ export default class DocumentBaseImpl {
     modified: DocumentSourceImpl[],
     deleted: DocumentSourceImpl[]
   }> {
-    console.log(`[rag] Scanning for offline changes in database "${this.name}"`)
+    // console.log(`[rag] Scanning for offline changes in database "${this.name}"`)
     
     const added: Array<{docSource: DocumentSourceImpl, parentFolder?: DocumentSourceImpl}> = []
     const modified: DocumentSourceImpl[] = []
@@ -412,7 +412,9 @@ export default class DocumentBaseImpl {
       await this.scanDocumentForChanges(document, added, modified, deleted)
     }
 
-    console.log(`[rag] Offline scan complete: ${added.length} added, ${modified.length} modified, ${deleted.length} deleted`)
+    if (added.length > 0 || modified.length > 0 || deleted.length > 0) {
+      console.log(`[rag] Offline scan complete: ${added.length} added, ${modified.length} modified, ${deleted.length} deleted`)
+    }
     
     return { added, modified, deleted }
   }
