@@ -133,7 +133,7 @@ test('Settings General', async () => {
 test('Settings Chat', async () => {
   
   const tab = await switchToTab(wrapper, tabs.indexOf('settingsChat'))
-  expect(tab.findAll('.form-field')).toHaveLength(7)
+  expect(tab.findAll('.form-field')).toHaveLength(9)
 
   expect(store.config.appearance.chat.theme).not.toBe('conversation')
   tab.find('.form-field.theme select').setValue('conversation')
