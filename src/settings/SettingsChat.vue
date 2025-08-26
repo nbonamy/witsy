@@ -18,6 +18,13 @@
           <option value="conversation">{{ t('settings.chat.themes.conversation') }}</option>
         </select>
       </div>
+      <div class="form-field previews">
+        <label>{{ t('settings.chat.previews.title') }}</label>
+      </div>
+      <div class="form-field horizontal run-at-login">
+        <input type="checkbox" v-model="previewHtml" @change="save" />
+        <label>{{ t('settings.chat.previews.html') }}</label>
+      </div>
       <div class="form-field copy">
         <label>{{ t('settings.chat.copyFormat.title') }}</label>
         <select v-model="copyFormat" @change="save">
@@ -91,6 +98,7 @@ const isMas = ref(false)
 const theme = ref(null)
 const fontSize = ref(null)
 const fontFamily = ref('')
+const previewHtml = ref(true)
 const copyFormat = ref<TextFormat>('text')
 const showToolCalls = ref<ChatToolMode>('calling')
 const layout = ref<ChatListLayout>('normal')
@@ -108,6 +116,7 @@ const load = () => {
   theme.value = store.config.appearance.chat.theme || 'openai'
   layout.value = store.config.appearance.chatList.layout || 'normal'
   copyFormat.value = store.config.appearance.chat.copyFormat || 'text'
+  previewHtml.value = store.config.appearance.chat.autoPreview.html ?? true
   showToolCalls.value = store.config.appearance.chat.showToolCalls || 'calling'
   fontFamily.value = store.config.appearance.chat.fontFamily || ''
   fontSize.value = store.config.appearance.chat.fontSize || 3
@@ -118,6 +127,7 @@ const save = () => {
   store.config.appearance.chat.fontFamily = fontFamily.value
   store.config.appearance.chat.fontSize = fontSize.value
   store.config.appearance.chatList.layout = layout.value
+  store.config.appearance.chat.autoPreview.html = previewHtml.value
   store.config.appearance.chat.showToolCalls = showToolCalls.value
   store.config.appearance.chat.copyFormat = copyFormat.value
   store.saveSettings()

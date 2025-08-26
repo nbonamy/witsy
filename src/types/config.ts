@@ -170,6 +170,9 @@ export type ChatAppearance = {
   theme: string
   fontFamily: string
   fontSize: number
+  autoPreview: {
+    html: boolean
+  }
   showToolCalls: ChatToolMode
   copyFormat: TextFormat
 }

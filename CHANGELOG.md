@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.X.Y] - WIP
+
+### Added
+- HTML Artifacts preview
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
 ## [2.13.2] - 2025-08-22
 
 ### Added
