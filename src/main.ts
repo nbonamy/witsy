@@ -29,9 +29,11 @@ import * as window from './main/window';
 import * as menu from './main/menu';
 import * as backup from './main/backup';
 
-let mcp: Mcp = null
-let scheduler: Scheduler = null;
-let autoUpdater: AutoUpdater = null;
+let mcp: Mcp;
+let scheduler: Scheduler;
+let autoUpdater: AutoUpdater;
+let docMonitor: DocumentMonitor;
+let trayIconManager: TrayIconManager;
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -103,12 +105,6 @@ const quitApp = () => {
   app.quit();
 }
 
-//  tray icon
-const trayIconManager = new TrayIconManager(app, autoUpdater, quitApp);
-
-// document monitor (will be initialized in app.on('ready'))
-let docMonitor: DocumentMonitor;
-
 // this needs to be done before onReady
 if (process.platform === 'darwin') {
   systemPreferences.setUserDefault('NSDisabledDictationMenuItem', 'boolean', true)
@@ -163,6 +159,18 @@ app.whenReady().then(async () => {
   // set theme
   nativeTheme.themeSource = settings.appearance.theme;
 
+  // auto-updater (we need it now for menu)
+  autoUpdater = new AutoUpdater(app, {
+    preInstall: () => quitAnyway = true,
+    onUpdateAvailable: () => {
+      window.notifyBrowserWindows('update-available');
+      trayIconManager.install();
+    },
+  });
+
+  // tray icon
+  trayIconManager = new TrayIconManager(app, autoUpdater, quitApp);  
+  
   // install the menu
   window.addWindowListener({
     onWindowCreated: () => setTimeout(installMenu, 500), 
@@ -247,15 +255,6 @@ app.whenReady().then(async () => {
     window.prepareCommandPicker();
   }
 
-  // auto-updater
-  autoUpdater = new AutoUpdater(app, {
-    preInstall: () => quitAnyway = true,
-    onUpdateAvailable: () => {
-      window.notifyBrowserWindows('update-available');
-      trayIconManager.install();
-    },
-  });
-  
 });
 
 // called when the app is already running
