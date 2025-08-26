@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 - HTML Artifacts preview
 
 ### Changed
-- N/A
+- Support for secure api storage (https://github.com/nbonamy/witsy/issues/407)
 
 ### Fixed
 - N/A
