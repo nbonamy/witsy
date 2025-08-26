@@ -19,7 +19,7 @@ import Scheduler from './main/scheduler';
 import Mcp from './main/mcp';
 
 import { fixPath } from './main/utils';
-import { useI18n } from './main/i18n';
+//import { useI18n } from './main/i18n';
 import { installIpc } from './main/ipc';
 import { importOpenAI } from './main/import_oai';
 
@@ -31,6 +31,7 @@ import * as backup from './main/backup';
 
 let mcp: Mcp = null
 let scheduler: Scheduler = null;
+let autoUpdater: AutoUpdater = null;
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -57,15 +58,6 @@ console.log('Log file:',log.transports.file.getFile().path);
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
-
-// auto-update
-const autoUpdater = new AutoUpdater(app, {
-  preInstall: () => quitAnyway = true,
-  onUpdateAvailable: () => {
-    window.notifyBrowserWindows('update-available');
-    trayIconManager.install();
-  },
-});
 
 // open store
 const store = new Store({ name: 'window' });
@@ -145,6 +137,7 @@ app.whenReady().then(async () => {
 
   // error
   if (config.settingsFileHadError()) {
+    const { useI18n } = await import('./main/i18n');
     const t = useI18n(app)
     dialog.showMessageBox({
       type: 'error',
@@ -253,6 +246,15 @@ app.whenReady().then(async () => {
     window.preparePromptAnywhere();
     window.prepareCommandPicker();
   }
+
+  // auto-updater
+  autoUpdater = new AutoUpdater(app, {
+    preInstall: () => quitAnyway = true,
+    onUpdateAvailable: () => {
+      window.notifyBrowserWindows('update-available');
+      trayIconManager.install();
+    },
+  });
   
 });
 
