@@ -29,7 +29,7 @@
       "toolRetry": true,
       "datetime": true,
       "mermaid": true,
-      "artifacts": false
+      "artifacts": true
     }
   },
   "deepresearch": {
@@ -47,6 +47,9 @@
       "layout": "normal"
     },
     "chat": {
+      "autoPreview": {
+        "html": true
+      },
       "copyFormat": "text",
       "showReasoning": true,
       "showToolCalls": "always",

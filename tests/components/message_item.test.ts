@@ -55,6 +55,9 @@ const botMessageToolMedia2: Message = Message.fromJson({ role: 'assistant', type
 const botMessageToolArtifact1: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here:\n\n<artifact title="test">Test</artifact>\n\nWelcome!' })
 const botMessageToolArtifact2: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here:\n\n<artifact title="test1">Test1</artifact>\n\n<artifact title="test2">Test2</artifact>\n\nWelcome!' })
 const botMessageToolArtifact3: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here:\n\n<artifact title="test1">Test1</artifact>\n\n<artifact title="test2">Te' })
+const botMessageToolArtifactHtml1: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here is an HTML example:\n\n<artifact title="Simple HTML Page">```html\n<!DOCTYPE html>\n<html>\n<head>\n<title>Test Page</title>\n</head>\n<body>\n<h1>Hello World</h1>\n<p>This is a test paragraph.</p>\n</body>\n</html>\n```</artifact>\n\nThat\'s it!' })
+const botMessageToolArtifactHtml2: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here is HTML without language specifier:\n\n<artifact title="HTML with DOCTYPE">```\n<!DOCTYPE html>\n<html>\n<head>\n<title>Test Page</title>\n</head>\n<body>\n<h1>Hello from DOCTYPE</h1>\n</body>\n</html>\n```</artifact>' })
+const botMessageToolArtifactHtml3: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here is another HTML example:\n\n<artifact title="HTML with tag">```\n<html>\n<head>\n<title>Simple Test</title>\n</head>\n<body>\n<h1>Hello from HTML tag</h1>\n</body>\n</html>\n```</artifact>' })
 
 beforeAll(() => {
   useWindowMock()
@@ -284,6 +287,96 @@ test('Assistant image message with artifact', async () => {
   const wrapper3 = await mount(botMessageToolArtifact3)
   expect(wrapper3.find('.body').text()).toBe('Here:\ntest1Test1\ntest2Te')
   expect(wrapper3.findAll('.body .artifact').length).toBe(2)
+
+})
+
+test('Assistant artifact with HTML preview', async () => {
+
+  const wrapper = await mount(botMessageToolArtifactHtml1)
+  expect(wrapper.find('.body').text()).toBe('Here is an HTML example:\nSimple HTML PageThat\'s it!')
+  expect(wrapper.findAll('.body .artifact').length).toBe(1)
+  
+  // Check that the artifact has HTML content
+  const artifact = wrapper.find('.body .artifact')
+  expect(artifact.exists()).toBe(true)
+  expect(artifact.find('.panel-header label').text()).toBe('Simple HTML Page')
+  
+  // Check for preview controls (play/stop buttons)
+  const previewButton = artifact.find('.icon.preview')
+  expect(previewButton.exists()).toBe(true)
+  
+  // Check if iframe is present for HTML preview (should be enabled by default based on store settings)
+  let iframe = artifact.find('iframe')
+  if (iframe.exists()) {
+    // HTML preview is active
+    expect(iframe.attributes('sandbox')).toBe('allow-scripts allow-same-origin allow-forms')
+    expect(iframe.attributes('srcdoc')).toContain('<!DOCTYPE html>')
+    expect(iframe.attributes('srcdoc')).toContain('<h1>Hello World</h1>')
+    expect(iframe.attributes('srcdoc')).toContain('<p>This is a test paragraph.</p>')
+    
+    // Toggle off HTML preview
+    await previewButton.trigger('click')
+    iframe = artifact.find('iframe')
+    expect(iframe.exists()).toBe(false)
+    
+    // Should now show the code instead
+    expect(artifact.find('.panel-body').text()).toContain('<!DOCTYPE html>')
+    
+    // Toggle back on HTML preview
+    await previewButton.trigger('click')
+    iframe = artifact.find('iframe')
+    expect(iframe.exists()).toBe(true)
+  } else {
+    // HTML preview is not active initially, verify we can turn it on
+    expect(artifact.find('.panel-body').text()).toContain('<!DOCTYPE html>')
+    
+    // Click preview button to enable HTML preview
+    await previewButton.trigger('click')
+    iframe = artifact.find('iframe')
+    expect(iframe.exists()).toBe(true)
+  }
+
+})
+
+test('Assistant artifact with HTML preview (DOCTYPE)', async () => {
+
+  // Enable HTML auto-preview
+  store.config.appearance.chat.autoPreview.html = true
+  
+  const wrapper = await mount(botMessageToolArtifactHtml2)
+  expect(wrapper.findAll('.body .artifact').length).toBe(1)
+  
+  const artifact = wrapper.find('.body .artifact')
+  expect(artifact.exists()).toBe(true)
+  expect(artifact.find('.panel-header label').text()).toBe('HTML with DOCTYPE')
+  
+  // Check for preview controls (play/stop buttons)
+  expect(artifact.find('.icon.preview').exists()).toBe(true)
+  
+  // Check if iframe is present for HTML preview
+  const iframe = artifact.find('iframe')
+  expect(iframe.exists()).toBe(true)
+
+})
+
+test('Assistant artifact with HTML preview (HTML tag)', async () => {
+
+  // Enable HTML auto-preview
+  store.config.appearance.chat.autoPreview.html = true
+  
+  const wrapper = await mount(botMessageToolArtifactHtml3)
+  expect(wrapper.findAll('.body .artifact').length).toBe(1)
+  
+  const artifact = wrapper.find('.body .artifact')
+  expect(artifact.exists()).toBe(true)
+  expect(artifact.find('.panel-header label').text()).toBe('HTML with tag')
+  
+  // Check for preview controls (play/stop buttons)
+  expect(artifact.find('.icon.preview').exists()).toBe(true)
+  
+  // Check if iframe is present for HTML preview
+  const iframe = artifact.find('iframe')
+  expect(iframe.exists()).toBe(true)
 
 })
 
