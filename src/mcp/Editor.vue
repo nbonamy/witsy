@@ -143,6 +143,7 @@ import VariableEditor from '../screens/VariableEditor.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { strDict } from '../types/index'
+import { useMcpServer } from '../composables/mcp'
 import { McpInstallStatus, McpServer, McpServerType } from '../types/mcp'
 
 export type McpCreateType = McpServerType | 'smithery'
@@ -304,120 +305,23 @@ const checkOAuth = async (): Promise<void> => {
 }
 
 const isOauthRequired = async (): Promise<boolean> => {
-
-  if (type.value !== 'http' || !url.value || oauthConfig.value) {
-    return false
-  }
-
-  try {
-    const oauthCheck = await window.api.mcp.detectOAuth(url.value, JSON.parse(JSON.stringify(headers.value)))
-    return oauthCheck.requiresOAuth
-  } catch (e) {
-    console.error('Failed to detect OAuth requirement:', e)
-    return false
-  }
-
+  if (type.value === 'smithery') return false
+  return useMcpServer().isOauthRequired(type.value, url.value, headers.value, oauthConfig.value)
 }
 
-const initOauth = async (userInitiated: boolean): Promise<boolean> => {
-
-  try {
-    const oauthCheck = await window.api.mcp.detectOAuth(url.value, JSON.parse(JSON.stringify(headers.value)))
-    if (!oauthCheck.requiresOAuth) {
-      return true
-    }
-
-    // Update OAuth status for UI
-    oauthStatus.value.required = true
-    oauthStatus.value.metadata = oauthCheck.metadata
-    oauthStatus.value.checked = true
-
-    // ask if required
-    let result = { isConfirmed: true }
-    if (!userInitiated) {
-      result = await Dialog.show({
-        title: t('mcp.serverEditor.oauth.required'),
-        text: t('mcp.serverEditor.oauth.requiredText'),
-        confirmButtonText: t('common.yes'),
-        cancelButtonText: t('common.cancel'),
-        showCancelButton: true
-      })
-    }
-
-    if (result.isConfirmed) {
-      await setupOAuth(userInitiated)
-      return true
-    } else {
-      return false
-    }
-  
-  } catch (error) {
-    console.error('Failed to detect OAuth requirement during save:', error)
-    return true
+const initOauth = async (userInitiated: boolean): Promise<void> => {
+  if (await useMcpServer().initOauth(userInitiated, url.value, headers.value, oauthStatus.value)) {
+    await setupOAuth(userInitiated)
   }
 }
 
 const setupOAuth = async (userInitiated: boolean) => {
-  
-  if (!oauthStatus.value.metadata) {
-    console.error('No OAuth metadata available')
-    return
-  }
-
-  try {
-    // Show loading state
-    await Dialog.show({
-      title: t('mcp.serverEditor.oauth.authorizing'),
-      text: t('mcp.serverEditor.oauth.authorizingText'),
-      confirmButtonText: t('common.ok'),
-    })
-
-    // Start OAuth flow with optional client credentials
-    const clientCredentials = (oauthClientId.value || oauthClientSecret.value) ? {
-      client_id: oauthClientId.value,
-      client_secret: oauthClientSecret.value
-    } : undefined
-    
-    const oauthResult = await window.api.mcp.startOAuthFlow(
-      url.value, 
-      JSON.parse(JSON.stringify(oauthStatus.value.metadata)),
-      clientCredentials
-    )
-    
-    // Parse the returned OAuth configuration and set up local config
-    const oauthData = JSON.parse(oauthResult)
-    oauthConfig.value = {
-      // Only store essential OAuth data in compact form
-      tokens: oauthData.tokens,
-      clientId: oauthData.clientInformation?.client_id,
-      clientSecret: oauthData.clientInformation?.client_secret
-      // clientMetadata is standardized and regenerated each time
-    }
-
-    await Dialog.show({
-      title: t('mcp.serverEditor.oauth.success'),
-      text: t('mcp.serverEditor.oauth.successText'),
-      confirmButtonText: t('common.ok'),
-    })
-
+  const config = await useMcpServer().setupOAuth(url.value, oauthStatus.value, oauthClientId.value, oauthClientSecret.value)
+  if (config) {
+    oauthConfig.value = config    
     if (!userInitiated) {
       setTimeout(onSave, 500)
     }
-
-  } catch (error) {
-
-    console.error('OAuth setup failed:', error)
-
-    let text = error.message || t('mcp.serverEditor.oauth.errorText')
-    if (text.includes('does not support dynamic client registration')) {
-      text = t('mcp.serverEditor.oauth.dynamicClientRegistrationError')
-    }
-
-    await Dialog.show({
-      title: t('mcp.serverEditor.oauth.error'),
-      text: text,
-      confirmButtonText: t('common.ok'),
-    })
   }
 }
 
