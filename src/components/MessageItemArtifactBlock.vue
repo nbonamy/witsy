@@ -2,8 +2,9 @@
   <div class="artifact panel">
     <div class="panel-header">
       <label>{{ title }}</label>
-      <BIconPlayBtn class="icon preview" @click="toggleHtml" v-if="isHtml && !previewHtml" />
-      <BIconStopBtn class="icon preview" @click="toggleHtml" v-if="isHtml && previewHtml" />      <ClipboardCheckIcon class="icon" v-if="copying" />
+      <ScanEyeIcon class="icon preview" @click="toggleHtml" v-if="isHtml && !previewHtml" />
+      <EyeOffIcon class="icon preview" @click="toggleHtml" v-if="isHtml && previewHtml" />
+      <ClipboardCheckIcon class="icon" v-if="copying" />
       <ClipboardIcon class="icon" @click="onCopy" v-else />
       <DownloadIcon class="icon" @click="onDownload" />
     </div>
@@ -16,7 +17,7 @@
 
 <script setup lang="ts">
 
-import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon } from 'lucide-vue-next'
+import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, EyeOffIcon, ScanEyeIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import Message from '../models/message'
 import { store } from '../services/store'
