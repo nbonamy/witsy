@@ -47,6 +47,9 @@ const isHtml = computed(() => {
     const innerContent = content.slice(content.indexOf('\n') + 1, -3).trim()
     return innerContent.startsWith('<!DOCTYPE html') || innerContent.startsWith('<html')
   }
+  if (content.startsWith('<!DOCTYPE html') || content.startsWith('<html')) {
+    return true
+  }
   return false
 })
 
@@ -63,6 +66,9 @@ const html = computed(() => {
     if (innerContent.startsWith('<!DOCTYPE html') || innerContent.startsWith('<html')) {
       return innerContent
     }
+  }
+  if (content.startsWith('<!DOCTYPE html') || content.startsWith('<html')) {
+    return content
   }
   return ''
 })
@@ -149,6 +155,10 @@ const onDownload = () => {
       .text hr:first-child, .text hr:last-child {
         display: none;
       }
+    }
+
+    iframe {
+      height: 500px !important;
     }
   }
 }
