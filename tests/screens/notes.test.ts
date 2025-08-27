@@ -1,18 +1,13 @@
 import { mount, VueWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { createDialogMock, createI18nMock } from '../mocks'
+import { createI18nMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 
 import Notes from '../../src/docrepo/Notes.vue'
 import NoteEditor from '../../src/docrepo/NoteEditor.vue'
 import Dialog from '../../src/composables/dialog'
 import { DocumentBase, DocumentSource } from '../../src/types/rag'
-
-// mock dialog
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
 
 // mock i18n
 vi.mock('../../src/services/i18n', () => createI18nMock())
