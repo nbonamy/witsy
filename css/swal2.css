@@ -291,10 +291,15 @@ div:where(.swal2-container) .swal2-html-container.list {
   max-height: 300px;
   overflow-y: auto;
   scrollbar-color: var(--scrollbar-thumb-color) var(--dialog-body-bg-color);
-  li {
-    list-style: none;
-    margin-left: 0px;
-    margin-bottom: 8px;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    li {
+      list-style: none;
+      margin-left: 0px;
+      margin-bottom: 8px;
+    }
   }
 }
 
