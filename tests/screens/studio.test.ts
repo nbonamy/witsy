@@ -1,7 +1,6 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
-import { createDialogMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store, kMediaChatId } from '../../src/services/store'
@@ -15,10 +14,6 @@ import Chat from '../../src/models/chat'
 import Dialog from '../../src/composables/dialog'
 
 enableAutoUnmount(afterEach)
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
 
 vi.mock('../../src/services/image', async (importOriginal) => {
   const mod: any = await importOriginal()

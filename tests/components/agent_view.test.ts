@@ -1,6 +1,6 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { createDialogMock, createEventBusMock, createI18nMock } from '../mocks/index'
+import { createEventBusMock, createI18nMock } from '../mocks/index'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import View from '../../src/agent/View.vue'
@@ -10,10 +10,6 @@ import useEventBus from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterAll)
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
 
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()

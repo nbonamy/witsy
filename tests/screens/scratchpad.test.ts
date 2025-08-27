@@ -2,9 +2,10 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createDialogMock, createI18nMock } from '../mocks'
+import { createI18nMock } from '../mocks'
 import LlmMock, { installMockModels } from '../mocks/llm'
 import { store } from '../../src/services/store'
+import Dialog from '../../src/composables/dialog'
 import defaultSettings from '../../defaults/settings.json'
 import ScratchPad from '../../src/screens/ScratchPad.vue'
 import Prompt from '../../src/components/Prompt.vue'
@@ -15,10 +16,6 @@ import ActionBar from '../../src/scratchpad/ActionBar.vue'
 import useEventBus  from '../../src/composables/event_bus'
 import Attachment from '../../src/models/attachment'
 const { emitEvent } = useEventBus()
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock(() => ({ isDismissed: true }))
-})
 
 vi.mock('../../src/llms/manager', async () => {
   const LlmManager = vi.fn()
@@ -120,6 +117,7 @@ test('Clears chat', async () => {
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).not.toBe('')
+  vi.mocked(Dialog.show).mockResolvedValueOnce({ isDismissed: true })
   emitEvent('action', 'clear')
   await vi.waitUntil(async () => !wrapper.vm.modified)
   expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder_en-US')

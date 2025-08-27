@@ -1,7 +1,6 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { createDialogMock } from '../mocks'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import { switchToTab, tabs } from './settings_utils'
@@ -9,10 +8,6 @@ import Settings from '../../src/screens/Settings.vue'
 
 let wrapper: VueWrapper<any>
 const voiceIndex = tabs.indexOf('settingsVoice')
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
 
 vi.mock('../../src/voice/stt-whisper', async (importOriginal) => {
   const { default: STTWhisper } = await importOriginal<typeof import('../../src/voice/stt-whisper')>()

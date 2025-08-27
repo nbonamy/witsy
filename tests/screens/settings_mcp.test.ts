@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { createDialogMock, createI18nMock } from '../mocks'
+import { createI18nMock } from '../mocks'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
@@ -11,12 +11,6 @@ import McpServerEditor from '../../src/components/McpServerEditor.vue'
 import Dialog from '../../src/composables/dialog'
 
 let mcp: VueWrapper<any>
-
-vi.mock('../../src/composables/dialog', async () => 
-  createDialogMock(() => ({
-    value: { command: 'none', args: [ '-y', 'pkg' ], env: { key: 'value' } }
-  }))
-)
 
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
@@ -409,6 +403,12 @@ test('JSON server add', async () => {
   await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
   const menu = mcp.findComponent({ name: 'ContextMenu' })
   expect(mcp.exists()).toBe(true)
+
+  vi.mocked(Dialog.show).mockResolvedValueOnce({
+    isConfirmed: true,
+    value: { command: 'none', args: [ '-y', 'pkg' ], env: { key: 'value' } }
+  })
+
   await menu.find('.item[data-action=json]').trigger('click')
   expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
 
