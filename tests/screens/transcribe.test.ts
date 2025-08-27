@@ -2,7 +2,8 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createEventBusMock, createI18nMock, emitEventMock } from '../mocks'
+import { createI18nMock } from '../mocks'
+import { emitEventMock } from '../../vitest.setup'
 import { store } from '../../src/services/store'
 import Transcribe from '../../src/screens/Transcribe.vue'
 import Waveform from '../../src/components/Waveform.vue'
@@ -14,9 +15,6 @@ vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/composables/event_bus', async () => {
-  return createEventBusMock()
-})
 
 vi.mock('../../src/composables/transcriber', () => {
   return { default: vi.fn(() => ({

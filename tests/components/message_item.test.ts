@@ -2,7 +2,8 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
-import { createEventBusMock, createI18nMock, emitEventMock } from '../mocks'
+import { createI18nMock } from '../mocks'
+import { emitEventMock } from '../../vitest.setup'
 import { store } from '../../src/services/store'
 import MessageItem from '../../src/components/MessageItem.vue'
 import Message from '../../src/models/message'
@@ -15,10 +16,6 @@ const readAloudMock = vi.fn()
 
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
-})
-
-vi.mock('../../src/composables/event_bus', async () => {
-  return createEventBusMock()
 })
 
 vi.mock('../../src/composables/audio_player', async () => {

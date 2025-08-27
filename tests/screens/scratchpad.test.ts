@@ -12,10 +12,13 @@ import Prompt from '../../src/components/Prompt.vue'
 import EditableText from '../../src/components/EditableText.vue'
 import Toolbar from '../../src/scratchpad/Toolbar.vue'
 import ActionBar from '../../src/scratchpad/ActionBar.vue'
-
-import useEventBus  from '../../src/composables/event_bus'
 import Attachment from '../../src/models/attachment'
+
+vi.unmock('../../src/composables/event_bus')
+import useEventBus  from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
+
+// Unmock EventBus for this test - scratchpad needs real event handling
 
 vi.mock('../../src/llms/manager', async () => {
   const LlmManager = vi.fn()

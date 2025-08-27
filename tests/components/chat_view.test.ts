@@ -14,6 +14,7 @@ import ChatArea from '../../src/components/ChatArea.vue'
 import Assistant from '../../src/services/assistant'
 import Dialog from '../../src/composables/dialog'
 
+vi.unmock('../../src/composables/event_bus')
 import useEventBus  from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
 
