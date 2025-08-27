@@ -16,34 +16,6 @@ export const createEventBusMock = (emitMock?: (event: string, ...args: any[]) =>
   })}
 } 
 
-export const createDialogMock = (callback?: (args) => Partial<{
-  isConfirmed: boolean
-  isDenied: boolean
-  isDismissed: boolean
-  value?: any
-}>) => {
-
-  const defaultResponse = {
-    isConfirmed: true,
-    isDenied: false,
-    isDismissed: false,
-  }
-
-  return {
-    default: {
-      alert: vi.fn((args) => Promise.resolve({
-        ...defaultResponse,
-        ...callback?.(args)
-      })),
-      show: vi.fn((args) => Promise.resolve({
-      ...defaultResponse,
-      ...callback?.(args)
-    })),
-    }
-  }
-
-}
-
 export const createI18nMock = (callback?: () => Partial<{
   locale: string
 }>) => {

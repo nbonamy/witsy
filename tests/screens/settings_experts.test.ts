@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { ChatModel } from 'multi-llm-ts'
 import { useWindowMock } from '../mocks/window'
-import { createDialogMock, createI18nMock } from '../mocks'
+import { createI18nMock } from '../mocks'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import { switchToTab, tabs } from './settings_utils'
@@ -14,10 +14,6 @@ enableAutoUnmount(afterAll)
 
 HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
 
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()

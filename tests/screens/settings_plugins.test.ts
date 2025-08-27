@@ -1,17 +1,12 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { createDialogMock } from '../mocks'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import { switchToTab, tabs } from './settings_utils'
 import { ModelsList, loadOpenAIModels } from 'multi-llm-ts'
 import { wait } from '../../src/main/utils'
 import Settings from '../../src/screens/Settings.vue'
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()

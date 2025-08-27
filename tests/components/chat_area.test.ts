@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createDialogMock, createEventBusMock, createI18nMock, emitEventMock } from '../mocks'
+import { createEventBusMock, createI18nMock, emitEventMock } from '../mocks'
 import { stubTeleport } from '../mocks/stubs'
 import { findModelSelectoPlus } from '../utils'
 import { store } from '../../src/services/store'
@@ -12,10 +12,6 @@ import Chat from '../../src/models/chat'
 import { defaultCapabilities } from 'multi-llm-ts'
 
 enableAutoUnmount(afterAll)
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
 
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()

@@ -27,6 +27,22 @@ vi.mock('sweetalert2/dist/sweetalert2.js', () => ({
   }
 }))
 
+// Mock Dialog service to prevent SweetAlert2 DOM-related errors in tests
+vi.mock('./src/composables/dialog', () => ({
+  default: {
+    alert: vi.fn(() => Promise.resolve({
+      isConfirmed: true,
+      isDenied: false,
+      isDismissed: false,
+    })),
+    show: vi.fn(() => Promise.resolve({
+      isConfirmed: true,
+      isDenied: false,
+      isDismissed: false,
+    })),
+  }
+}))
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
