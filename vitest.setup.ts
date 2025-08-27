@@ -43,6 +43,20 @@ vi.mock('./src/composables/dialog', () => ({
   }
 }))
 
+// Mock EventBus composable
+const onEventMock = vi.fn()
+const emitEventMock = vi.fn()
+
+vi.mock('./src/composables/event_bus', () => ({
+  default: () => ({
+    onEvent: onEventMock,
+    emitEvent: emitEventMock
+  })
+}))
+
+// Export mock functions for individual test access
+export { onEventMock, emitEventMock }
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

@@ -2,7 +2,8 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createEventBusMock, createI18nMock, emitEventMock } from '../mocks'
+import { createI18nMock } from '../mocks'
+import { emitEventMock } from '../../vitest.setup'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
@@ -16,14 +17,7 @@ vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/composables/event_bus', async () => {
-  return createEventBusMock((event, ...args) => {
-    // this is called when mounting so discard it
-    if (event === 'prompt-resize' && args[0] === '0px') {
-      emitEventMock.mockClear()
-    }
-  })
-})
+
 
 let wrapper: VueWrapper<any>
 let chat: Chat|null = null
@@ -42,6 +36,15 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  
+  // Setup custom emitEventMock implementation
+  vi.mocked(emitEventMock).mockImplementation((event, ...args) => {
+    // this is called when mounting so discard it
+    if (event === 'prompt-resize' && args[0] === '0px') {
+      emitEventMock.mockClear()
+    }
+  })
+  
   chat = new Chat()
   wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat } } )
 })
