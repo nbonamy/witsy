@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { VueWrapper, enableAutoUnmount, mount, flushPromises } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createDialogMock, createI18nMock } from '../mocks/index'
+import { createI18nMock } from '../mocks/index'
 import { setLlmDefaults } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import Chat from '../../src/models/chat'
@@ -14,6 +14,7 @@ import ChatArea from '../../src/components/ChatArea.vue'
 import Assistant from '../../src/services/assistant'
 import Dialog from '../../src/composables/dialog'
 
+vi.unmock('../../src/composables/event_bus')
 import useEventBus  from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
 
@@ -21,14 +22,6 @@ enableAutoUnmount(afterEach)
 
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
-})
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock(
-    (args) => ({
-      value: args.input === 'select' ? 'folder1' : 'user-input'
-    })
-  )
 })
 
 vi.mock('../../src/services/assistant', async () => {
@@ -263,6 +256,7 @@ test('New chat in folder with defaults', async () => {
 
 test('Rename chat', async () => {
   mount(ChatView)
+  vi.mocked(Dialog.show).mockResolvedValueOnce({ value: 'user-input' })
   emitEvent('rename-chat', store.history.chats[0])
   expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.chat.rename',
@@ -277,6 +271,7 @@ test('Rename chat', async () => {
 test('Move chat', async () => {
   expect(store.history.folders[0].chats).not.toHaveLength(1)
   mount(ChatView)
+  vi.mocked(Dialog.show).mockResolvedValueOnce({ value: 'folder1' })
   emitEvent('move-chat', 'chat')
   expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.chat.moveToFolder',
@@ -306,6 +301,7 @@ test('Delete chat', async () => {
 
 test('Rename folder', async () => {
   mount(ChatView)
+  vi.mocked(Dialog.show).mockResolvedValueOnce({ value: 'user-input' })
   emitEvent('rename-folder', 'folder1')
   expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.folder.rename',

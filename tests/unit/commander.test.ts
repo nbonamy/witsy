@@ -3,7 +3,6 @@ import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { app, Notification } from 'electron'
 import { Command } from '../../src/types/index'
 import { store } from '../../src/services/store'
-import { createAutomatorMock } from '../mocks'
 import defaults from '../../defaults/settings.json'
 import * as window from '../../src/main/window'
 import Commander, { notEditablePrompts } from '../../src/automations/commander'
@@ -12,7 +11,6 @@ import LlmMock from '../mocks/llm'
 import { getCachedText, putCachedText } from '../../src/main/utils'
 
 let cachedTextId: string|null = null
-let selectedText: string|null = ''
 
 // mock electron
 vi.mock('electron', async() => {
@@ -43,10 +41,6 @@ vi.mock('../../src/main/window.ts', async () => {
     }),
     releaseFocus: vi.fn()
   }
-})
-
-vi.mock('../../src/automations/automator.ts', async () => {
-  return createAutomatorMock(() => ({ selectedText }))
 })
 
 // mock llm
@@ -96,7 +90,7 @@ const buildCommand = (action: 'chat_window' | 'paste_below' | 'paste_in_place' |
 
 test('Prepare command', async () => {
 
-  selectedText = 'Grabbed text'
+  vi.mocked(Automator.prototype.getSelectedText).mockResolvedValue('Grabbed text')
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
@@ -116,7 +110,7 @@ test('Prepare command', async () => {
 
 test('Error while grabbing', async () => {
 
-  selectedText = null
+  vi.mocked(Automator.prototype.getSelectedText).mockResolvedValue(null as any)
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
@@ -126,7 +120,7 @@ test('Error while grabbing', async () => {
 
 test('No text to grab', async () => {
 
-  selectedText = ''
+  vi.mocked(Automator.prototype.getSelectedText).mockResolvedValue('')
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()

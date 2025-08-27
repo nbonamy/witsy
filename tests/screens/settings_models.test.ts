@@ -2,7 +2,6 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createDialogMock } from '../mocks'
 import { store } from '../../src/services/store'
 import { switchToTab, tabs } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
@@ -14,10 +13,6 @@ import {
   loadLMStudioModels
 } from 'multi-llm-ts'
 import { findModelSelectoPlus } from '../utils'
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()

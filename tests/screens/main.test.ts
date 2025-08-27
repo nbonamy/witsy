@@ -4,6 +4,7 @@ import { mount, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import Main from '../../src/screens/Main.vue'
 
+vi.unmock('../../src/composables/event_bus')
 import useEventBus from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
 

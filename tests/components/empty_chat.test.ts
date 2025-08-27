@@ -3,7 +3,6 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, enableAutoUnmount, VueWrapper } from '@vue/test-utils'
 import { defaultCapabilities, loadAnthropicModels } from 'multi-llm-ts'
 import { useWindowMock } from '../mocks/window'
-import { createDialogMock } from '../mocks'
 import { store } from '../../src/services/store'
 import { wait } from '../../src/main/utils'
 import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
@@ -12,10 +11,6 @@ import { installMockModels } from '../mocks/llm'
 import { findModelSelectoPlus } from '../utils'
 
 enableAutoUnmount(afterAll)
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const actual = await importOriginal() as unknown as any

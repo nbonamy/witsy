@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { createDialogMock, createI18nMock } from '../mocks'
+import { createI18nMock } from '../mocks'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import McpServers from '../../src/screens/McpServers.vue'
@@ -11,12 +11,6 @@ import Dialog from '../../src/composables/dialog'
 import { stubTeleport } from '../mocks/stubs'
 
 let mcp: VueWrapper<any>
-
-vi.mock('../../src/composables/dialog', async () =>
-  createDialogMock(() => ({
-    value: { command: 'none', args: [ '-y', 'pkg' ], env: { key: 'value' } }
-  }))
-)
 
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
@@ -372,7 +366,13 @@ test('JSON server parsing', async () => {
 
 test('JSON server add', async () => {
 
+  vi.mocked(Dialog.show).mockResolvedValueOnce({
+    isConfirmed: true,
+    value: { command: 'none', args: [ '-y', 'pkg' ], env: { key: 'value' } }
+  })
+
   await mcp.find<HTMLElement>('button[name=addJson]').trigger('click')
+
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,

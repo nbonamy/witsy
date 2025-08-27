@@ -2,7 +2,8 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createDialogMock, createEventBusMock, createI18nMock, emitEventMock } from '../mocks'
+import { createI18nMock } from '../mocks'
+import { emitEventMock } from '../../vitest.setup'
 import { stubTeleport } from '../mocks/stubs'
 import { findModelSelectoPlus } from '../utils'
 import { store } from '../../src/services/store'
@@ -13,16 +14,8 @@ import { defaultCapabilities } from 'multi-llm-ts'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
-
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
-})
-
-vi.mock('../../src/composables/event_bus', async () => {
-  return createEventBusMock()
 })
 
 beforeAll(() => {
