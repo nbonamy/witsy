@@ -1,6 +1,5 @@
 import { vi, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { createDialogMock } from '../mocks'
 import { store } from '../../src/services/store'
 import FilesystemPlugin from '../../src/plugins/filesystem'
 import { PluginExecutionContext } from 'multi-llm-ts'
@@ -11,10 +10,6 @@ global.atob = (str: string) => str
 const context: PluginExecutionContext = {
   model: 'mock',
 }
-
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
 
 beforeEach(() => {
   

@@ -1,12 +1,10 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
 import { app, Notification } from 'electron'
-import { createAutomatorMock } from '../mocks'
 import ReadAloud from '../../src/automations/readaloud'
+import Automator from '../../src/automations/automator'
 import * as window from '../../src/main/window'
 import * as utils from '../../src/main/utils'
-
-let selectedText: string|null = ''
 
 // mock electron
 vi.mock('electron', async() => {
@@ -42,18 +40,13 @@ vi.mock('../../src/main/utils', async () => {
   }
 })
 
-// mock automator
-vi.mock('../../src/automations/automator.ts', async () => {
-  return createAutomatorMock(() => ({ selectedText }))
-})
-
 beforeEach(() => {
   vi.clearAllMocks()
 })
 
 test('Open readaloud window', async () => {
 
-  selectedText = 'Grabbed text'
+  vi.mocked(Automator.prototype.getSelectedText).mockResolvedValue('Grabbed text')
   
   await ReadAloud.read(app, 100)
   expect(utils.putCachedText).toHaveBeenLastCalledWith('Grabbed text')
@@ -66,7 +59,7 @@ test('Open readaloud window', async () => {
 
 test('Show no text error notification', async () => {
 
-  selectedText = ''
+  vi.mocked(Automator.prototype.getSelectedText).mockResolvedValue('')
   
   await ReadAloud.read(app, 100)
   expect(utils.putCachedText).not.toHaveBeenCalled()
@@ -77,7 +70,7 @@ test('Show no text error notification', async () => {
 
 test('Show no grab error notification', async () => {
 
-  selectedText = null
+  vi.mocked(Automator.prototype.getSelectedText).mockResolvedValue(null as any)
   
   await ReadAloud.read(app, 100)
   expect(utils.putCachedText).not.toHaveBeenCalled()

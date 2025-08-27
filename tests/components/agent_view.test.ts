@@ -1,6 +1,6 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { createDialogMock, createEventBusMock, createI18nMock } from '../mocks/index'
+import { createI18nMock } from '../mocks/index'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
@@ -12,16 +12,8 @@ const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../src/composables/dialog', async () => {
-  return createDialogMock()
-})
-
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
-})
-
-vi.mock('../../src/composables/event_bus', async () => {
-  return createEventBusMock()
 })
 
 beforeAll(() => {

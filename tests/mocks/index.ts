@@ -3,47 +3,6 @@
 import { vi } from 'vitest'
 import { store } from '../../src/services/store'
 
-export const onEventMock = vi.fn()
-export const emitEventMock = vi.fn()
-
-export const createEventBusMock = (emitMock?: (event: string, ...args: any[]) => void) => {
-  if (emitMock) {
-    emitEventMock.mockImplementation(emitMock)
-  }
-  return { default: () => ({
-    onEvent: onEventMock,
-    emitEvent: emitEventMock
-  })}
-} 
-
-export const createDialogMock = (callback?: (args) => Partial<{
-  isConfirmed: boolean
-  isDenied: boolean
-  isDismissed: boolean
-  value?: any
-}>) => {
-
-  const defaultResponse = {
-    isConfirmed: true,
-    isDenied: false,
-    isDismissed: false,
-  }
-
-  return {
-    default: {
-      alert: vi.fn((args) => Promise.resolve({
-        ...defaultResponse,
-        ...callback?.(args)
-      })),
-      show: vi.fn((args) => Promise.resolve({
-      ...defaultResponse,
-      ...callback?.(args)
-    })),
-    }
-  }
-
-}
-
 export const createI18nMock = (callback?: () => Partial<{
   locale: string
 }>) => {
@@ -113,20 +72,5 @@ export const createI18nMock = (callback?: () => Partial<{
     }
   
   }
-
-}
-
-export const createAutomatorMock = (callback?: () => Partial<{
-  selectedText: string|null
-}>) => {
-
-  const selectedText = 'Grabbed text'
-
-  const Automator = vi.fn()
-  Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
-  Automator.prototype.moveCaretBelow = vi.fn()
-  Automator.prototype.getSelectedText = vi.fn((): string|null => { return callback ? callback().selectedText ?? null : selectedText })
-  Automator.prototype.pasteText = vi.fn()
-  return { default: Automator }
 
 }

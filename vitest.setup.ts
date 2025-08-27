@@ -27,6 +27,52 @@ vi.mock('sweetalert2/dist/sweetalert2.js', () => ({
   }
 }))
 
+// Mock Dialog service to prevent SweetAlert2 DOM-related errors in tests
+vi.mock('./src/composables/dialog', () => ({
+  default: {
+    alert: vi.fn(() => Promise.resolve({
+      isConfirmed: true,
+      isDenied: false,
+      isDismissed: false,
+    })),
+    show: vi.fn(() => Promise.resolve({
+      isConfirmed: true,
+      isDenied: false,
+      isDismissed: false,
+    })),
+  }
+}))
+
+// Mock EventBus composable
+const onEventMock = vi.fn()
+const emitEventMock = vi.fn()
+
+vi.mock('./src/composables/event_bus', () => ({
+  default: () => ({
+    onEvent: onEventMock,
+    emitEvent: emitEventMock
+  })
+}))
+
+// Export mock functions for individual test access
+export { onEventMock, emitEventMock }
+
+// Mock Automator class
+vi.mock('./src/automations/automator', () => {
+  const Automator = vi.fn()
+  Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
+  Automator.prototype.moveCaretBelow = vi.fn()
+  Automator.prototype.getSelectedText = vi.fn(() => Promise.resolve('Grabbed text') as Promise<string | null>)
+  Automator.prototype.getForemostApp = vi.fn(() => Promise.resolve({
+    id: 'appId',
+    name: 'appName', 
+    path: 'appPath',
+    window: 'title'
+  }))
+  Automator.prototype.pasteText = vi.fn()
+  return { default: Automator }
+})
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
