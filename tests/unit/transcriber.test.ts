@@ -1,6 +1,5 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
-import { createAutomatorMock } from '../mocks'
 import Transcriber from '../../src/automations/transcriber'
 import Automator from '../../src/automations/automator'
 import * as window from '../../src/main/window'
@@ -16,10 +15,6 @@ vi.mock('../../src/main/window.ts', async () => {
     closeTranscribePalette: vi.fn(),
     isMainWindowFocused: vi.fn(() => false),
   }
-})
-
-vi.mock('../../src/automations/automator.ts', async () => {
-  return createAutomatorMock()
 })
 
 beforeEach(() => {

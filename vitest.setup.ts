@@ -57,6 +57,22 @@ vi.mock('./src/composables/event_bus', () => ({
 // Export mock functions for individual test access
 export { onEventMock, emitEventMock }
 
+// Mock Automator class
+vi.mock('./src/automations/automator', () => {
+  const Automator = vi.fn()
+  Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
+  Automator.prototype.moveCaretBelow = vi.fn()
+  Automator.prototype.getSelectedText = vi.fn(() => Promise.resolve('Grabbed text') as Promise<string | null>)
+  Automator.prototype.getForemostApp = vi.fn(() => Promise.resolve({
+    id: 'appId',
+    name: 'appName', 
+    path: 'appPath',
+    window: 'title'
+  }))
+  Automator.prototype.pasteText = vi.fn()
+  return { default: Automator }
+})
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

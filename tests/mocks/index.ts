@@ -74,18 +74,3 @@ export const createI18nMock = (callback?: () => Partial<{
   }
 
 }
-
-export const createAutomatorMock = (callback?: () => Partial<{
-  selectedText: string|null
-}>) => {
-
-  const selectedText = 'Grabbed text'
-
-  const Automator = vi.fn()
-  Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
-  Automator.prototype.moveCaretBelow = vi.fn()
-  Automator.prototype.getSelectedText = vi.fn((): string|null => { return callback ? callback().selectedText ?? null : selectedText })
-  Automator.prototype.pasteText = vi.fn()
-  return { default: Automator }
-
-}

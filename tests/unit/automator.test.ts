@@ -1,11 +1,13 @@
 
 import { vi, expect, test, beforeEach, Mock } from 'vitest'
 import { clipboard } from 'electron'
-import Automator from '../../src/automations/automator'
 import Automation, { AutomationAction }  from '../../src/automations/automation'
 import MacosAutomator from '../../src/automations/macos'
 import RobotAutomator from '../../src/automations/robot'
 import * as window from '../../src/main/window'
+
+vi.unmock('../../src/automations/automator')
+import Automator from '../../src/automations/automator'
 
 let clipboardText = undefined
 
