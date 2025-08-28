@@ -252,11 +252,21 @@ export const loadSettings = (source: App|string): Configuration => {
   return config
 }
 
+let lastSaved: string
+
 export const saveSettings = (dest: App|string, config: Configuration): void => {
   try {
 
     // nullify defaults
     nullifyDefaults(config)
+
+    // save only if modified
+    if (lastSaved && lastSaved === JSON.stringify(config)) {
+      return
+    }
+
+    // update
+    lastSaved = JSON.stringify(config)
 
     // make a copy
     const clone: Configuration = JSON.parse(JSON.stringify(config))
@@ -369,8 +379,8 @@ export const saveApiKeys = (apiKeys: ApiKeyEntry[]): boolean => {
     for (const entry of apiKeys) {
       if (entry.apiKey.length > 0) {
         try {
-        const buffer = safeStorage.encryptString(entry.apiKey);
-        safeStore.set(entry.name, buffer.toString('latin1'));
+          const buffer = safeStorage.encryptString(entry.apiKey);
+          safeStore.set(entry.name, buffer.toString('latin1'));
         } catch (error) {
           console.log(`Error saving API key for ${entry.name}:`, error)
         }
