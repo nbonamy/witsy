@@ -26,6 +26,7 @@ const safeStore = new Store<Record<string, string>>({
 });
 
 const monitor: Monitor = new Monitor(() => {
+  cachedAppConfig = undefined
   onSettingsChange()
 })
 
