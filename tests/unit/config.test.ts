@@ -75,6 +75,12 @@ test('Does not save when unmodified', () => {
   loaded.general.locale = 'en'
   config.saveSettings(app, loaded)
   expect(fs.writeFileSync).toHaveBeenCalled()
+  vi.clearAllMocks()
+  const loaded2 = config.loadSettings(app)
+  expect(loaded2.general.locale).toBe('en')
+  loaded2.general.locale = 'fr'
+  config.saveSettings(app, loaded2)
+  expect(fs.writeFileSync).toHaveBeenCalled()
 })
 
 test('Load engine config files', () => {

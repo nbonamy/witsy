@@ -63,7 +63,7 @@ export const loadSettings = (app: App): Configuration => {
 
   // check cache
   if (cachedAppConfig) {
-    return cachedAppConfig
+    return JSON.parse(JSON.stringify(cachedAppConfig))
   }
 
   let data = '{}'
@@ -170,6 +170,22 @@ export const loadSettings = (app: App): Configuration => {
 export const saveSettings = (app: App, config: Configuration, always: boolean = false): void => {
   try {
 
+    // nullify defaults
+    nullifyDefaults(config)
+
+    // // debug
+    // const jsonCached = JSON.stringify(cachedAppConfig)
+    // const jsonConfig = JSON.stringify(config)
+    // for (let i=0; i<Math.min(jsonCached.length, jsonConfig.length); i++) {
+    //   if (jsonCached[i] !== jsonConfig[i]) {
+    //     console.debug(`[main] config difference at index ${i}:`,
+    //       '\nCached: ' + jsonCached.substring(Math.max(0, i - 64), Math.min(i + 64, jsonCached.length)),
+    //       '\nConfig: ' + jsonConfig.substring(Math.max(0, i - 64), Math.min(i + 64, jsonConfig.length)),
+    //     )
+    //     break
+    //   }
+    // }
+
     // only if modified
     if (!always && cachedAppConfig) {
       if (JSON.stringify(cachedAppConfig) === JSON.stringify(config)) {
@@ -179,9 +195,6 @@ export const saveSettings = (app: App, config: Configuration, always: boolean = 
 
     // update cache
     cachedAppConfig = JSON.parse(JSON.stringify(config))
-
-    // nullify defaults
-    nullifyDefaults(config)
 
     // make a copy
     const clone: Configuration = JSON.parse(JSON.stringify(config))
