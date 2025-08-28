@@ -2,6 +2,7 @@
 {
   "general": {
     "firstRun": true,
+    "safeKeys": true,
     "onboardingDone": false,
     "keepRunning": true,
     "hideOnStartup": false,
