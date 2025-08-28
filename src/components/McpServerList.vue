@@ -164,7 +164,7 @@ const showTools = async (server: McpServer) => {
     Dialog.show({
       title: t('settings.mcp.tools'),
       html: '<ul>' + tools.map((tool: any) => `<li><b>${tool.name}</b><br/>${tool.description}</li>`).join('') + '</ul>',
-      customClass: { confirmButton: 'alert-confirm', htmlContainer: 'list' },
+      customClass: { popup: 'x-large', confirmButton: 'alert-confirm', htmlContainer: 'list' },
       confirmButtonText: t('common.close'),
     })
   } else {
