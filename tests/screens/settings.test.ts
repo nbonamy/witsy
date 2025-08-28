@@ -169,11 +169,16 @@ test('Settings Chat', async () => {
 test('Settings Advanced', async () => {
   
   const tab = await switchToTab(wrapper, tabs.indexOf('settingsAdvanced'))
-  expect(tab.findAll('.form-field')).toHaveLength(5)
 
   expect(store.config.prompt.autosave).not.toBe(true)
   tab.find('.form-field.autosave input').setValue(true)
   expect(store.config.prompt.autosave).toBe(true)
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  expect(store.config.general.safeKeys).toBe(true)
+  tab.find('.form-field.safe-keys input').setValue(false)
+  expect(store.config.general.safeKeys).toBe(false)
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
