@@ -6,6 +6,7 @@ import Tray from '../../src/main/tray'
 
 vi.mock('electron', () => {
   const Tray = vi.fn();
+  Tray.prototype.setImage = vi.fn();
   Tray.prototype.setContextMenu = vi.fn();
   Tray.prototype.on = vi.fn();
   const Menu = {
