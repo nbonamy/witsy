@@ -11,6 +11,10 @@
         <input type="checkbox" v-model="autoSavePrompt" @change="save" />
         <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
       </div>
+      <div class="form-field safe-keys horizontal">
+        <input type="checkbox" v-model="safeKeys" @change="save" />
+        <label>{{ t('settings.advanced.safeKeys') }}</label>
+      </div>
       <label>&nbsp;</label>
       <div class="form-field proxy">
         <label>{{ t('settings.advanced.proxy.title') }}</label>
@@ -81,13 +85,15 @@ import { ProxyMode } from '../types/config'
 const prompt = ref(null)
 const isPromptOverridden = ref(false)
 const instructions = ref('instructions.chat.docquery')
-const autoSavePrompt = ref(null)
+const autoSavePrompt = ref(false)
+const safeKeys = ref(true)
 const proxyMode = ref<ProxyMode>('default')
 const customProxy = ref('')
 const imageResize = ref(null)
 
 const load = () => {
   autoSavePrompt.value = store.config.prompt.autosave
+  safeKeys.value = store.config.general.safeKeys
   proxyMode.value = store.config.general.proxyMode
   customProxy.value = store.config.general.customProxy
   imageResize.value = store.config.llm.imageResize ?? 768
@@ -108,6 +114,7 @@ const save = () => {
 
   // basic stuff
   store.config.prompt.autosave = autoSavePrompt.value
+  store.config.general.safeKeys = safeKeys.value
   store.config.general.proxyMode = proxyMode.value
   store.config.general.customProxy = customProxy.value
   store.config.llm.imageResize = parseInt(imageResize.value)

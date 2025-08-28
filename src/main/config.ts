@@ -111,14 +111,16 @@ export const loadSettings = (app: App): Configuration => {
 
   }
 
-  // backwards compatibility
-  let apiKeys = extractApiKeys(jsonConfig)
-  if (apiKeys.length > 0) {
-    saveApiKeys(apiKeys)
-    save = true
-  } else {
-    apiKeys = loadApiKeys()
-    injectApiKeys(jsonConfig, apiKeys)
+  // safe keys handling (default is true even when we have no config...)
+  if (!('general' in jsonConfig) || !('safeKeys' in jsonConfig.general) || jsonConfig.general.safeKeys !== false) {
+    let apiKeys = extractApiKeys(jsonConfig)
+    if (apiKeys.length > 0) {
+      saveApiKeys(apiKeys)
+      save = true
+    } else {
+      apiKeys = loadApiKeys()
+      injectApiKeys(jsonConfig, apiKeys)
+    }
   }
 
   // now load engine models
@@ -184,11 +186,15 @@ export const saveSettings = (app: App, config: Configuration, always: boolean = 
     const clone: Configuration = JSON.parse(JSON.stringify(config))
 
     // save api keys separately
-    const apiKeys = extractApiKeys(clone)
-    if (apiKeys.length > 0) {
-      if (saveApiKeys(apiKeys)) {
-        nullifyApiKeys(clone, apiKeys)
+    if (config.general.safeKeys) {
+      const apiKeys = extractApiKeys(clone)
+      if (apiKeys.length > 0) {
+        if (saveApiKeys(apiKeys)) {
+          nullifyApiKeys(clone, apiKeys)
+        }
       }
+    } else {
+      deleteApiKeys()
     }
 
     // save engines configuration separately
@@ -362,7 +368,7 @@ export const loadApiKeys = (): ApiKeyEntry[] => {
   }
 }
 
-export const saveApiKeys = (apiKeys: ApiKeyEntry[]): boolean => {
+export const deleteApiKeys = (): boolean => {
 
   try {
 
@@ -379,6 +385,31 @@ export const saveApiKeys = (apiKeys: ApiKeyEntry[]): boolean => {
       }
     } catch (error) {
       console.log('Error clearing existing API keys:', error)
+      return false
+    }
+
+    // done
+    return true
+    
+
+  } catch (error) {
+    console.log('Error saving API keys:', error)
+    return false
+  }
+
+}
+
+export const saveApiKeys = (apiKeys: ApiKeyEntry[]): boolean => {
+
+  try {
+
+    // check
+    if (!safeStorage.isEncryptionAvailable()) {
+      return false
+    }
+
+    // First, delete all existing apiKey entries
+    if (!deleteApiKeys()) {
       return false
     }
     

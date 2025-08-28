@@ -3,6 +3,7 @@
   "workspaceId": "00000000-0000-0000-0000-000000000000",
   "general": {
     "firstRun": true,
+    "safeKeys": true,
     "onboardingDone": false,
     "keepRunning": true,
     "hideOnStartup": false,

@@ -2156,6 +2156,7 @@
         "title": "Proxy settings (requires app restart)"
       },
       "resetToDefault": "Reset to default value",
+      "safeKeys": "Store API keys in system secure storage",
       "systemInstructions": "System instructions"
     },
     "chat": {

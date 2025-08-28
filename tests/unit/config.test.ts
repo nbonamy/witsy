@@ -2,7 +2,7 @@
 import { app } from 'electron'
 import Store from 'electron-store'
 import fs from 'fs'
-import { beforeEach, expect, test, vi } from 'vitest'
+import { beforeEach, expect, test, vi, Mock } from 'vitest'
 import defaultSettings from '../../defaults/settings.json'
 import * as config from '../../src/main/config'
 
@@ -128,15 +128,6 @@ test('Backwards compatibility 2', () => {
   expect(Store.prototype.set).toHaveBeenLastCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key2')
 })
 
-test('Save apiKeys settings', () => {
-  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/unknown')
-  const loaded = config.loadSettings(app)
-  config.saveSettings(app, loaded, true)
-  expect(fs.writeFileSync).toHaveBeenLastCalledWith('tests/fixtures/config/unknown/settings.json', expect.any(String))
-  expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
-  expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key')
-})
-
 test('Save engine config', () => {
   vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/engines')
   const loaded = config.loadSettings(app)
@@ -150,4 +141,27 @@ test('Save engine config', () => {
   const settings = JSON.parse(calls[calls.length - 1][1])
   expect(settings.engines.openai.apiKey).toBeUndefined()
   expect(settings.engines.openai.models).toBeUndefined()
+})
+
+test('Save apiKeys settings', () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/unknown')
+  const loaded = config.loadSettings(app)
+  config.saveSettings(app, loaded, true)
+  expect(fs.writeFileSync).toHaveBeenLastCalledWith('tests/fixtures/config/unknown/settings.json', expect.any(String))
+  expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
+  expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key')
+})
+
+test('Save apiKeys settings with safeKeys disabled', () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/unknown')
+  const loaded = config.loadSettings(app)
+  loaded.general.safeKeys = false
+  config.saveSettings(app, loaded, true)
+  expect(fs.writeFileSync).toHaveBeenLastCalledWith('tests/fixtures/config/unknown/settings.json', expect.any(String))
+  // @ts-expect-error mock type stuff
+  const calls = (fs.writeFileSync.mock as Mock).calls
+  const settings = JSON.parse(calls[calls.length - 1][1])
+  expect(settings.engines.openai.apiKey).toBe('openai-api-key')
+  expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
+  expect(Store.prototype.set).not.toHaveBeenCalled()
 })
