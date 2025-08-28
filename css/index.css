@@ -78,7 +78,7 @@
   --chatarea-toolbar-text-color: var(--dimmed-text-color);
   --chatarea-toolbar-icon-color: var(--dimmed-text-color);
 
-  --message-list-bg-color: #fafafa;
+  --message-list-bg-color: var(--color-surface-lowest);
   --message-list-text-color: var(--text-color);
   --message-list-tip-text-color: #888;
   --message-list-actions-text-color: #909090;

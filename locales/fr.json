@@ -1,6 +1,7 @@
 {
   "common": {
     "actions": "Actions",
+    "agents": "Agents",
     "arguments": "Arguments",
     "askMeAnything": "Demandez-moi ce que vous voulez !",
     "back": "Retour",
@@ -137,6 +138,8 @@
     "selectNone": "Tout désélectionner",
     "settings": "Paramètres",
     "shortcut": "Raccourci",
+    "showLess": "Afficher moins",
+    "showMore": "Afficher plus",
     "spellcheck": {
       "add": "Ajouter au dictionnaire"
     },
@@ -1538,7 +1541,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Lorsque l'utilisateur vous demande de créer du contenu (document, résumé...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE\">\nCONTENU\n</artifact>",
+      "artifacts": "Lorsque l’utilisateur vous demande de créer du contenu (document, résumé, code...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE>\nCONTENU\n</artifact>. En particulier, le code HTML intégré dans les artefacts peut être prévisualisé automatiquement.",
       "mermaid": "Si l'on vous demande de produire un diagramme Mermaid, son code sera rendu en tant que diagramme pour l'utilisateur.",
       "toolRetry": "Lors de l'appel des outils, si vous obtenez une erreur d'entrée, analysez l'erreur, essayez de la corriger, puis réessayez d'appeler l'outil."
     },
@@ -1603,6 +1606,16 @@
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce serveur ?",
     "copyInstallCommand": "Vous pouvez copier la commande d'installation dans votre presse-papiers et l'essayer dans un terminal.",
     "failedToInstall": "Échec de l'installation du serveur",
+    "hero": {
+      "github": {
+        "description": "Accédez aux dépôts, gérez les problèmes, les demandes d’extraction et collaborez sur le code directement depuis votre espace de travail.",
+        "title": "Intégration GitHub"
+      },
+      "kochava": {
+        "description": "Analyse avancée des publicités mobiles et attribution propulsées par la plateforme de mesure leader de Kochava.",
+        "title": "Analyse Kochava"
+      }
+    },
     "importJson": {
       "details": "Copiez/collez ici les définitions JSON de serveur MCP depuis Claude.",
       "errorArgs": "Arguments du serveur MCP invalides.",
@@ -2119,6 +2132,7 @@
         "title": "Paramètres du proxy (requiert un redémarrage de l'application)"
       },
       "resetToDefault": "Réinitialiser à la valeur par défaut",
+      "safeKeys": "Stocker les clés API dans le stockage sécurisé du système",
       "systemInstructions": "Instructions système"
     },
     "chat": {
@@ -2138,6 +2152,10 @@
       "listLayouts": {
         "compact": "Compact",
         "cozy": "Confortable"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "Aperçus automatiques"
       },
       "showToolCalls": {
         "always": "Toujours",
