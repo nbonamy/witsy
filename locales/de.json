@@ -1,6 +1,7 @@
 {
   "common": {
     "actions": "Aktionen",
+    "agents": "Agenten",
     "arguments": "Argumente",
     "askMeAnything": "Frag mich, was du willst!",
     "back": "Zurück",
@@ -137,6 +138,8 @@
     "selectNone": "Alle abwählen",
     "settings": "Einstellungen",
     "shortcut": "Tastenkombination",
+    "showLess": "Weniger anzeigen",
+    "showMore": "Mehr anzeigen",
     "spellcheck": {
       "add": "Zum Wörterbuch hinzufügen"
     },
@@ -1538,7 +1541,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>",
+      "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung, Code...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>. Besonders HTML-Code, der in Artefakten eingebettet ist, kann automatisch in der Vorschau angezeigt werden.",
       "mermaid": "Wenn du gebeten wirst, ein Mermaid-Diagramm auszugeben, wird dessen Code als Diagramm für den Benutzer dargestellt.",
       "toolRetry": "Wenn beim Aufrufen von Werkzeugen ein Eingabefehler auftritt, analysiere den Fehler, versuche ihn zu beheben und rufe das Werkzeug dann erneut auf."
     },
@@ -1603,6 +1606,16 @@
     "confirmDelete": "Sind Sie sicher, dass Sie diesen Server löschen möchten?",
     "copyInstallCommand": "Sie können den Installationsbefehl in Ihre Zwischenablage kopieren und in einem Terminal ausprobieren.",
     "failedToInstall": "Installation des Servers fehlgeschlagen",
+    "hero": {
+      "github": {
+        "description": "Greifen Sie auf Repositories zu, verwalten Sie Issues, Pull Requests und arbeiten Sie direkt aus Ihrem Arbeitsbereich zusammen.",
+        "title": "GitHub-Integration"
+      },
+      "kochava": {
+        "description": "Fortschrittliche Mobile-Werbeanalyse und Attribution, betrieben durch Kochavas branchenführende Messplattform.",
+        "title": "Kochava Analytics"
+      }
+    },
     "importJson": {
       "details": "Kopieren/Einfügen von JSON MCP Server-Definitionen von Claude hier.",
       "errorArgs": "Ungültige MCP Server-Argumente.",
@@ -2119,6 +2132,7 @@
         "title": "Proxy-Einstellungen (erfordert Neustart der App)"
       },
       "resetToDefault": "Auf Standardwert zurücksetzen",
+      "safeKeys": "API-Schlüssel im sicheren Systemspeicher ablegen",
       "systemInstructions": "System-Prompt"
     },
     "chat": {
@@ -2138,6 +2152,10 @@
       "listLayouts": {
         "compact": "Kompakt",
         "cozy": "Gemütlich"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "Automatische Vorschauen"
       },
       "showToolCalls": {
         "always": "Immer",

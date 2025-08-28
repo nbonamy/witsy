@@ -1,6 +1,7 @@
 {
   "common": {
     "actions": "Akcje",
+    "agents": "Agenci",
     "arguments": "Argumenty",
     "askMeAnything": "Zapytaj mnie o cokolwiek",
     "back": "Powrót",
@@ -156,6 +157,8 @@
     "selectNone": "Anuluj wybór wszystkich",
     "settings": "Ustawienia",
     "shortcut": "Skrót klawiaturowy",
+    "showLess": "Pokaż mniej",
+    "showMore": "Pokaż więcej",
     "spellcheck": {
       "add": "Dodaj do słownika"
     },
@@ -1557,7 +1560,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś treści (dokument, streszczenie...), użyj następującej składni:\n<artifact title=\"TYTUŁ>\nTREŚĆ\n</artifact>",
+      "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś treści (dokument, podsumowanie, kod...), użyj następującej składni:\n<artifact title=\"TYTUŁ\">\nTREŚĆ\n</artifact>. Szczególnie kod HTML osadzony w artefaktach może być automatycznie podglądany.",
       "mermaid": "Jeśli zostaniesz poproszony o wygenerowanie wykresu Mermaid, jego kod zostanie wyświetlony użytkownikowi jako diagram.",
       "toolRetry": "Podczas wywoływania narzędzi, jeśli otrzymasz błąd wejścia, przeanalizuj błąd i spróbuj go naprawić, a następnie ponownie wywołaj narzędzie."
     },
@@ -1622,6 +1625,16 @@
     "confirmDelete": "Czy na pewno chcesz usunąć ten serwer?",
     "copyInstallCommand": "Możesz skopiować polecenie instalacji do schowka i spróbować je w terminalu.",
     "failedToInstall": "Nie udało się zainstalować serwera",
+    "hero": {
+      "github": {
+        "description": "Dostęp do repozytoriów, zarządzanie zgłoszeniami, pull requestami i współpraca nad kodem bezpośrednio z Twojego środowiska pracy.",
+        "title": "Integracja z GitHub"
+      },
+      "kochava": {
+        "description": "Zaawansowana analityka reklamy mobilnej i atrybucji oparta na wiodącej w branży platformie pomiarowej Kochava.",
+        "title": "Kochava Analytics"
+      }
+    },
     "importJson": {
       "details": "Wklej tutaj definicje serwera MCP w formacie JSON z Claude.",
       "errorArgs": "Nieprawidłowe argumenty serwera MCP.",
@@ -2141,6 +2154,7 @@
         "title": "Ustawienia serwera proxy (wymaga ponownego uruchomienia aplikacji)"
       },
       "resetToDefault": "Przywróć wartość domyślną",
+      "safeKeys": "Przechowuj klucze API w bezpiecznym magazynie systemowym",
       "systemInstructions": "Instrukcje systemowe"
     },
     "chat": {
@@ -2160,6 +2174,10 @@
       "listLayouts": {
         "compact": "Kompaktowy",
         "cozy": "Przytulny"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "Automatyczne podglądy"
       },
       "showToolCalls": {
         "always": "Zawsze",

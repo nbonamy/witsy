@@ -1,16 +1,38 @@
 <template>
   <div class="empty">
+    
     <h1>{{ t('chat.empty.greeting') }}</h1>
+    
     <div class="shortcuts">
 
-      <div v-for="shortcut in shortcuts" :key="shortcut.name" class="shortcut" @click="shortcut.run">
-        <AgentIcon class="icon" />
-        <h2>{{ shortcut.name }}</h2>
-        <p>{{ shortcut.description }}</p>
+      <div class="shortcuts-header">
+
+        {{ t('common.agents')}}
+
+        <div class="icon" v-if="!showAllShortcuts" @click="showAllShortcuts = true">
+          {{ t('common.showMore') }}
+          <ChevronDownIcon />
+        </div>
+
+        <div class="icon" v-else @click="showAllShortcuts = false">
+          {{ t('common.showLess') }}
+          <ChevronUpIcon />
+        </div>
+
       </div>
 
-      <div v-if="shortcuts.length === 0">
+      <div class="shortcuts-empty" v-if="shortcuts.length === 0">
         <p>No shortcuts available</p>
+      </div>
+
+      <div class="shortcuts-list" v-else>
+        <HomeShortcut
+          v-for="shortcut in shortcuts"
+          :key="shortcut.name"
+          :name="shortcut.name"
+          :description="shortcut.description"
+          @run="shortcut.run"
+        />
       </div>
     </div>
 
@@ -19,10 +41,13 @@
 
 <script setup lang="ts">
 
-import { computed } from 'vue';
-import { t } from '../services/i18n'
-import { store } from '../services/store'
-import AgentIcon from '../../assets/agent.svg?component'
+
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+import { t } from '../services/i18n';
+import { store } from '../services/store';
+import { Agent } from '../types/index';
+import HomeShortcut from './HomeShortcut.vue';
 
 type Shortcut = {
   name: string
@@ -34,15 +59,38 @@ const emit = defineEmits(['run-agent'])
 
 const shortcuts = computed((): Shortcut[] => {
 
-  return store.agents.map((a) => ({
+  const lastRuns: Record<string, number> = {}
+
+  const getLastRun = (agent: Agent) => {
+    if (!store.workspace) return agent.createdAt
+    const runs = window.api.agents.getRuns(store.workspace.uuid, agent.uuid)
+    return runs.length > 0 ? runs[runs.length - 1].createdAt : agent.createdAt
+  }
+
+  return store.agents.sort((a, b) => {
+
+    if (!lastRuns[a.uuid]) {
+      lastRuns[a.uuid] = getLastRun(a)
+    }
+
+    if (!lastRuns[b.uuid]) {
+      lastRuns[b.uuid] = getLastRun(b)
+    }
+
+    return lastRuns[b.uuid] - lastRuns[a.uuid]
+
+  }).map((a) => ({
     name: a.name,
     description: a.description,
     run: () => {
       emit('run-agent', a.uuid)
     }
-  }))
+  })).slice(0, showAllShortcuts.value ? undefined : 3);
 
 });
+
+const showAllShortcuts = ref(false)
+
 
 </script>
 
@@ -50,6 +98,8 @@ const shortcuts = computed((): Shortcut[] => {
 <style scoped>
 
 .empty {
+  width: 800px;
+  align-self: center;
 
   display: flex;
   flex-direction: column;
@@ -59,62 +109,63 @@ const shortcuts = computed((): Shortcut[] => {
 
   h1 {
     font-size: 24px;
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-medium);
     color: var(--color-on-surface);
   }
 
   .shortcuts {
-
+    width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 1rem;
 
-    .shortcut {
-      border-radius: 8px;
-      border: 0 solid var(--color-light-outline-subtle, rgba(217, 217, 221, 0.70));
-      background: var(--color-light-surface-container-lowest, #FFF);
-      box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.06);
+    .shortcuts-header {
 
+      width: 100%;
       display: flex;
-      width: 184px;
-      min-width: 140px;
-      padding: 16px 16px 24px 16px;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
+      flex-direction: row;
 
-      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
 
       .icon {
-        width: 1.25rem;
-        height: 1.25rem;
-        aspect-ratio: 1/1;
-        color: var(--color-tertiary);
-        margin-bottom: 0.5rem;
+
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin-left: auto;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--color-primary);
+        gap: 0.25rem;
+
+        svg {
+          fill: var(--color-primary);
+        }
       }
 
-      h2 {
-        margin: 0;
-        color: var(--color-light-on-surface, #27272A);
-        font-family: Inter;
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 500;
-        line-height: 20px;
-      }
 
-      p {
-        margin: 0;
-        color: var(--color-light-on-surface-variant, #71717A);
-        font-family: Inter;
-        font-size: 13px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 16px;
-      }
     }
 
+    .shortcuts-list {
 
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+
+      overflow-y: auto;
+      max-height: 400px;
+
+      &:nth-child(n+3) {
+        display: none;
+      }
+
+    }
   }
 }
 

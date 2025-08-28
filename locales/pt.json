@@ -1,6 +1,7 @@
 {
   "common": {
     "actions": "Ações",
+    "agents": "Agentes",
     "arguments": "Parâmetros",
     "askMeAnything": "Pergunte-me qualquer coisa",
     "back": "Voltar",
@@ -156,6 +157,8 @@
     "selectNone": "Desmarcar Tudo",
     "settings": "Configurações",
     "shortcut": "Atalho",
+    "showLess": "Mostrar Menos",
+    "showMore": "Mostrar Mais",
     "spellcheck": {
       "add": "Adicionar ao dicionário"
     },
@@ -1557,7 +1560,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Quando o usuário solicitar que você crie algum conteúdo (documento, resumo...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO\">\nCONTEÚDO\n</artifact>",
+      "artifacts": "Quando o usuário pedir para você criar algum conteúdo (documento, resumo, código...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO>\nCONTEÚDO\n</artifact>. Especialmente o código HTML embutido em artifacts pode ser visualizado automaticamente.",
       "mermaid": "Se for solicitado que você produza um diagrama Mermaid, seu código será exibido como um diagrama para o usuário.",
       "toolRetry": "Ao chamar ferramentas, se você receber um erro de entrada, analise o erro e tente corrigi-lo e então tente chamar a ferramenta novamente."
     },
@@ -1622,6 +1625,16 @@
     "confirmDelete": "Tem certeza de que deseja excluir este servidor?",
     "copyInstallCommand": "Você pode copiar o comando de instalação para a área de transferência e tentar em um Terminal.",
     "failedToInstall": "Falha ao instalar o servidor",
+    "hero": {
+      "github": {
+        "description": "Acesse repositórios, gerencie problemas, pull requests e colabore no código diretamente do seu espaço de trabalho.",
+        "title": "Integração com GitHub"
+      },
+      "kochava": {
+        "description": "Análises avançadas de anúncios móveis e atribuição alimentadas pela plataforma de medição líder do setor da Kochava.",
+        "title": "Kochava Analytics"
+      }
+    },
     "importJson": {
       "details": "Copie/cole aqui as definições JSON do Servidor MCP vindas do Claude.",
       "errorArgs": "Argumentos do Servidor MCP inválidos.",
@@ -2141,6 +2154,7 @@
         "title": "Configurações de proxy (requer reinício do aplicativo)"
       },
       "resetToDefault": "Redefinir para o valor padrão",
+      "safeKeys": "Armazenar chaves API em armazenamento seguro do sistema",
       "systemInstructions": "Instruções do sistema"
     },
     "chat": {
@@ -2160,6 +2174,10 @@
       "listLayouts": {
         "compact": "Compacto",
         "cozy": "Aconchegante"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "Pré-visualizações automáticas"
       },
       "showToolCalls": {
         "always": "Sempre",

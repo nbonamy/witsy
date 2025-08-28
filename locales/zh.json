@@ -1,6 +1,7 @@
 {
   "common": {
     "actions": "操作",
+    "agents": "代理",
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
     "back": "返回",
@@ -156,6 +157,8 @@
     "selectNone": "全不选",
     "settings": "设置",
     "shortcut": "快捷键",
+    "showLess": "显示更少",
+    "showMore": "显示更多",
     "spellcheck": {
       "add": "添加到字典"
     },
@@ -1557,7 +1560,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "当用户请求您创建某些内容（文档、摘要等）时，请使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>",
+      "artifacts": "当用户要求您创建一些内容（文档、摘要、代码...）时，使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>。特别是嵌入在 artifact 中的 HTML 代码可以自动预览。",
       "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
       "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
     },
@@ -1622,6 +1625,16 @@
     "confirmDelete": "你确定要删除这个服务器吗？",
     "copyInstallCommand": "你可以复制安装命令到剪贴板并尝试在终端中运行。",
     "failedToInstall": "服务器安装失败",
+    "hero": {
+      "github": {
+        "description": "直接从您的工作区访问仓库，管理问题、拉取请求并协作开发代码。",
+        "title": "GitHub 集成"
+      },
+      "kochava": {
+        "description": "由 Kochava 行业领先的测量平台驱动的高级移动广告分析和归因。",
+        "title": "Kochava 分析"
+      }
+    },
     "importJson": {
       "details": "从 Claude 复制/粘贴 JSON MCP 服务器定义。",
       "errorArgs": "无效的 MCP 服务器参数。",
@@ -2141,6 +2154,7 @@
         "title": "代理设置（需要重启应用）"
       },
       "resetToDefault": "重置为默认值",
+      "safeKeys": "将 API 密钥存储在系统安全存储中",
       "systemInstructions": "系统指令"
     },
     "chat": {
@@ -2160,6 +2174,10 @@
       "listLayouts": {
         "compact": "紧凑",
         "cozy": "舒适"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "自动预览"
       },
       "showToolCalls": {
         "always": "总是",

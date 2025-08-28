@@ -32,18 +32,26 @@
         </div> -->
         
         <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
+        
         <EmptyChat2 class="chat-content-main" @run-agent="onRunAgent" v-else />
+        
         <div class="deep-research-usage" v-if="prompt?.isDeepResearchActive() && tipsManager.isTipAvailable('deepResearchUsage')">
           {{  t('deepResearch.usage') }}
           <div class="deep-research-usage-close" @click="onHideDeepResearchUsage">
             <X />
           </div>
         </div>
+        
         <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" ref="prompt" />
+      
       </div>
+      
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
+    
     </main>
+    
     <ContextMenu v-if="showChatMenu" @close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
+  
   </div>
 </template>
 
@@ -367,7 +375,7 @@ defineExpose({
   
   .sp-main {
 
-  background-color: var(--message-list-bg-color);
+    background-color: var(--message-list-bg-color);
 
     header {
 

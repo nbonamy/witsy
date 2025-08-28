@@ -1,6 +1,7 @@
 {
   "common": {
     "actions": "アクション",
+    "agents": "エージェント",
     "arguments": "引数",
     "askMeAnything": "何でも聞いてください",
     "back": "戻る",
@@ -156,6 +157,8 @@
     "selectNone": "すべて解除",
     "settings": "設定",
     "shortcut": "ショートカット",
+    "showLess": "折りたたむ",
+    "showMore": "もっと見る",
     "spellcheck": {
       "add": "辞書に追加"
     },
@@ -1557,7 +1560,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約など）を作成するように依頼した場合、次の構文を使用してください:\n<artifact title=\"タイトル\">\n内容\n</artifact>",
+      "artifacts": "ユーザーからコンテンツ（ドキュメント、要約、コードなど）の作成を依頼された際は、以下の構文を使用してください。\n<artifact title=\"タイトル\">\n内容\n</artifact>。特に、artifact に埋め込まれた HTML コードは自動的にプレビュー表示されます。",
       "mermaid": "Mermaidチャートの出力を求められた場合、そのコードはユーザーに図として表示されます。",
       "toolRetry": "ツールを呼び出す際に入力エラーが発生した場合は、エラーを分析して修正を試み、その後ツールの呼び出しを再試行してください。"
     },
@@ -1622,6 +1625,16 @@
     "confirmDelete": "本当にこのサーバーを削除してもよろしいですか？",
     "copyInstallCommand": "インストールコマンドをクリップボードにコピーして、ターミナルで試すことができます。",
     "failedToInstall": "サーバーのインストールに失敗しました",
+    "hero": {
+      "github": {
+        "description": "リポジトリへのアクセス、課題やプルリクエストの管理、ワークスペースから直接コード協業が可能です。",
+        "title": "GitHub 連携"
+      },
+      "kochava": {
+        "description": "Kochava の業界最先端の計測プラットフォームによる高度なモバイル広告分析とアトリビューション。",
+        "title": "Kochava アナリティクス"
+      }
+    },
     "importJson": {
       "details": "ClaudeからのJSON MCPサーバー定義をここにコピー＆ペーストしてください。",
       "errorArgs": "無効なMCPサーバー引数です。",
@@ -2141,6 +2154,7 @@
         "title": "プロキシ設定（アプリの再起動が必要）"
       },
       "resetToDefault": "デフォルト値にリセット",
+      "safeKeys": "API キーをシステムのセキュアストレージに保存する",
       "systemInstructions": "システム指示"
     },
     "chat": {
@@ -2160,6 +2174,10 @@
       "listLayouts": {
         "compact": "コンパクト",
         "cozy": "ゆったり"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "自動プレビュー"
       },
       "showToolCalls": {
         "always": "常に",

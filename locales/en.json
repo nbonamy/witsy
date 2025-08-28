@@ -1,6 +1,7 @@
 {
   "common": {
     "actions": "Actions",
+    "agents": "Agents",
     "arguments": "Arguments",
     "askMeAnything": "Ask me anything",
     "back": "Back",
@@ -156,6 +157,8 @@
     "selectNone": "Unselect All",
     "settings": "Settings",
     "shortcut": "Shortcut",
+    "showLess": "Show Less",
+    "showMore": "Show More",
     "spellcheck": {
       "add": "Add to dictionary"
     },
@@ -1622,13 +1625,13 @@
     "copyInstallCommand": "You can copy the install command to your clipboard and try it in a Terminal.",
     "failedToInstall": "Failed to install server",
     "hero": {
-      "kochava": {
-        "title": "Kochava Analytics",
-        "description": "Advanced mobile ad analytics and attribution powered by Kochava's industry-leading measurement platform."
-      },
       "github": {
-        "title": "GitHub Integration",
-        "description": "Access repositories, manage issues, pull requests, and collaborate on code directly from your workspace."
+        "description": "Access repositories, manage issues, pull requests, and collaborate on code directly from your workspace.",
+        "title": "GitHub Integration"
+      },
+      "kochava": {
+        "description": "Advanced mobile ad analytics and attribution powered by Kochava's industry-leading measurement platform.",
+        "title": "Kochava Analytics"
       }
     },
     "importJson": {
@@ -2178,8 +2181,8 @@
         "cozy": "Cozy"
       },
       "previews": {
-        "title": "Automatic previews",
-        "html": "HTML"
+        "html": "HTML",
+        "title": "Automatic previews"
       },
       "showToolCalls": {
         "always": "Always",
