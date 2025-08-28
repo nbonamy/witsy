@@ -1,11 +1,10 @@
 
 import { app } from 'electron'
-import { Configuration } from '../../src/types/config'
-import { vi, expect, test, Mock } from 'vitest'
-import * as config from '../../src/main/config'
-import defaultSettings from '../../defaults/settings.json'
 import Store from 'electron-store'
 import fs from 'fs'
+import { beforeEach, expect, test, vi } from 'vitest'
+import defaultSettings from '../../defaults/settings.json'
+import * as config from '../../src/main/config'
 
 vi.mock('electron', async () => {
   return {
@@ -35,7 +34,13 @@ vi.mock('fs', async (importOriginal) => {
   return { default: {
     ...mod,
     writeFileSync: vi.fn(),
+    mkdirSync: vi.fn()
   }}
+})
+
+beforeEach(() => {
+  vi.clearAllMocks()
+  config.clearAppSettingsCache()
 })
 
 test('Load default settings', () => {
@@ -53,15 +58,34 @@ test('Load default settings', () => {
   expect(Store.prototype.set).not.toHaveBeenCalled()
 })
 
+test('Uses cache on second load', () => {
+  vi.spyOn(fs, 'readFileSync')
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/override1')
+  config.loadSettings(app)
+  expect(fs.readFileSync).toHaveBeenCalledTimes(2)
+  config.loadSettings(app)
+  expect(fs.readFileSync).toHaveBeenCalledTimes(2)
+})
+
+test('Does not save when unmodified', () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/override1')
+  const loaded = config.loadSettings(app)
+  config.saveSettings(app, loaded)
+  expect(fs.writeFileSync).not.toHaveBeenCalled()
+  loaded.general.locale = 'en'
+  config.saveSettings(app, loaded)
+  expect(fs.writeFileSync).toHaveBeenCalled()
+})
+
 test('Load engine config files', () => {
-  app.getPath = vi.fn(() => './tests/fixtures/engines')
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/engines')
   const loaded = config.loadSettings(app)
   expect(loaded.engines.openai.apiKey).toBe('openai-api-key')
   expect(loaded.engines.openai.models.chat).toHaveLength(1)
 })
 
 test('Load settings with error', () => {
-  app.getPath = vi.fn(() => './tests/fixtures/invalid')
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/invalid')
   const loaded = config.loadSettings(app)
   expect(config.settingsFileHadError()).toBe(true)
   loaded.engines.openai.baseURL = defaultSettings.engines.openai.baseURL
@@ -73,17 +97,22 @@ test('Load settings with error', () => {
   expect(loaded).toStrictEqual(defaultSettings)
 })
 
-test('Load overridden settings', () => {
-  const loaded1: Configuration = config.loadSettings('./tests/fixtures/config1.json')
-  expect(loaded1.general.locale).toBe('fr')
-  expect(loaded1.general.keepRunning).toBe(true)
+test('Load overridden settings 1', () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/override1')
+  const loaded = config.loadSettings(app)
+  expect(loaded.general.locale).toBe('fr')
+  expect(loaded.general.keepRunning).toBe(true)
+})
 
-  const loaded2 = config.loadSettings('./tests/fixtures/config2.json')
-  expect(loaded2.engines.openai.models.chat).toStrictEqual(['model1', 'model2'])
+test('Load overridden settings 2', () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/override2')
+  const loaded = config.loadSettings(app)
+  expect(loaded.engines.openai.models.chat).toStrictEqual(['model1', 'model2'])
 })
 
 test('Backwards compatibility 1', () => {
-  const loaded = config.loadSettings('./tests/fixtures/config_compat1.json')
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/compat1')
+  const loaded = config.loadSettings(app)
   expect(loaded.general.proxyMode).toBe('bypass')
   expect(loaded.appearance.darkTint).toBe('blue')
   expect(loaded.engines.openai.model.chat).toBe('model1')
@@ -92,30 +121,31 @@ test('Backwards compatibility 1', () => {
 })
 
 test('Backwards compatibility 2', () => {
-  const loaded = config.loadSettings('./tests/fixtures/config_compat2.json')
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/compat2')
+  const loaded = config.loadSettings(app)
   expect(loaded.engines.openai.apiKey).toBe('openai-api-key2')
   expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
   expect(Store.prototype.set).toHaveBeenLastCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key2')
 })
 
-test('Save settings', () => {
-  const loaded = config.loadSettings('')
-  config.saveSettings('settings.json', loaded)
-  const saved = JSON.parse(JSON.stringify(loaded))
-  expect(fs.writeFileSync).toHaveBeenLastCalledWith('settings.json', JSON.stringify(saved, null, 2))
+test('Save apiKeys settings', () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/unknown')
+  const loaded = config.loadSettings(app)
+  config.saveSettings(app, loaded, true)
+  expect(fs.writeFileSync).toHaveBeenLastCalledWith('tests/fixtures/config/unknown/settings.json', expect.any(String))
   expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
   expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key')
 })
 
 test('Save engine config', () => {
-  app.getPath = vi.fn(() => './tests/fixtures/engines')
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/engines')
   const loaded = config.loadSettings(app)
-  config.saveSettings(app, loaded)
-  expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/engines/engines/openai.json', expect.any(String))
-  expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/engines/settings.json', expect.any(String))
+  config.saveSettings(app, loaded, true)
+  expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/config/engines/engines/openai.json', expect.any(String))
+  expect(fs.writeFileSync).toHaveBeenLastCalledWith('tests/fixtures/config/engines/settings.json', expect.any(String))
   // @ts-expect-error mock type stuff
   const calls = (fs.writeFileSync.mock as Mock).calls
-  const openai = JSON.parse(calls[1][1])
+  const openai = JSON.parse(calls[0][1])
   expect(openai.models.chat).toHaveLength(1)
   const settings = JSON.parse(calls[calls.length - 1][1])
   expect(settings.engines.openai.apiKey).toBeUndefined()

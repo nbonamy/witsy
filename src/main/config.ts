@@ -14,9 +14,9 @@ type ApiKeyEntry = {
   apiKey: string
 }
 
-let firstLoad = true
 let errorLoadingConfig = false
 let onSettingsChange: CallableFunction = () => {}
+let cachedAppConfig: Configuration = undefined
 
 const safeStore = new Store<Record<string, string>>({
   name: 'apiKeys',
@@ -53,6 +53,176 @@ const engineConfigFilePath = (app: App, engine: string): string => {
 }
 
 export const settingsFileHadError = (): boolean => errorLoadingConfig
+
+export const clearAppSettingsCache = (): void => {
+  cachedAppConfig = undefined
+}
+
+export const loadSettings = (app: App): Configuration => {
+
+  // check cache
+  if (cachedAppConfig) {
+    return cachedAppConfig
+  }
+
+  let data = '{}'
+  const settingsFile = settingsFilePath(app)
+  const firstLoad = typeof cachedAppConfig === 'undefined'
+  if (firstLoad) {
+    console.log('Loading settings from', settingsFile)
+  }
+
+  let save = true
+  try {
+    data = fs.readFileSync(settingsFile, 'utf-8')
+    save = false
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      console.log('Error retrieving settings data', error)
+    }
+  }
+
+  // now try to parse
+  let jsonConfig = null 
+  try {
+    jsonConfig = JSON.parse(data)
+  } catch (error) {
+
+    // log
+    console.log('Error parsing settings data', error)
+
+    // save a backup before starting from scratch
+    if (firstLoad) {
+      const now = new Date()
+      const timestamp = now.getFullYear() + 
+               ('0' + (now.getMonth() + 1)).slice(-2) + 
+               ('0' + now.getDate()).slice(-2) + 
+               ('0' + now.getHours()).slice(-2) + 
+               ('0' + now.getMinutes()).slice(-2) + 
+               ('0' + now.getSeconds()).slice(-2)
+      const backupFile = settingsFile.replace('.json', `.${timestamp}.json`)
+      console.log('Saving backup of settings to', backupFile)
+      fs.writeFileSync(backupFile, data)
+    }
+
+    // start with defaults
+    errorLoadingConfig = true
+    jsonConfig = {}
+
+  }
+
+  // backwards compatibility
+  let apiKeys = extractApiKeys(jsonConfig)
+  if (apiKeys.length > 0) {
+    saveApiKeys(apiKeys)
+    save = true
+  } else {
+    apiKeys = loadApiKeys()
+    injectApiKeys(jsonConfig, apiKeys)
+  }
+
+  // now load engine models
+  if (jsonConfig.engines) {
+    
+    for (const engine of Object.keys(jsonConfig.engines)) {
+
+      // initialize models
+      if (!jsonConfig.engines[engine].models) {
+        jsonConfig.engines[engine].models = { chat: [] } 
+      }
+
+      // now load the models file
+      const engineConfigFile = engineConfigFilePath(app, engine)
+      if (fs.existsSync(engineConfigFile)) {
+        try {
+          const engineConfig = fs.readFileSync(engineConfigFile, 'utf-8')
+          jsonConfig.engines[engine] = {
+            ...jsonConfig.engines[engine],
+            ...JSON.parse(engineConfig)
+          }
+        } catch (error) {
+          console.log('Error loading engine models for', engine, error)
+        }
+      }
+
+    }
+  }
+
+  // now build config
+  const config = buildConfig(defaultSettings, jsonConfig)
+
+  // save if needed
+  if (save && !process.env.TEST) {
+    saveSettings(app, config)
+  }
+
+  // start monitoring
+  monitor.start(settingsFile)
+
+  // done
+  cachedAppConfig = JSON.parse(JSON.stringify(config))
+  return config
+}
+
+export const saveSettings = (app: App, config: Configuration, always: boolean = false): void => {
+  try {
+
+    // only if modified
+    if (!always && cachedAppConfig) {
+      if (JSON.stringify(cachedAppConfig) === JSON.stringify(config)) {
+        return
+      }
+    }
+
+    // update cache
+    cachedAppConfig = JSON.parse(JSON.stringify(config))
+
+    // nullify defaults
+    nullifyDefaults(config)
+
+    // make a copy
+    const clone: Configuration = JSON.parse(JSON.stringify(config))
+
+    // save api keys separately
+    const apiKeys = extractApiKeys(clone)
+    if (apiKeys.length > 0) {
+      if (saveApiKeys(apiKeys)) {
+        nullifyApiKeys(clone, apiKeys)
+      }
+    }
+
+    // save engines configuration separately
+    for (const engine of Object.keys(clone.engines)) {
+
+      // skip the favorite mock engine
+      if (engine === favoriteMockEngine) {
+        continue
+      }
+
+      // clone user data
+      const engineConfig = {
+        models: clone.engines[engine].models,
+        voices: clone.engines[engine].voices,
+      }
+
+      // now save it
+      const engineConfigFile = engineConfigFilePath(app, engine)
+      fs.writeFileSync(engineConfigFile, JSON.stringify(engineConfig, null, 2))
+
+      // clear clone
+      delete clone.engines[engine].models
+      delete clone.engines[engine].voices
+
+    }
+
+    // save
+    const settingsFile = settingsFilePath(app)
+    fs.writeFileSync(settingsFile, JSON.stringify(clone, null, 2))
+
+  } catch (error) {
+    console.log('Error saving settings data', error)
+  }
+}
 
 const mergeConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
 
@@ -152,159 +322,6 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
 
 }
 
-export const loadSettings = (source: App|string): Configuration => {
-
-  let data = '{}'
-  const settingsFile = typeof source === 'string' ? source : settingsFilePath(source)
-  if (firstLoad) {
-    console.log('Loading settings from', settingsFile)
-  }
-
-  let save = true
-  try {
-    data = fs.readFileSync(settingsFile, 'utf-8')
-    save = false
-  } catch (error) {
-    if (error.code !== 'ENOENT') {
-      console.log('Error retrieving settings data', error)
-    }
-  }
-
-  // now try to parse
-  let jsonConfig = null 
-  try {
-    jsonConfig = JSON.parse(data)
-  } catch (error) {
-
-    // log
-    console.log('Error parsing settings data', error)
-
-    // save a backup before starting from scratch
-    if (typeof source !== 'string' && firstLoad) {
-      const now = new Date()
-      const timestamp = now.getFullYear() + 
-               ('0' + (now.getMonth() + 1)).slice(-2) + 
-               ('0' + now.getDate()).slice(-2) + 
-               ('0' + now.getHours()).slice(-2) + 
-               ('0' + now.getMinutes()).slice(-2) + 
-               ('0' + now.getSeconds()).slice(-2)
-      const backupFile = settingsFilePath(source).replace('.json', `.${timestamp}.json`)
-      console.log('Saving backup of settings to', backupFile)
-      fs.writeFileSync(backupFile, data)
-    }
-
-    // start with defaults
-    errorLoadingConfig = true
-    jsonConfig = {}
-
-  }
-
-  // backwards compatibility
-  let apiKeys = extractApiKeys(jsonConfig)
-  if (apiKeys.length > 0) {
-    saveApiKeys(apiKeys)
-    save = true
-  } else {
-    apiKeys = loadApiKeys()
-    injectApiKeys(jsonConfig, apiKeys)
-  }
-
-  // now load engine models
-  if (typeof source !== 'string' && jsonConfig.engines) {
-    
-    for (const engine of Object.keys(jsonConfig.engines)) {
-
-      // initialize models
-      if (!jsonConfig.engines[engine].models) {
-        jsonConfig.engines[engine].models = { chat: [] } 
-      }
-
-      // now load the models file
-      const engineConfigFile = engineConfigFilePath(source, engine)
-      if (fs.existsSync(engineConfigFile)) {
-        try {
-          const engineConfig = fs.readFileSync(engineConfigFile, 'utf-8')
-          jsonConfig.engines[engine] = {
-            ...jsonConfig.engines[engine],
-            ...JSON.parse(engineConfig)
-          }
-        } catch (error) {
-          console.log('Error loading engine models for', engine, error)
-        }
-      }
-
-    }
-  }
-
-  // now build config
-  const config = buildConfig(defaultSettings, jsonConfig)
-
-  // save if needed
-  if (save && !process.env.TEST) {
-    saveSettings(source, config)
-  }
-
-  // start monitoring
-  monitor.start(settingsFile)
-
-  // done
-  firstLoad = false
-  return config
-}
-
-export const saveSettings = (dest: App|string, config: Configuration): void => {
-  try {
-
-    // nullify defaults
-    nullifyDefaults(config)
-
-    // make a copy
-    const clone: Configuration = JSON.parse(JSON.stringify(config))
-    if (typeof dest !== 'string') {
-
-      // save api keys separately
-      const apiKeys = extractApiKeys(clone)
-      if (apiKeys.length > 0) {
-        if (saveApiKeys(apiKeys)) {
-          nullifyApiKeys(clone, apiKeys)
-        }
-      }
-
-      // save engines configuration separately
-      for (const engine of Object.keys(clone.engines)) {
-
-        // skip the favorite mock engine
-        if (engine === favoriteMockEngine) {
-          continue
-        }
-
-        // clone user data
-        const engineConfig = {
-          models: clone.engines[engine].models,
-          voices: clone.engines[engine].voices,
-        }
-
-        // now save it
-        const engineConfigFile = engineConfigFilePath(dest, engine)
-        fs.writeFileSync(engineConfigFile, JSON.stringify(engineConfig, null, 2))
-
-        // clear clone
-        delete clone.engines[engine].models
-        delete clone.engines[engine].voices
-
-      }
-
-    }
-
-    // save
-    const settingsFile = typeof dest === 'string' ? dest : settingsFilePath(dest)
-    fs.writeFileSync(settingsFile, JSON.stringify(clone, null, 2))
-
-  } catch (error) {
-    console.log('Error saving settings data', error)
-  }
-}
-
 const nullifyDefaults = (settings: anyDict) => {
   if (settings.engines.openai && (settings.engines.openai.baseURL == '' || settings.engines.openai.baseURL === defaultSettings.engines.openai.baseURL)) {
     delete settings.engines.openai.baseURL
@@ -369,8 +386,8 @@ export const saveApiKeys = (apiKeys: ApiKeyEntry[]): boolean => {
     for (const entry of apiKeys) {
       if (entry.apiKey.length > 0) {
         try {
-        const buffer = safeStorage.encryptString(entry.apiKey);
-        safeStore.set(entry.name, buffer.toString('latin1'));
+          const buffer = safeStorage.encryptString(entry.apiKey);
+          safeStore.set(entry.name, buffer.toString('latin1'));
         } catch (error) {
           console.log(`Error saving API key for ${entry.name}:`, error)
         }

@@ -32,38 +32,46 @@ export default class {
 
   install = () => {
 
-    // delete previous one
-    this.destroy();
-  
-    // need to know if an update is available
-    const updateAvailable = this.autoUpdater.updateAvailable;
-  
-    // tray icon
-    let trayIcon = null;
-    const assetsFolder = process.env.DEBUG ? path.resolve('./assets') : process.resourcesPath;
-    if (process.platform === 'win32') {
-      const trayIconPath = path.join(assetsFolder, 'icon.ico');
-      trayIcon = nativeImage.createFromPath(trayIconPath);
-    } else {
-      const iconColor = process.platform === 'linux' ? 'White' : 'Template';
-      const trayIconPath = path.join(assetsFolder, updateAvailable ? `trayUpdate${iconColor}@2x.png` : `tray${iconColor}@2x.png`);
-      //console.log('trayIconPath', trayIconPath);
-      trayIcon = nativeImage.createFromPath(trayIconPath);
-      trayIcon.setTemplateImage(true);
+    // create if needed
+    if (!this.tray) {
+      this.tray = new Tray(this.getIcon());
+      this.tray.on('right-click', () => {
+        window.openMainWindow();
+      });
     }
+
+    // update icon
+    this.tray.setImage(this.getIcon());
     
-    // create tray
-    this.tray = new Tray(trayIcon);
+    // and now set/update the context menu
     this.tray.setContextMenu(Menu.buildFromTemplate(this.buildTrayMenu()));
     this.tray.on('click', () => {
       const contextMenu = Menu.buildFromTemplate(this.buildTrayMenu());
       this.tray.setContextMenu(contextMenu);
       this.tray.popUpContextMenu();
     });
-    this.tray.on('right-click', () => {
-      window.openMainWindow();
-    });
   
+  }
+
+  private getIcon = () => {
+
+    // need to know if an update is available
+    const updateAvailable = this.autoUpdater.updateAvailable;
+  
+    // tray icon
+    const assetsFolder = process.env.DEBUG ? path.resolve('./assets') : process.resourcesPath;
+    if (process.platform === 'win32') {
+      const trayIconPath = path.join(assetsFolder, 'icon.ico');
+      return nativeImage.createFromPath(trayIconPath);
+    } else {
+      const iconColor = process.platform === 'linux' ? 'White' : 'Template';
+      const trayIconPath = path.join(assetsFolder, updateAvailable ? `trayUpdate${iconColor}@2x.png` : `tray${iconColor}@2x.png`);
+      //console.log('trayIconPath', trayIconPath);
+      const trayIcon = nativeImage.createFromPath(trayIconPath);
+      trayIcon.setTemplateImage(true);
+      return trayIcon;
+    }
+
   }
 
   private buildTrayMenu = (): Array<Electron.MenuItemConstructorOptions> => {
