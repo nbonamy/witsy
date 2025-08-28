@@ -28,7 +28,7 @@
       </footer>
     </template>
     <footer>
-      <button class="run-agent cta" @click="onRunAgent"><MessageCircleMoreIcon /> {{ t('common.runAgent') }}</button>
+      <!-- <button class="run-agent cta" @click="onRunAgent"><MessageCircleMoreIcon /> {{ t('common.runAgent') }}</button> -->
       <button class="new-chat cta" @click="onNewChat"><MessageCircleMoreIcon /> {{ t('common.newChat') }}</button>
     </footer>
     <div class="resizer" :style="`left: ${width-5}px`" @mousedown="onResizeSidebarStart" v-if="visible">&nbsp;</div>
