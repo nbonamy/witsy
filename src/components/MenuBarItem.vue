@@ -64,8 +64,8 @@ const onClick = () => {
   &:deep() {
 
     svg {
-      width: 1.25rem;
-      height: 1.25rem;
+      width: var(--icon-lg);
+      height: var(--icon-lg);
     }
 
     span {

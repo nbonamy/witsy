@@ -17,7 +17,7 @@
     </div>
     <div class="actions">
       <PlusIcon
-        class="icon prompt-menu scale105"
+        class="icon prompt-menu"
         @click="onPromptMenu"
         ref="promptMenuAnchor"
       />
@@ -1357,8 +1357,8 @@ defineExpose({
       }
 
       svg {
-        width: 1rem;
-        height: 1rem;
+        width: var(--icon-md);
+        height: var(--icon-md);
       }
 
       .icon.caret {
@@ -1378,8 +1378,8 @@ defineExpose({
       justify-content: center;
 
       svg {
-        width: 1rem;
-        height: 1rem;
+        width: var(--icon-md);
+        height: var(--icon-md);
         color: white;
       }
 

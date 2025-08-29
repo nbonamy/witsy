@@ -30,7 +30,7 @@
             </div>
 
             <div class="wizard-step" :class="{ active: isStepVisible(kStepWorkflow), completed: isStepCompleted(kStepWorkflow) }" @click="onStepClick(kStepWorkflow)" v-if="hasStep(kStepWorkflow)">
-              <FlowIcon class="icon scale120" /> {{ t('agent.create.workflow.title') }}
+              <FlowIcon class="icon" /> {{ t('agent.create.workflow.title') }}
             </div>
 
             <div class="wizard-step" :class="{ active: isStepVisible(kStepInvocation), completed: isStepCompleted(kStepInvocation) }" @click="onStepClick(kStepInvocation)" v-if="hasStep(kStepInvocation)">

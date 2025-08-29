@@ -70,8 +70,8 @@ const getEngineName = (engine: string) => {
     border-radius: 0.5rem;
 
     .logo {
-      width: 1.5rem;
-      height: 1.5rem;
+      width: var(--icon-xl);
+      height:var(--icon-xl);
     }
   }
 }

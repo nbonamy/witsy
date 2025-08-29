@@ -137,8 +137,8 @@ const onDownload = () => {
     
     .icon {
       fill: none;
-      width: 1rem;
-      height: 1rem;
+      width: var(--icon-md);
+      height: var(--icon-md);
     }
   }
 

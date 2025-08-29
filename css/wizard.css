@@ -60,8 +60,8 @@
         }
 
         .icon {
-          width: 1.25rem;
-          height: 1.25rem;
+          width: 1var(--icon-lg);
+          height: var(--icon-lg);
         }
 
         &.active {

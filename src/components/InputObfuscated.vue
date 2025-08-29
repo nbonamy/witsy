@@ -71,8 +71,8 @@ const onKeyUp = (event: KeyboardEvent) => {
   padding-right: 0.5rem;
   right: 1px;
   z-index: 2;
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-md);
+  height: var(--icon-md);
 }
 
 </style>

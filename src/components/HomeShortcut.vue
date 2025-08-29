@@ -40,8 +40,8 @@ function onClick() {
   cursor: pointer;
 
   .icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: var(--icon-xl);
+    height: var(--icon-xl);
     aspect-ratio: 1/1;
     flex-shrink: 0;
   }

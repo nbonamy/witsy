@@ -565,8 +565,8 @@ button {
   gap: 0.5rem;
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    width: var(--icon-md);
+    height: var(--icon-md);
     stroke-width: 2px;
   }
 
@@ -699,8 +699,8 @@ table.table-plain {
 
       svg {
         cursor: pointer;
-        width: 1rem;
-        height: 1rem;
+        width: var(--icon-md);
+        height: var(--icon-md);
       }
     }
   }
@@ -714,8 +714,8 @@ table.table-plain {
     td .actions {
       gap: 1rem;
       svg {
-        width: 1.25rem;
-        height: 1.25rem;
+        width: var(--icon-lg);
+        height: var(--icon-lg);
       }
     }
 
@@ -808,33 +808,10 @@ table.table-plain {
 }
 
 .lucide {
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-md);
+  height: var(--icon-md);
 }
 
-svg.scale90 {
-  transform: scale(0.9);
-}
-
-svg.scale95 {
-  transform: scale(0.95);
-}
-
-svg.scale105 {
-  transform: scale(1.05);
-}
-
-svg.scale110 {
-  transform: scale(1.1);
-}
-
-svg.scale115 {
-  transform: scale(1.15);
-}
-
-svg.scale120 {
-  transform: scale(1.2);
-}
 
 .flex-push {
   flex: 1;

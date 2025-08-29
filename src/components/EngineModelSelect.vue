@@ -127,8 +127,8 @@ const onModelSelected = (engine: string, model: string) => {
 }
 
 .engine-logo {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
   flex-shrink: 0;
 }
 
@@ -137,8 +137,8 @@ const onModelSelected = (engine: string, model: string) => {
 }
 
 .chevron {
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-md);
+  height: var(--icon-md);
   color: var(--color-text-secondary);
   fill: var(--color-text-secondary);
   transition: transform 0.2s ease;

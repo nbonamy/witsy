@@ -400,8 +400,8 @@ defineExpose({
     color: var(--text-color);
     
     .section-icon {
-      width: 1.25rem;
-      height: 1.25rem;
+      width: var(--icon-lg);
+      height: var(--icon-lg);
       color: var(--accent-color);
       opacity: 0.8;
     }
@@ -479,8 +479,8 @@ defineExpose({
     color: var(--text-color);
     
     .section-icon {
-      width: 1.25rem;
-      height: 1.25rem;
+      width: var(--icon-lg);
+      height: var(--icon-lg);
       color: var(---color);
       opacity: 0.8;
     }

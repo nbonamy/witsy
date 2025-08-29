@@ -75,8 +75,8 @@
       }
 
       .icon {
-        width: 1rem;
-        height: 1rem;
+        width: var(--icon-md);
+        height: var(--icon-md);
       }
     }
 
@@ -149,15 +149,11 @@
         color: var(--chatarea-toolbar-text-color);
       }
 
-      .push {
-        flex: 1;
-      }
-
       .icon {
         cursor: pointer;
         text-align: right;
-        width: 1rem;
-        height: 1rem;
+        width: var(--icon-md);
+        height: var(--icon-md);
         color: var(--chatarea-toolbar-icon-color);
         margin-left: auto;
         opacity: 0.7;
@@ -201,8 +197,8 @@
           gap: 0.25rem;
           .icon {
             display: block;
-            width: 1.5rem;
-            height: 1.5rem;
+            width: var(--icon-xl);
+            height: var(--icon-xl);
             cursor: pointer;
           }
         }
@@ -271,10 +267,6 @@
           flex-direction: row;
           align-items: center;
           gap: 1.5rem;
-          
-          .push {
-            flex: 1;
-          }
           
           .list-action {
             font-size: 14px;
@@ -399,8 +391,8 @@
         padding-bottom: 1.105rem;
       }
       .icon {
-        width: 1.25rem;
-        height: 1.25rem;
+        width: var(--icon-lg);
+        height: var(--icon-lg);
       }
     }
 

@@ -159,8 +159,8 @@ const onKeyDown = (event: KeyboardEvent) => {
         gap: 0.6em;
 
         .logo {
-          width: 1.5rem;
-          height: 1.5rem;
+          width: var(--icon-xl);
+          height: var(--icon-xl);
         }
 
       }
@@ -201,8 +201,8 @@ const onKeyDown = (event: KeyboardEvent) => {
         gap: 0.6em;
 
         .logo {
-          width: 1.5rem;
-          height: 1.5rem;
+          width: var(--icon-xl);
+          height: var(--icon-xl);
         }
 
         .label, .id {

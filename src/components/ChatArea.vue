@@ -12,7 +12,7 @@
       </div>
 
       <!-- <div class="icon run-agent" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-right' }" @click="onRunAgent">
-        <IconRunAgent class="scale120" />
+        <IconRunAgent />
       </div> -->
 
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
@@ -397,8 +397,8 @@ defineExpose({
       }
 
       svg {
-        width: 1.25rem;
-        height: 1.25rem;
+        width:var(--icon-lg);
+        height: var(--icon-lg);
       }
 
       .icon {
@@ -447,8 +447,7 @@ defineExpose({
         }
 
         &:deep() .prompt {
-          margin: 1rem;
-          
+          margin: 1.5rem;
         }
       }
 

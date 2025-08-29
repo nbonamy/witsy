@@ -133,8 +133,8 @@ defineExpose({
   .agent-icon {
     flex-shrink: 0;
     svg {
-      width: 1.5rem;
-      height: 1.5rem;
+      width: var(--icon-xl);
+      height: var(--icon-xl);
       color: var(--text-color);
     }
   }
