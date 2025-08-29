@@ -14,7 +14,14 @@ import { loadSettings, saveSettings, settingsFilePath } from './config'
 import McpOAuthManager from './mcp_auth'
 import Monitor from './monitor'
 
+type ToolsCacheEntry = {
+  tools: any
+  timestamp: number
+}
+
 export default class {
+
+  private readonly CACHE_TTL_MS = 10 * 60 * 1000 // 10 minutes
 
   app: App
   monitor: Monitor|null
@@ -22,6 +29,7 @@ export default class {
   clients: McpClient[]
   logs: { [key: string]: string[] }
   oauthManager: McpOAuthManager
+  toolsCache: Map<string, ToolsCacheEntry>
   
   constructor(app: App) {
     this.app = app
@@ -30,6 +38,33 @@ export default class {
     this.currentConfig = null
     this.logs = {}
     this.oauthManager = new McpOAuthManager(app)
+    this.toolsCache = new Map()
+  }
+
+  private getCachedTools = async (client: McpClient): Promise<any> => {
+    const uuid = client.server.uuid
+    const cached = this.toolsCache.get(uuid)
+    
+    if (cached && Date.now() - cached.timestamp < this.CACHE_TTL_MS) {
+      return cached.tools
+    }
+
+    // Cache miss or expired, fetch new tools
+    const tools = await client.client.listTools()
+    this.toolsCache.set(uuid, {
+      tools,
+      timestamp: Date.now()
+    })
+    
+    return tools
+  }
+
+  private invalidateToolsCache = (uuid?: string): void => {
+    if (uuid) {
+      this.toolsCache.delete(uuid)
+    } else {
+      this.toolsCache.clear()
+    }
   }
 
   getStatus = (): McpStatus => {
@@ -40,6 +75,33 @@ export default class {
       })),
       logs: this.logs
     }
+  }
+
+  getAllServersWithTools = async (): Promise<Array<{ server: McpServer; tools: McpTool[] }>> => {
+    const results: Array<{ server: McpServer; tools: McpTool[] }> = []
+    
+    for (const client of this.clients) {
+      try {
+        const tools = await this.getCachedTools(client)
+        const mcpTools: McpTool[] = tools.tools.map((tool: any) => ({
+          name: tool.name,
+          description: tool.description || tool.name
+        }))
+        
+        results.push({
+          server: client.server,
+          tools: mcpTools
+        })
+      } catch (e) {
+        console.error(`Failed to get tools from MCP server ${client.server.url}:`, e)
+        results.push({
+          server: client.server,
+          tools: []
+        })
+      }
+    }
+    
+    return results
   }
 
   getServers = (): McpServer[] => {
@@ -99,6 +161,9 @@ export default class {
     if (client) {
       this.disconnect(client)
     }
+
+    // invalidate cache for this server
+    this.invalidateToolsCache(uuid)
 
     // is it a normal server
     if (config.mcp.servers.find((s: McpServer) => s.uuid === uuid)) {
@@ -236,6 +301,9 @@ export default class {
       this.disconnect(client)
     }
 
+    // invalidate cache for this server
+    this.invalidateToolsCache(server.uuid)
+
     // search for server in normal server
     const original = config.mcp.servers.find((s: McpServer) => s.uuid === server.uuid)
     if (original) {
@@ -350,6 +418,7 @@ export default class {
       await client.client.close()
     }
     this.clients = []
+    this.invalidateToolsCache()
     this.oauthManager.shutdown()
   }
 
@@ -428,8 +497,8 @@ export default class {
     // })
 
     // get tools
-    const tools = await client.listTools()
-    const toolNames = tools.tools.map(tool => this.uniqueToolName(server, tool.name))
+    const tools = await this.getCachedTools({ client, server, tools: [] } as McpClient)
+    const toolNames = tools.tools.map((tool: any) => this.uniqueToolName(server, tool.name))
 
     // store
     this.clients.push({
@@ -654,7 +723,7 @@ export default class {
     const client = this.clients.find(client => client.server.uuid === uuid)
     if (!client) return []
 
-    const tools = await client.client.listTools()
+    const tools = await this.getCachedTools(client)
     return tools.tools.map((tool: any) => ({
       name: tool.name,
       description: tool.description    
@@ -666,7 +735,7 @@ export default class {
     const allTools: LlmTool[] = []
     for (const client of this.clients) {
       try {
-        const tools = await client.client.listTools()
+        const tools = await this.getCachedTools(client)
         for (const tool of tools.tools) {
           try {
             const functionTool = this.mcpToOpenAI(client.server, tool)

@@ -407,6 +407,46 @@ test('Connect', async () => {
   ])
 })
 
+test('getAllServersWithTools', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+  
+  const result = await mcp.getAllServersWithTools()
+  expect(result).toHaveLength(4)
+  
+  // Check the structure of each server with tools
+  expect(result[0]).toEqual({
+    server: expect.objectContaining({
+      uuid: '1234-5678-90ab',
+      type: 'stdio',
+      command: 'node',
+      url: 'script.js'
+    }),
+    tools: [
+      { name: 'tool1', description: 'tool1 description' },
+      { name: 'tool2', description: 'tool2' },
+      { name: 'tool3', description: 'tool3 description' }
+    ]
+  })
+  
+  expect(result[1]).toEqual({
+    server: expect.objectContaining({
+      uuid: '2345-6789-0abc',
+      type: 'sse',
+      url: 'http://localhost:3000'
+    }),
+    tools: [
+      { name: 'tool1', description: 'tool1 description' },
+      { name: 'tool2', description: 'tool2' },
+      { name: 'tool3', description: 'tool3 description' }
+    ]
+  })
+  
+  // Verify that tools are the original names (not the unique suffixed ones)
+  expect(result[2].tools[0].name).toBe('tool1')
+  expect(result[2].tools[0].name).not.toContain('___')
+})
+
 test('Does not connect twice', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.connect())

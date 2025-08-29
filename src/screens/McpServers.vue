@@ -55,8 +55,6 @@ const onClose = () => {
 }
 
 const load = async () => {
-
-  console.log('Loading MCP servers...')
   selected.value = null
   loading.value = true
   await nextTick()
@@ -64,7 +62,6 @@ const load = async () => {
   servers.value = window.api.mcp.getServers()
   status.value = window.api.mcp.getStatus()
   setTimeout(() => {
-    console.log('MCP servers loaded')
     loading.value = false
   }, 1000 - (new Date().getTime() - now))
 }

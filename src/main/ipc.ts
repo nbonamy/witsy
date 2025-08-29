@@ -3,7 +3,7 @@
 import { History, Command, Expert } from '../types/index';
 import { Configuration } from '../types/config';
 import { Application, RunCommandParams } from '../types/automation';
-import { McpInstallStatus, McpTool } from '../types/mcp';
+import { McpInstallStatus, McpTool, McpServer } from '../types/mcp';
 import { LlmTool } from 'multi-llm-ts';
 
 import process from 'node:process';
@@ -630,6 +630,10 @@ export const installIpc = (
 
   ipcMain.on(IPC.MCP.GET_STATUS, (event): void => {
     event.returnValue = mcp ? mcp.getStatus() : null;
+  });
+
+  ipcMain.handle(IPC.MCP.GET_ALL_SERVERS_WITH_TOOLS, async (): Promise<Array<{ server: McpServer; tools: McpTool[] }>> => {
+    return mcp ? await mcp.getAllServersWithTools() : [];
   });
 
   ipcMain.handle(IPC.MCP.GET_SERVER_TOOLS, async (_, payload): Promise<McpTool[]> => {

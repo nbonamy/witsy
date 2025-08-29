@@ -192,6 +192,7 @@ contextBridge.exposeInMainWorld(
       installServer: (registry: string, server: string, apiKey: string): Promise<boolean> => { return ipcRenderer.invoke(IPC.MCP.INSTALL_SERVER, { registry, server, apiKey }) }, 
       reload: (): Promise<void> => { return ipcRenderer.invoke(IPC.MCP.RELOAD) },
       getStatus: (): McpStatus|null => { return ipcRenderer.sendSync(IPC.MCP.GET_STATUS) },
+      getAllServersWithTools: (): Promise<Array<{ server: McpServer; tools: McpTool[] }>> => { return ipcRenderer.invoke(IPC.MCP.GET_ALL_SERVERS_WITH_TOOLS) },
       getServerTools: (uuid: string): Promise<McpTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_SERVER_TOOLS, uuid) },
       getTools: (): Promise<LlmTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_TOOLS) },
       callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke(IPC.MCP.CALL_TOOL, { name, parameters }) },
