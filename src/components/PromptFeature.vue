@@ -34,6 +34,13 @@ const onClear = () => {
   gap: 0.25rem;
   color: var(--highlight-color);
   margin-left: 0.5rem;
+  padding: 0.25rem;
+
+  &:hover {
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: var(--color-secondary-container);
+  }
 }
 
 .prompt-feature .icon {
