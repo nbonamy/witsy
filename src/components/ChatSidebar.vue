@@ -312,7 +312,7 @@ defineExpose({
           padding: 0.5rem 0.75rem;
           gap: 0.25rem;
 
-          &#sort svg {
+          &[name=sort] svg {
             fill: var(--text-color);
           }
         }
@@ -330,15 +330,7 @@ defineExpose({
         padding: 10px 12px;
       }
 
-      .select-all {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 500;
-        cursor: pointer;
-      }
-
-      button#delete svg {
+      button[name=delete] svg {
         color: var(--color-error);
       }
 
