@@ -2,7 +2,7 @@
 import { ChatModel, EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
 import { DesignStudioMediaType, Shortcut, strDict, TTSVoice } from './index'
 import { PluginConfig } from '../plugins/plugin'
-import { McpClaudeServer, McpServer, McpServerState, McpOAuthConfig } from './mcp'
+import { McpClaudeServer, McpServer, McpServerState } from './mcp'
 import { ToolSelection } from './llm'
 
 export type Configuration = {
@@ -96,7 +96,6 @@ export type LLMConfig = {
   defaults: ModelDefaults[]
   customInstructions: CustomInstruction[]
   additionalInstructions: {
-    toolRetry: boolean
     datetime: boolean
     mermaid: boolean
     artifacts: boolean
@@ -164,8 +163,6 @@ export type AutomationConfig = {
 
 export type ChatToolMode = 'never' | 'calling' | 'always'
 
-export type TextFormat = 'text' | 'markdown'
-
 export type ChatAppearance = {
   showReasoning: boolean
   theme: string
@@ -175,7 +172,6 @@ export type ChatAppearance = {
     html: boolean
   }
   showToolCalls: ChatToolMode
-  copyFormat: TextFormat
 }
 
 export type ChatListMode = 'timeline' | 'folder'
@@ -197,6 +193,8 @@ export type ShortcutsConfig = {
   realtime: Shortcut
   studio: Shortcut
   forge: Shortcut
+  // optional Flag: globale Shortcuts (Default-Logik erfolgt zur Laufzeit in main/shortcuts.ts)
+  enableGlobalShortcuts?: boolean
 }
 
 export type ScratchpadConfig = {
@@ -234,8 +232,13 @@ export type STTConfig = {
     gpu: boolean
   }
   soniox?: {
+    languageHints?: string[]
+    endpointDetection?: boolean
     cleanup?: boolean
     audioFormat?: string
+    proxy?: 'temporary_key' | 'proxy_stream'
+    tempKeyExpiry?: number
+    speakerDiarization?: boolean
   }
   //silenceAction: SilenceAction
 }
@@ -290,7 +293,6 @@ export type RagConfig = {
 export type McpServerExtra = {
   label?: string
   state?: McpServerState
-  oauth?: McpOAuthConfig
 }
 
 export type McpConfig = {
@@ -299,4 +301,3 @@ export type McpConfig = {
   mcpServersExtra: Record<string, McpServerExtra>
   smitheryApiKey: string
 }
-
