@@ -2,13 +2,13 @@
   <div class="computer">
     <img ref="logo" class="logo" />
     <div class="state">{{ state || t('computerUse.state.idle') }}</div>
-    <XCircleIcon class="stop" @click="onStop()" />
+    <CircleXIcon class="stop" @click="onStop()" />
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { XCircleIcon } from 'lucide-vue-next'
+import { CircleXIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { t } from '../services/i18n'

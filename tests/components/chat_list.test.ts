@@ -56,14 +56,6 @@ test('Shows chats', async () => {
   })
 })
 
-test('Switches to folder mode', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined } } )
-  await wrapper.find('.button-group button:nth-child(1)').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('chat-list-mode', 'timeline')
-  await wrapper.find('.button-group button:nth-child(2)').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('chat-list-mode', 'folder')
-})
-
 test('Shows day indicator', async () => {
   const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined } } )
   expect(wrapper.findAll('.day')).toHaveLength(6)
@@ -112,51 +104,37 @@ test('Toggles folder state', async () => {
   expect(localStorage.getItem('expandedFolders')).toBe(`${store.rootFolder.id},1`)
 })
 
-test('Select chat', async () => {
+test('Change chat (non-select mode)', async () => {
   const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined } } )
   expect(wrapper.findAll('.selected')).toHaveLength(0)
   await wrapper.findAll('.chat').at(3)!.trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('select-chat', store.history.chats[3])
 })
 
-test('Select chat', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'folder', chat: undefined } } )
+test('Select chat (select mode)', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'folder', selectMode: true, chat: undefined } } )
   expect(wrapper.findAll('.selected')).toHaveLength(0)
   await wrapper.findAll('.chat').at(3)!.trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('select-chat', store.history.chats[3])
+  expect(wrapper.vm.selection).toStrictEqual([store.history.chats[3].uuid])
 })
+
+test('Multiselect', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'folder', selectMode: true, chat: undefined } } )
+  expect(wrapper.findAll('.select')).toHaveLength(10)
+  expect(wrapper.findAll('.select .selected')).toHaveLength(0)
+  await wrapper.findAll('.chat').at(3)!.trigger('click')
+    expect(wrapper.vm.selection).toHaveLength(1)
+  await wrapper.findAll('.chat').at(5)!.trigger('click')
+  expect(wrapper.vm.selection).toHaveLength(2)
+  await wrapper.findAll('.chat').at(5)!.trigger('click')
+  expect(wrapper.vm.selection).toHaveLength(1)
+})
+
 
 test('Shows selection', async () => {
   const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: store.history.chats[3] } } )
   expect(wrapper.findAll('.selected')).toHaveLength(1)
   expect(wrapper.findAll('.selected').at(0)!.find('.title').text()).toBe('Chat 3')
-})
-
-test('Filter All', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined } } )
-  wrapper.vm.filter = 'Subtitle'
-  await wrapper.vm.$nextTick()
-  expect(wrapper.findAll('.chat')).toHaveLength(10)
-})
-
-test('Filter Single', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined } } )
-  wrapper.vm.filter = '9'
-  await wrapper.vm.$nextTick()
-  expect(wrapper.findAll('.chat')).toHaveLength(1)
-  expect(wrapper.findAll('.chat').at(0)!.find('.title').text()).toBe('Chat 9')
-})
-
-test('Multiselect', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, selectMode: true } } )
-  expect(wrapper.findAll('.select')).toHaveLength(10)
-  expect(wrapper.findAll('.select .selected')).toHaveLength(0)
-  await wrapper.findAll('.chat').at(3)!.trigger('click')
-  expect(wrapper.findAll('.select .selected')).toHaveLength(1)
-  await wrapper.findAll('.chat').at(5)!.trigger('click')
-  expect(wrapper.findAll('.select .selected')).toHaveLength(2)
-  await wrapper.findAll('.chat').at(5)!.trigger('click')
-  expect(wrapper.findAll('.select .selected')).toHaveLength(1)
 })
 
 test('Context Menu Timeline Mode', async () => {

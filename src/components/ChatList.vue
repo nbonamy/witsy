@@ -1,17 +1,5 @@
 <template>
   <div class="chat-list">
-    <div class="header">
-      <div class="form"><div class="form-field search">
-        <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange">
-        </input>
-        <SearchIcon class="search-icon" />
-        <XCircleIcon class="clear-filter" v-if="filter" @click="onClearFilter" />
-      </div></div>
-    </div>
-    <div class="display-mode button-group" v-if="store.isFeatureEnabled('chat.folders')">
-      <button :class="{active: displayMode == 'timeline'}" @click="setDisplayMode('timeline')">{{ t('chatList.displayMode.timeline') }}</button>
-      <button :class="{active: displayMode == 'folder'}" @click="setDisplayMode('folder')">{{ t('chatList.displayMode.folders') }}</button>
-    </div>
     <div class="chats" ref="divChats">
       <ChatListTimeline v-if="displayMode == 'timeline'" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
       <ChatListFolder v-if="displayMode == 'folder'" :filtered="filter != ''" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
@@ -22,7 +10,6 @@
 
 <script setup lang="ts">
 
-import { SearchIcon, XCircleIcon } from 'lucide-vue-next'
 import { computed, onMounted, PropType, ref } from 'vue'
 import Chat from '../models/chat'
 import { t } from '../services/i18n'
@@ -33,6 +20,7 @@ import ChatListTimeline from './ChatListTimeline.vue'
 import ContextMenu from './ContextMenu.vue'
 
 import useEventBus from '../composables/event_bus'
+import { filter } from 'minimatch'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
@@ -48,19 +36,25 @@ const props = defineProps({
   selectMode: {
     type: Boolean,
     default: false,
-  }
+  },
+  filter: {
+    type: String,
+    default: '',
+  },
 })
 
 defineExpose({
   getSelection: () => selection.value,
   clearSelection: () => { selection.value = [] },
+  selectAll: () => { selection.value = visibleChats.value.map(chat => chat.uuid) },
+  unselectAll: () => { selection.value = [] },
 })
 
 const visibleChats = computed(() => store.history.chats.filter((c: Chat) => {
   if (c.uuid === kMediaChatId) return false
-  if (filter.value.trim().length === 0) return true
-  if (c.title?.toLowerCase().includes(filter.value.trim().toLowerCase())) return true
-  if (c.messages.some(m => m.content?.toLowerCase().includes(filter.value.trim().toLowerCase()))) return true
+  if (props.filter.trim().length === 0) return true
+  if (c.title?.toLowerCase().includes(props.filter.trim().toLowerCase())) return true
+  if (c.messages.some(m => m.content?.toLowerCase().includes(props.filter.trim().toLowerCase()))) return true
   return false
 }).toSorted((a: Chat, b: Chat) => b.lastModified - a.lastModified))
 
@@ -70,7 +64,6 @@ const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const targetRow = ref<Chat|null>(null)
-const filter = ref('')
 
 const contextMenuActions = () => [
   { label: t('common.rename'), action: 'rename' },
@@ -89,10 +82,6 @@ onMounted(() => {
     }, 500)
   })
 })
-
-const setDisplayMode = (mode: ChatListMode) => {
-  emitEvent('chat-list-mode', mode)
-}
 
 const onSelectChat = (chat: Chat) => {
   if (props.selectMode) {
@@ -137,15 +126,6 @@ const handleActionClick = async (action: string) => {
 
 }
 
-const onFilterChange = () => {
-  store.chatState.filter = filter.value.trim()
-}
-
-const onClearFilter = () => {
-  filter.value = ''
-  store.chatState.filter = null
-}
-
 </script>
 
 <style scoped>
@@ -157,48 +137,6 @@ const onClearFilter = () => {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-
-  .header {
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .form {
-      flex: 1;
-
-      input {
-        padding: 1rem;
-        font-size: 14.5px;
-        padding-left: 3rem;
-      }
-
-      .search-icon {
-        position: absolute;
-        left: 2.5rem;
-        width: 1.25rem;
-        height: 1.25rem;
-      }
-
-      .clear-filter {
-        position: relative;
-        cursor: pointer;
-        left: -2rem;
-        width: 1.25rem;
-        height: 1.25rem;
-        opacity: 0.5;
-      }
-
-    }
-  }
-
-  .display-mode {
-    margin-bottom: 2rem;
-    align-self: center;
-    button {
-      padding: 0.5rem 1rem;
-    }
-  }
 
   .chats {
     flex: 1;

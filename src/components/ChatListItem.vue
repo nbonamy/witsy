@@ -1,14 +1,9 @@
 <template>
   <div class="container">
-    <div class="chat" :class="[{ selected: chat.uuid == active?.uuid }, store.config.appearance.chatList.layout]">
-      <!-- <EngineLogo :engine="engine" :background="true" /> -->
+    <div class="chat" :class="[{ selected: !selectMode && chat.uuid == active?.uuid }, store.config.appearance.chatList.layout]">
+      <input type="checkbox" class="select" :checked="selection.includes(chat.uuid)" v-if="selectMode"/>
       <div class="info" @dblclick="onRenameChat">
         <div class="title">{{ chat.title }}</div>
-        <!-- <div class="subtitle">{{ chat.subtitle() }}</div> -->
-      </div>
-      <div v-if="selectMode" class="select">
-        <CircleCheckIcon v-if="selection.includes(chat.uuid)" class="selected"/>
-        <CircleIcon v-else />
       </div>
     </div>
   </div>
@@ -16,8 +11,6 @@
 
 <script setup lang="ts">
 
-import { CircleCheckIcon, CircleIcon } from 'lucide-vue-next'
-import { computed } from 'vue'
 import Chat from '../models/chat'
 import { store } from '../services/store'
 
@@ -42,8 +35,6 @@ const props = defineProps({
     required: true,
   },
 })
-
-const engine = computed(() => props.chat.engine || store.config.llm.engine)
 
 const emit = defineEmits(['select', 'menu']);
 
@@ -88,45 +79,25 @@ const onRenameChat = () => {
       }
     }
 
-    .logo {
-      width: var(--sidebar-logo-size);
-      height: var(--sidebar-logo-size);
-      margin-right: 0.5rem;
-    }
-
     .title {
       font-weight: var(--font-weight-medium);
       font-size: 14.5px;
     }
 
-    .subtitle {
-      font-size: 12px;
-    }
-
-    .select {
-      margin-left: 1rem;
-      text-align: right;
-      flex: 1;
+    input {
+      cursor: pointer;
+      margin-right: 0.75rem;
+      text-align: left;
+      width: var(--icon-lg);
     }
 
     &.compact {
   
-      margin: 0px;
-      margin-left: 0.5rem;
-      padding: 0.25rem 0.5rem;
-
-      .logo {
-        width: calc(var(--sidebar-logo-size) / 2);
-        height: calc(var(--sidebar-logo-size) / 2);
-      }
+      margin: 0.125rem 0rem;
+      padding: 0.375rem 1rem;
 
       .title {
-        font-weight: normal;
         font-size: 14px;
-      }
-
-      .subtitle {
-        display: none;
       }
 
     }

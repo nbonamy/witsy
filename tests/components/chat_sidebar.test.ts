@@ -6,6 +6,7 @@ import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import ChatSidebar from '../../src/components/ChatSidebar.vue'
 import Chat from '../../src/models/chat'
+import Message from '../../src/models/message'
 
 enableAutoUnmount(afterAll)
 
@@ -17,9 +18,19 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  const chat = new Chat()
-  chat.setEngineModel('mock', 'chat')
-  store.history.chats = [chat]
+  const now = new Date()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 1).getTime();
+  store.history = { folders: [], chats: [], quickPrompts: [] }
+  for (let i = 0; i < 10; i++) {
+    const chat = new Chat()
+    chat.title = `Chat ${i}`
+    chat.setEngineModel('mock', 'chat')
+    chat.lastModified = todayStart - i * i/2 * 86400000
+    chat.messages.push(new Message('system', 'System Prompt'))
+    chat.messages.push(new Message('user', `Question ${i}`))
+    chat.messages.push(new Message('assistant', `Subtitle ${i}`))
+    store.addChat(chat)
+  }
 })
 
 test('No chat', async () => {
@@ -45,21 +56,21 @@ test('New Chat', async () => {
 //   expect(store.config.appearance.chatList.mode).toBe('folder')
 // })
 
-test('Start and Cancel Delete', async () => {
+test('Start and Cancel Selection', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.sp-sidebar footer #select').trigger('click')
+  await wrapper.find('.sp-sidebar .chat-list-tools button[name=select]').trigger('click')
   expect(wrapper.vm.selectMode).toBe(true)
-  expect(wrapper.find('.sp-sidebar footer.actions').exists()).toBe(true)
-  await wrapper.find('.sp-sidebar footer.actions #cancel-delete').trigger('click')  
+  expect(wrapper.find('.sp-sidebar footer.select-actions').exists()).toBe(true)
+  await wrapper.find('.sp-sidebar .chat-list-tools button[name=select]').trigger('click')
   expect(wrapper.vm.selectMode).toBe(false)
-  expect(wrapper.find('.sp-sidebar footer.actions').exists()).toBe(false)
+  expect(wrapper.find('.sp-sidebar footer.select-actions').exists()).toBe(false)
 })
 
 test('Delete Chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.sp-sidebar footer #select').trigger('click')
+  await wrapper.find('.sp-sidebar .chat-list-tools button[name=select]').trigger('click')
   await wrapper.findAll('.sp-sidebar .chats .chat')[0].trigger('click')
-  await wrapper.find('.sp-sidebar footer.actions #delete').trigger('click')
+  await wrapper.find('.sp-sidebar footer.select-actions button[name=delete]').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', [store.history.chats[0].uuid])
   wrapper.vm.cancelSelectMode()
   await wrapper.vm.$nextTick()
@@ -70,19 +81,43 @@ test('Delete Chat', async () => {
 test('Move Chat', async () => {
   store.config.appearance.chatList.mode = 'folder'
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.sp-sidebar footer #select').trigger('click')
+  await wrapper.find('.sp-sidebar .chat-list-tools button[name=select]').trigger('click')
   await wrapper.findAll('.sp-sidebar .chats .chat')[0].trigger('click')
-  await wrapper.find('.sp-sidebar footer #move').trigger('click')
+  await wrapper.find('.sp-sidebar footer.select-actions button[name=move]').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('move-chat', [store.history.chats[0].uuid])
   wrapper.vm.cancelSelectMode()
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.selectMode).toBe(false)
-  expect(wrapper.find('.sp-sidebar footer #move').exists()).toBe(false)
+  expect(wrapper.find('.sp-sidebar footer.select-actions button[name=move]').exists()).toBe(false)
 })
 
-// test('Filter Textbox', async () => {
-//   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-//   await wrapper.find('.sp-sidebar header #filter').setValue('Test')
-//   await wrapper.find('.sp-sidebar header #filter').trigger('keyup')
-//   expect(store.chatState.filter).toBe('Test')
-// })
+test('Switches to folder mode', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatSidebar, { props: { displayMode: 'timeline', chat: undefined } } )
+  await wrapper.find('.sp-sidebar .chat-list-tools .display-mode button[name=timeline]').trigger('click')
+  expect(wrapper.vm.displayMode).toBe('timeline')
+  await wrapper.find('.sp-sidebar .chat-list-tools .display-mode button[name=folders]').trigger('click')
+  expect(wrapper.vm.displayMode).toBe('folder')
+})
+
+test('Filter Textbox', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  await wrapper.find('.sp-sidebar .chat-list-tools button[name=search]').trigger('click')
+  await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').setValue('Test')
+  await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').trigger('keyup')
+  expect(store.chatState.filter).toBe('Test')
+})
+
+test('Filter All', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  wrapper.vm.filter = 'Subtitle'
+  await wrapper.vm.$nextTick()
+  expect(wrapper.findAll('.chat')).toHaveLength(10)
+})
+
+test('Filter Single', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  wrapper.vm.filter = '9'
+  await wrapper.vm.$nextTick()
+  expect(wrapper.findAll('.chat')).toHaveLength(1)
+  expect(wrapper.findAll('.chat').at(0)!.find('.title').text()).toBe('Chat 9')
+})

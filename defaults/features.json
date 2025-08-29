@@ -9,7 +9,7 @@
   "workspaces": true,
   "chat": {
     "commands": false,
-    "folders": false,
+    "folders": true,
     "dates": false,
     "settings": true,
     "temporary": false,
