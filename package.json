@@ -78,7 +78,7 @@
     "name": "Nicolas Bonamy",
     "email": "nicolas@bonamy.fr"
   },
-  "license": "Apache-2.0",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@a2a-js/sdk": "^0.2.4",
     "@breezystack/lamejs": "^1.2.7",
