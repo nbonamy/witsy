@@ -3,7 +3,7 @@
     <div class="list-action new" @click="onNew"><PlusIcon />{{ t('settings.commands.new') }}</div>
     <div class="list-action edit" @click="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
     <div class="list-action delete" @click="onDelete" v-if="selected"><Trash2Icon />{{ t('common.delete') }}</div>
-    <div class="push" /> 
+    <div class="flex-push" /> 
     <div class="list-action defaults" @click="onDefaults"><Settings2Icon /></div>
     <div class="list-action menu" @click.stop="onMore" ref="moreButton"><div></div><div></div><div></div></div>
   </div>

@@ -88,7 +88,7 @@
             <button name="summarize" class="button" @click="onSummarize" :disabled="!transcription || state === 'processing'"><BIconChevronBarContract /> {{ t('transcribe.summarize') }}</button>
             <button name="translate" class="button" @click="onTranslate" :disabled="!transcription || state === 'processing'"><BIconGlobe /></button>
             <button name="commands" class="button" @click="onCommands" :disabled="!transcription || state === 'processing'"><BIconMagic /></button>
-            <div class="push"></div>
+            <div class="flex-push"></div>
             <button name="clear" class="button" @click="onClear" :disabled="!transcription || state === 'processing'">{{ t('common.clear') }}</button>
             <button name="insert" class="button" @click="onInsert" :disabled="!transcription || state === 'processing'" v-if="!isMas">{{ t('common.insert') }}</button>
             <button name="copy" class="button" @click="onCopy" :disabled="!transcription || state === 'processing'">{{ copying ? t('common.copied') : t('common.copy') }}</button>
@@ -844,9 +844,6 @@ button {
           flex-direction: row;
         }
 
-        .push {
-          flex: 1;
-        }
       }
 
       .help {

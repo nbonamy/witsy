@@ -50,7 +50,7 @@
         @clear="clearDeepResearch"
       />
 
-      <div class="push"></div>
+      <div class="flex-push"></div>
       
       <slot name="actions" />
       
@@ -1335,10 +1335,6 @@ defineExpose({
     display: flex;
     gap: 0.25rem;
     align-items: center;
-
-    .push {
-      flex: 1;
-    }
 
     &:not(:has(*)) {
       display: none;
