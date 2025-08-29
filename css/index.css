@@ -50,8 +50,8 @@
   --control-button-border-radius: var(--control-border-radius);
   --control-button-active-bg-color: #f2f2f2;
   --control-button-disabled-bg-color: #f2f2f2;
-  --control-button-disabled-border-color: var(--control-button-border-color);
-  --control-button-disabled-text-color: #888;
+  --control-button-disabled-border-color: var(--color-outline-variant);
+  --control-button-disabled-text-color: var(--color-outline-variant);
   --control-textarea-bg-color: var(--background-color);
   --control-placeholder-text-color: rgb(117, 117, 117);
   --control-list-bg-color: var(--background-color);
@@ -456,26 +456,27 @@ textarea {
 }
 
 input[type=checkbox] {
-  width: 14px;
-  height: 14px;
-  min-width: 14px !important;
-  max-width: 14px !important;
-}
-
-.macos input[type=checkbox] {
   outline: none;
   appearance: none;
   padding: 0;
-  border-radius: 0px;
+  width: 20px;
+  height: 20px;
+  min-width: 20px !important;
+  max-width: 20px !important;
+  border-radius: 3.5px;
   background: var(--control-checkbox-bg-color);
+  border: 2px solid var(--color-outline);
 
   &:after {
     position: relative;
+    display: inline-block;
     color: transparent;
     content: '\2713';
-    font-size: 10px;
-    font-weight: var(--font-weight-bold);
-    left: 2.5px;
+    font-size: 14px;
+    font-weight: var(--font-weight-medium);
+    transform: scaleX(1.1) scaleY(0.9);
+    left: 4px;
+    top: 0.5px;
   }
 
   &:checked {
@@ -493,10 +494,6 @@ input[type=checkbox] {
   &:disabled {
     background: var(--color-outline);
   }
-}
-
-.macos input[type=checkbox].large:checked:after, .macos .form-large input[type=checkbox]:checked:after {
-  top: -2.5px;
 }
 
 input[type=range] {
@@ -575,7 +572,6 @@ button {
   }
 
   &:disabled {
-    background-color: var(--control-button-disabled-bg-color);
     border: 1px solid var(--control-button-disabled-border-color);
     color: var(--control-button-disabled-text-color);
     cursor: not-allowed;

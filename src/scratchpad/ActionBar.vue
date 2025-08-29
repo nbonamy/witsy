@@ -26,7 +26,7 @@
       
       <div :class="{ action: true, active: audioState == 'playing', static: true }" @click="emitEvent('action', 'read')" v-tooltip="t('common.read')">
         <span v-if="audioState == 'playing'"><StopCircleIcon/></span>
-        <span v-else-if="audioState == 'loading'"><XCircleIcon/></span>
+        <span v-else-if="audioState == 'loading'"><CircleXIcon/></span>
         <span v-else><Volume2Icon /></span>
       </div>
     
@@ -70,7 +70,7 @@
 <script setup lang="ts">
 
 import FloatingVue, { vTooltip } from 'floating-vue'
-import { ClipboardCheckIcon, ClipboardIcon, FoldVerticalIcon, GraduationCapIcon, ListIcon, MoveLeftIcon, PencilLineIcon, RedoIcon, SparklesIcon, SpellCheckIcon, StopCircleIcon, TypeOutlineIcon, UndoIcon, UnfoldVerticalIcon, Volume2Icon, XCircleIcon } from 'lucide-vue-next'
+import { ClipboardCheckIcon, ClipboardIcon, FoldVerticalIcon, GraduationCapIcon, ListIcon, MoveLeftIcon, PencilLineIcon, RedoIcon, SparklesIcon, SpellCheckIcon, StopCircleIcon, TypeOutlineIcon, UndoIcon, UnfoldVerticalIcon, Volume2Icon, CircleXIcon } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import { t } from '../services/i18n'
 

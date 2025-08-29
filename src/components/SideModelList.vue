@@ -14,25 +14,21 @@
         <InputObfuscated v-model="store.config.engines[selectedEngine].apiKey" />
       </div> -->
 
-      <div class="form-field">
-        <div class="models-header">
-          <label>Available models</label>
-          <RotateCwIcon
-            class="refresh-icon" 
-            :class="{ spinning: isRefreshing }"
-            @click="refreshModels"
-          />
-        </div>
-        <template v-for="model in store.config.engines[selectedEngine].models.chat" :key="model">
-          <label class="checkbox">
-            <input 
-              type="checkbox" 
-              :checked="isModelEnabledInWorkspace(selectedEngine, model)" 
-              @change="$emit('toggle-model', selectedEngine, model.id)" 
-            />
-            <span>{{ model.name }}</span>
-          </label>
-        </template>
+      <div class="form-field horizontal models-header">
+        <label>Available models</label>
+        <RotateCwIcon
+          class="refresh-icon" 
+          :class="{ spinning: isRefreshing }"
+          @click="refreshModels"
+        />
+      </div>
+      <div v-for="model in store.config.engines[selectedEngine].models.chat" :key="model.id" class="form-field horizontal model">
+        <input 
+          type="checkbox" 
+          :checked="isModelEnabledInWorkspace(selectedEngine, model)" 
+          @change="$emit('toggle-model', selectedEngine, model.id)" 
+        />
+        <label>{{ model.name }}</label>
       </div>
     </template>
   </SideDrawer>
@@ -105,6 +101,7 @@ defineExpose({
 </script>
 
 <style scoped>
+
 .models-header {
   display: flex;
   align-items: center;
@@ -136,13 +133,8 @@ defineExpose({
   }
 }
 
-.checkbox {
+.form.form-vertical .form-field.model {
   cursor: pointer;
-  margin: 0.5rem 1rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.25rem;
-  font-weight: normal !important;
+  gap: 0.5rem !important;
 }
 </style>

@@ -47,7 +47,7 @@
     "disabled": "Disabled",
     "docRepo": "Knowledge Base",
     "documents": "Documents",
-    "done": "Done!",
+    "done": "Done",
     "edit": "Edit",
     "enabled": "Enabled",
     "error": "Error!",
@@ -153,12 +153,14 @@
       "weekly": "Weekly"
     },
     "search": "Search…",
+    "select": "Select",
     "selectAll": "Select All",
     "selectNone": "Unselect All",
     "settings": "Settings",
     "shortcut": "Shortcut",
     "showLess": "Show Less",
     "showMore": "Show More",
+    "sortBy": "Sort By",
     "spellcheck": {
       "add": "Add to dictionary"
     },
@@ -168,6 +170,7 @@
     "tryAgain": "Please try again.",
     "type": "Type",
     "undo": "Undo",
+    "unselectAll": "Unselect All",
     "upload": "Upload",
     "url": "URL",
     "usage": "Usage",

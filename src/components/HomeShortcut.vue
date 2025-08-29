@@ -10,9 +10,8 @@
 
 <script setup lang="ts">
 import AgentIcon from '../../assets/agent.svg?component'
-import { defineProps, defineEmits } from 'vue'
 
-const props = defineProps({
+defineProps({
   name: { type: String, required: true },
   description: { type: String, required: true },
 })
