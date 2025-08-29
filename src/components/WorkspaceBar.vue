@@ -35,7 +35,7 @@
         </div>
       </div>
 
-      <div class="push"></div>
+      <div class="flex-push"></div>
 
       <div class="workspace-item">
         <div 
@@ -223,10 +223,6 @@ const deleteWorkspace = async () => {
     align-items: center;
     padding-top: 1rem;
     padding-bottom: 0.5rem;
-
-    .push {
-      flex: 1;
-    }
 
     .workspace-item {
       

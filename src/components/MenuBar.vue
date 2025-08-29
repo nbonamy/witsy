@@ -44,7 +44,7 @@
         <span>{{ t('computerUse.title') }}</span>
       </MenuBarItem>
 
-      <div class="push"></div>
+      <div class="flex-push"></div>
 
       <MenuBarItem action="mcp" :active="mode === 'mcp'" @click="emit('change', 'mcp')" v-if="hasMcp">
         <PlugIcon />
@@ -228,10 +228,6 @@ body[data-tint=blue] .mx-context-menu {
     gap: 0.75rem;
 
     border-right: 1px solid var(--sidebar-border-color);
-
-    .push {
-      flex: 1;
-    }
 
     .chat svg {
       position: relative;

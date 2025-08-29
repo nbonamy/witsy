@@ -637,14 +637,14 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--window-bg-color);
+  background-color: var(--color-surface-base);
   border-radius: var(--control-button-border-radius);
-  padding: 1.5px;
+  padding: 4px;
 }
 
 .button-group button {
   cursor: pointer;
-  border-left: none;
+  border: none;
   border-radius: 0;
   box-shadow: none;
   outline: none;
@@ -663,7 +663,6 @@ button {
 
 .button-group button:first-child {
   border-radius: var(--control-button-border-radius) 0 0 var(--control-button-border-radius);
-  border-left: 1px solid var(--control-button-border-color);
 }
 
 .button-group button:last-child {
@@ -835,4 +834,8 @@ svg.scale115 {
 
 svg.scale120 {
   transform: scale(1.2);
+}
+
+.flex-push {
+  flex: 1;
 }
