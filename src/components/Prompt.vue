@@ -16,11 +16,10 @@
       </div>
     </div>
     <div class="actions">
-      <PlusIcon
-        class="icon prompt-menu"
-        @click="onPromptMenu"
-        ref="promptMenuAnchor"
-      />
+      
+      <ButtonIcon @click="onPromptMenu" ref="promptMenuAnchor">
+        <PlusIcon class="prompt-menu icon" />
+      </ButtonIcon>
       
       <PromptFeature
         v-if="instructions"
@@ -55,26 +54,29 @@
       <slot name="actions" />
       
       <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
-      <MicIcon v-if="hasDictation"
-        v-tooltip="{ text: t('prompt.conversation.tooltip'), position: 'top' }"
-        :class="{ icon: true, dictate: true, active: dictating }" 
-        @click="onDictate" 
-        @contextmenu="onConversationMenu" 
-      />
-
-      <div class="model-menu-button" @click="onModelMenu">
-        <BoxIcon />
-        <div class="model-name">{{ modelName }}</div>
-        <BIconCaretDownFill class="icon caret" />
-      </div>
+      
+      <ButtonIcon @click="onDictate" @contextmenu="onConversationMenu" >
+        <MicIcon v-if="hasDictation"
+          v-tooltip="{ text: t('prompt.conversation.tooltip'), position: 'top' }"
+          :class="{ icon: true, dictate: true, active: dictating }" 
+        />
+      </ButtonIcon>
+      
+      <ButtonIcon class="model-menu-wrapper" @click="onModelMenu">
+        <div class="model-menu-button">
+          <BoxIcon />
+          <div class="model-name">{{ modelName }}</div>
+          <BIconCaretDownFill class="icon caret" />
+        </div>
+      </ButtonIcon>
 
       <BIconMagic class="icon command right" @click="onCommands(true)" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')" />
       
-      <div class="send-stop">
+      <ButtonIcon class="send-stop">
         <SquareIcon class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
         <ArrowUpIcon class="icon send" :class="{ disabled: !prompt.length }" @click="onSendPrompt" v-else />
-      </div>
-    
+      </ButtonIcon>
+
     </div>
     
     <slot name="between" />
@@ -120,6 +122,7 @@ import { computed, nextTick, onMounted, onUnmounted, PropType, ref, watch } from
 import Waveform from '../components/Waveform.vue'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
 import Dialog from '../composables/dialog'
+import useEventBus from '../composables/event_bus'
 import ImageUtils from '../composables/image_utils'
 import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
@@ -133,6 +136,7 @@ import { Command, CustomInstruction, Expert } from '../types/index'
 import { DocumentBase } from '../types/rag'
 import { StreamingChunk } from '../voice/stt'
 import AttachmentView from './Attachment.vue'
+import ButtonIcon from './ButtonIcon.vue'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
 import EngineModelMenu from './EngineModelMenu.vue'
 import Loader from './Loader.vue'
@@ -154,7 +158,6 @@ export type RunAgentParams = {
 
 export type HistoryProvider = (event: KeyboardEvent) => string[]
 
-import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 const props = defineProps({
@@ -1335,37 +1338,41 @@ defineExpose({
     display: flex;
     gap: 0.25rem;
     align-items: center;
+    margin-top: 0.25rem;
 
     &:not(:has(*)) {
       display: none;
     }
+
+    .model-menu-wrapper {
+      margin: 0 0.5rem;
     
-    .model-menu-button {
-      margin: 0 1rem;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      cursor: pointer;
-      gap: 0.5rem;
+      .model-menu-button {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        cursor: pointer;
+        gap: 0.5rem;
 
-      .model-name {
-        font-size: 12px;
-        max-width: 150px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
+        .model-name {
+          font-size: 12px;
+          max-width: 150px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
 
-      svg {
-        width: var(--icon-md);
-        height: var(--icon-md);
-      }
+        svg {
+          width: var(--icon-md);
+          height: var(--icon-md);
+        }
 
-      .icon.caret {
-        width: 0.5rem;
-        height: 0.75rem;
+        .icon.caret {
+          width: 0.5rem;
+          height: 0.75rem;
+        }
+        
       }
-      
     }
 
     .send-stop {
