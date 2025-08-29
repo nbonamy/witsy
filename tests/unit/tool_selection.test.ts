@@ -1,0 +1,443 @@
+import { vi, test, expect, describe, beforeAll } from 'vitest'
+import type { McpToolUnique } from '../../src/types/mcp'
+import * as toolSelection from '../../src/composables/tool_selection'
+import { useWindowMock } from '../mocks/window'
+
+// Mock dependencies
+vi.mock('../../src/plugins/plugins', () => ({
+  availablePlugins: {
+    'search': class MockSearchPlugin {
+      constructor() {}
+      isEnabled() { return true }
+      getName() { return 'search' }
+      async getTools() {
+        return [
+          { function: { name: 'web_search' } },
+          { function: { name: 'tavily_search' } }
+        ]
+      }
+    },
+    'filesystem': class MockFilesystemPlugin {
+      constructor() {}
+      isEnabled() { return true }
+      getName() { return 'filesystem' }
+      // Note: no getTools method, so should use getName()
+    },
+    'python': class MockPythonPlugin {
+      constructor() {}
+      isEnabled() { return false } // disabled plugin
+      getName() { return 'python' }
+    },
+    'mcp': class MockMcpPlugin {
+      constructor() {}
+      isEnabled() { return true }
+      getName() { return 'mcp' }
+    }
+  }
+}))
+
+vi.mock('../../src/services/store', () => ({
+  store: {
+    config: {
+      plugins: {
+        search: {},
+        filesystem: {},
+        python: {},
+        mcp: {}
+      }
+    }
+  }
+}))
+
+describe('tool_selection', () => {
+
+  beforeAll(() => {
+    useWindowMock()
+  })
+
+  describe('allPluginsTools', () => {
+    test('should return enabled plugin tools excluding mcp by default', async () => {
+      const result = await toolSelection.allPluginsTools()
+      expect(result).toEqual(['web_search', 'tavily_search', 'filesystem'])
+    })
+
+    test('should include mcp plugin when includeMcp is true', async () => {
+      const result = await toolSelection.allPluginsTools(true)
+      expect(result).toEqual(['web_search', 'tavily_search', 'filesystem', 'mcp'])
+    })
+
+    test('should exclude disabled plugins', async () => {
+      const result = await toolSelection.allPluginsTools()
+      expect(result).not.toContain('python')
+    })
+  })
+
+  describe('initToolSelectionWithAllTools', () => {
+    test('should return all tools including mcp server tools', async () => {
+      const result = await toolSelection.initToolSelectionWithAllTools()
+      expect(result).toEqual(['web_search', 'tavily_search', 'filesystem', 'tool1_1', 'tool2_1', 'tool3_2', 'tool4_2'])
+    })
+  })
+
+  describe('validateToolSelection', () => {
+    test('should return null when all tools are selected', async () => {
+      const allTools = ['web_search', 'tavily_search', 'filesystem', 'tool1_1', 'tool2_1', 'tool3_2', 'tool4_2']
+      const result = await toolSelection.validateToolSelection(allTools)
+      expect(result).toBeNull()
+    })
+
+    test('should return the selection when partial tools are selected', async () => {
+      const partialTools = ['web_search', 'filesystem']
+      const result = await toolSelection.validateToolSelection(partialTools)
+      expect(result).toEqual(partialTools)
+    })
+
+    test('should return null when selection is null', async () => {
+      const result = await toolSelection.validateToolSelection(null)
+      expect(result).toBeNull()
+    })
+
+    test('should return empty array when empty selection', async () => {
+      const result = await toolSelection.validateToolSelection([])
+      expect(result).toEqual([])
+    })
+  })
+
+  describe('pluginsStatus', () => {
+    test('should return "all" when toolSelection is null', async () => {
+      const result = await toolSelection.pluginsStatus(null)
+      expect(result).toBe('all')
+    })
+
+    test('should return "none" when toolSelection is empty', async () => {
+      const result = await toolSelection.pluginsStatus([])
+      expect(result).toBe('none')
+    })
+
+    test('should return "all" when all plugin tools are selected', async () => {
+      const allPlugins = ['web_search', 'tavily_search', 'filesystem']
+      const result = await toolSelection.pluginsStatus(allPlugins)
+      expect(result).toBe('all')
+    })
+
+    test('should return "some" when some plugin tools are selected', async () => {
+      const somePlugins = ['web_search', 'filesystem']
+      const result = await toolSelection.pluginsStatus(somePlugins)
+      expect(result).toBe('some')
+    })
+
+    test('should return "none" when no plugin tools are selected', async () => {
+      const noPlugins = ['tool1_1', 'tool2_1'] // MCP tools only
+      const result = await toolSelection.pluginsStatus(noPlugins)
+      expect(result).toBe('none')
+    })
+  })
+
+  describe('pluginStatus', () => {
+    test('should return "all" when toolSelection is null', () => {
+      const result = toolSelection.pluginStatus(null, 'web_search')
+      expect(result).toBe('all')
+    })
+
+    test('should return "none" when toolSelection is empty', () => {
+      const result = toolSelection.pluginStatus([], 'web_search')
+      expect(result).toBe('none')
+    })
+
+    test('should return "all" when plugin is selected', () => {
+      const result = toolSelection.pluginStatus(['web_search', 'filesystem'], 'web_search')
+      expect(result).toBe('all')
+    })
+
+    test('should return "none" when plugin is not selected', () => {
+      const result = toolSelection.pluginStatus(['filesystem'], 'web_search')
+      expect(result).toBe('none')
+    })
+  })
+
+  describe('serverToolsStatus', () => {
+    test('should return "all" when toolSelection is null', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const result = toolSelection.serverToolsStatus(servers, null, servers[0])
+      expect(result).toBe('all')
+    })
+
+    test('should return "none" when toolSelection is empty', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const result = toolSelection.serverToolsStatus(servers, [], servers[0])
+      expect(result).toBe('none')
+    })
+
+    test('should return "all" when all server tools are selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const serverTools = ['tool1_1', 'tool2_1']
+      const result = toolSelection.serverToolsStatus(servers, serverTools, servers[0])
+      expect(result).toBe('all')
+    })
+
+    test('should return "some" when some server tools are selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const someServerTools = ['tool1_1']
+      const result = toolSelection.serverToolsStatus(servers, someServerTools, servers[0])
+      expect(result).toBe('some')
+    })
+
+    test('should return "none" when no server tools are selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const noServerTools = ['web_search', 'filesystem'] // Plugin tools only
+      const result = toolSelection.serverToolsStatus(servers, noServerTools, servers[0])
+      expect(result).toBe('none')
+    })
+  })
+
+  describe('serverToolStatus', () => {
+    test('should return "all" when toolSelection is null', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const tool: McpToolUnique = { uuid: 'tool1_1', name: 'tool1', description: 'description1' }
+      const result = toolSelection.serverToolStatus(servers, null, servers[0], tool)
+      expect(result).toBe('all')
+    })
+
+    test('should return "none" when toolSelection is empty', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const tool: McpToolUnique = { uuid: 'tool1_1', name: 'tool1', description: 'description1' }
+      const result = toolSelection.serverToolStatus(servers, [], servers[0], tool)
+      expect(result).toBe('none')
+    })
+
+    test('should return "all" when tool is selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const tool: McpToolUnique = { uuid: 'tool1_1', name: 'tool1', description: 'description1' }
+      const result = toolSelection.serverToolStatus(servers, ['tool1_1', 'web_search'], servers[0], tool)
+      expect(result).toBe('all')
+    })
+
+    test('should return "none" when tool is not selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const tool: McpToolUnique = { uuid: 'tool1_1', name: 'tool1', description: 'description1' }
+      const result = toolSelection.serverToolStatus(servers, ['tool2_1', 'web_search'], servers[0], tool)
+      expect(result).toBe('none')
+    })
+  })
+
+  describe('handleAllPluginsToggle', () => {
+    test('should unselect all plugins when starting with null (all selected)', async () => {
+      const result = await toolSelection.handleAllPluginsToggle(null)
+      expect(result).toEqual(['tool1_1', 'tool2_1', 'tool3_2', 'tool4_2'])
+    })
+
+    test('should unselect all plugins when all plugins are selected', async () => {
+      const allTools = ['web_search', 'tavily_search', 'filesystem', 'tool1_1', 'tool2_1']
+      const result = await toolSelection.handleAllPluginsToggle(allTools)
+      expect(result).toEqual(['tool1_1', 'tool2_1'])
+    })
+
+    test('should select all plugins when some plugins are selected', async () => {
+      const someTools = ['web_search', 'tool1_1']
+      const result = await toolSelection.handleAllPluginsToggle(someTools)
+      expect(result).toEqual(['tool1_1', 'web_search', 'tavily_search', 'filesystem'])
+    })
+
+    test('should select all plugins when no plugins are selected', async () => {
+      const noPlugins = ['tool1_1', 'tool2_1']
+      const result = await toolSelection.handleAllPluginsToggle(noPlugins)
+      expect(result).toEqual(['tool1_1', 'tool2_1', 'web_search', 'tavily_search', 'filesystem'])
+    })
+  })
+
+  describe('handlePluginToggle', () => {
+    test('should remove plugin when starting with null (all selected)', async () => {
+      const result = await toolSelection.handlePluginToggle(null, 'web_search')
+      expect(result).toEqual(['tavily_search', 'filesystem', 'tool1_1', 'tool2_1', 'tool3_2', 'tool4_2'])
+    })
+
+    test('should add plugin when not in selection', async () => {
+      const selection = ['tavily_search', 'tool1_1']
+      const result = await toolSelection.handlePluginToggle(selection, 'web_search')
+      expect(result).toEqual(['tavily_search', 'tool1_1', 'web_search'])
+    })
+
+    test('should remove plugin when in selection', async () => {
+      const selection = ['web_search', 'tavily_search', 'tool1_1']
+      const result = await toolSelection.handlePluginToggle(selection, 'web_search')
+      expect(result).toEqual(['tavily_search', 'tool1_1'])
+    })
+
+    test('should return null when all tools end up selected', async () => {
+      const selection = ['tavily_search', 'filesystem', 'tool1_1', 'tool2_1', 'tool3_2', 'tool4_2']
+      const result = await toolSelection.handlePluginToggle(selection, 'web_search')
+      expect(result).toBeNull()
+    })
+  })
+
+  describe('handleAllServerToolsToggle', () => {
+    test('should unselect all server tools when all are selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const allSelected = ['web_search', 'tool1_1', 'tool2_1', 'tool3_2', 'tool4_2']
+      const result = await toolSelection.handleAllServerToolsToggle(allSelected, servers[0])
+      expect(result).toEqual(['web_search', 'tool3_2', 'tool4_2'])
+    })
+
+    test('should select all server tools when none are selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const noneSelected = ['web_search', 'tool3_2', 'tool4_2']
+      const result = await toolSelection.handleAllServerToolsToggle(noneSelected, servers[0])
+      expect(result).toEqual(['web_search', 'tool3_2', 'tool4_2', 'tool1_1', 'tool2_1'])
+    })
+
+    test('should select all server tools when some are selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const someSelected = ['web_search', 'tool1_1', 'tool3_2', 'tool4_2']
+      const result = await toolSelection.handleAllServerToolsToggle(someSelected, servers[0])
+      expect(result).toEqual(['web_search', 'tool3_2', 'tool4_2', 'tool1_1', 'tool2_1'])
+    })
+
+    test('should handle null selection', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const result = await toolSelection.handleAllServerToolsToggle(null, servers[0])
+      expect(result).toEqual(['web_search', 'tavily_search', 'filesystem', 'tool3_2', 'tool4_2'])
+    })
+  })
+
+  describe('handleServerToolToggle', () => {
+    test('should add tool when not selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const tool: McpToolUnique = { uuid: 'tool1_1', name: 'tool1', description: 'description1' }
+      const selection = ['web_search', 'tool2_1']
+      const result = await toolSelection.handleServerToolToggle(selection, servers[0], tool)
+      expect(result).toEqual(['web_search', 'tool2_1', 'tool1_1'])
+    })
+
+    test('should remove tool when selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const tool: McpToolUnique = { uuid: 'tool1_1', name: 'tool1', description: 'description1' }
+      const selection = ['web_search', 'tool1_1', 'tool2_1']
+      const result = await toolSelection.handleServerToolToggle(selection, servers[0], tool)
+      expect(result).toEqual(['web_search', 'tool2_1'])
+    })
+
+    test('should handle null selection by removing tool', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const tool: McpToolUnique = { uuid: 'tool1_1', name: 'tool1', description: 'description1' }
+      const result = await toolSelection.handleServerToolToggle(null, servers[0], tool)
+      expect(result).toEqual(['web_search', 'tavily_search', 'filesystem', 'tool2_1', 'tool3_2', 'tool4_2'])
+    })
+
+    test('should return null when all tools end up selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const tool: McpToolUnique = { uuid: 'tool1_1', name: 'tool1', description: 'description1' }
+      const selection = ['web_search', 'tavily_search', 'filesystem', 'tool2_1', 'tool3_2', 'tool4_2']
+      const result = await toolSelection.handleServerToolToggle(selection, servers[0], tool)
+      expect(result).toBeNull()
+    })
+  })
+
+  describe('handleSelectAllTools', () => {
+    test('should return null (all tools selected)', async () => {
+      const result = await toolSelection.handleSelectAllTools()
+      expect(result).toBeNull()
+    })
+  })
+
+  describe('handleUnselectAllTools', () => {
+    test('should return empty array (no tools selected)', async () => {
+      const result = await toolSelection.handleUnselectAllTools()
+      expect(result).toEqual([])
+    })
+  })
+
+  describe('handleSelectAllPlugins', () => {
+    test('should return null when selection is null (all already selected)', async () => {
+      const result = await toolSelection.handleSelectAllPlugins(null)
+      expect(result).toBeNull()
+    })
+
+    test('should add missing plugins to selection', async () => {
+      const selection = ['tool1_1', 'web_search']
+      const result = await toolSelection.handleSelectAllPlugins(selection)
+      expect(result).toEqual(['tool1_1', 'web_search', 'tavily_search', 'filesystem'])
+    })
+
+    test('should return null when all tools end up selected', async () => {
+      const selection = ['tool1_1', 'tool2_1', 'tool3_2', 'tool4_2', 'web_search', 'tavily_search']
+      const result = await toolSelection.handleSelectAllPlugins(selection)
+      expect(result).toBeNull()
+    })
+
+    test('should return selection when no plugins are selected', async () => {
+      const selection = ['tool1_1', 'tool2_1']
+      const result = await toolSelection.handleSelectAllPlugins(selection)
+      expect(result).toEqual(['tool1_1', 'tool2_1', 'web_search', 'tavily_search', 'filesystem'])
+    })
+  })
+
+  describe('handleUnselectAllPlugins', () => {
+    test('should remove all plugins from selection', async () => {
+      const selection = ['web_search', 'tavily_search', 'filesystem', 'tool1_1', 'tool2_1']
+      const result = await toolSelection.handleUnselectAllPlugins(selection)
+      expect(result).toEqual(['tool1_1', 'tool2_1'])
+    })
+
+    test('should handle null selection by getting all tools first then removing plugins', async () => {
+      const result = await toolSelection.handleUnselectAllPlugins(null)
+      expect(result).toEqual(['tool1_1', 'tool2_1', 'tool3_2', 'tool4_2'])
+    })
+
+    test('should return empty array when only plugins are selected', async () => {
+      const selection = ['web_search', 'tavily_search', 'filesystem']
+      const result = await toolSelection.handleUnselectAllPlugins(selection)
+      expect(result).toEqual([])
+    })
+  })
+
+  describe('handleSelectAllServerTools', () => {
+    test('should return null when selection is null (all already selected)', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const result = await toolSelection.handleSelectAllServerTools(null, servers[0])
+      expect(result).toBeNull()
+    })
+
+    test('should add missing server tools to selection', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const selection = ['web_search', 'tool1_1', 'tool3_2', 'tool4_2']
+      const result = await toolSelection.handleSelectAllServerTools(selection, servers[0])
+      expect(result).toEqual(['web_search', 'tool1_1', 'tool3_2', 'tool4_2', 'tool2_1'])
+    })
+
+    test('should not duplicate existing tools', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const selection = ['web_search', 'tool1_1', 'tool2_1']
+      const result = await toolSelection.handleSelectAllServerTools(selection, servers[0])
+      expect(result).toEqual(['web_search', 'tool1_1', 'tool2_1'])
+    })
+
+    test('should return null when all tools end up selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const selection = ['web_search', 'tavily_search', 'filesystem', 'tool3_2', 'tool4_2']
+      const result = await toolSelection.handleSelectAllServerTools(selection, servers[0])
+      expect(result).toBeNull()
+    })
+  })
+
+  describe('handleUnselectAllServerTools', () => {
+    test('should remove all server tools from selection', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const selection = ['web_search', 'tool1_1', 'tool2_1', 'tool3_2', 'tool4_2']
+      const result = await toolSelection.handleUnselectAllServerTools(selection, servers[0])
+      expect(result).toEqual(['web_search', 'tool3_2', 'tool4_2'])
+    })
+
+    test('should handle null selection by getting all tools first then removing server tools', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const result = await toolSelection.handleUnselectAllServerTools(null, servers[0])
+      expect(result).toEqual(['web_search', 'tavily_search', 'filesystem', 'tool3_2', 'tool4_2'])
+    })
+
+    test('should return empty array when only server tools are selected', async () => {
+      const servers = await window.api.mcp.getAllServersWithTools()
+      const selection = ['tool1_1', 'tool2_1']
+      const result = await toolSelection.handleUnselectAllServerTools(selection, servers[0])
+      expect(result).toEqual([])
+    })
+  })
+})

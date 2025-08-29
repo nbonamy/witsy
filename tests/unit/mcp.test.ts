@@ -414,37 +414,36 @@ test('getAllServersWithTools', async () => {
   const result = await mcp.getAllServersWithTools()
   expect(result).toHaveLength(4)
   
-  // Check the structure of each server with tools
-  expect(result[0]).toEqual({
-    server: expect.objectContaining({
-      uuid: '1234-5678-90ab',
-      type: 'stdio',
-      command: 'node',
-      url: 'script.js'
-    }),
+  // Check the structure of each server with tools (flattened structure)
+  expect(result[0]).toEqual(expect.objectContaining({
+    uuid: '1234-5678-90ab',
+    type: 'stdio',
+    command: 'node',
+    url: 'script.js',
     tools: [
-      { name: 'tool1', description: 'tool1 description' },
-      { name: 'tool2', description: 'tool2' },
-      { name: 'tool3', description: 'tool3 description' }
+      { uuid: 'tool1___90ab', name: 'tool1', description: 'tool1 description' },
+      { uuid: 'tool2___90ab', name: 'tool2', description: 'tool2' },
+      { uuid: 'tool3___90ab', name: 'tool3', description: 'tool3 description' }
     ]
-  })
+  }))
   
-  expect(result[1]).toEqual({
-    server: expect.objectContaining({
-      uuid: '2345-6789-0abc',
-      type: 'sse',
-      url: 'http://localhost:3000'
-    }),
+  expect(result[1]).toEqual(expect.objectContaining({
+    uuid: '2345-6789-0abc',
+    type: 'sse',
+    url: 'http://localhost:3000',
     tools: [
-      { name: 'tool1', description: 'tool1 description' },
-      { name: 'tool2', description: 'tool2' },
-      { name: 'tool3', description: 'tool3 description' }
+      { uuid: 'tool1___0abc', name: 'tool1', description: 'tool1 description' },
+      { uuid: 'tool2___0abc', name: 'tool2', description: 'tool2' },
+      { uuid: 'tool3___0abc', name: 'tool3', description: 'tool3 description' }
     ]
-  })
+  }))
   
-  // Verify that tools are the original names (not the unique suffixed ones)
+  // Verify that tools have the original names (not the unique suffixed ones)
   expect(result[2].tools[0].name).toBe('tool1')
   expect(result[2].tools[0].name).not.toContain('___')
+  
+  // Verify that tools have unique UUIDs with suffixes
+  expect(result[2].tools[0].uuid).toContain('___')
 })
 
 test('Does not connect twice', async () => {

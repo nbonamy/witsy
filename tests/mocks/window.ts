@@ -448,6 +448,22 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         { uuid: '1', registryId: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', tools: [ 'tool1', 'tool2' ] },
         { uuid: '2', registryId: '2', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: [ 'tool3', 'tool4' ] },
       ], logs: {} })),
+      getAllServersWithTools: vi.fn(async () => [
+        {
+          uuid: '1', registryId: '1', state: 'enabled' as const, type: 'stdio' as const, command: 'node', url: 'script.js',
+          tools: [
+            { uuid: 'tool1_1', name: 'tool1', description: 'description1' },
+            { uuid: 'tool2_1', name: 'tool2', description: 'description2' }
+          ]
+        },
+        {
+          uuid: '2', registryId: '2', state: 'enabled' as const, type: 'sse' as const, url: 'http://localhost:3000',
+          tools: [
+            { uuid: 'tool3_2', name: 'tool3', description: 'description3' },
+            { uuid: 'tool4_2', name: 'tool4', description: 'description4' }
+          ]
+        }
+      ]),
       //@ts-expect-error not sure about the type: 'function' complain
       getTools: vi.fn(async () => [
         { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },

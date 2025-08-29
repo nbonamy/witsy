@@ -156,6 +156,8 @@
     "select": "Select",
     "selectAll": "Select All",
     "selectNone": "Unselect All",
+    "selectAllShort": "All",
+    "selectNoneShort": "None",
     "settings": "Settings",
     "shortcut": "Shortcut",
     "showLess": "Show Less",
@@ -170,7 +172,8 @@
     "tryAgain": "Please try again.",
     "type": "Type",
     "undo": "Undo",
-    "unselectAll": "Unselect All",
+    "unselectAll": "@:{'common.selectNone'}",
+    "unselectAllShort": "@:{'common.selectNoneShort'}",
     "upload": "Upload",
     "url": "URL",
     "usage": "Usage",
@@ -2077,6 +2080,10 @@
       },
       "instructions": {
         "title": "Writing Style"
+      },
+      "tools": {
+        "plugins": "StationOne plugins",
+        "title": "@:{'common.tools'}"
       }
     },
     "placeholders": {

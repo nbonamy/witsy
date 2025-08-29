@@ -17,8 +17,6 @@ vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
 })
 
-
-
 let wrapper: VueWrapper<any>
 let chat: Chat|null = null
 

@@ -494,6 +494,15 @@ input[type=checkbox] {
   &:disabled {
     background: var(--color-outline);
   }
+
+  &:not(:checked)[data-indeterminate=true] {
+    background: var(--color-surface-base);
+     &:after {
+      color: var(--color-outline);
+      left: 2px;
+      top: -1.5px;
+    }
+  }
 }
 
 input[type=range] {

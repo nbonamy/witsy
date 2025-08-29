@@ -9,7 +9,7 @@ import { exec } from 'child_process'
 import { App } from 'electron'
 import { LlmTool } from 'multi-llm-ts'
 import { anyDict } from '../types/index'
-import { McpClient, McpInstallStatus, McpServer, McpStatus, McpTool } from '../types/mcp'
+import { McpClient, McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from '../types/mcp'
 import { loadSettings, saveSettings, settingsFilePath } from './config'
 import McpOAuthManager from './mcp_auth'
 import Monitor from './monitor'
@@ -77,8 +77,8 @@ export default class {
     }
   }
 
-  getAllServersWithTools = async (): Promise<Array<{ server: McpServer; tools: McpTool[] }>> => {
-    const results: Array<{ server: McpServer; tools: McpTool[] }> = []
+  getAllServersWithTools = async (): Promise<McpServerWithTools[]> => {
+    const results: McpServerWithTools[] = []
     
     for (const client of this.clients) {
       try {
@@ -89,13 +89,16 @@ export default class {
         }))
         
         results.push({
-          server: client.server,
-          tools: mcpTools
+          ...client.server,
+          tools: mcpTools.map(t => ({
+            uuid: this.uniqueToolName(client.server, t.name),
+            ...t,
+          }))
         })
       } catch (e) {
         console.error(`Failed to get tools from MCP server ${client.server.url}:`, e)
         results.push({
-          server: client.server,
+          ...client.server,
           tools: []
         })
       }

@@ -40,6 +40,14 @@ export type McpTool = {
   description: string
 }
 
+export type McpToolUnique = {
+  uuid: string
+} & McpTool
+
+export type McpServerWithTools = McpServer & {
+  tools: McpToolUnique[]
+}
+
 export type McpClaudeServer = {
   command: string
   args: string[]
