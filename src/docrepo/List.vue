@@ -5,7 +5,7 @@
         <div class="list-item" :class="{ selected: props.selectedRepo?.uuid === repo.uuid }" @click="selectRepo(repo)">
           <div class="icon leading">
             <FolderOpenIcon v-if="selectedRepo?.uuid === repo.uuid" />
-            <FolderIconIcon v-else />
+            <FolderIcon v-else />
           </div>
           <div class="info">
             <div class="text">{{ repo.name }}</div>
@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronDown, ChevronRight, ChevronRightIcon, FolderIcon, FolderOpen, FolderOpenIcon } from 'lucide-vue-next';
-import { DocumentBase } from '../types/rag'
+import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from 'lucide-vue-next';
+import { DocumentBase } from '../types/rag';
 
 // props  
 const props = defineProps<{

@@ -77,6 +77,7 @@ const filter = ref('')
 const selected = ref(null)
 const currentSubmenu = ref(null)
 const chevronTemplate = ref(null)
+const submenuStack = ref([]) // Navigation stack for multi-level submenus
 
 const anchorElement = computed(() => {
   return document.querySelector(props.anchor)
@@ -134,6 +135,10 @@ const position = computed(() => {
 
 
 onMounted(() => {
+  // Reset navigation stack when component mounts
+  submenuStack.value = []
+  currentSubmenu.value = null
+  
   if (shouldShowCurrentFilter.value) {
     nextTick(() => {
       const input = document.querySelector<HTMLElement>('.context-menu input')
@@ -311,6 +316,10 @@ const onItemHover = (event: Event) => {
 const showSubmenu = (item: HTMLElement) => {
   const submenuSlot = item.getAttribute('data-submenu-slot')
   if (submenuSlot) {
+    // Push current submenu to stack before navigating
+    if (currentSubmenu.value) {
+      submenuStack.value.push(currentSubmenu.value)
+    }
     currentSubmenu.value = submenuSlot
     selected.value = null
     currentSubmenuHasFilter.value = false // Reset filter flag
@@ -322,7 +331,12 @@ const setSubmenuFilter = (hasFilter: boolean) => {
 }
 
 const goBack = () => {
-  currentSubmenu.value = null
+  // Pop from stack if there are previous submenus
+  if (submenuStack.value.length > 0) {
+    currentSubmenu.value = submenuStack.value.pop()
+  } else {
+    currentSubmenu.value = null
+  }
   selected.value = null
   filter.value = '' // Clear filter when going back
   currentSubmenuHasFilter.value = false

@@ -94,12 +94,23 @@
       :enable-instructions="enableInstructions"
       :enable-attachments="enableAttachments"
       :enable-deep-research="enableDeepResearch"
+      :tool-selection="chat.tools"
       @close="closePromptMenu"
       @expert-selected="handleExpertClick"
       @manage-experts="handleManageExperts"
       @doc-repo-selected="handlePromptMenuDocRepo"
       @manage-doc-repo="handleManageDocRepo"
       @instructions-selected="handlePromptMenuInstructions"
+      @select-all-tools="handleSelectAllTools"
+      @unselect-all-tools="handleUnselectAllTools"
+      @select-all-plugins="handleSelectAllPlugins"
+      @unselect-all-plugins="handleUnselectAllPlugins"
+      @all-plugins-toggle="handleAllPluginsToggle"
+      @plugin-toggle="handlePluginToggle"
+      @select-all-server-tools="handleSelectAllServerTools"
+      @unselect-all-server-tools="handleUnselectAllServerTools"
+      @all-server-tools-toggle="handleAllServerToolsToggle"
+      @server-tool-toggle="handleServerToolToggle"
       @attach-requested="onAttach"
       @deep-research-toggled="onDeepResearch"
     />
@@ -125,6 +136,7 @@ import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
 import ImageUtils from '../composables/image_utils'
 import useTipsManager from '../composables/tips_manager'
+import * as ts from '../composables/tool_selection'
 import useTranscriber from '../composables/transcriber'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Attachment from '../models/attachment'
@@ -133,6 +145,7 @@ import Message from '../models/message'
 import { commandI18n, expertI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Command, CustomInstruction, Expert } from '../types/index'
+import { McpServerWithTools, McpToolUnique } from '../types/mcp'
 import { DocumentBase } from '../types/rag'
 import { StreamingChunk } from '../voice/stt'
 import AttachmentView from './Attachment.vue'
@@ -821,8 +834,6 @@ const stopConversation = () => {
   emitEvent('conversation-mode', null)
 }
 
-
-
 const isContextMenuOpen = () => {
   return showExperts.value || showCommands.value || showConversationMenu.value || showPromptMenu.value || showModelMenu.value
 }
@@ -950,6 +961,45 @@ const handlePromptMenuInstructions = (instructionId: string) => {
   closePromptMenu()
 }
 
+const handleAllPluginsToggle = async () => {
+  props.chat.tools = await ts.handleAllPluginsToggle(props.chat.tools)
+}
+
+const handlePluginToggle = async (toolName: string) => {
+  props.chat.tools = await ts.handlePluginToggle(props.chat.tools, toolName)
+}
+
+const handleSelectAllTools = async () => {
+  props.chat.tools = await ts.handleSelectAllTools()
+}
+
+const handleUnselectAllTools = async () => {
+  props.chat.tools = await ts.handleUnselectAllTools()
+}
+
+const handleSelectAllPlugins = async () => {
+  props.chat.tools = await ts.handleSelectAllPlugins(props.chat.tools)
+}
+
+const handleUnselectAllPlugins = async () => {
+  props.chat.tools = await ts.handleUnselectAllPlugins(props.chat.tools)
+}
+
+const handleSelectAllServerTools = async (server: McpServerWithTools) => {
+  props.chat.tools = await ts.handleSelectAllServerTools(props.chat.tools, server)
+}
+
+const handleUnselectAllServerTools = async (server: McpServerWithTools) => {
+  props.chat.tools = await ts.handleUnselectAllServerTools(props.chat.tools, server)
+}
+
+const handleAllServerToolsToggle = async (server: McpServerWithTools) => {
+  props.chat.tools = await ts.handleAllServerToolsToggle(props.chat.tools, server)
+}
+
+const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolUnique) => {
+  props.chat.tools = await ts.handleServerToolToggle(props.chat.tools, server, tool)
+}
 
 const handleExpertClick = (action: string) => {
   closeContextMenu()

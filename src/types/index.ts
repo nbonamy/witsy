@@ -5,7 +5,7 @@ import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
 import { DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
 import { LocalSearchResult } from '../main/search'
-import { McpInstallStatus, McpServer, McpStatus, McpTool } from './mcp'
+import { McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from './mcp'
 import { ToolSelection } from './llm'
 import { ListDirectoryResponse } from './filesystem'
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './file'
@@ -494,6 +494,7 @@ declare global {
         installServer(registry: string, server: string, apiKey: string): Promise<McpInstallStatus>
         reload(): Promise<void>
         getStatus(): McpStatus
+        getAllServersWithTools(): Promise<McpServerWithTools[]>
         getServerTools(uuid: string): Promise<McpTool[]>
         getTools(): Promise<LlmTool[]>
         callTool(name: string, parameters: anyDict): any
