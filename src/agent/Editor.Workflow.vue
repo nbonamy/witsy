@@ -363,14 +363,14 @@ defineExpose({ validate })
 
           .step-icon {
             padding: 0.5rem;
-            width: 1.5rem;
-            height: 1.5rem;
+            width: var(--icon-xl);
+            height:var(--icon-xl);
             border-radius: 6px;
             background-color: var(--color-on-surface);
             svg {
               color: var(--color-on-primary);
-              width: 1.5rem;
-              height: 1.5rem;
+              width: var(--icon-xl);
+              height:var(--icon-xl);
             }
           }
 

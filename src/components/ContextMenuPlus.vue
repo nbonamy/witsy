@@ -545,8 +545,8 @@ defineExpose({
 
 :deep(.item .icon) {
   margin-right: 0.25rem;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
 }
 
 :deep(.item .icon.text) {

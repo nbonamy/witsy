@@ -37,9 +37,9 @@ const onClear = () => {
 }
 
 .prompt-feature .icon {
-  width: 1rem;
-  height: 1rem;
-  color: #0C72EE;
+  width: var(--icon-md);
+  height: var(--icon-md);
+  color: var(--color-secondary);
 }
 
 .prompt-feature .label {
@@ -48,14 +48,14 @@ const onClear = () => {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 14.5px;
-  color: #0C72EE;
+  color: var(--color-secondary);
 }
 
 .prompt-feature .clear {
   width: 0.75rem;
   height: 0.75rem;
   cursor: pointer;
-  color: #0C72EE;
+  color: var(--color-secondary);
 }
 
 </style>

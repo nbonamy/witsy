@@ -100,8 +100,8 @@ main {
         gap: 0.75rem;
 
         .engine {
-          width: 1.25rem;
-          height: 1.25rem;
+          width: var(--icon-lg);
+          height: var(--icon-lg);
         }
 
         .model {

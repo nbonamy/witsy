@@ -63,8 +63,8 @@ const onFaviconError = (event: Event) => {
 
 .favicon {
   margin-left: -0.375rem;
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-md);
+  height: var(--icon-md);
   flex-shrink: 0;
   border-radius: 0.5rem;
   border: 1.5px solid var(--message-list-bg-color);

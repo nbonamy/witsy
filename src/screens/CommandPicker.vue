@@ -239,8 +239,8 @@ const onUsage = () => {
   font-weight: var(--font-weight-medium);
 
   .icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: var(--icon-xl);
+    height: var(--icon-xl);
     margin-right: 0.5rem;
   }
 }

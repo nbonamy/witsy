@@ -86,8 +86,8 @@
         flex: 0 0 1.5rem;
         font-size: 17.5px;
         svg {
-          width: 1.25rem;
-          height: 1.25rem;
+          width: var(--icon-lg);
+          height: var(--icon-lg);
         }
 
         &:has(a) {
@@ -138,8 +138,8 @@
         }
 
         svg {
-          width: 1rem;
-          height: 1rem;
+          width: var(--icon-md);
+          height: var(--icon-md);
           opacity: 0.45;
           cursor: pointer;
         }

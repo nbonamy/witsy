@@ -14,8 +14,8 @@
 .wrapper {
   
   position: relative;
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-md);
+  height:var(--icon-md);
   display: flex;
   justify-content: center;
   align-items: center;

@@ -111,8 +111,8 @@ defineExpose({
 .icon-item {
   position: relative;
   padding: 0.25rem;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
   display: flex;
   justify-content: center;
   align-items: center;
