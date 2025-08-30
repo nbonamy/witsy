@@ -52,7 +52,7 @@
           </div>
           <div class="panel-footer step-actions" v-if="expandedStep === index">
             <button class="docrepo" @click="onDocRepo(index)"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
-            <button class="tools" @click="onTools(index)"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
+            <button class="tools" :id="`tools-menu-anchor-${index}`" @click="onTools(index)"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
             <button class="agents" @click="onAgents(index)"><AgentIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
             <button class="structured-output" @click="onStructuredOutput(index)"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
           </div>
@@ -65,24 +65,42 @@
     </template>
   </WizardStep>
 
-  <ToolSelector ref="toolSelector" :tools="currentStepTools" @save="onSaveTools" />
+  <ToolsMenu 
+    v-if="toolsMenuVisible && toolsMenuStepIndex >= 0" 
+    :anchor="`#tools-menu-anchor-${toolsMenuStepIndex}`"
+    position="above"
+    :tool-selection="toolsMenuStepIndex >= 0 ? agent.steps[toolsMenuStepIndex].tools : []"
+    @close="onCloseToolsMenu"
+    @selectAllTools="handleSelectAllTools"
+    @unselectAllTools="handleUnselectAllTools"
+    @selectAllPlugins="handleSelectAllPlugins"
+    @unselectAllPlugins="handleUnselectAllPlugins"
+    @selectAllServerTools="handleSelectAllServerTools"
+    @unselectAllServerTools="handleUnselectAllServerTools"
+    @allPluginsToggle="handleAllPluginsToggle"
+    @pluginToggle="handlePluginToggle"
+    @allServerToolsToggle="handleAllServerToolsToggle"
+    @serverToolToggle="handleServerToolToggle"
+  />
   <AgentSelector ref="agentSelector" :exclude-agent-id="agent.uuid" @save="onSaveAgents" />
 </template>
 
 <script setup lang="ts">
 import { BlocksIcon, BracesIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
-import { computed, PropType, ref, watch } from 'vue'
+import { PropType, ref, watch } from 'vue'
 import AgentIcon from '../../assets/agent.svg?component'
+import ToolsMenu from '../components/ToolsMenu.vue'
 import WizardStep from '../components/WizardStep.vue'
 import Dialog from '../composables/dialog'
+import * as ts from '../composables/tool_selection'
 import Agent from '../models/agent'
 import AgentSelector from '../screens/AgentSelector.vue'
-import ToolSelector from '../screens/ToolSelector.vue'
 import { t } from '../services/i18n'
 import { extractPromptInputs } from '../services/prompt'
 import { processJsonSchema } from '../services/schema'
 import { store } from '../services/store'
 import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from '../types/index'
+import { McpServerWithTools, McpToolUnique } from '../types/mcp'
 
 const props = defineProps({
   agent: {
@@ -105,13 +123,10 @@ const props = defineProps({
 
 const emit = defineEmits(['prev', 'next', 'update:expanded-step'])
 
-const toolSelector = ref<typeof ToolSelector|null>(null)
 const agentSelector = ref<typeof AgentSelector|null>(null)
 const expandedStep = ref(props.expandedStep)
-
-const currentStepTools = computed(() => {
-  return expandedStep.value >= 0 ? props.agent.steps[expandedStep.value]?.tools : []
-})
+const toolsMenuVisible = ref(false)
+const toolsMenuStepIndex = ref(-1)
 
 // Watch for prop changes
 watch(() => props.expandedStep, (newValue) => {
@@ -186,11 +201,73 @@ const onDocRepo = async (index: number) => {
 const onTools = (index: number) => {
   expandedStep.value = index
   emit('update:expanded-step', expandedStep.value)
-  toolSelector.value?.show(props.agent.steps[index].tools)
+  toolsMenuStepIndex.value = index
+  toolsMenuVisible.value = true
 }
 
-const onSaveTools = (tools: string[]) => {
-  props.agent.steps[expandedStep.value].tools = tools
+const onCloseToolsMenu = () => {
+  toolsMenuVisible.value = false
+  toolsMenuStepIndex.value = -1
+}
+
+const handleSelectAllTools = async () => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllTools()
+  }
+}
+
+const handleUnselectAllTools = async () => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllTools()
+  }
+}
+
+const handleSelectAllPlugins = async () => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllPlugins(props.agent.steps[toolsMenuStepIndex.value].tools)
+  }
+}
+
+const handleUnselectAllPlugins = async () => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllPlugins(props.agent.steps[toolsMenuStepIndex.value].tools)
+  }
+}
+
+const handleSelectAllServerTools = async (server: McpServerWithTools) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllServerTools(props.agent.steps[toolsMenuStepIndex.value].tools, server)
+  }
+}
+
+const handleUnselectAllServerTools = async (server: McpServerWithTools) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllServerTools(props.agent.steps[toolsMenuStepIndex.value].tools, server)
+  }
+}
+
+const handleAllPluginsToggle = async () => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleAllPluginsToggle(props.agent.steps[toolsMenuStepIndex.value].tools)
+  }
+}
+
+const handlePluginToggle = async (pluginName: string) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handlePluginToggle(props.agent.steps[toolsMenuStepIndex.value].tools, pluginName)
+  }
+}
+
+const handleAllServerToolsToggle = async (server: McpServerWithTools) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleAllServerToolsToggle(props.agent.steps[toolsMenuStepIndex.value].tools, server)
+  }
+}
+
+const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolUnique) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleServerToolToggle(props.agent.steps[toolsMenuStepIndex.value].tools, server, tool)
+  }
 }
 
 const onAgents = (index: number) => {

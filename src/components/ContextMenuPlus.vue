@@ -20,7 +20,7 @@
       <div class="actions" ref="list">        
         <!-- Show main menu or submenu content -->
         <div v-if="!currentSubmenu">
-          <slot :filter="filter" :selected="selected" />
+          <slot :filter="filter" :selected="selected" :withFilter="setSubmenuFilter" />
         </div>
         <div v-else>
           <slot :name="currentSubmenu" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
@@ -30,7 +30,7 @@
       <!-- Footer section -->
       <div v-if="hasFooter" class="footer" ref="footer">
         <div v-if="!currentSubmenu">
-          <slot name="footer" :filter="filter" :selected="selected" />
+          <slot name="footer" :filter="filter" :selected="selected" :withFilter="setSubmenuFilter" />
         </div>
         <div v-else>
           <slot :name="`${currentSubmenu}Footer`" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
