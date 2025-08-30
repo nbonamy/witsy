@@ -682,6 +682,12 @@
       },
       "starting": "Synthesizing content…"
     },
+    "title": {
+      "completed": "Report title generated successfully!",
+      "error": "An error occurred while generating the report title",
+      "running": "Creating a succinct title for the research report…",
+      "starting": "Generating report title…"
+    },
     "usage": "Deep Research delivers thorough insights on your chosen topic by reviewing multiple sources and highlighting key findings. Please note: this feature uses more tokens than regular chat.",
     "writer": {
       "completed": "Section \"{title}\" completed!",
@@ -2095,8 +2101,8 @@
         "cozy": "Cozy"
       },
       "previews": {
-        "title": "Automatic previews",
-        "html": "HTML"
+        "html": "HTML",
+        "title": "Automatic previews"
       },
       "showToolCalls": {
         "always": "Always",

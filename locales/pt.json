@@ -683,6 +683,12 @@
       },
       "starting": "Sintetizando conteúdo…"
     },
+    "title": {
+      "completed": "Título do relatório gerado com sucesso!",
+      "error": "Ocorreu um erro ao gerar o título do relatório",
+      "running": "Criando um título sucinto para o relatório de pesquisa…",
+      "starting": "Gerando título do relatório…"
+    },
     "usage": "A Pesquisa Profunda oferece insights detalhados sobre o tópico escolhido ao revisar múltiplas fontes e destacar descobertas chave. Por favor, note: esta funcionalidade usa mais tokens que o chat comum.",
     "writer": {
       "completed": "Seção \"{title}\" concluída!",
@@ -1528,7 +1534,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Quando o usuário solicitar que você crie algum conteúdo (documento, resumo...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO\">\nCONTEÚDO\n</artifact>",
+      "artifacts": "Quando o usuário pedir para você criar algum conteúdo (documento, resumo, código...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO>\nCONTEÚDO\n</artifact>. Especialmente o código HTML incorporado em artefatos pode ser visualizado automaticamente.",
       "mermaid": "Se for solicitado que você produza um diagrama Mermaid, seu código será exibido como um diagrama para o usuário.",
       "toolRetry": "Ao chamar ferramentas, se você receber um erro de entrada, analise o erro e tente corrigi-lo e então tente chamar a ferramenta novamente."
     },
@@ -2074,6 +2080,7 @@
         "title": "Configurações de proxy (requer reinício do aplicativo)"
       },
       "resetToDefault": "Redefinir para o valor padrão",
+      "safeKeys": "Armazenar chaves API no armazenamento seguro do sistema",
       "systemInstructions": "Instruções do sistema"
     },
     "chat": {
@@ -2093,6 +2100,10 @@
       "listLayouts": {
         "compact": "Compacto",
         "cozy": "Aconchegante"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "Pré-visualizações automáticas"
       },
       "showToolCalls": {
         "always": "Sempre",

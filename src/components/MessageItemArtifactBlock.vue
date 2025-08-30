@@ -155,6 +155,10 @@ const onDownload = () => {
       .text hr:first-child, .text hr:last-child {
         display: none;
       }
+      h1:first-of-type {
+        border-top: 0;
+        margin-top: 0;
+      }
     }
 
     iframe {

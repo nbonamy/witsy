@@ -664,6 +664,12 @@
       },
       "starting": "Synthèse du contenu…"
     },
+    "title": {
+      "completed": "Titre du rapport généré avec succès !",
+      "error": "Une erreur est survenue lors de la génération du titre du rapport",
+      "running": "Création d'un titre succinct pour le rapport de recherche…",
+      "starting": "Génération du titre du rapport…"
+    },
     "usage": "[BÊTA] Deep Research fournit des analyses approfondies sur votre sujet choisi en examinant plusieurs sources et en mettant en avant les points clés. Veuillez noter : cette fonction utilise plus de jetons que le chat standard.",
     "writer": {
       "completed": "Section \"{title}\" terminée !",
@@ -1509,7 +1515,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Lorsque l'utilisateur vous demande de créer du contenu (document, résumé...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE\">\nCONTENU\n</artifact>",
+      "artifacts": "Lorsque l'utilisateur vous demande de créer du contenu (document, résumé, code...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE\">\nCONTENU\n</artifact>. En particulier, le code HTML intégré dans les artifacts peut être prévisualisé automatiquement.",
       "mermaid": "Si l'on vous demande de produire un diagramme Mermaid, son code sera rendu en tant que diagramme pour l'utilisateur.",
       "toolRetry": "Lors de l'appel des outils, si vous obtenez une erreur d'entrée, analysez l'erreur, essayez de la corriger, puis réessayez d'appeler l'outil."
     },
@@ -2052,6 +2058,7 @@
         "title": "Paramètres du proxy (requiert un redémarrage de l'application)"
       },
       "resetToDefault": "Réinitialiser à la valeur par défaut",
+      "safeKeys": "Stocker les clés API dans le stockage sécurisé du système",
       "systemInstructions": "Instructions système"
     },
     "chat": {
@@ -2071,6 +2078,10 @@
       "listLayouts": {
         "compact": "Compact",
         "cozy": "Confortable"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "Aperçus automatiques"
       },
       "showToolCalls": {
         "always": "Toujours",
