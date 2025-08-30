@@ -6,24 +6,60 @@
       <BIconStopBtn class="icon preview" @click="toggleHtml" v-if="isHtml && previewHtml" />
       <BIconClipboardCheck class="icon" v-if="copying" />
       <BIconClipboard class="icon" @click="onCopy" v-else />
-      <BIconDownload class="icon" @click="onDownload" />
+      <div class="icon download" @click="onDownloadClick" ref="downloadButton">
+        <BIconDownload />
+      </div>
     </div>
-    <div class="panel-body">
+    <div class="panel-body" ref="panelBody">
       <iframe sandbox="allow-scripts allow-same-origin allow-forms" v-if="isHtml && previewHtml" :srcdoc="html" style="width: 100%; height: 400px; border: none;" />
       <MessageItemBody :message="message" show-tool-calls="never" v-else />
     </div>
+
+    <ContextMenu 
+      v-if="showDownloadMenu" 
+      @close="closeDownloadMenu"
+      :actions="downloadMenuActions" 
+      @action-clicked="onDownloadFormat"
+      :x="downloadMenuX" 
+      :y="downloadMenuY" 
+      position="below"
+    />
+    
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted } from 'vue'
-import { store } from '../services/store'
-import MessageItemBody from './MessageItemBody.vue'
+import { removeMarkdown } from '@excalidraw/markdown-to-text'
+import { computed, onMounted, ref } from 'vue'
 import Message from '../models/message'
+import { exportToPdf } from '../services/pdf'
+import { store } from '../services/store'
+import ContextMenu from './ContextMenu.vue'
+import MessageItemBody from './MessageItemBody.vue'
 
 const previewHtml = ref(false)
 const copying = ref(false)
+const downloadButton = ref<HTMLElement>(null)
+const panelBody = ref<HTMLElement>(null)
+const showDownloadMenu = ref(false)
+const downloadMenuX = ref(0)
+const downloadMenuY = ref(0)
+
+const downloadMenuActions = computed(() => {
+  if (isHtml.value) {
+    return [
+      { label: 'HTML', action: 'raw', disabled: false },
+      { label: 'PDF', action: 'pdf', disabled: false },
+    ]
+  } else {
+    return [
+      { label: 'Text', action: 'text', disabled: false },
+      { label: 'Markdown', action: 'raw', disabled: false },
+      { label: 'PDF', action: 'pdf', disabled: false },
+    ]
+  }
+})
 
 const props = defineProps({
   title: {
@@ -96,23 +132,119 @@ const onCopy = () => {
   }, 1000)
 }
 
-const onDownload = () => {
+const onDownloadClick = () => {
+  if (showDownloadMenu.value) {
+    closeDownloadMenu()
+  } else {
+    showDownloadContextMenu()
+  }
+}
 
-  // filename: if there is no extension, add .md
-  let filename = props.title
+const showDownloadContextMenu = () => {
+  showDownloadMenu.value = true
+  const rcButton = downloadButton.value.getBoundingClientRect()
+  downloadMenuX.value = rcButton.left - 120
+  downloadMenuY.value = rcButton.bottom + 5
+}
+
+const closeDownloadMenu = () => {
+  showDownloadMenu.value = false
+}
+
+const addExtension = (filename: string, extension: string): string => {
   if (filename.lastIndexOf('.') <= filename.length - 5) {
-    filename += '.md'
+    return filename + extension
+  } else {
+    return filename.replace(/\.[^.]+$/, extension)
+  }
+}
+
+const onDownloadFormat = async (action: string) => {
+  // close menu
+  closeDownloadMenu()
+  
+  let filename = props.title
+  let fileContent = ''
+
+  switch (action) {
+    case 'text':
+      fileContent = removeMarkdown(content(), {
+        listUnicodeChar: false,
+        gfm: true,
+        useImgAltText: true,
+      })
+      filename = addExtension(filename, '.txt')
+      break
+
+    case 'raw':
+      fileContent = content()
+      filename = addExtension(filename, isHtml.value ? '.html' : '.md')
+      break
+
+    case 'pdf':
+      try {
+
+        // For HTML content, export the iframe content directly
+        if (isHtml.value && previewHtml.value) {
+          const iframe = panelBody.value?.querySelector('iframe') as HTMLIFrameElement
+          if (!iframe) {
+            console.error('Could not find iframe element')
+            return
+          }
+          
+          // Get the actual HTML document from inside the iframe
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
+          if (!iframeDoc) {
+            console.error('Could not access iframe content')
+            return
+          }
+          
+          // Export the entire HTML document from the iframe
+          await exportToPdf({
+            title: filename.replace(/\.[^.]+$/, ''),
+            element: iframeDoc.documentElement, // This gets the <html> element with all its content
+          })
+          
+          return
+        }
+
+        // For markdown content, create proper message structure
+        const message = panelBody.value.closest('.message') as HTMLElement
+        const classList = Array.from(message.classList)
+
+        // dummy message
+        const msg = document.createElement('div')
+        classList.forEach(cls => msg.classList.add(cls))
+        const body = msg.appendChild(document.createElement('div'))
+        body.classList.add('body')
+        const content = body.appendChild(document.createElement('div'))
+        content.classList.add('message-content')
+        content.innerHTML = 
+          (props.title.length ? `<div class="text variable-font-size"><h1>${props.title}</h1></div>` : '')
+          + panelBody.value.outerHTML
+
+        await exportToPdf({
+          title: filename.replace(/\.[^.]+$/, ''),
+          element: msg,
+        })
+        
+      } catch (error) {
+        console.error('Failed to generate PDF:', error)
+        return
+      }
+
+      // exportToPdf is already doing the save
+      return
   }
 
-  // now download
+  // Save file using the API for text and markdown
   window.api.file.save({
-    contents: window.api.base64.encode(content()),
+    contents: window.api.base64.encode(fileContent),
     properties: {
       filename,
       prompt: true
     }
   })
-
 }
 
 </script>

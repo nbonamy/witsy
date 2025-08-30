@@ -44,14 +44,13 @@ import { Expert, Message } from '../types/index'
 import { ref, computed, onMounted } from 'vue'
 import { kMediaChatId, store } from '../services/store'
 import { t } from '../services/i18n'
+import { exportToPdf } from '../services/pdf'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
 import EmptyChat from './EmptyChat.vue'
 import Prompt, { SendPromptParams } from './Prompt.vue'
 import ModelSettings from '../screens/ModelSettings.vue'
 import Chat from '../models/chat'
-import html2canvas from 'html2canvas'
-import html2pdf from 'html2pdf.js'
 import IconSideBar from '../../assets/sidebar.svg?component'
 import IconRunAgent from '../../assets/robot_run.svg?component'
 import IconNewChat from './IconNewChat.vue'
@@ -225,29 +224,16 @@ const onExportMarkdown = async () => {
 }
 
 const onExportPdf = async () => {
-
-  const theme = store.config.appearance.theme
-  const image = document.createElement('img')
-
   try {
     
-    // first take a screenshot so that theme flickering is invisible to user
-    const canvas = await html2canvas(document.documentElement)
+    // Prepare the chat area element for PDF export
+    const chatArea = document.querySelector<HTMLElement>('.chat-area')
+    if (!chatArea) {
+      throw new Error('Chat area not found')
+    }
 
-    // add to body
-    image.style.position = 'absolute'
-    image.style.top = '0'
-    image.style.left = '0'
-    image.style.width = '100%'
-    image.style.zIndex = '10000'
-    image.src = canvas.toDataURL()
-    document.body.appendChild(image)
-
-    // switch to light for export
-    window.api.app.setAppearanceTheme('light')
-
-    // copy and clean-up
-    const content: HTMLElement = document.querySelector<HTMLElement>('.chat-area').cloneNode(true) as HTMLElement
+    // Clone and clean up the content
+    const content = chatArea.cloneNode(true) as HTMLElement
     content.querySelectorAll('header .icon')?.forEach(icon => icon.remove())
     content.querySelectorAll('.message .tool-container')?.forEach(tool => tool.remove())
     content.querySelector('.model-settings')?.remove()
@@ -255,39 +241,26 @@ const onExportPdf = async () => {
     content.querySelector('.overflow')?.remove()
     content.querySelector('.prompt')?.remove()
 
-    // now remove scroll
+    // Remove scroll styling
     content.style.height = 'auto'
-    content.querySelector<HTMLElement>('main').style.height = 'auto'
-    content.querySelector<HTMLElement>('main').style.overflow = 'visible'
-
-    // adjust title
-    //content.querySelector<HTMLElement>('header').style.marginTop = '-12px'
-    content.querySelector<HTMLElement>('header').style.marginLeft = '12px'
-    content.querySelector<HTMLElement>('header').style.marginRight = '12px'
-
-    // replace images with their b64 version
-    content.querySelectorAll<HTMLImageElement>('.message .body img').forEach((img) => {
-      const src = img.src
-      if (src.startsWith('file://')) {
-        const path = decodeURIComponent(src.replace('file://', ''))
-        const data = window.api.file.read(path)
-        if (data) {
-          img.src = `data:${data.mimeType};base64,${data.contents}`
-        }
-      }
-    })
-
-    // now render
-    const opt = {
-      margin: [ 12, 4, 8, 4 ],
-      filename: `${props.chat.title}.pdf`,
-      image: { type: 'jpeg', quality: 1.0 },
-      html2canvas: { scale: 2 },
-      pagebreak: { mode: 'avoid-all' },
-      jsPDF: { compress: true, putOnlyUsedFonts: true }
+    const mainElement = content.querySelector<HTMLElement>('main')
+    if (mainElement) {
+      mainElement.style.height = 'auto'
+      mainElement.style.overflow = 'visible'
     }
-    await html2pdf().from(content).set(opt).save()
-    
+
+    // Adjust header margins
+    const headerElement = content.querySelector<HTMLElement>('header')
+    if (headerElement) {
+      headerElement.style.marginLeft = '12px'
+      headerElement.style.marginRight = '12px'
+    }
+
+    // Export to PDF using the service
+    await exportToPdf({
+      title: props.chat.title,
+      element: content
+    })
 
   } catch (e) {
     console.error('Error exporting PDF:', e)
@@ -296,14 +269,6 @@ const onExportPdf = async () => {
       text: t('chat.export.error'),
     })
   }
-
-  // restore theme
-  window.api.app.setAppearanceTheme(theme)
-
-  // remove image
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  document.body.removeChild(image)
-
 }
 
 const onHideDeepResearchUsage = () => {
