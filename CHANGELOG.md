@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - HTML Artifacts preview
+- Artifacts download formats (text, markdown, html, pdf)
 - Add Deep Research title generation feature
 
 ### Changed
