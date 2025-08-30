@@ -6,6 +6,7 @@ import { store } from '../../src/services/store'
 import Editor from '../../src/agent/Editor.vue'
 import Agent from '../../src/models/agent'
 import Dialog from '../../src/composables/dialog'
+import { stubTeleport } from '../mocks/stubs'
 import { nextTick } from 'vue'
 
 
@@ -360,18 +361,38 @@ test('Calls save API when save button clicked', async () => {
   expect(window.api.agents.save).toHaveBeenCalled()
 })
 
-test('Shows ToolSelector and AgentSelector components', async () => {
+test('Shows ToolsMenu and AgentSelector components', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: new Agent()
+      mode: 'edit',
+      agent: agent
     }
   })
   await nextTick()
 
-  // Should render ToolSelector component
-  const toolSelector = wrapper.findComponent({ name: 'ToolSelector' })
-  expect(toolSelector.exists()).toBe(true)
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // ToolsMenu should not be visible initially
+  let toolsMenu = wrapper.findComponent({ name: 'ToolsMenu' })
+  expect(toolsMenu.exists()).toBe(false)
+
+  // Click tools button to show ToolsMenu
+  const toolsButton = wrapper.find('.step-actions .tools')
+  await toolsButton.trigger('click')
+  await nextTick()
+
+  // ToolsMenu should now be visible
+  toolsMenu = wrapper.findComponent({ name: 'ToolsMenu' })
+  expect(toolsMenu.exists()).toBe(true)
 
   // Should render AgentSelector component  
   const agentSelector = wrapper.findComponent({ name: 'AgentSelector' })
@@ -667,6 +688,57 @@ test('Shows tools and agents buttons in workflow steps', async () => {
   expect(agentsButton.text()).toContain('agent.create.workflow.customAgents')
 })
 
+test('ToolsMenu opens and updates step tool selection', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: [], agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: { 
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // ToolsMenu should not be visible initially
+  let toolsMenu = wrapper.findComponent({ name: 'ToolsMenu' })
+  expect(toolsMenu.exists()).toBe(false)
+
+  // Click tools button to open ToolsMenu
+  const toolsButton = wrapper.find('.step-actions .tools')
+  await toolsButton.trigger('click')
+  await nextTick()
+
+  // ToolsMenu should now be visible
+  toolsMenu = wrapper.findComponent({ name: 'ToolsMenu' })
+  expect(toolsMenu.exists()).toBe(true)
+
+  // Verify the tool selection is passed correctly
+  expect(toolsMenu.props('toolSelection')).toEqual([])
+
+  // Simulate saving tools from ToolsMenu
+  await toolsMenu.vm.$emit('pluginToggle', 'plugin1')
+  await toolsMenu.vm.$emit('serverToolToggle', {}, { uuid: 'tool1___server1' })
+  await toolsMenu.vm.$emit('close')
+  await nextTick()
+
+  // ToolsMenu should be closed
+  toolsMenu = wrapper.findComponent({ name: 'ToolsMenu' })
+  expect(toolsMenu.exists()).toBe(false)
+
+  // Agent step should have updated tools
+  expect(agent.steps[0].tools).toEqual(['plugin1', 'tool1___server1'])
+})
+
 test('Shows docrepo button in workflow steps', async () => {
   const agent = new Agent()
   agent.steps = [
@@ -821,8 +893,6 @@ test('Docrepo selection can be cleared by selecting none', async () => {
     inputValue: 'uuid1'
   }))
 })
-
-// === MODEL & ENGINE TESTS ===
 
 test('Changing engine updates model selection', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {

@@ -103,7 +103,8 @@
       </div>
     </template>
 
-    <template #pluginsSubMenu>
+    <template #pluginsSubMenu="{ withFilter }">
+      {{ withFilter(true) }}
       <div v-for="plugin in allPluginsTools" :key="plugin" @click="handlePluginClick(plugin)">
         <input type="checkbox" :checked="pluginStatus(plugin) === 'all'"  />
         {{ plugin }}
@@ -121,7 +122,7 @@
       </div>
     </template>
 
-    <template v-for="serverWithTools in mcpServersWithTools" :key="serverWithTools.server.uuid" v-slot:[`tools-${serverWithTools.uuid}`]="{ withFilter }">
+    <template v-for="serverWithTools in mcpServersWithTools" :key="serverWithTools.uuid" v-slot:[`tools-${serverWithTools.uuid}`]="{ withFilter }">
       {{ withFilter(true) }}
       <div v-for="tool in serverWithTools.tools" :key="tool.name" @click.stop="handleServerToolClick(serverWithTools, tool)">
         <input type="checkbox" :checked="serverToolStatus(serverWithTools, tool) === 'all'"  />
@@ -129,7 +130,7 @@
       </div>
     </template>
 
-    <template v-for="serverWithTools in mcpServersWithTools" :key="`submenu-footer-${serverWithTools.server.uuid}`" v-slot:[`tools-${serverWithTools.uuid}Footer`]="">
+    <template v-for="serverWithTools in mcpServersWithTools" :key="serverWithTools.uuid" v-slot:[`tools-${serverWithTools.uuid}Footer`]="">
       <div class="footer-select">
         <button @click="handleSelectAllServerTools(serverWithTools)">
          {{  t('common.selectAll') }}
@@ -154,6 +155,7 @@ import { ToolSelection } from '../types/llm'
 import { McpServer, McpServerWithTools, McpTool, McpToolUnique } from '../types/mcp'
 import { DocumentBase } from '../types/rag'
 import ContextMenuPlus from './ContextMenuPlus.vue'
+import { server } from 'typescript'
 
 // Props
 interface Props {
@@ -235,15 +237,32 @@ const customInstructions = computed(() => {
   return store.config.llm.customInstructions || []
 })
 
-// Methods
-const loadDocRepos = () => {
+onMounted(async () => {
+  
   if (props.enableDocRepo) {
-    try {
-      docRepos.value = window.api?.docrepo?.list(store.config.workspaceId) || []
-    } catch (error) {
-      console.error('Failed to load document repositories:', error)
-      docRepos.value = []
-    }
+    loadDocRepos()
+    window.api.on('docrepo-modified', loadDocRepos)
+  }
+
+  if (props.enableTools) {
+    mcpServersWithTools.value = await window.api.mcp.getAllServersWithTools()
+    allPluginsTools.value = await ts.allPluginsTools()
+
+    watch(props, async () => {
+      pluginsStatusComputed.value = await ts.pluginsStatus(props.toolSelection)
+    }, { deep: true, immediate: true })
+
+  }
+
+})
+
+
+const loadDocRepos = () => {
+  try {
+    docRepos.value = window.api?.docrepo?.list(store.config.workspaceId) || []
+  } catch (error) {
+    console.error('Failed to load document repositories:', error)
+    docRepos.value = []
   }
 }
 
@@ -336,19 +355,6 @@ const handleDeepResearchClick = () => {
   emit('deepResearchToggled')
   emit('close')
 }
-
-
-onMounted(async () => {
-  loadDocRepos()
-  mcpServersWithTools.value = await window.api.mcp.getAllServersWithTools()
-  allPluginsTools.value = await ts.allPluginsTools()
-
-  watch(props, async () => {
-    pluginsStatusComputed.value = await ts.pluginsStatus(props.toolSelection)
-  }, { deep: true, immediate: true })
-
-  window.api.on('docrepo-modified', loadDocRepos)
-})
 
 </script>
 

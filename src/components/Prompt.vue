@@ -17,8 +17,8 @@
     </div>
     <div class="actions">
       
-      <ButtonIcon @click="onPromptMenu" ref="promptMenuAnchor">
-        <PlusIcon class="prompt-menu icon" />
+      <ButtonIcon class="prompt-menu" @click="onPromptMenu" ref="promptMenuAnchor">
+        <PlusIcon class="icon" />
       </ButtonIcon>
       
       <PromptFeature
@@ -89,6 +89,7 @@
       v-if="showPromptMenu"
       anchor=".prompt-menu"
       :position="menusPosition"
+      :enable-tools="enableTools"
       :enable-experts="enableExperts"
       :enable-doc-repo="enableDocRepo" 
       :enable-instructions="enableInstructions"
@@ -220,6 +221,10 @@ const props = defineProps({
     default: true
   },
   enableWaveform: {
+    type: Boolean,
+    default: true
+  },
+  enableTools: {
     type: Boolean,
     default: true
   },
