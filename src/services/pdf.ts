@@ -42,25 +42,48 @@ export const exportToPdf = async (options: PdfExportOptions): Promise<void> => {
     // Switch to light theme for better PDF rendering
     window.api.app.setAppearanceTheme('light')
 
+    // tag images and canvases
+    const images = element.querySelectorAll<HTMLElement>('img, canvas')
+    for (let i=0; i<images.length; i++) {
+      const image = images[i]
+      image.setAttribute('data-uuid', crypto.randomUUID())
+    }
+
     // Clone and prepare the element for PDF generation
     const content = element.cloneNode(true) as HTMLElement
     
     // Replace file:// images with base64 data
-    content.querySelectorAll<HTMLImageElement>('img').forEach((img) => {
-      const src = img.src
-      if (src.startsWith('file://')) {
-        const path = decodeURIComponent(src.replace('file://', ''))
-        const data = window.api.file.read(path)
-        if (data) {
-          img.src = `data:${data.mimeType};base64,${data.contents}`
+    await Promise.all(
+      Array.from(content.querySelectorAll<HTMLImageElement>('img')).map(async (img) => {
+        const uuid = img.getAttribute('data-uuid')
+        const src = element.querySelector<HTMLImageElement>(`img[data-uuid="${uuid}"]`).src
+        if (src.startsWith('file://')) {
+          const path = decodeURIComponent(src.replace('file://', ''))
+          const data = window.api.file.read(path)
+          if (data) {
+            img.src = `data:${data.mimeType};base64,${data.contents}`
+          }
+        } else if (src.startsWith('http')) {
+          const response = await fetch(src)
+          const blob = await response.blob()
+          return new Promise<void>((resolve) => {
+            const reader = new FileReader()
+            reader.onload = () => {
+              img.src = reader.result as string
+              resolve()
+            }
+            reader.readAsDataURL(blob)
+          })
         }
-      }
-    })
+      })
+    )
 
     // Replace canvas elements with their base64 image data
     content.querySelectorAll<HTMLCanvasElement>('canvas').forEach((canvas) => {
       try {
-        const dataURL = canvas.toDataURL('image/png')
+        const uuid = canvas.getAttribute('data-uuid')
+        const orig = element.querySelector<HTMLCanvasElement>(`canvas[data-uuid="${uuid}"]`)
+        const dataURL = orig.toDataURL('image/png')
         const img = document.createElement('img')
         img.src = dataURL
         img.style.width = canvas.style.width || `${canvas.width}px`
