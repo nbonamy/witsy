@@ -683,6 +683,12 @@
       },
       "starting": "コンテンツを統合中…"
     },
+    "title": {
+      "completed": "レポートタイトルが正常に生成されました！",
+      "error": "レポートタイトルの生成中にエラーが発生しました",
+      "running": "研究レポートの簡潔なタイトルを作成しています…",
+      "starting": "レポートタイトルを生成しています…"
+    },
     "usage": "[ベータ版] ディープリサーチは、複数のソースをレビューし、重要な発見を強調することで、選択したトピックに関する徹底的な洞察を提供します。注意：この機能は通常のチャットよりも多くのトークンを使用します。",
     "writer": {
       "completed": "セクション\"{title}\"が完了しました！",
@@ -1528,7 +1534,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約など）を作成するように依頼した場合、次の構文を使用してください:\n<artifact title=\"タイトル\">\n内容\n</artifact>",
+      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約、コードなど）の作成を依頼した場合、次の構文を使用してください:\n<artifact title=\"TITLE\">\nCONTENT\n</artifact>。特に、アーティファクトに埋め込まれたHTMLコードは自動的にプレビューできます。",
       "mermaid": "Mermaidチャートの出力を求められた場合、そのコードはユーザーに図として表示されます。",
       "toolRetry": "ツールを呼び出す際に入力エラーが発生した場合は、エラーを分析して修正を試み、その後ツールの呼び出しを再試行してください。"
     },
@@ -2074,6 +2080,7 @@
         "title": "プロキシ設定（アプリの再起動が必要）"
       },
       "resetToDefault": "デフォルト値にリセット",
+      "safeKeys": "APIキーをシステムの安全なストレージに保存する",
       "systemInstructions": "システム指示"
     },
     "chat": {
@@ -2093,6 +2100,10 @@
       "listLayouts": {
         "compact": "コンパクト",
         "cozy": "ゆったり"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "自動プレビュー"
       },
       "showToolCalls": {
         "always": "常に",

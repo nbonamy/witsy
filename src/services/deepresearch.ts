@@ -261,9 +261,7 @@ Very succinct conclusion on this section
   Section Title: {{sectionTitle}}
   Section Objective: {{sectionObjective}}
   Key Learnings: {{keyLearnings}}`,
-    tools: [
-      'run_python_code'
-    ],
+    tools: [],
     agents: [],
   }],
 },
@@ -272,6 +270,65 @@ Very succinct conclusion on this section
   (args) => t('deepResearch.writer.completed', { title: args.sectionTitle }),
   (args) => t('deepResearch.writer.error', { title: args.sectionTitle }),
 )
+
+export const titleAgent = Agent.fromJson({
+  name: 'title',
+  description: 'Expert title generator that creates succinct, engaging titles for research reports based on the research topic and key findings.',
+  instructions: `You are a title agent, responsible for generating a succinct, engaging title for a research report.
+
+Your task is to create a clear, concise title that accurately reflects the research topic and captures the essence of the key findings. The title should be informative yet engaging, helping readers immediately understand what the report covers.
+
+Guidelines for creating the title:
+- Keep it between 5-12 words when possible
+- Make it specific to the research topic and findings
+- Avoid generic phrases like "A Study of" or "Research Report on"
+- Use active voice when appropriate
+- Ensure it's in the same language as the research topic
+- Make it professional and suitable for a comprehensive research report
+
+Your output will ONLY consist of the title as a JSON object with no markdown formatting or additional text. The JSON object should have the following structure:
+
+{
+  "title": "The generated title for the research report"
+}
+  `,
+  parameters: [
+    {
+      name: 'researchTopic',
+      type: 'string',
+      description: 'The original research topic or query',
+      required: true
+    },
+    {
+      name: 'keyLearnings',
+      type: 'array',
+      description: 'All the key learnings from all sections that have been extracted from the analysis',
+      items: {
+        type: 'string'
+      },
+      required: true
+    }
+  ],
+  steps: [{
+    prompt: `Generate a succinct title for a research report based on:
+
+  Research Topic: {{researchTopic}}
+  Key Learnings: {{keyLearnings}}`,
+    tools: [],
+    agents: [],
+  }]
+},
+  () => t('deepResearch.title.starting'),
+  () => t('deepResearch.title.running'),
+  () => t('deepResearch.title.completed'),
+  () => t('deepResearch.title.error'),
+)
+titleAgent.steps[0].structuredOutput = {
+  name: 'title',
+  structure: z.object({
+    title: z.string()
+  })
+}
 
 export const synthesisAgent = Agent.fromJson({
   name: 'synthesis',
@@ -316,9 +373,7 @@ Start your content with "# Executive Summary" or "# Conclusion" as appropriate, 
   Research Topic: {{researchTopic}}
   Key Learnings: {{keyLearnings}}
   Output Type: {{outputType}}`,
-    tools: [
-      'run_python_code'
-    ],
+    tools: [],
     agents: [],
     //docrepo: 'research_reports',
   }]
@@ -333,5 +388,6 @@ export const deepResearchAgents: Agent[] = [
   searchAgent,
   analysisAgent,
   writerAgent,
+  titleAgent,
   synthesisAgent,
 ]

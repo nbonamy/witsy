@@ -664,6 +664,12 @@
       },
       "starting": "Sintesi dei contenuti…"
     },
+    "title": {
+      "completed": "Titolo del rapporto generato con successo!",
+      "error": "Si è verificato un errore durante la generazione del titolo del rapporto",
+      "running": "Creazione di un titolo conciso per il rapporto di ricerca…",
+      "starting": "Generazione del titolo del rapporto in corso…"
+    },
     "usage": "Deep Research fornisce approfondimenti dettagliati sul tema scelto esaminando più fonti e evidenziando i risultati chiave. Nota: questa funzione utilizza più token rispetto alla chat normale.",
     "writer": {
       "completed": "Sezione \"{title}\" completata!",
@@ -1509,7 +1515,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Quando l'utente ti chiede di creare del contenuto (documento, riassunto...), usa la seguente sintassi:\n<artifact title=\"TITOLO\">\nCONTENUTO\n</artifact>",
+      "artifacts": "Quando l'utente ti chiede di creare del contenuto (documento, riassunto, codice...), usa la seguente sintassi:\n<artifact title=\"TITOLO>\nCONTENUTO\n</artifact>. In particolare, il codice HTML incorporato negli artifact può essere visualizzato automaticamente in anteprima.",
       "mermaid": "Se ti viene chiesto di generare un diagramma Mermaid, il suo codice sarà reso come diagramma all'utente.",
       "toolRetry": "Quando si chiamano gli strumenti, se si riceve un errore di input, analizzare l'errore e cercare di correggerlo, quindi riprovare a chiamare lo strumento."
     },
@@ -2052,6 +2058,7 @@
         "title": "Impostazioni del proxy (richiede riavvio dell'app)"
       },
       "resetToDefault": "Reimposta al valore predefinito",
+      "safeKeys": "Salva le chiavi API nell'archiviazione sicura del sistema",
       "systemInstructions": "Istruzioni di sistema"
     },
     "chat": {
@@ -2071,6 +2078,10 @@
       "listLayouts": {
         "compact": "Compatto",
         "cozy": "Accogliente"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "Anteprime automatiche"
       },
       "showToolCalls": {
         "always": "Sempre",

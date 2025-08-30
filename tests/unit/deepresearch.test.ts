@@ -74,6 +74,7 @@ const synthesisResult: AgentRun = {
 } as AgentRun
 
 beforeEach(() => {
+  
   vi.clearAllMocks()
   
   // Setup Runner mock
@@ -200,7 +201,7 @@ test('Analysis agent parameters', () => {
 test('Writer agent configuration', () => {
   expect(dr.writerAgent.name).toBe('writer')
   expect(dr.writerAgent.description).toContain('Section generator')
-  expect(dr.writerAgent.steps[0].tools).toContain('run_python_code')
+  expect(dr.writerAgent.steps[0].tools).toEqual([])
 })
 
 test('Writer agent prompt building', () => {
@@ -231,10 +232,42 @@ test('Writer agent parameters', () => {
   expect(keyLearningsParam?.type).toBe('array')
 })
 
+test('Title agent configuration', () => {
+  expect(dr.titleAgent.name).toBe('title')
+  expect(dr.titleAgent.description).toContain('Expert title generator')
+  expect(dr.titleAgent.steps[0].tools).toEqual([])
+})
+
+test('Title agent prompt building', () => {
+  const prompt = dr.titleAgent.buildPrompt(0, {
+    researchTopic: 'Quantum Computing Applications',
+    keyLearnings: ['Quantum computers can solve optimization problems', 'They show promise in cryptography', 'Current limitations exist in error rates']
+  })
+
+  expect(prompt).toContain('Quantum Computing Applications')
+  expect(prompt).toContain('Quantum computers can solve optimization problems')
+  expect(prompt).toContain('They show promise in cryptography')
+})
+
+test('Title agent parameters', () => {
+  const params = dr.titleAgent.parameters
+  const researchTopicParam = params.find(p => p.name === 'researchTopic')
+  const keyLearningsParam = params.find(p => p.name === 'keyLearnings')
+
+  expect(researchTopicParam?.required).toBe(true)
+  expect(keyLearningsParam?.required).toBe(true)
+  expect(keyLearningsParam?.type).toBe('array')
+})
+
+test('Title agent structured output', () => {
+  expect(dr.titleAgent.steps[0].structuredOutput?.name).toBe('title')
+  expect(dr.titleAgent.steps[0].structuredOutput?.structure).toBeDefined()
+})
+
 test('Synthesis agent configuration', () => {
   expect(dr.synthesisAgent.name).toBe('synthesis')
   expect(dr.synthesisAgent.description).toContain('Expert report synthesizer')
-  expect(dr.synthesisAgent.steps[0].tools).toContain('run_python_code')
+  expect(dr.synthesisAgent.steps[0].tools).toEqual([])
 })
 
 test('Synthesis agent prompt building for executive summary', () => {
@@ -390,6 +423,11 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
               ]}
             }
 
+          case 'title':
+            return { messages: [
+              new Message('assistant', `{"title": "Research Report: Test Topic"}`)
+            ]}
+
           default:
             return {
               messages: [new Message('assistant', `Response from ${agentName} agent`)]
@@ -404,11 +442,13 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
 
   // Verify the final response contains all sections
   const responseContent = chat.messages[chat.messages.length - 1].content
+  expect(responseContent).toContain('<artifact')
   expect(responseContent).toContain('# Executive Summary')
   expect(responseContent).toContain('## 1. Section 1')
   expect(responseContent).toContain('## 2. Section 2')
   expect(responseContent).toContain('# Conclusion')
   expect(responseContent).toContain('Sources:')
+  expect(responseContent).toContain('</artifact>')
 
   // Verify search results are included as sources
   expect(responseContent).toContain('[Search Result for q1_1](https://example.com/q1_1)')
@@ -432,20 +472,23 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
     'agent:synthesis',
     'agent:synthesis',
     'status_update',
+    'agent:title',
+    'status_update',
   ]
 
   // Check that all expected steps were executed
+  expect(executionLog.length).toEqual(expectedExecutionFlow.length)
   expectedExecutionFlow.forEach((step, index) => {
     expect(executionLog).toContain(step)
   })
 
   // Verify Runner was called the expected number of times
-  expect(Runner).toHaveBeenCalledTimes(6) // 1 planning + 2 analysis + 2 writer + 2 synthesis = 6
+  expect(Runner).toHaveBeenCalledTimes(7) // 1 planning + 2 analysis + 2 writer + 1 synthesis + 1 title = 7
 
   // Verify agent call sequence
   const agentCallSequence = agentCalls.map(call => call.agent)
   expect(agentCallSequence).toEqual([
-    'planning', 'analysis', 'analysis', 'writer', 'writer', 'synthesis', 'synthesis'
+    'planning', 'analysis', 'analysis', 'writer', 'writer', 'synthesis', 'synthesis', 'title'
   ])
 
   // Verify the planning agent was called with correct parameters
@@ -663,12 +706,13 @@ test('DeepResearchMultiAgent generator call', async () => {
 })
 
 test('Deep research agents count', () => {
-  expect(dr.deepResearchAgents).toHaveLength(5)
+  expect(dr.deepResearchAgents).toHaveLength(6)
   expect(dr.deepResearchAgents.map(a => a.name)).toEqual([
     'planning',
     'search', 
     'analysis',
     'writer',
+    'title',
     'synthesis'
   ])
 })

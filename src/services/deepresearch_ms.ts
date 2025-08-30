@@ -255,6 +255,26 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
         outputType: 'conclusion',
       }), { ephemeral: true, ...opts })
 
+      // generate title
+      await this.generateStatusUpdate(`Generating title for the report`, response)
+      const titleRunner = new Runner(this.config, dr.titleAgent)
+      const titleResult = await titleRunner.run('workflow', dr.titleAgent.buildPrompt(0, {
+        researchTopic: researchTopic,
+        keyLearnings: allKeyLearnings,
+      }), { ephemeral: true, ...opts })
+      
+      // extract title from the result
+      const titleMessage = titleResult.messages[titleResult.messages.length - 1]
+      let reportTitle = researchTopic // fallback title
+      try {
+        const titleData = this.parseJson(titleMessage.content)
+        if (titleData && titleData.title) {
+          reportTitle = titleData.title
+        }
+      } catch {
+        console.warn('Failed to parse title, using research topic as fallback')
+      }
+
       // status
       await this.generateStatusUpdate(`Done! Here is your report`, response)
 
@@ -263,11 +283,19 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       const conclusionMessage = conclusion.messages[conclusion.messages.length - 1]
       response.usage = addUsages(response.usage, execSummaryMessage.usage)
       response.usage = addUsages(response.usage, conclusionMessage.usage)
+      response.usage = addUsages(response.usage, titleMessage.usage)
 
       // executive summary
       response.appendText({
         type: 'content',
-        text: `\n\n---\n\n${execSummaryMessage.content}`,
+        text: `\n\n<artifact title="${reportTitle}">`,
+        done: false,
+      })
+
+      // executive summary
+      response.appendText({
+        type: 'content',
+        text: `${execSummaryMessage.content}`,
         done: false,
       })
 
@@ -306,7 +334,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       // done
       response.appendText({
         type: 'content',
-        text: '',
+        text: '</artifact>',
         done: true,
       })
 

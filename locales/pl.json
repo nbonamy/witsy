@@ -683,6 +683,12 @@
       },
       "starting": "Syntezuję treść…"
     },
+    "title": {
+      "completed": "Tytuł raportu został pomyślnie wygenerowany!",
+      "error": "Wystąpił błąd podczas generowania tytułu raportu",
+      "running": "Tworzenie zwięzłego tytułu raportu z badań…",
+      "starting": "Generowanie tytułu raportu…"
+    },
     "usage": "Deep Research dostarcza dogłębne informacje na wybrany temat, przeglądając wiele źródeł i podkreślając kluczowe ustalenia. Uwaga: ta funkcja wykorzystuje więcej tokenów niż zwykły czat.",
     "writer": {
       "completed": "Sekcja „{title}” ukończona!",
@@ -1528,7 +1534,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś treści (dokument, streszczenie...), użyj następującej składni:\n<artifact title=\"TYTUŁ>\nTREŚĆ\n</artifact>",
+      "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś treści (dokument, streszczenie, kod...), użyj następującej składni:\n<artifact title=\"TYTUŁ\">\nTREŚĆ\n</artifact>. Szczególnie kod HTML osadzony w artefaktach może być automatycznie podglądany.",
       "mermaid": "Jeśli zostaniesz poproszony o wygenerowanie wykresu Mermaid, jego kod zostanie wyświetlony użytkownikowi jako diagram.",
       "toolRetry": "Podczas wywoływania narzędzi, jeśli otrzymasz błąd wejścia, przeanalizuj błąd i spróbuj go naprawić, a następnie ponownie wywołaj narzędzie."
     },
@@ -2074,6 +2080,7 @@
         "title": "Ustawienia serwera proxy (wymaga ponownego uruchomienia aplikacji)"
       },
       "resetToDefault": "Przywróć wartość domyślną",
+      "safeKeys": "Przechowuj klucze API w bezpiecznym magazynie systemowym",
       "systemInstructions": "Instrukcje systemowe"
     },
     "chat": {
@@ -2093,6 +2100,10 @@
       "listLayouts": {
         "compact": "Kompaktowy",
         "cozy": "Przytulny"
+      },
+      "previews": {
+        "html": "HTML",
+        "title": "Automatyczne podglądy"
       },
       "showToolCalls": {
         "always": "Zawsze",

@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - HTML Artifacts preview
+- Add Deep Research title generation feature
 
 ### Changed
 - Support for secure api storage (https://github.com/nbonamy/witsy/issues/407)
