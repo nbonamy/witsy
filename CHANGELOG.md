@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 - Support for secure api storage (https://github.com/nbonamy/witsy/issues/407)
 
 ### Fixed
-- N/A
+- Design Studio: regional parameter error (personGeneration.allow_all) (https://github.com/nbonamy/witsy/issues/404)
 
 ### Removed
 - N/A
