@@ -168,7 +168,7 @@ export default class ImageCreator implements MediaCreator {
           config: {
             numberOfImages: 1,
             //safetyFilterLevel: SafetyFilterLevel.BLOCK_NONE,
-            personGeneration: PersonGeneration.ALLOW_ALL,
+            personGeneration: PersonGeneration.ALLOW_ADULT,
             includeRaiReason: true,
           },
         });
