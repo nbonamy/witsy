@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.X.Y] - WIP
+## [2.14.0] - WIP
 
 ### Added
 - HTML Artifacts preview
