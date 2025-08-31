@@ -24,11 +24,6 @@
 
 </div>
 
-## Important Accouncement
-
-[Witsy’s Next Chapter: New Stewardship and License Update #386](https://github.com/nbonamy/witsy/discussions/386)
-
-
 ## Downloads
 
 Download Witsy from [witsyai.com](https://witsyai.com) or from the [releases](https://github.com/nbonamy/witsy/releases) page.
