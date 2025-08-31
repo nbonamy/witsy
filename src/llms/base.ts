@@ -400,6 +400,18 @@ export default class LlmManagerBase implements ILlmManager {
       })
     }
 
+    // google are worse
+    if (engine === 'google') {
+      models.chat = models.chat.filter(m => !m.id.includes('-1.5-') && !m.id.includes('-2.0-') && m.id !== 'gemini-exp-1206')
+      models.chat = models.chat.sort((a, b) => {
+        if (a.id.includes('gemini') && !b.id.includes('gemini')) return -1
+        if (!a.id.includes('gemini') && b.id.includes('gemini')) return 1
+        if (a.id.includes('preview') && !b.id.includes('preview')) return 1
+        if (!a.id.includes('preview') && b.id.includes('preview')) return -1
+        return 0
+      })
+    }
+
     // save in store
     engineConfig.models = {
       chat: [],

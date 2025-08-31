@@ -389,7 +389,8 @@ const modelHasParams = computed(() => {
 const canTransform = computed(() => {
   return ['falai', 'replicate'].includes(engine.value) ||
     //(engine.value === 'google' && mediaType.value === 'image' && !props.currentMedia?.isVideo()) ||
-    (engine.value === 'openai' && model.value.startsWith('gpt-image-') && mediaType.value === 'image' && !props.currentMedia?.isVideo())
+    (engine.value === 'openai' && model.value.startsWith('gpt-image-') && mediaType.value === 'image' && !props.currentMedia?.isVideo()) ||
+    (engine.value === 'google' && model.value.includes('-image') && mediaType.value === 'image' && !props.currentMedia?.isVideo())
 })
 
 const canUpload = computed(() => {
@@ -461,7 +462,18 @@ const onChangeEngine = () => {
 }
 
 const onChangeTransform = () => {
-  model.value = store.config.engines?.[engine.value]?.model?.[modelType.value] || models.value[0]?.id
+
+  // if current model is valid then all good
+  if (model.value && models.value.find((m) => m.id === model.value)) {
+    // model is valid
+  } else {
+    const configModel = store.config.engines?.[engine.value]?.model?.[modelType.value]
+    if (configModel && models.value.find((m) => m.id === configModel)) {
+      model.value = configModel
+    } else {
+      model.value = models.value[0]?.id
+    }
+  }
   onChangeModel()
 }
 
