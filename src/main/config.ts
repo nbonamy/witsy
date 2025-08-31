@@ -19,7 +19,7 @@ let onSettingsChange: CallableFunction = () => {}
 let cachedAppConfig: Configuration = undefined
 
 const safeStore = new Store<Record<string, string>>({
-  name: 'apiKeys',
+  name: process.env.DEBUG ? 'apiKeys-debug' : 'apiKeys',
   accessPropertiesByDotNotation: false,
   watch: false,
   encryptionKey: 'witsy',

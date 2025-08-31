@@ -17,6 +17,13 @@ Use [nvm](https://github.com/nvm-sh/nvm) to switch between Node.js versions.
 2. **Linting**: Run `npm run lint` to check for and fix any linting issues.
 3. **Testing**: Add/Update required tests. Coverage varies betwen 80% and 82% and I would like to keep it that way (or more!). Run `npm run test` to ensure all tests pass before submitting your changes.
 
+### API Keys Safe Storage
+
+Beware that when API Keys Safe Storage is activated, your DEBUG build and RELEASE build will store API keys in distinct locations as one variant cannot read API keys written by the other variant. To handle that you have two options:
+
+- Accept to enter your API keys twice (for each variant)
+- Disable API keys Safe Storage in Settings | Advanced  
+
 ## Translation Contributions
 
 ### Steps
