@@ -1,11 +1,11 @@
 
-import { xAIBaseURL } from 'multi-llm-ts'
+import { ModelGoogle, xAIBaseURL } from 'multi-llm-ts'
 import { anyDict, MediaCreationEngine, MediaReference, MediaCreator } from '../types/index'
 import { saveFileContents, download } from '../services/download'
 import { engineNames } from '../llms/base'
 import { store } from '../services/store'
 import { HfInference } from '@huggingface/inference'
-import { GoogleGenAI, PersonGeneration, SafetyFilterLevel, SubjectReferenceImage } from '@google/genai'
+import { GenerateContentResponse, GoogleGenAI, PersonGeneration, SafetyFilterLevel, SubjectReferenceImage } from '@google/genai'
 import Replicate, { FileOutput } from 'replicate'
 import { fal } from '@fal-ai/client'
 import OpenAI, { toFile } from 'openai'
@@ -153,6 +153,80 @@ export default class ImageCreator implements MediaCreator {
   }
 
   async google(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+
+    let api: 'image' | 'text' = 'image'
+
+    const googleModel = store.config.engines.google?.models?.image?.find((m: any) => m.id === model)
+    if (googleModel && googleModel.meta) {
+      const meta = googleModel.meta as ModelGoogle
+      if (!meta.supportedActions.includes('predict')) {
+        api = 'text'
+      }
+    }
+
+    if (api == 'text') {
+      return this.google_text(model, parameters, reference)
+    } else {
+      return this.google_image(model, parameters, reference)
+    }
+
+  }
+
+  async google_text(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+
+    const client = new GoogleGenAI({ apiKey: store.config.engines.google.apiKey })
+
+    try {
+
+      let response: GenerateContentResponse = null
+
+      if (!reference) {
+  
+        response = await client.models.generateContent({
+          model: model,
+          contents: parameters.prompt,
+        });
+
+      } else {
+
+        response = await client.models.generateContent({
+          model: model,
+          contents: [
+            { text: parameters.prompt, },
+            { inlineData: {
+              mimeType: reference.mimeType,
+              data: reference.contents,
+            }}
+          ]
+        });
+
+      }
+
+      // iterate on parts
+      for (const part of response.candidates[0].content.parts || []) {
+        if (part.inlineData) {
+          const imageData = part.inlineData.data;
+          const fileUrl = saveFileContents('png', imageData)
+          return {
+            url: fileUrl,
+          }
+        }
+      }
+
+      // error
+      throw new Error('No inline data found')
+
+    } catch (error) {
+      console.error("Error generating content:", error);
+    }
+
+    return { 
+      error: 'Failed to generate image with Google Generative AI'
+    }
+  
+  }
+
+  async google_image(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
 
     const client = new GoogleGenAI({ apiKey: store.config.engines.google.apiKey })
   
