@@ -251,7 +251,7 @@ test('Selects expert', async () => {
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
   expect(menu.findAll('.filter').length).toBe(1)
-  expect(menu.findAll('.item').length).toBe(2)
+  expect(menu.findAll('.item').length).toBe(3)
   await menu.find('.item:nth-child(2)').trigger('click')
   expect(wrapper.vm.expert.id).toBe('uuid3')
   expect(wrapper.find('.input .icon.expert').exists()).toBe(true)
@@ -270,6 +270,28 @@ test('Clears expert', async () => {
   expect(menu.find('.item:nth-child(4)').text()).toBe('prompt.experts.clear')
   await menu.find('.item:nth-child(4)').trigger('click')
   expect(wrapper.vm.expert).toBeNull()
+})
+
+test('Sets engine and model when expert has them', async () => {
+  // Initial state - chat should have undefined engine/model
+  expect(chat!.engine).toBeUndefined()
+  expect(chat!.model).toBeUndefined()
+  
+  // Select expert with engine and model set (uuid4: anthropic/claude-3-sonnet)
+  const trigger = wrapper.find('.icon.experts')
+  await trigger.trigger('click')
+  const menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  
+  // Click on the expert with engine and model (should be item 3 - uuid4)
+  await menu.find('.item:nth-child(3)').trigger('click')
+  
+  // Verify expert was selected
+  expect(wrapper.vm.expert.id).toBe('uuid4')
+  
+  // Verify chat engine and model were updated
+  expect(chat!.engine).toBe('anthropic')
+  expect(chat!.model).toBe('claude-3-sonnet')
 })
 
 test('Stores command for later', async () => {

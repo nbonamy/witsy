@@ -15,6 +15,14 @@
         <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
       </div>
     </div>
+    <div class="form-field">
+      <label>{{ t('common.llmProvider') }}</label>
+      <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('experts.editor.useDefault')" />
+    </div>
+    <div class="form-field">
+      <label>{{ t('common.llmModel') }}</label>
+      <ModelSelectPlus id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('experts.editor.useDefault') : ''" />
+    </div>
     <div class="form-field" v-if="supportTriggerApps">
       <label>{{ t('experts.editor.triggerApps') }}</label>
       <div class="form-subgroup list-with-actions">
@@ -45,7 +53,10 @@
 import { Expert, ExternalApp } from '../types/index'
 import { FileContents } from '../types/file'
 import { onMounted, ref, computed, watch } from 'vue'
+import { store } from '../services/store'
 import { expertI18n, expertI18nDefault, t } from '../services/i18n'
+import EngineSelect from '../components/EngineSelect.vue'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import Dialog from '../composables/dialog'
 
 const emit = defineEmits(['expert-modified']);
@@ -57,6 +68,8 @@ const props = defineProps<{
 const type = ref(null)
 const name = ref(null)
 const prompt = ref(null)
+const engine = ref(null)
+const model = ref(null)
 const triggerApps = ref([])
 const selectedApp = ref(null)
 const diffLang = ref(false)
@@ -65,6 +78,11 @@ const isEdited = ref(false)
 const icons: Record<string, FileContents> = {}
 
 const supportTriggerApps = computed(() => window.api.platform !== 'linux')
+
+const models = computed(() => {
+  if (!engine.value || engine.value == '') return []
+  return store.config.engines[engine.value].models.chat
+})
 
 const iconData = (app: ExternalApp) => {
   const icon = icons[app.identifier]
@@ -76,6 +94,11 @@ const onChangeText = () => {
   isEdited.value = ((props.expert?.type === 'system') && (name.value !== expertI18nDefault(props.expert, 'name') || prompt.value !== expertI18nDefault(props.expert, 'prompt')))
 }
 
+const onChangeEngine = () => {
+  if (engine.value == '') model.value = ''
+  else model.value = store.config.engines[engine.value].models.chat?.[0]?.id
+}
+
 onMounted(async () => {
   watch(() => props || {}, async () => {
 
@@ -83,6 +106,8 @@ onMounted(async () => {
     type.value = props.expert?.type || 'user'
     name.value = props.expert?.name || expertI18n(props.expert, 'name')
     prompt.value = props.expert?.id ? (props.expert?.prompt || expertI18n(props.expert, 'prompt')) : ''
+    engine.value = props.expert?.engine || ''
+    model.value = props.expert?.model || ''
     triggerApps.value = JSON.parse(JSON.stringify(props.expert?.triggerApps || []))
     diffLang.value = window.api.config.localeUI() !== window.api.config.localeLLM()
     selectedApp.value = null
@@ -154,6 +179,7 @@ const onSave = (event: Event) => {
     id: props.expert.id,
     name: name.value === expertI18nDefault(props.expert, 'name') ? undefined : name.value,
     prompt: prompt.value === expertI18nDefault(props.expert, 'prompt') ? undefined : prompt.value,
+    ...(engine.value.length && model.value.length ? { engine: engine.value, model: model.value } : {}),
     triggerApps: triggerApps.value.map((app) => {
       if (app.icon.contents) {
         app.icon = app.icon.url.replace('file://', '')

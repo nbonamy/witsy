@@ -811,6 +811,7 @@
     "editor": {
       "triggerApps": "Aplicaciones desencadenantes",
       "triggerAppsDescription": "El prompt se seleccionará automáticamente cuando Prompt Anywhere se llame desde una de estas aplicaciones",
+      "useDefault": "Motor y modelo actuales",
       "validation": {
         "invalidApp": "No se puede analizar la aplicación seleccionada",
         "requiredFields": "Todos los campos marcados con * son obligatorios."
