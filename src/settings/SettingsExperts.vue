@@ -74,6 +74,13 @@ const onExpertModified = (payload: Expert) => {
   if (expert) {
     expert.name = payload.name
     expert.prompt = payload.prompt
+    if (payload.engine?.length && payload.model.length) {
+      expert.engine = payload.engine
+      expert.model = payload.model
+    } else {
+      delete expert.engine
+      delete expert.model
+    }
     expert.triggerApps = payload.triggerApps
   }
 

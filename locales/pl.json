@@ -830,6 +830,7 @@
     "editor": {
       "triggerApps": "Aplikacje wyzwalające",
       "triggerAppsDescription": "Monit zostanie automatycznie wybrany, gdy Prompt Anywhere zostanie wywołany z jednej z tych aplikacji",
+      "useDefault": "Aktualny silnik i model",
       "validation": {
         "invalidApp": "Nie można przeanalizować wybranej aplikacji",
         "requiredFields": "Wszystkie pola oznaczone * są wymagane."

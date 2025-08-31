@@ -830,6 +830,7 @@
     "editor": {
       "triggerApps": "触发应用",
       "triggerAppsDescription": "当从这些应用中调用 Prompt Anywhere 时，将自动选择提示。",
+      "useDefault": "当前引擎和模型",
       "validation": {
         "invalidApp": "无法分析所选应用程序",
         "requiredFields": "所有标记为 * 的字段均为必填项。"

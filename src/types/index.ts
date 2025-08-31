@@ -262,6 +262,8 @@ export type Expert = {
   type: 'system' | 'user',
   name?: string
   prompt?: string
+  engine?: string
+  model?: string
   state: 'enabled' | 'disabled' | 'deleted',
   triggerApps: ExternalApp[]
 }

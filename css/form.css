@@ -8,6 +8,9 @@
 }
 
 .form {
+
+  /* for outline */
+  padding: 0 2px;
   
   font-size: var(--form-normal-font-size);
 

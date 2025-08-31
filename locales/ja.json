@@ -830,6 +830,7 @@
     "editor": {
       "triggerApps": "トリガーアプリ",
       "triggerAppsDescription": "Prompt Anywhere をこれらのアプリから呼び出すとプロンプトが自動選択されます",
+      "useDefault": "現在のエンジンとモデル",
       "validation": {
         "invalidApp": "選択したアプリを解析できません",
         "requiredFields": "* が付いた項目はすべて必須です"

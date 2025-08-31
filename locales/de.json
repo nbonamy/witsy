@@ -811,6 +811,7 @@
     "editor": {
       "triggerApps": "Trigger-Apps",
       "triggerAppsDescription": "Der Prompt wird automatisch ausgewählt, wenn Prompt Anywhere von einer dieser Anwendungen aufgerufen wird",
+      "useDefault": "Aktuelle Engine und Modell",
       "validation": {
         "invalidApp": "Die ausgewählte Anwendung kann nicht analysiert werden",
         "requiredFields": "Alle mit * gekennzeichneten Felder sind erforderlich."

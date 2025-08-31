@@ -7,6 +7,8 @@ export default class Expert implements ExpertBase {
   type: 'system' | 'user';
   name?: string;
   prompt?: string;
+  engine?: string;
+  model?: string;
   state: 'enabled' | 'disabled' | 'deleted';
   triggerApps: ExternalApp[];
 
@@ -16,6 +18,8 @@ export default class Expert implements ExpertBase {
     expert.type = obj.type
     expert.name = obj.name
     expert.prompt = obj.prompt
+    expert.engine = obj.engine
+    expert.model = obj.model
     expert.state = obj.state
     expert.triggerApps = []
     return expert

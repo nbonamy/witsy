@@ -439,6 +439,15 @@ const setExpert = (xpert: Expert) => {
   if (prompt.value == '@') {
     prompt.value = ''
   }
+  
+  // Switch engine and model if expert has them defined
+  if (xpert?.engine && xpert?.model && props.chat?.setEngineModel) {
+    props.chat.setEngineModel(xpert.engine, xpert.model)
+    if (props.chat.messages.length === 0) {
+      llmManager.setChatModel(xpert.engine, xpert.model)
+    }
+  }
+  
   nextTick(() => {
     input.value?.focus()
   })

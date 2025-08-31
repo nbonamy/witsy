@@ -37,10 +37,10 @@
 <script setup lang="ts">
 
 import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
-import { ref, computed, ComputedRef, nextTick } from 'vue'
-import { store } from '../services/store'
+import { computed, nextTick, ref } from 'vue'
 import VueSelect from 'vue3-select-component'
 import LlmFactory, { ILlmManager } from '../llms/llm'
+import { store } from '../services/store'
 
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
