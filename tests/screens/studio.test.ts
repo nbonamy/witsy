@@ -667,7 +667,7 @@ test('Undo / Redo', async () => {
 test('Attachment Button Visibility', async () => {
 
   // Add Google image model first
-  store.config.engines.google.models.image.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
+  store.config.engines.google.models.image!.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
 
   const wrapper = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
@@ -707,7 +707,7 @@ test('Attachment Button Visibility', async () => {
 test('Attachment Management', async () => {
 
   // Add Google image model first
-  store.config.engines.google.models.image.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
+  store.config.engines.google.models.image!.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
 
   const wrapper = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
@@ -756,7 +756,7 @@ test('Attachment Management', async () => {
 test('Attachment During Generation', async () => {
 
   // Add Google image model first
-  store.config.engines.google.models.image.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
+  store.config.engines.google.models.image!.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
 
   const wrapper = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
@@ -813,9 +813,9 @@ test('Attachment During Generation', async () => {
 test('Attachment Button Disabled During Generation', async () => {
 
   // Add Google image model first
-  store.config.engines.google.models.image.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
+  store.config.engines.google.models.image!.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
 
-  const wrapper = mount(DesignStudio)
+  const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await wrapper.vm.$nextTick()
@@ -846,7 +846,7 @@ test('Multiple Attachments Management', async () => {
   await wrapper.vm.$nextTick()
   
   // Add Google image model and set it up
-  store.config.engines.google.models.image.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
+  store.config.engines.google.models.image!.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
   await wrapper.vm.$nextTick()
   await settings.find<HTMLSelectElement>('[name=model]').setValue('gemini-2-image')
@@ -887,7 +887,7 @@ test('Attachment Reset', async () => {
   await wrapper.vm.$nextTick()
   
   // Add Google image model and set it up
-  store.config.engines.google.models.image.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
+  store.config.engines.google.models.image!.push({ id: 'gemini-2-image', name: 'gemini-2-image' })
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
   await wrapper.vm.$nextTick()
   await settings.find<HTMLSelectElement>('[name=model]').setValue('gemini-2-image')
