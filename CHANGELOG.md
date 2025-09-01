@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - N/A
 
 ### Fixed
-- N/A
+- ncorrect token usage count for Gemini 2.5 Pro (https://github.com/nbonamy/witsy/issues/391)
 
 ### Removed
 - N/A
