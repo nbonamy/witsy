@@ -27,7 +27,7 @@ export default class VideoCreator implements MediaCreator {
     return VideoCreator.getEngines(checkApiKey)
   }
    
-  async execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<any> {
+  async execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference[]): Promise<any> {
     if (engine === 'replicate') {
       return this.replicate(model, parameters)
     } else if (engine === 'falai') {
@@ -65,7 +65,7 @@ export default class VideoCreator implements MediaCreator {
 
   }
   
-  async falai(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+  async falai(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
 
     try {
 
@@ -78,7 +78,7 @@ export default class VideoCreator implements MediaCreator {
       const response = await fal.subscribe(model, {
         input: {
           ...(parameters.prompt ? { prompt: parameters.prompt } : {}),
-          ...(reference ? { image_url: `data:${reference.mimeType};base64,${reference.contents}` } : {}),
+          ...(reference ? { image_url: `data:${reference[0].mimeType};base64,${reference[0].contents}` } : {}),
         }
       })
 
@@ -95,7 +95,7 @@ export default class VideoCreator implements MediaCreator {
   }
      
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async google(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+  async google(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
 
     const client = new GoogleGenAI({ apiKey: store.config.engines.google.apiKey })
   

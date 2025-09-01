@@ -1,6 +1,7 @@
 {
   "common.arguments": "Arguments",
   "common.askMeAnything": "Ask me anything",
+  "common.attach": "Attach",
   "common.back": "Back",
   "common.basedOn": "based on",
   "common.browse": "Browse",
@@ -487,6 +488,7 @@
   "designStudio.replicateInputImageRequired.title": "Replicate reference image parameter name required",
   "designStudio.title": "Design Studio",
   "designStudio.transform": "Use current media as base. Make sure you select a image-to-image, image-to-video or video-to-video model.",
+  "designStudio.upload": "Upload image",
   "designStudio.variableEditor.title": "Extra Parameter",
   "docRepo.config.characters": "characters",
   "docRepo.config.chunkOverlap": "Chunk overlap",

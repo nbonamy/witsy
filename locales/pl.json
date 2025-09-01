@@ -2,6 +2,7 @@
   "common": {
     "arguments": "Argumenty",
     "askMeAnything": "Zapytaj mnie o cokolwiek",
+    "attach": "Załącz",
     "back": "Powrót",
     "basedOn": "na podstawie",
     "browse": "Przeglądaj",
@@ -747,6 +748,7 @@
     },
     "title": "Design Studio",
     "transform": "Użyj bieżącego nośnika jako podstawy. Upewnij się, że wybierasz model obraz-do-obraz, obraz-do-wideo lub wideo-do-wideo.",
+    "upload": "Prześlij obraz",
     "variableEditor": {
       "title": "Dodatkowy parametr"
     }

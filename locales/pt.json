@@ -2,6 +2,7 @@
   "common": {
     "arguments": "Parâmetros",
     "askMeAnything": "Pergunte-me qualquer coisa",
+    "attach": "Anexar",
     "back": "Voltar",
     "basedOn": "baseado em",
     "browse": "Navegar",
@@ -747,6 +748,7 @@
     },
     "title": "Design Studio",
     "transform": "Use a mídia atual como base. Certifique-se de selecionar um modelo de imagem-para-imagem, imagem-para-vídeo ou vídeo-para-vídeo.",
+    "upload": "Carregar imagem",
     "variableEditor": {
       "title": "Parâmetro Extra"
     }

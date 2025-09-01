@@ -139,7 +139,7 @@ test('Stores attachment', async () => {
   expect(window.api.file.pickFile).toHaveBeenCalled()
   expect(window.api.file.pickFile).toHaveBeenLastCalledWith({
     multiselection: true,
-    //filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
+    //filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif'] }]
   })
   expect(wrapper.vm.attachments).toEqual([{
     mimeType: 'image/png',

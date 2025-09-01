@@ -2,6 +2,7 @@
   "common": {
     "arguments": "Argomenti",
     "askMeAnything": "Chiedimi qualsiasi cosa",
+    "attach": "Allega",
     "back": "Indietro",
     "basedOn": "basato su",
     "browse": "Sfogliare",
@@ -728,6 +729,7 @@
     },
     "title": "Design Studio",
     "transform": "Usa il media corrente come base. Assicurati di selezionare un modello immagine-a-immagine, immagine-a-video o video-a-video.",
+    "upload": "Carica immagine",
     "variableEditor": {
       "title": "Parametro Extra"
     }
