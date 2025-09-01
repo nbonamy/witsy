@@ -682,6 +682,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "Sind Sie sicher, dass Sie diese Medien löschen möchten?",
     "confirmDeleteSingle": "Sind Sie sicher, dass Sie dieses Medium löschen möchten?",
+    "draw": "Zeichnen",
     "dropzone": "Legen Sie Ihre Bilder hier ab, um sie mit KI zum Leben zu erwecken!",
     "emptyPlaceholder": "Lassen Sie Ihrer Kreativität freien Lauf!",
     "error": {
@@ -698,6 +699,7 @@
       "empty": "Sie haben noch keine Medien erstellt.",
       "title": "Verlauf"
     },
+    "inputImage": "Referenzbild",
     "loadMediaSettings": "Einstellungen laden",
     "mediaType": {
       "image": "Bild",
@@ -729,7 +731,6 @@
     },
     "title": "Design Studio",
     "transform": "Verwenden Sie das aktuelle Medium als Basis. Stellen Sie sicher, dass Sie ein Bild-zu-Bild-, Bild-zu-Video- oder Video-zu-Video-Modell auswählen.",
-    "upload": "Bild hochladen",
     "variableEditor": {
       "title": "Zusätzlicher Parameter"
     }
@@ -773,6 +774,11 @@
         "viewContents": "Inhalt des Ordners anzeigen"
       }
     }
+  },
+  "drawingCanvas": {
+    "draw": "Zeichnen",
+    "title": "Zeichenfläche",
+    "useDrawing": "Zeichnung verwenden"
   },
   "embedding": {
     "apiKeyReminder": "Stellen Sie sicher, dass Sie Ihren API-Schlüssel im Bereich Modelle der Witsy-Einstellungen eingeben.",
