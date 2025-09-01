@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.14.0] - WIP
+## [2.14.0] - 2025-08-31
 
 ### Added
 - HTML Artifacts preview
