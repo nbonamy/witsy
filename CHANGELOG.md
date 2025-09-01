@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.X.Y] - WIP
+
+### Added
+- Design Studio drawing
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
 ## [2.14.0] - 2025-08-31
 
 ### Added
