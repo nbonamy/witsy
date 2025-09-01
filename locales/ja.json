@@ -2,6 +2,7 @@
   "common": {
     "arguments": "引数",
     "askMeAnything": "何でも聞いてください",
+    "attach": "添付する",
     "back": "戻る",
     "basedOn": "基づく",
     "browse": "閲覧",
@@ -747,6 +748,7 @@
     },
     "title": "デザインスタジオ",
     "transform": "現在のメディアをベースとして使用。画像から画像、画像から動画、または動画から動画のモデルを選択してください。",
+    "upload": "画像をアップロード",
     "variableEditor": {
       "title": "追加パラメータ"
     }

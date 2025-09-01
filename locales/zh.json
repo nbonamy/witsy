@@ -2,6 +2,7 @@
   "common": {
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
+    "attach": "附件",
     "back": "返回",
     "basedOn": "基于",
     "browse": "浏览",
@@ -747,6 +748,7 @@
     },
     "title": "设计工作室",
     "transform": "使用当前媒体作为基础。请确保选择图像到图像、图像到视频或视频到视频模型。",
+    "upload": "上传图片",
     "variableEditor": {
       "title": "额外参数"
     }

@@ -45,6 +45,11 @@
       
       </div>
 
+      <div class="form-field" v-if="canUpload">
+        <label>{{ t('designStudio.upload') }}</label>
+        <button name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
+      </div>
+
       <div class="form-field horizontal" v-if="currentMedia != null && canTransform">
         <input type="checkbox" v-model="transform" name="transform" @change="onChangeTransform"/>
         <label>{{ t('designStudio.transform') }}</label>
@@ -59,6 +64,14 @@
         <label>{{ t('common.prompt') }}<BIconMagic v-if="promptLibrary.length" @click="onShowPromptLibrary"/></label>
         <textarea v-model="prompt" name="prompt" class="prompt" :placeholder="t('designStudio.promptPlaceholder')">
         </textarea>
+        <div class="attachments" v-if="attachments.length">
+          <div v-for="attachment in attachments" :key="attachment.url" class="attachment">
+            <AttachmentView :attachment="attachment" />
+            <div class="title" v-if="!attachment.isImage()">{{ attachment.filenameShort }}</div>
+            <BIconXLg class="delete" @click="onDetach(attachment)" />
+          </div>
+        </div>
+        <button v-if="canAttach" name="attach" type="button" @click="onAttach" :disabled="isGenerating">{{ t('common.attach') }}</button>
       </div>
 
       <div v-if="modelHasParams" class="form-field">
@@ -121,7 +134,6 @@
           <button name="generate" class="generate-button" type="button" @click="generateMedia()" :disabled="isGenerating">
             {{ isGenerating ? t('designStudio.generating') : isEditing ? t('common.edit') : t('designStudio.generate') }}
           </button>
-          <button v-if="canUpload" name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
         </div>
       </div>
     </div>
@@ -135,26 +147,29 @@
 
 <script setup lang="ts">
 
-import { MediaCreator, DesignStudioMediaType } from '../types/index'
-import { onMounted, ref, computed, watch } from 'vue'
-import { t } from '../services/i18n'
-import { store, kReferenceParamValue } from '../services/store'
-import Message from '../models/message'
-import Dialog from '../composables/dialog'
-import RefreshButton from '../components/RefreshButton.vue'
-import VariableEditor from '../screens/VariableEditor.vue'
+import { BIconMagic } from 'bootstrap-icons-vue'
+import { Model } from 'multi-llm-ts'
+import { computed, onMounted, ref, watch } from 'vue'
 import ComboBox from '../components/Combobox.vue'
-import ImageCreator from '../services/image'
-import VideoCreator from '../services/video'
 import ContextMenu, { MenuAction } from '../components/ContextMenu.vue'
+import RefreshButton from '../components/RefreshButton.vue'
 import VariableTable from '../components/VariableTable.vue'
-import { baseURL as SDWebUIBaseURL } from '../services/sdwebui'
+import Dialog from '../composables/dialog'
+import useEventBus from '../composables/event_bus'
+import Attachment from '../models/attachment'
+import Message from '../models/message'
+import VariableEditor from '../screens/VariableEditor.vue'
+import AttachmentView from '../components/Attachment.vue'
+import { t } from '../services/i18n'
+import ImageCreator from '../services/image'
 import ModelLoaderFactory from '../services/model_loader'
+import { baseURL as SDWebUIBaseURL } from '../services/sdwebui'
+import { kReferenceParamValue, store } from '../services/store'
+import VideoCreator from '../services/video'
+import { FileContents } from '../types/file'
+import { DesignStudioMediaType, MediaCreator } from '../types/index'
 import promptsLibrary from './prompts.json'
 
-import useEventBus from '../composables/event_bus'
-import { Model } from 'multi-llm-ts'
-import { BIconMagic } from 'bootstrap-icons-vue'
 const { onEvent } = useEventBus()
 
 type Parameter = {
@@ -182,6 +197,7 @@ const mediaType= ref<DesignStudioMediaType>('image')
 const engine = ref('')
 const model = ref('')
 const prompt = ref('')
+const attachments = ref<Attachment[]>([])
 const params = ref<Record<string, string>>({})
 const transform = ref(false)
 const preserve = ref(false)
@@ -271,6 +287,10 @@ const canEdit = computed(() => {
   return (engine.value === 'openai' && !model.value.includes('dall-e'))
 })
 
+const canAttach = computed(() => {
+  return engine.value === 'google' && model.value.includes('-image')
+})
+
 const modelHasDefaults = computed(() => {
   return store.config.studio.defaults?.find((d) => d.engine === engine.value && d.model === model.value)
 })
@@ -283,6 +303,20 @@ const canSaveAsDefaults = computed(() => {
   }
   return false
 })
+
+const onAttach = () => {
+  let file = window.api.file.pickFile({ filters: [
+    { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif'] }
+  ] })
+  if (file) {
+    const fileContents = file as FileContents
+    attachments.value.push(new Attachment(fileContents.contents, fileContents.mimeType, fileContents.url))
+  }
+}
+
+const onDetach = (attachment: Attachment) => {
+  attachments.value = attachments.value.filter((a: Attachment) => a !== attachment)
+}
 
 const customParams = computed((): Parameter[] => {
 
@@ -628,11 +662,16 @@ const generateMedia = async () => {
     engine: engine.value,
     model: model.value,
     prompt: userPrompt,
+    attachments: attachments.value,
     params: params.value
   })
 }
 
 defineExpose({
+  reset: () => {
+    attachments.value = []
+    transform.value = false
+  },
   loadSettings,
   generateMedia,
   setTransform: (value: boolean) => {
@@ -704,6 +743,51 @@ defineExpose({
 
 .studio-settings .error {
   color: red;
+}
+
+.studio-settings .attachments {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  gap: 0.5rem;
+
+  .attachment {
+    
+    padding: 0.5rem 0.25rem;
+    border: 1px solid var(--prompt-input-border-color);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    &:has(img) {
+      padding: 0.125rem 0.25rem;
+    }
+
+    .icon {
+      height: 1.25rem !important;
+      width: 1.25rem !important;
+    }
+
+    img {
+      height: 2rem !important;
+      width: 2rem !important;
+      border-radius: 0.125rem;
+      object-fit: cover;
+    }
+
+    .title {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .delete {
+      padding-left: 0.25rem;
+      cursor: pointer;
+    }
+
+  }
 }
 
 </style>

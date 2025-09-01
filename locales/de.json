@@ -2,6 +2,7 @@
   "common": {
     "arguments": "Argumente",
     "askMeAnything": "Frag mich, was du willst!",
+    "attach": "Anhängen",
     "back": "Zurück",
     "basedOn": "basierend auf",
     "browse": "Durchsuchen",
@@ -728,6 +729,7 @@
     },
     "title": "Design Studio",
     "transform": "Verwenden Sie das aktuelle Medium als Basis. Stellen Sie sicher, dass Sie ein Bild-zu-Bild-, Bild-zu-Video- oder Video-zu-Video-Modell auswählen.",
+    "upload": "Bild hochladen",
     "variableEditor": {
       "title": "Zusätzlicher Parameter"
     }

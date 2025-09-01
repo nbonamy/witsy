@@ -34,23 +34,24 @@
 </template>
 
 <script setup lang="ts">
-import { FileContents } from '../types/file'
-import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
-import { t } from '../services/i18n'
-import { store, kMediaChatId, kReferenceParamValue } from '../services/store'
-import { saveFileContents } from '../services/download'
-import Dialog from '../composables/dialog'
+import { anyDict } from '../types/index'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import ContextMenu from '../components/ContextMenu.vue'
-import Settings from '../studio/Settings.vue'
-import History from '../studio/History.vue'
-import Preview from '../studio/Preview.vue'
-import ImageCreator from '../services/image'
-import VideoCreator from '../services/video'
-import Message from '../models/message'
+import Dialog from '../composables/dialog'
+import useEventBus from '../composables/event_bus'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
+import Message from '../models/message'
+import { saveFileContents } from '../services/download'
+import { t } from '../services/i18n'
+import ImageCreator from '../services/image'
+import { kMediaChatId, kReferenceParamValue, store } from '../services/store'
+import VideoCreator from '../services/video'
+import History from '../studio/History.vue'
+import Preview from '../studio/Preview.vue'
+import Settings from '../studio/Settings.vue'
+import { FileContents } from '../types/file'
 
-import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 defineProps({
@@ -81,7 +82,7 @@ const contextMenuActions = () => {
   ]
 }
 
-const currentMedia = computed(() => {
+const currentMedia = computed((): Message => {
   return selection.value.length === 1 ? selection.value[0] : null
 })
 
@@ -136,6 +137,7 @@ const onDeleteMedia = () => {
 }
 
 const onReset = () => {
+  settings.value.reset()
   selection.value = []
   clearStacks()
   mode.value = 'create'
@@ -373,7 +375,7 @@ const processUpload = (fileName: string, mimeType: string, fileUrl: string) => {
 
 const onUpload = () => {
   let file = window.api.file.pickFile({ filters: [
-    { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+    { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif'] }
   ] })
   if (file) {
     const fileContents = file as FileContents
@@ -503,7 +505,15 @@ const processImageFile = async (file: File) => {
   }
 }
 
-const onMediaGenerationRequest = async (data: any) => {
+const onMediaGenerationRequest = async (data: {
+  mediaType: 'image' | 'video'
+  action: 'edit' | 'transform'
+  engine: string,
+  model: string,
+  prompt: string,
+  attachments: Attachment[],
+  params: anyDict
+}) => {
 
   // check
   const message: Message|null = selection.value.length == 0 ? null : selection.value[0]
@@ -512,7 +522,7 @@ const onMediaGenerationRequest = async (data: any) => {
   const currentUrl = message?.attachments[0]?.url
   const isEditing = data.action === 'edit' && !!currentUrl
   const isTransforming = data.action === 'transform' && !!currentUrl
-  let attachReference = isEditing || isTransforming
+  let attachReference = isEditing || isTransforming || data.attachments.length > 0
 
   // make a copy as we are going to change that
   const params = JSON.parse(JSON.stringify(data.params))
@@ -595,7 +605,13 @@ const onMediaGenerationRequest = async (data: any) => {
     const media = await creator.execute(data.engine, data.model, {
       prompt: data.prompt,
       ...params
-    }, attachReference ? window.api.file.read(currentUrl) : undefined)
+    }, attachReference ? [
+      ...(currentUrl ? [window.api.file.read(currentUrl)] : []),
+      ...(data.attachments.length ? data.attachments.map(a => ({
+        mimeType: a.mimeType,
+        contents: a.content
+      })) : [])
+    ] : undefined)
 
     // check
     if (!media?.url) {

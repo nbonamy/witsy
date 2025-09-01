@@ -2,6 +2,7 @@
   "common": {
     "arguments": "Arguments",
     "askMeAnything": "Ask me anything",
+    "attach": "Attach",
     "back": "Back",
     "basedOn": "based on",
     "browse": "Browse",
@@ -746,6 +747,7 @@
     },
     "title": "Design Studio",
     "transform": "Use current media as base. Make sure you select a image-to-image, image-to-video or video-to-video model.",
+    "upload": "Upload image",
     "variableEditor": {
       "title": "Extra Parameter"
     }

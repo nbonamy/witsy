@@ -480,7 +480,7 @@ const onStopPrompting = () => {
 
 const onAttach = () => {
   let files = window.api.file.pickFile({ multiselection: true, /*filters: [
-    { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+    { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif'] }
   ]*/ })
   if (Array.isArray(files)) {
     for (const filepath of files) {

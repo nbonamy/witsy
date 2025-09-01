@@ -41,7 +41,7 @@ export default class ImageCreator implements MediaCreator {
     return ImageCreator.getEngines(checkApiKey)
   }
 
-  async execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+  async execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
     if (engine == 'openai') {
       return this.openai(model, parameters, reference)
     } else if (engine == 'huggingface') {
@@ -61,7 +61,7 @@ export default class ImageCreator implements MediaCreator {
     }
   }
 
-  async openai(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+  async openai(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
     return this._openai('openai', store.config.engines.openai.apiKey, store.config.engines.openai.baseURL, model, parameters, reference)
   }
 
@@ -97,7 +97,7 @@ export default class ImageCreator implements MediaCreator {
 
   }  
 
-  async replicate(model: string, parameters: any/*, reference?: MediaReference*/): Promise<any> {
+  async replicate(model: string, parameters: any/*, reference?: MediaReference[]*/): Promise<any> {
 
     // init
     const client = new Replicate({ auth: store.config.engines.replicate.apiKey });
@@ -152,7 +152,7 @@ export default class ImageCreator implements MediaCreator {
     
   }
 
-  async google(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+  async google(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
 
     let api: 'image' | 'text' = 'image'
 
@@ -172,7 +172,7 @@ export default class ImageCreator implements MediaCreator {
 
   }
 
-  async google_text(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+  async google_text(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
 
     const client = new GoogleGenAI({ apiKey: store.config.engines.google.apiKey })
 
@@ -193,10 +193,10 @@ export default class ImageCreator implements MediaCreator {
           model: model,
           contents: [
             { text: parameters.prompt, },
-            { inlineData: {
-              mimeType: reference.mimeType,
-              data: reference.contents,
-            }}
+            ...reference.map(r => ({ inlineData: {
+              mimeType: r.mimeType,
+              data: r.contents,
+            }}))
           ]
         });
 
@@ -204,7 +204,9 @@ export default class ImageCreator implements MediaCreator {
 
       // iterate on parts
       for (const part of response.candidates[0].content.parts || []) {
-        if (part.inlineData) {
+        if (part.text) {
+          console.log(`[google] image generation with ${model}`, part.text)
+        } else if (part.inlineData) {
           const imageData = part.inlineData.data;
           const fileUrl = saveFileContents('png', imageData)
           return {
@@ -226,7 +228,7 @@ export default class ImageCreator implements MediaCreator {
   
   }
 
-  async google_image(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+  async google_image(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
 
     const client = new GoogleGenAI({ apiKey: store.config.engines.google.apiKey })
   
@@ -249,17 +251,21 @@ export default class ImageCreator implements MediaCreator {
 
       } else {
 
-        const referenceImage = new SubjectReferenceImage()
-        referenceImage.referenceId = 1
-        referenceImage.referenceImage = {
-          imageBytes: reference.contents,
-          mimeType: reference.mimeType,
-        }
+        let referenceId = 1
+        const referenceImages = reference.map(r => {
+          const referenceImage = new SubjectReferenceImage()
+          referenceImage.referenceId = referenceId++
+          referenceImage.referenceImage = {
+            imageBytes: r.contents,
+            mimeType: r.mimeType,
+          }
+          return referenceImage
+        })
 
         response = await client.models.editImage({
           model: model,
           prompt: parameters.prompt,
-          referenceImages: [referenceImage],
+          referenceImages: referenceImages,
           config: {
             numberOfImages: 1,
             safetyFilterLevel: SafetyFilterLevel.BLOCK_NONE,
@@ -305,7 +311,7 @@ export default class ImageCreator implements MediaCreator {
 
   }
 
-  async falai(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+  async falai(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
 
     try {
 
@@ -318,7 +324,7 @@ export default class ImageCreator implements MediaCreator {
       const response = await fal.subscribe(model, {
         input: {
           ...parameters,
-          ...(reference ? { image_url: `data:${reference.mimeType};base64,${reference.contents}` } : {}),
+          ...(reference ? { image_url: `data:${reference[0].mimeType};base64,${reference[0].contents}` } : {}),
         }
       })
 
@@ -334,7 +340,7 @@ export default class ImageCreator implements MediaCreator {
   
   }
 
-  protected async _openai(name: string, apiKey: string, baseURL: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+  protected async _openai(name: string, apiKey: string, baseURL: string, model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
 
     // init
     const client = new OpenAI({
@@ -349,7 +355,7 @@ export default class ImageCreator implements MediaCreator {
     if (reference) {
 
       // we need the binary data
-      const binaryString = atob(reference.contents);
+      const binaryString = atob(reference[0].contents);
       const len = binaryString.length;
       const bytes = new Uint8Array(len);
       for (let i = 0; i < len; i++) {
@@ -360,7 +366,7 @@ export default class ImageCreator implements MediaCreator {
       response = await client.images.edit({
         model: model,
         prompt: parameters?.prompt,
-        image: await toFile(bytes, '', { type: reference.mimeType }),
+        image: await toFile(bytes, '', { type: reference[0].mimeType }),
       })
 
     } else {

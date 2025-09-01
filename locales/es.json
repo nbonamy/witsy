@@ -2,6 +2,7 @@
   "common": {
     "arguments": "Argumentos",
     "askMeAnything": "Pregúntame cualquier cosa",
+    "attach": "Adjuntar",
     "back": "Atrás",
     "basedOn": "basado en",
     "browse": "Examinar",
@@ -728,6 +729,7 @@
     },
     "title": "Design Studio",
     "transform": "Usar el medio actual como base. Asegúrate de seleccionar un modelo de imagen a imagen, imagen a video o video a video.",
+    "upload": "Subir imagen",
     "variableEditor": {
       "title": "Parámetro Adicional"
     }
