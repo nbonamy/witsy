@@ -701,6 +701,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "Você tem certeza de que deseja excluir estes mídias?",
     "confirmDeleteSingle": "Tem certeza de que deseja excluir esta mídia?",
+    "draw": "Desenhar",
     "dropzone": "Solte suas imagens aqui para dar vida a elas com IA!",
     "emptyPlaceholder": "Deixe sua criatividade fluir!",
     "error": {
@@ -717,6 +718,7 @@
       "empty": "Você ainda não criou nenhuma mídia.",
       "title": "Histórico"
     },
+    "inputImage": "Imagem de Referência",
     "loadMediaSettings": "Carregar configurações",
     "mediaType": {
       "image": "Imagem",
@@ -748,7 +750,6 @@
     },
     "title": "Design Studio",
     "transform": "Use a mídia atual como base. Certifique-se de selecionar um modelo de imagem-para-imagem, imagem-para-vídeo ou vídeo-para-vídeo.",
-    "upload": "Carregar imagem",
     "variableEditor": {
       "title": "Parâmetro Extra"
     }
@@ -792,6 +793,11 @@
         "viewContents": "Ver conteúdo da pasta"
       }
     }
+  },
+  "drawingCanvas": {
+    "draw": "Desenhar",
+    "title": "Tela de Desenho",
+    "useDrawing": "Usar Desenho"
   },
   "embedding": {
     "apiKeyReminder": "Certifique-se de inserir sua chave de API no painel Modelos das Configurações do Witsy.",

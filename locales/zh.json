@@ -701,6 +701,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "您确定要删除这些媒体吗？",
     "confirmDeleteSingle": "你确定要删除这个媒体吗？",
+    "draw": "绘制",
     "dropzone": "将您的图片拖放到此处，让AI赋予它们生命！",
     "emptyPlaceholder": "让你的创造力尽情发挥吧！",
     "error": {
@@ -717,6 +718,7 @@
       "empty": "你还没有创建任何媒体。",
       "title": "历史记录"
     },
+    "inputImage": "参考图像",
     "loadMediaSettings": "加载设置",
     "mediaType": {
       "image": "图像",
@@ -748,7 +750,6 @@
     },
     "title": "设计工作室",
     "transform": "使用当前媒体作为基础。请确保选择图像到图像、图像到视频或视频到视频模型。",
-    "upload": "上传图片",
     "variableEditor": {
       "title": "额外参数"
     }
@@ -792,6 +793,11 @@
         "viewContents": "查看文件夹内容"
       }
     }
+  },
+  "drawingCanvas": {
+    "draw": "绘制",
+    "title": "绘图画布",
+    "useDrawing": "使用绘图"
   },
   "embedding": {
     "apiKeyReminder": "请在 Witsy 设置的模型面板中输入您的 API 密钥。",

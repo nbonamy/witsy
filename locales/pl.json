@@ -701,6 +701,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "Czy na pewno chcesz usunąć te media?",
     "confirmDeleteSingle": "Czy na pewno chcesz usunąć ten nośnik?",
+    "draw": "Rysuj",
     "dropzone": "Upuść tutaj swoje obrazy, aby ożywić je za pomocą AI!",
     "emptyPlaceholder": "Daj się ponieść kreatywności!",
     "error": {
@@ -717,6 +718,7 @@
       "empty": "Nie utworzono jeszcze żadnych multimediów.",
       "title": "Historia"
     },
+    "inputImage": "Obraz odniesienia",
     "loadMediaSettings": "Ustawienia ładowania",
     "mediaType": {
       "image": "Obraz",
@@ -748,7 +750,6 @@
     },
     "title": "Design Studio",
     "transform": "Użyj bieżącego nośnika jako podstawy. Upewnij się, że wybierasz model obraz-do-obraz, obraz-do-wideo lub wideo-do-wideo.",
-    "upload": "Prześlij obraz",
     "variableEditor": {
       "title": "Dodatkowy parametr"
     }
@@ -792,6 +793,11 @@
         "viewContents": "Pokaż zawartość folderu"
       }
     }
+  },
+  "drawingCanvas": {
+    "draw": "Rysuj",
+    "title": "Płótno do rysowania",
+    "useDrawing": "Użyj rysunku"
   },
   "embedding": {
     "apiKeyReminder": "Upewnij się, że wprowadziłeś swój klucz API w panelu Modele w Ustawieniach Witsy.",

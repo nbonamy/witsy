@@ -701,6 +701,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "これらのメディアを削除してもよろしいですか？",
     "confirmDeleteSingle": "このメディアを削除してもよろしいですか？",
+    "draw": "描く",
     "dropzone": "ここに画像をドロップして、AIで命を吹き込みましょう！",
     "emptyPlaceholder": "創造性を自由に発揮してください！",
     "error": {
@@ -717,6 +718,7 @@
       "empty": "まだメディアを作成していません。",
       "title": "履歴"
     },
+    "inputImage": "参照画像",
     "loadMediaSettings": "設定を読み込む",
     "mediaType": {
       "image": "画像",
@@ -748,7 +750,6 @@
     },
     "title": "デザインスタジオ",
     "transform": "現在のメディアをベースとして使用。画像から画像、画像から動画、または動画から動画のモデルを選択してください。",
-    "upload": "画像をアップロード",
     "variableEditor": {
       "title": "追加パラメータ"
     }
@@ -792,6 +793,11 @@
         "viewContents": "フォルダの内容を表示"
       }
     }
+  },
+  "drawingCanvas": {
+    "draw": "描く",
+    "title": "描画キャンバス",
+    "useDrawing": "描画を使用"
   },
   "embedding": {
     "apiKeyReminder": "Witsyの設定のモデルペインにAPIキーを入力してください。",

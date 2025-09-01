@@ -46,8 +46,11 @@
       </div>
 
       <div class="form-field" v-if="canUpload">
-        <label>{{ t('designStudio.upload') }}</label>
-        <button name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
+        <label>{{ t('designStudio.inputImage') }}</label>
+        <div class="form-subgroup">
+          <button name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
+          <button name="draw" type="button" @click="$emit('draw')" :disabled="isGenerating">{{ t('designStudio.draw') }}</button>
+        </div>
       </div>
 
       <div class="form-field horizontal" v-if="currentMedia != null && canTransform">
@@ -190,7 +193,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['upload', 'generate'])
+const emit = defineEmits(['upload', 'generate', 'draw'])
 
 const editor = ref(null)
 const mediaType= ref<DesignStudioMediaType>('image')
@@ -429,6 +432,10 @@ const canTransform = computed(() => {
 
 const canUpload = computed(() => {
   return canEdit.value || canTransform.value
+})
+
+const canDraw = computed(() => {
+  return mediaType.value === 'image'
 })
 
 const isEditing = computed(() => {

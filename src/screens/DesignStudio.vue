@@ -12,7 +12,7 @@
             <button :class="{active: mode === 'history'}" @click="mode = 'history'">{{ t('designStudio.history.title') }}</button>
           </div>
         </div>
-        <Settings :class="{ hidden: mode !== 'create' }" ref="settings" :current-media="currentMedia" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
+        <Settings :class="{ hidden: mode !== 'create' }" ref="settings" :current-media="currentMedia" :is-generating="isGenerating" @upload="onUpload" @draw="onDraw" @generate="onMediaGenerationRequest" />
         <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-messages="selection" @select-message="selectMessage" @context-menu="showContextMenu" />
       </main>
     </div>
@@ -31,6 +31,7 @@
     </div>
   </div>
   <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+  <DrawingCanvas v-if="showDrawingCanvas" :backgroundImage="currentMediaUrl" @close="onDrawingClose" @save="onDrawingSave" />
 </template>
 
 <script setup lang="ts">
@@ -50,6 +51,7 @@ import VideoCreator from '../services/video'
 import History from '../studio/History.vue'
 import Preview from '../studio/Preview.vue'
 import Settings from '../studio/Settings.vue'
+import DrawingCanvas from '../components/DrawingCanvas.vue'
 import { FileContents } from '../types/file'
 
 const { emitEvent } = useEventBus()
@@ -71,6 +73,7 @@ const menuX = ref(0)
 const menuY = ref(0)
 const targetRow = ref<Message|null>(null)
 const isDragOver = ref(false)
+const showDrawingCanvas = ref(false)
 
 const contextMenuActions = () => {
   return [
@@ -84,6 +87,18 @@ const contextMenuActions = () => {
 
 const currentMedia = computed((): Message => {
   return selection.value.length === 1 ? selection.value[0] : null
+})
+
+const currentMediaUrl = computed((): string | null => {
+  if (currentMedia.value && 
+      currentMedia.value.attachments && 
+      currentMedia.value.attachments.length > 0) {
+    const attachment = currentMedia.value.attachments[0]
+    if (attachment && attachment.isImage() && attachment.url) {
+      return attachment.url
+    }
+  }
+  return null
 })
 
 const history = computed(() => {
@@ -382,6 +397,51 @@ const onUpload = () => {
     const fileUrl = saveFileContents(fileContents.url.split('.').pop(), fileContents.contents)
     const fileName = fileContents.url.split(/[\\/]/).pop()
     processUpload(fileName, fileContents.mimeType, fileUrl)
+  }
+}
+
+const onDraw = () => {
+  showDrawingCanvas.value = true
+}
+
+const onDrawingClose = () => {
+  showDrawingCanvas.value = false
+}
+
+const onDrawingSave = (drawing: { url: string, mimeType: string, filename: string }) => {
+  showDrawingCanvas.value = false
+  
+  // Check if there's already a current message selected
+  if (currentMedia.value) {
+    // Add current state to undo stack before replacing
+    undoStack.value.push(backupCurrentMessage())
+    redoStack.value = []
+    
+    // Update the existing message with the new drawing
+    const message = currentMedia.value
+    
+    // Delete the old attachment file
+    if (message.attachments.length > 0) {
+      window.api.file.delete(message.attachments[0].url)
+      message.attachments = []
+    }
+    
+    // Update message content and attachments
+    message.content = message.content.length ? `${message.content} / ${t('drawingCanvas.draw')}` : t('drawingCanvas.draw')
+    message.createdAt = Date.now()
+    message.engine = 'drawing'
+    message.model = drawing.filename
+    message.attach(new Attachment('', drawing.mimeType, drawing.url))
+    
+    // Move message to end of chat
+    chat.value.messages = chat.value.messages.filter((m) => m.uuid !== message.uuid)
+    chat.value.messages.push(message)
+    
+    // Save history
+    store.saveHistory()
+  } else {
+    // No current message, create a new one
+    processUpload(drawing.filename, drawing.mimeType, drawing.url)
   }
 }
 
