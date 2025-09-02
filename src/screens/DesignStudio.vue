@@ -808,6 +808,22 @@ const onFullScreen = (url: string) => {
       display: flex;
       justify-content: center;
       align-items: center;
+
+      .button-group {
+        margin: 0 1rem;
+        width: 100%;
+        align-self: center;
+        display: flex;
+        justify-content: space-between;
+
+
+        button {
+          flex: 1;
+          padding: 0.5rem 1rem;
+        }
+
+      }
+
     }
 
     main .hidden {

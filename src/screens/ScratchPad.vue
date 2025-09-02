@@ -5,7 +5,7 @@
       <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
     <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
-    <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @prompt="onSendPrompt" @stop="onStopPrompting" ref="prompt" />
+    <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @stop="onStopPrompting" ref="prompt" />
     <audio/>
   </div>
 </template>
@@ -438,6 +438,13 @@ const onReadAloud = async () => {
 
 const onAudioPlayerStatus = (status: AudioStatus) => {
   audioState.value = status.state
+}
+
+const onSetEngineModel = (engine: string, model: string) => {
+  store.config.scratchpad.engine = engine
+  store.config.scratchpad.model = model
+  store.saveSettings()
+  initLlm()
 }
 
 const onSendPrompt = async (params: SendPromptParams) => {

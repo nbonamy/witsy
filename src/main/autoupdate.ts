@@ -38,7 +38,7 @@ export default class AutoUpdater {
       console.error('Error while checking for updates', error)
       this.downloading = false
       if (this.manualUpdate) {
-        dialog.showErrorBox('StationOne', t('autoupdate.error'))
+        dialog.showErrorBox(t('common.appName'), t('autoupdate.error'))
       } 
     })
 
@@ -54,7 +54,7 @@ export default class AutoUpdater {
       if (this.manualUpdate) {
         dialog.showMessageBox({
           type: 'info',
-          message: 'StationOne',
+          message: t('common.appName'),
           detail: t('autoupdate.available'),
         })
       }
@@ -67,7 +67,7 @@ export default class AutoUpdater {
         if (this.manualUpdate) {
           dialog.showMessageBox({
             type: 'info',
-            message: 'StationOne',
+            message: t('common.appName'),
             detail: t('autoupdate.uptodate'),
           })
         }
@@ -109,7 +109,7 @@ export default class AutoUpdater {
       const t = useI18n(this.app)
       dialog.showMessageBox({
         type: 'info',
-        message: 'StationOne',
+        message: t('common.appName'),
         detail: t('autoupdate.downloading'),
       })
     } else {

@@ -173,7 +173,7 @@ export const migrateExistingItemsToWorkspace = (app: App, workspaceId: string): 
 
     saveWorkspace(app, {
       uuid: workspaceId,
-      name: 'StationOne',
+      name: 'MyWorkspace',
       icon: 'BIconBox',
       color: '#006edb'
     })

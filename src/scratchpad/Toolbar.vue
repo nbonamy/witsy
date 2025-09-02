@@ -1,7 +1,7 @@
 <template>
   <div class="form">
 
-    <div class="toolbar form-field">
+    <div class="toolbar">
     
       <button class="tool" @click="emitEvent('action', 'clear')">
         <FileIcon /><span>{{ t('common.clear') }}</span>
@@ -15,8 +15,8 @@
         <SaveIcon /><span>{{ t('common.save') }}</span>
       </button>
       
-      <EngineSelect class="tool" v-model="engine" @change="onChangeEngine" />
-      <ModelSelect class="tool" v-model="model" :engine="engine" @change="onChangeModel"/>
+      <!-- <EngineSelect class="tool" v-model="engine" @change="onChangeEngine" />
+      <ModelSelect class="tool" v-model="model" :engine="engine" @change="onChangeModel"/> -->
       
       <select class="tool" v-model="fontFamily" @change="onChangeFontFamily">
         <option value="serif">{{ t('scratchpad.fontFamily.serif') }}</option>
@@ -39,16 +39,11 @@
 
 <script setup lang="ts">
 
-import { FileIcon, FileUpIcon, FolderOpenIcon, SaveIcon } from 'lucide-vue-next'
+import { FileIcon, FolderOpenIcon, SaveIcon } from 'lucide-vue-next'
 import { onMounted, ref, watch } from 'vue'
-import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelect from '../components/ModelSelect.vue'
-import LlmFactory from '../llms/llm'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
-
-// bus
 import useEventBus from '../composables/event_bus'
+import { t } from '../services/i18n'
+
 const { emitEvent } = useEventBus()
 
 export interface ToolbarAction {
@@ -63,14 +58,14 @@ const props = defineProps({
   fontSize: String
 })
 
-const engine = ref(null)
-const model = ref(null)
+// const engine = ref(null)
+// const model = ref(null)
 const fontFamily = ref(null)
 const fontSize = ref(null)
 
 onMounted(() => {
-  watch(() => props.engine || {}, () => engine.value = props.engine, { immediate: true })
-  watch(() => props.model || {}, () => model.value = props.model, { immediate: true })
+  // watch(() => props.engine || {}, () => engine.value = props.engine, { immediate: true })
+  // watch(() => props.model || {}, () => model.value = props.model, { immediate: true })
   watch(() => props.fontFamily || {}, () => fontFamily.value = props.fontFamily, { immediate: true })
   watch(() => props.fontSize || {}, () => fontSize.value = props.fontSize, { immediate: true })
 })
@@ -83,15 +78,15 @@ const onChangeFontSize = () => {
   emitEvent('action', { type: 'fontSize', value: fontSize.value })
 }
 
-const onChangeEngine = () => {
-  const llmManager = LlmFactory.manager(store.config)
-  model.value = llmManager.getDefaultChatModel(engine.value, false)
-  onChangeModel()
-}
+// const onChangeEngine = () => {
+//   const llmManager = LlmFactory.manager(store.config)
+//   model.value = llmManager.getDefaultChatModel(engine.value, false)
+//   onChangeModel()
+// }
 
-const onChangeModel = () => {
-  emitEvent('action', { type: 'llm', value: { engine: engine.value, model: model.value }})
-}
+// const onChangeModel = () => {
+//   emitEvent('action', { type: 'llm', value: { engine: engine.value, model: model.value }})
+// }
 
 </script>
 
@@ -127,26 +122,19 @@ const onChangeModel = () => {
 
     max-width: 128px;
     white-space: nowrap;
-    padding: 6px 8px;
     font-size: 14.5px;
+    font-weight: normal;
+    height: 32px;
     margin: 0;
 
     &:enabled {
       -webkit-app-region: no-drag;
     }
 
-    svg {
-      position: relative;
-      margin-right: 8px;
-      top: 2px;
-    }
-
   }
 
   select.tool {
     border-radius: 6px;
-    font-size: 13.5px;
-    padding-right: 0px;
     width: auto;
   }
 

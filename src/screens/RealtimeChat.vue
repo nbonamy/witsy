@@ -34,9 +34,6 @@
 
     <div class="sp-main">
 
-      <header>
-      </header>
-
       <main>
 
         <div class="status">{{ status }}</div>

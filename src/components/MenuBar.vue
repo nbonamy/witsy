@@ -56,10 +56,10 @@
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureEnabled('experts')">
+      <!-- <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureEnabled('experts')">
         <BrainIcon />
         <span>{{ t('docRepo.list.title') }}</span>
-      </MenuBarItem>
+      </MenuBarItem> -->
 
       <MenuBarItem action="settings" :active="mode === 'settings'" @click="emit('change', 'settings')">
         <SettingsIcon />

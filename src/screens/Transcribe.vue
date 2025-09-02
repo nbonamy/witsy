@@ -53,10 +53,6 @@
 
     <div class="sp-main" @drop="onDrop" @dragover="onDragOver" @dragenter="onDragEnter" @dragleave="onDragLeave" >
 
-      <header>
-
-      </header>
-
       <main>
 
         <div class="controls">

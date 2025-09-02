@@ -104,7 +104,9 @@ export default (window: BrowserWindow) => {
 
     if (
       url.includes('googlefonts') ||
-      url.includes('storage.googleapis.com')
+      url.includes('storage.googleapis.com') ||
+      url.includes('fonts.googleapis.com') ||
+      url.includes('fonts.gstatic.com')
     ) {
       return
     }

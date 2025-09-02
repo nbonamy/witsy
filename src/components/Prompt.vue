@@ -270,7 +270,7 @@ const isDragOver = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
-const emit = defineEmits(['prompt', 'run-agent','stop'])
+const emit = defineEmits(['set-engine-model', 'prompt', 'run-agent','stop'])
 
 const engine = () => props.chat?.engine || llmManager.getChatEngineModel().engine
 const model = () => props.chat?.model || llmManager.getChatEngineModel().model
@@ -901,11 +901,8 @@ const handleManageExperts = () => {
 }
 
 const handleModelSelected = (engine: string, model: string) => {
-  llmManager.setChatModel(engine, model)
-  if (props.chat) {
-    props.chat.engine = engine
-    props.chat.model = model
-  }
+  props.chat?.setEngineModel(engine, model)
+  emit('set-engine-model', engine, model)
   closeModelMenu()
 }
 
@@ -1419,7 +1416,7 @@ defineExpose({
         gap: 0.5rem;
 
         .model-name {
-          font-size: 12px;
+          font-size: 13px;
           max-width: 150px;
           overflow: hidden;
           text-overflow: ellipsis;

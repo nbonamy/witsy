@@ -12,11 +12,11 @@
       <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
     </main>
     <footer>
-      <label>StationOne v0.0.1</label>
+      <label>{{ t('common.appName') }} v{{ version }}</label>
       <div class="actions">
         <ActivityIcon @click="onMode('debug')"/>
-        <CommandIcon />
-        <CircleQuestionMarkIcon />
+        <!-- <CommandIcon />
+        <CircleQuestionMarkIcon /> -->
       </div>
     </footer>
   </div>
@@ -28,11 +28,12 @@
 
 <script setup lang="ts">
 
-import { ActivityIcon, CircleQuestionMarkIcon, CommandIcon } from 'lucide-vue-next'
-import { nextTick, onMounted, ref } from 'vue'
+import { ActivityIcon } from 'lucide-vue-next'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import Fullscreen from '../components/Fullscreen.vue'
 import MenuBar, { MenuBarMode } from '../components/MenuBar.vue'
 import WorkspaceBar from '../components/WorkspaceBar.vue'
+import useEventBus from '../composables/event_bus'
 import AgentForge from '../screens/AgentForge.vue'
 import Chat from '../screens/Chat.vue'
 import DesignStudio from '../screens/DesignStudio.vue'
@@ -42,10 +43,10 @@ import Onboarding from '../screens/Onboarding.vue'
 import RealtimeChat from '../screens/RealtimeChat.vue'
 import Settings from '../screens/Settings.vue'
 import Transcribe from '../screens/Transcribe.vue'
+import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { anyDict } from '../types/index'
 
-import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
 
 const chat = ref<typeof Chat>(null)
@@ -64,6 +65,10 @@ const props = defineProps({
 
 const mode = ref<MenuBarMode>('chat')
 const viewParams = ref(null)
+
+const version = computed(() => {
+  return window.api.app.getVersion()
+})
 
 onMounted(() => {
 

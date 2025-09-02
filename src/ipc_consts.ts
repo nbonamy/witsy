@@ -3,6 +3,7 @@
 export const APP = {
   GET_APP_PATH: 'get-app-path',
   GET_ASSET_PATH: 'get-asset-path',
+  GET_VERSION: 'get-version',
   SET_APPEARANCE_THEME: 'set-appearance-theme',
   SHOW_ABOUT: 'show-about',
   // SHOW_DIALOG: 'show-dialog',

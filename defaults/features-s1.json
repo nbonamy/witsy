@@ -1,0 +1,24 @@
+
+{
+  "appearance": false,
+  "studio": true,
+  "scratchpad": true,
+  "transcribe": false,
+  "computerUse": false,
+  "voiceMode": false,
+  "workspaces": true,
+  "chat": {
+    "commands": false,
+    "folders": true,
+    "dates": false,
+    "settings": true,
+    "temporary": false,
+    "exportMarkdown": false,
+    "exportPdf": false
+  },
+  "mcp": {
+    "station1": false,
+    "smithery": true,
+    "json": false
+  }
+}

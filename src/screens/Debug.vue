@@ -102,7 +102,7 @@
       </div>
     </main>
     <footer>
-      <label>StationOne v0.0.1</label>
+      <label>{{ t('common.appName') }} v{{ version }}</label>
     </footer>
   </div>
 </template>
@@ -127,6 +127,10 @@ const activeTab = ref<'request'|'response'>('request')
 const showSent = ref(true)
 const showReceived = ref(true)
 const copying = ref(false)
+
+const version = computed(() => {
+  return window.api.app.getVersion()
+})
 
 const info = computed(() => {
   if (!selected.value) return null

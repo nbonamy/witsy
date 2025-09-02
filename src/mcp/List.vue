@@ -16,7 +16,7 @@
       </div>
     </header>
 
-    <section class="hero">
+    <section class="hero" v-if="store.isFeatureEnabled('mcp.station1')">
       <div class="hero-cards">
         <div class="hero-card kochava-card" @click="onConnect('kochava')" :class="{ 'loading': mcpLoading }">
           <div class="card-icon">

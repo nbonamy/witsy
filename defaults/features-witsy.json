@@ -1,0 +1,7 @@
+
+{
+  "workspaces": false,
+  "mcp": {
+    "station1": true
+  }
+}

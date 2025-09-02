@@ -2,6 +2,7 @@
   "common": {
     "actions": "Ações",
     "agents": "Agentes",
+    "appName": "StationOne",
     "arguments": "Parâmetros",
     "askMeAnything": "Pergunte-me qualquer coisa",
     "attach": "Anexar",
@@ -154,12 +155,15 @@
       "weekly": "Semanal"
     },
     "search": "Pesquisar…",
+    "select": "Selecionar",
     "selectAll": "Selecionar Tudo",
     "selectNone": "Desmarcar Tudo",
+    "selectNoneShort": "Nenhum",
     "settings": "Configurações",
     "shortcut": "Atalho",
     "showLess": "Mostrar Menos",
     "showMore": "Mostrar Mais",
+    "sortBy": "Ordenar por",
     "spellcheck": {
       "add": "Adicionar ao dicionário"
     },
@@ -273,7 +277,7 @@
       },
       "confirmDelete": "Tem certeza de que deseja excluir este agente?",
       "create": "Novo Agente",
-      "empty": "Desbloqueie o poder agente do StationOne criando seu primeiro agente! Clique na cabeça do robô para começar.",
+      "empty": "Desbloqueie o poder agente do @:{'common.appName'} criando seu primeiro agente! Clique na cabeça do robô para começar.",
       "list": {
         "empty": "Nenhum agente deste tipo criado ainda.",
         "runnable": "Iniciado pelo Usuário",
@@ -366,7 +370,7 @@
     "available": "Uma nova versão está disponível. Baixando agora…",
     "downloading": "Uma atualização está em andamento. Por favor, aguarde a conclusão.",
     "error": "Erro ao verificar atualizações. Por favor, tente novamente mais tarde.",
-    "uptodate": "Você já está usando a versão mais recente do StationOne."
+    "uptodate": "Você já está usando a versão mais recente do @:{'common.appName'}."
   },
   "backup": {
     "restore": {
@@ -832,7 +836,7 @@
     "useDrawing": "Usar Desenho"
   },
   "embedding": {
-    "apiKeyReminder": "Certifique-se de inserir sua chave API no painel Modelos das Configurações do StationOne.",
+    "apiKeyReminder": "Certifique-se de inserir sua chave API no painel Modelos das Configurações do @:{'common.appName'}.",
     "browse": "Navegar modelos",
     "model": "Modelo de Embedding",
     "provider": "Provedor de Embedding"
@@ -1666,7 +1670,7 @@
     "noTools": "Nenhuma ferramenta disponível",
     "oauth": {
       "success": {
-        "message": "Você pode fechar esta janela e retornar ao StationOne.",
+        "message": "Você pode fechar esta janela e retornar ao @:{'common.appName'}.",
         "title": "Autorização bem-sucedida!"
       }
     },
@@ -1679,7 +1683,7 @@
       "httpHeaders": "Cabeçalhos HTTP Personalizados",
       "oauth": {
         "authorizing": "Iniciando autenticação",
-        "authorizingText": "Seu navegador será aberto para autorizar o StationOne. Por favor, complete a autorização e retorne a esta janela quando terminar.",
+        "authorizingText": "Seu navegador será aberto para autorizar o @:{'common.appName'}. Por favor, complete a autorização e retorne a esta janela quando terminar.",
         "clientId": "ID do cliente",
         "clientSecret": "Segredo do cliente",
         "dynamicClientRegistrationError": "Este servidor não suporta registro dinâmico de cliente. Você precisa especificar um ID de cliente e um segredo de cliente.",
@@ -1740,9 +1744,9 @@
   },
   "menu": {
     "app": {
-      "about": "Sobre o StationOne",
+      "about": "Sobre o @:{'common.appName'}",
       "checkForUpdates": "Verificar Atualizações…",
-      "quit": "Sair do StationOne",
+      "quit": "Sair do @:{'common.appName'}",
       "settings": "@:{'common.settings'}…"
     },
     "edit": {
@@ -1762,7 +1766,7 @@
         "openai": "Exportação de dados do ChatGPT…",
         "title": "Importar"
       },
-      "mainWindow": "Abrir StationOne",
+      "mainWindow": "Abrir @:{'common.appName'}",
       "newChat": "Novo Chat",
       "quickPrompt": "Novo Prompt",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1870,12 +1874,12 @@
       "count": "Nenhum modelo encontrado.|1 modelo disponível!|{count} modelos disponíveis!",
       "error": "Por favor, verifique sua chave API e tente novamente.",
       "showMore": "Mostrar mais",
-      "subtitle": "Você pode conversar com o StationOne usando modelos de linguagem de todos os principais provedores. Insira suas chaves API abaixo para começar. Se você não tiver chaves API, sem problema: na próxima tela você poderá configurar o StationOne para usar modelos locais através do Ollama!",
+      "subtitle": "Você pode conversar com o @:{'common.appName'} usando modelos de linguagem de todos os principais provedores. Insira suas chaves API abaixo para começar. Se você não tiver nenhuma chave API, não se preocupe: na próxima tela você poderá configurar o @:{'common.appName'} para usar modelos locais através do Ollama!",
       "success": "Chave {engine} validada.<br/>{count} modelos encontrados!",
       "title": "Seus provedores de modelos de chat"
     },
     "done": {
-      "subtitle": "Você está tudo pronto e preparado para começar!<br/>Comece a conversar com o StationOne e explore suas capacidades!",
+      "subtitle": "Você está tudo pronto e preparado para começar!<br/>Comece a conversar com o @:{'common.appName'} e explore suas capacidades!",
       "title": "Tudo pronto!"
     },
     "instructions": {
@@ -1889,8 +1893,8 @@
         "title": "Você não completou sua personalização."
       },
       "selectStyle": "Agora escolha como você gostaria que seu assistente respondesse.<br/>Isso será combinado com suas informações pessoais para criar as instruções perfeitas.",
-      "subtitle": "Respondendo a algumas perguntas, o StationOne poderá personalizar sua experiência e fornecer respostas melhores. Você pode pular esta etapa se quiser, mas é altamente recomendado para dar um toque mais pessoal ao StationOne.",
-      "title": "Deixe o StationOne saber sobre você!"
+      "subtitle": "Respondendo a algumas perguntas, o @:{'common.appName'} poderá personalizar sua experiência e fornecer respostas melhores. Você pode pular esta etapa se quiser, mas é altamente recomendado para tornar o @:{'common.appName'} mais pessoal.",
+      "title": "Deixe o @:{'common.appName'} saber sobre você!"
     },
     "ollama": {
       "browseModels": "Descubra mais modelos em https://ollama.com/search",
@@ -1914,22 +1918,22 @@
     },
     "permissions": {
       "accessibility": {
-        "description": "Necessário para o StationOne ler texto de outras aplicações e integrar-se perfeitamente ao seu fluxo de trabalho.",
+        "description": "Necessário para que o @:{'common.appName'} leia texto de outros aplicativos e se integre perfeitamente ao seu fluxo de trabalho.",
         "title": "Acessibilidade"
       },
       "automation": {
-        "description": "Certifique-se de conceder a permissão \"Eventos do Sistema\" ao StationOne na tela de configurações de Automação.",
+        "description": "Certifique-se de conceder a permissão \"Eventos do Sistema\" para o @:{'common.appName'} na tela de configurações de Automação.",
         "title": "Automação"
       },
       "denied": "Não Concedido",
       "granted": "Concedido",
-      "info": "Essas permissões permitem que o StationOne ofereça seu conjunto completo de recursos. Você pode concedê-las agora ou depois nas Preferências do Sistema.",
+      "info": "Essas permissões permitem que o @:{'common.appName'} ofereça toda a sua gama de recursos. Você pode concedê-las agora ou mais tarde nas Preferências do Sistema.",
       "leave": {
         "message": "Tem certeza de que deseja continuar sem conceder todas as permissões? Algumas funcionalidades podem não funcionar corretamente.",
         "title": "Permissões não totalmente concedidas"
       },
       "openSettings": "Abrir Configurações",
-      "subtitle": "No macOS, o StationOne precisa de certas permissões para oferecer a melhor experiência.",
+      "subtitle": "No macOS, o @:{'common.appName'} precisa de certas permissões para oferecer a melhor experiência.",
       "title": "Permissões do Sistema"
     },
     "studio": {
@@ -1944,13 +1948,13 @@
       "already": "@:{'onboarding.chat.already'}",
       "count": "@:{'onboarding.chat.count'}",
       "error": "@:{'onboarding.chat.error'}",
-      "subtitle": "Interaja com o StationOne usando sua voz! O StationOne pode ler em voz alta não apenas as respostas das suas sessões de chat com modelos de linguagem, mas também qualquer texto exibido na tela em outras aplicações!",
+      "subtitle": "Interaja com o @:{'common.appName'} usando sua voz! O @:{'common.appName'} pode ler em voz alta não apenas as respostas das suas sessões de chat com modelos de linguagem, mas também qualquer texto exibido na tela em outros aplicativos!",
       "success": "@:{'onboarding.chat.success'}",
       "title": "Interação por Voz"
     },
     "welcome": {
-      "subtitle": "O StationOne é um assistente de IA poderoso que pode ajudá-lo com uma ampla variedade de tarefas. Você pode conversar com ele, pedir para escrever documentos e até executar códigos no seu computador. Vamos começar!",
-      "title": "Bem-vindo ao StationOne!"
+      "subtitle": "@:{'common.appName'} is a powerful AI assistant that can help you with a wide range of tasks. You can chat with it, ask it to write documents, and even run code on your computer. Let's get started!",
+      "title": "Bem-vindo ao @:{'common.appName'}!"
     }
   },
   "plugins": {
@@ -2124,7 +2128,7 @@
     },
     "generationError": "Erro ao gerar texto",
     "loadingError": "Erro ao carregar arquivo scratchpad",
-    "placeholder": "Comece a digitar seu documento ou\npeça ao StationOne para escrever algo para você!\n\nDepois que começar, você pode pedir ao StationOne\npara fazer modificações no seu documento.\n\nSe você destacar uma parte do seu texto,\nO StationOne atualizará apenas essa parte.\n\nTambém confira o Assistente de Escrita\nna barra de ações no canto inferior direito!\n\nExperimente!",
+    "placeholder": "Comece a digitar seu documento ou\npeça ao @:{'common.appName'} para escrever algo para você!\n\nDepois de começar, você pode pedir ao @:{'common.appName'}\npara fazer modificações no seu documento.\n\nSe você destacar uma parte do seu texto,\n@:{'common.appName'} atualizará somente essa parte.\n\nConfira também o Assistente de Escrita\nna barra de ações no canto inferior direito!\n\nExperimente!",
     "title": "Scratchpad"
   },
   "settings": {
@@ -2232,7 +2236,7 @@
       "runtime": "Tipo de Pesquisa Profunda",
       "runtimes": {
         "ma": "Multi-agente (totalmente agentivo, conduzido por LLM)",
-        "ms": "Multi-etapas (código/agente híbrido, conduzido pelo StationOne)"
+        "ms": "Multietapas (código/agente híbrido, conduzido pelo @:{'common.appName'})"
       }
     },
     "engines": {
@@ -2393,7 +2397,7 @@
         "title": "Sistema de Arquivos"
       },
       "image": {
-        "apiKeyReminder": "Certifique-se de inserir sua chave API no painel Modelos das Configurações do StationOne.",
+        "apiKeyReminder": "Certifique-se de inserir sua chave API no painel Modelos das Configurações do @:{'common.appName'}.",
         "description": "Este plugin permite que os mecanismos LLM criem imagens a partir de uma descrição de texto.",
         "falai": {
           "aboutModels": "Mais sobre os modelos fal.ai"
@@ -2533,7 +2537,7 @@
       "tts": {
         "groqAcceptTermsReminder": "Você precisa <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">aceitar os termos e condições</a> para usar o modelo Groq.",
         "kokoroReminder": "Fornecido",
-        "sampleText": "Bem-vindo ao StationOne, o assistente definitivo de IA para desktop.",
+        "sampleText": "Bem-vindo ao @:{'common.appName'}, o assistente de IA definitivo para desktop.",
         "serviceDisclaimer": "O serviço pode parar de funcionar a qualquer momento.",
         "voice": "@:{'common.voice'}"
       },
@@ -2634,9 +2638,9 @@
       "voiceMode": "@:{'realtimeChat.title'}"
     },
     "notification": {
-      "darwin": "Você pode ativar o StationOne clicando no ícone da caneta-tinteiro na barra de menu.",
-      "linux": "Você pode ativar o StationOne clicando no ícone da caneta-tinteiro na barra de menu.",
-      "windows": "Você pode ativar o StationOne clicando no ícone da caneta-tinteiro na bandeja do sistema."
+      "darwin": "Você pode ativar o @:{'common.appName'} clicando no ícone de caneta-tinteiro na barra de menu.",
+      "linux": "Você pode ativar o @:{'common.appName'} clicando no ícone de caneta-tinteiro na barra de menu.",
+      "windows": "Você pode ativar o @:{'common.appName'} clicando no ícone de caneta-tinteiro na bandeja do sistema."
     }
   },
   "workspace": {
