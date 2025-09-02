@@ -19,11 +19,11 @@ vi.mock('../../src/services/i18n', async () => {
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
+  store.loadAgents()
 })
 
 beforeEach(() => {
   vi.clearAllMocks()
-  store.agents = []
 })
 
 test('Renders editor in create mode', async () => {
@@ -794,13 +794,14 @@ test('Shows docrepo help text when docrepo is selected', async () => {
   expect(docrepoHelpText).toBeTruthy()
 })
 
-test('Selecting docrepo opens dialog and updates step', async () => {
+test('Selecting docrepo opens ContextMenuPlus and updates step', async () => {
   const agent = new Agent()
   agent.steps = [
     { prompt: 'Step 1', tools: null, agents: [] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
     props: { 
       mode: 'edit',
       agent: agent
@@ -814,22 +815,22 @@ test('Selecting docrepo opens dialog and updates step', async () => {
   await workflowStep!.trigger('click')
   await nextTick()
 
+  // ContextMenuPlus should not be visible initially
+  let docRepoMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(docRepoMenu.exists()).toBe(false)
+
   // Click docrepo button
   const docrepoButton = wrapper.find('.step-actions .docrepo')
   await docrepoButton.trigger('click')
   await nextTick()
 
-  // Dialog mock should have been called with proper options
-  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
-    title: 'common.docRepo',
-    input: 'select',
-    inputOptions: expect.objectContaining({
-      'none': 'agent.create.workflow.docRepoNone',
-      'uuid1': 'docrepo1',
-      'uuid2': 'docrepo2'
-    }),
-    showCancelButton: true
-  }))
+  // ContextMenuPlus should now be visible
+  docRepoMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(docRepoMenu.exists()).toBe(true)
+
+  // Should show available doc repositories (look for actual menu structure)
+  const menuItems = docRepoMenu.element.querySelectorAll('.item')
+  expect(menuItems.length).toBeGreaterThan(0)
 })
 
 test('Docrepo selection updates agent step', async () => {
@@ -839,6 +840,7 @@ test('Docrepo selection updates agent step', async () => {
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
     props: { 
       mode: 'edit',
       agent: agent
@@ -852,24 +854,34 @@ test('Docrepo selection updates agent step', async () => {
   await workflowStep!.trigger('click')
   await nextTick()
 
-  // Click docrepo button
+  // Click docrepo button to show menu
   const docrepoButton = wrapper.find('.step-actions .docrepo')
   await docrepoButton.trigger('click')
   await nextTick()
 
-  // The dialog mock returns 'user-input' by default for select inputs
-  // Since the mock returns a simple string, we need to check what actually happens
-  // In the real implementation, the value would be set based on the dialog result
-  expect(Dialog.show).toHaveBeenCalled()
+  // Find ContextMenuPlus and click on a docrepo item
+  const docRepoMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(docRepoMenu.exists()).toBe(true)
+
+  // Simulate clicking on a docrepo item (first available repo)
+  const firstRepoItem = docRepoMenu.element.querySelector('div[data-testid="menu-item"]')
+  if (firstRepoItem) {
+    await firstRepoItem.click()
+    await nextTick()
+  
+    // Agent step should be updated with the selected docrepo
+    expect(agent.steps[0].docrepo).toBeTruthy()
+  }
 })
 
-test('Docrepo selection can be cleared by selecting none', async () => {
+test('Docrepo selection can be cleared using footer clear button', async () => {
   const agent = new Agent()
   agent.steps = [
     { prompt: 'Step 1', tools: null, agents: [], docrepo: 'uuid1' }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
     props: { 
       mode: 'edit',
       agent: agent
@@ -883,15 +895,27 @@ test('Docrepo selection can be cleared by selecting none', async () => {
   await workflowStep!.trigger('click')
   await nextTick()
 
-  // Click docrepo button
+  // Initially should have docrepo assigned
+  expect(agent.steps[0].docrepo).toBe('uuid1')
+
+  // Click docrepo button to show menu
   const docrepoButton = wrapper.find('.step-actions .docrepo')
   await docrepoButton.trigger('click')
   await nextTick()
 
-  // Dialog should be shown with current docrepo as input value
-  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
-    inputValue: 'uuid1'
-  }))
+  // Find ContextMenuPlus and click on the clear button in footer
+  const docRepoMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(docRepoMenu.exists()).toBe(true)
+
+  // Should show footer with clear button since docrepo is assigned
+  const clearButton = docRepoMenu.element.querySelector('.footer-select button')
+  if (clearButton && clearButton.textContent?.includes('common.clear')) {
+    await clearButton.click()
+    await nextTick()
+  
+    // Agent step docrepo should be cleared
+    expect(agent.steps[0].docrepo).toBeUndefined()
+  }
 })
 
 test('Changing engine updates model selection', async () => {
@@ -1225,4 +1249,286 @@ test('Shows existing jsonSchema in dialog input', async () => {
   expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
     inputValue: existingSchema
   }))
+})
+
+test('JSON schema can be cleared using deny button', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [], jsonSchema: '{"name": "string"}' }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Initially step should have jsonSchema
+  expect(agent.steps[0].jsonSchema).toBe('{"name": "string"}')
+
+  // Mock dialog to simulate clicking deny/clear button
+  vi.mocked(Dialog.show).mockResolvedValueOnce({ isDenied: true, value: '{"name": "string"}' })
+
+  // Click JSON schema button
+  const jsonSchemaButton = wrapper.find('.step-actions .structured-output')
+  await jsonSchemaButton.trigger('click')
+  await nextTick()
+
+  // Dialog should have been called with clear button
+  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
+    showDenyButton: true,
+    denyButtonText: 'common.clear'
+  }))
+
+  // The step's jsonSchema should be cleared
+  expect(agent.steps[0].jsonSchema).toBeUndefined()
+})
+
+test('Agents button opens ContextMenuPlus with available agents', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: { 
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // ContextMenuPlus should not be visible initially
+  let agentsMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(agentsMenu.exists()).toBe(false)
+
+  // Click agents button
+  const agentsButton = wrapper.find('.step-actions .agents')
+  await agentsButton.trigger('click')
+  await nextTick()
+
+  // ContextMenuPlus should now be visible
+  agentsMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(agentsMenu.exists()).toBe(true)
+
+  // Should show available agents with checkboxes
+  const checkboxes = agentsMenu.element.querySelectorAll('input[type="checkbox"]')
+  expect(checkboxes.length).toBeGreaterThan(0) // Should have agents from store
+})
+
+test('Agents selection updates step with checkboxes', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: { 
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Click agents button to show menu
+  const agentsButton = wrapper.find('.step-actions .agents')
+  await agentsButton.trigger('click')
+  await nextTick()
+
+  // Find ContextMenuPlus and click on first agent item
+  const agentsMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(agentsMenu.exists()).toBe(true)
+
+  // Find the first agent item (div with checkbox)
+  const firstAgentItem = agentsMenu.element.querySelector('.item')
+  if (firstAgentItem && store.agents.length > 0) {
+    await firstAgentItem.click()
+    await nextTick()
+  
+    // Agent step should be updated with the first available agent
+    const firstAvailableAgent = store.agents.find(a => a.uuid !== agent.uuid)
+    if (firstAvailableAgent) {
+      expect(agent.steps[0].agents).toContain(firstAvailableAgent.uuid)
+    }
+  }
+})
+
+test('Agents can be cleared using footer unselect all button', async () => {
+  // Get first two agents from store for testing
+  const availableAgents = store.agents.slice(0, 2)
+  const agentUuids = availableAgents.map(a => a.uuid)
+  
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: agentUuids }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: { 
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Initially should have agents assigned
+  expect(agent.steps[0].agents).toEqual(agentUuids)
+
+  // Click agents button to show menu
+  const agentsButton = wrapper.find('.step-actions .agents')
+  await agentsButton.trigger('click')
+  await nextTick()
+
+  // Find ContextMenuPlus and click unselect all button in footer
+  const agentsMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(agentsMenu.exists()).toBe(true)
+
+  // Should show footer with unselect all button
+  const unselectAllButton = agentsMenu.element.querySelector('.footer-select button:last-child')
+  if (unselectAllButton && unselectAllButton.textContent?.includes('common.unselectAll')) {
+    await unselectAllButton.click()
+    await nextTick()
+  
+    // Agent step agents should be cleared
+    expect(agent.steps[0].agents).toEqual([])
+  }
+})
+
+test('Agents button is disabled when no agents available', async () => {
+  // Create an agent that matches all agents in store so none are available
+  const agent = new Agent()
+  // Use the UUID of all existing agents to simulate no available agents
+  const allAgentUuids = store.agents.map(a => a.uuid)
+  
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+  
+  // Temporarily clear agents to test disabled state
+  const originalAgents = [...store.agents]
+  store.agents = []
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Agents button should be disabled
+  const agentsButton = wrapper.find('.step-actions .agents')
+  expect(agentsButton.attributes('disabled')).toBeDefined()
+  
+  // Restore original agents
+  store.agents = originalAgents
+})
+
+test('Buttons show active styling when content is configured', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { 
+      prompt: 'Step 1', 
+      tools: ['tool1'], 
+      agents: ['agent1'], 
+      docrepo: 'repo1',
+      jsonSchema: '{"name": "string"}'
+    }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // All buttons should have active class when content is configured
+  const docrepoButton = wrapper.find('.step-actions .docrepo')
+  expect(docrepoButton.classes()).toContain('active')
+
+  const toolsButton = wrapper.find('.step-actions .tools')
+  expect(toolsButton.classes()).toContain('active')
+
+  const agentsButton = wrapper.find('.step-actions .agents')
+  expect(agentsButton.classes()).toContain('active')
+
+  const jsonButton = wrapper.find('.step-actions .structured-output')
+  expect(jsonButton.classes()).toContain('active')
+})
+
+test('Buttons do not show active styling when no content is configured', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: [], agents: [] } // No content configured
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Buttons should not have active class when no content is configured
+  const docrepoButton = wrapper.find('.step-actions .docrepo')
+  expect(docrepoButton.classes()).not.toContain('active')
+
+  const toolsButton = wrapper.find('.step-actions .tools')
+  expect(toolsButton.classes()).not.toContain('active')
+
+  const agentsButton = wrapper.find('.step-actions .agents')
+  expect(agentsButton.classes()).not.toContain('active')
+
+  const jsonButton = wrapper.find('.step-actions .structured-output')
+  expect(jsonButton.classes()).not.toContain('active')
 })

@@ -51,10 +51,10 @@
             </div>
           </div>
           <div class="panel-footer step-actions" v-if="expandedStep === index">
-            <button class="docrepo" @click="onDocRepo(index)"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
-            <button class="tools" :id="`tools-menu-anchor-${index}`" @click="onTools(index)"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
-            <button class="agents" @click="onAgents(index)"><AgentIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
-            <button class="structured-output" @click="onStructuredOutput(index)"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
+            <button class="docrepo" :id="`docrepo-menu-anchor-${index}`" @click="onDocRepo(index)" :class="{ 'active': hasDocRepo(index) }"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
+            <button class="tools" :id="`tools-menu-anchor-${index}`" @click="onTools(index)" :class="{ 'active': hasTools(index) }"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
+            <button class="agents" :id="`agents-menu-anchor-${index}`" @click="onAgents(index)" :disabled="availableAgents.length === 0" :class="{ 'active': hasAgents(index) }"><AgentIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
+            <button class="structured-output" @click="onStructuredOutput(index)" :class="{ 'active': hasJsonSchema(index) }"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
           </div>
         </div>
         <div class="step-footer">
@@ -83,12 +83,69 @@
     @serverToolToggle="handleServerToolToggle"
   />
   <AgentSelector ref="agentSelector" :exclude-agent-id="agent.uuid" @save="onSaveAgents" />
+  
+  <!-- Doc Repo Context Menu -->
+  <ContextMenuPlus 
+    v-if="docRepoMenuVisible && docRepoMenuStepIndex >= 0" 
+    :anchor="`#docrepo-menu-anchor-${docRepoMenuStepIndex}`"
+    position="above"
+    @close="onCloseDocRepoMenu"
+  >
+    <template #default>
+      <div 
+        v-for="repo in docRepos" 
+        :key="repo.uuid"
+        @click="selectDocRepo(repo.uuid)"
+        :class="{ 'selected-repo': agent.steps[docRepoMenuStepIndex]?.docrepo === repo.uuid }"
+      >
+        <LightbulbIcon class="icon" />
+        {{ repo.name }}
+      </div>
+    </template>
+    <template #footer v-if="hasDocRepo(docRepoMenuStepIndex)">
+      <div @click="selectDocRepo('none')">
+        <Trash2Icon class="icon" />
+        {{ t('common.clear') }}
+      </div>
+    </template>
+  </ContextMenuPlus>
+  
+  <!-- Agents Context Menu -->
+  <ContextMenuPlus 
+    v-if="agentsMenuVisible && agentsMenuStepIndex >= 0" 
+    :anchor="`#agents-menu-anchor-${agentsMenuStepIndex}`"
+    position="above"
+    @close="onCloseAgentsMenu"
+  >
+    <template #default>
+      <div 
+        v-for="availableAgent in availableAgents" 
+        :key="availableAgent.uuid"
+        @click.stop="toggleAgent(availableAgent.uuid)"
+      >
+        <input type="checkbox" :checked="isAgentSelected(availableAgent.uuid)" @click.stop />
+        <AgentIcon class="icon" />
+        {{ availableAgent.name }}
+      </div>
+    </template>
+    <template #footer v-if="availableAgents.length > 0">
+      <div class="footer-select">
+        <button @click="selectAllAgents">
+          {{ t('common.selectAll') }}
+        </button>
+        <button @click="clearAllAgents">
+          {{ t('common.unselectAll') }}
+        </button>
+      </div>
+    </template>
+  </ContextMenuPlus>
 </template>
 
 <script setup lang="ts">
 import { BlocksIcon, BracesIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
-import { PropType, ref, watch } from 'vue'
+import { PropType, ref, watch, computed } from 'vue'
 import AgentIcon from '../../assets/agent.svg?component'
+import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import ToolsMenu from '../components/ToolsMenu.vue'
 import WizardStep from '../components/WizardStep.vue'
 import Dialog from '../composables/dialog'
@@ -127,11 +184,42 @@ const agentSelector = ref<typeof AgentSelector|null>(null)
 const expandedStep = ref(props.expandedStep)
 const toolsMenuVisible = ref(false)
 const toolsMenuStepIndex = ref(-1)
+const docRepoMenuVisible = ref(false)
+const docRepoMenuStepIndex = ref(-1)
+const agentsMenuVisible = ref(false)
+const agentsMenuStepIndex = ref(-1)
 
 // Watch for prop changes
 watch(() => props.expandedStep, (newValue) => {
   expandedStep.value = newValue
 })
+
+// Computed properties for menus
+const docRepos = computed(() => {
+  return window.api.docrepo.list(store.config.workspaceId)
+})
+
+const availableAgents = computed(() => {
+  return store.agents.filter(a => a.uuid !== props.agent.uuid)
+})
+
+const hasDocRepo = (index: number) => {
+  return !!props.agent.steps[index]?.docrepo
+}
+
+const hasTools = (index: number) => {
+  return props.agent.steps[index]?.tools === null || (
+    Array.isArray(props.agent.steps[index]?.tools) && props.agent.steps[index].tools.length > 0
+  )
+}
+
+const hasAgents = (index: number) => {
+  return props.agent.steps[index]?.agents && props.agent.steps[index].agents.length > 0
+}
+
+const hasJsonSchema = (index: number) => {
+  return !!props.agent.steps[index]?.jsonSchema
+}
 
 const promptInputs = (step: number) => {
   return extractPromptInputs(props.agent.steps[step].prompt).map((input) => {
@@ -160,42 +248,23 @@ const onAddStep = (index: number) => {
   emit('update:expanded-step', expandedStep.value)
 }
 
-const onDocRepo = async (index: number) => {
+const onDocRepo = (index: number) => {
+  expandedStep.value = index
+  emit('update:expanded-step', expandedStep.value)
+  docRepoMenuStepIndex.value = index
+  docRepoMenuVisible.value = true
+}
 
-  // get the list of doc repositories
-  const docRepos = window.api.docrepo.list(store.config.workspaceId)
+const onCloseDocRepoMenu = () => {
+  docRepoMenuVisible.value = false
+  docRepoMenuStepIndex.value = -1
+}
 
-  const rc = await Dialog.show({
-    title: t('common.docRepo'),
-    input: 'select',
-    inputOptions: {
-      'none': t('agent.create.workflow.docRepoNone'),
-      ...docRepos.reduce((acc, repo) => {
-        acc[repo.uuid] = repo.name
-        return acc
-      }, {} as Record<string, any>),
-    },
-    inputValue: props.agent.steps[index].docrepo || 'none',
-    showCancelButton: true,
-  })
-
-  // save
-  if (rc.isConfirmed) {
-    props.agent.steps[index].docrepo = rc.value === 'none' ? undefined : rc.value
-
-    // // update prompt
-    // if (props.agent.steps[index].docrepo) {
-    //   if (!(props.agent.steps[index].prompt?.length)) {
-    //     props.agent.steps[index].prompt = `{{${kAgentStepVarFacts}}}`
-    //   } else if (!props.agent.steps[index].prompt.includes(`{{${kAgentStepVarFacts}}}`)) {
-    //     props.agent.steps[index].prompt += `\n\n{{${kAgentStepVarFacts}}}`
-    //   }
-    // } else if (props.agent.steps[index].prompt) {
-    //   props.agent.steps[index].prompt = props.agent.steps[index].prompt.replaceAll(`{{${kAgentStepVarFacts}}}`, '')
-    // }
-
+const selectDocRepo = (docRepoId: string) => {
+  if (docRepoMenuStepIndex.value >= 0) {
+    props.agent.steps[docRepoMenuStepIndex.value].docrepo = docRepoId === 'none' ? undefined : docRepoId
   }
-
+  onCloseDocRepoMenu()
 }
 
 const onTools = (index: number) => {
@@ -271,9 +340,47 @@ const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolU
 }
 
 const onAgents = (index: number) => {
+  if (availableAgents.value.length === 0) return
+  
   expandedStep.value = index
   emit('update:expanded-step', expandedStep.value)
-  agentSelector.value?.show(props.agent.steps[index].agents)
+  agentsMenuStepIndex.value = index
+  agentsMenuVisible.value = true
+}
+
+const onCloseAgentsMenu = () => {
+  agentsMenuVisible.value = false
+  agentsMenuStepIndex.value = -1
+}
+
+const isAgentSelected = (agentId: string) => {
+  if (agentsMenuStepIndex.value < 0) return false
+  return props.agent.steps[agentsMenuStepIndex.value].agents?.includes(agentId) || false
+}
+
+const toggleAgent = (agentId: string) => {
+  if (agentsMenuStepIndex.value < 0) return
+  
+  const currentAgents = props.agent.steps[agentsMenuStepIndex.value].agents || []
+  const index = currentAgents.indexOf(agentId)
+  
+  if (index === -1) {
+    props.agent.steps[agentsMenuStepIndex.value].agents = [...currentAgents, agentId]
+  } else {
+    props.agent.steps[agentsMenuStepIndex.value].agents = currentAgents.filter(id => id !== agentId)
+  }
+}
+
+const selectAllAgents = () => {
+  if (agentsMenuStepIndex.value >= 0) {
+    props.agent.steps[agentsMenuStepIndex.value].agents = availableAgents.value.map(agent => agent.uuid)
+  }
+}
+
+const clearAllAgents = () => {
+  if (agentsMenuStepIndex.value >= 0) {
+    props.agent.steps[agentsMenuStepIndex.value].agents = []
+  }
 }
 
 const onSaveAgents = (agents: string[]) => {
@@ -289,7 +396,9 @@ const onStructuredOutput = async (index: number) => {
     input: 'textarea',
     inputValue: props.agent.steps[index].jsonSchema,
     showCancelButton: true,
+    showDenyButton: true,
     confirmButtonText: t('common.save'),
+    denyButtonText: t('common.clear'),
     inputValidator: (value: string) => {
 
       if (!value.trim()) {
@@ -318,6 +427,9 @@ const onStructuredOutput = async (index: number) => {
       // This shouldn't happen due to validation, but just in case
       console.error('Failed to parse structured output:', e)
     }
+  } else if (rc.isDenied) {
+    // Clear the JSON schema
+    props.agent.steps[index].jsonSchema = undefined
   }
 }
 
@@ -491,6 +603,22 @@ defineExpose({ validate })
         svg {
           color: var(--color-on-surface);
         }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          
+          &:hover {
+            background-color: var(--color-surface);
+          }
+        }
+        
+        &.active {
+          color: var(--color-primary);
+          svg {
+            color: var(--color-primary);
+          }
+        }
       }
     }
   }
@@ -514,6 +642,41 @@ defineExpose({ validate })
 
     .add-step {
       margin-left: auto;
+    }
+  }
+}
+
+/* Context menu styles */
+:deep(.selected-repo) {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 600;
+}
+
+:deep(.selected-repo .icon) {
+  color: var(--color-on-primary);
+}
+
+/* Footer select buttons styling */
+:deep(.footer-select) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background: none;
+    border: none;
+    color: var(--context-menu-text-color);
+    font-size: 14px;
+    border-radius: 4px;
+    
+    &:hover {
+      background-color: var(--context-menu-selected-bg-color);
     }
   }
 }
