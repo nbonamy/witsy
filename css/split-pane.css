@@ -92,7 +92,7 @@
 
       .sp-sidebar-title {
         font-size: 110%;
-        font-weight: bold;
+        font-weight: var(--font-weight-medium);
         color: var(--sidebar-text-color);
         margin-bottom: 1rem;
       }
@@ -143,7 +143,7 @@
       .title {
         flex: 1;
         font-size: 18.5px;
-        font-weight: bold;
+        font-weight: var(--font-weight-medium);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

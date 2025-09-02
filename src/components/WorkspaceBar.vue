@@ -211,7 +211,7 @@ const deleteWorkspace = async () => {
   display: flex;
   flex-direction: column;
   background-color: var(--menubar-bg-color);
-  width: var(--window-menubar-width);
+  flex: 0 0 var(--window-menubar-width);
 
   .workspaces {
     
