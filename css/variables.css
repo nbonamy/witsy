@@ -200,3 +200,58 @@
   --color-border-strong: var(--color-outline);
 
 }
+
+/* ========================================
+    THEME OVERRIDES
+======================================== */
+
+.windows {
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Surface Colors - Dark Theme */
+    --color-surface: #202020;
+    --color-surface-lowest: #202020;
+    --color-surface-low: #303030;
+    --color-surface-base: #303030;
+    --color-surface-high: #404040;
+    --color-surface-highest: #505050;
+
+    --color-on-surface: #e0e0e0;
+    --color-on-surface-variant: #9a9a9a;
+
+    /* Border & Outline Colors - Dark Theme */
+    --color-outline: #787878;
+    --color-outline-variant: #646464;
+
+    /* Primary Colors - Dark Theme */
+    --color-primary: rgb(11, 132, 255);
+    --color-secondary: rgb(65, 156, 255);
+  }
+
+  [data-tint=blue], [data-tint=blue] * {
+    /* Surface Colors - Dark Blue Theme */
+    --color-surface: rgb(18, 32, 47);
+    --color-surface-lowest: rgb(18, 32, 47);
+    --color-surface-low: rgb(24, 40, 55);
+    --color-surface-base: rgb(24, 40, 55);
+    --color-surface-high: rgb(40, 50, 65);
+    --color-surface-highest: rgb(50, 60, 75);
+
+    --color-on-surface: rgb(230, 230, 235);
+    --color-on-surface-variant: rgb(130, 150, 170);
+
+    /* Border & Outline Colors - Dark Blue Theme */
+    --color-outline: rgb(100, 110, 120);
+    --color-outline-variant: rgb(45, 65, 85);
+
+    /* Primary Colors - Dark Blue Theme */
+    --color-primary: rgb(10, 120, 240);
+    --color-secondary: rgb(60, 140, 230);
+  }
+}
