@@ -1,5 +1,5 @@
 <template>
-  <div class="fullscreen-drawer" :class="{ visible: visible }" @transitionend="onTransitionEnd">
+  <div class="fullscreen-drawer" :class="{ visible: visible }">
     <XIcon class="icon close" v-tooltip="{ text: t('common.close'), position: 'bottom-left' }" @click="close" v-if="showClose"/>
     <slot></slot>
   </div>
@@ -36,14 +36,10 @@ onMounted(() => {
 const show = () => {
   visible.value = true
 }
+
 const close = () => {
   visible.value = false
-}
-
-const onTransitionEnd = () => {
-  if (!visible.value) {
-    emit('closed')
-  }
+  emit('closed')
 }
 
 defineExpose({
@@ -77,6 +73,7 @@ defineExpose({
     width: var(--icon-lg);
     height: var(--icon-lg);
     cursor: pointer;
+    z-index: 1000;
   }
 
   &:deep() > * {

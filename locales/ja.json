@@ -1662,9 +1662,9 @@
       "title": "JSONからインポート"
     },
     "importSmitheryServer": "Smithery.aiからインストール",
-    "mcpServers": "MCPサーバー",
-    "modelContextProtocol": "モデルコンテキストプロトコル",
-    "noServersFound": "MCPサーバーが見つかりません。新しいサーバーを追加するには上のボタンをクリックしてください。",
+    "mcpServers": "コネクター",
+    "modelContextProtocol": "コネクションハブ",
+    "noServersFound": "コネクターが見つかりません。上のボタンをクリックして新しいコネクターを追加してください。",
     "noTools": "利用可能なツールがありません",
     "oauth": {
       "success": {
@@ -2079,7 +2079,7 @@
       },
       "docRepos": {
         "manage": "ナレッジベースを管理",
-        "title": "ナレッジコレクション"
+        "title": "ナレッジ"
       },
       "experts": {
         "manage": "新しい専門家を作成"
