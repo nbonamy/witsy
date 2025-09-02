@@ -9,7 +9,6 @@
 
       <main>
         <div class="form form-vertical">
-          <div class="sp-sidebar-title">{{ t('common.settings') }}</div>
           <div class="form-field">
             <label>{{ t('common.provider') }}</label>
             <select class="tool" v-model="engine" @change="onChangeEngine">
@@ -392,7 +391,7 @@ defineExpose({
   .sp-sidebar {
     flex-basis: 280px;
     main {
-      padding: 2rem 1.5rem;
+      padding: 1rem;
     }
   }
 

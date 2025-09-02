@@ -89,7 +89,7 @@ let panelOffset = 0
 
 onMounted(async () => {
   visible.value = window.api.store.get('sidebarVisible', true)
-  width.value = window.api.store.get('sidebarWidth', 250)
+  width.value = window.api.store.get('sidebarWidth', 400)
   onEvent('chat-list-mode', setChatListMode)
 
   // depends on feature activation
