@@ -1662,9 +1662,9 @@
       "title": "从 JSON 导入"
     },
     "importSmitheryServer": "从 Smithery.ai 安装",
-    "mcpServers": "MCP 服务器",
-    "modelContextProtocol": "模型上下文协议",
-    "noServersFound": "未找到 MCP 服务器。点击上方按钮添加新服务器。",
+    "mcpServers": "连接器",
+    "modelContextProtocol": "连接中心",
+    "noServersFound": "未找到连接器。请点击上方按钮以添加新的连接器。",
     "noTools": "无可用工具",
     "oauth": {
       "success": {
@@ -2079,7 +2079,7 @@
       },
       "docRepos": {
         "manage": "管理知识库",
-        "title": "知识集"
+        "title": "知识库"
       },
       "experts": {
         "manage": "创建新专家"

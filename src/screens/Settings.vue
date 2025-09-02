@@ -1,5 +1,5 @@
 <template>
-  <FullScreenDrawer ref="drawer" :auto-show="false" :show-close="true" @closed="$emit('closed')">
+  <FullScreenDrawer ref="drawer" :auto-show="false" :show-close="true">
     <div class="settings split-pane tabs" ref="tabs">
       <div class="sp-sidebar">
         <header>

@@ -18,7 +18,10 @@
       </div>
     </footer>
   </div>
-  <Settings :style="{ display: fullScreenPanel == 'settings' ? undefined : 'none' }" :extra="viewParams" @closed="onCloseFullScreenPanel" ref="settings" />
+  <Settings :style="{
+    display: fullScreenPanel == 'settings' ? undefined : 'none',
+    pointerEvents: fullScreenPanel == 'settings' ? undefined : 'none'
+  }" :extra="viewParams" @closed="onCloseFullScreenPanel" ref="settings" />
   <Onboarding v-if="showOnboarding" @close="onOnboardingDone" />
   <AgentForge v-if="fullScreenPanel === 'agents'" @closed="onCloseFullScreenPanel" />
   <McpServers v-if="fullScreenPanel == 'mcp'" @closed="onCloseFullScreenPanel" />

@@ -98,7 +98,9 @@ const showAllShortcuts = ref(false)
 <style scoped>
 
 .empty {
-  width: 800px;
+  width: 75%;
+  min-width: 300px;
+  max-width: 600px;
   align-self: center;
 
   display: flex;

@@ -1643,9 +1643,9 @@
       "title": "Importa da JSON"
     },
     "importSmitheryServer": "Installa da Smithery.ai",
-    "mcpServers": "Server MCP",
-    "modelContextProtocol": "Protocollo contesto modello",
-    "noServersFound": "Nessun server MCP trovato. Clicca sui pulsanti sopra per aggiungere un nuovo server.",
+    "mcpServers": "Connettori",
+    "modelContextProtocol": "Hub di Connessioni",
+    "noServersFound": "Nessun connettore trovato. Clicca sui pulsanti sopra per aggiungere un nuovo connettore.",
     "noTools": "Nessuno strumento disponibile",
     "oauth": {
       "success": {
@@ -2057,7 +2057,7 @@
       },
       "docRepos": {
         "manage": "Gestisci Base di Conoscenza",
-        "title": "Raccolta di conoscenze"
+        "title": "Conoscenza"
       },
       "experts": {
         "manage": "Crea Nuovo Esperto"

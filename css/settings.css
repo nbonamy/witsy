@@ -131,6 +131,13 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  gap: 0px !important;
+
+  &:has(main .master-detail) {
+    header {
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
 
   &:has(.sliding-root) {
     position: relative;
@@ -144,13 +151,20 @@
   main {
     
     max-width: var(--settings-max-width);
-    padding: 2rem 4rem;
+    padding: 1rem 4rem;
 
     &.sliding-pane {
      &.editor {
         .form {
           max-width: var(--settings-max-width);
         }
+      }
+    }
+
+    &:has(.master-detail) {
+      max-width: none;
+      .md-detail {
+        max-width: var(--settings-max-width);
       }
     }
 
