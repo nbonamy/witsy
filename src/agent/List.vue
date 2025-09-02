@@ -7,6 +7,7 @@
       <div class="actions">
         <button class="large secondary" @click="emit('importA2A')"><LogoA2A />{{ t('agent.forge.a2a.title') }}</button>
         <button class="large primary" @click="emit('create')"><PlusIcon />{{ t('agent.forge.create') }}</button>
+        <XIcon class="icon close" v-tooltip="{ text: t('common.close'), position: 'bottom-left' }" @click="emit('close')" />
       </div>
     </header>
 
@@ -58,7 +59,7 @@
 
 <script setup lang="ts">
 
-import { PlusIcon, PlayIcon, EyeIcon } from 'lucide-vue-next'
+import { PlusIcon, PlayIcon, EyeIcon, XIcon } from 'lucide-vue-next'
 import { PropType } from 'vue'
 import LogoA2A from '../../assets/a2a.svg?component'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
@@ -67,9 +68,9 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Agent } from '../types/index'
 
-const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'importA2A']) 
+const emit = defineEmits(['close', 'create', 'view', 'edit', 'run', 'delete', 'importA2A']) 
 
-const props = defineProps({
+defineProps({
   agents: Array as PropType<Agent[]>,
 })
 
@@ -85,6 +86,10 @@ const lastRun = (agent: Agent) => {
 <style scoped>
 
 .agents-list {
+
+  .icon.close {
+    margin-left: 1rem;
+  }
 
   main {
     padding: 4rem;

@@ -252,7 +252,7 @@ describe('Onboarding Main Component', () => {
     }
     
     // Check if the close event was emitted
-    expect(wrapper.emitted('close')).toBeTruthy()
+    expect(wrapper.emitted('closed')).toBeTruthy()
   })
 
   test('Last button emits close event', async () => {
@@ -264,7 +264,7 @@ describe('Onboarding Main Component', () => {
     }
     
     await wrapper.find('.last').trigger('click')
-    expect(wrapper.emitted('close')).toBeTruthy()
+    expect(wrapper.emitted('closed')).toBeTruthy()
   })
 
 })

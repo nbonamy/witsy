@@ -1,14 +1,10 @@
 <template>
-  <FullScreenDrawer ref="drawer" @closed="emit('close')">
+  <FullScreenDrawer ref="drawer" @closed="emit('closed')">
     <div class="mcp-servers split-pane">
       <div class="sp-main">
         <header>
           <div class="title">{{ t('mcp.modelContextProtocol') }}</div>
-          <XIcon
-            class="icon close" 
-            v-tooltip="{ text: t('common.close'), position: 'bottom-left' }"
-            @click="onClose"
-          />
+          <XIcon class="icon close" v-tooltip="{ text: t('common.close'), position: 'bottom-left' }" @click="onClose" />
         </header>
         <main>
           <template v-if="!selected">
@@ -48,7 +44,7 @@ onMounted(() => {
   load()
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['closed'])
 
 const onClose = () => {
   drawer.value?.close()
@@ -101,7 +97,6 @@ defineExpose({ load })
 .split-pane {
   .sp-main {
     header {
-      padding-top: 1.5rem;
       padding-bottom: 1.5rem;
       -webkit-app-region: drag;
       .close {

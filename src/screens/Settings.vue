@@ -1,54 +1,58 @@
 <template>
-  <div class="settings split-pane tabs" ref="tabs">
-    <div class="sp-sidebar">
-      <header>
-        <div class="title">{{ t('common.settings') }}</div>
-      </header>
-      <main>
-        <ul>
-          <li class="separator" v-if="store.isFeatureEnabled('workspaces')">General Settings</li>
-          <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><SettingsIcon class="icon" /></SettingsTab>
-          <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BoxIcon class="icon" /></SettingsTab>
-          <SettingsTab class="chat" :title="t('settings.tabs.chat')"><PanelsTopLeftIcon class="icon" /></SettingsTab>
-          <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
-          <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
-          <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><Plug2Icon class="icon" /></SettingsTab>
-          <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><WandIcon class="icon" /></SettingsTab>
-          <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><BrainIcon class="icon" /></SettingsTab>
-          <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
-          <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><CommandIcon class="icon" /></SettingsTab>
-          <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BadgePlusIcon class="icon" /></SettingsTab>
-          <template v-if="store.isFeatureEnabled('workspaces')">
-            <li class="separator">Workspace Settings</li>
-            <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
-          </template>
-        </ul>
-      </main>
-  </div>
-    <div class="sp-main">
-      <SettingsGeneral ref="settingsGeneral" />
-      <SettingsLLM ref="settingsLLM" />
-      <SettingsChat ref="settingsChat" />
-      <SettingsDeepResearch ref="settingsDeepResearch" />
-      <SettingsModels ref="settingsModels" />
-      <SettingsPlugins ref="settingsPlugins" />
-      <SettingsCommands ref="settingsCommands" />
-      <SettingsExperts ref="settingsExperts" />
-      <SettingsVoice ref="settingsVoice" />
-      <SettingsShortcuts ref="settingsShortcuts" />
-      <SettingsAdvanced ref="settingsAdvanced" />
-      <template v-if="store.isFeatureEnabled('workspaces')">
-        <SettingsModels2 ref="settingsModels" />
-      </template>
+  <FullScreenDrawer ref="drawer" :auto-show="false" :show-close="true" @closed="$emit('closed')">
+    <div class="settings split-pane tabs" ref="tabs">
+      <div class="sp-sidebar">
+        <header>
+          <div class="title">{{ t('common.settings') }}</div>
+        </header>
+        <main>
+          <ul>
+            <li class="separator" v-if="store.isFeatureEnabled('workspaces')">General Settings</li>
+            <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><AppWindowMacIcon class="icon" /></SettingsTab>
+            <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BoxIcon class="icon" /></SettingsTab>
+            <SettingsTab class="chat" :title="t('settings.tabs.chat')"><PanelsTopLeftIcon class="icon" /></SettingsTab>
+            <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
+            <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
+            <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><Plug2Icon class="icon" /></SettingsTab>
+            <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><WandIcon class="icon" /></SettingsTab>
+            <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><BrainIcon class="icon" /></SettingsTab>
+            <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
+            <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><CommandIcon class="icon" /></SettingsTab>
+            <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BadgePlusIcon class="icon" /></SettingsTab>
+            <template v-if="store.isFeatureEnabled('workspaces')">
+              <li class="separator">Workspace Settings</li>
+              <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
+            </template>
+          </ul>
+        </main>
     </div>
-  </div>
+      <div class="sp-main">
+        <SettingsGeneral ref="settingsGeneral" />
+        <SettingsLLM ref="settingsLLM" />
+        <SettingsChat ref="settingsChat" />
+        <SettingsDeepResearch ref="settingsDeepResearch" />
+        <SettingsModels ref="settingsModels" />
+        <SettingsPlugins ref="settingsPlugins" />
+        <SettingsCommands ref="settingsCommands" />
+        <SettingsExperts ref="settingsExperts" />
+        <SettingsVoice ref="settingsVoice" />
+        <SettingsShortcuts ref="settingsShortcuts" />
+        <SettingsAdvanced ref="settingsAdvanced" />
+        <template v-if="store.isFeatureEnabled('workspaces')">
+          <SettingsModels2 ref="settingsModels" />
+        </template>
+      </div>
+    </div>
+  </FullScreenDrawer>
 </template>
 
 <script setup lang="ts">
 
-import { BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, SettingsIcon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
+import { AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, SettingsIcon, TelescopeIcon, WandIcon, XIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref, watch } from 'vue'
+import FullScreenDrawer from '../components/FullScreenDrawer.vue'
 import { MenuBarMode } from '../components/MenuBar.vue'
+import useEventBus from '../composables/event_bus'
 import { installTabs, showActiveTab } from '../composables/tabs'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
@@ -67,8 +71,6 @@ import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
 import { OpenSettingsPayload } from '../types/index'
 
-// bus
-import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
 const props = defineProps({
@@ -80,6 +82,7 @@ const props = defineProps({
   }
 })
 
+const drawer = ref<typeof FullScreenDrawer>(null)
 const tabs = ref<HTMLElement>(null)
 const initialTab = ref('general')
 const settingsGeneral = ref(null)
@@ -179,5 +182,11 @@ const onOpenSettings = (payload?: OpenSettingsPayload) => {
 const load = (tab: any) => {
   tab.load()
 }
+
+defineExpose({
+  show: () => {
+    drawer.value.show()
+  },
+})
 
 </script>

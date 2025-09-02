@@ -22,8 +22,13 @@
   padding: 0;
 }
 
-.split-pane.settings .sp-sidebar {
+.fullscreen-drawer .split-pane.settings .sp-sidebar {
   flex-basis: 16rem;
+  border-right: 1px solid var(--border-color);
+  /* padding: 1.5rem; */
+  main {
+    padding-top: 0px;
+  }
 }
 
 .settings ul {
@@ -33,7 +38,11 @@
   justify-content: center;
   overflow: auto;
   padding: 0 0.5rem;
+  padding-left: 1rem;
+  padding-top: 0rem;
   gap: 0.5rem;
+
+  list-style: none;
 
   li {
 
