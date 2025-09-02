@@ -136,7 +136,7 @@ test('Stores attachment', async () => {
   expect(window.api.file.pickFile).toHaveBeenCalled()
   expect(window.api.file.pickFile).toHaveBeenLastCalledWith({
     multiselection: true,
-    //filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
+    //filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif'] }]
   })
   expect(wrapper.vm.attachments).toEqual([{
     mimeType: 'image/png',
@@ -258,7 +258,7 @@ test('Selects expert', async () => {
   const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
   await menu.find('.experts').trigger('click')
   expect(menu.findAll('.filter-input').length).toBe(1)
-  expect(menu.findAll('.item').length).toBe(3)
+  expect(menu.findAll('.item').length).toBe(4)
   // Management option is now in footer
   expect(menu.find('.footer .item').text()).toBe('prompt.menu.experts.manage')
   await menu.find('.item:nth-child(2)').trigger('click')
@@ -273,6 +273,27 @@ test('Clears expert', async () => {
   expect(feature.exists()).toBe(true)
   await feature.find('.clear').trigger('click')
   expect(wrapper.vm.expert).toBeNull()
+})
+
+test('Sets engine and model when expert has them', async () => {
+  // Initial state - chat should have undefined engine/model
+  expect(chat!.engine).toBeUndefined()
+  expect(chat!.model).toBeUndefined()
+  
+  // Select expert with engine and model set (uuid4: anthropic/claude-3-sonnet)
+  await wrapper.find('.prompt-menu').trigger('click')
+  const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  await menu.find('.experts').trigger('click')
+  
+  // Click on the expert with engine and model (should be item 3 - uuid4)
+  await menu.find('.item:nth-child(3)').trigger('click')
+  
+  // Verify expert was selected
+  expect(wrapper.vm.expert.id).toBe('uuid4')
+  
+  // Verify chat engine and model were updated
+  expect(chat!.engine).toBe('anthropic')
+  expect(chat!.model).toBe('claude-3-sonnet')
 })
 
 test('Stores command for later', async () => {

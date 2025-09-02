@@ -14,12 +14,17 @@ type ApiKeyEntry = {
   apiKey: string
 }
 
+let saveConfigInTest = false
+export const setSaveConfigInTests = () => {
+  saveConfigInTest = true
+}
+
 let errorLoadingConfig = false
 let onSettingsChange: CallableFunction = () => {}
 let cachedAppConfig: Configuration = undefined
 
 const safeStore = new Store<Record<string, string>>({
-  name: 'apiKeys',
+  name: process.env.DEBUG ? 'apiKeys-debug' : 'apiKeys',
   accessPropertiesByDotNotation: false,
   watch: false,
   encryptionKey: 'witsy',
@@ -155,7 +160,7 @@ export const loadSettings = (app: App): Configuration => {
   const config = buildConfig(defaultSettings, jsonConfig)
 
   // save if needed
-  if (save && !process.env.TEST) {
+  if (save && (!process.env.TEST || saveConfigInTest)) {
     saveSettings(app, config)
   }
 

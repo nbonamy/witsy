@@ -4,6 +4,7 @@
     "agents": "Agents",
     "arguments": "Arguments",
     "askMeAnything": "Ask me anything",
+    "attach": "Attach",
     "back": "Back",
     "basedOn": "based on",
     "browse": "Browse",
@@ -701,6 +702,12 @@
       },
       "starting": "Synthesizing content…"
     },
+    "title": {
+      "completed": "Report title generated successfully!",
+      "error": "An error occurred while generating the report title",
+      "running": "Creating a succinct title for the research report…",
+      "starting": "Generating report title…"
+    },
     "usage": "Deep Research delivers thorough insights on your chosen topic by reviewing multiple sources and highlighting key findings. Please note: this feature uses more tokens than regular chat.",
     "writer": {
       "completed": "Section \"{title}\" completed!",
@@ -712,6 +719,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "Are you sure you want to delete these media?",
     "confirmDeleteSingle": "Are you sure you want to delete this media?",
+    "draw": "Draw",
     "dropzone": "Drop your images here to bring them to life with AI!",
     "emptyPlaceholder": "Let your creativity go wild!",
     "error": {
@@ -728,6 +736,7 @@
       "empty": "You haven't created any media yet.",
       "title": "History"
     },
+    "inputImage": "Reference Image",
     "loadMediaSettings": "Load settings",
     "mediaType": {
       "image": "Image",
@@ -822,6 +831,11 @@
       }
     }
   },
+  "drawingCanvas": {
+    "draw": "Draw",
+    "title": "Drawing Canvas",
+    "useDrawing": "Use Drawing"
+  },
   "embedding": {
     "apiKeyReminder": "Make sure you enter your API key in the Models pane of StationOne Settings.",
     "browse": "Browse models",
@@ -861,6 +875,7 @@
     "editor": {
       "triggerApps": "Trigger Apps",
       "triggerAppsDescription": "The prompt will be automatically selected when Prompt Anywhere is called from one of these applications",
+      "useDefault": "Current engine and model",
       "validation": {
         "invalidApp": "Unable to analyze the selected application",
         "requiredFields": "All fields marked with * are required."

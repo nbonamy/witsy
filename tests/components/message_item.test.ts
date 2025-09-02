@@ -1,10 +1,12 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
 import { emitEventMock } from '../../vitest.setup'
 import { store } from '../../src/services/store'
+import { stubTeleport } from '../mocks/stubs'
 import MessageItem from '../../src/components/MessageItem.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
@@ -76,7 +78,7 @@ beforeEach(() => {
 })
 
 const mount = async (message: Message, mouseenter = true): Promise<VueWrapper<any>> => {
-  const wrapper = vtumount(MessageItem, { props: { chat: chat, message: message, readAloud: readAloudMock } })
+  const wrapper = vtumount(MessageItem, { ...stubTeleport, props: { chat: chat, message: message, readAloud: readAloudMock } })
   if (mouseenter) await wrapper.trigger('mouseenter')
   return wrapper
 }
@@ -594,4 +596,83 @@ test('Format reasoning message', async () => {
   await (wrapper.find('.body .toggle-reasoning').trigger('click'))
   expect(wrapper.find('.body .think').exists()).toBe(false)
   expect(store.config.appearance.chat.showReasoning).toBe(false)
+})
+
+test('Artifact download context menu', async () => {
+  const wrapper = await mount(botMessageToolArtifact1)
+  
+  // Check that the artifact has a download button
+  const artifact = wrapper.find('.body .artifact')
+  const downloadButton = artifact.find('.panel-header .icon.download')
+  expect(downloadButton.exists()).toBe(true)
+  
+  // Click the download button to show context menu
+  await downloadButton.trigger('click')
+  await nextTick()
+  
+  // Check that context menu is visible
+  const contextMenu = wrapper.findComponent({ name: 'ContextMenu' })
+  expect(contextMenu.exists()).toBe(true)
+  
+  // Check that all three download options are present
+  const menuItems = contextMenu.findAll('.item')
+  expect(menuItems.length).toBe(3)
+  expect(menuItems[0].text()).toContain('Text')
+  expect(menuItems[1].text()).toContain('Markdown')
+  expect(menuItems[2].text()).toContain('PDF')
+
+})
+
+test('Artifact download text', async () => {
+  const wrapper = await mount(botMessageToolArtifact1)
+  
+  // Check that the artifact has a download button
+  const artifact = wrapper.find('.body .artifact')
+  const downloadButton = artifact.find('.panel-header .icon.download')
+  expect(downloadButton.exists()).toBe(true)
+  
+  // Click the download button to show context menu
+  await downloadButton.trigger('click')
+  await nextTick()
+
+  const contextMenu = wrapper.findComponent({ name: 'ContextMenu' })
+  const menuItems = contextMenu.findAll('.item')
+
+  // markdown export
+  await menuItems[0].trigger('click')
+  expect(window.api.file.save).toHaveBeenLastCalledWith({
+    contents: 'Test_encoded',
+    properties: {
+      filename: 'test.txt',
+      prompt: true,
+    }
+  })
+
+})
+
+test('Artifact download markdown', async () => {
+  const wrapper = await mount(botMessageToolArtifact1)
+  
+  // Check that the artifact has a download button
+  const artifact = wrapper.find('.body .artifact')
+  const downloadButton = artifact.find('.panel-header .icon.download')
+  expect(downloadButton.exists()).toBe(true)
+  
+  // Click the download button to show context menu
+  await downloadButton.trigger('click')
+  await nextTick()
+
+  const contextMenu = wrapper.findComponent({ name: 'ContextMenu' })
+  const menuItems = contextMenu.findAll('.item')
+
+  // markdown export
+  await menuItems[1].trigger('click')
+  expect(window.api.file.save).toHaveBeenLastCalledWith({
+    contents: 'Test_encoded',
+    properties: {
+      filename: 'test.md',
+      prompt: true,
+    }
+  })
+
 })

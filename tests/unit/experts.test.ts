@@ -61,7 +61,7 @@ test('Load custom experts', () => {
 test('Service Install experts', () => {
   service.loadExperts()
   expect(window.api.experts.load).toHaveBeenCalled()
-  expect(store.experts).toHaveLength(3)
+  expect(store.experts).toHaveLength(4)
 })
 
 test('Service Save expert', () => {

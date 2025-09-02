@@ -4,6 +4,7 @@
     "agents": "Agenci",
     "arguments": "Argumenty",
     "askMeAnything": "Zapytaj mnie o cokolwiek",
+    "attach": "Załącz",
     "back": "Powrót",
     "basedOn": "na podstawie",
     "browse": "Przeglądaj",
@@ -696,6 +697,12 @@
       },
       "starting": "Syntezuję treść…"
     },
+    "title": {
+      "completed": "Tytuł raportu został pomyślnie wygenerowany!",
+      "error": "Wystąpił błąd podczas generowania tytułu raportu",
+      "running": "Tworzenie zwięzłego tytułu raportu z badań…",
+      "starting": "Generowanie tytułu raportu…"
+    },
     "usage": "Deep Research dostarcza dogłębne informacje na wybrany temat, przeglądając wiele źródeł i podkreślając kluczowe ustalenia. Uwaga: ta funkcja wykorzystuje więcej tokenów niż zwykły czat.",
     "writer": {
       "completed": "Sekcja „{title}” ukończona!",
@@ -707,6 +714,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "Czy na pewno chcesz usunąć te media?",
     "confirmDeleteSingle": "Czy na pewno chcesz usunąć ten nośnik?",
+    "draw": "Rysuj",
     "dropzone": "Upuść tutaj swoje obrazy, aby ożywić je za pomocą AI!",
     "emptyPlaceholder": "Daj się ponieść kreatywności!",
     "error": {
@@ -723,6 +731,7 @@
       "empty": "Nie utworzono jeszcze żadnych multimediów.",
       "title": "Historia"
     },
+    "inputImage": "Obraz odniesienia",
     "loadMediaSettings": "Ustawienia ładowania",
     "mediaType": {
       "image": "Obraz",
@@ -817,6 +826,11 @@
       }
     }
   },
+  "drawingCanvas": {
+    "draw": "Rysuj",
+    "title": "Płótno do rysowania",
+    "useDrawing": "Użyj rysunku"
+  },
   "embedding": {
     "apiKeyReminder": "Upewnij się, że wpisałeś swój klucz API w panelu Modele w ustawieniach StationOne.",
     "browse": "Przeglądaj modele",
@@ -856,6 +870,7 @@
     "editor": {
       "triggerApps": "Aplikacje wyzwalające",
       "triggerAppsDescription": "Monit zostanie automatycznie wybrany, gdy Prompt Anywhere zostanie wywołany z jednej z tych aplikacji",
+      "useDefault": "Aktualny silnik i model",
       "validation": {
         "invalidApp": "Nie można przeanalizować wybranej aplikacji",
         "requiredFields": "Wszystkie pola oznaczone * są wymagane."
@@ -1560,7 +1575,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś treści (dokument, podsumowanie, kod...), użyj następującej składni:\n<artifact title=\"TYTUŁ\">\nTREŚĆ\n</artifact>. Szczególnie kod HTML osadzony w artefaktach może być automatycznie podglądany.",
+      "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś treści (dokument, streszczenie, kod...), użyj następującej składni:\n<artifact title=\"TYTUŁ\">\nTREŚĆ\n</artifact>. Szczególnie kod HTML osadzony w artefaktach może być automatycznie podglądany.",
       "mermaid": "Jeśli zostaniesz poproszony o wygenerowanie wykresu Mermaid, jego kod zostanie wyświetlony użytkownikowi jako diagram.",
       "toolRetry": "Podczas wywoływania narzędzi, jeśli otrzymasz błąd wejścia, przeanalizuj błąd i spróbuj go naprawić, a następnie ponownie wywołaj narzędzie."
     },

@@ -4,6 +4,7 @@
     "agents": "代理",
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
+    "attach": "附件",
     "back": "返回",
     "basedOn": "基于",
     "browse": "浏览",
@@ -696,6 +697,12 @@
       },
       "starting": "内容综合中…"
     },
+    "title": {
+      "completed": "报告标题生成成功！",
+      "error": "生成报告标题时发生错误",
+      "running": "正在为研究报告创建简洁标题…",
+      "starting": "正在生成报告标题…"
+    },
     "usage": "[测试版] 深度研究通过审阅多个来源并突出关键发现，提供您所选主题的深入见解。请注意：此功能使用的令牌比普通聊天多。",
     "writer": {
       "completed": "章节 \"{title}\" 完成！",
@@ -707,6 +714,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "您确定要删除这些媒体吗？",
     "confirmDeleteSingle": "你确定要删除这个媒体吗？",
+    "draw": "绘制",
     "dropzone": "将您的图片拖放到此处，让AI赋予它们生命！",
     "emptyPlaceholder": "让你的创造力尽情发挥吧！",
     "error": {
@@ -723,6 +731,7 @@
       "empty": "你还没有创建任何媒体。",
       "title": "历史记录"
     },
+    "inputImage": "参考图像",
     "loadMediaSettings": "加载设置",
     "mediaType": {
       "image": "图像",
@@ -817,6 +826,11 @@
       }
     }
   },
+  "drawingCanvas": {
+    "draw": "绘制",
+    "title": "绘图画布",
+    "useDrawing": "使用绘图"
+  },
   "embedding": {
     "apiKeyReminder": "请确保您在StationOne设置的模型面板中输入了API密钥。",
     "browse": "浏览模型",
@@ -856,6 +870,7 @@
     "editor": {
       "triggerApps": "触发应用",
       "triggerAppsDescription": "当从这些应用中调用 Prompt Anywhere 时，将自动选择提示。",
+      "useDefault": "当前引擎和模型",
       "validation": {
         "invalidApp": "无法分析所选应用程序",
         "requiredFields": "所有标记为 * 的字段均为必填项。"
@@ -1560,7 +1575,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "当用户要求您创建一些内容（文档、摘要、代码...）时，使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>。特别是嵌入在 artifact 中的 HTML 代码可以自动预览。",
+      "artifacts": "当用户要求你创建某些内容（文档、摘要、代码……）时，使用以下语法：\n<artifact title=\"TITLE\">\n内容\n</artifact>。特别是嵌入在artifacts中的HTML代码可以被自动预览。",
       "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
       "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
     },
@@ -2154,7 +2169,7 @@
         "title": "代理设置（需要重启应用）"
       },
       "resetToDefault": "重置为默认值",
-      "safeKeys": "将 API 密钥存储在系统安全存储中",
+      "safeKeys": "将API密钥存储在系统安全存储中",
       "systemInstructions": "系统指令"
     },
     "chat": {

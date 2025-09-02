@@ -4,6 +4,7 @@
     "agents": "Agentes",
     "arguments": "Parâmetros",
     "askMeAnything": "Pergunte-me qualquer coisa",
+    "attach": "Anexar",
     "back": "Voltar",
     "basedOn": "baseado em",
     "browse": "Navegar",
@@ -696,6 +697,12 @@
       },
       "starting": "Sintetizando conteúdo…"
     },
+    "title": {
+      "completed": "Título do relatório gerado com sucesso!",
+      "error": "Ocorreu um erro ao gerar o título do relatório",
+      "running": "Criando um título sucinto para o relatório de pesquisa…",
+      "starting": "Gerando título do relatório…"
+    },
     "usage": "A Pesquisa Profunda oferece insights detalhados sobre o tópico escolhido ao revisar múltiplas fontes e destacar descobertas chave. Por favor, note: esta funcionalidade usa mais tokens que o chat comum.",
     "writer": {
       "completed": "Seção \"{title}\" concluída!",
@@ -707,6 +714,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "Você tem certeza de que deseja excluir estes mídias?",
     "confirmDeleteSingle": "Tem certeza de que deseja excluir esta mídia?",
+    "draw": "Desenhar",
     "dropzone": "Solte suas imagens aqui para dar vida a elas com IA!",
     "emptyPlaceholder": "Deixe sua criatividade fluir!",
     "error": {
@@ -723,6 +731,7 @@
       "empty": "Você ainda não criou nenhuma mídia.",
       "title": "Histórico"
     },
+    "inputImage": "Imagem de Referência",
     "loadMediaSettings": "Carregar configurações",
     "mediaType": {
       "image": "Imagem",
@@ -817,6 +826,11 @@
       }
     }
   },
+  "drawingCanvas": {
+    "draw": "Desenhar",
+    "title": "Tela de Desenho",
+    "useDrawing": "Usar Desenho"
+  },
   "embedding": {
     "apiKeyReminder": "Certifique-se de inserir sua chave API no painel Modelos das Configurações do StationOne.",
     "browse": "Navegar modelos",
@@ -856,6 +870,7 @@
     "editor": {
       "triggerApps": "Aplicativos de Acionamento",
       "triggerAppsDescription": "O prompt será selecionado automaticamente quando o Prompt Anywhere for chamado de um desses aplicativos",
+      "useDefault": "Motor e modelo atuais",
       "validation": {
         "invalidApp": "Não foi possível analisar o aplicativo selecionado",
         "requiredFields": "Todos os campos marcados com * são obrigatórios."
@@ -1560,7 +1575,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Quando o usuário pedir para você criar algum conteúdo (documento, resumo, código...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO>\nCONTEÚDO\n</artifact>. Especialmente o código HTML embutido em artifacts pode ser visualizado automaticamente.",
+      "artifacts": "Quando o usuário pedir para você criar algum conteúdo (documento, resumo, código...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO>\nCONTEÚDO\n</artifact>. Especialmente o código HTML incorporado em artefatos pode ser visualizado automaticamente.",
       "mermaid": "Se for solicitado que você produza um diagrama Mermaid, seu código será exibido como um diagrama para o usuário.",
       "toolRetry": "Ao chamar ferramentas, se você receber um erro de entrada, analise o erro e tente corrigi-lo e então tente chamar a ferramenta novamente."
     },
@@ -2154,7 +2169,7 @@
         "title": "Configurações de proxy (requer reinício do aplicativo)"
       },
       "resetToDefault": "Redefinir para o valor padrão",
-      "safeKeys": "Armazenar chaves API em armazenamento seguro do sistema",
+      "safeKeys": "Armazenar chaves API no armazenamento seguro do sistema",
       "systemInstructions": "Instruções do sistema"
     },
     "chat": {

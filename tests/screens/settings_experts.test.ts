@@ -95,7 +95,7 @@ test('Move items', async () => {
 
 })
 
-test('New expert', async () => {
+test('New expert with default engine and model', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
   const editor = tab.findComponent({ name: 'ExpertEditor' })
@@ -122,6 +122,43 @@ test('New expert', async () => {
     triggerApps: [],
     state: 'enabled'
   })
+})
+
+test('New expert with engine and model', async () => {
+
+  const tab = await switchToTab(wrapper, expertsIndex)
+  const editor = tab.findComponent({ name: 'ExpertEditor' })
+  await tab.find('.list-actions .list-action.new').trigger('click')
+
+  // for test stability
+  tab.vm.selected = null
+
+  // new command creates
+  expect(store.experts).toHaveLength(166)
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
+  await editor.find('[name=name]').setValue('expert')
+  await editor.find('[name=prompt]').setValue('prompt2')
+  await editor.find('[name=engine]').setValue('openai')
+  // await editor.find('input#model').setValue('chat1')
+  await editor.find('button.default').trigger('click')
+
+  // check
+  expect(store.experts).toHaveLength(167)
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(167)
+  expect(store.experts[166]).toStrictEqual({
+    id: expect.any(String),
+    type: 'user',
+    name: 'expert',
+    prompt: 'prompt2',
+    engine: 'openai',
+    model: 'chat1',
+    triggerApps: [],
+    state: 'enabled'
+  })
+
+  // remove this one
+  store.experts.pop()
+
 })
 
 test('Edit user prompt', async () => {

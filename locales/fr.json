@@ -4,6 +4,7 @@
     "agents": "Agents",
     "arguments": "Arguments",
     "askMeAnything": "Demandez-moi ce que vous voulez !",
+    "attach": "Joindre",
     "back": "Retour",
     "basedOn": "basé sur",
     "browse": "Parcourir",
@@ -677,6 +678,12 @@
       },
       "starting": "Synthèse du contenu…"
     },
+    "title": {
+      "completed": "Titre du rapport généré avec succès !",
+      "error": "Une erreur est survenue lors de la génération du titre du rapport",
+      "running": "Création d'un titre succinct pour le rapport de recherche…",
+      "starting": "Génération du titre du rapport…"
+    },
     "usage": "[BÊTA] Deep Research fournit des analyses approfondies sur votre sujet choisi en examinant plusieurs sources et en mettant en avant les points clés. Veuillez noter : cette fonction utilise plus de jetons que le chat standard.",
     "writer": {
       "completed": "Section \"{title}\" terminée !",
@@ -688,6 +695,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "Êtes-vous sûr de vouloir supprimer ces médias ?",
     "confirmDeleteSingle": "Êtes-vous sûr de vouloir supprimer ce média ?",
+    "draw": "Dessiner",
     "dropzone": "Déposez vos images ici pour leur donner vie avec l'IA !",
     "emptyPlaceholder": "Laissez libre cours à votre créativité !",
     "error": {
@@ -704,6 +712,7 @@
       "empty": "Vous n'avez encore créé aucun média.",
       "title": "Historique"
     },
+    "inputImage": "Image de référence",
     "loadMediaSettings": "Charger les paramètres",
     "mediaType": {
       "image": "Image",
@@ -798,6 +807,11 @@
       }
     }
   },
+  "drawingCanvas": {
+    "draw": "Dessiner",
+    "title": "Toile de dessin",
+    "useDrawing": "Utiliser le dessin"
+  },
   "embedding": {
     "apiKeyReminder": "Assurez-vous d'entrer votre clé API dans le panneau Modèles des paramètres de StationOne.",
     "browse": "Parcourir les modèles",
@@ -837,6 +851,7 @@
     "editor": {
       "triggerApps": "Applications déclencheuses",
       "triggerAppsDescription": "Le prompt sera automatiquement sélectionné lorsque Prompt Anywhere est appelé depuis l'une de ces applications",
+      "useDefault": "Moteur et modèle actuels",
       "validation": {
         "invalidApp": "Impossible d'analyser l'application sélectionnée",
         "requiredFields": "Tous les champs marqués d'un * sont obligatoires."
@@ -1541,7 +1556,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Lorsque l’utilisateur vous demande de créer du contenu (document, résumé, code...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE>\nCONTENU\n</artifact>. En particulier, le code HTML intégré dans les artefacts peut être prévisualisé automatiquement.",
+      "artifacts": "Lorsque l'utilisateur vous demande de créer du contenu (document, résumé, code...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE\">\nCONTENU\n</artifact>. En particulier, le code HTML intégré dans les artifacts peut être prévisualisé automatiquement.",
       "mermaid": "Si l'on vous demande de produire un diagramme Mermaid, son code sera rendu en tant que diagramme pour l'utilisateur.",
       "toolRetry": "Lors de l'appel des outils, si vous obtenez une erreur d'entrée, analysez l'erreur, essayez de la corriger, puis réessayez d'appeler l'outil."
     },

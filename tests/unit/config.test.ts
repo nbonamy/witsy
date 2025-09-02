@@ -40,6 +40,7 @@ vi.mock('fs', async (importOriginal) => {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  config.setSaveConfigInTests()
   config.clearAppSettingsCache()
 })
 
@@ -55,7 +56,9 @@ test('Load default settings', () => {
   expect(loaded).toStrictEqual(defaultSettings)
   expect(loaded.general.locale).toBe('')
   expect(loaded.engines.openai.models.chat).toStrictEqual([])
-  expect(Store.prototype.set).not.toHaveBeenCalled()
+  expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
+  expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key')
+  expect(Store.prototype.set).toHaveBeenCalledWith('engines.lmstudio.apiKey', 'encrypted-dummy')
 })
 
 test('Uses cache on second load', () => {
@@ -131,7 +134,12 @@ test('Backwards compatibility 2', () => {
   const loaded = config.loadSettings(app)
   expect(loaded.engines.openai.apiKey).toBe('openai-api-key2')
   expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
-  expect(Store.prototype.set).toHaveBeenLastCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key2')
+  expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key2')
+  expect(Store.prototype.set).toHaveBeenCalledWith('engines.lmstudio.apiKey', 'encrypted-dummy')
+  expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/config/compat2/settings.json', expect.any(String))
+  const calls = (fs.writeFileSync as Mock).mock.calls
+  expect(calls[calls.length-1][0]).toBe('tests/fixtures/config/compat2/settings.json')
+  expect(JSON.stringify(calls[calls.length-1][1])).not.toContain('apiKey')
 })
 
 test('Save engine config', () => {
@@ -161,6 +169,7 @@ test('Save apiKeys settings', () => {
 test('Save apiKeys settings with safeKeys disabled', () => {
   vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/unknown')
   const loaded = config.loadSettings(app)
+  vi.clearAllMocks()
   loaded.general.safeKeys = false
   config.saveSettings(app, loaded, true)
   expect(fs.writeFileSync).toHaveBeenLastCalledWith('tests/fixtures/config/unknown/settings.json', expect.any(String))
