@@ -166,7 +166,7 @@ const onDelete = () => {
 
 .preview {
   
-  width: calc(100% - var(--create-panel-width));
+  width: calc(100% - var(--large-panel-width));
   --preview-padding: 32px;
 
   .loading {

@@ -105,37 +105,42 @@ const onChangeFontSize = () => {
   padding-top: 24px;
 }
 
-.form .toolbar {
+.form {
 
-  display: flex;
-  flex-direction: row;
-  height: 32px;
-  margin: 0px;
-  padding: 8px 16px;
-  align-items: center;
   background-color: var(--dialog-header-bg-color);
-  border-bottom: 1px solid var(--scratchpad-bars-border-color);
-  -webkit-app-region: drag;
-  gap: 10px;
 
-  .tool {
+  .toolbar {
 
-    max-width: 128px;
-    white-space: nowrap;
-    font-size: 14.5px;
-    font-weight: normal;
+    display: flex;
+    flex-direction: row;
     height: 32px;
-    margin: 0;
+    margin: 0px;
+    padding: 8px 16px;
+    align-items: center;
+    border-bottom: 1px solid var(--scratchpad-bars-border-color);
+    -webkit-app-region: drag;
+    gap: 10px;
 
-    &:enabled {
-      -webkit-app-region: no-drag;
+    .tool {
+
+      max-width: 128px;
+      white-space: nowrap;
+      font-size: 14.5px;
+      font-weight: normal;
+      height: 32px;
+      margin: 0;
+
+      &:enabled {
+        -webkit-app-region: no-drag;
+      }
+
     }
 
-  }
+    select.tool {
+      border-radius: 6px;
+      width: auto;
+    }
 
-  select.tool {
-    border-radius: 6px;
-    width: auto;
   }
 
 }

@@ -320,7 +320,7 @@ const selectRequest = (request: NetworkRequest) => {
   }
 
   .details {
-    width: calc(100% - var(--create-panel-width));
+    width: calc(100% - var(--large-panel-width));
     --preview-padding: 32px;
   }
 
