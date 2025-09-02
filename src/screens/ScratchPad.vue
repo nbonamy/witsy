@@ -562,13 +562,13 @@ const onStopPrompting = async () => {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background-color: var(--background-color);
 
   .document {
     flex: 1;
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
-    background-color: var(--background-color);
     scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
   }
 

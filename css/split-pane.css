@@ -49,7 +49,7 @@
     header {
 
       flex: 0 var(--split-pane-header-height);
-      background-color: var(--window-decoration-color);
+      background-color: var(--sidebar-bg-color);
       border-bottom: 1px solid var(--sidebar-border-color);
       border-right: 1px solid var(--sidebar-border-color);
       padding: 0 2rem;
@@ -360,7 +360,7 @@
 
 .fullscreen-drawer .split-pane {
 
-  --drawer-pane-bg-color: #FAFAFA;
+  --drawer-pane-bg-color: var(--color-surface);
 
   .sp-sidebar {
 

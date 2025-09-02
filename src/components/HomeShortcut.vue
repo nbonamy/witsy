@@ -54,7 +54,7 @@ function onClick() {
 
     h2 {
       margin: 0;
-      color: var(--color-light-on-surface, #27272A);
+      color: var(--color-on-surface);
       font-family: Inter;
       font-size: 14px;
       font-style: normal;
@@ -64,7 +64,7 @@ function onClick() {
 
     p {
       margin: 0;
-      color: var(--color-light-on-surface-variant, #71717A);
+      color: var(--color-on-surface-variant);
       font-family: Inter;
       font-size: 12px;
       font-style: normal;
