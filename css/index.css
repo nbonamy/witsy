@@ -33,6 +33,7 @@
   --window-decoration-color: var(--background-color);
   --window-menubar-width: 4.5rem;
   --window-toolbar-height: 3rem;
+  --window-footer-height: 2.5rem;
 
   --menubar-bg-color: var(--window-decoration-color);
   --menubar-border-color: #d0d0d0;
@@ -774,12 +775,6 @@ table.table-plain {
     border-bottom: 1px solid var(--border-color);
   }
 
-  &:has(~ .fullscreen-drawer.visible) {
-    header {
-      -webkit-app-region: no-drag;
-    }
-  }
-
   main {
     flex: 1;
     display: flex;
@@ -794,12 +789,14 @@ table.table-plain {
 
   footer {
 
-    flex: 0 0 1rem;
-    padding: 0.75rem;
+    box-sizing: border-box;
+    flex: 0 0 var(--window-footer-height);
     border-top: 1px solid var(--border-color);
+    padding: 0rem 0.75rem;
 
     display: flex;
     flex-direction: row;
+    align-items: center;
     
     font-size: 13.5px;
     color: var(--faded-text-color);
@@ -850,7 +847,6 @@ table.table-plain {
   width: var(--icon-md);
   height: var(--icon-md);
 }
-
 
 .flex-push {
   flex: 1;

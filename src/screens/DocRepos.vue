@@ -1,5 +1,5 @@
 <template>
-  <FullScreenDrawer ref="drawer" @closed="emit('close')">
+  <FullScreenDrawer ref="drawer" @closed="emit('closed')">
     <Empty v-if="!docRepos?.length && !selectedRepo" @click="onCreate" @close="onClose" />
     <div v-else class="docrepo split-pane">
       <div class="sp-sidebar">
@@ -179,7 +179,7 @@ const cancelEditingTitle = () => {
   editingTitle.value = ''
 }
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['closed'])
 
 const onClose = () => {
   drawer.value?.close()
@@ -192,6 +192,9 @@ const onClose = () => {
 .split-pane {
   .sp-sidebar {
     flex-basis: 360px;
+    footer {
+      border: none;
+    }
   }
 
   .sp-main {

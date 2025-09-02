@@ -4,7 +4,7 @@
 
   <div class="onboarding" v-bind="$attrs">
 
-    <div class="close"><XIcon @click="$emit('close')" /></div>
+    <div class="close"><XIcon @click="$emit('closed')" /></div>
 
     <div class="language-selector" v-if="step === 0">
       <div class="localeUI">
@@ -28,7 +28,7 @@
     <footer class="form form-large">
       <button v-if="step !== 0" class="prev" @click.prevent="onPrev">{{ t('common.wizard.prev')}}</button>
       <button v-if="step !== 7" class="next default" @click.prevent="onNext">{{ t('common.wizard.next')}}</button>
-      <button v-if="step === 7" class="last" @click.prevent="$emit('close')">{{ t('common.close')}}</button>
+      <button v-if="step === 7" class="last" @click.prevent="$emit('closed')">{{ t('common.close')}}</button>
     </footer>
 
   </div>
@@ -51,7 +51,7 @@ import Welcome from '../onboarding/Welcome.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 
-defineEmits(['close']);
+defineEmits(['closed']);
 
 const step = ref(0)
 const locales = ref([])

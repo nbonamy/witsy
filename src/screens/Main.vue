@@ -3,11 +3,9 @@
     <header></header>
     <main>
       <WorkspaceBar v-if="store.isFeatureEnabled('workspaces')" />
-      <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
-      <Settings :style="{ display: mode === 'settings' ? undefined : 'none' }" :extra="viewParams" />
+      <MenuBar :mode="modeForMenuBar" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
       <Chat ref="chat" :style="{ display: mode === 'chat' ? undefined : 'none' }" :extra="viewParams" />
       <DesignStudio :style="{ display: mode === 'studio' ? undefined : 'none' }" />
-      <AgentForge v-if="mode === 'agents'" ref="agents" />
       <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
       <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
     </main>
@@ -20,9 +18,11 @@
       </div>
     </footer>
   </div>
-  <Onboarding v-if="onboard" @close="onOnboardingDone" />
-  <DocRepos v-if="docrepos" @close="onDocReposClose" />
-  <McpServers v-if="mcpservers" @close="onMcpServersClose" />
+  <Settings :style="{ display: fullScreenPanel == 'settings' ? undefined : 'none' }" :extra="viewParams" @closed="onCloseFullScreenPanel" ref="settings" />
+  <Onboarding v-if="showOnboarding" @close="onOnboardingDone" />
+  <AgentForge v-if="fullScreenPanel === 'agents'" @closed="onCloseFullScreenPanel" />
+  <McpServers v-if="fullScreenPanel == 'mcp'" @closed="onCloseFullScreenPanel" />
+  <DocRepos v-if="fullScreenPanel == 'docrepos'" @closed="onCloseFullScreenPanel" />
   <Fullscreen window="main" />
 </template>
 
@@ -52,9 +52,11 @@ const { emitEvent, onEvent } = useEventBus()
 const chat = ref<typeof Chat>(null)
 const transcribe = ref<typeof Transcribe>(null)
 const realtime = ref<typeof RealtimeChat>(null)
-const onboard = ref(false)
-const docrepos = ref(false)
-const mcpservers = ref(false)
+const settings = ref<typeof Settings>(null)
+const showOnboarding = ref(false)
+
+type FullScreenPanel = 'none' | 'settings' | 'docrepos' | 'mcp' | 'agents'
+const fullScreenPanel = ref<FullScreenPanel>('none')
 
 // init stuff
 store.load()
@@ -68,6 +70,13 @@ const viewParams = ref(null)
 
 const version = computed(() => {
   return window.api.app.getVersion()
+})
+
+const modeForMenuBar = computed(() => {
+  if (fullScreenPanel.value !== 'none') {
+    return fullScreenPanel.value
+  }
+  return mode.value
 })
 
 onMounted(() => {
@@ -99,7 +108,7 @@ onMounted(() => {
   // show onboarding when window opens
   window.api.on('window-opened', () => {
     if (!store.config.general.onboardingDone) {
-      setTimeout(() => onboard.value = true, 500)
+      setTimeout(() => showOnboarding.value = true, 500)
     }
   })
 
@@ -117,7 +126,7 @@ const processQueryParams = (params: anyDict) => {
     viewParams.value = params
 
     // special
-    if (params.view === 'docrepo') {
+    if (params.view === 'docrepos') {
       emitEvent('create-docrepo')
     }
 
@@ -134,11 +143,17 @@ const onMode = async (next: MenuBarMode) => {
     mode.value = 'chat'
   } else if (next === 'debug') {
     window.api.debug.showConsole()
-  } else if (next === 'docrepo') {
-    docrepos.value = true
+  } else if (next === 'docrepos') {
+    fullScreenPanel.value = 'docrepos'
   } else if (next === 'mcp') {
-    mcpservers.value = true
+    fullScreenPanel.value = 'mcp'
+  } else if (next === 'settings') {
+    fullScreenPanel.value = 'settings'
+    settings.value.show()
+  } else if (next === 'agents') {
+    fullScreenPanel.value = 'agents'
   } else {
+    fullScreenPanel.value = 'none'
     mode.value = next
   }
 
@@ -169,23 +184,19 @@ const onNewChat = () => {
 }
 
 const onRunOnboarding = () => {
-  onboard.value = true
+  showOnboarding.value = true
   store.config.general.onboardingDone = false
   store.saveSettings()
 }
 
 const onOnboardingDone = () => {
-  onboard.value = false
+  showOnboarding.value = false
   store.config.general.onboardingDone = true
   store.saveSettings()
 }
 
-const onDocReposClose = () => {
-  docrepos.value = false
-}
-
-const onMcpServersClose = () => {
-  mcpservers.value = false
+const onCloseFullScreenPanel = () => {
+  fullScreenPanel.value = 'none'
 }
 
 </script>

@@ -1664,9 +1664,9 @@
       "title": "Import from JSON"
     },
     "importSmitheryServer": "Install from Smithery.ai",
-    "mcpServers": "MCP Servers",
-    "modelContextProtocol": "Model Context Protocol",
-    "noServersFound": "No MCP Servers found. Click on the buttons above to add a new server.",
+    "mcpServers": "Connectors",
+    "modelContextProtocol": "Connections Hub",
+    "noServersFound": "No connectors found. Click on the buttons above to add a new connector.",
     "noTools": "No tools available",
     "oauth": {
       "success": {

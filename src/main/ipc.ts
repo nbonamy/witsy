@@ -485,7 +485,7 @@ export const installIpc = (
   });
 
   ipcMain.on(IPC.DOCREPO.OPEN, () => {
-    window.openMainWindow({ queryParams: { view: 'docrepo' } });
+    window.openMainWindow({ queryParams: { view: 'docrepos' } });
   });
 
   ipcMain.on(IPC.DOCREPO.LIST, (event, workspaceId: string) => {

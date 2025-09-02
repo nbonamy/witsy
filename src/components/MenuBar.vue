@@ -51,7 +51,7 @@
         <span>{{ t('mcp.mcpServers') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')" v-if="store.isFeatureEnabled('docrepo')">
+      <MenuBarItem action="docrepo" :active="mode === 'docrepos'" @click="emit('change', 'docrepos')" v-if="store.isFeatureEnabled('docrepos')">
         <LightbulbIcon />
         <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
@@ -88,8 +88,7 @@ import { MainWindowMode } from '../types/index'
 import IconMenu from './IconMenu.vue'
 import MenuBarItem from './MenuBarItem.vue'
 
-export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug' | 'agents'
-
+export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug'
 const hasComputerUse = computed(() => {
   return store.isFeatureEnabled('voiceMode') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
 })
