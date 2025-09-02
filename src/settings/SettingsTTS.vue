@@ -40,9 +40,7 @@
             {{ voice.label }}
           </option>
         </select>
-        <button class="control" @click.prevent="onRefreshVoices" v-if="canRefreshVoices">
-          {{ t('common.refresh') }}
-        </button>
+        <RefreshButton @refresh="onRefreshVoices" v-if="canRefreshVoices" />
         <button class="control" @click.prevent="onPlay">
           <PlayIcon v-if="audioState.state === 'idle'"/>
           <SquareIcon v-else />
@@ -63,17 +61,18 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
+import { PlayIcon, SquareIcon } from 'lucide-vue-next'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
+import RefreshButton from '../components/RefreshButton.vue'
+import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
 import { getTTSModels } from '../voice/tts'
-import TTSOpenAI from '../voice/tts-openai'
-import TTSGroq from '../voice/tts-groq'
 import TTSElevenLabs from '../voice/tts-elevenlabs'
 import TTSFalAi from '../voice/tts-falai'
-import { PlayIcon, SquareIcon } from 'lucide-vue-next'
+import TTSGroq from '../voice/tts-groq'
+import TTSOpenAI from '../voice/tts-openai'
 
 const engine = ref('openai')
 const voice = ref(null)
@@ -163,15 +162,17 @@ const onPlay = () => {
   }
 }
 
-const onRefreshVoices = async () => {
+const onRefreshVoices = async (): Promise<boolean> => {
   if (engine.value === 'elevenlabs') {
     const engine = new TTSElevenLabs(store.config)
     const voices = await engine.getVoices(model.value)
     if (voices?.length) {
       store.config.engines.elevenlabs.voices = voices
       store.saveSettings()
+      return true
     }
   }
+  return false
 }
 
 const load = () => {

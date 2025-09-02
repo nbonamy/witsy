@@ -121,8 +121,6 @@
     "recommended": "Recommended",
     "record": "Record",
     "redo": "Redo",
-    "refresh": "Refresh",
-    "refreshing": "Refreshing…",
     "rename": "Rename",
     "replace": "Replace",
     "required": {
@@ -159,7 +157,6 @@
     "selectAll": "Select All",
     "selectAllShort": "All",
     "selectNone": "Unselect All",
-    "selectNoneShort": "None",
     "settings": "Settings",
     "shortcut": "Shortcut",
     "showLess": "Show Less",

@@ -102,8 +102,6 @@
     "recommended": "Empfohlen",
     "record": "Aufzeichnen",
     "redo": "Wiederherstellen",
-    "refresh": "Aktualisieren",
-    "refreshing": "Aktualisieren…",
     "rename": "Umbenennen",
     "replace": "Ersetzen",
     "required": {
@@ -138,8 +136,8 @@
     "search": "Suchen…",
     "select": "Auswählen",
     "selectAll": "Alle auswählen",
+    "selectAllShort": "Alle",
     "selectNone": "Alle abwählen",
-    "selectNoneShort": "Keine",
     "settings": "Einstellungen",
     "shortcut": "Tastenkombination",
     "showLess": "Weniger anzeigen",
