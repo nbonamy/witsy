@@ -114,7 +114,7 @@ test('Error while grabbing', async () => {
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-  expect(Notification).toHaveBeenLastCalledWith({ title: 'StationOne', body: 'automation.grabError' })
+  expect(Notification).toHaveBeenLastCalledWith({ title: 'common.appName', body: 'automation.grabError' })
 
 })
 
@@ -124,7 +124,7 @@ test('No text to grab', async () => {
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-  expect(Notification).toHaveBeenLastCalledWith({ title: 'StationOne', body: 'automation.commander.emptyText' })
+  expect(Notification).toHaveBeenLastCalledWith({ title: 'common.appName', body: 'automation.commander.emptyText' })
 
 })
 

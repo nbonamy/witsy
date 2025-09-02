@@ -42,7 +42,7 @@
           </div>
         </div>
         
-        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" ref="prompt" />
+        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" ref="prompt" />
       
       </div>
       
@@ -60,6 +60,9 @@
 import { EllipsisVerticalIcon, MessageCirclePlusIcon, PanelRightCloseIcon, PanelRightOpenIcon, SlidersHorizontalIcon, X } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
+import useEventBus from '../composables/event_bus'
+import useTipsManager from '../composables/tips_manager'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
 import ModelSettings from '../screens/ModelSettings.vue'
 import { t } from '../services/i18n'
@@ -70,12 +73,10 @@ import ContextMenu, { MenuPosition } from './ContextMenu.vue'
 import EmptyChat2 from './EmptyChat2.vue'
 import MessageList from './MessageList.vue'
 import Prompt, { SendPromptParams } from './Prompt.vue'
-
-import useEventBus from '../composables/event_bus'
+  
 const { emitEvent, onEvent } = useEventBus()
-
-import useTipsManager from '../composables/tips_manager'
 const tipsManager = useTipsManager(store)
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
 const props = defineProps({
   chat: {
@@ -152,6 +153,10 @@ const emit = defineEmits(['prompt', 'run-agent', 'stop-generation'])
 onMounted(() => {
   onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
 })
+
+const onSetEngineModel = (engine: string, model: string) => {
+  llmManager.setChatModel(engine, model)
+}
 
 const onSendPrompt = (payload: SendPromptParams) => {
   emit('prompt', payload)

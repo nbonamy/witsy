@@ -46,11 +46,11 @@
       </div>
     </template>
 
-    <template #expertsSubmenuFooter>
+    <!-- <template #expertsSubmenuFooter>
       <div @click="handleManageExperts">
         <PlusIcon class="icon" /> {{ t('prompt.menu.experts.manage') }}
       </div>
-    </template>
+    </template> -->
 
     <template #docReposSubmenu="{ withFilter }">
       {{ withFilter(true) }}

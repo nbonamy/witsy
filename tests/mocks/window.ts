@@ -43,6 +43,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     on: vi.fn((signal, listener) => listeners.push(listener)),
     off: vi.fn(),
     app: {
+      getVersion: vi.fn(() => '0.1.0'),
       setAppearanceTheme: vi.fn(),
       showAbout: vi.fn(),
       // showDialog: vi.fn(async () => { return { response: opts.dialogResponse || 0, checkboxChecked: false }}),

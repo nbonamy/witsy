@@ -1,7 +1,7 @@
 {
   "name": "station1",
   "productName": "StationOne",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "StationOne: desktop AI assistant",
   "repository": {
     "type": "git",

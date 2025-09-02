@@ -12,10 +12,9 @@
     <div class="chat-list-tools">
       <div class="form search" v-if="filtering"><div class="form-field">
         <input name="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" />
-        <SearchXIcon class="search-icon" @click="onToggleFilter" v-if="!filter" />
-        <CircleXIcon class="clear-filter" @click="onClearFilter" v-else />
+        <CircleXIcon class="clear-filter" @click="onClearFilter" v-if="filter" />
       </div></div>
-      <div class="display-mode button-group" v-if="store.isFeatureEnabled('chat.folders')">
+      <div class="display-mode button-group" v-if="!filtering && store.isFeatureEnabled('chat.folders')">
         <button name="timeline" :class="{active: displayMode == 'timeline'}" @click="displayMode = 'timeline'">
           <MessagesSquareIcon />
           {{ t('chatList.displayMode.timeline') }}
@@ -41,8 +40,8 @@
       <button class="new-chat cta" @click="onNewChat"><MessageCircleMoreIcon /> {{ t('common.newChat') }}</button>
     </footer>
     <footer v-else class="select-actions">
-      <button name="select-all" @click="onSelectAll">{{ t('common.selectAll') }}</button>
-      <button name="unselect-all" @click="onUnselectAll">{{ t('common.unselectAll') }}</button>
+      <button name="select-all" @click="onSelectAll">{{ t('common.selectAllShort') }}</button>
+      <button name="unselect-all" @click="onUnselectAll">{{ t('common.unselectAllShort') }}</button>
       <div class="flex-push"/>
       <button name="move" @click="onMove" v-if="displayMode === 'folder'"><FolderInputIcon /> {{ t('common.move') }}</button>
       <button name="delete" @click="onDelete"><Trash2Icon /></button>
@@ -53,7 +52,7 @@
 
 <script setup lang="ts">
 
-import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCircleMoreIcon, MessagesSquareIcon, SearchIcon, SearchXIcon, SquareIcon, Trash2Icon } from 'lucide-vue-next'
+import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCircleMoreIcon, MessagesSquareIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
 import { nextTick, onMounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
@@ -261,8 +260,8 @@ defineExpose({
           position: relative;
 
           input {
-            padding: 1rem;
-            font-size: 14.5px;
+            padding: 0.625rem 0.75rem;
+            font-size: 14px;
           }
 
           .search-icon {

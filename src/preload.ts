@@ -1,20 +1,20 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { contextBridge, ipcRenderer } from 'electron'
-import { Command, ComputerAction, Expert, ExternalApp, anyDict, strDict, NetworkRequest, OpenSettingsPayload, MainWindowMode, AgentRun } from './types';
-import { WorkspaceHeader, Workspace } from './types/workspace';
-import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './types/file';
-import { Configuration } from './types/config';
-import { DocRepoQueryResponseItem, DocumentQueueItem, SourceType } from './types/rag';
-import { Application, RunCommandParams } from './types/automation';
-import { McpServer, McpStatus, McpTool } from './types/mcp';
-import { ListDirectoryResponse } from './types/filesystem';
-import { LocalSearchResult } from './main/search';
-import { Size } from './main/computer';
+import { contextBridge, ipcRenderer } from 'electron';
 import { LlmChunk, LlmTool } from 'multi-llm-ts';
-import Agent from './models/agent';
 import * as IPC from './ipc_consts';
+import { Size } from './main/computer';
+import { LocalSearchResult } from './main/search';
+import Agent from './models/agent';
+import { AgentRun, Command, ComputerAction, Expert, ExternalApp, MainWindowMode, NetworkRequest, OpenSettingsPayload, anyDict, strDict } from './types';
+import { Application, RunCommandParams } from './types/automation';
+import { Configuration } from './types/config';
+import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './types/file';
+import { ListDirectoryResponse } from './types/filesystem';
+import { McpServer, McpStatus, McpTool } from './types/mcp';
+import { DocRepoQueryResponseItem, DocumentQueueItem, SourceType } from './types/rag';
+import { Workspace, WorkspaceHeader } from './types/workspace';
 
 contextBridge.exposeInMainWorld(
   'api', {
@@ -33,6 +33,7 @@ contextBridge.exposeInMainWorld(
       }
     },
     app: {
+      getVersion: (): string => { return ipcRenderer.sendSync(IPC.APP.GET_VERSION) },
       setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync(IPC.APP.SET_APPEARANCE_THEME, theme) },
       // showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke(IPC.APP.SHOW_DIALOG, opts) },
       listFonts: (): string[] => { return ipcRenderer.sendSync(IPC.APP.FONTS_LIST) },

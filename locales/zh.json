@@ -2,6 +2,7 @@
   "common": {
     "actions": "操作",
     "agents": "代理",
+    "appName": "StationOne",
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
     "attach": "附件",
@@ -154,12 +155,15 @@
       "weekly": "每周"
     },
     "search": "搜索…",
+    "select": "选择",
     "selectAll": "全选",
     "selectNone": "全不选",
+    "selectNoneShort": "无",
     "settings": "设置",
     "shortcut": "快捷键",
     "showLess": "显示更少",
     "showMore": "显示更多",
+    "sortBy": "排序依据",
     "spellcheck": {
       "add": "添加到字典"
     },
@@ -273,7 +277,7 @@
       },
       "confirmDelete": "您确定要删除此代理吗？",
       "create": "新建代理",
-      "empty": "通过创建您的第一个代理，解锁StationOne的代理能力！点击机器人头部开始。",
+      "empty": "通过创建您的第一个代理，释放 @:{'common.appName'} 的代理能力！点击机器人头像开始。",
       "list": {
         "empty": "尚未创建此类型的代理。",
         "runnable": "用户发起",
@@ -366,7 +370,7 @@
     "available": "有新版本可用。正在下载…",
     "downloading": "正在更新。请等待完成。",
     "error": "检查更新时出错。请稍后再试。",
-    "uptodate": "您已使用最新版本的StationOne。"
+    "uptodate": "您已使用最新版本的 @:{'common.appName'}。"
   },
   "backup": {
     "restore": {
@@ -832,7 +836,7 @@
     "useDrawing": "使用绘图"
   },
   "embedding": {
-    "apiKeyReminder": "请确保您在StationOne设置的模型面板中输入了API密钥。",
+    "apiKeyReminder": "请确保您在 @:{'common.appName'} 设置的模型面板中输入了您的 API 密钥。",
     "browse": "浏览模型",
     "model": "嵌入模型",
     "provider": "嵌入提供商"
@@ -1666,7 +1670,7 @@
     "noTools": "无可用工具",
     "oauth": {
       "success": {
-        "message": "您可以关闭此窗口并返回StationOne。",
+        "message": "您可以关闭此窗口，并返回 @:{'common.appName'}。",
         "title": "授权成功！"
       }
     },
@@ -1679,7 +1683,7 @@
       "httpHeaders": "自定义 HTTP 头",
       "oauth": {
         "authorizing": "正在开始认证",
-        "authorizingText": "您的浏览器将打开以授权StationOne。请完成授权，完成后返回此窗口。",
+        "authorizingText": "您的浏览器将打开以授权 @:{'common.appName'}。请完成授权后返回此窗口。",
         "clientId": "客户端ID",
         "clientSecret": "客户端密钥",
         "dynamicClientRegistrationError": "该服务器不支持动态客户端注册。您需要指定客户端ID和客户端密钥。",
@@ -1740,9 +1744,9 @@
   },
   "menu": {
     "app": {
-      "about": "关于StationOne",
+      "about": "关于 @:{'common.appName'}",
       "checkForUpdates": "检查更新…",
-      "quit": "退出StationOne",
+      "quit": "退出 @:{'common.appName'}",
       "settings": "@:{'common.settings'}…"
     },
     "edit": {
@@ -1762,7 +1766,7 @@
         "openai": "ChatGPT 数据导出…",
         "title": "导入"
       },
-      "mainWindow": "打开StationOne",
+      "mainWindow": "打开 @:{'common.appName'}",
       "newChat": "新建聊天",
       "quickPrompt": "新建提示",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1870,12 +1874,12 @@
       "count": "未找到模型。|1 个模型可用！|{count} 个模型可用！",
       "error": "请检查您的API密钥并重试。",
       "showMore": "显示更多",
-      "subtitle": "您可以使用所有主要提供商的语言模型与StationOne聊天。请在下面输入您的API密钥开始。如果您没有API密钥，没关系：在下一屏您可以通过Ollama设置StationOne使用本地模型！",
+      "subtitle": "您可以使用所有主要提供商的语言模型与 @:{'common.appName'} 聊天。请在下面输入您的 API 密钥开始使用。如果您没有任何 API 密钥也没关系：下一屏您可以通过 Ollama 设置 @:{'common.appName'} 使用本地模型！",
       "success": "{engine} 密钥验证成功。<br/>{count} 个模型已找到！",
       "title": "您的聊天模型提供商"
     },
     "done": {
-      "subtitle": "您已全部设置完成，准备开始！<br/>开始与StationOne聊天，探索其功能吧！",
+      "subtitle": "您已全部设置完成，准备开始！<br/>开始与 @:{'common.appName'} 聊天，探索其功能吧！",
       "title": "全部完成！"
     },
     "instructions": {
@@ -1889,8 +1893,8 @@
         "title": "您尚未完成个性化设置。"
       },
       "selectStyle": "现在选择您希望助手如何响应。<br/>这将与您的个人信息结合，创建完美的指令。",
-      "subtitle": "通过回答几个问题，StationOne能够个性化您的体验并提供更好的回答。您可以跳过此步骤，但强烈建议这样做，让StationOne更具个性化。",
-      "title": "让StationOne了解您！"
+      "subtitle": "通过回答几个问题，@:{'common.appName'} 能够个性化您的体验并提供更好的答案。您可以跳过此步骤，但强烈建议完成，使 @:{'common.appName'} 更具个人色彩。",
+      "title": "让 @:{'common.appName'} 了解您！"
     },
     "ollama": {
       "browseModels": "在 https://ollama.com/search 发现更多模型",
@@ -1914,22 +1918,22 @@
     },
     "permissions": {
       "accessibility": {
-        "description": "StationOne需要此权限以读取其他应用的文本并无缝集成您的工作流程。",
+        "description": "此权限允许 @:{'common.appName'} 读取其他应用的文本并无缝集成到您的工作流程中。",
         "title": "辅助功能"
       },
       "automation": {
-        "description": "请确保在自动化设置界面中授予StationOne“系统事件”权限。",
+        "description": "请确保您在自动化设置中授予 @:{'common.appName'} “系统事件”权限。",
         "title": "自动化"
       },
       "denied": "未授权",
       "granted": "已授权",
-      "info": "这些权限使StationOne能够提供完整功能。您可以现在授予，也可以以后在系统偏好设置中授权。",
+      "info": "这些权限允许 @:{'common.appName'} 提供其全部功能。您可以现在授予，也可以稍后在系统偏好设置中授予。",
       "leave": {
         "message": "您确定要在未授权所有权限的情况下继续吗？部分功能可能无法正常使用。",
         "title": "权限未完全授权"
       },
       "openSettings": "打开设置",
-      "subtitle": "在macOS上，StationOne需要某些权限以提供最佳体验。",
+      "subtitle": "在 macOS 上，@:{'common.appName'} 需要某些权限以提供最佳体验。",
       "title": "系统权限"
     },
     "studio": {
@@ -1944,13 +1948,13 @@
       "already": "@:{'onboarding.chat.already'}",
       "count": "@:{'onboarding.chat.count'}",
       "error": "@:{'onboarding.chat.error'}",
-      "subtitle": "使用语音与StationOne互动！StationOne不仅可以朗读语言模型聊天会话中的回复，还可以朗读其他应用中显示的任何文本！",
+      "subtitle": "使用您的声音与 @:{'common.appName'} 互动！@:{'common.appName'} 不仅能朗读语言模型聊天会话的回复，还可朗读其他应用中显示的任何文本！",
       "success": "@:{'onboarding.chat.success'}",
       "title": "语音互动"
     },
     "welcome": {
-      "subtitle": "StationOne是一个强大的AI助手，可以帮助您完成各种任务。您可以与它聊天，要求它撰写文档，甚至在您的电脑上运行代码。让我们开始吧！",
-      "title": "欢迎使用StationOne！"
+      "subtitle": "@:{'common.appName'} is a powerful AI assistant that can help you with a wide range of tasks. You can chat with it, ask it to write documents, and even run code on your computer. Let's get started!",
+      "title": "欢迎使用 @:{'common.appName'}！"
     }
   },
   "plugins": {
@@ -2124,7 +2128,7 @@
     },
     "generationError": "生成文本时出错",
     "loadingError": "加载便签文件时出错",
-    "placeholder": "开始输入您的文档，或\n让StationOne帮您写点东西！\n\n开始后，您可以让StationOne\n修改您的文档。\n\n如果您选中了一部分文本，\nStationOne将只更新该部分。\n\n还可以查看右下角操作栏中的写作助手！\n\n试试看吧！",
+    "placeholder": "开始输入您的文档，或\n让 @:{'common.appName'} 为您写点东西！\n\n一旦开始，您可以让 @:{'common.appName'}\n对您的文档进行修改。\n\n如果您高亮了部分文本，\n@:{'common.appName'} 将只更新这部分内容。\n\n还可以查看位于右下角操作栏的写作助手！\n\n试试看吧！",
     "title": "Scratchpad"
   },
   "settings": {
@@ -2232,7 +2236,7 @@
       "runtime": "深度研究类型",
       "runtimes": {
         "ma": "多代理（完全代理驱动，基于 LLM）",
-        "ms": "多步骤（混合代码/代理，StationOne驱动）"
+        "ms": "多步骤（混合代码/代理，@:{'common.appName'} 驱动）"
       }
     },
     "engines": {
@@ -2393,7 +2397,7 @@
         "title": "文件系统"
       },
       "image": {
-        "apiKeyReminder": "请确保您在StationOne设置的模型面板中输入了API密钥。",
+        "apiKeyReminder": "请确保您在 @:{'common.appName'} 设置的模型面板中输入了您的 API 密钥。",
         "description": "此插件允许 LLM 引擎根据文本描述创建图像。",
         "falai": {
           "aboutModels": "了解更多关于 fal.ai 模型的信息"
@@ -2533,7 +2537,7 @@
       "tts": {
         "groqAcceptTermsReminder": "您需要<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">接受条款和条件</a>以使用 Groq 模型。",
         "kokoroReminder": "已提供",
-        "sampleText": "欢迎使用StationOne，终极AI桌面助手。",
+        "sampleText": "欢迎使用 @:{'common.appName'}，终极 AI 桌面助手。",
         "serviceDisclaimer": "该服务可能随时停止工作。",
         "voice": "@:{'common.voice'}"
       },
@@ -2634,9 +2638,9 @@
       "voiceMode": "@:{'realtimeChat.title'}"
     },
     "notification": {
-      "darwin": "您可以通过菜单栏的钢笔图标激活StationOne。",
-      "linux": "您可以通过菜单栏的钢笔图标激活StationOne。",
-      "windows": "您可以通过系统托盘的钢笔图标激活StationOne。"
+      "darwin": "您可以通过菜单栏的钢笔图标激活 @:{'common.appName'}。",
+      "linux": "您可以通过菜单栏的钢笔图标激活 @:{'common.appName'}。",
+      "windows": "您可以通过系统托盘的钢笔图标激活 @:{'common.appName'}。"
     }
   },
   "workspace": {

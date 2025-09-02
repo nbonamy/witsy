@@ -83,6 +83,10 @@ export const installIpc = (
     }
   });
 
+  ipcMain.on(IPC.APP.GET_VERSION, (event) => {
+    event.returnValue = app.getVersion();
+  });
+
   ipcMain.on(IPC.APP.SHOW_ABOUT, () => {
     app.showAboutPanel();
   });

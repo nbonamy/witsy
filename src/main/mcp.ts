@@ -6,13 +6,14 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import { OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth'
 import { CompatibilityCallToolResultSchema } from '@modelcontextprotocol/sdk/types'
 import { exec } from 'child_process'
-import { App } from 'electron'
+import { app, App } from 'electron'
 import { LlmTool } from 'multi-llm-ts'
 import { anyDict } from '../types/index'
 import { McpClient, McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from '../types/mcp'
 import { loadSettings, saveSettings, settingsFilePath } from './config'
 import McpOAuthManager from './mcp_auth'
 import Monitor from './monitor'
+import { useI18n } from './i18n'
 
 type ToolsCacheEntry = {
   tools: any
@@ -555,7 +556,7 @@ export default class {
 
       // build the client
       const client = new Client({
-        name: 'stationone-mcp-client',
+        name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
         version: '1.0.0'
       }, {
         capabilities: { tools: {} }
@@ -608,7 +609,7 @@ export default class {
 
       // build the client
       const client = new Client({
-        name: 'stationone-mcp-client',
+        name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
         version: '1.0.0'
       }, {
         capabilities: { tools: {} }
@@ -668,7 +669,7 @@ export default class {
             token_endpoint_auth_method: 'client_secret_post',
             grant_types: ['authorization_code', 'refresh_token'],
             response_types: ['code'],
-            client_name: 'StationOne MCP Client',
+            client_name: `${useI18n(app)('common.appName')} MCP Client`,
             scope: 'mcp:tools'
           }
           oauthProvider.saveClientInformation(clientInformation)
@@ -687,7 +688,7 @@ export default class {
 
       // build the client
       const client = new Client({
-        name: 'stationone-mcp-client',
+        name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
         version: '1.0.0'
       }, {
         capabilities: { tools: {} }

@@ -258,9 +258,9 @@ test('Selects expert', async () => {
   const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
   await menu.find('.experts').trigger('click')
   expect(menu.findAll('.filter-input').length).toBe(1)
-  expect(menu.findAll('.item').length).toBe(4)
+  expect(menu.findAll('.item').length).toBe(3)
   // Management option is now in footer
-  expect(menu.find('.footer .item').text()).toBe('prompt.menu.experts.manage')
+  // expect(menu.find('.footer .item').text()).toBe('prompt.menu.experts.manage')
   await menu.find('.item:nth-child(2)').trigger('click')
   expect(wrapper.vm.expert.id).toBe('uuid3')
   expect(wrapper.find('.prompt-feature').exists()).toBe(true)

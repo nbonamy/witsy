@@ -331,6 +331,7 @@ declare global {
       on: (signal: string, callback: (value: any) => void) => void
       off: (signal: string, callback: (value: any) => void) => void
       app: {
+        getVersion(): string
         setAppearanceTheme(theme: string): void
         showAbout(): void
         getAssetPath(assetPath: string): string

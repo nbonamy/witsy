@@ -41,6 +41,10 @@ vi.mock('electron', () => {
   }
 })
 
+vi.mock('../../src/main/i18n', () => ({
+  useI18n: vi.fn(() => (key: string) => key)
+}))
+
 beforeAll(() => {
   // @ts-expect-error mocking
   process.resourcesPath = 'resourcesPath'
@@ -53,11 +57,11 @@ test('Creates tray', async () => {
   expect(Menu.buildFromTemplate).toHaveBeenCalled()
   expect((Menu.buildFromTemplate as Mock).mock.calls[0][0]).toHaveLength(15)
   expect((Menu.buildFromTemplate as Mock).mock.calls[0][0].map((item: any) => item.label)).toEqual([
-    'Open StationOne', 'Quick Prompt', 'Run AI Command', undefined,
-    'Scratchpad', 'Design Studio', 'Agent Forge', undefined,
-    'Read Aloud', 'Start Dictation', 'Voice Chat', undefined,
-    'Settings…', undefined,
-    'Quit'
+    'tray.menu.mainWindow', 'tray.menu.quickPrompt', 'tray.menu.runAiCommand', undefined,
+    'tray.menu.scratchpad', 'tray.menu.designStudio', 'tray.menu.agentForge', undefined,
+    'tray.menu.readAloud', 'tray.menu.startDictation', 'tray.menu.voiceMode', undefined,
+    'tray.menu.settings', undefined,
+    'tray.menu.quit'
   ]);
   expect(tray.tray.setContextMenu).toHaveBeenCalled()
   expect(tray.tray.on).toHaveBeenCalledTimes(2)
