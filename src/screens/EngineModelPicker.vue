@@ -26,8 +26,8 @@
     </template> 
     <template #footer>
       <div class="buttons">
-        <button @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
-        <button @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
+        <button @click="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
+        <button @click="onSave" class="primary">{{ t('common.save') }}</button>
       </div>
     </template>
   </ModalDialog>

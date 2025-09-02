@@ -120,7 +120,7 @@ describe('AgentSelector', () => {
 
     const cancelButton = wrapper.find('button[name="cancel"]')
     expect(cancelButton.exists()).toBe(true)
-    expect(cancelButton.classes()).toContain('alert-cancel')
+    expect(cancelButton.classes()).toContain('tertiary')
 
     await cancelButton.trigger('click')
     // Button should be clickable
@@ -132,7 +132,7 @@ describe('AgentSelector', () => {
 
     const saveButton = wrapper.find('button[name="save"]')
     expect(saveButton.exists()).toBe(true)
-    expect(saveButton.classes()).toContain('alert-confirm')
+    expect(saveButton.classes()).toContain('primary')
 
     await saveButton.trigger('click')
     // Button should be clickable

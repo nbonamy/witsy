@@ -19,7 +19,7 @@
     </template>
     <template #footer>
       <div class="buttons">
-        <button @click="onCancel" class="alert-cancel" name="cancel">{{ t('common.cancel') }}</button>
+        <button @click="onCancel" class="tertiary" name="cancel">{{ t('common.cancel') }}</button>
       </div>
     </template>
   </ModalDialog>

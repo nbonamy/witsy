@@ -43,9 +43,9 @@ test('Basic confirm', () => {
     title: 'Hello',
     text: undefined,
     customClass: {
-      'cancelButton': 'alert-cancel',
-      'confirmButton': 'alert-neutral',
-      'denyButton': 'alert-neutral',
+      'cancelButton': 'tertiary',
+      'confirmButton': 'primary',
+      'denyButton': 'secondary',
       'popup': 'form form-large',
     },
     didOpen: expect.any(Function),
