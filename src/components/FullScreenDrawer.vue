@@ -49,13 +49,26 @@ defineExpose({
 
 </script>
 
+<style>
+
+#app:has(.workspace-bar) {
+  .fullscreen-drawer {
+    left: calc(2 * var(--window-menubar-width));
+  }
+}
+
+</style>
+
+
+
 <style scoped>
 
 .fullscreen-drawer {
+  
   position: absolute;
   top: calc(var(--window-toolbar-height) + 1px);
   bottom: calc(var(--window-footer-height) + 1px);
-  left: calc(var(--window-menubar-width) - 2px);
+  left: calc(var(--window-menubar-width));
   right: 0;
   background-color: var(--background-color);
   

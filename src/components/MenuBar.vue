@@ -208,7 +208,7 @@ body[data-tint=blue] .mx-context-menu {
   display: flex;
   flex-direction: column;
   background-color: var(--menubar-bg-color);
-  width: var(--window-menubar-width);
+  flex: 0 0 var(--window-menubar-width);
 
   .app-menu {
     cursor: pointer;
