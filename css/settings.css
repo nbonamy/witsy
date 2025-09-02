@@ -1,8 +1,10 @@
 
 .settings {
 
+  --settings-max-width: 600px;
+
   --settings-font-size: var(--form-large-font-size);
-  --settings-menu-font-size: 14.5px;
+  --settings-menu-font-size: 16px;
 
   --settings-normal-text-color: var(--tabs-header-normal-text-color);
   --settings-selected-text-color: var(--tabs-header-selected-text-color);
@@ -40,7 +42,7 @@
       display: flex;
       align-items: center;
       cursor: pointer;
-      padding: 8px;
+      padding: 0.5rem;
       background-color: var(--settings-normal-bg-color);
       color: var(--settings-normal-text-color);
           
@@ -69,7 +71,6 @@
           
           background-color: var(--settings-selected-bg-color);
           color: var(--settings-selected-text-color);
-          border-radius: 8px;
         
           .icon {
             color: var(--settings-selected-text-color);
@@ -133,15 +134,19 @@
 
   main {
     
-    min-width: 500px;
-    align-self: center;
+    max-width: var(--settings-max-width);
     padding: 2rem 4rem;
 
     &.sliding-pane {
      &.editor {
-        padding-left: 17%;
-        padding-right: 17%;
+        .form {
+          max-width: var(--settings-max-width);
+        }
       }
+    }
+
+    &:has(table) {
+      max-width: calc(var(--settings-max-width) * 1.5);
     }
 
     .sticky-table-container {

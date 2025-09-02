@@ -1,6 +1,7 @@
 
 .split-pane {
 
+  --split-pane-header-height: 72px;
   --split-pane-sidebar-list-item-selected-bg-color: var(--tabs-header-selected-bg-color);
   --split-pane-sidebar-list-item-selected-text-color: var(--tabs-header-selected-text-color);
   --split-pane-sidebar-list-item-hover-bg-color: var(--hover-bg-color);
@@ -47,11 +48,11 @@
     
     header {
 
-      flex: 0;
+      flex: 0 var(--split-pane-header-height);
       background-color: var(--window-decoration-color);
       border-bottom: 1px solid var(--sidebar-border-color);
       border-right: 1px solid var(--sidebar-border-color);
-      padding: 1.5rem 2rem;
+      padding: 0 2rem;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -130,9 +131,9 @@
 
     header {
       
-      padding: 1.5rem 2rem;
+      padding: 0 2rem;
 
-      flex: 0;
+      flex: 0 var(--split-pane-header-height);
       border-bottom: 1px solid var(--sidebar-border-color);
       display: flex;
       flex-direction: row;
@@ -229,7 +230,7 @@
       &.sliding-pane {
       
         position: absolute;
-        top: calc(var(--window-toolbar-height) + 1);
+        top: var(--split-pane-header-height);
         z-index: 20;
         display: flex;
 
@@ -250,6 +251,12 @@
         align-self: stretch;
       }
 
+      &:has(.list-actions, .sticky-table-container) {
+        .list-actions, .sticky-table-container {
+          max-width: 800px;
+        }
+      }
+
       &:has(.sticky-table-container) {
 
         min-width: auto;
@@ -257,11 +264,12 @@
 
         .list-actions {
           
+          box-sizing: border-box;
           padding: 0.875rem;
           margin-bottom: 0px;
-          border: 1px solid var(--sidebar-border-color);
+          border: 1px solid var(--border-color);
           border-bottom: 0px;
-          background: color-mix(in srgb, var(--sidebar-border-color), transparent 80%);
+          background: color-mix(in srgb, var(--border-color), transparent 80%);
           
           display: flex;
           flex-direction: row;

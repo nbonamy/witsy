@@ -110,9 +110,9 @@
   --editor-header-bg-color: var(--background-color);
   --editor-body-bg-color: var(--background-color);
 
-  --tabs-header-normal-text-color: #555;
-  --tabs-header-selected-bg-color: #f4f4f4;
-  --tabs-header-selected-text-color: var(--text-color);
+  --tabs-header-normal-text-color: var(--text-color);
+  --tabs-header-selected-bg-color: transparent;
+  --tabs-header-selected-text-color: var(--color-primary);
 
   --context-menu-bg-color: var(--background-color);
   --context-menu-border-color: var(--dialog-border-color);
@@ -507,6 +507,37 @@ input[type=checkbox] {
       top: 0.25px;
     }
   }
+
+  &.sm {
+    width: 16px;
+    height: 16px;
+    min-width: 16px !important;
+    max-width: 16px !important;
+    border-width: 1px;
+
+    &:after {
+      font-size: 11px;
+      top: -0.5px;
+      left: 3px;
+    }
+
+  }
+
+  &.xs {
+    width: 14px;
+    height: 14px;
+    min-width: 14px !important;
+    max-width: 14px !important;
+    border-width: 1px;
+
+    &:after {
+      font-size: 10px;
+      top: -1.5px;
+      left: 2px;
+    }
+
+  }
+
 }
 
 input[type=range] {

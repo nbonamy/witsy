@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 
-import { BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, SettingsIcon, TelescopeIcon, UnplugIcon, WandIcon } from 'lucide-vue-next'
+import { BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, SettingsIcon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref, watch } from 'vue'
 import { MenuBarMode } from '../components/MenuBar.vue'
 import { installTabs, showActiveTab } from '../composables/tabs'
