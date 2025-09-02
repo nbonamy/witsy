@@ -202,7 +202,7 @@ const onResizeSidebarStart = async () => {
 }
 
 const onResizeSidebarMove = (event: MouseEvent) => {
-  width.value = Math.max(200, Math.min(400, event.clientX - panelOffset))
+  width.value = Math.max(300, Math.min(500, event.clientX - panelOffset))
 }
 
 const onResizeSidebarEnd = () => {

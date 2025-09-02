@@ -92,7 +92,7 @@
 
   --info-panel-width: 300px;
 
-  --create-panel-width: 300px;
+  --large-panel-width: 300px;
 
   --prompt-icon-color: var(--icon-color);
   --prompt-input-bg-color: var(--background-color);
@@ -466,6 +466,7 @@ input[type=checkbox] {
   border-radius: 3.5px;
   background: var(--control-checkbox-bg-color);
   border: 2px solid var(--color-outline);
+  cursor: pointer;
 
   &:after {
     position: relative;

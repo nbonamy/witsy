@@ -706,7 +706,7 @@ button {
 .transcribe {
 
   .sp-sidebar {
-    flex-basis: 240px;
+    flex: 0 0 var(--large-panel-width);
     main {
       padding: 2rem 1.5rem;
     }

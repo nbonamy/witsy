@@ -786,7 +786,7 @@ const onFullScreen = (url: string) => {
   
   .sp-sidebar {
   
-    flex: 0 0 var(--create-panel-width);
+    flex: 0 0 var(--large-panel-width);
 
     header {
 
