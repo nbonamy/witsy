@@ -9,10 +9,10 @@
     <!-- Main menu template -->
     <template #default>
 
-      <div v-if="enableExperts && expertsMenuItems.length > 0" class="experts" data-submenu-slot="expertsSubmenu" >
-        <BrainIcon class="icon" /> {{ t('prompt.menu.experts.title') }}
+      <div v-if="enableInstructions" class="instructions" data-submenu-slot="instructionsSubmenu" >
+        <FeatherIcon class="icon" /> {{ t('prompt.menu.instructions.title') }}
       </div>
-      
+
       <div v-if="enableTools" class="tools" data-submenu-slot="toolsSubmenu">
         <HammerIcon class="icon" /> {{ t('prompt.menu.tools.title') }}
       </div>
@@ -21,10 +21,10 @@
         <LightbulbIcon class="icon" /> {{ t('prompt.menu.docRepos.title') }}
       </div>
       
-      <div v-if="enableInstructions" class="instructions" data-submenu-slot="instructionsSubmenu" >
-        <FeatherIcon class="icon" /> {{ t('prompt.menu.instructions.title') }}
+      <div v-if="enableExperts && expertsMenuItems.length > 0" class="experts" data-submenu-slot="expertsSubmenu" >
+        <BrainIcon class="icon" /> {{ t('prompt.menu.experts.title') }}
       </div>
-
+      
       <div v-if="enableDeepResearch" class="deepresearch" @click="handleDeepResearchClick" >
         <TelescopeIcon class="icon" /> {{ t('prompt.menu.deepResearch.title') }}
       </div>

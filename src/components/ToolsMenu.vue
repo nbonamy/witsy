@@ -1,6 +1,7 @@
 <template>
 
   <ContextMenuPlus 
+    class="tools-menu"
     :anchor="anchor"
     :position="position"
     :teleport="teleport"
@@ -204,7 +205,7 @@ const handleServerToolClick = (server: McpServerWithTools, tool: McpTool) => {
 </script>
 
 <style>
-.context-menu:has(.plugin-group) .back-button {
+.context-menu.tools-menu:has(.plugin-group) .back-button {
   visibility: hidden;
   flex-basis: 1rem;
 }

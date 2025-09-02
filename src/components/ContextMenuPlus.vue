@@ -3,10 +3,10 @@
     <Overlay @click="onOverlay" />
     <!-- Hidden chevron template for cloning -->
     <ChevronRightIcon ref="chevronTemplate" style="display: none;" class="chevron-template" />
-    <div class="context-menu" :style="position" @keydown="onKeyDown" @keyup="onKeyUp">
+    <div class="context-menu" :style="position" @keydown="onKeyDown" @keyup="onKeyUp" v-bind="$attrs">
       <!-- Top level filter or back/filter header -->
       <div v-if="showFilter || currentSubmenu" class="header">
-        <div v-if="currentSubmenu" class="back-button" @click="goBack">
+        <div v-if="currentSubmenu" class="back-button" @click="goBack" ref="backButton">
           <MoveLeftIcon />
         </div>
         <div v-if="shouldShowCurrentFilter" class="filter-input">

@@ -1,8 +1,8 @@
 <template>
-  <div class="prompt-feature">
+  <div class="prompt-feature" @click="onClear">
     <component :is="icon" class="icon" />
     <span class="label">{{ label }}</span>
-    <XIcon class="clear" @click="onClear" />
+    <XIcon class="clear" />
   </div>
 </template>
 
