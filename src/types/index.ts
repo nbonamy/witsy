@@ -281,6 +281,8 @@ export type Expert = {
   type: 'system' | 'user',
   name?: string
   prompt?: string
+  engine?: string
+  model?: string
   state: 'enabled' | 'disabled' | 'deleted',
   triggerApps: ExternalApp[]
 }
@@ -308,7 +310,7 @@ export type MediaReference = {
 
 export interface MediaCreator {
   getEngines(checkApiKey: boolean): MediaCreationEngine[]
-  execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<any>
+  execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference[]): Promise<any>
 }
 
 export type DesignStudioMediaType = 'image' | 'video' | 'imageEdit' | 'videoEdit'

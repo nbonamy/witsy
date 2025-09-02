@@ -4,6 +4,7 @@
     "agents": "Agentes",
     "arguments": "Argumentos",
     "askMeAnything": "Pregúntame cualquier cosa",
+    "attach": "Adjuntar",
     "back": "Atrás",
     "basedOn": "basado en",
     "browse": "Examinar",
@@ -677,6 +678,12 @@
       },
       "starting": "Sintetizando contenido…"
     },
+    "title": {
+      "completed": "¡Título del informe generado con éxito!",
+      "error": "Ocurrió un error al generar el título del informe",
+      "running": "Creando un título conciso para el informe de investigación…",
+      "starting": "Generando título del informe…"
+    },
     "usage": "Deep Research ofrece análisis detallados sobre el tema elegido revisando múltiples fuentes y destacando hallazgos clave. Nota: esta función utiliza más tokens que el chat regular.",
     "writer": {
       "completed": "¡Sección \"{title}\" completada!",
@@ -688,6 +695,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "¿Está seguro de que desea eliminar estos medios?",
     "confirmDeleteSingle": "¿Estás seguro de que deseas eliminar este medio?",
+    "draw": "Dibujar",
     "dropzone": "¡Suelta tus imágenes aquí para darles vida con IA!",
     "emptyPlaceholder": "¡Deja volar tu creatividad!",
     "error": {
@@ -704,6 +712,7 @@
       "empty": "Aún no has creado ningún medio.",
       "title": "Historial"
     },
+    "inputImage": "Imagen de Referencia",
     "loadMediaSettings": "Cargar configuraciones",
     "mediaType": {
       "image": "Imagen",
@@ -798,6 +807,11 @@
       }
     }
   },
+  "drawingCanvas": {
+    "draw": "Dibujar",
+    "title": "Lienzo de Dibujo",
+    "useDrawing": "Usar Dibujo"
+  },
   "embedding": {
     "apiKeyReminder": "Asegúrate de ingresar tu clave API en el panel Modelos de la configuración de StationOne.",
     "browse": "Explorar modelos",
@@ -837,6 +851,7 @@
     "editor": {
       "triggerApps": "Aplicaciones desencadenantes",
       "triggerAppsDescription": "El prompt se seleccionará automáticamente cuando Prompt Anywhere se llame desde una de estas aplicaciones",
+      "useDefault": "Motor y modelo actuales",
       "validation": {
         "invalidApp": "No se puede analizar la aplicación seleccionada",
         "requiredFields": "Todos los campos marcados con * son obligatorios."
@@ -1541,7 +1556,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Cuando el usuario te pida crear algún contenido (documento, resumen, código...), usa la siguiente sintaxis:\n<artifact title=\"TÍTULO\">\nCONTENIDO\n</artifact>. Especialmente el código HTML incrustado en los artefactos puede previsualizarse automáticamente.",
+      "artifacts": "Cuando el usuario te pida crear algún contenido (documento, resumen, código...), utiliza la siguiente sintaxis:\n<artifact title=\"TÍTULO\">\nCONTENIDO\n</artifact>. Especialmente el código HTML incrustado en los artefactos puede previsualizarse automáticamente.",
       "mermaid": "Si se le pide que muestre un diagrama Mermaid, su código se representará como un diagrama para el usuario.",
       "toolRetry": "Al llamar a las herramientas, si recibe un error de entrada, analice el error e intente corregirlo y luego vuelva a llamar a la herramienta."
     },
@@ -2132,7 +2147,7 @@
         "title": "Configuraciones del proxy (requiere reinicio de la aplicación)"
       },
       "resetToDefault": "Restablecer al valor predeterminado",
-      "safeKeys": "Guardar claves API en almacenamiento seguro del sistema",
+      "safeKeys": "Almacenar claves API en el almacenamiento seguro del sistema",
       "systemInstructions": "Instrucciones del sistema"
     },
     "chat": {

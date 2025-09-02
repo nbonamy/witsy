@@ -12,7 +12,7 @@
             <button :class="{active: mode === 'history'}" @click="mode = 'history'">{{ t('designStudio.history.title') }}</button>
           </div>
         </div>
-        <Settings :class="{ hidden: mode !== 'create' }" ref="settings" :current-media="currentMedia" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
+        <Settings :class="{ hidden: mode !== 'create' }" ref="settings" :current-media="currentMedia" :is-generating="isGenerating" @upload="onUpload" @draw="onDraw" @generate="onMediaGenerationRequest" />
         <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-messages="selection" @select-message="selectMessage" @context-menu="showContextMenu" />
       </main>
     </div>
@@ -31,13 +31,16 @@
     </div>
   </div>
   <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+  <DrawingCanvas v-if="showDrawingCanvas" :backgroundImage="currentMediaUrl" @close="onDrawingClose" @save="onDrawingSave" />
 </template>
 
 <script setup lang="ts">
 import { ImagePlusIcon, ListRestartIcon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import ContextMenu from '../components/ContextMenu.vue'
+import DrawingCanvas from '../components/DrawingCanvas.vue'
 import Dialog from '../composables/dialog'
+import useEventBus from '../composables/event_bus'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
 import Message from '../models/message'
@@ -50,8 +53,8 @@ import History from '../studio/History.vue'
 import Preview from '../studio/Preview.vue'
 import Settings from '../studio/Settings.vue'
 import { FileContents } from '../types/file'
+import { anyDict } from '../types/index'
 
-import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 defineProps({
@@ -71,6 +74,7 @@ const menuX = ref(0)
 const menuY = ref(0)
 const targetRow = ref<Message|null>(null)
 const isDragOver = ref(false)
+const showDrawingCanvas = ref(false)
 
 const contextMenuActions = () => {
   return [
@@ -82,8 +86,20 @@ const contextMenuActions = () => {
   ]
 }
 
-const currentMedia = computed(() => {
+const currentMedia = computed((): Message => {
   return selection.value.length === 1 ? selection.value[0] : null
+})
+
+const currentMediaUrl = computed((): string | null => {
+  if (currentMedia.value && 
+      currentMedia.value.attachments && 
+      currentMedia.value.attachments.length > 0) {
+    const attachment = currentMedia.value.attachments[0]
+    if (attachment && attachment.isImage() && attachment.url) {
+      return attachment.url
+    }
+  }
+  return null
 })
 
 const history = computed(() => {
@@ -144,6 +160,7 @@ const onDeleteMedia = () => {
 }
 
 const onReset = () => {
+  settings.value.reset()
   selection.value = []
   clearStacks()
   mode.value = 'create'
@@ -382,13 +399,58 @@ const processUpload = (fileName: string, mimeType: string, fileUrl: string) => {
 
 const onUpload = () => {
   let file = window.api.file.pickFile({ filters: [
-    { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+    { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif'] }
   ] })
   if (file) {
     const fileContents = file as FileContents
     const fileUrl = saveFileContents(fileContents.url.split('.').pop(), fileContents.contents)
     const fileName = fileContents.url.split(/[\\/]/).pop()
     processUpload(fileName, fileContents.mimeType, fileUrl)
+  }
+}
+
+const onDraw = () => {
+  showDrawingCanvas.value = true
+}
+
+const onDrawingClose = () => {
+  showDrawingCanvas.value = false
+}
+
+const onDrawingSave = (drawing: { url: string, mimeType: string, filename: string }) => {
+  showDrawingCanvas.value = false
+  
+  // Check if there's already a current message selected
+  if (currentMedia.value) {
+    // Add current state to undo stack before replacing
+    undoStack.value.push(backupCurrentMessage())
+    redoStack.value = []
+    
+    // Update the existing message with the new drawing
+    const message = currentMedia.value
+    
+    // Delete the old attachment file
+    if (message.attachments.length > 0) {
+      window.api.file.delete(message.attachments[0].url)
+      message.attachments = []
+    }
+    
+    // Update message content and attachments
+    message.content = message.content.length ? `${message.content} / ${t('drawingCanvas.draw')}` : t('drawingCanvas.draw')
+    message.createdAt = Date.now()
+    message.engine = 'drawing'
+    message.model = drawing.filename
+    message.attach(new Attachment('', drawing.mimeType, drawing.url))
+    
+    // Move message to end of chat
+    chat.value.messages = chat.value.messages.filter((m) => m.uuid !== message.uuid)
+    chat.value.messages.push(message)
+    
+    // Save history
+    store.saveHistory()
+  } else {
+    // No current message, create a new one
+    processUpload(drawing.filename, drawing.mimeType, drawing.url)
   }
 }
 
@@ -512,7 +574,15 @@ const processImageFile = async (file: File) => {
   }
 }
 
-const onMediaGenerationRequest = async (data: any) => {
+const onMediaGenerationRequest = async (data: {
+  mediaType: 'image' | 'video'
+  action: 'edit' | 'transform'
+  engine: string,
+  model: string,
+  prompt: string,
+  attachments: Attachment[],
+  params: anyDict
+}) => {
 
   // check
   const message: Message|null = selection.value.length == 0 ? null : selection.value[0]
@@ -521,7 +591,7 @@ const onMediaGenerationRequest = async (data: any) => {
   const currentUrl = message?.attachments[0]?.url
   const isEditing = data.action === 'edit' && !!currentUrl
   const isTransforming = data.action === 'transform' && !!currentUrl
-  let attachReference = isEditing || isTransforming
+  let attachReference = isEditing || isTransforming || data.attachments.length > 0
 
   // make a copy as we are going to change that
   const params = JSON.parse(JSON.stringify(data.params))
@@ -604,7 +674,13 @@ const onMediaGenerationRequest = async (data: any) => {
     const media = await creator.execute(data.engine, data.model, {
       prompt: data.prompt,
       ...params
-    }, attachReference ? window.api.file.read(currentUrl) : undefined)
+    }, attachReference ? [
+      ...(currentUrl ? [window.api.file.read(currentUrl)] : []),
+      ...(data.attachments.length ? data.attachments.map(a => ({
+        mimeType: a.mimeType,
+        contents: a.content
+      })) : [])
+    ] : undefined)
 
     // check
     if (!media?.url) {

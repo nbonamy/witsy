@@ -4,6 +4,7 @@
     "agents": "Agenti",
     "arguments": "Argomenti",
     "askMeAnything": "Chiedimi qualsiasi cosa",
+    "attach": "Allega",
     "back": "Indietro",
     "basedOn": "basato su",
     "browse": "Sfogliare",
@@ -677,6 +678,12 @@
       },
       "starting": "Sintesi dei contenuti…"
     },
+    "title": {
+      "completed": "Titolo del rapporto generato con successo!",
+      "error": "Si è verificato un errore durante la generazione del titolo del rapporto",
+      "running": "Creazione di un titolo conciso per il rapporto di ricerca…",
+      "starting": "Generazione del titolo del rapporto in corso…"
+    },
     "usage": "Deep Research fornisce approfondimenti dettagliati sul tema scelto esaminando più fonti e evidenziando i risultati chiave. Nota: questa funzione utilizza più token rispetto alla chat normale.",
     "writer": {
       "completed": "Sezione \"{title}\" completata!",
@@ -688,6 +695,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "Sei sicuro di voler eliminare questi media?",
     "confirmDeleteSingle": "Sei sicuro di voler eliminare questo media?",
+    "draw": "Disegna",
     "dropzone": "Trascina le tue immagini qui per farle prendere vita con l'IA!",
     "emptyPlaceholder": "Lascia che la tua creatività si scateni!",
     "error": {
@@ -704,6 +712,7 @@
       "empty": "Non hai ancora creato nessun media.",
       "title": "Cronologia"
     },
+    "inputImage": "Immagine di riferimento",
     "loadMediaSettings": "Carica impostazioni",
     "mediaType": {
       "image": "Immagine",
@@ -798,6 +807,11 @@
       }
     }
   },
+  "drawingCanvas": {
+    "draw": "Disegna",
+    "title": "Tela da disegno",
+    "useDrawing": "Usa disegno"
+  },
   "embedding": {
     "apiKeyReminder": "Assicurati di inserire la tua chiave API nel pannello Modelli delle Impostazioni di StationOne.",
     "browse": "Sfoglia modelli",
@@ -837,6 +851,7 @@
     "editor": {
       "triggerApps": "App di attivazione",
       "triggerAppsDescription": "Il prompt verrà selezionato automaticamente quando Prompt Anywhere viene chiamato da una di queste applicazioni",
+      "useDefault": "Motore e modello attuali",
       "validation": {
         "invalidApp": "Impossibile analizzare l'applicazione selezionata",
         "requiredFields": "Tutti i campi contrassegnati con * sono obbligatori."
@@ -1541,7 +1556,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Quando l'utente ti chiede di creare del contenuto (documento, riepilogo, codice...), usa la seguente sintassi:\n<artifact title=\"TITOLO\">\nCONTENUTO\n</artifact>. In particolare, il codice HTML incorporato negli artifact può essere visualizzato automaticamente.",
+      "artifacts": "Quando l'utente ti chiede di creare del contenuto (documento, riassunto, codice...), usa la seguente sintassi:\n<artifact title=\"TITOLO>\nCONTENUTO\n</artifact>. In particolare, il codice HTML incorporato negli artifact può essere visualizzato automaticamente in anteprima.",
       "mermaid": "Se ti viene chiesto di generare un diagramma Mermaid, il suo codice sarà reso come diagramma all'utente.",
       "toolRetry": "Quando si chiamano gli strumenti, se si riceve un errore di input, analizzare l'errore e cercare di correggerlo, quindi riprovare a chiamare lo strumento."
     },
@@ -2132,7 +2147,7 @@
         "title": "Impostazioni del proxy (richiede riavvio dell'app)"
       },
       "resetToDefault": "Reimposta al valore predefinito",
-      "safeKeys": "Archivia le chiavi API nello storage sicuro del sistema",
+      "safeKeys": "Salva le chiavi API nell'archiviazione sicura del sistema",
       "systemInstructions": "Istruzioni di sistema"
     },
     "chat": {

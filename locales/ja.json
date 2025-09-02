@@ -4,6 +4,7 @@
     "agents": "エージェント",
     "arguments": "引数",
     "askMeAnything": "何でも聞いてください",
+    "attach": "添付する",
     "back": "戻る",
     "basedOn": "基づく",
     "browse": "閲覧",
@@ -696,6 +697,12 @@
       },
       "starting": "コンテンツを統合中…"
     },
+    "title": {
+      "completed": "レポートタイトルが正常に生成されました！",
+      "error": "レポートタイトルの生成中にエラーが発生しました",
+      "running": "研究レポートの簡潔なタイトルを作成しています…",
+      "starting": "レポートタイトルを生成しています…"
+    },
     "usage": "[ベータ版] ディープリサーチは、複数のソースをレビューし、重要な発見を強調することで、選択したトピックに関する徹底的な洞察を提供します。注意：この機能は通常のチャットよりも多くのトークンを使用します。",
     "writer": {
       "completed": "セクション\"{title}\"が完了しました！",
@@ -707,6 +714,7 @@
   "designStudio": {
     "confirmDeleteMultiple": "これらのメディアを削除してもよろしいですか？",
     "confirmDeleteSingle": "このメディアを削除してもよろしいですか？",
+    "draw": "描く",
     "dropzone": "ここに画像をドロップして、AIで命を吹き込みましょう！",
     "emptyPlaceholder": "創造性を自由に発揮してください！",
     "error": {
@@ -723,6 +731,7 @@
       "empty": "まだメディアを作成していません。",
       "title": "履歴"
     },
+    "inputImage": "参照画像",
     "loadMediaSettings": "設定を読み込む",
     "mediaType": {
       "image": "画像",
@@ -817,6 +826,11 @@
       }
     }
   },
+  "drawingCanvas": {
+    "draw": "描く",
+    "title": "描画キャンバス",
+    "useDrawing": "描画を使用"
+  },
   "embedding": {
     "apiKeyReminder": "StationOne設定のモデルペインにAPIキーを入力していることを確認してください。",
     "browse": "モデルを閲覧",
@@ -856,6 +870,7 @@
     "editor": {
       "triggerApps": "トリガーアプリ",
       "triggerAppsDescription": "Prompt Anywhere をこれらのアプリから呼び出すとプロンプトが自動選択されます",
+      "useDefault": "現在のエンジンとモデル",
       "validation": {
         "invalidApp": "選択したアプリを解析できません",
         "requiredFields": "* が付いた項目はすべて必須です"
@@ -1560,7 +1575,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "ユーザーからコンテンツ（ドキュメント、要約、コードなど）の作成を依頼された際は、以下の構文を使用してください。\n<artifact title=\"タイトル\">\n内容\n</artifact>。特に、artifact に埋め込まれた HTML コードは自動的にプレビュー表示されます。",
+      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約、コードなど）の作成を依頼した場合、次の構文を使用してください:\n<artifact title=\"TITLE\">\nCONTENT\n</artifact>。特に、アーティファクトに埋め込まれたHTMLコードは自動的にプレビューできます。",
       "mermaid": "Mermaidチャートの出力を求められた場合、そのコードはユーザーに図として表示されます。",
       "toolRetry": "ツールを呼び出す際に入力エラーが発生した場合は、エラーを分析して修正を試み、その後ツールの呼び出しを再試行してください。"
     },
@@ -2154,7 +2169,7 @@
         "title": "プロキシ設定（アプリの再起動が必要）"
       },
       "resetToDefault": "デフォルト値にリセット",
-      "safeKeys": "API キーをシステムのセキュアストレージに保存する",
+      "safeKeys": "APIキーをシステムの安全なストレージに保存する",
       "systemInstructions": "システム指示"
     },
     "chat": {

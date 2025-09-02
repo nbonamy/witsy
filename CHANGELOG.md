@@ -5,13 +5,32 @@ All notable changes to this project will be documented in this file.
 ## [2.X.Y] - WIP
 
 ### Added
+- Design Studio drawing
+
+### Changed
+- N/A
+
+### Fixed
+- ncorrect token usage count for Gemini 2.5 Pro (https://github.com/nbonamy/witsy/issues/391)
+
+### Removed
+- N/A
+
+
+## [2.14.0] - 2025-08-31
+
+### Added
 - HTML Artifacts preview
+- Artifacts download formats (text, markdown, html, pdf)
+- Add Deep Research title generation feature
+- Nano Banana Support
 
 ### Changed
 - Support for secure api storage (https://github.com/nbonamy/witsy/issues/407)
 
 ### Fixed
-- N/A
+- Design Studio: regional parameter error (personGeneration.allow_all) (https://github.com/nbonamy/witsy/issues/404)
+- Google Models deduplication (trying to work around https://github.com/googleapis/js-genai/issues/803)
 
 ### Removed
 - N/A

@@ -64,7 +64,7 @@ test('Load', async () => {
   expect(store.history.folders).toHaveLength(0)
   expect(store.history.chats).toHaveLength(2)
   expect(store.commands).toHaveLength(5)
-  expect(store.experts).toHaveLength(3)
+  expect(store.experts).toHaveLength(4)
 })
 
 test('Save settings', async () => {
