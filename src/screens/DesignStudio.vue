@@ -799,7 +799,7 @@ const onFullScreen = (url: string) => {
 
     main {
       flex: 1;
-      padding-top: 1rem;
+      padding: 1rem;
       border-right: 1px solid var(--sidebar-border-color);
     }
 
@@ -810,7 +810,6 @@ const onFullScreen = (url: string) => {
       align-items: center;
 
       .button-group {
-        margin: 0 1rem;
         width: 100%;
         align-self: center;
         display: flex;

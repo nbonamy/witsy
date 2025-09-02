@@ -696,10 +696,6 @@ defineExpose({
   padding-bottom: 2rem;
 }
 
-.studio-settings > * {
-  padding: 0px 1.5rem;
-}
-
 .studio-settings .form .form-field label:has(svg) {
   width: 100%;
   svg {

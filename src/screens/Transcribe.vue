@@ -10,8 +10,6 @@
       <main>
         <div class="form form-vertical">
 
-          <div class="sp-sidebar-title">{{ t('common.settings') }}</div>
-
           <div class="form-field">
             <label>{{ t('settings.voice.engine') }}</label>
             <select name="engine" v-model="engine" @change="onChangeEngine">
@@ -160,8 +158,6 @@ const meta = computed(() => window.api.platform === 'darwin' ? 'Cmd' : 'Ctrl')
 const models = computed(() => {
   return getSTTModels(engine.value) ?? []
 })
-
-const isStreaming = computed(() => transcriber.streaming)
 
 const translateMenuActions = computed(() => ([
   { action: '', label: t('transcribe.translate'), disabled: true },
@@ -708,7 +704,7 @@ button {
   .sp-sidebar {
     flex: 0 0 var(--large-panel-width);
     main {
-      padding: 2rem 1.5rem;
+      padding: 1rem;
     }
   }
 

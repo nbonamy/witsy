@@ -24,11 +24,6 @@
         <span>{{ t('scratchpad.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.isFeatureEnabled('agents')">
-        <IconAgent />
-        <span>{{ t('agent.forge.title') }}</span>
-      </MenuBarItem>
-
       <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')" v-if="store.isFeatureEnabled('dictation')">
         <MicIcon />
         <span>{{ t('transcribe.title') }}</span>
@@ -45,6 +40,11 @@
       </MenuBarItem>
 
       <div class="flex-push"></div>
+
+      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.isFeatureEnabled('agents')">
+        <IconAgent />
+        <span>{{ t('agent.forge.title') }}</span>
+      </MenuBarItem>
 
       <MenuBarItem action="mcp" :active="mode === 'mcp'" @click="emit('change', 'mcp')" v-if="hasMcp">
         <PlugIcon />

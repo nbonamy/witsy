@@ -53,7 +53,7 @@ defineExpose({
 
 .fullscreen-drawer {
   position: fixed;
-  top: var(--window-toolbar-height);
+  top: calc(var(--window-toolbar-height) + 1px);
   left: 0;
   right: 0;
   bottom: 0;

@@ -56,10 +56,6 @@ const showContextMenu = (event: MouseEvent, msg: Message) => {
   padding-bottom: 2rem;
 }
 
-.history > * {
-  padding: 0px 24px;
-}
-
 .history .empty {
   font-size: 14.5px;
   opacity: 0.8;
