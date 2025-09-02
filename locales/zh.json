@@ -121,8 +121,6 @@
     "recommended": "推荐",
     "record": "记录",
     "redo": "重做",
-    "refresh": "刷新",
-    "refreshing": "正在刷新…",
     "rename": "重命名",
     "replace": "替换",
     "required": {
@@ -157,8 +155,8 @@
     "search": "搜索…",
     "select": "选择",
     "selectAll": "全选",
+    "selectAllShort": "全部",
     "selectNone": "全不选",
-    "selectNoneShort": "无",
     "settings": "设置",
     "shortcut": "快捷键",
     "showLess": "显示更少",

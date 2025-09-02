@@ -766,7 +766,7 @@ function getWrongLinkedTranslations(locales: { [locale: string]: LocaleData }): 
   // get linked translations
   const linkedKeys: string[] = []
   Object.keys(enData).forEach(key => {
-    if (enData[key].includes(LINKED_TRANSLATION_MARKER)) {
+    if (enData[key].startsWith(LINKED_TRANSLATION_MARKER)) {
       linkedKeys.push(key)
     }
   })

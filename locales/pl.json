@@ -121,8 +121,6 @@
     "recommended": "Polecane",
     "record": "Nagrywaj",
     "redo": "Ponów",
-    "refresh": "Odśwież",
-    "refreshing": "Odświeżanie...",
     "rename": "Zmień nazwę",
     "replace": "Zastąp",
     "required": {
@@ -157,8 +155,8 @@
     "search": "Szukaj...",
     "select": "Wybierz",
     "selectAll": "Wybierz wszystko",
+    "selectAllShort": "Wszystko",
     "selectNone": "Anuluj wybór wszystkich",
-    "selectNoneShort": "Brak",
     "settings": "Ustawienia",
     "shortcut": "Skrót klawiaturowy",
     "showLess": "Pokaż mniej",

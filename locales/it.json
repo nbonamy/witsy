@@ -102,8 +102,6 @@
     "recommended": "Consigliato",
     "record": "Registra",
     "redo": "Ripristina",
-    "refresh": "Aggiorna",
-    "refreshing": "Aggiornamento…",
     "rename": "Rinomina",
     "replace": "Sostituisci",
     "required": {
@@ -138,8 +136,8 @@
     "search": "Cerca…",
     "select": "Seleziona",
     "selectAll": "Seleziona tutto",
+    "selectAllShort": "Tutti",
     "selectNone": "Deseleziona tutto",
-    "selectNoneShort": "Nessuno",
     "settings": "Impostazioni",
     "shortcut": "Scorciatoia",
     "showLess": "Mostra meno",

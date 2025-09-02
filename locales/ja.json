@@ -121,8 +121,6 @@
     "recommended": "おすすめ",
     "record": "記録",
     "redo": "やり直し",
-    "refresh": "更新",
-    "refreshing": "更新中…",
     "rename": "名前変更",
     "replace": "置換",
     "required": {
@@ -157,8 +155,8 @@
     "search": "検索…",
     "select": "選択",
     "selectAll": "すべて選択",
+    "selectAllShort": "すべて",
     "selectNone": "すべて解除",
-    "selectNoneShort": "なし",
     "settings": "設定",
     "shortcut": "ショートカット",
     "showLess": "折りたたむ",
