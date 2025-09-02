@@ -88,9 +88,9 @@ const Dialog = {
     // add custom classes
     opts.customClass = {
       popup: 'form form-large',
-      confirmButton: opts.showCancelButton ? 'alert-confirm' : 'alert-neutral',
-      cancelButton: 'alert-cancel',
-      denyButton: 'alert-neutral',
+      confirmButton: opts.showCancelButton ? 'primary' : 'primary',
+      cancelButton: 'tertiary',
+      denyButton: 'secondary',
       ...opts.customClass
     }
 

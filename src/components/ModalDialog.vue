@@ -87,10 +87,10 @@ const show = async () => {
       button.classList.add('swal2-styled')
       if (button.classList.contains('default') || button.classList.contains('alert-confirm')) {
         button.classList.add('swal2-confirm')
-        button.classList.add('alert-confirm')
+        button.classList.add('primary')
       } else {
         button.classList.add('swal2-cancel')
-        button.classList.add('alert-neutral')
+        button.classList.add('tertiary')
       }
 
       // now move it

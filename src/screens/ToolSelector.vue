@@ -8,10 +8,10 @@
     </template>
     <template #footer>
       <div class="buttons">
-        <button name="cancel" @click="onCancel" class="alert-cancel" formnovalidate>{{ t('common.cancel') }}</button>
-        <button name="all" @click="selection = null" class="alert-neutral">{{ t('common.selectAll') }}</button>
-        <button name="none" @click="selection = []" class="alert-neutral">{{ t('common.selectNone') }}</button>
-        <button name="save" @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
+        <button name="cancel" @click="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="all" @click="selection = null" class="secondary">{{ t('common.selectAll') }}</button>
+        <button name="none" @click="selection = []" class="secondary">{{ t('common.selectNone') }}</button>
+        <button name="save" @click="onSave" class="primary">{{ t('common.save') }}</button>
       </div>
     </template>
   </ModalDialog>
