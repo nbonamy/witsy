@@ -1424,11 +1424,8 @@ test('Agents can be cleared using footer unselect all button', async () => {
 })
 
 test('Agents button is disabled when no agents available', async () => {
-  // Create an agent that matches all agents in store so none are available
+
   const agent = new Agent()
-  // Use the UUID of all existing agents to simulate no available agents
-  const allAgentUuids = store.agents.map(a => a.uuid)
-  
   agent.steps = [
     { prompt: 'Step 1', tools: null, agents: [] }
   ]
