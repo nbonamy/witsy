@@ -1,6 +1,7 @@
 <template>
   <div class="shortcut" @click="onClick">
-    <AgentIcon class="icon" />
+    <component :is="icon" class="icon" v-if="icon"/>
+    <AgentIcon class="icon" v-else />
     <div class="info">
       <h2>{{ name }}</h2>
       <p>{{ description }}</p>
@@ -12,6 +13,7 @@
 import AgentIcon from '../../assets/agent.svg?component'
 
 defineProps({
+  icon: { },
   name: { type: String, required: true },
   description: { type: String, required: true },
 })

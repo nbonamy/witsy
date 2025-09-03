@@ -36,7 +36,7 @@
   --window-footer-height: 2.5rem;
 
   --menubar-bg-color: var(--window-decoration-color);
-  --menubar-border-color: #d0d0d0;
+  --menubar-border-color: var(--border-color);
   --menubar-icon-color: var(--icon-color);
   --menubar-highlight-color: var(--highlight-color);
 
@@ -44,14 +44,14 @@
 
   --control-bg-color: var(--background-color);
   --control-disabled-bg-color: #fdfdfd;
-  --control-border-color: #d0d0d0;
+  --control-border-color: var(--border-color);
   --control-border-radius: var(--radius-sm);
   --control-text-color: var(--text-color);
-  --control-button-border-color: #cacaca;
+  --control-button-border-color: var(--border-color);
   --control-button-border-radius: var(--control-border-radius);
   --control-button-active-bg-color: #f2f2f2;
   --control-button-disabled-bg-color: #f2f2f2;
-  --control-button-disabled-border-color: var(--color-outline-variant);
+  --control-button-disabled-border-color: var(--border-color);
   --control-button-disabled-text-color: var(--color-outline-variant);
   --control-textarea-bg-color: var(--background-color);
   --control-placeholder-text-color: rgb(117, 117, 117);
@@ -172,8 +172,10 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    
     --background-color: var(--color-surface-lowest);
     --background-color-light: var(--color-surface-low);
+    --border-color: var(--color-outline-variant);
     --window-bg-color: var(--background-color-light);
     --text-color: var(--color-on-surface);
     --dimmed-text-color: #d0d0d0;
@@ -181,10 +183,12 @@
     --icon-color: var(--color-on-surface-variant);
     --highlight-color: var(--color-primary);
     --link-color: var(--color-secondary);
+    
     --default-window-decoration-color: #404040;
     --window-decoration-color: var(--default-window-decoration-color);
     --menubar-bg-color: var(--window-decoration-color);
     --menubar-highlight-color: var(--link-color);
+    
     --control-bg-color: #646464;
     --control-border-color: var(--control-bg-color);
     --control-text-color: #e0e0e0;
@@ -196,6 +200,7 @@
     --control-placeholder-text-color: var(--icon-color);
     --control-list-border-color: #6e6e6e;
     --control-checkbox-bg-color: #545454;
+    
     --sidebar-bg-color: #292929;
     --sidebar-text-color: var(--text-color);
     --sidebar-border-color: var(--border-color);
@@ -204,40 +209,52 @@
     --sidebar-search-bg-color: #404040;
     --sidebar-search-border-color: #606060;
     --sidebar-section-title-color: var(--icon-color);
+    
     --scrollbar-bg-color: var(--background-color-light);
     --scrollbar-thumb-color: #787878;
+    
     --chatarea-toolbar-bg-color: var(--window-decoration-color);
     --chatarea-toolbar-text-color: var(--dimmed-text-color);
     --chatarea-toolbar-icon-color: var(--dimmed-text-color);
+    
     --message-list-bg-color: var(--color-surface-lowest);
     --message-list-text-color: var(--text-color);
     --message-list-tip-text-color: var(--text-color);
     --message-list-actions-text-color: var(--icon-color);
     --message-list-overflow-bg-color: #000;
+    
     --tool-bg-color: #232323;
     --tool-key-text-color: #adadad;
+    
     --prompt-input-border-color: #3c3c3c;
     --prompt-input-text-color: var(--sidebar-text-color);
+    
     --dialog-border-color: #777;
     --dialog-header-bg-color: #373737;
     --dialog-header-text-color: #9f9f9f;
     --dialog-body-bg-color: #282828;
     --dialog-separator-color: #0f0f0f;
+    
     --editor-header-bg-color: var(--dialog-body-bg-color);
     --editor-body-bg-color: var(--dialog-body-bg-color);
+    
     --tabs-header-normal-text-color: #b4b4b4;
     --tabs-header-selected-bg-color: #444;
     --tabs-header-selected-text-color: rgb(17, 136, 255);
+    
     --context-menu-bg-color: rgb(46, 46, 46);
     --context-menu-border-color: #5c5c5c;
     --context-menu-selected-bg-color: var(--highlight-color);
     --context-menu-filter-bg-color: var(--sidebar-search-bg-color);
     --context-menu-filter-text-color: var(--sidebar-text-color);
+    
     --actions-bar-bg-color: linear-gradient(to bottom, rgb(72, 72, 72), rgb(66, 66, 66));
     --actions-bar-border-color: #6e6e6e;
     --actions-bar-button-border-color: var(--actions-bar-border-color);
     --actions-bar-button-active-bg-color: linear-gradient(to bottom, rgb(94, 94, 94), rgb(84, 84, 84));
+    
     --anywhere-bg-color: var(--window-bg-color);
+    
     --scratchpad-bars-border-color: #555;
     --scratchpad-text-color: var(--text-color);
     --scratchpad-placeholder-text-color: var(--control-placeholder-text-color);
@@ -248,27 +265,37 @@
     --scratchpad-actionbar-normal-icon-color: #bbb;
     --scratchpad-actionbar-disabled-icon-color: #666;
     --scratchpad-actionbar-hover-icon-color: #eee;
+    
     --source-app-bg-color: #fff;
     --source-app-text-color: #202020;
+    
     --dialog-box-shadow: 0 1px 1px rgba(0,0,0,.25), 0 2px 2px rgba(0,0,0,.25), 0 4px 4px rgba(0,0,0,.25), 0 8px 8px rgba(0,0,0,.25), 0 16px 16px rgba(0,0,0,.25);
     --message-reasoning-opacity: 0.80;
+  
   }
+  
   .windows {
     --window-decoration-color: var(--default-window-decoration-color);
   }
+
   [data-tint=blue], [data-tint=blue] * {
+  
     --background-color: var(--color-surface-lowest);
     --background-color-light: var(--color-surface-low);
+    --border-color: var(--color-outline-variant);
     --window-bg-color: var(--background-color-light);
     --text-color: var(--color-on-surface);
     --dimmed-text-color: rgb(140, 160, 180);
+    --faded-text-color: var(--color-on-surface-variant);
     --icon-color: var(--color-on-surface-variant);
     --highlight-color: var(--color-primary);
     --link-color: var(--color-secondary);
+  
     --default-window-decoration-color: rgb(40, 50, 65);
     --window-decoration-color: var(--default-window-decoration-color);
     --menubar-bg-color: var(--window-decoration-color);
     --menubar-icon-color: var(--icon-color);
+  
     --control-bg-color: var(--color-outline-variant);
     --control-border-color: var(--control-bg-color);
     --control-text-color: rgb(210, 220, 230);
@@ -282,53 +309,67 @@
     --control-list-bg-color: var(--background-color);
     --control-list-border-color: rgb(100, 100, 100);
     --control-checkbox-bg-color: rgb(60, 80, 100);
+  
     --sidebar-bg-color: var(--window-bg-color);
     --sidebar-text-color: var(--text-color);
+    --sidebar-border-color: var(--border-color);
     --sidebar-scroll-thumb-color: var(--scrollbar-thumb-color);
     --sidebar-icon-color: var(--icon-color);
     --sidebar-selected-color: var(--highlight-color);
     --sidebar-search-bg-color: rgb(64, 74, 84);
     --sidebar-search-border-color: rgb(76, 96, 116);
     --sidebar-section-title-color: var(--icon-color);
+  
     --scrollbar-bg-color: var(--background-color-light);
     --scrollbar-thumb-color: var(--color-outline);
+  
     --chatarea-toolbar-bg-color: rgb(40, 50, 65);
     --chatarea-toolbar-text-color: var(--text-color);
     --chatarea-toolbar-icon-color: var(--text-color);
+  
     --message-list-bg-color: var(--background-color);
     --message-list-text-color: var(--text-color);
     --message-list-tip-text-color: var(--text-color);
     --message-list-actions-text-color: var(--icon-color);
     --message-list-overflow-bg-color: rgb(10, 20, 50);
+  
     --tool-bg-color: #132131;
     --tool-key-text-color: #73889a;
+  
     --prompt-icon-color: var(--icon-color);
     --prompt-input-bg-color: var(--message-list-bg-color);
     --prompt-input-border-color: rgb(60, 70, 90);
     --prompt-input-text-color: var(--sidebar-text-color);
+  
     --dialog-border-color: rgb(86, 86, 96);
     --dialog-header-bg-color: rgb(40, 50, 65);
     --dialog-header-text-color: rgb(180, 180, 190);
     --dialog-body-bg-color: var(--background-color-light);
     --dialog-body-text-color: var(--text-color);
     --dialog-separator-color: rgb(20, 20, 30);
+  
     --editor-border-color: var(--dialog-border-color);
     --editor-header-bg-color: var(--dialog-body-bg-color);
     --editor-body-bg-color: var(--dialog-body-bg-color);
+  
     --tabs-header-normal-text-color: rgb(170, 170, 180);
     --tabs-header-selected-bg-color: rgb(58, 68, 78);
     --tabs-header-selected-text-color: rgb(7, 126, 246);
+  
     --context-menu-bg-color: var(--color-surface-low);
     --context-menu-border-color: rgb(70, 80, 90);
     --context-menu-text-color: var(--text-color);
     --context-menu-selected-bg-color: var(--highlight-color);
     --context-menu-filter-bg-color: var(--sidebar-search-bg-color);
     --context-menu-filter-text-color: var(--sidebar-text-color);
+  
     --actions-bar-bg-color: linear-gradient(to bottom, rgb(61, 71, 81), rgb(55, 65, 75));
     --actions-bar-border-color: var(--color-outline);
     --actions-bar-button-border-color: var(--actions-bar-border-color);
     --actions-bar-button-active-bg-color: linear-gradient(to bottom, rgb(83, 93, 103), rgb(73, 83, 93));
+  
     --anywhere-bg-color: var(--window-bg-color);
+  
     --scratchpad-bars-border-color: #555;
     --scratchpad-text-color: var(--text-color);
     --scratchpad-placeholder-text-color: var(--control-placeholder-text-color);
@@ -339,9 +380,11 @@
     --scratchpad-actionbar-normal-icon-color: #99a;
     --scratchpad-actionbar-disabled-icon-color: #566;
     --scratchpad-actionbar-hover-icon-color: #cde;
+    
     .windows {
       --window-decoration-color: var(--default-window-decoration-color);
     }
+
   }
 }
 
@@ -633,7 +676,8 @@ button {
   justify-content: center;
   background-color: var(--color-surface-base);
   border-radius: var(--control-button-border-radius);
-  padding: 4px;
+  padding: 0.25rem;
+  gap: 0.125rem;
 }
 
 .button-group button {
@@ -648,7 +692,15 @@ button {
 .button-group button:not(.active) {
   background-color: transparent;
   border-color: transparent;
+  color: var(--faded-text-color);
   border-radius: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .button-group button:not(.active) {
+    background-color: color-mix(in srgb, var(--control-bg-color), var(--background-color) 40%);
+    border-color: color-mix(in srgb, var(--control-bg-color), var(--background-color) 40%);
+  }
 }
 
 .button-group button.active {
