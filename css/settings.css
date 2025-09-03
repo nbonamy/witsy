@@ -59,7 +59,7 @@
         width: 15pt;
         height: 15pt;
         color: var(--settings-normal-text-color);
-        filter: invert(48%) sepia(6%) saturate(86%) hue-rotate(349deg) brightness(86%) contrast(90%);
+        /* filter: invert(48%) sepia(6%) saturate(86%) hue-rotate(349deg) brightness(86%) contrast(90%); */
       }
       
       .title {
@@ -83,7 +83,7 @@
         
           .icon {
             color: var(--settings-selected-text-color);
-            filter: var(--settings-selected-icon-filter);
+            /* filter: var(--settings-selected-icon-filter); */
           }
         }
 
