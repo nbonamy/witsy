@@ -467,6 +467,10 @@ const validateServerJson = (json: string) => {
     width: 20px;
     height: 20px;
   }
+
+  header {
+    border-bottom: none;
+  }
   
   main {
     padding: 4rem;

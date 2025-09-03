@@ -1,37 +1,34 @@
 <template>
-  <FullScreenDrawer ref="drawer" @closed="emit('closed')">
-    <div class="split-pane">
+  <div class="split-pane">
 
-      <template v-if="mode === 'list'">
-      
-        <template v-if="store.agents.length === 0">
-          <div class="sp-main">
-            <main class="empty">
-              <IconAgent @click="onCreate()" />
-              {{ t('agent.forge.empty') }}
-            </main>
-          </div>
-        </template>
-
-        <template v-else>
-          <List class="sp-main" :agents="store.agents" @close="emit('closed')" @create="onCreate" @import-a2-a="onImportA2A"  @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
-        </template>
-
-      </template>
-
-      <template v-else-if="mode === 'create' || mode === 'edit'">
-        <Editor class="sp-main" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
-      </template>
-
-      <template v-else-if="mode === 'view'">
-        <View class="sp-main" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)"/>
-      </template>
-
-      <PromptBuilder :title="running?.name ?? ''" ref="builder" />
+    <template v-if="mode === 'list'">
     
-    </div>
+      <template v-if="store.agents.length === 0">
+        <div class="sp-main">
+          <main class="empty">
+            <IconAgent @click="onCreate()" />
+            {{ t('agent.forge.empty') }}
+          </main>
+        </div>
+      </template>
 
-  </FullScreenDrawer>
+      <template v-else>
+        <List class="sp-main" :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A"  @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
+      </template>
+
+    </template>
+
+    <template v-else-if="mode === 'create' || mode === 'edit'">
+      <Editor class="sp-main" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
+    </template>
+
+    <template v-else-if="mode === 'view'">
+      <View class="sp-main" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)"/>
+    </template>
+
+    <PromptBuilder :title="running?.name ?? ''" ref="builder" />
+  
+  </div>
 
 </template>
 
@@ -42,7 +39,6 @@ import IconAgent from '../../assets/agent.svg?component'
 import Editor from '../agent/Editor.vue'
 import List from '../agent/List.vue'
 import View from '../agent/View.vue'
-import FullScreenDrawer from '../components/FullScreenDrawer.vue'
 import PromptBuilder from '../components/PromptBuilder.vue'
 import Dialog from '../composables/dialog'
 import Agent from '../models/agent'
@@ -55,8 +51,6 @@ import { AgentType } from '../types/index'
 defineProps({
   extra: Object
 })
-
-const emit = defineEmits(['closed'])
 
 type AgentForgeMode = 'list' | 'create' | 'view' | 'edit'
 
