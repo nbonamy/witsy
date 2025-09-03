@@ -394,10 +394,10 @@
       }
     },
     "empty": {
-      "agentForge": "Créez des agents pour automatiser vos tâches et optimiser votre flux de travail.",
+      "agentForge": "Créez des agents pour automatiser vos tâches et optimiser vos flux de travail !",
       "docRepo": "Indexez vos documents et ancrez @:{'common.appName'} dans votre savoir !",
       "greeting": "Salut, comment puis-je vous aider ?",
-      "mcpServers": "Connectez des serveurs MCP pour permettre à @:{'common.appName'} d'interagir avec votre environnement."
+      "mcpServers": "Connectez les serveurs MCP pour permettre à @:{'common.appName'} d'interagir avec votre environnement !"
     },
     "export": {
       "error": "Une erreur s'est produite lors de l'exportation de la conversation."

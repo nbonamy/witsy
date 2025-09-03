@@ -413,10 +413,10 @@
       }
     },
     "empty": {
-      "agentForge": "Twórz agentów, aby automatyzować swoje zadania i usprawniać przepływ pracy.",
+      "agentForge": "Twórz agentów, aby automatyzować swoje zadania i usprawnić przepływy pracy!",
       "docRepo": "Indeksuj swoje dokumenty i opieraj @:{'common.appName'} na swojej wiedzy!",
       "greeting": "Cześć, jak mogę Ci pomóc?",
-      "mcpServers": "Połącz serwery MCP, aby umożliwić @:{'common.appName'} interakcję z Twoim środowiskiem."
+      "mcpServers": "Połącz serwery MCP, aby umożliwić @:{'common.appName'} interakcję z Twoim środowiskiem!"
     },
     "export": {
       "error": "Wystąpił błąd podczas próby wyeksportowania czatu."
