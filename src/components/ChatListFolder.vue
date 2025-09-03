@@ -246,7 +246,12 @@ const handleActionClick = async (action: string) => {
   }
 
   .menu {
+    visibility: hidden;
     margin-left: auto;
+  }
+
+  &:hover .menu {
+    visibility: visible;
   }
 }
 
