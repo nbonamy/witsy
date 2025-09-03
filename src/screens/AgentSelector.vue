@@ -26,7 +26,7 @@
     <template #footer>
       <div class="buttons">
         <button name="cancel" @click="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
-        <button name="none" @click="selection = []" class="secondary">{{ t('common.selectNone') }}</button>
+        <button name="none" @click="selection = []" class="secondary">{{ t('common.unselectAll') }}</button>
         <button name="save" @click="onSave" class="primary">{{ t('common.save') }}</button>
       </div>
     </template>

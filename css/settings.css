@@ -12,9 +12,6 @@
   --settings-normal-bg-color: transparent;
   --settings-selected-bg-color: var(--tabs-header-selected-bg-color);
 
-  /* calculated using https://codepen.io/sosuke/pen/Pjoqqp */
-  --settings-selected-icon-filter: invert(25%) sepia(97%) saturate(3446%) hue-rotate(208deg) brightness(97%) contrast(98%);
-
 }
 
 .settings, .settings ul, .settings ul li {
@@ -59,7 +56,6 @@
         width: 15pt;
         height: 15pt;
         color: var(--settings-normal-text-color);
-        /* filter: invert(48%) sepia(6%) saturate(86%) hue-rotate(349deg) brightness(86%) contrast(90%); */
       }
       
       .title {
@@ -75,18 +71,13 @@
       left: -9999px;
 
       &:checked {
-
         & + label {
-          
           background-color: var(--settings-selected-bg-color);
           color: var(--settings-selected-text-color);
-        
           .icon {
             color: var(--settings-selected-text-color);
-            /* filter: var(--settings-selected-icon-filter); */
           }
         }
-
       }
     }
   }

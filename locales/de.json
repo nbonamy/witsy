@@ -152,6 +152,7 @@
     "tryAgain": "Bitte versuche es erneut.",
     "type": "Typ",
     "undo": "Rückgängig",
+    "unselectAllShort": "Keine",
     "upload": "Hochladen",
     "url": "URL",
     "usage": "Nutzung",
@@ -217,7 +218,6 @@
         "customTools": "Werkzeuge hinzufügen",
         "description": "@:{'common.description'}",
         "docRepo": "Wissen hinzufügen",
-        "docRepoNone": "Keine Wissensdatenbank",
         "error": {
           "emptyStepPrompt": "Die Eingabeaufforderung für Schritt #{step} darf nicht leer sein.",
           "missingDocRepo": "Schritt #{step} verwendet eine Wissensdatenbank, aber keine {'{'}{'{'}facts{'}'}{'}'}-Variable ist im Prompt definiert. Bitte fügen Sie eine Variable der Form {'{'}{'{'}facts{'}'}{'}'} zu Ihrem Prompt hinzu.",
@@ -782,7 +782,7 @@
     },
     "list": {
       "documentsCount": "Kein Dokument|1 Dokument|{count} Dokumente",
-      "title": "Knowledge Base",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "delete": "Delete collection"

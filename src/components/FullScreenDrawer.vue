@@ -81,7 +81,7 @@ defineExpose({
 
   .icon.close {
     position: absolute;
-    top: 1.5rem;
+    top: 1.66rem;
     right: 1.5rem;
     width: var(--icon-lg);
     height: var(--icon-lg);

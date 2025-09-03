@@ -152,6 +152,7 @@
     "tryAgain": "Veuillez réessayer.",
     "type": "Type",
     "undo": "Annuler",
+    "unselectAllShort": "Aucun",
     "upload": "Télécharger",
     "url": "URL",
     "usage": "Usage",
@@ -217,7 +218,6 @@
         "customTools": "Ajouter des Outils",
         "description": "@:{'common.description'}",
         "docRepo": "Ajouter des Connaissances",
-        "docRepoNone": "Pas de base de connaissances",
         "error": {
           "emptyStepPrompt": "L'invite de l’étape #{step} ne peut pas être vide.",
           "missingDocRepo": "L'étape #{step} utilise une base de connaissances mais aucune variable {'{'}{'{'}facts{'}'}{'}'} n'est définie dans l'invite. Veuillez ajouter une variable de la forme {'{'}{'{'}facts{'}'}{'}'} à votre invite.",
@@ -782,7 +782,7 @@
     },
     "list": {
       "documentsCount": "Aucun document|1 document|{count} documents",
-      "title": "Knowledge Base",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "delete": "Delete collection"

@@ -152,6 +152,7 @@
     "tryAgain": "Por favor, intenta de nuevo.",
     "type": "Tipo",
     "undo": "Deshacer",
+    "unselectAllShort": "Ninguno",
     "upload": "Subir",
     "url": "URL",
     "usage": "Uso",
@@ -217,7 +218,6 @@
         "customTools": "Agregar herramientas",
         "description": "@:{'common.description'}",
         "docRepo": "Agregar conocimiento",
-        "docRepoNone": "Sin Base de Conocimiento",
         "error": {
           "emptyStepPrompt": "La indicación del paso #{step} no puede estar vacía.",
           "missingDocRepo": "El paso #{step} usa una Base de Conocimiento pero no se ha definido una variable {'{'}{'{'}facts{'}'}{'}'} en la indicación. Por favor, añade una variable con la forma {'{'}{'{'}facts{'}'}{'}'} a tu indicación.",
@@ -782,7 +782,7 @@
     },
     "list": {
       "documentsCount": "No hay documentos|1 documento|{count} documentos",
-      "title": "Knowledge Base",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "delete": "Delete collection"
