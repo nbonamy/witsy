@@ -45,7 +45,6 @@
     "disabled": "Disabilitato",
     "docRepo": "Base di Conoscenza",
     "documents": "Documenti",
-    "done": "Fatto!",
     "edit": "Modifica",
     "embeddings": "Incorporamenti",
     "enabled": "Abilitato",
@@ -97,8 +96,6 @@
     "recommended": "Consigliato",
     "record": "Registra",
     "redo": "Ripristina",
-    "refresh": "Aggiorna",
-    "refreshing": "Aggiornamento…",
     "rename": "Rinomina",
     "replace": "Sostituisci",
     "required": {

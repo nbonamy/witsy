@@ -45,7 +45,6 @@
     "disabled": "Wyłączony",
     "docRepo": "Baza wiedzy",
     "documents": "Dokumenty",
-    "done": "Gotowe!",
     "edit": "Edytuj",
     "embeddings": "Embeddingi",
     "enabled": "Włączone",
@@ -116,8 +115,6 @@
     "recommended": "Polecane",
     "record": "Nagrywaj",
     "redo": "Ponów",
-    "refresh": "Odśwież",
-    "refreshing": "Odświeżanie...",
     "rename": "Zmień nazwę",
     "replace": "Zastąp",
     "required": {
