@@ -1431,6 +1431,7 @@
   "settings.general.tints.white": "White",
   "settings.llm.capabilities.artifacts": "Instruct model to create artifacts",
   "settings.llm.capabilities.title": "Additional instructions",
+  "settings.llm.disableStreaming": "Disable streaming",
   "settings.llm.instructions.editor.instructions": "@:{'common.instructions'}",
   "settings.llm.instructions.editor.label": "@:{'common.label'}",
   "settings.llm.instructions.editor.title": "Instruction Editor",

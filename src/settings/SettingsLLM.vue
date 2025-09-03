@@ -37,6 +37,12 @@
         <label>{{ t('settings.general.promptLLMModel') }}</label>
         <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />
         <ModelSelectPlus class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
+        <div class="form-subgroup">
+          <div class="form-field horizontal">
+            <input type="checkbox" name="disableStreaming" v-model="disableStreaming" @change="save" />
+            <div class="label">{{ t('settings.llm.disableStreaming') }}</div>
+          </div>
+        </div>
       </div>
       <div class="form-field localeLLM">
         <label>{{ t('settings.general.localeLLM') }}</label>
@@ -77,6 +83,7 @@ const isMas = ref(false)
 const instructions = ref<InstructionsType>('structured')
 const engine = ref(null)
 const model = ref(null)
+const disableStreaming = ref(false)
 const localeLLM = ref(null)
 const isLocalized = ref(false)
 const forceLocale = ref(false)
@@ -114,6 +121,7 @@ const load = () => {
   instructions.value = store.config.llm.instructions || 'structured'
   engine.value = store.config.prompt.engine || ''
   model.value = store.config.prompt.model || ''
+  disableStreaming.value = store.config.prompt.disableStreaming
   localeLLM.value = store.config.llm.locale
   forceLocale.value = store.config.llm.forceLocale
   artifactsInstructions.value = store.config.llm.additionalInstructions.artifacts
@@ -126,6 +134,7 @@ const save = () => {
   store.config.llm.instructions = instructions.value
   store.config.prompt.engine = engine.value
   store.config.prompt.model = model.value
+  store.config.prompt.disableStreaming = disableStreaming.value
   store.config.llm.locale = localeLLM.value
   store.config.llm.forceLocale = forceLocale.value
   store.config.llm.additionalInstructions.artifacts = artifactsInstructions.value

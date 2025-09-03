@@ -53,6 +53,10 @@
       
       <slot name="actions" />
       
+      <ButtonIcon @click="onCommands(true)" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')">
+        <BIconMagic class="icon command" />
+      </ButtonIcon>
+      
       <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
       
       <ButtonIcon @click="onDictate" @contextmenu="onConversationMenu" >
@@ -70,8 +74,6 @@
         </div>
       </ButtonIcon>
 
-      <BIconMagic class="icon command right" @click="onCommands(true)" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')" />
-      
       <ButtonIcon class="send-stop">
         <SquareIcon class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
         <ArrowUpIcon class="icon send" :class="{ disabled: !prompt.length }" @click="onSendPrompt" v-else />
@@ -85,6 +87,7 @@
     <ContextMenu v-if="showCommands" @close="closeContextMenu" :show-filter="true" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
     
     <ContextMenu v-if="showConversationMenu" @close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    
     <PromptMenu
       v-if="showPromptMenu"
       anchor=".prompt-menu"
@@ -115,10 +118,11 @@
       @attach-requested="onAttach"
       @deep-research-toggled="onDeepResearch"
     />
+    
     <EngineModelMenu
       v-if="showModelMenu"
       anchor=".model-menu-button"
-      position="above-right"
+      :position="menusPosition"
       :chat="chat"
       @close="closeModelMenu"
       @model-selected="handleModelSelected"
@@ -270,7 +274,7 @@ const isDragOver = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
-const emit = defineEmits(['set-engine-model', 'prompt', 'run-agent','stop'])
+const emit = defineEmits(['set-engine-model', 'tools-updated', 'prompt', 'run-agent','stop'])
 
 const engine = () => props.chat?.engine || llmManager.getChatEngineModel().engine
 const model = () => props.chat?.model || llmManager.getChatEngineModel().model
@@ -974,42 +978,52 @@ const handlePromptMenuInstructions = (instructionId: string) => {
 
 const handleAllPluginsToggle = async () => {
   props.chat.tools = await ts.handleAllPluginsToggle(props.chat.tools)
+  emit('tools-updated', props.chat.tools)
 }
 
 const handlePluginToggle = async (toolName: string) => {
   props.chat.tools = await ts.handlePluginToggle(props.chat.tools, toolName)
+  emit('tools-updated', props.chat.tools)
 }
 
 const handleSelectAllTools = async () => {
   props.chat.tools = await ts.handleSelectAllTools()
+  emit('tools-updated', props.chat.tools)
 }
 
 const handleUnselectAllTools = async () => {
   props.chat.tools = await ts.handleUnselectAllTools()
+  emit('tools-updated', props.chat.tools)
 }
 
 const handleSelectAllPlugins = async () => {
   props.chat.tools = await ts.handleSelectAllPlugins(props.chat.tools)
+  emit('tools-updated', props.chat.tools)
 }
 
 const handleUnselectAllPlugins = async () => {
   props.chat.tools = await ts.handleUnselectAllPlugins(props.chat.tools)
+  emit('tools-updated', props.chat.tools)
 }
 
 const handleSelectAllServerTools = async (server: McpServerWithTools) => {
   props.chat.tools = await ts.handleSelectAllServerTools(props.chat.tools, server)
+  emit('tools-updated', props.chat.tools)
 }
 
 const handleUnselectAllServerTools = async (server: McpServerWithTools) => {
   props.chat.tools = await ts.handleUnselectAllServerTools(props.chat.tools, server)
+  emit('tools-updated', props.chat.tools)
 }
 
 const handleAllServerToolsToggle = async (server: McpServerWithTools) => {
   props.chat.tools = await ts.handleAllServerToolsToggle(props.chat.tools, server)
+  emit('tools-updated', props.chat.tools)
 }
 
 const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolUnique) => {
   props.chat.tools = await ts.handleServerToolToggle(props.chat.tools, server, tool)
+  emit('tools-updated', props.chat.tools)
 }
 
 const handleExpertClick = (action: string) => {
@@ -1033,10 +1047,10 @@ const disableCommand = () => {
 const onCommands = (immediate: boolean) => {
   showCommands.value = true
   runCommandImmediate = immediate
-  const textarea = document.querySelector('.prompt textarea')
-  const rect = textarea?.getBoundingClientRect()
-  menuX.value = rect?.right + (props.menusPosition === 'below' ? rect?.y - 150 : 0 ) - 250
-  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y + 24 : 0 ) + 32
+  const anchor = document.querySelector('.prompt .icon.command')
+  const rect = anchor?.getBoundingClientRect()
+  menuX.value = rect?.right - 280
+  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y + 24 : 96)
 }
 
 const handleCommandClick = (action: string) => {
@@ -1166,7 +1180,7 @@ const autoGrow = (element: HTMLElement) => {
   if (element) {
     // reset before calculating
     element.style.height = '0px'
-    element.style.height = Math.min(150, element.scrollHeight+2) + 'px'
+    element.style.height = Math.min(150, element.scrollHeight+4) + 'px'
     emitEvent('prompt-resize', element.style.height)
   }
 }
@@ -1406,7 +1420,6 @@ defineExpose({
     }
 
     .model-menu-wrapper {
-      margin: 0 0.5rem;
     
       .model-menu-button {
         display: flex;

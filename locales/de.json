@@ -2339,6 +2339,7 @@
         "artifacts": "Modell anweisen, Artefakte zu erstellen",
         "title": "Zusätzliche Anweisungen"
       },
+      "disableStreaming": "Streaming deaktivieren",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",

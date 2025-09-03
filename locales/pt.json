@@ -2361,6 +2361,7 @@
         "artifacts": "Instruir o modelo a criar artefatos",
         "title": "Instruções adicionais"
       },
+      "disableStreaming": "Desativar streaming",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",

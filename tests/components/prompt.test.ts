@@ -319,7 +319,7 @@ test('Selects command and run', async () => {
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
-  const trigger = wrapper.find('.icon.command.right')
+  const trigger = wrapper.find('.icon.command')
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)

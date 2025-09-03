@@ -1,18 +1,17 @@
 
-import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
-import { useWindowMock, useBrowserMock } from '../mocks/window'
-import LlmMock, { installMockModels, setLlmDefaults } from '../mocks/llm'
+import { defaultCapabilities } from 'multi-llm-ts'
+import { afterEach, beforeAll, beforeEach, expect, test, vi } from 'vitest'
+import MessageItem from '../../src/components/MessageItem.vue'
+import Prompt, { SendPromptParams } from '../../src/components/Prompt.vue'
+import LlmManager from '../../src/llms/manager'
+import Attachment from '../../src/models/attachment'
+import Message from '../../src/models/message'
+import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import { store } from '../../src/services/store'
 import { Expert } from '../../src/types'
-import Attachment from '../../src/models/attachment'
-import Prompt, { SendPromptParams } from '../../src/components/Prompt.vue'
-import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
-import MessageItem from '../../src/components/MessageItem.vue'
-import Message from '../../src/models/message'
-import EngineModelPicker from '../../src/screens/EngineModelPicker.vue'
-import LlmManager from '../../src/llms/manager'
-import { defaultCapabilities } from 'multi-llm-ts'
+import LlmMock, { installMockModels, setLlmDefaults } from '../mocks/llm'
+import { useBrowserMock, useWindowMock } from '../mocks/window'
 
 vi.mock('../../src/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
@@ -24,6 +23,10 @@ vi.mock('../../src/llms/manager.ts', async () => {
   LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
   LlmManager.prototype.getChatModel = vi.fn(() => ({ id: 'chat', name: 'chat', ...defaultCapabilities }))
   LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
+  LlmManager.prototype.getChatEngines = vi.fn(() => ['mock'])
+  LlmManager.prototype.hasChatModels = vi.fn(() => true)
+  LlmManager.prototype.isFavoriteEngine = vi.fn(() => false)
+  LlmManager.prototype.isCustomEngine = vi.fn(() => false)
   LlmManager.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
   LlmManager.prototype.checkModelListsVersion = vi.fn()
   LlmManager.prototype.loadTools = vi.fn()
@@ -96,7 +99,7 @@ test('Initalizes LLM and chat with defaults', async () => {
   expect(wrapper.vm.chat.engine).toBe('mock')
   expect(wrapper.vm.chat.model).toBe('chat')
   expect(wrapper.vm.chat.disableStreaming).toBe(false)
-  expect(wrapper.vm.chat.tools).toStrictEqual([])
+  expect(wrapper.vm.chat.tools).toStrictEqual(null)
   expect(wrapper.vm.chat.modelOpts).toBeDefined()
   expect(wrapper.vm.chat.messages).toHaveLength(0)
 })
@@ -118,21 +121,29 @@ test('Does not initalizes expert when disabled', async () => {
 
 test('Changes engine model', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  store.config.prompt.disableStreaming = true
   wrapper.vm.onShow()
-  await wrapper.vm.$nextTick()
-  wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2', disableStreaming: false, disableTools: false })
+  await wrapper.find('.model-menu-wrapper').trigger('click')
+  wrapper.findComponent({ name: 'EngineModelMenu' }).vm.$emit('modelSelected', 'openai', 'chat1')
   await wrapper.vm.$nextTick()
   expect(LlmManager.prototype.igniteEngine).toHaveBeenLastCalledWith('openai')
-  expect(store.config.prompt.disableTools).toBe(false)
-  expect(wrapper.vm.chat.engine).toBe('openai')
-  expect(wrapper.vm.chat.model).toBe('chat2')
-  expect(wrapper.vm.chat.disableStreaming).toBe(false)
-  expect(LlmManager.prototype.loadTools).toHaveBeenCalled()
-  wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2', disableStreaming: true, disableTools: true })
-  expect(store.config.prompt.disableStreaming).toBe(true)
-  expect(store.config.prompt.disableTools).toBe(true)
   expect(wrapper.vm.chat.disableStreaming).toBe(true)
-  expect(wrapper.vm.llm.plugins.length).toBe(0)
+  expect(wrapper.vm.chat.engine).toBe('openai')
+  expect(wrapper.vm.chat.model).toBe('chat1')
+})
+
+test('Changes tools', async () => {
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  store.config.prompt.tools = ['web']
+  wrapper.vm.onShow()
+  expect(wrapper.vm.chat.tools).toStrictEqual(['web'])
+  await wrapper.find('.prompt-menu').trigger('click')
+  wrapper.findComponent({ name: 'PromptMenu' }).vm.$emit('unselectAllTools')
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.chat.tools).toStrictEqual([])
+  expect(store.config.prompt.tools).toStrictEqual([])
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' } as SendPromptParams)
+  expect(LlmManager.prototype.loadTools).toHaveBeenLastCalledWith(wrapper.vm.llm, expect.any(Object), [])
 })
 
 test('Renders prompt response', async () => {
@@ -254,7 +265,7 @@ test('Resets chat with defaults', async () => {
   expect(wrapper.vm.chat.messages).toHaveLength(0)
   expect(wrapper.vm.chat.engine).toBe('mock')
   expect(wrapper.vm.chat.model).toBe('chat')
-  expect(wrapper.vm.chat.tools).toStrictEqual([])
+  expect(wrapper.vm.chat.tools).toStrictEqual(null)
   expect(wrapper.vm.chat.modelOpts).toBeDefined()
   expect(wrapper.findComponent(MessageItem).exists()).toBeFalsy()
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')

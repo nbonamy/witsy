@@ -2361,6 +2361,7 @@
         "artifacts": "アーティファクトを作成するようモデルに指示する",
         "title": "追加の指示"
       },
+      "disableStreaming": "ストリーミングを無効にする",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",

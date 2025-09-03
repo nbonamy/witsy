@@ -177,11 +177,3 @@ const save = () => {
 defineExpose({ load })
 
 </script>
-
-<style scoped>
-
-.icon.delete {
-  margin-right: 2rem;
-}
-
-</style>
