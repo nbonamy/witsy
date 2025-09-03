@@ -21,14 +21,14 @@
           </div>
         </div>
       </div>
-      <div class="form-field lightTint" v-if="store.isFeatureEnabled('appearance') && appearanceTheme.getTheme() === 'light'">
+      <!-- <div class="form-field lightTint" v-if="store.isFeatureEnabled('appearance') && appearanceTheme.getTheme() === 'light'">
         <label>{{ t('settings.general.lightTint') }}</label>
         <select v-model="lightTint" @change="onTintChange">
           <option value="white">{{ t('settings.general.tints.white') }}</option>
           <option value="gray">{{ t('settings.general.tints.gray') }}</option>
         </select>
-      </div>
-      <div class="form-field darkTint" v-if="store.isFeatureEnabled('appearance') && appearanceTheme.getTheme() === 'dark'">
+      </div> -->
+      <div class="form-field darkTint" v-if="store.isFeatureEnabled('appearance')">
         <label>{{ t('settings.general.darkTint') }}</label>
         <select v-model="darkTint" @change="onTintChange">
           <option value="black">{{ t('settings.general.tints.black') }}</option>
