@@ -255,7 +255,26 @@ async function getCandidatesForDeletion(): Promise<Set<string>> {
       .filter(file => file.endsWith('.json'))
       .map(file => path.join(LOCALES_DIR, file))
 
-    // Load and process each locale file
+    // First pass: collect all linked references from en.json only
+    const referencedKeys = new Set<string>()
+    const localeData = JSON.parse(fs.readFileSync(path.join(LOCALES_DIR, 'en.json'), 'utf8'))
+    const flattenData = flatten(localeData)
+    const allKeys = Object.keys(flattenData)
+
+    // Find all linked translations in en.json
+    for (const key of allKeys) {
+      const value = flattenData[key]
+      if (typeof value === 'string') {
+        const regex = /@:\{'([^}]+)'\}/g
+        let match
+        while ((match = regex.exec(value)) !== null) {
+          const referencedKey = match[1]
+          referencedKeys.add(referencedKey)
+        }
+      }
+    }
+
+    // Second pass: process each locale file with knowledge of globally referenced keys
     for (const file of localeFiles) {
       
       const localeData = JSON.parse(fs.readFileSync(file, 'utf8'))
@@ -268,16 +287,10 @@ async function getCandidatesForDeletion(): Promise<Set<string>> {
         !EXCLUDE_FROM_UNUSED_PATTERNS.some(pattern => pattern.test(key))
       ))
 
-      // also the translation file itself can reference other keys using "@:{'id'}" syntax
-      for (const key of allKeys) {
-        const value = flattenData[key]
-        const regex = /@:\{'([^}]+)'\}/g
-        let match
-        while ((match = regex.exec(value)) !== null) {
-          const referencedKey = match[1]
-          if (allKeys.includes(referencedKey)) {
-            unusedKeys.delete(referencedKey)
-          }
+      // Remove keys that are globally referenced via linked translations from any locale file
+      for (const referencedKey of referencedKeys) {
+        if (allKeys.includes(referencedKey)) {
+          unusedKeys.delete(referencedKey)
         }
       }
 
@@ -766,7 +779,7 @@ function getWrongLinkedTranslations(locales: { [locale: string]: LocaleData }): 
   // get linked translations
   const linkedKeys: string[] = []
   Object.keys(enData).forEach(key => {
-    if (enData[key].includes(LINKED_TRANSLATION_MARKER)) {
+    if (enData[key].startsWith(LINKED_TRANSLATION_MARKER)) {
       linkedKeys.push(key)
     }
   })

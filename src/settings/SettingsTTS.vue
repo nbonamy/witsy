@@ -40,7 +40,7 @@
             {{ voice.label }}
           </option>
         </select>
-        <RefreshButton :onRefresh="onRefreshVoices" />
+        <RefreshButton @refresh="onRefreshVoices" v-if="canRefreshVoices" />
         <button class="control" @click.prevent="onPlay">
           <BIconPlayFill v-if="audioState.state === 'idle'"/>
           <BIconStopFill v-else />
