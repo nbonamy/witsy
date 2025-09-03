@@ -200,7 +200,6 @@ defineExpose({ load })
 
 </script>
 
-
 <style scoped>
 .control {
   svg {
