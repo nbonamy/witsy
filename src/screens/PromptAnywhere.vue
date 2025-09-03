@@ -712,9 +712,6 @@ const onResponseResize = (deltaX: number) => {
       color: var(--prompt-icon-color);
     }
 
-    .icon.send, .icon.stop {
-      display: none;
-    }
   }
 
   .response {

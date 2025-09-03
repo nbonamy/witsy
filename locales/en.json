@@ -413,10 +413,10 @@
       }
     },
     "empty": {
-      "agentForge": "Create agents to automate your tasks and streamline your workflow.",
+      "agentForge": "Create agents to automate your tasks and streamline your workflows!",
       "docRepo": "Index your documents and ground @:{'common.appName'} into your knowledge!",
       "greeting": "Hey, how can I assist you?",
-      "mcpServers": "Connect MCP servers to allow @:{'common.appName'} to interact with your environment."
+      "mcpServers": "Connect MCP servers to allow @:{'common.appName'} to interact with your environment!"
     },
     "export": {
       "error": "An error occurred while trying to export the chat."

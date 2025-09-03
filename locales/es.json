@@ -394,10 +394,10 @@
       }
     },
     "empty": {
-      "agentForge": "Crea agentes para automatizar tus tareas y optimizar tu flujo de trabajo.",
+      "agentForge": "¡Crea agentes para automatizar tus tareas y agilizar tus flujos de trabajo!",
       "docRepo": "Indexa tus documentos y fundamenta a @:{'common.appName'} en tu conocimiento.",
       "greeting": "Hola, ¿en qué puedo ayudarte?",
-      "mcpServers": "Conecta servidores MCP para permitir que @:{'common.appName'} interactúe con tu entorno."
+      "mcpServers": "¡Conecta servidores MCP para permitir que @:{'common.appName'} interactúe con tu entorno!"
     },
     "export": {
       "error": "Ocurrió un error al intentar exportar la conversación."
