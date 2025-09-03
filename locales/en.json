@@ -172,7 +172,7 @@
     "type": "Type",
     "undo": "Undo",
     "unselectAll": "@:{'common.selectNone'}",
-    "unselectAllShort": "@:{'common.selectNoneShort'}",
+    "unselectAllShort": "None",
     "upload": "Upload",
     "url": "URL",
     "usage": "Usage",
@@ -238,7 +238,6 @@
         "customTools": "Add Tools",
         "description": "@:{'common.description'}",
         "docRepo": "Add Knowledge",
-        "docRepoNone": "No Knowledge Base",
         "error": {
           "emptyStepPrompt": "Step #{step} prompt cannot be empty.",
           "missingDocRepo": "Step #{step} uses a Knowledge Base but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt.",
@@ -802,7 +801,7 @@
     },
     "list": {
       "documentsCount": "No document|1 document|{count} documents",
-      "title": "Knowledge Base",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "delete": "Delete collection"

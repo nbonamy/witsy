@@ -171,6 +171,7 @@
     "tryAgain": "请再试一次。",
     "type": "类型",
     "undo": "撤销",
+    "unselectAllShort": "无",
     "upload": "上传",
     "url": "网址",
     "usage": "使用情况",
@@ -236,7 +237,6 @@
         "customTools": "添加工具",
         "description": "@:{'common.description'}",
         "docRepo": "添加知识",
-        "docRepoNone": "无知识库",
         "error": {
           "emptyStepPrompt": "步骤 #{step} 的提示不能为空。",
           "missingDocRepo": "步骤 #{step} 使用了知识库，但提示中未定义 {'{'}{'{'}facts{'}'}{'}'} 变量。请在您的提示中添加形如 {'{'}{'{'}facts{'}'}{'}'} 的变量。",
@@ -801,7 +801,7 @@
     },
     "list": {
       "documentsCount": "无文档|1 个文档|{count} 个文档",
-      "title": "Knowledge Base",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "delete": "Delete collection"

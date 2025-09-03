@@ -152,6 +152,7 @@
     "tryAgain": "Per favore riprova.",
     "type": "Tipo",
     "undo": "Annulla",
+    "unselectAllShort": "Nessuno",
     "upload": "Carica",
     "url": "URL",
     "usage": "Utilizzo",
@@ -217,7 +218,6 @@
         "customTools": "Aggiungi Strumenti",
         "description": "@:{'common.description'}",
         "docRepo": "Aggiungi Conoscenza",
-        "docRepoNone": "Nessuna Base di Conoscenza",
         "error": {
           "emptyStepPrompt": "Il prompt del passaggio #{step} non può essere vuoto.",
           "missingDocRepo": "Il passaggio #{step} utilizza una Base di Conoscenza ma nessuna variabile {'{'}{'{'}facts{'}'}{'}'} è definita nel prompt. Per favore aggiungi una variabile della forma {'{'}{'{'}facts{'}'}{'}'} al tuo prompt.",
@@ -782,7 +782,7 @@
     },
     "list": {
       "documentsCount": "Nessun documento|1 documento|{count} documenti",
-      "title": "Knowledge Base",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "delete": "Delete collection"

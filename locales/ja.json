@@ -171,6 +171,7 @@
     "tryAgain": "もう一度お試しください。",
     "type": "タイプ",
     "undo": "元に戻す",
+    "unselectAllShort": "なし",
     "upload": "アップロード",
     "url": "URL",
     "usage": "使用状況",
@@ -236,7 +237,6 @@
         "customTools": "ツールを追加",
         "description": "@:{'common.description'}",
         "docRepo": "知識を追加",
-        "docRepoNone": "ナレッジベースなし",
         "error": {
           "emptyStepPrompt": "ステップ#{step}のプロンプトは空にできません。",
           "missingDocRepo": "ステップ#{step}はナレッジベースを使用していますが、プロンプトに{'{'}{'{'}facts{'}'}{'}'}という変数が定義されていません。{'{'}{'{'}facts{'}'}{'}'}形式の変数をプロンプトに追加してください。",
@@ -801,7 +801,7 @@
     },
     "list": {
       "documentsCount": "ドキュメントなし|1 件のドキュメント|{count} 件のドキュメント",
-      "title": "Knowledge Base",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "delete": "Delete collection"

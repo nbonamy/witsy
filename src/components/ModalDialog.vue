@@ -85,16 +85,15 @@ const show = async () => {
       // style it
       const button = children[i] as HTMLElement
       button.classList.add('swal2-styled')
-      if (button.classList.contains('default') || button.classList.contains('alert-confirm')) {
-        button.classList.add('swal2-confirm')
-        button.classList.add('primary')
-      } else {
-        button.classList.add('swal2-cancel')
-        button.classList.add('tertiary')
-      }
+      // if (button.classList.contains('default') || button.classList.contains('alert-confirm')) {
+      //   button.classList.add('swal2-confirm')
+      //   button.classList.add('primary')
+      // } else {
+      //   button.classList.add('swal2-cancel')
+      //   button.classList.add('tertiary')
+      // }
 
       // now move it
-      
       actions.value.insertBefore(button, buttons)
     }
 

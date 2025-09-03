@@ -171,6 +171,7 @@
     "tryAgain": "Proszę spróbować ponownie.",
     "type": "Typ",
     "undo": "Cofnij",
+    "unselectAllShort": "Brak",
     "upload": "Prześlij",
     "url": "URL",
     "usage": "Użycie",
@@ -236,7 +237,6 @@
         "customTools": "Dodaj narzędzia",
         "description": "@:{'common.description'}",
         "docRepo": "Dodaj wiedzę",
-        "docRepoNone": "Brak bazy wiedzy",
         "error": {
           "emptyStepPrompt": "Prompt kroku #{step} nie może być pusty.",
           "missingDocRepo": "Krok #{step} korzysta z bazy wiedzy, ale w podpowiedzi nie zdefiniowano zmiennej {'{'}{'{'}facts{'}'}{'}'}. Proszę dodaj zmienną w formacie {'{'}{'{'}facts{'}'}{'}'} do swojej podpowiedzi.",
@@ -801,7 +801,7 @@
     },
     "list": {
       "documentsCount": "Brak dokumentów|1 dokument|{count} dokumentów",
-      "title": "Knowledge Base",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "delete": "Delete collection"

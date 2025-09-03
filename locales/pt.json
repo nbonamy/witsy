@@ -171,6 +171,7 @@
     "tryAgain": "Por favor, tente novamente.",
     "type": "Tipo",
     "undo": "Desfazer",
+    "unselectAllShort": "Nenhum",
     "upload": "Carregar",
     "url": "URL",
     "usage": "Uso",
@@ -236,7 +237,6 @@
         "customTools": "Adicionar Ferramentas",
         "description": "@:{'common.description'}",
         "docRepo": "Adicionar Conhecimento",
-        "docRepoNone": "Nenhuma Base de Conhecimento",
         "error": {
           "emptyStepPrompt": "O prompt da etapa #{step} não pode estar vazio.",
           "missingDocRepo": "A etapa #{step} usa uma Base de Conhecimento, mas nenhuma variável {'{'}{'{'}facts{'}'}{'}'} está definida no prompt. Por favor, adicione uma variável no formato {'{'}{'{'}facts{'}'}{'}'} ao seu prompt.",
@@ -801,7 +801,7 @@
     },
     "list": {
       "documentsCount": "Nenhum documento|1 documento|{count} documentos",
-      "title": "Knowledge Base",
+      "title": "@:{'common.docRepo'}",
       "tooltips": {
         "config": "@:{'docRepo.config.title'}",
         "delete": "Delete collection"

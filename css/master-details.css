@@ -38,7 +38,7 @@
 
       .md-master-list-item {
 
-        --master-list--item-font-size: 14.5px;
+        --master-list--item-font-size: 15.5px;
 
         flex-direction: row;
         align-items: center;
@@ -49,10 +49,12 @@
         font-size: var(--master-list--item-font-size);
         color: var(--settings-normal-text-color);
         cursor: pointer;
+        gap: 0.5rem;
 
         .logo {
+          flex: 0 0 1.5rem;
+          text-align: center;
           height: var(--master-list--item-font-size);
-          margin-right: 0.5rem;
         }
 
         .icon {
