@@ -11,24 +11,25 @@
 </template>
 
 <script setup lang="ts">
-import { t, i18nInstructions, fullExpertI18n } from '../services/i18n'
-import { FileContents } from '../types/file'
-import { ref, onMounted, onUnmounted } from 'vue'
-import { store } from '../services/store'
 import { LlmEngine } from 'multi-llm-ts'
-import LlmFactory, { ILlmManager } from '../llms/llm'
-import ScratchpadToolbar, { ToolbarAction } from '../scratchpad/Toolbar.vue'
-import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt, { SendPromptParams } from '../components/Prompt.vue'
 import useAudioPlayer, { AudioState, AudioStatus } from '../composables/audio_player'
 import Dialog from '../composables/dialog'
-import Generator, { GenerationResult } from '../services/generator'
-import Message from '../models/message'
+import useEventBus from '../composables/event_bus'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
+import Message from '../models/message'
+import { availablePlugins } from '../plugins/plugins'
+import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
+import ScratchpadToolbar, { ToolbarAction } from '../scratchpad/Toolbar.vue'
+import Generator, { GenerationResult } from '../services/generator'
+import { fullExpertI18n, i18nInstructions, t } from '../services/i18n'
+import { store } from '../services/store'
+import { FileContents } from '../types/file'
 
 // bus
-import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 // load store
@@ -61,6 +62,7 @@ const audioPlayer = useAudioPlayer(store.config)
 const generator = new Generator(store.config)
 
 // init stuff
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 let llm: LlmEngine = null
 const modifiedCheckDelay = 1000
 let modifiedCheckTimeout: NodeJS.Timeout = null
@@ -190,7 +192,6 @@ const resetState = () => {
 const initLlm = () => {
 
   // load engine and model
-  const llmManager: ILlmManager = LlmFactory.manager(store.config)
   engine.value = store.config.scratchpad.engine
   model.value = store.config.scratchpad.model
   if (!engine?.value.length || !model?.value.length) {
@@ -494,6 +495,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
   chat.value.addMessage(response)
 
   try {
+
+    // load tools as configured per prompt
+    llmManager.loadTools(llm, availablePlugins, chat.value.tools)
 
     // now generate
     processing.value = true

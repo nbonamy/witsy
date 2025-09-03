@@ -13,9 +13,11 @@
 
     <template #value="{ option }">
       <span class="label">{{ option.label }}</span>
-      <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
-      <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
-      <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />
+      <template v-if="option.value">
+        <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
+        <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
+        <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />
+      </template>
     </template>
 
     <template #option="{ option }">
@@ -23,7 +25,7 @@
         <span class="label">{{ option.label }}</span>
         <span class="id" v-if="showId">{{ option.value }}</span>
       </div>
-      <div class="capabilities">
+      <div class="capabilities" v-if="option.value">
         <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
         <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
         <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />

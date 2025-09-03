@@ -2361,6 +2361,7 @@
         "artifacts": "指示模型创建工件",
         "title": "附加指令"
       },
+      "disableStreaming": "禁用流式传输",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",

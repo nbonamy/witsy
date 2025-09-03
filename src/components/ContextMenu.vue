@@ -232,10 +232,10 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   flex: 1;
   width: 100%;
   overflow-y: auto;
-  padding-right: 21px;
   display: flex;
   flex-direction: column;
   margin: 0px !important;
+  scrollbar-width: none;
 }
 
 .context-menu .item {

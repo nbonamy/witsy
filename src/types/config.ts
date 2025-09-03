@@ -128,7 +128,7 @@ export type PromptConfig = {
   engine: string
   model: string
   disableStreaming: boolean
-  disableTools: boolean
+  tools: ToolSelection
   autosave: boolean
 }
 

@@ -2339,6 +2339,7 @@
         "artifacts": "Istruisci il modello a creare artefatti",
         "title": "Istruzioni aggiuntive"
       },
+      "disableStreaming": "Disabilita lo streaming",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",

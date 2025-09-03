@@ -155,7 +155,6 @@ import { ToolSelection } from '../types/llm'
 import { McpServer, McpServerWithTools, McpTool, McpToolUnique } from '../types/mcp'
 import { DocumentBase } from '../types/rag'
 import ContextMenuPlus from './ContextMenuPlus.vue'
-import { server } from 'typescript'
 
 // Props
 interface Props {
@@ -238,7 +237,7 @@ const customInstructions = computed(() => {
 })
 
 onMounted(async () => {
-  
+
   if (props.enableDocRepo) {
     loadDocRepos()
     window.api.on('docrepo-modified', loadDocRepos)
