@@ -229,6 +229,7 @@ const onRenameChat = async (chat: Chat) => {
     title: t('main.chat.rename'),
     input: 'text',
     inputValue: chat.title,
+    confirmButtonText: t('common.rename'),
     showCancelButton: true,
   });
   if (title) {
@@ -255,6 +256,7 @@ const onMoveChat = async (chatId: string|string[]) => {
       acc[f.id] = f.name
       return acc
     }, {}),
+    confirmButtonText: t('common.move'),
     showCancelButton: true,
   });
   if (folderId) {
@@ -413,6 +415,7 @@ const onRenameFolder = async (folderId: string) => {
       title: t('main.folder.rename'),
       input: 'text',
       inputValue: folder.name,
+      confirmButtonText: t('common.rename'),
       showCancelButton: true,
     });
     if (name) {
@@ -431,6 +434,7 @@ const onDeleteFolder = async (folderId: string) => {
     denyButtonText: t('main.folder.deleteConversations'),
     showCancelButton: true,
     showDenyButton: true,
+    customClass: { 'actions': 'actions-stacked' }
   })
 
   if (result.isDismissed) {
