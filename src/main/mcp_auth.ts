@@ -116,6 +116,7 @@ class OAuthCallbackServer {
       }, 300000) // 5 minute timeout
 
       // Store the callback handlers
+      console.log(`✅ Storing pending callback for flowId: ${flowId}...`)
       this.pendingCallbacks.set(flowId, { resolve, reject, timeout })
     })
   }
@@ -220,7 +221,7 @@ class OAuthCallbackServer {
           setTimeout(() => this.shutdown(), 1000)
         }
       } else {
-        console.log(`❌ Invalid OAuth callback: no code or error parameter`)
+        console.log(`❌ Invalid OAuth callback: no code, state or error parameter or pendingCallback not found: code: ${code}, state: ${state}, error: ${error}`)
         res.writeHead(400)
         res.end('Bad request')
 
