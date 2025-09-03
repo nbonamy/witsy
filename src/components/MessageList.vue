@@ -144,7 +144,7 @@ const onScroll = () => {
 .messages-list {
   display: flex;
   position: relative;
-  overflow: hidden;
+  overflow-y: hidden;
   background-color: var(--message-list-bg-color);
   color: var(--message-list-text-color);
 }

@@ -1,6 +1,5 @@
 <template>
   <div class="docrepo-empty">
-    <div class="close" @click.stop="emit('close')"><XIcon /></div>
     <LightbulbIcon class="icon" />
     <h3>{{ t('docRepo.empty.title') }}</h3>
     <p>{{ t('docRepo.empty.text') }}</p>
@@ -9,10 +8,10 @@
 </template>
 
 <script setup lang="ts">
-import { LightbulbIcon, PlusIcon, XIcon } from 'lucide-vue-next';
+import { LightbulbIcon, PlusIcon } from 'lucide-vue-next';
 import { t } from '../services/i18n';
 
-const emit = defineEmits(['click', 'close'])
+const emit = defineEmits(['click'])
 
 </script>
 

@@ -26,7 +26,7 @@
       </div>
       <div class="toolbar">
         <button name="select" @click="selectMode = !selectMode">{{ selectMode ? t('common.done') : t('common.select') }}</button>
-        <button name="create-folder" :disabled="selectMode" @click="onNewFolder" v-if="displayMode === 'folder'"><FolderPlusIcon /> {{ t('sidebar.newFolder.title') }}</button>
+        <button name="create-folder" @click="onNewFolder" v-if="displayMode === 'folder'"><FolderPlusIcon /> {{ t('sidebar.newFolder.title') }}</button>
         <div class="flex-push"></div>
         <!-- <button name="sort" :disabled="selectMode">{{ t('common.sortBy') }} <ChevronDownIcon /></button> -->
         <button name="search" :disabled="selectMode" @click="onToggleFilter"><SearchIcon /></button>

@@ -7,7 +7,6 @@
       <div class="actions">
         <button class="large secondary" @click="emit('importA2A')"><LogoA2A />{{ t('agent.forge.a2a.title') }}</button>
         <button class="large primary" @click="emit('create')"><PlusIcon />{{ t('agent.forge.create') }}</button>
-        <XIcon class="icon close" v-tooltip="{ text: t('common.close'), position: 'bottom-left' }" @click="emit('close')" />
       </div>
     </header>
 
@@ -68,7 +67,7 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Agent } from '../types/index'
 
-const emit = defineEmits(['close', 'create', 'view', 'edit', 'run', 'delete', 'importA2A']) 
+const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'importA2A']) 
 
 defineProps({
   agents: Array as PropType<Agent[]>,
@@ -87,8 +86,8 @@ const lastRun = (agent: Agent) => {
 
 .agents-list {
 
-  .icon.close {
-    margin-left: 1rem;
+  header {
+    border-bottom: none;
   }
 
   main {

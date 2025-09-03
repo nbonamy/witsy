@@ -2,12 +2,26 @@
   <div class="main-window window">
     <header></header>
     <main>
+      
       <WorkspaceBar v-if="store.isFeatureEnabled('workspaces')" />
-      <MenuBar :mode="modeForMenuBar" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
+      <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
+      
       <Chat ref="chat" :style="{ display: mode === 'chat' ? undefined : 'none' }" :extra="viewParams" />
       <DesignStudio :style="{ display: mode === 'studio' ? undefined : 'none' }" />
       <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
       <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
+    
+      <AgentForge v-if="mode === 'agents'" />
+      <McpServers v-if="mode === 'mcp'" />
+      <DocRepos v-if="mode === 'docrepos'" />
+
+      <Settings :style="{
+        display: mode === 'settings' ? undefined : 'none',
+        pointerEvents: mode == 'settings' ? undefined : 'none'
+      }" :extra="viewParams" ref="settings" />
+
+      <Onboarding v-if="showOnboarding" @close="onOnboardingDone" />
+    
     </main>
     <footer>
       <label>{{ t('common.appName') }} v{{ version }}</label>
@@ -18,14 +32,6 @@
       </div>
     </footer>
   </div>
-  <Settings :style="{
-    display: fullScreenPanel == 'settings' ? undefined : 'none',
-    pointerEvents: fullScreenPanel == 'settings' ? undefined : 'none'
-  }" :extra="viewParams" @closed="onCloseFullScreenPanel" ref="settings" />
-  <Onboarding v-if="showOnboarding" @close="onOnboardingDone" />
-  <AgentForge v-if="fullScreenPanel === 'agents'" @closed="onCloseFullScreenPanel" />
-  <McpServers v-if="fullScreenPanel == 'mcp'" @closed="onCloseFullScreenPanel" />
-  <DocRepos v-if="fullScreenPanel == 'docrepos'" @closed="onCloseFullScreenPanel" />
   <Fullscreen window="main" />
 </template>
 
@@ -58,9 +64,6 @@ const realtime = ref<typeof RealtimeChat>(null)
 const settings = ref<typeof Settings>(null)
 const showOnboarding = ref(false)
 
-type FullScreenPanel = 'none' | 'settings' | 'docrepos' | 'mcp' | 'agents'
-const fullScreenPanel = ref<FullScreenPanel>('none')
-
 // init stuff
 store.load()
 
@@ -73,13 +76,6 @@ const viewParams = ref(null)
 
 const version = computed(() => {
   return window.api.app.getVersion()
-})
-
-const modeForMenuBar = computed(() => {
-  if (fullScreenPanel.value !== 'none') {
-    return fullScreenPanel.value
-  }
-  return mode.value
 })
 
 onMounted(() => {
@@ -146,17 +142,7 @@ const onMode = async (next: MenuBarMode) => {
     mode.value = 'chat'
   } else if (next === 'debug') {
     window.api.debug.showConsole()
-  } else if (next === 'docrepos') {
-    fullScreenPanel.value = 'docrepos'
-  } else if (next === 'mcp') {
-    fullScreenPanel.value = 'mcp'
-  } else if (next === 'settings') {
-    fullScreenPanel.value = 'settings'
-    settings.value.show()
-  } else if (next === 'agents') {
-    fullScreenPanel.value = 'agents'
   } else {
-    fullScreenPanel.value = 'none'
     mode.value = next
   }
 
@@ -196,10 +182,6 @@ const onOnboardingDone = () => {
   showOnboarding.value = false
   store.config.general.onboardingDone = true
   store.saveSettings()
-}
-
-const onCloseFullScreenPanel = () => {
-  fullScreenPanel.value = 'none'
 }
 
 </script>
