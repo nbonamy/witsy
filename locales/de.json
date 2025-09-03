@@ -394,7 +394,10 @@
       }
     },
     "empty": {
-      "greeting": "Hey, wie kann ich Ihnen helfen?"
+      "agentForge": "Erstellen Sie Agenten, um Ihre Aufgaben zu automatisieren und Ihren Arbeitsablauf zu optimieren.",
+      "docRepo": "Indexieren Sie Ihre Dokumente und verankern Sie @:{'common.appName'} in Ihrem Wissen!",
+      "greeting": "Hey, wie kann ich Ihnen helfen?",
+      "mcpServers": "Verbinden Sie MCP-Server, um @:{'common.appName'} die Interaktion mit Ihrer Umgebung zu ermöglichen."
     },
     "export": {
       "error": "Beim Versuch, den Chat zu exportieren, ist ein Fehler aufgetreten."

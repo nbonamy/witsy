@@ -5,35 +5,60 @@
     
     <div class="shortcuts">
 
-      <div class="shortcuts-header">
+      <template  v-if="shortcuts.length">
 
-        {{ t('common.agents')}}
+        <div class="shortcuts-header">
 
-        <div class="icon" v-if="!showAllShortcuts" @click="showAllShortcuts = true">
-          {{ t('common.showMore') }}
-          <ChevronDownIcon />
+          {{ t('common.agents')}}
+
+          <div class="icon" v-if="!showAllShortcuts" @click="showAllShortcuts = true">
+            {{ t('common.showMore') }}
+            <ChevronDownIcon />
+          </div>
+
+          <div class="icon" v-else @click="showAllShortcuts = false">
+            {{ t('common.showLess') }}
+            <ChevronUpIcon />
+          </div>
+
         </div>
 
-        <div class="icon" v-else @click="showAllShortcuts = false">
-          {{ t('common.showLess') }}
-          <ChevronUpIcon />
+        <div class="shortcuts-list">
+          <HomeShortcut
+            v-for="shortcut in shortcuts"
+            :key="shortcut.name"
+            :name="shortcut.name"
+            :description="shortcut.description"
+            @run="shortcut.run"
+          />
         </div>
 
-      </div>
-
-      <div class="shortcuts-empty" v-if="shortcuts.length === 0">
-        <p>No shortcuts available</p>
-      </div>
+      </template>
 
       <div class="shortcuts-list" v-else>
-        <HomeShortcut
-          v-for="shortcut in shortcuts"
-          :key="shortcut.name"
-          :name="shortcut.name"
-          :description="shortcut.description"
-          @run="shortcut.run"
-        />
-      </div>
+          <HomeShortcut
+            key="agentForge"
+            :name="t('agent.forge.title')"
+            :description="t('chat.empty.agentForge')"
+            @run="openAgentForge"
+          />
+          <HomeShortcut
+            key="mcpServer"
+            :icon="PlugIcon"
+            :name="t('mcp.mcpServers')"
+            :description="t('chat.empty.mcpServers')"
+            @run="openMcpServers"
+          />
+          <HomeShortcut
+            key="docRepo"
+            :icon="LightbulbIcon"
+            :name="t('common.docRepo')"
+            :description="t('chat.empty.docRepo')"
+            @run="openDocRepo"
+          />
+
+        </div>
+
     </div>
 
   </div>
@@ -42,12 +67,13 @@
 <script setup lang="ts">
 
 
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-import { t } from '../services/i18n';
-import { store } from '../services/store';
-import { Agent } from '../types/index';
-import HomeShortcut from './HomeShortcut.vue';
+import { ChevronDownIcon, ChevronUpIcon, LightbulbIcon, PlugIcon } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { Agent } from '../types/index'
+import HomeShortcut from './HomeShortcut.vue'
+import useEventBus from '../composables/event_bus'
 
 type Shortcut = {
   name: string
@@ -91,6 +117,17 @@ const shortcuts = computed((): Shortcut[] => {
 
 const showAllShortcuts = ref(false)
 
+const openAgentForge = () => {
+  useEventBus().emitEvent('set-main-window-mode', 'agents')
+}
+
+const openMcpServers = () => {
+  useEventBus().emitEvent('set-main-window-mode', 'mcp')
+}
+
+const openDocRepo = () => {
+  useEventBus().emitEvent('set-main-window-mode', 'docrepos')
+}
 
 </script>
 
@@ -109,10 +146,11 @@ const showAllShortcuts = ref(false)
   justify-content: center;
   gap: 3rem;
 
+  color: var(--text-color);
+
   h1 {
     font-size: 24px;
     font-weight: var(--font-weight-medium);
-    color: var(--color-on-surface);
   }
 
   .shortcuts {

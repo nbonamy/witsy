@@ -35,11 +35,11 @@ function onClick() {
   }
 
   &:hover {
-    background-color: var(--color-surface);
+    background-color: var(--color-surface-low);
   }
 
   &:active {
-    background-color: var(--color-surface-base);
+    background-color: var(--color-surface-high);
   }
 
   &:focus {

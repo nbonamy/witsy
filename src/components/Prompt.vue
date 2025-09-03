@@ -75,7 +75,7 @@
       </ButtonIcon>
 
       <ButtonIcon class="send-stop">
-        <SquareIcon class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
+        <XIcon class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
         <ArrowUpIcon class="icon send" :class="{ disabled: !prompt.length }" @click="onSendPrompt" v-else />
       </ButtonIcon>
 
@@ -122,7 +122,7 @@
     <EngineModelMenu
       v-if="showModelMenu"
       anchor=".model-menu-button"
-      :position="menusPosition"
+      :position="menusPosition === 'above' ? 'above-right' : 'below-right'"
       :chat="chat"
       @close="closeModelMenu"
       @model-selected="handleModelSelected"
@@ -132,7 +132,7 @@
 
 <script setup lang="ts">
 
-import { ArrowUpIcon, BoxIcon, BrainIcon, CommandIcon, FeatherIcon, LightbulbIcon, MicIcon, PlusIcon, SquareIcon, TelescopeIcon } from 'lucide-vue-next'
+import { ArrowUpIcon, BoxIcon, BrainIcon, CommandIcon, FeatherIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
 import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
 import { computed, nextTick, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
 import Waveform from '../components/Waveform.vue'
@@ -1434,9 +1434,11 @@ defineExpose({
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          color: var(--prompt-icon-color);
         }
 
         svg {
+          color: var(--prompt-icon-color);
           width: var(--icon-md);
           height: var(--icon-md);
         }
@@ -1450,10 +1452,11 @@ defineExpose({
     }
 
     .send-stop {
+      
       width: 2rem;
       height: 2rem;
       border-radius: 0.375rem;
-      background-color: var(--color-light-on-surface, #27272A);
+      background-color: var(--prompt-icon-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1461,11 +1464,11 @@ defineExpose({
       svg {
         width: var(--icon-md);
         height: var(--icon-md);
-        color: white;
+        color: var(--color-surface);
       }
 
       &:has(.disabled) {
-        background-color: rgb(229, 229, 229);
+        background-color: var(--color-surface-high);
       }
 
 

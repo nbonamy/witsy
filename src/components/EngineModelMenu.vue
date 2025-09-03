@@ -9,7 +9,7 @@
     <!-- Main menu template -->
     <template #default>
       <div v-for="engine in availableEngines" :key="engine" class="engine-item" :data-submenu-slot="`engine-${engine}`">
-        <EngineLogo :engine="engine" :grayscale="false" :custom-label="false" class="engine-logo" />
+        <EngineLogo :engine="engine" :grayscale="isDarkTheme" :custom-label="false" class="engine-logo" />
         <span class="engine-name">{{ getEngineName(engine) }}</span>
       </div>
     </template>
@@ -38,18 +38,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import ContextMenuPlus from './ContextMenuPlus.vue'
-import EngineLogo from './EngineLogo.vue'
-import { store } from '../services/store'
-import LlmFactory from '../llms/llm'
 import type { ChatModel } from 'multi-llm-ts'
+import { computed } from 'vue'
+import useAppearanceTheme from '../composables/appearance_theme'
 import { engineNames } from '../llms/base'
+import LlmFactory from '../llms/llm'
+import { store } from '../services/store'
+import ContextMenuPlus, { MenuPosition } from './ContextMenuPlus.vue'
+import EngineLogo from './EngineLogo.vue'
 
 // Props
 interface Props {
   anchor: string
-  position?: 'below' | 'above' | 'right' | 'left' | 'above-right' | 'above-left' | 'below-right' | 'below-left'
+  position?: MenuPosition
   teleport?: boolean
   chat?: any
 }
@@ -70,7 +71,10 @@ const emit = defineEmits<Emits>()
 // Reactive data
 const llmManager = LlmFactory.manager(store.config)
 
-// Computed properties
+const isDarkTheme = computed(() => {
+  return useAppearanceTheme().isDark
+})
+
 const availableEngines = computed(() => {
   // If no workspace is defined, show all engines
   if (!store.workspace?.models) {
