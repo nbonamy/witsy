@@ -35,13 +35,13 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, watch } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import ModalDialog from '../components/ModalDialog.vue'
+import { ref } from 'vue'
 import EngineSelect from '../components/EngineSelect.vue'
+import ModalDialog from '../components/ModalDialog.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
 
 const llmManager = LlmFactory.manager(store.config)
 
