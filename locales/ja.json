@@ -45,7 +45,6 @@
     "disabled": "無効",
     "docRepo": "ナレッジベース",
     "documents": "ドキュメント",
-    "done": "完了！",
     "edit": "編集",
     "embeddings": "埋め込み",
     "enabled": "有効",
@@ -116,8 +115,6 @@
     "recommended": "おすすめ",
     "record": "記録",
     "redo": "やり直し",
-    "refresh": "更新",
-    "refreshing": "更新中…",
     "rename": "名前変更",
     "replace": "置換",
     "required": {

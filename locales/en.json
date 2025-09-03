@@ -45,7 +45,6 @@
     "disabled": "Disabled",
     "docRepo": "Knowledge Base",
     "documents": "Documents",
-    "done": "Done!",
     "edit": "Edit",
     "embeddings": "Embeddings",
     "enabled": "Enabled",
@@ -116,8 +115,6 @@
     "recommended": "Recommended",
     "record": "Record",
     "redo": "Redo",
-    "refresh": "Refresh",
-    "refreshing": "Refreshing…",
     "rename": "Rename",
     "replace": "Replace",
     "required": {

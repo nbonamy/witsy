@@ -40,9 +40,7 @@
             {{ voice.label }}
           </option>
         </select>
-        <button class="control" @click.prevent="onRefreshVoices" v-if="canRefreshVoices">
-          {{ t('common.refresh') }}
-        </button>
+        <RefreshButton :onRefresh="onRefreshVoices" />
         <button class="control" @click.prevent="onPlay">
           <BIconPlayFill v-if="audioState.state === 'idle'"/>
           <BIconStopFill v-else />
@@ -68,6 +66,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import InputObfuscated from '../components/InputObfuscated.vue'
+import RefreshButton from '../components/RefreshButton.vue'
 import { getTTSModels } from '../voice/tts'
 import TTSOpenAI from '../voice/tts-openai'
 import TTSGroq from '../voice/tts-groq'
@@ -162,15 +161,17 @@ const onPlay = () => {
   }
 }
 
-const onRefreshVoices = async () => {
+const onRefreshVoices = async (): Promise<boolean> => {
   if (engine.value === 'elevenlabs') {
     const engine = new TTSElevenLabs(store.config)
     const voices = await engine.getVoices(model.value)
     if (voices?.length) {
       store.config.engines.elevenlabs.voices = voices
       store.saveSettings()
+      return true
     }
   }
+  return false
 }
 
 const load = () => {
@@ -197,7 +198,6 @@ const save = () => {
 defineExpose({ load })
 
 </script>
-
 
 <style scoped>
 .control {

@@ -45,7 +45,6 @@
     "disabled": "已禁用",
     "docRepo": "知识库",
     "documents": "文档",
-    "done": "完成！",
     "edit": "编辑",
     "embeddings": "嵌入",
     "enabled": "已启用",
@@ -116,8 +115,6 @@
     "recommended": "推荐",
     "record": "记录",
     "redo": "重做",
-    "refresh": "刷新",
-    "refreshing": "正在刷新…",
     "rename": "重命名",
     "replace": "替换",
     "required": {

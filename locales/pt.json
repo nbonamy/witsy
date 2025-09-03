@@ -45,7 +45,6 @@
     "disabled": "Desativado",
     "docRepo": "Base de Conhecimento",
     "documents": "Documentos",
-    "done": "Concluído!",
     "edit": "Editar",
     "embeddings": "Embeddings",
     "enabled": "Ativado",
@@ -116,8 +115,6 @@
     "recommended": "Recomendado",
     "record": "Gravar",
     "redo": "Refazer",
-    "refresh": "Atualizar",
-    "refreshing": "Atualizando…",
     "rename": "Renomear",
     "replace": "Substituir",
     "required": {

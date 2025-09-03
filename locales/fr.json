@@ -45,7 +45,6 @@
     "disabled": "Désactivé",
     "docRepo": "Base de connaissances",
     "documents": "Documents",
-    "done": "Terminé !",
     "edit": "Modifier",
     "embeddings": "Vecteurs",
     "enabled": "Activé",
@@ -97,8 +96,6 @@
     "recommended": "Recommandé",
     "record": "Enregistrer",
     "redo": "Rétablir",
-    "refresh": "Rafraîchir",
-    "refreshing": "Rafraîchissement…",
     "rename": "Renommer",
     "replace": "Remplacer",
     "required": {
