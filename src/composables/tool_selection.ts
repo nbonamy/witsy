@@ -76,7 +76,7 @@ export const validateToolSelection = async (toolSelection: ToolSelection): Promi
       toolSelection = null
     }
   }
-  console.log('Validated tool selection:', toolSelection)
+  // console.log('Validated tool selection:', toolSelection)
   return toolSelection
 }
 
