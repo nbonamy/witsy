@@ -81,7 +81,7 @@ export default class AgentGenerator {
         description: z.string().min(1).max(500).describe("Brief description of what the agent does"),
         type: z.enum(["runnable"]).describe("Agent type - should be 'runnable'"),
         instructions: z.string().min(1).max(2000).describe("Detailed instructions for the agent's behavior and personality"),
-        schedule: z.string().optional().describe("Optional crontab-style schedule (e.g., '0 9 * * 1' for Mondays at 9AM). Only include if user requests scheduling."),
+        schedule: z.string().describe("Optional crontab-style schedule (e.g., '0 9 * * 1' for Mondays at 9AM). Only include if user requests scheduling."),
         steps: z.array(z.object({
           description: z.string().min(1).max(200).describe("What this step does"),
           prompt: z.string().min(1).max(1000).describe("The prompt template for this step with variables like {{output.1}}"),
