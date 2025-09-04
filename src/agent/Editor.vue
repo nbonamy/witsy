@@ -54,7 +54,6 @@
         <EditorGenerator 
           :agent="agent" 
           :visible="isStepVisible(kStepGenerator)" 
-          :prev-button-text="t('common.cancel')" 
           :error="informationError" 
           @prev="onPrevStep" 
           @next="validateGenerator" 

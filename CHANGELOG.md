@@ -2,16 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.X.Y] - WIP
+## [2.15.Y] - WIP
 
 ### Added
 - Design Studio drawing
+- Agent Generator
 
 ### Changed
 - N/A
 
 ### Fixed
-- ncorrect token usage count for Gemini 2.5 Pro (https://github.com/nbonamy/witsy/issues/391)
+- Incorrect token usage count for Gemini 2.5 Pro (https://github.com/nbonamy/witsy/issues/391)
 
 ### Removed
 - N/A

@@ -139,11 +139,6 @@ export default class {
         click: () => window.openDesignStudioWindow(),
       },
       {
-        label: t('tray.menu.agentForge'),
-        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.forge),
-        click: () => window.openAgentForgeWindow(),
-      },
-      {
         type: 'separator'
       },
       {
