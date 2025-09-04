@@ -377,12 +377,12 @@ test('Tools', async () => {
   const menu = toolsWrapper.findComponent({ name: 'PromptMenu' })
 
   // Simulate saving tools from PromptMenu
-  await menu.vm.$emit('pluginToggle', 'plugin1')
+  await menu.vm.$emit('pluginToggle', 'search')
   await menu.vm.$emit('serverToolToggle', {}, { uuid: 'tool1___server1' })
   await menu.vm.$emit('close')
 
   // Agent step should have updated tools
-  expect(chat!.tools).toEqual(['plugin1', 'tool1___server1'])
+  expect(chat!.tools).toEqual(['search_internet', 'tool1___server1'])
 })
 
 test('Deep Research', async () => {

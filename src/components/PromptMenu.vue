@@ -105,9 +105,9 @@
 
     <template #pluginsSubMenu="{ withFilter }">
       {{ withFilter(true) }}
-      <div v-for="plugin in allPluginsTools" :key="plugin" @click="handlePluginClick(plugin)">
+      <div v-for="plugin in enabledPlugins(store.config)" :key="plugin" @click="handlePluginClick(plugin)">
         <input type="checkbox" :checked="pluginStatus(plugin) === 'all'"  />
-        {{ plugin }}
+        {{ t(`settings.plugins.${plugin}.title`) }}
       </div>
     </template>
 
@@ -145,9 +145,10 @@
 </template>
 
 <script setup lang="ts">
-import { BrainIcon, FeatherIcon, HammerIcon, LightbulbIcon, PaperclipIcon, PlusIcon, SettingsIcon, TelescopeIcon } from 'lucide-vue-next'
+import { BrainIcon, FeatherIcon, HammerIcon, LightbulbIcon, PaperclipIcon, SettingsIcon, TelescopeIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import * as ts from '../composables/tool_selection'
+import { enabledPlugins } from '../plugins/plugins'
 import { expertI18n, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Expert } from '../types/index'
