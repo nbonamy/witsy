@@ -6,7 +6,7 @@
     </div> -->
     <div class="panel-body">
       <slot name="content"></slot>
-      <div class="footer form-field">
+      <div class="footer form-field" v-if="showFooter">
         <slot name="footer">
           <div class="error" v-if="error">{{ error }}</div>
           <!-- <button @click="emit('prev')">{{ prevButtonText }}</button> -->
@@ -32,6 +32,10 @@ defineProps({
   error: {
     type: String,
     default: ''
+  },
+  showFooter: {
+    type: Boolean,
+    default: true
   },
   prevButtonText: {
     type: String,

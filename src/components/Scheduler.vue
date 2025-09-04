@@ -135,10 +135,19 @@ const update = () => {
     return
   }
 
-  if (days != '*') {
+  if (days != '*' && days != '*/1') {
     interval.value = 'd'
     on.value = ''
     every.value = days.split('/')[1] ?? '1'
+    at.value = time
+    return
+  }
+
+  // Handle daily schedule (days = '*' or days = '*/1') but only if hours and minutes are NOT patterns
+  if ((days == '*' || days == '*/1') && hours != '*' && minutes != '*' && !hours.includes('/') && !minutes.includes('/')) {
+    interval.value = 'd'
+    on.value = ''
+    every.value = '1'
     at.value = time
     return
   }

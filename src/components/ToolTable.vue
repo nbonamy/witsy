@@ -25,16 +25,7 @@ import { ToolSelection } from '../types/llm'
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import { availablePlugins, PluginInstance } from '../plugins/plugins'
-import { Plugin } from 'multi-llm-ts'
-import McpPlugin from '../plugins/mcp'
-
-type Tool = {
-  id: string
-  name: string
-  description: string
-  plugin: Plugin
-}
+import { useTools, Tool } from '../composables/useTools'
 
 const tools = ref<Tool[]>([])
 
@@ -42,44 +33,15 @@ const selection = defineModel<ToolSelection>()
 
 const emit = defineEmits(['toggle'])
 
+const { getAllAvailableTools } = useTools()
+
 onMounted(async () => {
   await initTools()
 })
 
 const initTools = async () => {
-  
-  tools.value = []
-  for (const pluginName in availablePlugins) {
-    
-    const pluginClass = availablePlugins[pluginName]
-    const plugin: PluginInstance = new pluginClass(store.config.plugins[pluginName])
-    if (!plugin.isEnabled()) continue
-    if ('getTools' in plugin) {
-
-      const pluginTools = await plugin.getTools()
-      for (const pluginTool of pluginTools) {
-
-        const id = pluginTool.function.name
-        const name = plugin instanceof McpPlugin
-          ? window.api.mcp.originalToolName(id)
-          : id
-
-        tools.value.push({
-          id, name,
-          description: pluginTool.function.description,
-          plugin
-        })
-      }
-
-    } else {
-      tools.value.push({
-        id: plugin.getName(),
-        name: plugin.getName(),
-        description: plugin.getDescription(),
-        plugin
-      })
-    }
-  }
+  const catalog = await getAllAvailableTools(store.config)
+  tools.value = catalog.allTools
 }
 
 const isToolActive = (tool: Tool) => {

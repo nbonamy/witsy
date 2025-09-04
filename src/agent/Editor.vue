@@ -6,7 +6,10 @@
       <div class="spacer"></div>
       <button class="large tertiary" name="cancel" @click="emit('cancel')">{{ t('common.cancel') }}</button>
       <button class="large secondary" name="prev" @click="onPrevStep" v-if="currentStep > 0">{{ t('common.back') }}</button>
-      <button class="large default" name="next" @click="onNextStep">{{ isStepVisible(kStepInvocation) ? t('common.save') : t('common.next') }}</button>
+      
+      <button class="large default" name="next" @click="onNextStep" v-if="!isStepVisible(kStepGenerator)">
+        {{ isStepVisible(kStepInvocation) ? t('common.save') : t('common.next') }}
+      </button>
     </header>
 
     <main>
@@ -42,6 +45,16 @@
         </div>
         
         <div class="wizard-body form form-large form-vertical">
+
+          <EditorGenerator 
+            :agent="agent" 
+            :visible="isStepVisible(kStepGenerator)" 
+            :error="informationError" 
+            @prev="onPrevStep" 
+            @next="validateGenerator"
+            @error="informationError = $event"
+            ref="stepGenerator"
+          />
 
           <EditorGeneral ref="stepGeneral"
             :agent="agent" 
@@ -106,6 +119,7 @@ import Agent from '../models/agent'
 import { t } from '../services/i18n'
 import { extractPromptInputs } from '../services/prompt'
 import { store } from '../services/store'
+import EditorGenerator from './Editor.Generator.vue'
 import EditorGeneral from './Editor.General.vue'
 import EditorInvocation from './Editor.Invocation.vue'
 import EditorModel from './Editor.Model.vue'
@@ -131,12 +145,14 @@ const completedStep = ref(-1)
 const informationError = ref('')
 const expandedStep = ref<number>(0)
 
+const stepGenerator = ref<typeof EditorGenerator>(null)
 const stepGeneral = ref<typeof EditorGeneral>(null)
 const stepModel = ref<typeof EditorModel>(null)
 const stepSettings = ref<typeof EditorSettings>(null)
 const stepWorkflow = ref<typeof EditorWorkflow>(null)
 const stepInvocation = ref<typeof EditorInvocation>(null)
 
+const kStepGenerator = 'generator'
 const kStepGeneral = 'general'
 const kStepModel = 'model'
 const kStepSettings = 'settings'
@@ -156,7 +172,19 @@ const steps = (): string[] => {
     ]
   }
 
-  // default
+  // default - only include generator for create mode
+  if (props.mode === 'create') {
+    return [
+      kStepGenerator,
+      kStepGeneral,
+      kStepModel,
+      kStepSettings,
+      kStepWorkflow,
+      kStepInvocation
+    ]
+  }
+
+  // edit mode
   return [
     kStepGeneral,
     kStepModel,
@@ -202,7 +230,9 @@ const isStepVisible = (step: string) => {
 }
 
 const onNextStep = () => {
-  if (currentStep.value == stepIndex(kStepGeneral)) {
+  if (currentStep.value == stepIndex(kStepGenerator)) {
+    validateGenerator()
+  } else if (currentStep.value == stepIndex(kStepGeneral)) {
     validateInformation()
   } else if (currentStep.value == stepIndex(kStepModel)) {
     validateModel()
@@ -240,6 +270,15 @@ const goToStepAfter = (step: string, stepSize: number = 1) => {
   const currentIndex = stepIndex(step)
   currentStep.value = currentIndex + stepSize
   completedStep.value = Math.max(completedStep.value, currentIndex)
+}
+
+const validateGenerator = () => {
+  const error = stepGenerator.value?.validate()
+  if (error) {
+    informationError.value = error
+    return
+  }
+  goToStepAfter(kStepGenerator)
 }
 
 const validateInformation = () => {
@@ -288,9 +327,12 @@ const validateInvocation = () => {
 }
 
 const resetWizard = () => {
-  currentStep.value = stepIndex(kStepGeneral)
+  // Start from the first step in the steps array
+  const allSteps = steps()
+  currentStep.value = allSteps.length > 0 ? stepIndex(allSteps[0]) : 0
   completedStep.value = props.mode === 'edit' ? steps().length - 1 : -1
   expandedStep.value = (props.mode === 'edit' && agent.value.steps.length > 1) ? -1 : 0
+  stepGenerator.value?.reset()
   informationError.value = ''
 }
 
