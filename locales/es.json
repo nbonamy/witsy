@@ -190,7 +190,7 @@
         "review": "Revisar mi agente",
         "skip": "Omitir y crear manualmente",
         "success": {
-          "subtitle": "Revisa la configuración de tu agente a continuación, luego haz clic en Siguiente para continuar con el asistente.",
+          "subtitle": "Revise la configuración de su agente a continuación, luego continúe con el asistente.",
           "title": "¡Agente generado con éxito!"
         },
         "title": "Generador de Agentes",

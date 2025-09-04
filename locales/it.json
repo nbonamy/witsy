@@ -190,7 +190,7 @@
         "review": "Rivedi il mio agente",
         "skip": "Salta e crea manualmente",
         "success": {
-          "subtitle": "Rivedi la configurazione del tuo agente qui sotto, poi clicca Avanti per continuare con il wizard.",
+          "subtitle": "Rivedi la configurazione del tuo agente qui sotto, quindi continua con la procedura guidata.",
           "title": "Agente generato con successo!"
         },
         "title": "Generatore di Agente",

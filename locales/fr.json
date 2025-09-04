@@ -190,7 +190,7 @@
         "review": "Revoir mon agent",
         "skip": "Passer et créer manuellement",
         "success": {
-          "subtitle": "Passez en revue la configuration de votre agent ci-dessous, puis cliquez sur Suivant pour continuer avec l'assistant.",
+          "subtitle": "Examinez votre configuration d'agent ci-dessous, puis continuez avec l'assistant.",
           "title": "Agent généré avec succès !"
         },
         "title": "Générateur d'Agent",

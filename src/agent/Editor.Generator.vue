@@ -5,6 +5,7 @@
       <div class="help">{{ t('agent.create.generator.description') }}</div>
     </template>
     <template #content>
+      
       <!-- Input fields (hidden during generation and after generation) -->
       <div v-if="!generating && !generatedAgent">
         <div class="form-field">
@@ -36,18 +37,17 @@
       </div>
 
       <!-- Generation in Progress -->
-      <div v-if="generating" class="form-field generating-status">
-        <div class="generating-indicator">
-          <div class="spinner"></div>
-          <div class="generating-text">
-            <strong>{{ t('agent.create.generator.generating.title') }}</strong>
-            <p>{{ t('agent.create.generator.generating.subtitle') }}</p>
-          </div>
+      <div v-if="generating" class="generating-status">
+        <div class="loader"><Loader /><Loader /><Loader /></div>
+        <div class="generating-text">
+          <strong>{{ t('agent.create.generator.generating.title') }}</strong>
+          <p>{{ t('agent.create.generator.generating.subtitle') }}</p>
         </div>
       </div>
 
-      <!-- Generated Preview (replace input fields when generated) -->
-      <div v-if="generatedAgent && !generating">
+      <!-- Generated Preview -->
+      <div class="preview" v-if="generatedAgent && !generating">
+        
         <div class="preview-success">
           <div class="success-icon">✨</div>
           <h3>{{ t('agent.create.generator.success.title') }}</h3>
@@ -57,21 +57,24 @@
         <div class="preview-card">
           <div class="preview-header">
             <h4>{{ generatedAgent.name }}</h4>
-            <p>{{ generatedAgent.description }}</p>
+            <p>{{ generatedAgent.instructions }}</p>
           </div>
           <div class="preview-body">
             <div class="preview-section">
               <strong>{{ t('agent.create.generator.preview.steps') }} ({{ generatedAgent.steps.length }}):</strong>
               <ul>
                 <li v-for="(step, index) in generatedAgent.steps" :key="index">
-                  <strong>{{ step.description || `Step ${index + 1}` }}</strong>
+                  {{ step.description || `Step ${index + 1}` }}
                 </li>
               </ul>
             </div>
           </div>
         </div>
+      
       </div>
+    
     </template>
+    
     <template #buttons>
       <button 
         v-if="!generatedAgent && !generating"
@@ -101,6 +104,7 @@ import WizardStep from '../components/WizardStep.vue'
 import LlmFactory from '../llms/llm'
 import Agent from '../models/agent'
 import AgentGenerator from '../services/agent_generator'
+import Loader from '../components/Loader.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 
@@ -138,11 +142,16 @@ const nextButtonText = computed(() => {
   else return t('agent.create.generator.generate')
 })
 
-onMounted(() => {
+const reset = () => {
   description.value = ''
   selectedEngine.value = ''
   selectedModel.value = ''
+  generating.value = false
   generatedAgent.value = null
+}
+
+onMounted(() => {
+  reset()
 })
 
 const onEngineChange = () => {
@@ -212,38 +221,35 @@ const onNext = () => {
     generateAgent()
   }
 }
+
+defineExpose({
+  reset
+})
+
 </script>
 
 <style scoped>
-.generating-status {
-  margin-top: 2rem;
-  text-align: center;
-}
 
-.generating-indicator {
+.generating-status {
+  margin: 2rem 8rem;
+  text-align: center;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
   padding: 2rem;
 }
 
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--faded-text-color);
-  border-top: 2px solid var(--text-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .generating-text {
-  text-align: left;
+  font-size: 12pt;
 }
 
 .generating-text strong {
@@ -253,7 +259,10 @@ const onNext = () => {
 .generating-text p {
   margin: 0.5rem 0 0 0;
   color: var(--faded-text-color);
-  font-size: 0.9em;
+}
+
+.preview {
+  margin: 2rem 1rem;
 }
 
 .preview-success {

@@ -209,7 +209,7 @@
         "review": "Review my agent",
         "skip": "Skip & Create Manually",
         "success": {
-          "subtitle": "Review your agent configuration below, then click Next to continue with the wizard.",
+          "subtitle": "Review your agent configuration below, then continue with the wizard.",
           "title": "Agent Generated Successfully!"
         },
         "title": "Agent Generator",

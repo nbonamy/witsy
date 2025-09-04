@@ -173,7 +173,7 @@
   "agent.create.generator.preview.steps": "Workflow Steps",
   "agent.create.generator.review": "Review my agent",
   "agent.create.generator.skip": "Skip & Create Manually",
-  "agent.create.generator.success.subtitle": "Review your agent configuration below, then click Next to continue with the wizard.",
+  "agent.create.generator.success.subtitle": "Review your agent configuration below, then continue with the wizard.",
   "agent.create.generator.success.title": "Agent Generated Successfully!",
   "agent.create.generator.title": "Agent Generator",
   "agent.create.generator.tryAgain": "Try Again",

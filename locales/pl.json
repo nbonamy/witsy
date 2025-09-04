@@ -209,7 +209,7 @@
         "review": "Przejrzyj mojego agenta",
         "skip": "Pomiń i utwórz ręcznie",
         "success": {
-          "subtitle": "Przejrzyj konfigurację swojego agenta poniżej, a następnie kliknij Dalej, aby kontynuować kreatora.",
+          "subtitle": "Przejrzyj poniżej konfigurację agenta, a następnie kontynuuj kreatora.",
           "title": "Agent został pomyślnie wygenerowany!"
         },
         "title": "Generator Agenta",
