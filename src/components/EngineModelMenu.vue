@@ -8,6 +8,16 @@
   >
     <!-- Main menu template -->
     <template #default>
+      <!-- Default label item if provided -->
+      <template v-if="props.defaultLabel">
+        <div class="engine-item" @click="handleDefaultClick">
+          <span class="engine-name">{{ props.defaultLabel }}</span>
+        </div>
+        <div class="separator">
+          <hr />
+        </div>
+      </template>
+      
       <template v-for="engine in availableEngines" :key="engine">
 
         <template v-if="llmManager.isFavoriteEngine(engine)">
@@ -62,9 +72,10 @@ interface Props {
   anchor: string
   position?: MenuPosition
   teleport?: boolean
+  defaultLabel?: string
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   position: 'below',
   teleport: true,
 })
@@ -72,7 +83,7 @@ withDefaults(defineProps<Props>(), {
 // Emits
 interface Emits {
   close: []
-  modelSelected: [engine: string, model: string]
+  modelSelected: [engine: string | null, model: string | null]
 }
 
 const emit = defineEmits<Emits>()
@@ -150,6 +161,11 @@ const handleFavoriteClick = (favorite: string) => {
   if (fav) {
     handleModelClick(fav.engine, fav.model)
   }
+}
+
+const handleDefaultClick = () => {
+  emit('modelSelected', null, null)
+  emit('close')
 }
 
 const handleModelClick = (engine: string, model: string) => {

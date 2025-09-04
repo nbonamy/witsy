@@ -22,8 +22,13 @@ vi.mock('../../src/llms/llm', () => {
         igniteEngine: vi.fn(() => ({
           complete: vi.fn()
         })),
-        getChatModel: vi.fn(() => ({ id: 'test-model' })),
+        getChatModel: vi.fn(() => ({ id: 'test-model', name: 'Test Model' })),
+        getChatModels: vi.fn(() => [{ id: 'test-model', name: 'Test Model' }]),
         getDefaultChatModel: vi.fn(() => 'test-model'),
+        getEngineName: vi.fn((engine) => engine),
+        isEngineReady: vi.fn(() => true),
+        hasChatModels: vi.fn(() => true),
+        isFavoriteEngine: vi.fn(() => false),
         checkModelListsVersion: vi.fn(),
         getCustomEngines: vi.fn(() => []),
         getStandardEngines: vi.fn(() => ['openai', 'anthropic']),
@@ -40,6 +45,7 @@ vi.mock('../../src/services/agent_generator')
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
+  store.config = {} // Ensure store.config exists for EngineModelSelect
 })
 
 beforeEach(() => {
@@ -90,9 +96,9 @@ test('Shows generator step form fields', async () => {
   expect(descriptionField.exists()).toBe(true)
   expect(descriptionField.attributes('required')).toBeDefined()
 
-  // Should show engine selector
-  const engineSelect = wrapper.findComponent({ name: 'EngineSelect' })
-  expect(engineSelect.exists()).toBe(true)
+  // Should show engine model selector
+  const engineModelSelect = wrapper.findComponent({ name: 'EngineModelSelect' })
+  expect(engineModelSelect.exists()).toBe(true)
 
   // Should show skip and generate buttons
   const skipButton = wrapper.find('button[name="skip"]')
@@ -382,7 +388,7 @@ test('Proceeds to next step after successful generation and review', async () =>
   expect(activeStep!.text()).toContain('agent.create.information.title')
 })
 
-test('Shows both engine and model selectors', async () => {
+test('Shows engine model selector component', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
       mode: 'create',
@@ -391,9 +397,9 @@ test('Shows both engine and model selectors', async () => {
   })
   await nextTick()
 
-  // Should show EngineSelect component
-  const engineSelect = wrapper.findComponent({ name: 'EngineSelect' })
-  expect(engineSelect.exists()).toBe(true)
+  // Should show EngineModelSelect component
+  const engineModelSelect = wrapper.findComponent({ name: 'EngineModelSelect' })
+  expect(engineModelSelect.exists()).toBe(true)
 
   // Should show the model selection help text
   const modelLabel = wrapper.find('label[for="model"]')
