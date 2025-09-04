@@ -14,6 +14,10 @@
 
         <div class="md-master-list">
 
+          <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGenerator), disabled: !isStepCompleted(kStepGenerator) }" @click="onStepClick(kStepGenerator)" v-if="hasStep(kStepGenerator)">
+            <BIconMagic class="logo" /> {{ t('agent.create.generator.title') }}
+          </div>
+
           <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGeneral), disabled: !isStepCompleted(kStepGeneral) }" @click="onStepClick(kStepGeneral)" v-if="hasStep(kStepGeneral)">
             <BIconCardHeading class="logo" /> {{ t('agent.create.information.title') }}
           </div>
@@ -47,10 +51,19 @@
       
       <div class="md-detail form form-large form-vertical">
 
+        <EditorGenerator 
+          :agent="agent" 
+          :visible="isStepVisible(kStepGenerator)" 
+          :prev-button-text="t('common.cancel')" 
+          :error="informationError" 
+          @prev="onPrevStep" 
+          @next="validateGenerator" 
+        />
+
         <EditorGeneral 
           :agent="agent" 
           :visible="isStepVisible(kStepGeneral)" 
-          :prev-button-text="t('common.cancel')" 
+          :prev-button-text="stepIndex(kStepGeneral) === 0 ? t('common.cancel') : t('common.back')" 
           :error="informationError" 
           @prev="onPrevStep" 
           @next="validateInformation" 
@@ -111,6 +124,7 @@ import { ref, onMounted, computed, watch, PropType } from 'vue'
 import { t } from '../services/i18n'
 import { extractPromptInputs } from '../services/prompt'
 import Dialog from '../composables/dialog'
+import EditorGenerator from './Editor.Generator.vue'
 import EditorGeneral from './Editor.General.vue'
 import EditorGoal from './Editor.Goal.vue'
 import EditorModel from './Editor.Model.vue'
@@ -138,6 +152,7 @@ const completedStep = ref(-1)
 const informationError = ref('')
 const expandedStep = ref<number>(0)
 
+const kStepGenerator = 'generator'
 const kStepGeneral = 'general'
 const kStepGoal = 'goal'
 const kStepModel = 'model'
@@ -158,7 +173,20 @@ const steps = (): string[] => {
     ]
   }
 
-  // default
+  // default - only include generator for create mode
+  if (props.mode === 'create') {
+    return [
+      kStepGenerator,
+      kStepGeneral,
+      kStepGoal,
+      kStepModel,
+      kStepSettings,
+      kStepWorkflow,
+      kStepInvocation
+    ]
+  }
+
+  // edit mode
   return [
     kStepGeneral,
     kStepGoal,
@@ -229,6 +257,14 @@ const goToStepAfter = (step: string, stepSize: number = 1) => {
   completedStep.value = Math.max(completedStep.value, currentIndex)
 }
 
+const validateGenerator = (event?: { error: string }) => {
+  if (event?.error) {
+    informationError.value = event.error
+    return
+  }
+  goToStepAfter(kStepGenerator)
+}
+
 const validateInformation = (event?: { error: string }) => {
   if (event?.error) {
     informationError.value = event.error
@@ -278,7 +314,9 @@ const validateInvocation = (event?: { error: string }) => {
 }
 
 const resetWizard = () => {
-  currentStep.value = stepIndex(kStepGeneral)
+  // Start from the first step in the steps array
+  const allSteps = steps()
+  currentStep.value = allSteps.length > 0 ? stepIndex(allSteps[0]) : 0
   completedStep.value = props.mode === 'edit' ? steps().length - 1 : -1
   expandedStep.value = (props.mode === 'edit' && agent.value.steps.length > 1) ? -1 : 0
   informationError.value = ''
