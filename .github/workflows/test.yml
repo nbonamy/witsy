@@ -18,7 +18,7 @@ jobs:
         id: test
         run: |
           set -o pipefail
-          npm run test-ci 2>&1 | tee test-output.txt
+          npm run test:ci 2>&1 | tee test-output.txt
           echo "SUMMARY=$(tail -5 test-output.txt | head -1)" > $GITHUB_OUTPUT
       - name: Capture coverage
         id: coverage
