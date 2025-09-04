@@ -53,19 +53,21 @@ export default class AgentGenerator {
       const chatModel = llmManager.getChatModel(engine, model)
       
       // Create structured output schema
-      
-      const response = await llm.complete(chatModel, messages, {
+      const stream = llm.generate(chatModel, messages, {
         tools: false,
-        reasoningEffort: 'medium',
-        thinkingBudget: 5000,
-        reasoning: false,
         structuredOutput: structuredOutput
       })
 
-      // Parse and validate the response
-      const contentToProcess = typeof response.content === 'string' ? response.content.trim() : response.content
-      const agent = this.parseAndValidateResponse(contentToProcess)
-      return agent
+      // build response
+      let response: string = ''
+      for await (const msg of stream) {
+        if (msg.type === 'content') {
+          response += msg.text
+        }
+      }
+
+      // parse and validate the response
+      return this.parseAndValidateResponse(response)
 
     } catch (error) {
       console.error('Error generating agent from description:', error)
