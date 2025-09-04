@@ -17,10 +17,12 @@
   
   <div class="form-field" v-else>
     <label>{{ t('embedding.model') }}</label>
-    <select v-model="model" @change="onChangeModel" required :disabled="disabled">
-      <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
-    </select>
-    <RefreshButton :on-refresh="getModels" v-if="canRefresh" ref="refresh"/>
+    <div class="form-subgroup">
+      <select v-model="model" @change="onChangeModel" required :disabled="disabled">
+        <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
+      </select>
+      <RefreshButton :on-refresh="getModels" v-if="canRefresh" ref="refresh"/>
+    </div>
   </div>
   
   <div class="form-field" style="margin-top: -8px" v-if="engine !== 'ollama'">
@@ -140,3 +142,10 @@ const getModels = async (): Promise<boolean> => {
 
 </script>
 
+<style scoped>
+
+.form.form-vertical .form-field .form-subgroup {
+  display: flex;
+}
+
+</style>
