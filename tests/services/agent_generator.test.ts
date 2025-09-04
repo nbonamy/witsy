@@ -97,10 +97,10 @@ const createValidAgentWithScheduleResponse = () => ({
 test('Successfully generates agent from description', async () => {
   const validResponse = createValidAgentResponse()
   
-  // Mock the LLM to return valid agent JSON
+  // Mock the LLM to return valid agent JSON via streaming
   const mockLlm = {
-    complete: vi.fn().mockResolvedValue({
-      content: JSON.stringify(validResponse)
+    generate: vi.fn().mockImplementation(async function* () {
+      yield { type: 'content', text: JSON.stringify(validResponse) }
     })
   }
   
@@ -125,7 +125,7 @@ test('Successfully generates agent from description', async () => {
   expect(result!.steps[1].tools).toEqual(['writeFile'])
 
   // Verify LLM was called with proper arguments
-  expect(mockLlm.complete).toHaveBeenCalledWith(
+  expect(mockLlm.generate).toHaveBeenCalledWith(
     { id: 'test-model' },
     expect.arrayContaining([
       expect.objectContaining({ role: 'system' }),
@@ -133,9 +133,6 @@ test('Successfully generates agent from description', async () => {
     ]),
     expect.objectContaining({
       tools: false,
-      reasoningEffort: 'medium',
-      thinkingBudget: 5000,
-      reasoning: false,
       structuredOutput: expect.objectContaining({
         name: 'agent',
         structure: expect.any(Object)
@@ -148,8 +145,8 @@ test('Successfully generates agent with schedule when requested', async () => {
   const validResponse = createValidAgentWithScheduleResponse()
   
   const mockLlm = {
-    complete: vi.fn().mockResolvedValue({
-      content: JSON.stringify(validResponse)
+    generate: vi.fn().mockImplementation(async function* () {
+      yield { type: 'content', text: JSON.stringify(validResponse) }
     })
   }
   
@@ -172,8 +169,8 @@ test('Uses specified engine and model when provided', async () => {
   const validResponse = createValidAgentResponse()
   
   const mockLlm = {
-    complete: vi.fn().mockResolvedValue({
-      content: JSON.stringify(validResponse)
+    generate: vi.fn().mockImplementation(async function* () {
+      yield { type: 'content', text: JSON.stringify(validResponse) }
     })
   }
   
@@ -203,8 +200,8 @@ test('Handles LLM response wrapped in markdown code blocks', async () => {
   const markdownWrappedResponse = '```json\n' + JSON.stringify(validResponse) + '\n```'
   
   const mockLlm = {
-    complete: vi.fn().mockResolvedValue({
-      content: markdownWrappedResponse
+    generate: vi.fn().mockImplementation(async function* () {
+      yield { type: 'content', text: markdownWrappedResponse }
     })
   }
   
@@ -224,9 +221,11 @@ test('Handles LLM response wrapped in markdown code blocks', async () => {
 test('Handles structured output response (already parsed object)', async () => {
   const validResponse = createValidAgentResponse()
   
+  // When structured output is used, the agent_generator's parseAndValidateResponse
+  // handles both string and object responses, but for streaming we still get string chunks
   const mockLlm = {
-    complete: vi.fn().mockResolvedValue({
-      content: validResponse // Return object directly, not JSON string
+    generate: vi.fn().mockImplementation(async function* () {
+      yield { type: 'content', text: JSON.stringify(validResponse) }
     })
   }
   
@@ -245,8 +244,8 @@ test('Handles structured output response (already parsed object)', async () => {
 
 test('Returns null when LLM response is invalid JSON', async () => {
   const mockLlm = {
-    complete: vi.fn().mockResolvedValue({
-      content: 'This is not valid JSON at all!'
+    generate: vi.fn().mockImplementation(async function* () {
+      yield { type: 'content', text: 'This is not valid JSON at all!' }
     })
   }
   
@@ -271,8 +270,8 @@ test('Returns null when required fields are missing', async () => {
   }
   
   const mockLlm = {
-    complete: vi.fn().mockResolvedValue({
-      content: JSON.stringify(invalidResponse)
+    generate: vi.fn().mockImplementation(async function* () {
+      yield { type: 'content', text: JSON.stringify(invalidResponse) }
     })
   }
   
@@ -298,8 +297,8 @@ test('Returns null when steps are missing or empty', async () => {
   }
   
   const mockLlm = {
-    complete: vi.fn().mockResolvedValue({
-      content: JSON.stringify(invalidResponse)
+    generate: vi.fn().mockImplementation(async function* () {
+      yield { type: 'content', text: JSON.stringify(invalidResponse) }
     })
   }
   
@@ -316,8 +315,12 @@ test('Returns null when steps are missing or empty', async () => {
 })
 
 test('Returns null when LLM throws an error', async () => {
+  
   const mockLlm = {
-    complete: vi.fn().mockRejectedValue(new Error('LLM API error'))
+    // eslint-disable-next-line require-yield
+    generate: vi.fn().mockImplementation(async function* () {
+      throw new Error('LLM API error')
+    })
   }
   
   vi.mocked(LlmFactory.manager).mockReturnValue({
@@ -347,8 +350,8 @@ test('Applies default values when optional fields are missing', async () => {
   }
   
   const mockLlm = {
-    complete: vi.fn().mockResolvedValue({
-      content: JSON.stringify(responseWithMissingOptionals)
+    generate: vi.fn().mockImplementation(async function* () {
+      yield { type: 'content', text: JSON.stringify(responseWithMissingOptionals) }
     })
   }
   
@@ -376,8 +379,8 @@ test('Builds system and user prompts correctly', async () => {
   const validResponse = createValidAgentResponse()
   
   const mockLlm = {
-    complete: vi.fn().mockResolvedValue({
-      content: JSON.stringify(validResponse)
+    generate: vi.fn().mockImplementation(async function* () {
+      yield { type: 'content', text: JSON.stringify(validResponse) }
     })
   }
   
@@ -391,7 +394,7 @@ test('Builds system and user prompts correctly', async () => {
   await generator.generateAgentFromDescription('Create a research assistant for academic papers')
 
   // Verify the messages passed to LLM contain expected content
-  const messages = mockLlm.complete.mock.calls[0][1]
+  const messages = mockLlm.generate.mock.calls[0][1]
   
   expect(messages).toHaveLength(2)
   expect(messages[0].role).toBe('system')
