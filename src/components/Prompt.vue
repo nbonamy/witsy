@@ -1003,8 +1003,8 @@ const handleAllPluginsToggle = async () => {
   emit('tools-updated', props.chat.tools)
 }
 
-const handlePluginToggle = async (toolName: string) => {
-  props.chat.tools = await ts.handlePluginToggle(props.chat.tools, toolName)
+const handlePluginToggle = async (pluginName: string) => {
+  props.chat.tools = await ts.handlePluginToggle(props.chat.tools, pluginName)
   emit('tools-updated', props.chat.tools)
 }
 

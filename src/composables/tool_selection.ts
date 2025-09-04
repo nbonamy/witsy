@@ -1,7 +1,7 @@
-import { availablePlugins, PluginInstance } from '../plugins/plugins'
+import { availablePlugins, pluginToolName, pluginTools } from '../plugins/plugins'
+import { store } from '../services/store'
 import { ToolSelection } from '../types/llm'
 import { McpServerWithTools, McpToolUnique } from '../types/mcp'
-import { store } from '../services/store'
 
 export type ToolStatus = 'all' | 'some' | 'none'
 
@@ -18,7 +18,8 @@ export const pluginsStatus = async (toolSelection: ToolSelection): Promise<ToolS
 export const pluginStatus = (toolSelection: ToolSelection, pluginName: string): ToolStatus => {
   if (toolSelection === undefined || toolSelection === null) return 'all'
   if (toolSelection.length === 0) return 'none'
-  return toolSelection.includes(pluginName) ? 'all' : 'none'
+  const toolName = pluginToolName(store.config, pluginName)
+  return toolSelection.includes(toolName) ? 'all' : 'none'
 }
 
 export const serverToolsStatus = (allServersWithTools: McpServerWithTools[], toolSelection: ToolSelection, server: McpServerWithTools): ToolStatus => {
@@ -41,18 +42,7 @@ export const allPluginsTools = async (includeMcp: boolean = false): Promise<Tool
   const plugins: ToolSelection = []
   for (const pluginName in availablePlugins) {
     if (pluginName === 'mcp' && !includeMcp) continue
-    const pluginClass = availablePlugins[pluginName]
-    const plugin: PluginInstance = new pluginClass(store.config.plugins[pluginName])
-      if (plugin.isEnabled()) {
-      if ('getTools' in plugin) {
-        const pluginTools = await plugin.getTools()
-        for (const pluginTool of pluginTools) {
-          plugins.push(pluginTool.function.name)
-        }
-      } else {
-        plugins.push(plugin.getName())
-      }
-    }
+    plugins.push(...await pluginTools(store.config, pluginName))
   }
   return plugins
 }
@@ -86,7 +76,7 @@ export const validateToolSelection = async (toolSelection: ToolSelection): Promi
       toolSelection = null
     }
   }
-  // console.log('Validated tool selection:', toolSelection)
+  console.log('Validated tool selection:', toolSelection)
   return toolSelection
 }
 
@@ -108,12 +98,13 @@ export const handleAllPluginsToggle = async (toolSelection: ToolSelection): Prom
 
 }
 
-export const handlePluginToggle = async (toolSelection: ToolSelection, toolName: string): Promise<ToolSelection> => {
+export const handlePluginToggle = async (toolSelection: ToolSelection, pluginName: string): Promise<ToolSelection> => {
 
   if (toolSelection === undefined || toolSelection === null) {
     toolSelection = await initToolSelectionWithAllTools()
   }
 
+  const toolName = pluginToolName(store.config, pluginName)
   if (toolSelection.includes(toolName)) {
     toolSelection = toolSelection.filter(t => t !== toolName)
   } else {

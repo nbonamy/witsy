@@ -51,9 +51,9 @@
 
     <template #pluginsSubMenu="{ withFilter }">
       {{ withFilter(true) }}
-      <div v-for="plugin in allPluginsTools" :key="plugin" @click="handlePluginClick(plugin)">
+      <div v-for="plugin in enabledPlugins(store.config)" :key="plugin" @click="handlePluginClick(plugin)">
         <input type="checkbox" :checked="pluginStatus(plugin) === 'all'"  />
-        {{ plugin }}
+        {{ t(`settings.plugins.${plugin}.title`) }}
       </div>
     </template>
 
@@ -93,7 +93,9 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch } from 'vue'
 import * as ts from '../composables/tool_selection'
+import { enabledPlugins } from '../plugins/plugins'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 import type { ToolSelection } from '../types/llm'
 import type { McpServer, McpServerWithTools, McpTool, McpToolUnique } from '../types/mcp'
 import ContextMenuPlus from './ContextMenuPlus.vue'

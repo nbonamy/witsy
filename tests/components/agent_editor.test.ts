@@ -722,7 +722,7 @@ test('ToolsMenu opens and updates step tool selection', async () => {
   expect(toolsMenu.props('toolSelection')).toEqual([])
 
   // Simulate saving tools from ToolsMenu
-  await toolsMenu.vm.$emit('pluginToggle', 'plugin1')
+  await toolsMenu.vm.$emit('pluginToggle', 'search')
   await toolsMenu.vm.$emit('serverToolToggle', {}, { uuid: 'tool1___server1' })
   await toolsMenu.vm.$emit('close')
   await nextTick()
@@ -732,7 +732,7 @@ test('ToolsMenu opens and updates step tool selection', async () => {
   expect(toolsMenu.exists()).toBe(false)
 
   // Agent step should have updated tools
-  expect(agent.steps[0].tools).toEqual(['plugin1', 'tool1___server1'])
+  expect(agent.steps[0].tools).toEqual(['search_internet', 'tool1___server1'])
 })
 
 test('Shows docrepo button in workflow steps', async () => {
