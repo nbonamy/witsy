@@ -20,6 +20,7 @@ vi.mock('../../src/llms/manager.ts', async () => {
   LlmManager.prototype.getEngineName = () => 'mock'
   LlmManager.prototype.getCustomEngines = () => []
   LlmManager.prototype.getFavoriteId = () => 'favid'
+  LlmManager.prototype.isFavoriteModel = vi.fn(() => false)
   LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
   LlmManager.prototype.getChatModel = vi.fn(() => ({ id: 'chat', name: 'chat', ...defaultCapabilities }))
   LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
@@ -123,7 +124,7 @@ test('Changes engine model', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   store.config.prompt.disableStreaming = true
   wrapper.vm.onShow()
-  await wrapper.find('.model-menu-wrapper').trigger('click')
+  await wrapper.find('.model-menu-button').trigger('click')
   wrapper.findComponent({ name: 'EngineModelMenu' }).vm.$emit('modelSelected', 'openai', 'chat1')
   await wrapper.vm.$nextTick()
   expect(LlmManager.prototype.igniteEngine).toHaveBeenLastCalledWith('openai')

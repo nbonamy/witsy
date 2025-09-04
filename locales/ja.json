@@ -60,6 +60,7 @@
     "experts": "専門家",
     "favorites": {
       "add": "お気に入りに追加",
+      "name": "お気に入り",
       "remove": "お気に入りから削除"
     },
     "filename": "ファイル名",

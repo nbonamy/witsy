@@ -60,6 +60,7 @@
     "experts": "Eksperci",
     "favorites": {
       "add": "Dodaj do ulubionych",
+      "name": "Ulubione",
       "remove": "Usuń z ulubionych"
     },
     "filename": "Nazwa pliku",

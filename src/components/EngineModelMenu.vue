@@ -8,21 +8,30 @@
   >
     <!-- Main menu template -->
     <template #default>
-      <div v-for="engine in availableEngines" :key="engine" class="engine-item" :data-submenu-slot="`engine-${engine}`">
-        <EngineLogo :engine="engine" :grayscale="isDarkTheme" :custom-label="false" class="engine-logo" />
-        <span class="engine-name">{{ getEngineName(engine) }}</span>
-      </div>
+      <template v-for="engine in availableEngines" :key="engine">
+
+        <template v-if="llmManager.isFavoriteEngine(engine)">
+          <div class="engine-item" v-for="model in getEngineModels(engine)" :key="model.id" @click="handleFavoriteClick(model.id)">
+            <EngineLogo :engine="getFavoriteEngine(model.id)" :grayscale="isDarkTheme" :custom-label="false" class="engine-logo" />
+            <span class="engine-name emphasis">{{ getFavoriteModel(model.id).name }}</span>
+          </div>
+          <div class="separator" v-if="llmManager.isFavoriteEngine(engine)">
+            <hr />
+          </div>
+        </template>
+
+        <div class="engine-item" :data-submenu-slot="`engine-${engine}`" v-else>
+          <EngineLogo :engine="engine" :grayscale="isDarkTheme" :custom-label="false" class="engine-logo" />
+          <span class="engine-name">{{ getEngineName(engine) }}</span>
+        </div>
+
+      </template>
     </template>
 
     <!-- Engine submenu templates -->
     <template v-for="engine in availableEngines" :key="`${engine}-submenu`" #[`engine-${engine}`]="{ withFilter }">
       {{ withFilter(true) }}
-      <div 
-        v-for="model in getEngineModels(engine)" 
-        :key="model.id" 
-        class="model-item"
-        @click="handleModelClick(engine, model.id)"
-      >
+      <div v-for="model in getEngineModels(engine)" :key="model.id" class="model-item" @click="handleModelClick(engine, model.id)" >
         <div class="model-info">
           <div class="model-name">{{ model.name }}</div>
           <div class="model-id">{{ model.id }}</div>
@@ -43,6 +52,7 @@ import { computed } from 'vue'
 import useAppearanceTheme from '../composables/appearance_theme'
 import { engineNames } from '../llms/base'
 import LlmFactory from '../llms/llm'
+import { t } from '../services/i18n'
 import { store } from '../services/store'
 import ContextMenuPlus, { MenuPosition } from './ContextMenuPlus.vue'
 import EngineLogo from './EngineLogo.vue'
@@ -76,11 +86,15 @@ const isDarkTheme = computed(() => {
 })
 
 const availableEngines = computed(() => {
-  // If no workspace is defined, show all engines
+
   if (!store.workspace?.models) {
     return llmManager.getChatEngines().filter(engine => {
-      return llmManager.isEngineReady(engine) && llmManager.hasChatModels(engine) && !llmManager.isFavoriteEngine(engine)
+      return llmManager.isEngineReady(engine) && llmManager.hasChatModels(engine)
+    }).filter((engine) => {
+      return !llmManager.isFavoriteEngine(engine) || store.isFeatureEnabled('favorites')
     }).sort((a, b) => {
+      if (llmManager.isFavoriteEngine(a)) return -1
+      if (llmManager.isFavoriteEngine(b)) return 1
       const nameA = llmManager.getEngineName(a).toLowerCase()
       const nameB = llmManager.getEngineName(b).toLowerCase()
       return nameA.localeCompare(nameB)
@@ -99,6 +113,9 @@ const availableEngines = computed(() => {
 })
 
 const getEngineName = (engine: string): string => {
+  if (llmManager.isFavoriteEngine(engine)) {
+    return t('common.favorites.name')
+  }
   const name = llmManager.getEngineName(engine)
   return engineNames[name] ?? name
 }
@@ -119,7 +136,23 @@ const getEngineModels = (engine: string): ChatModel[] => {
   return allModels.filter(model => workspaceModelIds.includes(model.id))
 }
 
-// Methods
+const getFavoriteEngine = (favoriteId: string): string => {
+  const fav = llmManager.getFavoriteModel(favoriteId)
+  return fav.engine
+}
+
+const getFavoriteModel = (favoriteId: string): ChatModel => {
+  const fav = llmManager.getFavoriteModel(favoriteId)
+  return llmManager.getChatModel(fav.engine, fav.model)
+} 
+
+const handleFavoriteClick = (favorite: string) => {
+  const fav = llmManager.getFavoriteModel(favorite)
+  if (fav) {
+    handleModelClick(fav.engine, fav.model)
+  }
+}
+
 const handleModelClick = (engine: string, model: string) => {
   // Update LLM manager settings
   llmManager.setChatModel(engine, model)
@@ -132,6 +165,7 @@ const handleModelClick = (engine: string, model: string) => {
   emit('modelSelected', engine, model)
   emit('close')
 }
+
 </script>
 
 <style scoped>
@@ -154,6 +188,9 @@ const handleModelClick = (engine: string, model: string) => {
 
 .engine-name {
   flex: 1;
+  &.emphasis {
+    font-weight: var(--font-weight-medium);
+  }
 }
 
 .model-item {

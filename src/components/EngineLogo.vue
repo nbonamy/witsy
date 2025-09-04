@@ -14,7 +14,6 @@ import { computed } from 'vue'
 import { store } from '../services/store'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
 import LogoCustom from '../../assets/custom.svg?component'
-import LogoFavorite from '../../assets/favorite.svg?component'
 import LogoAnthropic from '../../assets/anthropic.svg?component'
 import LogoAzure from '../../assets/azure.svg?component'
 import LogoCerberas from '../../assets/cerebras.svg?component'
@@ -35,6 +34,7 @@ import LogoOpenAI from '../../assets/openai.svg?component'
 import LogoOpenRouter from '../../assets/openrouter.svg?component'
 import LogoReplicate from '../../assets/replicate.svg?component'
 import LogoXAI from '../../assets/xai.svg?component'
+import { BookHeartIcon, StarIcon } from 'lucide-vue-next'
 
 const llmManager = LlmFactory.manager(store.config)
 
@@ -85,7 +85,7 @@ const props = defineProps({
 })
 
 const logo = computed(() => {
-  if (props.engine == favoriteMockEngine) return LogoFavorite
+  if (props.engine == favoriteMockEngine) return BookHeartIcon
   if (pngLogos[props.engine]) return pngLogos[props.engine]
   if (logos[props.engine]) return logos[props.engine]
   if (llmManager.isCustomEngine(props.engine)) {
