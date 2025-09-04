@@ -152,7 +152,7 @@ import ImageUtils from '../composables/image_utils'
 import useTipsManager from '../composables/tips_manager'
 import * as ts from '../composables/tool_selection'
 import useTranscriber from '../composables/transcriber'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import LlmFactory, { favoriteMockEngine, ILlmManager } from '../llms/llm'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
 import Message from '../models/message'
@@ -331,6 +331,7 @@ onMounted(() => {
   // event
   onEvent('set-prompt', onSetPrompt)
   window.api.on('docrepo-modified', loadDocRepos)
+  document.addEventListener('keydown', onShortcutDown)
   autoGrow(input.value)
 
   // other stuff
@@ -347,7 +348,18 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.api.off('docrepo-modified', loadDocRepos)
+  document.removeEventListener('keydown', onShortcutDown)
 })
+
+const onShortcutDown = (ev: KeyboardEvent) => {
+  const favorites = llmManager.getChatModels(favoriteMockEngine)
+  if (!favorites.length) return
+  if (!ev.altKey) return
+  let index = ev.keyCode - 49
+  if (index === -1) index = 9
+  if (index < 0 || index > favorites.length-1) return
+  llmManager.setChatModel(favoriteMockEngine, favorites[index].id)
+}
 
 const matchInstructions = (instructions?: string): CustomInstruction|null => {
 
