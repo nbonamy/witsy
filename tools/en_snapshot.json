@@ -54,6 +54,7 @@
   "common.estimatedCost": "Estimated cost:",
   "common.experts": "Experts",
   "common.favorites.add": "Add to favorites",
+  "common.favorites.name": "Favorites",
   "common.favorites.remove": "Remove from favorites",
   "common.filename": "Filename",
   "common.fork": "Fork",

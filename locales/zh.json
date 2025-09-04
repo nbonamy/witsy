@@ -60,6 +60,7 @@
     "experts": "专家",
     "favorites": {
       "add": "添加到收藏夹",
+      "name": "收藏夹",
       "remove": "从收藏夹中移除"
     },
     "filename": "文件名",

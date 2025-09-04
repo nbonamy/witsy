@@ -66,13 +66,23 @@
         />
       </ButtonIcon>
       
-      <ButtonIcon class="model-menu-wrapper" @click="onModelMenu">
-        <div class="model-menu-button">
-          <BoxIcon />
-          <div class="model-name">{{ modelName }}</div>
-          <BIconCaretDownFill class="icon caret" />
-        </div>
-      </ButtonIcon>
+      <div class="model-menu-button" @click="onModelMenu">
+        <BoxIcon />
+        <div class="model-name">{{ modelName }}</div>
+        <BIconCaretDownFill class="icon caret" />
+      </div>
+
+      <template v-if="store.isFeatureEnabled('favorites') && chat">
+
+        <ButtonIcon v-if="!isFavoriteModel" @click="addToFavorites" v-tooltip="{ text: t('common.favorites.add'), position: 'top' }">
+          <HeartPlusIcon />
+        </ButtonIcon>
+
+        <ButtonIcon v-else @click="removeFavorite" v-tooltip="{ text: t('common.favorites.remove'), position: 'top' }">
+          <HeartMinusIcon />
+        </ButtonIcon>
+
+      </template>
 
       <ButtonIcon class="send-stop">
         <XIcon class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
@@ -132,7 +142,7 @@
 
 <script setup lang="ts">
 
-import { ArrowUpIcon, BoxIcon, BrainIcon, CommandIcon, FeatherIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
+import { ArrowUpIcon, BoxIcon, BrainIcon, CommandIcon, FeatherIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
 import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
 import { computed, nextTick, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
 import Waveform from '../components/Waveform.vue'
@@ -291,7 +301,6 @@ const isPrompting = computed(() => {
   return props.chat?.lastMessage()?.transient
 })
 
-
 const commands = computed(() => {
   return store.commands.filter((c) => c.state == 'enabled').map(c => {
     return { label: c.label ?? commandI18n(c, 'label'), action: c.id, icon: c.icon }
@@ -315,6 +324,8 @@ const modelName = computed(() => {
   const model = llmManager.getChatModel(props.chat?.engine, props.chat?.model)
   return model?.name || props.chat?.model || 'Select Model'
 })
+
+const isFavoriteModel = computed(() => llmManager.isFavoriteModel(props.chat?.engine, props.chat?.model))
 
 onMounted(() => {
 
@@ -1185,7 +1196,19 @@ const autoGrow = (element: HTMLElement) => {
   }
 }
 
-// Feature management methods
+const addToFavorites = () => {
+  if (props.chat) {
+    llmManager.addFavoriteModel(props.chat.engine, props.chat.model)
+    tipsManager.showTip('favoriteModels')
+  }
+}
+
+const removeFavorite = () => {
+  if (props.chat) {
+    llmManager.removeFavoriteModel(props.chat.engine, props.chat.model)
+  }
+}
+
 const clearExpert = () => {
   expert.value = null
 }
@@ -1419,36 +1442,33 @@ defineExpose({
       display: none;
     }
 
-    .model-menu-wrapper {
-    
-      .model-menu-button {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        cursor: pointer;
-        gap: 0.5rem;
+    .model-menu-button {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      cursor: pointer;
+      gap: 0.5rem;
 
-        .model-name {
-          font-size: 13px;
-          max-width: 150px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          color: var(--prompt-icon-color);
-        }
-
-        svg {
-          color: var(--prompt-icon-color);
-          width: var(--icon-md);
-          height: var(--icon-md);
-        }
-
-        .icon.caret {
-          width: 0.5rem;
-          height: 0.75rem;
-        }
-        
+      .model-name {
+        font-size: 13px;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--prompt-icon-color);
       }
+
+      svg {
+        color: var(--prompt-icon-color);
+        width: var(--icon-md);
+        height: var(--icon-md);
+      }
+
+      .icon.caret {
+        width: 0.5rem;
+        height: 0.75rem;
+      }
+        
     }
 
     .send-stop {

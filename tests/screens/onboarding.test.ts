@@ -48,6 +48,9 @@ vi.mock('../../src/llms/manager', async () => {
       isEngineReady() {
         return true
       }
+      isFavoriteModel() {
+        return false
+      }
       async loadModels(engine: string) {
         // Mock load models with different behaviors
         if (engine === 'error-engine') {
@@ -159,20 +162,6 @@ beforeAll(() => {
       store.config.engines[engine].apiKey = ''
     }
   })
-  
-  // Set up global llmManager mock for components that access it directly
-  const mockLlmManager = {
-    getChatEngineModel: () => ({ engine: 'mock', model: 'test' }),
-    checkModelListsVersion: () => {},
-    getStandardEngines: () => ['openai', 'anthropic', 'google'],
-    isCustomEngine: () => false,
-    isFavoriteEngine: () => false,
-    isReady: () => true,
-    isConfigured: () => true
-  }
-  
-  global.llmManager = mockLlmManager
-  globalThis.llmManager = mockLlmManager
 })
 
 beforeEach(() => {
