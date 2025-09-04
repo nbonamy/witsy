@@ -190,7 +190,7 @@
         "review": "Meinen Agenten überprüfen",
         "skip": "Überspringen & manuell erstellen",
         "success": {
-          "subtitle": "Überprüfen Sie Ihre Agentenkonfiguration unten und klicken Sie dann auf Weiter, um mit dem Assistenten fortzufahren.",
+          "subtitle": "Überprüfen Sie unten Ihre Agentenkonfiguration und fahren Sie dann mit dem Assistenten fort.",
           "title": "Agent erfolgreich erzeugt!"
         },
         "title": "Agentengenerator",

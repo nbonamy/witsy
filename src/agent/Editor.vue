@@ -56,7 +56,8 @@
           :visible="isStepVisible(kStepGenerator)" 
           :error="informationError" 
           @prev="onPrevStep" 
-          @next="validateGenerator" 
+          @next="validateGenerator"
+          ref="generator"
         />
 
         <EditorGeneral 
@@ -146,6 +147,7 @@ const props = defineProps({
 const emit = defineEmits(['cancel', 'save'])
 
 const agent = ref<Agent>(new Agent())
+const generator = ref<typeof EditorGenerator>(null)
 const currentStep = ref(0)
 const completedStep = ref(-1)
 const informationError = ref('')
@@ -318,6 +320,7 @@ const resetWizard = () => {
   currentStep.value = allSteps.length > 0 ? stepIndex(allSteps[0]) : 0
   completedStep.value = props.mode === 'edit' ? steps().length - 1 : -1
   expandedStep.value = (props.mode === 'edit' && agent.value.steps.length > 1) ? -1 : 0
+  generator.value?.reset()
   informationError.value = ''
 }
 

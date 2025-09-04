@@ -171,8 +171,8 @@ test('Shows generation in progress state', async () => {
   const generatingStatus = wrapper.find('.generating-status')
   expect(generatingStatus.exists()).toBe(true)
 
-  const spinner = wrapper.find('.spinner')
-  expect(spinner.exists()).toBe(true)
+  const loader = wrapper.find('.loader')
+  expect(loader.exists()).toBe(true)
 
   const generatingText = wrapper.find('.generating-text strong')
   expect(generatingText.text()).toBe('agent.create.generator.generating.title')
@@ -219,7 +219,7 @@ test('Shows generated agent preview after successful generation', async () => {
   expect(agentName.text()).toBe(generatedAgent.name)
 
   const agentDescription = wrapper.find('.preview-header p')
-  expect(agentDescription.text()).toBe(generatedAgent.description)
+  expect(agentDescription.text()).toBe(generatedAgent.instructions)
 
   // Should show steps count
   const stepsText = wrapper.find('.preview-section strong')
