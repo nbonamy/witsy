@@ -62,10 +62,9 @@ interface Props {
   anchor: string
   position?: MenuPosition
   teleport?: boolean
-  chat?: any
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   position: 'below',
   teleport: true,
 })
@@ -154,14 +153,6 @@ const handleFavoriteClick = (favorite: string) => {
 }
 
 const handleModelClick = (engine: string, model: string) => {
-  // Update LLM manager settings
-  llmManager.setChatModel(engine, model)
-  
-  // Update chat if provided
-  if (props.chat) {
-    props.chat.setEngineModel(engine, model)
-  }
-  
   emit('modelSelected', engine, model)
   emit('close')
 }
