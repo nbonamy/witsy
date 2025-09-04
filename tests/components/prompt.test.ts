@@ -22,15 +22,10 @@ let chat: Chat|null = null
 
 beforeAll(() => {
   useBrowserMock()
-  useWindowMock()
+  useWindowMock({ favoriteModels: true })
   store.isFeatureEnabled = () => true
-  store.loadSettings()
   store.loadExperts()
   store.loadCommands()
-  store.config.llm.imageResize = 0
-  store.config.engines.openai.models.chat.push(
-    { id: 'gpt-4.1', name: 'gpt-4.1', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
-  )
 })
 
 beforeEach(() => {
@@ -44,6 +39,24 @@ beforeEach(() => {
     }
   })
   
+  store.loadSettings()
+  store.config.llm.imageResize = 0
+  store.config.engines.openai.models.chat.push(
+    { id: 'gpt-4.1', name: 'gpt-4.1', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
+  )
+  store.config.engines.mock = {
+    models: {
+      chat: [
+        { id: 'chat', name: 'chat', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
+        { id: 'chat2', name: 'chat2', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
+        { id: 'vision', name: 'vision', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
+      ]
+    },
+    model: {
+      chat: 'chat'
+    }
+  }
+
   chat = new Chat()
 
   // for an unknown reason enableTools make some of the menu tests fail even though things work
@@ -501,25 +514,64 @@ test('getActiveDocRepoName function works correctly', async () => {
 })
 
 test('Model menu button displays and opens menu', async () => {
-  // Setup chat with engine and model
-  if (chat) {
-    chat.engine = 'mock'
-    chat.model = 'chat'
-    
-    // Recreate wrapper with updated chat
-    wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat } } )
-    
-    // Check model menu button exists
-    const modelButton = wrapper.find('.model-menu-button')
-    expect(modelButton.exists()).toBe(true)
-    
-    // Check it shows model name - should show fallback since mock doesn't return a model name
-    expect(modelButton.text()).toContain('chat')
-    
-    // Click the button
-    await modelButton.trigger('click')
-    
-    // Check that showModelMenu is true
-    expect(wrapper.vm.showModelMenu).toBe(true)
-  }
+
+  wrapper.vm.chat.engine = 'mock'
+  wrapper.vm.chat.model = 'chat'
+  await wrapper.vm.$nextTick()
+
+  // Check model menu button exists
+  const modelButton = wrapper.find('.model-menu-button')
+  expect(modelButton.exists()).toBe(true)
+  
+  // Check it shows model name - should show fallback since mock doesn't return a model name
+  expect(modelButton.text()).toContain('chat')
+  
+  // Click the button
+  await modelButton.trigger('click')
+  
+  // Check that showModelMenu is true
+  expect(wrapper.vm.showModelMenu).toBe(true)
+})
+
+test('Adds to favorite', async () => {
+
+  wrapper.vm.chat.engine = 'mock'
+  wrapper.vm.chat.model = 'chat2'
+  await wrapper.vm.$nextTick()
+
+  // Find buttons by name attribute
+  const addButton = wrapper.find('[name="addToFavorites"]')
+  const removeButton = wrapper.find('[name="removeFavorite"]')
+  
+  // Should have add button but not remove button
+  expect(addButton.exists()).toBe(true)
+  expect(removeButton.exists()).toBe(false)
+
+  // Click the add button
+  await addButton.trigger('click')
+  
+  // Should be added to favorites in store
+  expect(store.config.llm.favorites).toHaveLength(3)
+  expect(store.config.llm.favorites[2].id).toBe('mock-chat2')
+})
+
+test('Removes from favorites', async () => {
+
+  wrapper.vm.chat.engine = 'mock'
+  wrapper.vm.chat.model = 'chat'
+  await wrapper.vm.$nextTick()
+  
+  // Find buttons by name attribute
+  const addButton = wrapper.find('[name="addToFavorites"]')
+  const removeButton = wrapper.find('[name="removeFavorite"]')
+  
+  // Should have remove button but not add button
+  expect(removeButton.exists()).toBe(true)
+  expect(addButton.exists()).toBe(false)
+
+  // Click the remove button
+  await removeButton.trigger('click')
+  
+  // Should be removed from favorites in store
+  expect(store.config.llm.favorites).toHaveLength(1)
 })

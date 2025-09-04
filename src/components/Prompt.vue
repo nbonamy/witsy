@@ -74,12 +74,12 @@
 
       <template v-if="store.isFeatureEnabled('favorites') && chat">
 
-        <ButtonIcon v-if="!isFavoriteModel" @click="addToFavorites" v-tooltip="{ text: t('common.favorites.add'), position: 'top' }">
-          <HeartPlusIcon />
+        <ButtonIcon name="addToFavorites" v-if="!isFavoriteModel" @click="addToFavorites" v-tooltip="{ text: t('common.favorites.add'), position: 'top' }">
+          <HeartPlusIcon class="icon" />
         </ButtonIcon>
 
-        <ButtonIcon v-else @click="removeFavorite" v-tooltip="{ text: t('common.favorites.remove'), position: 'top' }">
-          <HeartMinusIcon />
+        <ButtonIcon name="removeFavorite" v-else @click="removeFavorite" v-tooltip="{ text: t('common.favorites.remove'), position: 'top' }">
+          <HeartMinusIcon class="icon" />
         </ButtonIcon>
 
       </template>
@@ -320,7 +320,7 @@ const conversationMenu = computed(() => {
   }
 })
 
-const modelName = computed(() => {  
+const modelName = computed(() => {
   const model = llmManager.getChatModel(props.chat?.engine, props.chat?.model)
   return model?.name || props.chat?.model || 'Select Model'
 })
