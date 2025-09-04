@@ -7,16 +7,21 @@
       :id="selectId"
     >
       <div class="content">
-        <EngineLogo 
-          :engine="engine" 
-          :grayscale="false" 
-          :custom-label="false" 
-          class="engine-logo" 
-        />
-        <div class="names">
-          <span class="engine-name">{{ getEngineName(engine) }}</span>&nbsp;
-          <span class="model-name">{{ getModelName(model) }}</span>
-        </div>
+        <template v-if="!engine || !model">
+          <span class="default-label">{{ defaultLabel }}</span>
+        </template>
+        <template v-else>
+          <EngineLogo 
+            :engine="engine" 
+            :grayscale="false" 
+            :custom-label="false" 
+            class="engine-logo" 
+          />
+          <div class="names">
+            <span class="engine-name">{{ getEngineName(engine) }}</span>&nbsp;
+            <span class="model-name">{{ getModelName(model) }}</span>
+          </div>
+        </template>
       </div>
       <ChevronDownIcon class="chevron" :class="{ 'rotated': isOpen }" />
     </div>
@@ -24,8 +29,9 @@
     <EngineModelMenu
       v-if="isOpen"
       :anchor="`#${selectId}`"
-      :position="'below'"
+      :position="position"
       :teleport="true"
+      :defaultLabel="defaultLabel"
       @close="closeDropdown"
       @modelSelected="onModelSelected"
     />
@@ -40,16 +46,21 @@ import LlmFactory from '../llms/llm'
 import { store } from '../services/store'
 import EngineLogo from './EngineLogo.vue'
 import EngineModelMenu from './EngineModelMenu.vue'
+import { MenuPosition } from './ContextMenuPlus.vue'
 
 interface Props {
   engine: string
   model: string
+  position?: MenuPosition
+  defaultLabel?: string
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  position: 'below',
+})
 
 interface Emits {
-  modelSelected: [engine: string, model: string]
+  modelSelected: [engine: string | null, model: string | null]
 }
 
 const emit = defineEmits<Emits>()
@@ -95,7 +106,7 @@ const closeDropdown = () => {
   isOpen.value = false
 }
 
-const onModelSelected = (engine: string, model: string) => {
+const onModelSelected = (engine: string | null, model: string | null) => {
   emit('modelSelected', engine, model)
   closeDropdown()
 }
@@ -134,6 +145,11 @@ const onModelSelected = (engine: string, model: string) => {
 
 .engine-name {
   font-weight: var(--font-weight-medium);
+}
+
+.default-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
 }
 
 .chevron {

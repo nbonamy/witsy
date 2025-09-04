@@ -23,15 +23,12 @@
         <div class="form-field">
           <label for="model">{{ t('agent.create.generator.model') }}</label>
           <div class="help">{{ t('agent.create.generator.help.model') }}</div>
-          <EngineSelect 
-            v-model="selectedEngine" 
-            :default-text="t('agent.create.generator.modelOptions.auto')"
-            @change="onEngineChange"
-          />
-          <ModelSelect 
-            v-if="selectedEngine" 
-            v-model="selectedModel" 
-            :engine="selectedEngine"
+          <EngineModelSelect 
+            :engine="selectedEngine" 
+            :model="selectedModel"
+            :position="'above'"
+            :defaultLabel="t('agent.create.generator.modelOptions.auto')"
+            @modelSelected="onModelSelected"
           />
         </div>
       </div>
@@ -95,8 +92,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, PropType, ref } from 'vue'
-import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelect from '../components/ModelSelect.vue'
+import EngineModelSelect from '../components/EngineModelSelect.vue'
 import WizardStep from '../components/WizardStep.vue'
 import LlmFactory from '../llms/llm'
 import Agent from '../models/agent'
@@ -149,14 +145,18 @@ const reset = () => {
 
 onMounted(() => {
   reset()
+  // Set default engine/model for display
+  const engines = llmManager.getChatEngines()
+  if (engines.length > 0) {
+    const defaultEngine = engines[0]
+    selectedEngine.value = defaultEngine
+    selectedModel.value = llmManager.getDefaultChatModel(defaultEngine)
+  }
 })
 
-const onEngineChange = () => {
-  if (selectedEngine.value) {
-    selectedModel.value = llmManager.getDefaultChatModel(selectedEngine.value)
-  } else {
-    selectedModel.value = ''
-  }
+const onModelSelected = (engine: string | null, model: string | null) => {
+  selectedEngine.value = engine || ''
+  selectedModel.value = model || ''
 }
 
 const generateAgent = async () => {
@@ -232,6 +232,10 @@ defineExpose({
 </script>
 
 <style scoped>
+
+.engine-model-select {
+  width: calc(100% - 2rem);
+}
 
 .generating-status {
   margin: 2rem 8rem;
