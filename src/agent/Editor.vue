@@ -2,7 +2,7 @@
   <div class="agent-editor" @keydown.enter="onSave">
 
     <header>
-      <div class="title">New Agent</div>
+      <div class="title">{{ agent.name || t('agent.forge.create') }}</div>
       <div class="spacer"></div>
       <button class="large tertiary" name="cancel" @click="emit('cancel')">{{ t('common.cancel') }}</button>
       <button class="large secondary" name="prev" @click="onPrevStep" v-if="currentStep > 0">{{ t('common.back') }}</button>

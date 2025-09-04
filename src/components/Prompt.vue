@@ -133,7 +133,6 @@
       v-if="showModelMenu"
       anchor=".model-menu-button"
       :position="menusPosition === 'above' ? 'above-right' : 'below-right'"
-      :chat="chat"
       @close="closeModelMenu"
       @model-selected="handleModelSelected"
     />
