@@ -162,6 +162,40 @@
   },
   "agent": {
     "create": {
+      "generator": {
+        "describe": "Description de l'Agent",
+        "description": "Décrivez votre agent en langage naturel et laissez l'IA générer automatiquement une configuration complète.",
+        "error": {
+          "description": "Veuillez fournir une description de l'agent souhaité.",
+          "generation": "Échec de la génération de la configuration de l'agent. Veuillez réessayer ou créer manuellement.",
+          "unexpected": "Une erreur inattendue s'est produite lors de la génération. Veuillez réessayer."
+        },
+        "generate": "Créer mon agent",
+        "generating": {
+          "subtitle": "Cela peut prendre quelques instants pendant que nous analysons vos besoins et sélectionnons les meilleurs outils.",
+          "title": "Génération de votre agent..."
+        },
+        "help": {
+          "describe": "Décrivez ce que vous voulez que votre agent fasse en anglais simple. Soyez aussi détaillé que possible - incluez le but de l'agent et comment vous souhaitez qu'il se comporte.",
+          "model": "Sélectionnez le modèle d'IA à utiliser pour générer la configuration de votre agent. Laissez vide pour une sélection automatique du meilleur modèle disponible."
+        },
+        "model": "Modèle de génération (Optionnel)",
+        "modelOptions": {
+          "auto": "🤖 Sélection automatique du meilleur modèle"
+        },
+        "placeholder": "Exemple : Créez un assistant de recherche capable de rechercher des informations sur le web, de sauvegarder les résultats dans des fichiers et de générer des visualisations Python des données. Il doit être précis mais concis dans ses réponses.",
+        "preview": {
+          "steps": "Étapes du flux de travail"
+        },
+        "review": "Revoir mon agent",
+        "skip": "Passer et créer manuellement",
+        "success": {
+          "subtitle": "Passez en revue la configuration de votre agent ci-dessous, puis cliquez sur Suivant pour continuer avec l'assistant.",
+          "title": "Agent généré avec succès !"
+        },
+        "title": "Générateur d'Agent",
+        "tryAgain": "Réessayer"
+      },
       "goal": {
         "title": "Objectif de l'Agent"
       },
@@ -2557,7 +2591,6 @@
   },
   "tray": {
     "menu": {
-      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Installer la mise à jour et redémarrer…",
       "mainWindow": "@:{'menu.file.mainWindow'}",

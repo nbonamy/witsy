@@ -162,6 +162,40 @@
   },
   "agent": {
     "create": {
+      "generator": {
+        "describe": "Agentenbeschreibung",
+        "description": "Beschreiben Sie Ihren Agenten in natürlicher Sprache und lassen Sie die KI automatisch eine vollständige Konfiguration erzeugen.",
+        "error": {
+          "description": "Bitte geben Sie eine Beschreibung des gewünschten Agenten an.",
+          "generation": "Die Generierung der Agentenkonfiguration ist fehlgeschlagen. Bitte versuchen Sie es erneut oder erstellen Sie den Agenten manuell.",
+          "unexpected": "Während der Generierung ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+        },
+        "generate": "Meinen Agenten erstellen",
+        "generating": {
+          "subtitle": "Dies kann einen Moment dauern, während wir Ihre Anforderungen analysieren und die besten Werkzeuge auswählen.",
+          "title": "Ihr Agent wird erzeugt..."
+        },
+        "help": {
+          "describe": "Beschreiben Sie auf einfachem Deutsch, was Ihr Agent tun soll. Seien Sie so detailliert wie möglich – geben Sie den Zweck des Agenten an und wie er sich verhalten soll.",
+          "model": "Wählen Sie aus, welches KI-Modell zur Generierung Ihrer Agentenkonfiguration verwendet werden soll. Lassen Sie das Feld leer für eine automatische Auswahl des besten verfügbaren Modells."
+        },
+        "model": "Generierungsmodell (optional)",
+        "modelOptions": {
+          "auto": "🤖 Bestes Modell automatisch auswählen"
+        },
+        "placeholder": "Beispiel: Erstellen Sie einen Forschungsassistenten, der im Web nach Informationen suchen, Ergebnisse in Dateien speichern und Python-Visualisierungen der Daten erstellen kann. Er sollte gründlich, aber prägnant in seinen Antworten sein.",
+        "preview": {
+          "steps": "Arbeitsablaufschritte"
+        },
+        "review": "Meinen Agenten überprüfen",
+        "skip": "Überspringen & manuell erstellen",
+        "success": {
+          "subtitle": "Überprüfen Sie Ihre Agentenkonfiguration unten und klicken Sie dann auf Weiter, um mit dem Assistenten fortzufahren.",
+          "title": "Agent erfolgreich erzeugt!"
+        },
+        "title": "Agentengenerator",
+        "tryAgain": "Erneut versuchen"
+      },
       "goal": {
         "title": "Agentenziel"
       },
@@ -2557,7 +2591,6 @@
   },
   "tray": {
     "menu": {
-      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Update installieren und neu starten…",
       "mainWindow": "@:{'menu.file.mainWindow'}",

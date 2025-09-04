@@ -181,6 +181,40 @@
   },
   "agent": {
     "create": {
+      "generator": {
+        "describe": "代理描述",
+        "description": "用自然语言描述您的代理，让 AI 自动生成完整配置。",
+        "error": {
+          "description": "请提供您想要的代理描述。",
+          "generation": "生成代理配置失败。请重试或手动创建。",
+          "unexpected": "生成过程中发生意外错误。请重试。"
+        },
+        "generate": "创建我的代理",
+        "generating": {
+          "subtitle": "分析您的需求并选择最佳工具，这可能需要几秒钟。",
+          "title": "正在生成您的代理…"
+        },
+        "help": {
+          "describe": "用简单的英文描述您希望代理执行的任务。越详细越好——包括代理的目的以及您希望其行为方式。",
+          "model": "选择用于生成代理配置的 AI 模型。留空则自动选择最佳可用模型。"
+        },
+        "model": "生成模型（可选）",
+        "modelOptions": {
+          "auto": "🤖 自动选择最佳模型"
+        },
+        "placeholder": "示例：创建一个研究助手，可以在网上搜索信息，将发现保存到文件中，并生成数据的 Python 可视化图表。它的回复应既详尽又简洁。",
+        "preview": {
+          "steps": "工作流程步骤"
+        },
+        "review": "审查我的代理",
+        "skip": "跳过并手动创建",
+        "success": {
+          "subtitle": "请审核下面的代理配置，确认无误后点击“下一步”继续向导。",
+          "title": "代理生成成功！"
+        },
+        "title": "代理生成器",
+        "tryAgain": "再试一次"
+      },
       "goal": {
         "title": "代理目标"
       },
@@ -2579,7 +2613,6 @@
   },
   "tray": {
     "menu": {
-      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "安装更新并重启…",
       "mainWindow": "@:{'menu.file.mainWindow'}",

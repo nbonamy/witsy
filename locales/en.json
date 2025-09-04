@@ -182,9 +182,18 @@
   "agent": {
     "create": {
       "generator": {
-        "title": "Agent Generator",
-        "description": "Describe your agent in natural language and let AI generate a complete configuration automatically.",
         "describe": "Agent Description",
+        "description": "Describe your agent in natural language and let AI generate a complete configuration automatically.",
+        "error": {
+          "description": "Please provide a description of your desired agent.",
+          "generation": "Failed to generate agent configuration. Please try again or create manually.",
+          "unexpected": "An unexpected error occurred during generation. Please try again."
+        },
+        "generate": "Create my agent",
+        "generating": {
+          "subtitle": "This may take a few moments while we analyze your requirements and select the best tools.",
+          "title": "Generating your agent..."
+        },
         "help": {
           "describe": "Describe what you want your agent to do in plain English. Be as detailed as possible - include the agent's purpose, and how you want it to behave.",
           "model": "Select which AI model to use for generating your agent configuration. Leave blank for automatic selection of the best available model."
@@ -194,26 +203,17 @@
           "auto": "🤖 Auto-select best model"
         },
         "placeholder": "Example: Create a research assistant that can search the web for information, save findings to files, and generate Python visualizations of the data. It should be thorough but concise in its responses.",
-        "skip": "Skip & Create Manually",
-        "tryAgain": "Try Again",
-        "generating": {
-          "title": "Generating your agent...",
-          "subtitle": "This may take a few moments while we analyze your requirements and select the best tools."
-        },
-        "success": {
-          "title": "Agent Generated Successfully!",
-          "subtitle": "Review your agent configuration below, then click Next to continue with the wizard."
-        },
         "preview": {
-          "title": "Generated Agent Preview",
-          "help": "Review the generated configuration below. You can modify it in the next steps or regenerate it with a different description.",
           "steps": "Workflow Steps"
         },
-        "error": {
-          "description": "Please provide a description of your desired agent.",
-          "generation": "Failed to generate agent configuration. Please try again or create manually.",
-          "unexpected": "An unexpected error occurred during generation. Please try again."
-        }
+        "review": "Review my agent",
+        "skip": "Skip & Create Manually",
+        "success": {
+          "subtitle": "Review your agent configuration below, then click Next to continue with the wizard.",
+          "title": "Agent Generated Successfully!"
+        },
+        "title": "Agent Generator",
+        "tryAgain": "Try Again"
       },
       "goal": {
         "title": "Agent Goal"
@@ -2618,7 +2618,6 @@
   },
   "tray": {
     "menu": {
-      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Install update and restart…",
       "mainWindow": "@:{'menu.file.mainWindow'}",

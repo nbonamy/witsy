@@ -1,10 +1,12 @@
+import { LlmStructuredOutput } from 'multi-llm-ts'
+import { z } from 'zod'
 import { useTools } from '../composables/useTools'
 import LlmFactory from '../llms/llm'
 import Agent from '../models/agent'
 import Message from '../models/message'
 import { Configuration } from '../types/config'
 import { i18nInstructions } from './i18n'
-import { processJsonSchema } from './schema'
+import LlmUtils from './llm_utils'
 
 export default class AgentGenerator {
 
@@ -23,7 +25,8 @@ export default class AgentGenerator {
     try {
 
       // Get the best model for generation
-      const { engine, model } = await this.getBestModelForGeneration(selectedEngine, selectedModel)
+      const llmUtils = new LlmUtils(this.config)
+      const { engine, model } = llmUtils.getEngineModelForTask('complex', selectedEngine, selectedModel)
       
       // Get available tools
       const { getToolsForGeneration } = useTools()
@@ -34,9 +37,9 @@ export default class AgentGenerator {
       let userPrompt = this.buildUserPrompt(description)
       
       // Add JSON schema instructions (same pattern as runner.ts)
-      const jsonSchema = this.getAgentJsonSchema()
+      const structuredOutput = this.getAgentZodSchema()
       const instructions = i18nInstructions(this.config, 'instructions.agent.structuredOutput')
-      userPrompt += `\n\n${instructions.replace('{jsonSchema}', jsonSchema)}`
+      userPrompt += `\n\n${instructions.replace('{jsonSchema}', this.getAgentJsonSchema())}`
       
       // Create messages
       const messages = [
@@ -50,7 +53,6 @@ export default class AgentGenerator {
       const chatModel = llmManager.getChatModel(engine, model)
       
       // Create structured output schema
-      const structuredOutput = processJsonSchema('agent', this.getAgentJsonSchema())
       
       const response = await llm.complete(chatModel, messages, {
         tools: false,
@@ -61,7 +63,8 @@ export default class AgentGenerator {
       })
 
       // Parse and validate the response
-      const agent = this.parseAndValidateResponse(response.content.trim())
+      const contentToProcess = typeof response.content === 'string' ? response.content.trim() : response.content
+      const agent = this.parseAndValidateResponse(contentToProcess)
       return agent
 
     } catch (error) {
@@ -70,54 +73,22 @@ export default class AgentGenerator {
     }
   }
 
-  private async getBestModelForGeneration(
-    selectedEngine?: string, 
-    selectedModel?: string
-  ): Promise<{ engine: string, model: string }> {
-    
-    // If both engine and model are specified, use them
-    if (selectedEngine && selectedModel) {
-      return { engine: selectedEngine, model: selectedModel }
-    }
-
-    // Hard-coded generation models (similar to titling models in llm_utils.ts)
-    const generationModels: Record<string, string> = {
-      'anthropic': 'claude-3-5-sonnet-20241022',
-      'openai': 'gpt-4o',
-      'google': 'gemini-2.0-flash-exp',
-      'mistralai': 'mistral-large-latest',
-      'groq': 'llama-3.3-70b-versatile',
-      'cerebras': 'llama-3.3-70b',
-      'deepseek': 'deepseek-chat',
-      'xai': 'grok-3',
-    }
-
-    // Try to use selected engine with best model
-    if (selectedEngine) {
-      const bestModel = generationModels[selectedEngine]
-      if (bestModel && this.config.engines[selectedEngine]?.models?.chat.find(m => m.id === bestModel)) {
-        return { engine: selectedEngine, model: bestModel }
-      }
-      // Fall back to first available model for the selected engine
-      const firstModel = this.config.engines[selectedEngine]?.models?.chat?.[0]?.id
-      if (firstModel) {
-        return { engine: selectedEngine, model: firstModel }
-      }
-    }
-
-    // Try each engine in order of preference
-    for (const [engineName, preferredModel] of Object.entries(generationModels)) {
-      if (this.config.engines[engineName]?.models?.chat?.find(m => m.id === preferredModel)) {
-        return { engine: engineName, model: preferredModel }
-      }
-    }
-
-    // Fallback to current configured engine/model
-    const fallbackEngine = this.config.llm.engine
-    const fallbackModel = this.config.engines[fallbackEngine]?.models?.chat?.[0]?.id || 'default'
+  private getAgentZodSchema = (): LlmStructuredOutput => {
     return {
-      engine: fallbackEngine,
-      model: fallbackModel
+      name: 'agent',
+      structure: z.object({
+        name: z.string().min(1).max(100).describe("Descriptive name for the agent"),
+        description: z.string().min(1).max(500).describe("Brief description of what the agent does"),
+        type: z.enum(["runnable"]).describe("Agent type - should be 'runnable'"),
+        instructions: z.string().min(1).max(2000).describe("Detailed instructions for the agent's behavior and personality"),
+        schedule: z.string().optional().describe("Optional crontab-style schedule (e.g., '0 9 * * 1' for Mondays at 9AM). Only include if user requests scheduling."),
+        steps: z.array(z.object({
+          description: z.string().min(1).max(200).describe("What this step does"),
+          prompt: z.string().min(1).max(1000).describe("The prompt template for this step with variables like {{output.1}}"),
+          tools: z.array(z.string().min(1)).max(20).describe("Array of tool names to use in this step"),
+          agents: z.array(z.string().min(1)).max(5).describe("Array of agent names to delegate to")
+        })).min(1).max(10).describe("Array of workflow steps")
+      })
     }
   }
 
@@ -129,6 +100,7 @@ export default class AgentGenerator {
         description: { type: "string", description: "Brief description of what the agent does" },
         type: { type: "string", enum: ["runnable"], description: "Agent type - should be 'runnable'" },
         instructions: { type: "string", description: "Detailed instructions for the agent's behavior and personality" },
+        schedule: { type: "string", description: "Optional crontab-style schedule (e.g., '0 9 * * 1' for Mondays at 9AM). Only include if user requests scheduling." },
         steps: {
           type: "array",
           items: {
@@ -146,34 +118,48 @@ export default class AgentGenerator {
       required: ["name", "description", "type", "instructions", "steps"]
     })
   }
-
+  
   private buildSystemPrompt(toolsDescription: string): string {
     return `You are an expert AI agent configuration generator. Your task is to analyze a user's description of their desired agent and generate a complete agent configuration.
 
-${toolsDescription}
+INITIAL PROMPT: If possible create fully autonomous agents that can run without user intervention.
+If the user request explicitely mentions something that would require a user input then use a prompt placeholder such as {{topic:The topic to research}}
+For instance if the user request is "Summarize daily news about a topic of my choice" then the step 1 prompt would be "Search latest information about {{topic:The topic to research}}"
+If the user description is explicit enough then do not use placeholders in step 1 prompt.
+Never use placeholders in subsequent prompt steps!
 
-CRITICAL: Multi-step workflow variables:
+WORKFLOW: Multi-step workflow variables:
 - Use {{output.1}} to reference the output from step 1
 - Use {{output.2}} to reference the output from step 2
 - And so on for subsequent steps
 - This is ESSENTIAL for connecting steps in multi-step workflows
+- A step prompt cannot just be "Analyze search results and extract key insights". It needs to includes a {{output.#}} variable 
 - Example: Step 2 prompt could be "Analyze the following data: {{output.1}}"
 
+SCHEDULING: If the user mentions scheduling, timing, or recurring tasks:
+- Generate a crontab-style schedule in the "schedule" field
+- Only include schedule if explicitly requested by the user
+- Do not mention scheduling in the agent goal. Scheduling is unrelated to the agent goal
+
 Important guidelines:
-1. Only use tools that are listed in the available tools above
+1. Only use tools that are listed in the available tools below
 2. Create multiple steps if the task requires different phases or tools
 3. Use descriptive prompts with placeholder variables like {{topic}}, {{query}}, {{filename}}
 4. For multi-step workflows, ALWAYS use {{output.#}} variables to connect steps
 5. Match tools to their appropriate use cases
-6. Make the agent instructions detailed and specific
+6. Make the agent instructions detailed and specific. This will be used as a system prompt to the model so it needs to be effective.
 7. Choose meaningful step descriptions
 8. The agent type should be "runnable"
-9. When creating multi-step workflows, ensure later steps reference earlier steps using {{output.#}}
+9. Include a schedule only if the user explicitly requests scheduling or timing
 
 Examples of good multi-step prompts:
 - Step 1: "Search for information about {{topic}}"
 - Step 2: "Summarize the following search results: {{output.1}}" 
-- Step 3: "Save the summary to file {{filename}}: {{output.2}}"`
+- Step 3: "Save the summary to file {{filename}}: {{output.2}}"
+
+${toolsDescription}
+
+`
   }
 
   private buildUserPrompt(description: string): string {
@@ -230,6 +216,7 @@ Return the complete JSON configuration.`
         description: agentConfig.description,
         type: agentConfig.type || 'runnable',
         instructions: agentConfig.instructions || '',
+        schedule: agentConfig.schedule || null,
         steps: agentConfig.steps.map((step: any) => ({
           description: step.description || '',
           prompt: step.prompt || '',

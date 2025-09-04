@@ -1,5 +1,5 @@
 <template>
-  <WizardStep :visible="visible" :prev-button-text="prevButtonText" :error="error" @prev="$emit('prev')" @next="onNext">
+  <WizardStep :visible="visible" :show-footer="!generating" :prev-button-text="t('common.cancel')" :next-button-text="nextButtonText" :error="error" @prev="$emit('prev')" @next="onNext">
     <template #header>
       <label>{{ t('agent.create.generator.title') }}</label>
       <div class="help">{{ t('agent.create.generator.description') }}</div>
@@ -75,6 +75,7 @@
     <template #buttons>
       <button 
         v-if="!generatedAgent && !generating"
+        name="skip"
         @click="skipGeneration" 
         class="secondary"
       >
@@ -82,6 +83,7 @@
       </button>
       <button 
         v-if="generatedAgent && !generating"
+        name="tryAgain"
         @click="tryAgain" 
         class="secondary"
       >
@@ -92,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, PropType, ref } from 'vue'
+import { computed, onMounted, PropType, ref } from 'vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import WizardStep from '../components/WizardStep.vue'
@@ -131,8 +133,12 @@ const generatedAgent = ref<Agent | null>(null)
 
 const llmManager = LlmFactory.manager(store.config)
 
+const nextButtonText = computed(() => {
+  if (generatedAgent.value) return t('agent.create.generator.review')
+  else return t('agent.create.generator.generate')
+})
+
 onMounted(() => {
-  // Reset state when component mounts - start fresh each time
   description.value = ''
   selectedEngine.value = ''
   selectedModel.value = ''
@@ -178,7 +184,6 @@ const generateAgent = async () => {
 }
 
 const tryAgain = () => {
-  // Reset to initial state but keep user inputs
   generatedAgent.value = null
   generating.value = false
 }
@@ -193,19 +198,17 @@ const applyGeneratedConfig = (agent: Agent) => {
   props.agent.description = agent.description
   props.agent.type = agent.type
   props.agent.instructions = agent.instructions
+  props.agent.schedule = agent.schedule
   props.agent.steps = agent.steps
 }
 
 const onNext = () => {
   if (generatedAgent.value) {
-    // Apply generated config and proceed to next step
     applyGeneratedConfig(generatedAgent.value)
     emit('next')
   } else if (generating.value) {
-    // Do nothing while generating
     return
   } else {
-    // Generate the agent and stay on this step to show preview
     generateAgent()
   }
 }

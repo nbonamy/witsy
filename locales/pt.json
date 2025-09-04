@@ -181,6 +181,40 @@
   },
   "agent": {
     "create": {
+      "generator": {
+        "describe": "Descrição do Agente",
+        "description": "Descreva seu agente em linguagem natural e deixe a IA gerar uma configuração completa automaticamente.",
+        "error": {
+          "description": "Por favor, forneça uma descrição do agente desejado.",
+          "generation": "Falha ao gerar a configuração do agente. Por favor, tente novamente ou crie manualmente.",
+          "unexpected": "Ocorreu um erro inesperado durante a geração. Por favor, tente novamente."
+        },
+        "generate": "Criar meu agente",
+        "generating": {
+          "subtitle": "Isso pode levar alguns momentos enquanto analisamos seus requisitos e selecionamos as melhores ferramentas.",
+          "title": "Gerando seu agente..."
+        },
+        "help": {
+          "describe": "Descreva o que você quer que seu agente faça em inglês claro. Seja o mais detalhado possível - inclua o propósito do agente e como você quer que ele se comporte.",
+          "model": "Selecione qual modelo de IA usar para gerar a configuração do seu agente. Deixe em branco para seleção automática do melhor modelo disponível."
+        },
+        "model": "Modelo de Geração (Opcional)",
+        "modelOptions": {
+          "auto": "🤖 Selecionar automaticamente o melhor modelo"
+        },
+        "placeholder": "Exemplo: Crie um assistente de pesquisa que possa buscar informações na web, salvar os resultados em arquivos e gerar visualizações em Python dos dados. Ele deve ser minucioso, mas conciso em suas respostas.",
+        "preview": {
+          "steps": "Etapas do Fluxo de Trabalho"
+        },
+        "review": "Revisar meu agente",
+        "skip": "Pular e Criar Manualmente",
+        "success": {
+          "subtitle": "Revise a configuração do seu agente abaixo e clique em Avançar para continuar com o assistente.",
+          "title": "Agente Gerado com Sucesso!"
+        },
+        "title": "Gerador de Agentes",
+        "tryAgain": "Tentar Novamente"
+      },
       "goal": {
         "title": "Objetivo do Agente"
       },
@@ -2579,7 +2613,6 @@
   },
   "tray": {
     "menu": {
-      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Instalar atualização e reiniciar…",
       "mainWindow": "@:{'menu.file.mainWindow'}",
