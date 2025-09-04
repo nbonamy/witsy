@@ -14,7 +14,9 @@
       </div>
 
       <EmbeddingSelector v-model:engine="engine" v-model:model="model" />
+    
     </template>
+    
     <template #footer>
       <div class="buttons">
         <button name="cancel" @click="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
