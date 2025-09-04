@@ -16,7 +16,7 @@ Witsy is a cross-platform Electron-based desktop AI assistant that serves as a u
 
 ### Build System (Electron Forge + Vite)
 - **Development**: `npm start` - runs with hot reload
-- **Testing**: `npm test` (Vitest unit tests), `npm run teste2e` (E2E tests)
+- **Testing**: `npm test` (Vitest unit tests), `npm run test:e2e` (E2E tests)
 - **Building**: `make mac-arm64`, `make win-x64`, etc. - platform-specific builds via Makefile
 - **Configuration**: `forge.config.ts` handles Electron Forge setup, Vite configs handle bundling
 
@@ -100,5 +100,5 @@ All the CSS variables are defined in `./css/index.css`. Use those variables and 
 ### Running Tests
 ```bash
 npm test                   # Unit tests
-npm run test-ci            # With coverage
+npm run test:ci            # With coverage
 ```

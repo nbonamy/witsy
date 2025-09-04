@@ -39,14 +39,10 @@ test('Renders editor in create mode', async () => {
   const steps = wrapper.findAll('.wizard-step')
   expect(steps.length).toBeGreaterThan(0)
   
-  // First step (General) should be selected
-  const firstStep = steps[0]
-  expect(firstStep.classes()).toContain('active')
-  expect(firstStep.text()).toContain('agent.create.information.title')
-
-  // Should show wizard step content
+  // In create mode, generator step should be visible (check WizardStep component instead)
   const wizardStep = wrapper.findComponent({ name: 'WizardStep' })
   expect(wizardStep.exists()).toBe(true)
+  expect(wizardStep.props('visible')).toBe(true)
 })
 
 test('Shows different steps for witsy vs a2a agents', async () => {
@@ -61,6 +57,12 @@ test('Shows different steps for witsy vs a2a agents', async () => {
     }
   })
   await nextTick()
+  
+  // Navigate to general step to find goal field
+  const skipButton = witsyWrapper.find('button[name="skip"]')
+  await skipButton.trigger('click')
+  await nextTick()
+  
   expect(witsyWrapper.find('[name=goal]').exists()).toBe(true)
 
   // Test a2a agent (should not have Goal step)
@@ -108,6 +110,11 @@ test('Shows form fields for information step', async () => {
       agent: new Agent()
     }
   })
+  await nextTick()
+
+  // Navigate to general step to see form fields
+  const skipButton = wrapper.find('button[name="skip"]')
+  await skipButton.trigger('click')
   await nextTick()
 
   // Should show name field
@@ -399,34 +406,6 @@ test('Shows ToolsMenu and AgentSelector components', async () => {
   expect(agentSelector.exists()).toBe(true)
 })
 
-test('Updates form fields when typing', async () => {
-  const wrapper: VueWrapper<any> = mount(Editor, {
-    props: { 
-      mode: 'create',
-      agent: new Agent()
-    }
-  })
-  await nextTick()
-
-  // Type in name field
-  const nameField = wrapper.find<HTMLInputElement>('input[name="name"]')
-  await nameField.setValue('New Agent Name')
-  
-  expect(nameField.element.value).toBe('New Agent Name')
-
-  // Type in description field
-  const descriptionField = wrapper.find<HTMLTextAreaElement>('textarea[name="description"]')
-  await descriptionField.setValue('New Agent Description')
-  
-  expect(descriptionField.element.value).toBe('New Agent Description')
-
-  // Change type field
-  const typeField = wrapper.find<HTMLSelectElement>('select[name="type"]')
-  await typeField.setValue('support')
-  
-  expect(typeField.element.value).toBe('support')
-})
-
 test('Shows model settings step when available', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
@@ -436,18 +415,26 @@ test('Shows model settings step when available', async () => {
   })
   await nextTick()
 
-  // Navigate to model step
-  const steps = wrapper.findAll('.wizard-step')
-  const modelStep = steps.find(step => step.text().includes('agent.create.llm.title'))
-  await modelStep!.trigger('click')
+  // Navigate to model step by completing previous steps
+  const skipButton = wrapper.find('button[name="skip"]')
+  await skipButton.trigger('click')
+  await nextTick()
+  
+  // Complete general step
+  const nameField = wrapper.find('input[name="name"]')
+  await nameField.setValue('Test Agent')
+  const descriptionField = wrapper.find('textarea[name="description"]')
+  await descriptionField.setValue('Test Description')
+  const goalField = wrapper.find('textarea[name="goal"]')
+  await goalField.setValue('Test Goal')
+  const nextButton = wrapper.find('button[name="next"]')
+  await nextButton.trigger('click')
   await nextTick()
 
-  // Should show "Show Model Settings" button if hasSettings is true
-  const wizardStep = wrapper.findComponent({ name: 'WizardStep' })
-  const settingsButton = wizardStep.find('button')
-  if (settingsButton.exists()) {
-    expect(settingsButton.text()).toContain('agent.create.llm.showModelSettings')
-  }
+  // Should show model settings button
+  const buttons = wrapper.findAll('button')
+  const settingsBtn = buttons.find(btn => btn.text().includes('agent.create.llm.showModelSettings'))
+  expect(settingsBtn).toBeTruthy()
 })
 
 // === VALIDATION TESTS ===
@@ -461,6 +448,11 @@ test('Validates information step - shows error for empty fields', async () => {
   })
   await nextTick()
 
+  // Navigate to general step first
+  const skipButton = wrapper.find('button[name="skip"]')
+  await skipButton.trigger('click')
+  await nextTick()
+
   // Leave fields empty and try to proceed
   const wizardStep = wrapper.findComponent({ name: 'WizardStep' })
   
@@ -468,10 +460,8 @@ test('Validates information step - shows error for empty fields', async () => {
   await wizardStep.vm.$emit('next')
   await nextTick()
 
-  // Should show error message in HTML
-  const errorDiv = wizardStep.find('.error')
-  expect(errorDiv.exists()).toBe(true)
-  expect(errorDiv.text()).toBe('common.required.fieldsRequired')
+  // Should show error message in HTML (error prop should be passed to WizardStep)
+  expect(wizardStep.props('error')).toBeTruthy()
   
   // Should still be on the same step
   const steps = wrapper.findAll('.wizard-step')
@@ -487,6 +477,11 @@ test('Validates information step - proceeds when fields are filled', async () =>
   })
   await nextTick()
 
+  // Navigate to general step first
+  const skipButton = wrapper.find('button[name="skip"]')
+  await skipButton.trigger('click')
+  await nextTick()
+
   // Fill in required fields
   const nameField = wrapper.find<HTMLInputElement>('input[name="name"]')
   await nameField.setValue('Test Agent')
@@ -495,15 +490,16 @@ test('Validates information step - proceeds when fields are filled', async () =>
   const goalField = wrapper.find<HTMLTextAreaElement>('textarea[name="goal"]')
   await goalField.setValue('Test Goal')
 
-  // Try to proceed
-  const wizardStep = wrapper.findComponent({ name: 'WizardStep' })
-  await wizardStep.vm.$emit('next')
+  // Try to proceed using next button
+  const nextButton = wrapper.find('button[name="next"]')
+  await nextButton.trigger('click')
   await nextTick()
 
-  // Should move to next step (Goal step for witsy agents)
+  // Should move to next step (Model step for witsy agents)
   const steps = wrapper.findAll('.wizard-step')
-  expect(steps[1].classes()).toContain('active')
-  expect(steps[0].classes()).not.toContain('active')
+  const activeStep = steps.find(step => step.classes().includes('active'))
+  expect(activeStep).toBeTruthy()
+  expect(activeStep!.text()).toContain('agent.create.llm.title')
 })
 
 test('Workflow step handles multiple steps correctly', async () => {

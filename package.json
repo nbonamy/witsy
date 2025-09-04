@@ -16,10 +16,13 @@
     "publish": "electron-forge publish",
     "lint": "eslint '**/*.ts' && echo '0 linting error' && vue-tsc --noEmit && echo '0 TypeScript error'",
     "credits": "npx @opengovsg/credits-generator",
-    "test": "vitest",
-    "test-ci": "vitest --coverage.enabled=true --coverage.reporter='text-summary'",
-    "testui": "vitest --ui --coverage.enabled=true",
-    "teste2e": "WITSY_HOME=/tmp vitest --config ./vitest.config.e2e.mjs './tests/e2e/**' ./tests/e2e/**"
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:ci": "vitest --coverage.enabled=true --coverage.reporter='text-summary'",
+    "test:ui": "vitest --ui --coverage.enabled=true",
+    "test:e2e": "WITSY_HOME=/tmp vitest --config ./vitest.config.e2e.mjs './tests/e2e/**' ./tests/e2e/**",
+    "typecheck": "npm run lint",
+    "type-check": "npm run typecheck"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
