@@ -1,5 +1,5 @@
+import { LlmStructuredOutput } from 'multi-llm-ts'
 import { z, ZodType } from 'zod'
-import { AgentStepStructuredOutput } from '../types/index'
 
 export const parseSimpleFormatToZod = (structure: any): ZodType => {
 
@@ -54,7 +54,7 @@ export const parseSimpleFormatToZod = (structure: any): ZodType => {
   return z.string()
 }
 
-export const processJsonSchema = (name: string, jsonSchema?: string): AgentStepStructuredOutput|null => {
+export const processJsonSchema = (name: string, jsonSchema?: string): LlmStructuredOutput|null => {
 
   if (!jsonSchema) return null
 
