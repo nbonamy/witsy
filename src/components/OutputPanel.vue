@@ -3,10 +3,10 @@
     <MessageItem :message="message" :show-role="false" :show-actions="false" />
     <div class="actions">
       <MessageItemActionCopy :message="message" ref="actionCopy" />
-      <div class="action insert" v-if="!isMas && !message.transient" @click="onInsert">
+      <div class="action insert" v-if="!message.transient" @click="onInsert">
         <BIconArrowReturnLeft /> {{ t('common.insert') }}
       </div>
-      <div class="action replace" v-if="!isMas && showReplace && !message.transient" @click="onReplace">
+      <div class="action replace" v-if="showReplace && !message.transient" @click="onReplace">
         <BIconArrowLeftRight /> {{ t('common.replace') }}
       </div>
       <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
@@ -50,7 +50,6 @@ const { onEvent } = useEventBus()
 // init stuff
 const audioPlayer = useAudioPlayer(store.config)
 
-const isMas = ref(false)
 const actionCopy = ref(null)
 const audio = ref(null)
 const audioState = ref({
@@ -93,9 +92,6 @@ onMounted(() => {
   // audio listener init
   audioPlayer.addListener(onAudioPlayerStatus)
   onEvent('audio-noise-detected', () =>  audioPlayer.stop)
-
-  // other stuff
-  isMas.value = window.api.isMasBuild
 
 })
 

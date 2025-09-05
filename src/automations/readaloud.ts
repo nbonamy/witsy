@@ -10,12 +10,6 @@ export default class ReadAloud {
 
   static read = async (app: App, timeout?: number): Promise<void> => {
 
-    // not available in mas
-    if (process.mas) {
-      window.showMasLimitsDialog()
-      return
-    }
-
     // localization
     const t = useI18n(app);
 

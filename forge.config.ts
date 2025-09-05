@@ -1,17 +1,16 @@
-import type { ForgeConfig } from '@electron-forge/shared-types';
+import { MakerDeb } from '@electron-forge/maker-deb';
+import { MakerDMG, MakerDMGConfig } from '@electron-forge/maker-dmg';
+import { MakerRpm } from '@electron-forge/maker-rpm';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
-import { MakerDMG, MakerDMGConfig } from '@electron-forge/maker-dmg';
-import { MakerPKG } from '@electron-forge/maker-pkg';
-import { MakerDeb } from '@electron-forge/maker-deb';
-import { MakerRpm } from '@electron-forge/maker-rpm';
-import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
+import { VitePlugin } from '@electron-forge/plugin-vite';
+import type { ForgeConfig } from '@electron-forge/shared-types';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import { execSync } from 'child_process';
-import prePackage from './build/prepackage';
 import fs from 'fs';
 import path from 'path';
+import prePackage from './build/prepackage';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -19,7 +18,6 @@ dotenv.config();
 // osx special configuration
 let osxPackagerConfig = {}
 const isDarwin = process.platform == 'darwin';
-const isMas = isDarwin && process.argv.includes('mas');
 const dmgOptions: MakerDMGConfig = {
   //appPath: 'actually_not_used',
   icon: './assets/icon.icns',
@@ -33,40 +31,19 @@ const dmgOptions: MakerDMGConfig = {
 }
 
 if (isDarwin) {
-  if (!isMas) {
-    osxPackagerConfig = {
-      osxSign: {
-        identity: process.env.IDENTIFY_DARWIN_CODE,
-        provisioningProfile: './build/Witsy_Darwin.provisionprofile',
-        optionsForFile: () => { return {
-          hardenedRuntime: true,
-          entitlements: './build/Entitlements.darwin.plist'
-        }; },
-      },
-      osxNotarize: {
-        appleId: process.env.APPLE_ID,
-        appleIdPassword: process.env.APPLE_PASSWORD,
-        teamId: process.env.APPLE_TEAM_ID
-      }
-    }
-  } else {
-    osxPackagerConfig = {
-      osxUniversal: {
-      },
-      osxSign: {
-        identity: process.env.IDENTITY_MAS_CODE,
-        provisioningProfile: './build/Witsy_MAS.provisionprofile',
-        optionsForFile: (filePath: string) => { 
-          let entitlements = './build/Entitlements.mas.child.plist'
-          if (filePath.endsWith('Witsy.app')) {
-            entitlements = './build/Entitlements.mas.main.plist'
-          }
-          return {
-            hardenedRuntime: true,
-            entitlements: entitlements
-          };
-        },
-      },
+  osxPackagerConfig = {
+    osxSign: {
+      identity: process.env.IDENTIFY_DARWIN_CODE,
+      provisioningProfile: './build/Witsy_Darwin.provisionprofile',
+      optionsForFile: () => { return {
+        hardenedRuntime: true,
+        entitlements: './build/Entitlements.darwin.plist'
+      }; },
+    },
+    osxNotarize: {
+      appleId: process.env.APPLE_ID,
+      appleIdPassword: process.env.APPLE_PASSWORD,
+      teamId: process.env.APPLE_TEAM_ID
     }
   }
 }
@@ -97,8 +74,7 @@ const config: ForgeConfig = {
       // sign native modules
       (buildPath, electronVersion, platform, arch, callback) => {
         try {
-          // we sign libnut on mas but feature is disabled anyway
-          if (platform === 'darwin' || platform === 'mas') {
+          if (platform === 'darwin') {
             const binaries = [
               'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node',
               `node_modules/autolib/build/Release/autolib.node`,
@@ -106,7 +82,7 @@ const config: ForgeConfig = {
 
             binaries.forEach((binary) => {
               const binaryPath = path.join(buildPath, binary);
-              const identify = isMas ? process.env.IDENTITY_MAS_CODE : process.env.IDENTIFY_DARWIN_CODE;
+              const identify = process.env.IDENTIFY_DARWIN_CODE;
               if (fs.existsSync(binaryPath)) {
                 console.log(`Signing binary: ${binaryPath}`);
                 execSync(`codesign --deep --force --verbose --sign "${identify}" "${binaryPath}"`, {
@@ -128,7 +104,7 @@ const config: ForgeConfig = {
   rebuildConfig: {},
   makers: process.env.TEST ? [ new MakerZIP() ] : [
     /* xplat  */ new MakerZIP({}, ['linux', 'win32', 'darwin']),
-    /* darwin */ new MakerDMG(dmgOptions, ['darwin']), new MakerPKG({ identity: process.env.IDENTITY_MAS_PKG, }, ['mas']),
+    /* darwin */ new MakerDMG(dmgOptions, ['darwin']),
     /* win32  */ new MakerSquirrel({}),
     /* linux  */ new MakerRpm({}), new MakerDeb({})
   ],

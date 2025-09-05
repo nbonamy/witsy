@@ -19,11 +19,6 @@ export default class AutoUpdater {
 
   private initialize = () => {
 
-    // not available on mas
-    if (process.mas) {
-      return
-    }
-
     // localization
     const t = useI18n(this.app)
 

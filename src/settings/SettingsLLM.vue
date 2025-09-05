@@ -79,7 +79,6 @@ import { store } from '../services/store'
 import { InstructionsType } from '../types/config'
 import { CustomInstruction } from '../types/index'
 
-const isMas = ref(false)
 const instructions = ref<InstructionsType>('structured')
 const engine = ref(null)
 const model = ref(null)
@@ -117,7 +116,6 @@ const getDefaultInstructionLabel = (instructionType: string) => {
 }
 
 const load = () => {
-  isMas.value = window.api.isMasBuild
   instructions.value = store.config.llm.instructions || 'structured'
   engine.value = store.config.prompt.engine || ''
   model.value = store.config.prompt.model || ''
