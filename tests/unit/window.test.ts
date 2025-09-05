@@ -1,10 +1,10 @@
 
-import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
-import { BrowserWindow, dialog, Menu, shell, } from 'electron'
-import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
+import { BrowserWindow, Menu } from 'electron'
+import { beforeAll, beforeEach, expect, Mock, test, vi } from 'vitest'
 import * as window from '../../src/main/window'
+import { store } from '../../src/services/store'
 import { Application } from '../../src/types/automation'
+import { useWindowMock } from '../mocks/window'
 
 global.MAIN_WINDOW_VITE_DEV_SERVER_URL = 'http://localhost:3000/'
 global.MAIN_WINDOW_VITE_NAME = 'vite'
@@ -357,17 +357,6 @@ test('Open Debug window', async () => {
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/debug')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
-})
-
-test('MAS build warning', async () => {
-  window.showMasLimitsDialog()
-  expect(dialog.showMessageBoxSync).toHaveBeenLastCalledWith(null, {
-    buttons: ['Close', 'Check website'],
-    message: expect.any(String),
-    detail: expect.any(String),
-    defaultId: 1,
-  })
-  expect(shell.openExternal).toHaveBeenLastCalledWith(expect.stringContaining('https://witsyai.com/'))
 })
 
 test('Utilities', async () => {

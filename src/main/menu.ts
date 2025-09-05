@@ -21,7 +21,6 @@ export type MenuCallbacks = {
 }
 
 const isMac = process.platform === 'darwin'
-const isMas = process.mas
 
 const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig) => {
 
@@ -47,13 +46,11 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
         label: app.name,
         submenu: [
           { role: 'about' },
-          ...(!isMas ? [
-            {
-              label: t('menu.app.checkForUpdates'),
-              click: async () => callbacks.checkForUpdates()
-            },
-            { type: 'separator' },
-          ] : []),
+          {
+            label: t('menu.app.checkForUpdates'),
+            click: async () => callbacks.checkForUpdates()
+          },
+          { type: 'separator' },
           {
             label: t('menu.app.settings'),
             accelerator: 'CmdOrCtrl+,',

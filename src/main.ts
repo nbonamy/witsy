@@ -37,7 +37,7 @@ let docMonitor: DocumentMonitor;
 let trayIconManager: TrayIconManager;
 
 // first-thing: single instance
-// on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
+// on darwin this is done through Info.plist (LSMultipleInstancesProhibited)
 if (process.platform !== 'darwin' && !process.env.TEST) {
   const gotTheLock = app.requestSingleInstanceLock();
   if (!gotTheLock) {
@@ -188,11 +188,9 @@ app.whenReady().then(async () => {
   registerShortcuts();
 
   // start mcp
-  if (!process.mas) {
-    await fixPath()
-    mcp = new Mcp(app);
-    mcp.connect();
-  }
+  await fixPath()
+  mcp = new Mcp(app);
+  mcp.connect();
 
   // // and now scheduler
   // scheduler = new Scheduler(app, mcp);

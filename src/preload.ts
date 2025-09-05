@@ -20,7 +20,6 @@ contextBridge.exposeInMainWorld(
   'api', {
     licensed: true,
     platform: process.platform,
-    isMasBuild: process.mas === true,
     userDataPath: ipcRenderer.sendSync(IPC.APP.GET_APP_PATH),
     on: (signal: string, callback: (value: any) => void): void => {
       ipcRenderer.on(signal, (_event, value) => callback(value))

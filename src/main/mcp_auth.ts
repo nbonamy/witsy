@@ -168,7 +168,7 @@ class OAuthCallbackServer {
               </style>
             </head>
             <body>
-              <img src="https://witsyai.com/img/logo.png" alt="Witsy" class="logo">
+              <img src="https://witsy.bonamy.fr/img/logo.png" alt="Witsy" class="logo">
               <h1>${t('mcp.oauth.success.title')}</h1>
               <p>${t('mcp.oauth.success.message')}</p>
               <script>setTimeout(() => window.close(), 2000);</script>
@@ -203,7 +203,7 @@ class OAuthCallbackServer {
               </style>
             </head>
             <body>
-              <img src="https://witsyai.com/img/logo.png" alt="Witsy" class="logo">
+              <img src="https://witsy.bonamy.fr/img/logo.png" alt="Witsy" class="logo">
               <h1 data-i18n="oauth.error.title">Authorization Failed</h1>
               <p data-i18n="oauth.error.message">Error: ${error}</p>
             </body>
