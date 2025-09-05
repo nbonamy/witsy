@@ -137,6 +137,11 @@ const onModelSelected = (engine: string | null, model: string | null) => {
   min-width: 0;
 }
 
+.content span {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 .engine-logo {
   width: var(--icon-lg);
   height: var(--icon-lg);
