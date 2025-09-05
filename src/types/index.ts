@@ -307,7 +307,6 @@ declare global {
     api: {
       licensed: boolean
       platform: string
-      isMasBuild: boolean
       userDataPath: string
       on: (signal: string, callback: (value: any) => void) => void
       off: (signal: string, callback: (value: any) => void) => void

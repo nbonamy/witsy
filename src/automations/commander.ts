@@ -20,12 +20,6 @@ export default class Commander {
 
   static initCommand = async (app: App, timeout?: number): Promise<void> => {
 
-    // not available in mas
-    if (process.mas) {
-      window.showMasLimitsDialog()
-      return
-    }
-
     // start time
     const startTime = Date.now();
 

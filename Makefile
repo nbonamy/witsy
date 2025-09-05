@@ -34,10 +34,6 @@ mac-x64:
 	cd out/make/zip/darwin/x64/ ; mv Witsy-darwin-x64-$(VERSION).zip Witsy-$(VERSION)-darwin-x64.zip
 	cd out/make ; mv Witsy-$(VERSION)-x64.dmg Witsy-$(VERSION)-darwin-x64.dmg
 
-mac-mas:
-	-rm -rf out/*mas-universal* out/make/*.pkg
-	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge make -p mas -a universal
-
 mac: mac-arm64 mac-x64
 
 win-x64:
