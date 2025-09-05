@@ -98,6 +98,8 @@ const processQueryParams = (params: anyDict) => {
       emitEvent('create-docrepo')
     }
 
+  } else if (mode.value === 'none') {
+    onMode('chat')
   }
 }
 
