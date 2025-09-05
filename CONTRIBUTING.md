@@ -2,6 +2,10 @@
 
 Thank you for considering contributing to Witsy! Here are some guidelines to help you get started.
 
+## Contribution License Agreement
+
+For contributions to be accepted into Witsy, you first need sign the [Contributor License Agreement](CLA.md).
+
 ## Code Contributions
 
 ### Development Environment
