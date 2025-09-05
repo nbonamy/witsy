@@ -68,7 +68,7 @@ onMounted(async () => {
     title.value = props.chat?.title
     engine.value = props.chat?.engine
     model.value = props.chat?.model
-  }, { immediate: true })
+  }, { deep: true, immediate: true })
 })
 
 const close = () => {
