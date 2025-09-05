@@ -71,7 +71,6 @@ import LangSelect from '../components/LangSelect.vue'
 import InstructionEditor from '../components/InstructionEditor.vue'
 import Dialog from '../composables/dialog'
 
-const isMas = ref(false)
 const instructions = ref<InstructionsType>('structured')
 const engine = ref(null)
 const model = ref(null)
@@ -108,7 +107,6 @@ const getDefaultInstructionLabel = (instructionType: string) => {
 }
 
 const load = () => {
-  isMas.value = window.api.isMasBuild
   instructions.value = store.config.llm.instructions || 'structured'
   engine.value = store.config.prompt.engine || ''
   model.value = store.config.prompt.model || ''

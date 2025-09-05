@@ -90,7 +90,7 @@
             <button name="commands" class="button" @click="onCommands" :disabled="!transcription || state === 'processing'"><BIconMagic /></button>
             <div class="push"></div>
             <button name="clear" class="button" @click="onClear" :disabled="!transcription || state === 'processing'">{{ t('common.clear') }}</button>
-            <button name="insert" class="button" @click="onInsert" :disabled="!transcription || state === 'processing'" v-if="!isMas">{{ t('common.insert') }}</button>
+            <button name="insert" class="button" @click="onInsert" :disabled="!transcription || state === 'processing'">{{ t('common.insert') }}</button>
             <button name="copy" class="button" @click="onCopy" :disabled="!transcription || state === 'processing'">{{ copying ? t('common.copied') : t('common.copy') }}</button>
           </div>
         </div>
@@ -139,7 +139,6 @@ let pushToTalkMode = false
 
 type State = 'idle'|'initializing'|'recording'|'processing'
 
-const isMas = ref(false)
 const engine = ref('')
 const model = ref('')
 const locale = ref('')
@@ -278,7 +277,6 @@ const initialize = async () => {
   // other stuff
   autoStart.value = store.config.stt.autoStart
   pushToTalk.value = store.config.stt.pushToTalk
-  isMas.value = window.api.isMasBuild
 
 }
 

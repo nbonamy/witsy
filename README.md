@@ -1,7 +1,7 @@
 
 <div align="center">
 
-  <a href="https://witsyai.com" target="_blank"><img src="assets/icon.png" width="128" alt="Witsy Logo"></a>
+  <img src="assets/icon.png" width="128" alt="Witsy Logo">
   <div><b>Witsy</b></div>
   <div>Desktop AI Assistant<br/>Universal MCP Client</div>
 
@@ -26,7 +26,7 @@
 
 ## Downloads
 
-Download Witsy from [witsyai.com](https://witsyai.com) or from the [releases](https://github.com/nbonamy/witsy/releases) page.
+Download Witsy from the [releases](https://github.com/nbonamy/witsy/releases) page.
 
 On macOS you can also `brew install --cask witsy`.
 
@@ -154,7 +154,7 @@ https://www.youtube.com/watch?v=vixl7I07hBk
 
 ## Setup
 
-You can download a binary from from [witsyai.com](https://witsyai.com), from the [releases](https://github.com/nbonamy/witsy/releases) page or build yourself:
+You can download a binary from from the [releases](https://github.com/nbonamy/witsy/releases) page or build yourself:
 
 ```
 npm install

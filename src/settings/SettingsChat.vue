@@ -41,7 +41,7 @@
           <option value="always">{{ t('settings.chat.showToolCalls.always') }}</option>
         </select>
       </div>
-      <div class="form-field font-family" v-if="!isMas">
+      <div class="form-field font-family">
         <label>{{ t('settings.chat.font') }}</label>
         <select v-model="fontFamily" @change="save">
           <option value="">{{ t('common.default') }}</option>
@@ -94,7 +94,6 @@ import { t } from '../services/i18n'
 import Message from '../models/message'
 import MessageItem from '../components/MessageItem.vue'
 
-const isMas = ref(false)
 const theme = ref(null)
 const fontSize = ref(null)
 const fontFamily = ref('')
@@ -112,7 +111,6 @@ const fontStyle = computed(() => {
 })
 
 const load = () => {
-  isMas.value = window.api.isMasBuild
   theme.value = store.config.appearance.chat.theme || 'openai'
   layout.value = store.config.appearance.chatList.layout || 'normal'
   copyFormat.value = store.config.appearance.chat.copyFormat || 'text'

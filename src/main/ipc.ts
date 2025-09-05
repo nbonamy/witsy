@@ -121,7 +121,7 @@ export const installIpc = (
   });
 
   ipcMain.on(IPC.APP.FONTS_LIST, async (event) => {
-    event.returnValue = process.mas ? [] : await fontList.getFonts();
+    event.returnValue = await fontList.getFonts();
   });
 
   ipcMain.on(IPC.STORE.GET_VALUE, (event, payload) => {
