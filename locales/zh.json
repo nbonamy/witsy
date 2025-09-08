@@ -1680,16 +1680,6 @@
     "confirmDelete": "你确定要删除这个服务器吗？",
     "copyInstallCommand": "你可以复制安装命令到剪贴板并尝试在终端中运行。",
     "failedToInstall": "服务器安装失败",
-    "hero": {
-      "github": {
-        "description": "直接从您的工作区访问仓库，管理问题、拉取请求并协作开发代码。",
-        "title": "GitHub 集成"
-      },
-      "kochava": {
-        "description": "由 Kochava 行业领先的测量平台驱动的高级移动广告分析和归因。",
-        "title": "Kochava 分析"
-      }
-    },
     "importJson": {
       "details": "从 Claude 复制/粘贴 JSON MCP 服务器定义。",
       "errorArgs": "无效的 MCP 服务器参数。",
