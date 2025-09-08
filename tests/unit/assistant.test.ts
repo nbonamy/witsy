@@ -21,7 +21,7 @@ vi.mock('../../src/llms/manager.ts', async () => {
   LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
   LlmManager.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
   LlmManager.prototype.isComputerUseModel = vi.fn(() => false)
-  LlmManager.prototype.checkModelListsVersion = vi.fn()
+  LlmManager.prototype.checkModelsCapabilities = vi.fn()
   LlmManager.prototype.loadTools = vi.fn()
 	return { default: LlmManager }
 })

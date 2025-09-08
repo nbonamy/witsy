@@ -29,15 +29,15 @@
 
 <script setup lang="ts">
 
-import { ref, computed, nextTick, PropType } from 'vue'
-import { store } from '../services/store'
+import { computed, nextTick, PropType, ref } from 'vue'
 import VueSelect from 'vue3-select-component'
-import LlmFactory from '../llms/llm'
 import { engineNames } from '../llms/base'
+import LlmFactory from '../llms/llm'
+import LlmManager from '../llms/manager'
+import { store } from '../services/store'
 import EngineLogo from './EngineLogo.vue'
-import LlmManager from 'llms/manager'
 
-const llmManager: LlmManager = LlmFactory.manager(store.config)
+const llmManager: LlmManager = LlmFactory.manager(store.config) as LlmManager
 
 const select = ref<typeof VueSelect|null>(null)
 

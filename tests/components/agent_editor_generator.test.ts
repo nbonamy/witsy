@@ -29,7 +29,7 @@ vi.mock('../../src/llms/llm', () => {
         isEngineReady: vi.fn(() => true),
         hasChatModels: vi.fn(() => true),
         isFavoriteEngine: vi.fn(() => false),
-        checkModelListsVersion: vi.fn(),
+        checkModelsCapabilities: vi.fn(),
         getCustomEngines: vi.fn(() => []),
         getStandardEngines: vi.fn(() => ['openai', 'anthropic']),
         getChatEngines: vi.fn(() => ['openai', 'anthropic']),
@@ -45,7 +45,6 @@ vi.mock('../../src/services/agent_generator')
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
-  store.config = {} // Ensure store.config exists for EngineModelSelect
 })
 
 beforeEach(() => {

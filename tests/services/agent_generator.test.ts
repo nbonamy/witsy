@@ -28,7 +28,7 @@ vi.mock('../../src/llms/llm', () => {
       manager: vi.fn(() => ({
         igniteEngine: vi.fn(),
         getChatModel: vi.fn(() => ({ id: 'gpt-4' })),
-        checkModelListsVersion: vi.fn()
+        checkModelsCapabilities: vi.fn()
       }))
     }
   }
@@ -107,7 +107,7 @@ test('Successfully generates agent from description', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'test-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)
@@ -153,7 +153,7 @@ test('Successfully generates agent with schedule when requested', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'test-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)
@@ -177,7 +177,7 @@ test('Uses specified engine and model when provided', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'custom-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)
@@ -208,7 +208,7 @@ test('Handles LLM response wrapped in markdown code blocks', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'test-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)
@@ -232,7 +232,7 @@ test('Handles structured output response (already parsed object)', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'test-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)
@@ -252,7 +252,7 @@ test('Returns null when LLM response is invalid JSON', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'test-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)
@@ -278,7 +278,7 @@ test('Returns null when required fields are missing', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'test-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)
@@ -305,7 +305,7 @@ test('Returns null when steps are missing or empty', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'test-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)
@@ -326,7 +326,7 @@ test('Returns null when LLM throws an error', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'test-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)
@@ -358,7 +358,7 @@ test('Applies default values when optional fields are missing', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'test-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)
@@ -387,7 +387,7 @@ test('Builds system and user prompts correctly', async () => {
   vi.mocked(LlmFactory.manager).mockReturnValue({
     igniteEngine: vi.fn().mockReturnValue(mockLlm),
     getChatModel: vi.fn().mockReturnValue({ id: 'test-model' }),
-    checkModelListsVersion: vi.fn()
+    checkModelsCapabilities: vi.fn()
   } as any)
 
   const generator = new AgentGenerator(store.config)

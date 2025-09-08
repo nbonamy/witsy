@@ -9,6 +9,7 @@ import { loadAgents } from './agents'
 import features from '../../defaults/features.json'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
+import LlmManager from 'llms/manager'
 
 export const kMediaChatId = '00000000-0000-0000-0000-000000000000'
 export const kReferenceParamValue = '<media>'
@@ -87,8 +88,8 @@ export const store: Store = reactive({
     loadWorkspace()
 
     // we need to check the model list versions
-    const llmManager = LlmFactory.manager(store.config)
-    llmManager.checkModelListsVersion()
+    const llmManager = LlmFactory.manager(store.config) as LlmManager
+    llmManager.checkModelsCapabilities()
 
     // subscribe to file changes
     window.api.on('file-modified', (file) => {
