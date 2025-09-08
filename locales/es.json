@@ -1661,16 +1661,6 @@
     "confirmDelete": "¿Estás seguro de que quieres eliminar este servidor?",
     "copyInstallCommand": "Puedes copiar el comando de instalación al portapapeles e intentarlo en una terminal.",
     "failedToInstall": "Error al instalar el servidor",
-    "hero": {
-      "github": {
-        "description": "Accede a repositorios, gestiona incidencias, solicitudes de extracción y colabora en el código directamente desde tu espacio de trabajo.",
-        "title": "Integración con GitHub"
-      },
-      "kochava": {
-        "description": "Análisis avanzado de publicidad móvil y atribución impulsados por la plataforma de medición líder en la industria de Kochava.",
-        "title": "Kochava Analytics"
-      }
-    },
     "importJson": {
       "details": "Copia y pega definiciones JSON de servidores MCP desde Claude aquí.",
       "errorArgs": "Argumentos del servidor MCP inválidos.",

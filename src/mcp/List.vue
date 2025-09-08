@@ -16,44 +16,32 @@
       </div>
     </header>
 
-    <section class="hero" v-if="store.isFeatureEnabled('mcp.station1')">
-      <div class="hero-cards">
-        <div class="hero-card kochava-card" @click="onConnect('kochava')" :class="{ 'loading': mcpLoading }">
-          <div class="card-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="#4F46E5"/>
-              <path d="M8 8h16v4H8V8zm0 6h16v4H8v-4zm0 6h16v4H8v-4z" fill="white"/>
-            </svg>
+    <section class="integrations" v-if="store.isFeatureEnabled('mcp.station1')">
+      <div class="integrations-list">
+        <div 
+          v-for="integration in integrations" 
+          :key="integration.id"
+          :class="['integration', `${integration.id}-card`, { 'loading': mcpLoading === integration.id }]" 
+          @click="onConnect(integration.id)"
+        >
+          <div class="integration-icon">
+            <img :src="integration.icon" :alt="integration.name" />
           </div>
-          <div class="card-content">
-            <h3>{{ t('mcp.hero.kochava.title') }}</h3>
-            <p>{{ t('mcp.hero.kochava.description') }}</p>
+          <div class="integration-content">
+            <h3>{{ integration.name }}</h3>
+            <p>{{ integration.description }}</p>
           </div>
-          <div class="card-action" v-if="!mcpLoading">
+          <div class="integration-action" v-if="mcpLoading !== integration.id">
             <PlusIcon />
           </div>
-          <div class="card-spinner" v-if="mcpLoading">
+          <div class="integration-spinner" v-if="mcpLoading === integration.id">
             <Spinner />
           </div>
         </div>
-
-        <div class="hero-card github-card" @click="onConnect('github')" :class="{ 'loading': mcpLoading }">
-          <div class="card-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M16 2C8.268 2 2 8.268 2 16c0 6.18 4.008 11.422 9.572 13.282.7.128.958-.304.958-.674 0-.332-.012-1.21-.018-2.376-3.896.846-4.716-1.878-4.716-1.878-.636-1.616-1.554-2.046-1.554-2.046-1.27-.868.096-.85.096-.85 1.406.098 2.146 1.444 2.146 1.444 1.25 2.14 3.278 1.522 4.078 1.164.126-.906.488-1.522.888-1.872-3.11-.354-6.378-1.554-6.378-6.92 0-1.528.546-2.778 1.444-3.756-.144-.354-.626-1.782.138-3.712 0 0 1.178-.376 3.86 1.438 1.12-.312 2.32-.468 3.512-.474 1.192.006 2.392.162 3.512.474 2.682-1.814 3.86-1.438 3.86-1.438.764 1.93.282 3.358.138 3.712.898.978 1.444 2.228 1.444 3.756 0 5.378-3.274 6.56-6.392 6.908.502.432.952 1.284.952 2.588 0 1.87-.018 3.378-.018 3.836 0 .374.254.808.966.672C25.996 27.418 30 22.178 30 16c0-7.732-6.268-14-14-14z" fill="#24292e"/>
-            </svg>
-          </div>
-          <div class="card-content">
-            <h3>{{ t('mcp.hero.github.title') }}</h3>
-            <p>{{ t('mcp.hero.github.description') }}</p>
-          </div>
-          <div class="card-action" v-if="!mcpLoading">
-            <PlusIcon />
-          </div>
-          <div class="card-spinner" v-if="mcpLoading">
-            <Spinner />
-          </div>
-        </div>
+      </div>
+      
+      <div v-if="integrationsLoading" class="integrations-loading">
+        <Spinner /> Loading integrations...
       </div>
     </section>
 
@@ -144,7 +132,7 @@
 import { BIconBraces, BIconCloudPlus } from 'bootstrap-icons-vue'
 import { PauseIcon, PlayIcon, PlusIcon, PowerIcon, RefreshCwIcon, SearchIcon, SquareIcon } from 'lucide-vue-next'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
-import { nextTick, PropType, ref } from 'vue'
+import { nextTick, onMounted, PropType, ref } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import Spinner from '../components/Spinner.vue'
 import Dialog from '../composables/dialog'
@@ -152,6 +140,18 @@ import { OAuthStatus, useMcpServer } from '../composables/mcp'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { McpServer, McpServerStatus } from '../types/mcp'
+import { s } from 'vite/dist/node/types.d-aGj9QkWt'
+
+interface Integration {
+  id: string
+  name: string
+  description: string
+  icon: string
+  category: string
+  auth?: string
+  hasCredentials: boolean
+  mcpUrl: string
+}
 
 const props = defineProps({
   servers: Array as PropType<McpServer[]>,
@@ -161,8 +161,30 @@ const props = defineProps({
 
 const selected = ref(null)
 const mcpLoading = ref<string|undefined>(undefined)
+const integrations = ref<Integration[]>([])
+const integrationsLoading = ref(false)
 
 const emit = defineEmits([ 'edit', 'create', 'reload', 'restart' ])
+
+const fetchIntegrations = async (): Promise<void> => {
+  try {
+    integrationsLoading.value = true
+    const response = await fetch('http://localhost:3001/api/v1/integrations')
+    if (response.ok) {
+      integrations.value = await response.json()
+    }
+  } catch (error) {
+    console.error('Failed to fetch integrations:', error)
+  } finally {
+    integrationsLoading.value = false
+  }
+}
+
+onMounted(() => {
+  if (store.isFeatureEnabled('mcp.station1')) {
+    fetchIntegrations()
+  }
+})
 
 const getType = (server: McpServer) => {
   if (server.url.includes('@smithery/cli')) return 'smithery'
@@ -227,8 +249,9 @@ const onRestart = async () => {
   emit('restart')
 }
 
-const getAppConnectUrl = (app: string): string => {
-  return `http://localhost:3001/mcp/${app}`
+const getAppConnectUrl = (integrationId: string): string => {
+  const integration = integrations.value.find(int => int.id === integrationId)
+  return integration ? integration.mcpUrl : `http://localhost:3001/mcp/${integrationId}`
 }
 
 const onConnect = async (app: string): Promise<void> => {
@@ -240,9 +263,11 @@ const onConnect = async (app: string): Promise<void> => {
   }
 }
 
-const setupOAuth = async (app: string, url: string, oauthStatus: OAuthStatus) => {
+const setupOAuth = async (integrationId: string, url: string, oauthStatus: OAuthStatus) => {
   const oauthConfig = await useMcpServer().setupOAuth(url, oauthStatus)
   if (oauthConfig) {
+    const integration = integrations.value.find(int => int.id === integrationId)
+    const integrationName = integration ? integration.name : integrationId
 
     // build a dummy server
     const server: McpServer = {
@@ -250,13 +275,13 @@ const setupOAuth = async (app: string, url: string, oauthStatus: OAuthStatus) =>
       registryId: null,
       state: 'enabled',
       type: 'http',
-      label: app,
+      label: integrationName,
       url: url,
       oauth: JSON.parse(JSON.stringify(oauthConfig)),
     }
 
     // save it
-    mcpLoading.value = app
+    mcpLoading.value = integrationId
     await window.api.mcp.editServer(server)
     emit('reload')
     mcpLoading.value = undefined
@@ -388,20 +413,21 @@ const validateServerJson = (json: string) => {
 
 .mcp-server-list {
   
-  .hero {
-    padding: 2rem 4rem 0;
+  .integrations {
+    padding-top: 4rem;
     max-width: 1000px;
     margin: 0 auto;
   }
   
-  .hero-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  .integrations-list {
+    display: flex;
+    flex-wrap: wrap;
     gap: 1.5rem;
     margin-bottom: 2rem;
   }
   
-  .hero-card {
+  .integration {
+    flex: 0 0 260px;
     display: flex;
     align-items: flex-start;
     gap: 1rem;
@@ -414,42 +440,46 @@ const validateServerJson = (json: string) => {
     position: relative;
   }
   
-  .hero-card:hover {
+  .integration:hover {
     background: var(--hover-background);
     border-color: var(--accent-color);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
-  .hero-card.loading {
+  .integration.loading {
     cursor: wait;
     opacity: 0.7;
   }
   
-  .card-icon {
+  .integration-icon {
     flex-shrink: 0;
-    width: 32px;
-    height: 32px;
+    width: 2rem;
+    height: 2rem;
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
   
-  .card-content {
+  .integration-content {
     flex: 1;
   }
   
-  .card-content h3 {
+  .integration-content h3 {
     margin: 0 0 0.5rem 0;
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-color);
   }
   
-  .card-content p {
+  .integration-content p {
     margin: 0;
     font-size: 0.9rem;
     color: var(--faded-text-color);
     line-height: 1.4;
   }
   
-  .card-action {
+  .integration-action {
     flex-shrink: 0;
     width: 20px;
     height: 20px;
@@ -458,14 +488,23 @@ const validateServerJson = (json: string) => {
     transition: opacity 0.2s ease;
   }
   
-  .hero-card:hover .card-action {
+  .integration:hover .integration-action {
     opacity: 1;
   }
   
-  .card-spinner {
+  .integration-spinner {
     flex-shrink: 0;
     width: 20px;
     height: 20px;
+  }
+
+  .integrations-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    color: var(--faded-text-color);
   }
 
   header {

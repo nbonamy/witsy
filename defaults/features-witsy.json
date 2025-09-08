@@ -2,6 +2,6 @@
 {
   "workspaces": false,
   "mcp": {
-    "station1": false
+    "station1": true
   }
 }

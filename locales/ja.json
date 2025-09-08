@@ -1680,16 +1680,6 @@
     "confirmDelete": "本当にこのサーバーを削除してもよろしいですか？",
     "copyInstallCommand": "インストールコマンドをクリップボードにコピーして、ターミナルで試すことができます。",
     "failedToInstall": "サーバーのインストールに失敗しました",
-    "hero": {
-      "github": {
-        "description": "リポジトリへのアクセス、課題やプルリクエストの管理、ワークスペースから直接コード協業が可能です。",
-        "title": "GitHub 連携"
-      },
-      "kochava": {
-        "description": "Kochava の業界最先端の計測プラットフォームによる高度なモバイル広告分析とアトリビューション。",
-        "title": "Kochava アナリティクス"
-      }
-    },
     "importJson": {
       "details": "ClaudeからのJSON MCPサーバー定義をここにコピー＆ペーストしてください。",
       "errorArgs": "無効なMCPサーバー引数です。",

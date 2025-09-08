@@ -1661,16 +1661,6 @@
     "confirmDelete": "Sind Sie sicher, dass Sie diesen Server löschen möchten?",
     "copyInstallCommand": "Sie können den Installationsbefehl in Ihre Zwischenablage kopieren und in einem Terminal ausprobieren.",
     "failedToInstall": "Installation des Servers fehlgeschlagen",
-    "hero": {
-      "github": {
-        "description": "Greifen Sie auf Repositories zu, verwalten Sie Issues, Pull Requests und arbeiten Sie direkt aus Ihrem Arbeitsbereich zusammen.",
-        "title": "GitHub-Integration"
-      },
-      "kochava": {
-        "description": "Fortschrittliche Mobile-Werbeanalyse und Attribution, betrieben durch Kochavas branchenführende Messplattform.",
-        "title": "Kochava Analytics"
-      }
-    },
     "importJson": {
       "details": "Kopieren/Einfügen von JSON MCP Server-Definitionen von Claude hier.",
       "errorArgs": "Ungültige MCP Server-Argumente.",
