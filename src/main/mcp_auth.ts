@@ -109,10 +109,10 @@ class OAuthCallbackServer {
         this.pendingCallbacks.delete(flowId)
         reject(new Error('OAuth callback timeout'))
         
-        // If no more pending callbacks, shutdown server
-        if (this.pendingCallbacks.size === 0) {
-          this.shutdown()
-        }
+        // // If no more pending callbacks, shutdown server
+        // if (this.pendingCallbacks.size === 0) {
+        //   this.shutdown()
+        // }
       }, 300000) // 5 minute timeout
 
       // Store the callback handlers
@@ -182,9 +182,9 @@ class OAuthCallbackServer {
         pendingCallback.resolve(code)
 
         // If no more pending callbacks, shutdown server after a delay
-        if (this.pendingCallbacks.size === 0) {
-          setTimeout(() => this.shutdown(), 3000)
-        }
+        // if (this.pendingCallbacks.size === 0) {
+        //   setTimeout(() => this.shutdown(), 30000)
+        // }
       } else if (error) {
         console.log(`❌ Authorization error for flow ${state}: ${error}`)
         res.writeHead(400, { 'Content-Type': 'text/html' })
@@ -217,9 +217,9 @@ class OAuthCallbackServer {
         }
 
         // If no more pending callbacks, shutdown server
-        if (this.pendingCallbacks.size === 0) {
-          setTimeout(() => this.shutdown(), 1000)
-        }
+        // if (this.pendingCallbacks.size === 0) {
+        //   setTimeout(() => this.shutdown(), 30000)
+        // }
       } else {
         console.log(`❌ Invalid OAuth callback: no code, state or error parameter or pendingCallback not found: code: ${code}, state: ${state}, error: ${error}`)
         res.writeHead(400)
