@@ -75,7 +75,7 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Workspace } from '../types/workspace'
 
-const llmManager: LlmManager = LlmFactory.manager(store.config)
+const llmManager: LlmManager = LlmFactory.manager(store.config) as LlmManager
 
 const onlinePanelRef = ref<InstanceType<typeof SideModelList>>()
 const localPanelRef = ref<InstanceType<typeof SideModelList>>()

@@ -38,7 +38,7 @@ vi.mock('../../src/llms/manager.ts', async () => {
   LlmManager.prototype.isFavoriteEngine = vi.fn(() => false)
   LlmManager.prototype.isCustomEngine = vi.fn(() => false)
   LlmManager.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
-  LlmManager.prototype.checkModelListsVersion = vi.fn()
+  LlmManager.prototype.checkModelsCapabilities = vi.fn()
   LlmManager.prototype.loadTools = vi.fn()
 	return { default: LlmManager }
 })
