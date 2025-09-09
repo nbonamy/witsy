@@ -3,28 +3,28 @@
     <header class="toolbar">
       <template v-if="message">
         <div class="title">{{ message.content }}</div>
-        <div class="icon undo" @click="$emit('undo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canUndo }">
+        <ButtonIcon class="undo" @click="$emit('undo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canUndo }">
           <UndoIcon />
-        </div>
-        <div class="icon redo" @click="$emit('redo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canRedo }">
+        </ButtonIcon>
+        <ButtonIcon class="redo" @click="$emit('redo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canRedo }">
           <RedoIcon />
-        </div>
-        <div class="icon info" @click="onInfo">
+        </ButtonIcon>
+        <ButtonIcon class="info" @click="onInfo">
           <InfoIcon />
-        </div>
-        <div class="icon fullscreen" @click="onFullScreen" v-if="!message.isVideo()">
+        </ButtonIcon>
+        <ButtonIcon class="fullscreen" @click="onFullScreen" v-if="!message.isVideo()">
           <FullscreenIcon />
-        </div>
-        <div class="icon copy" @click="onCopy" v-if="!message.isVideo()">
+        </ButtonIcon>
+        <ButtonIcon class="copy" @click="onCopy" v-if="!message.isVideo()">
           <ClipboardCheckIcon v-if="copying" />
           <ClipboardIcon v-else />
-        </div>
-        <div class="icon save" @click="onDownload">
+        </ButtonIcon>
+        <ButtonIcon class="save" @click="onDownload">
           <DownloadIcon />
-        </div>
-        <div class="icon delete" @click="onDelete">
+        </ButtonIcon> 
+        <ButtonIcon class="delete" @click="onDelete">
           <Trash2Icon />
-        </div>
+        </ButtonIcon>
       </template>
     </header>
     <main v-if="!message" class="empty">
@@ -51,6 +51,7 @@
 
 import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, FullscreenIcon, InfoIcon, RedoIcon, Trash2Icon, UndoIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, ref, watch } from 'vue'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import Loader from '../components/Loader.vue'
 import Dialog from '../composables/dialog'
 import Message from '../models/message'

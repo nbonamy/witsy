@@ -4,7 +4,9 @@
     <div class="sp-sidebar">
       <header>
         <div class="title">{{ t('docRepo.list.title') }}</div>
-        <Settings2Icon class="icon config" v-tooltip="{ text: t('docRepo.list.tooltips.config'), position: 'bottom' }" @click="onConfig" />
+        <ButtonIcon class="config" v-tooltip="{ text: t('docRepo.list.tooltips.config'), position: 'bottom' }" @click="onConfig">
+          <Settings2Icon />
+        </ButtonIcon>
       </header>
       <main>
         <List :docRepos="docRepos || []" :selectedRepo="selectedRepo" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" />
@@ -18,11 +20,9 @@
         <div class="title-section">
           <div v-if="!isEditingTitle" class="title-display">
             <span class="title">{{ selectedRepo?.name }}</span>
-            <PencilIcon
-              class="icon edit-title" 
-              v-tooltip="{ text: t('common.edit'), position: 'bottom' }"
-              @click="startEditingTitle" 
-            />
+            <ButtonIcon class="edit-title" v-tooltip="{ text: t('common.edit'), position: 'bottom' }" @click="startEditingTitle">
+              <PencilIcon />
+            </ButtonIcon>
           </div>
           <div v-else class="title-edit">
             <input 
@@ -34,24 +34,18 @@
               class="title-input"
             />
             <div class="actions">
-              <CheckIcon
-                class="icon save" 
-                v-tooltip="{ text: t('common.save'), position: 'bottom' }"
-                @click="saveTitle" 
-              />
-              <XIcon
-                class="icon cancel" 
-                v-tooltip="{ text: t('common.cancel'), position: 'bottom' }"
-                @click="cancelEditingTitle" 
-              />
+              <ButtonIcon class="save" v-tooltip="{ text: t('common.save'), position: 'bottom' }" @click="saveTitle" >
+                <CheckIcon />
+              </ButtonIcon>              
+              <ButtonIcon class="cancel" v-tooltip="{ text: t('common.cancel'), position: 'bottom' }" @click="cancelEditingTitle">
+                <XIcon />
+              </ButtonIcon>
             </div>
           </div>
         </div>
-        <Trash2
-          class="icon delete" 
-          v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }"
-          @click="onDeleteRepo(selectedRepo)"
-        />
+        <ButtonIcon class="delete" v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }" v-if="!isEditingTitle" @click="onDeleteRepo(selectedRepo)">
+          <Trash2 />
+        </ButtonIcon>
       </header>
       <View :selectedRepo="selectedRepo" v-if="mode === 'view'"/>
     </div>
@@ -64,6 +58,7 @@
 
 import { CheckIcon, PencilIcon, PlusIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
 import Config from '../docrepo/Config.vue'

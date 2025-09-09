@@ -389,10 +389,7 @@ defineExpose({
   font-size: 18.5px;
 
   .sp-sidebar {
-    flex-basis: 280px;
-    main {
-      padding: 1rem;
-    }
+    flex: 0 0 var(--large-panel-width);
   }
 
   .sp-main {

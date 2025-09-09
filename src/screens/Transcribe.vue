@@ -701,9 +701,6 @@ button {
 
   .sp-sidebar {
     flex: 0 0 var(--large-panel-width);
-    main {
-      padding: 1rem;
-    }
   }
 
   .sp-main {

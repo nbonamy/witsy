@@ -3,7 +3,9 @@
     <div class="sp-sidebar">
       <header>
         <div class="title">{{ t('designStudio.title') }}</div>
-        <ListRestartIcon class="icon reset" @click="onReset" v-if="currentMedia" />
+        <ButtonIcon class="reset" @click="onReset" v-if="currentMedia">
+          <ListRestartIcon  />
+        </ButtonIcon>
       </header>
       <main>
         <div class="header">
@@ -37,6 +39,7 @@
 <script setup lang="ts">
 import { ImagePlusIcon, ListRestartIcon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import DrawingCanvas from '../components/DrawingCanvas.vue'
 import Dialog from '../composables/dialog'
@@ -799,8 +802,6 @@ const onFullScreen = (url: string) => {
 
     main {
       flex: 1;
-      padding: 1rem;
-      border-right: 1px solid var(--sidebar-border-color);
     }
 
     main .header {

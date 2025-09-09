@@ -132,8 +132,6 @@ const handleActionClick = async (action: string) => {
 
 .chat-list {
 
-  padding: 1rem;
-  padding-top: 0rem;
   display: flex;
   flex-direction: column;
   overflow-y: auto;

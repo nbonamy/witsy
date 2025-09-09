@@ -2,14 +2,14 @@
   <div class="chat-area sp-main">
     <header :class="{ 'is-left-most': isLeftMost }">
       
-      <div class="icon toggle-sidebar" v-tooltip="{ text: t('main.toggleSidebar'), position: 'bottom-right' }" @click="toggleSideBar">
+      <ButtonIcon class="toggle-sidebar" v-tooltip="{ text: t('main.toggleSidebar'), position: 'bottom-right' }" @click="toggleSideBar">
         <PanelRightCloseIcon v-if="isLeftMost" />
         <PanelRightOpenIcon v-else />
-      </div>
+      </ButtonIcon>
 
-      <div class="icon new-chat" v-if="isLeftMost"v-tooltip="{ text: t('common.newChat'), position: 'bottom-right' }" @click="onNewChat">
+      <ButtonIcon class="new-chat" v-if="isLeftMost" v-tooltip="{ text: t('common.newChat'), position: 'bottom-right' }" @click="onNewChat">
         <MessageCirclePlusIcon />
-      </div>
+      </ButtonIcon>
 
       <!-- <div class="icon run-agent" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-right' }" @click="onRunAgent">
         <IconRunAgent />
@@ -17,8 +17,14 @@
 
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
       <div class="spacer"></div>
-      <SlidersHorizontalIcon class="icon settings" @click="showModelSettings = !showModelSettings" v-if="store.isFeatureEnabled('chat.settings')" />
-      <EllipsisVerticalIcon class="icon menu" @click="onMenu" v-if="chat?.title || store.isFeatureEnabled('chat.temporary')" /> 
+
+      <ButtonIcon class="settings" @click="showModelSettings = !showModelSettings" v-if="store.isFeatureEnabled('chat.settings')">
+        <SlidersHorizontalIcon />
+      </ButtonIcon>
+
+      <ButtonIcon class="menu" @click="onMenu" v-if="chat?.title || store.isFeatureEnabled('chat.temporary')">
+        <EllipsisVerticalIcon />
+      </ButtonIcon>
     
   </header>
     <main>
@@ -70,6 +76,7 @@ import { exportToPdf } from '../services/pdf'
 import { kMediaChatId, store } from '../services/store'
 import { Expert, Message } from '../types/index'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
+import ButtonIcon from './ButtonIcon.vue'
 import EmptyChat2 from './EmptyChat2.vue'
 import MessageList from './MessageList.vue'
 import Prompt, { SendPromptParams } from './Prompt.vue'
@@ -337,10 +344,6 @@ defineExpose({
 
 <style scoped>
 
-.macos .split-pane .sp-main header.is-left-most {
-  padding-left: 40px;
-}
-
 .split-pane {
   
   .sp-main {
@@ -363,23 +366,19 @@ defineExpose({
       }
 
       .icon {
-        margin-right: 8px;
-      }
-
-      svg {
-        width:var(--icon-lg);
-        height: var(--icon-lg);
-      }
-
-      .icon {
         &.hidden {
           display: none;
         }
       }
 
+      .toggle-sidebar {
+        position: relative;
+        top: -2px;
+      }
+
       .new-chat {
         position: relative;
-        top: -1px;
+        top: -2px;
       }
 
     }

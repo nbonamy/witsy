@@ -10,9 +10,9 @@
           <div class="info">
             <div class="text">{{ repo.name }}</div>
           </div>
-          <div class="icon trailing">
-            <ChevronRightIcon v-if="selectedRepo?.uuid === repo.uuid" />
-          </div>
+          <ButtonIcon class="trailing" v-if="selectedRepo?.uuid === repo.uuid">
+            <ChevronRightIcon />
+          </ButtonIcon>
         </div>
       </template>
     </div>
@@ -20,8 +20,9 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from 'lucide-vue-next';
-import { DocumentBase } from '../types/rag';
+import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from 'lucide-vue-next'
+import { DocumentBase } from '../types/rag'
+import ButtonIcon from '../components/ButtonIcon.vue'
 
 // props  
 const props = defineProps<{
@@ -51,17 +52,20 @@ const selectRepo = (repo: DocumentBase) => {
 }
 
 .list-body {
+  margin-top: 0.5rem;
   flex: 1;
   overflow-y: auto;
-  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .list-item {
-  padding: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  height: 2rem;
 }
 
 

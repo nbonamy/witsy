@@ -17,6 +17,7 @@ function onClick() {
 <style scoped>
 
 .button-icon {
+  flex: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -28,8 +29,9 @@ function onClick() {
   cursor: pointer;
   transition: background-color 0.15s ease;
 
-  :deep(*) svg {
-    color: var(--color-on-surface);
+  &:deep() svg {
+    flex-shrink: 0;
+    color: var(--chatarea-toolbar-icon-color);
     width: var(--icon-md);
     height: var(--icon-md);
   }
