@@ -1,5 +1,5 @@
 <template>
-  <div class="sp-sidebar chat-sidebar" :class="{ 'manual-resize': manualResize }" :style="`flex-basis: ${visible ? width : 0}px`">
+  <div class="sp-sidebar chat-sidebar" :class="{ 'manual-resize': manualResize }" :style="`flex-basis: ${width}px; display: ${visible ? 'inherit' : 'none'}`">
     <header>
       <!-- <div class="icon run-agent" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-left' }" @click="onRunAgent">
         <IconRunAgent />
@@ -232,6 +232,7 @@ defineExpose({
 .split-pane {
   
   .sp-sidebar {
+    
     flex: 0 0 0px;
     position: relative;
 
@@ -243,12 +244,11 @@ defineExpose({
 
     .chat-list-tools {
 
-      padding: 1rem;
+      padding: 0rem 1rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      border-right: 1px solid var(--sidebar-border-color);
       gap: 1rem;
 
       .search {
@@ -307,12 +307,20 @@ defineExpose({
 
         button {
 
+          padding: 0.5rem;
           font-weight: 500;
-          padding: 0.5rem 0.75rem;
           gap: 0.25rem;
 
           &[name=sort] svg {
             fill: var(--text-color);
+          }
+
+          &:first-child {
+            margin-left: 0;
+          }
+
+          &:last-child {
+            margin-right: 0;
           }
         }
       }

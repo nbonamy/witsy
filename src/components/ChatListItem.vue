@@ -48,14 +48,13 @@ const onRenameChat = () => {
 
 .container {
   
-  margin: 0rem;
-  padding: 0rem 0.5rem;
   cursor: pointer;
 
   .chat {
     
     margin: 0;
-    padding: 1rem;
+    padding: 0.75rem;
+    padding-left: 1rem;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -70,7 +69,6 @@ const onRenameChat = () => {
       flex-direction: column;
       justify-content: center;
       min-width: 0;
-      min-height: 2lh;
 
       * {
         overflow: hidden;
@@ -92,10 +90,13 @@ const onRenameChat = () => {
     }
 
     &.compact {
-  
-      margin: 0.125rem 0rem;
-      padding: 0.375rem 1rem;
-
+      margin: 0;
+      padding: 0.5rem;
+      padding-left: 0.75rem;
+      max-height: 1lh;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       .title {
         font-size: 14px;
       }

@@ -775,14 +775,14 @@ table.table-plain {
   flex-direction: column;
   height: 100vh;
 
-  header {
+  > header {
     -webkit-app-region: drag;
     flex: 0 0 var(--window-toolbar-height);
     background-color: var(--background-color);
     border-bottom: 1px solid var(--border-color);
   }
 
-  main {
+  > main {
     flex: 1;
     display: flex;
     flex-direction: row;

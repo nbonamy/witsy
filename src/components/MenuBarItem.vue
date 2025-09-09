@@ -1,19 +1,20 @@
 <template>
-  <div ref="item"
+  <ButtonIcon ref="item"
     class="item" 
     :class="{ active: active }" 
     v-tooltip="{ text: tooltipText, position: 'right' }"
     @click="onClick"
   >
     <slot />
-  </div>
+  </ButtonIcon>
 </template>
 
 <script setup lang="ts">
 
 import { onMounted, ref } from 'vue'
+import ButtonIcon from './ButtonIcon.vue'
 
-const item = ref<HTMLElement | null>(null)
+const item = ref<typeof ButtonIcon>(null)
 const tooltipText = ref('')
 
 const emit = defineEmits(['click'])
@@ -30,7 +31,7 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  const span = item.value.querySelector('span') as HTMLElement
+  const span = item.value.$el.querySelector('span') as HTMLElement
   tooltipText.value = span ? span.innerText : ''
 })
 
@@ -47,18 +48,13 @@ const onClick = () => {
   align-items: center;
   justify-content: center;
   aspect-ratio: 1;
-  border-radius: 50%;
   padding: 0.5rem;
   cursor: pointer;
   color: #848CAF;
   position: relative;
 
-  &.active, &:hover {
-    background-color: var(--background-color);
-  }
-
-  &.active {
-    color: var(--menubar-highlight-color);
+  &.active:deep() svg {
+    color: var(--menubar-highlight-color) !important;
   }
 
   &:deep() {
