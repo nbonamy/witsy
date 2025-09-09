@@ -37,7 +37,7 @@
     </main>
     <footer v-if="!selectMode">
       <!-- <button class="run-agent cta" @click="onRunAgent"><MessageCircleMoreIcon /> {{ t('common.runAgent') }}</button> -->
-      <button class="new-chat cta" @click="onNewChat"><MessageCircleMoreIcon /> {{ t('common.newChat') }}</button>
+      <button class="new-chat cta" @click="onNewChat"><MessageCirclePlusIcon /> {{ t('common.newChat') }}</button>
     </footer>
     <footer v-else class="select-actions">
       <button name="select-all" @click="onSelectAll">{{ t('common.selectAllShort') }}</button>
@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 
-import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCircleMoreIcon, MessagesSquareIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
+import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCirclePlusIcon, MessagesSquareIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
 import { nextTick, onMounted, ref } from 'vue'
 import Dialog from '../composables/dialog'

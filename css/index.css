@@ -656,12 +656,17 @@ button {
   }
 
   &.cta {
-    padding: 1rem 1.5rem;
+    padding: 1rem;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: var(--font-weight-semibold);
     background-color: var(--color-primary);
     color: var(--color-on-primary);
     white-space: nowrap;
+    gap: 0.75rem;
+    svg {
+      width: var(--icon-xl);
+      height: var(--icon-xl);
+    }
     &:active:enabled {
       background-color: var(--color-secondary) !important;
       color: var(--color-on-secondary) !important;
@@ -794,7 +799,7 @@ table.table-plain {
     }
   }
 
-  footer {
+  > footer {
 
     box-sizing: border-box;
     flex: 0 0 var(--window-footer-height);

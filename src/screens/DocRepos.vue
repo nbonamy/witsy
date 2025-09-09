@@ -12,7 +12,7 @@
         <List :docRepos="docRepos || []" :selectedRepo="selectedRepo" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" />
       </main>
       <footer>
-        <button class="new-collection cta" @click="onCreate"><PlusIcon /> {{ t('docRepo.create.title') }}</button>
+        <button class="new-collection cta" @click="onCreate"><FolderPlusIcon /> {{ t('docRepo.create.title') }}</button>
       </footer>
     </div>
     <div class="sp-main">
@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 
-import { CheckIcon, PencilIcon, PlusIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
+import { CheckIcon, FolderPlusIcon, PencilIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import Dialog from '../composables/dialog'
