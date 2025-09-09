@@ -1,5 +1,6 @@
 import { DirectiveBinding } from 'vue'
 import '../../css/tooltip.css'
+import { stat } from 'fs'
 
 interface TooltipOptions {
   text: string
@@ -144,7 +145,7 @@ export const vTooltip = {
 
       const now = Date.now()
       const timeSinceLastHide = now - lastTooltipHidden
-      const tooltipDelay = timeSinceLastHide < 1000 ? 250 : 750
+      const tooltipDelay = timeSinceLastHide < 1000 ? 250 : 1000
       // console.log('Tooltip delay:', timeSinceLastHide, tooltipDelay, 'ms')
       state.hideTimeout = setTimeout(() => showTooltip(el), tooltipDelay)
     }
@@ -154,6 +155,10 @@ export const vTooltip = {
       // Don't interfere with the original click event
       // Just hide the tooltip if it's visible
       const state = elementState.get(el)
+      if (state?.hideTimeout) {
+        clearTimeout(state.hideTimeout)
+        state.hideTimeout = null
+      }
       if (state?.tooltipElement) {
         hideTooltip(el)
       }
