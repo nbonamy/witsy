@@ -21,9 +21,6 @@
 
 .split-pane.settings .sp-sidebar {
   flex-basis: 16rem;
-  main {
-    padding-top: 2rem;
-  }
 }
 
 .settings ul {
@@ -32,9 +29,6 @@
   flex-direction: column;
   justify-content: center;
   overflow: auto;
-  padding: 0 0.5rem;
-  padding-left: 1rem;
-  padding-top: 0rem;
   gap: 0.5rem;
 
   list-style: none;
