@@ -208,7 +208,6 @@ export const installIpc = (
     // prepare
     const args: RunCommandParams = JSON.parse(payload);
     await window.closeCommandPicker(args.sourceApp);
-    //await window.releaseFocus();
 
     // now run
     const commander = new Commander();
