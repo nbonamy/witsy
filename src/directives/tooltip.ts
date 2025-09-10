@@ -1,6 +1,5 @@
 import { DirectiveBinding } from 'vue'
 import '../../css/tooltip.css'
-import { stat } from 'fs'
 
 interface TooltipOptions {
   text: string

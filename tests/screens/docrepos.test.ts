@@ -108,14 +108,14 @@ test('Creates a docrepo', async () => {
 test('Shows configuration', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
-  await wrapper.find('.split-pane .sp-sidebar header .icon.config').trigger('click')
+  await wrapper.find('.split-pane .sp-sidebar header .config').trigger('click')
   expect(wrapper.findComponent({ name: 'Config' }).exists()).toBe(true)
 })
 
 test('Updates configuration', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos, { ...stubTeleport })
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
-  await wrapper.find('.split-pane .sp-sidebar header .icon.config').trigger('click')
+  await wrapper.find('.split-pane .sp-sidebar header .config').trigger('click')
   await wrapper.vm.$nextTick()
   const config = wrapper.findComponent({ name: 'Config' })
   console.log(config.html())
@@ -146,7 +146,7 @@ test('Updates configuration', async () => {
   expect(store.config.rag.relevanceCutOff).toBe(0.3)
 
   // Test cancel behavior  
-  await wrapper.find('.split-pane .sp-sidebar header .icon.config').trigger('click')
+  await wrapper.find('.split-pane .sp-sidebar header .config').trigger('click')
   await config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').setValue('3')
   await config.find<HTMLButtonElement>('button[name=cancel]').trigger('click')
   expect(store.config.rag.maxDocumentSizeMB).toBe(2)
@@ -156,7 +156,7 @@ test('Deletes base', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.split-pane .list-item:nth-child(1)').trigger('click')
-  await wrapper.find('.split-pane .sp-main .icon.delete').trigger('click')
+  await wrapper.find('.split-pane .sp-main .delete').trigger('click')
   expect(Dialog.show).toHaveBeenCalled()
   expect(window.api.docrepo.delete).toHaveBeenLastCalledWith('uuid1')
 })
@@ -285,7 +285,7 @@ test('Shows pencil icon for title editing', async () => {
   // First repo should be auto-selected
   expect(wrapper.vm.selectedRepo?.name).toBe('docrepo1')
   expect(wrapper.find('.split-pane .sp-main header .title-display .title').text()).toBe('docrepo1')
-  expect(wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').exists()).toBe(true)
+  expect(wrapper.find('.split-pane .sp-main header .title-display .edit-title').exists()).toBe(true)
 })
 
 test('Enters edit mode when pencil is clicked', async () => {
@@ -295,7 +295,7 @@ test('Enters edit mode when pencil is clicked', async () => {
   expect(wrapper.vm.isEditingTitle).toBe(false)
   
   // Click the pencil icon
-  await wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').trigger('click')
+  await wrapper.find('.split-pane .sp-main header .title-display .edit-title').trigger('click')
   expect(wrapper.vm.isEditingTitle).toBe(true)
   
   // Check that input field is shown
@@ -303,8 +303,8 @@ test('Enters edit mode when pencil is clicked', async () => {
   expect(wrapper.find<HTMLInputElement>('.split-pane .sp-main header .title-edit input').element.value).toBe('docrepo1')
   
   // Check that action buttons are shown
-  expect(wrapper.find('.split-pane .sp-main header .title-edit .actions .icon.cancel').exists()).toBe(true)
-  expect(wrapper.find('.split-pane .sp-main header .title-edit .actions .icon.save').exists()).toBe(true)
+  expect(wrapper.find('.split-pane .sp-main header .title-edit .actions .cancel').exists()).toBe(true)
+  expect(wrapper.find('.split-pane .sp-main header .title-edit .actions .save').exists()).toBe(true)
 })
 
 test('Cancels editing when cancel button is clicked', async () => {
@@ -312,14 +312,14 @@ test('Cancels editing when cancel button is clicked', async () => {
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   
   // Enter edit mode
-  await wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').trigger('click')
+  await wrapper.find('.split-pane .sp-main header .title-display .edit-title').trigger('click')
   expect(wrapper.vm.isEditingTitle).toBe(true)
   
   // Change the input value
   await wrapper.find('.split-pane .sp-main header .title-edit input').setValue('changed-name')
   
   // Click cancel
-  await wrapper.find('.split-pane .sp-main header .title-edit .actions .icon.cancel').trigger('click')
+  await wrapper.find('.split-pane .sp-main header .title-edit .actions .cancel').trigger('click')
   
   // Should exit edit mode without saving
   expect(wrapper.vm.isEditingTitle).toBe(false)
@@ -332,14 +332,14 @@ test('Saves changes when save button is clicked', async () => {
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   
   // Enter edit mode
-  await wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').trigger('click')
+  await wrapper.find('.split-pane .sp-main header .title-display .edit-title').trigger('click')
   expect(wrapper.vm.isEditingTitle).toBe(true)
   
   // Change the input value
   await wrapper.find('.split-pane .sp-main header .title-edit input').setValue('new-name')
   
   // Click save
-  await wrapper.find('.split-pane .sp-main header .title-edit .actions .icon.save').trigger('click')
+  await wrapper.find('.split-pane .sp-main header .title-edit .actions .save').trigger('click')
   
   // Should exit edit mode and save
   expect(wrapper.vm.isEditingTitle).toBe(false)
@@ -351,7 +351,7 @@ test('Saves changes when Enter key is pressed', async () => {
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   
   // Enter edit mode
-  await wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').trigger('click')
+  await wrapper.find('.split-pane .sp-main header .title-display .edit-title').trigger('click')
   expect(wrapper.vm.isEditingTitle).toBe(true)
   
   // Change the input value
@@ -372,7 +372,7 @@ test('Cancels editing when Escape key is pressed', async () => {
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   
   // Enter edit mode
-  await wrapper.find('.split-pane .sp-main header .title-display .icon.edit-title').trigger('click')
+  await wrapper.find('.split-pane .sp-main header .title-display .edit-title').trigger('click')
   expect(wrapper.vm.isEditingTitle).toBe(true)
   
   // Change the input value
