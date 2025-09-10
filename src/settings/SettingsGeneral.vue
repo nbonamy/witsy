@@ -1,9 +1,9 @@
 <template>
-  <div class="tab-content form form-vertical form-large">
+  <div class="tab-content">
     <header>
       <div class="title">{{ t('settings.tabs.general') }}</div>
     </header>
-    <main>
+    <main class="form form-vertical form-large">
       <div class="form-field appearance">
         <label>{{ t('settings.general.theme') }}</label>
         <div class="form-subgroup">

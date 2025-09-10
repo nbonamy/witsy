@@ -17,7 +17,7 @@
           @prompt="onSendPrompt"
           @stop="onStopGeneration"
         >
-          <template #after>
+          <template #before>
             <div class="app" v-if="sourceApp">
               <img class="icon" :src="iconData" /> {{ t('common.workingWith') }} {{ sourceApp.name }}
             </div>
