@@ -140,7 +140,6 @@ import { OAuthStatus, useMcpServer } from '../composables/mcp'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { McpServer, McpServerStatus } from '../types/mcp'
-import { s } from 'vite/dist/node/types.d-aGj9QkWt'
 
 interface Integration {
   id: string

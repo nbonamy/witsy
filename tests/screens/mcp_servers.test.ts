@@ -79,7 +79,7 @@ test('Server enablement', async () => {
 test('Server delete', async () => {
   await mcp.find<HTMLTableRowElement>('.mcp-server-list table tbody tr:nth-child(4) .context-menu-trigger .trigger').trigger('click')
   await mcp.findComponent({ name: 'ContextMenuPlus' }).find('.delete').trigger('click')
-  expect(window.api.mcp.deleteServer).toHaveBeenLastCalledWith('@mcp1')
+  expect(window.api.mcp.deleteServer).toHaveBeenLastCalledWith('mcp1')
 })
 
 test('Server edit', async () => {
