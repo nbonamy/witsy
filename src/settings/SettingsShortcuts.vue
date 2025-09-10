@@ -1,9 +1,9 @@
 <template>
-  <div class="form tab-content form-large">
+  <div class="tab-content">
     <header>
       <div class="title">{{ t('settings.tabs.shortcuts') }}</div>
     </header>
-    <main>
+    <main class="form form-large">
       <div class="form-field">
         <label>{{ t('settings.shortcuts.mainWindow') }}</label>
         <InputShortcut v-model="chat" @change="save "/>

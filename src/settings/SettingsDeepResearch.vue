@@ -1,9 +1,9 @@
 <template>
-  <div class="form tab-content form-vertical form-large">
+  <div class="tab-content">
     <header>
       <div class="title">{{ t('settings.tabs.deepResearch') }}</div>
     </header>
-    <main>
+    <main class="form form-vertical form-large">
       <div class="form-field layout">
         <label>{{ t('settings.deepResearch.runtime') }}</label>
         <select v-model="runtime" @change="save">

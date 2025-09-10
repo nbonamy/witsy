@@ -1,9 +1,9 @@
 <template>
-  <div class="form tab-content form-vertical form-large">
+  <div class="tab-content">
     <header>
       <div class="title">{{ t('settings.tabs.plugins') }}</div>
     </header>
-    <main>
+    <main class="form form-vertical form-large">
       <div class="master-detail">
         <div class="md-master">
           <div class="md-master-list">
