@@ -64,7 +64,7 @@
 
       .title {
         flex: 1;
-        font-size: 10pt;
+        font-size: 11pt;
         font-weight: 600;
         color: var(--text-color);
       }
@@ -137,7 +137,7 @@
       
       .title {
         flex: 1;
-        font-size: 12pt;
+        font-size: 11pt;
         font-weight: bold;
         white-space: nowrap;
         overflow: hidden;
@@ -282,7 +282,11 @@
   &:not(:has(.sp-sidebar)) {
     .sp-main {
       header {
-        padding-left: 2rem;
+        padding-left: 2.5rem;
+        .title {
+          font-size: 11pt;
+        }
+
       }
     }
   }
@@ -293,7 +297,7 @@
   .split-pane {
     .sp-sidebar {
       header {
-        padding-left: 1.5rem;
+        padding-left: 2.5rem;
       }
     }
   }
