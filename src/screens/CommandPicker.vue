@@ -4,7 +4,8 @@
       <div class="app" v-if="sourceApp">
         <img class="icon" :src="iconData" /> {{ t('common.workingWith') }} {{ sourceApp.name }}
       </div>
-      <div class="list" ref="list"> <div class="command" v-for="command in commands" :key="command.id" :class="{ selected: selected?.id == command.id }" @mousemove="onMouseMove(command)" @click="onRunCommand($event, command)">
+      <div class="list" ref="list">
+        <div class="command" v-for="command in commands" :key="command.id" :class="{ selected: selected?.id == command.id }" @mousemove="onMouseMove(command)" @click="onRunCommand($event, command)">
           <div class="icon">{{ command.icon }}</div>
           <div class="label">{{ command.label ?? commandI18n(command, 'label') }}</div>
           <div class="shortcut" v-if="command.shortcut">{{ command.shortcut }}</div>
