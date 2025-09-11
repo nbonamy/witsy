@@ -1,6 +1,7 @@
 <template>
 
   <ContextMenuPlus 
+    ref="contextMenuPlus"
     class="tools-menu"
     :anchor="anchor"
     :position="position"
@@ -51,7 +52,7 @@
 
     <template #pluginsSubMenu="{ withFilter }">
       {{ withFilter(true) }}
-      <div v-for="plugin in enabledPlugins(store.config)" :key="plugin" @click="handlePluginClick(plugin)">
+      <div v-for="plugin in enabledPlugins(store.config)" :key="plugin" :data-plugin-id="plugin" @click="handlePluginClick(plugin)">
         <input type="checkbox" :checked="pluginStatus(plugin) === 'all'"  />
         {{ t(`settings.plugins.${plugin}.title`) }}
       </div>
@@ -70,7 +71,7 @@
 
     <template v-for="serverWithTools in mcpServersWithTools" :key="serverWithTools.uuid" v-slot:[`tools-${serverWithTools.uuid}`]="{ withFilter }">
       {{ withFilter(true) }}
-      <div v-for="tool in serverWithTools.tools" :key="tool.name" @click.stop="handleServerToolClick(serverWithTools, tool)">
+      <div v-for="tool in serverWithTools.tools" :key="tool.name" :data-server-tool-id="tool.uuid" @click.stop="handleServerToolClick(serverWithTools, tool)">
         <input type="checkbox" :checked="serverToolStatus(serverWithTools, tool) === 'all'"  />
         {{ tool.name }}
       </div>
@@ -116,12 +117,12 @@ const props = withDefaults(defineProps<Props>(), {
 // Emits
 interface Emits {
   close: []
-  selectAllTools: []
-  unselectAllTools: []
-  selectAllPlugins: []
-  unselectAllPlugins: []
-  selectAllServerTools: [server: McpServerWithTools]
-  unselectAllServerTools: [server: McpServerWithTools]
+  selectAllTools: [visibleIds?: string[] | null]
+  unselectAllTools: [visibleIds?: string[] | null]
+  selectAllPlugins: [visibleIds?: string[] | null]
+  unselectAllPlugins: [visibleIds?: string[] | null]
+  selectAllServerTools: [server: McpServerWithTools, visibleIds?: string[] | null]
+  unselectAllServerTools: [server: McpServerWithTools, visibleIds?: string[] | null]
   allPluginsToggle: []
   pluginToggle: [pluginName: string]
   allServerToolsToggle: [server: McpServerWithTools]
@@ -131,6 +132,7 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 // Reactive data
+const contextMenuPlus = ref()
 const allPluginsTools = ref<ToolSelection>([])
 const mcpServersWithTools = ref<McpServerWithTools[]>([])
 const pluginsStatusComputed = ref<ts.ToolStatus>('all')
@@ -165,27 +167,33 @@ const getServerDisplayName = (server: McpServer): string => {
 }
 
 const handleSelectAllTools = () => {
-  emit('selectAllTools')
+  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
+  emit('selectAllTools', visibleIds)
 }
 
 const handleUnselectAllTools = () => {
-  emit('unselectAllTools')
+  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
+  emit('unselectAllTools', visibleIds)
 }
 
 const handleSelectAllPlugins = () => {
-  emit('selectAllPlugins')
+  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
+  emit('selectAllPlugins', visibleIds)
 }
 
 const handleUnselectAllPlugins = () => {
-  emit('unselectAllPlugins')
+  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
+  emit('unselectAllPlugins', visibleIds)
 }
 
 const handleSelectAllServerTools = (server: McpServerWithTools) => {
-  emit('selectAllServerTools', server)
+  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
+  emit('selectAllServerTools', server, visibleIds)
 }
 
 const handleUnselectAllServerTools = (server: McpServerWithTools) => {
-  emit('unselectAllServerTools', server)
+  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
+  emit('unselectAllServerTools', server, visibleIds)
 }
 
 const handlePluginsClick = () => {

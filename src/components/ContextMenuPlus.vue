@@ -425,6 +425,32 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   }
 }
 
+const getVisibleItemIds = () => {
+  const visibleIds: string[] = []
+  
+  if (!list.value) return visibleIds
+  
+  // Get all visible items (not hidden by filter)
+  const visibleItems = list.value.querySelectorAll('.item:not([style*="display: none"])')
+  
+  visibleItems.forEach((item: HTMLElement) => {
+    // Look for data attributes that identify the item
+    const pluginId = item.getAttribute('data-plugin-id')
+    const serverToolId = item.getAttribute('data-server-tool-id')
+    const toolId = item.getAttribute('data-tool-id')
+    
+    if (pluginId) {
+      visibleIds.push(pluginId)
+    } else if (serverToolId) {
+      visibleIds.push(serverToolId)
+    } else if (toolId) {
+      visibleIds.push(toolId)
+    }
+  })
+  
+  return visibleIds
+}
+
 // Expose methods for testing
 defineExpose({
   showSubmenu: (item: HTMLElement | string) => {
@@ -441,7 +467,8 @@ defineExpose({
   setCurrentSubmenu: (submenu: string) => {
     currentSubmenu.value = submenu
     currentSubmenuHasFilter.value = false
-  }
+  },
+  getVisibleItemIds
 })
 
 </script>

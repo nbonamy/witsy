@@ -150,21 +150,52 @@ export const handleServerToolToggle = async (toolSelection: ToolSelection, serve
 
 }
 
-export const handleSelectAllTools = async (): Promise<ToolSelection> => {
-  return null
-}
-
-export const handleUnselectAllTools = async (): Promise<ToolSelection> => {
-  return []
-}
-
-export const handleSelectAllPlugins = async (toolSelection: ToolSelection): Promise<ToolSelection> => {
-  if (toolSelection === undefined || toolSelection === null) {
+export const handleSelectAllTools = async (visibleToolIds?: string[] | null): Promise<ToolSelection> => {
+  if (visibleToolIds === null || !visibleToolIds) {
+    // No filter active, select all tools
     return null
+  }
+  
+  // Filter active, return only visible tools
+  return visibleToolIds
+}
+
+export const handleUnselectAllTools = async (visibleToolIds?: string[] | null): Promise<ToolSelection> => {
+  if (visibleToolIds === null || !visibleToolIds) {
+    // No filter active, unselect all tools  
+    return []
+  }
+  
+  // Filter active, need to get current selection and remove only visible tools
+  const allTools = await initToolSelectionWithAllTools()
+  return allTools.filter(tool => !visibleToolIds.includes(tool))
+}
+
+export const handleSelectAllPlugins = async (toolSelection: ToolSelection, visiblePluginIds?: string[] | null): Promise<ToolSelection> => {
+  if (toolSelection === undefined || toolSelection === null) {
+    if (visiblePluginIds === null || !visiblePluginIds) {
+      return null
+    }
+    // Filter active, start with all tools then add visible plugins
+    toolSelection = await initToolSelectionWithAllTools()
   }
 
   const allPlugins = await allPluginsTools()
-  for (const plugin of allPlugins) {
+  const pluginsToAdd = visiblePluginIds === null || !visiblePluginIds 
+    ? allPlugins 
+    : []
+  
+  // If we have visible plugin IDs, get their tools
+  if (visiblePluginIds && visiblePluginIds.length > 0) {
+    for (const pluginName of visiblePluginIds) {
+      if (availablePlugins[pluginName]) {
+        const pluginToolsForName = await pluginTools(store.config, pluginName)
+        pluginsToAdd.push(...pluginToolsForName)
+      }
+    }
+  }
+  
+  for (const plugin of pluginsToAdd) {
     if (!toolSelection.includes(plugin)) {
       toolSelection.push(plugin)
     }
@@ -175,26 +206,48 @@ export const handleSelectAllPlugins = async (toolSelection: ToolSelection): Prom
 
 }
 
-export const handleUnselectAllPlugins = async (toolSelection: ToolSelection): Promise<ToolSelection> => {
+export const handleUnselectAllPlugins = async (toolSelection: ToolSelection, visiblePluginIds?: string[] | null): Promise<ToolSelection> => {
   if (toolSelection === undefined || toolSelection === null) {
     toolSelection = await initToolSelectionWithAllTools()
   }
 
   const allPlugins = await allPluginsTools()
-  toolSelection = toolSelection.filter(t => !allPlugins.includes(t))
+  const pluginsToRemove = visiblePluginIds === null || !visiblePluginIds 
+    ? allPlugins 
+    : []
+  
+  // If we have visible plugin IDs, get their tools to remove
+  if (visiblePluginIds && visiblePluginIds.length > 0) {
+    for (const pluginName of visiblePluginIds) {
+      if (availablePlugins[pluginName]) {
+        const pluginToolsForName = await pluginTools(store.config, pluginName)
+        pluginsToRemove.push(...pluginToolsForName)
+      }
+    }
+  }
+  
+  toolSelection = toolSelection.filter(t => !pluginsToRemove.includes(t))
   
   // done
   return await validateToolSelection(toolSelection)
 
 }
 
-export const handleSelectAllServerTools = async (toolSelection: ToolSelection, server: McpServerWithTools): Promise<ToolSelection> => {
+export const handleSelectAllServerTools = async (toolSelection: ToolSelection, server: McpServerWithTools, visibleToolIds?: string[] | null): Promise<ToolSelection> => {
   if (toolSelection === undefined || toolSelection === null) {
-    return null
+    if (visibleToolIds === null || !visibleToolIds) {
+      return null
+    }
+    // Filter active, start with all tools
+    toolSelection = await initToolSelectionWithAllTools()
   }
 
   const serverToolUuids = server.tools.map(t => t.uuid)
-  for (const uuid of serverToolUuids) {
+  const toolsToAdd = visibleToolIds === null || !visibleToolIds 
+    ? serverToolUuids 
+    : serverToolUuids.filter(uuid => visibleToolIds.includes(uuid))
+  
+  for (const uuid of toolsToAdd) {
     if (!toolSelection.includes(uuid)) {
       toolSelection.push(uuid)
     }
@@ -205,13 +258,17 @@ export const handleSelectAllServerTools = async (toolSelection: ToolSelection, s
 
 }
 
-export const handleUnselectAllServerTools = async (toolSelection: ToolSelection, server: McpServerWithTools): Promise<ToolSelection> => {
+export const handleUnselectAllServerTools = async (toolSelection: ToolSelection, server: McpServerWithTools, visibleToolIds?: string[] | null): Promise<ToolSelection> => {
   if (toolSelection === undefined || toolSelection === null) {
     toolSelection = await initToolSelectionWithAllTools()
   }
 
   const serverToolUuids = server.tools.map(t => t.uuid)
-  toolSelection = toolSelection.filter(t => !serverToolUuids.includes(t))
+  const toolsToRemove = visibleToolIds === null || !visibleToolIds 
+    ? serverToolUuids 
+    : serverToolUuids.filter(uuid => visibleToolIds.includes(uuid))
+  
+  toolSelection = toolSelection.filter(t => !toolsToRemove.includes(t))
   
   // done
   return await validateToolSelection(toolSelection)
