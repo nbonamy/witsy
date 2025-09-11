@@ -1,6 +1,6 @@
 import { LlmStructuredOutput } from 'multi-llm-ts'
 import { z } from 'zod'
-import { useTools } from '../composables/useTools'
+import { useTools } from '../composables/tools'
 import LlmFactory from '../llms/llm'
 import Agent from '../models/agent'
 import Message from '../models/message'

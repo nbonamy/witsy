@@ -35,7 +35,7 @@ vi.mock('../../src/llms/llm', () => {
 })
 
 // Mock useTools composable
-vi.mock('../../src/composables/useTools', () => ({
+vi.mock('../../src/composables/tools', () => ({
   useTools: vi.fn(() => ({
     getToolsForGeneration: vi.fn().mockResolvedValue('Available tools: search, writeFile, calculator')
   }))
