@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import type { ChatModel } from 'multi-llm-ts'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import useAppearanceTheme from '../composables/appearance_theme'
 import { engineNames } from '../llms/base'
 import LlmFactory from '../llms/llm'
@@ -83,6 +83,7 @@ const props = withDefaults(defineProps<Props>(), {
 // Emits
 interface Emits {
   close: []
+  empty: []
   modelSelected: [engine: string | null, model: string | null]
 }
 
@@ -120,6 +121,13 @@ const availableEngines = computed(() => {
     const nameB = llmManager.getEngineName(b).toLowerCase()
     return nameA.localeCompare(nameB)
   })
+
+})
+
+onMounted(() => {
+  if (availableEngines.value.length === 0) {
+    emit('empty')
+  }
 })
 
 const getEngineName = (engine: string): string => {

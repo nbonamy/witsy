@@ -2116,6 +2116,9 @@
         "title": "文体"
       }
     },
+    "noEngineAvailable": {
+      "title": "モデルプロバイダーが設定されていません"
+    },
     "placeholders": {
       "default": "ここにメッセージを入力してください…"
     }

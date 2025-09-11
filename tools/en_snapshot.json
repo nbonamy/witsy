@@ -1269,6 +1269,8 @@
   "prompt.menu.instructions.title": "Writing Style",
   "prompt.menu.tools.plugins": "@:{'common.appName'} plugins",
   "prompt.menu.tools.title": "@:{'common.tools'}",
+  "prompt.noEngineAvailable.title": "No model provider configured",
+  "prompt.noEngineAvailable.text": "@:{'common.appName'} requires at least one model provider to be configured. Do you want to configure one now?",
   "prompt.placeholders.default": "Type your message here…",
   "realtimeChat.errorPrefix": "Error: ",
   "realtimeChat.establishingConnection": "Establishing connection…",

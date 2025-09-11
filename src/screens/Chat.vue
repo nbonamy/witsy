@@ -470,7 +470,16 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
   if (!assistant.value.hasLlm()) {
-    nextTick(() => window.api.settings.open({ initialTab: 'models' }))
+    const rc = await Dialog.show({
+      title: t('prompt.noEngineAvailable.title'),
+      text: t('prompt.noEngineAvailable.text'),
+      showCancelButton: true,
+      confirmButtonText: t('common.yes'),
+      cancelButtonText: t('common.no'),
+    })
+    if (rc.isConfirmed) {
+      window.api.settings.open({ initialTab: 'models' })
+    }
     return
   }
 

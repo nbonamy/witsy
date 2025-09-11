@@ -97,8 +97,13 @@ export default class LlmManager extends LlmManagerBase {
     } catch { /* empty */ }
 
     // fallback
-    console.warn(`Engine ${engine} unknown. Falling back to OpenAI`)
-    return new llm.OpenAI(this.config.engines.openai)
+    if (llm.OpenAI.isConfigured(this.config.engines.openai)) {
+      console.warn(`Engine ${engine} unknown. Falling back to OpenAI`)
+      return new llm.OpenAI(this.config.engines.openai)
+    } else {
+      console.error(`Engine ${engine} unknown.`)
+      return null
+    }
 
   }
   

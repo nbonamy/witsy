@@ -2116,6 +2116,9 @@
         "title": "Styl pisania"
       }
     },
+    "noEngineAvailable": {
+      "title": "Brak skonfigurowanego dostawcy modelu"
+    },
     "placeholders": {
       "default": "Wpisz tutaj swoją wiadomość…"
     }

@@ -2094,6 +2094,9 @@
         "title": "Style d'écriture"
       }
     },
+    "noEngineAvailable": {
+      "title": "Aucun fournisseur de modèle configuré"
+    },
     "placeholders": {
       "default": "Tapez votre message ici…"
     }

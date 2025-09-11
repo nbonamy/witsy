@@ -134,6 +134,7 @@
       anchor=".model-menu-button"
       :position="menusPosition === 'above' ? 'above-right' : 'below-right'"
       @close="closeModelMenu"
+      @empty="onNoEngineAvailable"
       @model-selected="handleModelSelected"
     />
   </div>
@@ -930,6 +931,20 @@ const handleModelSelected = (engine: string, model: string) => {
   props.chat?.setEngineModel(engine, model)
   emit('set-engine-model', engine, model)
   closeModelMenu()
+}
+
+const onNoEngineAvailable = async () => {
+  closeModelMenu()
+  const rc = await Dialog.show({
+    title: t('prompt.noEngineAvailable.title'),
+    text: t('prompt.noEngineAvailable.text'),
+    showCancelButton: true,
+    confirmButtonText: t('common.yes'),
+    cancelButtonText: t('common.no'),
+  })
+  if (rc.isConfirmed) {
+    window.api.settings.open({ initialTab: 'models' })
+  }
 }
 
 const setDocRepo = (docRepoUuid: string | null) => {

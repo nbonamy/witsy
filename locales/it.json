@@ -2094,6 +2094,9 @@
         "title": "Stile di scrittura"
       }
     },
+    "noEngineAvailable": {
+      "title": "Nessun fornitore di modello configurato"
+    },
     "placeholders": {
       "default": "Digita il tuo messaggio qui…"
     }
