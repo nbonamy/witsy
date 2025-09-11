@@ -2094,6 +2094,9 @@
         "title": "Schreibstil"
       }
     },
+    "noEngineAvailable": {
+      "title": "Kein Modellanbieter konfiguriert"
+    },
     "placeholders": {
       "default": "Geben Sie hier Ihre Nachricht ein…"
     }

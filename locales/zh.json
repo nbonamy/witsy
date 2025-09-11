@@ -2116,6 +2116,9 @@
         "title": "写作风格"
       }
     },
+    "noEngineAvailable": {
+      "title": "未配置模型提供者"
+    },
     "placeholders": {
       "default": "在此输入您的消息…"
     }

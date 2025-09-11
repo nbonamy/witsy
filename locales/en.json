@@ -2126,6 +2126,10 @@
         "title": "@:{'common.tools'}"
       }
     },
+    "noEngineAvailable": {
+      "text": "@:{'common.appName'} requires at least one model provider to be configured. Do you want to configure one now?",
+      "title": "No model provider configured"
+    },
     "placeholders": {
       "default": "Type your message here…"
     }
