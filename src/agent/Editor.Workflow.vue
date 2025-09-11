@@ -279,39 +279,39 @@ const onCloseToolsMenu = () => {
   toolsMenuStepIndex.value = -1
 }
 
-const handleSelectAllTools = async () => {
+const handleSelectAllTools = async (visibleIds?: string[] | null) => {
   if (toolsMenuStepIndex.value >= 0) {
-    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllTools()
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllTools(visibleIds)
   }
 }
 
-const handleUnselectAllTools = async () => {
+const handleUnselectAllTools = async (visibleIds?: string[] | null) => {
   if (toolsMenuStepIndex.value >= 0) {
-    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllTools()
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllTools(visibleIds)
   }
 }
 
-const handleSelectAllPlugins = async () => {
+const handleSelectAllPlugins = async (visibleIds?: string[] | null) => {
   if (toolsMenuStepIndex.value >= 0) {
-    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllPlugins(props.agent.steps[toolsMenuStepIndex.value].tools)
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllPlugins(props.agent.steps[toolsMenuStepIndex.value].tools, visibleIds)
   }
 }
 
-const handleUnselectAllPlugins = async () => {
+const handleUnselectAllPlugins = async (visibleIds?: string[] | null) => {
   if (toolsMenuStepIndex.value >= 0) {
-    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllPlugins(props.agent.steps[toolsMenuStepIndex.value].tools)
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllPlugins(props.agent.steps[toolsMenuStepIndex.value].tools, visibleIds)
   }
 }
 
-const handleSelectAllServerTools = async (server: McpServerWithTools) => {
+const handleSelectAllServerTools = async (server: McpServerWithTools, visibleIds?: string[] | null) => {
   if (toolsMenuStepIndex.value >= 0) {
-    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllServerTools(props.agent.steps[toolsMenuStepIndex.value].tools, server)
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllServerTools(props.agent.steps[toolsMenuStepIndex.value].tools, server, visibleIds)
   }
 }
 
-const handleUnselectAllServerTools = async (server: McpServerWithTools) => {
+const handleUnselectAllServerTools = async (server: McpServerWithTools, visibleIds?: string[] | null) => {
   if (toolsMenuStepIndex.value >= 0) {
-    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllServerTools(props.agent.steps[toolsMenuStepIndex.value].tools, server)
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllServerTools(props.agent.steps[toolsMenuStepIndex.value].tools, server, visibleIds)
   }
 }
 

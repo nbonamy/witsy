@@ -341,16 +341,50 @@ describe('tool_selection', () => {
   })
 
   describe('handleSelectAllTools', () => {
-    test('should return null (all tools selected)', async () => {
+    test('should return null (all tools selected) when no filter provided', async () => {
       const result = await toolSelection.handleSelectAllTools()
       expect(result).toBeNull()
+    })
+
+    test('should return null when visibleToolIds is null', async () => {
+      const result = await toolSelection.handleSelectAllTools(null)
+      expect(result).toBeNull()
+    })
+
+    test('should return filtered tools when visibleToolIds is provided', async () => {
+      const visibleIds = ['web_search', 'tool1_1']
+      const result = await toolSelection.handleSelectAllTools(visibleIds)
+      expect(result).toEqual(['web_search', 'tool1_1'])
+    })
+
+    test('should return empty array when visibleToolIds is empty', async () => {
+      const visibleIds: string[] = []
+      const result = await toolSelection.handleSelectAllTools(visibleIds)
+      expect(result).toEqual([])
     })
   })
 
   describe('handleUnselectAllTools', () => {
-    test('should return empty array (no tools selected)', async () => {
+    test('should return empty array (no tools selected) when no filter provided', async () => {
       const result = await toolSelection.handleUnselectAllTools()
       expect(result).toEqual([])
+    })
+
+    test('should return empty array when visibleToolIds is null', async () => {
+      const result = await toolSelection.handleUnselectAllTools(null)
+      expect(result).toEqual([])
+    })
+
+    test('should return all tools except visible ones when visibleToolIds is provided', async () => {
+      const visibleIds = ['web_search', 'tool1_1']
+      const result = await toolSelection.handleUnselectAllTools(visibleIds)
+      expect(result).toEqual(['filesystem', 'tool2_1', 'tool3_2', 'tool4_2'])
+    })
+
+    test('should return all tools when visibleToolIds is empty', async () => {
+      const visibleIds: string[] = []
+      const result = await toolSelection.handleUnselectAllTools(visibleIds)
+      expect(result).toEqual(['web_search', 'filesystem', 'tool1_1', 'tool2_1', 'tool3_2', 'tool4_2'])
     })
   })
 
@@ -377,6 +411,56 @@ describe('tool_selection', () => {
       const result = await toolSelection.handleSelectAllPlugins(selection)
       expect(result).toEqual(['tool1_1', 'tool2_1', 'web_search', 'filesystem'])
     })
+
+    describe('with filtering', () => {
+      test('should return null when selection is null and no visible plugins specified', async () => {
+        const result = await toolSelection.handleSelectAllPlugins(null, null)
+        expect(result).toBeNull()
+      })
+
+      test('should return null when selection is null and visible plugins result in all tools selected', async () => {
+        const visiblePluginIds = ['search'] // plugin name, not tool name
+        const result = await toolSelection.handleSelectAllPlugins(null, visiblePluginIds)
+        // When selection is null and there are visible plugins, it starts with all tools and adds the visible plugin
+        // Since web_search is already in all tools, the result should be null (all tools selected)
+        expect(result).toBeNull()
+      })
+
+      test('should add only visible plugins to existing selection', async () => {
+        const selection = ['tool1_1', 'tool2_1']
+        const visiblePluginIds = ['search'] // only search plugin visible
+        const result = await toolSelection.handleSelectAllPlugins(selection, visiblePluginIds)
+        expect(result).toEqual(['tool1_1', 'tool2_1', 'web_search'])
+      })
+
+      test('should add multiple visible plugins to existing selection', async () => {
+        const selection = ['tool1_1']
+        const visiblePluginIds = ['search', 'filesystem']
+        const result = await toolSelection.handleSelectAllPlugins(selection, visiblePluginIds)
+        expect(result).toEqual(['tool1_1', 'web_search', 'filesystem'])
+      })
+
+      test('should not duplicate existing plugins when filtering', async () => {
+        const selection = ['tool1_1', 'web_search']
+        const visiblePluginIds = ['search', 'filesystem']
+        const result = await toolSelection.handleSelectAllPlugins(selection, visiblePluginIds)
+        expect(result).toEqual(['tool1_1', 'web_search', 'filesystem'])
+      })
+
+      test('should return existing selection when no visible plugins match', async () => {
+        const selection = ['tool1_1', 'tool2_1']
+        const visiblePluginIds = ['nonexistent']
+        const result = await toolSelection.handleSelectAllPlugins(selection, visiblePluginIds)
+        expect(result).toEqual(['tool1_1', 'tool2_1'])
+      })
+
+      test('should handle empty visible plugins array', async () => {
+        const selection = ['tool1_1', 'tool2_1']
+        const visiblePluginIds: string[] = []
+        const result = await toolSelection.handleSelectAllPlugins(selection, visiblePluginIds)
+        expect(result).toEqual(['tool1_1', 'tool2_1'])
+      })
+    })
   })
 
   describe('handleUnselectAllPlugins', () => {
@@ -395,6 +479,48 @@ describe('tool_selection', () => {
       const selection = ['web_search', 'filesystem']
       const result = await toolSelection.handleUnselectAllPlugins(selection)
       expect(result).toEqual([])
+    })
+
+    describe('with filtering', () => {
+      test('should remove all plugins when visiblePluginIds is null', async () => {
+        const selection = ['web_search', 'filesystem', 'tool1_1', 'tool2_1']
+        const result = await toolSelection.handleUnselectAllPlugins(selection, null)
+        expect(result).toEqual(['tool1_1', 'tool2_1'])
+      })
+
+      test('should remove only visible plugins from selection', async () => {
+        const selection = ['web_search', 'filesystem', 'tool1_1', 'tool2_1']
+        const visiblePluginIds = ['search'] // only search plugin visible
+        const result = await toolSelection.handleUnselectAllPlugins(selection, visiblePluginIds)
+        expect(result).toEqual(['filesystem', 'tool1_1', 'tool2_1'])
+      })
+
+      test('should remove multiple visible plugins from selection', async () => {
+        const selection = ['web_search', 'filesystem', 'tool1_1', 'tool2_1']
+        const visiblePluginIds = ['search', 'filesystem'] // both plugins visible
+        const result = await toolSelection.handleUnselectAllPlugins(selection, visiblePluginIds)
+        expect(result).toEqual(['tool1_1', 'tool2_1'])
+      })
+
+      test('should handle null selection and visible plugins by removing only visible plugins', async () => {
+        const visiblePluginIds = ['search'] // only search plugin visible
+        const result = await toolSelection.handleUnselectAllPlugins(null, visiblePluginIds)
+        expect(result).toEqual(['filesystem', 'tool1_1', 'tool2_1', 'tool3_2', 'tool4_2'])
+      })
+
+      test('should return selection unchanged when no visible plugins match', async () => {
+        const selection = ['web_search', 'filesystem', 'tool1_1', 'tool2_1']
+        const visiblePluginIds = ['nonexistent']
+        const result = await toolSelection.handleUnselectAllPlugins(selection, visiblePluginIds)
+        expect(result).toEqual(['web_search', 'filesystem', 'tool1_1', 'tool2_1'])
+      })
+
+      test('should handle empty visible plugins array', async () => {
+        const selection = ['web_search', 'filesystem', 'tool1_1', 'tool2_1']
+        const visiblePluginIds: string[] = []
+        const result = await toolSelection.handleUnselectAllPlugins(selection, visiblePluginIds)
+        expect(result).toEqual(['web_search', 'filesystem', 'tool1_1', 'tool2_1'])
+      })
     })
   })
 
@@ -425,6 +551,62 @@ describe('tool_selection', () => {
       const result = await toolSelection.handleSelectAllServerTools(selection, servers[0])
       expect(result).toBeNull()
     })
+
+    describe('with filtering', () => {
+      test('should return null when selection is null and no visible tools specified', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const result = await toolSelection.handleSelectAllServerTools(null, servers[0], null)
+        expect(result).toBeNull()
+      })
+
+      test('should start with all tools and add only visible server tools when selection is null', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const visibleToolIds = ['tool1_1'] // only one server tool visible
+        const result = await toolSelection.handleSelectAllServerTools(null, servers[0], visibleToolIds)
+        // Should return null because all tools end up selected (starts with all tools, tool1_1 already included)
+        expect(result).toBeNull()
+      })
+
+      test('should add only visible server tools to existing selection', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const selection = ['web_search', 'tool3_2', 'tool4_2']
+        const visibleToolIds = ['tool1_1'] // only tool1_1 visible
+        const result = await toolSelection.handleSelectAllServerTools(selection, servers[0], visibleToolIds)
+        expect(result).toEqual(['web_search', 'tool3_2', 'tool4_2', 'tool1_1'])
+      })
+
+      test('should add multiple visible server tools to existing selection', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const selection = ['web_search']
+        const visibleToolIds = ['tool1_1', 'tool2_1'] // both server tools visible
+        const result = await toolSelection.handleSelectAllServerTools(selection, servers[0], visibleToolIds)
+        expect(result).toEqual(['web_search', 'tool1_1', 'tool2_1'])
+      })
+
+      test('should not duplicate existing server tools when filtering', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const selection = ['web_search', 'tool1_1']
+        const visibleToolIds = ['tool1_1', 'tool2_1'] // both server tools visible
+        const result = await toolSelection.handleSelectAllServerTools(selection, servers[0], visibleToolIds)
+        expect(result).toEqual(['web_search', 'tool1_1', 'tool2_1'])
+      })
+
+      test('should return existing selection when no visible server tools match', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const selection = ['web_search', 'tool3_2']
+        const visibleToolIds = ['nonexistent'] // no matching tools
+        const result = await toolSelection.handleSelectAllServerTools(selection, servers[0], visibleToolIds)
+        expect(result).toEqual(['web_search', 'tool3_2'])
+      })
+
+      test('should handle empty visible tools array', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const selection = ['web_search', 'tool3_2']
+        const visibleToolIds: string[] = []
+        const result = await toolSelection.handleSelectAllServerTools(selection, servers[0], visibleToolIds)
+        expect(result).toEqual(['web_search', 'tool3_2'])
+      })
+    })
   })
 
   describe('handleUnselectAllServerTools', () => {
@@ -446,6 +628,54 @@ describe('tool_selection', () => {
       const selection = ['tool1_1', 'tool2_1']
       const result = await toolSelection.handleUnselectAllServerTools(selection, servers[0])
       expect(result).toEqual([])
+    })
+
+    describe('with filtering', () => {
+      test('should remove all server tools when visibleToolIds is null', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const selection = ['web_search', 'tool1_1', 'tool2_1', 'tool3_2', 'tool4_2']
+        const result = await toolSelection.handleUnselectAllServerTools(selection, servers[0], null)
+        expect(result).toEqual(['web_search', 'tool3_2', 'tool4_2'])
+      })
+
+      test('should remove only visible server tools from selection', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const selection = ['web_search', 'tool1_1', 'tool2_1', 'tool3_2']
+        const visibleToolIds = ['tool1_1'] // only tool1_1 visible
+        const result = await toolSelection.handleUnselectAllServerTools(selection, servers[0], visibleToolIds)
+        expect(result).toEqual(['web_search', 'tool2_1', 'tool3_2'])
+      })
+
+      test('should remove multiple visible server tools from selection', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const selection = ['web_search', 'tool1_1', 'tool2_1', 'tool3_2']
+        const visibleToolIds = ['tool1_1', 'tool2_1'] // both server tools visible
+        const result = await toolSelection.handleUnselectAllServerTools(selection, servers[0], visibleToolIds)
+        expect(result).toEqual(['web_search', 'tool3_2'])
+      })
+
+      test('should handle null selection and visible tools by removing only visible server tools', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const visibleToolIds = ['tool1_1'] // only tool1_1 visible
+        const result = await toolSelection.handleUnselectAllServerTools(null, servers[0], visibleToolIds)
+        expect(result).toEqual(['web_search', 'filesystem', 'tool2_1', 'tool3_2', 'tool4_2'])
+      })
+
+      test('should return selection unchanged when no visible server tools match', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const selection = ['web_search', 'tool1_1', 'tool2_1', 'tool3_2']
+        const visibleToolIds = ['nonexistent'] // no matching tools
+        const result = await toolSelection.handleUnselectAllServerTools(selection, servers[0], visibleToolIds)
+        expect(result).toEqual(['web_search', 'tool1_1', 'tool2_1', 'tool3_2'])
+      })
+
+      test('should handle empty visible tools array', async () => {
+        const servers = await window.api.mcp.getAllServersWithTools()
+        const selection = ['web_search', 'tool1_1', 'tool2_1', 'tool3_2']
+        const visibleToolIds: string[] = []
+        const result = await toolSelection.handleUnselectAllServerTools(selection, servers[0], visibleToolIds)
+        expect(result).toEqual(['web_search', 'tool1_1', 'tool2_1', 'tool3_2'])
+      })
     })
   })
 })
