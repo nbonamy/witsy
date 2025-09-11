@@ -1,10 +1,10 @@
 {
   "mcp": {
     "servers": [
-      { "uuid": "1234-5678-90ab", "registryId": "1234-5678-90ab", "state": "enabled", "type": "stdio", "command": "node", "url": "script.js", "cwd": "cwd1", "env": { "KEY": "value" }, "oauth": null },
-      { "uuid": "2345-6789-0abc", "registryId": "2345-6789-0abc", "state": "enabled", "type": "sse", "url": "http://localhost:3000", "oauth": null },
-      { "uuid": "3456-7890-abcd", "registryId": "3456-7890-abcd", "state": "disabled", "type": "stdio", "command": "python3", "url": "script.py", "oauth": null },
-      { "uuid": "4567-890a-bcde", "registryId": "4567-890a-bcde", "state": "enabled", "type": "http", "url": "http://localhost:3002", "oauth": null }
+      { "uuid": "1234-5678-90ab", "registryId": "1234-5678-90ab", "state": "enabled", "type": "stdio", "command": "node", "url": "script.js", "cwd": "cwd1", "env": { "KEY": "value" }, "oauth": null, "toolSelection": null },
+      { "uuid": "2345-6789-0abc", "registryId": "2345-6789-0abc", "state": "enabled", "type": "sse", "url": "http://localhost:3000", "oauth": null, "toolSelection": null },
+      { "uuid": "3456-7890-abcd", "registryId": "3456-7890-abcd", "state": "disabled", "type": "stdio", "command": "python3", "url": "script.py", "oauth": null, "toolSelection": null },
+      { "uuid": "4567-890a-bcde", "registryId": "4567-890a-bcde", "state": "enabled", "type": "http", "url": "http://localhost:3002", "oauth": null, "toolSelection": null }
     ],
     "disabledMcpServers": [ "mcp2" ],
     "mcpServersExtra": {}

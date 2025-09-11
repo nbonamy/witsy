@@ -2,6 +2,7 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { strDict } from './index'
 import { OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js'
+import { ToolSelection } from './llm'
 
 export type McpServerType = 'stdio' | 'sse' | 'http'
 
@@ -21,6 +22,7 @@ export type McpServer = {
   env?: strDict
   headers?: strDict
   oauth?: McpOAuthConfig
+  toolSelection: ToolSelection
 }
 
 export type McpOAuthConfig = {

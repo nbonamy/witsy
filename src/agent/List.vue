@@ -16,6 +16,7 @@
         <thead>
           <tr>
             <th>{{ t('agent.name') }}</th>
+            <th>{{ t('agent.description') }}</th>
             <th>{{ t('common.type') }}</th>
             <th>{{ t('agent.history.lastRun') }}</th>
             <th>{{ t('common.actions') }}</th>
@@ -25,6 +26,7 @@
         <tbody>
           <tr v-for="agent in agents">
             <td>{{ agent.name }}</td>
+            <td>{{ agent.description }}</td>
             <td>{{ t(`agent.forge.list.${agent.type}`) }}</td>
             <td>{{ lastRun(agent) }}</td>
             <td><div class="actions">

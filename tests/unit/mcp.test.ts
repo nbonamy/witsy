@@ -136,12 +136,12 @@ test('Initialization', async () => {
   expect(Client.prototype.connect).toHaveBeenCalledTimes(0)
   expect(await mcp.getStatus()).toEqual({ servers: [], logs: {} })
   expect(mcp.getServers()).toStrictEqual([
-    { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, oauth: null },
-    { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', oauth: null },
-    { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py', oauth: null },
-    { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', oauth: null },
-    { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined },
-    { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined, oauth: undefined }
+    { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, oauth: null, toolSelection: null },
+    { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', oauth: null, toolSelection: null },
+    { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py', oauth: null, toolSelection: null },
+    { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', oauth: null, toolSelection: null },
+    { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined, toolSelection: null },
+    { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined, oauth: undefined, toolSelection: null }
   ])
 })
 
@@ -173,6 +173,7 @@ test('Create server - Stdio', async () => {
     cwd: 'cwd1',
     env: { KEY: 'value' },
     oauth: null,
+    toolSelection: null,
   })
 })
 
@@ -202,6 +203,7 @@ test('Create server - SSE', async () => {
     env: undefined,
     headers: undefined,
     oauth: undefined,
+    toolSelection: null,
   })
 })
 
@@ -235,6 +237,7 @@ test('Create server - HTTP', async () => {
     env: undefined,
     headers: { key: 'value' },
     oauth: undefined,
+    toolSelection: null,
   })
 })
 
@@ -341,10 +344,10 @@ test('Connect', async () => {
   expect(mcp.clients).toHaveLength(4)
   expect(await mcp.getStatus()).toStrictEqual({
     servers: [
-      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, oauth: null, tools: ['tool1___90ab', 'tool2___90ab', 'tool3___90ab'] },
-      { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', oauth: null, tools: ['tool1___0abc', 'tool2___0abc', 'tool3___0abc'] },
-      { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', oauth: null, tools: ['tool1___bcde', 'tool2___bcde', 'tool3___bcde'] },
-      { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined, tools: ['tool1_____s1', 'tool2_____s1', 'tool3_____s1'] },
+      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, oauth: null, toolSelection: null, tools: ['tool1___90ab', 'tool2___90ab', 'tool3___90ab'] },
+      { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', oauth: null, toolSelection: null, tools: ['tool1___0abc', 'tool2___0abc', 'tool3___0abc'] },
+      { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', oauth: null, toolSelection: null, tools: ['tool1___bcde', 'tool2___bcde', 'tool3___bcde'] },
+      { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined, toolSelection: null, tools: ['tool1_____s1', 'tool2_____s1', 'tool3_____s1'] },
     ],
     logs: {
       '1234-5678-90ab': [],

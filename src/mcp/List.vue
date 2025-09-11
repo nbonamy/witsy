@@ -65,8 +65,9 @@
             <td class="status-col">
               <span class="status-indicator">{{ getStatus(server) }}</span>
             </td>
-            <td class="server-col server-info clickable info" @click="onEdit(server)">
+            <td class="server-col server-info clickable" @click="showTools(server)">
               <div class="text">{{ getDescription(server) }}</div>
+              <div class="subtext">{{ getToolsCount(server) }}</div>
             </td>
             <td class="type-col">{{ getType(server) }}</td>
             <td class="actions-col">
@@ -124,6 +125,16 @@
       </div>
     </main>
     
+    <!-- Tool Selection Dialog -->
+    <McpToolSelector
+      ref="toolSelector"
+      id="mcp-tool-selector"
+      :tools="currentServerTools"
+      :toolSelection="currentToolSelection"
+      @save="onToolSelectionSave"
+      @cancel="onToolSelectionCancel"
+    />
+    
   </div>
 </template>
 
@@ -134,12 +145,14 @@ import { PauseIcon, PlayIcon, PlusIcon, PowerIcon, RefreshCwIcon, SearchIcon, Sq
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { nextTick, onMounted, PropType, ref } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
+import McpToolSelector from '../components/McpToolSelector.vue'
 import Spinner from '../components/Spinner.vue'
 import Dialog from '../composables/dialog'
 import { OAuthStatus, useMcpServer } from '../composables/mcp'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { McpServer, McpServerStatus } from '../types/mcp'
+import { McpServer, McpServerStatus, McpStatus, McpTool } from '../types/mcp'
+import { ToolSelection } from '../types/llm'
 
 interface Integration {
   id: string
@@ -154,7 +167,7 @@ interface Integration {
 
 const props = defineProps({
   servers: Array as PropType<McpServer[]>,
-  status: Object,
+  status: Object as PropType<McpStatus>,
   loading: Boolean
 })
 
@@ -162,6 +175,10 @@ const selected = ref(null)
 const mcpLoading = ref<string|undefined>(undefined)
 const integrations = ref<Integration[]>([])
 const integrationsLoading = ref(false)
+const toolSelector = ref<InstanceType<typeof McpToolSelector>>()
+const currentServerTools = ref<McpTool[]>([])
+const currentToolSelection = ref<ToolSelection>(null)
+const currentServer = ref<McpServer|null>(null)
 
 const emit = defineEmits([ 'edit', 'create', 'reload', 'restart' ])
 
@@ -200,6 +217,11 @@ const getDescription = (server: McpServer) => {
   if (server.type == 'stdio') return server.command.split(/[\\/]/).pop() + ' ' + server.url
 }
 
+const getToolsCount = (server: McpServer) => {
+  const count = props.status?.servers.find((s: McpServerStatus) => s.uuid == server.uuid)?.tools?.length || 0
+  return count === 1 ? '1 tool available' : `${count} tools available`
+}
+
 const isRunning = (server: McpServer) => {
   if (server.state == 'disabled') return false
   const s = props.status?.servers.find((s: McpServerStatus) => s.uuid == server.uuid)
@@ -228,20 +250,38 @@ const showLogs = (server: McpServer) => {
 }
 
 const showTools = async (server: McpServer) => {
-  const tools = await window.api.mcp.getServerTools(server.registryId)
-  if (tools.length) {
-    Dialog.show({
-      title: t('mcp.tools'),
-      html: '<ul>' + tools.map((tool: any) => `<li><b>${tool.name}</b><br/>${tool.description}</li>`).join('') + '</ul>',
-      customClass: { popup: 'x-large', confirmButton: 'primary', htmlContainer: 'list' },
-      confirmButtonText: t('common.close'),
-    })
-  } else {
-    Dialog.show({
-      title: t('mcp.noTools'),
-      confirmButtonText: t('common.close'),
-    })
+  const tools = await window.api.mcp.getServerTools(server.uuid)
+  currentServer.value = server
+  currentServerTools.value = tools
+  currentToolSelection.value = server.toolSelection
+  toolSelector.value?.show()
+}
+
+const onToolSelectionSave = async (selection: ToolSelection) => {
+  if (!currentServer.value) return
+  
+  // Create a copy of the server with updated toolSelection
+  const updatedServer: McpServer = {
+    ...JSON.parse(JSON.stringify(currentServer.value)),
+    toolSelection: selection
   }
+  
+  // Save the updated server
+  await window.api.mcp.editServer(updatedServer)
+  
+  // Refresh the server list to show updated data
+  emit('reload')
+  
+  // Clear the current selections
+  currentServer.value = null
+  currentServerTools.value = []
+  currentToolSelection.value = null
+}
+
+const onToolSelectionCancel = () => {
+  currentServer.value = null
+  currentServerTools.value = []
+  currentToolSelection.value = null
 }
 
 const onRestart = async () => {
@@ -277,6 +317,7 @@ const setupOAuth = async (integrationId: string, url: string, oauthStatus: OAuth
       label: integrationName,
       url: url,
       oauth: JSON.parse(JSON.stringify(oauthConfig)),
+      toolSelection: null,
     }
 
     // save it
@@ -324,7 +365,8 @@ const onImportJson = async () => {
       command: result.value.command,
       url: result.value.args.join(' '),
       cwd: result.value.cwd,
-      env: result.value.env || {}
+      env: result.value.env || {},
+      toolSelection: null,
     }
 
     // edit it
@@ -527,8 +569,12 @@ const validateServerJson = (json: string) => {
     cursor: pointer;
   }
   
-  .server-info:hover {
-    background-color: var(--hover-background);
+  .server-info {
+    .subtext {
+      font-size: 0.85rem;
+      color: var(--faded-text-color);
+      margin-top: 0.2rem;
+    }
   }
   
   .status-indicator {
