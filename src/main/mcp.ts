@@ -135,7 +135,10 @@ export default class {
 
     // now we can do it
     return [
-      ...config.mcp.servers,
+      ...config.mcp.servers.map((server: McpServer) => ({
+        ...server,
+        toolSelection: server.toolSelection ?? null
+      })),
       ...Object.keys(config.mcpServers).reduce((arr: McpServer[], key: string) => {
         arr.push({
           uuid: key.replace('@', ''),
@@ -147,7 +150,8 @@ export default class {
           url: config.mcpServers[key].args.join(' '),
           cwd: config.mcpServers[key].cwd,
           env: config.mcpServers[key].env,
-          oauth: config.mcp.mcpServersExtra[key]?.oauth || undefined
+          oauth: config.mcp.mcpServersExtra[key]?.oauth || undefined,
+          toolSelection: config.mcp.mcpServersExtra[key]?.toolSelection || null
         })
         return arr
       }, [])
@@ -326,6 +330,7 @@ export default class {
       original.env = server.env
       original.headers = server.headers
       original.oauth = server.oauth
+      original.toolSelection = server.toolSelection ?? null
       edited = true
     }
 
@@ -338,8 +343,9 @@ export default class {
         config.mcp.mcpServersExtra[server.registryId] = {}
       }
 
-      // state
+      // extra
       config.mcp.mcpServersExtra[server.registryId].state = server.state
+      config.mcp.mcpServersExtra[server.registryId].toolSelection = server.toolSelection ?? null
       
       // label
       if (server.label !== undefined) {

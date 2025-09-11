@@ -105,6 +105,7 @@ test('Server edit', async () => {
     env: {},
     headers: {},
     oauth: null,
+    toolSelection: null,
   })
 })
 
@@ -131,6 +132,7 @@ test('Normal server add - Stdio', async () => {
     env: {},
     headers: {},
     oauth: null,
+    toolSelection: null,
   })
 
   // add cwd
@@ -167,6 +169,7 @@ test('Normal server add - Stdio', async () => {
     env: { key1: 'value1', key2: 'value2' },
     headers: {},
     oauth: null,
+    toolSelection: null,
   })
 
   // edit variable
@@ -196,6 +199,7 @@ test('Normal server add - Stdio', async () => {
     env: { key3: 'value3' },
     headers: {},
     oauth: null,
+    toolSelection: null,
   })
 
 })
@@ -222,6 +226,7 @@ test('Normal server add - HTTP', async () => {
     env: {},
     headers: {},
     oauth: null,
+    toolSelection: null,
   })
 
   // add variable
@@ -253,6 +258,7 @@ test('Normal server add - HTTP', async () => {
     env: {},
     headers: { key1: 'value1', key2: 'value2' },
     oauth: null,
+    toolSelection: null,
   })
 
   // edit variable
@@ -281,6 +287,7 @@ test('Normal server add - HTTP', async () => {
     env: {},
     headers: { key3: 'value3' },
     oauth: null,
+    toolSelection: null,
   })
 
 })
@@ -381,6 +388,7 @@ test('JSON server add', async () => {
     command: 'none',
     url: '-y pkg',
     env: { key: 'value' },
+    toolSelection: null,
   })
 
 })

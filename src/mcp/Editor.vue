@@ -409,6 +409,7 @@ const onSave = async () => {
         env: JSON.parse(JSON.stringify(env.value)),
         headers: JSON.parse(JSON.stringify(headers.value)),
         oauth: JSON.parse(JSON.stringify(oauthConfig.value)),
+        toolSelection: props.server?.toolSelection || null,
       }
 
       // save it

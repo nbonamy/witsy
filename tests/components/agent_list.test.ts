@@ -56,11 +56,12 @@ test('Shows table with agent rows', async () => {
   
   // Check table headers
   const headers = wrapper.findAll('thead th')
-  expect(headers).toHaveLength(4)
+  expect(headers).toHaveLength(5)
   expect(headers.at(0)?.text()).toBe('agent.name')
-  expect(headers.at(1)?.text()).toBe('common.type')
-  expect(headers.at(2)?.text()).toBe('agent.history.lastRun')
-  expect(headers.at(3)?.text()).toBe('common.actions')
+  expect(headers.at(1)?.text()).toBe('agent.description')
+  expect(headers.at(2)?.text()).toBe('common.type')
+  expect(headers.at(3)?.text()).toBe('agent.history.lastRun')
+  expect(headers.at(4)?.text()).toBe('common.actions')
 })
 
 test('Shows all agents in table rows', async () => {
@@ -83,8 +84,9 @@ test('Displays agent information correctly', async () => {
   
   // Should display agent name, type, and last run info
   expect(cells.at(0)?.text()).toBe('Test Agent 1')
-  expect(cells.at(1)?.text()).toBe('agent.forge.list.runnable')
-  expect(cells.at(2)?.text()).toBeTruthy() // Should have some last run text
+  expect(cells.at(1)?.text()).toBe('A test runnable agent')
+  expect(cells.at(2)?.text()).toBe('agent.forge.list.runnable')
+  expect(cells.at(3)?.text()).toBeTruthy() // Should have some last run text
 })
 
 test('Displays agents in array order', async () => {
@@ -119,7 +121,7 @@ test('Shows action buttons for each agent', async () => {
   })
   
   const firstRow = wrapper.find('tbody tr')
-  const actionsCell = firstRow.findAll('td').at(3) // Last column contains actions
+  const actionsCell = firstRow.findAll('td').at(4) // Last column contains actions
   const actions = actionsCell?.find('.actions')
   
   expect(actions?.find('.run')).toBeTruthy()

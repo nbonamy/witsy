@@ -286,6 +286,7 @@ export type McpServerExtra = {
   label?: string
   state?: McpServerState
   oauth?: McpOAuthConfig
+  toolSelection?: ToolSelection
 }
 
 export type McpConfig = {
@@ -294,4 +295,3 @@ export type McpConfig = {
   mcpServersExtra: Record<string, McpServerExtra>
   smitheryApiKey: string
 }
-
