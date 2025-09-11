@@ -348,7 +348,7 @@ const onDelete = async (server: McpServer) => {
   }).then(async (result) => {
     if (result.isConfirmed) {
       nextTick(async () => {
-        await window.api.mcp.deleteServer(server.registryId)
+        await window.api.mcp.deleteServer(server.uuid)
         selected.value = null
         emit('reload')
       })
