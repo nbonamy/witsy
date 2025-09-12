@@ -2,6 +2,7 @@
   "common": {
     "actions": "操作",
     "agents": "代理",
+    "allSelected": "全部已选择",
     "appName": "StationOne",
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
@@ -111,6 +112,7 @@
     "newChat": "New Conversation",
     "next": "下一步",
     "no": "否",
+    "noneSelected": "未选择",
     "notes": "Notes",
     "ok": "确定",
     "path": "路径",
@@ -157,6 +159,7 @@
     "select": "选择",
     "selectAll": "全选",
     "selectAllShort": "全部",
+    "selectedCount": "已选择 {selected} 个，共 {total} 个",
     "selectNone": "全不选",
     "settings": "设置",
     "shortcut": "快捷键",
@@ -1748,6 +1751,7 @@
     "serverNotFound": "你尝试连接的服务器不存在。",
     "servers": "服务器。从以下位置发现并安装 MCP 服务器",
     "smithery": "Smithery",
+    "toolsCount": "无工具启用|已启用 1 个工具|已启用 {count} 个工具",
     "tooltips": {
       "deleteServer": "删除服务器",
       "editServer": "编辑服务器",

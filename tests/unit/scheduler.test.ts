@@ -84,7 +84,7 @@ describe('Scheduler', () => {
 
     // Create mock MCP
     mockMcp = {
-      getTools: vi.fn(() => []),
+      getLlmTools: vi.fn(() => []),
       callTool: vi.fn(),
       isAvailable: vi.fn(() => true)
     } as any
@@ -192,7 +192,7 @@ describe('Scheduler', () => {
     const window = (global as any).window
 
     expect(window.api.mcp.isAvailable()).toBe(true)
-    expect(window.api.mcp.getTools).toBe(mockMcp.getTools)
+    expect(window.api.mcp.getLlmTools).toBe(mockMcp.getLlmTools)
     expect(window.api.mcp.callTool).toBe(mockMcp.callTool)
   })
 

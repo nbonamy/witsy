@@ -2,6 +2,7 @@
   "common": {
     "actions": "Actions",
     "agents": "Agents",
+    "allSelected": "Tous sélectionnés",
     "appName": "StationOne",
     "arguments": "Arguments",
     "askMeAnything": "Demandez-moi ce que vous voulez !",
@@ -92,6 +93,7 @@
     "newChat": "New Conversation",
     "next": "Suivant",
     "no": "Non",
+    "noneSelected": "Aucun sélectionné",
     "notes": "Notes",
     "ok": "OK",
     "path": "Chemin",
@@ -138,6 +140,7 @@
     "select": "Sélectionner",
     "selectAll": "Tout sélectionner",
     "selectAllShort": "Tous",
+    "selectedCount": "{selected} sur {total} sélectionnés",
     "selectNone": "Tout désélectionner",
     "settings": "Paramètres",
     "shortcut": "Raccourci",
@@ -1729,6 +1732,7 @@
     "serverNotFound": "Le serveur auquel vous essayez de vous connecter n'existe pas.",
     "servers": "serveurs. Découvrez et installez des serveurs MCP depuis le",
     "smithery": "Smithery",
+    "toolsCount": "Aucun outil activé|1 outil activé|{count} outils activés",
     "tooltips": {
       "deleteServer": "Supprimer le serveur",
       "editServer": "Modifier le serveur",

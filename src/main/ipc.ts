@@ -644,8 +644,8 @@ export const installIpc = (
     return mcp ? await mcp.getServerTools(payload) : [];
   });
 
-  ipcMain.handle(IPC.MCP.GET_TOOLS, async (): Promise<LlmTool[]> => {
-    return mcp ? await mcp.getTools() : [];
+  ipcMain.handle(IPC.MCP.GET_LLM_TOOLS, async (): Promise<LlmTool[]> => {
+    return mcp ? await mcp.getLlmTools() : [];
   });
 
   ipcMain.handle(IPC.MCP.CALL_TOOL, async (_, payload) => {

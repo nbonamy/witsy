@@ -218,8 +218,13 @@ const getDescription = (server: McpServer) => {
 }
 
 const getToolsCount = (server: McpServer) => {
-  const count = props.status?.servers.find((s: McpServerStatus) => s.uuid == server.uuid)?.tools?.length || 0
-  return count === 1 ? '1 tool available' : `${count} tools available`
+  const status = props.status?.servers.find((s: McpServerStatus) => s.uuid == server.uuid)
+  if (!status) return t('mcp.toolsCount', { count: 0 })
+  if (Array.isArray(status.toolSelection)) {
+    return t('mcp.toolsCount', { count: status.toolSelection.length })
+  } else {
+    return t('mcp.toolsCount', { count: status.tools.length })
+  }
 }
 
 const isRunning = (server: McpServer) => {

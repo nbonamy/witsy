@@ -165,7 +165,7 @@ export default class Scheduler {
         // @ts-expect-error partial mock
         mcp: {
           isAvailable: () => true,
-          getTools: this.mcp?.getTools,
+          getLlmTools: this.mcp?.getLlmTools,
           callTool: this.mcp?.callTool,
         },
       }

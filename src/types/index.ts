@@ -498,7 +498,7 @@ declare global {
         getStatus(): McpStatus
         getAllServersWithTools(): Promise<McpServerWithTools[]>
         getServerTools(uuid: string): Promise<McpTool[]>
-        getTools(): Promise<LlmTool[]>
+        getLlmTools(): Promise<LlmTool[]>
         callTool(name: string, parameters: anyDict): any
         originalToolName(name: string): string
         detectOAuth(url: string, headers: Record<string, string>): Promise<any>

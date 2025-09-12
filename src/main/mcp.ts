@@ -84,7 +84,13 @@ export default class {
     for (const client of this.clients) {
       try {
         const tools = await this.getCachedTools(client)
-        const mcpTools: McpTool[] = tools.tools.map((tool: any) => ({
+        const mcpTools: McpTool[] = tools.tools.filter((tool: any) => {
+          if (Array.isArray(client.server.toolSelection) && !client.server.toolSelection.includes(tool.name)) {
+            return false
+          } else {
+            return true
+          }
+        }).map((tool: any) => ({
           name: tool.name,
           description: tool.description || tool.name
         }))
@@ -741,12 +747,18 @@ export default class {
 
   }
 
-  getTools = async (): Promise<LlmTool[]> => {
+  getLlmTools = async (): Promise<LlmTool[]> => {
     const allTools: LlmTool[] = []
     for (const client of this.clients) {
       try {
         const tools = await this.getCachedTools(client)
         for (const tool of tools.tools) {
+
+          // skip disabled tools
+          if (Array.isArray(client.server.toolSelection) && !client.server.toolSelection.includes(tool.name)) {
+            continue
+          }
+
           try {
             const functionTool = this.mcpToOpenAI(client.server, tool)
             allTools.push(functionTool)

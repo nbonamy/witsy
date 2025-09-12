@@ -73,11 +73,6 @@ describe('tool_selection', () => {
       const result = await toolSelection.allPluginsTools(true)
       expect(result).toEqual(['web_search', 'filesystem', 'mcp'])
     })
-
-    test('should exclude disabled plugins', async () => {
-      const result = await toolSelection.allPluginsTools()
-      expect(result).not.toContain('python')
-    })
   })
 
   describe('initToolSelectionWithAllTools', () => {

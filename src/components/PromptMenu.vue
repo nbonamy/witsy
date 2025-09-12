@@ -106,7 +106,7 @@
 
     <template #pluginsSubMenu="{ withFilter }">
       {{ withFilter(true) }}
-      <div v-for="plugin in enabledPlugins(store.config)" :key="plugin" :data-plugin-id="plugin" @click="handlePluginClick(plugin)">
+      <div v-for="plugin in enabledPlugins(store.config)" :key="plugin" :data-id="plugin" @click="handlePluginClick(plugin)">
         <input type="checkbox" :checked="pluginStatus(plugin) === 'all'"  />
         {{ t(`settings.plugins.${plugin}.title`) }}
       </div>
@@ -125,7 +125,7 @@
 
     <template v-for="serverWithTools in mcpServersWithTools" :key="serverWithTools.uuid" v-slot:[`tools-${serverWithTools.uuid}`]="{ withFilter }">
       {{ withFilter(true) }}
-      <div v-for="tool in serverWithTools.tools" :key="tool.name" :data-server-tool-id="tool.uuid" @click.stop="handleServerToolClick(serverWithTools, tool)">
+      <div v-for="tool in serverWithTools.tools" :key="tool.name" :data-id="tool.uuid" @click.stop="handleServerToolClick(serverWithTools, tool)">
         <input type="checkbox" :checked="serverToolStatus(serverWithTools, tool) === 'all'"  />
         {{ tool.name }}
       </div>

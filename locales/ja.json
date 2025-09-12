@@ -2,6 +2,7 @@
   "common": {
     "actions": "アクション",
     "agents": "エージェント",
+    "allSelected": "すべて選択済み",
     "appName": "StationOne",
     "arguments": "引数",
     "askMeAnything": "何でも聞いてください",
@@ -111,6 +112,7 @@
     "newChat": "New Conversation",
     "next": "次へ",
     "no": "いいえ",
+    "noneSelected": "選択なし",
     "notes": "Notes",
     "ok": "OK",
     "path": "パス",
@@ -157,6 +159,7 @@
     "select": "選択",
     "selectAll": "すべて選択",
     "selectAllShort": "すべて",
+    "selectedCount": "{total}中{selected}が選択されました",
     "selectNone": "すべて解除",
     "settings": "設定",
     "shortcut": "ショートカット",
@@ -1748,6 +1751,7 @@
     "serverNotFound": "接続しようとしているサーバーは存在しません。",
     "servers": "サーバー。MCPサーバーの発見とインストールは",
     "smithery": "Smithery",
+    "toolsCount": "ツールが有効になっていません|1つのツールが有効になりました|{count}つのツールが有効になりました",
     "tooltips": {
       "deleteServer": "サーバーを削除",
       "editServer": "サーバーを編集",
