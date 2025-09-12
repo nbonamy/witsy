@@ -12,27 +12,17 @@
     <template #body>
       <div class="tool-selector">
         <div class="tool-list">
-          <div 
-            v-for="tool in tools" 
-            :key="tool.name"
-            class="tool-item"
-          >
-            <input 
-              type="checkbox" 
-              :value="tool.name"
-              v-model="selectedTools"
-            />
-            <span class="tool-info">
+          <div v-for="tool in tools" :key="tool.name" class="tool-item">
+            <input type="checkbox" :value="tool.name" v-model="selectedTools" />
+            <span class="tool-info" @click="onClickInfo">
               <span class="tool-name">{{ tool.name }}</span>
               <span class="tool-description">{{ tool.description }}</span>
             </span>
           </div>
         </div>
-        
         <div v-if="!tools.length" class="empty-state">
           {{ t('mcp.noTools') }}
         </div>
-        
       </div>
     </template>
     
@@ -85,6 +75,11 @@ const initializeSelection = () => {
 // Watch for changes to toolSelection prop
 watch(() => props.toolSelection, initializeSelection, { immediate: true })
 watch(() => props.tools, initializeSelection)
+
+const onClickInfo = (ev: MouseEvent) => {
+  const el = ev.target as HTMLElement
+  el.parentElement.closest('.tool-item').querySelector('input').click()
+}
 
 const selectAll = () => {
   selectedTools.value = props.tools.map(tool => tool.name)

@@ -177,7 +177,7 @@ export const MCP = {
   GET_STATUS: 'mcp-get-status',
   GET_ALL_SERVERS_WITH_TOOLS: 'mcp-get-all-servers-with-tools',
   GET_SERVER_TOOLS: 'mcp-get-server-tools',
-  GET_TOOLS: 'mcp-get-tools',
+  GET_LLM_TOOLS: 'mcp-get-tools',
   CALL_TOOL: 'mcp-call-tool',
   ORIGINAL_TOOL_NAME: 'mcp-original-tool-name',
   DETECT_OAUTH: 'mcp-detect-oauth',

@@ -194,7 +194,7 @@ contextBridge.exposeInMainWorld(
       getStatus: (): McpStatus|null => { return ipcRenderer.sendSync(IPC.MCP.GET_STATUS) },
       getAllServersWithTools: (): Promise<Array<{ server: McpServer; tools: McpTool[] }>> => { return ipcRenderer.invoke(IPC.MCP.GET_ALL_SERVERS_WITH_TOOLS) },
       getServerTools: (uuid: string): Promise<McpTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_SERVER_TOOLS, uuid) },
-      getTools: (): Promise<LlmTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_TOOLS) },
+      getLlmTools: (): Promise<LlmTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_LLM_TOOLS) },
       callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke(IPC.MCP.CALL_TOOL, { name, parameters }) },
       originalToolName(name: string): string { return ipcRenderer.sendSync(IPC.MCP.ORIGINAL_TOOL_NAME, name) },
       detectOAuth: (url: string, headers: Record<string, string>): Promise<any> => { return ipcRenderer.invoke(IPC.MCP.DETECT_OAUTH, { url, headers }) },
