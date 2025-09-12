@@ -1460,7 +1460,7 @@ defineExpose({
 
   .actions {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.5rem;
     align-items: center;
     margin-top: 0.25rem;
 
@@ -1473,7 +1473,7 @@ defineExpose({
       flex-direction: row;
       align-items: center;
       cursor: pointer;
-      gap: 0.5rem;
+      gap: 0.25rem;
 
       .model-name {
         font-size: 13px;
