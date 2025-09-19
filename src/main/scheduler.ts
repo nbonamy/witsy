@@ -39,7 +39,6 @@ export default class Scheduler {
     // we want to run on next minute
     const now = new Date()
     const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
-    console.log(`Scheduler will start in ${delay}ms`)
     setTimeout(() => {
       this.check()
     }, delay)
