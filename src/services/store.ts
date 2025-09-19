@@ -12,6 +12,7 @@ import Chat from '../models/chat'
 import LlmManager from 'llms/manager'
 
 export const kMediaChatId = '00000000-0000-0000-0000-000000000000'
+export const kDefaultWorkspaceId = '00000000-0000-0000-0000-000000000000'
 export const kReferenceParamValue = '<media>'
 
 export const store: Store = reactive({

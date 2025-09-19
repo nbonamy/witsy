@@ -61,7 +61,7 @@ import { Grid2X2PlusIcon, StarIcon } from 'lucide-vue-next'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { kDefaultWorkspaceId, store } from '../services/store'
 import { WorkspaceHeader } from '../types/workspace'
 import ContextMenu from './ContextMenu.vue'
 import WorkspaceEditor from './WorkspaceEditor.vue'
@@ -140,7 +140,10 @@ const getContrastColor = (backgroundColor: string): string => {
 
 const contextMenuActions = [
   { label: t('common.edit'), action: 'edit' },
-  { label: t('common.delete'), action: 'delete' }
+  ...(selectedWorkspace.value && selectedWorkspace.value.uuid !== kDefaultWorkspaceId ? [
+    { label: t('workspace.upload.title'), action: 'upload' },
+    { label: t('common.delete'), action: 'delete' }
+  ] : []),
 ]
 
 const showWorkspaceContextMenu = (event: MouseEvent, workspace: WorkspaceHeader) => {
@@ -175,6 +178,7 @@ const editWorkspace = () => {
 }
 
 const deleteWorkspace = async () => {
+  
   if (!selectedWorkspace.value) return
   
   const result = await Dialog.show({
@@ -188,19 +192,14 @@ const deleteWorkspace = async () => {
     return
   }
 
+  // switch to default
+  store.activateWorkspace(kDefaultWorkspaceId)
+  emit('workspace-changed', kDefaultWorkspaceId)
+
   // Delete the workspace
-  const success = window.api.workspace.delete(selectedWorkspace.value.uuid)
-  if (success) {
-    await loadWorkspaces()
-    // If this was the active workspace, switch to another one
-    if (selectedWorkspace.value.uuid === activeWorkspaceId.value) {
-      const remainingWorkspaces = workspaces.value
-      if (remainingWorkspaces.length > 0) {
-        store.activateWorkspace(remainingWorkspaces[0].uuid)
-        emit('workspace-changed', remainingWorkspaces[0].uuid)
-      }
-    }
-  }
+  window.api.workspace.delete(selectedWorkspace.value.uuid)
+  await loadWorkspaces()
+
 }
 </script>
 
