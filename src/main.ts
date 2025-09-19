@@ -15,7 +15,7 @@ import DocumentRepository from './rag/docrepo';
 import DocumentMonitor from './rag/docmonitor';
 import MemoryManager from './main/memory';
 import TrayIconManager from './main/tray';
-// import Scheduler from './main/scheduler';
+import Scheduler from './main/scheduler';
 import Mcp from './main/mcp';
 
 import { fixPath } from './main/utils';
@@ -31,7 +31,7 @@ import * as backup from './main/backup';
 import * as workspace from './main/workspace';
 
 let mcp: Mcp;
-// let scheduler: Scheduler;
+let scheduler: Scheduler;
 let autoUpdater: AutoUpdater;
 let docMonitor: DocumentMonitor;
 let trayIconManager: TrayIconManager;
@@ -192,9 +192,9 @@ app.whenReady().then(async () => {
   mcp = new Mcp(app);
   mcp.connect();
 
-  // // and now scheduler
-  // scheduler = new Scheduler(app, mcp);
-  // scheduler.start();
+  // and now scheduler
+  scheduler = new Scheduler(app, mcp);
+  scheduler.start();
 
   // create the main window
   if (!settings.general.hideOnStartup || process.env.TEST) {
