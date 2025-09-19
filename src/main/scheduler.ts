@@ -39,6 +39,7 @@ export default class Scheduler {
     // we want to run on next minute
     const now = new Date()
     const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
+    console.log(`Scheduler will start in ${delay}ms`)
     setTimeout(() => {
       this.check()
     }, delay)
@@ -47,57 +48,62 @@ export default class Scheduler {
 
   async check(): Promise<void> {
 
-    // we need to check is we where 30 seconds before to make sure we don't miss
-    const tolerance = 30 * 1000
-    const now: number = Date.now()
+    try {
 
-    // we need a config
-    const config = loadSettings(this.app)
+      // we need to check is we where 30 seconds before to make sure we don't miss
+      const tolerance = 30 * 1000
+      const now: number = Date.now()
 
-    // load agents
-    const workspaces = listWorkspaces(this.app)
-    for (const workspace of workspaces) {
+      // we need a config
+      const config = loadSettings(this.app)
 
-      // iterate over all agents
-      const agents = loadAgents(this.app, workspace.uuid)
-      for (const agent of agents) {
+      // load agents
+      const workspaces = listWorkspaces(this.app)
+      for (const workspace of workspaces) {
 
-        try {
+        // iterate over all agents
+        const agents = loadAgents(this.app, workspace.uuid)
+        for (const agent of agents) {
 
-          // check if agent has a schedule
-          if (!agent.schedule) {
-            continue
-          }
+          try {
 
-          // check if schedule is due
-          const interval = CronExpressionParser.parse(agent.schedule, { currentDate: now - tolerance })
-          const next = interval.next().getTime()
-          if (Math.abs(next - now) < tolerance) {
-
-            console.log(`Agent ${agent.name} is due to run`)
-
-            try {
-              
-              // build a prompt
-              const prompt = agent.buildPrompt(0, agent.invocationValues)
-              
-              // now run it
-              const runner = new Runner(config, agent)
-              runner.run('schedule', prompt)
-            
-            } catch (error) {
-              console.log(`Error running agent ${agent.name}`, error)
+            // check if agent has a schedule
+            if (!agent.schedule) {
               continue
             }
 
+            // check if schedule is due
+            const interval = CronExpressionParser.parse(agent.schedule, { currentDate: now - tolerance })
+            const next = interval.next().getTime()
+            if (Math.abs(next - now) < tolerance) {
+
+              console.log(`Agent ${agent.name} is due to run`)
+
+              try {
+                
+                // build a prompt
+                const prompt = agent.buildPrompt(0, agent.invocationValues)
+                
+                // now run it
+                const runner = new Runner(config, agent)
+                runner.run('schedule', prompt)
+              
+              } catch (error) {
+                console.log(`Error running agent ${agent.name}`, error)
+                continue
+              }
+
+            }
+
+          } catch (error) {
+            console.log(`Error checking schedule for ${agent.name}`, error)
+            continue
           }
 
-        } catch (error) {
-          console.log(`Error checking schedule for ${agent.name}`, error)
-          continue
         }
-
       }
+
+    } finally {
 
       // schedule next
       this.start()
