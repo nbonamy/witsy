@@ -9,12 +9,12 @@
       </div>
       <div class="think" v-if="showReasoning">
         <div v-for="block in reasoningBlocks">
-          <MessageItemBodyBlock :block="block" @media-loaded="onMediaLoaded(message)" />
+          <MessageItemBodyBlock :block="block" :transient="message.transient" @media-loaded="onMediaLoaded(message)" />
         </div>
       </div>
     </template>
     <div v-for="block in contentBlocks">
-      <MessageItemBodyBlock :block="block" @media-loaded="onMediaLoaded(message)" />
+      <MessageItemBodyBlock :block="block" :transient="message.transient" @media-loaded="onMediaLoaded(message)" />
     </div>
   </div>
 </template>

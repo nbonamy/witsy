@@ -8,6 +8,7 @@ import { emitEventMock } from '../../vitest.setup'
 import { store } from '../../src/services/store'
 import { stubTeleport } from '../mocks/stubs'
 import MessageItem from '../../src/components/MessageItem.vue'
+import MessageItemArtifactBlock from '../../src/components/MessageItemArtifactBlock.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 import Dialog from '../../src/composables/dialog'
@@ -287,36 +288,48 @@ test('Assistant image message with artifact', async () => {
 
 test('Assistant artifact with HTML preview', async () => {
 
+  // Set message as transient to test the delay behavior
+  botMessageToolArtifactHtml1.transient = true
+
   const wrapper = await mount(botMessageToolArtifactHtml1)
   expect(wrapper.find('.body').text()).toBe('Here is an HTML example:\nSimple HTML PageThat\'s it!')
   expect(wrapper.findAll('.body .artifact').length).toBe(1)
-  
+
   // Check that the artifact has HTML content
   const artifact = wrapper.find('.body .artifact')
   expect(artifact.exists()).toBe(true)
   expect(artifact.find('.panel-header label').text()).toBe('Simple HTML Page')
-  
+
   // Check for preview controls (play/stop buttons)
   const previewButton = artifact.find('.icon.preview')
   expect(previewButton.exists()).toBe(true)
-  
+
   // Check if iframe is present for HTML preview (should be enabled by default based on store settings)
   let iframe = artifact.find('iframe')
   if (iframe.exists()) {
-    // HTML preview is active
+    // Initially should show loading message due to delay
     expect(iframe.attributes('sandbox')).toBe('allow-scripts allow-same-origin allow-forms')
+    expect(iframe.attributes('srcdoc')).toContain('common.htmlGeneration')
+
+    // Manually trigger the delay to pass by setting the reactive value
+    const artifactComponent: any = wrapper.findComponent(MessageItemArtifactBlock)
+    artifactComponent.vm.htmlRenderingDelayPassed = true
+    await artifactComponent.vm.$nextTick()
+
+    // Now should show actual HTML content
+    iframe = artifact.find('iframe')
     expect(iframe.attributes('srcdoc')).toContain('<!DOCTYPE html>')
     expect(iframe.attributes('srcdoc')).toContain('<h1>Hello World</h1>')
     expect(iframe.attributes('srcdoc')).toContain('<p>This is a test paragraph.</p>')
-    
+
     // Toggle off HTML preview
     await previewButton.trigger('click')
     iframe = artifact.find('iframe')
     expect(iframe.exists()).toBe(false)
-    
+
     // Should now show the code instead
     expect(artifact.find('.panel-body').text()).toContain('<!DOCTYPE html>')
-    
+
     // Toggle back on HTML preview
     await previewButton.trigger('click')
     iframe = artifact.find('iframe')
@@ -324,11 +337,32 @@ test('Assistant artifact with HTML preview', async () => {
   } else {
     // HTML preview is not active initially, verify we can turn it on
     expect(artifact.find('.panel-body').text()).toContain('<!DOCTYPE html>')
-    
+
     // Click preview button to enable HTML preview
     await previewButton.trigger('click')
     iframe = artifact.find('iframe')
     expect(iframe.exists()).toBe(true)
+  }
+
+})
+
+test('Assistant artifact with HTML preview (non-transient)', async () => {
+
+  // Use a non-transient message - should show HTML immediately
+  const wrapper = await mount(botMessageToolArtifactHtml2)
+  expect(wrapper.findAll('.body .artifact').length).toBe(1)
+
+  const artifact = wrapper.find('.body .artifact')
+  expect(artifact.exists()).toBe(true)
+  expect(artifact.find('.panel-header label').text()).toBe('HTML with DOCTYPE')
+
+  const iframe = artifact.find('iframe')
+  if (iframe.exists()) {
+    // Non-transient message should show HTML immediately (no loading message)
+    expect(iframe.attributes('sandbox')).toBe('allow-scripts allow-same-origin allow-forms')
+    expect(iframe.attributes('srcdoc')).toContain('<!DOCTYPE html>')
+    expect(iframe.attributes('srcdoc')).toContain('<h1>Hello from DOCTYPE</h1>')
+    expect(iframe.attributes('srcdoc')).not.toContain('common.htmlGeneration')
   }
 
 })
