@@ -67,6 +67,7 @@
     "filename": "文件名",
     "fork": "分叉",
     "high": "高",
+    "htmlGeneration": "HTML生成中…",
     "icon": "图标",
     "import": "导入",
     "insert": "插入",
@@ -2245,15 +2246,15 @@
     },
     "commands": {
       "confirmDelete": "你确定要删除这个命令吗？",
+      "disableAll": "全部禁用",
+      "enableAll": "全部启用",
       "export": "导出",
       "exportError": "导出命令文件失败",
       "exportSuccess": "命令文件导出成功",
       "import": "@:{'common.import'}",
       "importError": "导入命令文件失败",
       "importSuccess": "命令文件导入成功",
-      "new": "新建",
-      "selectAll": "@:{'common.selectAll'}",
-      "unselectAll": "@:{'common.selectNone'}"
+      "new": "新建"
     },
     "deepResearch": {
       "breadth": "研究广度",
@@ -2353,7 +2354,11 @@
     },
     "experts": {
       "confirmDelete": "你确定要删除这个专家吗？",
+      "confirmDeleteAll": "您确定要删除所有专家吗？",
       "copy": "复制",
+      "deleteAll": "全部删除",
+      "disableAll": "全部禁用",
+      "enableAll": "全部启用",
       "export": "导出",
       "exportError": "导出专家文件失败",
       "exportSuccess": "专家文件导出成功",
@@ -2361,10 +2366,8 @@
       "importError": "导入专家文件失败",
       "importSuccess": "专家文件导入成功",
       "new": "新建",
-      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "按字母顺序排序",
-      "sortState": "按状态排序",
-      "unselectAll": "@:{'common.selectNone'}"
+      "sortState": "按状态排序"
     },
     "general": {
       "darkTint": "深色",

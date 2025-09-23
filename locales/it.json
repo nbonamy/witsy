@@ -67,6 +67,7 @@
     "filename": "Nome file",
     "fork": "Fork",
     "high": "Alto",
+    "htmlGeneration": "Generazione HTML in corso…",
     "icon": "Icona",
     "import": "Importa",
     "insert": "Inserisci",
@@ -2223,15 +2224,15 @@
     },
     "commands": {
       "confirmDelete": "Sei sicuro di voler eliminare questo comando?",
+      "disableAll": "Disabilita tutto",
+      "enableAll": "Abilita tutto",
       "export": "Esporta",
       "exportError": "Errore durante l'esportazione del file dei comandi",
       "exportSuccess": "File dei comandi esportato con successo",
       "import": "@:{'common.import'}",
       "importError": "Errore durante l'importazione del file dei comandi",
       "importSuccess": "File dei comandi importato con successo",
-      "new": "Nuovo",
-      "selectAll": "@:{'common.selectAll'}",
-      "unselectAll": "@:{'common.selectNone'}"
+      "new": "Nuovo"
     },
     "deepResearch": {
       "breadth": "Ampiezza della ricerca",
@@ -2331,7 +2332,11 @@
     },
     "experts": {
       "confirmDelete": "Sei sicuro di voler eliminare questo esperto?",
+      "confirmDeleteAll": "Sei sicuro di voler eliminare tutti gli esperti?",
       "copy": "Copia",
+      "deleteAll": "Elimina tutto",
+      "disableAll": "Disabilita tutto",
+      "enableAll": "Abilita tutto",
       "export": "Esporta",
       "exportError": "Errore durante l'esportazione del file esperti",
       "exportSuccess": "File esperti esportato con successo",
@@ -2339,10 +2344,8 @@
       "importError": "Errore durante l'importazione del file esperti",
       "importSuccess": "File esperti importato con successo",
       "new": "Nuovo",
-      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordina alfabeticamente",
-      "sortState": "Ordina per stato",
-      "unselectAll": "@:{'common.selectNone'}"
+      "sortState": "Ordina per stato"
     },
     "general": {
       "darkTint": "Tonalità scura",

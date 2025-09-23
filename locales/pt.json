@@ -67,6 +67,7 @@
     "filename": "Nome do arquivo",
     "fork": "Fork",
     "high": "Alto",
+    "htmlGeneration": "Geração de HTML em andamento…",
     "icon": "Ícone",
     "import": "Importar",
     "insert": "Inserir",
@@ -2245,15 +2246,15 @@
     },
     "commands": {
       "confirmDelete": "Tem certeza de que deseja excluir este comando?",
+      "disableAll": "Desativar tudo",
+      "enableAll": "Ativar tudo",
       "export": "Exportar",
       "exportError": "Falha ao exportar arquivo de comandos",
       "exportSuccess": "Arquivo de comandos exportado com sucesso",
       "import": "@:{'common.import'}",
       "importError": "Falha ao importar arquivo de comandos",
       "importSuccess": "Arquivo de comandos importado com sucesso",
-      "new": "Novo",
-      "selectAll": "@:{'common.selectAll'}",
-      "unselectAll": "@:{'common.selectNone'}"
+      "new": "Novo"
     },
     "deepResearch": {
       "breadth": "Abrangência da pesquisa",
@@ -2353,7 +2354,11 @@
     },
     "experts": {
       "confirmDelete": "Tem certeza de que deseja excluir este especialista?",
+      "confirmDeleteAll": "Tem certeza de que deseja excluir todos os especialistas?",
       "copy": "Copiar",
+      "deleteAll": "Excluir tudo",
+      "disableAll": "Desativar tudo",
+      "enableAll": "Ativar tudo",
       "export": "Exportar",
       "exportError": "Falha ao exportar arquivo de especialistas",
       "exportSuccess": "Arquivo de especialistas exportado com sucesso",
@@ -2361,10 +2366,8 @@
       "importError": "Falha ao importar arquivo de especialistas",
       "importSuccess": "Arquivo de especialistas importado com sucesso",
       "new": "Novo",
-      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordenar alfabeticamente",
-      "sortState": "Ordenar por estado",
-      "unselectAll": "@:{'common.selectNone'}"
+      "sortState": "Ordenar por estado"
     },
     "general": {
       "darkTint": "Tonificação escura",
