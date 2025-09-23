@@ -60,8 +60,9 @@ const emit = defineEmits([ 'create', 'edit' ])
 const contextMenuActions = [
   { label: t('settings.experts.export'), action: 'export' },
   { label: t('settings.experts.import'), action: 'import' },
-  { label: t('settings.experts.selectAll'), action: 'select' },
-  { label: t('settings.experts.unselectAll'), action: 'unselect' },
+  { label: t('settings.experts.enableAll'), action: 'select' },
+  { label: t('settings.experts.disableAll'), action: 'unselect' },
+  { label: t('settings.experts.deleteAll'), action: 'deleteAll' },
   { label: t('settings.experts.sortAlpha'), action: 'sortAlpha' },
   { label: t('settings.experts.sortState'), action: 'sortEnabled' },
 ]
@@ -117,15 +118,25 @@ const handleActionClick = async (action: string) => {
 
   // process
   if (action === 'select') {
-    experts.value.forEach((expert: Expert) => expert.state = 'enabled')
+    experts.value.forEach((expert: Expert) => {
+      if (expert.state === 'disabled') {
+        expert.state = 'enabled'
+      }
+    })
     save()
   } else if (action === 'unselect') {
-    experts.value.forEach((expert: Expert) => expert.state = 'disabled')
+    experts.value.forEach((expert: Expert) => {
+      if (expert.state === 'enabled') {
+        expert.state = 'disabled'
+      }
+    })
     save()
   } else if (action === 'import') {
     onImport()
   } else if (action === 'export') {
     onExport()
+  } else if (action === 'deleteAll') {
+    deleteAll()
   } else if (action === 'sortAlpha') {
     experts.value.sort((a, b) => {
       const aName = a.name || expertI18n(a, 'name')
@@ -210,6 +221,27 @@ const onDelete = () => {
         const index = experts.value.indexOf(selected.value)
         experts.value.splice(index, 1)
       }
+      selected.value = null
+      save()
+    }
+  })
+}
+
+const deleteAll = () => {
+  Dialog.show({
+    target: document.querySelector('.settings .experts'),
+    title: t('settings.experts.confirmDeleteAll'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      experts.value.forEach((expert: Expert) => {
+        if (expert.type == 'system') {
+          expert.state = 'deleted'
+        }
+      })
+      experts.value = experts.value.filter((expert: Expert) => expert.type === 'system')
       selected.value = null
       save()
     }

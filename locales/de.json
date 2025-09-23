@@ -67,6 +67,7 @@
     "filename": "Dateiname",
     "fork": "Fork",
     "high": "Hoch",
+    "htmlGeneration": "HTML-Generierung läuft…",
     "icon": "Symbol",
     "import": "Importieren",
     "insert": "Einfügen",
@@ -2223,15 +2224,15 @@
     },
     "commands": {
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Befehl löschen möchten?",
+      "disableAll": "Alle deaktivieren",
+      "enableAll": "Alle aktivieren",
       "export": "Exportieren",
       "exportError": "Fehler beim Exportieren der Befehlsdatei",
       "exportSuccess": "Befehlsdatei erfolgreich exportiert",
       "import": "@:{'common.import'}",
       "importError": "Fehler beim Importieren der Befehlsdatei",
       "importSuccess": "Befehlsdatei erfolgreich importiert",
-      "new": "Neu",
-      "selectAll": "@:{'common.selectAll'}",
-      "unselectAll": "@:{'common.selectNone'}"
+      "new": "Neu"
     },
     "deepResearch": {
       "breadth": "Breite der Forschung",
@@ -2331,7 +2332,11 @@
     },
     "experts": {
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Experten löschen möchten?",
+      "confirmDeleteAll": "Sind Sie sicher, dass Sie alle Experten löschen möchten?",
       "copy": "Kopieren",
+      "deleteAll": "Alle löschen",
+      "disableAll": "Alle deaktivieren",
+      "enableAll": "Alle aktivieren",
       "export": "Exportieren",
       "exportError": "Fehler beim Exportieren der Expertendatei",
       "exportSuccess": "Experten-Datei erfolgreich exportiert",
@@ -2339,10 +2344,8 @@
       "importError": "Fehler beim Importieren der Experten-Datei",
       "importSuccess": "Experten-Datei erfolgreich importiert",
       "new": "Neu",
-      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Alphabetisch sortieren",
-      "sortState": "Nach Status sortieren",
-      "unselectAll": "@:{'common.selectNone'}"
+      "sortState": "Nach Status sortieren"
     },
     "general": {
       "darkTint": "Dunkler Farbton",

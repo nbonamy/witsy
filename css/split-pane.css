@@ -228,7 +228,7 @@
       
         position: absolute;
         top: var(--split-pane-header-height);
-        z-index: 20;
+        z-index: -20;
         display: flex;
 
         opacity: 0;
@@ -237,6 +237,7 @@
 
         &.visible {
           opacity: 1;
+          z-index: 20;
           transform: translateX(0%);
         }
       

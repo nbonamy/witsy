@@ -67,6 +67,7 @@
     "filename": "Nazwa pliku",
     "fork": "Utwórz forka",
     "high": "Wysoki",
+    "htmlGeneration": "Generowanie HTML w toku…",
     "icon": "Ikona",
     "import": "Importuj",
     "insert": "Wstaw",
@@ -2245,15 +2246,15 @@
     },
     "commands": {
       "confirmDelete": "Czy na pewno chcesz usunąć to polecenie?",
+      "disableAll": "Wyłącz wszystko",
+      "enableAll": "Włącz wszystko",
       "export": "Eksport",
       "exportError": "Nie udało się wyeksportować pliku poleceń",
       "exportSuccess": "Plik poleceń wyeksportowany pomyślnie",
       "import": "@:{'common.import'}",
       "importError": "Nie udało się zaimportować pliku poleceń",
       "importSuccess": "Plik poleceń zaimportowany pomyślnie",
-      "new": "Nowość",
-      "selectAll": "@:{'common.selectAll'}",
-      "unselectAll": "@:{'common.selectNone'}"
+      "new": "Nowość"
     },
     "deepResearch": {
       "breadth": "Zakres badań",
@@ -2353,7 +2354,11 @@
     },
     "experts": {
       "confirmDelete": "Czy na pewno chcesz usunąć tego eksperta?",
+      "confirmDeleteAll": "Czy na pewno chcesz usunąć wszystkich ekspertów?",
       "copy": "Kopia",
+      "deleteAll": "Usuń wszystko",
+      "disableAll": "Wyłącz wszystko",
+      "enableAll": "Włącz wszystko",
       "export": "Eksport",
       "exportError": "Nie udało się wyeksportować pliku ekspertów",
       "exportSuccess": "Plik eksperta został pomyślnie wyeksportowany",
@@ -2361,10 +2366,8 @@
       "importError": "Nie udało się zaimportować pliku ekspertów",
       "importSuccess": "Plik eksperta zaimportowany pomyślnie",
       "new": "Nowość",
-      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Sortuj alfabetycznie",
-      "sortState": "Sortuj według stanu",
-      "unselectAll": "@:{'common.selectNone'}"
+      "sortState": "Sortuj według stanu"
     },
     "general": {
       "darkTint": "Ciemny odcień",

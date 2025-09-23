@@ -67,6 +67,7 @@
     "filename": "ファイル名",
     "fork": "フォーク",
     "high": "高い",
+    "htmlGeneration": "HTML生成中…",
     "icon": "アイコン",
     "import": "インポート",
     "insert": "挿入",
@@ -2245,15 +2246,15 @@
     },
     "commands": {
       "confirmDelete": "このコマンドを削除してもよろしいですか？",
+      "disableAll": "すべて無効にする",
+      "enableAll": "すべて有効にする",
       "export": "エクスポート",
       "exportError": "コマンドファイルのエクスポートに失敗しました",
       "exportSuccess": "コマンドファイルが正常にエクスポートされました",
       "import": "@:{'common.import'}",
       "importError": "コマンドファイルのインポートに失敗しました",
       "importSuccess": "コマンドファイルが正常にインポートされました",
-      "new": "新規",
-      "selectAll": "@:{'common.selectAll'}",
-      "unselectAll": "@:{'common.selectNone'}"
+      "new": "新規"
     },
     "deepResearch": {
       "breadth": "リサーチの広さ",
@@ -2353,7 +2354,11 @@
     },
     "experts": {
       "confirmDelete": "このエキスパートを削除してもよろしいですか？",
+      "confirmDeleteAll": "本当にすべてのエキスパートを削除しますか？",
       "copy": "コピー",
+      "deleteAll": "すべて削除する",
+      "disableAll": "すべて無効にする",
+      "enableAll": "すべて有効にする",
       "export": "エクスポート",
       "exportError": "エキスパートファイルのエクスポートに失敗しました",
       "exportSuccess": "エキスパートファイルが正常にエクスポートされました",
@@ -2361,10 +2366,8 @@
       "importError": "エキスパートファイルのインポートに失敗しました",
       "importSuccess": "エキスパートファイルが正常にインポートされました",
       "new": "新規",
-      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "アルファベット順にソート",
-      "sortState": "状態別にソート",
-      "unselectAll": "@:{'common.selectNone'}"
+      "sortState": "状態別にソート"
     },
     "general": {
       "darkTint": "ダークティント",

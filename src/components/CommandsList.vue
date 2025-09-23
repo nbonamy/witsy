@@ -65,8 +65,8 @@ const emit = defineEmits([ 'create', 'edit' ])
 const contextMenuActions = [
   { label: t('settings.commands.export'), action: 'export' },
   { label: t('settings.commands.import'), action: 'import' },
-  { label: t('settings.commands.selectAll'), action: 'select' },
-  { label: t('settings.commands.unselectAll'), action: 'unselect' },
+  { label: t('settings.commands.enableAll'), action: 'select' },
+  { label: t('settings.commands.disableAll'), action: 'unselect' },
 ]
 
 const visibleCommands = computed(() => commands.value?.filter((command: Command) => command.state != 'deleted'))
@@ -122,10 +122,18 @@ const handleActionClick = async (action: string) => {
 
   // process
   if (action === 'select') {
-    commands.value.forEach((command: Command) => command.state = 'enabled')
+    commands.value.forEach((command: Command) => {
+      if (command.state === 'disabled') {
+        command.state = 'enabled'
+      }
+    })
     save()
   } else if (action === 'unselect') {
-    commands.value.forEach((command: Command) => command.state = 'disabled')
+    commands.value.forEach((command: Command) => {
+      if (command.state === 'enabled') {
+        command.state = 'disabled'
+      }
+    })
     save()
   } else if (action === 'defaults') {
     onDefaults()

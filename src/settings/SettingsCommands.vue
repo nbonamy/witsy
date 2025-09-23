@@ -1,7 +1,7 @@
 <template>
   <div class="commands tab-content"  @keyup.escape.prevent="onEdit(null)">
     <header v-if="edited">
-      <ChevronLeftIcon class="icon back" @click="onEdit(null)" />
+      <!-- <ChevronLeftIcon class="icon back" @click="onEdit(null)" /> -->
       <div class="title">{{ edited.label || commandI18n(edited, 'label') }}</div>
     </header>
     <header v-else>
@@ -18,7 +18,6 @@
 
 <script setup lang="ts">
 
-import { ChevronLeftIcon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
 import { ref } from 'vue'
 import CommandEditor from '../components/CommandEditor.vue'
