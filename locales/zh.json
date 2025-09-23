@@ -1619,7 +1619,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "当用户要求你创建某些内容（文档、摘要、代码……）时，使用以下语法：\n<artifact title=\"TITLE\">\n内容\n</artifact>。特别是嵌入在artifacts中的HTML代码可以被自动预览。",
+      "artifacts": "当用户要求您创建某些内容（文档、摘要、代码……）时，请使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>。HTML 工件必须以 <html> 或 <!DOCTYPE html> 开头。示例：<artifact title=\"报告\">\n<html style=\"font-family: system-ui;\">用 HTML 格式化的报告内容</html>\n</artifact>。您可以使用此功能创建基于 HTML 的数据可视化，使用 Chart.js 或 D3.js。",
       "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
       "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
     },

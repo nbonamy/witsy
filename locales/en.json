@@ -1619,7 +1619,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "When the user asks you to create some content (document, summary, code...), use the following syntax:\n<artifact title=\"TITLE>\nCONTENT\n</artifact>. Especially HTML code embedded in artifacts can be previewed automatically.",
+      "artifacts": "When the user asks you to create some content (document, summary, code...), use the following syntax:\n<artifact title=\"TITLE\">\nCONTENT\n</artifact>. HTML artifacts MUST start with <html> or <!DOCTYPE html>. Example: <artifact title=\"Report\">\n<html style=\"font-family: system-ui;\">Report Content formatted in HTML</html>\n</artifact>. You can use that capability to create HTML based data visualization using Chart.js or D3.js.",
       "mermaid": "If you are asked to output a Mermaid chart, its code will be rendered as a diagram to the user.",
       "toolRetry": "When calling tools, if you get an input error, analyze the error and try to fix it and then retry calling the tool."
     },

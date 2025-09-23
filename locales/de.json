@@ -1600,7 +1600,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Wenn der Benutzer dich bittet, Inhalte zu erstellen (Dokument, Zusammenfassung, Code...), verwende die folgende Syntax:\n<artifact title=\"TITLE>\nINHALT\n</artifact>. Insbesondere eingebetteter HTML-Code in Artefakten kann automatisch angezeigt werden.",
+      "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung, Code ...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITLE\">\nINHALT\n</artifact>. HTML-Artefakte MÜSSEN mit <html> oder <!DOCTYPE html> beginnen. Beispiel: <artifact title=\"Bericht\">\n<html style=\"font-family: system-ui;\">Berichtsinhalte im HTML-Format</html>\n</artifact>. Sie können diese Fähigkeit verwenden, um HTML-basierte Datenvisualisierungen mit Chart.js oder D3.js zu erstellen.",
       "mermaid": "Wenn du gebeten wirst, ein Mermaid-Diagramm auszugeben, wird dessen Code als Diagramm für den Benutzer dargestellt.",
       "toolRetry": "Wenn beim Aufrufen von Werkzeugen ein Eingabefehler auftritt, analysiere den Fehler, versuche ihn zu beheben und rufe das Werkzeug dann erneut auf."
     },
