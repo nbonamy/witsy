@@ -129,7 +129,7 @@ export const installIpc = (
   })
 
   ipcMain.on(IPC.APP.GET_APP_PATH, (event) => {
-    event.returnValue = app.getPath('userData') + '2';
+    event.returnValue = app.getPath('userData');
   });
 
   ipcMain.on(IPC.APP.GET_ASSET_PATH, (event, assetPath) => {

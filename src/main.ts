@@ -48,7 +48,14 @@ if (process.platform !== 'darwin' && !process.env.TEST) {
 
 // changes path
 if (process.env.WITSY_HOME) {
-  app.getPath = (name: string) => `${process.env.WITSY_HOME}/${name}`;
+  const originalGetPath = app.getPath;
+  app.getPath = (name: string) => {
+    if (name === 'userData') {
+      return process.env.WITSY_HOME;
+    } else {
+      return originalGetPath(name as any);
+    }
+  }
 }
 
 // set up logging
