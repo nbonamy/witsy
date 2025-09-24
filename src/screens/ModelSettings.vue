@@ -1,5 +1,11 @@
 <template>
   <div class="model-settings">
+    <div class="header">
+      <div class="title">{{ t('modelSettings.advancedSettings') }}</div>
+      <ButtonIcon class="close" @click="$emit('close')">
+        <SlidersHorizontalIcon />
+      </ButtonIcon>
+    </div>
     <div class="form form-vertical">
       <div class="form-field">
         <label>{{ t('common.llmProvider') }}</label>
@@ -134,21 +140,23 @@
 
 <script setup lang="ts">
 
-import { anyDict } from '../types/index'
+import { SlidersHorizontalIcon } from 'lucide-vue-next'
 import { LlmReasoningEffort, LlmVerbosity } from 'multi-llm-ts'
-import { ref, onMounted, computed, watch } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import Dialog from '../composables/dialog'
-import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelectPlus from '../components/ModelSelectPlus.vue'
-import LangSelect from '../components/LangSelect.vue'
-import VariableTable from '../components/VariableTable.vue'
-import VariableEditor from '../screens/VariableEditor.vue'
-import ToolSelector from '../screens/ToolSelector.vue'
-import LlmFactory, { areToolsDisabled, areAllToolsEnabled, ILlmManager } from '../llms/llm'
-import Chat from '../models/chat'
 import { Ollama } from 'ollama/dist/browser.cjs'
+import { computed, onMounted, ref, watch } from 'vue'
+import ButtonIcon from '../components/ButtonIcon.vue'
+import EngineSelect from '../components/EngineSelect.vue'
+import LangSelect from '../components/LangSelect.vue'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
+import VariableTable from '../components/VariableTable.vue'
+import Dialog from '../composables/dialog'
+import LlmFactory, { areAllToolsEnabled, areToolsDisabled, ILlmManager } from '../llms/llm'
+import Chat from '../models/chat'
+import ToolSelector from '../screens/ToolSelector.vue'
+import VariableEditor from '../screens/VariableEditor.vue'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { anyDict } from '../types/index'
 
 const editor = ref(null)
 const selector = ref(null)
@@ -180,6 +188,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+const emit = defineEmits(['close'])
 
 const modelHasDefaults = computed(() => {
   return store.config.llm.defaults.find(d => d.engine === engine.value && d.model === model.value) !== undefined
@@ -593,12 +603,29 @@ const onCreateOllamaModel = async () => {
   border-top: 1px solid var(--sidebar-border-color);
   border-left: 1px solid var(--sidebar-border-color);
   background-color: var(--sidebar-bg-color);
-  height: 100%;
   display: flex;
   flex-direction: column;
 
+  .header {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .close {
+    margin-left: auto;
+    cursor: pointer;
+  }
+
+  .title {
+    font-size: 11pt;
+    font-weight: var(--font-weight-semibold);
+    white-space: nowrap;
+  }
+
   .form {
-    padding: 16px;
+    padding: 1rem;
+    padding-top: 0rem;
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);

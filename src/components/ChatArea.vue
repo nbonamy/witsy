@@ -52,7 +52,7 @@
       
       </div>
       
-      <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
+      <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat" @close="showModelSettings = false"/>
     
     </main>
     
@@ -428,9 +428,14 @@ defineExpose({
 }
 
 .model-settings {
+
+  position: absolute;
+  top: var(--window-toolbar-height);
+  bottom: var(--window-footer-height);
+  right: 0px;
   
-  flex: 0 0 0px;
-  transition: flex-basis 0.15s ease-in-out;
+  width: 0px;
+  transition: width 0.15s ease-in-out;
   overflow: hidden;
 
   &:deep() label {
@@ -438,7 +443,7 @@ defineExpose({
   }
 
   &.visible {
-    flex: 0 0 var(--info-panel-width);
+    width: var(--info-panel-width);
   }
 }
 </style>
