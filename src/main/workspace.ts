@@ -12,7 +12,7 @@ import fs from 'fs'
 export const DEFAULT_WORKSPACE_ID = '00000000-0000-0000-0000-000000000000'
 
 export const workspacesFolder = (app: App): string => {
-  const userDataPath = app.getPath('userData') + '2'
+  const userDataPath = app.getPath('userData')
   const workspacesFolderPath = path.join(userDataPath, 'workspaces')
   fs.mkdirSync(workspacesFolderPath, { recursive: true })
   return workspacesFolderPath
@@ -125,7 +125,7 @@ export const initializeWorkspace = (app: App, workspaceId: string): void => {
 
 export const migrateExistingItemsToWorkspace = (app: App, workspaceId: string): boolean => {
   
-  const userDataPath = app.getPath('userData') + '2'
+  const userDataPath = app.getPath('userData')
   const itemsToMigrate = [
     { src: path.join(userDataPath, 'agents'), dest: agentsDirPath(app, workspaceId) },
     { src: path.join(userDataPath, 'images'), dest: attachmentsFilePath(app, workspaceId) },

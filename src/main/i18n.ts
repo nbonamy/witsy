@@ -70,7 +70,7 @@ export const getLocaleMessages = (app: App): anyDict => {
     en, fr, es, de, it, pl, pt, zh, ja
   }
 
-  const userDataPath = app.getPath('userData') + '2'
+  const userDataPath = app.getPath('userData')
   const localesPath = path.join(userDataPath, 'locales')
 
   // scan folder for all json files and load them
