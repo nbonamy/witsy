@@ -1,7 +1,7 @@
 
 <template>
   <div class="wrapper">
-    <input :type="type" :name="name" v-model="value" @keyup="onKeyUp" @blur="$emit('blur')"/>
+    <input :type="type" :name="name" v-model="value" @keyup="onKeyUp" @blur="$emit('blur')" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false"/>
     <component :is="icon" class="icon" @click="onToggleView" v-if="store.isFeatureEnabled('showKeys')"/>
   </div>
 </template>
