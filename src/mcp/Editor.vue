@@ -28,7 +28,7 @@
       </div>
       <div class="form-field">
         <label>{{ t('mcp.serverEditor.smitheryApiKey') }}</label>
-        <input type="text" name="apiKey" v-model="apiKey" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+        <InputObfuscated type="text" name="apiKey" v-model="apiKey" autofocus />
       </div>
     </template>
     <template v-if="type === 'stdio'">
@@ -136,14 +136,15 @@
 <script setup lang="ts">
 
 import { nextTick, onMounted, PropType, ref } from 'vue'
+import InputObfuscated from '../components/InputObfuscated.vue'
 import Spinner from '../components/Spinner.vue'
 import VariableTable from '../components/VariableTable.vue'
 import Dialog from '../composables/dialog'
+import { useMcpServer } from '../composables/mcp'
 import VariableEditor from '../screens/VariableEditor.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { strDict } from '../types/index'
-import { useMcpServer } from '../composables/mcp'
 import { McpInstallStatus, McpServer, McpServerType } from '../types/mcp'
 
 export type McpCreateType = McpServerType | 'smithery'
