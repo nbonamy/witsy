@@ -4,6 +4,7 @@ import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store, kMediaChatId } from '../../src/services/store'
+import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
 import { Configuration } from '../../src/types/config'
 import ImageCreator from '../../src/services/image'
 import DesignStudio from '../../src/screens/DesignStudio.vue'
@@ -404,22 +405,22 @@ test('Preview', async () => {
   expect(preview.find<HTMLImageElement>('img').element.src).toBe('file://url1.jpg/')
 
   // info
-  await preview.find<HTMLElement>('.icon.info').trigger('click')
+  await preview.find<HTMLElement>('.info').trigger('click')
   expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'prompt1',
     text: 'Engine: openai\nModel: dall-e-3',
   }))
 
   // fullscreen
-  await preview.find<HTMLElement>('.icon.fullscreen').trigger('click')
+  await preview.find<HTMLElement>('.fullscreen').trigger('click')
   expect(preview.emitted()['fullscreen']).toHaveLength(1)
 
   // copy
-  await preview.find<HTMLElement>('.icon.copy').trigger('click')
+  await preview.find<HTMLElement>('.copy').trigger('click')
   expect(window.api.clipboard.writeImage).toHaveBeenLastCalledWith('file://url1.jpg')
 
   // save
-  await preview.find<HTMLElement>('.icon.save').trigger('click')
+  await preview.find<HTMLElement>('.save').trigger('click')
   expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'file://url1.jpg',
     properties: {
@@ -430,7 +431,7 @@ test('Preview', async () => {
   })
 
   // delete
-  await preview.find<HTMLElement>('.icon.delete').trigger('click')
+  await preview.find<HTMLElement>('.delete').trigger('click')
   expect(preview.emitted()['delete']).toHaveLength(1)
 
 })
@@ -452,6 +453,7 @@ test('Upload', async () => {
       filename: expect.any(String),
       directory: 'userData',
       subdir: 'images',
+      workspace: DEFAULT_WORKSPACE_ID,
       prompt: false
     }
   })
@@ -585,12 +587,12 @@ test('Undo / Redo', async () => {
   await settings.find<HTMLButtonElement>('[name=generate]').trigger('click')
 
   const preview = wrapper.findComponent({ name: 'Preview' })
-  expect(preview.find('.icon.undo').exists()).toBe(true)
-  expect(preview.find('.icon.redo').exists()).toBe(true)
-  expect(preview.find('.icon.undo').classes()).not.toContain('disabled')
-  expect(preview.find('.icon.redo').classes()).toContain('disabled')
+  expect(preview.find('.undo').exists()).toBe(true)
+  expect(preview.find('.redo').exists()).toBe(true)
+  expect(preview.find('.undo').classes()).not.toContain('disabled')
+  expect(preview.find('.redo').classes()).toContain('disabled')
 
-  await preview.find<HTMLElement>('.icon.undo').trigger('click')
+  await preview.find<HTMLElement>('.undo').trigger('click')
 
   expect(window.api.file.delete).toHaveBeenLastCalledWith('file://openai/gpt-image-1/prompt')
 
@@ -625,10 +627,10 @@ test('Undo / Redo', async () => {
     toolCalls: []
   })
 
-  expect(preview.find('.icon.undo').classes()).toContain('disabled')
-  expect(preview.find('.icon.redo').classes()).not.toContain('disabled')
+  expect(preview.find('.undo').classes()).toContain('disabled')
+  expect(preview.find('.redo').classes()).not.toContain('disabled')
 
-  await preview.find<HTMLElement>('.icon.redo').trigger('click')
+  await preview.find<HTMLElement>('.redo').trigger('click')
 
   expect(window.api.file.delete).toHaveBeenLastCalledWith('file://file_saved')
 

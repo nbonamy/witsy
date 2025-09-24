@@ -10,8 +10,6 @@
       <main>
         <div class="form form-vertical">
 
-          <div class="sp-sidebar-title">{{ t('common.settings') }}</div>
-
           <div class="form-field">
             <label>{{ t('settings.voice.engine') }}</label>
             <select name="engine" v-model="engine" @change="onChangeEngine">
@@ -53,10 +51,6 @@
 
     <div class="sp-main" @drop="onDrop" @dragover="onDragOver" @dragenter="onDragEnter" @dragleave="onDragLeave" >
 
-      <header>
-
-      </header>
-
       <main>
 
         <div class="controls">
@@ -88,7 +82,7 @@
             <button name="summarize" class="button" @click="onSummarize" :disabled="!transcription || state === 'processing'"><BIconChevronBarContract /> {{ t('transcribe.summarize') }}</button>
             <button name="translate" class="button" @click="onTranslate" :disabled="!transcription || state === 'processing'"><BIconGlobe /></button>
             <button name="commands" class="button" @click="onCommands" :disabled="!transcription || state === 'processing'"><BIconMagic /></button>
-            <div class="push"></div>
+            <div class="flex-push"></div>
             <button name="clear" class="button" @click="onClear" :disabled="!transcription || state === 'processing'">{{ t('common.clear') }}</button>
             <button name="insert" class="button" @click="onInsert" :disabled="!transcription || state === 'processing'">{{ t('common.insert') }}</button>
             <button name="copy" class="button" @click="onCopy" :disabled="!transcription || state === 'processing'">{{ copying ? t('common.copied') : t('common.copy') }}</button>
@@ -163,8 +157,6 @@ const meta = computed(() => window.api.platform === 'darwin' ? 'Cmd' : 'Ctrl')
 const models = computed(() => {
   return getSTTModels(engine.value) ?? []
 })
-
-const isStreaming = computed(() => transcriber.streaming)
 
 const translateMenuActions = computed(() => ([
   { action: '', label: t('transcribe.translate'), disabled: true },
@@ -708,10 +700,7 @@ button {
 .transcribe {
 
   .sp-sidebar {
-    flex-basis: 240px;
-    main {
-      padding: 2rem 1.5rem;
-    }
+    flex: 0 0 var(--large-panel-width);
   }
 
   .sp-main {
@@ -775,7 +764,7 @@ button {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
-        font-size: 18pt;
+        font-size: 24px;
         gap: 24px;
         align-items: center;
         color: var(--text-color);
@@ -798,7 +787,7 @@ button {
           border: 0.25px solid var(--control-border-color);
           color: var(--text-color);
           border-radius: 6px;
-          font-size: 11.5pt;
+          font-size: 15.5px;
           padding: 8px;
           resize: none;
 
@@ -810,7 +799,7 @@ button {
             text-align: center;
             line-height: 140%;
             font-family: var(--font-family-serif);
-            font-size: 14pt;
+            font-size: 18.5px;
           }
         }
 
@@ -820,7 +809,7 @@ button {
           border: 0.25px solid var(--control-border-color);
           color: var(--text-color);
           border-radius: 6px;
-          font-size: 11.5pt;
+          font-size: 15.5px;
           padding: 8px;
           min-height: 200px;
           overflow-y: auto;
@@ -842,14 +831,11 @@ button {
           flex-direction: row;
         }
 
-        .push {
-          flex: 1;
-        }
       }
 
       .help {
         margin-top: 0.5rem;
-        font-size: 10pt;
+        font-size: 13.5px;
         text-align: right;
       }
 

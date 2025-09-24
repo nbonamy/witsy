@@ -8,7 +8,6 @@ export const tabs = [
   'settingsDeepResearch',
   'settingsModels',
   'settingsPlugins',
-  'settingsMcp',
   'settingsCommands',
   'settingsExperts',
   'settingsVoice',

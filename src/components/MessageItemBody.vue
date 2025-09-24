@@ -2,32 +2,33 @@
   <div v-if="message.type == 'text'">
     <template v-if="reasoningBlocks.length">
       <div @click="onToggleReasoning" class="toggle-reasoning">
-        <BIconChevronDown v-if="showReasoning" />
-        <BIconChevronRight v-else />
+        <ChevronDownIcon v-if="showReasoning" />
+        <ChevronRightIcon v-else />
         {{ isThinking ? t('message.reasoning.active') : showReasoning ? t('message.reasoning.hide') : t('message.reasoning.show') }}
         <span class="thinking-ellipsis" v-if="isThinking"></span>
       </div>
       <div class="think" v-if="showReasoning">
         <div v-for="block in reasoningBlocks">
-          <MessageItemBodyBlock :block="block" @media-loaded="onMediaLoaded(message)" />
+          <MessageItemBodyBlock :block="block" :transient="message.transient" @media-loaded="onMediaLoaded(message)" />
         </div>
       </div>
     </template>
     <div v-for="block in contentBlocks">
-      <MessageItemBodyBlock :block="block" @media-loaded="onMediaLoaded(message)" />
+      <MessageItemBodyBlock :block="block" :transient="message.transient" @media-loaded="onMediaLoaded(message)" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ChatToolMode } from '../types/config'
-import { ref, inject, computed, onMounted, PropType } from 'vue'
-import { store } from '../services/store'
+import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
+import { computed, inject, onMounted, PropType, ref } from 'vue'
+import Message from '../models/message'
 import { t } from '../services/i18n'
 import { closeOpenMarkdownTags, getCodeBlocks } from '../services/markdown'
+import { store } from '../services/store'
+import { ChatToolMode } from '../types/config'
 import MessageItemBodyBlock, { Block } from './MessageItemBodyBlock.vue'
-import Message from '../models/message'
 
 import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()

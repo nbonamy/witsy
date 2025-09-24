@@ -24,8 +24,8 @@
         <template v-if="allowModelEntry">
           <ComboBox name="model" :items="models" v-model="model" @change="onChangeModel">
             <button name="favorite" @click.prevent="toggleFavorite">
-              <BIconStarFill v-if="isFavorite"/>
-              <BIconStar v-else/>
+              <StarOffIcon v-if="isFavorite"/>
+              <StarIcon v-else/>
             </button>
           </ComboBox>
           <RefreshButton :on-refresh="getModels" />
@@ -64,7 +64,7 @@
       </div>
 
       <div class="form-field">
-        <label>{{ t('common.prompt') }}<BIconMagic v-if="promptLibrary.length" @click="onShowPromptLibrary"/></label>
+        <label>{{ t('common.prompt') }}<WandIcon v-if="promptLibrary.length" @click="onShowPromptLibrary"/></label>
         <textarea v-model="prompt" name="prompt" class="prompt" :placeholder="t('designStudio.promptPlaceholder')">
         </textarea>
         <div class="attachments" v-if="attachments.length">
@@ -150,9 +150,10 @@
 
 <script setup lang="ts">
 
-import { BIconMagic } from 'bootstrap-icons-vue'
+import { StarIcon, StarOffIcon, WandIcon } from 'lucide-vue-next'
 import { Model } from 'multi-llm-ts'
 import { computed, onMounted, ref, watch } from 'vue'
+import AttachmentView from '../components/Attachment.vue'
 import ComboBox from '../components/Combobox.vue'
 import ContextMenu, { MenuAction } from '../components/ContextMenu.vue'
 import RefreshButton from '../components/RefreshButton.vue'
@@ -162,7 +163,6 @@ import useEventBus from '../composables/event_bus'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
 import VariableEditor from '../screens/VariableEditor.vue'
-import AttachmentView from '../components/Attachment.vue'
 import { t } from '../services/i18n'
 import ImageCreator from '../services/image'
 import ModelLoaderFactory from '../services/model_loader'
@@ -694,10 +694,6 @@ defineExpose({
 .studio-settings {
   overflow-y: auto;
   padding-bottom: 2rem;
-}
-
-.studio-settings > * {
-  padding: 0px 1.5rem;
 }
 
 .studio-settings .form .form-field label:has(svg) {

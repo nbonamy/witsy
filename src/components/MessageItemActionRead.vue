@@ -1,15 +1,16 @@
 <template>
   <div class="action read" v-if="message.role == 'assistant' && message.type == 'text' && !message.transient" @click="onToggleRead(message)">
-    <span v-if="mgsAudioState(message) == 'playing'"><BIconStopCircle/> {{ t('common.stop') }}</span>
-    <span v-else-if="mgsAudioState(message) == 'loading'"><BIconXCircle/> {{ t('common.cancel') }}</span>
-    <span v-else><BIconPlayCircle /> {{ t('common.read') }}</span>
+    <template v-if="mgsAudioState(message) == 'playing'"><SquareIcon/> {{ t('common.stop') }}</template>
+    <template v-else-if="mgsAudioState(message) == 'loading'"><XIcon/> {{ t('common.cancel') }}</template>
+    <template v-else><PlayIcon /> {{ t('common.read') }}</template>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { t } from '../services/i18n'
+import { PlayIcon, SquareIcon, XIcon } from 'lucide-vue-next'
 import Message from '../models/message'
+import { t } from '../services/i18n'
 
 const props = defineProps({
   message: {
@@ -35,17 +36,3 @@ const onToggleRead = async (message: Message) => {
 }
 
 </script>
-
-<style scoped>
-.action {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-svg {
-  margin-right: 4px;
-  position: relative;
-  top: 1.5px;
-}
-
-</style>

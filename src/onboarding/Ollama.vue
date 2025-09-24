@@ -396,12 +396,12 @@ defineExpose({
     gap: 0.75rem;
     margin-bottom: 1.25rem;
     font-size: 1.125rem;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--text-color);
     
     .section-icon {
-      width: 1.25rem;
-      height: 1.25rem;
+      width: var(--icon-lg);
+      height: var(--icon-lg);
       color: var(--accent-color);
       opacity: 0.8;
     }
@@ -433,7 +433,7 @@ defineExpose({
 }
 
 .model-name {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   font-size: 0.875rem;
   color: var(--text-color);
   overflow: hidden;
@@ -475,12 +475,12 @@ defineExpose({
     gap: 0.75rem;
     margin-bottom: 1.25rem;
     font-size: 1.125rem;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     color: var(--text-color);
     
     .section-icon {
-      width: 1.25rem;
-      height: 1.25rem;
+      width: var(--icon-lg);
+      height: var(--icon-lg);
       color: var(---color);
       opacity: 0.8;
     }

@@ -70,7 +70,7 @@ const onCloseFullScreen = () => {
   position: absolute;
   top: 16px;
   right: 16px;
-  font-size: 14pt;
+  font-size: 18.5px;
 }
 
 .fullscreen.light {

@@ -109,13 +109,14 @@ class OAuthCallbackServer {
         this.pendingCallbacks.delete(flowId)
         reject(new Error('OAuth callback timeout'))
         
-        // If no more pending callbacks, shutdown server
-        if (this.pendingCallbacks.size === 0) {
-          this.shutdown()
-        }
+        // // If no more pending callbacks, shutdown server
+        // if (this.pendingCallbacks.size === 0) {
+        //   this.shutdown()
+        // }
       }, 300000) // 5 minute timeout
 
       // Store the callback handlers
+      console.log(`✅ Storing pending callback for flowId: ${flowId}...`)
       this.pendingCallbacks.set(flowId, { resolve, reject, timeout })
     })
   }
@@ -181,9 +182,9 @@ class OAuthCallbackServer {
         pendingCallback.resolve(code)
 
         // If no more pending callbacks, shutdown server after a delay
-        if (this.pendingCallbacks.size === 0) {
-          setTimeout(() => this.shutdown(), 3000)
-        }
+        // if (this.pendingCallbacks.size === 0) {
+        //   setTimeout(() => this.shutdown(), 30000)
+        // }
       } else if (error) {
         console.log(`❌ Authorization error for flow ${state}: ${error}`)
         res.writeHead(400, { 'Content-Type': 'text/html' })
@@ -216,11 +217,11 @@ class OAuthCallbackServer {
         }
 
         // If no more pending callbacks, shutdown server
-        if (this.pendingCallbacks.size === 0) {
-          setTimeout(() => this.shutdown(), 1000)
-        }
+        // if (this.pendingCallbacks.size === 0) {
+        //   setTimeout(() => this.shutdown(), 30000)
+        // }
       } else {
-        console.log(`❌ Invalid OAuth callback: no code or error parameter`)
+        console.log(`❌ Invalid OAuth callback: no code, state or error parameter or pendingCallback not found: code: ${code}, state: ${state}, error: ${error}`)
         res.writeHead(400)
         res.end('Bad request')
 
@@ -281,7 +282,7 @@ export default class McpOAuthManager {
     const callbackUrl = `http://localhost:${this.callbackServer.callbackPort}/callback`
     
     return {
-      client_name: 'Witsy MCP Client',
+      client_name: `${useI18n(app)('common.appName')} MCP Client`,
       redirect_uris: [callbackUrl],
       grant_types: ['authorization_code', 'refresh_token'],
       response_types: ['code'],
@@ -428,7 +429,7 @@ export default class McpOAuthManager {
         token_endpoint_auth_method: 'client_secret_post',
         grant_types: ['authorization_code', 'refresh_token'],
         response_types: ['code'],
-        client_name: 'Witsy MCP Client',
+        client_name: `${useI18n(app)('common.appName')} MCP Client`,
         scope: 'mcp:tools'
       }
       oauthProvider.saveClientInformation(clientInformation);
@@ -438,7 +439,7 @@ export default class McpOAuthManager {
 
     console.log('👤 Creating MCP client...');
     this.client = new Client({
-      name: 'witsy-oauth-client',
+      name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
       version: '1.0.0',
     }, { capabilities: {} });
     console.log('👤 Client created');

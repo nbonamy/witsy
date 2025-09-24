@@ -5,30 +5,31 @@
       <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
     <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
-    <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @prompt="onSendPrompt" @stop="onStopPrompting" ref="prompt" />
+    <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @stop="onStopPrompting" ref="prompt" />
     <audio/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { t, i18nInstructions, fullExpertI18n } from '../services/i18n'
-import { FileContents } from '../types/file'
-import { ref, onMounted, onUnmounted } from 'vue'
-import { store } from '../services/store'
 import { LlmEngine } from 'multi-llm-ts'
-import LlmFactory, { ILlmManager } from '../llms/llm'
-import ScratchpadToolbar, { ToolbarAction } from '../scratchpad/Toolbar.vue'
-import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt, { SendPromptParams } from '../components/Prompt.vue'
 import useAudioPlayer, { AudioState, AudioStatus } from '../composables/audio_player'
 import Dialog from '../composables/dialog'
-import Generator, { GenerationResult } from '../services/generator'
-import Message from '../models/message'
+import useEventBus from '../composables/event_bus'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
+import Message from '../models/message'
+import { availablePlugins } from '../plugins/plugins'
+import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
+import ScratchpadToolbar, { ToolbarAction } from '../scratchpad/Toolbar.vue'
+import Generator, { GenerationResult } from '../services/generator'
+import { fullExpertI18n, i18nInstructions, t } from '../services/i18n'
+import { store } from '../services/store'
+import { FileContents } from '../types/file'
 
 // bus
-import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 // load store
@@ -61,6 +62,7 @@ const audioPlayer = useAudioPlayer(store.config)
 const generator = new Generator(store.config)
 
 // init stuff
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 let llm: LlmEngine = null
 const modifiedCheckDelay = 1000
 let modifiedCheckTimeout: NodeJS.Timeout = null
@@ -190,7 +192,6 @@ const resetState = () => {
 const initLlm = () => {
 
   // load engine and model
-  const llmManager: ILlmManager = LlmFactory.manager(store.config)
   engine.value = store.config.scratchpad.engine
   model.value = store.config.scratchpad.model
   if (!engine?.value.length || !model?.value.length) {
@@ -440,6 +441,13 @@ const onAudioPlayerStatus = (status: AudioStatus) => {
   audioState.value = status.state
 }
 
+const onSetEngineModel = (engine: string, model: string) => {
+  store.config.scratchpad.engine = engine
+  store.config.scratchpad.model = model
+  store.saveSettings()
+  initLlm()
+}
+
 const onSendPrompt = async (params: SendPromptParams) => {
 
   // one at a time
@@ -487,6 +495,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
   chat.value.addMessage(response)
 
   try {
+
+    // load tools as configured per prompt
+    llmManager.loadTools(llm, availablePlugins, chat.value.tools)
 
     // now generate
     processing.value = true
@@ -555,13 +566,13 @@ const onStopPrompting = async () => {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background-color: var(--background-color);
 
   .document {
     flex: 1;
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
-    background-color: var(--background-color);
     scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
   }
 
@@ -588,23 +599,23 @@ const onStopPrompting = async () => {
   }
 
   .document.size-1, .document.size-1 * {
-    font-size: 11pt;
+    font-size: 16px;
   }
 
   .document.size-2, .document.size-2 * {
-    font-size: 13pt;
+    font-size: 18px;
   }
 
   .document.size-3, .document.size-3 * {
-    font-size: 15pt;
+    font-size: 20px;
   }
 
   .document.size-4, .document.size-4 * {
-    font-size: 17pt;
+    font-size: 22px;
   }
 
   .document.size-5, .document.size-5 * {
-    font-size: 19pt;
+    font-size: 24px;
   }
 
   .prompt {

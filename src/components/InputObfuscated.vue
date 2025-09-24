@@ -2,13 +2,15 @@
 <template>
   <div class="wrapper">
     <input :type="type" :name="name" v-model="value" @keyup="onKeyUp" @blur="$emit('blur')"/>
-    <component :is="icon" class="icon" @click="onToggleView" />
+    <component :is="icon" class="icon" @click="onToggleView" v-if="store.isFeatureEnabled('showKeys')"/>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
+import { EyeIcon, EyeOffIcon } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import { store } from '../services/store'
 
 defineProps({
   name: {
@@ -24,7 +26,7 @@ const value = defineModel()
 const emit = defineEmits(['blur', 'change']);
 
 const icon = computed(() => {
-  return type.value === 'password' ? 'BIconEye' : 'BIconEyeSlash'
+  return type.value === 'password' ? EyeIcon : EyeOffIcon
 })
 
 const onToggleView = () => {
@@ -65,11 +67,13 @@ const onKeyUp = (event: KeyboardEvent) => {
   background-color: var(--control-bg-color);
   cursor: pointer;
   position: absolute;
-  top: calc(50% - 0.5rem + 1px);
+  top: calc(50% - 0.5rem);
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   right: 1px;
   z-index: 2;
+  width: var(--icon-md);
+  height: var(--icon-md);
 }
 
 </style>

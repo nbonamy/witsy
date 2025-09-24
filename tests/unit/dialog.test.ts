@@ -38,18 +38,17 @@ test('Basic confirm', () => {
   Dialog.alert('Hello')
   expect(Swal.fire).toHaveBeenLastCalledWith({
     target: expect.any(HTMLElement),
-    iconHtml: '<img src="">',
+    iconHtml: undefined,
     confirmButtonText: 'common.ok',
     title: 'Hello',
     text: undefined,
     customClass: {
-      'cancelButton': 'alert-neutral',
-      'confirmButton': 'alert-neutral',
-      'denyButton': 'alert-neutral',
+      'cancelButton': 'tertiary',
+      'confirmButton': 'primary',
+      'denyButton': 'secondary',
       'popup': 'form form-large',
     },
     didOpen: expect.any(Function),
-    willOpen: expect.any(Function),
   })
 })
 
@@ -84,12 +83,11 @@ test('Input Text', () => {
     customClass: expect.objectContaining({
       input: 'text-textarea',
     }),
-    iconHtml: '<img src="">',
+    iconHtml: undefined,
     input: 'textarea',
     text: 'World',
     title: 'Hello',
     confirmButtonText: 'common.ok',
-    willOpen: expect.any(Function),
     didOpen: expect.any(Function),
   })
 })

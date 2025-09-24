@@ -51,6 +51,7 @@ const mockDocRepo = {
   addChildDocumentSource: vi.fn().mockResolvedValue('mock-child-doc-id'),
   removeDocumentSource: vi.fn().mockResolvedValue(undefined),
   removeChildDocumentSource: vi.fn().mockResolvedValue(undefined),
+  getDocumentSource: vi.fn().mockReturnValue(undefined),
   addListener: vi.fn(),
   removeListener: vi.fn(),
 }
@@ -325,22 +326,15 @@ test('DocMonitor registers and unregisters as listener', () => {
 test('DocMonitor onDocumentSourceAdded creates watcher', () => {
   const monitor = new DocumentMonitor(app, mockDocRepo as any)
   vi.mocked(fs.existsSync).mockReturnValue(true)
-  
-  monitor.onDocumentSourceAdded('base-id', 'doc-id', 'file', '/path/to/newfile.txt')
-  
+  monitor.onDocumentSourceAdded(new DocumentSourceImpl('doc-id', 'file', '/path/to/newfile.txt'))
   expect(vi.mocked(chokidarWatch)).toHaveBeenCalledWith('/path/to/newfile.txt', expect.any(Object))
 })
 
 test('DocMonitor onDocumentSourceRemoved removes watcher', () => {
   const monitor = new DocumentMonitor(app, mockDocRepo as any)
   vi.mocked(fs.existsSync).mockReturnValue(true)
-  
-  // First add a watcher
-  monitor.onDocumentSourceAdded('base-id', 'doc-id', 'file', '/path/to/file.txt')
-  
-  // Then remove it
-  monitor.onDocumentSourceRemoved('base-id', 'doc-id', '/path/to/file.txt')
-  
+  monitor.onDocumentSourceAdded(new DocumentSourceImpl('doc-id', 'file', '/path/to/file.txt'))
+  monitor.onDocumentSourceRemoved('/path/to/file.txt')
   expect(mockWatcher.close).toHaveBeenCalled()
 })
 
@@ -373,7 +367,7 @@ test('DocMonitor handles processFileEvent for add operation', async () => {
   expect(mockDocRepo.addDocumentSource).not.toHaveBeenCalled()
 })
 
-test('DocMonitor handles processFileEvent for change operation', async () => {
+test('DocMonitor handles processFileEvent for change operation on root-level file', async () => {
   // Setup: file document source exists in docrepo  
   const fileDoc = new DocumentSourceImpl('file-doc-id', 'file', '/path/to/file.txt')
   testDocBase.documents = [fileDoc]
@@ -385,8 +379,28 @@ test('DocMonitor handles processFileEvent for change operation', async () => {
   
   await monitor['processFileEvent']('/path/to/file.txt', 'change')
   
-  // For change events, it should re-add the document (which updates it)
+  // For change events on root-level files, it should use addDocumentSource
   expect(mockDocRepo.addDocumentSource).toHaveBeenCalledWith('test-base-id', 'file', '/path/to/file.txt', false)
+  expect(mockDocRepo.addChildDocumentSource).not.toHaveBeenCalled()
+})
+
+test('DocMonitor handles processFileEvent for change operation on folder-child file', async () => {
+  // Setup: folder document source with child file exists in docrepo
+  const childFileDoc = new DocumentSourceImpl('child-file-doc-id', 'file', '/path/to/folder/file.txt')
+  const folderDoc = new DocumentSourceImpl('folder-doc-id', 'folder', '/path/to/folder')
+  folderDoc.items = [childFileDoc]
+  testDocBase.documents = [folderDoc]
+  mockDocRepo.contents = [testDocBase]
+  
+  vi.mocked(fs.existsSync).mockReturnValue(true)
+  
+  const monitor = new DocumentMonitor(app, mockDocRepo as any)
+  
+  await monitor['processFileEvent']('/path/to/folder/file.txt', 'change')
+  
+  // For change events on folder-child files, it should use addChildDocumentSource
+  expect(mockDocRepo.addChildDocumentSource).toHaveBeenCalledWith('test-base-id', 'folder-doc-id', 'file', '/path/to/folder/file.txt', false)
+  expect(mockDocRepo.addDocumentSource).not.toHaveBeenCalled()
 })
 
 test('DocMonitor handles processFileEvent for unlink operation', async () => {

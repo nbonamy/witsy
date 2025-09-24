@@ -28,6 +28,7 @@ import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
 import * as menu from './main/menu';
 import * as backup from './main/backup';
+import * as workspace from './main/workspace';
 
 let mcp: Mcp;
 let scheduler: Scheduler;
@@ -79,7 +80,7 @@ const installMenu = () => {
     forge: window.openAgentForgeWindow,
     backupExport: async () => await backup.exportBackup(app),
     backupImport: async () => await backup.importBackup(app, quitApp),
-    importOpenAI: async () => await importOpenAI(app),
+    importOpenAI: async () => await importOpenAI(app, settings.workspaceId),
   }, settings.shortcuts);
 }
 
@@ -130,6 +131,9 @@ app.whenReady().then(async () => {
 
   // we need settings
   const settings = config.loadSettings(app);
+
+  // initialize current workspace
+  workspace.initializeWorkspace(app, settings.workspaceId)
 
   // error
   if (config.settingsFileHadError()) {

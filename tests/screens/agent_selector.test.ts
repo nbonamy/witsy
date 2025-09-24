@@ -120,7 +120,7 @@ describe('AgentSelector', () => {
 
     const cancelButton = wrapper.find('button[name="cancel"]')
     expect(cancelButton.exists()).toBe(true)
-    expect(cancelButton.classes()).toContain('push')
+    expect(cancelButton.classes()).toContain('tertiary')
 
     await cancelButton.trigger('click')
     // Button should be clickable
@@ -132,7 +132,7 @@ describe('AgentSelector', () => {
 
     const saveButton = wrapper.find('button[name="save"]')
     expect(saveButton.exists()).toBe(true)
-    expect(saveButton.classes()).toContain('alert-confirm')
+    expect(saveButton.classes()).toContain('primary')
 
     await saveButton.trigger('click')
     // Button should be clickable
@@ -216,22 +216,6 @@ describe('AgentSelector', () => {
       // Each row should be clickable
       expect(row.element.tagName).toBe('TR')
     })
-  })
-
-  test('Button states and classes', async () => {
-    const wrapper = mount_component()
-
-    // Check button names and classes
-    const noneButton = wrapper.find('button[name="none"]')
-    expect(noneButton.exists()).toBe(true)
-
-    const cancelButton = wrapper.find('button[name="cancel"]')
-    expect(cancelButton.exists()).toBe(true)
-    expect(cancelButton.classes()).toContain('push')
-
-    const saveButton = wrapper.find('button[name="save"]')
-    expect(saveButton.exists()).toBe(true)
-    expect(saveButton.classes()).toContain('alert-confirm')
   })
 
   test('Empty state when no agents', async () => {

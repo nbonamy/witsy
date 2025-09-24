@@ -1,11 +1,12 @@
 
 import { ChatModel, EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
-import { DesignStudioMediaType, Shortcut, strDict, TTSVoice } from './index'
+import { CustomInstruction, DesignStudioMediaType, Shortcut, strDict, TTSVoice } from './index'
 import { PluginConfig } from '../plugins/plugin'
 import { McpClaudeServer, McpServer, McpServerState, McpOAuthConfig } from './mcp'
 import { ToolSelection } from './llm'
 
 export type Configuration = {
+  workspaceId: string
   general: GeneralConfig
   llm: LLMConfig
   prompt: PromptConfig
@@ -79,12 +80,6 @@ export type ModelDefaults = {
 
 export type InstructionsType = 'standard' | 'structured' | 'playful' | 'empathic' | 'uplifting' | 'reflective' | 'visionary' | string
 
-export type CustomInstruction = {
-  id: string
-  label: string
-  instructions: string
-}
-
 export type LLMConfig = {
   instructions: InstructionsType  
   engine: string
@@ -133,7 +128,7 @@ export type PromptConfig = {
   engine: string
   model: string
   disableStreaming: boolean
-  disableTools: boolean
+  tools: ToolSelection
   autosave: boolean
 }
 
@@ -291,6 +286,7 @@ export type McpServerExtra = {
   label?: string
   state?: McpServerState
   oauth?: McpOAuthConfig
+  toolSelection?: ToolSelection
 }
 
 export type McpConfig = {
@@ -299,4 +295,3 @@ export type McpConfig = {
   mcpServersExtra: Record<string, McpServerExtra>
   smitheryApiKey: string
 }
-

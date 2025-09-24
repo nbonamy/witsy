@@ -42,6 +42,7 @@ let chat: Chat|null = null
 beforeEach(() => {
   chat = new Chat('New Chat')
   chat.setEngineModel('mock', 'chat')
+  store.isFeatureEnabled = () => true
 })
 
 const addMessagesToChat = () => {
@@ -50,11 +51,12 @@ const addMessagesToChat = () => {
 }
 
 test('Empty chat', async () => {
+  store.isFeatureEnabled = (feature: string) => feature != 'chat.temporary'
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: new Chat() } } )
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.sp-main > header').exists()).toBe(true)
   expect(wrapper.find('.sp-main > header .title').text()).toBe('')
-  expect(wrapper.find('.sp-main > header .menu-icon').exists()).toBe(true)
+  expect(wrapper.find('.sp-main > header .menu').exists()).toBe(false)
   expect(wrapper.find('.sp-main .model-settings').exists()).toBe(true)
   expect(wrapper.find('.sp-main .model-settings').classes()).not.toContain('visible')
   expect(wrapper.find('.sp-main .messages').exists()).toBe(false)
@@ -68,7 +70,7 @@ test('With chat', async () => {
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.sp-main > header').exists()).toBe(true)
   expect(wrapper.find('.sp-main > header .title').text()).toBe('New Chat')
-  expect(wrapper.find('.sp-main > header .menu-icon').exists()).toBe(true)
+  expect(wrapper.find('.sp-main > header .menu').exists()).toBe(true)
   expect(wrapper.find('.model-settings').exists()).toBe(true)
   expect(wrapper.find('.sp-main .model-settings').classes()).not.toContain('visible')
   expect(wrapper.find('.sp-main .messages').exists()).toBe(true)
@@ -79,8 +81,8 @@ test('With chat', async () => {
 
 test('Context menu empty chat', async () => {
   addMessagesToChat()
-  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: new Chat() } } )
-  await wrapper.find('.sp-main > header .menu-icon').trigger('click')
+  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: new Chat('title') } } )
+  await wrapper.find('.sp-main > header .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'chat.actions.makeTemporary', action: 'toggle_temp', disabled: false },
     { label: 'common.rename', action: 'rename', disabled: false },
@@ -93,7 +95,7 @@ test('Context menu empty chat', async () => {
 test('Context menu normal chat', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
-  await wrapper.find('.sp-main > header .menu-icon').trigger('click')
+  await wrapper.find('.sp-main > header .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'chat.actions.makeTemporary', action: 'toggle_temp', disabled: false },
     { label: 'common.rename', action: 'rename', disabled: false },
@@ -107,7 +109,7 @@ test('Context menu temporary chat', async () => {
   addMessagesToChat()
   chat!.temporary = true
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
-  await wrapper.find('.sp-main > header .menu-icon').trigger('click')
+  await wrapper.find('.sp-main > header .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'chat.actions.saveChat', action: 'toggle_temp', disabled: false },
     { label: 'common.rename', action: 'rename', disabled: false },
@@ -120,7 +122,7 @@ test('Context menu temporary chat', async () => {
 test('Context menu temporary 1', async () => {
   expect(store.history.chats.length).toBe(0)
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
-  await wrapper.find('.sp-main > header .menu-icon').trigger('click')
+  await wrapper.find('.sp-main > header .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=toggle_temp]').trigger('click')
   expect(chat?.temporary).toBe(true)
   expect(store.history.chats.length).toBe(0)
@@ -130,7 +132,7 @@ test('Context menu temporary 2', async () => {
   addMessagesToChat()
   expect(store.history.chats.length).toBe(0)
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
-  await wrapper.find('.sp-main > header .menu-icon').trigger('click')
+  await wrapper.find('.sp-main > header .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=toggle_temp]').trigger('click')
   expect(chat?.temporary).toBe(true)
   expect(store.history.chats.length).toBe(0)
@@ -141,7 +143,7 @@ test('Context menu temporary 3', async () => {
   chat!.temporary = true
   expect(store.history.chats.length).toBe(0)
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
-  await wrapper.find('.sp-main > header .menu-icon').trigger('click')
+  await wrapper.find('.sp-main > header .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=toggle_temp]').trigger('click')
   expect(chat?.temporary).toBe(false)
   expect(store.history.chats.length).toBe(1)
@@ -150,7 +152,7 @@ test('Context menu temporary 3', async () => {
 test('Context menu rename', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
-  await wrapper.find('.sp-main > header .menu-icon').trigger('click')
+  await wrapper.find('.sp-main > header .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=rename]').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('rename-chat', chat)
 })
@@ -158,7 +160,7 @@ test('Context menu rename', async () => {
 test('Context menu export Markdown', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
-  await wrapper.find('.sp-main > header .menu-icon').trigger('click')
+  await wrapper.find('.sp-main > header .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=exportMarkdown]').trigger('click')
   expect(window.api.file.save).toHaveBeenCalledWith({
     contents: '# New Chat\n\n## chat.role.system\n\nHello\n\n## chat.role.user\n\nHi\n\n_encoded',
@@ -173,7 +175,7 @@ test('Context menu export Markdown', async () => {
 // test('Context menu export PDF', async () => {
 //   addMessagesToChat()
 //   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
-//   await wrapper.find('.sp-main > header .menu-icon').trigger('click')
+//   await wrapper.find('.sp-main > header .menu').trigger('click')
 //   await wrapper.find('.context-menu .item[data-action=exportPdf]').trigger('click')
 // })
 
@@ -181,7 +183,7 @@ test('Context menu delete', async () => {
   addMessagesToChat()
   store.addChat(chat!)
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
-  await wrapper.find('.sp-main > header .menu-icon').trigger('click')
+  await wrapper.find('.sp-main > header .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=delete]').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', chat!.uuid)
 })

@@ -8,7 +8,7 @@ import { store } from '../../src/services/store'
 import Dialog from '../../src/composables/dialog'
 import defaultSettings from '../../defaults/settings.json'
 import ScratchPad from '../../src/screens/ScratchPad.vue'
-import Prompt from '../../src/components/Prompt.vue'
+import Prompt, { SendPromptParams } from '../../src/components/Prompt.vue'
 import EditableText from '../../src/components/EditableText.vue'
 import Toolbar from '../../src/scratchpad/Toolbar.vue'
 import ActionBar from '../../src/scratchpad/ActionBar.vue'
@@ -16,21 +16,30 @@ import Attachment from '../../src/models/attachment'
 
 vi.unmock('../../src/composables/event_bus')
 import useEventBus  from '../../src/composables/event_bus'
+import { defaultCapabilities } from 'multi-llm-ts'
+import LlmManager from '../../src/llms/manager'
 const { emitEvent } = useEventBus()
 
 // Unmock EventBus for this test - scratchpad needs real event handling
 
-vi.mock('../../src/llms/manager', async () => {
+vi.mock('../../src/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
-  LlmManager.prototype.getCustomEngines = vi.fn(() => [])
-  LlmManager.prototype.getEngineName = vi.fn(() => 'mock')
-  LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat' }])
+  LlmManager.prototype.getEngineName = () => 'mock'
+  LlmManager.prototype.getCustomEngines = () => []
+  LlmManager.prototype.getFavoriteId = () => 'favid'
+  LlmManager.prototype.isFavoriteModel = vi.fn(() => false)
+  LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
+  LlmManager.prototype.getChatModel = vi.fn(() => ({ id: 'chat', name: 'chat', ...defaultCapabilities }))
   LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
+  LlmManager.prototype.getChatEngines = vi.fn(() => ['mock'])
+  LlmManager.prototype.hasChatModels = vi.fn(() => true)
+  LlmManager.prototype.isFavoriteEngine = vi.fn(() => false)
   LlmManager.prototype.isCustomEngine = vi.fn(() => false)
-  LlmManager.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
-  LlmManager.prototype.checkModelListsVersion = vi.fn()
+  LlmManager.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
+  LlmManager.prototype.checkModelsCapabilities = vi.fn()
+  LlmManager.prototype.loadTools = vi.fn()
 	return { default: LlmManager }
 })
 
@@ -207,3 +216,23 @@ for (const action of ['spellcheck', 'improve', 'takeaways', 'title', 'simplify',
     expect(wrapper.findComponent(EditableText).text()).toContain(`instructions.scratchpad.${action}_fr-FR`)
   })
 }
+
+test('Changes engine model', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  await wrapper.find('.model-menu-button').trigger('click')
+  wrapper.findComponent({ name: 'EngineModelMenu' }).vm.$emit('modelSelected', 'openai', 'chat1')
+  await wrapper.vm.$nextTick()
+  expect(LlmManager.prototype.igniteEngine).toHaveBeenLastCalledWith('openai')
+  expect(wrapper.vm.chat.engine).toBe('openai')
+  expect(wrapper.vm.chat.model).toBe('chat1')
+})
+
+test('Changes tools', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  await wrapper.find('.prompt-menu').trigger('click')
+  wrapper.findComponent({ name: 'PromptMenu' }).vm.$emit('unselectAllTools')
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.chat.tools).toStrictEqual([])
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' } as SendPromptParams)
+  expect(LlmManager.prototype.loadTools).toHaveBeenLastCalledWith(wrapper.vm.llm, expect.any(Object), [])
+})

@@ -1,14 +1,9 @@
 <template>
   <div class="container">
-    <div class="chat" :class="[{ selected: chat.uuid == active?.uuid }, store.config.appearance.chatList.layout]">
-      <EngineLogo :engine="engine" :background="true" />
+    <div class="chat" :class="[{ selected: !selectMode && chat.uuid == active?.uuid }, store.config.appearance.chatList.layout]">
+      <input type="checkbox" class="select" :checked="selection.includes(chat.uuid)" v-if="selectMode"/>
       <div class="info" @dblclick="onRenameChat">
         <div class="title">{{ chat.title }}</div>
-        <div class="subtitle">{{ chat.subtitle() }}</div>
-      </div>
-      <div v-if="selectMode" class="select">
-        <BIconCheckCircleFill v-if="selection.includes(chat.uuid)" class="selected"/>
-        <BIconCircle v-else />
       </div>
     </div>
   </div>
@@ -16,10 +11,8 @@
 
 <script setup lang="ts">
 
-import { computed } from 'vue'
-import { store } from '../services/store'
-import EngineLogo from './EngineLogo.vue'
 import Chat from '../models/chat'
+import { store } from '../services/store'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -43,8 +36,6 @@ const props = defineProps({
   },
 })
 
-const engine = computed(() => props.chat.engine || store.config.llm.engine)
-
 const emit = defineEmits(['select', 'menu']);
 
 const onRenameChat = () => {
@@ -56,19 +47,19 @@ const onRenameChat = () => {
 <style scoped>
 
 .container {
-  margin: 0rem 0.5rem;
-  margin-right: 1rem;
-  padding: 0rem;
+  
   cursor: pointer;
 
   .chat {
+    
     margin: 0;
-    padding: 0.5rem;
+    padding: 0.75rem;
+    padding-left: 1rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     border-radius: 0.5rem;
-  
+
     &.selected {
       background-color: var(--sidebar-selected-color);
     }
@@ -76,54 +67,38 @@ const onRenameChat = () => {
     .info {
       display: flex;
       flex-direction: column;
+      justify-content: center;
       min-width: 0;
 
       * {
         overflow: hidden;
-        white-space: nowrap;
         text-overflow: ellipsis;
+        line-height: 1.5em;
       }
-    }
-
-    .logo {
-      width: var(--sidebar-logo-size);
-      height: var(--sidebar-logo-size);
-      margin-right: 0.5rem;
     }
 
     .title {
-      font-weight: bold;
-      font-size: 10.5pt;
+      font-weight: var(--font-weight-medium);
+      font-size: 14.5px;
     }
 
-    .subtitle {
-      font-size: 9pt;
-    }
-
-    .select {
-      margin-left: 1rem;
-      text-align: right;
-      flex: 1;
+    input {
+      cursor: pointer;
+      margin-right: 0.75rem;
+      text-align: left;
+      width: var(--icon-lg);
     }
 
     &.compact {
-  
-      margin: 0px;
-      margin-left: 0.5rem;
-      padding: 0.25rem 0.5rem;
-
-      .logo {
-        width: calc(var(--sidebar-logo-size) / 2);
-        height: calc(var(--sidebar-logo-size) / 2);
-      }
-
+      margin: 0;
+      padding: 0.5rem;
+      padding-left: 0.75rem;
+      max-height: 1lh;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       .title {
-        font-weight: normal;
-        font-size: 10.5pt;
-      }
-
-      .subtitle {
-        display: none;
+        font-size: 14px;
       }
 
     }

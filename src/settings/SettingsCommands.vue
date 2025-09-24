@@ -1,7 +1,7 @@
 <template>
   <div class="commands tab-content"  @keyup.escape.prevent="onEdit(null)">
     <header v-if="edited">
-      <BIconChevronLeft class="icon back" @click="onEdit(null)" />
+      <!-- <ChevronLeftIcon class="icon back" @click="onEdit(null)" /> -->
       <div class="title">{{ edited.label || commandI18n(edited, 'label') }}</div>
     </header>
     <header v-else>
@@ -18,14 +18,14 @@
 
 <script setup lang="ts">
 
-import { Command } from '../types'
-import { ref } from 'vue'
-import { store } from '../services/store'
-import { t, commandI18n } from '../services/i18n'
 import { v4 as uuidv4 } from 'uuid'
-import { newCommand, saveCommands } from '../services/commands'
-import CommandsList from '../components/CommandsList.vue'
+import { ref } from 'vue'
 import CommandEditor from '../components/CommandEditor.vue'
+import CommandsList from '../components/CommandsList.vue'
+import { newCommand, saveCommands } from '../services/commands'
+import { commandI18n, t } from '../services/i18n'
+import { store } from '../services/store'
+import { Command } from '../types'
 
 const list = ref(null)
 const editor = ref(null)

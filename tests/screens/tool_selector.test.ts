@@ -162,17 +162,6 @@ describe('ToolSelector', () => {
     expect(saveButton.text()).toBe('common.save')
   })
 
-  test('Button classes and attributes', () => {
-    const wrapper = mount_component()
-    
-    const cancelButton = wrapper.find('button[name="cancel"]')
-    expect(cancelButton.classes()).toContain('push')
-    expect(cancelButton.attributes('formnovalidate')).toBeDefined()
-    
-    const saveButton = wrapper.find('button[name="save"]')
-    expect(saveButton.classes()).toContain('alert-confirm')
-  })
-
   test('Button interactions', async () => {
     const wrapper = mount_component()
     
@@ -217,9 +206,9 @@ describe('ToolSelector', () => {
     expect(buttons).toHaveLength(4)
     
     // Check button order
-    expect(buttons[0].attributes('name')).toBe('all')
-    expect(buttons[1].attributes('name')).toBe('none')
-    expect(buttons[2].attributes('name')).toBe('cancel')
+    expect(buttons[0].attributes('name')).toBe('cancel')
+    expect(buttons[1].attributes('name')).toBe('all')
+    expect(buttons[2].attributes('name')).toBe('none')
     expect(buttons[3].attributes('name')).toBe('save')
   })
 

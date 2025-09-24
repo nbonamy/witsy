@@ -26,8 +26,8 @@
     </template> 
     <template #footer>
       <div class="buttons">
-        <button @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
-        <button @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
+        <button @click="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
+        <button @click="onSave" class="primary">{{ t('common.save') }}</button>
       </div>
     </template>
   </ModalDialog>
@@ -35,13 +35,13 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, watch } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import ModalDialog from '../components/ModalDialog.vue'
+import { ref } from 'vue'
 import EngineSelect from '../components/EngineSelect.vue'
+import ModalDialog from '../components/ModalDialog.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
 
 const llmManager = LlmFactory.manager(store.config)
 

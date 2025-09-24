@@ -214,7 +214,6 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
 <style scoped>
 
 .context-menu {
-  -webkit-app-region: no-drag;
   position: absolute;
   background: var(--context-menu-bg-color);
   border: 1px solid var(--context-menu-border-color);
@@ -233,16 +232,16 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   flex: 1;
   width: 100%;
   overflow-y: auto;
-  padding-right: 21px;
   display: flex;
   flex-direction: column;
   margin: 0px !important;
+  scrollbar-width: none;
 }
 
 .context-menu .item {
   padding: 0.5rem 0.75rem;
   cursor: pointer;
-  font-size: 11pt;
+  font-size: 14.5px;
   white-space: nowrap;
   overflow-x: clip;
   text-overflow: ellipsis;
@@ -272,7 +271,7 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
 }
 
 .context-menu .item .icon.text {
-  font-size: 11pt;
+  font-size: 14.5px;
 }
 
 .context-menu .item.disabled {
@@ -296,7 +295,7 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
     color: var(--context-menu-filter-text-color);
     border-radius: 0.5rem;
     padding: 0.5rem;
-    font-size: 11pt;
+    font-size: 14.5px;
 
     &:focus {
       outline: none;

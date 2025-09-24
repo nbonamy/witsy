@@ -18,12 +18,12 @@
 }
 
 .messages.conversation .message.user .body {
-  background-color: #2993f3;
-  color: white;
+  background-color: #D8F1FF;
+  color: black;
 }
 
 .messages.conversation .message.assistant .body {
-  background-color: #e9e9eb;
+  background-color: transparent;
   color: black;
 }
 

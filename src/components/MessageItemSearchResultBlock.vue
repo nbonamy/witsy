@@ -7,7 +7,7 @@
   </div>
   <div v-else class="expanded">
     <div class="header" @click="expanded = false">
-      <BIconXLg class="close" />
+      <XIcon class="close" />
       {{ t('plugins.search.completed', { query: toolCall.params.query, count: toolCall.result.results.length }) }}
     </div>
     <MessageItemSearchToolBlock class="results" :tool-call="toolCall"  />
@@ -16,10 +16,11 @@
 
 <script setup lang="ts">
 
-import { ToolCall } from '../types/index'
+import { XIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { t } from '../services/i18n'
-import MessageItemSearchToolBlock from './MessageItemSearchToolBlock.vue' 
+import { ToolCall } from '../types/index'
+import MessageItemSearchToolBlock from './MessageItemSearchToolBlock.vue'
 
 defineProps({
   toolCall: {
@@ -62,8 +63,8 @@ const onFaviconError = (event: Event) => {
 
 .favicon {
   margin-left: -0.375rem;
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-md);
+  height: var(--icon-md);
   flex-shrink: 0;
   border-radius: 0.5rem;
   border: 1.5px solid var(--message-list-bg-color);

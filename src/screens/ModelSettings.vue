@@ -590,6 +590,7 @@ const onCreateOllamaModel = async () => {
 <style scoped>
 
 .model-settings {
+  border-top: 1px solid var(--sidebar-border-color);
   border-left: 1px solid var(--sidebar-border-color);
   background-color: var(--sidebar-bg-color);
   height: 100%;

@@ -1,46 +1,52 @@
 <template>
   <div class="split-pane">
-    <div class="sp-main">
-      <header v-if="mode === 'create'">
-        <BIconChevronLeft class="icon back" @click="closeCreate" />
-        <div class="title">{{ t('agent.forge.create') }}</div>
-      </header>
-      <header v-else-if="mode === 'view' || mode === 'edit'">
-        <BIconChevronLeft class="icon back" @click="selectAgent(null)" />
-        <div class="title">{{ selected.name }}</div>
-      </header>
-      <header v-else>
-        <div class="title">{{ t('agent.forge.title') }}</div>
-      </header>
-      <main class="empty sliding-root" :class="{ visible: mode === 'list' }" v-if="store.agents.length === 0">
-        <BIconRobot @click="onCreate()" />
-        {{ t('agent.forge.empty') }}
-      </main>
-      <main class="sliding-root" :class="{ visible: mode === 'list' }" v-else>
-        <List :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A"  @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
-      </main>
-      <main class="sliding-pane" :class="{ visible: mode !== 'list' }" @transitionend="onTransitionEnd">
-        <Editor :style="{ display: isPaneVisible('create') || isPaneVisible('edit') ? 'flex' : 'none' }" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
-        <View :style="{ display: isPaneVisible('view') ? 'flex' : 'none' }" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" />
-      </main>
-    </div>
+
+    <template v-if="mode === 'list'">
+    
+      <template v-if="store.agents.length === 0">
+        <div class="sp-main">
+          <main class="empty">
+            <IconAgent @click="onCreate()" />
+            {{ t('agent.forge.empty') }}
+          </main>
+        </div>
+      </template>
+
+      <template v-else>
+        <List class="sp-main" :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A"  @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
+      </template>
+
+    </template>
+
+    <template v-else-if="mode === 'create' || mode === 'edit'">
+      <Editor class="sp-main" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
+    </template>
+
+    <template v-else-if="mode === 'view'">
+      <View class="sp-main" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)"/>
+    </template>
+
     <PromptBuilder :title="running?.name ?? ''" ref="builder" />
+  
   </div>
+
 </template>
 
 <script setup lang="ts">
-import { AgentType } from '../types/index'
-import { ref, onMounted } from 'vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
-import A2AClient from '../services/a2a-client'
-import Dialog from '../composables/dialog'
-import PromptBuilder from '../components/PromptBuilder.vue'
+
+import { ref } from 'vue'
+import IconAgent from '../../assets/agent.svg?component'
+import Editor from '../agent/Editor.vue'
 import List from '../agent/List.vue'
 import View from '../agent/View.vue'
-import Editor from '../agent/Editor.vue'
-import AgentRunner from '../services/runner'
+import PromptBuilder from '../components/PromptBuilder.vue'
+import Dialog from '../composables/dialog'
 import Agent from '../models/agent'
+import A2AClient from '../services/a2a-client'
+import { t } from '../services/i18n'
+import AgentRunner from '../services/runner'
+import { store } from '../services/store'
+import { AgentType } from '../types/index'
 
 defineProps({
   extra: Object
@@ -54,13 +60,6 @@ const selected = ref<Agent|null>(null)
 const running = ref<Agent|null>(null)
 const builder = ref(null)
 
-const isPaneVisible = (paneMode: AgentForgeMode) => {
-  return mode.value === paneMode || prevMode.value === paneMode
-}
-
-onMounted(() => {
-})
-
 const selectAgent = async (agent: Agent|null) => {
   if (!agent) {
     prevMode.value = mode.value
@@ -71,16 +70,20 @@ const selectAgent = async (agent: Agent|null) => {
   }
 }
 
-const onTransitionEnd = async () => {
-  if (mode.value === 'list') {
-    selected.value = null
-    prevMode.value = null
-  }
-}
-
 const onCreate = (type?: AgentType) => {
+  
+  const agent = new Agent()
+  if (store.workspace.models?.length) {
+    const model = store.workspace.models[0]
+    agent.engine = model.engine
+    agent.model = model.model
+  } else {
+    agent.engine = 'openai'
+    agent.model = 'gpt-4.1'
+  }
+  
   mode.value = 'create'
-  selected.value = new Agent()
+  selected.value = agent
   selected.value.type = type ?? 'runnable'
 }
 
@@ -111,7 +114,7 @@ const onImportA2A = async (type?: AgentType) => {
 
     if (agent) {
       agent.type = type || 'runnable'
-      window.api.agents.save(agent)
+      window.api.agents.save(store.config.workspaceId, agent)
       editAgent(agent)
       break
     }
@@ -164,7 +167,7 @@ const deleteAgent = (agent: Agent) => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      window.api.agents.delete(agent.uuid)
+      window.api.agents.delete(store.config.workspaceId, agent.uuid)
       store.loadAgents()
       selectAgent(null)
     }
@@ -194,8 +197,8 @@ const deleteAgent = (agent: Agent) => {
 
         color: var(--faded-text-color);
         font-family: var(--font-family-serif);
-        font-size: 16pt;
-        font-weight: 500;
+        font-size: 22px;
+        font-weight: var(--font-weight-medium);
         line-height: 1.5;
 
         svg {
@@ -204,12 +207,6 @@ const deleteAgent = (agent: Agent) => {
           height: 10rem;
           opacity: 20%;
         }
-      }
-
-      &.sliding-pane {
-        /* not sure why the default 100% makes it too wide here */
-        /* as this does not happen for DocRepos who have the same structure */
-        width: calc(100% - var(--window-menubar-width));
       }
 
     }

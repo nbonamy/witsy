@@ -1,7 +1,7 @@
 .tooltip-directive {
   position: absolute;
   z-index: 1000;
-  font-size: 10pt !important;
+  font-size: 13.5px !important;
   font-weight: normal !important;
   font-style: normal !important;
   background: var(--text-color);
@@ -15,12 +15,12 @@
 }
 
 .tooltip-directive.right {
-  top: 0px;
+  top: 0;
   left: calc(100% + 0.5rem);
 }
 
 .tooltip-directive.left {
-  top: 0px;
+  top: -50%;
   right: calc(100% + 0.5rem);
 }
 

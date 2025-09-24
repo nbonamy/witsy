@@ -131,7 +131,7 @@ export default class MemoryManager {
   }
   
   private databasePath = (): string => {
-    const userDataPath = this.app.getPath('userData')
+    const userDataPath = this.app.getPath('userData') + '2'
     const databasePath = path.join(userDataPath, 'memory')
     return databasePath
   }

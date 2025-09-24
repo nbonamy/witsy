@@ -1,5 +1,9 @@
 {
   "common": {
+    "actions": "Ações",
+    "agents": "Agentes",
+    "allSelected": "Todos selecionados",
+    "appName": "Witsy",
     "arguments": "Parâmetros",
     "askMeAnything": "Pergunte-me qualquer coisa",
     "attach": "Anexar",
@@ -25,10 +29,11 @@
       "deleteCustomInstruction": "Tem certeza de que deseja excluir esta instrução personalizada?",
       "deleteDocument": "Você tem certeza que deseja excluir este documento?",
       "deleteMemory": "Você tem certeza que deseja excluir essa memória?",
-      "deleteRepository": "Tem certeza de que deseja excluir esta base de conhecimento?",
+      "deleteRepository": "Are you sure you want to delete this collection?",
       "doNotClose": "Não feche",
       "unsavedChanges": "Você tem alterações não salvas. Se fechar esta janela, perderá seu trabalho."
     },
+    "content": "Content",
     "continue": "Continuar",
     "copied": "Copiado",
     "copy": "Copiar",
@@ -45,22 +50,24 @@
     "disabled": "Desativado",
     "docRepo": "Base de Conhecimento",
     "documents": "Documentos",
+    "done": "Concluído",
     "edit": "Editar",
-    "embeddings": "Embeddings",
     "enabled": "Ativado",
     "error": "Erro!",
     "errorCopyClipboard": "Ocorreu um erro ao copiar o texto para a área de transferência.",
     "errorModelRefresh": "Erro ao atualizar modelos. Verifique sua conexão e tente novamente.",
     "esc": "Esc",
     "estimatedCost": "Custo estimado:",
+    "experts": "Especialistas",
     "favorites": {
       "add": "Adicionar aos favoritos",
+      "name": "Favoritos",
       "remove": "Remover dos favoritos"
     },
     "filename": "Nome do arquivo",
-    "files": "Arquivos",
     "fork": "Fork",
     "high": "Alto",
+    "htmlGeneration": "Geração de HTML em andamento…",
     "icon": "Ícone",
     "import": "Importar",
     "insert": "Inserir",
@@ -103,8 +110,11 @@
     "move": "Mover",
     "name": "Nome",
     "new": "Novo",
-    "newChat": "Novo chat",
+    "newChat": "New Conversation",
+    "next": "Próximo",
     "no": "Não",
+    "noneSelected": "Nenhum selecionado",
+    "notes": "Notes",
     "ok": "OK",
     "path": "Caminho",
     "pick": "Escolher",
@@ -147,18 +157,26 @@
       "weekly": "Semanal"
     },
     "search": "Pesquisar…",
+    "select": "Selecionar",
     "selectAll": "Selecionar Tudo",
+    "selectAllShort": "Todos",
+    "selectedCount": "{selected} de {total} selecionados",
     "selectNone": "Desmarcar Tudo",
     "settings": "Configurações",
     "shortcut": "Atalho",
+    "showLess": "Mostrar Menos",
+    "showMore": "Mostrar Mais",
+    "sortBy": "Ordenar por",
     "spellcheck": {
       "add": "Adicionar ao dicionário"
     },
     "stop": "Parar",
+    "title": "Title",
     "tools": "Ferramentas",
     "tryAgain": "Por favor, tente novamente.",
     "type": "Tipo",
     "undo": "Desfazer",
+    "unselectAllShort": "Nenhum",
     "upload": "Carregar",
     "url": "URL",
     "usage": "Uso",
@@ -220,13 +238,14 @@
       },
       "information": {
         "help": {
-          "description": "Descrição breve do propósito do seu agente. Quando este agente for usado dentro de um fluxo de trabalho, isso será compartilhado com o LLM para ajudá-lo a entender o agente e eventualmente decidir chamá-lo.",
-          "goal": "O objetivo do agente. Isso será usado como as instruções do sistema enviadas ao LLM. Não inclua informações específicas de execução aqui, pois elas serão definidas no prompt.",
-          "name": "Nome descritivo para seu agente."
+          "description": "Descrição curta do propósito do seu agente. Ajuda os modelos a entender a intenção do agente.",
+          "goal": "O objetivo individual que guia a tomada de decisão do agente.",
+          "name": "Dê um nome ao seu agente. Isso ajudará você a identificá-lo mais tarde.",
+          "type": "A função do agente e a relação com outros agentes."
         },
         "promptInputs": "Variáveis Detectadas",
         "title": "Informações Gerais",
-        "type": "Modelo de Execução"
+        "type": "Função"
       },
       "invocation": {
         "missingInput": "[{name} está ausente]",
@@ -244,21 +263,19 @@
         "help": {
           "warning": "A execução do agente depende muito das capacidades de cada modelo. Certifique-se de selecionar um modelo que suporte capacidades agentivas."
         },
-        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
         "showModelSettings": "Configurações Avançadas",
         "title": "Configuração do Modelo"
       },
       "settings": {
-        "title": "Configurações do Modelo"
+        "title": "Configurações Avançadas de Modelo"
       },
       "workflow": {
         "addStep": "Adicionar Etapa",
         "confirmDeleteStep": "Tem certeza que deseja excluir esta etapa?",
-        "customAgents": "Delegados…",
-        "customTools": "Ferramentas…",
-        "description": "Descrição: usado no chat para fornecer atualizações de progresso",
-        "docRepo": "Base…",
-        "docRepoNone": "Nenhuma Base de Conhecimento",
+        "customAgents": "Designar Co-Agentes",
+        "customTools": "Adicionar Ferramentas",
+        "description": "@:{'common.description'}",
+        "docRepo": "Adicionar Conhecimento",
         "error": {
           "emptyStepPrompt": "O prompt da etapa #{step} não pode estar vazio.",
           "missingDocRepo": "A etapa #{step} usa uma Base de Conhecimento, mas nenhuma variável {'{'}{'{'}facts{'}'}{'}'} está definida no prompt. Por favor, adicione uma variável no formato {'{'}{'{'}facts{'}'}{'}'} ao seu prompt.",
@@ -266,14 +283,15 @@
         },
         "help": {
           "connect": "Conecte a saída das etapas anteriores usando variáveis {'{'}{'{'}output.#{'}'}{'}'} (exemplo: {'{'}{'{'}output.1{'}'}{'}'} para a saída da etapa 1)",
-          "docRepo": "Os fatos extraídos da base de conhecimento serão adicionados ao seu prompt.",
-          "factsVarDesc": "Fatos extraídos da base de conhecimento",
+          "description": "A descrição será usada para fornecer atualizações de progresso durante a execução do agente",
+          "docRepo": "Facts extracted from the collection will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "Saída da etapa #{step}",
+          "prompt": "As instruções personalizadas para o agente",
           "title": "Desenhe seu fluxo de trabalho em múltiplas etapas. Templates de prompt serão usados para executar cada etapa. Você pode incluir \"variáveis\" que serão substituídas pelos valores fornecidos pelo usuário quando o agente for executado. Use o formato {'{'}{'{'}nome:descrição:valor{'}'}{'}'} para definir uma variável (a descrição guiará o usuário quando solicitado um valor). Tanto a descrição quanto o valor padrão são opcionais."
         },
         "jsonSchema": "JSON…",
-        "step": "Etapa #{step}",
-        "stepFull": "Etapa #{step}: {text}",
+        "step": "Passo {step}",
         "structuredOutput": {
           "text": "Especifique um <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">esquema JSON simples</a> para definir o formato de saída esperado desta etapa.",
           "title": "Esquema JSON"
@@ -291,22 +309,22 @@
           },
           "text": "RECURSO EXPERIMENTAL!",
           "title": "Digite a URL do A2A"
-        }
+        },
+        "title": "Importar Agente A2A"
       },
       "confirmDelete": "Tem certeza de que deseja excluir este agente?",
-      "create": "Criar Agente",
-      "empty": "Selecione um agente existente ou crie um novo.",
+      "create": "Novo Agente",
+      "empty": "Desbloqueie o poder agente do @:{'common.appName'} criando seu primeiro agente! Clique na cabeça do robô para começar.",
       "list": {
         "empty": "Nenhum agente deste tipo criado ainda.",
-        "runnable": "Agentes executáveis",
-        "support": "Agentes de suporte"
+        "runnable": "Iniciado pelo Usuário",
+        "support": "Utilitário"
       },
       "title": "Forja do Agente"
     },
     "goal": "Objetivo",
     "help": {
       "clearHistory": "Limpar todo o histórico deste agente",
-      "create": "Criar um novo agente",
       "delete": "Excluir este agente",
       "deleteRun": "Excluir esta execução",
       "edit": "Editar este agente",
@@ -319,6 +337,7 @@
       "confirmDeleteSingle": "Tem certeza de que deseja excluir esta execução?",
       "date": "Data",
       "empty": "Ainda sem histórico…",
+      "lastRun": "Última Execução",
       "log": "Log",
       "neverRun": "Nunca",
       "status": "Status",
@@ -360,8 +379,8 @@
       "workflow": "⚙️ Fluxo de trabalho"
     },
     "type": {
-      "runnable": "Executável pelo usuário",
-      "support": "Agente de suporte"
+      "runnable": "Iniciado pelo Usuário",
+      "support": "Utilitário"
     },
     "view": {
       "filter": {
@@ -388,7 +407,7 @@
     "available": "Uma nova versão está disponível. Baixando agora…",
     "downloading": "Uma atualização está em andamento. Por favor, aguarde a conclusão.",
     "error": "Erro ao verificar atualizações. Por favor, tente novamente mais tarde.",
-    "uptodate": "Você já está usando a versão mais recente do Witsy."
+    "uptodate": "Você já está usando a versão mais recente do @:{'common.appName'}."
   },
   "backup": {
     "restore": {
@@ -432,6 +451,12 @@
         "titleRequired": "Certifique-se de inserir um título para este chat."
       }
     },
+    "empty": {
+      "agentForge": "Crie agentes para automatizar suas tarefas e agilizar seus fluxos de trabalho!",
+      "docRepo": "Indexe seus documentos e fundamente @:{'common.appName'} em seu conhecimento!",
+      "greeting": "Olá, como posso ajudar você?",
+      "mcpServers": "Conecte servidores MCP para permitir que @:{'common.appName'} interaja com seu ambiente!"
+    },
     "export": {
       "error": "Ocorreu um erro ao tentar exportar o chat."
     },
@@ -465,7 +490,8 @@
       "last7days": "Últimos 7 dias",
       "today": "Hoje",
       "yesterday": "Ontem"
-    }
+    },
+    "title": "Conversations"
   },
   "commands": {
     "commands": {
@@ -797,30 +823,49 @@
       "title": "Padrões da base de conhecimento"
     },
     "create": {
-      "embeddingWarning": "o modelo de embedding não pode ser alterado após a criação da base de conhecimento",
-      "title": "Criar base de conhecimento"
+      "embeddingWarning": "embedding model cannot be changed once collection is created",
+      "title": "New Collection"
     },
-    "list": {
-      "clickToCreate": "Clique no botão + para criar um.",
-      "documentsCount": "Nenhum documento|1 documento|{count} documentos",
-      "noRepositories": "Você ainda não tem bases de conhecimento.",
-      "title": "Bases de Conhecimento",
-      "tooltips": {
-        "config": "@:{'docRepo.config.title'}",
-        "create": "@:{'docRepo.create.title'}",
-        "delete": "Excluir base de conhecimento",
-        "edit": "Editar base de conhecimento"
+    "empty": {
+      "create": "Add some knowledge",
+      "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
+      "title": "Welcome to the Knowledge Base"
+    },
+    "file": {
+      "error": {
+        "formatNotSupported": {
+          "title": "File format not supported"
+        }
+      },
+      "help": {
+        "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
-    "view": {
-      "noDocuments": "Você ainda não tem nenhum documento. Clique nos ícones acima para adicionar documentos ou pastas.",
+    "list": {
+      "documentsCount": "Nenhum documento|1 documento|{count} documentos",
       "title": "@:{'common.docRepo'}",
+      "tooltips": {
+        "config": "@:{'docRepo.config.title'}",
+        "delete": "Delete collection"
+      }
+    },
+    "note": {
+      "add": "Add Note",
+      "create": {
+        "title": "New Note"
+      },
+      "edit": {
+        "title": "Edit Note"
+      },
+      "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
+    },
+    "view": {
+      "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {
         "addFile": "Adicionar arquivos",
         "addFolder": "Adicionar pasta",
         "embeddingNotReady": "Modelo de embedding não disponível",
         "openInExplorer": "Abrir no Finder",
-        "removeDocument": "Remover documento",
         "viewContents": "Ver conteúdo da pasta"
       }
     }
@@ -831,7 +876,7 @@
     "useDrawing": "Usar Desenho"
   },
   "embedding": {
-    "apiKeyReminder": "Certifique-se de inserir sua chave de API no painel Modelos das Configurações do Witsy.",
+    "apiKeyReminder": "Certifique-se de inserir sua chave API no painel Modelos das Configurações do @:{'common.appName'}.",
     "browse": "Navegar modelos",
     "model": "Modelo de Embedding",
     "provider": "Provedor de Embedding"
@@ -1574,7 +1619,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Quando o usuário pedir para você criar algum conteúdo (documento, resumo, código...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO>\nCONTEÚDO\n</artifact>. Especialmente o código HTML incorporado em artefatos pode ser visualizado automaticamente.",
+      "artifacts": "Quando o usuário pedir para você criar algum conteúdo (documento, resumo, código...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO\">\nCONTEÚDO\n</artifact>. Artefatos HTML DEVEM começar com <html> ou <!DOCTYPE html>. Exemplo: <artifact title=\"Relatório\">\n<html style=\"font-family: system-ui;\">Conteúdo do relatório formatado em HTML</html>\n</artifact>. Você pode usar essa capacidade para criar visualizações de dados baseadas em HTML usando Chart.js ou D3.js.",
       "mermaid": "Se for solicitado que você produza um diagrama Mermaid, seu código será exibido como um diagrama para o usuário.",
       "toolRetry": "Ao chamar ferramentas, se você receber um erro de entrada, analise o erro e tente corrigi-lo e então tente chamar a ferramenta novamente."
     },
@@ -1635,18 +1680,40 @@
     }
   },
   "mcp": {
+    "addCustomServer": "Adicionar servidor MCP…",
+    "confirmDelete": "Tem certeza de que deseja excluir este servidor?",
+    "copyInstallCommand": "Você pode copiar o comando de instalação para a área de transferência e tentar em um Terminal.",
+    "failedToInstall": "Falha ao instalar o servidor",
+    "importJson": {
+      "details": "Copie/cole aqui as definições JSON do Servidor MCP vindas do Claude.",
+      "errorArgs": "Argumentos do Servidor MCP inválidos.",
+      "errorCommand": "Comando do Servidor MCP não encontrado.",
+      "errorEmpty": "JSON não pode estar vazio.",
+      "errorFormat": "Erro ao analisar a definição do servidor JSON.",
+      "errorMultiple": "Múltiplos servidores encontrados. Por favor, cole um servidor por vez.",
+      "title": "Importar de JSON"
+    },
+    "importSmitheryServer": "Instalar do Smithery.ai",
+    "mcpServers": "Conectores",
+    "modelContextProtocol": "Hub de Conexões",
+    "noServersFound": "Nenhum conector encontrado. Clique nos botões acima para adicionar um novo conector.",
+    "noTools": "Nenhuma ferramenta disponível",
     "oauth": {
       "success": {
-        "message": "Você pode fechar esta janela e retornar ao Witsy.",
+        "message": "Você pode fechar esta janela e retornar ao @:{'common.appName'}.",
         "title": "Autorização bem-sucedida!"
       }
     },
+    "refreshServers": "Atualizar lista",
+    "restartServers": "Reiniciar servidores",
+    "retryWithApiKey": "Parece que uma chave API é necessária para instalar este servidor. Deseja tentar novamente com sua chave API? Caso contrário, você pode copiar o comando e tentar em um Terminal.",
+    "server": "Servidor",
     "serverEditor": {
       "environmentVariables": "Variáveis de Ambiente",
       "httpHeaders": "Cabeçalhos HTTP Personalizados",
       "oauth": {
         "authorizing": "Iniciando autenticação",
-        "authorizingText": "Seu navegador será aberto para autorizar o Witsy. Por favor, complete a autorização e retorne a esta janela quando terminar.",
+        "authorizingText": "Seu navegador será aberto para autorizar o @:{'common.appName'}. Por favor, complete a autorização e retorne a esta janela quando terminar.",
         "clientId": "ID do cliente",
         "clientSecret": "Segredo do cliente",
         "dynamicClientRegistrationError": "Este servidor não suporta registro dinâmico de cliente. Você precisa especificar um ID de cliente e um segredo de cliente.",
@@ -1667,7 +1734,6 @@
       "selectCommand": "Selecionar comando",
       "serverPackage": "Pacote do Servidor",
       "smitheryApiKey": "Chave da API do Smithery.ai",
-      "title": "Configuração do Servidor MCP",
       "type": {
         "http": "HTTP transmissível",
         "smithery": "Smithery.ai",
@@ -1681,6 +1747,19 @@
         "urlRequired": "Certifique-se de inserir uma URL para este servidor."
       },
       "workingDirectory": "Diretório de Trabalho"
+    },
+    "serverLogs": "Logs do Servidor MCP",
+    "serverNotFound": "O servidor que você está tentando conectar não existe.",
+    "servers": "servidores. Descubra e instale servidores MCP a partir do",
+    "smithery": "Smithery",
+    "toolsCount": "Nenhuma ferramenta ativada|1 ferramenta ativada|{count} ferramentas ativadas",
+    "tooltips": {
+      "deleteServer": "Excluir servidor",
+      "editServer": "Editar servidor",
+      "startServer": "Iniciar servidor",
+      "stopServer": "Pausar servidor",
+      "viewLogs": "Ver logs do servidor",
+      "viewTools": "Ver ferramentas disponíveis"
     },
     "variableEditor": {
       "title": "Variável de Ambiente MCP"
@@ -1696,9 +1775,9 @@
   },
   "menu": {
     "app": {
-      "about": "Sobre o Witsy",
+      "about": "Sobre o @:{'common.appName'}",
       "checkForUpdates": "Verificar Atualizações…",
-      "quit": "Sair do Witsy",
+      "quit": "Sair do @:{'common.appName'}",
       "settings": "@:{'common.settings'}…"
     },
     "edit": {
@@ -1718,7 +1797,7 @@
         "openai": "Exportação de dados do ChatGPT…",
         "title": "Importar"
       },
-      "mainWindow": "Abrir Witsy",
+      "mainWindow": "Abrir @:{'common.appName'}",
       "newChat": "Novo Chat",
       "quickPrompt": "Novo Prompt",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1826,12 +1905,12 @@
       "count": "Nenhum modelo encontrado.|1 modelo disponível!|{count} modelos disponíveis!",
       "error": "Por favor, verifique sua chave API e tente novamente.",
       "showMore": "Mostrar mais",
-      "subtitle": "Você pode conversar com o Witsy usando modelos de linguagem de todos os principais provedores. Insira suas chaves API abaixo para começar. Se você não tiver nenhuma chave API, não se preocupe: na próxima tela, você poderá configurar o Witsy para usar modelos locais através do Ollama!",
+      "subtitle": "Você pode conversar com o @:{'common.appName'} usando modelos de linguagem de todos os principais provedores. Insira suas chaves API abaixo para começar. Se você não tiver nenhuma chave API, não se preocupe: na próxima tela você poderá configurar o @:{'common.appName'} para usar modelos locais através do Ollama!",
       "success": "Chave {engine} validada.<br/>{count} modelos encontrados!",
       "title": "Seus provedores de modelos de chat"
     },
     "done": {
-      "subtitle": "Você está tudo configurado e pronto para começar!<br/>Comece a conversar com o Witsy e explore suas capacidades!",
+      "subtitle": "Você está tudo pronto e preparado para começar!<br/>Comece a conversar com o @:{'common.appName'} e explore suas capacidades!",
       "title": "Tudo pronto!"
     },
     "instructions": {
@@ -1845,8 +1924,8 @@
         "title": "Você não completou sua personalização."
       },
       "selectStyle": "Agora escolha como você gostaria que seu assistente respondesse.<br/>Isso será combinado com suas informações pessoais para criar as instruções perfeitas.",
-      "subtitle": "Respondendo a algumas perguntas, o Witsy poderá personalizar sua experiência e fornecer respostas melhores. Você pode pular esta etapa se quiser, mas é altamente recomendável para tornar o Witsy mais pessoal.",
-      "title": "Deixe o Witsy saber sobre você!"
+      "subtitle": "Respondendo a algumas perguntas, o @:{'common.appName'} poderá personalizar sua experiência e fornecer respostas melhores. Você pode pular esta etapa se quiser, mas é altamente recomendado para tornar o @:{'common.appName'} mais pessoal.",
+      "title": "Deixe o @:{'common.appName'} saber sobre você!"
     },
     "ollama": {
       "browseModels": "Descubra mais modelos em https://ollama.com/search",
@@ -1870,22 +1949,22 @@
     },
     "permissions": {
       "accessibility": {
-        "description": "Necessário para que o Witsy leia textos de outras aplicações e se integre perfeitamente ao seu fluxo de trabalho.",
+        "description": "Necessário para que o @:{'common.appName'} leia texto de outros aplicativos e se integre perfeitamente ao seu fluxo de trabalho.",
         "title": "Acessibilidade"
       },
       "automation": {
-        "description": "Certifique-se de conceder a permissão \"Eventos do Sistema\" ao Witsy na tela de configurações de Automação.",
+        "description": "Certifique-se de conceder a permissão \"Eventos do Sistema\" para o @:{'common.appName'} na tela de configurações de Automação.",
         "title": "Automação"
       },
       "denied": "Não Concedido",
       "granted": "Concedido",
-      "info": "Essas permissões permitem que o Witsy ofereça sua gama completa de funcionalidades. Você pode concedê-las agora ou depois nas Preferências do Sistema.",
+      "info": "Essas permissões permitem que o @:{'common.appName'} ofereça toda a sua gama de recursos. Você pode concedê-las agora ou mais tarde nas Preferências do Sistema.",
       "leave": {
         "message": "Tem certeza de que deseja continuar sem conceder todas as permissões? Algumas funcionalidades podem não funcionar corretamente.",
         "title": "Permissões não totalmente concedidas"
       },
       "openSettings": "Abrir Configurações",
-      "subtitle": "No macOS, o Witsy precisa de certas permissões para oferecer a melhor experiência.",
+      "subtitle": "No macOS, o @:{'common.appName'} precisa de certas permissões para oferecer a melhor experiência.",
       "title": "Permissões do Sistema"
     },
     "studio": {
@@ -1900,13 +1979,13 @@
       "already": "@:{'onboarding.chat.already'}",
       "count": "@:{'onboarding.chat.count'}",
       "error": "@:{'onboarding.chat.error'}",
-      "subtitle": "Interaja com o Witsy usando sua voz! O Witsy pode ler em voz alta não apenas as respostas das suas sessões de chat com modelos de linguagem, mas também qualquer texto exibido na tela em outros aplicativos!",
+      "subtitle": "Interaja com o @:{'common.appName'} usando sua voz! O @:{'common.appName'} pode ler em voz alta não apenas as respostas das suas sessões de chat com modelos de linguagem, mas também qualquer texto exibido na tela em outros aplicativos!",
       "success": "@:{'onboarding.chat.success'}",
       "title": "Interação por Voz"
     },
     "welcome": {
-      "subtitle": "O Witsy é um assistente de IA poderoso que pode ajudá-lo com uma ampla variedade de tarefas. Você pode conversar com ele, pedir para escrever documentos e até mesmo executar códigos no seu computador. Vamos começar!",
-      "title": "Bem-vindo ao Witsy!"
+      "subtitle": "@:{'common.appName'} is a powerful AI assistant that can help you with a wide range of tasks. You can chat with it, ask it to write documents, and even run code on your computer. Let's get started!",
+      "title": "Bem-vindo ao @:{'common.appName'}!"
     }
   },
   "plugins": {
@@ -2012,8 +2091,7 @@
       "formatError": {
         "text": "Por favor, tente novamente com outro arquivo.",
         "title": "Este formato de arquivo não é suportado por este modelo."
-      },
-      "tooltip": "Anexar arquivo"
+      }
     },
     "conversation": {
       "placeholders": {
@@ -2025,20 +2103,29 @@
       "stop": "Parar conversa",
       "tooltip": "Ditado"
     },
-    "docRepos": {
-      "none": "Nenhuma base de conhecimento disponível. Deseja criar uma agora?",
-      "tooltip": "Conectar à base de conhecimento"
-    },
-    "experts": {
-      "clear": "Limpar especialista",
-      "tooltip": "Selecionar especialista"
-    },
     "instructions": {
-      "default": "⚙️ Usar configuração padrão",
-      "title": "@:{'common.instructions'}"
+      "default": "⚙️ Usar configuração padrão"
+    },
+    "menu": {
+      "attach": {
+        "title": "Adicionar fotos e arquivos"
+      },
+      "docRepos": {
+        "manage": "Gerenciar Base de Conhecimento",
+        "title": "Conhecimento"
+      },
+      "experts": {
+        "manage": "Criar Novo Especialista"
+      },
+      "instructions": {
+        "title": "Estilo de Escrita"
+      }
+    },
+    "noEngineAvailable": {
+      "title": "Nenhum provedor de modelo configurado"
     },
     "placeholders": {
-      "default": "Pressione Enter para enviar, Shift+Enter para adicionar uma nova linha"
+      "default": "Digite sua mensagem aqui…"
     }
   },
   "realtimeChat": {
@@ -2075,7 +2162,7 @@
     },
     "generationError": "Erro ao gerar texto",
     "loadingError": "Erro ao carregar arquivo scratchpad",
-    "placeholder": "Comece a digitar seu documento ou\npeça ao Witsy para escrever algo para você!\n\nDepois de começar, você pode pedir ao Witsy\npara fazer modificações em seu documento.\n\nSe você destacar uma parte do seu texto,\nWitsy atualizará apenas essa parte.\n\nConfira também o Assistente de Escrita\nna barra de ação no canto inferior direito!\n\nExperimente!",
+    "placeholder": "Comece a digitar seu documento ou\npeça ao @:{'common.appName'} para escrever algo para você!\n\nDepois de começar, você pode pedir ao @:{'common.appName'}\npara fazer modificações no seu documento.\n\nSe você destacar uma parte do seu texto,\n@:{'common.appName'} atualizará somente essa parte.\n\nConfira também o Assistente de Escrita\nna barra de ações no canto inferior direito!\n\nExperimente!",
     "title": "Scratchpad"
   },
   "settings": {
@@ -2159,15 +2246,15 @@
     },
     "commands": {
       "confirmDelete": "Tem certeza de que deseja excluir este comando?",
+      "disableAll": "Desativar tudo",
+      "enableAll": "Ativar tudo",
       "export": "Exportar",
       "exportError": "Falha ao exportar arquivo de comandos",
       "exportSuccess": "Arquivo de comandos exportado com sucesso",
       "import": "@:{'common.import'}",
       "importError": "Falha ao importar arquivo de comandos",
       "importSuccess": "Arquivo de comandos importado com sucesso",
-      "new": "Novo",
-      "selectAll": "@:{'common.selectAll'}",
-      "unselectAll": "@:{'common.selectNone'}"
+      "new": "Novo"
     },
     "deepResearch": {
       "breadth": "Abrangência da pesquisa",
@@ -2183,7 +2270,7 @@
       "runtime": "Tipo de Pesquisa Profunda",
       "runtimes": {
         "ma": "Multi-agente (totalmente agentivo, conduzido por LLM)",
-        "ms": "Multi-etapas (híbrido código/agente, conduzido por Witsy)"
+        "ms": "Multietapas (código/agente híbrido, conduzido pelo @:{'common.appName'})"
       }
     },
     "engines": {
@@ -2267,7 +2354,11 @@
     },
     "experts": {
       "confirmDelete": "Tem certeza de que deseja excluir este especialista?",
+      "confirmDeleteAll": "Tem certeza de que deseja excluir todos os especialistas?",
       "copy": "Copiar",
+      "deleteAll": "Excluir tudo",
+      "disableAll": "Desativar tudo",
+      "enableAll": "Ativar tudo",
       "export": "Exportar",
       "exportError": "Falha ao exportar arquivo de especialistas",
       "exportSuccess": "Arquivo de especialistas exportado com sucesso",
@@ -2275,10 +2366,8 @@
       "importError": "Falha ao importar arquivo de especialistas",
       "importSuccess": "Arquivo de especialistas importado com sucesso",
       "new": "Novo",
-      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordenar alfabeticamente",
-      "sortState": "Ordenar por estado",
-      "unselectAll": "@:{'common.selectNone'}"
+      "sortState": "Ordenar por estado"
     },
     "general": {
       "darkTint": "Tonificação escura",
@@ -2310,6 +2399,7 @@
         "artifacts": "Instruir o modelo a criar artefatos",
         "title": "Instruções adicionais"
       },
+      "disableStreaming": "Desativar streaming",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",
@@ -2325,47 +2415,6 @@
         "uplifting": "🌟 Inspirador e edificante",
         "visionary": "🚀 Futurista e visionário"
       }
-    },
-    "mcp": {
-      "addCustomServer": "Adicionar servidor MCP...",
-      "confirmDelete": "Tem certeza de que deseja excluir este servidor?",
-      "connectedToServers": "Conectado a {count} servidor MCP{count > 1 ? 'es' : ''}",
-      "copyInstallCommand": "Você pode copiar o comando de instalação para sua área de transferência e experimentá-lo em um Terminal.",
-      "description": "Este plugin permite que os mecanismos LLM acessem",
-      "failedToInstall": "Falha ao instalar servidor",
-      "importJson": {
-        "details": "Cole/cole aqui as definições do servidor JSON MCP do Claude.",
-        "errorArgs": "Argumentos de servidor MCP inválidos.",
-        "errorCommand": "Comando do servidor MCP não encontrado.",
-        "errorEmpty": "O JSON não pode estar vazio.",
-        "errorFormat": "Erro ao analisar a definição do servidor JSON.",
-        "errorMultiple": "Vários servidores encontrados. Por favor, cole um servidor de cada vez.",
-        "menu": "@:{'settings.mcp.importJson.title'}…",
-        "title": "Importar de JSON"
-      },
-      "importSmitheryServer": "Importar servidor Smithery.ai…",
-      "mcpServers": "Servidores MCP",
-      "modelContextProtocol": "Protocolo de Contexto de Modelo",
-      "noServersFound": "Nenhum servidor MCP encontrado. Clique no ícone + acima para adicionar um novo servidor ou atualizar a lista.",
-      "noTools": "Nenhuma ferramenta disponível",
-      "retryWithApiKey": "Parece que uma chave de API é necessária para instalar este servidor. Você deseja tentar novamente com sua chave de API? Caso contrário, você pode copiar o comando e tentar em um terminal.",
-      "serverLogs": "Logs do Servidor MCP",
-      "serverNotFound": "O servidor que você está tentando conectar não existe.",
-      "servers": "servidores. Descubra e instale servidores MCP do",
-      "smithery": "Smithery",
-      "tools": "@:{'common.tools'}",
-      "tooltips": {
-        "addServer": "Adicionar um novo servidor MCP",
-        "deleteServer": "Excluir servidor",
-        "editServer": "Editar servidor",
-        "refreshServers": "Atualizar lista de servidores MCP",
-        "restartServers": "Reiniciar servidores MCP",
-        "startServer": "Iniciar servidor",
-        "stopServer": "Parar servidor",
-        "viewLogs": "Visualizar logs do servidor",
-        "viewTools": "Visualizar ferramentas disponíveis"
-      },
-      "totalTools": "Total de {count} serviço{count > 1 ? 's' : ''} disponível{count > 1 ? 's' : ''}"
     },
     "plugins": {
       "browse": {
@@ -2385,7 +2434,7 @@
         "title": "Sistema de Arquivos"
       },
       "image": {
-        "apiKeyReminder": "Certifique-se de inserir sua chave de API no painel Modelos das Configurações do Witsy.",
+        "apiKeyReminder": "Certifique-se de inserir sua chave API no painel Modelos das Configurações do @:{'common.appName'}.",
         "description": "Este plugin permite que os mecanismos LLM criem imagens a partir de uma descrição de texto.",
         "falai": {
           "aboutModels": "Mais sobre os modelos fal.ai"
@@ -2473,10 +2522,9 @@
       "chat": "Chat",
       "commands": "Comandos",
       "deepResearch": "@:{'common.deepResearch'}",
-      "experts": "Especialistas",
+      "experts": "@:{'common.experts'}",
       "general": "Geral",
       "llm": "LLM",
-      "mcp": "MCP",
       "models": "Modelos",
       "plugins": "Plugins",
       "shortcuts": "Atalhos",
@@ -2526,7 +2574,7 @@
       "tts": {
         "groqAcceptTermsReminder": "Você precisa <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">aceitar os termos e condições</a> para usar o modelo Groq.",
         "kokoroReminder": "Fornecido",
-        "sampleText": "Bem-vindo ao Witsy, o assistente de IA de desktop definitivo.",
+        "sampleText": "Bem-vindo ao @:{'common.appName'}, o assistente de IA definitivo para desktop.",
         "serviceDisclaimer": "O serviço pode parar de funcionar a qualquer momento.",
         "voice": "@:{'common.voice'}"
       },
@@ -2626,9 +2674,24 @@
       "voiceMode": "@:{'realtimeChat.title'}"
     },
     "notification": {
-      "darwin": "Você pode ativar o Witsy pelo ícone da caneta na barra de menu.",
-      "linux": "Você pode ativar o Witsy pelo ícone da caneta na barra de menu.",
-      "windows": "Você pode ativar o Witsy pelo ícone da caneta na área de notificação."
+      "darwin": "Você pode ativar o @:{'common.appName'} clicando no ícone de caneta-tinteiro na barra de menu.",
+      "linux": "Você pode ativar o @:{'common.appName'} clicando no ícone de caneta-tinteiro na barra de menu.",
+      "windows": "Você pode ativar o @:{'common.appName'} clicando no ícone de caneta-tinteiro na bandeja do sistema."
+    }
+  },
+  "workspace": {
+    "delete": {
+      "confirm": "Tem certeza de que deseja excluir este espaço de trabalho?"
+    },
+    "editor": {
+      "color": "Color",
+      "create": "Create New Workspace",
+      "createDescription": "Create a new workspace to organize your models, chats and agents.",
+      "edit": "Edit Workspace",
+      "editDescription": "Edit the details of your workspace.",
+      "icon": "Icon",
+      "name": "Name",
+      "namePlaceholder": "Enter workspace name"
     }
   }
 }

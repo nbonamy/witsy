@@ -1,5 +1,6 @@
 
 {
+  "workspaceId": "00000000-0000-0000-0000-000000000000",
   "general": {
     "firstRun": true,
     "safeKeys": true,
@@ -70,7 +71,7 @@
     "model": "",
     "autosave": false,
     "disableStreaming": false,
-    "disableTools": false
+    "tools": null
   },
   "commands": {
     "engine": "",

@@ -221,7 +221,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
         {
           label: t('menu.help.goToDataFolder'),
           click: async () => {
-            await shell.openPath(app.getPath('userData'))
+            await shell.openPath(app.getPath('userData') + '2')
           }
         },
         {
