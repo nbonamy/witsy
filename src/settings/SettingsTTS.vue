@@ -42,8 +42,8 @@
         </select>
         <RefreshButton @refresh="onRefreshVoices" v-if="canRefreshVoices" />
         <button class="control" @click.prevent="onPlay">
-          <BIconPlayFill v-if="audioState.state === 'idle'"/>
-          <BIconStopFill v-else />
+          <PlayIcon v-if="audioState.state === 'idle'"/>
+          <SquareIcon v-else />
         </button>
       </div>
       <audio ref="audio" />
@@ -61,17 +61,18 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
+import { PlayIcon, SquareIcon } from 'lucide-vue-next'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import RefreshButton from '../components/RefreshButton.vue'
+import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
 import { getTTSModels } from '../voice/tts'
-import TTSOpenAI from '../voice/tts-openai'
-import TTSGroq from '../voice/tts-groq'
 import TTSElevenLabs from '../voice/tts-elevenlabs'
 import TTSFalAi from '../voice/tts-falai'
+import TTSGroq from '../voice/tts-groq'
+import TTSOpenAI from '../voice/tts-openai'
 
 const engine = ref('openai')
 const voice = ref(null)

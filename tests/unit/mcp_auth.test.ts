@@ -28,7 +28,6 @@ vi.mock('portfinder', () => ({
   getPortPromise: vi.fn(() => Promise.resolve(8090))
 }))
 
-// Mock i18n
 vi.mock('../../src/main/i18n', () => ({
   useI18n: vi.fn(() => (key: string) => key)
 }))
@@ -176,20 +175,18 @@ describe('McpOAuthManager', () => {
     mockClient.connect.mockResolvedValue(undefined)
     mockClient.close.mockResolvedValue(undefined)
     
-    const result = await manager.detectOAuth('http://localhost:3000')
+    const result = await manager.detectOAuth('http://localhost:3000', {})
     
     expect(result).toEqual({ requiresOAuth: false })
     expect(mockClient.connect).toHaveBeenCalled()
     expect(mockClient.close).toHaveBeenCalled()
   })
 
-
-
   test('detectOAuth throws non-OAuth errors', async () => {
     const networkError = new Error('Network connection failed')
     mockClient.connect.mockRejectedValue(networkError)
     
-    await expect(manager.detectOAuth('http://localhost:3000')).rejects.toThrow('Network connection failed')
+    await expect(manager.detectOAuth('http://localhost:3000', {})).rejects.toThrow('Network connection failed')
   })
 
   describe('isOAuthRequiredError', () => {

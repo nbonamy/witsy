@@ -1,39 +1,46 @@
 
 .panel {
   
-  padding: 2rem;
-  padding-top: 0px;
+  margin: 0;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  margin: 8px 6px 8px 6px;
-  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  gap: 1rem;
 
-  .panel-header {
+  header, .panel-header {
     
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-weight: bold;
+    font-weight: var(--font-weight-medium);
     gap: 1rem;
 
-    padding: 1.5rem;
-    background-color: var(--window-decoration-color);
-    border: 1px solid var(--control-border-color);
-    border-bottom-width: 0px;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
     margin-bottom: 0px !important;
 
     label {
       flex: 1;
+
+      .tag {
+        margin-left: 0.25rem;
+        position: relative;
+        top: -2px;
+      }
+
+      .subtitle {
+        font-size: 12px;
+        margin-top: 0.25rem;
+        font-weight: 200;
+        color: var(--faded-text-color);
+      }
     }
 
     .icon {
       cursor: pointer;
       width: 1.125rem;
       height: 1.125rem;
-      opacity: 0.8;
-      fill: var(--text-color);
+      color: var(--color-on-surface-variant);
     }
 
     .spinner {
@@ -46,47 +53,41 @@
 
   }
 
-  &:not(:has(.panel-body, .panel-empty)) {
-    .panel-header {
-      border-bottom-width: 1px;
-      border-bottom-left-radius: 0.5rem;
-      border-bottom-right-radius: 0.5rem;
-    }
-  }
-
-  .panel-body, .panel-empty {
+  main, .panel-body {
     flex-grow: 1;
-    border: 1px solid var(--control-border-color);
-    border-bottom-left-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
   }
 
-  .panel-body {
+  main, .panel-body {
 
-    padding: 1rem;
     display: flex;
     flex-direction: column;
     overflow: auto;
     gap: 1rem;
+    padding-right: 0.5rem;
+
+    &:has(input, select, textarea) {
+      padding-left: 2px;
+    }
+
+    &:has(.panel-item .actions) {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
 
     .panel-item {
 
-      padding: 1rem;
-      font-size: 9.5pt;
+      margin-left: 0.25rem;
       display: flex;
       flex-direction: row;
       align-items: center;
-      border: 0.75px solid var(--control-border-color);
-      border-radius: 0.5rem;
       gap: 1rem;
 
       .leading {
-        text-align: center;
-        flex: 0 0 2.5rem;
-        font-size: 13pt;
+        flex: 0 0 1.5rem;
+        font-size: 17.5px;
         svg {
-          width: 1.25rem;
-          height: 1.25rem;
+          width: var(--icon-lg);
+          height: var(--icon-lg);
         }
 
         &:has(a) {
@@ -113,12 +114,14 @@
         }
 
         .text {
-          font-size: 11pt;
-          font-weight: 600;
+          font-size: 14px;
+          font-weight: var(--font-weight-medium);
         }
 
         .subtext {
-          opacity: 0.6;
+          font-weight: 200;
+          font-size: 12px;
+          color: var(--faded-text-color);
         }
       }
 
@@ -135,9 +138,9 @@
         }
 
         svg {
-          width: 1.25rem;
-          height: 1.25rem;
-          opacity: 0.6;
+          width: var(--icon-md);
+          height: var(--icon-md);
+          opacity: 0.45;
           cursor: pointer;
         }
 
@@ -155,9 +158,52 @@
     }
   }
 
-  .panel-empty {
-    padding: 3rem 15%;
+  main.empty, .panel-empty {
+    padding: 2rem 25%;
     text-align: center;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--faded-text-color);
+  }
+
+  footer, .panel-footer {
+
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+
+    button {
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: var(--font-weight-medium);
+      color: #1B4FB2;
+      svg {
+        color: #1B4FB2;
+      }
+    }
+
+  }
+
+  &:has(footer, .panel-footer) .panel-empty {
+    flex-grow: 1;
+  }
+
+  &.collapsed {
+    
+    flex-grow: 0;
+    
+    header, .panel-header {
+      .toggle-panel {
+        transform: rotate(180deg);
+      }
+    }
+    
+    
+    > :not(header, .panel-header) {
+      display: none;
+    }
   }
 
 }

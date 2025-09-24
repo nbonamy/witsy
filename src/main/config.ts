@@ -40,19 +40,19 @@ export const setOnSettingsChange = (callback: CallableFunction) => {
 }
 
 export const settingsFilePath = (app: App): string => {
-  const userDataPath = app.getPath('userData')
+  const userDataPath = app.getPath('userData') + '2'
   const settingsFilePath = path.join(userDataPath, 'settings.json')
   return settingsFilePath
 }
 
 export const apiKeysFilePath = (app: App): string => {
-  const userDataPath = app.getPath('userData')
+  const userDataPath = app.getPath('userData') + '2'
   const apiKeysFilePath = path.join(userDataPath, 'apiKeys.json')
   return apiKeysFilePath
 }
 
 const engineConfigFilePath = (app: App, engine: string): string => {
-  const userDataPath = app.getPath('userData')
+  const userDataPath = app.getPath('userData') + '2'
   const engineModelsFilePath = path.join(userDataPath, 'engines')
   fs.mkdirSync(engineModelsFilePath, { recursive: true })
   return path.join(engineModelsFilePath, `${engine}.json`)

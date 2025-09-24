@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 
-import { CustomInstruction } from '../types/config'
+import { CustomInstruction } from '../types'
 import { ref, computed, watch } from 'vue'
 import { i18nInstructions, t } from '../services/i18n'
 

@@ -120,7 +120,7 @@ const onStop = async () => {
   padding: 10px 4px;
   text-align: center;
   font-variant-numeric: tabular-nums;
-  font-size: 9.5pt;
+  font-size: 12.5px;
   color: var(--icon-color);
   white-space: nowrap;
 }

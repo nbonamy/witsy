@@ -54,12 +54,17 @@ test('Shows form fields for information step', async () => {
   expect(typeOptions.length).toBe(2)
   expect(typeOptions[0].attributes('value')).toBe('runnable')
   expect(typeOptions[1].attributes('value')).toBe('support')
+
+  // Should show goal field
+  const goalField = wrapper.find('textarea[name="goal"]')
+  expect(goalField.exists()).toBe(true)
 })
 
 test('Populates form fields with agent data in edit mode', async () => {
   const agent = new Agent()
   agent.name = 'Test Agent Name'
   agent.description = 'Test Agent Description'
+  agent.instructions = 'Test Agent Goal'
   agent.type = 'support'
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -77,44 +82,12 @@ test('Populates form fields with agent data in edit mode', async () => {
   const descriptionField = wrapper.find<HTMLTextAreaElement>('textarea[name="description"]')
   expect(descriptionField.element.value).toBe('Test Agent Description')
 
+  const goalField = wrapper.find<HTMLTextAreaElement>('textarea[name="goal"]')
+  expect(goalField.element.value).toBe('Test Agent Goal')
+
   const typeField = wrapper.find<HTMLSelectElement>('select[name="type"]')
   expect(typeField.element.value).toBe('support')
 })
-
-test('Updates form fields when typing', async () => {
-  const wrapper: VueWrapper<any> = mount(Editor, {
-    props: { 
-      mode: 'create',
-      agent: undefined
-    }
-  })
-  await nextTick()
-
-  // Click skip button to get to general step
-  const skipButton = wrapper.find('button[name="skip"]')
-  await skipButton.trigger('click')
-  await nextTick()
-
-  // Type in name field
-  const nameField = wrapper.find<HTMLInputElement>('input[name="name"]')
-  await nameField.setValue('New Agent Name')
-  
-  expect(nameField.element.value).toBe('New Agent Name')
-
-  // Type in description field
-  const descriptionField = wrapper.find<HTMLTextAreaElement>('textarea[name="description"]')
-  await descriptionField.setValue('New Agent Description')
-  
-  expect(descriptionField.element.value).toBe('New Agent Description')
-
-  // Change type field
-  const typeField = wrapper.find<HTMLSelectElement>('select[name="type"]')
-  await typeField.setValue('support')
-  
-  expect(typeField.element.value).toBe('support')
-})
-
-// === VALIDATION TESTS ===
 
 test('Validates information step - shows error for empty fields', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -143,8 +116,10 @@ test('Validates information step - shows error for empty fields', async () => {
   expect(errorDiv.text()).toBe('common.required.fieldsRequired')
   
   // Should still be on the same step (general step)
-  const steps = wrapper.findAll('.md-master-list-item')
-  expect(steps[1].classes()).toContain('selected')
+  const steps = wrapper.findAll('.wizard-step')
+  const activeStep = steps.find(step => step.classes().includes('active'))
+  expect(activeStep).toBeTruthy()
+  expect(activeStep!.text()).toContain('agent.create.information.title')
 })
 
 test('Validates information step - proceeds when fields are filled', async () => {
@@ -168,13 +143,49 @@ test('Validates information step - proceeds when fields are filled', async () =>
   const descriptionField = wrapper.find<HTMLTextAreaElement>('textarea[name="description"]')
   await descriptionField.setValue('Test Description')
 
+  const goalField = wrapper.find<HTMLTextAreaElement>('textarea[name="goal"]')
+  await goalField.setValue('Test Goal')
+
   // Try to proceed
   const wizardStep = wrapper.findAllComponents({ name: 'WizardStep' })[1]
   await wizardStep.vm.$emit('next')
   await nextTick()
 
-  // Should move to next step (Goal step for witsy agents)
-  const steps = wrapper.findAll('.md-master-list-item')
-  expect(steps[2].classes()).toContain('selected')
-  expect(steps[1].classes()).not.toContain('selected')
+  // Should move to next step (Model step for witsy agents)
+  const steps = wrapper.findAll('.wizard-step')
+  const activeStep = steps.find(step => step.classes().includes('active'))
+  expect(activeStep).toBeTruthy()
+  expect(activeStep!.text()).toContain('agent.create.llm.title')
+})
+
+test('Validates goal field is required', async () => {
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: { 
+      mode: 'create',
+      agent: undefined
+    }
+  })
+  await nextTick()
+
+  // Click skip button to get to general step
+  const skipButton = wrapper.find('button[name="skip"]')
+  await skipButton.trigger('click')
+  await nextTick()
+
+  // Fill in name and description but leave goal empty
+  const nameField = wrapper.find<HTMLInputElement>('input[name="name"]')
+  await nameField.setValue('Test Agent')
+  
+  const descriptionField = wrapper.find<HTMLTextAreaElement>('textarea[name="description"]')
+  await descriptionField.setValue('Test Description')
+
+  // Try to proceed with empty goal
+  const wizardStep = wrapper.findAllComponents({ name: 'WizardStep' })[1]
+  await wizardStep.vm.$emit('next')
+  await nextTick()
+
+  // Should show error message
+  const errorDiv = wizardStep.find('.error')
+  expect(errorDiv.exists()).toBe(true)
+  expect(errorDiv.text()).toBe('common.required.fieldsRequired')
 })

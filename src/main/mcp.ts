@@ -6,15 +6,25 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import { OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth'
 import { CompatibilityCallToolResultSchema } from '@modelcontextprotocol/sdk/types'
 import { exec } from 'child_process'
-import { App } from 'electron'
+import { app, App } from 'electron'
 import { LlmTool } from 'multi-llm-ts'
 import { anyDict } from '../types/index'
-import { McpClient, McpInstallStatus, McpServer, McpStatus, McpTool } from '../types/mcp'
+import { McpClient, McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from '../types/mcp'
 import { loadSettings, saveSettings, settingsFilePath } from './config'
 import McpOAuthManager from './mcp_auth'
 import Monitor from './monitor'
+import { useI18n } from './i18n'
+import { notifyBrowserWindows } from './windows'
+import { wait } from './utils'
+
+type ToolsCacheEntry = {
+  tools: any
+  timestamp: number
+}
 
 export default class {
+
+  private readonly CACHE_TTL_MS = 10 * 60 * 1000 // 10 minutes
 
   app: App
   monitor: Monitor|null
@@ -22,6 +32,7 @@ export default class {
   clients: McpClient[]
   logs: { [key: string]: string[] }
   oauthManager: McpOAuthManager
+  toolsCache: Map<string, ToolsCacheEntry>
   
   constructor(app: App) {
     this.app = app
@@ -30,6 +41,33 @@ export default class {
     this.currentConfig = null
     this.logs = {}
     this.oauthManager = new McpOAuthManager(app)
+    this.toolsCache = new Map()
+  }
+
+  private getCachedTools = async (client: McpClient): Promise<any> => {
+    const uuid = client.server.uuid
+    const cached = this.toolsCache.get(uuid)
+    
+    if (cached && Date.now() - cached.timestamp < this.CACHE_TTL_MS) {
+      return cached.tools
+    }
+
+    // Cache miss or expired, fetch new tools
+    const tools = await client.client.listTools()
+    this.toolsCache.set(uuid, {
+      tools,
+      timestamp: Date.now()
+    })
+    
+    return tools
+  }
+
+  private invalidateToolsCache = (uuid?: string): void => {
+    if (uuid) {
+      this.toolsCache.delete(uuid)
+    } else {
+      this.toolsCache.clear()
+    }
   }
 
   getStatus = (): McpStatus => {
@@ -40,6 +78,42 @@ export default class {
       })),
       logs: this.logs
     }
+  }
+
+  getAllServersWithTools = async (): Promise<McpServerWithTools[]> => {
+    const results: McpServerWithTools[] = []
+    
+    for (const client of this.clients) {
+      try {
+        const tools = await this.getCachedTools(client)
+        const mcpTools: McpTool[] = tools.tools.filter((tool: any) => {
+          if (Array.isArray(client.server.toolSelection) && !client.server.toolSelection.includes(tool.name)) {
+            return false
+          } else {
+            return true
+          }
+        }).map((tool: any) => ({
+          name: tool.name,
+          description: tool.description || tool.name
+        }))
+        
+        results.push({
+          ...client.server,
+          tools: mcpTools.map(t => ({
+            uuid: this.uniqueToolName(client.server, t.name),
+            ...t,
+          }))
+        })
+      } catch (e) {
+        console.error(`Failed to get tools from MCP server ${client.server.url}:`, e)
+        results.push({
+          ...client.server,
+          tools: []
+        })
+      }
+    }
+    
+    return results
   }
 
   getServers = (): McpServer[] => {
@@ -69,7 +143,10 @@ export default class {
 
     // now we can do it
     return [
-      ...config.mcp.servers,
+      ...config.mcp.servers.map((server: McpServer) => ({
+        ...server,
+        toolSelection: server.toolSelection ?? null
+      })),
       ...Object.keys(config.mcpServers).reduce((arr: McpServer[], key: string) => {
         arr.push({
           uuid: key.replace('@', ''),
@@ -81,7 +158,8 @@ export default class {
           url: config.mcpServers[key].args.join(' '),
           cwd: config.mcpServers[key].cwd,
           env: config.mcpServers[key].env,
-          oauth: config.mcp.mcpServersExtra[key]?.oauth || undefined
+          oauth: config.mcp.mcpServersExtra[key]?.oauth || undefined,
+          toolSelection: config.mcp.mcpServersExtra[key]?.toolSelection || null
         })
         return arr
       }, [])
@@ -99,6 +177,9 @@ export default class {
     if (client) {
       this.disconnect(client)
     }
+
+    // invalidate cache for this server
+    this.invalidateToolsCache(uuid)
 
     // is it a normal server
     if (config.mcp.servers.find((s: McpServer) => s.uuid === uuid)) {
@@ -223,7 +304,7 @@ export default class {
     const config = loadSettings(this.app)
 
     // create?
-    if (server.uuid === null) {
+    if (!server.uuid) {
       server.uuid = crypto.randomUUID()
       server.registryId = server.uuid
       config.mcp.servers.push(server)
@@ -235,6 +316,9 @@ export default class {
     if (client) {
       this.disconnect(client)
     }
+
+    // invalidate cache for this server
+    this.invalidateToolsCache(server.uuid)
 
     // search for server in normal server
     const original = config.mcp.servers.find((s: McpServer) => s.uuid === server.uuid)
@@ -254,6 +338,7 @@ export default class {
       original.env = server.env
       original.headers = server.headers
       original.oauth = server.oauth
+      original.toolSelection = server.toolSelection ?? null
       edited = true
     }
 
@@ -266,8 +351,9 @@ export default class {
         config.mcp.mcpServersExtra[server.registryId] = {}
       }
 
-      // state
+      // extra
       config.mcp.mcpServersExtra[server.registryId].state = server.state
+      config.mcp.mcpServersExtra[server.registryId].toolSelection = server.toolSelection ?? null
       
       // label
       if (server.label !== undefined) {
@@ -350,6 +436,7 @@ export default class {
       await client.client.close()
     }
     this.clients = []
+    this.invalidateToolsCache()
     this.oauthManager.shutdown()
   }
 
@@ -358,6 +445,35 @@ export default class {
     await this.connect()
   }
 
+  restartServer = async (uuid: string): Promise<boolean> => {
+
+    const servers = this.getServers()
+    const server = servers.find(s => s.uuid === uuid)
+    if (!server || server.state !== 'enabled') return false
+
+    // Step 1: Disconnect and clear cache to show "starting" status
+    const mcpClient = this.clients.find((c: McpClient) => c.server.uuid === server.uuid)
+    if (mcpClient) {
+      this.disconnect(mcpClient)
+    }
+
+    // Clear cache to set tools = undefined (starting status)
+    this.toolsCache.delete(server.uuid)
+
+    // Notify UI to show "starting" status
+    notifyBrowserWindows('mcp-servers-updated')
+
+    // Step 2: Small delay to ensure UI updates (use existing wait utility)
+    await wait(100)
+
+    // Step 3: Reconnect
+    const success = await this.connectToServer(server)
+
+    // Final notification is already handled by connectToServer
+
+    return success
+  }
+  
   connect = async (): Promise<void> => {
 
     // now connect to servers
@@ -428,8 +544,8 @@ export default class {
     // })
 
     // get tools
-    const tools = await client.listTools()
-    const toolNames = tools.tools.map(tool => this.uniqueToolName(server, tool.name))
+    const tools = await this.getCachedTools({ client, server, tools: [] } as McpClient)
+    const toolNames = tools.tools.map((tool: any) => this.uniqueToolName(server, tool.name))
 
     // store
     this.clients.push({
@@ -483,7 +599,7 @@ export default class {
 
       // build the client
       const client = new Client({
-        name: 'witsy-mcp-client',
+        name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
         version: '1.0.0'
       }, {
         capabilities: { tools: {} }
@@ -536,7 +652,7 @@ export default class {
 
       // build the client
       const client = new Client({
-        name: 'witsy-mcp-client',
+        name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
         version: '1.0.0'
       }, {
         capabilities: { tools: {} }
@@ -555,6 +671,7 @@ export default class {
 
     } catch (e) {
       console.error(`Failed to connect to MCP server ${server.url}:`, e)
+      this.logs[server.uuid] = this.logs[server.uuid] || []
       this.logs[server.uuid].push(e.message)
     }
 
@@ -596,7 +713,7 @@ export default class {
             token_endpoint_auth_method: 'client_secret_post',
             grant_types: ['authorization_code', 'refresh_token'],
             response_types: ['code'],
-            client_name: 'Witsy MCP Client',
+            client_name: `${useI18n(app)('common.appName')} MCP Client`,
             scope: 'mcp:tools'
           }
           oauthProvider.saveClientInformation(clientInformation)
@@ -615,7 +732,7 @@ export default class {
 
       // build the client
       const client = new Client({
-        name: 'witsy-mcp-client',
+        name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
         version: '1.0.0'
       }, {
         capabilities: { tools: {} }
@@ -654,7 +771,7 @@ export default class {
     const client = this.clients.find(client => client.server.uuid === uuid)
     if (!client) return []
 
-    const tools = await client.client.listTools()
+    const tools = await this.getCachedTools(client)
     return tools.tools.map((tool: any) => ({
       name: tool.name,
       description: tool.description    
@@ -662,12 +779,18 @@ export default class {
 
   }
 
-  getTools = async (): Promise<LlmTool[]> => {
+  getLlmTools = async (): Promise<LlmTool[]> => {
     const allTools: LlmTool[] = []
     for (const client of this.clients) {
       try {
-        const tools = await client.client.listTools()
+        const tools = await this.getCachedTools(client)
         for (const tool of tools.tools) {
+
+          // skip disabled tools
+          if (Array.isArray(client.server.toolSelection) && !client.server.toolSelection.includes(tool.name)) {
+            continue
+          }
+
           try {
             const functionTool = this.mcpToOpenAI(client.server, tool)
             allTools.push(functionTool)

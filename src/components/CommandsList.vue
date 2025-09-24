@@ -1,10 +1,10 @@
 <template>
   <div class="list-actions">
-    <div class="list-action new" @click="onNew"><BIconPlusLg />{{ t('settings.commands.new') }}</div>
-    <div class="list-action edit" @click="onEdit(selected)" v-if="selected"><BIconPencil />{{ t('common.edit') }}</div>
-    <div class="list-action delete" @click="onDelete" v-if="selected"><BIconTrash />{{ t('common.delete') }}</div>
-    <div class="push" /> 
-    <div class="list-action defaults" @click="onDefaults"><BIconSliders /></div>
+    <div class="list-action new" @click="onNew"><PlusIcon />{{ t('settings.commands.new') }}</div>
+    <div class="list-action edit" @click="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
+    <div class="list-action delete" @click="onDelete" v-if="selected"><Trash2Icon />{{ t('common.delete') }}</div>
+    <div class="flex-push" /> 
+    <div class="list-action defaults" @click="onDefaults"><Settings2Icon /></div>
     <div class="list-action menu" @click.stop="onMore" ref="moreButton"><div></div><div></div><div></div></div>
   </div>
   <div class="commands sticky-table-container">
@@ -18,7 +18,7 @@
         <tr v-for="command in visibleCommands" :key="command.id" :data-id="command.id" class="command" :class="selected?.id == command.id ? 'selected' : ''"
             @click="onSelect(command)" @dblclick="onEdit(command)" draggable="true" @dragstart="reorderCommands.onDragStart" @dragover="reorderCommands.onDragOver" @dragend="reorderCommands.onDragEnd"
         >
-          <td class="enabled"><input type="checkbox" :checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
+          <td class="enabled"><input type="checkbox" class="sm":checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
           <td class="icon">{{ command.icon }}</td>
           <td class="label">{{ label(command) }}</td>
           <td class="shortcut">{{ command.shortcut }}</td>
@@ -45,6 +45,7 @@ import useReorderTable from '../composables/reorder_table'
 import CommandDefaults from '../screens/CommandDefaults.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
+import { PencilIcon, PlusIcon, Settings2Icon, Trash2Icon } from 'lucide-vue-next'
 
 const commands= ref<Command[]>(null)
 const selected= ref<Command>(null)
@@ -64,8 +65,8 @@ const emit = defineEmits([ 'create', 'edit' ])
 const contextMenuActions = [
   { label: t('settings.commands.export'), action: 'export' },
   { label: t('settings.commands.import'), action: 'import' },
-  { label: t('settings.commands.selectAll'), action: 'select' },
-  { label: t('settings.commands.unselectAll'), action: 'unselect' },
+  { label: t('settings.commands.enableAll'), action: 'select' },
+  { label: t('settings.commands.disableAll'), action: 'unselect' },
 ]
 
 const visibleCommands = computed(() => commands.value?.filter((command: Command) => command.state != 'deleted'))
@@ -106,8 +107,8 @@ const showContextMenu = () => {
   showMenu.value = true
   const rcButton = moreButton.value.getBoundingClientRect()
   const rcContent = moreButton.value.closest('.tab-content').getBoundingClientRect()
-  menuX.value = rcContent.right - rcButton.right
-  menuY.value = rcButton.bottom + 8
+  menuX.value = rcContent.right - rcButton.right - 8
+  menuY.value = rcButton.bottom - 32
 }
 
 const closeContextMenu = () => {
@@ -121,10 +122,18 @@ const handleActionClick = async (action: string) => {
 
   // process
   if (action === 'select') {
-    commands.value.forEach((command: Command) => command.state = 'enabled')
+    commands.value.forEach((command: Command) => {
+      if (command.state === 'disabled') {
+        command.state = 'enabled'
+      }
+    })
     save()
   } else if (action === 'unselect') {
-    commands.value.forEach((command: Command) => command.state = 'disabled')
+    commands.value.forEach((command: Command) => {
+      if (command.state === 'enabled') {
+        command.state = 'disabled'
+      }
+    })
     save()
   } else if (action === 'defaults') {
     onDefaults()

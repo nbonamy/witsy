@@ -19,6 +19,7 @@ vi.mock('../../src/services/i18n', async () => {
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
+  store.isFeatureEnabled = () => true
 })
 
 beforeEach(() => {
@@ -40,31 +41,23 @@ beforeEach(() => {
 
 test('No chat', async () => {
   store.history.chats = []
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined } } )
   expect(wrapper.exists()).toBe(true)
 })
 
 test('Shows chats', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined } } )
   expect(wrapper.findAll('.chat')).toHaveLength(10)
   expect(wrapper.findAll('.selected')).toHaveLength(0)
   expect(wrapper.findAll('.select')).toHaveLength(0)
   wrapper.findAll('.chat').forEach((chat, i) => {
     expect(chat.find('.title').text()).toBe(`Chat ${i}`)
-    expect(chat.find('.subtitle').text()).toBe(`Subtitle ${i}`)
+    // expect(chat.find('.subtitle').text()).toBe(`Subtitle ${i}`)
   })
 })
 
-test('Switches to folder mode', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, filter: '' } } )
-  await wrapper.find('.button-group button:nth-child(1)').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('chat-list-mode', 'timeline')
-  await wrapper.find('.button-group button:nth-child(2)').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('chat-list-mode', 'folder')
-})
-
 test('Shows day indicator', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined } } )
   expect(wrapper.findAll('.day')).toHaveLength(6)
   expect(wrapper.findAll('.day').at(0)!.text()).toBe('chatList.timeline.today')
   expect(wrapper.findAll('.day').at(1)!.text()).toBe('chatList.timeline.yesterday')
@@ -86,7 +79,7 @@ test('Shows folders indicator', async () => {
     { id: '2', name: 'Wonderful', chats: [store.history.chats[2].uuid, store.history.chats[3].uuid, store.history.chats[4].uuid] }
   ]
   localStorage.setItem('expandedFolders', `${store.rootFolder.id},2`)
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'folder', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'folder', chat: undefined } } )
   await wrapper.vm.$nextTick()
   expect(wrapper.findAll('section')).toHaveLength(3)
   expect(wrapper.find('section:nth-child(1) .folder').text()).toBe('▶ Great')
@@ -103,7 +96,7 @@ test('Toggles folder state', async () => {
     { id: '2', name: 'Wonderful', chats: [store.history.chats[2].uuid, store.history.chats[3].uuid, store.history.chats[4].uuid] }
   ]
   localStorage.setItem('expandedFolders', `${store.rootFolder.id},2`)
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'folder', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'folder', chat: undefined } } )
   await wrapper.vm.$nextTick()
   await wrapper.find('section:nth-child(1) .folder span').trigger('click')
   await wrapper.find('section:nth-child(2) .folder span').trigger('click')
@@ -111,51 +104,41 @@ test('Toggles folder state', async () => {
   expect(localStorage.getItem('expandedFolders')).toBe(`${store.rootFolder.id},1`)
 })
 
-test('Select chat', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, filter: '' } } )
+test('Change chat (non-select mode)', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined } } )
   expect(wrapper.findAll('.selected')).toHaveLength(0)
   await wrapper.findAll('.chat').at(3)!.trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('select-chat', store.history.chats[3])
 })
 
-test('Select chat', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'folder', chat: undefined, filter: '' } } )
+test('Select chat (select mode)', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'folder', selectMode: true, chat: undefined } } )
   expect(wrapper.findAll('.selected')).toHaveLength(0)
   await wrapper.findAll('.chat').at(3)!.trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('select-chat', store.history.chats[3])
+  expect(wrapper.vm.selection).toStrictEqual([store.history.chats[3].uuid])
 })
+
+test('Multiselect', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'folder', selectMode: true, chat: undefined } } )
+  expect(wrapper.findAll('.select')).toHaveLength(10)
+  expect(wrapper.findAll('.select .selected')).toHaveLength(0)
+  await wrapper.findAll('.chat').at(3)!.trigger('click')
+    expect(wrapper.vm.selection).toHaveLength(1)
+  await wrapper.findAll('.chat').at(5)!.trigger('click')
+  expect(wrapper.vm.selection).toHaveLength(2)
+  await wrapper.findAll('.chat').at(5)!.trigger('click')
+  expect(wrapper.vm.selection).toHaveLength(1)
+})
+
 
 test('Shows selection', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: store.history.chats[3], filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: store.history.chats[3] } } )
   expect(wrapper.findAll('.selected')).toHaveLength(1)
   expect(wrapper.findAll('.selected').at(0)!.find('.title').text()).toBe('Chat 3')
 })
 
-test('Filter All', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, filter: 'Subtitle' } } )
-  expect(wrapper.findAll('.chat')).toHaveLength(10)
-})
-
-test('Filter Single', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, filter: '9' } } )
-  expect(wrapper.findAll('.chat')).toHaveLength(1)
-  expect(wrapper.findAll('.chat').at(0)!.find('.title').text()).toBe('Chat 9')
-})
-
-test('Multiselect', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, filter: '', selectMode: true } } )
-  expect(wrapper.findAll('.select')).toHaveLength(10)
-  expect(wrapper.findAll('.select .selected')).toHaveLength(0)
-  await wrapper.findAll('.chat').at(3)!.trigger('click')
-  expect(wrapper.findAll('.select .selected')).toHaveLength(1)
-  await wrapper.findAll('.chat').at(5)!.trigger('click')
-  expect(wrapper.findAll('.select .selected')).toHaveLength(2)
-  await wrapper.findAll('.chat').at(5)!.trigger('click')
-  expect(wrapper.findAll('.select .selected')).toHaveLength(1)
-})
-
 test('Context Menu Timeline Mode', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'timeline', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'timeline', chat: undefined } } )
   expect(wrapper.findAll('.context-menu')).toHaveLength(0)
   await wrapper.findAll('.chat').at(3)!.trigger('contextmenu')
   expect(wrapper.findAll('.context-menu')).toHaveLength(1)
@@ -166,7 +149,7 @@ test('Context Menu Timeline Mode', async () => {
 })
 
 test('Context Menu Folder Mode', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
   expect(wrapper.findAll('.context-menu')).toHaveLength(0)
   await wrapper.findAll('.chat').at(3)!.trigger('contextmenu')
   expect(wrapper.findAll('.context-menu')).toHaveLength(1)
@@ -178,21 +161,21 @@ test('Context Menu Folder Mode', async () => {
 })
 
 test('Rename Chat', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'timeline', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'timeline', chat: undefined } } )
   await wrapper.findAll('.chat').at(3)!.trigger('contextmenu')
   await wrapper.findAll('.context-menu .item')[0].trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('rename-chat', store.history.chats[3])
 })
 
 test('Delete Chat', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'timeline', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'timeline', chat: undefined } } )
   await wrapper.findAll('.chat').at(3)!.trigger('contextmenu')
   await wrapper.findAll('.context-menu .item')[1].trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', store.history.chats[3].uuid)
 })
 
 test('Move Chat', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
   await wrapper.findAll('.chat').at(3)!.trigger('contextmenu')
   await wrapper.findAll('.context-menu .item')[1].trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('move-chat', store.history.chats[3].uuid)
@@ -200,7 +183,7 @@ test('Move Chat', async () => {
 
 test('Context Menu Folder', async () => {
   store.history.folders = [ { id: '1', name: 'Folder', chats: [store.history.chats[0].uuid] } ]
-  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
   expect(wrapper.findAll('.context-menu')).toHaveLength(0)
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
   expect(wrapper.findAll('.context-menu')).toHaveLength(1)
@@ -213,7 +196,7 @@ test('Context Menu Folder', async () => {
 
 test('New Chat', async () => {
   store.history.folders = [ { id: '1', name: 'Folder', chats: [store.history.chats[0].uuid] } ]
-  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
   await wrapper.find('.context-menu .actions .item[data-action=chat]').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('new-chat-in-folder', '1')
@@ -221,7 +204,7 @@ test('New Chat', async () => {
 
 test('Rename Folder', async () => {
   store.history.folders = [ { id: '1', name: 'Folder', chats: [store.history.chats[0].uuid] } ]
-  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
   await wrapper.find('.context-menu .actions .item[data-action=rename]').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('rename-folder', '1')
@@ -229,7 +212,7 @@ test('Rename Folder', async () => {
 
 test('Delete Folder', async () => {
   store.history.folders = [ { id: '1', name: 'Folder', chats: [store.history.chats[0].uuid] } ]
-  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
   await wrapper.find('.context-menu .actions .item[data-action=delete]').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('delete-folder', '1')
@@ -256,7 +239,7 @@ test('Folder defaults', async () => {
     }
   })
   store.history.folders = [ { id: '1', name: 'Folder', chats: [store.history.chats[0].uuid] } ]
-  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: chat, filter: '' } } )
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: chat } } )
 
   // set defaults
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')

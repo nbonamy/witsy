@@ -229,6 +229,7 @@ const onRenameChat = async (chat: Chat) => {
     title: t('main.chat.rename'),
     input: 'text',
     inputValue: chat.title,
+    confirmButtonText: t('common.rename'),
     showCancelButton: true,
   });
   if (title) {
@@ -255,6 +256,7 @@ const onMoveChat = async (chatId: string|string[]) => {
       acc[f.id] = f.name
       return acc
     }, {}),
+    confirmButtonText: t('common.move'),
     showCancelButton: true,
   });
   if (folderId) {
@@ -413,6 +415,7 @@ const onRenameFolder = async (folderId: string) => {
       title: t('main.folder.rename'),
       input: 'text',
       inputValue: folder.name,
+      confirmButtonText: t('common.rename'),
       showCancelButton: true,
     });
     if (name) {
@@ -431,6 +434,7 @@ const onDeleteFolder = async (folderId: string) => {
     denyButtonText: t('main.folder.deleteConversations'),
     showCancelButton: true,
     showDenyButton: true,
+    customClass: { 'actions': 'actions-stacked' }
   })
 
   if (result.isDismissed) {
@@ -466,7 +470,16 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
   if (!assistant.value.hasLlm()) {
-    nextTick(() => window.api.settings.open({ initialTab: 'models' }))
+    const rc = await Dialog.show({
+      title: t('prompt.noEngineAvailable.title'),
+      text: t('prompt.noEngineAvailable.text'),
+      showCancelButton: true,
+      confirmButtonText: t('common.yes'),
+      cancelButtonText: t('common.no'),
+    })
+    if (rc.isConfirmed) {
+      window.api.settings.open({ initialTab: 'models' })
+    }
     return
   }
 
@@ -552,10 +565,17 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
 }
 
-const onRunAgent = async () => {
+const onRunAgent = async (agentId?: string) => {
 
-  // show agent picker
-  agent.value = await picker.value.pick()
+  // select agent
+  if (agentId) {
+    agent.value = store.agents.find((a) => a.uuid === agentId)
+  } else {
+    agent.value = await picker.value.pick()
+  }
+
+
+  // required
   if (!agent.value) {
     return
   }

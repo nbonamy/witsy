@@ -1,0 +1,257 @@
+:root {
+
+  /* Witsy Design System - CSS Variables */
+
+  /* ========================================
+    COLOR SYSTEM
+  ======================================== */
+
+  /* Primary Colors */
+  --color-primary: #1B4FB2;
+  --color-on-primary: #FFFFFF;
+  --color-primary-container: #EFF8FF;
+  --color-on-primary-container: #1E4B97;
+
+  /* Secondary Colors */
+  --color-secondary: #0C72EE;
+  --color-on-secondary: #FFFFFF;
+  --color-secondary-container: #EBF8FF;
+  --color-on-secondary-container: #1159BC;
+
+  /* Tertiary Colors */
+  --color-tertiary: #848CAF;
+  --color-on-tertiary: #FFFFFF;
+  --color-tertiary-container: #EBEFF4;
+  --color-on-tertiary-container: #6C7296;
+
+  /* Semantic Colors */
+  --color-error: #D5351F;
+  --color-on-error: #FFFFFF;
+  --color-error-container: #FEF3F2;
+  --color-on-error-container: #9B2919;
+
+  --color-success: #079669;
+  --color-on-success: #FFFFFF;
+  --color-success-container: #E8FDF3;
+  --color-on-success-container: #064E3B;
+
+  --color-warning: #D97708;
+  --color-on-warning: #FFFFFF;
+  --color-warning-container: #FFFAE5;
+  --color-on-warning-container: #B4540A;
+
+  /* Surface Colors */
+  --color-surface: #FAFAFA;
+  --color-surface-lowest: #FFFFFF;
+  --color-surface-low: #F4F4F5;
+  --color-surface-base: #F0F0F0;
+  --color-surface-high: #E9E9EC;
+  --color-surface-highest: #E4E4E7;
+
+  --color-on-surface: #27272A;
+  --color-on-surface-variant: #71717A;
+
+  /* Border & Outline Colors */
+  --color-outline: #A1A1AA;
+  --color-outline-variant: #D9D9DD;
+  --color-outline-subtle: rgba(255, 0, 0, 0.7);
+
+  /* Utility Colors */
+  --color-scrim: #000000;
+  --color-shadow: #000000;
+
+  /* ========================================
+    TYPOGRAPHY SYSTEM
+  ======================================== */
+
+  /* Font Family */
+  --font-family-base: Geist, Inter, -apple-system, BlinkMacSystemFont, 'Arial', sans-serif;
+
+  /* Font Sizes */
+  --font-size-12: 12px;
+  --font-size-14: 14px;
+  --font-size-16: 16px;
+  --font-size-18: 18px;
+  --font-size-20: 20px;
+  --font-size-24: 24px;
+  --font-size-32: 32px;
+  --font-size-40: 40px;
+  --font-size-48: 48px;
+  --font-size-64: 64px;
+  --font-size-72: 72px;
+
+  /* Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Letter Spacing */
+  --letter-spacing-0: 0;
+  --letter-spacing-tight-1: -0.5px;
+  --letter-spacing-tight-2: -1px;
+  --letter-spacing-tight-3: -2px;
+  --letter-spacing-tight-4: -3px;
+  --letter-spacing-tight-5: -4px;
+
+  /* Line Heights */
+  --line-height-16: 16px;
+  --line-height-20: 20px;
+  --line-height-24: 24px;
+  --line-height-28: 28px;
+  --line-height-32: 32px;
+  --line-height-36: 36px;
+  --line-height-40: 40px;
+  --line-height-48: 48px;
+  --line-height-56: 56px;
+  --line-height-72: 72px;
+  --line-height-80: 80px;
+
+  /* Text Style Tokens */
+  --text-body-sm: var(--font-size-12) / var(--line-height-16) var(--font-family-base);
+  --text-body-md: var(--font-size-14) / var(--line-height-20) var(--font-family-base);
+  --text-body-lg: var(--font-size-16) / var(--line-height-24) var(--font-family-base);
+  --text-body-xl: var(--font-size-18) / var(--line-height-28) var(--font-family-base);
+  --text-body-2xl: var(--font-size-20) / var(--line-height-36) var(--font-family-base);
+  --text-body-3xl: var(--font-size-24) / var(--line-height-36) var(--font-family-base);
+
+  --text-label-sm: var(--font-size-12) / var(--line-height-16) var(--font-family-base);
+  --text-label-md: var(--font-size-14) / var(--line-height-20) var(--font-family-base);
+  --text-label-lg: var(--font-size-16) / var(--line-height-20) var(--font-family-base);
+  --text-label-xl: var(--font-size-18) / var(--line-height-24) var(--font-family-base);
+  --text-label-2xl: var(--font-size-20) / var(--line-height-32) var(--font-family-base);
+
+  --text-button-sm: var(--font-size-12) / var(--line-height-16) var(--font-family-base);
+  --text-button-md: var(--font-size-14) / var(--line-height-24) var(--font-family-base);
+  --text-button-lg: var(--font-size-16) / var(--line-height-24) var(--font-family-base);
+
+  --text-heading-16: var(--font-size-16) / var(--line-height-20) var(--font-family-base);
+  --text-heading-20: var(--font-size-20) / var(--line-height-24) var(--font-family-base);
+  --text-heading-24: var(--font-size-24) / var(--line-height-32) var(--font-family-base);
+  --text-heading-32: var(--font-size-32) / var(--line-height-40) var(--font-family-base);
+  --text-heading-40: var(--font-size-40) / var(--line-height-48) var(--font-family-base);
+  --text-heading-48: var(--font-size-48) / var(--line-height-56) var(--font-family-base);
+  --text-heading-64: var(--font-size-64) / var(--line-height-72) var(--font-family-base);
+  --text-heading-72: var(--font-size-72) / var(--line-height-80) var(--font-family-base);
+
+  --text-subheading-16: var(--font-size-16) / var(--line-height-20) var(--font-family-base);
+  --text-subheading-20: var(--font-size-20) / var(--line-height-24) var(--font-family-base);
+  --text-subheading-24: var(--font-size-24) / var(--line-height-32) var(--font-family-base);
+  --text-subheading-32: var(--font-size-32) / var(--line-height-40) var(--font-family-base);
+  --text-subheading-40: var(--font-size-40) / var(--line-height-48) var(--font-family-base);
+  --text-subheading-48: var(--font-size-48) / var(--line-height-56) var(--font-family-base);
+  --text-subheading-64: var(--font-size-64) / var(--line-height-72) var(--font-family-base);
+  --text-subheading-72: var(--font-size-72) / var(--line-height-80) var(--font-family-base);
+
+  /* ========================================
+    LAYOUT SYSTEM
+  ======================================== */
+
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 100px;
+
+  /* Spacing Scale */
+  --space-px: 1px;
+  --space-0: 0;
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-6: 12px;
+  --space-8: 16px;
+  --space-10: 20px;
+  --space-12: 24px;
+  --space-16: 32px;
+  --space-20: 40px;
+
+  --icon-md: 16px;
+  --icon-lg: 20px;
+  --icon-xl: 24px;
+
+  /* ========================================
+    SHADOW SYSTEM
+  ======================================== */
+
+  --shadow-card: 0 3px 8px rgba(0, 0, 0, 0.03);
+  --shadow-table: 0 1px 12px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-menu: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-overlay: 0 10px 48px rgba(0, 0, 0, 0.12), 0 10px 64px rgba(0, 0, 0, 0.16);
+
+  /* ========================================
+    SEMANTIC ALIASES
+  ======================================== */
+
+  /* Interactive States */
+  --color-focus: var(--color-primary);
+  --color-focus-ring: var(--color-primary-container);
+
+  /* Common Usage Patterns */
+  --color-text: var(--color-on-surface);
+  --color-text-muted: var(--color-on-surface-variant);
+  --color-background: var(--color-surface);
+  --color-border: var(--color-outline-variant);
+  --color-border-strong: var(--color-outline);
+
+}
+
+/* ========================================
+    THEME OVERRIDES
+======================================== */
+
+.windows {
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Surface Colors - Dark Theme */
+    --color-surface: #202020;
+    --color-surface-lowest: #202020;
+    --color-surface-low: #303030;
+    --color-surface-base: #303030;
+    --color-surface-high: #404040;
+    --color-surface-highest: #505050;
+
+    --color-on-surface: #e0e0e0;
+    --color-on-surface-variant: #9a9a9a;
+
+    /* Border & Outline Colors - Dark Theme */
+    --color-outline: #787878;
+    --color-outline-variant: #646464;
+
+    /* Primary Colors - Dark Theme */
+    --color-primary: rgb(11, 132, 255);
+    --color-secondary: rgb(65, 156, 255);
+  }
+
+  [data-tint=blue], [data-tint=blue] * {
+    /* Surface Colors - Dark Blue Theme */
+    --color-surface: rgb(18, 32, 47);
+    --color-surface-lowest: rgb(18, 32, 47);
+    --color-surface-low: rgb(24, 40, 55);
+    --color-surface-base: rgb(24, 40, 55);
+    --color-surface-high: rgb(40, 50, 65);
+    --color-surface-highest: rgb(50, 60, 75);
+
+    --color-on-surface: rgb(230, 230, 235);
+    --color-on-surface-variant: rgb(130, 150, 170);
+
+    /* Border & Outline Colors - Dark Blue Theme */
+    --color-outline: rgb(100, 110, 120);
+    --color-outline-variant: rgb(45, 65, 85);
+
+    /* Primary Colors - Dark Blue Theme */
+    --color-primary: rgb(10, 120, 240);
+    --color-secondary: rgb(60, 140, 230);
+  }
+}

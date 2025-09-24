@@ -211,7 +211,7 @@ export default class extends Generator {
 
         // and now add tools for running agents
         const agents = [
-          ...window.api.agents.load(),
+          ...window.api.agents.load(store.config.workspaceId),
           ...(opts?.agents || [])
         ]
         for (const agentId of step.agents) {
@@ -451,7 +451,7 @@ ${chunk.content}
   }
 
   private saveRun(run: AgentRun): void {
-    window.api.agents.saveRun({
+    window.api.agents.saveRun(store.config.workspaceId, {
       ...run,
       messages: run.messages.map(m => JSON.parse(JSON.stringify(m))),
     })

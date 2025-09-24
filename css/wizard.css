@@ -1,0 +1,108 @@
+
+.wizard {
+
+  --wizard-width: 800px;
+  --wizard-step-normal-color: var(--color-outline);
+  --wizard-step-active-color: var(--text-color);
+  --wizard-step-completed-color: var(--color-success);
+
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: scroll;
+  width: 100%;
+
+  .wizard-header {
+    
+    width: var(--wizard-width);
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+
+    .wizard-steps {
+
+      justify-items: stretch;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+
+      .wizard-step {
+
+        flex: 1;
+        white-space: nowrap;
+        font-size: 14px;
+
+        position: relative;
+        padding-top: 1rem;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+
+        cursor: pointer;
+
+        color: var(--wizard-step-normal-color);
+
+        &::before {
+          content: '';
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 0.5rem;
+          width: 100%;
+          border-radius: 0.25rem;
+          margin-bottom: 0.25rem;
+          background-color: var(--wizard-step-normal-color);
+        }
+
+        .icon {
+          width: 1var(--icon-lg);
+          height: var(--icon-lg);
+        }
+
+        &.active {
+          color: var(--wizard-step-active-color);
+          &::before {
+            background-color: var(--wizard-step-active-color);
+          }
+        }
+
+        &.completed:not(.active) {
+          color: var(--wizard-step-completed-color);
+          &::before {
+            background-color: var(--wizard-step-completed-color);
+          }
+        }
+
+      }
+
+    }
+
+
+  }
+
+  .wizard-body {
+    
+    width: var(--wizard-width);
+
+    .panel {
+      padding: 0rem;
+      .panel-body {
+        input, select, textarea {
+          padding: 0.75rem !important;
+        }
+        input, textarea {
+          width: calc(100% - 1.5rem) !important;
+        }
+      }
+    }
+
+  }
+
+
+
+}

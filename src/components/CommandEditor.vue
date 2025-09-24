@@ -1,7 +1,7 @@
 <template>
   <div class="command-editor form form-vertical form-large" @keydown.enter="onSave">
     <div class="form-field" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
-      <label class="no-colon"><BIconExclamationCircle /></label>
+      <label class="no-colon"><CircleAlertIcon /></label>
       <div>{{ t('common.differentLocales') }}</div>
     </div>
     <div class="form-field">
@@ -53,6 +53,7 @@ import { t, commandI18n, commandI18nDefault } from '../services/i18n'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import Dialog from '../composables/dialog'
+import { CircleAlertIcon } from 'lucide-vue-next'
 
 const emit = defineEmits(['command-modified']);
 
@@ -216,7 +217,7 @@ const onSave = (event: Event) => {
 
 .windows .command-editor .icon {
   font-family: 'NotoColorEmojiLimited';
-  font-size: 9pt;
+  font-size: 12px;
 }
 
 </style>

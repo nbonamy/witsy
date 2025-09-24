@@ -100,7 +100,7 @@ export function useTools() {
       
       toolsDescription += "MCP Server Tools:\n"
       for (const [serverName, tools] of Object.entries(toolsByServer)) {
-        const toolNames = tools.map(t => `${t.name} (${t.description})`).join(', ')
+        const toolNames = tools.map(t => `${t.id} (${t.description})`).join(', ')
         toolsDescription += `- ${serverName}: ${toolNames}\n`
       }
       toolsDescription += "\n"

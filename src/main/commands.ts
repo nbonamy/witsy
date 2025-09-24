@@ -14,7 +14,7 @@ const monitor: Monitor = new Monitor(() => {
 })
 
 export const commandsFilePath = (app: App): string => {
-  const userDataPath = app.getPath('userData')
+  const userDataPath = app.getPath('userData') + '2'
   const commandsFilePath = path.join(userDataPath, 'commands.json')
   return commandsFilePath
 }

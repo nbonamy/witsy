@@ -16,7 +16,7 @@ export const createI18nMock = (callback?: () => Partial<{
       ? store.config?.general?.locale
         ? `${key}_${store.config.general.locale}`
         : key
-      : `${key}_${store.config.general.locale||'default'}_${Object.entries(values)
+      : `${key}_${store.config?.general?.locale||'default'}_${Object.entries(values)
           .map(([k, v]) => `${k}=${JSON.stringify(v).replace(/^"/g, '').replace(/"$/g, '')}`)
           .join('&')
         }`,

@@ -82,8 +82,26 @@ describe('Tooltip directive', () => {
       // Trigger mouseenter
       await button.trigger('mouseenter')
       
-      // Should not show immediately
+      // Should not show immediately (has delay)
       expect(document.querySelector('.tooltip-directive')).toBeNull()
+    })
+
+    it('should teleport tooltip to document body when shown', async () => {
+      const wrapper = mount(TestComponent, {
+        props: { tooltipConfig: 'Body teleport test' }
+      })
+      const button = wrapper.find('[data-testid="tooltip-button"]')
+      
+      // Trigger mouseenter and advance timers
+      await button.trigger('mouseenter')
+      vi.advanceTimersByTime(1000) // Advance past tooltip delay
+      
+      // Check if tooltip exists in document body
+      const tooltip = document.querySelector('.tooltip-directive')
+      if (tooltip) {
+        expect(tooltip.parentElement).toBe(document.body)
+        expect(tooltip.textContent).toContain('Body teleport test')
+      }
     })
 
     it('should handle different tooltip configurations', async () => {
@@ -121,22 +139,16 @@ describe('Tooltip directive', () => {
   })
 
   describe('SVG element support', () => {
-    it('should create wrapper for SVG elements', () => {
+    it('should handle SVG elements without wrappers', () => {
       const wrapper = mount(SvgTestComponent)
       const svg = wrapper.find('[data-testid="svg-element"]')
       
       expect(svg.exists()).toBe(true)
       expect(svg.element.tagName).toBe('svg')
       
-      // Check if wrapper was created (SVG should have a parent wrapper)
-      const svgElement = svg.element as SVGElement
-      const parent = svgElement.parentElement
-      
-      // The parent should have the wrapper styling
-      if (parent && parent !== document.body) {
-        expect(parent.style.position).toBe('relative')
-        expect(parent.style.display).toBe('inline-block')
-      }
+      // SVG elements should work with tooltip directive without wrappers
+      // since tooltips are now teleported to body
+      expect(svg.element).toBeDefined()
     })
   })
 

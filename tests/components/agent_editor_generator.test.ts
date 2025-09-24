@@ -22,9 +22,14 @@ vi.mock('../../src/llms/llm', () => {
         igniteEngine: vi.fn(() => ({
           complete: vi.fn()
         })),
-        getChatModel: vi.fn(() => ({ id: 'test-model' })),
+        getChatModel: vi.fn(() => ({ id: 'test-model', name: 'Test Model' })),
+        getChatModels: vi.fn(() => [{ id: 'test-model', name: 'Test Model' }]),
         getDefaultChatModel: vi.fn(() => 'test-model'),
-        checkModelListsVersion: vi.fn(),
+        getEngineName: vi.fn((engine) => engine),
+        isEngineReady: vi.fn(() => true),
+        hasChatModels: vi.fn(() => true),
+        isFavoriteEngine: vi.fn(() => false),
+        checkModelsCapabilities: vi.fn(),
         getCustomEngines: vi.fn(() => []),
         getStandardEngines: vi.fn(() => ['openai', 'anthropic']),
         getChatEngines: vi.fn(() => ['openai', 'anthropic']),
@@ -80,19 +85,19 @@ test('Shows generator step form fields', async () => {
   })
   await nextTick()
 
-  // Should show generator step (first step)
-  const steps = wrapper.findAll('.md-master-list-item')
-  expect(steps[0].classes()).toContain('selected')
-  expect(steps[0].text()).toContain('agent.create.generator.title')
+  // Should show generator step (first step) - check for the visible WizardStep component
+  const wizardStep = wrapper.findComponent({ name: 'WizardStep' })
+  expect(wizardStep.exists()).toBe(true)
+  expect(wizardStep.props('visible')).toBe(true)
 
   // Should show description textarea
   const descriptionField = wrapper.find('textarea[name="description"]')
   expect(descriptionField.exists()).toBe(true)
   expect(descriptionField.attributes('required')).toBeDefined()
 
-  // Should show engine selector
-  const engineSelect = wrapper.findComponent({ name: 'EngineSelect' })
-  expect(engineSelect.exists()).toBe(true)
+  // Should show engine model selector
+  const engineModelSelect = wrapper.findComponent({ name: 'EngineModelSelect' })
+  expect(engineModelSelect.exists()).toBe(true)
 
   // Should show skip and generate buttons
   const skipButton = wrapper.find('button[name="skip"]')
@@ -115,9 +120,10 @@ test('Allows skipping generation step', async () => {
   await nextTick()
 
   // Should move to next step (General step)
-  const steps = wrapper.findAll('.md-master-list-item')
-  expect(steps[1].classes()).toContain('selected')
-  expect(steps[0].classes()).not.toContain('selected')
+  const steps = wrapper.findAll('.wizard-step')
+  const activeStep = steps.find(step => step.classes().includes('active'))
+  expect(activeStep).toBeTruthy()
+  expect(activeStep!.text()).toContain('agent.create.information.title')
 })
 
 test('Shows validation error when description is empty', async () => {
@@ -298,8 +304,9 @@ test('Shows error when generation fails', async () => {
   await new Promise(resolve => setTimeout(resolve, 10))
   await wrapper.vm.$nextTick()
 
-  // Should show error
-  const errorDiv = wizardStep.find('.error')
+  // Should show error in WizardStep component
+  const wizardStepComponent = wrapper.findComponent({ name: 'WizardStep' })
+  const errorDiv = wizardStepComponent.find('.error')
   expect(errorDiv.exists()).toBe(true)
   expect(errorDiv.text()).toBe('agent.create.generator.error.generation')
 })
@@ -331,8 +338,9 @@ test('Shows error when generation throws exception', async () => {
   await new Promise(resolve => setTimeout(resolve, 10))
   await wrapper.vm.$nextTick()
 
-  // Should show unexpected error
-  const errorDiv = wizardStep.find('.error')
+  // Should show unexpected error in WizardStep component
+  const wizardStepComponent = wrapper.findComponent({ name: 'WizardStep' })
+  const errorDiv = wizardStepComponent.find('.error')
   expect(errorDiv.exists()).toBe(true)
   expect(errorDiv.text()).toBe('agent.create.generator.error.unexpected')
 })
@@ -373,11 +381,13 @@ test('Proceeds to next step after successful generation and review', async () =>
   await nextTick()
 
   // Should move to next step (General step)
-  const steps = wrapper.findAll('.md-master-list-item')
-  expect(steps[1].classes()).toContain('selected')
+  const steps = wrapper.findAll('.wizard-step')
+  const activeStep = steps.find(step => step.classes().includes('active'))
+  expect(activeStep).toBeTruthy()
+  expect(activeStep!.text()).toContain('agent.create.information.title')
 })
 
-test('Shows both engine and model selectors', async () => {
+test('Shows engine model selector component', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
       mode: 'create',
@@ -386,9 +396,9 @@ test('Shows both engine and model selectors', async () => {
   })
   await nextTick()
 
-  // Should show EngineSelect component
-  const engineSelect = wrapper.findComponent({ name: 'EngineSelect' })
-  expect(engineSelect.exists()).toBe(true)
+  // Should show EngineModelSelect component
+  const engineModelSelect = wrapper.findComponent({ name: 'EngineModelSelect' })
+  expect(engineModelSelect.exists()).toBe(true)
 
   // Should show the model selection help text
   const modelLabel = wrapper.find('label[for="model"]')

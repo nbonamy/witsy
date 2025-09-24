@@ -1,17 +1,16 @@
 
 .settings {
 
+  --settings-max-width: 600px;
+
   --settings-font-size: var(--form-large-font-size);
-  --settings-menu-font-size: 11pt;
+  --settings-menu-font-size: 16px;
 
   --settings-normal-text-color: var(--tabs-header-normal-text-color);
   --settings-selected-text-color: var(--tabs-header-selected-text-color);
 
   --settings-normal-bg-color: transparent;
   --settings-selected-bg-color: var(--tabs-header-selected-bg-color);
-
-  /* calculated using https://codepen.io/sosuke/pen/Pjoqqp */
-  --settings-selected-icon-filter: invert(25%) sepia(97%) saturate(3446%) hue-rotate(208deg) brightness(97%) contrast(98%);
 
 }
 
@@ -20,13 +19,19 @@
   padding: 0;
 }
 
+.split-pane.settings .sp-sidebar {
+  flex-basis: 16rem;
+}
+
 .settings ul {
   
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0 0.5rem;
+  overflow: auto;
   gap: 0.5rem;
+
+  list-style: none;
 
   li {
 
@@ -35,20 +40,19 @@
       display: flex;
       align-items: center;
       cursor: pointer;
-      padding: 8px;
+      padding: 0.5rem;
       background-color: var(--settings-normal-bg-color);
       color: var(--settings-normal-text-color);
           
       .icon {
         width: 15pt;
         height: 15pt;
-        color: var(--settings-normal-text-color);
-        filter: invert(48%) sepia(6%) saturate(86%) hue-rotate(349deg) brightness(86%) contrast(90%);
+        color: var(--settings-normal-text-color) !important;
       }
       
       .title {
         font-size: var(--settings-menu-font-size);
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
       }
     
     }
@@ -59,28 +63,44 @@
       left: -9999px;
 
       &:checked {
-
         & + label {
-          
           background-color: var(--settings-selected-bg-color);
           color: var(--settings-selected-text-color);
-          border-radius: 8px;
-        
           .icon {
-            color: var(--settings-selected-text-color);
-            filter: var(--settings-selected-icon-filter);
+            color: var(--settings-selected-text-color) !important;
           }
         }
-
       }
     }
   }
-}
 
-@media (prefers-color-scheme: dark) {
-  .settings ul li label .icon {
-    filter: invert(81%) sepia(0%) saturate(0%) hue-rotate(323deg) brightness(167%) contrast(170%);
+  li.separator {
+    position: relative;
+    text-align: center;
+    margin: 0.5rem 0;
+    z-index: 100;
+    font-weight: var(--font-weight-medium);
+    display: flex;
+    align-items: center;
+
+    &:before,
+    &:after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-color);
+    }
+
+    &:before {
+      margin-right: 0.5rem;
+    }
+
+    &:after {
+      margin-left: 0.5rem;
+    }
   }
+
+
 }
 
 .settings .tab-content {
@@ -88,6 +108,14 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  gap: 0px !important;
+  padding: 0px;
+
+  &:has(main .master-detail) {
+    header {
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
 
   &:has(.sliding-root) {
     position: relative;
@@ -100,15 +128,26 @@
 
   main {
     
-    min-width: 500px;
-    align-self: center;
-    padding: 2rem 4rem;
+    max-width: var(--settings-max-width);
+    padding: 1rem 4rem;
 
     &.sliding-pane {
      &.editor {
-        padding-left: 17%;
-        padding-right: 17%;
+        .form {
+          max-width: var(--settings-max-width);
+        }
       }
+    }
+
+    &:has(.master-detail) {
+      max-width: none;
+      .md-detail {
+        max-width: var(--settings-max-width);
+      }
+    }
+
+    &:has(table) {
+      max-width: calc(var(--settings-max-width) * 1.5);
     }
 
     .sticky-table-container {

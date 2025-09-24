@@ -15,7 +15,7 @@ export default class DocumentSourceImpl {
   lastModified: number
   fileSize: number
 
-  constructor(id: string, type: SourceType, origin: string) {
+  constructor(id: string, type: SourceType, origin: string, title?: string) {
     this.uuid = id
     this.type = type
     this.origin = origin
@@ -23,15 +23,14 @@ export default class DocumentSourceImpl {
       this.filename = path.basename(origin)
       this.url = `file://${encodeURI(origin)}`
     } else {
-      this.url = origin
+      this.url = title
     }
-    this.title = this.getTitle()
+    this.title = title || this.getDefaultTitle()
     this.items = []
   }
 
   static fromJSON(json: any): DocumentSourceImpl {
-    const source = new DocumentSourceImpl(json.uuid, json.type, json.origin)
-    source.title = json.title
+    const source = new DocumentSourceImpl(json.uuid, json.type, json.origin, json.title)
     source.origin = json.origin
     source.filename = json.filename
     source.url = json.url
@@ -43,11 +42,9 @@ export default class DocumentSourceImpl {
     return source
   }
 
-  getTitle(): string {
+  private getDefaultTitle(): string {
     if (this.type === 'file') {
       return path.basename(decodeURI(this.url))
-    } else if (this.title) {
-      return this.title
     } else if (this.type === 'text') {
       return 'Text'
     } else {

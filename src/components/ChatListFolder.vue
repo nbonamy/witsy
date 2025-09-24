@@ -6,7 +6,7 @@
         <span v-else class="expand">▶</span>
         {{ f.name }}
       </span>
-      <BIconThreeDots class="menu" @click="showFolderContextMenu($event, f.id)" v-if="f.id != store.rootFolder.id"/>
+      <EllipsisVertical class="menu" @click="showFolderContextMenu($event, f.id)" v-if="f.id != store.rootFolder.id"/>
     </div>
     <template v-for="chat in f.chats" :key="chat.uuid" v-if="isFolderExpanded(f.id)">
       <ChatListItem :chat="chat" :selection="selection" :active="active" :selectMode="selectMode" @click="onSelectChat(chat)" @contextmenu.prevent="showChatContextMenu($event, chat)" />
@@ -17,14 +17,15 @@
 
 <script setup lang="ts">
 
-import { Folder } from '../types/index'
-import { ref, onMounted, computed } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { EllipsisVertical } from 'lucide-vue-next'
+import { computed, onMounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
+import Chat from '../models/chat'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { Folder } from '../types/index'
 import ChatListItem from './ChatListItem.vue'
 import ContextMenu from './ContextMenu.vue'
-import Chat from '../models/chat'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -233,7 +234,7 @@ const handleActionClick = async (action: string) => {
   gap: .25rem;
   margin: 12px 0 8px;
   padding: 0 12px;
-  font-size: 9pt;
+  font-size: 12px;
   font-weight: bold;
   text-transform: uppercase;
   color: var(--sidebar-section-title-color);
@@ -245,7 +246,12 @@ const handleActionClick = async (action: string) => {
   }
 
   .menu {
+    visibility: hidden;
     margin-left: auto;
+  }
+
+  &:hover .menu {
+    visibility: visible;
   }
 }
 

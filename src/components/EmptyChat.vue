@@ -358,7 +358,7 @@ const removeFavorite = () => {
 <style scoped>
 
 .empty {
-  --form-font-size: 10.5pt;
+  --form-font-size: 14px;
 }
 
 .hidden {
@@ -379,7 +379,7 @@ const removeFavorite = () => {
 .empty .tip {
   text-align: center;
   font-style: italic;
-  font-size: 11pt;
+  font-size: 14.5px;
   font-family: var(--font-family-serif);
   color: var(--message-list-tip-text-color);
   margin-bottom: 0px;
@@ -400,7 +400,7 @@ const removeFavorite = () => {
 }
 
 .windows .empty .tip {
-  font-size: 14pt;
+  font-size: 18.5px;
 }
 
 .empty .selector {
@@ -487,20 +487,19 @@ const removeFavorite = () => {
 }
 
 .empty .select-model {
-  z-index: 2;
   margin-top: 8px;
   padding: 4px 0px;
-  font-size: 10.5pt;
+  font-size: 14px;
   cursor: pointer;
 }
 
 .empty .refresh {
-  font-size: 15.5pt;
+  font-size: 20.5px;
 }
 
 .favorite {
   margin-top: 1rem;
-  font-size: 9.5pt;
+  font-size: 12.5px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -532,7 +531,7 @@ const removeFavorite = () => {
   .action {
     display: flex;
     align-items: center;
-    font-size: 10.5pt;
+    font-size: 14px;
     gap: 0.5rem;
     padding: 6px 16px;
     border-radius: 8px;

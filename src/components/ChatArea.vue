@@ -2,66 +2,88 @@
   <div class="chat-area sp-main">
     <header :class="{ 'is-left-most': isLeftMost }">
       
-      <div class="icon toggle-sidebar" v-tooltip="{ text: t('main.toggleSidebar'), position: 'bottom-right' }" @click="toggleSideBar">
-        <IconSideBar />
-      </div>
+      <ButtonIcon class="toggle-sidebar" v-tooltip="{ text: t('main.toggleSidebar'), position: 'bottom-right' }" @click="toggleSideBar">
+        <PanelRightCloseIcon v-if="isLeftMost" />
+        <PanelRightOpenIcon v-else />
+      </ButtonIcon>
 
-      <div class="icon new-chat" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.newChat'), position: 'bottom-right' }" @click="onNewChat">
-        <IconNewChat />
-      </div>
+      <ButtonIcon class="new-chat" v-if="isLeftMost" v-tooltip="{ text: t('common.newChat'), position: 'bottom-right' }" @click="onNewChat">
+        <MessageCirclePlusIcon />
+      </ButtonIcon>
 
-      <div class="icon run-agent" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-right' }" @click="onRunAgent">
-        <IconRunAgent class="scale120" />
-      </div>
+      <!-- <div class="icon run-agent" :class="{ hidden: !isLeftMost }" v-tooltip="{ text: t('common.runAgent'), position: 'bottom-right' }" @click="onRunAgent">
+        <IconRunAgent />
+      </div> -->
 
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
-      
       <div class="spacer"></div>
-      <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" />
-      <IconMenu class="icon" @click="onMenu" />
-    </header>
+
+      <ButtonIcon class="settings" @click="showModelSettings = !showModelSettings" v-if="store.isFeatureEnabled('chat.settings')">
+        <SlidersHorizontalIcon />
+      </ButtonIcon>
+
+      <ButtonIcon class="menu" @click="onMenu" v-if="chat?.title || store.isFeatureEnabled('chat.temporary')">
+        <EllipsisVerticalIcon />
+      </ButtonIcon>
+    
+  </header>
     <main>
       <div class="chat-content">
+        
+        <!-- <div class="chat-content-title">
+          <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
+          <div class="spacer"></div> -->
+          <!-- <SlidersHorizontalIcon class="icon settings" @click="showModelSettings = !showModelSettings" /> -->
+          <!-- <EllipsisVerticalIcon class="icon" @click="onMenu" />
+        </div> -->
+        
         <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
-        <EmptyChat class="chat-content-main" v-else />
+        
+        <EmptyChat2 class="chat-content-main" @run-agent="onRunAgent" v-else />
+        
         <div class="deep-research-usage" v-if="prompt?.isDeepResearchActive() && tipsManager.isTipAvailable('deepResearchUsage')">
           {{  t('deepResearch.usage') }}
           <div class="deep-research-usage-close" @click="onHideDeepResearchUsage">
-            <BIconXLg />
+            <X />
           </div>
         </div>
-        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" ref="prompt" />
+        
+        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" ref="prompt" />
+      
       </div>
+      
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
+    
     </main>
+    
     <ContextMenu v-if="showChatMenu" @close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
+  
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { Expert, Message } from '../types/index'
-import { ref, computed, onMounted } from 'vue'
-import { kMediaChatId, store } from '../services/store'
+import { EllipsisVerticalIcon, MessageCirclePlusIcon, PanelRightCloseIcon, PanelRightOpenIcon, SlidersHorizontalIcon, X } from 'lucide-vue-next'
+import { computed, onMounted, ref } from 'vue'
+import Dialog from '../composables/dialog'
+import useEventBus from '../composables/event_bus'
+import useTipsManager from '../composables/tips_manager'
+import LlmFactory, { ILlmManager } from '../llms/llm'
+import Chat from '../models/chat'
+import ModelSettings from '../screens/ModelSettings.vue'
 import { t } from '../services/i18n'
 import { exportToPdf } from '../services/pdf'
+import { kMediaChatId, store } from '../services/store'
+import { Expert, Message } from '../types/index'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
+import ButtonIcon from './ButtonIcon.vue'
+import EmptyChat2 from './EmptyChat2.vue'
 import MessageList from './MessageList.vue'
-import EmptyChat from './EmptyChat.vue'
 import Prompt, { SendPromptParams } from './Prompt.vue'
-import ModelSettings from '../screens/ModelSettings.vue'
-import Chat from '../models/chat'
-import IconSideBar from '../../assets/sidebar.svg?component'
-import IconRunAgent from '../../assets/robot_run.svg?component'
-import IconNewChat from './IconNewChat.vue'
-import IconMenu from './IconMenu.vue'
-import Dialog from '../composables/dialog'
-
-import useEventBus from '../composables/event_bus'
+  
 const { emitEvent, onEvent } = useEventBus()
-
-import useTipsManager from '../composables/tips_manager'
 const tipsManager = useTipsManager(store)
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
 const props = defineProps({
   chat: {
@@ -80,10 +102,16 @@ const chatMenuPosition = computed((): MenuPosition => {
 
 const chatMenuActions = computed(() => {
   return [
-    { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
+    ...(store.isFeatureEnabled('chat.temporary') ? [
+      { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
+    ] : []),
     { label: t('common.rename'), action: 'rename', disabled: false },
-    { label: t('chat.actions.exportMarkdown'), action: 'exportMarkdown', disabled: !hasMessages() },
-    { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
+    ...(store.isFeatureEnabled('chat.exportMarkdown') ? [
+      { label: t('chat.actions.exportMarkdown'), action: 'exportMarkdown', disabled: !hasMessages() },
+    ] : []),
+    ...(store.isFeatureEnabled('chat.exportPdf') ? [
+      { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
+    ] : []),
     { label: t('common.delete'), action: 'delete', disabled: !isSaved() },
   ].filter((a) => a != null)
 })
@@ -133,12 +161,16 @@ onMounted(() => {
   onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
 })
 
+const onSetEngineModel = (engine: string, model: string) => {
+  llmManager.setChatModel(engine, model)
+}
+
 const onSendPrompt = (payload: SendPromptParams) => {
   emit('prompt', payload)
 }
 
-const onRunAgent = () => {
-  emit('run-agent')
+const onRunAgent = (...args: any[]) => {
+  emit('run-agent', ...args)
 }
 
 const onStopGeneration = () => {
@@ -159,8 +191,8 @@ const onRenameChat = () => {
 
 const onMenu = () => {
   showChatMenu.value = true
-  menuX.value = 16 + (chatMenuPosition.value == 'below' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
-  menuY.value = 32 + (window.api.platform == 'win32' ? 18 : 4)
+  menuX.value = 24 + (chatMenuPosition.value == 'below' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
+  menuY.value = 100 + (window.api.platform == 'win32' ? 18 : 4)
 }
 
 const closeChatMenu = () => {
@@ -312,14 +344,6 @@ defineExpose({
 
 <style scoped>
 
-.macos .split-pane .sp-main header.is-left-most {
-  padding-left: 40px;
-}
-
-.windows .split-pane .sp-main header .toggle-sidebar svg {
-  top: -4.5px;
-}
-
 .split-pane {
   
   .sp-main {
@@ -339,23 +363,22 @@ defineExpose({
 
       .title {
         flex: 0 1 auto;
-        /* -webkit-app-region: no-drag; */
-      }
-
-      .icon {
-        margin-right: 8px;
-      }
-
-      .toggle-sidebar svg {
-        position: relative;
-        top: -1px;
-        transform: scaleY(120%);
       }
 
       .icon {
         &.hidden {
           display: none;
         }
+      }
+
+      .toggle-sidebar {
+        position: relative;
+        top: -2px;
+      }
+
+      .new-chat {
+        position: relative;
+        top: -2px;
       }
 
     }
@@ -369,6 +392,7 @@ defineExpose({
         display: flex;
         flex-direction: column;
         max-width: 100%;
+        background-color: var(--message-list-bg-color);
 
         .deep-research-usage {
           padding: 1rem 1.5rem;
@@ -383,7 +407,7 @@ defineExpose({
 
           .deep-research-usage-close {
             cursor: pointer;
-            font-size: 14pt;
+            font-size: 18.5px;
           }
         }
 
@@ -392,7 +416,7 @@ defineExpose({
         }
 
         &:deep() .prompt {
-          margin: 1rem;
+          margin: 1.5rem;
         }
       }
 

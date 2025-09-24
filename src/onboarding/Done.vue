@@ -4,7 +4,7 @@
   <section>
 
     <header v-if="visible">
-      <img class="logo landing-logo" src="../../assets/icon.png" alt="Witsy Logo" />
+      <img class="logo landing-logo" src="../../assets/icon.png" alt="Logo" />
       <h1 class="title-text">{{ t('onboarding.done.title') }}</h1>
       <h3 class="subtitle-text" v-html="t('onboarding.done.subtitle')"></h3>
     </header>

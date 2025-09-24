@@ -4,6 +4,7 @@ import { createI18nMock } from '../mocks/index'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Editor from '../../src/agent/Editor.vue'
+import Agent from '../../src/models/agent'
 import { nextTick } from 'vue'
 
 enableAutoUnmount(afterAll)
@@ -23,46 +24,49 @@ beforeEach(() => {
 })
 
 test('Shows model step with engine and model selects', async () => {
+  const agent = new Agent()
+  
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: undefined
+      mode: 'edit',
+      agent: agent
     }
   })
   await nextTick()
 
-  // Navigate to model step
-  const steps = wrapper.findAll('.md-master-list-item')
+  // Navigate to model step (much simpler in edit mode)
+  const steps = wrapper.findAll('.wizard-step')
   const modelStep = steps.find(step => step.text().includes('agent.create.llm.title'))
-  expect(modelStep).toBeTruthy()
-  
   await modelStep!.trigger('click')
   await nextTick()
 
-  // Should show EngineSelect component
-  const engineSelect = wrapper.findComponent({ name: 'EngineSelect' })
-  expect(engineSelect.exists()).toBe(true)
-
-  // Should show ModelSelect component
-  const modelSelect = wrapper.findComponent({ name: 'ModelSelect' })
-  expect(modelSelect.exists()).toBe(true)
+  // Should show EngineModelSelect component
+  const engineModelSelect = wrapper.findComponent({ name: 'EngineModelSelect' })
+  expect(engineModelSelect.exists()).toBe(true)
 
   // Should show LangSelect component
   const langSelect = wrapper.findComponent({ name: 'LangSelect' })
   expect(langSelect.exists()).toBe(true)
+  
+  // Should show model settings button
+  const buttons = wrapper.findAll('button')
+  const settingsBtn = buttons.find(btn => btn.text().includes('agent.create.llm.showModelSettings'))
+  expect(settingsBtn).toBeTruthy()
 })
 
 test('Shows model settings step when available', async () => {
+  const agent = new Agent()
+  
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: undefined
+      mode: 'edit',
+      agent: agent
     }
   })
   await nextTick()
 
-  // Navigate to model step
-  const steps = wrapper.findAll('.md-master-list-item')
+  // Navigate to model step (much simpler in edit mode)
+  const steps = wrapper.findAll('.wizard-step')
   const modelStep = steps.find(step => step.text().includes('agent.create.llm.title'))
   await modelStep!.trigger('click')
   await nextTick()
@@ -76,41 +80,45 @@ test('Shows model settings step when available', async () => {
 })
 
 test('Changing engine updates model selection', async () => {
+  const agent = new Agent()
+  
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: undefined
+      mode: 'edit',
+      agent: agent
     }
   })
   await nextTick()
 
-  // Navigate to model step
-  const steps = wrapper.findAll('.md-master-list-item')
+  // Navigate to model step (much simpler in edit mode)
+  const steps = wrapper.findAll('.wizard-step')
   const modelStep = steps.find(step => step.text().includes('agent.create.llm.title'))
   await modelStep!.trigger('click')
   await nextTick()
 
-  // Change engine selection
-  const engineSelect = wrapper.findComponent({ name: 'EngineSelect' })
-  await engineSelect.vm.$emit('change')
+  // Change model selection
+  const engineModelSelect = wrapper.findComponent({ name: 'EngineModelSelect' })
+  await engineModelSelect.vm.$emit('modelSelected', 'openai', 'gpt-4')
   await nextTick()
 
   // Should trigger model update (we can't easily test the internal state change,
   // but we can verify the event handling is wired up)
-  expect(engineSelect.exists()).toBe(true)
+  expect(engineModelSelect.exists()).toBe(true)
 })
 
 test('Shows model settings fields', async () => {
+  const agent = new Agent()
+  
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: undefined
+      mode: 'edit',
+      agent: agent
     }
   })
   await nextTick()
 
-  // Navigate to model step first
-  const steps = wrapper.findAll('.md-master-list-item')
+  // Navigate to model step (much simpler in edit mode)
+  const steps = wrapper.findAll('.wizard-step')
   const modelStep = steps.find(step => step.text().includes('agent.create.llm.title'))
   await modelStep!.trigger('click')
   await nextTick()

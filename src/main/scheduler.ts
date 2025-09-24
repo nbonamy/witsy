@@ -11,6 +11,7 @@ import * as agents from './agents'
 import Runner from '../services/runner'
 import Mcp from './mcp'
 import LocalSearch from './search'
+import { listWorkspaces } from './workspace'
 
 export default class Scheduler {
 
@@ -46,58 +47,67 @@ export default class Scheduler {
 
   async check(): Promise<void> {
 
-    // we need to check is we where 30 seconds before to make sure we don't miss
-    const tolerance = 30 * 1000
-    const now: number = Date.now()
+    try {
 
-    // we need a config
-    const config = loadSettings(this.app)
+      // we need to check is we where 30 seconds before to make sure we don't miss
+      const tolerance = 30 * 1000
+      const now: number = Date.now()
 
-    // load agents
-    const agents: Agent[] = loadAgents(this.app)
+      // we need a config
+      const config = loadSettings(this.app)
 
-    // iterate over all agents
-    for (const agent of agents) {
+      // load agents
+      const workspaces = listWorkspaces(this.app)
+      for (const workspace of workspaces) {
 
-      try {
-
-        // check if agent has a schedule
-        if (!agent.schedule) {
-          continue
-        }
-
-        // check if schedule is due
-        const interval = CronExpressionParser.parse(agent.schedule, { currentDate: now - tolerance })
-        const next = interval.next().getTime()
-        if (Math.abs(next - now) < tolerance) {
-
-          console.log(`Agent ${agent.name} is due to run`)
+        // iterate over all agents
+        const agents = loadAgents(this.app, workspace.uuid)
+        for (const agent of agents) {
 
           try {
-            
-            // build a prompt
-            const prompt = agent.buildPrompt(0, agent.invocationValues)
-            
-            // now run it
-            const runner = new Runner(config, agent)
-            runner.run('schedule', prompt)
-          
+
+            // check if agent has a schedule
+            if (!agent.schedule) {
+              continue
+            }
+
+            // check if schedule is due
+            const interval = CronExpressionParser.parse(agent.schedule, { currentDate: now - tolerance })
+            const next = interval.next().getTime()
+            if (Math.abs(next - now) < tolerance) {
+
+              console.log(`Agent ${agent.name} is due to run`)
+
+              try {
+                
+                // build a prompt
+                const prompt = agent.buildPrompt(0, agent.invocationValues)
+                
+                // now run it
+                const runner = new Runner(config, agent)
+                runner.run('schedule', prompt)
+              
+              } catch (error) {
+                console.log(`Error running agent ${agent.name}`, error)
+                continue
+              }
+
+            }
+
           } catch (error) {
-            console.log(`Error running agent ${agent.name}`, error)
+            console.log(`Error checking schedule for ${agent.name}`, error)
             continue
           }
 
         }
-
-      } catch (error) {
-        console.log(`Error checking schedule for ${agent.name}`, error)
-        continue
       }
 
-    }
+    } finally {
 
-    // schedule next
-    this.start()
+      // schedule next
+      this.start()
+
+    }
 
   }
 
@@ -127,11 +137,11 @@ export default class Scheduler {
 
         // @ts-expect-error partial mock
         agents: {
-          load: (): Agent[] => {
-            return agents.loadAgents(this.app)
+          load: (workspaceId: string): Agent[] => {
+            return agents.loadAgents(this.app, workspaceId)
           },
-          saveRun: (run: AgentRun): boolean =>  {
-            return agents.saveAgentRun(this.app, run)
+          saveRun: (workspaceId: string, run: AgentRun): boolean =>  {
+            return agents.saveAgentRun(this.app, workspaceId, run)
           },
         },
 
@@ -160,7 +170,7 @@ export default class Scheduler {
         // @ts-expect-error partial mock
         mcp: {
           isAvailable: () => true,
-          getTools: this.mcp?.getTools,
+          getLlmTools: this.mcp?.getLlmTools,
           callTool: this.mcp?.callTool,
         },
       }

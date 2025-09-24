@@ -4,22 +4,22 @@
     <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
     <template v-if="!message.transient">
       <div class="action usage" v-if="message.usage" @click="onUsage(message)">
-        <BIconBarChartFill /> {{ t('common.usage') }}
+        <ChartNoAxesColumnIncreasingIcon /> {{ t('common.usage') }}
       </div>
       <div class="action retry" v-if="message.role == 'assistant'" @click="onRetry(message)">
-        <BIconArrowCounterclockwise /> {{ t('common.retry') }}
+        <RotateCcwIcon /> {{ t('common.retry') }}
       </div>
       <div class="action edit" v-if="message.role == 'user' && message.type == 'text'" @click="onEdit(message)">
-        <BIconPencil /> {{ t('common.edit') }}
+        <PencilIcon /> {{ t('common.edit') }}
       </div>
       <div class="action delete" v-if="message.role == 'user' && message.type == 'text'" @click="onDelete(message)">
-        <BIconTrash /> {{ t('common.delete') }}
+        <Trash2Icon /> {{ t('common.delete') }}
       </div>
       <div class="action fork" @click="onFork(message)">
-        <ForkIcon /> {{ t('common.fork') }}
+        <GitBranchIcon /> {{ t('common.fork') }}
       </div>
       <div class="action tools" @click="onTools(message)" v-if="message.role == 'assistant' && store.config.appearance.chat.showToolCalls != 'always'">
-        <BIconTools /> {{ t('common.tools') }}
+        <WrenchIcon /> {{ t('common.tools') }}
       </div>
     </template>
   </div>
@@ -27,13 +27,13 @@
 
 <script setup lang="ts">
 
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import Message from '../models/message'
-import Dialog from '../composables/dialog'
+import { ChartNoAxesColumnIncreasingIcon, GitBranchIcon, PencilIcon, RotateCcwIcon, Trash2Icon, WrenchIcon } from 'lucide-vue-next'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import ForkIcon from '../../assets/fork.svg?component'
+import Dialog from '../composables/dialog'
+import Message from '../models/message'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -70,14 +70,14 @@ const onRetry = (message: Message) => {
   Dialog.show({
     title: t('message.actions.retryConfirm.title'),
     text: t('message.actions.retryConfirm.text'),
-    confirmButtonText: t('message.actions.retryConfirm.confirmButton'),
-    denyButtonText: t('message.actions.retryConfirm.denyButton'),
+    confirmButtonText: t('message.actions.retryConfirm.denyButton'),
+    denyButtonText: t('message.actions.retryConfirm.confirmButton'),
     showCancelButton: true,
     showDenyButton: true,
   }).then((result) => {
     
     // don't ask again
-    if (result.isConfirmed) {
+    if (result.isDenied) {
       store.config.general.confirm.retryGeneration = false
       store.saveSettings()
     }
@@ -145,24 +145,20 @@ const onTools = (message: Message) => {
 
 .actions {
 
-  .action {
+  &:deep() .action {
     display: flex;
     flex-direction: row;
     align-items: center;
     margin-left: 8px;
+    gap: 0.25rem;
 
     &:first-child {
       margin-left: 0px;
     }
 
     svg {
-      margin-right: 4px;
-      height: 12px;
-    }
-
-    &.read svg {
-      position: relative;
-      top: 1.5px;
+      width: 0.75rem;
+      height: 0.75rem;
     }
 
   }
