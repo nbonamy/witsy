@@ -22,17 +22,7 @@
       
       <div v-else class="servers-list">
 
-      <div class="actions">
-        <Spinner v-if="props.loading" />
-        <button class="large secondary" name="reload" @click="onReload" :disabled="props.loading">
-          <RefreshCwIcon />{{ t('mcp.refreshServers') }}
-        </button>
-        <button class="large secondary" name="restart" @click="onRestart" :disabled="props.loading">
-          <PowerIcon />{{ t('mcp.restartServers') }}
-        </button>
-      </div>
-
-      <div 
+        <div 
           v-for="server in sortedServers" 
           :key="server.uuid" 
           class="server-item"
@@ -112,7 +102,19 @@
               </template>
             </ContextMenuTrigger>
           </div>
+        
         </div>
+
+        <div class="actions">
+          <Spinner v-if="props.loading" />
+          <button class="large secondary" name="reload" @click="onReload" :disabled="props.loading">
+            <RefreshCwIcon />{{ t('mcp.refreshServers') }}
+          </button>
+          <button class="large secondary" name="restart" @click="onRestart" :disabled="props.loading">
+            <PowerIcon />{{ t('mcp.restartServers') }}
+          </button>
+        </div>
+
       </div>
 
     </main>
@@ -430,18 +432,17 @@ const validateServerJson = (json: string) => {
   }
 
   .servers-list {
-    padding: 0 2rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
   .servers-list .actions {
+    margin-top: 1rem;
     display: flex;
     justify-content: flex-end;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
   }
   
   .server-item {
