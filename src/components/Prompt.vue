@@ -59,8 +59,8 @@
       
       <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
       
-      <ButtonIcon @click="onDictate" @contextmenu="onConversationMenu" >
-        <MicIcon v-if="hasDictation"
+      <ButtonIcon @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation">
+        <MicIcon
           v-tooltip="{ text: t('prompt.conversation.tooltip'), position: 'top' }"
           :class="{ icon: true, dictate: true, active: dictating }" 
         />
@@ -146,7 +146,7 @@ import { ArrowUpIcon, BoxIcon, BrainIcon, CommandIcon, FeatherIcon, HeartMinusIc
 import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
 import { computed, nextTick, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
 import Waveform from '../components/Waveform.vue'
-import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
+import useAudioRecorder from '../composables/audio_recorder'
 import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
 import ImageUtils from '../composables/image_utils'
@@ -162,7 +162,7 @@ import { store } from '../services/store'
 import { Command, CustomInstruction, Expert } from '../types/index'
 import { McpServerWithTools, McpToolUnique } from '../types/mcp'
 import { DocumentBase } from '../types/rag'
-import { StreamingChunk } from '../voice/stt'
+import { isSTTReady, StreamingChunk } from '../voice/stt'
 import AttachmentView from './Attachment.vue'
 import ButtonIcon from './ButtonIcon.vue'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
@@ -277,7 +277,6 @@ const showConversationMenu = ref(false)
 const showPromptMenu = ref(false)
 const showModelMenu = ref(false)
 const deepResearchActive = ref(false)
-const hasDictation = ref(false)
 const dictating = ref(false)
 const processing = ref(false)
 const isDragOver = ref(false)
@@ -292,6 +291,11 @@ const model = () => props.chat?.model || llmManager.getChatEngineModel().model
 const backSpaceHitsToClearExpert = 1
 let backSpaceHitsWhenEmpty = 0
 let runCommandImmediate = false
+
+const hasDictation = computed(() => {
+  if (!props.enableDictation) return false
+  return isSTTReady(store.config)
+})
 
 const isProcessing = computed(() => {
   return processing.value || props.processing
@@ -428,27 +432,17 @@ const setDeepResearch = (active: boolean) => {
 
 const initDictation = async () => {
 
-  // needed?
-  if (!props.enableDictation) {
-    return
-  }
-
-  // check
-  const supported = await isAudioRecordingSupported()
-  if (!supported) {
-    return
-  }
-
-  // this should be good enough
-  hasDictation.value = true
-
   // push-to-talk stuff
+
   const onKeyUpPTT = () => {
+    if (hasDictation.value === false) return
     //console.log('Stopping push-to-talk dictation')
     document.removeEventListener('keyup', onKeyUpPTT)
     stopDictation(false)
   }
+
   document.addEventListener('keydown', (event) => {
+    if (hasDictation.value === false) return
     if (props.conversationMode == 'ptt' && event.code === 'Space' && dictating.value === false) {
       //console.log('Starting push-to-talk dictation')
       document.addEventListener('keyup', onKeyUpPTT)

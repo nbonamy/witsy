@@ -93,7 +93,7 @@
       padding: 0rem;
       .panel-body {
         input, select, textarea {
-          padding: 0.75rem !important;
+          padding: 0.75rem;
         }
         input, textarea {
           width: calc(100% - 1.5rem) !important;
