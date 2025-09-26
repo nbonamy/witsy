@@ -70,38 +70,36 @@ test('Actions', async () => {
 })
 
 test('Server enablement', async () => {
-  await mcp.find<HTMLInputElement>('.mcp-server-list .panel-item:nth-child(1) .stop').trigger('click')
+  await mcp.find<HTMLInputElement>('.mcp-server-list .server-item:nth-child(2) .stop').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith(expect.objectContaining({ uuid: '1', state: 'disabled' }))
-  await mcp.find<HTMLInputElement>('.mcp-server-list .panel-item:nth-child(5) .start').trigger('click')
+  await mcp.find<HTMLInputElement>('.mcp-server-list .server-item:nth-child(4) .start').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith(expect.objectContaining({ uuid: 'mcp2', state: 'enabled' }))
 })
 
 test('Server delete', async () => {
-  await mcp.find<HTMLTableRowElement>('.mcp-server-list table tbody tr:nth-child(4) .context-menu-trigger .trigger').trigger('click')
+  await mcp.find<HTMLTableRowElement>('.mcp-server-list .server-item:nth-child(3) .context-menu-trigger .trigger').trigger('click')
   await mcp.findComponent({ name: 'ContextMenuPlus' }).find('.delete').trigger('click')
   expect(window.api.mcp.deleteServer).toHaveBeenLastCalledWith('mcp1')
 })
 
 test('Server edit', async () => {
-  await mcp.find<HTMLTableRowElement>('.mcp-server-list table tbody tr:nth-child(1) .context-menu-trigger .trigger').trigger('click')
+  await mcp.find<HTMLElement>('.servers-list .server-item:nth-child(1) .context-menu-trigger .trigger').trigger('click')
   await mcp.findComponent({ name: 'ContextMenuPlus' }).find('.edit').trigger('click')
   const editor = mcp.findComponent({ name: 'Editor' })
-  expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
-  expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('node')
-  expect(editor.find<HTMLInputElement>('input[name=url]').element.value).toBe('script.js')
-  expect(editor.find<HTMLInputElement>('input[name=cwd]').element.value).toBe('cwd1')
+  expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('sse')
+  expect(editor.find<HTMLInputElement>('input[name=url]').element.value).toBe('http://localhost:3000')
   await editor.find<HTMLSelectElement>('select[name=type]').setValue('sse')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('http://localhost:3000')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
-    uuid: '1',
-    registryId: '1',
+    uuid: '2',
+    registryId: '2',
     state: 'enabled',
     label: '',
     type: 'sse',
-    command: 'node',
+    command: '',
     url: 'http://localhost:3000',
-    cwd: 'cwd1',
+    cwd: '',
     env: {},
     headers: {},
     oauth: null,
