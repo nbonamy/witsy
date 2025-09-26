@@ -65,7 +65,7 @@ test('stt settings', async () => {
   expect(store.config.stt.silenceDuration).toBe(1000)
 
   // openai
-  expect(stt.find<HTMLSelectElement>('select[name=model]').element.value).toBe('whisper-1')
+  expect(stt.find<HTMLSelectElement>('select[name=model]').element.value).toBe('gpt-4o-transcribe')
 
   // groq
   await stt.find('select[name=engine]').setValue('groq')

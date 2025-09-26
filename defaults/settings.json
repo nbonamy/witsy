@@ -137,7 +137,7 @@
   },
   "stt": {
     "engine": "openai", 
-    "model": "whisper-1",
+    "model": "gpt-4o-transcribe",
     "locale": "",
     "vocabulary": [],
     "autoStart": false,
