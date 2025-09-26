@@ -172,7 +172,9 @@ app.whenReady().then(async () => {
 
   // auto-updater (we need it now for menu)
   autoUpdater = new AutoUpdater(app, {
-    preInstall: () => quitAnyway = true,
+    preInstall: () => {
+      quitApp();
+    },
     onUpdateAvailable: () => {
       window.notifyBrowserWindows('update-available');
       trayIconManager.install();

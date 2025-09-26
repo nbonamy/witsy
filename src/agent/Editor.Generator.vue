@@ -11,13 +11,13 @@
         <div class="form-field">
           <label for="description">{{ t('agent.create.generator.describe') }}</label>
           <div class="help">{{ t('agent.create.generator.help.describe') }}</div>
-          <textarea 
+          <VoiceTextarea 
             v-model="description" 
             name="description" 
             :placeholder="t('agent.create.generator.placeholder')"
             rows="8"
             required 
-          ></textarea>
+          />
         </div>
         
         <div class="form-field">
@@ -97,6 +97,7 @@ import WizardStep from '../components/WizardStep.vue'
 import LlmFactory from '../llms/llm'
 import Agent from '../models/agent'
 import AgentGenerator from '../services/agent_generator'
+import VoiceTextarea from '../components/VoiceTextarea.vue'
 import Loader from '../components/Loader.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'

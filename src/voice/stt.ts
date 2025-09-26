@@ -1,17 +1,18 @@
 
 import { Configuration } from 'types/config'
+import { isAudioRecordingSupported } from '../composables/audio_recorder'
 import { engineNames } from '../llms/base'
 import STTFalAi from './stt-falai'
 import STTFireworks from './stt-fireworks'
 import STTGladia from './stt-gladia'
 import STTGroq from './stt-groq'
 import STTHuggingFace from './stt-huggingface'
+import STTMistral from './stt-mistral'
 import STTNvidia from './stt-nvidia'
 import STTOpenAI from './stt-openai'
-import STTSpeechmatics from './stt-speechmatics'
-import STTMistral from './stt-mistral'
-import STTWhisper from './stt-whisper'
 import STTSoniox from './stt-soniox'
+import STTSpeechmatics from './stt-speechmatics'
+import STTWhisper from './stt-whisper'
 
 export type DownloadStatus = {
   state: 'initiate'|'download'|'done'
@@ -93,6 +94,36 @@ export interface STTEngine {
 
   // file conversion
   transcribeFile?(file: File, opts?: object): Promise<TranscribeResponse>
+}
+
+export const isSTTReady = (config: Configuration): boolean => {
+
+  // basic checks
+  if (!isAudioRecordingSupported()) return false
+  if (!config.stt.engine) return false
+
+  // custom needs a base URL
+  if (config.stt.engine === 'custom') {
+    if (!config.stt.customOpenAI?.baseURL?.length) {
+      return false
+    }
+  }
+
+  // other require api keys
+  if (!config.engines[config.stt.engine]?.apiKey?.length) {
+    return false
+  }
+
+  // last but not least: we need a model!
+  const model = config.stt.model
+  if (!model?.length) return false
+  const models = getSTTModels(config.stt.engine)
+  if (!models || !models.length) return false
+  if (!models.map(m => m.id).includes(model)) return false
+
+  // all good!
+  return true
+
 }
 
 export const getSTTEngines = () => {
