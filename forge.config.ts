@@ -53,7 +53,17 @@ if (isDarwin) {
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    ignore: [],
+    
+    /*
+     * electron-forge 7.9.0 fix but increases image size significantly
+     */
+    // ignore: (file: string): boolean => {
+    //   if (!file) return false;
+    //   if (file.startsWith('/node_modules')) return false;
+    //   if (!file.startsWith('/.vite')) return true;
+    //   return false;
+    // },
+    
     icon: 'assets/icon',
     executableName: process.platform == 'linux' ? 'witsy' : 'Witsy',
     appBundleId: 'com.nabocorp.witsy',
@@ -148,49 +158,47 @@ const config: ForgeConfig = {
     prePackage: async (forgeConfig, platform, arch) => {
       prePackage(platform, arch)
     },
-    packageAfterCopy: async (forgeConfig, buildPath, electronVersion, platform) => {
+    
+    /*
+     * electron-forge 7.9.0 fix to include native dependencies
+     */
+    // packageAfterCopy: async (forgeConfig, buildPath, electronVersion, platform) => {
+    //   // https://www.danielcorin.com/posts/2024/challenges-building-an-electron-app/#using-sqlite-extensions
+    //   const requiredNativePackages = [ `@nut-tree-fork/libnut-${platform}`, 'autolib', ];
+    //   const sourceNodeModulesPath = path.resolve('.', 'node_modules');
+    //   const destNodeModulesPath = path.resolve(buildPath, 'node_modules');
+    //   await Promise.all(
+    //     requiredNativePackages.map(async (packageName) => {
+    //       const sourcePath = path.join(sourceNodeModulesPath, packageName);
+    //       const destPath = path.join(destNodeModulesPath, packageName);
+    //       await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
+    //       await fs.promises.cp(sourcePath, destPath, {
+    //         recursive: true,
+    //         preserveTimestamps: true,
+    //       });
+    //     })
+    //   );
+    // },
 
-      const nativeModules = [`@nut-tree-fork/libnut-${platform}`, 'autolib'];
-      const sourceNodeModulesPath = path.resolve('.', 'node_modules');
-      const destNodeModulesPath = path.resolve(buildPath, 'node_modules');
-
-      // Create node_modules directory if it doesn't exist
-      if (!fs.existsSync(destNodeModulesPath)) {
-        fs.mkdirSync(destNodeModulesPath, { recursive: true });
-      }
-
-      for (const moduleName of nativeModules) {
-        const sourcePath = path.join(sourceNodeModulesPath, moduleName);
-        const destPath = path.join(destNodeModulesPath, moduleName);
-
-        if (fs.existsSync(sourcePath)) {
-          // Create parent directories for scoped packages
-          const destDir = path.dirname(destPath);
-          if (!fs.existsSync(destDir)) {
-            fs.mkdirSync(destDir, { recursive: true });
-          }
-
-          // Copy the entire module directory
-          execSync(`cp -r "${sourcePath}" "${destPath}"`);
-        }
-      }
-    },
-    packageAfterPrune: async (forgeConfig, buildPath) => {
-      const unlink = (bin: string) => {
-        const binPath = path.join(buildPath, bin);
-        if (fs.existsSync(binPath)) {
-          fs.unlinkSync(binPath);
-        }
-      }
-      unlink('node_modules/@iktakahiro/markdown-it-katex/node_modules/.bin/katex')
-      unlink('node_modules/officeparser/node_modules/.bin/rimraf')
-      unlink('node_modules/@langchain/core/node_modules/.bin/uuid')
-      unlink('node_modules/portfinder/node_modules/.bin/mkdirp')
-      unlink('node_modules/clipboardy/node_modules/.bin/semver')
-      unlink('node_modules/clipboardy/node_modules/.bin/which')
-      unlink('node_modules/execa/node_modules/.bin/semver')
-      unlink('node_modules/execa/node_modules/.bin/which')
-    }
+    /*
+     * this was needed to fix issues with binaries provided by dependencies
+     */
+    // packageAfterPrune: async () => {
+    //   const unlink = (bin: string) => {
+    //     const binPath = path.join(buildPath, bin);
+    //     if (fs.existsSync(binPath)) {
+    //       fs.unlinkSync(binPath);
+    //     }
+    //   }
+    //   unlink('node_modules/@iktakahiro/markdown-it-katex/node_modules/.bin/katex')
+    //   unlink('node_modules/officeparser/node_modules/.bin/rimraf')
+    //   unlink('node_modules/@langchain/core/node_modules/.bin/uuid')
+    //   unlink('node_modules/portfinder/node_modules/.bin/mkdirp')
+    //   unlink('node_modules/clipboardy/node_modules/.bin/semver')
+    //   unlink('node_modules/clipboardy/node_modules/.bin/which')
+    //   unlink('node_modules/execa/node_modules/.bin/semver')
+    //   unlink('node_modules/execa/node_modules/.bin/which')
+    // }
   }
 };
 
