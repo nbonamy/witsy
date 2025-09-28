@@ -62,7 +62,7 @@ class AudioRecorder {
   audioChunks: Blob[]
   analyser: AnalyserNode
   bufferLength: number
-  dataArray: Uint8Array
+  dataArray: Uint8Array<ArrayBuffer>
   sampler: NodeJS.Timeout
   startRecordingTime: number
   lastNoise: number

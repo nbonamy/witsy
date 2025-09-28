@@ -10,8 +10,8 @@ For contributions to be accepted into Witsy, you first need sign the [Contributo
 
 ### Development Environment
 
-- **Node.js version**: `20.18`
-- **npm version**: `11.1.0`
+- **Node.js version**: `22.19.0`
+- **npm version**: `11.6.0`
 
 Use [nvm](https://github.com/nvm-sh/nvm) to switch between Node.js versions.
 
