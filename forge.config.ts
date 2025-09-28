@@ -5,11 +5,13 @@ import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { VitePlugin } from '@electron-forge/plugin-vite';
+import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+
 import prePackage from './build/prepackage';
 
 import dotenv from 'dotenv';
@@ -51,6 +53,7 @@ if (isDarwin) {
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    ignore: [],
     icon: 'assets/icon',
     executableName: process.platform == 'linux' ? 'witsy' : 'Witsy',
     appBundleId: 'com.nabocorp.witsy',
@@ -71,25 +74,23 @@ const config: ForgeConfig = {
     ],
     ...(process.env.TEST ? {} : osxPackagerConfig),
     afterCopy: [
-      // sign native modules
-      (buildPath, electronVersion, platform, arch, callback) => {
+      (buildPath: string, electronVersion: string, platform: string, arch: string, callback: (error?: Error) => void) => {
         try {
           if (platform === 'darwin') {
             const binaries = [
               'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node',
-              `node_modules/autolib/build/Release/autolib.node`,
+              'node_modules/autolib/build/Release/autolib.node',
             ];
 
             binaries.forEach((binary) => {
               const binaryPath = path.join(buildPath, binary);
               const identify = process.env.IDENTIFY_DARWIN_CODE;
               if (fs.existsSync(binaryPath)) {
-                console.log(`Signing binary: ${binaryPath}`);
                 execSync(`codesign --deep --force --verbose --sign "${identify}" "${binaryPath}"`, {
                   stdio: 'inherit',
                 });
               } else {
-                throw new Error(`Binary not found: ${binaryPath}`);
+                throw new Error(`❌ Binary not found for signing: ${binaryPath}`);
               }
             });
           }
@@ -109,6 +110,7 @@ const config: ForgeConfig = {
     /* linux  */ new MakerRpm({}), new MakerDeb({})
   ],
   plugins: [
+    new AutoUnpackNativesPlugin({}),
     new VitePlugin({
       // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
       // If you are familiar with Vite configuration, it will look really familiar.
@@ -146,8 +148,34 @@ const config: ForgeConfig = {
     prePackage: async (forgeConfig, platform, arch) => {
       prePackage(platform, arch)
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    packageAfterPrune: async (forgeConfig, buildPath, electronVersion, platform, arch) => {
+    packageAfterCopy: async (forgeConfig, buildPath, electronVersion, platform) => {
+
+      const nativeModules = [`@nut-tree-fork/libnut-${platform}`, 'autolib'];
+      const sourceNodeModulesPath = path.resolve('.', 'node_modules');
+      const destNodeModulesPath = path.resolve(buildPath, 'node_modules');
+
+      // Create node_modules directory if it doesn't exist
+      if (!fs.existsSync(destNodeModulesPath)) {
+        fs.mkdirSync(destNodeModulesPath, { recursive: true });
+      }
+
+      for (const moduleName of nativeModules) {
+        const sourcePath = path.join(sourceNodeModulesPath, moduleName);
+        const destPath = path.join(destNodeModulesPath, moduleName);
+
+        if (fs.existsSync(sourcePath)) {
+          // Create parent directories for scoped packages
+          const destDir = path.dirname(destPath);
+          if (!fs.existsSync(destDir)) {
+            fs.mkdirSync(destDir, { recursive: true });
+          }
+
+          // Copy the entire module directory
+          execSync(`cp -r "${sourcePath}" "${destPath}"`);
+        }
+      }
+    },
+    packageAfterPrune: async (forgeConfig, buildPath) => {
       const unlink = (bin: string) => {
         const binPath = path.join(buildPath, bin);
         if (fs.existsSync(binPath)) {
