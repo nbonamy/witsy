@@ -1,6 +1,6 @@
 
 import PDFParser from 'pdf2json'
-import officeParser from 'officeparser'
+import { parseOfficeAsync } from 'officeparser'
 
 export function getPDFRawTextContent(contents: Buffer): Promise<string> {
   const pdfParser = new PDFParser(undefined, 1)
@@ -28,7 +28,7 @@ export function getPDFRawTextContent(contents: Buffer): Promise<string> {
 }
 
 export function getOfficeRawTextContent(contents: Buffer): Promise<string> {
-  return officeParser.parseOfficeAsync(contents)
+  return parseOfficeAsync(contents)
 }
 
 export function getTextContent(b64contents: string, format: string): Promise<string> {
