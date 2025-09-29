@@ -13,7 +13,7 @@
         <div class="panel-item">
           <div class="icon leading"><Component :is="docIcon(doc)" /></div>
           <div class="info">
-            <div class="text">{{ doc.origin }}</div>
+            <div class="text">{{ doc.filename }}</div>
             <div class="subtext" v-if="doc.type === 'folder'">{{ t('docRepo.list.documentsCount', { count: docSourceCount(doc) } ) }}</div>
             <div class="subtext" v-else>{{ filesize(doc.fileSize) }}</div>
           </div>
