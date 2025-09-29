@@ -29,6 +29,7 @@ export type McpOAuthConfig = {
   tokens?: OAuthTokens
   clientId?: string
   clientSecret?: string
+  scope?: string
 }
 
 export type McpClient = {

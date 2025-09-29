@@ -8,12 +8,14 @@ import { createServer as defaultCreateServer } from 'node:http'
 import { useI18n } from '../main/i18n'
 import * as portfinder from 'portfinder'
 
+export type OnTokensUpdatedCallback = (tokens: OAuthTokens, scope: string) => void
+
 export class McpOAuthClientProvider implements OAuthClientProvider {
   private _codeVerifier?: string
   private _redirectUrl: string | URL
   private _clientMetadata: OAuthClientMetadata
   private _onRedirect: (url: URL) => void
-  private _onTokensUpdated: (tokens: OAuthTokens) => void
+  private _onTokensUpdated: OnTokensUpdatedCallback
   private _clientInformation?: OAuthClientInformationFull
   private _tokens?: OAuthTokens
 
@@ -21,7 +23,7 @@ export class McpOAuthClientProvider implements OAuthClientProvider {
     redirectUrl: string | URL, 
     clientMetadata: OAuthClientMetadata,
     onRedirect: (url: URL) => void,
-    onTokensUpdated: (tokens: OAuthTokens) => void
+    onTokensUpdated: OnTokensUpdatedCallback
   ) {
     this._redirectUrl = redirectUrl
     this._clientMetadata = clientMetadata
@@ -51,7 +53,7 @@ export class McpOAuthClientProvider implements OAuthClientProvider {
 
   saveTokens(tokens: OAuthTokens): void {
     this._tokens = tokens
-    this._onTokensUpdated(tokens)
+    this._onTokensUpdated(tokens, this.clientMetadata.scope || '')
   }
 
   redirectToAuthorization(authorizationUrl: URL): void {
@@ -273,10 +275,8 @@ export default class McpOAuthManager {
     this.callbackServer = OAuthCallbackServer.getInstance()
   }
 
-  /**
-   * Get standardized client metadata for Witsy
-   */
-  async getClientMetadata(): Promise<OAuthClientMetadata> {
+  async getClientMetadata(scope?: string): Promise<OAuthClientMetadata> {
+    
     // Ensure server is running to get the port
     await this.callbackServer.ensureServerRunning()
     const callbackUrl = `http://localhost:${this.callbackServer.callbackPort}/callback`
@@ -287,7 +287,7 @@ export default class McpOAuthManager {
       grant_types: ['authorization_code', 'refresh_token'],
       response_types: ['code'],
       token_endpoint_auth_method: 'client_secret_post',
-      scope: 'mcp:tools'
+      ...(scope ? { scope } : {})
     }
   }
 
@@ -324,7 +324,8 @@ export default class McpOAuthManager {
         
         if (isOAuthError) {
           // OAuth is required - provide standardized Witsy client metadata
-          const clientMetadata = await this.getClientMetadata()
+          const scope = await this.getServerSupportedScopes(url)
+          const clientMetadata = await this.getClientMetadata(scope)
           console.log(`OAuth required for ${url}:`, error.message)
           return { requiresOAuth: true, metadata: clientMetadata }
         } else {
@@ -430,7 +431,6 @@ export default class McpOAuthManager {
         grant_types: ['authorization_code', 'refresh_token'],
         response_types: ['code'],
         client_name: `${useI18n(app)('common.appName')} MCP Client`,
-        scope: 'mcp:tools'
       }
       oauthProvider.saveClientInformation(clientInformation);
     }
@@ -500,17 +500,62 @@ export default class McpOAuthManager {
    * Create an OAuth provider for a server - simplified
    */
   async createOAuthProvider(
-    clientMetadata?: OAuthClientMetadata, 
-    onRedirect?: (url: URL) => void,
-    onTokensUpdated?: (tokens: OAuthTokens) => void
+    clientMetadata: OAuthClientMetadata, 
+    onRedirect: (url: URL) => void,
+    onTokensUpdated: OnTokensUpdatedCallback
   ): Promise<McpOAuthClientProvider> {
     
-    const metadata = clientMetadata || await this.getClientMetadata()
-    const redirectUrl = metadata.redirect_uris?.[0] || `http://localhost:${this.callbackServer.callbackPort}/callback`
-    return new McpOAuthClientProvider(redirectUrl, metadata, onRedirect, onTokensUpdated)
+    const redirectUrl = clientMetadata.redirect_uris?.[0] || `http://localhost:${this.callbackServer.callbackPort}/callback`
+    return new McpOAuthClientProvider(redirectUrl, clientMetadata, onRedirect, onTokensUpdated)
   }
 
   shutdown(): void {
+  }
+
+  async getServerSupportedScopes(url: string): Promise<string | null> {
+
+    try {
+
+      // get metadata url (.well-known/oauth-protected-resource)
+      let response = await fetch(url)
+      const headers = response.headers
+      const auth = headers.get('www-authenticate')
+      if (!auth) return null
+      
+      // parse the header
+      let resourceMetadata = null
+      const parts = auth.split(',')
+      for (const part of parts) {
+        const [key, value] = part.trim().split('=')
+        if (key === 'resource_metadata' && value) {
+          resourceMetadata = value.replace(/"/g, '')
+          break
+        }
+      }
+
+      // if none
+      if (!resourceMetadata) {
+        return null
+      }
+
+      // now fetch it
+      response = await fetch(resourceMetadata)
+      if (!response.ok) {
+        console.error(`Failed to fetch resource metadata from ${resourceMetadata}: ${response.status} ${response.statusText}`)
+        return null
+      }
+      const json = await response.json()
+      if (json.scopes_supported && Array.isArray(json.scopes_supported)) {
+        return json.scopes_supported.join(' ')
+      }
+
+    } catch (error) {
+      console.error('Failed to get server supported scopes:', url, error)
+    }
+
+    // too bad
+    return null
+
   }
 
 }

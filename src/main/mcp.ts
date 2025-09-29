@@ -1,7 +1,7 @@
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
-import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
+import { getDefaultEnvironment, StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js"
 import { OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth'
 import { CompatibilityCallToolResultSchema } from '@modelcontextprotocol/sdk/types'
@@ -11,11 +11,11 @@ import { LlmTool } from 'multi-llm-ts'
 import { anyDict } from '../types/index'
 import { McpClient, McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from '../types/mcp'
 import { loadSettings, saveSettings, settingsFilePath } from './config'
+import { useI18n } from './i18n'
 import McpOAuthManager from './mcp_auth'
 import Monitor from './monitor'
-import { useI18n } from './i18n'
-import { notifyBrowserWindows } from './windows'
 import { wait } from './utils'
+import { notifyBrowserWindows } from './windows'
 
 type ToolsCacheEntry = {
   tools: any
@@ -388,7 +388,7 @@ export default class {
 
   }
 
-  updateTokens = async (server: McpServer, tokens: OAuthTokens): Promise<boolean> => {
+  updateTokens = async (server: McpServer, tokens: OAuthTokens, scope: string): Promise<boolean> => {
 
     // we need a config
     const config = loadSettings(this.app)
@@ -406,6 +406,7 @@ export default class {
     if (original && original.oauth) {
       if (JSON.stringify(original.oauth.tokens) !== JSON.stringify(tokens)) {
         original.oauth.tokens = tokens
+        original.oauth.scope = scope
         edited = true
       }
     }
@@ -415,6 +416,7 @@ export default class {
     if (originalMcp && config.mcp.mcpServersExtra[server.registryId].oauth) {
       if (JSON.stringify(config.mcp.mcpServersExtra[server.registryId].oauth.tokens) !== JSON.stringify(tokens)) {
         config.mcp.mcpServersExtra[server.registryId].oauth.tokens = tokens
+        config.mcp.mcpServersExtra[server.registryId].oauth.scope = scope
         edited = true
       }
     }
@@ -690,12 +692,13 @@ export default class {
 
       // add OAuth provider if configured
       if (server.oauth && (server.oauth.tokens || server.oauth.clientId)) {
-        
-        const oauthProvider = await this.oauthManager.createOAuthProvider(undefined, (redirectUrl) => {
+
+        const clientMetadata = await this.oauthManager.getClientMetadata(server.oauth.tokens.scope ?? server.oauth.scope)
+        const oauthProvider = await this.oauthManager.createOAuthProvider(clientMetadata, (redirectUrl) => {
           console.log(`OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
           this.logs[server.uuid].push(`OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
-        }, (tokens: OAuthTokens) => {
-          this.updateTokens(server, tokens)
+        }, (tokens: OAuthTokens, scope: string) => {
+          this.updateTokens(server, tokens, scope)
         })
         
         // Set existing tokens if available
@@ -714,7 +717,7 @@ export default class {
             grant_types: ['authorization_code', 'refresh_token'],
             response_types: ['code'],
             client_name: `${useI18n(app)('common.appName')} MCP Client`,
-            scope: 'mcp:tools'
+            ...(server.oauth.scope ? { scope: server.oauth.scope } : {})
           }
           oauthProvider.saveClientInformation(clientInformation)
         }
