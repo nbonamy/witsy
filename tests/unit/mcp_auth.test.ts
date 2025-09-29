@@ -129,7 +129,7 @@ describe('McpOAuthClientProvider', () => {
     
     provider.saveTokens(tokens)
     expect(provider.tokens()).toEqual(tokens)
-    expect(mockOnTokensUpdated).toHaveBeenCalledWith(tokens)
+    expect(mockOnTokensUpdated).toHaveBeenCalledWith(tokens, '')
   })
 
   test('redirectToAuthorization calls redirect callback', () => {

@@ -100,11 +100,10 @@ export function useMcpServer() {
 
       const oauthData = JSON.parse(oauthResult)
       return {
-        // Only store essential OAuth data in compact form
         tokens: oauthData.tokens,
         clientId: oauthData.clientInformation?.client_id,
-        clientSecret: oauthData.clientInformation?.client_secret
-        // clientMetadata is standardized and regenerated each time
+        clientSecret: oauthData.clientInformation?.client_secret,
+        scope: oauthData.clientMetadata?.scope
       }
 
     } catch (error) {
