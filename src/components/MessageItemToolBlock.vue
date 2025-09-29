@@ -1,5 +1,5 @@
 <template>
-  <div class="tool-container" @click="toggleOpen">
+  <div class="tool-container" @click="toggleOpen" @selectstart="onSelectStart" @mouseup="onMouseUp">
     <div class="tool-header">
       <div class="tool-name">{{ name }}</div>
       <div v-if="!toolCall.done" class="tool-loader">
@@ -57,6 +57,8 @@ const props = defineProps({
 })
 
 const isOpen = ref(false)
+const isSelecting = ref(false)
+const lastClickTime = ref(0)
 
 const name = computed(() => {
   if (props.toolCall.status) return props.toolCall.status
@@ -66,13 +68,18 @@ const name = computed(() => {
 })
 
 onMounted(() => {
-  const opened = JSON.parse(window.localStorage.getItem('opened-tools') || '[]')
+  const opened = JSON.parse(window.sessionStorage.getItem('opened-tools') || '[]')
   isOpen.value = opened.includes(props.toolCall.id)
 })
 
 const toggleOpen = () => {
+
+  if (isSelecting.value) {
+    return
+  }
+  
   isOpen.value = !isOpen.value
-  const opened = JSON.parse(window.localStorage.getItem('opened-tools') || '[]')
+  const opened = JSON.parse(window.sessionStorage.getItem('opened-tools') || '[]')
   if (isOpen.value) {
     if (!opened.includes(props.toolCall.id)) {
       opened.push(props.toolCall.id)
@@ -83,7 +90,21 @@ const toggleOpen = () => {
       opened.splice(index, 1)
     }
   }
-  window.localStorage.setItem('opened-tools', JSON.stringify(opened))
+  window.sessionStorage.setItem('opened-tools', JSON.stringify(opened))
+}
+
+const onSelectStart = () => {
+  isSelecting.value = true
+}
+
+const onMouseUp = () => {
+  if (!window.getSelection()?.toString().length) {
+    isSelecting.value = false
+  } else {
+    setTimeout(() => {
+      isSelecting.value = false
+    }, 250)
+  }
 }
 
 </script>
@@ -99,6 +120,7 @@ const toggleOpen = () => {
   border-radius: 8px;
   font-size: 0.9em;
   cursor: pointer;
+  user-select: text;
 
   .tool-header {
     display: flex;
