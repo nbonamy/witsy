@@ -4,30 +4,30 @@
     <div class="actionbar" v-if="activeBar == 'standard'">
       
       <div class="action" @click="emitEvent('action', 'undo')" v-tooltip="t('common.undo')" :class="{ disabled: !undoStack.length }">
-        <BIconReplyFill />
+        <UndoIcon />
       </div>
       
       <div class="action" @click="emitEvent('action', 'redo')" v-tooltip="t('common.redo')" :class="{ disabled: !redoStack.length }">
-        <BIconReplyFill style="transform: scaleX(-1)"/>
+        <RedoIcon />
       </div>
       
       <div class="action" @click="emitEvent('action', 'copy')" v-tooltip="t('scratchpad.actions.copyToClipboard')">
-        <BIconClipboard v-if="copyState == 'idle'"/>
-        <BIconClipboardCheck style="color: var(--scratchpad-actionbar-active-icon-color)" v-else/>
+        <ClipboardIcon v-if="copyState == 'idle'"/>
+        <ClipboardCheckIcon style="color: var(--scratchpad-actionbar-active-icon-color)" v-else/>
       </div>
       
       <div class="action" @click="onMagicAction($event, 'spellcheck')" v-tooltip="t('scratchpad.actions.spellcheck')">
-        <BIconSpellcheck />
+        <SpellCheckIcon />
       </div>
       
       <div class="action" @click="onMagicBar" v-tooltip="t('scratchpad.actions.writingAssistant')">
-        <BIconStars />
+        <SparklesIcon />
       </div>
       
       <div :class="{ action: true, active: audioState == 'playing', static: true }" @click="emitEvent('action', 'read')" v-tooltip="t('common.read')">
-        <span v-if="audioState == 'playing'"><BIconStopCircle/></span>
-        <span v-else-if="audioState == 'loading'"><BIconXCircle/></span>
-        <span v-else><BIconVolumeUp /></span>
+        <span v-if="audioState == 'playing'"><StopCircleIcon/></span>
+        <span v-else-if="audioState == 'loading'"><CircleXIcon/></span>
+        <span v-else><Volume2Icon /></span>
       </div>
     
     </div>
@@ -35,31 +35,31 @@
     <div class="actionbar" v-if="activeBar == 'magic'">
       
       <div class="action" @click="onStandardBar" v-tooltip="t('common.back')">
-        <BIconArrowLeft />
+        <MoveLeftIcon />
       </div>
       
       <div class="action" @click="onMagicAction($event, 'improve')" v-tooltip="t('scratchpad.actions.improveWriting')">
-        <BIconMortarboard />
+        <GraduationCapIcon />
       </div>
       
       <div class="action" @click="onMagicAction($event, 'takeaways')" v-tooltip="t('scratchpad.actions.listTakeaways')">
-        <BIconListUl />
+        <ListIcon />
       </div>
       
       <div class="action" @click="onMagicAction($event, 'title')" v-tooltip="t('scratchpad.actions.suggestTitle')">
-        <BIconFonts />
+        <TypeOutlineIcon />
       </div>
       
       <div class="action" @click="onMagicAction($event, 'simplify')" v-tooltip="t('scratchpad.actions.simplifyWriting')">
-        <BIconChevronBarContract />
+        <FoldVerticalIcon />
       </div>
       
       <div class="action" @click="onMagicAction($event, 'expand')" v-tooltip="t('scratchpad.actions.expandWriting')">
-        <BIconChevronBarExpand />
+        <UnfoldVerticalIcon />
       </div>
     
       <div class="action" @click="onMagicAction($event, 'complete')" v-tooltip="t('scratchpad.actions.completeText')" >
-        <BIconPen />
+        <PencilLineIcon />
       </div>
     
     </div>
@@ -69,8 +69,9 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue'
 import FloatingVue, { vTooltip } from 'floating-vue'
+import { ClipboardCheckIcon, ClipboardIcon, FoldVerticalIcon, GraduationCapIcon, ListIcon, MoveLeftIcon, PencilLineIcon, RedoIcon, SparklesIcon, SpellCheckIcon, StopCircleIcon, TypeOutlineIcon, UndoIcon, UnfoldVerticalIcon, Volume2Icon, CircleXIcon } from 'lucide-vue-next'
+import { onMounted, ref } from 'vue'
 import { t } from '../services/i18n'
 
 // bus
@@ -123,7 +124,7 @@ const onMagicAction = (event: Event, action: string) => {
   
   position: absolute;
   right: 1.5rem;
-  bottom: 6rem;
+  bottom: 8rem;
   border: 1px solid var(--scratchpad-actionbar-border-color);
   border-radius: 20px;
   padding: 16px 12px;
@@ -144,7 +145,7 @@ const onMagicAction = (event: Event, action: string) => {
   
   .action {
     color: var(--scratchpad-actionbar-normal-icon-color);
-    font-size: 14pt;
+    font-size: 18.5px;
     cursor: pointer;
 
     &.disabled {

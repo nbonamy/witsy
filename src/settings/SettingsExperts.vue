@@ -1,7 +1,7 @@
 <template>
   <div class="experts tab-content"  @keyup.escape.prevent="onEdit(null)">
     <header v-if="edited">
-      <BIconChevronLeft class="icon back" @click="onEdit(null)" />
+      <!-- <ChevronLeftIcon class="icon back" @click="onEdit(null)" /> -->
       <div class="title">{{ edited.name || expertI18n(edited, 'name') }}</div>
     </header>
     <header v-else>
@@ -18,14 +18,14 @@
 
 <script setup lang="ts">
 
-import { Expert } from '../types/index'
-import { ref } from 'vue'
-import { store } from '../services/store'
-import { expertI18n, t } from '../services/i18n'
-import { newExpert, saveExperts } from '../services/experts'
 import { v4 as uuidv4 } from 'uuid'
-import ExpertsList from '../components/ExpertsList.vue'
+import { ref } from 'vue'
 import ExpertEditor from '../components/ExpertEditor.vue'
+import ExpertsList from '../components/ExpertsList.vue'
+import { newExpert, saveExperts } from '../services/experts'
+import { expertI18n, t } from '../services/i18n'
+import { store } from '../services/store'
+import { Expert } from '../types/index'
 
 const list = ref(null)
 const editor = ref(null)

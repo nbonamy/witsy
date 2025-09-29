@@ -16,7 +16,7 @@ export const newExpert = (): Expert => {
 
 export const loadExperts = (): void => {
   try {
-    store.experts = window.api.experts.load()
+    store.experts = window.api.experts.load(store.config.workspaceId)
   } catch (error) {
     console.log('Error loading experts data', error)
     store.experts = JSON.parse(JSON.stringify(defaultExperts))
@@ -25,7 +25,7 @@ export const loadExperts = (): void => {
 
 export const saveExperts = (): void => {
   try {
-    window.api.experts.save(JSON.parse(JSON.stringify(store.experts)))
+    window.api.experts.save(store.config.workspaceId, JSON.parse(JSON.stringify(store.experts)))
   } catch (error) {
     console.log('Error saving experts data', error)
   }

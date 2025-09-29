@@ -3,16 +3,17 @@
     <video :src="url" :alt="desc" class="media video" @load="onMediaLoaded" controls v-if="isVideo()"></video>
     <img :src="url" :alt="desc" class="media image" @click="onFullscreen" @load="onMediaLoaded" v-else/>
     <div class="media-actions">
-      <BIconInfoCircle v-if="prompt" class="action info" @click="onInfo"/>
-      <BIconClipboard v-if="!isVideo() && !copying" class="action copy" @click="onCopy" />
-      <BIconClipboardCheck v-if="copying" class="action copy" />
-      <BIconDownload class="action download" @click="onDownload" />
+      <InfoIcon v-if="prompt" class="action info" @click="onInfo"/>
+      <ClipboardIcon v-if="!isVideo() && !copying" class="action copy" @click="onCopy" />
+      <ClipboardCheckIcon v-if="copying" class="action copy" />
+      <DownloadIcon class="action download" @click="onDownload" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 
+import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, InfoIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
 import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'

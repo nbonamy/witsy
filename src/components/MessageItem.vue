@@ -3,7 +3,7 @@
     
     <div class="role" :class="message.role" v-if="showRole" v-tooltip="{ text: modelInfo, position: 'bottom-right' }">
       <template v-if="agent">
-        <BIconRobot class="avatar" />
+        <AgentIcon class="avatar" />
         <div class="name variable-font-size">{{ agent.name }}</div>
       </template>
       <template v-else>
@@ -34,7 +34,7 @@
 
       <!-- expert -->
        <div v-if="message.expert" class="expert text variable-font-size">
-        <p><BIconStars/> {{  message.expert.name }}</p>
+        <p><BrainIcon/> {{ message.expert.name }}</p>
       </div>
 
       <!-- content -->
@@ -56,28 +56,29 @@
 
 <script setup lang="ts">
 
-import { ChatToolMode } from '../types/config'
-import { ref, computed, onMounted, onUnmounted, PropType, watch } from 'vue'
+import { BrainIcon } from 'lucide-vue-next'
+import { computed, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
+import AgentIcon from '../../assets/agent.svg?component'
+import UserAvatar from '../../assets/person.crop.circle.svg?component'
+import useAppearanceTheme from '../composables/appearance_theme'
+import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
+import Attachment from '../models/attachment'
+import Chat from '../models/chat'
+import Message from '../models/message'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
-import useAppearanceTheme from '../composables/appearance_theme'
-import UserAvatar from '../../assets/person.crop.circle.svg?component'
+import { ChatToolMode } from '../types/config'
+import AttachmentView from './Attachment.vue'
+import EngineLogo from './EngineLogo.vue'
+import Loader from './Loader.vue'
+import MessageItemActions from './MessageItemActions.vue'
 import MessageItemBody from './MessageItemBody.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
-import MessageItemActions from './MessageItemActions.vue'
-import Chat from '../models/chat'
-import Attachment from '../models/attachment'
-import Message from '../models/message'
-import Loader from './Loader.vue'
-import AttachmentView from './Attachment.vue'
-import EngineLogo from './EngineLogo.vue'
 // import { getMarkdownSelection } from '../services/markdown'
 
 // events
 import useEventBus from '../composables/event_bus'
-import { BIconRobot } from 'bootstrap-icons-vue'
 const { emitEvent, onEvent } = useEventBus()
 
 // init stuff

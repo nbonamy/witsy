@@ -1,15 +1,17 @@
 
 .master-detail {
 
+  --master-detail-width: 225px;
+
   display: flex;
   flex-direction: row;
   align-items: stretch;
   height: 100vh;
 
   .md-master {
-    
-    width: 200px;
-    padding: 0.5rem;
+
+    width: var(--master-detail-width);
+    padding: 0.75rem 1rem;
     border-right: 1px solid var(--sidebar-border-color);
     background-color: color-mix(in srgb, var(--sidebar-bg-color), var(--background-color) 50%);
 
@@ -21,7 +23,7 @@
       color: var(--faded-text-color);
 
       .md-master-header-title {
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
         margin-bottom: 1rem;
         color: var(--dimmed-text-color);
       }
@@ -29,36 +31,44 @@
 
     .md-master-list {
   
-      width: 200px;
+      width: var(--master-detail-width);
       overflow-y: auto;
       scrollbar-gutter: stable;
       scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
 
       .md-master-list-item {
 
-        --master-list--item-font-size: 11pt;
+        --master-list--item-font-size: 15.5px;
 
         flex-direction: row;
         align-items: center;
         height: auto;
         padding: 0.5rem;
         display: flex;
-        border-radius: 4px;
+        border-radius: 6px;
         font-size: var(--master-list--item-font-size);
         color: var(--settings-normal-text-color);
         cursor: pointer;
+        gap: 0.5rem;
 
         .logo {
+          flex: 0 0 1.5rem;
+          text-align: center;
           height: var(--master-list--item-font-size);
-          margin-right: 0.5rem;
         }
 
         .icon {
           color: var(--settings-normal-text-color);
+          width: 1.125rem;
+          height: 1.125rem;
         }
 
         &.selected {
           background-color: var(--settings-selected-bg-color);
+          color: var(--settings-selected-text-color);
+          .icon {
+            color: var(--settings-selected-text-color);
+          }
         }
       }
 

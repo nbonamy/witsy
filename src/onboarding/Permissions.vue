@@ -242,7 +242,6 @@ defineExpose({
   padding: 0rem 1.5rem;
   background-color: var(--background-alt-color);
   border-radius: 12px;
-  border: 1px solid var(--border-color);
 }
 
 .info-icon {

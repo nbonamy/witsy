@@ -1,5 +1,9 @@
 {
   "common": {
+    "actions": "アクション",
+    "agents": "エージェント",
+    "allSelected": "すべて選択済み",
+    "appName": "Witsy",
     "arguments": "引数",
     "askMeAnything": "何でも聞いてください",
     "attach": "添付する",
@@ -25,10 +29,11 @@
       "deleteCustomInstruction": "このカスタム指示を削除してもよろしいですか？",
       "deleteDocument": "このドキュメントを削除してもよろしいですか？",
       "deleteMemory": "このメモリを削除してもよろしいですか？",
-      "deleteRepository": "このナレッジベースを本当に削除しますか？",
+      "deleteRepository": "Are you sure you want to delete this collection?",
       "doNotClose": "閉じない",
       "unsavedChanges": "未保存の変更があります。このウィンドウを閉じると作業内容が失われます。"
     },
+    "content": "Content",
     "continue": "続行",
     "copied": "コピーしました",
     "copy": "コピー",
@@ -45,22 +50,24 @@
     "disabled": "無効",
     "docRepo": "ナレッジベース",
     "documents": "ドキュメント",
+    "done": "完了",
     "edit": "編集",
-    "embeddings": "埋め込み",
     "enabled": "有効",
     "error": "エラー！",
     "errorCopyClipboard": "テキストのクリップボードへのコピー中にエラーが発生しました。",
     "errorModelRefresh": "モデルの更新中にエラーが発生しました。接続を確認して再試行してください。",
     "esc": "Esc",
     "estimatedCost": "推定コスト：",
+    "experts": "専門家",
     "favorites": {
       "add": "お気に入りに追加",
+      "name": "お気に入り",
       "remove": "お気に入りから削除"
     },
     "filename": "ファイル名",
-    "files": "ファイル",
     "fork": "フォーク",
     "high": "高い",
+    "htmlGeneration": "HTML生成中…",
     "icon": "アイコン",
     "import": "インポート",
     "insert": "挿入",
@@ -103,8 +110,11 @@
     "move": "移動",
     "name": "名前",
     "new": "新規",
-    "newChat": "新しいチャット",
+    "newChat": "New Conversation",
+    "next": "次へ",
     "no": "いいえ",
+    "noneSelected": "選択なし",
+    "notes": "Notes",
     "ok": "OK",
     "path": "パス",
     "pick": "選択",
@@ -147,18 +157,26 @@
       "weekly": "毎週"
     },
     "search": "検索…",
+    "select": "選択",
     "selectAll": "すべて選択",
+    "selectAllShort": "すべて",
+    "selectedCount": "{total}中{selected}が選択されました",
     "selectNone": "すべて解除",
     "settings": "設定",
     "shortcut": "ショートカット",
+    "showLess": "折りたたむ",
+    "showMore": "もっと見る",
+    "sortBy": "並べ替え",
     "spellcheck": {
       "add": "辞書に追加"
     },
     "stop": "停止",
+    "title": "Title",
     "tools": "ツール",
     "tryAgain": "もう一度お試しください。",
     "type": "タイプ",
     "undo": "元に戻す",
+    "unselectAllShort": "なし",
     "upload": "アップロード",
     "url": "URL",
     "usage": "使用状況",
@@ -220,13 +238,14 @@
       },
       "information": {
         "help": {
-          "description": "エージェントの目的の簡単な説明。このエージェントがワークフロー内で使用されると、LLMと共有され、エージェントの理解と呼び出しの判断に役立ちます。",
-          "goal": "エージェントの目標。これはLLMに送信されるシステム指示として使用されます。プロンプト内で設定される実行固有情報はここに含めないでください。",
-          "name": "エージェントの説明的な名前。"
+          "description": "エージェントの目的の短い説明。モデルがエージェントの意図を理解するのに役立ちます。",
+          "goal": "エージェントの意思決定を導く個々の目標。",
+          "name": "エージェントに名前を付けてください。後で識別しやすくなります。",
+          "type": "エージェントの機能と他のエージェントとの関係。"
         },
         "promptInputs": "検出された変数",
         "title": "一般情報",
-        "type": "実行モデル"
+        "type": "役割"
       },
       "invocation": {
         "missingInput": "[{name} が不足しています]",
@@ -244,21 +263,19 @@
         "help": {
           "warning": "エージェントの実行はモデルごとの機能に大きく依存します。エージェント機能をサポートするモデルを選択してください。"
         },
-        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
         "showModelSettings": "詳細設定",
         "title": "モデル設定"
       },
       "settings": {
-        "title": "モデル設定"
+        "title": "高度なモデル設定"
       },
       "workflow": {
         "addStep": "ステップを追加",
         "confirmDeleteStep": "このステップを本当に削除しますか？",
-        "customAgents": "代理人…",
-        "customTools": "ツール…",
-        "description": "説明：チャット内で進捗状況の更新に使用されます",
-        "docRepo": "ベース…",
-        "docRepoNone": "ナレッジベースなし",
+        "customAgents": "協力エージェントを割り当てる",
+        "customTools": "ツールを追加",
+        "description": "@:{'common.description'}",
+        "docRepo": "知識を追加",
         "error": {
           "emptyStepPrompt": "ステップ#{step}のプロンプトは空にできません。",
           "missingDocRepo": "ステップ#{step}はナレッジベースを使用していますが、プロンプトに{'{'}{'{'}facts{'}'}{'}'}という変数が定義されていません。{'{'}{'{'}facts{'}'}{'}'}形式の変数をプロンプトに追加してください。",
@@ -266,14 +283,15 @@
         },
         "help": {
           "connect": "前のステップの出力を{'{'}{'{'}output.#{'}'}{'}'}変数（例：ステップ1の出力には{'{'}{'{'}output.1{'}'}{'}'}）を使って接続します",
-          "docRepo": "ナレッジベースから抽出された事実は、プロンプトに追加されます。",
-          "factsVarDesc": "ナレッジベースから抽出された事実",
+          "description": "エージェント実行中の進捗状況の更新に説明が使われます。",
+          "docRepo": "Facts extracted from the collection will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "ステップ#{step}の出力",
+          "prompt": "エージェントのカスタム指示",
           "title": "複数ステップのワークフローを設計します。各ステップの実行にはプロンプトテンプレートが使用されます。エージェント実行時にユーザーが提供した値に置き換えられる「変数」を含めることができます。変数は{'{'}{'{'}name:description:value{'}'}{'}'}の形式で定義してください（説明は値を入力する際のユーザーのガイドになります）。説明とデフォルト値はどちらも任意です。"
         },
         "jsonSchema": "JSON…",
-        "step": "ステップ#{step}",
-        "stepFull": "ステップ#{step}: {text}",
+        "step": "ステップ {step}",
         "structuredOutput": {
           "text": "このステップの期待される出力形式を定義するために、<a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">簡単なJSONスキーマ</a>を指定してください。",
           "title": "JSONスキーマ"
@@ -291,22 +309,22 @@
           },
           "text": "実験的な機能です！",
           "title": "A2AのURLを入力してください"
-        }
+        },
+        "title": "A2Aエージェントをインポート"
       },
       "confirmDelete": "このエージェントを削除してもよろしいですか？",
-      "create": "エージェント作成",
-      "empty": "最初のエージェントを作成してWitsyのエージェント機能を解放しましょう！ロボットのアイコンをクリックして始めてください。",
+      "create": "新規エージェント",
+      "empty": "初めてのエージェントを作成して@:{'common.appName'}のエージェンシーパワーを解放しましょう！ロボットの頭をクリックして開始。",
       "list": {
         "empty": "まだこのタイプのエージェントは作成されていません。",
-        "runnable": "実行可能エージェント",
-        "support": "サポートエージェント"
+        "runnable": "ユーザー起動型",
+        "support": "ユーティリティ"
       },
       "title": "エージェントフォージ"
     },
     "goal": "目標",
     "help": {
       "clearHistory": "このエージェントのすべての履歴をクリアする",
-      "create": "新しいエージェントを作成する",
       "delete": "このエージェントを削除する",
       "deleteRun": "この実行を削除する",
       "edit": "このエージェントを編集する",
@@ -319,6 +337,7 @@
       "confirmDeleteSingle": "この実行を削除してもよろしいですか？",
       "date": "日付",
       "empty": "履歴はまだありません…",
+      "lastRun": "最終実行",
       "log": "ログ",
       "neverRun": "未実行",
       "status": "ステータス",
@@ -360,8 +379,8 @@
       "workflow": "⚙️ ワークフロー"
     },
     "type": {
-      "runnable": "ユーザー実行可能",
-      "support": "サポートエージェント"
+      "runnable": "ユーザー起動型",
+      "support": "ユーティリティ"
     },
     "view": {
       "filter": {
@@ -388,7 +407,7 @@
     "available": "新しいバージョンが利用可能です。ダウンロード中…",
     "downloading": "アップデート中です。完了までお待ちください。",
     "error": "アップデートの確認中にエラーが発生しました。後でもう一度お試しください。",
-    "uptodate": "すでに最新バージョンのWitsyを使用しています。"
+    "uptodate": "すでに@:{'common.appName'}の最新バージョンを使用しています。"
   },
   "backup": {
     "restore": {
@@ -432,6 +451,12 @@
         "titleRequired": "このチャットのタイトルを入力してください。"
       }
     },
+    "empty": {
+      "agentForge": "エージェントを作成して、タスクを自動化し、ワークフローを効率化しましょう！",
+      "docRepo": "ドキュメントをインデックス化して、@:{'common.appName'}をあなたの知識の基盤にしましょう！",
+      "greeting": "こんにちは、どのようにお手伝いできますか？",
+      "mcpServers": "@:{'common.appName'} があなたの環境と連携できるように、MCPサーバーを接続しましょう！"
+    },
     "export": {
       "error": "チャットのエクスポート中にエラーが発生しました。"
     },
@@ -465,7 +490,8 @@
       "last7days": "過去7日間",
       "today": "今日",
       "yesterday": "昨日"
-    }
+    },
+    "title": "Conversations"
   },
   "commands": {
     "commands": {
@@ -797,30 +823,49 @@
       "title": "ナレッジベースのデフォルト設定"
     },
     "create": {
-      "embeddingWarning": "ナレッジベース作成後は埋め込みモデルを変更できません",
-      "title": "ナレッジベースを作成"
+      "embeddingWarning": "embedding model cannot be changed once collection is created",
+      "title": "New Collection"
     },
-    "list": {
-      "clickToCreate": "+ ボタンをクリックして作成してください。",
-      "documentsCount": "ドキュメントなし|1 件のドキュメント|{count} 件のドキュメント",
-      "noRepositories": "まだナレッジベースがありません。",
-      "title": "ナレッジベース",
-      "tooltips": {
-        "config": "@:{'docRepo.config.title'}",
-        "create": "@:{'docRepo.create.title'}",
-        "delete": "ナレッジベースを削除",
-        "edit": "ナレッジベースを編集"
+    "empty": {
+      "create": "Add some knowledge",
+      "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
+      "title": "Welcome to the Knowledge Base"
+    },
+    "file": {
+      "error": {
+        "formatNotSupported": {
+          "title": "File format not supported"
+        }
+      },
+      "help": {
+        "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
-    "view": {
-      "noDocuments": "まだドキュメントがありません。上のアイコンをクリックしてドキュメントまたはフォルダを追加してください。",
+    "list": {
+      "documentsCount": "ドキュメントなし|1 件のドキュメント|{count} 件のドキュメント",
       "title": "@:{'common.docRepo'}",
+      "tooltips": {
+        "config": "@:{'docRepo.config.title'}",
+        "delete": "Delete collection"
+      }
+    },
+    "note": {
+      "add": "Add Note",
+      "create": {
+        "title": "New Note"
+      },
+      "edit": {
+        "title": "Edit Note"
+      },
+      "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
+    },
+    "view": {
+      "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {
         "addFile": "ファイルを追加",
         "addFolder": "フォルダーを追加",
         "embeddingNotReady": "埋め込みモデルは利用できません",
         "openInExplorer": "Finderで開く",
-        "removeDocument": "ドキュメントを削除",
         "viewContents": "フォルダの内容を表示"
       }
     }
@@ -831,7 +876,7 @@
     "useDrawing": "描画を使用"
   },
   "embedding": {
-    "apiKeyReminder": "Witsyの設定のモデルペインにAPIキーを入力してください。",
+    "apiKeyReminder": "必ず@:{'common.appName'}設定のモデルペインにAPIキーを入力してください。",
     "browse": "モデルを閲覧",
     "model": "埋め込みモデル",
     "provider": "埋め込みプロバイダー"
@@ -1574,7 +1619,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約、コードなど）の作成を依頼した場合、次の構文を使用してください:\n<artifact title=\"TITLE\">\nCONTENT\n</artifact>。特に、アーティファクトに埋め込まれたHTMLコードは自動的にプレビューできます。",
+      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約、コードなど）の作成を依頼した場合、以下の構文を使用してください。\n<artifact title=\"TITLE\">\nCONTENT\n</artifact>。HTMLアーティファクトは必ず<html>または<!DOCTYPE html>で始める必要があります。例：<artifact title=\"Report\">\n<html style=\"font-family: system-ui;\">HTMLでフォーマットされたレポートコンテンツ</html>\n</artifact>。この機能を使って、Chart.jsやD3.jsを利用したHTMLベースのデータビジュアライゼーションを作成できます。",
       "mermaid": "Mermaidチャートの出力を求められた場合、そのコードはユーザーに図として表示されます。",
       "toolRetry": "ツールを呼び出す際に入力エラーが発生した場合は、エラーを分析して修正を試み、その後ツールの呼び出しを再試行してください。"
     },
@@ -1635,18 +1680,40 @@
     }
   },
   "mcp": {
+    "addCustomServer": "MCPサーバーを追加…",
+    "confirmDelete": "本当にこのサーバーを削除してもよろしいですか？",
+    "copyInstallCommand": "インストールコマンドをクリップボードにコピーして、ターミナルで試すことができます。",
+    "failedToInstall": "サーバーのインストールに失敗しました",
+    "importJson": {
+      "details": "ClaudeからのJSON MCPサーバー定義をここにコピー＆ペーストしてください。",
+      "errorArgs": "無効なMCPサーバー引数です。",
+      "errorCommand": "MCPサーバーコマンドが見つかりません。",
+      "errorEmpty": "JSONは空にできません。",
+      "errorFormat": "JSONサーバー定義の解析中にエラーが発生しました。",
+      "errorMultiple": "複数のサーバーが見つかりました。一度に1つのサーバーを貼り付けてください。",
+      "title": "JSONからインポート"
+    },
+    "importSmitheryServer": "Smithery.aiからインストール",
+    "mcpServers": "コネクター",
+    "modelContextProtocol": "コネクションハブ",
+    "noServersFound": "コネクターが見つかりません。上のボタンをクリックして新しいコネクターを追加してください。",
+    "noTools": "利用可能なツールがありません",
     "oauth": {
       "success": {
-        "message": "このウィンドウを閉じてWitsyに戻ることができます。",
+        "message": "このウィンドウを閉じて@:{'common.appName'}に戻ってください。",
         "title": "認証成功！"
       }
     },
+    "refreshServers": "リストを更新",
+    "restartServers": "サーバーを再起動",
+    "retryWithApiKey": "このサーバーのインストールにはAPIキーが必要なようです。APIキーを使って再試行しますか？それ以外の場合は、コマンドをコピーしてターミナルで試すこともできます。",
+    "server": "サーバー",
     "serverEditor": {
       "environmentVariables": "環境変数",
       "httpHeaders": "カスタムHTTPヘッダー",
       "oauth": {
         "authorizing": "認証を開始しています",
-        "authorizingText": "ブラウザが開き、Witsyの承認画面に移動します。承認を完了し、このウィンドウに戻ってください。",
+        "authorizingText": "ブラウザが開き@:{'common.appName'}の認証を行います。認証完了後、このウィンドウに戻ってください。",
         "clientId": "クライアントID",
         "clientSecret": "クライアントシークレット",
         "dynamicClientRegistrationError": "このサーバーは動的クライアント登録をサポートしていません。クライアントIDとクライアントシークレットを指定する必要があります。",
@@ -1667,7 +1734,6 @@
       "selectCommand": "コマンドを選択",
       "serverPackage": "サーバーパッケージ",
       "smitheryApiKey": "Smithery.ai APIキー",
-      "title": "MCPサーバー設定",
       "type": {
         "http": "ストリーム可能なHTTP",
         "smithery": "Smithery.ai",
@@ -1681,6 +1747,19 @@
         "urlRequired": "このサーバーのURLを入力してください。"
       },
       "workingDirectory": "作業ディレクトリ"
+    },
+    "serverLogs": "MCPサーバーログ",
+    "serverNotFound": "接続しようとしているサーバーは存在しません。",
+    "servers": "サーバー。MCPサーバーの発見とインストールは",
+    "smithery": "Smithery",
+    "toolsCount": "ツールが有効になっていません|1つのツールが有効になりました|{count}つのツールが有効になりました",
+    "tooltips": {
+      "deleteServer": "サーバーを削除",
+      "editServer": "サーバーを編集",
+      "startServer": "サーバーを起動",
+      "stopServer": "サーバーを一時停止",
+      "viewLogs": "サーバーログを見る",
+      "viewTools": "利用可能なツールを見る"
     },
     "variableEditor": {
       "title": "MCP環境変数"
@@ -1696,9 +1775,9 @@
   },
   "menu": {
     "app": {
-      "about": "Witsyについて",
+      "about": "@:{'common.appName'}について",
       "checkForUpdates": "アップデートを確認…",
-      "quit": "Witsyを終了",
+      "quit": "@:{'common.appName'}を終了",
       "settings": "@:{'common.settings'}…"
     },
     "edit": {
@@ -1718,7 +1797,7 @@
         "openai": "ChatGPTデータのエクスポート…",
         "title": "インポート"
       },
-      "mainWindow": "Witsyを開く",
+      "mainWindow": "@:{'common.appName'}を開く",
       "newChat": "新しいチャット",
       "quickPrompt": "クイックプロンプト",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1826,12 +1905,12 @@
       "count": "モデルが見つかりません。|1つのモデルがあります！|{count} 個のモデルがあります！",
       "error": "APIキーを確認して再試行してください。",
       "showMore": "もっと見る",
-      "subtitle": "Witsyは主要なプロバイダーの言語モデルを使ってチャットができます。下にAPIキーを入力して始めてください。APIキーがなくても心配いりません：次の画面でOllamaを使ってローカルモデルを設定できます！",
+      "subtitle": "主要なプロバイダの言語モデルを使って@:{'common.appName'}とチャットできます。始めるには下にAPIキーを入力してください。APIキーをお持ちでなくても心配ありません：次の画面でOllamaを使ってローカルモデルを設定できます！",
       "success": "{engine}のキーが検証されました。<br/>{count}個のモデルが見つかりました！",
       "title": "あなたのチャットモデルプロバイダー"
     },
     "done": {
-      "subtitle": "設定が完了し、すぐに使えます！<br/>Witsyとチャットを始めて、その機能を体験しましょう！",
+      "subtitle": "準備完了です！<br/>@:{'common.appName'}とチャットを始め、その能力を探検しましょう！",
       "title": "すべて完了！"
     },
     "instructions": {
@@ -1845,8 +1924,8 @@
         "title": "パーソナライズを完了していません。"
       },
       "selectStyle": "次に、アシスタントの応答スタイルを選択してください。<br/>これに個人情報が組み合わされて、最適な指示が作成されます。",
-      "subtitle": "いくつかの質問に答えることで、Witsyがあなたの体験をパーソナライズし、より良い回答を提供できるようになります。このステップはスキップできますが、Witsyをより個人的なものにするために強くおすすめします。",
-      "title": "Witsyにあなたのことを教えましょう！"
+      "subtitle": "いくつかの質問に答えることで、@:{'common.appName'}があなたの体験をパーソナライズし、より良い回答を提供できます。このステップはスキップ可能ですが、@:{'common.appName'}をよりパーソナルに感じるために強く推奨します。",
+      "title": "@:{'common.appName'}にあなたのことを教えよう！"
     },
     "ollama": {
       "browseModels": "https://ollama.com/search でさらに多くのモデルを発見",
@@ -1870,22 +1949,22 @@
     },
     "permissions": {
       "accessibility": {
-        "description": "Witsyが他のアプリケーションのテキストを読み取り、ワークフローにシームレスに統合するために必要です。",
+        "description": "@:{'common.appName'}が他のアプリのテキストを読み、作業の流れにシームレスに統合するために必要です。",
         "title": "アクセシビリティ"
       },
       "automation": {
-        "description": "自動化設定画面でWitsyに「システムイベント」の権限を必ず付与してください。",
+        "description": "オートメーション設定画面で@:{'common.appName'}に「システムイベント」権限を付与してください。",
         "title": "自動化"
       },
       "denied": "未許可",
       "granted": "許可済み",
-      "info": "これらの権限により、Witsyは全機能を提供できます。今すぐまたは後でシステム環境設定から許可できます。",
+      "info": "これらの許可により@:{'common.appName'}がすべての機能を提供できます。今すぐまたはシステム環境設定で後から付与可能です。",
       "leave": {
         "message": "すべての権限を付与せずに続行してもよろしいですか？一部の機能が正常に動作しない場合があります。",
         "title": "権限が完全に付与されていません"
       },
       "openSettings": "設定を開く",
-      "subtitle": "macOSでは、Witsyが最高の体験を提供するために特定の権限が必要です。",
+      "subtitle": "macOSでは最高の体験を提供するために@:{'common.appName'}に特定の許可が必要です。",
       "title": "システムの権限"
     },
     "studio": {
@@ -1900,13 +1979,13 @@
       "already": "@:{'onboarding.chat.already'}",
       "count": "@:{'onboarding.chat.count'}",
       "error": "@:{'onboarding.chat.error'}",
-      "subtitle": "声を使ってWitsyとやり取りしましょう！ Witsyは言語モデルとのチャットの応答だけでなく、他のアプリケーションに表示されるテキストも読み上げることができます！",
+      "subtitle": "声で@:{'common.appName'}とやり取りしましょう！@:{'common.appName'}はチャットの応答だけでなく、他のアプリで表示されるテキストも読み上げます！",
       "success": "@:{'onboarding.chat.success'}",
       "title": "音声インタラクション"
     },
     "welcome": {
-      "subtitle": "Witsyは幅広いタスクを助ける強力なAIアシスタントです。会話をしたり、ドキュメントを書かせたり、パソコンでコードを実行させたりできます。さあ始めましょう！",
-      "title": "Witsyへようこそ！"
+      "subtitle": "@:{'common.appName'} is a powerful AI assistant that can help you with a wide range of tasks. You can chat with it, ask it to write documents, and even run code on your computer. Let's get started!",
+      "title": "@:{'common.appName'}へようこそ！"
     }
   },
   "plugins": {
@@ -2012,8 +2091,7 @@
       "formatError": {
         "text": "別のファイルでもう一度お試しください。",
         "title": "このファイル形式は、このモデルではサポートされていません。"
-      },
-      "tooltip": "ファイルを添付"
+      }
     },
     "conversation": {
       "placeholders": {
@@ -2025,20 +2103,29 @@
       "stop": "会話を停止",
       "tooltip": "口述する"
     },
-    "docRepos": {
-      "none": "利用可能なナレッジベースがありません。今すぐ作成しますか？",
-      "tooltip": "ナレッジベースに接続"
-    },
-    "experts": {
-      "clear": "エキスパートをクリア",
-      "tooltip": "専門家を選択"
-    },
     "instructions": {
-      "default": "⚙️ デフォルト設定を使用",
-      "title": "@:{'common.instructions'}"
+      "default": "⚙️ デフォルト設定を使用"
+    },
+    "menu": {
+      "attach": {
+        "title": "写真とファイルを追加"
+      },
+      "docRepos": {
+        "manage": "ナレッジベースを管理",
+        "title": "ナレッジ"
+      },
+      "experts": {
+        "manage": "新しい専門家を作成"
+      },
+      "instructions": {
+        "title": "文体"
+      }
+    },
+    "noEngineAvailable": {
+      "title": "モデルプロバイダーが設定されていません"
     },
     "placeholders": {
-      "default": "Enterで送信、Shift+Enterで新しい行を追加"
+      "default": "ここにメッセージを入力してください…"
     }
   },
   "realtimeChat": {
@@ -2075,7 +2162,7 @@
     },
     "generationError": "テキスト生成中にエラーが発生しました",
     "loadingError": "スクラッチパッドファイルの読み込み中にエラーが発生しました",
-    "placeholder": "ドキュメントの入力を開始するか、\nWitsyに何か書くように依頼してください！\n\n一度開始したら、Witsyに\nドキュメントの変更を依頼できます。\n\nテキストの一部をハイライトすると、\nWitsyはその部分のみを更新します。\n\n右下のアクションバーにあるライティングアシスタントも\nチェックしてください！\n\n試してみてください！",
+    "placeholder": "ドキュメントを入力開始、または\n@:{'common.appName'}に何かを書かせてみましょう！\n\n始めたら@:{'common.appName'}に\nドキュメントの修正を依頼できます。\n\nテキストの一部を選択すると、\n@:{'common.appName'}はその部分のみ更新します。\n\n右下のアクションバーの\nライティングアシスタントもぜひご利用ください！\n\nお試しください！",
     "title": "スクラッチパッド"
   },
   "settings": {
@@ -2159,15 +2246,15 @@
     },
     "commands": {
       "confirmDelete": "このコマンドを削除してもよろしいですか？",
+      "disableAll": "すべて無効にする",
+      "enableAll": "すべて有効にする",
       "export": "エクスポート",
       "exportError": "コマンドファイルのエクスポートに失敗しました",
       "exportSuccess": "コマンドファイルが正常にエクスポートされました",
       "import": "@:{'common.import'}",
       "importError": "コマンドファイルのインポートに失敗しました",
       "importSuccess": "コマンドファイルが正常にインポートされました",
-      "new": "新規",
-      "selectAll": "@:{'common.selectAll'}",
-      "unselectAll": "@:{'common.selectNone'}"
+      "new": "新規"
     },
     "deepResearch": {
       "breadth": "リサーチの広さ",
@@ -2183,7 +2270,7 @@
       "runtime": "詳細リサーチタイプ",
       "runtimes": {
         "ma": "マルチエージェント（完全なエージェント、LLM駆動）",
-        "ms": "マルチステップ（ハイブリッドコード/エージェント、Witsy駆動）"
+        "ms": "マルチステップ（ハイブリッドコード/エージェント、@:{'common.appName'}主導）"
       }
     },
     "engines": {
@@ -2267,7 +2354,11 @@
     },
     "experts": {
       "confirmDelete": "このエキスパートを削除してもよろしいですか？",
+      "confirmDeleteAll": "本当にすべてのエキスパートを削除しますか？",
       "copy": "コピー",
+      "deleteAll": "すべて削除する",
+      "disableAll": "すべて無効にする",
+      "enableAll": "すべて有効にする",
       "export": "エクスポート",
       "exportError": "エキスパートファイルのエクスポートに失敗しました",
       "exportSuccess": "エキスパートファイルが正常にエクスポートされました",
@@ -2275,10 +2366,8 @@
       "importError": "エキスパートファイルのインポートに失敗しました",
       "importSuccess": "エキスパートファイルが正常にインポートされました",
       "new": "新規",
-      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "アルファベット順にソート",
-      "sortState": "状態別にソート",
-      "unselectAll": "@:{'common.selectNone'}"
+      "sortState": "状態別にソート"
     },
     "general": {
       "darkTint": "ダークティント",
@@ -2310,6 +2399,7 @@
         "artifacts": "アーティファクトを作成するようモデルに指示する",
         "title": "追加の指示"
       },
+      "disableStreaming": "ストリーミングを無効にする",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",
@@ -2332,47 +2422,6 @@
         "title": "設定の読み込み中にエラーが発生しました。"
       }
     },
-    "mcp": {
-      "addCustomServer": "MCPサーバーを追加…",
-      "confirmDelete": "このサーバーを削除してもよろしいですか？",
-      "connectedToServers": "{count}台のMCPサーバーに接続済み",
-      "copyInstallCommand": "インストールコマンドをクリップボードにコピーして、ターミナルで試すことができます。",
-      "description": "このプラグインはLLMエンジンにアクセスを許可します。",
-      "failedToInstall": "サーバーのインストールに失敗しました",
-      "importJson": {
-        "details": "ClaudeからJSON MCPサーバー定義をここにコピー/ペーストしてください。",
-        "errorArgs": "無効なMCPサーバー引数。",
-        "errorCommand": "MCPサーバーコマンドが見つかりません。",
-        "errorEmpty": "JSONは空にできません。",
-        "errorFormat": "JSONサーバー定義の解析中にエラーが発生しました。",
-        "errorMultiple": "複数のサーバーが見つかりました。一度に1つのサーバーを貼り付けてください。",
-        "menu": "@:{'settings.mcp.importJson.title'}…",
-        "title": "JSONからインポート"
-      },
-      "importSmitheryServer": "Smithery.aiサーバーをインポート…",
-      "mcpServers": "MCPサーバー",
-      "modelContextProtocol": "モデルコンテキストプロトコル",
-      "noServersFound": "MCPサーバーが見つかりません。新しいサーバーを追加するか、リストを更新するには、上部の+アイコンをクリックしてください。",
-      "noTools": "利用可能なツールはありません",
-      "retryWithApiKey": "このサーバーのインストールにはAPIキーが必要なようです。APIキーで再試行しますか？それともコマンドをコピーしてターミナルで試しますか？",
-      "serverLogs": "MCPサーバーログ",
-      "serverNotFound": "接続しようとしているサーバーは存在しません。",
-      "servers": "サーバー。MCPサーバーを",
-      "smithery": "Smithery",
-      "tools": "@:{'common.tools'}",
-      "tooltips": {
-        "addServer": "新しいMCPサーバーを追加",
-        "deleteServer": "サーバーを削除",
-        "editServer": "サーバーを編集",
-        "refreshServers": "MCPサーバーリストを更新",
-        "restartServers": "MCPサーバーを再起動",
-        "startServer": "サーバーを起動",
-        "stopServer": "サーバーを停止",
-        "viewLogs": "サーバーのログを見る",
-        "viewTools": "利用可能なツールを見る"
-      },
-      "totalTools": "利用可能なサービス総数：{count}件"
-    },
     "plugins": {
       "browse": {
         "description": "このプラグインを使用すると、LLMエンジンはインターネットからコンテンツをダウンロードし、それを使用してより正確な応答を生成できます。",
@@ -2391,7 +2440,7 @@
         "title": "ファイルシステム"
       },
       "image": {
-        "apiKeyReminder": "Witsy設定のモデルペインにAPIキーを入力していることを確認してください。",
+        "apiKeyReminder": "必ず@:{'common.appName'}設定のモデルペインにAPIキーを入力してください。",
         "description": "このプラグインを使用すると、LLMエンジンはテキスト記述から画像を生成できます。",
         "falai": {
           "aboutModels": "fal.aiモデルについてさらに詳しく"
@@ -2479,10 +2528,9 @@
       "chat": "チャット",
       "commands": "コマンド",
       "deepResearch": "@:{'common.deepResearch'}",
-      "experts": "エキスパート",
+      "experts": "@:{'common.experts'}",
       "general": "一般",
       "llm": "LLM",
-      "mcp": "MCP",
       "models": "モデル",
       "plugins": "プラグイン",
       "shortcuts": "ショートカット",
@@ -2532,7 +2580,7 @@
       "tts": {
         "groqAcceptTermsReminder": "Groqモデルを使用するには、<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">利用規約に同意する</a>必要があります。",
         "kokoroReminder": "提供元",
-        "sampleText": "究極のAIデスクトップアシスタント、Witsyへようこそ。",
+        "sampleText": "究極のAIデスクトップアシスタント、@:{'common.appName'}へようこそ。",
         "serviceDisclaimer": "このサービスはいつでも停止する可能性があります。",
         "voice": "@:{'common.voice'}"
       },
@@ -2632,9 +2680,24 @@
       "voiceMode": "@:{'realtimeChat.title'}"
     },
     "notification": {
-      "darwin": "メニューバーの万年筆アイコンからWitsyをアクティブにできます。",
-      "linux": "メニューバーの万年筆アイコンからWitsyをアクティブにできます。",
-      "windows": "システムトレイの万年筆アイコンからWitsyをアクティブにできます。"
+      "darwin": "メニューバーの万年筆アイコンから@:{'common.appName'}を起動できます。",
+      "linux": "メニューバーの万年筆アイコンから@:{'common.appName'}を起動できます。",
+      "windows": "システムトレイの万年筆アイコンから@:{'common.appName'}を起動できます。"
+    }
+  },
+  "workspace": {
+    "delete": {
+      "confirm": "このワークスペースを削除してもよろしいですか？"
+    },
+    "editor": {
+      "color": "Color",
+      "create": "Create New Workspace",
+      "createDescription": "Create a new workspace to organize your models, chats and agents.",
+      "edit": "Edit Workspace",
+      "editDescription": "Edit the details of your workspace.",
+      "icon": "Icon",
+      "name": "Name",
+      "namePlaceholder": "Enter workspace name"
     }
   }
 }

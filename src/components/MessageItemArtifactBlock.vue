@@ -2,12 +2,12 @@
   <div class="artifact panel">
     <div class="panel-header">
       <label>{{ title }}</label>
-      <BIconPlayBtn class="icon preview" @click="toggleHtml" v-if="isHtml && !previewHtml" />
-      <BIconStopBtn class="icon preview" @click="toggleHtml" v-if="isHtml && previewHtml" />
-      <BIconClipboardCheck class="icon" v-if="copying" />
-      <BIconClipboard class="icon" @click="onCopy" v-else />
+      <ScanEyeIcon class="icon preview" @click="toggleHtml" v-if="isHtml && !previewHtml" />
+      <EyeOffIcon class="icon preview" @click="toggleHtml" v-if="isHtml && previewHtml" />
+      <ClipboardCheckIcon class="icon" v-if="copying" />
+      <ClipboardIcon class="icon" @click="onCopy" v-else />
       <div class="icon download" @click="onDownloadClick" ref="downloadButton">
-        <BIconDownload />
+        <DownloadIcon class="icon"/>
       </div>
     </div>
     <div class="panel-body" ref="panelBody">
@@ -31,14 +31,19 @@
 <script setup lang="ts">
 
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
-import { computed, onMounted, ref } from 'vue'
+import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, EyeOffIcon, ScanEyeIcon } from 'lucide-vue-next'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Message from '../models/message'
 import { exportToPdf } from '../services/pdf'
 import { store } from '../services/store'
 import ContextMenu from './ContextMenu.vue'
 import MessageItemBody from './MessageItemBody.vue'
 
+const { t } = useI18n()
+
 const previewHtml = ref(false)
+const htmlRenderingDelayPassed = ref(false)
 const copying = ref(false)
 const downloadButton = ref<HTMLElement>(null)
 const panelBody = ref<HTMLElement>(null)
@@ -70,6 +75,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  transient: {
+    type: Boolean,
+    required: true,
+  },
 })
 
 const isHtml = computed(() => {
@@ -91,6 +100,11 @@ const isHtml = computed(() => {
 const message = computed(() => new Message('assistant', props.content))
 
 const html = computed(() => {
+  // Show loading message during delay period for HTML content
+  if (isHtml.value && !htmlRenderingDelayPassed.value) {
+    return `<html><body style="display: flex; align-items: center; justify-content: center; height: 100vh; font-family: system-ui; color: #666;">${t('common.htmlGeneration')}</body></html>`
+  }
+
   const content = props.content.trim()
   if (content.startsWith('```html') && content.endsWith('```')) {
     return content.slice(8, -3).trim()
@@ -108,8 +122,54 @@ const html = computed(() => {
   return ''
 })
 
+let delayTimeout: NodeJS.Timeout | null = null
+
+const setupHtmlDelay = () => {
+  if (!props.transient) {
+    // Non-transient messages: show HTML immediately
+    htmlRenderingDelayPassed.value = true
+  } else {
+    // Transient messages: reset delay and start timeout
+    htmlRenderingDelayPassed.value = false
+
+    // Clear any existing timeout
+    if (delayTimeout) {
+      clearTimeout(delayTimeout)
+    }
+
+    // Start new timeout
+    delayTimeout = setTimeout(() => {
+      htmlRenderingDelayPassed.value = true
+    }, 2000)
+  }
+}
+
 onMounted(() => {
   previewHtml.value = store.config.appearance.chat.autoPreview.html ?? true
+  setupHtmlDelay()
+
+  // Watch content changes for transient messages
+  watch(() => props.content, () => {
+    if (props.transient) {
+      setupHtmlDelay()
+    }
+  })
+
+  // Watch transient state changes
+  watch(() => props.transient, (newTransient) => {
+    if (!newTransient) {
+      // Message is no longer transient (streaming completed)
+      // Clear any pending timeout and show HTML immediately
+      if (delayTimeout) {
+        clearTimeout(delayTimeout)
+        delayTimeout = null
+      }
+      htmlRenderingDelayPassed.value = true
+    } else {
+      // Message became transient (shouldn't happen normally, but handle it)
+      setupHtmlDelay()
+    }
+  })
 })
 
 const content = () => {
@@ -255,10 +315,11 @@ const onDownloadFormat = async (action: string) => {
   
   margin: 1rem 0rem;
   padding: 0rem;
+  background-color: var(--background-color);
 
   .panel-header {
     padding: 0.75rem 1rem;
-    background-color: var(--message-list-bg-color);
+    border-bottom: 1px solid var(--border-color);
     gap: 0.5rem;
 
     label {
@@ -266,16 +327,14 @@ const onDownloadFormat = async (action: string) => {
     }
     
     .icon {
-      transform: scale(0.75);
-
-      &.preview {
-        transform: scaleX(0.9) scaleY(0.95);
-        opacity: 0.5;
-      }
+      fill: none;
+      width: var(--icon-md);
+      height: var(--icon-md);
     }
   }
 
   .panel-body {
+    padding: 1rem;
     padding-top: 0.25rem;
     padding-bottom: 0rem;
 

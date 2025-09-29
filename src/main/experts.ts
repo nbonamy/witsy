@@ -3,6 +3,7 @@ import { Expert } from 'types/index'
 import { app, App } from 'electron'
 import { createI18n } from './i18n.base'
 import { getLocaleMessages } from './i18n'
+import { workspaceFolderPath } from './workspace'
 import defaultExperts from '../../defaults/experts.json'
 import Monitor from './monitor'
 import * as window from './window'
@@ -14,17 +15,16 @@ const monitor: Monitor = new Monitor(() => {
   window.notifyBrowserWindows('file-modified', 'experts');
 });
 
-export const expertsFilePath = (app: App): string => {
-  const userDataPath = app.getPath('userData')
-  const expertsFilePath = path.join(userDataPath, 'experts.json')
-  return expertsFilePath
+export const expertsFilePath = (app: App, workspaceId: string): string => {
+  const workspacePath = workspaceFolderPath(app, workspaceId)
+  return path.join(workspacePath, 'experts.json')
 }
 
-export const loadExperts = (source: App|string): Expert[] => {
+export const loadExperts = (source: App|string, workspaceId: string): Expert[] => {
 
   // init
   let experts: Expert[] = []
-  const expertsFile = typeof source === 'string' ? source : expertsFilePath(source)
+  const expertsFile = typeof source === 'string' ? source : expertsFilePath(source, workspaceId)
 
   // read
   try {
@@ -75,7 +75,7 @@ export const loadExperts = (source: App|string): Expert[] => {
 
   // save if needed
   if (updated) {
-    saveExperts(source, experts)
+    saveExperts(source, workspaceId, experts)
   }
 
   // start monitoring
@@ -88,16 +88,16 @@ export const loadExperts = (source: App|string): Expert[] => {
 
 }
 
-export const saveExperts = (dest: App|string, content: Expert[]): void => {
+export const saveExperts = (dest: App|string, workspaceId: string, content: Expert[]): void => {
   try {
-    const expertsFile = typeof dest === 'string' ? dest : expertsFilePath(dest)
+    const expertsFile = typeof dest === 'string' ? dest : expertsFilePath(dest, workspaceId)
     fs.writeFileSync(expertsFile, JSON.stringify(content, null, 2))
   } catch (error) {
     console.log('Error saving experts', error)
   }
 }
 
-export const exportExperts = (app: App) => {
+export const exportExperts = (app: App, workspaceId: string) => {
 
   // pick a directory
   const filepath = file.pickDirectory(app)
@@ -106,7 +106,7 @@ export const exportExperts = (app: App) => {
   }
 
   // load defaults file content
-  const contents = fs.readFileSync(expertsFilePath(app), 'utf-8')
+  const contents = fs.readFileSync(expertsFilePath(app, workspaceId), 'utf-8')
 
   // write
   const target = path.join(filepath, 'experts.json')
@@ -117,7 +117,7 @@ export const exportExperts = (app: App) => {
 
 }
 
-export const importExperts = (app: App) => {
+export const importExperts = (app: App, workspaceId: string) => {
 
   // pick the file
   const filename = file.pickFile(app, { location: true, filters: [{ name: 'JSON', extensions: ['json'] }] })
@@ -127,7 +127,7 @@ export const importExperts = (app: App) => {
 
   // read and write
   const contents = fs.readFileSync(filename as string, 'utf-8')
-  fs.writeFileSync(expertsFilePath(app), contents)
+  fs.writeFileSync(expertsFilePath(app, workspaceId), contents)
 
   // done
   return true

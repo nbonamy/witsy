@@ -25,9 +25,9 @@
     </template>
     <template #footer>
       <div class="buttons">
-        <button name="none" @click="selection = []">{{ t('common.selectNone') }}</button>
-        <button name="cancel" @click="onCancel" class="push" formnovalidate>{{ t('common.cancel') }}</button>
-        <button name="save" @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
+        <button name="cancel" @click="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="none" @click="selection = []" class="secondary">{{ t('common.unselectAll') }}</button>
+        <button name="save" @click="onSave" class="primary">{{ t('common.save') }}</button>
       </div>
     </template>
   </ModalDialog>

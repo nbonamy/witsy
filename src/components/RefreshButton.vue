@@ -7,6 +7,7 @@
 
 <script setup lang="ts">
 
+import { CheckCheckIcon, CircleAlertIcon, RefreshCcwIcon } from 'lucide-vue-next'
 import { PropType, ref } from 'vue'
 
 const props = defineProps({
@@ -16,17 +17,17 @@ const props = defineProps({
   }
 })
 
-const refreshIcon = ref('BIconArrowClockwise')
+const refreshIcon = ref(RefreshCcwIcon)
 const refreshing = ref(false)
 
 const onClick = async () => {
   refreshing.value = true
   await new Promise(resolve => setTimeout(resolve, 500))
   const rc = await props.onRefresh.call(this)
-  refreshIcon.value = rc ? 'BIconCheckAll' : 'BIconExclamationLg'
+  refreshIcon.value = rc ? CheckCheckIcon : CircleAlertIcon
   refreshing.value = false
   setTimeout(() => {
-    refreshIcon.value = 'BIconArrowClockwise'
+    refreshIcon.value = RefreshCcwIcon
   }, 2000)
 }
 
@@ -37,15 +38,6 @@ defineExpose({
 </script>
 
 <style scoped>
-
-button {
-  padding-bottom: 2px !important;
-}
-
-.form.form-large button {
-  padding-top: 6px !important;
-  padding-bottom: 2px !important;
-}
 
 svg {
   width: 0.85rem;

@@ -108,6 +108,10 @@ vi.mock('electron', async () => {
   }
 })
 
+vi.mock('../../src/main/i18n', () => ({
+  useI18n: vi.fn(() => (key: string) => key)
+}))
+
 vi.mock('../../src/main/utils', async () => {
   return {
     wait: vi.fn(),
@@ -147,7 +151,7 @@ test('Create main window', async () => {
   window.openMainWindow()
   expect(window.mainWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    title: 'Witsy'
+    title: 'common.appName'
   }))
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?#')
   expect(window.mainWindow.isVisible()).toBe(true)
@@ -301,7 +305,7 @@ test('Open Scratchpad window', async () => {
   window.openScratchPad('text')
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/scratchpad',
-    title: 'Scratchpad',
+    title: 'tray.menu.scratchpad',
     queryParams: { textId: 'textId' }
   }))
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?textId=textId#/scratchpad')

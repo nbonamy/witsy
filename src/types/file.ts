@@ -12,6 +12,7 @@ export type FileProperties = {
   prompt?: boolean
   subdir?: string | false
   filename?: string
+  workspace?: string
 }
 
 export type FileSaveParams = {

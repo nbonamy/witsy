@@ -32,6 +32,7 @@ global.fetch = vi.fn(async (url: string) => {
       url,
       ok: true,
       headers: {
+        // @ts-expect-error mock
         get: () => 'application/pdf',
       },
       blob: () => new Blob([new TextEncoder().encode('pdf')], { type: 'application/pdf' })
@@ -41,6 +42,7 @@ global.fetch = vi.fn(async (url: string) => {
       url,
       ok: true,
       headers: {
+        // @ts-expect-error mock
         get: () => 'text/html; charset=UTF-8',
       },
       text: () => '<html><head><title>title</title></head><body>fetched_content</body></html>',

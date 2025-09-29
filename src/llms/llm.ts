@@ -17,7 +17,7 @@ export const areAllToolsEnabled = (tools: ToolSelection): boolean => {
 
 export default class LlmFactory {
 
-  static manager(config: Configuration) {
+  static manager(config: Configuration): ILlmManager {
     return new LlmManager(config)
   }
 

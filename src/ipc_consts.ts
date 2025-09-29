@@ -3,6 +3,7 @@
 export const APP = {
   GET_APP_PATH: 'get-app-path',
   GET_ASSET_PATH: 'get-asset-path',
+  GET_VERSION: 'get-version',
   SET_APPEARANCE_THEME: 'set-appearance-theme',
   SHOW_ABOUT: 'show-about',
   // SHOW_DIALOG: 'show-dialog',
@@ -16,6 +17,8 @@ export const MAIN_WINDOW = {
   UPDATE_MODE: 'main-window-update-mode',
   SET_CONTEXT_MENU_CONTEXT: 'main-window-set-menu-context',
   CLOSE: 'main-window-close',
+  HIDE_WINDOW_BUTTONS: 'main-window-hide-buttons',
+  SHOW_WINDOW_BUTTONS: 'main-window-show-buttons',
 } as const;
 
 export const DEBUG = {
@@ -109,7 +112,8 @@ export const DOCREPO = {
   REMOVE_DOCUMENT: 'docrepo-remove-document',
   QUERY: 'docrepo-query',
   IS_EMBEDDING_AVAILABLE: 'docrepo-is-embedding-available',
-  GET_CURRENT_QUEUE_ITEM: 'docrepo-get-current-queue-item'
+  GET_CURRENT_QUEUE_ITEM: 'docrepo-get-current-queue-item',
+  IS_SOURCE_SUPPORTED: 'docrepo-is-source-supported'
 } as const;
 
 export const AUTOMATION = {
@@ -170,9 +174,11 @@ export const MCP = {
   GET_INSTALL_COMMAND: 'mcp-get-install-command',
   INSTALL_SERVER: 'mcp-install-server',
   RELOAD: 'mcp-reload',
+  RESTART_SERVER: 'mcp-restart-server',
   GET_STATUS: 'mcp-get-status',
+  GET_ALL_SERVERS_WITH_TOOLS: 'mcp-get-all-servers-with-tools',
   GET_SERVER_TOOLS: 'mcp-get-server-tools',
-  GET_TOOLS: 'mcp-get-tools',
+  GET_LLM_TOOLS: 'mcp-get-tools',
   CALL_TOOL: 'mcp-call-tool',
   ORIGINAL_TOOL_NAME: 'mcp-original-tool-name',
   DETECT_OAUTH: 'mcp-detect-oauth',
@@ -240,4 +246,11 @@ export const OLLAMA = {
 
 export const GOOGLE = {
   DOWNLOAD_MEDIA: 'google-download-media',
+} as const;
+
+export const WORKSPACE = {
+  LIST: 'workspace-list',
+  LOAD: 'workspace-load',
+  SAVE: 'workspace-save',
+  DELETE: 'workspace-delete',
 } as const;

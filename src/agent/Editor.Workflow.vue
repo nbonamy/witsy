@@ -8,24 +8,33 @@
       <template v-for="(step, index) in agent.steps" :key="index">
         <div class="panel step-panel">
           <div class="panel-header" @click="toggleStepExpansion(index)">
-            <BIconCaretDownFill v-if="expandedStep === index" class="icon caret" />
-            <BIconCaretRightFill v-else class="icon caret" />
-            <label v-if="step.description && expandedStep !== index">{{ t('agent.create.workflow.stepFull', { step: index + 1, text: step.description }) }}</label>
-            <label v-else>{{ t('agent.create.workflow.step', { step: index + 1 }) }}</label>
-            <BIconTrash class="icon delete" @click.stop="onDeleteStep(index)" v-if="index > 0 && expandedStep === index"/>
+            <label>
+              <div class="step-icon">
+                <MousePointerClickIcon />
+              </div>
+              <div class="step-info">
+                <div class="step-info-number">{{ t('agent.create.workflow.step', { step: index + 1 }) }}</div>
+                <div class="step-info-name" v-html="step.description || 'Step Name'"></div>
+              </div>
+            </label>
+            <Trash2Icon class="icon delete" @click.stop="onDeleteStep(index)" v-if="agent.steps.length > 1" />
+            <ChevronDownIcon v-if="expandedStep === index" class="icon caret" />
+            <ChevronRightIcon v-else class="icon caret" />
           </div>
           <div class="panel-body" v-if="expandedStep === index">
             <div class="form-field">
               <label for="description">{{ t('agent.create.workflow.description') }}</label>
+              <div class="help">{{ t('agent.create.workflow.help.description') }}</div>
               <input v-model="agent.steps[index].description"></input>
             </div>
             <div class="form-field">
               <label for="prompt">{{ t('common.prompt') }}</label>
+              <div class="help">{{ t('agent.create.workflow.help.prompt') }}</div>
               <textarea v-model="agent.steps[index].prompt"></textarea>
               <div class="help" v-if="index > 0">{{ t('agent.create.workflow.help.connect') }}</div>
               <div class="help" v-if="step.docrepo">{{ t('agent.create.workflow.help.docRepo') }}</div>
             </div>
-            <div class="form-field" v-if="promptInputs(index).length">
+            <div class="variables" v-if="promptInputs(index).length">
               <label for="prompt">{{ t('agent.create.information.promptInputs') }}</label>
               <table class="table-plain prompt-inputs">
                 <thead><tr>
@@ -40,39 +49,115 @@
                 </tr></tbody>
               </table>
             </div>
-            <div class="step-actions">
-              <button class="with-icon docrepo" @click="onDocRepo(index)"><BIconDatabase /> {{ t('agent.create.workflow.docRepo') }}</button>
-              <button class="with-icon tools" @click="onTools(index)"><BIconTools /> {{ t('agent.create.workflow.customTools') }}</button>
-              <button class="with-icon agents" @click="onAgents(index)"><BIconRobot /> {{ t('agent.create.workflow.customAgents') }}</button>
-              <button class="with-icon structured-output" @click="onStructuredOutput(index)"><BIconFiletypeJson /> {{ t('agent.create.workflow.jsonSchema') }}</button>
-            </div>
+          </div>
+          <div class="panel-footer step-actions" v-if="expandedStep === index">
+            <button class="docrepo" :id="`docrepo-menu-anchor-${index}`" @click="onDocRepo(index)" :class="{ 'active': hasDocRepo(index) }"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
+            <button class="tools" :id="`tools-menu-anchor-${index}`" @click="onTools(index)" :class="{ 'active': hasTools(index) }"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
+            <button class="agents" :id="`agents-menu-anchor-${index}`" @click="onAgents(index)" :disabled="availableAgents.length === 0" :class="{ 'active': hasAgents(index) }"><AgentIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
+            <button class="structured-output" @click="onStructuredOutput(index)" :class="{ 'active': hasJsonSchema(index) }"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
           </div>
         </div>
-        <div class="workflow-arrow" v-if="index < agent.steps.length - 1">
-          <BIconThreeDotsVertical  />
+        <div class="step-footer">
+          <div class="workflow-arrow" v-if="index < agent.steps.length - 1"></div>
+          <button class="add-step tertiary" name="add-step" @click="onAddStep(index+1)"><PlusIcon /> {{ t('agent.create.workflow.addStep') }}</button>
         </div>
       </template>
     </template>
-    <template #buttons>
-      <button name="add-step" @click="onAddStep(agent.steps.length+1)">{{ t('agent.create.workflow.addStep') }}</button>
-    </template>
   </WizardStep>
 
-  <ToolSelector ref="toolSelector" :tools="currentStepTools" @save="onSaveTools" />
+  <ToolsMenu 
+    v-if="toolsMenuVisible && toolsMenuStepIndex >= 0" 
+    :anchor="`#tools-menu-anchor-${toolsMenuStepIndex}`"
+    position="above"
+    :tool-selection="toolsMenuStepIndex >= 0 ? agent.steps[toolsMenuStepIndex].tools : []"
+    @close="onCloseToolsMenu"
+    @select-all-tools="handleSelectAllTools"
+    @unselect-all-tools="handleUnselectAllTools"
+    @select-all-plugins="handleSelectAllPlugins"
+    @unselect-all-plugins="handleUnselectAllPlugins"
+    @select-all-server-tools="handleSelectAllServerTools"
+    @unselect-all-server-tools="handleUnselectAllServerTools"
+    @all-plugins-toggle="handleAllPluginsToggle"
+    @plugin-toggle="handlePluginToggle"
+    @all-server-tools-toggle="handleAllServerToolsToggle"
+    @server-tool-toggle="handleServerToolToggle"
+  />
   <AgentSelector ref="agentSelector" :exclude-agent-id="agent.uuid" @save="onSaveAgents" />
+  
+  <!-- Doc Repo Context Menu -->
+  <ContextMenuPlus 
+    v-if="docRepoMenuVisible && docRepoMenuStepIndex >= 0" 
+    :anchor="`#docrepo-menu-anchor-${docRepoMenuStepIndex}`"
+    position="above"
+    @close="onCloseDocRepoMenu"
+  >
+    <template #default>
+      <div 
+        v-for="repo in docRepos" 
+        :key="repo.uuid"
+        @click="selectDocRepo(repo.uuid)"
+        :class="{ 'selected-repo': agent.steps[docRepoMenuStepIndex]?.docrepo === repo.uuid }"
+      >
+        <LightbulbIcon class="icon" />
+        {{ repo.name }}
+      </div>
+    </template>
+    <template #footer v-if="hasDocRepo(docRepoMenuStepIndex)">
+      <div @click="selectDocRepo('none')">
+        <Trash2Icon class="icon" />
+        {{ t('common.clear') }}
+      </div>
+    </template>
+  </ContextMenuPlus>
+  
+  <!-- Agents Context Menu -->
+  <ContextMenuPlus 
+    v-if="agentsMenuVisible && agentsMenuStepIndex >= 0" 
+    :anchor="`#agents-menu-anchor-${agentsMenuStepIndex}`"
+    position="above"
+    @close="onCloseAgentsMenu"
+  >
+    <template #default>
+      <div 
+        v-for="availableAgent in availableAgents" 
+        :key="availableAgent.uuid"
+        @click.stop="toggleAgent(availableAgent.uuid)"
+      >
+        <input type="checkbox" :checked="isAgentSelected(availableAgent.uuid)" @click.stop />
+        <AgentIcon class="icon" />
+        {{ availableAgent.name }}
+      </div>
+    </template>
+    <template #footer v-if="availableAgents.length > 0">
+      <div class="footer-select">
+        <button @click="selectAllAgents">
+          {{ t('common.selectAll') }}
+        </button>
+        <button @click="clearAllAgents">
+          {{ t('common.unselectAll') }}
+        </button>
+      </div>
+    </template>
+  </ContextMenuPlus>
 </template>
 
 <script setup lang="ts">
-import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from '../types/index'
-import { ref, watch, computed, PropType } from 'vue'
-import { t } from '../services/i18n'
-import { processJsonSchema } from '../services/schema'
-import { extractPromptInputs } from '../services/prompt'
-import Dialog from '../composables/dialog'
+import { BlocksIcon, BracesIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
+import { PropType, ref, watch, computed } from 'vue'
+import AgentIcon from '../../assets/agent.svg?component'
+import ContextMenuPlus from '../components/ContextMenuPlus.vue'
+import ToolsMenu from '../components/ToolsMenu.vue'
 import WizardStep from '../components/WizardStep.vue'
-import ToolSelector from '../screens/ToolSelector.vue'
-import AgentSelector from '../screens/AgentSelector.vue'
+import Dialog from '../composables/dialog'
+import * as ts from '../composables/tool_selection'
 import Agent from '../models/agent'
+import AgentSelector from '../screens/AgentSelector.vue'
+import { t } from '../services/i18n'
+import { extractPromptInputs } from '../services/prompt'
+import { processJsonSchema } from '../services/schema'
+import { store } from '../services/store'
+import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from '../types/index'
+import { McpServerWithTools, McpToolUnique } from '../types/mcp'
 
 const props = defineProps({
   agent: {
@@ -95,18 +180,46 @@ const props = defineProps({
 
 const emit = defineEmits(['prev', 'next', 'update:expanded-step'])
 
-const toolSelector = ref<typeof ToolSelector|null>(null)
 const agentSelector = ref<typeof AgentSelector|null>(null)
 const expandedStep = ref(props.expandedStep)
-
-const currentStepTools = computed(() => {
-  return expandedStep.value >= 0 ? props.agent.steps[expandedStep.value]?.tools : []
-})
+const toolsMenuVisible = ref(false)
+const toolsMenuStepIndex = ref(-1)
+const docRepoMenuVisible = ref(false)
+const docRepoMenuStepIndex = ref(-1)
+const agentsMenuVisible = ref(false)
+const agentsMenuStepIndex = ref(-1)
 
 // Watch for prop changes
 watch(() => props.expandedStep, (newValue) => {
   expandedStep.value = newValue
 })
+
+// Computed properties for menus
+const docRepos = computed(() => {
+  return window.api.docrepo.list(store.config.workspaceId)
+})
+
+const availableAgents = computed(() => {
+  return store.agents.filter(a => a.uuid !== props.agent.uuid)
+})
+
+const hasDocRepo = (index: number) => {
+  return !!props.agent.steps[index]?.docrepo
+}
+
+const hasTools = (index: number) => {
+  return props.agent.steps[index]?.tools === null || (
+    Array.isArray(props.agent.steps[index]?.tools) && props.agent.steps[index].tools.length > 0
+  )
+}
+
+const hasAgents = (index: number) => {
+  return props.agent.steps[index]?.agents && props.agent.steps[index].agents.length > 0
+}
+
+const hasJsonSchema = (index: number) => {
+  return !!props.agent.steps[index]?.jsonSchema
+}
 
 const promptInputs = (step: number) => {
   return extractPromptInputs(props.agent.steps[step].prompt).map((input) => {
@@ -126,67 +239,148 @@ const toggleStepExpansion = (index: number) => {
 }
 
 const onAddStep = (index: number) => {
-  props.agent.steps.push({
+  props.agent.steps.splice(index, 0, {
     prompt: `{{${kAgentStepVarOutputPrefix}${index-1}}}`,
     tools: [],
     agents: [],
   })
-  expandedStep.value = index-1
+  expandedStep.value = index
   emit('update:expanded-step', expandedStep.value)
 }
 
-const onDocRepo = async (index: number) => {
+const onDocRepo = (index: number) => {
+  expandedStep.value = index
+  emit('update:expanded-step', expandedStep.value)
+  docRepoMenuStepIndex.value = index
+  docRepoMenuVisible.value = true
+}
 
-  // get the list of doc repositories
-  const docRepos = window.api.docrepo.list()
+const onCloseDocRepoMenu = () => {
+  docRepoMenuVisible.value = false
+  docRepoMenuStepIndex.value = -1
+}
 
-  const rc = await Dialog.show({
-    title: t('common.docRepo'),
-    input: 'select',
-    inputOptions: {
-      'none': t('agent.create.workflow.docRepoNone'),
-      ...docRepos.reduce((acc, repo) => {
-        acc[repo.uuid] = repo.name
-        return acc
-      }, {} as Record<string, any>),
-    },
-    inputValue: props.agent.steps[index].docrepo || 'none',
-    showCancelButton: true,
-  })
-
-  // save
-  if (rc.isConfirmed) {
-    props.agent.steps[index].docrepo = rc.value === 'none' ? undefined : rc.value
-
-    // // update prompt
-    // if (props.agent.steps[index].docrepo) {
-    //   if (!(props.agent.steps[index].prompt?.length)) {
-    //     props.agent.steps[index].prompt = `{{${kAgentStepVarFacts}}}`
-    //   } else if (!props.agent.steps[index].prompt.includes(`{{${kAgentStepVarFacts}}}`)) {
-    //     props.agent.steps[index].prompt += `\n\n{{${kAgentStepVarFacts}}}`
-    //   }
-    // } else if (props.agent.steps[index].prompt) {
-    //   props.agent.steps[index].prompt = props.agent.steps[index].prompt.replaceAll(`{{${kAgentStepVarFacts}}}`, '')
-    // }
-
+const selectDocRepo = (docRepoId: string) => {
+  if (docRepoMenuStepIndex.value >= 0) {
+    props.agent.steps[docRepoMenuStepIndex.value].docrepo = docRepoId === 'none' ? undefined : docRepoId
   }
-
+  onCloseDocRepoMenu()
 }
 
 const onTools = (index: number) => {
   expandedStep.value = index
   emit('update:expanded-step', expandedStep.value)
-  toolSelector.value?.show(props.agent.steps[index].tools)
+  toolsMenuStepIndex.value = index
+  toolsMenuVisible.value = true
 }
 
-const onSaveTools = (tools: string[]) => {
-  props.agent.steps[expandedStep.value].tools = tools
+const onCloseToolsMenu = () => {
+  toolsMenuVisible.value = false
+  toolsMenuStepIndex.value = -1
+}
+
+const handleSelectAllTools = async (visibleIds?: string[] | null) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllTools(visibleIds)
+  }
+}
+
+const handleUnselectAllTools = async (visibleIds?: string[] | null) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllTools(visibleIds)
+  }
+}
+
+const handleSelectAllPlugins = async (visibleIds?: string[] | null) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllPlugins(props.agent.steps[toolsMenuStepIndex.value].tools, visibleIds)
+  }
+}
+
+const handleUnselectAllPlugins = async (visibleIds?: string[] | null) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllPlugins(props.agent.steps[toolsMenuStepIndex.value].tools, visibleIds)
+  }
+}
+
+const handleSelectAllServerTools = async (server: McpServerWithTools, visibleIds?: string[] | null) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleSelectAllServerTools(props.agent.steps[toolsMenuStepIndex.value].tools, server, visibleIds)
+  }
+}
+
+const handleUnselectAllServerTools = async (server: McpServerWithTools, visibleIds?: string[] | null) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleUnselectAllServerTools(props.agent.steps[toolsMenuStepIndex.value].tools, server, visibleIds)
+  }
+}
+
+const handleAllPluginsToggle = async () => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleAllPluginsToggle(props.agent.steps[toolsMenuStepIndex.value].tools)
+  }
+}
+
+const handlePluginToggle = async (pluginName: string) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handlePluginToggle(props.agent.steps[toolsMenuStepIndex.value].tools, pluginName)
+  }
+}
+
+const handleAllServerToolsToggle = async (server: McpServerWithTools) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleAllServerToolsToggle(props.agent.steps[toolsMenuStepIndex.value].tools, server)
+  }
+}
+
+const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolUnique) => {
+  if (toolsMenuStepIndex.value >= 0) {
+    props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleServerToolToggle(props.agent.steps[toolsMenuStepIndex.value].tools, server, tool)
+  }
 }
 
 const onAgents = (index: number) => {
+  if (availableAgents.value.length === 0) return
+  
   expandedStep.value = index
   emit('update:expanded-step', expandedStep.value)
-  agentSelector.value?.show(props.agent.steps[index].agents)
+  agentsMenuStepIndex.value = index
+  agentsMenuVisible.value = true
+}
+
+const onCloseAgentsMenu = () => {
+  agentsMenuVisible.value = false
+  agentsMenuStepIndex.value = -1
+}
+
+const isAgentSelected = (agentId: string) => {
+  if (agentsMenuStepIndex.value < 0) return false
+  return props.agent.steps[agentsMenuStepIndex.value].agents?.includes(agentId) || false
+}
+
+const toggleAgent = (agentId: string) => {
+  if (agentsMenuStepIndex.value < 0) return
+  
+  const currentAgents = props.agent.steps[agentsMenuStepIndex.value].agents || []
+  const index = currentAgents.indexOf(agentId)
+  
+  if (index === -1) {
+    props.agent.steps[agentsMenuStepIndex.value].agents = [...currentAgents, agentId]
+  } else {
+    props.agent.steps[agentsMenuStepIndex.value].agents = currentAgents.filter(id => id !== agentId)
+  }
+}
+
+const selectAllAgents = () => {
+  if (agentsMenuStepIndex.value >= 0) {
+    props.agent.steps[agentsMenuStepIndex.value].agents = availableAgents.value.map(agent => agent.uuid)
+  }
+}
+
+const clearAllAgents = () => {
+  if (agentsMenuStepIndex.value >= 0) {
+    props.agent.steps[agentsMenuStepIndex.value].agents = []
+  }
 }
 
 const onSaveAgents = (agents: string[]) => {
@@ -202,7 +396,9 @@ const onStructuredOutput = async (index: number) => {
     input: 'textarea',
     inputValue: props.agent.steps[index].jsonSchema,
     showCancelButton: true,
+    showDenyButton: true,
     confirmButtonText: t('common.save'),
+    denyButtonText: t('common.clear'),
     inputValidator: (value: string) => {
 
       if (!value.trim()) {
@@ -231,6 +427,9 @@ const onStructuredOutput = async (index: number) => {
       // This shouldn't happen due to validation, but just in case
       console.error('Failed to parse structured output:', e)
     }
+  } else if (rc.isDenied) {
+    // Clear the JSON schema
+    props.agent.steps[index].jsonSchema = undefined
   }
 }
 
@@ -246,14 +445,16 @@ const onDeleteStep = async (index: number) => {
 }
 
 const onNext = () => {
+  emit('next')
+}
 
+const validate = (): string|null => {
   // all steps after one must have a prompt
   if (props.agent.steps.length > 1) {
     for (let i = 1; i < props.agent.steps.length; i++) {
       const step = props.agent.steps[i]
       if (props.agent.steps.length > 1 && !step.prompt.trim().length) {
-        emit('next', { error: t('agent.create.workflow.error.emptyStepPrompt', { step: i + 1 }) })
-        return
+        return t('agent.create.workflow.error.emptyStepPrompt', { step: i + 1 })
       }
     }
   }
@@ -262,13 +463,14 @@ const onNext = () => {
   // for (let i = 0; i < props.agent.steps.length; i++) {
   //   const step = props.agent.steps[i]
   //   if (step.docrepo && !step.prompt?.includes(kAgentStepVarFacts)) {
-  //     emit('next', { error: t('agent.create.workflow.error.missingDocRepo', { step: i + 1 }) })
-  //     return
+  //     return t('agent.create.workflow.error.missingDocRepo', { step: i + 1 })
   //   }
   // }
 
-  emit('next')
+  return null
 }
+
+defineExpose({ validate })
 </script>
 
 <style scoped>
@@ -277,61 +479,206 @@ const onNext = () => {
   width: 100%;
 }
 
-.prompt-inputs {
-  td:first-child {
-    width: 25%;
+.variables {
+  
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  width: calc(100% - 2px);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+
+  label {
+    padding: 0.5rem 0.75rem;
+    font-weight: bold;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--background-color-light);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    font-family: monospace;
+    font-size: 12.5px;
   }
-  td:last-child {
-    width: 25%;
+
+  .prompt-inputs {
+
+    th {
+      border: none;
+      font-weight: 600;
+    }
+
+    th, td {
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    td:first-child {
+      width: 25%;
+    }
+    td:last-child {
+      width: 25%;
+    }
   }
 }
 
 .workflow:deep() {
   .panel-body {
     padding-top: 2rem;
-    gap: 1rem;
+    gap: 0rem;
     overflow: auto;
     align-items: center;
 
     .step-panel {
       margin: 0;
-      padding: 0;
       flex-shrink: 0;
-      width: 600px;
+      align-self: stretch;
+      gap: 0rem;
+      background-color: var(--background-color);
+
+      .panel-header, .panel-body {
+        padding: 1.5rem;
+      }
 
       .panel-header {
         cursor: pointer;
         flex-direction: row !important;
-        padding: 0.5rem 1rem;
+
         label {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 1rem;
           cursor: pointer;
+
+          .step-icon {
+            padding: 0.5rem;
+            width: var(--icon-xl);
+            height:var(--icon-xl);
+            border-radius: 6px;
+            background-color: var(--color-on-surface);
+            svg {
+              color: var(--color-on-primary);
+              width: var(--icon-xl);
+              height:var(--icon-xl);
+            }
+          }
+
+          .step-info {
+
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+
+            .step-info-number {
+              font-weight: 300;
+            }
+          }
+
+
         }
+
       }
 
       .panel-body {
-        padding: 0.5rem 1rem;
         gap: 0rem;
+        padding-top: 0px;
+        input, textarea, select {
+          background-color: var(--color-surface);
+        }
       }
     }
 
     .step-actions {
-      width: 100%;
-      margin: 0.25rem 0rem;
+      padding: 1rem;
+      background-color: var(--color-surface);
+      border-top: 1px solid var(--border-color);
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-start;
+
+      button {
+        background-color: var(--color-surface);
+        color: var(--color-on-surface);
+        svg {
+          color: var(--color-on-surface);
+        }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          
+          &:hover {
+            background-color: var(--color-surface);
+          }
+        }
+        
+        &.active {
+          color: var(--color-primary);
+          svg {
+            color: var(--color-primary);
+          }
+        }
+      }
     }
   }
 
-  .workflow-arrow {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  .step-footer {
 
-    svg {
-      width: 1.5rem;
-      height: 1.5rem;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    height: 4rem;
+
+    .workflow-arrow {
+      align-self: flex-start;
+      margin-left: 2rem;
+      width: 1px;
+      height: 100%;
+      background-color: var(--color-outline-variant);
+    }
+
+    .add-step {
+      margin-left: auto;
     }
   }
 }
+
+/* Context menu styles */
+:deep(.selected-repo) {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 600;
+}
+
+:deep(.selected-repo .icon) {
+  color: var(--color-on-primary);
+}
+
+/* Footer select buttons styling */
+:deep(.footer-select) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background: none;
+    border: none;
+    color: var(--context-menu-text-color);
+    font-size: 14px;
+    border-radius: 4px;
+    
+    &:hover {
+      background-color: var(--context-menu-selected-bg-color);
+    }
+  }
+}
+
 </style>

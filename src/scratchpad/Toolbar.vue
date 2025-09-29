@@ -1,22 +1,22 @@
 <template>
   <div class="form">
 
-    <div class="toolbar form-field">
+    <div class="toolbar">
     
       <button class="tool" @click="emitEvent('action', 'clear')">
-        <BIconFileEarmark /><span>{{ t('common.clear') }}</span>
+        <FileIcon /><span>{{ t('common.clear') }}</span>
       </button>
       
       <button class="tool" @click="emitEvent('action', 'load')">
-        <BIconFileArrowUp /><span>{{ t('common.load') }}</span>
+        <FolderOpenIcon /><span>{{ t('common.load') }}</span>
       </button>
       
       <button class="tool" @click="emitEvent('action', 'save')">
-        <BIconFileArrowDown /><span>{{ t('common.save') }}</span>
+        <SaveIcon /><span>{{ t('common.save') }}</span>
       </button>
       
-      <EngineSelect class="tool" v-model="engine" @change="onChangeEngine" />
-      <ModelSelect class="tool" v-model="model" :engine="engine" @change="onChangeModel"/>
+      <!-- <EngineSelect class="tool" v-model="engine" @change="onChangeEngine" />
+      <ModelSelect class="tool" v-model="model" :engine="engine" @change="onChangeModel"/> -->
       
       <select class="tool" v-model="fontFamily" @change="onChangeFontFamily">
         <option value="serif">{{ t('scratchpad.fontFamily.serif') }}</option>
@@ -39,15 +39,11 @@
 
 <script setup lang="ts">
 
-import { ref, watch, onMounted } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import LlmFactory, { ILlmManager } from '../llms/llm'
-import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelect from '../components/ModelSelect.vue'
-
-// bus
+import { FileIcon, FolderOpenIcon, SaveIcon } from 'lucide-vue-next'
+import { onMounted, ref, watch } from 'vue'
 import useEventBus from '../composables/event_bus'
+import { t } from '../services/i18n'
+
 const { emitEvent } = useEventBus()
 
 export interface ToolbarAction {
@@ -62,14 +58,14 @@ const props = defineProps({
   fontSize: String
 })
 
-const engine = ref(null)
-const model = ref(null)
+// const engine = ref(null)
+// const model = ref(null)
 const fontFamily = ref(null)
 const fontSize = ref(null)
 
 onMounted(() => {
-  watch(() => props.engine || {}, () => engine.value = props.engine, { immediate: true })
-  watch(() => props.model || {}, () => model.value = props.model, { immediate: true })
+  // watch(() => props.engine || {}, () => engine.value = props.engine, { immediate: true })
+  // watch(() => props.model || {}, () => model.value = props.model, { immediate: true })
   watch(() => props.fontFamily || {}, () => fontFamily.value = props.fontFamily, { immediate: true })
   watch(() => props.fontSize || {}, () => fontSize.value = props.fontSize, { immediate: true })
 })
@@ -82,15 +78,15 @@ const onChangeFontSize = () => {
   emitEvent('action', { type: 'fontSize', value: fontSize.value })
 }
 
-const onChangeEngine = () => {
-  const llmManager = LlmFactory.manager(store.config)
-  model.value = llmManager.getDefaultChatModel(engine.value, false)
-  onChangeModel()
-}
+// const onChangeEngine = () => {
+//   const llmManager = LlmFactory.manager(store.config)
+//   model.value = llmManager.getDefaultChatModel(engine.value, false)
+//   onChangeModel()
+// }
 
-const onChangeModel = () => {
-  emitEvent('action', { type: 'llm', value: { engine: engine.value, model: model.value }})
-}
+// const onChangeModel = () => {
+//   emitEvent('action', { type: 'llm', value: { engine: engine.value, model: model.value }})
+// }
 
 </script>
 
@@ -109,44 +105,42 @@ const onChangeModel = () => {
   padding-top: 24px;
 }
 
-.form .toolbar {
+.form {
 
-  display: flex;
-  flex-direction: row;
-  height: 32px;
-  margin: 0px;
-  padding: 8px 16px;
-  align-items: center;
   background-color: var(--dialog-header-bg-color);
-  border-bottom: 1px solid var(--scratchpad-bars-border-color);
-  -webkit-app-region: drag;
-  gap: 10px;
 
-  .tool {
+  .toolbar {
 
-    max-width: 128px;
-    white-space: nowrap;
-    padding: 6px 8px;
-    font-size: 11pt;
-    margin: 0;
+    display: flex;
+    flex-direction: row;
+    height: 32px;
+    margin: 0px;
+    padding: 8px 16px;
+    align-items: center;
+    border-bottom: 1px solid var(--scratchpad-bars-border-color);
+    -webkit-app-region: drag;
+    gap: 10px;
 
-    &:enabled {
-      -webkit-app-region: no-drag;
+    .tool {
+
+      max-width: 128px;
+      white-space: nowrap;
+      font-size: 14.5px;
+      font-weight: normal;
+      height: 32px;
+      margin: 0;
+
+      &:enabled {
+        -webkit-app-region: no-drag;
+      }
+
     }
 
-    svg {
-      position: relative;
-      margin-right: 8px;
-      top: 2px;
+    select.tool {
+      border-radius: 6px;
+      width: auto;
     }
 
-  }
-
-  select.tool {
-    border-radius: 6px;
-    font-size: 10pt;
-    padding-right: 0px;
-    width: auto;
   }
 
 }

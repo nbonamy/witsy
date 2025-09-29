@@ -84,10 +84,12 @@ const onSelect = (event: Event) => {
 
   .combobox-input {
     position: absolute;
-    left: 0;
+    left: 2px;
+    top: 2px;
+    bottom: 2px;
     background-color: transparent;
-    border: none;
-    width: calc(100% - 28px);
+    border: none !important;
+    width: calc(100% - 32px);
     margin: 0 !important;
     padding-left: 8px !important;
     padding-top: 5.5px !important;

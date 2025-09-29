@@ -7,18 +7,21 @@ import Agent from '../../src/models/agent'
 import * as configModule from '../../src/main/config'
 import * as agentsModule from '../../src/main/agents'
 import * as interpreterModule from '../../src/main/interpreter'
+import * as workspaceModule from '../../src/main/workspace'
 import * as i18nModule from '../../src/services/i18n'
 import * as mainI18nModule from '../../src/main/i18n'
+import { WorkspaceHeader } from '../../src/types/workspace'
 
 // Mock external dependencies
 vi.mock('cron-parser')
 vi.mock('../../src/main/config')
 vi.mock('../../src/main/agents')
 vi.mock('../../src/main/interpreter')
-vi.mock('../../src/services/i18n')
 vi.mock('../../src/main/i18n')
-vi.mock('../../src/services/runner')
 vi.mock('../../src/main/search')
+vi.mock('../../src/main/workspace')
+vi.mock('../../src/services/runner')
+vi.mock('../../src/services/i18n')
 
 // Mock CronExpressionParser
 const mockCronParser = {
@@ -27,6 +30,8 @@ const mockCronParser = {
 }
 
 vi.mocked(await import('cron-parser')).CronExpressionParser = mockCronParser as any
+
+vi.mock('fs')
 
 describe('Scheduler', () => {
   let scheduler: Scheduler
@@ -79,7 +84,7 @@ describe('Scheduler', () => {
 
     // Create mock MCP
     mockMcp = {
-      getTools: vi.fn(() => []),
+      getLlmTools: vi.fn(() => []),
       callTool: vi.fn(),
       isAvailable: vi.fn(() => true)
     } as any
@@ -105,6 +110,7 @@ describe('Scheduler', () => {
     vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
     vi.mocked(agentsModule.saveAgentRun).mockReturnValue(true)
     vi.mocked(interpreterModule.runPython).mockResolvedValue('python result')
+    vi.mocked(workspaceModule.listWorkspaces).mockReturnValue([{uuid: '123'} as WorkspaceHeader])
     vi.mocked(i18nModule.initI18n).mockReturnValue(undefined)
     vi.mocked(mainI18nModule.getLocaleMessages).mockReturnValue({})
 
@@ -186,7 +192,7 @@ describe('Scheduler', () => {
     const window = (global as any).window
 
     expect(window.api.mcp.isAvailable()).toBe(true)
-    expect(window.api.mcp.getTools).toBe(mockMcp.getTools)
+    expect(window.api.mcp.getLlmTools).toBe(mockMcp.getLlmTools)
     expect(window.api.mcp.callTool).toBe(mockMcp.callTool)
   })
 

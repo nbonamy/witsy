@@ -34,7 +34,7 @@ export default class Commander {
     if (text == null) {
       try {
         new Notification({
-          title: 'Witsy',
+          title: t('common.appName'),
           body: t('automation.grabError')
         }).show()
       } catch (error) {
@@ -47,7 +47,7 @@ export default class Commander {
     if (text.trim() === '') {
       try {
         new Notification({
-          title: 'Witsy',
+          title: t('common.appName'),
           body: t('automation.commander.emptyText')
         }).show()
         console.log('No text selected');

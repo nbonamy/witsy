@@ -40,10 +40,8 @@ test('Shows invocation step with schedule and variables', async () => {
   await nextTick()
 
   // Navigate to invocation step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const invocationStep = steps.find(step => step.text().includes('agent.create.invocation.title'))
-  expect(invocationStep).toBeTruthy()
-  
   await invocationStep!.trigger('click')
   await nextTick()
 
@@ -80,7 +78,7 @@ test('Shows next runs when schedule is set', async () => {
   await nextTick()
 
   // Navigate to invocation step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const invocationStep = steps.find(step => step.text().includes('agent.create.invocation.title'))
   await invocationStep!.trigger('click')
   await nextTick()
@@ -108,7 +106,7 @@ test('Updates invocation variables when typing', async () => {
   await nextTick()
 
   // Navigate to invocation step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const invocationStep = steps.find(step => step.text().includes('agent.create.invocation.title'))
   await invocationStep!.trigger('click')
   await nextTick()

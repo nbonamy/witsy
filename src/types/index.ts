@@ -3,17 +3,18 @@ import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAtt
 import { Configuration } from './config'
 import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
-import { DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem } from './rag'
+import { DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
 import { LocalSearchResult } from '../main/search'
-import { McpInstallStatus, McpServer, McpStatus, McpTool } from './mcp'
+import { McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from './mcp'
 import { ToolSelection } from './llm'
 import { ListDirectoryResponse } from './filesystem'
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './file'
+import { WorkspaceHeader, Workspace } from './workspace'
 
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
 
-export type MainWindowMode = 'none' | 'chat' | 'studio' | 'dictation' | 'agents' | 'voice-mode' | 'docrepo' | 'settings'
+export type MainWindowMode = 'none' | 'chat' | 'studio' | 'dictation' | 'agents' | 'voice-mode' | 'docrepos' | 'mcp' | 'settings'
 
 export interface Attachment extends IAttachmentBase {
   url: string
@@ -71,6 +72,12 @@ export interface Message extends IMessageBase {
 export type A2APromptOpts = {
   currentTaskId?: string
   currentContextId?: string
+}
+
+export type CustomInstruction = {
+  id: string
+  label: string
+  instructions: string
 }
 
 export interface Chat {
@@ -222,7 +229,11 @@ export type TranscribeState = {
   transcription: string
 }
 
+export type StoreEvent = 'workspaceSwitched'
+
 export interface Store {
+
+  workspace: Workspace
 
   commands: Command[]
   experts: Expert[]
@@ -233,10 +244,17 @@ export interface Store {
 
   chatState: ChatState  
   transcribeState: TranscribeState
-  
+
+  listeners: Record<string, CallableFunction[]>
+  addListener: (event: StoreEvent, listener: CallableFunction) => void
+  removeListener: (event: StoreEvent, listener: CallableFunction) => void
+
+  isFeatureEnabled(feature: string): boolean
+
   saveHistory(): void
   saveSettings(): void
   load(): void
+  loadWorkspace(): void
   loadSettings(): void
   loadCommands(): void
   loadExperts(): void
@@ -248,6 +266,7 @@ export interface Store {
   addQuickPrompt(prompt: string): void
   // addPadPrompt(prompt: string): void
   // mergeHistory(chats: any[]): void
+  activateWorkspace(workspaceId: string): void
   dump?(): void
 }
 
@@ -311,6 +330,7 @@ declare global {
       on: (signal: string, callback: (value: any) => void) => void
       off: (signal: string, callback: (value: any) => void) => void
       app: {
+        getVersion(): string
         setAppearanceTheme(theme: string): void
         showAbout(): void
         getAssetPath(assetPath: string): string
@@ -322,6 +342,8 @@ declare global {
         updateMode(mode: MainWindowMode): void
         setContextMenuContext(id: string): void
         close(): void
+        hideWindowButtons(): void
+        showWindowButtons(): void
       }
       debug: {
         showConsole(): void
@@ -378,8 +400,8 @@ declare global {
         save(config: Configuration): void
       }
       history: {
-        load(): History
-        save(history: History): void
+        load(workspaceId: string): History
+        save(workspaceId: string, history: History): void
       }
       automation: {
         getText(id: string): string
@@ -413,33 +435,34 @@ declare global {
         resize(deltaX: number, deltaY: number): void
       }
       experts: {
-        load(): Expert[]
-        save(experts: Expert[]): void
-        import(): boolean
-        export(): boolean
+        load(workspaceId: string): Expert[]
+        save(workspaceId: string, experts: Expert[]): void
+        import(workspaceId: string): boolean
+        export(workspaceId: string): boolean
       }
       agents: {
         forge(): void
-        load(): any[]
-        save(agent: Agent): boolean
-        delete(agentId: string): boolean
-        getRuns(agentId: string): AgentRun[]
-        getRun(agentId: string, runId: string): AgentRun|null
-        saveRun(run: AgentRun): boolean
-        deleteRun(agentId: string, runId: string): boolean
-        deleteRuns(agentId: string): boolean
+        load(workspaceId: string): any[]
+        save(workspaceId: string, agent: Agent): boolean
+        delete(workspaceId: string, agentId: string): boolean
+        getRuns(workspaceId: string, agentId: string): AgentRun[]
+        getRun(workspaceId: string, agentId: string, runId: string): AgentRun|null
+        saveRun(workspaceId: string, run: AgentRun): boolean
+        deleteRun(workspaceId: string, agentId: string, runId: string): boolean
+        deleteRuns(workspaceId: string, agentId: string): boolean
       }
       docrepo: {
         open(): void
-        list(): DocumentBase[]
+        list(workspaceId: string): DocumentBase[]
         connect(baseId: string): void
         disconnect(): void
         isEmbeddingAvailable(engine: string, model: string): boolean
-        create(title: string, embeddingEngine: string, embeddingModel: string): string
-        rename(id: string, title: string): void
-        delete(id: string): void
-        addDocument(id: string, type: string, url: string): void
-        removeDocument(id: string, docId: string): void
+        create(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): string
+        rename(baseId: string, title: string): void
+        delete(baseId: string): void
+        isSourceSupported(type: SourceType, origin: string): boolean
+        addDocument(id: string, type: SourceType, origin: string, title?: string): Promise<void>
+        removeDocument(id: string, docId: string): Promise<boolean>
         query(id: string, text: string): Promise<DocRepoQueryResponseItem[]>
         getCurrentQueueItem(): Promise<DocumentQueueItem|null>
       },
@@ -472,9 +495,11 @@ declare global {
         getInstallCommand(registry: string, server: string): string
         installServer(registry: string, server: string, apiKey: string): Promise<McpInstallStatus>
         reload(): Promise<void>
+        restartServer(uuid: string): Promise<boolean>
         getStatus(): McpStatus
+        getAllServersWithTools(): Promise<McpServerWithTools[]>
         getServerTools(uuid: string): Promise<McpTool[]>
-        getTools(): Promise<LlmTool[]>
+        getLlmTools(): Promise<LlmTool[]>
         callTool(name: string, parameters: anyDict): any
         originalToolName(name: string): string
         detectOAuth(url: string, headers: Record<string, string>): Promise<any>
@@ -517,7 +542,7 @@ declare global {
         import(): boolean
       }
       import: {
-        openai(): boolean
+        openai(workspaceId: string): boolean
       }
       ollama: {
         downloadStart(targetDirectory: string): Promise<{ success: boolean; downloadId?: string; error?: string }>
@@ -525,6 +550,12 @@ declare global {
       }
       google: {
         downloadMedia(url: string, mimeType: string): Promise<string>
+      }
+      workspace: {
+        list(): WorkspaceHeader[]
+        load(workspaceId: string): Workspace|null
+        save(workspace: Workspace): boolean
+        delete(workspaceId: string): boolean
       }
     }
   }

@@ -28,6 +28,7 @@ import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
 import * as menu from './main/menu';
 import * as backup from './main/backup';
+import * as workspace from './main/workspace';
 
 let mcp: Mcp;
 let scheduler: Scheduler;
@@ -47,7 +48,14 @@ if (process.platform !== 'darwin' && !process.env.TEST) {
 
 // changes path
 if (process.env.WITSY_HOME) {
-  app.getPath = (name: string) => `${process.env.WITSY_HOME}/${name}`;
+  const originalGetPath = app.getPath;
+  app.getPath = (name: string) => {
+    if (name === 'userData') {
+      return process.env.WITSY_HOME;
+    } else {
+      return originalGetPath(name as any);
+    }
+  }
 }
 
 // set up logging
@@ -79,7 +87,7 @@ const installMenu = () => {
     forge: window.openAgentForgeWindow,
     backupExport: async () => await backup.exportBackup(app),
     backupImport: async () => await backup.importBackup(app, quitApp),
-    importOpenAI: async () => await importOpenAI(app),
+    importOpenAI: async () => await importOpenAI(app, settings.workspaceId),
   }, settings.shortcuts);
 }
 
@@ -131,6 +139,9 @@ app.whenReady().then(async () => {
   // we need settings
   const settings = config.loadSettings(app);
 
+  // initialize current workspace
+  workspace.initializeWorkspace(app, settings.workspaceId)
+
   // error
   if (config.settingsFileHadError()) {
     const { useI18n } = await import('./main/i18n');
@@ -161,7 +172,9 @@ app.whenReady().then(async () => {
 
   // auto-updater (we need it now for menu)
   autoUpdater = new AutoUpdater(app, {
-    preInstall: () => quitAnyway = true,
+    preInstall: () => {
+      quitApp();
+    },
     onUpdateAvailable: () => {
       window.notifyBrowserWindows('update-available');
       trayIconManager.install();

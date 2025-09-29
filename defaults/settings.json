@@ -1,5 +1,6 @@
 
 {
+  "workspaceId": "00000000-0000-0000-0000-000000000000",
   "general": {
     "firstRun": true,
     "safeKeys": true,
@@ -70,7 +71,7 @@
     "model": "",
     "autosave": false,
     "disableStreaming": false,
-    "disableTools": false
+    "tools": null
   },
   "commands": {
     "engine": "",
@@ -136,7 +137,7 @@
   },
   "stt": {
     "engine": "openai", 
-    "model": "whisper-1",
+    "model": "gpt-4o-transcribe",
     "locale": "",
     "vocabulary": [],
     "autoStart": false,

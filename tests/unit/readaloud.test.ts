@@ -24,7 +24,6 @@ vi.mock('electron', async() => {
   }
 })
 
-// mock windows
 vi.mock('../../src/main/window.ts', async () => {
   return {
     releaseFocus: vi.fn(),
@@ -32,6 +31,10 @@ vi.mock('../../src/main/window.ts', async () => {
     isMainWindowFocused: vi.fn(() => false),
   }
 })
+
+vi.mock('../../src/main/i18n', () => ({
+  useI18n: vi.fn(() => (key: string) => key)
+}))
 
 vi.mock('../../src/main/utils', async () => {
   return {
@@ -64,7 +67,7 @@ test('Show no text error notification', async () => {
   await ReadAloud.read(app, 100)
   expect(utils.putCachedText).not.toHaveBeenCalled()
   expect(window.openReadAloudPalette).not.toHaveBeenCalled()
-    expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: 'Please highlight the text you want to read aloud.' })
+    expect(Notification).toHaveBeenLastCalledWith({ title: 'common.appName', body: 'automation.readAloud.emptyText' })
 
   })
 
@@ -75,6 +78,6 @@ test('Show no grab error notification', async () => {
   await ReadAloud.read(app, 100)
   expect(utils.putCachedText).not.toHaveBeenCalled()
   expect(window.openReadAloudPalette).not.toHaveBeenCalled()
-  expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: 'An error occurred while trying to grab the text. Please check Privacy & Security settings.' })
+  expect(Notification).toHaveBeenLastCalledWith({ title: 'common.appName', body: 'automation.grabError' })
 
 })
