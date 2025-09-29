@@ -1,1 +1,4 @@
-features-witsy.json
+
+{
+  "workspaces": false
+}
