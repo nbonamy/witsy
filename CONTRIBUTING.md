@@ -10,16 +10,17 @@ For contributions to be accepted into Witsy, you first need sign the [Contributo
 
 ### Development Environment
 
-- **Node.js version**: `20.18`
-- **npm version**: `11.1.0`
+- **Node.js version**: `22.19.0`
+- **npm version**: `11.6.0`
 
 Use [nvm](https://github.com/nvm-sh/nvm) to switch between Node.js versions.
 
 ### Guidelines
 
 1. **Keep `package-lock.json`**: `electron` and `electron-forge` are picky things and the versions of the packages used are important.
-2. **Linting**: Run `npm run lint` to check for and fix any linting issues.
-3. **Testing**: Add/Update required tests. Coverage varies betwen 80% and 82% and I would like to keep it that way (or more!). Run `npm run test` to ensure all tests pass before submitting your changes.
+2. **Installing dependencies**: Run `npm ci` to ensure you install the exact versions listed in `package-lock.json`
+3. **Linting**: Run `npm run lint` to check for and fix any linting issues.
+4. **Testing**: Add/Update required tests. Coverage varies betwen 80% and 82% and I would like to keep it that way (or more!). Run `npm run test` to ensure all tests pass before submitting your changes.
 
 ### API Keys Safe Storage
 

@@ -423,7 +423,7 @@ export const enableClickThrough = (window: BrowserWindow) => {
     })
 
     // set ignore mouse events by alpha.
-    const buffer = image.getBitmap()
+    const buffer = image.toBitmap() as any
     window.setIgnoreMouseEvents(buffer[3] < 255)
     //console.log(`${window.getTitle()} setIgnoreMouseEvents`, buffer[3] < 255)
   
