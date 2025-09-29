@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Design Studio drawing
+- Let users choose which tools to enable from each MCP, and persist that choice for all models (https://github.com/nbonamy/witsy/issues/410)
 
 ### Changed
 - N/A
@@ -15,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - White screen + Delay (https://github.com/nbonamy/witsy/issues/411)
 - When using the fork command, the title field is not filled (https://github.com/nbonamy/witsy/issues/409)
 - Using Tool websearch doesn´t work anymore (https://github.com/nbonamy/witsy/issues/428)
+- For Ollama 'Max Completion Tokens' should allow negative values (https://github.com/nbonamy/witsy/issues/413)
 
 ### Removed
 - N/A
