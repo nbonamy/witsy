@@ -174,7 +174,7 @@ const sortedServers = computed(() => {
 
 const getDescription = (server: McpServer) => {
 
-  // this should work for station1 servers
+  // if we have a token description
   if (server.label && server.label.trim().length) {
     let label = server.label.trim()
     if (server.oauth?.tokens?.id_token) {
