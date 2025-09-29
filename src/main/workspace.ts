@@ -104,22 +104,23 @@ export const deleteWorkspace = (app: App, workspaceId: string): boolean => {
 
 export const initializeWorkspace = (app: App, workspaceId: string): void => {
 
-    // check if it exists first
-    const workspaceExists = listWorkspaces(app).some(ws => ws.uuid === workspaceId)
-    if (workspaceExists) return
 
-    // create the workspace folder and the workspace definition file
-    workspaceFolderPath(app, workspaceId)
-    saveWorkspace(app, {
-      uuid: workspaceId,
-      name: 'Workspace',
-    })
+  // check if it exists first
+  const workspaceExists = listWorkspaces(app).some(ws => ws.uuid === workspaceId)
+  if (workspaceExists) return
 
-    // if it is not the default one there is not much else we can do
-    if (workspaceId !== DEFAULT_WORKSPACE_ID) return
+  // create the workspace folder and the workspace definition file
+  workspaceFolderPath(app, workspaceId)
+  saveWorkspace(app, {
+    uuid: workspaceId,
+    name: 'Workspace',
+  })
 
-    // otherwise we can migrate legacy stuff
-    migrateExistingItemsToWorkspace(app, workspaceId);
+  // if it is not the default one there is not much else we can do
+  if (workspaceId !== DEFAULT_WORKSPACE_ID) return
+
+  // otherwise we can migrate legacy stuff
+  migrateExistingItemsToWorkspace(app, workspaceId);
 
 }
 
@@ -167,8 +168,13 @@ export const migrateExistingItemsToWorkspace = (app: App, workspaceId: string): 
     if (fs.existsSync(historyFile)) {
       try {
         let history = fs.readFileSync(historyFile, 'utf8')
-        const r = /"file:\/\/(.*)\/Witsy\/images\/(.*?)"/g
-        history = history.replaceAll(r, `"file://$1/Witsy/workspaces/${workspaceId}/images/$2"`)
+        if (process.platform === 'win32') {
+          const r = /file:\/\/(.*?)(\\*)Witsy(\\*)images(\\*)(.*?)/g
+          history = history.replaceAll(r, `file://$1$3Witsy$3workspaces${'$3'}${workspaceId}$3images$3$5`)
+        } else {
+          const r = /"file:\/\/(.*)\/Witsy\/images\/(.*?)"/g
+          history = history.replaceAll(r, `"file://$1/Witsy/workspaces/${workspaceId}/images/$2"`)
+        }
         fs.writeFileSync(historyFile, history)
       } catch (error) {
         console.error(`Failed to migrate history.json for workspace ${workspaceId}:`, error)

@@ -235,6 +235,7 @@ defineExpose({
     
     flex: 0 0 0px;
     position: relative;
+    overflow: hidden;
 
     /* resizing animation except when dragging */
     transition: flex-basis 0.15s ease-in-out;

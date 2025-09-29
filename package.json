@@ -97,7 +97,7 @@
     "@langchain/core": "^0.3.21",
     "@langchain/textsplitters": "^0.1.0",
     "@mistralai/mistralai": "^1.10.0",
-    "@modelcontextprotocol/sdk": "^1.17.5",
+    "@modelcontextprotocol/sdk": "^1.18.2",
     "@nut-tree-fork/nut-js": "^4.2.6",
     "@speechmatics/auth": "^0.1.0",
     "@speechmatics/real-time-client": "^6.0.0",
