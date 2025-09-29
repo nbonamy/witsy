@@ -383,7 +383,6 @@ defineExpose({
 <style scoped>
 
 .realtime {
-  height: 100vh;
   background-color: var(--window-bg-color);
   color: var(--text-color);
   font-size: 18.5px;
