@@ -212,6 +212,7 @@ body[data-tint=blue] .mx-context-menu {
 
   .app-menu {
     cursor: pointer;
+    padding: 0.5rem;
   }
 
   .menu {
