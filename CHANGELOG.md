@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - When using the fork command, the title field is not filled (https://github.com/nbonamy/witsy/issues/409)
 - Using Tool websearch doesn´t work anymore (https://github.com/nbonamy/witsy/issues/428)
 - For Ollama 'Max Completion Tokens' should allow negative values (https://github.com/nbonamy/witsy/issues/413)
+- Added keep-alive on ollama embeddings (https://github.com/nbonamy/witsy/issues/425)
 
 ### Removed
 - N/A

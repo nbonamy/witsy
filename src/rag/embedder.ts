@@ -146,7 +146,11 @@ export default class Embedder {
 
     // ollama
     if (this.ollama) {
-      const response = await this.ollama.embed({ model: this.model, input: texts, })
+      const response = await this.ollama.embed({
+        model: this.model,
+        input: texts,
+        keep_alive: '5m',
+      })
       return response.embeddings
     }
 
