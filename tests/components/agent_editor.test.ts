@@ -58,11 +58,6 @@ test('Shows different steps for witsy vs a2a agents', async () => {
   })
   await nextTick()
   
-  // Navigate to general step to find goal field
-  const skipButton = witsyWrapper.find('button[name="skip"]')
-  await skipButton.trigger('click')
-  await nextTick()
-  
   expect(witsyWrapper.find('[name=goal]').exists()).toBe(true)
 
   // Test a2a agent (should not have Goal step)
@@ -110,11 +105,6 @@ test('Shows form fields for information step', async () => {
       agent: new Agent()
     }
   })
-  await nextTick()
-
-  // Navigate to general step to see form fields
-  const skipButton = wrapper.find('button[name="skip"]')
-  await skipButton.trigger('click')
   await nextTick()
 
   // Should show name field
@@ -415,11 +405,6 @@ test('Shows model settings step when available', async () => {
   })
   await nextTick()
 
-  // Navigate to model step by completing previous steps
-  const skipButton = wrapper.find('button[name="skip"]')
-  await skipButton.trigger('click')
-  await nextTick()
-  
   // Complete general step
   const nameField = wrapper.find('input[name="name"]')
   await nameField.setValue('Test Agent')
@@ -448,11 +433,6 @@ test('Validates information step - shows error for empty fields', async () => {
   })
   await nextTick()
 
-  // Navigate to general step first
-  const skipButton = wrapper.find('button[name="skip"]')
-  await skipButton.trigger('click')
-  await nextTick()
-
   // Leave fields empty and try to proceed
   const wizardStep = wrapper.findComponent({ name: 'WizardStep' })
   
@@ -475,11 +455,6 @@ test('Validates information step - proceeds when fields are filled', async () =>
       agent: new Agent()
     }
   })
-  await nextTick()
-
-  // Navigate to general step first
-  const skipButton = wrapper.find('button[name="skip"]')
-  await skipButton.trigger('click')
   await nextTick()
 
   // Fill in required fields

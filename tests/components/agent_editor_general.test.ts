@@ -32,11 +32,6 @@ test('Shows form fields for information step', async () => {
   })
   await nextTick()
 
-  // Click skip button to get to general step
-  const skipButton = wrapper.find('button[name="skip"]')
-  await skipButton.trigger('click')
-  await nextTick()
-
   // Should show name field
   const nameField = wrapper.find('input[name="name"]')
   expect(nameField.exists()).toBe(true)
@@ -98,13 +93,8 @@ test('Validates information step - shows error for empty fields', async () => {
   })
   await nextTick()
 
-  // Click skip button to get to general step
-  const skipButton = wrapper.find('button[name="skip"]')
-  await skipButton.trigger('click')
-  await nextTick()
-
   // Leave fields empty and try to proceed
-  const wizardStep = wrapper.findAllComponents({ name: 'WizardStep' })[1]
+  const wizardStep = wrapper.findAllComponents({ name: 'WizardStep' })[0]
   
   // Find and click the Next button (emits 'next' event)
   await wizardStep.vm.$emit('next')
@@ -131,11 +121,6 @@ test('Validates information step - proceeds when fields are filled', async () =>
   })
   await nextTick()
 
-  // Click skip button to get to general step
-  const skipButton = wrapper.find('button[name="skip"]')
-  await skipButton.trigger('click')
-  await nextTick()
-
   // Fill in required fields
   const nameField = wrapper.find<HTMLInputElement>('input[name="name"]')
   await nameField.setValue('Test Agent')
@@ -147,7 +132,7 @@ test('Validates information step - proceeds when fields are filled', async () =>
   await goalField.setValue('Test Goal')
 
   // Try to proceed
-  const wizardStep = wrapper.findAllComponents({ name: 'WizardStep' })[1]
+  const wizardStep = wrapper.findAllComponents({ name: 'WizardStep' })[0]
   await wizardStep.vm.$emit('next')
   await nextTick()
 
@@ -167,11 +152,6 @@ test('Validates goal field is required', async () => {
   })
   await nextTick()
 
-  // Click skip button to get to general step
-  const skipButton = wrapper.find('button[name="skip"]')
-  await skipButton.trigger('click')
-  await nextTick()
-
   // Fill in name and description but leave goal empty
   const nameField = wrapper.find<HTMLInputElement>('input[name="name"]')
   await nameField.setValue('Test Agent')
@@ -180,7 +160,7 @@ test('Validates goal field is required', async () => {
   await descriptionField.setValue('Test Description')
 
   // Try to proceed with empty goal
-  const wizardStep = wrapper.findAllComponents({ name: 'WizardStep' })[1]
+  const wizardStep = wrapper.findAllComponents({ name: 'WizardStep' })[0]
   await wizardStep.vm.$emit('next')
   await nextTick()
 
