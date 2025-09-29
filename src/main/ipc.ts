@@ -751,6 +751,12 @@ export const installIpc = (
     return results;
   });
 
+  ipcMain.handle(IPC.SEARCH.TEST, async () => {
+    const localSearch = new LocalSearch();
+    const result = localSearch.test();
+    return result;
+  });
+
   ipcMain.on(IPC.STUDIO.START, () => {
     window.openDesignStudioWindow();
   })

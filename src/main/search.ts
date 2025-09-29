@@ -30,14 +30,33 @@ export type LocalSearchResult = {
 
 export default class LocalSearch {
 
-  public search(query: string, num: number = 5): Promise<LocalSearchResult[]> {
+  public async test(): Promise<boolean> {
+
+    try {
+      
+      const results = await this.search('What is Witsy?', 1, true)
+      console.log('Test search results:', results.map(r => r.url))
+      if (results.length > 0) {
+        return true
+      }
+    } catch (e) {
+      console.error('Test search error:', e)
+    }
+
+    // too bad
+    return false
+  
+  }
+
+  public search(query: string, num: number = 5, testMode: boolean = false): Promise<LocalSearchResult[]> {
 
     return new Promise((resolve, reject) => {
 
+      //const url = 'https://2captcha.com/demo/recaptcha-v2'
       const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`
 
       // open a new window
-      const win = this.openHiddenWindow()
+      const win = this.openHiddenWindow(testMode)
 
       // get ready to grab the results
       win.webContents.on('did-finish-load', async () => {
@@ -92,7 +111,9 @@ export default class LocalSearch {
         } catch (e) {
 
           // done
-          this.tryCloseWindow(win)
+          if (!testMode) {
+            this.tryCloseWindow(win)
+          }
           reject(e)
 
         }
@@ -114,7 +135,7 @@ export default class LocalSearch {
       console.log(`[search] getting contents for ${url}`)
 
       // open a new window
-      const win = this.openHiddenWindow()
+      const win = this.openHiddenWindow(false)
 
       // flag to track if we've already resolved
       let hasResolved = false
@@ -229,14 +250,14 @@ export default class LocalSearch {
 
   }
 
-  protected openHiddenWindow(): BrowserWindow {
+  protected openHiddenWindow(testMode: boolean): BrowserWindow {
 
     // open a new window
     const win = new BrowserWindow({
       width: 800,
       height: 600,
-      show: false,
-      frame: false,
+      show: testMode,
+      frame: testMode,
       focusable: true,
       hiddenInMissionControl: true,
       skipTaskbar: true,

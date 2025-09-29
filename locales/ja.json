@@ -1756,6 +1756,7 @@
     "tooltips": {
       "deleteServer": "サーバーを削除",
       "editServer": "サーバーを編集",
+      "restartServer": "サーバーを再起動",
       "startServer": "サーバーを起動",
       "stopServer": "サーバーを一時停止",
       "viewLogs": "サーバーログを見る",
@@ -2486,6 +2487,12 @@
         "exaApiKey": "Exa APIキー",
         "getApiKey": "APIキーを取得する",
         "tavilyApiKey": "Tavily APIキー",
+        "testLocal": {
+          "error": "インターネット検索中にエラーが発生しました",
+          "message": "テスト検索を実行するウィンドウが開きます。検索が成功すると、ウィンドウは自動的に閉じます。人間認証のプロンプトが表示された場合は、それを解決し、手動でウィンドウを閉じてから再度お試しください。",
+          "success": "ローカル検索テスト成功",
+          "title": "ローカル検索をテスト"
+        },
         "title": "ウェブ検索",
         "truncateTo": "切り捨てて",
         "truncationWarning": "警告：切り捨て長は入力トークン数、ひいてはリクエストコストに影響します"

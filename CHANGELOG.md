@@ -2,11 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.15.Y] - WIP
+## [3.0.0] - WIP
 
 ### Added
 - Design Studio drawing
-- Agent Generator
 
 ### Changed
 - N/A
@@ -15,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Incorrect token usage count for Gemini 2.5 Pro (https://github.com/nbonamy/witsy/issues/391)
 - White screen + Delay (https://github.com/nbonamy/witsy/issues/411)
 - When using the fork command, the title field is not filled (https://github.com/nbonamy/witsy/issues/409)
+- Using Tool websearch doesn´t work anymore (https://github.com/nbonamy/witsy/issues/428)
 
 ### Removed
 - N/A

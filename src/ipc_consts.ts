@@ -213,6 +213,7 @@ export const MEMORY = {
 
 export const SEARCH = {
   QUERY: 'search-query',
+  TEST: 'search-test',
 } as const;
 
 export const STUDIO = {

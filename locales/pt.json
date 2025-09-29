@@ -1756,6 +1756,7 @@
     "tooltips": {
       "deleteServer": "Excluir servidor",
       "editServer": "Editar servidor",
+      "restartServer": "Reiniciar servidor",
       "startServer": "Iniciar servidor",
       "stopServer": "Pausar servidor",
       "viewLogs": "Ver logs do servidor",
@@ -2480,6 +2481,12 @@
         "exaApiKey": "Chave API Exa",
         "getApiKey": "Obtenha sua chave de API",
         "tavilyApiKey": "Chave de API Tavily",
+        "testLocal": {
+          "error": "Erro ao buscar na internet",
+          "message": "Uma janela será aberta para realizar uma busca de teste. Se a busca for bem-sucedida, a janela fechará automaticamente. Se você vir um prompt de verificação humana, resolva-o, feche a janela manualmente e tente novamente.",
+          "success": "Teste de busca local bem-sucedido",
+          "title": "Testar busca local"
+        },
         "title": "Pesquisa na Web",
         "truncateTo": "Truncar para",
         "truncationWarning": "AVISO: O comprimento do truncamento impactará a contagem de tokens de entrada e, portanto, os custos da solicitação"
