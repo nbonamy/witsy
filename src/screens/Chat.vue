@@ -734,4 +734,11 @@ defineExpose({
 
 <style scoped>
 
+/* Chat list adds one pixel
+   To the main window's height somehow
+   We don't know why though */
+.chat.split-pane {
+  height: calc(100vh - var(--window-toolbar-height) - 2.5rem - 1px) !important;
+}
+
 </style>
