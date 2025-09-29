@@ -157,7 +157,7 @@ https://www.youtube.com/watch?v=vixl7I07hBk
 You can download a binary from from the [releases](https://github.com/nbonamy/witsy/releases) page or build yourself:
 
 ```
-npm install
+npm ci
 npm start
 ```
 

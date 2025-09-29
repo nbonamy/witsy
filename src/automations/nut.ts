@@ -20,7 +20,8 @@ export default class NutAutomator implements Automator {
     try {
       const nutPackage = '@nut-tree-fork/nut-js';
       nut = await import(nutPackage);
-      return true
+      console.log('nutjs loaded successfully.');
+      return true;
     } catch {
       console.log('Error loading nutjs. Automation not available.');
       nut = null;

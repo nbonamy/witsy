@@ -18,9 +18,8 @@ import { ChatListMode } from '../types/config'
 import ChatListFolder from './ChatListFolder.vue'
 import ChatListTimeline from './ChatListTimeline.vue'
 import ContextMenu from './ContextMenu.vue'
-
 import useEventBus from '../composables/event_bus'
-import { filter } from 'minimatch'
+
 const { emitEvent } = useEventBus()
 
 const props = defineProps({

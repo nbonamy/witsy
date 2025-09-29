@@ -10,8 +10,7 @@ const grabGoogleResults = `
   const results = []
   const search = document.getElementById("search")
   search.querySelectorAll("a").forEach((link) => {
-    const result = link.closest("div")
-    const title = result.querySelector("h3")
+    const title = link.querySelector("h3")
     const url = link.getAttribute("href")
     const item = {
       title: title?.textContent || "",
