@@ -1,17 +1,18 @@
 <template>
   <div class="action copy" v-if="!message.transient" @click="onCopy">
-    <BIconClipboard /> {{ copyLabel }}
+    <ClipboardIcon /> {{ copyLabel }}
   </div>
 </template>
 
 <script setup lang="ts">
 
+import { removeMarkdown } from '@excalidraw/markdown-to-text'
+import { ClipboardIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
+import Dialog from '../composables/dialog'
+import Message from '../models/message'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { removeMarkdown } from '@excalidraw/markdown-to-text'
-import Message from '../models/message'
-import Dialog from '../composables/dialog'
 
 const props = defineProps({
   message: {
@@ -65,14 +66,3 @@ defineExpose({
   copy: onCopy,
 })
 </script>
-
-<style scoped>
-.action {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-svg {
-  margin-right: 4px;
-}
-</style>

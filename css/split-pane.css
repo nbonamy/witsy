@@ -1,14 +1,18 @@
 
 .split-pane {
-  
+
+  --split-pane-header-height: 32px;
+  --split-pane-sidebar-list-item-selected-bg-color: var(--tabs-header-selected-bg-color);
+  --split-pane-sidebar-list-item-selected-text-color: var(--tabs-header-selected-text-color);
+  --split-pane-sidebar-list-item-hover-bg-color: var(--hover-bg-color);
+
   display: flex;
-  height: 100vh;
   width: 100%;
   overflow: hidden;
   color: var(--text-color);
 
   * {
-    scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
+    scrollbar-color: var(--sidebar-scroll-thumb-color) transparent;
   }
 
   .sp-sidebar {
@@ -17,12 +21,14 @@
       the flex with their desired width */
     
     flex: 0 0 200px;
-    height: 100vh;
     overflow-x: hidden;
     background-color: var(--sidebar-bg-color);
+    border-right: 1px solid var(--sidebar-border-color);
     color: var(--sidebar-text-color);
     display: flex;
     flex-direction: column;
+    padding: 1rem 0rem;
+    gap: 1rem;
 
     * > .icon, .icon {
       margin: 0rem 0.5rem;
@@ -45,18 +51,12 @@
     
     header {
 
-      flex: 0 0 var(--window-toolbar-height);
-      background-color: var(--window-decoration-color);
-      border-bottom: 1px solid var(--toolbar-border-color);
-      padding: 0px 1rem;
+      flex: 0 var(--split-pane-header-height);
+      background-color: var(--sidebar-bg-color);
+      padding: 0rem 1rem;
       display: flex;
       flex-direction: row;
       align-items: center;
-      -webkit-app-region: drag;
-
-      .form, input, select, .icon {
-        -webkit-app-region: no-drag;
-      }
 
       .form {
         flex: 1;
@@ -64,36 +64,35 @@
 
       .title {
         flex: 1;
-        font-size: 11pt;
+        font-size: 13pt;
         font-weight: 600;
         color: var(--text-color);
       }
     
       .actions {
-        -webkit-app-region: drag;
         display: flex;
         justify-content: flex-end;
+        opacity: 0.7;
         gap: 8px;
       }
 
       .icon {
-        width: 1rem;
-        height: 1rem;
+        width: var(--icon-md);
+        height: var(--icon-md);
       }
     }
 
     main {
 
       flex: 1;
-      border-right: 1px solid var(--sidebar-border-color);
-      padding-top: 1rem;
+      padding: 0rem 1rem;
       overflow-y: hidden;
       display: flex;
       flex-direction: column;
 
       .sp-sidebar-title {
         font-size: 110%;
-        font-weight: bold;
+        font-weight: var(--font-weight-medium);
         color: var(--sidebar-text-color);
         margin-bottom: 1rem;
       }
@@ -102,12 +101,18 @@
 
     footer {
 
-      border-right: 1px solid var(--sidebar-border-color);
-      padding: 1rem;
-      font-size: 11pt;
+      padding: 0rem 1rem;
+      font-size: 14.5px;
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
+
+      &:has(button:only-child) {
+        justify-content: center;
+        button {
+          width: 100%;
+        }
+      }
 
     }
 
@@ -116,7 +121,6 @@
   .sp-main {
     
     flex: 1;
-    height: 100vh;
     display: flex;
     flex-direction: column;
     background-color: var(--background-color);
@@ -125,15 +129,12 @@
 
     header {
       
-      flex: 0 0 var(--window-toolbar-height);
-      background-color: var(--window-decoration-color);
-      border-bottom: 1px solid var(--toolbar-border-color);
-      padding: 0px 1rem;
+      flex: 0 var(--split-pane-header-height);
+      padding: 1rem;
       display: flex;
       flex-direction: row;
       align-items: center;
-      -webkit-app-region: drag;
-      gap: 0.75rem;
+      gap: 0.5rem;
       
       .title {
         flex: 1;
@@ -145,19 +146,15 @@
         color: var(--chatarea-toolbar-text-color);
       }
 
-      .push {
-        flex: 1;
-      }
-
       .icon {
-        -webkit-app-region: no-drag;
+        flex-shrink: 0;
         cursor: pointer;
         text-align: right;
-        width: 16px;
-        height: 16px;
+        width: var(--icon-md);
+        height: var(--icon-md);
         color: var(--chatarea-toolbar-icon-color);
-        fill: var(--chatarea-toolbar-icon-color);
         margin-left: auto;
+        opacity: 0.7;
 
         &.disabled {
           opacity: 0.5;
@@ -170,10 +167,41 @@
 
         &.back {
           color: var(--text-color);
-          fill: var(--text-color);
+          transform: scale(150%);
         }
         
       }
+
+      &:has(input) {
+
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+
+        .icon {
+          display: none
+        }
+
+        input {
+          flex: 1;
+          padding: 0.25rem;
+          background: #fafafa;
+          color: var(--color-text);
+          font-size: inherit;
+          font-family: inherit;
+        }
+
+        .actions {
+          display: flex;
+          gap: 0.25rem;
+          .icon {
+            display: block;
+            width: var(--icon-lg);
+            height: var(--icon-lg);
+            cursor: pointer;
+          }
+        }
+      }
+
     }
 
     main {
@@ -182,7 +210,6 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      background-color: var(--background-color);
       transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s;
       box-sizing: border-box;
 
@@ -200,8 +227,8 @@
       &.sliding-pane {
       
         position: absolute;
-        top: var(--window-toolbar-height);
-        z-index: 20;
+        top: var(--split-pane-header-height);
+        z-index: -20;
         display: flex;
 
         opacity: 0;
@@ -210,6 +237,7 @@
 
         &.visible {
           opacity: 1;
+          z-index: 20;
           transform: translateX(0%);
         }
       
@@ -221,6 +249,12 @@
         align-self: stretch;
       }
 
+      &:has(.list-actions, .sticky-table-container) {
+        .list-actions, .sticky-table-container {
+          max-width: 800px;
+        }
+      }
+
       &:has(.sticky-table-container) {
 
         min-width: auto;
@@ -228,23 +262,20 @@
 
         .list-actions {
           
+          box-sizing: border-box;
           padding: 0.875rem;
           margin-bottom: 0px;
-          border: 1px solid var(--sidebar-border-color);
+          border: 1px solid var(--border-color);
           border-bottom: 0px;
-          background: color-mix(in srgb, var(--sidebar-border-color), transparent 80%);
+          background: color-mix(in srgb, var(--border-color), transparent 80%);
           
           display: flex;
           flex-direction: row;
           align-items: center;
           gap: 1.5rem;
           
-          .push {
-            flex: 1;
-          }
-          
           .list-action {
-            font-size: 10.5pt;
+            font-size: 14px;
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -264,11 +295,11 @@
         .sticky-table-container {
           
           th {
-            font-weight: 600;
+            font-weight: var(--font-weight-semibold);
           }
         
           td button {
-            font-size: 6pt !important;
+            font-size: 8px !important;
             padding: 2px 8px;
           }
 
@@ -282,9 +313,8 @@
   &:not(:has(.sp-sidebar)) {
     .sp-main {
       header {
-        padding-left: 2.5rem;
         .title {
-          font-size: 11pt;
+          font-size: 13pt;
         }
 
       }
@@ -293,7 +323,7 @@
 
 }
 
-.macos {
+/* .macos {
   .split-pane {
     .sp-sidebar {
       header {
@@ -301,17 +331,7 @@
       }
     }
   }
-}
-
-.macos {
-  .window {
-    .sp-sidebar {
-      header {
-        padding-left: 5rem;
-      }
-    }
-  }
-}
+} */
 
 .windows {
   .split-pane {
@@ -337,4 +357,54 @@
       }
     }
   }
+}
+
+.fullscreen-drawer .split-pane {
+
+  --drawer-pane-bg-color: var(--color-surface);
+
+  .sp-sidebar {
+
+    background-color: var(--drawer-pane-bg-color);
+
+    header {
+      background-color: var(--drawer-pane-bg-color);
+      border: none;
+      .title {
+        font-weight: var(--font-weight-medium);
+        font-size: 20px;
+      }
+    }
+
+    main {
+      border-right: none;
+      .list-item {
+        &.selected {
+          background-color: #F0F0F0 !important;
+        }
+      }
+    }
+
+  }
+
+  .sp-main {
+
+    header {
+      border: none;
+      gap: 1rem;
+      .title {
+        font-size: 22px;
+      }
+      &:has(input) {
+        padding-top: 1.105rem;
+        padding-bottom: 1.105rem;
+      }
+      .icon {
+        width: var(--icon-lg);
+        height: var(--icon-lg);
+      }
+    }
+
+  }
+
 }

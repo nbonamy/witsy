@@ -43,6 +43,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     on: vi.fn((signal, listener) => listeners.push(listener)),
     off: vi.fn(),
     app: {
+      getVersion: vi.fn(() => '0.1.0'),
       setAppearanceTheme: vi.fn(),
       showAbout: vi.fn(),
       // showDialog: vi.fn(async () => { return { response: opts.dialogResponse || 0, checkboxChecked: false }}),
@@ -54,6 +55,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       updateMode: vi.fn(),
       setContextMenuContext: vi.fn(),
       close: vi.fn(),
+      showWindowButtons: vi.fn(),
+      hideWindowButtons: vi.fn(),
     },
     debug: {
       showConsole: vi.fn(),
@@ -268,7 +271,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       ]),
       save: vi.fn(),
       delete: vi.fn(),
-      getRuns: vi.fn((agentId: string) => {
+      getRuns: vi.fn((workspaceId: string, agentId: string) => {
         if (agentId === 'agent1') {
           return [
             {
@@ -321,8 +324,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         }
         return []
       }),
-      getRun: vi.fn((agentId: string, runId: string) => {
-        const runs = window.api?.agents?.getRuns(agentId) || []
+      getRun: vi.fn((workspaceId: string, agentId: string, runId: string) => {
+        const runs = window.api?.agents?.getRuns(workspaceId, agentId) || []
         return runs.find((run: AgentRun) => run.uuid === runId) || null
       }),
       saveRun: vi.fn(),
@@ -388,14 +391,14 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     docrepo: {
       open: vi.fn(),
-      list: vi.fn((): DocumentBase[] => {
+      list: vi.fn((workspaceId: string): DocumentBase[] => {
         return [
-          { uuid: 'uuid1', name: 'docrepo1', embeddingEngine: 'ollama', embeddingModel: 'all-minilm', documents: [] },
-          { uuid: 'uuid2', name: 'docrepo2', embeddingEngine: 'openai', embeddingModel: 'text-embedding-ada-002', documents: [
-            { uuid: 'uuid3', type: 'file', title: 'file1', origin: '/tmp/file1', filename: 'file1', url: 'file:///tmp/file1', lastModified: 0, fileSize: 0 },
+          { uuid: 'uuid1', name: 'docrepo1', embeddingEngine: 'ollama', embeddingModel: 'all-minilm', workspaceId: workspaceId, documents: [] },
+          { uuid: 'uuid2', name: 'docrepo2', embeddingEngine: 'openai', embeddingModel: 'text-embedding-ada-002', workspaceId: workspaceId, documents: [
+            { uuid: 'uuid3', type: 'file', title: 'file1', origin: '/tmp/file1', filename: 'file1', url: 'file:///tmp/file1', lastModified: 0, fileSize: 1 },
             { uuid: 'uuid4', type: 'folder', title: 'folder1', origin: '/tmp/folder1', filename: 'folder1', url: 'file:///tmp/folder1', lastModified: 0, fileSize: 0, items: [
-              { uuid: 'uuid5', type: 'file', title: 'file2', origin: '/tmp/file2', filename: 'file2', url: 'file:///tmp/file2', lastModified: 0, fileSize: 0 },
-              { uuid: 'uuid6', type: 'file', title: 'file3', origin: '/tmp/file3', filename: 'file3', url: 'file:///tmp/file3', lastModified: 0, fileSize: 0 },
+              { uuid: 'uuid5', type: 'file', title: 'file2', origin: '/tmp/file2', filename: 'file2', url: 'file:///tmp/file2', lastModified: 0, fileSize: 2 },
+              { uuid: 'uuid6', type: 'file', title: 'file3', origin: '/tmp/file3', filename: 'file3', url: 'file:///tmp/file3', lastModified: 0, fileSize: 3 },
             ]},
           ]},
         ]
@@ -406,8 +409,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       create: vi.fn(),
       rename: vi.fn(),
       delete: vi.fn(),
-      addDocument: vi.fn(),
-      removeDocument: vi.fn(),
+      addDocument: vi.fn(async () => {}),
+      removeDocument: vi.fn(async () => true),
       query: vi.fn(async () => [
         {
           content: 'content',
@@ -422,7 +425,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           }
         } as DocRepoQueryResponseItem
       ]),
-      getCurrentQueueItem: vi.fn(async () => null)
+      getCurrentQueueItem: vi.fn(async () => null),
+      isSourceSupported: vi.fn((type: string, origin: string) => origin.startsWith('file'))
     },
     scratchpad: {
       open: vi.fn(),
@@ -446,8 +450,24 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         { uuid: '1', registryId: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', tools: [ 'tool1', 'tool2' ] },
         { uuid: '2', registryId: '2', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: [ 'tool3', 'tool4' ] },
       ], logs: {} })),
+      getAllServersWithTools: vi.fn(async () => [
+        {
+          uuid: '1', registryId: '1', state: 'enabled' as const, type: 'stdio' as const, command: 'node', url: 'script.js', toolSelection: null,
+          tools: [
+            { uuid: 'tool1_1', name: 'tool1', description: 'description1' },
+            { uuid: 'tool2_1', name: 'tool2', description: 'description2' }
+          ]
+        },
+        {
+          uuid: '2', registryId: '2', state: 'enabled' as const, type: 'sse' as const, url: 'http://localhost:3000', toolSelection: null,
+          tools: [
+            { uuid: 'tool3_2', name: 'tool3', description: 'description3' },
+            { uuid: 'tool4_2', name: 'tool4', description: 'description4' }
+          ]
+        }
+      ]),
       //@ts-expect-error not sure about the type: 'function' complain
-      getTools: vi.fn(async () => [
+      getLlmTools: vi.fn(async () => [
         { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },
         { type: 'function', function: { name: 'tool2' , description: 'description2', parameters: { type: 'object', properties: {}, required: [] } } },
       ]),
@@ -507,6 +527,12 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     backup: {
       export: vi.fn(() => true),
       import: vi.fn(() => true),
+    },
+    workspace: {
+      list: vi.fn(() => []),
+      load: vi.fn(() => null),
+      save: vi.fn(() => true),
+      delete: vi.fn(() => true),
     }
   }
 

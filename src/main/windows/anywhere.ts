@@ -30,7 +30,7 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
     enableLargerThanScreen: true,
     keepHidden: true,
     hasShadow: false,
-    //movable: true,
+    movable: true,
   });
 
   // // open the DevTools

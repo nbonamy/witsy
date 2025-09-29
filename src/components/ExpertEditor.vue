@@ -1,7 +1,7 @@
 <template>
   <div class="expert-editor form form-vertical form-large" @keydown.enter="onSave">
     <div class="form-field" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
-      <label class="no-colon"><BIconExclamationCircle /></label>
+      <label class="no-colon"><CircleAlertIcon /></label>
       <div>{{ t('common.differentLocales') }}</div>
     </div>
     <div class="form-field">
@@ -35,8 +35,8 @@
         </template>
         </div>
         <div class="lwa-actions">
-          <button class="button add" @click.prevent="onAddApp"><BIconPlus /></button>
-          <button class="button del" @click.prevent="onDelApp"><BIconDash /></button>
+          <button class="button add" @click.prevent="onAddApp"><PlusIcon /></button>
+          <button class="button del" @click.prevent="onDelApp"><MinusIcon /></button>
         </div>
         <span> {{ t('experts.editor.triggerAppsDescription') }}</span>
       </div>
@@ -50,14 +50,15 @@
 
 <script setup lang="ts">
 
-import { Expert, ExternalApp } from '../types/index'
-import { FileContents } from '../types/file'
-import { onMounted, ref, computed, watch } from 'vue'
-import { store } from '../services/store'
-import { expertI18n, expertI18nDefault, t } from '../services/i18n'
+import { CircleAlertIcon, MinusIcon, PlusIcon } from 'lucide-vue-next'
+import { computed, onMounted, ref, watch } from 'vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import Dialog from '../composables/dialog'
+import { expertI18n, expertI18nDefault, t } from '../services/i18n'
+import { store } from '../services/store'
+import { FileContents } from '../types/file'
+import { Expert, ExternalApp } from '../types/index'
 
 const emit = defineEmits(['expert-modified']);
 

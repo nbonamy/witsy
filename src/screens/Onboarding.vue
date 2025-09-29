@@ -4,7 +4,7 @@
 
   <div class="onboarding" v-bind="$attrs">
 
-    <div class="close"><BIconXLg @click="$emit('close')" /></div>
+    <div class="close"><XIcon @click="$emit('close')" /></div>
 
     <div class="language-selector" v-if="step === 0">
       <div class="localeUI">
@@ -37,18 +37,19 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted } from 'vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { XIcon } from 'lucide-vue-next'
+import { onMounted, ref } from 'vue'
 import LangSelect from '../components/LangSelect.vue'
-import Welcome from '../onboarding/Welcome.vue'
 import Chat from '../onboarding/Chat.vue'
-import Ollama from '../onboarding/Ollama.vue'
+import Done from '../onboarding/Done.vue'
 import Instructions from '../onboarding/Instructions.vue'
+import Ollama from '../onboarding/Ollama.vue'
 import Permissions from '../onboarding/Permissions.vue'
 import Studio from '../onboarding/Studio.vue'
 import Voice from '../onboarding/Voice.vue'
-import Done from '../onboarding/Done.vue'
+import Welcome from '../onboarding/Welcome.vue'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
 
 defineEmits(['close']);
 
@@ -224,7 +225,7 @@ const notifyVisible = () => {
           padding: 0 4rem;
           text-align: center;
           color: var(--dimmed-text-color);
-          font-weight: 400;
+          font-weight: var(--font-weight-regular);
         }
       }
 

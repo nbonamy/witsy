@@ -94,14 +94,14 @@ defineExpose({
     margin-bottom: 1rem;
     .empty {
       padding: 1em;
-      font-size: 11pt;
+      font-size: 14.5px;
       text-align: center;
     }
     .sticky-table-container {
       margin-bottom: 0.5rem;
     }
     button {
-      font-size: 8pt;
+      font-size: 10.5px;
       padding: 2px 8px;
     }
   }

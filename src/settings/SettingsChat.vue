@@ -138,11 +138,11 @@ defineExpose({ load })
 <style scoped>
 
 .slider-label.small {
-  font-size: 8pt;
+  font-size: 10.5px;
 }
 
 .slider-label.large {
-  font-size: 12pt;
+  font-size: 16px;
 }
 
 .sample {

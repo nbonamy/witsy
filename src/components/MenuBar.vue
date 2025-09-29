@@ -3,63 +3,66 @@
 
   <div class="menubar-wrapper">
 
-    <div class="corner">
+    <div class="menu">
+
       <div class="app-menu" @click.prevent="onAppMenu">
         <IconMenu />
       </div>
-    </div>
 
-    <div class="menu">
-
-      <MenuBarItem class="chat" action="chat" :active="mode === 'chat'" @click="emit('change', 'chat')">
-        <BIconChatSquareQuote />
+      <MenuBarItem class="chat" action="chat" :active="mode === 'chat'" @click="emit('new-chat')">
+        <IconChat />
         <span>{{ t('common.chat') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')">
-        <BIconPalette />
+      <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')" v-if="store.isFeatureEnabled('studio')">
+        <PaletteIcon />
         <span>{{ t('designStudio.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')">
-        <BIconJournalText />
+      <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')" v-if="store.isFeatureEnabled('scratchpad')">
+        <FileTextIcon />
         <span>{{ t('scratchpad.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')">
-        <BIconRobot />
-        <span>{{ t('agent.forge.title') }}</span>
-      </MenuBarItem>
-
-      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')">
-        <BIconMic />
+      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')" v-if="store.isFeatureEnabled('dictation')">
+        <MicIcon />
         <span>{{ t('transcribe.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')">
-        <BIconDatabase />
-        <span>{{ t('docRepo.list.title') }}</span>
-      </MenuBarItem>
-
-      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')">
-        <BIconChatSquareDots />
+      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')" v-if="store.isFeatureEnabled('voiceMode')">
+        <HeadsetIcon />
         <span>{{ t('realtimeChat.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">
-        <BIconMouse2 />
+        <MouseIcon />
         <span>{{ t('computerUse.title') }}</span>
       </MenuBarItem>
 
-      <div class="push"></div>
+      <div class="flex-push"></div>
 
-      <MenuBarItem action="debug" :active="mode === 'debug'" @click="emit('change', 'debug')">
-        <BIconActivity />
-        <span>{{ t('debugConsole.title') }}</span>
+      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.isFeatureEnabled('agents')">
+        <IconAgent />
+        <span>{{ t('agent.forge.title') }}</span>
       </MenuBarItem>
 
+      <MenuBarItem action="mcp" :active="mode === 'mcp'" @click="emit('change', 'mcp')" v-if="hasMcp">
+        <PlugIcon />
+        <span>{{ t('mcp.mcpServers') }}</span>
+      </MenuBarItem>
+
+      <MenuBarItem action="docrepo" :active="mode === 'docrepos'" @click="emit('change', 'docrepos')" v-if="store.isFeatureEnabled('docrepos')">
+        <LightbulbIcon />
+        <span>{{ t('docRepo.list.title') }}</span>
+      </MenuBarItem>
+
+      <!-- <MenuBarItem action="experts" :active="mode === 'experts'" @click="emit('change', 'experts')" v-if="store.isFeatureEnabled('experts')">
+        <BrainIcon />
+        <span>{{ t('docRepo.list.title') }}</span>
+      </MenuBarItem> -->
+
       <MenuBarItem action="settings" :active="mode === 'settings'" @click="emit('change', 'settings')">
-        <BIconGear />
+        <SettingsIcon />
         <span>{{ t('common.settings') }}</span>
       </MenuBarItem>
 
@@ -72,20 +75,26 @@
 
 <script setup lang="ts">
 
-import { MainWindowMode } from '../types/index'
-import { onMounted, ref, computed, watch } from 'vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
-import MenuBarItem from './MenuBarItem.vue'
-import IconMenu from './IconMenu.vue'
-import useAppearanceTheme from '../composables/appearance_theme' 
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
+import { BrainIcon, FileTextIcon, HeadsetIcon, LightbulbIcon, MicIcon, MouseIcon, PaletteIcon, PlugIcon, SettingsIcon } from 'lucide-vue-next'
+import { computed, onMounted, ref, watch } from 'vue'
+import IconAgent from '../../assets/agent.svg?component'
+import IconChat from '../../assets/message-circle-3.svg?component'
+import useAppearanceTheme from '../composables/appearance_theme'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { MainWindowMode } from '../types/index'
+import IconMenu from './IconMenu.vue'
+import MenuBarItem from './MenuBarItem.vue'
 
-export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug' | 'agents'
-
+export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug'
 const hasComputerUse = computed(() => {
-  return store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
+  return store.isFeatureEnabled('voiceMode') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
+})
+
+const hasMcp = computed(() => {
+  return window.api.mcp.isAvailable()
 })
 
 const emit = defineEmits(['change', 'new-chat', 'run-onboarding'])
@@ -128,7 +137,7 @@ const onAppMenu = (event: Event) => {
           { label: t('menu.file.backupExport'), divided: 'up', onClick: () => setTimeout(() => window.api.backup.export(), 0) },
           { label: t('menu.file.backupImport'), onClick: () => setTimeout(() => window.api.backup.import(), 0) },
           { label: t('menu.file.import.title'), divided: 'up', children: [
-            { label: t('menu.file.import.openai'), onClick: () => setTimeout(() => window.api.import.openai(), 0) }
+            { label: t('menu.file.import.openai'), onClick: () => setTimeout(() => window.api.import.openai(store.config.workspaceId), 0) }
           ] },
           { label: t('menu.file.closeWindow'), divided: 'up', onClick: () => window.api.main.close() },
         ]
@@ -198,16 +207,8 @@ body[data-tint=blue] .mx-context-menu {
   
   display: flex;
   flex-direction: column;
-
-  .corner {
-    background-color: var(--window-decoration-color);
-    border-bottom: 1px solid var(--toolbar-border-color);
-    width: var(--window-menubar-width);
-    height: var(--window-toolbar-height);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  background-color: var(--menubar-bg-color);
+  flex: 0 0 var(--window-menubar-width);
 
   .app-menu {
     cursor: pointer;
@@ -223,13 +224,9 @@ body[data-tint=blue] .mx-context-menu {
     justify-content: flex-start;
     align-items: center;
     background-color: var(--menubar-bg-color);
-    gap: 0.65rem;
+    gap: 0.75rem;
 
-    border-right: 1px solid var(--menubar-border-color);
-
-    .push {
-      flex: 1;
-    }
+    border-right: 1px solid var(--sidebar-border-color);
 
     .chat svg {
       position: relative;

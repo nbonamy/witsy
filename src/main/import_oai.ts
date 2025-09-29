@@ -13,7 +13,7 @@ import fs from 'fs'
 
 const DEFAULT_FOLDER_NAME = 'ChatGPT'
 
-export const importOpenAI = async (app: App): Promise<boolean> => {
+export const importOpenAI = async (app: App, workspaceId: string): Promise<boolean> => {
 
   // first pick file
   const file = pickFile(app, {
@@ -30,7 +30,7 @@ export const importOpenAI = async (app: App): Promise<boolean> => {
 
   const t = useI18n(app)
 
-  const rc = await processOpenAI(app, file as string)
+  const rc = await processOpenAI(app, workspaceId, file as string)
   if (rc) {
     await dialog.showMessageBox({
       type: 'info',
@@ -51,7 +51,7 @@ export const importOpenAI = async (app: App): Promise<boolean> => {
 
 }
 
-const processOpenAI = async (app: App, file: string): Promise<boolean> => {
+const processOpenAI = async (app: App, workspaceId: string, file: string): Promise<boolean> => {
 
   try {
   
@@ -84,13 +84,13 @@ const processOpenAI = async (app: App, file: string): Promise<boolean> => {
     }
 
     // import
-    const history = await loadHistory(app)
+    const history = await loadHistory(app, workspaceId)
     const attachmentPath = path.join(app.getPath('userData'), 'images')
     const rc = await importOpenAIConversations(userData.id, data, history, sourcePath, attachmentPath)
 
     // save
     if (rc) {
-      saveHistory(app, history)
+      saveHistory(app, workspaceId, history)
     }
 
     // done

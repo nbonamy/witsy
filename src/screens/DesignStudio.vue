@@ -3,7 +3,9 @@
     <div class="sp-sidebar">
       <header>
         <div class="title">{{ t('designStudio.title') }}</div>
-        <BIconArrowCounterclockwise class="icon reset" @click="onReset" v-if="currentMedia" />
+        <ButtonIcon class="reset" @click="onReset" v-if="currentMedia">
+          <ListRestartIcon  />
+        </ButtonIcon>
       </header>
       <main>
         <div class="header">
@@ -25,7 +27,7 @@
     <div v-if="isDragOver" class="drop-wrapper">
       <div class="drop-overlay"></div>  
       <div class="drop-indicator">
-        <BIconImageFill />
+        <ImagePlusIcon />
         {{ t('designStudio.dropzone') }}
       </div>
     </div>
@@ -35,9 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import { anyDict } from '../types/index'
+import { ImagePlusIcon, ListRestartIcon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenu from '../components/ContextMenu.vue'
+import DrawingCanvas from '../components/DrawingCanvas.vue'
 import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
 import Attachment from '../models/attachment'
@@ -51,8 +55,8 @@ import VideoCreator from '../services/video'
 import History from '../studio/History.vue'
 import Preview from '../studio/Preview.vue'
 import Settings from '../studio/Settings.vue'
-import DrawingCanvas from '../components/DrawingCanvas.vue'
 import { FileContents } from '../types/file'
+import { anyDict } from '../types/index'
 
 const { emitEvent } = useEventBus()
 
@@ -106,7 +110,28 @@ const history = computed(() => {
 })
 
 onMounted(() => {
+  
   // we need the media chat
+  initializeChat()
+  store.addListener('workspaceSwitched', initializeChat)
+
+  // events
+  window.api.on('delete-media', onDeleteMedia)
+  window.api.on('select-all-media', onSelectAll)
+  document.addEventListener('keydown', onKeyDown)
+  document.addEventListener('paste', onPaste)
+
+})
+
+onUnmounted(() => {
+  store.removeListener('workspaceSwitched', initializeChat)
+  document.removeEventListener('keydown', onKeyDown)
+  document.removeEventListener('paste', onPaste)
+  window.api.off('delete-media', onDeleteMedia)
+  window.api.off('select-all-media', onSelectAll)
+})
+
+const initializeChat = () => {
   chat.value = store.history.chats.find(chat => chat.uuid === kMediaChatId)
   if (!chat.value) {
     chat.value = Chat.fromJson({
@@ -118,21 +143,7 @@ onMounted(() => {
     chat.value.addMessage(new Message('system', 'Dummy chat to save created media'))
     store.history.chats.push(chat.value)
   }
-
-  // events
-  window.api.on('delete-media', onDeleteMedia)
-  window.api.on('select-all-media', onSelectAll)
-  document.addEventListener('keydown', onKeyDown)
-  document.addEventListener('paste', onPaste)
-
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', onKeyDown)
-  document.removeEventListener('paste', onPaste)
-  window.api.off('delete-media', onDeleteMedia)
-  window.api.off('select-all-media', onSelectAll)
-})
+}
 
 const isSelected = (msg: Message) => {
   return selection.value.some(m => m.uuid === msg.uuid)
@@ -369,6 +380,7 @@ const updateMessage = (msg: Message) => {
         filename: a.url.split(/[\\/]/).pop(),
         directory: 'userData',
         subdir: 'images',
+        workspace: store.config.workspaceId,
         prompt: false
       }
     })
@@ -777,7 +789,7 @@ const onFullScreen = (url: string) => {
   
   .sp-sidebar {
   
-    flex: 0 0 var(--create-panel-width);
+    flex: 0 0 var(--large-panel-width);
 
     header {
 
@@ -790,8 +802,6 @@ const onFullScreen = (url: string) => {
 
     main {
       flex: 1;
-      padding-top: 1rem;
-      border-right: 1px solid var(--sidebar-border-color);
     }
 
     main .header {
@@ -799,6 +809,21 @@ const onFullScreen = (url: string) => {
       display: flex;
       justify-content: center;
       align-items: center;
+
+      .button-group {
+        width: 100%;
+        align-self: center;
+        display: flex;
+        justify-content: space-between;
+
+
+        button {
+          flex: 1;
+          padding: 0.5rem 1rem;
+        }
+
+      }
+
     }
 
     main .hidden {
@@ -840,13 +865,13 @@ const onFullScreen = (url: string) => {
   gap: 2rem;
   text-align: center;
   font-size: 1.5rem;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: 150%;
 
   svg {
     width: 4rem;
     height: 4rem;
-    fill: var(--highlight-color);
+    color: var(--highlight-color);
     border-radius: 0.5rem;
     transform: scaleX(1.1) rotate(5deg);
   }

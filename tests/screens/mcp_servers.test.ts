@@ -1,14 +1,14 @@
 
-import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { createI18nMock } from '../mocks'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
-import SettingsMcp from '../../src/settings/SettingsMcp.vue'
-import McpServerList from '../../src/components/McpServerList.vue'
-import McpServerEditor from '../../src/components/McpServerEditor.vue'
+import McpServers from '../../src/screens/McpServers.vue'
+import List from '../../src/mcp/List.vue'
+import Editor from '../../src/mcp/Editor.vue'
 import Dialog from '../../src/composables/dialog'
+import { stubTeleport } from '../mocks/stubs'
 
 let mcp: VueWrapper<any>
 
@@ -16,14 +16,28 @@ vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
 })
 
+vi.mock('../../src/components/ContextMenuPlus.vue', () => ({
+  default: {
+    name: 'ContextMenuPlus',
+    props: ['anchor', 'position'],
+    emits: ['close'],
+    template: `
+      <div class="context-menu-plus-mock" data-testid="context-menu">
+        <slot />
+      </div>
+    `
+  }
+}))
+
 beforeAll(() => {
   useWindowMock()
   useBrowserMock()
   store.loadSettings()
+  store.isFeatureEnabled = () => true
   store.load = () => {}
-  
+ 
   // wrapper
-  mcp = mount(SettingsMcp, { ...stubTeleport })
+  mcp = mount(McpServers)
 })
 
 beforeEach(async () => {
@@ -33,84 +47,80 @@ beforeEach(async () => {
 
 test('Initialization', async () => {
   // expect(mcp.find('input[type=checkbox]').exists()).toBeTruthy()
-  expect(mcp.findComponent({ name: 'McpServerEditor' }).exists()).toBe(true)
+  expect(mcp.findComponent({ name: 'List' }).exists()).toBe(true)
   expect(window.api.mcp.getServers).toHaveBeenCalledTimes(1)
   expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(1)
 })
 
 test('Actions', async () => {
   
-  // reload
-  await mcp.find('.icon.reload').trigger('click')
+
+  const list = mcp.findComponent({ name: 'List' })
+  await vi.waitUntil(async () => !mcp.vm.loading, 2000)
+  await list.find('button[name=reload]').trigger('click')
   expect(window.api.mcp.getServers).toHaveBeenCalledTimes(2)
   expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(2)
   expect(window.api.mcp.reload).toHaveBeenCalledTimes(0)
 
   // restart
-  await mcp.find('.icon.restart').trigger('click')
+  await vi.waitUntil(async () => !mcp.vm.loading, 2000)
+  await list.find('button[name=restart]').trigger('click')
   expect(window.api.mcp.reload).toHaveBeenCalledTimes(1)
 
 })
 
 test('Server enablement', async () => {
-  await mcp.find<HTMLInputElement>('.mcp-server-list .panel-item:nth-child(1) .stop').trigger('click')
+  await mcp.find<HTMLInputElement>('.mcp-server-list .server-item:nth-child(2) .stop').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith(expect.objectContaining({ uuid: '1', state: 'disabled' }))
-  await mcp.find<HTMLInputElement>('.mcp-server-list .panel-item:nth-child(5) .start').trigger('click')
+  await mcp.find<HTMLInputElement>('.mcp-server-list .server-item:nth-child(4) .start').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith(expect.objectContaining({ uuid: 'mcp2', state: 'enabled' }))
 })
 
 test('Server delete', async () => {
-  await mcp.find<HTMLTableRowElement>('.mcp-server-list .panel-item:nth-child(4) .delete').trigger('click')
-  await mcp.vm.$nextTick()
-  expect(window.api.mcp.deleteServer).toHaveBeenLastCalledWith('@mcp1')
+  await mcp.find<HTMLTableRowElement>('.mcp-server-list .server-item:nth-child(3) .context-menu-trigger .trigger').trigger('click')
+  await mcp.findComponent({ name: 'ContextMenuPlus' }).find('.delete').trigger('click')
+  expect(window.api.mcp.deleteServer).toHaveBeenLastCalledWith('mcp1')
 })
 
 test('Server edit', async () => {
-  await mcp.find<HTMLTableRowElement>('.mcp-server-list .panel-item:nth-child(1) .info').trigger('click')
-  const editor = mcp.findComponent({ name: 'McpServerEditor' })
-  expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
-  expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('node')
-  expect(editor.find<HTMLInputElement>('input[name=url]').element.value).toBe('script.js')
-  expect(editor.find<HTMLInputElement>('input[name=cwd]').element.value).toBe('cwd1')
+  await mcp.find<HTMLElement>('.servers-list .server-item:nth-child(1) .context-menu-trigger .trigger').trigger('click')
+  await mcp.findComponent({ name: 'ContextMenuPlus' }).find('.edit').trigger('click')
+  const editor = mcp.findComponent({ name: 'Editor' })
+  expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('sse')
+  expect(editor.find<HTMLInputElement>('input[name=url]').element.value).toBe('http://localhost:3000')
   await editor.find<HTMLSelectElement>('select[name=type]').setValue('sse')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('http://localhost:3000')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
-    uuid: '1',
-    registryId: '1',
+    uuid: '2',
+    registryId: '2',
     state: 'enabled',
     label: '',
     type: 'sse',
-    command: 'node',
+    command: '',
     url: 'http://localhost:3000',
-    cwd: 'cwd1',
+    cwd: '',
     env: {},
     headers: {},
     oauth: null,
+    toolSelection: null,
   })
 })
 
 test('Normal server add - Stdio', async () => {
 
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-  await mcp.find<HTMLElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.item').length).toBe(3)
-  await menu.find('.item[data-action=custom]').trigger('click')
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
+  const editor: VueWrapper<any> = mount(Editor, { ...stubTeleport, props: { type: 'stdio' } })
+  await editor.vm.$nextTick()
 
-  const editor = mcp.findComponent(McpServerEditor)
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   await editor.find<HTMLInputElement>('input[name=command]').setValue('npx')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('script1.js')
 
   // save
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
-    uuid: null,
-    registryId: null,
+    uuid: undefined,
+    registryId: undefined,
     state: 'enabled',
     label: '',
     type: 'stdio',
@@ -120,23 +130,14 @@ test('Normal server add - Stdio', async () => {
     env: {},
     headers: {},
     oauth: null,
+    toolSelection: null,
   })
 
-  // fake select the server
-  await mcp.vm.$nextTick()
-  mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
-  await mcp.vm.$nextTick()
-
   // add cwd
-  // UNKNOWN: does not work in tests.
-  // Hence "cwd: ''" in expects below
-  // input and editor.vm.cwd still report the right value!
   await editor.find<HTMLButtonElement>('button[name=pickWorkDir]').trigger('click')
   expect(window.api.file.pickDirectory).toHaveBeenCalledTimes(1)
   expect(editor.find<HTMLInputElement>('input[name=cwd]').element.value).toBe('picked_folder')
-  // @ts-expect-error mock
-  expect(editor.vm.cwd).toBe('picked_folder')
-  
+ 
   // add variable
   await editor.find<HTMLButtonElement>('.button.add').trigger('click')
   const editor2 = editor.findComponent({ name: 'VariableEditor' })
@@ -154,10 +155,9 @@ test('Normal server add - Stdio', async () => {
 
   // save
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
-    uuid: null,
-    registryId: null,
+    uuid: undefined,
+    registryId: undefined,
     state: 'enabled',
     label: '',
     type: 'stdio',
@@ -167,12 +167,8 @@ test('Normal server add - Stdio', async () => {
     env: { key1: 'value1', key2: 'value2' },
     headers: {},
     oauth: null,
+    toolSelection: null,
   })
-
-  // fake select the server 
-  await mcp.vm.$nextTick()
-  mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
-  await mcp.vm.$nextTick()
 
   // edit variable
   await editor.find<HTMLTableRowElement>('.sticky-table-container tbody tr:nth-child(1)').trigger('click')
@@ -190,41 +186,35 @@ test('Normal server add - Stdio', async () => {
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
   await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
-    uuid: null,
-    registryId: null,
+    uuid: undefined,
+    registryId: undefined,
     state: 'enabled',
     label: '',
     type: 'stdio',
     command: 'npx',
     url: 'script1.js',
-    cwd: '',//'picked_folder',
+    cwd: 'picked_folder',
     env: { key3: 'value3' },
     headers: {},
     oauth: null,
+    toolSelection: null,
   })
 
 })
 
 test('Normal server add - HTTP', async () => {
 
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-  await mcp.find<HTMLElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.item').length).toBe(3)
-  await menu.find('.item[data-action=custom]').trigger('click')
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
+  const editor: VueWrapper<any> = mount(Editor, { ...stubTeleport, props: { type: 'http' } })
+  await editor.vm.$nextTick()
 
-  const editor = mcp.findComponent(McpServerEditor)
-  await editor.find<HTMLSelectElement>('select[name=type]').setValue('http')
+  expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('http')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('http://www.mcp.com')
 
   // save
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
-    uuid: null,
-    registryId: null,
+    uuid: undefined,
+    registryId: undefined,
     state: 'enabled',
     label: '',
     type: 'http',
@@ -234,12 +224,8 @@ test('Normal server add - HTTP', async () => {
     env: {},
     headers: {},
     oauth: null,
+    toolSelection: null,
   })
-
-  // fake select the server 
-  await mcp.vm.$nextTick()
-  mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
-  await mcp.vm.$nextTick()
 
   // add variable
   await editor.find<HTMLButtonElement>('button.add').trigger('click')
@@ -258,10 +244,9 @@ test('Normal server add - HTTP', async () => {
 
   // save
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
-    uuid: null,
-    registryId: null,
+    uuid: undefined,
+    registryId: undefined,
     state: 'enabled',
     label: '',
     type: 'http',
@@ -271,12 +256,8 @@ test('Normal server add - HTTP', async () => {
     env: {},
     headers: { key1: 'value1', key2: 'value2' },
     oauth: null,
+    toolSelection: null,
   })
-
-  // fake select the server 
-  await mcp.vm.$nextTick()
-  mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
-  await mcp.vm.$nextTick()
 
   // edit variable
   await editor.find<HTMLTableRowElement>('.sticky-table-container tbody tr:nth-child(1)').trigger('click')
@@ -292,10 +273,9 @@ test('Normal server add - HTTP', async () => {
   await editor.find<HTMLButtonElement>('button.remove').trigger('click')
 
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  await mcp.vm.$nextTick()
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
-    uuid: null,
-    registryId: null,
+    uuid: undefined,
+    registryId: undefined,
     state: 'enabled',
     label: '',
     type: 'http',
@@ -305,20 +285,16 @@ test('Normal server add - HTTP', async () => {
     env: {},
     headers: { key3: 'value3' },
     oauth: null,
+    toolSelection: null,
   })
 
 })
 
 test('Smithery server add', async () => {
 
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  expect(mcp.exists()).toBe(true)
-  await menu.find('.item[data-action=smithery]').trigger('click')
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
+  const editor: VueWrapper<any> = mount(Editor, { ...stubTeleport, props: { type: 'smithery' }})
+  await editor.vm.$nextTick()
 
-  const editor = mcp.findComponent({ name: 'McpServerEditor' })
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('smithery')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('package')
   await editor.find<HTMLInputElement>('input[name=apiKey]').setValue('apiKey')
@@ -329,12 +305,8 @@ test('Smithery server add', async () => {
 
 test('Error server add', async () => {
 
-  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  await menu.find('.item[data-action=custom]').trigger('click')
+  const editor: VueWrapper<any> = mount(Editor, { ...stubTeleport, props: { type: 'stdio' }})
 
-  const editor = mcp.findComponent({ name: 'McpServerEditor' })
-  expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
   expect(Dialog.show).toHaveBeenCalledTimes(1)
   expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
@@ -358,17 +330,17 @@ test('Error server add', async () => {
 test('JSON server parsing', async () => {
 
   // error cases
-  const list: VueWrapper<any> = mcp.findComponent(McpServerList)
-  expect(() => list.vm.validateServerJson('')).toThrowError('settings.mcp.importJson.errorEmpty')
-  expect(() => list.vm.validateServerJson('a')).toThrowError('settings.mcp.importJson.errorFormat')
-  expect(() => list.vm.validateServerJson('"hello"')).toThrowError('settings.mcp.importJson.errorFormat')
-  expect(() => list.vm.validateServerJson('[]')).toThrowError('settings.mcp.importJson.errorFormat')
-  expect(() => list.vm.validateServerJson('{ "a": 1, "b": 1 }')).toThrowError('settings.mcp.importJson.errorMultiple')
-  expect(() => list.vm.validateServerJson('"mcp": {}')).toThrowError('settings.mcp.importJson.errorCommand')
-  expect(() => list.vm.validateServerJson('"mcp": { "command": "" }')).toThrowError('settings.mcp.importJson.errorCommand')
-  expect(() => list.vm.validateServerJson('"mcp": { "command": "node" }')).toThrowError('settings.mcp.importJson.errorArgs')
-  expect(() => list.vm.validateServerJson('"mcp": { "command": "node", "args": "" }')).toThrowError('settings.mcp.importJson.errorArgs')
-  expect(() => list.vm.validateServerJson('"mcp": { "command": "node", "args": {} }')).toThrowError('settings.mcp.importJson.errorArgs')
+  const list: VueWrapper<any> = mcp.findComponent(List)
+  expect(() => list.vm.validateServerJson('')).toThrowError('mcp.importJson.errorEmpty')
+  expect(() => list.vm.validateServerJson('a')).toThrowError('mcp.importJson.errorFormat')
+  expect(() => list.vm.validateServerJson('"hello"')).toThrowError('mcp.importJson.errorFormat')
+  expect(() => list.vm.validateServerJson('[]')).toThrowError('mcp.importJson.errorFormat')
+  expect(() => list.vm.validateServerJson('{ "a": 1, "b": 1 }')).toThrowError('mcp.importJson.errorMultiple')
+  expect(() => list.vm.validateServerJson('"mcp": {}')).toThrowError('mcp.importJson.errorCommand')
+  expect(() => list.vm.validateServerJson('"mcp": { "command": "" }')).toThrowError('mcp.importJson.errorCommand')
+  expect(() => list.vm.validateServerJson('"mcp": { "command": "node" }')).toThrowError('mcp.importJson.errorArgs')
+  expect(() => list.vm.validateServerJson('"mcp": { "command": "node", "args": "" }')).toThrowError('mcp.importJson.errorArgs')
+  expect(() => list.vm.validateServerJson('"mcp": { "command": "node", "args": {} }')).toThrowError('mcp.importJson.errorArgs')
 
   // empty args
   expect(list.vm.validateServerJson('"mcp": { "command": "node", "args": [] }')).toStrictEqual({
@@ -399,18 +371,12 @@ test('JSON server parsing', async () => {
 
 test('JSON server add', async () => {
 
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
-  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  expect(mcp.exists()).toBe(true)
-
   vi.mocked(Dialog.show).mockResolvedValueOnce({
     isConfirmed: true,
     value: { command: 'none', args: [ '-y', 'pkg' ], env: { key: 'value' } }
   })
 
-  await menu.find('.item[data-action=json]').trigger('click')
-  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
+  await mcp.find<HTMLElement>('button[name=addJson]').trigger('click')
 
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
@@ -420,27 +386,25 @@ test('JSON server add', async () => {
     command: 'none',
     url: '-y pkg',
     env: { key: 'value' },
+    toolSelection: null,
   })
 
 })
 
 test('Editor pickers', async () => {
 
-  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
-  const menu = mcp.findComponent({ name: 'ContextMenu' })
-  await menu.find('.item[data-action=custom]').trigger('click')
-  const editor = mcp.findComponent({ name: 'McpServerEditor' })
+  const editor: VueWrapper<any> = mount(Editor, { ...stubTeleport, props: { type: 'stdio' }})
 
   await editor.find<HTMLSelectElement>('select[name=source]').setValue('npx')
   expect(window.api.file.find).toHaveBeenCalledTimes(1)
   expect(window.api.file.pickFile).toHaveBeenCalledTimes(0)
   expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('file.ext')
-  
+ 
   await editor.find<HTMLButtonElement>('button[name=pickCommand]').trigger('click')
   expect(window.api.file.find).toHaveBeenCalledTimes(1)
   expect(window.api.file.pickFile).toHaveBeenCalledTimes(1)
   expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('image.png')
-  
+ 
   await editor.find<HTMLButtonElement>('button[name=pickScript]').trigger('click')
   expect(window.api.file.find).toHaveBeenCalledTimes(1)
   expect(window.api.file.pickFile).toHaveBeenCalledTimes(2)

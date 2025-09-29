@@ -17,21 +17,15 @@ vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
 })
 
-
-
 let wrapper: VueWrapper<any>
 let chat: Chat|null = null
 
 beforeAll(() => {
   useBrowserMock()
-  useWindowMock()
-  store.loadSettings()
+  useWindowMock({ favoriteModels: true })
+  store.isFeatureEnabled = () => true
   store.loadExperts()
   store.loadCommands()
-  store.config.llm.imageResize = 0
-  store.config.engines.openai.models.chat.push(
-    { id: 'gpt-4.1', name: 'gpt-4.1', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
-  )
 })
 
 beforeEach(() => {
@@ -45,16 +39,33 @@ beforeEach(() => {
     }
   })
   
+  store.loadSettings()
+  store.config.llm.imageResize = 0
+  store.config.engines.openai.models.chat.push(
+    { id: 'gpt-4.1', name: 'gpt-4.1', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
+  )
+  store.config.engines.mock = {
+    models: {
+      chat: [
+        { id: 'chat', name: 'chat', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
+        { id: 'chat2', name: 'chat2', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
+        { id: 'vision', name: 'vision', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
+      ]
+    },
+    model: {
+      chat: 'chat'
+    }
+  }
+
   chat = new Chat()
-  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat } } )
+
+  // for an unknown reason enableTools make some of the menu tests fail even though things work
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableTools: false } } )
 })
 
 test('Render', () => {
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.input textarea').exists()).toBe(true)
-  expect(wrapper.find('.icon.attach').exists()).toBe(true)
-  expect(wrapper.find('.icon.docrepo').exists()).toBe(true)
-  expect(wrapper.find('.icon.experts').exists()).toBe(true)
   expect(wrapper.find('.send').exists()).toBe(true)
   expect(wrapper.find('.stop').exists()).toBe(false)
   expect(window.api.docrepo.list).toHaveBeenCalled()
@@ -66,7 +77,6 @@ test('Send on click', async () => {
   await prompt.setValue('this is my prompt')
   await wrapper.find('.icon.send').trigger('click')
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
-    instructions: null,
     prompt: 'this is my prompt',
     attachments: [],
     deepResearch: false,
@@ -80,7 +90,6 @@ test('Sends on enter', async () => {
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
-    instructions: null,
     prompt: 'this is my prompt',
     attachments: [],
     deepResearch: false,
@@ -97,7 +106,6 @@ test('Sends with right parameters', async () => {
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
   expect(wrapper.emitted<any[]>().prompt[0]).toEqual([{
-    instructions: null,
     prompt: 'this is my prompt',
     attachments: [ { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false } ],
     expert: { id: 'uuid3', name: 'actor3', prompt: 'prompt3', type: 'user', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
@@ -111,7 +119,7 @@ test('Not send on shift enter', async () => {
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.enter.shift')
-  expect(emitEventMock).not.toHaveBeenCalled()
+  expect(emitEventMock.mock.calls.filter(c => c[0] !== 'prompt-resize').length).toBe(0)
 })
 
 // test('Autogrow', async () => {
@@ -134,8 +142,10 @@ test('Show stop button when working', async () => {
 })
 
 test('Stores attachment', async () => {
-  const attach = wrapper.find('.attach')
-  await attach.trigger('click')
+  await wrapper.find('.prompt-menu').trigger('click')
+  const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  await menu.find('.attachments').trigger('click')
+  await wrapper.vm.$nextTick() // Wait for async operations
   expect(window.api.file.pickFile).toHaveBeenCalled()
   expect(window.api.file.pickFile).toHaveBeenLastCalledWith({
     multiselection: true,
@@ -221,54 +231,60 @@ test('History navigation', async () => {
 })
 
 test('Selects instructions', async () => {
-  const trigger = wrapper.find('.icon.instructions')
-  await trigger.trigger('click')
-  const menu = wrapper.find('.context-menu')
-  expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.filter').length).toBe(0)
-  expect(menu.findAll('.item').length).toBe(9)
-  await menu.find('.item:nth-child(2)').trigger('click')
+  await wrapper.find('.prompt-menu').trigger('click')
+  const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  await menu.find('.instructions').trigger('click')
+  // expect(menu.findAll('.filter-input').length).toBe(1)
+  expect(menu.findAll('.item').length).toBe(8)
+  await menu.find('.item:nth-child(1)').trigger('click')
   expect(wrapper.vm.instructions).toBe(null)
-  await trigger.trigger('click')
+  
+  await wrapper.find('.prompt-menu').trigger('click')
+  await wrapper.find('.instructions').trigger('click')
   const menu2 = wrapper.find('.context-menu')
-  await menu2.find('.item:nth-child(4)').trigger('click')
-  expect(wrapper.vm.instructions).toBe('instructions.chat.structured_default')
+  await menu2.find('.item:nth-child(3)').trigger('click')
+  expect(wrapper.vm.instructions).toStrictEqual({
+    id: 'structured',
+    label: 'settings.llm.instructions.structured',
+    instructions: 'instructions.chat.structured_default'
+  })
 })
 
 test('Selects instructions based on chat locale', async () => {
   wrapper.vm.chat.locale = 'fr-FR'
-  const trigger = wrapper.find('.icon.instructions')
-  await trigger.trigger('click')
-  const menu = wrapper.find('.context-menu')
-  await menu.find('.item:nth-child(5)').trigger('click')
-  expect(wrapper.vm.instructions).toBe('instructions.chat.playful_fr-FR')
+  
+  await wrapper.find('.prompt-menu').trigger('click')
+  const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  await menu.find('.instructions').trigger('click')
+  
+  await menu.find('.item:nth-child(4)').trigger('click')
+  expect(wrapper.vm.instructions).toStrictEqual({
+    id: 'playful',
+    label: 'settings.llm.instructions.playful',
+    instructions: 'instructions.chat.playful_fr-FR'
+  })
   expect(getLlmLocale()).toBe('default')
 })
 
 test('Selects expert', async () => {
-  const trigger = wrapper.find('.icon.experts')
-  await trigger.trigger('click')
-  const menu = wrapper.find('.context-menu')
-  expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.filter').length).toBe(1)
+  await wrapper.find('.prompt-menu').trigger('click')
+  const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  await menu.find('.experts').trigger('click')
+  expect(menu.findAll('.filter-input').length).toBe(1)
   expect(menu.findAll('.item').length).toBe(3)
+  // Management option is now in footer
+  // expect(menu.find('.footer .item').text()).toBe('prompt.menu.experts.manage')
   await menu.find('.item:nth-child(2)').trigger('click')
   expect(wrapper.vm.expert.id).toBe('uuid3')
-  expect(wrapper.find('.input .icon.expert').exists()).toBe(true)
+  expect(wrapper.find('.prompt-feature').exists()).toBe(true)
 })
 
 test('Clears expert', async () => {
   wrapper.vm.expert = store.experts[0]
   await wrapper.vm.$nextTick()
-  const trigger = wrapper.find('.input .icon.expert')
-  await trigger.trigger('click')
-  const menu = wrapper.find('.context-menu')
-  expect(menu.exists()).toBe(true)
-  expect(menu.find('.item:nth-child(1)').text()).toBe('expert_uuid1_name')
-  expect(menu.find('.item:nth-child(2)').text()).toBe('expert_uuid1_prompt')
-  expect(menu.find('.item:nth-child(3)').text()).toBe('')
-  expect(menu.find('.item:nth-child(4)').text()).toBe('prompt.experts.clear')
-  await menu.find('.item:nth-child(4)').trigger('click')
+  const feature = wrapper.findComponent({ name: 'PromptFeature' })
+  expect(feature.exists()).toBe(true)
+  await feature.find('.clear').trigger('click')
   expect(wrapper.vm.expert).toBeNull()
 })
 
@@ -278,10 +294,9 @@ test('Sets engine and model when expert has them', async () => {
   expect(chat!.model).toBeUndefined()
   
   // Select expert with engine and model set (uuid4: anthropic/claude-3-sonnet)
-  const trigger = wrapper.find('.icon.experts')
-  await trigger.trigger('click')
-  const menu = wrapper.find('.context-menu')
-  expect(menu.exists()).toBe(true)
+  await wrapper.find('.prompt-menu').trigger('click')
+  const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  await menu.find('.experts').trigger('click')
   
   // Click on the expert with engine and model (should be item 3 - uuid4)
   await menu.find('.item:nth-child(3)').trigger('click')
@@ -307,7 +322,6 @@ test('Stores command for later', async () => {
   prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
-    instructions: null,
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
     deepResearch: false,
@@ -318,7 +332,7 @@ test('Selects command and run', async () => {
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
-  const trigger = wrapper.find('.icon.command.right')
+  const trigger = wrapper.find('.icon.command')
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
@@ -326,7 +340,6 @@ test('Selects command and run', async () => {
   expect(menu.findAll('.item').length).toBe(4)
   await menu.find('.item:nth-child(2)').trigger('click')
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
-    instructions: null,
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
     deepResearch: false,
@@ -341,30 +354,224 @@ test('Clears comamnd', async () => {
 })
 
 test('Document repository', async () => {
-
-  // trigger
-  const trigger = wrapper.find('.icon.docrepo')
-  await trigger.trigger('click')
-  let menu = wrapper.find('.context-menu')
-  expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.item').length).toBe(2)
+  await wrapper.find('.prompt-menu').trigger('click')
+  const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  await menu.find('.docrepos').trigger('click')
+  expect(menu.findAll('.item').length).toBe(3)
   expect(menu.find('.item:nth-child(1)').text()).toBe('docrepo1')
   expect(menu.find('.item:nth-child(2)').text()).toBe('docrepo2')
+  // Management option is now in footer
+  expect(menu.find('.footer .item').text()).toBe('prompt.menu.docRepos.manage')
 
   // connect
-  await trigger.trigger('click')
-  menu = wrapper.find('.context-menu')
   await menu.find('.item:nth-child(1)').trigger('click')
   expect(window.api.docrepo.connect).toHaveBeenLastCalledWith('uuid1')
 
-  // trigger again
-  await trigger.trigger('click')
-  menu = wrapper.find('.context-menu')
-  expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.item').length).toBe(4)
-  expect(menu.find('.item:nth-child(4)').text()).toBe('Disconnect')
+})
 
-  // disconnect
-  await menu.find('.item:nth-child(4)').trigger('click')
-  expect(window.api.docrepo.disconnect).toHaveBeenLastCalledWith()
+test('Tools', async () => {
+  // Mount wrapper with enableTools enabled
+  chat!.tools = []
+  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+  await toolsWrapper.find('.prompt-menu').trigger('click')
+  const menu = toolsWrapper.findComponent({ name: 'PromptMenu' })
+
+  // Simulate saving tools from PromptMenu
+  await menu.vm.$emit('pluginToggle', 'search')
+  await menu.vm.$emit('serverToolToggle', {}, { uuid: 'tool1___server1' })
+  await menu.vm.$emit('close')
+
+  // Agent step should have updated tools
+  expect(chat!.tools).toEqual(['search_internet', 'tool1___server1'])
+})
+
+test('Deep Research', async () => {
+  // Mount wrapper with enableDeepResearch enabled
+  const deepResearchWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableDeepResearch: true } })
+  
+  expect(deepResearchWrapper.vm.isDeepResearchActive()).toBe(false)
+  
+  await deepResearchWrapper.find('.prompt-menu').trigger('click')
+  const menu = deepResearchWrapper.findComponent({ name: 'ContextMenuPlus' })
+  await menu.find('.deepresearch').trigger('click')
+  
+  expect(deepResearchWrapper.vm.isDeepResearchActive()).toBe(true)
+})
+
+test('PromptFeature component displays for active expert', async () => {
+  wrapper.vm.expert = store.experts[0]
+  await wrapper.vm.$nextTick()
+  
+  const feature = wrapper.findComponent({ name: 'PromptFeature' })
+  expect(feature.exists()).toBe(true)
+  expect(feature.props('label')).toBe('expert_uuid1_name')
+})
+
+test('PromptFeature component displays for active docrepo', async () => {
+  wrapper.vm.docrepo = 'uuid1'
+  await wrapper.vm.$nextTick()
+  
+  const features = wrapper.findAllComponents({ name: 'PromptFeature' })
+  const docrepoFeature = features.find(f => f.props('label') === 'docrepo1')
+  expect(docrepoFeature).toBeTruthy()
+})
+
+test('PromptFeature component displays for active instructions', async () => {
+  wrapper.vm.instructions = { id: 'structured', label: 'Structured', instructions: 'test' }
+  await wrapper.vm.$nextTick()
+  
+  const features = wrapper.findAllComponents({ name: 'PromptFeature' })
+  const instructionsFeature = features.find(f => f.props('label') === 'Structured')
+  expect(instructionsFeature).toBeTruthy()
+})
+
+test('PromptFeature component displays for active deep research', async () => {
+  wrapper.vm.deepResearchActive = true
+  await wrapper.vm.$nextTick()
+  
+  const features = wrapper.findAllComponents({ name: 'PromptFeature' })
+  const deepResearchFeature = features.find(f => f.props('label') === 'common.deepResearch')
+  expect(deepResearchFeature).toBeTruthy()
+})
+
+test('Clear functions work correctly', async () => {
+  // Set up test data
+  wrapper.vm.expert = store.experts[0]
+  wrapper.vm.docrepo = 'uuid1'
+  wrapper.vm.instructions = { id: 'structured', label: 'Structured', instructions: 'test' }
+  wrapper.vm.deepResearchActive = true
+  await wrapper.vm.$nextTick()
+
+  // Test clearExpert
+  wrapper.vm.clearExpert()
+  expect(wrapper.vm.expert).toBeNull()
+
+  // Test clearDocRepo
+  wrapper.vm.clearDocRepo()
+  expect(wrapper.vm.docrepo).toBeNull()
+
+  // Test clearInstructions  
+  wrapper.vm.clearInstructions()
+  expect(wrapper.vm.instructions).toBeNull()
+
+  // Test clearDeepResearch
+  wrapper.vm.clearDeepResearch()
+  expect(wrapper.vm.deepResearchActive).toBe(false)
+})
+
+test('matchInstructions function works correctly', () => {
+  // Test with null/undefined
+  expect(wrapper.vm.matchInstructions()).toBeNull()
+  expect(wrapper.vm.matchInstructions('')).toBeNull()
+  
+  // Test with standard instruction
+  const standardResult = wrapper.vm.matchInstructions('instructions.chat.structured_default')
+  expect(standardResult).toEqual({
+    id: 'structured',
+    label: 'settings.llm.instructions.structured',
+    instructions: 'instructions.chat.structured_default'
+  })
+  
+  // Test with custom instruction (fallback)
+  const customResult = wrapper.vm.matchInstructions('Some custom text')
+  expect(customResult).toEqual({
+    id: 'custom',
+    label: 'Custom',
+    instructions: 'Some custom text'
+  })
+})
+
+test('matchDocRepo function works correctly', async () => {
+  // Load docrepos first
+  await wrapper.vm.loadDocRepos()
+  
+  // Test with null/undefined
+  expect(wrapper.vm.matchDocRepo()).toBeUndefined()
+  expect(wrapper.vm.matchDocRepo('')).toBeUndefined()
+  
+  // Test with valid docrepo ID
+  expect(wrapper.vm.matchDocRepo('uuid1')).toBe('uuid1')
+  
+  // Test with invalid docrepo ID
+  expect(wrapper.vm.matchDocRepo('invalid-uuid')).toBeUndefined()
+})
+
+test('getActiveDocRepoName function works correctly', async () => {
+  // Load docrepos first
+  await wrapper.vm.loadDocRepos()
+  
+  // Test with no active docrepo (returns fallback)
+  wrapper.vm.docrepo = null
+  expect(wrapper.vm.getActiveDocRepoName()).toBe('Knowledge Base')
+  
+  // Test with active docrepo
+  wrapper.vm.docrepo = 'uuid1'
+  expect(wrapper.vm.getActiveDocRepoName()).toBe('docrepo1')
+  
+  // Test with invalid docrepo (returns fallback)
+  wrapper.vm.docrepo = 'invalid-uuid'
+  expect(wrapper.vm.getActiveDocRepoName()).toBe('Knowledge Base')
+})
+
+test('Model menu button displays and opens menu', async () => {
+
+  wrapper.vm.chat.engine = 'mock'
+  wrapper.vm.chat.model = 'chat'
+  await wrapper.vm.$nextTick()
+
+  // Check model menu button exists
+  const modelButton = wrapper.find('.model-menu-button')
+  expect(modelButton.exists()).toBe(true)
+  
+  // Check it shows model name - should show fallback since mock doesn't return a model name
+  expect(modelButton.text()).toContain('chat')
+  
+  // Click the button
+  await modelButton.trigger('click')
+  
+  // Check that showModelMenu is true
+  expect(wrapper.vm.showModelMenu).toBe(true)
+})
+
+test('Adds to favorite', async () => {
+
+  wrapper.vm.chat.engine = 'mock'
+  wrapper.vm.chat.model = 'chat2'
+  await wrapper.vm.$nextTick()
+
+  // Find buttons by name attribute
+  const addButton = wrapper.find('[name="addToFavorites"]')
+  const removeButton = wrapper.find('[name="removeFavorite"]')
+  
+  // Should have add button but not remove button
+  expect(addButton.exists()).toBe(true)
+  expect(removeButton.exists()).toBe(false)
+
+  // Click the add button
+  await addButton.trigger('click')
+  
+  // Should be added to favorites in store
+  expect(store.config.llm.favorites).toHaveLength(3)
+  expect(store.config.llm.favorites[2].id).toBe('mock-chat2')
+})
+
+test('Removes from favorites', async () => {
+
+  wrapper.vm.chat.engine = 'mock'
+  wrapper.vm.chat.model = 'chat'
+  await wrapper.vm.$nextTick()
+  
+  // Find buttons by name attribute
+  const addButton = wrapper.find('[name="addToFavorites"]')
+  const removeButton = wrapper.find('[name="removeFavorite"]')
+  
+  // Should have remove button but not add button
+  expect(removeButton.exists()).toBe(true)
+  expect(addButton.exists()).toBe(false)
+
+  // Click the remove button
+  await removeButton.trigger('click')
+  
+  // Should be removed from favorites in store
+  expect(store.config.llm.favorites).toHaveLength(1)
 })

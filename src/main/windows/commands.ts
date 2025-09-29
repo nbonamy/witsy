@@ -25,7 +25,7 @@ export const prepareCommandPicker = (queryParams?: anyDict): void => {
   // open a new one
   commandPicker = createWindow({
     hash: '/commands',
-    title: 'WitsyCommandPicker',
+    title: 'Command Picker',
     x: 0, y: 0,
     width: width,
     height: height,

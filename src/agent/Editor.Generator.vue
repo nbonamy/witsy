@@ -11,27 +11,24 @@
         <div class="form-field">
           <label for="description">{{ t('agent.create.generator.describe') }}</label>
           <div class="help">{{ t('agent.create.generator.help.describe') }}</div>
-          <textarea 
+          <VoiceTextarea 
             v-model="description" 
             name="description" 
             :placeholder="t('agent.create.generator.placeholder')"
             rows="8"
             required 
-          ></textarea>
+          />
         </div>
         
         <div class="form-field">
           <label for="model">{{ t('agent.create.generator.model') }}</label>
           <div class="help">{{ t('agent.create.generator.help.model') }}</div>
-          <EngineSelect 
-            v-model="selectedEngine" 
-            :default-text="t('agent.create.generator.modelOptions.auto')"
-            @change="onEngineChange"
-          />
-          <ModelSelect 
-            v-if="selectedEngine" 
-            v-model="selectedModel" 
-            :engine="selectedEngine"
+          <EngineModelSelect 
+            :engine="selectedEngine" 
+            :model="selectedModel"
+            :position="'above'"
+            :defaultLabel="t('agent.create.generator.modelOptions.auto')"
+            @modelSelected="onModelSelected"
           />
         </div>
       </div>
@@ -76,34 +73,31 @@
     </template>
     
     <template #buttons>
-      <button 
-        v-if="!generatedAgent && !generating"
-        name="skip"
-        @click="skipGeneration" 
-        class="secondary"
-      >
-        {{ t('agent.create.generator.skip') }}
-      </button>
-      <button 
-        v-if="generatedAgent && !generating"
-        name="tryAgain"
-        @click="tryAgain" 
-        class="secondary"
-      >
-        {{ t('agent.create.generator.tryAgain') }}
-      </button>
+
+      <button name="skip" @click="skipGeneration" class="secondary">{{ t('agent.create.generator.skip') }}</button>
+
+      <template v-if="!generatedAgent && !generating">
+        <button name="generate" @click="generateAgent" class="primary">{{ t('agent.create.generator.generate') }}</button>
+      </template>
+
+      <template v-if="generatedAgent && !generating">
+        <button name="tryAgain" @click="tryAgain" class="secondary">{{ t('agent.create.generator.tryAgain') }}</button>
+        <button name="review" @click="onNext" class="primary">{{ t('agent.create.generator.review') }}</button>
+      </template>
+
     </template>
+  
   </WizardStep>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, PropType, ref } from 'vue'
-import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelect from '../components/ModelSelect.vue'
+import EngineModelSelect from '../components/EngineModelSelect.vue'
 import WizardStep from '../components/WizardStep.vue'
 import LlmFactory from '../llms/llm'
 import Agent from '../models/agent'
 import AgentGenerator from '../services/agent_generator'
+import VoiceTextarea from '../components/VoiceTextarea.vue'
 import Loader from '../components/Loader.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
@@ -127,7 +121,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['prev', 'next'])
+const emit = defineEmits(['prev', 'next', 'error'])
 
 const description = ref('')
 const selectedEngine = ref('')
@@ -152,20 +146,26 @@ const reset = () => {
 
 onMounted(() => {
   reset()
+  // Set default engine/model for display
+  const engines = llmManager.getChatEngines()
+  if (engines.length > 0) {
+    const defaultEngine = engines[0]
+    selectedEngine.value = defaultEngine
+    selectedModel.value = llmManager.getDefaultChatModel(defaultEngine)
+  }
 })
 
-const onEngineChange = () => {
-  if (selectedEngine.value) {
-    selectedModel.value = llmManager.getDefaultChatModel(selectedEngine.value)
-  } else {
-    selectedModel.value = ''
-  }
+const onModelSelected = (engine: string | null, model: string | null) => {
+  selectedEngine.value = engine || ''
+  selectedModel.value = model || ''
 }
 
 const generateAgent = async () => {
   if (!description.value.trim()) {
-    emit('next', { error: t('agent.create.generator.error.description') })
+    emit('error', t('agent.create.generator.error.description'))
     return
+  } else {
+    emit('error', '')
   }
 
   generating.value = true
@@ -182,11 +182,11 @@ const generateAgent = async () => {
       generatedAgent.value = agent
       // Don't apply config yet - let user review first
     } else {
-      emit('next', { error: t('agent.create.generator.error.generation') })
+      emit('error', t('agent.create.generator.error.generation'))
     }
   } catch (error) {
     console.error('Agent generation failed:', error)
-    emit('next', { error: t('agent.create.generator.error.unexpected') })
+    emit('error', t('agent.create.generator.error.unexpected'))
   } finally {
     generating.value = false
   }
@@ -222,13 +222,21 @@ const onNext = () => {
   }
 }
 
+const validate = (): string|null => {
+  return null
+}
+
 defineExpose({
-  reset
+  reset, validate
 })
 
 </script>
 
 <style scoped>
+
+.engine-model-select {
+  width: calc(100% - 2rem);
+}
 
 .generating-status {
   margin: 2rem 8rem;
@@ -259,10 +267,6 @@ defineExpose({
 .generating-text p {
   margin: 0.5rem 0 0 0;
   color: var(--faded-text-color);
-}
-
-.preview {
-  margin: 2rem 1rem;
 }
 
 .preview-success {

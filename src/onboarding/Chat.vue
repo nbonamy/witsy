@@ -33,7 +33,7 @@
       
       <div v-if="engines.length > 4 && !isExpanded" class="show-more" @click="isExpanded = true">
         <span>{{ t('onboarding.chat.showMore') }}</span>
-        <BIconCaretDownFill />
+        <ChevronDownIcon />
       </div>
     </div>
 
@@ -54,6 +54,7 @@ import InputObfuscated from '../components/InputObfuscated.vue'
 import { preventTabOnLastEngineGridInput } from './onboarding'
 
 import useAppearanceTheme from '../composables/appearance_theme'
+import { ChevronDownIcon } from 'lucide-vue-next'
 const appearanceTheme = useAppearanceTheme()
 
 const isExpanded = ref(false)
@@ -146,7 +147,7 @@ const onKeyDown = (event: KeyboardEvent) => {
   cursor: pointer;
   color: var(--primary-color);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   border-radius: 0.5rem;
   transition: background-color 0.2s ease;
 }

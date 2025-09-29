@@ -2,16 +2,17 @@
   <div class="computer">
     <img ref="logo" class="logo" />
     <div class="state">{{ state || t('computerUse.state.idle') }}</div>
-    <BIconXCircle class="stop" @click="onStop()" />
+    <CircleXIcon class="stop" @click="onStop()" />
   </div>
 </template>
 
 <script setup lang="ts">
 
+import { CircleXIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
-import { ref, onMounted, onUnmounted } from 'vue'
-import { store } from '../services/store'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 
 // init stuff
 store.loadSettings()
@@ -52,7 +53,7 @@ const onStop = () => {
   align-items: center;
   background-color: var(--window-bg-color);
   color: var(--text-color);
-  font-size: 11pt;
+  font-size: 14.5px;
   padding: 0px 16px;
   -webkit-app-region: drag;
   gap: 16px;
@@ -81,7 +82,7 @@ const onStop = () => {
     color: var(--icon-color);
     cursor: pointer;
     margin-left: auto;
-    font-size: 12pt;
+    font-size: 16px;
 
     &:hover {
       color: var(--text-color);

@@ -1,5 +1,6 @@
 <template>
   <div class="mcp-server-editor form form-vertical form-large" @keydown.enter.prevent="onSave">
+    <main>
     <div class="form-field">
       <label>{{ t('common.type') }}</label>
       <select name="type" v-model="type">
@@ -27,7 +28,7 @@
       </div>
       <div class="form-field">
         <label>{{ t('mcp.serverEditor.smitheryApiKey') }}</label>
-        <input type="text" name="apiKey" v-model="apiKey" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+        <InputObfuscated type="text" name="apiKey" v-model="apiKey" autofocus />
       </div>
     </template>
     <template v-if="type === 'stdio'">
@@ -117,23 +118,34 @@
         </template>
       </div>
     </template>
+    
     <div class="buttons">
-      <button name="cancel" @click.prevent="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
-      <button name="save" @click.prevent="onSave" class="alert-confirm">{{ type === 'smithery' ? t('common.install') : t('common.save') }}</button>
+      <Spinner v-if="loading" />
+      <template v-else>
+        <button name="cancel" @click.prevent="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="save" @click.prevent="onSave" class="primary">{{ type === 'smithery' ? t('common.install') : t('common.save') }}</button>
+      </template>
     </div>
+
+    <VariableEditor ref="editor" id="mcp-variable-editor" title="mcp.variableEditor.title" :variable="selectedVar" @save="onSaveVar" />
+
+    </main>
   </div>
-  <VariableEditor ref="editor" id="mcp-variable-editor" title="mcp.variableEditor.title" :variable="selectedVar" @save="onSaveVar" />
 </template>
 
 <script setup lang="ts">
 
-import { onMounted, PropType, ref, watch } from 'vue'
+import { nextTick, onMounted, PropType, ref } from 'vue'
+import InputObfuscated from '../components/InputObfuscated.vue'
+import Spinner from '../components/Spinner.vue'
 import VariableTable from '../components/VariableTable.vue'
 import Dialog from '../composables/dialog'
+import { useMcpServer } from '../composables/mcp'
 import VariableEditor from '../screens/VariableEditor.vue'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 import { strDict } from '../types/index'
-import { McpServer, McpServerType } from '../types/mcp'
+import { McpInstallStatus, McpServer, McpServerType } from '../types/mcp'
 
 export type McpCreateType = McpServerType | 'smithery'
 
@@ -146,7 +158,8 @@ export type McpServerVariable = {
 }
 
 const editor = ref(null)
-const type = ref('stdio')
+const loading = ref(false)
+const type = ref<McpServerType|'smithery'>('stdio')
 const label = ref('')
 const command = ref('')
 const source = ref('')
@@ -170,7 +183,6 @@ const oauthStatus = ref({
 const props = defineProps({
   server: {
     type: Object as PropType<McpServer>,
-    default: () => ({}),
   },
   type: {
     type: String as PropType<McpCreateType>,
@@ -182,31 +194,19 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['cancel', 'save', 'install'])
+const emit = defineEmits(['cancel', 'saved', 'install'])
 
 onMounted(async () => {
-  // Initialize values from props
-  const initializeValues = async () => {
-    // console.log('Initializing McpServerEditor with props:', props)
-    type.value = props.type || 'stdio'
-    label.value = props.server?.label || ''
-    command.value = props.server?.command || ''
-    url.value = props.server?.url || ''
-    cwd.value = props.server?.cwd || ''
-    env.value = props.server?.env || {}
-    headers.value = props.server?.headers || {}
-    oauthConfig.value = props.server?.oauth || null
-    apiKey.value = props.apiKey || ''
-  }
-
-  // Initialize immediately
-  await initializeValues()
-
-  // Watch for specific prop changes without deep watching the entire props object
-  watch(() => props.server, initializeValues)
-  watch(() => props.type, initializeValues)
-  watch(() => props.apiKey, initializeValues)
-
+  // console.log('Initializing McpServerEditor with props:', props)
+  type.value = props.type || 'stdio'
+  label.value = props.server?.label || ''
+  command.value = props.server?.command || ''
+  url.value = props.server?.url || ''
+  cwd.value = props.server?.cwd || ''
+  env.value = props.server?.env || {}
+  headers.value = props.server?.headers || {}
+  oauthConfig.value = props.server?.oauth || null
+  apiKey.value = props.apiKey || ''
 })
 
 const onCancel = () => {
@@ -306,120 +306,23 @@ const checkOAuth = async (): Promise<void> => {
 }
 
 const isOauthRequired = async (): Promise<boolean> => {
-
-  if (type.value !== 'http' || !url.value || oauthConfig.value) {
-    return false
-  }
-
-  try {
-    const oauthCheck = await window.api.mcp.detectOAuth(url.value, JSON.parse(JSON.stringify(headers.value)))
-    return oauthCheck.requiresOAuth
-  } catch (e) {
-    console.error('Failed to detect OAuth requirement:', e)
-    return false
-  }
-
+  if (type.value === 'smithery') return false
+  return useMcpServer().isOauthRequired(type.value, url.value, headers.value, oauthConfig.value)
 }
 
-const initOauth = async (userInitiated: boolean): Promise<boolean> => {
-
-  try {
-    const oauthCheck = await window.api.mcp.detectOAuth(url.value, JSON.parse(JSON.stringify(headers.value)))
-    if (!oauthCheck.requiresOAuth) {
-      return true
-    }
-
-    // Update OAuth status for UI
-    oauthStatus.value.required = true
-    oauthStatus.value.metadata = oauthCheck.metadata
-    oauthStatus.value.checked = true
-
-    // ask if required
-    let result = { isConfirmed: true }
-    if (!userInitiated) {
-      result = await Dialog.show({
-        title: t('mcp.serverEditor.oauth.required'),
-        text: t('mcp.serverEditor.oauth.requiredText'),
-        confirmButtonText: t('common.yes'),
-        cancelButtonText: t('common.cancel'),
-        showCancelButton: true
-      })
-    }
-
-    if (result.isConfirmed) {
-      await setupOAuth(userInitiated)
-      return true
-    } else {
-      return false
-    }
-  
-  } catch (error) {
-    console.error('Failed to detect OAuth requirement during save:', error)
-    return true
+const initOauth = async (userInitiated: boolean): Promise<void> => {
+  if (await useMcpServer().initOauth(userInitiated, url.value, headers.value, oauthStatus.value)) {
+    await setupOAuth(userInitiated)
   }
 }
 
 const setupOAuth = async (userInitiated: boolean) => {
-  
-  if (!oauthStatus.value.metadata) {
-    console.error('No OAuth metadata available')
-    return
-  }
-
-  try {
-    // Show loading state
-    await Dialog.show({
-      title: t('mcp.serverEditor.oauth.authorizing'),
-      text: t('mcp.serverEditor.oauth.authorizingText'),
-      confirmButtonText: t('common.ok'),
-    })
-
-    // Start OAuth flow with optional client credentials
-    const clientCredentials = (oauthClientId.value || oauthClientSecret.value) ? {
-      client_id: oauthClientId.value,
-      client_secret: oauthClientSecret.value
-    } : undefined
-    
-    const oauthResult = await window.api.mcp.startOAuthFlow(
-      url.value, 
-      JSON.parse(JSON.stringify(oauthStatus.value.metadata)),
-      clientCredentials
-    )
-    
-    // Parse the returned OAuth configuration and set up local config
-    const oauthData = JSON.parse(oauthResult)
-    oauthConfig.value = {
-      // Only store essential OAuth data in compact form
-      tokens: oauthData.tokens,
-      clientId: oauthData.clientInformation?.client_id,
-      clientSecret: oauthData.clientInformation?.client_secret
-      // clientMetadata is standardized and regenerated each time
-    }
-
-    await Dialog.show({
-      title: t('mcp.serverEditor.oauth.success'),
-      text: t('mcp.serverEditor.oauth.successText'),
-      confirmButtonText: t('common.ok'),
-    })
-
+  const config = await useMcpServer().setupOAuth(url.value, oauthStatus.value, oauthClientId.value, oauthClientSecret.value)
+  if (config) {
+    oauthConfig.value = config    
     if (!userInitiated) {
       setTimeout(onSave, 500)
     }
-
-  } catch (error) {
-
-    console.error('OAuth setup failed:', error)
-
-    let text = error.message || t('mcp.serverEditor.oauth.errorText')
-    if (text.includes('does not support dynamic client registration')) {
-      text = t('mcp.serverEditor.oauth.dynamicClientRegistrationError')
-    }
-
-    await Dialog.show({
-      title: t('mcp.serverEditor.oauth.error'),
-      text: text,
-      confirmButtonText: t('common.ok'),
-    })
   }
 }
 
@@ -475,52 +378,124 @@ const onSave = async () => {
     return
   }
 
-  // Check if OAuth setup is needed before saving
-  const oauthNeeded = await isOauthRequired()
-  if (oauthNeeded) {
-    initOauth(false)
-    return
-  }
+  try {
 
-  if (type.value === 'smithery') {
-
-    emit('install', {
-      registry: type.value,
-      server: url.value,
-      apiKey: apiKey.value,
-    })
-
-  } else {
-
-    const trimmedLabel = label.value.trim()
-
-    const payload: any = {
-      type: type.value,
-      label: label.value.trim(),
-      command: command.value,
-      url: url.value,
-      cwd: cwd.value,
-      env: JSON.parse(JSON.stringify(env.value)),
-      headers: JSON.parse(JSON.stringify(headers.value)),
-      oauth: JSON.parse(JSON.stringify(oauthConfig.value)),
+    // Check if OAuth setup is needed before saving
+    const oauthNeeded = await isOauthRequired()
+    if (oauthNeeded) {
+      loading.value = true
+      initOauth(false)
+      return
     }
 
-    // include label only when non-empty or when it existed before (allows deletion)
-    if (trimmedLabel.length || props.server?.label !== undefined) {
-      payload.label = trimmedLabel
+    if (type.value === 'smithery') {
+
+      loading.value = true
+      if (await install(type.value, url.value, apiKey.value)) {
+        emit('saved')
+      }
+
+    } else {
+
+      // build a dummy server
+      const server: McpServer = {
+        uuid: props.server?.uuid,
+        registryId: props.server?.registryId,
+        state: props.server?.state || 'enabled',
+        type: type.value,
+        label: label.value.trim(),
+        command: command.value,
+        url: url.value,
+        cwd: cwd.value,
+        env: JSON.parse(JSON.stringify(env.value)),
+        headers: JSON.parse(JSON.stringify(headers.value)),
+        oauth: JSON.parse(JSON.stringify(oauthConfig.value)),
+        toolSelection: props.server?.toolSelection || null,
+      }
+
+      // save it
+      loading.value = true
+      await window.api.mcp.editServer(server)
+      emit('saved')
+
     }
 
-    emit('save', payload)
-
+  } finally {
+    loading.value = false
   }
 
 }
 
+const install = async (registry: string, server: string, apiKey: string): Promise<boolean> => {
+
+  // save
+  if (registry === 'smithery') {
+    store.config.mcp.smitheryApiKey = apiKey
+    store.saveSettings()
+  }
+
+  await nextTick()
+  
+  const rc: McpInstallStatus = await window.api.mcp.installServer(registry, server, apiKey)
+
+  if (rc === 'success') {
+    return true
+  }
+
+  if (rc === 'not_found') {
+    await Dialog.show({
+      title: t('mcp.failedToInstall'),
+      text: t('mcp.serverNotFound'),
+      confirmButtonText: t('common.retry'),
+    })
+    return false
+  }
+
+  if (rc === 'api_key_missing') {
+    Dialog.show({
+      title: t('mcp.failedToInstall'),
+      text: t('mcp.retryWithApiKey'),
+      confirmButtonText: t('common.retry'),
+      denyButtonText: t('common.copy'),
+      showCancelButton: true,
+      showDenyButton: true,
+    }).then((result) => {
+      if (result.isDenied) {
+        const command = window.api.mcp.getInstallCommand(registry, server)
+        navigator.clipboard.writeText(command)
+        emit('cancel')
+      } else if (!result.isConfirmed) {
+        emit('cancel')
+      }
+    })
+    return false
+  }
+   
+  // general error  
+  Dialog.show({
+    title: t('mcp.failedToInstall'),
+    text: t('mcp.copyInstallCommand'),
+    confirmButtonText: t('common.copy'),
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const command = window.api.mcp.getInstallCommand(registry, server)
+      navigator.clipboard.writeText(command)
+    }
+  })
+
+}
 </script>
 
 <style scoped>
 
 .mcp-server-editor {
+
+  main {
+    padding: 2rem 0rem;
+    margin: 0 auto;
+    width: 500px;
+  }
   
   .list-with-actions {
     width: 100%;

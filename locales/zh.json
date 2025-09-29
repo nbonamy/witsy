@@ -1,5 +1,9 @@
 {
   "common": {
+    "actions": "操作",
+    "agents": "代理",
+    "allSelected": "全部已选择",
+    "appName": "Witsy",
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
     "attach": "附件",
@@ -25,10 +29,11 @@
       "deleteCustomInstruction": "您确定要删除此自定义指令吗？",
       "deleteDocument": "您确定要删除此文档吗？",
       "deleteMemory": "您确定要删除此记忆吗？",
-      "deleteRepository": "您确定要删除此知识库吗？",
+      "deleteRepository": "Are you sure you want to delete this collection?",
       "doNotClose": "不要关闭",
       "unsavedChanges": "您有未保存的更改。如果您关闭此窗口，您的工作将丢失。"
     },
+    "content": "Content",
     "continue": "继续",
     "copied": "已复制",
     "copy": "复制",
@@ -45,22 +50,24 @@
     "disabled": "已禁用",
     "docRepo": "知识库",
     "documents": "文档",
+    "done": "完成",
     "edit": "编辑",
-    "embeddings": "嵌入",
     "enabled": "已启用",
     "error": "错误！",
     "errorCopyClipboard": "复制文本到剪贴板时发生错误。",
     "errorModelRefresh": "刷新模型时出错。请检查您的连接并重试。",
     "esc": "Esc",
     "estimatedCost": "预估成本：",
+    "experts": "专家",
     "favorites": {
       "add": "添加到收藏夹",
+      "name": "收藏夹",
       "remove": "从收藏夹中移除"
     },
     "filename": "文件名",
-    "files": "文件",
     "fork": "分叉",
     "high": "高",
+    "htmlGeneration": "HTML生成中…",
     "icon": "图标",
     "import": "导入",
     "insert": "插入",
@@ -103,8 +110,11 @@
     "move": "移动",
     "name": "名称",
     "new": "新建",
-    "newChat": "新建聊天",
+    "newChat": "New Conversation",
+    "next": "下一步",
     "no": "否",
+    "noneSelected": "未选择",
+    "notes": "Notes",
     "ok": "确定",
     "path": "路径",
     "pick": "选择",
@@ -147,18 +157,26 @@
       "weekly": "每周"
     },
     "search": "搜索…",
+    "select": "选择",
     "selectAll": "全选",
+    "selectAllShort": "全部",
+    "selectedCount": "已选择 {selected} 个，共 {total} 个",
     "selectNone": "全不选",
     "settings": "设置",
     "shortcut": "快捷键",
+    "showLess": "显示更少",
+    "showMore": "显示更多",
+    "sortBy": "排序依据",
     "spellcheck": {
       "add": "添加到字典"
     },
     "stop": "停止",
+    "title": "Title",
     "tools": "工具",
     "tryAgain": "请再试一次。",
     "type": "类型",
     "undo": "撤销",
+    "unselectAllShort": "无",
     "upload": "上传",
     "url": "网址",
     "usage": "使用情况",
@@ -220,13 +238,14 @@
       },
       "information": {
         "help": {
-          "description": "代理用途的简短描述。当此代理在工作流程中使用时，该描述将与大语言模型共享，帮助其理解代理并最终决定调用它。",
-          "goal": "代理的目标。该目标将作为发送给大语言模型的系统指令。请勿在此包含执行的具体信息，这些将在提示中设置。",
-          "name": "您代理的描述性名称。"
+          "description": "代理目的的简短描述。帮助模型理解代理的意图。",
+          "goal": "指导代理决策的个人目标。",
+          "name": "给你的代理起一个名字。这将帮助你以后识别它。",
+          "type": "代理的功能及其与其他代理的关系。"
         },
         "promptInputs": "检测到的变量",
         "title": "基本信息",
-        "type": "执行模型"
+        "type": "角色"
       },
       "invocation": {
         "missingInput": "[{name} 缺失]",
@@ -244,21 +263,19 @@
         "help": {
           "warning": "代理执行高度依赖于各模型的能力。请选择支持代理功能的模型。"
         },
-        "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
         "showModelSettings": "高级设置",
         "title": "模型配置"
       },
       "settings": {
-        "title": "模型设置"
+        "title": "高级模型设置"
       },
       "workflow": {
         "addStep": "添加步骤",
         "confirmDeleteStep": "您确定要删除此步骤吗？",
-        "customAgents": "代理…",
-        "customTools": "工具…",
-        "description": "描述：用于聊天中提供进度更新",
-        "docRepo": "基础…",
-        "docRepoNone": "无知识库",
+        "customAgents": "分配协同代理",
+        "customTools": "添加工具",
+        "description": "@:{'common.description'}",
+        "docRepo": "添加知识",
         "error": {
           "emptyStepPrompt": "步骤 #{step} 的提示不能为空。",
           "missingDocRepo": "步骤 #{step} 使用了知识库，但提示中未定义 {'{'}{'{'}facts{'}'}{'}'} 变量。请在您的提示中添加形如 {'{'}{'{'}facts{'}'}{'}'} 的变量。",
@@ -266,14 +283,15 @@
         },
         "help": {
           "connect": "使用 {'{'}{'{'}output.#{'}'}{'}'} 变量连接前一步骤的输出（例如，第1步的输出为 {'{'}{'{'}output.1{'}'}{'}'}）",
-          "docRepo": "从知识库提取的事实将被添加到您的提示中。",
-          "factsVarDesc": "从知识库提取的事实",
+          "description": "描述将用于在代理执行过程中提供进度更新",
+          "docRepo": "Facts extracted from the collection will be appended to your prompt.",
+          "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "步骤 #{step} 的输出",
+          "prompt": "代理的自定义指令",
           "title": "设计您的多步骤工作流。提示模板将用于执行每个步骤。您可以包含“变量”，这些变量将在执行代理时用用户提供的值替换。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示输入值时指导用户）。描述和值都是可选的。"
         },
         "jsonSchema": "JSON…",
-        "step": "步骤 #{step}",
-        "stepFull": "步骤 #{step}：{text}",
+        "step": "步骤 {step}",
         "structuredOutput": {
           "text": "指定一个<a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">简单的JSON模式</a>来定义此步骤的预期输出格式。",
           "title": "JSON schema"
@@ -291,22 +309,22 @@
           },
           "text": "实验性功能！",
           "title": "输入 A2A 的 URL"
-        }
+        },
+        "title": "导入 A2A 代理"
       },
       "confirmDelete": "您确定要删除此代理吗？",
-      "create": "创建代理",
-      "empty": "请选择现有代理或创建新代理。",
+      "create": "新建代理",
+      "empty": "通过创建您的第一个代理，释放 @:{'common.appName'} 的代理能力！点击机器人头像开始。",
       "list": {
         "empty": "尚未创建此类型的代理。",
-        "runnable": "可执行代理",
-        "support": "支持代理"
+        "runnable": "用户发起",
+        "support": "工具"
       },
       "title": "代理锻造"
     },
     "goal": "目标",
     "help": {
       "clearHistory": "清除此代理的所有历史记录",
-      "create": "创建新代理",
       "delete": "删除此代理",
       "deleteRun": "删除此次运行",
       "edit": "编辑此代理",
@@ -319,6 +337,7 @@
       "confirmDeleteSingle": "您确定要删除此运行吗？",
       "date": "日期",
       "empty": "暂无历史记录…",
+      "lastRun": "上次运行",
       "log": "日志",
       "neverRun": "从未",
       "status": "状态",
@@ -360,8 +379,8 @@
       "workflow": "⚙️ 工作流"
     },
     "type": {
-      "runnable": "用户可执行",
-      "support": "支持代理"
+      "runnable": "用户发起",
+      "support": "工具"
     },
     "view": {
       "filter": {
@@ -388,7 +407,7 @@
     "available": "有新版本可用。正在下载…",
     "downloading": "正在更新。请等待完成。",
     "error": "检查更新时出错。请稍后再试。",
-    "uptodate": "您已经使用的是 Witsy 的最新版本。"
+    "uptodate": "您已使用最新版本的 @:{'common.appName'}。"
   },
   "backup": {
     "restore": {
@@ -432,6 +451,12 @@
         "titleRequired": "请为此次聊天输入标题。"
       }
     },
+    "empty": {
+      "agentForge": "创建代理以自动执行任务并简化工作流程！",
+      "docRepo": "索引您的文档并将@:{'common.appName'}根植于您的知识中！",
+      "greeting": "您好，我能帮您什么？",
+      "mcpServers": "连接MCP服务器以允许 @:{'common.appName'} 互动您的环境！"
+    },
     "export": {
       "error": "尝试导出聊天时发生错误。"
     },
@@ -465,7 +490,8 @@
       "last7days": "过去 7 天",
       "today": "今天",
       "yesterday": "昨天"
-    }
+    },
+    "title": "Conversations"
   },
   "commands": {
     "commands": {
@@ -797,30 +823,49 @@
       "title": "知识库默认设置"
     },
     "create": {
-      "embeddingWarning": "知识库创建后，嵌入模型无法更改",
-      "title": "创建知识库"
+      "embeddingWarning": "embedding model cannot be changed once collection is created",
+      "title": "New Collection"
     },
-    "list": {
-      "clickToCreate": "点击 + 按钮创建。",
-      "documentsCount": "无文档|1 个文档|{count} 个文档",
-      "noRepositories": "您还没有任何知识库。",
-      "title": "知识库",
-      "tooltips": {
-        "config": "@:{'docRepo.config.title'}",
-        "create": "@:{'docRepo.create.title'}",
-        "delete": "删除知识库",
-        "edit": "编辑知识库"
+    "empty": {
+      "create": "Add some knowledge",
+      "text": "Knowledge Base lets you chat with your own content - from simple documents to entire knowledge bases. Think of it as having a smart assistant that has read and understood all your company’s materials.",
+      "title": "Welcome to the Knowledge Base"
+    },
+    "file": {
+      "error": {
+        "formatNotSupported": {
+          "title": "File format not supported"
+        }
+      },
+      "help": {
+        "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
-    "view": {
-      "noDocuments": "您还没有任何文档。点击上面的图标以添加文档或文件夹。",
+    "list": {
+      "documentsCount": "无文档|1 个文档|{count} 个文档",
       "title": "@:{'common.docRepo'}",
+      "tooltips": {
+        "config": "@:{'docRepo.config.title'}",
+        "delete": "Delete collection"
+      }
+    },
+    "note": {
+      "add": "Add Note",
+      "create": {
+        "title": "New Note"
+      },
+      "edit": {
+        "title": "Edit Note"
+      },
+      "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
+    },
+    "view": {
+      "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {
         "addFile": "添加文件",
         "addFolder": "添加文件夹",
         "embeddingNotReady": "嵌入模型不可用",
         "openInExplorer": "在访达中打开",
-        "removeDocument": "移除文档",
         "viewContents": "查看文件夹内容"
       }
     }
@@ -831,7 +876,7 @@
     "useDrawing": "使用绘图"
   },
   "embedding": {
-    "apiKeyReminder": "请在 Witsy 设置的模型面板中输入您的 API 密钥。",
+    "apiKeyReminder": "请确保您在 @:{'common.appName'} 设置的模型面板中输入了您的 API 密钥。",
     "browse": "浏览模型",
     "model": "嵌入模型",
     "provider": "嵌入提供商"
@@ -1574,7 +1619,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "当用户要求你创建某些内容（文档、摘要、代码……）时，使用以下语法：\n<artifact title=\"TITLE\">\n内容\n</artifact>。特别是嵌入在artifacts中的HTML代码可以被自动预览。",
+      "artifacts": "当用户要求您创建某些内容（文档、摘要、代码……）时，请使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>。HTML 工件必须以 <html> 或 <!DOCTYPE html> 开头。示例：<artifact title=\"报告\">\n<html style=\"font-family: system-ui;\">用 HTML 格式化的报告内容</html>\n</artifact>。您可以使用此功能创建基于 HTML 的数据可视化，使用 Chart.js 或 D3.js。",
       "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
       "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
     },
@@ -1635,18 +1680,40 @@
     }
   },
   "mcp": {
+    "addCustomServer": "添加 MCP 服务器…",
+    "confirmDelete": "你确定要删除这个服务器吗？",
+    "copyInstallCommand": "你可以复制安装命令到剪贴板并尝试在终端中运行。",
+    "failedToInstall": "服务器安装失败",
+    "importJson": {
+      "details": "从 Claude 复制/粘贴 JSON MCP 服务器定义。",
+      "errorArgs": "无效的 MCP 服务器参数。",
+      "errorCommand": "未找到 MCP 服务器命令。",
+      "errorEmpty": "JSON 不能为空。",
+      "errorFormat": "解析 JSON 服务器定义时出错。",
+      "errorMultiple": "检测到多个服务器。请一次粘贴一个服务器。",
+      "title": "从 JSON 导入"
+    },
+    "importSmitheryServer": "从 Smithery.ai 安装",
+    "mcpServers": "连接器",
+    "modelContextProtocol": "连接中心",
+    "noServersFound": "未找到连接器。请点击上方按钮以添加新的连接器。",
+    "noTools": "无可用工具",
     "oauth": {
       "success": {
-        "message": "你可以关闭此窗口并返回 Witsy。",
+        "message": "您可以关闭此窗口，并返回 @:{'common.appName'}。",
         "title": "授权成功！"
       }
     },
+    "refreshServers": "刷新列表",
+    "restartServers": "重启服务器",
+    "retryWithApiKey": "看起来需要 API 密钥才能安装此服务器。你想用你的 API 密钥重试吗？否则你可以复制命令并尝试在终端中运行。",
+    "server": "服务器",
     "serverEditor": {
       "environmentVariables": "环境变量",
       "httpHeaders": "自定义 HTTP 头",
       "oauth": {
         "authorizing": "正在开始认证",
-        "authorizingText": "您的浏览器将打开以授权Witsy。请完成授权后返回此窗口。",
+        "authorizingText": "您的浏览器将打开以授权 @:{'common.appName'}。请完成授权后返回此窗口。",
         "clientId": "客户端ID",
         "clientSecret": "客户端密钥",
         "dynamicClientRegistrationError": "该服务器不支持动态客户端注册。您需要指定客户端ID和客户端密钥。",
@@ -1667,7 +1734,6 @@
       "selectCommand": "选择命令",
       "serverPackage": "服务器包",
       "smitheryApiKey": "Smithery.ai API 密钥",
-      "title": "MCP 服务器配置",
       "type": {
         "http": "可流式传输的 HTTP",
         "smithery": "Smithery.ai",
@@ -1681,6 +1747,19 @@
         "urlRequired": "确保你为这个服务器输入了一个 URL。"
       },
       "workingDirectory": "工作目录"
+    },
+    "serverLogs": "MCP 服务器日志",
+    "serverNotFound": "你尝试连接的服务器不存在。",
+    "servers": "服务器。从以下位置发现并安装 MCP 服务器",
+    "smithery": "Smithery",
+    "toolsCount": "无工具启用|已启用 1 个工具|已启用 {count} 个工具",
+    "tooltips": {
+      "deleteServer": "删除服务器",
+      "editServer": "编辑服务器",
+      "startServer": "启动服务器",
+      "stopServer": "暂停服务器",
+      "viewLogs": "查看服务器日志",
+      "viewTools": "查看可用工具"
     },
     "variableEditor": {
       "title": "MCP 环境变量"
@@ -1696,9 +1775,9 @@
   },
   "menu": {
     "app": {
-      "about": "关于Witsy",
+      "about": "关于 @:{'common.appName'}",
       "checkForUpdates": "检查更新…",
-      "quit": "退出 Witsy",
+      "quit": "退出 @:{'common.appName'}",
       "settings": "@:{'common.settings'}…"
     },
     "edit": {
@@ -1718,7 +1797,7 @@
         "openai": "ChatGPT 数据导出…",
         "title": "导入"
       },
-      "mainWindow": "打开Witsy",
+      "mainWindow": "打开 @:{'common.appName'}",
       "newChat": "新建聊天",
       "quickPrompt": "新建提示",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1826,12 +1905,12 @@
       "count": "未找到模型。|1 个模型可用！|{count} 个模型可用！",
       "error": "请检查您的API密钥并重试。",
       "showMore": "显示更多",
-      "subtitle": "您可以使用所有主要提供商的语言模型与Witsy聊天。在下面输入您的API密钥以开始。如果您没有任何API密钥，不用担心：在下一屏中，您将能够设置Witsy通过Ollama使用本地模型！",
+      "subtitle": "您可以使用所有主要提供商的语言模型与 @:{'common.appName'} 聊天。请在下面输入您的 API 密钥开始使用。如果您没有任何 API 密钥也没关系：下一屏您可以通过 Ollama 设置 @:{'common.appName'} 使用本地模型！",
       "success": "{engine} 密钥验证成功。<br/>{count} 个模型已找到！",
       "title": "您的聊天模型提供商"
     },
     "done": {
-      "subtitle": "您已完成所有设置，准备开始！<br/>开始与Witsy聊天，探索其功能吧！",
+      "subtitle": "您已全部设置完成，准备开始！<br/>开始与 @:{'common.appName'} 聊天，探索其功能吧！",
       "title": "全部完成！"
     },
     "instructions": {
@@ -1845,8 +1924,8 @@
         "title": "您尚未完成个性化设置。"
       },
       "selectStyle": "现在选择您希望助手如何响应。<br/>这将与您的个人信息结合，创建完美的指令。",
-      "subtitle": "通过回答几个问题，Witsy将能够个性化您的体验并提供更好的回答。您可以跳过此步骤，但强烈建议这样做，以使Witsy更加贴近您个人。",
-      "title": "让Witsy了解您！"
+      "subtitle": "通过回答几个问题，@:{'common.appName'} 能够个性化您的体验并提供更好的答案。您可以跳过此步骤，但强烈建议完成，使 @:{'common.appName'} 更具个人色彩。",
+      "title": "让 @:{'common.appName'} 了解您！"
     },
     "ollama": {
       "browseModels": "在 https://ollama.com/search 发现更多模型",
@@ -1870,22 +1949,22 @@
     },
     "permissions": {
       "accessibility": {
-        "description": "Witsy 需要此权限以读取其他应用程序中的文本，并无缝集成您的工作流程。",
+        "description": "此权限允许 @:{'common.appName'} 读取其他应用的文本并无缝集成到您的工作流程中。",
         "title": "辅助功能"
       },
       "automation": {
-        "description": "请确保在自动化设置界面中授予 Witsy “系统事件” 权限。",
+        "description": "请确保您在自动化设置中授予 @:{'common.appName'} “系统事件”权限。",
         "title": "自动化"
       },
       "denied": "未授权",
       "granted": "已授权",
-      "info": "这些权限使 Witsy 能够提供全功能。您可以现在或稍后在系统偏好设置中授权。",
+      "info": "这些权限允许 @:{'common.appName'} 提供其全部功能。您可以现在授予，也可以稍后在系统偏好设置中授予。",
       "leave": {
         "message": "您确定要在未授权所有权限的情况下继续吗？部分功能可能无法正常使用。",
         "title": "权限未完全授权"
       },
       "openSettings": "打开设置",
-      "subtitle": "在 macOS 上，Witsy 需要某些权限以提供最佳体验。",
+      "subtitle": "在 macOS 上，@:{'common.appName'} 需要某些权限以提供最佳体验。",
       "title": "系统权限"
     },
     "studio": {
@@ -1900,13 +1979,13 @@
       "already": "@:{'onboarding.chat.already'}",
       "count": "@:{'onboarding.chat.count'}",
       "error": "@:{'onboarding.chat.error'}",
-      "subtitle": "使用您的声音与Witsy互动！Witsy不仅可以朗读您与语言模型聊天会话中的回复，还可以朗读其他应用程序中屏幕上显示的任何文本！",
+      "subtitle": "使用您的声音与 @:{'common.appName'} 互动！@:{'common.appName'} 不仅能朗读语言模型聊天会话的回复，还可朗读其他应用中显示的任何文本！",
       "success": "@:{'onboarding.chat.success'}",
       "title": "语音互动"
     },
     "welcome": {
-      "subtitle": "Witsy是一个强大的AI助手，可以帮助您完成各种任务。您可以与它聊天，要求它撰写文档，甚至在您的电脑上运行代码。让我们开始吧！",
-      "title": "欢迎使用Witsy！"
+      "subtitle": "@:{'common.appName'} is a powerful AI assistant that can help you with a wide range of tasks. You can chat with it, ask it to write documents, and even run code on your computer. Let's get started!",
+      "title": "欢迎使用 @:{'common.appName'}！"
     }
   },
   "plugins": {
@@ -2012,8 +2091,7 @@
       "formatError": {
         "text": "请尝试使用其他文件。",
         "title": "此文件格式不被此模型支持。"
-      },
-      "tooltip": "附加文件"
+      }
     },
     "conversation": {
       "placeholders": {
@@ -2025,20 +2103,29 @@
       "stop": "停止对话",
       "tooltip": "口述"
     },
-    "docRepos": {
-      "none": "没有可用的知识库。您想现在创建一个吗？",
-      "tooltip": "连接到知识库"
-    },
-    "experts": {
-      "clear": "清除专家",
-      "tooltip": "选择专家"
-    },
     "instructions": {
-      "default": "⚙️ 使用配置默认",
-      "title": "@:{'common.instructions'}"
+      "default": "⚙️ 使用配置默认"
+    },
+    "menu": {
+      "attach": {
+        "title": "添加照片和文件"
+      },
+      "docRepos": {
+        "manage": "管理知识库",
+        "title": "知识库"
+      },
+      "experts": {
+        "manage": "创建新专家"
+      },
+      "instructions": {
+        "title": "写作风格"
+      }
+    },
+    "noEngineAvailable": {
+      "title": "未配置模型提供者"
     },
     "placeholders": {
-      "default": "按回车提交，Shift+回车添加新行"
+      "default": "在此输入您的消息…"
     }
   },
   "realtimeChat": {
@@ -2075,7 +2162,7 @@
     },
     "generationError": "生成文本时出错",
     "loadingError": "加载便签文件时出错",
-    "placeholder": "开始输入你的文档，或者\n让 Witsy 为你写点什么！\n\n一旦开始，你可以让 Witsy\n对你的文档进行修改。\n\n如果你突出显示了一部分文本，\nWitsy 只会更新这一部分。\n\n还可以查看右下角的写作助手！\n\n试试吧！",
+    "placeholder": "开始输入您的文档，或\n让 @:{'common.appName'} 为您写点东西！\n\n一旦开始，您可以让 @:{'common.appName'}\n对您的文档进行修改。\n\n如果您高亮了部分文本，\n@:{'common.appName'} 将只更新这部分内容。\n\n还可以查看位于右下角操作栏的写作助手！\n\n试试看吧！",
     "title": "Scratchpad"
   },
   "settings": {
@@ -2159,15 +2246,15 @@
     },
     "commands": {
       "confirmDelete": "你确定要删除这个命令吗？",
+      "disableAll": "全部禁用",
+      "enableAll": "全部启用",
       "export": "导出",
       "exportError": "导出命令文件失败",
       "exportSuccess": "命令文件导出成功",
       "import": "@:{'common.import'}",
       "importError": "导入命令文件失败",
       "importSuccess": "命令文件导入成功",
-      "new": "新建",
-      "selectAll": "@:{'common.selectAll'}",
-      "unselectAll": "@:{'common.selectNone'}"
+      "new": "新建"
     },
     "deepResearch": {
       "breadth": "研究广度",
@@ -2183,7 +2270,7 @@
       "runtime": "深度研究类型",
       "runtimes": {
         "ma": "多代理（完全代理驱动，基于 LLM）",
-        "ms": "多步（混合代码/代理，基于 Witsy）"
+        "ms": "多步骤（混合代码/代理，@:{'common.appName'} 驱动）"
       }
     },
     "engines": {
@@ -2267,7 +2354,11 @@
     },
     "experts": {
       "confirmDelete": "你确定要删除这个专家吗？",
+      "confirmDeleteAll": "您确定要删除所有专家吗？",
       "copy": "复制",
+      "deleteAll": "全部删除",
+      "disableAll": "全部禁用",
+      "enableAll": "全部启用",
       "export": "导出",
       "exportError": "导出专家文件失败",
       "exportSuccess": "专家文件导出成功",
@@ -2275,10 +2366,8 @@
       "importError": "导入专家文件失败",
       "importSuccess": "专家文件导入成功",
       "new": "新建",
-      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "按字母顺序排序",
-      "sortState": "按状态排序",
-      "unselectAll": "@:{'common.selectNone'}"
+      "sortState": "按状态排序"
     },
     "general": {
       "darkTint": "深色",
@@ -2310,6 +2399,7 @@
         "artifacts": "指示模型创建工件",
         "title": "附加指令"
       },
+      "disableStreaming": "禁用流式传输",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",
@@ -2325,47 +2415,6 @@
         "uplifting": "🌟 鼓舞人心和振奋",
         "visionary": "🚀 前瞻性和富有远见"
       }
-    },
-    "mcp": {
-      "addCustomServer": "添加 MCP 服务器…",
-      "confirmDelete": "你确定要删除这个服务器吗？",
-      "connectedToServers": "已连接到 {count} 个 MCP 服务器",
-      "copyInstallCommand": "你可以将安装命令复制到剪贴板，并在终端中尝试运行。",
-      "description": "此插件允许 LLM 引擎访问",
-      "failedToInstall": "服务器安装失败",
-      "importJson": {
-        "details": "在此粘贴来自Claude的JSON MCP服务器定义。",
-        "errorArgs": "无效的MCP服务器参数。",
-        "errorCommand": "未找到MCP服务器命令。",
-        "errorEmpty": "JSON不能为空。",
-        "errorFormat": "解析JSON服务器定义时出错。",
-        "errorMultiple": "发现多个服务器。请一次粘贴一个服务器。",
-        "menu": "@:{'settings.mcp.importJson.title'}…",
-        "title": "从 JSON 导入"
-      },
-      "importSmitheryServer": "导入 Smithery.ai 服务器…",
-      "mcpServers": "MCP 服务器",
-      "modelContextProtocol": "模型上下文协议",
-      "noServersFound": "未找到MCP服务器。点击上面的+图标以添加新服务器或刷新列表。",
-      "noTools": "没有可用工具",
-      "retryWithApiKey": "安装此服务器似乎需要一个 API 密钥。您想用您的 API 密钥重试吗？否则您可以复制命令并在终端中尝试。",
-      "serverLogs": "MCP 服务器日志",
-      "serverNotFound": "您尝试连接的服务器不存在。",
-      "servers": "服务器。从",
-      "smithery": "Smithery",
-      "tools": "@:{'common.tools'}",
-      "tooltips": {
-        "addServer": "添加新的MCP服务器",
-        "deleteServer": "删除服务器",
-        "editServer": "编辑服务器",
-        "refreshServers": "刷新MCP服务器列表",
-        "restartServers": "重启MCP服务器",
-        "startServer": "启动服务器",
-        "stopServer": "停止服务器",
-        "viewLogs": "查看服务器日志",
-        "viewTools": "查看可用工具"
-      },
-      "totalTools": "总共 {count} 个服务可用"
     },
     "plugins": {
       "browse": {
@@ -2385,7 +2434,7 @@
         "title": "文件系统"
       },
       "image": {
-        "apiKeyReminder": "确保你在 Witsy 设置的模型面板中输入了你的 API 密钥。",
+        "apiKeyReminder": "请确保您在 @:{'common.appName'} 设置的模型面板中输入了您的 API 密钥。",
         "description": "此插件允许 LLM 引擎根据文本描述创建图像。",
         "falai": {
           "aboutModels": "了解更多关于 fal.ai 模型的信息"
@@ -2473,10 +2522,9 @@
       "chat": "聊天",
       "commands": "命令",
       "deepResearch": "@:{'common.deepResearch'}",
-      "experts": "专家",
+      "experts": "@:{'common.experts'}",
       "general": "常规",
       "llm": "LLM",
-      "mcp": "MCP",
       "models": "模型",
       "plugins": "插件",
       "shortcuts": "快捷键",
@@ -2526,7 +2574,7 @@
       "tts": {
         "groqAcceptTermsReminder": "您需要<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">接受条款和条件</a>以使用 Groq 模型。",
         "kokoroReminder": "已提供",
-        "sampleText": "欢迎使用 Witsy，终极 AI 桌面助手。",
+        "sampleText": "欢迎使用 @:{'common.appName'}，终极 AI 桌面助手。",
         "serviceDisclaimer": "该服务可能随时停止工作。",
         "voice": "@:{'common.voice'}"
       },
@@ -2626,9 +2674,24 @@
       "voiceMode": "@:{'realtimeChat.title'}"
     },
     "notification": {
-      "darwin": "您可以从菜单栏中的钢笔图标激活 Witsy。",
-      "linux": "您可以从菜单栏中的钢笔图标激活 Witsy。",
-      "windows": "您可以从系统托盘中的钢笔图标激活 Witsy。"
+      "darwin": "您可以通过菜单栏的钢笔图标激活 @:{'common.appName'}。",
+      "linux": "您可以通过菜单栏的钢笔图标激活 @:{'common.appName'}。",
+      "windows": "您可以通过系统托盘的钢笔图标激活 @:{'common.appName'}。"
+    }
+  },
+  "workspace": {
+    "delete": {
+      "confirm": "您确定要删除此工作区吗？"
+    },
+    "editor": {
+      "color": "Color",
+      "create": "Create New Workspace",
+      "createDescription": "Create a new workspace to organize your models, chats and agents.",
+      "edit": "Edit Workspace",
+      "editDescription": "Edit the details of your workspace.",
+      "icon": "Icon",
+      "name": "Name",
+      "namePlaceholder": "Enter workspace name"
     }
   }
 }

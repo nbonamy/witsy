@@ -11,7 +11,6 @@ import Loader from './loader'
 import Splitter from './splitter'
 import { databasePath } from './utils'
 import * as file from '../main/file'
-import { v4 as uuidv4 } from 'uuid'
 import fs from 'fs'
 
 const ADD_COMMIT_EVERY = 5
@@ -27,19 +26,21 @@ export default class DocumentBaseImpl {
   name: string
   embeddingEngine: string
   embeddingModel: string
+  workspaceId: string
   documents: DocumentSourceImpl[]
 
-  constructor(app: App, uuid: string, name: string, embeddingEngine: string, embeddingModel: string) {
+  constructor(app: App, uuid: string, name: string, embeddingEngine: string, embeddingModel: string, workspaceId: string) {
     this.app = app
     this.uuid = uuid
     this.name = name
     this.embeddingEngine = embeddingEngine
     this.embeddingModel = embeddingModel
+    this.workspaceId = workspaceId
     this.documents = []
   }
 
   static fromJSON(app: App, json: any): DocumentBaseImpl {
-    const base = new DocumentBaseImpl(app, json.uuid, json.name, json.embeddingEngine, json.embeddingModel)
+    const base = new DocumentBaseImpl(app, json.uuid, json.name || json.title, json.embeddingEngine, json.embeddingModel, json.workspaceId)
     for (const doc of json.documents) {
       const source = DocumentSourceImpl.fromJSON(doc)
       base.documents.push(source)
@@ -69,14 +70,14 @@ export default class DocumentBaseImpl {
     }
   }
 
-  async addDocumentSource(uuid: string, type: SourceType, url: string, callback: VoidFunction): Promise<string> {
+  async addDocumentSource(uuid: string, type: SourceType, url: string, title?: string, callback?: VoidFunction): Promise<string|null> {
 
     // check existing
     let source = this.documents.find(d => d.uuid === uuid)
     if (source) {
       await this.deleteDocumentSource(uuid)
     } else {
-      source = new DocumentSourceImpl(uuid, type, url)
+      source = new DocumentSourceImpl(uuid, type, url, title)
     }
 
     // add if
@@ -89,9 +90,19 @@ export default class DocumentBaseImpl {
 
     } else {
 
-      // we add only when it's done
-      await this.addDocument(source, callback)
+      // we add first so container is visible
       this.documents.push(source)
+      callback?.()
+
+      // we add only when it's done
+      try {
+        await this.addDocument(source, callback)
+      } catch (error) {
+        console.error('[rag] Error adding document', error)
+        this.documents = this.documents.filter(d => d.uuid !== source.uuid)
+        callback?.()
+        return null
+      }
 
     }
 
@@ -203,7 +214,7 @@ export default class DocumentBaseImpl {
         await this.db.insert(source.uuid, batch[i], embeddings[i], {
           uuid: source.uuid,
           type: source.type,
-          title: source.getTitle(),
+          title: source.title,
           url: source.url
         })
         if (++transactionSize === 1000) {
@@ -248,7 +259,7 @@ export default class DocumentBaseImpl {
       try {
 
         // do it
-        const doc = new DocumentSourceImpl(uuidv4(), 'file', file)
+        const doc = new DocumentSourceImpl(crypto.randomUUID(), 'file', file)
         await this.addDocument(doc)
         source.items.push(doc)
 
@@ -457,7 +468,7 @@ export default class DocumentBaseImpl {
       for (const filePath of files) {
         if (!existingPaths.has(filePath)) {
           // Found a new file that wasn't tracked before
-          const newDocSource = new DocumentSourceImpl(uuidv4(), 'file', filePath)
+          const newDocSource = new DocumentSourceImpl(crypto.randomUUID(), 'file', filePath)
           
           added.push({
             docSource: newDocSource,

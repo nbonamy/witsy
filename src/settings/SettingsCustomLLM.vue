@@ -76,6 +76,7 @@ import RefreshButton from '../components/RefreshButton.vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Combobox from '../components/Combobox.vue'
 import { ChatModel } from 'multi-llm-ts'
+import LlmManager from 'llms/manager'
 
 const props = defineProps({
   engine: {
@@ -129,7 +130,7 @@ const getModels = async (): Promise<boolean> => {
   // const model = engineConfig.model.chat
 
   // load
-  const llmManager = LlmFactory.manager(store.config)
+  const llmManager = LlmFactory.manager(store.config) as LlmManager
   let success = await llmManager.loadModelsCustom(props.engine)
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))

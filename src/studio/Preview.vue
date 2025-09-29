@@ -3,28 +3,28 @@
     <header class="toolbar">
       <template v-if="message">
         <div class="title">{{ message.content }}</div>
-        <div class="icon undo" @click="$emit('undo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canUndo }">
-          <BIconArrowCounterclockwise />
-        </div>
-        <div class="icon redo" @click="$emit('redo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canRedo }">
-          <BIconArrowClockwise />
-        </div>
-        <div class="icon info" @click="onInfo">
-          <BIconInfoCircle />
-        </div>
-        <div class="icon fullscreen" @click="onFullScreen" v-if="!message.isVideo()">
-          <BIconFullscreen />
-        </div>
-        <div class="icon copy" @click="onCopy" v-if="!message.isVideo()">
-          <BIconClipboardCheck v-if="copying" />
-          <BIconClipboard v-else />
-        </div>
-        <div class="icon save" @click="onDownload">
-          <BIconDownload />
-        </div>
-        <div class="icon delete" @click="onDelete">
-          <BIconTrash />
-        </div>
+        <ButtonIcon class="undo" @click="$emit('undo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canUndo }">
+          <UndoIcon />
+        </ButtonIcon>
+        <ButtonIcon class="redo" @click="$emit('redo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canRedo }">
+          <RedoIcon />
+        </ButtonIcon>
+        <ButtonIcon class="info" @click="onInfo">
+          <InfoIcon />
+        </ButtonIcon>
+        <ButtonIcon class="fullscreen" @click="onFullScreen" v-if="!message.isVideo()">
+          <FullscreenIcon />
+        </ButtonIcon>
+        <ButtonIcon class="copy" @click="onCopy" v-if="!message.isVideo()">
+          <ClipboardCheckIcon v-if="copying" />
+          <ClipboardIcon v-else />
+        </ButtonIcon>
+        <ButtonIcon class="save" @click="onDownload">
+          <DownloadIcon />
+        </ButtonIcon> 
+        <ButtonIcon class="delete" @click="onDelete">
+          <Trash2Icon />
+        </ButtonIcon>
       </template>
     </header>
     <main v-if="!message" class="empty">
@@ -49,11 +49,13 @@
 
 <script setup lang="ts">
 
-import { ref, watch, onMounted, nextTick } from 'vue'
-import { t } from '../services/i18n'
-import Message from '../models/message'
-import Dialog from '../composables/dialog'
+import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, FullscreenIcon, InfoIcon, RedoIcon, Trash2Icon, UndoIcon } from 'lucide-vue-next'
+import { nextTick, onMounted, ref, watch } from 'vue'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import Loader from '../components/Loader.vue'
+import Dialog from '../composables/dialog'
+import Message from '../models/message'
+import { t } from '../services/i18n'
 
 const props = defineProps({
   message: {
@@ -165,7 +167,7 @@ const onDelete = () => {
 
 .preview {
   
-  width: calc(100% - var(--create-panel-width));
+  width: calc(100% - var(--large-panel-width));
   --preview-padding: 32px;
 
   .loading {
@@ -195,7 +197,7 @@ const onDelete = () => {
     span {
       font-family: var(--font-family-serif);
       font-style: italic;
-      font-size: 24pt;
+      font-size: 32px;
     }
 
   }
@@ -209,7 +211,6 @@ const onDelete = () => {
     align-items: center;
     text-align: center;
     padding: var(--preview-padding);
-    -webkit-app-region: no-drag;
 
     img, video {
       max-width: 100%;

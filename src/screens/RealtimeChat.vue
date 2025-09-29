@@ -9,7 +9,6 @@
 
       <main>
         <div class="form form-vertical">
-          <div class="sp-sidebar-title">{{ t('common.settings') }}</div>
           <div class="form-field">
             <label>{{ t('common.provider') }}</label>
             <select class="tool" v-model="engine" @change="onChangeEngine">
@@ -33,9 +32,6 @@
     </div>
 
     <div class="sp-main">
-
-      <header>
-      </header>
 
       <main>
 
@@ -390,13 +386,10 @@ defineExpose({
   height: 100vh;
   background-color: var(--window-bg-color);
   color: var(--text-color);
-  font-size: 14pt;
+  font-size: 18.5px;
 
   .sp-sidebar {
-    flex-basis: 280px;
-    main {
-      padding: 2rem 1.5rem;
-    }
+    flex: 0 0 var(--large-panel-width);
   }
 
   .sp-main {
@@ -423,11 +416,11 @@ defineExpose({
       .cost-container {
         text-align: center;
         margin-top: 2rem;
-        font-size: 10pt;
+        font-size: 13.5px;
 
         .value {
           margin: 4px 0px;
-          font-size: 14pt;
+          font-size: 18.5px;
           font-weight: bold;
           font-variant-numeric: tabular-nums;
 
@@ -436,7 +429,7 @@ defineExpose({
           }
         }
         .note {
-          font-size: 9pt;
+          font-size: 12px;
         }
       }
 

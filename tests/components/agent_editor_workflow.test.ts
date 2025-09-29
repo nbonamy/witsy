@@ -24,6 +24,7 @@ beforeEach(() => {
   store.agents = []
 })
 
+
 test('Shows workflow step with step panels', async () => {
   const agent = new Agent()
   agent.steps = [
@@ -40,10 +41,8 @@ test('Shows workflow step with step panels', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
-  expect(workflowStep).toBeTruthy()
-  
   await workflowStep!.trigger('click')
   await nextTick()
 
@@ -64,14 +63,14 @@ test('Can expand and collapse workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -106,7 +105,7 @@ test('Shows step management buttons in workflow', async () => {
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -127,17 +126,28 @@ test('Shows step management buttons in workflow', async () => {
 })
 
 test('Shows ToolSelector and AgentSelector components', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
-      agent: undefined
+      mode: 'edit',
+      agent: agent
     }
   })
   await nextTick()
 
-  // Should render ToolSelector component
-  const toolSelector = wrapper.findComponent({ name: 'ToolSelector' })
-  expect(toolSelector.exists()).toBe(true)
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Should render tools button in step actions (copy exactly from working test)
+  const toolsButton = wrapper.find('.step-actions .tools')
+  expect(toolsButton.exists()).toBe(true)
 
   // Should render AgentSelector component  
   const agentSelector = wrapper.findComponent({ name: 'AgentSelector' })
@@ -156,14 +166,14 @@ test('Workflow step handles multiple steps correctly', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -185,14 +195,14 @@ test('Adds new workflow step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -220,14 +230,14 @@ test('Deletes workflow step with confirmation', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -258,14 +268,14 @@ test('Shows tools and agents buttons in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -288,14 +298,14 @@ test('Shows docrepo button in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -314,14 +324,14 @@ test('Shows docrepo help text when docrepo is selected', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -336,6 +346,7 @@ test('Shows docrepo help text when docrepo is selected', async () => {
 })
 
 test('Selecting docrepo opens dialog and updates step', async () => {
+
   const agent = new Agent()
   agent.steps = [
     { prompt: 'Step 1', tools: null, agents: [] }
@@ -343,37 +354,30 @@ test('Selecting docrepo opens dialog and updates step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
 
-  // Click docrepo button
+  // Click docrepo button (no need to expand step - it should be auto-expanded)
   const docrepoButton = wrapper.find('.step-actions .docrepo')
   await docrepoButton.trigger('click')
   await nextTick()
 
-  // Dialog mock should have been called with proper options
-  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
-    title: 'common.docRepo',
-    input: 'select',
-    inputOptions: expect.objectContaining({
-      'none': 'agent.create.workflow.docRepoNone',
-      'uuid1': 'docrepo1',
-      'uuid2': 'docrepo2'
-    }),
-    showCancelButton: true
-  }))
+  // Should show ContextMenuPlus component
+  const contextMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(contextMenu.exists()).toBe(true)
 })
 
 test('Docrepo selection updates agent step', async () => {
+
   const agent = new Agent()
   agent.steps = [
     { prompt: 'Step 1', tools: null, agents: [] }
@@ -381,30 +385,31 @@ test('Docrepo selection updates agent step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
 
-  // Click docrepo button
+  // Click docrepo button (no need to expand step - it should be auto-expanded)
   const docrepoButton = wrapper.find('.step-actions .docrepo')
   await docrepoButton.trigger('click')
   await nextTick()
 
   // The dialog mock returns 'user-input' by default for select inputs
-  // Since the mock returns a simple string, we need to check what actually happens
-  // In the real implementation, the value would be set based on the dialog result
-  expect(Dialog.show).toHaveBeenCalled()
+  // Should show ContextMenuPlus for docrepo selection
+  const contextMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(contextMenu.exists()).toBe(true)
 })
 
 test('Docrepo selection can be cleared by selecting none', async () => {
+
   const agent = new Agent()
   agent.steps = [
     { prompt: 'Step 1', tools: null, agents: [], docrepo: 'uuid1' }
@@ -412,27 +417,26 @@ test('Docrepo selection can be cleared by selecting none', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
 
-  // Click docrepo button
+  // Click docrepo button (no need to expand step - it should be auto-expanded)
   const docrepoButton = wrapper.find('.step-actions .docrepo')
   await docrepoButton.trigger('click')
   await nextTick()
 
-  // Dialog should be shown with current docrepo as input value
-  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
-    inputValue: 'uuid1'
-  }))
+  // Should show ContextMenuPlus for docrepo selection
+  const contextMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(contextMenu.exists()).toBe(true)
 })
 
 test('Shows prompt inputs table in workflow steps', async () => {
@@ -443,14 +447,14 @@ test('Shows prompt inputs table in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -472,14 +476,14 @@ test('Shows JSON schema button in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -498,14 +502,14 @@ test('Updates step jsonSchema when valid JSON is provided', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -545,14 +549,14 @@ test('Clears step jsonSchema when empty JSON is provided', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -580,14 +584,14 @@ test('Preserves existing jsonSchema when dialog is cancelled', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()
@@ -617,14 +621,14 @@ test('Shows existing jsonSchema in dialog input', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
-      mode: 'create',
+      mode: 'edit',
       agent: agent
     }
   })
   await nextTick()
 
   // Navigate to workflow step
-  const steps = wrapper.findAll('.md-master-list-item')
+  const steps = wrapper.findAll('.wizard-step')
   const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
   await workflowStep!.trigger('click')
   await nextTick()

@@ -4,7 +4,7 @@
       <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="control-group">
         <ModelSelectPlus v-model="chat_model" :models="chat_models" :disabled="chat_models.length == 0" @change="save" />
-        <button @click.prevent="onDelete"><BIconTrash /></button>
+        <button @click.prevent="onDelete"><Trash2Icon /></button>
         <RefreshButton :on-refresh="getModels" ref="refresh" />
       </div>
     </div>
@@ -33,17 +33,18 @@
 
 <script setup lang="ts">
 
-import { computed, ref } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import { getChatModels } from '../llms/ollama'
+import { Trash2Icon } from 'lucide-vue-next'
 import { ChatModel, defaultCapabilities, Ollama } from 'multi-llm-ts'
-import Dialog from '../composables/dialog'
-import LlmFactory from '../llms/llm'
+import { computed, ref } from 'vue'
 import defaults from '../../defaults/settings.json'
-import RefreshButton from '../components/RefreshButton.vue'
 import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
+import RefreshButton from '../components/RefreshButton.vue'
+import Dialog from '../composables/dialog'
+import LlmFactory from '../llms/llm'
+import { getChatModels } from '../llms/ollama'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
 
 const baseURL = ref(null)
 const keepAlive = ref('')

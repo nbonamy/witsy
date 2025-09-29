@@ -329,7 +329,7 @@ export default class LlmManagerBase implements ILlmManager {
   
   }
 
-  checkModelListsVersion(): void {
+  checkModelsCapabilities(): void {
 
     // iterate on all engines
     let updated = false

@@ -5,7 +5,7 @@
 
     <div class="panel-header">
       <label>{{ t('agent.run.title') }}</label>
-      <BIconCalendar2X 
+      <CalendarMinus2Icon 
         class="icon delete" 
         v-tooltip="{ text: t('agent.help.deleteRun'), position: 'bottom-left' }" 
         @click="$emit('delete')" 
@@ -60,11 +60,12 @@
 
 <script setup lang="ts">
 
-import { AgentRun } from '../types/index'
-import { computed, ref, onMounted, watch } from 'vue'
-import { t } from '../services/i18n'
+import { CalendarMinus2Icon } from 'lucide-vue-next'
+import { computed, onMounted, ref, watch } from 'vue'
 import MessageItemBody from '../components/MessageItemBody.vue'
-import { BIconCalendar2X } from 'bootstrap-icons-vue'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { AgentRun } from '../types/index'
 
 const props = defineProps({
   agentId: {
@@ -105,7 +106,7 @@ onMounted(() => {
 const loadAgentRun = async () => {
   try {
     clearTimeout(refreshTimeout)
-    run.value = window.api.agents.getRun(props.agentId, props.runId)
+    run.value = window.api.agents.getRun(store.config.workspaceId, props.agentId, props.runId)
     if (run.value.status === 'running') {
       setTimeout(() => {
         loadAgentRun()
@@ -125,10 +126,6 @@ const emit = defineEmits(['delete'])
 </script>
 
 <style scoped>
-
-.run {
-  width: 100%;
-}
 
 .prompt {
   min-height: 5lh;

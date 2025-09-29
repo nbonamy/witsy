@@ -1,6 +1,6 @@
 <template>
   <section v-for="c in chats" :key="c.uuid" :set="chatDay=getDay(c)">
-    <div v-if="chatDay != currDay" :set="currDay = chatDay" class="day">{{ currDay }}</div>
+    <div v-if="store.isFeatureEnabled('chat.dates') && chatDay != currDay" :set="currDay = chatDay" class="day">{{ currDay }}</div>
     <ChatListItem :chat="c" :selection="selection" :active="active" :selectMode="selectMode" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)" :data-day="chatDay" />
   </section>
 </template>
@@ -8,6 +8,7 @@
 <script setup lang="ts">
 
 import { t } from '../services/i18n'
+import { store } from '../services/store'
 import ChatListItem from './ChatListItem.vue'
 import Chat from '../models/chat'
 
@@ -63,16 +64,15 @@ const showContextMenu = (event: MouseEvent, chat: Chat) => {
 <style scoped>
 
 .day {
-  margin: 12px 0 8px;
-  padding: 0 12px;
-  font-size: 9pt;
+  padding: 0.5rem;
+  font-size: 12px;
   font-weight: bold;
   text-transform: uppercase;
   color: var(--sidebar-section-title-color);
 }
 
 section:first-child .day {
-  margin-top: 0;
+  padding-top: 0;
 }
 
 </style>
