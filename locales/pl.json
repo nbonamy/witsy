@@ -1756,6 +1756,7 @@
     "tooltips": {
       "deleteServer": "Usuń serwer",
       "editServer": "Edytuj serwer",
+      "restartServer": "Uruchom ponownie serwer",
       "startServer": "Uruchom serwer",
       "stopServer": "Wstrzymaj serwer",
       "viewLogs": "Pokaż logi serwera",
@@ -2486,6 +2487,12 @@
         "exaApiKey": "Klucz API Exa",
         "getApiKey": "Uzyskaj klucz API",
         "tavilyApiKey": "Klucz API Tavily",
+        "testLocal": {
+          "error": "Błąd podczas wyszukiwania w internecie",
+          "message": "Otworzy się okno, aby wykonać test wyszukiwania. Jeśli wyszukiwanie zakończy się sukcesem, okno zamknie się automatycznie. Jeśli pojawi się monit o weryfikację człowieka, rozwiąż go, zamknij okno ręcznie i spróbuj ponownie.",
+          "success": "Test lokalnego wyszukiwania zakończony pomyślnie",
+          "title": "Test lokalnego wyszukiwania"
+        },
         "title": "Wyszukiwanie w sieci",
         "truncateTo": "Skróć do",
         "truncationWarning": "OSTRZEŻENIE: Długość skrócenia wpłynie na liczbę tokenów wejściowych, a tym samym na koszty żądania."

@@ -183,6 +183,9 @@
         &:has(input[type=checkbox]) {
           gap: 0.125rem;
         }
+        span, a {
+          margin-top: 0px;
+        }
       }
 
       label {

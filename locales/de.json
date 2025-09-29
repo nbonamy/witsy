@@ -1737,6 +1737,7 @@
     "tooltips": {
       "deleteServer": "Server löschen",
       "editServer": "Server bearbeiten",
+      "restartServer": "Server neu starten",
       "startServer": "Server starten",
       "stopServer": "Server pausieren",
       "viewLogs": "Server-Protokolle anzeigen",
@@ -2458,6 +2459,12 @@
         "exaApiKey": "Exa API-Schlüssel",
         "getApiKey": "Holen Sie sich Ihren API-Schlüssel",
         "tavilyApiKey": "Tavily API-Schlüssel",
+        "testLocal": {
+          "error": "Fehler bei der Internetsuche",
+          "message": "Ein Fenster wird geöffnet, um eine Testsuche durchzuführen. Wenn die Suche erfolgreich ist, schließt sich das Fenster automatisch. Wenn Sie eine menschliche Verifikationsabfrage sehen, lösen Sie diese, schließen Sie das Fenster manuell und versuchen Sie es erneut.",
+          "success": "Lokale Suche erfolgreich getestet",
+          "title": "Lokale Suche testen"
+        },
         "title": "Websuche",
         "truncateTo": "Truncate auf",
         "truncationWarning": "WARNUNG: Die Trunkierungslänge beeinflusst die Anzahl der Eingabetokens und damit die Kosten der Anfrage"

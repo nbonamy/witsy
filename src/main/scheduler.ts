@@ -165,6 +165,7 @@ export default class Scheduler {
             const results = localSearch.search(query, num)
             return results
           },
+          test: async () => true,
         },
         
         // @ts-expect-error partial mock

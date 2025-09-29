@@ -20,6 +20,12 @@
       </select>
     </div>
 
+    <div class="form-field horizontal" v-if="engine == 'local'">
+      <button @click="onTestLocal">{{ t('settings.plugins.search.testLocal.title') }}</button>
+      <span v-if="localTestResult === true" class="success">{{ t('settings.plugins.search.testLocal.success') }}</span>
+      <span v-if="localTestResult === false" class="error">{{ t('settings.plugins.search.testLocal.error') }}</span>
+    </div>
+    
     <div class="form-field" v-if="engine == 'exa'">
       <label>{{ t('settings.plugins.search.exaApiKey') }}</label>
       <div class="form-subgroup">
@@ -59,6 +65,7 @@
 import { ref } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import Dialog from '../composables/dialog'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const enabled = ref(false)
@@ -67,6 +74,7 @@ const contentLength = ref(0)
 const tavilyApiKey = ref(null)
 const braveApiKey = ref(null)
 const exaApiKey = ref(null)
+const localTestResult = ref(null)
 
 const load = () => {
   enabled.value = store.config.plugins.search.enabled || false
@@ -75,6 +83,19 @@ const load = () => {
   tavilyApiKey.value = store.config.plugins.search.tavilyApiKey || ''
   braveApiKey.value = store.config.plugins.search.braveApiKey || ''
   exaApiKey.value = store.config.plugins.search.exaApiKey || ''
+}
+
+const onTestLocal = async () => {
+
+  let rc = await Dialog.show({
+    title: t('settings.plugins.search.testLocal.title'),
+    text: t('settings.plugins.search.testLocal.message'),
+    showCancelButton: true,
+  })
+  if (rc.isConfirmed) {
+    localTestResult.value = await window.api.search.test()
+  }
+
 }
 
 const save = () => {
@@ -96,6 +117,14 @@ defineExpose({ load })
 
 .form .form-field .form-subgroup input {
   width: 40px;
+}
+
+.success {
+  color: var(--color-success);
+}
+
+.error {
+  color: var(--color-error);
 }
 
 </style>

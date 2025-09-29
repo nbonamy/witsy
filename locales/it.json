@@ -1737,6 +1737,7 @@
     "tooltips": {
       "deleteServer": "Elimina server",
       "editServer": "Modifica server",
+      "restartServer": "Riavvia il server",
       "startServer": "Avvia server",
       "stopServer": "Metti in pausa il server",
       "viewLogs": "Visualizza log del server",
@@ -2458,6 +2459,12 @@
         "exaApiKey": "Chiave API Exa",
         "getApiKey": "Ottieni la tua chiave API",
         "tavilyApiKey": "Chiave API Tavily",
+        "testLocal": {
+          "error": "Errore durante la ricerca su internet",
+          "message": "Si aprirà una finestra per effettuare un test di ricerca. Se la ricerca ha successo, la finestra si chiuderà automaticamente. Se appare una richiesta di verifica umana, completala, chiudi la finestra manualmente e riprova.",
+          "success": "Test di ricerca locale riuscito",
+          "title": "Test ricerca locale"
+        },
         "title": "Ricerca Web",
         "truncateTo": "Tronca a",
         "truncationWarning": "ATTENZIONE: La lunghezza del troncamento influirà sul numero di token di input e quindi sui costi delle richieste"

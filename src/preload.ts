@@ -226,6 +226,7 @@ contextBridge.exposeInMainWorld(
     },
     search: {
       query: (query: string, num: number = 5): Promise<LocalSearchResult[]> => { return ipcRenderer.invoke(IPC.SEARCH.QUERY, { query, num }) },
+      test: (): Promise<boolean> => { return ipcRenderer.invoke(IPC.SEARCH.TEST) },
     },
     studio: {
       start: (): void => { return ipcRenderer.send(IPC.STUDIO.START) },

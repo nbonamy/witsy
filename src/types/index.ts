@@ -530,6 +530,7 @@ declare global {
       }
       search: {
         query(query: string, num: number): Promise<LocalSearchResult[]>
+        test(): Promise<boolean>
       }
       studio: {
         start(): void

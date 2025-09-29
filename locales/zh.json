@@ -1756,6 +1756,7 @@
     "tooltips": {
       "deleteServer": "删除服务器",
       "editServer": "编辑服务器",
+      "restartServer": "重启服务器",
       "startServer": "启动服务器",
       "stopServer": "暂停服务器",
       "viewLogs": "查看服务器日志",
@@ -2480,6 +2481,12 @@
         "exaApiKey": "Exa API 密钥",
         "getApiKey": "获取你的 API 密钥",
         "tavilyApiKey": "Tavily API 密钥",
+        "testLocal": {
+          "error": "搜索互联网时出错",
+          "message": "将打开一个窗口进行测试搜索。如果搜索成功，窗口将自动关闭。如果您看到人机验证提示，请完成验证，手动关闭窗口并重试。",
+          "success": "本地搜索测试成功",
+          "title": "测试本地搜索"
+        },
         "title": "网络搜索",
         "truncateTo": "截断至",
         "truncationWarning": "警告：截断长度将影响输入令牌数量，从而影响请求成本"
