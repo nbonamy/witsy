@@ -1,4 +1,4 @@
-import { GenerateContentConfig } from '@google/genai';
+import { GenerateContentConfig } from '@google/genai'
 import { ChatModel, Google, LlmCompletionOpts } from 'multi-llm-ts'
 
 export default class GoogleEngine extends Google {
