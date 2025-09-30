@@ -50,6 +50,7 @@ vi.mock('electron', async () => {
   })
   BrowserWindow.prototype.webContents = {
     on: vi.fn(),
+    once: vi.fn(),
     send: vi.fn(),
     setWindowOpenHandler: vi.fn(),
     capturePage: vi.fn(() => ({

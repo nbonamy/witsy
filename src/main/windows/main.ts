@@ -192,12 +192,14 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   }
 
   // notify
-  mainWindow.webContents.send('window-opened');
-  
+  mainWindow.webContents.once('did-finish-load', () => {
+    mainWindow.webContents.send('window-opened');
+  });
+
   // record
   firstOpen = false;
 
-};
+}
 
 // only available for test purposes
 export const closeMainWindow = (): void => {
