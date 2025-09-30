@@ -84,8 +84,8 @@ const vision_models = computed(() => {
 const load = () => {
   // vertexai.value = store.config.engines.google?.googleVertexAI || false
   apiKey.value = store.config.engines.google?.apiKey || ''
-  project.value = store.config.engines.google?.googleVertexProject || ''
-  location.value = store.config.engines.google?.googleVertexLocation || ''
+  // project.value = store.config.engines.google?.googleVertexProject || ''
+  // location.value = store.config.engines.google?.googleVertexLocation || ''
   chat_models.value = store.config.engines.google?.models?.chat || []
   chat_model.value = store.config.engines.google?.model?.chat || ''
   vision_model.value = store.config.engines.google?.model?.vision || ''
@@ -121,8 +121,8 @@ const onKeyChange = () => {
 const save = () => {
   // store.config.engines.google.googleVertexAI = vertexai.value
   store.config.engines.google.apiKey = apiKey.value
-  store.config.engines.google.googleVertexProject = project.value
-  store.config.engines.google.googleVertexLocation = location.value
+  // store.config.engines.google.googleVertexProject = project.value
+  // store.config.engines.google.googleVertexLocation = location.value
   store.config.engines.google.model.chat = chat_model.value
   store.config.engines.google.model.vision = vision_model.value
   store.config.engines.google.disableTools = disableTools.value
