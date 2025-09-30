@@ -124,17 +124,27 @@ export const initializeWorkspace = (app: App, workspaceId: string): void => {
 
 }
 
+export const migrateHistoryImagePaths = (history: string, workspaceId: string, platform: string = process.platform): string => {
+  if (platform === 'win32') {
+    const r = /file:\/\/(.*?)(\\*)Witsy(\\*)images(\\*)(.*?)/g
+    return history.replaceAll(r, `file://$1$3Witsy$3workspaces${'$3'}${workspaceId}$3images$3$5`)
+  } else {
+    const r = /file:\/\/(.*)\/Witsy\/images\/(.*?)/g
+    return history.replaceAll(r, `file://$1/Witsy/workspaces/${workspaceId}/images/$2`)
+  }
+}
+
 export const migrateExistingItemsToWorkspace = (app: App, workspaceId: string): boolean => {
-  
+
   const userDataPath = app.getPath('userData')
   const itemsToMigrate = [
     { src: path.join(userDataPath, 'agents'), dest: agentsDirPath(app, workspaceId) },
     { src: path.join(userDataPath, 'images'), dest: attachmentsFilePath(app, workspaceId) },
     { src: path.join(userDataPath, 'history.json'), dest: historyFilePath(app, workspaceId) }
   ]
-  
+
   let migrationOccurred = false
-  
+
   try {
     for (const item of itemsToMigrate) {
       if (fs.existsSync(item.src) && !fs.existsSync(item.dest)) {
@@ -167,15 +177,9 @@ export const migrateExistingItemsToWorkspace = (app: App, workspaceId: string): 
     const historyFile = historyFilePath(app, workspaceId)
     if (fs.existsSync(historyFile)) {
       try {
-        let history = fs.readFileSync(historyFile, 'utf8')
-        if (process.platform === 'win32') {
-          const r = /file:\/\/(.*?)(\\*)Witsy(\\*)images(\\*)(.*?)/g
-          history = history.replaceAll(r, `file://$1$3Witsy$3workspaces${'$3'}${workspaceId}$3images$3$5`)
-        } else {
-          const r = /"file:\/\/(.*)\/Witsy\/images\/(.*?)"/g
-          history = history.replaceAll(r, `"file://$1/Witsy/workspaces/${workspaceId}/images/$2"`)
-        }
-        fs.writeFileSync(historyFile, history)
+        const history = fs.readFileSync(historyFile, 'utf8')
+        const migratedHistory = migrateHistoryImagePaths(history, workspaceId)
+        fs.writeFileSync(historyFile, migratedHistory)
       } catch (error) {
         console.error(`Failed to migrate history.json for workspace ${workspaceId}:`, error)
       }
