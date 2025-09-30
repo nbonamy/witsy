@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - Added keep-alive on ollama embeddings (https://github.com/nbonamy/witsy/issues/425)
 - Scopes from OAuth protected resource metadata should be used for DCR (https://github.com/nbonamy/witsy/issues/420)
 - Window freezing (when streaming is enabled) when response text is long (https://github.com/nbonamy/witsy/issues/426)
+- API Key label displayed with Google selected in Video plugin settings
 
 ### Removed
 - N/A
