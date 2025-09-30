@@ -107,7 +107,7 @@ const onChangeFontSize = () => {
 
 .form {
 
-  background-color: var(--dialog-header-bg-color);
+  background-color: var(--background-color);
 
   .toolbar {
 
