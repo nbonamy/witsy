@@ -11,7 +11,11 @@
       </div>
     </div>
     <div class="panel-body" ref="panelBody">
-      <iframe sandbox="allow-scripts allow-same-origin allow-forms" v-if="isHtml && previewHtml" :srcdoc="html" style="width: 100%; height: 400px; border: none;" />
+
+      <template v-if="isHtml">
+        <iframe ref="htmlIframe" sandbox="allow-scripts allow-same-origin allow-forms" v-if="previewHtml && (!transient || headComplete)" :srcdoc="html" style="width: 100%; border: none;" />
+        <div v-else class="html-loading">{{ t('common.htmlGeneration') }}</div>
+      </template>
       <MessageItemBody :message="message" show-tool-calls="never" v-else />
     </div>
 
@@ -32,7 +36,7 @@
 
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, EyeOffIcon, ScanEyeIcon } from 'lucide-vue-next'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Message from '../models/message'
 import { exportToPdf } from '../services/pdf'
@@ -47,6 +51,9 @@ const htmlRenderingDelayPassed = ref(false)
 const copying = ref(false)
 const downloadButton = ref<HTMLElement>(null)
 const panelBody = ref<HTMLElement>(null)
+const htmlIframe = ref<HTMLIFrameElement>(null)
+const headComplete = ref(false)
+const initialHtmlWithListener = ref('')
 const showDownloadMenu = ref(false)
 const downloadMenuX = ref(0)
 const downloadMenuY = ref(0)
@@ -99,12 +106,7 @@ const isHtml = computed(() => {
 
 const message = computed(() => new Message('assistant', props.content))
 
-const html = computed(() => {
-  // Show loading message during delay period for HTML content
-  if (isHtml.value && !htmlRenderingDelayPassed.value) {
-    return `<html><body style="display: flex; align-items: center; justify-content: center; height: 100vh; font-family: system-ui; color: #666;">${t('common.htmlGeneration')}</body></html>`
-  }
-
+const extractHtmlContent = () => {
   const content = props.content.trim()
   if (content.startsWith('```html') && content.endsWith('```')) {
     return content.slice(8, -3).trim()
@@ -120,9 +122,96 @@ const html = computed(() => {
     return content
   }
   return ''
+}
+
+const extractBodyContent = (htmlContent: string) => {
+  const bodyStart = htmlContent.indexOf('<body')
+  if (bodyStart === -1) return ''
+  const bodyTagEnd = htmlContent.indexOf('>', bodyStart)
+  if (bodyTagEnd === -1) return ''
+  const bodyEnd = htmlContent.lastIndexOf('</body>')
+  if (bodyEnd === -1) return htmlContent.slice(bodyTagEnd + 1)
+  return htmlContent.slice(bodyTagEnd + 1, bodyEnd)
+}
+
+const html = computed(() => {
+  // Non-transient: return full HTML content
+  if (!props.transient) {
+    return extractHtmlContent()
+  }
+
+  // Transient: wait for head to complete
+  if (!headComplete.value) {
+    return '' // No iframe yet
+  }
+
+  // Transient with head complete: return cached HTML with listener
+  return initialHtmlWithListener.value
 })
 
+const adjustIframeHeight = () => {
+  if (!htmlIframe.value || !htmlIframe.value.contentDocument) return
+
+  const offsetHeight = htmlIframe.value.contentDocument.documentElement.offsetHeight
+  if (offsetHeight > 0) {
+    htmlIframe.value.style.height = offsetHeight + 'px'
+  }
+}
+
+const updateIframeContent = () => {
+  const htmlContent = extractHtmlContent()
+  if (!htmlContent) return
+
+  // Check if head is complete (contains </head>)
+  if (!headComplete.value && htmlContent.includes('</head>')) {
+    const listenerScript = `
+  <script type="module">
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'update') {
+        document.body.innerHTML = event.data.body;
+      }
+    });
+  <\/script>
+  `
+
+    // Extract everything up to and including </head>
+    const headEndIndex = htmlContent.indexOf('</head>') + 7
+    const headSection = htmlContent.substring(0, headEndIndex)
+
+    // Inject listener before </head> and add empty body
+    const htmlWithListener = headSection.replace('</head>', listenerScript + '</head>')
+    initialHtmlWithListener.value = htmlWithListener + '<body></body></html>'
+
+    headComplete.value = true
+
+    // Adjust height after iframe renders
+    setTimeout(() => adjustIframeHeight(), 50)
+    return
+  }
+
+  // Send body updates via postMessage
+  if (headComplete.value) {
+    if (!htmlIframe.value || !htmlIframe.value.contentWindow) return
+
+    const bodyContent = extractBodyContent(htmlContent)
+    htmlIframe.value.contentWindow.postMessage(
+      { type: 'update', body: bodyContent },
+      '*'
+    )
+
+    // Adjust height after content updates
+    setTimeout(() => adjustIframeHeight(), 50)
+  }
+}
+
 let delayTimeout: NodeJS.Timeout | null = null
+let resizeTimeout: NodeJS.Timeout | null = null
+
+const handleResize = () => {
+  if (!htmlIframe.value) return
+  if (resizeTimeout) clearTimeout(resizeTimeout)
+  resizeTimeout = setTimeout(() => adjustIframeHeight(), 100)
+}
 
 const setupHtmlDelay = () => {
   if (!props.transient) {
@@ -152,6 +241,7 @@ onMounted(() => {
   watch(() => props.content, () => {
     if (props.transient) {
       setupHtmlDelay()
+      updateIframeContent()
     }
   })
 
@@ -165,11 +255,33 @@ onMounted(() => {
         delayTimeout = null
       }
       htmlRenderingDelayPassed.value = true
+      // Adjust height for non-transient HTML
+      setTimeout(() => adjustIframeHeight(), 100)
     } else {
       // Message became transient (shouldn't happen normally, but handle it)
       setupHtmlDelay()
     }
   })
+
+  // Watch for iframe to appear (for non-transient messages)
+  watch(htmlIframe, (newIframe) => {
+    if (newIframe && !props.transient) {
+      // Adjust height after iframe loads
+      setTimeout(() => adjustIframeHeight(), 100)
+    }
+  })
+
+  // For non-transient messages on mount
+  if (!props.transient && isHtml.value) {
+    setTimeout(() => adjustIframeHeight(), 100)
+  }
+
+  // Adjust height on window resize (with debounce)
+  window.addEventListener('resize', handleResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
 })
 
 const content = () => {
@@ -312,7 +424,7 @@ const onDownloadFormat = async (action: string) => {
 <style scoped>
 
 .panel.artifact {
-  
+
   margin: 1rem 0rem;
   padding: 0rem;
   background-color: var(--background-color);
@@ -333,10 +445,16 @@ const onDownloadFormat = async (action: string) => {
     }
   }
 
+  &:has(.panel-body iframe) {
+    gap: 0rem;
+  }
+
   .panel-body {
     padding: 1rem;
     padding-top: 0.25rem;
     padding-bottom: 0rem;
+    min-height: 300px;
+    overflow: hidden;
 
     &:has(iframe) {
       padding: 0rem;
@@ -352,8 +470,18 @@ const onDownloadFormat = async (action: string) => {
       }
     }
 
+  .html-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: var(--dimmed-text-color);
+  }
+
     iframe {
-      height: 500px !important;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+      overflow: hidden;
     }
   }
 }

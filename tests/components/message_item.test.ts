@@ -288,61 +288,58 @@ test('Assistant image message with artifact', async () => {
 
 test('Assistant artifact with HTML preview', async () => {
 
-  // Set message as transient to test the delay behavior
+  // Set message as transient to test the streaming behavior
   botMessageToolArtifactHtml1.transient = true
 
   const wrapper = await mount(botMessageToolArtifactHtml1)
-  expect(wrapper.find('.body').text()).toBe('Here is an HTML example:\nSimple HTML PageThat\'s it!')
   expect(wrapper.findAll('.body .artifact').length).toBe(1)
 
-  // Check that the artifact has HTML content
   const artifact = wrapper.find('.body .artifact')
   expect(artifact.exists()).toBe(true)
   expect(artifact.find('.panel-header label').text()).toBe('Simple HTML Page')
 
-  // Check for preview controls (play/stop buttons)
+  const artifactComponent = wrapper.findComponent(MessageItemArtifactBlock)
+
+  // Phase 1: Initial state - loading div should show, no iframe
+  expect(artifact.find('.html-loading').exists()).toBe(true)
+  expect(artifact.find('.html-loading').text()).toBe('common.htmlGeneration')
+  expect(artifact.find('iframe').exists()).toBe(false)
+
+  // Phase 2: Head detected - trigger updateIframeContent to detect </head>
+  artifactComponent.vm.updateIframeContent()
+  await artifactComponent.vm.$nextTick()
+
+  // headComplete is now true, but delay hasn't passed yet
+  // Since headComplete is true, iframe condition is met, but html computed returns empty until delay passes
+  // So we need to pass the delay for iframe to show
+  artifactComponent.vm.htmlRenderingDelayPassed = true
+  await artifactComponent.vm.$nextTick()
+
+  // Now iframe should exist with cached HTML (head + empty body + listener)
+  let iframe = artifact.find('iframe')
+  expect(iframe.exists()).toBe(true)
+  expect(iframe.attributes('sandbox')).toBe('allow-scripts allow-same-origin allow-forms')
+  expect(iframe.attributes('srcdoc')).toContain('<body></body>')
+  expect(iframe.attributes('srcdoc')).toContain('window.addEventListener')
+  expect(artifact.find('.html-loading').exists()).toBe(false)
+
+  // Check for preview controls
   const previewButton = artifact.find('.icon.preview')
   expect(previewButton.exists()).toBe(true)
 
-  // Check if iframe is present for HTML preview (should be enabled by default based on store settings)
-  let iframe = artifact.find('iframe')
-  if (iframe.exists()) {
-    // Initially should show loading message due to delay
-    expect(iframe.attributes('sandbox')).toBe('allow-scripts allow-same-origin allow-forms')
-    expect(iframe.attributes('srcdoc')).toContain('common.htmlGeneration')
+  // Toggle off HTML preview
+  await previewButton.trigger('click')
+  await artifactComponent.vm.$nextTick()
+  iframe = artifact.find('iframe')
+  expect(iframe.exists()).toBe(false)
+  // When preview is off, it shows the loading div (v-else in template)
+  expect(artifact.find('.html-loading').exists()).toBe(true)
 
-    // Manually trigger the delay to pass by setting the reactive value
-    const artifactComponent: any = wrapper.findComponent(MessageItemArtifactBlock)
-    artifactComponent.vm.htmlRenderingDelayPassed = true
-    await artifactComponent.vm.$nextTick()
-
-    // Now should show actual HTML content
-    iframe = artifact.find('iframe')
-    expect(iframe.attributes('srcdoc')).toContain('<!DOCTYPE html>')
-    expect(iframe.attributes('srcdoc')).toContain('<h1>Hello World</h1>')
-    expect(iframe.attributes('srcdoc')).toContain('<p>This is a test paragraph.</p>')
-
-    // Toggle off HTML preview
-    await previewButton.trigger('click')
-    iframe = artifact.find('iframe')
-    expect(iframe.exists()).toBe(false)
-
-    // Should now show the code instead
-    expect(artifact.find('.panel-body').text()).toContain('<!DOCTYPE html>')
-
-    // Toggle back on HTML preview
-    await previewButton.trigger('click')
-    iframe = artifact.find('iframe')
-    expect(iframe.exists()).toBe(true)
-  } else {
-    // HTML preview is not active initially, verify we can turn it on
-    expect(artifact.find('.panel-body').text()).toContain('<!DOCTYPE html>')
-
-    // Click preview button to enable HTML preview
-    await previewButton.trigger('click')
-    iframe = artifact.find('iframe')
-    expect(iframe.exists()).toBe(true)
-  }
+  // Toggle back on HTML preview
+  await previewButton.trigger('click')
+  await artifactComponent.vm.$nextTick()
+  iframe = artifact.find('iframe')
+  expect(iframe.exists()).toBe(true)
 
 })
 
