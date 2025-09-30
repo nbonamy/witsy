@@ -68,7 +68,7 @@ function onClick() {
       margin: 0;
       color: var(--color-on-surface-variant);
       font-family: Inter;
-      font-size: 12px;
+      font-size: 13px;
       font-style: normal;
       font-weight: 400;
       line-height: 16px;
