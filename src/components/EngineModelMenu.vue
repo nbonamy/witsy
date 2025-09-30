@@ -42,15 +42,7 @@
     <template v-for="engine in availableEngines" :key="`${engine}-submenu`" #[`engine-${engine}`]="{ withFilter }">
       {{ withFilter(true) }}
       <div v-for="model in getEngineModels(engine)" :key="model.id" class="model-item" @click="handleModelClick(engine, model.id)" >
-        <div class="model-info">
-          <div class="model-name">{{ model.name }}</div>
-          <div class="model-id">{{ model.id }}</div>
-        </div>
-        <div class="model-capabilities">
-          <span v-if="model.capabilities?.vision" class="capability" title="Vision">👁️</span>
-          <span v-if="model.capabilities?.tools" class="capability" title="Tools">🔧</span>
-          <span v-if="model.capabilities?.reasoning" class="capability" title="Reasoning">🧠</span>
-        </div>
+        {{ model.name }}
       </div>
     </template>
   </ContextMenuPlus>
@@ -209,50 +201,9 @@ const handleModelClick = (engine: string, model: string) => {
 }
 
 .model-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.25rem 0rem;
-  cursor: pointer;
-  font-size: 13.5px;
-}
-
-.model-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
-  gap: 0.125rem;
-}
-
-.model-name {
+  display: block;
+  padding: 0.75rem 1rem;
   font-weight: var(--font-weight-medium);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.model-id {
-  display: none;
-  opacity: 0.6;
-  font-size: 0.85em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.model-capabilities {
-  display: none;
-  gap: 0.25rem;
-  flex-shrink: 0;
-}
-
-.capability {
-  font-size: 0.75em;
-  opacity: 0.7;
-}
-
-.capability:hover {
-  opacity: 1;
-}
 </style>

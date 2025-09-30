@@ -19,12 +19,12 @@
       
       <div class="actions" ref="list">        
         <!-- Show main menu or submenu content -->
-        <div v-if="!currentSubmenu">
+        <template v-if="!currentSubmenu">
           <slot :filter="filter" :selected="selected" :withFilter="setSubmenuFilter" />
-        </div>
-        <div v-else>
+        </template>
+        <template v-else>
           <slot :name="currentSubmenu" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
-        </div>
+        </template>
       </div>
       
       <!-- Footer section -->
@@ -566,6 +566,12 @@ defineExpose({
   margin: 0;
 }
 
+:deep(.item span) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 :deep(.item .icon) {
   margin-right: 0.25rem;
   width: var(--icon-lg);
@@ -587,14 +593,10 @@ defineExpose({
   border-radius: 0.375rem;
 } */
 
-:deep(.item .chevron) {
-  margin-left: auto;
-  padding-left: 2rem;
-}
-
 :deep(.item .chevron-icon) {
+  flex-shrink: 0;
   margin-left: auto;
-  padding-left: 2rem;
+  padding-left: 1rem;
   display: flex;
   align-items: center;
   opacity: 0.6;
