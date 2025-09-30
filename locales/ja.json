@@ -199,40 +199,6 @@
   },
   "agent": {
     "create": {
-      "generator": {
-        "describe": "エージェントの説明",
-        "description": "あなたのエージェントを自然言語で説明すると、AIが自動で完全な設定を生成します。",
-        "error": {
-          "description": "希望するエージェントの説明を入力してください。",
-          "generation": "エージェント設定の生成に失敗しました。再試行するか手動で作成してください。",
-          "unexpected": "生成中に予期しないエラーが発生しました。再度お試しください。"
-        },
-        "generate": "エージェントを作成",
-        "generating": {
-          "subtitle": "ご要望を分析し最適なツールを選択するため、しばらくお待ちください。",
-          "title": "エージェントを生成中..."
-        },
-        "help": {
-          "describe": "エージェントにしてほしいことをわかりやすい英語で説明してください。できるだけ詳しく、エージェントの目的や行動方法を含めてください。",
-          "model": "エージェント設定の生成に使用するAIモデルを選択してください。空欄にすると最適なモデルが自動選択されます。"
-        },
-        "model": "生成モデル（任意）",
-        "modelOptions": {
-          "auto": "🤖 最適モデルを自動選択"
-        },
-        "placeholder": "例：ウェブで情報を検索し、発見した内容をファイルに保存し、データのPythonによる可視化を生成できるリサーチアシスタントを作成してください。回答は詳細かつ簡潔であるべきです。",
-        "preview": {
-          "steps": "ワークフローステップ"
-        },
-        "review": "エージェントを確認する",
-        "skip": "スキップして手動で作成",
-        "success": {
-          "subtitle": "以下でエージェントの設定を確認し、その後ウィザードを続行してください。",
-          "title": "エージェントが正常に生成されました！"
-        },
-        "title": "エージェントジェネレーター",
-        "tryAgain": "再試行"
-      },
       "goal": {
         "title": "エージェントの目標"
       },
@@ -2306,7 +2272,12 @@
       "getApiKey": "APIキーを取得する",
       "google": {
         "aboutModels": "Googleモデルについてさらに詳しく",
-        "pricing": "Googleの料金"
+        "api": "Google API",
+        "gemini": "Gemini",
+        "location": "Location",
+        "pricing": "Googleの料金",
+        "project": "Project ID",
+        "vertexai": "Vertex AI"
       },
       "groq": {
         "aboutModels": "Groqモデルについてさらに詳しく",
@@ -2689,7 +2660,7 @@
     "notification": {
       "darwin": "メニューバーの万年筆アイコンから@:{'common.appName'}を起動できます。",
       "linux": "メニューバーの万年筆アイコンから@:{'common.appName'}を起動できます。",
-      "windows": "システムトレイの万年筆アイコンから@:{'common.appName'}を起動できます。"
+      "win32": "システムトレイの万年筆アイコンから@:{'common.appName'}を起動できます。"
     }
   },
   "workspace": {
