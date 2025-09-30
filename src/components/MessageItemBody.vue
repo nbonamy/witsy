@@ -22,7 +22,8 @@
 <script setup lang="ts">
 
 import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
-import { computed, inject, onMounted, PropType, ref } from 'vue'
+import { computed, inject, onMounted, PropType, ref, watch } from 'vue'
+import useEventBus from '../composables/event_bus'
 import Message from '../models/message'
 import { t } from '../services/i18n'
 import { closeOpenMarkdownTags, getCodeBlocks } from '../services/markdown'
@@ -30,7 +31,6 @@ import { store } from '../services/store'
 import { ChatToolMode } from '../types/config'
 import MessageItemBodyBlock, { Block } from './MessageItemBodyBlock.vue'
 
-import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 const showReasoning = inject('showReasoning', ref(store.config.appearance.chat.showReasoning))
@@ -38,6 +38,10 @@ const userToggleReasoning = inject('onToggleReasoning', (value: boolean) => {
   store.config.appearance.chat.showReasoning = value
   store.saveSettings()
 })
+
+const cachedContentBlocks = ref<Block[]>([])
+let isComputing = false
+let needsRecompute = false
 
 const props = defineProps({
   message: {
@@ -59,12 +63,18 @@ const reasoningBlocks = computed((): Block[] => {
 })
 
 const contentBlocks = computed((): Block[] => {
+  
+  // Return cached blocks if available
+  if (cachedContentBlocks.value.length > 0) {
+    return cachedContentBlocks.value
+  }
+
+  // Immediate computation for initial render
   const blocks = computeBlocks(props.message.content)
   if (blocks.length === 0 && !props.message.transient) {
     return [{ type: 'empty' }]
-  } else {
-    return blocks
   }
+  return blocks
 })
 
 const onToggleReasoning = () => {
@@ -73,10 +83,44 @@ const onToggleReasoning = () => {
   emitEvent('toggle-reasoning', showReasoning.value)
 }
 
+const performComputation = async () => {
+  
+  if (isComputing) {
+    needsRecompute = true
+    return
+  }
+
+  isComputing = true
+  needsRecompute = false
+
+  // Use nextTick to ensure this runs asynchronously
+  await new Promise(resolve => setTimeout(resolve, 0))
+
+  const blocks = computeBlocks(props.message.content)
+  if (blocks.length === 0 && !props.message.transient) {
+    cachedContentBlocks.value = [{ type: 'empty' }]
+  } else {
+    cachedContentBlocks.value = blocks
+  }
+
+  isComputing = false
+
+  // If content changed during computation, recompute
+  if (needsRecompute) {
+    performComputation()
+  }
+}
+
 onMounted(() => {
+
   onEvent('toggle-reasoning', (value: boolean) => {
     showReasoning.value = value
-  })  
+  })
+
+  watch(() => props.message.content, () => {
+    performComputation()
+  })
+
 })
 
 const emits = defineEmits(['media-loaded'])
