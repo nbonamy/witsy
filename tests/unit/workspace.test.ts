@@ -268,11 +268,11 @@ describe('migrateExistingItemsToWorkspace', () => {
 
   test('should continue migration even if some items fail', () => {
     const workspaceId = DEFAULT_WORKSPACE_ID
-    
+
     // Set up existing sources
     existingSources = ['agents', 'commands.json', 'experts.json']
     existingDestinations = []
-    
+
     // Mock renameSync to fail for one item
     vi.mocked(fs.renameSync).mockImplementation((oldPath: fs.PathLike, newPath: fs.PathLike) => {
       if (oldPath.toString().includes('commands.json')) {
@@ -280,12 +280,12 @@ describe('migrateExistingItemsToWorkspace', () => {
       }
       renamedItems.push({ from: oldPath.toString(), to: newPath.toString() })
     })
-    
+
     const result = workspace.migrateExistingItemsToWorkspace(app, workspaceId)
-    
+
     expect(result).toBe(true)
     expect(renamedItems).toHaveLength(1)
-    
+
     const agentMove = renamedItems.find(r => r.from.includes('agents'))
     expect(agentMove).toBeDefined()
 
@@ -293,4 +293,41 @@ describe('migrateExistingItemsToWorkspace', () => {
     expect(expertsMove).toBeUndefined()
 
   })
+})
+
+describe('migrateHistoryImagePaths', () => {
+
+  test('should migrate Windows-style paths with backslashes', () => {
+    const darwinInput = `
+      "content": "[Title](file:///Users/username/Library/Application Support/Witsy/images/image-id.png)",
+      "url": "file:///Users/username/Library/Application Support/Witsy/images/image-id.png"
+    `
+    const darwinOutput = `
+      "content": "[Title](file:///Users/username/Library/Application Support/Witsy/workspaces/0000-0000/images/image-id.png)",
+      "url": "file:///Users/username/Library/Application Support/Witsy/workspaces/0000-0000/images/image-id.png"
+    `
+
+    const win32Input = `
+      "content": "[Title](file://C:\\\\Users\\\\username\\\\AppData\\\\Roaming\\\\Witsy\\\\images\\\\image-id.png)",
+      "url": "file://C:\\Users\\username\\AppData\\Roaming\\Witsy\\images\\image-id.png"
+    `
+
+    const win32Output = `
+      "content": "[Title](file://C:\\\\Users\\\\username\\\\AppData\\\\Roaming\\\\Witsy\\\\workspaces\\\\0000-0000\\\\images\\\\image-id.png)",
+      "url": "file://C:\\Users\\username\\AppData\\Roaming\\Witsy\\workspaces\\0000-0000\\images\\image-id.png"
+    `
+
+    expect(workspace.migrateHistoryImagePaths(darwinInput, '0000-0000', 'darwin')).toBe(darwinOutput)
+    expect(workspace.migrateHistoryImagePaths(win32Input, '0000-0000', 'win32')).toBe(win32Output)
+
+    if (process.platform === 'win32') {
+      expect(workspace.migrateHistoryImagePaths(darwinInput, '0000-0000')).toBe(darwinInput)
+      expect(workspace.migrateHistoryImagePaths(win32Input, '0000-0000')).toBe(win32Output)
+    } else {
+      expect(workspace.migrateHistoryImagePaths(darwinInput, '0000-0000')).toBe(darwinOutput)
+      expect(workspace.migrateHistoryImagePaths(win32Input, '0000-0000')).toBe(win32Input)
+    }
+
+  })
+
 })
