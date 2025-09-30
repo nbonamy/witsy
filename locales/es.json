@@ -180,40 +180,6 @@
   },
   "agent": {
     "create": {
-      "generator": {
-        "describe": "Descripción del Agente",
-        "description": "Describe tu agente en lenguaje natural y deja que la IA genere una configuración completa automáticamente.",
-        "error": {
-          "description": "Por favor proporciona una descripción del agente deseado.",
-          "generation": "Error al generar la configuración del agente. Por favor, inténtalo de nuevo o créalo manualmente.",
-          "unexpected": "Ocurrió un error inesperado durante la generación. Por favor, inténtalo de nuevo."
-        },
-        "generate": "Crear mi agente",
-        "generating": {
-          "subtitle": "Esto puede tardar unos momentos mientras analizamos tus requisitos y seleccionamos las mejores herramientas.",
-          "title": "Generando tu agente..."
-        },
-        "help": {
-          "describe": "Describe lo que quieres que haga tu agente en un inglés sencillo. Sé lo más detallado posible: incluye el propósito del agente y cómo quieres que se comporte.",
-          "model": "Selecciona qué modelo de IA usar para generar la configuración de tu agente. Déjalo en blanco para la selección automática del mejor modelo disponible."
-        },
-        "model": "Modelo de Generación (Opcional)",
-        "modelOptions": {
-          "auto": "🤖 Selección automática del mejor modelo"
-        },
-        "placeholder": "Ejemplo: Crea un asistente de investigación que pueda buscar información en la web, guardar los hallazgos en archivos y generar visualizaciones en Python de los datos. Debe ser exhaustivo pero conciso en sus respuestas.",
-        "preview": {
-          "steps": "Pasos del flujo de trabajo"
-        },
-        "review": "Revisar mi agente",
-        "skip": "Omitir y crear manualmente",
-        "success": {
-          "subtitle": "Revise la configuración de su agente a continuación, luego continúe con el asistente.",
-          "title": "¡Agente generado con éxito!"
-        },
-        "title": "Generador de Agentes",
-        "tryAgain": "Intentar de nuevo"
-      },
       "goal": {
         "title": "Objetivo del Agente"
       },
@@ -2284,7 +2250,12 @@
       "getApiKey": "Obtenga su clave API",
       "google": {
         "aboutModels": "Más sobre los modelos de Google",
-        "pricing": "Precios de Google"
+        "api": "Google API",
+        "gemini": "Gemini",
+        "location": "Location",
+        "pricing": "Precios de Google",
+        "project": "Project ID",
+        "vertexai": "Vertex AI"
       },
       "groq": {
         "aboutModels": "Más sobre los modelos de Groq",
@@ -2661,7 +2632,7 @@
     "notification": {
       "darwin": "Puedes activar @:{'common.appName'} desde el ícono de pluma fuente en la barra de menú.",
       "linux": "Puedes activar @:{'common.appName'} desde el ícono de pluma fuente en la barra de menú.",
-      "windows": "Puedes activar @:{'common.appName'} desde el ícono de pluma fuente en la bandeja del sistema."
+      "win32": "Puedes activar @:{'common.appName'} desde el ícono de pluma fuente en la bandeja del sistema."
     }
   },
   "workspace": {
