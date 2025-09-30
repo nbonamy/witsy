@@ -59,7 +59,7 @@ export const titleBarOptions = (opts?: any): BrowserWindowConstructorOptions => 
       // windows
       symbolColor: nativeTheme.shouldUseDarkColors ? '#fff' : '#000',
       // windows
-      height: process.platform === 'win32' ? opts.height : undefined,
+      height: process.platform === 'win32' ? opts.height - 1 : undefined,
     },
     trafficLightPosition: { x: 12, y: 16 },
   }
