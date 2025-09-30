@@ -17,11 +17,12 @@
       </select>
     </div>
 
-    <div class="form-field">
+    <div class="form-field" v-if="['falai', 'replicate'].includes(engine)">
       <label>{{ t('settings.engines.apiKey') }}</label>
-        <InputObfuscated v-if="engine === 'falai'" v-model="falaiAPIKey" @blur="save" />
-        <InputObfuscated v-if="engine === 'replicate'" v-model="replicateAPIKey" @blur="save" />
+      <InputObfuscated v-if="engine === 'falai'" v-model="falaiAPIKey" @blur="save" />
+      <InputObfuscated v-if="engine === 'replicate'" v-model="replicateAPIKey" @blur="save" />
     </div>
+
     <div class="form-field">
       <label>{{ t('settings.plugins.video.videoModel') }}</label>
       <div class="form-subgroup">
