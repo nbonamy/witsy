@@ -35,7 +35,7 @@
       </div>
       
       <div v-if="enableAttachments" class="attachments" @click="handleAttachmentClick" >
-        <PaperclipIcon class="icon" /> {{ t('prompt.menu.attach.title') }}
+        <PaperclipIcon class="icon" />{{ t('prompt.menu.attach.title') }}
       </div>
       
     </template>
@@ -43,7 +43,7 @@
     <template #expertsSubmenu="{ withFilter }">
       {{ withFilter(true) }}
       <div v-for="expert in expertsMenuItems" :key="expert.id" @click="handleExpertClick(expert.id)" >
-        <BrainIcon class="icon" /> {{ expert.name }}
+        <BrainIcon class="icon" /><span>{{ expert.name }}</span>
       </div>
     </template>
 
@@ -56,7 +56,7 @@
     <template #docReposSubmenu="{ withFilter }">
       {{ withFilter(true) }}
       <div v-for="docRepo in docReposMenuItems" :key="docRepo.uuid" @click="handleDocRepoClick(docRepo.uuid)" >
-        <LightbulbIcon class="icon" /> {{ docRepo.name }}
+        <LightbulbIcon class="icon" /><span>{{ docRepo.name }}</span>
       </div>
     </template>
 
@@ -69,13 +69,13 @@
     <template #instructionsSubmenu="{ withFilter }">
       {{ withFilter(true) }}
       <div @click="handleInstructionsClick('null')" >
-        {{ t('prompt.instructions.default') }}
+        <span>{{ t('prompt.instructions.default') }}</span>
       </div>
       <div v-for="instructionId in instructionIds" :key="instructionId" @click="handleInstructionsClick(instructionId)" >
-        {{ t(`settings.llm.instructions.${instructionId}`) }}
+        <span>{{ t(`settings.llm.instructions.${instructionId}`) }}</span>
       </div>
       <div v-for="custom in customInstructions" :key="custom.id" @click="handleInstructionsClick(`custom:${custom.id}`)" >
-        {{ custom.label }}
+        <span>{{ custom.label }}</span>
       </div>
     </template>
 
@@ -83,12 +83,12 @@
       {{ withFilter(true) }}
       <div class="plugin-group" data-submenu-slot="pluginsSubMenu">
         <input type="checkbox" :checked="pluginsStatusComputed === 'all'" :data-indeterminate="pluginsStatusComputed === 'some'" @click.stop="handlePluginsClick()" />
-        {{ t('prompt.menu.tools.plugins') }}
+        <span>{{ t('prompt.menu.tools.plugins') }}</span>
       </div>
       <template v-for="serverWithTools in mcpServersWithTools" :key="serverWithTools.uuid">
         <div v-if="serverWithTools.tools.length > 0" class="server-group" :data-submenu-slot="`tools-${serverWithTools.uuid}`">
           <input type="checkbox" :checked="serverToolsStatus(serverWithTools) === 'all'" :data-indeterminate="serverToolsStatus(serverWithTools) === 'some'" @click.stop="handleServerToolsClick(serverWithTools)" />
-          {{ getServerDisplayName(serverWithTools) }}
+          <span>{{ getServerDisplayName(serverWithTools) }}</span>
         </div>
       </template>
     </template>
@@ -108,7 +108,7 @@
       {{ withFilter(true) }}
       <div v-for="plugin in enabledPlugins(store.config)" :key="plugin" :data-id="plugin" @click="handlePluginClick(plugin)">
         <input type="checkbox" :checked="pluginStatus(plugin) === 'all'"  />
-        {{ t(`settings.plugins.${plugin}.title`) }}
+        <span>{{ t(`settings.plugins.${plugin}.title`) }}</span>
       </div>
     </template>
 
@@ -127,7 +127,7 @@
       {{ withFilter(true) }}
       <div v-for="tool in serverWithTools.tools" :key="tool.name" :data-id="tool.uuid" @click.stop="handleServerToolClick(serverWithTools, tool)">
         <input type="checkbox" :checked="serverToolStatus(serverWithTools, tool) === 'all'"  />
-        {{ tool.name }}
+        <span>{{ tool.name }}</span>
       </div>
     </template>
 
@@ -285,10 +285,10 @@ const handleExpertClick = (expertId: string) => {
   emit('expertSelected', expertId)
 }
 
-const handleManageExperts = () => {
-  emit('close')
-  emit('manageExperts')
-}
+// const handleManageExperts = () => {
+//   emit('close')
+//   emit('manageExperts')
+// }
 
 const handleDocRepoClick = (docRepoUuid: string) => {
   emit('close')
@@ -367,6 +367,7 @@ const handleDeepResearchClick = () => {
 </script>
 
 <style scoped>
+
 .server-group {
   display: flex;
   align-items: center;
