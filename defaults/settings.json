@@ -212,6 +212,7 @@
       }
     },
     "google": {
+      "vertexai": false,
       "models": {
         "chat": [],
         "image": []

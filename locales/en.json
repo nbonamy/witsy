@@ -2317,7 +2317,12 @@
       "getApiKey": "Get your API key",
       "google": {
         "aboutModels": "More about Google models",
-        "pricing": "Google pricing"
+        "api": "Google API",
+        "gemini": "Gemini",
+        "pricing": "Google pricing",
+        "project": "Project ID",
+        "location": "Location",
+        "vertexai": "Vertex AI"
       },
       "groq": {
         "aboutModels": "More about Groq models",
