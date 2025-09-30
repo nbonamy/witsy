@@ -1,11 +1,12 @@
 
-import { anyDict } from 'types/index'
-import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
-import Plugin, { PluginConfig } from './plugin'
-import Tavily from '../vendor/tavily'
+import Perplexity from '@perplexity-ai/perplexity_ai'
 import { Exa } from 'exa-js'
 import { convert } from 'html-to-text'
+import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
+import { anyDict } from 'types/index'
 import { t } from '../services/i18n'
+import Tavily from '../vendor/tavily'
+import Plugin, { PluginConfig } from './plugin'
 
 export type SearchResultItem = {
   title: string
@@ -33,9 +34,10 @@ export default class extends Plugin {
   isEnabled(): boolean {
     return this.config?.enabled && (
       (this.config.engine == 'local') ||
-      (this.config.engine == 'tavily' && this.config.tavilyApiKey?.trim().length > 0) ||
       (this.config.engine == 'brave' && this.config.braveApiKey?.trim().length > 0) ||
-      (this.config.engine == 'exa' && this.config.exaApiKey?.trim().length > 0)
+      (this.config.engine == 'exa' && this.config.exaApiKey?.trim().length > 0) ||
+      (this.config.engine == 'perplexity' && this.config.perplexityApiKey?.trim().length > 0) ||
+      (this.config.engine == 'tavily' && this.config.tavilyApiKey?.trim().length > 0)
     )
   }
 
@@ -86,12 +88,14 @@ export default class extends Plugin {
     
     if (this.config.engine === 'local') {
       return this.local(parameters, maxResults)
-    } else if (this.config.engine === 'tavily') {
-      return this.tavily(parameters, maxResults)
     } else if (this.config.engine === 'brave') {
       return this.brave(parameters, maxResults)
     } else if (this.config.engine === 'exa') {
       return this.exa(parameters, maxResults)
+    } else if (this.config.engine === 'perplexity') {
+      return this.perplexity(parameters, maxResults)
+    } else if (this.config.engine === 'tavily') {
+      return this.tavily(parameters, maxResults)
     } else {
       return { error: 'Invalid engine' }
     }
@@ -111,41 +115,6 @@ export default class extends Plugin {
       }
       //console.log('Local search response:', response)
       return response
-    } catch (error) {
-      return { error: error.message }
-    }
-  }
-
-  async tavily(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
-
-    try {
-
-      // tavily
-      const tavily = new Tavily(this.config.tavilyApiKey)
-      const results = await tavily.search(parameters.query, {
-        max_results: maxResults,
-        //include_answer: true,
-        //include_raw_content: true,
-      })
-
-      // content returned by tavily is very short
-      for (const result of results.results) {
-        const html = await fetch(result.url).then(response => response.text())
-        result.content = this.htmlToText(html)
-      }
-
-      // done
-      const response = {
-        query: parameters.query,
-        results: results.results.map(result => ({
-          title: result.title,
-          url: result.url,
-          content: this.truncateContent(result.content)
-        }))
-      }
-      //console.log('Tavily response:', response)
-      return response
-
     } catch (error) {
       return { error: error.message }
     }
@@ -208,6 +177,75 @@ export default class extends Plugin {
       return { error: error.message }
     }
 
+  }
+
+  async perplexity(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
+
+    try {
+
+      // perplexity
+      const perplexity = new Perplexity({ apiKey: this.config.perplexityApiKey })
+      const results = await perplexity.search.create({
+        query: parameters.query,
+        max_results: maxResults,
+      }) as unknown as SearchResponse
+
+      // no content returned by perplexity
+      for (const result of results.results) {
+        const html = await fetch(result.url).then(response => response.text())
+        result.content = this.htmlToText(html)
+      }
+
+      // done
+      const response = {
+        query: parameters.query,
+        results: results.results.map(result => ({
+          title: result.title,
+          url: result.url,
+          content: this.truncateContent(result.content)
+        }))
+      }
+      //console.log('Tavily response:', response)
+      return response
+
+    } catch (error) {
+      return { error: error.message }
+    }
+  }
+
+  async tavily(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
+
+    try {
+
+      // tavily
+      const tavily = new Tavily(this.config.tavilyApiKey)
+      const results = await tavily.search(parameters.query, {
+        max_results: maxResults,
+        //include_answer: true,
+        //include_raw_content: true,
+      })
+
+      // content returned by tavily is very short
+      for (const result of results.results) {
+        const html = await fetch(result.url).then(response => response.text())
+        result.content = this.htmlToText(html)
+      }
+
+      // done
+      const response = {
+        query: parameters.query,
+        results: results.results.map(result => ({
+          title: result.title,
+          url: result.url,
+          content: this.truncateContent(result.content)
+        }))
+      }
+      //console.log('Tavily response:', response)
+      return response
+
+    } catch (error) {
+      return { error: error.message }
+    }
   }
 
   htmlToText(html: string): string {

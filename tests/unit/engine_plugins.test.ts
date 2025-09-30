@@ -17,6 +17,7 @@ import { HfInference } from '@huggingface/inference'
 import { GoogleGenAI } from '@google/genai'
 import { fal } from '@fal-ai/client'
 import tavily from '../../src/vendor/tavily'
+import Perplexity from '@perplexity-ai/perplexity_ai'
 import { Exa } from 'exa-js'
 import Replicate from 'replicate'
 import OpenAI from 'openai'
@@ -70,15 +71,6 @@ vi.mock('../../src/services/download.ts', async () => {
   }
 })  
 
-// tavily
-vi.mock('../../src/vendor/tavily', async () => {
-  const Tavily = vi.fn()
-  Tavily.prototype.search = vi.fn(() => ({ results: [
-    { title: 'title', url: 'url', content: 'content' }
-  ] }))
-  return { default: Tavily }
-})
-
 // exa
 vi.mock('exa-js', async () => {
   const Exa = vi.fn()
@@ -86,6 +78,26 @@ vi.mock('exa-js', async () => {
     { title: 'title', url: 'url', text: 'fetched_' }
   ] }))
   return { Exa }
+})
+
+// perplexity
+vi.mock('@perplexity-ai/perplexity_ai', async () => {
+  const Perplexity = vi.fn()
+  Perplexity.prototype.search = {
+    create: vi.fn(() => ({ results: [
+      { title: 'title', url: 'url' }
+    ] }))
+  }
+  return { default: Perplexity }
+})
+
+// tavily
+vi.mock('../../src/vendor/tavily', async () => {
+  const Tavily = vi.fn()
+  Tavily.prototype.search = vi.fn(() => ({ results: [
+    { title: 'title', url: 'url', content: 'content' }
+  ] }))
+  return { default: Tavily }
 })
 
 // youtube transcript
@@ -275,32 +287,6 @@ test('Search Plugin Local', async () => {
   expect(window.api.search.query).toHaveBeenLastCalledWith('test', 5)
 })
 
-test('Search Plugin Exa', async () => {
-  store.config.plugins.search.engine = 'exa'
-  const search = new Search(store.config.plugins.search)
-  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
-    query: 'test',
-    results: [
-      { title: 'title', url: 'url', content: 'fetched_' }
-    ]
-  })
-  expect(Exa.prototype.searchAndContents).toHaveBeenLastCalledWith('test', { text: true, numResults: 5 })
-  expect(window.api.search.query).not.toHaveBeenCalled()
-})
-
-test('Search Plugin Tavily', async () => {
-  store.config.plugins.search.engine = 'tavily'
-  const search = new Search(store.config.plugins.search)
-  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
-    query: 'test',
-    results: [
-      { title: 'title', url: 'url', content: 'fetched_' }
-    ]
-  })
-  expect(tavily.prototype.search).toHaveBeenLastCalledWith('test', { max_results: 5 })
-  expect(window.api.search.query).not.toHaveBeenCalled()
-})
-
 test('Search Plugin Brave', async () => {
   store.config.plugins.search.engine = 'brave'
   const search = new Search(store.config.plugins.search)
@@ -317,6 +303,45 @@ test('Search Plugin Brave', async () => {
       'X-Subscription-Token': store.config.plugins.search.braveApiKey
     }
   })
+  expect(window.api.search.query).not.toHaveBeenCalled()
+})
+
+test('Search Plugin Exa', async () => {
+  store.config.plugins.search.engine = 'exa'
+  const search = new Search(store.config.plugins.search)
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { title: 'title', url: 'url', content: 'fetched_' }
+    ]
+  })
+  expect(Exa.prototype.searchAndContents).toHaveBeenLastCalledWith('test', { text: true, numResults: 5 })
+  expect(window.api.search.query).not.toHaveBeenCalled()
+})
+
+test('Search Plugin Perplexity', async () => {
+  store.config.plugins.search.engine = 'perplexity'
+  const search = new Search(store.config.plugins.search)
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { title: 'title', url: 'url', content: 'fetched_' }
+    ]
+  })
+  expect(Perplexity.prototype.search.create).toHaveBeenLastCalledWith({ query: 'test', max_results: 5 })
+  expect(window.api.search.query).not.toHaveBeenCalled()
+})
+
+test('Search Plugin Tavily', async () => {
+  store.config.plugins.search.engine = 'tavily'
+  const search = new Search(store.config.plugins.search)
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { title: 'title', url: 'url', content: 'fetched_' }
+    ]
+  })
+  expect(tavily.prototype.search).toHaveBeenLastCalledWith('test', { max_results: 5 })
   expect(window.api.search.query).not.toHaveBeenCalled()
 })
 
