@@ -25,7 +25,10 @@ export const openScratchPad = (text?: string|null): void => {
     title: useI18n(app)('tray.menu.scratchpad'),
     hash: '/scratchpad',
     x, y, width, height,
-    ...titleBarOptions(),
+    minWidth: 700,
+    ...titleBarOptions({
+      height: 48,
+    }),
     showInDock: true,
     queryParams,
   });

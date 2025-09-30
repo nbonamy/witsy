@@ -98,7 +98,7 @@ const onChangeFontSize = () => {
 }
 
 .windows .form .toolbar {
-  padding-top: 32px;
+  padding-top: 8px;
 }
 
 .linux .form .toolbar {
