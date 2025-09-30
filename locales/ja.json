@@ -1585,7 +1585,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約、コードなど）の作成を依頼した場合、以下の構文を使用してください。\n<artifact title=\"TITLE\">\nCONTENT\n</artifact>。HTMLアーティファクトは必ず<html>または<!DOCTYPE html>で始める必要があります。例：<artifact title=\"Report\">\n<html style=\"font-family: system-ui;\">HTMLでフォーマットされたレポートコンテンツ</html>\n</artifact>。この機能を使って、Chart.jsやD3.jsを利用したHTMLベースのデータビジュアライゼーションを作成できます。",
+      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約、コードなど）の作成を依頼した場合、次の構文を使用してください:\n<artifact title=\"タイトル\">\n内容\n</artifact>。HTMLのアーティファクトは必ず<html>または<!DOCTYPE html>で始める必要があります。例: <artifact title=\"レポート\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>HTML形式のレポート内容</body></html>\n</artifact>。この機能を使ってChart.jsやD3.jsを用いたHTMLベースのデータビジュアライゼーションを作成できます。",
       "mermaid": "Mermaidチャートの出力を求められた場合、そのコードはユーザーに図として表示されます。",
       "toolRetry": "ツールを呼び出す際に入力エラーが発生した場合は、エラーを分析して修正を試み、その後ツールの呼び出しを再試行してください。"
     },
