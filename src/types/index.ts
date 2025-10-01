@@ -14,7 +14,7 @@ import { WorkspaceHeader, Workspace } from './workspace'
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
 
-export type MainWindowMode = 'none' | 'chat' | 'studio' | 'dictation' | 'agents' | 'voice-mode' | 'docrepos' | 'mcp' | 'settings'
+export type MainWindowMode = 'none' | 'chat' | 'studio' | 'dictation' | 'agents' | 'voice-mode' | 'docrepos' | 'mcp' | 'settings' | `webapp-${string}`
 
 export interface Attachment extends IAttachmentBase {
   url: string
@@ -344,6 +344,7 @@ declare global {
         close(): void
         hideWindowButtons(): void
         showWindowButtons(): void
+        moveWindow(deltaX: number, deltaY: number): void
       }
       debug: {
         showConsole(): void
@@ -557,6 +558,10 @@ declare global {
         load(workspaceId: string): Workspace|null
         save(workspace: Workspace): boolean
         delete(workspaceId: string): boolean
+      }
+      webview: {
+        setLinkBehavior(webviewId: number, isExternal: boolean): Promise<void>
+        setSpellCheckEnabled(webviewId: number, enabled: boolean): Promise<void>
       }
     }
   }

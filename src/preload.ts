@@ -46,6 +46,7 @@ contextBridge.exposeInMainWorld(
       close: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.CLOSE) },
       hideWindowButtons: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.HIDE_WINDOW_BUTTONS) },
       showWindowButtons: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.SHOW_WINDOW_BUTTONS) },
+      moveWindow: (deltaX: number, deltaY: number): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.MOVE_WINDOW, { deltaX, deltaY }) },
     },
     debug: {
       showConsole: (): void => { return ipcRenderer.send(IPC.DEBUG.SHOW_CONSOLE) },
@@ -259,6 +260,14 @@ contextBridge.exposeInMainWorld(
       load: (workspaceId: string): Workspace|null => { return JSON.parse(ipcRenderer.sendSync(IPC.WORKSPACE.LOAD, workspaceId)) },
       save: (workspace: Workspace): boolean => { return ipcRenderer.sendSync(IPC.WORKSPACE.SAVE, JSON.stringify(workspace)) },
       delete: (workspaceId: string): boolean => { return ipcRenderer.sendSync(IPC.WORKSPACE.DELETE, workspaceId) },
+    },
+    webview: {
+      setLinkBehavior: (webviewId: number, isExternal: boolean): Promise<void> => {
+        return ipcRenderer.invoke('webview-set-link-behavior', webviewId, isExternal)
+      },
+      setSpellCheckEnabled: (webviewId: number, enabled: boolean): Promise<void> => {
+        return ipcRenderer.invoke('webview-set-spell-check', webviewId, enabled)
+      },
     }
   },
 );

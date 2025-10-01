@@ -51,6 +51,8 @@
     "docRepo": "ナレッジベース",
     "documents": "ドキュメント",
     "done": "完了",
+    "downloadCsv": "CSV",
+    "downloadXlsx": "XLSX",
     "edit": "編集",
     "enabled": "有効",
     "error": "エラー！",
@@ -281,6 +283,18 @@
       "confirmDelete": "このエージェントを削除してもよろしいですか？",
       "create": "新規エージェント",
       "empty": "初めてのエージェントを作成して@:{'common.appName'}のエージェンシーパワーを解放しましょう！ロボットの頭をクリックして開始。",
+      "import": {
+        "conflict": {
+          "createNew": "新規作成",
+          "overwrite": "上書きする",
+          "text": "同じ名前のエージェントがすでに存在します。どうしますか？",
+          "title": "エージェントはすでに存在します"
+        },
+        "error": {
+          "text": "選択されたファイルは有効なエージェントJSONファイルではありません。",
+          "title": "インポートエラー"
+        }
+      },
       "list": {
         "empty": "まだこのタイプのエージェントは作成されていません。",
         "runnable": "ユーザー起動型",
@@ -294,6 +308,8 @@
       "delete": "このエージェントを削除する",
       "deleteRun": "この実行を削除する",
       "edit": "このエージェントを編集する",
+      "export": "エージェントをエクスポート",
+      "import": "エージェントをインポート",
       "run": "このエージェントを実行する",
       "view": "エージェントの詳細を表示する"
     },
@@ -306,6 +322,7 @@
       "lastRun": "最終実行",
       "log": "ログ",
       "neverRun": "未実行",
+      "running": "実行中...",
       "status": "ステータス",
       "trigger": "トリガー"
     },
@@ -846,20 +863,6 @@
     "browse": "モデルを閲覧",
     "model": "埋め込みモデル",
     "provider": "埋め込みプロバイダー"
-  },
-  "emptyChat": {
-    "favorites": {
-      "shortcut": "{shortcut}を押すと、このモデルをすぐに有効化できます"
-    },
-    "settings": {
-      "needsApiKey": "このプロバイダーのモデルを使用するにはAPIキーが必要です。以下に入力してください。",
-      "needsModels": "このプロバイダーのモデルが読み込まれていません。<br/><a href=\"#settings_models_{engine}\">ここをクリック</a>して設定を確認してください。",
-      "refreshingModels": "モデルリストを読み込み中…"
-    },
-    "tips": {
-      "switchModel": "ここをクリックして別のチャットボットモデルに切り替えてください！",
-      "switchProvider": "ここをクリックして別のチャットボットプロバイダーに切り替えてください！"
-    }
   },
   "engine": {
     "create": {
@@ -1585,7 +1588,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約、コードなど）の作成を依頼した場合、次の構文を使用してください:\n<artifact title=\"タイトル\">\n内容\n</artifact>。HTMLのアーティファクトは必ず<html>または<!DOCTYPE html>で始める必要があります。例: <artifact title=\"レポート\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>HTML形式のレポート内容</body></html>\n</artifact>。この機能を使ってChart.jsやD3.jsを用いたHTMLベースのデータビジュアライゼーションを作成できます。",
+      "artifacts": "ユーザーがコンテンツ（ドキュメント、要約、コードなど）の作成を依頼した場合、以下の構文を使用してください:\n<artifact title=\"TITLE\">\n内容\n</artifact>。HTMLアーティファクトは必ず<html>または<!DOCTYPE html>で始めてください。例: <artifact title=\"Report\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>HTML形式で整えられたレポート内容</body></html>\n</artifact>。この機能を利用してChart.jsやD3.jsを用いたHTMLベースのデータビジュアライゼーションを作成できます。単純なデータテーブルにはアーティファクトを使用しないでください。",
       "mermaid": "Mermaidチャートの出力を求められた場合、そのコードはユーザーに図として表示されます。",
       "toolRetry": "ツールを呼び出す際に入力エラーが発生した場合は、エラーを分析して修正を試み、その後ツールの呼び出しを再試行してください。"
     },
@@ -2515,7 +2518,8 @@
       "models": "モデル",
       "plugins": "プラグイン",
       "shortcuts": "ショートカット",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "ウェブアプリ"
     },
     "voice": {
       "automatic": "🤖 自動",
@@ -2664,6 +2668,23 @@
       "darwin": "メニューバーの万年筆アイコンから@:{'common.appName'}を起動できます。",
       "linux": "メニューバーの万年筆アイコンから@:{'common.appName'}を起動できます。",
       "win32": "システムトレイの万年筆アイコンから@:{'common.appName'}を起動できます。"
+    }
+  },
+  "webapps": {
+    "add": "ウェブアプリを追加",
+    "delete": "ウェブアプリを削除",
+    "deleteConfirm": "このウェブアプリを削除してもよろしいですか？",
+    "description": "メニューバーから直接アクセスできるようにウェブアプリケーションを設定します。ログインセッションやデータは保持されます。",
+    "edit": "ウェブアプリを編集",
+    "enabled": "有効",
+    "evictionDuration": "非アクティブなウェブアプリを削除するまでの時間（分）",
+    "icon": "アイコン",
+    "iconSearch": "アイコンを検索...",
+    "name": "名前",
+    "noApps": "設定されたウェブアプリがありません",
+    "url": "URL",
+    "validation": {
+      "requiredFields": "名前とURLは必須です"
     }
   },
   "workspace": {

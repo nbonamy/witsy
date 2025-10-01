@@ -51,6 +51,8 @@
     "docRepo": "Wissensdatenbank",
     "documents": "Dokumente",
     "done": "Fertig",
+    "downloadCsv": "CSV",
+    "downloadXlsx": "XLSX",
     "edit": "Bearbeiten",
     "enabled": "Aktiviert",
     "error": "Fehler!",
@@ -262,6 +264,18 @@
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Agenten löschen möchten?",
       "create": "Neuer Agent",
       "empty": "Entfesseln Sie die agentenbasierte Kraft von @:{'common.appName'}, indem Sie Ihren ersten Agenten erstellen! Klicken Sie auf den Roboterkopf, um zu starten.",
+      "import": {
+        "conflict": {
+          "createNew": "Neu erstellen",
+          "overwrite": "Überschreiben",
+          "text": "Ein Agent mit diesem Namen existiert bereits. Was möchten Sie tun?",
+          "title": "Agent existiert bereits"
+        },
+        "error": {
+          "text": "Die ausgewählte Datei ist keine gültige Agent-JSON-Datei.",
+          "title": "Importfehler"
+        }
+      },
       "list": {
         "empty": "Noch kein Agent dieses Typs erstellt.",
         "runnable": "Vom Benutzer initiiert",
@@ -275,6 +289,8 @@
       "delete": "Diesen Agenten löschen",
       "deleteRun": "Diesen Lauf löschen",
       "edit": "Diesen Agenten bearbeiten",
+      "export": "Agent exportieren",
+      "import": "Agent importieren",
       "run": "Diesen Agenten ausführen",
       "view": "Agentendetails anzeigen"
     },
@@ -287,6 +303,7 @@
       "lastRun": "Letzte Ausführung",
       "log": "Protokoll",
       "neverRun": "Nie",
+      "running": "Wird ausgeführt...",
       "status": "Status",
       "trigger": "Auslöser"
     },
@@ -827,20 +844,6 @@
     "browse": "Modelle durchsuchen",
     "model": "Embedding-Modell",
     "provider": "Embedding-Modell-Anbieter"
-  },
-  "emptyChat": {
-    "favorites": {
-      "shortcut": "Drücken Sie {shortcut}, um dieses Modell schnell zu aktivieren"
-    },
-    "settings": {
-      "needsApiKey": "Sie benötigen einen API-Schlüssel, um Modelle von diesem Anbieter zu verwenden. Sie können ihn unten eingeben.",
-      "needsModels": "Modelle wurden für diesen Anbieter nicht geladen.<br/><a href=\"#settings_models_{engine}\">Klicken Sie hier</a>, um Ihre Konfiguration zu überprüfen.",
-      "refreshingModels": "Lade Modellliste…"
-    },
-    "tips": {
-      "switchModel": "Klicken Sie hier, um zu einem anderen Chatbot-Modell zu wechseln!",
-      "switchProvider": "Klicken Sie hier, um zu einem anderen Chatbot-Anbieter zu wechseln!"
-    }
   },
   "engine": {
     "create": {
@@ -1566,7 +1569,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung, Code...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>. HTML-Artefakte MÜSSEN mit <html> oder <!DOCTYPE html> beginnen. Beispiel: <artifact title=\"Bericht\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Berichtsinhalte im HTML-Format</body></html>\n</artifact>. Sie können diese Funktion verwenden, um HTML-basierte Datenvisualisierungen mit Chart.js oder D3.js zu erstellen.",
+      "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung, Code...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>. HTML-Artefakte MÜSSEN mit <html> oder <!DOCTYPE html> beginnen. Beispiel: <artifact title=\"Bericht\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Berichtinhalt formatiert in HTML</body></html>\n</artifact>. Sie können diese Funktion verwenden, um HTML-basierte Datenvisualisierungen mit Chart.js oder D3.js zu erstellen. Verwenden Sie Artefakte NICHT für einfache Datentabellen.",
       "mermaid": "Wenn du gebeten wirst, ein Mermaid-Diagramm auszugeben, wird dessen Code als Diagramm für den Benutzer dargestellt.",
       "toolRetry": "Wenn beim Aufrufen von Werkzeugen ein Eingabefehler auftritt, analysiere den Fehler, versuche ihn zu beheben und rufe das Werkzeug dann erneut auf."
     },
@@ -2487,7 +2490,8 @@
       "models": "Modelle",
       "plugins": "Plugins",
       "shortcuts": "Tastenkürzel",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "Web-Apps"
     },
     "voice": {
       "automatic": "🤖 Automatisch",
@@ -2636,6 +2640,23 @@
       "darwin": "Sie können @:{'common.appName'} über das Füllfederhalter-Symbol in der Menüleiste aktivieren.",
       "linux": "Sie können @:{'common.appName'} über das Füllfederhalter-Symbol in der Menüleiste aktivieren.",
       "win32": "Sie können @:{'common.appName'} über das Füllfederhalter-Symbol im Infobereich (System Tray) aktivieren."
+    }
+  },
+  "webapps": {
+    "add": "Web-App hinzufügen",
+    "delete": "Web-App löschen",
+    "deleteConfirm": "Sind Sie sicher, dass Sie diese Web-App löschen möchten?",
+    "description": "Konfigurieren Sie Webanwendungen, um direkt über die Menüleiste auf sie zuzugreifen. Ihre Anmeldesitzungen und Daten werden gespeichert.",
+    "edit": "Web-App bearbeiten",
+    "enabled": "Aktiviert",
+    "evictionDuration": "Inaktive Web-Apps nach (Minuten) entfernen",
+    "icon": "Symbol",
+    "iconSearch": "Symbole suchen...",
+    "name": "Name",
+    "noApps": "Keine Webanwendungen konfiguriert",
+    "url": "URL",
+    "validation": {
+      "requiredFields": "Name und URL sind erforderlich"
     }
   },
   "workspace": {

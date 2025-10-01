@@ -1,10 +1,10 @@
 <template>
   <div class="icon-picker">
     <div class="search-bar">
-      <input 
-        v-model="searchQuery" 
-        type="text" 
-        placeholder="Search icons..." 
+      <input
+        v-model="searchQuery"
+        type="text"
+        :placeholder="t('webapps.iconSearch')"
         class="search-input"
       />
     </div>
@@ -17,7 +17,7 @@
         :title="iconName"
         @click="select(iconName)"
       >
-        <component :is="iconName" />
+        <component :is="getIcon(iconName)" class="icon-svg" />
       </div>
     </div>
   </div>
@@ -25,7 +25,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import * as BootstrapIcons from 'bootstrap-icons-vue'
+import { icons } from 'lucide-vue-next'
+import { t } from '../services/i18n'
 
 const props = defineProps<{
   modelValue: string | null | undefined
@@ -39,16 +40,7 @@ const emit = defineEmits<{
 const searchQuery = ref('')
 
 const allIcons = computed(() => {
-  const icons: string[] = []
-  for (const [key, component] of Object.entries(BootstrapIcons)) {
-    if (key.startsWith('BIcon') && typeof component === 'object') {
-      if (key.includes('Filetype')) {
-        continue
-      }
-      icons.push(key)
-    }
-  }
-  return icons.sort()
+  return Object.keys(icons).sort()
 })
 
 // Filter icons based on search query
@@ -67,13 +59,12 @@ const displayedIcons = computed(() => {
   return filteredIcons.value
 })
 
+const getIcon = (iconName: string) => {
+  return (icons as any)[iconName]
+}
+
 function select(iconName: string) {
-  // If the icon is already selected, deselect it (emit null/undefined)
-  if (props.modelValue === iconName) {
-    emit('update:modelValue', null)
-  } else {
-    emit('update:modelValue', iconName)
-  }
+  emit('update:modelValue', iconName)
 }
 
 function isSelected(iconName: string) {
@@ -102,7 +93,7 @@ defineExpose({
 .icon-grid {
   display: flex;
   flex-wrap: wrap;
-  height: calc(4 * (1.25rem + 2 * 0.25rem + 2 * 1px));
+  height: calc(6 * (1.25rem + 2 * 0.25rem + 2 * 1px));
   overflow-y: auto;
   align-content: flex-start;
   scrollbar-color: var(--scrollbar-thumb-color) var(--control-list-bg-color);
@@ -110,9 +101,9 @@ defineExpose({
 
 .icon-item {
   position: relative;
-  padding: 0.25rem;
-  width: var(--icon-lg);
-  height: var(--icon-lg);
+  padding: 0.375rem;
+  width: var(--icon-xl);
+  height: var(--icon-xl);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -126,11 +117,11 @@ defineExpose({
     background: var(--highlight-color);
     border-color: var(--highlight-color);
     svg {
-      fill: var(--highlighted-color);
+      fill: var(--background-color);
     }
   }
 
-  svg {
+  .icon-svg {
     width: 100%;
     height: 100%;
   }

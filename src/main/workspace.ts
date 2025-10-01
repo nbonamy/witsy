@@ -40,7 +40,7 @@ export const listWorkspaces = (app: App): WorkspaceHeader[] => {
           const workspaceData = fs.readFileSync(workspaceJsonPath, 'utf8')
           const workspaceObj = JSON.parse(workspaceData)
           const workspace = WorkspaceModel.fromJson(workspaceObj)
-          
+
           workspaces.push({
             uuid: workspace.uuid,
             name: workspace.name,

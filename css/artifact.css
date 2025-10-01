@@ -1,0 +1,63 @@
+/* Shared styles for all artifact blocks */
+
+.panel.artifact {
+
+  margin: 1rem 0rem;
+  padding: 0rem;
+  background-color: var(--background-color);
+
+  .panel-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    gap: 0.5rem;
+
+    label {
+      font-size: 0.95em;
+    }
+
+    .icon {
+      fill: none;
+      width: var(--icon-md);
+      height: var(--icon-md);
+    }
+  }
+
+  &:has(.panel-body iframe) {
+    gap: 0rem;
+  }
+
+  .panel-body {
+    padding: 1rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0rem;
+    overflow: hidden;
+
+    &:has(iframe) {
+      padding: 0rem;
+    }
+
+    &:deep() {
+      .text hr:first-child, .text hr:last-child {
+        display: none;
+      }
+      h1:first-of-type {
+        border-top: 0;
+        margin-top: 0;
+      }
+    }
+
+    .html-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      color: var(--dimmed-text-color);
+    }
+
+    iframe {
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+      overflow: hidden;
+    }
+  }
+}

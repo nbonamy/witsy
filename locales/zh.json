@@ -51,6 +51,8 @@
     "docRepo": "知识库",
     "documents": "文档",
     "done": "完成",
+    "downloadCsv": "CSV",
+    "downloadXlsx": "XLSX",
     "edit": "编辑",
     "enabled": "已启用",
     "error": "错误！",
@@ -281,6 +283,18 @@
       "confirmDelete": "您确定要删除此代理吗？",
       "create": "新建代理",
       "empty": "通过创建您的第一个代理，释放 @:{'common.appName'} 的代理能力！点击机器人头像开始。",
+      "import": {
+        "conflict": {
+          "createNew": "创建新的",
+          "overwrite": "覆盖",
+          "text": "具有此名称的代理已存在。您想要怎么做？",
+          "title": "代理已存在"
+        },
+        "error": {
+          "text": "所选文件不是有效的代理 JSON 文件。",
+          "title": "导入错误"
+        }
+      },
       "list": {
         "empty": "尚未创建此类型的代理。",
         "runnable": "用户发起",
@@ -294,6 +308,8 @@
       "delete": "删除此代理",
       "deleteRun": "删除此次运行",
       "edit": "编辑此代理",
+      "export": "导出代理",
+      "import": "导入代理",
       "run": "运行此代理",
       "view": "查看代理详情"
     },
@@ -306,6 +322,7 @@
       "lastRun": "上次运行",
       "log": "日志",
       "neverRun": "从未",
+      "running": "运行中...",
       "status": "状态",
       "trigger": "触发器"
     },
@@ -846,20 +863,6 @@
     "browse": "浏览模型",
     "model": "嵌入模型",
     "provider": "嵌入提供商"
-  },
-  "emptyChat": {
-    "favorites": {
-      "shortcut": "按 {shortcut} 快速激活此模型"
-    },
-    "settings": {
-      "needsApiKey": "您需要一个API密钥才能使用此供应商的模型。您可以在下面输入它。",
-      "needsModels": "此供应商的模型尚未加载。<br/><a href=\"#settings_models_{engine}\">点击这里</a>检查您的配置。",
-      "refreshingModels": "加载模型列表中…"
-    },
-    "tips": {
-      "switchModel": "点击此处切换到不同的聊天机器人模型！",
-      "switchProvider": "点击此处切换到不同的聊天机器人提供商！"
-    }
   },
   "engine": {
     "create": {
@@ -1585,7 +1588,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "当用户要求你创建一些内容（文档、摘要、代码等）时，使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>。HTML工件必须以<html>或<!DOCTYPE html>开头。例如：<artifact title=\"报告\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>报告内容以HTML格式呈现</body></html>\n</artifact>。你可以使用此功能创建基于HTML的数据可视化，使用Chart.js或D3.js。",
+      "artifacts": "当用户要求您创建一些内容（文档、摘要、代码……）时，请使用以下语法：\n<artifact title=\"TITLE\">\n内容\n</artifact>。HTML工件必须以<html>或<!DOCTYPE html>开头。例如：<artifact title=\"报告\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>以HTML格式呈现的报告内容</body></html>\n</artifact>。您可以使用此功能来创建基于HTML的数据可视化，使用Chart.js或D3.js。请勿将工件用于简单的数据表。",
       "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
       "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
     },
@@ -2509,7 +2512,8 @@
       "models": "模型",
       "plugins": "插件",
       "shortcuts": "快捷键",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "Web 应用"
     },
     "voice": {
       "automatic": "🤖 自动",
@@ -2658,6 +2662,23 @@
       "darwin": "您可以通过菜单栏的钢笔图标激活 @:{'common.appName'}。",
       "linux": "您可以通过菜单栏的钢笔图标激活 @:{'common.appName'}。",
       "win32": "您可以通过系统托盘的钢笔图标激活 @:{'common.appName'}。"
+    }
+  },
+  "webapps": {
+    "add": "添加 Web 应用",
+    "delete": "删除 Web 应用",
+    "deleteConfirm": "您确定要删除此 Web 应用吗？",
+    "description": "配置 Web 应用，可以直接从菜单栏访问。您的登录会话和数据将被保留。",
+    "edit": "编辑 Web 应用",
+    "enabled": "已启用",
+    "evictionDuration": "清除非活动 Web 应用时间（分钟）",
+    "icon": "图标",
+    "iconSearch": "搜索图标...",
+    "name": "名称",
+    "noApps": "未配置任何 Web 应用",
+    "url": "网址",
+    "validation": {
+      "requiredFields": "名称和网址为必填项"
     }
   },
   "workspace": {

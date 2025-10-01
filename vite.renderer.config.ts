@@ -18,7 +18,18 @@ export default defineConfig((env) => {
     build: {
       outDir: `.vite/renderer/${name}`,
     },
-    plugins: [pluginExposeRenderer(name), renderer(), vue(), svgLoader({ defaultImport: 'url' })],
+    plugins: [
+      pluginExposeRenderer(name),
+      renderer(),
+      vue({
+        template: {
+          compilerOptions: {
+            isCustomElement: (tag) => tag === 'webview'
+          }
+        }
+      }),
+      svgLoader({ defaultImport: 'url' })
+    ],
     resolve: {
       preserveSymlinks: true,
     },

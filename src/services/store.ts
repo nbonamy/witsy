@@ -304,7 +304,16 @@ const loadSettings = (): void => {
 }
 
 const loadWorkspace = (): void => {
-  store.workspace = window.api.workspace.load(store.config.workspaceId)
+  const loaded = window.api.workspace.load(store.config.workspaceId)
+  if (loaded) {
+    store.workspace = loaded
+  } else {
+    // Initialize default workspace if none exists
+    store.workspace = {
+      uuid: store.config.workspaceId,
+      name: 'Default Workspace'
+    }
+  }
 }
 
 const loadHistory = (): void => {

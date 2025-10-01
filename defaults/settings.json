@@ -14,7 +14,8 @@
     "confirm": {
       "retryGeneration": true
     },
-    "locale": ""
+    "locale": "",
+    "webappEvictionMinutes": 30
   },
   "llm": {
     "locale": "",
