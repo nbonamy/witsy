@@ -10,6 +10,7 @@
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><AppWindowMacIcon class="icon" /></SettingsTab>
           <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BoxIcon class="icon" /></SettingsTab>
           <SettingsTab class="chat" :title="t('settings.tabs.chat')"><PanelsTopLeftIcon class="icon" /></SettingsTab>
+          <SettingsTab class="webapps" :title="t('settings.tabs.webapps')" @change="load(settingsWebApps)" :checked="initialTab == 'webapps'" v-if="store.isFeatureEnabled('webapps')"><AppWindowIcon class="icon" /></SettingsTab>
           <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
           <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><Plug2Icon class="icon" /></SettingsTab>
@@ -18,7 +19,6 @@
           <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
           <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><CommandIcon class="icon" /></SettingsTab>
           <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BadgePlusIcon class="icon" /></SettingsTab>
-          <SettingsTab class="webapps" :title="t('settings.tabs.webapps')" @change="load(settingsWebApps)" :checked="initialTab == 'webapps'" v-if="store.isFeatureEnabled('webapps')"><AppWindowIcon class="icon" /></SettingsTab>
           <template v-if="store.isFeatureEnabled('workspaces')">
             <li class="separator">Workspace Settings</li>
             <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
@@ -30,6 +30,7 @@
       <SettingsGeneral ref="settingsGeneral" />
       <SettingsLLM ref="settingsLLM" />
       <SettingsChat ref="settingsChat" />
+      <SettingsWebApps ref="settingsWebApps" v-if="store.isFeatureEnabled('webapps')" />
       <SettingsDeepResearch ref="settingsDeepResearch" />
       <SettingsModels ref="settingsModels" />
       <SettingsPlugins ref="settingsPlugins" />
@@ -38,7 +39,6 @@
       <SettingsVoice ref="settingsVoice" />
       <SettingsShortcuts ref="settingsShortcuts" />
       <SettingsAdvanced ref="settingsAdvanced" />
-      <SettingsWebApps ref="settingsWebApps" v-if="store.isFeatureEnabled('webapps')" />
       <template v-if="store.isFeatureEnabled('workspaces')">
         <SettingsModels2 ref="settingsModels" />
       </template>
