@@ -125,3 +125,9 @@ export const putCachedText = (text: string): string => {
   textCache[id] = text
   return id
 }
+
+export const getCleanUserAgent = (originalUA: string): string => {
+  return originalUA
+    .replace(/Witsy\/\S+\s/, '')
+    .replace(/Electron\/\S+\s/, '')
+}
