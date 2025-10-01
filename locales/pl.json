@@ -864,20 +864,6 @@
     "model": "Model embeddingów",
     "provider": "Dostawca embeddingów"
   },
-  "emptyChat": {
-    "favorites": {
-      "shortcut": "Naciśnij {shortcut}, aby szybko aktywować ten model"
-    },
-    "settings": {
-      "needsApiKey": "Musisz mieć klucz API, aby korzystać z modeli tego dostawcy. Możesz wpisać go poniżej.",
-      "needsModels": "Modele nie są załadowane dla tego dostawcy.<br/><a href=\"#settings_models_{engine}\">Kliknij tutaj</a>, aby sprawdzić swoją konfigurację.",
-      "refreshingModels": "Ładowanie listy modeli…"
-    },
-    "tips": {
-      "switchModel": "Kliknij tutaj, aby przełączyć się na inny model chatbota!",
-      "switchProvider": "Kliknij tutaj, aby przełączyć się na innego dostawcę chatbotów!"
-    }
-  },
   "engine": {
     "create": {
       "apiBaseURL": "@:{'settings.engines.custom.apiBaseURL'}",
@@ -2532,7 +2518,8 @@
       "models": "Modele",
       "plugins": "Wtyczki",
       "shortcuts": "Skróty",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "Aplikacje internetowe"
     },
     "voice": {
       "automatic": "Automatyczny",
@@ -2681,6 +2668,23 @@
       "darwin": "Możesz aktywować @:{'common.appName'} z ikony kałamarza na pasku menu.",
       "linux": "Możesz aktywować @:{'common.appName'} z ikony kałamarza na pasku menu.",
       "win32": "Możesz aktywować @:{'common.appName'} z ikony kałamarza w zasobniku systemowym."
+    }
+  },
+  "webapps": {
+    "add": "Dodaj aplikację internetową",
+    "delete": "Usuń aplikację internetową",
+    "deleteConfirm": "Czy na pewno chcesz usunąć tę aplikację internetową?",
+    "description": "Skonfiguruj aplikacje internetowe, aby uzyskać do nich dostęp bezpośrednio z paska menu. Twoje sesje logowania i dane zostaną zachowane.",
+    "edit": "Edytuj aplikację internetową",
+    "enabled": "Włączone",
+    "evictionDuration": "Usuń nieaktywne aplikacje po (minutach)",
+    "icon": "Ikona",
+    "iconSearch": "Szukaj ikon...",
+    "name": "Nazwa",
+    "noApps": "Nie skonfigurowano żadnych aplikacji internetowych",
+    "url": "URL",
+    "validation": {
+      "requiredFields": "Nazwa i URL są wymagane"
     }
   },
   "workspace": {

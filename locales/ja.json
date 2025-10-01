@@ -864,20 +864,6 @@
     "model": "埋め込みモデル",
     "provider": "埋め込みプロバイダー"
   },
-  "emptyChat": {
-    "favorites": {
-      "shortcut": "{shortcut}を押すと、このモデルをすぐに有効化できます"
-    },
-    "settings": {
-      "needsApiKey": "このプロバイダーのモデルを使用するにはAPIキーが必要です。以下に入力してください。",
-      "needsModels": "このプロバイダーのモデルが読み込まれていません。<br/><a href=\"#settings_models_{engine}\">ここをクリック</a>して設定を確認してください。",
-      "refreshingModels": "モデルリストを読み込み中…"
-    },
-    "tips": {
-      "switchModel": "ここをクリックして別のチャットボットモデルに切り替えてください！",
-      "switchProvider": "ここをクリックして別のチャットボットプロバイダーに切り替えてください！"
-    }
-  },
   "engine": {
     "create": {
       "apiBaseURL": "@:{'settings.engines.custom.apiBaseURL'}",
@@ -2532,7 +2518,8 @@
       "models": "モデル",
       "plugins": "プラグイン",
       "shortcuts": "ショートカット",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "ウェブアプリ"
     },
     "voice": {
       "automatic": "🤖 自動",
@@ -2681,6 +2668,23 @@
       "darwin": "メニューバーの万年筆アイコンから@:{'common.appName'}を起動できます。",
       "linux": "メニューバーの万年筆アイコンから@:{'common.appName'}を起動できます。",
       "win32": "システムトレイの万年筆アイコンから@:{'common.appName'}を起動できます。"
+    }
+  },
+  "webapps": {
+    "add": "ウェブアプリを追加",
+    "delete": "ウェブアプリを削除",
+    "deleteConfirm": "このウェブアプリを削除してもよろしいですか？",
+    "description": "メニューバーから直接アクセスできるようにウェブアプリケーションを設定します。ログインセッションやデータは保持されます。",
+    "edit": "ウェブアプリを編集",
+    "enabled": "有効",
+    "evictionDuration": "非アクティブなウェブアプリを削除するまでの時間（分）",
+    "icon": "アイコン",
+    "iconSearch": "アイコンを検索...",
+    "name": "名前",
+    "noApps": "設定されたウェブアプリがありません",
+    "url": "URL",
+    "validation": {
+      "requiredFields": "名前とURLは必須です"
     }
   },
   "workspace": {
