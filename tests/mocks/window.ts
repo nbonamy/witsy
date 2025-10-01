@@ -533,6 +533,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       load: vi.fn(() => null),
       save: vi.fn(() => true),
       delete: vi.fn(() => true),
+    },
+    webview: {
+      setLinkBehavior: vi.fn(async () => {}),
+      setSpellCheckEnabled: vi.fn(async () => {}),
     }
   }
 
