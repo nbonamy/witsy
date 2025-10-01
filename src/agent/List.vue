@@ -5,8 +5,9 @@
     <header>
       <div class="title">{{ t('agent.forge.title') }}</div>
       <div class="actions">
-        <button class="large secondary" @click="emit('importA2A')"><LogoA2A />{{ t('agent.forge.a2a.title') }}</button>
-        <button class="large primary" @click="emit('create')"><PlusIcon />{{ t('agent.forge.create') }}</button>
+        <button name="import-json" class="large secondary" @click="emit('importJson')"><UploadIcon />{{ t('agent.help.import') }}</button>
+        <button name="import-a2a" class="large secondary" @click="emit('importA2A')"><LogoA2A />{{ t('agent.forge.a2a.title') }}</button>
+        <button name="create" class="large primary" @click="emit('create')"><PlusIcon />{{ t('agent.forge.create') }}</button>
       </div>
     </header>
 
@@ -40,12 +41,15 @@
                 v-tooltip="{ text: t('agent.help.view'), position: 'top-left' }" 
                 @click.stop="$emit('view', agent)" 
               />
-              <ContextMenuTrigger position="below-left">
+              <ContextMenuTrigger position="below-right">
                 <template #menu="{ close }">
-                  <div class="item" @click="close(); $emit('edit', agent)">
+                  <div class="item edit" @click="close(); $emit('edit', agent)">
                     {{ t('agent.help.edit') }}
                   </div>
-                  <div class="item" @click="close(); $emit('delete', agent)">
+                  <div class="item export" @click="close(); $emit('export', agent)">
+                    {{ t('agent.help.export') }}
+                  </div>
+                  <div class="item delete" @click="close(); $emit('delete', agent)">
                     {{ t('agent.help.delete') }}
                   </div>
                 </template>
@@ -60,7 +64,7 @@
 
 <script setup lang="ts">
 
-import { PlusIcon, PlayIcon, EyeIcon, XIcon } from 'lucide-vue-next'
+import { EyeIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
 import { PropType } from 'vue'
 import LogoA2A from '../../assets/a2a.svg?component'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
@@ -69,7 +73,7 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Agent } from '../types/index'
 
-const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'importA2A']) 
+const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'export', 'importA2A', 'importJson']) 
 
 defineProps({
   agents: Array as PropType<Agent[]>,

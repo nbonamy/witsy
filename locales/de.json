@@ -264,6 +264,18 @@
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Agenten löschen möchten?",
       "create": "Neuer Agent",
       "empty": "Entfesseln Sie die agentenbasierte Kraft von @:{'common.appName'}, indem Sie Ihren ersten Agenten erstellen! Klicken Sie auf den Roboterkopf, um zu starten.",
+      "import": {
+        "conflict": {
+          "createNew": "Neu erstellen",
+          "overwrite": "Überschreiben",
+          "text": "Ein Agent mit diesem Namen existiert bereits. Was möchten Sie tun?",
+          "title": "Agent existiert bereits"
+        },
+        "error": {
+          "text": "Die ausgewählte Datei ist keine gültige Agent-JSON-Datei.",
+          "title": "Importfehler"
+        }
+      },
       "list": {
         "empty": "Noch kein Agent dieses Typs erstellt.",
         "runnable": "Vom Benutzer initiiert",
@@ -277,6 +289,8 @@
       "delete": "Diesen Agenten löschen",
       "deleteRun": "Diesen Lauf löschen",
       "edit": "Diesen Agenten bearbeiten",
+      "export": "Agent exportieren",
+      "import": "Agent importieren",
       "run": "Diesen Agenten ausführen",
       "view": "Agentendetails anzeigen"
     },

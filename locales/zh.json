@@ -283,6 +283,18 @@
       "confirmDelete": "您确定要删除此代理吗？",
       "create": "新建代理",
       "empty": "通过创建您的第一个代理，释放 @:{'common.appName'} 的代理能力！点击机器人头像开始。",
+      "import": {
+        "conflict": {
+          "createNew": "创建新的",
+          "overwrite": "覆盖",
+          "text": "具有此名称的代理已存在。您想要怎么做？",
+          "title": "代理已存在"
+        },
+        "error": {
+          "text": "所选文件不是有效的代理 JSON 文件。",
+          "title": "导入错误"
+        }
+      },
       "list": {
         "empty": "尚未创建此类型的代理。",
         "runnable": "用户发起",
@@ -296,6 +308,8 @@
       "delete": "删除此代理",
       "deleteRun": "删除此次运行",
       "edit": "编辑此代理",
+      "export": "导出代理",
+      "import": "导入代理",
       "run": "运行此代理",
       "view": "查看代理详情"
     },
