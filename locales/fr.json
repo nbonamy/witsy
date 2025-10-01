@@ -303,6 +303,7 @@
       "lastRun": "Dernière Exécution",
       "log": "Journal",
       "neverRun": "Jamais",
+      "running": "En cours...",
       "status": "Statut",
       "trigger": "Déclencheur"
     },

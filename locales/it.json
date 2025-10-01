@@ -303,6 +303,7 @@
       "lastRun": "Ultima Esecuzione",
       "log": "Registro",
       "neverRun": "Mai",
+      "running": "In esecuzione...",
       "status": "Stato",
       "trigger": "Attivatore"
     },

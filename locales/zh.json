@@ -322,6 +322,7 @@
       "lastRun": "上次运行",
       "log": "日志",
       "neverRun": "从未",
+      "running": "运行中...",
       "status": "状态",
       "trigger": "触发器"
     },

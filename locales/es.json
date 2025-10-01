@@ -303,6 +303,7 @@
       "lastRun": "Última ejecución",
       "log": "Registro",
       "neverRun": "Nunca",
+      "running": "Ejecutando...",
       "status": "Estado",
       "trigger": "Disparador"
     },
