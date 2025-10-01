@@ -3,9 +3,9 @@ import { VueWrapper } from '@vue/test-utils'
 
 export const tabs = [
   'settingsGeneral',
+  'settingsSidebar',
   'settingsLLM',
   'settingsChat',
-  'settingsWebApps',
   'settingsDeepResearch',
   'settingsModels',
   'settingsPlugins',

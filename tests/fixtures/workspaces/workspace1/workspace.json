@@ -18,5 +18,6 @@
       "enabled": true
     }
   ],
-  "agents": ["agent1"]
+  "agents": ["agent1"],
+  "hiddenFeatures": ["studio", "scratchpad"]
 }

@@ -2529,8 +2529,8 @@
       "models": "Models",
       "plugins": "Plugins",
       "shortcuts": "Shortcuts",
-      "voice": "@:{'common.voice'}",
-      "webapps": "Web Apps"
+      "sidebar": "Sidebar",
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 Automatic",
@@ -2586,6 +2586,9 @@
     }
   },
   "sidebar": {
+    "features": {
+        "title": "Witsy Features"
+    },
     "newFolder": {
       "placeholder": "New Folder Name",
       "title": "New Folder"
@@ -2693,6 +2696,7 @@
     "iconSearch": "Search icons...",
     "name": "Name",
     "noApps": "No web apps configured",
+    "title": "Web Apps",
     "url": "URL",
     "validation": {
       "requiredFields": "Name and URL are required"

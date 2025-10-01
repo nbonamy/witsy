@@ -4,7 +4,7 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import SettingsWebApps from '../../src/settings/SettingsWebApps.vue'
+import SettingsSidebar from '../../src/settings/SettingsSidebar.vue'
 import Dialog from '../../src/composables/dialog'
 
 beforeAll(() => {
@@ -15,18 +15,20 @@ beforeAll(() => {
   if (!store.workspace) {
     store.workspace = {
       uuid: 'test-workspace',
-      name: 'Test Workspace'
+      name: 'Test Workspace',
+      hiddenFeatures: []
     }
   }
 })
 
 beforeEach(() => {
   store.workspace.webapps = []
+  store.workspace.hiddenFeatures = []
   store.config.general.webappEvictionMinutes = 30
 })
 
-test('SettingsWebApps renders with sliding panes', () => {
-  const wrapper = mount(SettingsWebApps)
+test('SettingsSidebar renders with sliding panes', () => {
+  const wrapper = mount(SettingsSidebar)
   wrapper.vm.load()
 
   expect(wrapper.find('.sliding-root').exists()).toBe(true)
@@ -35,8 +37,17 @@ test('SettingsWebApps renders with sliding panes', () => {
   expect(wrapper.find('.sliding-pane').classes()).not.toContain('visible')
 })
 
-test('SettingsWebApps shows editor when creating', async () => {
-  const wrapper = mount(SettingsWebApps)
+test('SettingsSidebar renders SidebarFeatures component', () => {
+  const wrapper = mount(SettingsSidebar)
+  wrapper.vm.load()
+
+  // Check SidebarFeatures is present
+  expect(wrapper.find('.sidebar-features').exists()).toBe(true)
+  expect(wrapper.findAll('.form-field.horizontal').length).toBeGreaterThan(0)
+})
+
+test('SettingsSidebar shows editor when creating', async () => {
+  const wrapper = mount(SettingsSidebar)
   wrapper.vm.load()
   await nextTick()
 
@@ -50,8 +61,8 @@ test('SettingsWebApps shows editor when creating', async () => {
   expect(wrapper.find('.sliding-pane').classes()).toContain('visible')
 })
 
-test('SettingsWebApps cancels edit with escape key', async () => {
-  const wrapper = mount(SettingsWebApps)
+test('SettingsSidebar cancels edit with escape key', async () => {
+  const wrapper = mount(SettingsSidebar)
   wrapper.vm.load()
 
   // Open editor
@@ -68,8 +79,8 @@ test('SettingsWebApps cancels edit with escape key', async () => {
   expect(wrapper.find('.sliding-pane').classes()).not.toContain('visible')
 })
 
-test('SettingsWebApps saves new webapp', async () => {
-  const wrapper = mount(SettingsWebApps)
+test('SettingsSidebar saves new webapp', async () => {
+  const wrapper = mount(SettingsSidebar)
   wrapper.vm.load()
 
   // Open editor
@@ -97,12 +108,12 @@ test('SettingsWebApps saves new webapp', async () => {
   expect(window.api.workspace.save).toHaveBeenCalled()
 })
 
-test('SettingsWebApps updates existing webapp', async () => {
+test('SettingsSidebar updates existing webapp', async () => {
   store.workspace.webapps = [
     { id: 'test1', name: 'Test 1', url: 'https://test1.com', icon: 'Globe', enabled: true }
   ]
 
-  const wrapper = mount(SettingsWebApps)
+  const wrapper = mount(SettingsSidebar)
   wrapper.vm.load()
   await nextTick()
 
@@ -124,12 +135,12 @@ test('SettingsWebApps updates existing webapp', async () => {
   expect(store.workspace.webapps[0].name).toBe('Test 1 Updated')
 })
 
-test('SettingsWebApps header shows webapp name when editing', async () => {
+test('SettingsSidebar header shows webapp name when editing', async () => {
   store.workspace.webapps = [
     { id: 'test1', name: 'Test App', url: 'https://test1.com', icon: 'Globe', enabled: true }
   ]
 
-  const wrapper = mount(SettingsWebApps)
+  const wrapper = mount(SettingsSidebar)
   wrapper.vm.load()
   await nextTick()
 
@@ -143,8 +154,8 @@ test('SettingsWebApps header shows webapp name when editing', async () => {
   expect(header.text()).toContain('Test App')
 })
 
-test('SettingsWebApps validates required fields', async () => {
-  const wrapper = mount(SettingsWebApps)
+test('SettingsSidebar validates required fields', async () => {
+  const wrapper = mount(SettingsSidebar)
   wrapper.vm.load()
 
   // Spy on Dialog.alert
@@ -165,8 +176,8 @@ test('SettingsWebApps validates required fields', async () => {
   expect(store.workspace.webapps.length).toBe(0)
 })
 
-test('SettingsWebApps exposes load method', () => {
-  const wrapper = mount(SettingsWebApps)
+test('SettingsSidebar exposes load method', () => {
+  const wrapper = mount(SettingsSidebar)
   expect(wrapper.vm.load).toBeDefined()
   expect(typeof wrapper.vm.load).toBe('function')
 })
