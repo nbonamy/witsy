@@ -15,6 +15,7 @@ export default class Workspace {
   docrepos: string[]
   tools?: ToolSelection[]
   webapps?: WebApp[]
+  hiddenFeatures?: string[]
 
   constructor(name: string) {
     this.uuid = crypto.randomUUID()
@@ -31,6 +32,7 @@ export default class Workspace {
     workspace.docrepos = obj.docrepos;
     workspace.tools = obj.tools;
     workspace.webapps = obj.webapps;
+    workspace.hiddenFeatures = obj.hiddenFeatures || [];
     return workspace;
   }
 

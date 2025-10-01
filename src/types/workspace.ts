@@ -23,4 +23,5 @@ export type Workspace = WorkspaceHeader & {
   docrepos?: string[]
   tools?: ToolSelection[]
   webapps?: WebApp[]
+  hiddenFeatures?: string[]
 }

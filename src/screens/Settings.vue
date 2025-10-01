@@ -8,9 +8,9 @@
         <ul>
           <li class="separator" v-if="store.isFeatureEnabled('workspaces')">General Settings</li>
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><AppWindowMacIcon class="icon" /></SettingsTab>
+          <SettingsTab class="sidebar" :title="t('settings.tabs.sidebar')" @change="load(settingsSidebar)" :checked="initialTab == 'sidebar'" v-if="store.isFeatureEnabled('webapps')"><PanelsTopLeftIcon class="icon" /></SettingsTab>
           <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BoxIcon class="icon" /></SettingsTab>
-          <SettingsTab class="chat" :title="t('settings.tabs.chat')"><PanelsTopLeftIcon class="icon" /></SettingsTab>
-          <SettingsTab class="webapps" :title="t('settings.tabs.webapps')" @change="load(settingsWebApps)" :checked="initialTab == 'webapps'" v-if="store.isFeatureEnabled('webapps')"><AppWindowIcon class="icon" /></SettingsTab>
+          <SettingsTab class="chat" :title="t('settings.tabs.chat')"><AppWindowIcon class="icon" /></SettingsTab>
           <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
           <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><Plug2Icon class="icon" /></SettingsTab>
@@ -28,9 +28,9 @@
   </div>
     <div class="sp-main">
       <SettingsGeneral ref="settingsGeneral" />
+      <SettingsSidebar ref="settingsSidebar" v-if="store.isFeatureEnabled('webapps')" />
       <SettingsLLM ref="settingsLLM" />
       <SettingsChat ref="settingsChat" />
-      <SettingsWebApps ref="settingsWebApps" v-if="store.isFeatureEnabled('webapps')" />
       <SettingsDeepResearch ref="settingsDeepResearch" />
       <SettingsModels ref="settingsModels" />
       <SettingsPlugins ref="settingsPlugins" />
@@ -68,7 +68,7 @@ import SettingsPlugins from '../settings/SettingsPlugins.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
-import SettingsWebApps from '../settings/SettingsWebApps.vue'
+import SettingsSidebar from '../settings/SettingsSidebar.vue'
 import { OpenSettingsPayload } from '../types/index'
 
 const { onEvent } = useEventBus()
@@ -96,7 +96,7 @@ const settingsExperts = ref(null)
 const settingsVoice = ref(null)
 const settingsShortcuts = ref(null)
 const settingsAdvanced = ref(null)
-const settingsWebApps = ref(null)
+const settingsSidebar = ref(null)
 
 const settings = [
   settingsGeneral,
@@ -111,7 +111,7 @@ const settings = [
   settingsVoice,
   settingsShortcuts,
   settingsAdvanced,
-  settingsWebApps
+  settingsSidebar
 ]
 
 onMounted(async () => {

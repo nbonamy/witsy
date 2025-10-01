@@ -14,22 +14,22 @@
         <span>{{ t('common.chat') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')" v-if="store.isFeatureEnabled('studio')">
+      <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')" v-if="store.isFeatureEnabled('studio') && !isFeatureHidden('studio')">
         <PaletteIcon />
         <span>{{ t('designStudio.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')" v-if="store.isFeatureEnabled('scratchpad')">
+      <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')" v-if="store.isFeatureEnabled('scratchpad') && !isFeatureHidden('scratchpad')">
         <FileTextIcon />
         <span>{{ t('scratchpad.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')" v-if="store.isFeatureEnabled('dictation')">
+      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')" v-if="store.isFeatureEnabled('dictation') && !isFeatureHidden('dictation')">
         <MicIcon />
         <span>{{ t('transcribe.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')" v-if="store.isFeatureEnabled('voiceMode')">
+      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')" v-if="store.isFeatureEnabled('voiceMode') && !isFeatureHidden('voiceMode')">
         <HeadsetIcon />
         <span>{{ t('realtimeChat.title') }}</span>
       </MenuBarItem>
@@ -102,8 +102,14 @@ import IconMenu from './IconMenu.vue'
 import MenuBarItem from './MenuBarItem.vue'
 
 export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug'
+
+const isFeatureHidden = (featureKey: string): boolean => {
+  return store.workspace?.hiddenFeatures?.includes(featureKey) || false
+}
+
 const hasComputerUse = computed(() => {
-  return store.isFeatureEnabled('voiceMode') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
+  const hasConfig = store.isFeatureEnabled('voiceMode') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
+  return hasConfig && !isFeatureHidden('computerUse')
 })
 
 const hasMcp = computed(() => {

@@ -64,7 +64,7 @@
 
       .title {
         flex: 1;
-        font-size: 13pt;
+        font-size: 17px;
         font-weight: 600;
         color: var(--text-color);
       }
@@ -138,12 +138,11 @@
       
       .title {
         flex: 1;
-        font-size: 11pt;
-        font-weight: bold;
+        font-size: 17px;
+        font-weight: var(--font-weight-medium);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        color: var(--chatarea-toolbar-text-color);
       }
 
       .icon {
@@ -314,7 +313,7 @@
     .sp-main {
       header {
         .title {
-          font-size: 13pt;
+          font-size: 17px;
         }
 
       }

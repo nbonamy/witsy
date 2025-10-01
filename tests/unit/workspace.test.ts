@@ -81,7 +81,7 @@ describe('listWorkspaces', () => {
 describe('loadWorkspace', () => {
   test('should load workspace successfully from fixture', () => {
     const result = workspace.loadWorkspace(app, 'workspace1')
-    
+
     expect(result).not.toBeNull()
     expect(result?.uuid).toBe('workspace-1')
     expect(result?.name).toBe('Test Workspace 1')
@@ -89,17 +89,25 @@ describe('loadWorkspace', () => {
     expect(result?.color).toBe('#ff0000')
     expect(result?.models).toHaveLength(1)
     expect(result?.experts).toEqual(['expert1', 'expert2'])
+    expect(result?.hiddenFeatures).toEqual(['studio', 'scratchpad'])
+  })
+
+  test('should default hiddenFeatures to empty array when not present', () => {
+    const result = workspace.loadWorkspace(app, 'workspace2')
+
+    expect(result).not.toBeNull()
+    expect(result?.hiddenFeatures).toEqual([])
   })
 
   test('should return null when workspace file does not exist', () => {
     const result = workspace.loadWorkspace(app, 'nonexistent')
-    
+
     expect(result).toBeNull()
   })
 
   test('should return null when workspace file has invalid structure', () => {
     const result = workspace.loadWorkspace(app, 'invalid-folder')
-    
+
     expect(result).toBeNull()
   })
 })
@@ -114,18 +122,19 @@ describe('saveWorkspace', () => {
       models: [],
       experts: [],
       docrepos: [],
-      agents: []
+      agents: [],
+      hiddenFeatures: ['voiceMode']
     }
-    
+
     const result = workspace.saveWorkspace(app, workspaceData)
-    
+
     expect(result).toBe(true)
-    
+
     // mkdirSync is called twice: once for workspaces folder, once for specific workspace folder
     expect(fs.mkdirSync).toHaveBeenCalledTimes(2)
     expect(fs.mkdirSync).toHaveBeenCalledWith('tests/fixtures/workspaces', { recursive: true })
     expect(fs.mkdirSync).toHaveBeenCalledWith('tests/fixtures/workspaces/workspace-1', { recursive: true })
-    
+
     expect(fs.writeFileSync).toHaveBeenCalledWith(
       'tests/fixtures/workspaces/workspace-1/workspace.json',
       JSON.stringify(workspaceData, null, 2)

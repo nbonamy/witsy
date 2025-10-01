@@ -1,5 +1,5 @@
 
-import { beforeAll, expect, test } from 'vitest'
+import { beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
@@ -13,8 +13,16 @@ beforeAll(() => {
   if (!store.workspace) {
     store.workspace = {
       uuid: 'test-workspace',
-      name: 'Test Workspace'
+      name: 'Test Workspace',
+      hiddenFeatures: []
     }
+  }
+})
+
+beforeEach(() => {
+  // Reset hiddenFeatures before each test
+  if (store.workspace) {
+    store.workspace.hiddenFeatures = []
   }
 })
 
@@ -158,4 +166,62 @@ test('MenuBar renders webapps in order', () => {
   const secondPos = text.indexOf('Second App')
   expect(firstPos).toBeGreaterThan(-1)
   expect(secondPos).toBeGreaterThan(firstPos)
+})
+
+test('MenuBar hides features when in hiddenFeatures array', () => {
+  store.isFeatureEnabled = () => true
+  store.workspace.hiddenFeatures = ['studio', 'scratchpad']
+
+  const wrapper = mount(MenuBar, {
+    props: {
+      mode: 'chat'
+    }
+  })
+
+  // Should not find studio or scratchpad menu items
+  const studioItem = wrapper.find('[action="studio"]')
+  const scratchpadItem = wrapper.find('[action="scratchpad"]')
+
+  expect(studioItem.exists()).toBe(false)
+  expect(scratchpadItem.exists()).toBe(false)
+})
+
+test('MenuBar hides computerUse when in hiddenFeatures even if config present', () => {
+  store.isFeatureEnabled = () => true
+  store.workspace.hiddenFeatures = ['computerUse']
+  store.config.engines.anthropic = {
+    apiKey: 'test-key',
+    models: {
+      chat: [{ id: 'computer-use', name: 'Computer Use' }]
+    }
+  } as any
+
+  const wrapper = mount(MenuBar, {
+    props: {
+      mode: 'chat'
+    }
+  })
+
+  const computerUseItem = wrapper.find('[action="computer-use"]')
+  expect(computerUseItem.exists()).toBe(false)
+})
+
+test('MenuBar respects both global feature flags and hiddenFeatures', () => {
+  // Globally disable voiceMode, enable everything else
+  store.isFeatureEnabled = (feature: string) => {
+    if (feature === 'voiceMode') return false
+    return true
+  }
+  store.workspace.hiddenFeatures = ['studio'] // Hide studio via workspace
+
+  const wrapper = mount(MenuBar, {
+    props: {
+      mode: 'chat'
+    }
+  })
+
+  // studio hidden via hiddenFeatures
+  expect(wrapper.find('[action="studio"]').exists()).toBe(false)
+  // voiceMode hidden via global feature flag
+  expect(wrapper.find('[action="voice-mode"]').exists()).toBe(false)
 })
