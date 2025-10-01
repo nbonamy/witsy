@@ -2543,7 +2543,8 @@
       "models": "Models",
       "plugins": "Plugins",
       "shortcuts": "Shortcuts",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "Web Apps"
     },
     "voice": {
       "automatic": "🤖 Automatic",
@@ -2708,5 +2709,18 @@
       "name": "Name",
       "namePlaceholder": "Enter workspace name"
     }
+  },
+  "webapps": {
+    "add": "Add Web App",
+    "delete": "Delete Web App",
+    "deleteConfirm": "Are you sure you want to delete this web app?",
+    "edit": "Edit Web App",
+    "enabled": "Enabled",
+    "evictionDuration": "Evict inactive webapps after (minutes)",
+    "icon": "Icon",
+    "iconSearch": "Search icons...",
+    "name": "Name",
+    "noApps": "No web apps configured",
+    "url": "URL"
   }
 }
