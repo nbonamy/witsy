@@ -57,6 +57,14 @@ export const installIpc = (
   quitApp: () => void,
 ): void => {
 
+  // Cache window position for faster dragging
+  let cachedPosition = window.mainWindow.getPosition();
+
+  // Update cache when window is moved by user or system
+  window.mainWindow.on('move', () => {
+    cachedPosition = window.mainWindow.getPosition();
+  });
+
   ipcMain.on(IPC.MAIN_WINDOW.UPDATE_MODE, (event, mode) => {
     window.setMainWindowMode(mode);
     installMenu();
@@ -81,6 +89,12 @@ export const installIpc = (
     if (process.platform === 'darwin') {
       window.mainWindow.setWindowButtonVisibility(true);
     }
+  });
+
+  ipcMain.on(IPC.MAIN_WINDOW.MOVE_WINDOW, (_event, { deltaX, deltaY }) => {
+    cachedPosition[0] += deltaX;
+    cachedPosition[1] += deltaY;
+    window.mainWindow.setPosition(cachedPosition[0], cachedPosition[1], false);
   });
 
   ipcMain.on(IPC.APP.GET_VERSION, (event) => {

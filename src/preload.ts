@@ -46,6 +46,7 @@ contextBridge.exposeInMainWorld(
       close: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.CLOSE) },
       hideWindowButtons: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.HIDE_WINDOW_BUTTONS) },
       showWindowButtons: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.SHOW_WINDOW_BUTTONS) },
+      moveWindow: (deltaX: number, deltaY: number): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.MOVE_WINDOW, { deltaX, deltaY }) },
     },
     debug: {
       showConsole: (): void => { return ipcRenderer.send(IPC.DEBUG.SHOW_CONSOLE) },

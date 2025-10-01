@@ -344,6 +344,7 @@ declare global {
         close(): void
         hideWindowButtons(): void
         showWindowButtons(): void
+        moveWindow(deltaX: number, deltaY: number): void
       }
       debug: {
         showConsole(): void
