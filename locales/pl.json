@@ -2674,7 +2674,7 @@
     "add": "Dodaj aplikację internetową",
     "delete": "Usuń aplikację internetową",
     "deleteConfirm": "Czy na pewno chcesz usunąć tę aplikację internetową?",
-    "description": "Skonfiguruj aplikacje internetowe, aby uzyskać do nich dostęp bezpośrednio z paska menu. Twoje sesje logowania i dane zostaną zachowane.",
+    "description": "EKSPERYMENTALNE: Skonfiguruj aplikacje internetowe, aby uzyskać do nich dostęp bezpośrednio z paska menu. Twoje sesje logowania i dane zostaną zachowane.",
     "edit": "Edytuj aplikację internetową",
     "enabled": "Włączone",
     "evictionDuration": "Usuń nieaktywne aplikacje po (minutach)",

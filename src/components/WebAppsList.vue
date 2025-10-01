@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <div class="form eviction-setting">
+    <div class="form form-vertical form-large eviction-setting">
       <div class="form-field">
         <label>{{ t('webapps.evictionDuration') }}</label>
         <input
@@ -219,12 +219,9 @@ defineExpose({ load })
 }
 
 .eviction-setting {
-  padding: 1rem;
-  border-top: 1px solid var(--border-color);
+  margin-top: 2rem;
 
   .form-field {
-    max-width: 400px;
-
     input[type="number"] {
       width: 100px;
     }

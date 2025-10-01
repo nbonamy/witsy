@@ -2646,7 +2646,7 @@
     "add": "Aggiungi app web",
     "delete": "Elimina app web",
     "deleteConfirm": "Sei sicuro di voler eliminare questa app web?",
-    "description": "Configura le applicazioni web per accedervi direttamente dalla barra del menu. Le tue sessioni di accesso e i dati verranno preservati.",
+    "description": "SPERIMENTALE: Configura le applicazioni web per accedervi direttamente dalla barra del menu. Le tue sessioni di accesso e i dati verranno preservati.",
     "edit": "Modifica app web",
     "enabled": "Abilitato",
     "evictionDuration": "Rimuovi app web inattive dopo (minuti)",
