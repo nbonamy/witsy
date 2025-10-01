@@ -1,7 +1,7 @@
 
 <template>
-  <button @click="onClick" :class="{ refreshing: refreshing }">
-    <component :is="refreshIcon" />
+  <button @click="onClick">
+    <SpinningIcon :icon="refreshIcon" :spinning="refreshing" size="sm" />
   </button>
 </template>
 
@@ -9,6 +9,7 @@
 
 import { CheckCheckIcon, CircleAlertIcon, RefreshCcwIcon } from 'lucide-vue-next'
 import { PropType, ref } from 'vue'
+import SpinningIcon from './SpinningIcon.vue'
 
 const props = defineProps({
   onRefresh: {
@@ -38,25 +39,4 @@ defineExpose({
 </script>
 
 <style scoped>
-
-svg {
-  width: 0.85rem;
-  height: 0.85rem;
-}
-
-.refreshing {
-  pointer-events: none;
-}
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.refreshing svg {
-  animation: spin 1s linear infinite;
-}
 </style>
