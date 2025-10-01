@@ -9,6 +9,7 @@ import { useI18n } from '../i18n';
 const storeBoundsId = 'main.bounds'
 
 let firstOpen = true;
+let cachedPosition: number[];
 let contextMenuContext: string | null = null;
 let mainWindowMode: MainWindowMode = 'none';
 export let mainWindow: BrowserWindow = null;
@@ -122,6 +123,11 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
     
   })
 
+  // Update cache when window is moved by user or system
+  mainWindow.on('move', () => {
+    cachedPosition = mainWindow.getPosition();
+  });
+
   // show a tip
   mainWindow.on('close', (event) => {
 
@@ -200,6 +206,24 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   firstOpen = false;
 
 }
+
+export const moveMainWindowBy = (deltaX: number, deltaY: number): void => {
+
+  // first time called
+  if (!cachedPosition) {
+
+    // Cache window position for faster dragging
+    cachedPosition = mainWindow.getPosition();
+
+  }
+
+  // now update
+  cachedPosition[0] += deltaX;
+  cachedPosition[1] += deltaY;
+  mainWindow.setPosition(cachedPosition[0], cachedPosition[1], false);
+
+}
+
 
 // only available for test purposes
 export const closeMainWindow = (): void => {
