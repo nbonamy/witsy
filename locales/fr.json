@@ -2064,6 +2064,9 @@
       },
       "instructions": {
         "title": "Style d'écriture"
+      },
+      "models": {
+        "reload": "Recharger les modèles"
       }
     },
     "noEngineAvailable": {
@@ -2555,7 +2558,7 @@
     },
     "doNotShowAgain": "Ne plus afficher",
     "favoriteModels": {
-      "text": "Cliquez sur l'icône LLM : vos modèles préférés seront regroupés sous l'icône étoile !",
+      "text": "Vos modèles favoris sont accessibles en haut du menu des modèles !",
       "title": "Accès rapide à vos modèles favoris"
     },
     "folderDefaults": {
