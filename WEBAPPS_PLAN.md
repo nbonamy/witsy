@@ -144,8 +144,8 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [x] All 1593 tests passing ✓
 - [x] Linting passed ✓
 
-### ⬜ Step 8: Create SettingsWebApps Component
-**File**: `src/settings/SettingsWebApps.vue`
+### ✅ Step 8: Create SettingsWebApps Component
+**Files**: `src/settings/SettingsWebApps.vue`, `tests/settings/settings_webapps.test.ts`
 
 - [ ] List current webapps with drag-to-reorder
   - Use vue-draggable or similar
@@ -175,23 +175,17 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [ ] Add to workspace settings section
 - [ ] Tab icon: use a Lucide icon (AppWindowIcon?)
 
-### ⬜ Step 10: Localization
+### ✅ Step 10: Localization
 **File**: `locales/en.json`
 
-- [ ] Add translations:
-  - `settings.tabs.webapps`: "Web Apps"
-  - `webapps.title`: "Web Apps"
-  - `webapps.add`: "Add Web App"
-  - `webapps.edit`: "Edit Web App"
-  - `webapps.name`: "Name"
-  - `webapps.url`: "URL"
-  - `webapps.icon`: "Icon"
-  - `webapps.enabled`: "Enabled"
-  - `webapps.delete`: "Delete Web App"
-  - `webapps.deleteConfirm`: "Are you sure you want to delete this web app?"
-  - `webapps.evictionDuration`: "Evict inactive webapps after (minutes)"
-  - `webapps.iconSearch`: "Search icons..."
-  - `webapps.noApps`: "No web apps configured"
+- [x] Add `settings.tabs.webapps`: "Web Apps"
+- [x] Add webapps section with all translations:
+  - add, delete, deleteConfirm, edit
+  - enabled, evictionDuration
+  - icon, iconSearch
+  - name, noApps, url
+- [x] All 1603 tests passing ✓
+- [x] Linting passed ✓
 
 ### ⬜ Step 11: Tests
 **Files**: New test files in `tests/unit/` and `tests/screens/`
