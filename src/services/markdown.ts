@@ -212,3 +212,67 @@ export const getCodeBlocks = (input: string): { start: number, end: number }[] =
   
   return blocks
 }
+
+/**
+ * Extract content from markdown code blocks
+ */
+export function extractCodeBlockContent(content: string): string {
+  const trimmed = content.trim()
+  if (trimmed.startsWith('```') && trimmed.endsWith('```')) {
+    return trimmed.slice(trimmed.indexOf('\n') + 1, -3).trim()
+  }
+  return trimmed
+}
+
+/**
+ * Add or replace file extension
+ */
+export function addExtension(filename: string, extension: string): string {
+  const lastDotIndex = filename.lastIndexOf('.')
+  if (lastDotIndex === -1 || filename.length - lastDotIndex > 5) {
+    return filename + extension
+  }
+  return filename.replace(/\.[^.]+$/, extension)
+}
+
+/**
+ * Detect if content is HTML
+ */
+export function isHtmlContent(content: string): boolean {
+  const trimmed = content.trim()
+
+  if (trimmed.startsWith('```html') && trimmed.endsWith('```')) {
+    return true
+  }
+
+  if (trimmed.startsWith('```') && trimmed.endsWith('```')) {
+    const innerContent = trimmed.slice(trimmed.indexOf('\n') + 1, -3).trim()
+    return innerContent.startsWith('<!DOCTYPE html') || innerContent.startsWith('<html')
+  }
+
+  return trimmed.startsWith('<!DOCTYPE html') || trimmed.startsWith('<html')
+}
+
+/**
+ * Extract HTML content from various formats
+ */
+export function extractHtmlContent(content: string): string {
+  const trimmed = content.trim()
+
+  if (trimmed.startsWith('```html') && trimmed.endsWith('```')) {
+    return trimmed.slice(8, -3).trim()
+  }
+
+  if (trimmed.startsWith('```') && trimmed.endsWith('```')) {
+    const innerContent = trimmed.slice(trimmed.indexOf('\n') + 1, -3).trim()
+    if (innerContent.startsWith('<!DOCTYPE html') || innerContent.startsWith('<html')) {
+      return innerContent
+    }
+  }
+
+  if (trimmed.startsWith('<!DOCTYPE html') || trimmed.startsWith('<html')) {
+    return trimmed
+  }
+
+  return ''
+}
