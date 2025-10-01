@@ -1,6 +1,7 @@
 
 import { FavoriteModel } from '../types/config'
 import { ToolSelection } from '../types/llm'
+import { WebApp } from '../types/workspace'
 
 export default class Workspace {
 
@@ -8,11 +9,12 @@ export default class Workspace {
   name: string
   icon: string
   color: string
-  
+
   models: FavoriteModel[]
   experts: string[]
   docrepos: string[]
   tools?: ToolSelection[]
+  webapps?: WebApp[]
 
   constructor(name: string) {
     this.uuid = crypto.randomUUID()
@@ -28,6 +30,7 @@ export default class Workspace {
     workspace.experts = obj.experts;
     workspace.docrepos = obj.docrepos;
     workspace.tools = obj.tools;
+    workspace.webapps = obj.webapps;
     return workspace;
   }
 
