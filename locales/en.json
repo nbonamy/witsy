@@ -2721,6 +2721,9 @@
     "iconSearch": "Search icons...",
     "name": "Name",
     "noApps": "No web apps configured",
-    "url": "URL"
+    "url": "URL",
+    "validation": {
+      "requiredFields": "Name and URL are required"
+    }
   }
 }
