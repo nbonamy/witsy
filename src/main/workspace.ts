@@ -40,7 +40,13 @@ export const listWorkspaces = (app: App): WorkspaceHeader[] => {
           const workspaceData = fs.readFileSync(workspaceJsonPath, 'utf8')
           const workspaceObj = JSON.parse(workspaceData)
           const workspace = WorkspaceModel.fromJson(workspaceObj)
-          workspaces.push(workspace)
+
+          workspaces.push({
+            uuid: workspace.uuid,
+            name: workspace.name,
+            icon: workspace.icon,
+            color: workspace.color
+          })
         } catch {
           // Skip folders without valid workspace.json files
           continue
