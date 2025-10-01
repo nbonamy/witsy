@@ -29,12 +29,12 @@
       
       <!-- Footer section -->
       <div v-if="hasFooter" class="footer" ref="footer">
-        <div v-if="!currentSubmenu">
+        <template v-if="!currentSubmenu">
           <slot name="footer" :filter="filter" :selected="selected" :withFilter="setSubmenuFilter" />
-        </div>
-        <div v-else>
+        </template>
+        <template v-else>
           <slot :name="`${currentSubmenu}Footer`" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
-        </div>
+        </template>
       </div>
     </div>
   </Teleport>
@@ -603,7 +603,7 @@ defineExpose({
   color: var(--context-menu-text-color);
 }
 
-.footer {
+.footer:has(*) {
   border-top: 1px solid var(--context-menu-border-color);
   padding: 0.25rem 0rem;
 }
