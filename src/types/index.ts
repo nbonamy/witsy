@@ -559,6 +559,10 @@ declare global {
         save(workspace: Workspace): boolean
         delete(workspaceId: string): boolean
       }
+      webview: {
+        setLinkBehavior(webviewId: number, isExternal: boolean): Promise<void>
+        setSpellCheckEnabled(webviewId: number, enabled: boolean): Promise<void>
+      }
     }
   }
 }
