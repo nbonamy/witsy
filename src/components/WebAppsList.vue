@@ -211,11 +211,11 @@ defineExpose({ load })
 }
 
 .no-webapps {
-  padding: 2rem;
+  padding: 4rem 2rem;
   text-align: center;
-  color: var(--text-secondary-color);
   border-left: 1px solid var(--border-color);
   border-right: 1px solid var(--border-color);
+  font-size: 14px;
 }
 
 .eviction-setting {
