@@ -41,8 +41,8 @@
             <td class="name">{{ webapp.name }}</td>
             <td class="url">{{ webapp.url }}</td>
             <td class="move">
-              <button @click.prevent.stop="onMoveDown(webapp)">▼</button>
-              <button @click.prevent.stop="onMoveUp(webapp)">▲</button>
+              <button @click.prevent="onMoveDown(webapp)" @dblclick.stop>▼</button>
+              <button @click.prevent="onMoveUp(webapp)" @dblclick.stop>▲</button>
             </td>
           </tr>
         </tbody>
@@ -183,86 +183,5 @@ defineExpose({ load })
 </script>
 
 <style scoped>
-
-.webapps {
-  flex: 1;
-  overflow-y: auto;
-
-  table {
-    width: 100%;
-
-    th, td {
-      text-align: left;
-      padding: 0.5rem;
-    }
-
-    th.enabled, td.enabled {
-      width: 60px;
-      text-align: center;
-    }
-
-    th.icon, td.icon {
-      width: 50px;
-      text-align: center;
-    }
-
-    th.move, td.move {
-      width: 80px;
-      text-align: center;
-    }
-
-    td.icon .webapp-icon {
-      width: 20px;
-      height: 20px;
-    }
-
-    tbody tr {
-      cursor: pointer;
-
-      &.selected {
-        background: var(--highlight-color);
-      }
-
-      &:hover {
-        background: var(--control-button-hover-bg-color);
-      }
-
-      &.selected:hover {
-        background: var(--highlight-color);
-      }
-    }
-
-    td.move button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0.25rem;
-      color: var(--text-color);
-
-      &:hover {
-        color: var(--color-primary);
-      }
-    }
-  }
-}
-
-.no-webapps {
-  padding: 2rem;
-  text-align: center;
-  color: var(--text-secondary-color);
-}
-
-.eviction-setting {
-  padding: 1rem;
-  border-top: 1px solid var(--border-color);
-
-  .form-field {
-    max-width: 400px;
-
-    input[type="number"] {
-      width: 100px;
-    }
-  }
-}
 
 </style>
