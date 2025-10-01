@@ -37,7 +37,6 @@ export default function useWebappManager() {
       const workspaceWebapp = store.workspace.webapps?.find(w => w.id === webappId)
       if (workspaceWebapp) {
         workspaceWebapp.lastUsed = Date.now()
-        window.api.workspace.save(store.workspace)
       }
     }
   }
