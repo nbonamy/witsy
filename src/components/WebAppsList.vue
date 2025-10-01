@@ -14,7 +14,6 @@
             <th class="enabled">{{ t('common.enabled') }}</th>
             <th class="icon">{{ t('webapps.icon') }}</th>
             <th class="name">{{ t('webapps.name') }}</th>
-            <th class="url">{{ t('webapps.url') }}</th>
             <th class="move">{{ t('common.move') }}</th>
           </tr>
         </thead>
@@ -39,7 +38,6 @@
               <component :is="getWebappIcon(webapp.icon)" class="webapp-icon" />
             </td>
             <td class="name">{{ webapp.name }}</td>
-            <td class="url">{{ webapp.url }}</td>
             <td class="move">
               <button @click.prevent="onMoveDown(webapp)" @dblclick.stop>▼</button>
               <button @click.prevent="onMoveUp(webapp)" @dblclick.stop>▲</button>
@@ -185,9 +183,20 @@ defineExpose({ load })
 <style scoped>
 
 .webapps {
-  td.icon .webapp-icon {
-    width: 20px;
-    height: 20px;
+
+  td {
+    padding: 0.25rem 0.75rem;
+    vertical-align: middle;
+  }
+
+
+  td.icon {
+    width: 1.5rem;
+    .webapp-icon {
+      margin-top: 5px;
+      width: 1rem;
+      height: 1rem;
+    }
   }
 }
 

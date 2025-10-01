@@ -18,7 +18,6 @@
         @click="select(iconName)"
       >
         <component :is="getIcon(iconName)" class="icon-svg" />
-        <span class="icon-name">{{ iconName }}</span>
       </div>
     </div>
   </div>
@@ -94,7 +93,7 @@ defineExpose({
 .icon-grid {
   display: flex;
   flex-wrap: wrap;
-  height: calc(4 * (1.25rem + 2 * 0.25rem + 2 * 1px));
+  height: calc(6 * (1.25rem + 2 * 0.25rem + 2 * 1px));
   overflow-y: auto;
   align-content: flex-start;
   scrollbar-color: var(--scrollbar-thumb-color) var(--control-list-bg-color);
@@ -102,9 +101,9 @@ defineExpose({
 
 .icon-item {
   position: relative;
-  padding: 0.25rem;
-  width: var(--icon-lg);
-  height: var(--icon-lg);
+  padding: 0.375rem;
+  width: var(--icon-xl);
+  height: var(--icon-xl);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -118,7 +117,7 @@ defineExpose({
     background: var(--highlight-color);
     border-color: var(--highlight-color);
     svg {
-      fill: var(--highlighted-color);
+      fill: var(--background-color);
     }
   }
 
@@ -127,24 +126,5 @@ defineExpose({
     height: 100%;
   }
 }
-
-.icon-name {
-  position: absolute;
-  bottom: -18px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 9px;
-  color: var(--text-secondary-color);
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.2s;
-  pointer-events: none;
-}
-
-.icon-item:hover .icon-name {
-  opacity: 1;
-}
-
-
 
 </style>

@@ -12,9 +12,9 @@
       <label>{{ t('webapps.icon') }}</label>
       <IconPicker v-model="icon" />
     </div>
-    <div class="form-field">
-      <label>{{ t('webapps.enabled') }}</label>
+    <div class="form-field horizontal">
       <input type="checkbox" v-model="enabled" />
+      <label>{{ t('webapps.enabled') }}</label>
     </div>
     <div class="buttons">
       <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
@@ -86,37 +86,5 @@ const onSave = (event: Event) => {
 
 <style scoped>
 
-.webapp-editor {
-  padding: 1rem;
-
-  .form-field {
-    margin-bottom: 1rem;
-
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    input[type="text"],
-    input[type="url"] {
-      width: 100%;
-    }
-
-    input[type="checkbox"] {
-      width: auto;
-    }
-  }
-
-  .buttons {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
-
-    button {
-      padding: 0.5rem 1rem;
-    }
-  }
-}
 
 </style>
