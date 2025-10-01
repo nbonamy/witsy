@@ -72,7 +72,7 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [x] Linting passed ✓
 
 ### ✅ Step 4: WebAppViewer Component
-**File**: `src/screens/WebAppViewer.vue`, `src/types/index.ts`
+**Files**: `src/screens/WebAppViewer.vue`, `src/types/index.ts`, `tests/screens/webapp_viewer.test.ts`, `tests/mocks/window.ts`
 
 - [x] Create component with props: `webapp: WebApp`, `visible: boolean`
 - [x] Use `<webview>` tag with `partition="persist:webview"` and `allowpopups`
@@ -81,6 +81,9 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [x] Emit events: update-last-used, navigate
 - [x] Configure link behavior and spell check via IPC
 - [x] Add webview API types to Window interface
+- [x] Add webview mock to window.ts
+- [x] Write 7 unit tests for component behavior
+- [x] All 1578 tests passing ✓
 - [x] Linting passed ✓
 
 ### ⬜ Step 5: Update Main.vue
