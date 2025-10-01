@@ -76,26 +76,27 @@
       <div class="form" v-if="edited">
         <div class="form-field">
           <label>{{ t('webapps.name') }}</label>
-          <input type="text" v-model="edited.name" @input="onModified" />
+          <input type="text" v-model="edited.name" />
         </div>
 
         <div class="form-field">
           <label>{{ t('webapps.url') }}</label>
-          <input type="url" v-model="edited.url" @input="onModified" placeholder="https://example.com" />
+          <input type="url" v-model="edited.url" placeholder="https://example.com" />
         </div>
 
         <div class="form-field">
           <label>{{ t('webapps.icon') }}</label>
-          <IconPicker v-model="edited.icon" @update:modelValue="onModified" />
+          <IconPicker v-model="edited.icon" />
         </div>
 
         <div class="form-field">
           <label>{{ t('webapps.enabled') }}</label>
-          <input type="checkbox" v-model="edited.enabled" @change="onModified" />
+          <input type="checkbox" v-model="edited.enabled" />
         </div>
 
         <div class="form-actions">
           <button class="cancel" @click="onCancel">{{ t('common.cancel') }}</button>
+          <button class="save cta" @click="onSave">{{ t('common.save') }}</button>
         </div>
       </div>
     </main>
@@ -162,7 +163,7 @@ const onCancel = () => {
   edited.value = null
 }
 
-const onModified = () => {
+const onSave = () => {
   if (!edited.value) return
 
   // Validate
@@ -172,8 +173,8 @@ const onModified = () => {
 
   // New webapp
   if (!edited.value.id) {
-    edited.value.id = uuidv4()
-    webapps.value.push(edited.value)
+    const newWebapp = { ...edited.value, id: uuidv4() }
+    webapps.value.push(newWebapp)
   } else {
     // Update existing
     const existing = webapps.value.find(w => w.id === edited.value.id)

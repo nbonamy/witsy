@@ -93,7 +93,7 @@ test('SettingsWebApps opens editor on create', async () => {
   expect((nameInput.element as HTMLInputElement).value).toBe('')
 })
 
-test('SettingsWebApps creates new webapp with auto-save', async () => {
+test('SettingsWebApps creates new webapp with save button', async () => {
   const wrapper = mount(SettingsWebApps)
   wrapper.vm.load()
 
@@ -111,7 +111,15 @@ test('SettingsWebApps creates new webapp with auto-save', async () => {
   await urlInput.setValue('https://chatgpt.com')
   await nextTick()
 
-  // Should auto-save
+  // Should NOT auto-save yet
+  expect(store.workspace.webapps.length).toBe(0)
+
+  // Click save
+  const saveButton = wrapper.find('button.save')
+  await saveButton.trigger('click')
+  await nextTick()
+
+  // Now should be saved
   expect(window.api.workspace.save).toHaveBeenCalled()
   expect(store.workspace.webapps.length).toBe(1)
   expect(store.workspace.webapps[0].name).toBe('ChatGPT')
@@ -140,7 +148,15 @@ test('SettingsWebApps edits existing webapp', async () => {
   await nameInput.setValue('Test 1 Updated')
   await nextTick()
 
-  // Should auto-save
+  // Should NOT auto-save
+  expect(store.workspace.webapps[0].name).toBe('Test 1')
+
+  // Click save
+  const saveButton = wrapper.find('button.save')
+  await saveButton.trigger('click')
+  await nextTick()
+
+  // Now should be updated
   expect(store.workspace.webapps[0].name).toBe('Test 1 Updated')
 })
 
