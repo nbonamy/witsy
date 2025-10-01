@@ -3,6 +3,8 @@
     <div v-if="block.type == 'empty'" class="text empty variable-font-size"><p>{{ t('message.content.empty') }}</p></div>
     <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
     <MessageItemArtifactBlock v-else-if="block.type == 'artifact'" :title="block.title!" :content="block.content!" :transient="props.transient" />
+    <MessageItemHtmlBlock v-else-if="block.type == 'html'" :title="block.title!" :content="block.content!" :transient="props.transient" />
+    <MessageItemTableBlock v-else-if="block.type == 'table'" :content="block.content!" />
     <MessageItemMediaBlock v-else-if="block.type == 'media'" :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" />
     <MessageItemToolBlock v-else-if="block.type == 'tool'" :tool-call="block.toolCall!" />
     <MessageItemSearchResultBlock v-else-if="block.type == 'search'" :tool-call="block.toolCall!" />
@@ -14,10 +16,12 @@
 import { ToolCall } from '../types/index'
 import { nextTick, PropType, ref, h, render } from 'vue'
 import MessageItemArtifactBlock from './MessageItemArtifactBlock.vue'
+import MessageItemHtmlBlock from './MessageItemHtmlBlock.vue'
+import MessageItemTableBlock from './MessageItemTableBlock.vue'
 import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
-import MessageItemSearchResultBlock from './MessageItemSearchResultBlock.vue' 
+import MessageItemSearchResultBlock from './MessageItemSearchResultBlock.vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 
@@ -43,6 +47,12 @@ type BlockArtifact = {
   content: string
 }
 
+type BlockHtml = {
+  type: 'html'
+  title: string
+  content: string
+}
+
 type BlockTool = {
   type: 'tool'
   toolCall: ToolCall
@@ -53,7 +63,12 @@ type BlockSearch = {
   toolCall: ToolCall
 }
 
-export type Block = BlockEmpty | BlockText | BlockMedia | BlockArtifact | BlockTool | BlockSearch
+type BlockTable = {
+  type: 'table'
+  content: string
+}
+
+export type Block = BlockEmpty | BlockText | BlockMedia | BlockArtifact | BlockHtml | BlockTool | BlockSearch | BlockTable
 
 const props = defineProps({
   block: {

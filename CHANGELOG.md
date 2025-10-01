@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Let users choose which tools to enable from each MCP, and persist that choice for all models (https://github.com/nbonamy/witsy/issues/410)
 - Allow selecting and copying text from tool execution results (https://github.com/nbonamy/witsy/issues/421)
 - Support Perplexity Search API (https://github.com/nbonamy/witsy/issues/427)
+- Table rendering as artifact, download as CSV and XSLX
 
 ### Changed
 - N/A
