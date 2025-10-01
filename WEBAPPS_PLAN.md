@@ -59,15 +59,17 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [x] Add `"webapps": true`
 - [x] Linting passed ✓
 
-### ⬜ Step 3: Main Process - Webview Session Setup
-**Files**: `src/main/ipc.ts`, new file `src/main/webview.ts`
+### ✅ Step 3: Main Process - Webview Session Setup
+**Files**: `src/main/ipc.ts`, `src/main/webview.ts`, `src/main.ts`, `src/preload.ts`
 
-- [ ] Create webview.ts service:
-  - Setup `session.fromPartition('persist:webview')`
-  - Strip "Witsy" and "Electron" from user agent
-  - Configure `setWindowOpenHandler` to keep links in webview
-- [ ] Export IPC methods if needed
-- [ ] Initialize in main process startup
+- [x] Create webview.ts service with functions:
+  - `initWebviewSession()` - Setup session with custom UA
+  - `setWebviewLinkBehavior()` - Configure link handling
+  - `setWebviewSpellCheck()` - Enable/disable spell check
+- [x] Add IPC handlers in ipc.ts
+- [x] Initialize in main.ts whenReady()
+- [x] Expose API in preload.ts
+- [x] Linting passed ✓
 
 ### ⬜ Step 4: WebAppViewer Component
 **File**: `src/screens/WebAppViewer.vue`

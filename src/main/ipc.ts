@@ -28,6 +28,7 @@ import MacOSPermissions from './permissions';
 
 import * as IPC from '../ipc_consts';
 import * as config from './config';
+import * as webview from './webview';
 import * as history from './history';
 import * as commands from './commands';
 import * as experts from './experts';
@@ -820,6 +821,15 @@ export const installIpc = (
       return null;
     }
   })
+
+  // webview
+  ipcMain.handle('webview-set-link-behavior', (_, webviewId: number, isExternal: boolean) => {
+    webview.setWebviewLinkBehavior(webviewId, isExternal);
+  });
+
+  ipcMain.handle('webview-set-spell-check', (_, webviewId: number, enabled: boolean) => {
+    webview.setWebviewSpellCheck(webviewId, enabled);
+  });
 
 }
 

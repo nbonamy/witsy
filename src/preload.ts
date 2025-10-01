@@ -260,6 +260,14 @@ contextBridge.exposeInMainWorld(
       load: (workspaceId: string): Workspace|null => { return JSON.parse(ipcRenderer.sendSync(IPC.WORKSPACE.LOAD, workspaceId)) },
       save: (workspace: Workspace): boolean => { return ipcRenderer.sendSync(IPC.WORKSPACE.SAVE, JSON.stringify(workspace)) },
       delete: (workspaceId: string): boolean => { return ipcRenderer.sendSync(IPC.WORKSPACE.DELETE, workspaceId) },
+    },
+    webview: {
+      setLinkBehavior: (webviewId: number, isExternal: boolean): Promise<void> => {
+        return ipcRenderer.invoke('webview-set-link-behavior', webviewId, isExternal)
+      },
+      setSpellCheckEnabled: (webviewId: number, enabled: boolean): Promise<void> => {
+        return ipcRenderer.invoke('webview-set-spell-check', webviewId, enabled)
+      },
     }
   },
 );
