@@ -21,6 +21,7 @@
           <template v-if="store.isFeatureEnabled('workspaces')">
             <li class="separator">Workspace Settings</li>
             <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
+            <SettingsTab class="webapps" :title="t('settings.tabs.webapps')" @change="load(settingsWebApps)" :checked="initialTab == 'webapps'" v-if="store.isFeatureEnabled('webapps')"><AppWindowIcon class="icon" /></SettingsTab>
           </template>
         </ul>
       </main>
@@ -39,6 +40,7 @@
       <SettingsAdvanced ref="settingsAdvanced" />
       <template v-if="store.isFeatureEnabled('workspaces')">
         <SettingsModels2 ref="settingsModels" />
+        <SettingsWebApps ref="settingsWebApps" v-if="store.isFeatureEnabled('webapps')" />
       </template>
     </div>
   </div>
@@ -46,7 +48,7 @@
 
 <script setup lang="ts">
 
-import { AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
+import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref, watch } from 'vue'
 import { MenuBarMode } from '../components/MenuBar.vue'
 import useEventBus from '../composables/event_bus'
@@ -66,6 +68,7 @@ import SettingsPlugins from '../settings/SettingsPlugins.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
+import SettingsWebApps from '../settings/SettingsWebApps.vue'
 import { OpenSettingsPayload } from '../types/index'
 
 const { onEvent } = useEventBus()
@@ -93,6 +96,7 @@ const settingsExperts = ref(null)
 const settingsVoice = ref(null)
 const settingsShortcuts = ref(null)
 const settingsAdvanced = ref(null)
+const settingsWebApps = ref(null)
 
 const settings = [
   settingsGeneral,
@@ -106,7 +110,8 @@ const settings = [
   settingsExperts,
   settingsVoice,
   settingsShortcuts,
-  settingsAdvanced
+  settingsAdvanced,
+  settingsWebApps
 ]
 
 onMounted(async () => {
