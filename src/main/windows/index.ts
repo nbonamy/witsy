@@ -132,6 +132,7 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
       defaultEncoding: 'UTF-8',
       devTools: process.env.DEBUG ? true : false,
       sandbox: true,
+      webviewTag: true,
     },
   });
 
