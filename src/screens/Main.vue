@@ -68,6 +68,9 @@ const realtime = ref<typeof RealtimeChat>(null)
 const settings = ref<typeof Settings>(null)
 const showOnboarding = ref(false)
 
+let lastMouseX = 0
+let lastMouseY = 0
+
 // init stuff
 store.load()
 
@@ -189,9 +192,6 @@ const onOnboardingDone = () => {
   store.config.general.onboardingDone = true
   store.saveSettings()
 }
-
-let lastMouseX = 0
-let lastMouseY = 0
 
 const onHeaderMouseDown = (event: MouseEvent) => {
   lastMouseX = event.screenX
