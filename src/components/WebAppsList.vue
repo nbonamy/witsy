@@ -195,6 +195,8 @@ defineExpose({ load })
   padding: 2rem;
   text-align: center;
   color: var(--text-secondary-color);
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
 }
 
 .eviction-setting {
