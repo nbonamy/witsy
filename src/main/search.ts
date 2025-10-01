@@ -2,6 +2,7 @@
 import { BrowserWindow } from 'electron'
 import { getTextContent } from './text'
 import { deleteFile } from './file'
+import { getCleanUserAgent } from './utils'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
@@ -269,6 +270,11 @@ export default class LocalSearch {
         disableDialogs: true,
       },
     })
+
+    // Set clean user agent (strip Witsy and Electron identifiers)
+    const originalUA = win.webContents.session.getUserAgent()
+    const cleanUA = getCleanUserAgent(originalUA)
+    win.webContents.session.setUserAgent(cleanUA)
 
     // prevent memory leaks
     win.webContents.setMaxListeners(20)

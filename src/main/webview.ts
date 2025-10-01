@@ -1,4 +1,5 @@
 import { session, shell, webContents } from 'electron'
+import { getCleanUserAgent } from './utils'
 
 /**
  * Initialize the webview session with custom user agent
@@ -7,9 +8,7 @@ import { session, shell, webContents } from 'electron'
 export function initWebviewSession(): void {
   const wvSession = session.fromPartition('persist:webview')
   const originUA = wvSession.getUserAgent()
-  const newUA = originUA
-    .replace(/Witsy\/\S+\s/, '')
-    .replace(/Electron\/\S+\s/, '')
+  const newUA = getCleanUserAgent(originUA)
 
   wvSession.setUserAgent(newUA)
   wvSession.webRequest.onBeforeSendHeaders((details, cb) => {
