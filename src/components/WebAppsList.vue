@@ -39,7 +39,8 @@
               <input type="checkbox" class="sm" :checked="webapp.enabled" @click.stop="onToggleEnabled(webapp)" />
             </td>
             <td class="icon">
-              <component :is="getWebappIcon(webapp.icon)" class="webapp-icon" />
+              <img v-if="!webapp.icon" :src="`https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=${encodeURIComponent(webapp.url)}`" class="webapp-favicon" alt="Webapp icon" />
+              <component v-else :is="getWebappIcon(webapp.icon)" class="webapp-icon" />
             </td>
             <td class="name">{{ webapp.name }}</td>
             <td class="move">
@@ -203,6 +204,11 @@ defineExpose({ load })
   td.icon {
     width: 1.5rem;
     .webapp-icon {
+      margin-top: 5px;
+      width: 1rem;
+      height: 1rem;
+    }
+    .webapp-favicon {
       margin-top: 5px;
       width: 1rem;
       height: 1rem;

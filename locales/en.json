@@ -2698,6 +2698,7 @@
     "noApps": "No web apps configured",
     "title": "Web Apps",
     "url": "URL",
+    "useWebsiteIcon": "Use website icon",
     "validation": {
       "requiredFields": "Name and URL are required"
     }

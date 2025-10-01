@@ -2685,6 +2685,7 @@
     "noApps": "Nie skonfigurowano żadnych aplikacji internetowych",
     "title": "Aplikacje internetowe",
     "url": "URL",
+    "useWebsiteIcon": "Użyj ikony strony internetowej",
     "validation": {
       "requiredFields": "Nazwa i URL są wymagane"
     }

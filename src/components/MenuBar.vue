@@ -47,7 +47,8 @@
         :active="mode === `webapp-${webapp.id}`"
         @click="emit('change', `webapp-${webapp.id}`)"
       >
-        <component :is="getWebappIcon(webapp.icon)" />
+        <img v-if="!webapp.icon" :src="`https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=${encodeURIComponent(webapp.url)}`" class="webapp-favicon" alt="Webapp icon" />
+        <component v-else :is="getWebappIcon(webapp.icon)" />
         <span>{{ webapp.name }}</span>
       </MenuBarItem>
 
@@ -262,6 +263,11 @@ body[data-tint=blue] .mx-context-menu {
     .chat svg {
       position: relative;
       top: 2px;
+    }
+
+    .webapp-favicon {
+      width: 1.5rem;
+      height: 1.5rem;
     }
 
   }

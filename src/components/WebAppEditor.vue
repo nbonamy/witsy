@@ -10,7 +10,18 @@
     </div>
     <div class="form-field">
       <label>{{ t('webapps.icon') }}</label>
-      <IconPicker v-model="icon" />
+      <div class="icon-selection">
+        <div class="icon-option" :class="{ active: !icon }" @click="useWebsiteIcon">
+          <div class="icon-preview">
+            <img v-if="faviconUrl" :src="faviconUrl" class="favicon" alt="Website icon" />
+            <GlobeIcon v-else class="placeholder-icon" />
+          </div>
+          <span>{{ t('webapps.useWebsiteIcon') }}</span>
+        </div>
+        <div class="icon-option" :class="{ active: !!icon }">
+          <IconPicker v-model="icon" />
+        </div>
+      </div>
     </div>
     <div class="form-field horizontal">
       <input type="checkbox" id="webapp-enabled" v-model="enabled" />
@@ -25,7 +36,8 @@
 
 <script setup lang="ts">
 
-import { onMounted, ref, watch } from 'vue'
+import { GlobeIcon } from 'lucide-vue-next'
+import { computed, onMounted, ref, watch } from 'vue'
 import IconPicker from '../components/IconPicker.vue'
 import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
@@ -39,14 +51,28 @@ const props = defineProps<{
 
 const name = ref('')
 const url = ref('')
-const icon = ref('Globe')
+const icon = ref<string | undefined>(undefined)
 const enabled = ref(true)
+
+const faviconUrl = computed(() => {
+  if (!url.value) return ''
+  try {
+    new URL(url.value)
+    return `https://s2.googleusercontent.com/s2/favicons?sz=48&domain_url=${encodeURIComponent(url.value)}`
+  } catch {
+    return ''
+  }
+})
+
+const useWebsiteIcon = () => {
+  icon.value = undefined
+}
 
 onMounted(() => {
   watch(() => props.webapp, () => {
     name.value = props.webapp?.name || ''
     url.value = props.webapp?.url || ''
-    icon.value = props.webapp?.icon || 'Globe'
+    icon.value = props.webapp?.icon
     enabled.value = props.webapp?.enabled ?? true
   }, { deep: true, immediate: true })
 })
@@ -86,5 +112,54 @@ const onSave = (event: Event) => {
 
 <style scoped>
 
+.icon-selection {
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+}
+
+.icon-option {
+  padding: 0.75rem;
+  border: 1px solid var(--control-border-color);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  span {
+    margin-top: 0px !important;
+  }
+
+  &.active {
+    border-color: var(--highlight-color);
+  }
+
+}
+
+.icon-option:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.icon-preview {
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+
+  .favicon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .placeholder-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--text-color);
+    opacity: 0.5;
+  }
+}
 
 </style>
