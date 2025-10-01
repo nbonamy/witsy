@@ -845,20 +845,6 @@
     "model": "Modello di embedding",
     "provider": "Fornitore di embedding"
   },
-  "emptyChat": {
-    "favorites": {
-      "shortcut": "Premi {shortcut} per attivare rapidamente questo modello"
-    },
-    "settings": {
-      "needsApiKey": "Hai bisogno di una chiave API per utilizzare i modelli di questo fornitore. Puoi inserirla qui sotto.",
-      "needsModels": "I modelli non sono stati caricati per questo fornitore.<br/><a href=\"#settings_models_{engine}\">Clicca qui</a> per controllare la tua configurazione.",
-      "refreshingModels": "Caricamento della lista dei modelli…"
-    },
-    "tips": {
-      "switchModel": "Clicca qui per passare a un diverso modello di chat bot!",
-      "switchProvider": "Clicca qui per passare a un diverso fornitore di chat bot!"
-    }
-  },
   "engine": {
     "create": {
       "apiBaseURL": "@:{'settings.engines.custom.apiBaseURL'}",
@@ -2504,7 +2490,8 @@
       "models": "Modelli",
       "plugins": "Plugin",
       "shortcuts": "Scorciatoie",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "App Web"
     },
     "voice": {
       "automatic": "🤖 Automatico",
@@ -2653,6 +2640,23 @@
       "darwin": "Puoi attivare @:{'common.appName'} dall'icona della penna stilografica nella barra dei menu.",
       "linux": "Puoi attivare @:{'common.appName'} dall'icona della penna stilografica nella barra dei menu.",
       "win32": "Puoi attivare @:{'common.appName'} dall'icona della penna stilografica nella barra delle applicazioni."
+    }
+  },
+  "webapps": {
+    "add": "Aggiungi app web",
+    "delete": "Elimina app web",
+    "deleteConfirm": "Sei sicuro di voler eliminare questa app web?",
+    "description": "Configura le applicazioni web per accedervi direttamente dalla barra del menu. Le tue sessioni di accesso e i dati verranno preservati.",
+    "edit": "Modifica app web",
+    "enabled": "Abilitato",
+    "evictionDuration": "Rimuovi app web inattive dopo (minuti)",
+    "icon": "Icona",
+    "iconSearch": "Cerca icone...",
+    "name": "Nome",
+    "noApps": "Nessuna app web configurata",
+    "url": "URL",
+    "validation": {
+      "requiredFields": "Nome e URL sono obbligatori"
     }
   },
   "workspace": {

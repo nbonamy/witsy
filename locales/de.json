@@ -845,20 +845,6 @@
     "model": "Embedding-Modell",
     "provider": "Embedding-Modell-Anbieter"
   },
-  "emptyChat": {
-    "favorites": {
-      "shortcut": "Drücken Sie {shortcut}, um dieses Modell schnell zu aktivieren"
-    },
-    "settings": {
-      "needsApiKey": "Sie benötigen einen API-Schlüssel, um Modelle von diesem Anbieter zu verwenden. Sie können ihn unten eingeben.",
-      "needsModels": "Modelle wurden für diesen Anbieter nicht geladen.<br/><a href=\"#settings_models_{engine}\">Klicken Sie hier</a>, um Ihre Konfiguration zu überprüfen.",
-      "refreshingModels": "Lade Modellliste…"
-    },
-    "tips": {
-      "switchModel": "Klicken Sie hier, um zu einem anderen Chatbot-Modell zu wechseln!",
-      "switchProvider": "Klicken Sie hier, um zu einem anderen Chatbot-Anbieter zu wechseln!"
-    }
-  },
   "engine": {
     "create": {
       "apiBaseURL": "@:{'settings.engines.custom.apiBaseURL'}",
@@ -2504,7 +2490,8 @@
       "models": "Modelle",
       "plugins": "Plugins",
       "shortcuts": "Tastenkürzel",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "Web-Apps"
     },
     "voice": {
       "automatic": "🤖 Automatisch",
@@ -2653,6 +2640,23 @@
       "darwin": "Sie können @:{'common.appName'} über das Füllfederhalter-Symbol in der Menüleiste aktivieren.",
       "linux": "Sie können @:{'common.appName'} über das Füllfederhalter-Symbol in der Menüleiste aktivieren.",
       "win32": "Sie können @:{'common.appName'} über das Füllfederhalter-Symbol im Infobereich (System Tray) aktivieren."
+    }
+  },
+  "webapps": {
+    "add": "Web-App hinzufügen",
+    "delete": "Web-App löschen",
+    "deleteConfirm": "Sind Sie sicher, dass Sie diese Web-App löschen möchten?",
+    "description": "Konfigurieren Sie Webanwendungen, um direkt über die Menüleiste auf sie zuzugreifen. Ihre Anmeldesitzungen und Daten werden gespeichert.",
+    "edit": "Web-App bearbeiten",
+    "enabled": "Aktiviert",
+    "evictionDuration": "Inaktive Web-Apps nach (Minuten) entfernen",
+    "icon": "Symbol",
+    "iconSearch": "Symbole suchen...",
+    "name": "Name",
+    "noApps": "Keine Webanwendungen konfiguriert",
+    "url": "URL",
+    "validation": {
+      "requiredFields": "Name und URL sind erforderlich"
     }
   },
   "workspace": {
