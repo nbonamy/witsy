@@ -4,17 +4,17 @@
       {{ t('settings.plugins.filesystem.description') }}
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" name="enabled" v-model="enabled" @change="save" />
-      <label>{{ t('common.enabled') }}</label>
+      <input type="checkbox" id="filesystem-enabled" name="enabled" v-model="enabled" @change="save" />
+      <label for="filesystem-enabled">{{ t('common.enabled') }}</label>
     </div>
     <template v-if="enabled">
       <div class="form-field horizontal">
-        <input type="checkbox" name="enabled" v-model="allowWrite" @change="onAllowWrite" />
-        <label>{{ t('settings.plugins.filesystem.allowWrite') }}</label>
+        <input type="checkbox" id="filesystem-allow-write" name="enabled" v-model="allowWrite" @change="onAllowWrite" />
+        <label for="filesystem-allow-write">{{ t('settings.plugins.filesystem.allowWrite') }}</label>
       </div>
       <div class="form-field horizontal">
-        <input type="checkbox" name="enabled" :disabled="!allowWrite" v-model="skipConfirmation" @change="onSkipConfirmation" />
-        <label>{{ t('settings.plugins.filesystem.skipConfirmation') }}</label>
+        <input type="checkbox" id="filesystem-skip-confirmation" name="enabled" :disabled="!allowWrite" v-model="skipConfirmation" @change="onSkipConfirmation" />
+        <label for="filesystem-skip-confirmation">{{ t('settings.plugins.filesystem.skipConfirmation') }}</label>
       </div>
       <div class="form-field form-vertical">
         <label>{{ t('settings.plugins.filesystem.allowedPaths') }}</label>

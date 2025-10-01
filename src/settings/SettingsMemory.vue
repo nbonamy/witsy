@@ -4,8 +4,8 @@
       {{ t('settings.plugins.memory.description') }}
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" v-model="enabled" :disabled="!ready" @change="save" />
-      <label>{{ t('common.enabled') }}</label>
+      <input type="checkbox" id="memory-enabled" v-model="enabled" :disabled="!ready" @change="save" />
+      <label for="memory-enabled">{{ t('common.enabled') }}</label>
     </div>
     <EmbeddingSelector v-if="!hasFacts" :disabled="hasFacts" v-model:engine="engine" v-model:model="model" @update="save"/>
     <div v-else class="form-field">

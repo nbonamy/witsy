@@ -25,8 +25,8 @@
       </div>
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
-      <label>{{ t('settings.engines.disableTools') }}</label>
+      <input type="checkbox" id="ollama-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
+      <label for="ollama-disable-tools">{{ t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>

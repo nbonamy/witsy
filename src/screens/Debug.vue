@@ -87,9 +87,9 @@
             <div class="section" v-if="selected.frames.length > 0">
               <div class="form header">
                 <h3>Frames</h3>
-                <input type="checkbox" v-model="showSent" /> Sent
+                <input type="checkbox" id="debug-show-sent" v-model="showSent" /><label for="debug-show-sent">Sent</label>
                 &nbsp;&nbsp;&nbsp;
-                <input type="checkbox" v-model="showReceived" /> Received
+                <input type="checkbox" id="debug-show-received" v-model="showReceived" /><label for="debug-show-received">Received</label>
               </div>
               <template v-for="frame in selected.frames">
                 <div v-if="(showSent && frame.type === 'sent') || (showReceived && frame.type === 'received')" class="json">

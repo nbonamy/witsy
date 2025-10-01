@@ -16,8 +16,8 @@
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.lmstudio.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
-      <label>{{ t('settings.engines.disableTools') }}</label>
+      <input type="checkbox" id="lmstudio-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
+      <label for="lmstudio-disable-tools">{{ t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>

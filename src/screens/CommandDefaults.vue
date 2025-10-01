@@ -13,8 +13,8 @@
         <ModelSelect id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.defaults.lastOneUsed') : ''" />
       </div>
       <div class="form-field" v-if="isWindows">
-        <label>{{ t('commands.defaults.altWinCopyPaste') }}</label>
-        <input type="checkbox" v-model="altWinCopyPaste" />
+        <label for="alt-win-copy-paste">{{ t('commands.defaults.altWinCopyPaste') }}</label>
+        <input type="checkbox" id="alt-win-copy-paste" v-model="altWinCopyPaste" />
       </div>
     </template>
     <template #footer>

@@ -118,14 +118,16 @@
     @close="onCloseAgentsMenu"
   >
     <template #default>
-      <div 
-        v-for="availableAgent in availableAgents" 
+      <div
+        v-for="availableAgent in availableAgents"
         :key="availableAgent.uuid"
         @click.stop="toggleAgent(availableAgent.uuid)"
       >
-        <input type="checkbox" :checked="isAgentSelected(availableAgent.uuid)" @click.stop />
-        <AgentIcon class="icon" />
-        {{ availableAgent.name }}
+        <input type="checkbox" :id="`agent-${availableAgent.uuid}`" :checked="isAgentSelected(availableAgent.uuid)" @click.stop />
+        <label :for="`agent-${availableAgent.uuid}`">
+          <AgentIcon class="icon" />
+          {{ availableAgent.name }}
+        </label>
       </div>
     </template>
     <template #footer v-if="availableAgents.length > 0">

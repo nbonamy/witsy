@@ -36,18 +36,18 @@
       <tr>
         <td>{{ t('common.schedule.every') }}</td>
         <td>
-          <input type="checkbox" name="mon" :checked="on.includes('1')" @input="onDay(1)" /><label class="no-colon">{{ t('common.schedule.monday') }}</label>
-          <input type="checkbox" name="tue" :checked="on.includes('2')" @input="onDay(2)" /><label class="no-colon">{{ t('common.schedule.tuesday') }}</label>
-          <input type="checkbox" name="wed" :checked="on.includes('3')" @input="onDay(3)" /><label class="no-colon">{{ t('common.schedule.wednesday') }}</label>
-          <input type="checkbox" name="thu" :checked="on.includes('4')" @input="onDay(4)" /><label class="no-colon">{{ t('common.schedule.thursday') }}</label>
+          <input type="checkbox" id="schedule-mon" name="mon" :checked="on.includes('1')" @input="onDay(1)" /><label for="schedule-mon" class="no-colon">{{ t('common.schedule.monday') }}</label>
+          <input type="checkbox" id="schedule-tue" name="tue" :checked="on.includes('2')" @input="onDay(2)" /><label for="schedule-tue" class="no-colon">{{ t('common.schedule.tuesday') }}</label>
+          <input type="checkbox" id="schedule-wed" name="wed" :checked="on.includes('3')" @input="onDay(3)" /><label for="schedule-wed" class="no-colon">{{ t('common.schedule.wednesday') }}</label>
+          <input type="checkbox" id="schedule-thu" name="thu" :checked="on.includes('4')" @input="onDay(4)" /><label for="schedule-thu" class="no-colon">{{ t('common.schedule.thursday') }}</label>
         </td>
       </tr>
       <tr>
         <td>&nbsp;</td>
         <td>
-          <input type="checkbox" name="fri" :checked="on.includes('5')" @input="onDay(5)" /><label class="no-colon">{{ t('common.schedule.friday') }}</label>
-          <input type="checkbox" name="sat" :checked="on.includes('6')" @input="onDay(6)" /><label class="no-colon">{{ t('common.schedule.saturday') }}</label>
-          <input type="checkbox" name="sun" :checked="on.includes('0')" @input="onDay(0)" /><label class="no-colon">{{ t('common.schedule.sunday') }}</label>
+          <input type="checkbox" id="schedule-fri" name="fri" :checked="on.includes('5')" @input="onDay(5)" /><label for="schedule-fri" class="no-colon">{{ t('common.schedule.friday') }}</label>
+          <input type="checkbox" id="schedule-sat" name="sat" :checked="on.includes('6')" @input="onDay(6)" /><label for="schedule-sat" class="no-colon">{{ t('common.schedule.saturday') }}</label>
+          <input type="checkbox" id="schedule-sun" name="sun" :checked="on.includes('0')" @input="onDay(0)" /><label for="schedule-sun" class="no-colon">{{ t('common.schedule.sunday') }}</label>
         </td>
       </tr>
       <tr>

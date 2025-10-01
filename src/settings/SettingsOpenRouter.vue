@@ -30,8 +30,8 @@
       <ModelSelectPlus v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
-      <label>{{  t('settings.engines.disableTools') }}</label>
+      <input type="checkbox" id="openrouter-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
+      <label for="openrouter-disable-tools">{{  t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>

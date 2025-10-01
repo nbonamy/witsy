@@ -27,8 +27,8 @@
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
-      <label>{{  t('settings.engines.disableTools') }}</label>
+      <input type="checkbox" id="openai-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
+      <label for="openai-disable-tools">{{  t('settings.engines.disableTools') }}</label>
     </div>
   </div>  
 </template>

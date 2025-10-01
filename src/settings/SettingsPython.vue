@@ -6,8 +6,8 @@
       <b>{{ t('settings.plugins.python.useAtOwnRisk') }}</b>!
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" v-model="enabled" @change="save" />
-      <label>{{ t('common.enabled') }}</label>
+      <input type="checkbox" id="python-enabled" v-model="enabled" @change="save" />
+      <label for="python-enabled">{{ t('common.enabled') }}</label>
     </div>
     <div class="form-field">
       <label>{{ t('settings.plugins.python.binaryPath') }}</label>

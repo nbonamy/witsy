@@ -6,8 +6,8 @@
     </div>
     
     <div class="form-field horizontal">
-      <input type="checkbox" v-model="enabled" @change="save" />
-      <label>{{ t('common.enabled') }}</label>
+      <input type="checkbox" id="video-enabled" v-model="enabled" @change="save" />
+      <label for="video-enabled">{{ t('common.enabled') }}</label>
     </div>
     
     <div class="form-field">

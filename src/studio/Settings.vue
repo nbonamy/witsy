@@ -54,13 +54,13 @@
       </div>
 
       <div class="form-field horizontal" v-if="currentMedia != null && canTransform">
-        <input type="checkbox" v-model="transform" name="transform" @change="onChangeTransform"/>
-        <label>{{ t('designStudio.transform') }}</label>
+        <input type="checkbox" id="studio-transform" v-model="transform" name="transform" @change="onChangeTransform"/>
+        <label for="studio-transform">{{ t('designStudio.transform') }}</label>
       </div>
 
       <div class="form-field horizontal" v-if="isEditing && !isGenerating">
-        <input type="checkbox" v-model="preserve" name="preserve" />
-        <label>{{ t('designStudio.preserveOriginal') }}</label>
+        <input type="checkbox" id="studio-preserve" v-model="preserve" name="preserve" />
+        <label for="studio-preserve">{{ t('designStudio.preserveOriginal') }}</label>
       </div>
 
       <div class="form-field">

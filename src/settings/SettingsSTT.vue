@@ -60,8 +60,8 @@
     </div>
     
     <div class="form-field horizontal" v-if="engine == 'whisper'">
-      <input type="checkbox" v-model="whisperGPU" @change="save" />
-      <label>{{ t('settings.voice.useWebGpu') }}</label>
+      <input type="checkbox" id="whisper-gpu" v-model="whisperGPU" @change="save" />
+      <label for="whisper-gpu">{{ t('settings.voice.useWebGpu') }}</label>
     </div>
     
     <div class="form-field" v-if="engine != 'custom'">
@@ -101,8 +101,8 @@
     </div>
     
     <div class="form-field horizontal" v-if="engine == 'soniox'">
-      <input type="checkbox" v-model="sonioxCleanup" @change="save" />
-      <label>{{ t('settings.voice.soniox.cleanup') }}</label>
+      <input type="checkbox" id="soniox-cleanup" v-model="sonioxCleanup" @change="save" />
+      <label for="soniox-cleanup">{{ t('settings.voice.soniox.cleanup') }}</label>
     </div>
 
     <div class="form-field">
