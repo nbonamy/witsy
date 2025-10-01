@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="webapps-description">
+      {{ t('webapps.description') }}
+    </div>
+
     <div class="list-actions">
       <div class="list-action new" @click.prevent="onNew"><PlusIcon />{{ t('webapps.add') }}</div>
       <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
@@ -181,6 +185,12 @@ defineExpose({ load })
 </script>
 
 <style scoped>
+
+.webapps-description {
+  margin-bottom: 2rem;
+  font-size: 14px;
+  line-height: 1.5;
+}
 
 .webapps {
 
