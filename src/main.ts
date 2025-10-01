@@ -29,6 +29,7 @@ import * as window from './main/window';
 import * as menu from './main/menu';
 import * as backup from './main/backup';
 import * as workspace from './main/workspace';
+import * as webview from './main/webview';
 
 let mcp: Mcp;
 let scheduler: Scheduler;
@@ -141,6 +142,9 @@ app.whenReady().then(async () => {
 
   // initialize current workspace
   workspace.initializeWorkspace(app, settings.workspaceId)
+
+  // initialize webview session
+  webview.initWebviewSession()
 
   // error
   if (config.settingsFileHadError()) {
