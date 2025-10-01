@@ -4,7 +4,6 @@ import { mount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import MenuBar from '../../src/components/MenuBar.vue'
-import { WebApp } from '../../src/types/workspace'
 
 beforeAll(() => {
   useWindowMock()
