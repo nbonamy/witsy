@@ -30,12 +30,14 @@ let hasLoadedSrc = false
 
 // Update lastUsed when component becomes visible
 watch(() => props.visible, (isVisible) => {
+  console.log(`[WebAppViewer ${props.webapp.id}] Visibility changed:`, isVisible, 'webviewRef:', !!webviewRef.value, 'hasLoadedSrc:', hasLoadedSrc)
   if (isVisible && webviewRef.value) {
     emit('update-last-used')
 
     // Lazy load: only set src on first show
     if (!hasLoadedSrc) {
       const webview = webviewRef.value as any
+      console.log(`[WebAppViewer ${props.webapp.id}] Setting src to:`, props.webapp.url)
       webview.src = props.webapp.url
       hasLoadedSrc = true
     }
@@ -79,7 +81,9 @@ onMounted(() => {
   })
 
   // Set src immediately if visible on mount
+  console.log(`[WebAppViewer ${props.webapp.id}] onMounted - visible:`, props.visible, 'webview:', !!webview, 'hasLoadedSrc:', hasLoadedSrc)
   if (props.visible && !hasLoadedSrc) {
+    console.log(`[WebAppViewer ${props.webapp.id}] Setting src on mount to:`, props.webapp.url)
     webview.src = props.webapp.url
     hasLoadedSrc = true
   }
