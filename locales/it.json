@@ -264,6 +264,18 @@
       "confirmDelete": "Sei sicuro di voler eliminare questo agente?",
       "create": "Nuovo Agente",
       "empty": "Sblocca il potere agente di @:{'common.appName'} creando il tuo primo agente! Clicca sull'icona del robot per iniziare.",
+      "import": {
+        "conflict": {
+          "createNew": "Crea nuovo",
+          "overwrite": "Sovrascrivi",
+          "text": "Esiste già un agente con questo nome. Cosa desideri fare?",
+          "title": "Agente già esistente"
+        },
+        "error": {
+          "text": "Il file selezionato non è un file JSON agente valido.",
+          "title": "Errore di importazione"
+        }
+      },
       "list": {
         "empty": "Nessun agente di questo tipo creato ancora.",
         "runnable": "Avviato dall'utente",
@@ -277,6 +289,8 @@
       "delete": "Elimina questo agente",
       "deleteRun": "Elimina questa esecuzione",
       "edit": "Modifica questo agente",
+      "export": "Esporta agente",
+      "import": "Importa agente",
       "run": "Esegui questo agente",
       "view": "Visualizza i dettagli dell'agente"
     },

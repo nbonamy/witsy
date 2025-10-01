@@ -284,6 +284,18 @@
       "confirmDelete": "Are you sure you want to delete this agent?",
       "create": "New Agent",
       "empty": "Unlock the agentic power of @:{'common.appName'} by creating your first agent! Click the robot head to get started.",
+      "import": {
+        "conflict": {
+          "createNew": "Create New",
+          "overwrite": "Overwrite",
+          "text": "An agent with this name already exists. What would you like to do?",
+          "title": "Agent Already Exists"
+        },
+        "error": {
+          "text": "The selected file is not a valid agent JSON file.",
+          "title": "Import Error"
+        }
+      },
       "list": {
         "empty": "No agent of this type created yet.",
         "runnable": "User Initiated",
@@ -297,6 +309,8 @@
       "delete": "Delete this agent",
       "deleteRun": "Delete this run",
       "edit": "Edit this agent",
+      "export": "Export agent",
+      "import": "Import agent",
       "run": "Run this agent",
       "view": "View agent details"
     },

@@ -283,6 +283,18 @@
       "confirmDelete": "Czy na pewno chcesz usunąć tego agenta?",
       "create": "Nowy agent",
       "empty": "Uwolnij agentową moc @:{'common.appName'}, tworząc swojego pierwszego agenta! Kliknij ikonę robota, aby zacząć.",
+      "import": {
+        "conflict": {
+          "createNew": "Utwórz nowego",
+          "overwrite": "Nadpisz",
+          "text": "Agent o tej nazwie już istnieje. Co chcesz zrobić?",
+          "title": "Agent już istnieje"
+        },
+        "error": {
+          "text": "Wybrany plik nie jest prawidłowym plikiem JSON agenta.",
+          "title": "Błąd importu"
+        }
+      },
       "list": {
         "empty": "Nie utworzono jeszcze agenta tego typu.",
         "runnable": "Inicjowany przez użytkownika",
@@ -296,6 +308,8 @@
       "delete": "Usuń tego agenta",
       "deleteRun": "Usuń to uruchomienie",
       "edit": "Edytuj tego agenta",
+      "export": "Eksportuj agenta",
+      "import": "Importuj agenta",
       "run": "Uruchom tego agenta",
       "view": "Zobacz szczegóły agenta"
     },
