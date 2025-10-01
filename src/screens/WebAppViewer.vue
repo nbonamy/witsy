@@ -30,14 +30,12 @@ let hasLoadedSrc = false
 
 // Update lastUsed when component becomes visible
 watch(() => props.visible, (isVisible) => {
-  console.log(`[WebAppViewer ${props.webapp.id}] Visibility changed:`, isVisible, 'webviewRef:', !!webviewRef.value, 'hasLoadedSrc:', hasLoadedSrc)
   if (isVisible && webviewRef.value) {
     emit('update-last-used')
 
     // Lazy load: only set src on first show
     if (!hasLoadedSrc) {
       const webview = webviewRef.value as any
-      console.log(`[WebAppViewer ${props.webapp.id}] Setting src to:`, props.webapp.url)
       webview.src = props.webapp.url
       hasLoadedSrc = true
     }
@@ -46,21 +44,10 @@ watch(() => props.visible, (isVisible) => {
 
 onMounted(() => {
   const webview = webviewRef.value as any
-  if (!webview) {
-    console.error(`[WebAppViewer ${props.webapp.id}] No webview ref in onMounted!`)
-    return
-  }
-
-  const handleDidStartLoading = () => {
-    console.log(`[WebApp ${props.webapp.id}] Started loading`)
-  }
+  if (!webview) return
 
   const handleDidFinishLoad = () => {
     console.log(`[WebApp ${props.webapp.id}] Page loaded`)
-  }
-
-  const handleDidFailLoad = (event: any) => {
-    console.error(`[WebApp ${props.webapp.id}] Failed to load:`, event)
   }
 
   const handleDidNavigateInPage = (event: any) => {
@@ -69,7 +56,6 @@ onMounted(() => {
   }
 
   const handleDomReady = async () => {
-    console.log(`[WebApp ${props.webapp.id}] DOM ready`)
     const webviewId = webview.getWebContentsId()
     if (webviewId) {
       // Configure webview to keep links internal (not open in external browser)
@@ -81,27 +67,19 @@ onMounted(() => {
   }
 
   // Attach event listeners
-  webview.addEventListener('did-start-loading', handleDidStartLoading)
   webview.addEventListener('did-finish-load', handleDidFinishLoad)
-  webview.addEventListener('did-fail-load', handleDidFailLoad)
   webview.addEventListener('did-navigate-in-page', handleDidNavigateInPage)
   webview.addEventListener('dom-ready', handleDomReady)
 
-  console.log(`[WebAppViewer ${props.webapp.id}] Event listeners attached`)
-
   // Cleanup on unmount
   onBeforeUnmount(() => {
-    webview.removeEventListener('did-start-loading', handleDidStartLoading)
     webview.removeEventListener('did-finish-load', handleDidFinishLoad)
-    webview.removeEventListener('did-fail-load', handleDidFailLoad)
     webview.removeEventListener('did-navigate-in-page', handleDidNavigateInPage)
     webview.removeEventListener('dom-ready', handleDomReady)
   })
 
   // Set src immediately if visible on mount
-  console.log(`[WebAppViewer ${props.webapp.id}] onMounted - visible:`, props.visible, 'webview:', !!webview, 'hasLoadedSrc:', hasLoadedSrc)
   if (props.visible && !hasLoadedSrc) {
-    console.log(`[WebAppViewer ${props.webapp.id}] Setting src on mount to:`, props.webapp.url)
     webview.src = props.webapp.url
     hasLoadedSrc = true
   }

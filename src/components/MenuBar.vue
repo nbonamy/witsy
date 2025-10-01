@@ -111,17 +111,10 @@ const hasMcp = computed(() => {
 })
 
 const enabledWebapps = computed(() => {
-  if (!store.isFeatureEnabled('webapps')) {
-    console.log('[MenuBar] Webapps feature disabled')
+  if (!store.isFeatureEnabled('webapps') || !store.workspace) {
     return []
   }
-  if (!store.workspace) {
-    console.log('[MenuBar] No workspace loaded')
-    return []
-  }
-  const webapps = store.workspace.webapps?.filter(w => w.enabled) || []
-  console.log('[MenuBar] Enabled webapps:', webapps.length, webapps)
-  return webapps
+  return store.workspace.webapps?.filter(w => w.enabled) || []
 })
 
 const getWebappIcon = (iconName: string) => {
