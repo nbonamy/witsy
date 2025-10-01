@@ -2518,6 +2518,7 @@
       "models": "モデル",
       "plugins": "プラグイン",
       "shortcuts": "ショートカット",
+      "sidebar": "サイドバー",
       "voice": "@:{'common.voice'}",
       "webapps": "ウェブアプリ"
     },
@@ -2682,6 +2683,7 @@
     "iconSearch": "アイコンを検索...",
     "name": "名前",
     "noApps": "設定されたウェブアプリがありません",
+    "title": "ウェブアプリ",
     "url": "URL",
     "validation": {
       "requiredFields": "名前とURLは必須です"

@@ -2587,7 +2587,7 @@
   },
   "sidebar": {
     "features": {
-        "title": "Witsy Features"
+      "title": "@:{'common.appName'} Features"
     },
     "newFolder": {
       "placeholder": "New Folder Name",

@@ -2490,6 +2490,7 @@
       "models": "Modèles",
       "plugins": "Plugins",
       "shortcuts": "Raccourcis",
+      "sidebar": "Barre latérale",
       "voice": "@:{'common.voice'}",
       "webapps": "Applications web"
     },
@@ -2654,6 +2655,7 @@
     "iconSearch": "Rechercher des icônes...",
     "name": "Nom",
     "noApps": "Aucune application web configurée",
+    "title": "Applications Web",
     "url": "URL",
     "validation": {
       "requiredFields": "Le nom et l'URL sont obligatoires"

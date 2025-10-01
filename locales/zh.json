@@ -2512,6 +2512,7 @@
       "models": "模型",
       "plugins": "插件",
       "shortcuts": "快捷键",
+      "sidebar": "侧边栏",
       "voice": "@:{'common.voice'}",
       "webapps": "Web 应用"
     },
@@ -2676,6 +2677,7 @@
     "iconSearch": "搜索图标...",
     "name": "名称",
     "noApps": "未配置任何 Web 应用",
+    "title": "网络应用",
     "url": "网址",
     "validation": {
       "requiredFields": "名称和网址为必填项"
