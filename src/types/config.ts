@@ -60,6 +60,7 @@ export type GeneralConfig = {
   locale: string
   tips: {[key: string]: boolean}
   confirm: {[key: string]: boolean}
+  webappEvictionMinutes: number
 }
 
 export type FavoriteModel = {
