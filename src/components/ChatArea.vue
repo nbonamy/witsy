@@ -432,7 +432,7 @@ defineExpose({
   position: absolute;
   top: var(--window-toolbar-height);
   bottom: var(--window-footer-height);
-  right: 0px;
+  right: -1px;
   
   width: 0px;
   transition: width 0.15s ease-in-out;
