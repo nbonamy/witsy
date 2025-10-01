@@ -71,20 +71,17 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [x] Expose API in preload.ts
 - [x] Linting passed ✓
 
-### ⬜ Step 4: WebAppViewer Component
-**File**: `src/screens/WebAppViewer.vue`
+### ✅ Step 4: WebAppViewer Component
+**File**: `src/screens/WebAppViewer.vue`, `src/types/index.ts`
 
-- [ ] Create component with props: `webapp: WebApp`
-- [ ] Use `<webview>` tag:
-  - `partition="persist:webview"`
-  - `allowpopups`
-  - Lazy `src` assignment (only set when first shown)
-- [ ] Handle events:
-  - `did-finish-load`
-  - `did-navigate-in-page` (track URL changes)
-  - `dom-ready`
-- [ ] Update `lastUsed` timestamp on activation
-- [ ] Emit events to parent for state management
+- [x] Create component with props: `webapp: WebApp`, `visible: boolean`
+- [x] Use `<webview>` tag with `partition="persist:webview"` and `allowpopups`
+- [x] Lazy src assignment (only set URL on first show)
+- [x] Handle events: did-finish-load, did-navigate-in-page, dom-ready
+- [x] Emit events: update-last-used, navigate
+- [x] Configure link behavior and spell check via IPC
+- [x] Add webview API types to Window interface
+- [x] Linting passed ✓
 
 ### ⬜ Step 5: Update Main.vue
 **File**: `src/screens/Main.vue`
