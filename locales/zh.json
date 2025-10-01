@@ -2086,6 +2086,9 @@
       },
       "instructions": {
         "title": "写作风格"
+      },
+      "models": {
+        "reload": "重新加载模型"
       }
     },
     "noEngineAvailable": {
@@ -2577,7 +2580,7 @@
     },
     "doNotShowAgain": "不再显示",
     "favoriteModels": {
-      "text": "点击 LLM 图标：你偏好的模型将被分组在星形图标下！",
+      "text": "您收藏的模型可以从模型菜单顶部访问！",
       "title": "快速访问您收藏的模型"
     },
     "folderDefaults": {

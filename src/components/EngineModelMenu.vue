@@ -8,6 +8,7 @@
   >
     <!-- Main menu template -->
     <template #default>
+      
       <!-- Default label item if provided -->
       <template v-if="props.defaultLabel">
         <div class="engine-item" @click="handleDefaultClick">
@@ -36,21 +37,30 @@
         </div>
 
       </template>
+    
     </template>
 
     <!-- Engine submenu templates -->
     <template v-for="engine in availableEngines" :key="`${engine}-submenu`" #[`engine-${engine}`]="{ withFilter }">
       {{ withFilter(true) }}
-      <div v-for="model in getEngineModels(engine)" :key="model.id" class="model-item" @click="handleModelClick(engine, model.id)" >
+      <div v-for="model in getEngineModels(engine)" :key="model.id" class="item model-item" @click="handleModelClick(engine, model.id)" >
         {{ model.name }}
       </div>
     </template>
+
+    <template v-for="engine in availableEngines" :key="`${engine}-footer`" v-slot:[`engine-${engine}Footer`]="{ withFilter }">
+      <div @click="refreshModels(engine)" v-if="!store.workspace?.models">
+        <RefreshCcwIcon class="icon refresh" :class="{ refreshing }"/> {{ t('prompt.menu.models.reload') }}
+      </div>
+    </template>
+
   </ContextMenuPlus>
+
 </template>
 
 <script setup lang="ts">
 import type { ChatModel } from 'multi-llm-ts'
-import { computed, onMounted } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import useAppearanceTheme from '../composables/appearance_theme'
 import { engineNames } from '../llms/base'
 import LlmFactory from '../llms/llm'
@@ -58,6 +68,7 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import ContextMenuPlus, { MenuPosition } from './ContextMenuPlus.vue'
 import EngineLogo from './EngineLogo.vue'
+import { RefreshCcwIcon } from 'lucide-vue-next'
 
 // Props
 interface Props {
@@ -83,6 +94,8 @@ const emit = defineEmits<Emits>()
 
 // Reactive data
 const llmManager = LlmFactory.manager(store.config)
+
+const refreshing = ref(false)
 
 const isDarkTheme = computed(() => {
   return useAppearanceTheme().isDark
@@ -146,6 +159,13 @@ const getEngineModels = (engine: string): ChatModel[] => {
   return allModels.filter(model => workspaceModelIds.includes(model.id))
 }
 
+const refreshModels = async (engine: string) => {
+  refreshing.value = true
+  await nextTick()
+  await llmManager.loadModels(engine)
+  refreshing.value = false
+}
+
 const getFavoriteEngine = (favoriteId: string): string => {
   const fav = llmManager.getFavoriteModel(favoriteId)
   return fav.engine
@@ -204,6 +224,23 @@ const handleModelClick = (engine: string, model: string) => {
   display: block;
   padding: 0.75rem 1rem;
   font-weight: var(--font-weight-medium);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.icon.refresh {
+  width: var(--icon-md);
+  height: var(--icon-md);
+  &.refreshing {
+    animation: spin 2s linear infinite;
+  }
 }
 
 </style>

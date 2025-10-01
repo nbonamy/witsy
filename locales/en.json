@@ -2093,6 +2093,9 @@
       "instructions": {
         "title": "Writing Style"
       },
+      "models": {
+        "reload": "Reload models"
+      },
       "tools": {
         "plugins": "@:{'common.appName'} plugins",
         "title": "@:{'common.tools'}"
@@ -2594,7 +2597,7 @@
     },
     "doNotShowAgain": "Do not show again",
     "favoriteModels": {
-      "text": "Click on the LLM icon: your preferred models will be grouped under the star icon!",
+      "text": "Your favorite models are accessible from the top of the model menu!",
       "title": "Quick access to your favorite models"
     },
     "folderDefaults": {

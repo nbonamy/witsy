@@ -2086,6 +2086,9 @@
       },
       "instructions": {
         "title": "Styl pisania"
+      },
+      "models": {
+        "reload": "Przeładuj modele"
       }
     },
     "noEngineAvailable": {
@@ -2583,7 +2586,7 @@
     },
     "doNotShowAgain": "Nie pokazuj ponownie",
     "favoriteModels": {
-      "text": "Kliknij ikonę LLM: preferowane modele zostaną zgrupowane pod ikoną gwiazdy!",
+      "text": "Twoje ulubione modele są dostępne na górze menu modeli!",
       "title": "Szybki dostęp do ulubionych modeli"
     },
     "folderDefaults": {

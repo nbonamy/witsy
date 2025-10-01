@@ -2086,6 +2086,9 @@
       },
       "instructions": {
         "title": "文体"
+      },
+      "models": {
+        "reload": "モデルを再読み込み"
       }
     },
     "noEngineAvailable": {
@@ -2583,7 +2586,7 @@
     },
     "doNotShowAgain": "今後表示しない",
     "favoriteModels": {
-      "text": "LLMアイコンをクリックすると、お気に入りのモデルが星アイコンの下にグループ化されます！",
+      "text": "お気に入りのモデルはモデルメニューの上部からアクセスできます！",
       "title": "お気に入りのモデルに素早くアクセス"
     },
     "folderDefaults": {
