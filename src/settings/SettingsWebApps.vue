@@ -228,7 +228,7 @@ const onEvictionChange = () => {
 
 const saveWebapps = () => {
   store.workspace.webapps = webapps.value
-  window.api.workspace.save(store.workspace)
+  window.api.workspace.save(JSON.parse(JSON.stringify(store.workspace)))
 }
 
 const load = () => {
