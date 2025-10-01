@@ -1,11 +1,16 @@
 <template>
   <div class="webapp-viewer" v-show="visible">
+    <div v-if="isLoading" class="loading">
+      <Loader />
+      <Loader />
+      <Loader />
+    </div>
     <webview
       ref="webviewRef"
       :data-webapp-id="webapp.id"
       partition="persist:webview"
       allowpopups
-      style="width: 100%; height: 100%;"
+      :style="{ width: '100%', height: '100%', display: isLoading ? 'none' : 'flex' }"
     />
   </div>
 </template>
@@ -13,6 +18,7 @@
 <script setup lang="ts">
 
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import Loader from '../components/Loader.vue'
 import { WebApp } from '../types/workspace'
 
 const props = defineProps<{
@@ -26,6 +32,7 @@ const emit = defineEmits<{
 }>()
 
 const webviewRef = ref<HTMLElement | null>(null)
+const isLoading = ref(false)
 let hasLoadedSrc = false
 
 // Update lastUsed when component becomes visible
@@ -36,6 +43,7 @@ watch(() => props.visible, (isVisible) => {
     // Lazy load: only set src on first show
     if (!hasLoadedSrc) {
       const webview = webviewRef.value as any
+      isLoading.value = true
       webview.src = props.webapp.url
       hasLoadedSrc = true
     }
@@ -48,6 +56,7 @@ onMounted(() => {
 
   const handleDidFinishLoad = () => {
     console.log(`[WebApp ${props.webapp.id}] Page loaded`)
+    isLoading.value = false
   }
 
   const handleDidNavigateInPage = (event: any) => {
@@ -80,6 +89,7 @@ onMounted(() => {
 
   // Set src immediately if visible on mount
   if (props.visible && !hasLoadedSrc) {
+    isLoading.value = true
     webview.src = props.webapp.url
     hasLoadedSrc = true
   }
@@ -94,5 +104,25 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   background-color: var(--background-color);
+  position: relative;
+
+  .loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    background-color: var(--background-color);
+    z-index: 10;
+
+    .loader {
+      width: 24px;
+      height: 24px;
+    }
+  }
 }
 </style>
