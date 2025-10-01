@@ -15,7 +15,6 @@ test('WebAppViewer renders with correct structure', () => {
     id: 'test-app',
     name: 'Test App',
     url: 'https://example.com',
-    icon: 'Globe',
     enabled: true
   }
 
@@ -39,7 +38,6 @@ test('WebAppViewer hides when visible prop is false', () => {
     id: 'test-app',
     name: 'Test App',
     url: 'https://example.com',
-    icon: 'Globe',
     enabled: true
   }
 
@@ -61,7 +59,6 @@ test('WebAppViewer shows when visible prop is true', () => {
     id: 'test-app',
     name: 'Test App',
     url: 'https://example.com',
-    icon: 'Globe',
     enabled: true
   }
 
@@ -81,7 +78,6 @@ test('WebAppViewer emits update-last-used when becoming visible', async () => {
     id: 'test-app',
     name: 'Test App',
     url: 'https://example.com',
-    icon: 'Globe',
     enabled: true
   }
 
@@ -107,7 +103,6 @@ test('WebAppViewer does not emit update-last-used when already visible', async (
     id: 'test-app',
     name: 'Test App',
     url: 'https://example.com',
-    icon: 'Globe',
     enabled: true
   }
 
@@ -135,7 +130,6 @@ test('WebAppViewer emits update-last-used on each show', async () => {
     id: 'test-app',
     name: 'Test App',
     url: 'https://example.com',
-    icon: 'Globe',
     enabled: true
   }
 

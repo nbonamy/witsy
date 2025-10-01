@@ -2657,6 +2657,7 @@
     "noApps": "Nessuna app web configurata",
     "title": "App Web",
     "url": "URL",
+    "useWebsiteIcon": "Usa l'icona del sito web",
     "validation": {
       "requiredFields": "Nome e URL sono obbligatori"
     }

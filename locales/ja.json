@@ -2685,6 +2685,7 @@
     "noApps": "設定されたウェブアプリがありません",
     "title": "ウェブアプリ",
     "url": "URL",
+    "useWebsiteIcon": "ウェブサイトアイコンを使用する",
     "validation": {
       "requiredFields": "名前とURLは必須です"
     }

@@ -12,7 +12,7 @@ export type WebApp = {
   id: string
   name: string
   url: string
-  icon: string
+  icon?: string
   enabled: boolean
   lastUsed?: number
 }

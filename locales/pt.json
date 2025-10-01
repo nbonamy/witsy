@@ -2679,6 +2679,7 @@
     "noApps": "Nenhum aplicativo web configurado",
     "title": "Aplicativos Web",
     "url": "URL",
+    "useWebsiteIcon": "Usar ícone do site",
     "validation": {
       "requiredFields": "Nome e URL são obrigatórios"
     }
