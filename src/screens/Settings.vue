@@ -18,10 +18,10 @@
           <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
           <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><CommandIcon class="icon" /></SettingsTab>
           <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BadgePlusIcon class="icon" /></SettingsTab>
+          <SettingsTab class="webapps" :title="t('settings.tabs.webapps')" @change="load(settingsWebApps)" :checked="initialTab == 'webapps'" v-if="store.isFeatureEnabled('webapps')"><AppWindowIcon class="icon" /></SettingsTab>
           <template v-if="store.isFeatureEnabled('workspaces')">
             <li class="separator">Workspace Settings</li>
             <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
-            <SettingsTab class="webapps" :title="t('settings.tabs.webapps')" @change="load(settingsWebApps)" :checked="initialTab == 'webapps'" v-if="store.isFeatureEnabled('webapps')"><AppWindowIcon class="icon" /></SettingsTab>
           </template>
         </ul>
       </main>
@@ -38,9 +38,9 @@
       <SettingsVoice ref="settingsVoice" />
       <SettingsShortcuts ref="settingsShortcuts" />
       <SettingsAdvanced ref="settingsAdvanced" />
+      <SettingsWebApps ref="settingsWebApps" v-if="store.isFeatureEnabled('webapps')" />
       <template v-if="store.isFeatureEnabled('workspaces')">
         <SettingsModels2 ref="settingsModels" />
-        <SettingsWebApps ref="settingsWebApps" v-if="store.isFeatureEnabled('webapps')" />
       </template>
     </div>
   </div>
