@@ -16,9 +16,9 @@
 
       <div class="form-field horizontal models-header">
         <label>Available models</label>
-        <RotateCwIcon
-          class="refresh-icon" 
-          :class="{ spinning: isRefreshing }"
+        <SpinningIcon
+          class="refresh-icon"
+          :spinning="isRefreshing"
           @click="refreshModels"
         />
       </div>
@@ -35,7 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import { RotateCwIcon } from 'lucide-vue-next'
 import { ChatModel } from 'multi-llm-ts'
 import { ref } from 'vue'
 import Dialog from '../composables/dialog'
@@ -45,6 +44,7 @@ import { store } from '../services/store'
 import { Workspace } from '../types/workspace'
 import EngineSelectPlus from './EngineSelectPlus.vue'
 import SideDrawer from './SideDrawer.vue'
+import SpinningIcon from './SpinningIcon.vue'
 // import InputObfuscated from './InputObfuscated.vue'
 
 interface Props {
@@ -118,19 +118,6 @@ defineExpose({
 
 .refresh-icon:hover {
   opacity: 0.7;
-}
-
-.refresh-icon.spinning {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .form.form-vertical .form-field.model {

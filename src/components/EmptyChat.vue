@@ -12,9 +12,9 @@
         </div>
         <EngineLogo :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
         <div class="models" v-if="models?.length">
-          <BIconArrowRepeat class="for=symmetry" style="visibility: hidden; margin-right: 0.5rem;" v-if="!showAllEngines && engine != favoriteMockEngine" />
+          <div style="width: 0.85rem; visibility: hidden; margin-right: 0.5rem;" v-if="!showAllEngines && engine != favoriteMockEngine" />
           <ModelSelectPlus v-if="models?.length" :models="models" :caps-hover-only="true" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel" />
-          <BIconArrowRepeat v-if="!showAllEngines && engine != favoriteMockEngine" @click="onRefreshModels" :class="{ refresh: true, 'rotating': isRefreshing }"/>
+          <SpinningIcon v-if="!showAllEngines && engine != favoriteMockEngine" @click="onRefreshModels" class="refresh" size="sm" :spinning="isRefreshing"/>
         </div>
         <template v-else-if="!showAllEngines">
           <div class="help apiKey" v-if="!llmManager.isEngineConfigured(engine)">
@@ -30,7 +30,7 @@
           </div>
           <div class="help loading" v-else-if="isRefreshing">
             {{ t('emptyChat.settings.refreshingModels') }}
-            <BIconArrowRepeat class="refresh rotating"/>
+            <SpinningIcon class="refresh" size="sm" :spinning="true"/>
           </div>
           <div class="help models" v-else>
             <span v-html="t('emptyChat.settings.needsModels', { engine: engine })"></span>
@@ -60,6 +60,7 @@ import useTipsManager from '../composables/tips_manager'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
 import ModelSelectPlus from './ModelSelectPlus.vue'
 import InputObfuscated from './InputObfuscated.vue'
+import SpinningIcon from './SpinningIcon.vue'
 
 const tipsManager = useTipsManager(store)
 const llmManager = LlmFactory.manager(store.config)
@@ -470,19 +471,6 @@ const removeFavorite = () => {
     svg {
       visibility: visible;
     }
-  }
-}
-
-  .rotating {
-    animation: spin 1.5s linear infinite;
-  }
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
   }
 }
 

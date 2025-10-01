@@ -31,11 +31,11 @@
             <td>{{ t(`agent.forge.list.${agent.type}`) }}</td>
             <td>{{ lastRun(agent) }}</td>
             <td><div class="actions">
-              <RefreshCcwIcon class="starting" v-if="startingAgents.includes(agent.uuid)"/>
+              <SpinningIcon v-if="startingAgents.includes(agent.uuid)" :spinning="true" class="run" />
               <PlayIcon v-else
-                class="run" 
-                v-tooltip="{ text: t('agent.help.run'), position: 'top-left' }" 
-                @click.stop="onAgentRun(agent)" 
+                class="run"
+                v-tooltip="{ text: t('agent.help.run'), position: 'top-left' }"
+                @click.stop="onAgentRun(agent)"
               />
               <EyeIcon 
                 class="view" 
@@ -65,10 +65,11 @@
 
 <script setup lang="ts">
 
-import { EyeIcon, PlayIcon, PlusIcon, RefreshCcwIcon, UploadIcon } from 'lucide-vue-next'
+import { EyeIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
 import { PropType, onMounted, onUnmounted, ref, watch } from 'vue'
 import LogoA2A from '../../assets/a2a.svg?component'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
+import SpinningIcon from '../components/SpinningIcon.vue'
 import { useTimeAgo } from '../composables/ago'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
@@ -138,20 +139,7 @@ const lastRun = (agent: Agent) => {
   main {
     padding: 4rem;
   }
-  
-  svg.starting {
-    animation: spin 1s linear infinite;
-  }
 
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 </style>
