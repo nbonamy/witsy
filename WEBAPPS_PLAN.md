@@ -104,14 +104,24 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [x] All 1578 tests passing ✓
 - [x] Linting passed ✓
 
-### ⬜ Step 6: Update MenuBar
-**File**: `src/components/MenuBar.vue`
+### ✅ Step 6: Update MenuBar
+**Files**: `src/components/MenuBar.vue`, `tests/components/menubar.test.ts`
 
-- [ ] Import webapp icons dynamically from Lucide
-- [ ] Render webapp items from `store.workspace.webapps?.filter(w => w.enabled)`
-- [ ] Position after Computer Use, before agents
-- [ ] Emit mode change: `web-app-{id}`
-- [ ] Guard with `store.isFeatureEnabled('webapps')`
+- [x] Import Lucide icons and WebApp type
+- [x] Create `enabledWebapps` computed to filter enabled webapps
+- [x] Create `getWebappIcon` helper for dynamic icon lookup
+- [x] Render webapp MenuBarItems dynamically after Computer Use
+- [x] Emit `webapp-{id}` mode on click
+- [x] Guard with feature flag and null checks
+- [x] Write 7 unit tests covering:
+  - Feature toggle behavior
+  - Enabled/disabled filtering
+  - Active state
+  - Click events
+  - Empty/undefined handling
+  - Rendering order
+- [x] All 1585 tests passing ✓
+- [x] Linting passed ✓
 
 ### ⬜ Step 7: Create Icon Picker Component
 **File**: `src/components/IconPicker.vue`

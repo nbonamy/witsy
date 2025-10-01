@@ -39,6 +39,18 @@
         <span>{{ t('computerUse.title') }}</span>
       </MenuBarItem>
 
+      <!-- Dynamic WebApp items -->
+      <MenuBarItem
+        v-for="webapp in enabledWebapps"
+        :key="webapp.id"
+        :action="`webapp-${webapp.id}`"
+        :active="mode === `webapp-${webapp.id}`"
+        @click="emit('change', `webapp-${webapp.id}`)"
+      >
+        <component :is="getWebappIcon(webapp.icon)" />
+        <span>{{ webapp.name }}</span>
+      </MenuBarItem>
+
       <div class="flex-push"></div>
 
       <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.isFeatureEnabled('agents')">
@@ -77,7 +89,7 @@
 
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
-import { BrainIcon, FileTextIcon, HeadsetIcon, LightbulbIcon, MicIcon, MouseIcon, PaletteIcon, PlugIcon, SettingsIcon } from 'lucide-vue-next'
+import { BrainIcon, FileTextIcon, HeadsetIcon, LightbulbIcon, MicIcon, MouseIcon, PaletteIcon, PlugIcon, SettingsIcon, icons } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import IconAgent from '../../assets/agent.svg?component'
 import IconChat from '../../assets/message-circle-3.svg?component'
@@ -85,6 +97,7 @@ import useAppearanceTheme from '../composables/appearance_theme'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { MainWindowMode } from '../types/index'
+import { WebApp } from '../types/workspace'
 import IconMenu from './IconMenu.vue'
 import MenuBarItem from './MenuBarItem.vue'
 
@@ -96,6 +109,17 @@ const hasComputerUse = computed(() => {
 const hasMcp = computed(() => {
   return window.api.mcp.isAvailable()
 })
+
+const enabledWebapps = computed(() => {
+  if (!store.isFeatureEnabled('webapps') || !store.workspace) {
+    return []
+  }
+  return store.workspace.webapps?.filter(w => w.enabled) || []
+})
+
+const getWebappIcon = (iconName: string) => {
+  return (icons as any)[iconName] || icons.Globe
+}
 
 const emit = defineEmits(['change', 'new-chat', 'run-onboarding'])
 
