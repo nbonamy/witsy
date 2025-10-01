@@ -184,4 +184,30 @@ defineExpose({ load })
 
 <style scoped>
 
+.webapps {
+  td.icon .webapp-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.no-webapps {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary-color);
+}
+
+.eviction-setting {
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+
+  .form-field {
+    max-width: 400px;
+
+    input[type="number"] {
+      width: 100px;
+    }
+  }
+}
+
 </style>
