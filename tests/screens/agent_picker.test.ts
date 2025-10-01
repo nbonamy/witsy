@@ -13,12 +13,6 @@ vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/composables/event_bus', () => ({
-  default: () => ({
-    emitEvent: vi.fn()
-  })
-}))
-
 beforeAll(() => {
   useWindowMock()
 })
