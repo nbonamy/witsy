@@ -19,6 +19,7 @@ export const MAIN_WINDOW = {
   CLOSE: 'main-window-close',
   HIDE_WINDOW_BUTTONS: 'main-window-hide-buttons',
   SHOW_WINDOW_BUTTONS: 'main-window-show-buttons',
+  MOVE_WINDOW: 'main-window-move',
 } as const;
 
 export const DEBUG = {

@@ -1,6 +1,10 @@
 <template>
   <div class="main-window window">
-    <header></header>
+
+    <!-- we handle window dragging manually because of
+         https://github.com/electron/electron/issues/40610
+    -->
+    <header @mousedown="onHeaderMouseDown"></header>
     <main>
       
       <WorkspaceBar v-if="store.isFeatureEnabled('workspaces')" />
@@ -184,6 +188,29 @@ const onOnboardingDone = () => {
   showOnboarding.value = false
   store.config.general.onboardingDone = true
   store.saveSettings()
+}
+
+let lastMouseX = 0
+let lastMouseY = 0
+
+const onHeaderMouseDown = (event: MouseEvent) => {
+  lastMouseX = event.screenX
+  lastMouseY = event.screenY
+  document.addEventListener('mousemove', onHeaderMouseMove)
+  document.addEventListener('mouseup', onHeaderMouseUp)
+}
+
+const onHeaderMouseMove = (event: MouseEvent) => {
+  const deltaX = event.screenX - lastMouseX
+  const deltaY = event.screenY - lastMouseY
+  lastMouseX = event.screenX
+  lastMouseY = event.screenY
+  window.api.main.moveWindow(deltaX, deltaY)
+}
+
+const onHeaderMouseUp = () => {
+  document.removeEventListener('mousemove', onHeaderMouseMove)
+  document.removeEventListener('mouseup', onHeaderMouseUp)
 }
 
 </script>
