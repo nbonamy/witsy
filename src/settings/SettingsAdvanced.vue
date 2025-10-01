@@ -8,12 +8,12 @@
         <label>{{ t('settings.advanced.header') }}</label>
       </div>
       <div class="form-field autosave horizontal">
-        <input type="checkbox" v-model="autoSavePrompt" @change="save" />
-        <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
+        <input type="checkbox" id="auto-save-prompt" v-model="autoSavePrompt" @change="save" />
+        <label for="auto-save-prompt">{{ t('settings.advanced.autoSavePrompt') }}</label>
       </div>
       <div class="form-field safe-keys horizontal">
-        <input type="checkbox" v-model="safeKeys" @change="save" />
-        <label>{{ t('settings.advanced.safeKeys') }}</label>
+        <input type="checkbox" id="safe-keys" v-model="safeKeys" @change="save" />
+        <label for="safe-keys">{{ t('settings.advanced.safeKeys') }}</label>
       </div>
       <label>&nbsp;</label>
       <div class="form-field proxy">

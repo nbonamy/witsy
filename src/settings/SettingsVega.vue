@@ -4,8 +4,8 @@
       {{ t('settings.plugins.vega.description') }}
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" v-model="enabled" @change="save" />
-      <label>{{ t('common.enabled') }}</label>
+      <input type="checkbox" id="vega-enabled" v-model="enabled" @change="save" />
+      <label for="vega-enabled">{{ t('common.enabled') }}</label>
     </div>
   </div>
 </template>

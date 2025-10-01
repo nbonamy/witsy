@@ -29,8 +29,8 @@
       <div class="form-field capabilities">
         <label>{{ t('settings.llm.capabilities.title') }}</label>
           <div class="form-field horizontal">
-            <input type="checkbox" v-model="artifactsInstructions" @change="save" />
-            <div class="label">{{ t('settings.llm.capabilities.artifacts') }}</div>
+            <input type="checkbox" id="artifacts-instructions" v-model="artifactsInstructions" @change="save" />
+            <label for="artifacts-instructions">{{ t('settings.llm.capabilities.artifacts') }}</label>
           </div>
       </div>
       <div class="form-field quick-prompt">
@@ -39,8 +39,8 @@
         <ModelSelectPlus class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
         <div class="form-subgroup">
           <div class="form-field horizontal">
-            <input type="checkbox" name="disableStreaming" v-model="disableStreaming" @change="save" />
-            <div class="label">{{ t('settings.llm.disableStreaming') }}</div>
+            <input type="checkbox" id="disable-streaming" name="disableStreaming" v-model="disableStreaming" @change="save" />
+            <label for="disable-streaming">{{ t('settings.llm.disableStreaming') }}</label>
           </div>
         </div>
       </div>
@@ -49,8 +49,8 @@
         <div class="form-subgroup">
           <LangSelect v-model="localeLLM" @change="onChangeLocaleLLM" />
           <div class="form-field horizontal">
-            <input type="checkbox" v-model="forceLocale" :disabled="!isLocalized" @change="save" />
-            <div class="label">{{ t('settings.general.forceLocale') }}</div>
+            <input type="checkbox" id="force-locale" v-model="forceLocale" :disabled="!isLocalized" @change="save" />
+            <label for="force-locale">{{ t('settings.general.forceLocale') }}</label>
           </div>
         </div>
       </div>

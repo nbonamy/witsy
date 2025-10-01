@@ -23,12 +23,13 @@
         />
       </div>
       <div v-for="model in store.config.engines[selectedEngine].models.chat" :key="model.id" class="form-field horizontal model">
-        <input 
-          type="checkbox" 
-          :checked="isModelEnabledInWorkspace(selectedEngine, model)" 
-          @change="$emit('toggle-model', selectedEngine, model.id)" 
+        <input
+          type="checkbox"
+          :id="`model-${selectedEngine}-${model.id}`"
+          :checked="isModelEnabledInWorkspace(selectedEngine, model)"
+          @change="$emit('toggle-model', selectedEngine, model.id)"
         />
-        <label>{{ model.name }}</label>
+        <label :for="`model-${selectedEngine}-${model.id}`">{{ model.name }}</label>
       </div>
     </template>
   </SideDrawer>

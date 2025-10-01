@@ -22,8 +22,8 @@
         <label>{{ t('settings.chat.previews.title') }}</label>
       </div>
       <div class="form-field horizontal run-at-login">
-        <input type="checkbox" v-model="previewHtml" @change="save" />
-        <label>{{ t('settings.chat.previews.html') }}</label>
+        <input type="checkbox" id="preview-html" v-model="previewHtml" @change="save" />
+        <label for="preview-html">{{ t('settings.chat.previews.html') }}</label>
       </div>
       <div class="form-field copy">
         <label>{{ t('settings.chat.copyFormat.title') }}</label>

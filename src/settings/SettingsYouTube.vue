@@ -4,8 +4,8 @@
       {{ t('settings.plugins.youtube.description') }}
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" v-model="enabled" @change="save" />
-      <label>{{ t('common.enabled') }}</label>
+      <input type="checkbox" id="youtube-enabled" v-model="enabled" @change="save" />
+      <label for="youtube-enabled">{{ t('common.enabled') }}</label>
     </div>
   </div>
 </template>

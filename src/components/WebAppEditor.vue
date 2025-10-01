@@ -13,8 +13,8 @@
       <IconPicker v-model="icon" />
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" v-model="enabled" />
-      <label>{{ t('webapps.enabled') }}</label>
+      <input type="checkbox" id="webapp-enabled" v-model="enabled" />
+      <label for="webapp-enabled">{{ t('webapps.enabled') }}</label>
     </div>
     <div class="buttons">
       <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>

@@ -4,8 +4,8 @@
       {{ t('settings.plugins.browse.description') }}
     </div>
     <div class="form-field horizontal">
-      <input type="checkbox" name="enabled" v-model="enabled" @change="save" />
-      <label>{{ t('common.enabled') }}</label>
+      <input type="checkbox" id="browse-enabled" name="enabled" v-model="enabled" @change="save" />
+      <label for="browse-enabled">{{ t('common.enabled') }}</label>
     </div>
   </div>
 </template>

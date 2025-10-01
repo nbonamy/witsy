@@ -44,16 +44,16 @@
         <button @click.prevent="onResetTips">{{ t('common.reset') }}</button>
       </div>
       <div class="form-field horizontal run-at-login">
-        <input type="checkbox" v-model="runAtLogin" @change="save" />
-        <label>{{ t('settings.general.runAtLogin') }}</label>
+        <input type="checkbox" id="run-at-login" v-model="runAtLogin" @change="save" />
+        <label for="run-at-login">{{ t('settings.general.runAtLogin') }}</label>
       </div>
       <div class="form-field horizontal hide-on-startup">
-        <input type="checkbox" v-model="hideOnStartup" @change="save" />
-        <label>{{ t('settings.general.hideOnStartup') }}</label>
+        <input type="checkbox" id="hide-on-startup" v-model="hideOnStartup" @change="save" />
+        <label for="hide-on-startup">{{ t('settings.general.hideOnStartup') }}</label>
       </div>
       <div class="form-field horizontal keep-running">
-        <input type="checkbox" v-model="keepRunning" @change="save" />
-        <label>{{ t('settings.general.keepInStatusBar') }}</label>
+        <input type="checkbox" id="keep-running" v-model="keepRunning" @change="save" />
+        <label for="keep-running">{{ t('settings.general.keepInStatusBar') }}</label>
       </div>
     </main>
   </div>
