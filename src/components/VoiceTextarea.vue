@@ -41,7 +41,7 @@
           @click="onToggleVoice"
           :class="{ 'recording': isRecording, 'processing': processing }"
         >
-          <RefreshCwIcon v-if="processing" class="processing-icon" />
+          <SpinningIcon v-if="processing" :spinning="true" />
           <MicIcon v-else :class="{ 'active': isRecording }" />
         </ButtonIcon>
       </div>
@@ -50,13 +50,14 @@
 </template>
 
 <script setup lang="ts">
-import { MicIcon, RefreshCwIcon } from 'lucide-vue-next'
+import { MicIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import useAudioRecorder from '../composables/audio_recorder'
 import useTranscriber from '../composables/transcriber'
 import { store } from '../services/store'
 import { isSTTReady, StreamingChunk } from '../voice/stt'
 import ButtonIcon from './ButtonIcon.vue'
+import SpinningIcon from './SpinningIcon.vue'
 import Waveform from './Waveform.vue'
 
 interface Props {
@@ -315,9 +316,8 @@ onUnmounted(() => {
       color: var(--highlight-color);
     }
 
-    .voice-button :deep(.processing-icon) {
+    .voice-button :deep(svg) {
       color: var(--highlight-color);
-      animation: rotate 1s linear infinite;
     }
 
   }

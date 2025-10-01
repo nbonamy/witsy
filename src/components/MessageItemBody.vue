@@ -26,7 +26,7 @@ import { computed, inject, onMounted, PropType, ref, watch } from 'vue'
 import useEventBus from '../composables/event_bus'
 import Message from '../models/message'
 import { t } from '../services/i18n'
-import { closeOpenMarkdownTags, getCodeBlocks } from '../services/markdown'
+import { closeOpenMarkdownTags, getCodeBlocks, isHtmlContent } from '../services/markdown'
 import { store } from '../services/store'
 import { ChatToolMode } from '../types/config'
 import MessageItemBodyBlock, { Block } from './MessageItemBodyBlock.vue'
@@ -157,11 +157,12 @@ const computeBlocks = (content: string|null): Block[] => {
   let lastIndex = 0
   const blocks: Block[] = []
   // Updated regex to exclude images that are inside markdown links [![alt](url)](link)
-  // Negative lookbehind (?<!\[) prevents matching when preceded by '[' 
+  // Negative lookbehind (?<!\[) prevents matching when preceded by '['
   const regexMedia1 = /(?<!\[)!\[([^\]]*)\]\(([^\)]*)\)/g
   const regexMedia2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
   const regexArtifact1 = /<artifact title=\"([^\"]*)\">(.*?)<\/artifact>/gms
   const regexTool1 = /<tool (id|index)="([^\"]*)"><\/tool>/g
+  const regexTable1 = /\|(.+)\|[\r\n]+\|[-:\s|]+\|[\r\n]+((?:\|.+\|[\r\n]*)+)/g
 
   while (lastIndex < content.length) {
     
@@ -173,11 +174,13 @@ const computeBlocks = (content: string|null): Block[] => {
     regexMedia2.lastIndex = lastIndex
     regexArtifact1.lastIndex = lastIndex
     regexTool1.lastIndex = lastIndex
-    
+    regexTable1.lastIndex = lastIndex
+
     const media1Match = regexMedia1.exec(content)
     const media2Match = regexMedia2.exec(content)
     const artifact1Match = regexArtifact1.exec(content)
     const tool1Match = regexTool1.exec(content)
+    const table1Match = regexTable1.exec(content)
     
     // Collect valid matches (not inside code blocks)
     if (media1Match && !codeBlocks.find(block => media1Match.index >= block.start && media1Match.index < block.end)) {
@@ -191,6 +194,9 @@ const computeBlocks = (content: string|null): Block[] => {
     }
     if (tool1Match && !codeBlocks.find(block => tool1Match.index >= block.start && tool1Match.index < block.end)) {
       matches.push({ match: tool1Match, type: 'tool', regex: regexTool1 })
+    }
+    if (table1Match && !codeBlocks.find(block => table1Match.index >= block.start && table1Match.index < block.end)) {
+      matches.push({ match: table1Match, type: 'table', regex: regexTable1 })
     }
     
     // If no matches found, add remaining content as text and break
@@ -251,7 +257,19 @@ const computeBlocks = (content: string|null): Block[] => {
       const desc = match.length === 3 ? match[1] : 'Video'
       blocks.push({ type: 'media', url: imageUrl, desc, prompt })
     } else if (matchType === 'artifact') {
-      blocks.push({ type: 'artifact', title: match[1], content: match[2] })
+      // Check if artifact content is HTML
+      const artifactContent = match[2]
+      const isHtml = isHtmlContent(artifactContent)
+      if (isHtml) {
+        blocks.push({ type: 'html', title: match[1], content: artifactContent })
+      } else {
+        blocks.push({ type: 'artifact', title: match[1], content: artifactContent })
+      }
+    } else if (matchType === 'table') {
+      // Render the markdown table to HTML
+      const tableMarkdown = match[0]
+      const tableHtml = window.api.markdown.render(tableMarkdown)
+      blocks.push({ type: 'table', content: tableHtml })
     }
     
     // Update lastIndex to continue after this match

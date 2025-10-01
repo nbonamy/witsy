@@ -1,6 +1,10 @@
 <template>
   <div class="main-window window">
-    <header></header>
+
+    <!-- we handle window dragging manually because of
+         https://github.com/electron/electron/issues/40610
+    -->
+    <header @mousedown="onHeaderMouseDown"></header>
     <main>
       
       <WorkspaceBar v-if="store.isFeatureEnabled('workspaces')" />
@@ -14,6 +18,16 @@
       <AgentForge v-if="mode === 'agents'" />
       <McpServers v-if="mode === 'mcp'" />
       <DocRepos v-if="mode === 'docrepos'" />
+
+      <!-- WebApp viewers - lazy loaded and kept mounted for session persistence -->
+      <WebAppViewer
+        v-for="webapp in loadedWebapps"
+        :key="webapp.id"
+        :webapp="webapp"
+        :visible="mode === `webapp-${webapp.id}`"
+        @update-last-used="updateLastUsed(webapp.id)"
+        @navigate="onNavigate(webapp.id, $event)"
+      />
 
       <Settings :style="{
         display: mode === 'settings' ? undefined : 'none',
@@ -38,11 +52,12 @@
 <script setup lang="ts">
 
 import { ActivityIcon } from 'lucide-vue-next'
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import Fullscreen from '../components/Fullscreen.vue'
 import MenuBar, { MenuBarMode } from '../components/MenuBar.vue'
 import WorkspaceBar from '../components/WorkspaceBar.vue'
 import useEventBus from '../composables/event_bus'
+import useWebappManager from '../composables/webapp_manager'
 import AgentForge from '../screens/AgentForge.vue'
 import Chat from '../screens/Chat.vue'
 import DesignStudio from '../screens/DesignStudio.vue'
@@ -52,17 +67,22 @@ import Onboarding from '../screens/Onboarding.vue'
 import RealtimeChat from '../screens/RealtimeChat.vue'
 import Settings from '../screens/Settings.vue'
 import Transcribe from '../screens/Transcribe.vue'
+import WebAppViewer from '../screens/WebAppViewer.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { anyDict } from '../types/index'
 
 const { emitEvent, onEvent } = useEventBus()
+const { loadedWebapps, loadWebapp, updateLastUsed, onNavigate, setupEviction, cleanup } = useWebappManager()
 
 const chat = ref<typeof Chat>(null)
 const transcribe = ref<typeof Transcribe>(null)
 const realtime = ref<typeof RealtimeChat>(null)
 const settings = ref<typeof Settings>(null)
 const showOnboarding = ref(false)
+
+let lastMouseX = 0
+let lastMouseY = 0
 
 // init stuff
 store.load()
@@ -114,6 +134,11 @@ onMounted(() => {
   // show it again
   window.api.on('run-onboarding', onRunOnboarding)
 
+  // Setup webapp eviction interval if feature is enabled
+  if (store.isFeatureEnabled('webapps')) {
+    setupEviction()
+  }
+
 })
 
 const processQueryParams = (params: anyDict) => {
@@ -134,6 +159,11 @@ const processQueryParams = (params: anyDict) => {
   }
 }
 
+// Cleanup on unmount
+onBeforeUnmount(() => {
+  cleanup()
+})
+
 const onMode = async (next: MenuBarMode) => {
 
   //console.log('[main] onMode', next)
@@ -144,6 +174,11 @@ const onMode = async (next: MenuBarMode) => {
     mode.value = 'chat'
   } else if (next === 'debug') {
     window.api.debug.showConsole()
+  } else if (typeof next === 'string' && next.startsWith('webapp-')) {
+    // Handle webapp mode
+    const webappId = next.replace('webapp-', '')
+    loadWebapp(webappId)
+    mode.value = next
   } else {
     mode.value = next
   }
@@ -184,6 +219,26 @@ const onOnboardingDone = () => {
   showOnboarding.value = false
   store.config.general.onboardingDone = true
   store.saveSettings()
+}
+
+const onHeaderMouseDown = (event: MouseEvent) => {
+  lastMouseX = event.screenX
+  lastMouseY = event.screenY
+  document.addEventListener('mousemove', onHeaderMouseMove)
+  document.addEventListener('mouseup', onHeaderMouseUp)
+}
+
+const onHeaderMouseMove = (event: MouseEvent) => {
+  const deltaX = event.screenX - lastMouseX
+  const deltaY = event.screenY - lastMouseY
+  lastMouseX = event.screenX
+  lastMouseY = event.screenY
+  window.api.main.moveWindow(deltaX, deltaY)
+}
+
+const onHeaderMouseUp = () => {
+  document.removeEventListener('mousemove', onHeaderMouseMove)
+  document.removeEventListener('mouseup', onHeaderMouseUp)
 }
 
 </script>

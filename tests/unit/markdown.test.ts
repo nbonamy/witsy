@@ -1,6 +1,6 @@
 import { test, expect } from 'vitest'
 import { renderMarkdown } from '../../src/main/markdown'
-import { closeOpenMarkdownTags, getCodeBlocks } from '../../src/services/markdown'
+import { addExtension, closeOpenMarkdownTags, extractCodeBlockContent, extractHtmlContent, getCodeBlocks, isHtmlContent } from '../../src/services/markdown'
 
 test('renders markdown', () => {
   const markdown = '# Hello World'
@@ -280,3 +280,109 @@ test('getCodeBlocks', () => {
   ])
 })
 
+// Tests for new utility functions
+
+test('extractCodeBlockContent - with backticks', () => {
+  const content = '```javascript\nconsole.log("hello")\n```'
+  const result = extractCodeBlockContent(content)
+  expect(result).toBe('console.log("hello")')
+})
+
+test('extractCodeBlockContent - without backticks', () => {
+  const content = 'Just plain text'
+  const result = extractCodeBlockContent(content)
+  expect(result).toBe('Just plain text')
+})
+
+test('extractCodeBlockContent - empty content', () => {
+  const content = ''
+  const result = extractCodeBlockContent(content)
+  expect(result).toBe('')
+})
+
+test('addExtension - no extension', () => {
+  expect(addExtension('myfile', '.txt')).toBe('myfile.txt')
+})
+
+test('addExtension - short extension', () => {
+  expect(addExtension('file.md', '.txt')).toBe('file.txt')
+})
+
+test('addExtension - multiple dots', () => {
+  expect(addExtension('my.awesome.file.md', '.txt')).toBe('my.awesome.file.txt')
+})
+
+test('addExtension - long filename part after dot', () => {
+  expect(addExtension('filewithverylongext', '.txt')).toBe('filewithverylongext.txt')
+})
+
+test('isHtmlContent - with ```html code block', () => {
+  const content = '```html\n<html><body>test</body></html>\n```'
+  expect(isHtmlContent(content)).toBe(true)
+})
+
+test('isHtmlContent - with DOCTYPE in code block', () => {
+  const content = '```\n<!DOCTYPE html>\n<html><body>test</body></html>\n```'
+  expect(isHtmlContent(content)).toBe(true)
+})
+
+test('isHtmlContent - with <html> in code block', () => {
+  const content = '```\n<html><body>test</body></html>\n```'
+  expect(isHtmlContent(content)).toBe(true)
+})
+
+test('isHtmlContent - raw DOCTYPE', () => {
+  const content = '<!DOCTYPE html>\n<html><body>test</body></html>'
+  expect(isHtmlContent(content)).toBe(true)
+})
+
+test('isHtmlContent - raw <html>', () => {
+  const content = '<html><body>test</body></html>'
+  expect(isHtmlContent(content)).toBe(true)
+})
+
+test('isHtmlContent - not HTML', () => {
+  const content = 'Just some markdown text'
+  expect(isHtmlContent(content)).toBe(false)
+})
+
+test('isHtmlContent - code block without HTML', () => {
+  const content = '```javascript\nconsole.log("test")\n```'
+  expect(isHtmlContent(content)).toBe(false)
+})
+
+test('extractHtmlContent - from ```html block', () => {
+  const content = '```html\n<html><body>test</body></html>\n```'
+  const result = extractHtmlContent(content)
+  expect(result).toBe('<html><body>test</body></html>')
+})
+
+test('extractHtmlContent - from ``` block with DOCTYPE', () => {
+  const content = '```\n<!DOCTYPE html>\n<html><body>test</body></html>\n```'
+  const result = extractHtmlContent(content)
+  expect(result).toBe('<!DOCTYPE html>\n<html><body>test</body></html>')
+})
+
+test('extractHtmlContent - from ``` block with <html>', () => {
+  const content = '```\n<html><body>test</body></html>\n```'
+  const result = extractHtmlContent(content)
+  expect(result).toBe('<html><body>test</body></html>')
+})
+
+test('extractHtmlContent - raw DOCTYPE', () => {
+  const content = '<!DOCTYPE html>\n<html><body>test</body></html>'
+  const result = extractHtmlContent(content)
+  expect(result).toBe('<!DOCTYPE html>\n<html><body>test</body></html>')
+})
+
+test('extractHtmlContent - raw <html>', () => {
+  const content = '<html><body>test</body></html>'
+  const result = extractHtmlContent(content)
+  expect(result).toBe('<html><body>test</body></html>')
+})
+
+test('extractHtmlContent - not HTML', () => {
+  const content = '```javascript\nconsole.log("test")\n```'
+  const result = extractHtmlContent(content)
+  expect(result).toBe('')
+})

@@ -8,7 +8,7 @@ import { emitEventMock } from '../../vitest.setup'
 import { store } from '../../src/services/store'
 import { stubTeleport } from '../mocks/stubs'
 import MessageItem from '../../src/components/MessageItem.vue'
-import MessageItemArtifactBlock from '../../src/components/MessageItemArtifactBlock.vue'
+import MessageItemHtmlBlock from '../../src/components/MessageItemHtmlBlock.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 import Dialog from '../../src/composables/dialog'
@@ -54,6 +54,7 @@ const botMessageToolArtifact3: Message = Message.fromJson({ role: 'assistant', t
 const botMessageToolArtifactHtml1: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here is an HTML example:\n\n<artifact title="Simple HTML Page">```html\n<!DOCTYPE html>\n<html>\n<head>\n<title>Test Page</title>\n</head>\n<body>\n<h1>Hello World</h1>\n<p>This is a test paragraph.</p>\n</body>\n</html>\n```</artifact>\n\nThat\'s it!' })
 const botMessageToolArtifactHtml2: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here is HTML without language specifier:\n\n<artifact title="HTML with DOCTYPE">```\n<!DOCTYPE html>\n<html>\n<head>\n<title>Test Page</title>\n</head>\n<body>\n<h1>Hello from DOCTYPE</h1>\n</body>\n</html>\n```</artifact>' })
 const botMessageToolArtifactHtml3: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here is another HTML example:\n\n<artifact title="HTML with tag">```\n<html>\n<head>\n<title>Simple Test</title>\n</head>\n<body>\n<h1>Hello from HTML tag</h1>\n</body>\n</html>\n```</artifact>' })
+const botMessageTable: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here is a table:\n\n| Name | Age |\n|------|-----|\n| Alice | 30 |\n| Bob | 25 |\n\nThat\'s it!' })
 
 beforeAll(() => {
   useWindowMock()
@@ -298,7 +299,7 @@ test('Assistant artifact with HTML preview', async () => {
   expect(artifact.exists()).toBe(true)
   expect(artifact.find('.panel-header label').text()).toBe('Simple HTML Page')
 
-  const artifactComponent = wrapper.findComponent(MessageItemArtifactBlock)
+  const artifactComponent = wrapper.findComponent(MessageItemHtmlBlock)
 
   // Phase 1: Initial state - loading div should show, no iframe
   expect(artifact.find('.html-loading').exists()).toBe(true)
@@ -332,8 +333,9 @@ test('Assistant artifact with HTML preview', async () => {
   await artifactComponent.vm.$nextTick()
   iframe = artifact.find('iframe')
   expect(iframe.exists()).toBe(false)
-  // When preview is off, it shows the loading div (v-else in template)
-  expect(artifact.find('.html-loading').exists()).toBe(true)
+  // When preview is off, it shows the HTML source code
+  expect(artifact.find('.html-loading').exists()).toBe(false)
+  expect(artifact.find('.text').exists()).toBe(true)
 
   // Toggle back on HTML preview
   await previewButton.trigger('click')
@@ -706,4 +708,43 @@ test('Artifact download markdown', async () => {
     }
   })
 
+})
+
+test('Assistant message with table', async () => {
+  const wrapper = await mount(botMessageTable)
+  expect(wrapper.find('.body').text()).toContain('Here is a table:')
+  expect(wrapper.find('.body').text()).toContain('That\'s it!')
+  expect(wrapper.findAll('.body .artifact').length).toBe(1)
+
+  const artifact = wrapper.find('.body .artifact')
+  expect(artifact.exists()).toBe(true)
+
+  // Check for table inside panel body
+  expect(artifact.find('.panel-body table').exists()).toBe(true)
+
+  // Check for download button
+  const downloadButton = artifact.find('.panel .icon.download')
+  expect(downloadButton.exists()).toBe(true)
+})
+
+test('Table download context menu', async () => {
+  const wrapper = await mount(botMessageTable)
+
+  const artifact = wrapper.find('.body .artifact')
+  const downloadButton = artifact.find('.panel .icon.download')
+  expect(downloadButton.exists()).toBe(true)
+
+  // Click the download button to show context menu
+  await downloadButton.trigger('click')
+  await nextTick()
+
+  // Check that context menu is visible
+  const contextMenu = wrapper.findComponent({ name: 'ContextMenu' })
+  expect(contextMenu.exists()).toBe(true)
+
+  // Check that CSV and XLSX options are present
+  const menuItems = contextMenu.findAll('.item')
+  expect(menuItems.length).toBe(2)
+  expect(menuItems[0].text()).toContain('common.downloadCsv')
+  expect(menuItems[1].text()).toContain('common.downloadXlsx')
 })

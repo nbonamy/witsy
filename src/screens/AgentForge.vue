@@ -13,7 +13,7 @@
       </template>
 
       <template v-else>
-        <List class="sp-main" :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A"  @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
+        <List class="sp-main" :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
       </template>
 
     </template>
@@ -47,6 +47,7 @@ import { t } from '../services/i18n'
 import AgentRunner from '../services/runner'
 import { store } from '../services/store'
 import { AgentType } from '../types/index'
+import { FileContents } from '../types/file'
 
 defineProps({
   extra: Object
@@ -172,6 +173,70 @@ const deleteAgent = (agent: Agent) => {
       selectAgent(null)
     }
   })
+}
+
+const onExport = (agent: Agent) => {
+  const jsonContent = JSON.stringify(agent, null, 2)
+  const encodedContent = window.api.base64.encode(jsonContent)
+
+  window.api.file.save({
+    contents: encodedContent,
+    properties: {
+      filename: `${agent.name}.json`,
+      prompt: true
+    }
+  })
+}
+
+const onImportJson = async () => {
+  try {
+    const file = window.api.file.pickFile({
+      filters: [{ name: 'Agent JSON', extensions: ['json'] }]
+    })
+
+    if (!file) return
+
+    const fileContents = file as FileContents
+    const jsonContent = window.api.base64.decode(fileContents.contents)
+    const importedAgent = Agent.fromJson(JSON.parse(jsonContent))
+
+    // Check for UUID conflict
+    const existingAgent = store.agents.find(a => a.uuid === importedAgent.uuid)
+
+    if (existingAgent) {
+      const result = await Dialog.show({
+        title: t('agent.forge.import.conflict.title'),
+        text: t('agent.forge.import.conflict.text'),
+        confirmButtonText: t('agent.forge.import.conflict.overwrite'),
+        denyButtonText: t('agent.forge.import.conflict.createNew'),
+        showDenyButton: true,
+        showCancelButton: true,
+      })
+
+      await Dialog.waitUntilClosed()
+
+      if (result.isDismissed) return
+
+      // If user chose "Create New", generate new UUID
+      if (result.isDenied) {
+        importedAgent.uuid = crypto.randomUUID()
+        importedAgent.createdAt = Date.now()
+        importedAgent.updatedAt = Date.now()
+      }
+    }
+
+    window.api.agents.save(store.config.workspaceId, importedAgent)
+    store.loadAgents()
+
+  } catch (error) {
+    console.error('Error importing agent:', error)
+    await Dialog.show({
+      title: t('agent.forge.import.error.title'),
+      text: t('agent.forge.import.error.text'),
+      confirmButtonText: t('common.ok'),
+    })
+    await Dialog.waitUntilClosed()
+  }
 }
 
 </script>

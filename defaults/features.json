@@ -1,3 +1,4 @@
 {
-  "workspaces": false
+  "workspaces": false,
+  "webapps": true
 }

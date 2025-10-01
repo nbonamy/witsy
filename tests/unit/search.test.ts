@@ -8,6 +8,8 @@ vi.mock('electron', async () => {
       setMaxListeners: vi.fn(),
       session: {
         on: vi.fn(),
+        getUserAgent: vi.fn(() => 'Mozilla/5.0 Witsy/1.0.0 Electron/28.0.0 Safari/537.36'),
+        setUserAgent: vi.fn(),
       },
       on: vi.fn((signal, callback) => {
         if (signal === 'dom-ready' || signal === 'did-finish-load') {

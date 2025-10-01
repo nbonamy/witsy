@@ -51,6 +51,8 @@
     "docRepo": "Baza wiedzy",
     "documents": "Dokumenty",
     "done": "Gotowe",
+    "downloadCsv": "CSV",
+    "downloadXlsx": "XLSX",
     "edit": "Edytuj",
     "enabled": "Włączone",
     "error": "Błąd!",
@@ -281,6 +283,18 @@
       "confirmDelete": "Czy na pewno chcesz usunąć tego agenta?",
       "create": "Nowy agent",
       "empty": "Uwolnij agentową moc @:{'common.appName'}, tworząc swojego pierwszego agenta! Kliknij ikonę robota, aby zacząć.",
+      "import": {
+        "conflict": {
+          "createNew": "Utwórz nowego",
+          "overwrite": "Nadpisz",
+          "text": "Agent o tej nazwie już istnieje. Co chcesz zrobić?",
+          "title": "Agent już istnieje"
+        },
+        "error": {
+          "text": "Wybrany plik nie jest prawidłowym plikiem JSON agenta.",
+          "title": "Błąd importu"
+        }
+      },
       "list": {
         "empty": "Nie utworzono jeszcze agenta tego typu.",
         "runnable": "Inicjowany przez użytkownika",
@@ -294,6 +308,8 @@
       "delete": "Usuń tego agenta",
       "deleteRun": "Usuń to uruchomienie",
       "edit": "Edytuj tego agenta",
+      "export": "Eksportuj agenta",
+      "import": "Importuj agenta",
       "run": "Uruchom tego agenta",
       "view": "Zobacz szczegóły agenta"
     },
@@ -306,6 +322,7 @@
       "lastRun": "Ostatnie uruchomienie",
       "log": "Dziennik",
       "neverRun": "Nigdy",
+      "running": "Trwa...",
       "status": "Status",
       "trigger": "Wyzwalacz"
     },
@@ -846,20 +863,6 @@
     "browse": "Przeglądaj modele",
     "model": "Model embeddingów",
     "provider": "Dostawca embeddingów"
-  },
-  "emptyChat": {
-    "favorites": {
-      "shortcut": "Naciśnij {shortcut}, aby szybko aktywować ten model"
-    },
-    "settings": {
-      "needsApiKey": "Musisz mieć klucz API, aby korzystać z modeli tego dostawcy. Możesz wpisać go poniżej.",
-      "needsModels": "Modele nie są załadowane dla tego dostawcy.<br/><a href=\"#settings_models_{engine}\">Kliknij tutaj</a>, aby sprawdzić swoją konfigurację.",
-      "refreshingModels": "Ładowanie listy modeli…"
-    },
-    "tips": {
-      "switchModel": "Kliknij tutaj, aby przełączyć się na inny model chatbota!",
-      "switchProvider": "Kliknij tutaj, aby przełączyć się na innego dostawcę chatbotów!"
-    }
   },
   "engine": {
     "create": {
@@ -1585,7 +1588,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Gdy użytkownik poprosi cię o stworzenie jakiejś treści (dokument, streszczenie, kod...), użyj następującej składni:\n<artifact title=\"TYTUŁ\">\nZAWARTOŚĆ\n</artifact>. Artefakty HTML MUSZĄ zaczynać się od <html> lub <!DOCTYPE html>. Przykład: <artifact title=\"Raport\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Zawartość raportu sformatowana w HTML</body></html>\n</artifact>. Możesz użyć tej funkcji do tworzenia wizualizacji danych w oparciu o HTML z wykorzystaniem Chart.js lub D3.js.",
+      "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś treści (dokumentu, streszczenia, kodu...), użyj następującej składni:\n<artifact title=\"TYTUŁ\">\nTREŚĆ\n</artifact>. Artefakty HTML MUSZĄ zaczynać się od <html> lub <!DOCTYPE html>. Przykład: <artifact title=\"Raport\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Zawartość raportu sformatowana w HTML</body></html>\n</artifact>. Możesz użyć tej funkcji, aby tworzyć wizualizacje danych oparte na HTML za pomocą Chart.js lub D3.js. Nie korzystaj z artefaktów do prostych tabel danych.",
       "mermaid": "Jeśli zostaniesz poproszony o wygenerowanie wykresu Mermaid, jego kod zostanie wyświetlony użytkownikowi jako diagram.",
       "toolRetry": "Podczas wywoływania narzędzi, jeśli otrzymasz błąd wejścia, przeanalizuj błąd i spróbuj go naprawić, a następnie ponownie wywołaj narzędzie."
     },
@@ -2515,7 +2518,8 @@
       "models": "Modele",
       "plugins": "Wtyczki",
       "shortcuts": "Skróty",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "Aplikacje internetowe"
     },
     "voice": {
       "automatic": "Automatyczny",
@@ -2664,6 +2668,23 @@
       "darwin": "Możesz aktywować @:{'common.appName'} z ikony kałamarza na pasku menu.",
       "linux": "Możesz aktywować @:{'common.appName'} z ikony kałamarza na pasku menu.",
       "win32": "Możesz aktywować @:{'common.appName'} z ikony kałamarza w zasobniku systemowym."
+    }
+  },
+  "webapps": {
+    "add": "Dodaj aplikację internetową",
+    "delete": "Usuń aplikację internetową",
+    "deleteConfirm": "Czy na pewno chcesz usunąć tę aplikację internetową?",
+    "description": "Skonfiguruj aplikacje internetowe, aby uzyskać do nich dostęp bezpośrednio z paska menu. Twoje sesje logowania i dane zostaną zachowane.",
+    "edit": "Edytuj aplikację internetową",
+    "enabled": "Włączone",
+    "evictionDuration": "Usuń nieaktywne aplikacje po (minutach)",
+    "icon": "Ikona",
+    "iconSearch": "Szukaj ikon...",
+    "name": "Nazwa",
+    "noApps": "Nie skonfigurowano żadnych aplikacji internetowych",
+    "url": "URL",
+    "validation": {
+      "requiredFields": "Nazwa i URL są wymagane"
     }
   },
   "workspace": {

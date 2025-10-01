@@ -51,6 +51,8 @@
     "docRepo": "Base de connaissances",
     "documents": "Documents",
     "done": "Terminé",
+    "downloadCsv": "CSV",
+    "downloadXlsx": "XLSX",
     "edit": "Modifier",
     "enabled": "Activé",
     "error": "Erreur !",
@@ -262,6 +264,18 @@
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet agent ?",
       "create": "Nouvel Agent",
       "empty": "Libérez la puissance agentique de @:{'common.appName'} en créant votre premier agent ! Cliquez sur la tête de robot pour commencer.",
+      "import": {
+        "conflict": {
+          "createNew": "Créer nouveau",
+          "overwrite": "Écraser",
+          "text": "Un agent avec ce nom existe déjà. Que souhaitez-vous faire ?",
+          "title": "L'agent existe déjà"
+        },
+        "error": {
+          "text": "Le fichier sélectionné n'est pas un fichier JSON d'agent valide.",
+          "title": "Erreur d'importation"
+        }
+      },
       "list": {
         "empty": "Aucun agent de ce type créé pour le moment.",
         "runnable": "Initié par l'utilisateur",
@@ -275,6 +289,8 @@
       "delete": "Supprimer cet agent",
       "deleteRun": "Supprimer cette exécution",
       "edit": "Modifier cet agent",
+      "export": "Exporter l'agent",
+      "import": "Importer l'agent",
       "run": "Exécuter cet agent",
       "view": "Voir les détails de l'agent"
     },
@@ -287,6 +303,7 @@
       "lastRun": "Dernière Exécution",
       "log": "Journal",
       "neverRun": "Jamais",
+      "running": "En cours...",
       "status": "Statut",
       "trigger": "Déclencheur"
     },
@@ -827,20 +844,6 @@
     "browse": "Parcourir les modèles",
     "model": "Modèle",
     "provider": "Fournisseur"
-  },
-  "emptyChat": {
-    "favorites": {
-      "shortcut": "Appuyez sur {shortcut} pour activer rapidement ce modèle"
-    },
-    "settings": {
-      "needsApiKey": "Vous avez besoin d'une clé API pour utiliser les modèles de ce fournisseur. Vous pouvez l'entrer ci-dessous.",
-      "needsModels": "Les modèles ne sont pas chargés pour ce fournisseur.<br/><a href=\"#settings_models_{engine}\">Cliquez ici</a> pour vérifier votre configuration.",
-      "refreshingModels": "Chargement de la liste des modèles…"
-    },
-    "tips": {
-      "switchModel": "Cliquez ici pour changer de modèle !",
-      "switchProvider": "Cliquez ici pour changer de fournisseur !"
-    }
   },
   "engine": {
     "create": {
@@ -1566,7 +1569,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Lorsque l'utilisateur vous demande de créer du contenu (document, résumé, code...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE\">\nCONTENU\n</artifact>. Les artefacts HTML DOIVENT commencer par <html> ou <!DOCTYPE html>. Exemple : <artifact title=\"Rapport\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Contenu du rapport formaté en HTML</body></html>\n</artifact>. Vous pouvez utiliser cette capacité pour créer des visualisations de données basées sur HTML en utilisant Chart.js ou D3.js.",
+      "artifacts": "Lorsque l'utilisateur vous demande de créer un contenu (document, résumé, code...), utilisez la syntaxe suivante :\n<artifact title=\"TITRE\">\nCONTENU\n</artifact>. Les artefacts HTML DOIVENT commencer par <html> ou <!DOCTYPE html>. Exemple : <artifact title=\"Rapport\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Contenu du rapport formaté en HTML</body></html>\n</artifact>. Vous pouvez utiliser cette capacité pour créer des visualisations de données basées sur HTML en utilisant Chart.js ou D3.js. N'utilisez PAS les artefacts pour des tableaux de données simples.",
       "mermaid": "Si l'on vous demande de produire un diagramme Mermaid, son code sera rendu en tant que diagramme pour l'utilisateur.",
       "toolRetry": "Lors de l'appel des outils, si vous obtenez une erreur d'entrée, analysez l'erreur, essayez de la corriger, puis réessayez d'appeler l'outil."
     },
@@ -2487,7 +2490,8 @@
       "models": "Modèles",
       "plugins": "Plugins",
       "shortcuts": "Raccourcis",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "Applications web"
     },
     "voice": {
       "automatic": "🤖 Automatique",
@@ -2636,6 +2640,23 @@
       "darwin": "Vous pouvez activer @:{'common.appName'} via l'icône du stylo-plume dans la barre de menu.",
       "linux": "Vous pouvez activer @:{'common.appName'} via l'icône du stylo-plume dans la barre de menu.",
       "win32": "Vous pouvez activer @:{'common.appName'} via l'icône du stylo-plume dans la zone de notification."
+    }
+  },
+  "webapps": {
+    "add": "Ajouter une application web",
+    "delete": "Supprimer l'application web",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette application web ?",
+    "description": "Configurez les applications web pour y accéder directement depuis la barre de menu. Vos sessions de connexion et vos données seront conservées.",
+    "edit": "Modifier l'application web",
+    "enabled": "Activé",
+    "evictionDuration": "Supprimer les applications web inactives après (minutes)",
+    "icon": "Icône",
+    "iconSearch": "Rechercher des icônes...",
+    "name": "Nom",
+    "noApps": "Aucune application web configurée",
+    "url": "URL",
+    "validation": {
+      "requiredFields": "Le nom et l'URL sont obligatoires"
     }
   },
   "workspace": {

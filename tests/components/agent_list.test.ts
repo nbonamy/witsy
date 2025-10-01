@@ -75,18 +75,52 @@ test('Shows all agents in table rows', async () => {
 })
 
 test('Displays agent information correctly', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents }
   })
-  
+
   const firstRow = wrapper.find('tbody tr')
   const cells = firstRow.findAll('td')
-  
+
   // Should display agent name, type, and last run info
   expect(cells.at(0)?.text()).toBe('Test Agent 1')
   expect(cells.at(1)?.text()).toBe('A test runnable agent')
   expect(cells.at(2)?.text()).toBe('agent.forge.list.runnable')
   expect(cells.at(3)?.text()).toBeTruthy() // Should have some last run text
+})
+
+test('Shows "Running..." for agent with running execution', async () => {
+  // Mock getRuns to return a running execution for agent1 BEFORE mounting
+  const getRunsSpy = vi.spyOn(window.api.agents, 'getRuns').mockImplementation((workspaceId: string, agentId: string) => {
+    if (agentId === 'agent1') {
+      return [{
+        uuid: 'run-running',
+        agentId: 'agent1',
+        createdAt: Date.now() - 1000,
+        updatedAt: Date.now() - 1000,
+        trigger: 'manual',
+        status: 'running',
+        prompt: 'Test prompt',
+        messages: [],
+        toolCalls: []
+      }]
+    }
+    return []
+  })
+
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents }
+  })
+
+  await nextTick()
+
+  const firstRow = wrapper.find('tbody tr')
+  const cells = firstRow.findAll('td')
+
+  // Should display "Running..." for last run
+  expect(cells.at(3)?.text()).toBe('agent.history.running')
+
+  getRunsSpy.mockRestore()
 })
 
 test('Displays agents in array order', async () => {
@@ -154,80 +188,113 @@ test('Emits run event when clicking run button', async () => {
 })
 
 test('Emits edit event when clicking edit option in context menu', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
+  const wrapper: VueWrapper<any> = mount(List, {
     props: { agents: store.agents },
     attachTo: document.body
   })
-  
+
   // Find the ContextMenuTrigger and click it to open the menu
   const contextMenuTrigger = wrapper.findComponent({ name: 'ContextMenuTrigger' })
   await contextMenuTrigger.find('.trigger').trigger('click')
   await nextTick()
-  
+
   // Find the ContextMenuPlus component and click the edit item
   const contextMenuPlus = wrapper.findComponent({ name: 'ContextMenuPlus' })
   expect(contextMenuPlus.exists()).toBe(true)
-  
-  const editItem = contextMenuPlus.find('.item')
+
+  const editItem = contextMenuPlus.find('.item.edit')
   await editItem.trigger('click')
-  
+
   expect(wrapper.emitted('edit')).toBeTruthy()
   expect(wrapper.emitted('edit')![0]).toEqual([store.agents[0]]) // First agent in array
 })
 
 test('Emits delete event when clicking delete option in context menu', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
+  const wrapper: VueWrapper<any> = mount(List, {
     props: { agents: store.agents },
     attachTo: document.body
   })
-  
+
   // Find the ContextMenuTrigger and click it to open the menu
   const contextMenuTrigger = wrapper.findComponent({ name: 'ContextMenuTrigger' })
   await contextMenuTrigger.find('.trigger').trigger('click')
   await nextTick()
-  
-  // Find the ContextMenuPlus component and click the delete item (second item)
+
+  // Find the ContextMenuPlus component and click the delete item
   const contextMenuPlus = wrapper.findComponent({ name: 'ContextMenuPlus' })
   expect(contextMenuPlus.exists()).toBe(true)
-  
-  const deleteItem = contextMenuPlus.findAll('.item').at(1) // Second item is delete
-  await deleteItem?.trigger('click')
-  
+
+  const deleteItem = contextMenuPlus.find('.item.delete')
+  await deleteItem.trigger('click')
+
   expect(wrapper.emitted('delete')).toBeTruthy()
   expect(wrapper.emitted('delete')![0]).toEqual([store.agents[0]]) // First agent in array
 })
 
 test('Emits create event when clicking create button', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents }
   })
-  
-  const createButton = wrapper.find('button.primary')
+
+  const createButton = wrapper.find('button[name="create"]')
   await createButton.trigger('click')
-  
+
   expect(wrapper.emitted('create')).toBeTruthy()
 })
 
 test('Emits importA2A event when clicking A2A button', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents }
   })
-  
-  const a2aButton = wrapper.find('button.secondary')
+
+  const a2aButton = wrapper.find('button[name="import-a2a"]')
   await a2aButton.trigger('click')
-  
+
   expect(wrapper.emitted('importA2A')).toBeTruthy()
 })
 
-test('Event handlers prevent bubbling for action buttons', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
+test('Emits importJson event when clicking import button', async () => {
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents }
   })
-  
+
+  const importButton = wrapper.find('button[name="import-json"]')
+  await importButton.trigger('click')
+
+  expect(wrapper.emitted('importJson')).toBeTruthy()
+})
+
+test('Emits export event when clicking export option in context menu', async () => {
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents },
+    attachTo: document.body
+  })
+
+  // Find the ContextMenuTrigger and click it to open the menu
+  const contextMenuTrigger = wrapper.findComponent({ name: 'ContextMenuTrigger' })
+  await contextMenuTrigger.find('.trigger').trigger('click')
+  await nextTick()
+
+  // Find the ContextMenuPlus component and click the export item
+  const contextMenuPlus = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(contextMenuPlus.exists()).toBe(true)
+
+  const exportItem = contextMenuPlus.find('.item.export')
+  await exportItem.trigger('click')
+
+  expect(wrapper.emitted('export')).toBeTruthy()
+  expect(wrapper.emitted('export')![0]).toEqual([store.agents[0]]) // First agent in array
+})
+
+test('Event handlers prevent bubbling for action buttons', async () => {
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents }
+  })
+
   // Click on run button should not trigger any other events since there's no panel item click
   const runButton = wrapper.find('.run')
   await runButton.trigger('click')
-  
+
   // Should have run event only
   expect(wrapper.emitted('run')).toBeTruthy()
   expect(wrapper.emitted('view')).toBeFalsy()

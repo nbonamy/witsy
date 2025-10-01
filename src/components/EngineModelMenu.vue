@@ -50,7 +50,7 @@
 
     <template v-for="engine in availableEngines" :key="`${engine}-footer`" v-slot:[`engine-${engine}Footer`]="{ withFilter }">
       <div @click="refreshModels(engine)" v-if="!store.workspace?.models">
-        <RefreshCcwIcon class="icon refresh" :class="{ refreshing }"/> {{ t('prompt.menu.models.reload') }}
+        <SpinningIcon class="icon refresh" :spinning="refreshing" /> {{ t('prompt.menu.models.reload') }}
       </div>
     </template>
 
@@ -68,7 +68,7 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import ContextMenuPlus, { MenuPosition } from './ContextMenuPlus.vue'
 import EngineLogo from './EngineLogo.vue'
-import { RefreshCcwIcon } from 'lucide-vue-next'
+import SpinningIcon from './SpinningIcon.vue'
 
 // Props
 interface Props {
@@ -226,21 +226,9 @@ const handleModelClick = (engine: string, model: string) => {
   font-weight: var(--font-weight-medium);
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .icon.refresh {
   width: var(--icon-md);
   height: var(--icon-md);
-  &.refreshing {
-    animation: spin 2s linear infinite;
-  }
 }
 
 </style>

@@ -193,7 +193,6 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
-- [ ] Implement Soniox for STT
 - [ ] Workspaces / Projects (whatever the name is)
 - [ ] Proper database (SQLite3) storage (??)
 
@@ -202,6 +201,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [X] Implement Soniox for STT
 - [x] OpenAI GPT-5 support
 - [x] Agents (multi-step, scheduling...)
 - [x] Document Repository file change monitoring

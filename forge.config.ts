@@ -53,7 +53,7 @@ if (isDarwin) {
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    
+
     /*
      * electron-forge 7.9.0 fix but increases image size significantly
      */
@@ -63,7 +63,7 @@ const config: ForgeConfig = {
     //   if (!file.startsWith('/.vite')) return true;
     //   return false;
     // },
-    
+
     icon: 'assets/icon',
     executableName: process.platform == 'linux' ? 'witsy' : 'Witsy',
     appBundleId: 'com.nabocorp.witsy',
@@ -199,6 +199,46 @@ const config: ForgeConfig = {
     //   unlink('node_modules/execa/node_modules/.bin/semver')
     //   unlink('node_modules/execa/node_modules/.bin/which')
     // }
+    
+    /*
+     * Remove non-matching architecture binaries from onnxruntime-node
+     */
+    packageAfterPrune: async (forgeConfig, buildPath, electronVersion, platform, arch) => {
+      console.log(`🧹 Cleaning up onnxruntime-node binaries for ${platform}-${arch}`);
+
+      const onnxRuntimePath = path.join(buildPath, 'node_modules', 'onnxruntime-node', 'bin', 'napi-v3');
+
+      if (!fs.existsSync(onnxRuntimePath)) {
+        console.log(`⚠️  onnxruntime-node path not found: ${onnxRuntimePath}`);
+        return;
+      }
+
+      // Define directories to remove based on platform and arch
+      const dirsToRemove: string[] = [];
+
+      if (platform === 'linux' && arch === 'x64') {
+        dirsToRemove.push('linux/arm64', 'darwin', 'win32');
+      } else if (platform === 'linux' && arch === 'arm64') {
+        dirsToRemove.push('linux/x64', 'darwin', 'win32');
+      } else if (platform === 'darwin' && arch === 'x64') {
+        dirsToRemove.push('linux', 'darwin/arm64', 'win32');
+      } else if (platform === 'darwin' && arch === 'arm64') {
+        dirsToRemove.push('linux', 'darwin/x64', 'win32');
+      } else if (platform === 'win32' && arch === 'x64') {
+        dirsToRemove.push('linux', 'darwin', 'win32/arm64');
+      }
+
+      // Remove the directories
+      for (const dir of dirsToRemove) {
+        const fullPath = path.join(onnxRuntimePath, dir);
+        if (fs.existsSync(fullPath)) {
+          console.log(`🗑️  Removing: ${dir}`);
+          fs.rmSync(fullPath, { recursive: true, force: true });
+        }
+      }
+
+      console.log(`✅ Cleanup complete`);
+    }
   }
 };
 

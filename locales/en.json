@@ -51,6 +51,8 @@
     "docRepo": "Knowledge Base",
     "documents": "Documents",
     "done": "Done",
+    "downloadCsv": "CSV",
+    "downloadXlsx": "XLSX",
     "edit": "Edit",
     "enabled": "Enabled",
     "error": "Error!",
@@ -282,6 +284,18 @@
       "confirmDelete": "Are you sure you want to delete this agent?",
       "create": "New Agent",
       "empty": "Unlock the agentic power of @:{'common.appName'} by creating your first agent! Click the robot head to get started.",
+      "import": {
+        "conflict": {
+          "createNew": "Create New",
+          "overwrite": "Overwrite",
+          "text": "An agent with this name already exists. What would you like to do?",
+          "title": "Agent Already Exists"
+        },
+        "error": {
+          "text": "The selected file is not a valid agent JSON file.",
+          "title": "Import Error"
+        }
+      },
       "list": {
         "empty": "No agent of this type created yet.",
         "runnable": "User Initiated",
@@ -295,6 +309,8 @@
       "delete": "Delete this agent",
       "deleteRun": "Delete this run",
       "edit": "Edit this agent",
+      "export": "Export agent",
+      "import": "Import agent",
       "run": "Run this agent",
       "view": "View agent details"
     },
@@ -307,6 +323,7 @@
       "lastRun": "Last Run",
       "log": "Log",
       "neverRun": "Never",
+      "running": "Running...",
       "status": "Status",
       "trigger": "Trigger"
     },
@@ -846,20 +863,6 @@
     "browse": "Browse models",
     "model": "Embedding Model",
     "provider": "Embedding Provider"
-  },
-  "emptyChat": {
-    "favorites": {
-      "shortcut": "Press {shortcut} to quickly activate this model"
-    },
-    "settings": {
-      "needsApiKey": "You need an API key to use models from this provider. You can enter it below.",
-      "needsModels": "Models are not loaded for this provider.<br/><a href=\"#settings_models_{engine}\">Click here</a> to check your configuration.",
-      "refreshingModels": "Loading models list…"
-    },
-    "tips": {
-      "switchModel": "Click here to switch to a different chat bot model!",
-      "switchProvider": "Click here to switch to a different chat bot provider!"
-    }
   },
   "engine": {
     "create": {
@@ -1585,7 +1588,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "When the user asks you to create some content (document, summary, code...), use the following syntax:\n<artifact title=\"TITLE\">\nCONTENT\n</artifact>. HTML artifacts MUST start with <html> or <!DOCTYPE html>. Example: <artifact title=\"Report\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Report Content formatted in HTML</body></html>\n</artifact>. You can use that capability to create HTML based data visualization using Chart.js or D3.js.",
+      "artifacts": "When the user asks you to create some content (document, summary, code...), use the following syntax:\n<artifact title=\"TITLE\">\nCONTENT\n</artifact>. HTML artifacts MUST start with <html> or <!DOCTYPE html>. Example: <artifact title=\"Report\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Report Content formatted in HTML</body></html>\n</artifact>. You can use that capability to create HTML based data visualization using Chart.js or D3.js. Do NOT use artifacts for simple data tables.",
       "mermaid": "If you are asked to output a Mermaid chart, its code will be rendered as a diagram to the user.",
       "toolRetry": "When calling tools, if you get an input error, analyze the error and try to fix it and then retry calling the tool."
     },
@@ -2526,7 +2529,8 @@
       "models": "Models",
       "plugins": "Plugins",
       "shortcuts": "Shortcuts",
-      "voice": "@:{'common.voice'}"
+      "voice": "@:{'common.voice'}",
+      "webapps": "Web Apps"
     },
     "voice": {
       "automatic": "🤖 Automatic",
@@ -2675,6 +2679,23 @@
       "darwin": "You can activate @:{'common.appName'} from the fountain pen icon in the menu bar.",
       "linux": "You can activate @:{'common.appName'} from the fountain pen icon in the menu bar.",
       "win32": "You can activate @:{'common.appName'} from the fountain pen icon in the system tray."
+    }
+  },
+  "webapps": {
+    "add": "Add Web App",
+    "delete": "Delete Web App",
+    "deleteConfirm": "Are you sure you want to delete this web app?",
+    "description": "Configure web applications to access them directly from the menu bar. Your login sessions and data will be preserved.",
+    "edit": "Edit Web App",
+    "enabled": "Enabled",
+    "evictionDuration": "Evict inactive webapps after (minutes)",
+    "icon": "Icon",
+    "iconSearch": "Search icons...",
+    "name": "Name",
+    "noApps": "No web apps configured",
+    "url": "URL",
+    "validation": {
+      "requiredFields": "Name and URL are required"
     }
   },
   "workspace": {
