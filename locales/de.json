@@ -2646,7 +2646,7 @@
     "add": "Web-App hinzufügen",
     "delete": "Web-App löschen",
     "deleteConfirm": "Sind Sie sicher, dass Sie diese Web-App löschen möchten?",
-    "description": "Konfigurieren Sie Webanwendungen, um direkt über die Menüleiste auf sie zuzugreifen. Ihre Anmeldesitzungen und Daten werden gespeichert.",
+    "description": "EXPERIMENTELL: Konfigurieren Sie Webanwendungen, um direkt aus der Menüleiste darauf zuzugreifen. Ihre Anmeldesitzungen und Daten werden erhalten bleiben.",
     "edit": "Web-App bearbeiten",
     "enabled": "Aktiviert",
     "evictionDuration": "Inaktive Web-Apps nach (Minuten) entfernen",

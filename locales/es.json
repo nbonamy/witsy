@@ -2646,7 +2646,7 @@
     "add": "Agregar aplicación web",
     "delete": "Eliminar aplicación web",
     "deleteConfirm": "¿Estás seguro de que deseas eliminar esta aplicación web?",
-    "description": "Configura aplicaciones web para acceder a ellas directamente desde la barra de menú. Tus sesiones de inicio y datos se preservarán.",
+    "description": "EXPERIMENTAL: Configure aplicaciones web para acceder a ellas directamente desde la barra de menú. Tus sesiones de inicio de sesión y datos se conservarán.",
     "edit": "Editar aplicación web",
     "enabled": "Habilitado",
     "evictionDuration": "Eliminar aplicaciones web inactivas después de (minutos)",

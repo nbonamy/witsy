@@ -2646,7 +2646,7 @@
     "add": "Ajouter une application web",
     "delete": "Supprimer l'application web",
     "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette application web ?",
-    "description": "Configurez les applications web pour y accéder directement depuis la barre de menu. Vos sessions de connexion et vos données seront conservées.",
+    "description": "EXPÉRIMENTAL : Configurez des applications web pour y accéder directement depuis la barre de menu. Vos sessions de connexion et vos données seront conservées.",
     "edit": "Modifier l'application web",
     "enabled": "Activé",
     "evictionDuration": "Supprimer les applications web inactives après (minutes)",

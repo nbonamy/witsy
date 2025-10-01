@@ -2668,7 +2668,7 @@
     "add": "Adicionar Aplicativo Web",
     "delete": "Excluir Aplicativo Web",
     "deleteConfirm": "Tem certeza de que deseja excluir este aplicativo web?",
-    "description": "Configure aplicativos web para acessá-los diretamente na barra de menu. Suas sessões de login e dados serão preservados.",
+    "description": "EXPERIMENTAL: Configure aplicações web para acessá-las diretamente a partir da barra de menu. Suas sessões de login e dados serão preservados.",
     "edit": "Editar Aplicativo Web",
     "enabled": "Ativado",
     "evictionDuration": "Remover aplicativos web inativos após (minutos)",
