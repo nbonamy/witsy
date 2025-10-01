@@ -322,6 +322,7 @@
       "lastRun": "最終実行",
       "log": "ログ",
       "neverRun": "未実行",
+      "running": "実行中...",
       "status": "ステータス",
       "trigger": "トリガー"
     },

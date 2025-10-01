@@ -75,18 +75,52 @@ test('Shows all agents in table rows', async () => {
 })
 
 test('Displays agent information correctly', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents }
   })
-  
+
   const firstRow = wrapper.find('tbody tr')
   const cells = firstRow.findAll('td')
-  
+
   // Should display agent name, type, and last run info
   expect(cells.at(0)?.text()).toBe('Test Agent 1')
   expect(cells.at(1)?.text()).toBe('A test runnable agent')
   expect(cells.at(2)?.text()).toBe('agent.forge.list.runnable')
   expect(cells.at(3)?.text()).toBeTruthy() // Should have some last run text
+})
+
+test('Shows "Running..." for agent with running execution', async () => {
+  // Mock getRuns to return a running execution for agent1 BEFORE mounting
+  const getRunsSpy = vi.spyOn(window.api.agents, 'getRuns').mockImplementation((workspaceId: string, agentId: string) => {
+    if (agentId === 'agent1') {
+      return [{
+        uuid: 'run-running',
+        agentId: 'agent1',
+        createdAt: Date.now() - 1000,
+        updatedAt: Date.now() - 1000,
+        trigger: 'manual',
+        status: 'running',
+        prompt: 'Test prompt',
+        messages: [],
+        toolCalls: []
+      }]
+    }
+    return []
+  })
+
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents }
+  })
+
+  await nextTick()
+
+  const firstRow = wrapper.find('tbody tr')
+  const cells = firstRow.findAll('td')
+
+  // Should display "Running..." for last run
+  expect(cells.at(3)?.text()).toBe('agent.history.running')
+
+  getRunsSpy.mockRestore()
 })
 
 test('Displays agents in array order', async () => {

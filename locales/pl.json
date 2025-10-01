@@ -322,6 +322,7 @@
       "lastRun": "Ostatnie uruchomienie",
       "log": "Dziennik",
       "neverRun": "Nigdy",
+      "running": "Trwa...",
       "status": "Status",
       "trigger": "Wyzwalacz"
     },

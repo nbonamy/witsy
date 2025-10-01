@@ -322,6 +322,7 @@
       "lastRun": "Última Execução",
       "log": "Log",
       "neverRun": "Nunca",
+      "running": "Executando...",
       "status": "Status",
       "trigger": "Acionador"
     },

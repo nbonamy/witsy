@@ -303,6 +303,7 @@
       "lastRun": "Letzte Ausführung",
       "log": "Protokoll",
       "neverRun": "Nie",
+      "running": "Wird ausgeführt...",
       "status": "Status",
       "trigger": "Auslöser"
     },

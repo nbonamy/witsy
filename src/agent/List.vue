@@ -31,10 +31,11 @@
             <td>{{ t(`agent.forge.list.${agent.type}`) }}</td>
             <td>{{ lastRun(agent) }}</td>
             <td><div class="actions">
-              <PlayIcon 
+              <RefreshCcwIcon class="starting" v-if="startingAgents.includes(agent.uuid)"/>
+              <PlayIcon v-else
                 class="run" 
                 v-tooltip="{ text: t('agent.help.run'), position: 'top-left' }" 
-                @click.stop="$emit('run', agent)" 
+                @click.stop="onAgentRun(agent)" 
               />
               <EyeIcon 
                 class="view" 
@@ -64,25 +65,63 @@
 
 <script setup lang="ts">
 
-import { EyeIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
-import { PropType } from 'vue'
+import { EyeIcon, PlayIcon, PlusIcon, RefreshCcwIcon, UploadIcon } from 'lucide-vue-next'
+import { PropType, onMounted, onUnmounted, ref, watch } from 'vue'
 import LogoA2A from '../../assets/a2a.svg?component'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import { useTimeAgo } from '../composables/ago'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { Agent } from '../types/index'
+import { Agent, AgentRun } from '../types/index'
 
-const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'export', 'importA2A', 'importJson']) 
+const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'export', 'importA2A', 'importJson'])
 
-defineProps({
+const props = defineProps({
   agents: Array as PropType<Agent[]>,
 })
 
+const runs = ref<Record<string, AgentRun[]>>({})
+const startingAgents = ref<string[]>([])
+
+onMounted(() => {
+  loadAllRuns()
+  watch(() => props.agents, loadAllRuns, { deep: true })
+  window.api.on('agent-run-update', onAgentRunUpdate)
+})
+
+onUnmounted(() => {
+  window.api.off('agent-run-update', onAgentRunUpdate)
+})
+
+const loadAllRuns = () => {
+  if (!props.agents) return
+  const newCache: Record<string, AgentRun[]> = {}
+  for (const agent of props.agents) {
+    newCache[agent.uuid] = window.api.agents.getRuns(store.config.workspaceId, agent.uuid)
+  }
+  runs.value = newCache
+}
+
+const onAgentRun = async (agent: Agent) => {
+  emit('run', agent)
+  startingAgents.value.push(agent.uuid)
+  setTimeout(() => {
+    const idx = startingAgents.value.indexOf(agent.uuid)
+    if (idx !== -1) startingAgents.value.splice(idx, 1)
+  }, 1000)
+}
+
+const onAgentRunUpdate = (data: { agentId: string }) => {
+  if (data.agentId && runs.value[data.agentId] !== undefined) {
+    runs.value[data.agentId] = window.api.agents.getRuns(store.config.workspaceId, data.agentId)
+  }
+}
+
 const lastRun = (agent: Agent) => {
-  const runs = window.api.agents.getRuns(store.config.workspaceId, agent.uuid)
-  if (runs.length === 0) return t('agent.history.neverRun')
-  const lastRun = runs[runs.length - 1]
+  const agentRuns = runs.value[agent.uuid] || []
+  if (agentRuns.length === 0) return t('agent.history.neverRun')
+  const lastRun = agentRuns[agentRuns.length - 1]
+  if (lastRun.status === 'running') return t('agent.history.running')
   return useTimeAgo().format(new Date(lastRun.createdAt))
 }
 
@@ -100,6 +139,19 @@ const lastRun = (agent: Agent) => {
     padding: 4rem;
   }
   
+  svg.starting {
+    animation: spin 1s linear infinite;
+  }
+
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 </style>
