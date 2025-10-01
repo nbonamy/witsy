@@ -21,7 +21,7 @@
 
     <template #default>
       <div data-submenu-slot="tools">
-        hello
+        {{ t('prompt.menu.tools.title') }}
       </div>
     </template>
 
