@@ -167,13 +167,16 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [ ] Eviction duration setting (in minutes)
 - [ ] Save to workspace file immediately
 
-### ⬜ Step 9: Update Settings.vue
+### ✅ Step 9: Update Settings.vue
 **File**: `src/screens/Settings.vue`
 
-- [ ] Add WebApps tab (only if workspaces feature enabled)
-- [ ] Import SettingsWebApps component
-- [ ] Add to workspace settings section
-- [ ] Tab icon: use a Lucide icon (AppWindowIcon?)
+- [x] Import SettingsWebApps component and AppWindowIcon
+- [x] Add WebApps tab in workspace settings section
+- [x] Guard with both workspaces and webapps feature flags
+- [x] Add settingsWebApps ref to settings array
+- [x] Use AppWindowIcon for tab icon
+- [x] All 1603 tests passing ✓
+- [x] Linting passed ✓
 
 ### ✅ Step 10: Localization
 **File**: `locales/en.json`
