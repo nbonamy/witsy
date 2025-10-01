@@ -1,10 +1,10 @@
 <template>
   <div class="icon-picker">
     <div class="search-bar">
-      <input 
-        v-model="searchQuery" 
-        type="text" 
-        placeholder="Search icons..." 
+      <input
+        v-model="searchQuery"
+        type="text"
+        :placeholder="t('webapps.iconSearch')"
         class="search-input"
       />
     </div>
@@ -17,7 +17,8 @@
         :title="iconName"
         @click="select(iconName)"
       >
-        <component :is="iconName" />
+        <component :is="getIcon(iconName)" class="icon-svg" />
+        <span class="icon-name">{{ iconName }}</span>
       </div>
     </div>
   </div>
@@ -25,7 +26,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import * as BootstrapIcons from 'bootstrap-icons-vue'
+import { icons } from 'lucide-vue-next'
+import { t } from '../services/i18n'
 
 const props = defineProps<{
   modelValue: string | null | undefined
@@ -39,16 +41,7 @@ const emit = defineEmits<{
 const searchQuery = ref('')
 
 const allIcons = computed(() => {
-  const icons: string[] = []
-  for (const [key, component] of Object.entries(BootstrapIcons)) {
-    if (key.startsWith('BIcon') && typeof component === 'object') {
-      if (key.includes('Filetype')) {
-        continue
-      }
-      icons.push(key)
-    }
-  }
-  return icons.sort()
+  return Object.keys(icons).sort()
 })
 
 // Filter icons based on search query
@@ -67,13 +60,12 @@ const displayedIcons = computed(() => {
   return filteredIcons.value
 })
 
+const getIcon = (iconName: string) => {
+  return (icons as any)[iconName]
+}
+
 function select(iconName: string) {
-  // If the icon is already selected, deselect it (emit null/undefined)
-  if (props.modelValue === iconName) {
-    emit('update:modelValue', null)
-  } else {
-    emit('update:modelValue', iconName)
-  }
+  emit('update:modelValue', iconName)
 }
 
 function isSelected(iconName: string) {
@@ -130,10 +122,29 @@ defineExpose({
     }
   }
 
-  svg {
+  .icon-svg {
     width: 100%;
     height: 100%;
   }
 }
+
+.icon-name {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: var(--text-secondary-color);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.icon-item:hover .icon-name {
+  opacity: 1;
+}
+
+
 
 </style>

@@ -123,15 +123,26 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [x] All 1585 tests passing ✓
 - [x] Linting passed ✓
 
-### ⬜ Step 7: Create Icon Picker Component
-**File**: `src/components/IconPicker.vue`
+### ✅ Step 7: Update IconPicker Component
+**Files**: `src/components/IconPicker.vue`, `tests/components/icon_picker.test.ts`
 
-- [ ] Get all Lucide icon names
-- [ ] Create scrollable grid layout
-- [ ] Add search filter input
-- [ ] Show icon preview for each
-- [ ] Emit selected icon name
-- [ ] Current selection highlight
+- [x] Update existing IconPicker from Bootstrap to Lucide icons
+- [x] Get all Lucide icon names (sorted)
+- [x] Scrollable grid layout with search
+- [x] Case-insensitive search filter
+- [x] Icon name tooltip on hover
+- [x] Highlight selected icon
+- [x] Emit update:modelValue on click
+- [x] Localized placeholder text
+- [x] Write 8 unit tests covering:
+  - Rendering
+  - Icon display
+  - Search filtering
+  - Selection
+  - Click events
+  - Case insensitive search
+- [x] All 1593 tests passing ✓
+- [x] Linting passed ✓
 
 ### ⬜ Step 8: Create SettingsWebApps Component
 **File**: `src/settings/SettingsWebApps.vue`
