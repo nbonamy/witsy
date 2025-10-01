@@ -1,5 +1,5 @@
 
-import { beforeAll, expect, test, vi } from 'vitest'
+import { beforeAll, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'

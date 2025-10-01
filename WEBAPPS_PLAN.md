@@ -86,18 +86,23 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [x] All 1578 tests passing ✓
 - [x] Linting passed ✓
 
-### ⬜ Step 5: Update Main.vue
-**File**: `src/screens/Main.vue`
+### ✅ Step 5: Update Main.vue
+**Files**: `src/screens/Main.vue`, `src/composables/webapp_manager.ts`
 
-- [ ] Import WebAppViewer
-- [ ] Track loaded webapps (Map of id -> component instance)
-- [ ] Lazy-create WebAppViewer on first activation
-- [ ] Show/hide based on mode (keep mounted when hidden)
-- [ ] Implement eviction logic:
-  - Check lastUsed timestamps periodically
-  - Destroy webview DOM if exceeded threshold
-  - Keep webapp config intact
-- [ ] Handle mode switching for `web-app-{id}` pattern
+- [x] Create webapp_manager composable for clean separation
+- [x] Import WebAppViewer and webapp_manager
+- [x] Render WebAppViewer for each loaded webapp
+- [x] Lazy-load webapps on first activation
+- [x] Keep webviews mounted but hidden (v-show for session persistence)
+- [x] Implement eviction logic in manager:
+  - Check lastUsed timestamps every minute
+  - Evict after configurable duration (default 30 min)
+  - Remove from loadedWebapps array
+- [x] Handle webapp mode in onMode function
+- [x] Update lastUsed on visibility changes
+- [x] Cleanup on unmount
+- [x] All 1578 tests passing ✓
+- [x] Linting passed ✓
 
 ### ⬜ Step 6: Update MenuBar
 **File**: `src/components/MenuBar.vue`
