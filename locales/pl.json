@@ -2518,6 +2518,7 @@
       "models": "Modele",
       "plugins": "Wtyczki",
       "shortcuts": "Skróty",
+      "sidebar": "Pasek boczny",
       "voice": "@:{'common.voice'}",
       "webapps": "Aplikacje internetowe"
     },
@@ -2682,6 +2683,7 @@
     "iconSearch": "Szukaj ikon...",
     "name": "Nazwa",
     "noApps": "Nie skonfigurowano żadnych aplikacji internetowych",
+    "title": "Aplikacje internetowe",
     "url": "URL",
     "validation": {
       "requiredFields": "Nazwa i URL są wymagane"

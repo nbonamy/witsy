@@ -2490,6 +2490,7 @@
       "models": "Modelle",
       "plugins": "Plugins",
       "shortcuts": "Tastenkürzel",
+      "sidebar": "Seitenleiste",
       "voice": "@:{'common.voice'}",
       "webapps": "Web-Apps"
     },
@@ -2654,6 +2655,7 @@
     "iconSearch": "Symbole suchen...",
     "name": "Name",
     "noApps": "Keine Webanwendungen konfiguriert",
+    "title": "Web-Apps",
     "url": "URL",
     "validation": {
       "requiredFields": "Name und URL sind erforderlich"

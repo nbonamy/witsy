@@ -2490,6 +2490,7 @@
       "models": "Modelos",
       "plugins": "Complementos",
       "shortcuts": "Atajos",
+      "sidebar": "Barra lateral",
       "voice": "@:{'common.voice'}",
       "webapps": "Aplicaciones web"
     },
@@ -2654,6 +2655,7 @@
     "iconSearch": "Buscar iconos...",
     "name": "Nombre",
     "noApps": "No hay aplicaciones web configuradas",
+    "title": "Aplicaciones web",
     "url": "URL",
     "validation": {
       "requiredFields": "Nombre y URL son obligatorios"
