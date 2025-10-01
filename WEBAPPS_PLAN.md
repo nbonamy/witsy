@@ -53,10 +53,11 @@ Add configurable web apps to workspace settings that appear in sidebar and open 
 - [x] Add `webappEvictionMinutes: number` to `GeneralConfig`
 - [x] Linting passed ✓
 
-### ⬜ Step 2: Feature Flag
+### ✅ Step 2: Feature Flag
 **File**: `defaults/features.json`
 
-- [ ] Add `"webapps": true`
+- [x] Add `"webapps": true`
+- [x] Linting passed ✓
 
 ### ⬜ Step 3: Main Process - Webview Session Setup
 **Files**: `src/main/ipc.ts`, new file `src/main/webview.ts`
