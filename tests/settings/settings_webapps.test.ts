@@ -1,6 +1,6 @@
 
 import { beforeAll, beforeEach, expect, test, vi } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
