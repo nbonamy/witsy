@@ -39,8 +39,7 @@ const onCreate = (current: WebApp) => {
   edited.value = {
     id: null,
     name: '',
-    url: '',
-    icon: 'Globe',
+    url: 'https://',
     enabled: true
   } as any
 }

@@ -195,6 +195,8 @@ defineExpose({ load })
 
 .webapps {
 
+  border: 0.5px solid var(--border-color);
+
   td {
     padding: 0.25rem 0.75rem;
     vertical-align: middle;
@@ -219,9 +221,8 @@ defineExpose({ load })
 .no-webapps {
   padding: 4rem 2rem;
   text-align: center;
-  border-left: 1px solid var(--border-color);
-  border-right: 1px solid var(--border-color);
-  font-size: 14px;
+  border: 1px solid var(--border-color);
+  font-size: 15px;
 }
 
 .eviction-setting {
