@@ -131,7 +131,7 @@ export default class {
       {
         label: t('tray.menu.scratchpad'),
         accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad),
-        click: () => window.openScratchPad()
+        click: () => window.openMainWindow({ queryParams: { view: 'scratchpad' } })
       },
       {
         label: t('tray.menu.designStudio'),

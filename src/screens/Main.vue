@@ -26,6 +26,11 @@
         @navigate="onNavigate(webapp.id, $event)"
       />
 
+      <ScratchPad :style="{
+        display: mode === 'scratchpad' ? undefined : 'none',
+        pointerEvents: mode == 'scratchpad' ? undefined : 'none'
+      }" :extra="viewParams" ref="scratchpad" />
+
       <Settings :style="{
         display: mode === 'settings' ? undefined : 'none',
         pointerEvents: mode == 'settings' ? undefined : 'none'
@@ -63,6 +68,7 @@ import DocRepos from '../screens/DocRepos.vue'
 import McpServers from '../screens/McpServers.vue'
 import Onboarding from '../screens/Onboarding.vue'
 import RealtimeChat from '../screens/RealtimeChat.vue'
+import ScratchPad from '../screens/ScratchPad.vue'
 import Settings from '../screens/Settings.vue'
 import Transcribe from '../screens/Transcribe.vue'
 import WebAppViewer from '../screens/WebAppViewer.vue'
@@ -163,9 +169,7 @@ const onMode = async (next: MenuBarMode) => {
 
   //console.log('[main] onMode', next)
 
-  if (next === 'scratchpad') {
-    window.api.scratchpad.open()
-  } else if (next === 'computer-use') {
+  if (next === 'computer-use') {
     mode.value = 'chat'
   } else if (next === 'debug') {
     window.api.debug.showConsole()
@@ -183,7 +187,7 @@ const onMode = async (next: MenuBarMode) => {
   emitEvent('main-view-changed', next)
 
   // for menu update
-  if (mode.value !== 'computer-use' && mode.value !== 'scratchpad' && mode.value !== 'debug') {
+  if (mode.value !== 'computer-use' && mode.value !== 'debug') {
     window.api.main.updateMode(mode.value)
   }
 

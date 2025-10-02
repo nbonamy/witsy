@@ -680,7 +680,17 @@ export const installIpc = (
   });
 
   ipcMain.on(IPC.SCRATCHPAD.OPEN, async (_, payload) => {
-    await window.openScratchPad(payload);
+    // Switch main window to scratchpad mode instead of opening new window
+    if (window.mainWindow) {
+      window.mainWindow.show();
+      window.mainWindow.focus();
+      // Pass textId via query params event
+      const params: any = { view: 'scratchpad' };
+      if (payload) {
+        params.textId = payload;
+      }
+      window.mainWindow.webContents.send('query-params', params);
+    }
   });
 
   ipcMain.on(IPC.COMPUTER.IS_AVAILABLE, async (event) => {
