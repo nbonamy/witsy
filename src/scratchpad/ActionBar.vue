@@ -123,14 +123,13 @@ const onMagicAction = (event: Event, action: string) => {
 .actionbar-wrapper {
 
   position: absolute;
-  right: 1.5rem;
+  right: 2rem;
   top: 55%;
   transform: translateY(-50%);
   border: 1px solid var(--scratchpad-actionbar-border-color);
-  border-radius: 20px;
-  padding: 16px 12px;
-  box-shadow: 0 0 8px var(--scratchpad-actionbar-shadow-color);
-  transition: height 0.15s linear;
+  border-radius: 2rem;
+  padding: 1rem 0.75rem;
+  box-shadow: 0 0 0.5rem var(--scratchpad-actionbar-shadow-color);
   background-color: var(--scratchpad-actionbar-bg-color);
   z-index: 10;
 
@@ -140,14 +139,20 @@ const onMagicAction = (event: Event, action: string) => {
 
   .actionbar {
     display: flex;
+    padding: 0.5rem 0;
     flex-direction: column-reverse;
-    gap: 12px;
+    gap: 1.25rem;
   }
   
   .action {
     color: var(--scratchpad-actionbar-normal-icon-color);
-    font-size: 18.5px;
     cursor: pointer;
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+
 
     &.disabled {
       color: var(--scratchpad-actionbar-disabled-icon-color);
