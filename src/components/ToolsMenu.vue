@@ -29,12 +29,12 @@
       {{ withFilter(true) }}
       <div class="plugin-group" data-submenu-slot="pluginsSubMenu">
         <input type="checkbox" :checked="pluginsStatusComputed === 'all'" :data-indeterminate="pluginsStatusComputed === 'some'" @click.stop="handlePluginsClick()" />
-        {{ t('prompt.menu.tools.plugins') }}
+        <span>{{ t('prompt.menu.tools.plugins') }}</span>
       </div>
       <template v-for="serverWithTools in mcpServersWithTools" :key="serverWithTools.uuid">
         <div v-if="serverWithTools.tools.length > 0" class="server-group" :data-submenu-slot="`tools-${serverWithTools.uuid}`">
           <input type="checkbox" :checked="serverToolsStatus(serverWithTools) === 'all'" :data-indeterminate="serverToolsStatus(serverWithTools) === 'some'" @click.stop="handleServerToolsClick(serverWithTools)" />
-          {{ getServerDisplayName(serverWithTools) }}
+          <span>{{ getServerDisplayName(serverWithTools) }}</span>
         </div>
       </template>
     </template>
@@ -54,7 +54,7 @@
       {{ withFilter(true) }}
       <div v-for="plugin in enabledPlugins(store.config)" :key="plugin" :data-id="plugin" @click="handlePluginClick(plugin)">
         <input type="checkbox" :checked="pluginStatus(plugin) === 'all'"  />
-        {{ t(`settings.plugins.${plugin}.title`) }}
+        <span>{{ t(`settings.plugins.${plugin}.title`) }}</span>
       </div>
     </template>
 
@@ -73,7 +73,7 @@
       {{ withFilter(true) }}
       <div v-for="tool in serverWithTools.tools" :key="tool.name" :data-id="tool.uuid" @click.stop="handleServerToolClick(serverWithTools, tool)">
         <input type="checkbox" :checked="serverToolStatus(serverWithTools, tool) === 'all'"  />
-        {{ tool.name }}
+        <span>{{ tool.name }}</span>
       </div>
     </template>
 

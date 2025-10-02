@@ -573,6 +573,7 @@ defineExpose({
 }
 
 :deep(.item .icon) {
+  flex-shrink: 0;
   margin-right: 0.25rem;
   width: var(--icon-lg);
   height: var(--icon-lg);
