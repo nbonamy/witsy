@@ -1,12 +1,19 @@
 <template>
-  <div class="scratchpad">
-    <ScratchpadToolbar :engine="engine" :model="model" :fontFamily="fontFamily" :fontSize="fontSize" />
-    <div class="document" :class="[ fontFamily, `size-${fontSize}` ]">
-      <EditableText ref="editor" :placeholder="placeholder"/>
+  <div class="scratchpad split-pane">
+
+    <ScratchpadSidebar :fontFamily="fontFamily" :fontSize="fontSize" :modified="modified" :fileUrl="fileUrl" />
+
+    <div class="sp-main">
+      <main>
+        <div class="document" :class="[ fontFamily, `size-${fontSize}` ]">
+          <EditableText ref="editor" :placeholder="placeholder"/>
+        </div>
+        <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
+      </main>
+      <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @stop="onStopPrompting" ref="prompt" />
+      <audio/>
     </div>
-    <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
-    <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @stop="onStopPrompting" ref="prompt" />
-    <audio/>
+
   </div>
 </template>
 
@@ -23,11 +30,16 @@ import Chat from '../models/chat'
 import Message from '../models/message'
 import { availablePlugins } from '../plugins/plugins'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
-import ScratchpadToolbar, { ToolbarAction } from '../scratchpad/Toolbar.vue'
+import ScratchpadSidebar from '../scratchpad/Sidebar.vue'
 import Generator, { GenerationResult } from '../services/generator'
 import { fullExpertI18n, i18nInstructions, t } from '../services/i18n'
 import { store } from '../services/store'
 import { FileContents } from '../types/file'
+
+export interface ToolbarAction {
+  type: string,
+  value: any
+}
 
 // bus
 const { onEvent, emitEvent } = useEventBus()
@@ -561,18 +573,24 @@ const onStopPrompting = async () => {
 <style scoped>
 
 .scratchpad {
-  
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--background-color);
 
-  .document {
-    flex: 1;
-    overflow-y: scroll;
-    display: flex;
-    flex-direction: column;
-    scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
+  .sp-main {
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .document {
+      flex: 1;
+      overflow-y: scroll;
+      display: flex;
+      flex-direction: column;
+      scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
+    }
+
   }
 
   .document :deep(.container) {
@@ -617,9 +635,10 @@ const onStopPrompting = async () => {
     font-size: 24px;
   }
 
-  .prompt {
+  :deep(.prompt) {
     margin: 1rem;
   }
+
 }
 
 </style>

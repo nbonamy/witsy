@@ -10,7 +10,7 @@ import defaultSettings from '../../defaults/settings.json'
 import ScratchPad from '../../src/screens/ScratchPad.vue'
 import Prompt, { SendPromptParams } from '../../src/components/Prompt.vue'
 import EditableText from '../../src/components/EditableText.vue'
-import Toolbar from '../../src/scratchpad/Toolbar.vue'
+import Sidebar from '../../src/scratchpad/Sidebar.vue'
 import ActionBar from '../../src/scratchpad/ActionBar.vue'
 import Attachment from '../../src/models/attachment'
 
@@ -79,7 +79,7 @@ test('Renders correctly', () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.scratchpad').exists()).toBe(true)
-  expect(wrapper.findComponent(Toolbar).exists()).toBe(true)
+  expect(wrapper.findComponent(Sidebar).exists()).toBe(true)
   expect(wrapper.findComponent(EditableText).exists()).toBe(true)
   expect(wrapper.findComponent(ActionBar).exists()).toBe(true)
   expect(wrapper.findComponent(Prompt).exists()).toBe(true)
