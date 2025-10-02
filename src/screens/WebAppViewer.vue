@@ -55,12 +55,12 @@ onMounted(() => {
   if (!webview) return
 
   const handleDidFinishLoad = () => {
-    console.log(`[WebApp ${props.webapp.id}] Page loaded`)
+    //console.log(`[WebApp ${props.webapp.id}] Page loaded`)
     isLoading.value = false
   }
 
   const handleDidNavigateInPage = (event: any) => {
-    console.log(`[WebApp ${props.webapp.id}] Navigated to:`, event.url)
+    //console.log(`[WebApp ${props.webapp.id}] Navigated to:`, event.url)
     emit('navigate', event.url)
   }
 
