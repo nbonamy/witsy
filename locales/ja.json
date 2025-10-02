@@ -2519,8 +2519,7 @@
       "plugins": "プラグイン",
       "shortcuts": "ショートカット",
       "sidebar": "サイドバー",
-      "voice": "@:{'common.voice'}",
-      "webapps": "ウェブアプリ"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 自動",
@@ -2683,26 +2682,11 @@
     "iconSearch": "アイコンを検索...",
     "name": "名前",
     "noApps": "設定されたウェブアプリがありません",
+    "preserveColors": "ウェブアプリのアイコン色を保持する",
     "title": "ウェブアプリ",
     "url": "URL",
-    "useWebsiteIcon": "ウェブサイトアイコンを使用する",
     "validation": {
       "requiredFields": "名前とURLは必須です"
-    }
-  },
-  "workspace": {
-    "delete": {
-      "confirm": "このワークスペースを削除してもよろしいですか？"
-    },
-    "editor": {
-      "color": "Color",
-      "create": "Create New Workspace",
-      "createDescription": "Create a new workspace to organize your models, chats and agents.",
-      "edit": "Edit Workspace",
-      "editDescription": "Edit the details of your workspace.",
-      "icon": "Icon",
-      "name": "Name",
-      "namePlaceholder": "Enter workspace name"
     }
   }
 }

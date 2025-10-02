@@ -2513,8 +2513,7 @@
       "plugins": "插件",
       "shortcuts": "快捷键",
       "sidebar": "侧边栏",
-      "voice": "@:{'common.voice'}",
-      "webapps": "Web 应用"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 自动",
@@ -2677,26 +2676,11 @@
     "iconSearch": "搜索图标...",
     "name": "名称",
     "noApps": "未配置任何 Web 应用",
+    "preserveColors": "保留网页应用图标颜色",
     "title": "网络应用",
     "url": "网址",
-    "useWebsiteIcon": "使用网站图标",
     "validation": {
       "requiredFields": "名称和网址为必填项"
-    }
-  },
-  "workspace": {
-    "delete": {
-      "confirm": "您确定要删除此工作区吗？"
-    },
-    "editor": {
-      "color": "Color",
-      "create": "Create New Workspace",
-      "createDescription": "Create a new workspace to organize your models, chats and agents.",
-      "edit": "Edit Workspace",
-      "editDescription": "Edit the details of your workspace.",
-      "icon": "Icon",
-      "name": "Name",
-      "namePlaceholder": "Enter workspace name"
     }
   }
 }

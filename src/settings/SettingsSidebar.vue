@@ -64,6 +64,7 @@ const onWebappModified = (payload: WebApp | null) => {
       name: payload.name,
       url: payload.url,
       icon: payload.icon,
+      preserveColors: payload.preserveColors,
       enabled: payload.enabled
     }
 
@@ -83,6 +84,7 @@ const onWebappModified = (payload: WebApp | null) => {
       webapp.name = payload.name
       webapp.url = payload.url
       webapp.icon = payload.icon
+      webapp.preserveColors = payload.preserveColors
       webapp.enabled = payload.enabled
     }
   }

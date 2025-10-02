@@ -47,7 +47,7 @@
         :active="mode === `webapp-${webapp.id}`"
         @click="emit('change', `webapp-${webapp.id}`)"
       >
-        <img v-if="!webapp.icon" :src="`https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=${encodeURIComponent(webapp.url)}`" class="webapp-favicon" alt="Webapp icon" />
+        <img v-if="webapp.icon?.startsWith('http')" :src="webapp.icon" class="webapp-favicon" :class="{ 'grayscale': !webapp.preserveColors }" alt="Webapp icon" />
         <component v-else :is="getWebappIcon(webapp.icon)" />
         <span>{{ webapp.name }}</span>
       </MenuBarItem>
@@ -272,8 +272,10 @@ body[data-tint=blue] .mx-context-menu {
     .webapp-favicon {
       width: var(--icon-lg);
       height: var(--icon-lg);
-      filter: grayscale() contrast(0) brightness(0);
-      opacity: 0.7;
+      &.grayscale {
+        filter: grayscale() contrast(0) brightness(0);
+        opacity: 0.7;
+      }
     }
 
   }

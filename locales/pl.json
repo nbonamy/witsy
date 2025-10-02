@@ -2519,8 +2519,7 @@
       "plugins": "Wtyczki",
       "shortcuts": "Skróty",
       "sidebar": "Pasek boczny",
-      "voice": "@:{'common.voice'}",
-      "webapps": "Aplikacje internetowe"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "Automatyczny",
@@ -2683,26 +2682,11 @@
     "iconSearch": "Szukaj ikon...",
     "name": "Nazwa",
     "noApps": "Nie skonfigurowano żadnych aplikacji internetowych",
+    "preserveColors": "Zachowaj kolory ikon aplikacji webowych",
     "title": "Aplikacje internetowe",
     "url": "URL",
-    "useWebsiteIcon": "Użyj ikony strony internetowej",
     "validation": {
       "requiredFields": "Nazwa i URL są wymagane"
-    }
-  },
-  "workspace": {
-    "delete": {
-      "confirm": "Czy na pewno chcesz usunąć to środowisko pracy?"
-    },
-    "editor": {
-      "color": "Color",
-      "create": "Create New Workspace",
-      "createDescription": "Create a new workspace to organize your models, chats and agents.",
-      "edit": "Edit Workspace",
-      "editDescription": "Edit the details of your workspace.",
-      "icon": "Icon",
-      "name": "Name",
-      "namePlaceholder": "Enter workspace name"
     }
   }
 }
