@@ -6,7 +6,6 @@ import App from '../../src/App.vue'
 import Main from '../../src/screens/Main.vue'
 import CommandPicker from '../../src/screens/CommandPicker.vue'
 import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
-import ScratchPad from '../../src/screens/ScratchPad.vue'
 import RealtimeChat from '../../src/screens/RealtimeChat.vue'
 import Transcribe from '../../src/screens/Transcribe.vue'
 import ReadAloud from '../../src/screens/ReadAloud.vue'
@@ -60,10 +59,11 @@ test('Transmits prompt query params', () => {
 })
 
 test('Renders scratchpad', () => {
+  // Scratchpad is now part of Main window, not a separate route
   // @ts-expect-error no-other-way
-  window.location = new URL('http://localhost/#/scratchpad')
+  window.location = new URL('http://localhost/#/')
   const wrapper = mount(App)
-  expect(wrapper.findComponent(ScratchPad).exists()).toBe(true)
+  expect(wrapper.findComponent(Main).exists()).toBe(true)
 })
 
 test('Renders realtime chat', () => {

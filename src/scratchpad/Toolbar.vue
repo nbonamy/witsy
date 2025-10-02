@@ -1,30 +1,30 @@
 <template>
-  <div class="form">
+  <div class="form form-large">
 
     <div class="toolbar">
     
-      <button class="tool" @click="emitEvent('action', 'clear')">
+      <button class="secondary" @click="emitEvent('action', 'clear')">
         <FileIcon /><span>{{ t('common.clear') }}</span>
       </button>
       
-      <button class="tool" @click="emitEvent('action', 'load')">
+      <button class="secondary" @click="emitEvent('action', 'load')">
         <FolderOpenIcon /><span>{{ t('common.load') }}</span>
       </button>
       
-      <button class="tool" @click="emitEvent('action', 'save')">
+      <button class="secondary" @click="emitEvent('action', 'save')">
         <SaveIcon /><span>{{ t('common.save') }}</span>
       </button>
       
       <!-- <EngineSelect class="tool" v-model="engine" @change="onChangeEngine" />
       <ModelSelect class="tool" v-model="model" :engine="engine" @change="onChangeModel"/> -->
       
-      <select class="tool" v-model="fontFamily" @change="onChangeFontFamily">
+      <select class="secondary" v-model="fontFamily" @change="onChangeFontFamily">
         <option value="serif">{{ t('scratchpad.fontFamily.serif') }}</option>
         <option value="sans-serif">{{ t('scratchpad.fontFamily.sansSerif') }}</option>
         <option value="monospace">{{ t('scratchpad.fontFamily.monospace') }}</option>
       </select>
       
-      <select class="tool" v-model="fontSize" @change="onChangeFontSize">
+      <select class="secondary" v-model="fontSize" @change="onChangeFontSize">
         <option value="1">{{ t('scratchpad.fontSize.smaller') }}</option>
         <option value="2">{{ t('scratchpad.fontSize.small') }}</option>
         <option value="3">{{ t('scratchpad.fontSize.normal') }}</option>
@@ -93,18 +93,6 @@ const onChangeFontSize = () => {
 
 <style scoped>
 
-.macos .form .toolbar {
-  padding-left: 90px;
-}
-
-.windows .form .toolbar {
-  padding-top: 8px;
-}
-
-.linux .form .toolbar {
-  padding-top: 24px;
-}
-
 .form {
 
   background-color: var(--background-color);
@@ -113,30 +101,21 @@ const onChangeFontSize = () => {
 
     display: flex;
     flex-direction: row;
+    justify-content: center;
     height: 32px;
     margin: 0px;
     padding: 8px 16px;
     align-items: center;
-    border-bottom: 1px solid var(--scratchpad-bars-border-color);
-    -webkit-app-region: drag;
-    gap: 10px;
+    border-bottom: 0.25px solid var(--scratchpad-bars-border-color);
+    gap: 0.25rem;
 
-    .tool {
-
+    .secondary {
       max-width: 128px;
-      white-space: nowrap;
-      font-size: 14.5px;
-      font-weight: normal;
-      height: 32px;
-      margin: 0;
-
-      &:enabled {
-        -webkit-app-region: no-drag;
-      }
-
     }
 
-    select.tool {
+    select.secondary {
+      color: var(--color-primary);
+      height: 36px;
       border-radius: 6px;
       width: auto;
     }

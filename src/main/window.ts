@@ -8,7 +8,6 @@ export * from './windows/index';
 export * from './windows/main';
 export * from './windows/readaloud';
 export * from './windows/realtime';
-export * from './windows/scratchpad';
 export * from './windows/settings';
 export * from './windows/studio';
 export * from './windows/transcribe';

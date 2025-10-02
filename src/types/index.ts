@@ -14,7 +14,7 @@ import { WorkspaceHeader, Workspace } from './workspace'
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
 
-export type MainWindowMode = 'none' | 'chat' | 'studio' | 'dictation' | 'agents' | 'voice-mode' | 'docrepos' | 'mcp' | 'settings' | `webapp-${string}`
+export type MainWindowMode = 'none' | 'chat' | 'studio' | 'scratchpad' | 'dictation' | 'agents' | 'voice-mode' | 'docrepos' | 'mcp' | 'settings' | `webapp-${string}`
 
 export interface Attachment extends IAttachmentBase {
   url: string

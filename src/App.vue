@@ -14,7 +14,6 @@ import PromptAnywhere from './screens/PromptAnywhere.vue'
 import RealtimeChat from './screens/RealtimeChat.vue'
 import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
-import ScratchPad from './screens/ScratchPad.vue'
 import ComputerStatus from './screens/ComputerStatus.vue'
 import Debug from './screens/Debug.vue'
 import i18n, { i18nLlm, t } from './services/i18n'
@@ -35,7 +34,6 @@ const routes: { [key: string]: any } = {
   '/readaloud': ReadAloud,
   '/realtime': RealtimeChat,
   '/transcribe': Transcribe,
-  '/scratchpad': ScratchPad,
   '/computer': ComputerStatus,
   '/debug': Debug,
 }
