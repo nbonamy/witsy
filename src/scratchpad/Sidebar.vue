@@ -14,12 +14,14 @@
         <div class="toolbar">
 
           <button @click="emitEvent('action', 'clear')">
-            <FileIcon /><span>{{ t('common.clear') }}</span>
+            <FileIcon /><span>{{ t('common.new') }}</span>
           </button>
 
           <button @click="emitEvent('action', 'load')">
             <FolderOpenIcon /><span>{{ t('common.load') }}</span>
           </button>
+
+          <div class="flex-push"></div>
 
           <button @click="emitEvent('action', 'save')">
             <SaveIcon /><span>{{ t('common.save') }}</span>
@@ -60,10 +62,11 @@ const onSettings = () => {
 
   .toolbar {
     display: flex;
-    justify-content: space-between;
     margin-bottom: 1rem;
 
-    button: 0.25rem;
+    button {
+      padding: 0.5rem;
+    }
   }
 }
 
