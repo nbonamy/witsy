@@ -47,7 +47,7 @@
   "common.documents": "Documents",
   "common.done": "Done",
   "common.downloadCsv": "CSV",
-  "common.downloadXlsx": "XLSX",
+  "common.downloadXlsx": "Excel",
   "common.edit": "Edit",
   "common.enabled": "Enabled",
   "common.error": "Error!",
@@ -1649,8 +1649,8 @@
   "webapps.iconSearch": "Search icons...",
   "webapps.name": "Name",
   "webapps.noApps": "No web apps configured",
+  "webapps.preserveColors": "Preserve webapp icon colors",
   "webapps.title": "Web Apps",
   "webapps.url": "URL",
-  "webapps.preserveColors": "Preserve webapp icon colors",
   "webapps.validation.requiredFields": "Name and URL are required"
 }
