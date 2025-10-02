@@ -38,7 +38,7 @@
               <input type="checkbox" class="sm" :checked="webapp.enabled" @click.stop="onToggleEnabled(webapp)" @dblclick.stop />
             </td>
             <td class="icon">
-              <img v-if="!webapp.icon" :src="`https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=${encodeURIComponent(webapp.url)}`" class="webapp-favicon" alt="Webapp icon" />
+              <img v-if="webapp.icon?.startsWith('http')" :src="webapp.icon" class="webapp-favicon" :class="{ 'grayscale': !webapp.preserveColors }" alt="Webapp icon" />
               <component v-else :is="getWebappIcon(webapp.icon)" class="webapp-icon" />
             </td>
             <td class="name">{{ webapp.name }}</td>
@@ -197,6 +197,17 @@ defineExpose({ load })
       margin-top: 5px;
       width: 1rem;
       height: 1rem;
+      &.grayscale {
+        filter: grayscale() contrast(0) brightness(0.7);
+      }
+    }
+  }
+
+  tr.selected {
+    .icon {
+      .webapp-icon, .webapp-favicon {
+        filter: grayscale() contrast(0) brightness(2);
+      }
     }
   }
 }

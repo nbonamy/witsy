@@ -1,5 +1,5 @@
 
-import { beforeAll, expect, test } from 'vitest'
+import { beforeAll, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
@@ -8,6 +8,12 @@ import { WebApp } from '../../src/types/workspace'
 
 beforeAll(() => {
   useWindowMock()
+
+  global.fetch = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({ id: 'test-file-id' })
+  }) as any
+
 })
 
 test('WebAppEditor renders with correct structure', () => {
@@ -30,8 +36,7 @@ test('WebAppEditor displays website favicon for valid URLs', async () => {
   })
 
   const urlInput = wrapper.find('input[name="url"]')
-  await urlInput.setValue('https://example.com')
-  await nextTick()
+  await urlInput.setValue('https://google.com')
 
   const favicon = wrapper.find('.favicon')
   expect(favicon.exists()).toBe(true)

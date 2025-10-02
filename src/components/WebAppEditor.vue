@@ -6,17 +6,20 @@
     </div>
     <div class="form-field">
       <label>{{ t('webapps.url') }}</label>
-      <input type="url" name="url" v-model="url" required placeholder="https://example.com" />
+      <input type="url" name="url" v-model="url" required placeholder="https://example.com" @input="updateFaviconUrl"/>
     </div>
     <div class="form-field">
       <label>{{ t('webapps.icon') }}</label>
       <div class="icon-selection">
         <div class="icon-option" :class="{ active: !icon }" @click="useWebsiteIcon">
           <div class="icon-preview">
-            <img v-if="faviconUrl" :src="faviconUrl" class="favicon" alt="Website icon" />
+            <img v-if="faviconUrl" :src="faviconUrl" class="favicon" :class="{ 'grayscale': !preserveColors }" alt="Website icon"/>
             <GlobeIcon v-else class="placeholder-icon" />
           </div>
-          <span>{{ t('webapps.useWebsiteIcon') }}</span>
+          <div class="form-field horizontal">
+            <input type="checkbox" id="use-website-icon" v-model="preserveColors" />
+            <label for="use-website-icon">{{ t('webapps.preserveColors') }}</label>
+          </div>
         </div>
         <div class="icon-option" :class="{ active: !!icon }">
           <IconPicker v-model="icon" />
@@ -37,7 +40,7 @@
 <script setup lang="ts">
 
 import { GlobeIcon } from 'lucide-vue-next'
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import IconPicker from '../components/IconPicker.vue'
 import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
@@ -51,11 +54,16 @@ const props = defineProps<{
 
 const name = ref('')
 const url = ref('')
+const faviconUrl = ref('')
 const icon = ref<string | undefined>(undefined)
+const preserveColors = ref(false)
 const enabled = ref(true)
 
-const faviconUrl = computed(() => {
-  if (!url.value) return ''
+const updateFaviconUrl = async () => {
+
+  // reset it
+  faviconUrl.value = ''
+  if (!url.value) return
 
   // Basic regex validation for HTTP/HTTPS URLs
   const urlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)$/
@@ -64,12 +72,15 @@ const faviconUrl = computed(() => {
   }
 
   try {
-    new URL(url.value)
-    return `https://s2.googleusercontent.com/s2/favicons?sz=48&domain_url=${encodeURIComponent(url.value)}`
+    const googleUrl = `https://s2.googleusercontent.com/s2/favicons?sz=48&domain_url=${encodeURIComponent(url.value)}`
+    const response = await fetch(googleUrl)
+    if (response.ok) {
+      faviconUrl.value = googleUrl
+    }
   } catch {
     return ''
   }
-})
+}
 
 const useWebsiteIcon = () => {
   icon.value = undefined
@@ -80,6 +91,8 @@ onMounted(() => {
     name.value = props.webapp?.name || ''
     url.value = props.webapp?.url || ''
     icon.value = props.webapp?.icon
+    updateFaviconUrl()
+    preserveColors.value = props.webapp?.preserveColors ?? false
     enabled.value = props.webapp?.enabled ?? true
   }, { deep: true, immediate: true })
 })
@@ -110,7 +123,8 @@ const onSave = (event: Event) => {
     id: props.webapp?.id,
     name: name.value,
     url: url.value,
-    icon: icon.value,
+    icon: icon.value ?? faviconUrl.value,
+    preserveColors: preserveColors.value,
     enabled: enabled.value
   })
 }
@@ -126,11 +140,14 @@ const onSave = (event: Event) => {
 }
 
 .icon-option {
-  padding: 0.75rem;
+  padding: 1rem 2rem;
   border: 1px solid var(--control-border-color);
   border-radius: 0.25rem;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 
   span {
     margin-top: 0px !important;
@@ -140,12 +157,6 @@ const onSave = (event: Event) => {
     border-color: var(--highlight-color);
   }
 
-}
-
-.icon-option:first-child {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
 }
 
 .icon-preview {
@@ -159,6 +170,9 @@ const onSave = (event: Event) => {
   .favicon {
     width: 2rem;
     height: 2rem;
+    &.grayscale {
+      filter: grayscale() contrast(0) brightness(0.7);
+    }
   }
 
   .placeholder-icon {

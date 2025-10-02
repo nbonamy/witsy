@@ -13,6 +13,7 @@ export type WebApp = {
   name: string
   url: string
   icon?: string
+  preserveColors?: boolean
   enabled: boolean
   lastUsed?: number
 }
