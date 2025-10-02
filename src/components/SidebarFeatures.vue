@@ -26,10 +26,10 @@ import { store } from '../services/store'
 
 const features = [
   { key: 'studio', label: 'designStudio.title' },
-  { key: 'voiceMode', label: 'realtimeChat.title' },
   { key: 'scratchpad', label: 'scratchpad.title' },
-  { key: 'computerUse', label: 'computerUse.title' },
   { key: 'dictation', label: 'transcribe.title' },
+  { key: 'voiceMode', label: 'realtimeChat.title' },
+  { key: 'computerUse', label: 'computerUse.title' },
 ].filter(f => store.isFeatureEnabled(f.key))
 
 const hiddenFeatures = computed(() => {
@@ -66,7 +66,7 @@ const onToggleFeature = (featureKey: string) => {
 
 .features-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 0.5rem 2rem;
 
   label {
