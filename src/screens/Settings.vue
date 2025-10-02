@@ -6,7 +6,6 @@
       </header>
       <main>
         <ul>
-          <li class="separator" v-if="store.isFeatureEnabled('workspaces')">General Settings</li>
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><AppWindowMacIcon class="icon" /></SettingsTab>
           <SettingsTab class="sidebar" :title="t('settings.tabs.sidebar')" @change="load(settingsSidebar)" :checked="initialTab == 'sidebar'" v-if="store.isFeatureEnabled('webapps')"><PanelsTopLeftIcon class="icon" /></SettingsTab>
           <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BoxIcon class="icon" /></SettingsTab>
@@ -19,10 +18,6 @@
           <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
           <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><CommandIcon class="icon" /></SettingsTab>
           <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BadgePlusIcon class="icon" /></SettingsTab>
-          <template v-if="store.isFeatureEnabled('workspaces')">
-            <li class="separator">Workspace Settings</li>
-            <SettingsTab class="models2" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
-          </template>
         </ul>
       </main>
   </div>
@@ -39,9 +34,6 @@
       <SettingsVoice ref="settingsVoice" />
       <SettingsShortcuts ref="settingsShortcuts" />
       <SettingsAdvanced ref="settingsAdvanced" />
-      <template v-if="store.isFeatureEnabled('workspaces')">
-        <SettingsModels2 ref="settingsModels" />
-      </template>
     </div>
   </div>
 </template>
@@ -63,12 +55,11 @@ import SettingsExperts from '../settings/SettingsExperts.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
 import SettingsModels from '../settings/SettingsModels.vue'
-import SettingsModels2 from '../settings/SettingsModels2.vue'
 import SettingsPlugins from '../settings/SettingsPlugins.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
+import SettingsSidebar from '../settings/SettingsSidebar.vue'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
-import SettingsSidebar from '../settings/SettingsSidebar.vue'
 import { OpenSettingsPayload } from '../types/index'
 
 const { onEvent } = useEventBus()
