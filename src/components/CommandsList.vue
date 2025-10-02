@@ -221,4 +221,8 @@ defineExpose({ load })
 
 <style scoped>
 
+.commands {
+  border: 0.5px solid var(--border-color);
+}
+
 </style>

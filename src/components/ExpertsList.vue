@@ -269,4 +269,8 @@ defineExpose({ load })
 
 <style scoped>
 
+.experts {
+  border: 0.5px solid var(--border-color);
+}
+
 </style>

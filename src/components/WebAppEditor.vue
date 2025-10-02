@@ -56,6 +56,13 @@ const enabled = ref(true)
 
 const faviconUrl = computed(() => {
   if (!url.value) return ''
+
+  // Basic regex validation for HTTP/HTTPS URLs
+  const urlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)$/
+  if (!urlRegex.test(url.value)) {
+    return ''
+  }
+
   try {
     new URL(url.value)
     return `https://s2.googleusercontent.com/s2/favicons?sz=48&domain_url=${encodeURIComponent(url.value)}`

@@ -90,7 +90,7 @@
 
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
-import { BrainIcon, FileTextIcon, HeadsetIcon, LightbulbIcon, MicIcon, MouseIcon, PaletteIcon, PlugIcon, SettingsIcon, icons } from 'lucide-vue-next'
+import { FileTextIcon, HeadsetIcon, LightbulbIcon, MicIcon, MouseIcon, PaletteIcon, PlugIcon, SettingsIcon, icons } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import IconAgent from '../../assets/agent.svg?component'
 import IconChat from '../../assets/message-circle-3.svg?component'
@@ -98,7 +98,6 @@ import useAppearanceTheme from '../composables/appearance_theme'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { MainWindowMode } from '../types/index'
-import { WebApp } from '../types/workspace'
 import IconMenu from './IconMenu.vue'
 import MenuBarItem from './MenuBarItem.vue'
 
@@ -266,8 +265,8 @@ body[data-tint=blue] .mx-context-menu {
     }
 
     .webapp-favicon {
-      width: 1.5rem;
-      height: 1.5rem;
+      width: var(--icon-lg);
+      height: var(--icon-lg);
     }
 
   }
