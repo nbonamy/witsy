@@ -25,7 +25,7 @@ export default function useWebappManager() {
       lastUsed: Date.now()
     })
 
-    console.log(`[webapp-manager] Loaded webapp: ${webappId}`)
+    // console.log(`[webapp-manager] Loaded webapp: ${webappId}`)
   }
 
   const updateLastUsed = (webappId: string) => {
@@ -41,8 +41,9 @@ export default function useWebappManager() {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onNavigate = (webappId: string, url: string) => {
-    console.log(`[webapp-manager] Webapp ${webappId} navigated to: ${url}`)
+    // console.log(`[webapp-manager] Webapp ${webappId} navigated to: ${url}`)
   }
 
   const setupEviction = () => {
