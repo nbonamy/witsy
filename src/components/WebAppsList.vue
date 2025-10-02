@@ -7,7 +7,6 @@
     <div class="list-actions">
       <div class="list-action new" @click.prevent="onNew"><PlusIcon />{{ t('webapps.add') }}</div>
       <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
-      <div class="list-action copy" @click.prevent="onCopy(selected)" v-if="selected"><CopyIcon />{{ t('common.copy') }}</div>
       <div class="list-action delete" @click.prevent="onDelete" v-if="selected"><Trash2Icon />{{ t('common.delete') }}</div>
     </div>
 
@@ -72,15 +71,13 @@
 
 <script setup lang="ts">
 
-import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
-import { v4 as uuidv4 } from 'uuid'
+import { icons, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { ref } from 'vue'
 import Dialog from '../composables/dialog'
 import useReorderTable from '../composables/reorder_table'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { WebApp } from '../types/workspace'
-import { icons } from 'lucide-vue-next'
 
 const emit = defineEmits(['edit', 'create'])
 
@@ -115,20 +112,6 @@ const onNew = () => {
 const onEdit = (webapp: WebApp | null) => {
   if (!webapp) return
   emit('edit', webapp)
-}
-
-const onCopy = (webapp: WebApp) => {
-  if (!webapp) return
-
-  const copy: WebApp = {
-    ...webapp,
-    id: uuidv4(),
-    name: `${webapp.name} (copy)`
-  }
-
-  webapps.value.push(copy)
-  saveWebapps()
-  load()
 }
 
 const onDelete = async () => {
