@@ -336,7 +336,6 @@
   .split-pane {
     .sp-main {
       header {
-        padding-right: 148px;
         .menu {
           margin-top: 1px;
         }
@@ -349,7 +348,6 @@
   .split-pane {
     .sp-main {
       header {
-        padding-right: 92px;
         .menu {
           margin-top: 0px;
         }
