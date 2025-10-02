@@ -602,6 +602,10 @@ button {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  
+  span {
+    margin-top: 0 !important;
+  }
 
   svg {
     width: var(--icon-md);

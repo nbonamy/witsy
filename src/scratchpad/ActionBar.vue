@@ -121,10 +121,11 @@ const onMagicAction = (event: Event, action: string) => {
 <style scoped>
 
 .actionbar-wrapper {
-  
+
   position: absolute;
   right: 1.5rem;
-  bottom: 9rem;
+  top: 55%;
+  transform: translateY(-50%);
   border: 1px solid var(--scratchpad-actionbar-border-color);
   border-radius: 20px;
   padding: 16px 12px;

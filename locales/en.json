@@ -2135,14 +2135,16 @@
     "fontFamily": {
       "monospace": "Monospace",
       "sansSerif": "Sans-Serif",
-      "serif": "Serif"
+      "serif": "Serif",
+      "title": "Font Family"
     },
     "fontSize": {
       "large": "Large",
       "larger": "Larger",
       "normal": "Normal",
       "small": "Small",
-      "smaller": "Smaller"
+      "smaller": "Smaller",
+      "title": "Font Size"
     },
     "generationError": "Error while generating text",
     "loadingError": "Error while loading scratchpad file",
