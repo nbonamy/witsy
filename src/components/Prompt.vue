@@ -5,7 +5,7 @@
       <div class="attachment" v-for="(attachment, index) in attachments" :key="index">
         <AttachmentView :attachment="attachment" />
         <div class="title" v-if="!attachment.isImage()">{{ attachment.filenameShort }}</div>
-        <BIconXLg class="delete" @click="onDetach(attachment)" />
+        <XIcon class="delete" @click="onDetach(attachment)" />
       </div>
     </div>
     <div class="input" @paste="onPaste">
@@ -54,7 +54,7 @@
       <slot name="actions" />
       
       <ButtonIcon @click="onCommands(true)" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')">
-        <BIconMagic class="icon command" />
+        <CommandIcon class="icon command" />
       </ButtonIcon>
       
       <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
@@ -69,7 +69,7 @@
       <div class="model-menu-button" @click="onModelMenu">
         <BoxIcon />
         <div class="model-name">{{ modelName }}</div>
-        <BIconCaretDownFill class="icon caret" />
+        <ChevronDownIcon class="icon caret" />
       </div>
 
       <template v-if="store.isFeatureEnabled('favorites') && chat">
@@ -142,7 +142,7 @@
 
 <script setup lang="ts">
 
-import { ArrowUpIcon, BoxIcon, BrainIcon, CommandIcon, FeatherIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
+import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
 import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
 import { computed, nextTick, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
 import Waveform from '../components/Waveform.vue'
@@ -1300,6 +1300,13 @@ defineExpose({
   border: 1px solid var(--prompt-input-border-color);
   border-radius: 1rem;
   background-color: var(--prompt-input-bg-color);
+  box-shadow: var(--shadow-input);
+  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+
+  &:focus-within {
+    box-shadow: var(--shadow-input-focus);
+    border-color: var(--color-primary);
+  }
 
   &.drag-over {
     border: 1px dashed var(--highlight-color);

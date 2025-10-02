@@ -10,20 +10,20 @@
         <div class="toolbar-section">
           
           <div class="toolbar-group">
-            <button @click="undo"><BIconArrowCounterclockwise /></button>
-            <button @click="redo"><BIconArrowClockwise /></button>
+            <button @click="undo"><RotateCcwIcon /></button>
+            <button @click="redo"><RotateCwIcon /></button>
           </div>
 
           <button @click="reset" title="Clear">
-            <BIconTrash />
+            <Trash2Icon />
           </button>
 
           <div class="button-group">
             <button @click="setMode('draw')" :class="{ active: mode === 'draw' }" title="Draw">
-              <BIconPencil />
+              <PenIconcil />
             </button>
             <button @click="setMode('erase')" :class="{ active: mode === 'erase' }" title="Erase">
-              <BIconEraser />
+              <EraserIcon />
             </button>
           </div>
           
