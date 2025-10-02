@@ -2098,23 +2098,49 @@
       "suggestTitle": "Einen Titel vorschlagen",
       "writingAssistant": "Schreibassistent"
     },
-    "fileError": "Diese Datei ist keine Notizdatei. Bitte versuchen Sie es mit einer anderen Datei erneut.",
+    "delete": {
+      "confirm": "Möchten Sie \"{title}\" wirklich löschen?",
+      "title": "Notizzettel löschen"
+    },
+    "deleteError": "Fehler beim Löschen des Notizzettels",
     "fontFamily": {
       "monospace": "Monospace",
       "sansSerif": "Sans-Serif",
-      "serif": "Serif"
+      "serif": "Serif",
+      "title": "Schriftfamilie"
     },
     "fontSize": {
       "large": "Groß",
       "larger": "Größer",
       "normal": "Normal",
       "small": "Klein",
-      "smaller": "Kleiner"
+      "smaller": "Kleiner",
+      "title": "Schriftgröße"
     },
     "generationError": "Fehler beim Generieren von Text",
+    "history": {
+      "documents": "Dokumente",
+      "empty": "Keine gespeicherten Dokumente"
+    },
+    "import": {
+      "prompt": "Geben Sie einen Titel für diesen Notizzettel ein:",
+      "title": "Notizzettel importieren"
+    },
+    "importError": "Fehler beim Importieren des Notizzettels",
     "loadingError": "Fehler beim Laden der Notizdatei",
     "placeholder": "Beginnen Sie, Ihr Dokument zu schreiben oder\nbitten Sie @:{'common.appName'}, etwas für Sie zu verfassen!\n\nSobald Sie begonnen haben, können Sie @:{'common.appName'} bitten,\nÄnderungen an Ihrem Dokument vorzunehmen.\n\nWenn Sie einen Textbereich markieren,\nwird @:{'common.appName'} nur diesen Bereich aktualisieren.\n\nSchauen Sie sich auch den Schreibassistenten\nin der Aktionsleiste unten rechts an!\n\nProbieren Sie es aus!",
-    "title": "Scratchpad"
+    "rename": {
+      "prompt": "Geben Sie einen neuen Titel ein",
+      "title": "Notizzettel umbenennen"
+    },
+    "renameError": "Fehler beim Umbenennen des Notizzettels",
+    "save": {
+      "prompt": "Geben Sie einen Titel für diesen Notizzettel ein",
+      "title": "Notizzettel speichern"
+    },
+    "saveError": "Fehler beim Speichern des Notizzettels",
+    "title": "Scratchpad",
+    "unsavedPrompt": "Möchten Sie Ihre Änderungen speichern?"
   },
   "settings": {
     "advanced": {
@@ -2435,6 +2461,7 @@
         },
         "exaApiKey": "Exa API-Schlüssel",
         "getApiKey": "Holen Sie sich Ihren API-Schlüssel",
+        "perplexityApiKey": "Perplexity API-Schlüssel",
         "tavilyApiKey": "Tavily API-Schlüssel",
         "testLocal": {
           "error": "Fehler bei der Internetsuche",

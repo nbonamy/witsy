@@ -430,6 +430,24 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     scratchpad: {
       open: vi.fn(),
+      list: vi.fn(() => [
+        { uuid: 'scratchpad1', title: 'Test Scratchpad 1', lastModified: Date.now() - 3600000 },
+        { uuid: 'scratchpad2', title: 'Test Scratchpad 2', lastModified: Date.now() - 7200000 },
+      ]),
+      load: vi.fn((workspaceId: string, uuid: string) => ({
+        uuid,
+        title: 'Test Scratchpad',
+        contents: { content: 'Test content' },
+        chat: null,
+        undoStack: [],
+        redoStack: [],
+        createdAt: Date.now() - 86400000,
+        lastModified: Date.now() - 3600000
+      })),
+      save: vi.fn(() => true),
+      rename: vi.fn(() => true),
+      delete: vi.fn(() => true),
+      import: vi.fn(() => 'new-uuid'),
     },
     mcp: {
       isAvailable: vi.fn(() => true),

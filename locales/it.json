@@ -2098,23 +2098,49 @@
       "suggestTitle": "Suggerisci un titolo",
       "writingAssistant": "Assistente di scrittura"
     },
-    "fileError": "Questo file non è un file di appunti. Riprova con un altro file.",
+    "delete": {
+      "confirm": "Sei sicuro di voler eliminare \"{title}\"?",
+      "title": "Elimina block notes"
+    },
+    "deleteError": "Errore durante l'eliminazione del block notes",
     "fontFamily": {
       "monospace": "Monospace",
       "sansSerif": "Sans-Serif",
-      "serif": "Serif"
+      "serif": "Serif",
+      "title": "Famiglia di caratteri"
     },
     "fontSize": {
       "large": "Grande",
       "larger": "Più grande",
       "normal": "Normale",
       "small": "Piccolo",
-      "smaller": "Più piccolo"
+      "smaller": "Più piccolo",
+      "title": "Dimensione del carattere"
     },
     "generationError": "Errore durante la generazione del testo",
+    "history": {
+      "documents": "Documenti",
+      "empty": "Nessun documento salvato"
+    },
+    "import": {
+      "prompt": "Inserisci un titolo per questo block notes:",
+      "title": "Importa block notes"
+    },
+    "importError": "Errore durante l'importazione del block notes",
     "loadingError": "Errore durante il caricamento del file di appunti",
     "placeholder": "Inizia a digitare il tuo documento o\nchiedi a @:{'common.appName'} di scrivere qualcosa per te!\n\nUna volta iniziato puoi chiedere a @:{'common.appName'}\ndi fare modifiche al tuo documento.\n\nSe evidenzi una porzione di testo,\n@:{'common.appName'} aggiornerà solo quella parte.\n\nDai un'occhiata anche all'Assistente di Scrittura\nnella barra delle azioni in basso a destra!\n\nProvalo ora!",
-    "title": "Scratchpad"
+    "rename": {
+      "prompt": "Inserisci un nuovo titolo",
+      "title": "Rinomina block notes"
+    },
+    "renameError": "Errore durante la rinomina del block notes",
+    "save": {
+      "prompt": "Inserisci un titolo per questo block notes",
+      "title": "Salva block notes"
+    },
+    "saveError": "Errore durante il salvataggio del block notes",
+    "title": "Scratchpad",
+    "unsavedPrompt": "Vuoi salvare le modifiche?"
   },
   "settings": {
     "advanced": {
@@ -2435,6 +2461,7 @@
         },
         "exaApiKey": "Chiave API Exa",
         "getApiKey": "Ottieni la tua chiave API",
+        "perplexityApiKey": "Chiave API Perplexity",
         "tavilyApiKey": "Chiave API Tavily",
         "testLocal": {
           "error": "Errore durante la ricerca su internet",

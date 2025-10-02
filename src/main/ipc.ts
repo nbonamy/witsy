@@ -45,6 +45,7 @@ import * as backup from './backup';
 import * as ollama from './ollama';
 import * as google from './google';
 import * as workspace from './workspace';
+import * as scratchpadManager from './scratchpad';
 import { importOpenAI } from './import_oai';
 
 export const installIpc = (
@@ -691,6 +692,30 @@ export const installIpc = (
       }
       window.mainWindow.webContents.send('query-params', params);
     }
+  });
+
+  ipcMain.on(IPC.SCRATCHPAD.LIST, (event, workspaceId) => {
+    event.returnValue = scratchpadManager.listScratchpads(app, workspaceId);
+  });
+
+  ipcMain.on(IPC.SCRATCHPAD.LOAD, (event, { workspaceId, uuid }) => {
+    event.returnValue = scratchpadManager.loadScratchpad(app, workspaceId, uuid);
+  });
+
+  ipcMain.on(IPC.SCRATCHPAD.SAVE, (event, { workspaceId, data }) => {
+    event.returnValue = scratchpadManager.saveScratchpad(app, workspaceId, data);
+  });
+
+  ipcMain.on(IPC.SCRATCHPAD.RENAME, (event, { workspaceId, uuid, newTitle }) => {
+    event.returnValue = scratchpadManager.renameScratchpad(app, workspaceId, uuid, newTitle);
+  });
+
+  ipcMain.on(IPC.SCRATCHPAD.DELETE, (event, { workspaceId, uuid }) => {
+    event.returnValue = scratchpadManager.deleteScratchpad(app, workspaceId, uuid);
+  });
+
+  ipcMain.on(IPC.SCRATCHPAD.IMPORT, (event, { workspaceId, filePath, title }) => {
+    event.returnValue = scratchpadManager.importScratchpad(app, workspaceId, filePath, title);
   });
 
   ipcMain.on(IPC.COMPUTER.IS_AVAILABLE, async (event) => {

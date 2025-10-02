@@ -52,7 +52,15 @@ export type MenuPosition = 'below' | 'above' | 'right' | 'left' | 'above-right' 
 const props = defineProps({
   anchor: {
     type: String,
-    required: true
+    required: false
+  },
+  mouseX: {
+    type: Number,
+    required: false
+  },
+  mouseY: {
+    type: Number,
+    required: false
   },
   position: {
     type: String as () => MenuPosition,
@@ -80,7 +88,7 @@ const chevronTemplate = ref(null)
 const submenuStack = ref([]) // Navigation stack for multi-level submenus
 
 const anchorElement = computed(() => {
-  return document.querySelector(props.anchor)
+  return props.anchor ? document.querySelector(props.anchor) : null
 })
 
 const shouldShowCurrentFilter = computed(() => {
@@ -101,6 +109,12 @@ const hasFooter = computed(() => {
 })
 
 const position = computed(() => {
+  // Mouse coordinate mode
+  if (props.mouseX !== undefined && props.mouseY !== undefined) {
+    return { left: props.mouseX + 'px', top: props.mouseY + 'px' }
+  }
+
+  // Anchor mode
   if (!anchorElement.value) return { top: '0px', left: '0px' }
   
   const rect = anchorElement.value.getBoundingClientRect()

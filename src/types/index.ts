@@ -16,6 +16,21 @@ export type anyDict = Record<string, any>
 
 export type MainWindowMode = 'none' | 'chat' | 'studio' | 'scratchpad' | 'dictation' | 'agents' | 'voice-mode' | 'docrepos' | 'mcp' | 'settings' | `webapp-${string}`
 
+export type ScratchpadHeader = {
+  uuid: string
+  title: string
+  lastModified: number
+}
+
+export type ScratchpadData = {
+  uuid: string
+  title: string
+  contents: any
+  chat: any
+  createdAt: number
+  lastModified: number
+}
+
 export interface Attachment extends IAttachmentBase {
   url: string
   extracted: boolean
@@ -509,6 +524,12 @@ declare global {
       }
       scratchpad: {
         open(textId?: string): void
+        list(workspaceId: string): ScratchpadHeader[]
+        load(workspaceId: string, uuid: string): ScratchpadData | null
+        save(workspaceId: string, data: ScratchpadData): boolean
+        rename(workspaceId: string, uuid: string, newTitle: string): boolean
+        delete(workspaceId: string, uuid: string): boolean
+        import(workspaceId: string, filePath: string, title: string): string | null
       }
       computer: {
         isAvailable(): boolean
