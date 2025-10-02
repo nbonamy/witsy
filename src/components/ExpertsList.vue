@@ -17,7 +17,7 @@
       <tbody>
         <tr v-for="expert in visibleExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
             @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="reorderExperts.onDragStart" @dragover="reorderExperts.onDragOver" @dragend="reorderExperts.onDragEnd">
-          <td class="enabled"><input type="checkbox" class="sm" :checked="expert.state=='enabled'" @click="onEnabled(expert)" /></td>
+          <td class="enabled"><input type="checkbox" class="sm" :checked="expert.state=='enabled'" @click="onEnabled(expert)" @dblclick.stop /></td>
           <td class="name">{{ name(expert) }}</td>
           <td class="move">
             <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
