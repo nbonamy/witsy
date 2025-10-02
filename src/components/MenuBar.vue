@@ -200,8 +200,6 @@ const onAppMenu = (event: Event) => {
 
   .mx-context-menu-item {
 
-    -webkit-app-region: no-drag;
-
     .label {
       color: var(--text-color);
       font-family: system-ui, -apple-system, sans-serif;
@@ -258,11 +256,6 @@ body[data-tint=blue] .mx-context-menu {
     gap: 0.75rem;
 
     border-right: 1px solid var(--sidebar-border-color);
-
-    -webkit-app-region: drag;
-    > * {
-      -webkit-app-region: no-drag;
-    }
 
     .chat svg {
       position: relative;
