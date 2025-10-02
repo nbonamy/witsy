@@ -36,7 +36,7 @@
             @dragend="reorderWebapps.onDragEnd"
           >
             <td class="enabled">
-              <input type="checkbox" class="sm" :checked="webapp.enabled" @click.stop="onToggleEnabled(webapp)" />
+              <input type="checkbox" class="sm" :checked="webapp.enabled" @click.stop="onToggleEnabled(webapp)" @dblclick.stop />
             </td>
             <td class="icon">
               <img v-if="!webapp.icon" :src="`https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=${encodeURIComponent(webapp.url)}`" class="webapp-favicon" alt="Webapp icon" />

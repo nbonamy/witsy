@@ -18,7 +18,7 @@
         <tr v-for="command in visibleCommands" :key="command.id" :data-id="command.id" class="command" :class="selected?.id == command.id ? 'selected' : ''"
             @click="onSelect(command)" @dblclick="onEdit(command)" draggable="true" @dragstart="reorderCommands.onDragStart" @dragover="reorderCommands.onDragOver" @dragend="reorderCommands.onDragEnd"
         >
-          <td class="enabled"><input type="checkbox" class="sm":checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
+          <td class="enabled"><input type="checkbox" class="sm":checked="command.state=='enabled'" @click="onEnabled(command)" @dblclick.stop /></td>
           <td class="icon">{{ command.icon }}</td>
           <td class="label">{{ label(command) }}</td>
           <td class="shortcut">{{ command.shortcut }}</td>
