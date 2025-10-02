@@ -83,11 +83,12 @@ beforeEach(() => {
 
   // disable all additional instructions
   for (const key of Object.keys(store.config.llm.additionalInstructions)) {
+    // @ts-expect-error partial mock
     store.config.llm.additionalInstructions[key] = false
   }
 
   // init assistant
-  assistant = new Assistant(store.config)
+  assistant = new Assistant(store.config, store.workspace.uuid)
   assistant!.setLlm(new LlmMock({}))
   assistant.initLlm = () => {}
 })

@@ -25,15 +25,17 @@ export interface AssistantCompletionOpts extends GenerationOpts {
 
 export default class extends Generator {
 
+  workspaceId: string
   llmManager: ILlmManager
   deepResearch: DeepResearch
   chat: Chat
 
-  constructor(config: Configuration) {
+  constructor(config: Configuration, workspaceId?: string) {
     super(config)
     this.llm = null
     this.stream = null
     this.deepResearch = null
+    this.workspaceId = workspaceId || config.workspaceId
     this.llmManager = LlmFactory.manager(config)
     this.chat = new Chat()
   }
@@ -181,7 +183,7 @@ export default class extends Generator {
       // opts = { ...opts, ...dpOpts }
 
       const useMultiAgent = this.config.deepresearch.runtime === 'ma'
-      this.deepResearch = useMultiAgent ? new DeepResearchMultiAgent(this.config) : new DeepResearchMultiStep(this.config)
+      this.deepResearch = useMultiAgent ? new DeepResearchMultiAgent(this.config, this.workspaceId) : new DeepResearchMultiStep(this.config, this.workspaceId)
       rc = await this.deepResearch.run(this.llm, this.chat, {
         ...opts,
         breadth: this.config.deepresearch.breadth,

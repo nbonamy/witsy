@@ -10,11 +10,13 @@ import Chat from '../models/chat'
 export default class DeepResearchMultiAgent implements dr.DeepResearch, AgentStorage {
 
   config: Configuration
+  workspaceId: string
   generator: Generator
   storage: Record<string, any> = {}
 
-  constructor(config: Configuration) {
+  constructor(config: Configuration, workspaceId: string) {
     this.config = config
+    this.workspaceId = workspaceId
   }
 
   stop = (): void => {
@@ -36,7 +38,7 @@ export default class DeepResearchMultiAgent implements dr.DeepResearch, AgentSto
 
     // add all deep research agents as plugins
     for (const agent of dr.deepResearchAgents) {
-      const agentPlugin = new AgentPlugin(this.config, agent, agent.engine || engine.getId(), agent.model || opts.model, {
+      const agentPlugin = new AgentPlugin(this.config, this.workspaceId, agent, agent.engine || engine.getId(), agent.model || opts.model, {
         noToolsInContent: true,
         storeData: !['writer', 'synthesis'].includes(agent.name),
         callback: callback,

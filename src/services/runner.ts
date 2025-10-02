@@ -49,13 +49,15 @@ export const isAgentConversation = (chat: Chat): Agent|null => {
 export default class extends Generator {
 
   llmManager: ILlmManager
+  workspaceId: string
   agent: Agent
 
-  constructor(config: Configuration, agent: Agent) {
+  constructor(config: Configuration, workspaceId: string, agent: Agent) {
     super(config)
     this.llm = null
     this.stream = null
     this.llmManager = LlmFactory.manager(config)
+    this.workspaceId = workspaceId
     this.agent = agent
   }
 
@@ -211,13 +213,13 @@ export default class extends Generator {
 
         // and now add tools for running agents
         const agents = [
-          ...window.api.agents.load(store.config.workspaceId),
+          ...window.api.agents.load(this.workspaceId),
           ...(opts?.agents || [])
         ]
         for (const agentId of step.agents) {
           const agent = agents.find((a: Agent) => a.uuid === agentId)
           if (agent) {
-            const plugin = new AgentPlugin(this.config, agent, agent.engine || opts.engine, agent.model || opts.model)
+            const plugin = new AgentPlugin(this.config, this.workspaceId, agent, agent.engine || opts.engine, agent.model || opts.model)
             this.llm.addPlugin(plugin)
           }
         }
@@ -451,7 +453,7 @@ ${chunk.content}
   }
 
   private saveRun(run: AgentRun): void {
-    window.api.agents.saveRun(store.config.workspaceId, {
+    window.api.agents.saveRun(this.workspaceId, {
       ...run,
       messages: run.messages.map(m => JSON.parse(JSON.stringify(m))),
     })

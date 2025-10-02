@@ -275,7 +275,7 @@ describe('Scheduler', () => {
     await scheduler.check()
 
     expect(agent.buildPrompt).toHaveBeenCalledWith(0, { param1: 'value1' })
-    expect(Runner).toHaveBeenCalledWith(mockConfig, agent)
+    expect(Runner).toHaveBeenCalledWith(mockConfig, '123', agent)
 
     const runnerInstance = vi.mocked(Runner).mock.results[0].value
     expect(runnerInstance.run).toHaveBeenCalledWith('schedule', mockPrompt)
@@ -503,7 +503,7 @@ describe('Scheduler', () => {
     expect(nonScheduledAgent.buildPrompt).not.toHaveBeenCalled()
 
     // Verify runner was created and executed
-    expect(Runner).toHaveBeenCalledWith(mockConfig, scheduledAgent)
+    expect(Runner).toHaveBeenCalledWith(mockConfig, '123', scheduledAgent)
     const runnerInstance = vi.mocked(Runner).mock.results[0].value
     expect(runnerInstance.run).toHaveBeenCalledWith('schedule', 'Generate daily report in pdf format')
 

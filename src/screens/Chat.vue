@@ -596,7 +596,7 @@ const onRunAgent = async (agentId?: string) => {
 const runAgent = async (agent: Agent, prompt: string, a2aContext?: A2APromptOpts) => {
 
   // now we can run it with streaming
-  const runner = new AgentRunner(store.config, agent)
+  const runner = new AgentRunner(store.config, store.workspace.uuid, agent)
   activeGenerator = runner
   await runner.run('manual', prompt, {
     streaming: true,

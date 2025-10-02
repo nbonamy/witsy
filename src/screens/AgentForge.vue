@@ -154,7 +154,7 @@ const editAgent = (agent: Agent) => {
 const runAgent = (agent: Agent, opts?: Record<string, string>) => {
   running.value = agent
   builder.value.show(agent.steps[0].prompt, opts || {}, async (prompt: string) => {
-    const runner = new AgentRunner(store.config, agent)
+    const runner = new AgentRunner(store.config, store.workspace.uuid, agent)
     await runner.run('manual', prompt)
     running.value = null
   })
