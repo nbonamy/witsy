@@ -24,16 +24,18 @@ export default class extends Plugin {
   declare config: Configuration
   engine: string
   model: string
+  workspaceId: string
   agent: Agent
   opts: AgentPluginOpts
   storage?: AgentStorage
 
   constructor(
-    config: Configuration, agent: Agent,
+    config: Configuration, workspaceId: string, agent: Agent,
     engine: string, model: string, opts?: Omit<AgentPluginOpts, 'engine'|'model'>,
     storage?: AgentStorage, 
   ) {
     super(config)
+    this.workspaceId = workspaceId
     this.agent = agent
     this.engine = engine
     this.model = model
@@ -157,7 +159,7 @@ export default class extends Plugin {
       //console.log(`Running agent ${this.agent.name} with prompt:`, prompt)
 
       // now call the agent through the runner
-      const runner = new Runner(this.config, this.agent)
+      const runner = new Runner(this.config, this.workspaceId, this.agent)
       const run = await runner.run('workflow', prompt, this.opts)
       
       if (run.status === 'success') {

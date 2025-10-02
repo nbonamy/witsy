@@ -123,6 +123,7 @@ beforeEach(() => {
 
   // disable all additional instructions
   for (const key of Object.keys(store.config.llm.additionalInstructions)) {
+    // @ts-expect-error partial mock
     store.config.llm.additionalInstructions[key] = false
   }
 
@@ -133,7 +134,7 @@ beforeEach(() => {
   testAgent = createTestAgent()
 
   // Create runner
-  runner = new Runner(store.config, testAgent)
+  runner = new Runner(store.config, '123', testAgent)
 })
 
 test('Runner Creation', () => {

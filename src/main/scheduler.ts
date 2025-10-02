@@ -84,7 +84,7 @@ export default class Scheduler {
                 const prompt = agent.buildPrompt(0, agent.invocationValues)
                 
                 // now run it
-                const runner = new Runner(config, agent)
+                const runner = new Runner(config, workspace.uuid, agent)
                 runner.run('schedule', prompt)
               
               } catch (error) {

@@ -21,13 +21,15 @@ class AbortError extends Error {
 export default class DeepResearchMultiStep implements dr.DeepResearch {
 
   config: Configuration
+  workspaceId: string
   abortController: AbortController
   generators: Generator[]
   engine: LlmEngine
   model: string
 
-  constructor(config: Configuration) {
+  constructor(config: Configuration, workspaceId: string) {
     this.config = config
+    this.workspaceId = workspaceId
     this.generators = []
   }
 
@@ -68,7 +70,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       response.addToolCall(planningToolCall)
         
       // we start by running the planning agent
-      const planner = new Runner(this.config, dr.planningAgent)
+      const planner = new Runner(this.config, this.workspaceId, dr.planningAgent)
       const run = await planner.run('workflow', dr.planningAgent.buildPrompt(0, {
         userQuery: researchTopic,
         numSections: opts.breadth,
@@ -184,7 +186,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
         sections.map(async (section: ResearchSection, index: number) => {
 
           // now we can run the analysis agent on the results
-          const analyzer = new Runner(this.config, dr.analysisAgent)
+          const analyzer = new Runner(this.config, this.workspaceId, dr.analysisAgent)
           const analysis = await analyzer.run('workflow', dr.analysisAgent.buildPrompt(0, {
             sectionObjective: section.description,
             rawInformation: searchResults[index].reduce((acc, result) => acc + `\n${result.title}\n${result.content}\n`, ''),
@@ -215,7 +217,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
           }
 
           // now we can run the section agent to generate the section content
-          const sectionGenerator = new Runner(this.config, dr.writerAgent)
+          const sectionGenerator = new Runner(this.config, this.workspaceId, dr.writerAgent)
           const sectionContent = await sectionGenerator.run('workflow', dr.writerAgent.buildPrompt(0, {
             sectionNumber: index + 1,
             sectionTitle: section.title,
@@ -243,7 +245,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       await this.generateStatusUpdate(`Let me put the final touches`, response)
 
       // run agents
-      const synthesis = new Runner(this.config, dr.synthesisAgent)
+      const synthesis = new Runner(this.config, this.workspaceId, dr.synthesisAgent)
       const execSummary = await synthesis.run('workflow', dr.synthesisAgent.buildPrompt(0, {
         researchTopic: researchTopic,
         keyLearnings: allKeyLearnings.join('\n'),
@@ -257,7 +259,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
       // generate title
       await this.generateStatusUpdate(`Generating title for the report`, response)
-      const titleRunner = new Runner(this.config, dr.titleAgent)
+      const titleRunner = new Runner(this.config, this.workspaceId, dr.titleAgent)
       const titleResult = await titleRunner.run('workflow', dr.titleAgent.buildPrompt(0, {
         researchTopic: researchTopic,
         keyLearnings: allKeyLearnings,

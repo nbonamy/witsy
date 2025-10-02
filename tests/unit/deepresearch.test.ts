@@ -11,6 +11,9 @@ import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
 import SearchPlugin from '../../src/plugins/search'
 import Generator from '../../src/services/generator'
+import Runner, { RunnerCompletionOpts } from '../../src/services/runner'
+import { AgentRun, AgentRunTrigger } from '../../src/types'
+import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
 
 // Mock dependencies
 vi.mock('../../src/plugins/search')
@@ -23,9 +26,6 @@ vi.mock('../../src/services/runner', () => {
     default: vi.fn()
   }
 })
-
-import Runner from '../../src/services/runner'
-import { AgentRun } from '../../src/types'
 
 const mockConfig: Configuration = {
   deepresearch: {
@@ -306,13 +306,13 @@ test('Synthesis agent parameters', () => {
 })
 
 test('DeepResearchMultiStep creation', () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
   expect(deepResearch).toBeInstanceOf(DeepResearchMultiStep)
   expect(deepResearch.config).toBe(mockConfig)
 })
 
 test('DeepResearchMultiStep stop functionality', () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
   const abortSpy = vi.fn()
   const stopSpy = vi.fn()
   
@@ -326,7 +326,7 @@ test('DeepResearchMultiStep stop functionality', () => {
 })
 
 test('DeepResearchMultiStep complete agent chain execution', async () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
   const chat = new Chat()
   chat.messages = [
     new Message('system', 'You are a deep research assistant'),
@@ -376,9 +376,9 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
 
   // Mock Runner with detailed tracking and realistic responses
   // @ts-expect-error mock
-  vi.mocked(Runner).mockImplementation((config, agent) => {
+  vi.mocked(Runner).mockImplementation((config: Configuration, workspaceId: string, agent: Agent) => {
     return {
-      run: vi.fn().mockImplementation(async (workflow, prompt, options) => {
+      run: vi.fn().mockImplementation(async (trigger: AgentRunTrigger, prompt: string, options: RunnerCompletionOpts) => {
         const agentName = agent.name
         executionLog.push(`agent:${agentName}`)
         agentCalls.push({ agent: agentName, prompt, options })
@@ -528,7 +528,7 @@ test('DeepResearchMultiStep JSON parsing error handling', async () => {
   // @ts-expect-error mock
   vi.mocked(Runner).mockImplementation(() => mockRunnerInstance)
   
-  const deepResearch = new DeepResearchMultiStep(mockConfig)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
   const chat = new Chat()
   chat.messages = [
     new Message('system', 'You are a helpful assistant'),
@@ -545,7 +545,7 @@ test('DeepResearchMultiStep JSON parsing error handling', async () => {
 })
 
 test('DeepResearchMultiStep abort handling', async () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
   const chat = new Chat()
   chat.messages = [
     new Message('system', 'You are a helpful assistant'),
@@ -582,34 +582,34 @@ test('DeepResearchMultiStep abort handling', async () => {
 })
 
 test('DeepResearchMultiStep JSON parsing valid content', () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
   const validJson = '{"sections": [{"title": "Test"}]}'
   const result = deepResearch['parseJson'](validJson)
   expect(result).toEqual({ sections: [{ title: 'Test' }] })
 })
 
 test('DeepResearchMultiStep JSON parsing with extra content', () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
   const jsonWithExtra = 'Some text before {"sections": [{"title": "Test"}]} some text after'
   const result = deepResearch['parseJson'](jsonWithExtra)
   expect(result).toEqual({ sections: [{ title: 'Test' }] })
 })
 
 test('DeepResearchMultiStep JSON parsing invalid content', () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
   const invalidJson = 'No JSON here'
   expect(() => deepResearch['parseJson'](invalidJson)).toThrow('No JSON object found in content')
 })
 
 test('DeepResearchMultiAgent creation', () => {
-  const deepResearch = new DeepResearchMultiAgent(mockConfig)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
   expect(deepResearch).toBeInstanceOf(DeepResearchMultiAgent)
   expect(deepResearch.config).toBe(mockConfig)
   expect(deepResearch.storage).toEqual({})
 })
 
 test('DeepResearchMultiAgent stop functionality', () => {
-  const deepResearch = new DeepResearchMultiAgent(mockConfig)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
   const mockGenerator = { stop: vi.fn() }
   deepResearch.generator = mockGenerator as any
 
@@ -619,7 +619,7 @@ test('DeepResearchMultiAgent stop functionality', () => {
 })
 
 test('DeepResearchMultiAgent storage and retrieval', async () => {
-  const deepResearch = new DeepResearchMultiAgent(mockConfig)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
   const testData = { key: 'value', number: 42 }
   
   const id = await deepResearch.store(testData)
@@ -631,7 +631,7 @@ test('DeepResearchMultiAgent storage and retrieval', async () => {
 })
 
 test('DeepResearchMultiAgent retrieve non-existent key', async () => {
-  const deepResearch = new DeepResearchMultiAgent(mockConfig)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
   const result = await deepResearch.retrieve('non-existent-key')
   expect(result).toBeUndefined()
 })
@@ -639,7 +639,7 @@ test('DeepResearchMultiAgent retrieve non-existent key', async () => {
 test('DeepResearchMultiAgent engine setup', async () => {
   vi.clearAllMocks()
   
-  const deepResearch = new DeepResearchMultiAgent(mockConfig)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
   const chat = new Chat()
   chat.messages = []
 
@@ -658,7 +658,7 @@ test('DeepResearchMultiAgent engine setup', async () => {
 test('DeepResearchMultiAgent system message setup', async () => {
   vi.clearAllMocks()
   
-  const deepResearch = new DeepResearchMultiAgent(mockConfig)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
   const chat = new Chat()
   chat.messages = []
 
@@ -681,7 +681,7 @@ test('DeepResearchMultiAgent system message setup', async () => {
 test('DeepResearchMultiAgent generator call', async () => {
   vi.clearAllMocks()
   
-  const deepResearch = new DeepResearchMultiAgent(mockConfig)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
   const chat = new Chat()
   chat.messages = []
 
