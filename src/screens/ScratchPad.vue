@@ -1,7 +1,7 @@
 <template>
   <div class="scratchpad split-pane">
 
-    <ScratchpadSidebar :fontFamily="fontFamily" :fontSize="fontSize" :modified="modified" :fileUrl="fileUrl" />
+    <ScratchpadSidebar :modified="modified" :fileUrl="fileUrl" />
 
     <div class="sp-main">
       <main>
@@ -13,6 +13,8 @@
       <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @stop="onStopPrompting" ref="prompt" />
       <audio/>
     </div>
+
+    <ScratchpadSettings ref="settingsDialog" @save="onSaveSettings" />
 
   </div>
 </template>
@@ -30,6 +32,7 @@ import Chat from '../models/chat'
 import Message from '../models/message'
 import { availablePlugins } from '../plugins/plugins'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
+import ScratchpadSettings from '../scratchpad/Settings.vue'
 import ScratchpadSidebar from '../scratchpad/Sidebar.vue'
 import Generator, { GenerationResult } from '../services/generator'
 import { fullExpertI18n, i18nInstructions, t } from '../services/i18n'
@@ -52,6 +55,7 @@ const placeholder = ref(t('scratchpad.placeholder').replaceAll('\n', '<br/>'))
 const chat = ref<Chat>(null)
 const prompt = ref<typeof Prompt>(null)
 const editor = ref<typeof EditableText>(null)
+const settingsDialog = ref(null)
 const processing = ref(false)
 const engine = ref<string>(null)
 const model = ref<string>(null)
@@ -271,7 +275,8 @@ const onAction = (action: string|ToolbarAction) => {
     'undo': onUndo,
     'redo': onRedo,
     'copy': onCopy,
-    'read': onReadAloud
+    'read': onReadAloud,
+    'settings': onSettings
   }
 
   // find
@@ -287,18 +292,6 @@ const onAction = (action: string|ToolbarAction) => {
   // advanced actions
   const toolbarAction = action as ToolbarAction
   switch (toolbarAction.type) {
-
-    case 'fontFamily':
-      fontFamily.value = toolbarAction.value
-      store.config.scratchpad.fontFamily = fontFamily.value
-      store.saveSettings()
-      return
-
-    case 'fontSize':
-      fontSize.value = toolbarAction.value
-      store.config.scratchpad.fontSize = fontSize.value
-      store.saveSettings()
-      return
 
     case 'llm':
       engine.value = toolbarAction.value.engine
@@ -445,6 +438,18 @@ const onReadAloud = async () => {
     audioState.value = 'loading'
     await audioPlayer.play(document.querySelector('.scratchpad audio'), 'scratchpad', text)
   }
+}
+
+const onSettings = () => {
+  settingsDialog.value?.show()
+}
+
+const onSaveSettings = (settings: { fontFamily: string, fontSize: string }) => {
+  fontFamily.value = settings.fontFamily
+  fontSize.value = settings.fontSize
+  store.config.scratchpad.fontFamily = fontFamily.value
+  store.config.scratchpad.fontSize = fontSize.value
+  store.saveSettings()
 }
 
 const onAudioPlayerStatus = (status: AudioStatus) => {
