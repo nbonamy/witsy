@@ -5,8 +5,8 @@ import Plugin, { PluginConfig } from './plugin'
 
 export default class extends Plugin {
 
-  constructor(config: PluginConfig) {
-    super(config)
+  constructor(config: PluginConfig, workspaceId: string) {
+    super(config, workspaceId)
   }
 
   isEnabled(): boolean {

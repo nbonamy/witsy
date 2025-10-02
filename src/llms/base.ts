@@ -457,7 +457,7 @@ export default class LlmManagerBase implements ILlmManager {
     engineConfig.model[type] = models[0].id
   }
 
-  loadTools = async (engine: llm.LlmEngine, availablePlugins: PluginsList, toolSelection: ToolSelection): Promise<void> => {
+  loadTools = async (engine: llm.LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection): Promise<void> => {
 
     // clear
     engine.clearPlugins()
@@ -472,7 +472,7 @@ export default class LlmManagerBase implements ILlmManager {
     for (const pluginName in availablePlugins) {
       
       const pluginClass = availablePlugins[pluginName]
-      const plugin: PluginInstance = new pluginClass(this.config.plugins[pluginName])
+      const plugin: PluginInstance = new pluginClass(this.config.plugins[pluginName], workspaceId)
 
       // if no filters add
       if (areAllToolsEnabled(toolSelection)) {

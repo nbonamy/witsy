@@ -144,7 +144,7 @@ export default class extends Generator {
 
     // make sure llm has latest tools
     if (!this.llmManager.isComputerUseModel(opts.engine, opts.model)) {
-      await this.llmManager.loadTools(this.llm, availablePlugins, this.chat.tools)
+      await this.llmManager.loadTools(this.llm, this.workspaceId, availablePlugins, this.chat.tools)
     } else {
       this.llm.clearPlugins()
     }

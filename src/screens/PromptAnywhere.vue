@@ -431,7 +431,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     }
 
     // load tools as configured per prompt
-    llmManager.loadTools(llm, availablePlugins, chat.value.tools)
+    llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools)
 
     // system instructions
     const systemInstructions = generator.getSystemInstructions(instructions)

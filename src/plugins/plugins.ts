@@ -14,7 +14,9 @@ import VideoPlugin from './video'
 import YouTubePlugin from './youtube'
 
 export type PluginInstance = Plugin | CustomToolPlugin | MultiToolPlugin
-export type PluginType = typeof Plugin | typeof CustomToolPlugin | typeof MultiToolPlugin
+export type PluginType = {
+  new (config: any, workspaceId: string): PluginInstance
+}
 export type PluginsList = Record<string, PluginType>
 
 export const availablePlugins: PluginsList = {
@@ -34,7 +36,7 @@ export const enabledPlugins = (config: Configuration, includeMcp: boolean = fals
   for (const pluginName in availablePlugins) {
     if (pluginName === 'mcp' && !includeMcp) continue
     const pluginClass = availablePlugins[pluginName]
-    const plugin: PluginInstance = new pluginClass(config.plugins[pluginName])
+    const plugin: PluginInstance = new pluginClass(config.plugins[pluginName], config.workspaceId)
     if (plugin.isEnabled()) {
       plugins.push(pluginName)
     }
@@ -46,7 +48,7 @@ export const pluginTools = async (config: Configuration, pluginName: string): Pr
 
   const plugins: ToolSelection = []
   const pluginClass = availablePlugins[pluginName]
-  const plugin: PluginInstance = new pluginClass(config.plugins[pluginName])
+  const plugin: PluginInstance = new pluginClass(config.plugins[pluginName], config.workspaceId)
   if (plugin.isEnabled()) {
     if ('getTools' in plugin) {
       const pluginTools = await plugin.getTools()
@@ -63,7 +65,7 @@ export const pluginTools = async (config: Configuration, pluginName: string): Pr
 
 export const pluginToolName = (config: Configuration, pluginName: string): string => {
   const pluginClass = availablePlugins[pluginName]
-  const plugin: PluginInstance = new pluginClass(config.plugins[pluginName])
+  const plugin: PluginInstance = new pluginClass(config.plugins[pluginName], config.workspaceId)
   if ('getTools' in plugin) {
     throw new Error('this cannot be called with a CustomToolPlugin or MultiToolPlugin')
   }
