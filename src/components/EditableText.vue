@@ -604,11 +604,12 @@ defineExpose({ getContent, setContent })
 }
 
 .placeholder {
-  position: fixed;
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
   line-height: 1.2lh;
-  width: 60%;
-  left: 20%;
-  padding-top: 64px;
+  max-width: 80%;
   color: var(--scratchpad-placeholder-text-color) !important;
   text-align: center;
   font-style: italic;

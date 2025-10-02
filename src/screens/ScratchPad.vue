@@ -92,25 +92,25 @@ onMounted(() => {
   fontFamily.value = store.config.scratchpad.fontFamily || 'serif'
   fontSize.value = store.config.scratchpad.fontSize || '3'
 
-  // handle mode switches with unsaved changes
-  onEvent('main-view-changed', (newMode: string) => {
-    if (newMode !== 'scratchpad' && modified.value) {
-      // Mode is about to change away from scratchpad, check for unsaved changes
-      emitEvent('set-main-window-mode', 'scratchpad') // Revert to scratchpad
-      Dialog.show({
-        title: t('common.confirmation.unsavedChanges'),
-        showCancelButton: true,
-        confirmButtonText: t('common.confirmation.doNotClose'),
-        cancelButtonText: t('common.confirmation.closeAnyway'),
-        reverseButtons: true
-      }).then((result) => {
-        if (result.isDismissed) {
-          modified.value = false // Clear modified flag
-          emitEvent('set-main-window-mode', newMode) // Allow mode change
-        }
-      })
-    }
-  })
+  // // handle mode switches with unsaved changes
+  // onEvent('main-view-changed', (newMode: string) => {
+  //   if (newMode !== 'scratchpad' && modified.value) {
+  //     // Mode is about to change away from scratchpad, check for unsaved changes
+  //     emitEvent('set-main-window-mode', 'scratchpad') // Revert to scratchpad
+  //     Dialog.show({
+  //       title: t('common.confirmation.unsavedChanges'),
+  //       showCancelButton: true,
+  //       confirmButtonText: t('common.confirmation.doNotClose'),
+  //       cancelButtonText: t('common.confirmation.closeAnyway'),
+  //       reverseButtons: true
+  //     }).then((result) => {
+  //       if (result.isDismissed) {
+  //         modified.value = false // Clear modified flag
+  //         emitEvent('set-main-window-mode', newMode) // Allow mode change
+  //       }
+  //     })
+  //   }
+  // })
 
   // override some system shortcuts
   editor.value.$el.addEventListener('keydown', (ev: KeyboardEvent) => {
@@ -334,7 +334,6 @@ const confirmOverwrite = (callback: CallableFunction) => {
     showCancelButton: true,
     confirmButtonText: t('common.cancel'),
     cancelButtonText: t('common.confirmation.continue'),
-    reverseButtons: true
   }).then((result) => {
     if (result.isDismissed) {
       callback()
@@ -581,6 +580,7 @@ const onStopPrompting = async () => {
       display: flex;
       flex-direction: column;
       position: relative;
+      overflow: hidden;
     }
 
     .document {

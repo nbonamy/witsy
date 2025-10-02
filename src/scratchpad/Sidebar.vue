@@ -8,26 +8,30 @@
     <main>
       <div class="form form-vertical">
 
-        <div class="form-field">
-          <button @click="emitEvent('action', 'clear')">
-            <FileIcon /><span>{{ t('common.clear') }}</span>
-          </button>
+        <div class="toolbar">
+
+          <div class="form-field">
+            <button @click="emitEvent('action', 'clear')">
+              <FileIcon /><span>{{ t('common.clear') }}</span>
+            </button>
+          </div>
+
+          <div class="form-field">
+            <button @click="emitEvent('action', 'load')">
+              <FolderOpenIcon /><span>{{ t('common.load') }}</span>
+            </button>
+          </div>
+
+          <div class="form-field">
+            <button @click="emitEvent('action', 'save')">
+              <SaveIcon /><span>{{ t('common.save') }}</span>
+            </button>
+          </div>
+
         </div>
 
         <div class="form-field">
-          <button @click="emitEvent('action', 'load')">
-            <FolderOpenIcon /><span>{{ t('common.load') }}</span>
-          </button>
-        </div>
-
-        <div class="form-field">
-          <button @click="emitEvent('action', 'save')">
-            <SaveIcon /><span>{{ t('common.save') }}</span>
-          </button>
-        </div>
-
-        <div class="form-field">
-          <label>{{ t('scratchpad.fontFamily.label') }}</label>
+          <label>{{ t('scratchpad.fontFamily.title') }}</label>
           <select v-model="fontFamily" @change="onChangeFontFamily">
             <option value="serif">{{ t('scratchpad.fontFamily.serif') }}</option>
             <option value="sans-serif">{{ t('scratchpad.fontFamily.sansSerif') }}</option>
@@ -36,7 +40,7 @@
         </div>
 
         <div class="form-field">
-          <label>{{ t('scratchpad.fontSize.label') }}</label>
+          <label>{{ t('scratchpad.fontSize.title') }}</label>
           <select v-model="fontSize" @change="onChangeFontSize">
             <option value="1">{{ t('scratchpad.fontSize.smaller') }}</option>
             <option value="2">{{ t('scratchpad.fontSize.small') }}</option>
@@ -85,3 +89,16 @@ const onChangeFontSize = () => {
 }
 
 </script>
+
+<style scoped>
+
+.sp-sidebar {
+  flex: 0 0 var(--large-panel-width);
+
+  .toolbar {
+    display: flex;
+    margin-bottom: 1rem;
+  }
+}
+
+</style>
