@@ -172,6 +172,7 @@
     },
     "voice": "Voix",
     "warning": "Attention",
+    "web": "Web",
     "wizard": {
       "next": "Suivant",
       "prev": "Retour"
@@ -831,6 +832,25 @@
         "embeddingNotReady": "Modèle d'intégration non disponible",
         "openInExplorer": "Ouvrir dans le Finder",
         "viewContents": "Afficher le contenu du dossier"
+      }
+    },
+    "web": {
+      "addUrl": "Ajouter une URL",
+      "addWebsite": "Ajouter un site web",
+      "dialog": {
+        "sitemapPrompt": "Entrez l'URL du plan de site (par exemple, https://example.com/sitemap.xml)",
+        "urlPrompt": "Entrez l'URL (doit commencer par http:// ou https://)"
+      },
+      "error": {
+        "invalidUrl": "Format d'URL invalide. L'URL doit commencer par http:// ou https://"
+      },
+      "help": {
+        "formats": "Ajoutez des pages web individuelles ou des sites Web entiers via les plans de site"
+      },
+      "noWeb": "Vous n'avez pas encore de ressources web. Cliquez sur les boutons ci-dessous pour ajouter des URL ou des sites web.",
+      "pagesCount": "Aucune page|1 page|{count} pages",
+      "tooltips": {
+        "refresh": "Actualiser le contenu"
       }
     }
   },

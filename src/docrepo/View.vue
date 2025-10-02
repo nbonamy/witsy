@@ -20,6 +20,7 @@
       </div>
     </div>
     <Files v-if="selectedRepo" :selectedRepo="selectedRepo" />
+    <Web v-if="selectedRepo" :selectedRepo="selectedRepo" />
     <Notes v-if="selectedRepo" :selectedRepo="selectedRepo" />
   </main>
 </template>
@@ -33,6 +34,7 @@ import { t } from '../services/i18n'
 import { DocumentBase } from '../types/rag'
 import Files from './Files.vue'
 import Notes from './Notes.vue'
+import Web from './Web.vue'
 
 // props
 const props = defineProps<{

@@ -172,6 +172,7 @@
     },
     "voice": "Audio",
     "warning": "Warnung",
+    "web": "Web",
     "wizard": {
       "next": "Weiter",
       "prev": "Zurück"
@@ -831,6 +832,25 @@
         "embeddingNotReady": "Einbettungsmodell nicht verfügbar",
         "openInExplorer": "Im Finder öffnen",
         "viewContents": "Inhalt des Ordners anzeigen"
+      }
+    },
+    "web": {
+      "addUrl": "URL hinzufügen",
+      "addWebsite": "Website hinzufügen",
+      "dialog": {
+        "sitemapPrompt": "Sitemap-URL eingeben (z. B. https://example.com/sitemap.xml)",
+        "urlPrompt": "URL eingeben (muss mit http:// oder https:// beginnen)"
+      },
+      "error": {
+        "invalidUrl": "Ungültiges URL-Format. Die URL muss mit http:// oder https:// beginnen"
+      },
+      "help": {
+        "formats": "Fügen Sie einzelne Webseiten oder ganze Websites über Sitemaps hinzu"
+      },
+      "noWeb": "Sie haben noch keine Webressourcen. Klicken Sie auf die untenstehenden Schaltflächen, um URLs oder Websites hinzuzufügen.",
+      "pagesCount": "Keine Seiten|1 Seite|{count} Seiten",
+      "tooltips": {
+        "refresh": "Inhalt aktualisieren"
       }
     }
   },
