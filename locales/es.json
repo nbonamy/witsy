@@ -172,6 +172,7 @@
     },
     "voice": "Voz",
     "warning": "Advertencia",
+    "web": "Web",
     "wizard": {
       "next": "Siguiente",
       "prev": "Atrás"
@@ -831,6 +832,25 @@
         "embeddingNotReady": "Modelo de incrustación no disponible",
         "openInExplorer": "Abrir en Finder",
         "viewContents": "Ver contenido de la carpeta"
+      }
+    },
+    "web": {
+      "addUrl": "Agregar URL",
+      "addWebsite": "Agregar sitio web",
+      "dialog": {
+        "sitemapPrompt": "Introduce la URL del mapa del sitio (por ejemplo, https://example.com/sitemap.xml)",
+        "urlPrompt": "Introduce URL (debe comenzar con http:// o https://)"
+      },
+      "error": {
+        "invalidUrl": "Formato de URL inválido. La URL debe comenzar con http:// o https://"
+      },
+      "help": {
+        "formats": "Agrega páginas web individuales o sitios web completos mediante mapas del sitio"
+      },
+      "noWeb": "Aún no tienes recursos web. Haz clic en los botones a continuación para añadir URLs o sitios web.",
+      "pagesCount": "No hay páginas|1 página|{count} páginas",
+      "tooltips": {
+        "refresh": "Actualizar contenido"
       }
     }
   },

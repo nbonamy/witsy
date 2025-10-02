@@ -22,6 +22,8 @@ export default class DocumentSourceImpl {
     if (this.type === 'file' || this.type === 'folder') {
       this.filename = path.basename(origin)
       this.url = `file://${encodeURI(origin)}`
+    } else if (this.type === 'url' || this.type === 'sitemap') {
+      this.url = origin
     } else {
       this.url = title
     }

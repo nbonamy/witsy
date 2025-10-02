@@ -191,6 +191,7 @@
     },
     "voice": "Głos",
     "warning": "Ostrzeżenie",
+    "web": "Sieć",
     "wizard": {
       "next": "Dalej",
       "prev": "Wstecz"
@@ -850,6 +851,25 @@
         "embeddingNotReady": "Model osadzania niedostępny",
         "openInExplorer": "Otwórz w Finderze",
         "viewContents": "Pokaż zawartość folderu"
+      }
+    },
+    "web": {
+      "addUrl": "Dodaj adres URL",
+      "addWebsite": "Dodaj stronę internetową",
+      "dialog": {
+        "sitemapPrompt": "Wprowadź adres URL mapy witryny (np. https://example.com/sitemap.xml)",
+        "urlPrompt": "Wprowadź adres URL (musi zaczynać się od http:// lub https://)"
+      },
+      "error": {
+        "invalidUrl": "Nieprawidłowy format adresu URL. Adres URL musi zaczynać się od http:// lub https://"
+      },
+      "help": {
+        "formats": "Dodaj pojedyncze strony internetowe lub całe strony za pomocą map witryn"
+      },
+      "noWeb": "Nie masz jeszcze żadnych zasobów internetowych. Kliknij przyciski poniżej, aby dodać adresy URL lub strony internetowe.",
+      "pagesCount": "Brak stron|1 strona|{count} stron",
+      "tooltips": {
+        "refresh": "Odśwież zawartość"
       }
     }
   },

@@ -172,6 +172,7 @@
     },
     "voice": "Voce",
     "warning": "Attenzione",
+    "web": "Web",
     "wizard": {
       "next": "Avanti",
       "prev": "Indietro"
@@ -831,6 +832,25 @@
         "embeddingNotReady": "Modello di embedding non disponibile",
         "openInExplorer": "Apri in Finder",
         "viewContents": "Visualizza contenuti della cartella"
+      }
+    },
+    "web": {
+      "addUrl": "Aggiungi URL",
+      "addWebsite": "Aggiungi sito web",
+      "dialog": {
+        "sitemapPrompt": "Inserisci l'URL della sitemap (es. https://example.com/sitemap.xml)",
+        "urlPrompt": "Inserisci URL (deve iniziare con http:// o https://)"
+      },
+      "error": {
+        "invalidUrl": "Formato URL non valido. L'URL deve iniziare con http:// o https://"
+      },
+      "help": {
+        "formats": "Aggiungi singole pagine web o interi siti tramite sitemap"
+      },
+      "noWeb": "Non hai ancora risorse web. Clicca sui pulsanti qui sotto per aggiungere URL o siti web.",
+      "pagesCount": "Nessuna pagina|1 pagina|{count} pagine",
+      "tooltips": {
+        "refresh": "Aggiorna contenuto"
       }
     }
   },

@@ -44,11 +44,12 @@
 
 <script setup lang="ts">
 import { ChevronDownIcon, FilePlusIcon, FileTextIcon, PencilIcon, Trash2Icon } from 'lucide-vue-next'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import Dialog from '../composables/dialog'
 import { togglePanel } from '../composables/panel'
+import { useDocRepoEvents } from '../composables/useDocRepoEvents'
 import { t } from '../services/i18n'
-import { DocRepoAddDocResponse, DocumentBase, DocumentQueueItem, DocumentSource } from '../types/rag'
+import { DocumentBase, DocumentSource } from '../types/rag'
 import NoteEditor from './NoteEditor.vue'
 
 // props
@@ -56,9 +57,10 @@ const props = defineProps<{
   selectedRepo: DocumentBase
 }>()
 
+// use composable for IPC events
+const { loading, processingItems } = useDocRepoEvents()
+
 // internal state
-const loading = ref(false)
-const processingItems = ref<string[]>([])
 const noteEditorRef = ref<InstanceType<typeof NoteEditor> | null>(null)
 
 const notes = computed(() => {
@@ -67,51 +69,6 @@ const notes = computed(() => {
 
 const noteCount = (): number => {
   return notes.value.length
-}
-
-onMounted(() => {
-  window.api.on('docrepo-process-item-start', onProcessItemStart)
-  window.api.on('docrepo-process-item-done', onProcessItemDone)
-  window.api.on('docrepo-add-document-done', onAddDocDone)
-  window.api.on('docrepo-add-document-error', onAddDocError)
-  window.api.on('docrepo-del-document-done', onDelDocDone)
-
-  window.api.docrepo.getCurrentQueueItem().then((item) => {
-    if (item) {
-      onProcessItemStart(item)
-    }
-  })
-})
-
-onUnmounted(() => {
-  window.api.off('docrepo-process-item-start', onProcessItemStart)
-  window.api.off('docrepo-process-item-done', onProcessItemDone)
-  window.api.off('docrepo-add-document-done', onAddDocDone)
-  window.api.off('docrepo-add-document-error', onAddDocError)
-  window.api.off('docrepo-del-document-done', onDelDocDone)
-})
-
-const onProcessItemStart = (payload: DocumentQueueItem) => {
-  processingItems.value.push(payload.parentDocId ?? payload.uuid)
-}
-
-const onProcessItemDone = (payload: DocumentQueueItem) => {
-  processingItems.value = processingItems.value.filter(id => id !== (payload.parentDocId ?? payload.uuid))
-}
-
-const onAddDocDone = (payload: DocRepoAddDocResponse) => {
-  const queueLength = payload.queueLength
-  loading.value = queueLength > 0
-}
-
-const onAddDocError = (payload: DocRepoAddDocResponse) => {
-  const queueLength = payload.queueLength
-  loading.value = queueLength > 0
-  Dialog.alert(payload.error)
-}
-
-const onDelDocDone = (payload: DocRepoAddDocResponse) => {
-  loading.value = false
 }
 
 const onAddNote = () => {

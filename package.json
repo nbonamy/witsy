@@ -118,6 +118,7 @@
     "elevenlabs": "^1.59.0",
     "exa-js": "^1.9.3",
     "extract-zip": "^2.0.1",
+    "fast-xml-parser": "^5.2.5",
     "filesize": "^11.0.2",
     "fix-webm-duration": "^1.0.6",
     "floating-vue": "^5.2.2",

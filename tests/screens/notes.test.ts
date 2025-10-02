@@ -244,23 +244,8 @@ describe('Notes', () => {
     expect(window.api.docrepo.removeDocument).not.toHaveBeenCalled()
   })
 
-  it('Handles processing status correctly', async () => {
-    // Simulate processing start
-    const queueItem = { uuid: 'note1', parentDocId: null }
-    wrapper.vm.onProcessItemStart(queueItem)
-    await nextTick()
-    
-    const statusTags = wrapper.findAll('.tag')
-    expect(statusTags[1].text()).toBe('Indexing') // First tag is count, second is status
-    expect(statusTags[1].classes()).toContain('info')
-    
-    // Simulate processing done
-    wrapper.vm.onProcessItemDone(queueItem)
-    await nextTick()
-    
-    const updatedStatusTags = wrapper.findAll('.tag.success')
-    expect(updatedStatusTags[0].text()).toBe('Ready')
-  })
+  // Note: Processing status is now managed by useDocRepoEvents composable
+  // and is tested via IPC integration tests rather than component tests
 
   it('Handles plain text notes without JSON format', async () => {
     const plainTextRepo = {

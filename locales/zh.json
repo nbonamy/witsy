@@ -191,6 +191,7 @@
     },
     "voice": "声音",
     "warning": "警告",
+    "web": "网页",
     "wizard": {
       "next": "下一步",
       "prev": "上一步"
@@ -850,6 +851,25 @@
         "embeddingNotReady": "嵌入模型不可用",
         "openInExplorer": "在访达中打开",
         "viewContents": "查看文件夹内容"
+      }
+    },
+    "web": {
+      "addUrl": "添加网址",
+      "addWebsite": "添加网站",
+      "dialog": {
+        "sitemapPrompt": "请输入网站地图 URL（例如：https://example.com/sitemap.xml）",
+        "urlPrompt": "请输入网址（必须以 http:// 或 https:// 开头）"
+      },
+      "error": {
+        "invalidUrl": "无效的网址格式。网址必须以 http:// 或 https:// 开头"
+      },
+      "help": {
+        "formats": "通过网站地图添加单个网页或整个网站"
+      },
+      "noWeb": "您还没有任何网页资源。点击下面的按钮添加网址或网站。",
+      "pagesCount": "无页面|1 页|{count} 页",
+      "tooltips": {
+        "refresh": "刷新内容"
       }
     }
   },

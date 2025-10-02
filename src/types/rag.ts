@@ -1,5 +1,5 @@
 
-export type SourceType = 'file'|'folder'|'url'|'text'
+export type SourceType = 'file'|'folder'|'url'|'sitemap'|'text'
 
 // export type DocumentSourceBase = {
 //   uuid: string

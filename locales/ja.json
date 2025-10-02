@@ -191,6 +191,7 @@
     },
     "voice": "音声",
     "warning": "警告",
+    "web": "ウェブ",
     "wizard": {
       "next": "次へ",
       "prev": "戻る"
@@ -850,6 +851,25 @@
         "embeddingNotReady": "埋め込みモデルは利用できません",
         "openInExplorer": "Finderで開く",
         "viewContents": "フォルダの内容を表示"
+      }
+    },
+    "web": {
+      "addUrl": "URLを追加",
+      "addWebsite": "ウェブサイトを追加",
+      "dialog": {
+        "sitemapPrompt": "サイトマップのURLを入力してください（例：https://example.com/sitemap.xml）",
+        "urlPrompt": "URLを入力してください（http:// または https:// で始まる必要があります）"
+      },
+      "error": {
+        "invalidUrl": "無効なURL形式です。URLはhttp:// または https:// で始まる必要があります"
+      },
+      "help": {
+        "formats": "単一のウェブページまたはサイトマップを通じて全ウェブサイトを追加"
+      },
+      "noWeb": "まだウェブリソースがありません。以下のボタンをクリックしてURLまたはウェブサイトを追加してください。",
+      "pagesCount": "ページなし|1ページ|{count}ページ",
+      "tooltips": {
+        "refresh": "コンテンツを更新"
       }
     }
   },

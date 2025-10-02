@@ -88,6 +88,13 @@ export default class DocumentBaseImpl {
       callback?.()
       await this.addFolder(source, callback)
 
+    } else if (type === 'sitemap') {
+
+      // we add first so container is visible
+      this.documents.push(source)
+      callback?.()
+      await this.addSitemap(source, callback)
+
     } else {
 
       // we add first so container is visible
@@ -244,41 +251,42 @@ export default class DocumentBaseImpl {
 
   }
 
-  async addFolder(source: DocumentSourceImpl, callback: VoidFunction): Promise<void> {
-
-    // list files in folder recursively
-    const files = file.listFilesRecursively(source.origin)
-
-    // add to the database using transaction
+  private async addChildDocuments(
+    source: DocumentSourceImpl,
+    childItems: Array<{ type: SourceType, origin: string }>,
+    callback: VoidFunction
+  ): Promise<void> {
     await this.connect()
-    // await this.db.beginTransaction()
 
-    // iterate
     let added = 0
-    for (const file of files) {
+    for (const item of childItems) {
       try {
-
-        // do it
-        const doc = new DocumentSourceImpl(crypto.randomUUID(), 'file', file)
+        const doc = new DocumentSourceImpl(crypto.randomUUID(), item.type, item.origin)
         await this.addDocument(doc)
         source.items.push(doc)
 
-        // commit?
         if ((++added) % ADD_COMMIT_EVERY === 0) {
-          // await this.db.commitTransaction()
           callback?.()
-          // await this.db.beginTransaction()
         }
-
-      } catch {
-        //console.error('Error adding file', file, error)
+      } catch (error) {
+        console.error('Error adding child document', item.origin, error)
       }
     }
-
-    // done
-    // await this.db.commitTransaction()
     callback?.()
+  }
 
+  async addFolder(source: DocumentSourceImpl, callback: VoidFunction): Promise<void> {
+    const files = file.listFilesRecursively(source.origin)
+    const items = files.map(f => ({ type: 'file' as SourceType, origin: f }))
+    await this.addChildDocuments(source, items, callback)
+  }
+
+  async addSitemap(source: DocumentSourceImpl, callback: VoidFunction): Promise<void> {
+    const config: Configuration = loadSettings(this.app)
+    const loader = new Loader(config)
+    const urls = await loader.getSitemapUrls(source.origin)
+    const items = urls.map(url => ({ type: 'url' as SourceType, origin: url }))
+    await this.addChildDocuments(source, items, callback)
   }
 
   async deleteDocumentSource(docId: string, callback?: VoidFunction): Promise<void> {
