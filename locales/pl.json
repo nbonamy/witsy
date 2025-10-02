@@ -2120,23 +2120,49 @@
       "suggestTitle": "Zaproponuj tytuł",
       "writingAssistant": "Asystent pisania"
     },
-    "fileError": "Nie można otworzyć pliku",
+    "delete": {
+      "confirm": "Czy na pewno chcesz usunąć \"{title}\"?",
+      "title": "Usuń notatkę"
+    },
+    "deleteError": "Błąd podczas usuwania notatki",
     "fontFamily": {
       "monospace": "Czcionka o stałej szerokości",
       "sansSerif": "Czcionka bezszeryfowa",
-      "serif": "Czcionka szeryfowa"
+      "serif": "Czcionka szeryfowa",
+      "title": "Czcionka"
     },
     "fontSize": {
       "large": "Duży",
       "larger": "Większy",
       "normal": "Normalny",
       "small": "Mały",
-      "smaller": "Mniejszy"
+      "smaller": "Mniejszy",
+      "title": "Rozmiar czcionki"
     },
     "generationError": "Wystąpił błąd podczas generowania",
+    "history": {
+      "documents": "Dokumenty",
+      "empty": "Brak zapisanych dokumentów"
+    },
+    "import": {
+      "prompt": "Wprowadź tytuł tej notatki:",
+      "title": "Importuj notatkę"
+    },
+    "importError": "Błąd podczas importu notatki",
     "loadingError": "Wystąpił błąd podczas ładowania",
     "placeholder": "Zacznij pisać swój dokument lub\npoproś @:{'common.appName'}, aby coś dla Ciebie napisał!\n\nPo rozpoczęciu możesz poprosić @:{'common.appName'}\no modyfikacje w Twoim dokumencie.\n\nJeśli zaznaczysz fragment tekstu,\n@:{'common.appName'} zaktualizuje tylko ten fragment.\n\nSprawdź także Asystenta Pisania\nw pasku akcji w prawym dolnym rogu!\n\nSpróbuj!",
-    "title": "Scratchpad"
+    "rename": {
+      "prompt": "Wprowadź nowy tytuł",
+      "title": "Zmień nazwę notatki"
+    },
+    "renameError": "Błąd podczas zmiany nazwy notatki",
+    "save": {
+      "prompt": "Wprowadź tytuł tej notatki",
+      "title": "Zapisz notatkę"
+    },
+    "saveError": "Błąd podczas zapisywania notatki",
+    "title": "Scratchpad",
+    "unsavedPrompt": "Czy chcesz zapisać zmiany?"
   },
   "settings": {
     "advanced": {
@@ -2463,6 +2489,7 @@
         },
         "exaApiKey": "Klucz API Exa",
         "getApiKey": "Uzyskaj klucz API",
+        "perplexityApiKey": "Klucz API Perplexity",
         "tavilyApiKey": "Klucz API Tavily",
         "testLocal": {
           "error": "Błąd podczas wyszukiwania w internecie",

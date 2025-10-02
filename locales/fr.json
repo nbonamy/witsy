@@ -2098,23 +2098,49 @@
       "suggestTitle": "Suggérer un titre",
       "writingAssistant": "Assistant d'écriture"
     },
-    "fileError": "Ce fichier n'est pas un fichier de bloc-notes. Veuillez réessayer avec un autre fichier.",
+    "delete": {
+      "confirm": "Êtes-vous sûr de vouloir supprimer « {title} » ?",
+      "title": "Supprimer le carnet de notes"
+    },
+    "deleteError": "Erreur lors de la suppression du carnet de notes",
     "fontFamily": {
       "monospace": "Monospace",
       "sansSerif": "Sans-Serif",
-      "serif": "Serif"
+      "serif": "Serif",
+      "title": "Famille de polices"
     },
     "fontSize": {
       "large": "Grand",
       "larger": "Très grand",
       "normal": "Normal",
       "small": "Petit",
-      "smaller": "Très petit"
+      "smaller": "Très petit",
+      "title": "Taille de la police"
     },
     "generationError": "Erreur lors de la génération du texte",
+    "history": {
+      "documents": "Documents",
+      "empty": "Aucun document enregistré"
+    },
+    "import": {
+      "prompt": "Entrez un titre pour ce carnet de notes :",
+      "title": "Importer le carnet de notes"
+    },
+    "importError": "Erreur lors de l'importation du carnet de notes",
     "loadingError": "Erreur lors du chargement du fichier de bloc-notes",
     "placeholder": "Commencez à taper votre document ou\ndemandez à @:{'common.appName'} d'écrire quelque chose pour vous !\n\nUne fois commencé, vous pouvez demander à @:{'common.appName'}\nde modifier votre document.\n\nSi vous surlignez une portion de votre texte,\n@:{'common.appName'} mettra à jour uniquement cette partie.\n\nDécouvrez aussi l'Assistant d'écriture\ndans la barre d'actions en bas à droite !\n\nEssayez-le !",
-    "title": "Scratchpad"
+    "rename": {
+      "prompt": "Entrez un nouveau titre",
+      "title": "Renommer le carnet de notes"
+    },
+    "renameError": "Erreur lors du renommage du carnet de notes",
+    "save": {
+      "prompt": "Entrez un titre pour ce carnet de notes",
+      "title": "Enregistrer le carnet de notes"
+    },
+    "saveError": "Erreur lors de l'enregistrement du carnet de notes",
+    "title": "Scratchpad",
+    "unsavedPrompt": "Voulez-vous enregistrer vos modifications ?"
   },
   "settings": {
     "advanced": {
@@ -2435,6 +2461,7 @@
         },
         "exaApiKey": "Clé API Exa",
         "getApiKey": "Obtenir votre clé API",
+        "perplexityApiKey": "Clé API Perplexity",
         "tavilyApiKey": "Clé API Tavily",
         "testLocal": {
           "error": "Erreur lors de la recherche sur Internet",

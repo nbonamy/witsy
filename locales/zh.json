@@ -2120,23 +2120,49 @@
       "suggestTitle": "建议标题",
       "writingAssistant": "写作助手"
     },
-    "fileError": "此文件不是便签文件。请尝试使用其他文件。",
+    "delete": {
+      "confirm": "您确定要删除“{title}”吗？",
+      "title": "删除草稿本"
+    },
+    "deleteError": "删除草稿本时出错",
     "fontFamily": {
       "monospace": "等宽字体",
       "sansSerif": "无衬线字体",
-      "serif": "衬线字体"
+      "serif": "衬线字体",
+      "title": "字体"
     },
     "fontSize": {
       "large": "大",
       "larger": "更大",
       "normal": "正常",
       "small": "小",
-      "smaller": "更小"
+      "smaller": "更小",
+      "title": "字体大小"
     },
     "generationError": "生成文本时出错",
+    "history": {
+      "documents": "文档",
+      "empty": "没有保存的文档"
+    },
+    "import": {
+      "prompt": "请输入此草稿本的标题：",
+      "title": "导入草稿本"
+    },
+    "importError": "导入草稿本时出错",
     "loadingError": "加载便签文件时出错",
     "placeholder": "开始输入您的文档，或\n让 @:{'common.appName'} 为您写点东西！\n\n一旦开始，您可以让 @:{'common.appName'}\n对您的文档进行修改。\n\n如果您高亮了部分文本，\n@:{'common.appName'} 将只更新这部分内容。\n\n还可以查看位于右下角操作栏的写作助手！\n\n试试看吧！",
-    "title": "Scratchpad"
+    "rename": {
+      "prompt": "请输入新标题",
+      "title": "重命名草稿本"
+    },
+    "renameError": "重命名草稿本时出错",
+    "save": {
+      "prompt": "请输入此草稿本的标题",
+      "title": "保存草稿本"
+    },
+    "saveError": "保存草稿本时出错",
+    "title": "Scratchpad",
+    "unsavedPrompt": "您想保存更改吗？"
   },
   "settings": {
     "advanced": {
@@ -2457,6 +2483,7 @@
         },
         "exaApiKey": "Exa API 密钥",
         "getApiKey": "获取你的 API 密钥",
+        "perplexityApiKey": "Perplexity API 密钥",
         "tavilyApiKey": "Tavily API 密钥",
         "testLocal": {
           "error": "搜索互联网时出错",

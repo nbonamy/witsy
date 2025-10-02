@@ -189,6 +189,12 @@ export const MCP = {
 
 export const SCRATCHPAD = {
   OPEN: 'scratchpad-open',
+  LIST: 'scratchpad-list',
+  LOAD: 'scratchpad-load',
+  SAVE: 'scratchpad-save',
+  RENAME: 'scratchpad-rename',
+  DELETE: 'scratchpad-delete',
+  IMPORT: 'scratchpad-import',
 } as const;
 
 export const COMPUTER = {

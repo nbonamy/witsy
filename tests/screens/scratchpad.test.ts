@@ -155,17 +155,21 @@ test('Undo/redo', async () => {
 
 test('Loads chat', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('action', 'load')
-  await vi.waitUntil(async () => wrapper.vm.fileUrl)
-  expect(wrapper.findComponent(EditableText).text()).toBe('Hello LLM')
+  const scratchpad = { uuid: 'scratchpad1', title: 'Test Scratchpad 1', lastModified: Date.now() }
+  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
+  expect(wrapper.findComponent(EditableText).text()).toBe('Test content')
 })
 
 test('Saves chat', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
+  // Mock dialog to auto-confirm with a title
+  vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'New Scratchpad', isDenied: false, isDismissed: false })
   emitEvent('action', 'save')
-  expect(window.api.file.save).toHaveBeenCalled()
+  await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
+  expect(window.api.scratchpad.save).toHaveBeenCalled()
 })
 
 test('Sets engine', async () => {
@@ -235,4 +239,147 @@ test('Changes tools', async () => {
   expect(wrapper.vm.chat.tools).toStrictEqual([])
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' } as SendPromptParams)
   expect(LlmManager.prototype.loadTools).toHaveBeenLastCalledWith(wrapper.vm.llm, expect.any(String), expect.any(Object), [])
+})
+
+// History Management Tests
+
+test('Loads scratchpads list on mount', () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  expect(window.api.scratchpad.list).toHaveBeenCalled()
+  expect(wrapper.vm.scratchpads).toHaveLength(2)
+  expect(wrapper.vm.scratchpads[0].uuid).toBe('scratchpad1')
+})
+
+test('Displays history in sidebar', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  await wrapper.vm.$nextTick()
+  const sidebar = wrapper.findComponent(Sidebar)
+  expect(sidebar.exists()).toBe(true)
+  expect(sidebar.props('scratchpads')).toHaveLength(2)
+})
+
+test('Selects scratchpad from history', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  const scratchpad = wrapper.vm.scratchpads[0]
+  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  await vi.waitUntil(async () => wrapper.vm.currentScratchpadId === scratchpad.uuid)
+  expect(wrapper.vm.currentTitle).toBe('Test Scratchpad')
+  expect(wrapper.vm.selectedScratchpad).toEqual(scratchpad)
+})
+
+test('Import prompts for title', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // @ts-expect-error mock
+  window.api.file.pickFile = vi.fn(() => ({
+    contents: '{"content": "imported"}',
+    url: 'file:///test/my-test-file.json'
+  }))
+
+  vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'My Custom Title', isDenied: false, isDismissed: false })
+
+  emitEvent('action', 'import')
+  await vi.waitUntil(async () => Dialog.show.mock.calls.length > 0)
+
+  const dialogCall = vi.mocked(Dialog.show).mock.calls[0][0]
+  expect(dialogCall.inputValue).toBe('My Test File') // Title case from filename
+})
+
+test('Import creates new scratchpad', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'Imported', isDenied: false, isDismissed: false })
+
+  // @ts-expect-error mock
+  window.api.file.pickFile = vi.fn(() => ({
+    url: 'file:///test/file.json',
+    contents: '{}'
+  }))
+
+  emitEvent('action', 'import')
+  await vi.waitUntil(async () => window.api.scratchpad.import.mock.calls.length > 0, { timeout: 2000 })
+
+  // Check the actual call
+  const importCall = vi.mocked(window.api.scratchpad.import).mock.calls[0]
+  expect(importCall[0]).toBe(store.config.workspaceId) // workspaceId
+  expect(importCall[1]).toBe('file:///test/file.json') // filePath (not normalized in renderer)
+  expect(importCall[2]).toBe('Imported') // title
+})
+
+test('Rename updates scratchpad', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  const scratchpad = wrapper.vm.scratchpads[0]
+  wrapper.vm.targetScratchpad = scratchpad
+
+  vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'New Title', isDenied: false, isDismissed: false })
+
+  await wrapper.vm.onRenameScratchpad()
+
+  expect(window.api.scratchpad.rename).toHaveBeenCalledWith(
+    expect.any(String),
+    scratchpad.uuid,
+    'New Title'
+  )
+})
+
+test('Delete removes scratchpad', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  const scratchpad = wrapper.vm.scratchpads[0]
+  wrapper.vm.targetScratchpad = scratchpad
+
+  vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false })
+
+  await wrapper.vm.onDeleteScratchpad()
+
+  expect(window.api.scratchpad.delete).toHaveBeenCalledWith(
+    expect.any(String),
+    scratchpad.uuid
+  )
+})
+
+test('Save resets modified flag', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // Manually set modified (simulating that content changed)
+  wrapper.vm.modified = true
+  expect(wrapper.vm.modified).toBe(true)
+
+  vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'Test', isDenied: false, isDismissed: false })
+  emitEvent('action', 'save')
+  await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
+
+  expect(wrapper.vm.modified).toBe(false)
+})
+
+test('Load initializes undo stack', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  const scratchpad = wrapper.vm.scratchpads[0]
+  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
+
+  expect(wrapper.vm.undoStack).toHaveLength(1)
+  expect(wrapper.vm.undoStack[0].after).toEqual({ content: 'Test content' })
+  expect(wrapper.vm.redoStack).toHaveLength(0)
+  expect(wrapper.vm.modified).toBe(false)
+})
+
+test('Switching with unsaved changes prompts', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // Manually set modified (simulating unsaved changes)
+  wrapper.vm.modified = true
+  expect(wrapper.vm.modified).toBe(true)
+
+  // Try to switch
+  vi.spyOn(Dialog, 'show').mockResolvedValue({ isDismissed: true, isConfirmed: false, isDenied: false })
+
+  const scratchpad = wrapper.vm.scratchpads[1]
+  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  await vi.waitUntil(async () => Dialog.show.mock.calls.length > 0)
+
+  expect(Dialog.show).toHaveBeenCalled()
+  expect(wrapper.vm.currentScratchpadId).toBeNull() // Should not have switched
 })

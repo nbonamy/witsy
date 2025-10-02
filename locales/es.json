@@ -2098,23 +2098,49 @@
       "suggestTitle": "Sugerir un título",
       "writingAssistant": "Asistente de escritura"
     },
-    "fileError": "Este archivo no es un archivo de bloc de notas. Inténtalo de nuevo con otro archivo.",
+    "delete": {
+      "confirm": "¿Estás seguro de que quieres eliminar \"{title}\"?",
+      "title": "Eliminar Bloc de Notas"
+    },
+    "deleteError": "Error al eliminar el bloc de notas",
     "fontFamily": {
       "monospace": "Monoespaciado",
       "sansSerif": "Sin serifas",
-      "serif": "Serif"
+      "serif": "Serif",
+      "title": "Familia de Fuente"
     },
     "fontSize": {
       "large": "Grande",
       "larger": "Más grande",
       "normal": "Normal",
       "small": "Pequeño",
-      "smaller": "Más pequeño"
+      "smaller": "Más pequeño",
+      "title": "Tamaño de Fuente"
     },
     "generationError": "Error al generar texto",
+    "history": {
+      "documents": "Documentos",
+      "empty": "No hay documentos guardados"
+    },
+    "import": {
+      "prompt": "Introduce un título para este bloc de notas:",
+      "title": "Importar Bloc de Notas"
+    },
+    "importError": "Error al importar el bloc de notas",
     "loadingError": "Error al cargar el archivo de bloc de notas",
     "placeholder": "Comienza a escribir tu documento o\n¡pídele a @:{'common.appName'} que escriba algo por ti!\n\nUna vez que empieces, puedes pedirle a @:{'common.appName'}\nque haga modificaciones en tu documento.\n\nSi resalta una parte de tu texto,\n@:{'common.appName'} solo actualizará esa parte.\n\n¡También echa un vistazo al Asistente de Escritura\nen la barra de acción en la esquina inferior derecha!\n\n¡Inténtalo!",
-    "title": "Scratchpad"
+    "rename": {
+      "prompt": "Introduce un nuevo título",
+      "title": "Renombrar Bloc de Notas"
+    },
+    "renameError": "Error al renombrar el bloc de notas",
+    "save": {
+      "prompt": "Introduce un título para este bloc de notas",
+      "title": "Guardar Bloc de Notas"
+    },
+    "saveError": "Error al guardar el bloc de notas",
+    "title": "Scratchpad",
+    "unsavedPrompt": "¿Quieres guardar tus cambios?"
   },
   "settings": {
     "advanced": {
@@ -2435,6 +2461,7 @@
         },
         "exaApiKey": "Clave API de Exa",
         "getApiKey": "Obtenga su clave API",
+        "perplexityApiKey": "Clave API de Perplexity",
         "tavilyApiKey": "Clave API de Tavily",
         "testLocal": {
           "error": "Error al buscar en internet",

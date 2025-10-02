@@ -608,7 +608,7 @@ defineExpose({ getContent, setContent })
   top: 20%;
   left: 50%;
   transform: translateX(-50%);
-  line-height: 1.2lh;
+  line-height: 1.35lh;
   max-width: 80%;
   color: var(--scratchpad-placeholder-text-color) !important;
   text-align: center;

@@ -2131,7 +2131,11 @@
       "suggestTitle": "Suggest a title",
       "writingAssistant": "Writing assistant"
     },
-    "fileError": "This file is not a scratchpad file. Please try again with another file.",
+    "delete": {
+      "confirm": "Are you sure you want to delete \"{title}\"?",
+      "title": "Delete Scratchpad"
+    },
+    "deleteError": "Error deleting scratchpad",
     "fontFamily": {
       "monospace": "Monospace",
       "sansSerif": "Sans-Serif",
@@ -2147,9 +2151,29 @@
       "title": "Font Size"
     },
     "generationError": "Error while generating text",
+    "history": {
+      "documents": "Documents",
+      "empty": "No saved documents"
+    },
+    "import": {
+      "prompt": "Enter a title for this scratchpad:",
+      "title": "Import Scratchpad"
+    },
+    "importError": "Error importing scratchpad",
     "loadingError": "Error while loading scratchpad file",
     "placeholder": "Start typing your document or\nask @:{'common.appName'} to write something for you!\n\nOnce you started you can ask @:{'common.appName'}\nto make modification on your document.\n\nIf you highligh a portion of your text,\n@:{'common.appName'} will only update this portion.\n\nAlso check out the Writing Assistant\nin the action bar in the lower right corner!\n\nGive it a go!",
-    "title": "Scratchpad"
+    "rename": {
+      "prompt": "Enter a new title",
+      "title": "Rename Scratchpad"
+    },
+    "renameError": "Error renaming scratchpad",
+    "save": {
+      "prompt": "Enter a title for this scratchpad",
+      "title": "Save Scratchpad"
+    },
+    "saveError": "Error saving scratchpad",
+    "title": "Scratchpad",
+    "unsavedPrompt": "Do you want to save your changes?"
   },
   "settings": {
     "advanced": {
@@ -2476,6 +2500,7 @@
         },
         "exaApiKey": "Exa API Key",
         "getApiKey": "Get your API key",
+        "perplexityApiKey": "Perplexity API Key",
         "tavilyApiKey": "Tavily API Key",
         "testLocal": {
           "error": "Error while searching the internet",

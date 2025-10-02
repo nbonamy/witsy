@@ -2120,23 +2120,49 @@
       "suggestTitle": "Sugerir um título",
       "writingAssistant": "Assistente de escrita"
     },
-    "fileError": "Este arquivo não é um arquivo scratchpad. Por favor, tente novamente com outro arquivo.",
+    "delete": {
+      "confirm": "Tem certeza de que deseja excluir \"{title}\"?",
+      "title": "Excluir Bloco de Notas"
+    },
+    "deleteError": "Erro ao excluir o bloco de notas",
     "fontFamily": {
       "monospace": "Monoespaçado",
       "sansSerif": "Sem-Serifa",
-      "serif": "Serifa"
+      "serif": "Serifa",
+      "title": "Família da Fonte"
     },
     "fontSize": {
       "large": "Grande",
       "larger": "Maior",
       "normal": "Normal",
       "small": "Pequeno",
-      "smaller": "Menor"
+      "smaller": "Menor",
+      "title": "Tamanho da Fonte"
     },
     "generationError": "Erro ao gerar texto",
+    "history": {
+      "documents": "Documentos",
+      "empty": "Nenhum documento salvo"
+    },
+    "import": {
+      "prompt": "Digite um título para este bloco de notas:",
+      "title": "Importar Bloco de Notas"
+    },
+    "importError": "Erro ao importar o bloco de notas",
     "loadingError": "Erro ao carregar arquivo scratchpad",
     "placeholder": "Comece a digitar seu documento ou\npeça ao @:{'common.appName'} para escrever algo para você!\n\nDepois de começar, você pode pedir ao @:{'common.appName'}\npara fazer modificações no seu documento.\n\nSe você destacar uma parte do seu texto,\n@:{'common.appName'} atualizará somente essa parte.\n\nConfira também o Assistente de Escrita\nna barra de ações no canto inferior direito!\n\nExperimente!",
-    "title": "Scratchpad"
+    "rename": {
+      "prompt": "Digite um novo título",
+      "title": "Renomear Bloco de Notas"
+    },
+    "renameError": "Erro ao renomear o bloco de notas",
+    "save": {
+      "prompt": "Digite um título para este bloco de notas",
+      "title": "Salvar Bloco de Notas"
+    },
+    "saveError": "Erro ao salvar o bloco de notas",
+    "title": "Scratchpad",
+    "unsavedPrompt": "Você deseja salvar suas alterações?"
   },
   "settings": {
     "advanced": {
@@ -2457,6 +2483,7 @@
         },
         "exaApiKey": "Chave API Exa",
         "getApiKey": "Obtenha sua chave de API",
+        "perplexityApiKey": "Chave da API Perplexity",
         "tavilyApiKey": "Chave de API Tavily",
         "testLocal": {
           "error": "Erro ao buscar na internet",

@@ -205,6 +205,12 @@ contextBridge.exposeInMainWorld(
     },
     scratchpad: {
       open: (textId?: string): void => { return ipcRenderer.send(IPC.SCRATCHPAD.OPEN, textId) },
+      list: (workspaceId: string): any[] => { return ipcRenderer.sendSync(IPC.SCRATCHPAD.LIST, workspaceId) },
+      load: (workspaceId: string, uuid: string): any => { return ipcRenderer.sendSync(IPC.SCRATCHPAD.LOAD, { workspaceId, uuid }) },
+      save: (workspaceId: string, data: any): boolean => { return ipcRenderer.sendSync(IPC.SCRATCHPAD.SAVE, { workspaceId, data }) },
+      rename: (workspaceId: string, uuid: string, newTitle: string): boolean => { return ipcRenderer.sendSync(IPC.SCRATCHPAD.RENAME, { workspaceId, uuid, newTitle }) },
+      delete: (workspaceId: string, uuid: string): boolean => { return ipcRenderer.sendSync(IPC.SCRATCHPAD.DELETE, { workspaceId, uuid }) },
+      import: (workspaceId: string, filePath: string, title: string): string | null => { return ipcRenderer.sendSync(IPC.SCRATCHPAD.IMPORT, { workspaceId, filePath, title }) },
     },
     computer: {
       isAvailable: (): boolean => { return ipcRenderer.sendSync(IPC.COMPUTER.IS_AVAILABLE) },
