@@ -16,8 +16,9 @@ export default class extends MultiToolPlugin {
 
   config: FilesystemPluginConfig
   tools: LlmTool[]
-  
-  constructor(config: FilesystemPluginConfig) {
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  constructor(config: FilesystemPluginConfig, workspaceId: string) {
     super()
     this.config = config
     this.tools = [

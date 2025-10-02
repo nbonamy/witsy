@@ -10,8 +10,8 @@ export default class extends Plugin {
 
   creator: VideoCreator
 
-  constructor(config: PluginConfig) {
-    super(config)
+  constructor(config: PluginConfig, workspaceId: string) {
+    super(config, workspaceId)
     this.creator = new VideoCreator()
   }
 

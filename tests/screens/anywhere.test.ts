@@ -144,7 +144,7 @@ test('Changes tools', async () => {
   expect(wrapper.vm.chat.tools).toStrictEqual([])
   expect(store.config.prompt.tools).toStrictEqual([])
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' } as SendPromptParams)
-  expect(LlmManager.prototype.loadTools).toHaveBeenLastCalledWith(wrapper.vm.llm, expect.any(Object), [])
+  expect(LlmManager.prototype.loadTools).toHaveBeenLastCalledWith(wrapper.vm.llm, expect.any(String), expect.any(Object), [])
 })
 
 test('Renders prompt response', async () => {

@@ -26,7 +26,7 @@ export function useTools() {
     for (const pluginName in availablePlugins) {
       
       const pluginClass = availablePlugins[pluginName]
-      const plugin: PluginInstance = new pluginClass(config.plugins[pluginName])
+      const plugin: PluginInstance = new pluginClass(config.plugins[pluginName], config.workspaceId)
       if (!plugin.isEnabled()) continue
       
       if ('getTools' in plugin) {

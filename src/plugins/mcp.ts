@@ -7,11 +7,13 @@ import { t } from '../services/i18n'
 export default class extends MultiToolPlugin {
 
   config: PluginConfig
+  workspaceId: string
   tools: LlmTool[]
   
-  constructor(config: PluginConfig) {
+  constructor(config: PluginConfig, workspaceId: string) {
     super()
     this.config = config
+    this.workspaceId = workspaceId
     this.tools = []
   }
 

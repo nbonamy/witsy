@@ -175,7 +175,7 @@ export default class extends Generator {
         for (const pluginName in availablePlugins) {
           
           const pluginClass = availablePlugins[pluginName]
-          const plugin = new pluginClass(this.config.plugins[pluginName])
+          const plugin = new pluginClass(this.config.plugins[pluginName], this.workspaceId)
 
           // if no filters add
           if (step.tools === null) {

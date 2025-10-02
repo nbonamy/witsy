@@ -234,5 +234,5 @@ test('Changes tools', async () => {
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.chat.tools).toStrictEqual([])
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' } as SendPromptParams)
-  expect(LlmManager.prototype.loadTools).toHaveBeenLastCalledWith(wrapper.vm.llm, expect.any(Object), [])
+  expect(LlmManager.prototype.loadTools).toHaveBeenLastCalledWith(wrapper.vm.llm, expect.any(String), expect.any(Object), [])
 })

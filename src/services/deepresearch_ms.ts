@@ -126,7 +126,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
             section.queries.map(async (query: string) => {
 
               // call plugin directly
-              const search = new SearchPlugin(this.config.plugins.search)
+              const search = new SearchPlugin(this.config.plugins.search, this.workspaceId)
 
               // fake tool call
               const seachToolCall = {

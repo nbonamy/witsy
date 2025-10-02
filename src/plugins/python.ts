@@ -6,8 +6,8 @@ import { t } from '../services/i18n'
 
 export default class extends Plugin {
 
-  constructor(config: PluginConfig) {
-    super(config)
+  constructor(config: PluginConfig, workspaceId: string) {
+    super(config, workspaceId)
   }
 
   isEnabled(): boolean {

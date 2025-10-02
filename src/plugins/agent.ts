@@ -24,7 +24,6 @@ export default class extends Plugin {
   declare config: Configuration
   engine: string
   model: string
-  workspaceId: string
   agent: Agent
   opts: AgentPluginOpts
   storage?: AgentStorage
@@ -34,8 +33,7 @@ export default class extends Plugin {
     engine: string, model: string, opts?: Omit<AgentPluginOpts, 'engine'|'model'>,
     storage?: AgentStorage, 
   ) {
-    super(config)
-    this.workspaceId = workspaceId
+    super(config, workspaceId)
     this.agent = agent
     this.engine = engine
     this.model = model
