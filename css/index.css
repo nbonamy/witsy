@@ -781,15 +781,7 @@ table.table-plain {
   height: 100vh;
 
   > header {
-    /*
-      this should have webkit-app-region: drag;
-      but it does not work because of
-      https://github.com/electron/electron/issues/40610
-
     -webkit-app-region: drag;
-
-    */
-
     flex: 0 0 var(--window-toolbar-height);
     background-color: var(--background-color);
     border-bottom: 1px solid var(--border-color);
@@ -801,17 +793,11 @@ table.table-plain {
     display: flex;
     flex-direction: row;
     max-height: calc(100vh - var(--window-toolbar-height) - 2.5rem);
-
-    /*
-    -webkit-app-region: no-drag;
-    * {
-      -webkit-app-region: no-drag;
-    }
-    */
-  
   }
 
   > footer {
+
+    -webkit-app-region: drag;
 
     box-sizing: border-box;
     flex: 0 0 var(--window-footer-height);
@@ -828,6 +814,7 @@ table.table-plain {
     color: var(--faded-text-color);
 
     .actions {
+      -webkit-app-region: no-drag;
       margin-left: auto;
       display: flex;
       gap: 1rem;
