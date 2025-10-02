@@ -14,7 +14,10 @@ export type ToolSelection = string[]|null
 
 export interface ILlmManager {
 
+  getStandardEngines(): string[]
   getPriorityEngines(): string[]
+  getNonChatEngines(): string[]
+
   getChatEngines(opts?: GetChatEnginesOpts): string[]
 
   getEngineName(engine: string): string
@@ -22,6 +25,7 @@ export interface ILlmManager {
   getCustomEngines(): string[]
   isCustomEngine(engine: string): boolean
 
+  isFavoriteId(id: string): boolean
   isFavoriteEngine(engine: string): boolean
   getFavoriteId(engine: string, model: string): string
   isFavoriteModel(engine: string, model: string): boolean

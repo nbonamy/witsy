@@ -221,12 +221,14 @@ test('Ignite Custom Engine Azure', async () => {
 
 test('Anthropic Computer Use', async () => {
   const anthropic = await llmManager.igniteEngine('anthropic')
+  // @ts-expect-error mock
   expect(anthropic['computerInfo']).not.toBeNull()
 })
 
 test('Reflects configuration changes', () => {
   defaults.engines.openai.apiKey = '345'
   store.loadSettings()
+  // @ts-expect-error mock
   expect(llmManager.config.engines.openai.apiKey).toBe('345')
 })
 
