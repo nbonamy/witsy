@@ -4,24 +4,24 @@
     <div class="actions">
       <MessageItemActionCopy :message="message" ref="actionCopy" />
       <div class="action insert" v-if="!message.transient" @click="onInsert">
-        <BIconArrowReturnLeft /> {{ t('common.insert') }}
+        <CornerDownLeftIcon /> {{ t('common.insert') }}
       </div>
       <div class="action replace" v-if="showReplace && !message.transient" @click="onReplace">
-        <BIconArrowLeftRight /> {{ t('common.replace') }}
+        <ArrowLeftRightIcon /> {{ t('common.replace') }}
       </div>
       <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
       <div class="action continue" v-if="!message.transient" @click="onChat">
-        <BIconChatSquare /> {{ t('common.chat') }}
+        <MessageSquareIcon /> {{ t('common.chat') }}
       </div>
       <div class="action scratchpad" v-if="!message.transient" @click="onScratchPad">
-        <BIconPen /> {{ t('common.write') }}
+        <PenIcon /> {{ t('common.write') }}
       </div>
       <div class="action retry" v-if="!message.transient" @click="onRetry(message)">
-        <BIconArrowCounterclockwise /> {{ t('common.retry') }}
+        <RotateCcwIcon /> {{ t('common.retry') }}
       </div>
       <div class="action spacer" />
       <div class="action clear" @click="onClear" v-if="showClear">
-        <BIconXCircle /> {{ t('common.clear') }}
+        <XCircleIcon /> {{ t('common.clear') }}
       </div>
       <div class="action close" @click="onClose">
         <span class="narrow">{{ t('common.esc') }}</span> {{ t('common.close') }}

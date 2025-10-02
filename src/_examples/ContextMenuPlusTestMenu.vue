@@ -7,14 +7,14 @@
     <template #default>
       <!-- Static menu items -->
       <div @click="handleAction('copy')">
-        <BIconClipboard class="icon" />
+        <ClipboardIcon class="icon" />
         Copy
       </div>
       
       <div 
         data-submenu-slot="editSubmenu"
       >
-        <BIconPencil class="icon" />
+        <PenIconcil class="icon" />
         Edit
       </div>
       
@@ -41,7 +41,7 @@
       
       <!-- Static item -->
       <div @click="handleAction('delete')">
-        <BIconTrash class="icon" />
+        <Trash2Icon class="icon" />
         Delete
       </div>
     </template>
@@ -50,22 +50,22 @@
     <template #editSubmenu="{ withFilter }">
       {{ withFilter(true) }}
       <div @click="handleSubmenuAction('undo')">
-        <BIconArrowCounterclockwise class="icon" />
+        <RotateCcwIcon class="icon" />
         Undo
       </div>
       <div @click="handleSubmenuAction('redo')">
-        <BIconArrowClockwise class="icon" />
+        <RotateCwIcon class="icon" />
         Redo
       </div>
       <div class="separator">
         <hr />
       </div>
       <div @click="handleSubmenuAction('cut')">
-        <BIconScissors class="icon" />
+        <ScissorsIcon class="icon" />
         Cut
       </div>
       <div @click="handleSubmenuAction('paste')">
-        <BIconClipboard2 class="icon" />
+        <ClipboardIcon2 class="icon" />
         Paste
       </div>
     </template>
@@ -78,7 +78,7 @@
         :key="file.id"
         @click="handleFileAction(file)"
       >
-        <BIconFileEarmark class="icon" />
+        <FileIcon class="icon" />
         <div style="flex: 1;">
           <div>{{ file.name }}</div>
           <div style="font-size: 10px; opacity: 0.6;">{{ file.modified }}</div>
@@ -88,7 +88,7 @@
         <hr />
       </div>
       <div @click="handleAction('browse')">
-        <BIconFolder class="icon" />
+        <FolderIcon class="icon" />
         Browse for file...
       </div>
     </template>
@@ -129,14 +129,14 @@ const dynamicMenuItems = computed(() => [
   {
     id: 'open',
     label: 'Open Recent',
-    icon: 'BIconFolder',
+    icon: 'FolderIcon',
     hasSubmenu: true,
     submenuSlot: 'recentFilesSubmenu'
   },
   {
     id: 'settings',
     label: 'Settings',
-    icon: 'BIconGear',
+    icon: 'SettingsIcon',
     hasSubmenu: true,
     submenuSlot: 'settingsSubmenu'
   }
@@ -152,10 +152,10 @@ const recentFiles = computed(() => [
 
 // Dynamic settings categories
 const settingsCategories = computed(() => [
-  { id: 'general', label: 'General', icon: 'BIconGear' },
-  { id: 'appearance', label: 'Appearance', icon: 'BIconPalette' },
-  { id: 'editor', label: 'Editor', icon: 'BIconCode' },
-  { id: 'extensions', label: 'Extensions', icon: 'BIconPuzzle' }
+  { id: 'general', label: 'General', icon: 'SettingsIcon' },
+  { id: 'appearance', label: 'Appearance', icon: 'PaletteIcon' },
+  { id: 'editor', label: 'Editor', icon: 'CodeIcon' },
+  { id: 'extensions', label: 'Extensions', icon: 'PuzzleIcon' }
 ])
 
 const handleAction = (action: string) => {
