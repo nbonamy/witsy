@@ -1,10 +1,8 @@
 <template>
   <div class="main-window window">
 
-    <!-- we handle window dragging manually because of
-         https://github.com/electron/electron/issues/40610
-    -->
-    <header @mousedown="onHeaderMouseDown"></header>
+    <header />
+
     <main>
       
       <WorkspaceBar v-if="store.isFeatureEnabled('workspaces')" />
@@ -37,6 +35,7 @@
       <Onboarding v-if="showOnboarding" @close="onOnboardingDone" />
     
     </main>
+    
     <footer>
       <label>{{ t('common.appName') }} v{{ version }}</label>
       <div class="actions">
@@ -45,6 +44,7 @@
         <CircleQuestionMarkIcon /> -->
       </div>
     </footer>
+  
   </div>
   <Fullscreen window="main" />
 </template>
@@ -80,9 +80,6 @@ const transcribe = ref<typeof Transcribe>(null)
 const realtime = ref<typeof RealtimeChat>(null)
 const settings = ref<typeof Settings>(null)
 const showOnboarding = ref(false)
-
-let lastMouseX = 0
-let lastMouseY = 0
 
 // init stuff
 store.load()
@@ -219,26 +216,6 @@ const onOnboardingDone = () => {
   showOnboarding.value = false
   store.config.general.onboardingDone = true
   store.saveSettings()
-}
-
-const onHeaderMouseDown = (event: MouseEvent) => {
-  lastMouseX = event.screenX
-  lastMouseY = event.screenY
-  document.addEventListener('mousemove', onHeaderMouseMove)
-  document.addEventListener('mouseup', onHeaderMouseUp)
-}
-
-const onHeaderMouseMove = (event: MouseEvent) => {
-  const deltaX = event.screenX - lastMouseX
-  const deltaY = event.screenY - lastMouseY
-  lastMouseX = event.screenX
-  lastMouseY = event.screenY
-  window.api.main.moveWindow(deltaX, deltaY)
-}
-
-const onHeaderMouseUp = () => {
-  document.removeEventListener('mousemove', onHeaderMouseMove)
-  document.removeEventListener('mouseup', onHeaderMouseUp)
 }
 
 </script>

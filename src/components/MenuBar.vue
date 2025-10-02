@@ -239,7 +239,7 @@ body[data-tint=blue] .mx-context-menu {
   flex-direction: column;
   background-color: var(--menubar-bg-color);
   flex: 0 0 var(--window-menubar-width);
-
+  
   .app-menu {
     cursor: pointer;
     padding: 0.5rem;
@@ -259,6 +259,11 @@ body[data-tint=blue] .mx-context-menu {
 
     border-right: 1px solid var(--sidebar-border-color);
 
+    -webkit-app-region: drag;
+    > * {
+      -webkit-app-region: no-drag;
+    }
+
     .chat svg {
       position: relative;
       top: 2px;
@@ -267,6 +272,8 @@ body[data-tint=blue] .mx-context-menu {
     .webapp-favicon {
       width: var(--icon-lg);
       height: var(--icon-lg);
+      filter: grayscale() contrast(0) brightness(0);
+      opacity: 0.7;
     }
 
   }
