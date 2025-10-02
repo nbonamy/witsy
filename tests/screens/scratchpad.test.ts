@@ -1,5 +1,5 @@
 
-import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test, afterEach, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
@@ -268,7 +268,7 @@ test('Selects scratchpad from history', async () => {
 })
 
 test('Import prompts for title', async () => {
-  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  mount(ScratchPad)
 
   // @ts-expect-error mock
   window.api.file.pickFile = vi.fn(() => ({
@@ -279,14 +279,14 @@ test('Import prompts for title', async () => {
   vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'My Custom Title', isDenied: false, isDismissed: false })
 
   emitEvent('action', 'import')
-  await vi.waitUntil(async () => Dialog.show.mock.calls.length > 0)
+  await vi.waitUntil(async () => (Dialog.show as Mock).mock.calls.length > 0)
 
   const dialogCall = vi.mocked(Dialog.show).mock.calls[0][0]
   expect(dialogCall.inputValue).toBe('My Test File') // Title case from filename
 })
 
 test('Import creates new scratchpad', async () => {
-  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  mount(ScratchPad)
 
   vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'Imported', isDenied: false, isDismissed: false })
 
@@ -297,7 +297,7 @@ test('Import creates new scratchpad', async () => {
   }))
 
   emitEvent('action', 'import')
-  await vi.waitUntil(async () => window.api.scratchpad.import.mock.calls.length > 0, { timeout: 2000 })
+  await vi.waitUntil(async () => (window.api.scratchpad.import as Mock).mock.calls.length > 0, { timeout: 2000 })
 
   // Check the actual call
   const importCall = vi.mocked(window.api.scratchpad.import).mock.calls[0]
@@ -378,7 +378,7 @@ test('Switching with unsaved changes prompts', async () => {
 
   const scratchpad = wrapper.vm.scratchpads[1]
   emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
-  await vi.waitUntil(async () => Dialog.show.mock.calls.length > 0)
+  await vi.waitUntil(async () => (Dialog.show as Mock).mock.calls.length > 0)
 
   expect(Dialog.show).toHaveBeenCalled()
   expect(wrapper.vm.currentScratchpadId).toBeNull() // Should not have switched
