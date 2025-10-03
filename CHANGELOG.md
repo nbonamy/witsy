@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 - Table rendering as artifact, download as CSV and XSLX
 
 ### Changed
-- N/A
+- New UI
 
 ### Fixed
 - Incorrect token usage count for Gemini 2.5 Pro (https://github.com/nbonamy/witsy/issues/391)
