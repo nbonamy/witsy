@@ -228,13 +228,7 @@ const applyFilter = (filterText: string) => {
 }
 
 const addClasses = () => {
-  const processItems = (container: HTMLElement) => {
-    if (!container) return
-    
-    // Find all elements that should be menu items but don't have the class yet
-    // Look for divs that are likely menu items (have content, click handlers, etc.)
-    const potentialItems = container.querySelectorAll('.actions > *:not(.item)')
-    
+  const processItems = (potentialItems: NodeListOf<HTMLElement>) => {
     potentialItems.forEach((element: HTMLElement) => {
       // Skip wrapper divs and other structural elements
       if (!element.textContent?.trim() && !element.classList.contains('separator')) return
@@ -250,12 +244,12 @@ const addClasses = () => {
   
   // Process items in the main actions area
   if (list.value) {
-    processItems(list.value)
+    processItems(list.value.querySelectorAll('.actions > *:not(.item)'))
   }
   
   // Process items in the footer area
   if (footer.value) {
-    processItems(footer.value)
+    processItems(footer.value.querySelectorAll('div:not(.item)'))
   }
 }
 
