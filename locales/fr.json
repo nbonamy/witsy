@@ -836,7 +836,7 @@
     },
     "web": {
       "addUrl": "Ajouter une URL",
-      "addWebsite": "Ajouter un site web",
+      "addWebsite": "Ajouter un plan du site",
       "dialog": {
         "sitemapPrompt": "Entrez l'URL du plan de site (par exemple, https://example.com/sitemap.xml)",
         "urlPrompt": "Entrez l'URL (doit commencer par http:// ou https://)"

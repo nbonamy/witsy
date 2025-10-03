@@ -855,7 +855,7 @@
     },
     "web": {
       "addUrl": "URLを追加",
-      "addWebsite": "ウェブサイトを追加",
+      "addWebsite": "サイトマップを追加",
       "dialog": {
         "sitemapPrompt": "サイトマップのURLを入力してください（例：https://example.com/sitemap.xml）",
         "urlPrompt": "URLを入力してください（http:// または https:// で始まる必要があります）"

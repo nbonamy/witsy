@@ -555,7 +555,7 @@
   "docRepo.view.tooltips.openInExplorer": "Open in Finder",
   "docRepo.view.tooltips.viewContents": "View folder contents",
   "docRepo.web.addUrl": "Add URL",
-  "docRepo.web.addWebsite": "Add Website",
+  "docRepo.web.addWebsite": "Add Sitemap",
   "docRepo.web.dialog.sitemapPrompt": "Enter sitemap URL (e.g., https://example.com/sitemap.xml)",
   "docRepo.web.dialog.urlPrompt": "Enter URL (must start with http:// or https://)",
   "docRepo.web.error.invalidUrl": "Invalid URL format. URL must start with http:// or https://",
