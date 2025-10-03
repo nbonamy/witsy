@@ -169,8 +169,9 @@ test('Swal initially visible but closes - retry', async () => {
   vi.useRealTimers()
 })
 
-// Note: didOpen and didClose callback tests are complex due to mock setup
-// The critical paths for fallback dialogs and main options are well covered above
+// Note: didOpen/didClose callback tests would require complex Swal mock setup
+// These are better tested through integration/E2E tests
+// The critical paths (fallback dialogs, button handling, etc.) are well covered above
 
 test('waitUntilClosed - immediately if not visible', async () => {
   vi.mocked(Swal.isVisible).mockReturnValue(false)
