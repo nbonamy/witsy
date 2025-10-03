@@ -284,9 +284,10 @@ defineExpose({
 }
 
 .expert {
-  margin-top: 12px;
+  margin-top: 0px;
   margin-bottom: -12px;
   p {
+    margin-top: 0;
     display: inline-flex;
     align-items: center;
     font-weight: 600;
