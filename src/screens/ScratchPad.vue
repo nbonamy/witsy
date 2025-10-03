@@ -1,7 +1,7 @@
 <template>
   <div class="scratchpad split-pane">
 
-    <ScratchpadSidebar :modified="modified" :fileUrl="fileUrl" :scratchpads="scratchpads" :selectedScratchpad="selectedScratchpad" :contextMenuTarget="targetScratchpad" />
+    <ScratchpadSidebar :fileUrl="fileUrl" :scratchpads="scratchpads" :selectedScratchpad="selectedScratchpad" :contextMenuTarget="targetScratchpad" />
 
     <div class="sp-main">
       <main>
@@ -83,10 +83,10 @@ const undoStack = ref<Array<any>>([])
 const redoStack = ref<Array<any>>([])
 const audioState = ref<AudioState>('idle')
 const copyState = ref<string>('idle')
-const modified = ref(false)
 const conversationMode = ref(null)
 const currentScratchpadId = ref<string>(null)
 const currentTitle = ref<string>(null)
+const lastSavedContent = ref<string | null>(null)
 const scratchpads = ref<ScratchpadHeader[]>([])
 const selectedScratchpad = ref<ScratchpadHeader>(null)
 const showMenu = ref(false)
@@ -106,8 +106,8 @@ const generator = new Generator(store.config)
 // init stuff
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 let llm: LlmEngine = null
-const modifiedCheckDelay = 1000
-let modifiedCheckTimeout: NodeJS.Timeout = null
+const undoStackCheckDelay = 1000
+let undoStackCheckTimeout: NodeJS.Timeout = null
 let fileUrl: string = null
 
 onMounted(() => {
@@ -168,11 +168,11 @@ onMounted(() => {
       onReadAloud()
     }
 
-  })  
+  })
 
-  // for undo/redo
+  // for undo/redo stack building
   document.addEventListener('keyup', (e) => {
-    resetModifiedCheckTimeout()
+    resetUndoStackCheckTimeout()
   })
 
   // init
@@ -182,7 +182,6 @@ onMounted(() => {
   if (props.extra && props.extra.textId) {
     const text = window.api.automation.getText(props.extra.textId)
     editor.value.setContent({ content: text })
-    modified.value = true
   }
 
 })
@@ -190,7 +189,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.api.off('start-dictation', onStartDictation)
   audioPlayer.removeListener(onAudioPlayerStatus)
-  clearTimeout(modifiedCheckTimeout)
+  clearTimeout(undoStackCheckTimeout)
 })
 
 const onStartDictation = () => {
@@ -201,7 +200,7 @@ const updateTitle = () => {
   let title = 'Scratchpad'
   if (currentTitle.value) {
     title += ' - ' + currentTitle.value
-    if (modified.value) {
+    if (checkIfModified()) {
       title += ' *'
     }
   }
@@ -216,10 +215,11 @@ const resetState = () => {
 
   // easy reset
   editor.value.setContent({ content: '' })
-  modified.value = false
   processing.value = false
-  undoStack.value = []
-  redoStack.value = []
+
+  // Initialize with empty baseline so first edit is undoable
+  initializeUndoStack({ content: '', start: null, end: null })
+
   currentScratchpadId.value = null
   currentTitle.value = null
   selectedScratchpad.value = null
@@ -255,20 +255,28 @@ const initLlm = () => {
 
 }
 
-const resetModifiedCheckTimeout = () => {
-  clearTimeout(modifiedCheckTimeout)
-  modifiedCheckTimeout = setTimeout(() => {
-    checkIfModified()
-  }, modifiedCheckDelay)
+const initializeUndoStack = (contents: { content: string, start?: number | null, end?: number | null }) => {
+  undoStack.value = [{
+    before: contents,
+    after: contents,
+    messages: []
+  }]
+  redoStack.value = []
+  lastSavedContent.value = contents.content
 }
 
-const checkIfModified = () => {
+const resetUndoStackCheckTimeout = () => {
+  clearTimeout(undoStackCheckTimeout)
+  undoStackCheckTimeout = setTimeout(() => {
+    updateUndoStack()
+  }, undoStackCheckDelay)
+}
 
+const updateUndoStack = () => {
   const contents = editor.value?.getContent()
   if (!contents) return
 
   if (!undoStack.value.length) {
-
     // if no undo then only if there is content
     if (contents.content.trim().length) {
       undoStack.value.push({
@@ -277,11 +285,8 @@ const checkIfModified = () => {
         messages: chat.value.messages.slice(-2)
       })
       redoStack.value = []
-      modified.value = true
     }
-
   } else {
-
     // check if the last action is different
     const lastState = undoStack.value[undoStack.value.length - 1]
     const lastContent = lastState.after.content
@@ -292,11 +297,21 @@ const checkIfModified = () => {
         messages: chat.value.messages.slice(-2)
       })
       redoStack.value = []
-      modified.value = true
     }
+  }
+}
 
+const checkIfModified = (): boolean => {
+  const contents = editor.value?.getContent()
+  if (!contents) return false
+
+  // New scratchpad: modified if content is not empty
+  if (!currentScratchpadId.value) {
+    return contents.content.trim().length > 0
   }
 
+  // Existing scratchpad: compare with cached saved content
+  return contents.content !== lastSavedContent.value
 }
 
 const onAction = (action: string|ToolbarAction) => {
@@ -359,7 +374,7 @@ const onAction = (action: string|ToolbarAction) => {
 
 const confirmOverwrite = (callback: CallableFunction) => {
 
-  if (!modified.value) {
+  if (!checkIfModified()) {
     callback()
     return
   }
@@ -383,19 +398,15 @@ const onClear = () => {
 }
 
 const onSelectScratchpad = async (scratchpad: ScratchpadHeader) => {
-  // Force check for modifications before prompting
-  clearTimeout(modifiedCheckTimeout)
-  checkIfModified()
-
   // Check for unsaved changes
-  if (modified.value) {
+  if (checkIfModified()) {
     const result = await Dialog.show({
       title: t('common.confirmation.unsavedChanges'),
       text: t('scratchpad.unsavedPrompt'),
       showCancelButton: true,
       showDenyButton: true,
       confirmButtonText: t('common.save'),
-      denyButtonText: t('common.dontSave'),
+      denyButtonText: t('scratchpad.dontSave'),
       cancelButtonText: t('common.cancel')
     })
 
@@ -420,8 +431,6 @@ const onSelectScratchpad = async (scratchpad: ScratchpadHeader) => {
     // clear current state (don't call resetState as it creates new chat)
     editor.value.setContent({ content: '' })
     processing.value = false
-    undoStack.value = []
-    redoStack.value = []
 
     // update state
     currentScratchpadId.value = data.uuid
@@ -429,13 +438,9 @@ const onSelectScratchpad = async (scratchpad: ScratchpadHeader) => {
     selectedScratchpad.value = scratchpad
     editor.value.setContent(data.contents)
 
-    // Initialize undo/redo with loaded content to prevent false modification detection
-    undoStack.value = [{
-      before: { content: '', start: null, end: null },
-      after: data.contents,
-      messages: []
-    }]
-    redoStack.value = []
+    // Initialize undo stack with loaded content as baseline
+    // This ensures undo won't erase the loaded content
+    initializeUndoStack(data.contents)
 
     // chat - restore from data or create new
     if (data.chat) {
@@ -448,9 +453,7 @@ const onSelectScratchpad = async (scratchpad: ScratchpadHeader) => {
     // init llm based on loaded chat or defaults
     initLlm()
 
-    // done - clear modified flag and any pending checks
-    modified.value = false
-    clearTimeout(modifiedCheckTimeout)
+    // done
     updateTitle()
 
   } catch (err) {
@@ -536,15 +539,8 @@ const onSave = async () => {
     // Save (serialize to avoid cloning errors with complex objects)
     const success = window.api.scratchpad.save(store.config.workspaceId, JSON.parse(JSON.stringify(data)))
     if (success) {
-      // Reset undo stack with current content to mark this as the clean state
-      undoStack.value = [{
-        before: { content: '', start: null, end: null },
-        after: data.contents,
-        messages: []
-      }]
-      redoStack.value = []
-      modified.value = false
-      clearTimeout(modifiedCheckTimeout)
+      // Initialize undo stack with saved content as baseline
+      initializeUndoStack(data.contents)
       updateTitle()
       loadScratchpadsList()
       // Update selected scratchpad
@@ -560,12 +556,12 @@ const onSave = async () => {
 }
 
 const onUndo = () => {
-  if (undoStack.value.length > 0) {
+  // Only allow undo if we have more than the baseline entry
+  if (undoStack.value.length > 1) {
     const action = undoStack.value.pop()
     redoStack.value.push(action)
     editor.value.setContent(action.before)
     chat.value.messages?.splice(-2, 2)
-    modified.value = true
   }
 }
 
@@ -575,7 +571,6 @@ const onRedo = () => {
     undoStack.value.push(action)
     editor.value.setContent(action.after)
     chat.value.messages?.push(...action.messages)
-    modified.value = true
   }
 }
 
@@ -759,9 +754,6 @@ const onSendPrompt = async (params: SendPromptParams) => {
     if (rc !== 'success') {
       throw new Error(response.content)
     }
-
-    // done
-    modified.value = true
 
     // default to all response
     const action = {

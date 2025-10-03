@@ -2165,6 +2165,7 @@
       "title": "Delete Scratchpad"
     },
     "deleteError": "Error deleting scratchpad",
+    "dontSave": "Continue and lose changes",
     "fontFamily": {
       "monospace": "Monospace",
       "sansSerif": "Sans-Serif",

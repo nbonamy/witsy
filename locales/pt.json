@@ -2154,6 +2154,7 @@
       "title": "Excluir Bloco de Notas"
     },
     "deleteError": "Erro ao excluir o bloco de notas",
+    "dontSave": "Continuar e perder as alterações",
     "fontFamily": {
       "monospace": "Monoespaçado",
       "sansSerif": "Sem-Serifa",

@@ -2,34 +2,38 @@
   <div class="actionbar-wrapper">
     
     <div class="actionbar" v-if="activeBar == 'standard'">
-      
-      <div class="action" @click="emitEvent('action', 'undo')" v-tooltip="t('common.undo')" :class="{ disabled: !undoStack.length }">
+
+      <div class="action" @click="emitEvent('action', 'save')" v-tooltip="t('common.save')">
+        <SaveIcon />
+      </div>
+
+      <div class="action" @click="emitEvent('action', 'undo')" v-tooltip="t('common.undo')" :class="{ disabled: undoStack.length <= 1 }">
         <UndoIcon />
       </div>
-      
+
       <div class="action" @click="emitEvent('action', 'redo')" v-tooltip="t('common.redo')" :class="{ disabled: !redoStack.length }">
         <RedoIcon />
       </div>
-      
+
       <div class="action" @click="emitEvent('action', 'copy')" v-tooltip="t('scratchpad.actions.copyToClipboard')">
         <ClipboardIcon v-if="copyState == 'idle'"/>
         <ClipboardCheckIcon style="color: var(--scratchpad-actionbar-active-icon-color)" v-else/>
       </div>
-      
+
       <div class="action" @click="onMagicAction($event, 'spellcheck')" v-tooltip="t('scratchpad.actions.spellcheck')">
         <SpellCheckIcon />
       </div>
-      
+
       <div class="action" @click="onMagicBar" v-tooltip="t('scratchpad.actions.writingAssistant')">
         <SparklesIcon />
       </div>
-      
+
       <div :class="{ action: true, active: audioState == 'playing', static: true }" @click="emitEvent('action', 'read')" v-tooltip="t('common.read')">
         <span v-if="audioState == 'playing'"><StopCircleIcon/></span>
         <span v-else-if="audioState == 'loading'"><CircleXIcon/></span>
         <span v-else><Volume2Icon /></span>
       </div>
-    
+
     </div>
     
     <div class="actionbar" v-if="activeBar == 'magic'">
@@ -70,7 +74,7 @@
 <script setup lang="ts">
 
 import FloatingVue, { vTooltip } from 'floating-vue'
-import { ClipboardCheckIcon, ClipboardIcon, FoldVerticalIcon, GraduationCapIcon, ListIcon, MoveLeftIcon, PencilLineIcon, RedoIcon, SparklesIcon, SpellCheckIcon, StopCircleIcon, TypeOutlineIcon, UndoIcon, UnfoldVerticalIcon, Volume2Icon, CircleXIcon } from 'lucide-vue-next'
+import { CircleXIcon, ClipboardCheckIcon, ClipboardIcon, FoldVerticalIcon, GraduationCapIcon, ListIcon, MoveLeftIcon, PencilLineIcon, RedoIcon, SaveIcon, SparklesIcon, SpellCheckIcon, StopCircleIcon, TypeOutlineIcon, UndoIcon, UnfoldVerticalIcon, Volume2Icon } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import { t } from '../services/i18n'
 

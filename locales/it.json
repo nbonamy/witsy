@@ -2132,6 +2132,7 @@
       "title": "Elimina block notes"
     },
     "deleteError": "Errore durante l'eliminazione del block notes",
+    "dontSave": "Continua e perdi le modifiche",
     "fontFamily": {
       "monospace": "Monospace",
       "sansSerif": "Sans-Serif",

@@ -96,7 +96,7 @@ test('Initalizes correctly', async () => {
   expect(wrapper.vm.chat.modelOpts).toBeDefined()
   expect(wrapper.vm.chat.messages).toHaveLength(1)
   expect(wrapper.vm.editor.value).not.toBeNull()
-  expect(wrapper.vm.undoStack).toHaveLength(0)
+  expect(wrapper.vm.undoStack).toHaveLength(1) // Empty baseline
   expect(wrapper.vm.redoStack).toHaveLength(0)
 })
 
@@ -105,7 +105,7 @@ test('Sends prompt and sets modified', async () => {
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system_fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
-  expect(wrapper.vm.modified).toBe(true)
+  expect(wrapper.vm.checkIfModified()).toBe(true)
 })
 
 test('Sends system prompt with params', async () => {
@@ -113,7 +113,7 @@ test('Sends system prompt with params', async () => {
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[0] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system_fr-FR"},{"role":"user","content":"expert_uuid1_prompt\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
-  expect(wrapper.vm.modified).toBe(true)
+  expect(wrapper.vm.checkIfModified()).toBe(true)
 })
 
 test('Sends user prompt with params', async () => {
@@ -121,7 +121,7 @@ test('Sends user prompt with params', async () => {
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[2] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system_fr-FR"},{"role":"user","content":"prompt3\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
-  expect(wrapper.vm.modified).toBe(true)
+  expect(wrapper.vm.checkIfModified()).toBe(true)
 })
 
 test('Clears chat', async () => {
@@ -131,25 +131,79 @@ test('Clears chat', async () => {
   expect(wrapper.findComponent(EditableText).text()).not.toBe('')
   vi.mocked(Dialog.show).mockResolvedValueOnce({ isDismissed: true })
   emitEvent('action', 'clear')
-  await vi.waitUntil(async () => !wrapper.vm.modified)
+  await vi.waitUntil(async () => wrapper.vm.currentScratchpadId === null)
   expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder_en-US')
+})
+
+test('Manual typing creates undo entries', async () => {
+  vi.useFakeTimers()
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // Should start with baseline only
+  expect(wrapper.vm.undoStack).toHaveLength(1)
+  expect(wrapper.vm.undoStack[0].after.content).toBe('')
+
+  // Simulate manual typing
+  wrapper.vm.editor.setContent({ content: 'First edit', start: null, end: null })
+
+  // Trigger keyup event to activate the debounce timeout
+  document.dispatchEvent(new KeyboardEvent('keyup'))
+
+  // Fast-forward past the debounce delay
+  vi.advanceTimersByTime(1000)
+  await wrapper.vm.$nextTick()
+
+  // Should have created new undo entry
+  expect(wrapper.vm.undoStack.length).toBeGreaterThan(1)
+  expect(wrapper.vm.undoStack[wrapper.vm.undoStack.length - 1].after.content).toBe('First edit')
+  expect(wrapper.vm.checkIfModified()).toBe(true)
+
+  // Type more
+  wrapper.vm.editor.setContent({ content: 'First edit plus more', start: null, end: null })
+  document.dispatchEvent(new KeyboardEvent('keyup'))
+  vi.advanceTimersByTime(1000)
+  await wrapper.vm.$nextTick()
+
+  // Should have another undo entry
+  expect(wrapper.vm.undoStack.length).toBeGreaterThan(2)
+  expect(wrapper.vm.undoStack[wrapper.vm.undoStack.length - 1].after.content).toBe('First edit plus more')
+
+  vi.useRealTimers()
 })
 
 test('Undo/redo', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
+
+  // Load a scratchpad to have baseline content
+  const scratchpad = wrapper.vm.scratchpads[0]
+  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
+
+  // Should have baseline in undo stack
+  expect(wrapper.vm.undoStack).toHaveLength(1)
+  const baselineContent = wrapper.findComponent(EditableText).text()
+
+  // Make an edit using LLM (which creates undo entries)
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
-  expect(wrapper.vm.undoStack).toHaveLength(1)
+
+  // Should have more undo entries now
+  expect(wrapper.vm.undoStack.length).toBeGreaterThan(1)
+  const editedContent = wrapper.findComponent(EditableText).text()
+  expect(editedContent).not.toBe(baselineContent)
   expect(wrapper.vm.redoStack).toHaveLength(0)
+
+  // Undo should restore baseline
   emitEvent('action', 'undo')
-  await vi.waitUntil(async () => wrapper.vm.undoStack.length === 0)
-  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder_en-US')
-  expect(wrapper.vm.undoStack).toHaveLength(0)
-  expect(wrapper.vm.redoStack).toHaveLength(1)
+  await wrapper.vm.$nextTick()
+  expect(wrapper.findComponent(EditableText).text()).toBe(baselineContent)
+  expect(wrapper.vm.undoStack).toHaveLength(1) // Back to baseline only
+  expect(wrapper.vm.redoStack.length).toBeGreaterThan(0)
+
+  // Redo should restore edit
   emitEvent('action', 'redo')
-  await vi.waitUntil(async () => wrapper.vm.redoStack.length === 0)
-  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system_fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
-  expect(wrapper.vm.undoStack).toHaveLength(1)
+  await wrapper.vm.$nextTick()
+  expect(wrapper.findComponent(EditableText).text()).toBe(editedContent)
   expect(wrapper.vm.redoStack).toHaveLength(0)
 })
 
@@ -339,18 +393,23 @@ test('Delete removes scratchpad', async () => {
   )
 })
 
-test('Save resets modified flag', async () => {
+test('Saves scratchpad successfully', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
 
-  // Manually set modified (simulating that content changed)
-  wrapper.vm.modified = true
-  expect(wrapper.vm.modified).toBe(true)
+  // Add some content first so there's something to save
+  wrapper.vm.editor.setContent({ content: 'Content to save', start: null, end: null })
+  await wrapper.vm.$nextTick()
+
+  // Before save, should be modified (new content on new scratchpad)
+  expect(wrapper.vm.checkIfModified()).toBe(true)
 
   vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'Test', isDenied: false, isDismissed: false })
   emitEvent('action', 'save')
   await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
 
-  expect(wrapper.vm.modified).toBe(false)
+  expect(window.api.scratchpad.save).toHaveBeenCalled()
+  expect(wrapper.vm.currentScratchpadId).toBeDefined()
+  expect(wrapper.vm.undoStack).toHaveLength(1) // Baseline after save
 })
 
 test('Load initializes undo stack', async () => {
@@ -363,15 +422,15 @@ test('Load initializes undo stack', async () => {
   expect(wrapper.vm.undoStack).toHaveLength(1)
   expect(wrapper.vm.undoStack[0].after).toEqual({ content: 'Test content' })
   expect(wrapper.vm.redoStack).toHaveLength(0)
-  expect(wrapper.vm.modified).toBe(false)
+  expect(wrapper.vm.checkIfModified()).toBe(false)
 })
 
 test('Switching with unsaved changes prompts', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
 
-  // Manually set modified (simulating unsaved changes)
-  wrapper.vm.modified = true
-  expect(wrapper.vm.modified).toBe(true)
+  // Actually modify content to trigger unsaved changes
+  wrapper.vm.editor.setContent({ content: 'Modified content', start: null, end: null })
+  await wrapper.vm.$nextTick()
 
   // Try to switch
   vi.spyOn(Dialog, 'show').mockResolvedValue({ isDismissed: true, isConfirmed: false, isDenied: false })

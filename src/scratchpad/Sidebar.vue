@@ -12,28 +12,24 @@
     </header>
 
     <main>
-      <div class="toolbar">
-        <button @click="emitEvent('action', 'clear')">
-          <FileIcon /><span>{{ t('common.new') }}</span>
-        </button>
-
-        <button @click="emitEvent('action', 'save')">
-          <SaveIcon /><span>{{ t('common.save') }}</span>
-        </button>
-      </div>
-
       <div class="history-section">
         <div class="history-title">{{ t('scratchpad.history.documents') }}</div>
         <History :scratchpads="scratchpads" :selectedScratchpad="selectedScratchpad" :contextMenuTarget="contextMenuTarget" @select-scratchpad="onSelectScratchpad" @context-menu="onContextMenu" />
       </div>
     </main>
 
+    <footer>
+      <button class="cta" @click="emitEvent('action', 'clear')">
+        <NotebookPenIcon />{{ t('common.new') }}
+      </button>
+    </footer>
+
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { FileIcon, FileUpIcon, SaveIcon, Settings2Icon } from 'lucide-vue-next'
+import { FileUpIcon, NotebookPenIcon, Settings2Icon } from 'lucide-vue-next'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import History from './History.vue'
 import useEventBus from '../composables/event_bus'
@@ -43,7 +39,6 @@ import { ScratchpadHeader } from '../types/index'
 const { emitEvent } = useEventBus()
 
 defineProps({
-  modified: Boolean,
   fileUrl: String,
   scratchpads: {
     type: Array as () => ScratchpadHeader[],
@@ -81,21 +76,16 @@ const onContextMenu = ({ event, scratchpad }: { event: MouseEvent, scratchpad: S
 
 .sp-sidebar {
   flex: 0 0 var(--large-panel-width);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 
   main {
+    flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-  }
-
-  .toolbar {
-    flex: 0 0 auto;
-    display: flex;
-    margin-bottom: 1.5rem;
-
-    button {
-      padding: 0.5rem;
-    }
   }
 
   .history-section {
@@ -119,6 +109,10 @@ const onContextMenu = ({ event, scratchpad }: { event: MouseEvent, scratchpad: S
     flex: 1;
     overflow-y: auto;
     min-height: 0;
+  }
+
+  footer {
+    flex-shrink: 0;
   }
 }
 

@@ -2154,6 +2154,7 @@
       "title": "删除草稿本"
     },
     "deleteError": "删除草稿本时出错",
+    "dontSave": "继续并丢失更改",
     "fontFamily": {
       "monospace": "等宽字体",
       "sansSerif": "无衬线字体",
