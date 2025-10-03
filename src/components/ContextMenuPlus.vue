@@ -249,7 +249,7 @@ const addClasses = () => {
   
   // Process items in the footer area
   if (footer.value) {
-    processItems(footer.value.querySelectorAll('div:not(.item)'))
+    processItems(footer.value.querySelectorAll('.footer > *:not(.item)'))
   }
 }
 
