@@ -32,16 +32,16 @@
             <td>{{ lastRun(agent) }}</td>
             <td><div class="actions">
               <SpinningIcon v-if="startingAgents.includes(agent.uuid)" :spinning="true" class="run" />
-              <PlayIcon v-else
+              <ButtonIcon v-else
                 class="run"
                 v-tooltip="{ text: t('agent.help.run'), position: 'top-left' }"
                 @click.stop="onAgentRun(agent)"
-              />
-              <EyeIcon 
+              ><PlayIcon /></ButtonIcon>
+              <ButtonIcon
                 class="view" 
                 v-tooltip="{ text: t('agent.help.view'), position: 'top-left' }" 
                 @click.stop="$emit('view', agent)" 
-              />
+              ><EyeIcon /></ButtonIcon>
               <ContextMenuTrigger position="below-right">
                 <template #menu>
                   <div class="item edit" @click="$emit('edit', agent)">
@@ -74,6 +74,7 @@ import { useTimeAgo } from '../composables/ago'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Agent, AgentRun } from '../types/index'
+import ButtonIcon from '../components/ButtonIcon.vue'
 
 const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'export', 'importA2A', 'importJson'])
 

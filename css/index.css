@@ -767,7 +767,7 @@ table.table-plain {
     }
 
     td .actions {
-      gap: 1rem;
+      gap: 0.25rem;
       svg {
         width: var(--icon-lg);
         height: var(--icon-lg);
