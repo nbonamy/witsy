@@ -299,7 +299,7 @@ test('Assistant artifact with HTML preview', async () => {
   expect(artifact.exists()).toBe(true)
   expect(artifact.find('.panel-header label').text()).toBe('Simple HTML Page')
 
-  const artifactComponent = wrapper.findComponent(MessageItemHtmlBlock)
+  const artifactComponent: VueWrapper<any> = wrapper.findComponent(MessageItemHtmlBlock)
 
   // Phase 1: Initial state - loading div should show, no iframe
   expect(artifact.find('.html-loading').exists()).toBe(true)
@@ -325,7 +325,7 @@ test('Assistant artifact with HTML preview', async () => {
   expect(artifact.find('.html-loading').exists()).toBe(false)
 
   // Check for preview controls
-  const previewButton = artifact.find('.icon.preview')
+  const previewButton = artifact.find('.preview')
   expect(previewButton.exists()).toBe(true)
 
   // Toggle off HTML preview
@@ -379,7 +379,7 @@ test('Assistant artifact with HTML preview (DOCTYPE)', async () => {
   expect(artifact.find('.panel-header label').text()).toBe('HTML with DOCTYPE')
   
   // Check for preview controls (play/stop buttons)
-  expect(artifact.find('.icon.preview').exists()).toBe(true)
+  expect(artifact.find('.preview').exists()).toBe(true)
   
   // Check if iframe is present for HTML preview
   const iframe = artifact.find('iframe')
@@ -400,7 +400,7 @@ test('Assistant artifact with HTML preview (HTML tag)', async () => {
   expect(artifact.find('.panel-header label').text()).toBe('HTML with tag')
   
   // Check for preview controls (play/stop buttons)
-  expect(artifact.find('.icon.preview').exists()).toBe(true)
+  expect(artifact.find('.preview').exists()).toBe(true)
   
   // Check if iframe is present for HTML preview
   const iframe = artifact.find('iframe')
@@ -633,20 +633,20 @@ test('Format reasoning message', async () => {
 
 test('Artifact download context menu', async () => {
   const wrapper = await mount(botMessageToolArtifact1)
-  
+
   // Check that the artifact has a download button
   const artifact = wrapper.find('.body .artifact')
-  const downloadButton = artifact.find('.panel-header .icon.download')
+  const downloadButton = artifact.find('.panel-header .download .trigger')
   expect(downloadButton.exists()).toBe(true)
-  
+
   // Click the download button to show context menu
   await downloadButton.trigger('click')
   await nextTick()
-  
+
   // Check that context menu is visible
-  const contextMenu = wrapper.findComponent({ name: 'ContextMenu' })
+  const contextMenu = wrapper.find('.context-menu')
   expect(contextMenu.exists()).toBe(true)
-  
+
   // Check that all three download options are present
   const menuItems = contextMenu.findAll('.item')
   expect(menuItems.length).toBe(3)
@@ -658,17 +658,17 @@ test('Artifact download context menu', async () => {
 
 test('Artifact download text', async () => {
   const wrapper = await mount(botMessageToolArtifact1)
-  
+
   // Check that the artifact has a download button
   const artifact = wrapper.find('.body .artifact')
-  const downloadButton = artifact.find('.panel-header .icon.download')
+  const downloadButton = artifact.find('.panel-header .download .trigger')
   expect(downloadButton.exists()).toBe(true)
-  
+
   // Click the download button to show context menu
   await downloadButton.trigger('click')
   await nextTick()
 
-  const contextMenu = wrapper.findComponent({ name: 'ContextMenu' })
+  const contextMenu = wrapper.find('.context-menu')
   const menuItems = contextMenu.findAll('.item')
 
   // markdown export
@@ -685,17 +685,17 @@ test('Artifact download text', async () => {
 
 test('Artifact download markdown', async () => {
   const wrapper = await mount(botMessageToolArtifact1)
-  
+
   // Check that the artifact has a download button
   const artifact = wrapper.find('.body .artifact')
-  const downloadButton = artifact.find('.panel-header .icon.download')
+  const downloadButton = artifact.find('.panel-header .download .trigger')
   expect(downloadButton.exists()).toBe(true)
-  
+
   // Click the download button to show context menu
   await downloadButton.trigger('click')
   await nextTick()
 
-  const contextMenu = wrapper.findComponent({ name: 'ContextMenu' })
+  const contextMenu = wrapper.find('.context-menu')
   const menuItems = contextMenu.findAll('.item')
 
   // markdown export
@@ -723,7 +723,7 @@ test('Assistant message with table', async () => {
   expect(artifact.find('.panel-body table').exists()).toBe(true)
 
   // Check for download button
-  const downloadButton = artifact.find('.panel .icon.download')
+  const downloadButton = artifact.find('.panel .download')
   expect(downloadButton.exists()).toBe(true)
 })
 
@@ -731,7 +731,7 @@ test('Table download context menu', async () => {
   const wrapper = await mount(botMessageTable)
 
   const artifact = wrapper.find('.body .artifact')
-  const downloadButton = artifact.find('.panel .icon.download')
+  const downloadButton = artifact.find('.panel .download .trigger')
   expect(downloadButton.exists()).toBe(true)
 
   // Click the download button to show context menu
@@ -739,7 +739,7 @@ test('Table download context menu', async () => {
   await nextTick()
 
   // Check that context menu is visible
-  const contextMenu = wrapper.findComponent({ name: 'ContextMenu' })
+  const contextMenu = wrapper.find('.context-menu')
   expect(contextMenu.exists()).toBe(true)
 
   // Check that CSV and XLSX options are present

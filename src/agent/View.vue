@@ -32,8 +32,12 @@
 
     </main>
 
-    <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
-  
+    <ContextMenuPlus v-if="showMenu" @close="closeContextMenu" :mouseX="menuX" :mouseY="menuY">
+      <div class="item" :class="{ disabled: selection.length === 0 && !targetRun }" @click="(selection.length > 0 || targetRun) && handleActionClick('delete')">
+        {{ t('common.delete') }}
+      </div>
+    </ContextMenuPlus>
+
   </div>
 
 </template>
@@ -49,7 +53,7 @@ import Dialog from '../composables/dialog'
 import Info from './Info.vue'
 import History from './History.vue'
 import Run from './Run.vue'
-import ContextMenu from '../components/ContextMenu.vue'
+import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import { ChevronLeftIcon } from 'lucide-vue-next'
 
 const runs = ref<AgentRun[]>([])
@@ -160,16 +164,8 @@ const closeContextMenu = () => {
   showMenu.value = false
 }
 
-const contextMenuActions = () => {
-  const selectedCount = selection.value.length > 0 ? selection.value.length : (targetRun.value ? 1 : 0)
-  
-  return [
-    { label: t('common.delete'), action: 'delete', disabled: selectedCount === 0 },
-  ]
-}
-
 const handleActionClick = async (action: string) => {
-  
+
   // close
   closeContextMenu()
 

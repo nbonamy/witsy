@@ -4,7 +4,11 @@
       <ChatListTimeline v-if="displayMode == 'timeline'" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
       <ChatListFolder v-if="displayMode == 'folder'" :filtered="filter != ''" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
     </div>
-    <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+    <ContextMenuPlus v-if="showMenu" @close="closeContextMenu" :mouseX="menuX" :mouseY="menuY">
+      <div class="item" @click="handleActionClick('rename')">{{ t('common.rename') }}</div>
+      <div v-if="displayMode === 'folder'" class="item" @click="handleActionClick('move')">{{ t('common.move') }}</div>
+      <div class="item" @click="handleActionClick('delete')">{{ t('common.delete') }}</div>
+    </ContextMenuPlus>
   </div>
 </template>
 
@@ -17,7 +21,7 @@ import { kMediaChatId, store } from '../services/store'
 import { ChatListMode } from '../types/config'
 import ChatListFolder from './ChatListFolder.vue'
 import ChatListTimeline from './ChatListTimeline.vue'
-import ContextMenu from './ContextMenu.vue'
+import ContextMenuPlus from './ContextMenuPlus.vue'
 import useEventBus from '../composables/event_bus'
 
 const { emitEvent } = useEventBus()
@@ -63,12 +67,6 @@ const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const targetRow = ref<Chat|null>(null)
-
-const contextMenuActions = () => [
-  { label: t('common.rename'), action: 'rename' },
-  ...(props.displayMode === 'folder' ? [ { label: t('common.move'), action: 'move' } ] : []),
-  { label: t('common.delete'), action: 'delete' },
-]
 
 let scrollEndTimeout: NodeJS.Timeout|null = null
 onMounted(() => {

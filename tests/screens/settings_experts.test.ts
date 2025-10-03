@@ -273,7 +273,7 @@ test('Context Menu', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
   expect(tab.findAll('.context-menu')).toHaveLength(0)
-  await tab.find('.list-actions .list-action.menu').trigger('click')
+  await tab.find('.list-actions .list-action.menu .trigger').trigger('click')
   await tab.vm.$nextTick()
   expect(tab.findAll('.context-menu')).toHaveLength(1)
 

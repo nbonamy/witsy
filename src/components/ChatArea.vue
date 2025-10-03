@@ -22,10 +22,39 @@
         <SlidersHorizontalIcon />
       </ButtonIcon>
 
-      <ButtonIcon class="menu" @click="onMenu" v-if="chat?.title || store.isFeatureEnabled('chat.temporary')">
-        <EllipsisVerticalIcon />
-      </ButtonIcon>
-    
+      <ContextMenuTrigger class="menu" :position="chatMenuPosition" v-if="chat?.title || store.isFeatureEnabled('chat.temporary')">
+        <template #trigger>
+          <EllipsisVerticalIcon />
+        </template>
+        <template #menu>
+          <div v-if="store.isFeatureEnabled('chat.temporary')"
+               class="item"
+               @click="handleActionClick('toggle_temp')">
+            {{ chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary') }}
+          </div>
+          <div class="item" @click="handleActionClick('rename')">
+            {{ t('common.rename') }}
+          </div>
+          <div v-if="store.isFeatureEnabled('chat.exportMarkdown')"
+               class="item"
+               :class="{ disabled: !hasMessages() }"
+               @click="hasMessages() && handleActionClick('exportMarkdown')">
+            {{ t('chat.actions.exportMarkdown') }}
+          </div>
+          <div v-if="store.isFeatureEnabled('chat.exportPdf')"
+               class="item"
+               :class="{ disabled: !hasMessages() }"
+               @click="hasMessages() && handleActionClick('exportPdf')">
+            {{ t('chat.actions.exportPdf') }}
+          </div>
+          <div class="item"
+               :class="{ disabled: !isSaved() }"
+               @click="isSaved() && handleActionClick('delete')">
+            {{ t('common.delete') }}
+          </div>
+        </template>
+      </ContextMenuTrigger>
+
   </header>
     <main>
       <div class="chat-content">
@@ -55,9 +84,7 @@
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat" @close="showModelSettings = false"/>
     
     </main>
-    
-    <ContextMenu v-if="showChatMenu" @close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
-  
+
   </div>
 </template>
 
@@ -76,7 +103,8 @@ import { exportToPdf } from '../services/pdf'
 import { kMediaChatId, store } from '../services/store'
 import { Expert, Message } from '../types/index'
 import ButtonIcon from './ButtonIcon.vue'
-import ContextMenu, { MenuPosition } from './ContextMenu.vue'
+import ContextMenuTrigger from './ContextMenuTrigger.vue'
+import { MenuPosition } from './ContextMenuPlus.vue'
 import EmptyChat from './EmptyChat.vue'
 import MessageList from './MessageList.vue'
 import Prompt, { SendPromptParams } from './Prompt.vue'
@@ -97,23 +125,7 @@ const props = defineProps({
 })
 
 const chatMenuPosition = computed((): MenuPosition => {
-  return /*window.api.platform == 'win32' ? 'left' :*/ 'right'
-})
-
-const chatMenuActions = computed(() => {
-  return [
-    ...(store.isFeatureEnabled('chat.temporary') ? [
-      { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
-    ] : []),
-    { label: t('common.rename'), action: 'rename', disabled: false },
-    ...(store.isFeatureEnabled('chat.exportMarkdown') ? [
-      { label: t('chat.actions.exportMarkdown'), action: 'exportMarkdown', disabled: !hasMessages() },
-    ] : []),
-    ...(store.isFeatureEnabled('chat.exportPdf') ? [
-      { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
-    ] : []),
-    { label: t('common.delete'), action: 'delete', disabled: !isSaved() },
-  ].filter((a) => a != null)
+  return /*window.api.platform == 'win32' ? 'left' :*/ 'below-right'
 })
 
 const isSaved = () => {
@@ -151,9 +163,6 @@ const historyProvider = (event: KeyboardEvent): string[] => {
 const prompt= ref<typeof Prompt>(null)
 const conversationMode= ref<string>('')
 const showModelSettings = ref(false)
-const showChatMenu = ref(false)
-const menuX = ref(0)
-const menuY = ref(0)
 
 const emit = defineEmits(['prompt', 'run-agent', 'stop-generation'])
 
@@ -189,20 +198,7 @@ const onRenameChat = () => {
   emitEvent('rename-chat', props.chat)
 }
 
-const onMenu = () => {
-  showChatMenu.value = true
-  menuX.value = 24 + (chatMenuPosition.value == 'below' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
-  menuY.value = 100 + (window.api.platform == 'win32' ? 18 : 4)
-}
-
-const closeChatMenu = () => {
-  showChatMenu.value = false
-}
-
 const handleActionClick = async (action: string) => {
-
-  // close
-  closeChatMenu()
 
   // process
   if (action === 'toggle_temp') {

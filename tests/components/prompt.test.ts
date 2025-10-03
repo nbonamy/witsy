@@ -352,9 +352,9 @@ test('Stores command for later', async () => {
   await prompt.trigger('keydown', { key: '#' })
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.filter').length).toBe(1)
+  expect(menu.findAll('.filter-input').length).toBe(1)
   expect(menu.findAll('.item').length).toBe(4)
-  await menu.find('.item:nth-child(2)').trigger('click')
+  await menu.findAll('.item')[1].trigger('click')
   expect(wrapper.vm.command.id).toBe('uuid2')
   expect(wrapper.find('.input .icon.command.left').exists()).toBe(true)
   prompt.setValue('this is my prompt')
@@ -374,9 +374,9 @@ test('Selects command and run', async () => {
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.filter').length).toBe(1)
+  expect(menu.findAll('.filter-input').length).toBe(1)
   expect(menu.findAll('.item').length).toBe(4)
-  await menu.find('.item:nth-child(2)').trigger('click')
+  await menu.findAll('.item')[1].trigger('click')
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],

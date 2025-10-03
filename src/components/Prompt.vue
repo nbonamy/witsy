@@ -53,16 +53,16 @@
       
       <slot name="actions" />
       
-      <ButtonIcon @click="onCommands(true)" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')">
+      <ButtonIcon :id="`commands-menu-${uniqueId}`" @click="onCommands()" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')">
         <BIconMagic class="icon command" />
       </ButtonIcon>
       
       <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
       
-      <ButtonIcon @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation">
+      <ButtonIcon :id="`dictate-${uniqueId}`" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation">
         <MicIcon
           v-tooltip="{ text: t('prompt.conversation.tooltip'), position: 'top' }"
-          :class="{ icon: true, dictate: true, active: dictating }" 
+          :class="{ icon: true, dictate: true, active: dictating }"
         />
       </ButtonIcon>
       
@@ -93,11 +93,28 @@
     
     <slot name="between" />
     <slot name="after" />
-    
-    <ContextMenu v-if="showCommands" @close="closeContextMenu" :show-filter="true" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    
-    <ContextMenu v-if="showConversationMenu" @close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    
+
+    <ContextMenuPlus v-if="showExperts" @close="closeContextMenu" :show-filter="true" anchor=".prompt .textarea-wrapper" :position="menusPosition">
+      <div v-for="exp in expertsMenuItems" :key="exp.id" class="item" @click="handleExpertClick(exp.id)">
+        <BrainIcon class="icon" />
+        {{ exp.name }}
+      </div>
+    </ContextMenuPlus>
+
+    <ContextMenuPlus v-if="showCommands" @close="closeContextMenu" :show-filter="true" :anchor="commandsAnchor" :position="menusPosition">
+      <div v-for="cmd in commands" :key="cmd.action" class="item" @click="handleCommandClick(cmd.action)">
+        <span v-if="typeof cmd.icon === 'string'" class="icon text">{{ cmd.icon }}</span>
+        <component :is="cmd.icon" v-else-if="typeof cmd.icon === 'object'" class="icon" />
+        {{ cmd.label }}
+      </div>
+    </ContextMenuPlus>
+
+    <ContextMenuPlus v-if="showConversationMenu" @close="closeContextMenu" :anchor="`#dictate-${uniqueId}`" :position="menusPosition">
+      <div v-for="item in conversationMenu" :key="item.action" class="item" @click="handleConversationClick(item.action)">
+        {{ item.label }}
+      </div>
+    </ContextMenuPlus>
+
     <PromptMenu
       v-if="showPromptMenu"
       :anchor="`#prompt-menu-${uniqueId}`"
@@ -165,7 +182,7 @@ import { DocumentBase } from '../types/rag'
 import { isSTTReady, StreamingChunk } from '../voice/stt'
 import AttachmentView from './Attachment.vue'
 import ButtonIcon from './ButtonIcon.vue'
-import ContextMenu, { MenuPosition } from './ContextMenu.vue'
+import ContextMenuPlus, { MenuPosition } from './ContextMenuPlus.vue'
 import EngineModelMenu from './EngineModelMenu.vue'
 import Loader from './Loader.vue'
 import PromptFeature from './PromptFeature.vue'
@@ -283,8 +300,7 @@ const deepResearchActive = ref(false)
 const dictating = ref(false)
 const processing = ref(false)
 const isDragOver = ref(false)
-const menuX = ref(0)
-const menuY = ref(0)
+const commandsAnchor = ref('.prompt .textarea-wrapper')
 
 const emit = defineEmits(['set-engine-model', 'tools-updated', 'prompt', 'run-agent','stop'])
 
@@ -306,6 +322,15 @@ const isProcessing = computed(() => {
 
 const isPrompting = computed(() => {
   return props.chat?.lastMessage()?.transient
+})
+
+const expertsMenuItems = computed(() => {
+  return store.experts
+    .filter((e) => e.state === 'enabled')
+    .map(e => ({
+      id: e.id,
+      name: e.name || expertI18n(e, 'name')
+    }))
 })
 
 const commands = computed(() => {
@@ -681,10 +706,6 @@ const onDrop = async (event: DragEvent) => {
 
 
 const openExperts = () => {
-  const icon = document.querySelector('.prompt .experts')
-  const rect = icon?.getBoundingClientRect()
-  menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
-  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 16 )  + 24
   showExperts.value = true
 }
 
@@ -846,10 +867,6 @@ const startDictation = async () => {
 
 const onConversationMenu = () => {
   if (!props.enableConversations) return
-  const icon = document.querySelector('.prompt .dictate')
-  const rect = icon?.getBoundingClientRect()
-  menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
-  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect.y : 8 )  + 24
   showConversationMenu.value = true
 }
 
@@ -1078,13 +1095,10 @@ const disableCommand = () => {
   command.value = null
 }
 
-const onCommands = (immediate: boolean) => {
+const onCommands = () => {
+  commandsAnchor.value = `#commands-menu-${uniqueId.value}`
+  runCommandImmediate = true
   showCommands.value = true
-  runCommandImmediate = immediate
-  const anchor = document.querySelector('.prompt .icon.command')
-  const rect = anchor?.getBoundingClientRect()
-  menuX.value = rect?.right - 280
-  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y + 24 : 96)
 }
 
 const handleCommandClick = (action: string) => {
@@ -1186,7 +1200,9 @@ const onKeyDown = (event: KeyboardEvent) => {
     }
   } else if (event.key === '#') {
     if (props.enableCommands && prompt.value === '') {
-      onCommands(false)
+      commandsAnchor.value = '.prompt .textarea-wrapper'
+      runCommandImmediate = false
+      showCommands.value = true
       prompt.value = '#'
       event.preventDefault()
       return false
@@ -1398,14 +1414,12 @@ defineExpose({
       }
 
       .icon.left.command {
-        position: relative;
-        top: 2px;
         transform: scale(0.9);
       }
 
       .icon.left.loader-wrapper {
         position: relative;
-        top: -4px;
+        top: -8px;
         margin-left: 0;
         margin-right: -8px;
         height: 19px;
@@ -1463,6 +1477,14 @@ defineExpose({
 
     &:not(:has(*)) {
       display: none;
+    }
+
+    .prompt-menu {
+      position: relative;
+      left: -4px;
+      .icon {
+        transform: scale(1.2);
+      }
     }
 
     .model-menu-button {

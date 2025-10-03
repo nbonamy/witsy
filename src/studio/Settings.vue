@@ -143,7 +143,11 @@
 
     <VariableEditor ref="editor" id="studio-variable-editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
 
-    <ContextMenu v-if="showPromptLibrary" :actions="promptLibrary" :x="menuX" :y="menuY" @action-clicked="onRunPromptLibrary" @close="showPromptLibrary = false"/>
+    <ContextMenuPlus v-if="showPromptLibrary" :mouseX="menuX" :mouseY="menuY" @close="showPromptLibrary = false">
+      <div v-for="item in promptLibrary" :key="item.action" class="item" @click="onRunPromptLibrary(item.action)">
+        {{ item.label }}
+      </div>
+    </ContextMenuPlus>
 
   </div>
 </template>
@@ -155,7 +159,7 @@ import { Model } from 'multi-llm-ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import AttachmentView from '../components/Attachment.vue'
 import ComboBox from '../components/Combobox.vue'
-import ContextMenu, { MenuAction } from '../components/ContextMenu.vue'
+import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import RefreshButton from '../components/RefreshButton.vue'
 import VariableTable from '../components/VariableTable.vue'
 import Dialog from '../composables/dialog'
@@ -556,7 +560,7 @@ const onShowPromptLibrary = (event: MouseEvent) => {
 
 const onRunPromptLibrary = (action: string) => {
   showPromptLibrary.value = false
-  const libraryPrompt = promptLibrary.value.find((a: MenuAction) => a.action === action)
+  const libraryPrompt = promptLibrary.value.find((a: any) => a.action === action)
   if (libraryPrompt) prompt.value = libraryPrompt.prompt
 }
 
