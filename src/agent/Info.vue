@@ -5,21 +5,21 @@
   
     <div class="panel-header">
       <label>{{ t('agent.view.header') }}</label>
-      <PlayIcon 
-        class="icon run" 
+      <ButtonIcon 
+        class="run" 
         v-tooltip="{ text: t('agent.help.run'), position: 'bottom-left' }" 
         @click="onRun" 
-      />
-      <PencilIcon 
-        class="icon edit" 
+      ><PlayIcon /></ButtonIcon>
+      <ButtonIcon 
+        class="edit" 
         v-tooltip="{ text: t('agent.help.edit'), position: 'bottom-left' }" 
         @click="onEdit" 
-      />
-      <Trash2Icon 
-        class="icon delete" 
+      ><PencilIcon /></ButtonIcon>
+      <ButtonIcon 
+        class="delete" 
         v-tooltip="{ text: t('agent.help.delete'), position: 'bottom-left' }" 
         @click="onDelete" 
-      />
+      ><Trash2Icon /></ButtonIcon>
     </div>
     
     <div class="panel-body form form-vertical form-large">
@@ -53,6 +53,7 @@
 import { CronExpressionParser } from 'cron-parser'
 import { PencilIcon, PlayIcon, Trash2Icon } from 'lucide-vue-next'
 import { PropType, computed } from 'vue'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import { t } from '../services/i18n'
 import { Agent, AgentRun } from '../types/index'
 
