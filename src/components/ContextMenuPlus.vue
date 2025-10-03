@@ -517,7 +517,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   margin: 0px !important;
-  padding: 0.25rem 0rem;
+  padding: 0.5rem 0rem;
   scrollbar-color: var(--scrollbar-thumb-color) var(--control-textarea-bg-color);
 }
 
@@ -568,7 +568,8 @@ defineExpose({
 /* Global styles for menu items (to be used by slotted content) */
 :deep(.item) {
   position: relative;
-  padding: 0.5rem 1rem;
+  margin: 0rem 0.5rem;
+  padding: 0.5rem 0.5rem;
   cursor: pointer;
   font-size: 14.5px;
   white-space: nowrap;
