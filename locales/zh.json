@@ -843,6 +843,15 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "search": {
+      "error": "搜索时发生错误。请再试一次。",
+      "noResults": "未找到与您的查询相关的结果。",
+      "placeholder": "输入您的搜索查询...",
+      "results": "搜索结果（{count}）",
+      "score": "相关性分数：{score}",
+      "text": "输入您的搜索查询以在此知识库中查找相关信息。",
+      "title": "搜索知识库"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

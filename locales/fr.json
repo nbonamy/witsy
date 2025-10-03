@@ -824,6 +824,15 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "search": {
+      "error": "Une erreur est survenue pendant la recherche. Veuillez réessayer.",
+      "noResults": "Aucun résultat trouvé pour votre requête.",
+      "placeholder": "Saisissez votre requête de recherche...",
+      "results": "Résultats de la recherche ({count})",
+      "score": "Score de pertinence : {score}",
+      "text": "Saisissez votre requête de recherche pour trouver des informations pertinentes dans cette base de connaissances.",
+      "title": "Rechercher dans la base de connaissances"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

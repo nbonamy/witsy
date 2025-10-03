@@ -43,6 +43,9 @@
             </div>
           </div>
         </div>
+        <ButtonIcon class="search" v-tooltip="{ text: t('docRepo.search.title'), position: 'bottom-left' }" v-if="!isEditingTitle" @click="onSearch">
+          <SearchIcon />
+        </ButtonIcon>
         <ButtonIcon class="delete" v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }" v-if="!isEditingTitle" @click="onDeleteRepo(selectedRepo)">
           <Trash2 />
         </ButtonIcon>
@@ -56,7 +59,7 @@
 
 <script setup lang="ts">
 
-import { CheckIcon, FolderPlusIcon, PencilIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
+import { CheckIcon, FolderPlusIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import Dialog from '../composables/dialog'
@@ -84,6 +87,8 @@ const createDialog = ref(null)
 const isEditingTitle = ref(false)
 const editingTitle = ref('')
 const titleInput = ref<HTMLInputElement | null>(null)
+
+
 
 onMounted(async () => {
   window.api.on('docrepo-modified', loadDocRepos)
@@ -164,6 +169,83 @@ const cancelEditingTitle = () => {
   editingTitle.value = ''
 }
 
+const escapeHtml = (text: string): string => {
+  const div = document.createElement('div')
+  div.textContent = text
+  return div.innerHTML
+}
+
+const onSearch = async () => {
+  if (!selectedRepo.value) return
+  
+  try {
+    const result = await Dialog.show({
+      title: t('docRepo.search.title'),
+      text: t('docRepo.search.text'),
+      input: 'text',
+      inputPlaceholder: t('docRepo.search.placeholder'),
+      showCancelButton: true,
+    })
+
+    if (!result.isConfirmed || !result.value?.trim()) {
+      return
+    }
+    
+    const searchResults = await window.api.docrepo.query(selectedRepo.value.uuid, result.value.trim())
+    if (!searchResults || searchResults.length === 0) {
+      await Dialog.show({
+        title: t('docRepo.search.title'),
+        text: t('docRepo.search.noResults')
+      })
+      return
+    }
+
+    const resultsHtml = searchResults.map((result: any) => {
+
+      let html = `<div class="search-result-item">`
+        
+      if (result.metadata?.title) {
+        html += '<div class="result-title">'
+        if (result.metadata.url) {
+          html += `<a href="${result.metadata?.url || '#'}" target="_blank" rel="noopener noreferrer">`
+        }
+        html += escapeHtml(result.metadata.title)
+        if (result.metadata.url) {
+          html += `</a>`
+        }
+        html += `</div>`
+      }
+
+      html += `<div class="result-content">${escapeHtml(result.content)}</div>`
+
+      if (result.score) {
+        html += `<div class="result-metadata">`
+        html += `<span class="score">${t('docRepo.search.score', { score: result.score.toFixed(3) })}</span>`
+        html += `</div>`
+      }
+      
+      html += `</div>`
+      return html
+    
+    }).join('')
+    
+    await Dialog.show({
+      title: t('docRepo.search.results', { count: searchResults.length }),
+      html: `<div class="search-results-container">${resultsHtml}</div>`,
+      customClass: {
+        popup: 'search-results-dialog'
+      }
+    })
+
+  } catch (error) {
+    console.error('Search error:', error)
+    await Dialog.show({
+      title: t('docRepo.search.title'),
+      text: t('docRepo.search.error')
+    })
+  }
+}
+
 </script>
 
 <style scoped>
@@ -223,5 +305,47 @@ const cancelEditingTitle = () => {
 
   }
 }
+
+
+</style>
+
+<style>
+.search-results-dialog {
+  width: 700px !important;
+  max-width: 700px !important;
+}
+
+.search-results-dialog .swal2-html-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.search-results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.search-result-item {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border-color);
+  gap: 0.5rem;
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.search-result-item .result-title {
+  font-weight: var(--font-weight-medium);
+}
+
+.search-result-item .result-metadata .score {
+  color: var(--color-success);
+  font-weight: var(--font-weight-regular);
+}
+
 
 </style>
