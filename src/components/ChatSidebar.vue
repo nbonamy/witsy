@@ -194,9 +194,11 @@ const onMove = () => {
   }
 }
 
-const onResizeSidebarStart = async () => {
+const onResizeSidebarStart = async (event: MouseEvent) => {
   manualResize.value = true
   await nextTick()
+  // Calculate offset based on where user clicked vs current width
+  panelOffset = event.clientX - width.value
   window.addEventListener('mousemove', onResizeSidebarMove)
   window.addEventListener('mouseup', onResizeSidebarEnd)
 }
