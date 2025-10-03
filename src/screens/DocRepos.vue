@@ -88,8 +88,6 @@ const isEditingTitle = ref(false)
 const editingTitle = ref('')
 const titleInput = ref<HTMLInputElement | null>(null)
 
-
-
 onMounted(async () => {
   window.api.on('docrepo-modified', loadDocRepos)
   onEvent('create-docrepo', onCreate)
