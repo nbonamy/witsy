@@ -1,9 +1,9 @@
 <template>
   <div class="readaloud">
-    <BIconPauseCircle v-if="state == 'playing'" @click="onPlayPause()" />
-    <BIconPlayCircle v-else-if="state == 'paused'" @click="onPlayPause()" />
+    <PauseCircleIcon v-if="state == 'playing'" @click="onPlayPause()" />
+    <PlayCircleIcon v-else-if="state == 'paused'" @click="onPlayPause()" />
     <Loader class="loader" v-else />
-    <BIconXCircle @click="onStop()" />
+    <XCircleIcon @click="onStop()" />
     <audio/>
   </div>
 </template>

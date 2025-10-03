@@ -2,13 +2,13 @@
 <template>
 
   <div @click="emit('click', attachment)" v-if="attachment.isText()">
-    <BIconFilePdf class="icon" v-if="attachment.format() === 'pdf'"/>
-    <BIconFileBarGraph class="icon" v-else-if="attachment.format() === 'xlsx'"/>
-    <BIconFileRichtext class="icon" v-else-if="attachment.format() === 'pptx'"/>
-    <BIconFiletypeCsv class="icon" v-else-if="attachment.format() === 'csv'"/>
-    <BIconFiletypeJson class="icon" v-else-if="attachment.format() === 'json'"/>
-    <BIconFiletypeHtml class="icon" v-else-if="attachment.format() === 'html'"/>
-    <BIconFileText class="icon" v-else />
+    <FileTextIcon class="icon" v-if="attachment.format() === 'pdf'"/>
+    <BarChart3Icon class="icon" v-else-if="attachment.format() === 'xlsx'"/>
+    <FileTextIcon class="icon" v-else-if="attachment.format() === 'pptx'"/>
+    <FileSpreadsheetIcon class="icon" v-else-if="attachment.format() === 'csv'"/>
+    <FileJsonIcon class="icon" v-else-if="attachment.format() === 'json'"/>
+    <FileCodeIcon class="icon" v-else-if="attachment.format() === 'html'"/>
+    <FileTextIcon class="icon" v-else />
   </div>
   <img :src="imageSrc" class="image" @click="emit('image-click', imageSrc)" v-else />
 </template>

@@ -1,7 +1,7 @@
 <template>
   <div class="fullscreen" :class="fullScreenTheme" v-if="fullScreenImageUrl" @click="onCloseFullScreen">
     <img :src="fullScreenImageUrl" alt="Full screen image" />
-    <BIconXLg class="close" @click.stop="onCloseFullScreen" />
+    <XIcon class="close" @click.stop="onCloseFullScreen" />
   </div>
 </template>
 

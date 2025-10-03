@@ -4,10 +4,10 @@
       <div class="title">{{ t('mcp.modelContextProtocol') }}</div>
       <div class="actions">
         <button name="addSmithery" class="large secondary" @click="onCreate('smithery')" v-if="store.isFeatureEnabled('mcp.smithery')">
-          <BIconCloudPlus />{{ t('mcp.importSmitheryServer') }}
+          <CloudUploadIcon />{{ t('mcp.importSmitheryServer') }}
         </button>
         <button name="addJson" class="large secondary" @click="onImportJson" v-if="store.isFeatureEnabled('mcp.json')">
-          <BIconBraces />{{ t('mcp.importJson.menu') }}
+          <BracesIcon />{{ t('mcp.importJson.menu') }}
         </button>
         <button name="addCustom" class="large primary" @click="onCreate('http')">
           <PlusIcon />{{ t('mcp.addCustomServer') }}
@@ -134,7 +134,7 @@
 
 <script setup lang="ts">
 
-import { BIconBraces, BIconCloudPlus } from 'bootstrap-icons-vue'
+import { BracesIcon, CloudUploadIcon } from 'lucide-vue-next'
 import { PauseIcon, PlayIcon, PlusIcon, PowerIcon, RefreshCwIcon, SearchIcon } from 'lucide-vue-next'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { computed, nextTick, PropType, ref } from 'vue'

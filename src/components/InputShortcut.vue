@@ -2,7 +2,7 @@
 <template>
   <div class="form-subgroup">
     <input type="text" v-model="display" spellcheck="false" @keydown.prevent="onKeyDown" />
-    <button class="clear" :class="{ disabled: !display }" @click.prevent="onDelete"><BIconXCircleFill /></button>
+    <button class="clear" :class="{ disabled: !display }" @click.prevent="onDelete"><XCircleIcon /></button>
   </div>
 </template>
 

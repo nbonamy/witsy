@@ -56,20 +56,20 @@
         <div class="controls">
           <div class="form form-large">
             <button name="stop" class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
-            <button name="record" class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'"><BIconMic />&nbsp;{{ t('common.record') }}</button>
+            <button name="record" class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'"><MicIcon />&nbsp;{{ t('common.record') }}</button>
             <input ref="fileInput" type="file" accept=".mp3,.wav,audio/mp3,audio/wav" @change="onFileSelected" class="file-input" />
-            <button name="upload" class="button" @click="triggerFileUpload" :disabled="state === 'processing'"><BIconUpload />&nbsp;{{ t('transcribe.upload') }} </button>
+            <button name="upload" class="button" @click="triggerFileUpload" :disabled="state === 'processing'"><UploadIcon />&nbsp;{{ t('transcribe.upload') }} </button>
             <div class="dropzone" :class="{ 'drag-over': isDragOver, 'disabled': state === 'processing' }"
             >
-              <BIconSoundwave />&nbsp;{{ t('transcribe.dropzone') }}
+              <AudioWaveformIcon />&nbsp;{{ t('transcribe.dropzone') }}
             </div>
           </div>
         </div>
 
         <div class="visualizer">
-          <BIconRecordCircle v-if="state == 'recording'" class="stop" color="red" @click="onStop()" />
+          <CircleIcon v-if="state == 'recording'" class="stop" color="red" @click="onStop()" />
           <Loader class="loader" v-else-if="state === 'processing'" />
-          <BIconRecordCircle v-else class="record" :color="state === 'initializing' ? 'orange' : ''" @click="onRecord(false)" />
+          <CircleIcon v-else class="record" :color="state === 'initializing' ? 'orange' : ''" @click="onRecord(false)" />
           <Waveform :width="500" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
         </div>
         
@@ -79,9 +79,9 @@
         
         <div class="actions">
           <div class="form form-large">
-            <button name="summarize" class="button" @click="onSummarize" :disabled="!transcription || state === 'processing'"><BIconChevronBarContract /> {{ t('transcribe.summarize') }}</button>
-            <button name="translate" class="button" @click="onTranslate" :disabled="!transcription || state === 'processing'"><BIconGlobe /></button>
-            <button name="commands" class="button" @click="onCommands" :disabled="!transcription || state === 'processing'"><BIconMagic /></button>
+            <button name="summarize" class="button" @click="onSummarize" :disabled="!transcription || state === 'processing'"><MinimizeIcon /> {{ t('transcribe.summarize') }}</button>
+            <button name="translate" class="button" @click="onTranslate" :disabled="!transcription || state === 'processing'"><GlobeIcon /></button>
+            <button name="commands" class="button" @click="onCommands" :disabled="!transcription || state === 'processing'"><WandIcon /></button>
             <div class="flex-push"></div>
             <button name="clear" class="button" @click="onClear" :disabled="!transcription || state === 'processing'">{{ t('common.clear') }}</button>
             <button name="insert" class="button" @click="onInsert" :disabled="!transcription || state === 'processing'">{{ t('common.insert') }}</button>

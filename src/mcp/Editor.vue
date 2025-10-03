@@ -98,8 +98,8 @@
           <div class="form-subgroup">
             <div class="form-field">
               <label @click="showAuthFields = !showAuthFields" class="show-auth-fields">
-                <BIconCaretRightFill v-if="!showAuthFields" />
-                <BIconCaretDownFill v-else />
+                <ChevronRightIcon v-if="!showAuthFields" />
+                <ChevronDownIcon v-else />
                 {{ t('mcp.serverEditor.oauth.showAuthFields') }}
               </label>
             </div>

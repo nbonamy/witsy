@@ -1,8 +1,8 @@
 
 <template>
   <div class="wrapper">
-    <BIconChatLeft class="chat" />
-    <BIconPlus class="plus"/>
+    <MessageCircleIcon class="chat" />
+    <PlusIcon class="plus"/>
   </div>
 </template>
 

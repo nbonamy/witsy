@@ -107,7 +107,7 @@ class OAuthCallbackServer {
     return new Promise<string>((resolve, reject) => {
       // Set up timeout for this specific flow
       const timeout = setTimeout(() => {
-        console.log(`⏰ OAuth callback timeout for flow ${flowId}`)
+        console.log(`[OAuth] OAuth callback timeout for flow ${flowId}`)
         this.pendingCallbacks.delete(flowId)
         reject(new Error('OAuth callback timeout'))
         
@@ -118,14 +118,14 @@ class OAuthCallbackServer {
       }, 300000) // 5 minute timeout
 
       // Store the callback handlers
-      console.log(`✅ Storing pending callback for flowId: ${flowId}...`)
+      console.log(`[OAuth] Storing pending callback for flowId: ${flowId}...`)
       this.pendingCallbacks.set(flowId, { resolve, reject, timeout })
     })
   }
 
   async ensureServerRunning(): Promise<void> {
     if (this.server) {
-      console.log('📡 OAuth callback server already running, reusing...')
+      console.log('[OAuth] OAuth callback server already running, reusing...')
       return
     }
 
@@ -134,7 +134,7 @@ class OAuthCallbackServer {
 
     // Find an available port starting from 8090
     this.port = await portfinder.getPortPromise({ port: 8090 })
-    console.log(`🚀 Starting OAuth callback server on port ${this.port}...`)
+    console.log(`[OAuth] Starting OAuth callback server on port ${this.port}...`)
     this.server = this.createServer((req, res) => {
 
       // Ignore favicon requests
@@ -144,7 +144,7 @@ class OAuthCallbackServer {
         return
       }
 
-      console.log(`📥 Received OAuth callback: ${req.url}`)
+      console.log(`[OAuth] Received OAuth callback: ${req.url}`)
       const parsedUrl = new URL(req.url || '', 'http://localhost')
       const code = parsedUrl.searchParams.get('code')
       const error = parsedUrl.searchParams.get('error')
@@ -153,7 +153,7 @@ class OAuthCallbackServer {
       const pendingCallback = this.pendingCallbacks.get(state)
       
       if (code && pendingCallback) {
-        console.log(`✅ Authorization code received for flow ${state}: ${code?.substring(0, 10)}...`)
+        console.log(`[OAuth] Authorization code received for flow ${state}: ${code?.substring(0, 10)}...`)
         res.writeHead(200, { 'Content-Type': 'text/html' })
         res.end(`
           <!DOCTYPE html>
@@ -188,7 +188,7 @@ class OAuthCallbackServer {
         //   setTimeout(() => this.shutdown(), 30000)
         // }
       } else if (error) {
-        console.log(`❌ Authorization error for flow ${state}: ${error}`)
+        console.log(`[OAuth] Authorization error for flow ${state}: ${error}`)
         res.writeHead(400, { 'Content-Type': 'text/html' })
         res.end(`
           <!DOCTYPE html>
@@ -223,7 +223,7 @@ class OAuthCallbackServer {
         //   setTimeout(() => this.shutdown(), 30000)
         // }
       } else {
-        console.log(`❌ Invalid OAuth callback: no code, state or error parameter or pendingCallback not found: code: ${code}, state: ${state}, error: ${error}`)
+        console.log(`[OAuth] Invalid OAuth callback: no code, state or error parameter or pendingCallback not found: code: ${code}, state: ${state}, error: ${error}`)
         res.writeHead(400)
         res.end('Bad request')
 
@@ -236,21 +236,21 @@ class OAuthCallbackServer {
     })
 
     this.server.listen(this.port, () => {
-      console.log(`✅ OAuth callback server listening on http://localhost:${this.port}`)
+      console.log(`[OAuth] OAuth callback server listening on http://localhost:${this.port}`)
     })
 
     this.server.on('error', (err: any) => {
       if (err.code === 'EADDRINUSE') {
-        console.log(`⚠️ Port ${this.port} is already in use - OAuth callback server may already be running`)
+        console.log(`[OAuth] Port ${this.port} is already in use - OAuth callback server may already be running`)
       } else {
-        console.error('❌ OAuth callback server error:', err)
+        console.error('[OAuth] OAuth callback server error:', err)
       }
     })
   }
 
   private shutdown(): void {
     if (this.server) {
-      console.log('🛑 Shutting down OAuth callback server')
+      console.log('[OAuth] Shutting down OAuth callback server')
       this.server.close()
       this.server = null
       
@@ -382,7 +382,7 @@ export default class McpOAuthManager {
    * Opens the authorization URL in the user's default browser
    */
   private async openBrowser(url: string): Promise<void> {
-    console.log(`🌐 Opening browser for authorization: ${url}`);
+    console.log(`[OAuth] Opening browser for authorization: ${url}`);
 
     // Use shell.openExternal for Electron instead of exec for cross-platform compatibility
     shell.openExternal(url);
@@ -396,14 +396,14 @@ export default class McpOAuthManager {
     clientMetadata: OAuthClientMetadata,
     clientCredentials?: { client_id: string; client_secret: string }
   ): Promise<string> {
-    console.log(`🔗 Attempting to connect to ${url}...`);
+    console.log(`[OAuth] Attempting to connect to ${url}...`);
     this.serverUrl = url;
     
     // Generate unique flow ID for this OAuth attempt
     const flowId = `oauth_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
-    console.log(`🆔 OAuth flow ID: ${flowId}`)
+    console.log(`[OAuth] OAuth flow ID: ${flowId}`)
     
-    console.log('🔐 Creating OAuth provider...');
+    console.log('[OAuth] Creating OAuth provider...');
     const callbackUrl = `http://localhost:${this.callbackServer.callbackPort}/callback`
     const oauthProvider = new McpOAuthClientProvider(
       callbackUrl,
@@ -413,7 +413,7 @@ export default class McpOAuthManager {
         const urlWithState = new URL(redirectUrl.toString())
         urlWithState.searchParams.set('state', flowId)
         
-        console.log(`📌 OAuth redirect handler called - opening browser`);
+        console.log(`[OAuth] OAuth redirect handler called - opening browser`);
         console.log(`Opening browser to: ${urlWithState.toString()}`);
         this.openBrowser(urlWithState.toString());
       },
@@ -422,7 +422,7 @@ export default class McpOAuthManager {
     
     // Set client credentials if provided (for servers that don't support dynamic registration)
     if (clientCredentials) {
-      console.log('🔑 Using provided client credentials');
+      console.log('[OAuth] Using provided client credentials');
       const clientInformation = {
         client_id: clientCredentials.client_id,
         client_secret: clientCredentials.client_secret,
@@ -435,16 +435,16 @@ export default class McpOAuthManager {
       oauthProvider.saveClientInformation(clientInformation);
     }
     
-    console.log('🔐 OAuth provider created');
+    console.log('[OAuth] OAuth provider created');
 
-    console.log('👤 Creating MCP client...');
+    console.log('[OAuth] Creating MCP client...');
     this.client = new Client({
       name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
       version: '1.0.0',
     }, { capabilities: {} });
-    console.log('👤 Client created');
+    console.log('[OAuth] Client created');
 
-    console.log('🔐 Starting OAuth flow...');
+    console.log('[OAuth] Starting OAuth flow...');
     await this.attemptConnection(oauthProvider, flowId);
     
     // Return the OAuth configuration with tokens
@@ -460,27 +460,27 @@ export default class McpOAuthManager {
    * Attempt connection - matches reference implementation exactly
    */
   private async attemptConnection(oauthProvider: McpOAuthClientProvider, flowId: string): Promise<void> {
-    console.log('🚢 Creating transport with OAuth provider...');
+    console.log('[OAuth] Creating transport with OAuth provider...');
     const baseUrl = new URL(this.serverUrl);
     const transport = new StreamableHTTPClientTransport(baseUrl, {
       authProvider: oauthProvider
     });
-    console.log('🚢 Transport created');
+    console.log('[OAuth] Transport created');
 
     try {
-      console.log('🔌 Attempting connection (this will trigger OAuth redirect)...');
+      console.log('[OAuth] Attempting connection (this will trigger OAuth redirect)...');
       await this.client!.connect(transport);
-      console.log('✅ Connected successfully');
+      console.log('[OAuth] Connected successfully');
     } catch (error) {
       if (error instanceof UnauthorizedError) {
-        console.log('🔐 OAuth required - waiting for authorization...');
+        console.log('[OAuth] OAuth required - waiting for authorization...');
         const authCode = await this.callbackServer.waitForCallback(flowId);
         await transport.finishAuth(authCode);
-        console.log('🔐 Authorization code received:', authCode);
-        console.log('🔌 Reconnecting with authenticated transport...');
+        console.log('[OAuth] Authorization code received:', authCode);
+        console.log('[OAuth] Reconnecting with authenticated transport...');
         await this.attemptConnection(oauthProvider, flowId);
       } else {
-        console.error('❌ Connection failed with non-auth error:', error);
+        console.error('[OAuth] Connection failed with non-auth error:', error);
         throw error;
       }
     }
