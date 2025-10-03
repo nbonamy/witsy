@@ -2154,6 +2154,7 @@
       "title": "スクラッチパッドの削除"
     },
     "deleteError": "スクラッチパッドの削除中にエラーが発生しました",
+    "dontSave": "続行して変更を失う",
     "fontFamily": {
       "monospace": "等幅",
       "sansSerif": "サンセリフ",

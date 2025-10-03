@@ -2154,6 +2154,7 @@
       "title": "Usuń notatkę"
     },
     "deleteError": "Błąd podczas usuwania notatki",
+    "dontSave": "Kontynuuj i utrac zmiany",
     "fontFamily": {
       "monospace": "Czcionka o stałej szerokości",
       "sansSerif": "Czcionka bezszeryfowa",

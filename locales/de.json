@@ -2132,6 +2132,7 @@
       "title": "Notizzettel löschen"
     },
     "deleteError": "Fehler beim Löschen des Notizzettels",
+    "dontSave": "Weiter und Änderungen verwerfen",
     "fontFamily": {
       "monospace": "Monospace",
       "sansSerif": "Sans-Serif",

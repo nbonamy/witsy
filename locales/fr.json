@@ -2132,6 +2132,7 @@
       "title": "Supprimer le carnet de notes"
     },
     "deleteError": "Erreur lors de la suppression du carnet de notes",
+    "dontSave": "Continuer et perdre les modifications",
     "fontFamily": {
       "monospace": "Monospace",
       "sansSerif": "Sans-Serif",
