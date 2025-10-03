@@ -73,13 +73,23 @@ const onDownloadFormat = async (action: string) => {
 
   position: relative;
 
+  border-color: transparent;
+  &:hover {
+    border-color: color-mix(in srgb, var(--border-color), transparent 30%);
+  }
+
   .icon.download {
+    display: none;
     position: absolute;
     top: 0.25rem;
     right: 1rem;
     opacity: 0.6;
     cursor: pointer;
     z-index: 2;
+  }
+
+  &:hover .icon.download {
+    display: inline-block;
   }
 
   .panel-body {
