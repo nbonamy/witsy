@@ -35,12 +35,12 @@
               <ButtonIcon v-else
                 class="run"
                 v-tooltip="{ text: t('agent.help.run'), position: 'top-left' }"
-                @click.stop="onAgentRun(agent)"
+                @click="onAgentRun(agent)"
               ><PlayIcon /></ButtonIcon>
               <ButtonIcon
                 class="view" 
                 v-tooltip="{ text: t('agent.help.view'), position: 'top-left' }" 
-                @click.stop="$emit('view', agent)" 
+                @click="$emit('view', agent)" 
               ><EyeIcon /></ButtonIcon>
               <ContextMenuTrigger position="below-right">
                 <template #menu>
