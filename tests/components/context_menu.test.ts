@@ -1130,6 +1130,189 @@ describe('ContextMenuPlus System', () => {
     })
   })
 
+  describe('ContextMenuPlus - Hover Highlight', () => {
+    it('highlights item on hover when hoverHighlight is true (default)', async () => {
+      wrapper = mount(ContextMenuPlus, {
+        props: {
+          anchor: '#test-anchor'
+        },
+        slots: {
+          default: `
+            <div class="item">Item 1</div>
+            <div class="item">Item 2</div>
+            <div class="item">Item 3</div>
+          `
+        },
+        attachTo: document.body
+      })
+
+      await nextTick()
+
+      const items = findAllInBody('.item')
+      expect(items.length).toBe(3)
+
+      // Trigger mousemove on the first item
+      if (items[0].element) {
+        const hoverEvent = new MouseEvent('mousemove', { bubbles: true })
+        items[0].element.dispatchEvent(hoverEvent)
+        await nextTick()
+      }
+
+      // Check if item has selected class
+      expect(items[0].element?.classList.contains('selected')).toBe(true)
+    })
+
+    it('does not highlight item on hover when hoverHighlight is false', async () => {
+      wrapper = mount(ContextMenuPlus, {
+        props: {
+          anchor: '#test-anchor',
+          hoverHighlight: false
+        },
+        slots: {
+          default: `
+            <div class="item">Item 1</div>
+            <div class="item">Item 2</div>
+          `
+        },
+        attachTo: document.body
+      })
+
+      await nextTick()
+
+      const items = findAllInBody('.item')
+      expect(items.length).toBe(2)
+
+      // Trigger mousemove on the first item
+      if (items[0].element) {
+        const hoverEvent = new MouseEvent('mousemove', { bubbles: true })
+        items[0].element.dispatchEvent(hoverEvent)
+        await nextTick()
+      }
+
+      // Item should not have selected class
+      expect(items[0].element?.classList.contains('selected')).toBe(false)
+    })
+
+    it('does not highlight separator on hover', async () => {
+      wrapper = mount(ContextMenuPlus, {
+        props: {
+          anchor: '#test-anchor',
+          hoverHighlight: true
+        },
+        slots: {
+          default: `
+            <div class="item">Item 1</div>
+            <div class="item separator"><hr /></div>
+            <div class="item">Item 2</div>
+          `
+        },
+        attachTo: document.body
+      })
+
+      await nextTick()
+
+      const separator = findInBody('.item.separator')
+      expect(separator.exists()).toBe(true)
+
+      // Trigger mousemove on separator
+      if (separator.element) {
+        const hoverEvent = new MouseEvent('mousemove', { bubbles: true })
+        separator.element.dispatchEvent(hoverEvent)
+        await nextTick()
+      }
+
+      // Separator should not have selected class
+      expect(separator.element?.classList.contains('selected')).toBe(false)
+    })
+
+    it('does not highlight disabled item on hover', async () => {
+      wrapper = mount(ContextMenuPlus, {
+        props: {
+          anchor: '#test-anchor',
+          hoverHighlight: true
+        },
+        slots: {
+          default: `
+            <div class="item">Item 1</div>
+            <div class="item disabled">Disabled Item</div>
+            <div class="item">Item 2</div>
+          `
+        },
+        attachTo: document.body
+      })
+
+      await nextTick()
+
+      const disabledItem = findInBody('.item.disabled')
+      expect(disabledItem.exists()).toBe(true)
+
+      // Trigger mousemove on disabled item
+      if (disabledItem.element) {
+        const hoverEvent = new MouseEvent('mousemove', { bubbles: true })
+        disabledItem.element.dispatchEvent(hoverEvent)
+        await nextTick()
+      }
+
+      // Disabled item should not have selected class
+      expect(disabledItem.element?.classList.contains('selected')).toBe(false)
+    })
+
+    it('highlights normal items but skips separators and disabled items', async () => {
+      wrapper = mount(ContextMenuPlus, {
+        props: {
+          anchor: '#test-anchor',
+          hoverHighlight: true
+        },
+        slots: {
+          default: `
+            <div class="item">Item 1</div>
+            <div class="item separator"><hr /></div>
+            <div class="item disabled">Disabled Item</div>
+            <div class="item">Item 2</div>
+          `
+        },
+        attachTo: document.body
+      })
+
+      await nextTick()
+
+      const allItems = findAllInBody('.item')
+      expect(allItems.length).toBe(4)
+
+      // Test Item 1 (should highlight)
+      if (allItems[0].element) {
+        const hoverEvent = new MouseEvent('mousemove', { bubbles: true })
+        allItems[0].element.dispatchEvent(hoverEvent)
+        await nextTick()
+        expect(allItems[0].element?.classList.contains('selected')).toBe(true)
+      }
+
+      // Test separator (should not highlight)
+      if (allItems[1].element) {
+        const hoverEvent = new MouseEvent('mousemove', { bubbles: true })
+        allItems[1].element.dispatchEvent(hoverEvent)
+        await nextTick()
+        expect(allItems[1].element?.classList.contains('selected')).toBe(false)
+      }
+
+      // Test disabled item (should not highlight)
+      if (allItems[2].element) {
+        const hoverEvent = new MouseEvent('mousemove', { bubbles: true })
+        allItems[2].element.dispatchEvent(hoverEvent)
+        await nextTick()
+        expect(allItems[2].element?.classList.contains('selected')).toBe(false)
+      }
+
+      // Test Item 2 (should highlight)
+      if (allItems[3].element) {
+        const hoverEvent = new MouseEvent('mousemove', { bubbles: true })
+        allItems[3].element.dispatchEvent(hoverEvent)
+        await nextTick()
+        expect(allItems[3].element?.classList.contains('selected')).toBe(true)
+      }
+    })
+  })
+
   describe('Performance and Edge Cases', () => {
     it('handles multiple rapid mounts/unmounts', async () => {
       for (let i = 0; i < 5; i++) {

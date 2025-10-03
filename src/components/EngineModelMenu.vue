@@ -4,6 +4,7 @@
     :position="position"
     :teleport="teleport"
     :show-filter="false"
+    :hover-highlight="false"
     @close="$emit('close')"
   >
     <!-- Main menu template -->
