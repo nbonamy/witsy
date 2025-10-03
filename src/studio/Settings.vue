@@ -1,5 +1,6 @@
 <template>
   <div class="studio-settings">
+    <main>
     <div class="form form-vertical">
 
       <div class="form-field media-type">
@@ -48,8 +49,8 @@
       <div class="form-field" v-if="canUpload">
         <label>{{ t('designStudio.inputImage') }}</label>
         <div class="form-subgroup">
-          <button name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
-          <button name="draw" type="button" @click="$emit('draw')" :disabled="isGenerating">{{ t('designStudio.draw') }}</button>
+          <button name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating"><UploadIcon />{{ t('common.upload') }}</button>
+          <button name="draw" type="button" @click="$emit('draw')" :disabled="isGenerating"><LineSquiggleIcon />{{ t('designStudio.draw') }}</button>
         </div>
       </div>
 
@@ -74,7 +75,7 @@
             <BIconXLg class="delete" @click="onDetach(attachment)" />
           </div>
         </div>
-        <button v-if="canAttach" name="attach" type="button" @click="onAttach" :disabled="isGenerating">{{ t('common.attach') }}</button>
+        <button v-if="canAttach" name="attach" type="button" @click="onAttach" :disabled="isGenerating"><PaperclipIcon />{{ t('common.attach') }}</button>
       </div>
 
       <div v-if="modelHasParams" class="form-field">
@@ -132,14 +133,15 @@
 
       </template>
 
-      <div class="form-field">
-        <div class="form-subgroup">
-          <button name="generate" class="generate-button" type="button" @click="generateMedia()" :disabled="isGenerating">
-            {{ isGenerating ? t('designStudio.generating') : isEditing ? t('common.edit') : t('designStudio.generate') }}
-          </button>
-        </div>
-      </div>
     </div>
+    </main>
+    
+    <footer>
+      <button name="generate" class="cta" type="button" @click="generateMedia()" :disabled="isGenerating">
+        <BrushIcon />
+        {{ isGenerating ? t('designStudio.generating') : isEditing ? t('common.edit') : t('designStudio.generate') }}
+      </button>
+    </footer>
 
     <VariableEditor ref="editor" id="studio-variable-editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
 
@@ -154,7 +156,7 @@
 
 <script setup lang="ts">
 
-import { StarIcon, StarOffIcon, WandIcon } from 'lucide-vue-next'
+import { BrushIcon, LineSquiggleIcon, PaperclipIcon, StarIcon, StarOffIcon, UploadIcon, WandIcon } from 'lucide-vue-next'
 import { Model } from 'multi-llm-ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import AttachmentView from '../components/Attachment.vue'
@@ -696,8 +698,28 @@ defineExpose({
 <style scoped>
 
 .studio-settings {
-  overflow-y: auto;
-  padding-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+
+  main {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding-right: 1rem;
+  }
+
+  footer {
+    flex-shrink: 0;
+  }
+}
+
+.split-pane .sp-sidebar {
+  main, footer {
+    padding: 0rem;
+  }
 }
 
 .studio-settings .form .form-field label:has(svg) {
