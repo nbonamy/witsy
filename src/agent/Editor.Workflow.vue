@@ -89,6 +89,7 @@
     v-if="docRepoMenuVisible && docRepoMenuStepIndex >= 0" 
     :anchor="`#docrepo-menu-anchor-${docRepoMenuStepIndex}`"
     position="above"
+    :hover-highlight="false"
     @close="onCloseDocRepoMenu"
   >
     <template #default>
@@ -115,6 +116,7 @@
     v-if="agentsMenuVisible && agentsMenuStepIndex >= 0" 
     :anchor="`#agents-menu-anchor-${agentsMenuStepIndex}`"
     position="above"
+    :hover-highlight="false"
     @close="onCloseAgentsMenu"
   >
     <template #default>

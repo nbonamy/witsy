@@ -73,6 +73,10 @@ const props = defineProps({
   teleport: {
     type: Boolean,
     default: true
+  },
+  hoverHighlight: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -191,6 +195,16 @@ watch([currentSubmenu], () => {
     addEventListeners()
   })
 }, { flush: 'post' })
+
+// Watch for selected changes to apply/remove the selected class
+watch(selected, (newSelected, oldSelected) => {
+  if (oldSelected) {
+    oldSelected.classList.remove('selected')
+  }
+  if (newSelected) {
+    newSelected.classList.add('selected')
+  }
+})
 
 
 const applyFilter = (filterText: string) => {
@@ -322,9 +336,15 @@ const onItemClick = (event: Event) => {
 
 const onItemHover = (event: Event) => {
   const target = event.target as HTMLElement
-  const item = target.closest('.item')
-  selected.value = item
-  ensureVisible()
+  const item = target.closest('.item') as HTMLElement | null
+
+  // Only apply selection if hoverHighlight is enabled and item is not separator/disabled
+  if (props.hoverHighlight && item && !item.classList.contains('separator') && !item.classList.contains('disabled')) {
+    selected.value = item
+    ensureVisible()
+  } else if (!props.hoverHighlight) {
+    selected.value = null
+  }
 }
 
 const showSubmenu = (item: HTMLElement) => {
@@ -602,11 +622,11 @@ defineExpose({
   cursor: default;
 }
 
-/* :deep(.item.selected) {
+:deep(.item.selected) {
   background-color: var(--context-menu-selected-bg-color);
   color: var(--context-menu-selected-text-color);
   border-radius: 0.375rem;
-} */
+}
 
 :deep(.item .chevron-icon) {
   flex-shrink: 0;
