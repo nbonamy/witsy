@@ -17,7 +17,7 @@
     </div>
     <div class="actions">
       
-      <ButtonIcon class="prompt-menu" @click="onPromptMenu" ref="promptMenuAnchor">
+      <ButtonIcon class="prompt-menu" :id="`prompt-menu-${uniqueId}`" @click="onPromptMenu" ref="promptMenuAnchor">
         <PlusIcon class="icon" />
       </ButtonIcon>
       
@@ -66,7 +66,7 @@
         />
       </ButtonIcon>
       
-      <div class="model-menu-button" @click="onModelMenu">
+      <div class="model-menu-button" :id="`model-menu-button-${uniqueId}`" @click="onModelMenu">
         <BoxIcon />
         <div class="model-name">{{ modelName }}</div>
         <BIconCaretDownFill class="icon caret" />
@@ -100,11 +100,11 @@
     
     <PromptMenu
       v-if="showPromptMenu"
-      anchor=".prompt-menu"
+      :anchor="`#prompt-menu-${uniqueId}`"
       :position="menusPosition"
       :enable-tools="enableTools"
       :enable-experts="enableExperts"
-      :enable-doc-repo="enableDocRepo" 
+      :enable-doc-repo="enableDocRepo"
       :enable-instructions="enableInstructions"
       :enable-attachments="enableAttachments"
       :enable-deep-research="enableDeepResearch"
@@ -131,7 +131,7 @@
     
     <EngineModelMenu
       v-if="showModelMenu"
-      anchor=".model-menu-button"
+      :anchor="`#model-menu-button-${uniqueId}`"
       :position="menusPosition === 'above' ? 'above-right' : 'below-right'"
       @close="closeModelMenu"
       @empty="onNoEngineAvailable"
@@ -262,6 +262,9 @@ const { transcriber, processStreamingError } = useTranscriber(store.config)
 const tipsManager = useTipsManager(store)
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 let userStoppedDictation = false
+
+// Generate unique ID for this prompt instance to avoid conflicts when multiple prompts are in DOM
+const uniqueId = ref(crypto.randomUUID())
 
 const prompt = ref('')
 const instructions = ref<CustomInstruction>(undefined)

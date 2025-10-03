@@ -71,6 +71,44 @@ test('Render', () => {
   expect(window.api.docrepo.list).toHaveBeenCalled()
 })
 
+test('Has unique IDs for menu anchors', () => {
+  const promptMenu = wrapper.find('.prompt-menu')
+  const modelMenuButton = wrapper.find('.model-menu-button')
+
+  expect(promptMenu.exists()).toBe(true)
+  expect(modelMenuButton.exists()).toBe(true)
+
+  // Check that both elements have id attributes
+  const promptMenuId = promptMenu.attributes('id')
+  const modelMenuButtonId = modelMenuButton.attributes('id')
+
+  expect(promptMenuId).toBeTruthy()
+  expect(modelMenuButtonId).toBeTruthy()
+
+  // Check that IDs start with the expected prefix
+  expect(promptMenuId).toMatch(/^prompt-menu-/)
+  expect(modelMenuButtonId).toMatch(/^model-menu-button-/)
+
+  // Check that IDs are different
+  expect(promptMenuId).not.toBe(modelMenuButtonId)
+})
+
+test('Different Prompt instances have different unique IDs', () => {
+  const chat2 = new Chat()
+  const wrapper2 = mount(Prompt, { ...stubTeleport, props: { chat: chat2, enableTools: false } })
+
+  const promptMenu1 = wrapper.find('.prompt-menu').attributes('id')
+  const promptMenu2 = wrapper2.find('.prompt-menu').attributes('id')
+  const modelMenu1 = wrapper.find('.model-menu-button').attributes('id')
+  const modelMenu2 = wrapper2.find('.model-menu-button').attributes('id')
+
+  // Check that different instances have different IDs
+  expect(promptMenu1).not.toBe(promptMenu2)
+  expect(modelMenu1).not.toBe(modelMenu2)
+
+  wrapper2.unmount()
+})
+
 test('Send on click', async () => {
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
