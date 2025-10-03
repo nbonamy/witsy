@@ -9,11 +9,11 @@
         <option value="all">{{ t('agent.view.filter.all') }}</option>
         <option value="exclude">{{ t('agent.view.filter.exclude_workflow') }}</option>
       </select>
-      <CalendarXIcon 
-        class="icon clear" 
-        v-tooltip="{ text: t('agent.help.clearHistory'), position: 'bottom-left' }" 
-        @click="$emit('clear')" 
-      />
+      <ButtonIcon 
+        class="clear"
+        v-tooltip="{ text: t('agent.help.clearHistory'), position: 'bottom-left' }"
+        @click="$emit('clear')"
+      ><CalendarXIcon /></ButtonIcon>
     </div>
 
     <div class="panel-body">
@@ -52,11 +52,12 @@
 
 <script setup lang="ts">
 
-import { Agent, AgentRun } from '../types/index';
-import { PropType, computed } from 'vue'
-import { t } from '../services/i18n'
-import { useTimeAgo } from '../composables/ago'
 import { CalendarXIcon, EyeIcon } from 'lucide-vue-next';
+import { PropType, computed } from 'vue';
+import ButtonIcon from '../components/ButtonIcon.vue';
+import { useTimeAgo } from '../composables/ago';
+import { t } from '../services/i18n';
+import { Agent, AgentRun } from '../types/index';
 
 const timeAgo = useTimeAgo()
 

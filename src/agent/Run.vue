@@ -5,11 +5,11 @@
 
     <div class="panel-header">
       <label>{{ t('agent.run.title') }}</label>
-      <CalendarMinus2Icon 
-        class="icon delete" 
+      <ButtonIcon 
+        class="delete" 
         v-tooltip="{ text: t('agent.help.deleteRun'), position: 'bottom-left' }" 
         @click="$emit('delete')" 
-      />
+      ><CalendarMinus2Icon /></ButtonIcon>
     </div>
 
     <div class="panel-body form form-vertical form-large">
@@ -62,6 +62,7 @@
 
 import { CalendarMinus2Icon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import MessageItemBody from '../components/MessageItemBody.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
