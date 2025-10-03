@@ -855,7 +855,7 @@
     },
     "web": {
       "addUrl": "Dodaj adres URL",
-      "addWebsite": "Dodaj stronę internetową",
+      "addWebsite": "Dodaj mapę witryny",
       "dialog": {
         "sitemapPrompt": "Wprowadź adres URL mapy witryny (np. https://example.com/sitemap.xml)",
         "urlPrompt": "Wprowadź adres URL (musi zaczynać się od http:// lub https://)"

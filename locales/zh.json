@@ -855,7 +855,7 @@
     },
     "web": {
       "addUrl": "添加网址",
-      "addWebsite": "添加网站",
+      "addWebsite": "添加网站地图",
       "dialog": {
         "sitemapPrompt": "请输入网站地图 URL（例如：https://example.com/sitemap.xml）",
         "urlPrompt": "请输入网址（必须以 http:// 或 https:// 开头）"

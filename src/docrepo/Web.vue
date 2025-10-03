@@ -38,13 +38,13 @@
     </div>
     <div class="panel-footer">
       <button name="addUrl" @click="onAddUrl"><PlusIcon /> {{ t('docRepo.web.addUrl') }}</button>
-      <button name="addWebsite" @click="onAddWebsite"><GlobeIcon /> {{ t('docRepo.web.addWebsite') }}</button>
+      <button name="addWebsite" @click="onAddWebsite"><MapIcon /> {{ t('docRepo.web.addWebsite') }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ChevronDownIcon, GlobeIcon, PlusIcon, RefreshCwIcon, Trash2Icon } from 'lucide-vue-next'
+import { ChevronDownIcon, GlobeIcon, MapIcon, PlusIcon, RefreshCwIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed } from 'vue'
 import Dialog from '../composables/dialog'
 import { togglePanel } from '../composables/panel'

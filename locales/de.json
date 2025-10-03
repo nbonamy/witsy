@@ -836,7 +836,7 @@
     },
     "web": {
       "addUrl": "URL hinzufügen",
-      "addWebsite": "Website hinzufügen",
+      "addWebsite": "Sitemap hinzufügen",
       "dialog": {
         "sitemapPrompt": "Sitemap-URL eingeben (z. B. https://example.com/sitemap.xml)",
         "urlPrompt": "URL eingeben (muss mit http:// oder https:// beginnen)"
