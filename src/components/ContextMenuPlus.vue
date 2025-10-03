@@ -233,7 +233,7 @@ const addClasses = () => {
     
     // Find all elements that should be menu items but don't have the class yet
     // Look for divs that are likely menu items (have content, click handlers, etc.)
-    const potentialItems = container.querySelectorAll('div:not(.item)')
+    const potentialItems = container.querySelectorAll('.actions > *:not(.item)')
     
     potentialItems.forEach((element: HTMLElement) => {
       // Skip wrapper divs and other structural elements
@@ -627,6 +627,9 @@ defineExpose({
   background-color: var(--context-menu-selected-bg-color);
   color: var(--context-menu-selected-text-color);
   border-radius: 0.375rem;
+  svg {
+    color: var(--context-menu-selected-text-color);
+  }
 }
 
 :deep(.item .chevron-icon) {
