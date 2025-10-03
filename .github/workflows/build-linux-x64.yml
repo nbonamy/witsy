@@ -27,6 +27,7 @@ jobs:
       - name: Build script
         run: make linux-x64
         env:
+          NODE_OPTIONS: --max_old_space_size=4096
           PREBUILDS_ONLY: "1"
       - name: List packages
         uses: mathiasvr/command-output@v2.0.0

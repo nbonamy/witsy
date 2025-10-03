@@ -51,6 +51,7 @@ jobs:
       - name: Build script
         run: make mac-${{ inputs.arch }}
         env:
+          NODE_OPTIONS: --max_old_space_size=4096
           PREBUILDS_ONLY: "1"
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
