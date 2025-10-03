@@ -2129,9 +2129,9 @@
     },
     "delete": {
       "confirm": "¿Estás seguro de que quieres eliminar \"{title}\"?",
-      "title": "Eliminar Bloc de Notas"
+      "title": "Eliminar Documento"
     },
-    "deleteError": "Error al eliminar el bloc de notas",
+    "deleteError": "Error al eliminar el documento",
     "dontSave": "Continuar y perder los cambios",
     "fontFamily": {
       "monospace": "Monoespaciado",
@@ -2153,22 +2153,23 @@
       "empty": "No hay documentos guardados"
     },
     "import": {
-      "prompt": "Introduce un título para este bloc de notas:",
-      "title": "Importar Bloc de Notas"
+      "prompt": "Ingrese un título para este documento",
+      "title": "Importar Documento"
     },
-    "importError": "Error al importar el bloc de notas",
-    "loadingError": "Error al cargar el archivo de bloc de notas",
+    "importError": "Error al importar el archivo del documento",
+    "loadingError": "Error al cargar el archivo del documento",
+    "new": "Nuevo Documento",
     "placeholder": "Comienza a escribir tu documento o\n¡pídele a @:{'common.appName'} que escriba algo por ti!\n\nUna vez que empieces, puedes pedirle a @:{'common.appName'}\nque haga modificaciones en tu documento.\n\nSi resalta una parte de tu texto,\n@:{'common.appName'} solo actualizará esa parte.\n\n¡También echa un vistazo al Asistente de Escritura\nen la barra de acción en la esquina inferior derecha!\n\n¡Inténtalo!",
     "rename": {
       "prompt": "Introduce un nuevo título",
-      "title": "Renombrar Bloc de Notas"
+      "title": "Renombrar Documento"
     },
-    "renameError": "Error al renombrar el bloc de notas",
+    "renameError": "Error al renombrar el documento",
     "save": {
-      "prompt": "Introduce un título para este bloc de notas",
-      "title": "Guardar Bloc de Notas"
+      "prompt": "Ingrese un título para este documento",
+      "title": "Guardar Documento"
     },
-    "saveError": "Error al guardar el bloc de notas",
+    "saveError": "Error al guardar el documento",
     "title": "Scratchpad",
     "unsavedPrompt": "¿Quieres guardar tus cambios?"
   },

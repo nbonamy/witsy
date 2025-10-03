@@ -2151,9 +2151,9 @@
     },
     "delete": {
       "confirm": "Czy na pewno chcesz usunąć \"{title}\"?",
-      "title": "Usuń notatkę"
+      "title": "Usuń dokument"
     },
-    "deleteError": "Błąd podczas usuwania notatki",
+    "deleteError": "Błąd podczas usuwania dokumentu",
     "dontSave": "Kontynuuj i utrac zmiany",
     "fontFamily": {
       "monospace": "Czcionka o stałej szerokości",
@@ -2175,22 +2175,23 @@
       "empty": "Brak zapisanych dokumentów"
     },
     "import": {
-      "prompt": "Wprowadź tytuł tej notatki:",
-      "title": "Importuj notatkę"
+      "prompt": "Wprowadź tytuł tego dokumentu",
+      "title": "Importuj dokument"
     },
-    "importError": "Błąd podczas importu notatki",
-    "loadingError": "Wystąpił błąd podczas ładowania",
+    "importError": "Błąd podczas importowania pliku dokumentu",
+    "loadingError": "Błąd podczas ładowania pliku dokumentu",
+    "new": "Nowy dokument",
     "placeholder": "Zacznij pisać swój dokument lub\npoproś @:{'common.appName'}, aby coś dla Ciebie napisał!\n\nPo rozpoczęciu możesz poprosić @:{'common.appName'}\no modyfikacje w Twoim dokumencie.\n\nJeśli zaznaczysz fragment tekstu,\n@:{'common.appName'} zaktualizuje tylko ten fragment.\n\nSprawdź także Asystenta Pisania\nw pasku akcji w prawym dolnym rogu!\n\nSpróbuj!",
     "rename": {
       "prompt": "Wprowadź nowy tytuł",
-      "title": "Zmień nazwę notatki"
+      "title": "Zmień nazwę dokumentu"
     },
-    "renameError": "Błąd podczas zmiany nazwy notatki",
+    "renameError": "Błąd podczas zmiany nazwy dokumentu",
     "save": {
-      "prompt": "Wprowadź tytuł tej notatki",
-      "title": "Zapisz notatkę"
+      "prompt": "Wprowadź tytuł tego dokumentu",
+      "title": "Zapisz dokument"
     },
-    "saveError": "Błąd podczas zapisywania notatki",
+    "saveError": "Błąd podczas zapisywania dokumentu",
     "title": "Scratchpad",
     "unsavedPrompt": "Czy chcesz zapisać zmiany?"
   },

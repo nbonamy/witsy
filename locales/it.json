@@ -2129,9 +2129,9 @@
     },
     "delete": {
       "confirm": "Sei sicuro di voler eliminare \"{title}\"?",
-      "title": "Elimina block notes"
+      "title": "Elimina Documento"
     },
-    "deleteError": "Errore durante l'eliminazione del block notes",
+    "deleteError": "Errore durante l'eliminazione del documento",
     "dontSave": "Continua e perdi le modifiche",
     "fontFamily": {
       "monospace": "Monospace",
@@ -2153,22 +2153,23 @@
       "empty": "Nessun documento salvato"
     },
     "import": {
-      "prompt": "Inserisci un titolo per questo block notes:",
-      "title": "Importa block notes"
+      "prompt": "Inserisci un titolo per questo documento",
+      "title": "Importa Documento"
     },
-    "importError": "Errore durante l'importazione del block notes",
-    "loadingError": "Errore durante il caricamento del file di appunti",
+    "importError": "Errore durante l'importazione del file documento",
+    "loadingError": "Errore durante il caricamento del file documento",
+    "new": "Nuovo Documento",
     "placeholder": "Inizia a digitare il tuo documento o\nchiedi a @:{'common.appName'} di scrivere qualcosa per te!\n\nUna volta iniziato puoi chiedere a @:{'common.appName'}\ndi fare modifiche al tuo documento.\n\nSe evidenzi una porzione di testo,\n@:{'common.appName'} aggiornerà solo quella parte.\n\nDai un'occhiata anche all'Assistente di Scrittura\nnella barra delle azioni in basso a destra!\n\nProvalo ora!",
     "rename": {
       "prompt": "Inserisci un nuovo titolo",
-      "title": "Rinomina block notes"
+      "title": "Rinomina Documento"
     },
-    "renameError": "Errore durante la rinomina del block notes",
+    "renameError": "Errore durante la rinominazione del documento",
     "save": {
-      "prompt": "Inserisci un titolo per questo block notes",
-      "title": "Salva block notes"
+      "prompt": "Inserisci un titolo per questo documento",
+      "title": "Salva Documento"
     },
-    "saveError": "Errore durante il salvataggio del block notes",
+    "saveError": "Errore durante il salvataggio del documento",
     "title": "Scratchpad",
     "unsavedPrompt": "Vuoi salvare le modifiche?"
   },

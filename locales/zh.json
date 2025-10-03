@@ -2151,9 +2151,9 @@
     },
     "delete": {
       "confirm": "您确定要删除“{title}”吗？",
-      "title": "删除草稿本"
+      "title": "删除文档"
     },
-    "deleteError": "删除草稿本时出错",
+    "deleteError": "删除文档时出错",
     "dontSave": "继续并丢失更改",
     "fontFamily": {
       "monospace": "等宽字体",
@@ -2175,22 +2175,23 @@
       "empty": "没有保存的文档"
     },
     "import": {
-      "prompt": "请输入此草稿本的标题：",
-      "title": "导入草稿本"
+      "prompt": "请输入此文档的标题",
+      "title": "导入文档"
     },
-    "importError": "导入草稿本时出错",
-    "loadingError": "加载便签文件时出错",
+    "importError": "导入文档文件时出错",
+    "loadingError": "加载文档文件时出错",
+    "new": "新建文档",
     "placeholder": "开始输入您的文档，或\n让 @:{'common.appName'} 为您写点东西！\n\n一旦开始，您可以让 @:{'common.appName'}\n对您的文档进行修改。\n\n如果您高亮了部分文本，\n@:{'common.appName'} 将只更新这部分内容。\n\n还可以查看位于右下角操作栏的写作助手！\n\n试试看吧！",
     "rename": {
       "prompt": "请输入新标题",
-      "title": "重命名草稿本"
+      "title": "重命名文档"
     },
-    "renameError": "重命名草稿本时出错",
+    "renameError": "重命名文档时出错",
     "save": {
-      "prompt": "请输入此草稿本的标题",
-      "title": "保存草稿本"
+      "prompt": "请输入此文档的标题",
+      "title": "保存文档"
     },
-    "saveError": "保存草稿本时出错",
+    "saveError": "保存文档时出错",
     "title": "Scratchpad",
     "unsavedPrompt": "您想保存更改吗？"
   },
