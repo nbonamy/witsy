@@ -67,6 +67,16 @@ export const CHAT = {
 // Preload exposures in src/preload.ts
 ```
 
+### CSS classes
+
+The project includes a variety of CSS classes available globally:
+- variables.css + index.css = base variables and styles
+- form.css = styling of form and form elements
+- split-pane.css + master-detail.css = common layouts
+- panel.css + artifact.css + tooltip.css = common components
+- swal2.css = dialog styling
+
+Make sure you use globally available CSS variables and don't create your own styles.
 
 ### Testing Patterns
 - **Unit Tests**: `tests/unit/` using Vitest + Vue Test Utils
