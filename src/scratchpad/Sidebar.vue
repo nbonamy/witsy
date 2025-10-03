@@ -20,7 +20,7 @@
 
     <footer>
       <button class="cta" @click="emitEvent('action', 'clear')">
-        <NotebookPenIcon />{{ t('common.new') }}
+        <NotebookPenIcon />{{ t('scratchpad.new') }}
       </button>
     </footer>
 

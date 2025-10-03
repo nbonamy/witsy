@@ -2129,9 +2129,9 @@
     },
     "delete": {
       "confirm": "Möchten Sie \"{title}\" wirklich löschen?",
-      "title": "Notizzettel löschen"
+      "title": "Dokument löschen"
     },
-    "deleteError": "Fehler beim Löschen des Notizzettels",
+    "deleteError": "Fehler beim Löschen des Dokuments",
     "dontSave": "Weiter und Änderungen verwerfen",
     "fontFamily": {
       "monospace": "Monospace",
@@ -2153,22 +2153,23 @@
       "empty": "Keine gespeicherten Dokumente"
     },
     "import": {
-      "prompt": "Geben Sie einen Titel für diesen Notizzettel ein:",
-      "title": "Notizzettel importieren"
+      "prompt": "Geben Sie einen Titel für dieses Dokument ein",
+      "title": "Dokument importieren"
     },
-    "importError": "Fehler beim Importieren des Notizzettels",
-    "loadingError": "Fehler beim Laden der Notizdatei",
+    "importError": "Fehler beim Importieren der Dokumentdatei",
+    "loadingError": "Fehler beim Laden der Dokumentdatei",
+    "new": "Neues Dokument",
     "placeholder": "Beginnen Sie, Ihr Dokument zu schreiben oder\nbitten Sie @:{'common.appName'}, etwas für Sie zu verfassen!\n\nSobald Sie begonnen haben, können Sie @:{'common.appName'} bitten,\nÄnderungen an Ihrem Dokument vorzunehmen.\n\nWenn Sie einen Textbereich markieren,\nwird @:{'common.appName'} nur diesen Bereich aktualisieren.\n\nSchauen Sie sich auch den Schreibassistenten\nin der Aktionsleiste unten rechts an!\n\nProbieren Sie es aus!",
     "rename": {
       "prompt": "Geben Sie einen neuen Titel ein",
-      "title": "Notizzettel umbenennen"
+      "title": "Dokument umbenennen"
     },
-    "renameError": "Fehler beim Umbenennen des Notizzettels",
+    "renameError": "Fehler beim Umbenennen des Dokuments",
     "save": {
-      "prompt": "Geben Sie einen Titel für diesen Notizzettel ein",
-      "title": "Notizzettel speichern"
+      "prompt": "Geben Sie einen Titel für dieses Dokument ein",
+      "title": "Dokument speichern"
     },
-    "saveError": "Fehler beim Speichern des Notizzettels",
+    "saveError": "Fehler beim Speichern des Dokuments",
     "title": "Scratchpad",
     "unsavedPrompt": "Möchten Sie Ihre Änderungen speichern?"
   },

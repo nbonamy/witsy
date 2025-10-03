@@ -2162,9 +2162,9 @@
     },
     "delete": {
       "confirm": "Are you sure you want to delete \"{title}\"?",
-      "title": "Delete Scratchpad"
+      "title": "Delete Document"
     },
-    "deleteError": "Error deleting scratchpad",
+    "deleteError": "Error deleting document",
     "dontSave": "Continue and lose changes",
     "fontFamily": {
       "monospace": "Monospace",
@@ -2186,22 +2186,23 @@
       "empty": "No saved documents"
     },
     "import": {
-      "prompt": "Enter a title for this scratchpad:",
-      "title": "Import Scratchpad"
+      "prompt": "Enter a title for this document",
+      "title": "Import Document"
     },
-    "importError": "Error importing scratchpad",
-    "loadingError": "Error while loading scratchpad file",
+    "importError": "Error importing document file",
+    "loadingError": "Error while loading document file",
+    "new": "New Document",
     "placeholder": "Start typing your document or\nask @:{'common.appName'} to write something for you!\n\nOnce you started you can ask @:{'common.appName'}\nto make modification on your document.\n\nIf you highligh a portion of your text,\n@:{'common.appName'} will only update this portion.\n\nAlso check out the Writing Assistant\nin the action bar in the lower right corner!\n\nGive it a go!",
     "rename": {
       "prompt": "Enter a new title",
-      "title": "Rename Scratchpad"
+      "title": "Rename Document"
     },
-    "renameError": "Error renaming scratchpad",
+    "renameError": "Error renaming document",
     "save": {
-      "prompt": "Enter a title for this scratchpad",
-      "title": "Save Scratchpad"
+      "prompt": "Enter a title for this document",
+      "title": "Save Document"
     },
-    "saveError": "Error saving scratchpad",
+    "saveError": "Error saving document",
     "title": "Scratchpad",
     "unsavedPrompt": "Do you want to save your changes?"
   },

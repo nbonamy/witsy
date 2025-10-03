@@ -2151,9 +2151,9 @@
     },
     "delete": {
       "confirm": "Tem certeza de que deseja excluir \"{title}\"?",
-      "title": "Excluir Bloco de Notas"
+      "title": "Excluir Documento"
     },
-    "deleteError": "Erro ao excluir o bloco de notas",
+    "deleteError": "Erro ao excluir o documento",
     "dontSave": "Continuar e perder as alterações",
     "fontFamily": {
       "monospace": "Monoespaçado",
@@ -2175,22 +2175,23 @@
       "empty": "Nenhum documento salvo"
     },
     "import": {
-      "prompt": "Digite um título para este bloco de notas:",
-      "title": "Importar Bloco de Notas"
+      "prompt": "Insira um título para este documento",
+      "title": "Importar Documento"
     },
-    "importError": "Erro ao importar o bloco de notas",
-    "loadingError": "Erro ao carregar arquivo scratchpad",
+    "importError": "Erro ao importar arquivo do documento",
+    "loadingError": "Erro ao carregar arquivo do documento",
+    "new": "Novo Documento",
     "placeholder": "Comece a digitar seu documento ou\npeça ao @:{'common.appName'} para escrever algo para você!\n\nDepois de começar, você pode pedir ao @:{'common.appName'}\npara fazer modificações no seu documento.\n\nSe você destacar uma parte do seu texto,\n@:{'common.appName'} atualizará somente essa parte.\n\nConfira também o Assistente de Escrita\nna barra de ações no canto inferior direito!\n\nExperimente!",
     "rename": {
       "prompt": "Digite um novo título",
-      "title": "Renomear Bloco de Notas"
+      "title": "Renomear Documento"
     },
-    "renameError": "Erro ao renomear o bloco de notas",
+    "renameError": "Erro ao renomear o documento",
     "save": {
-      "prompt": "Digite um título para este bloco de notas",
-      "title": "Salvar Bloco de Notas"
+      "prompt": "Insira um título para este documento",
+      "title": "Salvar Documento"
     },
-    "saveError": "Erro ao salvar o bloco de notas",
+    "saveError": "Erro ao salvar o documento",
     "title": "Scratchpad",
     "unsavedPrompt": "Você deseja salvar suas alterações?"
   },

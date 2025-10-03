@@ -2129,9 +2129,9 @@
     },
     "delete": {
       "confirm": "Êtes-vous sûr de vouloir supprimer « {title} » ?",
-      "title": "Supprimer le carnet de notes"
+      "title": "Supprimer le document"
     },
-    "deleteError": "Erreur lors de la suppression du carnet de notes",
+    "deleteError": "Erreur lors de la suppression du document",
     "dontSave": "Continuer et perdre les modifications",
     "fontFamily": {
       "monospace": "Monospace",
@@ -2153,22 +2153,23 @@
       "empty": "Aucun document enregistré"
     },
     "import": {
-      "prompt": "Entrez un titre pour ce carnet de notes :",
-      "title": "Importer le carnet de notes"
+      "prompt": "Entrez un titre pour ce document",
+      "title": "Importer un document"
     },
-    "importError": "Erreur lors de l'importation du carnet de notes",
-    "loadingError": "Erreur lors du chargement du fichier de bloc-notes",
+    "importError": "Erreur lors de l'importation du fichier de document",
+    "loadingError": "Erreur lors du chargement du fichier de document",
+    "new": "Nouveau document",
     "placeholder": "Commencez à taper votre document ou\ndemandez à @:{'common.appName'} d'écrire quelque chose pour vous !\n\nUne fois commencé, vous pouvez demander à @:{'common.appName'}\nde modifier votre document.\n\nSi vous surlignez une portion de votre texte,\n@:{'common.appName'} mettra à jour uniquement cette partie.\n\nDécouvrez aussi l'Assistant d'écriture\ndans la barre d'actions en bas à droite !\n\nEssayez-le !",
     "rename": {
       "prompt": "Entrez un nouveau titre",
-      "title": "Renommer le carnet de notes"
+      "title": "Renommer le document"
     },
-    "renameError": "Erreur lors du renommage du carnet de notes",
+    "renameError": "Erreur lors du renommage du document",
     "save": {
-      "prompt": "Entrez un titre pour ce carnet de notes",
-      "title": "Enregistrer le carnet de notes"
+      "prompt": "Entrez un titre pour ce document",
+      "title": "Enregistrer le document"
     },
-    "saveError": "Erreur lors de l'enregistrement du carnet de notes",
+    "saveError": "Erreur lors de l'enregistrement du document",
     "title": "Scratchpad",
     "unsavedPrompt": "Voulez-vous enregistrer vos modifications ?"
   },
