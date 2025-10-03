@@ -843,6 +843,15 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "search": {
+      "error": "An error occurred while searching. Please try again.",
+      "noResults": "No results found for your query.",
+      "placeholder": "Enter your search query...",
+      "results": "Search Results ({count})",
+      "score": "Relevance Score: {score}",
+      "text": "Enter your search query to find relevant information in this knowledge base.",
+      "title": "Search Knowledge Base"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

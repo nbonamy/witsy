@@ -824,6 +824,15 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "search": {
+      "error": "Beim Suchen ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "noResults": "Für Ihre Anfrage wurden keine Ergebnisse gefunden.",
+      "placeholder": "Geben Sie Ihre Suchanfrage ein...",
+      "results": "Suchergebnisse ({count})",
+      "score": "Relevanzbewertung: {score}",
+      "text": "Geben Sie Ihre Suchanfrage ein, um relevante Informationen in dieser Wissensdatenbank zu finden.",
+      "title": "Wissensdatenbank durchsuchen"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

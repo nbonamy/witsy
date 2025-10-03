@@ -19,7 +19,7 @@
           <div class="actions">
             <div class="tag info" v-if="processingItems.includes(resource.uuid)">Indexing</div>
             <div class="tag success" v-else>Ready</div>
-            <RefreshCwIcon
+            <RefreshCwIcon v-if="!processingItems.includes(resource.uuid)"
               class="icon refresh"
               v-tooltip="{ text: t('docRepo.web.tooltips.refresh'), position: 'left' }"
               @click="onRefresh(resource)"

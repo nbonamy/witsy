@@ -843,6 +843,15 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "search": {
+      "error": "Wystąpił błąd podczas wyszukiwania. Spróbuj ponownie.",
+      "noResults": "Nie znaleziono wyników dla Twojego zapytania.",
+      "placeholder": "Wpisz zapytanie...",
+      "results": "Wyniki wyszukiwania ({count})",
+      "score": "Wskaźnik trafności: {score}",
+      "text": "Wpisz zapytanie, aby znaleźć odpowiednie informacje w tej bazie wiedzy.",
+      "title": "Szukaj w bazie wiedzy"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

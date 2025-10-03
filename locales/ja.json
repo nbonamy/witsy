@@ -843,6 +843,15 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "search": {
+      "error": "検索中にエラーが発生しました。もう一度お試しください。",
+      "noResults": "クエリに対する結果が見つかりませんでした。",
+      "placeholder": "検索クエリを入力してください...",
+      "results": "検索結果（{count}）",
+      "score": "関連度スコア：{score}",
+      "text": "ナレッジベース内で関連情報を見つけるために検索クエリを入力してください。",
+      "title": "ナレッジベース検索"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

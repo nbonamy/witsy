@@ -824,6 +824,15 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "search": {
+      "error": "Si è verificato un errore durante la ricerca. Per favore riprova.",
+      "noResults": "Nessun risultato trovato per la tua query.",
+      "placeholder": "Inserisci la tua query di ricerca...",
+      "results": "Risultati della ricerca ({count})",
+      "score": "Punteggio di rilevanza: {score}",
+      "text": "Inserisci la tua query per trovare informazioni pertinenti in questa knowledge base.",
+      "title": "Cerca nella Knowledge Base"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {
