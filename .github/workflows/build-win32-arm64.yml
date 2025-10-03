@@ -27,6 +27,7 @@ jobs:
       - name: Build script
         run: make win-arm64
         env:
+          NODE_OPTIONS: --max_old_space_size=4096
           PREBUILDS_ONLY: "1"
           npm_config_platform: "win32"
           npm_config_arch: "arm64"
