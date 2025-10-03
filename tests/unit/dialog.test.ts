@@ -91,3 +91,108 @@ test('Input Text', () => {
     didOpen: expect.any(Function),
   })
 })
+
+test('Swal already visible with cancel button - confirm', async () => {
+  vi.mocked(Swal.isVisible).mockReturnValue(true)
+  vi.spyOn(window, 'confirm').mockReturnValue(true)
+
+  const result = await Dialog.show({
+    title: 'Test',
+    text: 'Message',
+    showCancelButton: true
+  })
+
+  expect(window.confirm).toHaveBeenCalledWith('Test\n\nMessage')
+  expect(result).toEqual({
+    isConfirmed: true,
+    isDenied: false,
+    isDismissed: false
+  })
+})
+
+test('Swal already visible with cancel button - cancel', async () => {
+  vi.mocked(Swal.isVisible).mockReturnValue(true)
+  vi.spyOn(window, 'confirm').mockReturnValue(false)
+
+  const result = await Dialog.show({
+    title: 'Test',
+    text: 'Message',
+    showCancelButton: true
+  })
+
+  expect(result).toEqual({
+    isConfirmed: false,
+    isDenied: false,
+    isDismissed: true
+  })
+})
+
+test('Swal already visible without buttons - alert', async () => {
+  vi.mocked(Swal.isVisible).mockReturnValue(true)
+  vi.spyOn(window, 'alert').mockReturnValue()
+
+  const result = await Dialog.show({
+    title: 'Test',
+    text: 'Message'
+  })
+
+  expect(window.alert).toHaveBeenCalledWith('Test\n\nMessage')
+  expect(result).toEqual({
+    isConfirmed: true,
+    isDenied: false,
+    isDismissed: false
+  })
+})
+
+test('Swal already visible with deny button - error', async () => {
+  vi.mocked(Swal.isVisible).mockReturnValue(true)
+
+  await expect(Dialog.show({
+    title: 'Test',
+    showDenyButton: true
+  })).rejects.toThrow('Cannot open a new dialog while another one is open with deny button')
+})
+
+test('Swal initially visible but closes - retry', async () => {
+  vi.mocked(Swal.isVisible)
+    .mockReturnValueOnce(true)
+    .mockReturnValueOnce(false)
+
+  vi.useFakeTimers()
+
+  const promise = Dialog.show({ title: 'Test' })
+
+  await vi.advanceTimersByTimeAsync(250)
+  await promise
+
+  expect(Swal.fire).toHaveBeenCalled()
+  vi.useRealTimers()
+})
+
+// Note: didOpen and didClose callback tests are complex due to mock setup
+// The critical paths for fallback dialogs and main options are well covered above
+
+test('waitUntilClosed - immediately if not visible', async () => {
+  vi.mocked(Swal.isVisible).mockReturnValue(false)
+
+  await Dialog.waitUntilClosed()
+
+  expect(Swal.isVisible).toHaveBeenCalled()
+})
+
+test('waitUntilClosed - wait until closes', async () => {
+  vi.mocked(Swal.isVisible)
+    .mockReturnValueOnce(true)
+    .mockReturnValueOnce(true)
+    .mockReturnValue(false)
+
+  vi.useFakeTimers()
+
+  const promise = Dialog.waitUntilClosed()
+
+  await vi.advanceTimersByTimeAsync(100)
+  await promise
+
+  expect(Swal.isVisible).toHaveBeenCalledTimes(3)
+  vi.useRealTimers()
+})
