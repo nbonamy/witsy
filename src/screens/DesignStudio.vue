@@ -32,7 +32,17 @@
       </div>
     </div>
   </div>
-  <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+  <ContextMenuPlus v-if="showMenu" @close="closeContextMenu" :mouseX="menuX" :mouseY="menuY">
+    <div v-if="selection.length == 1" class="item" @click="handleActionClick('load')">
+      {{ t('designStudio.loadMediaSettings') }}
+    </div>
+    <div v-if="selection.length == 1" class="item" @click="handleActionClick('rename')">
+      {{ t('common.rename') }}
+    </div>
+    <div class="item" @click="handleActionClick('delete')">
+      {{ t('common.delete') }}
+    </div>
+  </ContextMenuPlus>
   <DrawingCanvas v-if="showDrawingCanvas" :backgroundImage="currentMediaUrl" @close="onDrawingClose" @save="onDrawingSave" />
 </template>
 
@@ -40,7 +50,7 @@
 import { ImagePlusIcon, ListRestartIcon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import ButtonIcon from '../components/ButtonIcon.vue'
-import ContextMenu from '../components/ContextMenu.vue'
+import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import DrawingCanvas from '../components/DrawingCanvas.vue'
 import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
@@ -78,16 +88,6 @@ const menuY = ref(0)
 const targetRow = ref<Message|null>(null)
 const isDragOver = ref(false)
 const showDrawingCanvas = ref(false)
-
-const contextMenuActions = () => {
-  return [
-    ...selection.value.length == 1 ? [
-      { label: t('designStudio.loadMediaSettings'), action: 'load' },
-      { label: t('common.rename'), action: 'rename' },
-    ] : [],
-    { label: t('common.delete'), action: 'delete' },
-  ]
-}
 
 const currentMedia = computed((): Message => {
   return selection.value.length === 1 ? selection.value[0] : null
@@ -202,7 +202,7 @@ const closeContextMenu = () => {
 }
 
 const handleActionClick = async (action: string) => {
-  
+
   // close
   closeContextMenu()
 

@@ -2,29 +2,29 @@
   <div class="artifact panel">
     <div class="panel-header">
       <label>{{ title }}</label>
-      <ScanEyeIcon class="icon preview" @click="toggleHtml" v-if="!previewHtml" />
-      <EyeOffIcon class="icon preview" @click="toggleHtml" v-if="previewHtml" />
-      <ClipboardCheckIcon class="icon" v-if="copying" />
-      <ClipboardIcon class="icon" @click="onCopy" v-else />
-      <div class="icon download" @click="onDownloadClick" ref="downloadButton">
-        <DownloadIcon class="icon"/>
-      </div>
+      <ButtonIcon class="preview" @click="toggleHtml">
+        <ScanEyeIcon v-if="!previewHtml" />
+        <EyeOffIcon v-else />
+      </ButtonIcon>
+      <ButtonIcon>
+        <ClipboardCheckIcon v-if="copying" />
+        <ClipboardIcon @click="onCopy" v-else />
+      </ButtonIcon>
+      <ContextMenuTrigger class="download" position="below-right" ref="downloadButton">
+        <template #trigger>
+          <DownloadIcon />
+        </template>
+        <template #menu>
+          <div class="item" @click="onDownloadFormat('raw')">HTML</div>
+          <div class="item" @click="onDownloadFormat('pdf')">PDF</div>
+        </template>
+      </ContextMenuTrigger>
     </div>
     <div class="panel-body variable-font-size" ref="panelBody">
       <MessageItemBody v-if="!previewHtml" :message="message" show-tool-calls="never" />
       <iframe ref="htmlIframe" sandbox="allow-scripts allow-same-origin allow-forms" v-else-if="!transient || headComplete" :srcdoc="html" style="width: 100%; border: none;" />
       <div v-else class="html-loading">{{ t('common.htmlGeneration') }}</div>
     </div>
-
-    <ContextMenu
-      v-if="showDownloadMenu"
-      @close="closeDownloadMenu"
-      :actions="downloadMenuActions"
-      @action-clicked="onDownloadFormat"
-      :x="downloadMenuX"
-      :y="downloadMenuY"
-      position="below"
-    />
 
   </div>
 </template>
@@ -39,7 +39,8 @@ import { t } from '../services/i18n'
 import { addExtension, extractCodeBlockContent, extractHtmlContent as extractHtml } from '../services/markdown'
 import { exportToPdf } from '../services/pdf'
 import { store } from '../services/store'
-import ContextMenu from './ContextMenu.vue'
+import ButtonIcon from './ButtonIcon.vue'
+import ContextMenuTrigger from './ContextMenuTrigger.vue'
 import MessageItemBody from './MessageItemBody.vue'
 
 const content = () => extractCodeBlockContent(props.content)
@@ -52,16 +53,6 @@ const panelBody = ref<HTMLElement>()
 const htmlIframe = ref<HTMLIFrameElement>()
 const headComplete = ref(false)
 const initialHtmlWithListener = ref('')
-const showDownloadMenu = ref(false)
-const downloadMenuX = ref(0)
-const downloadMenuY = ref(0)
-
-const downloadMenuActions = computed(() => {
-  return [
-    { label: 'HTML', action: 'raw', disabled: false },
-    { label: 'PDF', action: 'pdf', disabled: false },
-  ]
-})
 
 const props = defineProps({
   title: {
@@ -248,28 +239,7 @@ const toggleHtml = () => {
   previewHtml.value = !previewHtml.value
 }
 
-const onDownloadClick = () => {
-  if (showDownloadMenu.value) {
-    closeDownloadMenu()
-  } else {
-    showDownloadContextMenu()
-  }
-}
-
-const showDownloadContextMenu = () => {
-  showDownloadMenu.value = true
-  const rcButton = downloadButton.value.getBoundingClientRect()
-  downloadMenuX.value = rcButton.left - 120
-  downloadMenuY.value = rcButton.bottom + 5
-}
-
-const closeDownloadMenu = () => {
-  showDownloadMenu.value = false
-}
-
 const onDownloadFormat = async (action: string) => {
-  // close menu
-  closeDownloadMenu()
 
   let filename = props.title
   let fileContent = ''

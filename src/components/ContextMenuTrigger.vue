@@ -1,6 +1,7 @@
 <template>
   <div class="context-menu-trigger">
-    <div 
+    
+    <ButtonIcon
       :id="triggerId" 
       class="trigger" 
       @click="toggleMenu"
@@ -11,16 +12,18 @@
       <slot name="trigger">
         <EllipsisVerticalIcon />
       </slot>
-    </div>
+    </ButtonIcon>
     
-    <ContextMenuPlus 
+    <ContextMenuPlus
       v-if="isMenuOpen"
       :anchor="`#${triggerId}`"
       :position="position"
+      :auto-close="true"
       @close="closeMenu"
     >
-      <slot name="menu" :close="closeMenu" />
+      <slot name="menu" />
     </ContextMenuPlus>
+  
   </div>
 </template>
 
@@ -29,6 +32,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { EllipsisVerticalIcon } from 'lucide-vue-next'
 import ContextMenuPlus, { type MenuPosition } from './ContextMenuPlus.vue'
+import ButtonIcon from './ButtonIcon.vue'
 
 const props = defineProps({
   position: {
@@ -79,19 +83,6 @@ defineExpose({
 .context-menu-trigger {
   position: relative;
   display: inline-block;
-}
-
-.trigger {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.25rem;
-  outline: none;
-}
-
-.trigger:focus-visible {
-  box-shadow: 0 0 0 2px var(--focus-ring-color, #3b82f6);
 }
 
 </style>

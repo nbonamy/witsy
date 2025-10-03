@@ -2,25 +2,24 @@
   <div class="artifact panel">
     <div class="panel-header">
       <label>{{ title }}</label>
-      <ClipboardCheckIcon class="icon" v-if="copying" />
-      <ClipboardIcon class="icon" @click="onCopy" v-else />
-      <div class="icon download" @click="onDownloadClick" ref="downloadButton">
-        <DownloadIcon class="icon"/>
-      </div>
+      <ButtonIcon>
+        <ClipboardCheckIcon v-if="copying" />
+        <ClipboardIcon @click="onCopy" v-else />
+      </ButtonIcon>
+      <ContextMenuTrigger class="download" position="below-right" ref="downloadButton">
+        <template #trigger>
+          <DownloadIcon />
+        </template>
+        <template #menu>
+          <div class="item" @click="onDownloadFormat('text')">Text</div>
+          <div class="item" @click="onDownloadFormat('raw')">Markdown</div>
+          <div class="item" @click="onDownloadFormat('pdf')">PDF</div>
+        </template>
+      </ContextMenuTrigger>
     </div>
     <div class="panel-body variable-font-size" ref="panelBody">
       <MessageItemBody :message="message" show-tool-calls="never" />
     </div>
-
-    <ContextMenu
-      v-if="showDownloadMenu"
-      @close="closeDownloadMenu"
-      :actions="downloadMenuActions"
-      @action-clicked="onDownloadFormat"
-      :x="downloadMenuX"
-      :y="downloadMenuY"
-      position="below"
-    />
 
   </div>
 </template>
@@ -34,7 +33,8 @@ import { useArtifactCopy } from '../composables/artifact_copy'
 import Message from '../models/message'
 import { addExtension, extractCodeBlockContent } from '../services/markdown'
 import { exportToPdf } from '../services/pdf'
-import ContextMenu from './ContextMenu.vue'
+import ButtonIcon from './ButtonIcon.vue'
+import ContextMenuTrigger from './ContextMenuTrigger.vue'
 import MessageItemBody from './MessageItemBody.vue'
 
 const content = () => extractCodeBlockContent(props.content)
@@ -42,17 +42,6 @@ const { copying, onCopy } = useArtifactCopy(content)
 
 const downloadButton = ref<HTMLElement>(null)
 const panelBody = ref<HTMLElement>(null)
-const showDownloadMenu = ref(false)
-const downloadMenuX = ref(0)
-const downloadMenuY = ref(0)
-
-const downloadMenuActions = computed(() => {
-  return [
-    { label: 'Text', action: 'text', disabled: false },
-    { label: 'Markdown', action: 'raw', disabled: false },
-    { label: 'PDF', action: 'pdf', disabled: false },
-  ]
-})
 
 const props = defineProps({
   title: {
@@ -71,28 +60,7 @@ const props = defineProps({
 
 const message = computed(() => new Message('assistant', props.content))
 
-const onDownloadClick = () => {
-  if (showDownloadMenu.value) {
-    closeDownloadMenu()
-  } else {
-    showDownloadContextMenu()
-  }
-}
-
-const showDownloadContextMenu = () => {
-  showDownloadMenu.value = true
-  const rcButton = downloadButton.value.getBoundingClientRect()
-  downloadMenuX.value = rcButton.left - 120
-  downloadMenuY.value = rcButton.bottom + 5
-}
-
-const closeDownloadMenu = () => {
-  showDownloadMenu.value = false
-}
-
 const onDownloadFormat = async (action: string) => {
-  // close menu
-  closeDownloadMenu()
 
   let filename = props.title
   let fileContent = ''

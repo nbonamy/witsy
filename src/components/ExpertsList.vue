@@ -4,8 +4,18 @@
     <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
     <div class="list-action copy" @click.prevent="onCopy(selected)" v-if="selected"><CopyIcon />{{ t('settings.experts.copy') }}</div>
     <div class="list-action delete" @click.prevent="onDelete" v-if="selected"><Trash2Icon />{{ t('common.delete') }}</div>
-    <div class="flex-push" /> 
-    <div class="list-action menu" @click.prevent.stop="onMore" ref="moreButton"><div></div><div></div><div></div></div>
+    <div class="flex-push" />
+    <ContextMenuTrigger class="list-action menu" position="below-right" ref="moreButton">
+      <template #menu>
+        <div class="item" @click="handleActionClick('export')">{{ t('settings.experts.export') }}</div>
+        <div class="item" @click="handleActionClick('import')">{{ t('settings.experts.import') }}</div>
+        <div class="item" @click="handleActionClick('select')">{{ t('settings.experts.enableAll') }}</div>
+        <div class="item" @click="handleActionClick('unselect')">{{ t('settings.experts.disableAll') }}</div>
+        <div class="item" @click="handleActionClick('deleteAll')">{{ t('settings.experts.deleteAll') }}</div>
+        <div class="item" @click="handleActionClick('sortAlpha')">{{ t('settings.experts.sortAlpha') }}</div>
+        <div class="item" @click="handleActionClick('sortEnabled')">{{ t('settings.experts.sortState') }}</div>
+      </template>
+    </ContextMenuTrigger>
   </div>
   <div class="experts sticky-table-container">
     <table>
@@ -27,7 +37,6 @@
       </tbody>
     </table>
   </div>
-  <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="right" :teleport="false" />
 </template>
 
 <script setup lang="ts">
@@ -35,7 +44,7 @@
 import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, ref } from 'vue'
-import ContextMenu from '../components/ContextMenu.vue'
+import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import Dialog from '../composables/dialog'
 import useReorderTable from '../composables/reorder_table'
 import { newExpert, saveExperts } from '../services/experts'
@@ -46,9 +55,6 @@ import { Expert } from '../types/index'
 const experts= ref<Expert[]>(null)
 const selected= ref<Expert>(null)
 const moreButton= ref<HTMLElement>(null)
-const showMenu = ref(false)
-const menuX = ref(0)
-const menuY = ref(0)
 
 const reorderExperts = useReorderTable((ids: string[]) => {
   experts.value.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
@@ -56,16 +62,6 @@ const reorderExperts = useReorderTable((ids: string[]) => {
 })
 
 const emit = defineEmits([ 'create', 'edit' ])
-
-const contextMenuActions = [
-  { label: t('settings.experts.export'), action: 'export' },
-  { label: t('settings.experts.import'), action: 'import' },
-  { label: t('settings.experts.enableAll'), action: 'select' },
-  { label: t('settings.experts.disableAll'), action: 'unselect' },
-  { label: t('settings.experts.deleteAll'), action: 'deleteAll' },
-  { label: t('settings.experts.sortAlpha'), action: 'sortAlpha' },
-  { label: t('settings.experts.sortState'), action: 'sortEnabled' },
-]
 
 const visibleExperts = computed(() => experts.value?.filter((expert: Expert) => expert.state != 'deleted'))
 
@@ -91,30 +87,7 @@ const onMoveUp = (expert: Expert) => {
   }
 }
 
-const onMore = () => {
-  if (showMenu.value) {
-    closeContextMenu()
-  } else {
-    showContextMenu()
-  }
-}
-
-const showContextMenu = () => {
-  showMenu.value = true
-  const rcButton = moreButton.value.getBoundingClientRect()
-  const rcContent = moreButton.value.closest('.tab-content').getBoundingClientRect()
-  menuX.value = rcContent.right - rcButton.right - 8
-  menuY.value = rcButton.bottom - 32
-}
-
-const closeContextMenu = () => {
-  showMenu.value = false;
-}
-
 const handleActionClick = async (action: string) => {
-
-  // close
-  closeContextMenu()
 
   // process
   if (action === 'select') {

@@ -12,7 +12,13 @@
       <ChatListItem :chat="chat" :selection="selection" :active="active" :selectMode="selectMode" @click="onSelectChat(chat)" @contextmenu.prevent="showChatContextMenu($event, chat)" />
     </template>
   </section>
-  <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+  <ContextMenuPlus v-if="showMenu" @close="closeContextMenu" :mouseX="menuX" :mouseY="menuY">
+    <div class="item" @click="handleActionClick('chat')">{{ t('common.newChat') }}</div>
+    <div class="item" @click="handleActionClick('rename')">{{ t('common.rename') }}</div>
+    <div class="item" @click="handleActionClick('setDefaults')">{{ t('chatList.folder.actions.setDefaults') }}</div>
+    <div v-if="store.history.folders.find((f: Folder) => f.id === targetRow)?.defaults" class="item" @click="handleActionClick('clearDefaults')">{{ t('chatList.folder.actions.clearDefaults') }}</div>
+    <div class="item" @click="handleActionClick('delete')">{{ t('chatList.folder.actions.delete') }}</div>
+  </ContextMenuPlus>
 </template>
 
 <script setup lang="ts">
@@ -20,17 +26,16 @@
 import { EllipsisVertical } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
+import useEventBus from '../composables/event_bus'
+import useTipsManager from '../composables/tips_manager'
 import Chat from '../models/chat'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Folder } from '../types/index'
 import ChatListItem from './ChatListItem.vue'
-import ContextMenu from './ContextMenu.vue'
+import ContextMenuPlus from './ContextMenuPlus.vue'
 
-import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
-
-import useTipsManager from '../composables/tips_manager'
 const tipsManager = useTipsManager(store)
 
 const props = defineProps({
@@ -86,16 +91,6 @@ const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const targetRow= ref<string|null>(null)
-const contextMenuActions = () => {
-  const folder = store.history.folders.find((f) => f.id === targetRow.value)
-  return [
-    { label: t('common.newChat'), action: 'chat' },
-    { label: t('common.rename'), action: 'rename' },
-    { label: t('chatList.folder.actions.setDefaults'), action: 'setDefaults' },
-    ...(folder?.defaults ? [ { label: t('chatList.folder.actions.clearDefaults'), action: 'clearDefaults' } ] : []),
-    { label: t('chatList.folder.actions.delete'), action: 'delete' },
-  ]
-}
 
 onMounted(() => {
   expandedFolders.value = localStorage.getItem('expandedFolders')?.split(',') || expandedFolders.value

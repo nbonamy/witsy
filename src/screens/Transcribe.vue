@@ -80,8 +80,8 @@
         <div class="actions">
           <div class="form form-large">
             <button name="summarize" class="button" @click="onSummarize" :disabled="!transcription || state === 'processing'"><BIconChevronBarContract /> {{ t('transcribe.summarize') }}</button>
-            <button name="translate" class="button" @click="onTranslate" :disabled="!transcription || state === 'processing'"><BIconGlobe /></button>
-            <button name="commands" class="button" @click="onCommands" :disabled="!transcription || state === 'processing'"><BIconMagic /></button>
+            <button name="translate" id="translate-btn" class="button" @click="onTranslate" :disabled="!transcription || state === 'processing'"><BIconGlobe /></button>
+            <button name="commands" id="commands-btn" class="button" @click="onCommands" :disabled="!transcription || state === 'processing'"><BIconMagic /></button>
             <div class="flex-push"></div>
             <button name="clear" class="button" @click="onClear" :disabled="!transcription || state === 'processing'">{{ t('common.clear') }}</button>
             <button name="insert" class="button" @click="onInsert" :disabled="!transcription || state === 'processing'">{{ t('common.insert') }}</button>
@@ -98,8 +98,20 @@
       </main>
     </div>
 
-    <ContextMenu v-if="showTranslateMenu" @close="() => showTranslateMenu = false" :actions="translateMenuActions" :show-filter="true" @action-clicked="handleTranslateClick" :x="menuX" :y="menuY" position="above" :teleport="false" />
-    <ContextMenu v-if="showCommandsMenu" @close="() => showCommandsMenu = false" :actions="commandsMenuActions" :show-filter="true" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" position="above" :teleport="false" />
+    <ContextMenuPlus v-if="showTranslateMenu" @close="() => showTranslateMenu = false" :show-filter="true" anchor="#translate-btn" position="above" :teleport="false">
+      <div class="item disabled">{{ t('transcribe.translate') }}</div>
+      <div v-for="lang in allLanguages" :key="lang.label" class="item" @click="handleTranslateClick(lang.label)">
+        {{ lang.label }}
+      </div>
+    </ContextMenuPlus>
+
+    <ContextMenuPlus v-if="showCommandsMenu" @close="() => showCommandsMenu = false" :show-filter="true" anchor="#commands-btn" position="above" :teleport="false">
+      <div v-for="cmd in commandsMenuActions" :key="cmd.action" class="item" @click="handleCommandClick(cmd.action)">
+        <span v-if="typeof cmd.icon === 'string'" class="icon text">{{ cmd.icon }}</span>
+        <component :is="cmd.icon" v-else-if="typeof cmd.icon === 'object'" class="icon" />
+        {{ cmd.label }}
+      </div>
+    </ContextMenuPlus>
 
   </div>
 </template>
@@ -112,7 +124,7 @@ import { store } from '../services/store'
 import { commandI18n, t } from '../services/i18n'
 import { getSTTEngines, getSTTModels } from '../voice/stt'
 import { allLanguages } from '../services/i18n'
-import ContextMenu from '../components/ContextMenu.vue'
+import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import Waveform from '../components/Waveform.vue'
 import Loader from '../components/Loader.vue'
 import useTranscriber from '../composables/transcriber'
@@ -146,8 +158,6 @@ const copying = ref(false)
 const fileInput = ref(null)
 const showTranslateMenu = ref(false)
 const showCommandsMenu = ref(false)
-const menuX = ref(0)
-const menuY = ref(0)
 const isDragOver = ref(false)
 
 let previousTranscription = ''
@@ -157,13 +167,6 @@ const meta = computed(() => window.api.platform === 'darwin' ? 'Cmd' : 'Ctrl')
 const models = computed(() => {
   return getSTTModels(engine.value) ?? []
 })
-
-const translateMenuActions = computed(() => ([
-  { action: '', label: t('transcribe.translate'), disabled: true },
-  ...allLanguages.map(lang => ({
-    action: lang.label, label: lang.label
-  }))
-]))
 
 const commandsMenuActions = computed(() => {
   return store.commands.filter((c) => c.state == 'enabled').map(c => {
@@ -643,11 +646,7 @@ const onSummarize = async () => {
   })
 }
 
-const onTranslate = async (ev: MouseEvent) => {
-  const rcButton = (ev.currentTarget as HTMLElement).getBoundingClientRect()
-  const rcContent = (ev.currentTarget as HTMLElement).closest('.split-pane').getBoundingClientRect()
-  menuX.value = rcButton.right + 8
-  menuY.value = rcContent.bottom - rcButton.bottom
+const onTranslate = async () => {
   showTranslateMenu.value = true
 }
 
@@ -662,11 +661,7 @@ const handleTranslateClick = async (action: string) => {
   })
 }
 
-const onCommands = async (ev: MouseEvent) => {
-  const rcButton = (ev.currentTarget as HTMLElement).getBoundingClientRect()
-  const rcContent = (ev.currentTarget as HTMLElement).closest('.split-pane').getBoundingClientRect()
-  menuX.value = rcButton.right + 8
-  menuY.value = rcContent.bottom - rcButton.bottom
+const onCommands = async () => {
   showCommandsMenu.value = true
 }
 

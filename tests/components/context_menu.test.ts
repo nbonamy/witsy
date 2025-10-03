@@ -1313,6 +1313,119 @@ describe('ContextMenuPlus System', () => {
     })
   })
 
+  describe('ContextMenuPlus - Auto Close', () => {
+    it('auto-closes when item is clicked with autoClose true', async () => {
+      const wrapper = mount(ContextMenuPlus, {
+        props: {
+          anchor: '#test-anchor',
+          autoClose: true
+        },
+        slots: {
+          default: `
+            <div class="item">Item 1</div>
+            <div class="item">Item 2</div>
+          `
+        },
+        attachTo: document.body
+      })
+
+      await nextTick()
+
+      const items = findAllInBody('.item')
+      expect(items.length).toBe(2)
+
+      // Click an item - should emit close
+      if (items[0].element) {
+        items[0].element.click()
+        await nextTick()
+      }
+
+      expect(wrapper.emitted('close')).toBeTruthy()
+    })
+
+    it('does not auto-close when autoClose is false', async () => {
+      const wrapper = mount(ContextMenuPlus, {
+        props: {
+          anchor: '#test-anchor',
+          autoClose: false
+        },
+        slots: {
+          default: `
+            <div class="item">Item 1</div>
+            <div class="item">Item 2</div>
+          `
+        },
+        attachTo: document.body
+      })
+
+      await nextTick()
+
+      const items = findAllInBody('.item')
+      expect(items.length).toBe(2)
+
+      // Click an item - should NOT emit close
+      if (items[0].element) {
+        items[0].element.click()
+        await nextTick()
+      }
+
+      expect(wrapper.emitted('close')).toBeFalsy()
+    })
+
+    it('does not auto-close on separator click', async () => {
+      const wrapper = mount(ContextMenuPlus, {
+        props: {
+          anchor: '#test-anchor',
+          autoClose: true
+        },
+        slots: {
+          default: `
+            <div class="item">Item 1</div>
+            <div class="item separator"><hr /></div>
+            <div class="item">Item 2</div>
+          `
+        },
+        attachTo: document.body
+      })
+
+      await nextTick()
+
+      const separator = findInBody('.item.separator')
+      if (separator.element) {
+        separator.element.click()
+        await nextTick()
+      }
+
+      expect(wrapper.emitted('close')).toBeFalsy()
+    })
+
+    it('does not auto-close on disabled item click', async () => {
+      const wrapper = mount(ContextMenuPlus, {
+        props: {
+          anchor: '#test-anchor',
+          autoClose: true
+        },
+        slots: {
+          default: `
+            <div class="item">Item 1</div>
+            <div class="item disabled">Disabled Item</div>
+          `
+        },
+        attachTo: document.body
+      })
+
+      await nextTick()
+
+      const disabledItem = findInBody('.item.disabled')
+      if (disabledItem.element) {
+        disabledItem.element.click()
+        await nextTick()
+      }
+
+      expect(wrapper.emitted('close')).toBeFalsy()
+    })
+  })
+
   describe('Performance and Edge Cases', () => {
     it('handles multiple rapid mounts/unmounts', async () => {
       for (let i = 0; i < 5; i++) {

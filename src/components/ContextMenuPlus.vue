@@ -77,6 +77,10 @@ const props = defineProps({
   hoverHighlight: {
     type: Boolean,
     default: true
+  },
+  autoClose: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -297,7 +301,16 @@ const addEventListeners = () => {
           onItemClick(event)
         })
       }
-      
+
+      // Add auto-close listener
+      if (props.autoClose) {
+        item.addEventListener('click', () => {
+          if (!item.classList.contains('separator') && !item.classList.contains('disabled')) {
+            emit('close')
+          }
+        })
+      }
+
       // Mark as processed
       item.setAttribute('data-listeners-added', 'true')
     })
@@ -518,7 +531,7 @@ defineExpose({
 .header {
   display: flex;
   align-items: center;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--context-menu-border-color);
 }
 

@@ -3,9 +3,16 @@
     <div class="list-action new" @click="onNew"><PlusIcon />{{ t('settings.commands.new') }}</div>
     <div class="list-action edit" @click="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
     <div class="list-action delete" @click="onDelete" v-if="selected"><Trash2Icon />{{ t('common.delete') }}</div>
-    <div class="flex-push" /> 
+    <div class="flex-push" />
     <div class="list-action defaults" @click="onDefaults"><Settings2Icon /></div>
-    <div class="list-action menu" @click.stop="onMore" ref="moreButton"><div></div><div></div><div></div></div>
+    <ContextMenuTrigger class="list-action menu" position="below-right" ref="moreButton">
+      <template #menu>
+        <div class="item" @click="handleActionClick('export')">{{ t('settings.commands.export') }}</div>
+        <div class="item" @click="handleActionClick('import')">{{ t('settings.commands.import') }}</div>
+        <div class="item" @click="handleActionClick('select')">{{ t('settings.commands.enableAll') }}</div>
+        <div class="item" @click="handleActionClick('unselect')">{{ t('settings.commands.disableAll') }}</div>
+      </template>
+    </ContextMenuTrigger>
   </div>
   <div class="commands sticky-table-container">
     <table>
@@ -30,7 +37,6 @@
       </tbody>
     </table>
   </div>
-  <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="right" :teleport="false" />
   <CommandDefaults ref="defaults" />
 </template>
 
@@ -43,7 +49,7 @@ import { t, commandI18n } from '../services/i18n'
 import { saveCommands } from '../services/commands'
 import useReorderTable from '../composables/reorder_table'
 import CommandDefaults from '../screens/CommandDefaults.vue'
-import ContextMenu from '../components/ContextMenu.vue'
+import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import Dialog from '../composables/dialog'
 import { PencilIcon, PlusIcon, Settings2Icon, Trash2Icon } from 'lucide-vue-next'
 
@@ -51,9 +57,6 @@ const commands= ref<Command[]>(null)
 const selected= ref<Command>(null)
 const defaults= ref<typeof CommandDefaults>(null)
 const moreButton= ref<HTMLElement>(null)
-const showMenu = ref(false)
-const menuX = ref(0)
-const menuY = ref(0)
 
 const reorderCommands = useReorderTable((ids: string[]) => {
   commands.value.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
@@ -61,13 +64,6 @@ const reorderCommands = useReorderTable((ids: string[]) => {
 })
 
 const emit = defineEmits([ 'create', 'edit' ])
-
-const contextMenuActions = [
-  { label: t('settings.commands.export'), action: 'export' },
-  { label: t('settings.commands.import'), action: 'import' },
-  { label: t('settings.commands.enableAll'), action: 'select' },
-  { label: t('settings.commands.disableAll'), action: 'unselect' },
-]
 
 const visibleCommands = computed(() => commands.value?.filter((command: Command) => command.state != 'deleted'))
 
@@ -95,30 +91,7 @@ const onMoveUp = (command: Command) => {
   }
 }
 
-const onMore = () => {
-  if (showMenu.value) {
-    closeContextMenu()
-  } else {
-    showContextMenu()
-  }
-}
-
-const showContextMenu = () => {
-  showMenu.value = true
-  const rcButton = moreButton.value.getBoundingClientRect()
-  const rcContent = moreButton.value.closest('.tab-content').getBoundingClientRect()
-  menuX.value = rcContent.right - rcButton.right - 8
-  menuY.value = rcButton.bottom - 32
-}
-
-const closeContextMenu = () => {
-  showMenu.value = false;
-}
-
 const handleActionClick = async (action: string) => {
-
-  // close
-  closeContextMenu()
 
   // process
   if (action === 'select') {

@@ -142,10 +142,10 @@ test('Context Menu Timeline Mode', async () => {
   expect(wrapper.findAll('.context-menu')).toHaveLength(0)
   await wrapper.findAll('.chat').at(3)!.trigger('contextmenu')
   expect(wrapper.findAll('.context-menu')).toHaveLength(1)
-  expect(wrapper.vm.contextMenuActions()).toStrictEqual([
-    { label: 'common.rename', action: 'rename' },
-    { label: 'common.delete', action: 'delete' },
-  ])
+  const items = wrapper.findAll('.context-menu .item')
+  expect(items.length).toBe(2)
+  expect(items[0].text()).toContain('common.rename')
+  expect(items[1].text()).toContain('common.delete')
 })
 
 test('Context Menu Folder Mode', async () => {
@@ -153,11 +153,11 @@ test('Context Menu Folder Mode', async () => {
   expect(wrapper.findAll('.context-menu')).toHaveLength(0)
   await wrapper.findAll('.chat').at(3)!.trigger('contextmenu')
   expect(wrapper.findAll('.context-menu')).toHaveLength(1)
-  expect(wrapper.vm.contextMenuActions()).toStrictEqual([
-    { label: 'common.rename', action: 'rename' },
-    { label: 'common.move', action: 'move' },
-    { label: 'common.delete', action: 'delete' },
-  ])
+  const items = wrapper.findAll('.context-menu .item')
+  expect(items.length).toBe(3)
+  expect(items[0].text()).toContain('common.rename')
+  expect(items[1].text()).toContain('common.move')
+  expect(items[2].text()).toContain('common.delete')
 })
 
 test('Rename Chat', async () => {
@@ -198,7 +198,8 @@ test('New Chat', async () => {
   store.history.folders = [ { id: '1', name: 'Folder', chats: [store.history.chats[0].uuid] } ]
   const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
-  await wrapper.find('.context-menu .actions .item[data-action=chat]').trigger('click')
+  const items = wrapper.findAll('.context-menu .item')
+  await items[0].trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('new-chat-in-folder', '1')
 })
 
@@ -206,7 +207,8 @@ test('Rename Folder', async () => {
   store.history.folders = [ { id: '1', name: 'Folder', chats: [store.history.chats[0].uuid] } ]
   const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
-  await wrapper.find('.context-menu .actions .item[data-action=rename]').trigger('click')
+  const items = wrapper.findAll('.context-menu .item')
+  await items[1].trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('rename-folder', '1')
 })
 
@@ -214,7 +216,8 @@ test('Delete Folder', async () => {
   store.history.folders = [ { id: '1', name: 'Folder', chats: [store.history.chats[0].uuid] } ]
   const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
-  await wrapper.find('.context-menu .actions .item[data-action=delete]').trigger('click')
+  const items = wrapper.findAll('.context-menu .item')
+  await items[3].trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('delete-folder', '1')
 })
 
@@ -235,7 +238,7 @@ test('Folder defaults', async () => {
       temperature: 0.7,
       customOpts: {
         custom: 'custom'
-      } 
+      }
     }
   })
   store.history.folders = [ { id: '1', name: 'Folder', chats: [store.history.chats[0].uuid] } ]
@@ -243,7 +246,8 @@ test('Folder defaults', async () => {
 
   // set defaults
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
-  await wrapper.find('.context-menu .actions .item[data-action=setDefaults]').trigger('click')
+  const menuItems = wrapper.findAll('.context-menu .item')
+  await menuItems[2].trigger('click')
   expect(store.history.folders[0].defaults).toStrictEqual({
     engine: 'mock',
     model: 'chat',
@@ -268,9 +272,10 @@ test('Folder defaults', async () => {
     Message.fromJson({ role: 'assistant', content: 'Subtitle 1' })
   ]
 
-  // set defaults
+  // set defaults again
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
-  await wrapper.find('.context-menu .actions .item[data-action=setDefaults]').trigger('click')
+  const menuItems2 = wrapper.findAll('.context-menu .item')
+  await menuItems2[2].trigger('click')
   expect(store.history.folders[0].defaults).toStrictEqual({
     engine: 'mock',
     model: 'chat',
@@ -284,16 +289,17 @@ test('Folder defaults', async () => {
       temperature: 0.7,
       customOpts: {
         custom: 'custom'
-      } 
+      }
     }
   })
-  
+
   // clear defaults
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
-  expect(wrapper.findAll('.context-menu .actions .item')).toHaveLength(5)
-  expect(wrapper.findAll('.context-menu .actions .item').at(3)!.text()).toBe('chatList.folder.actions.clearDefaults')
-  expect(wrapper.findAll('.context-menu .actions .item').at(4)!.text()).toBe('chatList.folder.actions.delete')
-  await wrapper.find('.context-menu .actions .item[data-action=clearDefaults]').trigger('click')
+  const menuItems3 = wrapper.findAll('.context-menu .item')
+  expect(menuItems3).toHaveLength(5)
+  expect(menuItems3[3].text()).toBe('chatList.folder.actions.clearDefaults')
+  expect(menuItems3[4].text()).toBe('chatList.folder.actions.delete')
+  await menuItems3[3].trigger('click')
   expect(store.history.folders[0].defaults).toBeUndefined()
 
 })
