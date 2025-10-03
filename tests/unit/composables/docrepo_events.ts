@@ -1,9 +1,8 @@
-import { vi, test, expect, describe, beforeAll } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { beforeAll, describe, expect, test, vi } from 'vitest'
 import { defineComponent, nextTick } from 'vue'
-import { useWindowMock } from '../../mocks/window'
 import { useDocRepoEvents } from '../../../src/composables/useDocRepoEvents'
-import Dialog from '../../../src/composables/dialog'
+import { useWindowMock } from '../../mocks/window'
 
 // Mock dialog
 vi.mock('../../../src/composables/dialog', () => ({
