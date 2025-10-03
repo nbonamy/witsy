@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body" :disabled="!teleport">
-    <Overlay @click="onOverlay" />
+    <Overlay @click="onOverlay" @contextmenu="onOverlay" />
     <!-- Hidden chevron template for cloning -->
     <ChevronRightIcon ref="chevronTemplate" style="display: none;" class="chevron-template" />
     <div class="context-menu" :style="position" @keydown="onKeyDown" @keyup="onKeyUp" v-bind="$attrs">
