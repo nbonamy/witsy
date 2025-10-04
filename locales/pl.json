@@ -1680,6 +1680,10 @@
   "mcp": {
     "addCustomServer": "Dodaj serwer MCP…",
     "confirmDelete": "Czy na pewno chcesz usunąć ten serwer?",
+    "connectionErrors": {
+      "authFailed": "Uwierzytelnianie nie powiodło się. Serwer odrzucił poświadczenia. Proszę sprawdzić ustawienia uwierzytelniania.",
+      "fetchFailed": "Nie można połączyć się z serwerem. Proszę sprawdzić, czy serwer działa i czy adres URL jest poprawny."
+    },
     "copyInstallCommand": "Możesz skopiować polecenie instalacji do schowka i spróbować je w terminalu.",
     "failedToInstall": "Nie udało się zainstalować serwera",
     "importJson": {

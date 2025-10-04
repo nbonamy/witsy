@@ -467,6 +467,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       getStatus: vi.fn(() => ({ servers: [
         { uuid: '1', registryId: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', tools: [ 'tool1', 'tool2' ] },
         { uuid: '2', registryId: '2', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: [ 'tool3', 'tool4' ] },
+        { uuid: '3', registryId: '3', state: 'enabled', type: 'stdio', command: 'python3', url: 'script.py', tools: null },
       ], logs: {} })),
       getAllServersWithTools: vi.fn(async () => [
         {

@@ -1040,6 +1040,8 @@
   "mcp.serverNotFound": "The server you are trying to connect does not exist.",
   "mcp.servers": "servers. Discover and install MCP servers from the",
   "mcp.smithery": "Smithery",
+  "mcp.connectionErrors.fetchFailed": "Unable to connect to the server. Please check that the server is running and the URL is correct.",
+  "mcp.connectionErrors.authFailed": "Authentication failed. The server rejected the credentials. Please check your authentication setup.",
   "mcp.tools": "@:{'common.tools'}",
   "mcp.toolsCount": "No tools enabled|1 tool enabled|{count} tools enabled",
   "mcp.tooltips.deleteServer": "Delete server",

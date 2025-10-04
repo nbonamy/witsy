@@ -1680,6 +1680,10 @@
   "mcp": {
     "addCustomServer": "Add MCP server…",
     "confirmDelete": "Are you sure you want to delete this server?",
+    "connectionErrors": {
+      "authFailed": "Authentication failed. The server rejected the credentials. Please check your authentication setup.",
+      "fetchFailed": "Unable to connect to the server. Please check that the server is running and the URL is correct."
+    },
     "copyInstallCommand": "You can copy the install command to your clipboard and try it in a Terminal.",
     "failedToInstall": "Failed to install server",
     "importJson": {

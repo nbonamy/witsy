@@ -60,7 +60,7 @@ export type McpClaudeServer = {
 }
 
 export type McpServerStatus = McpServer & {
-  tools: string[]
+  tools?: string[] | null
 }
 
 export type McpStatus = {

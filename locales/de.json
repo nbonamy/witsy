@@ -1661,6 +1661,10 @@
   "mcp": {
     "addCustomServer": "MCP-Server hinzufügen…",
     "confirmDelete": "Sind Sie sicher, dass Sie diesen Server löschen möchten?",
+    "connectionErrors": {
+      "authFailed": "Authentifizierung fehlgeschlagen. Der Server hat die Anmeldedaten abgelehnt. Bitte überprüfen Sie Ihre Authentifizierungseinstellungen.",
+      "fetchFailed": "Verbindung mit dem Server fehlgeschlagen. Bitte überprüfen Sie, ob der Server läuft und die URL korrekt ist."
+    },
     "copyInstallCommand": "Sie können den Installationsbefehl in Ihre Zwischenablage kopieren und in einem Terminal ausprobieren.",
     "failedToInstall": "Installation des Servers fehlgeschlagen",
     "importJson": {

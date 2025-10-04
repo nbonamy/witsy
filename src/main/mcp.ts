@@ -33,7 +33,8 @@ export default class {
   logs: { [key: string]: string[] }
   oauthManager: McpOAuthManager
   toolsCache: Map<string, ToolsCacheEntry>
-  
+  failedServerUuids: Set<string>
+
   constructor(app: App) {
     this.app = app
     this.clients = []
@@ -42,6 +43,7 @@ export default class {
     this.logs = {}
     this.oauthManager = new McpOAuthManager(app)
     this.toolsCache = new Map()
+    this.failedServerUuids = new Set()
   }
 
   private getCachedTools = async (client: McpClient): Promise<any> => {
@@ -71,11 +73,18 @@ export default class {
   }
 
   getStatus = (): McpStatus => {
+    const allServers = this.getServers()
     return {
-      servers: this.clients.map(client => ({
-        ...client.server,
-        tools: client.tools
-      })),
+      servers: [
+        ...this.clients.map(client => ({
+          ...client.server,
+          tools: client.tools
+        })),
+        ...Array.from(this.failedServerUuids).map(uuid => {
+          const server = allServers.find(s => s.uuid === uuid)
+          return server ? { ...server, tools: null as string[] | null } : null
+        }).filter(Boolean)
+      ],
       logs: this.logs
     }
   }
@@ -177,6 +186,9 @@ export default class {
     if (client) {
       this.disconnect(client)
     }
+
+    // remove from failed set
+    this.failedServerUuids.delete(uuid)
 
     // invalidate cache for this server
     this.invalidateToolsCache(uuid)
@@ -317,6 +329,9 @@ export default class {
       this.disconnect(client)
     }
 
+    // remove from failed set (in case we're re-editing a failed server)
+    this.failedServerUuids.delete(server.uuid)
+
     // invalidate cache for this server
     this.invalidateToolsCache(server.uuid)
 
@@ -438,6 +453,7 @@ export default class {
       await client.client.close()
     }
     this.clients = []
+    this.failedServerUuids.clear()
     this.invalidateToolsCache()
     this.oauthManager.shutdown()
   }
@@ -458,6 +474,9 @@ export default class {
     if (mcpClient) {
       this.disconnect(mcpClient)
     }
+
+    // Remove from failed set (in case it was previously failed)
+    this.failedServerUuids.delete(server.uuid)
 
     // Clear cache to set tools = undefined (starting status)
     this.toolsCache.delete(server.uuid)
@@ -537,6 +556,8 @@ export default class {
 
     if (!client) {
       console.error(`Failed to connect to MCP server ${server.url}`)
+      this.failedServerUuids.add(server.uuid)
+      notifyBrowserWindows('mcp-servers-updated')
       return false
     }
 
@@ -548,6 +569,9 @@ export default class {
     // get tools
     const tools = await this.getCachedTools({ client, server, tools: [] } as McpClient)
     const toolNames = tools.tools.map((tool: any) => this.uniqueToolName(server, tool.name))
+
+    // remove from failed set on successful connection
+    this.failedServerUuids.delete(server.uuid)
 
     // store
     this.clients.push({
@@ -641,12 +665,18 @@ export default class {
 
     try {
 
+      // track unique errors to avoid duplicates
+      const seenErrors = new Set<string>()
+
       // get transport
       const transport = new SSEClientTransport(
         new URL(server.url)
       )
       transport.onerror = (e) => {
-        this.logs[server.uuid].push(e.message)
+        if (!seenErrors.has(e.message)) {
+          seenErrors.add(e.message)
+          this.logs[server.uuid].push(this.translateError(e.message))
+        }
       }
       transport.onmessage = (message: any) => {
         console.log('MCP SSE message', message)
@@ -661,7 +691,10 @@ export default class {
       })
 
       client.onerror = (e) => {
-        this.logs[server.uuid].push(e.message)
+        if (!seenErrors.has(e.message)) {
+          seenErrors.add(e.message)
+          this.logs[server.uuid].push(this.translateError(e.message))
+        }
       }
 
       // connect
@@ -674,7 +707,10 @@ export default class {
     } catch (e) {
       console.error(`Failed to connect to MCP server ${server.url}:`, e)
       this.logs[server.uuid] = this.logs[server.uuid] || []
-      this.logs[server.uuid].push(e.message)
+      // Only add catch error if logs are empty (no errors from handlers)
+      if (this.logs[server.uuid].length === 0) {
+        this.logs[server.uuid].push(this.translateError(e.message))
+      }
     }
 
   }
@@ -682,6 +718,9 @@ export default class {
   private connectToStreamableHttpServer = async(server: McpServer): Promise<Client> => {
 
     try {
+
+      // track unique errors to avoid duplicates
+      const seenErrors = new Set<string>()
 
       // prepare transport options
       const transportOptions: any = {
@@ -700,12 +739,12 @@ export default class {
         }, (tokens: OAuthTokens, scope: string) => {
           this.updateTokens(server, tokens, scope)
         })
-        
+
         // Set existing tokens if available
         if (server.oauth.tokens) {
           oauthProvider.saveTokens(server.oauth.tokens)
         }
-        
+
         // Set existing client registration if available
         if (server.oauth.clientId && server.oauth.clientSecret) {
           // Reconstruct clientInformation from compact format
@@ -727,7 +766,10 @@ export default class {
       // get transport
       const transport = new StreamableHTTPClientTransport(new URL(server.url), transportOptions)
       transport.onerror = (e) => {
-        this.logs[server.uuid].push(e.message)
+        if (!seenErrors.has(e.message)) {
+          seenErrors.add(e.message)
+          this.logs[server.uuid].push(this.translateError(e.message))
+        }
       }
       // transport.onmessage = (message: any) => {
       //   console.log('MCP HTTP message', message)
@@ -742,7 +784,10 @@ export default class {
       })
 
       client.onerror = (e) => {
-        this.logs[server.uuid].push(e.message)
+        if (!seenErrors.has(e.message)) {
+          seenErrors.add(e.message)
+          this.logs[server.uuid].push(this.translateError(e.message))
+        }
       }
 
       // connect
@@ -759,7 +804,10 @@ export default class {
 
     } catch (e) {
       console.error(`Failed to connect to MCP server ${server.url}:`, e)
-      this.logs[server.uuid].push(e.message)
+      // Only add catch error if logs are empty (no errors from handlers)
+      if (this.logs[server.uuid].length === 0) {
+        this.logs[server.uuid].push(this.translateError(e.message))
+      }
     }
 
   }  
@@ -833,6 +881,27 @@ export default class {
 
   protected uniqueToolName(server: McpServer, name: string): string {
     return `${name}___${server.uuid.padStart(4, '_').slice(-4)}`
+  }
+
+  private translateError(errorMessage: string): string {
+    const i18n = useI18n(this.app)
+
+    // Check for fetch/connection errors
+    if (errorMessage.includes('fetch failed') || errorMessage.includes('ECONNREFUSED')) {
+      return i18n('mcp.connectionErrors.fetchFailed')
+    }
+
+    // Check for OAuth/auth errors
+    if (errorMessage.includes('POSTing to endpoint') && errorMessage.includes('HTTP 500')) {
+      return i18n('mcp.connectionErrors.authFailed')
+    }
+
+    if (errorMessage.includes('server_error') || errorMessage.includes('Internal Server Error')) {
+      return i18n('mcp.connectionErrors.authFailed')
+    }
+
+    // Return original message if no translation found
+    return errorMessage
   }
 
   protected mcpToOpenAI = (server: McpServer, tool: any): LlmTool => {

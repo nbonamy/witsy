@@ -34,7 +34,7 @@
           </div>
         
           <!-- Server Content -->
-          <div class="server-content clickable" @click="showTools(server)">
+          <div class="server-content clickable" @click="showServerInfo(server)">
             <div class="server-name">{{ getDescription(server) }}</div>
             <div class="server-tools">{{ getToolsCount(server) }}</div>
           </div>
@@ -79,7 +79,7 @@
               class="tools"
               :class="{ 'disabled': !isRunning(server) }"
               v-tooltip="{ text: t('mcp.tooltips.viewTools'), position: 'top-left' }"
-              @click="showTools(server)"
+              @click="showServerInfo(server)"
             >
               <SearchIcon />
             </ButtonIcon>
@@ -241,7 +241,14 @@ const showLogs = (server: McpServer) => {
   })
 }
 
-const showTools = async (server: McpServer) => {
+const showServerInfo = async (server: McpServer) => {
+  // If server is failed, show logs instead
+  const statusServer = props.status?.servers.find((s: McpServerStatus) => s.uuid == server.uuid)
+  if (statusServer?.tools === null && hasLogs(server)) {
+    showLogs(server)
+    return
+  }
+
   const tools = await window.api.mcp.getServerTools(server.uuid)
   currentServer.value = server
   currentServerTools.value = tools
