@@ -20,6 +20,7 @@ import Mcp from './main/mcp';
 
 import { fixPath } from './main/utils';
 //import { useI18n } from './main/i18n';
+import { HttpServer } from './main/http_server';
 import { installIpc } from './main/ipc';
 import { importOpenAI } from './main/import_oai';
 
@@ -173,6 +174,10 @@ app.whenReady().then(async () => {
 
   // set theme
   nativeTheme.themeSource = settings.appearance.theme;
+
+  // we need an http server
+  const httpServer = HttpServer.getInstance();
+  await httpServer.ensureServerRunning();
 
   // auto-updater (we need it now for menu)
   autoUpdater = new AutoUpdater(app, {
