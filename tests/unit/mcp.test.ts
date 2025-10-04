@@ -141,7 +141,12 @@ test('Initialization', async () => {
   expect(mcp).toBeDefined()
   expect(mcp.clients).toBeDefined()
   expect(Client.prototype.connect).toHaveBeenCalledTimes(0)
-  expect(await mcp.getStatus()).toEqual({ servers: [], logs: {} })
+  expect(await mcp.getStatus()).toEqual({ servers: [
+    expect.objectContaining({ uuid: '1234-5678-90ab', tools: undefined }),
+    expect.objectContaining({ uuid: '2345-6789-0abc', tools: undefined }),
+    expect.objectContaining({ uuid: '4567-890a-bcde', tools: undefined }),
+    expect.objectContaining({ uuid: 's1', tools: undefined }),
+  ], logs: {} })
   expect(mcp.getServers()).toStrictEqual([
     { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, oauth: null, toolSelection: null },
     { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', oauth: null, toolSelection: null },
