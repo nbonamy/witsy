@@ -33,7 +33,6 @@ export default class {
   logs: { [key: string]: string[] }
   oauthManager: McpOAuthManager
   toolsCache: Map<string, ToolsCacheEntry>
-  failedServerUuids: Set<string>
 
   constructor(app: App) {
     this.app = app
@@ -43,12 +42,15 @@ export default class {
     this.logs = {}
     this.oauthManager = new McpOAuthManager(app)
     this.toolsCache = new Map()
-    this.failedServerUuids = new Set()
   }
 
   private getCachedTools = async (client: McpClient): Promise<any> => {
     const uuid = client.server.uuid
     const cached = this.toolsCache.get(uuid)
+
+    if (cached && cached.tools === null) {
+      return { tools: [] } // Previous error, return empty tools
+    }
     
     if (cached && Date.now() - cached.timestamp < this.CACHE_TTL_MS) {
       return cached.tools
@@ -73,18 +75,48 @@ export default class {
   }
 
   getStatus = (): McpStatus => {
+
     const allServers = this.getServers()
+    const statusServers = []
+
+    for (const server of allServers) {
+      // Skip disabled servers
+      if (server.state === 'disabled') {
+        continue
+      }
+
+      const persistentClient = this.clients.find(c => c.server.uuid === server.uuid)
+      if (persistentClient) {
+        statusServers.push({
+          ...persistentClient.server,
+          tools: persistentClient.tools
+        })
+        continue
+      }
+
+      // Check cache for non-persistent servers
+      const cached = this.toolsCache.get(server.uuid)
+      if (cached) {
+        if (cached.tools !== undefined) {
+          // We have tools (success) or null (error)
+          const tools = Array.isArray(cached.tools?.tools) ? cached.tools.tools : []
+          const toolNames = tools.map((tool: any) => this.uniqueToolName(server, tool.name))
+          statusServers.push({
+            ...server,
+            tools: cached.tools === null ? null : toolNames
+          })
+        }
+      } else {
+        // No cache entry yet - server is starting
+        statusServers.push({
+          ...server,
+          tools: undefined
+        })
+      }
+    }
+
     return {
-      servers: [
-        ...this.clients.map(client => ({
-          ...client.server,
-          tools: client.tools
-        })),
-        ...Array.from(this.failedServerUuids).map(uuid => {
-          const server = allServers.find(s => s.uuid === uuid)
-          return server ? { ...server, tools: null as string[] | null } : null
-        }).filter(Boolean)
-      ],
+      servers: statusServers,
       logs: this.logs
     }
   }
@@ -186,9 +218,6 @@ export default class {
     if (client) {
       this.disconnect(client)
     }
-
-    // remove from failed set
-    this.failedServerUuids.delete(uuid)
 
     // invalidate cache for this server
     this.invalidateToolsCache(uuid)
@@ -329,9 +358,6 @@ export default class {
       this.disconnect(client)
     }
 
-    // remove from failed set (in case we're re-editing a failed server)
-    this.failedServerUuids.delete(server.uuid)
-
     // invalidate cache for this server
     this.invalidateToolsCache(server.uuid)
 
@@ -453,7 +479,6 @@ export default class {
       await client.client.close()
     }
     this.clients = []
-    this.failedServerUuids.clear()
     this.invalidateToolsCache()
     this.oauthManager.shutdown()
   }
@@ -474,9 +499,6 @@ export default class {
     if (mcpClient) {
       this.disconnect(mcpClient)
     }
-
-    // Remove from failed set (in case it was previously failed)
-    this.failedServerUuids.delete(server.uuid)
 
     // Clear cache to set tools = undefined (starting status)
     this.toolsCache.delete(server.uuid)
@@ -556,7 +578,10 @@ export default class {
 
     if (!client) {
       console.error(`Failed to connect to MCP server ${server.url}`)
-      this.failedServerUuids.add(server.uuid)
+      this.toolsCache.set(server.uuid, {
+        tools: null,
+        timestamp: 0,
+      })
       notifyBrowserWindows('mcp-servers-updated')
       return false
     }
@@ -569,9 +594,6 @@ export default class {
     // get tools
     const tools = await this.getCachedTools({ client, server, tools: [] } as McpClient)
     const toolNames = tools.tools.map((tool: any) => this.uniqueToolName(server, tool.name))
-
-    // remove from failed set on successful connection
-    this.failedServerUuids.delete(server.uuid)
 
     // store
     this.clients.push({
