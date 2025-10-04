@@ -45,6 +45,7 @@ export default class {
   }
 
   private getCachedTools = async (client: McpClient): Promise<any> => {
+    
     const uuid = client.server.uuid
     const cached = this.toolsCache.get(uuid)
 
@@ -56,14 +57,28 @@ export default class {
       return cached.tools
     }
 
-    // Cache miss or expired, fetch new tools
-    const tools = await client.client.listTools()
-    this.toolsCache.set(uuid, {
-      tools,
-      timestamp: Date.now()
-    })
-    
-    return tools
+    try {
+
+      // Cache miss or expired, fetch new tools
+      const tools = await client.client.listTools()
+      this.toolsCache.set(uuid, {
+        tools,
+        timestamp: Date.now()
+      })
+      
+      return tools
+
+    } catch (e) {
+
+      console.error(`Failed to get tools from MCP server ${client.server.url}:`, e)
+      this.logs[uuid].push(`Failed to get tools`)
+      this.toolsCache.set(uuid, {
+        tools: null,
+        timestamp: 0
+      })
+      return []
+    }
+
   }
 
   private invalidateToolsCache = (uuid?: string): void => {
