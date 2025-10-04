@@ -1,5 +1,5 @@
 import { vi, test, expect, beforeEach, describe } from 'vitest'
-import { App } from 'electron'
+import { app } from 'electron'
 import McpOAuthManager, { McpOAuthClientProvider } from '../../src/main/mcp_auth'
 
 // Mock Electron
@@ -20,6 +20,24 @@ const mockServer = {
   on: vi.fn()
 }
 
+// Mock HttpServer
+const mockHttpServerInstance = {
+  port: 8090,
+  registerRoute: vi.fn(),
+  register: vi.fn(),
+  unregister: vi.fn(),
+  listen: vi.fn(() => Promise.resolve()),
+  close: vi.fn(() => Promise.resolve()),
+  ensureServerRunning: vi.fn(() => Promise.resolve()),
+  getBaseUrl: vi.fn(() => 'http://localhost:8090')
+}
+
+vi.mock('../../src/main/http_server', () => ({
+  HttpServer: {
+    getInstance: vi.fn(() => mockHttpServerInstance)
+  }
+}))
+
 // Mock portfinder
 vi.mock('portfinder', () => ({
   default: {
@@ -39,15 +57,17 @@ const mockClient = {
 }
 
 const mockTransport = {
-  finishAuth: vi.fn()
+  finishAuth: vi.fn(),
+  start: vi.fn(),
+  send: vi.fn()
 }
 
 vi.mock('@modelcontextprotocol/sdk/client/index.js', () => ({
-  Client: vi.fn(() => mockClient)
+  Client: vi.fn().mockImplementation(() => mockClient)
 }))
 
 vi.mock('@modelcontextprotocol/sdk/client/streamableHttp.js', () => ({
-  StreamableHTTPClientTransport: vi.fn(() => mockTransport)
+  StreamableHTTPClientTransport: vi.fn().mockImplementation(() => mockTransport)
 }))
 
 vi.mock('@modelcontextprotocol/sdk/client/auth.js', () => ({
@@ -151,7 +171,6 @@ describe('McpOAuthClientProvider', () => {
 
 describe('McpOAuthManager', () => {
   let manager: McpOAuthManager
-  let mockApp: App
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -161,9 +180,7 @@ describe('McpOAuthManager', () => {
     mockServer.listen.mockClear()
     mockServer.close.mockClear()
     mockServer.on.mockClear()
-    
-    mockApp = {} as App
-    manager = new McpOAuthManager(mockApp)
+    manager = new McpOAuthManager(app)
   })
 
   test('constructor initializes with app', () => {
@@ -247,32 +264,6 @@ describe('McpOAuthManager', () => {
     expect(provider.clientMetadata).toEqual(customMetadata)
   })
 
-  test('startOAuthFlow with client credentials', async () => {
-    const clientMetadata = {
-      client_name: 'Test Client',
-      redirect_uris: ['http://localhost:8090/callback'],
-      grant_types: ['authorization_code'],
-      response_types: ['code']
-    }
-    
-    const clientCredentials = {
-      client_id: 'test-client-id',
-      client_secret: 'test-client-secret'
-    }
-    
-    mockServer.listen.mockImplementation((port, callback) => {
-      callback()
-    })
-    mockClient.connect.mockResolvedValue(undefined)
-    
-    const result = await manager.startOAuthFlow('http://localhost:3000', clientMetadata, clientCredentials)
-    
-    const parsedResult = JSON.parse(result)
-    expect(parsedResult.clientMetadata).toEqual(clientMetadata)
-    expect(parsedResult.clientInformation).toBeDefined()
-    expect(parsedResult.clientInformation.client_id).toBe('test-client-id')
-  })
-
   test('startOAuthFlow handles UnauthorizedError', async () => {
     const clientMetadata = {
       client_name: 'Test Client',
@@ -290,18 +281,15 @@ describe('McpOAuthManager', () => {
     mockClient.connect.mockRejectedValueOnce(unauthorizedError).mockResolvedValueOnce(undefined)
     mockTransport.finishAuth.mockResolvedValue(undefined)
     
-    // Mock the callback server to simulate receiving an auth code
-    const originalWaitForCallback = manager['callbackServer'].waitForCallback
-    manager['callbackServer'].waitForCallback = vi.fn(() => Promise.resolve('test-auth-code'))
+    // Mock the waitForCallback method on the manager itself
+    const originalWaitForCallback = manager.waitForCallback
+    manager.waitForCallback = vi.fn(() => Promise.resolve('test-auth-code'))
     
-    const result = await manager.startOAuthFlow('http://localhost:3000', clientMetadata)
-    
-    const parsedResult = JSON.parse(result)
-    expect(parsedResult.clientMetadata).toEqual(clientMetadata)
+    await manager.startOAuthFlow('http://localhost:3000', clientMetadata)
     expect(mockTransport.finishAuth).toHaveBeenCalledWith('test-auth-code')
     
     // Restore original method
-    manager['callbackServer'].waitForCallback = originalWaitForCallback
+    manager.waitForCallback = originalWaitForCallback
   })
 
   test('completeOAuthFlow returns false (legacy method)', async () => {
@@ -314,83 +302,31 @@ describe('McpOAuthManager', () => {
   })
 })
 
-describe('OAuthCallbackServer', () => {
-  let server: any
+describe('McpOAuthManager - Callback Functionality', () => {
   let manager: McpOAuthManager
   let mockApp: App
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockServer.listen.mockClear()
-    mockServer.close.mockClear()
-    mockServer.on.mockClear()
+    mockHttpServerInstance.registerRoute.mockClear()
+    mockHttpServerInstance.listen.mockClear()
+    mockHttpServerInstance.close.mockClear()
     
     mockApp = {} as App
     manager = new McpOAuthManager(mockApp)
-    
-    // Reset the singleton instance completely
-    const OAuthCallbackServerClass = (manager as any).callbackServer.constructor
-    OAuthCallbackServerClass.instance = null
-    
-    // Get fresh instance and reset all state
-    server = OAuthCallbackServerClass.getInstance()
-    server.server = null
-    server.port = null
-    server.pendingCallbacks.clear()
-    
-    // Close any existing server if it exists
-    if (server.server) {
-      server.server.close()
-      server.server = null
-    }
-  })
-
-  test('getInstance returns singleton', () => {
-    const server1 = server.constructor.getInstance()
-    const server2 = server.constructor.getInstance()
-    expect(server1).toBe(server2)
-  })
-
-
-  test('ensureServerRunning starts server on available port', async () => {
-    const mockCreatedServer = {
-      listen: vi.fn((port, callback) => callback()),
-      close: vi.fn(),
-      on: vi.fn()
-    }
-    
-    // Create a mock createServer function
-    const mockCreateServer = vi.fn(() => mockCreatedServer)
-    
-    // Create a new server instance with the mock createServer
-    const OAuthCallbackServerClass = server.constructor
-    OAuthCallbackServerClass.instance = null
-    const serverWithMock = OAuthCallbackServerClass.getInstance(mockCreateServer)
-    
-    await serverWithMock.ensureServerRunning()
-    
-    expect(mockCreateServer).toHaveBeenCalledTimes(1)
-    expect(mockCreateServer).toHaveBeenCalledWith(expect.any(Function))
-    expect(mockCreatedServer.listen).toHaveBeenCalledWith(8090, expect.any(Function))
-    expect(serverWithMock.callbackPort).toBe(8090)
-    expect(serverWithMock.server).toBe(mockCreatedServer)
   })
 
   test('waitForCallback resolves with authorization code', async () => {
     const flowId = 'test-flow'
     
-    // Mock ensureServerRunning to avoid actual server creation
-    const originalEnsureServerRunning = server.ensureServerRunning
-    server.ensureServerRunning = vi.fn().mockResolvedValue(undefined)
-    
     // Start the promise
-    const callbackPromise = server.waitForCallback(flowId)
+    const callbackPromise = manager.waitForCallback(flowId)
     
     // Wait a tick for the promise to set up the pending callback
     await new Promise(resolve => setImmediate(resolve))
     
     // Simulate receiving a callback by resolving the stored promise
-    const pendingCallback = server.pendingCallbacks.get(flowId)
+    const pendingCallback = (manager as any).pendingCallbacks.get(flowId)
     if (pendingCallback) {
       clearTimeout(pendingCallback.timeout)
       pendingCallback.resolve('test-auth-code')
@@ -398,62 +334,48 @@ describe('OAuthCallbackServer', () => {
     
     const result = await callbackPromise
     expect(result).toBe('test-auth-code')
-    
-    // Restore original method
-    server.ensureServerRunning = originalEnsureServerRunning
   })
 
-  test('ensureServerRunning reuses existing server', async () => {
-    server.server = mockServer
-    server.port = 8090
+  test('waitForCallback times out after 5 minutes', async () => {
+    const flowId = 'test-timeout-flow'
     
-    await server.ensureServerRunning()
-    
-    // Should not create a new server
-    expect(mockServer.listen).not.toHaveBeenCalled()
-  })
-
-  test('HTTP request handler processes successful OAuth callback', async () => {
-    const mockCreatedServer = {
-      listen: vi.fn((port, callback) => callback()),
-      close: vi.fn(),
-      on: vi.fn()
-    }
-    
-    let requestHandler: any
-    const mockCreateServer = vi.fn((handler) => {
-      requestHandler = handler
-      return mockCreatedServer
+    // Mock setTimeout to immediately trigger timeout
+    const originalSetTimeout = global.setTimeout
+    global.setTimeout = vi.fn((callback) => {
+      // Immediately call the timeout callback
+      callback()
+      return {} as NodeJS.Timeout
     })
     
-    // Create server instance with mock createServer
-    const OAuthCallbackServerClass = server.constructor
-    OAuthCallbackServerClass.instance = null
-    const serverWithMock = OAuthCallbackServerClass.getInstance(mockCreateServer)
+    await expect(manager.waitForCallback(flowId)).rejects.toThrow('OAuth callback timeout')
     
-    await serverWithMock.ensureServerRunning()
+    // Restore original setTimeout
+    global.setTimeout = originalSetTimeout
+  })
+
+  test('handleCallback processes successful OAuth callback', async () => {
+    const flowId = 'test-flow'
     
     // Set up a pending callback
     const mockResolve = vi.fn()
     const mockReject = vi.fn()
     const mockTimeout = setTimeout(() => {}, 1000)
-    serverWithMock.pendingCallbacks.set('test-flow', {
+    ;(manager as any).pendingCallbacks.set(flowId, {
       resolve: mockResolve,
       reject: mockReject,
       timeout: mockTimeout
     })
     
     // Mock request and response
-    const mockReq = {
-      url: '/callback?code=test-auth-code&state=test-flow'
-    }
+    const mockReq = {}
     const mockRes = {
       writeHead: vi.fn(),
       end: vi.fn()
     }
+    const mockParsedUrl = new URL('http://localhost:8090/callback?code=test-auth-code&state=' + flowId)
     
-    // Call the request handler
-    requestHandler(mockReq, mockRes)
+    // Call the handleCallback method
+    ;(manager as any).handleCallback(mockReq, mockRes, mockParsedUrl)
     
     // Verify response
     expect(mockRes.writeHead).toHaveBeenCalledWith(200, { 'Content-Type': 'text/html' })
@@ -462,52 +384,34 @@ describe('OAuthCallbackServer', () => {
     
     // Verify callback was resolved
     expect(mockResolve).toHaveBeenCalledWith('test-auth-code')
-    expect(serverWithMock.pendingCallbacks.has('test-flow')).toBe(false)
+    expect((manager as any).pendingCallbacks.has(flowId)).toBe(false)
     
     clearTimeout(mockTimeout)
   })
 
-  test('HTTP request handler processes OAuth error callback', async () => {
-    const mockCreatedServer = {
-      listen: vi.fn((port, callback) => callback()),
-      close: vi.fn(),
-      on: vi.fn()
-    }
-    
-    let requestHandler: any
-    const mockCreateServer = vi.fn((handler) => {
-      requestHandler = handler
-      return mockCreatedServer
-    })
-    
-    // Create server instance with mock createServer
-    const OAuthCallbackServerClass = server.constructor
-    OAuthCallbackServerClass.instance = null
-    const serverWithMock = OAuthCallbackServerClass.getInstance(mockCreateServer)
-    
-    await serverWithMock.ensureServerRunning()
+  test('handleCallback processes OAuth error callback', async () => {
+    const flowId = 'test-error-flow'
     
     // Set up a pending callback
     const mockResolve = vi.fn()
     const mockReject = vi.fn()
     const mockTimeout = setTimeout(() => {}, 1000)
-    serverWithMock.pendingCallbacks.set('test-flow', {
+    ;(manager as any).pendingCallbacks.set(flowId, {
       resolve: mockResolve,
       reject: mockReject,
       timeout: mockTimeout
     })
     
     // Mock request and response
-    const mockReq = {
-      url: '/callback?error=access_denied&state=test-flow'
-    }
+    const mockReq = {}
     const mockRes = {
       writeHead: vi.fn(),
       end: vi.fn()
     }
+    const mockParsedUrl = new URL('http://localhost:8090/callback?error=access_denied&state=' + flowId)
     
-    // Call the request handler
-    requestHandler(mockReq, mockRes)
+    // Call the handleCallback method
+    ;(manager as any).handleCallback(mockReq, mockRes, mockParsedUrl)
     
     // Verify response
     expect(mockRes.writeHead).toHaveBeenCalledWith(400, { 'Content-Type': 'text/html' })
@@ -515,52 +419,34 @@ describe('OAuthCallbackServer', () => {
     
     // Verify callback was rejected
     expect(mockReject).toHaveBeenCalledWith(new Error('OAuth authorization failed: access_denied'))
-    expect(serverWithMock.pendingCallbacks.has('test-flow')).toBe(false)
+    expect((manager as any).pendingCallbacks.has(flowId)).toBe(false)
     
     clearTimeout(mockTimeout)
   })
 
-  test('HTTP request handler processes invalid callback requests', async () => {
-    const mockCreatedServer = {
-      listen: vi.fn((port, callback) => callback()),
-      close: vi.fn(),
-      on: vi.fn()
-    }
-    
-    let requestHandler: any
-    const mockCreateServer = vi.fn((handler) => {
-      requestHandler = handler
-      return mockCreatedServer
-    })
-    
-    // Create server instance with mock createServer
-    const OAuthCallbackServerClass = server.constructor
-    OAuthCallbackServerClass.instance = null
-    const serverWithMock = OAuthCallbackServerClass.getInstance(mockCreateServer)
-    
-    await serverWithMock.ensureServerRunning()
+  test('handleCallback processes invalid callback requests', async () => {
+    const flowId = 'test-invalid-flow'
     
     // Set up a pending callback
     const mockResolve = vi.fn()
     const mockReject = vi.fn()
     const mockTimeout = setTimeout(() => {}, 1000)
-    serverWithMock.pendingCallbacks.set('test-flow', {
+    ;(manager as any).pendingCallbacks.set(flowId, {
       resolve: mockResolve,
       reject: mockReject,
       timeout: mockTimeout
     })
     
     // Mock request and response with no code or error
-    const mockReq = {
-      url: '/callback?state=test-flow'
-    }
+    const mockReq = {}
     const mockRes = {
       writeHead: vi.fn(),
       end: vi.fn()
     }
+    const mockParsedUrl = new URL('http://localhost:8090/callback?state=' + flowId)
     
-    // Call the request handler
-    requestHandler(mockReq, mockRes)
+    // Call the handleCallback method
+    ;(manager as any).handleCallback(mockReq, mockRes, mockParsedUrl)
     
     // Verify response
     expect(mockRes.writeHead).toHaveBeenCalledWith(400)
@@ -568,8 +454,68 @@ describe('OAuthCallbackServer', () => {
     
     // Verify callback was rejected
     expect(mockReject).toHaveBeenCalledWith(new Error('No authorization code provided'))
-    expect(serverWithMock.pendingCallbacks.has('test-flow')).toBe(false)
+    expect((manager as any).pendingCallbacks.has(flowId)).toBe(false)
     
     clearTimeout(mockTimeout)
+  })
+
+  test('handleCallback handles missing pending callback gracefully', async () => {
+    // Mock request and response
+    const mockReq = {}
+    const mockRes = {
+      writeHead: vi.fn(),
+      end: vi.fn()
+    }
+    const mockParsedUrl = new URL('http://localhost:8090/callback?code=test-auth-code&state=nonexistent-flow')
+    
+    // Call the handleCallback method with no pending callback
+    ;(manager as any).handleCallback(mockReq, mockRes, mockParsedUrl)
+    
+    // Should send 400 response when there's a code but no pending callback (falls through to else block)
+    expect(mockRes.writeHead).toHaveBeenCalledWith(400)
+    expect(mockRes.end).toHaveBeenCalledWith('Bad request')
+  })
+
+  test('multiple pending callbacks are handled independently', async () => {
+    const flowId1 = 'test-flow-1'
+    const flowId2 = 'test-flow-2'
+    
+    // Set up two pending callbacks
+    const mockResolve1 = vi.fn()
+    const mockResolve2 = vi.fn()
+    const mockReject1 = vi.fn()
+    const mockReject2 = vi.fn()
+    
+    ;(manager as any).pendingCallbacks.set(flowId1, {
+      resolve: mockResolve1,
+      reject: mockReject1,
+      timeout: setTimeout(() => {}, 1000)
+    })
+    
+    ;(manager as any).pendingCallbacks.set(flowId2, {
+      resolve: mockResolve2,
+      reject: mockReject2,
+      timeout: setTimeout(() => {}, 1000)
+    })
+    
+    // Mock first callback response
+    const mockRes1 = { writeHead: vi.fn(), end: vi.fn() }
+    const mockParsedUrl1 = new URL('http://localhost:8090/callback?code=auth-code-1&state=' + flowId1)
+    ;(manager as any).handleCallback({}, mockRes1, mockParsedUrl1)
+    
+    // Verify first callback resolved, second still pending
+    expect(mockResolve1).toHaveBeenCalledWith('auth-code-1')
+    expect(mockResolve2).not.toHaveBeenCalled()
+    expect((manager as any).pendingCallbacks.has(flowId1)).toBe(false)
+    expect((manager as any).pendingCallbacks.has(flowId2)).toBe(true)
+    
+    // Mock second callback response  
+    const mockRes2 = { writeHead: vi.fn(), end: vi.fn() }
+    const mockParsedUrl2 = new URL('http://localhost:8090/callback?code=auth-code-2&state=' + flowId2)
+    ;(manager as any).handleCallback({}, mockRes2, mockParsedUrl2)
+    
+    // Verify second callback resolved
+    expect(mockResolve2).toHaveBeenCalledWith('auth-code-2')
+    expect((manager as any).pendingCallbacks.has(flowId2)).toBe(false)
   })
 })

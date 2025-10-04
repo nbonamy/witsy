@@ -4,9 +4,8 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js"
 import { OAuthClientInformation, OAuthClientInformationFull, OAuthClientMetadata, OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js'
 import { app, App, shell } from 'electron'
-import { createServer as defaultCreateServer } from 'node:http'
 import { useI18n } from '../main/i18n'
-import * as portfinder from 'portfinder'
+import { HttpServer } from './http_server'
 
 export type OnTokensUpdatedCallback = (tokens: OAuthTokens, scope: string) => void
 
@@ -73,213 +72,31 @@ export class McpOAuthClientProvider implements OAuthClientProvider {
 
 }
 
-/**
- * OAuth flow manager for MCP servers
- */
-// Global OAuth callback server singleton
-class OAuthCallbackServer {
-
-  private static instance: OAuthCallbackServer | null = null
-  private server: any = null
-  private port: number | null = null
-  private pendingCallbacks: Map<string, { resolve: (code: string) => void, reject: (error: Error) => void, timeout: NodeJS.Timeout }> = new Map()
-  private createServer: typeof defaultCreateServer
-
-  get callbackPort(): number | null {
-    return this.port
-  }
-
-  private constructor(createServer: typeof defaultCreateServer = defaultCreateServer) {
-    this.createServer = createServer
-  }
-
-  static getInstance(createServer?: typeof defaultCreateServer): OAuthCallbackServer {
-    if (!OAuthCallbackServer.instance) {
-      OAuthCallbackServer.instance = new OAuthCallbackServer(createServer)
-    }
-    return OAuthCallbackServer.instance
-  }
-
-  async waitForCallback(flowId: string): Promise<string> {
-    // Start server if not already running (outside the Promise)
-    await this.ensureServerRunning()
-    
-    return new Promise<string>((resolve, reject) => {
-      // Set up timeout for this specific flow
-      const timeout = setTimeout(() => {
-        console.log(`⏰ OAuth callback timeout for flow ${flowId}`)
-        this.pendingCallbacks.delete(flowId)
-        reject(new Error('OAuth callback timeout'))
-        
-        // // If no more pending callbacks, shutdown server
-        // if (this.pendingCallbacks.size === 0) {
-        //   this.shutdown()
-        // }
-      }, 300000) // 5 minute timeout
-
-      // Store the callback handlers
-      console.log(`✅ Storing pending callback for flowId: ${flowId}...`)
-      this.pendingCallbacks.set(flowId, { resolve, reject, timeout })
-    })
-  }
-
-  async ensureServerRunning(): Promise<void> {
-    if (this.server) {
-      console.log('📡 OAuth callback server already running, reusing...')
-      return
-    }
-
-    // localization
-    const t = useI18n(app);
-
-    // Find an available port starting from 8090
-    this.port = await portfinder.getPortPromise({ port: 8090 })
-    console.log(`🚀 Starting OAuth callback server on port ${this.port}...`)
-    this.server = this.createServer((req, res) => {
-
-      // Ignore favicon requests
-      if (req.url === '/favicon.ico') {
-        res.writeHead(404)
-        res.end()
-        return
-      }
-
-      console.log(`📥 Received OAuth callback: ${req.url}`)
-      const parsedUrl = new URL(req.url || '', 'http://localhost')
-      const code = parsedUrl.searchParams.get('code')
-      const error = parsedUrl.searchParams.get('error')
-      const state = parsedUrl.searchParams.get('state') || 'default' // Use state to identify flow
-
-      const pendingCallback = this.pendingCallbacks.get(state)
-      
-      if (code && pendingCallback) {
-        console.log(`✅ Authorization code received for flow ${state}: ${code?.substring(0, 10)}...`)
-        res.writeHead(200, { 'Content-Type': 'text/html' })
-        res.end(`
-          <!DOCTYPE html>
-          <html lang="en">
-            <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>OAuth Authorization Successful</title>
-              <style>
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 60px 20px; background: rgb(252, 250, 248); color: black; text-align: center; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding-top: 12.5%; }
-                .logo { width: 8rem; height: 8rem; margin-bottom: 2rem;   transform: rotate(5deg); }
-                h1 { font-size: 28pt; font-weight: 600; margin: 0 0 1rem 0; }
-                p { font-size: 16pt; opacity: 0.8; margin: 0; line-height: 1.5; }
-              </style>
-            </head>
-            <body>
-              <img src="https://witsy.bonamy.fr/img/logo.png" alt="Witsy" class="logo">
-              <h1>${t('mcp.oauth.success.title')}</h1>
-              <p>${t('mcp.oauth.success.message')}</p>
-              <script>setTimeout(() => window.close(), 2000);</script>
-            </body>
-          </html>
-        `)
-
-        // Clean up this specific callback
-        clearTimeout(pendingCallback.timeout)
-        this.pendingCallbacks.delete(state)
-        pendingCallback.resolve(code)
-
-        // If no more pending callbacks, shutdown server after a delay
-        // if (this.pendingCallbacks.size === 0) {
-        //   setTimeout(() => this.shutdown(), 30000)
-        // }
-      } else if (error) {
-        console.log(`❌ Authorization error for flow ${state}: ${error}`)
-        res.writeHead(400, { 'Content-Type': 'text/html' })
-        res.end(`
-          <!DOCTYPE html>
-          <html lang="en">
-            <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>OAuth Authorization Failed</title>
-              <style>
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 60px 20px; background: #0f172a; color: #ffffff; text-align: center; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-                .logo { width: 64px; height: 64px; margin-bottom: 32px; }
-                h1 { font-size: 28px; font-weight: 600; margin: 0 0 16px 0; color: #ef4444; }
-                p { font-size: 16px; opacity: 0.8; margin: 0; line-height: 1.5; }
-              </style>
-            </head>
-            <body>
-              <img src="https://witsy.bonamy.fr/img/logo.png" alt="Witsy" class="logo">
-              <h1 data-i18n="oauth.error.title">Authorization Failed</h1>
-              <p data-i18n="oauth.error.message">Error: ${error}</p>
-            </body>
-          </html>
-        `)
-
-        if (pendingCallback) {
-          clearTimeout(pendingCallback.timeout)
-          this.pendingCallbacks.delete(state)
-          pendingCallback.reject(new Error(`OAuth authorization failed: ${error}`))
-        }
-
-        // If no more pending callbacks, shutdown server
-        // if (this.pendingCallbacks.size === 0) {
-        //   setTimeout(() => this.shutdown(), 30000)
-        // }
-      } else {
-        console.log(`❌ Invalid OAuth callback: no code, state or error parameter or pendingCallback not found: code: ${code}, state: ${state}, error: ${error}`)
-        res.writeHead(400)
-        res.end('Bad request')
-
-        if (pendingCallback) {
-          clearTimeout(pendingCallback.timeout)
-          this.pendingCallbacks.delete(state)
-          pendingCallback.reject(new Error('No authorization code provided'))
-        }
-      }
-    })
-
-    this.server.listen(this.port, () => {
-      console.log(`✅ OAuth callback server listening on http://localhost:${this.port}`)
-    })
-
-    this.server.on('error', (err: any) => {
-      if (err.code === 'EADDRINUSE') {
-        console.log(`⚠️ Port ${this.port} is already in use - OAuth callback server may already be running`)
-      } else {
-        console.error('❌ OAuth callback server error:', err)
-      }
-    })
-  }
-
-  private shutdown(): void {
-    if (this.server) {
-      console.log('🛑 Shutting down OAuth callback server')
-      this.server.close()
-      this.server = null
-      
-      // Clean up any remaining callbacks
-      for (const [flowId, callback] of this.pendingCallbacks) {
-        clearTimeout(callback.timeout)
-        callback.reject(new Error(`OAuth server shutdown (flow ${flowId})`))
-      }
-      this.pendingCallbacks.clear()
-    }
-  }
-}
-
 export default class McpOAuthManager {
   private app: App
   private client: Client | null = null
   private serverUrl: string = ''
-  private callbackServer: OAuthCallbackServer
+  private httpServer: HttpServer
+  private pendingCallbacks: Map<string, { 
+    resolve: (code: string) => void
+    reject: (error: Error) => void
+    timeout: NodeJS.Timeout 
+  }> = new Map()
   
   constructor(app: App) {
     this.app = app
-    this.callbackServer = OAuthCallbackServer.getInstance()
+    this.httpServer = HttpServer.getInstance()
+    this.httpServer.unregister('/mcp/callback')
+    this.httpServer.register('/mcp/callback', (req, res, parsedUrl) => {
+      this.handleCallback(req, res, parsedUrl)
+    })
   }
 
   async getClientMetadata(scope?: string): Promise<OAuthClientMetadata> {
     
     // Ensure server is running to get the port
-    await this.callbackServer.ensureServerRunning()
-    const callbackUrl = `http://localhost:${this.callbackServer.callbackPort}/callback`
+    await this.httpServer.ensureServerRunning()
+    const callbackUrl = `${this.httpServer.getBaseUrl()}/mcp/callback`
     
     return {
       client_name: `${useI18n(app)('common.appName')} MCP Client`,
@@ -289,6 +106,105 @@ export default class McpOAuthManager {
       token_endpoint_auth_method: 'client_secret_post',
       ...(scope ? { scope } : {})
     }
+  }
+
+  private handleCallback(req: any, res: any, parsedUrl: URL): void {
+    const t = useI18n(app)
+    const code = parsedUrl.searchParams.get('code')
+    const error = parsedUrl.searchParams.get('error')
+    const state = parsedUrl.searchParams.get('state') || 'default'
+
+    const pendingCallback = this.pendingCallbacks.get(state)
+    
+    if (code && pendingCallback) {
+      console.log(`✅ Authorization code received for MCP flow ${state}: ${code.substring(0, 10)}...`)
+      res.writeHead(200, { 'Content-Type': 'text/html' })
+      res.end(`
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${t('mcp.oauth.success.title')}</title>
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 60px 20px; background: rgb(252, 250, 248); color: black; text-align: center; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding-top: 12.5%; }
+              .logo { width: 8rem; height: 8rem; margin-bottom: 2rem; transform: rotate(5deg); }
+              h1 { font-size: 28pt; font-weight: 600; margin: 0 0 1rem 0; }
+              p { font-size: 16pt; opacity: 0.8; margin: 0; line-height: 1.5; }
+            </style>
+          </head>
+          <body>
+            <img src="https://witsy.bonamy.fr/img/logo.png" alt="Witsy" class="logo">
+            <h1>${t('mcp.oauth.success.title')}</h1>
+            <p>${t('mcp.oauth.success.message')}</p>
+            <script>setTimeout(() => window.close(), 5000);</script>
+          </body>
+        </html>
+      `)
+
+      // Clean up this specific callback
+      clearTimeout(pendingCallback.timeout)
+      this.pendingCallbacks.delete(state)
+      pendingCallback.resolve(code)
+
+    } else if (error) {
+      console.log(`❌ Authorization error for MCP flow ${state}: ${error}`)
+      res.writeHead(400, { 'Content-Type': 'text/html' })
+      res.end(`
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>OAuth Authorization Failed</title>
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 60px 20px; background: #0f172a; color: #ffffff; text-align: center; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+              .logo { width: 64px; height: 64px; margin-bottom: 32px; }
+              h1 { font-size: 28px; font-weight: 600; margin: 0 0 16px 0; color: #ef4444; }
+              p { font-size: 16px; opacity: 0.8; margin: 0; line-height: 1.5; }
+            </style>
+          </head>
+          <body>
+            <img src="https://witsy.bonamy.fr/img/logo.png" alt="Witsy" class="logo">
+            <h1>Authorization Failed</h1>
+            <p>Error: ${error}</p>
+          </body>
+        </html>
+      `)
+
+      if (pendingCallback) {
+        clearTimeout(pendingCallback.timeout)
+        this.pendingCallbacks.delete(state)
+        pendingCallback.reject(new Error(`OAuth authorization failed: ${error}`))
+      }
+    } else {
+      console.log(`❌ Invalid MCP OAuth callback: missing code/error or callback not found`)
+      res.writeHead(400)
+      res.end('Bad request')
+
+      if (pendingCallback) {
+        clearTimeout(pendingCallback.timeout)
+        this.pendingCallbacks.delete(state)
+        pendingCallback.reject(new Error('No authorization code provided'))
+      }
+    }
+  }
+
+  /**
+   * Wait for OAuth callback with a specific flow ID
+   */
+  async waitForCallback(flowId: string): Promise<string> {
+    await this.httpServer.ensureServerRunning()
+    return new Promise<string>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        console.log(`⏰ MCP OAuth callback timeout for flow ${flowId}`)
+        this.pendingCallbacks.delete(flowId)
+        reject(new Error('OAuth callback timeout'))
+      }, 300000) // 5 minute timeout
+
+      console.log(`✅ Storing pending MCP callback for flowId: ${flowId}`)
+      this.pendingCallbacks.set(flowId, { resolve, reject, timeout })
+    })
   }
 
   /**
@@ -404,7 +320,7 @@ export default class McpOAuthManager {
     console.log(`🆔 OAuth flow ID: ${flowId}`)
     
     console.log('🔐 Creating OAuth provider...');
-    const callbackUrl = `http://localhost:${this.callbackServer.callbackPort}/callback`
+    const callbackUrl = `${this.httpServer.getBaseUrl()}/mcp/callback`
     const oauthProvider = new McpOAuthClientProvider(
       callbackUrl,
       clientMetadata,
@@ -450,9 +366,9 @@ export default class McpOAuthManager {
     // Return the OAuth configuration with tokens
     const tokens = oauthProvider.tokens();
     return JSON.stringify({
+      clientInformation: oauthProvider.clientInformation(),
       clientMetadata,
       tokens,
-      clientInformation: oauthProvider.clientInformation()
     });
   }
 
@@ -474,9 +390,9 @@ export default class McpOAuthManager {
     } catch (error) {
       if (error instanceof UnauthorizedError) {
         console.log('🔐 OAuth required - waiting for authorization...');
-        const authCode = await this.callbackServer.waitForCallback(flowId);
-        await transport.finishAuth(authCode);
+        const authCode = await this.waitForCallback(flowId);
         console.log('🔐 Authorization code received:', authCode);
+        await transport.finishAuth(authCode);
         console.log('🔌 Reconnecting with authenticated transport...');
         await this.attemptConnection(oauthProvider, flowId);
       } else {
@@ -505,7 +421,7 @@ export default class McpOAuthManager {
     onTokensUpdated: OnTokensUpdatedCallback
   ): Promise<McpOAuthClientProvider> {
     
-    const redirectUrl = clientMetadata.redirect_uris?.[0] || `http://localhost:${this.callbackServer.callbackPort}/callback`
+    const redirectUrl = clientMetadata.redirect_uris?.[0] || `${this.httpServer.getBaseUrl()}/mcp/callback`
     return new McpOAuthClientProvider(redirectUrl, clientMetadata, onRedirect, onTokensUpdated)
   }
 
