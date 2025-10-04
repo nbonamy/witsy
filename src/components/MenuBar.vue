@@ -5,9 +5,9 @@
 
     <div class="menu">
 
-      <div class="app-menu" @click.prevent="onAppMenu">
-        <IconMenu />
-      </div>
+      <ButtonIcon class="app-menu" @click="onAppMenu">
+        <MenuIcon/>
+      </ButtonIcon>
 
       <MenuBarItem class="chat" action="chat" :active="mode === 'chat'" @click="emit('new-chat')">
         <IconChat />
@@ -90,15 +90,15 @@
 
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
-import { FileTextIcon, HeadsetIcon, LightbulbIcon, MicIcon, MouseIcon, PaletteIcon, PlugIcon, SettingsIcon, icons } from 'lucide-vue-next'
+import { FileTextIcon, HeadsetIcon, LightbulbIcon, MenuIcon, MicIcon, MouseIcon, PaletteIcon, PlugIcon, SettingsIcon, icons } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import IconAgent from '../../assets/agent.svg?component'
 import IconChat from '../../assets/message-circle-3.svg?component'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import useAppearanceTheme from '../composables/appearance_theme'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { MainWindowMode } from '../types/index'
-import IconMenu from './IconMenu.vue'
 import MenuBarItem from './MenuBarItem.vue'
 
 export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug'
