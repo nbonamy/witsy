@@ -134,7 +134,7 @@ export default class McpOAuthManager {
             </style>
           </head>
           <body>
-            <img src="https://witsy.bonamy.fr/img/logo.png" alt="Witsy" class="logo">
+            <img src="/logo.png" alt="Witsy" class="logo">
             <h1>${t('mcp.oauth.success.title')}</h1>
             <p>${t('mcp.oauth.success.message')}</p>
             <script>setTimeout(() => window.close(), 5000);</script>

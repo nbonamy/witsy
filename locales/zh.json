@@ -1680,6 +1680,10 @@
   "mcp": {
     "addCustomServer": "添加 MCP 服务器…",
     "confirmDelete": "你确定要删除这个服务器吗？",
+    "connectionErrors": {
+      "authFailed": "身份验证失败。服务器拒绝了凭据。请检查您的身份验证设置。",
+      "fetchFailed": "无法连接到服务器。请检查服务器是否正在运行以及URL是否正确。"
+    },
     "copyInstallCommand": "你可以复制安装命令到剪贴板并尝试在终端中运行。",
     "failedToInstall": "服务器安装失败",
     "importJson": {

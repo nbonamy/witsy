@@ -1661,6 +1661,10 @@
   "mcp": {
     "addCustomServer": "Ajouter un serveur MCP…",
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce serveur ?",
+    "connectionErrors": {
+      "authFailed": "Échec de l'authentification. Le serveur a rejeté les informations d'identification. Veuillez vérifier votre configuration d'authentification.",
+      "fetchFailed": "Impossible de se connecter au serveur. Veuillez vérifier que le serveur est en fonctionnement et que l'URL est correcte."
+    },
     "copyInstallCommand": "Vous pouvez copier la commande d'installation dans votre presse-papiers et l'essayer dans un terminal.",
     "failedToInstall": "Échec de l'installation du serveur",
     "importJson": {

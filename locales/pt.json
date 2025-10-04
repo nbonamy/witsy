@@ -1680,6 +1680,10 @@
   "mcp": {
     "addCustomServer": "Adicionar servidor MCP…",
     "confirmDelete": "Tem certeza de que deseja excluir este servidor?",
+    "connectionErrors": {
+      "authFailed": "Autenticação falhou. O servidor rejeitou as credenciais. Por favor, verifique a configuração de autenticação.",
+      "fetchFailed": "Não foi possível conectar ao servidor. Por favor, verifique se o servidor está em execução e se o URL está correto."
+    },
     "copyInstallCommand": "Você pode copiar o comando de instalação para a área de transferência e tentar em um Terminal.",
     "failedToInstall": "Falha ao instalar o servidor",
     "importJson": {

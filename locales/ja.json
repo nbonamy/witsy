@@ -1680,6 +1680,10 @@
   "mcp": {
     "addCustomServer": "MCPサーバーを追加…",
     "confirmDelete": "本当にこのサーバーを削除してもよろしいですか？",
+    "connectionErrors": {
+      "authFailed": "認証に失敗しました。サーバーが認証情報を拒否しました。認証設定を確認してください。",
+      "fetchFailed": "サーバーに接続できません。サーバーが稼働していることと、URLが正しいことを確認してください。"
+    },
     "copyInstallCommand": "インストールコマンドをクリップボードにコピーして、ターミナルで試すことができます。",
     "failedToInstall": "サーバーのインストールに失敗しました",
     "importJson": {
