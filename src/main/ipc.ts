@@ -46,7 +46,9 @@ import * as ollama from './ollama';
 import * as google from './google';
 import * as workspace from './workspace';
 import * as scratchpadManager from './scratchpad';
+
 import { importOpenAI } from './import_oai';
+import { AGENT_API_BASE_PATH } from './agent_webhook';
 
 export const installIpc = (
   store: Store,
@@ -319,6 +321,10 @@ export const installIpc = (
   ipcMain.handle(IPC.AGENTS.GENERATE_WEBHOOK_TOKEN, async (_event, workspaceId: string, agentId: string) => {
     const { generateWebhookToken } = await import('./agent_utils');
     return generateWebhookToken(app, workspaceId, agentId);
+  });
+
+  ipcMain.on(IPC.AGENTS.GET_API_BASE_PATH, (event) => {
+    event.returnValue = AGENT_API_BASE_PATH;
   });
 
   ipcMain.on(IPC.WORKSPACE.LIST, (event) => {

@@ -74,11 +74,11 @@ test('routes with exact match take precedence', () => {
 test('wildcard routes match prefixes', () => {
   const handler = vi.fn()
 
-  httpServer.register('/agent/run/*', handler)
+  httpServer.register('/api/agent/run/*', handler)
 
   const mockReq = {
     method: 'GET',
-    url: 'http://localhost:8090/agent/run/abc12345'
+    url: 'http://localhost:8090/api/agent/run/abc12345'
   } as IncomingMessage
 
   const mockRes = {
@@ -238,11 +238,11 @@ test('handler receives correct parsedUrl for wildcard routes', () => {
     res.end()
   })
 
-  httpServer.register('/agent/run/*', handler)
+  httpServer.register('/api/agent/run/*', handler)
 
   const mockReq = {
     method: 'GET',
-    url: 'http://localhost:8090/agent/run/abc12345?param=value'
+    url: 'http://localhost:8090/api/agent/run/abc12345?param=value'
   } as IncomingMessage
 
   const mockRes = {
@@ -255,7 +255,7 @@ test('handler receives correct parsedUrl for wildcard routes', () => {
 
   expect(handler).toHaveBeenCalled()
   expect(receivedUrl).toBeDefined()
-  expect(receivedUrl?.pathname).toBe('/agent/run/abc12345')
+  expect(receivedUrl?.pathname).toBe('/api/agent/run/abc12345')
   expect(receivedUrl?.searchParams.get('param')).toBe('value')
 })
 

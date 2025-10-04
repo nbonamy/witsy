@@ -101,6 +101,7 @@ export const AGENTS = {
   DELETE_RUN: 'agents-delete-run',
   DELETE_RUNS: 'agents-delete-runs',
   GENERATE_WEBHOOK_TOKEN: 'agents-generate-webhook-token',
+  GET_API_BASE_PATH: 'agents-get-api-base-path',
 } as const;
 
 export const DOCREPO = {

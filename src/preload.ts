@@ -158,6 +158,7 @@ contextBridge.exposeInMainWorld(
       deleteRun(workspaceId: string, agentId: string, runId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUN, JSON.stringify({ workspaceId, agentId, runId })) },
       deleteRuns(workspaceId: string, agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUNS, JSON.stringify({ workspaceId, agentId })); },
       generateWebhookToken: (workspaceId: string, agentId: string): Promise<string> => ipcRenderer.invoke(IPC.AGENTS.GENERATE_WEBHOOK_TOKEN, workspaceId, agentId),
+      getApiBasePath: (): string => ipcRenderer.sendSync(IPC.AGENTS.GET_API_BASE_PATH),
     },
     docrepo: {
       open(): void { return ipcRenderer.send(IPC.DOCREPO.OPEN) },
