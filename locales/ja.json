@@ -2715,6 +2715,7 @@
   "tray": {
     "menu": {
       "designStudio": "@:{'menu.file.designStudio'}",
+      "httpServer": "🌐 ポート {port} で HTTP サーバーが稼働中",
       "installUpdate": "アップデートをインストールして再起動…",
       "mainWindow": "@:{'menu.file.mainWindow'}",
       "quickPrompt": "@:{'menu.file.quickPrompt'}",

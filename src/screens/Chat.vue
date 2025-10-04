@@ -147,6 +147,13 @@ onMounted(() => {
         console.log('Chat not found', params.chatId)
       }
     }
+    if (params?.text) {
+      console.log('[chat] setting prompt text', params.text)
+      nextTick(() => {
+        chatArea.value?.setPrompt(params.text)
+        chatArea.value?.focusPrompt()
+      })
+    }
   }, { immediate: true })
 
 })

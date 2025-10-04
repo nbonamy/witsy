@@ -2687,6 +2687,7 @@
   "tray": {
     "menu": {
       "designStudio": "@:{'menu.file.designStudio'}",
+      "httpServer": "🌐 Server HTTP in esecuzione sulla porta {port}",
       "installUpdate": "Installa aggiornamento e riavvia…",
       "mainWindow": "@:{'menu.file.mainWindow'}",
       "quickPrompt": "@:{'menu.file.quickPrompt'}",

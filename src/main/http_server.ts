@@ -57,7 +57,7 @@ export class HttpServer {
       throw new Error(`Path conflict: Route '${path}' already registered`)
     }
     this.routes.set(path, handler)
-    console.log(`📝 Registered HTTP route: ${path}`)
+    console.log(`[http] Registered route: ${path}`)
   }
 
   /**
@@ -66,7 +66,7 @@ export class HttpServer {
    */
   unregister(path: string): void {
     if (this.routes.delete(path)) {
-      console.log(`🗑️ Unregistered HTTP route: ${path}`)
+      console.log(`[http] Unregistered route: ${path}`)
     }
   }
 
@@ -81,7 +81,7 @@ export class HttpServer {
 
     // Find an available port starting from 8090
     this.port = await portfinder.getPortPromise({ port: 8090 })
-    console.log(`🚀 Starting HTTP server on port ${this.port}...`)
+    console.log(`[http] Starting server on port ${this.port}`)
     
     this.server = this.createServer((req, res) => {
       
@@ -102,7 +102,7 @@ export class HttpServer {
         return;
       }
 
-      console.log(`📥 Received HTTP request: ${req.method} ${req.url}`)
+      console.log(`[http] ${req.method} ${req.url}`)
       
       try {
         const parsedUrl = new URL(req.url || '/', `http://localhost:${this.port}`)
@@ -112,14 +112,13 @@ export class HttpServer {
         const handler = this.routes.get(path)
         
         if (handler) {
-          console.log(`✅ Found handler for path: ${path}`)
           // Execute the handler
           const result = handler(req, res, parsedUrl)
           
           // If handler returns a promise, handle it
           if (result instanceof Promise) {
             result.catch((error) => {
-              console.error(`❌ Handler error for path ${path}:`, error)
+              console.error(`[http] Handler error for path ${path}:`, error)
               if (!res.headersSent) {
                 res.writeHead(500, { 'Content-Type': 'text/plain' })
                 res.end('Internal Server Error')
@@ -127,12 +126,12 @@ export class HttpServer {
             })
           }
         } else {
-          console.log(`❌ No handler found for path: ${path}`)
+          console.log(`[http] No handler found for path: ${path}`)
           res.writeHead(404, { 'Content-Type': 'text/plain' })
           res.end('Not Found')
         }
       } catch (error) {
-        console.error('❌ HTTP server error:', error)
+        console.error('[http] Server error:', error)
         if (!res.headersSent) {
           res.writeHead(500, { 'Content-Type': 'text/plain' })
           res.end('Internal Server Error')
@@ -141,14 +140,14 @@ export class HttpServer {
     })
 
     this.server.listen(this.port, () => {
-      console.log(`✅ HTTP server listening on http://localhost:${this.port}`)
+      console.log(`[http] Server listening on http://localhost:${this.port}`)
     })
 
     this.server.on('error', (err: any) => {
       if (err.code === 'EADDRINUSE') {
-        console.log(`⚠️ Port ${this.port} is already in use - HTTP server may already be running`)
+        console.log(`[http] Port ${this.port} is already in use - server may already be running`)
       } else {
-        console.error('❌ HTTP server error:', err)
+        console.error('[http] Server error:', err)
       }
     })
   }
@@ -159,7 +158,7 @@ export class HttpServer {
    */
   private shutdown(): void {
     if (this.server) {
-      console.log('🛑 Shutting down HTTP server')
+      console.log('[http] Shutting down server')
       this.server.close()
       this.server = null
       this.port = null
