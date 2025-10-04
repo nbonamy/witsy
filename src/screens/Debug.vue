@@ -6,7 +6,9 @@
       <div class="sp-sidebar">
         <header>
           <div class="title">{{ t('debugConsole.title') }}</div>
-          <Trash2Icon class="icon" @click="clearRequests"/>
+          <ButtonIcon @click="clearRequests">
+            <Trash2Icon />
+          </ButtonIcon>
         </header>
         <main class="list">
           <div v-if="requests.length === 0" class="empty">
@@ -113,6 +115,7 @@ import { Trash2Icon } from 'lucide-vue-next'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/vue3-json-viewer.css'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import Loader from '../components/Loader.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
