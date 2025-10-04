@@ -24,6 +24,7 @@ import { HttpServer } from './main/http_server';
 import { installIpc } from './main/ipc';
 import { importOpenAI } from './main/import_oai';
 import { installHttpTriggers } from './main/http_triggers';
+import { installAgentWebhook } from './main/agent_webhook';
 
 import * as config from './main/config';
 import * as shortcuts from './main/shortcuts';
@@ -221,6 +222,13 @@ app.whenReady().then(async () => {
   // and now scheduler
   scheduler = new Scheduler(app, mcp);
   scheduler.start();
+
+  // install agent webhook
+  try {
+    installAgentWebhook(httpServer, app, mcp);
+  } catch (error) {
+    console.error('Error installing agent webhook:', error);
+  }
 
   // create the main window
   if (!settings.general.hideOnStartup || process.env.TEST) {

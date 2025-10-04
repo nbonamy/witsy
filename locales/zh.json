@@ -359,7 +359,11 @@
       "manual_description": "代理始终可手动触发",
       "nextRuns": "下一次运行",
       "schedule": "⏰ 计划",
-      "webhook": "🌐 Webhook URL",
+      "webhook": "🌐 网页钩子",
+      "webhook_copy": "复制URL",
+      "webhook_description": "通过HTTP请求触发此代理",
+      "webhook_regenerate": "重新生成令牌",
+      "webhook_url": "网页钩子URL",
       "workflow": "⚙️ 工作流"
     },
     "type": {

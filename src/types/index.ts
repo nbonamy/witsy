@@ -164,6 +164,7 @@ export interface Agent {
   parameters: PluginParameter[]
   steps: AgentStep[]
   schedule: string|null
+  webhookToken: string|null
   invocationValues: Record<string, string>
   buildPrompt: (step: number, parameters: anyDict) => string|null
   getPreparationDescription?: () => string
@@ -352,6 +353,7 @@ declare global {
         // showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
         listFonts(): string[]
         fullscreen(window: string, state: boolean): void
+        getHttpPort(): number
       }
       main: {
         updateMode(mode: MainWindowMode): void
@@ -466,6 +468,7 @@ declare global {
         saveRun(workspaceId: string, run: AgentRun): boolean
         deleteRun(workspaceId: string, agentId: string, runId: string): boolean
         deleteRuns(workspaceId: string, agentId: string): boolean
+        generateWebhookToken(workspaceId: string, agentId: string): string
       }
       docrepo: {
         open(): void

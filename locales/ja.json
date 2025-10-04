@@ -359,7 +359,11 @@
       "manual_description": "エージェントは常に手動でトリガーできます",
       "nextRuns": "次回実行予定",
       "schedule": "⏰ スケジュール",
-      "webhook": "🌐 Webhook URL",
+      "webhook": "🌐 ウェブフック",
+      "webhook_copy": "URLをコピー",
+      "webhook_description": "HTTPリクエストでこのエージェントをトリガーします",
+      "webhook_regenerate": "トークンを再生成",
+      "webhook_url": "ウェブフックURL",
       "workflow": "⚙️ ワークフロー"
     },
     "type": {

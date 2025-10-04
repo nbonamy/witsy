@@ -39,6 +39,7 @@ contextBridge.exposeInMainWorld(
       showAbout: (): void => { return ipcRenderer.send(IPC.APP.SHOW_ABOUT) },
       getAssetPath: (assetPath: string): string => { return ipcRenderer.sendSync(IPC.APP.GET_ASSET_PATH, assetPath) },
       fullscreen: (window: string, state: boolean): void => { return ipcRenderer.send(IPC.APP.FULLSCREEN, { window, state }) },
+      getHttpPort: (): Promise<number> => ipcRenderer.invoke(IPC.APP.GET_HTTP_PORT),
     },
     main: {
       updateMode: (mode: MainWindowMode): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.UPDATE_MODE, mode) },
@@ -156,6 +157,7 @@ contextBridge.exposeInMainWorld(
       saveRun(workspaceId: string, run: AgentRun): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE_RUN, JSON.stringify({ workspaceId, run })) },
       deleteRun(workspaceId: string, agentId: string, runId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUN, JSON.stringify({ workspaceId, agentId, runId })) },
       deleteRuns(workspaceId: string, agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUNS, JSON.stringify({ workspaceId, agentId })); },
+      generateWebhookToken: (workspaceId: string, agentId: string): Promise<string> => ipcRenderer.invoke(IPC.AGENTS.GENERATE_WEBHOOK_TOKEN, workspaceId, agentId),
     },
     docrepo: {
       open(): void { return ipcRenderer.send(IPC.DOCREPO.OPEN) },

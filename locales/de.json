@@ -340,7 +340,11 @@
       "manual_description": "Agenten können jederzeit manuell ausgelöst werden",
       "nextRuns": "Nächste Ausführungen",
       "schedule": "⏰ Zeitplan",
-      "webhook": "🌐 Webhook-URL",
+      "webhook": "🌐 Webhook",
+      "webhook_copy": "URL kopieren",
+      "webhook_description": "Diesen Agenten über eine HTTP-Anfrage auslösen",
+      "webhook_regenerate": "Token neu generieren",
+      "webhook_url": "Webhook-URL",
       "workflow": "⚙️ Arbeitsablauf"
     },
     "type": {

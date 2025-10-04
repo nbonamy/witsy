@@ -178,6 +178,7 @@ All endpoints support both `GET` (with query parameters) and `POST` (with JSON o
 | `GET/POST /api/command` | Trigger AI command picker | `text` - Pre-fill command text |
 | `GET/POST /api/transcribe` | Start transcription/dictation | - |
 | `GET/POST /api/readaloud` | Start read aloud | - |
+| `GET/POST /agent/run/:token` | Trigger agent execution via webhook | Query params passed as prompt inputs |
 
 ### Example Usage
 
@@ -200,7 +201,64 @@ curl "http://localhost:8090/api/prompt?text=Write%20a%20poem"
 curl -X POST http://localhost:8090/api/command \
   -H "Content-Type: application/json" \
   -d '{"text":"selected text to process"}'
+
+# Trigger agent via webhook with parameters
+curl "http://localhost:8090/agent/run/abc12345?input1=value1&input2=value2"
+
+# Trigger agent with POST JSON
+curl -X POST http://localhost:8090/agent/run/abc12345 \
+  -H "Content-Type: application/json" \
+  -d '{"input1":"value1","input2":"value2"}'
 ```
+
+### Agent Webhooks
+
+Agent webhooks allow you to trigger agent execution via HTTP requests, enabling integration with external systems, automation tools, or custom workflows.
+
+#### How It Works
+
+**Setting up a webhook:**
+1. Open the Agent Forge and select or create an agent
+2. Navigate to the "Invocation" tab (last step in the wizard)
+3. Check the "🌐 Webhook" checkbox
+4. A unique 8-character token is automatically generated for your agent
+5. Copy the webhook URL displayed (format: `http://localhost:{port}/agent/run/{token}`)
+6. You can regenerate the token at any time using the refresh button
+
+**Using the webhook:**
+- Send GET or POST requests to the webhook URL
+- Include parameters as query strings (GET) or JSON body (POST)
+- Parameters are automatically passed to the agent's prompt as input variables
+- The agent must have prompt variables defined (e.g., `{task}`, `{name}`) to receive the parameters
+
+**Example agent prompt:**
+```
+Please process the following task: {task}
+User: {user}
+Priority: {priority}
+```
+
+**Triggering the agent:**
+```bash
+# Using GET with query parameters
+curl "http://localhost:8090/agent/run/abc12345?task=backup&user=john&priority=high"
+
+# Using POST with JSON
+curl -X POST http://localhost:8090/agent/run/abc12345 \
+  -H "Content-Type: application/json" \
+  -d '{"task":"backup","user":"john","priority":"high"}'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "runId": "run-uuid-here"
+}
+```
+
+**Security Note:**
+The HTTP server runs on localhost only by default. If you need external access, consider using a reverse proxy with proper authentication.
 
 ## Setup
 

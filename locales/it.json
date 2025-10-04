@@ -340,7 +340,11 @@
       "manual_description": "Gli agenti possono sempre essere attivati manualmente",
       "nextRuns": "Prossime esecuzioni",
       "schedule": "⏰ Pianifica",
-      "webhook": "🌐 URL Webhook",
+      "webhook": "🌐 Webhook",
+      "webhook_copy": "Copia URL",
+      "webhook_description": "Attiva questo agente tramite richiesta HTTP",
+      "webhook_regenerate": "Rigenera token",
+      "webhook_url": "URL Webhook",
       "workflow": "⚙️ Flusso di lavoro"
     },
     "type": {

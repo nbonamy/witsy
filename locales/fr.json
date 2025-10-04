@@ -340,7 +340,11 @@
       "manual_description": "Les agents peuvent toujours être déclenchés manuellement",
       "nextRuns": "Prochaines exécutions",
       "schedule": "⏰ Programmation",
-      "webhook": "🌐 URL Webhook",
+      "webhook": "🌐 Webhook",
+      "webhook_copy": "Copier l’URL",
+      "webhook_description": "Déclenchez cet agent via une requête HTTP",
+      "webhook_regenerate": "Régénérer le jeton",
+      "webhook_url": "URL du Webhook",
       "workflow": "⚙️ Flux de travail"
     },
     "type": {
