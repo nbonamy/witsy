@@ -102,6 +102,7 @@ const emit = defineEmits(['prev', 'next'])
 
 const invocationInputs = ref<Record<string, string>>({})
 const httpPort = ref<number>(8090)
+const agentApiBasePath = ref<string>(window.api.agents.getApiBasePath())
 
 const webhookEnabled = computed({
   get: () => !!props.agent.webhookToken,
@@ -120,7 +121,7 @@ const webhookEnabled = computed({
 
 const webhookUrl = computed(() => {
   if (!props.agent.webhookToken) return ''
-  return `http://localhost:${httpPort.value}/agent/run/${props.agent.webhookToken}`
+  return `http://localhost:${httpPort.value}${agentApiBasePath.value}/run/${props.agent.webhookToken}`
 })
 
 const nextRuns = computed(() => {

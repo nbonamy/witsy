@@ -469,6 +469,7 @@ declare global {
         deleteRun(workspaceId: string, agentId: string, runId: string): boolean
         deleteRuns(workspaceId: string, agentId: string): boolean
         generateWebhookToken(workspaceId: string, agentId: string): string
+        getApiBasePath(): string
       }
       docrepo: {
         open(): void

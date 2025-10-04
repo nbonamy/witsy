@@ -155,6 +155,9 @@ https://www.youtube.com/watch?v=vixl7I07hBk
 
 Witsy provides a local HTTP API that allows external applications to trigger various commands and features. The API server runs on `localhost` by default on port **8090** (or the next available port if 8090 is in use).
 
+**Security Note:**
+The HTTP server runs on localhost only by default. If you need external access, consider using a reverse proxy with proper authentication.
+
 ### Finding the Server Port
 
 The current HTTP server port is displayed in the tray menu below the Settings option:
@@ -178,7 +181,8 @@ All endpoints support both `GET` (with query parameters) and `POST` (with JSON o
 | `GET/POST /api/command` | Trigger AI command picker | `text` - Pre-fill command text |
 | `GET/POST /api/transcribe` | Start transcription/dictation | - |
 | `GET/POST /api/readaloud` | Start read aloud | - |
-| `GET/POST /agent/run/:token` | Trigger agent execution via webhook | Query params passed as prompt inputs |
+| `GET/POST /api/agent/run/:token` | Trigger agent execution via webhook | Query params passed as prompt inputs |
+| `GET /api/agent/status/:token/:runId` | Check agent execution status | Returns status, output, and error |
 
 ### Example Usage
 
@@ -203,12 +207,15 @@ curl -X POST http://localhost:8090/api/command \
   -d '{"text":"selected text to process"}'
 
 # Trigger agent via webhook with parameters
-curl "http://localhost:8090/agent/run/abc12345?input1=value1&input2=value2"
+curl "http://localhost:8090/api/agent/run/abc12345?input1=value1&input2=value2"
 
 # Trigger agent with POST JSON
-curl -X POST http://localhost:8090/agent/run/abc12345 \
+curl -X POST http://localhost:8090/api/agent/run/abc12345 \
   -H "Content-Type: application/json" \
   -d '{"input1":"value1","input2":"value2"}'
+
+# Check agent execution status
+curl "http://localhost:8090/api/agent/status/abc12345/run-uuid-here"
 ```
 
 ### Agent Webhooks
@@ -222,7 +229,7 @@ Agent webhooks allow you to trigger agent execution via HTTP requests, enabling 
 2. Navigate to the "Invocation" tab (last step in the wizard)
 3. Check the "🌐 Webhook" checkbox
 4. A unique 8-character token is automatically generated for your agent
-5. Copy the webhook URL displayed (format: `http://localhost:{port}/agent/run/{token}`)
+5. Copy the webhook URL displayed (format: `http://localhost:{port}/api/agent/run/{token}`)
 6. You can regenerate the token at any time using the refresh button
 
 **Using the webhook:**
@@ -230,6 +237,7 @@ Agent webhooks allow you to trigger agent execution via HTTP requests, enabling 
 - Include parameters as query strings (GET) or JSON body (POST)
 - Parameters are automatically passed to the agent's prompt as input variables
 - The agent must have prompt variables defined (e.g., `{task}`, `{name}`) to receive the parameters
+- The webhook returns immediately with a `runId` and `statusUrl` for checking execution status
 
 **Example agent prompt:**
 ```
@@ -241,24 +249,69 @@ Priority: {priority}
 **Triggering the agent:**
 ```bash
 # Using GET with query parameters
-curl "http://localhost:8090/agent/run/abc12345?task=backup&user=john&priority=high"
+curl "http://localhost:8090/api/agent/run/abc12345?task=backup&user=john&priority=high"
 
 # Using POST with JSON
-curl -X POST http://localhost:8090/agent/run/abc12345 \
+curl -X POST http://localhost:8090/api/agent/run/abc12345 \
   -H "Content-Type: application/json" \
   -d '{"task":"backup","user":"john","priority":"high"}'
 ```
 
-**Response:**
+**Run response:**
 ```json
 {
   "success": true,
-  "runId": "run-uuid-here"
+  "runId": "550e8400-e29b-41d4-a716-446655440000",
+  "statusUrl": "/api/agent/status/abc12345/550e8400-e29b-41d4-a716-446655440000"
 }
 ```
 
-**Security Note:**
-The HTTP server runs on localhost only by default. If you need external access, consider using a reverse proxy with proper authentication.
+**Checking execution status:**
+```bash
+# Use the statusUrl from the webhook response (relative path)
+curl "http://localhost:8090/api/agent/status/abc12345/550e8400-e29b-41d4-a716-446655440000"
+```
+
+**Status response (running):**
+```json
+{
+  "success": true,
+  "runId": "550e8400-e29b-41d4-a716-446655440000",
+  "agentId": "agent-uuid",
+  "status": "running",
+  "createdAt": 1234567890000,
+  "updatedAt": 1234567900000,
+  "trigger": "webhook"
+}
+```
+
+**Status response (success):**
+```json
+{
+  "success": true,
+  "runId": "550e8400-e29b-41d4-a716-446655440000",
+  "agentId": "agent-uuid",
+  "status": "success",
+  "createdAt": 1234567890000,
+  "updatedAt": 1234567950000,
+  "trigger": "webhook",
+  "output": "Backup completed successfully for user john with high priority"
+}
+```
+
+**Status response (error):**
+```json
+{
+  "success": true,
+  "runId": "550e8400-e29b-41d4-a716-446655440000",
+  "agentId": "agent-uuid",
+  "status": "error",
+  "createdAt": 1234567890000,
+  "updatedAt": 1234567999000,
+  "trigger": "webhook",
+  "error": "Failed to connect to backup server"
+}
+```
 
 ## Setup
 

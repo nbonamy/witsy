@@ -332,6 +332,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       saveRun: vi.fn(),
       deleteRuns: vi.fn(),
       deleteRun: vi.fn(),
+      getApiBasePath: vi.fn(() => '/api/agent'),
     },
     history: {
       load: vi.fn(() => ({ folders: [ ], chats: [ ], quickPrompts: [ ] })),
