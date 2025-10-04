@@ -97,7 +97,6 @@ export default class Agent implements AgentBase {
     return replacePromptInputs(this.steps[step].prompt, parameters)
 
   }
-
   
   getPreparationDescription?: () => string
   getRunningDescription?: (args: any) => string

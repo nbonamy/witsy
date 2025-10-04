@@ -32,16 +32,16 @@
         <label>{{ t('agent.trigger.webhook_url') }}</label>
         <div class="webhook-url-container">
           <input type="text" :value="webhookUrl" readonly />
-          <button type="button" @click="onRegenerateToken" :title="t('agent.trigger.webhook_regenerate')">
-            <RefreshCwIcon :size="16" />
-          </button>
           <button type="button" @click="onCopyUrl" :title="t('agent.trigger.webhook_copy')">
             <CopyIcon :size="16" />
+          </button>
+          <button type="button" @click="onRegenerateToken" :title="t('agent.trigger.webhook_regenerate')">
+            <RefreshCwIcon :size="16" />
           </button>
         </div>
       </div>
 
-      <template v-if="agent.schedule && promptInputs(0).length">
+      <template v-if="(agent.schedule || webhookEnabled)&& promptInputs(0).length">
 
         <div class="form-field">
           <label for="prompt">{{ t('agent.create.invocation.variables') }}</label>

@@ -29,7 +29,10 @@ export function installAgentWebhook(httpServer: HttpServer, app: App, mcp: Mcp):
       const params = await parseParams(req, parsedUrl)
 
       // Build prompt with parameters
-      const prompt = agent.buildPrompt(0, params)
+      const prompt = agent.buildPrompt(0, {
+        ...agent.invocationValues,
+        ...params
+      })
       if (!prompt) {
         sendError(res, 'Failed to build prompt', 400)
         return
