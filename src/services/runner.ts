@@ -17,6 +17,7 @@ import AgentPlugin from '../plugins/agent'
 import A2AClient from './a2a-client'
 
 export interface RunnerCompletionOpts extends GenerationOpts {
+  runId?: string
   ephemeral?: boolean
   engine?: string
   agents?: Agent[]
@@ -65,7 +66,7 @@ export default class extends Generator {
 
     // create a run
     const run: AgentRun = {
-      uuid: crypto.randomUUID(),
+      uuid: opts.runId || crypto.randomUUID(),
       agentId: this.agent.uuid,
       createdAt: Date.now(),
       updatedAt: Date.now(),

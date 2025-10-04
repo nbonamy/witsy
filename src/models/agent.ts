@@ -21,6 +21,7 @@ export default class Agent implements AgentBase {
   parameters: PluginParameter[]
   steps: AgentStep[] = []
   schedule: string|null
+  webhookToken: string|null
   invocationValues: Record<string, string>
 
   constructor() {
@@ -39,6 +40,7 @@ export default class Agent implements AgentBase {
     this.instructions = ''
     this.parameters = []
     this.schedule = null
+    this.webhookToken = null
     this.invocationValues = {}
     this.steps = [{
       tools: [],
@@ -70,6 +72,7 @@ export default class Agent implements AgentBase {
     agent.parameters = obj.parameters ?? []
     agent.steps = obj.steps ?? []
     agent.schedule = obj.schedule ?? null
+    agent.webhookToken = obj.webhookToken ?? null
     agent.invocationValues = obj.invocationValues ?? {}
     agent.getPreparationDescription = preparationDescription
     agent.getRunningDescription = runningDescription

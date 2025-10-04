@@ -359,7 +359,11 @@
       "manual_description": "Agenci mogą być zawsze wyzwalani ręcznie",
       "nextRuns": "Następne wykonania",
       "schedule": "⏰ Harmonogram",
-      "webhook": "🌐 URL webhooka",
+      "webhook": "🌐 Webhook",
+      "webhook_copy": "Kopiuj URL",
+      "webhook_description": "Wywołaj tego agenta za pomocą żądania HTTP",
+      "webhook_regenerate": "Odnów token",
+      "webhook_url": "URL webhooka",
       "workflow": "⚙️ Przepływ pracy"
     },
     "type": {

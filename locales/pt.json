@@ -359,7 +359,11 @@
       "manual_description": "Agentes podem sempre ser acionados manualmente",
       "nextRuns": "Próximas Execuções",
       "schedule": "⏰ Agenda",
-      "webhook": "🌐 URL do Webhook",
+      "webhook": "🌐 Webhook",
+      "webhook_copy": "Copiar URL",
+      "webhook_description": "Disparar este agente via solicitação HTTP",
+      "webhook_regenerate": "Regenerar token",
+      "webhook_url": "URL do Webhook",
       "workflow": "⚙️ Fluxo de trabalho"
     },
     "type": {

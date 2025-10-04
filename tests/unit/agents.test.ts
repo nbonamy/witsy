@@ -112,6 +112,7 @@ test('Save agent', () => {
       prompt: 'prompt3'
     }],
     schedule: '*/5 * * * *',
+    webhookToken: null,
     invocationValues: {},
   }
   const result = main.saveAgent(app, 'test-workspace', agent)

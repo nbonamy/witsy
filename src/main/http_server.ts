@@ -49,6 +49,7 @@ export class HttpServer {
   /**
    * Register a route handler
    * @param path The path to handle (e.g., '/oauth/callback')
+   *             Use '*' suffix for prefix matching (e.g., '/agent/run/*')
    * @param handler The request handler function
    * @throws Error if path already exists
    */
@@ -103,14 +104,30 @@ export class HttpServer {
       }
 
       console.log(`[http] ${req.method} ${req.url}`)
-      
+
       try {
         const parsedUrl = new URL(req.url || '/', `http://localhost:${this.port}`)
         const path = parsedUrl.pathname
 
         // Find matching route handler
-        const handler = this.routes.get(path)
-        
+        let handler: RequestHandler | undefined
+
+        // First try exact match
+        handler = this.routes.get(path)
+
+        // If no exact match, try wildcard matches
+        if (!handler) {
+          for (const [route, routeHandler] of this.routes) {
+            if (route.endsWith('*')) {
+              const prefix = route.slice(0, -1) // Remove the *
+              if (path.startsWith(prefix)) {
+                handler = routeHandler
+                break
+              }
+            }
+          }
+        }
+
         if (handler) {
           // Execute the handler
           const result = handler(req, res, parsedUrl)

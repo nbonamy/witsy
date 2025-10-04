@@ -114,6 +114,11 @@ export const installIpc = (
     event.returnValue = theme;
   });
 
+  ipcMain.handle(IPC.APP.GET_HTTP_PORT, async () => {
+    const { HttpServer } = await import('./http_server');
+    return HttpServer.getInstance().getPort();
+  });
+
   // ipcMain.handle(IPC.APP.SHOW_DIALOG, (event, payload): Promise<Electron.MessageBoxReturnValue> => {
   //   return dialog.showMessageBox(payload);
   // });
@@ -309,6 +314,11 @@ export const installIpc = (
   ipcMain.on(IPC.AGENTS.DELETE_RUNS, (event, payload) => {
     const { workspaceId, agentId } = JSON.parse(payload);
     event.returnValue = agents.deleteAgentRuns(app, workspaceId, agentId);
+  });
+
+  ipcMain.handle(IPC.AGENTS.GENERATE_WEBHOOK_TOKEN, async (_event, workspaceId: string, agentId: string) => {
+    const { generateWebhookToken } = await import('./agent_utils');
+    return generateWebhookToken(app, workspaceId, agentId);
   });
 
   ipcMain.on(IPC.WORKSPACE.LIST, (event) => {

@@ -359,7 +359,11 @@
       "manual_description": "Agents can always be manually triggered",
       "nextRuns": "Next Runs",
       "schedule": "⏰ Schedule",
-      "webhook": "🌐 Webhook URL",
+      "webhook": "🌐 Webhook",
+      "webhook_copy": "Copy URL",
+      "webhook_description": "Trigger this agent via HTTP request",
+      "webhook_regenerate": "Regenerate token",
+      "webhook_url": "Webhook URL",
       "workflow": "⚙️ Workflow"
     },
     "type": {

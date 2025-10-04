@@ -50,6 +50,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       getAssetPath: vi.fn(() => ''),
       listFonts: vi.fn(() => []),
       fullscreen: vi.fn(),
+      getHttpPort: vi.fn(() => 8090),
     },
     main: {
       updateMode: vi.fn(),

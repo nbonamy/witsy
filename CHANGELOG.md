@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 - Allow selecting and copying text from tool execution results (https://github.com/nbonamy/witsy/issues/421)
 - Support Perplexity Search API (https://github.com/nbonamy/witsy/issues/427)
 - Table rendering as artifact, download as CSV and XSLX
+- HTTP Server to control Witsy (see README.md)
+- Agent trigger via webhooks (see README.md)
 
 ### Changed
 - New UI

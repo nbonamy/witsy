@@ -4,6 +4,7 @@ export const APP = {
   GET_APP_PATH: 'get-app-path',
   GET_ASSET_PATH: 'get-asset-path',
   GET_VERSION: 'get-version',
+  GET_HTTP_PORT: 'app-get-http-port',
   SET_APPEARANCE_THEME: 'set-appearance-theme',
   SHOW_ABOUT: 'show-about',
   // SHOW_DIALOG: 'show-dialog',
@@ -99,6 +100,7 @@ export const AGENTS = {
   SAVE_RUN: 'agents-save-run',
   DELETE_RUN: 'agents-delete-run',
   DELETE_RUNS: 'agents-delete-runs',
+  GENERATE_WEBHOOK_TOKEN: 'agents-generate-webhook-token',
 } as const;
 
 export const DOCREPO = {
