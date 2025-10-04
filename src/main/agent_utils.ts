@@ -80,7 +80,6 @@ export class AgentExecutor {
   constructor(app: App, mcp: Mcp) {
     this.app = app
     this.mcp = mcp
-    initI18n()
   }
 
   public async runAgent(
@@ -90,9 +89,11 @@ export class AgentExecutor {
     prompt: string,
     runId?: string
   ): Promise<AgentRun> {
-
+    
+    // install our hooks
     const config = loadSettings(this.app)
     this.installGlobalMock(config)
+    initI18n()
 
     // Create runner and execute
     const runner = new Runner(config, workspaceId, agent)

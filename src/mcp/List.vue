@@ -236,7 +236,7 @@ const onReload = async () => {
 const showLogs = (server: McpServer) => {
   Dialog.show({
     title: t('mcp.serverLogs'),
-    text: props.status.logs[server.uuid].join(''),
+    html: props.status.logs[server.uuid].join('<br>'),
     confirmButtonText: t('common.close'),
   })
 }
