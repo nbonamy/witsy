@@ -1,26 +1,26 @@
 diff --git a/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js b/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
-index f713dd6..a8fd0a3 100644
+index 95d6f94..ac9542e 100644
 --- a/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
 +++ b/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
 @@ -78,7 +78,7 @@ class StdioClientTransport {
-                     ...this._serverParams.env,
+                     ...this._serverParams.env
                  },
-                 stdio: ["pipe", "pipe", (_b = this._serverParams.stderr) !== null && _b !== void 0 ? _b : "inherit"],
+                 stdio: ['pipe', 'pipe', (_b = this._serverParams.stderr) !== null && _b !== void 0 ? _b : 'inherit'],
 -                shell: false,
 +                shell: node_process_1.default.platform === "win32",
                  signal: this._abortController.signal,
-                 windowsHide: node_process_1.default.platform === "win32" && isElectron(),
-                 cwd: this._serverParams.cwd,
+                 windowsHide: node_process_1.default.platform === 'win32' && isElectron(),
+                 cwd: this._serverParams.cwd
 diff --git a/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js b/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
-index d0ce090..3291e4f 100644
+index d77c64d..3407efa 100644
 --- a/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
 +++ b/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
 @@ -71,7 +71,7 @@ export class StdioClientTransport {
-                     ...this._serverParams.env,
+                     ...this._serverParams.env
                  },
-                 stdio: ["pipe", "pipe", (_b = this._serverParams.stderr) !== null && _b !== void 0 ? _b : "inherit"],
+                 stdio: ['pipe', 'pipe', (_b = this._serverParams.stderr) !== null && _b !== void 0 ? _b : 'inherit'],
 -                shell: false,
 +                shell: process.platform === "win32",
                  signal: this._abortController.signal,
-                 windowsHide: process.platform === "win32" && isElectron(),
-                 cwd: this._serverParams.cwd,
+                 windowsHide: process.platform === 'win32' && isElectron(),
+                 cwd: this._serverParams.cwd
