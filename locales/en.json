@@ -2729,6 +2729,7 @@
   "tray": {
     "menu": {
       "designStudio": "@:{'menu.file.designStudio'}",
+      "httpServer": "🌐 HTTP Server running on port {port}",
       "installUpdate": "Install update and restart…",
       "mainWindow": "@:{'menu.file.mainWindow'}",
       "quickPrompt": "@:{'menu.file.quickPrompt'}",

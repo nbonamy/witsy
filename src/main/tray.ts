@@ -4,6 +4,7 @@ import Commander from '../automations/commander';
 import PromptAnywhere from '../automations/anywhere';
 import ReadAloud from '../automations/readaloud';
 import Transcriber from '../automations/transcriber';
+import { HttpServer } from './http_server';
 import { loadSettings } from './config';
 import * as window from './window';
 import * as shortcuts from './shortcuts';
@@ -162,6 +163,13 @@ export default class {
       {
         label: t('tray.menu.settings'),
         click: () => window.openSettingsWindow() },
+      {
+        type: 'separator'
+      },
+      {
+        label: t('tray.menu.httpServer', { port: HttpServer.getInstance().getPort() }),
+        enabled: false
+      },
       {
         type: 'separator'
       },

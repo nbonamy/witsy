@@ -151,6 +151,56 @@ Once the text is transcribed you can:
 
 https://www.youtube.com/watch?v=vixl7I07hBk
 
+## HTTP API
+
+Witsy provides a local HTTP API that allows external applications to trigger various commands and features. The API server runs on `localhost` by default on port **8090** (or the next available port if 8090 is in use).
+
+### Finding the Server Port
+
+The current HTTP server port is displayed in the tray menu below the Settings option:
+- **macOS/Linux**: Check the fountain pen icon in the menu bar
+- **Windows**: Check the fountain pen icon in the system tray
+
+### Available Endpoints
+
+All endpoints support both `GET` (with query parameters) and `POST` (with JSON or form-encoded body) requests.
+
+| Endpoint | Description | Optional Parameters |
+|----------|-------------|---------------------|
+| `GET /api/health` | Server health check | - |
+| `GET/POST /api/chat` | Open main window in chat view | `text` - Pre-fill chat input |
+| `GET/POST /api/scratchpad` | Open scratchpad | - |
+| `GET/POST /api/settings` | Open settings window | - |
+| `GET/POST /api/studio` | Open design studio | - |
+| `GET/POST /api/forge` | Open agent forge | - |
+| `GET/POST /api/realtime` | Open realtime chat (voice mode) | - |
+| `GET/POST /api/prompt` | Trigger Prompt Anywhere | `text` - Pre-fill prompt |
+| `GET/POST /api/command` | Trigger AI command picker | `text` - Pre-fill command text |
+| `GET/POST /api/transcribe` | Start transcription/dictation | - |
+| `GET/POST /api/readaloud` | Start read aloud | - |
+
+### Example Usage
+
+```bash
+# Health check
+curl http://localhost:8090/api/health
+
+# Open chat with pre-filled text (GET with query parameter)
+curl "http://localhost:8090/api/chat?text=Hello%20World"
+
+# Open chat with pre-filled text (POST with JSON)
+curl -X POST http://localhost:8090/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Hello World"}'
+
+# Trigger Prompt Anywhere with text
+curl "http://localhost:8090/api/prompt?text=Write%20a%20poem"
+
+# Trigger AI command on selected text
+curl -X POST http://localhost:8090/api/command \
+  -H "Content-Type: application/json" \
+  -d '{"text":"selected text to process"}'
+```
 
 ## Setup
 

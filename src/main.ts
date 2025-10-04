@@ -23,6 +23,7 @@ import { fixPath } from './main/utils';
 import { HttpServer } from './main/http_server';
 import { installIpc } from './main/ipc';
 import { importOpenAI } from './main/import_oai';
+import { installHttpTriggers } from './main/http_triggers';
 
 import * as config from './main/config';
 import * as shortcuts from './main/shortcuts';
@@ -178,6 +179,13 @@ app.whenReady().then(async () => {
   // we need an http server
   const httpServer = HttpServer.getInstance();
   await httpServer.ensureServerRunning();
+
+  // install HTTP triggers
+  try {
+    installHttpTriggers(httpServer, app);
+  } catch (error) {
+    console.error('Error installing HTTP triggers:', error);
+  }
 
   // auto-updater (we need it now for menu)
   autoUpdater = new AutoUpdater(app, {
