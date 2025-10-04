@@ -93,7 +93,7 @@ defineExpose({ load })
 
 <style scoped>
 
-.form.tab-content:deep() main {
+.tab-content:deep() {
 
   --label-width: 190px;
   
@@ -117,6 +117,16 @@ defineExpose({ load })
     }
     label + * {
       width: 150px !important;
+    }
+
+    .form-subgroup {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    button {
+      padding: 6px 1rem;
     }
   }
 }
