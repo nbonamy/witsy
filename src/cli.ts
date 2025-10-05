@@ -4,6 +4,8 @@ import chalk from 'chalk'
 import { handleCommand, handleMessage, initialize } from './cli/commands'
 import { clearFooter, displayFooter } from './cli/display'
 import { promptInput } from './cli/input'
+import { state } from './cli/state'
+import { saveCliConfig } from './cli/config'
 import ansiEscapes from 'ansi-escapes'
 
 // Main loop
@@ -44,6 +46,16 @@ async function main() {
         await handleCommand(trimmed)
         // displayFooter already called by handleCommand redraw
         continue
+      }
+
+      // Add to prompt history (avoid consecutive duplicates)
+      // Only for regular prompts, not commands
+      if (state.cliConfig && state.userDataPath) {
+        const lastPrompt = state.cliConfig.history[state.cliConfig.history.length - 1]
+        if (trimmed !== lastPrompt) {
+          state.cliConfig.history.push(trimmed)
+          saveCliConfig(state.userDataPath, state.cliConfig)
+        }
       }
 
       // Clear the footer (bottom separator + status) that was displayed above

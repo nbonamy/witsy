@@ -8,6 +8,7 @@ import { displayHeader, displayFooter, displayConversation, clearFooter } from '
 import { promptInput } from './input'
 import ansiEscapes from 'ansi-escapes'
 import { LlmChunk } from 'multi-llm-ts'
+import { loadCliConfig, saveCliConfig } from './config'
 
 const api = new WitsyAPI()
 
@@ -138,6 +139,13 @@ export async function handleModel() {
 
     state.engine = selectedEngine
     state.model = selectedModel
+
+    // Persist selection to cli.json
+    if (state.cliConfig && state.userDataPath) {
+      state.cliConfig.engine = selectedEngine
+      state.cliConfig.model = selectedModel
+      saveCliConfig(state.userDataPath, state.cliConfig)
+    }
 
     const engineName = engines.find(e => e.id === selectedEngine)?.name || selectedEngine
     const modelName = models.find(m => m.id === selectedModel)?.name || selectedModel
@@ -334,8 +342,22 @@ export async function executeCommand(command: string) {
 export async function initialize() {
   try {
     const config = await api.getConfig()
-    state.engine = config.engine
-    state.model = config.model
+    state.userDataPath = config.userDataPath
+
+    // Load CLI config from disk
+    const cliConfig = loadCliConfig(state.userDataPath)
+    state.cliConfig = cliConfig
+
+    // Use CLI config values if present, otherwise fall back to API config
+    state.engine = cliConfig.engine || config.engine
+    state.model = cliConfig.model || config.model
+
+    // If CLI config didn't have engine/model, save them now
+    if (!cliConfig.engine || !cliConfig.model) {
+      state.cliConfig.engine = state.engine
+      state.cliConfig.model = state.model
+      saveCliConfig(state.userDataPath, state.cliConfig)
+    }
   } catch {
     // Silently fail - will show connecting status
     state.engine = ''

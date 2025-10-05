@@ -88,7 +88,7 @@ describe('CLI Display Requirements', () => {
       // SEPARATOR
       // FOOTER (current model + number of messages)
       const expected = `
-  ██  █  ██  Witsy CLI v3.0.0
+  ██  █  ██  Witsy CLI vdev
   ██ ███ ██  AI Assistant · Command Line Interface
    ███ ███   http://localhost:8090
 
@@ -124,7 +124,7 @@ describe('CLI Display Requirements', () => {
       await input({ message: '>' })  // Simulate prompt appearing at cursor
 
       const expected = `
-  ██  █  ██  Witsy CLI v3.0.0
+  ██  █  ██  Witsy CLI vdev
   ██ ███ ██  AI Assistant · Command Line Interface
    ███ ███   http://localhost:8090
 
@@ -165,7 +165,7 @@ describe('CLI Display Requirements', () => {
       await input({ message: '>' })  // Simulate prompt appearing at cursor
 
       const expected = `
-  ██  █  ██  Witsy CLI v3.0.0
+  ██  █  ██  Witsy CLI vdev
   ██ ███ ██  AI Assistant · Command Line Interface
    ███ ███   http://localhost:8090
 
@@ -200,7 +200,7 @@ Hello how are you?
       await input({ message: '>' })  // Simulate prompt appearing at cursor
 
       const expected = `
-  ██  █  ██  Witsy CLI v3.0.0
+  ██  █  ██  Witsy CLI vdev
   ██ ███ ██  AI Assistant · Command Line Interface
    ███ ███   http://localhost:8090
 

@@ -7,11 +7,11 @@ export class WitsyAPI {
     return `http://localhost:${state.port}`
   }
 
-  async getConfig(): Promise<{ engine: string; model: string }> {
+  async getConfig(): Promise<{ engine: string; model: string; userDataPath: string }> {
     const response = await fetch(`${this.baseUrl()}/api/cli/config`)
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const data = await response.json()
-    return { engine: data.engine, model: data.model }
+    return { engine: data.engine, model: data.model, userDataPath: data.userDataPath }
   }
 
   async getEngines(): Promise<Array<{ id: string; name: string }>> {
