@@ -134,8 +134,8 @@ export async function promptInput(options: InputOptions): Promise<string> {
     process.stdin.on('keypress', (char: string, key: any) => {
       if (!key) return
 
-      // Handle Ctrl+C
-      if (key.ctrl && key.name === 'c') {
+      // Handle Ctrl+C and Ctrl+D
+      if (key.ctrl && (key.name === 'c' || key.name === 'd')) {
         rl.close()
         reject(new Error('User force closed the prompt'))
         return
