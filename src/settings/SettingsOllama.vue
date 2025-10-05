@@ -5,7 +5,7 @@
       <div class="control-group">
         <ModelSelectPlus v-model="chat_model" :models="chat_models" :disabled="chat_models.length == 0" @change="save" />
         <button @click.prevent="onDelete"><Trash2Icon /></button>
-        <RefreshButton :on-refresh="getModels" ref="refresh" />
+        <RefreshButton name="refresh" :on-refresh="getModels" ref="refresh" />
       </div>
     </div>
     <div class="form-field">
