@@ -34,19 +34,19 @@ const dmgOptions: MakerDMGConfig = {
 
 if (isDarwin) {
   osxPackagerConfig = {
-    // osxSign: {
-    //   identity: process.env.IDENTIFY_DARWIN_CODE,
-    //   provisioningProfile: './build/Witsy_Darwin.provisionprofile',
-    //   optionsForFile: () => { return {
-    //     hardenedRuntime: true,
-    //     entitlements: './build/Entitlements.darwin.plist'
-    //   }; },
-    // },
-    // osxNotarize: {
-    //   appleId: process.env.APPLE_ID,
-    //   appleIdPassword: process.env.APPLE_PASSWORD,
-    //   teamId: process.env.APPLE_TEAM_ID
-    // }
+    osxSign: {
+      identity: process.env.IDENTIFY_DARWIN_CODE,
+      provisioningProfile: './build/Witsy_Darwin.provisionprofile',
+      optionsForFile: () => { return {
+        hardenedRuntime: true,
+        entitlements: './build/Entitlements.darwin.plist'
+      }; },
+    },
+    osxNotarize: {
+      appleId: process.env.APPLE_ID,
+      appleIdPassword: process.env.APPLE_PASSWORD,
+      teamId: process.env.APPLE_TEAM_ID
+    }
   }
 }
 
