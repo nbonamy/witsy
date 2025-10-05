@@ -22,10 +22,12 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
       const settings = config.loadSettings(app)
       const engine = settings.llm.engine
       const model = settings.engines[engine]?.model?.chat
+      const userDataPath = app.getPath('userData')
 
       sendJson(res, {
         engine,
-        model
+        model,
+        userDataPath
       })
     } catch (error) {
       console.error('[http] Error in /api/cli/config:', error)

@@ -24,6 +24,7 @@ describe('WitsyAPI', () => {
     const mockResponse = {
       engine: 'openai',
       model: 'gpt-4',
+      userDataPath: '/path/to/userData',
     }
 
     vi.mocked(fetch).mockResolvedValueOnce({
