@@ -1,6 +1,6 @@
 
 <template>
-  <button @click="onClick">
+  <button @click="onClick" v-bind="$attrs">
     <SpinningIcon :icon="refreshIcon" :spinning="refreshing" size="sm" />
   </button>
 </template>
@@ -22,6 +22,7 @@ const refreshIcon = ref(RefreshCcwIcon)
 const refreshing = ref(false)
 
 const onClick = async () => {
+  if (refreshing.value) return
   refreshing.value = true
   await new Promise(resolve => setTimeout(resolve, 500))
   const rc = await props.onRefresh.call(this)
