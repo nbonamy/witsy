@@ -1,11 +1,11 @@
 // Command Handlers
 
-import { select } from '@inquirer/prompts'
 import chalk from 'chalk'
 import { state } from './state'
 import { WitsyAPI } from './api'
 import { displayHeader, displayFooter, displayConversation, clearFooter } from './display'
 import { promptInput } from './input'
+import { selectOption } from './select'
 import ansiEscapes from 'ansi-escapes'
 import { LlmChunk } from 'multi-llm-ts'
 import { loadCliConfig, saveCliConfig } from './config'
@@ -72,34 +72,14 @@ export async function handleModel() {
       return
     }
 
-    const enginePrompt = select({
-      message: 'Select engine:',
+    const selectedEngine = await selectOption({
+      title: 'Select engine:',
       choices: engines.map(e => ({
         name: `${e.name} (${e.id})`,
         value: e.id
       })),
-      theme: {
-        style: {
-          highlight: (text: string) => chalk.rgb(180, 142, 238)(text)
-        }
-      }
+      pageSize: 8
     })
-
-    // Add escape key handler
-    const escapeHandler = (_str: string, key: any) => {
-      if (key && key.name === 'escape') {
-        enginePrompt.cancel()
-        process.stdin.removeListener('keypress', escapeHandler)
-      }
-    }
-    process.stdin.on('keypress', escapeHandler)
-
-    let selectedEngine: string
-    try {
-      selectedEngine = await enginePrompt
-    } finally {
-      process.stdin.removeListener('keypress', escapeHandler)
-    }
 
     const models = await api.getModels(selectedEngine)
 
@@ -108,34 +88,14 @@ export async function handleModel() {
       return
     }
 
-    const modelPrompt = select({
-      message: 'Select model:',
+    const selectedModel = await selectOption({
+      title: 'Select model:',
       choices: models.map(m => ({
         name: m.name,
         value: m.id
       })),
-      theme: {
-        style: {
-          highlight: (text: string) => chalk.rgb(180, 142, 238)(text)
-        }
-      }
+      pageSize: 8
     })
-
-    // Add escape key handler
-    const modelEscapeHandler = (_str: string, key: any) => {
-      if (key && key.name === 'escape') {
-        modelPrompt.cancel()
-        process.stdin.removeListener('keypress', modelEscapeHandler)
-      }
-    }
-    process.stdin.on('keypress', modelEscapeHandler)
-
-    let selectedModel: string
-    try {
-      selectedModel = await modelPrompt
-    } finally {
-      process.stdin.removeListener('keypress', modelEscapeHandler)
-    }
 
     state.engine = selectedEngine
     state.model = selectedModel
@@ -158,7 +118,7 @@ export async function handleModel() {
     displayFooter()
   } catch (error: any) {
     // Handle cancellation (Escape key)
-    if (error?.message?.includes('ExitPromptError') || error?.name === 'ExitPromptError') {
+    if (error?.message?.includes('cancelled')) {
       // Clear terminal and redraw entire screen to clear selector
       process.stdout.write(ansiEscapes.clearTerminal)
       displayHeader()
@@ -254,53 +214,6 @@ export async function handleMessage(message: string) {
 }
 
 export async function handleCommand(commandInput: string) {
-  // If just "/", show command list
-  if (commandInput === '/') {
-    try {
-      const commandPrompt = select({
-        message: 'Select command:',
-        choices: COMMANDS.map(c => ({
-          name: c.name.padEnd(20) + chalk.dim(c.description),
-          value: c.value
-        })),
-        theme: {
-          style: {
-            highlight: (text: string) => chalk.rgb(180, 142, 238)(text)
-          }
-        }
-      })
-
-      // Add escape key handler
-      const cmdEscapeHandler = (_str: string, key: any) => {
-        if (key && key.name === 'escape') {
-          commandPrompt.cancel()
-          process.stdin.removeListener('keypress', cmdEscapeHandler)
-        }
-      }
-      process.stdin.on('keypress', cmdEscapeHandler)
-
-      let command: string
-      try {
-        command = await commandPrompt
-      } finally {
-        process.stdin.removeListener('keypress', cmdEscapeHandler)
-      }
-
-      await executeCommand(command)
-    } catch (error: any) {
-      if (error?.message?.includes('ExitPromptError') || error?.name === 'ExitPromptError') {
-        // Clear and redraw
-        process.stdout.write(ansiEscapes.clearTerminal)
-        displayHeader()
-        displayConversation()
-        displayFooter()
-        return
-      }
-      throw error
-    }
-    return
-  }
-
   // Parse command and args
   const [cmd] = commandInput.slice(1).split(' ')
   await executeCommand(cmd.toLowerCase())
