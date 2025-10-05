@@ -18,6 +18,10 @@ export interface GenerationOpts extends LlmCompletionOpts {
 
 export type LlmChunkCallback = (chunk: LlmChunk) => void
 
+export interface InstructionsModifiers {
+  noMarkdown?: boolean
+}
+
 export type GenerationResult = 
   'success' |
   'stopped' |
@@ -330,7 +334,7 @@ export default class Generator {
     return conversation
   }
 
-  getSystemInstructions(instructions?: string): string {
+  getSystemInstructions(instructions?: string, modifiers?: InstructionsModifiers): string {
 
     // default
     let instr = instructions
@@ -342,6 +346,12 @@ export default class Generator {
       } else {
         instr = i18nInstructions(this.config, `instructions.chat.${this.config.llm.instructions}`)
       }
+    }
+
+    // no markdown modifier
+    if (modifiers?.noMarkdown) {
+      console.log('Applying noMarkdown modifier to instructions')
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.noMarkdown')
     }
 
     // forced locale

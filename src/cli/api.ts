@@ -36,6 +36,7 @@ export class WitsyAPI {
         stream: 'true',
         engine: state.engine,
         model: state.model,
+        noMarkdown: true,
         thread
       })
     })

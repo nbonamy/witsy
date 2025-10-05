@@ -21,6 +21,7 @@ export interface AssistantCompletionOpts extends GenerationOpts {
   instructions?: string|null
   attachments?: Attachment[]
   expert?: Expert
+  noMarkdown?: boolean
 }
 
 export default class extends Generator {
@@ -120,7 +121,7 @@ export default class extends Generator {
     }
 
     // update system message with latest instructions
-    this.chat.messages[0].content = this.getSystemInstructions(this.chat.instructions)
+    this.chat.messages[0].content = this.getSystemInstructions(this.chat.instructions, { noMarkdown: opts.noMarkdown })
 
     // make sure we have the right engine and model
     // special case: chat was started without an apiKey

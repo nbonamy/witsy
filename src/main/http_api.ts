@@ -101,6 +101,7 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
       const params = await parseParams(req, parsedUrl)
       const stream = params.stream !== 'false'
       const engine = params.engine || settings.llm.engine
+      const noMarkdown = Boolean(params.noMarkdown)
       const thread: any[] = Array.isArray(params.thread) ? params.thread : []
 
       if (!Array.isArray(thread) || thread.length === 0) {
@@ -158,7 +159,8 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
 
         await assistant.prompt(prompt, {
           model,
-          streaming: true
+          streaming: true,
+          noMarkdown
         }, (chunk) => {
           if (chunk) {
             res.write(`data: ${JSON.stringify(chunk)}\n\n`)
@@ -171,7 +173,8 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
         // Non-streaming mode - JSON response
         await assistant.prompt(prompt, {
           model,
-          streaming: false
+          streaming: false,
+          noMarkdown
         }, () => {
           // Chunks will be accumulated in the assistant's response message
         })
