@@ -157,25 +157,33 @@ export async function promptInput(options: InputOptions): Promise<string> {
 
       // Handle Enter
       if (key.name === 'return' || key.name === 'enter') {
-        // If showing suggestions, select the highlighted command
+        // If showing suggestions, select the highlighted command and execute immediately
         if (showingSuggestions && filteredCommands.length > 0) {
           const selectedCommand = filteredCommands[selectedSuggestionIndex]
           clearCommandSuggestions(suggestionLineCount)
           showingSuggestions = false
           suggestionLineCount = 0
 
-          // Clear current input and write selected command
-          const promptLength = options.message.length + 1
-          process.stdout.write(ansiEscapes.cursorTo(promptLength))
-          process.stdout.write(ansiEscapes.eraseEndLine)
-          process.stdout.write(selectedCommand.name)
-
           input = selectedCommand.name
 
-          // Don't submit yet - let user see it and press enter again if they want
+          // Execute immediately
+          process.stdout.write('\n')
+          rl.close()
+          resolve(input)
           return
         }
 
+        // Check for empty input early - erase line, move cursor up and return empty
+        if (!input.trim()) {
+          process.stdout.write(ansiEscapes.cursorTo(0))
+          process.stdout.write(ansiEscapes.eraseLine)
+          process.stdout.write(ansiEscapes.cursorUp(1))
+          rl.close()
+          resolve('')
+          return
+        }
+
+        // Normal case: write newline and submit
         process.stdout.write('\n')
         rl.close()
         resolve(input)
