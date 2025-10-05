@@ -1623,6 +1623,7 @@
     "capabilities": {
       "artifacts": "When the user asks you to create some content (document, summary, code...), use the following syntax:\n<artifact title=\"TITLE\">\nCONTENT\n</artifact>. HTML artifacts MUST start with <html> or <!DOCTYPE html>. Example: <artifact title=\"Report\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Report Content formatted in HTML</body></html>\n</artifact>. You can use that capability to create HTML based data visualization using Chart.js or D3.js. Do NOT use artifacts for simple data tables.",
       "mermaid": "If you are asked to output a Mermaid chart, its code will be rendered as a diagram to the user.",
+      "noMarkdown": "Do not use markdown formatting in your responses. Use plain text only. Do not use **bold**, *italic*, `code`, or any other markdown syntax.",
       "toolRetry": "When calling tools, if you get an input error, analyze the error and try to fix it and then retry calling the tool."
     },
     "chat": {

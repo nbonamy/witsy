@@ -185,6 +185,21 @@ test('User-defined instructions', async () => {
   expect(assistant!.chat.title).toBe('You are a titling assistant:\n"Title"')
 })
 
+test('NoMarkdown modifier', async () => {
+  store.config.llm.locale = ''
+  // Test without noMarkdown
+  await prompt('Hello LLM', { model: 'chat' })
+  const instructions1 = await assistant!.chat.messages[0].content
+  expect(instructions1).toContain('instructions.chat.standard_en-US')
+  expect(instructions1).not.toContain('instructions.capabilities.noMarkdown_en-US')
+
+  // Test with noMarkdown
+  await prompt('Hello LLM', { model: 'chat', noMarkdown: true })
+  const instructions2 = await assistant!.chat.messages[0].content
+  expect(instructions2).toContain('instructions.chat.standard_en-US')
+  expect(instructions2).toContain('instructions.capabilities.noMarkdown_en-US')
+})
+
 test('Assistant Chat Streaming', async () => {
   const content = await prompt('Hello LLM')
   expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')

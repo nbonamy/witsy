@@ -299,6 +299,53 @@ describe('HTTP API Endpoints', () => {
       expect(mockAssistant.prompt).toHaveBeenCalled()
     })
 
+    test('passes noMarkdown parameter to assistant', async () => {
+      installApiEndpoints(httpServer, mockApp, mockMcp)
+
+      const handler = registeredRoutes.get('/api/complete')
+
+      const mockReq = {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        on: vi.fn((event, callback) => {
+          if (event === 'data') {
+            callback(Buffer.from(JSON.stringify({
+              stream: 'false',
+              noMarkdown: true,
+              thread: [{ role: 'user', content: 'Hello' }]
+            })))
+          }
+          if (event === 'end') callback()
+        })
+      } as any
+      const mockRes = {
+        writeHead: vi.fn(),
+        end: vi.fn()
+      } as any
+      const mockUrl = new URL('http://localhost/api/complete')
+
+      // Mock the chat's last message
+      const mockChat = {
+        lastMessage: vi.fn(() => ({ content: 'Test response' }))
+      }
+
+      mockAssistant.setChat.mockImplementation((chat: any) => {
+        chat.lastMessage = mockChat.lastMessage
+        mockAssistant.chat = chat
+      })
+
+      await handler!(mockReq, mockRes, mockUrl)
+
+      // Verify that prompt was called with noMarkdown option
+      expect(mockAssistant.prompt).toHaveBeenCalledWith(
+        'Hello',
+        expect.objectContaining({
+          noMarkdown: true
+        }),
+        expect.any(Function)
+      )
+    })
+
     test('returns 400 for missing thread', async () => {
       installApiEndpoints(httpServer, mockApp, mockMcp)
 
