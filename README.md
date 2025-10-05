@@ -79,6 +79,45 @@ Non-exhaustive feature list:
   <img src="doc/studio.jpg" height="250" />
 </p>
 
+## Setup
+
+You can download a binary from from the [releases](https://github.com/nbonamy/witsy/releases) page or build yourself:
+
+```
+npm ci
+npm start
+```
+
+## Prerequisites
+
+To use OpenAI, Anthropic, Google or Mistral AI models, you need to enter your API key:
+- [OpenAI](https://platform.openai.com/api-keys)
+- [Anthropic](https://console.anthropic.com/settings/keys)
+- [Google](https://aistudio.google.com/app/apikey)
+- [xAI](https://console.x.ai/team/)
+- [Meta](https://llama.developer.meta.com/api-keys/)
+- [MistralAI](https://console.mistral.ai/api-keys/)
+- [DeepSeek](https://platform.deepseek.com/api_keys)
+- [OpenRouter](https://openrouter.ai/settings/keys)
+- [Groq](https://console.groq.com/keys)
+- [Cerebras](https://cloud.cerebras.ai/platform/)
+
+To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/search).
+
+To use text-to-speech, you need an 
+- [OpenAI API key](https://platform.openai.com/api-keys).
+- [Fal.ai API Key](https://fal.ai/dashboard/keys)
+- [Fireworks.ai API Key](https://app.fireworks.ai/settings/users/api-keys)
+- [Groq API Key](https://console.groq.com/keys)
+- [Speechmatics API Key](https://portal.speechmatics.com/settings/api-keys)
+- [Gladia API Key](https://app.gladia.io/account) 
+  
+To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
+
+<p align="center">
+  <img src="doc/settings.jpg" height="250" />&nbsp;&nbsp;
+</p>
+
 ## Prompt Anywhere
 
 Generate content in any application:
@@ -181,6 +220,9 @@ All endpoints support both `GET` (with query parameters) and `POST` (with JSON o
 | `GET/POST /api/command` | Trigger AI command picker | `text` - Pre-fill command text |
 | `GET/POST /api/transcribe` | Start transcription/dictation | - |
 | `GET/POST /api/readaloud` | Start read aloud | - |
+| `GET /api/engines` | List available AI engines | Returns configured chat engines |
+| `GET /api/models/:engine` | List models for an engine | Returns available models for specified engine |
+| `POST /api/complete` | Run chat completion | `stream` (default: true), `engine`, `model`, `thread` (Message[]) |
 | `GET/POST /api/agent/run/:token` | Trigger agent execution via webhook | Query params passed as prompt inputs |
 | `GET /api/agent/status/:token/:runId` | Check agent execution status | Returns status, output, and error |
 
@@ -216,7 +258,155 @@ curl -X POST http://localhost:8090/api/agent/run/abc12345 \
 
 # Check agent execution status
 curl "http://localhost:8090/api/agent/status/abc12345/run-uuid-here"
+
+# List available engines
+curl http://localhost:8090/api/engines
+
+# List models for a specific engine
+curl http://localhost:8090/api/models/openai
+
+# Run non-streaming chat completion
+curl -X POST http://localhost:8090/api/complete \
+  -H "Content-Type: application/json" \
+  -d '{
+    "stream": "false",
+    "engine": "openai",
+    "model": "gpt-4",
+    "thread": [
+      {"role": "user", "content": "Hello, how are you?"}
+    ]
+  }'
+
+# Run streaming chat completion (SSE)
+curl -X POST http://localhost:8090/api/complete \
+  -H "Content-Type: application/json" \
+  -d '{
+    "stream": "true",
+    "thread": [
+      {"role": "user", "content": "Write a short poem"}
+    ]
+  }'
 ```
+
+### Command Line Interface
+
+Witsy includes a command-line interface that allows you to interact with the AI assistant directly from your terminal.
+
+**Installation**
+
+The CLI is automatically installed when you launch Witsy for the first time:
+- **macOS**: Creates a symlink at `/usr/local/bin/witsy` (requires admin password)
+- **Windows**: Adds the CLI to your user PATH (restart terminal for changes to take effect)
+- **Linux**: Creates a symlink at `/usr/local/bin/witsy` (uses pkexec if needed)
+
+**Usage**
+
+Once installed, you can use the `witsy` command from any terminal:
+
+```bash
+witsy
+```
+
+The CLI will connect to your running Witsy application and provide an interactive chat interface. It uses the same configuration (engine, model, API keys) as your desktop application.
+
+**Available Commands**
+- `/help` - Show available commands
+- `/model` - Select engine and model
+- `/port` - Change server port (default: 4321)
+- `/clear` - Clear conversation history
+- `/history` - Show conversation history
+- `/exit` - Exit the CLI
+
+**Requirements**
+- Witsy desktop application must be running
+- HTTP API server enabled (default port: 4321)
+
+### CLI Chat Completion API
+
+The `/api/complete` endpoint provides programmatic access to Witsy's chat completion functionality, enabling command-line tools and scripts to interact with any configured LLM.
+
+**Endpoint**: `POST /api/complete`
+
+**Request body**:
+```json
+{
+  "stream": "true",       // Optional: "true" (default) for SSE streaming, "false" for JSON response
+  "engine": "openai",     // Optional: defaults to configured engine in settings
+  "model": "gpt-4",       // Optional: defaults to configured model for the engine
+  "thread": [             // Required: array of messages
+    {"role": "user", "content": "Your prompt here"}
+  ]
+}
+```
+
+**Response (non-streaming, `stream: "false"`):**
+```json
+{
+  "success": true,
+  "response": {
+    "content": "The assistant's response text",
+    "usage": {
+      "promptTokens": 10,
+      "completionTokens": 20,
+      "totalTokens": 30
+    }
+  }
+}
+```
+
+**Response (streaming, `stream: "true"`):**
+Server-Sent Events (SSE) format with chunks:
+```
+data: {"type":"content","text":"Hello","done":false}
+data: {"type":"content","text":" world","done":false}
+data: [DONE]
+```
+
+**List Engines:**
+```bash
+curl http://localhost:8090/api/engines
+```
+Response:
+```json
+{
+  "engines": [
+    {"id": "openai", "name": "OpenAI"},
+    {"id": "anthropic", "name": "Anthropic"},
+    {"id": "google", "name": "Google"}
+  ]
+}
+```
+
+**List Models for an Engine:**
+```bash
+curl http://localhost:8090/api/models/openai
+```
+Response:
+```json
+{
+  "engine": "openai",
+  "models": [
+    {"id": "gpt-4", "name": "GPT-4"},
+    {"id": "gpt-3.5-turbo", "name": "GPT-3.5 Turbo"}
+  ]
+}
+```
+
+### Command Line Interface (CLI)
+
+Witsy includes a command-line interface for interacting with AI models directly from your terminal.
+
+**Requirements:**
+- Witsy application must be running (for the HTTP API server)
+
+**Launch the CLI:**
+```bash
+npm run cli
+```
+
+Enter `/help` to show the list of commands
+
+---
 
 ### Agent Webhooks
 
@@ -312,45 +502,6 @@ curl "http://localhost:8090/api/agent/status/abc12345/550e8400-e29b-41d4-a716-44
   "error": "Failed to connect to backup server"
 }
 ```
-
-## Setup
-
-You can download a binary from from the [releases](https://github.com/nbonamy/witsy/releases) page or build yourself:
-
-```
-npm ci
-npm start
-```
-
-## Prerequisites
-
-To use OpenAI, Anthropic, Google or Mistral AI models, you need to enter your API key:
-- [OpenAI](https://platform.openai.com/api-keys)
-- [Anthropic](https://console.anthropic.com/settings/keys)
-- [Google](https://aistudio.google.com/app/apikey)
-- [xAI](https://console.x.ai/team/)
-- [Meta](https://llama.developer.meta.com/api-keys/)
-- [MistralAI](https://console.mistral.ai/api-keys/)
-- [DeepSeek](https://platform.deepseek.com/api_keys)
-- [OpenRouter](https://openrouter.ai/settings/keys)
-- [Groq](https://console.groq.com/keys)
-- [Cerebras](https://cloud.cerebras.ai/platform/)
-
-To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/search).
-
-To use text-to-speech, you need an 
-- [OpenAI API key](https://platform.openai.com/api-keys).
-- [Fal.ai API Key](https://fal.ai/dashboard/keys)
-- [Fireworks.ai API Key](https://app.fireworks.ai/settings/users/api-keys)
-- [Groq API Key](https://console.groq.com/keys)
-- [Speechmatics API Key](https://portal.speechmatics.com/settings/api-keys)
-- [Gladia API Key](https://app.gladia.io/account) 
-  
-To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
-
-<p align="center">
-  <img src="doc/settings.jpg" height="250" />&nbsp;&nbsp;
-</p>
 
 ## TODO
 

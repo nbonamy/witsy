@@ -1,15 +1,10 @@
 import { App } from 'electron'
 import { Agent, AgentRun, AgentRunTrigger } from '../types/index'
-import { Configuration } from '../types/config'
-import { loadAgents, saveAgentRun } from './agents'
 import { listWorkspaces } from './workspace'
-import { runPython } from './interpreter'
-import { getLocaleMessages } from './i18n'
+import { loadAgents } from './agents'
 import Runner from '../services/runner'
 import Mcp from './mcp'
-import LocalSearch from './search'
-import { initI18n } from '../services/i18n'
-import { loadSettings } from './config'
+import { LlmContext } from './llm_utils'
 
 /**
  * Generate a unique 8-character alphanumeric webhook token for an agent
@@ -72,14 +67,10 @@ export function findAgentByWebhookToken(app: App, token: string): { agent: Agent
   return null
 }
 
-export class AgentExecutor {
-
-  protected app: App
-  protected mcp: Mcp
+export class AgentExecutor extends LlmContext {
 
   constructor(app: App, mcp: Mcp) {
-    this.app = app
-    this.mcp = mcp
+    super(app, mcp)
   }
 
   public async runAgent(
@@ -89,77 +80,14 @@ export class AgentExecutor {
     prompt: string,
     runId?: string
   ): Promise<AgentRun> {
-    
-    // install our hooks
-    const config = loadSettings(this.app)
-    this.installGlobalMock(config)
-    initI18n()
+
+    // Initialize LLM context (global mock + i18n)
+    const config = this.initializeContext()
 
     // Create runner and execute
     const runner = new Runner(config, workspaceId, agent)
     return await runner.run(trigger, prompt, { runId, model: agent.model } )
   }
 
-  protected installGlobalMock = (config: Configuration) => {
-
-    global.window = {
-      api: {
-
-        // @ts-expect-error partial mock
-        config: {
-          localeUI: () => {
-            return config.general.locale || 'en-US'
-          },
-          localeLLM: () => {
-            return config.llm.locale || 'en-US'
-          },
-          getI18nMessages: () => {
-            return getLocaleMessages(this.app)
-          }
-        },
-
-        // @ts-expect-error partial mock
-        agents: {
-          load: (wsId: string): Agent[] => {
-            return loadAgents(this.app, wsId)
-          },
-          saveRun: (wsId: string, run: AgentRun): boolean =>  {
-            return saveAgentRun(this.app, wsId, run)
-          },
-        },
-
-        interpreter: {
-          python: async (script: string): Promise<any> => {
-            try {
-              const result = await runPython(script);
-              return { result: result }
-            } catch (error) {
-              console.log('Error while running python', error);
-              return { error: error || 'Unknown error' }
-            }
-          },
-        },
-
-        search: {
-          query: (payload: any) => {
-            const { query, num } = payload
-            const localSearch = new LocalSearch()
-            const results = localSearch.search(query, num)
-            return results
-          },
-          test: async () => true,
-        },
-
-        // @ts-expect-error partial mock
-        mcp: {
-          isAvailable: () => true,
-          getLlmTools: this.mcp?.getLlmTools,
-          callTool: this.mcp?.callTool,
-        },
-      }
-    }
-
-  }
-  
 }
 
