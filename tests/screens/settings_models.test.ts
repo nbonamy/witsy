@@ -1,5 +1,5 @@
 
-import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
@@ -176,10 +176,10 @@ test('ollama settings', async () => {
   await tab.vm.$nextTick()
   const ollama = tab.findComponent({ name: 'SettingsOllama' })
   await ollama.find('input[name=baseURL]').setValue('base-url')
-  await ollama.find('input[name=baseURL]').trigger('blur')
+  await ollama.find('input[name=baseURL]').trigger('change')
   expect(store.config.engines.ollama.baseURL).toBe('base-url')
-  await ollama.findAll('button')[1].trigger('click')
-  await wait(750) //timeout
+  await ollama.find('button[name=refresh]').trigger('click')
+  await vi.waitUntil(() =>  (loadOllamaModels as Mock).mock.calls.length > 0)
   expect(loadOllamaModels).toHaveBeenCalled()
   const visionModelSelect = findModelSelectoPlus(ollama, 1)
   await visionModelSelect.open()
