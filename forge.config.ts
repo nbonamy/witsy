@@ -34,19 +34,19 @@ const dmgOptions: MakerDMGConfig = {
 
 if (isDarwin) {
   osxPackagerConfig = {
-    osxSign: {
-      identity: process.env.IDENTIFY_DARWIN_CODE,
-      provisioningProfile: './build/Witsy_Darwin.provisionprofile',
-      optionsForFile: () => { return {
-        hardenedRuntime: true,
-        entitlements: './build/Entitlements.darwin.plist'
-      }; },
-    },
-    osxNotarize: {
-      appleId: process.env.APPLE_ID,
-      appleIdPassword: process.env.APPLE_PASSWORD,
-      teamId: process.env.APPLE_TEAM_ID
-    }
+    // osxSign: {
+    //   identity: process.env.IDENTIFY_DARWIN_CODE,
+    //   provisioningProfile: './build/Witsy_Darwin.provisionprofile',
+    //   optionsForFile: () => { return {
+    //     hardenedRuntime: true,
+    //     entitlements: './build/Entitlements.darwin.plist'
+    //   }; },
+    // },
+    // osxNotarize: {
+    //   appleId: process.env.APPLE_ID,
+    //   appleIdPassword: process.env.APPLE_PASSWORD,
+    //   teamId: process.env.APPLE_TEAM_ID
+    // }
   }
 }
 
@@ -81,7 +81,10 @@ const config: ForgeConfig = {
       'assets/icon.ico',
       'assets/gladia.png',
       'assets/speechmatics.png',
-    ],
+      'dist/cli/cli.js',
+      'bin/witsy',
+      'bin/witsy.cmd',
+    ] as any,
     ...(process.env.TEST ? {} : osxPackagerConfig),
     afterCopy: [
       (buildPath: string, electronVersion: string, platform: string, arch: string, callback: (error?: Error) => void) => {
@@ -146,7 +149,7 @@ const config: ForgeConfig = {
     // at package time, before code signing the application
     new FusesPlugin({
       version: FuseVersion.V1,
-      [FuseV1Options.RunAsNode]: false,
+      [FuseV1Options.RunAsNode]: true,
       [FuseV1Options.EnableCookieEncryption]: true,
       [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
       [FuseV1Options.EnableNodeCliInspectArguments]: true,
@@ -156,6 +159,8 @@ const config: ForgeConfig = {
   ],
   hooks: {
     prePackage: async (forgeConfig, platform, arch) => {
+      // Build CLI before packaging
+      execSync('npm run build:cli', { stdio: 'inherit' })
       prePackage(platform, arch)
     },
     

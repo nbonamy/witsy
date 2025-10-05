@@ -25,6 +25,8 @@ import { installIpc } from './main/ipc';
 import { importOpenAI } from './main/import_oai';
 import { installHttpTriggers } from './main/http_triggers';
 import { installAgentWebhook } from './main/agent_webhook';
+import { installApiEndpoints } from './main/http_api';
+import { checkAndInstallCLI } from './main/cli_installer';
 
 import * as config from './main/config';
 import * as shortcuts from './main/shortcuts';
@@ -228,6 +230,18 @@ app.whenReady().then(async () => {
     installAgentWebhook(httpServer, app, mcp);
   } catch (error) {
     console.error('Error installing agent webhook:', error);
+  }
+
+  // install API endpoints
+  try {
+    installApiEndpoints(httpServer, app, mcp);
+  } catch (error) {
+    console.error('Error installing API endpoints:', error);
+  }
+
+  // check and install CLI (skip in DEBUG mode)
+  if (!process.env.DEBUG) {
+    await checkAndInstallCLI();
   }
 
   // create the main window

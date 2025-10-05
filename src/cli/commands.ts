@@ -1,0 +1,348 @@
+// Command Handlers
+
+import { select } from '@inquirer/prompts'
+import chalk from 'chalk'
+import { state } from './state'
+import { WitsyAPI } from './api'
+import { displayHeader, displayFooter, displayConversation, clearFooter } from './display'
+import { promptInput } from './input'
+import ansiEscapes from 'ansi-escapes'
+import { LlmChunk } from 'multi-llm-ts'
+
+const api = new WitsyAPI()
+
+export const COMMANDS = [
+  { name: '/help', value: 'help', description: 'Show this help message' },
+  { name: '/port', value: 'port', description: 'Change server port' },
+  { name: '/model', value: 'model', description: 'Select engine and model' },
+  { name: '/clear', value: 'clear', description: 'Clear conversation history' },
+  { name: '/history', value: 'history', description: 'Show conversation history' },
+  { name: '/exit', value: 'exit', description: 'Exit the CLI' }
+]
+
+export async function handleHelp() {
+
+  clearFooter()
+
+  console.log(chalk.yellow('\nAvailable Commands:'))
+  for (const cmd of COMMANDS) {
+    console.log(chalk.dim(`  ${cmd.name.padEnd(20)} ${cmd.description}`))
+  }
+  console.log()
+
+  displayFooter()
+}
+
+export async function handlePort() {
+
+  process.stdout.write(ansiEscapes.cursorDown(1))
+  process.stdout.write(ansiEscapes.eraseLine)
+
+  const portStr = await promptInput({
+    message: 'Enter port number:',
+    defaultText: state.port.toString()
+  })
+
+  const port = parseInt(portStr)
+  if (isNaN(port) || port < 1 || port > 65535) {
+    console.log(chalk.red('\nInvalid port number (must be 1-65535)\n'))
+    displayFooter()
+    return
+  }
+
+  state.port = port
+  console.log(chalk.yellow(`\n✓ Port changed to ${state.port}\n`))
+
+  // Redraw entire screen
+  displayHeader()
+  displayConversation()
+  displayFooter()
+}
+
+export async function handleModel() {
+  try {
+
+    process.stdout.write(ansiEscapes.cursorDown(1))
+
+    const engines = await api.getEngines()
+
+    if (engines.length === 0) {
+      console.log(chalk.red('\nNo engines available\n'))
+      return
+    }
+
+    const enginePrompt = select({
+      message: 'Select engine:',
+      choices: engines.map(e => ({
+        name: `${e.name} (${e.id})`,
+        value: e.id
+      })),
+      theme: {
+        style: {
+          highlight: (text: string) => chalk.rgb(180, 142, 238)(text)
+        }
+      }
+    })
+
+    // Add escape key handler
+    const escapeHandler = (_str: string, key: any) => {
+      if (key && key.name === 'escape') {
+        enginePrompt.cancel()
+        process.stdin.removeListener('keypress', escapeHandler)
+      }
+    }
+    process.stdin.on('keypress', escapeHandler)
+
+    let selectedEngine: string
+    try {
+      selectedEngine = await enginePrompt
+    } finally {
+      process.stdin.removeListener('keypress', escapeHandler)
+    }
+
+    const models = await api.getModels(selectedEngine)
+
+    if (models.length === 0) {
+      console.log(chalk.red('\nNo models available\n'))
+      return
+    }
+
+    const modelPrompt = select({
+      message: 'Select model:',
+      choices: models.map(m => ({
+        name: m.name,
+        value: m.id
+      })),
+      theme: {
+        style: {
+          highlight: (text: string) => chalk.rgb(180, 142, 238)(text)
+        }
+      }
+    })
+
+    // Add escape key handler
+    const modelEscapeHandler = (_str: string, key: any) => {
+      if (key && key.name === 'escape') {
+        modelPrompt.cancel()
+        process.stdin.removeListener('keypress', modelEscapeHandler)
+      }
+    }
+    process.stdin.on('keypress', modelEscapeHandler)
+
+    let selectedModel: string
+    try {
+      selectedModel = await modelPrompt
+    } finally {
+      process.stdin.removeListener('keypress', modelEscapeHandler)
+    }
+
+    state.engine = selectedEngine
+    state.model = selectedModel
+
+    const engineName = engines.find(e => e.id === selectedEngine)?.name || selectedEngine
+    const modelName = models.find(m => m.id === selectedModel)?.name || selectedModel
+
+    console.log(chalk.yellow(`\n✓ Selected ${engineName} / ${modelName}\n`))
+
+    // Redraw entire screen
+    displayHeader()
+    displayConversation()
+    displayFooter()
+  } catch (error: any) {
+    // Handle cancellation (Escape key)
+    if (error?.message?.includes('ExitPromptError') || error?.name === 'ExitPromptError') {
+      // Clear terminal and redraw entire screen to clear selector
+      process.stdout.write(ansiEscapes.clearTerminal)
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      return
+    }
+    // Clear and redraw entire screen with error message
+    process.stdout.write(ansiEscapes.clearTerminal)
+    displayHeader()
+    displayConversation()
+    console.log(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`))
+    console.log(chalk.dim('Make sure Witsy is running'))
+    console.log()
+    displayFooter()
+  }
+}
+
+export async function handleClear() {
+  state.history = []
+  console.log(chalk.yellow('\n✓ Conversation history cleared\n'))
+
+  // Redraw screen without messages
+  displayHeader()
+  displayConversation() // Will be empty
+  displayFooter()
+}
+
+export async function handleHistory() {
+  if (state.history.length === 0) {
+    console.log(chalk.dim('\nNo conversation history\n'))
+    return
+  }
+
+  // Just display the conversation
+  displayConversation()
+}
+
+export async function handleMessage(message: string) {
+  
+  // Add user message to history
+  state.history.push({ role: 'user', content: message })
+
+  try {
+    
+    let response = ''
+    let inTools = false
+
+    // Stream assistant response (no prefix, just content in white/default color)
+    await api.complete(state.history, (payload: string) => {
+
+      const chunk: LlmChunk = JSON.parse(payload)
+      if (chunk.type === 'content') {
+        process.stdout.write(chunk.text)
+        response += chunk.text
+      } else if (chunk.type === 'tool') {
+
+        if (!inTools) {
+          if (response.length > 0 && !response.endsWith('\n')) {
+            console.log()
+            console.log()
+          }
+          inTools = true
+        } else {
+          process.stdout.write(ansiEscapes.cursorTo(0))
+          process.stdout.write(ansiEscapes.eraseLine)
+        }
+
+        process.stdout.write((chunk.done ? chalk.greenBright('⏺') : chalk.blueBright('⏺')) + ` ${chunk.status}`)
+
+        if (chunk.done) {
+          console.log()
+          console.log()
+          inTools = false
+        }
+
+      }
+
+    })
+
+    // Add assistant response to history
+    state.history.push({ role: 'assistant', content: response })
+
+    // Blank line after response
+    console.log('\n')
+
+  } catch (error) {
+    
+    console.log(chalk.red(`\nError: ${error instanceof Error ? error.message : 'Unknown error'}`))
+    console.log(chalk.dim('Make sure Witsy is running\n'))
+    state.history.pop()
+  }
+}
+
+export async function handleCommand(commandInput: string) {
+  // If just "/", show command list
+  if (commandInput === '/') {
+    try {
+      const commandPrompt = select({
+        message: 'Select command:',
+        choices: COMMANDS.map(c => ({
+          name: c.name.padEnd(20) + chalk.dim(c.description),
+          value: c.value
+        })),
+        theme: {
+          style: {
+            highlight: (text: string) => chalk.rgb(180, 142, 238)(text)
+          }
+        }
+      })
+
+      // Add escape key handler
+      const cmdEscapeHandler = (_str: string, key: any) => {
+        if (key && key.name === 'escape') {
+          commandPrompt.cancel()
+          process.stdin.removeListener('keypress', cmdEscapeHandler)
+        }
+      }
+      process.stdin.on('keypress', cmdEscapeHandler)
+
+      let command: string
+      try {
+        command = await commandPrompt
+      } finally {
+        process.stdin.removeListener('keypress', cmdEscapeHandler)
+      }
+
+      await executeCommand(command)
+    } catch (error: any) {
+      if (error?.message?.includes('ExitPromptError') || error?.name === 'ExitPromptError') {
+        // Clear and redraw
+        process.stdout.write(ansiEscapes.clearTerminal)
+        displayHeader()
+        displayConversation()
+        displayFooter()
+        return
+      }
+      throw error
+    }
+    return
+  }
+
+  // Parse command and args
+  const [cmd] = commandInput.slice(1).split(' ')
+  await executeCommand(cmd.toLowerCase())
+}
+
+export async function executeCommand(command: string) {
+  switch (command) {
+    case 'help':
+      await handleHelp()
+      break
+    case 'port':
+      await handlePort()
+      break
+    case 'model':
+      await handleModel()
+      break
+    case 'clear':
+      await handleClear()
+      break
+    case 'history':
+      await handleHistory()
+      break
+    case 'exit':
+    case 'quit':
+      console.log(chalk.yellow('\nGoodbye! 👋\n'))
+      process.exit(0)
+      break
+    default:
+      process.stdout.write(ansiEscapes.cursorSavePosition)
+      console.log(chalk.red(`\nUnknown command: /${command}`))
+      console.log(chalk.dim('Type /help for available commands\n'))
+      process.stdout.write(ansiEscapes.cursorRestorePosition)
+      process.stdout.write(ansiEscapes.cursorUp(1))
+      process.stdout.write(ansiEscapes.eraseLine)
+
+  }
+}
+
+export async function initialize() {
+  try {
+    const config = await api.getConfig()
+    state.engine = config.engine
+    state.model = config.model
+  } catch {
+    // Silently fail - will show connecting status
+    state.engine = ''
+    state.model = ''
+  }
+
+  displayHeader()
+  displayConversation() // Will be empty initially
+  displayFooter() // Print top separator, prompt will appear below
+}
