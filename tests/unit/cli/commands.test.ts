@@ -17,8 +17,8 @@ vi.mock('../../../src/cli/display', () => ({
 vi.mock('../../../src/cli/input', () => ({
   promptInput: vi.fn(),
 }))
-vi.mock('@inquirer/prompts', () => ({
-  select: vi.fn(),
+vi.mock('../../../src/cli/select', () => ({
+  selectOption: vi.fn(),
 }))
 vi.mock('chalk', () => ({
   default: {
@@ -192,9 +192,9 @@ describe('/model Command Persistence', () => {
     vi.mocked(WitsyAPI.prototype.getEngines).mockResolvedValue(mockEngines)
     vi.mocked(WitsyAPI.prototype.getModels).mockResolvedValue(mockModels)
 
-    // Mock the select prompts to return specific choices
-    const { select } = await import('@inquirer/prompts')
-    vi.mocked(select)
+    // Mock selectOption to return specific choices
+    const { selectOption } = await import('../../../src/cli/select')
+    vi.mocked(selectOption)
       .mockResolvedValueOnce('openai')  // First call: engine selection
       .mockResolvedValueOnce('gpt-4')   // Second call: model selection
 

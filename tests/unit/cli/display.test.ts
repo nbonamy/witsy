@@ -3,13 +3,6 @@ import { displayHeader, displayFooter, displayConversation } from '../../../src/
 import { state } from '../../../src/cli/state'
 import { VirtualTerminal } from './VirtualTerminal'
 
-// Mock @inquirer/prompts
-vi.mock('@inquirer/prompts', () => ({
-  input: vi.fn()
-}))
-
-import { input } from '@inquirer/prompts'
-
 describe('CLI Display Requirements', () => {
   let terminal: VirtualTerminal
   let originalLog: typeof console.log
@@ -42,15 +35,6 @@ describe('CLI Display Requirements', () => {
       configurable: true
     })
 
-    // Mock @inquirer/prompts input to write prompt to terminal
-    vi.mocked(input).mockImplementation(async (config: any) => {
-      // The real inquirer library would write the prompt at the current cursor position
-      // It doesn't add any newlines or move the cursor to a new line
-      // Just write the prompt character where the cursor is
-      process.stdout.write(config.message)
-      return '' // Return empty for tests
-    })
-
     // Reset state
     state.port = 8090
     state.engine = 'openai'
@@ -79,7 +63,7 @@ describe('CLI Display Requirements', () => {
       displayHeader()
       displayConversation()  // empty
       displayFooter()
-      await input({ message: '>' })  // Simulate prompt appearing at cursor
+      process.stdout.write('>')  // Simulate prompt appearing at cursor
 
       // Assert: Exact expected output per requirements
       // HEADER
@@ -121,7 +105,7 @@ describe('CLI Display Requirements', () => {
       displayHeader()
       displayConversation()
       displayFooter()
-      await input({ message: '>' })  // Simulate prompt appearing at cursor
+      process.stdout.write('>')  // Simulate prompt appearing at cursor
 
       const expected = `
   ██  █  ██  Witsy CLI vdev
@@ -162,7 +146,7 @@ describe('CLI Display Requirements', () => {
       displayHeader()
       displayConversation()
       displayFooter()
-      await input({ message: '>' })  // Simulate prompt appearing at cursor
+      process.stdout.write('>')  // Simulate prompt appearing at cursor
 
       const expected = `
   ██  █  ██  Witsy CLI vdev
@@ -197,7 +181,7 @@ Hello how are you?
       displayHeader()
       displayConversation()
       displayFooter()
-      await input({ message: '>' })  // Simulate prompt appearing at cursor
+      process.stdout.write('>')  // Simulate prompt appearing at cursor
 
       const expected = `
   ██  █  ██  Witsy CLI vdev
