@@ -1,5 +1,13 @@
 # Witsy CLI - Features & Architecture
 
+## Document Maintenance
+
+**When implementing a feature from TODO list:**
+1. Update Summary section (Current Features and Architecture). Keep it concise - highlight feature, not implementation details
+2. Remove completed item from TODO list
+
+---
+
 ## Summary
 
 Witsy CLI is a terminal-based interface for the Witsy AI assistant, providing a minimal but powerful chat experience.
