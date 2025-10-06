@@ -84,9 +84,15 @@ export async function promptInput(options: InputOptions): Promise<string> {
         },
 
         onSpecialKey: (key: string) => {
-          // Handle Ctrl+C / Ctrl+D
-          if (key === 'CTRL_C' || key === 'CTRL_D') {
-            reject(new Error('User force closed the prompt'))
+          // Handle Ctrl+C (always exit) and Ctrl+D (clear or exit based on history)
+          if (key === 'CTRL_C') {
+            cleanup()
+            resolve('__CTRL_C__')
+            return true // Prevent default
+          }
+          if (key === 'CTRL_D') {
+            cleanup()
+            resolve('__CTRL_D__')
             return true // Prevent default
           }
 
