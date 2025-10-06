@@ -205,7 +205,7 @@ async function installWindowsCLI(): Promise<boolean> {
     const rootDir = appMatch[1]
     targetDir = rootDir
 
-    for (const ext in ['.cmd', '.ps1']) {
+    for (const ext of ['.cmd', '.ps1']) {
 
       sourceCmd = path.join(appDir, 'resources', 'cli', 'bin', `witsy${ext}`)
       const targetCmd = path.join(rootDir, `witsy${ext}`)
