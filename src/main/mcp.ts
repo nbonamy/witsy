@@ -628,7 +628,11 @@ export default class {
 
       // build command and args
       const command = process.platform === 'win32' ? 'cmd' : server.command
-      const args = process.platform === 'win32' ? ['/C', `"${server.command}" ${server.url}`] : server.url.split(' ')
+      const args = process.platform === 'win32'
+        ? ['/C', `"${server.command}" ${server.url}`]
+        : server.url.match(/"[^"]+"|'[^']+'|\S+/g) || [];
+      
+      // now environment
       let env = {
         ...getDefaultEnvironment(),
         ...server.env,
