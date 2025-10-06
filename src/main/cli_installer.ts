@@ -187,30 +187,63 @@ async function installWindowsCLI(): Promise<boolean> {
 
   const appPath = app.getPath('exe')
   const appDir = path.dirname(appPath)
-  const cliDir = path.join(appDir, 'resources', 'cli', 'bin')
+
+  // Detect if we're running under Squirrel (versioned app-X.X.X folder)
+  const isSquirrel = appDir.includes('\\app-')
+
+  let targetDir: string
+  let sourceCmd: string
+
+  if (isSquirrel) {
+    // Extract root directory (parent of app-X.X.X)
+    const appMatch = appDir.match(/^(.*?)\\app-[^\\]+$/)
+    if (!appMatch) {
+      log.error('Failed to extract root directory from Squirrel path:', appDir)
+      return false
+    }
+
+    const rootDir = appMatch[1]
+    targetDir = rootDir
+    sourceCmd = path.join(appDir, 'resources', 'cli', 'bin', 'witsy.cmd')
+    const targetCmd = path.join(rootDir, 'witsy.cmd')
+
+    // Copy witsy.cmd to root directory
+    try {
+      fs.copyFileSync(sourceCmd, targetCmd)
+      log.info('Copied witsy.cmd to root:', targetCmd)
+    } catch (error) {
+      log.error('Failed to copy witsy.cmd to root:', error)
+      return false
+    }
+  } else {
+    // Non-Squirrel installation (keep old behavior for compatibility)
+    targetDir = path.join(appDir, 'resources', 'cli', 'bin')
+  }
 
   try {
-    // Check if already in PATH using PowerShell
+    // Get current PATH
     const checkScript = `[Environment]::GetEnvironmentVariable('Path', 'User')`
     const currentPath = execSync(`powershell -Command "${checkScript}"`, {
       shell: 'powershell.exe',
       encoding: 'utf8'
     }).trim()
 
-    if (currentPath.includes(cliDir)) {
+    // Check if target directory is already in PATH
+    if (currentPath.includes(targetDir)) {
+      log.info('CLI directory already in PATH:', targetDir)
       return true
     }
 
-    // Add to user PATH using PowerShell
+    // Add target directory to PATH
     const psScript = `
       $oldPath = [Environment]::GetEnvironmentVariable('Path', 'User')
-      $newPath = $oldPath + ';${cliDir}'
+      $newPath = $oldPath + ';${targetDir}'
       [Environment]::SetEnvironmentVariable('Path', $newPath, 'User')
     `
 
     execSync(`powershell -Command "${psScript.replace(/"/g, '\\"')}"`, { shell: 'powershell.exe' })
 
-    log.info('CLI installed successfully, added to PATH:', cliDir)
+    log.info('CLI installed successfully, added to PATH:', targetDir)
 
     return true
 
