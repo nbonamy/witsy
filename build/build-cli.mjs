@@ -20,6 +20,8 @@ await build({
   external: [
     // Electron is provided by the runtime
     'electron',
+    // terminal-kit has dynamic requires that can't be bundled
+    'terminal-kit',
   ],
   define: {
     '__WITSY_VERSION__': JSON.stringify(packageJson.version),
@@ -29,6 +31,19 @@ await build({
   // },
   minify: false,
   sourcemap: false,
+  loader: {
+    '.node': 'copy',
+  },
+  plugins: [{
+    name: 'ignore-readme',
+    setup(build) {
+      // Ignore README files that esbuild tries to parse as JS
+      build.onLoad({ filter: /\/README$/ }, () => ({
+        contents: '',
+        loader: 'js',
+      }));
+    },
+  }],
 });
 
 console.log('✓ CLI built successfully as single file');
