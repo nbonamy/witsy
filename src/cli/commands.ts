@@ -23,6 +23,7 @@ export const COMMANDS = [
   { name: '/model', value: 'model', description: 'Select engine and model' },
   { name: '/title', value: 'title', description: 'Set conversation title' },
   { name: '/save', value: 'save', description: 'Save conversation to workspace' },
+  { name: '/retry', value: 'retry', description: 'Retry last message' },
   { name: '/clear', value: 'clear', description: 'Clear conversation history' },
   // { name: '/history', value: 'history', description: 'Show conversation history' },
   { name: '/exit', value: 'exit', description: 'Exit the CLI' }
@@ -225,6 +226,56 @@ export async function handleClear() {
 
   // Redraw screen without messages
   resetDisplay()
+}
+
+export async function handleRetry() {
+  // Check if there are any messages
+  if (state.chat.messages.length === 0) {
+    console.log(chalk.red('\nNo message to retry\n'))
+    displayFooter()
+    return
+  }
+
+  // Find last user message by iterating backwards
+  let lastUserIndex = -1
+  for (let i = state.chat.messages.length - 1; i >= 0; i--) {
+    if (state.chat.messages[i].role === 'user') {
+      lastUserIndex = i
+      break
+    }
+  }
+
+  // If no user message found (shouldn't happen, but handle it)
+  if (lastUserIndex === -1) {
+    console.log(chalk.red('\nNo user message to retry\n'))
+    displayFooter()
+    return
+  }
+
+  // Get the content of the last user message
+  const lastUserContent = state.chat.messages[lastUserIndex].content
+
+  // Remove the last user message and everything after it
+  state.chat.messages.splice(lastUserIndex)
+
+  // Redraw screen with updated conversation (without the removed messages)
+  resetDisplay()
+
+  // Now clear the footer to make room for the retry
+  clearFooter()
+
+  // Display the user message again (same as main loop does)
+  const grayText = chalk.rgb(139, 148, 156)
+  console.log()
+  console.log(grayText('> ' + lastUserContent))
+  console.log() // Blank line
+
+  // Call handleMessage with the last user content
+  // This will use CURRENT state.engine/state.model, not the old ones
+  await handleMessage(lastUserContent)
+
+  // Display footer for next prompt
+  displayFooter()
 }
 
 export async function handleHistory() {
@@ -430,6 +481,9 @@ export async function executeCommand(command: string) {
       break
     case 'save':
       await handleSave()
+      break
+    case 'retry':
+      await handleRetry()
       break
     case 'clear':
       await handleClear()

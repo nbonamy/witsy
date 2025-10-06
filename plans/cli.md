@@ -16,9 +16,10 @@ Witsy CLI is a terminal-based interface for the Witsy AI assistant, providing a 
 ### Current Features
 
 - **Interactive Chat**: Streaming completions with conversation history
-- **Command System**: `/help`, `/port`, `/model`, `/title`, `/save`, `/clear`, `/exit`
+- **Command System**: `/help`, `/port`, `/model`, `/title`, `/save`, `/retry`, `/clear`, `/exit`
 - **Conversation Persistence**: Save conversations to workspace with `/save`, auto-saves on each message after first save
 - **Title Management**: Set conversation titles with `/title`, auto-saves if conversation already saved
+- **Message Retry**: Retry last message with `/retry`, uses current engine/model (respects model changes)
 - **Connection Management**: Short timeout on startup, exits immediately if cannot connect or HTTP endpoints disabled
 - **Filterable Menus**: Type to filter commands and model selections, aligned descriptions (Claude Code style)
 - **Input History**: UP/DOWN arrow navigation through previous prompts
@@ -108,7 +109,6 @@ CLI <--(HTTP)--> Witsy Backend (port 8090)
 
 ## Future Enhancements (Not Prioritized)
 
-- `/retry` - Resend last message
 - `'/agent'` - To run agent
 - `'/expert'` - To select an expert
 - Templates/presets for common prompts
