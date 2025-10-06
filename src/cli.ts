@@ -45,6 +45,12 @@ async function main() {
             choices: COMMANDS
           })
 
+          // If empty (cancelled), just redraw and continue
+          if (!selectedCommand) {
+            resetDisplay()
+            continue
+          }
+
           // selectOption returns value field, need to prepend "/"
           await handleCommand('/' + selectedCommand)
         } else {
