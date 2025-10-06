@@ -9,9 +9,11 @@ All notable changes to this project will be documented in this file.
 - Let users choose which tools to enable from each MCP, and persist that choice for all models (https://github.com/nbonamy/witsy/issues/410)
 - Allow selecting and copying text from tool execution results (https://github.com/nbonamy/witsy/issues/421)
 - Support Perplexity Search API (https://github.com/nbonamy/witsy/issues/427)
+- Web 'Apps' (https://github.com/nbonamy/witsy/issues/431)
 - Table rendering as artifact, download as CSV and XSLX
 - HTTP Server to control Witsy (see README.md)
 - Agent trigger via webhooks (see README.md)
+- Command line version of Witsy (see README.md)
 
 ### Changed
 - New UI
@@ -26,6 +28,8 @@ All notable changes to this project will be documented in this file.
 - Scopes from OAuth protected resource metadata should be used for DCR (https://github.com/nbonamy/witsy/issues/420)
 - Window freezing (when streaming is enabled) when response text is long (https://github.com/nbonamy/witsy/issues/426)
 - API Key label displayed with Google selected in Video plugin settings
+- Smithery Arg Parsing - Runtime & Install (https://github.com/nbonamy/witsy/issues/435)
+- Better MCP Logs (https://github.com/nbonamy/witsy/issues/436)
 
 ### Removed
 - N/A
