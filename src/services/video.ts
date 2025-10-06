@@ -1,16 +1,20 @@
 
-import { anyDict, MediaCreator, MediaCreationEngine, MediaReference } from '../types/index'
-import { saveFileContents, download } from '../services/download'
-import { engineNames } from '../llms/base'
-import { store } from '../services/store'
-import Replicate, { FileOutput } from 'replicate'
-import { GoogleGenAI, PersonGeneration } from '@google/genai'
 import { fal } from '@fal-ai/client'
+import { GoogleGenAI, PersonGeneration } from '@google/genai'
+import Replicate, { FileOutput } from 'replicate'
+import { engineNames } from '../llms/base'
+import { download, saveFileContents } from '../services/download'
+import { store } from '../services/store'
+import { anyDict, MediaCreationEngine, MediaCreator, MediaReference } from '../types/index'
+// import { VideoModel } from 'openai/resources'
 
 export default class VideoCreator implements MediaCreator {
 
   static getEngines(checkApiKey: boolean): MediaCreationEngine[] {
     const engines = []
+    // if (!checkApiKey || store.config.engines.openai.apiKey) {
+    //   engines.push({ id: 'openai', name: engineNames.openai })
+    // }
     if (!checkApiKey || store.config.engines.google.apiKey) {
       engines.push({ id: 'google', name: engineNames.google })
     }
@@ -34,6 +38,8 @@ export default class VideoCreator implements MediaCreator {
       return this.falai(model, parameters, reference)
     } else if (engine == 'google') {
       return this.google(model, parameters, reference)
+    // } else if (engine == 'openai') {
+    //   return this.openai(model, parameters, reference)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -145,6 +151,54 @@ export default class VideoCreator implements MediaCreator {
     }
 
   }
+  
+  // async openai(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
+  //   return this._openai('openai', store.config.engines.openai.apiKey, store.config.engines.openai.baseURL, model, parameters, reference)
+  // }
+
+  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // protected async _openai(name: string, apiKey: string, baseURL: string, model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
+
+  //   // init
+  //   const client = new OpenAI({
+  //     apiKey: apiKey,
+  //     baseURL: baseURL,
+  //     dangerouslyAllowBrowser: true
+  //   })
+
+  //   // call
+  //   console.log(`[${name}] prompting model ${model}`)
+  //   const video = await client.videos.create({
+  //     model: model as VideoModel,
+  //     prompt: parameters?.prompt,
+  //     ...(parameters?.seconds ? { seconds: parameters.seconds } : {}),
+  //     ...(parameters?.size ? { size: parameters.size } : {}),
+  //   })
+
+  //   // poll for completion
+  //   let videoJob = video
+  //   while (videoJob.status === 'queued' || videoJob.status === 'in_progress') {
+  //     await new Promise(resolve => setTimeout(resolve, 2000))
+  //     videoJob = await client.videos.retrieve(video.id)
+  //   }
+
+  //   // check for errors
+  //   if (videoJob.status === 'failed') {
+  //     console.error(`[${name}] Video generation failed`, videoJob.error)
+  //     return { error: videoJob.error?.message || `Video generation failed with ${name} API` }
+  //   }
+
+  //   // download the content
+  //   const response = await client.videos.downloadContent(videoJob.id)
+  //   const blob = await response.blob()
+  //   const type = blob.type?.split('/')[1] || 'mp4'
+  //   const b64 = await this.blobToBase64(blob)
+  //   const content = b64.split(',')[1]
+  //   const fileUrl = saveFileContents(type, content)
+
+  //   return { url: fileUrl }
+
+  // }
   
   async blobToBase64(blob: Blob): Promise<string>{
     return new Promise((resolve, reject) => {

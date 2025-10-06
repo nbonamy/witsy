@@ -398,6 +398,12 @@ export default class LlmManagerBase implements ILlmManager {
         name = name.replace(/^gpt-image-/i, 'GPT Image ')
         return { id: m.id, name, meta: m.meta }
       })
+      models.video = models.video.map(m => {
+        let name = m.name
+        name = name.replace(/^sora-/i, 'Sora ')
+        name = name.replace(/-pro$/i, ' Pro')
+        return { id: m.id, name, meta: m.meta }
+      })
     }
 
     // google are worse
