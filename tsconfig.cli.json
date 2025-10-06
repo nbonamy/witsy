@@ -13,7 +13,6 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "src/cli.ts",
     "src/cli/**/*.ts"
   ],
   "exclude": [

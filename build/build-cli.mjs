@@ -11,7 +11,7 @@ const packageJson = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf-
 
 // Build CLI as single file
 await build({
-  entryPoints: [join(rootDir, 'src/cli.ts')],
+  entryPoints: [join(rootDir, 'src/cli/main.ts')],
   bundle: true,
   platform: 'node',
   format: 'cjs',

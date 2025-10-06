@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import chalk from 'chalk'
-import { handleCommand, handleMessage, handleQuit, handleClear, initialize, COMMANDS } from './cli/commands'
-import { clearFooter, displayFooter, resetDisplay } from './cli/display'
-import { promptInput } from './cli/input'
-import { selectOption } from './cli/select'
-import { state } from './cli/state'
-import { saveCliConfig } from './cli/config'
 import ansiEscapes from 'ansi-escapes'
+import chalk from 'chalk'
+import { COMMANDS, handleClear, handleCommand, handleMessage, handleQuit, initialize } from './commands'
+import { saveCliConfig } from './config'
+import { clearFooter, displayFooter, resetDisplay } from './display'
+import { promptInput } from './input'
+import { selectOption } from './select'
+import { state } from './state'
 
 // Main loop
 async function main() {
