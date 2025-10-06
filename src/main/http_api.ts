@@ -18,17 +18,20 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
 
   // GET /api/cli/config - Get current CLI configuration
   httpServer.register('/api/cli/config', async (_req, res) => {
-    if (!isHttpEndpointsEnabled(app, res)) return
+    // Note: This endpoint does not check isHttpEndpointsEnabled
+    // It returns the enableHttpEndpoints status so CLI can check it
     try {
       const settings = config.loadSettings(app)
       const engine = settings.llm.engine
       const model = settings.engines[engine]?.model?.chat
       const userDataPath = app.getPath('userData')
+      const enableHttpEndpoints = settings.general.enableHttpEndpoints
 
       sendJson(res, {
         engine,
         model,
-        userDataPath
+        userDataPath,
+        enableHttpEndpoints
       })
     } catch (error) {
       console.error('[http] Error in /api/cli/config:', error)
