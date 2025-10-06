@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { displayHeader, displayFooter, displayConversation } from '../../../src/cli/display'
 import { state } from '../../../src/cli/state'
 import { VirtualTerminal } from './VirtualTerminal'
+import Chat from '../../../src/models/chat'
+import Message from '../../../src/models/message'
 
 describe('CLI Display Requirements', () => {
   let terminal: VirtualTerminal
@@ -39,7 +41,8 @@ describe('CLI Display Requirements', () => {
     state.port = 8090
     state.engine = 'openai'
     state.model = 'gpt-4'
-    state.history = []
+    state.chat = new Chat('CLI Session')
+    state.chat.uuid = ''
   })
 
   afterEach(() => {
@@ -89,9 +92,8 @@ openai gpt-4`
   describe('Requirement: After User Message', () => {
     test('should show layout with user message', async () => {
       // Arrange: User submitted "hello"
-      state.history = [
-        { role: 'user', content: 'hello' }
-      ]
+      const userMsg = new Message('user', 'hello')
+      state.chat.addMessage(userMsg)
 
       // Act: Display after user message
       // HEADER
@@ -127,10 +129,10 @@ openai gpt-4                                                          1 messages
   describe('Requirement: After Conversation', () => {
     test('should show layout with full conversation', async () => {
       // Arrange: User said "hello", assistant replied "Hello how are you?"
-      state.history = [
-        { role: 'user', content: 'hello' },
-        { role: 'assistant', content: 'Hello how are you?' }
-      ]
+      const userMsg = new Message('user', 'hello')
+      const assistantMsg = new Message('assistant', 'Hello how are you?')
+      state.chat.addMessage(userMsg)
+      state.chat.addMessage(assistantMsg)
 
       // Act: Display after assistant response
       // HEADER
@@ -170,12 +172,10 @@ openai gpt-4                                                          2 messages
   describe('Requirement: Multiple Messages', () => {
     test('should show layout with multiple exchanges', async () => {
       // Arrange: Multiple message exchanges
-      state.history = [
-        { role: 'user', content: 'Tell me a joke' },
-        { role: 'assistant', content: 'Why did the chicken cross the road?' },
-        { role: 'user', content: 'Why?' },
-        { role: 'assistant', content: 'To get to the other side!' }
-      ]
+      state.chat.addMessage(new Message('user', 'Tell me a joke'))
+      state.chat.addMessage(new Message('assistant', 'Why did the chicken cross the road?'))
+      state.chat.addMessage(new Message('user', 'Why?'))
+      state.chat.addMessage(new Message('assistant', 'To get to the other side!'))
 
       // Act
       displayHeader()

@@ -54,7 +54,7 @@ export function displayFooter() {
   console.log('')
 
   // Render footer using helper
-  const rightText = state.history.length > 0 ? `${state.history.length} messages` : ''
+  const rightText = state.chat.messages.length > 0 ? `${state.chat.messages.length} messages` : ''
   renderFooterContent(rightText)
 
   // Move cursor back up to the prompt line (1 line up from current position)
@@ -168,8 +168,8 @@ export function displayConversation() {
   // Always add ONE blank line after header
   console.log()
 
-  for (let i = 0; i < state.history.length; i++) {
-    const msg = state.history[i]
+  for (let i = 0; i < state.chat.messages.length; i++) {
+    const msg = state.chat.messages[i]
     if (msg.role === 'user') {
       // User messages: gray with "> " prefix
       console.log(grayText('> ' + msg.content))
