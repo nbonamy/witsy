@@ -1,39 +1,43 @@
 // Custom input handler using terminal-kit's witsyInputField
 
 import terminalKit from 'terminal-kit'
-import ansiEscapes from 'ansi-escapes'
-import { repositionFooter, updateFooterRightText, displayHeader, displayConversation, displayFooter } from './display'
+import { repositionFooter, resetDisplay, updateFooterRightText } from './display'
 import { state } from './state'
 import { witsyInputField } from './witsyInputField'
 
 const term = terminalKit.terminal
 
 interface InputOptions {
-  message: string
-  defaultText?: string
+  prompt: string
+}
+
+// Calculate line count correctly
+const calculateLineCount = (promptText: string, text: string): number => {
+  const termWidth = process.stdout.columns || 80
+  const totalChars = promptText.length + text.length + 1
+  return Math.max(1, Math.ceil(totalChars / termWidth))
 }
 
 export async function promptInput(options: InputOptions): Promise<string> {
-  return new Promise((resolve, reject) => {
-    // State
-    let previousLineCount = 1
-    let escapePressed = false
-    let escapeTimer: NodeJS.Timeout | null = null
-    let controller: any = null
 
-    const startInputField = () => {
+  return new Promise((resolve, reject) => {
+
+    term.getCursorLocation((error, x, y) => {
+
+      // State
+      let previousLineCount = 1
+      let escapePressed = false
+      let escapeTimer: NodeJS.Timeout | null = null
+      let controller: any = null
+      const initialCursorY = y
+
       // Show prompt
-      process.stdout.write(options.message + ' ')
+      const promptText = options.prompt
+      process.stdout.write(promptText)
 
       // Helper: handle resize
       const handleResize = () => {
-        // Clear terminal and redraw everything
-        process.stdout.write(ansiEscapes.clearTerminal)
-        displayHeader()
-        displayConversation()
-        displayFooter()
-
-        // controller.redraw() will handle redrawing the input
+        resetDisplay()
         if (controller) {
           controller.redraw()
         }
@@ -44,15 +48,20 @@ export async function promptInput(options: InputOptions): Promise<string> {
 
       // Call witsyInputField
       controller = witsyInputField.call(term, {
+        
         cancelable: true,
         history: state.cliConfig?.history || [],
 
-        onTextChange: (text: string, _key: string, lineCount: number) => {
-          // Track line count changes for footer positioning
-          if (lineCount !== previousLineCount) {
-            const delta = lineCount - previousLineCount
-            repositionFooter(delta)
-            previousLineCount = lineCount
+        onTextChange: (text: string) => {
+
+          // Calculate line count ourselves
+          const calculatedLineCount = calculateLineCount(promptText, text)
+
+          // ONLY update when line count changes
+          if (calculatedLineCount !== previousLineCount) {
+            const delta = calculatedLineCount - previousLineCount
+            repositionFooter(delta, calculatedLineCount, initialCursorY)
+            previousLineCount = calculatedLineCount
           }
 
           // When "/" typed, immediately trigger command selector
@@ -81,14 +90,18 @@ export async function promptInput(options: InputOptions): Promise<string> {
             }
             escapePressed = false
 
-            // Clear terminal and redraw
-            process.stdout.write(ansiEscapes.clearTerminal)
-            displayHeader()
-            displayConversation()
-            displayFooter()
+            // Cleanup
+            process.stdout.removeListener('resize', handleResize)
 
-            // Resolve empty to start fresh input
+            // Abort the controller to properly close it
+            if (controller && typeof controller.abort === 'function') {
+              controller.abort()
+            }
+
+            // Clear terminal and redraw
+            resetDisplay()
             resolve('')
+
           } else {
             // First escape - show message
             escapePressed = true
@@ -103,6 +116,7 @@ export async function promptInput(options: InputOptions): Promise<string> {
           }
         },
       }, (error: Error | undefined, input: string) => {
+        
         // Cleanup
         if (escapeTimer) {
           clearTimeout(escapeTimer)
@@ -116,19 +130,9 @@ export async function promptInput(options: InputOptions): Promise<string> {
           resolve(input)
         }
       })
-    }
 
-    // Drain stdin to clear any leftover escape sequences before starting
-    if (process.stdin.isTTY && process.stdin.readable) {
-      const drainListener = () => { /* discard */ }
-      process.stdin.on('data', drainListener)
+    })
 
-      setTimeout(() => {
-        process.stdin.removeListener('data', drainListener)
-        startInputField()
-      }, 50)
-    } else {
-      startInputField()
-    }
   })
+  
 }

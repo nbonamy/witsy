@@ -1,14 +1,15 @@
-import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest'
-import { handleCommand, COMMANDS, initialize } from '../../../src/cli/commands'
-import { state } from '../../../src/cli/state'
-import { WitsyAPI } from '../../../src/cli/api'
 import * as fs from 'fs'
-import * as path from 'path'
 import * as os from 'os'
+import * as path from 'path'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { WitsyAPI } from '../../../src/cli/api'
+import { COMMANDS, handleCommand, initialize } from '../../../src/cli/commands'
+import { state } from '../../../src/cli/state'
 
 // Mock dependencies
 vi.mock('../../../src/cli/api')
 vi.mock('../../../src/cli/display', () => ({
+  resetDisplay: vi.fn(),
   displayFooter: vi.fn(),
   clearFooter: vi.fn(),
   displayHeader: vi.fn(),
