@@ -2208,6 +2208,7 @@
     "advanced": {
       "autoSavePrompt": "始终在聊天历史中保存提示会话",
       "conversationLength": "每段对话的消息数量",
+      "enableHttpEndpoints": "启用HTTP端点（API、触发器、Webhook）",
       "header": "杂项设置",
       "imageResize": "图像调整大小",
       "imageResizeOptions": {

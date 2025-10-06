@@ -61,6 +61,7 @@ export type GeneralConfig = {
   tips: {[key: string]: boolean}
   confirm: {[key: string]: boolean}
   webappEvictionMinutes: number
+  enableHttpEndpoints: boolean
 }
 
 export type FavoriteModel = {

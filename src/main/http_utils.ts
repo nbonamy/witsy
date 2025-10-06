@@ -1,4 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'node:http'
+import { App } from 'electron'
+import * as config from './config'
 
 /**
  * Send JSON response
@@ -55,4 +57,19 @@ export async function parseParams(req: IncomingMessage, parsedUrl: URL): Promise
   }
 
   return params
+}
+
+/**
+ * Check if HTTP endpoints are enabled in configuration
+ * If disabled, sends 404 response and returns false
+ * If enabled, returns true
+ */
+export function isHttpEndpointsEnabled(app: App, res: ServerResponse): boolean {
+  const settings = config.loadSettings(app)
+  if (!settings.general.enableHttpEndpoints) {
+    res.writeHead(404)
+    res.end()
+    return false
+  }
+  return true
 }

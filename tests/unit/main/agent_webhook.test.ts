@@ -44,7 +44,7 @@ beforeEach(() => {
   }
 
   vi.mocked(configModule.loadSettings).mockReturnValue({
-    general: { locale: 'en-US' },
+    general: { locale: 'en-US', enableHttpEndpoints: true },
     llm: { locale: 'en-US' }
   } as any)
 })

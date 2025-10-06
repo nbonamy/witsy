@@ -2186,6 +2186,7 @@
     "advanced": {
       "autoSavePrompt": "Immer Prompt-Sitzungen im Chatverlauf speichern",
       "conversationLength": "Nachrichten pro Unterhaltung",
+      "enableHttpEndpoints": "HTTP-Endpunkte aktivieren (API, Trigger, Webhooks)",
       "header": "Sonstige Einstellungen",
       "imageResize": "Bildgröße",
       "imageResizeOptions": {

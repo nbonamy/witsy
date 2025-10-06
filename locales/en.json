@@ -2219,6 +2219,7 @@
     "advanced": {
       "autoSavePrompt": "Always save prompt sessions in chat history",
       "conversationLength": "Messages per conversation",
+      "enableHttpEndpoints": "Enable HTTP endpoints (API, triggers, webhooks)",
       "header": "Miscellaneous settings",
       "imageResize": "Image resize",
       "imageResizeOptions": {

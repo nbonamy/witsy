@@ -2208,6 +2208,7 @@
     "advanced": {
       "autoSavePrompt": "Zawsze zapisuj sesje podpowiedzi w historii czatu",
       "conversationLength": "Wiadomości na konwersację",
+      "enableHttpEndpoints": "Włącz punkty końcowe HTTP (API, wyzwalacze, webhooki)",
       "header": "Ustawienia różne",
       "imageResize": "Zmiana rozmiaru obrazu",
       "imageResizeOptions": {

@@ -2186,6 +2186,7 @@
     "advanced": {
       "autoSavePrompt": "Enregistrer les requêtes rapides dans l'historique",
       "conversationLength": "Messages par conversation",
+      "enableHttpEndpoints": "Activer les points de terminaison HTTP (API, déclencheurs, webhooks)",
       "header": "Paramètres divers",
       "imageResize": "Taille des images",
       "imageResizeOptions": {

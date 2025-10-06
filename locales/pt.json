@@ -2208,6 +2208,7 @@
     "advanced": {
       "autoSavePrompt": "Sempre salvar sessões de prompt no histórico do chat",
       "conversationLength": "Mensagens por conversa",
+      "enableHttpEndpoints": "Ativar endpoints HTTP (API, gatilhos, webhooks)",
       "header": "Configurações diversas",
       "imageResize": "Redimensionamento de imagem",
       "imageResizeOptions": {

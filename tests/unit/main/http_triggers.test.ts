@@ -4,6 +4,7 @@ import { App } from 'electron'
 import { HttpServer } from '../../../src/main/http_server'
 import { installHttpTriggers } from '../../../src/main/http_triggers'
 import * as window from '../../../src/main/window'
+import * as config from '../../../src/main/config'
 import PromptAnywhere from '../../../src/automations/anywhere'
 import Commander from '../../../src/automations/commander'
 import ReadAloud from '../../../src/automations/readaloud'
@@ -18,6 +19,15 @@ vi.mock('../../../src/main/window', () => ({
   openRealtimeChatWindow: vi.fn(),
   openPromptAnywhere: vi.fn().mockResolvedValue(undefined),
   openCommandPicker: vi.fn(),
+}))
+
+// Mock config module
+vi.mock('../../../src/main/config', () => ({
+  loadSettings: vi.fn().mockReturnValue({
+    general: {
+      enableHttpEndpoints: true
+    }
+  })
 }))
 
 // Mock automation modules
@@ -143,6 +153,32 @@ describe('HTTP Triggers', () => {
 
     expect(window.openMainWindow).toHaveBeenCalledWith({ queryParams: { view: 'scratchpad' } })
     expect(mockRes.end).toHaveBeenCalledWith(JSON.stringify({ success: true, action: 'scratchpad' }))
+  })
+
+  test('endpoints should return 404 when disabled', async () => {
+    // Mock config with disabled endpoints
+    vi.mocked(config.loadSettings).mockReturnValueOnce({
+      general: {
+        enableHttpEndpoints: false
+      }
+    } as any)
+
+    installHttpTriggers(httpServer, mockApp)
+
+    const healthHandler = mockRegister.mock.calls.find(
+      (call: any) => call[0] === '/api/health'
+    )?.[1]
+
+    const mockReq = {} as IncomingMessage
+    const mockRes = {
+      writeHead: vi.fn(),
+      end: vi.fn()
+    } as unknown as ServerResponse
+
+    await healthHandler(mockReq, mockRes, new URL('http://localhost:8090/api/health'))
+
+    expect(mockRes.writeHead).toHaveBeenCalledWith(404)
+    expect(mockRes.end).toHaveBeenCalled()
   })
 
   test('settings endpoint should open settings window', async () => {

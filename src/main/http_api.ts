@@ -1,6 +1,6 @@
 import { App } from 'electron'
 import { HttpServer } from './http_server'
-import { sendJson, sendError, parseParams } from './http_utils'
+import { sendJson, sendError, parseParams, isHttpEndpointsEnabled } from './http_utils'
 import { engineNames } from '../llms/base'
 import LlmFactory from '../llms/llm'
 import Assistant from '../services/assistant'
@@ -18,6 +18,7 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
 
   // GET /api/cli/config - Get current CLI configuration
   httpServer.register('/api/cli/config', async (_req, res) => {
+    if (!isHttpEndpointsEnabled(app, res)) return
     try {
       const settings = config.loadSettings(app)
       const engine = settings.llm.engine
@@ -37,6 +38,7 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
 
   // GET /api/engines - List available chat engines
   httpServer.register('/api/engines', async (_req, res) => {
+    if (!isHttpEndpointsEnabled(app, res)) return
     try {
       const settings = config.loadSettings(app)
       const llmManager = LlmFactory.manager(settings)
@@ -57,6 +59,7 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
 
   // GET /api/models/:engine - List models for a specific engine
   httpServer.register('/api/models/*', async (req, res, parsedUrl) => {
+    if (!isHttpEndpointsEnabled(app, res)) return
     try {
       const settings = config.loadSettings(app)
       const llmManager = LlmFactory.manager(settings)
@@ -91,6 +94,7 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
 
   // POST /api/complete - Run chat completion
   httpServer.register('/api/complete', async (req, res, parsedUrl) => {
+    if (!isHttpEndpointsEnabled(app, res)) return
     try {
       // Initialize LLM context (global mock + i18n)
       const llmContext = new LlmContext(app, mcp)

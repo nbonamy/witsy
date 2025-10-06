@@ -2186,6 +2186,7 @@
     "advanced": {
       "autoSavePrompt": "Salva sempre le sessioni di richiesta nella cronologia chat",
       "conversationLength": "Messaggi per conversazione",
+      "enableHttpEndpoints": "Abilita endpoint HTTP (API, trigger, webhook)",
       "header": "Impostazioni varie",
       "imageResize": "Ridimensionamento immagine",
       "imageResizeOptions": {

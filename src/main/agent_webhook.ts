@@ -1,7 +1,7 @@
 import { App } from 'electron'
 import { AgentExecutor, findAgentByWebhookToken } from './agent_utils'
 import { HttpServer } from './http_server'
-import { parseParams, sendError, sendJson } from './http_utils'
+import { parseParams, sendError, sendJson, isHttpEndpointsEnabled } from './http_utils'
 import { getAgentRun } from './agents'
 import Mcp from './mcp'
 
@@ -17,6 +17,7 @@ export const AGENT_API_BASE_PATH = '/api/agent'
 export function installAgentWebhook(httpServer: HttpServer, app: App, mcp: Mcp): void {
 
   httpServer.register(`${AGENT_API_BASE_PATH}/run/*`, async (req, res, parsedUrl) => {
+    if (!isHttpEndpointsEnabled(app, res)) return
     try {
       // Extract token from URL path
       const pathParts = parsedUrl.pathname.split('/')
