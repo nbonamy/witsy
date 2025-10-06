@@ -50,7 +50,6 @@
     "@types/plist": "^3.0.5",
     "@types/terminal-kit": "^2.5.7",
     "@types/uuid": "^10.0.0",
-    "@types/vue3-json-viewer": "^2.4.0",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
     "@vitejs/plugin-vue": "^5.2.4",
