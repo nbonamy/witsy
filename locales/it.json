@@ -462,6 +462,12 @@
     },
     "title": "Conversations"
   },
+  "cli": {
+    "install": {
+      "failure": "Impossibile installare l'interfaccia a riga di comando. Il collegamento non può essere creato.",
+      "success": "Interfaccia a riga di comando installata con successo"
+    }
+  },
   "commands": {
     "commands": {
       "00000000-0000-0000-0000-000000000000": {
@@ -2193,6 +2199,7 @@
         "none": "Nessun ridimensionamento",
         "size": "Ridimensiona la dimensione maggiore a {size} pixel"
       },
+      "installCLI": "Installa l'interfaccia a riga di comando di Witsy",
       "instructions": {
         "chat_empathic": "@:{'common.chat'} - @:{'settings.llm.instructions.empathic'}",
         "chat_playful": "@:{'common.chat'} - @:{'settings.llm.instructions.playful'}",

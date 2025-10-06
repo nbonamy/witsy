@@ -481,6 +481,12 @@
     },
     "title": "Conversations"
   },
+  "cli": {
+    "install": {
+      "failure": "Falha ao instalar a interface de linha de comando. O atalho não pôde ser criado.",
+      "success": "Interface de linha de comando instalada com sucesso"
+    }
+  },
   "commands": {
     "commands": {
       "00000000-0000-0000-0000-000000000000": {
@@ -2215,6 +2221,7 @@
         "none": "Sem redimensionamento",
         "size": "Redimensionar a maior dimensão para {size} pixels"
       },
+      "installCLI": "Instalar Interface de Linha de Comando do Witsy",
       "instructions": {
         "chat_empathic": "@:{'common.chat'} - @:{'settings.llm.instructions.empathic'}",
         "chat_playful": "@:{'common.chat'} - @:{'settings.llm.instructions.playful'}",

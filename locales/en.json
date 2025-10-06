@@ -481,6 +481,14 @@
     },
     "title": "Conversations"
   },
+  "cli": {
+    "install": {
+      "elevated": "@:{'common.appName'} will now prompt with 'osascript' for Administrator privileges to install the command line interface.",
+      "failure": "Failed to install command line interface. The shortcut could not be created.",
+      "success": "Command line interface installed successfully",
+      "title": "@:{'common.appName'} Command Line Interface Installation"
+    }
+  },
   "commands": {
     "commands": {
       "00000000-0000-0000-0000-000000000000": {
@@ -2226,6 +2234,7 @@
         "none": "No resize",
         "size": "Resize largest dimension to {size} pixels"
       },
+      "installCLI": "Install Witsy Command Line Interface",
       "instructions": {
         "chat_empathic": "@:{'common.chat'} - @:{'settings.llm.instructions.empathic'}",
         "chat_playful": "@:{'common.chat'} - @:{'settings.llm.instructions.playful'}",

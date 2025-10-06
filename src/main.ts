@@ -241,7 +241,7 @@ app.whenReady().then(async () => {
 
   // check and install CLI (skip in DEBUG mode)
   if (!process.env.DEBUG) {
-    await checkAndInstallCLI();
+    await checkAndInstallCLI(false);
   }
 
   // create the main window

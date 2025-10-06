@@ -62,6 +62,7 @@ export type GeneralConfig = {
   confirm: {[key: string]: boolean}
   webappEvictionMinutes: number
   enableHttpEndpoints: boolean
+  cliInstallError: boolean
 }
 
 export type FavoriteModel = {
