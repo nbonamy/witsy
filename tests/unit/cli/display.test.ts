@@ -200,7 +200,39 @@ To get to the other side!
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4                                                          4 messages`
+openai gpt-4                                             4 messages · type /save`
+
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+  })
+
+  describe('Requirement: Save Status in Footer', () => {
+    test('should show auto-saving status when chat is saved', async () => {
+      // Arrange: Saved chat with UUID
+      state.chat.addMessage(new Message('user', 'hello'))
+      state.chat.addMessage(new Message('assistant', 'hi there'))
+      state.chat.uuid = 'some-uuid-123'
+
+      // Act
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      process.stdout.write('>')
+
+      const expected = `
+  ██  █  ██  Witsy CLI vdev
+  ██ ███ ██  AI Assistant · Command Line Interface
+   ███ ███   http://localhost:8090
+
+
+> hello
+
+hi there
+
+────────────────────────────────────────────────────────────────────────────────
+>
+────────────────────────────────────────────────────────────────────────────────
+openai gpt-4                                            2 messages · auto-saving`
 
       expect(terminal.getVisibleText()).toBe(expected)
     })

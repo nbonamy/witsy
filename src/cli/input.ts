@@ -1,7 +1,7 @@
 // Custom input handler using terminal-kit's witsyInputField
 
 import terminalKit from 'terminal-kit'
-import { repositionFooter, resetDisplay, updateFooterRightText } from './display'
+import { getFooterRightText, repositionFooter, resetDisplay, updateFooterRightText } from './display'
 import { state } from './state'
 import { witsyInputField } from './witsyInputField'
 
@@ -115,7 +115,7 @@ export async function promptInput(options: InputOptions): Promise<string> {
             escapeTimer = setTimeout(() => {
               escapePressed = false
               escapeTimer = null
-              updateFooterRightText(`${state.chat.messages.length} messages`, previousLineCount)
+              updateFooterRightText(getFooterRightText(), previousLineCount)
             }, 1000)
           }
         },
