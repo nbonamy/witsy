@@ -8,6 +8,7 @@ const term = terminalKit.terminal
 interface SelectChoice<T = string> {
   name: string
   value: T
+  description?: string
 }
 
 interface SelectOptions<T> {
@@ -34,8 +35,17 @@ export async function selectOption<T = string>(
     const displayTitle = searchString ? `${options.title} ${searchString}` : options.title
     term.cyan(`? ${displayTitle}\n`)
 
-    // Prepare menu items (just the names)
-    const menuItems = options.choices.map(choice => choice.name)
+    // Prepare menu items with aligned descriptions
+    const maxNameLength = Math.max(...options.choices.map(c => c.name.length))
+    const columnWidth = Math.max(20, maxNameLength + 4) // At least 20, or name + 4 spaces
+
+    const menuItems = options.choices.map(choice => {
+      if (choice.description) {
+        const padding = ' '.repeat(columnWidth - choice.name.length)
+        return `${choice.name}${padding}${choice.description}`
+      }
+      return choice.name
+    })
 
     // Calculate max items to display (leave room for title, footer, etc.)
     const maxItems = Math.max(5, term.height - 16)
