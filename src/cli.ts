@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 import chalk from 'chalk'
-import { handleCommand, handleMessage, initialize } from './cli/commands'
+import { handleCommand, handleMessage, initialize, COMMANDS } from './cli/commands'
 import { clearFooter, displayFooter } from './cli/display'
 import { promptInput } from './cli/input'
+import { selectOption } from './cli/select'
 import { state } from './cli/state'
 import { saveCliConfig } from './cli/config'
 import ansiEscapes from 'ansi-escapes'
@@ -43,7 +44,18 @@ async function main() {
 
       // Handle commands
       if (trimmed.startsWith('/')) {
-        await handleCommand(trimmed)
+        // If just "/", show command selector
+        if (trimmed === '/') {
+          const selectedCommand = await selectOption({
+            title: 'Select command',
+            choices: COMMANDS
+          })
+
+          // selectOption returns value field, need to prepend "/"
+          await handleCommand('/' + selectedCommand)
+        } else {
+          await handleCommand(trimmed)
+        }
         // displayFooter already called by handleCommand redraw
         continue
       }

@@ -1,55 +1,154 @@
 #!/usr/bin/env node
 
 /**
- * Terminal-Kit Verification Test
+ * witsyInputField Interactive Test
  *
- * This file verifies that terminal-kit works correctly in our environment.
+ * Interactive test for witsyInputField with all features
  * Run with: npx tsx src/cli/test-terminal-kit.ts
  */
 
 import terminalKit from 'terminal-kit'
+import { witsyInputField } from './witsyInputField'
 
 const term = terminalKit.terminal
 
 async function main() {
   term.clear()
 
-  // Test 1: Colored output
-  term.bold.magenta('Terminal-Kit Verification Test\n\n')
+  term.bold.magenta('witsyInputField Interactive Test\n\n')
 
-  term.green('✓ Terminal instance created\n')
-  term.cyan('✓ Color output working\n')
+  term.cyan('Features:\n')
+  term.gray('  • Type normally, use backspace, left/right arrows, HOME/END\n')
+  term.gray('  • UP at position 0 on first line → navigate history backward\n')
+  term.gray('  • DOWN at end on last line → navigate history forward\n')
+  term.gray('  • UP/DOWN elsewhere → move cursor up/down (multi-line)\n')
+  term.gray('  • ESCAPE twice within 1 second → clear input\n')
+  term.gray('  • Type "/" → triggers onTextChange callback (shows "Command detected!")\n')
+  term.gray('  • ENTER → submit and add to history\n')
+  term.gray('  • Ctrl+C/Ctrl+D → exit with "Goodbye!"\n\n')
 
-  // Test 2: RGB colors (like our custom styling)
-  term.colorRgb(180, 142, 238)('✓ RGB color (purple) working\n')
-  term.colorRgb(139, 148, 156)('✓ RGB color (gray) working\n')
+  const history: string[] = ['first message', 'second message', 'third message']
 
-  term('\n')
+  term.yellow('Initial history: ')
+  term.gray(`["${history.join('", "')}"]\n\n`)
 
-  // Test 3: Basic inputField
-  term.yellow('Testing basic input (type something and press Enter):\n')
-  term('> ')
+  const shouldExit = false
+  let escapePressed = false
+  let escapeTimer: NodeJS.Timeout | null = null
 
-  const input = await term.inputField({
-    cancelable: true,
-  }).promise
+  while (!shouldExit) {
+    term('> ')
 
-  term('\n')
+    try {
+      const result = await new Promise<string>((resolve, reject) => {
+        witsyInputField.call(term, {
+          cancelable: true,
+          history: history,
+          onTextChange: (text: string, key: string, lineCount: number) => {
+            // Detect command
+            if (text.startsWith('/')) {
+              term.saveCursor()
+              term.moveTo(1, term.height)
+              term.eraseLine()
+              term.yellow(`Command detected! (${lineCount} line${lineCount > 1 ? 's' : ''})`)
+              term.restoreCursor()
+            } else if (text.length === 0) {
+              // Clear the message when text is cleared
+              term.saveCursor()
+              term.moveTo(1, term.height)
+              term.eraseLine()
+              term.restoreCursor()
+            }
+          },
+          onSpecialKey: (key: string) => {
+            if (key === 'CTRL_C' || key === 'CTRL_D') {
+              term('\n')
+              term.yellow('Goodbye!\n')
+              process.exit(0)
+            }
+            return false
+          },
+          onEscape: () => {
+            if (escapePressed) {
+              // Second escape - resolve with empty string (clears on next iteration)
+              if (escapeTimer) {
+                clearTimeout(escapeTimer)
+                escapeTimer = null
+              }
+              escapePressed = false
 
-  if (input === undefined) {
-    term.red('\n✗ Input was cancelled\n')
-  } else {
-    term.green(`✓ Input received: "${input}"\n`)
+              // Clear the message
+              term.saveCursor()
+              term.moveTo(1, term.height)
+              term.eraseLine()
+              term.restoreCursor()
+
+              resolve('')
+            } else {
+              // First escape - show message
+              escapePressed = true
+              term.saveCursor()
+              term.moveTo(1, term.height)
+              term.eraseLine()
+              term.yellow('Press Escape again to clear')
+              term.restoreCursor()
+
+              // Start 1-second timer
+              escapeTimer = setTimeout(() => {
+                escapePressed = false
+                escapeTimer = null
+                term.saveCursor()
+                term.moveTo(1, term.height)
+                term.eraseLine()
+                term.restoreCursor()
+              }, 1000)
+            }
+          },
+        }, (error: Error | undefined, input: string) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(input)
+          }
+        })
+      })
+
+      if (shouldExit) break
+
+      // Reset escape state for next iteration
+      escapePressed = false
+      if (escapeTimer) {
+        clearTimeout(escapeTimer)
+        escapeTimer = null
+      }
+
+      term('\n')
+
+      if (result && result.trim()) {
+        if (!result.startsWith('/')) {
+          history.push(result)
+        }
+      } else {
+        term.gray('Empty input, not added to history\n\n')
+      }
+
+    } catch (error) {
+      // Check if we're exiting due to Ctrl+C/Ctrl+D
+      if (shouldExit) {
+        break
+      }
+
+      term('\n')
+      if (error instanceof Error && error.message.includes('force closed')) {
+        term.yellow('Exiting...\n')
+        break
+      } else {
+        throw error
+      }
+    }
   }
 
   term('\n')
-  term.bold('All tests passed! Press any key to exit...\n')
-
-  await term.yesOrNo({ yes: ['y', 'ENTER'], no: ['n'] }).promise
-
-  term('\n')
-  term.green('✓ Terminal-Kit is working correctly!\n\n')
-
   process.exit(0)
 }
 

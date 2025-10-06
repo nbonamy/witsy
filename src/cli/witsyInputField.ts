@@ -24,17 +24,22 @@
 	SOFTWARE.
 */
 
+/* eslint-disable no-var */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
 "use strict" ;
 
 
 
-const NextGenEvents = require( 'nextgen-events' ) ;
-const Promise = require( 'seventh' ) ;
-const string = require( 'string-kit' ) ;
-const autoComplete = require( './autoComplete.js' ) ;
+import NextGenEvents from 'nextgen-events' ;
+import Promise from 'seventh' ;
+import * as string from 'string-kit' ;
+import autoComplete from 'terminal-kit/lib/autoComplete.js' ;
 
 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const defaultKeyBindings = {
 	ENTER: 'submit' ,
 	KP_ENTER: 'submit' ,
@@ -45,6 +50,29 @@ const defaultKeyBindings = {
 	RIGHT: 'forward' ,
 	UP: 'historyPrevious' ,
 	DOWN: 'historyNext' ,
+	HOME: 'startOfInput' ,
+	END: 'endOfInput' ,
+	TAB: 'autoComplete' ,
+	CTRL_R: 'autoCompleteUsingHistory' ,
+	CTRL_LEFT: 'previousWord' ,
+	CTRL_RIGHT: 'nextWord' ,
+	ALT_D: 'deleteNextWord' ,
+	CTRL_W: 'deletePreviousWord' ,
+	CTRL_U: 'deleteAllBefore' ,
+	CTRL_K: 'deleteAllAfter'
+} ;
+
+// Witsy custom key bindings: UP/DOWN/ESCAPE have custom behavior
+const witsyKeyBindings = {
+	ENTER: 'submit' ,
+	KP_ENTER: 'submit' ,
+	ESCAPE: 'witsyEscape' ,
+	BACKSPACE: 'backDelete' ,
+	DELETE: 'delete' ,
+	LEFT: 'backward' ,
+	RIGHT: 'forward' ,
+	UP: 'witsyUp' ,
+	DOWN: 'witsyDown' ,
 	HOME: 'startOfInput' ,
 	END: 'endOfInput' ,
 	TAB: 'autoComplete' ,
@@ -125,7 +153,7 @@ const defaultTokenRegExp = /\S+/g ;
 			* error `mixed` truthy if an underlying error occurs
 			* input `string` the user input
 */
-module.exports = function inputField( options , callback ) {
+export function witsyInputField( options , callback ) {
 	if ( typeof options === 'function' ) { callback = options ; options = {} ; }
 	else if ( ! options || typeof options !== 'object' ) { options = {} ; }
 
@@ -142,7 +170,7 @@ module.exports = function inputField( options , callback ) {
 		delete options.autoCompleteMenu.y ;
 	}
 
-	var keyBindings = options.keyBindings || defaultKeyBindings ;
+	var keyBindings = options.keyBindings || witsyKeyBindings ;
 
 	if ( options.tokenRegExp && ( ! ( options.tokenRegExp instanceof RegExp ) || ! options.tokenRegExp.flags.includes( 'g' ) ) ) {
 		throw new Error( ".inputField(): if set, the 'tokenRegExp' option should be a RegExp with the 'g' flag" ) ;
@@ -546,10 +574,27 @@ module.exports = function inputField( options , callback ) {
 
 
 
+	// Helper function to call onTextChange callback
+	var callOnTextChange = ( key ) => {
+		if ( options.onTextChange ) {
+			computeAllCoordinate() ;
+			var lineCount = end.y - start.y + 1 ;
+			options.onTextChange( inputs[ inputIndex ].join( '' ) , key , lineCount ) ;
+		}
+	} ;
+
+
 	// The main method: the key event handler
 	var onKey = ( key , trash , data ) => {
 
 		if ( finished || paused ) { return ; }
+
+		// Check for special keys first (Witsy addition)
+		if ( options.onSpecialKey && key.match( /^(CTRL_|ALT_|META_)/ ) ) {
+			if (options.onSpecialKey(key) === true) {
+				return ; // Callback returned true, prevent default behavior
+			}
+		}
 
 		var leftPart , autoCompleteUsed , autoCompleted , extraLines , charToDelete , cutOffset , altKey ,
 			lastOffset = offset ;
@@ -572,6 +617,9 @@ module.exports = function inputField( options , callback ) {
 			//inputs[ inputIndex ] = inputs[ inputIndex ].slice( 0 , offset ) + key + inputs[ inputIndex ].slice( offset ) ;
 			inputs[ inputIndex ].splice( offset , 0 , key ) ;
 			offset ++ ;
+
+			// Call onTextChange callback (Witsy addition)
+			callOnTextChange( key ) ;
 
 			if ( echo ) {
 				if ( offset === inputs[ inputIndex ].length && ! alwaysRedraw ) {
@@ -612,6 +660,9 @@ module.exports = function inputField( options , callback ) {
 						inputs[ inputIndex ].splice( offset - 1 , 1 ) ;
 						offset -- ;
 
+						// Call onTextChange callback (Witsy addition)
+						callOnTextChange( 'BACKSPACE' ) ;
+
 						if ( echo ) {
 							// The cursor position check should happen BEFORE we modify it with computeAllCoordinate()
 							if ( cursor.y < end.y || cursor.x === 1 || alwaysRedraw ) {
@@ -643,6 +694,9 @@ module.exports = function inputField( options , callback ) {
 						charToDelete = inputs[ inputIndex ][ offset ] ;
 						inputs[ inputIndex ].splice( offset , 1 ) ;
 
+						// Call onTextChange callback (Witsy addition)
+						callOnTextChange( 'DELETE' ) ;
+
 						if ( echo ) {
 							// The cursor position check should happen BEFORE we modify it with computeAllCoordinate()
 							if ( cursor.y < end.y || alwaysRedraw ) {
@@ -665,6 +719,9 @@ module.exports = function inputField( options , callback ) {
 						inputs[ inputIndex ].splice( 0 , offset ) ;
 						offset = 0 ;
 
+						// Call onTextChange callback (Witsy addition)
+						callOnTextChange( 'CTRL_U' ) ;
+
 						if ( echo ) {
 							computeAllCoordinate() ;
 							// Need forceClear
@@ -676,6 +733,9 @@ module.exports = function inputField( options , callback ) {
 				case 'deleteAllAfter' :
 					if ( inputs[ inputIndex ].length && offset < inputs[ inputIndex ].length ) {
 						inputs[ inputIndex ].splice( offset , inputs[ inputIndex ].length - offset ) ;
+
+						// Call onTextChange callback (Witsy addition)
+						callOnTextChange( 'CTRL_K' ) ;
 
 						if ( echo ) {
 							computeAllCoordinate() ;
@@ -730,6 +790,9 @@ module.exports = function inputField( options , callback ) {
 
 						inputs[ inputIndex ].splice( offset , cutOffset - offset ) ;
 
+						// Call onTextChange callback (Witsy addition)
+						callOnTextChange( 'CTRL_W' ) ;
+
 						if ( echo ) {
 							computeAllCoordinate() ;
 							this.moveTo( cursor.x , cursor.y ) ;
@@ -748,6 +811,9 @@ module.exports = function inputField( options , callback ) {
 
 						inputs[ inputIndex ].splice( cutOffset , offset - cutOffset ) ;
 						offset = Math.min( inputs[ inputIndex ].length , cutOffset ) ;
+
+						// Call onTextChange callback (Witsy addition)
+						callOnTextChange( 'ALT_D' ) ;
 
 						if ( echo ) {
 							computeAllCoordinate() ;
@@ -856,6 +922,100 @@ module.exports = function inputField( options , callback ) {
 
 						// Not sure if this is desirable
 						//if ( dynamic.autoCompleteHint ) { autoCompleteHint() ; }
+					}
+					break ;
+
+				// Witsy custom handlers
+				case 'witsyUp' :
+					// UP arrow logic:
+					// - cursor at position 0 on first line → navigate history backward
+					// - cursor on first line but not at position 0 → move to position 0
+					// - cursor not on first line → move cursor up one visual line
+
+					computeAllCoordinate() ;
+
+					if ( cursor.y === start.y && offset === 0 ) {
+						// At first character of first line → navigate history backward
+						if ( inputIndex > 0 ) {
+							inputIndex -- ;
+							offset = 0 ;
+
+							if ( echo ) {
+								extraLines = end.y - start.y ;
+								computeAllCoordinate() ;
+								extraLines -= end.y - start.y ;
+								redraw( extraLines , true ) ;
+								this.moveTo( cursor.x , cursor.y ) ;
+							}
+						}
+					} else if ( cursor.y === start.y ) {
+						// On first line but not at first character → move to start
+						offset = 0 ;
+						if ( echo ) {
+							computeAllCoordinate() ;
+							this.moveTo( cursor.x , cursor.y ) ;
+						}
+					} else {
+						// Not on first line → move cursor up one visual line
+						// Calculate target offset for one line up
+						var targetOffset = offset - this.width ;
+						if ( targetOffset < 0 ) { targetOffset = 0 ; }
+						offset = targetOffset ;
+						if ( echo ) {
+							computeAllCoordinate() ;
+							this.moveTo( cursor.x , cursor.y ) ;
+						}
+					}
+					break ;
+
+				case 'witsyDown' :
+					// DOWN arrow logic:
+					// - cursor at last position on last line → navigate history forward
+					// - cursor on last line but not at last position → move to end
+					// - cursor not on last line → move cursor down one visual line
+
+					computeAllCoordinate() ;
+
+					if ( cursor.y === end.y && offset === inputs[ inputIndex ].length ) {
+						// At last character of last line → navigate history forward
+						if ( inputIndex < inputs.length - 1 ) {
+							inputIndex ++ ;
+							offset = inputs[ inputIndex ].length ;
+
+							if ( echo ) {
+								extraLines = end.y - start.y ;
+								computeAllCoordinate() ;
+								extraLines -= end.y - start.y ;
+								redraw( extraLines , true ) ;
+								this.moveTo( cursor.x , cursor.y ) ;
+							}
+						}
+					} else if ( cursor.y === end.y ) {
+						// On last line but not at last character → move to end
+						offset = inputs[ inputIndex ].length ;
+						if ( echo ) {
+							computeAllCoordinate() ;
+							this.moveTo( cursor.x , cursor.y ) ;
+						}
+					} else {
+						// Not on last line → move cursor down one visual line
+						// Calculate target offset for one line down
+						var targetOffset = offset + this.width ;
+						var maxOffset = inputs[ inputIndex ].length ;
+						if ( targetOffset > maxOffset ) { targetOffset = maxOffset ; }
+						offset = targetOffset ;
+						if ( echo ) {
+							computeAllCoordinate() ;
+							this.moveTo( cursor.x , cursor.y ) ;
+						}
+					}
+					break ;
+
+				case 'witsyEscape' :
+					// Witsy custom: delegate ESCAPE handling to callback
+					computeAllCoordinate() ;
+					if ( options.onEscape ) {
+						options.onEscape( inputs[ inputIndex ].join( '' ) , end.y - start.y + 1 ) ;
 					}
 					break ;
 
