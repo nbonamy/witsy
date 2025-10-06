@@ -162,14 +162,17 @@ export default class {
       },
       {
         label: t('tray.menu.settings'),
-        click: () => window.openSettingsWindow() },
-      {
-        type: 'separator'
+        click: () => window.openSettingsWindow()
       },
-      {
-        label: t('tray.menu.httpServer', { port: HttpServer.getInstance().getPort() }),
-        enabled: false
-      },
+      ...(config.general?.enableHttpEndpoints ? [
+        {
+          type: 'separator'
+        },
+        {
+          label: t('tray.menu.httpServer', { port: HttpServer.getInstance().getPort() }),
+          enabled: false
+        },
+      ] : []),
       {
         type: 'separator'
       },
