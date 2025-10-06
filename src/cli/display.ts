@@ -8,6 +8,14 @@ import { state } from './state'
 declare const __WITSY_VERSION__: string
 const VERSION = typeof __WITSY_VERSION__ !== 'undefined' ? __WITSY_VERSION__ : 'dev'
 
+export function resetDisplay(beforeFooter?: () => void) {
+  console.clear()
+  displayHeader()
+  displayConversation()
+  if (beforeFooter) beforeFooter()
+  displayFooter()
+}
+
 export function displayHeader() {
   console.clear()
   const iconColor = chalk.rgb(215, 119, 87)  // Coral/orange for icon
@@ -20,53 +28,46 @@ ${iconColor('   ███ ███')}   ${grayText(`http://localhost:${state.po
 `)
 }
 
+// Helper to render footer content (separator + status line)
+function renderFooterContent(rightText: string) {
+  const terminalWidth = process.stdout.columns || 80
+  const separatorColor = chalk.rgb(101, 113, 153)
+  const grayText = chalk.rgb(139, 148, 156)
+
+  const leftText = state.engine && state.model
+    ? `[${state.engine}: ${state.model}]`
+    : '[connecting...]'
+  const padding = Math.max(0, terminalWidth - leftText.length - rightText.length)
+
+  process.stdout.write(separatorColor('─'.repeat(terminalWidth)) + '\n')
+  process.stdout.write(grayText(leftText + ' '.repeat(padding) + rightText))
+}
+
 export function displayFooter() {
   const terminalWidth = process.stdout.columns || 80
-  const separatorColor = chalk.rgb(101, 113, 153)  // Blue-gray for separators
-  const grayText = chalk.rgb(139, 148, 156)  // Muted gray for text
+  const separatorColor = chalk.rgb(101, 113, 153)
 
   // Print top separator
   console.log(separatorColor('─'.repeat(terminalWidth)))
 
   // Leave an empty line for the prompt (will move cursor back here)
-  console.log('')  // Explicitly pass empty string
+  console.log('')
 
-  // Print bottom separator
-  console.log(separatorColor('─'.repeat(terminalWidth)))
+  // Render footer using helper
+  const rightText = state.history.length > 0 ? `${state.history.length} messages` : ''
+  renderFooterContent(rightText)
 
-  // Print footer WITHOUT newline at the end
-  const leftText = state.engine && state.model
-    ? `[${state.engine}: ${state.model}]`
-    : '[connecting...]'
-
-  const rightText = `${state.history.length} messages`
-  const padding = Math.max(0, terminalWidth - leftText.length - rightText.length)
-
-  process.stdout.write(grayText(leftText + ' '.repeat(padding) + rightText))
-
-  // Now cursor is at the end of the footer line
-  // Move cursor back up to the prompt line (2 lines up from current position)
+  // Move cursor back up to the prompt line (1 line up from current position)
   process.stdout.write(ansiEscapes.cursorUp(2))
-
-  // Move to beginning of line
   process.stdout.write(ansiEscapes.cursorTo(0))
 }
 
 export function clearFooter() {
-
-  // Move back up to top separator and erase it
-  process.stdout.write(ansiEscapes.cursorUp(3))
-  process.stdout.write(ansiEscapes.eraseLine)
-
-  for (let i = 0; i < 4; i++) {
-    process.stdout.write(ansiEscapes.cursorDown(1))
-    process.stdout.write(ansiEscapes.eraseLine)
-  }
-
-  // Move back up
-  process.stdout.write(ansiEscapes.cursorUp(4))
-  process.stdout.write(ansiEscapes.eraseLine)
+  // After Enter, cursor may have moved down
+  // Move up 2 lines to top separator and erase everything down
+  process.stdout.write(ansiEscapes.cursorUp(2))
   process.stdout.write(ansiEscapes.cursorTo(0))
+  process.stdout.write(ansiEscapes.eraseDown)
 }
 
 
@@ -107,48 +108,23 @@ export function updateFooterRightText(text: string, lineOffset: number = 1) {
   process.stdout.write(ansiEscapes.cursorRestorePosition)
 }
 
-export function repositionFooter(delta: number) {
-  const terminalWidth = process.stdout.columns || 80
-  const separatorColor = chalk.rgb(101, 113, 153)
-  const grayText = chalk.rgb(139, 148, 156)
+export function repositionFooter(delta: number, lineCount: number, initialCursorY: number) {
+  // Save current cursor position (don't interrupt terminal-kit's rendering)
+  process.stdout.write(ansiEscapes.cursorSavePosition)
 
-  if (delta === 0) return
+  // Calculate old footer position
+  const previousLineCount = lineCount - delta
+  const oldFooterY = initialCursorY + previousLineCount - 1
 
-  const leftText = state.engine && state.model
-    ? `[${state.engine}: ${state.model}]`
-    : '[connecting...]'
-  const rightText = `${state.history.length} messages`
-  const padding = Math.max(0, terminalWidth - leftText.length - rightText.length)
+  // Go to old footer position and erase it
+  process.stdout.write(ansiEscapes.cursorTo(0, oldFooterY))
+  process.stdout.write(ansiEscapes.eraseDown)
 
-  if (delta > 0) {
-    // Prompt grew - need to move footer down
-    process.stdout.write(ansiEscapes.cursorSavePosition)
-    process.stdout.write(ansiEscapes.eraseEndLine)
-    process.stdout.write(ansiEscapes.cursorDown(1))
-    process.stdout.write(ansiEscapes.cursorTo(0))
-    process.stdout.write(ansiEscapes.eraseLine)
-    process.stdout.write(separatorColor('─'.repeat(terminalWidth)))
-    process.stdout.write(ansiEscapes.cursorDown(1))
-    process.stdout.write(ansiEscapes.cursorTo(0))
-    process.stdout.write(ansiEscapes.eraseLine)
-    process.stdout.write(grayText(leftText + ' '.repeat(padding) + rightText))
-    process.stdout.write(ansiEscapes.cursorRestorePosition)
-  } else {
-    // Prompt shrunk - need to move footer up and clean old position
-    process.stdout.write(ansiEscapes.cursorSavePosition)
-    process.stdout.write(ansiEscapes.cursorDown(1))
-    process.stdout.write(ansiEscapes.cursorTo(0))
-    process.stdout.write(ansiEscapes.eraseLine)
-    process.stdout.write(separatorColor('─'.repeat(terminalWidth)))
-    process.stdout.write(ansiEscapes.cursorDown(1))
-    process.stdout.write(ansiEscapes.cursorTo(0))
-    process.stdout.write(ansiEscapes.eraseLine)
-    process.stdout.write(grayText(leftText + ' '.repeat(padding) + rightText))
-    process.stdout.write(ansiEscapes.cursorDown(1))
-    process.stdout.write(ansiEscapes.cursorTo(0))
-    process.stdout.write(ansiEscapes.eraseLine)
-    process.stdout.write(ansiEscapes.cursorRestorePosition)
-  }
+  // Move to new footer position
+  process.stdout.write(ansiEscapes.cursorTo(0, initialCursorY + lineCount - 1))
+
+  // Restore cursor - let terminal-kit continue rendering
+  process.stdout.write(ansiEscapes.cursorRestorePosition)
 }
 
 export function displayCommandSuggestions(
@@ -185,29 +161,6 @@ export function displayCommandSuggestions(
 
   // Return number of lines rendered (blank line + commands)
   return commands.length + 1
-}
-
-export function clearCommandSuggestions(lineCount: number) {
-  if (lineCount === 0) return
-
-  // Save cursor position
-  process.stdout.write(ansiEscapes.cursorSavePosition)
-
-  // Move down past footer
-  process.stdout.write(ansiEscapes.cursorDown(3))
-  process.stdout.write(ansiEscapes.cursorTo(0))
-
-  // Erase all suggestion lines
-  for (let i = 0; i < lineCount; i++) {
-    process.stdout.write(ansiEscapes.eraseLine)
-    if (i < lineCount - 1) {
-      process.stdout.write(ansiEscapes.cursorDown(1))
-      process.stdout.write(ansiEscapes.cursorTo(0))
-    }
-  }
-
-  // Restore cursor position
-  process.stdout.write(ansiEscapes.cursorRestorePosition)
 }
 
 export function displayConversation() {

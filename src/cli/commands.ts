@@ -1,14 +1,14 @@
 // Command Handlers
 
+import ansiEscapes from 'ansi-escapes'
 import chalk from 'chalk'
-import { state } from './state'
+import { LlmChunk } from 'multi-llm-ts'
 import { WitsyAPI } from './api'
-import { displayHeader, displayFooter, displayConversation, clearFooter } from './display'
+import { loadCliConfig, saveCliConfig } from './config'
+import { clearFooter, displayConversation, displayFooter, resetDisplay } from './display'
 import { promptInput } from './input'
 import { selectOption } from './select'
-import ansiEscapes from 'ansi-escapes'
-import { LlmChunk } from 'multi-llm-ts'
-import { loadCliConfig, saveCliConfig } from './config'
+import { state } from './state'
 
 const api = new WitsyAPI()
 
@@ -17,7 +17,7 @@ export const COMMANDS = [
   { name: '/port', value: 'port', description: 'Change server port' },
   { name: '/model', value: 'model', description: 'Select engine and model' },
   { name: '/clear', value: 'clear', description: 'Clear conversation history' },
-  { name: '/history', value: 'history', description: 'Show conversation history' },
+  // { name: '/history', value: 'history', description: 'Show conversation history' },
   { name: '/exit', value: 'exit', description: 'Exit the CLI' }
 ]
 
@@ -36,12 +36,11 @@ export async function handleHelp() {
 
 export async function handlePort() {
 
-  process.stdout.write(ansiEscapes.cursorDown(1))
-  process.stdout.write(ansiEscapes.eraseLine)
+  process.stdout.write(ansiEscapes.cursorUp(1))
+  process.stdout.write(ansiEscapes.eraseDown)
 
   const portStr = await promptInput({
-    message: 'Enter port number:',
-    defaultText: state.port.toString()
+    prompt: 'Enter port number: ',
   })
 
   const port = parseInt(portStr)
@@ -55,15 +54,11 @@ export async function handlePort() {
   console.log(chalk.yellow(`\n✓ Port changed to ${state.port}\n`))
 
   // Redraw entire screen
-  displayHeader()
-  displayConversation()
-  displayFooter()
+  resetDisplay()
 }
 
 export async function handleModel() {
   try {
-
-    process.stdout.write(ansiEscapes.cursorDown(1))
 
     const engines = await api.getEngines()
 
@@ -84,7 +79,9 @@ export async function handleModel() {
     const models = await api.getModels(selectedEngine)
 
     if (models.length === 0) {
-      console.log(chalk.red('\nNo models available\n'))
+      resetDisplay(() => {
+        console.log(chalk.red('\nNo models available\n'))
+      })
       return
     }
 
@@ -113,27 +110,19 @@ export async function handleModel() {
     console.log(chalk.yellow(`\n✓ Selected ${engineName} / ${modelName}\n`))
 
     // Redraw entire screen
-    displayHeader()
-    displayConversation()
-    displayFooter()
+    resetDisplay()
+
   } catch (error: any) {
     // Handle cancellation (Escape key)
     if (error?.message?.includes('cancelled')) {
-      // Clear terminal and redraw entire screen to clear selector
-      process.stdout.write(ansiEscapes.clearTerminal)
-      displayHeader()
-      displayConversation()
-      displayFooter()
+      resetDisplay()
       return
     }
-    // Clear and redraw entire screen with error message
-    process.stdout.write(ansiEscapes.clearTerminal)
-    displayHeader()
-    displayConversation()
-    console.log(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`))
-    console.log(chalk.dim('Make sure Witsy is running'))
-    console.log()
-    displayFooter()
+    resetDisplay(() => {
+      console.log(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`))
+      console.log(chalk.dim('Make sure Witsy is running'))
+      console.log()
+    })
   }
 }
 
@@ -142,9 +131,7 @@ export async function handleClear() {
   console.log(chalk.yellow('\n✓ Conversation history cleared\n'))
 
   // Redraw screen without messages
-  displayHeader()
-  displayConversation() // Will be empty
-  displayFooter()
+  resetDisplay()
 }
 
 export async function handleHistory() {
@@ -219,6 +206,11 @@ export async function handleCommand(commandInput: string) {
   await executeCommand(cmd.toLowerCase())
 }
 
+export function handleQuit() {
+  console.log(chalk.yellow('\nGoodbye! 👋\n'))
+  process.exit(0)
+}
+
 export async function executeCommand(command: string) {
   switch (command) {
     case 'help':
@@ -233,21 +225,18 @@ export async function executeCommand(command: string) {
     case 'clear':
       await handleClear()
       break
-    case 'history':
-      await handleHistory()
-      break
+    // case 'history':
+    //   await handleHistory()
+    //   break
     case 'exit':
     case 'quit':
-      console.log(chalk.yellow('\nGoodbye! 👋\n'))
-      process.exit(0)
+      handleQuit()
       break
     default:
-      process.stdout.write(ansiEscapes.cursorSavePosition)
-      console.log(chalk.red(`\nUnknown command: /${command}`))
-      console.log(chalk.dim('Type /help for available commands\n'))
-      process.stdout.write(ansiEscapes.cursorRestorePosition)
-      process.stdout.write(ansiEscapes.cursorUp(1))
-      process.stdout.write(ansiEscapes.eraseLine)
+      resetDisplay(() => {
+        console.log(chalk.red(`\nUnknown command: /${command}`))
+        console.log(chalk.dim('Type /help for available commands\n'))
+      })
 
   }
 }
@@ -277,7 +266,5 @@ export async function initialize() {
     state.model = ''
   }
 
-  displayHeader()
-  displayConversation() // Will be empty initially
-  displayFooter() // Print top separator, prompt will appear below
+  resetDisplay()
 }

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import chalk from 'chalk'
-import { handleCommand, handleMessage, initialize, COMMANDS } from './cli/commands'
-import { clearFooter, displayFooter } from './cli/display'
+import { handleCommand, handleMessage, handleQuit, initialize, COMMANDS } from './cli/commands'
+import { clearFooter, displayFooter, resetDisplay } from './cli/display'
 import { promptInput } from './cli/input'
 import { selectOption } from './cli/select'
 import { state } from './cli/state'
@@ -16,28 +16,22 @@ async function main() {
 
   await initialize()
 
-  // Track first prompt to show default text
-  let isFirstPrompt = true
-
   // Main input loop
   while (true) {
+    
     try {
       // Top separator is already visible from init or previous iteration
       // Prompt will appear below it
       const userInput = await promptInput({
-        message: '>',
-        defaultText: isFirstPrompt ? 'Try "tell me a joke"' : undefined
+        prompt: '> ',
       })
 
       const trimmed = userInput.trim()
 
       if (!trimmed) {
-        displayFooter()
+        resetDisplay()
         continue
       }
-
-      // Clear the first prompt flag
-      isFirstPrompt = false
 
       // After input() returns, print bottom separator and status
       // Skip for now - displayFooter already handles the full footer
@@ -85,7 +79,9 @@ async function main() {
 
       // Print footer for next prompt
       displayFooter()
+    
     } catch (error) {
+      
       if (error instanceof Error && error.message.includes('User force closed')) {
         clearFooter()
         console.log(chalk.yellow('\n\n Goodbye! 👋\n'))
@@ -93,15 +89,16 @@ async function main() {
       }
       console.error(chalk.red(`\nError: ${error instanceof Error ? error.message : 'Unknown error'}\n`))
       // Print footer for next prompt after error
+      
       displayFooter()
+    
     }
   }
 }
 
 // Handle Ctrl+C gracefully
 process.on('SIGINT', () => {
-  console.log(chalk.yellow('\n\nGoodbye! 👋\n'))
-  process.exit(0)
+  handleQuit()
 })
 
 // Run

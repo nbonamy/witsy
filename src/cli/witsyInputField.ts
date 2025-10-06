@@ -30,14 +30,10 @@
 
 "use strict" ;
 
-
-
 import NextGenEvents from 'nextgen-events' ;
 import Promise from 'seventh' ;
 import * as string from 'string-kit' ;
 import autoComplete from 'terminal-kit/lib/autoComplete.js' ;
-
-
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const defaultKeyBindings = {
@@ -88,8 +84,6 @@ const witsyKeyBindings = {
 
 
 const defaultTokenRegExp = /\S+/g ;
-
-
 
 /*
 	inputField( [options] , callback )
@@ -577,9 +571,7 @@ export function witsyInputField( options , callback ) {
 	// Helper function to call onTextChange callback
 	var callOnTextChange = ( key ) => {
 		if ( options.onTextChange ) {
-			computeAllCoordinate() ;
-			var lineCount = end.y - start.y + 1 ;
-			options.onTextChange( inputs[ inputIndex ].join( '' ) , key , lineCount ) ;
+			options.onTextChange( inputs[ inputIndex ].join( '' ), key) ;
 		}
 	} ;
 
