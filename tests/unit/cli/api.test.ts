@@ -84,4 +84,132 @@ describe('WitsyAPI', () => {
 
     await expect(api.getConfig()).rejects.toThrow('HTTP 404')
   })
+
+  test('connectWithTimeout returns true on successful connection', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+    } as Response)
+
+    const result = await api.connectWithTimeout(4321, 2000)
+    expect(result).toBe(true)
+    expect(fetch).toHaveBeenCalledWith('http://localhost:4321/api/cli/config', expect.any(Object))
+  })
+
+  test('connectWithTimeout returns false on timeout', async () => {
+    vi.mocked(fetch).mockImplementationOnce(() =>
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 100))
+    )
+
+    const result = await api.connectWithTimeout(4321, 50)
+    expect(result).toBe(false)
+  })
+
+  test('connectWithTimeout returns false on network error', async () => {
+    vi.mocked(fetch).mockRejectedValueOnce(new Error('Network error'))
+
+    const result = await api.connectWithTimeout(4321, 2000)
+    expect(result).toBe(false)
+  })
+
+  test('complete streams response chunks', async () => {
+    const chunks: string[] = []
+    const mockChunks = [
+      'data: {"type":"content","text":"Hello"}\n',
+      'data: {"type":"content","text":" world"}\n',
+      'data: [DONE]\n'
+    ]
+
+    // Mock ReadableStream
+    const encoder = new TextEncoder()
+    let chunkIndex = 0
+
+    const mockReader = {
+      read: vi.fn(async () => {
+        if (chunkIndex < mockChunks.length) {
+          const value = encoder.encode(mockChunks[chunkIndex++])
+          return { value, done: false }
+        }
+        return { value: undefined, done: true }
+      })
+    }
+
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      body: {
+        getReader: () => mockReader
+      } as any
+    } as Response)
+
+    await api.complete(
+      [{ role: 'user', content: 'test' }],
+      (payload) => chunks.push(payload)
+    )
+
+    expect(chunks).toHaveLength(2)
+    expect(chunks[0]).toBe('{"type":"content","text":"Hello"}')
+    expect(chunks[1]).toBe('{"type":"content","text":" world"}')
+  })
+
+  test('complete handles abort signal', async () => {
+    const controller = new AbortController()
+
+    vi.mocked(fetch).mockRejectedValueOnce(new DOMException('Aborted', 'AbortError'))
+
+    controller.abort()
+
+    await expect(
+      api.complete(
+        [{ role: 'user', content: 'test' }],
+        () => {},
+        controller.signal
+      )
+    ).rejects.toThrow()
+  })
+
+  test('complete throws on missing response body', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      body: null
+    } as Response)
+
+    await expect(
+      api.complete([{ role: 'user', content: 'test' }], () => {})
+    ).rejects.toThrow('No response body')
+  })
+
+  test('saveConversation makes correct API call', async () => {
+    const mockChat = {
+      uuid: 'test-uuid',
+      title: 'Test Chat',
+      messages: []
+    }
+
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ chatId: 'new-chat-id' })
+    } as Response)
+
+    const result = await api.saveConversation(mockChat as any)
+
+    expect(fetch).toHaveBeenCalledWith(
+      'http://localhost:4321/api/conversations',
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat: mockChat })
+      })
+    )
+    expect(result).toBe('new-chat-id')
+  })
+
+  test('saveConversation handles errors', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: false,
+      status: 500
+    } as Response)
+
+    await expect(
+      api.saveConversation({} as any)
+    ).rejects.toThrow('HTTP 500')
+  })
 })

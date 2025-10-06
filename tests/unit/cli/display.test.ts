@@ -1,9 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { displayHeader, displayFooter, displayConversation } from '../../../src/cli/display'
+import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions } from '../../../src/cli/display'
 import { state } from '../../../src/cli/state'
 import { VirtualTerminal } from './VirtualTerminal'
-import Chat from '../../../src/models/chat'
-import Message from '../../../src/models/message'
+import { ChatCli, MessageCli } from '../../../src/cli/models'
 
 describe('CLI Display Requirements', () => {
   let terminal: VirtualTerminal
@@ -41,7 +40,7 @@ describe('CLI Display Requirements', () => {
     state.port = 8090
     state.engine = 'openai'
     state.model = 'gpt-4'
-    state.chat = new Chat('CLI Session')
+    state.chat = new ChatCli('CLI Session')
     state.chat.uuid = ''
   })
 
@@ -92,7 +91,7 @@ openai gpt-4`
   describe('Requirement: After User Message', () => {
     test('should show layout with user message', async () => {
       // Arrange: User submitted "hello"
-      const userMsg = new Message('user', 'hello')
+      const userMsg = new MessageCli('user', 'hello')
       state.chat.addMessage(userMsg)
 
       // Act: Display after user message
@@ -129,8 +128,8 @@ openai gpt-4                                                          1 messages
   describe('Requirement: After Conversation', () => {
     test('should show layout with full conversation', async () => {
       // Arrange: User said "hello", assistant replied "Hello how are you?"
-      const userMsg = new Message('user', 'hello')
-      const assistantMsg = new Message('assistant', 'Hello how are you?')
+      const userMsg = new MessageCli('user', 'hello')
+      const assistantMsg = new MessageCli('assistant', 'Hello how are you?')
       state.chat.addMessage(userMsg)
       state.chat.addMessage(assistantMsg)
 
@@ -172,10 +171,10 @@ openai gpt-4                                                          2 messages
   describe('Requirement: Multiple Messages', () => {
     test('should show layout with multiple exchanges', async () => {
       // Arrange: Multiple message exchanges
-      state.chat.addMessage(new Message('user', 'Tell me a joke'))
-      state.chat.addMessage(new Message('assistant', 'Why did the chicken cross the road?'))
-      state.chat.addMessage(new Message('user', 'Why?'))
-      state.chat.addMessage(new Message('assistant', 'To get to the other side!'))
+      state.chat.addMessage(new MessageCli('user', 'Tell me a joke'))
+      state.chat.addMessage(new MessageCli('assistant', 'Why did the chicken cross the road?'))
+      state.chat.addMessage(new MessageCli('user', 'Why?'))
+      state.chat.addMessage(new MessageCli('assistant', 'To get to the other side!'))
 
       // Act
       displayHeader()
@@ -209,8 +208,8 @@ openai gpt-4                                             4 messages · type /sav
   describe('Requirement: Save Status in Footer', () => {
     test('should show auto-saving status when chat is saved', async () => {
       // Arrange: Saved chat with UUID
-      state.chat.addMessage(new Message('user', 'hello'))
-      state.chat.addMessage(new Message('assistant', 'hi there'))
+      state.chat.addMessage(new MessageCli('user', 'hello'))
+      state.chat.addMessage(new MessageCli('assistant', 'hi there'))
       state.chat.uuid = 'some-uuid-123'
 
       // Act
@@ -235,6 +234,367 @@ hi there
 openai gpt-4                                            2 messages · auto-saving`
 
       expect(terminal.getVisibleText()).toBe(expected)
+    })
+  })
+
+  describe('Requirement: Footer Repositioning for Multi-line Input', () => {
+    test('should move footer down when input wraps from 1 to 2 lines', () => {
+      // Arrange: Display initial layout with 1-line prompt
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      process.stdout.write('> ')  // Initial prompt
+
+      // Get initial cursor position (where prompt is)
+      const initialInputY = terminal.getCursorPosition().row
+
+      // Act: Simulate input wrapping to 2 lines
+      // When user types a long line that wraps, repositionFooter is called
+      repositionFooter(initialInputY, 1, 2)
+
+      // Assert: Footer should have moved down 1 line (prompt > was erased by repositionFooter)
+      const expected = `
+  ██  █  ██  Witsy CLI vdev
+  ██ ███ ██  AI Assistant · Command Line Interface
+   ███ ███   http://localhost:8090
+
+
+────────────────────────────────────────────────────────────────────────────────
+
+────────────────────────────────────────────────────────────────────────────────
+openai gpt-4`
+
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('should move footer down multiple lines for very long input', () => {
+      // Arrange: Initial display
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      process.stdout.write('> ')
+
+      const initialInputY = terminal.getCursorPosition().row
+
+      // Act: Simulate input wrapping to 3 lines (e.g., large paste)
+      repositionFooter(initialInputY, 1, 3)
+
+      // Assert: Footer should have moved down 2 lines (prompt was erased)
+      const expected = `
+  ██  █  ██  Witsy CLI vdev
+  ██ ███ ██  AI Assistant · Command Line Interface
+   ███ ███   http://localhost:8090
+
+
+────────────────────────────────────────────────────────────────────────────────
+
+
+────────────────────────────────────────────────────────────────────────────────
+openai gpt-4`
+
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('should move footer up when input shrinks from 2 to 1 line', () => {
+      // Arrange: Start with 2-line input (footer already moved down)
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      const initialInputY = terminal.getCursorPosition().row
+
+      // First move footer down for 2-line input
+      repositionFooter(initialInputY, 1, 2)
+
+      // Act: User deletes text, input shrinks to 1 line
+      repositionFooter(initialInputY, 2, 1)
+
+      // Assert: Footer should move back up to original position (prompt was erased)
+      const expected = `
+  ██  █  ██  Witsy CLI vdev
+  ██ ███ ██  AI Assistant · Command Line Interface
+   ███ ███   http://localhost:8090
+
+
+────────────────────────────────────────────────────────────────────────────────
+────────────────────────────────────────────────────────────────────────────────
+openai gpt-4`
+
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('should preserve footer content when repositioning', () => {
+      // Arrange: Display with existing conversation
+      const userMsg = new MessageCli('user', 'hello')
+      const assistantMsg = new MessageCli('assistant', 'hi')
+      state.chat.addMessage(userMsg)
+      state.chat.addMessage(assistantMsg)
+
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      const initialInputY = terminal.getCursorPosition().row
+
+      // Act: Reposition footer
+      repositionFooter(initialInputY, 1, 2)
+
+      // Assert: Footer content (message count) should be preserved
+      expect(terminal.contains('2 messages')).toBe(true)
+      expect(terminal.contains('openai gpt-4')).toBe(true)
+    })
+
+    test('should handle edge case of no line count change', () => {
+      // Arrange: Initial display
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      const initialInputY = terminal.getCursorPosition().row
+      process.stdout.write('> ')
+
+      // Act: Call repositionFooter with same line count (shouldn't happen in practice, but test defensiveness)
+      repositionFooter(initialInputY, 1, 1)
+
+      // Assert: Footer content preserved even though prompt erased (repositionFooter always erases/redraws)
+      expect(terminal.contains('openai gpt-4')).toBe(true)
+      expect(terminal.contains('────────────────')).toBe(true)
+    })
+  })
+
+  describe('Requirement: Dynamic Footer Text Updates', () => {
+    test('should update footer text during escape hint with 1-line input', () => {
+      // Arrange: Initial display
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      const initialInputY = terminal.getCursorPosition().row
+      process.stdout.write('> ')
+
+      // Act: User presses escape once, footer text changes
+      updateFooterRightText(initialInputY, 1, 'Press Escape again to clear')
+
+      // Assert: Footer text updated, position unchanged (prompt was erased by updateFooterRightText)
+      expect(terminal.contains('Press Escape again to clear')).toBe(true)
+      expect(terminal.contains('openai gpt-4')).toBe(true)
+
+      const expected = `
+  ██  █  ██  Witsy CLI vdev
+  ██ ███ ██  AI Assistant · Command Line Interface
+   ███ ███   http://localhost:8090
+
+
+────────────────────────────────────────────────────────────────────────────────
+────────────────────────────────────────────────────────────────────────────────
+openai gpt-4                                         Press Escape again to clear`
+
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('should update footer text with multi-line input', () => {
+      // Arrange: Display with 2-line input
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      const initialInputY = terminal.getCursorPosition().row
+
+      // Move footer for 2-line input
+      repositionFooter(initialInputY, 1, 2)
+
+      // Act: Update footer text for escape hint
+      updateFooterRightText(initialInputY, 2, 'Press Escape again to clear')
+
+      // Assert: Footer text updated at correct position (prompt was erased)
+      expect(terminal.contains('Press Escape again to clear')).toBe(true)
+
+      const expected = `
+  ██  █  ██  Witsy CLI vdev
+  ██ ███ ██  AI Assistant · Command Line Interface
+   ███ ███   http://localhost:8090
+
+
+────────────────────────────────────────────────────────────────────────────────
+
+────────────────────────────────────────────────────────────────────────────────
+openai gpt-4                                         Press Escape again to clear`
+
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('should restore default footer text after escape timeout', () => {
+      // Arrange: Footer showing escape hint
+      state.chat.addMessage(new MessageCli('user', 'test'))
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      const initialInputY = terminal.getCursorPosition().row
+      process.stdout.write('> ')
+
+      // Show escape hint
+      updateFooterRightText(initialInputY, 1, 'Press Escape again to clear')
+
+      // Act: Timeout fires, restore default text
+      updateFooterRightText(initialInputY, 1)  // No text param = use default
+
+      // Assert: Default text restored (message count)
+      expect(terminal.contains('1 messages')).toBe(true)
+      expect(terminal.contains('Press Escape again to clear')).toBe(false)
+    })
+  })
+
+  describe('Requirement: resetDisplay', () => {
+    test('should redraw entire screen with header, conversation, and footer', () => {
+      // Arrange: State with messages
+      state.chat.addMessage(new MessageCli('user', 'hello'))
+      state.chat.addMessage(new MessageCli('assistant', 'hi'))
+
+      // Act
+      resetDisplay()
+
+      // Assert: Complete screen layout
+      expect(terminal.contains('Witsy CLI')).toBe(true)
+      expect(terminal.contains('> hello')).toBe(true)
+      expect(terminal.contains('hi')).toBe(true)
+      expect(terminal.contains('openai gpt-4')).toBe(true)
+      expect(terminal.contains('2 messages')).toBe(true)
+    })
+
+    test('should call optional beforeFooter callback', () => {
+      // Arrange
+      let callbackCalled = false
+      const beforeFooter = () => {
+        callbackCalled = true
+        console.log('Custom content')
+      }
+
+      // Act
+      resetDisplay(beforeFooter)
+
+      // Assert
+      expect(callbackCalled).toBe(true)
+      expect(terminal.contains('Custom content')).toBe(true)
+    })
+  })
+
+  describe('Requirement: clearFooter', () => {
+    test('should erase footer from screen', () => {
+      // Arrange: Display with footer
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      process.stdout.write('> test')
+
+      // Verify footer is there
+      expect(terminal.contains('openai gpt-4')).toBe(true)
+
+      // Act: Clear footer
+      clearFooter()
+
+      // Assert: Footer content erased
+      expect(terminal.contains('openai gpt-4')).toBe(false)
+    })
+  })
+
+  describe('Requirement: eraseLines', () => {
+    test('should erase specified number of lines', () => {
+      // Arrange: Write multiple lines
+      console.log('line 1')
+      console.log('line 2')
+      console.log('line 3')
+
+      // Act: Erase 2 lines
+      eraseLines(2)
+
+      // Assert: Lines erased
+      expect(terminal.contains('line 2')).toBe(false)
+      expect(terminal.contains('line 3')).toBe(false)
+    })
+  })
+
+  describe('Requirement: displayCommandSuggestions', () => {
+    test('should display command list with descriptions', () => {
+      // Arrange: Commands to suggest
+      const commands = [
+        { name: '/help', description: 'Show help' },
+        { name: '/exit', description: 'Exit CLI' }
+      ]
+
+      displayHeader()
+      displayConversation()
+      displayFooter()
+
+      // Act
+      const linesRendered = displayCommandSuggestions(commands, 0)
+
+      // Assert: Commands displayed
+      expect(terminal.contains('/help')).toBe(true)
+      expect(terminal.contains('Show help')).toBe(true)
+      expect(terminal.contains('/exit')).toBe(true)
+      expect(terminal.contains('Exit CLI')).toBe(true)
+      expect(linesRendered).toBe(3) // blank line + 2 commands
+    })
+
+    test('should highlight selected command', () => {
+      // Arrange
+      const commands = [
+        { name: '/help', description: 'Show help' },
+        { name: '/exit', description: 'Exit CLI' }
+      ]
+
+      displayHeader()
+      displayConversation()
+      displayFooter()
+
+      // Act: Select second command
+      displayCommandSuggestions(commands, 1)
+
+      // Assert: Both commands displayed (highlighting is via ANSI codes)
+      expect(terminal.contains('/help')).toBe(true)
+      expect(terminal.contains('/exit')).toBe(true)
+    })
+  })
+
+  describe('Requirement: displayConversation with edge cases', () => {
+    test('should display empty conversation with just blank line', () => {
+      // Arrange: Empty conversation
+      state.chat.messages = []
+
+      // Act
+      displayHeader()
+      displayConversation()
+
+      // Assert: Just header and blank line, no messages
+      const lines = terminal.getVisibleText().split('\n')
+      expect(lines.length).toBeLessThan(10) // Header is ~5 lines
+      expect(terminal.contains('>')).toBe(false)
+    })
+
+    test('should display long message that wraps', () => {
+      // Arrange: Very long message
+      const longMessage = 'a'.repeat(200)
+      state.chat.addMessage(new MessageCli('user', longMessage))
+
+      // Act
+      displayHeader()
+      displayConversation()
+
+      // Assert: Message displayed (wrapping handled by terminal)
+      expect(terminal.contains(longMessage.slice(0, 50))).toBe(true)
+    })
+
+    test('should display multiple exchanges correctly', () => {
+      // Arrange: Multiple back-and-forth messages
+      state.chat.addMessage(new MessageCli('user', 'first'))
+      state.chat.addMessage(new MessageCli('assistant', 'response1'))
+      state.chat.addMessage(new MessageCli('user', 'second'))
+      state.chat.addMessage(new MessageCli('assistant', 'response2'))
+
+      // Act
+      displayHeader()
+      displayConversation()
+
+      // Assert: All messages present
+      expect(terminal.contains('> first')).toBe(true)
+      expect(terminal.contains('response1')).toBe(true)
+      expect(terminal.contains('> second')).toBe(true)
+      expect(terminal.contains('response2')).toBe(true)
     })
   })
 })

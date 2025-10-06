@@ -32,7 +32,7 @@ Witsy CLI is a terminal-based interface for the Witsy AI assistant, providing a 
 ### Architecture Design
 
 **Core Components:**
-- `cli.ts` - Main REPL loop, orchestrates input/command flow
+- `main.ts` - Main REPL loop, orchestrates input/command flow
 - `commands.ts` - Command handlers and business logic
 - `api.ts` - HTTP client for Witsy backend communication
 - `input.ts` - Custom input field with history and escape handling
