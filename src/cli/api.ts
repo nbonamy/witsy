@@ -50,7 +50,7 @@ export class WitsyAPI {
     return data.models
   }
 
-  async complete(thread: Array<{ role: string; content: string }>, onChunk: (text: string) => void): Promise<void> {
+  async complete(thread: Array<{ role: string; content: string }>, onChunk: (text: string) => void, signal?: AbortSignal): Promise<void> {
     const response = await fetch(`${this.baseUrl()}/api/complete`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -60,7 +60,8 @@ export class WitsyAPI {
         model: state.model,
         noMarkdown: true,
         thread
-      })
+      }),
+      signal
     })
 
     if (!response.ok) throw new Error(`HTTP ${response.status}`)

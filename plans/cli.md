@@ -24,6 +24,7 @@ Witsy CLI is a terminal-based interface for the Witsy AI assistant, providing a 
 - **Input History**: UP/DOWN arrow navigation through previous prompts
 - **Tool Call Visualization**: Blue/green indicators for tool execution
 - **Smart Display**: Auto-adjusts menu height, double-escape to clear, save status in footer ("type /save" hint at 4+ messages, "auto-saving" when saved)
+- **Stream Cancellation**: Press Escape during streaming to cancel, partial responses are saved
 - **Persistent Config**: CLI-specific settings in `cli.json` (engine, model, input history)
 
 ### Architecture Design
@@ -105,90 +106,11 @@ CLI <--(HTTP)--> Witsy Backend (port 8090)
 
 ---
 
-### 2. Stop Streaming with Escape
-
-**Problem**: No way to cancel long-running completions.
-
-**Requirements:**
-- Escape key during streaming stops the request
-- Shows "Response cancelled by user" message
-- Partial response is preserved in history
-- Display returns to normal prompt state
-
-**Implementation:**
-
-**api.ts:**
-- Make `complete()` cancellable:
-  ```typescript
-  async complete(
-    thread: Array<{role: string, content: string}>,
-    onChunk: (text: string) => void,
-    signal?: AbortSignal  // Add abort signal
-  ): Promise<void>
-  ```
-- Pass signal to fetch:
-  ```typescript
-  const response = await fetch(`${this.baseUrl()}/api/complete`, {
-    method: 'POST',
-    signal,  // Add this
-    // ...
-  })
-  ```
-
-**commands.ts:**
-- Update `handleMessage()`:
-  ```typescript
-  const controller = new AbortController()
-  let cancelled = false
-
-  // Set up escape key listener
-  const escapeListener = (key: string) => {
-    if (key === '\x1b') {  // Escape
-      cancelled = true
-      controller.abort()
-    }
-  }
-  process.stdin.on('data', escapeListener)
-
-  try {
-    await api.complete(state.history, onChunk, controller.signal)
-  } catch (error) {
-    if (error.name === 'AbortError') {
-      console.log(chalk.yellow('\n[Response cancelled]'))
-    } else {
-      throw error
-    }
-  } finally {
-    process.stdin.removeListener('data', escapeListener)
-  }
-
-  // Keep partial response in history
-  if (response.length > 0) {
-    state.history.push({ role: 'assistant', content: response })
-  } else if (cancelled) {
-    state.history.pop()  // Remove user message if no response
-  }
-  ```
-
-**Alternative Approach:**
-- Use terminal-kit's key grabbing instead of raw stdin listener
-- May be cleaner but need to ensure it doesn't interfere with input field
-
-**Testing:**
-- Start long completion, press Escape immediately
-- Press Escape mid-response, verify partial text saved
-- Press Escape multiple times (shouldn't error)
-- Verify next prompt works normally after cancel
-
----
-
 ## Future Enhancements (Not Prioritized)
 
 - `/retry` - Resend last message
-- `/history` - Show conversation stats and management
-- `/export markdown` - Save conversation to file
-- Session persistence (auto-save/restore)
-- Conversation branching
+- `'/agent'` - To run agent
+- `'/expert'` - To select an expert
 - Templates/presets for common prompts
 - Search in conversation history
 - Configurable keybindings (vim/emacs modes)
