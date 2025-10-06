@@ -28,8 +28,8 @@
       "type": "node",
       "request": "launch",
       "name": "CLI",
-      "program": "${workspaceFolder}/node_modules/.bin/ts-node",
-      "args": [ "./src/cli/main.ts" ],
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["ts-node", "./src/cli/main.ts"],
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "console": "integratedTerminal"
     }
