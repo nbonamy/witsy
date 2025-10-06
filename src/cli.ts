@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import chalk from 'chalk'
-import { handleCommand, handleMessage, handleQuit, initialize, COMMANDS } from './cli/commands'
+import { handleCommand, handleMessage, handleQuit, handleClear, initialize, COMMANDS } from './cli/commands'
 import { clearFooter, displayFooter, resetDisplay } from './cli/display'
 import { promptInput } from './cli/input'
 import { selectOption } from './cli/select'
@@ -25,6 +25,21 @@ async function main() {
       const userInput = await promptInput({
         prompt: '> ',
       })
+
+      // Handle Ctrl+C (always exit)
+      if (userInput === '__CTRL_C__') {
+        handleQuit()
+      }
+
+      // Handle Ctrl+D (clear if messages exist, else exit)
+      if (userInput === '__CTRL_D__') {
+        if (state.chat.messages.length > 0) {
+          await handleClear()
+        } else {
+          handleQuit()
+        }
+        continue
+      }
 
       const trimmed = userInput.trim()
 
@@ -87,17 +102,9 @@ async function main() {
       displayFooter()
     
     } catch (error) {
-      
-      if (error instanceof Error && error.message.includes('User force closed')) {
-        clearFooter()
-        console.log(chalk.yellow('\n\n Goodbye! 👋\n'))
-        process.exit(0)
-      }
       console.error(chalk.red(`\nError: ${error instanceof Error ? error.message : 'Unknown error'}\n`))
       // Print footer for next prompt after error
-      
       displayFooter()
-    
     }
   }
 }
