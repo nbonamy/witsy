@@ -15,11 +15,12 @@ Witsy CLI is a terminal-based interface for the Witsy AI assistant, providing a 
 ### Current Features
 
 - **Interactive Chat**: Streaming completions with conversation history
-- **Command System**: `/help`, `/model`, `/port`, `/clear`, `/exit`
+- **Command System**: `/help`, `/port`, `/model`, `/clear`, `/exit`
+- **Connection Management**: Short timeout on startup, exits immediately if cannot connect or HTTP endpoints disabled
 - **Filterable Menus**: Type to filter commands and model selections
 - **Input History**: UP/DOWN arrow navigation through previous prompts
 - **Tool Call Visualization**: Blue/green indicators for tool execution
-- **Smart Display**: Auto-adjusts menu height, double-escape to clear
+- **Smart Display**: Auto-adjusts menu height, double-escape to clear, connection status in footer
 - **Persistent Config**: CLI-specific settings in `cli.json` (engine, model, input history)
 
 ### Architecture Design
@@ -53,26 +54,7 @@ CLI <--(HTTP)--> Witsy Backend (port 8090)
 
 ## TODO List
 
-### 1. Connection Error Management
-
-**Problem**: Generic error messages, no reconnection flow, slow startup on failed connection.
-
-**Requirements:**
-- Short timeout on initial connection (e.g., 2 seconds)
-- Clear error message: "Witsy not running. Start Witsy desktop app and use /connect command"
-- `/port` command validates connection to new port before accepting
-- `/connect` command to retry connection (test `/api/cli/config`)
-
-**Implementation:**
-- Add `connectWithTimeout(port: number, timeout: number): Promise<boolean>` to `api.ts`
-- Update `initialize()` to use short timeout, show helpful error
-- Update `handlePort()` to test connection before saving
-- Add `handleConnect()` command that calls `connectWithTimeout()` and updates state
-- Add connection status indicator in footer (connected/disconnected)
-
----
-
-### 2. Save Conversation Command
+### 1. Save Conversation Command
 
 **Problem**: Conversations are ephemeral, lost on `/clear` or CLI exit.
 
@@ -111,7 +93,7 @@ CLI <--(HTTP)--> Witsy Backend (port 8090)
 
 ---
 
-### 3. Multiline Input Support
+### 2. Multiline Input Support
 
 **Problem**: Single-line input is limiting for longer prompts, can't paste multi-line text easily.
 
@@ -158,7 +140,7 @@ CLI <--(HTTP)--> Witsy Backend (port 8090)
 
 ---
 
-### 4. Stop Streaming with Escape
+### 3. Stop Streaming with Escape
 
 **Problem**: No way to cancel long-running completions.
 

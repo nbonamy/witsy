@@ -50,8 +50,47 @@ export async function handlePort() {
     return
   }
 
+  // Test connection to new port
+  console.log(chalk.dim(`\nTesting connection to port ${port}...`))
+  const connected = await api.connectWithTimeout(port, 2000)
+
+  if (!connected) {
+    console.log(chalk.red(`\n✗ Cannot connect to Witsy on port ${port}`))
+    console.log(chalk.dim('  Make sure Witsy is running on that port\n'))
+    displayFooter()
+    return
+  }
+
+  // Update port and fetch new config
   state.port = port
-  console.log(chalk.yellow(`\n✓ Port changed to ${state.port}\n`))
+
+  try {
+    const config = await api.getConfig()
+
+    // Check if HTTP endpoints are enabled
+    if (!config.enableHttpEndpoints) {
+      console.log(chalk.red('\n✗ HTTP endpoints are disabled'))
+      console.log(chalk.dim('  Enable HTTP endpoints in Witsy settings to use the CLI'))
+      console.log(chalk.dim('  Settings > Advanced > Enable HTTP endpoints\n'))
+      displayFooter()
+      return
+    }
+
+    state.userDataPath = config.userDataPath
+    state.engine = config.engine
+    state.model = config.model
+
+    // Update CLI config
+    if (state.cliConfig) {
+      state.cliConfig.engine = config.engine
+      state.cliConfig.model = config.model
+      saveCliConfig(state.userDataPath, state.cliConfig)
+    }
+
+    console.log(chalk.yellow(`\n✓ Connected to Witsy on port ${state.port}\n`))
+  } catch {
+    console.log(chalk.red(`\n✗ Error fetching config from port ${port}\n`))
+  }
 
   // Redraw entire screen
   resetDisplay()
@@ -252,8 +291,34 @@ export async function executeCommand(command: string) {
 }
 
 export async function initialize() {
+  // Try to connect with short timeout
+  const connected = await api.connectWithTimeout(state.port, 2000)
+
+  if (!connected) {
+    state.engine = ''
+    state.model = ''
+    resetDisplay(() => {
+      console.log(chalk.red('\n✗ Cannot connect to Witsy'))
+      console.log(chalk.dim('  Make sure Witsy desktop app is running on port ' + state.port + '\n'))
+    })
+    process.stdout.write(ansiEscapes.eraseDown)
+    process.exit(1)
+  }
+
   try {
     const config = await api.getConfig()
+
+    // Check if HTTP endpoints are enabled
+    if (!config.enableHttpEndpoints) {
+      resetDisplay(() => {
+        console.log(chalk.red('\n✗ HTTP endpoints are disabled'))
+        console.log(chalk.dim('  Enable HTTP endpoints in Witsy settings to use the CLI'))
+        console.log(chalk.dim('  Settings > General > Enable HTTP endpoints\n'))
+      })
+      process.stdout.write(ansiEscapes.eraseDown)
+      process.exit(1)
+    }
+
     state.userDataPath = config.userDataPath
 
     // Load CLI config from disk
@@ -271,7 +336,6 @@ export async function initialize() {
       saveCliConfig(state.userDataPath, state.cliConfig)
     }
   } catch {
-    // Silently fail - will show connecting status
     state.engine = ''
     state.model = ''
   }

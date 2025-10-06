@@ -87,9 +87,8 @@ export function updateFooterRightText(text: string, lineOffset: number = 1) {
   const grayText = chalk.rgb(139, 148, 156)
 
   const leftText = state.engine && state.model
-    ? `[${state.engine}: ${state.model}]`
+    ? `${state.engine} ${state.model}`
     : '[connecting...]'
-
   const padding = Math.max(0, terminalWidth - leftText.length - text.length)
 
   // Save cursor position

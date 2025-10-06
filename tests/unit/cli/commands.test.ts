@@ -84,9 +84,11 @@ describe('CLI Initialization', () => {
     const mockApiConfig = {
       engine: 'anthropic',
       model: 'claude-3',
-      userDataPath: tempDir
+      userDataPath: tempDir,
+      enableHttpEndpoints: true
     }
 
+    vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
     vi.mocked(WitsyAPI.prototype.getConfig).mockResolvedValue(mockApiConfig)
 
     // Create CLI config with different engine/model
@@ -117,9 +119,11 @@ describe('CLI Initialization', () => {
     const mockApiConfig = {
       engine: 'anthropic',
       model: 'claude-3',
-      userDataPath: tempDir
+      userDataPath: tempDir,
+      enableHttpEndpoints: true
     }
 
+    vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
     vi.mocked(WitsyAPI.prototype.getConfig).mockResolvedValue(mockApiConfig)
 
     // No CLI config file exists

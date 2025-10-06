@@ -7,11 +7,32 @@ export class WitsyAPI {
     return `http://localhost:${state.port}`
   }
 
-  async getConfig(): Promise<{ engine: string; model: string; userDataPath: string }> {
+  async connectWithTimeout(port: number, timeoutMs: number): Promise<boolean> {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), timeoutMs)
+
+    try {
+      const response = await fetch(`http://localhost:${port}/api/cli/config`, {
+        signal: controller.signal
+      })
+      clearTimeout(timeout)
+      return response.ok
+    } catch {
+      clearTimeout(timeout)
+      return false
+    }
+  }
+
+  async getConfig(): Promise<{ engine: string; model: string; userDataPath: string; enableHttpEndpoints: boolean }> {
     const response = await fetch(`${this.baseUrl()}/api/cli/config`)
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const data = await response.json()
-    return { engine: data.engine, model: data.model, userDataPath: data.userDataPath }
+    return {
+      engine: data.engine,
+      model: data.model,
+      userDataPath: data.userDataPath,
+      enableHttpEndpoints: data.enableHttpEndpoints
+    }
   }
 
   async getEngines(): Promise<Array<{ id: string; name: string }>> {
