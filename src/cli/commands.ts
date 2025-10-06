@@ -18,6 +18,7 @@ export const COMMANDS = [
   { name: '/help', value: 'help', description: 'Show this help message' },
   { name: '/port', value: 'port', description: 'Change server port' },
   { name: '/model', value: 'model', description: 'Select engine and model' },
+  { name: '/title', value: 'title', description: 'Set conversation title' },
   { name: '/save', value: 'save', description: 'Save conversation to workspace' },
   { name: '/clear', value: 'clear', description: 'Clear conversation history' },
   // { name: '/history', value: 'history', description: 'Show conversation history' },
@@ -178,6 +179,42 @@ export async function handleModel() {
   }
 }
 
+export async function handleTitle() {
+
+  process.stdout.write(ansiEscapes.cursorUp(1))
+  process.stdout.write(ansiEscapes.eraseDown)
+
+  const title = await promptInput({
+    prompt: 'Enter conversation title: ',
+  })
+
+  const trimmedTitle = title.trim()
+  if (!trimmedTitle) {
+    console.log(chalk.red('\nTitle cannot be empty\n'))
+    displayFooter()
+    return
+  }
+
+  // Update chat title
+  state.chat.title = trimmedTitle
+
+  // Auto-save if chat is already saved
+  if (state.chat.uuid) {
+    try {
+      await api.saveConversation(state.chat)
+      console.log(chalk.yellow(`\n✓ Title updated and saved: "${trimmedTitle}"\n`))
+    } catch {
+      console.log(chalk.yellow(`\n✓ Title updated: "${trimmedTitle}"`))
+      console.log(chalk.red('  (Auto-save failed)\n'))
+    }
+  } else {
+    console.log(chalk.yellow(`\n✓ Title updated: "${trimmedTitle}"\n`))
+  }
+
+  // Redraw entire screen
+  resetDisplay()
+}
+
 export async function handleClear() {
   state.chat = new Chat('CLI Session')
   state.chat.uuid = ''
@@ -329,6 +366,9 @@ export async function executeCommand(command: string) {
       break
     case 'model':
       await handleModel()
+      break
+    case 'title':
+      await handleTitle()
       break
     case 'save':
       await handleSave()
