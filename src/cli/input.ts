@@ -1,7 +1,7 @@
 // Custom input handler using terminal-kit's witsyInputField
 
 import terminalKit from 'terminal-kit'
-import { getFooterRightText, repositionFooter, resetDisplay, updateFooterRightText } from './display'
+import { repositionFooter, resetDisplay, updateFooterRightText } from './display'
 import { state } from './state'
 import { witsyInputField } from './witsyInputField'
 
@@ -29,7 +29,7 @@ export async function promptInput(options: InputOptions): Promise<string> {
       let escapePressed = false
       let escapeTimer: NodeJS.Timeout | null = null
       let controller: any = null
-      const initialCursorY = y
+      const initialInputY = y
 
       // Show prompt
       const promptText = options.prompt
@@ -71,8 +71,7 @@ export async function promptInput(options: InputOptions): Promise<string> {
 
           // ONLY update when line count changes
           if (calculatedLineCount !== previousLineCount) {
-            const delta = calculatedLineCount - previousLineCount
-            repositionFooter(delta, calculatedLineCount, initialCursorY)
+            repositionFooter(initialInputY, previousLineCount, calculatedLineCount)
             previousLineCount = calculatedLineCount
           }
 
@@ -115,13 +114,13 @@ export async function promptInput(options: InputOptions): Promise<string> {
           } else {
             // First escape - show message
             escapePressed = true
-            updateFooterRightText('Press Escape again to clear', previousLineCount)
+            updateFooterRightText(initialInputY, previousLineCount, 'Press Escape again to clear')
 
             // Start 1-second timer
             escapeTimer = setTimeout(() => {
               escapePressed = false
               escapeTimer = null
-              updateFooterRightText(getFooterRightText(), previousLineCount)
+              updateFooterRightText(initialInputY, previousLineCount)
             }, 1000)
           }
         },

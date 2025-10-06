@@ -462,7 +462,7 @@ export async function handleCommand(commandInput: string) {
 
 export function handleQuit() {
   clearFooter()
-  console.log(chalk.yellow('\nGoodbye! 👋\n'))
+  console.log(chalk.yellow('\nGoodbye! 👋'))
   process.exit(0)
 }
 
