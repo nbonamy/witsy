@@ -164,7 +164,10 @@ export default class {
         label: t('tray.menu.settings'),
         click: () => window.openSettingsWindow()
       },
-      ...(config.general?.enableHttpEndpoints ? [
+    ])
+
+    if (config.general?.enableHttpEndpoints) {
+      menuItems = menuItems.concat([
         {
           type: 'separator'
         },
@@ -172,14 +175,19 @@ export default class {
           label: t('tray.menu.httpServer', { port: HttpServer.getInstance().getPort() }),
           enabled: false
         },
-      ] : []),
+      ])
+    }
+
+    // finally quit
+    menuItems = menuItems.concat([
       {
         type: 'separator'
       },
       {
         label: t('tray.menu.quit'),
         /*accelerator: 'Command+Q', */
-        click: () => this.quit() }
+        click: () => this.quit()
+      }
     ]);
 
     // return
