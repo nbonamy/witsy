@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { displayHeader, displayFooter, displayConversation } from '../../../src/cli/display'
 import { state } from '../../../src/cli/state'
 import { VirtualTerminal } from './VirtualTerminal'
@@ -80,7 +80,7 @@ describe('CLI Display Requirements', () => {
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-[openai: gpt-4]                                                       0 messages`
+openai gpt-4`
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -118,7 +118,7 @@ describe('CLI Display Requirements', () => {
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-[openai: gpt-4]                                                       1 messages`
+openai gpt-4                                                          1 messages`
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -161,7 +161,7 @@ Hello how are you?
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-[openai: gpt-4]                                                       2 messages`
+openai gpt-4                                                          2 messages`
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -200,7 +200,7 @@ To get to the other side!
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-[openai: gpt-4]                                                       4 messages`
+openai gpt-4                                                          4 messages`
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
