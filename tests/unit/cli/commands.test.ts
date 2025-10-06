@@ -3,9 +3,12 @@ import * as os from 'os'
 import * as path from 'path'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { WitsyAPI } from '../../../src/cli/api'
-import { COMMANDS, handleCommand, initialize } from '../../../src/cli/commands'
+import { COMMANDS, handleCommand, initialize, handleHelp, handleClear, handleSave, handleTitle, handleRetry, handleQuit, executeCommand, handlePort, handleMessage, handleModel } from '../../../src/cli/commands'
 import { state } from '../../../src/cli/state'
-import { ChatCli } from '../../../src/cli/models'
+import { ChatCli, MessageCli } from '../../../src/cli/models'
+import { resetDisplay, displayFooter, clearFooter } from '../../../src/cli/display'
+import { promptInput } from '../../../src/cli/input'
+import { selectOption } from '../../../src/cli/select'
 
 // Setup fetch mock
 global.fetch = vi.fn()
@@ -215,13 +218,11 @@ describe('/model Command Persistence', () => {
     vi.mocked(WitsyAPI.prototype.getModels).mockResolvedValue(mockModels)
 
     // Mock selectOption to return specific choices
-    const { selectOption } = await import('../../../src/cli/select')
     vi.mocked(selectOption)
       .mockResolvedValueOnce('openai')  // First call: engine selection
       .mockResolvedValueOnce('gpt-4')   // Second call: model selection
 
     // Import handleModel dynamically to get the function
-    const { handleModel } = await import('../../../src/cli/commands')
     await handleModel()
 
     // Check state was updated
@@ -261,8 +262,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleHelp displays command list', async () => {
-    const { handleHelp } = await import('../../../src/cli/commands')
-    const { displayFooter, clearFooter } = await import('../../../src/cli/display')
 
     await handleHelp()
 
@@ -271,12 +270,9 @@ describe('Command Handlers', () => {
   })
 
   test('handleClear resets conversation', async () => {
-    const { handleClear } = await import('../../../src/cli/commands')
-    const Chat = (await import('../../../src/models/chat')).default
-    const Message = (await import('../../../src/models/message')).default
 
     state.chat = new ChatCli('Test')
-    state.chat.addMessage(new Message('user', 'test'))
+    state.chat.addMessage(new MessageCli('user', 'test'))
 
     await handleClear()
 
@@ -285,12 +281,9 @@ describe('Command Handlers', () => {
   })
 
   test('handleSave saves conversation and sets UUID', async () => {
-    const { handleSave } = await import('../../../src/cli/commands')
-    const Chat = (await import('../../../src/models/chat')).default
-    const Message = (await import('../../../src/models/message')).default
 
     state.chat = new ChatCli('Test')
-    state.chat.addMessage(new Message('user', 'test'))
+    state.chat.addMessage(new MessageCli('user', 'test'))
     state.chat.uuid = ''
 
     vi.mocked(WitsyAPI.prototype.saveConversation).mockResolvedValue('new-chat-id')
@@ -302,8 +295,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleSave displays error when no messages', async () => {
-    const { handleSave } = await import('../../../src/cli/commands')
-    const Chat = (await import('../../../src/models/chat')).default
 
     state.chat = new ChatCli('Test')
     state.chat.messages = []
@@ -315,9 +306,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleTitle updates chat title', async () => {
-    const { handleTitle } = await import('../../../src/cli/commands')
-    const { promptInput } = await import('../../../src/cli/input')
-    const Chat = (await import('../../../src/models/chat')).default
 
     state.chat = new ChatCli('Old Title')
 
@@ -329,9 +317,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleTitle auto-saves if chat is already saved', async () => {
-    const { handleTitle } = await import('../../../src/cli/commands')
-    const { promptInput } = await import('../../../src/cli/input')
-    const Chat = (await import('../../../src/models/chat')).default
 
     state.chat = new ChatCli('Old Title')
     state.chat.uuid = 'existing-uuid'
@@ -346,13 +331,10 @@ describe('Command Handlers', () => {
   })
 
   test('handleRetry retries last user message', async () => {
-    const { handleRetry } = await import('../../../src/cli/commands')
-    const Chat = (await import('../../../src/models/chat')).default
-    const Message = (await import('../../../src/models/message')).default
 
     state.chat = new ChatCli('Test')
-    state.chat.addMessage(new Message('user', 'first'))
-    state.chat.addMessage(new Message('assistant', 'response'))
+    state.chat.addMessage(new MessageCli('user', 'first'))
+    state.chat.addMessage(new MessageCli('assistant', 'response'))
 
     // Mock streaming response
     const encoder = new TextEncoder()
@@ -376,8 +358,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleRetry displays error when no messages', async () => {
-    const { handleRetry } = await import('../../../src/cli/commands')
-    const Chat = (await import('../../../src/models/chat')).default
 
     state.chat = new ChatCli('Test')
     state.chat.messages = []
@@ -389,7 +369,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleQuit exits process', async () => {
-    const { handleQuit } = await import('../../../src/cli/commands')
     const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never)
 
     handleQuit()
@@ -399,8 +378,6 @@ describe('Command Handlers', () => {
   })
 
   test('executeCommand dispatches to correct handler', async () => {
-    const { executeCommand } = await import('../../../src/cli/commands')
-    const { clearFooter, displayFooter } = await import('../../../src/cli/display')
 
     await executeCommand('help')
 
@@ -410,8 +387,6 @@ describe('Command Handlers', () => {
   })
 
   test('executeCommand handles unknown commands', async () => {
-    const { executeCommand } = await import('../../../src/cli/commands')
-    const { resetDisplay } = await import('../../../src/cli/display')
 
     await executeCommand('unknown')
 
@@ -419,8 +394,6 @@ describe('Command Handlers', () => {
   })
 
   test('handlePort validates port number', async () => {
-    const { handlePort } = await import('../../../src/cli/commands')
-    const { promptInput } = await import('../../../src/cli/input')
 
     vi.mocked(promptInput).mockResolvedValue('invalid')
 
@@ -431,8 +404,6 @@ describe('Command Handlers', () => {
   })
 
   test('handlePort validates port range', async () => {
-    const { handlePort } = await import('../../../src/cli/commands')
-    const { promptInput } = await import('../../../src/cli/input')
 
     vi.mocked(promptInput).mockResolvedValue('99999')
 
@@ -443,8 +414,6 @@ describe('Command Handlers', () => {
   })
 
   test('handlePort changes port successfully', async () => {
-    const { handlePort } = await import('../../../src/cli/commands')
-    const { promptInput } = await import('../../../src/cli/input')
 
     vi.mocked(promptInput).mockResolvedValue('5000')
     vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
@@ -462,8 +431,6 @@ describe('Command Handlers', () => {
   })
 
   test('handlePort handles connection failure', async () => {
-    const { handlePort } = await import('../../../src/cli/commands')
-    const { promptInput } = await import('../../../src/cli/input')
 
     vi.mocked(promptInput).mockResolvedValue('5000')
     vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(false)
@@ -475,8 +442,6 @@ describe('Command Handlers', () => {
   })
 
   test('handlePort handles disabled HTTP endpoints', async () => {
-    const { handlePort } = await import('../../../src/cli/commands')
-    const { promptInput } = await import('../../../src/cli/input')
 
     vi.mocked(promptInput).mockResolvedValue('5000')
     vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
@@ -494,8 +459,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleMessage adds messages and streams response', async () => {
-    const { handleMessage } = await import('../../../src/cli/commands')
-    const Chat = (await import('../../../src/models/chat')).default
 
     state.chat = new ChatCli('Test')
 
@@ -522,8 +485,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleMessage handles cancellation', async () => {
-    const { handleMessage } = await import('../../../src/cli/commands')
-    const Chat = (await import('../../../src/models/chat')).default
 
     state.chat = new ChatCli('Test')
 
@@ -536,8 +497,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleMessage handles partial response on cancellation', async () => {
-    const { handleMessage } = await import('../../../src/cli/commands')
-    const Chat = (await import('../../../src/models/chat')).default
 
     state.chat = new ChatCli('Test')
 
@@ -561,8 +520,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleMessage handles tool calls', async () => {
-    const { handleMessage } = await import('../../../src/cli/commands')
-    const Chat = (await import('../../../src/models/chat')).default
 
     state.chat = new ChatCli('Test')
 
@@ -589,8 +546,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleMessage handles API errors', async () => {
-    const { handleMessage } = await import('../../../src/cli/commands')
-    const Chat = (await import('../../../src/models/chat')).default
 
     state.chat = new ChatCli('Test')
 
@@ -603,8 +558,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleModel handles cancellation', async () => {
-    const { handleModel } = await import('../../../src/cli/commands')
-    const { selectOption } = await import('../../../src/cli/select')
 
     vi.mocked(WitsyAPI.prototype.getEngines).mockResolvedValue([
       { id: 'openai', name: 'OpenAI' }
@@ -619,7 +572,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleModel handles no engines', async () => {
-    const { handleModel } = await import('../../../src/cli/commands')
 
     vi.mocked(WitsyAPI.prototype.getEngines).mockResolvedValue([])
 
@@ -630,8 +582,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleModel handles no models', async () => {
-    const { handleModel } = await import('../../../src/cli/commands')
-    const { selectOption } = await import('../../../src/cli/select')
 
     vi.mocked(WitsyAPI.prototype.getEngines).mockResolvedValue([
       { id: 'openai', name: 'OpenAI' }
@@ -646,9 +596,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleTitle rejects empty title', async () => {
-    const { handleTitle } = await import('../../../src/cli/commands')
-    const { promptInput } = await import('../../../src/cli/input')
-    const Chat = (await import('../../../src/models/chat')).default
 
     state.chat = new ChatCli('Old Title')
 
@@ -661,8 +608,6 @@ describe('Command Handlers', () => {
   })
 
   test('handleCommand parses command correctly', async () => {
-    const { handleCommand } = await import('../../../src/cli/commands')
-    const { clearFooter } = await import('../../../src/cli/display')
 
     await handleCommand('/help some args')
 
