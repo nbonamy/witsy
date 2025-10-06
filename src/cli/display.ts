@@ -28,6 +28,26 @@ ${iconColor('   ███ ███')}   ${grayText(`http://localhost:${state.po
 `)
 }
 
+// Helper to generate footer right text based on conversation state
+export function getFooterRightText(): string {
+  if (state.chat.messages.length === 0) {
+    return ''
+  }
+
+  const msgCount = `${state.chat.messages.length} messages`
+
+  if (state.chat.uuid) {
+    // Chat is saved - show auto-save status
+    return `${msgCount} · auto-saving`
+  } else if (state.chat.messages.length >= 4) {
+    // Long conversation not saved - remind user
+    return `${msgCount} · type /save`
+  } else {
+    // Short conversation - just show count
+    return msgCount
+  }
+}
+
 // Helper to render footer content (separator + status line)
 function renderFooterContent(rightText: string) {
   const terminalWidth = process.stdout.columns || 80
@@ -54,7 +74,7 @@ export function displayFooter() {
   console.log('')
 
   // Render footer using helper
-  const rightText = state.chat.messages.length > 0 ? `${state.chat.messages.length} messages` : ''
+  const rightText = getFooterRightText()
   renderFooterContent(rightText)
 
   // Move cursor back up to the prompt line (1 line up from current position)
