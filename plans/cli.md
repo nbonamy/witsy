@@ -5,6 +5,7 @@
 **When implementing a feature from TODO list:**
 1. Update Summary section (Current Features and Architecture). Keep it concise - highlight feature, not implementation details
 2. Remove completed item from TODO list
+3. Update tests if state structure changes (e.g., `tests/unit/cli/display.test.ts` uses `state.chat` now instead of `state.history`)
 
 ---
 
@@ -15,7 +16,8 @@ Witsy CLI is a terminal-based interface for the Witsy AI assistant, providing a 
 ### Current Features
 
 - **Interactive Chat**: Streaming completions with conversation history
-- **Command System**: `/help`, `/port`, `/model`, `/clear`, `/exit`
+- **Command System**: `/help`, `/port`, `/model`, `/save`, `/clear`, `/exit`
+- **Conversation Persistence**: Save conversations to workspace with `/save`, auto-saves on each message after first save
 - **Connection Management**: Short timeout on startup, exits immediately if cannot connect or HTTP endpoints disabled
 - **Filterable Menus**: Type to filter commands and model selections
 - **Input History**: UP/DOWN arrow navigation through previous prompts
@@ -48,52 +50,14 @@ CLI <--(HTTP)--> Witsy Backend (port 8090)
   GET  /api/engines          - List available engines
   GET  /api/models/:engine   - List models for engine
   POST /api/complete         - Stream chat completion
+  POST /api/conversations    - Save/update chat conversation
 ```
 
 ---
 
 ## TODO List
 
-### 1. Save Conversation Command
-
-**Problem**: Conversations are ephemeral, lost on `/clear` or CLI exit.
-
-**Requirements:**
-- `/save` command saves current conversation to Witsy workspace
-- Uses new API endpoint: `POST /api/conversations` (to be created)
-- CLI message model needs enrichment with Chat/Message metadata (timestamps, IDs)
-- Conversation saved with proper workspace association (`config.workspaceId`)
-
-**Implementation:**
-
-**Backend (main process):**
-- Create `POST /api/conversations` endpoint
-- Accepts: `{ workspaceId: string, messages: Message[] }`
-- Uses existing Chat/Message persistence logic
-- Returns: `{ chatId: string, messageIds: string[] }`
-
-**CLI:**
-- Update `CLIState.history` type from simple `{ role, content }` to richer model:
-  ```typescript
-  interface CliMessage {
-    role: string
-    content: string
-    timestamp: Date
-    id?: string  // After save
-  }
-  ```
-- Add `handleSave()` in `commands.ts`
-- Call `POST /api/conversations` with current `state.history`
-- Show success message: "✓ Conversation saved to workspace"
-- Mark messages as saved in state (store returned IDs)
-
-**Future Enhancement:**
-- `/load <chatId>` to restore saved conversation
-- `/conversations list` to show recent chats
-
----
-
-### 2. Multiline Input Support
+### 1. Multiline Input Support
 
 **Problem**: Single-line input is limiting for longer prompts, can't paste multi-line text easily.
 
@@ -140,7 +104,7 @@ CLI <--(HTTP)--> Witsy Backend (port 8090)
 
 ---
 
-### 3. Stop Streaming with Escape
+### 2. Stop Streaming with Escape
 
 **Problem**: No way to cancel long-running completions.
 

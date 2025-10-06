@@ -115,7 +115,7 @@ export async function promptInput(options: InputOptions): Promise<string> {
             escapeTimer = setTimeout(() => {
               escapePressed = false
               escapeTimer = null
-              updateFooterRightText(`${state.history.length} messages`, previousLineCount)
+              updateFooterRightText(`${state.chat.messages.length} messages`, previousLineCount)
             }, 1000)
           }
         },

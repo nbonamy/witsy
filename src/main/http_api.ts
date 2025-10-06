@@ -9,6 +9,7 @@ import Chat from '../models/chat'
 import Mcp from './mcp'
 import { LlmContext } from './llm_utils'
 import * as config from './config'
+import { loadHistory, saveHistory } from './history'
 
 /**
  * Install HTTP API endpoints on the server
@@ -197,6 +198,57 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
       }
     } catch (error) {
       console.error('[http] Error in /api/complete:', error)
+      sendError(res, error instanceof Error ? error.message : 'Internal server error', 500)
+    }
+  })
+
+  // POST /api/conversations - Save or update a chat conversation
+  httpServer.register('/api/conversations', async (req, res, parsedUrl) => {
+    if (!isHttpEndpointsEnabled(app, res)) return
+    try {
+      // Load settings to get workspace ID
+      const settings = config.loadSettings(app)
+      const workspaceId = settings.workspaceId
+
+      // Parse request body
+      const params = await parseParams(req, parsedUrl)
+      if (!params.chat) {
+        sendError(res, 'Chat parameter is required', 400)
+        return
+      }
+
+      // Deserialize chat
+      const chat = Chat.fromJson(params.chat)
+
+      // Load history for workspace
+      const history = await loadHistory(app, workspaceId)
+
+      // Create or update chat
+      if (!chat.uuid || chat.uuid === '') {
+        // Create new chat
+        chat.uuid = crypto.randomUUID()
+        chat.initTitle()
+        history.chats.push(chat)
+        console.log(`[http] Created new chat: ${chat.uuid}`)
+      } else {
+        // Update existing chat
+        const index = history.chats.findIndex(c => c.uuid === chat.uuid)
+        if (index >= 0) {
+          history.chats[index] = chat
+          console.log(`[http] Updated existing chat: ${chat.uuid}`)
+        } else {
+          // Fallback: add as new if not found
+          history.chats.push(chat)
+          console.log(`[http] Chat not found, added as new: ${chat.uuid}`)
+        }
+      }
+
+      // Save history
+      saveHistory(app, workspaceId, history)
+
+      sendJson(res, { chatId: chat.uuid })
+    } catch (error) {
+      console.error('[http] Error in /api/conversations:', error)
       sendError(res, error instanceof Error ? error.message : 'Internal server error', 500)
     }
   })

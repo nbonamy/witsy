@@ -9,6 +9,8 @@ import { clearFooter, displayConversation, displayFooter, resetDisplay } from '.
 import { promptInput } from './input'
 import { selectOption } from './select'
 import { state } from './state'
+import Message from '../models/message'
+import Chat from '../models/chat'
 
 const api = new WitsyAPI()
 
@@ -16,6 +18,7 @@ export const COMMANDS = [
   { name: '/help', value: 'help', description: 'Show this help message' },
   { name: '/port', value: 'port', description: 'Change server port' },
   { name: '/model', value: 'model', description: 'Select engine and model' },
+  { name: '/save', value: 'save', description: 'Save conversation to workspace' },
   { name: '/clear', value: 'clear', description: 'Clear conversation history' },
   // { name: '/history', value: 'history', description: 'Show conversation history' },
   { name: '/exit', value: 'exit', description: 'Exit the CLI' }
@@ -176,7 +179,8 @@ export async function handleModel() {
 }
 
 export async function handleClear() {
-  state.history = []
+  state.chat = new Chat('CLI Session')
+  state.chat.uuid = ''
   console.log(chalk.yellow('\n✓ Conversation history cleared\n'))
 
   // Redraw screen without messages
@@ -184,7 +188,7 @@ export async function handleClear() {
 }
 
 export async function handleHistory() {
-  if (state.history.length === 0) {
+  if (state.chat.messages.length === 0) {
     console.log(chalk.dim('\nNo conversation history\n'))
     return
   }
@@ -194,17 +198,29 @@ export async function handleHistory() {
 }
 
 export async function handleMessage(message: string) {
-  
-  // Add user message to history
-  state.history.push({ role: 'user', content: message })
+
+  // Update chat engine/model before each message (user can change model mid-conversation)
+  state.chat.setEngineModel(state.engine, state.model)
+
+  // Create and add user message
+  const userMessage = new Message('user', message)
+  userMessage.engine = state.engine
+  userMessage.model = state.model
+  state.chat.addMessage(userMessage)
 
   try {
-    
+
     let response = ''
     let inTools = false
 
+    // Build thread for API (convert to simple format for /api/complete)
+    const thread = state.chat.messages.map(msg => ({
+      role: msg.role,
+      content: msg.content
+    }))
+
     // Stream assistant response (no prefix, just content in white/default color)
-    await api.complete(state.history, (payload: string) => {
+    await api.complete(thread, (payload: string) => {
 
       const chunk: LlmChunk = JSON.parse(payload)
       if (chunk.type === 'content') {
@@ -235,18 +251,61 @@ export async function handleMessage(message: string) {
 
     })
 
-    // Add assistant response to history
-    state.history.push({ role: 'assistant', content: response })
+    // Create and add assistant response
+    const assistantMessage = new Message('assistant', response)
+    assistantMessage.engine = state.engine
+    assistantMessage.model = state.model
+    state.chat.addMessage(assistantMessage)
 
     // Blank line after response
     console.log('\n')
 
+    // Auto-save if chat has been saved before
+    if (state.chat.uuid) {
+      try {
+        await api.saveConversation(state.chat)
+      } catch {
+        console.log(chalk.dim('(Auto-save failed)'))
+      }
+    }
+
   } catch (error) {
-    
+
     console.log(chalk.red(`\nError: ${error instanceof Error ? error.message : 'Unknown error'}`))
     console.log(chalk.dim('Make sure Witsy is running\n'))
-    state.history.pop()
+
+    // Remove the user message we just added
+    state.chat.messages.pop()
   }
+}
+
+export async function handleSave() {
+
+  clearFooter()
+
+  // Check if there are messages to save
+  if (state.chat.messages.length === 0) {
+    console.log(chalk.red('\nNo conversation to save\n'))
+    displayFooter()
+    return
+  }
+
+  try {
+    // Call API to save conversation
+    const chatId = await api.saveConversation(state.chat)
+
+    // Update chat UUID to enable auto-save
+    state.chat.uuid = chatId
+
+    console.log(chalk.yellow('\n✓ Conversation saved to workspace'))
+    console.log(chalk.dim('  Auto-save enabled for this conversation\n'))
+
+  } catch (error) {
+    console.log(chalk.red(`\nError saving conversation: ${error instanceof Error ? error.message : 'Unknown error'}`))
+    console.log(chalk.dim('Make sure Witsy is running\n'))
+  }
+
+  displayFooter()
 }
 
 export async function handleCommand(commandInput: string) {
@@ -270,6 +329,9 @@ export async function executeCommand(command: string) {
       break
     case 'model':
       await handleModel()
+      break
+    case 'save':
+      await handleSave()
       break
     case 'clear':
       await handleClear()
