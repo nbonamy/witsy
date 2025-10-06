@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { readFileSync } from 'fs';
+import { readFileSync, cpSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -47,3 +47,42 @@ await build({
 });
 
 console.log('✓ CLI built successfully as single file');
+
+// Copy terminal-kit and its dependencies to dist/cli/node_modules
+const distCli = join(rootDir, 'dist/cli');
+const distNodeModules = join(distCli, 'node_modules');
+mkdirSync(distNodeModules, { recursive: true });
+
+// Copy terminal-kit
+const terminalKitSrc = join(rootDir, 'node_modules/terminal-kit');
+const terminalKitDest = join(distNodeModules, 'terminal-kit');
+cpSync(terminalKitSrc, terminalKitDest, { recursive: true });
+console.log('✓ Copied terminal-kit to dist/cli/node_modules');
+
+// Read terminal-kit's dependencies from package.json
+const terminalKitPackageJson = JSON.parse(
+  readFileSync(join(terminalKitSrc, 'package.json'), 'utf-8')
+);
+const deps = Object.keys(terminalKitPackageJson.dependencies || {});
+
+// Copy terminal-kit dependencies
+for (const dep of deps) {
+  const depSrc = join(rootDir, 'node_modules', dep);
+  const depDest = join(distNodeModules, dep);
+  try {
+    cpSync(depSrc, depDest, { recursive: true });
+    console.log(`✓ Copied ${dep} to dist/cli/node_modules`);
+  } catch (err) {
+    console.warn(`⚠ Could not copy ${dep}: ${err.message}`);
+  }
+}
+
+// Copy bin scripts to dist/cli/bin
+const distBin = join(distCli, 'bin');
+mkdirSync(distBin, { recursive: true });
+
+const witsyScript = join(rootDir, 'bin/witsy');
+const witsyCmd = join(rootDir, 'bin/witsy.cmd');
+cpSync(witsyScript, join(distBin, 'witsy'), { recursive: false });
+cpSync(witsyCmd, join(distBin, 'witsy.cmd'), { recursive: false });
+console.log('✓ Copied bin scripts to dist/cli/bin');

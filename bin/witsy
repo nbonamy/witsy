@@ -28,11 +28,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	fi
 
 	ELECTRON="$APP_PATH/Contents/MacOS/Witsy"
-	CLI="$APP_PATH/Contents/Resources/cli.js"
+	CLI="$APP_PATH/Contents/Resources/cli/cli.js"
 else
-	# Linux: executable is in same directory as this script
-	ELECTRON="$SCRIPT_DIR/../witsy"
-	CLI="$SCRIPT_DIR/../resources/cli.js"
+	# Linux: script is in resources/cli/bin, executable is 3 levels up
+	ELECTRON="$SCRIPT_DIR/../../../witsy"
+	CLI="$SCRIPT_DIR/../cli.js"
 fi
 
 ELECTRON_RUN_AS_NODE=1 "$ELECTRON" "$CLI" "$@"

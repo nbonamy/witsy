@@ -18,7 +18,7 @@ export async function checkAndInstallCLI(): Promise<void> {
 async function installMacOSCLI(): Promise<void> {
   const appPath = app.getAppPath()
   const resourcesPath = path.join(appPath, '..', '..', 'Resources')
-  const sourcePath = path.join(resourcesPath, 'witsy')
+  const sourcePath = path.join(resourcesPath, 'cli', 'bin', 'witsy')
 
   const elevatedInstall = (sourcePath: string, symlinkPath: string) => {
     const script = `
@@ -37,7 +37,7 @@ async function installMacOSCLI(): Promise<void> {
 async function installLinuxCLI(): Promise<void> {
   const appPath = app.getPath('exe')
   const appDir = path.dirname(appPath)
-  const sourcePath = path.join(appDir, 'resources', 'bin', 'witsy')
+  const sourcePath = path.join(appDir, 'resources', 'cli', 'bin', 'witsy')
 
   const elevatedInstall = (sourcePath: string, symlinkPath: string) => {
     const script = `
@@ -112,7 +112,7 @@ async function installWindowsCLI(): Promise<void> {
 
   const appPath = app.getPath('exe')
   const appDir = path.dirname(appPath)
-  const cliDir = path.join(appDir, 'resources', 'bin')
+  const cliDir = path.join(appDir, 'resources', 'cli', 'bin')
 
   try {
     // Check if already in PATH using PowerShell
