@@ -17,22 +17,42 @@
       </select>
     </div>
 
-    <div class="form-field" v-if="['falai', 'replicate'].includes(engine)">
-      <label>{{ t('settings.engines.apiKey') }}</label>
-      <InputObfuscated v-if="engine === 'falai'" v-model="falaiAPIKey" @blur="save" />
-      <InputObfuscated v-if="engine === 'replicate'" v-model="replicateAPIKey" @blur="save" />
-    </div>
-
-    <div class="form-field">
-      <label>{{ t('settings.plugins.video.videoModel') }}</label>
-      <div class="form-subgroup">
-        <Combobox :items="models" :placeholder="t('common.modelPlaceholder')" v-model="model" @change="save">
-          <RefreshButton :on-refresh="getModels" />
-        </Combobox>
-        <a v-if="engine === 'replicate'" href="https://replicate.com/collections/text-to-video" target="_blank">{{ t('settings.plugins.video.replicate.aboutModels') }}</a>
-        <a v-if="engine === 'falai'" href="https://fal.ai/models?categories=text-to-video" target="_blank">{{ t('settings.plugins.video.falai.aboutModels') }}</a>
+    <template v-if="['openai', 'google', 'xai'].includes(engine)">
+      <div class="form-field">
+        <label>{{ t('settings.plugins.image.imageModel') }}</label>
+        <div class="form-subgroup">
+          <div class="control-group">
+            <select v-model="model" :disabled="models.length == 0" @change="save">
+              <option v-for="model in models" :key="model.id" :value="model.id">{{ model.name }}
+              </option>
+            </select>
+            <RefreshButton :on-refresh="getModels" />
+          </div>
+          <span>{{ t('settings.plugins.image.apiKeyReminder') }}</span>
+        </div>
       </div>
-    </div>
+    </template>
+
+    <template v-else>
+
+      <div class="form-field">
+        <label>{{ t('settings.engines.apiKey') }}</label>
+        <InputObfuscated v-if="engine === 'falai'" v-model="falaiAPIKey" @blur="save" />
+        <InputObfuscated v-if="engine === 'replicate'" v-model="replicateAPIKey" @blur="save" />
+      </div>
+
+      <div class="form-field">
+        <label>{{ t('settings.plugins.video.videoModel') }}</label>
+        <div class="form-subgroup">
+          <Combobox :items="models" :placeholder="t('common.modelPlaceholder')" v-model="model" @change="save">
+            <RefreshButton :on-refresh="getModels" />
+          </Combobox>
+          <a v-if="engine === 'replicate'" href="https://replicate.com/collections/text-to-video" target="_blank">{{ t('settings.plugins.video.replicate.aboutModels') }}</a>
+          <a v-if="engine === 'falai'" href="https://fal.ai/models?categories=text-to-video" target="_blank">{{ t('settings.plugins.video.falai.aboutModels') }}</a>
+        </div>
+      </div>
+
+    </template>
 
   </div>
 </template>
