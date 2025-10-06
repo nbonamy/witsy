@@ -13,26 +13,39 @@ interface SelectChoice<T = string> {
 interface SelectOptions<T> {
   title: string
   choices: SelectChoice<T>[]
-  pageSize?: number
+  onSearchChange?: (search: string) => void
+  originalChoices?: SelectChoice<T>[] // Internal: preserve full list for filtering
 }
 
-export async function selectOption<T = string>(options: SelectOptions<T>): Promise<T> {
-  
+export async function selectOption<T = string>(
+  options: SelectOptions<T>,
+  searchString = ''
+): Promise<T> {
+
+  // Preserve original choices for filtering on backspace
+  const originalChoices = options.originalChoices || options.choices
 
   return new Promise((resolve, reject) => {
 
     // Move cursor down 3 lines (past footer) before displaying menu
     term('\n\n\n')
 
-    // Display title
-    term.cyan(`? ${options.title}\n`)
+    // Display title with search string if present
+    const displayTitle = searchString ? `${options.title} ${searchString}` : options.title
+    term.cyan(`? ${displayTitle}\n`)
 
     // Prepare menu items (just the names)
     const menuItems = options.choices.map(choice => choice.name)
 
+    // Calculate max items to display (leave room for title, footer, etc.)
+    const maxItems = Math.max(5, term.height - 16)
+
+    // Limit items if there are too many
+    const displayItems = menuItems.slice(0, maxItems)
+
     // Call singleColumnMenu
     term.singleColumnMenu(
-      menuItems,
+      displayItems,
       {
         style: term.styleReset.dim.white,     // Light gray for unselected
         selectedStyle: term.styleReset.white, // White for selected
@@ -40,8 +53,26 @@ export async function selectOption<T = string>(options: SelectOptions<T>): Promi
         selectedLeftPadding: '  › ',
         cancelable: true,
         exitOnUnexpectedKey: true,
+        itemMaxWidth: term.width - 10,
+        y: undefined, // Auto position
+        continueOnSubmit: false,
+        selectedIndex: 0,
+        keyBindings: {
+          ENTER: 'submit',
+          KP_ENTER: 'submit',
+          UP: 'previous',
+          DOWN: 'next',
+          TAB: 'cycleNext',
+          SHIFT_TAB: 'cyclePrevious',
+          HOME: 'first',
+          END: 'last',
+          BACKSPACE: 'exitWithKey',  // Changed from 'cancel' to enable filtering
+          DELETE: 'cancel',
+          ESCAPE: 'escape'
+        }
       },
-      (error: Error | undefined, response: any) => {
+      async (error: Error | undefined, response: any) => {
+
         // Reset display to clean up menu
         resetDisplay()
 
@@ -52,6 +83,89 @@ export async function selectOption<T = string>(options: SelectOptions<T>): Promi
 
         // Check if cancelled (escape pressed or unexpected key)
         if (!response.submitted) {
+
+          // Handle character input for filtering
+          if (response.unexpectedKey && response.unexpectedKeyData?.isCharacter) {
+            const char = response.unexpectedKey
+            const newSearchString = searchString + char
+
+            // Filter choices by name containing search string (case-insensitive)
+            // Strip leading "/" from names for matching
+            const filteredChoices = originalChoices.filter(choice => {
+              const nameToMatch = choice.name.startsWith('/')
+                ? choice.name.slice(1)
+                : choice.name
+              return nameToMatch.toLowerCase().includes(newSearchString.toLowerCase())
+            })
+
+            // If no matches, ignore the keystroke and don't recurse
+            if (filteredChoices.length === 0) {
+              // Recursively call with same choices and search string (no change)
+              try {
+                const result = await selectOption(
+                  { ...options, originalChoices },
+                  searchString
+                )
+                resolve(result)
+              } catch (err) {
+                reject(err)
+              }
+              return
+            }
+
+            // Call onSearchChange callback if provided
+            if (options.onSearchChange) {
+              options.onSearchChange(newSearchString)
+            }
+
+            // Recursively call selectOption with filtered choices
+            try {
+              const result = await selectOption(
+                { ...options, choices: filteredChoices, originalChoices },
+                newSearchString
+              )
+              resolve(result)
+            } catch (err) {
+              reject(err)
+            }
+            return
+          }
+
+          // Handle backspace to remove last character
+          if (response.unexpectedKey === 'BACKSPACE') {
+            if (searchString.length > 0) {
+              const newSearchString = searchString.slice(0, -1)
+
+              // Re-filter with shorter search string from original choices
+              // Strip leading "/" from names for matching
+              const filteredChoices = newSearchString
+                ? originalChoices.filter(choice => {
+                    const nameToMatch = choice.name.startsWith('/')
+                      ? choice.name.slice(1)
+                      : choice.name
+                    return nameToMatch.toLowerCase().includes(newSearchString.toLowerCase())
+                  })
+                : originalChoices
+
+              // Call onSearchChange callback if provided
+              if (options.onSearchChange) {
+                options.onSearchChange(newSearchString)
+              }
+
+              // Recursively call selectOption
+              try {
+                const result = await selectOption(
+                  { ...options, choices: filteredChoices, originalChoices },
+                  newSearchString
+                )
+                resolve(result)
+              } catch (err) {
+                reject(err)
+              }
+              return
+            }
+          }
+
           // Just resolve empty instead of rejecting - caller can handle it
           resolve('' as T)
           return

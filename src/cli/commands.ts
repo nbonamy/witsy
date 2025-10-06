@@ -72,9 +72,14 @@ export async function handleModel() {
       choices: engines.map(e => ({
         name: `${e.name} (${e.id})`,
         value: e.id
-      })),
-      pageSize: 8
+      }))
     })
+
+    // If empty (cancelled), just redraw and return
+    if (!selectedEngine) {
+      resetDisplay()
+      return
+    }
 
     const models = await api.getModels(selectedEngine)
 
@@ -90,9 +95,14 @@ export async function handleModel() {
       choices: models.map(m => ({
         name: m.name,
         value: m.id
-      })),
-      pageSize: 8
+      }))
     })
+
+    // If empty (cancelled), just redraw and return
+    if (!selectedModel) {
+      resetDisplay()
+      return
+    }
 
     state.engine = selectedEngine
     state.model = selectedModel

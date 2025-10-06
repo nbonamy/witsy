@@ -43,6 +43,18 @@ export async function promptInput(options: InputOptions): Promise<string> {
         }
       }
 
+      // Helper: cleanup
+      const cleanup = () => {
+        if (escapeTimer) {
+          clearTimeout(escapeTimer)
+          escapeTimer = null
+        }
+        process.stdout.removeListener('resize', handleResize)
+        if (controller && typeof controller.abort === 'function') {
+          controller.abort()
+        }
+      }
+
       // Add resize listener
       process.stdout.on('resize', handleResize)
 
@@ -66,6 +78,7 @@ export async function promptInput(options: InputOptions): Promise<string> {
 
           // When "/" typed, immediately trigger command selector
           if (text === '/') {
+            cleanup()
             resolve('/')
           }
         },
@@ -84,19 +97,10 @@ export async function promptInput(options: InputOptions): Promise<string> {
           // ESCAPE double-tap logic
           if (escapePressed) {
             // Second escape - clear terminal and redraw everything
-            if (escapeTimer) {
-              clearTimeout(escapeTimer)
-              escapeTimer = null
-            }
             escapePressed = false
 
             // Cleanup
-            process.stdout.removeListener('resize', handleResize)
-
-            // Abort the controller to properly close it
-            if (controller && typeof controller.abort === 'function') {
-              controller.abort()
-            }
+            cleanup()
 
             // Clear terminal and redraw
             resetDisplay()
@@ -116,12 +120,9 @@ export async function promptInput(options: InputOptions): Promise<string> {
           }
         },
       }, (error: Error | undefined, input: string) => {
-        
+
         // Cleanup
-        if (escapeTimer) {
-          clearTimeout(escapeTimer)
-        }
-        process.stdout.removeListener('resize', handleResize)
+        cleanup()
 
         // Resolve/reject
         if (error) {
