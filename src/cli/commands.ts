@@ -2,6 +2,7 @@
 
 import ansiEscapes from 'ansi-escapes'
 import chalk from 'chalk'
+import terminalKit from 'terminal-kit'
 import { LlmChunk } from 'multi-llm-ts'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
@@ -11,6 +12,8 @@ import { selectOption } from './select'
 import { state } from './state'
 import Message from '../models/message'
 import Chat from '../models/chat'
+
+const term = terminalKit.terminal
 
 const api = new WitsyAPI()
 
@@ -245,10 +248,31 @@ export async function handleMessage(message: string) {
   userMessage.model = state.model
   state.chat.addMessage(userMessage)
 
+  // Setup abort controller for cancellation
+  const controller = new AbortController()
+  let cancelled = false
+  let response = '' // Declare here so it's accessible in catch block
+
+  // Use terminal-kit to grab input for escape key handling
+  let keyHandler: any = null
+
   try {
 
-    let response = ''
     let inTools = false
+
+    // Show hint that user can cancel (only on first message)
+    if (state.chat.messages.length === 1) {
+      console.log(chalk.italic.dim('(Press ESC to cancel)\n'))
+    }
+
+    // Grab input using terminal-kit and listen for Escape key
+    term.grabInput(true)
+    keyHandler = term.on('key', (key: string) => {
+      if (key === 'ESCAPE') {
+        cancelled = true
+        controller.abort()
+      }
+    })
 
     // Build thread for API (convert to simple format for /api/complete)
     const thread = state.chat.messages.map(msg => ({
@@ -261,8 +285,8 @@ export async function handleMessage(message: string) {
 
       const chunk: LlmChunk = JSON.parse(payload)
       if (chunk.type === 'content') {
-        process.stdout.write(chunk.text)
         response += chunk.text
+        process.stdout.write(chunk.text)
       } else if (chunk.type === 'tool') {
 
         if (!inTools) {
@@ -286,13 +310,15 @@ export async function handleMessage(message: string) {
 
       }
 
-    })
+    }, controller.signal)
 
-    // Create and add assistant response
-    const assistantMessage = new Message('assistant', response)
-    assistantMessage.engine = state.engine
-    assistantMessage.model = state.model
-    state.chat.addMessage(assistantMessage)
+    // Create and add assistant response (if we got any content)
+    if (response.length > 0) {
+      const assistantMessage = new Message('assistant', response)
+      assistantMessage.engine = state.engine
+      assistantMessage.model = state.model
+      state.chat.addMessage(assistantMessage)
+    }
 
     // Blank line after response
     console.log('\n')
@@ -308,11 +334,43 @@ export async function handleMessage(message: string) {
 
   } catch (error) {
 
-    console.log(chalk.red(`\nError: ${error instanceof Error ? error.message : 'Unknown error'}`))
-    console.log(chalk.dim('Make sure Witsy is running\n'))
+    // Handle cancellation
+    if (cancelled || (error instanceof Error && error.name === 'AbortError')) {
+      console.log(chalk.yellow('\n(Cancelled)\n'))
 
-    // Remove the user message we just added
-    state.chat.messages.pop()
+      // Keep partial response if we got any
+      if (response && response.length > 0) {
+        const assistantMessage = new Message('assistant', response)
+        assistantMessage.engine = state.engine
+        assistantMessage.model = state.model
+        state.chat.addMessage(assistantMessage)
+
+        // Auto-save if chat has been saved before
+        if (state.chat.uuid) {
+          try {
+            await api.saveConversation(state.chat)
+          } catch {
+            console.log(chalk.dim('(Auto-save failed)'))
+          }
+        }
+      } else {
+        // No response - remove user message
+        state.chat.messages.pop()
+      }
+    } else {
+      console.log(chalk.red(`\nError: ${error instanceof Error ? error.message : 'Unknown error'}`))
+      console.log(chalk.dim('Make sure Witsy is running\n'))
+
+      // Remove the user message we just added
+      state.chat.messages.pop()
+    }
+
+  } finally {
+    // Cleanup: ungrab input and remove key listener
+    if (keyHandler) {
+      term.removeListener('key', keyHandler)
+    }
+    term.grabInput(false)
   }
 }
 
