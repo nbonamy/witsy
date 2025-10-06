@@ -268,6 +268,10 @@ export default class LocalSearch {
         sandbox: true,
         autoplayPolicy: 'user-gesture-required',
         disableDialogs: true,
+        partition: 'persist:search',
+        webSecurity: true,
+        allowRunningInsecureContent: false,
+        experimentalFeatures: true,
       },
     })
 
