@@ -83,6 +83,8 @@ mkdirSync(distBin, { recursive: true });
 
 const witsyScript = join(rootDir, 'bin/witsy');
 const witsyCmd = join(rootDir, 'bin/witsy.cmd');
+const witsyPs1 = join(rootDir, 'bin/witsy.ps1');
 cpSync(witsyScript, join(distBin, 'witsy'), { recursive: false });
 cpSync(witsyCmd, join(distBin, 'witsy.cmd'), { recursive: false });
+cpSync(witsyPs1, join(distBin, 'witsy.ps1'), { recursive: false });
 console.log('✓ Copied bin scripts to dist/cli/bin');

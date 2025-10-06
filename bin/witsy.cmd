@@ -12,5 +12,5 @@ echo Error: Could not find Witsy installation
 exit /b 1
 
 :found
-"%~dp0!LATEST_APP!\Witsy.exe" "%~dp0!LATEST_APP!\resources\cli\cli.js" %*
+"%~dp0!LATEST_APP!\Witsy.exe" --no-deprecation "%~dp0!LATEST_APP!\resources\cli\cli.js" %*
 exit /b %ERRORLEVEL%

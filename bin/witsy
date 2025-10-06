@@ -35,5 +35,5 @@ else
 	CLI="$SCRIPT_DIR/../cli.js"
 fi
 
-ELECTRON_RUN_AS_NODE=1 "$ELECTRON" "$CLI" "$@"
+ELECTRON_RUN_AS_NODE=1 "$ELECTRON" --no-deprecation "$CLI" "$@"
 exit $?
