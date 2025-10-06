@@ -1335,6 +1335,7 @@
   "scratchpad.unsavedPrompt": "Do you want to save your changes?",
   "settings.advanced.autoSavePrompt": "Always save prompt sessions in chat history",
   "settings.advanced.conversationLength": "Messages per conversation",
+  "settings.advanced.enableHttpEndpoints": "Enable HTTP endpoints (API, triggers, webhooks)",
   "settings.advanced.header": "Miscellaneous settings",
   "settings.advanced.imageResize": "Image resize",
   "settings.advanced.imageResizeOptions.none": "No resize",

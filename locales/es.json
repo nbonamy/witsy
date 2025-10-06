@@ -2186,6 +2186,7 @@
     "advanced": {
       "autoSavePrompt": "Guardar siempre las sesiones de solicitud en el historial de chat",
       "conversationLength": "Mensajes por conversación",
+      "enableHttpEndpoints": "Habilitar puntos finales HTTP (API, desencadenadores, webhooks)",
       "header": "Configuraciones misceláneas",
       "imageResize": "Redimensionar imagen",
       "imageResizeOptions": {

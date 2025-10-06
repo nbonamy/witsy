@@ -15,7 +15,8 @@
       "retryGeneration": true
     },
     "locale": "",
-    "webappEvictionMinutes": 30
+    "webappEvictionMinutes": 30,
+    "enableHttpEndpoints": true
   },
   "llm": {
     "locale": "",

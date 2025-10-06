@@ -40,6 +40,9 @@ describe('HTTP API Endpoints', () => {
     mockMcp = {} as Mcp
 
     mockSettings = {
+      general: {
+        enableHttpEndpoints: true
+      },
       llm: { engine: 'openai' },
       engines: {
         openai: { model: { chat: 'gpt-4' }, models: { chat: [] } },
@@ -63,6 +66,34 @@ describe('HTTP API Endpoints', () => {
 
   afterEach(() => {
     vi.clearAllMocks()
+  })
+
+  describe('HTTP Endpoints Disabled', () => {
+    test('should return 404 when endpoints are disabled', async () => {
+      const disabledSettings = {
+        ...mockSettings,
+        general: {
+          enableHttpEndpoints: false
+        }
+      }
+      vi.mocked(config.loadSettings).mockReturnValueOnce(disabledSettings)
+
+      installApiEndpoints(httpServer, mockApp, mockMcp)
+
+      const handler = registeredRoutes.get('/api/engines')
+      expect(handler).toBeDefined()
+
+      const mockReq = {} as IncomingMessage
+      const mockRes = {
+        writeHead: vi.fn(),
+        end: vi.fn()
+      } as any
+
+      await handler!(mockReq, mockRes)
+
+      expect(mockRes.writeHead).toHaveBeenCalledWith(404)
+      expect(mockRes.end).toHaveBeenCalled()
+    })
   })
 
   describe('GET /api/engines', () => {

@@ -2208,6 +2208,7 @@
     "advanced": {
       "autoSavePrompt": "常にプロンプトセッションをチャット履歴に保存する",
       "conversationLength": "会話あたりのメッセージ数",
+      "enableHttpEndpoints": "HTTPエンドポイント（API、トリガー、ウェブフック）を有効にする",
       "header": "その他の設定",
       "imageResize": "画像のリサイズ",
       "imageResizeOptions": {

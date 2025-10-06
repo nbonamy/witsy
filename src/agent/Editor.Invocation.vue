@@ -19,27 +19,29 @@
         <span v-html="nextRuns"></span>
       </div>
 
-      <div class="form-field">
-        <label>{{ t('agent.trigger.webhook') }}</label>
-      </div>
-
-      <div class="form-field horizontal">
-        <input type="checkbox" v-model="webhookEnabled" @change="onWebhookToggle" />
-        <span>{{ t('agent.trigger.webhook_description') }}</span>
-      </div>
-
-      <div class="form-field" v-if="webhookEnabled">
-        <label>{{ t('agent.trigger.webhook_url') }}</label>
-        <div class="webhook-url-container">
-          <input type="text" :value="webhookUrl" readonly />
-          <button type="button" @click="onCopyUrl" :title="t('agent.trigger.webhook_copy')">
-            <CopyIcon :size="16" />
-          </button>
-          <button type="button" @click="onRegenerateToken" :title="t('agent.trigger.webhook_regenerate')">
-            <RefreshCwIcon :size="16" />
-          </button>
+      <template v-if="store.config.general.enableHttpEndpoints">
+        <div class="form-field">
+          <label>{{ t('agent.trigger.webhook') }}</label>
         </div>
-      </div>
+
+        <div class="form-field horizontal">
+          <input type="checkbox" v-model="webhookEnabled" @change="onWebhookToggle" />
+          <span>{{ t('agent.trigger.webhook_description') }}</span>
+        </div>
+
+        <div class="form-field" v-if="webhookEnabled">
+          <label>{{ t('agent.trigger.webhook_url') }}</label>
+          <div class="webhook-url-container">
+            <input type="text" :value="webhookUrl" readonly />
+            <button type="button" @click="onCopyUrl" :title="t('agent.trigger.webhook_copy')">
+              <CopyIcon :size="16" />
+            </button>
+            <button type="button" @click="onRegenerateToken" :title="t('agent.trigger.webhook_regenerate')">
+              <RefreshCwIcon :size="16" />
+            </button>
+          </div>
+        </div>
+      </template>
 
       <template v-if="(agent.schedule || webhookEnabled)&& promptInputs(0).length">
 
