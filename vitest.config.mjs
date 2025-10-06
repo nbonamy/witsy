@@ -34,6 +34,7 @@ export default defineConfig({
       exclude: [
         ...coverageConfigDefaults.exclude,
         '*.config.ts',
+        'out/*',
         'build/*',
         'src/_examples/*',
         'src/ipc_consts.ts',
@@ -48,6 +49,10 @@ export default defineConfig({
         'src/main/ipc.ts',
         'src/plugins/vega.ts',
         'src/types/**/*',
+        'src/cli/main.ts',
+        'src/cli/input.ts',
+        'src/cli/witsyInputField.ts',
+        'src/cli/select.ts',
         'src/vendor/**/*',
         'tools/**/*',
       ]

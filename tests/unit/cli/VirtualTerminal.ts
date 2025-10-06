@@ -31,7 +31,7 @@ export class VirtualTerminal {
       // Check for ANSI escape sequence
       if (str[i] === '\x1B' && str[i + 1] === '[') {
         // Look for the end of the escape sequence
-        const endings = ['m', 'A', 'B', 'G', 'K', 'J', 's', 'u']
+        const endings = ['m', 'A', 'B', 'G', 'H', 'K', 'J', 's', 'u']
         let escapeEnd = -1
 
         for (const ending of endings) {
@@ -128,6 +128,17 @@ export class VirtualTerminal {
       return
     }
 
+    // Cursor position (absolute): \x1B[{row};{col}H (1-indexed)
+    // eslint-disable-next-line no-control-regex
+    const posMatch = seq.match(/\x1B\[(\d+);(\d+)H/)
+    if (posMatch) {
+      const row = parseInt(posMatch[1]) - 1  // Convert 1-based to 0-based
+      const col = parseInt(posMatch[2]) - 1  // Convert 1-based to 0-based
+      this.cursor.row = Math.min(this.height - 1, Math.max(0, row))
+      this.cursor.col = Math.min(this.width - 1, Math.max(0, col))
+      return
+    }
+
     // Cursor up: \x1B[{n}A
     // eslint-disable-next-line no-control-regex
     const upMatch = seq.match(/\x1B\[(\d*)A/)
@@ -152,6 +163,36 @@ export class VirtualTerminal {
     if (colMatch) {
       const col = parseInt(colMatch[1]) - 1  // Convert 1-based to 0-based
       this.cursor.col = Math.min(this.width - 1, Math.max(0, col))
+      return
+    }
+
+    // Erase down: \x1B[J or \x1B[0J (from cursor to end of screen)
+    if (seq === '\x1B[J' || seq === '\x1B[0J') {
+      // Clear from cursor to end of current line
+      for (let col = this.cursor.col; col < this.width; col++) {
+        this.screen[this.cursor.row][col] = ' '
+      }
+      // Clear all lines below current row
+      for (let row = this.cursor.row + 1; row < this.height; row++) {
+        for (let col = 0; col < this.width; col++) {
+          this.screen[row][col] = ' '
+        }
+      }
+      return
+    }
+
+    // Erase up: \x1B[1J (from beginning to cursor)
+    if (seq === '\x1B[1J') {
+      // Clear all lines above current row
+      for (let row = 0; row < this.cursor.row; row++) {
+        for (let col = 0; col < this.width; col++) {
+          this.screen[row][col] = ' '
+        }
+      }
+      // Clear from start of current line to cursor
+      for (let col = 0; col <= this.cursor.col; col++) {
+        this.screen[this.cursor.row][col] = ' '
+      }
       return
     }
 

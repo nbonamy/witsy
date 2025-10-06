@@ -1,17 +1,14 @@
-// Command Handlers
-
 import ansiEscapes from 'ansi-escapes'
 import chalk from 'chalk'
+import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
-import { LlmChunk } from 'multi-llm-ts'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
 import { clearFooter, displayConversation, displayFooter, resetDisplay } from './display'
 import { promptInput } from './input'
+import { ChatCli, MessageCli } from './models'
 import { selectOption } from './select'
 import { state } from './state'
-import Message from '../models/message'
-import Chat from '../models/chat'
 
 const term = terminalKit.terminal
 
@@ -220,8 +217,7 @@ export async function handleTitle() {
 }
 
 export async function handleClear() {
-  state.chat = new Chat('CLI Session')
-  state.chat.uuid = ''
+  state.chat = new ChatCli('CLI Session')
   console.log(chalk.yellow('\n✓ Conversation history cleared\n'))
 
   // Redraw screen without messages
@@ -294,7 +290,7 @@ export async function handleMessage(message: string) {
   state.chat.setEngineModel(state.engine, state.model)
 
   // Create and add user message
-  const userMessage = new Message('user', message)
+  const userMessage = new MessageCli('user', message)
   userMessage.engine = state.engine
   userMessage.model = state.model
   state.chat.addMessage(userMessage)
@@ -365,7 +361,7 @@ export async function handleMessage(message: string) {
 
     // Create and add assistant response (if we got any content)
     if (response.length > 0) {
-      const assistantMessage = new Message('assistant', response)
+      const assistantMessage = new MessageCli('assistant', response)
       assistantMessage.engine = state.engine
       assistantMessage.model = state.model
       state.chat.addMessage(assistantMessage)
@@ -391,7 +387,7 @@ export async function handleMessage(message: string) {
 
       // Keep partial response if we got any
       if (response && response.length > 0) {
-        const assistantMessage = new Message('assistant', response)
+        const assistantMessage = new MessageCli('assistant', response)
         assistantMessage.engine = state.engine
         assistantMessage.model = state.model
         state.chat.addMessage(assistantMessage)
