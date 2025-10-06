@@ -1,7 +1,7 @@
 // Witsy API Client
 
 import { state } from './state'
-import Chat from '../models/chat'
+import { ChatCli } from './models'
 
 export class WitsyAPI {
   private baseUrl(): string {
@@ -92,7 +92,7 @@ export class WitsyAPI {
     }
   }
 
-  async saveConversation(chat: Chat): Promise<string> {
+  async saveConversation(chat: ChatCli): Promise<string> {
     const response = await fetch(`${this.baseUrl()}/api/conversations`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -16,7 +16,7 @@
     "publish": "electron-forge publish",
     "lint": "eslint '**/*.ts' && echo '0 linting error' && vue-tsc --noEmit && echo '0 TypeScript error'",
     "credits": "npx @opengovsg/credits-generator",
-    "cli": "tsx src/cli.ts",
+    "cli": "tsx src/cli/main.ts",
     "build:cli": "node build/build-cli.mjs",
     "test": "vitest --run",
     "test:watch": "vitest",
