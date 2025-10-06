@@ -204,17 +204,23 @@ async function installWindowsCLI(): Promise<boolean> {
 
     const rootDir = appMatch[1]
     targetDir = rootDir
-    sourceCmd = path.join(appDir, 'resources', 'cli', 'bin', 'witsy.cmd')
-    const targetCmd = path.join(rootDir, 'witsy.cmd')
 
-    // Copy witsy.cmd to root directory
-    try {
-      fs.copyFileSync(sourceCmd, targetCmd)
-      log.info('Copied witsy.cmd to root:', targetCmd)
-    } catch (error) {
-      log.error('Failed to copy witsy.cmd to root:', error)
-      return false
+    for (const ext in ['.cmd', '.ps1']) {
+
+      sourceCmd = path.join(appDir, 'resources', 'cli', 'bin', `witsy${ext}`)
+      const targetCmd = path.join(rootDir, `witsy${ext}`)
+
+      // Copy witsy.ps1 to root directory
+      try {
+        fs.copyFileSync(sourceCmd, targetCmd)
+        log.info(`Copied witsy${ext} to root:`, targetCmd)
+      } catch (error) {
+        log.error(`Failed to copy witsy${ext} to root:`, error)
+        return false
+      }
+
     }
+  
   } else {
     // Non-Squirrel installation (keep old behavior for compatibility)
     targetDir = path.join(appDir, 'resources', 'cli', 'bin')
