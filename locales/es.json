@@ -462,6 +462,12 @@
     },
     "title": "Conversations"
   },
+  "cli": {
+    "install": {
+      "failure": "No se pudo instalar la interfaz de línea de comandos. No se pudo crear el acceso directo.",
+      "success": "Interfaz de línea de comandos instalada con éxito"
+    }
+  },
   "commands": {
     "commands": {
       "00000000-0000-0000-0000-000000000000": {
@@ -2193,6 +2199,7 @@
         "none": "Sin redimensionar",
         "size": "Redimensionar la mayor dimensión a {size} píxeles"
       },
+      "installCLI": "Instalar la Interfaz de Línea de Comandos de Witsy",
       "instructions": {
         "chat_empathic": "@:{'common.chat'} - @:{'settings.llm.instructions.empathic'}",
         "chat_playful": "@:{'common.chat'} - @:{'settings.llm.instructions.playful'}",

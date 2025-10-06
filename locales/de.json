@@ -462,6 +462,12 @@
     },
     "title": "Conversations"
   },
+  "cli": {
+    "install": {
+      "failure": "Die Installation der Befehlszeilenschnittstelle ist fehlgeschlagen. Die Verknüpfung konnte nicht erstellt werden.",
+      "success": "Befehlszeilenschnittstelle erfolgreich installiert"
+    }
+  },
   "commands": {
     "commands": {
       "00000000-0000-0000-0000-000000000000": {
@@ -2193,6 +2199,7 @@
         "none": "Keine Größe",
         "size": "Längste Seite auf {size} Pixel ändern"
       },
+      "installCLI": "Witsy Befehlszeilenschnittstelle installieren",
       "instructions": {
         "chat_empathic": "@:{'common.chat'} - @:{'settings.llm.instructions.empathic'}",
         "chat_playful": "@:{'common.chat'} - @:{'settings.llm.instructions.playful'}",

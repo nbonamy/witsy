@@ -462,6 +462,12 @@
     },
     "title": "Conversations"
   },
+  "cli": {
+    "install": {
+      "failure": "Échec de l'installation de l'interface en ligne de commande. Le raccourci n'a pas pu être créé.",
+      "success": "Interface en ligne de commande installée avec succès"
+    }
+  },
   "commands": {
     "commands": {
       "00000000-0000-0000-0000-000000000000": {
@@ -2193,6 +2199,7 @@
         "none": "Taille originale",
         "size": "Redimensionner à {size} pixels"
       },
+      "installCLI": "Installer l'interface en ligne de commande Witsy",
       "instructions": {
         "chat_empathic": "@:{'common.chat'} - @:{'settings.llm.instructions.empathic'}",
         "chat_playful": "@:{'common.chat'} - @:{'settings.llm.instructions.playful'}",

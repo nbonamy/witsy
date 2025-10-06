@@ -481,6 +481,12 @@
     },
     "title": "Conversations"
   },
+  "cli": {
+    "install": {
+      "failure": "Nie udało się zainstalować interfejsu wiersza poleceń. Nie można było utworzyć skrótu.",
+      "success": "Interfejs wiersza poleceń został pomyślnie zainstalowany"
+    }
+  },
   "commands": {
     "commands": {
       "00000000-0000-0000-0000-000000000000": {
@@ -2215,6 +2221,7 @@
         "none": "Bez zmiany rozmiaru",
         "size": "Zmień rozmiar największego wymiaru do {size} pikseli"
       },
+      "installCLI": "Zainstaluj interfejs wiersza poleceń Witsy",
       "instructions": {
         "chat_empathic": "@:{'common.chat'} - @:{'settings.llm.instructions.empathic'}",
         "chat_playful": "@:{'common.chat'} - @:{'settings.llm.instructions.playful'}",

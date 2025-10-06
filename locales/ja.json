@@ -481,6 +481,12 @@
     },
     "title": "Conversations"
   },
+  "cli": {
+    "install": {
+      "failure": "コマンドラインインターフェースのインストールに失敗しました。ショートカットを作成できませんでした。",
+      "success": "コマンドラインインターフェースが正常にインストールされました"
+    }
+  },
   "commands": {
     "commands": {
       "00000000-0000-0000-0000-000000000000": {
@@ -2215,6 +2221,7 @@
         "none": "リサイズしない",
         "size": "最大寸法を{size}ピクセルにリサイズする"
       },
+      "installCLI": "Witsyコマンドラインインターフェースをインストール",
       "instructions": {
         "chat_empathic": "@:{'common.chat'} - @:{'settings.llm.instructions.empathic'}",
         "chat_playful": "@:{'common.chat'} - @:{'settings.llm.instructions.playful'}",

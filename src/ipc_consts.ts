@@ -265,3 +265,7 @@ export const WORKSPACE = {
   SAVE: 'workspace-save',
   DELETE: 'workspace-delete',
 } as const;
+
+export const CLI = {
+  INSTALL: 'cli-install',
+} as const;

@@ -28,6 +28,7 @@ import MacOSPermissions from './permissions';
 
 import * as IPC from '../ipc_consts';
 import * as config from './config';
+import * as cliInstaller from './cli_installer';
 import * as webview from './webview';
 import * as history from './history';
 import * as commands from './commands';
@@ -341,6 +342,10 @@ export const installIpc = (
 
   ipcMain.on(IPC.WORKSPACE.DELETE, (event, workspaceId) => {
     event.returnValue = workspace.deleteWorkspace(app, workspaceId);
+  });
+
+  ipcMain.handle(IPC.CLI.INSTALL, async () => {
+    return await cliInstaller.retryInstallCLI();
   });
 
   ipcMain.on(IPC.SETTINGS.OPEN, (event, payload) => {

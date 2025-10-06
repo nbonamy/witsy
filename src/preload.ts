@@ -270,6 +270,9 @@ contextBridge.exposeInMainWorld(
       save: (workspace: Workspace): boolean => { return ipcRenderer.sendSync(IPC.WORKSPACE.SAVE, JSON.stringify(workspace)) },
       delete: (workspaceId: string): boolean => { return ipcRenderer.sendSync(IPC.WORKSPACE.DELETE, workspaceId) },
     },
+    cli: {
+      install: (): Promise<{ success: boolean, message: string }> => { return ipcRenderer.invoke(IPC.CLI.INSTALL) },
+    },
     webview: {
       setLinkBehavior: (webviewId: number, isExternal: boolean): Promise<void> => {
         return ipcRenderer.invoke('webview-set-link-behavior', webviewId, isExternal)

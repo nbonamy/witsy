@@ -1,26 +1,78 @@
-import { app } from 'electron'
 import { execSync } from 'child_process'
+import { app, dialog } from 'electron'
+import log from 'electron-log/main'
 import fs from 'fs'
 import path from 'path'
-import log from 'electron-log/main'
+import { useI18n } from '../main/i18n'
+import * as config from './config'
 
-export async function checkAndInstallCLI(): Promise<void> {
+function isSymlinkValid(symlinkPath: string, expectedTarget: string): boolean {
+  try {
+    // Check if symlink exists (use lstat to check the symlink itself, not its target)
+    const stats = fs.lstatSync(symlinkPath)
+    if (!stats.isSymbolicLink() && !stats.isFile()) {
+      return false
+    }
 
-  if (process.platform === 'darwin') {
-    await installMacOSCLI()
-  } else if (process.platform === 'win32') {
-    await installWindowsCLI()
-  } else if (process.platform === 'linux') {
-    await installLinuxCLI()
+    // Check if it points to the correct target
+    const linkTarget = fs.readlinkSync(symlinkPath)
+    const resolvedTarget = path.resolve(path.dirname(symlinkPath), linkTarget)
+    const resolvedSource = path.resolve(expectedTarget)
+
+    return resolvedTarget === resolvedSource
+  } catch {
+    // Symlink doesn't exist or error reading it
+    return false
   }
 }
 
-async function installMacOSCLI(): Promise<void> {
+async function installCLI(fallbackMethod: boolean): Promise<boolean> {
+  if (process.platform === 'darwin') {
+    return await installMacOSCLI(fallbackMethod)
+  } else if (process.platform === 'win32') {
+    return await installWindowsCLI()
+  } else if (process.platform === 'linux') {
+    return await installLinuxCLI(fallbackMethod)
+  }
+}
+
+export async function checkAndInstallCLI(fallbackMethod: boolean): Promise<void> {
+
+  // Check if previous installation failed - if so, skip
+  const cfg = config.loadSettings(app)
+  if (cfg.general.cliInstallError) {
+    return
+  }
+
+  await installCLI(fallbackMethod)
+}
+
+export async function retryInstallCLI(): Promise<{ success: boolean }> {
+  try {
+    // Reset error flag
+    const cfg = config.loadSettings(app)
+    cfg.general.cliInstallError = false
+    config.saveSettings(app, cfg)
+
+    // Attempt installation
+    return {
+      success: await installCLI(true)
+    }
+
+  } catch (error) {
+    log.error('Error in retryInstallCLI:', error)
+    return { success: false }
+  }
+}
+
+async function installMacOSCLI(fallbackMethod: boolean): Promise<boolean> {
+  
   const appPath = app.getAppPath()
   const resourcesPath = path.join(appPath, '..', '..', 'Resources')
   const sourcePath = path.join(resourcesPath, 'cli', 'bin', 'witsy')
 
   const elevatedInstall = (sourcePath: string, symlinkPath: string) => {
+
     const script = `
       if [ ! -d "/usr/local/bin" ]; then
         mkdir -p /usr/local/bin
@@ -31,15 +83,16 @@ async function installMacOSCLI(): Promise<void> {
     execSync(`osascript -e 'do shell script "${script.replace(/"/g, '\\"')}" with administrator privileges'`)
   }
 
-  await installUnixCLI(sourcePath, elevatedInstall)
+  return await installUnixCLI(sourcePath, fallbackMethod ? elevatedInstall : undefined)
 }
 
-async function installLinuxCLI(): Promise<void> {
+async function installLinuxCLI(fallbackMethod: boolean): Promise<boolean> {
   const appPath = app.getPath('exe')
   const appDir = path.dirname(appPath)
   const sourcePath = path.join(appDir, 'resources', 'cli', 'bin', 'witsy')
 
   const elevatedInstall = (sourcePath: string, symlinkPath: string) => {
+
     const script = `
       mkdir -p /usr/local/bin
       ln -sf "${sourcePath}" "${symlinkPath}"
@@ -48,37 +101,22 @@ async function installLinuxCLI(): Promise<void> {
     execSync(`pkexec sh -c '${script.replace(/'/g, "\\'")}'`)
   }
 
-  await installUnixCLI(sourcePath, elevatedInstall)
+  return await installUnixCLI(sourcePath, fallbackMethod ? elevatedInstall : undefined)
 }
 
 async function installUnixCLI(
   sourcePath: string,
   elevatedInstall: (sourcePath: string, symlinkPath: string) => void
-): Promise<void> {
+): Promise<boolean> {
+
+  const t = useI18n(app)
   const symlinkPath = '/usr/local/bin/witsy'
 
   try {
-    // Check if symlink exists (use lstat to check the symlink itself, not its target)
-    let symlinkExists = false
-    try {
-      const stats = fs.lstatSync(symlinkPath)
-      symlinkExists = stats.isSymbolicLink() || stats.isFile()
-    } catch {
-      // Symlink doesn't exist
-    }
-
-    if (symlinkExists) {
-      try {
-        const linkTarget = fs.readlinkSync(symlinkPath)
-        const resolvedTarget = path.resolve(path.dirname(symlinkPath), linkTarget)
-        const resolvedSource = path.resolve(sourcePath)
-
-        if (resolvedTarget === resolvedSource) {
-          return
-        }
-      } catch {
-        // Not a symlink, will replace it
-      }
+    // Check if symlink already exists and is valid
+    if (isSymlinkValid(symlinkPath, sourcePath)) {
+      log.info('CLI symlink already exists and is valid')
+      return true
     }
 
     // Try to create/update symlink without sudo first
@@ -88,7 +126,7 @@ async function installUnixCLI(
       }
 
       // Remove existing file/symlink if it exists
-      if (symlinkExists) {
+      if (fs.existsSync(symlinkPath)) {
         fs.unlinkSync(symlinkPath)
       }
 
@@ -98,17 +136,54 @@ async function installUnixCLI(
 
     } catch {
 
-      // If that fails, use elevated privileges
-      elevatedInstall(sourcePath, symlinkPath)
-      log.info('CLI installed successfully to /usr/local/bin/witsy (with elevated privileges)')
+      if (elevatedInstall) {
+
+        // If that fails, show info dialog and use elevated privileges
+        await dialog.showMessageBox({
+          type: 'info',
+          title: t('cli.install.title'),
+          message: t('cli.install.elevated'),
+          buttons: [t('common.ok')]
+        })
+
+        try {
+          
+          elevatedInstall(sourcePath, symlinkPath)
+
+          log.info('CLI installed successfully to /usr/local/bin/witsy (with elevated privileges)')
+        
+        } catch (elevatedError) {
+
+          log.error('Failed to install CLI with elevated privileges:', elevatedError)
+
+          // Show error dialog
+          await dialog.showMessageBox({
+            type: 'error',
+            title: t('cli.install.title'),
+            message: t('cli.install.failure'),
+            buttons: [t('common.ok')]
+          })
+
+          // Record error in config
+          const cfg = config.loadSettings(app)
+          cfg.general.cliInstallError = true
+          config.saveSettings(app, cfg)
+        }
+
+      }
     }
 
   } catch (error) {
     log.error('Failed to install CLI:', error)
   }
+
+  // success
+  return isSymlinkValid(symlinkPath, sourcePath)
+
+
 }
 
-async function installWindowsCLI(): Promise<void> {
+async function installWindowsCLI(): Promise<boolean> {
 
   const appPath = app.getPath('exe')
   const appDir = path.dirname(appPath)
@@ -123,7 +198,7 @@ async function installWindowsCLI(): Promise<void> {
     }).trim()
 
     if (currentPath.includes(cliDir)) {
-      return
+      return true
     }
 
     // Add to user PATH using PowerShell
@@ -137,7 +212,10 @@ async function installWindowsCLI(): Promise<void> {
 
     log.info('CLI installed successfully, added to PATH:', cliDir)
 
+    return true
+
   } catch (error) {
     log.error('Failed to install CLI:', error)
+    return false
   }
 }

@@ -584,6 +584,9 @@ declare global {
         save(workspace: Workspace): boolean
         delete(workspaceId: string): boolean
       }
+      cli: {
+        install(): Promise<{ success: boolean, message: string }>
+      }
       webview: {
         setLinkBehavior(webviewId: number, isExternal: boolean): Promise<void>
         setSpellCheckEnabled(webviewId: number, enabled: boolean): Promise<void>

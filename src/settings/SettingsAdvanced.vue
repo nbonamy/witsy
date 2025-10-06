@@ -19,6 +19,9 @@
         <input type="checkbox" id="http-endpoints" v-model="enableHttpEndpoints" @change="save" />
         <label for="http-endpoints">{{ t('settings.advanced.enableHttpEndpoints') }}</label>
       </div>
+      <div class="form-field cli-install">
+        <button @click="installCLI" :disabled="!enableHttpEndpoints">{{ t('settings.advanced.installCLI') }}</button>
+      </div>
       <label>&nbsp;</label>
       <div class="form-field proxy">
         <label>{{ t('settings.advanced.proxy.title') }}</label>
@@ -138,12 +141,20 @@ const save = () => {
       }
     } else if (!acc[key]) {
       acc[key] = {}
-    } 
+    }
     return acc[key]
   }, store.config as anyDict)
 
   // save
   store.saveSettings()
+}
+
+const installCLI = async () => {
+  const result = await window.api.cli.install()
+  console.log(result)
+  if (result.success) {
+    alert(t('cli.install.success'))
+  }
 }
 
 defineExpose({ load })
