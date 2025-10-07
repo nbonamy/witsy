@@ -2574,7 +2574,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Użycie: Podświetl tekst, naciśnij skrót klawiaturowy, a następnie wybierz polecenie AI.",
-      "clearAll": "Usuń wszystkie skróty",
+      "clearAll": "Wyczyść wszystkie skróty",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
       "mainWindow": "@:{'tray.menu.mainWindow'}",

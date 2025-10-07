@@ -2568,7 +2568,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Uso: Destaque seu texto, pressione o atalho de teclado e escolha um comando de IA",
-      "clearAll": "Remover todos os atalhos",
+      "clearAll": "Limpar todos os atalhos",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
       "mainWindow": "@:{'tray.menu.mainWindow'}",
