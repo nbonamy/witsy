@@ -23,14 +23,23 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
     // It returns the enableHttpEndpoints status so CLI can check it
     try {
       const settings = config.loadSettings(app)
-      const engine = settings.llm.engine
-      const model = settings.engines[engine]?.model?.chat
+      const llmManager = LlmFactory.manager(settings)
+      const engineId = settings.llm.engine
+      const modelId = settings.engines[engineId]?.model?.chat
       const userDataPath = app.getPath('userData')
       const enableHttpEndpoints = settings.general.enableHttpEndpoints
 
+      // Get engine name
+      const engineName = engineNames[engineId] || engineId
+
+      // Get model name
+      const models = llmManager.getChatModels(engineId)
+      const modelInfo = models.find(m => m.id === modelId)
+      const modelName = modelInfo?.name || modelId
+
       sendJson(res, {
-        engine,
-        model,
+        engine: { id: engineId, name: engineName },
+        model: { id: modelId, name: modelName },
         userDataPath,
         enableHttpEndpoints
       })

@@ -4,8 +4,8 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 export interface CliConfig {
-  engine?: string
-  model?: string
+  engine?: { id: string; name: string }
+  model?: { id: string; name: string }
   historySize: number
   history: string[]
 }

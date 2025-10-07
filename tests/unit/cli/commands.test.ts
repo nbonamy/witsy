@@ -56,8 +56,8 @@ describe('CLI Commands', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     state.port = 4321
-    state.engine = 'openai'
-    state.model = 'gpt-4'
+    state.engine = { id: 'openai', name: 'OpenAI' }
+    state.model = { id: 'gpt-4', name: 'GPT-4' }
     state.chat = new ChatCli('CLI Session')
   })
 
@@ -177,9 +177,9 @@ describe('CLI Initialization', () => {
 
     await initialize()
 
-    // Should set empty engine/model on error
-    expect(state.engine).toBe('')
-    expect(state.model).toBe('')
+    // Should set null engine/model on error
+    expect(state.engine).toBe(null)
+    expect(state.model).toBe(null)
   })
 })
 
@@ -229,16 +229,16 @@ describe('/model Command Persistence', () => {
     await handleModel()
 
     // Check state was updated
-    expect(state.engine).toBe('openai')
-    expect(state.model).toBe('gpt-4')
+    expect(state.engine).toEqual({ id: 'openai', name: 'OpenAI' })
+    expect(state.model).toEqual({ id: 'gpt-4', name: 'GPT-4' })
 
     // Check cli.json was created and contains the selection
     const configPath = path.join(tempDir, 'cli.json')
     expect(fs.existsSync(configPath)).toBe(true)
 
     const savedConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
-    expect(savedConfig.engine).toBe('openai')
-    expect(savedConfig.model).toBe('gpt-4')
+    expect(savedConfig.engine).toEqual({ id: 'openai', name: 'OpenAI' })
+    expect(savedConfig.model).toEqual({ id: 'gpt-4', name: 'GPT-4' })
   })
 })
 
@@ -250,8 +250,8 @@ describe('Command Handlers', () => {
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'witsy-cli-cmd-test-'))
     state.userDataPath = tempDir
     state.port = 4321
-    state.engine = 'openai'
-    state.model = 'gpt-4'
+    state.engine = { id: 'openai', name: 'OpenAI' }
+    state.model = { id: 'gpt-4', name: 'GPT-4' }
     state.cliConfig = {
       historySize: 50,
       history: []
@@ -570,8 +570,8 @@ describe('Command Handlers', () => {
     await handleModel()
 
     // State should not change
-    expect(state.engine).toBe('openai')
-    expect(state.model).toBe('gpt-4')
+    expect(state.engine).toEqual({ id: 'openai', name: 'OpenAI' })
+    expect(state.model).toEqual({ id: 'gpt-4', name: 'GPT-4' })
   })
 
   test('handleModel handles no engines', async () => {
@@ -581,7 +581,7 @@ describe('Command Handlers', () => {
     await handleModel()
 
     // Should just return without error
-    expect(state.engine).toBe('openai')
+    expect(state.engine).toEqual({ id: 'openai', name: 'OpenAI' })
   })
 
   test('handleModel handles no models', async () => {
@@ -595,7 +595,7 @@ describe('Command Handlers', () => {
     await handleModel()
 
     // Engine should not change when no models available
-    expect(state.engine).toBe('openai')
+    expect(state.engine).toEqual({ id: 'openai', name: 'OpenAI' })
   })
 
   test('handleTitle rejects empty title', async () => {

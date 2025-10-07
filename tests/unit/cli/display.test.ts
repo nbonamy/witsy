@@ -38,8 +38,8 @@ describe('CLI Display Requirements', () => {
 
     // Reset state
     state.port = 8090
-    state.engine = 'openai'
-    state.model = 'gpt-4'
+    state.engine = { id: 'openai', name: 'OpenAI' }
+    state.model = { id: 'gpt-4', name: 'GPT-4' }
     state.chat = new ChatCli('CLI Session')
     state.chat.uuid = ''
   })
@@ -82,7 +82,7 @@ describe('CLI Display Requirements', () => {
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4`
+  OpenAI · GPT-4                                                                `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -119,7 +119,7 @@ openai gpt-4`
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4                                                          1 messages`
+  OpenAI · GPT-4                                                    1 messages  `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -162,7 +162,7 @@ Hello how are you?
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4                                                          2 messages`
+  OpenAI · GPT-4                                                    2 messages  `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -199,7 +199,7 @@ To get to the other side!
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4                                             4 messages · type /save`
+  OpenAI · GPT-4                                       4 messages · type /save  `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -231,7 +231,7 @@ hi there
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4                                            2 messages · auto-saving`
+  OpenAI · GPT-4                                      2 messages · auto-saving  `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -262,7 +262,7 @@ openai gpt-4                                            2 messages · auto-savin
 ────────────────────────────────────────────────────────────────────────────────
 
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4`
+  OpenAI · GPT-4                                                                `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -290,7 +290,7 @@ openai gpt-4`
 
 
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4`
+  OpenAI · GPT-4                                                                `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -317,7 +317,7 @@ openai gpt-4`
 
 ────────────────────────────────────────────────────────────────────────────────
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4`
+  OpenAI · GPT-4                                                                `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -339,7 +339,7 @@ openai gpt-4`
 
       // Assert: Footer content (message count) should be preserved
       expect(terminal.contains('2 messages')).toBe(true)
-      expect(terminal.contains('openai gpt-4')).toBe(true)
+      expect(terminal.contains('OpenAI · GPT-4')).toBe(true)
     })
 
     test('should handle edge case of no line count change', () => {
@@ -354,7 +354,7 @@ openai gpt-4`
       repositionFooter(initialInputY, 1, 1)
 
       // Assert: Footer content preserved even though prompt erased (repositionFooter always erases/redraws)
-      expect(terminal.contains('openai gpt-4')).toBe(true)
+      expect(terminal.contains('OpenAI · GPT-4')).toBe(true)
       expect(terminal.contains('────────────────')).toBe(true)
     })
   })
@@ -373,7 +373,7 @@ openai gpt-4`
 
       // Assert: Footer text updated, position unchanged (prompt was erased by updateFooterRightText)
       expect(terminal.contains('Press Escape again to clear')).toBe(true)
-      expect(terminal.contains('openai gpt-4')).toBe(true)
+      expect(terminal.contains('OpenAI · GPT-4')).toBe(true)
 
       const expected = `
   ██  █  ██  Witsy CLI vdev
@@ -383,7 +383,7 @@ openai gpt-4`
 
 ────────────────────────────────────────────────────────────────────────────────
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4                                         Press Escape again to clear`
+  OpenAI · GPT-4                                   Press Escape again to clear  `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -413,7 +413,7 @@ openai gpt-4                                         Press Escape again to clear
 ────────────────────────────────────────────────────────────────────────────────
 
 ────────────────────────────────────────────────────────────────────────────────
-openai gpt-4                                         Press Escape again to clear`
+  OpenAI · GPT-4                                   Press Escape again to clear  `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -452,7 +452,7 @@ openai gpt-4                                         Press Escape again to clear
       expect(terminal.contains('Witsy CLI')).toBe(true)
       expect(terminal.contains('> hello')).toBe(true)
       expect(terminal.contains('hi')).toBe(true)
-      expect(terminal.contains('openai gpt-4')).toBe(true)
+      expect(terminal.contains('OpenAI · GPT-4')).toBe(true)
       expect(terminal.contains('2 messages')).toBe(true)
     })
 
@@ -482,13 +482,13 @@ openai gpt-4                                         Press Escape again to clear
       process.stdout.write('> test')
 
       // Verify footer is there
-      expect(terminal.contains('openai gpt-4')).toBe(true)
+      expect(terminal.contains('OpenAI · GPT-4')).toBe(true)
 
       // Act: Clear footer
       clearFooter()
 
       // Assert: Footer content erased
-      expect(terminal.contains('openai gpt-4')).toBe(false)
+      expect(terminal.contains('OpenAI · GPT-4')).toBe(false)
     })
   })
 
