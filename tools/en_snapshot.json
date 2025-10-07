@@ -347,7 +347,7 @@
   "chatList.timeline.today": "Today",
   "chatList.timeline.yesterday": "Yesterday",
   "chatList.title": "Conversations",
-  "cli.install.elevated": "@:{'common.appName'} will now prompt with 'osascript' for Administrator privileges to install the command line interface.",
+  "cli.install.elevated": "@:{'common.appName'} will now prompt for Administrator privileges to install the command line interface.",
   "cli.install.failure": "Failed to install command line interface. The shortcut could not be created.",
   "cli.install.success": "Command line interface installed successfully",
   "cli.install.title": "@:{'common.appName'} Command Line Interface Installation",

@@ -483,8 +483,10 @@
   },
   "cli": {
     "install": {
+      "elevated": "@:{'common.appName'} はコマンドラインインターフェイスをインストールするために管理者権限の入力を求めます。",
       "failure": "コマンドラインインターフェースのインストールに失敗しました。ショートカットを作成できませんでした。",
-      "success": "コマンドラインインターフェースが正常にインストールされました"
+      "success": "コマンドラインインターフェースが正常にインストールされました",
+      "title": "@:{'common.appName'} コマンドラインインターフェイスのインストール"
     }
   },
   "commands": {
@@ -2136,9 +2138,13 @@
       },
       "models": {
         "reload": "モデルを再読み込み"
+      },
+      "tools": {
+        "plugins": "@:{'common.appName'} プラグイン"
       }
     },
     "noEngineAvailable": {
+      "text": "@:{'common.appName'} を使用するには、少なくとも1つのモデルプロバイダーを設定する必要があります。今すぐ設定しますか？",
       "title": "モデルプロバイダーが設定されていません"
     },
     "placeholders": {
@@ -2653,6 +2659,9 @@
     }
   },
   "sidebar": {
+    "features": {
+      "title": "@:{'common.appName'} の機能"
+    },
     "newFolder": {
       "placeholder": "新しいフォルダー名",
       "title": "新しいフォルダー"

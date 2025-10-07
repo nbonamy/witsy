@@ -464,8 +464,10 @@
   },
   "cli": {
     "install": {
+      "elevated": "@:{'common.appName'} richiederà ora i privilegi di Amministratore per installare l'interfaccia a riga di comando.",
       "failure": "Impossibile installare l'interfaccia a riga di comando. Il collegamento non può essere creato.",
-      "success": "Interfaccia a riga di comando installata con successo"
+      "success": "Interfaccia a riga di comando installata con successo",
+      "title": "Installazione della Interfaccia a Riga di Comando di @:{'common.appName'}"
     }
   },
   "commands": {
@@ -2114,9 +2116,13 @@
       },
       "models": {
         "reload": "Ricarica modelli"
+      },
+      "tools": {
+        "plugins": "Plugin di @:{'common.appName'}"
       }
     },
     "noEngineAvailable": {
+      "text": "@:{'common.appName'} richiede che almeno un provider di modelli sia configurato. Vuoi configurarne uno ora?",
       "title": "Nessun fornitore di modello configurato"
     },
     "placeholders": {
@@ -2625,6 +2631,9 @@
     }
   },
   "sidebar": {
+    "features": {
+      "title": "Funzionalità di @:{'common.appName'}"
+    },
     "newFolder": {
       "placeholder": "Nome della nuova cartella",
       "title": "Nuova Cartella"

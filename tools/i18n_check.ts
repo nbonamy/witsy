@@ -40,7 +40,7 @@ const EXCLUDE_KEY_PREFIXES = [
 ]
 
 // Pattern to detect linked translations
-const LINKED_TRANSLATION_MARKER = '@:{'
+const LINKED_TRANSLATION_REGEX = /^@:\{'.*'\}$/
 
 // Parse command line arguments
 const args = process.argv.slice(2)
@@ -405,7 +405,7 @@ function categorizeKeys(
   // Filter out linked translations (equal to "@:{'something'}")
   const finalCandidateKeys = candidateKeys.filter(key => {
     const enValue = enData[key]
-    return enValue && !enValue.startsWith(LINKED_TRANSLATION_MARKER)
+    return enValue && !LINKED_TRANSLATION_REGEX.test(enValue)
   })
   
   // Identify keys that need English translations (missing or empty English values)
@@ -779,7 +779,7 @@ function getWrongLinkedTranslations(locales: { [locale: string]: LocaleData }): 
   // get linked translations
   const linkedKeys: string[] = []
   Object.keys(enData).forEach(key => {
-    if (enData[key].startsWith(LINKED_TRANSLATION_MARKER)) {
+    if (LINKED_TRANSLATION_REGEX.test(enData[key])) {
       linkedKeys.push(key)
     }
   })

@@ -464,8 +464,10 @@
   },
   "cli": {
     "install": {
+      "elevated": "@:{'common.appName'} va maintenant demander les privilèges d'administrateur pour installer l'interface en ligne de commande.",
       "failure": "Échec de l'installation de l'interface en ligne de commande. Le raccourci n'a pas pu être créé.",
-      "success": "Interface en ligne de commande installée avec succès"
+      "success": "Interface en ligne de commande installée avec succès",
+      "title": "Installation de l'interface en ligne de commande @:{'common.appName'}"
     }
   },
   "commands": {
@@ -2114,9 +2116,13 @@
       },
       "models": {
         "reload": "Recharger les modèles"
+      },
+      "tools": {
+        "plugins": "Extensions @:{'common.appName'}"
       }
     },
     "noEngineAvailable": {
+      "text": "@:{'common.appName'} nécessite qu'au moins un fournisseur de modèle soit configuré. Voulez-vous en configurer un maintenant ?",
       "title": "Aucun fournisseur de modèle configuré"
     },
     "placeholders": {
@@ -2625,6 +2631,9 @@
     }
   },
   "sidebar": {
+    "features": {
+      "title": "Fonctionnalités @:{'common.appName'}"
+    },
     "newFolder": {
       "placeholder": "Nom du nouveau dossier",
       "title": "Nouveau Dossier"
