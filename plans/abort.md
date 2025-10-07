@@ -1059,3 +1059,332 @@ mcp: {
 5. **User Feedback:** Should show appropriate message when operation is cancelled vs failed
 
 6. **Multiple Signals:** Each generation gets its own AbortController, so multiple concurrent chats can be cancelled independently
+
+## Critical Missing Points & Issues (Final Review)
+
+### 1. ✅ **MUST UPDATE: All Provider Context Creation Sites**
+
+**Problem:** The plan mentions "find where context is created" but doesn't list the exact locations.
+
+**Found 14 locations** in multi-llm-ts providers that create context for `callTool()`:
+
+```
+ollama.ts: lines 201, 413
+mistralai.ts: lines 92, 304
+anthropic.ts: lines 160, 564
+openai.ts: lines 237, 508, 704, 908
+groq.ts: lines 105, 328
+google.ts: lines 157, 489
+```
+
+**Current pattern:**
+```typescript
+this.callTool({ model: model.id }, toolCall.name, args)
+```
+
+**Must change to:**
+```typescript
+this.callTool({
+  model: model.id,
+  abortSignal: opts?.abortSignal  // ADD THIS at all 14 locations
+}, toolCall.name, args)
+```
+
+**Action:** Add to Phase 1, step 3: "Update all 14 provider callTool invocations to pass abortSignal from opts"
+
+### 2. ✅ **DeepResearch Classes Already Have AbortController**
+
+**Discovery:** `DeepResearchMultiStep` and `DeepResearchMultiAgent` already implement their own AbortController (deepresearch_ms.ts:25, 36-38):
+
+```typescript
+abortController: AbortController
+
+stop = (): void => {
+  this.abortController?.abort()
+  this.generators?.forEach(generator => generator.stop())
+}
+```
+
+**Issue:** After our changes, this creates a coordination question:
+- DeepResearch has its own AbortController
+- Generator will have its own AbortController
+- DeepResearch creates multiple Generator instances
+
+**Solution Options:**
+
+**Option A (Recommended):** DeepResearch receives signal from Assistant
+```typescript
+// In Assistant
+const deepResearch = new DeepResearch(config, workspaceId)
+deepResearch.run(engine, chat, {
+  ...opts,
+  abortSignal: this.abortController.signal  // Pass Assistant's signal
+})
+
+// In DeepResearch
+run = async (engine: LlmEngine, chat: Chat, opts: dr.DeepResearchOpts) => {
+  // Don't create own controller, use opts.abortSignal
+  // Pass signal to each Generator
+  const generator = new Generator(this.config)
+  await generator.generate(this.engine, messages, {
+    ...opts,
+    abortSignal: opts.abortSignal  // Pass through
+  })
+}
+
+stop = (): void => {
+  // Just stop generators, they'll handle abort via their signals
+  this.generators?.forEach(generator => generator.stop())
+}
+```
+
+**Option B:** DeepResearch keeps its own controller (current approach)
+```typescript
+// DeepResearch creates controller and passes to generators
+this.abortController = new AbortController()
+const generator = new Generator(this.config)
+await generator.generate(this.engine, messages, {
+  ...opts,
+  abortSignal: this.abortController.signal
+})
+```
+
+**Recommendation:** Use Option A for simpler coordination - one abort signal flows from top (Assistant) down through DeepResearch to Generators.
+
+**Action:** Add to Phase 2: "Update DeepResearch classes to receive and pass through abortSignal instead of creating their own"
+
+### 3. ⚠️ **runWithAbort() Access Control Issue**
+
+**Problem:** The `executeIpcWithAbort()` helper accesses `plugin['runWithAbort']()` using bracket notation because `runWithAbort()` is **protected**.
+
+Line 296 of plan:
+```typescript
+return plugin['runWithAbort'](  // Accessing protected method!
+  ipcCall(signalId),
+  abortSignal,
+  () => cancelCall(signalId)
+)
+```
+
+**This is a code smell.** Two solutions:
+
+**Option A:** Make `runWithAbort()` **public** instead of protected
+```typescript
+// In Plugin class
+public async runWithAbort<T>(...)  // Changed from protected
+```
+
+**Option B:** Make `executeIpcWithAbort()` a Plugin method
+```typescript
+// In Plugin class (multi-llm-ts)
+protected async executeIpcWithAbort<T>(
+  ipcCall: (signalId: string) => Promise<T>,
+  cancelCall: (signalId: string) => void,
+  abortSignal?: AbortSignal
+): Promise<T> {
+  const signalId = crypto.randomUUID()
+  return this.runWithAbort(ipcCall(signalId), abortSignal, () => cancelCall(signalId))
+}
+```
+
+**Recommendation:** **Option A** (make public) is cleaner:
+- It's a useful utility that other code might want to use
+- The method is safe to call from anywhere
+- Avoids the bracket notation hack
+- Keeps IPC concerns in Witsy layer
+
+**Action:** Update plan to make `runWithAbort()` public instead of protected
+
+### 4. ✅ **Error Message Standardization**
+
+**Problem:** Plan shows inconsistent error messages:
+- `'Operation cancelled'` (generic)
+- `'Search cancelled'` (search plugin)
+- `'Tool call cancelled'` (MCP plugin)
+
+**Decision needed:** Should we:
+- **Option A:** Standardize on generic `'Operation cancelled'` everywhere
+- **Option B:** Use specific messages per plugin type (current approach)
+- **Option C:** Include plugin name: `'{pluginName} operation cancelled'`
+
+**Recommendation:** **Option A** for consistency. Users don't need to know which plugin was cancelled, just that their cancel request worked.
+
+**Exception:** Keep specific messages for user-facing operations (e.g., "Search cancelled" in UI) but use generic message in plugin returns.
+
+**Action:** Add to implementation guidelines: "Use 'Operation cancelled' consistently in plugin error returns"
+
+### 5. ✅ **Event Listener Cleanup on Normal Completion**
+
+**Problem:** The `runWithAbort()` helper sets up an abort listener but doesn't explicitly clean it up on normal completion:
+
+```typescript
+return Promise.race([
+  operation,
+  new Promise<T>((_, reject) => {
+    abortSignal.addEventListener('abort', () => {
+      onAbort?.()
+      reject(new Error('Operation cancelled'))
+    }, { once: true })  // ✅ GOOD: { once: true } cleans up listener
+  })
+])
+```
+
+**Good news:** The `{ once: true }` option handles cleanup automatically. But this should be documented.
+
+**Action:** Add note to helper documentation: "Listener cleanup is automatic via { once: true } option"
+
+### 6. ✅ **In-Flight Resource Cleanup Strategy**
+
+**Problem:** Plan doesn't explicitly state what happens to resources when abort is triggered mid-operation:
+
+**Scenarios:**
+1. **LocalSearch:** Abort while browser window is open, fetching content
+2. **MCP Plugin:** Abort while external tool is executing
+3. **Filesystem Plugin:** Abort while reading large file
+4. **Python Plugin:** Abort while code is executing
+
+**Strategy:**
+
+**LocalSearch:**
+```typescript
+// Abort listener closes browser windows immediately
+abortSignal?.addEventListener('abort', () => {
+  if (!hasResolved) {
+    hasResolved = true
+    this.tryCloseWindow(win)  // ✅ Cleanup
+    reject(new Error('Content fetch aborted'))
+  }
+})
+```
+
+**MCP Plugin:**
+```typescript
+// MCP SDK handles abort internally, we just catch the error
+try {
+  await mcp.callTool(..., { signal })
+} catch (error) {
+  if (error.name === 'AbortError') {
+    // MCP SDK cleaned up
+  }
+}
+```
+
+**General Pattern:**
+- Browser windows: Close immediately on abort
+- Network requests: AbortSignal to fetch() handles cleanup
+- File operations: Check signal before/between operations
+- External processes (Python): Cannot be aborted mid-execution, only prevented from starting
+
+**Action:** Add "Resource Cleanup Strategy" section documenting cleanup behavior per plugin type
+
+### 7. ✅ **Deep Research Abort Testing**
+
+**Missing from test strategy:** Testing abort during deep research operations, which are complex:
+- Multiple generators running
+- Search plugin called multiple times
+- Long-running (minutes)
+- Most likely scenario where users will want to cancel
+
+**Action:** Add to testing strategy:
+```
+4. **Deep Research Tests:**
+   - Abort during planning phase
+   - Abort during section generation (multiple concurrent searches)
+   - Abort during final synthesis
+   - Verify all generators stop
+   - Verify all browser windows close
+   - Verify proper cleanup of all resources
+```
+
+### 8. ⚠️ **Race Condition Window in IPC Helper**
+
+**Issue:** Small race condition window in `executeIpcWithAbort()`:
+
+```typescript
+const signalId = crypto.randomUUID()
+
+return plugin.runWithAbort(
+  ipcCall(signalId),  // ← Operation starts here
+  abortSignal,
+  () => cancelCall(signalId)  // ← Abort listener set up here
+)
+```
+
+The operation starts before the abort listener is attached. If abort happens in this window, the cancel IPC might not be called.
+
+**Impact:** Low - window is microseconds, and worst case is operation completes when it should have been cancelled.
+
+**Fix (if needed):**
+```typescript
+// Set up listener first
+if (abortSignal?.aborted) {
+  throw new Error('Operation cancelled')
+}
+
+const cleanupListener = abortSignal ? () => cancelCall(signalId) : undefined
+if (cleanupListener) {
+  abortSignal.addEventListener('abort', cleanupListener, { once: true })
+}
+
+try {
+  return await ipcCall(signalId)
+} catch (error) {
+  // Handle error
+} finally {
+  // Cleanup if needed
+  if (cleanupListener && abortSignal) {
+    abortSignal.removeEventListener('abort', cleanupListener)
+  }
+}
+```
+
+**Action:** Document as "known low-impact race condition" or implement fix if deemed necessary
+
+### 9. ✅ **Browse Plugin IPC Usage Needs Verification**
+
+**Assumption in plan:** Browse plugin uses direct fetch()
+
+**Action needed:** Verify if Browse plugin uses IPC or direct fetch, then classify correctly in implementation order
+
+### 10. 📋 **Implementation Order Update Needed**
+
+Based on findings, update Phase 1 to include:
+
+```
+Phase 1: Foundation (multi-llm-ts)
+
+1. ✅ Make Plugin.runWithAbort() PUBLIC (not protected)
+2. ✅ Add Plugin.runWithAbort() to multi-llm-ts
+3. ✅ Update PluginExecutionContext - Add abortSignal field
+4. ✅ Update LlmEngine.callTool() - Pass signal to plugins via context
+5. ✅ Update ALL 14 provider locations - Pass abortSignal when creating context:
+   - ollama.ts: lines 201, 413
+   - mistralai.ts: lines 92, 304
+   - anthropic.ts: lines 160, 564
+   - openai.ts: lines 237, 508, 704, 908
+   - groq.ts: lines 105, 328
+   - google.ts: lines 157, 489
+```
+
+## Updated Implementation Checklist
+
+### Phase 1: Foundation (multi-llm-ts) - 5 steps
+- [ ] Make `runWithAbort()` public instead of protected
+- [ ] Add `Plugin.runWithAbort()` method
+- [ ] Update `PluginExecutionContext` to include `abortSignal?: AbortSignal`
+- [ ] Update `LlmEngine.callTool()` to pass signal to plugins
+- [ ] Update all 14 provider callTool invocations to pass abortSignal from opts
+
+### Phase 2: Generator/Assistant (Witsy) - 4 steps
+- [ ] Update Generator class - Use AbortController instead of stopGeneration
+- [ ] Update Assistant class - Pass abort through to deepResearch
+- [ ] Update DeepResearch classes - Receive signal instead of creating own
+- [ ] Remove deprecated stop() calls - Use abortController.abort()
+
+### Phase 3-6: (Unchanged from original plan)
+
+### Additional Verification Tasks
+- [ ] Verify Browse plugin IPC usage (direct fetch or IPC?)
+- [ ] Add deep research abort tests to test strategy
+- [ ] Document resource cleanup strategy per plugin type
+- [ ] Standardize error messages to "Operation cancelled"
