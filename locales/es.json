@@ -2194,6 +2194,7 @@
       "conversationLength": "Mensajes por conversación",
       "enableHttpEndpoints": "Habilitar puntos finales HTTP (API, desencadenadores, webhooks)",
       "header": "Configuraciones misceláneas",
+      "httpServer": "Servidor HTTP funcionando en el puerto {port}",
       "imageResize": "Redimensionar imagen",
       "imageResizeOptions": {
         "none": "Sin redimensionar",

@@ -2194,6 +2194,7 @@
       "conversationLength": "Nachrichten pro Unterhaltung",
       "enableHttpEndpoints": "HTTP-Endpunkte aktivieren (API, Trigger, Webhooks)",
       "header": "Sonstige Einstellungen",
+      "httpServer": "HTTP-Server läuft auf Port {port}",
       "imageResize": "Bildgröße",
       "imageResizeOptions": {
         "none": "Keine Größe",

@@ -39,7 +39,7 @@ contextBridge.exposeInMainWorld(
       showAbout: (): void => { return ipcRenderer.send(IPC.APP.SHOW_ABOUT) },
       getAssetPath: (assetPath: string): string => { return ipcRenderer.sendSync(IPC.APP.GET_ASSET_PATH, assetPath) },
       fullscreen: (window: string, state: boolean): void => { return ipcRenderer.send(IPC.APP.FULLSCREEN, { window, state }) },
-      getHttpPort: (): Promise<number> => ipcRenderer.invoke(IPC.APP.GET_HTTP_PORT),
+      getHttpPort: (): number => ipcRenderer.sendSync(IPC.APP.GET_HTTP_PORT),
     },
     main: {
       updateMode: (mode: MainWindowMode): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.UPDATE_MODE, mode) },

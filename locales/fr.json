@@ -2194,6 +2194,7 @@
       "conversationLength": "Messages par conversation",
       "enableHttpEndpoints": "Activer les points de terminaison HTTP (API, déclencheurs, webhooks)",
       "header": "Paramètres divers",
+      "httpServer": "Serveur HTTP en cours d'exécution sur le port {port}",
       "imageResize": "Taille des images",
       "imageResizeOptions": {
         "none": "Taille originale",

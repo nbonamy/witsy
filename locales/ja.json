@@ -2216,6 +2216,7 @@
       "conversationLength": "会話あたりのメッセージ数",
       "enableHttpEndpoints": "HTTPエンドポイント（API、トリガー、ウェブフック）を有効にする",
       "header": "その他の設定",
+      "httpServer": "ポート {port} で動作中のHTTPサーバー",
       "imageResize": "画像のリサイズ",
       "imageResizeOptions": {
         "none": "リサイズしない",

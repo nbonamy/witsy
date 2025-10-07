@@ -2216,6 +2216,7 @@
       "conversationLength": "Mensagens por conversa",
       "enableHttpEndpoints": "Ativar endpoints HTTP (API, gatilhos, webhooks)",
       "header": "Configurações diversas",
+      "httpServer": "Servidor HTTP rodando na porta {port}",
       "imageResize": "Redimensionamento de imagem",
       "imageResizeOptions": {
         "none": "Sem redimensionamento",
