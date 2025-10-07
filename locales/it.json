@@ -2546,6 +2546,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Utilizzo: Evidenzia il tuo testo, premi la scorciatoia da tastiera e poi scegli un comando IA",
+      "clearAll": "Rimuovi tutte le scorciatoie",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
       "mainWindow": "@:{'tray.menu.mainWindow'}",
