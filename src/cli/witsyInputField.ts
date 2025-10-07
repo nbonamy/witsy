@@ -914,6 +914,15 @@ export function witsyInputField( options , callback ) {
 
 			if ( inputs[ inputIndex ].length >= options.maxLength ) { return ; }
 
+			// Call onCharacter callback (Witsy addition) - before inserting
+			// Allows callback to prevent character insertion by returning true
+			if ( options.onCharacter ) {
+				var preventDefault = options.onCharacter( key , inputs[ inputIndex ].join( '' ) ) ;
+				if ( preventDefault === true ) {
+					return ; // Don't insert the character
+				}
+			}
+
 			// Insert version
 			//inputs[ inputIndex ] = inputs[ inputIndex ].slice( 0 , offset ) + key + inputs[ inputIndex ].slice( offset ) ;
 			inputs[ inputIndex ].splice( offset , 0 , key ) ;

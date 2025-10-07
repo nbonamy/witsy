@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions } from '../../../src/cli/display'
+import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions, displayShortcutHelp, clearShortcutHelp, getDefaultFooterRightText } from '../../../src/cli/display'
 import { state } from '../../../src/cli/state'
 import { VirtualTerminal } from './VirtualTerminal'
 import { ChatCli, MessageCli } from '../../../src/cli/models'
@@ -82,7 +82,7 @@ describe('CLI Display Requirements', () => {
 ────────────────────────────────────────────────────────────────────────────────
 >
 ────────────────────────────────────────────────────────────────────────────────
-  OpenAI · GPT-4                                                                `
+  OpenAI · GPT-4                                               ? for shortcuts  `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -262,7 +262,7 @@ hi there
 ────────────────────────────────────────────────────────────────────────────────
 
 ────────────────────────────────────────────────────────────────────────────────
-  OpenAI · GPT-4                                                                `
+  OpenAI · GPT-4                                               ? for shortcuts  `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -290,7 +290,7 @@ hi there
 
 
 ────────────────────────────────────────────────────────────────────────────────
-  OpenAI · GPT-4                                                                `
+  OpenAI · GPT-4                                               ? for shortcuts  `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -317,7 +317,7 @@ hi there
 
 ────────────────────────────────────────────────────────────────────────────────
 ────────────────────────────────────────────────────────────────────────────────
-  OpenAI · GPT-4                                                                `
+  OpenAI · GPT-4                                               ? for shortcuts  `
 
       expect(terminal.getVisibleText()).toBe(expected)
     })
@@ -595,6 +595,108 @@ hi there
       expect(terminal.contains('response1')).toBe(true)
       expect(terminal.contains('> second')).toBe(true)
       expect(terminal.contains('response2')).toBe(true)
+    })
+  })
+
+  describe('Requirement: Shortcut Help Display', () => {
+    test('getDefaultFooterRightText should return "? for shortcuts" when no messages', () => {
+      // Arrange: Empty chat
+      state.chat.messages = []
+
+      // Act
+      const result = getDefaultFooterRightText()
+
+      // Assert
+      expect(result).toBe('? for shortcuts')
+    })
+
+    test('getDefaultFooterRightText should return message count when messages exist', () => {
+      // Arrange: Chat with 2 messages
+      state.chat.addMessage(new MessageCli('user', 'hello'))
+      state.chat.addMessage(new MessageCli('assistant', 'hi'))
+
+      // Act
+      const result = getDefaultFooterRightText()
+
+      // Assert
+      expect(result).toBe('2 messages')
+    })
+
+    test('displayShortcutHelp should show help text in place of footer', () => {
+      // Arrange: Initial display
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      const initialInputY = terminal.getCursorPosition().row
+
+      // Act: Display help (replaces footer text)
+      displayShortcutHelp(initialInputY, 1)
+
+      // Assert: Help text displayed
+      expect(terminal.contains('/ for commands')).toBe(true)
+      expect(terminal.contains('double tap esc to clear input')).toBe(true)
+      expect(terminal.contains('shift + ⏎ for newline')).toBe(true)
+    })
+
+    test('displayShortcutHelp should use 3-column layout', () => {
+      // Arrange: Initial display
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      const initialInputY = terminal.getCursorPosition().row
+
+      // Act
+      displayShortcutHelp(initialInputY, 1)
+
+      // Assert: Check spacing indicates columns (each item padded to column width)
+      const text = terminal.getVisibleText()
+      expect(text).toContain('/ for commands')
+      expect(text).toContain('double tap esc to clear input')
+      expect(text).toContain('shift + ⏎ for newline')
+
+      // Column 1 and 2 should be on first row
+      const lines = text.split('\n')
+      const helpLine1 = lines.find(l => l.includes('/ for commands'))
+      expect(helpLine1).toBeDefined()
+      expect(helpLine1).toContain('double tap esc to clear input')
+    })
+
+    test('clearShortcutHelp should restore normal footer text', () => {
+      // Arrange: Display help first
+      state.chat.addMessage(new MessageCli('user', 'test'))
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      const initialInputY = terminal.getCursorPosition().row
+
+      displayShortcutHelp(initialInputY, 1)
+      expect(terminal.contains('/ for commands')).toBe(true)
+
+      // Act: Clear help
+      clearShortcutHelp(initialInputY, 1)
+
+      // Assert: Normal footer restored
+      expect(terminal.contains('/ for commands')).toBe(false)
+      expect(terminal.contains('OpenAI · GPT-4')).toBe(true)
+      expect(terminal.contains('1 messages')).toBe(true)
+    })
+
+    test('clearShortcutHelp should work with multi-line input', () => {
+      // Arrange: Display with 2-line input
+      displayHeader()
+      displayConversation()
+      displayFooter()
+      const initialInputY = terminal.getCursorPosition().row
+
+      repositionFooter(initialInputY, 1, 2)
+      displayShortcutHelp(initialInputY, 2)
+
+      // Act: Clear help
+      clearShortcutHelp(initialInputY, 2)
+
+      // Assert: Normal footer restored at correct position
+      expect(terminal.contains('/ for commands')).toBe(false)
+      expect(terminal.contains('OpenAI · GPT-4')).toBe(true)
     })
   })
 })
