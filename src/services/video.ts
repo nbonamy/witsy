@@ -6,15 +6,32 @@ import { engineNames } from '../llms/base'
 import { download, saveFileContents } from '../services/download'
 import { store } from '../services/store'
 import { anyDict, MediaCreationEngine, MediaCreator, MediaReference } from '../types/index'
-// import { VideoModel } from 'openai/resources'
+
+// Type definitions for OpenAI Video API
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type VideoModel = 'sora-2' | 'sora-2-pro'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type VideoSize = '720x1280' | '1280x720' | '1024x1792' | '1792x1024'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type VideoSeconds = '4' | '8' | '12'
+
+interface VideoJob {
+  id: string
+  status: 'queued' | 'in_progress' | 'completed' | 'failed'
+  progress?: number
+  error?: {
+    code: string
+    message: string
+  }
+}
 
 export default class VideoCreator implements MediaCreator {
 
   static getEngines(checkApiKey: boolean): MediaCreationEngine[] {
     const engines = []
-    // if (!checkApiKey || store.config.engines.openai.apiKey) {
-    //   engines.push({ id: 'openai', name: engineNames.openai })
-    // }
+    if (!checkApiKey || store.config.engines.openai.apiKey) {
+      engines.push({ id: 'openai', name: engineNames.openai })
+    }
     if (!checkApiKey || store.config.engines.google.apiKey) {
       engines.push({ id: 'google', name: engineNames.google })
     }
@@ -38,8 +55,8 @@ export default class VideoCreator implements MediaCreator {
       return this.falai(model, parameters, reference)
     } else if (engine == 'google') {
       return this.google(model, parameters, reference)
-    // } else if (engine == 'openai') {
-    //   return this.openai(model, parameters, reference)
+    } else if (engine == 'openai') {
+      return this.openai(model, parameters, reference)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -151,21 +168,145 @@ export default class VideoCreator implements MediaCreator {
     }
 
   }
-  
+
+  async openai(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
+    return this._openai('openai', store.config.engines.openai.apiKey, store.config.engines.openai.baseURL, model, parameters, reference)
+  }
+
+  protected async _openai(name: string, apiKey: string, baseURL: string, model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
+
+    try {
+      const endpoint = baseURL || 'https://api.openai.com'
+
+      // Step 1: Create video generation job
+      console.log(`[${name}] creating video with model ${model}`)
+      const formData = new FormData()
+      formData.append('prompt', parameters?.prompt || '')
+      formData.append('model', model)
+
+      if (parameters?.size) {
+        formData.append('size', parameters.size)
+      }
+
+      if (parameters?.seconds) {
+        formData.append('seconds', parameters.seconds)
+      }
+
+      // Handle image reference if provided
+      if (reference?.[0]) {
+        const binaryString = atob(reference[0].contents)
+        const bytes = new Uint8Array(binaryString.length)
+        for (let i = 0; i < bytes.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i)
+        }
+        const blob = new Blob([bytes], { type: reference[0].mimeType })
+        formData.append('input_reference', blob, 'reference.jpg')
+      }
+
+      const createResponse = await fetch(`${endpoint}/v1/videos`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: formData
+      })
+
+      if (!createResponse.ok) {
+        const errorText = await createResponse.text()
+        console.error(`[${name}] Video creation failed:`, errorText)
+        throw new Error(`Video creation failed: ${createResponse.status} ${createResponse.statusText}`)
+      }
+
+      const videoJob: VideoJob = await createResponse.json()
+      const videoId = videoJob.id
+
+      if (!videoId) {
+        throw new Error('Video API response missing id')
+      }
+
+      // Step 2: Poll for completion
+      console.log(`[${name}] polling video status for ${videoId}`)
+      const maxAttempts = 180 // 20-40 minutes with 10s intervals
+      let currentJob = videoJob
+
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        if (currentJob.status === 'completed') {
+          break
+        }
+
+        if (currentJob.status === 'failed') {
+          console.error(`[${name}] Video generation failed`, currentJob.error)
+          return {
+            error: currentJob.error?.message || `Video generation failed with ${name} API`
+          }
+        }
+
+        // Wait before next poll (10 seconds as recommended)
+        await new Promise(resolve => setTimeout(resolve, 10000))
+
+        const statusResponse = await fetch(`${endpoint}/v1/videos/${videoId}`, {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`
+          }
+        })
+
+        if (!statusResponse.ok) {
+          throw new Error(`Status check failed: ${statusResponse.status} ${statusResponse.statusText}`)
+        }
+
+        currentJob = await statusResponse.json()
+
+        if (currentJob.progress) {
+          console.log(`[${name}] video generation progress: ${currentJob.progress}%`)
+        }
+      }
+
+      if (currentJob.status !== 'completed') {
+        throw new Error('Video generation timed out')
+      }
+
+      // Step 3: Download the video content
+      console.log(`[${name}] downloading video content`)
+      const downloadResponse = await fetch(`${endpoint}/v1/videos/${videoId}/content`, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`
+        }
+      })
+
+      if (!downloadResponse.ok) {
+        throw new Error(`Video download failed: ${downloadResponse.status} ${downloadResponse.statusText}`)
+      }
+
+      const blob = await downloadResponse.blob()
+      const type = blob.type?.split('/')[1] || 'mp4'
+      const b64 = await this.blobToBase64(blob)
+      const content = b64.split(',')[1]
+      const fileUrl = saveFileContents(type, content)
+
+      return { url: fileUrl }
+
+    } catch (error) {
+      console.error(`[${name}] Video generation error:`, error)
+      return { error: error.message || `Video generation failed with ${name} API` }
+    }
+
+  }
+
+  // SDK-BASED IMPLEMENTATION (commented out - kept for reference)
+  // This version requires OpenAI SDK which is incompatible with Electron
+  //
   // async openai(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
   //   return this._openai('openai', store.config.engines.openai.apiKey, store.config.engines.openai.baseURL, model, parameters, reference)
   // }
-
-  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //
   // protected async _openai(name: string, apiKey: string, baseURL: string, model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
-
   //   // init
   //   const client = new OpenAI({
   //     apiKey: apiKey,
   //     baseURL: baseURL,
   //     dangerouslyAllowBrowser: true
   //   })
-
+  //
   //   // call
   //   console.log(`[${name}] prompting model ${model}`)
   //   const video = await client.videos.create({
@@ -174,20 +315,20 @@ export default class VideoCreator implements MediaCreator {
   //     ...(parameters?.seconds ? { seconds: parameters.seconds } : {}),
   //     ...(parameters?.size ? { size: parameters.size } : {}),
   //   })
-
+  //
   //   // poll for completion
   //   let videoJob = video
   //   while (videoJob.status === 'queued' || videoJob.status === 'in_progress') {
   //     await new Promise(resolve => setTimeout(resolve, 2000))
   //     videoJob = await client.videos.retrieve(video.id)
   //   }
-
+  //
   //   // check for errors
   //   if (videoJob.status === 'failed') {
   //     console.error(`[${name}] Video generation failed`, videoJob.error)
   //     return { error: videoJob.error?.message || `Video generation failed with ${name} API` }
   //   }
-
+  //
   //   // download the content
   //   const response = await client.videos.downloadContent(videoJob.id)
   //   const blob = await response.blob()
@@ -195,11 +336,10 @@ export default class VideoCreator implements MediaCreator {
   //   const b64 = await this.blobToBase64(blob)
   //   const content = b64.split(',')[1]
   //   const fileUrl = saveFileContents(type, content)
-
+  //
   //   return { url: fileUrl }
-
   // }
-  
+
   async blobToBase64(blob: Blob): Promise<string>{
     return new Promise((resolve, reject) => {
         const reader = new FileReader()

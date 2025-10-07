@@ -42,12 +42,12 @@ It is the first of very few (only?) universal MCP clients:<br/>***Witsy allows y
 
 | Capability | Providers |
 |------------|-----------|
-| **Chat** | OpenAI, Anthropic, Google (Gemini), xAI (Grok), Meta (Llama), Ollama, LM Studio, MistralAI, DeepSeek, OpenRouter, Groq, Cerebras, Azure OpenAI, any provider who supports the OpenAI API standard |
-| **Image Creation** | OpenAI (DALL-E), Google (Imagen), xAI (Grok), Replicate, fal.ai, HuggingFace, Stable Diffusion WebUI |
-| **Video Creation** | Replicate, fal.ai |
-| **Text-to-Speech** | OpenAI, ElevenLabs, Groq |
+| **Chat** | OpenAI, Anthropic, Google (Gemini), xAI (Grok), Meta (Llama), Ollama, LM Studio, MistralAI, DeepSeek, OpenRouter, Groq, Cerebras, Azure OpenAI, any provider who supports the OpenAI API standard (together.ai for instance)|
+| **Image Creation** | OpenAI, Google, xAI, Replicate, fal.ai, HuggingFace, Stable Diffusion WebUI |
+| **Video Creation** | OpenAI, Google, Replicate, fal.ai |
+| **Text-to-Speech** | OpenAI, ElevenLabs, Groq, fal.ai |
 | **Speech-to-Text** | OpenAI (Whisper), fal.ai, Fireworks.ai, Gladia, Groq, nVidia, Speechmatics, Local Whisper, Soniox (realtime and async)  any provider who supports the OpenAI API standard |
-| **Search Engines** | Tavily, Brave, Exa, Local Google Search |
+| **Search Engines** | Perplexity, Tavily, Brave, Exa, Local Google Search |
 | **MCP Repositories** | Smithery.ai
 | **Embeddings** | OpenAI, Ollama |
 
