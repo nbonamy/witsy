@@ -306,6 +306,7 @@ export async function handleMessage(message: string) {
   try {
 
     let inTools = false
+    let inReasoning = false
 
     // Show hint that user can cancel (only on first message)
     if (state.chat.messages.length === 1) {
@@ -331,9 +332,27 @@ export async function handleMessage(message: string) {
     await api.complete(thread, (payload: string) => {
 
       const chunk: LlmChunk = JSON.parse(payload)
+      
+      if (chunk.type === 'reasoning') {
+        if (!inReasoning) {
+          process.stdout.write(chalk.gray('⏺') + chalk.white(` Thinking...`))
+        }
+        inReasoning = true
+        return
+      }
+      
+      if (inReasoning) {
+        process.stdout.write(ansiEscapes.cursorTo(0))
+        process.stdout.write(chalk.white('✓ Done thinking.'))
+        process.stdout.write('\n\n')
+        inReasoning = false
+      }
+      
       if (chunk.type === 'content') {
+      
         response += chunk.text
         process.stdout.write(chunk.text)
+      
       } else if (chunk.type === 'tool') {
 
         if (!inTools) {
