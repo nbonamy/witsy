@@ -1,15 +1,14 @@
-import { App, Tray, Menu, nativeImage } from 'electron';
-import AutoUpdater from './autoupdate';
-import Commander from '../automations/commander';
+import { App, Menu, nativeImage, Tray } from 'electron';
+import path from 'path';
 import PromptAnywhere from '../automations/anywhere';
+import Commander from '../automations/commander';
 import ReadAloud from '../automations/readaloud';
 import Transcriber from '../automations/transcriber';
-import { HttpServer } from './http_server';
+import AutoUpdater from './autoupdate';
 import { loadSettings } from './config';
-import * as window from './window';
-import * as shortcuts from './shortcuts';
 import { useI18n } from './i18n';
-import path from 'path';
+import * as shortcuts from './shortcuts';
+import * as window from './window';
 
 export default class {
 
@@ -166,17 +165,17 @@ export default class {
       },
     ])
 
-    if (config.general?.enableHttpEndpoints) {
-      menuItems = menuItems.concat([
-        {
-          type: 'separator'
-        },
-        {
-          label: t('tray.menu.httpServer', { port: HttpServer.getInstance().getPort() }),
-          enabled: false
-        },
-      ])
-    }
+    // if (config.general?.enableHttpEndpoints) {
+    //   menuItems = menuItems.concat([
+    //     {
+    //       type: 'separator'
+    //     },
+    //     {
+    //       label: t('tray.menu.httpServer', { port: HttpServer.getInstance().getPort() }),
+    //       enabled: false
+    //     },
+    //   ])
+    // }
 
     // finally quit
     menuItems = menuItems.concat([

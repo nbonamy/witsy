@@ -2216,6 +2216,7 @@
       "conversationLength": "每段对话的消息数量",
       "enableHttpEndpoints": "启用HTTP端点（API、触发器、Webhook）",
       "header": "杂项设置",
+      "httpServer": "HTTP 服务器运行在端口 {port}",
       "imageResize": "图像调整大小",
       "imageResizeOptions": {
         "none": "不调整大小",

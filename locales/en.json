@@ -2229,6 +2229,7 @@
       "conversationLength": "Messages per conversation",
       "enableHttpEndpoints": "Enable HTTP endpoints (API, triggers, webhooks)",
       "header": "Miscellaneous settings",
+      "httpServer": "HTTP Server running on port {port}",
       "imageResize": "Image resize",
       "imageResizeOptions": {
         "none": "No resize",
@@ -2746,7 +2747,6 @@
   "tray": {
     "menu": {
       "designStudio": "@:{'menu.file.designStudio'}",
-      "httpServer": "🌐 HTTP Server running on port {port}",
       "installUpdate": "Install update and restart…",
       "mainWindow": "@:{'menu.file.mainWindow'}",
       "quickPrompt": "@:{'menu.file.quickPrompt'}",

@@ -50,6 +50,7 @@ import * as scratchpadManager from './scratchpad';
 
 import { importOpenAI } from './import_oai';
 import { AGENT_API_BASE_PATH } from './agent_webhook';
+import { HttpServer } from './http_server';
 
 export const installIpc = (
   store: Store,
@@ -117,9 +118,8 @@ export const installIpc = (
     event.returnValue = theme;
   });
 
-  ipcMain.handle(IPC.APP.GET_HTTP_PORT, async () => {
-    const { HttpServer } = await import('./http_server');
-    return HttpServer.getInstance().getPort();
+  ipcMain.on(IPC.APP.GET_HTTP_PORT, async (event) => {
+    event.returnValue = HttpServer.getInstance().getPort();
   });
 
   // ipcMain.handle(IPC.APP.SHOW_DIALOG, (event, payload): Promise<Electron.MessageBoxReturnValue> => {

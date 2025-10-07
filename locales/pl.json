@@ -2216,6 +2216,7 @@
       "conversationLength": "Wiadomości na konwersację",
       "enableHttpEndpoints": "Włącz punkty końcowe HTTP (API, wyzwalacze, webhooki)",
       "header": "Ustawienia różne",
+      "httpServer": "Serwer HTTP działa na porcie {port}",
       "imageResize": "Zmiana rozmiaru obrazu",
       "imageResizeOptions": {
         "none": "Bez zmiany rozmiaru",

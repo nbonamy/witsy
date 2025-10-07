@@ -15,9 +15,12 @@
         <input type="checkbox" id="safe-keys" v-model="safeKeys" @change="save" />
         <label for="safe-keys">{{ t('settings.advanced.safeKeys') }}</label>
       </div>
-      <div class="form-field http-endpoints horizontal">
-        <input type="checkbox" id="http-endpoints" v-model="enableHttpEndpoints" @change="save" />
-        <label for="http-endpoints">{{ t('settings.advanced.enableHttpEndpoints') }}</label>
+      <div>
+        <div class="form-field http-endpoints horizontal">
+          <input type="checkbox" id="http-endpoints" v-model="enableHttpEndpoints" @change="save" />
+          <label for="http-endpoints">{{ t('settings.advanced.enableHttpEndpoints') }}</label>
+        </div>
+        <div style="margin-left: 32px; font-style: italic;" v-if="enableHttpEndpoints">{{ t('settings.advanced.httpServer', { port: httpPort }) }}</div>
       </div>
       <div class="form-field cli-install">
         <button @click="installCLI" :disabled="!enableHttpEndpoints">{{ t('settings.advanced.installCLI') }}</button>
@@ -82,12 +85,12 @@
 </template>
 
 <script setup lang="ts">
-import { t, i18nInstructions } from '../services/i18n'
+import { i18nInstructions, t } from '../services/i18n'
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { store } from '../services/store'
-import { anyDict } from '../types/index'
 import { ProxyMode } from '../types/config'
+import { anyDict } from '../types/index'
 
 const prompt = ref(null)
 const isPromptOverridden = ref(false)
@@ -98,6 +101,8 @@ const enableHttpEndpoints = ref(true)
 const proxyMode = ref<ProxyMode>('default')
 const customProxy = ref('')
 const imageResize = ref(null)
+
+const httpPort = computed(() => window.api.app.getHttpPort())
 
 const load = () => {
   autoSavePrompt.value = store.config.prompt.autosave
@@ -151,7 +156,6 @@ const save = () => {
 
 const installCLI = async () => {
   const result = await window.api.cli.install()
-  console.log(result)
   if (result.success) {
     alert(t('cli.install.success'))
   }
