@@ -38,6 +38,7 @@ export type EngineConfig = WitsyEngineCreateOpts & {
   models: ModelsConfig
   model: ModelConfig
   realtime?: EngineRealtimeConfig
+  hideDatedModels?: boolean
   disableTools?: boolean
   voices?: TTSVoice[]
 }

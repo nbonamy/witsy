@@ -12,11 +12,15 @@
       <div class="form-subgroup">
         <div class="control-group">
           <ModelSelectPlus id="chat" v-model="chat_model" :models="chat_models" :height="300" :disabled="chat_models.length == 0" @change="save" />
-          <RefreshButton :on-refresh="getModels" />
+          <RefreshButton :on-refresh="getModels" ref="refresh" />
         </div>
         <a href="https://platform.openai.com/docs/models/continuous-model-upgrades" target="_blank">{{ t('settings.engines.openai.aboutModels') }}</a><br/>
         <a href="https://openai.com/api/pricing/" target="_blank">{{ t('settings.engines.openai.pricing') }}</a>
       </div>
+    </div>
+    <div class="form-field horizontal">
+      <input type="checkbox" id="openai-hide-dated-models" name="hideDatedModels" v-model="hideDatedModels" @change="onHideDatedModelsChange" />
+      <label for="openai-hide-dated-models">{{  t('settings.engines.hideDatedModels') }}</label>
     </div>
     <div class="form-field">
       <label>{{ t('settings.engines.vision.model') }}</label>
@@ -49,9 +53,11 @@ import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 const apiKey = ref(null)
 const baseURL = ref(null)
 const disableTools = ref(false)
+const hideDatedModels = ref(true)
 const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
 const chat_models = ref<ChatModel[]>([])
+const refresh = ref(null)
 
 const vision_models = computed(() => {
   return [
@@ -63,6 +69,7 @@ const vision_models = computed(() => {
 const load = () => {
   apiKey.value = store.config.engines.openai?.apiKey || ''
   baseURL.value = store.config.engines.openai?.baseURL || ''
+  hideDatedModels.value = store.config.engines.openai?.hideDatedModels ?? true
   chat_models.value = store.config.engines.openai?.models?.chat || []
   chat_model.value = store.config.engines.openai?.model?.chat || ''
   vision_model.value = store.config.engines.openai?.model?.vision || ''
@@ -95,9 +102,15 @@ const onKeyChange = () => {
   save()
 }
 
+const onHideDatedModelsChange = () => {
+  save()
+  refresh.value.refresh()
+}
+
 const save = () => {
   store.config.engines.openai.apiKey = apiKey.value
   store.config.engines.openai.baseURL = baseURL.value
+  store.config.engines.openai.hideDatedModels = hideDatedModels.value
   store.config.engines.openai.model.chat = chat_model.value
   store.config.engines.openai.model.vision = vision_model.value
   store.config.engines.openai.disableTools = disableTools.value

@@ -383,6 +383,14 @@ export default class LlmManagerBase implements ILlmManager {
 
     // openai names are not great
     if (engine === 'openai') {
+
+
+      // filter
+      if (store.config.engines.openai.hideDatedModels) {
+        models.chat = models.chat.filter(m => !m.id.match(/\d{4}-\d{2}-\d{2}$/i))
+      }
+
+      // names
       models.chat = models.chat.map(m => {
         let name = m.name
         name = name.replace(/^gpt-([^-]*)(-?)([a-z]?)/i, (_, l1, __, l3) => `GPT-${l1} ${l3?.toUpperCase()}`)

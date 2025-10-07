@@ -2363,6 +2363,7 @@
         "aboutModels": "Więcej informacji o modelach Groq",
         "pricing": "Ceny Groq"
       },
+      "hideDatedModels": "Ukryj modele z wyraźnymi datami wydania",
       "lmstudio": {
         "apiBaseURL": "Podstawowy adres URL API"
       },
