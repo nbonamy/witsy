@@ -8,6 +8,13 @@ import { state } from './state'
 declare const __WITSY_VERSION__: string
 const VERSION = typeof __WITSY_VERSION__ !== 'undefined' ? __WITSY_VERSION__ : 'dev'
 
+// override gray
+export const primaryText = chalk.rgb(215, 119, 87)
+export const secondaryText = chalk.rgb(101, 113, 153)
+export const tertiaryText = chalk.rgb(180, 142, 238)
+export const successText = chalk.greenBright
+export const grayText = chalk.rgb(139, 148, 156)
+
 export function resetDisplay(beforeFooter?: () => void) {
   console.clear()
   displayHeader()
@@ -20,20 +27,18 @@ export function resetDisplay(beforeFooter?: () => void) {
 
 export function displayHeader() {
   console.clear()
-  const iconColor = chalk.rgb(215, 119, 87)  // Coral/orange for icon
-  const grayText = chalk.rgb(139, 148, 156)  // Muted gray for text
 
   console.log(`
-${iconColor('  ██  █  ██')}  ${chalk.bold('Witsy CLI')} ${grayText('v' + VERSION)}
-${iconColor('  ██ ███ ██')}  ${grayText('AI Assistant · Command Line Interface')}
-${iconColor('   ███ ███')}   ${grayText(`http://localhost:${state.port}`)}
+${primaryText('  ██  █  ██')}  ${chalk.bold('Witsy CLI')} ${grayText('v' + VERSION)}
+${primaryText('  ██ ███ ██')}  ${grayText('AI Assistant · Command Line Interface')}
+${primaryText('   ███ ███')}   ${grayText(`http://localhost:${state.port}`)}
 `)
 }
 
 export function getDefaultFooterLeftText(): string {
   return state.engine && state.model
     ? `${state.engine} ${state.model}`
-    : '[connecting...]'
+    : '[connecting…]'
 }
 
 export function getDefaultFooterRightText(): string {
@@ -59,14 +64,12 @@ export function getDefaultFooterRightText(): string {
 function renderFooterContent(rightText?: string) {
   
   const terminalWidth = process.stdout.columns || 80
-  const separatorColor = chalk.rgb(101, 113, 153)
-  const grayText = chalk.rgb(139, 148, 156)
 
   const leftText = getDefaultFooterLeftText()
   rightText = rightText ?? getDefaultFooterRightText()
   const padding = Math.max(0, terminalWidth - leftText.length - rightText.length)
 
-  process.stdout.write(separatorColor('─'.repeat(terminalWidth)) + '\n')
+  process.stdout.write(secondaryText('─'.repeat(terminalWidth)) + '\n')
   process.stdout.write(grayText(leftText + ' '.repeat(padding) + rightText))
 }
 
@@ -77,10 +80,9 @@ export function displayFooter() {
   process.stdout.write(ansiEscapes.cursorUp(4))
 
   const terminalWidth = process.stdout.columns || 80
-  const separatorColor = chalk.rgb(101, 113, 153)
 
   // Print top separator
-  process.stdout.write(separatorColor('─'.repeat(terminalWidth)))
+  process.stdout.write(secondaryText('─'.repeat(terminalWidth)))
   process.stdout.write(ansiEscapes.cursorDown(2))
   process.stdout.write(ansiEscapes.cursorTo(0))
 
@@ -148,10 +150,8 @@ export function repositionFooter(initialInputY: number, previousLineCount: numbe
 export function displayCommandSuggestions(
   commands: Array<{ name: string; description: string }>,
   selectedIndex: number
-): number {
-  const grayText = chalk.rgb(139, 148, 156)
-  const highlightColor = chalk.rgb(180, 142, 238) // Light purple for selected
 
+): number {
   // Save cursor position
   process.stdout.write(ansiEscapes.cursorSavePosition)
 
@@ -166,9 +166,9 @@ export function displayCommandSuggestions(
   for (let i = 0; i < commands.length; i++) {
     const cmd = commands[i]
     const isSelected = i === selectedIndex
-    const prefix = isSelected ? highlightColor('  › ') : '    '
+    const prefix = isSelected ? tertiaryText('  › ') : '    '
     const cmdText = isSelected
-      ? highlightColor(cmd.name.padEnd(15) + cmd.description)
+      ? tertiaryText(cmd.name.padEnd(15) + cmd.description)
       : grayText(cmd.name.padEnd(15) + cmd.description)
 
     console.log(prefix + cmdText)
@@ -182,7 +182,6 @@ export function displayCommandSuggestions(
 }
 
 export function displayConversation() {
-  const grayText = chalk.rgb(139, 148, 156)  // Muted gray for text
 
   // Always add ONE blank line after header
   console.log()
@@ -198,6 +197,46 @@ export function displayConversation() {
     }
     // Blank line after each message
     console.log()
+  }
+}
+
+// Pulsating animation frames for tool execution
+const ANIMATION_FRAMES = [
+  '⋅',
+  '∘',
+  '○',
+  '◯',
+  '⊙',
+  '◉',
+  '⊙',
+  '◯',
+  '○',
+  '∘',
+]
+
+let animationIndex = 0
+
+function getToolAnimationFrame(): string {
+  const frame = ANIMATION_FRAMES[animationIndex]
+  animationIndex = (animationIndex + 1) % ANIMATION_FRAMES.length
+  return frame
+}
+
+export function startPulseAnimation(text: string): NodeJS.Timeout {
+  // Display initial frame
+  process.stdout.write(chalk.blueBright(getToolAnimationFrame()) + ` ${text}`)
+
+  // Start animation interval
+  return setInterval(() => {
+    process.stdout.write(ansiEscapes.cursorTo(0))
+    process.stdout.write(ansiEscapes.eraseLine)
+    process.stdout.write(secondaryText(getToolAnimationFrame()) + ` ${text}`)
+  }, 150)
+}
+
+export function stopPulseAnimation(interval: NodeJS.Timeout | null): void {
+  if (interval) {
+    clearInterval(interval)
   }
 }
 

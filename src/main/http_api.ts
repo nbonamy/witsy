@@ -168,6 +168,7 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
         await assistant.prompt(prompt, {
           model,
           streaming: true,
+          titling: false,
           noMarkdown
         }, (chunk) => {
           if (chunk) {
