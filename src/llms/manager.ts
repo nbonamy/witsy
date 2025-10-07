@@ -94,7 +94,9 @@ export default class LlmManager extends LlmManagerBase {
       if (engine === 'openrouter') return new OpenRouter(this.config.engines.openrouter)
       if (engine === 'xai') return new llm.XAI(this.config.engines.xai)
 
-    } catch { /* empty */ }
+    } catch (e) {
+      console.error(`Error igniting engine ${engine}:`, e)
+     }
 
     // fallback
     if (llm.OpenAI.isConfigured(this.config.engines.openai)) {

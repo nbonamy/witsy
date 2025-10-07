@@ -95,6 +95,11 @@ export class LlmContext {
           getLlmTools: this.mcp?.getLlmTools,
           callTool: this.mcp?.callTool,
         },
+
+        // @ts-expect-error partial mock
+        computer: {
+          isAvailable: () => false,
+        }
       }
     }
 
