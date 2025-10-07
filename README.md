@@ -513,7 +513,17 @@ curl "http://localhost:8090/api/agent/status/abc12345/550e8400-e29b-41d4-a716-44
 
 ## DONE
 
-- [X] Implement Soniox for STT
+- [x]
+- [x] OpenAI Sora support
+- [x] Google Nano Banana support
+- [x] Command line interface
+- [x] HTTP Server for commanding Witsy, triggering Agents
+- [x] Table rendering as artifact, download as CSV and XSLX
+- [x] Web apps in menu bar
+- [x] Perplexity Search API support
+- [x] Design Studio drawing
+- [x] MCP Authorization support
+- [x] Implement Soniox for STT
 - [x] OpenAI GPT-5 support
 - [x] Agents (multi-step, scheduling...)
 - [x] Document Repository file change monitoring
