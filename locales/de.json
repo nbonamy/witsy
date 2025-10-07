@@ -464,8 +464,10 @@
   },
   "cli": {
     "install": {
+      "elevated": "@:{'common.appName'} fordert jetzt Administratorrechte an, um die Befehlszeilenschnittstelle zu installieren.",
       "failure": "Die Installation der Befehlszeilenschnittstelle ist fehlgeschlagen. Die Verknüpfung konnte nicht erstellt werden.",
-      "success": "Befehlszeilenschnittstelle erfolgreich installiert"
+      "success": "Befehlszeilenschnittstelle erfolgreich installiert",
+      "title": "Installation der @:{'common.appName'} Befehlszeilenschnittstelle"
     }
   },
   "commands": {
@@ -2114,9 +2116,13 @@
       },
       "models": {
         "reload": "Modelle neu laden"
+      },
+      "tools": {
+        "plugins": "@:{'common.appName'} Plugins"
       }
     },
     "noEngineAvailable": {
+      "text": "@:{'common.appName'} erfordert, dass mindestens ein Modellanbieter konfiguriert ist. Möchten Sie jetzt einen konfigurieren?",
       "title": "Kein Modellanbieter konfiguriert"
     },
     "placeholders": {
@@ -2625,6 +2631,9 @@
     }
   },
   "sidebar": {
+    "features": {
+      "title": "@:{'common.appName'} Funktionen"
+    },
     "newFolder": {
       "placeholder": "Neuer Ordnername",
       "title": "Neuer Ordner"

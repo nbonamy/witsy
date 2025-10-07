@@ -483,8 +483,10 @@
   },
   "cli": {
     "install": {
+      "elevated": "@:{'common.appName'} agora solicitará privilégios de Administrador para instalar a interface de linha de comando.",
       "failure": "Falha ao instalar a interface de linha de comando. O atalho não pôde ser criado.",
-      "success": "Interface de linha de comando instalada com sucesso"
+      "success": "Interface de linha de comando instalada com sucesso",
+      "title": "Instalação da Interface de Linha de Comando do @:{'common.appName'}"
     }
   },
   "commands": {
@@ -2136,9 +2138,13 @@
       },
       "models": {
         "reload": "Recarregar modelos"
+      },
+      "tools": {
+        "plugins": "Plugins do @:{'common.appName'}"
       }
     },
     "noEngineAvailable": {
+      "text": "@:{'common.appName'} requer pelo menos um provedor de modelo configurado. Você quer configurar um agora?",
       "title": "Nenhum provedor de modelo configurado"
     },
     "placeholders": {
@@ -2647,6 +2653,9 @@
     }
   },
   "sidebar": {
+    "features": {
+      "title": "Recursos do @:{'common.appName'}"
+    },
     "newFolder": {
       "placeholder": "Nome da Nova Pasta",
       "title": "Nova Pasta"

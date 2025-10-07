@@ -464,8 +464,10 @@
   },
   "cli": {
     "install": {
+      "elevated": "@:{'common.appName'} solicitará privilegios de Administrador para instalar la interfaz de línea de comandos.",
       "failure": "No se pudo instalar la interfaz de línea de comandos. No se pudo crear el acceso directo.",
-      "success": "Interfaz de línea de comandos instalada con éxito"
+      "success": "Interfaz de línea de comandos instalada con éxito",
+      "title": "Instalación de la Interfaz de Línea de Comandos de @:{'common.appName'}"
     }
   },
   "commands": {
@@ -2114,9 +2116,13 @@
       },
       "models": {
         "reload": "Recargar modelos"
+      },
+      "tools": {
+        "plugins": "Plugins de @:{'common.appName'}"
       }
     },
     "noEngineAvailable": {
+      "text": "@:{'common.appName'} requiere que al menos un proveedor de modelos esté configurado. ¿Quieres configurar uno ahora?",
       "title": "No hay proveedor de modelo configurado"
     },
     "placeholders": {
@@ -2625,6 +2631,9 @@
     }
   },
   "sidebar": {
+    "features": {
+      "title": "Características de @:{'common.appName'}"
+    },
     "newFolder": {
       "placeholder": "Nombre de la nueva carpeta",
       "title": "Nueva Carpeta"

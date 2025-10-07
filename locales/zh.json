@@ -483,8 +483,10 @@
   },
   "cli": {
     "install": {
+      "elevated": "@:{'common.appName'} 现在将提示管理员权限以安装命令行界面。",
       "failure": "命令行界面安装失败。快捷方式无法创建。",
-      "success": "命令行界面安装成功"
+      "success": "命令行界面安装成功",
+      "title": "@:{'common.appName'} 命令行界面安装"
     }
   },
   "commands": {
@@ -2136,9 +2138,13 @@
       },
       "models": {
         "reload": "重新加载模型"
+      },
+      "tools": {
+        "plugins": "@:{'common.appName'} 插件"
       }
     },
     "noEngineAvailable": {
+      "text": "@:{'common.appName'} 需要至少配置一个模型提供者。您现在想要配置一个吗？",
       "title": "未配置模型提供者"
     },
     "placeholders": {
@@ -2647,6 +2653,9 @@
     }
   },
   "sidebar": {
+    "features": {
+      "title": "@:{'common.appName'} 功能"
+    },
     "newFolder": {
       "placeholder": "新文件夹名称",
       "title": "新建文件夹"
