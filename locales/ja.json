@@ -2363,6 +2363,7 @@
         "aboutModels": "Groqモデルについてさらに詳しく",
         "pricing": "Groqの料金"
       },
+      "hideDatedModels": "明確なリリース日があるモデルを非表示にする",
       "lmstudio": {
         "apiBaseURL": "APIベースURL"
       },

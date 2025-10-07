@@ -2363,6 +2363,7 @@
         "aboutModels": "了解更多关于 Groq 模型的信息",
         "pricing": "Groq 定价"
       },
+      "hideDatedModels": "隐藏有明确发布日期的模型",
       "lmstudio": {
         "apiBaseURL": "API 基础URL"
       },
