@@ -392,13 +392,13 @@ export default class LlmManagerBase implements ILlmManager {
         name = name.replace(/-(\d\d\d\d-\d\d-\d\d)$/i, (_ ,l1) => ` ${l1}`)
         return { id: m.id, name, capabilities: m.capabilities, meta: m.meta }
       })
-      models.image = models.image.map(m => {
+      models.image = models.image?.map(m => {
         let name = m.name
         name = name.replace(/^dall-e-/i, 'DALL-E ')
         name = name.replace(/^gpt-image-/i, 'GPT Image ')
         return { id: m.id, name, meta: m.meta }
       })
-      models.video = models.video.map(m => {
+      models.video = models.video?.map(m => {
         let name = m.name
         name = name.replace(/^sora-/i, 'Sora ')
         name = name.replace(/-pro$/i, ' Pro')
