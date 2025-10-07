@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions, displayShortcutHelp, clearShortcutHelp, getDefaultFooterRightText } from '../../../src/cli/display'
+import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions, displayShortcutHelp, clearShortcutHelp, getDefaultFooterRightText, padContent } from '../../../src/cli/display'
 import { state } from '../../../src/cli/state'
 import { VirtualTerminal } from './VirtualTerminal'
 import { ChatCli, MessageCli } from '../../../src/cli/models'
@@ -114,7 +114,7 @@ describe('CLI Display Requirements', () => {
    ███ ███   http://localhost:8090
 
 
-> hello
+>   hello
 
 ────────────────────────────────────────────────────────────────────────────────
 >
@@ -155,9 +155,9 @@ describe('CLI Display Requirements', () => {
    ███ ███   http://localhost:8090
 
 
-> hello
+>   hello
 
-Hello how are you?
+  Hello how are you?
 
 ────────────────────────────────────────────────────────────────────────────────
 >
@@ -188,13 +188,13 @@ Hello how are you?
    ███ ███   http://localhost:8090
 
 
-> Tell me a joke
+>   Tell me a joke
 
-Why did the chicken cross the road?
+  Why did the chicken cross the road?
 
-> Why?
+>   Why?
 
-To get to the other side!
+  To get to the other side!
 
 ────────────────────────────────────────────────────────────────────────────────
 >
@@ -224,9 +224,9 @@ To get to the other side!
    ███ ███   http://localhost:8090
 
 
-> hello
+>   hello
 
-hi there
+  hi there
 
 ────────────────────────────────────────────────────────────────────────────────
 >
@@ -450,8 +450,8 @@ hi there
 
       // Assert: Complete screen layout
       expect(terminal.contains('Witsy CLI')).toBe(true)
-      expect(terminal.contains('> hello')).toBe(true)
-      expect(terminal.contains('hi')).toBe(true)
+      expect(terminal.contains('>   hello')).toBe(true)
+      expect(terminal.contains('  hi')).toBe(true)
       expect(terminal.contains('OpenAI · GPT-4')).toBe(true)
       expect(terminal.contains('2 messages')).toBe(true)
     })
@@ -591,10 +591,94 @@ hi there
       displayConversation()
 
       // Assert: All messages present
-      expect(terminal.contains('> first')).toBe(true)
-      expect(terminal.contains('response1')).toBe(true)
-      expect(terminal.contains('> second')).toBe(true)
-      expect(terminal.contains('response2')).toBe(true)
+      expect(terminal.contains('>   first')).toBe(true)
+      expect(terminal.contains('  response1')).toBe(true)
+      expect(terminal.contains('>   second')).toBe(true)
+      expect(terminal.contains('  response2')).toBe(true)
+    })
+  })
+
+  describe('Requirement: padContent word wrapping', () => {
+    test('should add padding to short single line', () => {
+      // Arrange
+      const text = 'Hello world'
+
+      // Act
+      const result = padContent(text, 80)
+
+      // Assert
+      expect(result).toBe('  Hello world  ')
+    })
+
+    test('should preserve existing newlines', () => {
+      // Arrange
+      const text = 'Line 1\nLine 2\nLine 3'
+
+      // Act
+      const result = padContent(text, 80)
+
+      // Assert
+      expect(result).toBe('  Line 1  \n  Line 2  \n  Line 3  ')
+    })
+
+    test('should wrap long line at word boundaries', () => {
+      // Arrange
+      // Create a line that exceeds width-4 (76 chars for 80 col terminal)
+      const text = 'This is a very long line that definitely exceeds the maximum width and should be wrapped at word boundaries'
+
+      // Act
+      const result = padContent(text, 80)
+
+      // Assert - should be wrapped into multiple lines, each with padding
+      const lines = result.split('\n')
+      expect(lines.length).toBeGreaterThan(1)
+      for (const line of lines) {
+        expect(line.startsWith('  ')).toBe(true)
+        expect(line.endsWith('  ')).toBe(true)
+        // Each line should not exceed 80 chars
+        expect(line.length).toBeLessThanOrEqual(80)
+      }
+    })
+
+    test('should break very long words', () => {
+      // Arrange
+      // Create a word longer than maxLineWidth (76 chars for 80 col terminal)
+      const longWord = 'a'.repeat(100)
+
+      // Act
+      const result = padContent(longWord, 80)
+
+      // Assert - should be broken into chunks
+      const lines = result.split('\n')
+      expect(lines.length).toBeGreaterThan(1)
+      for (const line of lines) {
+        expect(line.startsWith('  ')).toBe(true)
+        expect(line.endsWith('  ')).toBe(true)
+        expect(line.length).toBeLessThanOrEqual(80)
+      }
+    })
+
+    test('should handle empty string', () => {
+      // Act
+      const result = padContent('', 80)
+
+      // Assert
+      expect(result).toBe('    ')
+    })
+
+    test('should handle mixed long and short lines', () => {
+      // Arrange
+      const text = 'Short\nThis is a very long line that exceeds the maximum width and needs wrapping\nAnother short'
+
+      // Act
+      const result = padContent(text, 80)
+
+      // Assert
+      const lines = result.split('\n')
+      expect(lines[0]).toBe('  Short  ')
+      expect(lines[lines.length - 1]).toBe('  Another short  ')
+      // Middle lines should be wrapped (at least 3 lines total: short + wrapped middle + short)
+      expect(lines.length).toBeGreaterThanOrEqual(3)
     })
   })
 

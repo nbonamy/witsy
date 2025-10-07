@@ -17,6 +17,7 @@ global.fetch = vi.fn()
 vi.mock('../../../src/cli/api')
 vi.mock('../../../src/cli/display', () => ({
   grayText: (s: string) => s,
+  padContent: (text: string) => `  ${text}  `,
   resetDisplay: vi.fn(),
   displayFooter: vi.fn(),
   clearFooter: vi.fn(),
@@ -24,6 +25,7 @@ vi.mock('../../../src/cli/display', () => ({
   displayConversation: vi.fn(),
   startPulseAnimation: vi.fn(() => ({} as NodeJS.Timeout)),
   stopPulseAnimation: vi.fn(),
+  successText: (s: string) => s,
 }))
 vi.mock('../../../src/cli/input', () => ({
   promptInput: vi.fn(),

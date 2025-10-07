@@ -5,7 +5,7 @@ import chalk from 'chalk'
 import { parseArgs } from 'node:util'
 import { COMMANDS, handleClear, handleCommand, handleMessage, handleQuit, initialize } from './commands'
 import { saveCliConfig } from './config'
-import { clearFooter, displayFooter, grayText, resetDisplay } from './display'
+import { clearFooter, displayFooter, grayText, padContent, resetDisplay } from './display'
 import { promptInput } from './input'
 import { selectOption } from './select'
 import { state } from './state'
@@ -150,7 +150,8 @@ async function main() {
       // Handle chat message
       // Display user message with "> " prefix and gray color
       console.log()
-      console.log(grayText('> ' + trimmed))
+      const paddedUserContent = padContent(trimmed)
+      console.log(grayText('> ' + paddedUserContent))
       console.log() // Blank line
 
       // Stream assistant response
