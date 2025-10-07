@@ -4,12 +4,11 @@
 # This script allows running the Witsy CLI from the command line
 # by using the Electron binary as a Node.js runtime
 
-# Determine the script's directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
 # Detect platform and set paths accordingly
 if [[ "$OSTYPE" == "darwin"* ]]; then
+	
 	# macOS: follow symlink to find .app bundle
+	
 	function app_realpath() {
 		SOURCE=$1
 		while [ -h "$SOURCE" ]; do
@@ -29,10 +28,23 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
 	ELECTRON="$APP_PATH/Contents/MacOS/Witsy"
 	CLI="$APP_PATH/Contents/Resources/cli/cli.js"
+
 else
-	# Linux: script is in resources/cli/bin, executable is 3 levels up
+	
+	# Linux: follow symlink to find real script location
+	
+	SCRIPT_PATH="${BASH_SOURCE[0]}"
+	while [ -h "$SCRIPT_PATH" ]; do
+		SCRIPT_DIR="$( cd -P "$( dirname "$SCRIPT_PATH" )" && pwd )"
+		SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
+		[[ $SCRIPT_PATH != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
+	done
+	SCRIPT_DIR="$( cd -P "$( dirname "$SCRIPT_PATH" )" && pwd )"
+
+	# Script is in resources/cli/bin, executable is 3 levels up
 	ELECTRON="$SCRIPT_DIR/../../../witsy"
 	CLI="$SCRIPT_DIR/../cli.js"
+
 fi
 
 ELECTRON_RUN_AS_NODE=1 "$ELECTRON" --no-deprecation "$CLI" "$@"
