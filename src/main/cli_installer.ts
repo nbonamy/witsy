@@ -241,13 +241,10 @@ async function installWindowsCLI(): Promise<boolean> {
     }
 
     // Add target directory to PATH
-    const psScript = `
-      $oldPath = [Environment]::GetEnvironmentVariable('Path', 'User')
-      $newPath = $oldPath + ';${targetDir}'
-      [Environment]::SetEnvironmentVariable('Path', $newPath, 'User')
-    `
+    const newPath = currentPath + ';' + targetDir
+    const psScript = `[Environment]::SetEnvironmentVariable('Path', '${newPath.replace(/'/g, "''")}', 'User')`
 
-    execSync(`powershell -Command "${psScript.replace(/"/g, '\\"')}"`, { shell: 'powershell.exe' })
+    execSync(`powershell -Command "${psScript}"`, { shell: 'powershell.exe' })
 
     log.info('CLI installed successfully, added to PATH:', targetDir)
 
