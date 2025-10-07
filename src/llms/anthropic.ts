@@ -5,7 +5,7 @@ import { store } from '../services/store'
 import ComputerPlugin from '../plugins/computer'
 
 const getComputerInfo = () =>{
-  if (!window.api.computer.isAvailable()) return null
+  if (!window.api.computer?.isAvailable()) return null
   const plugin = new ComputerPlugin(store.config.plugins.computer, store.config.workspaceId)
   return {
     plugin: plugin,
