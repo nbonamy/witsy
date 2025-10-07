@@ -24,7 +24,7 @@ export class WitsyAPI {
     }
   }
 
-  async getConfig(): Promise<{ engine: string; model: string; userDataPath: string; enableHttpEndpoints: boolean }> {
+  async getConfig(): Promise<{ engine: { id: string; name: string }; model: { id: string; name: string }; userDataPath: string; enableHttpEndpoints: boolean }> {
     const response = await fetch(`${this.baseUrl()}/api/cli/config`)
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const data = await response.json()
@@ -56,8 +56,8 @@ export class WitsyAPI {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         stream: 'true',
-        engine: state.engine,
-        model: state.model,
+        engine: state.engine?.id,
+        model: state.model?.id,
         noMarkdown: true,
         thread
       }),

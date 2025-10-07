@@ -11,8 +11,8 @@ describe('WitsyAPI', () => {
   beforeEach(() => {
     api = new WitsyAPI()
     state.port = 4321
-    state.engine = 'openai'
-    state.model = 'gpt-4'
+    state.engine = { id: 'openai', name: 'OpenAI' }
+    state.model = { id: 'gpt-4', name: 'GPT-4' }
     vi.clearAllMocks()
   })
 
@@ -22,9 +22,10 @@ describe('WitsyAPI', () => {
 
   test('getConfig makes correct API call', async () => {
     const mockResponse = {
-      engine: 'openai',
-      model: 'gpt-4',
+      engine: { id: 'openai', name: 'OpenAI' },
+      model: { id: 'gpt-4', name: 'GPT-4' },
       userDataPath: '/path/to/userData',
+      enableHttpEndpoints: true
     }
 
     vi.mocked(fetch).mockResolvedValueOnce({

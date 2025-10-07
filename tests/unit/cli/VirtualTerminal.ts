@@ -218,13 +218,23 @@ export class VirtualTerminal {
   }
 
   /**
-   * Get visible text from screen (strips trailing spaces from each line)
+   * Get visible text from screen (trim all lines except last, skip empty lines at end)
    */
   getVisibleText(): string {
-    return this.screen
-      .map(row => row.join('').trimEnd())
-      .join('\n')
-      .trimEnd()
+    const lines = this.screen.map(row => row.join(''))
+
+    // Remove empty lines from the end
+    let lastNonEmpty = lines.length - 1
+    while (lastNonEmpty >= 0 && lines[lastNonEmpty].trim() === '') {
+      lastNonEmpty--
+    }
+
+    // Trim all lines except the last
+    const trimmedLines = lines.slice(0, lastNonEmpty + 1).map((line, index) => {
+      return index === lastNonEmpty ? line : line.trimEnd()
+    })
+
+    return trimmedLines.join('\n')
   }
 
   /**

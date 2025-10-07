@@ -139,7 +139,7 @@ export async function handleModel() {
       return
     }
 
-    const selectedEngine = await selectOption({
+    const selectedEngineId = await selectOption({
       title: 'Select engine:',
       choices: engines.map(e => ({
         name: `${e.name} (${e.id})`,
@@ -148,12 +148,13 @@ export async function handleModel() {
     })
 
     // If empty (cancelled), just redraw and return
-    if (!selectedEngine) {
+    if (!selectedEngineId) {
       resetDisplay()
       return
     }
 
-    const models = await api.getModels(selectedEngine)
+    const selectedEngine = engines.find(e => e.id === selectedEngineId)!
+    const models = await api.getModels(selectedEngineId)
 
     if (models.length === 0) {
       resetDisplay(() => {
@@ -162,7 +163,7 @@ export async function handleModel() {
       return
     }
 
-    const selectedModel = await selectOption({
+    const selectedModelId = await selectOption({
       title: 'Select model:',
       choices: models.map(m => ({
         name: m.name,
@@ -171,10 +172,12 @@ export async function handleModel() {
     })
 
     // If empty (cancelled), just redraw and return
-    if (!selectedModel) {
+    if (!selectedModelId) {
       resetDisplay()
       return
     }
+
+    const selectedModel = models.find(m => m.id === selectedModelId)!
 
     state.engine = selectedEngine
     state.model = selectedModel
@@ -186,10 +189,7 @@ export async function handleModel() {
       saveCliConfig(state.userDataPath, state.cliConfig)
     }
 
-    const engineName = engines.find(e => e.id === selectedEngine)?.name || selectedEngine
-    const modelName = models.find(m => m.id === selectedModel)?.name || selectedModel
-
-    console.log(chalk.yellow(`\n✓ Selected ${engineName} / ${modelName}\n`))
+    console.log(chalk.yellow(`\n✓ Selected ${selectedEngine.name} / ${selectedModel.name}\n`))
 
     // Redraw entire screen
     resetDisplay()
@@ -314,12 +314,12 @@ export async function handleHistory() {
 export async function handleMessage(message: string) {
 
   // Update chat engine/model before each message (user can change model mid-conversation)
-  state.chat.setEngineModel(state.engine, state.model)
+  state.chat.setEngineModel(state.engine?.id || '', state.model?.id || '')
 
   // Create and add user message
   const userMessage = new MessageCli('user', message)
-  userMessage.engine = state.engine
-  userMessage.model = state.model
+  userMessage.engine = state.engine?.id || ''
+  userMessage.model = state.model?.id || ''
   state.chat.addMessage(userMessage)
 
   // Setup abort controller for cancellation
@@ -425,8 +425,8 @@ export async function handleMessage(message: string) {
     // Create and add assistant response (if we got any content)
     if (response.length > 0) {
       const assistantMessage = new MessageCli('assistant', response)
-      assistantMessage.engine = state.engine
-      assistantMessage.model = state.model
+      assistantMessage.engine = state.engine?.id || ''
+      assistantMessage.model = state.model?.id || ''
       state.chat.addMessage(assistantMessage)
     }
 
@@ -451,8 +451,8 @@ export async function handleMessage(message: string) {
       // Keep partial response if we got any
       if (response && response.length > 0) {
         const assistantMessage = new MessageCli('assistant', response)
-        assistantMessage.engine = state.engine
-        assistantMessage.model = state.model
+        assistantMessage.engine = state.engine?.id || ''
+        assistantMessage.model = state.model?.id || ''
         state.chat.addMessage(assistantMessage)
 
         // Auto-save if chat has been saved before
@@ -570,8 +570,6 @@ export async function initialize() {
   const connected = await api.connectWithTimeout(state.port, 2000)
 
   if (!connected) {
-    state.engine = ''
-    state.model = ''
     resetDisplay(() => {
       console.log(chalk.red('\n✗ Cannot connect to Witsy'))
       console.log(chalk.dim('  Make sure Witsy desktop app is running on port ' + state.port + '\n'))
@@ -611,8 +609,8 @@ export async function initialize() {
       saveCliConfig(state.userDataPath, state.cliConfig)
     }
   } catch {
-    state.engine = ''
-    state.model = ''
+    state.engine = null
+    state.model = null
   }
 
   resetDisplay()

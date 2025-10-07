@@ -28,8 +28,8 @@ export async function selectOption<T = string>(
 
   return new Promise((resolve, reject) => {
 
-    // Move cursor down 3 lines (past footer) before displaying menu
-    term('\n\n\n')
+    // Move cursor down (past footer) before displaying menu
+    term('\n\n\n\n')
 
     // Display title with search string if present
     const displayTitle = searchString ? `${options.title} ${searchString}` : options.title

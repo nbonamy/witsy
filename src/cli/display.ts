@@ -37,7 +37,7 @@ ${primaryText('   ███ ███')}   ${grayText(`http://localhost:${state.
 
 export function getDefaultFooterLeftText(): string {
   return state.engine && state.model
-    ? `${state.engine} ${state.model}`
+    ? `${state.engine.name} · ${state.model.name}`
     : '[connecting…]'
 }
 
@@ -62,15 +62,15 @@ export function getDefaultFooterRightText(): string {
 
 // Helper to render footer content (separator + status line)
 function renderFooterContent(rightText?: string) {
-  
+
   const terminalWidth = process.stdout.columns || 80
 
   const leftText = getDefaultFooterLeftText()
   rightText = rightText ?? getDefaultFooterRightText()
-  const padding = Math.max(0, terminalWidth - leftText.length - rightText.length)
+  const padding = Math.max(0, terminalWidth - leftText.length - rightText.length - 4)
 
   process.stdout.write(secondaryText('─'.repeat(terminalWidth)) + '\n')
-  process.stdout.write(grayText(leftText + ' '.repeat(padding) + rightText))
+  process.stdout.write(grayText('  ' + leftText + ' '.repeat(padding) + rightText + '  '))
 }
 
 export function displayFooter() {

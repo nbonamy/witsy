@@ -28,7 +28,7 @@ Witsy CLI is a terminal-based interface for the Witsy AI assistant, providing a 
 - **Tool Call Visualization**: Blue/green indicators for tool execution
 - **Smart Display**: Auto-adjusts menu height, save status in footer ("type /save" hint at 4+ messages, "auto-saving" when saved)
 - **Stream Cancellation**: Press Escape during streaming to cancel, partial responses are saved
-- **Persistent Config**: CLI-specific settings in `cli.json` (engine, model, input history)
+- **Persistent Config**: CLI-specific settings in `cli.json` (engine/model with display names, input history)
 - **Multi-line Input**: Shift+Enter (CTRL_J) creates newlines, multi-line paste preserves newlines, UP/DOWN navigate between logical lines
 
 ### Architecture Design
