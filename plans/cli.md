@@ -21,10 +21,10 @@ Witsy CLI is a terminal-based interface for the Witsy AI assistant, providing a 
 - **Title Management**: Set conversation titles with `/title`, auto-saves if conversation already saved
 - **Message Retry**: Retry last message with `/retry`, uses current engine/model (respects model changes)
 - **Connection Management**: Short timeout on startup, exits immediately if cannot connect or HTTP endpoints disabled, configurable port via `-p/--port` CLI argument (default: 8090)
-- **Command Line Arguments**: `-p/--port` to specify port, `-h/--help` for usage information
+- **Command Line Arguments**: `-p/--port` to specify port, `-d/--debug` to show keycodes on line 1, `-h/--help` for usage information
 - **Filterable Menus**: Type to filter commands and model selections, aligned descriptions (Claude Code style)
 - **Input History**: UP/DOWN arrow navigation through previous prompts
-- **Keyboard Shortcuts**: Ctrl+C exits immediately, Ctrl+D clears conversation (or exits if empty), double-Escape clears input
+- **Keyboard Shortcuts**: Ctrl+C exits immediately, Ctrl+D clears conversation (or exits if empty), double-Escape clears input, Option+Left/Right for word navigation, Command+Left/Right for line navigation
 - **Tool Call Visualization**: Blue/green indicators for tool execution
 - **Smart Display**: Auto-adjusts menu height, save status in footer ("type /save" hint at 4+ messages, "auto-saving" when saved)
 - **Stream Cancellation**: Press Escape during streaming to cancel, partial responses are saved
@@ -64,6 +64,15 @@ CLI <--(HTTP)--> Witsy Backend (default port 8090, configurable via -p/--port)
 ## TODO List
 
 _(No pending features)_
+
+---
+
+## Development Notes
+
+**Debugging Keycodes:**
+- Run CLI with `--debug` flag to show keycodes in real-time on line 1
+- Useful for investigating terminal key sequences when adding new keyboard shortcuts
+- Example: `witsy-cli --debug` then press Option+Left to see `DEBUG: key='ALT_B' ...`
 
 ---
 
