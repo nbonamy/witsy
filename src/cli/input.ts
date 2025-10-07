@@ -1,7 +1,7 @@
 // Custom input handler using terminal-kit's witsyInputField
 
 import terminalKit from 'terminal-kit'
-import { repositionFooter, resetDisplay, updateFooterRightText } from './display'
+import { clearShortcutHelp, displayShortcutHelp, repositionFooter, resetDisplay, updateFooterRightText } from './display'
 import { state } from './state'
 import { witsyInputField } from './witsyInputField'
 
@@ -46,6 +46,7 @@ export async function promptInput(options: InputOptions): Promise<string> {
       let escapeTimer: NodeJS.Timeout | null = null
       let controller: any = null
       const initialInputY = y
+      let helpShowing = false
 
       // Show prompt
       const promptText = options.prompt
@@ -80,6 +81,23 @@ export async function promptInput(options: InputOptions): Promise<string> {
         cancelable: true,
         history: state.cliConfig?.history || [],
         debug: state.debug,
+
+        onCharacter: (char: string, text: string) => {
+          // Clear help on any key press (if help is showing)
+          if (helpShowing) {
+            clearShortcutHelp(initialInputY, previousLineCount)
+            helpShowing = false
+          }
+
+          // If '?' pressed on empty prompt, show help and prevent character insertion
+          if (char === '?' && text === '') {
+            displayShortcutHelp(initialInputY, previousLineCount)
+            helpShowing = true
+            return true // Prevent default (don't insert the '?')
+          }
+
+          return false // Allow default behavior
+        },
 
         onTextChange: (text: string) => {
 
