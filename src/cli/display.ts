@@ -228,6 +228,63 @@ export function displayCommandSuggestions(
   return commands.length + 1
 }
 
+// Word-wrap text with padding on each physical line
+export function padContent(text: string, width: number = process.stdout.columns || 80): string {
+  const maxLineWidth = width - 4  // Reserve 2 left + 2 right for padding
+  const lines: string[] = []
+
+  // Split by existing newlines first (preserve intentional line breaks)
+  const paragraphs = text.split('\n')
+
+  for (const paragraph of paragraphs) {
+    // Handle empty paragraphs
+    if (paragraph === '') {
+      lines.push('    ')
+      continue
+    }
+
+    const words = paragraph.split(' ')
+    let currentLine = ''
+
+    for (const word of words) {
+      // Skip empty words (from multiple spaces)
+      if (word === '') continue
+
+      // If word alone is longer than maxLineWidth, break it
+      if (word.length > maxLineWidth) {
+        // Flush current line if not empty
+        if (currentLine) {
+          lines.push(`  ${currentLine.trimEnd()}  `)
+          currentLine = ''
+        }
+        // Break long word into chunks
+        for (let i = 0; i < word.length; i += maxLineWidth) {
+          lines.push(`  ${word.slice(i, i + maxLineWidth)}  `)
+        }
+        continue
+      }
+
+      // Try adding word to current line
+      const testLine = currentLine ? `${currentLine} ${word}` : word
+
+      if (testLine.length <= maxLineWidth) {
+        currentLine = testLine
+      } else {
+        // Line would be too long, flush current line and start new one
+        lines.push(`  ${currentLine.trimEnd()}  `)
+        currentLine = word
+      }
+    }
+
+    // Flush remaining line
+    if (currentLine) {
+      lines.push(`  ${currentLine.trimEnd()}  `)
+    }
+  }
+
+  return lines.join('\n')
+}
+
 export function displayConversation() {
 
   // Always add ONE blank line after header
@@ -236,11 +293,12 @@ export function displayConversation() {
   for (let i = 0; i < state.chat.messages.length; i++) {
     const msg = state.chat.messages[i]
     if (msg.role === 'user') {
-      // User messages: gray with "> " prefix
-      console.log(grayText('> ' + msg.content))
+      // User messages: gray with "> " prefix, then padded content
+      const paddedContent = padContent(msg.content)
+      console.log(grayText('> ' + paddedContent))
     } else {
       // Assistant messages: white (default terminal color)
-      console.log(msg.content)
+      console.log(padContent(msg.content))
     }
     // Blank line after each message
     console.log()

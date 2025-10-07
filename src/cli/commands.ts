@@ -4,7 +4,7 @@ import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
-import { clearFooter, displayConversation, displayFooter, grayText, resetDisplay, startPulseAnimation, stopPulseAnimation, successText } from './display'
+import { clearFooter, displayConversation, displayFooter, grayText, padContent, resetDisplay, startPulseAnimation, stopPulseAnimation, successText } from './display'
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
 import { selectOption } from './select'
@@ -290,7 +290,8 @@ export async function handleRetry() {
 
   // Display the user message again (same as main loop does)
   console.log()
-  console.log(grayText('> ' + lastUserContent))
+  const paddedRetryContent = padContent(lastUserContent)
+  console.log(grayText('> ' + paddedRetryContent))
   console.log() // Blank line
 
   // Call handleMessage with the last user content
@@ -309,6 +310,84 @@ export async function handleHistory() {
 
   // Just display the conversation
   displayConversation()
+}
+
+// Helper class to handle streaming content with padding
+class StreamPadder {
+  private buffer = ''
+  private isFirstLine = true
+  private terminalWidth: number
+
+  constructor() {
+    this.terminalWidth = process.stdout.columns || 80
+  }
+
+  write(text: string): void {
+    this.buffer += text
+
+    // Process complete lines (those ending with \n)
+    const lines = this.buffer.split('\n')
+
+    // Keep the last incomplete line in the buffer
+    this.buffer = lines.pop() || ''
+
+    // Output complete lines with padding
+    for (const line of lines) {
+      const paddedLine = this.padLine(line)
+      process.stdout.write(paddedLine + '\n')
+      this.isFirstLine = false
+    }
+  }
+
+  flush(): void {
+    // Output any remaining content in buffer
+    if (this.buffer.length > 0) {
+      const paddedLine = this.padLine(this.buffer)
+      process.stdout.write(paddedLine)
+      this.buffer = ''
+    }
+  }
+
+  private padLine(line: string): string {
+    const maxLineWidth = this.terminalWidth - 4
+    const words = line.split(' ')
+    const paddedLines: string[] = []
+    let currentLine = ''
+
+    for (const word of words) {
+      // If word alone is longer than maxLineWidth, break it
+      if (word.length > maxLineWidth) {
+        // Flush current line if not empty
+        if (currentLine) {
+          paddedLines.push(`  ${currentLine.trimEnd()}  `)
+          currentLine = ''
+        }
+        // Break long word into chunks
+        for (let i = 0; i < word.length; i += maxLineWidth) {
+          paddedLines.push(`  ${word.slice(i, i + maxLineWidth)}  `)
+        }
+        continue
+      }
+
+      // Try adding word to current line
+      const testLine = currentLine ? `${currentLine} ${word}` : word
+
+      if (testLine.length <= maxLineWidth) {
+        currentLine = testLine
+      } else {
+        // Line would be too long, flush current line and start new one
+        paddedLines.push(`  ${currentLine.trimEnd()}  `)
+        currentLine = word
+      }
+    }
+
+    // Flush remaining line
+    if (currentLine) {
+      paddedLines.push(`  ${currentLine.trimEnd()}  `)
+    }
+
+    return paddedLines.join('\n')
+  }
 }
 
 export async function handleMessage(message: string) {
@@ -336,6 +415,7 @@ export async function handleMessage(message: string) {
     let inTools = false
     let inReasoning = false
     let firstChunk = true
+    const streamPadder = new StreamPadder()
 
     // Start loading animation
     const loadingVerb = loadingVerbs[Math.floor(Math.random() * loadingVerbs.length)]
@@ -390,7 +470,7 @@ export async function handleMessage(message: string) {
       if (chunk.type === 'content') {
 
         response += chunk.text
-        process.stdout.write(chunk.text)
+        streamPadder.write(chunk.text)
 
       } else if (chunk.type === 'tool') {
 
@@ -421,6 +501,9 @@ export async function handleMessage(message: string) {
       }
 
     }, controller.signal)
+
+    // Flush any remaining buffered content
+    streamPadder.flush()
 
     // Create and add assistant response (if we got any content)
     if (response.length > 0) {
@@ -522,7 +605,7 @@ export async function handleCommand(commandInput: string) {
 
 export function handleQuit() {
   clearFooter()
-  console.log(chalk.yellow('\nGoodbye! 👋'))
+  console.log(chalk.yellow('\n  Goodbye! 👋'))
   process.exit(0)
 }
 
