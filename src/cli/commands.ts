@@ -291,7 +291,7 @@ export async function handleRetry() {
   // Display the user message again (same as main loop does)
   console.log()
   const paddedRetryContent = padContent(lastUserContent)
-  console.log(grayText('> ' + paddedRetryContent))
+  console.log(grayText('> ' + paddedRetryContent.slice(2))) // Remove left padding
   console.log() // Blank line
 
   // Call handleMessage with the last user content
