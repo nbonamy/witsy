@@ -2574,6 +2574,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "使用方法：テキストをハイライトし、キーボードショートカットを押し、AIコマンドを選択してください",
+      "clearAll": "すべてのショートカットを削除",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
       "mainWindow": "@:{'tray.menu.mainWindow'}",
