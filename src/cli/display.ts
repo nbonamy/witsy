@@ -41,8 +41,12 @@ export function getDefaultFooterLeftText(): string {
     : '[connecting…]'
 }
 
-export function getDefaultFooterRightText(): string {
+export function getDefaultFooterRightText(inputText?: string): string {
   if (state.chat.messages.length === 0) {
+    // Don't show shortcuts hint if user has typed something (including spaces)
+    if (inputText && inputText.length > 0) {
+      return ''
+    }
     return '? for shortcuts'
   }
 
@@ -61,19 +65,19 @@ export function getDefaultFooterRightText(): string {
 }
 
 // Helper to render footer content (separator + status line)
-function renderFooterContent(rightText?: string) {
+function renderFooterContent(rightText?: string, inputText?: string) {
 
   const terminalWidth = process.stdout.columns || 80
 
   const leftText = getDefaultFooterLeftText()
-  rightText = rightText ?? getDefaultFooterRightText()
+  rightText = rightText ?? getDefaultFooterRightText(inputText)
   const padding = Math.max(0, terminalWidth - leftText.length - rightText.length - 4)
 
   process.stdout.write(secondaryText('─'.repeat(terminalWidth)) + '\n')
   process.stdout.write(grayText('  ' + leftText + ' '.repeat(padding) + rightText + '  '))
 }
 
-export function displayFooter() {
+export function displayFooter(inputText?: string) {
 
   // make sure we have the space
   process.stdout.write('\n\n\n\n')
@@ -87,7 +91,7 @@ export function displayFooter() {
   process.stdout.write(ansiEscapes.cursorTo(0))
 
   // Render footer using helper
-  renderFooterContent()
+  renderFooterContent(undefined, inputText)
 
   // Move cursor back up to the prompt line (1 line up from current position)
   process.stdout.write(ansiEscapes.cursorUp(2))
@@ -114,7 +118,7 @@ export function eraseLines(count: number) {
   }
 }
 
-export function updateFooterRightText(initialInputY: number, lineCount: number, text?: string) {
+export function updateFooterRightText(initialInputY: number, lineCount: number, text?: string, inputText?: string) {
 
   // Save cursor position
   process.stdout.write(ansiEscapes.cursorSavePosition)
@@ -122,14 +126,14 @@ export function updateFooterRightText(initialInputY: number, lineCount: number, 
   // Move to footer line
   process.stdout.write(ansiEscapes.cursorTo(0, initialInputY + lineCount - 1))
   process.stdout.write(ansiEscapes.eraseDown)
-  renderFooterContent(text)
+  renderFooterContent(text, inputText)
 
   // Restore cursor position
   process.stdout.write(ansiEscapes.cursorRestorePosition)
 }
 
-export function repositionFooter(initialInputY: number, previousLineCount: number, newLineCount: number) {
-  
+export function repositionFooter(initialInputY: number, previousLineCount: number, newLineCount: number, inputText?: string) {
+
   // Save current cursor position (don't interrupt terminal-kit's rendering)
   process.stdout.write(ansiEscapes.cursorSavePosition)
 
@@ -141,7 +145,7 @@ export function repositionFooter(initialInputY: number, previousLineCount: numbe
   process.stdout.write(ansiEscapes.cursorTo(0, initialInputY + newLineCount - 1))
 
   // Render footer at new position
-  renderFooterContent()
+  renderFooterContent(undefined, inputText)
 
   // Restore cursor - let terminal-kit continue rendering
   process.stdout.write(ansiEscapes.cursorRestorePosition)
@@ -177,14 +181,14 @@ export function displayShortcutHelp(initialInputY: number, lineCount: number): v
   process.stdout.write(ansiEscapes.cursorRestorePosition)
 }
 
-export function clearShortcutHelp(initialInputY: number, lineCount: number): void {
+export function clearShortcutHelp(initialInputY: number, lineCount: number, inputText?: string): void {
   // Save cursor position
   process.stdout.write(ansiEscapes.cursorSavePosition)
 
   // Move to footer line and redraw the normal footer
   process.stdout.write(ansiEscapes.cursorTo(0, initialInputY + lineCount - 1))
   process.stdout.write(ansiEscapes.eraseDown)
-  renderFooterContent()
+  renderFooterContent(undefined, inputText)
 
   // Restore cursor position
   process.stdout.write(ansiEscapes.cursorRestorePosition)

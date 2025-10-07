@@ -622,6 +622,39 @@ hi there
       expect(result).toBe('2 messages')
     })
 
+    test('getDefaultFooterRightText should return empty string when no messages but input is not empty', () => {
+      // Arrange: Empty chat with user typing
+      state.chat.messages = []
+
+      // Act
+      const result = getDefaultFooterRightText('hello')
+
+      // Assert
+      expect(result).toBe('')
+    })
+
+    test('getDefaultFooterRightText should return "? for shortcuts" when no messages and input is empty', () => {
+      // Arrange: Empty chat with no input
+      state.chat.messages = []
+
+      // Act
+      const result = getDefaultFooterRightText('')
+
+      // Assert
+      expect(result).toBe('? for shortcuts')
+    })
+
+    test('getDefaultFooterRightText should return empty string when input contains only whitespace', () => {
+      // Arrange: Empty chat with whitespace input
+      state.chat.messages = []
+
+      // Act
+      const result = getDefaultFooterRightText('   ')
+
+      // Assert
+      expect(result).toBe('')
+    })
+
     test('displayShortcutHelp should show help text in place of footer', () => {
       // Arrange: Initial display
       displayHeader()
