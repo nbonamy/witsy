@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - HTTP Server to control Witsy (see README.md)
 - Agent trigger via webhooks (see README.md)
 - Command line version of Witsy (see README.md)
+- OpenAI Sora video generation
 
 ### Changed
 - New UI
