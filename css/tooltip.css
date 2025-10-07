@@ -40,7 +40,7 @@
   left: -0.5rem;
 }
 
-.tooltip-directive.bottom {
+.tooltip-directive.bottom, .tooltip-directive.below {
   top: calc(100% + 0.5rem);
   left: 50%;
   transform: translateX(-50%);
@@ -99,7 +99,7 @@
   border-color: var(--text-color) transparent transparent transparent;
 }
 
-.tooltip-directive.bottom .arrow {
+.tooltip-directive.bottom .arrow, .tooltip-directive.below .arrow {
   bottom: 100%;
   left: 50%;
   margin-left: -5px;
