@@ -1,14 +1,14 @@
 # Enable strict mode for safety
 Set-StrictMode -Version Latest
 
-# Set environment variables
-$env:ELECTRON_RUN_AS_NODE = "1"
+# Set console output encoding to UTF-8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Get the directory of this script
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 
 # Find the latest "app-*" directory (reverse alphabetically = highest version)
-$AppDirs = Get-ChildItem -Path $ScriptDir -Directory -Filter "app-*" | Sort-Object Name -Descending
+$AppDirs = @(Get-ChildItem -Path $ScriptDir -Directory -Filter "app-*" | Sort-Object Name -Descending)
 
 if ($AppDirs.Count -eq 0) {
     Write-Host "Error: Could not find Witsy installation"
@@ -16,11 +16,23 @@ if ($AppDirs.Count -eq 0) {
 }
 
 $LatestApp = $AppDirs[0].FullName
-
-# Build the paths
-$ExePath = Join-Path $LatestApp "Witsy.exe"
 $CliPath = Join-Path $LatestApp "resources\cli\cli.js"
 
-# Execute the command
-& $ExePath --no-deprecation $CliPath @args
-exit $LASTEXITCODE
+# Check if Node.js is available
+$nodeCmd = Get-Command node -ErrorAction SilentlyContinue
+
+if ($nodeCmd) {
+    # Node.js is available, use it
+    & node --no-deprecation $CliPath @args
+    exit $LASTEXITCODE
+}
+
+# Node.js not found, show error message
+Write-Host ""
+Write-Host "Witsy CLI requires Node.js to run on Windows."
+Write-Host ""
+Write-Host "Please install Node.js from: https://nodejs.org/dist/v22.12.0/node-v22.12.0-x64.msi"
+Write-Host ""
+Write-Host "After installation, restart your terminal and try again."
+Write-Host ""
+exit 1
