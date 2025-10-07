@@ -4,6 +4,12 @@ Set-StrictMode -Version Latest
 # Set console output encoding to UTF-8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
+Write-Host ""
+Write-Host "Witsy CLI on Windows is still under development."
+Write-Host "Stay tuned for updates!"
+Write-Host ""
+exit 1
+
 # Get the directory of this script
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 
