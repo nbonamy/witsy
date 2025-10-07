@@ -3,6 +3,7 @@ import '../../css/tooltip.css'
 
 interface TooltipOptions {
   text: string
+  anchor?: string
   position?: 'right' | 'left' | 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right'
 }
 
@@ -32,8 +33,11 @@ const createTooltip = (text: string, position: string = 'right'): HTMLElement =>
 }
 
 
-const calculateTooltipPosition = (el: HTMLElement, position: string = 'right') => {
-  const rect = el.getBoundingClientRect()
+const calculateTooltipPosition = (el: HTMLElement, position: string = 'right', anchor: string = '') => {
+
+  const anchorEl = anchor ? el.querySelector(anchor) as HTMLElement : el
+  const rect = anchorEl.getBoundingClientRect()
+  
   const scrollX = window.scrollX || document.documentElement.scrollLeft
   const scrollY = window.scrollY || document.documentElement.scrollTop
   
@@ -86,7 +90,7 @@ const showTooltip = (el: HTMLElement) => {
   document.body.appendChild(state.tooltipElement)
   
   // Calculate and apply position
-  const position = calculateTooltipPosition(el, state.options.position)
+  const position = calculateTooltipPosition(el, state.options.position, state.options.anchor)
   Object.assign(state.tooltipElement.style, position)
   
   // Trigger reflow and show

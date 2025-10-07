@@ -10,10 +10,14 @@ All notable changes to this project will be documented in this file.
 - Allow selecting and copying text from tool execution results (https://github.com/nbonamy/witsy/issues/421)
 - Support Perplexity Search API (https://github.com/nbonamy/witsy/issues/427)
 - Web 'Apps' (https://github.com/nbonamy/witsy/issues/431)
+- Clear all shortcuts button (https://github.com/nbonamy/witsy/pull/405)
+- add shell.nix (https://github.com/nbonamy/witsy/pull/424)
+- OpenAI: Hide models with explicit release dates
 - Table rendering as artifact, download as CSV and XSLX
 - HTTP Server to control Witsy (see README.md)
 - Agent trigger via webhooks (see README.md)
 - Command line version of Witsy (see README.md)
+- OpenAI Sora video generation
 
 ### Changed
 - New UI

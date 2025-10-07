@@ -71,6 +71,11 @@ function renderFooterContent(rightText?: string) {
 }
 
 export function displayFooter() {
+
+  // make sure we have the space
+  process.stdout.write('\n\n\n\n')
+  process.stdout.write(ansiEscapes.cursorUp(4))
+
   const terminalWidth = process.stdout.columns || 80
   const separatorColor = chalk.rgb(101, 113, 153)
 

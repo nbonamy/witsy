@@ -19,7 +19,7 @@ export const COMMANDS = [
   { name: '/port', value: 'port', description: 'Change server port' },
   { name: '/model', value: 'model', description: 'Select engine and model' },
   { name: '/title', value: 'title', description: 'Set conversation title' },
-  { name: '/save', value: 'save', description: 'Save conversation to workspace' },
+  { name: '/save', value: 'save', description: 'Save conversation' },
   { name: '/retry', value: 'retry', description: 'Retry last message' },
   { name: '/clear', value: 'clear', description: 'Clear conversation history' },
   // { name: '/history', value: 'history', description: 'Show conversation history' },

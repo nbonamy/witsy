@@ -1610,7 +1610,7 @@
     "capabilities": {
       "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung, Code...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>. HTML-Artefakte MÜSSEN mit <html> oder <!DOCTYPE html> beginnen. Beispiel: <artifact title=\"Bericht\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Berichtinhalt formatiert in HTML</body></html>\n</artifact>. Sie können diese Funktion verwenden, um HTML-basierte Datenvisualisierungen mit Chart.js oder D3.js zu erstellen. Verwenden Sie Artefakte NICHT für einfache Datentabellen.",
       "mermaid": "Wenn du gebeten wirst, ein Mermaid-Diagramm auszugeben, wird dessen Code als Diagramm für den Benutzer dargestellt.",
-      "noMarkdown": "Verwenden Sie in Ihren Antworten kein Markdown-Format. Verwenden Sie nur Klartext. Verwenden Sie weder **fett**, *kursiv*, `Code` noch andere Markdown-Syntax.",
+      "noMarkdown": "Verwenden Sie in Ihren Antworten keine Markdown-Formatierung. Verwenden Sie nur reinen Text. Verwenden Sie kein **fett**, *kursiv*, `Code` oder eine andere Markdown-Syntax. Wenn Sie Tabellen verwenden, verwenden Sie nur reine Texttabellen mit entsprechender Abstandhaltung zur Ausrichtung der Spalten.",
       "toolRetry": "Wenn beim Aufrufen von Werkzeugen ein Eingabefehler auftritt, analysiere den Fehler, versuche ihn zu beheben und rufe das Werkzeug dann erneut auf."
     },
     "chat": {
@@ -2341,6 +2341,7 @@
         "aboutModels": "Mehr über Groq-Modelle",
         "pricing": "Groq-Preise"
       },
+      "hideDatedModels": "Modelle mit expliziten Veröffentlichungsdaten ausblenden",
       "lmstudio": {
         "apiBaseURL": "API-Basis-URL"
       },
@@ -2545,6 +2546,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination und wählen Sie dann einen KI-Befehl aus.",
+      "clearAll": "Alle Tastenkombinationen löschen",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
       "mainWindow": "@:{'tray.menu.mainWindow'}",

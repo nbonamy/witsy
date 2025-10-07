@@ -1,7 +1,7 @@
 <template>
   <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false)">
     
-    <div class="role" :class="message.role" v-if="showRole" v-tooltip="{ text: modelInfo, position: 'bottom-right' }">
+    <div class="role" :class="message.role" v-if="showRole" v-tooltip="{ text: modelInfo, anchor: '.name', position: 'below' }">
       <template v-if="agent">
         <AgentIcon class="avatar" />
         <div class="name variable-font-size">{{ agent.name }}</div>
