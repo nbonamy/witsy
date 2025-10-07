@@ -114,7 +114,7 @@ describe('CLI Display Requirements', () => {
    ███ ███   http://localhost:8090
 
 
->   hello
+> hello
 
 ────────────────────────────────────────────────────────────────────────────────
 >
@@ -155,7 +155,7 @@ describe('CLI Display Requirements', () => {
    ███ ███   http://localhost:8090
 
 
->   hello
+> hello
 
   Hello how are you?
 
@@ -188,11 +188,11 @@ describe('CLI Display Requirements', () => {
    ███ ███   http://localhost:8090
 
 
->   Tell me a joke
+> Tell me a joke
 
   Why did the chicken cross the road?
 
->   Why?
+> Why?
 
   To get to the other side!
 
@@ -224,7 +224,7 @@ describe('CLI Display Requirements', () => {
    ███ ███   http://localhost:8090
 
 
->   hello
+> hello
 
   hi there
 
@@ -450,7 +450,7 @@ describe('CLI Display Requirements', () => {
 
       // Assert: Complete screen layout
       expect(terminal.contains('Witsy CLI')).toBe(true)
-      expect(terminal.contains('>   hello')).toBe(true)
+      expect(terminal.contains('> hello')).toBe(true)
       expect(terminal.contains('  hi')).toBe(true)
       expect(terminal.contains('OpenAI · GPT-4')).toBe(true)
       expect(terminal.contains('2 messages')).toBe(true)
@@ -591,9 +591,9 @@ describe('CLI Display Requirements', () => {
       displayConversation()
 
       // Assert: All messages present
-      expect(terminal.contains('>   first')).toBe(true)
+      expect(terminal.contains('> first')).toBe(true)
       expect(terminal.contains('  response1')).toBe(true)
-      expect(terminal.contains('>   second')).toBe(true)
+      expect(terminal.contains('> second')).toBe(true)
       expect(terminal.contains('  response2')).toBe(true)
     })
   })

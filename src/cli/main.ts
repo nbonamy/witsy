@@ -151,7 +151,7 @@ async function main() {
       // Display user message with "> " prefix and gray color
       console.log()
       const paddedUserContent = padContent(trimmed)
-      console.log(grayText('> ' + paddedUserContent))
+      console.log(grayText('> ' + paddedUserContent.slice(2))) // Remove left padding
       console.log() // Blank line
 
       // Stream assistant response

@@ -293,9 +293,10 @@ export function displayConversation() {
   for (let i = 0; i < state.chat.messages.length; i++) {
     const msg = state.chat.messages[i]
     if (msg.role === 'user') {
-      // User messages: gray with "> " prefix, then padded content
+      // User messages: gray with "> " prefix, content gets padding but not the prefix
       const paddedContent = padContent(msg.content)
-      console.log(grayText('> ' + paddedContent))
+      // Remove left padding (2 spaces) since "> " already provides positioning
+      console.log(grayText('> ' + paddedContent.slice(2)))
     } else {
       // Assistant messages: white (default terminal color)
       console.log(padContent(msg.content))
