@@ -2546,7 +2546,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Utilisation : Surlignez votre texte, appuyez sur le raccourci clavier puis choisissez une commande IA",
-      "clearAll": "Supprimer tous les raccourcis",
+      "clearAll": "Effacer tous les raccourcis",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
       "mainWindow": "@:{'tray.menu.mainWindow'}",

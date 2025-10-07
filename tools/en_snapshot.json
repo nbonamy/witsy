@@ -1575,7 +1575,7 @@
   "settings.plugins.youtube.title": "YouTube",
   "settings.shortcuts.aiCommands": "@:{'tray.menu.runAiCommand'}",
   "settings.shortcuts.aiCommandsUsage": "Usage: Highlight your text, press keyboard shortcut then choose an Al command",
-  "settings.shortcuts.clearAll": "Remove all shortcuts",
+  "settings.shortcuts.clearAll": "Clear all shortcuts",
   "settings.shortcuts.designStudio": "@:{'tray.menu.designStudio'}",
   "settings.shortcuts.dictation": "@:{'tray.menu.startDictation'}",
   "settings.shortcuts.mainWindow": "@:{'tray.menu.mainWindow'}",
