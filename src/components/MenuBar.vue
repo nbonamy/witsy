@@ -279,4 +279,17 @@ body[data-tint=blue] .mx-context-menu {
   display: none;
 }
 
+@media (prefers-color-scheme: dark) {
+  .menubar-wrapper {
+    .menu {
+      .webapp-favicon {
+        &.grayscale {
+          filter: grayscale() contrast(0) brightness(0) invert(1);
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+}
+
 </style>

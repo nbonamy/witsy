@@ -188,6 +188,7 @@
     "openai": {
       "apiKey": "",
       "baseURL": "https://api.openai.com/v1",
+      "hideDatedModels": true,
       "models": {
         "chat": [],
         "image": []
