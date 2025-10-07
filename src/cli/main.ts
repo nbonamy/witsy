@@ -2,6 +2,7 @@
 
 import ansiEscapes from 'ansi-escapes'
 import chalk from 'chalk'
+import { parseArgs } from 'node:util'
 import { COMMANDS, handleClear, handleCommand, handleMessage, handleQuit, initialize } from './commands'
 import { saveCliConfig } from './config'
 import { clearFooter, displayFooter, grayText, resetDisplay } from './display'
@@ -9,9 +10,60 @@ import { promptInput } from './input'
 import { selectOption } from './select'
 import { state } from './state'
 
+// Parse command line arguments
+function parseCliArgs() {
+  try {
+    const { values } = parseArgs({
+      options: {
+        port: { type: 'string', short: 'p' },
+        help: { type: 'boolean', short: 'h' }
+      },
+      allowPositionals: false
+    })
+
+    // Show help
+    if (values.help) {
+      console.log(`
+${chalk.bold('Witsy CLI')} - AI Assistant Command Line Interface
+
+${chalk.bold('Usage:')}
+  witsy-cli [options]
+
+${chalk.bold('Options:')}
+  -p, --port <port>    Connect to Witsy on specified port (default: 8090)
+  -h, --help           Show this help message
+
+${chalk.bold('Commands (during session):')}
+  /help                Show available commands
+  /port                Change server port
+  /model               Select engine and model
+  /exit                Exit the CLI
+`)
+      process.exit(0)
+    }
+
+    // Parse and validate port
+    if (values.port) {
+      const port = parseInt(values.port)
+      if (isNaN(port) || port < 1 || port > 65535) {
+        console.error(chalk.red(`Error: Invalid port number "${values.port}" (must be 1-65535)`))
+        process.exit(1)
+      }
+      state.port = port
+    }
+  } catch (error: any) {
+    console.error(chalk.red(`Error: ${error.message}`))
+    console.log(chalk.dim('Use --help for usage information'))
+    process.exit(1)
+  }
+}
+
 // Main loop
 async function main() {
-  
+
+  // Parse CLI arguments first
+  parseCliArgs()
+
   process.stdout.write(ansiEscapes.clearTerminal)
 
   await initialize()
