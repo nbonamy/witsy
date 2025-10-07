@@ -1,6 +1,12 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+echo.
+echo Witsy CLI on Windows is still under development.
+echo Stay tuned for updates!
+echo.
+exit /b 1
+
 REM Find the latest app-* folder (sorted reverse alphabetically to get highest version)
 for /f "delims=" %%i in ('dir /b /ad /o-n "%~dp0app-*" 2^>nul') do (
     set LATEST_APP=%%i
