@@ -11,11 +11,27 @@ interface InputOptions {
   prompt: string
 }
 
-// Calculate line count correctly
+// Calculate line count correctly - accounts for both explicit newlines and wrapping
 const calculateLineCount = (promptText: string, text: string): number => {
   const termWidth = process.stdout.columns || 80
-  const totalChars = promptText.length + text.length + 1
-  return Math.max(1, Math.ceil(totalChars / termWidth))
+
+  // Split text into logical lines (by \n)
+  const lines = text.split('\n')
+
+  // Calculate total visual lines
+  let totalLines = 0
+
+  // First line includes the prompt
+  const firstLineLength = promptText.length + (lines[0]?.length || 0) + 1
+  totalLines += Math.max(1, Math.ceil(firstLineLength / termWidth))
+
+  // Subsequent lines don't have prompt
+  for (let i = 1; i < lines.length; i++) {
+    const lineLength = lines[i].length
+    totalLines += Math.max(1, Math.ceil(lineLength / termWidth))
+  }
+
+  return totalLines
 }
 
 export async function promptInput(options: InputOptions): Promise<string> {
