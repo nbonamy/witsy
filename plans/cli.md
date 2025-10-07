@@ -78,6 +78,7 @@ _(No pending features)_
 
 ## Future Enhancements (Not Prioritized)
 
+- Toggle to show reasoning tokens
 - `'/agent'` - To run agent
 - `'/expert'` - To select an expert
 - Templates/presets for common prompts
