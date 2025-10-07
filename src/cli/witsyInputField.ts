@@ -170,7 +170,12 @@ export function witsyInputField( options , callback ) {
 		throw new Error( ".inputField(): if set, the 'tokenRegExp' option should be a RegExp with the 'g' flag" ) ;
 	}
 
-	if ( ! this.grabbing ) { this.grabInput() ; }
+	if ( ! this.grabbing ) {
+		this.grabInput() ;
+	}
+
+	// Always enable bracketed paste mode for each input field (Witsy addition)
+	this.raw( '\x1b[?2004h' ) ;
 
 
 
@@ -180,7 +185,7 @@ export function witsyInputField( options , callback ) {
 		start = {} , end = {} , cursor = {} , endHint = {} ,
 		inputs = [] , inputIndex ,
 		alwaysRedraw = options.tokenHook || options.autoCompleteHint ,
-		hint = [] , meta = false ;
+		hint = [] , meta = false , pasteMode = false , escapeSeq = '' , escapeTimeout = null ;
 
 	var dynamic = {
 		style: options.style || this ,
@@ -260,6 +265,13 @@ export function witsyInputField( options , callback ) {
 
 		finished = true ;
 		this.removeListener( 'key' , onKey ) ;
+		// Disable bracketed paste mode (Witsy addition)
+		this.raw( '\x1b[?2004l' ) ;
+		// Clear any pending escape timeout (Witsy addition)
+		if ( escapeTimeout ) {
+			clearTimeout( escapeTimeout ) ;
+			escapeTimeout = null ;
+		}
 
 		if ( error === 'abort' ) { return ; }
 
@@ -575,11 +587,125 @@ export function witsyInputField( options , callback ) {
 		}
 	} ;
 
+	// Helper function to handle witsyEscape action (Witsy addition)
+	var handleWitsyEscape = () => {
+		computeAllCoordinate() ;
+		if ( options.onEscape ) {
+			options.onEscape( inputs[ inputIndex ].join( '' ) , end.y - start.y + 1 ) ;
+		}
+	} ;
+
 
 	// The main method: the key event handler
 	var onKey = ( key , trash , data ) => {
 
 		if ( finished || paused ) { return ; }
+
+		// Handle bracketed paste mode (Witsy addition)
+		// Bracketed paste comes as: ESCAPE [ 2 0 0 ~ ... content ... ESCAPE [ 2 0 1 ~
+		var keyStr = typeof key === 'string' ? key : String( key ) ;
+
+		// Build escape sequence to detect bracketed paste start/end
+		if ( ! pasteMode ) {
+			if ( keyStr === 'ESCAPE' ) {
+				escapeSeq = 'ESCAPE' ;
+				// Set a timeout to process ESC if no sequence follows
+				escapeTimeout = setTimeout( () => {
+					if ( escapeSeq.startsWith( 'ESCAPE' ) ) {
+						// It's a real ESC key press, not a paste sequence
+						escapeSeq = '' ;
+						escapeTimeout = null ;
+						handleWitsyEscape() ;
+					}
+				} , 20 ) ;
+				return ;
+			}
+			else if ( escapeSeq ) {
+				// Clear timeout since we're building a sequence
+				if ( escapeTimeout ) {
+					clearTimeout( escapeTimeout ) ;
+					escapeTimeout = null ;
+				}
+
+				escapeSeq += keyStr ;
+
+				// Check for paste start: ESC[200~
+				if ( escapeSeq === 'ESCAPE[200~' ) {
+					pasteMode = true ;
+					escapeSeq = '' ;
+					return ;
+				}
+
+				// If sequence doesn't match, process accumulated keys
+				if ( ! 'ESCAPE[200~'.startsWith( escapeSeq ) ) {
+					// Not a paste sequence, clear and fall through
+					escapeSeq = '' ;
+					// Fall through to normal processing
+				}
+				else {
+					// Still building the sequence
+					return ;
+				}
+			}
+		}
+
+		// In paste mode, just detect end sequence and convert CTRL_J to space
+		if ( pasteMode ) {
+			// Build escape sequence to detect end
+			if ( keyStr === 'ESCAPE' ) {
+				escapeSeq = 'ESCAPE' ;
+				// Set a timeout to process ESC if no sequence follows
+				escapeTimeout = setTimeout( () => {
+					if ( escapeSeq.startsWith( 'ESCAPE' ) ) {
+						// It's a real ESC key press, exit paste mode
+						escapeSeq = '' ;
+						escapeTimeout = null ;
+						pasteMode = false ;
+						handleWitsyEscape() ;
+					}
+				} , 20 ) ;
+				return ;
+			}
+			else if ( escapeSeq ) {
+				// Clear timeout since we're building a sequence
+				if ( escapeTimeout ) {
+					clearTimeout( escapeTimeout ) ;
+					escapeTimeout = null ;
+				}
+
+				escapeSeq += keyStr ;
+
+				// Check for paste end: ESC[201~
+				if ( escapeSeq === 'ESCAPE[201~' ) {
+					pasteMode = false ;
+					escapeSeq = '' ;
+					return ;
+				}
+
+				// Still building the sequence
+				if ( 'ESCAPE[201~'.startsWith( escapeSeq ) ) {
+					return ;
+				}
+				else {
+					// Not the end sequence, clear and fall through
+					escapeSeq = '' ;
+					// Fall through to process the key
+				}
+			}
+
+			// Convert CTRL_J (newline) to space during paste
+			// NOTE: This will need to be updated when multi-line input support is added
+			// (see plans/cli.md "Multiline Input Support" section)
+			if ( keyStr === 'CTRL_J' ) {
+				key = ' ' ;
+				keyStr = ' ' ;
+				// Update data to treat it as a character
+				if ( ! data ) { data = {} ; }
+				data.isCharacter = true ;
+			}
+
+			// Fall through to normal character processing
+		}
 
 		// Check for special keys first (Witsy addition)
 		if ( options.onSpecialKey && key.match( /^(CTRL_|ALT_|META_)/ ) ) {
@@ -1005,10 +1131,7 @@ export function witsyInputField( options , callback ) {
 
 				case 'witsyEscape' :
 					// Witsy custom: delegate ESCAPE handling to callback
-					computeAllCoordinate() ;
-					if ( options.onEscape ) {
-						options.onEscape( inputs[ inputIndex ].join( '' ) , end.y - start.y + 1 ) ;
-					}
+					handleWitsyEscape() ;
 					break ;
 
 				case 'autoCompleteUsingHistory' :
