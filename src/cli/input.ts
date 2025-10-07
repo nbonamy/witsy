@@ -85,7 +85,8 @@ export async function promptInput(options: InputOptions): Promise<string> {
         onCharacter: (char: string, text: string) => {
           // Clear help on any key press (if help is showing)
           if (helpShowing) {
-            clearShortcutHelp(initialInputY, previousLineCount)
+            // Pass current text (character hasn't been inserted yet)
+            clearShortcutHelp(initialInputY, previousLineCount, text)
             helpShowing = false
           }
 
@@ -106,8 +107,11 @@ export async function promptInput(options: InputOptions): Promise<string> {
 
           // ONLY update when line count changes
           if (calculatedLineCount !== previousLineCount) {
-            repositionFooter(initialInputY, previousLineCount, calculatedLineCount)
+            repositionFooter(initialInputY, previousLineCount, calculatedLineCount, text)
             previousLineCount = calculatedLineCount
+          } else if (state.chat.messages.length === 0) {
+            // If no messages, update footer to show/hide shortcuts hint based on input
+            updateFooterRightText(initialInputY, previousLineCount, undefined, text)
           }
 
           // When "/" typed, immediately trigger command selector
@@ -133,7 +137,12 @@ export async function promptInput(options: InputOptions): Promise<string> {
           return false // Allow default behavior
         },
 
-        onEscape: () => {
+        onEscape: (text: string) => {
+          // If input is empty, nothing to clear - ignore escape
+          if (text.length === 0) {
+            return
+          }
+
           // ESCAPE double-tap logic
           if (escapePressed) {
             // Second escape - clear terminal and redraw everything
@@ -149,13 +158,13 @@ export async function promptInput(options: InputOptions): Promise<string> {
           } else {
             // First escape - show message
             escapePressed = true
-            updateFooterRightText(initialInputY, previousLineCount, 'Press Escape again to clear')
+            updateFooterRightText(initialInputY, previousLineCount, 'Press Escape again to clear', text)
 
             // Start 1-second timer
             escapeTimer = setTimeout(() => {
               escapePressed = false
               escapeTimer = null
-              updateFooterRightText(initialInputY, previousLineCount)
+              updateFooterRightText(initialInputY, previousLineCount, undefined, text)
             }, 1000)
           }
         },
