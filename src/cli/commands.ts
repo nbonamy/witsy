@@ -4,7 +4,7 @@ import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
-import { clearFooter, displayConversation, displayFooter, resetDisplay } from './display'
+import { clearFooter, displayConversation, displayFooter, grayText, resetDisplay, startPulseAnimation, stopPulseAnimation, successText } from './display'
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
 import { selectOption } from './select'
@@ -24,6 +24,34 @@ export const COMMANDS = [
   { name: '/clear', value: 'clear', description: 'Clear conversation history' },
   // { name: '/history', value: 'history', description: 'Show conversation history' },
   { name: '/exit', value: 'exit', description: 'Exit the CLI' }
+]
+
+// Loading verbs
+const loadingVerbs = [
+  'Fizzbuzzing',
+  'Hyperspacing',
+  'Calibrating',
+  'Percolating',
+  'Discombobulating',
+  'Transmutating',
+  'Bamboozling',
+  'Quantum-leaping',
+  'Nebulizing',
+  'Fractalizating'
+]
+
+// Thinking verbs
+const thinkingVerbs = [
+  'Cogitating',
+  'Ruminating',
+  'Pondering',
+  'Contemplating',
+  'Deliberating',
+  'Mulling',
+  'Reflecting',
+  'Musing',
+  'Reasoning',
+  'Cerebrating'
 ]
 
 export async function handleHelp() {
@@ -56,7 +84,7 @@ export async function handlePort() {
   }
 
   // Test connection to new port
-  console.log(chalk.dim(`\nTesting connection to port ${port}...`))
+  console.log(chalk.dim(`\nTesting connection to port ${port}.…`))
   const connected = await api.connectWithTimeout(port, 2000)
 
   if (!connected) {
@@ -261,7 +289,6 @@ export async function handleRetry() {
   clearFooter()
 
   // Display the user message again (same as main loop does)
-  const grayText = chalk.rgb(139, 148, 156)
   console.log()
   console.log(grayText('> ' + lastUserContent))
   console.log() // Blank line
@@ -302,16 +329,17 @@ export async function handleMessage(message: string) {
 
   // Use terminal-kit to grab input for escape key handling
   let keyHandler: any = null
+  let animationInterval: NodeJS.Timeout | null = null
 
   try {
 
     let inTools = false
     let inReasoning = false
+    let firstChunk = true
 
-    // Show hint that user can cancel (only on first message)
-    if (state.chat.messages.length === 1) {
-      console.log(chalk.italic.dim('(Press ESC to cancel)\n'))
-    }
+    // Start loading animation
+    const loadingVerb = loadingVerbs[Math.floor(Math.random() * loadingVerbs.length)]
+    animationInterval = startPulseAnimation(`${loadingVerb}… ` + grayText('(esc to interrupt)'))
 
     // Grab input using terminal-kit and listen for Escape key
     term.grabInput(true)
@@ -332,27 +360,38 @@ export async function handleMessage(message: string) {
     await api.complete(thread, (payload: string) => {
 
       const chunk: LlmChunk = JSON.parse(payload)
-      
+
+      // Stop animation on first chunk
+      if (firstChunk) {
+        stopPulseAnimation(animationInterval)
+        animationInterval = null
+        process.stdout.write(ansiEscapes.cursorTo(0))
+        process.stdout.write(ansiEscapes.eraseLine)
+        firstChunk = false
+      }
+
       if (chunk.type === 'reasoning') {
         if (!inReasoning) {
-          process.stdout.write(chalk.gray('⏺') + chalk.white(` Thinking...`))
+          const thinkingVerb = thinkingVerbs[Math.floor(Math.random() * thinkingVerbs.length)]
+          animationInterval = startPulseAnimation(`${thinkingVerb}…`)
         }
         inReasoning = true
         return
       }
-      
+
       if (inReasoning) {
+        stopPulseAnimation(animationInterval)
+        animationInterval = null
         process.stdout.write(ansiEscapes.cursorTo(0))
-        process.stdout.write(chalk.white('✓ Done thinking.'))
-        process.stdout.write('\n\n')
+        process.stdout.write(ansiEscapes.eraseLine)
         inReasoning = false
       }
-      
+
       if (chunk.type === 'content') {
-      
+
         response += chunk.text
         process.stdout.write(chunk.text)
-      
+
       } else if (chunk.type === 'tool') {
 
         if (!inTools) {
@@ -366,12 +405,17 @@ export async function handleMessage(message: string) {
           process.stdout.write(ansiEscapes.eraseLine)
         }
 
-        process.stdout.write((chunk.done ? chalk.greenBright('⏺') : chalk.blueBright('⏺')) + ` ${chunk.status}`)
-
         if (chunk.done) {
+          stopPulseAnimation(animationInterval)
+          animationInterval = null
+          process.stdout.write(successText('✓') + ` ${chunk.status}`)
           console.log()
           console.log()
           inTools = false
+        } else {
+          if (!animationInterval) {
+            animationInterval = startPulseAnimation(chunk.status)
+          }
         }
 
       }
@@ -432,7 +476,8 @@ export async function handleMessage(message: string) {
     }
 
   } finally {
-    // Cleanup: ungrab input and remove key listener
+    // Cleanup: stop animation, ungrab input and remove key listener
+    stopPulseAnimation(animationInterval)
     if (keyHandler) {
       term.removeListener('key', keyHandler)
     }

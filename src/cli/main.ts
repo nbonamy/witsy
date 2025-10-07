@@ -4,7 +4,7 @@ import ansiEscapes from 'ansi-escapes'
 import chalk from 'chalk'
 import { COMMANDS, handleClear, handleCommand, handleMessage, handleQuit, initialize } from './commands'
 import { saveCliConfig } from './config'
-import { clearFooter, displayFooter, resetDisplay } from './display'
+import { clearFooter, displayFooter, grayText, resetDisplay } from './display'
 import { promptInput } from './input'
 import { selectOption } from './select'
 import { state } from './state'
@@ -90,7 +90,6 @@ async function main() {
 
       // Handle chat message
       // Display user message with "> " prefix and gray color
-      const grayText = chalk.rgb(139, 148, 156)
       console.log()
       console.log(grayText('> ' + trimmed))
       console.log() // Blank line
