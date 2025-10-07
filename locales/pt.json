@@ -1629,7 +1629,7 @@
     "capabilities": {
       "artifacts": "Quando o usuário pedir para você criar algum conteúdo (documento, resumo, código...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO\">\nCONTEÚDO\n</artifact>. Artefatos HTML DEVEM começar com <html> ou <!DOCTYPE html>. Exemplo: <artifact title=\"Relatório\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Conteúdo do relatório formatado em HTML</body></html>\n</artifact>. Você pode usar essa capacidade para criar visualizações de dados baseadas em HTML usando Chart.js ou D3.js. NÃO use artefatos para tabelas de dados simples.",
       "mermaid": "Se for solicitado que você produza um diagrama Mermaid, seu código será exibido como um diagrama para o usuário.",
-      "noMarkdown": "Não use formatação em markdown nas suas respostas. Use apenas texto simples. Não use **negrito**, *itálico*, `código` ou qualquer outra sintaxe markdown.",
+      "noMarkdown": "Não use formatação markdown em suas respostas. Use apenas texto simples. Não use **negrito**, *itálico*, `código` ou qualquer outra sintaxe markdown. Se utilizar tabela, use apenas tabelas de texto simples com espaçamento adequado para alinhar as colunas.",
       "toolRetry": "Ao chamar ferramentas, se você receber um erro de entrada, analise o erro e tente corrigi-lo e então tente chamar a ferramenta novamente."
     },
     "chat": {
