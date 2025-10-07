@@ -14,6 +14,9 @@ VERSION := $(shell grep "version" package.json | cut -d '"' -f 4)
 CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 BUILD_NUMBER_FILE := ./build/build_number.txt
 
+# Global environment variables for all targets
+export NODE_OPTIONS := --max_old_space_size=4096
+
 default: increment-build-number mac-arm64
 
 test:
