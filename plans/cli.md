@@ -29,7 +29,7 @@ Witsy CLI is a terminal-based interface for the Witsy AI assistant, providing a 
 - **Smart Display**: Auto-adjusts menu height, save status in footer ("type /save" hint at 4+ messages, "auto-saving" when saved)
 - **Stream Cancellation**: Press Escape during streaming to cancel, partial responses are saved
 - **Persistent Config**: CLI-specific settings in `cli.json` (engine, model, input history)
-- **Bracketed Paste Mode**: Multi-line paste support via bracketed paste mode (newlines replaced with spaces, no terminal warnings)
+- **Multi-line Input**: Shift+Enter (CTRL_J) creates newlines, multi-line paste preserves newlines, UP/DOWN navigate between logical lines
 
 ### Architecture Design
 
@@ -63,51 +63,7 @@ CLI <--(HTTP)--> Witsy Backend (default port 8090, configurable via -p/--port)
 
 ## TODO List
 
-### 1. Multiline Input Support
-
-**Problem**: Single-line input is limiting for longer prompts, can't paste multi-line text easily.
-
-**Requirements:**
-- Shift+Enter creates a new line within input
-- Enter submits (existing behavior)
-- `witsyInputField` handles multi-line display and coordinate calculation
-- Footer repositioning accounts for multi-line input height
-- Input line count calculation updated
-
-**Implementation:**
-
-**witsyInputField.ts:**
-- Add Shift+Enter keybinding: `SHIFT_ENTER: 'newline'`
-- In `onKey`, handle 'newline' action:
-  ```typescript
-  case 'newline':
-    inputs[inputIndex].splice(offset, 0, '\n')
-    offset++
-    computeAllCoordinate()
-    redraw()
-    break
-  ```
-- Update `computeAllCoordinate()` to handle `\n` in input string
-- Calculate visual lines based on wrapping AND newlines
-- Update paste handling: Remove CTRL_J to space conversion - allow newlines to be preserved in paste
-
-**input.ts:**
-- Update `calculateLineCount()` to count `\n` characters:
-  ```typescript
-  const newlineCount = (text.match(/\n/g) || []).length
-  const wrappedLines = Math.ceil(totalChars / termWidth)
-  return Math.max(1, wrappedLines + newlineCount)
-  ```
-- Ensure footer repositioning works with multi-line input
-
-**display.ts:**
-- No changes needed (footer already uses `lineCount`)
-
-**Testing:**
-- Type text, Shift+Enter, type more, submit
-- Paste multi-line text
-- Verify footer stays in correct position
-- Test with very long lines that wrap
+_(No pending features)_
 
 ---
 

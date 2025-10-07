@@ -62,6 +62,7 @@ const defaultKeyBindings = {
 const witsyKeyBindings = {
 	ENTER: 'submit' ,
 	KP_ENTER: 'submit' ,
+	CTRL_J: 'newline' ,
 	ESCAPE: 'witsyEscape' ,
 	BACKSPACE: 'backDelete' ,
 	DELETE: 'delete' ,
@@ -327,11 +328,34 @@ export function witsyInputField( options , callback ) {
 
 
 	// Compute the coordinate of an offset, given a start coordinate
+	// Now handles both explicit newlines (\n) and line wrapping
 	var offsetCoordinate = offset_ => {
-		return {
-			x: 1 + ( start.x + offset_ - 1 ) % this.width ,
-			y: start.y + Math.floor( ( start.x + offset_ - 1 ) / this.width )
-		} ;
+		var x = start.x , y = start.y ;
+
+		for ( var i = 0 ; i < offset_ ; i ++ ) {
+			if ( i < inputs[ inputIndex ].length && inputs[ inputIndex ][ i ] === '\n' ) {
+				// Explicit newline
+				y ++ ;
+				x = 1 ;
+			}
+			else {
+				// Regular character - check width
+				var charWidth = 1 ;
+				if ( i < inputs[ inputIndex ].length && string.unicode.isFullWidth( inputs[ inputIndex ][ i ] ) ) {
+					charWidth = 2 ;
+				}
+
+				x += charWidth ;
+
+				// Handle wrapping
+				if ( x > this.width ) {
+					y ++ ;
+					x = charWidth ; // Character moved to new line
+				}
+			}
+		}
+
+		return { x , y } ;
 	} ;
 
 
@@ -595,6 +619,116 @@ export function witsyInputField( options , callback ) {
 		}
 	} ;
 
+	// Helper functions for multi-line navigation (Witsy addition)
+	var findLineStart = ( offset_ ) => {
+		while ( offset_ > 0 && inputs[ inputIndex ][ offset_ - 1 ] !== '\n' ) {
+			offset_ -- ;
+		}
+		return offset_ ;
+	} ;
+
+	var findLineEnd = ( offset_ ) => {
+		while ( offset_ < inputs[ inputIndex ].length && inputs[ inputIndex ][ offset_ ] !== '\n' ) {
+			offset_ ++ ;
+		}
+		return offset_ ;
+	} ;
+
+	// Helper function to handle witsyUp action (Witsy addition)
+	var handleWitsyUp = () => {
+		computeAllCoordinate() ;
+
+		if ( cursor.y === start.y && offset === 0 ) {
+			// At first character of first line → navigate history backward
+			if ( inputIndex > 0 ) {
+				inputIndex -- ;
+				offset = 0 ;
+
+				if ( echo ) {
+					var extraLines = end.y - start.y ;
+					computeAllCoordinate() ;
+					extraLines -= end.y - start.y ;
+					redraw( extraLines , true ) ;
+					this.moveTo( cursor.x , cursor.y ) ;
+				}
+			}
+		} else if ( cursor.y === start.y ) {
+			// On first line but not at first character → move to start
+			offset = 0 ;
+			if ( echo ) {
+				computeAllCoordinate() ;
+				this.moveTo( cursor.x , cursor.y ) ;
+			}
+		} else {
+			// Not on first line → move cursor up one logical line
+			var currentLineStart = findLineStart( offset ) ;
+
+			if ( currentLineStart > 0 ) {
+				// There is a previous line (before the \n)
+				var prevLineEnd = currentLineStart - 1 ; // The \n character
+				var prevLineStart = findLineStart( prevLineEnd ) ;
+				var columnInCurrentLine = offset - currentLineStart ;
+				var prevLineLength = prevLineEnd - prevLineStart ;
+
+				// Move to same column in previous line, or end if shorter
+				offset = prevLineStart + Math.min( columnInCurrentLine , prevLineLength ) ;
+
+				if ( echo ) {
+					computeAllCoordinate() ;
+					this.moveTo( cursor.x , cursor.y ) ;
+				}
+			}
+		}
+	} ;
+
+	// Helper function to handle witsyDown action (Witsy addition)
+	var handleWitsyDown = () => {
+		computeAllCoordinate() ;
+
+		if ( cursor.y === end.y && offset === inputs[ inputIndex ].length ) {
+			// At last character of last line → navigate history forward
+			if ( inputIndex < inputs.length - 1 ) {
+				inputIndex ++ ;
+				offset = inputs[ inputIndex ].length ;
+
+				if ( echo ) {
+					var extraLines = end.y - start.y ;
+					computeAllCoordinate() ;
+					extraLines -= end.y - start.y ;
+					redraw( extraLines , true ) ;
+					this.moveTo( cursor.x , cursor.y ) ;
+				}
+			}
+		} else if ( cursor.y === end.y ) {
+			// On last line but not at last character → move to end
+			offset = inputs[ inputIndex ].length ;
+			if ( echo ) {
+				computeAllCoordinate() ;
+				this.moveTo( cursor.x , cursor.y ) ;
+			}
+		} else {
+			// Not on last line → move cursor down one logical line
+			var currentLineStart = findLineStart( offset ) ;
+			var currentLineEnd = findLineEnd( offset ) ;
+
+			if ( currentLineEnd < inputs[ inputIndex ].length ) {
+				// There is a next line (after the \n)
+				var nextLineStart = currentLineEnd + 1 ; // Skip the \n
+				var nextLineEnd = findLineEnd( nextLineStart ) ;
+				var columnInCurrentLine = offset - currentLineStart ;
+				var nextLineLength = nextLineEnd - nextLineStart ;
+
+				// Move to same column in next line, or end if shorter
+				offset = nextLineStart + Math.min( columnInCurrentLine , nextLineLength ) ;
+
+				if ( echo ) {
+					computeAllCoordinate() ;
+					this.moveTo( cursor.x , cursor.y ) ;
+				}
+			}
+		}
+	} ;
+
 
 	// The main method: the key event handler
 	var onKey = ( key , trash , data ) => {
@@ -604,6 +738,9 @@ export function witsyInputField( options , callback ) {
 		// Handle bracketed paste mode (Witsy addition)
 		// Bracketed paste comes as: ESCAPE [ 2 0 0 ~ ... content ... ESCAPE [ 2 0 1 ~
 		var keyStr = typeof key === 'string' ? key : String( key ) ;
+
+		// console.log( `onKey: key='${keyStr}' pasteMode=${pasteMode} escapeSeq='${escapeSeq}'` ) ;
+		// return;
 
 		// Build escape sequence to detect bracketed paste start/end
 		if ( ! pasteMode ) {
@@ -693,22 +830,13 @@ export function witsyInputField( options , callback ) {
 				}
 			}
 
-			// Convert CTRL_J (newline) to space during paste
-			// NOTE: This will need to be updated when multi-line input support is added
-			// (see plans/cli.md "Multiline Input Support" section)
-			if ( keyStr === 'CTRL_J' ) {
-				key = ' ' ;
-				keyStr = ' ' ;
-				// Update data to treat it as a character
-				if ( ! data ) { data = {} ; }
-				data.isCharacter = true ;
-			}
-
-			// Fall through to normal character processing
+			// In paste mode, CTRL_J will be handled by the 'newline' keybinding
+			// Fall through to normal processing
 		}
 
 		// Check for special keys first (Witsy addition)
-		if ( options.onSpecialKey && key.match( /^(CTRL_|ALT_|META_)/ ) ) {
+		// Skip CTRL_J as it's handled by the 'newline' keybinding
+		if ( options.onSpecialKey && key !== 'CTRL_J' && key.match( /^(CTRL_|ALT_|META_)/ ) ) {
 			if (options.onSpecialKey(key) === true) {
 				return ; // Callback returned true, prevent default behavior
 			}
@@ -770,6 +898,21 @@ export function witsyInputField( options , callback ) {
 
 				case 'meta' :
 					meta = true ;
+					break ;
+
+				case 'newline' :
+					if ( inputs[ inputIndex ].length >= options.maxLength ) { break ; }
+
+					inputs[ inputIndex ].splice( offset , 0 , '\n' ) ;
+					offset ++ ;
+
+					// Call onTextChange callback
+					callOnTextChange( '\n' ) ;
+
+					if ( echo ) {
+						computeAllCoordinate() ;
+						redraw() ;
+					}
 					break ;
 
 				case 'backDelete' :
@@ -1045,88 +1188,13 @@ export function witsyInputField( options , callback ) {
 
 				// Witsy custom handlers
 				case 'witsyUp' :
-					// UP arrow logic:
-					// - cursor at position 0 on first line → navigate history backward
-					// - cursor on first line but not at position 0 → move to position 0
-					// - cursor not on first line → move cursor up one visual line
-
-					computeAllCoordinate() ;
-
-					if ( cursor.y === start.y && offset === 0 ) {
-						// At first character of first line → navigate history backward
-						if ( inputIndex > 0 ) {
-							inputIndex -- ;
-							offset = 0 ;
-
-							if ( echo ) {
-								extraLines = end.y - start.y ;
-								computeAllCoordinate() ;
-								extraLines -= end.y - start.y ;
-								redraw( extraLines , true ) ;
-								this.moveTo( cursor.x , cursor.y ) ;
-							}
-						}
-					} else if ( cursor.y === start.y ) {
-						// On first line but not at first character → move to start
-						offset = 0 ;
-						if ( echo ) {
-							computeAllCoordinate() ;
-							this.moveTo( cursor.x , cursor.y ) ;
-						}
-					} else {
-						// Not on first line → move cursor up one visual line
-						// Calculate target offset for one line up
-						var targetOffset = offset - this.width ;
-						if ( targetOffset < 0 ) { targetOffset = 0 ; }
-						offset = targetOffset ;
-						if ( echo ) {
-							computeAllCoordinate() ;
-							this.moveTo( cursor.x , cursor.y ) ;
-						}
-					}
+					// Witsy custom: delegate UP handling to callback
+					handleWitsyUp() ;
 					break ;
 
 				case 'witsyDown' :
-					// DOWN arrow logic:
-					// - cursor at last position on last line → navigate history forward
-					// - cursor on last line but not at last position → move to end
-					// - cursor not on last line → move cursor down one visual line
-
-					computeAllCoordinate() ;
-
-					if ( cursor.y === end.y && offset === inputs[ inputIndex ].length ) {
-						// At last character of last line → navigate history forward
-						if ( inputIndex < inputs.length - 1 ) {
-							inputIndex ++ ;
-							offset = inputs[ inputIndex ].length ;
-
-							if ( echo ) {
-								extraLines = end.y - start.y ;
-								computeAllCoordinate() ;
-								extraLines -= end.y - start.y ;
-								redraw( extraLines , true ) ;
-								this.moveTo( cursor.x , cursor.y ) ;
-							}
-						}
-					} else if ( cursor.y === end.y ) {
-						// On last line but not at last character → move to end
-						offset = inputs[ inputIndex ].length ;
-						if ( echo ) {
-							computeAllCoordinate() ;
-							this.moveTo( cursor.x , cursor.y ) ;
-						}
-					} else {
-						// Not on last line → move cursor down one visual line
-						// Calculate target offset for one line down
-						var targetOffset = offset + this.width ;
-						var maxOffset = inputs[ inputIndex ].length ;
-						if ( targetOffset > maxOffset ) { targetOffset = maxOffset ; }
-						offset = targetOffset ;
-						if ( echo ) {
-							computeAllCoordinate() ;
-							this.moveTo( cursor.x , cursor.y ) ;
-						}
-					}
+					// Witsy custom: delegate DOWN handling to callback
+					handleWitsyDown() ;
 					break ;
 
 				case 'witsyEscape' :
