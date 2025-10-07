@@ -80,8 +80,7 @@ export class LlmContext {
         },
 
         search: {
-          query: (payload: any) => {
-            const { query, num } = payload
+          query: (query: string, num: number = 5) => {
             const localSearch = new LocalSearch()
             const results = localSearch.search(query, num)
             return results

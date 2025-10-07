@@ -14,6 +14,7 @@ const grabGoogleResults = `
     const title = link.querySelector("h3")
     const url = link.getAttribute("href")
     const item = {
+      el: link.outerHTML,
       title: title?.textContent || "",
       url,
     }
