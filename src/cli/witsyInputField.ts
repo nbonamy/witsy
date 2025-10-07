@@ -72,6 +72,10 @@ const witsyKeyBindings = {
 	DOWN: 'witsyDown' ,
 	HOME: 'startOfInput' ,
 	END: 'endOfInput' ,
+	CTRL_A: 'startOfLine' ,
+	CTRL_E: 'endOfLine' ,
+	ALT_B: 'previousWord' ,
+	ALT_F: 'nextWord' ,
 	TAB: 'autoComplete' ,
 	CTRL_R: 'autoCompleteUsingHistory' ,
 	CTRL_LEFT: 'previousWord' ,
@@ -619,6 +623,13 @@ export function witsyInputField( options , callback ) {
 		}
 	} ;
 
+	// Helper function to check if character is word boundary (Witsy addition)
+	var isWordBoundary = ( char ) => {
+		if ( ! char ) { return true ; }
+		// Whitespace and common punctuation
+		return /[\s,.:;!?()[\]{}<>"'`~@#$%^&*+=|\\/-]/.test( char ) ;
+	} ;
+
 	// Helper functions for multi-line navigation (Witsy addition)
 	var findLineStart = ( offset_ ) => {
 		while ( offset_ > 0 && inputs[ inputIndex ][ offset_ - 1 ] !== '\n' ) {
@@ -631,6 +642,44 @@ export function witsyInputField( options , callback ) {
 		while ( offset_ < inputs[ inputIndex ].length && inputs[ inputIndex ][ offset_ ] !== '\n' ) {
 			offset_ ++ ;
 		}
+		return offset_ ;
+	} ;
+
+	// Helper functions for word navigation (Witsy addition)
+	var findPrevWordStart = ( offset_ ) => {
+		// If at start, stay there
+		if ( offset_ === 0 ) { return 0 ; }
+
+		// Move back one position
+		offset_ -- ;
+
+		// Skip any word boundaries (whitespace/punctuation)
+		while ( offset_ > 0 && isWordBoundary( inputs[ inputIndex ][ offset_ ] ) ) {
+			offset_ -- ;
+		}
+
+		// Now skip back to the start of the word
+		while ( offset_ > 0 && ! isWordBoundary( inputs[ inputIndex ][ offset_ - 1 ] ) ) {
+			offset_ -- ;
+		}
+
+		return offset_ ;
+	} ;
+
+	var findNextWordStart = ( offset_ ) => {
+		// If at end, stay there
+		if ( offset_ >= inputs[ inputIndex ].length ) { return inputs[ inputIndex ].length ; }
+
+		// Skip current word (non-boundaries)
+		while ( offset_ < inputs[ inputIndex ].length && ! isWordBoundary( inputs[ inputIndex ][ offset_ ] ) ) {
+			offset_ ++ ;
+		}
+
+		// Skip any word boundaries (whitespace/punctuation)
+		while ( offset_ < inputs[ inputIndex ].length && isWordBoundary( inputs[ inputIndex ][ offset_ ] ) ) {
+			offset_ ++ ;
+		}
+
 		return offset_ ;
 	} ;
 
@@ -739,8 +788,14 @@ export function witsyInputField( options , callback ) {
 		// Bracketed paste comes as: ESCAPE [ 2 0 0 ~ ... content ... ESCAPE [ 2 0 1 ~
 		var keyStr = typeof key === 'string' ? key : String( key ) ;
 
-		// console.log( `onKey: key='${keyStr}' pasteMode=${pasteMode} escapeSeq='${escapeSeq}'` ) ;
-		// return;
+		// Debug mode: show keycode on line 1
+		if ( options.debug ) {
+			this.saveCursor() ;
+			this.moveTo( 1 , 1 ) ;
+			this.eraseLine() ;
+			this.noFormat( `DEBUG: key='${keyStr}' pasteMode=${pasteMode} escapeSeq='${escapeSeq}' data=${JSON.stringify(data)}` ) ;
+			this.restoreCursor() ;
+		}
 
 		// Build escape sequence to detect bracketed paste start/end
 		if ( ! pasteMode ) {
@@ -902,6 +957,20 @@ export function witsyInputField( options , callback ) {
 
 				case 'newline' :
 					if ( inputs[ inputIndex ].length >= options.maxLength ) { break ; }
+
+					if ( echo ) {
+						// Before modifying input, save old end position and erase from cursor to end
+						// This prevents ghost text when content shifts to new lines
+						var oldEndY = end.y ;
+						var savedCursorX = cursor.x ;
+						var savedCursorY = cursor.y ;
+
+						// Erase from cursor position to end of input
+						for ( var eraseY = savedCursorY ; eraseY <= oldEndY ; eraseY ++ ) {
+							this.moveTo( eraseY === savedCursorY ? savedCursorX : 1 , eraseY ) ;
+							this.eraseLineAfter() ;
+						}
+					}
 
 					inputs[ inputIndex ].splice( offset , 0 , '\n' ) ;
 					offset ++ ;
@@ -1089,36 +1158,30 @@ export function witsyInputField( options , callback ) {
 					break ;
 
 				case 'previousWord' :
-					if ( inputs[ inputIndex ].length && offset > 0 ) {
-						if ( dynamic.autoCompleteHint && offset === inputs[ inputIndex ].length ) {
-							clearHint() ;
-						}
+					if ( dynamic.autoCompleteHint && offset === inputs[ inputIndex ].length ) {
+						clearHint() ;
+					}
 
-						offset -- ;
+					// Move to start of previous word
+					offset = findPrevWordStart( offset ) ;
 
-						while ( offset > 0 && inputs[ inputIndex ][ offset ] === ' ' ) { offset -- ; }
-						while ( offset > 0 && inputs[ inputIndex ][ offset - 1 ] !== ' ' ) { offset -- ; }
-
-						if ( echo ) {
-							computeAllCoordinate() ;
-							this.moveTo( cursor.x , cursor.y ) ;
-						}
+					if ( echo ) {
+						computeAllCoordinate() ;
+						this.moveTo( cursor.x , cursor.y ) ;
 					}
 					break ;
 
 				case 'nextWord' :
-					if ( inputs[ inputIndex ].length && offset < inputs[ inputIndex ].length ) {
-						while ( offset < inputs[ inputIndex ].length && inputs[ inputIndex ][ offset ] === ' ' ) { offset ++ ; }
-						while ( offset < inputs[ inputIndex ].length && inputs[ inputIndex ][ offset ] !== ' ' ) { offset ++ ; }
+					// Move to start of next word
+					offset = findNextWordStart( offset ) ;
 
-						if ( echo ) {
-							computeAllCoordinate() ;
-							this.moveTo( cursor.x , cursor.y ) ;
-						}
+					if ( echo ) {
+						computeAllCoordinate() ;
+						this.moveTo( cursor.x , cursor.y ) ;
+					}
 
-						if ( dynamic.autoCompleteHint && offset === inputs[ inputIndex ].length ) {
-							autoCompleteHint() ;
-						}
+					if ( dynamic.autoCompleteHint && lastOffset !== inputs[ inputIndex ].length ) {
+						autoCompleteHint() ;
 					}
 
 					break ;
@@ -1138,6 +1201,35 @@ export function witsyInputField( options , callback ) {
 
 				case 'endOfInput' :
 					offset = inputs[ inputIndex ].length ;
+
+					if ( echo ) {
+						computeAllCoordinate() ;
+						this.moveTo( cursor.x , cursor.y ) ;
+					}
+
+					if ( dynamic.autoCompleteHint && lastOffset !== inputs[ inputIndex ].length ) {
+						autoCompleteHint() ;
+					}
+
+					break ;
+
+				case 'startOfLine' :
+					if ( dynamic.autoCompleteHint && offset === inputs[ inputIndex ].length ) {
+						clearHint() ;
+					}
+
+					// Move to start of current logical line
+					offset = findLineStart( offset ) ;
+
+					if ( echo ) {
+						computeAllCoordinate() ;
+						this.moveTo( cursor.x , cursor.y ) ;
+					}
+					break ;
+
+				case 'endOfLine' :
+					// Move to end of current logical line
+					offset = findLineEnd( offset ) ;
 
 					if ( echo ) {
 						computeAllCoordinate() ;

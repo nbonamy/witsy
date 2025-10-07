@@ -76,9 +76,10 @@ export async function promptInput(options: InputOptions): Promise<string> {
 
       // Call witsyInputField
       controller = witsyInputField.call(term, {
-        
+
         cancelable: true,
         history: state.cliConfig?.history || [],
+        debug: state.debug,
 
         onTextChange: (text: string) => {
 

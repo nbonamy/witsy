@@ -16,6 +16,7 @@ function parseCliArgs() {
     const { values } = parseArgs({
       options: {
         port: { type: 'string', short: 'p' },
+        debug: { type: 'boolean', short: 'd' },
         help: { type: 'boolean', short: 'h' }
       },
       allowPositionals: false
@@ -31,6 +32,7 @@ ${chalk.bold('Usage:')}
 
 ${chalk.bold('Options:')}
   -p, --port <port>    Connect to Witsy on specified port (default: 8090)
+  -d, --debug          Enable debug mode (show keycodes)
   -h, --help           Show this help message
 
 ${chalk.bold('Commands (during session):')}
@@ -50,6 +52,11 @@ ${chalk.bold('Commands (during session):')}
         process.exit(1)
       }
       state.port = port
+    }
+
+    // Enable debug mode
+    if (values.debug) {
+      state.debug = true
     }
   } catch (error: any) {
     console.error(chalk.red(`Error: ${error.message}`))
