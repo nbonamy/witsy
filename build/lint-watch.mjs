@@ -32,15 +32,17 @@ function runLint() {
 console.log('👀 Watching for changes...\n');
 
 const watcher = chokidar.watch(['**/*.ts', '**/*.vue'], {
-  ignored: ['node_modules/**', 'out/**', '.vite/**', 'dist/**'],
+  ignored: ['node_modules/**', 'out/**', '.vite/**', 'dist/**', 'build/**'],
   persistent: true,
-  ignoreInitial: false
+  ignoreInitial: true
+});
+
+watcher.on('change', (path) => {
+  console.log(`📝 Changed: ${path}`);
+  runLint();
 });
 
 watcher.on('ready', () => {
+  console.log('✓ Watcher ready\n');
   runLint();
-  watcher.on('change', (path) => {
-    console.log(`📝 Changed: ${path}`);
-    runLint();
-  });
 });
