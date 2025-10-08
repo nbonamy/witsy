@@ -14,9 +14,9 @@
     <template #value="{ option }">
       <span class="label">{{ option.label }}</span>
       <template v-if="option.value">
-        <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
-        <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
-        <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />
+        <WrenchIcon :class="{ active: option.capabilities?.tools }" class="capability" />
+        <ImageIcon :class="{ active: option.capabilities?.vision }" class="capability" />
+        <ZapIcon :class="{ active: option.capabilities?.reasoning }" class="capability" />
       </template>
     </template>
 
@@ -26,9 +26,9 @@
         <span class="id" v-if="showId">{{ option.value }}</span>
       </div>
       <div class="capabilities" v-if="option.value">
-        <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
-        <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
-        <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />
+        <WrenchIcon :class="{ active: option.capabilities?.tools }" class="capability" />
+        <ImageIcon :class="{ active: option.capabilities?.vision }" class="capability" />
+        <ZapIcon :class="{ active: option.capabilities?.reasoning }" class="capability" />
       </div>
     </template>
 
@@ -38,6 +38,7 @@
 
 <script setup lang="ts">
 
+import { ImageIcon, WrenchIcon, ZapIcon } from 'lucide-vue-next'
 import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 import { computed, nextTick, ref } from 'vue'
 import VueSelect from 'vue3-select-component'
