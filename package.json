@@ -110,7 +110,6 @@
     "applescript": "^1.0.0",
     "archiver": "^7.0.1",
     "autolib": "github:nbonamy/witsy-autolib#v1.1.0",
-    "bootstrap-icons-vue": "^1.11.3",
     "chokidar": "^4.0.3",
     "clipboard": "^2.0.11",
     "compute-cosine-similarity": "^1.1.0",

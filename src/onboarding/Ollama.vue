@@ -57,7 +57,7 @@
         <!-- Installed models -->
         <div class="models-section">
           <h4 class="section-title">
-            <BIconCpu class="section-icon" />
+            <CpuIcon class="section-icon" />
             {{ t('onboarding.ollama.installedModels') }}
           </h4>
           <div class="models-list" v-if="installedModels.length > 0">
@@ -66,9 +66,9 @@
                 <span class="model-name">{{ model.name }}</span>
               </div>
               <div class="model-capabilities">
-                <BIconTools :class="{ active: model.capabilities?.tools }" class="capability" />
-                <BIconImage :class="{ active: model.capabilities?.vision }" class="capability" />
-                <BIconLightningChargeFill :class="{ active: model.capabilities?.reasoning }" class="capability" />
+                <WrenchIcon :class="{ active: model.capabilities?.tools }" class="capability" />
+                <ImageIcon :class="{ active: model.capabilities?.vision }" class="capability" />
+                <ZapIcon :class="{ active: model.capabilities?.reasoning }" class="capability" />
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@
         <!-- Model pulling interface -->
         <div class="pull-section">
           <h4 class="section-title">
-            <BIconDownload class="section-icon" />
+            <DownloadIcon class="section-icon" />
             {{ t('onboarding.ollama.pullModels') }}
           </h4>
           <OllamaModelPull 

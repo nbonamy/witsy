@@ -5,6 +5,16 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import Store from 'electron-store';
 import log from 'electron-log/main';
 
+// Prevent EPIPE errors from crashing the app
+process.on('uncaughtException', (error) => {
+  if (error.message?.includes('EPIPE') || error.message?.includes('EBADF')) {
+    // Silently ignore pipe errors
+    return;
+  }
+  // Log other errors to file only
+  log.error('Uncaught exception:', error);
+});
+
 import AutoUpdater from './main/autoupdate';
 import Automator from './automations/automator';
 import Commander from './automations/commander';
@@ -64,10 +74,24 @@ if (process.env.WITSY_HOME) {
   }
 }
 
-// set up logging
+// set up logging - wrap console transport to prevent EPIPE errors
+const originalConsoleFn = log.transports.console.writeFn;
+log.transports.console.writeFn = function(data: any) {
+  try {
+    originalConsoleFn(data);
+  } catch {
+    // Silently ignore all console write errors (EPIPE, EBADF, etc)
+  }
+};
+
 Object.assign(console, log.functions);
 log.eventLogger.startLogging();
-console.log('Log file:',log.transports.file.getFile().path);
+
+try {
+  console.log('Log file:',log.transports.file.getFile().path);
+} catch {
+  // Ignore if this fails
+}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 // eslint-disable-next-line @typescript-eslint/no-require-imports

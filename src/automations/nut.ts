@@ -20,28 +20,28 @@ export default class NutAutomator implements Automator {
     try {
       const nutPackage = '@nut-tree-fork/nut-js';
       nut = await import(nutPackage);
-      console.log('nutjs loaded successfully.');
+      console.log('[nutjs] Loaded successfully.');
       return true;
     } catch {
-      console.log('Error loading nutjs. Automation not available.');
+      console.log('[nutjs] Error loading nutjs. Automation not available.');
       nut = null;
       return false
     }
   }
 
   async getForemostApp(): Promise<Application|null> {
-    console.warn('getForemostApp not implemented (expected)');
+    console.warn('[nutjs] getForemostApp not implemented (expected)');
     return null;
   }
 
   async selectAll() {
-    if (!await this.setup()) throw new Error('nutjs not loaded');
+    if (!await this.setup()) throw new Error('[nutjs] nutjs not loaded');
     await nut.keyboard.type(this.commandKey(), nut.Key.A);
     await wait(this.delay());
   }
 
   async moveCaretBelow() {
-    if (!await this.setup()) throw new Error('nutjs not loaded');
+    if (!await this.setup()) throw new Error('[nutjs] nutjs not loaded');
     await nut.keyboard.type(nut.Key.Down);
     await nut.keyboard.type(nut.Key.Enter);
     await nut.keyboard.type(nut.Key.Enter);
@@ -49,19 +49,19 @@ export default class NutAutomator implements Automator {
   }
 
   async copySelectedText() {
-    if (!await this.setup()) throw new Error('nutjs not loaded');
+    if (!await this.setup()) throw new Error('[nutjs] nutjs not loaded');
     await nut.keyboard.type(this.commandKey(), nut.Key.C);
     await wait(this.delay());
   }
 
   async deleteSelectedText() {
-    if (!await this.setup()) throw new Error('nutjs not loaded');
+    if (!await this.setup()) throw new Error('[nutjs] nutjs not loaded');
     await nut.keyboard.type(nut.Key.Delete);
     await wait(this.delay());
   }
 
   async pasteText() {
-    if (!await this.setup()) throw new Error('nutjs not loaded');
+    if (!await this.setup()) throw new Error('[nutjs] nutjs not loaded');
     await nut.keyboard.type(this.commandKey(), nut.Key.V);
     await wait(this.delay());
   }

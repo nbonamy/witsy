@@ -118,8 +118,6 @@ onMounted(() => {
     processQueryParams(props.extra)
   }
 
-    console.log(chat.value.tools)
-
 })
 
 onUnmounted(() => {
@@ -140,7 +138,7 @@ const onDictate = () => {
 const processQueryParams = (params?: anyDict) => {
 
   // log
-  console.log('Processing query params', JSON.stringify(params))
+  console.log('[anywr] Processing query params', JSON.stringify(params))
   showParams = params
 
   // reset stuff
@@ -158,11 +156,11 @@ const processQueryParams = (params?: anyDict) => {
   if (params?.promptId) {
     userPrompt = window.api.automation.getText(params.promptId)
     if (userPrompt?.length) {
-      console.log(`Triggered with prompt: ${userPrompt.replaceAll('\n', '').substring(0, 50)}...`)
+      console.log(`[anywr] Triggered with prompt: ${userPrompt.replaceAll('\n', '').substring(0, 50)}...`)
       userEngine = params.engine
       userModel = params.model
     } else {
-      console.error(`Prompt with id ${params.promptId} not found`)
+      console.error(`[anywr] Prompt with id ${params.promptId} not found`)
     }
   }
 
@@ -293,7 +291,7 @@ const initLlm = (engine?: string, model?: string) => {
   chat.value.tools = store.config.prompt.tools
 
   // log
-  console.log(`initialize prompt window llm: ${engine} ${model}`)
+  console.log(`[anywr] Initialize prompt window llm: ${engine} ${model}`)
 
   // init llm
   llm = llmManager.igniteEngine(engine)
