@@ -58,7 +58,7 @@ const defaultKeyBindings = {
 	CTRL_K: 'deleteAllAfter'
 } ;
 
-// Witsy custom key bindings: UP/DOWN/ESCAPE have custom behavior
+// Witsy custom key bindings: UP/DOWN/ESCAPE/TAB have custom behavior
 const witsyKeyBindings = {
 	ENTER: 'submit' ,
 	KP_ENTER: 'submit' ,
@@ -76,7 +76,7 @@ const witsyKeyBindings = {
 	CTRL_E: 'endOfLine' ,
 	ALT_B: 'previousWord' ,
 	ALT_F: 'nextWord' ,
-	TAB: 'autoComplete' ,
+	TAB: 'handleWitsyTab' ,
 	CTRL_R: 'autoCompleteUsingHistory' ,
 	CTRL_LEFT: 'previousWord' ,
 	CTRL_RIGHT: 'nextWord' ,
@@ -623,6 +623,16 @@ export function witsyInputField( options , callback ) {
 		}
 	} ;
 
+	// Helper function to handle witsyTab action (Witsy addition)
+	var handleWitsyTab = () => {
+		console.debug( 'handleWitsyTab called, onTab=' + (options.onTab ? 'YES' : 'NO') ) ;
+		if ( options.onTab ) {
+			console.debug( 'calling onTab callback' ) ;
+			options.onTab( inputs[ inputIndex ].join( '' ) , end.y - start.y + 1 ) ;
+			computeAllCoordinate() ;
+		}
+	} ;
+
 	// Helper function to check if character is word boundary (Witsy addition)
 	var isWordBoundary = ( char ) => {
 		if ( ! char ) { return true ; }
@@ -789,13 +799,7 @@ export function witsyInputField( options , callback ) {
 		var keyStr = typeof key === 'string' ? key : String( key ) ;
 
 		// Debug mode: show keycode on line 1
-		if ( options.debug ) {
-			this.saveCursor() ;
-			this.moveTo( 1 , 1 ) ;
-			this.eraseLine() ;
-			this.noFormat( `DEBUG: key='${keyStr}' pasteMode=${pasteMode} escapeSeq='${escapeSeq}' data=${JSON.stringify(data)}` ) ;
-			this.restoreCursor() ;
-		}
+		console.debug( `[onKey] key='${keyStr}' pasteMode=${pasteMode} escapeSeq='${escapeSeq}' data=${JSON.stringify(data)}` ) ;
 
 		// Build escape sequence to detect bracketed paste start/end
 		if ( ! pasteMode ) {
@@ -887,6 +891,12 @@ export function witsyInputField( options , callback ) {
 
 			// In paste mode, CTRL_J will be handled by the 'newline' keybinding
 			// Fall through to normal processing
+		}
+
+		if (key == 'TAB') {
+			// Handle witsyTab action (Witsy addition)
+			handleWitsyTab() ;
+			return ;
 		}
 
 		// Check for special keys first (Witsy addition)
@@ -1301,6 +1311,12 @@ export function witsyInputField( options , callback ) {
 				case 'witsyEscape' :
 					// Witsy custom: delegate ESCAPE handling to callback
 					handleWitsyEscape() ;
+					break ;
+
+				case 'witsyTab' :
+					// Witsy custom: delegate TAB handling to callback
+					console.debug( 'case witsyTab reached' ) ;
+					handleWitsyTab() ;
 					break ;
 
 				case 'autoCompleteUsingHistory' :

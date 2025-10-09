@@ -4,7 +4,7 @@ import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
-import { clearFooter, displayConversation, displayFooter, grayText, padContent, resetDisplay, startPulseAnimation, stopPulseAnimation, successText } from './display'
+import { clearFooter, displayConversation, displayFooter, grayText, padContent, resetDisplay, startPulseAnimation, stopPulseAnimation, successText, writeReasoningAvailableIndicator } from './display'
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
 import { selectOption } from './select'
@@ -405,6 +405,7 @@ export async function handleMessage(message: string) {
   const controller = new AbortController()
   let cancelled = false
   let response = '' // Declare here so it's accessible in catch block
+  let reasoning = '' // Accumulate reasoning content
 
   // Use terminal-kit to grab input for escape key handling
   let keyHandler: any = null
@@ -414,6 +415,8 @@ export async function handleMessage(message: string) {
 
     let inTools = false
     let inReasoning = false
+    let reasoningHeaderShown = false
+    // let reasoningStartY: number | null = null
     let firstChunk = true
     const streamPadder = new StreamPadder()
 
@@ -421,12 +424,52 @@ export async function handleMessage(message: string) {
     const loadingVerb = loadingVerbs[Math.floor(Math.random() * loadingVerbs.length)]
     animationInterval = startPulseAnimation(`${loadingVerb}… ` + grayText('(esc to interrupt)'))
 
-    // Grab input using terminal-kit and listen for Escape key
+    // Grab input using terminal-kit and listen for Escape and Tab keys
     term.grabInput(true)
     keyHandler = term.on('key', (key: string) => {
+      
       if (key === 'ESCAPE') {
         cancelled = true
         controller.abort()
+      
+      /*} else if (key === 'TAB' && reasoningStartY !== null && reasoning.length > 0) {
+        // Toggle reasoning display
+        console.debug(`TAB: ${state.showReasoning} -> ${!state.showReasoning}, reasoningStartY=${reasoningStartY}`)
+        state.showReasoning = !state.showReasoning
+
+        // 1. Save cursor position
+        process.stdout.write(ansiEscapes.cursorSavePosition)
+
+        // 2. Go to reasoning start position
+        process.stdout.write(ansiEscapes.cursorTo(0, reasoningStartY))
+
+        // 3. Erase everything below
+        process.stdout.write(ansiEscapes.eraseDown)
+
+        // Create temporary message for display
+        const tempMsg = new MessageCli('assistant', '')
+        tempMsg.reasoning = reasoning
+
+        if (state.showReasoning) {
+          // Toggle OFF → ON: Show reasoning tokens
+          // 4. (in OFF→ON)
+          // 5. Write reasoning with takeSpace
+          writeReasoningTokens(tempMsg, true)
+        } else {
+          // Toggle ON → OFF: Show indicator
+          // 4. Write indicator
+          writeReasoningAvailableIndicator()
+        }
+
+        // 5/6. Redraw content
+        console.log()
+        if (response.trim().length > 0) {
+          process.stdout.write(padContent(response.trim()))
+        }
+
+        // 6/7. Restore cursor position
+        process.stdout.write(ansiEscapes.cursorRestorePosition)
+        */
       }
     })
 
@@ -452,19 +495,55 @@ export async function handleMessage(message: string) {
 
       if (chunk.type === 'reasoning') {
         if (!inReasoning) {
-          const thinkingVerb = thinkingVerbs[Math.floor(Math.random() * thinkingVerbs.length)]
-          animationInterval = startPulseAnimation(`${thinkingVerb}…`)
+          inReasoning = true
+
+          // // Capture cursor position for reasoning start
+          // term.getCursorLocation((error, x, y) => {
+          //   if (!error) {
+          //     reasoningStartY = y
+          //     console.debug(`Reasoning starts at Y=${y}`)
+          //   }
+          // })
+
+          if (state.showReasoning) {
+            // Show header for reasoning with hint
+            console.log(grayText('\n[Reasoning]') + ' ' + grayText('(tab to hide)'))
+            reasoningHeaderShown = true
+          } else {
+            // Show animation
+            const thinkingVerb = thinkingVerbs[Math.floor(Math.random() * thinkingVerbs.length)]
+            animationInterval = startPulseAnimation(`${thinkingVerb}… ` + grayText('(esc to interrupt)'))
+          }
         }
-        inReasoning = true
+
+        // Accumulate reasoning content
+        if (chunk.text) {
+          reasoning += chunk.text
+
+          // If showReasoning is true, stream the text
+          if (state.showReasoning) {
+            process.stdout.write(grayText(chunk.text))
+          }
+        }
         return
       }
 
       if (inReasoning) {
         stopPulseAnimation(animationInterval)
         animationInterval = null
-        process.stdout.write(ansiEscapes.cursorTo(0))
-        process.stdout.write(ansiEscapes.eraseLine)
+
+        if (state.showReasoning && reasoningHeaderShown) {
+          // Add blank line after reasoning text
+          // console.log()
+        } else {
+          // Clear animation line
+          process.stdout.write(ansiEscapes.cursorTo(0))
+          process.stdout.write(ansiEscapes.eraseLine)
+          // writeReasoningAvailableIndicator()
+        }
+
         inReasoning = false
+        reasoningHeaderShown = false
       }
 
       if (chunk.type === 'content') {
@@ -507,9 +586,14 @@ export async function handleMessage(message: string) {
 
     // Create and add assistant response (if we got any content)
     if (response.length > 0) {
+      
       const assistantMessage = new MessageCli('assistant', response)
       assistantMessage.engine = state.engine?.id || ''
       assistantMessage.model = state.model?.id || ''
+      if (reasoning.length > 0) {
+        // Trim trailing newlines from reasoning for better display control
+        assistantMessage.reasoning = reasoning.trimEnd()
+      }
       state.chat.addMessage(assistantMessage)
     }
 
@@ -525,6 +609,8 @@ export async function handleMessage(message: string) {
       }
     }
 
+    term.removeAllListeners('key')
+
   } catch (error) {
 
     // Handle cancellation
@@ -536,6 +622,10 @@ export async function handleMessage(message: string) {
         const assistantMessage = new MessageCli('assistant', response)
         assistantMessage.engine = state.engine?.id || ''
         assistantMessage.model = state.model?.id || ''
+        if (reasoning.length > 0) {
+          // Trim trailing newlines from reasoning for better display control
+          assistantMessage.reasoning = reasoning.trimEnd()
+        }
         state.chat.addMessage(assistantMessage)
 
         // Auto-save if chat has been saved before

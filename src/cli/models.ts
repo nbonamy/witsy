@@ -5,6 +5,7 @@ export class MessageCli {
   uuid: string
   role: 'user' | 'assistant' | 'system'
   content: string
+  reasoning?: string
   engine: string
   model: string
   createdAt: number
@@ -13,6 +14,7 @@ export class MessageCli {
     this.uuid = crypto.randomUUID()
     this.role = role
     this.content = content
+    this.reasoning = undefined
     this.engine = ''
     this.model = ''
     this.createdAt = Date.now()

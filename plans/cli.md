@@ -30,6 +30,7 @@ Witsy CLI is a terminal-based interface for the Witsy AI assistant, providing a 
 - **Stream Cancellation**: Press Escape during streaming to cancel, partial responses are saved
 - **Persistent Config**: CLI-specific settings in `cli.json` (engine/model with display names, input history)
 - **Multi-line Input**: Shift+Enter (CTRL_J) creates newlines, multi-line paste preserves newlines, UP/DOWN navigate between logical lines
+- **Reasoning Tokens**: Press TAB to toggle reasoning visibility during streaming or at prompt, displayed with gray styling
 
 ### Architecture Design
 
@@ -78,7 +79,6 @@ _(No pending features)_
 
 ## Future Enhancements (Not Prioritized)
 
-- Toggle to show reasoning tokens
 - `'/agent'` - To run agent
 - `'/expert'` - To select an expert
 - Templates/presets for common prompts

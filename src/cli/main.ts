@@ -5,7 +5,7 @@ import chalk from 'chalk'
 import { parseArgs } from 'node:util'
 import { COMMANDS, handleClear, handleCommand, handleMessage, handleQuit, initialize } from './commands'
 import { saveCliConfig } from './config'
-import { clearFooter, displayFooter, grayText, padContent, resetDisplay } from './display'
+import { clearFooter, displayFooter, grayText, padContent, resetDisplay, setupDebugLogging } from './display'
 import { promptInput } from './input'
 import { selectOption } from './select'
 import { state } from './state'
@@ -54,10 +54,10 @@ ${chalk.bold('Commands (during session):')}
       state.port = port
     }
 
-    // Enable debug mode
-    if (values.debug) {
-      state.debug = true
-    }
+    // Debug mode
+    state.debug = values.debug
+    setupDebugLogging()
+
   } catch (error: any) {
     console.error(chalk.red(`Error: ${error.message}`))
     console.log(chalk.dim('Use --help for usage information'))
@@ -99,6 +99,12 @@ async function main() {
         }
         continue
       }
+
+      // // Handle Tab (toggle reasoning display and redraw)
+      // if (userInput === '__TAB__') {
+      //   resetDisplay()
+      //   continue
+      // }
 
       const trimmed = userInput.trim()
 

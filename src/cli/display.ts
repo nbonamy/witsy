@@ -3,6 +3,7 @@
 import chalk from 'chalk'
 import ansiEscapes from 'ansi-escapes'
 import { state } from './state'
+import { MessageCli } from './models'
 
 // Version is injected at build time via esbuild define
 declare const __WITSY_VERSION__: string
@@ -14,6 +15,11 @@ export const secondaryText = chalk.rgb(101, 113, 153)
 export const tertiaryText = chalk.rgb(180, 142, 238)
 export const successText = chalk.greenBright
 export const grayText = chalk.rgb(139, 148, 156)
+
+// Reasoning display constants
+const REASONING_SHOWN_INDICATOR = '◆'
+const REASONING_HIDDEN_INDICATOR = '◇'
+const REASONING_AVAILABLE_TEXT = ''//TAB to show reasoning'
 
 export function resetDisplay(beforeFooter?: () => void) {
   console.clear()
@@ -160,14 +166,15 @@ export function displayShortcutHelp(initialInputY: number, lineCount: number): v
   process.stdout.write(ansiEscapes.eraseDown)
 
   // Define 3 columns (currently using only first 2)
-  const col1Width = 25
-  const col2Width = 30
-  // const col3Width = remaining space (reserved for future)
+  const col1Width = 30
+  const col2Width = 45
+  const col3Width = 30
 
   // First row: / for commands | double tap esc to clear input
   const row1Col1 = '/ for commands'
   const row1Col2 = 'double tap esc to clear input'
-  process.stdout.write(grayText('  ' + row1Col1.padEnd(col1Width) + row1Col2.padEnd(col2Width)))
+  const row1Col3 = ''//tab to toggle reasoning display'
+  process.stdout.write(grayText('  ' + row1Col1.padEnd(col1Width) + row1Col2.padEnd(col2Width) + row1Col3.padEnd(col3Width)))
 
   // Move to next line
   process.stdout.write('\n')
@@ -175,7 +182,8 @@ export function displayShortcutHelp(initialInputY: number, lineCount: number): v
   // Second row: empty | shift + ⏎ for newline
   const row2Col1 = ''
   const row2Col2 = 'shift + ⏎ for newline'
-  process.stdout.write(grayText('  ' + row2Col1.padEnd(col1Width) + row2Col2.padEnd(col2Width)))
+  const row2Col3 = ''
+  process.stdout.write(grayText('  ' + row2Col1.padEnd(col1Width) + row2Col2.padEnd(col2Width) + row2Col3.padEnd(col3Width)))
 
   // Restore cursor position
   process.stdout.write(ansiEscapes.cursorRestorePosition)
@@ -285,6 +293,26 @@ export function padContent(text: string, width: number = process.stdout.columns 
   return lines.join('\n')
 }
 
+export function writeReasoningAvailableIndicator(): number {
+  process.stdout.write(grayText(REASONING_HIDDEN_INDICATOR + ' ' + REASONING_AVAILABLE_TEXT))
+  return 1
+}
+
+export function writeReasoningTokens(msg: MessageCli, takeSpace: boolean = false): number {
+  const paddedReasoning = padContent(msg.reasoning.trim())
+  const lines = paddedReasoning.split('\n')
+  const lineCount = lines.length
+
+  if (takeSpace) {
+    // Reserve space by writing blank lines, then move cursor back up
+    console.log('\n'.repeat(lineCount - 1))
+    process.stdout.write(ansiEscapes.cursorUp(lineCount))
+  }
+
+  process.stdout.write(grayText(REASONING_SHOWN_INDICATOR + ' ' + paddedReasoning.slice(2)))
+  return lineCount
+}
+
 export function displayConversation() {
 
   // Always add ONE blank line after header
@@ -299,7 +327,17 @@ export function displayConversation() {
       console.log(grayText('> ' + paddedContent.slice(2)))
     } else {
       // Assistant messages: white (default terminal color)
-      console.log(padContent(msg.content))
+      // // Show reasoning if enabled and available
+      // if (msg.reasoning) {
+      //   if (state.showReasoning) {
+      //     writeReasoningTokens(msg)
+      //     console.log('\n')
+      //   } else {
+      //     writeReasoningAvailableIndicator()
+      //     console.log('\n')
+      //   }
+      // }
+      console.log(padContent(msg.content.trim()))
     }
     // Blank line after each message
     console.log()
@@ -332,12 +370,13 @@ export function startPulseAnimation(text: string): NodeJS.Timeout {
   // Display initial frame
   process.stdout.write(chalk.blueBright(getToolAnimationFrame()) + ` ${text}`)
 
-  // Start animation interval
-  return setInterval(() => {
-    process.stdout.write(ansiEscapes.cursorTo(0))
-    process.stdout.write(ansiEscapes.eraseLine)
-    process.stdout.write(secondaryText(getToolAnimationFrame()) + ` ${text}`)
-  }, 150)
+  // // Start animation interval
+  // return setInterval(() => {
+  //   process.stdout.write(ansiEscapes.cursorTo(0))
+  //   process.stdout.write(ansiEscapes.eraseLine)
+  //   process.stdout.write(secondaryText(getToolAnimationFrame()) + ` ${text}`)
+  // }, 150)
+  return undefined
 }
 
 export function stopPulseAnimation(interval: NodeJS.Timeout | null): void {
@@ -346,3 +385,39 @@ export function stopPulseAnimation(interval: NodeJS.Timeout | null): void {
   }
 }
 
+// Debug logging function - writes to line 1 when debug mode is enabled
+let debugTimeout: NodeJS.Timeout | null = null
+
+export function debugLog(message: string): void {
+  if (state.debug) {
+    process.stdout.write(ansiEscapes.cursorSavePosition)
+    process.stdout.write(ansiEscapes.cursorTo(0, 0))
+    process.stdout.write(ansiEscapes.eraseLine)
+    process.stdout.write(`DEBUG: ${message}`)
+    process.stdout.write(ansiEscapes.cursorRestorePosition)
+
+    // Clear debug line after 3 seconds
+    if (debugTimeout) {
+      clearTimeout(debugTimeout)
+    }
+    debugTimeout = setTimeout(() => {
+      process.stdout.write(ansiEscapes.cursorSavePosition)
+      process.stdout.write(ansiEscapes.cursorTo(0, 0))
+      process.stdout.write(ansiEscapes.eraseLine)
+      process.stdout.write(ansiEscapes.cursorRestorePosition)
+      debugTimeout = null
+    }, 3000)
+  }
+}
+
+// Setup console.debug override (must be called after state.debug is set)
+export function setupDebugLogging(): void {
+  // const originalDebug = console.debug
+  console.debug = (...args: any[]) => {
+    if (state.debug) {
+      debugLog(args.map(arg => String(arg)).join(' '))
+    } else {
+      //originalDebug(...args)
+    }
+  }
+}

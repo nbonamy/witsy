@@ -81,6 +81,7 @@ export async function promptInput(options: InputOptions): Promise<string> {
         cancelable: true,
         history: state.cliConfig?.history || [],
         debug: state.debug,
+        autoComplete: null, // Disable default TAB autocomplete so our witsyTab can work
 
         onCharacter: (char: string, text: string) => {
           // Clear help on any key press (if help is showing)
@@ -167,6 +168,17 @@ export async function promptInput(options: InputOptions): Promise<string> {
               updateFooterRightText(initialInputY, previousLineCount, undefined, text)
             }, 1000)
           }
+        },
+
+        onTab: () => {
+          // // Toggle reasoning display and signal to redraw
+          // const before = state.showReasoning
+          // state.showReasoning = !state.showReasoning
+          // console.debug(`TAB in input.ts callback, showReasoning: ${before} -> ${state.showReasoning}`)
+
+          // // Cleanup and signal to restart input with new display
+          // cleanup()
+          // resolve('__TAB__')
         },
       }, (error: Error | undefined, input: string) => {
 
