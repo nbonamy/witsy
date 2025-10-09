@@ -7,7 +7,7 @@ function runLint() {
   if (running) return;
   running = true;
 
-  console.log('\n🔍 Running linters...\n');
+  console.log('\n🔍 Running linters...');
 
   const lint = spawn('npm', ['run', 'lint'], { shell: true });
 
@@ -29,20 +29,17 @@ function runLint() {
   });
 }
 
-console.log('👀 Watching for changes...\n');
+console.log('👀 Watching for changes...');
 
-const watcher = chokidar.watch(['**/*.ts', '**/*.vue'], {
-  ignored: ['node_modules/**', 'out/**', '.vite/**', 'dist/**', 'build/**'],
+const watcher = chokidar.watch(['.'], {
+  ignored: /(^|[\/\\])(node_modules|out|\.vite|dist|build|\.git)[\/\\]/,
   persistent: true,
-  ignoreInitial: true
+  ignoreInitial: true,
+  awaitWriteFinish: {
+    stabilityThreshold: 100,
+    pollInterval: 100
+  }
 });
 
-watcher.on('change', (path) => {
-  console.log(`📝 Changed: ${path}`);
-  runLint();
-});
-
-watcher.on('ready', () => {
-  console.log('✓ Watcher ready\n');
-  runLint();
-});
+watcher.on('change', runLint);
+watcher.on('ready', runLint);
