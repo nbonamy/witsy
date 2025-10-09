@@ -72,7 +72,7 @@
           <div v-for="attachment in attachments" :key="attachment.url" class="attachment">
             <AttachmentView :attachment="attachment" />
             <div class="title" v-if="!attachment.isImage()">{{ attachment.filenameShort }}</div>
-            <BIconXLg class="delete" @click="onDetach(attachment)" />
+            <XIcon class="delete" @click="onDetach(attachment)" />
           </div>
         </div>
         <button v-if="canAttach" name="attach" type="button" @click="onAttach" :disabled="isGenerating"><PaperclipIcon />{{ t('common.attach') }}</button>
@@ -156,7 +156,7 @@
 
 <script setup lang="ts">
 
-import { BrushIcon, LineSquiggleIcon, PaperclipIcon, StarIcon, StarOffIcon, UploadIcon, WandIcon } from 'lucide-vue-next'
+import { BrushIcon, LineSquiggleIcon, PaperclipIcon, StarIcon, StarOffIcon, UploadIcon, WandIcon, XIcon } from 'lucide-vue-next'
 import { Model } from 'multi-llm-ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import AttachmentView from '../components/Attachment.vue'

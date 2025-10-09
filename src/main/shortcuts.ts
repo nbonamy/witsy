@@ -83,13 +83,13 @@ const registerShortcut = (name: string, shortcut: Shortcut, callback: () => void
   }
 
   // debug
-  console.debug('Registering shortcut', shortcut, accelerator)
+  console.debug('[scut] Registering shortcut', shortcut, accelerator)
 
   // do it
   try {
     globalShortcut.register(accelerator, callback)
   } catch (error) {
-    console.error(`Failed to register shortcut for ${name}:`, error)
+    console.error(`[scut] Failed to register shortcut for ${name}:`, error)
   }
 
 };

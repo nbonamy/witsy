@@ -70,8 +70,8 @@ export default class {
 
     } catch (e) {
 
-      console.error(`Failed to get tools from MCP server ${client.server.url}:`, e)
-      this.logs[uuid].push(`Failed to get tools`)
+      console.error(`[mcp] Failed to get tools from MCP server ${client.server.url}:`, e)
+      this.logs[uuid].push(`[mcp] Failed to get tools`)
       this.toolsCache.set(uuid, {
         tools: null,
         timestamp: 0
@@ -161,7 +161,7 @@ export default class {
           }))
         })
       } catch (e) {
-        console.error(`Failed to get tools from MCP server ${client.server.url}:`, e)
+        console.error(`[mcp] Failed to get tools from MCP server ${client.server.url}:`, e)
         results.push({
           ...client.server,
           tools: []
@@ -280,14 +280,14 @@ export default class {
         const childProcess = exec(command)
 
         childProcess.on('error', (error) => {
-          console.error(`Error installing MCP server ${server}:`, error)
+          console.error(`[mcp] Error installing MCP server ${server}:`, error)
           this.logs[server].push(`Error installing MCP server ${server}: ${error.message}`)
           reject('error')
         })
 
         childProcess.stderr.on('data', (data: Buffer) => {
           const stderr = data.toString()
-          console.error(`MCP install ${server} stderr:`, stderr)
+          console.error(`[mcp] MCP install ${server} stderr:`, stderr)
           this.logs[server].push(`MCP install ${server} stderr: ${stderr}`)
 
           if (stderr.includes('Failed to install')) {
@@ -307,7 +307,7 @@ export default class {
 
         childProcess.stdout.on('data', (data: Buffer) => {
           const stdout = data.toString()
-          console.log(`MCP install ${server} stdout:`, stdout)
+          console.log(`[mcp] MCP install ${server} stdout:`, stdout)
           this.logs[server].push(`MCP install ${server} stdout: ${stdout}`)
 
           if (stdout.includes('successfully installed')) {
@@ -545,7 +545,7 @@ export default class {
     this.startConfigMonitor()
 
     // done
-    console.log('MCP servers connected', this.clients.map(client => client.server.uuid))
+    console.log('[mcp] Servers connected', this.clients.map(client => client.server.uuid))
 
   }
 
@@ -554,7 +554,7 @@ export default class {
       this.monitor = new Monitor(() => {
         const servers = this.getServers()
         if (JSON.stringify(servers) !== this.currentConfig) {
-          console.log('MCP servers changed, reloading')
+          console.log('[mcp] Servers changed, reloading')
           this.reload()
         }
       })
@@ -592,7 +592,7 @@ export default class {
     }
 
     if (!client) {
-      console.error(`Failed to connect to MCP server ${server.url}`)
+      console.error(`[mcp] Failed to connect to MCP server ${server.url}`)
       this.toolsCache.set(server.uuid, {
         tools: null,
         timestamp: 0,
@@ -651,7 +651,7 @@ export default class {
       // working directory
       const cwd = server.cwd || undefined
 
-      // console.log('MCP Stdio command', process.platform, command, args, env)
+      // console.log('[mcp] MCP Stdio command', process.platform, command, args, env)
 
       const transport = new StdioClientTransport({
         command, args, env, stderr: 'pipe', cwd
@@ -684,7 +684,7 @@ export default class {
       return client
 
     } catch (e) {
-      console.error(`Failed to connect to MCP server ${server.command} ${server.url}:`, e)
+      console.error(`[mcp] Failed to connect to MCP server ${server.command} ${server.url}:`, e)
       this.logs[server.uuid].push(`Failed to connect to MCP server "${server.command} ${server.url}"\n`)
       this.logs[server.uuid].push(`Error: ${e.message}\n`)
       if (e.message.startsWith('spawn')) {
@@ -720,7 +720,7 @@ export default class {
         }
       }
       transport.onmessage = (message: any) => {
-        console.log('MCP SSE message', message)
+        console.log('[mcp] MCP SSE message', message)
       }
 
       // build the client
@@ -746,7 +746,7 @@ export default class {
 
 
     } catch (e) {
-      console.error(`Failed to connect to MCP server ${server.url}:`, e)
+      console.error(`[mcp] Failed to connect to MCP server ${server.url}:`, e)
       this.logs[server.uuid] = this.logs[server.uuid] || []
       // Only add catch error if logs are empty (no errors from handlers)
       if (this.logs[server.uuid].length === 0) {
@@ -775,8 +775,8 @@ export default class {
 
         const clientMetadata = await this.oauthManager.getClientMetadata(server.oauth.tokens.scope ?? server.oauth.scope)
         const oauthProvider = await this.oauthManager.createOAuthProvider(clientMetadata, (redirectUrl) => {
-          console.log(`OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
-          this.logs[server.uuid].push(`OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
+          console.log(`[mcp] OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
+          this.logs[server.uuid].push(`[mcp] OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
         }, (tokens: OAuthTokens, scope: string) => {
           this.updateTokens(server, tokens, scope)
         })
@@ -813,7 +813,7 @@ export default class {
         }
       }
       // transport.onmessage = (message: any) => {
-      //   console.log('MCP HTTP message', message)
+      //   console.log('[mcp] HTTP message', message)
       // }
 
       // build the client
@@ -844,7 +844,7 @@ export default class {
 
 
     } catch (e) {
-      console.error(`Failed to connect to MCP server ${server.url}:`, e)
+      console.error(`[mcp] Failed to connect to MCP server ${server.url}:`, e)
       // Only add catch error if logs are empty (no errors from handlers)
       if (this.logs[server.uuid].length === 0) {
         this.logs[server.uuid].push(this.translateError(e.message))
@@ -887,11 +887,11 @@ export default class {
             const functionTool = this.mcpToOpenAI(client.server, tool)
             allTools.push(functionTool)
           } catch (e) {
-            console.error(`Failed to convert MCP tool ${tool.name} from MCP server ${client.server.url} to OpenAI tool:`, e)
+            console.error(`[mcp] Failed to convert MCP tool ${tool.name} from MCP server ${client.server.url} to OpenAI tool:`, e)
           }
         }
       } catch (e) {
-        console.error(`Failed to get tools from MCP server ${client.server.url}:`, e)
+        console.error(`[mcp] Failed to get tools from MCP server ${client.server.url}:`, e)
       }
     }
     return allTools
@@ -906,7 +906,7 @@ export default class {
 
     // remove unique suffix
     const tool = this.originalToolName(name)
-    console.log('Calling MCP tool', tool, args)
+    console.log(`[mcp] Calling MCP tool`, tool, args)
 
     return await client.client.callTool({
       name: tool,
@@ -999,7 +999,7 @@ export default class {
         return true
       }
     } catch (error) {
-      console.error(`Failed to complete OAuth flow for server ${serverUuid}:`, error)
+      console.error(`[mcp] Failed to complete OAuth flow for server ${serverUuid}:`, error)
       this.logs[serverUuid]?.push(`Failed to complete OAuth flow: ${error.message}`)
     }
 
