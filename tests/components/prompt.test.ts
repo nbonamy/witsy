@@ -113,7 +113,7 @@ test('Send on click', async () => {
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
-  await wrapper.find('.icon.send').trigger('click')
+  await wrapper.find('.send-stop').trigger('click')
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     prompt: 'this is my prompt',
     attachments: [],
@@ -175,7 +175,7 @@ test('Show stop button when working', async () => {
   await wrapper.setProps({ chat: chat })
   expect(wrapper.find('.send').exists()).toBe(false)
   expect(wrapper.find('.stop').exists()).toBe(true)
-  await wrapper.find('.icon.stop').trigger('click')
+  await wrapper.find('.send-stop').trigger('click')
   expect(wrapper.emitted<any[]>().stop).toBeTruthy()
 })
 
