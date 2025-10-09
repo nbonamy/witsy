@@ -84,9 +84,9 @@
 
       </template>
 
-      <ButtonIcon class="send-stop">
-        <XIcon class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
-        <ArrowUpIcon class="icon send" :class="{ disabled: !prompt.length }" @click="onSendPrompt" v-else />
+      <ButtonIcon class="send-stop" @click="isPrompting ? onStopPrompting() : onSendPrompt()">
+        <XIcon class="icon stop" v-if="isPrompting" />
+        <ArrowUpIcon class="icon send" :class="{ disabled: !prompt.length }" v-else />
       </ButtonIcon>
 
     </div>
