@@ -1612,7 +1612,7 @@
     "capabilities": {
       "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung, Code...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>. HTML-Artefakte MÜSSEN mit <html> oder <!DOCTYPE html> beginnen. Beispiel: <artifact title=\"Bericht\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Berichtinhalt formatiert in HTML</body></html>\n</artifact>. Sie können diese Funktion verwenden, um HTML-basierte Datenvisualisierungen mit Chart.js oder D3.js zu erstellen. Verwenden Sie Artefakte NICHT für einfache Datentabellen.",
       "mermaid": "Wenn du gebeten wirst, ein Mermaid-Diagramm auszugeben, wird dessen Code als Diagramm für den Benutzer dargestellt.",
-      "noMarkdown": "Verwenden Sie in Ihren Antworten keine Markdown-Formatierung. Verwenden Sie nur reinen Text. Verwenden Sie kein **fett**, *kursiv*, `Code` oder eine andere Markdown-Syntax. Wenn Sie Tabellen verwenden, verwenden Sie nur reine Texttabellen mit entsprechender Abstandhaltung zur Ausrichtung der Spalten.",
+      "noMarkdown": "Verwenden Sie in Ihren Antworten keine Markdown-Formatierung. Verwenden Sie nur reinen Text. Verwenden Sie kein **fett**, *kursiv*, `Code`, ```Codeblöcke``` oder andere Markdown-Syntax. Wenn Sie Tabellen verwenden, verwenden Sie nur reine Texttabellen mit entsprechendem Abstand zur Ausrichtung der Spalten.",
       "toolRetry": "Wenn beim Aufrufen von Werkzeugen ein Eingabefehler auftritt, analysiere den Fehler, versuche ihn zu beheben und rufe das Werkzeug dann erneut auf."
     },
     "chat": {
