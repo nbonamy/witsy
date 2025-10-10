@@ -33,7 +33,6 @@ const onClear = () => {
   align-items: center;
   gap: 0.25rem;
   color: var(--highlight-color);
-  margin-left: 0.5rem;
   padding: 0.25rem;
 
   &:hover {
