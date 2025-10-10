@@ -1,15 +1,14 @@
 
-import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool, LlmChunk, PluginParameter, LlmUsage, LlmStructuredOutput } from 'multi-llm-ts'
-import { Configuration } from './config'
 import { Size } from 'electron'
+import { Attachment as IAttachmentBase, Message as IMessageBase, LlmChunk, LlmChunkTool, LlmModelOpts, LlmStructuredOutput, LlmTool, LlmUsage, PluginParameter } from 'multi-llm-ts'
 import { Application, RunCommandParams } from './automation'
-import { DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
-import { LocalSearchResult } from '../main/search'
-import { McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from './mcp'
-import { ToolSelection } from './llm'
-import { ListDirectoryResponse } from './filesystem'
+import { Configuration } from './config'
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './file'
-import { WorkspaceHeader, Workspace } from './workspace'
+import { ListDirectoryResponse } from './filesystem'
+import { ToolSelection } from './llm'
+import { McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from './mcp'
+import { DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
+import { Workspace, WorkspaceHeader } from './workspace'
 
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
@@ -339,6 +338,16 @@ export type OpenSettingsPayload = {
   engine?: string
 }
 
+export type LocalSearchResponse = {
+  error?: 'captcha' | 'unknown'
+  results?: LocalSearchResult[]
+}
+
+export type LocalSearchResult = {
+  url: string
+  title: string
+  content: string
+}
 
 declare global {
   interface Window {
@@ -559,7 +568,7 @@ declare global {
         delete(uuid: string): void
       }
       search: {
-        query(query: string, num: number, signalId?: string): Promise<LocalSearchResult[]>
+        query(query: string, num: number, signalId?: string): Promise<LocalSearchResponse>
         cancel(signalId: string): void
         test(): Promise<boolean>
       }

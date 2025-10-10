@@ -1,34 +1,34 @@
 
 import { BrowserWindow } from 'electron'
-import { getTextContent } from './text'
-import { deleteFile } from './file'
-import { getCleanUserAgent } from './utils'
 import * as fs from 'fs'
-import * as path from 'path'
 import * as os from 'os'
+import * as path from 'path'
+import { LocalSearchResponse, LocalSearchResult } from '../types/index'
+import { deleteFile } from './file'
+import { getTextContent } from './text'
+import { getCleanUserAgent } from './utils'
 
 const grabGoogleResults = `
   const results = []
   const search = document.getElementById("search")
-  search.querySelectorAll("a").forEach((link) => {
-    const title = link.querySelector("h3")
-    const url = link.getAttribute("href")
-    const item = {
-      el: link.outerHTML,
-      title: title?.textContent || "",
-      url,
-    }
-    if (!item.title || !item.url) return
-    results.push(item)
-  })
-  results
+  if (!search) {
+    const el = document.querySelector('#recaptcha')
+    el ? 'captcha' : 'unknown'
+  } else {
+    search.querySelectorAll("a").forEach((link) => {
+      const title = link.querySelector("h3")
+      const url = link.getAttribute("href")
+      const item = {
+        el: link.outerHTML,
+        title: title?.textContent || "",
+        url,
+      }
+      if (!item.title || !item.url) return
+      results.push(item)
+    })
+    results
+  }
 `
-
-export type LocalSearchResult = {
-  url: string
-  title: string
-  content: string
-}
 
 export default class LocalSearch {
 
@@ -36,9 +36,9 @@ export default class LocalSearch {
 
     try {
       
-      const results = await this.search('What is Witsy?', 1, true)
-      console.log('Test search results:', results.map(r => r.url))
-      if (results.length > 0) {
+      const response = await this.search('What is Witsy?', 1, true)
+      console.log('Test search results:', response.results?.map(r => r.url))
+      if (response.results?.length > 0) {
         return true
       }
     } catch (e) {
@@ -50,7 +50,7 @@ export default class LocalSearch {
   
   }
 
-  public search(query: string, num: number = 5, testMode: boolean = false, abortSignal?: AbortSignal): Promise<LocalSearchResult[]> {
+  public search(query: string, num: number = 5, testMode: boolean = false, abortSignal?: AbortSignal): Promise<LocalSearchResponse> {
 
     return new Promise((resolve, reject) => {
 
@@ -98,6 +98,15 @@ export default class LocalSearch {
 
           // get the results
           const googleResults: LocalSearchResult[] = await win.webContents.executeJavaScript(grabGoogleResults)
+          if (!Array.isArray(googleResults)) {
+            reject({ error: googleResults === 'captcha'
+              ? 'Inform the user that a CAPTCHA mechanism is preventing search to work. They need to go Settings | Plugins | Web Search and click the "Test local search" button'
+              : 'An unknown error happened while trying to search locally. Please try again later.'
+            })
+            return
+          }
+
+          // log
           console.log(`[search] found ${googleResults.length} results`)
 
           // close the window now
@@ -138,7 +147,7 @@ export default class LocalSearch {
           // done
           if (!hasResolved) {
             hasResolved = true
-            resolve(results)
+            resolve({ results })
           }
 
         } catch (e) {
