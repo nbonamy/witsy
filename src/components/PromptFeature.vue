@@ -1,14 +1,15 @@
 <template>
-  <div class="prompt-feature" @click="onClear">
-    <component :is="icon" class="icon" />
+  <div class="prompt-feature" @click="onClear" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+    <component :is="icon" class="icon" v-if="!active"/>
+    <XIcon class="icon clear" v-else />
     <span class="label">{{ label }}</span>
-    <XIcon class="clear" />
   </div>
 </template>
 
 <script setup lang="ts">
 
 import { XIcon } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface Props {
   icon?: any
@@ -21,9 +22,20 @@ const emit = defineEmits<{
   clear: []
 }>()
 
+const active = ref(false)
+
+const onMouseEnter = () => {
+  active.value = true
+}
+
+const onMouseLeave = () => {
+  active.value = false
+}
+
 const onClear = () => {
   emit('clear')
 }
+
 </script>
 
 <style scoped>
@@ -54,13 +66,6 @@ const onClear = () => {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 14.5px;
-  color: var(--color-secondary);
-}
-
-.prompt-feature .clear {
-  width: 0.75rem;
-  height: 0.75rem;
-  cursor: pointer;
   color: var(--color-secondary);
 }
 

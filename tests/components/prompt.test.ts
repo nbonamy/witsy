@@ -416,6 +416,8 @@ test('Clears expert', async () => {
   await wrapper.vm.$nextTick()
   const feature = wrapper.findComponent({ name: 'PromptFeature' })
   expect(feature.exists()).toBe(true)
+  expect(feature.find('.clear').exists()).toBe(false)
+  await feature.trigger('mouseenter')
   await feature.find('.clear').trigger('click')
   expect(wrapper.vm.expert).toBeNull()
 })
