@@ -350,7 +350,6 @@ export default class Generator {
 
     // no markdown modifier
     if (modifiers?.noMarkdown) {
-      console.log('Applying noMarkdown modifier to instructions')
       instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.noMarkdown')
     }
 

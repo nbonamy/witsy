@@ -5,7 +5,7 @@
       <div class="attachment" v-for="(attachment, index) in attachments" :key="index">
         <AttachmentView :attachment="attachment" />
         <div class="title" v-if="!attachment.isImage()">{{ attachment.filenameShort }}</div>
-        <BIconXLg class="delete" @click="onDetach(attachment)" />
+        <XIcon class="delete" @click="onDetach(attachment)" />
       </div>
     </div>
     <div class="input" @paste="onPaste">
@@ -54,7 +54,7 @@
       <slot name="actions" />
       
       <ButtonIcon :id="`commands-menu-${uniqueId}`" @click="onCommands()" v-if="enableCommands && prompt && store.isFeatureEnabled('chat.commands')">
-        <BIconMagic class="icon command" />
+        <CommandIcon class="icon command" />
       </ButtonIcon>
       
       <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
@@ -69,7 +69,7 @@
       <div class="model-menu-button" :id="`model-menu-button-${uniqueId}`" @click="onModelMenu">
         <BoxIcon />
         <div class="model-name">{{ modelName }}</div>
-        <BIconCaretDownFill class="icon caret" />
+        <ChevronDownIcon class="icon caret" />
       </div>
 
       <template v-if="store.isFeatureEnabled('favorites') && chat">
@@ -84,9 +84,9 @@
 
       </template>
 
-      <ButtonIcon class="send-stop">
-        <XIcon class="icon stop" :class="{ canceling: promptingState === 'canceling' }" @click="onStopPrompting" v-if="promptingState !== 'idle'" />
-        <ArrowUpIcon class="icon send" :class="{ disabled: !prompt.length }" @click="onSendPrompt" v-else />
+      <ButtonIcon class="send-stop" @click="promptingState !== 'idle' ? onStopPrompting() : onSendPrompt()">
+        <XIcon class="icon stop" :class="{ canceling: promptingState === 'canceling' }" v-if="promptingState !== 'idle'" />
+        <ArrowUpIcon class="icon send" :class="{ disabled: !prompt.length }" v-else />
       </ButtonIcon>
 
     </div>
@@ -159,7 +159,7 @@
 
 <script setup lang="ts">
 
-import { ArrowUpIcon, BoxIcon, BrainIcon, CommandIcon, FeatherIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
+import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
 import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
 import { computed, nextTick, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
 import Waveform from '../components/Waveform.vue'
@@ -208,7 +208,7 @@ const { onEvent, emitEvent } = useEventBus()
 const props = defineProps({
   chat: {
     type: Object as PropType<Chat>,
-    required: true
+    required: false
   },
   conversationMode: {
     type: String,

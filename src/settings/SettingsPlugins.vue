@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 
-import { BIconYoutube } from 'bootstrap-icons-vue'
 import { BinocularsIcon, CloudDownloadIcon, FolderIcon, IdCardIcon, PaletteIcon, VideoIcon } from 'lucide-vue-next'
 import { computed, nextTick, ref } from 'vue'
 import WIconPython from '../../assets/python.svg?component'
@@ -61,7 +60,7 @@ const plugins = computed((): PluginUI[] => {
         image: { icon: PaletteIcon },
         video: { icon: VideoIcon },
         memory: { icon: IdCardIcon },
-        youtube: { icon: BIconYoutube },
+        youtube: { icon: VideoIcon },
         vega: { icon: WIconVega },
         filesystem: { icon: FolderIcon },
         // mcp: { icon: WIconMcp },

@@ -9,7 +9,7 @@ const DEFAULT_MODEL = 'claude-3-7-sonnet-20250219'
 const system = `You are an assistant helping to add i18n to a project.
 The project is an electron app written in TypesSrcipt and Vue 3.
 The project uses vue-i18n for internationalization.
-The project uses bootstrap-icons-vue for icons.
+The project uses lucide-vue-next for icons.
 You will given a file to localize and your objective is to extract all the hardcoded strings and replace them with i18n keys.
 If you do not detect any hard-coded string, skip the file without modifying it.
 If you believe the file has already been processed, skip the file without modifying it.
@@ -42,7 +42,7 @@ class ReadFilePlugin extends llm.Plugin {
   async execute(context: llm.PluginExecutionContext, parameters: any) {
     try {
       return { success: true, content: await fs.promises.readFile(parameters.path, 'utf-8') }
-    } catch (e) {
+    } catch (e: any) {
       return { success: false, error: e.message }
     }
   }
@@ -60,11 +60,12 @@ class WriteFilePlugin extends llm.Plugin {
       { name: 'path', type: 'string', description: 'The path to the file to write' },
       { name: 'content', type: 'string', description: 'The content to write' }
     ]
-  } async execute(context: llm.PluginExecutionContext, parameters: any) {
+  }
+  async execute(context: llm.PluginExecutionContext, parameters: any) {
     try {
       await fs.promises.writeFile(parameters.path, parameters.content, 'utf-8')
       return { success: true }
-    } catch (e) {
+    } catch (e: any) {
       return { success: false, error: e.message }
     }
   }
