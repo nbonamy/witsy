@@ -58,6 +58,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       close: vi.fn(),
       showWindowButtons: vi.fn(),
       hideWindowButtons: vi.fn(),
+      moveWindow: vi.fn(),
     },
     debug: {
       showConsole: vi.fn(),
@@ -333,6 +334,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       deleteRuns: vi.fn(),
       deleteRun: vi.fn(),
       getApiBasePath: vi.fn(() => '/api/agent'),
+      generateWebhookToken: vi.fn(() => 'webhook-token'),
     },
     history: {
       load: vi.fn(() => ({ folders: [ ], chats: [ ], quickPrompts: [ ] })),
@@ -541,10 +543,12 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       delete: vi.fn(),
     },
     search: {
-      query: vi.fn(async () => [
+      query: vi.fn(async () => ({ results: [
         { title: 'title1', url: 'url1', content: '<html>page_content1<img src="test" /></html>' },
         { title: 'title2', url: 'url2', content: '<html>header<main id="main">page_content2</main></html>' },
-      ])
+      ]})),
+      cancel: vi.fn(),
+      test: vi.fn(),
     },
     backup: {
       export: vi.fn(() => true),

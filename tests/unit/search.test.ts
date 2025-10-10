@@ -4,6 +4,7 @@ import LocalSearch from '../../src/main/search'
 
 vi.mock('electron', async () => {
   const BrowserWindow = vi.fn(function() {
+    // @ts-expect-error mock
     this.webContents = {
       setMaxListeners: vi.fn(),
       session: {
@@ -41,11 +42,11 @@ test('search', async () => {
 
   const search = new LocalSearch()
   const res = await search.search('witsy', 3)
-  expect(res).toEqual([
+  expect(res).toEqual({ results: [
     { title: 'title', url: 'url1', content: '<html><body>test</body></html>' },
     { title: 'title', url: 'url2', content: '<html><body>test</body></html>' },
     { title: 'title', url: 'url4', content: '<html><body>test</body></html>' },
-  ])
+  ]})
 
 })
 
@@ -54,11 +55,11 @@ test('search with abortSignal - basic completion', async () => {
   const abortController = new AbortController()
 
   const res = await search.search('witsy', 3, false, abortController.signal)
-  expect(res).toEqual([
+  expect(res).toEqual({ results: [
     { title: 'title', url: 'url1', content: '<html><body>test</body></html>' },
     { title: 'title', url: 'url2', content: '<html><body>test</body></html>' },
     { title: 'title', url: 'url4', content: '<html><body>test</body></html>' },
-  ])
+  ]})
 })
 
 test('search aborted before window opens', async () => {
@@ -81,7 +82,7 @@ test('search with non-aborted signal completes normally', async () => {
   const res = await search.search('witsy', 3, false, abortController.signal)
 
   // Should complete successfully
-  expect(res).toHaveLength(3)
+  expect(res.results).toHaveLength(3)
   expect(abortController.signal.aborted).toBe(false)
 })
 
@@ -90,7 +91,7 @@ test('search without abortSignal works normally', async () => {
 
   // No signal provided (undefined)
   const res = await search.search('witsy', 3, false, undefined)
-  expect(res).toHaveLength(3)
+  expect(res.results).toHaveLength(3)
 })
 
 test('search accepts abortSignal parameter', async () => {
@@ -99,7 +100,7 @@ test('search accepts abortSignal parameter', async () => {
 
   // Verify the method signature accepts abortSignal
   const res = await search.search('witsy', 3, false, abortController.signal)
-  expect(res).toHaveLength(3)
+  expect(res.results).toHaveLength(3)
 })
 
 test('search aborted before execution rejects immediately', async () => {

@@ -241,7 +241,7 @@ beforeEach(() => {
 })
 
 test('Browse Plugin', async () => {
-  const browse = new Browse(store.config.plugins.browse)
+  const browse = new Browse(store.config.plugins.browse, 'test-workspace')
   expect(browse.isEnabled()).toBe(true)
   expect(browse.getName()).toBe('extract_webpage_content')
   expect(browse.getDescription()).not.toBeFalsy()
@@ -264,7 +264,7 @@ test('Browse Plugin', async () => {
 })
 
 test('Search Plugin Local', async () => {
-  const search = new Search(store.config.plugins.search)
+  const search = new Search(store.config.plugins.search, 'test-workspace')
   expect(search.isEnabled()).toBe(true)
   expect(search.getName()).toBe('search_internet')
   expect(search.getDescription()).not.toBeFalsy()
@@ -282,14 +282,14 @@ test('Search Plugin Local', async () => {
     results: [
       { title: 'title1', url: 'url1', content: 'page_con' },
       { title: 'title2', url: 'url2', content: 'page_con' }
-    ]
+    ],
   })
   expect(window.api.search.query).toHaveBeenLastCalledWith('test', 5, expect.any(String))
 })
 
 test('Search Plugin Brave', async () => {
   store.config.plugins.search.engine = 'brave'
-  const search = new Search(store.config.plugins.search)
+  const search = new Search(store.config.plugins.search, 'test-workspace')
   expect(await search.execute(context, { query: 'test' })).toStrictEqual({
     query: 'test',
     results: [
@@ -308,7 +308,7 @@ test('Search Plugin Brave', async () => {
 
 test('Search Plugin Exa', async () => {
   store.config.plugins.search.engine = 'exa'
-  const search = new Search(store.config.plugins.search)
+  const search = new Search(store.config.plugins.search, 'test-workspace')
   expect(await search.execute(context, { query: 'test' })).toStrictEqual({
     query: 'test',
     results: [
@@ -321,7 +321,7 @@ test('Search Plugin Exa', async () => {
 
 test('Search Plugin Perplexity', async () => {
   store.config.plugins.search.engine = 'perplexity'
-  const search = new Search(store.config.plugins.search)
+  const search = new Search(store.config.plugins.search, 'test-workspace')
   expect(await search.execute(context, { query: 'test' })).toStrictEqual({
     query: 'test',
     results: [
@@ -334,7 +334,7 @@ test('Search Plugin Perplexity', async () => {
 
 test('Search Plugin Tavily', async () => {
   store.config.plugins.search.engine = 'tavily'
-  const search = new Search(store.config.plugins.search)
+  const search = new Search(store.config.plugins.search, 'test-workspace')
   expect(await search.execute(context, { query: 'test' })).toStrictEqual({
     query: 'test',
     results: [
@@ -347,7 +347,7 @@ test('Search Plugin Tavily', async () => {
 
 test('Image Plugin', async () => {
   
-  const image = new Image(store.config.plugins.image)
+  const image = new Image(store.config.plugins.image, 'test-workspace')
   expect(image.isEnabled()).toBe(true)
   expect(image.getName()).toBe('image_generation')
   expect(image.getDescription()).toBe('plugins.image.description_fr-FR')
@@ -366,7 +366,7 @@ test('Image Plugin OpenAI', async () => {
 
   store.config.plugins.image.engine = 'openai'
   store.config.plugins.image.model = 'gpt-image-1'
-  const image = new Image(store.config.plugins.image)
+  const image = new Image(store.config.plugins.image, 'test-workspace')
   const result = await image.execute({ model: 'gpt-image-1' }, { prompt: 'test prompt' })
   expect(OpenAI.prototype.images.generate).toHaveBeenLastCalledWith(expect.objectContaining({
     model: 'gpt-image-1',
@@ -389,7 +389,7 @@ test('Image Plugin HuggingFace', async () => {
 
   store.config.plugins.image.engine = 'huggingface'
   store.config.plugins.image.model = 'test-model'
-  const image = new Image(store.config.plugins.image)
+  const image = new Image(store.config.plugins.image, 'test-workspace')
   const result = await image.execute({ model: 'test-model' }, { prompt: 'test prompt' })
   expect(HfInference.prototype.textToImage).toHaveBeenLastCalledWith(expect.objectContaining({
     model: 'test-model',
@@ -405,7 +405,7 @@ test('Image Plugin Replicate', async () => {
 
   store.config.plugins.image.engine = 'replicate'
   store.config.plugins.image.model = 'image/model'
-  const image = new Image(store.config.plugins.image)
+  const image = new Image(store.config.plugins.image, 'test-workspace')
   const result = await image.execute({ model: 'image/model' }, { prompt: 'test prompt' })
   expect(Replicate.prototype.run).toHaveBeenLastCalledWith('image/model', expect.objectContaining({
     input: {
@@ -423,7 +423,7 @@ test('Image Plugin fal.ai', async () => {
 
   store.config.plugins.image.engine = 'falai'
   store.config.plugins.image.model = 'image/model'
-  const image = new Image(store.config.plugins.image)
+  const image = new Image(store.config.plugins.image, 'test-workspace')
   const result = await image.execute({ model: 'image/model' }, { prompt: 'test prompt' })
   expect(fal.config).toHaveBeenLastCalledWith({ credentials: 'test-api-key' })
   expect(fal.subscribe).toHaveBeenLastCalledWith('image/model', expect.objectContaining({
@@ -439,7 +439,7 @@ test('Image Plugin google', async () => {
 
   store.config.plugins.image.engine = 'google'
   store.config.plugins.image.model = 'image/model'
-  const image = new Image(store.config.plugins.image)
+  const image = new Image(store.config.plugins.image, 'test-workspace')
   const result = await image.execute({ model: 'image/model' }, { prompt: 'test prompt' })
   expect(GoogleGenAI.prototype.models.generateImages).toHaveBeenLastCalledWith({
     model: 'image/model',
@@ -454,7 +454,7 @@ test('Image Plugin google', async () => {
 
 test('Video Plugin', async () => {
   
-  const video = new Video(store.config.plugins.video)
+  const video = new Video(store.config.plugins.video, 'test-workspace')
   expect(video.isEnabled()).toBe(true)
   expect(video.getName()).toBe('video_generation')
   expect(video.getDescription()).toBe('plugins.video.description_fr-FR')
@@ -476,7 +476,7 @@ test('Video Plugin Replicate', async () => {
   
   store.config.plugins.video.engine = 'replicate'
   store.config.plugins.video.model = 'video/model'
-  const video = new Video(store.config.plugins.video)
+  const video = new Video(store.config.plugins.video, 'test-workspace')
   const result = await video.execute({ model: 'video/model' }, { prompt: 'test prompt' })
   expect(Replicate.prototype.run).toHaveBeenLastCalledWith('video/model', expect.objectContaining({
     input: {
@@ -493,7 +493,7 @@ test('Video Plugin fal.ai', async () => {
 
   store.config.plugins.video.engine = 'falai'
   store.config.plugins.video.model = 'video/model'
-  const video = new Video(store.config.plugins.video)
+  const video = new Video(store.config.plugins.video, 'test-workspace')
   const result = await video.execute({ model: 'video/model' }, { prompt: 'test prompt' })
   expect(fal.config).toHaveBeenLastCalledWith({ credentials: 'test-api-key' })
   expect(fal.subscribe).toHaveBeenLastCalledWith('video/model', expect.objectContaining({
@@ -506,7 +506,7 @@ test('Video Plugin fal.ai', async () => {
 })
 
 test('Python Plugin', async () => {
-  const python = new Python(store.config.plugins.python)
+  const python = new Python(store.config.plugins.python, 'test-workspace')
   expect(python.isEnabled()).toBe(true)
   expect(python.getName()).toBe('run_python_code')
   expect(python.getDescription()).not.toBeFalsy()
@@ -523,7 +523,7 @@ test('Python Plugin', async () => {
 })
 
 test('YouTube Plugin', async () => {
-  const youtube = new YouTube(store.config.plugins.youtube)
+  const youtube = new YouTube(store.config.plugins.youtube, 'test-workspace')
   expect(youtube.isEnabled()).toBe(true)
   expect(youtube.getName()).toBe('get_youtube_transcript')
   expect(youtube.getDescription()).not.toBeFalsy()
@@ -544,7 +544,7 @@ test('YouTube Plugin', async () => {
 })
 
 test('Memory Plugin', async () => {
-  const memory = new Memory(store.config.plugins.memory)
+  const memory = new Memory(store.config.plugins.memory, 'test-workspace')
   expect(memory.isEnabled()).toBe(false)
   expect(memory.getName()).toBe('long_term_memory')
   expect(memory.getDescription()).toBe('plugins.memory.description_fr-FR')
@@ -580,7 +580,7 @@ test('Memory Plugin', async () => {
 test('Computer Plugin', async () => {
 
   // basic stuff
-  const computer = new Computer(store.config.plugins.computer)
+  const computer = new Computer(store.config.plugins.computer, 'test-workspace')
   expect(computer.isEnabled()).toBe(true)
   expect(computer.getName()).toBe('computer')
   expect(computer.getDescription()).toBe('')
@@ -607,7 +607,7 @@ test('Computer Plugin', async () => {
 
 test('MCP Plugin', async () => {
   
-  const mcp = new Mcp(store.config.mcp)
+  const mcp = new Mcp(store.config.mcp, 'test-workspace')
   expect(mcp.isEnabled()).toBe(true)
   expect(mcp).toBeInstanceOf(MultiToolPlugin)
   expect(mcp.getName()).toBe('Model Context Protocol')
