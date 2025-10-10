@@ -187,7 +187,6 @@ import EngineModelMenu from './EngineModelMenu.vue'
 import Loader from './Loader.vue'
 import PromptFeature from './PromptFeature.vue'
 import PromptMenu from './PromptMenu.vue'
-import { send } from 'vite'
 
 export type SendPromptParams = {
   prompt: string,
