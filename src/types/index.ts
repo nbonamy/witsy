@@ -44,6 +44,7 @@ export interface Attachment extends IAttachmentBase {
 
 export type ToolCall = {
   id: string
+  state?: 'preparing' | 'running' | 'completed' | 'canceled' | 'error'
   status?: string
   done: boolean
   name: string
@@ -520,7 +521,8 @@ declare global {
         getAllServersWithTools(): Promise<McpServerWithTools[]>
         getServerTools(uuid: string): Promise<McpTool[]>
         getLlmTools(): Promise<LlmTool[]>
-        callTool(name: string, parameters: anyDict): any
+        callTool(name: string, parameters: anyDict, signalId?: string): any
+        cancelTool(signalId: string): void
         originalToolName(name: string): string
         detectOAuth(url: string, headers: Record<string, string>): Promise<any>
         startOAuthFlow(url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string>
@@ -555,7 +557,8 @@ declare global {
         delete(uuid: string): void
       }
       search: {
-        query(query: string, num: number): Promise<LocalSearchResult[]>
+        query(query: string, num: number, signalId?: string): Promise<LocalSearchResult[]>
+        cancel(signalId: string): void
         test(): Promise<boolean>
       }
       studio: {

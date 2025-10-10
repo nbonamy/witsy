@@ -101,7 +101,7 @@ test('Assistant Creation', () => {
 test('Assistant parameters', async () => {
   await prompt('Hello LLM')
   const params: AssistantCompletionOpts = spyMockStream.mock.calls[0][2] as AssistantCompletionOpts
-  expect(params).toStrictEqual({
+  expect(params).toMatchObject({
     titling: true,
     engine: 'mock',
     model: 'chat',
@@ -124,6 +124,8 @@ test('Assistant parameters', async () => {
     caching: true,
     usage: true,
   })
+  // Verify abortSignal is present
+  expect(params.abortSignal).toBeInstanceOf(AbortSignal)
 })
 
 test('Assistant instructions', async () => {

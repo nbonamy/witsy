@@ -1,5 +1,5 @@
 import { App } from 'electron'
-import { Agent, AgentRun } from '../types/index'
+import { Agent, AgentRun, anyDict } from '../types/index'
 import { Configuration } from '../types/config'
 import { loadAgents, saveAgentRun } from './agents'
 import { getLocaleMessages } from './i18n'
@@ -85,6 +85,7 @@ export class LlmContext {
             const results = localSearch.search(query, num)
             return results
           },
+          cancel: () => {},
           test: async () => true,
         },
 
@@ -92,7 +93,10 @@ export class LlmContext {
         mcp: {
           isAvailable: () => true,
           getLlmTools: this.mcp?.getLlmTools,
-          callTool: this.mcp?.callTool,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          callTool: (name: string, parameters: anyDict, signalId?: string) => {
+            return this.mcp?.callTool(name, parameters)
+          },
         },
 
         // @ts-expect-error partial mock

@@ -39,18 +39,24 @@ export type GenerationResult =
 export default class Generator {
 
   config: Configuration
-  stopGeneration: boolean
+  abortController: AbortController | null
   stream: AsyncIterable<LlmChunk>|null
   llm: LlmEngine|null
 
   constructor(config: Configuration) {
     this.config = config
     this.stream = null
-    this.stopGeneration = false
+    this.abortController = null
     this.llm = null
   }
 
   async generate(llm: LlmEngine, messages: Message[], opts: GenerationOpts, llmCallback?: LlmChunkCallback): Promise<GenerationResult> {
+
+    // Create abort controller for this generation if not already created
+    // (Assistant.prompt() creates it earlier to ensure stop() works immediately)
+    if (!this.abortController) {
+      this.abortController = new AbortController()
+    }
 
     // return code
     let rc: GenerationResult = 'success'
@@ -96,6 +102,7 @@ export default class Generator {
         const llmResponse: LlmResponse = await llm.complete(model, conversation, {
           visionFallbackModel: visionModel,
           usage: true,
+          abortSignal: this.abortController.signal,
           ...opts
         })
 
@@ -129,18 +136,14 @@ export default class Generator {
       } else {
 
         // now stream
-        this.stopGeneration = false
         this.stream = llm.generate(model, conversation, {
           visionFallbackModel: visionModel,
           usage: true,
+          abortSignal: this.abortController.signal,
           ...opts
         })
         for await (const msg of this.stream) {
-          if (this.stopGeneration) {
-            response.appendText({ type: 'content', text: '', done: true })
-            rc = 'stopped'
-            break
-          }
+          // Engine will stop if signal aborted
           if (msg.type === 'usage') {
             response.usage = msg.usage
           } else if (msg.type === 'tool') {
@@ -289,7 +292,12 @@ export default class Generator {
         }
       } else {
         llmCallback?.call(null, { type: 'content', text: null, done: true })
+        rc = 'stopped'
       }
+    } finally {
+      // Cleanup
+      this.stream = null
+      this.abortController = null
     }
 
     // make sure the message is terminated correctly
@@ -299,22 +307,14 @@ export default class Generator {
       response.appendText({ type: 'content', text: '', done: true })
     }
 
-    // cleanup
-    this.stream = null
-    //callback?.call(null, null)
-
     // done
     return rc
 
   }
 
   async stop() {
-    if (this.stream) {
-      this.stopGeneration = true
-      try {
-        await this.llm?.stop(this.stream)
-      } catch { /* empty */ }
-    }
+    // Abort the signal
+    this.abortController?.abort()
   }
 
   getConversation(messages: Message[]): Message[] {

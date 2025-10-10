@@ -313,15 +313,12 @@ test('DeepResearchMultiStep creation', () => {
 
 test('DeepResearchMultiStep stop functionality', () => {
   const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
-  const abortSpy = vi.fn()
   const stopSpy = vi.fn()
-  
-  deepResearch.abortController = { abort: abortSpy } as any
+
   deepResearch.generators = [{ stop: stopSpy }] as any
 
   deepResearch.stop()
 
-  expect(abortSpy).toHaveBeenCalled()
   expect(stopSpy).toHaveBeenCalled()
 })
 
@@ -553,6 +550,13 @@ test('DeepResearchMultiStep abort handling', async () => {
     new Message('assistant', '')
   ]
 
+  // Create AbortController for the test
+  const abortController = new AbortController()
+  const optsWithSignal = {
+    ...mockOpts,
+    abortSignal: abortController.signal
+  }
+
   // Create a promise that we can control
   let resolveRun: any
   const runPromise = new Promise((resolve) => {
@@ -563,16 +567,16 @@ test('DeepResearchMultiStep abort handling', async () => {
   const mockRunnerInstance = {
     run: vi.fn().mockImplementation(() => runPromise)
   }
-  
+
   // @ts-expect-error mock
   vi.mocked(Runner).mockImplementation(() => mockRunnerInstance)
 
   // Start the run operation
-  const resultPromise = deepResearch.run(mockEngine, chat, mockOpts)
-  
+  const resultPromise = deepResearch.run(mockEngine, chat, optsWithSignal)
+
   // Simulate abort after a short delay
   setTimeout(() => {
-    deepResearch.stop() // This should call abortController.abort()
+    abortController.abort() // Trigger abort signal
     // Resolve the mock to continue execution
     resolveRun(planningResult)
   }, 10)

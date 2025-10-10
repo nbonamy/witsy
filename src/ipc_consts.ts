@@ -184,6 +184,7 @@ export const MCP = {
   GET_SERVER_TOOLS: 'mcp-get-server-tools',
   GET_LLM_TOOLS: 'mcp-get-tools',
   CALL_TOOL: 'mcp-call-tool',
+  CANCEL_TOOL: 'mcp-cancel-tool',
   ORIGINAL_TOOL_NAME: 'mcp-original-tool-name',
   DETECT_OAUTH: 'mcp-detect-oauth',
   START_OAUTH_FLOW: 'mcp-start-oauth-flow',
@@ -224,6 +225,7 @@ export const MEMORY = {
 export const SEARCH = {
   QUERY: 'search-query',
   TEST: 'search-test',
+  CANCEL: 'search-cancel',
 } as const;
 
 export const STUDIO = {

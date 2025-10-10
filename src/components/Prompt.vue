@@ -85,7 +85,7 @@
       </template>
 
       <ButtonIcon class="send-stop">
-        <XIcon class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
+        <XIcon class="icon stop" :class="{ canceling: promptingState === 'canceling' }" @click="onStopPrompting" v-if="promptingState !== 'idle'" />
         <ArrowUpIcon class="icon send" :class="{ disabled: !prompt.length }" @click="onSendPrompt" v-else />
       </ButtonIcon>
 
@@ -320,8 +320,16 @@ const isProcessing = computed(() => {
   return processing.value || props.processing
 })
 
-const isPrompting = computed(() => {
-  return props.chat?.lastMessage()?.transient
+type PromptingState = 'idle' | 'prompting' | 'canceling'
+const promptingState = ref<PromptingState>('idle')
+
+// Watch for changes in message transient state
+watch(() => props.chat?.lastMessage()?.transient, (isTransient) => {
+  if (isTransient && promptingState.value === 'idle') {
+    promptingState.value = 'prompting'
+  } else if (!isTransient && promptingState.value !== 'idle') {
+    promptingState.value = 'idle'
+  }
 })
 
 const expertsMenuItems = computed(() => {
@@ -359,12 +367,22 @@ const modelName = computed(() => {
 
 const isFavoriteModel = computed(() => llmManager.isFavoriteModel(props.chat?.engine, props.chat?.model))
 
+// Escape key to abort generation (document-level)
+const onEscapeKey = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && promptingState.value === 'prompting') {
+    onStopPrompting()
+    event.preventDefault()
+    event.stopPropagation()
+  }
+}
+
 onMounted(() => {
 
   // event
   onEvent('set-prompt', onSetPrompt)
   window.api.on('docrepo-modified', loadDocRepos)
   document.addEventListener('keydown', onShortcutDown)
+  document.addEventListener('keydown', onEscapeKey)
   autoGrow(input.value)
 
   // other stuff
@@ -382,6 +400,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.api.off('docrepo-modified', loadDocRepos)
   document.removeEventListener('keydown', onShortcutDown)
+  document.removeEventListener('keydown', onEscapeKey)
 })
 
 const onShortcutDown = (ev: KeyboardEvent) => {
@@ -541,6 +560,7 @@ const onSendPrompt = () => {
 }
 
 const onStopPrompting = () => {
+  promptingState.value = 'canceling'
   emit('stop', null)
 }
 
@@ -1536,6 +1556,23 @@ defineExpose({
         background-color: var(--color-surface-high);
       }
 
+      &:has(.canceling) {
+        opacity: 0.6;
+        cursor: not-allowed;
+
+        svg {
+          animation: pulse 1s ease-in-out infinite;
+        }
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
 
     }
 

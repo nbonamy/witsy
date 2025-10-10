@@ -48,3 +48,68 @@ test('search', async () => {
   ])
 
 })
+
+test('search with abortSignal - basic completion', async () => {
+  const search = new LocalSearch()
+  const abortController = new AbortController()
+
+  const res = await search.search('witsy', 3, false, abortController.signal)
+  expect(res).toEqual([
+    { title: 'title', url: 'url1', content: '<html><body>test</body></html>' },
+    { title: 'title', url: 'url2', content: '<html><body>test</body></html>' },
+    { title: 'title', url: 'url4', content: '<html><body>test</body></html>' },
+  ])
+})
+
+test('search aborted before window opens', async () => {
+  const search = new LocalSearch()
+  const abortController = new AbortController()
+
+  // Abort immediately
+  abortController.abort()
+
+  await expect(
+    search.search('witsy', 3, false, abortController.signal)
+  ).rejects.toThrow('Operation cancelled')
+})
+
+test('search with non-aborted signal completes normally', async () => {
+  const search = new LocalSearch()
+  const abortController = new AbortController()
+
+  // Don't abort - just pass the signal
+  const res = await search.search('witsy', 3, false, abortController.signal)
+
+  // Should complete successfully
+  expect(res).toHaveLength(3)
+  expect(abortController.signal.aborted).toBe(false)
+})
+
+test('search without abortSignal works normally', async () => {
+  const search = new LocalSearch()
+
+  // No signal provided (undefined)
+  const res = await search.search('witsy', 3, false, undefined)
+  expect(res).toHaveLength(3)
+})
+
+test('search accepts abortSignal parameter', async () => {
+  const search = new LocalSearch()
+  const abortController = new AbortController()
+
+  // Verify the method signature accepts abortSignal
+  const res = await search.search('witsy', 3, false, abortController.signal)
+  expect(res).toHaveLength(3)
+})
+
+test('search aborted before execution rejects immediately', async () => {
+  const search = new LocalSearch()
+  const abortController = new AbortController()
+
+  // Abort before calling search
+  abortController.abort()
+
+  await expect(
+    search.search('witsy', 3, false, abortController.signal)
+  ).rejects.toThrow('Operation cancelled')
+})

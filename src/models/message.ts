@@ -135,6 +135,7 @@ export default class Message extends MessageBase implements IMessage {
 
     // if found update else add
     if (call) {
+      call.state = toolCall.state
       call.done = toolCall.done
       call.status = toolCall.status
       call.params = toolCall.call?.params || null
@@ -143,6 +144,7 @@ export default class Message extends MessageBase implements IMessage {
       this.toolCalls.push({
         id: toolCall.id,
         name: toolCall.name,
+        state: toolCall.state,
         status: toolCall.status,
         done: toolCall.done,
         params: toolCall.call?.params || null,

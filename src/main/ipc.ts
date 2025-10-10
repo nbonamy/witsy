@@ -678,8 +678,37 @@ export const installIpc = (
     return mcp ? await mcp.getLlmTools() : [];
   });
 
+  // Track active MCP tool calls
+  const activeMcpCalls = new Map<string, AbortController>();
+
   ipcMain.handle(IPC.MCP.CALL_TOOL, async (_, payload) => {
-    return mcp ? await mcp.callTool(payload.name, payload.parameters) : null;
+    const { name, parameters, signalId } = payload;
+
+    if (!mcp) return null;
+
+    // Create abort controller if signalId provided
+    let abortController: AbortController | undefined;
+    if (signalId) {
+      abortController = new AbortController();
+      activeMcpCalls.set(signalId, abortController);
+    }
+
+    try {
+      return await mcp.callTool(name, parameters, abortController?.signal);
+    } finally {
+      // Clean up
+      if (signalId) {
+        activeMcpCalls.delete(signalId);
+      }
+    }
+  });
+
+  ipcMain.on(IPC.MCP.CANCEL_TOOL, (_, signalId: string) => {
+    const controller = activeMcpCalls.get(signalId);
+    if (controller) {
+      controller.abort();
+      activeMcpCalls.delete(signalId);
+    }
   });
 
   ipcMain.on(IPC.MCP.ORIGINAL_TOOL_NAME, (event, payload) => {
@@ -805,11 +834,37 @@ export const installIpc = (
     event.returnValue = await memoryManager.delete(payload);
   });
 
+  // Track active search operations
+  const activeSearches = new Map<string, AbortController>();
+
   ipcMain.handle(IPC.SEARCH.QUERY, async (_, payload) => {
-    const { query, num } = payload;
-    const localSearch = new LocalSearch();
-    const results = localSearch.search(query, num);
-    return results;
+    const { query, num, signalId } = payload;
+
+    // Create abort controller if signalId provided
+    let abortController: AbortController | undefined;
+    if (signalId) {
+      abortController = new AbortController();
+      activeSearches.set(signalId, abortController);
+    }
+
+    try {
+      const localSearch = new LocalSearch();
+      const results = await localSearch.search(query, num, false, abortController?.signal);
+      return results;
+    } finally {
+      // Clean up
+      if (signalId) {
+        activeSearches.delete(signalId);
+      }
+    }
+  });
+
+  ipcMain.on(IPC.SEARCH.CANCEL, (_, signalId: string) => {
+    const controller = activeSearches.get(signalId);
+    if (controller) {
+      controller.abort();
+      activeSearches.delete(signalId);
+    }
   });
 
   ipcMain.handle(IPC.SEARCH.TEST, async () => {
