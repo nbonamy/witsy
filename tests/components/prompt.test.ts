@@ -117,7 +117,7 @@ test('Send on click', async () => {
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     prompt: 'this is my prompt',
     attachments: [],
-    deepResearch: false,
+    execType: 'prompt',
   })
   expect(prompt.element.value).toBe('')
 })
@@ -130,7 +130,7 @@ test('Sends on enter', async () => {
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     prompt: 'this is my prompt',
     attachments: [],
-    deepResearch: false,
+    execType: 'prompt',
   })
   expect(prompt.element.value).toBe('')
 })
@@ -139,6 +139,7 @@ test('Sends with right parameters', async () => {
   wrapper.vm.attachments = [ new Attachment('image64', 'image/png', 'file://image.png') ]
   wrapper.vm.expert = store.experts[2]
   wrapper.vm.docrepo = 'docrepo'
+  wrapper.vm.deepResearchActive = true
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt2')
   await prompt.setValue('this is my prompt')
@@ -148,7 +149,7 @@ test('Sends with right parameters', async () => {
     attachments: [ { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false } ],
     expert: { id: 'uuid3', name: 'actor3', prompt: 'prompt3', type: 'user', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
     docrepo: 'docrepo',
-    deepResearch: false,
+    execType: 'deepresearch',
   }])
   expect(prompt.element.value).toBe('')
 })
@@ -455,7 +456,7 @@ test('Stores command for later', async () => {
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
-    deepResearch: false,
+    execType: 'prompt',
   })
 })
 
@@ -473,7 +474,7 @@ test('Selects command and run', async () => {
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
-    deepResearch: false,
+    execType: 'prompt',
   })
 })
 

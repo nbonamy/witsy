@@ -1,5 +1,5 @@
 
-import { ToolCall, MessageType, Message as IMessage, A2APromptOpts } from '../types'
+import { ToolCall, MessageType, Message as IMessage, A2APromptOpts, MessageExecutionType } from '../types'
 import { LlmRole, LlmChunkTool, LlmUsage, Message as MessageBase, LlmChunkContent } from 'multi-llm-ts'
 import Attachment from './attachment'
 import Expert from './expert'
@@ -9,6 +9,7 @@ export default class Message extends MessageBase implements IMessage {
   uuid: string
   type: MessageType
   uiOnly: boolean
+  execType: MessageExecutionType
   createdAt: number
   engine: string
   model: string
@@ -16,7 +17,6 @@ export default class Message extends MessageBase implements IMessage {
   agentId?: string
   agentRunId?: string
   a2aContext?: A2APromptOpts
-  deepResearch: boolean
   transient: boolean
   status?: string
   toolCalls: ToolCall[]
@@ -32,7 +32,7 @@ export default class Message extends MessageBase implements IMessage {
     this.createdAt = Date.now()
     this.type = 'text'
     this.uiOnly = false
-    this.deepResearch = false
+    this.execType = 'prompt'
     this.toolCalls = []
     this.attachments = []
     this.transient = (content == null)
@@ -50,6 +50,7 @@ export default class Message extends MessageBase implements IMessage {
     message.uiOnly = obj.uiOnly || false
     message.engine = obj.engine || null
     message.model = obj.model || null
+    message.execType = obj.deepResearch ? 'deepresearch' : (obj.agentId ? 'agent' : (obj.execType || 'prompt'))
     message.createdAt = obj.createdAt
     message.attachments = 
       obj.attachment ? [ Attachment.fromJson(obj.attachment) ] :
@@ -60,7 +61,6 @@ export default class Message extends MessageBase implements IMessage {
     message.agentId = obj.agentId || undefined
     message.agentRunId = obj.agentRunId || undefined
     message.a2aContext = obj.a2aContext || undefined
-    message.deepResearch = obj.deepResearch || false
     message.toolCalls = obj.toolCalls || obj.toolCall?.calls?.map((tc: any, idx: number) => ({
       ...tc,
       id: (idx + 1).toString(),
