@@ -838,6 +838,7 @@ export const installIpc = (
   const activeSearches = new Map<string, AbortController>();
 
   ipcMain.handle(IPC.SEARCH.QUERY, async (_, payload) => {
+    
     const { query, num, signalId } = payload;
 
     // Create abort controller if signalId provided
@@ -851,8 +852,9 @@ export const installIpc = (
       const localSearch = new LocalSearch();
       const results = await localSearch.search(query, num, false, abortController?.signal);
       return results;
+    } catch (error: any) {
+      return error;
     } finally {
-      // Clean up
       if (signalId) {
         activeSearches.delete(signalId);
       }

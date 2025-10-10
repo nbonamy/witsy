@@ -5,9 +5,8 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { LlmChunk, LlmTool } from 'multi-llm-ts';
 import * as IPC from './ipc_consts';
 import { Size } from './main/computer';
-import { LocalSearchResult } from './main/search';
 import Agent from './models/agent';
-import { AgentRun, Command, ComputerAction, Expert, ExternalApp, MainWindowMode, NetworkRequest, OpenSettingsPayload, anyDict, strDict } from './types';
+import { AgentRun, Command, ComputerAction, Expert, ExternalApp, LocalSearchResponse, MainWindowMode, NetworkRequest, OpenSettingsPayload, anyDict, strDict } from './types';
 import { Application, RunCommandParams } from './types/automation';
 import { Configuration } from './types/config';
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './types/file';
@@ -236,7 +235,7 @@ contextBridge.exposeInMainWorld(
       delete: (uuid: string): void => { return ipcRenderer.sendSync(IPC.MEMORY.DELETE, uuid) },
     },
     search: {
-      query: (query: string, num: number = 5, signalId?: string): Promise<LocalSearchResult[]> => { return ipcRenderer.invoke(IPC.SEARCH.QUERY, { query, num, signalId }) },
+      query: (query: string, num: number = 5, signalId?: string): Promise<LocalSearchResponse> => { return ipcRenderer.invoke(IPC.SEARCH.QUERY, { query, num, signalId }) },
       cancel: (signalId: string): void => { ipcRenderer.send(IPC.SEARCH.CANCEL, signalId) },
       test: (): Promise<boolean> => { return ipcRenderer.invoke(IPC.SEARCH.TEST) },
     },

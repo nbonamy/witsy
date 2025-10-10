@@ -3,7 +3,7 @@ import Perplexity from '@perplexity-ai/perplexity_ai'
 import { Exa } from 'exa-js'
 import { convert } from 'html-to-text'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
-import { anyDict } from 'types/index'
+import { anyDict, LocalSearchResponse } from 'types/index'
 import { t } from '../services/i18n'
 import Tavily from '../vendor/tavily'
 import Plugin, { PluginConfig } from './plugin'
@@ -106,21 +106,25 @@ export default class extends Plugin {
   async local(context: PluginExecutionContext, parameters: anyDict, maxResults: number): Promise<SearchResponse> {
 
     try {
-      const results = await executeIpcWithAbort(
+      const response: LocalSearchResponse = await executeIpcWithAbort(
         (signalId) => window.api.search.query(parameters.query, maxResults, signalId),
         (signalId) => window.api.search.cancel(signalId),
         context.abortSignal
       )
-      const response = {
+
+      if (response.error || !response.results) {
+        return { error: response.error }
+      }
+      
+      return {
         query: parameters.query,
-        results: results.map(result => ({
+        results: response.results.map(result => ({
           title: result.title,
           url: result.url,
           content: this.truncateContent(this.htmlToText(result.content))
         }))
       }
-      //console.log('Local search response:', response)
-      return response
+
     } catch (error) {
       return { error: error.message }
     }
