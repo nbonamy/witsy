@@ -58,10 +58,13 @@ export type ToolCallInfo = {
 
 export type MessageType = 'text' | 'image'
 
+export type MessageExecutionType = 'prompt' | 'deepresearch' | 'agent'
+
 export interface Message extends IMessageBase {
   uuid: string
   type: MessageType
   uiOnly: boolean
+  execType: MessageExecutionType
   createdAt: number
   engine: string
   model: string
@@ -69,7 +72,6 @@ export interface Message extends IMessageBase {
   agentId?: string
   agentRunId?: string
   a2aContext?: A2APromptOpts
-  deepResearch: boolean
   transient: boolean
   status?: string
   toolCalls: ToolCall[]

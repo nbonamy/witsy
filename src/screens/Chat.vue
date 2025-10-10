@@ -34,6 +34,7 @@ import LlmFactory from '../llms/llm'
 
 // bus
 import useEventBus from '../composables/event_bus'
+import { exec } from 'child_process'
 const { onEvent, emitEvent } = useEventBus()
 
 // init stuff
@@ -391,7 +392,7 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
       attachments: message.attachments,
       docrepo: fork.docrepo,
       expert: message.expert,
-      deepResearch: message.deepResearch || false,
+      execType: message.execType || 'prompt',
     })
   }
 }
@@ -465,7 +466,7 @@ const onDeleteFolder = async (folderId: string) => {
 const onSendPrompt = async (params: SendPromptParams) => {
 
   // deconstruct params
-  const { instructions, prompt, attachments, docrepo, expert, deepResearch } = params
+  const { instructions, prompt, attachments, docrepo, expert, execType } = params
 
   // if the chat is still in an agentic context then run the agent
   const agent = isAgentConversation(assistant.value.chat)
@@ -517,7 +518,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     attachments: attachments || [],
     docrepo: docrepo || null,
     expert: expert || null,
-    deepResearch: deepResearch || false,
+    execType: execType || 'prompt',
   }, (chunk) => {
   
     // if we get a chunk, emit it
@@ -675,7 +676,7 @@ const onRetryGeneration = async (message: Message) => {
       attachments: lastMessage.attachments,
       docrepo: assistant.value.chat.docrepo,
       expert: lastMessage.expert,
-      deepResearch: lastMessage.deepResearch || false,
+      execType: lastMessage.execType,
     })
 
   }

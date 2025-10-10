@@ -1,5 +1,5 @@
 
-import { Expert } from 'types'
+import { Expert, MessageExecutionType } from 'types'
 import { Configuration } from 'types/config'
 import { LlmEngine } from 'multi-llm-ts'
 import { fullExpertI18n, getLlmLocale, setLlmLocale } from './i18n'
@@ -16,7 +16,7 @@ import { DeepResearch } from './deepresearch'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
-  deepResearch?: boolean
+  execType?: MessageExecutionType
   titling?: boolean
   instructions?: string|null
   attachments?: Attachment[]
@@ -156,15 +156,12 @@ export default class extends Generator {
     // save this
     const hadPlugins = this.llm.plugins.length > 0
 
-    // deep research?
-    const deepReseach = opts?.deepResearch
-
     // add user message
     const userMessage = new Message('user', prompt)
     userMessage.setExpert(fullExpertI18n(opts.expert))
     userMessage.engine = opts.engine
     userMessage.model = opts.model
-    userMessage.deepResearch = deepReseach
+    userMessage.execType = opts?.execType || 'prompt'
     opts.attachments.map(a => userMessage.attach(a))
     this.chat.addMessage(userMessage)
 
@@ -172,7 +169,7 @@ export default class extends Generator {
     const assistantMessage = new Message('assistant')
     assistantMessage.engine = opts.engine
     assistantMessage.model = opts.model
-    assistantMessage.deepResearch = deepReseach
+    assistantMessage.execType = opts?.execType || 'prompt'
     this.chat.addMessage(assistantMessage)
     llmCallback?.call(null, null)
 
@@ -181,7 +178,7 @@ export default class extends Generator {
 
     // deep research will come with its own instructions
     let rc: GenerationResult = 'error'
-    if (deepReseach) {
+    if (userMessage.execType === 'deepresearch') {
       // const dpOpts = useDeepResearchMultiAgent(this.config, this.llm, this.chat, opts)
       // this.chat.messages[0].content = this.getSystemInstructions(this.chat.messages[0].content)
       // opts = { ...opts, ...dpOpts }

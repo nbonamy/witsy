@@ -176,7 +176,7 @@ import Chat from '../models/chat'
 import Message from '../models/message'
 import { commandI18n, expertI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from '../services/i18n'
 import { store } from '../services/store'
-import { Command, CustomInstruction, Expert } from '../types/index'
+import { Command, CustomInstruction, Expert, MessageExecutionType } from '../types/index'
 import { McpServerWithTools, McpToolUnique } from '../types/mcp'
 import { DocumentBase } from '../types/rag'
 import { isSTTReady, StreamingChunk } from '../voice/stt'
@@ -187,6 +187,7 @@ import EngineModelMenu from './EngineModelMenu.vue'
 import Loader from './Loader.vue'
 import PromptFeature from './PromptFeature.vue'
 import PromptMenu from './PromptMenu.vue'
+import { send } from 'vite'
 
 export type SendPromptParams = {
   prompt: string,
@@ -194,7 +195,7 @@ export type SendPromptParams = {
   attachments?: Attachment[]
   docrepo?: string,
   expert?: Expert,
-  deepResearch?: boolean
+  execType?: MessageExecutionType
 }
 
 export type RunAgentParams = {
@@ -547,14 +548,15 @@ const onSendPrompt = () => {
   prompt.value = defaultPrompt(props.conversationMode)
   nextTick(() => {
     autoGrow(input.value)
-    emit('prompt', {
+    const sendPromptParams: SendPromptParams = {
       instructions: instructions.value?.instructions,
       prompt: message,
       attachments: attachments.value,
       docrepo: docrepo.value,
       expert: expert.value,
-      deepResearch: deepResearchActive.value,
-    } as SendPromptParams)
+      execType: deepResearchActive.value ? 'deepresearch' : 'prompt',
+    }
+    emit('prompt', sendPromptParams)
     attachments.value = []
   })
 }
