@@ -43,8 +43,8 @@ test('Build from JSON', () => {
     createdAt: 1,
     role: 'role',
     content: 'content',
-    attachment: { contents: 'image', mimeType: 'image/png', url: 'url', saved: false },
-    deepResearch: true,
+    execType: 'deepresearch',
+    attachment: null,
     transient: true,
   })
   expect(message2.uuid).toBe('uuid')
@@ -52,11 +52,30 @@ test('Build from JSON', () => {
   expect(message2.type).toBe('text')
   expect(message2.execType).toBe('deepresearch')
   expect(message2.content).toBe('content')
-  expect(message2.attachments).toHaveLength(1)
+  expect(message2.attachments).toStrictEqual([])
   expect(message2.transient).toBe(false)
   expect(message2.toolCalls).toStrictEqual([])
 
   const message3 = Message.fromJson({
+    uuid: 'uuid',
+    type: 'text',
+    createdAt: 1,
+    role: 'role',
+    content: 'content',
+    attachment: { contents: 'image', mimeType: 'image/png', url: 'url', saved: false },
+    deepResearch: true,
+    transient: true,
+  })
+  expect(message3.uuid).toBe('uuid')
+  expect(message3.role).toBe('role')
+  expect(message3.type).toBe('text')
+  expect(message3.execType).toBe('deepresearch')
+  expect(message3.content).toBe('content')
+  expect(message3.attachments).toHaveLength(1)
+  expect(message3.transient).toBe(false)
+  expect(message3.toolCalls).toStrictEqual([])
+
+  const message4 = Message.fromJson({
     uuid: 'uuid',
     type: 'text',
     createdAt: 1,
@@ -69,17 +88,17 @@ test('Build from JSON', () => {
     agentId: 'agent',
     transient: true,
   })
-  expect(message3.uuid).toBe('uuid')
-  expect(message3.role).toBe('role')
-  expect(message3.type).toBe('text')
-  expect(message3.execType).toBe('agent')
-  expect(message3.content).toBe('content')
-  expect(message3.attachments).toHaveLength(2)
-  expect(message3.transient).toBe(false)
-  expect(message3.toolCalls).toStrictEqual([])
+  expect(message4.uuid).toBe('uuid')
+  expect(message4.role).toBe('role')
+  expect(message4.type).toBe('text')
+  expect(message4.execType).toBe('agent')
+  expect(message4.content).toBe('content')
+  expect(message4.attachments).toHaveLength(2)
+  expect(message4.transient).toBe(false)
+  expect(message4.toolCalls).toStrictEqual([])
 
   // backwards compatibility with toolCall
-  const message4 = Message.fromJson({
+  const message5 = Message.fromJson({
     uuid: 'uuid',
     type: 'text',
     createdAt: 1,
@@ -91,7 +110,7 @@ test('Build from JSON', () => {
     ], status: 'done' },
     transient: true,
   })
-  expect(message4.toolCalls).toStrictEqual([
+  expect(message5.toolCalls).toStrictEqual([
     { id: '1', name: 'tool1', done: true, status: undefined, params: ['arg1'], result: 'result1' },
     { id: '2', name: 'tool2', done: true, status: undefined, params: ['arg2'], result: 'result2' }
   ])
