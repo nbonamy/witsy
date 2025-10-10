@@ -50,7 +50,7 @@ export default class Message extends MessageBase implements IMessage {
     message.uiOnly = obj.uiOnly || false
     message.engine = obj.engine || null
     message.model = obj.model || null
-    message.execType = obj.deepResearch ? 'deepresearch' : (obj.agentId ? 'agent' : (obj.execType || 'prompt'))
+    message.execType = obj.execType || (obj.deepResearch ? 'deepresearch' : (obj.agentId ? 'agent' : 'prompt'))
     message.createdAt = obj.createdAt
     message.attachments = 
       obj.attachment ? [ Attachment.fromJson(obj.attachment) ] :
