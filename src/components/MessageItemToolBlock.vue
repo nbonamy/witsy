@@ -1,5 +1,5 @@
 <template>
-  <div class="tool-container" @click="toggleOpen" @selectstart="onSelectStart" @mouseup="onMouseUp">
+  <div class="tool-container" :class="{ canceled: toolCall.state === 'canceled' }" @click="toggleOpen" @selectstart="onSelectStart" @mouseup="onMouseUp">
     <div class="tool-header">
       <div class="tool-name">{{ name }}</div>
       <div v-if="!toolCall.done" class="tool-loader">
@@ -183,6 +183,15 @@ const onMouseUp = () => {
           word-break: break-all;
         }
       }
+    }
+  }
+
+  &.canceled {
+    opacity: 0.6;
+
+    .tool-header .tool-name {
+      text-decoration: line-through;
+      color: var(--dimmed-text-color);
     }
   }
 

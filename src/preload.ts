@@ -200,7 +200,8 @@ contextBridge.exposeInMainWorld(
       getAllServersWithTools: (): Promise<Array<{ server: McpServer; tools: McpTool[] }>> => { return ipcRenderer.invoke(IPC.MCP.GET_ALL_SERVERS_WITH_TOOLS) },
       getServerTools: (uuid: string): Promise<McpTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_SERVER_TOOLS, uuid) },
       getLlmTools: (): Promise<LlmTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_LLM_TOOLS) },
-      callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke(IPC.MCP.CALL_TOOL, { name, parameters }) },
+      callTool: (name: string, parameters: anyDict, signalId?: string): Promise<any> => { return ipcRenderer.invoke(IPC.MCP.CALL_TOOL, { name, parameters, signalId }) },
+      cancelTool: (signalId: string): void => { ipcRenderer.send(IPC.MCP.CANCEL_TOOL, signalId) },
       originalToolName(name: string): string { return ipcRenderer.sendSync(IPC.MCP.ORIGINAL_TOOL_NAME, name) },
       detectOAuth: (url: string, headers: Record<string, string>): Promise<any> => { return ipcRenderer.invoke(IPC.MCP.DETECT_OAUTH, { url, headers }) },
       startOAuthFlow: (url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string> => { return ipcRenderer.invoke(IPC.MCP.START_OAUTH_FLOW, JSON.stringify({ url, clientMetadata, clientCredentials })) },
@@ -235,7 +236,8 @@ contextBridge.exposeInMainWorld(
       delete: (uuid: string): void => { return ipcRenderer.sendSync(IPC.MEMORY.DELETE, uuid) },
     },
     search: {
-      query: (query: string, num: number = 5): Promise<LocalSearchResult[]> => { return ipcRenderer.invoke(IPC.SEARCH.QUERY, { query, num }) },
+      query: (query: string, num: number = 5, signalId?: string): Promise<LocalSearchResult[]> => { return ipcRenderer.invoke(IPC.SEARCH.QUERY, { query, num, signalId }) },
+      cancel: (signalId: string): void => { ipcRenderer.send(IPC.SEARCH.CANCEL, signalId) },
       test: (): Promise<boolean> => { return ipcRenderer.invoke(IPC.SEARCH.TEST) },
     },
     studio: {

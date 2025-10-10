@@ -897,7 +897,7 @@ export default class {
     return allTools
   }
 
-  callTool = async (name: string, args: anyDict): Promise<any> => {
+  callTool = async (name: string, args: anyDict, abortSignal?: AbortSignal): Promise<any> => {
 
     const client = this.clients.find(client => client.tools.includes(name))
     if (!client) {
@@ -911,7 +911,7 @@ export default class {
     return await client.client.callTool({
       name: tool,
       arguments: args
-    }, CompatibilityCallToolResultSchema)
+    }, CompatibilityCallToolResultSchema, { signal: abortSignal })
 
   }
 

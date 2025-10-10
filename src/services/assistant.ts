@@ -81,6 +81,9 @@ export default class extends Generator {
 
   async prompt(prompt: string, opts: AssistantCompletionOpts, llmCallback: LlmChunkCallback, generationCallback?: GenerationCallback): Promise<GenerationResult> {
 
+    // Create abort controller immediately so stop() works even during setup
+    this.abortController = new AbortController()
+
     // we need a prompt or at least attachments
     prompt = prompt.trim()
     if (prompt === '' && (!opts.attachments || opts.attachments.length === 0)) {
@@ -187,6 +190,7 @@ export default class extends Generator {
       this.deepResearch = useMultiAgent ? new DeepResearchMultiAgent(this.config, this.workspaceId) : new DeepResearchMultiStep(this.config, this.workspaceId)
       rc = await this.deepResearch.run(this.llm, this.chat, {
         ...opts,
+        abortSignal: this.abortController.signal,
         breadth: this.config.deepresearch.breadth,
         depth: this.config.deepresearch.depth,
         searchResults: this.config.deepresearch.searchResults,

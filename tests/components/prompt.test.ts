@@ -179,6 +179,99 @@ test('Show stop button when working', async () => {
   expect(wrapper.emitted<any[]>().stop).toBeTruthy()
 })
 
+test('promptingState starts as idle', () => {
+  expect(wrapper.vm.promptingState).toBe('idle')
+})
+
+test('promptingState changes to prompting when message transient', async () => {
+  const chat = Chat.fromJson({ messages: [ {} ] })
+  chat.messages[0].transient = true
+  await wrapper.setProps({ chat: chat })
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.promptingState).toBe('prompting')
+})
+
+test('promptingState changes to canceling when stop clicked', async () => {
+  const chat = Chat.fromJson({ messages: [ {} ] })
+  chat.messages[0].transient = true
+  await wrapper.setProps({ chat: chat })
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.promptingState).toBe('prompting')
+
+  await wrapper.find('.icon.stop').trigger('click')
+  expect(wrapper.vm.promptingState).toBe('canceling')
+})
+
+test('promptingState returns to idle when message completes', async () => {
+  const chat = Chat.fromJson({ messages: [ {} ] })
+  chat.messages[0].transient = true
+  await wrapper.setProps({ chat: chat })
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.promptingState).toBe('prompting')
+
+  // Create new chat with completed message to trigger watcher
+  const completedChat = Chat.fromJson({ messages: [ {} ] })
+  completedChat.messages[0].transient = false
+  await wrapper.setProps({ chat: completedChat })
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.promptingState).toBe('idle')
+})
+
+test('Stop button shows correct icon based on state', async () => {
+  // Idle - shows send icon
+  expect(wrapper.find('.send').exists()).toBe(true)
+  expect(wrapper.find('.stop').exists()).toBe(false)
+
+  // Prompting - shows stop icon
+  const chat = Chat.fromJson({ messages: [ {} ] })
+  chat.messages[0].transient = true
+  await wrapper.setProps({ chat: chat })
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.send').exists()).toBe(false)
+  expect(wrapper.find('.stop').exists()).toBe(true)
+})
+
+test('Stop button has canceling class when canceling', async () => {
+  const chat = Chat.fromJson({ messages: [ {} ] })
+  chat.messages[0].transient = true
+  await wrapper.setProps({ chat: chat })
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.find('.icon.stop.canceling').exists()).toBe(false)
+
+  await wrapper.find('.icon.stop').trigger('click')
+  expect(wrapper.find('.icon.stop.canceling').exists()).toBe(true)
+})
+
+test('Escape key triggers stop when prompting', async () => {
+  const chat = Chat.fromJson({ messages: [ {} ] })
+  chat.messages[0].transient = true
+  await wrapper.setProps({ chat: chat })
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.promptingState).toBe('prompting')
+
+  // Simulate Escape key at document level
+  const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' })
+  document.dispatchEvent(escapeEvent)
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.emitted<any[]>().stop).toBeTruthy()
+  expect(wrapper.vm.promptingState).toBe('canceling')
+})
+
+test('Escape key does nothing when idle', async () => {
+  expect(wrapper.vm.promptingState).toBe('idle')
+
+  // Simulate Escape key at document level
+  const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' })
+  document.dispatchEvent(escapeEvent)
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.emitted<any[]>().stop).toBeFalsy()
+  expect(wrapper.vm.promptingState).toBe('idle')
+})
+
 test('Stores attachment', async () => {
   await wrapper.find('.prompt-menu').trigger('click')
   const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })

@@ -50,9 +50,15 @@ export default class LocalSearch {
   
   }
 
-  public search(query: string, num: number = 5, testMode: boolean = false): Promise<LocalSearchResult[]> {
+  public search(query: string, num: number = 5, testMode: boolean = false, abortSignal?: AbortSignal): Promise<LocalSearchResult[]> {
 
     return new Promise((resolve, reject) => {
+
+      // Check if already aborted
+      if (abortSignal?.aborted) {
+        reject(new Error('Operation cancelled'))
+        return
+      }
 
       //const url = 'https://2captcha.com/demo/recaptcha-v2'
       const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`
@@ -60,8 +66,30 @@ export default class LocalSearch {
       // open a new window
       const win = this.openHiddenWindow(testMode)
 
+      // Track if we've resolved/rejected to avoid double resolution
+      let hasResolved = false
+
+      // Set up abort listener
+      abortSignal?.addEventListener('abort', () => {
+        if (!hasResolved) {
+          hasResolved = true
+          this.tryCloseWindow(win)
+          reject(new Error('Operation cancelled'))
+        }
+      }, { once: true })
+
       // get ready to grab the results
       win.webContents.on('did-finish-load', async () => {
+
+        // Check abort before processing
+        if (abortSignal?.aborted) {
+          if (!hasResolved) {
+            hasResolved = true
+            this.tryCloseWindow(win)
+            reject(new Error('Operation cancelled'))
+          }
+          return
+        }
 
         try {
         
@@ -108,7 +136,10 @@ export default class LocalSearch {
           }
 
           // done
-          resolve(results)
+          if (!hasResolved) {
+            hasResolved = true
+            resolve(results)
+          }
 
         } catch (e) {
 
@@ -116,7 +147,10 @@ export default class LocalSearch {
           if (!testMode) {
             this.tryCloseWindow(win)
           }
-          reject(e)
+          if (!hasResolved) {
+            hasResolved = true
+            reject(e)
+          }
 
         }
 

@@ -398,6 +398,7 @@ export const importOpenAIConversations = async (userId: string, data: any, histo
                 type: 'tool',
                 id: id,
                 name: 'dalle',
+                state: 'completed',
                 call: {
                   params: { prompt, },
                   result: { url: `file://${targetPath}`, }

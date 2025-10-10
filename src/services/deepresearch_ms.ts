@@ -22,7 +22,6 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
   config: Configuration
   workspaceId: string
-  abortController: AbortController
   generators: Generator[]
   engine: LlmEngine
   model: string
@@ -34,14 +33,10 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
   }
 
   stop = (): void => {
-    this.abortController?.abort()
     this.generators?.forEach(generator => generator.stop())
   }
 
   run = async (engine: LlmEngine, chat: Chat, opts: dr.DeepResearchOpts): Promise<GenerationResult> => {
-
-    // reset
-    this.abortController = new AbortController()
 
     // save this
     this.engine = engine
@@ -91,7 +86,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       response.usage = addUsages(response.usage, planMessage.usage)
 
       // stopped?
-      if (this.abortController?.signal.aborted) {
+      if (opts.abortSignal?.aborted) {
         throw new AbortError()
       }
 
@@ -212,7 +207,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
           allKeyLearnings.push(...keyLearnings)
 
           // check if are aborted
-          if (this.abortController?.signal.aborted) {
+          if (opts.abortSignal?.aborted) {
             return ''
           }
 
@@ -379,11 +374,6 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
     Notice none of those examples exceed 2 sentences and include "Status Update:" or any dumb text like that.
     `
 
-    // check before generating
-    if (this.abortController?.signal.aborted) {
-      throw new AbortError()
-    }
-
     const usage = response.usage
 
     const generator = new Generator(this.config) 
@@ -396,11 +386,6 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
     this.generators = this.generators.filter(g => g !== generator)
 
     response.usage = addUsages(usage, response.usage)
-
-    // check before generating
-    if (this.abortController?.signal.aborted) {
-      throw new AbortError()
-    }
 
     // update response
     response.transient = true

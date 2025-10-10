@@ -7,6 +7,7 @@ import { anyDict } from 'types/index'
 import { t } from '../services/i18n'
 import Tavily from '../vendor/tavily'
 import Plugin, { PluginConfig } from './plugin'
+import { executeIpcWithAbort } from './ipc_abort_helper'
 
 export type SearchResultItem = {
   title: string
@@ -86,26 +87,30 @@ export default class extends Plugin {
   async execute(context: PluginExecutionContext, parameters: anyDict): Promise<SearchResponse> {
 
     const maxResults = parameters.maxResults || this.config.maxResults || 5
-    
+
     if (this.config.engine === 'local') {
-      return this.local(parameters, maxResults)
+      return this.local(context, parameters, maxResults)
     } else if (this.config.engine === 'brave') {
-      return this.brave(parameters, maxResults)
+      return this.brave(context, parameters, maxResults)
     } else if (this.config.engine === 'exa') {
-      return this.exa(parameters, maxResults)
+      return this.exa(context, parameters, maxResults)
     } else if (this.config.engine === 'perplexity') {
-      return this.perplexity(parameters, maxResults)
+      return this.perplexity(context, parameters, maxResults)
     } else if (this.config.engine === 'tavily') {
-      return this.tavily(parameters, maxResults)
+      return this.tavily(context, parameters, maxResults)
     } else {
       return { error: 'Invalid engine' }
     }
   }
 
-  async local(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
+  async local(context: PluginExecutionContext, parameters: anyDict, maxResults: number): Promise<SearchResponse> {
 
     try {
-      const results = await window.api.search.query(parameters.query, maxResults)
+      const results = await executeIpcWithAbort(
+        (signalId) => window.api.search.query(parameters.query, maxResults, signalId),
+        (signalId) => window.api.search.cancel(signalId),
+        context.abortSignal
+      )
       const response = {
         query: parameters.query,
         results: results.map(result => ({
@@ -121,23 +126,30 @@ export default class extends Plugin {
     }
   }
 
-  async brave(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
+  async brave(context: PluginExecutionContext, parameters: anyDict, maxResults: number): Promise<SearchResponse> {
 
     try {
 
       const baseUrl = 'https://api.search.brave.com/res/v1/web/search'
-      const response = await fetch(`${baseUrl}?q=${encodeURIComponent(parameters.query)}&count=${maxResults}`, {
-        headers: {
-          'Accept': 'application/json',
-          'X-Subscription-Token': this.config.braveApiKey
-        }
-      })
+      const response = await this.runWithAbort(
+        fetch(`${baseUrl}?q=${encodeURIComponent(parameters.query)}&count=${maxResults}`, {
+          headers: {
+            'Accept': 'application/json',
+            'X-Subscription-Token': this.config.braveApiKey
+          },
+          signal: context.abortSignal
+        }),
+        context.abortSignal
+      )
 
       const data = await response.json()
 
       // content returned by brave is very short
       for (const result of data.web.results) {
-        const html = await fetch(result.url).then(response => response.text())
+        const html = await this.runWithAbort(
+          fetch(result.url, { signal: context.abortSignal }).then(response => response.text()),
+          context.abortSignal
+        )
         result.content = this.htmlToText(html)
       }
 
@@ -155,15 +167,18 @@ export default class extends Plugin {
     }
   }
 
-  async exa(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
+  async exa(context: PluginExecutionContext, parameters: anyDict, maxResults: number): Promise<SearchResponse> {
 
     try {
 
       const exa = new Exa(this.config.exaApiKey)
-      const results = await exa.searchAndContents(parameters.query, {
-        text: true,
-        numResults: maxResults,
-      })
+      const results = await this.runWithAbort(
+        exa.searchAndContents(parameters.query, {
+          text: true,
+          numResults: maxResults,
+        }),
+        context.abortSignal
+      )
 
       return {
         query: parameters.query,
@@ -180,20 +195,26 @@ export default class extends Plugin {
 
   }
 
-  async perplexity(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
+  async perplexity(context: PluginExecutionContext, parameters: anyDict, maxResults: number): Promise<SearchResponse> {
 
     try {
 
       // perplexity
       const perplexity = new Perplexity({ apiKey: this.config.perplexityApiKey })
-      const results = await perplexity.search.create({
-        query: parameters.query,
-        max_results: maxResults,
-      }) as unknown as SearchResponse
+      const results = await this.runWithAbort(
+        perplexity.search.create({
+          query: parameters.query,
+          max_results: maxResults,
+        }),
+        context.abortSignal
+      ) as unknown as SearchResponse
 
       // no content returned by perplexity
       for (const result of results.results) {
-        const html = await fetch(result.url).then(response => response.text())
+        const html = await this.runWithAbort(
+          fetch(result.url, { signal: context.abortSignal }).then(response => response.text()),
+          context.abortSignal
+        )
         result.content = this.htmlToText(html)
       }
 
@@ -214,21 +235,27 @@ export default class extends Plugin {
     }
   }
 
-  async tavily(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
+  async tavily(context: PluginExecutionContext, parameters: anyDict, maxResults: number): Promise<SearchResponse> {
 
     try {
 
       // tavily
       const tavily = new Tavily(this.config.tavilyApiKey)
-      const results = await tavily.search(parameters.query, {
-        max_results: maxResults,
-        //include_answer: true,
-        //include_raw_content: true,
-      })
+      const results = await this.runWithAbort(
+        tavily.search(parameters.query, {
+          max_results: maxResults,
+          //include_answer: true,
+          //include_raw_content: true,
+        }),
+        context.abortSignal
+      )
 
       // content returned by tavily is very short
       for (const result of results.results) {
-        const html = await fetch(result.url).then(response => response.text())
+        const html = await this.runWithAbort(
+          fetch(result.url, { signal: context.abortSignal }).then(response => response.text()),
+          context.abortSignal
+        )
         result.content = this.htmlToText(html)
       }
 

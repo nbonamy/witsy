@@ -284,7 +284,7 @@ test('Search Plugin Local', async () => {
       { title: 'title2', url: 'url2', content: 'page_con' }
     ]
   })
-  expect(window.api.search.query).toHaveBeenLastCalledWith('test', 5)
+  expect(window.api.search.query).toHaveBeenLastCalledWith('test', 5, expect.any(String))
 })
 
 test('Search Plugin Brave', async () => {
@@ -629,7 +629,7 @@ test('MCP Plugin', async () => {
     tool: 'tool1',
     parameters: { param1: 'value1' }
   })).toStrictEqual({ result: 'result' })
-  expect(window.api.mcp.callTool).toHaveBeenLastCalledWith('tool1', { param1: 'value1' })
+  expect(window.api.mcp.callTool).toHaveBeenLastCalledWith('tool1', { param1: 'value1' }, expect.any(String))
   
   expect(await mcp.execute(context, {
     tool: 'tool2',
