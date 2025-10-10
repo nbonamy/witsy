@@ -2,14 +2,15 @@
 <template>
   <div class="form-subgroup">
     <input type="text" v-model="display" spellcheck="false" @keydown.prevent="onKeyDown" />
-    <button class="clear" :class="{ disabled: !display }" @click.prevent="onDelete"><BIconXCircleFill /></button>
+    <button class="clear" :class="{ disabled: !display }" @click.prevent="onDelete"><XCircleIcon /></button>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ModelRef, computed } from 'vue'
-import { Shortcut, disabledShortcutKey } from '../types/index'
+import { XCircleIcon } from 'lucide-vue-next';
+import { ModelRef, computed } from 'vue';
+import { Shortcut, disabledShortcutKey } from '../types/index';
 
 const value: ModelRef<Shortcut|undefined> = defineModel()
 

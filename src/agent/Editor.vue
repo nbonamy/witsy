@@ -25,7 +25,7 @@
             </div>
 
             <!-- <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGoal), disabled: !isStepCompleted(kStepGoal) }" @click="onStepClick(kStepGoal)" v-if="hasStep(kStepGoal)">
-              <BIconBullseye class="logo" /> {{ t('agent.create.goal.title') }}
+              <TargetIcon class="logo" /> {{ t('agent.create.goal.title') }}
             </div> -->
 
             <div class="wizard-step" :class="{ active: isStepVisible(kStepModel) || isStepVisible(kStepSettings), completed: isStepCompleted(kStepModel) }" @click="onStepClick(kStepModel)" v-if="hasStep(kStepModel)">
