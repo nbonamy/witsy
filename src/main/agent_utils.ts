@@ -1,5 +1,6 @@
 import { App } from 'electron'
 import AgentWorkflowExecutor from '../services/agent_executor_workflow'
+import AgentA2AExecutor from '../services/agent_executor_a2a'
 import { Agent, AgentRun, AgentRunTrigger } from '../types/index'
 import { loadAgents } from './agents'
 import { LlmContext } from './llm_utils'
@@ -84,8 +85,10 @@ export class AgentExecutor extends LlmContext {
     // Initialize LLM context (global mock + i18n)
     const config = this.initializeContext()
 
-    // Create executor and execute
-    const executor = new AgentWorkflowExecutor(config, workspaceId, agent)
+    // Select executor based on agent type
+    const executor = agent.source === 'a2a'
+      ? new AgentA2AExecutor(config, workspaceId, agent)
+      : new AgentWorkflowExecutor(config, workspaceId, agent)
     return await executor.run(trigger, prompt, { runId, model: agent.model } )
   }
 
