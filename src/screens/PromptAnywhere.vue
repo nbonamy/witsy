@@ -50,6 +50,7 @@ import { fullExpertI18n, i18nInstructions, t } from '../services/i18n'
 import { store } from '../services/store'
 import { anyDict, ExternalApp } from '../types'
 import { ToolSelection } from '../types/llm'
+import LlmUtils from '../services/llm_utils'
 
 const promptChatTimeout = 1000 * 60 * 5
 
@@ -59,6 +60,7 @@ store.load()
 // init stuff
 const generator = new Generator(store.config)
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
+let abortController: AbortController | null = null
 
 const prompt = ref<typeof Prompt>(null)
 const sourceApp = ref<ExternalApp | null>(null)
@@ -408,7 +410,7 @@ const onClose = () => {
 }
 
 const onStopGeneration = () => {
-  generator.stop()
+  abortController?.abort()
 }
 
 const onSendPrompt = async (params: SendPromptParams) => {
@@ -432,7 +434,8 @@ const onSendPrompt = async (params: SendPromptParams) => {
     llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools)
 
     // system instructions
-    const systemInstructions = generator.getSystemInstructions(instructions)
+    const llmUtils = new LlmUtils(store.config)
+    const systemInstructions = llmUtils.getSystemInstructions(instructions)
     if (chat.value.messages.length === 0) {
       chat.value.addMessage(new Message('system', systemInstructions))
     } else if (instructions) {
@@ -460,6 +463,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
     response.value = new Message('assistant')
     chat.value.addMessage(response.value)
 
+    // create abort controller
+    abortController = new AbortController()
+
     // now generate
     await generator.generate(llm, chat.value.messages, {
       ...chat.value.modelOpts,
@@ -467,6 +473,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
       streaming: !chat.value.disableStreaming,
       docrepo: docrepo,
       sources: true,
+      abortSignal: abortController.signal,
     })
 
     // save?

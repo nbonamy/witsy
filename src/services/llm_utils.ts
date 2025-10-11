@@ -1,9 +1,13 @@
 
 import { Configuration } from '../types/config'
-import { i18nInstructions } from './i18n'
+import { i18nInstructions, localeToLangName, getLlmLocale } from './i18n'
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import Message from '../models/message'
 import LlmFactory from '../llms/llm'
+
+export interface InstructionsModifiers {
+  noMarkdown?: boolean
+}
 
 export type TaskComplexity = 'simple' | 'normal' | 'complex'
 
@@ -135,7 +139,7 @@ export default class {
 
       // remove prefixes
       if (title.startsWith('Title:')) {
-        title = title.substring(6)
+        title = title.substring(6).trim()
       }
 
       // remove quotes
@@ -151,6 +155,119 @@ export default class {
       return null
     }
   
+  }
+
+  async generateStatusUpdate(engine: string, model: string, prompt: string): Promise<string> {
+    const statusInstructions = `You are a status update generator for an autonomous task execution system.
+
+Generate a concise status update (1-2 sentences maximum) for the user based on the current progress.
+
+Examples:
+- "Let me analyze your request and create an execution plan."
+- "I've created a plan with 5 tasks. Starting execution now."
+- "Working on task 2 of 5: writing blog articles."
+- "Completed research phase. Moving on to content creation."
+
+Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Status Update:" or technical jargon.`
+
+    return this.run(engine, model, 'simple', statusInstructions, prompt)
+  }
+
+  private async run(engine: string, model: string, complexity: TaskComplexity, system: string, prompt: string): Promise<string> {
+
+    // Get optimal model for simple task (titling is simple)
+    const { engine: selectedEngine, model: actualModel } = this.getEngineModelForTask(complexity, engine, model)
+
+    const messages = [
+      new Message('system', system),
+      new Message('user', prompt)
+    ]
+
+    // now get it
+    const llmManager = LlmFactory.manager(this.config)
+    const llm = llmManager.igniteEngine(selectedEngine)
+    const actualChatModel = llmManager.getChatModel(selectedEngine, actualModel)
+    const response = await llm.complete(actualChatModel, messages, {
+      tools: false,
+      reasoningEffort: 'low',
+      thinkingBudget: 0,
+      reasoning: false,
+    })
+
+    // get prompt
+    return response.content.trim()
+
+  }
+
+  static parseJson(content: string): any {
+    let idx = content.indexOf('{')
+    if (idx === -1) throw new Error('No JSON object found in content')
+    content = content.slice(idx)
+    idx = content.lastIndexOf('}')
+    if (idx === -1) throw new Error('No JSON object found in content')
+    content = content.slice(0, idx + 1).trim()
+    return JSON.parse(content)
+  }
+
+  getSystemInstructions(instructions?: string, modifiers?: InstructionsModifiers): string {
+
+    // default
+    let instr = instructions
+    if (!instr) {
+      // Check if it's a custom instruction
+      const customInstruction = this.config.llm.customInstructions?.find((ci: any) => ci.id === this.config.llm.instructions)
+      if (customInstruction) {
+        instr = customInstruction.instructions
+      } else {
+        instr = i18nInstructions(this.config, `instructions.chat.${this.config.llm.instructions}`)
+      }
+    }
+
+    // no markdown modifier
+    if (modifiers?.noMarkdown) {
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.noMarkdown')
+    }
+
+    // forced locale
+    if (/*instr === i18nInstructions(null, `instructions.chat.${this.config.llm.instructions}`) && */this.config.llm.forceLocale) {
+      const lang = localeToLangName(getLlmLocale())
+      if (lang.length) {
+        instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setLang', { lang })
+      }
+    }
+
+    // retry tools
+    if (this.config.llm.additionalInstructions?.toolRetry) {
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.toolRetry')
+    }
+
+    // capabilities: mermaid
+    if (this.config.llm.additionalInstructions?.mermaid) {
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.mermaid')
+    }
+
+    // capabilities: artifacts
+    if (this.config.llm.additionalInstructions?.artifacts) {
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.artifacts')
+    }
+
+    // add date and time
+    if (this.config.llm.additionalInstructions?.datetime) {
+
+      // get it basic
+      let date = new Date().toLocaleString()
+      try {
+        // try advanced (our locale may be wrong)
+        date = new Date().toLocaleString(window.api?.config?.localeLLM(), { dateStyle: 'long', timeStyle: 'long' })
+      } catch { /* empty */ }
+
+      // add it
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setDate', { date })
+      
+    }
+
+    // done
+    return instr
   }
 
 }

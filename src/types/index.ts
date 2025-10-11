@@ -176,7 +176,7 @@ export interface Agent {
 }
 
 export type AgentRunTrigger = 'manual' | 'schedule' | 'webhook' | 'workflow'
-export type AgentRunStatus = 'running' | 'success' | 'error'
+export type AgentRunStatus = 'running' | 'success' | 'canceled' | 'error'
 
 export type AgentRun = {
   uuid: string

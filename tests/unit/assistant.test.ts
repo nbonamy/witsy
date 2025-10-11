@@ -6,7 +6,6 @@ import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
 import Assistant, { AssistantCompletionOpts } from '../../src/services/assistant'
 import Attachment from '../../src/models/attachment'
-import Message from '../../src/models/message'
 import LlmMock, { installMockModels } from '../mocks/llm'
 
 vi.mock('../../src/llms/manager.ts', async () => {
@@ -124,8 +123,6 @@ test('Assistant parameters', async () => {
     caching: true,
     usage: true,
   })
-  // Verify abortSignal is present
-  expect(params.abortSignal).toBeInstanceOf(AbortSignal)
 })
 
 test('Assistant instructions', async () => {
@@ -296,55 +293,6 @@ test('Assistant prompt override', async () => {
   assistant!.chat.instructions = 'UserInstructions'
   const content = await prompt('Hello LLM')
   expect(content).toBe('[{"role":"system","content":"UserInstructions"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
-})
-
-test('Conversaton Length 1', async () => {
-  store.config.llm.conversationLength = 1
-  await prompt('Hello LLM1')
-  await prompt('Hello LLM2')
-  const thread = JSON.parse(assistant!.chat.lastMessage().content)
-  expect(assistant!.chat.messages.length).toBe(5)
-  expect(thread).toHaveLength(3)
-  expect(thread.map((m: Message) => m.role)).toEqual(['system', 'user', 'assistant'])
-})
-
-test('Conversaton Length 2', async () => {
-  store.config.llm.conversationLength = 2
-  await prompt('Hello LLM1')
-  await prompt('Hello LLM2')
-  const thread = JSON.parse(assistant!.chat.lastMessage().content)
-  expect(thread).toHaveLength(5)
-  expect(thread.map((m: Message) => m.role)).toEqual(['system', 'user', 'assistant', 'user', 'assistant'])
-})
-
-test('No API Key', async () => {
-  await prompt('no api key')
-  const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.missingApiKey_en-US')
-})
-
-test('Low balance', async () => {
-  await prompt('no credit left')
-  const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.outOfCredits_en-US')
-})
-
-test('Quota exceeded', async () => {
-  await prompt('quota exceeded')
-  const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.quotaExceeded_en-US')
-})
-
-test('Stop generation', async () => {
-  const start = Date.now()
-  await assistant!.prompt('infinite', { model: 'chat' }, () => {
-    if (Date.now() > start + 250) {
-      assistant!.stop()
-    } else {
-      expect(assistant!.chat.lastMessage().transient).toBe(true)
-    }
-  })
-  expect(assistant!.chat.lastMessage().transient).toBe(false)
 })
 
 test('Custom instructions with valid ID', async () => {

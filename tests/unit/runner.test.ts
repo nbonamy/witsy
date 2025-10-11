@@ -468,7 +468,7 @@ test('Agent Run with Chat Model Options', async () => {
   const chat = new Chat()
   chat.modelOpts = { temperature: 0.5 }
   testAgent.modelOpts = { temperature: 0.9 }
-  
+
   const run = await runAgent('manual', 'Chat model opts test', { chat })
 
   expect(run.status).toBe('success')
@@ -480,16 +480,114 @@ test('Agent Run with Chat Model Options', async () => {
   }
 })
 
-test('Runner Stop Functionality', async () => {
-  const promise = runAgent('manual', 'Stop test')
-  
-  // Stop the runner
-  runner!.stop()
-  
-  const run = await promise
-  
-  // Run should still complete but may be interrupted
+test('Runner aborts when abortSignal is aborted before first step', async () => {
+  const abortController = new AbortController()
+
+  // Abort before starting
+  abortController.abort()
+
+  // Start the run with aborted signal
+  const run = await runner!.run('manual', 'Abort test', {
+    model: 'chat',
+    streaming: true,
+    abortSignal: abortController.signal
+  })
+
   expect(run).toBeDefined()
+  expect(run.status).toBe('canceled')
+})
+
+test('Runner aborts between multi-step execution', async () => {
+  testAgent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] },
+    { prompt: 'Step 2', tools: null, agents: [] },
+    { prompt: 'Step 3', tools: null, agents: [] },
+  ]
+
+  const abortController = new AbortController()
+  let stepCount = 0
+
+  // Mock generate to track steps and abort after step 1
+  spyGenerate.mockImplementation(async (_llm, messages) => {
+    stepCount++
+    const assistantMessage = messages[messages.length - 1]
+    assistantMessage.appendText({ type: 'content', text: `Step ${stepCount} complete`, done: true })
+
+    // Abort after first step completes
+    if (stepCount === 1) {
+      abortController.abort()
+    }
+
+    return 'success'
+  })
+
+  const run = await runner!.run('manual', 'Multi-step abort test', {
+    model: 'chat',
+    abortSignal: abortController.signal
+  })
+
+  expect(run.status).toBe('canceled')
+  expect(stepCount).toBe(1) // Should only execute first step
+  expect(run.messages).toHaveLength(3) // system + step1 user + step1 assistant
+})
+
+test('Runner aborts before docrepo query', async () => {
+  testAgent.steps[0].docrepo = 'test-repo'
+  const abortController = new AbortController()
+
+  // Mock docrepo query (should not be called)
+  window.api.docrepo.query = vi.fn().mockResolvedValue([])
+
+  // Abort before run starts
+  abortController.abort()
+
+  const run = await runner!.run('manual', 'Docrepo abort test', {
+    model: 'chat',
+    abortSignal: abortController.signal
+  })
+
+  expect(run.status).toBe('canceled')
+  expect(window.api.docrepo.query).not.toHaveBeenCalled()
+})
+
+test('Runner aborts before tool loading', async () => {
+  testAgent.steps[0].tools = ['search_internet']
+  const abortController = new AbortController()
+
+  // Abort before run starts
+  abortController.abort()
+
+  const run = await runner!.run('manual', 'Tools abort test', {
+    model: 'chat',
+    abortSignal: abortController.signal
+  })
+
+  expect(run.status).toBe('canceled')
+  // Generator should not have been called
+  expect(spyGenerate).not.toHaveBeenCalled()
+})
+
+test('Runner aborts before titling', async () => {
+  const chat = new Chat()
+  const abortController = new AbortController()
+
+  // Mock generate to succeed but abort before titling
+  spyGenerate.mockImplementation(async (_llm, messages) => {
+    const assistantMessage = messages[messages.length - 1]
+    assistantMessage.appendText({ type: 'content', text: 'Response', done: true })
+    // Abort after generation
+    abortController.abort()
+    return 'success'
+  })
+
+  const run = await runner!.run('manual', 'Titling abort test', {
+    model: 'chat',
+    chat,
+    abortSignal: abortController.signal
+  })
+
+  expect(run.status).toBe('canceled')
+  expect(chat.title).toBeUndefined() // Title should not be set
 })
 
 test('Agent Run with Docrepo - No Sources', async () => {

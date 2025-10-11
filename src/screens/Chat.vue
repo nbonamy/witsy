@@ -25,12 +25,13 @@ import ChatArea from '../components/ChatArea.vue'
 import PromptBuilder from '../components/PromptBuilder.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import AgentPicker from './AgentPicker.vue'
-import Generator, { GenerationEvent } from '../services/generator'
+import { GenerationEvent } from '../services/generator'
 import Assistant from '../services/assistant'
 import AgentRunner, { isAgentConversation } from '../services/runner'
 import Message from '../models/message'
 import Chat from '../models/chat'
 import LlmFactory from '../llms/llm'
+import LlmUtils from '../services/llm_utils'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -51,13 +52,11 @@ const chatEditorCallback= ref<ChatEditorCallback>(() => {})
 const builder = ref<typeof PromptBuilder>(null)
 const picker = ref<typeof AgentPicker>(null)
 const agent = ref<Agent|null>(null)
+let abortController: AbortController | null = null
 
 const props = defineProps({
   extra: Object
 })
-
-// to stop generation
-let activeGenerator: Generator = assistant.value as unknown as Generator
 
 onMounted(() => {
 
@@ -508,8 +507,8 @@ const onSendPrompt = async (params: SendPromptParams) => {
     return llmManager.isComputerUseModel(assistant.value.chat.engine, assistant.value.chat.model)
   }
 
-  // save it to stop it
-  activeGenerator = assistant.value as unknown as Generator
+  // create abort controller for this prompt
+  abortController = new AbortController()
 
   // prompt
   const rc = await assistant.value.prompt(prompt, {
@@ -519,6 +518,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     docrepo: docrepo || null,
     expert: expert || null,
     execType: execType || 'prompt',
+    abortSignal: abortController.signal,
   }, (chunk) => {
   
     // if we get a chunk, emit it
@@ -603,15 +603,18 @@ const onRunAgent = async (agentId?: string) => {
 
 const runAgent = async (agent: Agent, prompt: string, a2aContext?: A2APromptOpts) => {
 
+  // create abort controller for this agent run
+  abortController = new AbortController()
+
   // now we can run it with streaming
   const runner = new AgentRunner(store.config, store.workspace.uuid, agent)
-  activeGenerator = runner
   await runner.run('manual', prompt, {
     streaming: true,
     ephemeral: false,
     model: assistant.value.chat.model,
     chat: assistant.value.chat,
-    a2aContext: a2aContext
+    a2aContext: a2aContext,
+    abortSignal: abortController.signal,
   }, async (event: GenerationEvent) => {
 
     if (event === 'before_generation') {
@@ -684,7 +687,7 @@ const onRetryGeneration = async (message: Message) => {
 }
 
 const onStopGeneration = async () => {
-  await activeGenerator?.stop()
+  abortController?.abort()
 }
 
 const onUpdateAvailable = () => {
@@ -720,7 +723,8 @@ const onMainViewChanged = (mode: MenuBarMode) => {
   assistant.value.chat.engine = 'anthropic'
   assistant.value.chat.model = 'computer-use'
 
-  const instructions = new Message('system', assistant.value.getSystemInstructions())
+  const llmUtils = new LlmUtils(store.config)
+  const instructions = new Message('system', llmUtils.getSystemInstructions())
   assistant.value.chat.addMessage(instructions)
 
   const message = new Message('assistant', t('computerUse.instructions'))

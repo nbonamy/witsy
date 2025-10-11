@@ -164,11 +164,13 @@ const processMessage = async (prompt: string) => {
     isProcessing.value = true
 
     // Get assistant response using prompt method
+    const abortController = new AbortController()
     await assistant.prompt(prompt, {
       model: assistant.chat.model,
       streaming: true,
       titling: false,
       tools: false,
+      abortSignal: abortController.signal,
     }, (chunk: any) => {
       if (chunk?.type === 'content') {
 

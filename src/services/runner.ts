@@ -2,7 +2,7 @@
 import { A2APromptOpts, AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
 import { DocRepoQueryResponseItem } from '../types/rag'
 import { Configuration } from '../types/config'
-import { LlmChunk, LlmChunkContent, MultiToolPlugin } from 'multi-llm-ts'
+import { LlmChunk, LlmChunkContent, LlmEngine, MultiToolPlugin } from 'multi-llm-ts'
 import { getLlmLocale, i18nInstructions, setLlmLocale, t } from './i18n'
 import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, GenerationCallback } from './generator'
 import LlmFactory, { ILlmManager } from '../llms/llm'
@@ -50,16 +50,35 @@ export const isAgentConversation = (chat: Chat): Agent|null => {
 export default class extends Generator {
 
   llmManager: ILlmManager
+  llmUtils: LlmUtils
   workspaceId: string
   agent: Agent
+  llm: LlmEngine|null
 
   constructor(config: Configuration, workspaceId: string, agent: Agent) {
     super(config)
     this.llm = null
-    this.stream = null
     this.llmManager = LlmFactory.manager(config)
+    this.llmUtils = new LlmUtils(config)
     this.workspaceId = workspaceId
     this.agent = agent
+  }
+
+  private checkAbort(run: AgentRun, opts?: RunnerCompletionOpts): boolean {
+    if (opts?.abortSignal?.aborted) {
+      run.status = 'canceled'
+      run.updatedAt = Date.now()
+      if (!opts?.ephemeral) {
+        this.saveRun(run)
+      }
+      if (opts?.chat) {
+        opts.chat.lastMessage().appendText({
+          type: 'content', text: '', done: true
+        })
+      }
+      return true
+    }
+    return false
   }
 
   async run(trigger: AgentRunTrigger, prompt?: string, opts?: RunnerCompletionOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
@@ -87,14 +106,14 @@ export default class extends Generator {
       if (run.messages.length === 0) {
         run.messages.push(new Message('system', ''))
         if (opts?.chat) {
-          prevSystemMessage = this.getSystemInstructions()
+          prevSystemMessage = this.llmUtils.getSystemInstructions()
         }
       } else {
         prevSystemMessage = run.messages[0].content
       }
 
       // update agent instructions
-      run.messages[0].content = this.getSystemInstructions(this.agent.instructions)
+      run.messages[0].content = this.llmUtils.getSystemInstructions(this.agent.instructions)
 
       // save it
       if (!opts?.ephemeral) {
@@ -114,6 +133,11 @@ export default class extends Generator {
       let rc: GenerationResult = 'error'
       for (let stepIdx = 0; stepIdx < this.agent.steps.length; stepIdx++) {
 
+        // check abort signal before each step
+        if (this.checkAbort(run, opts)) {
+          return run
+        }
+
         // get step
         const step: AgentStep = this.agent.steps[stepIdx]
 
@@ -130,6 +154,12 @@ export default class extends Generator {
 
         // docrepo
         if (step.docrepo) {
+
+          // check abort before expensive query
+          if (this.checkAbort(run, opts)) {
+            return run
+          }
+
           const sources: DocRepoQueryResponseItem[] = await window.api.docrepo.query(step.docrepo, stepPrompt);
           if (sources.length) {
             const context = sources.map((source) => source.content).join('\n\n');
@@ -168,6 +198,11 @@ export default class extends Generator {
             opts.chat.setEngineModel(opts.engine, opts.model)
             opts.chat.locale = this.agent.locale || opts.chat.locale
            opts.chat.modelOpts = this.agent.modelOpts || null
+        }
+
+        // check abort before tool loading
+        if (this.checkAbort(run, opts)) {
+          return run
         }
 
         // make sure llm has latest tools
@@ -240,7 +275,7 @@ export default class extends Generator {
           // we add default system instructions to the chat
           // so that the user can continue the conversation in the same style
           if (opts.chat.messages.length === 0) {
-            opts.chat.addMessage(new Message('system', this.getSystemInstructions()))
+            opts.chat.addMessage(new Message('system', this.llmUtils.getSystemInstructions()))
           }
 
           // user
@@ -309,6 +344,12 @@ export default class extends Generator {
 
       // titling
       if (rc === 'success' && opts?.chat && !opts.chat.hasTitle()) {
+
+        // check abort before titling
+        if (this.checkAbort(run, opts)) {
+          return run
+        }
+
         generationCallback?.('before_title')
         const title = await this.getTitle(opts.engine, opts.model, opts.chat.messages)
         opts.chat.title = title
@@ -394,6 +435,11 @@ export default class extends Generator {
       // now process chunks
       const prompt = run.messages.find(m => m.role === 'user')?.content || ''
       for await (const chunk of client.execute(prompt, opts?.a2aContext)) {
+
+        // check abort signal during streaming
+        if (opts?.abortSignal?.aborted) {
+          return 'stopped'
+        }
 
         // get the current assistant message (last in the array) to ensure reactivity
         const assistantMessage = run.messages[run.messages.length - 1]

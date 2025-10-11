@@ -20,6 +20,19 @@ vi.mock('../../src/plugins/search')
 vi.mock('../../src/services/generator')
 vi.mock('../../src/plugins/agent')
 
+// Mock LlmUtils
+vi.mock('../../src/services/llm_utils', () => {
+  const parseJson = (content: string): any => JSON.parse(content)
+  const MockLlmUtils = vi.fn().mockImplementation(() => ({
+    generateStatusUpdate: vi.fn().mockResolvedValue('Status update generated')
+  }))
+  MockLlmUtils.parseJson = parseJson
+
+  return {
+    default: MockLlmUtils
+  }
+})
+
 // Mock Runner properly
 vi.mock('../../src/services/runner', () => {
   return {
@@ -36,6 +49,18 @@ const mockConfig: Configuration = {
       enabled: true,
       engine: 'google'
     }
+  },
+  engines: {
+    'test-engine': {
+      models: {
+        chat: [
+          { id: 'test-model', name: 'Test Model', capabilities: { tools: true, vision: false, reasoning: false } }
+        ]
+      }
+    }
+  },
+  llm: {
+    engine: 'test-engine'
   }
 } as unknown as Configuration
 
@@ -311,18 +336,10 @@ test('DeepResearchMultiStep creation', () => {
   expect(deepResearch.config).toBe(mockConfig)
 })
 
-test('DeepResearchMultiStep stop functionality', () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
-  const stopSpy = vi.fn()
-
-  deepResearch.generators = [{ stop: stopSpy }] as any
-
-  deepResearch.stop()
-
-  expect(stopSpy).toHaveBeenCalled()
-})
-
 test('DeepResearchMultiStep complete agent chain execution', async () => {
+  // Reset mocks to track calls
+  vi.clearAllMocks()
+
   const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
   const chat = new Chat()
   chat.messages = [
@@ -452,25 +469,19 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
   expect(responseContent).toContain('[Search Result for q1_2](https://example.com/q1_2)')
   expect(responseContent).toContain('[Search Result for q2_1](https://example.com/q2_1)')
 
-  // Verify complete execution chain
+  // Verify complete execution chain (status updates are now mocked and not tracked)
   const expectedExecutionFlow = [
-    'status_update',
     'agent:planning',
-    'status_update',
     'search:q1_1',
     'search:q1_2',
     'search:q2_1',
-    'status_update',
+    'agent:analysis',
     'agent:analysis',
     'agent:writer',
-    'agent:analysis',
     'agent:writer',
-    'status_update',
     'agent:synthesis',
     'agent:synthesis',
-    'status_update',
     'agent:title',
-    'status_update',
   ]
 
   // Check that all expected steps were executed
@@ -511,6 +522,12 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
   expect(synthesisCalls).toHaveLength(2)
   expect(synthesisCalls[0].prompt).toContain('executive_summary')
   expect(synthesisCalls[1].prompt).toContain('conclusion')
+
+  // Verify generateStatusUpdate was called 6 times
+  // (before planning, after planning, after search, before synthesis, before title, final)
+  const LlmUtilsMock = vi.mocked(await import('../../src/services/llm_utils')).default
+  const llmUtilsInstance = LlmUtilsMock.mock.results[0]?.value
+  expect(llmUtilsInstance.generateStatusUpdate).toHaveBeenCalledTimes(6)
 
 })
 
@@ -585,41 +602,12 @@ test('DeepResearchMultiStep abort handling', async () => {
   expect(result).toBe('stopped')
 })
 
-test('DeepResearchMultiStep JSON parsing valid content', () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
-  const validJson = '{"sections": [{"title": "Test"}]}'
-  const result = deepResearch['parseJson'](validJson)
-  expect(result).toEqual({ sections: [{ title: 'Test' }] })
-})
-
-test('DeepResearchMultiStep JSON parsing with extra content', () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
-  const jsonWithExtra = 'Some text before {"sections": [{"title": "Test"}]} some text after'
-  const result = deepResearch['parseJson'](jsonWithExtra)
-  expect(result).toEqual({ sections: [{ title: 'Test' }] })
-})
-
-test('DeepResearchMultiStep JSON parsing invalid content', () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
-  const invalidJson = 'No JSON here'
-  expect(() => deepResearch['parseJson'](invalidJson)).toThrow('No JSON object found in content')
-})
 
 test('DeepResearchMultiAgent creation', () => {
   const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
   expect(deepResearch).toBeInstanceOf(DeepResearchMultiAgent)
   expect(deepResearch.config).toBe(mockConfig)
   expect(deepResearch.storage).toEqual({})
-})
-
-test('DeepResearchMultiAgent stop functionality', () => {
-  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
-  const mockGenerator = { stop: vi.fn() }
-  deepResearch.generator = mockGenerator as any
-
-  deepResearch.stop()
-
-  expect(mockGenerator.stop).toHaveBeenCalled()
 })
 
 test('DeepResearchMultiAgent storage and retrieval', async () => {
