@@ -24,8 +24,9 @@ export interface AssistantCompletionOpts extends GenerationOpts {
   noMarkdown?: boolean
 }
 
-export default class extends Generator {
+export default class {
 
+  config: Configuration
   workspaceId: string
   llmManager: ILlmManager
   deepResearch: DeepResearch
@@ -33,7 +34,7 @@ export default class extends Generator {
   chat: Chat
 
   constructor(config: Configuration, workspaceId?: string) {
-    super(config)
+    this.config = config
     this.llm = null
     this.deepResearch = null
     this.workspaceId = workspaceId || config.workspaceId
@@ -228,7 +229,8 @@ export default class extends Generator {
   }
 
   async _prompt(opts: AssistantCompletionOpts, llmCallback: LlmChunkCallback): Promise<GenerationResult> {
-    return await this.generate(this.llm, this.chat.messages, {
+    const generator = new Generator(this.config)
+    return await generator.generate(this.llm, this.chat.messages, {
       ...opts,
       ...this.chat.modelOpts,
     }, llmCallback)

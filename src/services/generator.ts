@@ -163,119 +163,7 @@ export default class Generator {
       }
 
     } catch (error) {
-      console.error('Error while generating text', error)
-
-      if (error.name !== 'AbortError') {
-
-        // get the error message
-        const cause = error.cause?.stack?.toString()?.toLowerCase() || ''
-        const message = error.message.toLowerCase()
-
-        // best case status is the http status code
-        // if not we can try to find it in the message
-        let status = error.status ?? error.status_code ?? 0
-        if (status === 0) {
-          // extract from message with \d\d\d
-          const statusMatch = message.match(/\b(\d{3})\b/)
-          if (statusMatch) {
-            status = parseInt(statusMatch[0])
-          }
-        }
-
-        // proxy
-        if (!error.status && (cause.includes('proxy') || cause.includes('network'))) {
-          console.error('Network error:', cause)
-          response.setText(t('generator.errors.networkError'))
-          rc = 'error'
-        }
-        
-        // missing api key
-        else if ([401, 403].includes(status) || message.includes('401') || message.includes('apikey')) {
-          console.error('Missing API key:', status, message)
-          response.setText(t('generator.errors.missingApiKey'))
-          rc = 'missing_api_key'
-        }
-        
-        // out of credits
-        else if ([400, 402].includes(status) && (message.includes('credit') || message.includes('balance'))) {
-          console.error('Out of credits:', status, message)
-          response.setText(t('generator.errors.outOfCredits'))
-          rc = 'out_of_credits'
-        
-        // quota exceeded
-        } else if ([429].includes(status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many'))) {
-          console.error('Quota exceeded:', status, message)
-          response.setText(t('generator.errors.quotaExceeded'))
-          rc = 'quota_exceeded'
-
-        // context length or function description too long
-        } else if ([400, 429].includes(status) && (message.includes('context length') || message.includes('too long') || message.includes('too large'))) {
-          if (message.includes('function.description')) {
-            console.error('Function description too long:', status, message)
-            response.setText(t('generator.errors.pluginDescriptionTooLong'))
-            rc = 'function_description_too_long'
-          } else {
-            console.error('Context too long:', status, message)
-            response.setText(t('generator.errors.contextTooLong'))
-            rc = 'context_too_long'
-          }
-        
-        // function call not supported
-        } else if ([400, 404].includes(status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool calling') || message.includes('tool use') || message.includes('tool choice'))) {
-          console.warn('Model does not support function calling:', status, message)
-          llm.clearPlugins()
-          return this.generate(llm, messages, opts, llmCallback)
-
-        // streaming not supported
-        } else if ([400].includes(status) && message.includes('\'stream\' does not support true')) {
-          console.warn('Model does not support streaming:', status, message)
-          rc = 'streaming_not_supported'
-
-        // invalid model
-        } else if ([404].includes(status) && message.includes('model')) {
-          console.error('Provider reports invalid model:', status, message)
-          response.setText(t('generator.errors.invalidModel'))
-          rc = 'invalid_model'
-
-        // thinking cannot be disabled
-        } else if ([400].includes(status) && message.includes('only works in thinking mode')) {
-          console.error('Invalid budget:', status, message)
-          response.setText(t('generator.errors.onlyThinkingMode'))
-          rc = 'invalid_budget'
-
-        // invalid budget
-        } else if ([400].includes(status) && message.includes('thinking budget')) {
-          console.error('Invalid budget:', status, message)
-          const match = message.match(/between (\d*) and (\d*)/)
-          if (match) {
-            const min = parseInt(match[1], 10)
-            const max = parseInt(match[2], 10)
-            response.setText(t('generator.errors.invalidBudgetKnown', { min, max }))
-          } else {
-            response.setText(t('generator.errors.invalidBudgetUnknown'))
-          }
-          rc = 'invalid_budget'
-
-        // final error: depends if we already have some content and if plugins are enabled
-        } else {
-          console.error('Error while generating text:', status, message)
-          if (response.content === '') {
-            if (opts?.contextWindowSize || opts?.maxTokens || opts?.temperature || opts?.top_k || opts?.top_p || Object.keys(opts?.customOpts || {}).length > 0) {
-              response.setText(t('generator.errors.tryWithoutParams'))
-            } else if (llm.plugins.length > 0) {
-              response.setText(t('generator.errors.tryWithoutPlugins'))
-            } else {
-              response.setText(t('generator.errors.couldNotGenerate'))
-            }
-          } else {
-            response.appendText({ type: 'content', text: t('generator.errors.cannotContinue'), done: true })
-          }
-          rc = 'error'
-        }
-      } else {
-        llmCallback?.call(null, { type: 'content', text: null, done: true })
-        rc = 'stopped'
-      }
+      rc = await this.handleError(error, llm, messages, opts, response, llmCallback)
     }
 
     // make sure the message is terminated correctly
@@ -288,6 +176,130 @@ export default class Generator {
     // done
     return rc
 
+  }
+
+  private async handleError(
+    error: any,
+    llm: LlmEngine,
+    messages: Message[],
+    opts: GenerationOpts,
+    response: Message,
+    llmCallback?: LlmChunkCallback
+  ): Promise<GenerationResult> {
+
+    console.error('Error while generating text', error)
+
+    if (error.name !== 'AbortError') {
+
+      // get the error message
+      const cause = error.cause?.stack?.toString()?.toLowerCase() || ''
+      const message = error.message.toLowerCase()
+
+      // best case status is the http status code
+      // if not we can try to find it in the message
+      let status = error.status ?? error.status_code ?? 0
+      if (status === 0) {
+        // extract from message with \d\d\d
+        const statusMatch = message.match(/\b(\d{3})\b/)
+        if (statusMatch) {
+          status = parseInt(statusMatch[0])
+        }
+      }
+
+      // proxy
+      if (!error.status && (cause.includes('proxy') || cause.includes('network'))) {
+        console.error('Network error:', cause)
+        response.setText(t('generator.errors.networkError'))
+        return 'error'
+      }
+
+      // missing api key
+      else if ([401, 403].includes(status) || message.includes('401') || message.includes('apikey')) {
+        console.error('Missing API key:', status, message)
+        response.setText(t('generator.errors.missingApiKey'))
+        return 'missing_api_key'
+      }
+
+      // out of credits
+      else if ([400, 402].includes(status) && (message.includes('credit') || message.includes('balance'))) {
+        console.error('Out of credits:', status, message)
+        response.setText(t('generator.errors.outOfCredits'))
+        return 'out_of_credits'
+
+      // quota exceeded
+      } else if ([429].includes(status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many'))) {
+        console.error('Quota exceeded:', status, message)
+        response.setText(t('generator.errors.quotaExceeded'))
+        return 'quota_exceeded'
+
+      // context length or function description too long
+      } else if ([400, 429].includes(status) && (message.includes('context length') || message.includes('too long') || message.includes('too large'))) {
+        if (message.includes('function.description')) {
+          console.error('Function description too long:', status, message)
+          response.setText(t('generator.errors.pluginDescriptionTooLong'))
+          return 'function_description_too_long'
+        } else {
+          console.error('Context too long:', status, message)
+          response.setText(t('generator.errors.contextTooLong'))
+          return 'context_too_long'
+        }
+
+      // function call not supported
+      } else if ([400, 404].includes(status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool calling') || message.includes('tool use') || message.includes('tool choice'))) {
+        console.warn('Model does not support function calling:', status, message)
+        llm.clearPlugins()
+        return this.generate(llm, messages, opts, llmCallback)
+
+      // streaming not supported
+      } else if ([400].includes(status) && message.includes('\'stream\' does not support true')) {
+        console.warn('Model does not support streaming:', status, message)
+        return 'streaming_not_supported'
+
+      // invalid model
+      } else if ([404].includes(status) && message.includes('model')) {
+        console.error('Provider reports invalid model:', status, message)
+        response.setText(t('generator.errors.invalidModel'))
+        return 'invalid_model'
+
+      // thinking cannot be disabled
+      } else if ([400].includes(status) && message.includes('only works in thinking mode')) {
+        console.error('Invalid budget:', status, message)
+        response.setText(t('generator.errors.onlyThinkingMode'))
+        return 'invalid_budget'
+
+      // invalid budget
+      } else if ([400].includes(status) && message.includes('thinking budget')) {
+        console.error('Invalid budget:', status, message)
+        const match = message.match(/between (\d*) and (\d*)/)
+        if (match) {
+          const min = parseInt(match[1], 10)
+          const max = parseInt(match[2], 10)
+          response.setText(t('generator.errors.invalidBudgetKnown', { min, max }))
+        } else {
+          response.setText(t('generator.errors.invalidBudgetUnknown'))
+        }
+        return 'invalid_budget'
+
+      // final error: depends if we already have some content and if plugins are enabled
+      } else {
+        console.error('Error while generating text:', status, message)
+        if (response.content === '') {
+          if (opts?.contextWindowSize || opts?.maxTokens || opts?.temperature || opts?.top_k || opts?.top_p || Object.keys(opts?.customOpts || {}).length > 0) {
+            response.setText(t('generator.errors.tryWithoutParams'))
+          } else if (llm.plugins.length > 0) {
+            response.setText(t('generator.errors.tryWithoutPlugins'))
+          } else {
+            response.setText(t('generator.errors.couldNotGenerate'))
+          }
+        } else {
+          response.appendText({ type: 'content', text: t('generator.errors.cannotContinue'), done: true })
+        }
+        return 'error'
+      }
+    } else {
+      llmCallback?.call(null, { type: 'content', text: null, done: true })
+      return 'stopped'
+    }
   }
 
   getConversation(messages: Message[]): Message[] {

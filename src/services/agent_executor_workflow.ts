@@ -10,6 +10,7 @@ import { processJsonSchema } from '../services/schema'
 import { Configuration } from '../types/config'
 import { AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
 import { DocRepoQueryResponseItem } from '../types/rag'
+import AgentExecutorBase from './agent_executor_base'
 import Generator, { GenerationCallback, GenerationOpts, GenerationResult, LlmChunkCallback } from './generator'
 import { getLlmLocale, i18nInstructions, setLlmLocale, t } from './i18n'
 import LlmUtils from './llm_utils'
@@ -23,39 +24,17 @@ export interface AgentWorkflowExecutorOpts extends GenerationOpts {
   callback?: LlmChunkCallback
 }
 
-export default class AgentWorkflowExecutor {
+export default class AgentWorkflowExecutor extends AgentExecutorBase {
 
-  config: Configuration
   llmManager: ILlmManager
   llmUtils: LlmUtils
-  workspaceId: string
-  agent: Agent
   llm: LlmEngine|null
 
   constructor(config: Configuration, workspaceId: string, agent: Agent) {
-    this.config = config
+    super(config, workspaceId, agent)
     this.llm = null
     this.llmManager = LlmFactory.manager(config)
     this.llmUtils = new LlmUtils(config)
-    this.workspaceId = workspaceId
-    this.agent = agent
-  }
-
-  private checkAbort(run: AgentRun, opts?: AgentWorkflowExecutorOpts): boolean {
-    if (opts?.abortSignal?.aborted) {
-      run.status = 'canceled'
-      run.updatedAt = Date.now()
-      if (!opts?.ephemeral) {
-        this.saveRun(run)
-      }
-      if (opts?.chat) {
-        opts.chat.lastMessage().appendText({
-          type: 'content', text: '', done: true
-        })
-      }
-      return true
-    }
-    return false
   }
 
   async run(trigger: AgentRunTrigger, prompt?: string, opts?: AgentWorkflowExecutorOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
@@ -391,13 +370,6 @@ export default class AgentWorkflowExecutor {
         opts.callback(chunk)
       }
 
-    })
-  }
-
-  private saveRun(run: AgentRun): void {
-    window.api.agents.saveRun(this.workspaceId, {
-      ...run,
-      messages: run.messages.map(m => JSON.parse(JSON.stringify(m))),
     })
   }
 
