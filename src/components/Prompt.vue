@@ -1560,18 +1560,8 @@ defineExpose({
       &:has(.canceling) {
         opacity: 0.6;
         cursor: not-allowed;
-
         svg {
-          animation: pulse 1s ease-in-out infinite;
-        }
-      }
-
-      @keyframes pulse {
-        0%, 100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
+          animation: pulse 1.5s ease-in-out infinite;
         }
       }
 
@@ -1612,6 +1602,15 @@ defineExpose({
 
   }
 
+}
+
+@keyframes pulse {
+  0%, 100% {
+    scale: 1.05;
+  }
+  50% {
+    scale: 0.75;
+  }
 }
 
 .windows .input, .windows .input .textarea-wrapper textarea {
