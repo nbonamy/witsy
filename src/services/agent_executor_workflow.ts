@@ -7,7 +7,6 @@ import AgentPlugin from '../plugins/agent'
 import { availablePlugins } from '../plugins/plugins'
 import { replacePromptInputs } from '../services/prompt'
 import { processJsonSchema } from '../services/schema'
-import { store } from '../services/store'
 import { Configuration } from '../types/config'
 import { AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
 import { DocRepoQueryResponseItem } from '../types/rag'
@@ -24,29 +23,9 @@ export interface AgentWorkflowExecutorOpts extends GenerationOpts {
   callback?: LlmChunkCallback
 }
 
-export const isAgentConversation = (chat: Chat): Agent|null => {
+export default class AgentWorkflowExecutor {
 
-  // check message
-  const message = chat.lastMessage()
-  if (!message) return null
-  if (!message.agentId) return null
-
-  // we need the agent anyway
-  const agent = store.agents.find((a) => a.uuid === message.agentId)
-  if (!agent) return null
-
-  // a2a agents are conversational
-  if (agent && agent.source === 'a2a') {
-    return agent
-  }
-
-  // nope
-  return null
-
-}
-
-export default class AgentWorkflowExecutor extends Generator {
-
+  config: Configuration
   llmManager: ILlmManager
   llmUtils: LlmUtils
   workspaceId: string
@@ -54,7 +33,7 @@ export default class AgentWorkflowExecutor extends Generator {
   llm: LlmEngine|null
 
   constructor(config: Configuration, workspaceId: string, agent: Agent) {
-    super(config)
+    this.config = config
     this.llm = null
     this.llmManager = LlmFactory.manager(config)
     this.llmUtils = new LlmUtils(config)
@@ -386,7 +365,8 @@ export default class AgentWorkflowExecutor extends Generator {
 
   private async prompt(run: AgentRun, opts: AgentWorkflowExecutorOpts): Promise<GenerationResult> {
 
-    return await this.generate(this.llm, [
+    const generator = new Generator(this.config)
+    return await generator.generate(this.llm, [
       run.messages[0],                       // instructions
       run.messages[run.messages.length - 2], // user message
       run.messages[run.messages.length - 1], // assistant message

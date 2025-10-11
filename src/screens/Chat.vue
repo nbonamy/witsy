@@ -23,8 +23,7 @@ import useTipsManager from '../composables/tips_manager'
 import LlmFactory from '../llms/llm'
 import Chat from '../models/chat'
 import Message from '../models/message'
-import AgentA2AExecutor from '../services/agent_executor_a2a'
-import AgentWorkflowExecutor, { isAgentConversation } from '../services/agent_executor_workflow'
+import { createAgentExecutor, isAgentConversation } from '../services/agent_utils'
 import Assistant from '../services/assistant'
 import { saveFileContents } from '../services/download'
 import { GenerationEvent } from '../services/generator'
@@ -605,10 +604,8 @@ const runAgent = async (agent: Agent, prompt: string, a2aContext?: A2APromptOpts
   // create abort controller for this agent run
   abortController = new AbortController()
 
-  // select executor based on agent type
-  const executor = agent.source === 'a2a'
-    ? new AgentA2AExecutor(store.config, store.workspace.uuid, agent)
-    : new AgentWorkflowExecutor(store.config, store.workspace.uuid, agent)
+  // create executor for this agent
+  const executor = createAgentExecutor(store.config, store.workspace.uuid, agent)
 
   await executor.run('manual', prompt, {
     streaming: true,
