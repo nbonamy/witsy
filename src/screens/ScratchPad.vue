@@ -102,6 +102,7 @@ const props = defineProps({
 store.loadSettings()
 const audioPlayer = useAudioPlayer(store.config)
 const generator = new Generator(store.config)
+let abortController: AbortController | null = null
 
 // init stuff
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
@@ -742,6 +743,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
     // load tools as configured per prompt
     llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools)
 
+    // create abort controller
+    abortController = new AbortController()
+
     // now generate
     processing.value = true
     const rc: GenerationResult = await generator.generate(llm, chat.value.messages, {
@@ -749,6 +753,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
       model: chat.value.model,
       docrepo: chat.value.docrepo,
       sources: false,
+      abortSignal: abortController.signal,
     })
 
     if (rc !== 'success') {
@@ -794,7 +799,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 }
 
 const onStopPrompting = async () => {
-  generator.stop()
+  abortController?.abort()
 }
 
 </script>

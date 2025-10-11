@@ -174,12 +174,14 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
           'Connection': 'keep-alive'
         })
 
+        const abortController = new AbortController()
         await assistant.prompt(prompt, {
           model,
           streaming: true,
           titling: false,
-          noMarkdown
-        }, (chunk) => {
+          noMarkdown,
+          abortSignal: abortController.signal,
+        }, (chunk: any) => {
           if (chunk) {
             res.write(`data: ${JSON.stringify(chunk)}\n\n`)
           }
@@ -189,10 +191,12 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
         res.end()
       } else {
         // Non-streaming mode - JSON response
+        const abortController = new AbortController()
         await assistant.prompt(prompt, {
           model,
           streaming: false,
-          noMarkdown
+          noMarkdown,
+          abortSignal: abortController.signal,
         }, () => {
           // Chunks will be accumulated in the assistant's response message
         })

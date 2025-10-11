@@ -1,7 +1,7 @@
 import { LlmEngine, LlmCompletionOpts, LlmChunk, LlmResponse, Model } from 'multi-llm-ts'
 import { Configuration, EngineConfig } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
-import { t , i18nInstructions, localeToLangName, getLlmLocale } from './i18n'
+import { t , i18nInstructions } from './i18n'
 import Message from '../models/message'
 
 export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title' | 'generation_done'
@@ -17,10 +17,6 @@ export interface GenerationOpts extends LlmCompletionOpts {
 }
 
 export type LlmChunkCallback = (chunk: LlmChunk) => void
-
-export interface InstructionsModifiers {
-  noMarkdown?: boolean
-}
 
 export type GenerationResult = 
   'success' |
@@ -39,24 +35,12 @@ export type GenerationResult =
 export default class Generator {
 
   config: Configuration
-  abortController: AbortController | null
-  stream: AsyncIterable<LlmChunk>|null
-  llm: LlmEngine|null
 
   constructor(config: Configuration) {
     this.config = config
-    this.stream = null
-    this.abortController = null
-    this.llm = null
   }
 
   async generate(llm: LlmEngine, messages: Message[], opts: GenerationOpts, llmCallback?: LlmChunkCallback): Promise<GenerationResult> {
-
-    // Create abort controller for this generation if not already created
-    // (Assistant.prompt() creates it earlier to ensure stop() works immediately)
-    if (!this.abortController) {
-      this.abortController = new AbortController()
-    }
 
     // return code
     let rc: GenerationResult = 'success'
@@ -102,7 +86,6 @@ export default class Generator {
         const llmResponse: LlmResponse = await llm.complete(model, conversation, {
           visionFallbackModel: visionModel,
           usage: true,
-          abortSignal: this.abortController.signal,
           ...opts
         })
 
@@ -136,13 +119,12 @@ export default class Generator {
       } else {
 
         // now stream
-        this.stream = llm.generate(model, conversation, {
+        const stream = llm.generate(model, conversation, {
           visionFallbackModel: visionModel,
           usage: true,
-          abortSignal: this.abortController.signal,
           ...opts
         })
-        for await (const msg of this.stream) {
+        for await (const msg of stream) {
           // Engine will stop if signal aborted
           if (msg.type === 'usage') {
             response.usage = msg.usage
@@ -294,10 +276,6 @@ export default class Generator {
         llmCallback?.call(null, { type: 'content', text: null, done: true })
         rc = 'stopped'
       }
-    } finally {
-      // Cleanup
-      this.stream = null
-      this.abortController = null
     }
 
     // make sure the message is terminated correctly
@@ -310,11 +288,6 @@ export default class Generator {
     // done
     return rc
 
-  }
-
-  async stop() {
-    // Abort the signal
-    this.abortController?.abort()
   }
 
   getConversation(messages: Message[]): Message[] {
@@ -332,67 +305,6 @@ export default class Generator {
       }
     }
     return conversation
-  }
-
-  getSystemInstructions(instructions?: string, modifiers?: InstructionsModifiers): string {
-
-    // default
-    let instr = instructions
-    if (!instr) {
-      // Check if it's a custom instruction
-      const customInstruction = this.config.llm.customInstructions?.find((ci: any) => ci.id === this.config.llm.instructions)
-      if (customInstruction) {
-        instr = customInstruction.instructions
-      } else {
-        instr = i18nInstructions(this.config, `instructions.chat.${this.config.llm.instructions}`)
-      }
-    }
-
-    // no markdown modifier
-    if (modifiers?.noMarkdown) {
-      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.noMarkdown')
-    }
-
-    // forced locale
-    if (/*instr === i18nInstructions(null, `instructions.chat.${this.config.llm.instructions}`) && */this.config.llm.forceLocale) {
-      const lang = localeToLangName(getLlmLocale())
-      if (lang.length) {
-        instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setLang', { lang })
-      }
-    }
-
-    // retry tools
-    if (this.config.llm.additionalInstructions?.toolRetry) {
-      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.toolRetry')
-    }
-
-    // capabilities: mermaid
-    if (this.config.llm.additionalInstructions?.mermaid) {
-      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.mermaid')
-    }
-
-    // capabilities: artifacts
-    if (this.config.llm.additionalInstructions?.artifacts) {
-      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.artifacts')
-    }
-
-    // add date and time
-    if (this.config.llm.additionalInstructions?.datetime) {
-
-      // get it basic
-      let date = new Date().toLocaleString()
-      try {
-        // try advanced (our locale may be wrong)
-        date = new Date().toLocaleString(window.api?.config?.localeLLM(), { dateStyle: 'long', timeStyle: 'long' })
-      } catch { /* empty */ }
-
-      // add it
-      instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setDate', { date })
-      
-    }
-
-    // done
-    return instr
   }
 
 }

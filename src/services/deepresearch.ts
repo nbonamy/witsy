@@ -14,7 +14,6 @@ export type DeepResearchOpts = AssistantCompletionOpts & {
 }
 
 export interface DeepResearch {
-  stop(): void
   run(engine: LlmEngine, chat: Chat, opts: DeepResearchOpts): Promise<GenerationResult>
 }
 

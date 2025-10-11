@@ -2,11 +2,11 @@
 import { Configuration } from '../types/config'
 import { LlmChunkTool, LlmEngine, addUsages } from 'multi-llm-ts'
 import * as dr from './deepresearch'
-import Generator, { GenerationResult } from './generator'
+import { GenerationResult } from './generator'
 import SearchPlugin, { SearchResultItem } from '../plugins/search'
-import Message from '../models/message'
 import Chat from '../models/chat'
 import Runner from './runner'
+import LlmUtils from './llm_utils'
 
 type ResearchSection = {
   title: string,
@@ -22,18 +22,12 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
   config: Configuration
   workspaceId: string
-  generators: Generator[]
   engine: LlmEngine
   model: string
 
   constructor(config: Configuration, workspaceId: string) {
     this.config = config
     this.workspaceId = workspaceId
-    this.generators = []
-  }
-
-  stop = (): void => {
-    this.generators?.forEach(generator => generator.stop())
   }
 
   run = async (engine: LlmEngine, chat: Chat, opts: dr.DeepResearchOpts): Promise<GenerationResult> => {
@@ -49,7 +43,10 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
     try {
 
       // status
-      await this.generateStatusUpdate(`I am going to create a research plan for the following topic: ${researchTopic}`, response)
+      const llmUtils = new LlmUtils(this.config)
+      const status1 = await llmUtils.generateStatusUpdate(this.engine.getId(), this.model, `I am going to create a research plan for the following topic: ${researchTopic}`)
+      response.appendText({ type: 'content', text: status1 + '\n\n', done: false })
+      response.transient = true
 
       // fake tool call
       const planningToolCall = {
@@ -94,7 +91,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       let sections: ResearchSection[] = []
 
       try {
-        const plan = this.parseJson(planMessage.content)
+        const plan = LlmUtils.parseJson(planMessage.content)
         sections = plan.sections
       } catch (e) {
         response.appendText({
@@ -107,7 +104,9 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       }
 
       // status
-      await this.generateStatusUpdate(`The plan is completed. Proceeding with generating content for the following sections:\n${sections.map((section: ResearchSection)  => section.title).join('\n')}`, response)
+      const status2 = await llmUtils.generateStatusUpdate(this.engine.getId(), this.model, `The plan is completed. Proceeding with generating content for the following sections:\n${sections.map((section: ResearchSection)  => section.title).join('\n')}`)
+      response.appendText({ type: 'content', text: status2 + '\n\n', done: false })
+      response.transient = true
 
       // now build each sections
       const searchResults: SearchResultItem[][] = await Promise.all(
@@ -164,7 +163,9 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       const allKeyLearnings: string[] = []
 
       // status
-      await this.generateStatusUpdate(`I have gathered information for all sections. I am going to analyze the information and generate content for each section.`, response)
+      const status3 = await llmUtils.generateStatusUpdate(this.engine.getId(), this.model, `I have gathered information for all sections. I am going to analyze the information and generate content for each section.`)
+      response.appendText({ type: 'content', text: status3 + '\n\n', done: false })
+      response.transient = true
 
       // add empty checkbox for each section
       for (const section of sections) {
@@ -197,7 +198,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
           // extract learnings
           let keyLearnings: string[] = []
           try {
-            keyLearnings = this.parseJson(analysisMessage.content).learnings
+            keyLearnings = LlmUtils.parseJson(analysisMessage.content).learnings
           } catch (e) {
             console.error('Error parsing key learnings:', analysisMessage.content, e)
             keyLearnings = searchResults[index].map(result => `- ${result.title}: ${result.content}`)
@@ -237,7 +238,9 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       )
 
       // exec summary and conclusion
-      await this.generateStatusUpdate(`Let me put the final touches`, response)
+      const status4 = await llmUtils.generateStatusUpdate(this.engine.getId(), this.model, `Let me put the final touches`)
+      response.appendText({ type: 'content', text: status4 + '\n\n', done: false })
+      response.transient = true
 
       // run agents
       const synthesis = new Runner(this.config, this.workspaceId, dr.synthesisAgent)
@@ -253,7 +256,9 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       }), { ephemeral: true, ...opts })
 
       // generate title
-      await this.generateStatusUpdate(`Generating title for the report`, response)
+      const status5 = await llmUtils.generateStatusUpdate(this.engine.getId(), this.model, `Generating title for the report`)
+      response.appendText({ type: 'content', text: status5 + '\n\n', done: false })
+      response.transient = true
       const titleRunner = new Runner(this.config, this.workspaceId, dr.titleAgent)
       const titleResult = await titleRunner.run('workflow', dr.titleAgent.buildPrompt(0, {
         researchTopic: researchTopic,
@@ -264,7 +269,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       const titleMessage = titleResult.messages[titleResult.messages.length - 1]
       let reportTitle = researchTopic // fallback title
       try {
-        const titleData = this.parseJson(titleMessage.content)
+        const titleData = LlmUtils.parseJson(titleMessage.content)
         if (titleData && titleData.title) {
           reportTitle = titleData.title
         }
@@ -273,7 +278,9 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       }
 
       // status
-      await this.generateStatusUpdate(`Done! Here is your report`, response)
+      const status6 = await llmUtils.generateStatusUpdate(this.engine.getId(), this.model, `Done! Here is your report`)
+      response.appendText({ type: 'content', text: status6 + '\n\n', done: false })
+      response.transient = true
 
       // append usages
       const execSummaryMessage = execSummary.messages[execSummary.messages.length - 1]
@@ -356,54 +363,6 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
     }
 
-  }
-
-  private generateStatusUpdate = async (prompt: string, response: Message): Promise<void> => {
-
-    const statusUpdateInstructions = `You are a status update generator, your task is to generate a status update for the user based on the following prompt.
-
-    The larger task is to create a comprehensive research report, so the status update should reflect the progress made so far.
-
-    The status update should be concise, informative, and provide a clear overview of the current state of the research.
-    
-    Examples of status updates:
-    - "Let me analyze your request about quantum mechanics and create a research plan."
-    - "I am done with the planning phase, I will now start gathering information for the following sections: Quantum Entanglement, Quantum Computing, and Quantum Cryptography."
-    - "I have gathered information for the Quantum Entanglement section, I will now analyze it and extract key learnings."
-
-    Notice none of those examples exceed 2 sentences and include "Status Update:" or any dumb text like that.
-    `
-
-    const usage = response.usage
-
-    const generator = new Generator(this.config) 
-    this.generators.push(generator)
-    await generator.generate(this.engine, [
-      new Message('system', statusUpdateInstructions),
-      new Message('user', prompt),
-      response,
-    ], { model: this.model, tools: false, })
-    this.generators = this.generators.filter(g => g !== generator)
-
-    response.usage = addUsages(usage, response.usage)
-
-    // update response
-    response.transient = true
-    response.appendText({
-      type: 'content',
-      text: '\n\n',
-      done: false
-    })
-  }
-
-  private parseJson = (content: string): any => {
-    let idx = content.indexOf('{')
-    if (idx === -1) throw new Error('No JSON object found in content')
-    content = content.slice(idx)
-    idx = content.lastIndexOf('}')
-    if (idx === -1) throw new Error('No JSON object found in content')
-    content = content.slice(0, idx + 1).trim()
-    return JSON.parse(content)
   }
 
 }

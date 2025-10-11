@@ -11,16 +11,11 @@ export default class DeepResearchMultiAgent implements dr.DeepResearch, AgentSto
 
   config: Configuration
   workspaceId: string
-  generator: Generator
   storage: Record<string, any> = {}
 
   constructor(config: Configuration, workspaceId: string) {
     this.config = config
     this.workspaceId = workspaceId
-  }
-
-  stop = (): void => {
-    this.generator?.stop()
   }
 
   run = async (engine: LlmEngine, chat: Chat, opts: dr.DeepResearchOpts): Promise<GenerationResult> => {
@@ -58,8 +53,8 @@ export default class DeepResearchMultiAgent implements dr.DeepResearch, AgentSto
     }
 
     // now we can generate
-    this.generator = new Generator(this.config)
-    return await this.generator.generate(engine, chat.messages, {
+    const generator = new Generator(this.config)
+    return await generator.generate(engine, chat.messages, {
       ...opts,
       ...chat.modelOpts,
       toolChoice: { type: 'tool', name: 'agent_planning'}
