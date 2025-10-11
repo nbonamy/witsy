@@ -1,7 +1,8 @@
 
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
-import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../services/agent_executor_workflow'
-import AgentA2AExecutor, { AgentA2AExecutorOpts } from '../services/agent_executor_a2a'
+import { AgentA2AExecutorOpts } from '../services/agent_executor_a2a'
+import { AgentWorkflowExecutorOpts } from '../services/agent_executor_workflow'
+import { createAgentExecutor } from '../services/agent_utils'
 import { t } from '../services/i18n'
 import { extractPromptInputs, replacePromptInputs } from '../services/prompt'
 import { Configuration } from '../types/config'
@@ -165,10 +166,10 @@ export default class extends Plugin {
       const prompt = replacePromptInputs(this.agent.steps[0].prompt || '', parameters)
       //console.log(`Running agent ${this.agent.name} with prompt:`, prompt)
 
-      // select executor based on agent type and pass appropriate opts
-      const run = this.agent.source === 'a2a'
-        ? await new AgentA2AExecutor(this.config, this.workspaceId, this.agent).run('workflow', prompt, this.opts.a2aOpts)
-        : await new AgentWorkflowExecutor(this.config, this.workspaceId, this.agent).run('workflow', prompt, this.opts.workflowOpts)
+      // create executor and run with appropriate opts
+      const executor = createAgentExecutor(this.config, this.workspaceId, this.agent)
+      const executorOpts = this.agent.source === 'a2a' ? this.opts.a2aOpts : this.opts.workflowOpts
+      const run = await executor.run('workflow', prompt, executorOpts)
       
       if (run.status === 'success') {
 
