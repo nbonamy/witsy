@@ -1,5 +1,5 @@
 
-import { LlmChunk, LlmChunkContent, LlmEngine, MultiToolPlugin } from 'multi-llm-ts'
+import { LlmChunk, LlmEngine, MultiToolPlugin } from 'multi-llm-ts'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Agent from '../models/agent'
 import Message from '../models/message'
@@ -9,9 +9,8 @@ import { replacePromptInputs } from '../services/prompt'
 import { processJsonSchema } from '../services/schema'
 import { store } from '../services/store'
 import { Configuration } from '../types/config'
-import { A2APromptOpts, AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
+import { AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
 import { DocRepoQueryResponseItem } from '../types/rag'
-import A2AClient from './a2a-client'
 import Generator, { GenerationCallback, GenerationOpts, GenerationResult, LlmChunkCallback } from './generator'
 import { getLlmLocale, i18nInstructions, setLlmLocale, t } from './i18n'
 import LlmUtils from './llm_utils'
@@ -22,7 +21,6 @@ export interface AgentWorkflowExecutorOpts extends GenerationOpts {
   engine?: string
   agents?: Agent[]
   chat?: Chat
-  a2aContext?: A2APromptOpts
   callback?: LlmChunkCallback
 }
 
@@ -314,22 +312,13 @@ export default class AgentWorkflowExecutor extends Generator {
             t('chat.agent.status.inProgress', { step: stepIdx + 1, steps: this.agent.steps.length })
         }
 
-        // now depends on the type of agent
-        if (this.agent.source === 'a2a') {
+        // generate text
+        rc = await this.prompt(run, opts)
 
-          rc = await this.runA2A(run, opts)
-
-        } else {
-
-          // generate text
+        // check if streaming is not supported
+        if (rc === 'streaming_not_supported') {
+          opts.streaming = false
           rc = await this.prompt(run, opts)
-
-          // check if streaming is not supported
-          if (rc === 'streaming_not_supported') {
-            opts.streaming = false
-            rc = await this.prompt(run, opts)
-          }
-
         }
 
         // if error break now
@@ -423,80 +412,6 @@ export default class AgentWorkflowExecutor extends Generator {
       }
 
     })
-  }
-
-  private async runA2A(run: AgentRun, opts: AgentWorkflowExecutorOpts): Promise<GenerationResult> {
-
-    try {
-    
-      // init A2A client
-      const client = new A2AClient(this.agent.instructions)
-
-      // now process chunks
-      const prompt = run.messages.find(m => m.role === 'user')?.content || ''
-      for await (const chunk of client.execute(prompt, opts?.a2aContext)) {
-
-        // check abort signal during streaming
-        if (opts?.abortSignal?.aborted) {
-          return 'stopped'
-        }
-
-        // get the current assistant message (last in the array) to ensure reactivity
-        const assistantMessage = run.messages[run.messages.length - 1]
-
-        if (chunk.type === 'content') {
-          
-          assistantMessage.appendText(chunk)
-          opts?.callback?.(chunk)
-        
-        } else if (chunk.type === 'status') {
-
-          // update chat
-          if (chunk.taskId) {
-            assistantMessage.a2aContext = {
-              currentTaskId: chunk.taskId,
-              currentContextId: chunk.contextId,
-            }
-          } else {
-            delete assistantMessage.a2aContext
-          }
-
-          // update status
-          if (chunk.status) {
-            assistantMessage.setStatus(chunk.status)
-          }
-
-
-        } else if (chunk.type === 'artifact') {
-
-          // we build a witsy artifact
-          const artifact = `<artifact title="${chunk.name}">
-\`\`\`
-${chunk.content}
-\`\`\`
-</artifact>`
-
-          // debug: emit artifact as content
-          const textChunk: LlmChunkContent = {
-            type: 'content',
-            text: `\n\n${artifact}\n\n`,
-            done: false,
-          }
-          assistantMessage.appendText(textChunk)
-          opts?.callback?.(textChunk)
-
-        }
-      
-      }
-
-      // done
-      return 'success'
-
-    } catch (error) {
-      console.error('Error while running A2A client', error)
-      throw error
-    }
-
   }
 
   private saveRun(run: AgentRun): void {

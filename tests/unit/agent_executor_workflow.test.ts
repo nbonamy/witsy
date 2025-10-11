@@ -356,16 +356,6 @@ test('Agent Run with Empty Prompt', async () => {
   expect(run).toBeNull()
 })
 
-test('A2A Agent Run', async () => {
-  testAgent.source = 'a2a'
-  testAgent.instructions = 'A2A test instructions'
-
-  const run = await runAgent('manual', 'A2A test prompt')
-
-  expect(run.status).toBe('success')
-  expect(run.messages[2].content).toContain('A2A response chunk 1 chunk 2')
-})
-
 test('Agent Run with Tool Calls', async () => {
   // Mock the generate method to call the callback with tool chunks
   spyGenerate.mockImplementation(async (llm, messages, opts, callback) => {

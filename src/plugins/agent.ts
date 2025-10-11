@@ -1,6 +1,7 @@
 
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../services/agent_executor_workflow'
+import AgentA2AExecutor, { AgentA2AExecutorOpts } from '../services/agent_executor_a2a'
 import { t } from '../services/i18n'
 import { extractPromptInputs, replacePromptInputs } from '../services/prompt'
 import { Configuration } from '../types/config'
@@ -14,7 +15,9 @@ export interface AgentStorage {
   retrieve: (key: string) => Promise<any>
 }
 
-export type AgentPluginOpts = AgentWorkflowExecutorOpts & {
+export type AgentPluginOpts = {
+  workflowOpts?: AgentWorkflowExecutorOpts
+  a2aOpts?: AgentA2AExecutorOpts
   storeData?: boolean
   retrieveData?: boolean
 }
@@ -30,8 +33,8 @@ export default class extends Plugin {
 
   constructor(
     config: Configuration, workspaceId: string, agent: Agent,
-    engine: string, model: string, opts?: Omit<AgentPluginOpts, 'engine'|'model'>,
-    storage?: AgentStorage, 
+    engine: string, model: string, opts?: AgentPluginOpts,
+    storage?: AgentStorage,
   ) {
     super(config, workspaceId)
     this.agent = agent
@@ -39,12 +42,18 @@ export default class extends Plugin {
     this.model = model
     this.storage = storage
     this.opts = {
-      ephemeral: opts?.ephemeral ?? false,
-      engine: this.engine,
-      model: this.model,
-      storeData: true,
-      retrieveData: true,
-      ...opts,
+      storeData: opts?.storeData ?? true,
+      retrieveData: opts?.retrieveData ?? true,
+      workflowOpts: {
+        ephemeral: false,
+        engine: this.engine,
+        model: this.model,
+        ...opts?.workflowOpts,
+      },
+      a2aOpts: {
+        ephemeral: false,
+        ...opts?.a2aOpts,
+      },
     }
   }
 
@@ -156,9 +165,10 @@ export default class extends Plugin {
       const prompt = replacePromptInputs(this.agent.steps[0].prompt || '', parameters)
       //console.log(`Running agent ${this.agent.name} with prompt:`, prompt)
 
-      // now call the agent through the executor
-      const executor = new AgentWorkflowExecutor(this.config, this.workspaceId, this.agent)
-      const run = await executor.run('workflow', prompt, this.opts)
+      // select executor based on agent type and pass appropriate opts
+      const run = this.agent.source === 'a2a'
+        ? await new AgentA2AExecutor(this.config, this.workspaceId, this.agent).run('workflow', prompt, this.opts.a2aOpts)
+        : await new AgentWorkflowExecutor(this.config, this.workspaceId, this.agent).run('workflow', prompt, this.opts.workflowOpts)
       
       if (run.status === 'success') {
 

@@ -1,8 +1,8 @@
-import { LlmEngine, LlmCompletionOpts, LlmChunk, LlmResponse, Model } from 'multi-llm-ts'
+import { LlmChunk, LlmCompletionOpts, LlmEngine, LlmResponse, Model } from 'multi-llm-ts'
+import Message from '../models/message'
 import { Configuration, EngineConfig } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
-import { t , i18nInstructions } from './i18n'
-import Message from '../models/message'
+import { i18nInstructions, t } from './i18n'
 
 export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title' | 'generation_done'
 
