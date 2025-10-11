@@ -5,6 +5,7 @@ import Message from '../models/message'
 import { Configuration } from '../types/config'
 import { A2APromptOpts, AgentRun, AgentRunTrigger } from '../types/index'
 import A2AClient from './a2a-client'
+import AgentExecutorBase from './agent_executor_base'
 import { GenerationCallback, GenerationResult, LlmChunkCallback } from './generator'
 import { t } from './i18n'
 
@@ -17,33 +18,10 @@ export interface AgentA2AExecutorOpts {
   abortSignal?: AbortSignal
 }
 
-export default class AgentA2AExecutor {
-
-  config: Configuration
-  workspaceId: string
-  agent: Agent
+export default class AgentA2AExecutor extends AgentExecutorBase {
 
   constructor(config: Configuration, workspaceId: string, agent: Agent) {
-    this.config = config
-    this.workspaceId = workspaceId
-    this.agent = agent
-  }
-
-  private checkAbort(run: AgentRun, opts?: AgentA2AExecutorOpts): boolean {
-    if (opts?.abortSignal?.aborted) {
-      run.status = 'canceled'
-      run.updatedAt = Date.now()
-      if (!opts?.ephemeral) {
-        this.saveRun(run)
-      }
-      if (opts?.chat) {
-        opts.chat.lastMessage().appendText({
-          type: 'content', text: '', done: true
-        })
-      }
-      return true
-    }
-    return false
+    super(config, workspaceId, agent)
   }
 
   async run(trigger: AgentRunTrigger, prompt?: string, opts?: AgentA2AExecutorOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
@@ -210,13 +188,6 @@ ${chunk.content}
       throw error
     }
 
-  }
-
-  private saveRun(run: AgentRun): void {
-    window.api.agents.saveRun(this.workspaceId, {
-      ...run,
-      messages: run.messages.map(m => JSON.parse(JSON.stringify(m))),
-    })
   }
 
 }
