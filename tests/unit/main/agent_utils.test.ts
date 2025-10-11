@@ -4,13 +4,13 @@ import { generateWebhookToken, findAgentByWebhookToken, AgentExecutor } from '..
 import * as workspaceModule from '../../../src/main/workspace'
 import * as agentsModule from '../../../src/main/agents'
 import * as configModule from '../../../src/main/config'
-import Runner from '../../../src/services/runner'
+import AgentWorkflowExecutor from '../../../src/services/agent_executor_workflow'
 
 // Mock dependencies
 vi.mock('../../../src/main/workspace')
 vi.mock('../../../src/main/agents')
 vi.mock('../../../src/main/config')
-vi.mock('../../../src/services/runner')
+vi.mock('../../../src/services/agent_executor_workflow')
 vi.mock('../../../src/main/interpreter', () => ({
   runPython: vi.fn()
 }))
@@ -190,7 +190,7 @@ test('findAgentByWebhookToken searches all workspaces', () => {
   expect(agentsModule.loadAgents).toHaveBeenCalledWith(mockApp, 'workspace-3')
 })
 
-test('AgentExecutor sets up mocks and calls Runner', async () => {
+test('AgentExecutor sets up mocks and calls AgentWorkflowExecutor', async () => {
   const mockAgent = {
     uuid: 'agent-1',
     name: 'Test Agent'
@@ -202,12 +202,12 @@ test('AgentExecutor sets up mocks and calls Runner', async () => {
     status: 'success'
   }
 
-  const mockRunner = {
+  const mockExecutor = {
     run: vi.fn().mockResolvedValue(mockRun)
   }
 
   // @ts-expect-error mocking
-  Runner.mockImplementation(() => mockRunner)
+  AgentWorkflowExecutor.mockImplementation(() => mockExecutor)
 
   const mockConfig = {
     general: { locale: 'en-US' },
@@ -225,8 +225,8 @@ test('AgentExecutor sets up mocks and calls Runner', async () => {
   const executor = new AgentExecutor(mockApp, mockMcp)
   const result = await executor.runAgent('workspace-1', mockAgent, 'webhook', 'Test prompt')
 
-  expect(Runner).toHaveBeenCalledWith(mockConfig, 'workspace-1', mockAgent)
-  expect(mockRunner.run).toHaveBeenCalledWith('webhook', 'Test prompt', expect.objectContaining({
+  expect(AgentWorkflowExecutor).toHaveBeenCalledWith(mockConfig, 'workspace-1', mockAgent)
+  expect(mockExecutor.run).toHaveBeenCalledWith('webhook', 'Test prompt', expect.objectContaining({
     model: undefined,
     runId: undefined
   }))

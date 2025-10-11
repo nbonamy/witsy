@@ -43,11 +43,11 @@ import PromptBuilder from '../components/PromptBuilder.vue'
 import Dialog from '../composables/dialog'
 import Agent from '../models/agent'
 import A2AClient from '../services/a2a-client'
+import AgentWorkflowExecutor from '../services/agent_executor_workflow'
 import { t } from '../services/i18n'
-import AgentRunner from '../services/runner'
 import { store } from '../services/store'
-import { AgentType } from '../types/index'
 import { FileContents } from '../types/file'
+import { AgentType } from '../types/index'
 
 defineProps({
   extra: Object
@@ -154,8 +154,8 @@ const editAgent = (agent: Agent) => {
 const runAgent = (agent: Agent, opts?: Record<string, string>) => {
   running.value = agent
   builder.value.show(agent.steps[0].prompt, opts || {}, async (prompt: string) => {
-    const runner = new AgentRunner(store.config, store.workspace.uuid, agent)
-    await runner.run('manual', prompt)
+    const executor = new AgentWorkflowExecutor(store.config, store.workspace.uuid, agent)
+    await executor.run('manual', prompt)
     running.value = null
   })
 }

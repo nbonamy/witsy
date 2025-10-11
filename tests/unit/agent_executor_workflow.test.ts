@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
-import Runner, { RunnerCompletionOpts } from '../../src/services/runner'
+import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../../src/services/agent_executor_workflow'
 import Generator from '../../src/services/generator'
 import Agent from '../../src/models/agent'
 import Chat from '../../src/models/chat'
@@ -53,7 +53,7 @@ vi.mock('../../src/plugins/plugins.ts', () => {
 
 const spyGenerate = vi.spyOn(Generator.prototype, 'generate')
 
-let runner: Runner|null = null
+let executor: AgentWorkflowExecutor|null = null
 let testAgent: Agent
 
 const createTestAgent = (overrides: Partial<Agent> = {}): Agent => {
@@ -79,12 +79,12 @@ const createTestAgent = (overrides: Partial<Agent> = {}): Agent => {
 const runAgent = async (
   trigger: AgentRunTrigger = 'manual',
   prompt?: string,
-  opts: Partial<RunnerCompletionOpts> = {},
+  opts: Partial<AgentWorkflowExecutorOpts> = {},
   generationCallback?: (event: string) => void
 ): Promise<AgentRun> => {
 
   // Default options
-  const defaultOpts: RunnerCompletionOpts = {
+  const defaultOpts: AgentWorkflowExecutorOpts = {
     engine: 'mock',
     model: 'chat',
     ephemeral: true,
@@ -92,7 +92,7 @@ const runAgent = async (
   }
 
   // Run the agent
-  const run = await runner!.run(trigger, prompt, defaultOpts, generationCallback)
+  const run = await executor!.run(trigger, prompt, defaultOpts, generationCallback)
   
   // Wait for completion if not ephemeral
   if (!defaultOpts.ephemeral) {
@@ -133,14 +133,14 @@ beforeEach(() => {
   // Create test agent
   testAgent = createTestAgent()
 
-  // Create runner
-  runner = new Runner(store.config, '123', testAgent)
+  // Create executor
+  executor = new AgentWorkflowExecutor(store.config, '123', testAgent)
 })
 
-test('Runner Creation', () => {
-  expect(runner).not.toBeNull()
-  expect(runner!.agent).toBe(testAgent)
-  expect(runner!.llmManager).toBeDefined()
+test('AgentWorkflowExecutor Creation', () => {
+  expect(executor).not.toBeNull()
+  expect(executor!.agent).toBe(testAgent)
+  expect(executor!.llmManager).toBeDefined()
 })
 
 test('Basic Agent Run - Success', async () => {
@@ -243,21 +243,21 @@ test('Agent Run with Streaming Disabled', async () => {
   // Check if generate was called with streaming: false
   const generateCalls = spyGenerate.mock.calls
   if (generateCalls.length > 0) {
-    const params = generateCalls[0][2] as RunnerCompletionOpts
+    const params = generateCalls[0][2] as AgentWorkflowExecutorOpts
     expect(params.streaming).toBe(false)
   }
 })
 
 test('Agent Run with Streaming Enabled', async () => {
   testAgent.disableStreaming = false
-  
+
   const run = await runAgent('manual', 'Streaming test')
 
   expect(run.status).toBe('success')
   // Check if generate was called with streaming: true
   const generateCalls = spyGenerate.mock.calls
   if (generateCalls.length > 0) {
-    const params = generateCalls[0][2] as RunnerCompletionOpts
+    const params = generateCalls[0][2] as AgentWorkflowExecutorOpts
     expect(params.streaming).toBe(true)
   }
 })
@@ -316,7 +316,7 @@ test('Agent Run with Structured Output', async () => {
   // Check if generate was called with structuredOutput
   const generateCalls = spyGenerate.mock.calls
   if (generateCalls.length > 0) {
-    const params = generateCalls[0][2] as RunnerCompletionOpts
+    const params = generateCalls[0][2] as AgentWorkflowExecutorOpts
     expect(params.structuredOutput).toBeDefined()
   }
 })
@@ -427,7 +427,7 @@ test('Agent Run with Model Options', async () => {
   // Check if generate was called with model options
   const generateCalls = spyGenerate.mock.calls
   if (generateCalls.length > 0) {
-    const params = generateCalls[0][2] as RunnerCompletionOpts
+    const params = generateCalls[0][2] as AgentWorkflowExecutorOpts
     expect(params.temperature).toBe(0.8)
     expect(params.maxTokens).toBe(100)
   }
@@ -475,19 +475,19 @@ test('Agent Run with Chat Model Options', async () => {
   // Agent model options should override chat model options
   const generateCalls = spyGenerate.mock.calls
   if (generateCalls.length > 0) {
-    const params = generateCalls[0][2] as RunnerCompletionOpts
+    const params = generateCalls[0][2] as AgentWorkflowExecutorOpts
     expect(params.temperature).toBe(0.9)
   }
 })
 
-test('Runner aborts when abortSignal is aborted before first step', async () => {
+test('AgentWorkflowExecutor aborts when abortSignal is aborted before first step', async () => {
   const abortController = new AbortController()
 
   // Abort before starting
   abortController.abort()
 
   // Start the run with aborted signal
-  const run = await runner!.run('manual', 'Abort test', {
+  const run = await executor!.run('manual', 'Abort test', {
     model: 'chat',
     streaming: true,
     abortSignal: abortController.signal
@@ -497,7 +497,7 @@ test('Runner aborts when abortSignal is aborted before first step', async () => 
   expect(run.status).toBe('canceled')
 })
 
-test('Runner aborts between multi-step execution', async () => {
+test('AgentWorkflowExecutor aborts between multi-step execution', async () => {
   testAgent.steps = [
     { prompt: 'Step 1', tools: null, agents: [] },
     { prompt: 'Step 2', tools: null, agents: [] },
@@ -521,7 +521,7 @@ test('Runner aborts between multi-step execution', async () => {
     return 'success'
   })
 
-  const run = await runner!.run('manual', 'Multi-step abort test', {
+  const run = await executor!.run('manual', 'Multi-step abort test', {
     model: 'chat',
     abortSignal: abortController.signal
   })
@@ -531,7 +531,7 @@ test('Runner aborts between multi-step execution', async () => {
   expect(run.messages).toHaveLength(3) // system + step1 user + step1 assistant
 })
 
-test('Runner aborts before docrepo query', async () => {
+test('AgentWorkflowExecutor aborts before docrepo query', async () => {
   testAgent.steps[0].docrepo = 'test-repo'
   const abortController = new AbortController()
 
@@ -541,7 +541,7 @@ test('Runner aborts before docrepo query', async () => {
   // Abort before run starts
   abortController.abort()
 
-  const run = await runner!.run('manual', 'Docrepo abort test', {
+  const run = await executor!.run('manual', 'Docrepo abort test', {
     model: 'chat',
     abortSignal: abortController.signal
   })
@@ -550,14 +550,14 @@ test('Runner aborts before docrepo query', async () => {
   expect(window.api.docrepo.query).not.toHaveBeenCalled()
 })
 
-test('Runner aborts before tool loading', async () => {
+test('AgentWorkflowExecutor aborts before tool loading', async () => {
   testAgent.steps[0].tools = ['search_internet']
   const abortController = new AbortController()
 
   // Abort before run starts
   abortController.abort()
 
-  const run = await runner!.run('manual', 'Tools abort test', {
+  const run = await executor!.run('manual', 'Tools abort test', {
     model: 'chat',
     abortSignal: abortController.signal
   })
@@ -567,7 +567,7 @@ test('Runner aborts before tool loading', async () => {
   expect(spyGenerate).not.toHaveBeenCalled()
 })
 
-test('Runner aborts before titling', async () => {
+test('AgentWorkflowExecutor aborts before titling', async () => {
   const chat = new Chat()
   const abortController = new AbortController()
 
@@ -580,7 +580,7 @@ test('Runner aborts before titling', async () => {
     return 'success'
   })
 
-  const run = await runner!.run('manual', 'Titling abort test', {
+  const run = await executor!.run('manual', 'Titling abort test', {
     model: 'chat',
     chat,
     abortSignal: abortController.signal
