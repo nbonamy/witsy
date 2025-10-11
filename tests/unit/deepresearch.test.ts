@@ -11,7 +11,7 @@ import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
 import SearchPlugin from '../../src/plugins/search'
 import Generator from '../../src/services/generator'
-import Runner, { RunnerCompletionOpts } from '../../src/services/runner'
+import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../../src/services/agent_executor_workflow'
 import { AgentRun, AgentRunTrigger } from '../../src/types'
 import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
 
@@ -33,8 +33,8 @@ vi.mock('../../src/services/llm_utils', () => {
   }
 })
 
-// Mock Runner properly
-vi.mock('../../src/services/runner', () => {
+// Mock AgentWorkflowExecutor properly
+vi.mock('../../src/services/agent_executor_workflow', () => {
   return {
     default: vi.fn()
   }
@@ -102,8 +102,8 @@ beforeEach(() => {
   
   vi.clearAllMocks()
   
-  // Setup Runner mock
-  const mockRunnerInstance = {
+  // Setup AgentWorkflowExecutor mock
+  const mockExecutorInstance = {
     run: vi.fn((workflow, prompt) => {
       // Determine which agent is being called based on the prompt content
       if (prompt.includes('Plan the research report structure')) {
@@ -119,7 +119,7 @@ beforeEach(() => {
   }
   
   // @ts-expect-error mock
-  vi.mocked(Runner).mockImplementation(() => mockRunnerInstance)
+  vi.mocked(AgentWorkflowExecutor).mockImplementation(() => mockExecutorInstance)
   
   // Setup SearchPlugin mock
   // @ts-expect-error mock
@@ -388,11 +388,11 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
     stop: vi.fn()
   }))
 
-  // Mock Runner with detailed tracking and realistic responses
+  // Mock AgentWorkflowExecutor with detailed tracking and realistic responses
   // @ts-expect-error mock
-  vi.mocked(Runner).mockImplementation((config: Configuration, workspaceId: string, agent: Agent) => {
+  vi.mocked(AgentWorkflowExecutor).mockImplementation((config: Configuration, workspaceId: string, agent: Agent) => {
     return {
-      run: vi.fn().mockImplementation(async (trigger: AgentRunTrigger, prompt: string, options: RunnerCompletionOpts) => {
+      run: vi.fn().mockImplementation(async (trigger: AgentRunTrigger, prompt: string, options: AgentWorkflowExecutorOpts) => {
         const agentName = agent.name
         executionLog.push(`agent:${agentName}`)
         agentCalls.push({ agent: agentName, prompt, options })
@@ -490,8 +490,8 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
     expect(executionLog).toContain(step)
   })
 
-  // Verify Runner was called the expected number of times
-  expect(Runner).toHaveBeenCalledTimes(7) // 1 planning + 2 analysis + 2 writer + 1 synthesis + 1 title = 7
+  // Verify AgentWorkflowExecutor was called the expected number of times
+  expect(AgentWorkflowExecutor).toHaveBeenCalledTimes(7) // 1 planning + 2 analysis + 2 writer + 1 synthesis + 1 title = 7
 
   // Verify agent call sequence
   const agentCallSequence = agentCalls.map(call => call.agent)
@@ -533,14 +533,14 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
 
 test('DeepResearchMultiStep JSON parsing error handling', async () => {
   // Override the mock for this specific test
-  const mockRunnerInstance = {
+  const mockExecutorInstance = {
     run: vi.fn().mockResolvedValue({
       messages: [new Message('assistant', 'Invalid JSON response')]
     })
   }
   
   // @ts-expect-error mock
-  vi.mocked(Runner).mockImplementation(() => mockRunnerInstance)
+  vi.mocked(AgentWorkflowExecutor).mockImplementation(() => mockExecutorInstance)
   
   const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
   const chat = new Chat()
@@ -581,12 +581,12 @@ test('DeepResearchMultiStep abort handling', async () => {
   })
 
   // Override the mock to simulate a long-running operation
-  const mockRunnerInstance = {
+  const mockExecutorInstance = {
     run: vi.fn().mockImplementation(() => runPromise)
   }
 
   // @ts-expect-error mock
-  vi.mocked(Runner).mockImplementation(() => mockRunnerInstance)
+  vi.mocked(AgentWorkflowExecutor).mockImplementation(() => mockExecutorInstance)
 
   // Start the run operation
   const resultPromise = deepResearch.run(mockEngine, chat, optsWithSignal)

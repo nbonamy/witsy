@@ -1,11 +1,11 @@
 
-import { Agent, anyDict } from '../types/index'
-import { Configuration } from '../types/config'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
-import Plugin from './plugin'
+import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../services/agent_executor_workflow'
 import { t } from '../services/i18n'
 import { extractPromptInputs, replacePromptInputs } from '../services/prompt'
-import Runner, { RunnerCompletionOpts } from '../services/runner'
+import { Configuration } from '../types/config'
+import { Agent, anyDict } from '../types/index'
+import Plugin from './plugin'
 
 const kStoreIdPrefix = 'storeId:'
 
@@ -14,7 +14,7 @@ export interface AgentStorage {
   retrieve: (key: string) => Promise<any>
 }
 
-export type AgentPluginOpts = RunnerCompletionOpts & {
+export type AgentPluginOpts = AgentWorkflowExecutorOpts & {
   storeData?: boolean
   retrieveData?: boolean
 }
@@ -156,9 +156,9 @@ export default class extends Plugin {
       const prompt = replacePromptInputs(this.agent.steps[0].prompt || '', parameters)
       //console.log(`Running agent ${this.agent.name} with prompt:`, prompt)
 
-      // now call the agent through the runner
-      const runner = new Runner(this.config, this.workspaceId, this.agent)
-      const run = await runner.run('workflow', prompt, this.opts)
+      // now call the agent through the executor
+      const executor = new AgentWorkflowExecutor(this.config, this.workspaceId, this.agent)
+      const run = await executor.run('workflow', prompt, this.opts)
       
       if (run.status === 'success') {
 

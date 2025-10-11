@@ -1,10 +1,10 @@
 import { App } from 'electron'
+import AgentWorkflowExecutor from '../services/agent_executor_workflow'
 import { Agent, AgentRun, AgentRunTrigger } from '../types/index'
-import { listWorkspaces } from './workspace'
 import { loadAgents } from './agents'
-import Runner from '../services/runner'
-import Mcp from './mcp'
 import { LlmContext } from './llm_utils'
+import Mcp from './mcp'
+import { listWorkspaces } from './workspace'
 
 /**
  * Generate a unique 8-character alphanumeric webhook token for an agent
@@ -84,9 +84,9 @@ export class AgentExecutor extends LlmContext {
     // Initialize LLM context (global mock + i18n)
     const config = this.initializeContext()
 
-    // Create runner and execute
-    const runner = new Runner(config, workspaceId, agent)
-    return await runner.run(trigger, prompt, { runId, model: agent.model } )
+    // Create executor and execute
+    const executor = new AgentWorkflowExecutor(config, workspaceId, agent)
+    return await executor.run(trigger, prompt, { runId, model: agent.model } )
   }
 
 }

@@ -20,7 +20,7 @@ vi.mock('../../src/main/interpreter')
 vi.mock('../../src/main/i18n')
 vi.mock('../../src/main/search')
 vi.mock('../../src/main/workspace')
-vi.mock('../../src/services/runner')
+vi.mock('../../src/services/agent_executor_workflow')
 vi.mock('../../src/services/i18n')
 
 // Mock CronExpressionParser

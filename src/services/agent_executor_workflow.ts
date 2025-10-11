@@ -1,22 +1,22 @@
 
-import { A2APromptOpts, AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
-import { DocRepoQueryResponseItem } from '../types/rag'
-import { Configuration } from '../types/config'
 import { LlmChunk, LlmChunkContent, LlmEngine, MultiToolPlugin } from 'multi-llm-ts'
-import { getLlmLocale, i18nInstructions, setLlmLocale, t } from './i18n'
-import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, GenerationCallback } from './generator'
 import LlmFactory, { ILlmManager } from '../llms/llm'
+import Agent from '../models/agent'
+import Message from '../models/message'
+import AgentPlugin from '../plugins/agent'
 import { availablePlugins } from '../plugins/plugins'
 import { replacePromptInputs } from '../services/prompt'
 import { processJsonSchema } from '../services/schema'
 import { store } from '../services/store'
-import LlmUtils from './llm_utils'
-import Agent from '../models/agent'
-import Message from '../models/message'
-import AgentPlugin from '../plugins/agent'
+import { Configuration } from '../types/config'
+import { A2APromptOpts, AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
+import { DocRepoQueryResponseItem } from '../types/rag'
 import A2AClient from './a2a-client'
+import Generator, { GenerationCallback, GenerationOpts, GenerationResult, LlmChunkCallback } from './generator'
+import { getLlmLocale, i18nInstructions, setLlmLocale, t } from './i18n'
+import LlmUtils from './llm_utils'
 
-export interface RunnerCompletionOpts extends GenerationOpts {
+export interface AgentWorkflowExecutorOpts extends GenerationOpts {
   runId?: string
   ephemeral?: boolean
   engine?: string
@@ -47,7 +47,7 @@ export const isAgentConversation = (chat: Chat): Agent|null => {
 
 }
 
-export default class extends Generator {
+export default class AgentWorkflowExecutor extends Generator {
 
   llmManager: ILlmManager
   llmUtils: LlmUtils
@@ -64,7 +64,7 @@ export default class extends Generator {
     this.agent = agent
   }
 
-  private checkAbort(run: AgentRun, opts?: RunnerCompletionOpts): boolean {
+  private checkAbort(run: AgentRun, opts?: AgentWorkflowExecutorOpts): boolean {
     if (opts?.abortSignal?.aborted) {
       run.status = 'canceled'
       run.updatedAt = Date.now()
@@ -81,7 +81,7 @@ export default class extends Generator {
     return false
   }
 
-  async run(trigger: AgentRunTrigger, prompt?: string, opts?: RunnerCompletionOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
+  async run(trigger: AgentRunTrigger, prompt?: string, opts?: AgentWorkflowExecutorOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
 
     // create a run
     const run: AgentRun = {
@@ -395,7 +395,7 @@ export default class extends Generator {
 
   }
 
-  private async prompt(run: AgentRun, opts: RunnerCompletionOpts): Promise<GenerationResult> {
+  private async prompt(run: AgentRun, opts: AgentWorkflowExecutorOpts): Promise<GenerationResult> {
 
     return await this.generate(this.llm, [
       run.messages[0],                       // instructions
@@ -425,7 +425,7 @@ export default class extends Generator {
     })
   }
 
-  private async runA2A(run: AgentRun, opts: RunnerCompletionOpts): Promise<GenerationResult> {
+  private async runA2A(run: AgentRun, opts: AgentWorkflowExecutorOpts): Promise<GenerationResult> {
 
     try {
     

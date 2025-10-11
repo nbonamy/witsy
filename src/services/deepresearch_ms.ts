@@ -1,11 +1,11 @@
 
-import { Configuration } from '../types/config'
 import { LlmChunkTool, LlmEngine, addUsages } from 'multi-llm-ts'
+import Chat from '../models/chat'
+import SearchPlugin, { SearchResultItem } from '../plugins/search'
+import { Configuration } from '../types/config'
+import AgentWorkflowExecutor from './agent_executor_workflow'
 import * as dr from './deepresearch'
 import { GenerationResult } from './generator'
-import SearchPlugin, { SearchResultItem } from '../plugins/search'
-import Chat from '../models/chat'
-import Runner from './runner'
 import LlmUtils from './llm_utils'
 
 type ResearchSection = {
@@ -62,7 +62,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       response.addToolCall(planningToolCall)
         
       // we start by running the planning agent
-      const planner = new Runner(this.config, this.workspaceId, dr.planningAgent)
+      const planner = new AgentWorkflowExecutor(this.config, this.workspaceId, dr.planningAgent)
       const run = await planner.run('workflow', dr.planningAgent.buildPrompt(0, {
         userQuery: researchTopic,
         numSections: opts.breadth,
@@ -182,7 +182,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
         sections.map(async (section: ResearchSection, index: number) => {
 
           // now we can run the analysis agent on the results
-          const analyzer = new Runner(this.config, this.workspaceId, dr.analysisAgent)
+          const analyzer = new AgentWorkflowExecutor(this.config, this.workspaceId, dr.analysisAgent)
           const analysis = await analyzer.run('workflow', dr.analysisAgent.buildPrompt(0, {
             sectionObjective: section.description,
             rawInformation: searchResults[index].reduce((acc, result) => acc + `\n${result.title}\n${result.content}\n`, ''),
@@ -213,7 +213,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
           }
 
           // now we can run the section agent to generate the section content
-          const sectionGenerator = new Runner(this.config, this.workspaceId, dr.writerAgent)
+          const sectionGenerator = new AgentWorkflowExecutor(this.config, this.workspaceId, dr.writerAgent)
           const sectionContent = await sectionGenerator.run('workflow', dr.writerAgent.buildPrompt(0, {
             sectionNumber: index + 1,
             sectionTitle: section.title,
@@ -243,7 +243,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       response.transient = true
 
       // run agents
-      const synthesis = new Runner(this.config, this.workspaceId, dr.synthesisAgent)
+      const synthesis = new AgentWorkflowExecutor(this.config, this.workspaceId, dr.synthesisAgent)
       const execSummary = await synthesis.run('workflow', dr.synthesisAgent.buildPrompt(0, {
         researchTopic: researchTopic,
         keyLearnings: allKeyLearnings.join('\n'),
@@ -259,8 +259,8 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       const status5 = await llmUtils.generateStatusUpdate(this.engine.getId(), this.model, `Generating title for the report`)
       response.appendText({ type: 'content', text: status5 + '\n\n', done: false })
       response.transient = true
-      const titleRunner = new Runner(this.config, this.workspaceId, dr.titleAgent)
-      const titleResult = await titleRunner.run('workflow', dr.titleAgent.buildPrompt(0, {
+      const titleExecutor = new AgentWorkflowExecutor(this.config, this.workspaceId, dr.titleAgent)
+      const titleResult = await titleExecutor.run('workflow', dr.titleAgent.buildPrompt(0, {
         researchTopic: researchTopic,
         keyLearnings: allKeyLearnings,
       }), { ephemeral: true, ...opts })

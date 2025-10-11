@@ -11,31 +11,29 @@
 <script setup lang="ts">
 
 import { LlmChunkContent } from 'multi-llm-ts'
-import { strDict, Agent, A2APromptOpts } from '../types'
-import { MenuBarMode } from '../components/MenuBar.vue'
-import { ref, onMounted, nextTick, watch } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import { saveFileContents } from '../services/download'
-import { SendPromptParams } from '../components/Prompt.vue'
-import Dialog from '../composables/dialog'
-import useTipsManager from '../composables/tips_manager'
-import ChatSidebar from '../components/ChatSidebar.vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import ChatArea from '../components/ChatArea.vue'
+import ChatSidebar from '../components/ChatSidebar.vue'
+import { MenuBarMode } from '../components/MenuBar.vue'
+import { SendPromptParams } from '../components/Prompt.vue'
 import PromptBuilder from '../components/PromptBuilder.vue'
-import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
-import AgentPicker from './AgentPicker.vue'
-import { GenerationEvent } from '../services/generator'
-import Assistant from '../services/assistant'
-import AgentRunner, { isAgentConversation } from '../services/runner'
-import Message from '../models/message'
-import Chat from '../models/chat'
-import LlmFactory from '../llms/llm'
-import LlmUtils from '../services/llm_utils'
-
-// bus
+import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
-import { exec } from 'child_process'
+import useTipsManager from '../composables/tips_manager'
+import LlmFactory from '../llms/llm'
+import Chat from '../models/chat'
+import Message from '../models/message'
+import AgentWorkflowExecutor, { isAgentConversation } from '../services/agent_executor_workflow'
+import Assistant from '../services/assistant'
+import { saveFileContents } from '../services/download'
+import { GenerationEvent } from '../services/generator'
+import { t } from '../services/i18n'
+import LlmUtils from '../services/llm_utils'
+import { store } from '../services/store'
+import { A2APromptOpts, Agent, strDict } from '../types'
+import AgentPicker from './AgentPicker.vue'
+import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
+
 const { onEvent, emitEvent } = useEventBus()
 
 // init stuff
@@ -607,8 +605,8 @@ const runAgent = async (agent: Agent, prompt: string, a2aContext?: A2APromptOpts
   abortController = new AbortController()
 
   // now we can run it with streaming
-  const runner = new AgentRunner(store.config, store.workspace.uuid, agent)
-  await runner.run('manual', prompt, {
+  const executor = new AgentWorkflowExecutor(store.config, store.workspace.uuid, agent)
+  await executor.run('manual', prompt, {
     streaming: true,
     ephemeral: false,
     model: assistant.value.chat.model,
