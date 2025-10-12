@@ -69,11 +69,11 @@
 
 import { ChevronDownIcon, ChevronUpIcon, LightbulbIcon, PlugIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
+import useEventBus from '../composables/event_bus'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { Agent } from '../types/index'
+import { Agent } from '../types/agents'
 import HomeShortcut from './HomeShortcut.vue'
-import useEventBus from '../composables/event_bus'
 
 type Shortcut = {
   name: string

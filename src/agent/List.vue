@@ -68,13 +68,13 @@
 import { EyeIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
 import { PropType, onMounted, onUnmounted, ref, watch } from 'vue'
 import LogoA2A from '../../assets/a2a.svg?component'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import SpinningIcon from '../components/SpinningIcon.vue'
 import { useTimeAgo } from '../composables/ago'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { Agent, AgentRun } from '../types/index'
-import ButtonIcon from '../components/ButtonIcon.vue'
+import { Agent, AgentRun } from '../types/agents'
 
 const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'export', 'importA2A', 'importJson'])
 

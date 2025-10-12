@@ -1,6 +1,6 @@
 
 import { Size } from 'electron'
-import { Attachment as IAttachmentBase, Message as IMessageBase, LlmChunk, LlmChunkTool, LlmModelOpts, LlmStructuredOutput, LlmTool, LlmUsage, PluginParameter } from 'multi-llm-ts'
+import { Attachment as IAttachmentBase, Message as IMessageBase, LlmChunk, LlmChunkTool, LlmModelOpts, LlmTool, LlmUsage } from 'multi-llm-ts'
 import { Application, RunCommandParams } from './automation'
 import { Configuration } from './config'
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './file'
@@ -9,6 +9,7 @@ import { ToolSelection } from './llm'
 import { McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from './mcp'
 import { DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
 import { Workspace, WorkspaceHeader } from './workspace'
+import { A2APromptOpts, Agent, AgentRun } from './agents'
 
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
@@ -86,11 +87,6 @@ export interface Message extends IMessageBase {
   delete(): void
 }
 
-export type A2APromptOpts = {
-  currentTaskId?: string
-  currentContextId?: string
-}
-
 export type CustomInstruction = {
   id: string
   label: string
@@ -125,70 +121,6 @@ export interface Chat {
   lastMessage(): Message
   subtitle(): string
   delete(): void
-}
-
-export type AgentSource = 'witsy' | 'a2a'
-export type AgentType = 'runnable' | 'support'
-
-export const kAgentStepVarOutputPrefix = 'output.'
-export const kAgentStepVarFacts = 'facts'
-
-export type AgentStepStructuredOutput = LlmStructuredOutput
-
-export type AgentStep = {
-  // engine: string|null
-  // model: string|null
-  // modelOpts: LlmModelOpts|null
-  // disableStreaming: boolean
-  description?: string
-  prompt?: string
-  tools?: string[]|null
-  agents?: string[]
-  docrepo?: string
-  jsonSchema?: string
-  structuredOutput?: AgentStepStructuredOutput
-}
-
-export interface Agent {
-  uuid: string
-  source: AgentSource
-  createdAt: number
-  updatedAt: number
-  name: string
-  description: string
-  type: AgentType
-  engine: string|null
-  model: string|null
-  modelOpts: LlmModelOpts|null
-  disableStreaming: boolean
-  locale: string|null
-  instructions: string
-  parameters: PluginParameter[]
-  steps: AgentStep[]
-  schedule: string|null
-  webhookToken: string|null
-  invocationValues: Record<string, string>
-  buildPrompt: (step: number, parameters: anyDict) => string|null
-  getPreparationDescription?: () => string
-  getRunningDescription?: (args: any) => string
-  getCompletedDescription?: (args: any, results: any) => string
-  getErrorDescription?: (args: any, results: any) => string
-}
-
-export type AgentRunTrigger = 'manual' | 'schedule' | 'webhook' | 'workflow'
-export type AgentRunStatus = 'running' | 'success' | 'canceled' | 'error'
-
-export type AgentRun = {
-  uuid: string
-  agentId: string
-  createdAt: number
-  updatedAt: number
-  trigger: AgentRunTrigger
-  status: AgentRunStatus
-  prompt: string
-  error?: string
-  messages: Message[]
-  toolCalls: ToolCall[]
 }
 
 export type Folder = {

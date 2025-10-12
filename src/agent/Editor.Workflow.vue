@@ -141,7 +141,7 @@
 
 <script setup lang="ts">
 import { BlocksIcon, BracesIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
-import { PropType, ref, watch, computed } from 'vue'
+import { computed, PropType, ref, watch } from 'vue'
 import AgentIcon from '../../assets/agent.svg?component'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import ToolsMenu from '../components/ToolsMenu.vue'
@@ -154,7 +154,7 @@ import { t } from '../services/i18n'
 import { extractPromptInputs } from '../services/prompt'
 import { processJsonSchema } from '../services/schema'
 import { store } from '../services/store'
-import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from '../types/index'
+import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from '../types/agents'
 import { McpServerWithTools, McpToolUnique } from '../types/mcp'
 
 const props = defineProps({
@@ -365,7 +365,7 @@ const toggleAgent = (agentId: string) => {
   if (index === -1) {
     props.agent.steps[agentsMenuStepIndex.value].agents = [...currentAgents, agentId]
   } else {
-    props.agent.steps[agentsMenuStepIndex.value].agents = currentAgents.filter(id => id !== agentId)
+    props.agent.steps[agentsMenuStepIndex.value].agents = currentAgents.filter((id: string) => id !== agentId)
   }
 }
 

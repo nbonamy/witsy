@@ -1,6 +1,6 @@
 import { App } from 'electron'
 import { createAgentExecutor } from '../services/agent_utils'
-import { Agent, AgentRun, AgentRunTrigger } from '../types/index'
+import { Agent, AgentRun, AgentRunTrigger } from '../types/agents'
 import { loadAgents } from './agents'
 import { LlmContext } from './llm_utils'
 import Mcp from './mcp'

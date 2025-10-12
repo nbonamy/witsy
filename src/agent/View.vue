@@ -45,16 +45,16 @@
 
 <script setup lang="ts">
 
-import { Agent, AgentRun } from '../types/index'
-import { ref, PropType, onMounted, watch, onUnmounted } from 'vue'
+import { ChevronLeftIcon } from 'lucide-vue-next'
+import { PropType, onMounted, onUnmounted, ref, watch } from 'vue'
+import ContextMenuPlus from '../components/ContextMenuPlus.vue'
+import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import Dialog from '../composables/dialog'
-import Info from './Info.vue'
+import { Agent, AgentRun } from '../types/agents'
 import History from './History.vue'
+import Info from './Info.vue'
 import Run from './Run.vue'
-import ContextMenuPlus from '../components/ContextMenuPlus.vue'
-import { ChevronLeftIcon } from 'lucide-vue-next'
 
 const runs = ref<AgentRun[]>([])
 const selection = ref<AgentRun[]>([])

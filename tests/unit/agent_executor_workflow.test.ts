@@ -3,12 +3,13 @@ import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
+import { AgentRun, AgentRunTrigger } from '../../src/types/agents'
 import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../../src/services/agent_executor_workflow'
 import Generator from '../../src/services/generator'
 import Agent from '../../src/models/agent'
 import Chat from '../../src/models/chat'
-import { AgentRun, AgentRunTrigger } from '../../src/types'
 import LlmMock, { installMockModels } from '../mocks/llm'
+
 
 // Mock dependencies
 vi.mock('../../src/llms/manager.ts', async () => {
@@ -361,8 +362,8 @@ test('Agent Run with Tool Calls', async () => {
   spyGenerate.mockImplementation(async (llm, messages, opts, callback) => {
     // Simulate tool calls via callback
     if (callback) {
-      callback({ type: 'tool', id: 'tool1', name: 'test_tool', call: { params: { test: 'param' }, result: null }, done: false })
-      callback({ type: 'tool', id: 'tool1', name: 'test_tool', call: { params: { test: 'param' }, result: 'tool result' }, done: true })
+      callback({ type: 'tool', id: 'tool1', name: 'test_tool', state:'running', call: { params: { test: 'param' }, result: null }, done: false })
+      callback({ type: 'tool', id: 'tool1', name: 'test_tool', state:'running', call: { params: { test: 'param' }, result: 'tool result' }, done: true })
       callback({ type: 'content', text: 'Final response', done: true })
     }
     return 'success'
@@ -709,4 +710,81 @@ test('Agent Run with Docrepo - Second Step Uses Output Variable', async () => {
   const secondStepMessage = run.messages[3]
   expect(secondStepMessage.content).toContain('Summary based on analysis')
   expect(secondStepMessage.content).toContain('instructions.agent.docquery')
+})
+
+test('Agent delegates to llmManager.loadTools', async () => {
+
+  installMockModels()
+
+  // Spy on llmManager.loadTools to verify it's called
+  const mockLoadTools = vi.spyOn(executor!['llmManager'], 'loadTools')
+
+  // Create a test agent that specifies certain tools
+  testAgent.steps = [{
+    prompt: 'Test prompt',
+    tools: ['plugin1', 'plugin2', 'tool1'],
+    agents: [],
+  }]
+
+  const run = await runAgent('manual', 'Test prompt')
+
+  // Verify llmManager.loadTools was called with correct arguments
+  expect(mockLoadTools).toHaveBeenCalledWith(
+    expect.any(Object), // engine (LlmEngine instance)
+    expect.any(String), // workspaceId
+    {},                 // availablePlugins (mocked as {})
+    ['plugin1', 'plugin2', 'tool1'] // tools
+  )
+
+  expect(run.status).toBe('success')
+})
+
+test('Agent loads all tools when tools is null', async () => {
+
+  installMockModels()
+
+  const mockLoadTools = vi.spyOn(executor!['llmManager'], 'loadTools')
+
+  testAgent.steps = [{
+    prompt: 'Test prompt',
+    tools: null,
+    agents: [],
+  }]
+
+  const run = await runAgent('manual', 'Test prompt')
+
+  // Verify llmManager.loadTools was called with null (load all)
+  expect(mockLoadTools).toHaveBeenCalledWith(
+    expect.any(Object),
+    expect.any(String),
+    {},
+    null
+  )
+
+  expect(run.status).toBe('success')
+})
+
+test('Agent loads no tools when tools is empty array', async () => {
+
+  installMockModels()
+
+  const mockLoadTools = vi.spyOn(executor!['llmManager'], 'loadTools')
+
+  testAgent.steps = [{
+    prompt: 'Test prompt',
+    tools: [],
+    agents: [],
+  }]
+
+  const run = await runAgent('manual', 'Test prompt')
+
+  // Verify llmManager.loadTools was called with empty array (load none)
+  expect(mockLoadTools).toHaveBeenCalledWith(
+    expect.any(Object),
+    expect.any(String),
+    {},
+    []
+  )
+
+  expect(run.status).toBe('success')
 })

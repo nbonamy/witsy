@@ -46,8 +46,8 @@ import A2AClient from '../services/a2a-client'
 import AgentWorkflowExecutor from '../services/agent_executor_workflow'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
+import { AgentType } from '../types/agents'
 import { FileContents } from '../types/file'
-import { AgentType } from '../types/index'
 
 defineProps({
   extra: Object

@@ -1,5 +1,5 @@
 
-import { A2APromptOpts } from '../types/index'
+import { A2APromptOpts } from '../types/agents'
 import { Message, MessageSendParams, Task, TaskArtifactUpdateEvent, TaskStatusUpdateEvent } from '@a2a-js/sdk'
 import Agent from '../models/agent'
 // @ts-expect-error unknown why this is a linting error

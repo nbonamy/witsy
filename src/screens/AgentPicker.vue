@@ -34,7 +34,7 @@ import ModalDialog from '../components/ModalDialog.vue'
 import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { Agent } from '../types/index'
+import { Agent } from '../types/agents'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()

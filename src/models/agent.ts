@@ -1,7 +1,7 @@
 
 import { LlmModelOpts, PluginParameter } from 'multi-llm-ts'
-import { AgentSource, AgentType, Agent as AgentBase, AgentStep } from '../types/index'
 import { extractPromptInputs, replacePromptInputs } from '../services/prompt'
+import { Agent as AgentBase, AgentSource, AgentStep, AgentType } from '../types/agents'
 
 export default class Agent implements AgentBase {
 

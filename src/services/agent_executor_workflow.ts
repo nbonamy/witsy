@@ -1,14 +1,12 @@
 
-import { LlmChunk, LlmEngine, MultiToolPlugin } from 'multi-llm-ts'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import { LlmChunk, LlmEngine } from 'multi-llm-ts'
 import Agent from '../models/agent'
 import Message from '../models/message'
-import AgentPlugin from '../plugins/agent'
-import { availablePlugins } from '../plugins/plugins'
 import { replacePromptInputs } from '../services/prompt'
 import { processJsonSchema } from '../services/schema'
+import { AgentRun, AgentRunTrigger, AgentStep } from '../types/agents'
 import { Configuration } from '../types/config'
-import { AgentRun, AgentRunTrigger, AgentStep, Chat } from '../types/index'
+import { Chat } from '../types/index'
 import { DocRepoQueryResponseItem } from '../types/rag'
 import AgentExecutorBase from './agent_executor_base'
 import Generator, { GenerationCallback, GenerationOpts, GenerationResult, LlmChunkCallback } from './generator'
@@ -26,14 +24,12 @@ export interface AgentWorkflowExecutorOpts extends GenerationOpts {
 
 export default class AgentWorkflowExecutor extends AgentExecutorBase {
 
-  llmManager: ILlmManager
   llmUtils: LlmUtils
   llm: LlmEngine|null
 
   constructor(config: Configuration, workspaceId: string, agent: Agent) {
     super(config, workspaceId, agent)
     this.llm = null
-    this.llmManager = LlmFactory.manager(config)
     this.llmUtils = new LlmUtils(config)
   }
 
@@ -161,60 +157,8 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
           return run
         }
 
-        // make sure llm has latest tools
-        this.llm.clearPlugins()
-        const multiPluginsAdded: Record<string, MultiToolPlugin> = {}
-        for (const pluginName in availablePlugins) {
-          
-          const pluginClass = availablePlugins[pluginName]
-          const plugin = new pluginClass(this.config.plugins[pluginName], this.workspaceId)
-
-          // if no filters add
-          if (step.tools === null) {
-            this.llm.addPlugin(plugin)
-            continue
-          }
-
-          // single-tool plugins is easy
-          if (!(plugin instanceof MultiToolPlugin)) {
-            if (step.tools.includes(plugin.getName())) {
-              this.llm.addPlugin(plugin)
-            }
-            continue
-          }
-
-          // multi-tool plugins are more complex
-          const pluginTools = await plugin.getTools()
-          for (const pluginTool of pluginTools) {
-            if (step.tools.includes(pluginTool.function.name)) {
-
-              let instance = multiPluginsAdded[pluginName]
-              if (!instance) {
-                instance = plugin
-                this.llm.addPlugin(instance)
-                multiPluginsAdded[pluginName] = instance
-              }
-
-              // enable this tool
-              instance.enableTool(pluginTool.function.name)
-            }
-
-          }
-
-        }
-
-        // and now add tools for running agents
-        const agents = [
-          ...window.api.agents.load(this.workspaceId),
-          ...(opts?.agents || [])
-        ]
-        for (const agentId of step.agents) {
-          const agent = agents.find((a: Agent) => a.uuid === agentId)
-          if (agent) {
-            const plugin = new AgentPlugin(this.config, this.workspaceId, agent, agent.engine || opts.engine, agent.model || opts.model)
-            this.llm.addPlugin(plugin)
-          }
-        }
+        // load tools for this step
+        await this.loadToolsAndAgents(this.llm, step.tools, step.agents, opts)
 
         // should we provide status updates
         const provideStatusUpdates = (this.agent.steps.length > 1 || step.description?.trim()?.length)
