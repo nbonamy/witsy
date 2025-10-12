@@ -191,7 +191,6 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
   workspaceId: string
   agent: Agent
   llm: any
-  toolAbortChunk: LlmChunkToolAbort | null = null
 
   // Tool management
   private toolCatalog: ToolCatalog | null = null
@@ -621,13 +620,8 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
         }
       }
 
-      const { rc, message: response } = await this.prompt(partitionId, messages[0], messages[messages.length - 1], agent.steps[0].tools || [], wrappedOpts)
-      if (rc === 'error' && this.toolAbortChunk) {
-        this.toolAbortions.push(this.toolAbortChunk)
-        console.warn(`[deepresearch_al] Tool '${this.toolAbortChunk.name}' aborted for action: ${decision.nextAction}`)
-        console.warn(`[deepresearch_al] Abort reason:`, this.toolAbortChunk.reason)
-        return
-      } else if (response === null) {
+      const { message: response } = await this.prompt(partitionId, messages[0], messages[messages.length - 1], agent.steps[0].tools || [], wrappedOpts)
+      if (response === null) {
         console.warn(`[deepresearch_al] Agent execution failed for: ${decision.nextAction}`)
         return // Continue to next iteration
       }
@@ -689,9 +683,6 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
 
   private async prompt(partitionId: string, instructions: Message, prompt: Message, tools: string[], opts: DeepResearchALCompletionOpts): Promise<PromptResponse> {
 
-    // generator
-    const generator = new Generator(this.config)
-
     // llm
     const llm = this.llmManager.igniteEngine(opts.engine)
 
@@ -711,6 +702,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
     // response message
     const response: Message = new Message('assistant', '')
 
+    const generator = new Generator(this.config)
     const rc = await generator.generate(this.llm, [
       instructions,
       prompt,
