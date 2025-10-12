@@ -291,6 +291,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
       let done = false
       let rc: GenerationResult = 'success'
       let researchPlan = '' // Will be set once plan is created
+      const iterationHistory: string[] = [] // Track all iterations for context
 
       try {
 
@@ -314,6 +315,11 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
             ? memoryList.map(it => `- id: ${it.id}, title: "${it.title}"`).join('\n')
             : 'No work completed yet'
 
+          // Build iteration history context
+          const historyText = iterationHistory.length > 0
+            ? iterationHistory.join('\n')
+            : 'No previous iterations yet (this is the first decision)'
+
           // Build reflection context
           const reflectionContext = this.buildReflectionContext()
 
@@ -334,8 +340,10 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
             .replace('{{userRequest}}', userRequest)
             .replace('{{memoryList}}', memoryText)
             .replace('{{researchPlan}}', researchPlan)
+            .replace('{{iterationHistory}}', historyText)
             .replace('{{previousReflections}}', reflectionContext)
 
+          window.localStorage.setItem(`prompt_${iteration}`, decisionPrompt)
           messages.push(new Message('user', decisionPrompt))
 
           // Call main agent to decide next action
@@ -385,6 +393,9 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
 
           // Execute the action
           await this.executeAction(partitionId, messages, opts, chatMessage, iteration, decision)
+
+          // Record this iteration in history
+          iterationHistory.push(`#${iteration}: ${decision.nextAction || decision.agentName} (agent: ${decision.agentName})`)
 
           // If planning agent just ran, extract the plan
           if (decision.agentName === 'planning' && !researchPlan) {
@@ -670,7 +681,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
     }
 
     // Store in memory with metadata
-    const title = `Iteration #${iteration}. ${decision.nextAction}: ${JSON.stringify(cleanParams)}`
+    const title = `#${iteration}. ${agent.name}: ${JSON.stringify(cleanParams)}`
     const metadata: Partial<StoreItem> = {
       agentName: agent.name,
       componentType: componentType,
@@ -1022,7 +1033,12 @@ Examples:
   ],
   steps: [{
     prompt: `User research request: {{userRequest}}
+
 {{researchPlan}}
+
+Previous iterations:
+{{iterationHistory}}
+
 Memory (completed work):
 {{memoryList}}
 
@@ -1044,11 +1060,11 @@ mainLoopAgent.steps[0].structuredOutput = {
   name: 'research_decision',
   structure: z.object({
     status: z.enum(['continue', 'done']).describe("Status: continue with work or done (complete)"),
-    nextAction: z.string().optional().describe("Human-readable description of next action"),
-    agentName: z.string().optional().describe("Which deepresearch agent to call: planning, search, analysis, writer, title, or synthesis"),
-    agentParamsJson: z.string().optional().describe("JSON string containing parameters to pass to the agent. Can include '_relevantMemory' field. Example: {\"userQuery\":\"...\",\"_relevantMemory\":[\"id1\"]}"),
+    nextAction: z.string().nullable().optional().describe("Human-readable description of next action"),
+    agentName: z.string().nullable().optional().describe("Which deepresearch agent to call: planning, search, analysis, writer, title, or synthesis"),
+    agentParamsJson: z.string().nullable().optional().describe("JSON string containing parameters to pass to the agent. Can include '_relevantMemory' field. Example: {\"userQuery\":\"...\",\"_relevantMemory\":[\"id1\"]}"),
     reasoning: z.string().describe("Explanation of decision and current progress"),
-    estimatedRemaining: z.number().optional().describe("Estimated number of remaining actions (helps with progress tracking)"),
-    deliveryMessage: z.string().optional().describe("Summary message when status='done'")
+    estimatedRemaining: z.number().nullable().optional().describe("Estimated number of remaining actions (helps with progress tracking)"),
+    deliveryMessage: z.string().nullable().optional().describe("Summary message when status='done'")
   })
 }
