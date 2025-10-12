@@ -66,7 +66,7 @@ import ButtonIcon from '../components/ButtonIcon.vue'
 import MessageItemBody from '../components/MessageItemBody.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { AgentRun } from '../types/index'
+import { AgentRun } from '../types/agents'
 
 const props = defineProps({
   agentId: {

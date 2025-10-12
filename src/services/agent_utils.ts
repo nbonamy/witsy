@@ -1,10 +1,11 @@
-import { Configuration } from '../types/config'
-import { AgentRun, AgentRunTrigger, Chat } from '../types/index'
-import { store } from './store'
 import Agent from '../models/agent'
-import AgentWorkflowExecutor from './agent_executor_workflow'
+import { AgentRun, AgentRunTrigger } from '../types/agents'
+import { Configuration } from '../types/config'
+import { Chat } from '../types/index'
 import AgentA2AExecutor from './agent_executor_a2a'
+import AgentWorkflowExecutor from './agent_executor_workflow'
 import { GenerationCallback } from './generator'
+import { store } from './store'
 
 export interface AgentExecutor {
   run(trigger: AgentRunTrigger, prompt?: string, opts?: any, generationCallback?: GenerationCallback): Promise<AgentRun>

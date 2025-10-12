@@ -57,7 +57,7 @@ import { PropType, computed } from 'vue';
 import ButtonIcon from '../components/ButtonIcon.vue';
 import { useTimeAgo } from '../composables/ago';
 import { t } from '../services/i18n';
-import { Agent, AgentRun } from '../types/index';
+import { Agent, AgentRun } from '../types/agents';
 
 const timeAgo = useTimeAgo()
 

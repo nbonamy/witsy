@@ -55,7 +55,7 @@ import { PencilIcon, PlayIcon, Trash2Icon } from 'lucide-vue-next'
 import { PropType, computed } from 'vue'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import { t } from '../services/i18n'
-import { Agent, AgentRun } from '../types/index'
+import { Agent, AgentRun } from '../types/agents'
 
 const props = defineProps({
   agent: {

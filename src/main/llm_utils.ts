@@ -1,13 +1,14 @@
 import { App } from 'electron'
-import { Agent, AgentRun, anyDict } from '../types/index'
+import { initI18n } from '../services/i18n'
+import { Agent, AgentRun } from '../types/agents'
 import { Configuration } from '../types/config'
+import { anyDict } from '../types/index'
 import { loadAgents, saveAgentRun } from './agents'
+import { loadSettings } from './config'
 import { getLocaleMessages } from './i18n'
 import { runPython } from './interpreter'
-import LocalSearch from './search'
 import Mcp from './mcp'
-import { initI18n } from '../services/i18n'
-import { loadSettings } from './config'
+import LocalSearch from './search'
 
 /**
  * Base class for LLM operations that need global mocks and i18n
