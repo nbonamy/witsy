@@ -2301,6 +2301,7 @@
       },
       "runtime": "Tipo de investigación profunda",
       "runtimes": {
+        "al": "Bucle Agente (orquestación autónoma de agentes)",
         "ma": "Multi-agente (completo, dirigido por LLM)",
         "ms": "Multietapa (código/agent híbrido, impulsado por @:{'common.appName'})"
       }

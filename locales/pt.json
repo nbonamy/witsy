@@ -2323,6 +2323,7 @@
       },
       "runtime": "Tipo de Pesquisa Profunda",
       "runtimes": {
+        "al": "Loop Agente (orquestração de agente autônomo)",
         "ma": "Multi-agente (totalmente agentivo, conduzido por LLM)",
         "ms": "Multietapas (código/agente híbrido, conduzido pelo @:{'common.appName'})"
       }

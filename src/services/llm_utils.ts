@@ -270,4 +270,68 @@ Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Statu
     return instr
   }
 
+  async evaluateOutput(
+    engine: string,
+    model: string,
+    agentGoal: string,
+    taskPrompt: string,
+    output: string
+  ): Promise<{ quality: 'pass' | 'fail', feedback: string }> {
+
+    const evaluationInstructions = `You are a quality evaluator for autonomous agent outputs.
+
+Evaluate if the output meets the requirements specified in the agent goal and task prompt.
+
+Check for:
+1. COMPLETENESS: Does it fulfill all requirements from the agent goal?
+2. RELEVANCE: Does it properly address the task prompt?
+3. FORMAT: Does it follow any format/structure requirements from the agent goal?
+4. SUBSTANCE: Is it meaningful content (not just meta-commentary like "I will do X")?
+5. LENGTH: Does it meet any length requirements specified in the agent goal?
+
+Return a JSON object with:
+{
+  "quality": "pass" or "fail",
+  "feedback": "Brief explanation of why it passed or failed"
+}
+
+Be strict but fair. If the output is genuinely incomplete, wrong format, or lacks substance, mark it as fail with specific feedback.`
+
+    const evaluationPrompt = `Agent Goal: ${agentGoal}
+
+Task Prompt: ${taskPrompt}
+
+Output to Evaluate:
+${output.substring(0, 10000)}
+
+Evaluate this output and return your assessment as JSON.`
+
+    try {
+      const result = await this.run(engine, model, 'simple', evaluationInstructions, evaluationPrompt)
+
+      // Parse JSON response
+      let parsed: any
+      try {
+        // Remove markdown code blocks if present
+        let cleaned = result.trim()
+        if (cleaned.startsWith('```')) {
+          cleaned = cleaned.split('\n').slice(1, -1).join('\n')
+        }
+        parsed = JSON.parse(cleaned)
+      } catch {
+        // If parsing fails, assume pass (don't block on evaluation errors)
+        console.warn('[llm_utils] Failed to parse quality evaluation, assuming pass')
+        return { quality: 'pass', feedback: 'Evaluation parse error, assuming pass' }
+      }
+
+      return {
+        quality: parsed.quality === 'fail' ? 'fail' : 'pass',
+        feedback: parsed.feedback || 'No feedback provided'
+      }
+    } catch (error) {
+      console.warn('[llm_utils] Quality evaluation error:', error)
+      return { quality: 'pass', feedback: 'Evaluation error, assuming pass' }
+    }
+  }
+
 }

@@ -2301,6 +2301,7 @@
       },
       "runtime": "Tipo di ricerca approfondita",
       "runtimes": {
+        "al": "Loop Agente (orchestrazione autonoma degli agenti)",
         "ma": "Multi-agente (completamente agentico, guidato da LLM)",
         "ms": "Multifase (ibrido codice/agente, guidato da @:{'common.appName'})"
       }

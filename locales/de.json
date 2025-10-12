@@ -2301,6 +2301,7 @@
       },
       "runtime": "Typ der Tiefenrecherche",
       "runtimes": {
+        "al": "Agentic Loop (autonome Agenten-Orchestrierung)",
         "ma": "Multi-Agent (voll agentenbasiert, LLM-gesteuert)",
         "ms": "Mehrstufig (Hybrid-Code/Agent, @:{'common.appName'}-gesteuert)"
       }
