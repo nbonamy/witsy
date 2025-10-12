@@ -2323,6 +2323,7 @@
       },
       "runtime": "Typ głębokich badań",
       "runtimes": {
+        "al": "Agentic Loop (autonomiczna orkiestracja agenta)",
         "ma": "Multi-agent (pełny agentyczny, napędzany LLM)",
         "ms": "Wielokrotny krok (hybrydowy kod/agent, sterowany przez @:{'common.appName'})"
       }

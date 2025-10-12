@@ -1415,6 +1415,7 @@
   "settings.deepResearch.runtime": "Deep Research type",
   "settings.deepResearch.runtimes.ma": "Multi-agent (full agentic, LLM-driven)",
   "settings.deepResearch.runtimes.ms": "Multi-step (hybrid code/agent, @:{'common.appName'}-driven)",
+  "settings.deepResearch.runtimes.al": "Agentic Loop (autonomous agent orchestration)",
   "settings.engines.anthropic.aboutModels": "More about Anthropic models",
   "settings.engines.anthropic.pricing": "Anthropic pricing",
   "settings.engines.apiKey": "API key",

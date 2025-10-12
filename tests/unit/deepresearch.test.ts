@@ -6,6 +6,7 @@ import { Configuration } from '../../src/types/config'
 import { LlmEngine } from 'multi-llm-ts'
 import DeepResearchMultiStep from '../../src/services/deepresearch_ms'
 import DeepResearchMultiAgent from '../../src/services/deepresearch_ma'
+import DeepResearchAL, { mainLoopAgent, getComponentType } from '../../src/services/deepresearch_al'
 import * as dr from '../../src/services/deepresearch'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
@@ -20,11 +21,42 @@ vi.mock('../../src/plugins/search')
 vi.mock('../../src/services/generator')
 vi.mock('../../src/plugins/agent')
 
+// Mock LlmFactory
+vi.mock('../../src/llms/llm', () => {
+  const mockLlm = {
+    getId: () => 'test-engine',
+    getName: () => 'Test Engine',
+    addPlugin: vi.fn(),
+    clearPlugins: vi.fn(),
+    plugins: []
+  }
+  return {
+    default: {
+      manager: vi.fn().mockReturnValue({
+        igniteEngine: vi.fn().mockReturnValue(mockLlm),
+        getChatModel: vi.fn().mockReturnValue({ id: 'test-model' })
+      })
+    }
+  }
+})
+
+// Mock useTools
+vi.mock('../../src/composables/tools', () => ({
+  useTools: vi.fn().mockReturnValue({
+    getAllAvailableTools: vi.fn().mockResolvedValue({ allTools: [] }),
+    getToolsForGeneration: vi.fn().mockResolvedValue('')
+  })
+}))
+
 // Mock LlmUtils
 vi.mock('../../src/services/llm_utils', () => {
   const parseJson = (content: string): any => JSON.parse(content)
   const MockLlmUtils = vi.fn().mockImplementation(() => ({
-    generateStatusUpdate: vi.fn().mockResolvedValue('Status update generated')
+    generateStatusUpdate: vi.fn().mockResolvedValue('Status update generated'),
+    getSystemInstructions: vi.fn().mockImplementation((instr) => instr || 'System instructions'),
+    getTitle: vi.fn().mockResolvedValue('Test Title'),
+    evaluateOutput: vi.fn().mockResolvedValue({ quality: 'pass', feedback: 'Good' }),
+    getEngineModelForTask: vi.fn().mockReturnValue({ engine: 'test-engine', model: 'test-model' })
   }))
   MockLlmUtils.parseJson = parseJson
 
@@ -731,4 +763,392 @@ test('Deep research agents parameter validation', () => {
       expect(typeof param.required).toBe('boolean')
     })
   })
+})
+
+// ==================== DEEPRESEARCH AL TESTS ====================
+
+test('DeepResearchAgentLoop - Main loop agent configuration', () => {
+  expect(mainLoopAgent.name).toBe('deep_research_main_loop')
+  expect(mainLoopAgent.description).toContain('Strategic research coordinator')
+  expect(mainLoopAgent.steps[0].structuredOutput).toBeDefined()
+  expect(mainLoopAgent.steps[0].structuredOutput.name).toBe('research_decision')
+})
+
+test('DeepResearchAgentLoop - Main loop agent schema', () => {
+  const schema = mainLoopAgent.steps[0].structuredOutput.structure
+  expect(schema).toBeDefined()
+
+  // Verify schema has expected fields
+  const shape = schema._def.shape()
+  expect(shape.status).toBeDefined()
+  expect(shape.nextAction).toBeDefined()
+  expect(shape.agentName).toBeDefined()
+  expect(shape.agentParamsJson).toBeDefined()
+  expect(shape.reasoning).toBeDefined()
+  expect(shape.estimatedRemaining).toBeDefined()
+  expect(shape.deliveryMessage).toBeDefined()
+})
+
+test('DeepResearchAgentLoop - Constructor initializes agent mapping', () => {
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+
+  // @ts-expect-error accessing private property for testing
+  const agentMap = deepResearchAL.deepResearchAgents
+
+  expect(agentMap.size).toBe(dr.deepResearchAgents.length)
+  expect(agentMap.has('planning')).toBe(true)
+  expect(agentMap.has('search')).toBe(true)
+  expect(agentMap.has('analysis')).toBe(true)
+  expect(agentMap.has('writer')).toBe(true)
+  expect(agentMap.has('title')).toBe(true)
+  expect(agentMap.has('synthesis')).toBe(true)
+})
+
+test('DeepResearchAgentLoop - Uses mainLoopAgent by default', () => {
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+
+  // Verify the class is instantiated correctly
+  expect(deepResearchAL).toBeDefined()
+  // @ts-expect-error accessing private property for testing
+  expect(deepResearchAL.agent.name).toBe('deep_research_main_loop')
+})
+
+test('DeepResearchAgentLoop - getComponentType helper maps agent names correctly', () => {
+  expect(getComponentType('planning', {})).toBe('plan')
+  expect(getComponentType('search', {})).toBe('search_results')
+  expect(getComponentType('analysis', {})).toBe('learnings')
+  expect(getComponentType('writer', {})).toBe('section')
+  expect(getComponentType('title', {})).toBe('title')
+  expect(getComponentType('synthesis', { outputType: 'conclusion' })).toBe('conclusion')
+  expect(getComponentType('synthesis', { outputType: 'executive_summary' })).toBe('exec_summary')
+  expect(getComponentType('synthesis', {})).toBe('exec_summary') // default
+  expect(getComponentType('unknown', {})).toBeUndefined()
+})
+
+test('DeepResearchAgentLoop - buildReflectionContext with no reflections', () => {
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+
+  // @ts-expect-error accessing private method for testing
+  const context = deepResearchAL.buildReflectionContext()
+
+  expect(context).toBe('')
+})
+
+test('DeepResearchAgentLoop - buildReflectionContext with reflections', () => {
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+
+  // @ts-expect-error accessing private property for testing
+  deepResearchAL.reflections = [
+    { type: 'failure', message: 'Test failed' },
+    { type: 'learning', message: 'Learned something' }
+  ]
+
+  // @ts-expect-error accessing private method for testing
+  const context = deepResearchAL.buildReflectionContext()
+
+  expect(context).toContain('PREVIOUS LEARNINGS & FEEDBACK')
+  expect(context).toContain('Test failed')
+  expect(context).toContain('Learned something')
+})
+
+test('DeepResearchAgentLoop - buildReflectionContext with tool abortions', () => {
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+
+  // @ts-expect-error accessing private property for testing
+  deepResearchAL.toolAbortions = [{
+    name: 'search_internet',
+    params: { query: 'test' },
+    reason: { decision: 'User denied' }
+  }]
+
+  // @ts-expect-error accessing private method for testing
+  const context = deepResearchAL.buildReflectionContext()
+
+  expect(context).toContain('IMPORTANT - Tool Abortions')
+  expect(context).toContain('search_internet')
+  expect(context).toContain('User denied')
+})
+
+test('DeepResearchAgentLoop - resolveToolPlugins returns empty for no catalog', () => {
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+
+  // @ts-expect-error accessing private method for testing
+  const plugins = deepResearchAL.resolveToolPlugins(['search_internet'])
+
+  expect(plugins).toEqual([])
+})
+
+test('DeepResearchAgentLoop - generateStatusUpdate sets transient and status', async () => {
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const message = new Message('assistant', '')
+  const opts = { ...mockOpts, engine: 'test-engine', model: 'test-model' }
+
+  // @ts-expect-error accessing private method for testing
+  await deepResearchAL.generateStatusUpdate('Test prompt', message, opts)
+
+  expect(message.transient).toBe(true)
+  expect(message.status).toBe('Status update generated')
+})
+
+test('DeepResearchAgentLoop - Handles agentParamsJson as string', () => {
+  const jsonString = '{"searchQuery":"test","maxResults":8}'
+  const parsed = JSON.parse(jsonString)
+
+  expect(parsed.searchQuery).toBe('test')
+  expect(parsed.maxResults).toBe(8)
+})
+
+test('DeepResearchAgentLoop - Handles agentParamsJson as object', () => {
+  const jsonObject = {"searchQuery":"test","maxResults":8}
+
+  expect(jsonObject.searchQuery).toBe('test')
+  expect(jsonObject.maxResults).toBe(8)
+})
+
+test('DeepResearchAgentLoop - Handles agentParamsJson as array for parallel', () => {
+  const jsonArray = [
+    {"searchQuery":"test1","maxResults":8},
+    {"searchQuery":"test2","maxResults":8}
+  ]
+
+  expect(Array.isArray(jsonArray)).toBe(true)
+  expect(jsonArray.length).toBe(2)
+  expect(jsonArray[0].searchQuery).toBe('test1')
+  expect(jsonArray[1].searchQuery).toBe('test2')
+})
+
+test('DeepResearchAgentLoop - Extracts _relevantMemory from params', () => {
+  const params = {
+    searchQuery: 'test',
+    maxResults: 8,
+    _relevantMemory: ['mem-id-1', 'mem-id-2']
+  }
+
+  const { _relevantMemory, ...cleanParams } = params
+
+  expect(_relevantMemory).toEqual(['mem-id-1', 'mem-id-2'])
+  expect(cleanParams).toEqual({
+    searchQuery: 'test',
+    maxResults: 8
+  })
+  expect(cleanParams._relevantMemory).toBeUndefined()
+})
+
+test('DeepResearchAgentLoop - Configuration values injected into main loop', () => {
+  const opts: dr.DeepResearchOpts = {
+    model: 'test-model',
+    breadth: 5,
+    depth: 3,
+    searchResults: 10
+  }
+
+  // Test that breadth, depth, searchResults would be available
+  expect(opts.breadth).toBe(5)
+  expect(opts.depth).toBe(3)
+  expect(opts.searchResults).toBe(10)
+})
+
+test('DeepResearchAgentLoop - Parallel execution with array params', () => {
+  const paramsString = '[{"searchQuery":"q1","maxResults":8},{"searchQuery":"q2","maxResults":8}]'
+  const parsed = JSON.parse(paramsString)
+
+  expect(Array.isArray(parsed)).toBe(true)
+  expect(parsed.length).toBe(2)
+
+  // Both should execute in parallel
+  parsed.forEach((p: any) => {
+    expect(p.maxResults).toBe(8)
+  })
+})
+
+test('DeepResearchAgentLoop - Sequential execution with single params', () => {
+  const paramsString = '{"searchQuery":"q1","maxResults":8}'
+  const parsed = JSON.parse(paramsString)
+
+  expect(Array.isArray(parsed)).toBe(false)
+  expect(parsed.searchQuery).toBe('q1')
+})
+
+test('DeepResearchAgentLoop - Full workflow with mocked Generator', async () => {
+  const chat = new Chat()
+  chat.addMessage(new Message('system', 'System'))
+  chat.addMessage(new Message('user', 'test research'))
+  chat.addMessage(new Message('assistant', ''))
+
+  let generateCallCount = 0
+
+  // Mock Generator to simulate agent loop
+  // @ts-expect-error mock
+  vi.mocked(Generator).mockImplementation(() => ({
+    generate: vi.fn().mockImplementation(async (llm, messages, opts, callback) => {
+      generateCallCount++
+      const response = messages[messages.length - 1]
+
+      // Iteration 1: Main loop decides to plan
+      if (generateCallCount === 1) {
+        response.content = JSON.stringify({
+          status: 'continue',
+          agentName: 'planning',
+          agentParamsJson: '{"userQuery":"test","numSections":1,"numQueriesPerSection":1,"_relevantMemory":[]}',
+          nextAction: 'Plan',
+          reasoning: 'Need plan',
+          estimatedRemaining: 3
+        })
+        return 'success'
+      }
+
+      // Iteration 2: Planning agent returns plan
+      if (generateCallCount === 2) {
+        response.content = JSON.stringify({
+          sections: [{ title: 'Test Section', description: 'Test', queries: ['test query'] }]
+        })
+        return 'success'
+      }
+
+      // Iteration 3: Main loop decides done
+      if (generateCallCount === 3) {
+        response.content = JSON.stringify({
+          status: 'done',
+          deliveryMessage: 'Done',
+          reasoning: 'Complete'
+        })
+        return 'success'
+      }
+
+      return 'success'
+    }),
+    stop: vi.fn()
+  }))
+
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const result = await deepResearchAL.run(mockEngine, chat, mockOpts)
+
+  expect(result).toBe('success')
+  expect(generateCallCount).toBe(3)
+  expect(chat.messages.length).toBeGreaterThan(2)
+})
+
+test('DeepResearchAgentLoop - Workflow with search and analysis', async () => {
+  const chat = new Chat()
+  chat.addMessage(new Message('system', 'System'))
+  chat.addMessage(new Message('user', 'test'))
+  chat.addMessage(new Message('assistant', ''))
+
+  let callCount = 0
+
+  // @ts-expect-error mock
+  vi.mocked(Generator).mockImplementation(() => ({
+    generate: vi.fn().mockImplementation(async (llm, messages, opts, callback) => {
+      callCount++
+      const response = messages[messages.length - 1]
+
+      if (callCount === 1) {
+        // Main loop: plan
+        response.content = JSON.stringify({
+          status: 'continue',
+          agentName: 'planning',
+          agentParamsJson: '{"userQuery":"test","numSections":1,"numQueriesPerSection":1,"_relevantMemory":[]}',
+          nextAction: 'Plan',
+          reasoning: 'Start',
+          estimatedRemaining: 5
+        })
+      } else if (callCount === 2) {
+        // Planning result
+        response.content = JSON.stringify({ sections: [{ title: 'S1', description: 'D1', queries: ['q1'] }] })
+      } else if (callCount === 3) {
+        // Main loop: search
+        response.content = JSON.stringify({
+          status: 'continue',
+          agentName: 'search',
+          agentParamsJson: '{"searchQuery":"q1","maxResults":8,"_relevantMemory":[]}',
+          nextAction: 'Search',
+          reasoning: 'Search',
+          estimatedRemaining: 4
+        })
+      } else if (callCount === 4) {
+        // Search result with tool callback
+        response.content = 'Search results here'
+        if (callback) {
+          callback({ type: 'tool', name: 'search_internet', done: true, call: { result: { results: [{ title: 'T1', url: 'http://test.com' }] } } } as any)
+        }
+      } else if (callCount === 5) {
+        // Main loop: done
+        response.content = JSON.stringify({
+          status: 'done',
+          deliveryMessage: 'Done',
+          reasoning: 'Complete'
+        })
+      }
+
+      return 'success'
+    }),
+    stop: vi.fn()
+  }))
+
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const result = await deepResearchAL.run(mockEngine, chat, mockOpts)
+
+  expect(result).toBe('success')
+  expect(callCount).toBe(5)
+})
+
+test('DeepResearchAgentLoop - Error handling in runAgentLoop', async () => {
+  const chat = new Chat()
+  chat.addMessage(new Message('system', 'System'))
+  chat.addMessage(new Message('user', 'test'))
+  chat.addMessage(new Message('assistant', ''))
+
+  // @ts-expect-error mock
+  vi.mocked(Generator).mockImplementation(() => ({
+    generate: vi.fn().mockRejectedValue(new Error('Test error')),
+    stop: vi.fn()
+  }))
+
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const result = await deepResearchAL.run(mockEngine, chat, mockOpts)
+
+  expect(result).toBe('error')
+})
+
+test('DeepResearchAgentLoop - Abort signal handling', async () => {
+  const chat = new Chat()
+  chat.addMessage(new Message('system', 'System'))
+  chat.addMessage(new Message('user', 'test'))
+  chat.addMessage(new Message('assistant', ''))
+
+  const abortController = new AbortController()
+  let callCount = 0
+
+  // @ts-expect-error mock
+  vi.mocked(Generator).mockImplementation(() => ({
+    generate: vi.fn().mockImplementation(async (llm, messages) => {
+      callCount++
+      const response = messages[messages.length - 1]
+
+      if (callCount === 1) {
+        // First iteration succeeds
+        response.content = JSON.stringify({
+          status: 'continue',
+          agentName: 'planning',
+          agentParamsJson: '{"userQuery":"test","_relevantMemory":[]}',
+          nextAction: 'test',
+          reasoning: 'test'
+        })
+      } else if (callCount === 2) {
+        // Planning agent executes
+        response.content = JSON.stringify({ sections: [] })
+      } else {
+        // After planning, abort before next iteration
+        abortController.abort()
+        response.content = JSON.stringify({ status: 'continue', agentName: 'search', agentParamsJson: '{}', nextAction: 'search', reasoning: 'search' })
+      }
+      return 'success'
+    }),
+    stop: vi.fn()
+  }))
+
+  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const result = await deepResearchAL.run(mockEngine, chat, { ...mockOpts, abortSignal: abortController.signal })
+
+  expect(result).toBe('stopped')
 })

@@ -111,7 +111,7 @@ export type InstructionsConfig = {
   }
 }
 
-export type DeepResearchRuntime = 'ma' | 'ms'
+export type DeepResearchRuntime = 'ma' | 'ms' | 'al'
 
 export type DeepResearchConfig = {
   runtime: DeepResearchRuntime

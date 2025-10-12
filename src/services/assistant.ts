@@ -12,6 +12,7 @@ import LlmFactory, { ILlmManager } from '../llms/llm'
 import LlmUtils from './llm_utils'
 import DeepResearchMultiAgent from './deepresearch_ma'
 import DeepResearchMultiStep from './deepresearch_ms'
+import DeepResearchAL from './deepresearch_al'
 import { DeepResearch } from './deepresearch'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
@@ -177,8 +178,14 @@ export default class {
       // this.chat.messages[0].content = this.getSystemInstructions(this.chat.messages[0].content)
       // opts = { ...opts, ...dpOpts }
 
-      const useMultiAgent = this.config.deepresearch.runtime === 'ma'
-      this.deepResearch = useMultiAgent ? new DeepResearchMultiAgent(this.config, this.workspaceId) : new DeepResearchMultiStep(this.config, this.workspaceId)
+      const runtime = this.config.deepresearch.runtime
+      if (runtime === 'ma') {
+        this.deepResearch = new DeepResearchMultiAgent(this.config, this.workspaceId)
+      } else if (runtime === 'al') {
+        this.deepResearch = new DeepResearchAL(this.config, this.workspaceId)
+      } else {
+        this.deepResearch = new DeepResearchMultiStep(this.config, this.workspaceId)
+      }
       rc = await this.deepResearch.run(this.llm, this.chat, {
         ...opts,
         breadth: this.config.deepresearch.breadth,
