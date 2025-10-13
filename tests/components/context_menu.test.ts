@@ -899,7 +899,7 @@ describe('ContextMenuPlus System', () => {
       
       // Should default to 0,0 position
       const style = menu.element?.getAttribute('style') || ''
-      expect(style).toContain('0px')
+      expect(style).toContain('transform: translate(-50%, -50%);')
     })
 
     it('handles window scroll offset', async () => {

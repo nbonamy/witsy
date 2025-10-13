@@ -969,6 +969,7 @@ const handleModelSelected = (engine: string, model: string) => {
 }
 
 const onNoEngineAvailable = async () => {
+  console.warn('Prompt: No engines available, showing settings dialog')
   closeModelMenu()
   const rc = await Dialog.show({
     title: t('prompt.noEngineAvailable.title'),

@@ -132,6 +132,9 @@ const availableEngines = computed(() => {
 
 onMounted(() => {
   if (availableEngines.value.length === 0) {
+    console.warn('EngineModelMenu: No available engines found')
+    console.warn('EngineModelMenu: All engines:', llmManager.getChatEngines())
+    console.warn('EngineModelMenu: Workspace models:', store.workspace?.models)
     emit('empty')
   }
 })
