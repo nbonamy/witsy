@@ -1,5 +1,69 @@
 # Command Palette Implementation Plan
 
+## 🎯 IMPLEMENTATION STATUS
+
+### ✅ COMPLETED (Phases 1-2 + Partial Phase 3)
+
+**Phase 1: Command Registry** ✅ 100%
+- ✅ Created `src/services/command_registry.ts` (171 lines)
+- ✅ Created `tests/unit/command_registry.test.ts` (379 lines, 23 tests passing)
+- ✅ Implemented: register, unregister, clear, getAll, getByCategory, search, getRecent, markAsExecuted
+- ✅ Fuzzy search with scoring (exact > starts-with > contains > fuzzy)
+- ✅ Recent commands tracking (max 10, localStorage persistence)
+- ✅ All 23 unit tests passing, lint clean
+
+**Phase 2: Command Palette Component** ✅ 100%
+- ✅ Created `src/components/CommandPalette.vue` (277 lines)
+- ✅ Created `tests/components/command_palette.test.ts` (503 lines, 31 tests passing)
+- ✅ Implemented: search input, keyboard nav, recent commands section, alphabetical sorting, disabled states
+- ✅ Keyboard navigation: Arrow Up/Down (skip disabled), Enter (execute), Escape (close)
+- ✅ Mouse support: hover to select, click to execute
+- ✅ Scroll management with scrollIntoView
+- ✅ All 31 component tests passing, lint clean
+
+**Phase 3: IPC & Shortcuts** ✅ 60%
+- ✅ Added `COMMAND_PALETTE.OPEN` to `src/ipc_consts.ts`
+- ✅ Added `commandPalette.onOpen()/offOpen()` to `src/preload.ts`
+- ⏳ **NEXT**: Register global shortcut in main process
+- ⏳ **NEXT**: Add to ShortcutsConfig type in `src/types/config.ts`
+- ⏳ **NEXT**: Add default to `defaults/settings.json`
+- ⏳ **NEXT**: Run full test suite
+
+**Test Results**: 2166/2166 passing (2112 existing + 54 new), 0 lint errors
+
+### 🚧 IN PROGRESS - Resume Here
+
+**Next Immediate Steps**:
+1. Find shortcut registration pattern in codebase
+2. Complete Phase 3: shortcuts + config
+3. Run tests
+4. Start Phase 4: integration
+
+### ⏳ TODO (Phases 3-5)
+
+**Phase 3: Complete Shortcuts** (40% remaining)
+- [ ] Find existing shortcut registration code
+- [ ] Register commandPalette shortcut (Cmd/Ctrl+Shift+P) in main process
+- [ ] Update `src/types/config.ts` - add commandPalette to ShortcutsConfig
+- [ ] Update `defaults/settings.json` - add commandPalette default
+- [ ] Run `npm run lint && npm test`
+
+**Phase 4: Integration**
+- [ ] Create initializeCommandRegistry() function with all menu items
+- [ ] Add CommandPalette to Main.vue
+- [ ] Add View menu item
+- [ ] Add translations to locales/en.json
+- [ ] Run full test suite
+
+**Phase 5: Polish**
+- [ ] Manual testing
+- [ ] Refine styling
+- [ ] Documentation
+- [ ] Final tests
+- [ ] Commit
+
+---
+
 ## Overview
 
 Add a VS Code-style command palette to Witsy that provides quick keyboard access to menu items and application actions. This feature will enhance user productivity by allowing keyboard-driven navigation without requiring memorization of individual shortcuts.
