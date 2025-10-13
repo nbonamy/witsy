@@ -136,6 +136,18 @@ contextBridge.exposeInMainWorld(
       run: (params: RunCommandParams): void => { return ipcRenderer.send(IPC.COMMANDS.RUN, JSON.stringify(params)) },
       closePicker: (sourceApp: Application): void => { return ipcRenderer.send(IPC.COMMANDS.PICKER_CLOSE, sourceApp) },
     },
+    commandPalette: {
+      onOpen: (callback: () => void): void => {
+        ipcRenderer.on(IPC.COMMAND_PALETTE.OPEN, callback)
+      },
+      offOpen: (callback?: () => void): void => {
+        if (callback) {
+          ipcRenderer.removeListener(IPC.COMMAND_PALETTE.OPEN, callback)
+        } else {
+          ipcRenderer.removeAllListeners(IPC.COMMAND_PALETTE.OPEN)
+        }
+      }
+    },
     anywhere: {
       prompt: () => { return ipcRenderer.send(IPC.ANYWHERE.PROMPT) },
       close: (sourceApp: Application): void => { return ipcRenderer.send(IPC.ANYWHERE.CLOSE, sourceApp) },

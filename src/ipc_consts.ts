@@ -83,6 +83,10 @@ export const COMMANDS = {
   PICKER_CLOSE: 'command-picker-close',
 } as const;
 
+export const COMMAND_PALETTE = {
+  OPEN: 'command-palette-open',
+} as const;
+
 export const EXPERTS = {
   LOAD: 'experts-load',
   SAVE: 'experts-save',
