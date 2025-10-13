@@ -25,7 +25,7 @@
         <template v-if="llmManager.isFavoriteEngine(engine)">
           <div class="engine-item" v-for="model in getEngineModels(engine)" :key="model.id" @click="handleFavoriteClick(model.id)">
             <EngineLogo :engine="getFavoriteEngine(model.id)" :grayscale="isDarkTheme" :custom-label="false" class="engine-logo" />
-            <span class="engine-name emphasis">{{ getFavoriteModel(model.id).name }}</span>
+            <span class="engine-name emphasis">{{ getFavoriteModel(model.id)?.name || model.id }}</span>
           </div>
           <div class="separator" v-if="llmManager.isFavoriteEngine(engine)">
             <hr />
