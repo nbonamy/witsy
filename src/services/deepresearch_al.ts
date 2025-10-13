@@ -6,12 +6,26 @@ import Agent from '../models/agent'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import { Configuration } from '../types/config'
+import { StorageSingleton, MemoryPlugin, StoreItem } from './agent_storage'
 import * as dr from './deepresearch'
 import Generator, { GenerationResult } from './generator'
 import { getLlmLocale, setLlmLocale, t } from './i18n'
 import LlmUtils from './llm_utils'
 
 const kUseStoredOutputs = false
+
+type SearchResultItem = {
+  title: string
+  url: string
+  content?: string
+}
+
+type StoreItemExtraDeepResearch = {
+  agentName?: string
+  componentType?: 'plan' | 'search_results' | 'learnings' | 'section' | 'title' | 'exec_summary' | 'conclusion'
+  sectionNumber?: number
+  searchResults?: SearchResultItem[]
+}
 
 export interface DeepResearchALCompletionOpts extends dr.DeepResearchOpts {
   qualityReview?: 'all' | 'deliverable' | 'none'
@@ -43,134 +57,12 @@ type PromptResponse = {
   message: Message | null
 }
 
-// ==================== SHARED MEMORY ====================
-
-type SearchResultItem = {
-  title: string
-  url: string
-  content?: string
+// Helper to safely cast StoreItem extra to DeepResearch type
+function getExtra(item: StoreItem): StoreItemExtraDeepResearch | undefined {
+  return item?.extra as StoreItemExtraDeepResearch | undefined
 }
 
-type StoreItem = {
-  title: string
-  body: string
-  agentName?: string
-  componentType?: 'plan' | 'search_results' | 'learnings' | 'section' | 'title' | 'exec_summary' | 'conclusion'
-  sectionNumber?: number
-  searchResults?: SearchResultItem[]
-}
-
-class StorageSingleton {
-
-  private static instance: StorageSingleton
-  private storage: Record<string, Record<string, StoreItem>> = {}
-
-  private constructor() {}
-
-  static getInstance(): StorageSingleton {
-    if (!StorageSingleton.instance) {
-      StorageSingleton.instance = new StorageSingleton()
-    }
-    return StorageSingleton.instance
-  }
-
-  store(partitionId: string, title: string, body: string, metadata?: Partial<StoreItem>): string {
-    while (true) {
-      const partition = this.getPartition(partitionId)
-      const id = crypto.randomUUID().split('-')[0]
-      if (partition[id]) continue
-      console.log('[deepresearch_al] Storing content:', title, metadata?.componentType ? `(${metadata.componentType})` : '')
-      partition[id] = { title, body, ...metadata }
-      window.localStorage.setItem(`memory`, JSON.stringify(this.listTitles(partitionId), null, 2))
-      return id
-    }
-  }
-
-  retrieve(partitionId: string, key: string): StoreItem {
-    console.log('[deepresearch_al] Retrieving content:', key)
-    const partition = this.getPartition(partitionId)
-    const item = partition[key]
-    return item
-  }
-
-  listTitles(partitionId: string): { id: string, title: string }[] {
-    const partition = this.getPartition(partitionId)
-    return Object.keys(partition).map(id => ({
-      id,
-      title: partition[id].title
-    }))
-  }
-
-  clear(partitionId: string): void {
-    delete this.storage[partitionId]
-  }
-
-  // Debug: Get all stored content
-  getAll(partitionId: string): Record<string, StoreItem> {
-    return { ...this.getPartition(partitionId) }
-  }
-
-  private getPartition(partitionId: string): Record<string, StoreItem> {
-    if (!this.storage[partitionId]) {
-      this.storage[partitionId] = {}
-    }
-    return this.storage[partitionId]
-  }
-}
-
-class MemoryPlugin extends Plugin {
-
-  partitionId: string = 'default'
-
-  constructor(partitionId: string) {
-    super()
-    this.partitionId = partitionId
-  }
-
-  setPartitionId(id: string): void {
-    this.partitionId = id
-  }
-
-  getName(): string {
-    return 'short_term_memory'
-  }
-
-  getDescription(): string {
-    return 'Retrieve information by title'
-  }
-
-  getRunningDescription(): string {
-    return ''
-  }
-
-  getParameters(): any[] {
-    return [
-      {
-        name: 'id',
-        type: 'string',
-        description: 'The id of the content to retrieve',
-        required: true
-      }
-    ]
-  }
-
-  async execute(_context: any, params: any): Promise<any> {
-    const { id } = params
-    const storage = StorageSingleton.getInstance()
-    const item = storage.retrieve(this.partitionId, id)
-    if (item) {
-      return item
-    } else {
-      return { error: `No content found for '${id}'` }
-    }
-  }
-
-}
-
-// ==================== DEEPRESEARCH AL CLASS ====================
-
-// Helper to determine component type from agent name and params
-export function getComponentType(agentName: string, params: any): StoreItem['componentType'] {
+export function getComponentType(agentName: string, params: any): StoreItemExtraDeepResearch['componentType'] {
   switch (agentName) {
     case 'planning': return 'plan'
     case 'search': return 'search_results'
@@ -400,7 +292,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
           // If planning agent just ran, extract the plan
           if (decision.agentName === 'planning' && !researchPlan) {
             const allItems = Object.values(memory.getAll(partitionId))
-            const planItem = allItems.find(i => i.componentType === 'plan')
+            const planItem = allItems.find(i => getExtra(i)?.componentType === 'plan')
             if (planItem) {
               researchPlan = `\n\nRESEARCH PLAN (follow this structure):\n${planItem.body}`
               console.log('[deepresearch_al] Research plan extracted and will be included in subsequent decisions')
@@ -682,7 +574,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
 
     // Store in memory with metadata
     const title = `#${iteration}. ${agent.name}: ${JSON.stringify(cleanParams)}`
-    const metadata: Partial<StoreItem> = {
+    const metadata: StoreItemExtraDeepResearch = {
       agentName: agent.name,
       componentType: componentType,
       sectionNumber: cleanParams.sectionNumber,
@@ -762,7 +654,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
     const allItems = Object.values(memory.getAll(partitionId))
 
     // Extract title
-    const titleItem = allItems.find(i => i.componentType === 'title')
+    const titleItem = allItems.find(i => getExtra(i)?.componentType === 'title')
     let reportTitle = 'Research Report'
     if (titleItem) {
       try {
@@ -774,21 +666,21 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
     }
 
     // Extract executive summary
-    const execSummary = allItems.find(i => i.componentType === 'exec_summary')?.body || ''
+    const execSummary = allItems.find(i => getExtra(i)?.componentType === 'exec_summary')?.body || ''
 
     // Extract conclusion
-    const conclusion = allItems.find(i => i.componentType === 'conclusion')?.body || ''
+    const conclusion = allItems.find(i => getExtra(i)?.componentType === 'conclusion')?.body || ''
 
     // Extract sections (sorted by sectionNumber)
     const sections = allItems
-      .filter(i => i.componentType === 'section')
-      .sort((a, b) => (a.sectionNumber || 0) - (b.sectionNumber || 0))
+      .filter(i => getExtra(i)?.componentType === 'section')
+      .sort((a, b) => (getExtra(a)?.sectionNumber || 0) - (getExtra(b)?.sectionNumber || 0))
       .map(i => i.body)
 
     // Extract search results for sources
     const searchResults = allItems
-      .filter(i => i.componentType === 'search_results' && i.searchResults)
-      .flatMap(i => i.searchResults)
+      .filter(i => getExtra(i)?.componentType === 'search_results' && getExtra(i)?.searchResults)
+      .flatMap(i => getExtra(i)?.searchResults || [])
 
     // Assemble the report
     let reportContent = `\n\n<artifact title="${reportTitle}">`
