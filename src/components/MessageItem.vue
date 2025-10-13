@@ -17,8 +17,11 @@
 
       <!-- status -->
       <div class="status-container" v-if="message.status && message.transient">
+        <SpinningIcon :icon="LoaderCircleIcon" :spinning="true" size="xl" class="icon" />
+        <!-- <LoaderCircleIcon class="icon" /> -->
         <span class="status-text">{{ message.status }}</span>
       </div>
+
 
       <!-- attachments -->
       <div class="attachments">
@@ -56,7 +59,7 @@
 
 <script setup lang="ts">
 
-import { BrainIcon } from 'lucide-vue-next'
+import { BrainIcon, LoaderCircleIcon } from 'lucide-vue-next'
 import { computed, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
 import AgentIcon from '../../assets/agent.svg?component'
 import UserAvatar from '../../assets/person.crop.circle.svg?component'
@@ -75,6 +78,7 @@ import MessageItemActions from './MessageItemActions.vue'
 import MessageItemBody from './MessageItemBody.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
+import SpinningIcon from './SpinningIcon.vue'
 // import { getMarkdownSelection } from '../services/markdown'
 
 // events
