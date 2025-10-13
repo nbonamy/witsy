@@ -1,9 +1,10 @@
 <template>
   <Teleport to="body" :disabled="!teleport">
-    <Overlay @click="onOverlay" @contextmenu="onOverlay" />
-    <!-- Hidden chevron template for cloning -->
-    <ChevronRightIcon ref="chevronTemplate" style="display: none;" class="chevron-template" />
-    <div class="context-menu" :style="position" @keydown="onKeyDown" @keyup="onKeyUp" v-bind="$attrs">
+    <template v-if="position">
+      <Overlay @click="onOverlay" @contextmenu="onOverlay" />
+      <!-- Hidden chevron template for cloning -->
+      <ChevronRightIcon ref="chevronTemplate" style="display: none;" class="chevron-template" />
+      <div class="context-menu" :style="position" @keydown="onKeyDown" @keyup="onKeyUp" v-bind="$attrs">
       <!-- Top level filter or back/filter header -->
       <div v-if="showFilter || currentSubmenu" class="header">
         <div v-if="currentSubmenu" class="back-button" @click="goBack" ref="backButton">
@@ -37,6 +38,7 @@
         </template>
       </div>
     </div>
+    </template>
   </Teleport>
 </template>
 
@@ -94,10 +96,7 @@ const selected = ref(null)
 const currentSubmenu = ref(null)
 const chevronTemplate = ref(null)
 const submenuStack = ref([]) // Navigation stack for multi-level submenus
-
-const anchorElement = computed(() => {
-  return props.anchor ? document.querySelector(props.anchor) : null
-})
+const position = ref(null)
 
 const shouldShowCurrentFilter = computed(() => {
   if (!currentSubmenu.value) {
@@ -116,65 +115,98 @@ const hasFooter = computed(() => {
   return !!$slots[`${currentSubmenu.value}Footer`]
 })
 
-const position = computed(() => {
+const calculatePosition = () => {
   // Mouse coordinate mode
   if (props.mouseX !== undefined && props.mouseY !== undefined) {
-    return { left: props.mouseX + 'px', top: props.mouseY + 'px' }
+    position.value = { left: props.mouseX + 'px', top: props.mouseY + 'px' }
+    return
   }
 
-  // Anchor mode
-  if (!anchorElement.value) return { top: '0px', left: '0px' }
-  
-  const rect = anchorElement.value.getBoundingClientRect()
+  // Anchor mode - query for element
+  const anchorElement = props.anchor ? document.querySelector(props.anchor) : null
+
+  if (!anchorElement) {
+    // Fallback to center of window if anchor not found
+    console.warn(`ContextMenuPlus: Anchor element not found: ${props.anchor}`)
+    position.value = {
+      left: `${window.innerWidth / 2}px`,
+      top: `${window.innerHeight / 2}px`,
+      transform: 'translate(-50%, -50%)'
+    }
+    return
+  }
+
+  const rect = anchorElement.getBoundingClientRect()
   const scrollX = window.scrollX || document.documentElement.scrollLeft
   const scrollY = window.scrollY || document.documentElement.scrollTop
-  
+
   const x = rect.left + scrollX
   const y = rect.top + scrollY
   const width = rect.width
   const height = rect.height
-  
+
   switch (props.position) {
     case 'above':
-      return { left: x + 'px', bottom: (window.innerHeight - y + 8) + 'px' }
+      position.value = { left: x + 'px', bottom: (window.innerHeight - y + 8) + 'px' }
+      break
     case 'above-right':
-      return { right: (window.innerWidth - x - width) + 'px', bottom: (window.innerHeight - y + 8) + 'px' }
+      position.value = { right: (window.innerWidth - x - width) + 'px', bottom: (window.innerHeight - y + 8) + 'px' }
+      break
     case 'above-left':
-      return { left: x + 'px', bottom: (window.innerHeight - y) + 'px' }
+      position.value = { left: x + 'px', bottom: (window.innerHeight - y) + 'px' }
+      break
     case 'right':
-      return { left: (x + width) + 'px', top: y + 'px' }
+      position.value = { left: (x + width) + 'px', top: y + 'px' }
+      break
     case 'left':
-      return { right: (window.innerWidth - x) + 'px', top: y + 'px' }
+      position.value = { right: (window.innerWidth - x) + 'px', top: y + 'px' }
+      break
     case 'below-right':
-      return { right: (window.innerWidth - x - width) + 'px', top: (y + height) + 'px' }
+      position.value = { right: (window.innerWidth - x - width) + 'px', top: (y + height) + 'px' }
+      break
     case 'below-left':
-      return { left: x + 'px', top: (y + height) + 'px' }
+      position.value = { left: x + 'px', top: (y + height) + 'px' }
+      break
     case 'below':
     default:
-      return { left: x + 'px', top: (y + height) + 'px' }
+      position.value = { left: x + 'px', top: (y + height) + 'px' }
   }
-})
+}
 
 
 onMounted(() => {
   // Reset navigation stack when component mounts
   submenuStack.value = []
   currentSubmenu.value = null
-  
-  if (shouldShowCurrentFilter.value) {
+
+  // Calculate position after DOM is ready
+  // In test mode, do it synchronously; otherwise use requestAnimationFrame for better timing
+  const isTestMode = typeof process !== 'undefined' && process.env?.NODE_ENV === 'test'
+
+  const initMenu = () => {
+    calculatePosition()
+
+    if (shouldShowCurrentFilter.value) {
+      nextTick(() => {
+        const input = document.querySelector<HTMLElement>('.context-menu input')
+        input?.focus()
+      })
+    }
+
+    // Add classes, chevron icons and event listeners after content is rendered
     nextTick(() => {
-      const input = document.querySelector<HTMLElement>('.context-menu input')
-      input?.focus()
+      addClasses()
+      addChevronIcons()
+      addEventListeners()
     })
   }
-  
-  // Add classes, chevron icons and event listeners after content is rendered
-  nextTick(() => {
-    addClasses()
-    addChevronIcons()
-    addEventListeners()
-  })
-  
+
+  if (isTestMode) {
+    initMenu()
+  } else {
+    requestAnimationFrame(initMenu)
+  }
+
   document.addEventListener('keydown', onKeyUp)
   document.addEventListener('keyup', onKeyDown)
 })
