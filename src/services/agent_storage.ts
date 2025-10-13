@@ -17,6 +17,7 @@ export type StoreItem = {
 export class StorageSingleton {
 
   private static instance: StorageSingleton
+  private writeOutputsToStorage: Record<string, boolean> = {}
   private storage: Record<string, Record<string, StoreItem>> = {}
 
   private constructor() {}
@@ -26,6 +27,10 @@ export class StorageSingleton {
       StorageSingleton.instance = new StorageSingleton()
     }
     return StorageSingleton.instance
+  }
+
+  setWriteOutputsToStorage(partitionId: string, enabled: boolean): void {
+    this.writeOutputsToStorage[partitionId] = enabled
   }
 
   /**
@@ -38,7 +43,9 @@ export class StorageSingleton {
       if (partition[id]) continue
       console.log('[store] Storing content:', title, extra ? `(with metadata)` : '')
       partition[id] = { title, body, extra }
-      window.localStorage.setItem(`memory`, JSON.stringify(this.listTitles(partitionId), null, 2))
+      if (this.writeOutputsToStorage[partitionId]) {
+        window.localStorage.setItem(`memory`, JSON.stringify(this.listTitles(partitionId), null, 2))
+      }
       return id
     }
   }

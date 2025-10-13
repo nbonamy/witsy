@@ -12,7 +12,8 @@ import Generator, { GenerationResult } from './generator'
 import { getLlmLocale, setLlmLocale, t } from './i18n'
 import LlmUtils from './llm_utils'
 
-const kUseStoredOutputs = false
+const kReadStoredOuputs = false
+const kWriteOutputsToStorage = false
 
 type SearchResultItem = {
   title: string
@@ -130,6 +131,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
 
       // clear memory
       StorageSingleton.getInstance().clear(partitionId)
+      StorageSingleton.getInstance().setWriteOutputsToStorage(partitionId, kWriteOutputsToStorage)
 
       // Get the assistant message that was already added by assistant.ts
       const chatMessage = chat.lastMessage()
@@ -234,15 +236,17 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
             .replace('{{researchPlan}}', researchPlan)
             .replace('{{iterationHistory}}', historyText)
             .replace('{{previousReflections}}', reflectionContext)
-
-          window.localStorage.setItem(`prompt_${iteration}`, decisionPrompt)
           messages.push(new Message('user', decisionPrompt))
 
+          if (kWriteOutputsToStorage) {
+            window.localStorage.setItem(`prompt_${iteration}`, decisionPrompt)
+          }
+          
           // Call main agent to decide next action
           const decisionKey = `decision_${iteration}`
           let decisionJson = window.localStorage.getItem(decisionKey)
 
-          if (!kUseStoredOutputs || !decisionJson) {
+          if (!kReadStoredOuputs || !decisionJson) {
             const { message: response } = await this.prompt(partitionId, messages[0], messages[messages.length - 1], [], {
               ...opts,
               structuredOutput: mainLoopAgent.steps[0].structuredOutput
@@ -254,10 +258,15 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
 
             messages.push(response)
             decisionJson = response.content
+            
             if (chatMessage) {
               chatMessage.usage = addUsages(chatMessage.usage, response.usage)
             }
-            window.localStorage.setItem(decisionKey, decisionJson)
+            
+            if (kWriteOutputsToStorage) {
+              window.localStorage.setItem(decisionKey, decisionJson)
+            }
+          
           } else {
             // Using cached decision, still need to add response to messages
             messages.push(new Message('assistant', decisionJson))
@@ -500,7 +509,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
     // Track search results if this is a search agent
     const capturedSearchResults: SearchResultItem[] = []
 
-    if (!kUseStoredOutputs || !output) {
+    if (!kReadStoredOuputs || !output) {
       // Resolve and add tools
       const toolPlugins = this.resolveToolPlugins(agent.steps[0].tools || [])
       this.llm.clearPlugins()
@@ -531,10 +540,15 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
 
       output = response?.content
       messages.push(response!)
+      
       if (chatMessage) {
         chatMessage.usage = addUsages(chatMessage.usage, response!.usage)
       }
-      window.localStorage.setItem(outputKey, output)
+      
+      if (kWriteOutputsToStorage) {
+        window.localStorage.setItem(outputKey, output)
+      }
+    
     } else {
       // Using cached output, still need to add response to messages
       messages.push(new Message('assistant', output))
