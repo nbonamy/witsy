@@ -2,7 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.0.0] - WIP
+## [3.0.1] - WIP
+
+### Added
+- Improved chat and agent abort capability
+- Helpful message when search fails
+
+### Changed
+- Major refactoring of agent system (executor, runner, a2a communication)
+- New DeepResearch execution model
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
+## [3.0.0] - 2025-10-07
 
 ### Added
 - Design Studio drawing
