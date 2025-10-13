@@ -28,10 +28,13 @@ export type SearchResponse = {
 
 export default class extends Plugin {
 
+  maxResults?: number
+  titlesOnly?: boolean
+
   constructor(config: PluginConfig, workspaceId: string) {
     super(config, workspaceId)
+    this.titlesOnly = false
   }
-
 
   isEnabled(): boolean {
     return this.config?.enabled && (
@@ -84,23 +87,51 @@ export default class extends Plugin {
     ]
   }
 
+  setMaxResults(max: number) {
+    this.maxResults = max
+  }
+
+  setTitlesOnly(titlesOnly: boolean) {
+    this.titlesOnly = titlesOnly
+  }
+
   async execute(context: PluginExecutionContext, parameters: anyDict): Promise<SearchResponse> {
 
-    const maxResults = parameters.maxResults || this.config.maxResults || 5
-
+    const maxResults = this.maxResults ?? (parameters.maxResults || this.config.maxResults || 5)
+    
+    let response: SearchResponse = { error: 'Not implemented' }
+    
     if (this.config.engine === 'local') {
-      return this.local(context, parameters, maxResults)
+      response = await this.local(context, parameters, maxResults)
     } else if (this.config.engine === 'brave') {
-      return this.brave(context, parameters, maxResults)
+      response = await this.brave(context, parameters, maxResults)
     } else if (this.config.engine === 'exa') {
-      return this.exa(context, parameters, maxResults)
+      response = await this.exa(context, parameters, maxResults)
     } else if (this.config.engine === 'perplexity') {
-      return this.perplexity(context, parameters, maxResults)
+      response = await this.perplexity(context, parameters, maxResults)
     } else if (this.config.engine === 'tavily') {
-      return this.tavily(context, parameters, maxResults)
+      response = await this.tavily(context, parameters, maxResults)
     } else {
-      return { error: 'Invalid engine' }
+      response = { error: 'Invalid engine' }
     }
+
+    // if error nothing to do
+    if (response.error || !response.results) {
+      return response
+    }
+
+    // process content
+    for (const result of response.results) {
+      if (this.titlesOnly) {
+        delete result.content
+      } else {
+        result.content = this.truncateContent(result.content)
+      }
+    }
+
+    // done
+    return response
+
   }
 
   async local(context: PluginExecutionContext, parameters: anyDict, maxResults: number): Promise<SearchResponse> {
@@ -121,7 +152,7 @@ export default class extends Plugin {
         results: response.results.map(result => ({
           title: result.title,
           url: result.url,
-          content: this.truncateContent(this.htmlToText(result.content))
+          content: this.htmlToText(result.content)
         }))
       }
 
@@ -149,13 +180,7 @@ export default class extends Plugin {
       const data = await response.json()
 
       // content returned by brave is very short
-      for (const result of data.web.results) {
-        const html = await this.runWithAbort(
-          fetch(result.url, { signal: context.abortSignal }).then(response => response.text()),
-          context.abortSignal
-        )
-        result.content = this.htmlToText(html)
-      }
+      await this.enrichResultsWithContent(data.web.results, context)
 
       return {
         query: parameters.query,
@@ -214,13 +239,7 @@ export default class extends Plugin {
       ) as unknown as SearchResponse
 
       // no content returned by perplexity
-      for (const result of results.results) {
-        const html = await this.runWithAbort(
-          fetch(result.url, { signal: context.abortSignal }).then(response => response.text()),
-          context.abortSignal
-        )
-        result.content = this.htmlToText(html)
-      }
+      await this.enrichResultsWithContent(results.results, context)
 
       // done
       const response = {
@@ -228,7 +247,7 @@ export default class extends Plugin {
         results: results.results.map(result => ({
           title: result.title,
           url: result.url,
-          content: this.truncateContent(result.content)
+          content: result.content
         }))
       }
       //console.log('Tavily response:', response)
@@ -255,13 +274,7 @@ export default class extends Plugin {
       )
 
       // content returned by tavily is very short
-      for (const result of results.results) {
-        const html = await this.runWithAbort(
-          fetch(result.url, { signal: context.abortSignal }).then(response => response.text()),
-          context.abortSignal
-        )
-        result.content = this.htmlToText(html)
-      }
+      await this.enrichResultsWithContent(results.results, context)
 
       // done
       const response = {
@@ -269,7 +282,7 @@ export default class extends Plugin {
         results: results.results.map(result => ({
           title: result.title,
           url: result.url,
-          content: this.truncateContent(result.content)
+          content: result.content
         }))
       }
       //console.log('Tavily response:', response)
@@ -307,6 +320,27 @@ export default class extends Plugin {
       return content
     } else {
       return content.slice(0, this.config.contentLength)
+    }
+  }
+
+  /**
+   * Fetches HTML content from URLs and converts to text.
+   * Used by search engines that don't return full content.
+   *
+   * @param results - Search results with URLs to fetch
+   * @param context - Plugin execution context with abort signal
+   * @private
+   */
+  private async enrichResultsWithContent(
+    results: SearchResultItem[],
+    context: PluginExecutionContext
+  ): Promise<void> {
+    for (const result of results) {
+      const html = await this.runWithAbort(
+        fetch(result.url, { signal: context.abortSignal }).then(response => response.text()),
+        context.abortSignal
+      )
+      result.content = this.htmlToText(html)
     }
   }
 

@@ -253,6 +253,12 @@ test('Browse Plugin', async () => {
   expect(browse.getParameters()[0].type).toBe('string')
   expect(browse.getParameters()[0].description).not.toBeFalsy()
   expect(browse.getParameters()[0].required).toBe(true)
+  expect(browse.getParameters()[1].name).toBe('search')
+  expect(browse.getParameters()[1].required).toBe(false)
+  expect(browse.getParameters()[2].name).toBe('maxChunks')
+  expect(browse.getParameters()[2].required).toBe(false)
+  expect(browse.getParameters()[3].name).toBe('chunkLength')
+  expect(browse.getParameters()[3].required).toBe(false)
   expect(await browse.execute(context, { url: 'https://google.com' })).toStrictEqual({
     title: 'title',
     content: 'fetched_content'
@@ -260,7 +266,32 @@ test('Browse Plugin', async () => {
   expect(await browse.execute(context, { url: 'https://google.com/dummy.pdf' })).toStrictEqual({
     title: 'https://google.com/dummy.pdf',
     content: 'cGRm_extracted'
-  })  
+  })
+})
+
+test('Browse Plugin with search', async () => {
+  const browse = new Browse(store.config.plugins.browse, 'test-workspace')
+  const result = await browse.execute(context, { url: 'https://google.com', search: 'fetched' })
+  expect(result.title).toBe('title')
+  expect(result.content).toContain('fetched')
+})
+
+test('Browse Plugin with search and custom chunkLength', async () => {
+  const browse = new Browse(store.config.plugins.browse, 'test-workspace')
+  const result = await browse.execute(context, { url: 'https://google.com', search: 'content', chunkLength: 5 })
+  expect(result.title).toBe('title')
+  expect(result.content).toContain('content')
+  expect(result.content).toContain('...')
+})
+
+test('Browse Plugin with maxChunks limit', async () => {
+  const browse = new Browse(store.config.plugins.browse, 'test-workspace')
+  const result = await browse.execute(context, { url: 'https://google.com', search: 'e', maxChunks: 2 })
+  expect(result.title).toBe('title')
+  expect(result.content).toContain('e')
+  // Should limit to 2 chunks even if more matches exist
+  const chunks = result.content.split('\n\n')
+  expect(chunks.length).toBeLessThanOrEqual(2)
 })
 
 test('Search Plugin Local', async () => {
@@ -293,8 +324,8 @@ test('Search Plugin Brave', async () => {
   expect(await search.execute(context, { query: 'test' })).toStrictEqual({
     query: 'test',
     results: [
-      { url: 'url1', title: 'title1', content: 'fetched_content' },
-      { url: 'url2', title: 'title2', content: 'fetched_content' }
+      { url: 'url1', title: 'title1', content: 'fetched_' },
+      { url: 'url2', title: 'title2', content: 'fetched_' }
     ]
   })
   expect(fetch).toHaveBeenNthCalledWith(1, 'https://api.search.brave.com/res/v1/web/search?q=test&count=5', {
