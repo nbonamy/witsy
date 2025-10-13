@@ -112,17 +112,18 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, onUnmounted } from 'vue'
+import { CpuIcon, DownloadIcon, ImageIcon, WrenchIcon, ZapIcon } from 'lucide-vue-next'
+import type { ChatModel } from 'multi-llm-ts'
+import { Ollama, } from 'ollama/dist/browser.cjs'
+import { onMounted, onUnmounted, ref } from 'vue'
+import EngineLogo from '../components/EngineLogo.vue'
+import OllamaModelPull from '../components/OllamaModelPull.vue'
+import Dialog from '../composables/dialog'
+import * as IPC from '../ipc_consts'
+import LlmManager from '../llms/manager'
+import { getChatModels } from '../llms/ollama'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { Ollama, } from 'ollama/dist/browser.cjs'
-import LlmManager from '../llms/manager'
-import OllamaModelPull from '../components/OllamaModelPull.vue'
-import EngineLogo from '../components/EngineLogo.vue'
-import Dialog from '../composables/dialog'
-import { getChatModels } from '../llms/ollama'
-import type { ChatModel } from 'multi-llm-ts'
-import * as IPC from '../ipc_consts'
 
 const state = ref<'hidden' | 'checking' | 'not-installed' | 'installed' | 'error'>('hidden')
 const downloading = ref(false)

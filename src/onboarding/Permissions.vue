@@ -65,9 +65,10 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { t } from '../services/i18n'
+import { CheckCircleIcon, CircleUserIcon, InfoIcon, SettingsIcon, XCircleIcon } from 'lucide-vue-next'
+import { computed, onUnmounted, ref } from 'vue'
 import Dialog from '../composables/dialog'
+import { t } from '../services/i18n'
 
 // Permission states
 const accessibilityGranted = ref(false)
