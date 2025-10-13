@@ -124,23 +124,31 @@ export default class Generator {
           usage: true,
           ...opts
         })
-        for await (const msg of stream) {
-          // Engine will stop if signal aborted
-          if (msg.type === 'usage') {
-            response.usage = msg.usage
-          } else if (msg.type === 'tool') {
-            response.addToolCall(msg, opts.noToolsInContent ? false : true)
-            llmCallback?.call(null, msg)
-          } else if (msg.type === 'content') {
-            if (msg && sources && sources.length > 0) {
-              msg.done = false
+
+        // we need this to catch errors in the for-await loop
+        // eslint-disable-next-line no-useless-catch
+        try {
+          for await (const msg of stream) {
+            // Engine will stop if signal aborted
+            if (msg.type === 'usage') {
+              response.usage = msg.usage
+              llmCallback?.call(null, msg)
+            } else if (msg.type === 'tool') {
+              response.addToolCall(msg, opts.noToolsInContent ? false : true)
+              llmCallback?.call(null, msg)
+            } else if (msg.type === 'content') {
+              if (msg && sources && sources.length > 0) {
+                msg.done = false
+              }
+              response.appendText(msg)
+              llmCallback?.call(null, msg)
+            } else if (msg.type === 'reasoning') {
+              response.appendText(msg)
+              llmCallback?.call(null, msg)
             }
-            response.appendText(msg)
-            llmCallback?.call(null, msg)
-          } else if (msg.type === 'reasoning') {
-            response.appendText(msg)
-            llmCallback?.call(null, msg)
           }
+        } catch (error) {
+          throw error
         }
 
       }
