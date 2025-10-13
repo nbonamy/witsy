@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Major refactoring of agent system (executor, runner, a2a communication)
 - New DeepResearch execution model
+- Context Menu position calculation
 
 ### Fixed
 - N/A
