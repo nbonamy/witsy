@@ -83,7 +83,6 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
   llmUtils: LlmUtils
   workspaceId: string
   agent: Agent
-  llm: any
 
   // Tool management
   private toolCatalog: ToolCatalog | null = null
@@ -99,7 +98,6 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
 
   constructor(config: Configuration, workspaceId: string, agent?: Agent) {
     this.config = config
-    this.llm = null
     this.llmManager = LlmFactory.manager(config)
     this.llmUtils = new LlmUtils(config)
     this.workspaceId = workspaceId
@@ -151,7 +149,6 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
       // we need a llm
       opts.engine = this.agent.engine || opts.engine
       opts.model = this.agent.model || this.llmManager.getChatModel(opts.engine, opts.model).id
-      this.llm = this.llmManager.igniteEngine(opts.engine)
 
       // initialize tools (once per run)
       if (!this.toolCatalog) {
@@ -199,9 +196,6 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
 
           iteration++
           console.log(`[deepresearch_al] Iteration ${iteration}`)
-
-          // clear tools
-          this.llm.clearPlugins()
 
           // Build context for main agent
           const memoryList = memory.listTitles(partitionId)
@@ -510,13 +504,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
     const capturedSearchResults: SearchResultItem[] = []
 
     if (!kReadStoredOuputs || !output) {
-      // Resolve and add tools
-      const toolPlugins = this.resolveToolPlugins(agent.steps[0].tools || [])
-      this.llm.clearPlugins()
-      for (const plugin of toolPlugins) {
-        this.llm.addPlugin(plugin as any)
-      }
-
+      
       // Wrap callback to capture search results
       const originalCallback = opts.callback
       const wrappedOpts = {
@@ -545,6 +533,38 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
         chatMessage.usage = addUsages(chatMessage.usage, response!.usage)
       }
       
+      // log
+      console.log(`[deepresearch_al] Action completed. Output length: ${output.length}`)
+
+      // Evaluate output quality if configured
+      const qualityMode = opts.qualityReview || 'deliverable'
+      const shouldReview =
+        qualityMode !== 'none' &&
+        (qualityMode === 'all' || (qualityMode === 'deliverable' && isDeliverable))
+
+      if (shouldReview) {
+        console.log(`[deepresearch_al] Evaluating output quality (mode: ${qualityMode})`)
+
+        const evaluation = await this.llmUtils.evaluateOutput(
+          opts.engine,
+          opts.model,
+          decision.nextAction,
+          prompt,
+          response
+        )
+
+        console.log(`[deepresearch_al] Quality evaluation result: ${evaluation.quality}`)
+
+        if (evaluation.quality === 'fail') {
+          this.reflections.push({
+            type: 'failure',
+            message: `Action "${decision.nextAction}" failed quality check: ${evaluation.feedback}. Please retry with improvements.`
+          })
+          console.warn(`[deepresearch_al] Quality check failed: ${evaluation.feedback}`)
+          return // Don't store, don't update status - main loop will retry with reflection
+        }
+      }
+
       if (kWriteOutputsToStorage) {
         window.localStorage.setItem(outputKey, output)
       }
@@ -552,38 +572,6 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
     } else {
       // Using cached output, still need to add response to messages
       messages.push(new Message('assistant', output))
-    }
-
-    // log
-    console.log(`[deepresearch_al] Action completed. Output length: ${output.length}`)
-
-    // Evaluate output quality if configured
-    const qualityMode = opts.qualityReview || 'deliverable'
-    const shouldReview =
-      qualityMode !== 'none' &&
-      (qualityMode === 'all' || (qualityMode === 'deliverable' && isDeliverable))
-
-    if (shouldReview) {
-      console.log(`[deepresearch_al] Evaluating output quality (mode: ${qualityMode})`)
-
-      const evaluation = await this.llmUtils.evaluateOutput(
-        opts.engine,
-        opts.model,
-        decision.nextAction,
-        prompt,
-        output
-      )
-
-      console.log(`[deepresearch_al] Quality evaluation result: ${evaluation.quality}`)
-
-      if (evaluation.quality === 'fail') {
-        this.reflections.push({
-          type: 'failure',
-          message: `Action "${decision.nextAction}" failed quality check: ${evaluation.feedback}. Please retry with improvements.`
-        })
-        console.warn(`[deepresearch_al] Quality check failed: ${evaluation.feedback}`)
-        return // Don't store, don't update status - main loop will retry with reflection
-      }
     }
 
     // Store in memory with metadata
@@ -610,7 +598,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
     }
 
     // always add storage plugin
-    let pluginStorage = this.llm.plugins.find((p: any) => p && typeof p.getName === 'function' && p.getName() === 'short_term_memory')
+    let pluginStorage = llm.plugins.find((p: any) => p && typeof p.getName === 'function' && p.getName() === 'short_term_memory')
     if (!pluginStorage) {
       pluginStorage = new MemoryPlugin(partitionId)
       llm.addPlugin(pluginStorage as any)
@@ -620,7 +608,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
     const response: Message = new Message('assistant', '')
 
     const generator = new Generator(this.config)
-    const rc = await generator.generate(this.llm, [
+    const rc = await generator.generate(llm, [
       instructions,
       prompt,
       response

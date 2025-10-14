@@ -1,9 +1,12 @@
 
-import { Configuration } from '../types/config'
-import { i18nInstructions, localeToLangName, getLlmLocale } from './i18n'
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
-import Message from '../models/message'
+import { ChatModel } from 'multi-llm-ts'
+import { z } from 'zod'
 import LlmFactory from '../llms/llm'
+import Message from '../models/message'
+import { Configuration } from '../types/config'
+import Generator from './generator'
+import { getLlmLocale, i18nInstructions, localeToLangName } from './i18n'
 
 export interface InstructionsModifiers {
   noMarkdown?: boolean
@@ -11,7 +14,7 @@ export interface InstructionsModifiers {
 
 export type TaskComplexity = 'simple' | 'normal' | 'complex'
 
-export default class {
+export default class LlmUtils {
 
   config: Configuration
 
@@ -173,32 +176,37 @@ Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Statu
     return this.run(engine, model, 'simple', statusInstructions, prompt)
   }
 
-  private async run(engine: string, model: string, complexity: TaskComplexity, system: string, prompt: string): Promise<string> {
+  private async run(engine: string, model: string, complexity: TaskComplexity, system: string, prompt: string, opts?: any): Promise<any> {
 
     // Get optimal model for simple task (titling is simple)
     const { engine: selectedEngine, model: actualModel } = this.getEngineModelForTask(complexity, engine, model)
 
     const messages = [
       new Message('system', system),
-      new Message('user', prompt)
+      new Message('user', prompt),
+      new Message('assistant', '')
     ]
 
     // now get it
+    const generator = new Generator(this.config)
     const llmManager = LlmFactory.manager(this.config)
     const llm = llmManager.igniteEngine(selectedEngine)
-    const actualChatModel = llmManager.getChatModel(selectedEngine, actualModel)
-    const response = await llm.complete(actualChatModel, messages, {
+    const actualChatModel: ChatModel = llmManager.getChatModel(selectedEngine, actualModel)
+    await generator.generate(llm, messages, {
+      model: actualChatModel.id,
+      streaming: complexity === 'simple' ? false : true,
       tools: false,
       reasoningEffort: 'low',
       thinkingBudget: 0,
       reasoning: false,
+      ...opts
     })
 
-    // get prompt
-    return response.content.trim()
+    // Return content - if structured output was used, it may be an object
+    return messages[2].content.trim()
 
   }
-
+  
   static parseJson(content: string): any {
     let idx = content.indexOf('{')
     if (idx === -1) throw new Error('No JSON object found in content')
@@ -275,15 +283,22 @@ Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Statu
     model: string,
     agentGoal: string,
     taskPrompt: string,
-    output: string
+    message: Message
   ): Promise<{ quality: 'pass' | 'fail', feedback: string }> {
+
+
+    const toolCalls = message.toolCalls?.length
+      ? message.toolCalls
+        .filter(tc => tc.state === 'completed')
+        .map(tc => `- ${tc.name}:\n  Parameters: ${JSON.stringify(tc.params)}`).join('\n')//\n  Results: ${JSON.stringify(tc.result)}`).join('\n')
+      : 'None'
 
     const evaluationInstructions = `You are a quality evaluator for autonomous agent outputs.
 
 Evaluate if the output meets the requirements specified in the agent goal and task prompt.
 
 Check for:
-1. COMPLETENESS: Does it fulfill all requirements from the agent goal?
+1. COMPLETENESS: Does it fulfill all requirements from the agent goal? Does it include the actual data requested?
 2. RELEVANCE: Does it properly address the task prompt?
 3. FORMAT: Does it follow any format/structure requirements from the agent goal?
 4. SUBSTANCE: Is it meaningful content (not just meta-commentary like "I will do X")?
@@ -295,6 +310,8 @@ Return a JSON object with:
   "feedback": "Brief explanation of why it passed or failed"
 }
 
+Remember that multi-line strings are not allowed in JSON: you must use "line1\\nline2" format for line breaks.
+
 Be strict but fair. If the output is genuinely incomplete, wrong format, or lacks substance, mark it as fail with specific feedback.`
 
     const evaluationPrompt = `Agent Goal: ${agentGoal}
@@ -302,27 +319,26 @@ Be strict but fair. If the output is genuinely incomplete, wrong format, or lack
 Task Prompt: ${taskPrompt}
 
 Output to Evaluate:
-${output.substring(0, 10000)}
+${message.content.substring(0, 10000)}
 
-Evaluate this output and return your assessment as JSON.`
+Tools Used:
+${toolCalls}
+
+Evaluate this output and return your assessment.`
 
     try {
-      const result = await this.run(engine, model, 'simple', evaluationInstructions, evaluationPrompt)
-
-      // Parse JSON response
-      let parsed: any
-      try {
-        // Remove markdown code blocks if present
-        let cleaned = result.trim()
-        if (cleaned.startsWith('```')) {
-          cleaned = cleaned.split('\n').slice(1, -1).join('\n')
+      const result = await this.run(engine, model, 'normal', evaluationInstructions, evaluationPrompt, {
+        structuredOutput: {
+          name: 'evaluation_result',
+          structure: z.object({
+            quality: z.enum(['pass', 'fail']).describe("Quality assessment: pass if meets requirements, fail if incomplete or inadequate"),
+            feedback: z.string().describe("Brief explanation of why it passed or failed")
+          })
         }
-        parsed = JSON.parse(cleaned)
-      } catch {
-        // If parsing fails, assume pass (don't block on evaluation errors)
-        console.warn('[llm_utils] Failed to parse quality evaluation, assuming pass')
-        return { quality: 'pass', feedback: 'Evaluation parse error, assuming pass' }
-      }
+      })
+
+      // Parse structured output (already validated by Zod)
+      const parsed = typeof result === 'object' ? result : LlmUtils.parseJson(result)
 
       return {
         quality: parsed.quality === 'fail' ? 'fail' : 'pass',
