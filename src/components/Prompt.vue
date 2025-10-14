@@ -75,11 +75,11 @@
       <template v-if="store.isFeatureEnabled('favorites') && chat">
 
         <ButtonIcon name="addToFavorites" v-if="!isFavoriteModel" @click="addToFavorites" v-tooltip="{ text: t('common.favorites.add'), position: 'top' }">
-          <HeartPlusIcon class="icon" />
+          <HeartPlusIcon class="icon add-favorite" />
         </ButtonIcon>
 
         <ButtonIcon name="removeFavorite" v-else @click="removeFavorite" v-tooltip="{ text: t('common.favorites.remove'), position: 'top' }">
-          <HeartMinusIcon class="icon" />
+          <HeartMinusIcon class="icon remove-favorite" />
         </ButtonIcon>
 
       </template>
@@ -1355,6 +1355,10 @@ defineExpose({
 
     &.dictate.active {
       color: red;
+    }
+
+    &.remove-favorite {
+      color: var(--color-error);
     }
 
   }
