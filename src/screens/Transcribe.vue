@@ -118,21 +118,20 @@
 
 <script setup lang="ts">
 
-import { StreamingChunk } from '../voice/stt'
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { store } from '../services/store'
-import { commandI18n, t } from '../services/i18n'
-import { getSTTEngines, getSTTModels } from '../voice/stt'
-import { allLanguages } from '../services/i18n'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
-import Waveform from '../components/Waveform.vue'
-import Loader from '../components/Loader.vue'
-import useTranscriber from '../composables/transcriber'
-import useAudioRecorder from '../composables/audio_recorder'
 import LangSelect from '../components/LangSelect.vue'
+import Loader from '../components/Loader.vue'
+import Waveform from '../components/Waveform.vue'
+import useAudioRecorder from '../composables/audio_recorder'
 import Dialog from '../composables/dialog'
+import useTranscriber from '../composables/transcriber'
 import Attachment from '../models/attachment'
+import { allLanguages, commandI18n, t } from '../services/i18n'
+import { store } from '../services/store'
+import { getSTTEngines, getSTTModels, StreamingChunk } from '../voice/stt'
 
+import { AudioWaveformIcon, CircleIcon, GlobeIcon, MicIcon, MinimizeIcon, UploadIcon, WandIcon } from 'lucide-vue-next'
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 

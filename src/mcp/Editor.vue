@@ -135,6 +135,7 @@
 
 <script setup lang="ts">
 
+import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref } from 'vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Spinner from '../components/Spinner.vue'
