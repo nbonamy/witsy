@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.0.1] - WIP
+## [3.0.2] - WIP
 
 ### Added
 - Improved chat and agent abort capability
