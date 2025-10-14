@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Improved chat and agent abort capability
 - Helpful message when search fails
+- Groq and Cerebras reasoning
 
 ### Changed
 - Major refactoring of agent system (executor, runner, a2a communication)
