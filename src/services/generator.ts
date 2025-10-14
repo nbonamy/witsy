@@ -54,7 +54,7 @@ export default class Generator {
     const model = engineConfig?.models?.chat?.find((m: Model) => m.id === opts.model)
     const visionModel = engineConfig?.models?.chat?.find((m: Model) => m.id === engineConfig.model?.vision)
     if (!model) {
-      console.error('Model not found:', llm.getName(), opts.model)
+      response.setText(t('generator.errors.invalidModel'))
       return 'invalid_model'
     }
 
@@ -126,7 +126,7 @@ export default class Generator {
         })
 
         // we need this to catch errors in the for-await loop
-        // eslint-disable-next-line no-useless-catch
+         
         try {
           for await (const msg of stream) {
             // Engine will stop if signal aborted
@@ -148,7 +148,8 @@ export default class Generator {
             }
           }
         } catch (error) {
-          throw error
+          rc = await this.handleError(error, llm, messages, opts, response, llmCallback)
+          return rc
         }
 
       }
@@ -171,14 +172,18 @@ export default class Generator {
       }
 
     } catch (error) {
+      
       rc = await this.handleError(error, llm, messages, opts, response, llmCallback)
-    }
+    
+    } finally {
 
-    // make sure the message is terminated correctly
-    // https://github.com/nbonamy/witsy/issues/104
-    if (response.transient) {
-      console.warn('Response is still transient. Appending empty text.')
-      response.appendText({ type: 'content', text: '', done: true })
+      // make sure the message is terminated correctly
+      // https://github.com/nbonamy/witsy/issues/104
+      if (response.transient) {
+        console.warn('Response is still transient. Appending empty text.')
+        response.appendText({ type: 'content', text: '', done: true })
+      }
+
     }
 
     // done
