@@ -85,7 +85,7 @@ export default class STTFireworks implements STTEngine {
       return
     }
 
-    const baseWsUrl = 'wss://audio-streaming.us-virginia-1.direct.fireworks.ai'
+    const baseWsUrl = 'wss://audio-streaming-v2.api.fireworks.ai'
     const wsPath = '/v1/audio/transcriptions/streaming'
 
     const queryParams = new URLSearchParams()
