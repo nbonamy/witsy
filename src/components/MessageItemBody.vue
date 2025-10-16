@@ -160,7 +160,7 @@ const computeBlocks = (content: string|null): Block[] => {
   // Negative lookbehind (?<!\[) prevents matching when preceded by '['
   const regexMedia1 = /(?<!\[)!\[([^\]]*)\]\(([^\)]*)\)/g
   const regexMedia2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
-  const regexArtifact1 = /<artifact title=\"([^\"]*)\">(.*?)<\/artifact>/gms
+  const regexArtifact1 = /<artifact.*?title=\"([^\"]*)\".*?>(.*?)<\/artifact>/gms
   const regexTool1 = /<tool (id|index)="([^\"]*)"><\/tool>/g
   const regexTable1 = /\|(.+)\|[\r\n]+\|[-:\s|]+\|[\r\n]+((?:\|.+\|[\r\n]*)+)/g
 
