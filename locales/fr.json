@@ -2622,6 +2622,7 @@
       "tts": {
         "groqAcceptTermsReminder": "Vous devez <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accepter les termes et conditions</a> pour utiliser le modèle Groq.",
         "kokoroReminder": "Fourni par",
+        "playbackError": "Échec de la lecture audio. Veuillez vérifier votre configuration TTS.",
         "sampleText": "Bienvenue sur @:{'common.appName'}, l'assistant de bureau ultime alimenté par l'IA.",
         "serviceDisclaimer": "Le service peut cesser de fonctionner à tout moment.",
         "voice": "@:{'common.voice'}"

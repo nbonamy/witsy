@@ -167,7 +167,10 @@
   "tts": {
     "engine": "openai",
     "model": "tts-1",
-    "voice": "alloy"
+    "voice": "alloy",
+    "customOpenAI": {
+      "baseURL": ""
+    }
   },
   "realtime": {
     "engine": "openai"

@@ -14,7 +14,10 @@ global.fetch = vi.fn(async (url) => ({
 }))
 
 vi.mock('openai', async () => {
-  const OpenAI = vi.fn()
+  const OpenAI = vi.fn((opts: any) => {
+    OpenAI.prototype.apiKey = opts.apiKey
+    OpenAI.prototype.baseURL = opts.baseURL
+  })
   OpenAI.prototype.audio = {
     speech: {
       create: vi.fn((opts) => opts.input)
@@ -118,4 +121,16 @@ test('fal.ai', async () => {
   const tts = getTTSEngine(store.config)
   const response = await tts.synthetize('hello fal.ai')
   expect(response).toStrictEqual({ type: 'audio', content: `data:text/plain;base64,${btoa("hello fal.ai")}`, mimeType: 'audio/wav' })
+})
+
+test('Custom OpenAI', async () => {
+  store.config.tts.engine = 'custom'
+  store.config.tts.model = 'custom-model'
+  store.config.tts.customOpenAI.baseURL = 'https://api.custom.com/v1'
+  const tts = getTTSEngine(store.config)
+  expect(tts).toBeDefined()
+  expect(tts).toBeInstanceOf(TTSOpenAI)
+  expect((tts as TTSOpenAI).client.baseURL).toBe('https://api.custom.com/v1')
+  const response = await tts.synthetize('hello custom')
+  expect(response).toStrictEqual({ type: 'audio', content: 'hello custom' })
 })

@@ -243,6 +243,9 @@ export type TTSConfig = {
   engine: string
   model: string
   voice: string
+  customOpenAI: {
+    baseURL: string
+  }
 }
 
 export type RealtimeConfig = {

@@ -33,33 +33,33 @@ class AudioPlayer {
     this.listeners = this.listeners.filter(l => l !== listener)
   }
 
-  async play(audioEl: HTMLAudioElement, uuid: string, content: string) {
+  async play(audioEl: HTMLAudioElement, uuid: string, content: string): Promise<boolean> {
 
     // if same id is playing, stop
     if (this.uuid == uuid && this.state != 'idle') {
       this.stop()
-      return
+      return true
     }
-  
+
     // if not same message 1st thing is to stop
     if (this.state != 'idle' && uuid != this.uuid) {
       this.stop()
     }
-  
+
     // set status
     this.uuid = uuid
     this.state = 'loading'
     this.emitStatus()
-  
+
     try {
-  
+
       // get the stream
       const tts = getTTSEngine(this.config)
       const response: SynthesisResponse = await tts.synthetize(content)
 
       // have we been cancelled
       if (this.uuid != uuid) {
-        return
+        return true
       }
 
       // stream it
@@ -106,10 +106,14 @@ class AudioPlayer {
         throw new Error('Invalid response format')
       }
 
+      return true
+
     } catch (e) {
       console.error(e)
+      this.stop()
+      return false
     }
-  
+
   }
 
   playpause(uuid: string) {

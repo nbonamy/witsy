@@ -24,7 +24,7 @@
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="falaiAPIKey" @blur="save" />
     </div>
-    <div class="form-field">
+    <div class="form-field" v-if="engine !== 'custom'">
       <label>{{ t('settings.voice.model') }}</label>
       <select v-model="model" @change="onChangeModel">
         <option v-for="model in models" :key="model.id" :value="model.id">
@@ -32,14 +32,25 @@
         </option>
       </select>
     </div>
+    <template v-else>
+      <div class="form-field">
+        <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
+        <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @change="save"/>
+      </div>
+      <div class="form-field">
+        <label>{{ t('settings.voice.model') }}</label>
+        <input name="model" v-model="model" @change="onChangeModel"/>
+      </div>
+    </template>
     <div class="form-field">
       <label>{{ t('settings.voice.tts.voice') }}</label>
       <div class="control-group">
-        <select v-model="voice" @change="save">
+        <select v-if="engine !== 'custom'" v-model="voice" @change="save">
           <option v-for="voice in voices" :key="voice.id" :value="voice.id">
             {{ voice.label }}
           </option>
         </select>
+        <input v-else name="voice" v-model="voice" @change="save"/>
         <RefreshButton @refresh="onRefreshVoices" v-if="canRefreshVoices" />
         <button class="control" @click.prevent="onPlay">
           <PlayIcon v-if="audioState.state === 'idle'"/>
@@ -68,11 +79,13 @@ import RefreshButton from '../components/RefreshButton.vue'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { getTTSModels } from '../voice/tts'
+import { getTTSModels, getTTSEngines } from '../voice/tts'
 import TTSElevenLabs from '../voice/tts-elevenlabs'
 import TTSFalAi from '../voice/tts-falai'
 import TTSGroq from '../voice/tts-groq'
 import TTSOpenAI from '../voice/tts-openai'
+import defaults from '../../defaults/settings.json'
+import Dialog from '../composables/dialog'
 
 const engine = ref('openai')
 const voice = ref(null)
@@ -81,6 +94,7 @@ const openaiAPIKey = ref(null)
 const groqAPIKey = ref(null)
 const falaiAPIKey = ref(null)
 const elevenlabsAPIKey = ref(null)
+const baseURL = ref('')
 const audio= ref<HTMLAudioElement|null>(null)
   const audioState= ref<{state: string, messageId: string|null}>({
   state: 'idle',
@@ -89,17 +103,10 @@ const audio= ref<HTMLAudioElement|null>(null)
 
 const audioPlayer = useAudioPlayer(store.config)
 
-const engines = [
-  { id: 'openai', label: 'OpenAI' },
-  { id: 'groq', label: 'Groq' },
-  { id: 'elevenlabs', label: 'Eleven Labs' },
-  // { id: 'replicate', label: 'Replicate' },
-  { id: 'falai', label: 'fal.ai' },
-  // { id: 'kokoro', label: 'Kokoro' },
-]
+const engines = getTTSEngines()
 
 const models = computed(() => {
-  return getTTSModels(engine.value)
+  return getTTSModels(engine.value) || []
 })
 
 const canRefreshVoices = computed(() => {
@@ -121,11 +128,14 @@ const voices = computed(() => {
     }
   } else if (engine.value === 'falai') {
     return TTSFalAi.voices(model.value)
+  } else if (engine.value === 'custom') {
+    return TTSOpenAI.voices(model.value)
   // } else if (engine.value === 'replicate') {
   //   return TTSReplicate.models(model.value)
   // } else if (engine.value === 'kokoro') {
   //   return TTSKokoro.voices(model.value)
   }
+  return []
 
 })
 
@@ -138,12 +148,12 @@ onUnmounted(() => {
 })
 
 const onChangeEngine = () => {
-  model.value = models.value[0].id
+  model.value = models.value.length ? models.value[0].id : ''
   onChangeModel()
 }
 
 const onChangeModel = () => {
-  voice.value = voices.value[0].id
+  voice.value = voices.value.length ? voices.value[0].id : ''
   save()
 }
 
@@ -154,11 +164,14 @@ const onAudioPlayerStatus = (status: AudioStatus) => {
   }
 }
 
-const onPlay = () => {
+const onPlay = async () => {
   if (audioState.value.state !== 'idle') {
     audioPlayer.stop()
   } else {
-    audioPlayer.play(audio.value!, 'sample', t('settings.voice.tts.sampleText'))
+    const success = await audioPlayer.play(audio.value!, 'sample', t('settings.voice.tts.sampleText'))
+    if (!success) {
+      Dialog.alert(t('settings.voice.tts.playbackError'))
+    }
   }
 }
 
@@ -177,12 +190,13 @@ const onRefreshVoices = async (): Promise<boolean> => {
 
 const load = () => {
   engine.value = store.config.tts?.engine || 'openai'
-  model.value = store.config.tts?.model || 'tts-1'
-  voice.value = store.config.tts?.voice || 'alloy'
-  openaiAPIKey.value = store.config.engines.openai?.apiKey || ''  
+  model.value = store.config.tts?.model || ''
+  voice.value = store.config.tts?.voice || ''
+  openaiAPIKey.value = store.config.engines.openai?.apiKey || ''
   groqAPIKey.value = store.config.engines.groq?.apiKey || ''
   falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
   elevenlabsAPIKey.value = store.config.engines.elevenlabs?.apiKey || ''
+  baseURL.value = store.config.tts.customOpenAI?.baseURL || ''
 }
 
 const save = () => {
@@ -193,6 +207,7 @@ const save = () => {
   store.config.engines.groq.apiKey = groqAPIKey.value
   store.config.engines.falai.apiKey = falaiAPIKey.value
   store.config.engines.elevenlabs.apiKey = elevenlabsAPIKey.value
+  store.config.tts.customOpenAI.baseURL = baseURL.value
   store.saveSettings()
 }
 
