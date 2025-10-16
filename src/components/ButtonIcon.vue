@@ -8,8 +8,8 @@
 
 const emit = defineEmits(['click'])
 
-function onClick() {
-  emit('click')
+function onClick(event: MouseEvent) {
+  emit('click', event)
 }
 
 </script>
