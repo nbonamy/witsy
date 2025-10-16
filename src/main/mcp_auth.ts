@@ -1,7 +1,8 @@
 
 import { OAuthClientProvider, UnauthorizedError } from '@modelcontextprotocol/sdk/client/auth.js'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js"
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { OAuthClientInformation, OAuthClientInformationFull, OAuthClientMetadata, OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js'
 import { app, App, shell } from 'electron'
 import { useI18n } from '../main/i18n'
@@ -76,11 +77,12 @@ export default class McpOAuthManager {
   private app: App
   private client: Client | null = null
   private serverUrl: string = ''
+  private serverType: 'http' | 'sse' = 'http'
   private httpServer: HttpServer
-  private pendingCallbacks: Map<string, { 
+  private pendingCallbacks: Map<string, {
     resolve: (code: string) => void
     reject: (error: Error) => void
-    timeout: NodeJS.Timeout 
+    timeout: NodeJS.Timeout
   }> = new Map()
   
   constructor(app: App) {
@@ -210,18 +212,25 @@ export default class McpOAuthManager {
   /**
    * Detect if a server requires OAuth by attempting to connect
    */
-  async detectOAuth(url: string, headers: Record<string, string>): Promise<{ requiresOAuth: boolean, metadata?: OAuthClientMetadata }> {
+  async detectOAuth(type: 'http' | 'sse', url: string, headers: Record<string, string>): Promise<{ requiresOAuth: boolean, metadata?: OAuthClientMetadata }> {
     try {
 
-      // prepare transport options
-      const transportOptions: any = {
-        requestInit: {
-          headers: headers,
+      // Create appropriate transport based on server type
+      let testTransport: any
+
+      if (type === 'sse') {
+        // For SSE, we don't pass headers in the transport options during detection
+        testTransport = new SSEClientTransport(new URL(url), {})
+      } else {
+        // For HTTP, pass headers in requestInit
+        const transportOptions: any = {
+          requestInit: {
+            headers: headers,
+          }
         }
+        testTransport = new StreamableHTTPClientTransport(new URL(url), transportOptions)
       }
-      
-      // Try to connect to the server without OAuth to see if it's required
-      const testTransport = new StreamableHTTPClientTransport(new URL(url), transportOptions)
+
       const testClient = new Client({
         name: 'witsy-oauth-detection',
         version: '1.0.0'
@@ -237,7 +246,7 @@ export default class McpOAuthManager {
       } catch (error) {
         // Check if this is an OAuth-related error
         const isOAuthError = this.isOAuthRequiredError(error)
-        
+
         if (isOAuthError) {
           // OAuth is required - provide standardized Witsy client metadata
           const scope = await this.getServerSupportedScopes(url)
@@ -267,13 +276,18 @@ export default class McpOAuthManager {
     // Check for HTTP 401 errors with OAuth-specific messages
     const errorMessage = error?.message || ''
     const lowerMessage = errorMessage.toLowerCase()
-    
+
     // Treat dynamic client registration errors as OAuth requirement
     if (lowerMessage.includes('dynamic client registration') ||
         lowerMessage.includes('does not support dynamic client registration')) {
       return true
     }
-    
+
+    // Check for SSE 401 errors (from EventSource)
+    if (lowerMessage.includes('sse error') && lowerMessage.includes('401')) {
+      return true
+    }
+
     // Look for OAuth-specific error patterns
     if (lowerMessage.includes('http 401') && (
       lowerMessage.includes('invalid_token') ||
@@ -285,9 +299,14 @@ export default class McpOAuthManager {
     }
 
     // Check for common OAuth error responses
-    if (lowerMessage.includes('invalid_token') || 
+    if (lowerMessage.includes('invalid_token') ||
         lowerMessage.includes('access_denied') ||
         lowerMessage.includes('insufficient_scope')) {
+      return true
+    }
+
+    // Generic 401 status code check
+    if (lowerMessage.includes('401') || lowerMessage.includes('unauthorized')) {
       return true
     }
 
@@ -308,12 +327,14 @@ export default class McpOAuthManager {
    * Start OAuth authorization flow - simplified to match reference implementation
    */
   async startOAuthFlow(
-    url: string, 
+    type: 'http' | 'sse',
+    url: string,
     clientMetadata: OAuthClientMetadata,
     clientCredentials?: { client_id: string; client_secret: string }
   ): Promise<string> {
     console.log(`[oauth] Attempting to connect to ${url}...`);
     this.serverUrl = url;
+    this.serverType = type;
     
     // Generate unique flow ID for this OAuth attempt
     const flowId = `oauth_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
@@ -378,9 +399,18 @@ export default class McpOAuthManager {
   private async attemptConnection(oauthProvider: McpOAuthClientProvider, flowId: string): Promise<void> {
     console.log('[oauth] Creating transport with OAuth provider...');
     const baseUrl = new URL(this.serverUrl);
-    const transport = new StreamableHTTPClientTransport(baseUrl, {
-      authProvider: oauthProvider
-    });
+
+    // Create appropriate transport based on server type
+    let transport: any
+    if (this.serverType === 'sse') {
+      transport = new SSEClientTransport(baseUrl, {
+        authProvider: oauthProvider
+      })
+    } else {
+      transport = new StreamableHTTPClientTransport(baseUrl, {
+        authProvider: oauthProvider
+      })
+    }
     console.log('[oauth] Transport created');
 
     try {

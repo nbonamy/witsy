@@ -2,7 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.0.2] - WIP
+## [3.0.3] - WIP
+
+### Added
+- Auth for MCP SSE servers (https://github.com/nbonamy/witsy/issues/442)
+
+### Changed
+- N/A
+
+### Fixed
+- MCP List Doesn't Scroll when number of servers exceeds page length (https://github.com/nbonamy/witsy/issues/448)
+
+### Removed
+- N/A
+
+
+## [3.0.2] - 2025-10-14
 
 ### Added
 - Improved chat and agent abort capability

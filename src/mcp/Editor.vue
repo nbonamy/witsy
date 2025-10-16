@@ -76,8 +76,8 @@
         />
       </div>
     </template>
-    <template v-if="type === 'http'">
-      <div class="form-field">
+    <template v-if="['http', 'sse'].includes(type)">
+      <div class="form-field" v-if="type === 'http'">
         <label>{{ t('mcp.serverEditor.httpHeaders') }}</label>
         <VariableTable 
           :variables="headers"
@@ -312,13 +312,13 @@ const isOauthRequired = async (): Promise<boolean> => {
 }
 
 const initOauth = async (userInitiated: boolean): Promise<void> => {
-  if (await useMcpServer().initOauth(userInitiated, url.value, headers.value, oauthStatus.value)) {
+  if (await useMcpServer().initOauth(userInitiated, type.value as McpServerType, url.value, headers.value, oauthStatus.value)) {
     await setupOAuth(userInitiated)
   }
 }
 
 const setupOAuth = async (userInitiated: boolean) => {
-  const config = await useMcpServer().setupOAuth(url.value, oauthStatus.value, oauthClientId.value, oauthClientSecret.value)
+  const config = await useMcpServer().setupOAuth(type.value as McpServerType, url.value, oauthStatus.value, oauthClientId.value, oauthClientSecret.value)
   if (config) {
     oauthConfig.value = config    
     if (!userInitiated) {

@@ -716,13 +716,13 @@ export const installIpc = (
   });
 
   ipcMain.handle(IPC.MCP.DETECT_OAUTH, async (_, payload): Promise<any> => {
-    const { url, headers } = payload;
-    return mcp ? await mcp.detectOAuth(url, headers) : { requiresOAuth: false };
+    const { type, url, headers } = payload;
+    return mcp ? await mcp.detectOAuth(type, url, headers) : { requiresOAuth: false };
   });
 
   ipcMain.handle(IPC.MCP.START_OAUTH_FLOW, async (_, payload): Promise<string> => {
-    const { url, clientMetadata, clientCredentials } = JSON.parse(payload);
-    return mcp ? await mcp.startOAuthFlow(url, clientMetadata, clientCredentials) : '';
+    const { type, url, clientMetadata, clientCredentials } = JSON.parse(payload);
+    return mcp ? await mcp.startOAuthFlow(type, url, clientMetadata, clientCredentials) : '';
   });
 
   ipcMain.handle(IPC.MCP.COMPLETE_OAUTH_FLOW, async (_, payload): Promise<boolean> => {
