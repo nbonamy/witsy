@@ -51,6 +51,7 @@ const botMessageToolMedia2: Message = Message.fromJson({ role: 'assistant', type
 const botMessageToolArtifact1: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here:\n\n<artifact title="test">Test</artifact>\n\nWelcome!' })
 const botMessageToolArtifact2: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here:\n\n<artifact title="test1">Test1</artifact>\n\n<artifact title="test2">Test2</artifact>\n\nWelcome!' })
 const botMessageToolArtifact3: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here:\n\n<artifact title="test1">Test1</artifact>\n\n<artifact title="test2">Te' })
+const botMessageToolArtifact4: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here:\n\n<artifact id="id1" title="test1" data="data1">Test1</artifact>' })
 const botMessageToolArtifactHtml1: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here is an HTML example:\n\n<artifact title="Simple HTML Page">```html\n<!DOCTYPE html>\n<html>\n<head>\n<title>Test Page</title>\n</head>\n<body>\n<h1>Hello World</h1>\n<p>This is a test paragraph.</p>\n</body>\n</html>\n```</artifact>\n\nThat\'s it!' })
 const botMessageToolArtifactHtml2: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here is HTML without language specifier:\n\n<artifact title="HTML with DOCTYPE">```\n<!DOCTYPE html>\n<html>\n<head>\n<title>Test Page</title>\n</head>\n<body>\n<h1>Hello from DOCTYPE</h1>\n</body>\n</html>\n```</artifact>' })
 const botMessageToolArtifactHtml3: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Here is another HTML example:\n\n<artifact title="HTML with tag">```\n<html>\n<head>\n<title>Simple Test</title>\n</head>\n<body>\n<h1>Hello from HTML tag</h1>\n</body>\n</html>\n```</artifact>' })
@@ -284,6 +285,10 @@ test('Assistant image message with artifact', async () => {
   const wrapper3 = await mount(botMessageToolArtifact3)
   expect(wrapper3.find('.body').text()).toBe('Here:\ntest1Test1\ntest2Te')
   expect(wrapper3.findAll('.body .artifact').length).toBe(2)
+
+  const wrapper4 = await mount(botMessageToolArtifact4)
+  expect(wrapper4.find('.body').text()).toBe('Here:\ntest1Test1')
+  expect(wrapper4.findAll('.body .artifact').length).toBe(1)
 
 })
 
