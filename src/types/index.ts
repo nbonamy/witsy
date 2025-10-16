@@ -467,8 +467,8 @@ declare global {
         callTool(name: string, parameters: anyDict, signalId?: string): any
         cancelTool(signalId: string): void
         originalToolName(name: string): string
-        detectOAuth(url: string, headers: Record<string, string>): Promise<any>
-        startOAuthFlow(url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string>
+        detectOAuth(type: 'http' | 'sse', url: string, headers: Record<string, string>): Promise<any>
+        startOAuthFlow(type: 'http' | 'sse', url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string>
         completeOAuthFlow(serverUuid: string, authCode: string): Promise<boolean>
       }
       scratchpad: {

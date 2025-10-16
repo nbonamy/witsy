@@ -14,12 +14,12 @@ export function useMcpServer() {
 
   const isOauthRequired = async (type: McpServerType, url: string, headers: Record<string, string>, oauthConfig?: any): Promise<boolean> => {
 
-    if (type !== 'http' || !url || oauthConfig) {
+    if (!['http', 'sse'].includes(type) || !url || oauthConfig) {
       return false
     }
 
     try {
-      const oauthCheck = await window.api.mcp.detectOAuth(url, JSON.parse(JSON.stringify(headers)))
+      const oauthCheck = await window.api.mcp.detectOAuth(type as 'http' | 'sse', url, JSON.parse(JSON.stringify(headers)))
       return oauthCheck.requiresOAuth
     } catch (e) {
       console.error('Failed to detect OAuth requirement:', e)
@@ -28,10 +28,10 @@ export function useMcpServer() {
 
   }
 
-  const initOauth = async (userInitiated: boolean, url: string, headers: Record<string, string>, oauthStatus: OAuthStatus): Promise<boolean> => {
+  const initOauth = async (userInitiated: boolean, type: McpServerType, url: string, headers: Record<string, string>, oauthStatus: OAuthStatus): Promise<boolean> => {
 
     try {
-      const oauthCheck = await window.api.mcp.detectOAuth(url, JSON.parse(JSON.stringify(headers)))
+      const oauthCheck = await window.api.mcp.detectOAuth(type as 'http' | 'sse', url, JSON.parse(JSON.stringify(headers)))
       if (!oauthCheck.requiresOAuth) {
         return true
       }
@@ -65,7 +65,7 @@ export function useMcpServer() {
     }
   }
 
-  const setupOAuth = async (url: string, oauthStatus: OAuthStatus, oauthClientId?: string, oauthClientSecret?: string): Promise<anyDict|null> => {
+  const setupOAuth = async (type: McpServerType, url: string, oauthStatus: OAuthStatus, oauthClientId?: string, oauthClientSecret?: string): Promise<anyDict|null> => {
 
     if (!oauthStatus.metadata) {
       console.error('No OAuth metadata available')
@@ -85,8 +85,9 @@ export function useMcpServer() {
         client_id: oauthClientId,
         client_secret: oauthClientSecret
       } : undefined
-      
+
       const oauthResult = await window.api.mcp.startOAuthFlow(
+        type as 'http' | 'sse',
         url,
         JSON.parse(JSON.stringify(oauthStatus.metadata)),
         clientCredentials

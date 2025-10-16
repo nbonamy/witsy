@@ -191,19 +191,30 @@ describe('McpOAuthManager', () => {
   test('detectOAuth detects no OAuth required', async () => {
     mockClient.connect.mockResolvedValue(undefined)
     mockClient.close.mockResolvedValue(undefined)
-    
-    const result = await manager.detectOAuth('http://localhost:3000', {})
-    
+
+    const result = await manager.detectOAuth('http', 'http://localhost:3000', {})
+
     expect(result).toEqual({ requiresOAuth: false })
     expect(mockClient.connect).toHaveBeenCalled()
     expect(mockClient.close).toHaveBeenCalled()
   })
 
+  test('detectOAuth detects OAuth required for SSE (401 error)', async () => {
+    const sseError = new Error('SSE error: Non-200 status code (401)')
+    mockClient.connect.mockRejectedValue(sseError)
+
+    const result = await manager.detectOAuth('sse', 'https://mcp.asana.com/sse', {})
+
+    expect(result.requiresOAuth).toBe(true)
+    expect(result.metadata).toBeDefined()
+    expect(mockClient.connect).toHaveBeenCalled()
+  })
+
   test('detectOAuth throws non-OAuth errors', async () => {
     const networkError = new Error('Network connection failed')
     mockClient.connect.mockRejectedValue(networkError)
-    
-    await expect(manager.detectOAuth('http://localhost:3000', {})).rejects.toThrow('Network connection failed')
+
+    await expect(manager.detectOAuth('http', 'http://localhost:3000', {})).rejects.toThrow('Network connection failed')
   })
 
   describe('isOAuthRequiredError', () => {
@@ -285,7 +296,7 @@ describe('McpOAuthManager', () => {
     const originalWaitForCallback = manager.waitForCallback
     manager.waitForCallback = vi.fn(() => Promise.resolve('test-auth-code'))
     
-    await manager.startOAuthFlow('http://localhost:3000', clientMetadata)
+    await manager.startOAuthFlow('http', 'http://localhost:3000', clientMetadata)
     expect(mockTransport.finishAuth).toHaveBeenCalledWith('test-auth-code')
     
     // Restore original method

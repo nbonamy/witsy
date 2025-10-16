@@ -62,7 +62,7 @@ describe('useMcpServer', () => {
       const result = await isOauthRequired('http', 'http://example.com', { auth: 'token' })
 
       expect(result).toBe(true)
-      expect(window.api.mcp.detectOAuth).toHaveBeenCalledWith('http://example.com', { auth: 'token' })
+      expect(window.api.mcp.detectOAuth).toHaveBeenCalledWith('http', 'http://example.com', { auth: 'token' })
     })
 
     test('returns false when OAuth detection fails', async () => {
@@ -87,7 +87,7 @@ describe('useMcpServer', () => {
 
       vi.mocked(window.api.mcp.detectOAuth).mockResolvedValue({ requiresOAuth: false })
 
-      const result = await initOauth(false, 'http://example.com', {}, oauthStatus)
+      const result = await initOauth(false, 'http', 'http://example.com', {}, oauthStatus)
 
       expect(result).toBe(true)
       expect(oauthStatus.required).toBeUndefined()
@@ -103,7 +103,7 @@ describe('useMcpServer', () => {
       })
       vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false })
 
-      const result = await initOauth(false, 'http://example.com', {}, oauthStatus)
+      const result = await initOauth(false, 'http', 'http://example.com', {}, oauthStatus)
 
       expect(result).toBe(true)
       expect(oauthStatus.required).toBe(true)
@@ -127,7 +127,7 @@ describe('useMcpServer', () => {
         metadata: { issuer: 'http://auth.example.com' }
       })
 
-      const result = await initOauth(true, 'http://example.com', {}, oauthStatus)
+      const result = await initOauth(true, 'http', 'http://example.com', {}, oauthStatus)
 
       expect(result).toBe(true)
       expect(Dialog.show).not.toHaveBeenCalled()
@@ -143,7 +143,7 @@ describe('useMcpServer', () => {
       })
       vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: false, isDenied: false, isDismissed: true })
 
-      const result = await initOauth(false, 'http://example.com', {}, oauthStatus)
+      const result = await initOauth(false, 'http', 'http://example.com', {}, oauthStatus)
 
       expect(result).toBe(false)
     })
@@ -155,7 +155,7 @@ describe('useMcpServer', () => {
       vi.mocked(window.api.mcp.detectOAuth).mockRejectedValue(new Error('Network error'))
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      const result = await initOauth(false, 'http://example.com', {}, oauthStatus)
+      const result = await initOauth(false, 'http', 'http://example.com', {}, oauthStatus)
 
       expect(result).toBe(false)
       expect(consoleSpy).toHaveBeenCalledWith('Failed to detect OAuth requirement during save:', expect.any(Error))
@@ -171,7 +171,7 @@ describe('useMcpServer', () => {
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      const result = await setupOAuth('http://example.com', oauthStatus)
+      const result = await setupOAuth('http', 'http://example.com', oauthStatus)
 
       expect(result).toBeNull()
       expect(consoleSpy).toHaveBeenCalledWith('No OAuth metadata available')
@@ -191,7 +191,7 @@ describe('useMcpServer', () => {
         clientMetadata: { scope: 'read write' }
       }))
 
-      const result = await setupOAuth('http://example.com', oauthStatus)
+      const result = await setupOAuth('http', 'http://example.com', oauthStatus)
 
       expect(Dialog.show).toHaveBeenCalledWith({
         title: 'mcp.serverEditor.oauth.authorizing',
@@ -223,9 +223,10 @@ describe('useMcpServer', () => {
         clientMetadata: {}
       }))
 
-      await setupOAuth('http://example.com', oauthStatus, 'custom_id', 'custom_secret')
+      await setupOAuth('http', 'http://example.com', oauthStatus, 'custom_id', 'custom_secret')
 
       expect(window.api.mcp.startOAuthFlow).toHaveBeenCalledWith(
+        'http',
         'http://example.com',
         { issuer: 'http://auth.example.com' },
         {
@@ -247,10 +248,11 @@ describe('useMcpServer', () => {
         clientMetadata: {}
       }))
 
-      await setupOAuth('http://example.com', oauthStatus, 'client_id_only')
+      await setupOAuth('http', 'http://example.com', oauthStatus, 'client_id_only')
 
       // When only client_id is provided, it still passes the partial object (code uses || for both)
       expect(window.api.mcp.startOAuthFlow).toHaveBeenCalledWith(
+        'http',
         'http://example.com',
         { issuer: 'http://auth.example.com' },
         {
@@ -270,7 +272,7 @@ describe('useMcpServer', () => {
       vi.mocked(window.api.mcp.startOAuthFlow).mockRejectedValue(error)
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      const result = await setupOAuth('http://example.com', oauthStatus)
+      const result = await setupOAuth('http', 'http://example.com', oauthStatus)
 
       expect(result).toBeNull()
       // The error dialog shows the error.message, not the generic text
@@ -293,7 +295,7 @@ describe('useMcpServer', () => {
       const error = { message: 'Server does not support dynamic client registration' }
       vi.mocked(window.api.mcp.startOAuthFlow).mockRejectedValue(error)
 
-      await setupOAuth('http://example.com', oauthStatus)
+      await setupOAuth('http', 'http://example.com', oauthStatus)
 
       expect(Dialog.show).toHaveBeenCalledWith({
         title: 'mcp.serverEditor.oauth.error',

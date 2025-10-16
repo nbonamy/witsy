@@ -61,7 +61,12 @@ vi.mock('@modelcontextprotocol/sdk/client/stdio.js', async () => {
 })
 
 vi.mock('@modelcontextprotocol/sdk/client/sse.js', async () => {
-  const SSEClientTransport = vi.fn()
+  const SSEClientTransport = vi.fn(function(url, options) {
+    // @ts-expect-error mock
+    this.options = options
+    // @ts-expect-error mock
+    this.finishAuth = vi.fn()
+  })
   SSEClientTransport.prototype.start = vi.fn()
   SSEClientTransport.prototype.close = vi.fn()
   SSEClientTransport.prototype.send = vi.fn()
@@ -206,11 +211,11 @@ test('Create server - SSE', async () => {
   expect(getDefaultEnvironment).not.toHaveBeenCalled()
   expect(StdioClientTransport).not.toHaveBeenCalled()
   expect(StreamableHTTPClientTransport).not.toHaveBeenCalled()
-  expect(SSEClientTransport).toHaveBeenLastCalledWith(new URL('http://localhost:3001/'))
-  expect(Client.prototype.connect).toHaveBeenLastCalledWith({
+  expect(SSEClientTransport).toHaveBeenLastCalledWith(new URL('http://localhost:3001/'), {})
+  expect(Client.prototype.connect).toHaveBeenLastCalledWith(expect.objectContaining({
     onerror: expect.any(Function),
     onmessage: expect.any(Function),
-  })
+  }))
   
   expect(mcp.getServers().find(s => s.url === 'http://localhost:3001')).toBeDefined()
   expect(config.mcp.servers.find(s => s.url === 'http://localhost:3001')).toStrictEqual({
@@ -408,7 +413,7 @@ test('Connect', async () => {
     ],
     logs: {
       '1234-5678-90ab': [],
-      '2345-6789-0abc': [],
+      '2345-6789-0abc': [ 'Connected to MCP server at http://localhost:3000' ],
       '3456-7890-abcd': [],
       '4567-890a-bcde': [ 'Connected to MCP server at http://localhost:3002' ],
       's1': [],
@@ -580,6 +585,40 @@ test('Create HTTP server with OAuth', async () => {
   const server = mcp.getServers().find(s => s.url === 'http://localhost:3001')
   expect(server?.oauth).toEqual(oauthConfig)
   expect(config.mcp.servers.find(s => s.url === 'http://localhost:3001')?.oauth).toEqual(oauthConfig)
+})
+
+test('Create SSE server with OAuth', async () => {
+  const mcp = new Mcp(app)
+  const oauthConfig = {
+    tokens: {
+      access_token: 'test-access-token-sse',
+      token_type: 'bearer'
+    },
+    clientId: 'test-client-id-sse',
+    clientSecret: 'test-client-secret-sse'
+  }
+
+  expect(await mcp.editServer({
+    uuid: null,
+    registryId: null,
+    state: 'enabled',
+    type: 'sse',
+    url: 'http://localhost:3003',
+    oauth: oauthConfig,
+    toolSelection: null,
+  })).toBe(true)
+
+  expect(mcp.getServers()).toHaveLength(7)
+  expect(SSEClientTransport).toHaveBeenLastCalledWith(
+    new URL('http://localhost:3003/'),
+    {
+      authProvider: expect.any(Object)
+    }
+  )
+
+  const server = mcp.getServers().find(s => s.url === 'http://localhost:3003')
+  expect(server?.oauth).toEqual(oauthConfig)
+  expect(config.mcp.servers.find(s => s.url === 'http://localhost:3003')?.oauth).toEqual(oauthConfig)
 })
 
 test('OAuth flow completion', async () => {

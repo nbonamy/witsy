@@ -709,9 +709,47 @@ export default class {
       // track unique errors to avoid duplicates
       const seenErrors = new Set<string>()
 
+      // prepare transport options
+      const transportOptions: any = {}
+
+      // add OAuth provider if configured
+      if (server.oauth && (server.oauth.tokens || server.oauth.clientId)) {
+
+        const clientMetadata = await this.oauthManager.getClientMetadata(server.oauth.tokens?.scope ?? server.oauth.scope)
+        const oauthProvider = await this.oauthManager.createOAuthProvider(clientMetadata, (redirectUrl) => {
+          console.log(`[mcp] OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
+          this.logs[server.uuid].push(`[mcp] OAuth authorization required. Please visit: ${redirectUrl.toString()}`)
+        }, (tokens: OAuthTokens, scope: string) => {
+          this.updateTokens(server, tokens, scope)
+        })
+
+        // Set existing tokens if available
+        if (server.oauth.tokens) {
+          oauthProvider.saveTokens(server.oauth.tokens)
+        }
+
+        // Set existing client registration if available
+        if (server.oauth.clientId && server.oauth.clientSecret) {
+          // Reconstruct clientInformation from compact format
+          const clientInformation = {
+            client_id: server.oauth.clientId,
+            client_secret: server.oauth.clientSecret,
+            redirect_uris: ['http://localhost:8090/callback'],
+            token_endpoint_auth_method: 'client_secret_post',
+            grant_types: ['authorization_code', 'refresh_token'],
+            response_types: ['code'],
+            client_name: `${useI18n(app)('common.appName')} MCP Client`,
+            ...(server.oauth.scope ? { scope: server.oauth.scope } : {})
+          }
+          oauthProvider.saveClientInformation(clientInformation)
+        }
+        transportOptions.authProvider = oauthProvider
+      }
+
       // get transport
       const transport = new SSEClientTransport(
-        new URL(server.url)
+        new URL(server.url),
+        transportOptions
       )
       transport.onerror = (e) => {
         if (!seenErrors.has(e.message)) {
@@ -740,6 +778,11 @@ export default class {
 
       // connect
       await client.connect(transport)
+
+      // add some logs
+      if (this.logs[server.uuid].length === 0) {
+        this.logs[server.uuid].push(`Connected to MCP server at ${server.url}`)
+      }
 
       // done
       return client
@@ -969,12 +1012,12 @@ export default class {
   }
 
   // OAuth delegation methods
-  detectOAuth = async (url: string, headers: Record<string, string>) => {
-    return this.oauthManager.detectOAuth(url, headers)
+  detectOAuth = async (type: 'http' | 'sse', url: string, headers: Record<string, string>) => {
+    return this.oauthManager.detectOAuth(type, url, headers)
   }
 
-  startOAuthFlow = async (url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string> => {
-    return this.oauthManager.startOAuthFlow(url, clientMetadata, clientCredentials)
+  startOAuthFlow = async (type: 'http' | 'sse', url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string> => {
+    return this.oauthManager.startOAuthFlow(type, url, clientMetadata, clientCredentials)
   }
 
   completeOAuthFlow = async (serverUuid: string, authorizationCode: string): Promise<boolean> => {
