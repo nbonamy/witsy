@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 - Custom OpenAI-compatible TTS Endpoints (https://github.com/nbonamy/witsy/issues/449)
 
 ### Changed
-- N/A
+- Agent run view redesign
 
 ### Fixed
 - MCP List Doesn't Scroll when number of servers exceeds page length (https://github.com/nbonamy/witsy/issues/448)
