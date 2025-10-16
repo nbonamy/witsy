@@ -19,90 +19,91 @@
       <div v-if="!props.servers?.length" class="empty-state">
         {{ t('mcp.noServersFound') }}
       </div>
-      
-      <div v-else class="servers-list">
 
-        <div 
-          v-for="server in sortedServers" 
-          :key="server.uuid" 
-          class="server-item"
-        >
-
-          <!-- Server Icon -->
-          <div class="server-icon">
-            <LinkIcon />
-          </div>
-        
-          <!-- Server Content -->
-          <div class="server-content clickable" @click="showServerInfo(server)">
-            <div class="server-name">{{ getDescription(server) }}</div>
-            <div class="server-tools">{{ getToolsCount(server) }}</div>
-          </div>
-          
-          <!-- Server Status -->
+      <template v-else>
+        <div class="servers-list">
           <div
-            class="tag"
-            :class="{
-              'success': getStatusText(server) === 'Running',
-              'info': getStatusText(server) === 'Disabled',
-              'warning': getStatusText(server) === 'Starting',
-              'error': getStatusText(server) === 'Failed'
-            }"
+            v-for="server in sortedServers"
+            :key="server.uuid"
+            class="server-item"
           >
-            {{ getStatusText(server) }}
+
+            <!-- Server Icon -->
+            <div class="server-icon">
+              <LinkIcon />
+            </div>
+
+            <!-- Server Content -->
+            <div class="server-content clickable" @click="showServerInfo(server)">
+              <div class="server-name">{{ getDescription(server) }}</div>
+              <div class="server-tools">{{ getToolsCount(server) }}</div>
+            </div>
+
+            <!-- Server Status -->
+            <div
+              class="tag"
+              :class="{
+                'success': getStatusText(server) === 'Running',
+                'info': getStatusText(server) === 'Disabled',
+                'warning': getStatusText(server) === 'Starting',
+                'error': getStatusText(server) === 'Failed'
+              }"
+            >
+              {{ getStatusText(server) }}
+            </div>
+
+            <!-- Server Actions -->
+            <div class="server-actions">
+              <!-- Start/Stop button -->
+              <ButtonIcon
+                v-if="server.state === 'disabled'"
+                name="start"
+                class="start"
+                v-tooltip="{ text: t('mcp.tooltips.startServer'), position: 'top-left' }"
+                @click="onEnabled(server)"
+              >
+                <PlayIcon />
+              </ButtonIcon>
+              <ButtonIcon
+                v-else
+                name="stop"
+                class="stop"
+                v-tooltip="{ text: t('mcp.tooltips.stopServer'), position: 'top-left' }"
+                @click="onEnabled(server)"
+              >
+                <PauseIcon />
+              </ButtonIcon>
+
+              <!-- View Tools button -->
+              <ButtonIcon
+                class="tools"
+                :class="{ 'disabled': !isRunning(server) }"
+                v-tooltip="{ text: t('mcp.tooltips.viewTools'), position: 'top-left' }"
+                @click="showServerInfo(server)"
+              >
+                <SearchIcon />
+              </ButtonIcon>
+
+              <!-- Context menu for other actions -->
+              <ContextMenuTrigger position="below-right">
+                <template #menu>
+                  <div class="item logs" @click="showLogs(server)" v-if="hasLogs(server)">
+                    {{ t('mcp.tooltips.viewLogs') }}
+                  </div>
+                  <div class="item edit" @click="onEdit(server)">
+                    {{ t('mcp.tooltips.editServer') }}
+                  </div>
+                  <div class="item restart" @click="onRestartServer(server)">
+                    {{ t('mcp.tooltips.restartServer') }}
+                  </div>
+                  <div class="item delete danger" @click="onDelete(server)">
+                    {{ t('mcp.tooltips.deleteServer') }}
+                  </div>
+                </template>
+              </ContextMenuTrigger>
+            </div>
+
           </div>
-          
-          <!-- Server Actions -->
-          <div class="server-actions">
-            <!-- Start/Stop button -->
-            <ButtonIcon 
-              v-if="server.state === 'disabled'"
-              name="start"
-              class="start" 
-              v-tooltip="{ text: t('mcp.tooltips.startServer'), position: 'top-left' }" 
-              @click="onEnabled(server)"
-            >
-              <PlayIcon />
-            </ButtonIcon>
-            <ButtonIcon 
-              v-else
-              name="stop"
-              class="stop" 
-              v-tooltip="{ text: t('mcp.tooltips.stopServer'), position: 'top-left' }" 
-              @click="onEnabled(server)"
-            >
-              <PauseIcon />
-            </ButtonIcon>
-            
-            <!-- View Tools button -->
-            <ButtonIcon 
-              class="tools"
-              :class="{ 'disabled': !isRunning(server) }"
-              v-tooltip="{ text: t('mcp.tooltips.viewTools'), position: 'top-left' }"
-              @click="showServerInfo(server)"
-            >
-              <SearchIcon />
-            </ButtonIcon>
-            
-            <!-- Context menu for other actions -->
-            <ContextMenuTrigger position="below-right">
-              <template #menu>
-                <div class="item logs" @click="showLogs(server)" v-if="hasLogs(server)">
-                  {{ t('mcp.tooltips.viewLogs') }}
-                </div>
-                <div class="item edit" @click="onEdit(server)">
-                  {{ t('mcp.tooltips.editServer') }}
-                </div>
-                <div class="item restart" @click="onRestartServer(server)">
-                  {{ t('mcp.tooltips.restartServer') }}
-                </div>
-                <div class="item delete danger" @click="onDelete(server)">
-                  {{ t('mcp.tooltips.deleteServer') }}
-                </div>
-              </template>
-            </ContextMenuTrigger>
-          </div>
-        
         </div>
 
         <div class="actions">
@@ -114,8 +115,7 @@
             <PowerIcon />{{ t('mcp.restartServers') }}
           </button>
         </div>
-
-      </div>
+      </template>
 
     </main>
     
@@ -415,22 +415,29 @@ const validateServerJson = (json: string) => {
 <style scoped>
 
 .mcp-server-list {
-  
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
   header {
+    flex-shrink: 0;
+    border-bottom: none;
+
     .spinner {
       margin-right: 1rem;
     }
   }
 
-  header {
-    border-bottom: none;
-  }
-  
   main {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 2rem;
+    overflow: hidden;
+    min-height: 0;
   }
-  
+
   .empty-state {
     text-align: center;
     color: var(--faded-text-color);
@@ -442,10 +449,13 @@ const validateServerJson = (json: string) => {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    min-height: 0;
   }
 
-  .servers-list .actions {
-    margin-top: 1rem;
+  .actions {
+    flex-shrink: 0;
     display: flex;
     justify-content: flex-end;
     align-items: center;
