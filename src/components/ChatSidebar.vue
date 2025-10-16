@@ -334,7 +334,7 @@ defineExpose({
       align-items: center;
 
       &.select-actions {
-        margin: 1rem;
+        margin: 0rem 1rem;
         border: 1px solid var(--border-color);
         border-radius: 6px;
         padding: 10px 12px;
