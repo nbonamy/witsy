@@ -48,7 +48,7 @@
       <!-- transient information -->
       <div v-if="message.transient" class="message-transient">
         <MessageItemToolBlock v-for="runningTool in runningTools" :tool-call="runningTool" v-if="runningTools" />
-        <Loader v-else />
+        <Loader v-if="!message.status" />
       </div>
 
     </div>
