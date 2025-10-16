@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Auth for MCP SSE servers (https://github.com/nbonamy/witsy/issues/442)
+- Custom OpenAI-compatible TTS Endpoints (https://github.com/nbonamy/witsy/issues/449)
 
 ### Changed
 - N/A

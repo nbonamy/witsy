@@ -2622,6 +2622,7 @@
       "tts": {
         "groqAcceptTermsReminder": "Devi <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accettare i termini e le condizioni</a> per utilizzare il modello Groq.",
         "kokoroReminder": "Fornito",
+        "playbackError": "Impossibile riprodurre l'audio. Si prega di verificare la configurazione TTS.",
         "sampleText": "Benvenuto in @:{'common.appName'}, l'assistente desktop AI definitivo.",
         "serviceDisclaimer": "Il servizio potrebbe smettere di funzionare in qualsiasi momento.",
         "voice": "@:{'common.voice'}"

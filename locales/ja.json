@@ -2650,6 +2650,7 @@
       "tts": {
         "groqAcceptTermsReminder": "Groqモデルを使用するには、<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">利用規約に同意する</a>必要があります。",
         "kokoroReminder": "提供元",
+        "playbackError": "音声の再生に失敗しました。TTSの設定を確認してください。",
         "sampleText": "究極のAIデスクトップアシスタント、@:{'common.appName'}へようこそ。",
         "serviceDisclaimer": "このサービスはいつでも停止する可能性があります。",
         "voice": "@:{'common.voice'}"

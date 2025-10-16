@@ -26,10 +26,11 @@ export default class TTSOpenAI extends TTSEngine {
     { id: 'shimmer', label: 'Shimmer' },
   ]
 
-  constructor(config: Configuration) {
+  constructor(config: Configuration, baseURL?: string) {
     super(config)
     this.client = new OpenAI({
       apiKey: config.engines.openai.apiKey,
+      baseURL: baseURL,
       dangerouslyAllowBrowser: true
     })
   }

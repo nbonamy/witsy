@@ -13,6 +13,7 @@ export const getTTSEngines = () => {
     { id: 'elevenlabs', label: engineNames.elevenlabs },
     { id: 'falai', label: engineNames.falai },
     { id: 'groq', label: engineNames.groq },
+    { id: 'custom', label: 'Custom OpenAI' },
   ]
 }
 
@@ -30,8 +31,10 @@ const getTTSEngine = (config: Configuration): TTSEngine => {
     return new TTSElevenLabs(config)
   // } else if (engine === 'kokoro') {
   //   return new TTSKokoro(config)
+  } else if (engine === 'custom') {
+    return new TTSOpenAI(config, config.tts.customOpenAI.baseURL)
   } else {
-    throw new Error(`Unknown STT engine ${engine}`)
+    throw new Error(`Unknown TTS engine ${engine}`)
   }
 }
 
@@ -49,6 +52,8 @@ export const getTTSModels = (engine: string) => {
   //   return TTSReplicate.models
   // } else if (engine === 'kokoro') {
   //   return TTSKokoro.models
+  } else if (engine === 'custom') {
+    return []
   }
 }
 
