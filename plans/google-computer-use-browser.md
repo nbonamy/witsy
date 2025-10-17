@@ -187,7 +187,7 @@ async execute(_context, payload) {
 
 ---
 
-### Step 6: Update Helper to Use Browser ✅ / ❌ / 🔄
+### Step 6: Update Helper to Use Browser ✅
 **Files**: `src/llms/google.ts`
 **Commit**: `feat: use browser for google computer info`
 **Tests**: Manual verification
