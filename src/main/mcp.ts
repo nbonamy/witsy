@@ -757,9 +757,9 @@ export default class {
           this.logs[server.uuid].push(this.translateError(e.message))
         }
       }
-      transport.onmessage = (message: any) => {
-        console.log('[mcp] MCP SSE message', message)
-      }
+      // transport.onmessage = (message: any) => {
+      //   console.log('[mcp] MCP SSE message', message)
+      // }
 
       // build the client
       const client = new Client({
