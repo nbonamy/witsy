@@ -500,6 +500,10 @@ declare global {
         close(): void
         updateStatus(chunk: LlmChunk): void
       }
+      computerBrowser: {
+        isAvailable(): boolean
+        executeAction(action: ComputerAction): Promise<{ url: string, screenshot: string }>
+      }
       memory: {
         reset(): void
         isNotEmpty(): boolean

@@ -18,7 +18,7 @@ Implement Google Computer Use using Electron browser automation instead of deskt
 
 ## Implementation Steps
 
-### Step 1: Create Browser Window Manager ✅ / ❌ / 🔄
+### Step 1: Create Browser Window Manager ✅
 **Files**: `src/main/windows/computer_browser.ts`
 **Commit**: `feat: create computer browser window manager`
 **Tests**: Manual verification

@@ -213,6 +213,11 @@ export const COMPUTER = {
   STATUS: 'computer-status',
 } as const;
 
+export const COMPUTER_BROWSER = {
+  IS_AVAILABLE: 'computer-browser-is-available',
+  EXECUTE_ACTION: 'computer-browser-execute-action',
+} as const;
+
 export const MEMORY = {
   RESET: 'memory-reset',
   HAS_FACTS: 'memory-has-facts',
