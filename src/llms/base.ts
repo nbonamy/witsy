@@ -124,7 +124,7 @@ export default class LlmManagerBase implements ILlmManager {
 
   isComputerUseModel = (engine: string, model: string): boolean => {
     return (engine === 'anthropic' && model === 'computer-use') ||
-           (engine === 'google' && model === 'google-computer-use')
+           (engine === 'google' && model === 'computer-use')
   }
 
   removeFavoriteModel = (engine: string, model: string) => {

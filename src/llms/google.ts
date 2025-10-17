@@ -14,7 +14,7 @@ const getComputerInfo = () => {
 }
 
 const isSpecializedModel = (model: string): boolean => {
-  return model === 'google-computer-use'
+  return model === 'computer-use'
 }
 
 const getFallbackModel = (): string => {

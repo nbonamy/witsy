@@ -150,7 +150,7 @@ Add support for Google's computer use implementation alongside the existing Anth
 
 - [ ] Add `getComputerInfo()` helper function (like Anthropic's)
 - [ ] Check if computer plugin is available and return computer info
-- [ ] Add `isSpecializedModel(model)` to detect `'google-computer-use'`
+- [ ] Add `isSpecializedModel(model)` to detect `'computer-use'`
 - [ ] Add `getFallbackModel()` returning standard Gemini model
 - [ ] Export these helpers
 - [ ] Add test cases for specialized model detection
@@ -169,7 +169,7 @@ Add support for Google's computer use implementation alongside the existing Anth
 
 - [ ] Import Google computer use helpers in `base.ts`
 - [ ] Update `isSpecializedModel()` to check Google engine
-- [ ] Update `isComputerUseModel()` to include `engine === 'google' && model === 'google-computer-use'`
+- [ ] Update `isComputerUseModel()` to include `engine === 'google' && model === 'computer-use'`
 - [ ] Update `getFallbackModel()` to handle Google engine
 - [ ] Add tests for Google computer use model detection
 - [ ] Run `npm run lint`
@@ -187,8 +187,8 @@ Add support for Google's computer use implementation alongside the existing Anth
 
 - [ ] Add `GoogleComputerToolInfo` interface (similar to Anthropic)
 - [ ] Accept optional `computerInfo` parameter in constructor
-- [ ] In `getModels()`: Add `'google-computer-use'` to models list when computerInfo exists
-- [ ] Map `'google-computer-use'` to actual model `'gemini-2.5-computer-use-preview-10-2025'`
+- [ ] In `getModels()`: Add `'computer-use'` to models list when computerInfo exists
+- [ ] Map `'computer-use'` to actual model `'gemini-2.5-computer-use-preview-10-2025'`
 - [ ] In `getToolOpts()` or similar: Inject computer_use tool when computer model is active
 - [ ] Handle tool responses with coordinate normalization
 - [ ] Add/update tests

@@ -11,7 +11,7 @@ class ComputerBrowserWindow {
   private readonly WINDOW_HEIGHT = 900
 
   isAvailable(): boolean {
-    return this.window !== null && !this.window.isDestroyed()
+    return true
   }
 
   private createWindow(): BrowserWindow {
@@ -47,8 +47,12 @@ class ComputerBrowserWindow {
     return win
   }
 
+  private isReady(): boolean {
+    return this.window !== null
+  }
+
   private getOrCreateWindow(): BrowserWindow {
-    if (!this.isAvailable()) {
+    if (!this.isReady()) {
       this.window = this.createWindow()
     }
     return this.window
@@ -70,14 +74,11 @@ class ComputerBrowserWindow {
   }
 
   async getCurrentURL(): Promise<string> {
-    if (!this.isAvailable()) {
-      return 'about:blank'
-    }
-    return this.window.webContents.getURL()
+    return !this.isReady() ? '' : (this.window?.webContents?.getURL() || 'about:blank')
   }
 
   async takeScreenshot(): Promise<string> {
-    if (!this.isAvailable()) {
+    if (!this.isReady()) {
       return null
     }
 
@@ -204,9 +205,21 @@ class ComputerBrowserWindow {
 
   private waitForLoad(win: BrowserWindow): Promise<void> {
     return new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        console.warn('[computer-browser] Page load timeout')
+        resolve()
+      }, 5000) // 5 second timeout
+
+      const cleanup = () => {
+        clearTimeout(timeout)
+        resolve()
+      }
+
       if (win.webContents.isLoading()) {
-        win.webContents.once('did-finish-load', () => resolve())
+        win.webContents.once('did-finish-load', cleanup)
+        win.webContents.once('did-fail-load', cleanup)
       } else {
+        clearTimeout(timeout)
         resolve()
       }
     })
