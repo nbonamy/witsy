@@ -204,31 +204,41 @@ class ComputerBrowserWindow {
   }
 
   private async navigate(win: BrowserWindow, url: string): Promise<void> {
-    await win.loadURL(url)
-    await this.waitForLoad(win)
+    const startTime = Date.now()
+    console.log(`[computer-browser] Navigating to ${url}`)
+
+    try {
+      await win.loadURL(url)
+      await this.waitForLoad(win)
+      console.log(`[computer-browser] Navigation completed in ${Date.now() - startTime}ms`)
+    } catch (err) {
+      console.error(`[computer-browser] Navigation error after ${Date.now() - startTime}ms:`, err)
+    }
   }
 
   private waitForLoad(win: BrowserWindow): Promise<void> {
     return new Promise((resolve) => {
       let resolved = false
+      const startTime = Date.now()
 
-      const cleanup = () => {
+      const cleanup = (reason: string) => {
         if (resolved) return
         resolved = true
         clearTimeout(timeout)
+        console.log(`[computer-browser] Load completed: ${reason} (${Date.now() - startTime}ms)`)
         resolve()
       }
 
       const timeout = setTimeout(() => {
-        console.warn('[computer-browser] Page load timeout')
-        cleanup()
+        cleanup('timeout')
       }, 5000) // 5 second timeout
 
       if (win.webContents.isLoading()) {
-        win.webContents.once('did-finish-load', cleanup)
-        win.webContents.once('did-fail-load', cleanup)
+        win.webContents.once('did-finish-load', () => cleanup('did-finish-load'))
+        win.webContents.once('did-fail-load', () => cleanup('did-fail-load'))
+        win.webContents.once('did-fail-provisional-load', () => cleanup('did-fail-provisional-load'))
       } else {
-        cleanup()
+        cleanup('already-loaded')
       }
     })
   }
