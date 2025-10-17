@@ -26,7 +26,7 @@ class ComputerBrowserWindow {
         contextIsolation: true,
         sandbox: true,
         partition: 'persist:computer-browser',
-        webSecurity: true,
+        webSecurity: false, // Allow mixed content and ignore cert errors
       },
     })
 
@@ -34,6 +34,11 @@ class ComputerBrowserWindow {
     const originalUA = win.webContents.session.getUserAgent()
     const cleanUA = getCleanUserAgent(originalUA)
     win.webContents.session.setUserAgent(cleanUA)
+
+    // Ignore certificate errors
+    win.webContents.session.setCertificateVerifyProc((request, callback) => {
+      callback(0) // 0 = trust, -2 = reject, -3 = use default verification
+    })
 
     // Prevent memory leaks
     win.webContents.setMaxListeners(20)
@@ -205,22 +210,25 @@ class ComputerBrowserWindow {
 
   private waitForLoad(win: BrowserWindow): Promise<void> {
     return new Promise((resolve) => {
-      const timeout = setTimeout(() => {
-        console.warn('[computer-browser] Page load timeout')
-        resolve()
-      }, 5000) // 5 second timeout
+      let resolved = false
 
       const cleanup = () => {
+        if (resolved) return
+        resolved = true
         clearTimeout(timeout)
         resolve()
       }
+
+      const timeout = setTimeout(() => {
+        console.warn('[computer-browser] Page load timeout')
+        cleanup()
+      }, 5000) // 5 second timeout
 
       if (win.webContents.isLoading()) {
         win.webContents.once('did-finish-load', cleanup)
         win.webContents.once('did-fail-load', cleanup)
       } else {
-        clearTimeout(timeout)
-        resolve()
+        cleanup()
       }
     })
   }
