@@ -249,7 +249,7 @@ export default class extends MultiToolPlugin {
       url: result.url,
       parts: [{
         inlineData: {
-          mimeType: 'image/png',
+          mimeType: 'image/jpeg',
           data: result.screenshot
         }
       }]

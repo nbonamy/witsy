@@ -90,14 +90,10 @@ class ComputerBrowserWindow {
     try {
       const image = await this.window.webContents.capturePage()
       const { width, height } = image.getSize()
-
-      // Resize to max 1280 width while preserving aspect ratio
-      const targetWidth = 1280
+      const targetWidth = 1000
       const scaleFactor = targetWidth / width
       const targetHeight = Math.round(height * scaleFactor)
-
       const resized = image.resize({ width: targetWidth, height: targetHeight })
-      // Use JPEG with 80% quality for much smaller file size
       return resized.toJPEG(80).toString('base64')
     } catch (e) {
       console.error('[computer-browser] Error taking screenshot:', e)
