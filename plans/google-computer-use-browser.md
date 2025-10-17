@@ -1,6 +1,6 @@
 # Plan: Implement Google Computer Use with Browser Automation
 
-**Status**: Planning
+**Status**: ✅ Complete
 **Created**: 2025-10-17
 **Last Updated**: 2025-10-17
 
@@ -272,7 +272,7 @@ const getComputerInfo = () => {
 
 ---
 
-### Step 10: Documentation ✅ / ❌ / 🔄
+### Step 10: Documentation ✅
 **Files**: `README.md`, plan file
 **Commit**: `docs: document browser-based google computer use`
 **Tests**: N/A
@@ -327,10 +327,25 @@ Key checkpoints:
 
 ## Key Learnings
 
-_To be filled after execution_
-
 ### Ways of Working
+1. **Start with clean branch**: Always create feature branch BEFORE starting work
+2. **Use worktrees for isolation**: Separate folder prevents confusion and conflicts
+3. **Atomic commits**: Each step is a complete, working, tested unit
+4. **Read documentation carefully**: Google's Computer Use is browser-focused, not desktop
+5. **Leverage existing patterns**: Reused local search BrowserWindow approach
 
 ### Design Patterns
+1. **Separate namespaces**: `computer` (desktop/Anthropic) vs `computerBrowser` (web/Google)
+2. **Single method returns all data**: `executeAction()` returns both URL and screenshot
+3. **Auto-managed lifecycle**: TTL timer handles cleanup automatically
+4. **Coordinate system abstraction**: 1000x1000 normalized grid maps to viewport
+5. **Plugin as MultiTool**: Exposes all 14 Google actions as separate tools
 
 ### Implementation Notes
+1. **Browser vs Desktop**: Fundamental architectural difference between providers
+2. **BrowserWindow screenshot**: Uses `webContents.capturePage()` not `desktopCapturer`
+3. **Input events**: `sendInputEvent()` for clicks, `executeJavaScript()` for scrolling
+4. **Waiting for load**: Use `did-finish-load` event to ensure page is ready
+5. **TTL cleanup**: 5-minute timer prevents resource leaks from abandoned sessions
+6. **URL placeholder**: Google requires URL even if we don't control real browser
+7. **Test mocking**: Added `computerBrowser` to window mock for test compatibility
