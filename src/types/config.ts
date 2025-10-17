@@ -5,6 +5,10 @@ import { PluginConfig } from '../plugins/plugin'
 import { McpClaudeServer, McpServer, McpServerState, McpOAuthConfig } from './mcp'
 import { ToolSelection } from './llm'
 
+export type ComputerUseConfig = {
+  provider: 'anthropic' | 'google'
+}
+
 export type Configuration = {
   workspaceId: string
   general: GeneralConfig
@@ -20,6 +24,7 @@ export type Configuration = {
   scratchpad: ScratchpadConfig
   engines: Record<string, EngineConfig|CustomEngineConfig>
   plugins: Record<string, PluginConfig>
+  computerUse: ComputerUseConfig
   stt: STTConfig
   tts: TTSConfig
   rag: RagConfig

@@ -479,7 +479,13 @@
       "allowedPaths": [],
       "allowWrite": false,
       "skipConfirmation": false
+    },
+    "computer": {
+      "enabled": true
     }
+  },
+  "computerUse": {
+    "provider": "anthropic"
   },
   "mcp": {
     "servers": [],
