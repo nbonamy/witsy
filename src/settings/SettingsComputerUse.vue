@@ -1,16 +1,17 @@
 <template>
-  <div class="form form-vertical form-large">
-    <div class="description">
-      {{ t('settings.computerUse.description') }}
-    </div>
-    <div class="form-field">
-      <label for="provider">{{ t('settings.computerUse.provider.label') }}</label>
-      <select id="provider" name="provider" v-model="provider" @change="save">
-        <option value="anthropic">{{ t('settings.computerUse.provider.anthropic') }}</option>
-        <option value="google">{{ t('settings.computerUse.provider.google') }}</option>
-      </select>
-      <div class="help">{{ t('settings.computerUse.provider.help') }}</div>
-    </div>
+  <div class="tab-content">
+    <header>
+      <div class="title">{{ t('settings.tabs.chat') }}</div>
+    </header>
+    <main class="form form-vertical form-large">
+      <div class="form-field">
+        <label for="provider">{{ t('settings.computerUse.provider.label') }}</label>
+        <select id="provider" name="provider" v-model="provider" @change="save">
+          <option value="anthropic">{{ t('settings.computerUse.provider.anthropic') }}</option>
+          <option value="google">{{ t('settings.computerUse.provider.google') }}</option>
+        </select>
+      </div>
+    </main>
   </div>
 </template>
 
