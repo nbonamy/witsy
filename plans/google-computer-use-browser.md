@@ -88,7 +88,7 @@ normalizedToViewport(x, y) {
 
 ---
 
-### Step 3: Add IPC Handlers ✅ / ❌ / 🔄
+### Step 3: Add IPC Handlers ✅
 **Files**: `src/main/ipc.ts`, `src/preload.ts`, `src/ipc_consts.ts`
 **Commit**: `feat: add computer browser ipc handlers`
 **Tests**: TypeScript compilation
@@ -132,7 +132,7 @@ computerBrowser: {
 
 ---
 
-### Step 4: Update Types ✅ / ❌ / 🔄
+### Step 4: Update Types ✅
 **Files**: `src/types/index.ts`
 **Commit**: `feat: add computer browser types`
 **Tests**: TypeScript compilation
