@@ -37,7 +37,7 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
 
     // create a run
     const run: AgentRun = {
-      uuid: opts.runId || crypto.randomUUID(),
+      uuid: opts?.runId || crypto.randomUUID(),
       agentId: this.agent.uuid,
       createdAt: Date.now(),
       updatedAt: Date.now(),
