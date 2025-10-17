@@ -17,7 +17,7 @@ Add support for Google's computer use implementation alongside the existing Anth
 
 ## Steps
 
-### Step 1: Add Configuration Types ✅ / ❌ / 🔄
+### Step 1: Add Configuration Types ✅
 **Files**: `src/types/config.ts`, `defaults/settings.json`
 **Commit**: `feat: add computer use provider configuration`
 **Tests**: `tests/unit/config.test.ts` (if exists) or manual verification
