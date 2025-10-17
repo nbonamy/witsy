@@ -2,6 +2,7 @@
 import { Configuration, CustomEngineConfig, EngineConfig } from '../types/config'
 import { GetChatEnginesOpts, ILlmManager, ToolSelection } from '../types/llm'
 import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel } from './anthropic'
+import { isSpecializedModel as isSpecialGoogleModel, getFallbackModel as getGoogleFallbackModel } from './google'
 import { areAllToolsEnabled, areToolsDisabled, favoriteMockEngine } from './llm'
 import { imageFormats, textFormats } from '../models/attachment'
 import { PluginInstance, PluginsList } from '../plugins/plugins'
@@ -86,6 +87,7 @@ export default class LlmManagerBase implements ILlmManager {
   
   isSpecializedModel = (engine: string, model: string): boolean => {
     if (engine === 'anthropic') return isSpecialAnthropicModel(model)
+    if (engine === 'google') return isSpecialGoogleModel(model)
     return false
   }
 
@@ -121,7 +123,8 @@ export default class LlmManagerBase implements ILlmManager {
   }
 
   isComputerUseModel = (engine: string, model: string): boolean => {
-    return (engine === 'anthropic' && model === 'computer-use')
+    return (engine === 'anthropic' && model === 'computer-use') ||
+           (engine === 'google' && model === 'google-computer-use')
   }
 
   removeFavoriteModel = (engine: string, model: string) => {
@@ -147,6 +150,7 @@ export default class LlmManagerBase implements ILlmManager {
 
   getFallbackModel = (engine: string): string => {
     if (engine === 'anthropic') return getAnthropicFallbackModel()
+    if (engine === 'google') return getGoogleFallbackModel()
     return null
   }
   
