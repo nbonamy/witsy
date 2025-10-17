@@ -40,4 +40,4 @@ export default class GoogleEngine extends Google {
 
 }
 
-export { getComputerInfo, isSpecializedModel, getFallbackModel, stripOldScreenshots }
+export { getComputerInfo, isSpecializedModel, getFallbackModel }

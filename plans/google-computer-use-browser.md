@@ -1,8 +1,21 @@
 # Plan: Implement Google Computer Use with Browser Automation
 
-**Status**: ✅ Complete
+**Status**: ⚠️ Implementation Complete - Model Issues
 **Created**: 2025-10-17
 **Last Updated**: 2025-10-17
+**Completed**: 2025-10-17
+
+## ⚠️ Important Note
+
+While the implementation is technically complete and functional, the Google Gemini 2.5 Computer Use model appears to hallucinate significantly during browser automation. See [Issue #444](https://github.com/nbonamy/witsy/issues/444#issuecomment-3416920643) for details.
+
+The model frequently:
+- Claims to perform actions it didn't actually execute
+- Reports incorrect URLs
+- Hallucinates page content and state
+- Makes nonsensical action choices
+
+This makes the feature unreliable for practical use. The implementation is archived on this branch pending improvements to Google's Computer Use model.
 
 ## Overview
 
@@ -347,5 +360,13 @@ Key checkpoints:
 3. **Input events**: `sendInputEvent()` for clicks, `executeJavaScript()` for scrolling
 4. **Waiting for load**: Use `did-finish-load` event to ensure page is ready
 5. **TTL cleanup**: 5-minute timer prevents resource leaks from abandoned sessions
-6. **URL placeholder**: Google requires URL even if we don't control real browser
-7. **Test mocking**: Added `computerBrowser` to window mock for test compatibility
+6. **Screenshot optimization**: Resize to 1000px width + JPEG 80% quality (~95% size reduction)
+7. **SSL handling**: Ignore certificate errors via `setCertificateVerifyProc()`
+8. **Load timeouts**: 5-second timeout per page load to prevent hangs
+9. **Auto-show/hide**: Browser shows on execute, can be hidden after generation
+10. **Test mocking**: Added `computerBrowser` to window mock for test compatibility
+
+### Known Issues
+- **Model hallucination**: Google Gemini 2.5 Computer Use model frequently hallucinates actions and state
+- **Reliability**: Current model quality makes this feature impractical for real-world use
+- **Reference**: See [GitHub Issue #444](https://github.com/nbonamy/witsy/issues/444#issuecomment-3416920643)
