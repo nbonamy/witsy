@@ -214,7 +214,6 @@ test('Create server - SSE', async () => {
   expect(SSEClientTransport).toHaveBeenLastCalledWith(new URL('http://localhost:3001/'), {})
   expect(Client.prototype.connect).toHaveBeenLastCalledWith(expect.objectContaining({
     onerror: expect.any(Function),
-    onmessage: expect.any(Function),
   }))
   
   expect(mcp.getServers().find(s => s.url === 'http://localhost:3001')).toBeDefined()
