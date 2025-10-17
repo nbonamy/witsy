@@ -153,7 +153,7 @@ computerBrowser: {
 
 ---
 
-### Step 5: Update ComputerGooglePlugin ✅ / ❌ / 🔄
+### Step 5: Update ComputerGooglePlugin ✅
 **Files**: `src/plugins/computer_google.ts`
 **Commit**: `feat: update google plugin to use browser automation`
 **Tests**: Unit tests
