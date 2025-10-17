@@ -34,7 +34,7 @@ Add support for Google's computer use implementation alongside the existing Anth
 
 ---
 
-### Step 2: Create Settings Component ✅ / ❌ / 🔄
+### Step 2: Create Settings Component ✅
 **Files**: `src/settings/SettingsComputerUse.vue`
 **Commit**: `feat: add computer use settings panel`
 **Tests**: `tests/components/settings_computer_use.test.ts`

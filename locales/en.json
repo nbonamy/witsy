@@ -2607,6 +2607,7 @@
       "advanced": "Advanced",
       "chat": "Chat",
       "commands": "Commands",
+      "computerUse": "Computer Use",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
       "general": "General",
@@ -2616,6 +2617,15 @@
       "shortcuts": "Shortcuts",
       "sidebar": "Sidebar",
       "voice": "@:{'common.voice'}"
+    },
+    "computerUse": {
+      "description": "Configure which provider to use for computer use functionality. Computer use allows AI models to control your computer by taking screenshots and performing actions like clicking and typing.",
+      "provider": {
+        "label": "Provider",
+        "help": "Select which AI provider to use for computer use. Different providers may have different capabilities and coordinate systems.",
+        "anthropic": "Anthropic (Claude)",
+        "google": "Google (Gemini)"
+      }
     },
     "voice": {
       "automatic": "🤖 Automatic",
