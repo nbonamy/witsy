@@ -21,6 +21,7 @@ import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
 import useTipsManager from '../composables/tips_manager'
 import LlmFactory from '../llms/llm'
+import { stripOldScreenshots } from '../llms/google'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import { createAgentExecutor, isAgentConversation } from '../services/agent_utils'
@@ -504,6 +505,11 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // we will need that (function because chat may be updated later)
   const isUsingComputer = () => {
     return llmManager.isComputerUseModel(assistant.value.chat.engine, assistant.value.chat.model)
+  }
+
+  // Strip old screenshots for Google computer use to reduce token usage
+  if (assistant.value.chat.engine === 'google' && assistant.value.chat.model === 'computer-use') {
+    stripOldScreenshots(assistant.value.chat.messages)
   }
 
   // create abort controller for this prompt

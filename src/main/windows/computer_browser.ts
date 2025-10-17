@@ -214,7 +214,7 @@ class ComputerBrowserWindow {
           await win.loadURL(url)
           await this.waitForLoad(win)
         })(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Navigation timeout')), 8000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Navigation timeout')), 5000))
       ])
       console.log(`[computer-browser] Navigation completed in ${Date.now() - startTime}ms`)
     } catch (err) {
