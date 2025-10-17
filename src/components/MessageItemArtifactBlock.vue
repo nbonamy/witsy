@@ -1,6 +1,7 @@
 <template>
   <div class="artifact panel">
     <div class="panel-header">
+      <ChevronDownIcon class="icon toggle" @click.stop="togglePanel" />
       <label>{{ title }}</label>
       <ButtonIcon>
         <ClipboardCheckIcon v-if="copying" />
@@ -27,9 +28,10 @@
 <script setup lang="ts">
 
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
-import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon } from 'lucide-vue-next'
+import { ChevronDownIcon, ClipboardCheckIcon, ClipboardIcon, DownloadIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { useArtifactCopy } from '../composables/artifact_copy'
+import { togglePanel } from '../composables/panel'
 import Message from '../models/message'
 import { addExtension, extractCodeBlockContent } from '../services/markdown'
 import { exportToPdf } from '../services/pdf'

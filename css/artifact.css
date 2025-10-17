@@ -20,6 +20,19 @@
       width: var(--icon-md);
       height: var(--icon-md);
     }
+
+    .icon.toggle {
+      transition: transform 0.2s ease;
+    }
+  }
+
+  &.collapsed {
+    .panel-header {
+      border-bottom: 0px;
+      .icon.toggle {
+        transform: rotate(-90deg);
+      }
+    }
   }
 
   &:has(.panel-body iframe) {
