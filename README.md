@@ -186,9 +186,23 @@ Once the text is transcribed you can:
 - Translate it to any language
 - Insert it in the application that was running before you activated the dictation
 
-## Anthropic Computer Use
+## Computer Use
 
-https://www.youtube.com/watch?v=vixl7I07hBk
+Witsy supports computer use with both Anthropic (desktop automation) and Google (browser automation):
+
+### Anthropic Computer Use
+- **Desktop automation** using nut.js for mouse and keyboard control
+- Takes screenshots of the entire desktop
+- Works with any desktop application
+- Video: https://www.youtube.com/watch?v=vixl7I07hBk
+
+### Google Computer Use
+- **Browser automation** using Electron BrowserWindow
+- Takes screenshots of web pages only
+- Provides actual page URL to the model
+- Coordinates map to browser viewport (1000x1000 normalized grid)
+- Auto-cleanup after 5 minutes of inactivity
+- 14 predefined actions: navigate, click, type, scroll, search, etc.
 
 ## HTTP API
 

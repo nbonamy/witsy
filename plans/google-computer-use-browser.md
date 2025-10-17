@@ -255,7 +255,7 @@ const getComputerInfo = () => {
 
 ---
 
-### Step 9: Add Window Tests ✅ / ❌ / 🔄
+### Step 9: Add Window Tests ✅
 **Files**: `tests/unit/computer_browser.test.ts`
 **Commit**: `test: add computer browser unit tests`
 **Tests**: `npm test -- computer_browser`
