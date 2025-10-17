@@ -320,18 +320,28 @@ describe('Run.vue', () => {
 
     await nextTick()
 
-    // Only responses are visible initially (prompts are hidden)
-    const messageItems = wrapper.findAllComponents({ name: 'MessageItemBody' })
-    expect(messageItems.length).toBe(2) // 2 responses
+    // everything is collapsed
+    expect(wrapper.findAll('.output-panel').length).toBe(2)
+    expect(wrapper.findAllComponents({ name: 'MessageItemBody' }).length).toBe(0)
 
-    // Expand first prompt
+    // Expand first panel
+    await wrapper.find('.output-panel .panel-header').trigger('click')
+    expect(wrapper.findAllComponents({ name: 'MessageItemBody' }).length).toBe(1)
+
+    // now expand prompt
     const firstPromptToggle = wrapper.find('.prompt-toggle')
     await firstPromptToggle.trigger('click')
-    await nextTick()
+    expect(wrapper.findAllComponents({ name: 'MessageItemBody' }).length).toBe(2)
 
-    // Now we should have 3 MessageItemBody components (1 prompt + 2 responses)
-    const messageItemsAfterExpand = wrapper.findAllComponents({ name: 'MessageItemBody' })
-    expect(messageItemsAfterExpand.length).toBe(3)
+    // hide prompt
+    await firstPromptToggle.trigger('click')
+    expect(wrapper.findAllComponents({ name: 'MessageItemBody' }).length).toBe(1)
+
+    // collapse
+    await wrapper.find('.output-panel .panel-header').trigger('click')
+    expect(wrapper.findAll('.output-panel').length).toBe(2)
+    expect(wrapper.findAllComponents({ name: 'MessageItemBody' }).length).toBe(0)
+
   })
 
   test('passes correct props to MessageItemBody', async () => {
@@ -345,6 +355,10 @@ describe('Run.vue', () => {
       },
     })
 
+    await nextTick()
+
+    // Expand first panel
+    await wrapper.find('.output-panel .panel-header').trigger('click')
     await nextTick()
 
     const messageItems = wrapper.findAllComponents({ name: 'MessageItemBody' })
@@ -398,77 +412,6 @@ describe('Run.vue', () => {
     const text = wrapper.text()
     // Check date format includes standard date components
     expect(text).toMatch(/[A-Z][a-z]{2}\s+[A-Z][a-z]{2}\s+\d{2}\s+\d{4}/)
-  })
-
-  test('prompt is hidden by default in output panels', async () => {
-    const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    // Expand first output panel to see prompt toggle
-    const firstOutputPanel = wrapper.find('.output-panel')
-    await firstOutputPanel.find('.panel-header').trigger('click')
-    await nextTick()
-
-    // Check that prompts are not visible initially (no MessageItemBody for prompt)
-    const messageItems = wrapper.findAllComponents({ name: 'MessageItemBody' })
-    // Only 2 responses visible initially, no prompts
-    expect(messageItems.length).toBe(2)
-
-    // Check that prompt toggle is visible
-    const promptToggle = wrapper.find('.prompt-toggle')
-    expect(promptToggle.exists()).toBe(true)
-    // Text content contains showPrompt translation key or actual translation
-    expect(promptToggle.text().length).toBeGreaterThan(0)
-  })
-
-  test('clicking toggle shows and hides prompt', async () => {
-    const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    // Expand first output panel to see prompt toggle
-    const firstOutputPanel = wrapper.find('.output-panel')
-    await firstOutputPanel.find('.panel-header').trigger('click')
-    await nextTick()
-
-    const firstPromptToggle = wrapper.find('.prompt-toggle')
-
-    // Initially hidden - only 2 MessageItemBody components (responses)
-    let messageItems = wrapper.findAllComponents({ name: 'MessageItemBody' })
-    expect(messageItems.length).toBe(2)
-
-    // Click to show
-    await firstPromptToggle.trigger('click')
-    await nextTick()
-
-    // Now should have 3 MessageItemBody components (1 prompt + 2 responses)
-    messageItems = wrapper.findAllComponents({ name: 'MessageItemBody' })
-    expect(messageItems.length).toBe(3)
-
-    // Click to hide
-    await firstPromptToggle.trigger('click')
-    await nextTick()
-
-    // Back to 2 MessageItemBody components
-    messageItems = wrapper.findAllComponents({ name: 'MessageItemBody' })
-    expect(messageItems.length).toBe(2)
   })
 
   test('chevron icon rotates when prompt is expanded', async () => {

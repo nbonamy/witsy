@@ -54,23 +54,19 @@
 
     <!-- Output Panels -->
     <template v-if="outputs && outputs.length > 0">
-      <div
-        v-for="(messages, index) in outputs"
-        :key="index"
-        class="panel collapsed output-panel"
-      >
-        <div class="panel-header" @click="togglePanel">
+      <div v-for="(messages, index) in outputs" :key="index" class="panel output-panel" :class="{ collapsed: !expandedPanels.has(index) }">
+        <div class="panel-header" @click="toggleOutputPanel(index)">
           <label>{{ getOutputTitle(index) }}</label>
           <div class="icon"><ChevronDownIcon /></div>
         </div>
-        <div class="panel-body">
+        <div class="panel-body" v-if="expandedPanels.has(index)">
           <hr/>
           <div class="step-prompt">
             <div class="prompt-toggle" @click="togglePrompt(index)">
               <ChevronRightIcon :class="{ expanded: expandedPrompts.has(index) }" />
               <span>{{ expandedPrompts.has(index) ? t('agent.run.hidePrompt') : t('agent.run.showPrompt') }}</span>
             </div>
-            <MessageItemBody :message="messages.prompt" v-if="expandedPrompts.has(index)" show-tool-calls="always"/>
+            <MessageItemBody class="item-prompt" :message="messages.prompt" v-if="expandedPrompts.has(index)" show-tool-calls="always"/>
           </div>
           <hr/>
           <MessageItemBody :message="messages.response" show-tool-calls="always"/>
@@ -115,6 +111,7 @@ const props = defineProps({
 
 const run = ref<AgentRun | null>(null)
 const agent = ref<any | null>(null)
+const expandedPanels = ref<Set<number>>(new Set())
 const expandedPrompts = ref<Set<number>>(new Set())
 
 let refreshTimeout: NodeJS.Timeout
@@ -181,6 +178,14 @@ const getOutputTitle = (index: number) => {
   return stepDescription ? `${t('agent.run.outputItem', { index: num })} - ${stepDescription}` : t('agent.run.outputItem', { index: num })
 }
 
+const toggleOutputPanel = (index: number) => {
+  if (expandedPanels.value.has(index)) {
+    expandedPanels.value.delete(index)
+  } else {
+    expandedPanels.value.add(index)
+  }
+}
+
 const togglePrompt = (index: number) => {
   if (expandedPrompts.value.has(index)) {
     expandedPrompts.value.delete(index)
@@ -225,6 +230,10 @@ const emit = defineEmits(['delete'])
     cursor: pointer;
   }
 
+  &.collapsed .panel-body {
+    display: none;
+  }
+
   .panel-body {
 
     &:deep() {
@@ -265,6 +274,7 @@ const emit = defineEmits(['delete'])
         }
       }
     }
+
   }
 }
 
