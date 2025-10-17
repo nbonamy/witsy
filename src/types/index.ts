@@ -238,9 +238,18 @@ export type Expert = {
 }
 
 export type ComputerAction = {
-  action: 'key' | 'type' | 'mouse_move' | 'left_click' | 'left_click_drag' | 'right_click' | 'middle_click' | 'double_click' | 'screenshot' | 'cursor_position'
+  action: 'key' | 'type' | 'mouse_move' | 'left_click' | 'left_click_drag' | 'right_click' | 'middle_click' | 'double_click' | 'screenshot' | 'cursor_position' |
+         'open_web_browser' | 'navigate' | 'go_back' | 'go_forward' | 'search' |
+         'click_at' | 'hover_at' | 'type_text_at' | 'drag_and_drop' |
+         'key_combination' | 'scroll_document' | 'scroll_at' | 'wait_5_seconds'
   coordinate?: number[]
+  coordinates?: { from: number[], to: number[] }
   text?: string
+  url?: string
+  query?: string
+  direction?: 'up' | 'down' | 'left' | 'right'
+  amount?: number
+  keys?: string[]
 }
 
 export type MemoryFact = {
