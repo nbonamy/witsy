@@ -33,18 +33,19 @@
 
 <script setup lang="ts">
 
-import { Application } from '../types/automation'
-import { ref, onMounted, onUnmounted, PropType } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
+import { ArrowLeftRightIcon, CornerDownLeftIcon, MessageSquareIcon, PenIcon, RotateCcwIcon, XCircleIcon } from 'lucide-vue-next'
+import { onMounted, onUnmounted, PropType, ref } from 'vue'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import Message from '../models/message'
+import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import Dialog from '../composables/dialog'
-
 import useEventBus from '../composables/event_bus'
+import Message from '../models/message'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
+import { Application } from '../types/automation'
+
 const { onEvent } = useEventBus()
 
 // init stuff
