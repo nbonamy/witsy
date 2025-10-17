@@ -123,8 +123,7 @@ export default class LlmManagerBase implements ILlmManager {
   }
 
   isComputerUseModel = (engine: string, model: string): boolean => {
-    return (engine === 'anthropic' && model === 'computer-use') ||
-           (engine === 'google' && model === 'computer-use')
+    return store.config.engines[engine]?.models?.computer?.some(m => m.id === model)
   }
 
   removeFavoriteModel = (engine: string, model: string) => {

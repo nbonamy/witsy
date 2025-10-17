@@ -115,10 +115,10 @@ const hasComputerUse = computed(() => {
 
   if (provider === 'google') {
     return store.config.engines.google.apiKey &&
-           store.config.engines.google.models?.chat?.find(m => m.id === 'computer-use')
+           store.config.engines.google.models?.computer?.length
   } else if (provider === 'anthropic') {
     return store.config.engines.anthropic.apiKey &&
-           store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
+           store.config.engines.anthropic.models?.chat?.length
   } else {
     return false
   }

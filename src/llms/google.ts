@@ -14,7 +14,8 @@ const getComputerInfo = () => {
 }
 
 const isSpecializedModel = (model: string): boolean => {
-  return model === 'computer-use'
+  if (!store.config.engines.google.apiKey) return false
+  return new Google(store.config.engines.google).isComputerUseModel(model)
 }
 
 const getFallbackModel = (): string => {

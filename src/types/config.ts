@@ -267,7 +267,7 @@ export type ModelsConfig = {
   videoEdit?: Model[]
   embedding?: Model[]
   realtime?: Model[]
-  computer?: Model[]
+  computer?: ChatModel[]
   tts?: Model[]
   stt?: Model[]
 }

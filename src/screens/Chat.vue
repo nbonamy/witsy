@@ -725,10 +725,10 @@ const onMainViewChanged = (mode: MenuBarMode) => {
   const provider = store.config.computerUse.provider
   if (provider === 'google') {
     assistant.value.chat.engine = 'google'
-    assistant.value.chat.model = 'computer-use'
+    assistant.value.chat.model = store.config.engines.google.models?.computer?.[0].id || 'computer-use'
   } else {
     assistant.value.chat.engine = 'anthropic'
-    assistant.value.chat.model = 'computer-use'
+    assistant.value.chat.model = store.config.engines.anthropic.models?.computer?.[0].id || 'computer-use'
   }
 
   const llmUtils = new LlmUtils(store.config)
