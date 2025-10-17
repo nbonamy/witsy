@@ -820,6 +820,10 @@ export const installIpc = (
     return await ComputerBrowser.executeAction(action);
   });
 
+  ipcMain.on(IPC.COMPUTER_BROWSER.HIDE, () => {
+    ComputerBrowser.hide();
+  });
+
   ipcMain.on(IPC.MEMORY.RESET, async () => {
     await memoryManager.reset();
   });

@@ -14,11 +14,17 @@ class ComputerBrowserWindow {
     return true
   }
 
+  hide(): void {
+    if (this.isReady()) {
+      this.window.hide()
+    }
+  }
+
   private createWindow(): BrowserWindow {
     const win = new BrowserWindow({
       width: this.WINDOW_WIDTH,
       height: this.WINDOW_HEIGHT,
-      show: true,
+      show: false, // Start hidden, show when needed
       frame: true,
       focusable: true,
       webPreferences: {
@@ -112,6 +118,9 @@ class ComputerBrowserWindow {
 
     const win = this.getOrCreateWindow()
     this.resetTTL()
+
+    // Show window when executing actions
+    win.show()
 
     try {
       await this.executeActionInternal(win, action)

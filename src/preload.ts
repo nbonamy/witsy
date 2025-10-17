@@ -230,6 +230,7 @@ contextBridge.exposeInMainWorld(
     computerBrowser: {
       isAvailable: (): boolean => { return ipcRenderer.sendSync(IPC.COMPUTER_BROWSER.IS_AVAILABLE) },
       executeAction: (action: ComputerAction): Promise<{ url: string, screenshot: string }> => { return ipcRenderer.invoke(IPC.COMPUTER_BROWSER.EXECUTE_ACTION, action) },
+      hide: (): void => { ipcRenderer.send(IPC.COMPUTER_BROWSER.HIDE) },
     },
     memory: {
       reset: (): void => { ipcRenderer.send(IPC.MEMORY.RESET) },

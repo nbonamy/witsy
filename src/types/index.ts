@@ -503,6 +503,7 @@ declare global {
       computerBrowser: {
         isAvailable(): boolean
         executeAction(action: ComputerAction): Promise<{ url: string, screenshot: string }>
+        hide(): void
       }
       memory: {
         reset(): void

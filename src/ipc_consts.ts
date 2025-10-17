@@ -216,6 +216,7 @@ export const COMPUTER = {
 export const COMPUTER_BROWSER = {
   IS_AVAILABLE: 'computer-browser-is-available',
   EXECUTE_ACTION: 'computer-browser-execute-action',
+  HIDE: 'computer-browser-hide',
 } as const;
 
 export const MEMORY = {
