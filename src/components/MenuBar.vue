@@ -108,8 +108,20 @@ const isFeatureHidden = (featureKey: string): boolean => {
 }
 
 const hasComputerUse = computed(() => {
-  const hasConfig = store.isFeatureEnabled('voiceMode') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
-  return hasConfig && !isFeatureHidden('computerUse')
+  if (!store.isFeatureEnabled('computerUse')) return false
+  if (isFeatureHidden('computerUse')) return false
+
+  const provider = store.config.computerUse.provider
+
+  if (provider === 'google') {
+    return store.config.engines.google.apiKey &&
+           store.config.engines.google.models?.chat?.find(m => m.id === 'computer-use')
+  } else if (provider === 'anthropic') {
+    return store.config.engines.anthropic.apiKey &&
+           store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
+  } else {
+    return false
+  }
 })
 
 const hasMcp = computed(() => {
