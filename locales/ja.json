@@ -2314,6 +2314,13 @@
       "importSuccess": "コマンドファイルが正常にインポートされました",
       "new": "新規"
     },
+    "computerUse": {
+      "provider": {
+        "anthropic": "Anthropic（クロード）",
+        "google": "Google（ジェミニ）",
+        "label": "プロバイダー"
+      }
+    },
     "deepResearch": {
       "breadth": "リサーチの広さ",
       "breadths": {
@@ -2600,6 +2607,7 @@
       "advanced": "詳細設定",
       "chat": "チャット",
       "commands": "コマンド",
+      "computerUse": "コンピューター使用",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
       "general": "一般",

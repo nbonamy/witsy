@@ -201,7 +201,7 @@ Add support for Google's computer use implementation alongside the existing Anth
 
 ---
 
-### Step 10: Update Witsy to Pass Computer Info to Google ✅ / ❌ / 🔄
+### Step 10: Update Witsy to Pass Computer Info to Google ✅
 **Files**: `src/llms/manager.ts` (renderer), `src/main/llm_utils.ts` (main)
 **Commit**: `feat: pass computer info to google engine`
 **Tests**: Integration test

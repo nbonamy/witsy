@@ -2292,6 +2292,13 @@
       "importSuccess": "Befehlsdatei erfolgreich importiert",
       "new": "Neu"
     },
+    "computerUse": {
+      "provider": {
+        "anthropic": "Anthropic (Claude)",
+        "google": "Google (Gemini)",
+        "label": "Anbieter"
+      }
+    },
     "deepResearch": {
       "breadth": "Breite der Forschung",
       "breadths": {
@@ -2572,6 +2579,7 @@
       "advanced": "Erweitert",
       "chat": "Chat",
       "commands": "Befehle",
+      "computerUse": "Computernutzung",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
       "general": "Allgemein",

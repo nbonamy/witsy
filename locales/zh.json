@@ -2314,6 +2314,13 @@
       "importSuccess": "命令文件导入成功",
       "new": "新建"
     },
+    "computerUse": {
+      "provider": {
+        "anthropic": "Anthropic（Claude）",
+        "google": "Google（Gemini）",
+        "label": "提供者"
+      }
+    },
     "deepResearch": {
       "breadth": "研究广度",
       "breadths": {
@@ -2594,6 +2601,7 @@
       "advanced": "高级",
       "chat": "聊天",
       "commands": "命令",
+      "computerUse": "计算机使用",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
       "general": "常规",

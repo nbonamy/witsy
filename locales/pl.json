@@ -2314,6 +2314,13 @@
       "importSuccess": "Plik poleceń zaimportowany pomyślnie",
       "new": "Nowość"
     },
+    "computerUse": {
+      "provider": {
+        "anthropic": "Anthropic (Claude)",
+        "google": "Google (Gemini)",
+        "label": "Dostawca"
+      }
+    },
     "deepResearch": {
       "breadth": "Zakres badań",
       "breadths": {
@@ -2600,6 +2607,7 @@
       "advanced": "Zaawansowane",
       "chat": "Czat",
       "commands": "Polecenia",
+      "computerUse": "Korzystanie z komputera",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
       "general": "Ogólne",
