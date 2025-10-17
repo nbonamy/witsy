@@ -202,6 +202,7 @@ const clearHistory = () => {
   main {
 
     padding: 2rem !important;
+    padding-top: 1rem !important;
 
     .master-detail {
       gap: 1rem;
