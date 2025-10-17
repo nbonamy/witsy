@@ -208,11 +208,18 @@ class ComputerBrowserWindow {
     console.log(`[computer-browser] Navigating to ${url}`)
 
     try {
-      await win.loadURL(url)
-      await this.waitForLoad(win)
+      // Wrap entire navigation in timeout to prevent long hangs
+      await Promise.race([
+        (async () => {
+          await win.loadURL(url)
+          await this.waitForLoad(win)
+        })(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Navigation timeout')), 8000))
+      ])
       console.log(`[computer-browser] Navigation completed in ${Date.now() - startTime}ms`)
     } catch (err) {
-      console.error(`[computer-browser] Navigation error after ${Date.now() - startTime}ms:`, err)
+      console.warn(`[computer-browser] Navigation timeout/error after ${Date.now() - startTime}ms:`, err.message)
+      // Don't throw - just log and continue
     }
   }
 
