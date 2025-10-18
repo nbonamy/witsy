@@ -262,7 +262,7 @@ const onChangeModel = async () => {
 const initialize = async () => {
 
   // initialize the transcriber
-  transcriber.initialize()
+  await transcriber.initialize()
   await initializeAudio()
   if (transcriber.engine) {
     console.log('[stt]', transcriber.engine?.name, transcriber.model)
