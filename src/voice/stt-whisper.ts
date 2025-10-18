@@ -69,7 +69,7 @@ export default class STTWhisper implements STTEngine {
       })
 
     } catch (error) {
-      console.error(error)
+      console.error(['[whisper] error when initializing:', error])
       callback?.({ status: 'error', message: error.message })
     }
 
