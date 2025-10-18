@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - MCP List Doesn't Scroll when number of servers exceeds page length (https://github.com/nbonamy/witsy/issues/448)
 - Agent Forge not working (https://github.com/nbonamy/witsy/issues/452)
+- Whisper STT error message
 
 ### Removed
 - N/A
