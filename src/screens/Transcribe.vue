@@ -67,9 +67,9 @@
         </div>
 
         <div class="visualizer">
-          <CircleIcon v-if="state == 'recording'" class="stop" color="red" @click="onStop()" />
+          <CircleIcon v-if="state == 'recording'" class="stop" color="red" fill="red" @click="onStop()" />
           <Loader class="loader" v-else-if="state === 'processing'" />
-          <CircleIcon v-else class="record" :color="state === 'initializing' ? 'orange' : ''" @click="onRecord(false)" />
+          <CircleIcon v-else class="record" :color="state === 'initializing' ? 'orange' : 'var(--text-color)'" :fill="state === 'initializing' ? 'orange' : 'var(--background-color)'" @click="onRecord(false)" />
           <Waveform :width="500" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
         </div>
         
@@ -131,7 +131,7 @@ import { allLanguages, commandI18n, t } from '../services/i18n'
 import { store } from '../services/store'
 import { getSTTEngines, getSTTModels, StreamingChunk } from '../voice/stt'
 
-import { AudioWaveformIcon, CircleIcon, GlobeIcon, MicIcon, MinimizeIcon, UploadIcon, WandIcon } from 'lucide-vue-next'
+import { AudioWaveformIcon, CircleIcon, DiscIcon, GlobeIcon, MicIcon, MinimizeIcon, UploadIcon, WandIcon } from 'lucide-vue-next'
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
