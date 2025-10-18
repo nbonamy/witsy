@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.0.3] - WIP
+## [3.0.3] - 2025-10-18
 
 ### Added
 - Auth for MCP SSE servers (https://github.com/nbonamy/witsy/issues/442)
@@ -10,9 +10,11 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Agent run view redesign
+- Update to new Fireworks Realtime (https://github.com/nbonamy/witsy/issues/446)
 
 ### Fixed
 - MCP List Doesn't Scroll when number of servers exceeds page length (https://github.com/nbonamy/witsy/issues/448)
+- Agent Forge not working (https://github.com/nbonamy/witsy/issues/452)
 
 ### Removed
 - N/A
