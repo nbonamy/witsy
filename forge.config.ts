@@ -182,7 +182,7 @@ const config: ForgeConfig = {
     //     })
     //   );
     // },
-
+    
     /*
      * this was needed to fix issues with binaries provided by dependencies
      */
@@ -242,6 +242,160 @@ const config: ForgeConfig = {
 
       console.log(`✅ Cleanup complete`);
     }
+  
+  //   /*
+  //    * Remove unnecessary files from node_modules to reduce bundle size
+  //    */
+  //   packageAfterPrune: async (forgeConfig, buildPath, electronVersion, platform, arch) => {
+  //     console.log(`\n🧹 Starting comprehensive node_modules cleanup for ${platform}-${arch}\n`);
+
+  //     const nodeModulesPath = path.join(buildPath, 'node_modules');
+  //     let totalSaved = 0;
+
+  //     // Helper to get directory size
+  //     const getDirSize = (dirPath: string): number => {
+  //       if (!fs.existsSync(dirPath)) return 0;
+  //       let size = 0;
+  //       try {
+  //         const items = fs.readdirSync(dirPath, { withFileTypes: true });
+  //         for (const item of items) {
+  //           const itemPath = path.join(dirPath, item.name);
+  //           if (item.isDirectory()) {
+  //             size += getDirSize(itemPath);
+  //           } else {
+  //             const stats = fs.statSync(itemPath);
+  //             size += stats.size;
+  //           }
+  //         }
+  //       } catch {
+  //         // Skip if permission denied or other errors
+  //       }
+  //       return size;
+  //     };
+
+  //     // Helper to remove and track savings
+  //     const removeAndTrack = (filePath: string): void => {
+  //       if (fs.existsSync(filePath)) {
+  //         const size = fs.statSync(filePath).isDirectory() ? getDirSize(filePath) : fs.statSync(filePath).size;
+  //         fs.rmSync(filePath, { recursive: true, force: true });
+  //         totalSaved += size;
+  //       }
+  //     };
+
+  //     // 1. Remove onnxruntime-node platform-specific binaries
+  //     console.log('📦 Cleaning onnxruntime-node binaries...');
+  //     const onnxRuntimePath = path.join(nodeModulesPath, 'onnxruntime-node', 'bin', 'napi-v3');
+  //     if (fs.existsSync(onnxRuntimePath)) {
+  //       const platformDirsToRemove: string[] = [];
+  //       if (platform === 'linux' && arch === 'x64') {
+  //         platformDirsToRemove.push('linux/arm64', 'darwin', 'win32');
+  //       } else if (platform === 'linux' && arch === 'arm64') {
+  //         platformDirsToRemove.push('linux/x64', 'darwin', 'win32');
+  //       } else if (platform === 'darwin' && arch === 'x64') {
+  //         platformDirsToRemove.push('linux', 'darwin/arm64', 'win32');
+  //       } else if (platform === 'darwin' && arch === 'arm64') {
+  //         platformDirsToRemove.push('linux', 'darwin/x64', 'win32');
+  //       } else if (platform === 'win32' && arch === 'x64') {
+  //         platformDirsToRemove.push('linux', 'darwin', 'win32/arm64');
+  //       }
+  //       platformDirsToRemove.forEach(dir => {
+  //         removeAndTrack(path.join(onnxRuntimePath, dir));
+  //       });
+  //     }
+
+  //     // 2. Remove onnxruntime-web redundant WASM files (keep only the most compatible one)
+  //     console.log('📦 Cleaning onnxruntime-web WASM variants...');
+  //     const onnxWebPath = path.join(nodeModulesPath, 'onnxruntime-web', 'dist');
+  //     if (fs.existsSync(onnxWebPath)) {
+  //       // Keep only the JSEP WASM (most capable), remove others
+  //       const wasmFiles = [
+  //         'ort-wasm-simd-threaded.wasm',  // Remove: 11M (we keep JSEP version)
+  //         'ort-wasm-simd.wasm',
+  //         'ort-wasm-threaded.wasm',
+  //         'ort-wasm.wasm',
+  //       ];
+  //       wasmFiles.forEach(file => {
+  //         removeAndTrack(path.join(onnxWebPath, file));
+  //       });
+
+  //       // Remove WebGL variants (we use WebGPU/WASM)
+  //       ['ort.webgl.js', 'ort.webgl.mjs'].forEach(file => {
+  //         removeAndTrack(path.join(onnxWebPath, file));
+  //       });
+  //     }
+
+  //     // 3. Remove all source maps (.map files)
+  //     console.log('🗺️  Removing source maps...');
+  //     const removeMapFiles = (dir: string) => {
+  //       if (!fs.existsSync(dir)) return;
+  //       try {
+  //         const items = fs.readdirSync(dir, { withFileTypes: true });
+  //         for (const item of items) {
+  //           const itemPath = path.join(dir, item.name);
+  //           if (item.isDirectory()) {
+  //             removeMapFiles(itemPath);
+  //           } else if (item.name.endsWith('.map')) {
+  //             removeAndTrack(itemPath);
+  //           }
+  //         }
+  //       } catch {
+  //         // Skip on error
+  //       }
+  //     };
+  //     removeMapFiles(nodeModulesPath);
+
+  //     // 4. Remove documentation and test directories
+  //     console.log('📚 Removing docs and tests...');
+  //     const docsAndTestDirs = ['docs', 'doc', 'examples', 'example', 'test', 'tests', '__tests__', 'spec'];
+  //     const walkAndRemoveDirs = (dir: string, dirsToRemove: string[]) => {
+  //       if (!fs.existsSync(dir)) return;
+  //       try {
+  //         const items = fs.readdirSync(dir, { withFileTypes: true });
+  //         for (const item of items) {
+  //           if (item.isDirectory()) {
+  //             const itemPath = path.join(dir, item.name);
+  //             if (dirsToRemove.includes(item.name.toLowerCase())) {
+  //               removeAndTrack(itemPath);
+  //             } else if (item.name !== 'node_modules') { // Don't recurse into nested node_modules
+  //               walkAndRemoveDirs(itemPath, dirsToRemove);
+  //             }
+  //           }
+  //         }
+  //       } catch {
+  //         // Skip on error
+  //       }
+  //     };
+  //     walkAndRemoveDirs(nodeModulesPath, docsAndTestDirs);
+
+  //     // 5. Remove TypeScript source files where compiled .js exists
+  //     console.log('📝 Removing redundant TypeScript sources...');
+  //     const removeTsWithJs = (dir: string) => {
+  //       if (!fs.existsSync(dir)) return;
+  //       try {
+  //         const items = fs.readdirSync(dir, { withFileTypes: true });
+  //         for (const item of items) {
+  //           const itemPath = path.join(dir, item.name);
+  //           if (item.isDirectory() && item.name !== 'node_modules') {
+  //             removeTsWithJs(itemPath);
+  //           } else if (item.name.endsWith('.ts') && !item.name.endsWith('.d.ts')) {
+  //             // Check if corresponding .js exists
+  //             const jsPath = itemPath.replace(/\.ts$/, '.js');
+  //             if (fs.existsSync(jsPath)) {
+  //               removeAndTrack(itemPath);
+  //             }
+  //           }
+  //         }
+  //       } catch {
+  //         // Skip on error
+  //       }
+  //     };
+  //     removeTsWithJs(nodeModulesPath);
+
+  //     // Report savings
+  //     const savedMB = (totalSaved / 1024 / 1024).toFixed(2);
+  //     console.log(`\n✅ Cleanup complete! Saved ${savedMB} MB\n`);
+  //   }
+  
   }
 };
 
