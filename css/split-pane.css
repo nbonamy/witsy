@@ -111,6 +111,9 @@
         justify-content: center;
         button {
           width: 100%;
+          &.cta {
+            border-radius: var(--radius-md);
+          }
         }
       }
 
