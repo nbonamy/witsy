@@ -159,6 +159,7 @@
     "tryAgain": "Bitte versuche es erneut.",
     "type": "Typ",
     "undo": "Rückgängig",
+    "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "Keine",
     "upload": "Hochladen",
     "url": "URL",
@@ -1462,7 +1463,7 @@
       },
       "22d89e0c-0333-44d0-a0ce-d1c90ed05139": {
         "name": "Solr Suchmaschine",
-        "prompt": "Ich möchte, dass du als Solr Suchmaschine im Standalone-Modus agierst. Du wirst in der Lage sein, Inline-JSON-Dokumente in beliebige Felder hinzuzufügen, und die Datentypen können Integer, String, Float oder Array sein. Nach einer Dokumenteneinfügung wirst du deinen Index aktualisieren, sodass wir Dokumente abrufen können, indem wir SOLR-spezifische Abfragen zwischen geschweiften Klammern durch Kommas getrennt schreiben, wie {q='title:Solr', sort='score asc'}. Du wirst drei Befehle in einer nummerierten Liste bereitstellen. Schreibe keine Erklärungen oder Beispiele, wie der Motor funktioniert. Dein erster Befehl besteht darin, die nummerierte Liste anzuzeigen und zwei leere Sammlungen mit den Namen 'prompts' und 'eyay' zu erstellen."
+        "prompt": "Ich möchte, dass du als Solr Suchmaschine im Standalone-Modus agierst. Du wirst in der Lage sein, Inline-JSON-Dokumente in beliebige Felder hinzuzufügen, und die Datentypen können Integer, String, Float oder Array sein. Nach einer Dokumenteneinfügung wirst du deinen Index aktualisieren, sodass wir Dokumente abrufen können, indem wir SOLR-spezifische Abfragen zwischen geschweiften Klammern durch Kommas getrennt schreiben, wie {'{'}q='title:Solr', sort='score asc'{'}'}. Du wirst drei Befehle in einer nummerierten Liste bereitstellen. Schreibe keine Erklärungen oder Beispiele, wie der Motor funktioniert. Dein erster Befehl besteht darin, die nummerierte Liste anzuzeigen und zwei leere Sammlungen mit den Namen 'prompts' und 'eyay' zu erstellen."
       },
       "04d81b88-67a0-4ea1-bab7-40e1aba8be8f": {
         "name": "Song-Empfehlungsgeber",
@@ -1691,6 +1692,7 @@
       "errorEmpty": "JSON darf nicht leer sein.",
       "errorFormat": "Fehler beim Parsen der JSON-Serverdefinition.",
       "errorMultiple": "Mehrere Server gefunden. Bitte fügen Sie jeweils nur einen Server ein.",
+      "menu": "@:{'mcp.importJson.title'}",
       "title": "Aus JSON importieren"
     },
     "importSmitheryServer": "Von Smithery.ai installieren",
@@ -1752,6 +1754,7 @@
     "serverNotFound": "Der Server, mit dem Sie verbinden möchten, existiert nicht.",
     "servers": "Server. Entdecken und installieren Sie MCP-Server von der",
     "smithery": "Smithery",
+    "tools": "@:{'common.tools'}",
     "toolsCount": "Keine Werkzeuge aktiviert|1 Werkzeug aktiviert|{count} Werkzeuge aktiviert",
     "tooltips": {
       "deleteServer": "Server löschen",
@@ -2108,12 +2111,16 @@
       "attach": {
         "title": "Fotos & Dateien hinzufügen"
       },
+      "deepResearch": {
+        "title": "@:{'common.deepResearch'}"
+      },
       "docRepos": {
         "manage": "Wissensdatenbank verwalten",
         "title": "Wissen"
       },
       "experts": {
-        "manage": "Neuen Experten erstellen"
+        "manage": "Neuen Experten erstellen",
+        "title": "@:{'common.experts'}"
       },
       "instructions": {
         "title": "Schreibstil"
@@ -2122,7 +2129,8 @@
         "reload": "Modelle neu laden"
       },
       "tools": {
-        "plugins": "@:{'common.appName'} Plugins"
+        "plugins": "@:{'common.appName'} Plugins",
+        "title": "@:{'common.tools'}"
       }
     },
     "noEngineAvailable": {

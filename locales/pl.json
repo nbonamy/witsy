@@ -178,6 +178,7 @@
     "tryAgain": "Proszę spróbować ponownie.",
     "type": "Typ",
     "undo": "Cofnij",
+    "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "Brak",
     "upload": "Prześlij",
     "url": "URL",
@@ -1710,6 +1711,7 @@
       "errorEmpty": "JSON nie może być pusty.",
       "errorFormat": "Błąd podczas analizowania definicji serwera JSON.",
       "errorMultiple": "Znaleziono wiele serwerów. Proszę wkleić jeden serwer naraz.",
+      "menu": "@:{'mcp.importJson.title'}",
       "title": "Importuj z JSON"
     },
     "importSmitheryServer": "Zainstaluj z Smithery.ai",
@@ -1771,6 +1773,7 @@
     "serverNotFound": "Serwer, z którym próbujesz się połączyć, nie istnieje.",
     "servers": "serwery. Odkrywaj i instaluj serwery MCP z",
     "smithery": "Smithery",
+    "tools": "@:{'common.tools'}",
     "toolsCount": "Brak włączonych narzędzi|1 włączone narzędzie|{count} włączonych narzędzi",
     "tooltips": {
       "deleteServer": "Usuń serwer",
@@ -2130,12 +2133,16 @@
       "attach": {
         "title": "Dodaj zdjęcia i pliki"
       },
+      "deepResearch": {
+        "title": "@:{'common.deepResearch'}"
+      },
       "docRepos": {
         "manage": "Zarządzaj Bazą Wiedzy",
         "title": "Wiedza"
       },
       "experts": {
-        "manage": "Utwórz Nowego Eksperta"
+        "manage": "Utwórz Nowego Eksperta",
+        "title": "@:{'common.experts'}"
       },
       "instructions": {
         "title": "Styl pisania"
@@ -2144,7 +2151,8 @@
         "reload": "Przeładuj modele"
       },
       "tools": {
-        "plugins": "wtyczki @:{'common.appName'}"
+        "plugins": "wtyczki @:{'common.appName'}",
+        "title": "@:{'common.tools'}"
       }
     },
     "noEngineAvailable": {

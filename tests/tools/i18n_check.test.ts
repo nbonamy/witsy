@@ -134,6 +134,7 @@ describe('i18n_check', () => {
     // Verify final EN file content (unused_key should be removed)
     expect(enContent).toEqual({
       "wrong_linked": "@:{'common.ok'}",
+      "missing_linked": "@:{'common.ok'}",
       "changed_english": "New English text",
       "missing_key": "This key exists in English but not in French",
       "normal_key": "This is a normal key",
@@ -146,6 +147,7 @@ describe('i18n_check', () => {
     expect(frContent).toEqual({
       // unused_key should be removed (not used in source code)
       "wrong_linked": "@:{'common.ok'}", // Should be fixed linked translation
+      "missing_linked": "@:{'common.ok'}", // Should be added as linked translation (THE BUG FIX!)
       "changed_english": "Nouveau texte anglais", // Should be retranslated
       "normal_key": "Ceci est une clé normale", // Should be preserved
       "common": {
@@ -157,7 +159,8 @@ describe('i18n_check', () => {
     // Verify snapshot content (should contain final EN state after cleanup)
     expect(snapshotContent).toEqual({
       "wrong_linked": "@:{'common.ok'}",
-      "changed_english": "New English text", 
+      "missing_linked": "@:{'common.ok'}",
+      "changed_english": "New English text",
       "missing_key": "This key exists in English but not in French",
       "normal_key": "This is a normal key",
       "common.ok": "OK"

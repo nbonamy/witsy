@@ -178,6 +178,7 @@
     "tryAgain": "もう一度お試しください。",
     "type": "タイプ",
     "undo": "元に戻す",
+    "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "なし",
     "upload": "アップロード",
     "url": "URL",
@@ -1710,6 +1711,7 @@
       "errorEmpty": "JSONは空にできません。",
       "errorFormat": "JSONサーバー定義の解析中にエラーが発生しました。",
       "errorMultiple": "複数のサーバーが見つかりました。一度に1つのサーバーを貼り付けてください。",
+      "menu": "@:{'mcp.importJson.title'}",
       "title": "JSONからインポート"
     },
     "importSmitheryServer": "Smithery.aiからインストール",
@@ -1771,6 +1773,7 @@
     "serverNotFound": "接続しようとしているサーバーは存在しません。",
     "servers": "サーバー。MCPサーバーの発見とインストールは",
     "smithery": "Smithery",
+    "tools": "@:{'common.tools'}",
     "toolsCount": "ツールが有効になっていません|1つのツールが有効になりました|{count}つのツールが有効になりました",
     "tooltips": {
       "deleteServer": "サーバーを削除",
@@ -2130,12 +2133,16 @@
       "attach": {
         "title": "写真とファイルを追加"
       },
+      "deepResearch": {
+        "title": "@:{'common.deepResearch'}"
+      },
       "docRepos": {
         "manage": "ナレッジベースを管理",
         "title": "ナレッジ"
       },
       "experts": {
-        "manage": "新しい専門家を作成"
+        "manage": "新しい専門家を作成",
+        "title": "@:{'common.experts'}"
       },
       "instructions": {
         "title": "文体"
@@ -2144,7 +2151,8 @@
         "reload": "モデルを再読み込み"
       },
       "tools": {
-        "plugins": "@:{'common.appName'} プラグイン"
+        "plugins": "@:{'common.appName'} プラグイン",
+        "title": "@:{'common.tools'}"
       }
     },
     "noEngineAvailable": {
