@@ -1,11 +1,15 @@
 
 import { LlmEngine } from 'multi-llm-ts'
-import { GenerationResult } from './generator'
-import { AssistantCompletionOpts } from './assistant'
-import { t } from './i18n'
+import { z } from 'zod'
 import Agent from '../models/agent'
 import Chat from '../models/chat'
-import { z } from 'zod'
+import { kBrowsePluginName } from '../plugins/browse'
+import { kPythonPluginName } from '../plugins/python'
+import { kSearchPluginName } from '../plugins/search'
+import { kYoutubePluginName } from '../plugins/youtube'
+import { AssistantCompletionOpts } from './assistant'
+import { GenerationResult } from './generator'
+import { t } from './i18n'
 
 export type DeepResearchOpts = AssistantCompletionOpts & {
   breadth: number, // number of sections to create
@@ -73,8 +77,8 @@ Your output will ONLY consist of the list of sections as a JSON object with no m
   steps: [{
     prompt: `Plan the research report structure for the following query: {{userQuery}}. Aim for {{numSections}} sections, with {{numQueriesPerSection}} search queries per section.`,
     tools: [
-      'search_internet',
-      'extract_webpage_content',
+      kSearchPluginName,
+      kBrowsePluginName
     ],
     agents: [],
     //docrepo: 'research_strategies',
@@ -125,9 +129,9 @@ Remove all <tool> tags from the content and return it as plain text.`,
   steps: [{
     prompt: `Execute targeted search for: {{searchQuery}}.\nmaxResults to return: {{maxResults}}`,
     tools: [
-      'search_internet',
-      'extract_webpage_content',
-      'get_youtube_transcript'
+      kSearchPluginName,
+      kBrowsePluginName,
+      kYoutubePluginName
     ],
     agents: [],
     //docrepo: 'search_results',
@@ -177,8 +181,8 @@ Your output will ONLY consist of the list of learnings as a JSON object with no 
   - Raw Information: {{rawInformation}}
     `,
     tools: [
-      'run_python_code',
-      'extract_webpage_content'
+      kPythonPluginName,
+      kBrowsePluginName,
     ],
     agents: [],
     //docrepo: 'analyzed_knowledge',

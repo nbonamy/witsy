@@ -6,6 +6,8 @@ import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import VideoCreator from '../services/video'
 
+export const kVideoPluginName = 'video_generation'
+
 export default class extends Plugin {
 
   creator: VideoCreator
@@ -25,7 +27,7 @@ export default class extends Plugin {
   }
 
   getName(): string {
-    return 'video_generation'
+    return kVideoPluginName
   }
 
   getDescription(): string {

@@ -9,6 +9,8 @@ import Tavily from '../vendor/tavily'
 import Plugin, { PluginConfig } from './plugin'
 import { executeIpcWithAbort } from './ipc_abort_helper'
 
+export const kSearchPluginName = 'search_internet'
+
 export type SearchResultItem = {
   title: string
   url: string
@@ -47,7 +49,7 @@ export default class extends Plugin {
   }
 
   getName(): string {
-    return 'search_internet'
+    return kSearchPluginName
   }
 
   getDescription(): string {

@@ -5,8 +5,9 @@ import LlmFactory, { ILlmManager } from '../llms/llm'
 import Agent from '../models/agent'
 import Chat from '../models/chat'
 import Message from '../models/message'
+import { kSearchPluginName } from '../plugins/search'
 import { Configuration } from '../types/config'
-import { StorageSingleton, MemoryPlugin, StoreItem } from './agent_storage'
+import { MemoryPlugin, StorageSingleton, StoreItem } from './agent_storage'
 import * as dr from './deepresearch'
 import Generator, { GenerationResult } from './generator'
 import { getLlmLocale, setLlmLocale, t } from './i18n'
@@ -511,7 +512,7 @@ export default class DeepResearchAgentLoop implements dr.DeepResearch {
         ...opts,
         callback: (chunk: LlmChunk) => {
           // Capture search_internet tool results for sources
-          if (agent.name === 'search' && chunk.type === 'tool' && chunk.name === 'search_internet' && chunk.done && chunk.call?.result?.results) {
+          if (agent.name === 'search' && chunk.type === 'tool' && chunk.name === kSearchPluginName && chunk.done && chunk.call?.result?.results) {
             capturedSearchResults.push(...chunk.call.result.results)
           }
           if (originalCallback) {

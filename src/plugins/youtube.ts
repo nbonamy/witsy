@@ -7,6 +7,8 @@ import TranscriptAPI from 'youtube-transcript-api'
 import { t } from '../services/i18n'
 import ytv from 'ytv'
 
+export const kYoutubePluginName = 'get_youtube_transcript'
+
 export default class extends Plugin {
 
   constructor(config: PluginConfig, workspaceId: string) {
@@ -18,7 +20,7 @@ export default class extends Plugin {
   }
 
   getName(): string {
-    return 'get_youtube_transcript'
+    return kYoutubePluginName
   }
 
   getDescription(): string {

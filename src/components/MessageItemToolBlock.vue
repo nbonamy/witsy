@@ -1,7 +1,8 @@
 <template>
   <div class="tool-container" :class="{ canceled: toolCall.state === 'canceled' }" @click="toggleOpen" @selectstart="onSelectStart" @mouseup="onMouseUp">
     <div class="tool-header">
-      <div class="tool-name">{{ name }}</div>
+      <PluginIcon :tool="name" />
+      <div class="tool-name">{{ title }}</div>
       <div v-if="!toolCall.done" class="tool-loader">
         <Loader /><Loader /><Loader />
       </div>
@@ -9,7 +10,7 @@
       <ChevronRightIcon v-else class="tool-fold" />
     </div>
     <div class="tool-results" v-if="isOpen">
-      <MessageItemSearchToolBlock v-if="toolCall.name === 'search_internet' && toolCall.result?.results?.length" :toolCall="toolCall" /> 
+      <MessageItemSearchToolBlock v-if="toolCall.name === kSearchPluginName && toolCall.result?.results?.length" :toolCall="toolCall" /> 
     </div>
     <div class="tool-values tool-params" v-if="toolCall?.params && isOpen">
       <div class="tool-values-header">
@@ -44,10 +45,12 @@
 
 import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
+import { kSearchPluginName } from '../plugins/search'
 import { t } from '../services/i18n'
 import { ToolCall } from '../types/index'
 import Loader from './Loader.vue'
 import MessageItemSearchToolBlock from './MessageItemSearchToolBlock.vue'
+import PluginIcon from './PluginIcon.vue'
 
 const props = defineProps({
   toolCall: {
@@ -58,9 +61,16 @@ const props = defineProps({
 
 const isOpen = ref(false)
 const isSelecting = ref(false)
-const lastClickTime = ref(0)
 
 const name = computed(() => {
+  if (props.toolCall.status?.includes('MCP')) {
+    return 'mcp'
+  } else {
+    return props.toolCall.name || ''
+  }
+})
+
+const title = computed(() => {
   if (props.toolCall.status) return props.toolCall.status
   const toolName = props.toolCall.name || ''
   const name = window.api.mcp.originalToolName(toolName)
@@ -126,6 +136,7 @@ const onMouseUp = () => {
     display: flex;
     padding: 0.5rem 1rem;
     align-items: center;
+    gap: 0.5rem;
     
     .tool-name {
       flex: 1;

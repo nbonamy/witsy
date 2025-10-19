@@ -4,6 +4,8 @@ import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import { t } from '../services/i18n'
 
+export const kPythonPluginName = 'run_python_code'
+
 export default class extends Plugin {
 
   constructor(config: PluginConfig, workspaceId: string) {
@@ -15,7 +17,7 @@ export default class extends Plugin {
   }
 
   getName(): string {
-    return 'run_python_code'
+    return kPythonPluginName
   }
 
   getDescription(): string {

@@ -6,6 +6,8 @@ import { MultiToolPlugin, LlmTool, PluginExecutionContext } from 'multi-llm-ts'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 
+export const kFilesystemPluginPrefix = 'filesystem_'
+
 export interface FilesystemPluginConfig extends PluginConfig {
   allowedPaths: string[]
   allowWrite: boolean
@@ -25,7 +27,7 @@ export default class extends MultiToolPlugin {
       {
         type: 'function',
         function: {
-          name: 'filesystem_list',
+          name: `${kFilesystemPluginPrefix}list`,
           description: 'List files and directories in a specified path. Avoid using absolute paths unless you know it from a previous call or provided by the user.',
           parameters: {
             type: 'object',
@@ -48,7 +50,7 @@ export default class extends MultiToolPlugin {
       {
         type: 'function',
         function: {
-          name: 'filesystem_read',
+          name: `${kFilesystemPluginPrefix}read`,
           description: 'Read the contents of a file',
           parameters: {
             type: 'object',
@@ -66,7 +68,7 @@ export default class extends MultiToolPlugin {
       {
         type: 'function',
         function: {
-          name: 'filesystem_write',
+          name: `${kFilesystemPluginPrefix}write`,
           description: 'Write content to files',
           parameters: {
             type: 'object',
@@ -89,7 +91,7 @@ export default class extends MultiToolPlugin {
       {
         type: 'function',
         function: {
-          name: 'filesystem_delete',
+          name: `${kFilesystemPluginPrefix}delete`,
           description: 'Delete a file or directory',
           parameters: {
             type: 'object',
@@ -117,13 +119,13 @@ export default class extends MultiToolPlugin {
 
   getPreparationDescription(name: string): string {
     switch (name) {
-      case 'filesystem_list':
+      case `${kFilesystemPluginPrefix}list`:
         return t('plugins.filesystem.list.starting')
-      case 'filesystem_read':
+      case `${kFilesystemPluginPrefix}read`:
         return t('plugins.filesystem.read.starting')
-      case 'filesystem_write':
+      case `${kFilesystemPluginPrefix}write`:
         return t('plugins.filesystem.write.starting')
-      case 'filesystem_delete':
+      case `${kFilesystemPluginPrefix}delete`:
         return t('plugins.filesystem.delete.starting')
       default:
         return t('plugins.filesystem.default.starting')
@@ -132,13 +134,13 @@ export default class extends MultiToolPlugin {
   
   getRunningDescription(name: string, args: any): string {
     switch (name) {
-      case 'filesystem_list':
+      case `${kFilesystemPluginPrefix}list`:
         return t('plugins.filesystem.list.running', { path: args.path })
-      case 'filesystem_read':
+      case `${kFilesystemPluginPrefix}read`:
         return t('plugins.filesystem.read.running', { path: args.path })
-      case 'filesystem_write':
+      case `${kFilesystemPluginPrefix}write`:
         return t('plugins.filesystem.write.running', { path: args.path })
-      case 'filesystem_delete':
+      case `${kFilesystemPluginPrefix}delete`:
         return t('plugins.filesystem.delete.running', { path: args.path })
       default:
         return t('plugins.filesystem.default.running')
@@ -148,20 +150,20 @@ export default class extends MultiToolPlugin {
   getCompletedDescription(name: string, args: any, results: any): string | undefined {
     
     switch (name) {
-      
-      case 'filesystem_list':
+
+      case `${kFilesystemPluginPrefix}list`:
         if (!results.success) return t('plugins.filesystem.list.error', { path: args.path, error: results.error || 'Unknown error' })
         else return t('plugins.filesystem.list.completed', { path: args.path, count: results.items?.length || 0 })
-      
-      case 'filesystem_read':
+
+      case `${kFilesystemPluginPrefix}read`:
         if (!results.success) return t('plugins.filesystem.read.error', { path: args.path, error: results.error || 'Unknown error' })
         else return t('plugins.filesystem.read.completed', { path: args.path, size: results.contents?.length || 0 })
-      
-      case 'filesystem_write':
+
+      case `${kFilesystemPluginPrefix}write`:
         if (!results.success) return t('plugins.filesystem.write.error', { path: args.path, error: results.error || 'Unknown error' })
         else return t('plugins.filesystem.write.completed', { path: args.path })
-      
-      case 'filesystem_delete':
+
+      case `${kFilesystemPluginPrefix}delete`:
         if (!results.success) return t('plugins.filesystem.delete.error', { path: args.path, error: results.error || 'Unknown error' })
         else return t('plugins.filesystem.delete.completed', { path: args.path })
       
@@ -177,7 +179,7 @@ export default class extends MultiToolPlugin {
     // Filter out write operations if not allowed
     if (!this.config.allowWrite) {
       availableTools = availableTools.filter((tool: LlmTool) => {
-        return !['filesystem_delete'].includes(tool.function.name)
+        return ![`${kFilesystemPluginPrefix}delete`].includes(tool.function.name)
       })
     }
     
@@ -192,7 +194,7 @@ export default class extends MultiToolPlugin {
 
   handlesTool(name: string): boolean {
     const handled = this.tools.find((tool: LlmTool) => tool.function.name === name) !== undefined
-    if (['filesystem_delete'].includes(name) && !this.config.allowWrite) {
+    if ([`${kFilesystemPluginPrefix}delete`].includes(name) && !this.config.allowWrite) {
       return false
     }
     return handled && (!this.toolsEnabled || this.toolsEnabled.includes(name))
@@ -259,16 +261,16 @@ export default class extends MultiToolPlugin {
 
     try {
       switch (tool) {
-        case 'filesystem_list':
+        case `${kFilesystemPluginPrefix}list`:
           return await this.listDirectory(path, args.includeHidden || false)
-        
-        case 'filesystem_read':
+
+        case `${kFilesystemPluginPrefix}read`:
           return await this.readFile(path)
-        
-        case 'filesystem_write':
+
+        case `${kFilesystemPluginPrefix}write`:
           return await this.writeFile(path, args.content)
-        
-        case 'filesystem_delete':
+
+        case `${kFilesystemPluginPrefix}delete`:
           return await this.deleteFile(path)
         
         default:
