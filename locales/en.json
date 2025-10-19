@@ -842,9 +842,9 @@
       }
     },
     "information": {
-      "title": "General Information",
       "description": "Description",
-      "descriptionPlaceholder": "Optional description for this knowledge base (used by AI assistants to understand when to search this collection)"
+      "descriptionPlaceholder": "Optional description for this knowledge base (used by AI assistants to understand when to search this collection)",
+      "title": "General Information"
     },
     "list": {
       "documentsCount": "No document|1 document|{count} documents",
@@ -2522,10 +2522,6 @@
         },
         "title": "Filesystem"
       },
-      "knowledge": {
-        "description": "This plugin exposes knowledge base collections with descriptions as searchable tools for LLM engines. When enabled, AI assistants can automatically search your knowledge base to ground their responses in your content.",
-        "title": "Knowledge"
-      },
       "image": {
         "apiKeyReminder": "Make sure you enter your API key in the Models pane of @:{'common.appName'} Settings.",
         "description": "This plugin allows LLM engines to create images from a text description.",
@@ -2541,6 +2537,10 @@
           "aboutModels": "More about Replicate models"
         },
         "title": "Text-to-Image"
+      },
+      "knowledge": {
+        "description": "This plugin exposes knowledge base collections with descriptions as searchable tools for LLM engines. When enabled, AI assistants can automatically search your knowledge base to ground their responses in your content.",
+        "title": "Knowledge"
       },
       "memory": {
         "contents": "Contents",
@@ -2572,6 +2572,7 @@
         },
         "exaApiKey": "Exa API Key",
         "getApiKey": "Get your API key",
+        "localWarning": "<strong style=\"color: red;\">Important:</strong> Google aggressively limits automated searches. It is highly recommended to use an online search engine from the one of the providers listed instead of the local search option (Brave and Tavily provide free options). You can use the test button below to temporaily authorize Google searches. Until it breaks again.",
         "perplexityApiKey": "Perplexity API Key",
         "tavilyApiKey": "Tavily API Key",
         "testLocal": {

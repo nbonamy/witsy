@@ -842,6 +842,11 @@
         "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
+    "information": {
+      "description": "Descrição",
+      "descriptionPlaceholder": "Descrição opcional para esta base de conhecimento (usada por assistentes de IA para entender quando pesquisar nesta coleção)",
+      "title": "Informações Gerais"
+    },
     "list": {
       "documentsCount": "Nenhum documento|1 documento|{count} documentos",
       "title": "@:{'common.docRepo'}",
@@ -2068,6 +2073,12 @@
       "error": "Erro ao gerar imagem",
       "running": "Pintando pixels…"
     },
+    "knowledge": {
+      "completed": "Nenhum resultado encontrado em {docrepo} | {count} resultado encontrado em {docrepo} | {count} resultados encontrados em {docrepo}",
+      "error": "Erro ao pesquisar em {docrepo}: {error}",
+      "preparing": "Preparando a busca na coleção da base de conhecimento {docrepo}…",
+      "running": "Pesquisando em {docrepo} por: {query}…"
+    },
     "mcp": {
       "completed": "Comando MCP \"{tool}\" executado com sucesso",
       "error": "Erro ao executar comando MCP \"{tool}\"",
@@ -2522,6 +2533,10 @@
         },
         "title": "Texto para Imagem"
       },
+      "knowledge": {
+        "description": "Este plugin expõe coleções da base de conhecimento com descrições como ferramentas pesquisáveis para motores LLM. Quando habilitado, assistentes de IA podem pesquisar automaticamente sua base de conhecimento para fundamentar suas respostas no seu conteúdo.",
+        "title": "Conhecimento"
+      },
       "memory": {
         "contents": "Conteúdo",
         "description": "Este plugin permite que os mecanismos LLM armazenem e recuperem informações sobre você, tornando suas respostas mais personalizadas.",
@@ -2552,6 +2567,7 @@
         },
         "exaApiKey": "Chave API Exa",
         "getApiKey": "Obtenha sua chave de API",
+        "localWarning": "<strong style=\"color: red;\">Importante:</strong> O Google limita agressivamente buscas automatizadas. Recomenda-se fortemente usar um motor de busca online de um dos provedores listados ao invés da opção de busca local (Brave e Tavily oferecem opções gratuitas). Você pode usar o botão de teste abaixo para autorizar temporariamente buscas no Google. Até que pare de funcionar novamente.",
         "perplexityApiKey": "Chave da API Perplexity",
         "tavilyApiKey": "Chave de API Tavily",
         "testLocal": {

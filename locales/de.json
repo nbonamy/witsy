@@ -823,6 +823,11 @@
         "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
+    "information": {
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Optionale Beschreibung für diese Wissensdatenbank (wird von KI-Assistenten verwendet, um zu verstehen, wann diese Sammlung durchsucht werden soll)",
+      "title": "Allgemeine Informationen"
+    },
     "list": {
       "documentsCount": "Kein Dokument|1 Dokument|{count} Dokumente",
       "title": "@:{'common.docRepo'}",
@@ -2048,6 +2053,12 @@
       "error": "Fehler beim Generieren des Bildes",
       "running": "Pixel werden gemalt…"
     },
+    "knowledge": {
+      "completed": "Keine Ergebnisse in {docrepo} gefunden | {count} Ergebnis in {docrepo} gefunden | {count} Ergebnisse in {docrepo} gefunden",
+      "error": "Fehler bei der Suche in {docrepo}: {error}",
+      "preparing": "Bereite {docrepo}-Wissensdatenbank-Sammlungssuche vor…",
+      "running": "Suche in {docrepo} nach: {query}…"
+    },
     "mcp": {
       "completed": "MCP-Befehl \"{tool}\" erfolgreich ausgeführt",
       "error": "Fehler beim Ausführen des MCP-Befehls \"{tool}\"",
@@ -2500,6 +2511,10 @@
         },
         "title": "Text zu Bild"
       },
+      "knowledge": {
+        "description": "Dieses Plugin stellt Wissensdatenbanksammlungen mit Beschreibungen als durchsuchbare Werkzeuge für LLM-Engines bereit. Wenn aktiviert, können KI-Assistenten automatisch Ihre Wissensdatenbank durchsuchen, um ihre Antworten auf Ihren Inhalt zu stützen.",
+        "title": "Wissen"
+      },
       "memory": {
         "contents": "Inhalt",
         "description": "Dieses Plugin ermöglicht es LLM-Engines, Informationen über Sie zu speichern und abzurufen, wodurch ihre Antworten persönlicher werden.",
@@ -2530,6 +2545,7 @@
         },
         "exaApiKey": "Exa API-Schlüssel",
         "getApiKey": "Holen Sie sich Ihren API-Schlüssel",
+        "localWarning": "<strong style=\"color: red;\">Wichtig:</strong> Google beschränkt automatisierte Suchvorgänge stark. Es wird dringend empfohlen, anstelle der lokalen Suchoption eine Online-Suchmaschine von einem der unten aufgeführten Anbieter zu verwenden (Brave und Tavily bieten kostenlose Optionen). Sie können die Test-Schaltfläche unten verwenden, um Google-Suchen temporär zu autorisieren. Bis es wieder nicht funktioniert.",
         "perplexityApiKey": "Perplexity API-Schlüssel",
         "tavilyApiKey": "Tavily API-Schlüssel",
         "testLocal": {

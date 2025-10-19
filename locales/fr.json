@@ -823,6 +823,11 @@
         "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
+    "information": {
+      "description": "Description",
+      "descriptionPlaceholder": "Description optionnelle pour cette base de connaissances (utilisée par les assistants IA pour comprendre quand rechercher dans cette collection)",
+      "title": "Informations générales"
+    },
     "list": {
       "documentsCount": "Aucun document|1 document|{count} documents",
       "title": "@:{'common.docRepo'}",
@@ -2048,6 +2053,12 @@
       "error": "Erreur lors de la génération de l'image",
       "running": "Peinture des pixels…"
     },
+    "knowledge": {
+      "completed": "Aucun résultat trouvé dans {docrepo} | {count} résultat trouvé dans {docrepo} | {count} résultats trouvés dans {docrepo}",
+      "error": "Erreur lors de la recherche dans {docrepo} : {error}",
+      "preparing": "Préparation de la recherche dans la collection de la base de connaissances {docrepo}…",
+      "running": "Recherche dans {docrepo} pour : {query}…"
+    },
     "mcp": {
       "completed": "Commande MCP \"{tool}\" exécutée avec succès",
       "error": "Erreur lors de l'exécution de la commande MCP \"{tool}\"",
@@ -2500,6 +2511,10 @@
         },
         "title": "Texte vers Image"
       },
+      "knowledge": {
+        "description": "Ce plugin expose les collections de bases de connaissances avec descriptions en tant qu’outils recherchables pour les moteurs LLM. Lorsqu’il est activé, les assistants IA peuvent automatiquement rechercher votre base de connaissances pour appuyer leurs réponses sur votre contenu.",
+        "title": "Connaissances"
+      },
       "memory": {
         "contents": "Contenu",
         "description": "Ce plugin permet aux moteurs LLM de stocker et récupérer des informations vous concernant, rendant leurs réponses plus personnalisées.",
@@ -2530,6 +2545,7 @@
         },
         "exaApiKey": "Clé API Exa",
         "getApiKey": "Obtenir votre clé API",
+        "localWarning": "<strong style=\"color: red;\">Important :</strong> Google limite agressivement les recherches automatisées. Il est fortement recommandé d’utiliser un moteur de recherche en ligne parmi les fournisseurs listés plutôt que l’option de recherche locale (Brave et Tavily offrent des options gratuites). Vous pouvez utiliser le bouton de test ci-dessous pour autoriser temporairement les recherches Google. Jusqu’à ce que cela fonctionne de nouveau.",
         "perplexityApiKey": "Clé API Perplexity",
         "tavilyApiKey": "Clé API Tavily",
         "testLocal": {
