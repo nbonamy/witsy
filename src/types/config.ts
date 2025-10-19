@@ -78,9 +78,12 @@ export type ModelDefaults = {
   disableStreaming: boolean
   disableTools?: boolean // backwards compatibility
   tools: ToolSelection
-  locale: string
-  instructions: string
-} & LlmModelOpts
+  locale?: string
+  instructions?: string
+  expert?: string
+  docrepo?: string
+  modelOpts?: LlmModelOpts
+}
 
 export type InstructionsType = 'standard' | 'structured' | 'playful' | 'empathic' | 'uplifting' | 'reflective' | 'visionary' | string
 

@@ -452,10 +452,10 @@
       "actions": {
         "clearDefaults": "Cancella le impostazioni predefinite della cartella",
         "delete": "Elimina cartella",
+        "editDefaults": "Modifica predefiniti",
         "setDefaults": "Imposta i valori predefiniti dalla chat"
       },
-      "confirmDeleteDefaults": "Sei sicuro di voler eliminare le impostazioni predefinite della cartella?",
-      "confirmOverwriteDefaults": "Sei sicuro di voler sovrascrivere le impostazioni predefinite della cartella?"
+      "confirmDeleteDefaults": "Sei sicuro di voler eliminare le impostazioni predefinite della cartella?"
     },
     "timeline": {
       "earlier": "Precedente",
@@ -1583,6 +1583,17 @@
         "prompt": "Voglio che tu agisca come yogi. Sarai in grado di guidare gli studenti attraverso pose sicure ed efficaci, creare sequenze personalizzate che soddisfino le esigenze di ciascun individuo, condurre sessioni di meditazione e tecniche di rilassamento, promuovere un'atmosfera incentrata sul calmare la mente e il corpo, dando consigli su aggiustamenti dello stile di vita per migliorare il benessere complessivo."
       }
     }
+  },
+  "folderSettings": {
+    "advancedSettings": {
+      "hide": "Nascondi impostazioni avanzate",
+      "show": "Mostra impostazioni avanzate"
+    },
+    "docrepo": "Base di conoscenza predefinita",
+    "expert": "Esperto predefinito",
+    "noDocRepo": "Nessuno",
+    "noExpert": "Nessuno",
+    "title": "Impostazioni predefinite della cartella"
   },
   "generator": {
     "errors": {

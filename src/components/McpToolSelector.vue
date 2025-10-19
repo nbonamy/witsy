@@ -135,7 +135,6 @@ defineExpose({ show, close })
 </script>
 
 <style>
-
 #mcp-tool-selector .swal2-popup {
   width: 44rem !important;
   max-width: 44rem !important;

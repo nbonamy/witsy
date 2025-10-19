@@ -132,11 +132,11 @@ export type Folder = {
     model: string
     disableStreaming: boolean
     tools: ToolSelection
-    instructions: string|null
-    locale: string|null
-    docrepo: string|null
-    expert: string|null
-    modelOpts: LlmModelOpts|null
+    instructions?: string
+    locale?: string
+    docrepo?: string
+    expert?: string
+    modelOpts?: LlmModelOpts
   }
 }
 

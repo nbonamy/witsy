@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Knowledge plugin to automatically connect knowledge base connections (https://github.com/nbonamy/witsy/issues/450)
+- Set folder default settings dialog (https://github.com/nbonamy/witsy/issues/454)
 
 ### Changed
 - N/A

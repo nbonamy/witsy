@@ -471,10 +471,10 @@
       "actions": {
         "clearDefaults": "Limpar padrões da pasta",
         "delete": "Excluir pasta",
+        "editDefaults": "Editar padrões",
         "setDefaults": "Definir padrões a partir do chat"
       },
-      "confirmDeleteDefaults": "Tem certeza de que deseja excluir os padrões da pasta?",
-      "confirmOverwriteDefaults": "Tem certeza de que deseja substituir os padrões da pasta?"
+      "confirmDeleteDefaults": "Tem certeza de que deseja excluir os padrões da pasta?"
     },
     "timeline": {
       "earlier": "Anterior",
@@ -1602,6 +1602,17 @@
         "prompt": "Eu quero que você aja como um yogi. Você será capaz de guiar os alunos através de poses seguras e eficazes, criar sequências personalizadas que se encaixem nas necessidades de cada indivíduo, conduzir sessões de meditação e técnicas de relaxamento, promover uma atmosfera focada em acalmar a mente e o corpo, dar conselhos sobre ajustes de estilo de vida para melhorar o bem-estar geral."
       }
     }
+  },
+  "folderSettings": {
+    "advancedSettings": {
+      "hide": "Ocultar configurações avançadas",
+      "show": "Mostrar configurações avançadas"
+    },
+    "docrepo": "Base de conhecimento padrão",
+    "expert": "Especialista padrão",
+    "noDocRepo": "Nenhum",
+    "noExpert": "Nenhum",
+    "title": "Configurações padrão da pasta"
   },
   "generator": {
     "errors": {

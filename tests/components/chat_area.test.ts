@@ -5,7 +5,6 @@ import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
 import { emitEventMock } from '../../vitest.setup'
 import { stubTeleport } from '../mocks/stubs'
-import { findModelSelectoPlus } from '../utils'
 import { store } from '../../src/services/store'
 import ChatArea from '../../src/components/ChatArea.vue'
 import Message from '../../src/models/message'
@@ -206,12 +205,10 @@ test('Model settings init chat', async () => {
   await wrapper.find('.sp-main > header .settings').trigger('click')
 
   // load engine/model with defaults
-  await wrapper.find('.model-settings select[name=engine]').setValue('mock')
-  const modelSelect = findModelSelectoPlus(wrapper)
-  await modelSelect.open()
-  await modelSelect.select(0)
+  const engineModelSelect = wrapper.findComponent({ name: 'EngineModelSelect' })
+  await engineModelSelect.vm.$emit('modelSelected', 'mock', 'chat')
+  await wrapper.vm.$nextTick()
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('true')
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoning]').element.value).toBe('')
   expect(chat?.tools).toStrictEqual([])
   expect(chat?.modelOpts?.contextWindowSize).toBe(512)
   expect(chat?.modelOpts?.maxTokens).toBe(150)
@@ -221,9 +218,8 @@ test('Model settings init chat', async () => {
   expect(chat?.modelOpts?.reasoning).toBe(true)
 
   // load engine/model without defaults
-  await wrapper.find('.model-settings select[name=engine]').setValue('openai')
-  await modelSelect.open()
-  await modelSelect.select(0)
+  await engineModelSelect.vm.$emit('modelSelected', 'openai', 'chat')
+  await wrapper.vm.$nextTick()
   expect(chat?.tools).toStrictEqual(null)
   expect(chat?.modelOpts).toBeUndefined()
 
@@ -236,8 +232,7 @@ test('Model settings update chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.sp-main > header .settings').trigger('click')
 
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').exists()).toBe(true)
-  expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
+  expect(wrapper.findComponent({ name: 'EngineModelSelect' }).exists()).toBe(true)
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').exists()).toBe(true)
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').exists()).toBe(true)
   expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=instructions]').exists()).toBe(true)
@@ -251,8 +246,9 @@ test('Model settings update chat', async () => {
 
   await wrapper.find('.model-settings .toggle').trigger('click')
 
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').element.value).toBe('mock')
-  expect(findModelSelectoPlus(wrapper).value).toBe('chat')
+  const engineModelSelect = wrapper.findComponent({ name: 'EngineModelSelect' })
+  expect(engineModelSelect.props('engine')).toBe('mock')
+  expect(engineModelSelect.props('model')).toBe('chat')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('false')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').element.value).toBe('')
   expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=instructions]').element.value).toBe('')
@@ -358,7 +354,9 @@ test('Model settings defaults', async () => {
     model: 'chat',
     disableStreaming: false,
     tools: null,
-    temperature: 0.7
+    modelOpts: {
+      temperature: 0.7
+    }
   })
 
   // add stuff
@@ -373,8 +371,10 @@ test('Model settings defaults', async () => {
     locale: 'fr-FR',
     disableStreaming: true,
     tools: [],
-    temperature: 0.7,
-    top_k: 15
+    modelOpts: {
+      temperature: 0.7,
+      top_k: 15
+    }
   })
 
   // update and load
@@ -388,8 +388,10 @@ test('Model settings defaults', async () => {
     locale: 'fr-FR',
     disableStreaming: true,
     tools: [],
-    temperature: 0.7,
-    top_k: 15
+    modelOpts: {
+      temperature: 0.7,
+      top_k: 15
+    }
   })
 
   // clear

@@ -188,8 +188,8 @@ test('Context Menu Folder', async () => {
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
   expect(wrapper.findAll('.context-menu')).toHaveLength(1)
   expect(wrapper.findAll('.context-menu .actions .item')).toHaveLength(4)
-  expect(wrapper.findAll('.context-menu .actions .item').at(0)!.text()).toBe('common.newChat')
-  expect(wrapper.findAll('.context-menu .actions .item').at(1)!.text()).toBe('common.rename')
+  expect(wrapper.findAll('.context-menu .actions .item').at(0)!.text()).toBe('common.rename')
+  expect(wrapper.findAll('.context-menu .actions .item').at(1)!.text()).toBe('chatList.folder.actions.editDefaults')
   expect(wrapper.findAll('.context-menu .actions .item').at(2)!.text()).toBe('chatList.folder.actions.setDefaults')
   expect(wrapper.findAll('.context-menu .actions .item').at(3)!.text()).toBe('chatList.folder.actions.delete')
 })
@@ -197,9 +197,9 @@ test('Context Menu Folder', async () => {
 test('New Chat', async () => {
   store.history.folders = [ { id: '1', name: 'Folder', chats: [store.history.chats[0].uuid] } ]
   const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
-  await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
-  const items = wrapper.findAll('.context-menu .item')
-  await items[0].trigger('click')
+  // New Chat is now a button icon, not in the context menu
+  const buttonIcons = wrapper.findAll('section').at(0)!.findAll('.button-icon')
+  await buttonIcons[0].trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('new-chat-in-folder', '1')
 })
 
@@ -208,7 +208,7 @@ test('Rename Folder', async () => {
   const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
   const items = wrapper.findAll('.context-menu .item')
-  await items[1].trigger('click')
+  await items[0].trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('rename-folder', '1')
 })
 
@@ -219,6 +219,46 @@ test('Delete Folder', async () => {
   const items = wrapper.findAll('.context-menu .item')
   await items[3].trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('delete-folder', '1')
+})
+
+test('Folder defaults', async () => {
+  // Set up folder with defaults
+  store.history.folders = [ {
+    id: '1',
+    name: 'Folder',
+    chats: [store.history.chats[0].uuid],
+    defaults: {
+      engine: 'mock',
+      model: 'chat',
+      disableStreaming: false,
+      tools: [],
+      instructions: 'instructions',
+      locale: 'locale',
+      docrepo: 'docrepo',
+    }
+  } ]
+
+  const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { displayMode: 'folder', chat: undefined } } )
+
+  // Open context menu
+  await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
+  const menuItems = wrapper.findAll('.context-menu .item')
+
+  // Should have 4 items: rename, editDefaults, clearDefaults, delete
+  expect(menuItems).toHaveLength(5)
+  expect(menuItems[1].text()).toBe('chatList.folder.actions.editDefaults')
+  expect(menuItems[3].text()).toBe('chatList.folder.actions.clearDefaults')
+
+  // Click editDefaults - this opens a dialog (tested in folder_settings.test.ts)
+  await menuItems[1].trigger('click')
+
+  // Open menu again to clear defaults
+  await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
+  const menuItems2 = wrapper.findAll('.context-menu .item')
+  await menuItems2[3].trigger('click')
+
+  // Defaults should be cleared
+  expect(store.history.folders[0].defaults).toBeUndefined()
 })
 
 test('Folder defaults', async () => {

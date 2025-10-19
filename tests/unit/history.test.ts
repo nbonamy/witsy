@@ -46,6 +46,23 @@ test('Load history', async () => {
 test('Backwards compatibility', async () => {
   const history = await loadHistory(app, 'test-workspace')
   expect(history.folders[0].defaults.instructions).toBe('instructions')
+  expect(history.folders[0].defaults.temperature).toBeUndefined()
+  expect(history.folders[0].defaults.maxTokens).toBeUndefined()
+  expect(history.folders[0].defaults.verbosity).toBeUndefined()
+  expect(history.folders[0].defaults.reasoningBudget).toBeUndefined()
+  expect(history.folders[0].defaults.thinkingBudget).toBeUndefined()
+  expect(history.folders[0].defaults.customOpts).toBeUndefined()
+  expect(history.folders[0].defaults.modelOpts).toStrictEqual({
+    maxTokens: 1024,
+    temperature: 0.7,
+    verbosity: 'detailed',
+    reasoningBudget: 5,
+    thinkingBudget: 10,
+    customOpts: {
+      key1: 'value1',
+      key2: 'value2'
+    }
+  })
 })
 
 test('Save history', async () => {

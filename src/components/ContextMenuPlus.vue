@@ -4,7 +4,7 @@
       <Overlay @click="onOverlay" @contextmenu="onOverlay" />
       <!-- Hidden chevron template for cloning -->
       <ChevronRightIcon ref="chevronTemplate" style="display: none;" class="chevron-template" />
-      <div class="context-menu" :style="position" @keydown="onKeyDown" @keyup="onKeyUp" v-bind="$attrs">
+      <div class="context-menu" :class="cssClasses" :style="position" @keydown="onKeyDown" @keyup="onKeyUp" v-bind="$attrs">
       <!-- Top level filter or back/filter header -->
       <div v-if="showFilter || currentSubmenu" class="header">
         <div v-if="currentSubmenu" class="back-button" @click="goBack" ref="backButton">
@@ -44,10 +44,10 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, onUnmounted, nextTick, watch, useSlots } from 'vue'
+import { ChevronRightIcon, MoveLeftIcon } from 'lucide-vue-next'
+import { computed, nextTick, onMounted, onUnmounted, ref, useSlots, watch } from 'vue'
 import Overlay from '../components/Overlay.vue'
 import { t } from '../services/i18n'
-import { ChevronRightIcon, MoveLeftIcon } from 'lucide-vue-next'
 
 export type MenuPosition = 'below' | 'above' | 'right' | 'left' | 'above-right' | 'above-left' | 'below-right' | 'below-left'
 
@@ -83,6 +83,10 @@ const props = defineProps({
   autoClose: {
     type: Boolean,
     default: false
+  },
+  cssClasses: {
+    type: String,
+    required: false
   }
 })
 
@@ -539,7 +543,7 @@ defineExpose({
   max-width: 270px;
   border-radius: 0.375rem;
   overflow: hidden;
-  z-index: 50;
+  z-index: 1070;
   padding: 0;
   display: flex;
   flex-direction: column;

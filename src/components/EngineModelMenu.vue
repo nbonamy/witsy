@@ -1,5 +1,6 @@
 <template>
-  <ContextMenuPlus 
+  <ContextMenuPlus
+    :css-classes="cssClasses"
     :anchor="anchor"
     :position="position"
     :teleport="teleport"
@@ -77,6 +78,7 @@ interface Props {
   position?: MenuPosition
   teleport?: boolean
   defaultLabel?: string
+  cssClasses?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
