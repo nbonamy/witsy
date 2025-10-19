@@ -24,15 +24,17 @@ export default class DocumentBaseImpl {
 
   uuid: string
   name: string
+  description?: string
   embeddingEngine: string
   embeddingModel: string
   workspaceId: string
   documents: DocumentSourceImpl[]
 
-  constructor(app: App, uuid: string, name: string, embeddingEngine: string, embeddingModel: string, workspaceId: string) {
+  constructor(app: App, uuid: string, name: string, embeddingEngine: string, embeddingModel: string, workspaceId: string, description?: string) {
     this.app = app
     this.uuid = uuid
     this.name = name
+    this.description = description
     this.embeddingEngine = embeddingEngine
     this.embeddingModel = embeddingModel
     this.workspaceId = workspaceId
@@ -40,7 +42,7 @@ export default class DocumentBaseImpl {
   }
 
   static fromJSON(app: App, json: any): DocumentBaseImpl {
-    const base = new DocumentBaseImpl(app, json.uuid, json.name || json.title, json.embeddingEngine, json.embeddingModel, json.workspaceId)
+    const base = new DocumentBaseImpl(app, json.uuid, json.name || json.title, json.embeddingEngine, json.embeddingModel, json.workspaceId, json.description)
     for (const doc of json.documents) {
       const source = DocumentSourceImpl.fromJSON(doc)
       base.documents.push(source)

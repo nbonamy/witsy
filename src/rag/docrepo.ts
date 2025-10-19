@@ -161,7 +161,7 @@ export default class DocumentRepository {
   
   }
 
-  async renameDocBase(baseId: string, name: string): Promise<void> {
+  async updateDocBase(baseId: string, title: string, description?: string): Promise<void> {
 
     // get the base
     const base = this.contents.find(b => b.uuid == baseId)
@@ -169,8 +169,9 @@ export default class DocumentRepository {
       throw new Error('Database not found')
     }
 
-    // rename
-    base.name = name
+    // update
+    base.name = title
+    base.description = description
 
     // done
     this.save()

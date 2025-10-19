@@ -52,6 +52,7 @@ export type DocumentMetadata = {
 export type DocumentBase = {
   uuid: string
   name: string
+  description?: string
   embeddingEngine: string
   embeddingModel: string
   workspaceId: string

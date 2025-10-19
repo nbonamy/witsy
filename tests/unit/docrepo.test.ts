@@ -1,5 +1,6 @@
 
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
+import { RagConfig } from '../../src/types/config'
 import DocumentRepository from '../../src/rag/docrepo'
 import DocumentSourceImpl from '../../src/rag/docsource'
 import DocumentBaseImpl from '../../src/rag/docbase'
@@ -12,7 +13,7 @@ import path from 'path'
 import fs from 'fs'
 import os from 'os'
 
-let ragConfig
+let ragConfig: RagConfig
 
 vi.mock('electron', async() => {
   return {
@@ -36,7 +37,7 @@ vi.mock('../../src/main/config', async() => {
 })
 
 vi.mock('../../src/rag/embedder', async() => {
-  const Embedder = vi.fn()
+  const Embedder: any = vi.fn()
   Embedder.prototype.embed = vi.fn((texts: string[]) => {
     if (texts[0].includes('squash') && texts[0].includes('tennis')) return Array(texts.length).fill(embeddings['squashtennis'])
     else if (texts[0].includes('squash')) return Array(texts.length).fill(embeddings['squash'])
@@ -97,14 +98,16 @@ test('Docrepo create', async () => {
 
 })
 
-test('Docrepo rename', async () => {
+test('Docrepo update', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
   const list = docrepo.list('workspace')
   expect(list[0].name).toBe('name')
-  docrepo.renameDocBase(docbase, 'newname')
+  expect(list[0].description).toBeUndefined()
+  docrepo.updateDocBase(docbase, 'newname', 'test description')
   const list2 = docrepo.list('workspace')
   expect(list2[0].name).toBe('newname')
+  expect(list2[0].description).toBe('test description')
 })
 
 test('Docrepo delete', async () => {

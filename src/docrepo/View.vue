@@ -1,20 +1,29 @@
 <template>
   <main v-if="selectedRepo">
-    <div class="info panel collapsed">
+    <div class="info panel">
       <div class="panel-header" @click="togglePanel">
-        <label>{{ t('embedding.model') }}</label>
+        <label>{{ t('docRepo.information.title') }}</label>
         <div class="icon"><ChevronDownIcon /></div>
       </div>
-      <div class="panel-body">
+      <div class="panel-body form form-vertical form-large">
         <div class="embeddings">
           <div class="info">
             <EngineLogo class="engine" :engine="selectedRepo.embeddingEngine" />
             <span class="model">{{ selectedRepo.embeddingModel }}</span>
           </div>
           <CircleAlertIcon
-            class="warning" 
-            v-if="!modelReady" 
+            class="warning"
+            v-if="!modelReady"
             v-tooltip="{ text: t('docRepo.view.tooltips.embeddingNotReady'), position: 'right' }"
+          />
+        </div>
+        <div class="form-field description-field">
+          <label>{{ t('docRepo.information.description') }}</label>
+          <textarea
+            v-model="description"
+            @blur="saveDescription"
+            :placeholder="t('docRepo.information.descriptionPlaceholder')"
+            rows="3"
           />
         </div>
       </div>
@@ -43,12 +52,23 @@ const props = defineProps<{
 
 // internal state
 const modelReady = ref(true)
+const description = ref('')
 
 const updateModelReady = () => {
   if (props.selectedRepo) {
     modelReady.value = window.api.docrepo.isEmbeddingAvailable(
-      props.selectedRepo.embeddingEngine, 
+      props.selectedRepo.embeddingEngine,
       props.selectedRepo.embeddingModel
+    )
+  }
+}
+
+const saveDescription = () => {
+  if (props.selectedRepo) {
+    window.api.docrepo.update(
+      props.selectedRepo.uuid,
+      props.selectedRepo.name,
+      description.value
     )
   }
 }
@@ -65,9 +85,10 @@ onUnmounted(() => {
   window.api.off('docrepo-model-downloaded', onModelReady)
 })
 
-// Watch for changes to selectedRepo to update modelReady
+// Watch for changes to selectedRepo to update modelReady and description
 watch(() => props.selectedRepo, () => {
   updateModelReady()
+  description.value = props.selectedRepo?.description || ''
 }, { immediate: true })
 </script>
 
@@ -84,14 +105,12 @@ main {
 
   .panel-body {
 
-    gap: 0.25rem;
-
     .embeddings {
 
       align-self: flex-start;
-      
+
       .info {
-        
+
         border: 1px solid var(--control-border-color);
         background-color: var(--control-disabled-bg-color);
         border-radius: 0.5rem;

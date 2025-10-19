@@ -422,7 +422,7 @@ declare global {
         disconnect(): void
         isEmbeddingAvailable(engine: string, model: string): boolean
         create(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): string
-        rename(baseId: string, title: string): void
+        update(baseId: string, title: string, description?: string): void
         delete(baseId: string): void
         isSourceSupported(type: SourceType, origin: string): boolean
         addDocument(id: string, type: SourceType, origin: string, title?: string): Promise<void>

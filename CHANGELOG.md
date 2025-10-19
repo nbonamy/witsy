@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.0.4] - WIP
 
 ### Added
-- N/A
+- Knowledge plugin to automatically connect knowledge base connections (https://github.com/nbonamy/witsy/issues/450)
 
 ### Changed
 - N/A

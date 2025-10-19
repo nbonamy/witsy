@@ -324,7 +324,7 @@ test('Cancels editing when cancel button is clicked', async () => {
   // Should exit edit mode without saving
   expect(wrapper.vm.isEditingTitle).toBe(false)
   expect(wrapper.vm.selectedRepo?.name).toBe('docrepo1') // Should remain unchanged
-  expect(window.api.docrepo.rename).not.toHaveBeenCalled()
+  expect(window.api.docrepo.update).not.toHaveBeenCalled()
 })
 
 test('Saves changes when save button is clicked', async () => {
@@ -343,7 +343,7 @@ test('Saves changes when save button is clicked', async () => {
   
   // Should exit edit mode and save
   expect(wrapper.vm.isEditingTitle).toBe(false)
-  expect(window.api.docrepo.rename).toHaveBeenLastCalledWith('uuid1', 'new-name')
+  expect(window.api.docrepo.update).toHaveBeenLastCalledWith('uuid1', 'new-name', undefined)
 })
 
 test('Saves changes when Enter key is pressed', async () => {
@@ -364,27 +364,27 @@ test('Saves changes when Enter key is pressed', async () => {
   
   // Should exit edit mode and save
   expect(wrapper.vm.isEditingTitle).toBe(false)
-  expect(window.api.docrepo.rename).toHaveBeenLastCalledWith('uuid1', 'enter-save-name')
+  expect(window.api.docrepo.update).toHaveBeenLastCalledWith('uuid1', 'enter-save-name', undefined)
 })
 
 test('Cancels editing when Escape key is pressed', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
-  
+
   // Enter edit mode
   await wrapper.find('.split-pane .sp-main header .title-display .edit-title').trigger('click')
   expect(wrapper.vm.isEditingTitle).toBe(true)
-  
+
   // Change the input value
   const input = wrapper.find('.split-pane .sp-main header .title-edit input')
   await input.setValue('escape-cancel-name')
-  
+
   // Press Escape
   await input.trigger('keyup.escape')
   await nextTick()
-  
+
   // Should exit edit mode without saving
   expect(wrapper.vm.isEditingTitle).toBe(false)
   expect(wrapper.vm.selectedRepo?.name).toBe('docrepo1') // Should remain unchanged
-  expect(window.api.docrepo.rename).not.toHaveBeenCalled()
+  expect(window.api.docrepo.update).not.toHaveBeenCalled()
 })

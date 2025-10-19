@@ -548,10 +548,10 @@ export const installIpc = (
     }
   });
 
-  ipcMain.on(IPC.DOCREPO.RENAME, async (event, payload) => {
+  ipcMain.on(IPC.DOCREPO.UPDATE, async (event, payload) => {
     try {
-      const { baseId, title } = payload;
-      await docRepo.renameDocBase(baseId, title);
+      const { baseId, title, description } = payload;
+      await docRepo.updateDocBase(baseId, title, description);
       event.returnValue = true
     } catch (error) {
       console.error(error);
