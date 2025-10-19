@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.4] - WIP
+
+### Added
+- N/A
+
+### Changed
+- N/A
+
+### Fixed
+- Prompt menu not showing in some languages (https://github.com/nbonamy/witsy/issues/455)
+
+### Removed
+- N/A
+
+
 ## [3.0.3] - 2025-10-18
 
 ### Added

@@ -159,6 +159,7 @@
     "tryAgain": "Veuillez réessayer.",
     "type": "Type",
     "undo": "Annuler",
+    "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "Aucun",
     "upload": "Télécharger",
     "url": "URL",
@@ -1462,7 +1463,7 @@
       },
       "22d89e0c-0333-44d0-a0ce-d1c90ed05139": {
         "name": "Moteur de Recherche Solr",
-        "prompt": "Je veux que tu agisses en tant que moteur de recherche Solr fonctionnant en mode autonome. Tu seras capable d'ajouter des documents JSON en ligne dans des champs arbitraires et les types de données pourraient être entiers, chaîne, flottant ou tableau. Ayant une insertion de document, tu mettras à jour ton index pour que nous puissions récupérer des documents en écrivant des requêtes spécifiques SOLR entre accolades, séparées par des virgules, comme {q='title:Solr', sort='score asc'}. Tu fourniras trois commandes dans une liste numérotée. Ne pas écrire d'explications ou d'exemples sur le fonctionnement du moteur. Ta première instruction est de montrer la liste numérotée et de créer deux collections vides appelées 'instructions' et 'yay' respectivement."
+        "prompt": "Je veux que tu agisses en tant que moteur de recherche Solr fonctionnant en mode autonome. Tu seras capable d'ajouter des documents JSON en ligne dans des champs arbitraires et les types de données pourraient être entiers, chaîne, flottant ou tableau. Ayant une insertion de document, tu mettras à jour ton index pour que nous puissions récupérer des documents en écrivant des requêtes spécifiques SOLR entre accolades, séparées par des virgules, comme {'{'}q='title:Solr', sort='score asc'{'}'}. Tu fourniras trois commandes dans une liste numérotée. Ne pas écrire d'explications ou d'exemples sur le fonctionnement du moteur. Ta première instruction est de montrer la liste numérotée et de créer deux collections vides appelées 'instructions' et 'yay' respectivement."
       },
       "04d81b88-67a0-4ea1-bab7-40e1aba8be8f": {
         "name": "Recommandeur de Chansons",
@@ -1691,6 +1692,7 @@
       "errorEmpty": "Le JSON ne peut pas être vide.",
       "errorFormat": "Erreur lors de l'analyse de la définition JSON du serveur.",
       "errorMultiple": "Plusieurs serveurs trouvés. Veuillez coller un serveur à la fois.",
+      "menu": "@:{'mcp.importJson.title'}",
       "title": "Importer depuis JSON"
     },
     "importSmitheryServer": "Installer depuis Smithery.ai",
@@ -1752,6 +1754,7 @@
     "serverNotFound": "Le serveur auquel vous essayez de vous connecter n'existe pas.",
     "servers": "serveurs. Découvrez et installez des serveurs MCP depuis le",
     "smithery": "Smithery",
+    "tools": "@:{'common.tools'}",
     "toolsCount": "Aucun outil activé|1 outil activé|{count} outils activés",
     "tooltips": {
       "deleteServer": "Supprimer le serveur",
@@ -2108,12 +2111,16 @@
       "attach": {
         "title": "Ajouter des photos et des fichiers"
       },
+      "deepResearch": {
+        "title": "@:{'common.deepResearch'}"
+      },
       "docRepos": {
         "manage": "Gérer la base de connaissances",
         "title": "Connaissances"
       },
       "experts": {
-        "manage": "Créer un nouvel expert"
+        "manage": "Créer un nouvel expert",
+        "title": "@:{'common.experts'}"
       },
       "instructions": {
         "title": "Style d'écriture"
@@ -2122,7 +2129,8 @@
         "reload": "Recharger les modèles"
       },
       "tools": {
-        "plugins": "Extensions @:{'common.appName'}"
+        "plugins": "Extensions @:{'common.appName'}",
+        "title": "@:{'common.tools'}"
       }
     },
     "noEngineAvailable": {

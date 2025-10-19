@@ -398,25 +398,25 @@ function categorizeKeys(
   keysWithChangedEnglish: string[]
 } {
   const allKeys = Array.from(keyUsages.keys())
-  
+
   // Filter out unused keys (candidates for deletion)
   const candidateKeys = allKeys.filter(key => !unusedKeys.has(key))
-  
-  // Filter out linked translations (equal to "@:{'something'}")
-  const finalCandidateKeys = candidateKeys.filter(key => {
+
+  // Separate regular translations (for change detection)
+  const regularTranslations = candidateKeys.filter(key => {
     const enValue = enData[key]
     return enValue && !LINKED_TRANSLATION_REGEX.test(enValue)
   })
-  
+
   // Identify keys that need English translations (missing or empty English values)
   const keysNeedingEnglish = candidateKeys.filter(key => {
     const enValue = enData[key]
     return !enValue || enValue.trim() === ''
   })
-  
-  // Load English snapshot and compare for changes
+
+  // Load English snapshot and compare for changes (only for regular translations, not linked)
   const enSnapshot = loadEnglishSnapshot()
-  const keysWithChangedEnglish = finalCandidateKeys.filter(key => {
+  const keysWithChangedEnglish = regularTranslations.filter(key => {
     const currentValue = enData[key]
     const snapshotValue = enSnapshot[key]
     // Key has changed if snapshot exists and values differ
@@ -424,7 +424,7 @@ function categorizeKeys(
   })
 
   return {
-    candidateKeys: finalCandidateKeys,
+    candidateKeys, // Now includes both linked and regular translations
     keysNeedingEnglish,
     keysWithChangedEnglish
   }
@@ -566,10 +566,19 @@ async function translateCandidatesForTranslation(
           //setNestedValue(locales[locale], key, key);
           console.log(`  ‼️ Skipping missing EN "${key}"`);
         }
-        // For other languages, prepare for translation
+        // For other languages, check if English value exists
         else if (keyExists(locales.en, key)) {
           const enValue = getNestedValue(locales.en, key);
-          localeTranslationBatches[locale].push({ key, en: enValue });
+
+          // If it's a linked translation, copy it directly (don't translate)
+          if (LINKED_TRANSLATION_REGEX.test(enValue)) {
+            setNestedValue(locales[locale], key, enValue);
+            console.log(`  + Copied linked translation "${key}" = "${enValue}"`);
+          }
+          // Otherwise, prepare for translation
+          else {
+            localeTranslationBatches[locale].push({ key, en: enValue });
+          }
         }
         else {
           // If no English value, use the key itself

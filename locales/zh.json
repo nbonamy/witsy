@@ -178,6 +178,7 @@
     "tryAgain": "请再试一次。",
     "type": "类型",
     "undo": "撤销",
+    "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "无",
     "upload": "上传",
     "url": "网址",
@@ -1710,6 +1711,7 @@
       "errorEmpty": "JSON 不能为空。",
       "errorFormat": "解析 JSON 服务器定义时出错。",
       "errorMultiple": "检测到多个服务器。请一次粘贴一个服务器。",
+      "menu": "@:{'mcp.importJson.title'}",
       "title": "从 JSON 导入"
     },
     "importSmitheryServer": "从 Smithery.ai 安装",
@@ -1771,6 +1773,7 @@
     "serverNotFound": "你尝试连接的服务器不存在。",
     "servers": "服务器。从以下位置发现并安装 MCP 服务器",
     "smithery": "Smithery",
+    "tools": "@:{'common.tools'}",
     "toolsCount": "无工具启用|已启用 1 个工具|已启用 {count} 个工具",
     "tooltips": {
       "deleteServer": "删除服务器",
@@ -2130,12 +2133,16 @@
       "attach": {
         "title": "添加照片和文件"
       },
+      "deepResearch": {
+        "title": "@:{'common.deepResearch'}"
+      },
       "docRepos": {
         "manage": "管理知识库",
         "title": "知识库"
       },
       "experts": {
-        "manage": "创建新专家"
+        "manage": "创建新专家",
+        "title": "@:{'common.experts'}"
       },
       "instructions": {
         "title": "写作风格"
@@ -2144,7 +2151,8 @@
         "reload": "重新加载模型"
       },
       "tools": {
-        "plugins": "@:{'common.appName'} 插件"
+        "plugins": "@:{'common.appName'} 插件",
+        "title": "@:{'common.tools'}"
       }
     },
     "noEngineAvailable": {
