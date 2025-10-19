@@ -5,6 +5,8 @@ import { convert } from 'html-to-text'
 import Plugin, { PluginConfig } from './plugin'
 import { t } from '../services/i18n'
 
+export const kBrowsePluginName = 'extract_webpage_content'
+
 export default class extends Plugin {
 
   private kDefaultChunkLength = 50
@@ -19,7 +21,7 @@ export default class extends Plugin {
   }
 
   getName(): string {
-    return 'extract_webpage_content'
+    return kBrowsePluginName
   }
 
   getDescription(): string {

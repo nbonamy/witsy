@@ -25,6 +25,7 @@ import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { computed, inject, onMounted, PropType, ref, watch } from 'vue'
 import useEventBus from '../composables/event_bus'
 import Message from '../models/message'
+import { kSearchPluginName } from '../plugins/search'
 import { t } from '../services/i18n'
 import { closeOpenMarkdownTags, getCodeBlocks, isHtmlContent } from '../services/markdown'
 import { store } from '../services/store'
@@ -229,7 +230,7 @@ const computeBlocks = (content: string|null): Block[] => {
         if (toolCall && toolCall.done) {
           if (props.showToolCalls === 'always') {
             blocks.push({ type: 'tool', toolCall: toolCall })
-          } else if (toolCall.name === 'search_internet') {
+          } else if (toolCall.name === kSearchPluginName) {
             blocks.push({ type: 'search', toolCall: toolCall })
           }
         }

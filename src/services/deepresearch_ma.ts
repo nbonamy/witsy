@@ -1,11 +1,12 @@
 
-import { Configuration } from '../types/config'
 import { LlmChunk, LlmEngine } from 'multi-llm-ts'
+import Chat from '../models/chat'
+import Message from '../models/message'
+import AgentPlugin, { AgentStorage } from '../plugins/agent'
+import { kSearchPluginName } from '../plugins/search'
+import { Configuration } from '../types/config'
 import * as dr from './deepresearch'
 import Generator, { GenerationResult } from './generator'
-import AgentPlugin, { AgentStorage } from '../plugins/agent'
-import Message from '../models/message'
-import Chat from '../models/chat'
 
 export default class DeepResearchMultiAgent implements dr.DeepResearch, AgentStorage {
 
@@ -26,7 +27,7 @@ export default class DeepResearchMultiAgent implements dr.DeepResearch, AgentSto
     // to surface all agents work back to message
     const callback = (chunk: LlmChunk): void => {
       const lastMessage = chat.messages[chat.messages.length - 1]
-      if (chunk.type === 'tool' && chunk.name === 'search_internet') {
+      if (chunk.type === 'tool' && chunk.name === kSearchPluginName) {
         lastMessage.addToolCall(chunk)
       }
     }

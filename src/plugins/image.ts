@@ -6,6 +6,8 @@ import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import ImageCreator from '../services/image'
 
+export const kImagePluginName = 'image_generation'
+
 export default class extends Plugin {
 
   creator: ImageCreator
@@ -28,7 +30,7 @@ export default class extends Plugin {
   }
 
   getName(): string {
-    return 'image_generation'
+    return kImagePluginName
   }
 
   getDescription(): string {

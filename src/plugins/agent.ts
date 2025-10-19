@@ -10,6 +10,7 @@ import { Configuration } from '../types/config'
 import { anyDict } from '../types/index'
 import Plugin from './plugin'
 
+const kAgentPluginPrefix = 'agent_'
 const kStoreIdPrefix = 'storeId:'
 
 export interface AgentStorage {
@@ -64,7 +65,7 @@ export default class extends Plugin {
   }
 
   getName(): string {
-    return `agent_${this.agent.name.replace(/ /g, '_').toLowerCase()}`
+    return `${kAgentPluginPrefix}${this.agent.name.replace(/ /g, '_').toLowerCase()}`
   }
 
   getDescription(): string {

@@ -8,8 +8,7 @@
         <div class="md-master">
           <div class="md-master-list">
             <div class="md-master-list-item" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" :data-id="plugin.id" @click="selectPlugin(plugin)">
-              <img :src="plugin.logo.image" class="logo image" v-if="plugin.logo.image" />
-              <component :is="plugin.logo.icon" class="logo icon" v-if="plugin.logo.icon" />
+              <PluginIcon :tool="plugin.id" class="logo icon"/>
               {{ plugin.label }}
             </div>
           </div>
@@ -22,15 +21,14 @@
 
 <script setup lang="ts">
 
-import { BinocularsIcon, CloudDownloadIcon, FolderIcon, IdCardIcon, PaletteIcon, VideoIcon } from 'lucide-vue-next'
 import { computed, nextTick, ref } from 'vue'
-import WIconPython from '../../assets/python.svg?component'
-import WIconVega from '../../assets/vega.svg?component'
+import PluginIcon from '../components/PluginIcon.vue'
 import { availablePlugins } from '../plugins/plugins'
 import { t } from '../services/i18n'
 import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsFilesystem from './SettingsFilesystem.vue'
 import SettingsImage from './SettingsImage.vue'
+import SettingsKnowledge from './SettingsKnowledge.vue'
 import SettingsMemory from './SettingsMemory.vue'
 import SettingsPython from './SettingsPython.vue'
 import SettingsSearch from './SettingsSearch.vue'
@@ -44,7 +42,6 @@ const pluginSettings = ref(null)
 type PluginUI = {
   id: string,
   label: string,
-  logo: { image?: string, icon?: any },
 }
 
 const plugins = computed((): PluginUI[] => {
@@ -53,18 +50,6 @@ const plugins = computed((): PluginUI[] => {
     return {
       id: plugin,
       label: t(`settings.plugins.${plugin}.title`),
-      logo: {
-        search: { icon: BinocularsIcon },
-        browse: { icon: CloudDownloadIcon },
-        python: { icon: WIconPython },
-        image: { icon: PaletteIcon },
-        video: { icon: VideoIcon },
-        memory: { icon: IdCardIcon },
-        youtube: { icon: VideoIcon },
-        vega: { icon: WIconVega },
-        filesystem: { icon: FolderIcon },
-        // mcp: { icon: WIconMcp },
-      }[plugin],
     }
   })
   return res
@@ -80,6 +65,7 @@ const currentView = computed(() => {
   if (currentPlugin.value == 'memory') return SettingsMemory
   if (currentPlugin.value == 'vega') return SettingsVega
   if (currentPlugin.value == 'filesystem') return SettingsFilesystem
+  if (currentPlugin.value == 'knowledge') return SettingsKnowledge
 })
 
 const selectPlugin = (plugin: PluginUI) => {

@@ -5,6 +5,7 @@ import { ToolSelection } from '../types/llm'
 import BrowsePlugin from './browse'
 import FilesystemPlugin from './filesystem'
 import ImagePlugin from './image'
+import KnowledgePlugin from './knowledge'
 import McpPlugin from './mcp'
 import MemoryPlugin from './memory'
 import Plugin from './plugin'
@@ -20,8 +21,9 @@ export type PluginType = {
 export type PluginsList = Record<string, PluginType>
 
 export const availablePlugins: PluginsList = {
+  knowledge: KnowledgePlugin,
   search: SearchPlugin,
-  browse: BrowsePlugin, 
+  browse: BrowsePlugin,
   image: ImagePlugin,
   video: VideoPlugin,
   mcp: McpPlugin,
