@@ -842,6 +842,11 @@
         "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
+    "information": {
+      "description": "Opis",
+      "descriptionPlaceholder": "Opcjonalny opis tej bazy wiedzy (używany przez asystentów AI do zrozumienia, kiedy przeszukiwać tę kolekcję)",
+      "title": "Informacje ogólne"
+    },
     "list": {
       "documentsCount": "Brak dokumentów|1 dokument|{count} dokumentów",
       "title": "@:{'common.docRepo'}",
@@ -2068,6 +2073,12 @@
       "error": "Błąd podczas generowania obrazu",
       "running": "Malowanie pikseli…"
     },
+    "knowledge": {
+      "completed": "Nie znaleziono wyników w {docrepo} | Znaleziono {count} wynik w {docrepo} | Znaleziono {count} wyników w {docrepo}",
+      "error": "Błąd podczas wyszukiwania w {docrepo}: {error}",
+      "preparing": "Przygotowywanie wyszukiwania w kolekcji bazy wiedzy {docrepo}…",
+      "running": "Wyszukiwanie w {docrepo} dla: {query}…"
+    },
     "mcp": {
       "completed": "Polecenie MCP \"{tool}\" zostało pomyślnie wykonane",
       "error": "Błąd podczas wykonywania polecenia MCP \"{tool}\"",
@@ -2528,6 +2539,10 @@
         },
         "title": "Tekst na obraz"
       },
+      "knowledge": {
+        "description": "Ten wtyczka udostępnia kolekcje bazy wiedzy z opisami jako narzędzia wyszukiwalne dla silników LLM. Po włączeniu asystenci AI mogą automatycznie przeszukiwać Twoją bazę wiedzy, aby opierać swoje odpowiedzi na Twojej zawartości.",
+        "title": "Wiedza"
+      },
       "memory": {
         "contents": "Zawartość",
         "description": "Ta wtyczka umożliwia silnikom LLM przechowywanie i pobieranie informacji o użytkowniku, dzięki czemu ich odpowiedzi są bardziej spersonalizowane.",
@@ -2558,6 +2573,7 @@
         },
         "exaApiKey": "Klucz API Exa",
         "getApiKey": "Uzyskaj klucz API",
+        "localWarning": "<strong style=\"color: red;\">Ważne:</strong> Google agresywnie ogranicza zautomatyzowane wyszukiwania. Zaleca się korzystanie z internetowych wyszukiwarek jednego z wymienionych dostawców zamiast opcji lokalnego wyszukiwania (Brave i Tavily oferują bezpłatne opcje). Możesz użyć poniższego przycisku testowego, aby tymczasowo autoryzować wyszukiwania Google. Do momentu, gdy znów przestanie działać.",
         "perplexityApiKey": "Klucz API Perplexity",
         "tavilyApiKey": "Klucz API Tavily",
         "testLocal": {

@@ -842,6 +842,11 @@
         "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
+    "information": {
+      "description": "説明",
+      "descriptionPlaceholder": "このナレッジベースの任意の説明（AIアシスタントがこのコレクションを検索すべきときの理解に使用します）",
+      "title": "一般情報"
+    },
     "list": {
       "documentsCount": "ドキュメントなし|1 件のドキュメント|{count} 件のドキュメント",
       "title": "@:{'common.docRepo'}",
@@ -2068,6 +2073,12 @@
       "error": "画像の生成中にエラーが発生しました",
       "running": "ピクセルを描画中…"
     },
+    "knowledge": {
+      "completed": "{docrepo}で結果が見つかりませんでした | {docrepo}から{count}件の結果が見つかりました | {docrepo}から{count}件の結果が見つかりました",
+      "error": "{docrepo}の検索中にエラーが発生しました: {error}",
+      "preparing": "{docrepo}ナレッジベースコレクションの検索準備中…",
+      "running": "{docrepo}を検索しています: {query}…"
+    },
     "mcp": {
       "completed": "MCPコマンド \"{tool}\" が正常に実行されました",
       "error": "MCPコマンド \"{tool}\" の実行中にエラーが発生しました",
@@ -2528,6 +2539,10 @@
         },
         "title": "テキストから画像へ"
       },
+      "knowledge": {
+        "description": "このプラグインは、説明付きのナレッジベースコレクションをLLMエンジンの検索可能なツールとして公開します。有効にすると、AIアシスタントは自動的にナレッジベースを検索し、コンテンツに基づいた応答を生成できます。",
+        "title": "ナレッジ"
+      },
       "memory": {
         "contents": "内容",
         "description": "このプラグインを使用すると、LLMエンジンはあなたに関する情報を保存および取得し、回答をよりパーソナライズすることができます。",
@@ -2558,6 +2573,7 @@
         },
         "exaApiKey": "Exa APIキー",
         "getApiKey": "APIキーを取得する",
+        "localWarning": "<strong style=\"color: red;\">重要:</strong> Googleは自動検索を厳しく制限しています。ローカル検索オプションではなく、以下に示された提供者のオンライン検索エンジンの利用を強く推奨します（BraveやTavilyは無料オプションを提供）。下のテストボタンで一時的にGoogle検索を許可できますが、再び利用不可になることがあります。",
         "perplexityApiKey": "Perplexity APIキー",
         "tavilyApiKey": "Tavily APIキー",
         "testLocal": {

@@ -842,6 +842,11 @@
         "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
+    "information": {
+      "description": "描述",
+      "descriptionPlaceholder": "此知识库的可选描述（供 AI 助手了解何时搜索此集合时使用）",
+      "title": "一般信息"
+    },
     "list": {
       "documentsCount": "无文档|1 个文档|{count} 个文档",
       "title": "@:{'common.docRepo'}",
@@ -2068,6 +2073,12 @@
       "error": "生成图像时出错",
       "running": "正在绘制像素…"
     },
+    "knowledge": {
+      "completed": "在 {docrepo} 中未找到结果 | 从 {docrepo} 找到 {count} 个结果 | 从 {docrepo} 找到 {count} 个结果",
+      "error": "搜索 {docrepo} 时出错：{error}",
+      "preparing": "正在准备 {docrepo} 知识库集合搜索…",
+      "running": "正在 {docrepo} 中搜索：{query}…"
+    },
     "mcp": {
       "completed": "MCP命令 \"{tool}\" 执行成功",
       "error": "执行MCP命令 \"{tool}\" 时出错",
@@ -2522,6 +2533,10 @@
         },
         "title": "文本转图像"
       },
+      "knowledge": {
+        "description": "此插件以描述形式将知识库集合作为可搜索工具暴露给大型语言模型引擎。启用后，AI 助手可以自动搜索您的知识库，以让其回答基于您的内容。",
+        "title": "知识"
+      },
       "memory": {
         "contents": "内容",
         "description": "此插件允许 LLM 引擎存储和检索有关你的信息，使它们的回答更具个性化。",
@@ -2552,6 +2567,7 @@
         },
         "exaApiKey": "Exa API 密钥",
         "getApiKey": "获取你的 API 密钥",
+        "localWarning": "<strong style=\"color: red;\">重要：</strong> 谷歌强力限制自动化搜索。强烈建议使用下列提供商之一的在线搜索引擎，而非本地搜索选项（Brave 和 Tavily 提供免费选项）。您可以使用下面的测试按钮暂时授权谷歌搜索，直到再次失效为止。",
         "perplexityApiKey": "Perplexity API 密钥",
         "tavilyApiKey": "Tavily API 密钥",
         "testLocal": {

@@ -21,7 +21,9 @@
       </select>
     </div>
 
-    <div class="form-field horizontal" v-if="engine == 'local'">
+    <div class="description" style="margin: 0 !important" v-if="engine === 'local'" v-html="t('settings.plugins.search.localWarning')"></div>
+
+    <div class="form-field horizontal" v-if="engine === 'local'">
       <button @click="onTestLocal">{{ t('settings.plugins.search.testLocal.title') }}</button>
       <span v-if="localTestResult === true" class="success">{{ t('settings.plugins.search.testLocal.success') }}</span>
       <span v-if="localTestResult === false" class="error">{{ t('settings.plugins.search.testLocal.error') }}</span>

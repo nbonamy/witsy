@@ -823,6 +823,11 @@
         "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
+    "information": {
+      "description": "Descrizione",
+      "descriptionPlaceholder": "Descrizione opzionale per questa base di conoscenza (usata dagli assistenti AI per capire quando cercare in questa collezione)",
+      "title": "Informazioni Generali"
+    },
     "list": {
       "documentsCount": "Nessun documento|1 documento|{count} documenti",
       "title": "@:{'common.docRepo'}",
@@ -2048,6 +2053,12 @@
       "error": "Errore durante la generazione dell'immagine",
       "running": "Painting pixels…"
     },
+    "knowledge": {
+      "completed": "Nessun risultato trovato in {docrepo} | Trovato {count} risultato in {docrepo} | Trovati {count} risultati in {docrepo}",
+      "error": "Errore durante la ricerca in {docrepo}: {error}",
+      "preparing": "Preparazione della ricerca nella collezione della base di conoscenza {docrepo}…",
+      "running": "Ricerca in {docrepo} per: {query}…"
+    },
     "mcp": {
       "completed": "Comando MCP \"{tool}\" eseguito con successo",
       "error": "Errore durante l'esecuzione del comando MCP \"{tool}\"",
@@ -2500,6 +2511,10 @@
         },
         "title": "Testo a Immagine"
       },
+      "knowledge": {
+        "description": "Questo plugin espone collezioni della base di conoscenza con descrizioni come strumenti ricercabili per motori LLM. Quando abilitato, gli assistenti AI possono cercare automaticamente nella tua base di conoscenza per basare le loro risposte sul tuo contenuto.",
+        "title": "Conoscenza"
+      },
       "memory": {
         "contents": "Contenuti",
         "description": "Questo plugin consente ai motori LLM di memorizzare e recuperare informazioni su di te, rendendo le loro risposte più personalizzate.",
@@ -2530,6 +2545,7 @@
         },
         "exaApiKey": "Chiave API Exa",
         "getApiKey": "Ottieni la tua chiave API",
+        "localWarning": "<strong style=\"color: red;\">Importante:</strong> Google limita severamente le ricerche automatizzate. Si consiglia vivamente di usare un motore di ricerca online tra quelli indicati invece dell'opzione di ricerca locale (Brave e Tavily offrono opzioni gratuite). Puoi usare il pulsante di test qui sotto per autorizzare temporaneamente le ricerche Google, fino a quando non si bloccherà di nuovo.",
         "perplexityApiKey": "Chiave API Perplexity",
         "tavilyApiKey": "Chiave API Tavily",
         "testLocal": {
