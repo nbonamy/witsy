@@ -452,10 +452,10 @@
       "actions": {
         "clearDefaults": "Borrar valores predeterminados de la carpeta",
         "delete": "Eliminar carpeta",
+        "editDefaults": "Editar predeterminados",
         "setDefaults": "Establecer valores predeterminados desde el chat"
       },
-      "confirmDeleteDefaults": "¿Está seguro de que desea eliminar los valores predeterminados de la carpeta?",
-      "confirmOverwriteDefaults": "¿Está seguro de que desea sobrescribir los valores predeterminados de la carpeta?"
+      "confirmDeleteDefaults": "¿Está seguro de que desea eliminar los valores predeterminados de la carpeta?"
     },
     "timeline": {
       "earlier": "Más antiguo",
@@ -1583,6 +1583,17 @@
         "prompt": "Quiero que actúes como un yogui. Serás capaz de guiar a los estudiantes a través de posturas seguras y efectivas, crear secuencias personalizadas que se adapten a las necesidades de cada individuo, dirigir sesiones de meditación y técnicas de relajación, fomentar un ambiente enfocado en calmar la mente y el cuerpo, y dar consejos sobre ajustes de estilo de vida para mejorar el bienestar general."
       }
     }
+  },
+  "folderSettings": {
+    "advancedSettings": {
+      "hide": "Ocultar configuraciones avanzadas",
+      "show": "Mostrar configuraciones avanzadas"
+    },
+    "docrepo": "Base de conocimiento predeterminada",
+    "expert": "Experto predeterminado",
+    "noDocRepo": "Ninguno",
+    "noExpert": "Ninguno",
+    "title": "Configuración predeterminada de la carpeta"
   },
   "generator": {
     "errors": {

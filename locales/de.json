@@ -452,10 +452,10 @@
       "actions": {
         "clearDefaults": "Ordnerstandards löschen",
         "delete": "Ordner löschen",
+        "editDefaults": "Standardwerte bearbeiten",
         "setDefaults": "Standards aus dem Chat festlegen"
       },
-      "confirmDeleteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards löschen möchten?",
-      "confirmOverwriteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards überschreiben möchten?"
+      "confirmDeleteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards löschen möchten?"
     },
     "timeline": {
       "earlier": "Früher",
@@ -1583,6 +1583,17 @@
         "prompt": "Ich möchte, dass du als Yogi agierst. Du wirst in der Lage sein, Schüler durch sichere und effektive Posen zu leiten, personalisierte Sequenzen zu erstellen, die den Bedürfnissen jedes Einzelnen entsprechen, Meditationssitzungen und Entspannungstechniken anzuleiten, eine Atmosphäre zu schaffen, die sich auf die Beruhigung von Geist und Körper konzentriert, und Ratschläge zu Lebensstiländerungen zur Verbesserung des allgemeinen Wohlbefindens zu geben."
       }
     }
+  },
+  "folderSettings": {
+    "advancedSettings": {
+      "hide": "Erweiterte Einstellungen ausblenden",
+      "show": "Erweiterte Einstellungen anzeigen"
+    },
+    "docrepo": "Standard Wissensdatenbank",
+    "expert": "Standard Experte",
+    "noDocRepo": "Keine",
+    "noExpert": "Keine",
+    "title": "Standardordnereinstellungen"
   },
   "generator": {
     "errors": {

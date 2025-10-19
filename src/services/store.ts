@@ -177,21 +177,7 @@ export const store: Store = reactive({
       chat.tools = defaults.tools !== undefined ? defaults.tools : (defaults.disableTools ? [] : null)
       chat.locale = defaults.locale
       chat.instructions = defaults.instructions
-      chat.modelOpts = {
-        contextWindowSize: defaults.contextWindowSize,
-        maxTokens: defaults.maxTokens,
-        temperature: defaults.temperature,
-        top_k: defaults.top_k,
-        top_p: defaults.top_p,
-        reasoning: defaults.reasoning,
-        reasoningBudget: defaults.reasoningBudget,
-        reasoningEffort: defaults.reasoningEffort,
-        verbosity: defaults.verbosity,
-        thinkingBudget: defaults.thinkingBudget,
-      }
-      if (defaults.customOpts) {
-        chat.modelOpts.customOpts = defaults.customOpts
-      }
+      chat.modelOpts = defaults.modelOpts
     } else {
       chat.disableStreaming = false
       chat.tools = store.config.engines[chat.engine]?.disableTools ? [] : null

@@ -452,10 +452,10 @@
       "actions": {
         "clearDefaults": "Effacer les valeurs par défaut du dossier",
         "delete": "Supprimer le dossier",
+        "editDefaults": "Modifier les valeurs par défaut",
         "setDefaults": "Définir les valeurs par défaut à partir du chat"
       },
-      "confirmDeleteDefaults": "Êtes-vous sûr de vouloir supprimer les valeurs par défaut du dossier ?",
-      "confirmOverwriteDefaults": "Êtes-vous sûr de vouloir écraser les valeurs par défaut du dossier ?"
+      "confirmDeleteDefaults": "Êtes-vous sûr de vouloir supprimer les valeurs par défaut du dossier ?"
     },
     "timeline": {
       "earlier": "Plus ancien",
@@ -1583,6 +1583,17 @@
         "prompt": "Je veux que tu agisses en tant que yogi. Tu seras capable de guider des étudiants à travers des poses sûres et efficaces, créer des séquences personnalisées qui correspondent aux besoins de chaque individu, diriger des séances de méditation et de relaxation, favoriser une atmosphère centrée sur l'apaisement de l'esprit et du corps, donnant des conseils sur les ajustements de style de vie pour améliorer le bien-être global."
       }
     }
+  },
+  "folderSettings": {
+    "advancedSettings": {
+      "hide": "Cacher les paramètres avancés",
+      "show": "Afficher les paramètres avancés"
+    },
+    "docrepo": "Base de connaissances par défaut",
+    "expert": "Expert par défaut",
+    "noDocRepo": "Aucun",
+    "noExpert": "Aucun",
+    "title": "Paramètres par défaut du dossier"
   },
   "generator": {
     "errors": {

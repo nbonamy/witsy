@@ -1,7 +1,7 @@
 
 import { VueWrapper } from "@vue/test-utils"
 
-export const findModelSelectoPlus = (wrapper: Omit<VueWrapper<any, any>, 'exists'>, index: number = 0) => {
+export const findModelSelectorPlus = (wrapper: Omit<VueWrapper<any, any>, 'exists'>, index: number = 0) => {
 
   const modelSelector = wrapper.findAllComponents({ name: 'ModelSelectPlus' })[index]
 

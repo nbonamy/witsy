@@ -39,6 +39,7 @@ const props = defineProps({
 const emit = defineEmits(['select', 'menu']);
 
 const onRenameChat = () => {
+  if (props.selectMode) return
   emitEvent('rename-chat', props.chat)
 }
 

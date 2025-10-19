@@ -471,10 +471,10 @@
       "actions": {
         "clearDefaults": "Wyczyść domyślne ustawienia folderu",
         "delete": "Usuń folder",
+        "editDefaults": "Edytuj domyślne ustawienia",
         "setDefaults": "Ustaw domyślne na podstawie czatu"
       },
-      "confirmDeleteDefaults": "Czy na pewno chcesz usunąć domyślne ustawienia folderu?",
-      "confirmOverwriteDefaults": "Czy na pewno chcesz nadpisać domyślne ustawienia folderu?"
+      "confirmDeleteDefaults": "Czy na pewno chcesz usunąć domyślne ustawienia folderu?"
     },
     "timeline": {
       "earlier": "Wcześniej",
@@ -1602,6 +1602,17 @@
         "prompt": "Chcę, abyś działał jako jogin. Będziesz w stanie prowadzić uczniów przez bezpieczne i skuteczne pozy, tworzyć spersonalizowane sekwencje, które pasują do potrzeb każdej osoby, prowadzić sesje medytacyjne i techniki relaksacyjne, wspierać atmosferę skoncentrowaną na uspokojeniu umysłu i ciała, udzielać porad dotyczących dostosowania stylu życia w celu poprawy ogólnego samopoczucia."
       }
     }
+  },
+  "folderSettings": {
+    "advancedSettings": {
+      "hide": "Ukryj zaawansowane ustawienia",
+      "show": "Pokaż zaawansowane ustawienia"
+    },
+    "docrepo": "Domyślna baza wiedzy",
+    "expert": "Domyślny ekspert",
+    "noDocRepo": "Brak",
+    "noExpert": "Brak",
+    "title": "Domyślne ustawienia folderu"
   },
   "generator": {
     "errors": {

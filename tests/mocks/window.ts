@@ -1,7 +1,8 @@
 
 import { vi } from 'vitest'
 import { renderMarkdown } from '../../src/main/markdown'
-import { AgentRun, AgentRunStatus, AgentRunTrigger, Command, Expert } from '../../src/types/index'
+import { Command, Expert } from '../../src/types/index'
+import { AgentRun, AgentRunStatus, AgentRunTrigger } from '../../src/types/agents'
 import { McpInstallStatus } from '../../src/types/mcp'
 import { ListDirectoryResponse } from '../../src/types/filesystem'
 import { FilePickParams } from '../../src/types/file'
@@ -104,13 +105,18 @@ const useWindowMock = (opts?: WindowMockOpts) => {
               engine: 'mock',
               model: 'chat',
               disableStreaming: false,
+              instructions: 'Test instructions',
               tools: [],
-              contextWindowSize: 512,
-              maxTokens: 150,
-              temperature: 0.7,
-              top_k: 10,
-              top_p: 0.5,
-              reasoning: true,
+              expert: 'expert1',
+              docrepo: 'repo1',
+              modelOpts: {
+                contextWindowSize: 512,
+                maxTokens: 150,
+                temperature: 0.7,
+                top_k: 10,
+                top_p: 0.5,
+                reasoning: true,
+              }
             },
           ]
         }

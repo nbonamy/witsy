@@ -32,6 +32,7 @@
       :position="position"
       :teleport="true"
       :defaultLabel="defaultLabel"
+      :css-classes="cssClasses"
       @close="closeDropdown"
       @modelSelected="onModelSelected"
     />
@@ -44,15 +45,16 @@ import { nextTick, ref } from 'vue'
 import { engineNames } from '../llms/base'
 import LlmFactory from '../llms/llm'
 import { store } from '../services/store'
+import { MenuPosition } from './ContextMenuPlus.vue'
 import EngineLogo from './EngineLogo.vue'
 import EngineModelMenu from './EngineModelMenu.vue'
-import { MenuPosition } from './ContextMenuPlus.vue'
 
 interface Props {
   engine: string
   model: string
   position?: MenuPosition
   defaultLabel?: string
+  cssClasses?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {

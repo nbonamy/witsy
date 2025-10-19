@@ -471,10 +471,10 @@
       "actions": {
         "clearDefaults": "清除文件夹默认值",
         "delete": "删除文件夹",
+        "editDefaults": "编辑默认设置",
         "setDefaults": "从聊天设置默认值"
       },
-      "confirmDeleteDefaults": "您确定要删除文件夹默认值吗？",
-      "confirmOverwriteDefaults": "您确定要覆盖文件夹默认值吗？"
+      "confirmDeleteDefaults": "您确定要删除文件夹默认值吗？"
     },
     "timeline": {
       "earlier": "更早",
@@ -1602,6 +1602,17 @@
         "prompt": "我希望你担任瑜伽导师。你能够指导学生安全有效地进行体式练习，根据每个人的需求制定个性化序列，带领冥想课程和放松技巧，营造专注于平静身心的氛围，提供建议关于生活方式调整以改善整体健康。"
       }
     }
+  },
+  "folderSettings": {
+    "advancedSettings": {
+      "hide": "隐藏高级设置",
+      "show": "显示高级设置"
+    },
+    "docrepo": "默认知识库",
+    "expert": "默认专家",
+    "noDocRepo": "无",
+    "noExpert": "无",
+    "title": "文件夹默认设置"
   },
   "generator": {
     "errors": {

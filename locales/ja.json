@@ -471,10 +471,10 @@
       "actions": {
         "clearDefaults": "フォルダーのデフォルトをクリア",
         "delete": "フォルダーを削除",
+        "editDefaults": "デフォルトを編集",
         "setDefaults": "チャットからデフォルトを設定"
       },
-      "confirmDeleteDefaults": "フォルダーのデフォルトを削除してもよろしいですか？",
-      "confirmOverwriteDefaults": "フォルダーのデフォルトを上書きしてもよろしいですか？"
+      "confirmDeleteDefaults": "フォルダーのデフォルトを削除してもよろしいですか？"
     },
     "timeline": {
       "earlier": "以前",
@@ -1602,6 +1602,17 @@
         "prompt": "ヨギとして振る舞ってください。生徒を安全で効果的なポーズに導き、個々のニーズに合わせたパーソナライズされたシーケンスを作成し、瞑想セッションやリラクゼーションテクニックを指導し、心と体を落ち着かせることに焦点を当てた雰囲気を作り出し、全体的な健康を改善するためのライフスタイル調整に関するアドバイスを提供してください。"
       }
     }
+  },
+  "folderSettings": {
+    "advancedSettings": {
+      "hide": "詳細設定を非表示",
+      "show": "詳細設定を表示"
+    },
+    "docrepo": "デフォルトナレッジベース",
+    "expert": "デフォルトエキスパート",
+    "noDocRepo": "なし",
+    "noExpert": "なし",
+    "title": "フォルダのデフォルト設定"
   },
   "generator": {
     "errors": {

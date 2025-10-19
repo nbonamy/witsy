@@ -6,7 +6,7 @@ import Settings from '../../src/screens/Settings.vue'
 import { store } from '../../src/services/store'
 import { CustomInstruction } from '../../src/types/index'
 import { useWindowMock } from '../mocks/window'
-import { findModelSelectoPlus } from '../utils'
+import { findModelSelectorPlus } from '../utils'
 import { switchToTab, tabs } from './settings_utils'
 
 enableAutoUnmount(afterAll)
@@ -83,7 +83,7 @@ test('Settings LLM basic functionality', async () => {
   const tab = await switchToTab(wrapper, tabs.indexOf('settingsLLM'))
   expect(tab.findAll('.form-field')).toHaveLength(10)
   expect(tab.findAll('.form-field.localeLLM select option')).toHaveLength(21)
-  expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
+  expect(findModelSelectorPlus(wrapper).exists()).toBe(true)
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
   expect(tab.findAll('.form-field.quick-prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
@@ -103,7 +103,7 @@ test('Settings LLM basic functionality', async () => {
   vi.clearAllMocks()
   
   // set prompt model
-  const modelSelect = findModelSelectoPlus(tab)
+  const modelSelect = findModelSelectorPlus(tab)
   await modelSelect.open()
   await modelSelect.select(1)
   await wrapper.vm.$nextTick()

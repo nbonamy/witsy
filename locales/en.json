@@ -470,10 +470,10 @@
       "actions": {
         "clearDefaults": "Clear folder defaults",
         "delete": "Delete folder",
+        "editDefaults": "Edit defaults",
         "setDefaults": "Set defaults from chat"
       },
-      "confirmDeleteDefaults": "Are you sure you want to delete the folder defaults?",
-      "confirmOverwriteDefaults": "Are you sure you want to overwrite the folder defaults?"
+      "confirmDeleteDefaults": "Are you sure you want to delete the folder defaults?"
     },
     "timeline": {
       "earlier": "Earlier",
@@ -1601,6 +1601,17 @@
         "prompt": "I want you to act as a yogi. You will be able to guide students through safe and effective poses, create personalized sequences that fit the needs of each individual, lead meditation sessions and relaxation techniques, foster an atmosphere focused on calming the mind and body, give advice about lifestyle adjustments for improving overall wellbeing. "
       }
     }
+  },
+  "folderSettings": {
+    "advancedSettings": {
+      "hide": "Hide Advanced Settings",
+      "show": "Show Advanced Settings"
+    },
+    "docrepo": "Default Knowledge Base",
+    "expert": "Default Expert",
+    "noDocRepo": "None",
+    "noExpert": "None",
+    "title": "Folder Default Settings"
   },
   "generator": {
     "errors": {

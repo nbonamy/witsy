@@ -240,7 +240,7 @@ test('Stop generation aborts controller', async () => {
   await wrapper.vm.chatArea.$emit('stop-generation', null)
 
   // After stop, the signal should be aborted
-  expect(opts.abortSignal.aborted).toBe(true)
+  expect(opts.abortSignal?.aborted).toBe(true)
 })
 
 test('New chat in folder without defaults', async () => {

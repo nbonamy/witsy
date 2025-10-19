@@ -12,7 +12,7 @@ import {
   loadMetaModels,
   loadLMStudioModels
 } from 'multi-llm-ts'
-import { findModelSelectoPlus } from '../utils'
+import { findModelSelectorPlus } from '../utils'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()
@@ -81,7 +81,7 @@ test('openai settings', async () => {
     apiKey: 'api-key',
     baseURL: 'base-url'
   }))
-  const visionModelSelect = findModelSelectoPlus(openai, 1)
+  const visionModelSelect = findModelSelectorPlus(openai, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.openai.model.vision).toBe('openai-vision')
@@ -104,7 +104,7 @@ test('anthropic settings', async () => {
   expect(loadAnthropicModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }), expect.anything())
-  const visionModelSelect = findModelSelectoPlus(anthropic, 1)
+  const visionModelSelect = findModelSelectorPlus(anthropic, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.anthropic.model.vision).toBe('anthropic-vision')
@@ -124,7 +124,7 @@ test('google settings', async () => {
   expect(loadGoogleModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = findModelSelectoPlus(google, 1)
+  const visionModelSelect = findModelSelectorPlus(google, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.google.model.vision).toBe('google-vision')
@@ -144,7 +144,7 @@ test('xai settings', async () => {
   expect(loadXAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = findModelSelectoPlus(xai, 1)
+  const visionModelSelect = findModelSelectorPlus(xai, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.xai.model.vision).toBe('xai-vision')
@@ -164,7 +164,7 @@ test('meta settings', async () => {
   expect(loadMetaModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect =  findModelSelectoPlus(meta, 1)
+  const visionModelSelect =  findModelSelectorPlus(meta, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.meta.model.vision).toBe('meta-vision')
@@ -184,7 +184,7 @@ test('ollama settings', async () => {
   await ollama.find('button[name=refresh]').trigger('click')
   await vi.waitUntil(() =>  (loadOllamaModels as Mock).mock.calls.length > 0)
   expect(loadOllamaModels).toHaveBeenCalled()
-  const visionModelSelect = findModelSelectoPlus(ollama, 1)
+  const visionModelSelect = findModelSelectorPlus(ollama, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.ollama.model.vision).toBe('ollama-vision')
@@ -205,7 +205,7 @@ test('lmstudio settings', async () => {
   await wait(750) //timeout
   expect(loadLMStudioModels).toHaveBeenLastCalledWith(expect.objectContaining({
   }))
-  const visionModelSelect = findModelSelectoPlus(lmstudio, 1)
+  const visionModelSelect = findModelSelectorPlus(lmstudio, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.lmstudio.model.vision).toBe('lmstudio-vision')
@@ -225,7 +225,7 @@ test('mistralai settings', async () => {
   expect(loadMistralAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = findModelSelectoPlus(mistralai, 1)
+  const visionModelSelect = findModelSelectorPlus(mistralai, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.mistralai.model.vision).toBe('mistralai-vision')
@@ -253,7 +253,7 @@ test('deepseek settings', async () => {
   expect(loadDeepSeekModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = findModelSelectoPlus(deepseek, 1)
+  const visionModelSelect = findModelSelectorPlus(deepseek, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.deepseek.model.vision).toBe('deepseek-vision')
@@ -273,7 +273,7 @@ test('openrouter settings', async () => {
   expect(loadOpenRouterModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = findModelSelectoPlus(openrouter, 1)
+  const visionModelSelect = findModelSelectorPlus(openrouter, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.openrouter.model.vision).toBe('openrouter-vision')
@@ -293,7 +293,7 @@ test('groq settings', async () => {
   expect(loadGroqModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = findModelSelectoPlus(groq, 1)
+  const visionModelSelect = findModelSelectorPlus(groq, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.groq.model.vision).toBe('groq-vision')
@@ -313,7 +313,7 @@ test('cerebras settings', async () => {
   expect(loadCerebrasModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = findModelSelectoPlus(cerebras, 1)
+  const visionModelSelect = findModelSelectorPlus(cerebras, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
   expect(store.config.engines.cerebras.model.vision).toBe('cerebras-vision')
