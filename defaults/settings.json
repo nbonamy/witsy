@@ -479,6 +479,9 @@
       "allowedPaths": [],
       "allowWrite": false,
       "skipConfirmation": false
+    },
+    "knowledge": {
+      "enabled": true
     }
   },
   "mcp": {

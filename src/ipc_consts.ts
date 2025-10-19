@@ -110,7 +110,7 @@ export const DOCREPO = {
   CONNECT: 'docrepo-connect',
   DISCONNECT: 'docrepo-disconnect',
   CREATE: 'docrepo-create',
-  RENAME: 'docrepo-rename',
+  UPDATE: 'docrepo-update',
   DELETE: 'docrepo-delete',
   ADD_DOCUMENT: 'docrepo-add-document',
   REMOVE_DOCUMENT: 'docrepo-remove-document',

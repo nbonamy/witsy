@@ -841,6 +841,11 @@
         "formats": "Add text files (including PDF and Microsoft Office documents)"
       }
     },
+    "information": {
+      "title": "General Information",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional description for this knowledge base (used by AI assistants to understand when to search this collection)"
+    },
     "list": {
       "documentsCount": "No document|1 document|{count} documents",
       "title": "@:{'common.docRepo'}",
@@ -2067,6 +2072,12 @@
       "error": "Error while generating image",
       "running": "Painting pixels…"
     },
+    "knowledge": {
+      "completed": "Found no results in {docrepo} | Found {count} result from {docrepo} | Found {count} results from {docrepo}",
+      "error": "Error while searching {docrepo}: {error}",
+      "preparing": "Preparing {docrepo} knowledge base collection search…",
+      "running": "Searching {docrepo} for: {query}…"
+    },
     "mcp": {
       "completed": "MCP command \"{tool}\" executed successfully",
       "error": "Error while executing MCP command \"{tool}\"",
@@ -2510,6 +2521,10 @@
           "title": "Are you sure you want to disable write operation confirmation?"
         },
         "title": "Filesystem"
+      },
+      "knowledge": {
+        "description": "This plugin exposes knowledge base collections with descriptions as searchable tools for LLM engines. When enabled, AI assistants can automatically search your knowledge base to ground their responses in your content.",
+        "title": "Knowledge"
       },
       "image": {
         "apiKeyReminder": "Make sure you enter your API key in the Models pane of @:{'common.appName'} Settings.",

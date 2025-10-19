@@ -166,7 +166,7 @@ contextBridge.exposeInMainWorld(
       connect(baseId: string): void { return ipcRenderer.send(IPC.DOCREPO.CONNECT, baseId) },
       disconnect(): void { return ipcRenderer.send(IPC.DOCREPO.DISCONNECT) },
       create(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): string { return ipcRenderer.sendSync(IPC.DOCREPO.CREATE, { workspaceId, title, embeddingEngine, embeddingModel }) },
-      rename(baseId: string, title: string): void { return ipcRenderer.sendSync(IPC.DOCREPO.RENAME, { baseId, title }) },
+      update(baseId: string, title: string, description?: string): void { return ipcRenderer.sendSync(IPC.DOCREPO.UPDATE, { baseId, title, description }) },
       delete(baseId: string): void { return ipcRenderer.sendSync(IPC.DOCREPO.DELETE, baseId) },
       addDocument(baseId: string, type: SourceType, origin: string, title?: string): Promise<void> { return ipcRenderer.invoke(IPC.DOCREPO.ADD_DOCUMENT, { baseId, type, origin, title }) },
       removeDocument(baseId: string, docId: string): Promise<boolean> { return ipcRenderer.invoke(IPC.DOCREPO.REMOVE_DOCUMENT, { baseId, docId }) },

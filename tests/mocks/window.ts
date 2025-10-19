@@ -411,7 +411,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       connect: vi.fn(() => true),
       disconnect: vi.fn(() => true),
       create: vi.fn(),
-      rename: vi.fn(),
+      update: vi.fn(),
       delete: vi.fn(),
       addDocument: vi.fn(async () => {}),
       removeDocument: vi.fn(async () => true),

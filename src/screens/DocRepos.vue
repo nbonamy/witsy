@@ -158,7 +158,7 @@ const startEditingTitle = async () => {
 
 const saveTitle = () => {
   if (!selectedRepo.value || !editingTitle.value.trim()) return
-  window.api.docrepo.rename(selectedRepo.value.uuid, editingTitle.value.trim())
+  window.api.docrepo.update(selectedRepo.value.uuid, editingTitle.value.trim(), selectedRepo.value.description)
   isEditingTitle.value = false
 }
 
