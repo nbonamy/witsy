@@ -943,12 +943,7 @@ Decide which deepresearch agent to invoke next to fulfill this research request.
     tools: [],
     agents: []
   }]
-},
-  () => t('deepResearch.mainLoop.starting'),
-  () => t('deepResearch.mainLoop.running'),
-  () => t('deepResearch.mainLoop.completed'),
-  () => t('deepResearch.mainLoop.error'),
-)
+})
 
 // Add structured output schema
 mainLoopAgent.steps[0].structuredOutput = {
