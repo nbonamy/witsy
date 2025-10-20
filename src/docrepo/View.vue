@@ -138,6 +138,14 @@ main {
 
     }
 
+    .description-field {
+
+      textarea {
+        padding: 0.375rem;
+      }
+
+    }
+
   }
 
 }
