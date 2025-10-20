@@ -474,7 +474,8 @@
         "editDefaults": "Editar padrões",
         "setDefaults": "Definir padrões a partir do chat"
       },
-      "confirmDeleteDefaults": "Tem certeza de que deseja excluir os padrões da pasta?"
+      "confirmDeleteDefaults": "Tem certeza de que deseja excluir os padrões da pasta?",
+      "confirmOverwriteDefaults": "Tem certeza de que deseja substituir os padrões da pasta?"
     },
     "timeline": {
       "earlier": "Anterior",

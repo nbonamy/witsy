@@ -473,7 +473,8 @@
         "editDefaults": "Edit defaults",
         "setDefaults": "Set defaults from chat"
       },
-      "confirmDeleteDefaults": "Are you sure you want to delete the folder defaults?"
+      "confirmDeleteDefaults": "Are you sure you want to delete the folder defaults?",
+      "confirmOverwriteDefaults": "Are you sure you want to overwrite the folder defaults?"
     },
     "timeline": {
       "earlier": "Earlier",

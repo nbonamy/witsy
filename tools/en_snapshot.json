@@ -344,6 +344,7 @@
   "chatList.folder.actions.editDefaults": "Edit defaults",
   "chatList.folder.actions.setDefaults": "Set defaults from chat",
   "chatList.folder.confirmDeleteDefaults": "Are you sure you want to delete the folder defaults?",
+  "chatList.folder.confirmOverwriteDefaults": "Are you sure you want to overwrite the folder defaults?",
   "chatList.timeline.earlier": "Earlier",
   "chatList.timeline.last14days": "Last 14 days",
   "chatList.timeline.last30days": "Last 30 days",

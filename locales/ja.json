@@ -474,7 +474,8 @@
         "editDefaults": "デフォルトを編集",
         "setDefaults": "チャットからデフォルトを設定"
       },
-      "confirmDeleteDefaults": "フォルダーのデフォルトを削除してもよろしいですか？"
+      "confirmDeleteDefaults": "フォルダーのデフォルトを削除してもよろしいですか？",
+      "confirmOverwriteDefaults": "フォルダーのデフォルトを上書きしてもよろしいですか？"
     },
     "timeline": {
       "earlier": "以前",

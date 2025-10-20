@@ -474,7 +474,8 @@
         "editDefaults": "Edytuj domyślne ustawienia",
         "setDefaults": "Ustaw domyślne na podstawie czatu"
       },
-      "confirmDeleteDefaults": "Czy na pewno chcesz usunąć domyślne ustawienia folderu?"
+      "confirmDeleteDefaults": "Czy na pewno chcesz usunąć domyślne ustawienia folderu?",
+      "confirmOverwriteDefaults": "Czy na pewno chcesz nadpisać domyślne ustawienia folderu?"
     },
     "timeline": {
       "earlier": "Wcześniej",
