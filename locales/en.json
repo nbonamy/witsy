@@ -1719,6 +1719,10 @@
       "fetchFailed": "Unable to connect to the server. Please check that the server is running and the URL is correct."
     },
     "copyInstallCommand": "You can copy the install command to your clipboard and try it in a Terminal.",
+    "empty": {
+      "text": "Connectors lets you connect your @:{'common.appName'} chats with external services and data sources using MCP Servers. Think of it as having a smart assistant that has access to all your favorite apps and enable automation via agents.",
+      "title": "Welcome to Connectors"
+    },
     "failedToInstall": "Failed to install server",
     "importJson": {
       "details": "Copy/Paste JSON MCP Server definitions from Claude here.",
@@ -1733,7 +1737,6 @@
     "importSmitheryServer": "Install from Smithery.ai",
     "mcpServers": "Connectors",
     "modelContextProtocol": "Connections Hub",
-    "noServersFound": "No connectors found. Click on the buttons above to add a new connector.",
     "noTools": "No tools available",
     "oauth": {
       "success": {

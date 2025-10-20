@@ -1720,6 +1720,10 @@
       "fetchFailed": "Nie można połączyć się z serwerem. Proszę sprawdzić, czy serwer działa i czy adres URL jest poprawny."
     },
     "copyInstallCommand": "Możesz skopiować polecenie instalacji do schowka i spróbować je w terminalu.",
+    "empty": {
+      "text": "Connectors pozwala łączyć Twoje czaty @:{'common.appName'} z zewnętrznymi usługami i źródłami danych za pomocą serwerów MCP. Można to porównać do posiadania inteligentnego asystenta, który ma dostęp do wszystkich Twoich ulubionych aplikacji i umożliwia automatyzację za pomocą agentów.",
+      "title": "Witamy w Connectors"
+    },
     "failedToInstall": "Nie udało się zainstalować serwera",
     "importJson": {
       "details": "Wklej tutaj definicje serwera MCP w formacie JSON z Claude.",
@@ -1734,7 +1738,6 @@
     "importSmitheryServer": "Zainstaluj z Smithery.ai",
     "mcpServers": "Konektory",
     "modelContextProtocol": "Centrum połączeń",
-    "noServersFound": "Nie znaleziono konektorów. Kliknij powyższe przyciski, aby dodać nowy konektor.",
     "noTools": "Brak dostępnych narzędzi",
     "oauth": {
       "success": {
