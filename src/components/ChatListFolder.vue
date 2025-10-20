@@ -251,7 +251,7 @@ const handleActionClick = async (action: string) => {
   justify-content: flex-start;
   gap: .25rem;
   margin: 12px 0 8px;
-  padding: 0 12px;
+  padding: 0 2px;
   font-size: 12px;
   font-weight: bold;
   text-transform: uppercase;
