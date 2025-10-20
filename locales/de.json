@@ -455,7 +455,8 @@
         "editDefaults": "Standardwerte bearbeiten",
         "setDefaults": "Standards aus dem Chat festlegen"
       },
-      "confirmDeleteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards löschen möchten?"
+      "confirmDeleteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards löschen möchten?",
+      "confirmOverwriteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards überschreiben möchten?"
     },
     "timeline": {
       "earlier": "Früher",

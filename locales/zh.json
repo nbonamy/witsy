@@ -474,7 +474,8 @@
         "editDefaults": "编辑默认设置",
         "setDefaults": "从聊天设置默认值"
       },
-      "confirmDeleteDefaults": "您确定要删除文件夹默认值吗？"
+      "confirmDeleteDefaults": "您确定要删除文件夹默认值吗？",
+      "confirmOverwriteDefaults": "您确定要覆盖文件夹默认值吗？"
     },
     "timeline": {
       "earlier": "更早",

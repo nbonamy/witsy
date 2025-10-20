@@ -455,7 +455,8 @@
         "editDefaults": "Modifier les valeurs par défaut",
         "setDefaults": "Définir les valeurs par défaut à partir du chat"
       },
-      "confirmDeleteDefaults": "Êtes-vous sûr de vouloir supprimer les valeurs par défaut du dossier ?"
+      "confirmDeleteDefaults": "Êtes-vous sûr de vouloir supprimer les valeurs par défaut du dossier ?",
+      "confirmOverwriteDefaults": "Êtes-vous sûr de vouloir écraser les valeurs par défaut du dossier ?"
     },
     "timeline": {
       "earlier": "Plus ancien",

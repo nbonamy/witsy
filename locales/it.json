@@ -455,7 +455,8 @@
         "editDefaults": "Modifica predefiniti",
         "setDefaults": "Imposta i valori predefiniti dalla chat"
       },
-      "confirmDeleteDefaults": "Sei sicuro di voler eliminare le impostazioni predefinite della cartella?"
+      "confirmDeleteDefaults": "Sei sicuro di voler eliminare le impostazioni predefinite della cartella?",
+      "confirmOverwriteDefaults": "Sei sicuro di voler sovrascrivere le impostazioni predefinite della cartella?"
     },
     "timeline": {
       "earlier": "Precedente",
