@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 
+import { BarChart3Icon, FileCodeIcon, FileJsonIcon, FileSpreadsheetIcon, FileTextIcon } from 'lucide-vue-next'
 import { computed } from 'vue'
 import Attachment from '../models/attachment'
 
