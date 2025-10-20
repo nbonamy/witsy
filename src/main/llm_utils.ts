@@ -9,6 +9,8 @@ import { getLocaleMessages } from './i18n'
 import { runPython } from './interpreter'
 import Mcp from './mcp'
 import LocalSearch from './search'
+import DocumentRepository from '../rag/docrepo'
+import { DocumentBase } from '../types/rag'
 
 /**
  * Base class for LLM operations that need global mocks and i18n
@@ -17,10 +19,12 @@ export class LlmContext {
 
   protected app: App
   protected mcp: Mcp
+  protected docRepo: DocumentRepository
 
-  constructor(app: App, mcp: Mcp) {
+  constructor(app: App, mcp: Mcp, docRepo: DocumentRepository) {
     this.app = app
     this.mcp = mcp
+    this.docRepo = docRepo
   }
 
   /**
@@ -66,6 +70,16 @@ export class LlmContext {
           saveRun: (wsId: string, run: AgentRun): boolean =>  {
             return saveAgentRun(this.app, wsId, run)
           },
+        },
+
+        // @ts-expect-error partial mock
+        docrepo: {
+          list: (workspaceId: string): DocumentBase[] => {
+            return this.docRepo.list(workspaceId)
+          },
+          query: async (baseId: string, query: string): Promise<any> => {
+            return this.docRepo.query(baseId, query)
+          }
         },
 
         interpreter: {

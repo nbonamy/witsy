@@ -1,4 +1,5 @@
 import { App } from 'electron'
+import DocumentRepository from '../rag/docrepo'
 import { createAgentExecutor } from '../services/agent_utils'
 import { Agent, AgentRun, AgentRunTrigger } from '../types/agents'
 import { loadAgents } from './agents'
@@ -69,8 +70,8 @@ export function findAgentByWebhookToken(app: App, token: string): { agent: Agent
 
 export class AgentExecutor extends LlmContext {
 
-  constructor(app: App, mcp: Mcp) {
-    super(app, mcp)
+  constructor(app: App, mcp: Mcp, docRepo: DocumentRepository) {
+    super(app, mcp, docRepo)
   }
 
   public async runAgent(

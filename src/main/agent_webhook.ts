@@ -1,8 +1,9 @@
 import { App } from 'electron'
+import DocumentRepository from '../rag/docrepo'
 import { AgentExecutor, findAgentByWebhookToken } from './agent_utils'
-import { HttpServer } from './http_server'
-import { parseParams, sendError, sendJson, isHttpEndpointsEnabled } from './http_utils'
 import { getAgentRun } from './agents'
+import { HttpServer } from './http_server'
+import { isHttpEndpointsEnabled, parseParams, sendError, sendJson } from './http_utils'
 import Mcp from './mcp'
 
 /**
@@ -14,7 +15,7 @@ export const AGENT_API_BASE_PATH = '/api/agent'
  * Install agent webhook endpoints on the HTTP server
  * Allows agents to be triggered via HTTP requests with webhook tokens
  */
-export function installAgentWebhook(httpServer: HttpServer, app: App, mcp: Mcp): void {
+export function installAgentWebhook(httpServer: HttpServer, app: App, mcp: Mcp, docRepo: DocumentRepository): void {
 
   httpServer.register(`${AGENT_API_BASE_PATH}/run/*`, async (req, res, parsedUrl) => {
     if (!isHttpEndpointsEnabled(app, res)) return
@@ -47,7 +48,7 @@ export function installAgentWebhook(httpServer: HttpServer, app: App, mcp: Mcp):
 
       // Run agent
       const runId = crypto.randomUUID()
-      const executor = new AgentExecutor(app, mcp)
+      const executor = new AgentExecutor(app, mcp, docRepo)
       executor.runAgent(workspaceId, agent, 'webhook', prompt, runId)
 
       sendJson(res, {

@@ -50,7 +50,11 @@ export default class extends MultiToolPlugin {
   }
 
   async getTools(): Promise<LlmTool[]> {
+    
     const allDocrepos = window.api.docrepo.list(this.workspaceId) as DocumentBase[]
+    if (!allDocrepos?.length) {
+      return []
+    }
 
     // Filter to only docrepos from current workspace with valid descriptions
     const filteredDocrepos = allDocrepos.filter(repo => {
