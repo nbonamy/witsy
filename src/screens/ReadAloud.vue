@@ -11,10 +11,11 @@
 <script setup lang="ts">
 
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
-import { ref, onMounted, onUnmounted } from 'vue'
-import { store } from '../services/store'
-import useAudioPlayer, { AudioStatus, textMaxLength} from '../composables/audio_player'
+import { PauseCircleIcon, PlayCircleIcon, XCircleIcon } from 'lucide-vue-next'
+import { onMounted, onUnmounted, ref } from 'vue'
 import Loader from '../components/Loader.vue'
+import useAudioPlayer, { AudioStatus, textMaxLength } from '../composables/audio_player'
+import { store } from '../services/store'
 
 // init stuff
 store.loadSettings()
