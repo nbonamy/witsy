@@ -1720,6 +1720,10 @@
       "fetchFailed": "Não foi possível conectar ao servidor. Por favor, verifique se o servidor está em execução e se o URL está correto."
     },
     "copyInstallCommand": "Você pode copiar o comando de instalação para a área de transferência e tentar em um Terminal.",
+    "empty": {
+      "text": "Connectors permite que você conecte seus chats @:{'common.appName'} com serviços externos e fontes de dados usando servidores MCP. Pense nele como um assistente inteligente que tem acesso a todos os seus aplicativos favoritos e possibilita automação através de agentes.",
+      "title": "Bem-vindo ao Connectors"
+    },
     "failedToInstall": "Falha ao instalar o servidor",
     "importJson": {
       "details": "Copie/cole aqui as definições JSON do Servidor MCP vindas do Claude.",
@@ -1734,7 +1738,6 @@
     "importSmitheryServer": "Instalar do Smithery.ai",
     "mcpServers": "Conectores",
     "modelContextProtocol": "Hub de Conexões",
-    "noServersFound": "Nenhum conector encontrado. Clique nos botões acima para adicionar um novo conector.",
     "noTools": "Nenhuma ferramenta disponível",
     "oauth": {
       "success": {

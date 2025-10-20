@@ -3,22 +3,21 @@
     <header>
       <div class="title">{{ t('mcp.modelContextProtocol') }}</div>
       <div class="actions">
+        <button name="addJson" class="large tertiary" @click="onImportJson" v-if="store.isFeatureEnabled('mcp.json')">
+          <BracesIcon />{{ t('mcp.importJson.menu') }}
+        </button>
         <button name="addSmithery" class="large secondary" @click="onCreate('smithery')" v-if="store.isFeatureEnabled('mcp.smithery')">
           <CloudUploadIcon />{{ t('mcp.importSmitheryServer') }}
         </button>
-        <button name="addJson" class="large secondary" @click="onImportJson" v-if="store.isFeatureEnabled('mcp.json')">
-          <BracesIcon />{{ t('mcp.importJson.menu') }}
-        </button>
-        <button name="addCustom" class="large primary" @click="onCreate('http')">
-          <PlusIcon />{{ t('mcp.addCustomServer') }}
+        <button name="addCustom" class="large primary" @click="onCreate('http')" v-if="props.servers?.length">
+          <McpIcon />{{ t('mcp.addCustomServer') }}
         </button>
       </div>
     </header>
 
     <main>
-      <div v-if="!props.servers?.length" class="empty-state">
-        {{ t('mcp.noServersFound') }}
-      </div>
+
+      <Empty v-if="!props.servers?.length" @click="onCreate('http')" />
 
       <template v-else>
         <div class="servers-list">
@@ -134,10 +133,10 @@
 
 <script setup lang="ts">
 
-import { BracesIcon, CloudUploadIcon } from 'lucide-vue-next'
-import { PauseIcon, PlayIcon, PlusIcon, PowerIcon, RefreshCwIcon, SearchIcon } from 'lucide-vue-next'
+import { BracesIcon, CloudUploadIcon, LinkIcon, PauseIcon, PlayIcon, PowerIcon, RefreshCwIcon, SearchIcon } from 'lucide-vue-next'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { computed, nextTick, PropType, ref } from 'vue'
+import McpIcon from '../../assets/mcp.svg?component'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import McpToolSelector from '../components/McpToolSelector.vue'
@@ -147,7 +146,7 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { ToolSelection } from '../types/llm'
 import { McpServer, McpServerStatus, McpStatus, McpTool } from '../types/mcp'
-import { LinkIcon } from 'lucide-vue-next'
+import Empty from './Empty.vue'
 
 const props = defineProps({
   servers: Array as PropType<McpServer[]>,

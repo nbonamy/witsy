@@ -1,133 +1,139 @@
 <template>
   <div class="mcp-server-editor form form-vertical form-large" @keydown.enter.prevent="onSave">
+    <header v-if="type === 'smithery'">
+      <SmitheryIcon />Smithery
+    </header>
+    <header v-else>
+      <McpIcon />Model Context Protocol
+    </header>
     <main>
-    <div class="form-field">
-      <label>{{ t('common.type') }}</label>
-      <select name="type" v-model="type">
-        <option value="stdio">{{ t('mcp.serverEditor.type.stdio') }}</option>
-        <option value="http">{{ t('mcp.serverEditor.type.http') }}</option>
-        <option value="sse">{{ t('mcp.serverEditor.type.sse') }}</option>
-        <option value="smithery" v-if="!server?.uuid">{{ t('mcp.serverEditor.type.smithery') }}</option>
-      </select>
-    </div>
-    <div class="form-field">
-      <label>{{ t('common.label') }}</label>
-      <input type="text" name="label" v-model="label" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-    </div>
-    <div class="form-field" v-if="['http', 'sse'].includes(type)">
-      <label>{{ t('common.url') }}</label>
-      <input type="text" name="url" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-    </div>
-    <template v-if="type === 'smithery'">
       <div class="form-field">
-        <label>{{ t('mcp.serverEditor.serverPackage') }}</label>
-        <div class="form-subgroup">
-          <input type="text" name="url" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-          <a href="https://smithery.ai" target="_blank">{{ t('common.browse') }} Smithery.ai</a>
-        </div>
+        <label>{{ t('common.type') }}</label>
+        <select name="type" v-model="type">
+          <option value="stdio">{{ t('mcp.serverEditor.type.stdio') }}</option>
+          <option value="http">{{ t('mcp.serverEditor.type.http') }}</option>
+          <option value="sse">{{ t('mcp.serverEditor.type.sse') }}</option>
+          <option value="smithery" v-if="!server?.uuid">{{ t('mcp.serverEditor.type.smithery') }}</option>
+        </select>
       </div>
       <div class="form-field">
-        <label>{{ t('mcp.serverEditor.smitheryApiKey') }}</label>
-        <InputObfuscated type="text" name="apiKey" v-model="apiKey" autofocus />
+        <label>{{ t('common.label') }}</label>
+        <input type="text" name="label" v-model="label" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
       </div>
-    </template>
-    <template v-if="type === 'stdio'">
-      <div class="form-field">
-        <label>{{ t('common.command') }}</label>
-        <div class="control-group">
-          <input type="text" name="command" v-model="command" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-          <button name="pickCommand" @click.prevent="pickCommand">{{ t('common.pick') }}</button>
-        </div>
-        <div style="width: 100%;">
-          <select name="source" v-model="source" @change="findCommand">
-            <option value="">{{ t('mcp.serverEditor.selectCommand') }}</option>
-            <option value="python3">python</option>
-            <option value="uvx">uvx</option>
-            <option value="node">node</option>
-            <option value="npx">npx</option>
-            <option value="bun">bun</option>
-            <option value="bunx">bunx</option>
-          </select>
-        </div>
+      <div class="form-field" v-if="['http', 'sse'].includes(type)">
+        <label>{{ t('common.url') }}</label>
+        <input type="text" name="url" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
       </div>
-      <div class="form-field">
-        <label>{{ t('common.arguments') }}</label>
-        <div class="control-group">
-          <input type="text" name="url" v-model="url" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-          <button name="pickScript" @click.prevent="pickScript">{{ t('common.pick') }}</button>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>{{ t('mcp.serverEditor.workingDirectory') }}</label>
-        <div class="control-group">
-          <input type="text" name="cwd" v-model="cwd" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-          <button name="pickWorkDir" @click.prevent="pickWorkDir">{{ t('common.pick') }}</button>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>{{ t('mcp.serverEditor.environmentVariables') }}</label>
-        <VariableTable
-          :variables="env"
-          :selectedVariable="selectedVar"
-          @select="onSelectVar('env', $event)"
-          @add="onAddVar('env')"
-          @edit="onEditVar('env', $event)"
-          @delete="onDelVar('env')"
-        />
-      </div>
-    </template>
-    <template v-if="['http', 'sse'].includes(type)">
-      <div class="form-field" v-if="type === 'http'">
-        <label>{{ t('mcp.serverEditor.httpHeaders') }}</label>
-        <VariableTable 
-          :variables="headers"
-          :selectedVariable="selectedVar"
-          @select="onSelectVar('header', $event)"
-          @add="onAddVar('header')"
-          @edit="onEditVar('header', $event)"
-          @delete="onDelVar('header')"
-        />
-      </div>
-      <div class="form-field">
-        <label>{{ t('mcp.serverEditor.oauth.title') }}</label>
-        <template v-if="oauthConfig">
-          <div>{{ t('mcp.serverEditor.oauth.successful') }}</div>
-          <div><a href="#" @click.prevent="removeOAuth">{{ t('common.delete') }}</a></div>
-        </template>
-        <template v-else>
+      <template v-if="type === 'smithery'">
+        <div class="form-field">
+          <label>{{ t('mcp.serverEditor.serverPackage') }}</label>
           <div class="form-subgroup">
-            <div class="form-field">
-              <label @click="showAuthFields = !showAuthFields" class="show-auth-fields">
-                <ChevronRightIcon v-if="!showAuthFields" />
-                <ChevronDownIcon v-else />
-                {{ t('mcp.serverEditor.oauth.showAuthFields') }}
-              </label>
-            </div>
-            <template  v-if="showAuthFields">
-              <div class="form-field">
-                <label>{{ t('mcp.serverEditor.oauth.clientId') }}</label>
-                <input type="text" name="oauthClientId" v-model="oauthClientId" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-              </div>
-              <div class="form-field">
-                <label>{{ t('mcp.serverEditor.oauth.clientSecret') }}</label>
-                <input type="password" name="oauthClientSecret" v-model="oauthClientSecret" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-              </div>
-            </template>
+            <input type="text" name="url" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+            <a href="https://smithery.ai" target="_blank">{{ t('common.browse') }} Smithery.ai</a>
           </div>
-          <div><a href="#" @click.prevent="checkOAuth">{{ t('mcp.serverEditor.oauth.setup') }}</a></div>
+        </div>
+        <div class="form-field">
+          <label>{{ t('mcp.serverEditor.smitheryApiKey') }}</label>
+          <InputObfuscated type="text" name="apiKey" v-model="apiKey" autofocus />
+        </div>
+      </template>
+      <template v-if="type === 'stdio'">
+        <div class="form-field">
+          <label>{{ t('common.command') }}</label>
+          <div class="control-group">
+            <input type="text" name="command" v-model="command" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+            <button name="pickCommand" @click.prevent="pickCommand">{{ t('common.pick') }}</button>
+          </div>
+          <div style="width: 100%;">
+            <select name="source" v-model="source" @change="findCommand">
+              <option value="">{{ t('mcp.serverEditor.selectCommand') }}</option>
+              <option value="python3">python</option>
+              <option value="uvx">uvx</option>
+              <option value="node">node</option>
+              <option value="npx">npx</option>
+              <option value="bun">bun</option>
+              <option value="bunx">bunx</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>{{ t('common.arguments') }}</label>
+          <div class="control-group">
+            <input type="text" name="url" v-model="url" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+            <button name="pickScript" @click.prevent="pickScript">{{ t('common.pick') }}</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>{{ t('mcp.serverEditor.workingDirectory') }}</label>
+          <div class="control-group">
+            <input type="text" name="cwd" v-model="cwd" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+            <button name="pickWorkDir" @click.prevent="pickWorkDir">{{ t('common.pick') }}</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>{{ t('mcp.serverEditor.environmentVariables') }}</label>
+          <VariableTable
+            :variables="env"
+            :selectedVariable="selectedVar"
+            @select="onSelectVar('env', $event)"
+            @add="onAddVar('env')"
+            @edit="onEditVar('env', $event)"
+            @delete="onDelVar('env')"
+          />
+        </div>
+      </template>
+      <template v-if="['http', 'sse'].includes(type)">
+        <div class="form-field" v-if="type === 'http'">
+          <label>{{ t('mcp.serverEditor.httpHeaders') }}</label>
+          <VariableTable 
+            :variables="headers"
+            :selectedVariable="selectedVar"
+            @select="onSelectVar('header', $event)"
+            @add="onAddVar('header')"
+            @edit="onEditVar('header', $event)"
+            @delete="onDelVar('header')"
+          />
+        </div>
+        <div class="form-field">
+          <label>{{ t('mcp.serverEditor.oauth.title') }}</label>
+          <template v-if="oauthConfig">
+            <div>{{ t('mcp.serverEditor.oauth.successful') }}</div>
+            <div><a href="#" @click.prevent="removeOAuth">{{ t('common.delete') }}</a></div>
+          </template>
+          <template v-else>
+            <div class="form-subgroup">
+              <div class="form-field">
+                <label @click="showAuthFields = !showAuthFields" class="show-auth-fields">
+                  <ChevronRightIcon v-if="!showAuthFields" />
+                  <ChevronDownIcon v-else />
+                  {{ t('mcp.serverEditor.oauth.showAuthFields') }}
+                </label>
+              </div>
+              <template  v-if="showAuthFields">
+                <div class="form-field">
+                  <label>{{ t('mcp.serverEditor.oauth.clientId') }}</label>
+                  <input type="text" name="oauthClientId" v-model="oauthClientId" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+                </div>
+                <div class="form-field">
+                  <label>{{ t('mcp.serverEditor.oauth.clientSecret') }}</label>
+                  <input type="password" name="oauthClientSecret" v-model="oauthClientSecret" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+                </div>
+              </template>
+            </div>
+            <div><a href="#" @click.prevent="checkOAuth">{{ t('mcp.serverEditor.oauth.setup') }}</a></div>
+          </template>
+        </div>
+      </template>
+      
+      <div class="buttons">
+        <Spinner v-if="loading" />
+        <template v-else>
+          <button name="cancel" @click.prevent="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
+          <button name="save" @click.prevent="onSave" class="primary">{{ type === 'smithery' ? t('common.install') : t('common.save') }}</button>
         </template>
       </div>
-    </template>
-    
-    <div class="buttons">
-      <Spinner v-if="loading" />
-      <template v-else>
-        <button name="cancel" @click.prevent="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
-        <button name="save" @click.prevent="onSave" class="primary">{{ type === 'smithery' ? t('common.install') : t('common.save') }}</button>
-      </template>
-    </div>
 
-    <VariableEditor ref="editor" id="mcp-variable-editor" title="mcp.variableEditor.title" :variable="selectedVar" @save="onSaveVar" />
+      <VariableEditor ref="editor" id="mcp-variable-editor" title="mcp.variableEditor.title" :variable="selectedVar" @save="onSaveVar" />
 
     </main>
   </div>
@@ -137,6 +143,8 @@
 
 import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref } from 'vue'
+import McpIcon from '../../assets/mcp.svg?component'
+import SmitheryIcon from '../../assets/smithery.svg?component'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Spinner from '../components/Spinner.vue'
 import VariableTable from '../components/VariableTable.vue'
@@ -492,10 +500,26 @@ const install = async (registry: string, server: string, apiKey: string): Promis
 
 .mcp-server-editor {
 
-  main {
+  header, main {
     padding: 2rem 0rem;
     margin: 0 auto;
     width: 500px;
+  }
+
+  header {
+    justify-content: center;
+    padding-top: 3rem;
+    padding-bottom: 0;
+
+    font-size: 18px;
+    font-weight: var(--font-weight-semibold);
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
   }
   
   .list-with-actions {

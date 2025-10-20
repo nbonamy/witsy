@@ -1,15 +1,16 @@
 <template>
-  <div class="docrepo-empty">
-    <LightbulbIcon class="icon" />
-    <h3>{{ t('docRepo.empty.title') }}</h3>
-    <p>{{ t('docRepo.empty.text') }}</p>
-    <button class="cta" @click="emit('click')"><PlusIcon /> {{ t('docRepo.empty.create') }}</button>
+  <div class="mcp-empty">
+    <Plug2Icon class="icon" />
+    <h3>{{ t('mcp.empty.title') }}</h3>
+    <p>{{ t('mcp.empty.text') }}</p>
+    <button class="cta" @click="emit('click')"><McpIcon /> {{ t('mcp.addCustomServer') }}</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { LightbulbIcon, PlusIcon } from 'lucide-vue-next';
-import { t } from '../services/i18n';
+import { Plug2Icon } from 'lucide-vue-next'
+import McpIcon from '../../assets/mcp.svg?component'
+import { t } from '../services/i18n'
 
 const emit = defineEmits(['click'])
 
@@ -17,11 +18,12 @@ const emit = defineEmits(['click'])
 
 <style scoped>
 
-.docrepo-empty {
+.mcp-empty {
   
   flex: 1;
-  padding: 0rem 20%;
   display: flex;
+  padding: 0% 20%;
+  padding-bottom: 4.25rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -45,6 +47,11 @@ const emit = defineEmits(['click'])
     margin: 0;
     color: var(--faded-text-color);
     line-height: 1.5;
+  }
+
+  button {
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md);
   }
 
 }

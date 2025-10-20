@@ -1720,6 +1720,10 @@
       "fetchFailed": "无法连接到服务器。请检查服务器是否正在运行以及URL是否正确。"
     },
     "copyInstallCommand": "你可以复制安装命令到剪贴板并尝试在终端中运行。",
+    "empty": {
+      "text": "连接器让您通过MCP服务器将@:{'common.appName'}聊天与外部服务和数据源连接起来。把它想象成拥有一个智能助手，能够访问您所有喜欢的应用，并通过代理实现自动化。",
+      "title": "欢迎使用连接器"
+    },
     "failedToInstall": "服务器安装失败",
     "importJson": {
       "details": "从 Claude 复制/粘贴 JSON MCP 服务器定义。",
@@ -1734,7 +1738,6 @@
     "importSmitheryServer": "从 Smithery.ai 安装",
     "mcpServers": "连接器",
     "modelContextProtocol": "连接中心",
-    "noServersFound": "未找到连接器。请点击上方按钮以添加新的连接器。",
     "noTools": "无可用工具",
     "oauth": {
       "success": {

@@ -1720,6 +1720,10 @@
       "fetchFailed": "サーバーに接続できません。サーバーが稼働していることと、URLが正しいことを確認してください。"
     },
     "copyInstallCommand": "インストールコマンドをクリップボードにコピーして、ターミナルで試すことができます。",
+    "empty": {
+      "text": "コネクターを使うと、@:{'common.appName'} のチャットを MCP サーバーを介して外部サービスやデータソースと接続できます。まるで、あなたのお気に入りのアプリにアクセスできるスマートアシスタントがいて、エージェントを通じて自動化を可能にするようなものです。",
+      "title": "コネクターへようこそ"
+    },
     "failedToInstall": "サーバーのインストールに失敗しました",
     "importJson": {
       "details": "ClaudeからのJSON MCPサーバー定義をここにコピー＆ペーストしてください。",
@@ -1734,7 +1738,6 @@
     "importSmitheryServer": "Smithery.aiからインストール",
     "mcpServers": "コネクター",
     "modelContextProtocol": "コネクションハブ",
-    "noServersFound": "コネクターが見つかりません。上のボタンをクリックして新しいコネクターを追加してください。",
     "noTools": "利用可能なツールがありません",
     "oauth": {
       "success": {

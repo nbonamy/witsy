@@ -1701,6 +1701,10 @@
       "fetchFailed": "Impossible de se connecter au serveur. Veuillez vérifier que le serveur est en fonctionnement et que l'URL est correcte."
     },
     "copyInstallCommand": "Vous pouvez copier la commande d'installation dans votre presse-papiers et l'essayer dans un terminal.",
+    "empty": {
+      "text": "Connecteurs vous permet de connecter vos discussions @:{'common.appName'} avec des services externes et des sources de données en utilisant les serveurs MCP. Pensez-y comme à un assistant intelligent qui a accès à toutes vos applications préférées et permet l'automatisation via des agents.",
+      "title": "Bienvenue dans Connecteurs"
+    },
     "failedToInstall": "Échec de l'installation du serveur",
     "importJson": {
       "details": "Copiez/collez ici les définitions JSON de serveur MCP depuis Claude.",
@@ -1715,7 +1719,6 @@
     "importSmitheryServer": "Installer depuis Smithery.ai",
     "mcpServers": "Connecteurs",
     "modelContextProtocol": "Centre de Connexions",
-    "noServersFound": "Aucun connecteur trouvé. Cliquez sur les boutons ci-dessus pour ajouter un nouveau connecteur.",
     "noTools": "Aucun outil disponible",
     "oauth": {
       "success": {
