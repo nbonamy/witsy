@@ -1,6 +1,7 @@
 
 import { CronExpressionParser } from 'cron-parser'
 import { App } from 'electron'
+import DocumentRepository from '../rag/docrepo'
 import { AgentExecutor } from './agent_utils'
 import { loadAgents } from './agents'
 import Mcp from './mcp'
@@ -10,8 +11,8 @@ export default class Scheduler extends AgentExecutor {
 
   timeout: NodeJS.Timeout|null = null
 
-  constructor(app: App, mcp: Mcp) {
-    super(app, mcp)
+  constructor(app: App, mcp: Mcp, docRepo: DocumentRepository) {
+    super(app, mcp, docRepo)
   }
 
   stop() {

@@ -1,21 +1,22 @@
 import { App } from 'electron'
-import { HttpServer } from './http_server'
-import { sendJson, sendError, parseParams, isHttpEndpointsEnabled } from './http_utils'
 import { engineNames } from '../llms/base'
 import LlmFactory from '../llms/llm'
-import Assistant from '../services/assistant'
-import Message from '../models/message'
 import Chat from '../models/chat'
-import Mcp from './mcp'
-import { LlmContext } from './llm_utils'
+import Message from '../models/message'
+import DocumentRepository from '../rag/docrepo'
+import Assistant from '../services/assistant'
 import * as config from './config'
 import { loadHistory, saveHistory } from './history'
+import { HttpServer } from './http_server'
+import { isHttpEndpointsEnabled, parseParams, sendError, sendJson } from './http_utils'
+import { LlmContext } from './llm_utils'
+import Mcp from './mcp'
 
 /**
  * Install HTTP API endpoints on the server
  * These endpoints provide CLI access to Witsy functionality
  */
-export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp): void {
+export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp, docRepo: DocumentRepository): void {
 
   // GET /api/cli/config - Get current CLI configuration
   httpServer.register('/api/cli/config', async (_req, res) => {
@@ -110,7 +111,7 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp):
     if (!isHttpEndpointsEnabled(app, res)) return
     try {
       // Initialize LLM context (global mock + i18n)
-      const llmContext = new LlmContext(app, mcp)
+      const llmContext = new LlmContext(app, mcp, docRepo)
       const settings = llmContext.initializeContext()
       const llmManager = LlmFactory.manager(settings)
 

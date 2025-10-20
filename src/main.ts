@@ -245,24 +245,6 @@ app.whenReady().then(async () => {
   mcp = new Mcp(app);
   mcp.connect();
 
-  // and now scheduler
-  scheduler = new Scheduler(app, mcp);
-  scheduler.start();
-
-  // install agent webhook
-  try {
-    installAgentWebhook(httpServer, app, mcp);
-  } catch (error) {
-    console.error('Error installing agent webhook:', error);
-  }
-
-  // install API endpoints
-  try {
-    installApiEndpoints(httpServer, app, mcp);
-  } catch (error) {
-    console.error('Error installing API endpoints:', error);
-  }
-
   // check and install CLI (skip in DEBUG mode)
   if (!process.env.DEBUG) {
     await checkAndInstallCLI(false);
@@ -321,6 +303,24 @@ app.whenReady().then(async () => {
 
   // install IPC handlers
   installIpc(store, autoUpdater, docRepo, memoryManager, mcp, installMenu, registerShortcuts, quitApp);
+
+  // install API endpoints
+  try {
+    installApiEndpoints(httpServer, app, mcp, docRepo);
+  } catch (error) {
+    console.error('Error installing API endpoints:', error);
+  }
+
+  // install agent webhook
+  try {
+    installAgentWebhook(httpServer, app, mcp, docRepo);
+  } catch (error) {
+    console.error('Error installing agent webhook:', error);
+  }
+
+  // and now scheduler
+  scheduler = new Scheduler(app, mcp, docRepo);
+  scheduler.start();
 
   // we want some windows to be as fast as possible
   if (!process.env.TEST) {
