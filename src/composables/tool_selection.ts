@@ -18,8 +18,16 @@ export const pluginsStatus = async (toolSelection: ToolSelection): Promise<ToolS
 export const pluginStatus = (toolSelection: ToolSelection, pluginName: string): ToolStatus => {
   if (toolSelection === undefined || toolSelection === null) return 'all'
   if (toolSelection.length === 0) return 'none'
-  const toolName = pluginToolName(store.config, pluginName)
-  return toolSelection.includes(toolName) ? 'all' : 'none'
+
+  const { name, multi } = pluginToolName(store.config, pluginName)
+
+  if (multi) {
+    // Multi-tool plugin: check if any tools with this prefix are selected
+    return toolSelection.some(t => t.startsWith(name)) ? 'all' : 'none'
+  } else {
+    // Single-tool plugin: check if the tool name is selected
+    return toolSelection.includes(name) ? 'all' : 'none'
+  }
 }
 
 export const serverToolsStatus = (allServersWithTools: McpServerWithTools[], toolSelection: ToolSelection, server: McpServerWithTools): ToolStatus => {
@@ -104,14 +112,33 @@ export const handlePluginToggle = async (toolSelection: ToolSelection, pluginNam
     toolSelection = await initToolSelectionWithAllTools()
   }
 
-  const toolName = pluginToolName(store.config, pluginName)
-  if (toolSelection.includes(toolName)) {
-    toolSelection = toolSelection.filter(t => t !== toolName)
+  const { name, multi } = pluginToolName(store.config, pluginName)
+
+  if (multi) {
+    // Multi-tool plugin: add/remove all tools with this prefix
+    const pluginToolNames = await pluginTools(store.config, pluginName)
+    const hasToolsSelected = toolSelection.some(t => t.startsWith(name))
+
+    if (hasToolsSelected) {
+      // Remove all tools with this prefix
+      toolSelection = toolSelection.filter(t => !t.startsWith(name))
+    } else {
+      // Add all tools from this plugin
+      for (const toolName of pluginToolNames) {
+        if (!toolSelection.includes(toolName)) {
+          toolSelection.push(toolName)
+        }
+      }
+    }
   } else {
-    toolSelection.push(toolName)
+    // Single-tool plugin: toggle the single tool
+    if (toolSelection.includes(name)) {
+      toolSelection = toolSelection.filter(t => t !== name)
+    } else {
+      toolSelection.push(name)
+    }
   }
 
-  // done
   return await validateToolSelection(toolSelection)
 
 }
