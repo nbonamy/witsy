@@ -102,7 +102,7 @@ global.fetch = vi.fn(async (url: string | Request, init?: any) => {
   }
 
   // Soniox file upload
-  if (url.includes('api.soniox.com/v1/files') && init?.method === 'POST') {
+  if (url.includes('api.soniox.com/v3/files') && init?.method === 'POST') {
     return {
       ok: true,
       status: 200,
@@ -112,7 +112,7 @@ global.fetch = vi.fn(async (url: string | Request, init?: any) => {
   }
 
   // Soniox transcription creation  
-  if (url.includes('api.soniox.com/v1/transcriptions') && init?.method === 'POST') {
+  if (url.includes('api.soniox.com/v3/transcriptions') && init?.method === 'POST') {
     return {
       ok: true,
       status: 200,
@@ -122,7 +122,7 @@ global.fetch = vi.fn(async (url: string | Request, init?: any) => {
   }
 
   // Soniox status check
-  if (url.includes('api.soniox.com/v1/transcriptions/mock-soniox-transcription-id') && !url.includes('transcript')) {
+  if (url.includes('api.soniox.com/v3/transcriptions/mock-soniox-transcription-id') && !url.includes('transcript')) {
     return {
       ok: true,
       status: 200,
@@ -132,7 +132,7 @@ global.fetch = vi.fn(async (url: string | Request, init?: any) => {
   }
 
   // Soniox transcript retrieval
-  if (url.includes('api.soniox.com/v1/transcriptions/mock-soniox-transcription-id/transcript')) {
+  if (url.includes('api.soniox.com/v3/transcriptions/mock-soniox-transcription-id/transcript')) {
     return {
       ok: true,
       status: 200,
