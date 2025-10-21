@@ -117,6 +117,10 @@ export default class extends MultiToolPlugin {
     return 'Filesystem Access'
   }
 
+  getToolNamePrefix(): string {
+    return kFilesystemPluginPrefix
+  }
+
   getPreparationDescription(name: string): string {
     switch (name) {
       case `${kFilesystemPluginPrefix}list`:

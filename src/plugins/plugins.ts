@@ -65,12 +65,19 @@ export const pluginTools = async (config: Configuration, pluginName: string): Pr
 
 }
 
-export const pluginToolName = (config: Configuration, pluginName: string): string => {
+export const pluginToolName = (config: Configuration, pluginName: string): { name: string, multi: boolean } => {
   const pluginClass = availablePlugins[pluginName]
   const plugin: PluginInstance = new pluginClass(config.plugins[pluginName], config.workspaceId)
-  if ('getTools' in plugin) {
-    throw new Error('this cannot be called with a CustomToolPlugin or MultiToolPlugin')
+
+  // Check if it's a multi-tool plugin with prefix
+  if ('getToolNamePrefix' in plugin && typeof plugin.getToolNamePrefix === 'function') {
+    return { name: plugin.getToolNamePrefix(), multi: true }
   }
-  return plugin.getName()
+
+  // Single-tool plugin
+  if ('getTools' in plugin) {
+    throw new Error('MultiToolPlugin without getToolNamePrefix is not supported')
+  }
+  return { name: plugin.getName(), multi: false }
 }
 

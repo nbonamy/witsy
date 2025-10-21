@@ -30,6 +30,10 @@ export default class extends MultiToolPlugin {
     return 'Knowledge Base Access'
   }
 
+  getToolNamePrefix(): string {
+    return kKnowledgePluginPrefix
+  }
+
   getPreparationDescription(name: string): string {
     const repo = this.getDocRepoByTool(name)
     return t('plugins.knowledge.preparing', { docrepo: repo.name })
