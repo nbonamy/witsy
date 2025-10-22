@@ -472,6 +472,7 @@ defineExpose({ validate })
 </script>
 
 <style scoped>
+
 .table-plain {
   padding: 0.5rem 1rem;
   width: 100%;
@@ -644,39 +645,8 @@ defineExpose({ validate })
   }
 }
 
-/* Context menu styles */
-:deep(.selected-repo) {
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 600;
-}
-
-:deep(.selected-repo .icon) {
-  color: var(--color-on-primary);
-}
-
-/* Footer select buttons styling */
-:deep(.footer-select) {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  
-  button {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    background: none;
-    border: none;
-    color: var(--context-menu-text-color);
-    font-size: 14px;
-    border-radius: 4px;
-    
-    &:hover {
-      background-color: var(--context-menu-selected-bg-color);
-    }
-  }
+.selected-repo {
+  color: var(--color-primary);
 }
 
 </style>
