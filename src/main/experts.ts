@@ -99,8 +99,26 @@ export const loadExperts = (source: App|string, workspaceId: string): Expert[] =
       delete expert.prompt
       updated = true
     }
-    // Migrate old category field to categoryId (backward compatibility)
-    if ((expert as any).category && !expert.categoryId) {
+
+    // Initialize stats if missing
+    if (!expert.stats) {
+      expert.stats = { timesUsed: 0 }
+      updated = true
+    }
+
+    // Assign categoryId from defaults for system experts if missing
+    if (expert.type === 'system' && !expert.categoryId) {
+      const defaultExpert = defaultExperts.find((de: Expert) => de.id === expert.id)
+      if (defaultExpert?.categoryId) {
+        expert.categoryId = defaultExpert.categoryId
+        updated = true
+      }
+    }
+
+    // User experts without categoryId remain uncategorized (undefined)
+
+    // Remove old category field if it exists (backward compatibility)
+    if ((expert as any).category) {
       delete (expert as any).category
       updated = true
     }

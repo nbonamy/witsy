@@ -40,27 +40,9 @@ export const newExpert = (): Expert => {
   }
 }
 
-export const migrateExperts = (experts: Expert[]): Expert[] => {
-  return experts.map(expert => {
-    // Remove old category field (backward compatibility)
-    if ((expert as any).category) {
-      delete (expert as any).category
-    }
-
-    // Initialize stats if missing
-    if (!expert.stats) {
-      expert.stats = { timesUsed: 0 }
-    }
-
-    return expert
-  })
-}
-
 export const loadExperts = (workspaceId: string): Expert[] => {
   try {
-    let experts = window.api.experts.load(workspaceId)
-    experts = migrateExperts(experts)
-    return experts
+    return window.api.experts.load(workspaceId)
   } catch (error) {
     console.log('Error loading experts data', error)
     return JSON.parse(JSON.stringify(defaultExperts))
