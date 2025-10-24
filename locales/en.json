@@ -2383,6 +2383,7 @@
       },
       "experts": {
         "manage": "Create New Expert",
+        "none": "No Expert",
         "title": "@:{'common.experts'}"
       },
       "instructions": {
@@ -2688,6 +2689,7 @@
       "sortAlpha": "Sort alphabetically",
       "sortState": "Sort by state",
       "sortUsage": "Sort by usage",
+      "uncategorized": "Uncategorized",
       "usage": "Usage"
     },
     "general": {
