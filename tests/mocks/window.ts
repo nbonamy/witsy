@@ -190,6 +190,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         { id: 'uuid4', type: 'user', name: 'actor4', prompt: 'prompt4', state: 'enabled', engine: 'anthropic', model: 'claude-3-sonnet', triggerApps: [] }
       ] as Expert[]),
       save: vi.fn(),
+      loadCategories: vi.fn(() => []),
+      saveCategories: vi.fn(),
       import: vi.fn(),
       export: vi.fn(),
     },

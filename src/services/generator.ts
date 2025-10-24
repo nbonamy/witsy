@@ -300,9 +300,9 @@ export default class Generator {
           if (opts?.contextWindowSize || opts?.maxTokens || opts?.temperature || opts?.top_k || opts?.top_p || Object.keys(opts?.customOpts || {}).length > 0) {
             response.setText(t('generator.errors.tryWithoutParams'))
           } else if (llm.plugins.length > 0) {
-            response.setText(t('generator.errors.tryWithoutPlugins', { error: error.message }))
+            response.setText(t('generator.errors.tryWithoutPlugins'))
           } else {
-            response.setText(t('generator.errors.couldNotGenerate', { error: error.message }))
+            response.setText(t('generator.errors.couldNotGenerate'))
           }
         } else {
           response.appendText({ type: 'content', text: t('generator.errors.cannotContinue'), done: true })

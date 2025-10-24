@@ -187,12 +187,13 @@ export interface Store {
 
   commands: Command[]
   experts: Expert[]
+  expertCategories: ExpertCategory[]
   agents: Agent[]
   config: Configuration
   history: History
   rootFolder: Folder
 
-  chatState: ChatState  
+  chatState: ChatState
   transcribeState: TranscribeState
 
   listeners: Record<string, CallableFunction[]>
@@ -207,7 +208,8 @@ export interface Store {
   loadWorkspace(): void
   loadSettings(): void
   loadCommands(): void
-  loadExperts(): void
+  loadExperts(): Promise<void>
+  loadCategories(): void
   loadAgents(): void
   loadHistory(): void
   initChatWithDefaults(chat: Chat): void
@@ -216,7 +218,7 @@ export interface Store {
   addQuickPrompt(prompt: string): void
   // addPadPrompt(prompt: string): void
   // mergeHistory(chats: any[]): void
-  activateWorkspace(workspaceId: string): void
+  activateWorkspace(workspaceId: string): Promise<void>
   dump?(): void
 }
 
@@ -226,15 +228,30 @@ export type ExternalApp = {
   icon: FileContents
 }
 
+export type ExpertCategory = {
+  id: string
+  type: 'system' | 'user'
+  state: 'enabled' | 'disabled' | 'deleted'
+  icon?: string
+  color?: string
+}
+
 export type Expert = {
   id: string,
   type: 'system' | 'user',
   name?: string
   prompt?: string
+  description?: string
+  categoryId?: string
   engine?: string
   model?: string
   state: 'enabled' | 'disabled' | 'deleted',
   triggerApps: ExternalApp[]
+  pinned?: boolean
+  stats?: {
+    timesUsed: number
+    lastUsed?: number
+  }
 }
 
 export type ComputerAction = {
@@ -399,6 +416,8 @@ declare global {
       experts: {
         load(workspaceId: string): Expert[]
         save(workspaceId: string, experts: Expert[]): void
+        loadCategories(workspaceId: string): ExpertCategory[]
+        saveCategories(workspaceId: string, categories: ExpertCategory[]): void
         import(workspaceId: string): boolean
         export(workspaceId: string): boolean
       }

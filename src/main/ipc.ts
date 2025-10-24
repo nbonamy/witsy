@@ -256,6 +256,15 @@ export const installIpc = (
     event.returnValue = experts.saveExperts(app, workspaceId, expertsData as Expert[]);
   });
 
+  ipcMain.on(IPC.EXPERTS.LOAD_CATEGORIES, (event, workspaceId) => {
+    event.returnValue = JSON.stringify(experts.loadCategories(app, workspaceId));
+  });
+
+  ipcMain.on(IPC.EXPERTS.SAVE_CATEGORIES, (event, payload) => {
+    const { workspaceId, categories } = JSON.parse(payload);
+    event.returnValue = experts.saveCategories(app, workspaceId, categories);
+  });
+
   ipcMain.on(IPC.EXPERTS.EXPORT, (event, workspaceId) => {
     event.returnValue = experts.exportExperts(app, workspaceId);
   });
