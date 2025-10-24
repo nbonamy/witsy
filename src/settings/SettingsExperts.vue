@@ -74,6 +74,8 @@ const onExpertModified = (payload: Expert) => {
   if (expert) {
     expert.name = payload.name
     expert.prompt = payload.prompt
+    expert.description = payload.description
+    expert.categoryId = payload.categoryId
     if (payload.engine?.length && payload.model.length) {
       expert.engine = payload.engine
       expert.model = payload.model
@@ -86,7 +88,7 @@ const onExpertModified = (payload: Expert) => {
 
   // done
   edited.value = null
-  saveExperts()
+  saveExperts(store.config.workspaceId)
   load()
 }
 

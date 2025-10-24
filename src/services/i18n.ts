@@ -61,7 +61,7 @@ const t: CallableFunction = (...args: any[]) => i18n?.global?.t(...args)
 const tllm: CallableFunction = (...args: any[]) => i18nLlm?.global?.t(...args)
 
 type i18nCommandAttr = 'label' | 'template'
-type i18nExpertAttr = 'name' | 'prompt'
+type i18nExpertAttr = 'name' | 'prompt' | 'description'
 
 const commandI18n = (command: Command|null, attr: i18nCommandAttr): string => {
   if (!command) return ''
@@ -87,7 +87,8 @@ const fullExpertI18n = (expert: Expert|null): Expert => {
   return expert ? {
     ...expert,
     name: expertI18n(expert, 'name'),
-    prompt: expertI18n(expert, 'prompt')
+    prompt: expertI18n(expert, 'prompt'),
+    description: expertI18n(expert, 'description')
   } : undefined
 }
 

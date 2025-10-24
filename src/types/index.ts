@@ -187,12 +187,13 @@ export interface Store {
 
   commands: Command[]
   experts: Expert[]
+  expertCategories: ExpertCategory[]
   agents: Agent[]
   config: Configuration
   history: History
   rootFolder: Folder
 
-  chatState: ChatState  
+  chatState: ChatState
   transcribeState: TranscribeState
 
   listeners: Record<string, CallableFunction[]>
@@ -226,15 +227,34 @@ export type ExternalApp = {
   icon: FileContents
 }
 
+export type ExpertCategory = {
+  id: string
+  type: 'system' | 'user'
+  state: 'enabled' | 'disabled' | 'deleted'
+  name?: string
+  icon?: string
+}
+
 export type Expert = {
   id: string,
   type: 'system' | 'user',
   name?: string
   prompt?: string
+  description?: string
+  categoryId?: string
   engine?: string
   model?: string
   state: 'enabled' | 'disabled' | 'deleted',
   triggerApps: ExternalApp[]
+  stats?: {
+    timesUsed: number
+    lastUsed?: number
+  }
+}
+
+export type ExpertData = {
+  categories: ExpertCategory[]
+  experts: Expert[]
 }
 
 export type ComputerAction = {
@@ -399,6 +419,8 @@ declare global {
       experts: {
         load(workspaceId: string): Expert[]
         save(workspaceId: string, experts: Expert[]): void
+        loadCategories(workspaceId: string): ExpertCategory[]
+        saveCategories(workspaceId: string, categories: ExpertCategory[]): void
         import(workspaceId: string): boolean
         export(workspaceId: string): boolean
       }

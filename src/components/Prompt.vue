@@ -95,10 +95,35 @@
     <slot name="after" />
 
     <ContextMenuPlus v-if="showExperts" @close="closeContextMenu" :show-filter="true" anchor=".prompt .textarea-wrapper" :position="menusPosition">
-      <div v-for="exp in expertsMenuItems" :key="exp.id" class="item" @click="handleExpertClick(exp.id)">
-        <BrainIcon class="icon" />
-        {{ exp.name }}
+
+      <!-- Categories with experts -->
+      <div v-for="cat in categoriesWithExperts" :key="cat.id" class="item" :data-submenu-slot="`category-${cat.id}`">
+        <FolderIcon class="icon" />
+        <span>{{ cat.name }}</span>
       </div>
+
+      <!-- Uncategorized experts -->
+      <template v-if="uncategorizedExperts.length">
+        <div v-for="exp in uncategorizedExperts" :key="exp.id" @click="handleExpertClick(exp.id)">
+          <BrainIcon class="icon" />
+          <span>{{ exp.name }}</span>
+        </div>
+      </template>
+
+      <!-- Category submenus -->
+      <template v-for="cat in categoriesWithExperts" :key="`submenu-${cat.id}`" #[`category-${cat.id}`]>
+        <div v-for="exp in expertsByCategory[cat.id]" :key="exp.id" class="item" @click="handleExpertClick(exp.id)">
+          <BrainIcon class="icon" />
+          {{ exp.name }}
+        </div>
+      </template>
+
+      <!-- <div class="separator" />
+      <div class="item" @click="handleExpertClick('none')">
+        <XIcon class="icon" />
+        {{ t('prompt.menu.experts.none') }}
+      </div> -->
+
     </ContextMenuPlus>
 
     <ContextMenuPlus v-if="showCommands" @close="closeContextMenu" :show-filter="true" :anchor="commandsAnchor" :position="menusPosition">
@@ -159,7 +184,7 @@
 
 <script setup lang="ts">
 
-import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
+import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, FolderIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, MoveLeftIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
 import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
 import { computed, nextTick, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
 import Waveform from '../components/Waveform.vue'
@@ -174,6 +199,7 @@ import LlmFactory, { favoriteMockEngine, ILlmManager } from '../llms/llm'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
 import Message from '../models/message'
+import { getCategoryLabel } from '../services/categories'
 import { commandI18n, expertI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Command, CustomInstruction, Expert, MessageExecutionType } from '../types/index'
@@ -337,8 +363,46 @@ const expertsMenuItems = computed(() => {
     .filter((e) => e.state === 'enabled')
     .map(e => ({
       id: e.id,
-      name: e.name || expertI18n(e, 'name')
+      name: e.name || expertI18n(e, 'name'),
+      categoryId: e.categoryId
     }))
+})
+
+const categoriesWithExperts = computed(() => {
+  // Get categories that have at least one enabled expert
+  const catIds = new Set<string>()
+  expertsMenuItems.value.forEach(exp => {
+    if (exp.categoryId) catIds.add(exp.categoryId)
+  })
+
+  // Get category objects and add labels
+  const categories = store.expertCategories
+    .filter(c => c.state === 'enabled' && catIds.has(c.id))
+    .map(c => ({
+      id: c.id,
+      icon: c.icon,
+      name: getCategoryLabel(c.id, store.expertCategories)
+    }))
+
+  // Sort alphabetically by name
+  return categories.sort((a, b) => a.name.localeCompare(b.name))
+})
+
+const expertsByCategory = computed(() => {
+  const grouped: Record<string, typeof expertsMenuItems.value> = {}
+
+  expertsMenuItems.value.forEach(exp => {
+    const catId = exp.categoryId || 'uncategorized'
+    if (!grouped[catId]) grouped[catId] = []
+    grouped[catId].push(exp)
+  })
+
+  // Keep experts in original order (from store.experts)
+  return grouped
+})
+
+const uncategorizedExperts = computed(() => {
+  return expertsMenuItems.value.filter(exp => !exp.categoryId)
 })
 
 const commands = computed(() => {
@@ -734,7 +798,6 @@ const onClickExperts = () => {
   openExperts()
 }
 
-
 const onClickActiveCommand = () => {
   disableCommand()
 }
@@ -1101,7 +1164,7 @@ const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolU
 
 const handleExpertClick = (action: string) => {
   closeContextMenu()
-  if (action === 'clear') {
+  if (action === 'clear' || action === 'none') {
     disableExpert()
     return
   } else if (action) {
