@@ -15,8 +15,6 @@ vi.mock('../../src/services/i18n', () => createI18nMock())
 // mock components
 vi.mock('../../src/components/Spinner.vue', () => ({ default: { name: 'Spinner', template: '<div class="spinner">Loading...</div>' } }))
 
-useWindowMock()
-
 const mockSelectedRepo: DocumentBase = {
   uuid: 'uuid1',
   name: 'Repository 1',
@@ -59,6 +57,10 @@ const mockSelectedRepo: DocumentBase = {
     } as DocumentSource
   ]
 }
+
+beforeAll(() => {
+  useWindowMock()
+})
 
 describe('Notes', () => {
   let wrapper: VueWrapper<any>

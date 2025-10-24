@@ -4,8 +4,8 @@ import { Folder, History, Store, StoreEvent } from '../types/index'
 import { Workspace } from '../types/workspace'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
-import { loadExperts } from './experts'
 import { loadAgents } from './agents'
+import { loadExperts, loadCategories } from './experts'
 import features from '../../defaults/features.json'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
@@ -19,8 +19,9 @@ export const store: Store = reactive({
 
   config: {} as Configuration,
   workspace: {} as Workspace,
-  commands: [], 
+  commands: [],
   experts: [],
+  expertCategories: [],
   agents: [],
   history: null,
   listeners: {},
@@ -60,12 +61,12 @@ export const store: Store = reactive({
     store.listeners[event] = store.listeners[event].filter(l => l !== listener)
   },
 
-  activateWorkspace: (workspaceId: string): void => {
+  activateWorkspace: async (workspaceId: string): Promise<void> => {
 
     // update settings
     store.config.workspaceId = workspaceId
     store.saveSettings()
-    
+
     // reload data for the new workspace
     store.loadWorkspace()
     store.loadHistory()
@@ -99,7 +100,7 @@ export const store: Store = reactive({
       } else if (file === 'commands') {
         loadCommands()
       } else if (file === 'experts') {
-        loadExperts()
+        void store.loadExperts()
       } else if (file === 'agents') {
         loadAgents()
       }
@@ -125,8 +126,9 @@ export const store: Store = reactive({
     loadCommands()
   },
 
-  loadExperts: (): void => {
-    loadExperts()
+  loadExperts: async (): Promise<void> => {
+    loadCategories(store.config.workspaceId)
+    loadExperts(store.config.workspaceId)
   },
 
   loadAgents: (): void => {
