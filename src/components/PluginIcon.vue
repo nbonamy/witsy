@@ -38,3 +38,13 @@ defineProps({
 })
 
 </script>
+
+<style scoped>
+
+svg {
+  width: var(--icon-md);
+  height: var(--icon-md);
+}
+
+
+</style>
