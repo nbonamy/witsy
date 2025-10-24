@@ -13,7 +13,6 @@ export default class Expert implements ExpertBase {
   model?: string;
   state: 'enabled' | 'disabled' | 'deleted';
   triggerApps: ExternalApp[];
-  pinned?: boolean;
   stats?: {
     timesUsed: number;
     lastUsed?: number;
@@ -31,7 +30,6 @@ export default class Expert implements ExpertBase {
     expert.model = obj.model
     expert.state = obj.state
     expert.triggerApps = []
-    expert.pinned = obj.pinned
     expert.stats = obj.stats
     return expert
   }

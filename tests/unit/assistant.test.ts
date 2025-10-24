@@ -62,7 +62,7 @@ const prompt = async (prompt: string, opts: AssistantCompletionOpts = { model: '
 
 beforeAll(async () => {
   useWindowMock({ noAdditionalInstructions: true })
-  await store.loadExperts()
+  store.loadExperts()
 })
 
 beforeEach(() => {

@@ -33,31 +33,6 @@
     </ContextMenuTrigger>
   </div>
   <div class="experts sticky-table-container">
-    <!-- Pinned section -->
-    <div v-if="pinnedExperts.length" class="pinned-section">
-      <div class="section-header">
-        <StarIcon class="icon" />
-        {{ t('settings.experts.pinned') }}
-      </div>
-      <table>
-        <tbody>
-          <tr v-for="expert in pinnedExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
-              @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="reorderExperts.onDragStart" @dragover="reorderExperts.onDragOver" @dragend="reorderExperts.onDragEnd">
-            <td class="pin"><button @click.prevent="onTogglePin(expert)" @dblclick.stop><StarIcon class="pinned" /></button></td>
-            <td class="enabled"><input type="checkbox" class="sm" :checked="expert.state=='enabled'" @click="onEnabled(expert)" @dblclick.stop /></td>
-            <td class="name">{{ name(expert) }}</td>
-            <td class="category">{{ expert.categoryId ? getCategoryLabel(expert.categoryId, store.expertCategories) : '-' }}</td>
-            <td class="usage">{{ expert.stats?.timesUsed || '-' }}</td>
-            <td class="move">
-              <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
-              <button @click.prevent="onMoveUp(expert)" @dblclick.stop>▲</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Regular section -->
     <table>
       <thead>
         <tr>
@@ -65,13 +40,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="expert in regularExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
+        <tr v-for="expert in filteredExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
             @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="reorderExperts.onDragStart" @dragover="reorderExperts.onDragOver" @dragend="reorderExperts.onDragEnd">
-          <td class="pin"><button @click.prevent="onTogglePin(expert)" @dblclick.stop><StarIcon class="unpinned" /></button></td>
           <td class="enabled"><input type="checkbox" class="sm" :checked="expert.state=='enabled'" @click="onEnabled(expert)" @dblclick.stop /></td>
           <td class="name">{{ name(expert) }}</td>
           <td class="category">{{ expert.categoryId ? getCategoryLabel(expert.categoryId, store.expertCategories) : '-' }}</td>
-          <td class="usage">{{ expert.stats?.timesUsed || '-' }}</td>
+          <!-- <td class="usage">{{ expert.stats?.timesUsed || '-' }}</td> -->
           <td class="move">
             <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
             <button @click.prevent="onMoveUp(expert)" @dblclick.stop>▲</button>
@@ -95,9 +69,9 @@ import { expertI18n, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Expert } from '../types/index'
 
-const experts= ref<Expert[]>(null)
-const selected= ref<Expert>(null)
-const moreButton= ref<HTMLElement>(null)
+const experts = ref<Expert[]>(null)
+const selected = ref<Expert>(null)
+const moreButton = ref<HTMLElement>(null)
 const searchQuery = ref('')
 const categoryFilter = ref<string>('')
 
@@ -142,31 +116,18 @@ const filteredExperts = computed(() => {
   return result
 })
 
-const pinnedExperts = computed(() =>
-  filteredExperts.value.filter(e => e.pinned)
-)
-
-const regularExperts = computed(() =>
-  filteredExperts.value.filter(e => !e.pinned)
-)
-
 const name = (expert: Expert) => {
   return expert.name || expertI18n(expert, 'name')
 }
 
 const columns = [
-  { field: 'pin', title: '' },
+  // { field: 'pin', title: '' },
   { field: 'enabled', title: '' },
   { field: 'name', title: t('common.name') },
   { field: 'category', title: t('common.category') },
-  { field: 'usage', title: t('settings.experts.usage') },
+  // { field: 'usage', title: t('settings.experts.usage') },
   { field: 'move', title: t('common.move'), },
 ]
-
-const onTogglePin = (expert: Expert) => {
-  expert.pinned = !expert.pinned
-  save()
-}
 
 const onMoveDown = (expert: Expert) => {
   if (reorderExperts.moveDown(expert, experts.value, '.settings .experts .sticky-table-container')) {
@@ -182,17 +143,20 @@ const onMoveUp = (expert: Expert) => {
 
 const handleActionClick = async (action: string) => {
 
+  // Get visible expert IDs (respects search and category filter)
+  const visibleIds = new Set(filteredExperts.value.map(e => e.id))
+
   // process
   if (action === 'select') {
     experts.value.forEach((expert: Expert) => {
-      if (expert.state === 'disabled') {
+      if (visibleIds.has(expert.id) && expert.state === 'disabled') {
         expert.state = 'enabled'
       }
     })
     save()
   } else if (action === 'unselect') {
     experts.value.forEach((expert: Expert) => {
-      if (expert.state === 'enabled') {
+      if (visibleIds.has(expert.id) && expert.state === 'enabled') {
         expert.state = 'disabled'
       }
     })
@@ -202,7 +166,7 @@ const handleActionClick = async (action: string) => {
   } else if (action === 'export') {
     onExport()
   } else if (action === 'deleteAll') {
-    deleteAll()
+    deleteAll(visibleIds)
   } else if (action === 'sortAlpha') {
     experts.value.sort((a, b) => {
       const aName = a.name || expertI18n(a, 'name')
@@ -302,7 +266,7 @@ const onDelete = () => {
   })
 }
 
-const deleteAll = () => {
+const deleteAll = (visibleIds: Set<string>) => {
   Dialog.show({
     target: document.querySelector('.settings .experts'),
     title: t('settings.experts.confirmDeleteAll'),
@@ -311,12 +275,16 @@ const deleteAll = () => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
+      // Mark visible system experts as deleted
       experts.value.forEach((expert: Expert) => {
-        if (expert.type == 'system') {
+        if (visibleIds.has(expert.id) && expert.type == 'system') {
           expert.state = 'deleted'
         }
       })
-      experts.value = experts.value.filter((expert: Expert) => expert.type === 'system')
+      // Remove visible user experts
+      experts.value = experts.value.filter((expert: Expert) =>
+        expert.type === 'system' || !visibleIds.has(expert.id)
+      )
       selected.value = null
       save()
     }
@@ -334,7 +302,7 @@ const load = () => {
 
 const save = () => {
   store.experts = experts.value
-  saveExperts(store.config.workspaceId, experts.value)
+  saveExperts(store.config.workspaceId)
 }
 
 defineExpose({ load })
@@ -372,10 +340,6 @@ defineExpose({ load })
   border: 0.5px solid var(--border-color);
 }
 
-.pinned-section {
-  margin-bottom: 1rem;
-}
-
 .section-header {
   display: flex;
   align-items: center;
@@ -396,19 +360,6 @@ defineExpose({ load })
   border: none;
   cursor: pointer;
   padding: 0;
-}
-
-.pin .unpinned {
-  color: var(--text-muted);
-  opacity: 0.3;
-}
-
-.pin .unpinned:hover {
-  opacity: 1;
-}
-
-.pin .pinned {
-  color: var(--color-primary);
 }
 
 .category, .usage {

@@ -143,7 +143,7 @@ contextBridge.exposeInMainWorld(
     },
     experts: {
       load: (workspaceId: string): Expert[] => { return JSON.parse(ipcRenderer.sendSync(IPC.EXPERTS.LOAD, workspaceId)) },
-      save: (workspaceId: string, data: Expert[]): void => { return ipcRenderer.send(IPC.EXPERTS.SAVE, JSON.stringify({ workspaceId, experts: data })) },
+      save: (workspaceId: string, experts: Expert[]): void => { return ipcRenderer.send(IPC.EXPERTS.SAVE, JSON.stringify({ workspaceId, experts })) },
       loadCategories: (workspaceId: string): ExpertCategory[] => { return JSON.parse(ipcRenderer.sendSync(IPC.EXPERTS.LOAD_CATEGORIES, workspaceId)) },
       saveCategories: (workspaceId: string, data: ExpertCategory[]): void => { return ipcRenderer.send(IPC.EXPERTS.SAVE_CATEGORIES, JSON.stringify({ workspaceId, categories: data })) },
       export: (workspaceId: string): void => { return ipcRenderer.sendSync(IPC.EXPERTS.EXPORT, workspaceId) },

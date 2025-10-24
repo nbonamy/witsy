@@ -59,12 +59,12 @@ test('Load custom experts', () => {
 })
 
 test('Service Install experts', () => {
-  const experts = service.loadExperts('test-workspace')
+  service.loadExperts('test-workspace')
   expect(window.api.experts.load).toHaveBeenCalled()
-  expect(experts).toHaveLength(4)
+  expect(store.experts).toHaveLength(4)
 })
 
 test('Service Save expert', () => {
-  service.saveExperts('test-workspace', store.experts)
+  service.saveExperts('test-workspace')
   expect(window.api.experts.save).toHaveBeenCalled()
 })

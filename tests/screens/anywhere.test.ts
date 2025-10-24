@@ -40,7 +40,7 @@ beforeAll(async () => {
   useWindowMock({ modelDefaults: true, noAdditionalInstructions: true })
   useBrowserMock()
   store.loadSettings()
-  await store.loadExperts()
+  store.loadExperts()
 })
 
 beforeEach(() => {

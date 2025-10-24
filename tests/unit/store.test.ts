@@ -54,7 +54,7 @@ test('Check atributtes', async () => {
 })
 
 test('Load', async () => {
-  await store.load()
+  store.load()
   store.config.llm.favorites = []
   expect(window.api.config?.load).toHaveBeenCalled()
   expect(window.api.experts?.load).toHaveBeenCalled()
@@ -68,13 +68,13 @@ test('Load', async () => {
 })
 
 test('Save settings', async () => {
-  await store.load()
+  store.load()
   store.saveSettings()
   expect(window.api.config?.save).toHaveBeenCalled()
 })
 
 test('Reload settings without changing reference', async () => {
-  await store.load()
+  store.load()
   expect(window.api.config?.load).toHaveBeenCalledTimes(1)
   const backup = store.config
   expect(store.config.llm.engine).toBe('openai')
@@ -90,7 +90,7 @@ test('Reload settings without changing reference', async () => {
 })
 
 test('Load history', async () => {
-  await store.load()
+  store.load()
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[0].messages).toHaveLength(0)
   expect(store.history.chats[1].messages).toHaveLength(2)
@@ -125,7 +125,7 @@ test('Save history', async () => {
 })
 
 test('Merge history', async () => {
-  await store.load()
+  store.load()
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[1].messages).toHaveLength(2)
   chats.push(new Chat())
@@ -140,7 +140,7 @@ test('Merge history', async () => {
 })
 
 test('Add quick prompt', async () => {
-  await store.load()
+  store.load()
   expect(store.history.quickPrompts).toHaveLength(0)
   store.addQuickPrompt('my prompt')
   expect(store.history.quickPrompts).toHaveLength(1)

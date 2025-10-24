@@ -43,16 +43,29 @@
 
     <template #expertsSubmenu="{ withFilter }">
       {{ withFilter(true) }}
-      <div v-for="expert in expertsMenuItems" :key="expert.id" @click="handleExpertClick(expert.id)" >
-        <BrainIcon class="icon" /><span>{{ expert.name }}</span>
+      <!-- Categories with experts -->
+      <div v-for="cat in categoriesWithExperts" :key="cat.id" :data-submenu-slot="`expertCategory-${cat.id}`">
+        <FolderIcon class="icon" />
+        <!-- <component :is="cat.icon" class="icon" :class="cat.color" /> -->
+        <span>{{ cat.name }}</span>
       </div>
+
+      <template v-if="uncategorizedExperts.length">
+        <div v-for="exp in uncategorizedExperts" :key="exp.id" @click="handleExpertClick(exp.id)">
+          <BrainIcon class="icon" />
+          <span>{{ exp.name }}</span>
+        </div>
+      </template>
+
     </template>
 
-    <!-- <template #expertsSubmenuFooter>
-      <div @click="handleManageExperts">
-        <PlusIcon class="icon" /> {{ t('prompt.menu.experts.manage') }}
+    <!-- Category submenus for experts -->
+    <template v-for="cat in categoriesWithExperts" :key="`submenu-${cat.id}`" #[`expertCategory-${cat.id}`]="">
+      <div v-for="exp in expertsByCategory[cat.id]" :key="exp.id" @click="handleExpertClick(exp.id)">
+        <BrainIcon class="icon" />
+        <span>{{ exp.name }}</span>
       </div>
-    </template> -->
+    </template>
 
     <template #docReposSubmenu="{ withFilter }">
       {{ withFilter(true) }}
@@ -147,7 +160,7 @@
 </template>
 
 <script setup lang="ts">
-import { BrainIcon, FeatherIcon, HammerIcon, LightbulbIcon, PaperclipIcon, SettingsIcon, TelescopeIcon } from 'lucide-vue-next'
+import { BrainIcon, FeatherIcon, FolderIcon, HammerIcon, LightbulbIcon, MoreHorizontal, PaperclipIcon, PlusIcon, SettingsIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import * as ts from '../composables/tool_selection'
 import { enabledPlugins } from '../plugins/plugins'
@@ -224,8 +237,49 @@ const expertsMenuItems = computed(() => {
     .map(expert => ({
       id: expert.id,
       name: expert.name || expertI18n(expert, 'name'),
-      prompt: expert.prompt || expertI18n(expert, 'prompt')
+      prompt: expert.prompt || expertI18n(expert, 'prompt'),
+      categoryId: expert.categoryId
     }))
+})
+
+const categoriesWithExperts = computed(() => {
+  // Get categories that have at least one enabled expert
+  const catIds = new Set<string>()
+  expertsMenuItems.value.forEach(exp => {
+    if (exp.categoryId) {
+      catIds.add(exp.categoryId)
+    }
+  })
+
+  // Get category objects and add labels
+  const categories = store.expertCategories
+    .filter(c => c.state === 'enabled' && catIds.has(c.id))
+    .map(c => ({
+      id: c.id,
+      icon: c.icon,
+      color: c.color,
+      name: t(`experts.categories.${c.id}.name`) || 'Category'
+    }))
+
+  // Sort alphabetically by name
+  return categories.sort((a, b) => a.name.localeCompare(b.name))
+})
+
+const expertsByCategory = computed(() => {
+  const grouped: Record<string, typeof expertsMenuItems.value> = {}
+
+  expertsMenuItems.value.forEach(exp => {
+    const catId = exp.categoryId || 'uncategorized'
+    if (!grouped[catId]) grouped[catId] = []
+    grouped[catId].push(exp)
+  })
+
+  // Keep experts in original order (from store.experts)
+  return grouped
+})
+
+const uncategorizedExperts = computed(() => {
+  return expertsMenuItems.value.filter(exp => !exp.categoryId)
 })
 
 const docReposMenuItems = computed(() => {
@@ -283,7 +337,11 @@ const serverToolStatus = (server: McpServerWithTools, tool: McpToolUnique): ts.T
 
 const handleExpertClick = (expertId: string) => {
   emit('close')
-  emit('expertSelected', expertId)
+  if (expertId === 'none') {
+    emit('expertSelected', null)
+  } else {
+    emit('expertSelected', expertId)
+  }
 }
 
 // const handleManageExperts = () => {
@@ -384,6 +442,12 @@ const handleDeepResearchClick = () => {
 .icon {
   width: 16px;
   height: 16px;
+}
+
+.count {
+  margin-left: auto;
+  opacity: 0.6;
+  font-size: 0.9em;
 }
 
 .footer-select {

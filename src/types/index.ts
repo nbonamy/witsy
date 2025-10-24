@@ -208,8 +208,7 @@ export interface Store {
   loadWorkspace(): void
   loadSettings(): void
   loadCommands(): void
-  loadExperts(): Promise<void>
-  loadCategories(): void
+  loadExperts(): void
   loadAgents(): void
   loadHistory(): void
   initChatWithDefaults(chat: Chat): void
@@ -218,7 +217,7 @@ export interface Store {
   addQuickPrompt(prompt: string): void
   // addPadPrompt(prompt: string): void
   // mergeHistory(chats: any[]): void
-  activateWorkspace(workspaceId: string): Promise<void>
+  activateWorkspace(workspaceId: string): void
   dump?(): void
 }
 
@@ -247,7 +246,6 @@ export type Expert = {
   model?: string
   state: 'enabled' | 'disabled' | 'deleted',
   triggerApps: ExternalApp[]
-  pinned?: boolean
   stats?: {
     timesUsed: number
     lastUsed?: number
