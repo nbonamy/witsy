@@ -32,6 +32,8 @@ const grabGoogleResults = `
 
 export default class LocalSearch {
 
+  private searchWindow: BrowserWindow | null = null
+
   public async test(): Promise<boolean> {
 
     try {
@@ -63,8 +65,13 @@ export default class LocalSearch {
       //const url = 'https://2captcha.com/demo/recaptcha-v2'
       const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`
 
-      // open a new window
-      const win = this.openHiddenWindow(testMode)
+      // get or create the persistent search window
+      const win = this.getOrCreateSearchWindow()
+
+      // show window in test mode
+      if (testMode) {
+        win.show()
+      }
 
       // Track if we've resolved/rejected to avoid double resolution
       let hasResolved = false
@@ -73,7 +80,9 @@ export default class LocalSearch {
       abortSignal?.addEventListener('abort', () => {
         if (!hasResolved) {
           hasResolved = true
-          this.tryCloseWindow(win)
+          if (testMode) {
+            win.hide()
+          }
           reject(new Error('Operation cancelled'))
         }
       }, { once: true })
@@ -85,7 +94,9 @@ export default class LocalSearch {
         if (abortSignal?.aborted) {
           if (!hasResolved) {
             hasResolved = true
-            this.tryCloseWindow(win)
+            if (testMode) {
+              win.hide()
+            }
             reject(new Error('Operation cancelled'))
           }
           return
@@ -99,6 +110,9 @@ export default class LocalSearch {
           // get the results
           const googleResults: LocalSearchResult[] = await win.webContents.executeJavaScript(grabGoogleResults)
           if (!Array.isArray(googleResults)) {
+            if (testMode) {
+              win.hide()
+            }
             reject({ error: googleResults === 'captcha'
               ? 'Inform the user that a CAPTCHA mechanism is preventing search to work. They need to go Settings | Plugins | Web Search and click the "Test local search" button'
               : 'An unknown error happened while trying to search locally. Please try again later.'
@@ -109,8 +123,27 @@ export default class LocalSearch {
           // log
           console.log(`[search] found ${googleResults.length} results`)
 
-          // close the window now
-          this.tryCloseWindow(win)
+          // hide window in test mode after results are extracted
+          if (testMode) {
+            win.hide()
+          }
+
+          // in real mode, set up random click on a result (5-10 seconds delay)
+          if (!testMode && googleResults.length > 0) {
+            const randomDelay = 5000 + Math.random() * 5000 // 5-10 seconds
+            const randomIndex = Math.floor(Math.random() * googleResults.length)
+            setTimeout(() => {
+              // click the random result
+              win.webContents.executeJavaScript(`
+                const links = document.querySelectorAll("#search a");
+                if (links[${randomIndex}]) {
+                  links[${randomIndex}].click();
+                }
+              `).catch(err => {
+                console.error('[search] failed to click result:', err)
+              })
+            }, randomDelay)
+          }
 
           // now iterate
           const urls = new Set()
@@ -152,9 +185,9 @@ export default class LocalSearch {
 
         } catch (e) {
 
-          // done
-          if (!testMode) {
-            this.tryCloseWindow(win)
+          // hide window in test mode on error
+          if (testMode) {
+            win.hide()
           }
           if (!hasResolved) {
             hasResolved = true
@@ -180,7 +213,7 @@ export default class LocalSearch {
       console.log(`[search] getting contents for ${url}`)
 
       // open a new window
-      const win = this.openHiddenWindow(false)
+      const win = this.openHiddenWindow()
 
       // flag to track if we've already resolved
       let hasResolved = false
@@ -200,7 +233,7 @@ export default class LocalSearch {
         item.setSavePath(tempPath)
         
         // handle download completion
-        item.once('done', async (event, state) => {
+        item.once('done', async (_event, state) => {
 
           try {
           
@@ -271,7 +304,7 @@ export default class LocalSearch {
       })
 
       //  catch errors
-      win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+      win.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
 
         // only one resolve
         if (hasResolved) {
@@ -295,14 +328,58 @@ export default class LocalSearch {
 
   }
 
-  protected openHiddenWindow(testMode: boolean): BrowserWindow {
+  protected getOrCreateSearchWindow(): BrowserWindow {
+    if (!this.searchWindow || this.searchWindow.isDestroyed()) {
+      this.searchWindow = this.createSearchWindow()
+    }
+    return this.searchWindow
+  }
+
+  protected createSearchWindow(): BrowserWindow {
 
     // open a new window
     const win = new BrowserWindow({
       width: 800,
       height: 600,
-      show: testMode,
-      frame: testMode,
+      show: false,
+      frame: false,
+      focusable: true,
+      hiddenInMissionControl: true,
+      skipTaskbar: true,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        sandbox: true,
+        autoplayPolicy: 'user-gesture-required',
+        disableDialogs: true,
+        partition: 'persist:search',
+        webSecurity: true,
+        allowRunningInsecureContent: false,
+        experimentalFeatures: true,
+      },
+    })
+
+    // Set clean user agent (strip Witsy and Electron identifiers)
+    const originalUA = win.webContents.session.getUserAgent()
+    const cleanUA = getCleanUserAgent(originalUA)
+    win.webContents.session.setUserAgent(cleanUA)
+
+    // prevent memory leaks
+    win.webContents.setMaxListeners(20)
+
+    // done
+    return win
+
+  }
+
+  protected openHiddenWindow(): BrowserWindow {
+
+    // open a new window
+    const win = new BrowserWindow({
+      width: 800,
+      height: 600,
+      show: false,
+      frame: false,
       focusable: true,
       hiddenInMissionControl: true,
       skipTaskbar: true,
