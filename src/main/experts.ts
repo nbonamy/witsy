@@ -88,6 +88,9 @@ const loadExpertData = (source: App|string, workspaceId: string): ExpertData => 
   // i18n migrate label and template
   const t = createI18n(getLocaleMessages(app), 'en', { missingWarn: false }).global.t as CallableFunction
   for (const expert of expertData.experts) {
+
+    const defaultExpert = defaultExperts.find((de: Expert) => de.id === expert.id)
+
     const key = `experts.experts.${expert.id}`
     if (expert.name === t(`${key}.name`)) {
       delete expert.name
@@ -104,22 +107,22 @@ const loadExpertData = (source: App|string, workspaceId: string): ExpertData => 
       updated = true
     }
 
-    // Assign categoryId from defaults for system experts if missing
+    // assign categoryId from defaults for system experts if missing
     if (expert.type === 'system' && !expert.categoryId) {
-      const defaultExpert = defaultExperts.find((de: Expert) => de.id === expert.id)
       if (defaultExpert?.categoryId) {
         expert.categoryId = defaultExpert.categoryId
         updated = true
       }
     }
 
-    // User experts without categoryId remain uncategorized (undefined)
-
-    // Remove old category field if it exists (backward compatibility)
-    if ((expert as any).category) {
-      delete (expert as any).category
-      updated = true
+    // add empty description
+    if (expert.type === 'system' && !expert.description) {
+      if (defaultExpert?.description) {
+        expert.description = defaultExpert.description
+        updated = true
+      }
     }
+
   }
   
   // now add new experts

@@ -9,7 +9,7 @@
     <select v-model="categoryFilter" class="category-filter">
       <option value="">{{ t('settings.experts.allCategories') }}</option>
       <option v-for="cat in availableCategories" :key="cat.id" :value="cat.id">
-        {{ getCategoryLabel(cat.id, store.expertCategories) }}
+        {{ cat.name }}
       </option>
     </select>
   </div>
@@ -68,7 +68,7 @@ import { getCategoryLabel } from '../services/categories'
 import { newExpert, saveExperts } from '../services/experts'
 import { expertI18n, t } from '../services/i18n'
 import { store } from '../services/store'
-import { Expert } from '../types/index'
+import { Expert, ExpertCategory } from '../types/index'
 
 const experts = ref<Expert[]>(null)
 const selected = ref<Expert>(null)
@@ -86,9 +86,14 @@ const emit = defineEmits([ 'create', 'edit' ])
 const availableCategories = computed(() => {
   const catIds = new Set<string>()
   experts.value?.forEach(e => {
-    if (e.categoryId) catIds.add(e.categoryId)
+    if (e.categoryId) {
+      catIds.add(e.categoryId)
+    }
   })
-  return store.expertCategories.filter(c => catIds.has(c.id) && c.state === 'enabled')
+  return store.expertCategories.filter(c => catIds.has(c.id) && c.state === 'enabled').map((c: ExpertCategory) => ({
+    id: c.id,
+    name: getCategoryLabel(c.id, store.expertCategories)
+  })).sort((a, b) => a.name.localeCompare(b.name))
 })
 
 const filteredExperts = computed(() => {

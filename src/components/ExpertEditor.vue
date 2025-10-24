@@ -8,9 +8,16 @@
       <label>{{ t('common.name') }}</label>
       <input type="text" name="name" v-model="name" required @keyup="onChangeText" />
     </div>
-    <div class="form-field">
+    <!-- <div class="form-field">
       <label>{{ t('common.description') }}</label>
       <textarea name="description" v-model="description" rows="2" :placeholder="t('settings.experts.descriptionPlaceholder')"></textarea>
+    </div> -->
+    <div class="form-field">
+      <label>{{ t('common.prompt') }}</label>
+      <div class="form-subgroup">
+        <textarea name="prompt" v-model="prompt" required @keyup="onChangeText"></textarea>
+        <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
+      </div>
     </div>
     <div class="form-field">
       <label>{{ t('common.category') }}</label>
@@ -22,19 +29,8 @@
       </select>
     </div>
     <div class="form-field">
-      <label>{{ t('common.prompt') }}</label>
-      <div class="form-subgroup">
-        <textarea name="prompt" v-model="prompt" required @keyup="onChangeText"></textarea>
-        <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
-      </div>
-    </div>
-    <div class="form-field">
       <label>{{ t('common.llmProvider') }}</label>
-      <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('experts.editor.useDefault')" />
-    </div>
-    <div class="form-field">
-      <label>{{ t('common.llmModel') }}</label>
-      <ModelSelectPlus id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('experts.editor.useDefault') : ''" />
+      <EngineModelSelect :engine="engine" :model="model" :default-label="t('experts.editor.useDefault')" @model-selected="onModelSelected" />
     </div>
     <div class="form-field" v-if="supportTriggerApps">
       <label>{{ t('experts.editor.triggerApps') }}</label>
@@ -65,14 +61,13 @@
 
 import { CircleAlertIcon, MinusIcon, PlusIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
-import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import Dialog from '../composables/dialog'
 import { getCategoryLabel } from '../services/categories'
 import { expertI18n, expertI18nDefault, t } from '../services/i18n'
 import { store } from '../services/store'
 import { FileContents } from '../types/file'
 import { Expert, ExternalApp } from '../types/index'
+import EngineModelSelect from './EngineModelSelect.vue'
 
 const emit = defineEmits(['expert-modified']);
 
@@ -98,11 +93,6 @@ const icons: Record<string, FileContents> = {}
 
 const supportTriggerApps = computed(() => window.api.platform !== 'linux')
 
-const models = computed(() => {
-  if (!engine.value || engine.value == '') return []
-  return store.config.engines[engine.value].models.chat
-})
-
 const iconData = (app: ExternalApp) => {
   const icon = icons[app.identifier]
   return `data:${icon.mimeType};base64,${icon.contents}`
@@ -113,9 +103,9 @@ const onChangeText = () => {
   isEdited.value = ((props.expert?.type === 'system') && (name.value !== expertI18nDefault(props.expert, 'name') || prompt.value !== expertI18nDefault(props.expert, 'prompt')))
 }
 
-const onChangeEngine = () => {
-  if (engine.value == '') model.value = ''
-  else model.value = store.config.engines[engine.value].models.chat?.[0]?.id
+const onModelSelected = (e: string, m: string) => {
+  model.value = m
+  engine.value = e
 }
 
 onMounted(async () => {
@@ -123,9 +113,9 @@ onMounted(async () => {
 
     // update values
     type.value = props.expert?.type || 'user'
-    name.value = props.expert?.name || expertI18n(props.expert, 'name')
-    description.value = props.expert?.description || expertI18n(props.expert, 'description') || ''
     categoryId.value = props.expert?.categoryId || ''
+    name.value = props.expert?.name || expertI18n(props.expert, 'name')
+    description.value = props.expert?.id ? (props.expert?.description ?? expertI18n(props.expert, 'description')) : ''
     prompt.value = props.expert?.id ? (props.expert?.prompt || expertI18n(props.expert, 'prompt')) : ''
     engine.value = props.expert?.engine || ''
     model.value = props.expert?.model || ''
@@ -202,7 +192,7 @@ const onSave = (event: Event) => {
     description: description.value || undefined,
     categoryId: categoryId.value || undefined,
     prompt: prompt.value === expertI18nDefault(props.expert, 'prompt') ? undefined : prompt.value,
-    ...(engine.value.length && model.value.length ? { engine: engine.value, model: model.value } : {}),
+    ...(engine.value?.length && model.value?.length ? { engine: engine.value, model: model.value } : {}),
     triggerApps: triggerApps.value.map((app) => {
       if (app.icon.contents) {
         app.icon = app.icon.url.replace('file://', '')
@@ -221,6 +211,10 @@ const onSave = (event: Event) => {
   textarea {
     height: 120px;
     resize: vertical !important;
+  }
+
+  .engine-model-select {
+    width: calc(100% - 2rem);
   }
 
   .list-with-actions {
