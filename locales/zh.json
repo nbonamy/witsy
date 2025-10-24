@@ -451,6 +451,9 @@
       "greeting": "您好，我能帮您什么？",
       "mcpServers": "连接MCP服务器以允许 @:{'common.appName'} 互动您的环境！"
     },
+    "error": {
+      "title": "LLM 提供者返回的错误"
+    },
     "export": {
       "error": "尝试导出聊天时发生错误。"
     },
@@ -1845,8 +1848,8 @@
       "outOfCredits": "抱歉，似乎你已经用完了你的 LLM 提供商账户的余额。检查你的 LLM 提供商账户余额。",
       "pluginDescriptionTooLong": "抱歉，似乎其中一个插件描述过长。如果你在设置 | 高级中进行了调整，请尝试再次。",
       "quotaExceeded": "抱歉，似乎你已经达到了你的 LLM 提供商账户的速率限制。稍后再试。",
-      "tryWithoutParams": "抱歉，我无法为该提示生成文本。你想不想 [不使用模型参数再试一次](#retry_without_params)？",
-      "tryWithoutPlugins": "抱歉，我无法为该提示生成文本。你想不想 [不使用插件再试一次](#retry_without_plugins)？"
+      "tryWithoutParams": "抱歉，我无法为该提示生成文本。您想要[在不使用模型参数的情况下重试](#retry_without_params)吗？<error>{error}</error>",
+      "tryWithoutPlugins": "抱歉，我无法为该提示生成文本。您想要[在不使用插件的情况下重试](#retry_without_plugins)吗？<error>{error}</error>"
     }
   },
   "import": {

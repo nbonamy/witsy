@@ -432,6 +432,9 @@
       "greeting": "Hola, ¿en qué puedo ayudarte?",
       "mcpServers": "¡Conecta servidores MCP para permitir que @:{'common.appName'} interactúe con tu entorno!"
     },
+    "error": {
+      "title": "Error devuelto por el proveedor LLM"
+    },
     "export": {
       "error": "Ocurrió un error al intentar exportar la conversación."
     },
@@ -1826,8 +1829,8 @@
       "outOfCredits": "Lo siento, parece que te has quedado sin créditos. Verifica el saldo de tu cuenta de proveedor LLM.",
       "pluginDescriptionTooLong": "Lo siento, parece que una de las descripciones de los plugins es demasiado larga. Si las has modificado en Configuración | Avanzado, por favor intenta nuevamente.",
       "quotaExceeded": "Lo siento, parece que has alcanzado el límite de tu cuenta de proveedor LLM. Intenta nuevamente más tarde.",
-      "tryWithoutParams": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres [intentar de nuevo sin parámetros de modelo](#retry_without_params)?",
-      "tryWithoutPlugins": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres [intentar de nuevo sin plugins](#retry_without_plugins)?"
+      "tryWithoutParams": "Lo siento, no pude generar texto para esa indicación. ¿Quieres [intentar de nuevo sin parámetros del modelo](#retry_without_params)? <error>{error}</error>",
+      "tryWithoutPlugins": "Lo siento, no pude generar texto para esa indicación. ¿Quieres [intentar de nuevo sin plugins](#retry_without_plugins)? <error>{error}</error>"
     }
   },
   "import": {
