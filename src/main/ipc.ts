@@ -1,56 +1,56 @@
 
 
-import { History, Command, Expert } from '../types/index';
-import { Configuration } from '../types/config';
-import { Application, RunCommandParams } from '../types/automation';
-import { McpInstallStatus, McpTool, McpServerWithTools } from '../types/mcp';
 import { LlmTool } from 'multi-llm-ts';
+import { Application, RunCommandParams } from '../types/automation';
+import { Configuration } from '../types/config';
+import { Command, History } from '../types/index';
+import { McpInstallStatus, McpServerWithTools, McpTool } from '../types/mcp';
 
-import process from 'node:process';
-import path from 'node:path';
-import fontList from 'font-list';
-import { app, ipcMain, nativeImage, clipboard, nativeTheme, shell } from 'electron';
+import { app, clipboard, ipcMain, nativeImage, nativeTheme, shell } from 'electron';
 import Store from 'electron-store';
+import fontList from 'font-list';
+import path from 'node:path';
+import process from 'node:process';
 import { getCachedText } from './utils';
 
-import AutoUpdater from './autoupdate';
-import Automation, { AutomationAction } from '../automations/automation'
-import Commander, { askMeAnythingId, notEditablePrompts } from '../automations/commander';
 import PromptAnywhere from '../automations/anywhere';
+import Automation, { AutomationAction } from '../automations/automation';
+import Commander, { askMeAnythingId, notEditablePrompts } from '../automations/commander';
 import Transcriber from '../automations/transcriber';
 import DocumentRepository from '../rag/docrepo';
-import MemoryManager from './memory';
-import LocalSearch from './search';
 import Embedder from '../rag/embedder';
+import AutoUpdater from './autoupdate';
 import Computer from './computer';
 import Mcp from './mcp';
+import MemoryManager from './memory';
 import MacOSPermissions from './permissions';
+import LocalSearch from './search';
 
 import * as IPC from '../ipc_consts';
-import * as config from './config';
-import * as cliInstaller from './cli_installer';
-import * as webview from './webview';
-import * as history from './history';
-import * as commands from './commands';
-import * as experts from './experts';
 import * as agents from './agents';
-import * as file from './file';
-import * as shortcuts from './shortcuts';
-import * as window from './window';
-import * as markdown from './markdown';
-import * as text from './text';
-import * as i18n from './i18n';
-import * as debug from './network';
-import * as interpreter from './interpreter';
 import * as backup from './backup';
-import * as ollama from './ollama';
+import * as cliInstaller from './cli_installer';
+import * as commands from './commands';
+import * as config from './config';
+import * as experts from './experts';
+import * as file from './file';
 import * as google from './google';
-import * as workspace from './workspace';
+import * as history from './history';
+import * as i18n from './i18n';
+import * as interpreter from './interpreter';
+import * as markdown from './markdown';
+import * as debug from './network';
+import * as ollama from './ollama';
 import * as scratchpadManager from './scratchpad';
+import * as shortcuts from './shortcuts';
+import * as text from './text';
+import * as webview from './webview';
+import * as window from './window';
+import * as workspace from './workspace';
 
-import { importOpenAI } from './import_oai';
 import { AGENT_API_BASE_PATH } from './agent_webhook';
 import { HttpServer } from './http_server';
+import { importOpenAI } from './import_oai';
 
 export const installIpc = (
   store: Store,
@@ -252,8 +252,8 @@ export const installIpc = (
   });
 
   ipcMain.on(IPC.EXPERTS.SAVE, (event, payload) => {
-    const { workspaceId, experts: expertsData } = JSON.parse(payload);
-    event.returnValue = experts.saveExperts(app, workspaceId, expertsData as Expert[]);
+    const { workspaceId, experts } = JSON.parse(payload);
+    event.returnValue = experts.saveExperts(app, workspaceId, experts);
   });
 
   ipcMain.on(IPC.EXPERTS.LOAD_CATEGORIES, (event, workspaceId) => {

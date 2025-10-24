@@ -160,12 +160,12 @@ export default class {
     opts.attachments.map(a => userMessage.attach(a))
     this.chat.addMessage(userMessage)
 
-    // track expert usage
-    if (opts.expert) {
-      const { trackExpertUsage } = await import('./experts')
-      const { store } = await import('./store')
-      trackExpertUsage(opts.expert.id, store.experts, store.config.workspaceId)
-    }
+    // // track expert usage
+    // if (opts.expert) {
+    //   const { trackExpertUsage } = await import('./experts')
+    //   const { store } = await import('./store')
+    //   trackExpertUsage(opts.expert.id, store.experts, store.config.workspaceId)
+    // }
 
     // add assistant message
     const assistantMessage = new Message('assistant')
