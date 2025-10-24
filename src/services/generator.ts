@@ -240,7 +240,7 @@ export default class Generator {
         return 'out_of_credits'
 
       // quota exceeded
-      } else if ([413, 429].includes(status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many') || message.includes('tokens per minute'))) {
+      } else if ([429].includes(status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many'))) {
         console.error('Quota exceeded:', status, message)
         response.setText(t('generator.errors.quotaExceeded'))
         return 'quota_exceeded'
@@ -300,9 +300,9 @@ export default class Generator {
           if (opts?.contextWindowSize || opts?.maxTokens || opts?.temperature || opts?.top_k || opts?.top_p || Object.keys(opts?.customOpts || {}).length > 0) {
             response.setText(t('generator.errors.tryWithoutParams'))
           } else if (llm.plugins.length > 0) {
-            response.setText(t('generator.errors.tryWithoutPlugins'))
+            response.setText(t('generator.errors.tryWithoutPlugins', { error: error.message }))
           } else {
-            response.setText(t('generator.errors.couldNotGenerate'))
+            response.setText(t('generator.errors.couldNotGenerate', { error: error.message }))
           }
         } else {
           response.appendText({ type: 'content', text: t('generator.errors.cannotContinue'), done: true })
