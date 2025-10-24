@@ -1,15 +1,19 @@
 
-import { Expert } from 'types/index'
+import { Expert, ExpertCategory } from 'types/index'
 import { app, App } from 'electron'
 import { createI18n } from './i18n.base'
 import { getLocaleMessages } from './i18n'
 import { workspaceFolderPath } from './workspace'
-import defaultExperts from '../../defaults/experts.json'
+import defaultExpertsData from '../../defaults/experts.json'
 import Monitor from './monitor'
 import * as window from './window'
 import * as file from './file'
 import path from 'path'
 import fs from 'fs'
+
+// Handle both old and new format
+const defaultExperts = Array.isArray(defaultExpertsData) ? defaultExpertsData : (defaultExpertsData as any).experts
+const defaultCategories: ExpertCategory[] = Array.isArray(defaultExpertsData) ? [] : (defaultExpertsData as any).categories
 
 const monitor: Monitor = new Monitor(() => {
   window.notifyBrowserWindows('file-modified', 'experts');
@@ -18,6 +22,51 @@ const monitor: Monitor = new Monitor(() => {
 export const expertsFilePath = (app: App, workspaceId: string): string => {
   const workspacePath = workspaceFolderPath(app, workspaceId)
   return path.join(workspacePath, 'experts.json')
+}
+
+export const categoriesFilePath = (app: App, workspaceId: string): string => {
+  const workspacePath = workspaceFolderPath(app, workspaceId)
+  return path.join(workspacePath, 'categories.json')
+}
+
+export const loadCategories = (source: App|string, workspaceId: string): ExpertCategory[] => {
+  let categories: ExpertCategory[] = []
+  const categoriesFile = typeof source === 'string' ? source : categoriesFilePath(source, workspaceId)
+
+  // Try to load from file
+  try {
+    categories = JSON.parse(fs.readFileSync(categoriesFile, 'utf-8'))
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      console.log('Error retrieving categories', error)
+    }
+  }
+
+  // Merge with defaults
+  let updated = false
+  for (const defaultCat of defaultCategories) {
+    const existing = categories.find(c => c.id === defaultCat.id)
+    if (!existing) {
+      categories.push(defaultCat)
+      updated = true
+    }
+  }
+
+  // Save if updated
+  if (updated) {
+    saveCategories(source, workspaceId, categories)
+  }
+
+  return categories
+}
+
+export const saveCategories = (dest: App|string, workspaceId: string, content: ExpertCategory[]): void => {
+  try {
+    const categoriesFile = typeof dest === 'string' ? dest : categoriesFilePath(dest, workspaceId)
+    fs.writeFileSync(categoriesFile, JSON.stringify(content, null, 2))
+  } catch (error) {
+    console.log('Error saving categories', error)
+  }
 }
 
 export const loadExperts = (source: App|string, workspaceId: string): Expert[] => {
@@ -48,6 +97,11 @@ export const loadExperts = (source: App|string, workspaceId: string): Expert[] =
     }
     if (expert.prompt === t(`${key}.prompt`)) {
       delete expert.prompt
+      updated = true
+    }
+    // Migrate old category field to categoryId (backward compatibility)
+    if ((expert as any).category && !expert.categoryId) {
+      delete (expert as any).category
       updated = true
     }
   }

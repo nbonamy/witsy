@@ -1,7 +1,33 @@
 
-import { Expert } from 'types/index'
-import { store } from './store'
-import defaultExperts from '../../defaults/experts.json'
+import { Expert, ExpertCategory } from 'types/index'
+import { t } from './i18n'
+import defaultExpertsData from '../../defaults/experts.json'
+
+// Handle both old and new format
+const defaultExperts = Array.isArray(defaultExpertsData) ? defaultExpertsData : (defaultExpertsData as any).experts
+
+export const getCategoryById = (categoryId?: string, categories?: ExpertCategory[]): ExpertCategory | undefined => {
+  if (!categoryId || !categories) return undefined
+  return categories.find(c => c.id === categoryId)
+}
+
+export const getCategoryLabel = (categoryId?: string, categories?: ExpertCategory[]): string => {
+  if (!categoryId || !categories) return 'Uncategorized'
+  const category = getCategoryById(categoryId, categories)
+  if (!category) return 'Uncategorized'
+
+  // Try to get i18n label
+  try {
+    const label = t(`experts.categories.${category.id}.name`)
+    if (label && !label.startsWith('experts.categories')) {
+      return label
+    }
+  } catch {
+    // Fallback to default
+  }
+
+  return 'Uncategorized'
+}
 
 export const newExpert = (): Expert => {
   return {
@@ -14,19 +40,51 @@ export const newExpert = (): Expert => {
   }
 }
 
-export const loadExperts = (): void => {
+export const migrateExperts = (experts: Expert[]): Expert[] => {
+  return experts.map(expert => {
+    // Remove old category field (backward compatibility)
+    if ((expert as any).category) {
+      delete (expert as any).category
+    }
+
+    // Initialize stats if missing
+    if (!expert.stats) {
+      expert.stats = { timesUsed: 0 }
+    }
+
+    return expert
+  })
+}
+
+export const loadExperts = (workspaceId: string): Expert[] => {
   try {
-    store.experts = window.api.experts.load(store.config.workspaceId)
+    let experts = window.api.experts.load(workspaceId)
+    experts = migrateExperts(experts)
+    return experts
   } catch (error) {
     console.log('Error loading experts data', error)
-    store.experts = JSON.parse(JSON.stringify(defaultExperts))
+    return JSON.parse(JSON.stringify(defaultExperts))
   }
 }
 
-export const saveExperts = (): void => {
+export const saveExperts = (workspaceId: string, experts: Expert[]): void => {
   try {
-    window.api.experts.save(store.config.workspaceId, JSON.parse(JSON.stringify(store.experts)))
+    window.api.experts.save(workspaceId, JSON.parse(JSON.stringify(experts)))
   } catch (error) {
     console.log('Error saving experts data', error)
   }
+}
+
+export const trackExpertUsage = (expertId: string, experts: Expert[], workspaceId: string): void => {
+  const expert = experts.find(e => e.id === expertId)
+  if (!expert) return
+
+  if (!expert.stats) {
+    expert.stats = { timesUsed: 0 }
+  }
+
+  expert.stats.timesUsed++
+  expert.stats.lastUsed = Date.now()
+
+  saveExperts(workspaceId, experts)
 }

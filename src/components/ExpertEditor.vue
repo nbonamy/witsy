@@ -9,6 +9,19 @@
       <input type="text" name="name" v-model="name" required @keyup="onChangeText" />
     </div>
     <div class="form-field">
+      <label>{{ t('common.description') }}</label>
+      <textarea name="description" v-model="description" rows="2" :placeholder="t('settings.experts.descriptionPlaceholder')"></textarea>
+    </div>
+    <div class="form-field">
+      <label>{{ t('common.category') }}</label>
+      <select v-model="categoryId">
+        <option value="">{{ t('settings.experts.noCategory') }}</option>
+        <option v-for="cat in allCategories" :key="cat.id" :value="cat.id">
+          {{ getCategoryLabel(cat.id, store.expertCategories) }}
+        </option>
+      </select>
+    </div>
+    <div class="form-field">
       <label>{{ t('common.prompt') }}</label>
       <div class="form-subgroup">
         <textarea name="prompt" v-model="prompt" required @keyup="onChangeText"></textarea>
@@ -55,6 +68,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import Dialog from '../composables/dialog'
+import { getCategoryLabel } from '../services/experts'
 import { expertI18n, expertI18nDefault, t } from '../services/i18n'
 import { store } from '../services/store'
 import { FileContents } from '../types/file'
@@ -68,6 +82,8 @@ const props = defineProps<{
 
 const type = ref(null)
 const name = ref(null)
+const description = ref(null)
+const categoryId = ref<string>('')
 const prompt = ref(null)
 const engine = ref(null)
 const model = ref(null)
@@ -75,6 +91,8 @@ const triggerApps = ref([])
 const selectedApp = ref(null)
 const diffLang = ref(false)
 const isEdited = ref(false)
+
+const allCategories = computed(() => store.expertCategories.filter(c => c.state === 'enabled'))
 
 const icons: Record<string, FileContents> = {}
 
@@ -106,6 +124,8 @@ onMounted(async () => {
     // update values
     type.value = props.expert?.type || 'user'
     name.value = props.expert?.name || expertI18n(props.expert, 'name')
+    description.value = props.expert?.description || expertI18n(props.expert, 'description') || ''
+    categoryId.value = props.expert?.categoryId || ''
     prompt.value = props.expert?.id ? (props.expert?.prompt || expertI18n(props.expert, 'prompt')) : ''
     engine.value = props.expert?.engine || ''
     model.value = props.expert?.model || ''
@@ -179,6 +199,8 @@ const onSave = (event: Event) => {
   emit('expert-modified', {
     id: props.expert.id,
     name: name.value === expertI18nDefault(props.expert, 'name') ? undefined : name.value,
+    description: description.value || undefined,
+    categoryId: categoryId.value || undefined,
     prompt: prompt.value === expertI18nDefault(props.expert, 'prompt') ? undefined : prompt.value,
     ...(engine.value.length && model.value.length ? { engine: engine.value, model: model.value } : {}),
     triggerApps: triggerApps.value.map((app) => {

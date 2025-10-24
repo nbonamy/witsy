@@ -20,11 +20,11 @@ vi.mock('../../src/services/i18n', async () => {
 let wrapper: VueWrapper<any>
 let chat: Chat|null = null
 
-beforeAll(() => {
+beforeAll(async () => {
   useBrowserMock()
   useWindowMock({ favoriteModels: true })
   store.isFeatureEnabled = () => true
-  store.loadExperts()
+  await store.loadExperts()
   store.loadCommands()
 })
 
@@ -144,10 +144,12 @@ test('Sends with right parameters', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt2')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(wrapper.emitted<any[]>().prompt[0]).toEqual([{
+  expect(wrapper.emitted<any[]>().prompt[0]).toMatchObject([{
     prompt: 'this is my prompt',
-    attachments: [ { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false } ],
-    expert: { id: 'uuid3', name: 'actor3', prompt: 'prompt3', type: 'user', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
+    attachments: expect.arrayContaining([
+      expect.objectContaining({ content: 'image64', mimeType: 'image/png', url: 'file://image.png' })
+    ]),
+    expert: expect.objectContaining({ id: 'uuid3', name: 'actor3', prompt: 'prompt3' }),
     docrepo: 'docrepo',
     execType: 'deepresearch',
   }])

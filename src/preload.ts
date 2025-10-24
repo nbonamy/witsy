@@ -6,7 +6,7 @@ import { LlmChunk, LlmTool } from 'multi-llm-ts';
 import * as IPC from './ipc_consts';
 import { Size } from './main/computer';
 import Agent from './models/agent';
-import { Command, ComputerAction, Expert, ExternalApp, LocalSearchResponse, MainWindowMode, NetworkRequest, OpenSettingsPayload, anyDict, strDict } from './types';
+import { Command, ComputerAction, Expert, ExpertCategory, ExternalApp, LocalSearchResponse, MainWindowMode, NetworkRequest, OpenSettingsPayload, anyDict, strDict } from './types';
 import { AgentRun } from './types/agents';
 import { Application, RunCommandParams } from './types/automation';
 import { Configuration } from './types/config';
@@ -144,6 +144,8 @@ contextBridge.exposeInMainWorld(
     experts: {
       load: (workspaceId: string): Expert[] => { return JSON.parse(ipcRenderer.sendSync(IPC.EXPERTS.LOAD, workspaceId)) },
       save: (workspaceId: string, data: Expert[]): void => { return ipcRenderer.send(IPC.EXPERTS.SAVE, JSON.stringify({ workspaceId, experts: data })) },
+      loadCategories: (workspaceId: string): ExpertCategory[] => { return JSON.parse(ipcRenderer.sendSync(IPC.EXPERTS.LOAD_CATEGORIES, workspaceId)) },
+      saveCategories: (workspaceId: string, data: ExpertCategory[]): void => { return ipcRenderer.send(IPC.EXPERTS.SAVE_CATEGORIES, JSON.stringify({ workspaceId, categories: data })) },
       export: (workspaceId: string): void => { return ipcRenderer.sendSync(IPC.EXPERTS.EXPORT, workspaceId) },
       import: (workspaceId: string): void => { return ipcRenderer.sendSync(IPC.EXPERTS.IMPORT, workspaceId) },
     },

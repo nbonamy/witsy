@@ -431,9 +431,6 @@
       "greeting": "Salut, comment puis-je vous aider ?",
       "mcpServers": "Connectez les serveurs MCP pour permettre à @:{'common.appName'} d'interagir avec votre environnement !"
     },
-    "error": {
-      "title": "Erreur retournée par le fournisseur LLM"
-    },
     "export": {
       "error": "Une erreur s'est produite lors de l'exportation de la conversation."
     },
@@ -1613,8 +1610,8 @@
       "outOfCredits": "Désolé, il semble que vous n'ayez plus de crédits. Vérifiez le solde de votre compte fournisseur LLM.",
       "pluginDescriptionTooLong": "Désolé, il semble que la description d'un des plugins soit trop longue. Si vous les avez modifiés dans Paramètres | Avancé, veuillez réessayer.",
       "quotaExceeded": "Désolé, il semble que vous ayez atteint la limite de votre compte fournisseur LLM. Réessayez plus tard.",
-      "tryWithoutParams": "Désolé, je n'ai pas pu générer de texte pour cette invite. Voulez-vous [réessayer sans les paramètres du modèle](#retry_without_params) ? <error>{error}</error>",
-      "tryWithoutPlugins": "Désolé, je n'ai pas pu générer de texte pour cette invite. Voulez-vous [réessayer sans les plugins](#retry_without_plugins) ? <error>{error}</error>"
+      "tryWithoutParams": "Désolé, je n'ai pas pu générer de texte pour cette requête. Voulez-vous [réessayer sans paramètres de modèle](#retry_without_params) ?",
+      "tryWithoutPlugins": "Désolé, je n'ai pas pu générer de texte pour cette requête. Voulez-vous [réessayer sans plugins](#retry_without_plugins) ?"
     }
   },
   "import": {
