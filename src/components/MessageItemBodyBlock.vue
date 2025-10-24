@@ -13,17 +13,19 @@
 
 <script setup lang="ts">
 
+import { h, nextTick, PropType, ref, render } from 'vue'
+import { InfoIcon } from 'lucide-vue-next'
+import Dialog from '../composables/dialog'
+import { t } from '../services/i18n'
+import { store } from '../services/store'
 import { ToolCall } from '../types/index'
-import { nextTick, PropType, ref, h, render } from 'vue'
 import MessageItemArtifactBlock from './MessageItemArtifactBlock.vue'
 import MessageItemHtmlBlock from './MessageItemHtmlBlock.vue'
-import MessageItemTableBlock from './MessageItemTableBlock.vue'
-import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
-import MessageItemToolBlock from './MessageItemToolBlock.vue'
+import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemSearchResultBlock from './MessageItemSearchResultBlock.vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
+import MessageItemTableBlock from './MessageItemTableBlock.vue'
+import MessageItemToolBlock from './MessageItemToolBlock.vue'
 
 type BlockEmpty = {
   type: 'empty'
@@ -88,7 +90,7 @@ const onMediaLoaded = () => {
 }
 
 const messageItemBodyBlock= ref<HTMLElement>(null)
-let mermaidRenderTimeout: NodeJS.Timeout|null = null
+let customRenderTimeout: NodeJS.Timeout|null = null
 
 const mdRender = (content: string) => {
 
@@ -109,16 +111,50 @@ const mdRender = (content: string) => {
   // replace <think> with <div class="think"> and </think> with </div>
   html = html.replace(/<think>/g, '<div class="text think"><p>').replace(/<\/think>/g, '</p></div>')
 
-  // mermaid
+  // replace <error>...</error> with a span with class error
+  html = html.replace(/&lt;error&gt;([ \t]*?)&lt;\/error&gt;/g, '')
+  html = html.replace(/&lt;error&gt;([\s\S]*?)&lt;\/error&gt;/g, `
+    <span class="error-icon-placeholder" data-error="$1"></span>
+  `)
+
+  // render error icons and mermaid blocks
   nextTick(() => {
-    clearTimeout(mermaidRenderTimeout)
-    mermaidRenderTimeout = setTimeout(() => {
+    clearTimeout(customRenderTimeout)
+    customRenderTimeout = setTimeout(() => {
+      renderErrorIcons()
       renderMermaidBlocks()
     }, 150)
   })
 
   // do it
   return html
+}
+
+const renderErrorIcons = () => {
+  if (!messageItemBodyBlock.value) return
+
+  const allErrorPlaceholders = messageItemBodyBlock.value.querySelectorAll<HTMLElement>('.error-icon-placeholder')
+  for (const placeholder of allErrorPlaceholders) {
+    const errorContent = placeholder.getAttribute('data-error') || ''
+
+    // Create a Vue component that renders the icon with click handler
+    const ErrorIconWrapper = {
+      setup() {
+        return () => h('span', {
+          style: 'cursor: pointer; vertical-align: middle;',
+          class: 'text variable-font-size',
+          onClick: () => showError(errorContent)
+        }, [
+          h(InfoIcon, { size: 24 })
+        ])
+      }
+    }
+
+    // Render the component in place of the placeholder
+    const vnode = h(ErrorIconWrapper)
+    placeholder.innerHTML = ''
+    render(vnode, placeholder)
+  }
 }
 
 const renderMermaidBlocks = async () => {
@@ -135,6 +171,13 @@ const renderMermaidBlocks = async () => {
     }
   }
 
+}
+
+const showError = (errorContent: string) => {
+  Dialog.show({
+    title: t('chat.error.title'),
+    text: errorContent
+  })
 }
 
 </script>
