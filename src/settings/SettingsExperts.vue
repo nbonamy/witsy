@@ -88,7 +88,7 @@ const onExpertModified = (payload: Expert) => {
 
   // done
   edited.value = null
-  saveExperts(store.config.workspaceId, store.experts)
+  saveExperts(store.config.workspaceId)
   load()
 }
 

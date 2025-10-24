@@ -24,7 +24,7 @@ beforeAll(async () => {
   useBrowserMock()
   useWindowMock({ favoriteModels: true })
   store.isFeatureEnabled = () => true
-  await store.loadExperts()
+  store.loadExperts()
   store.loadCommands()
 })
 

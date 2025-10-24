@@ -5,6 +5,7 @@ import { Workspace } from '../types/workspace'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadAgents } from './agents'
+import { loadExperts, loadCategories } from './experts'
 import features from '../../defaults/features.json'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
@@ -69,18 +70,13 @@ export const store: Store = reactive({
     // reload data for the new workspace
     store.loadWorkspace()
     store.loadHistory()
-    await store.loadExperts()
-    store.loadCategories()
+    store.loadExperts()
     store.loadAgents()
 
     // notify listeners
     for (const listener of store.listeners['workspaceSwitched'] || []) {
       listener()
     }
-  },
-
-  loadCategories: (): void => {
-    store.expertCategories = window.api.experts.loadCategories(store.config.workspaceId)
   },
 
   loadWorkspace: (): void => {
@@ -131,9 +127,8 @@ export const store: Store = reactive({
   },
 
   loadExperts: async (): Promise<void> => {
-    // Dynamic import to avoid circular dependency
-    const { loadExperts } = await import('./experts')
-    store.experts = loadExperts(store.config.workspaceId)
+    loadCategories(store.config.workspaceId)
+    loadExperts(store.config.workspaceId)
   },
 
   loadAgents: (): void => {
@@ -150,8 +145,7 @@ export const store: Store = reactive({
     store.loadWorkspace()
     store.loadCommands()
     store.loadHistory()
-    store.loadCategories()
-    await store.loadExperts()
+    store.loadExperts()
     store.loadAgents()
 
     // load models and select valid engine

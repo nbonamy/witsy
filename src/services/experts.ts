@@ -1,10 +1,12 @@
 
 import { Expert, ExpertCategory } from 'types/index'
 import { t } from './i18n'
+import { store } from './store'
 import defaultExpertsData from '../../defaults/experts.json'
 
 // Handle both old and new format
 const defaultExperts = Array.isArray(defaultExpertsData) ? defaultExpertsData : (defaultExpertsData as any).experts
+const defaultCategories = (defaultExpertsData as any).categories || []
 
 export const getCategoryById = (categoryId?: string, categories?: ExpertCategory[]): ExpertCategory | undefined => {
   if (!categoryId || !categories) return undefined
@@ -40,25 +42,42 @@ export const newExpert = (): Expert => {
   }
 }
 
-export const loadExperts = (workspaceId: string): Expert[] => {
+export const loadCategories = (workspaceId: string): void => {
   try {
-    return window.api.experts.load(workspaceId)
+    store.expertCategories = window.api.experts.loadCategories(workspaceId)
   } catch (error) {
-    console.log('Error loading experts data', error)
-    return JSON.parse(JSON.stringify(defaultExperts))
+    console.log('Error loading expert categories', error)
+    store.expertCategories = JSON.parse(JSON.stringify(defaultCategories))
   }
 }
 
-export const saveExperts = (workspaceId: string, experts: Expert[]): void => {
+export const loadExperts = (workspaceId: string): void => {
   try {
-    window.api.experts.save(workspaceId, JSON.parse(JSON.stringify(experts)))
+    store.experts = window.api.experts.load(workspaceId)
+  } catch (error) {
+    console.log('Error loading experts data', error)
+    store.experts = JSON.parse(JSON.stringify(defaultExperts))
+  }
+}
+
+export const saveExperts = (workspaceId: string): void => {
+  try {
+    window.api.experts.save(workspaceId, JSON.parse(JSON.stringify(store.experts)))
   } catch (error) {
     console.log('Error saving experts data', error)
   }
 }
 
-export const trackExpertUsage = (expertId: string, experts: Expert[], workspaceId: string): void => {
-  const expert = experts.find(e => e.id === expertId)
+export const saveCategories = (workspaceId: string): void => {
+  try {
+    window.api.experts.saveCategories(workspaceId, JSON.parse(JSON.stringify(store.expertCategories)))
+  } catch (error) {
+    console.log('Error saving expert categories', error)
+  }
+}
+
+export const trackExpertUsage = (workspaceId: string, expertId: string): void => {
+  const expert = store.experts.find(e => e.id === expertId)
   if (!expert) return
 
   if (!expert.stats) {
@@ -68,5 +87,5 @@ export const trackExpertUsage = (expertId: string, experts: Expert[], workspaceI
   expert.stats.timesUsed++
   expert.stats.lastUsed = Date.now()
 
-  saveExperts(workspaceId, experts)
+  saveExperts(workspaceId)
 }
