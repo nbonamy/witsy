@@ -148,8 +148,8 @@ test('New expert with engine and model', async () => {
   expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
   await editor.find('[name=name]').setValue('expert')
   await editor.find('[name=prompt]').setValue('prompt2')
-  await editor.find('[name=engine]').setValue('openai')
-  // await editor.find('input#model').setValue('chat1')
+  const engineModelSelect = editor.findComponent({ name: 'EngineModelSelect' })
+  await engineModelSelect.vm.$emit('modelSelected', 'openai', 'chat1')
   await editor.find('button.default').trigger('click')
 
   // check

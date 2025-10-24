@@ -4,85 +4,73 @@
       "id": "de402f9a-2d28-4196-bd5d-1cc8b60231e1",
       "type": "system",
       "state": "enabled",
-      "icon": "PenLine",
-      "color": "text-blue-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "cc89ea64-39e7-4b2f-b556-fcd73a83d327",
       "type": "system",
       "state": "enabled",
-      "icon": "Code2",
-      "color": "text-green-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "7b00c2ef-929d-4755-af42-2967e5bacf5c",
       "type": "system",
       "state": "enabled",
-      "icon": "Briefcase",
-      "color": "text-purple-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "5ca25abf-7c4b-42ec-b5ee-8784c2c7d082",
       "type": "system",
       "state": "enabled",
-      "icon": "Palette",
-      "color": "text-pink-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "28f374d7-95cc-49c5-99d6-04306eafff8a",
       "type": "system",
       "state": "enabled",
-      "icon": "GraduationCap",
-      "color": "text-indigo-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "1d3fc6db-2a5d-4b72-b340-9b1caf32039f",
       "type": "system",
       "state": "enabled",
-      "icon": "Gamepad2",
-      "color": "text-orange-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "047e03a2-df13-41a9-812a-72f14fe4f707",
       "type": "system",
       "state": "enabled",
-      "icon": "HeartPulse",
-      "color": "text-red-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "786161aa-4dd0-47c8-81b1-647a6412504f",
       "type": "system",
       "state": "enabled",
-      "icon": "Coffee",
-      "color": "text-amber-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "222fc562-19e5-4cfb-98cb-e12d58b9b5a4",
       "type": "system",
       "state": "enabled",
-      "icon": "ListChecks",
-      "color": "text-cyan-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "6d849afb-298b-411e-b343-fef57bebdd56",
       "type": "system",
       "state": "enabled",
-      "icon": "FlaskConical",
-      "color": "text-teal-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "de95ec7a-dc34-451f-a8d7-c787d72f63ec",
       "type": "system",
       "state": "enabled",
-      "icon": "Wrench",
-      "color": "text-slate-500"
+      "icon": "FolderIcon"
     },
     {
       "id": "0ba20fcc-10a9-4f58-9146-5681aa4daf62",
       "type": "system",
       "state": "enabled",
-      "icon": "MoreHorizontal",
-      "color": "text-gray-500"
+      "icon": "FolderIcon"
     }
   ],
   "experts": [

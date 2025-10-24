@@ -21,16 +21,17 @@ const DEFAULT_MODEL = 'gpt-4.1-mini'
 
 // Keys that should be excluded from unused key detection (programmatically referenced)
 const EXCLUDE_FROM_UNUSED_PATTERNS = [
-  /^settings\.plugins\.[^.]+\.title$/,
-  /^common\.language\.[a-z]{2}-[A-Z]{2}$/,
-  /^chat\.role\..*$/,
-  /^computerUse\.action\..*$/,
-  /^commands\.commands\..*$/,
-  /^experts\.experts\..*$/,
-  /^tray\.notification\..*$/,
   /^agent\.forge\.list\..*$/,
   /^agent\.status\..*$/,
-  /^agent\.trigger\..*$/
+  /^agent\.trigger\..*$/,
+  /^chat\.role\..*$/,
+  /^commands\.commands\..*$/,
+  /^common\.language\.[a-z]{2}-[A-Z]{2}$/,
+  /^computerUse\.action\..*$/,
+  /^experts\.categories\..*$/,
+  /^experts\.experts\..*$/,
+  /^settings\.plugins\.[^.]+\.title$/,
+  /^tray\.notification\..*$/,
 ]
 
 // Key prefixes to exclude from processing (extraction and en.json addition)

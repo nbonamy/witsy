@@ -11,6 +11,7 @@
     "basedOn": "based on",
     "browse": "Browse",
     "cancel": "Cancel",
+    "category": "Category",
     "chat": "Chat",
     "clear": "Clear",
     "clickToStart": "Click the blob to start chatting",
@@ -39,7 +40,6 @@
     "copy": "Copy",
     "copyMd": "Copy as Markdown",
     "costsAsOf": "costs as of",
-    "category": "Category",
     "create": "Create",
     "customize": "Customize…",
     "deepResearch": "Deep Research",
@@ -932,6 +932,56 @@
     }
   },
   "experts": {
+    "categories": {
+      "047e03a2-df13-41a9-812a-72f14fe4f707": {
+        "description": "Medical, wellness, and lifestyle guidance",
+        "name": "Health & Wellness"
+      },
+      "0ba20fcc-10a9-4f58-9146-5681aa4daf62": {
+        "description": "Miscellaneous and unique roles",
+        "name": "Other"
+      },
+      "1d3fc6db-2a5d-4b72-b340-9b1caf32039f": {
+        "description": "Games, storytelling, and fun interactions",
+        "name": "Entertainment"
+      },
+      "222fc562-19e5-4cfb-98cb-e12d58b9b5a4": {
+        "description": "Task management, organization, and efficiency tools",
+        "name": "Productivity"
+      },
+      "28f374d7-95cc-49c5-99d6-04306eafff8a": {
+        "description": "Teaching, tutoring, and educational content",
+        "name": "Education"
+      },
+      "5ca25abf-7c4b-42ec-b5ee-8784c2c7d082": {
+        "description": "Art, music, design, and creative expression",
+        "name": "Creative"
+      },
+      "6d849afb-298b-411e-b343-fef57bebdd56": {
+        "description": "Academic research, analysis, and information gathering",
+        "name": "Research"
+      },
+      "786161aa-4dd0-47c8-81b1-647a6412504f": {
+        "description": "Personal development, relationships, and daily life",
+        "name": "Lifestyle"
+      },
+      "7b00c2ef-929d-4755-af42-2967e5bacf5c": {
+        "description": "Business strategy, finance, marketing, and professional services",
+        "name": "Business"
+      },
+      "cc89ea64-39e7-4b2f-b556-fcd73a83d327": {
+        "description": "Programming, development, and technical implementation",
+        "name": "Coding"
+      },
+      "de402f9a-2d28-4196-bd5d-1cc8b60231e1": {
+        "description": "Content creation, editing, translation, and writing assistance",
+        "name": "Writing"
+      },
+      "de95ec7a-dc34-451f-a8d7-c787d72f63ec": {
+        "description": "Specialized technical knowledge and troubleshooting",
+        "name": "Technical"
+      }
+    },
     "editor": {
       "triggerApps": "Trigger Apps",
       "triggerAppsDescription": "The prompt will be automatically selected when Prompt Anywhere is called from one of these applications",
@@ -1693,7 +1743,7 @@
         "description": "Distinguishes and describes different tea types"
       },
       "9eb4e26f-b487-4356-9f69-0d7012ea35ae": {
-        "name": "Tech Reviewer:",
+        "name": "Tech Reviewer",
         "prompt": "I want you to act as a tech reviewer. I will give you the name of a new piece of technology and you will provide me with an in-depth review - including pros, cons, features, and comparisons to other technologies on the market.",
         "description": "Reviews and analyzes technology products"
       },
@@ -1766,56 +1816,6 @@
         "name": "Yogi",
         "prompt": "I want you to act as a yogi. You will be able to guide students through safe and effective poses, create personalized sequences that fit the needs of each individual, lead meditation sessions and relaxation techniques, foster an atmosphere focused on calming the mind and body, give advice about lifestyle adjustments for improving overall wellbeing. ",
         "description": "Provides yoga instruction and guidance"
-      }
-    },
-    "categories": {
-      "de402f9a-2d28-4196-bd5d-1cc8b60231e1": {
-        "name": "Writing",
-        "description": "Content creation, editing, translation, and writing assistance"
-      },
-      "cc89ea64-39e7-4b2f-b556-fcd73a83d327": {
-        "name": "Coding",
-        "description": "Programming, development, and technical implementation"
-      },
-      "7b00c2ef-929d-4755-af42-2967e5bacf5c": {
-        "name": "Business",
-        "description": "Business strategy, finance, marketing, and professional services"
-      },
-      "5ca25abf-7c4b-42ec-b5ee-8784c2c7d082": {
-        "name": "Creative",
-        "description": "Art, music, design, and creative expression"
-      },
-      "28f374d7-95cc-49c5-99d6-04306eafff8a": {
-        "name": "Education",
-        "description": "Teaching, tutoring, and educational content"
-      },
-      "1d3fc6db-2a5d-4b72-b340-9b1caf32039f": {
-        "name": "Entertainment",
-        "description": "Games, storytelling, and fun interactions"
-      },
-      "047e03a2-df13-41a9-812a-72f14fe4f707": {
-        "name": "Health & Wellness",
-        "description": "Medical, wellness, and lifestyle guidance"
-      },
-      "786161aa-4dd0-47c8-81b1-647a6412504f": {
-        "name": "Lifestyle",
-        "description": "Personal development, relationships, and daily life"
-      },
-      "222fc562-19e5-4cfb-98cb-e12d58b9b5a4": {
-        "name": "Productivity",
-        "description": "Task management, organization, and efficiency tools"
-      },
-      "6d849afb-298b-411e-b343-fef57bebdd56": {
-        "name": "Research",
-        "description": "Academic research, analysis, and information gathering"
-      },
-      "de95ec7a-dc34-451f-a8d7-c787d72f63ec": {
-        "name": "Technical",
-        "description": "Specialized technical knowledge and troubleshooting"
-      },
-      "0ba20fcc-10a9-4f58-9146-5681aa4daf62": {
-        "name": "Other",
-        "description": "Miscellaneous and unique roles"
       }
     }
   },
@@ -2382,7 +2382,6 @@
         "title": "Knowledge"
       },
       "experts": {
-        "manage": "Create New Expert",
         "none": "No Expert",
         "title": "@:{'common.experts'}"
       },
@@ -2688,7 +2687,6 @@
       "sortAlpha": "Sort alphabetically",
       "sortState": "Sort by state",
       "sortUsage": "Sort by usage",
-      "uncategorized": "Uncategorized",
       "usage": "Usage"
     },
     "general": {
