@@ -33,6 +33,12 @@ vi.mock('electron', async () => {
         }
       }),
     }
+    // @ts-expect-error mock
+    this.show = vi.fn()
+    // @ts-expect-error mock
+    this.hide = vi.fn()
+    // @ts-expect-error mock
+    this.isDestroyed = vi.fn(() => false)
   })
   BrowserWindow.prototype.loadURL = vi.fn()
   return { BrowserWindow }
