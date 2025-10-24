@@ -231,8 +231,8 @@ export type ExpertCategory = {
   id: string
   type: 'system' | 'user'
   state: 'enabled' | 'disabled' | 'deleted'
+  name?: string
   icon?: string
-  color?: string
 }
 
 export type Expert = {
