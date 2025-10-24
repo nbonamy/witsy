@@ -100,7 +100,7 @@
     "@imengyu/vue3-context-menu": "^1.5.2",
     "@langchain/core": "^0.3.21",
     "@langchain/textsplitters": "^0.1.0",
-    "@mistralai/mistralai": "^1.10.0",
+    "@mistralai/mistralai": "^1.1.0",
     "@modelcontextprotocol/sdk": "^1.19.1",
     "@nut-tree-fork/nut-js": "^4.2.6",
     "@perplexity-ai/perplexity_ai": "^0.6.0",
