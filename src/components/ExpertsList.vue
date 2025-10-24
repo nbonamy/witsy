@@ -1,4 +1,18 @@
 <template>
+  <div class="list-filters form form-large">
+    <input
+      v-model="searchQuery"
+      type="search"
+      :placeholder="t('settings.experts.searchPlaceholder')"
+      class="search-input"
+    />
+    <select v-model="categoryFilter" class="category-filter">
+      <option value="">{{ t('settings.experts.allCategories') }}</option>
+      <option v-for="cat in availableCategories" :key="cat.id" :value="cat.id">
+        {{ cat.name }}
+      </option>
+    </select>
+  </div>
   <div class="list-actions">
     <div class="list-action new" @click.prevent="onNew"><PlusIcon />{{ t('settings.experts.new') }}</div>
     <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
@@ -14,6 +28,7 @@
         <div class="item" @click="handleActionClick('deleteAll')">{{ t('settings.experts.deleteAll') }}</div>
         <div class="item" @click="handleActionClick('sortAlpha')">{{ t('settings.experts.sortAlpha') }}</div>
         <div class="item" @click="handleActionClick('sortEnabled')">{{ t('settings.experts.sortState') }}</div>
+        <div class="item" @click="handleActionClick('sortUsage')">{{ t('settings.experts.sortUsage') }}</div>
       </template>
     </ContextMenuTrigger>
   </div>
@@ -25,10 +40,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="expert in visibleExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
+        <tr v-for="expert in filteredExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
             @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="reorderExperts.onDragStart" @dragover="reorderExperts.onDragOver" @dragend="reorderExperts.onDragEnd">
           <td class="enabled"><input type="checkbox" class="sm" :checked="expert.state=='enabled'" @click="onEnabled(expert)" @dblclick.stop /></td>
           <td class="name">{{ name(expert) }}</td>
+          <td class="category">{{ expert.categoryId ? getCategoryLabel(expert.categoryId, store.expertCategories) : '-' }}</td>
+          <!-- <td class="usage">{{ expert.stats?.timesUsed || '-' }}</td> -->
           <td class="move">
             <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
             <button @click.prevent="onMoveUp(expert)" @dblclick.stop>▲</button>
@@ -47,14 +64,17 @@ import { computed, ref } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import Dialog from '../composables/dialog'
 import useReorderTable from '../composables/reorder_table'
+import { getCategoryLabel } from '../services/categories'
 import { newExpert, saveExperts } from '../services/experts'
 import { expertI18n, t } from '../services/i18n'
 import { store } from '../services/store'
-import { Expert } from '../types/index'
+import { Expert, ExpertCategory } from '../types/index'
 
-const experts= ref<Expert[]>(null)
-const selected= ref<Expert>(null)
-const moreButton= ref<HTMLElement>(null)
+const experts = ref<Expert[]>(null)
+const selected = ref<Expert>(null)
+const moreButton = ref<HTMLElement>(null)
+const searchQuery = ref('')
+const categoryFilter = ref<string>('')
 
 const reorderExperts = useReorderTable((ids: string[]) => {
   experts.value.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
@@ -63,15 +83,55 @@ const reorderExperts = useReorderTable((ids: string[]) => {
 
 const emit = defineEmits([ 'create', 'edit' ])
 
-const visibleExperts = computed(() => experts.value?.filter((expert: Expert) => expert.state != 'deleted'))
+const availableCategories = computed(() => {
+  const catIds = new Set<string>()
+  experts.value?.forEach(e => {
+    if (e.categoryId) {
+      catIds.add(e.categoryId)
+    }
+  })
+  return store.expertCategories.filter(c => catIds.has(c.id) && c.state === 'enabled').map((c: ExpertCategory) => ({
+    id: c.id,
+    name: getCategoryLabel(c.id, store.expertCategories)
+  })).sort((a, b) => a.name.localeCompare(b.name))
+})
+
+const filteredExperts = computed(() => {
+  let result = experts.value?.filter((expert: Expert) => expert.state != 'deleted') || []
+
+  // Apply search filter
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter(expert => {
+      const expertName = (expert.name || expertI18n(expert, 'name')).toLowerCase()
+      // const description = (expert.description || expertI18n(expert, 'description') || '').toLowerCase()
+      // const prompt = (expert.prompt || expertI18n(expert, 'prompt') || '').toLowerCase()
+      // const categoryLabel = expert.categoryId ? getCategoryLabel(expert.categoryId, store.expertCategories).toLowerCase() : ''
+      return expertName.includes(query)/* ||
+             description.includes(query) ||
+             prompt.includes(query) ||
+             categoryLabel.includes(query)*/
+    })
+  }
+
+  // Apply category filter
+  if (categoryFilter.value) {
+    result = result.filter(e => e.categoryId === categoryFilter.value)
+  }
+
+  return result
+})
 
 const name = (expert: Expert) => {
   return expert.name || expertI18n(expert, 'name')
 }
 
 const columns = [
+  // { field: 'pin', title: '' },
   { field: 'enabled', title: '' },
   { field: 'name', title: t('common.name') },
+  { field: 'category', title: t('common.category') },
+  // { field: 'usage', title: t('settings.experts.usage') },
   { field: 'move', title: t('common.move'), },
 ]
 
@@ -89,17 +149,20 @@ const onMoveUp = (expert: Expert) => {
 
 const handleActionClick = async (action: string) => {
 
+  // Get visible expert IDs (respects search and category filter)
+  const visibleIds = new Set(filteredExperts.value.map(e => e.id))
+
   // process
   if (action === 'select') {
     experts.value.forEach((expert: Expert) => {
-      if (expert.state === 'disabled') {
+      if (visibleIds.has(expert.id) && expert.state === 'disabled') {
         expert.state = 'enabled'
       }
     })
     save()
   } else if (action === 'unselect') {
     experts.value.forEach((expert: Expert) => {
-      if (expert.state === 'enabled') {
+      if (visibleIds.has(expert.id) && expert.state === 'enabled') {
         expert.state = 'disabled'
       }
     })
@@ -109,7 +172,7 @@ const handleActionClick = async (action: string) => {
   } else if (action === 'export') {
     onExport()
   } else if (action === 'deleteAll') {
-    deleteAll()
+    deleteAll(visibleIds)
   } else if (action === 'sortAlpha') {
     experts.value.sort((a, b) => {
       const aName = a.name || expertI18n(a, 'name')
@@ -127,6 +190,13 @@ const handleActionClick = async (action: string) => {
         // disabled < enabled
         return b.state.localeCompare(a.state)
       }
+    })
+    save()
+  } else if (action === 'sortUsage') {
+    experts.value.sort((a, b) => {
+      const aUsage = a.stats?.timesUsed || 0
+      const bUsage = b.stats?.timesUsed || 0
+      return bUsage - aUsage  // Descending
     })
     save()
   }
@@ -165,6 +235,8 @@ const onCopy = (expert: Expert) => {
   copy.id = uuidv4()
   copy.name = (expert.name || expertI18n(expert, 'name')) + ' (' + t('settings.experts.copy') + ')'
   copy.prompt = expert.prompt || expertI18n(expert, 'prompt')
+  copy.description = expert.description || expertI18n(expert, 'description')
+  copy.categoryId = expert.categoryId
   copy.triggerApps = expert.triggerApps
 
   const index = experts.value.indexOf(expert)
@@ -200,7 +272,7 @@ const onDelete = () => {
   })
 }
 
-const deleteAll = () => {
+const deleteAll = (visibleIds: Set<string>) => {
   Dialog.show({
     target: document.querySelector('.settings .experts'),
     title: t('settings.experts.confirmDeleteAll'),
@@ -209,12 +281,16 @@ const deleteAll = () => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
+      // Mark visible system experts as deleted
       experts.value.forEach((expert: Expert) => {
-        if (expert.type == 'system') {
+        if (visibleIds.has(expert.id) && expert.type == 'system') {
           expert.state = 'deleted'
         }
       })
-      experts.value = experts.value.filter((expert: Expert) => expert.type === 'system')
+      // Remove visible user experts
+      experts.value = experts.value.filter((expert: Expert) =>
+        expert.type === 'system' || !visibleIds.has(expert.id)
+      )
       selected.value = null
       save()
     }
@@ -232,7 +308,7 @@ const load = () => {
 
 const save = () => {
   store.experts = experts.value
-  saveExperts()
+  saveExperts(store.config.workspaceId)
 }
 
 defineExpose({ load })
@@ -242,8 +318,49 @@ defineExpose({ load })
 
 <style scoped>
 
+.list-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  overflow: visible;
+}
+
+.search-input {
+  flex: 1;
+}
+
+.category-filter {
+  min-width: 150px;
+}
+
 .experts {
   border: 0.5px solid var(--border-color);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  font-weight: 600;
+  background: var(--background-secondary);
+}
+
+.section-header .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary);
+}
+
+.pin button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.category, .usage {
+  text-align: center;
 }
 
 </style>

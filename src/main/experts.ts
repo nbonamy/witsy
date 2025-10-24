@@ -1,10 +1,10 @@
 
-import { Expert } from 'types/index'
+import { Expert, ExpertCategory, ExpertData } from 'types/index'
 import { app, App } from 'electron'
 import { createI18n } from './i18n.base'
 import { getLocaleMessages } from './i18n'
 import { workspaceFolderPath } from './workspace'
-import defaultExperts from '../../defaults/experts.json'
+import defaultExpertsData from '../../defaults/experts.json'
 import Monitor from './monitor'
 import * as window from './window'
 import * as file from './file'
@@ -21,14 +21,44 @@ export const expertsFilePath = (app: App, workspaceId: string): string => {
 }
 
 export const loadExperts = (source: App|string, workspaceId: string): Expert[] => {
+  const expertData = loadExpertData(source, workspaceId)
+  return expertData.experts
+}
+
+export const saveExperts = (dest: App|string, workspaceId: string, content: Expert[]): void => {
+  try {
+    const expertData = loadExpertData(dest, workspaceId)
+    expertData.experts = content
+    saveExpertData(dest, workspaceId, expertData)
+  } catch (error) {
+    console.log('Error saving experts data', error)
+  }
+}
+
+export const loadCategories = (source: App|string, workspaceId: string): ExpertCategory[] => {
+  const expertData = loadExpertData(source, workspaceId)
+  return expertData.categories
+}
+
+export const saveCategories = (dest: App|string, workspaceId: string, content: ExpertCategory[]): void => {
+  try {
+    const expertData = loadExpertData(dest, workspaceId)
+    expertData.categories = content
+    saveExpertData(dest, workspaceId, expertData)
+  } catch (error) {
+    console.log('Error saving categories', error)
+  }
+}
+
+const loadExpertData = (source: App|string, workspaceId: string): ExpertData => {
 
   // init
-  let experts: Expert[] = []
+  let jsonData: any
   const expertsFile = typeof source === 'string' ? source : expertsFilePath(source, workspaceId)
 
   // read
   try {
-    experts = JSON.parse(fs.readFileSync(expertsFile, 'utf-8'))
+    jsonData = JSON.parse(fs.readFileSync(expertsFile, 'utf-8'))
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving experts', error)
@@ -38,9 +68,29 @@ export const loadExperts = (source: App|string, workspaceId: string): Expert[] =
   // migrations can update
   let updated = false
 
+  // migrate old experts format
+  const defaultExperts = Array.isArray(defaultExpertsData) ? defaultExpertsData : (defaultExpertsData as any).experts
+  const expertData: ExpertData = {
+    categories: defaultExpertsData.categories as ExpertCategory[],
+    experts: defaultExperts as Expert[],
+  }
+  
+  if (Array.isArray(jsonData)) {
+    expertData.experts = jsonData as Expert[]
+    updated = true
+  } else if (jsonData?.categories && jsonData?.experts) {
+    expertData.categories = jsonData.categories as ExpertCategory[]
+    expertData.experts = jsonData.experts as Expert[]
+  } else {
+    return expertData
+  }
+
   // i18n migrate label and template
   const t = createI18n(getLocaleMessages(app), 'en', { missingWarn: false }).global.t as CallableFunction
-  for (const expert of experts) {
+  for (const expert of expertData.experts) {
+
+    const defaultExpert = defaultExperts.find((de: Expert) => de.id === expert.id)
+
     const key = `experts.experts.${expert.id}`
     if (expert.name === t(`${key}.name`)) {
       delete expert.name
@@ -50,13 +100,36 @@ export const loadExperts = (source: App|string, workspaceId: string): Expert[] =
       delete expert.prompt
       updated = true
     }
+
+    // Initialize stats if missing
+    if (!expert.stats) {
+      expert.stats = { timesUsed: 0 }
+      updated = true
+    }
+
+    // assign categoryId from defaults for system experts if missing
+    if (expert.type === 'system' && !expert.categoryId) {
+      if (defaultExpert?.categoryId) {
+        expert.categoryId = defaultExpert.categoryId
+        updated = true
+      }
+    }
+
+    // add empty description
+    if (expert.type === 'system' && !expert.description) {
+      if (defaultExpert?.description) {
+        expert.description = defaultExpert.description
+        updated = true
+      }
+    }
+
   }
   
   // now add new experts
   for (const prompt of defaultExperts) {
-    const p = experts.find((prt: Expert) => prt.id === prompt.id)
+    const p = expertData.experts.find((prt: Expert) => prt.id === prompt.id)
     if (p == null) {
-      experts.push(prompt as Expert)
+      expertData.experts.push(prompt as Expert)
       updated = true
     }
   }
@@ -66,16 +139,16 @@ export const loadExperts = (source: App|string, workspaceId: string): Expert[] =
     '6e197c43-1074-479b-89d5-3ab8d54ad36b' // doctor
   ]
   for (const id of deprecated) {
-    const index = experts.findIndex((expert: Expert) => expert.id === id)
+    const index = expertData.experts.findIndex((expert: Expert) => expert.id === id)
     if (index !== -1) {
-      experts.splice(index, 1)
+      expertData.experts.splice(index, 1)
       updated = true
     }
   }
 
   // save if needed
   if (updated) {
-    saveExperts(source, workspaceId, experts)
+    saveExpertData(source, workspaceId, expertData)
   }
 
   // start monitoring
@@ -84,11 +157,11 @@ export const loadExperts = (source: App|string, workspaceId: string): Expert[] =
   }
 
   // done
-  return experts
+  return expertData
 
 }
 
-export const saveExperts = (dest: App|string, workspaceId: string, content: Expert[]): void => {
+export const saveExpertData = (dest: App|string, workspaceId: string, content: ExpertData): void => {
   try {
     const expertsFile = typeof dest === 'string' ? dest : expertsFilePath(dest, workspaceId)
     fs.writeFileSync(expertsFile, JSON.stringify(content, null, 2))

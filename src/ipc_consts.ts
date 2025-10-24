@@ -86,6 +86,8 @@ export const COMMANDS = {
 export const EXPERTS = {
   LOAD: 'experts-load',
   SAVE: 'experts-save',
+  LOAD_CATEGORIES: 'experts-load-categories',
+  SAVE_CATEGORIES: 'experts-save-categories',
   EXPORT: 'experts-export',
   IMPORT: 'experts-import',
 } as const;

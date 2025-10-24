@@ -1,8 +1,9 @@
 # Experts Enhancement - Implementation Plan
 
-## Status: 🟡 NOT STARTED
+## Status: ✅ COMPLETED
 
-**Last Updated:** 2025-01-19
+**Last Updated:** 2025-10-24
+**Commit:** 332b0b47
 
 ---
 
@@ -18,10 +19,15 @@ Enhance Witsy's Experts feature with categories, search, descriptions, and usage
 5. Add pinning/favorites functionality
 6. Maintain backward compatibility with existing experts
 
-### Non-Goals
-- Community marketplace (future enhancement)
+### Implementation Note
+**Architecture Decision:** Implemented UUID-based categories instead of enum-based to support future community marketplace where users can create custom categories. This required restructuring defaults/experts.json but provides better extensibility.
+
+### Non-Goals (Deferred)
+- Community marketplace UI (foundation complete, UI future)
+- Category management UI (create/edit/delete categories)
 - Expert versioning (future enhancement)
 - Variable/placeholder system (separate feature)
+- Category submenus in PromptMenu (foundation ready, deferred for simplicity)
 
 ### Pre-Work Completed
 ✅ **Complete categorization mapping created** at `plans/experts-category-mapping.json`
@@ -1127,22 +1133,38 @@ git push --force-with-lease
 
 ## Key Learnings
 
-**To be filled after plan execution:**
-
 ### What Worked Well
-- TBD
+- **UUID-based categories**: Future-proofed for marketplace
+- **Incremental commits**: Easy to review and debug
+- **Test-driven approach**: All 2150 tests passing throughout
+- **Backward compatibility**: Smooth migration with no breaking changes
+- **Pre-made mapping**: Having expert categorization pre-analyzed saved significant time
+- **Dynamic import pattern**: Solved circular dependency elegantly
 
 ### What Could Be Improved
-- TBD
+- **Enum to UUID refactor**: Mid-implementation architecture change required rework (WIP commit)
+- **Test async handling**: Many tests needed updating for async loadExperts
+- **Token usage**: Large refactor consumed significant context (213k tokens)
 
 ### Design Patterns Used
-- TBD
+- **Dynamic imports**: Avoided circular dependency between store and experts service
+- **Optional fields**: All new fields optional for backward compatibility
+- **Migration pattern**: Automatic data migration on load
+- **Separation of concerns**: Categories as separate entities from experts
+- **i18n first**: All labels and descriptions localized from start
 
 ### Surprises/Unexpected Challenges
-- TBD
+- **Vitest mocking**: Require() not allowed, needed dynamic import
+- **Two-table layout**: Pinned section affected test selectors (nth-of-type)
+- **Circular dependencies**: Store importing experts caused test failures
+- **defaults/experts.json structure**: Changed from array to object mid-implementation
 
 ### Recommendations for Future Features
-- TBD
+- **Category Management UI**: Add create/edit/delete categories (foundation ready)
+- **Category submenus in PromptMenu**: Use ContextMenuPlus submenu feature
+- **Bulk operations**: Assign category to multiple experts at once
+- **Category-based defaults**: Default engine/model per category
+- **Usage analytics**: Charts/graphs of expert usage over time
 
 ---
 
