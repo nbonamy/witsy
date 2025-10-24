@@ -95,51 +95,35 @@
     <slot name="after" />
 
     <ContextMenuPlus v-if="showExperts" @close="closeContextMenu" :show-filter="true" anchor=".prompt .textarea-wrapper" :position="menusPosition">
+
       <!-- Categories with experts -->
       <div v-for="cat in categoriesWithExperts" :key="cat.id" class="item" :data-submenu-slot="`category-${cat.id}`">
-        <component :is="cat.icon" class="icon" :class="cat.color" />
+        <FolderIcon class="icon" />
         <span>{{ cat.name }}</span>
-        <span class="count">({{ expertsByCategory[cat.id].length }})</span>
       </div>
 
       <!-- Uncategorized experts -->
-      <div v-if="uncategorizedExperts.length" class="item" :data-submenu-slot="'category-uncategorized'">
-        <component :is="'MoreHorizontal'" class="icon text-gray-500" />
-        <span>{{ t('settings.experts.uncategorized') }}</span>
-        <span class="count">({{ uncategorizedExperts.length }})</span>
-      </div>
+      <template v-if="uncategorizedExperts.length">
+        <div v-for="exp in uncategorizedExperts" :key="exp.id" @click="handleExpertClick(exp.id)">
+          <BrainIcon class="icon" />
+          <span>{{ exp.name }}</span>
+        </div>
+      </template>
 
       <!-- Category submenus -->
-      <template v-for="cat in categoriesWithExperts" :key="`submenu-${cat.id}`" #[`category-${cat.id}`]="{ goBack }">
-        <div class="item back" @click="goBack">
-          <MoveLeftIcon class="icon" />
-          <span>{{ t('common.back') }}</span>
-        </div>
-        <div class="separator" />
+      <template v-for="cat in categoriesWithExperts" :key="`submenu-${cat.id}`" #[`category-${cat.id}`]>
         <div v-for="exp in expertsByCategory[cat.id]" :key="exp.id" class="item" @click="handleExpertClick(exp.id)">
           <BrainIcon class="icon" />
           {{ exp.name }}
         </div>
       </template>
 
-      <!-- Uncategorized submenu -->
-      <template v-if="uncategorizedExperts.length" #category-uncategorized="{ goBack }">
-        <div class="item back" @click="goBack">
-          <MoveLeftIcon class="icon" />
-          <span>{{ t('common.back') }}</span>
-        </div>
-        <div class="separator" />
-        <div v-for="exp in uncategorizedExperts" :key="exp.id" class="item" @click="handleExpertClick(exp.id)">
-          <BrainIcon class="icon" />
-          {{ exp.name }}
-        </div>
-      </template>
-
-      <div class="separator" />
+      <!-- <div class="separator" />
       <div class="item" @click="handleExpertClick('none')">
         <XIcon class="icon" />
         {{ t('prompt.menu.experts.none') }}
-      </div>
+      </div> -->
+
     </ContextMenuPlus>
 
     <ContextMenuPlus v-if="showCommands" @close="closeContextMenu" :show-filter="true" :anchor="commandsAnchor" :position="menusPosition">
@@ -200,7 +184,7 @@
 
 <script setup lang="ts">
 
-import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, MoreHorizontal, MoveLeftIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
+import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, FolderIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, MoveLeftIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
 import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
 import { computed, nextTick, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
 import Waveform from '../components/Waveform.vue'
@@ -215,6 +199,7 @@ import LlmFactory, { favoriteMockEngine, ILlmManager } from '../llms/llm'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
 import Message from '../models/message'
+import { getCategoryLabel } from '../services/categories'
 import { commandI18n, expertI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Command, CustomInstruction, Expert, MessageExecutionType } from '../types/index'
@@ -396,8 +381,7 @@ const categoriesWithExperts = computed(() => {
     .map(c => ({
       id: c.id,
       icon: c.icon,
-      color: c.color,
-      name: t(`experts.categories.${c.id}.name`) || 'Category'
+      name: getCategoryLabel(c.id, store.expertCategories)
     }))
 
   // Sort alphabetically by name
@@ -813,7 +797,6 @@ const openExperts = () => {
 const onClickExperts = () => {
   openExperts()
 }
-
 
 const onClickActiveCommand = () => {
   disableCommand()

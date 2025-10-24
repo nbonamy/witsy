@@ -46,7 +46,6 @@
       <!-- Categories with experts -->
       <div v-for="cat in categoriesWithExperts" :key="cat.id" :data-submenu-slot="`expertCategory-${cat.id}`">
         <FolderIcon class="icon" />
-        <!-- <component :is="cat.icon" class="icon" :class="cat.color" /> -->
         <span>{{ cat.name }}</span>
       </div>
 
@@ -160,10 +159,11 @@
 </template>
 
 <script setup lang="ts">
-import { BrainIcon, FeatherIcon, FolderIcon, HammerIcon, LightbulbIcon, MoreHorizontal, PaperclipIcon, PlusIcon, SettingsIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
+import { BrainIcon, FeatherIcon, FolderIcon, HammerIcon, LightbulbIcon, PaperclipIcon, SettingsIcon, TelescopeIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import * as ts from '../composables/tool_selection'
 import { enabledPlugins } from '../plugins/plugins'
+import { getCategoryLabel } from '../services/categories'
 import { expertI18n, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Expert } from '../types/index'
@@ -257,8 +257,7 @@ const categoriesWithExperts = computed(() => {
     .map(c => ({
       id: c.id,
       icon: c.icon,
-      color: c.color,
-      name: t(`experts.categories.${c.id}.name`) || 'Category'
+      name: getCategoryLabel(c.id, store.expertCategories)
     }))
 
   // Sort alphabetically by name

@@ -1,35 +1,11 @@
 
-import { Expert, ExpertCategory } from 'types/index'
-import { t } from './i18n'
-import { store } from './store'
 import defaultExpertsData from '../../defaults/experts.json'
+import { Expert } from '../types/index'
+import { store } from './store'
 
 // Handle both old and new format
 const defaultExperts = Array.isArray(defaultExpertsData) ? defaultExpertsData : (defaultExpertsData as any).experts
 const defaultCategories = (defaultExpertsData as any).categories || []
-
-export const getCategoryById = (categoryId?: string, categories?: ExpertCategory[]): ExpertCategory | undefined => {
-  if (!categoryId || !categories) return undefined
-  return categories.find(c => c.id === categoryId)
-}
-
-export const getCategoryLabel = (categoryId?: string, categories?: ExpertCategory[]): string => {
-  if (!categoryId || !categories) return 'Uncategorized'
-  const category = getCategoryById(categoryId, categories)
-  if (!category) return 'Uncategorized'
-
-  // Try to get i18n label
-  try {
-    const label = t(`experts.categories.${category.id}.name`)
-    if (label && !label.startsWith('experts.categories')) {
-      return label
-    }
-  } catch {
-    // Fallback to default
-  }
-
-  return 'Uncategorized'
-}
 
 export const newExpert = (): Expert => {
   return {

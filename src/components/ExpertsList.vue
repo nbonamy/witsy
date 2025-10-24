@@ -1,5 +1,5 @@
 <template>
-  <div class="list-filters">
+  <div class="list-filters form form-large">
     <input
       v-model="searchQuery"
       type="search"
@@ -58,13 +58,14 @@
 
 <script setup lang="ts">
 
-import { CopyIcon, PencilIcon, PlusIcon, StarIcon, Trash2Icon } from 'lucide-vue-next'
+import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, ref } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import Dialog from '../composables/dialog'
 import useReorderTable from '../composables/reorder_table'
-import { getCategoryLabel, newExpert, saveExperts } from '../services/experts'
+import { getCategoryLabel } from '../services/categories'
+import { newExpert, saveExperts } from '../services/experts'
 import { expertI18n, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Expert } from '../types/index'
@@ -98,13 +99,13 @@ const filteredExperts = computed(() => {
     const query = searchQuery.value.toLowerCase()
     result = result.filter(expert => {
       const expertName = (expert.name || expertI18n(expert, 'name')).toLowerCase()
-      const description = (expert.description || expertI18n(expert, 'description') || '').toLowerCase()
-      const prompt = (expert.prompt || expertI18n(expert, 'prompt') || '').toLowerCase()
-      const categoryLabel = expert.categoryId ? getCategoryLabel(expert.categoryId, store.expertCategories).toLowerCase() : ''
-      return expertName.includes(query) ||
+      // const description = (expert.description || expertI18n(expert, 'description') || '').toLowerCase()
+      // const prompt = (expert.prompt || expertI18n(expert, 'prompt') || '').toLowerCase()
+      // const categoryLabel = expert.categoryId ? getCategoryLabel(expert.categoryId, store.expertCategories).toLowerCase() : ''
+      return expertName.includes(query)/* ||
              description.includes(query) ||
              prompt.includes(query) ||
-             categoryLabel.includes(query)
+             categoryLabel.includes(query)*/
     })
   }
 
@@ -316,24 +317,15 @@ defineExpose({ load })
   display: flex;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
+  overflow: visible;
 }
 
 .search-input {
   flex: 1;
-  padding: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background: var(--background-color);
-  color: var(--text-color);
 }
 
 .category-filter {
   min-width: 150px;
-  padding: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background: var(--background-color);
-  color: var(--text-color);
 }
 
 .experts {

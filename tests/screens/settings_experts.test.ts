@@ -67,7 +67,7 @@ test('Renders', async () => {
   const tab = await switchToTab(wrapper, expertsIndex)
   expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
   expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(165)
-  expect(tab.findAll('.sticky-table-container tr.expert button')).toHaveLength(495) // 3 buttons per expert: pin, up, down
+  expect(tab.findAll('.sticky-table-container tr.expert button')).toHaveLength(330) // 2 buttons per expert: up, down (pin removed)
 
 })
 
@@ -89,15 +89,15 @@ test('Move items', async () => {
   const first = allExperts.at(0).attributes('data-id')
   const second = allExperts.at(1).attributes('data-id')
 
-  // Click up button on second item (button index 2: 0=pin, 1=down, 2=up)
-  await allExperts.at(1).findAll('button').at(2).trigger('click')
+  // Click up button on second item (button index 1: 0=down, 1=up - pin removed)
+  await allExperts.at(1).findAll('button').at(1).trigger('click')
 
   const afterMoveUp = tab.findAll('.sticky-table-container tr.expert')
   expect(afterMoveUp.at(0).attributes('data-id')).toBe(second)
   expect(afterMoveUp.at(1).attributes('data-id')).toBe(first)
 
-  // Click down button on first item (button index 1: 0=pin, 1=down, 2=up)
-  await afterMoveUp.at(0).findAll('button').at(1).trigger('click')
+  // Click down button on first item (button index 0: 0=down, 1=up)
+  await afterMoveUp.at(0).findAll('button').at(0).trigger('click')
 
   const afterMoveDown = tab.findAll('.sticky-table-container tr.expert')
   expect(afterMoveDown.at(0).attributes('data-id')).toBe(first)
