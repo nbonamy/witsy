@@ -1,7 +1,7 @@
 
 import { vi } from 'vitest'
 import { renderMarkdown } from '../../src/main/markdown'
-import { Command, Expert } from '../../src/types/index'
+import { Command, Expert, ExpertCategory } from '../../src/types/index'
 import { AgentRun, AgentRunStatus, AgentRunTrigger } from '../../src/types/agents'
 import { McpInstallStatus } from '../../src/types/mcp'
 import { ListDirectoryResponse } from '../../src/types/filesystem'
@@ -185,11 +185,16 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     experts: {
       load: vi.fn(() => [
         { id: 'uuid1', type: 'system', state: 'enabled' },
-        { id: 'uuid2', type: 'system', name: 'actor2', prompt: 'prompt2', state: 'disabled' },
-        { id: 'uuid3', type: 'user', name: 'actor3', prompt: 'prompt3', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
-        { id: 'uuid4', type: 'user', name: 'actor4', prompt: 'prompt4', state: 'enabled', engine: 'anthropic', model: 'claude-3-sonnet', triggerApps: [] }
+        { id: 'uuid2', type: 'system', categoryId: 'cat-1', name: 'actor2', prompt: 'prompt2', state: 'disabled' },
+        { id: 'uuid3', type: 'user', categoryId: 'cat-1', name: 'actor3', prompt: 'prompt3', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
+        { id: 'uuid4', type: 'user', categoryId: 'cat-2', name: 'actor4', prompt: 'prompt4', state: 'enabled', engine: 'anthropic', model: 'claude-3-sonnet', triggerApps: [] }
       ] as Expert[]),
       save: vi.fn(),
+      loadCategories: vi.fn(() => [
+        { id: 'cat-1', type: 'system', state: 'enabled', icon: 'Code2', color: 'text-green-500' },
+        { id: 'cat-2', type: 'system', state: 'enabled', icon: 'Briefcase', color: 'text-purple-500' }
+      ] as ExpertCategory[]),
+      saveCategories: vi.fn(),
       import: vi.fn(),
       export: vi.fn(),
     },

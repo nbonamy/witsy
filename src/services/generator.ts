@@ -240,7 +240,7 @@ export default class Generator {
         return 'out_of_credits'
 
       // quota exceeded
-      } else if ([429].includes(status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many'))) {
+      } else if ([413, 429].includes(status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many') || message.includes('tokens per minute'))) {
         console.error('Quota exceeded:', status, message)
         response.setText(t('generator.errors.quotaExceeded'))
         return 'quota_exceeded'

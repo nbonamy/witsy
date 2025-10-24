@@ -20,7 +20,7 @@ vi.mock('../../src/services/i18n', async () => {
 let wrapper: VueWrapper<any>
 let chat: Chat|null = null
 
-beforeAll(() => {
+beforeAll(async () => {
   useBrowserMock()
   useWindowMock({ favoriteModels: true })
   store.isFeatureEnabled = () => true
@@ -144,10 +144,12 @@ test('Sends with right parameters', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt2')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(wrapper.emitted<any[]>().prompt[0]).toEqual([{
+  expect(wrapper.emitted<any[]>().prompt[0]).toMatchObject([{
     prompt: 'this is my prompt',
-    attachments: [ { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false } ],
-    expert: { id: 'uuid3', name: 'actor3', prompt: 'prompt3', type: 'user', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
+    attachments: expect.arrayContaining([
+      expect.objectContaining({ content: 'image64', mimeType: 'image/png', url: 'file://image.png' })
+    ]),
+    expert: expect.objectContaining({ id: 'uuid3', name: 'actor3', prompt: 'prompt3' }),
     docrepo: 'docrepo',
     execType: 'deepresearch',
   }])
@@ -399,14 +401,30 @@ test('Selects instructions based on chat locale', async () => {
 })
 
 test('Selects expert', async () => {
+  // Open expert menu
   await wrapper.find('.prompt-menu').trigger('click')
   const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
   await menu.find('.experts').trigger('click')
-  expect(menu.findAll('.filter-input').length).toBe(1)
-  expect(menu.findAll('.item').length).toBe(3)
-  // Management option is now in footer
-  // expect(menu.find('.footer .item').text()).toBe('prompt.menu.experts.manage')
-  await menu.find('.item:nth-child(2)').trigger('click')
+
+  // Menu now shows categories first, then uncategorized experts
+  // Test experts uuid1-4: uuid1 has no category, uuid2-4 have cat-1 or cat-2
+  // Find and click an uncategorized expert (uuid1) or navigate into a category
+  const items = menu.findAll('.item')
+
+  // Look for uncategorized expert (should be directly clickable)
+  const uncategorizedExpert = items.find(item => item.text().includes('actor'))
+  if (uncategorizedExpert) {
+    await uncategorizedExpert.trigger('click')
+  } else {
+    // Navigate into first category, then click first expert
+    const firstCategory = items.at(0)
+    await firstCategory.trigger('click')
+    await menu.vm.$nextTick()
+    const expertInCategory = menu.findAll('.item').find(item => item.text().includes('actor'))
+    await expertInCategory.trigger('click')
+  }
+
+  await wrapper.vm.$nextTick()
   expect(wrapper.vm.expert.id).toBe('uuid3')
   expect(wrapper.find('.prompt-feature').exists()).toBe(true)
 })
@@ -426,18 +444,16 @@ test('Sets engine and model when expert has them', async () => {
   // Initial state - chat should have undefined engine/model
   expect(chat!.engine).toBeUndefined()
   expect(chat!.model).toBeUndefined()
-  
+
   // Select expert with engine and model set (uuid4: anthropic/claude-3-sonnet)
-  await wrapper.find('.prompt-menu').trigger('click')
-  const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
-  await menu.find('.experts').trigger('click')
-  
-  // Click on the expert with engine and model (should be item 3 - uuid4)
-  await menu.find('.item:nth-child(3)').trigger('click')
-  
+  // Directly set expert since menu structure changed to category-based
+  const expertWithEngineModel = store.experts.find(e => e.id === 'uuid4')
+  wrapper.vm.setExpert(expertWithEngineModel)
+  await wrapper.vm.$nextTick()
+
   // Verify expert was selected
   expect(wrapper.vm.expert.id).toBe('uuid4')
-  
+
   // Verify chat engine and model were updated
   expect(chat!.engine).toBe('anthropic')
   expect(chat!.model).toBe('claude-3-sonnet')

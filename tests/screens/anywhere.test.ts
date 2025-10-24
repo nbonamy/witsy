@@ -36,7 +36,7 @@ vi.mock('../../src/llms/manager.ts', async () => {
 
 enableAutoUnmount(afterEach)
 
-beforeAll(() => {
+beforeAll(async () => {
   useWindowMock({ modelDefaults: true, noAdditionalInstructions: true })
   useBrowserMock()
   store.loadSettings()
