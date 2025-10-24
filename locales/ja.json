@@ -451,9 +451,6 @@
       "greeting": "こんにちは、どのようにお手伝いできますか？",
       "mcpServers": "@:{'common.appName'} があなたの環境と連携できるように、MCPサーバーを接続しましょう！"
     },
-    "error": {
-      "title": "LLMプロバイダーから返されたエラー"
-    },
     "export": {
       "error": "チャットのエクスポート中にエラーが発生しました。"
     },
@@ -1848,8 +1845,8 @@
       "outOfCredits": "申し訳ありませんが、クレジットが不足しているようです。LLMプロバイダーアカウントの残高を確認してください。",
       "pluginDescriptionTooLong": "申し訳ありませんが、プラグインの説明の1つが長すぎるようです。設定 | 詳細設定で調整した場合は、もう一度お試しください。",
       "quotaExceeded": "申し訳ありませんが、LLMプロバイダーアカウントのレート制限に達したようです。後でもう一度お試しください。",
-      "tryWithoutParams": "申し訳ありませんが、そのプロンプトでテキストを生成できませんでした。[モデルパラメータなしで再試行しますか](#retry_without_params)? <error>{error}</error>",
-      "tryWithoutPlugins": "申し訳ありませんが、そのプロンプトでテキストを生成できませんでした。[プラグインなしで再試行しますか](#retry_without_plugins)? <error>{error}</error>"
+      "tryWithoutParams": "申し訳ありませんが、そのプロンプトに対してテキストを生成できませんでした。[モデルパラメータなしで再試行](#retry_without_params)しますか？",
+      "tryWithoutPlugins": "申し訳ありませんが、そのプロンプトに対してテキストを生成できませんでした。[プラグインなしで再試行](#retry_without_plugins)しますか？"
     }
   },
   "import": {

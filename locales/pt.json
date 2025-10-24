@@ -451,9 +451,6 @@
       "greeting": "Olá, como posso ajudar você?",
       "mcpServers": "Conecte servidores MCP para permitir que @:{'common.appName'} interaja com seu ambiente!"
     },
-    "error": {
-      "title": "Erro conforme retornado pelo provedor LLM"
-    },
     "export": {
       "error": "Ocorreu um erro ao tentar exportar o chat."
     },
@@ -1848,8 +1845,8 @@
       "outOfCredits": "Desculpe, parece que você ficou sem créditos. Verifique o saldo da sua conta de provedor de LLM.",
       "pluginDescriptionTooLong": "Desculpe, parece que uma das descrições dos plugins é muito longa. Se você as ajustou em Configurações | Avançado, tente novamente.",
       "quotaExceeded": "Desculpe, parece que você atingiu o limite de taxa da sua conta de provedor de LLM. Tente novamente mais tarde.",
-      "tryWithoutParams": "Desculpe, não consegui gerar texto para esse prompt. Deseja [tentar novamente sem os parâmetros do modelo](#retry_without_params)? <error>{error}</error>",
-      "tryWithoutPlugins": "Desculpe, não consegui gerar texto para esse prompt. Deseja [tentar novamente sem os plugins](#retry_without_plugins)? <error>{error}</error>"
+      "tryWithoutParams": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem parâmetros de modelo](#retry_without_params)?",
+      "tryWithoutPlugins": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem plugins](#retry_without_plugins)?"
     }
   },
   "import": {

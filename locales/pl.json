@@ -451,9 +451,6 @@
       "greeting": "Cześć, jak mogę Ci pomóc?",
       "mcpServers": "Połącz serwery MCP, aby umożliwić @:{'common.appName'} interakcję z Twoim środowiskiem!"
     },
-    "error": {
-      "title": "Błąd zwrócony przez dostawcę LLM"
-    },
     "export": {
       "error": "Wystąpił błąd podczas próby wyeksportowania czatu."
     },
@@ -1848,8 +1845,8 @@
       "outOfCredits": "Przepraszamy, wygląda na to, że skończyły Ci się kredyty. Sprawdź saldo swojego konta dostawcy LLM.",
       "pluginDescriptionTooLong": "Przepraszamy, wygląda na to, że opis jednej z wtyczek jest zbyt długi. Jeśli zmieniłeś je w Ustawieniach | Zaawansowane, spróbuj ponownie.",
       "quotaExceeded": "Przepraszamy, wygląda na to, że osiągnięto limit stawek na koncie dostawcy LLM. Spróbuj ponownie później.",
-      "tryWithoutParams": "Przepraszam, nie udało się wygenerować tekstu dla tego polecenia. Czy chcesz [spróbować ponownie bez parametrów modelu](#retry_without_params)? <error>{error}</error>",
-      "tryWithoutPlugins": "Przepraszam, nie udało się wygenerować tekstu dla tego polecenia. Czy chcesz [spróbować ponownie bez wtyczek](#retry_without_plugins)? <error>{error}</error>"
+      "tryWithoutParams": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz [spróbować ponownie bez parametrów modelu](#retry_without_params)?",
+      "tryWithoutPlugins": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz [spróbować ponownie bez wtyczek](#retry_without_plugins)?"
     }
   },
   "import": {
