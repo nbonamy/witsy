@@ -7,6 +7,7 @@ import TTSFalAi from '../../src/voice/tts-falai'
 import TTSElevenLabs from '../../src/voice/tts-elevenlabs'
 import TTSGroq from '../../src/voice/tts-groq'
 import TTSOpenAI from '../../src/voice/tts-openai'
+import TTSMiniMax from '../../src/voice/tts-minimax'
 
 // @ts-expect-error mocking
 global.fetch = vi.fn(async (url) => ({
@@ -133,4 +134,21 @@ test('Custom OpenAI', async () => {
   expect((tts as TTSOpenAI).client.baseURL).toBe('https://api.custom.com/v1')
   const response = await tts.synthetize('hello custom')
   expect(response).toStrictEqual({ type: 'audio', content: 'hello custom' })
+})
+
+test('MiniMax data', async () => {
+  expect(TTSMiniMax.models.length).toBe(4)
+  expect(TTSMiniMax.voices('speech-02-hd').length).toBeGreaterThan(0)
+  expect(TTSMiniMax.voices('speech-02-hd')[0].id).toBe('Wise_Woman')
+})
+
+test('MiniMax', async () => {
+  store.config.tts.engine = 'minimax'
+  store.config.engines.minimax = {
+    apiKey: 'test-key',
+    groupId: 'test-group'
+  }
+  const tts = getTTSEngine(store.config)
+  expect(tts).toBeDefined()
+  expect(tts).toBeInstanceOf(TTSMiniMax)
 })
