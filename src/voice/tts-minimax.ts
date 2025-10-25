@@ -49,7 +49,7 @@ export default class TTSMiniMax extends TTSEngine {
     return this.config.engines.minimax?.groupId
   }
 
-  private buildRequestPayload(text: string, opts?: { model?: string, voice?: string }) {
+  private buildRequestPayload(text: string, opts?: { model?: string, voice?: string, stream?: boolean }) {
     const model = opts?.model || this.config.tts.model || TTSMiniMax.models[0].id
     const voice = opts?.voice || this.config.tts.voice || TTSMiniMax.voices('')[0].id
 
@@ -63,7 +63,7 @@ export default class TTSMiniMax extends TTSEngine {
         emotion: 'neutral'
       },
       language_boost: 'English',
-      stream: false
+      stream: opts?.stream || false
     }
   }
 
@@ -75,7 +75,7 @@ export default class TTSMiniMax extends TTSEngine {
     return bytes.buffer as ArrayBuffer
   }
 
-  async synthetize(text: string, opts?: { model?: string, voice?: string }): Promise<SynthesisResponse> {
+  async synthetize(text: string, opts?: { model?: string, voice?: string, stream?: boolean }): Promise<SynthesisResponse> {
 
     const apiKey = this.getApiKey()
     if (!apiKey) {
@@ -87,7 +87,9 @@ export default class TTSMiniMax extends TTSEngine {
       throw new Error('MiniMax Group ID not configured')
     }
 
-    const payload = this.buildRequestPayload(text, opts)
+    // Use streaming by default (like ElevenLabs)
+    const useStreaming = opts?.stream !== false
+    const payload = this.buildRequestPayload(text, { ...opts, stream: useStreaming })
     const url = `https://api.minimaxi.chat/v1/t2a_v2?GroupId=${groupId}`
 
     const response = await fetch(url, {
@@ -104,6 +106,12 @@ export default class TTSMiniMax extends TTSEngine {
       throw new Error(`MiniMax API error: ${response.status} ${errorText}`)
     }
 
+    // Handle streaming response
+    if (useStreaming) {
+      return this.handleStreamingResponse(response)
+    }
+
+    // Handle non-streaming response
     const data = await response.json()
 
     if (!data.data?.audio) {
@@ -123,5 +131,64 @@ export default class TTSMiniMax extends TTSEngine {
       reader.onerror = reject
       reader.readAsDataURL(blob)
     })
+  }
+
+  private async handleStreamingResponse(response: Response): Promise<SynthesisResponse> {
+    const reader = response.body?.getReader()
+    if (!reader) {
+      throw new Error('No response body available for streaming')
+    }
+
+    const decoder = new TextDecoder()
+    let buffer = ''
+
+    const stream = new ReadableStream({
+      start: async (controller) => {
+        try {
+          while (true) {
+            const { done, value } = await reader.read()
+
+            if (done) {
+              controller.close()
+              break
+            }
+
+            buffer += decoder.decode(value, { stream: true })
+            const events = buffer.split('\n\n')
+            buffer = events.pop() || ''
+
+            for (const event of events) {
+              if (!event.trim() || !event.startsWith('data:')) continue
+
+              try {
+                const jsonStr = event.replace(/^data:\s*/, '')
+                const data = JSON.parse(jsonStr)
+
+                if (data.data?.audio) {
+                  const audioChunk = this.hexToBuffer(data.data.audio)
+                  controller.enqueue(new Uint8Array(audioChunk))
+
+                  // status: 1 = chunk, 2 = final
+                  if (data.data.status === 2) {
+                    controller.close()
+                    break
+                  }
+                }
+              } catch (e) {
+                console.error('Error parsing SSE event:', e)
+              }
+            }
+          }
+        } catch (error) {
+          controller.error(error)
+        }
+      }
+    })
+
+    return {
+      type: 'audio',
+      mimeType: 'audio/mp3',
+      content: stream
+    }
   }
 }
