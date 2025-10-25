@@ -99,7 +99,7 @@ test('TTSMiniMax synthetize makes correct API request', async () => {
   })
 
   const engine = new TTSMiniMax(config)
-  const result = await engine.synthetize('Hello world')
+  const result = await engine.synthetize('Hello world', { stream: false })
 
   expect(mockFetch).toHaveBeenCalledWith(
     'https://api.minimaxi.chat/v1/t2a_v2?GroupId=test-group-id',
@@ -160,5 +160,78 @@ test('TTSMiniMax synthetize handles missing audio data', async () => {
   })
 
   const engine = new TTSMiniMax(config)
-  await expect(engine.synthetize('test')).rejects.toThrow('No audio data in response')
+  await expect(engine.synthetize('test', { stream: false })).rejects.toThrow('No audio data in response')
+})
+
+test('TTSMiniMax synthetize streaming returns ReadableStream', async () => {
+  const config = {
+    ...defaults,
+    engines: {
+      minimax: {
+        apiKey: 'test-api-key',
+        groupId: 'test-group-id'
+      }
+    },
+    tts: {
+      engine: 'minimax',
+      model: 'speech-02-hd',
+      voice: 'Wise_Woman'
+    }
+  } as unknown as Configuration
+
+  const mockAudioChunk1 = '48656c6c6f' // "Hello" in hex
+  const mockAudioChunk2 = '576f726c64' // "World" in hex
+  const sseData1 = `data: ${JSON.stringify({ data: { audio: mockAudioChunk1, status: 1 } })}\n\n`
+  const sseData2 = `data: ${JSON.stringify({ data: { audio: mockAudioChunk2, status: 2 } })}\n\n`
+
+  const mockBody = new ReadableStream({
+    start(controller) {
+      controller.enqueue(new TextEncoder().encode(sseData1))
+      controller.enqueue(new TextEncoder().encode(sseData2))
+      controller.close()
+    }
+  })
+
+  mockFetch.mockResolvedValueOnce({
+    ok: true,
+    body: mockBody
+  })
+
+  const engine = new TTSMiniMax(config)
+  const result = await engine.synthetize('Hello world')
+
+  expect(result.type).toBe('audio')
+  expect(result.mimeType).toBe('audio/mp3')
+  expect(result.content).toBeInstanceOf(ReadableStream)
+})
+
+test('TTSMiniMax synthetize non-streaming returns base64', async () => {
+  const config = {
+    ...defaults,
+    engines: {
+      minimax: {
+        apiKey: 'test-api-key',
+        groupId: 'test-group-id'
+      }
+    }
+  } as unknown as Configuration
+
+  const mockAudioHex = '48656c6c6f'
+  mockFetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({
+      data: {
+        audio: mockAudioHex,
+        status: 2
+      }
+    })
+  })
+
+  const engine = new TTSMiniMax(config)
+  const result = await engine.synthetize('test', { stream: false })
+
+  expect(result.type).toBe('audio')
+  expect(result.mimeType).toBe('audio/mp3')
+  expect(typeof result.content).toBe('string')
+  expect(result.content).toMatch(/^data:audio\/mp3;base64,/)
 })
