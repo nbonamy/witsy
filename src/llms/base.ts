@@ -22,6 +22,7 @@ export const engineNames: Record<string, string> = {
   'huggingface': 'HuggingFace',
   'lmstudio': 'LM Studio',
   'meta': 'Meta',
+  'minimax': 'MiniMax',
   'mistralai': 'Mistral AI',
   'nvidia': 'nVidia',
   'ollama': 'Ollama',
