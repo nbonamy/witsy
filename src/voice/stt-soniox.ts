@@ -7,12 +7,12 @@ import { STTEngine, ProgressCallback, TranscribeResponse, StreamingCallback } fr
  * Soniox speech-to-text engine supporting both async and real-time transcription.
  * 
  * Async API:
- *   - POST /v1/transcriptions with direct audio data
- *   - GET /v1/transcriptions/{id} for status polling
- *   - GET /v1/transcriptions/{id}/transcript for final text
+ *   - POST /v3/transcriptions with direct audio data
+ *   - GET /v3/transcriptions/{id} for status polling
+ *   - GET /v3/transcriptions/{id}/transcript for final text
  *
  * Real-time API:
- *   - WebSocket wss://stt-rt.soniox.com/transcribe-websocket
+ *   - WebSocket wss://api.soniox.com/v3/streaming/speech-to-text
  *   - JSON config message followed by binary audio chunks
  *   - Receives tokens with is_final flag for progressive display
  */
@@ -93,7 +93,7 @@ export default class STTSoniox implements STTEngine {
         requestBody.context = vocabularyWords.join(', ')
       }
       
-      const response = await fetch('https://api.soniox.com/v1/transcriptions', {
+      const response = await fetch('https://api.soniox.com/v3/transcriptions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
@@ -166,7 +166,7 @@ export default class STTSoniox implements STTEngine {
     const maxAttempts = 60 // 60 seconds max
     
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      const statusResponse = await fetch(`https://api.soniox.com/v1/transcriptions/${transcriptionId}`, {
+      const statusResponse = await fetch(`https://api.soniox.com/v3/transcriptions/${transcriptionId}`, {
         headers: { 'Authorization': `Bearer ${apiKey}` }
       })
 
@@ -178,7 +178,7 @@ export default class STTSoniox implements STTEngine {
       
       if (statusData.status === 'completed') {
         // Get the final transcript
-        const transcriptResponse = await fetch(`https://api.soniox.com/v1/transcriptions/${transcriptionId}/transcript`, {
+        const transcriptResponse = await fetch(`https://api.soniox.com/v3/transcriptions/${transcriptionId}/transcript`, {
           headers: { 'Authorization': `Bearer ${apiKey}` }
         })
 
@@ -227,7 +227,7 @@ export default class STTSoniox implements STTEngine {
       console.log(`Uploading WebM with duration: ${(audioBlob as any)._audioDuration}ms`)
     }
     
-    const response = await fetch('https://api.soniox.com/v1/files', {
+    const response = await fetch('https://api.soniox.com/v3/files', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`
@@ -253,7 +253,7 @@ export default class STTSoniox implements STTEngine {
 
   private async deleteUploadedFile(fileId: string, apiKey: string): Promise<void> {
     try {
-      await fetch(`https://api.soniox.com/v1/files/${fileId}`, {
+      await fetch(`https://api.soniox.com/v3/files/${fileId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${apiKey}` }
       })
@@ -265,7 +265,7 @@ export default class STTSoniox implements STTEngine {
 
   private async cleanupTranscription(transcriptionId: string, apiKey: string): Promise<void> {
     try {
-      await fetch(`https://api.soniox.com/v1/transcriptions/${transcriptionId}`, {
+      await fetch(`https://api.soniox.com/v3/transcriptions/${transcriptionId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${apiKey}` }
       })
@@ -295,7 +295,7 @@ export default class STTSoniox implements STTEngine {
     this.pendingError = null
     
     try {
-      this.ws = new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket')
+      this.ws = new WebSocket('wss://api.soniox.com/v3/streaming/speech-to-text')
       
       this.ws.onopen = () => {
         // Send initial configuration message with correct audio format for WebSocket
