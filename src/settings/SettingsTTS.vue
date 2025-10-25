@@ -24,6 +24,14 @@
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="falaiAPIKey" @blur="save" />
     </div>
+    <div class="form-field" v-if="engine === 'minimax'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="minimaxAPIKey" @blur="save" />
+    </div>
+    <div class="form-field" v-if="engine === 'minimax'">
+      <label>{{ t('settings.engines.minimax.groupId') }}</label>
+      <input v-model="minimaxGroupId" @blur="save" />
+    </div>
     <div class="form-field" v-if="engine !== 'custom'">
       <label>{{ t('settings.voice.model') }}</label>
       <select v-model="model" @change="onChangeModel">
@@ -84,6 +92,7 @@ import TTSElevenLabs from '../voice/tts-elevenlabs'
 import TTSFalAi from '../voice/tts-falai'
 import TTSGroq from '../voice/tts-groq'
 import TTSOpenAI from '../voice/tts-openai'
+import TTSMiniMax from '../voice/tts-minimax'
 import defaults from '../../defaults/settings.json'
 import Dialog from '../composables/dialog'
 
@@ -94,6 +103,8 @@ const openaiAPIKey = ref(null)
 const groqAPIKey = ref(null)
 const falaiAPIKey = ref(null)
 const elevenlabsAPIKey = ref(null)
+const minimaxAPIKey = ref(null)
+const minimaxGroupId = ref(null)
 const baseURL = ref('')
 const audio= ref<HTMLAudioElement|null>(null)
   const audioState= ref<{state: string, messageId: string|null}>({
@@ -110,7 +121,7 @@ const models = computed(() => {
 })
 
 const canRefreshVoices = computed(() => {
-  return engine.value === 'elevenlabs'
+  return engine.value === 'elevenlabs' || engine.value === 'minimax'
 })
 
 const voices = computed(() => {
@@ -128,6 +139,12 @@ const voices = computed(() => {
     }
   } else if (engine.value === 'falai') {
     return TTSFalAi.voices(model.value)
+  } else if (engine.value === 'minimax') {
+    if (store.config.engines.minimax?.voices?.length) {
+      return store.config.engines.minimax.voices
+    } else {
+      return TTSMiniMax.voices(model.value)
+    }
   } else if (engine.value === 'custom') {
     return TTSOpenAI.voices(model.value)
   // } else if (engine.value === 'replicate') {
@@ -184,6 +201,17 @@ const onRefreshVoices = async (): Promise<boolean> => {
       store.saveSettings()
       return true
     }
+  } else if (engine.value === 'minimax') {
+    const engine = new TTSMiniMax(store.config)
+    const voices = await engine.getVoices(model.value)
+    if (voices?.length) {
+      if (!store.config.engines.minimax) {
+        store.config.engines.minimax = { models: {}, model: {} } as any
+      }
+      store.config.engines.minimax.voices = voices
+      store.saveSettings()
+      return true
+    }
   }
   return false
 }
@@ -196,6 +224,8 @@ const load = () => {
   groqAPIKey.value = store.config.engines.groq?.apiKey || ''
   falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
   elevenlabsAPIKey.value = store.config.engines.elevenlabs?.apiKey || ''
+  minimaxAPIKey.value = store.config.engines.minimax?.apiKey || ''
+  minimaxGroupId.value = store.config.engines.minimax?.groupId || ''
   baseURL.value = store.config.tts.customOpenAI?.baseURL || ''
 }
 
@@ -207,6 +237,11 @@ const save = () => {
   store.config.engines.groq.apiKey = groqAPIKey.value
   store.config.engines.falai.apiKey = falaiAPIKey.value
   store.config.engines.elevenlabs.apiKey = elevenlabsAPIKey.value
+  if (!store.config.engines.minimax) {
+    store.config.engines.minimax = { models: {}, model: {} } as any
+  }
+  store.config.engines.minimax.apiKey = minimaxAPIKey.value
+  store.config.engines.minimax.groupId = minimaxGroupId.value
   store.config.tts.customOpenAI.baseURL = baseURL.value
   store.saveSettings()
 }
