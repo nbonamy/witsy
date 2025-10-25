@@ -4,14 +4,14 @@
       <label>{{ t('settings.experts.categoryManager.title') }}</label>
       <XIcon class="icon" @click="onClose" />
     </header>
-    <main class="panel-body" :class="{ empty: categories.length === 0 }">
-      <div v-if="categories.length === 0" class="panel-empty">
+    <main class="panel-body" :class="{ empty: categoriesSorted.length === 0 }">
+      <div v-if="categoriesSorted.length === 0" class="panel-empty">
         {{ t('settings.experts.categoryManager.empty') }}
       </div>
       <table v-else class="table-plain">
         <tbody>
-          <tr v-for="category in categories" :key="category.id">
-            <td>
+          <tr v-for="category in categoriesSorted" :key="category.id">
+            <td @click="startEdit(category)">
               <input
                 v-if="editingId === category.id"
                 v-model="editingName"
@@ -23,9 +23,8 @@
                 ref="editInput"
                 class="edit-input"
               />
-              <span v-else @click="startEdit(category)">
-                {{ category.name || getCategoryLabel(category.id, categories) }}
-                <span class="count">({{ getExpertCount(category.id) }})</span>
+              <span v-else>
+                {{ category.name || categoryI18n(category, 'name') }}
               </span>
             </td>
             <td>
@@ -55,19 +54,16 @@
 
 <script setup lang="ts">
 import { PencilIcon, PlusIcon, Trash2Icon, XIcon } from 'lucide-vue-next'
+import { saveCategories } from '../services/experts'
 import { computed, nextTick, ref } from 'vue'
 import Dialog from '../composables/dialog'
-import { createCategory, deleteCategory, getCategoryLabel, updateCategory } from '../services/categories'
-import { t } from '../services/i18n'
+import { createCategory, deleteCategory, updateCategory } from '../services/categories'
+import { t, categoryI18n } from '../services/i18n'
+import { store } from '../services/store'
 import { Expert, ExpertCategory } from '../types/index'
 
-const props = defineProps<{
-  categories: ExpertCategory[]
-  experts: Expert[]
-}>()
-
 const emit = defineEmits<{
-  update: [categories: ExpertCategory[], experts: Expert[]]
+  update: []
   close: []
 }>()
 
@@ -75,17 +71,19 @@ const editingId = ref<string | null>(null)
 const editingName = ref('')
 const editInput = ref<HTMLInputElement[]>([])
 
+const categoriesSorted = computed(() => {
+  return [...store.expertCategories].sort((a, b) => {
+    return categoryI18n(a, 'name').localeCompare(categoryI18n(b, 'name'))
+  })
+})
+
 const getExpertCount = (categoryId: string): number => {
-  return props.experts.filter(e => e.categoryId === categoryId && e.state !== 'deleted').length
+  return store.experts.filter((e: Expert) => e.categoryId === categoryId && e.state !== 'deleted').length
 }
 
 const startEdit = async (category: ExpertCategory) => {
-  // Don't allow editing system categories
-  if (category.type === 'system') {
-    return
-  }
   editingId.value = category.id
-  editingName.value = category.name || ''
+  editingName.value = categoryI18n(category, 'name')
   await nextTick()
   if (editInput.value && editInput.value[0]) {
     editInput.value[0].focus()
@@ -100,7 +98,7 @@ const saveEdit = (categoryId: string) => {
   }
 
   // Check for duplicate names
-  const duplicate = props.categories.find(
+  const duplicate = store.expertCategories.find(
     c => c.id !== categoryId && c.name?.toLowerCase() === editingName.value.trim().toLowerCase()
   )
   if (duplicate) {
@@ -108,8 +106,9 @@ const saveEdit = (categoryId: string) => {
     return
   }
 
-  const updatedCategories = updateCategory(categoryId, editingName.value.trim(), [...props.categories])
-  emit('update', updatedCategories, props.experts)
+  updateCategory(categoryId, editingName.value.trim())
+  saveCategories(store.config.workspaceId)
+  emit('update')
   cancelEdit()
 }
 
@@ -132,7 +131,7 @@ const onNewCategory = async () => {
   }
 
   // Check for duplicate names
-  const duplicate = props.categories.find(
+  const duplicate = store.expertCategories.find(
     c => c.name?.toLowerCase() === result.value.trim().toLowerCase()
   )
   if (duplicate) {
@@ -141,8 +140,9 @@ const onNewCategory = async () => {
   }
 
   const newCategory = createCategory(result.value.trim())
-  const updatedCategories = [...props.categories, newCategory]
-  emit('update', updatedCategories, props.experts)
+  store.expertCategories.push(newCategory)
+  saveCategories(store.config.workspaceId)
+  emit('update')
 }
 
 const onDelete = async (category: ExpertCategory) => {
@@ -154,6 +154,7 @@ const onDelete = async (category: ExpertCategory) => {
   const expertCount = getExpertCount(category.id)
 
   if (expertCount === 0) {
+    
     // No experts, simple confirmation
     const result = await Dialog.show({
       title: t('settings.experts.categoryManager.confirmDelete'),
@@ -163,9 +164,10 @@ const onDelete = async (category: ExpertCategory) => {
     })
 
     if (result.isConfirmed) {
-      const updatedCategories = props.categories.filter(c => c.id !== category.id)
-      emit('update', updatedCategories, props.experts)
+      store.expertCategories.filter(c => c.id !== category.id)
+      emit('update')
     }
+  
   } else {
     // Has experts, ask what to do
     const result = await Dialog.show({
@@ -183,13 +185,9 @@ const onDelete = async (category: ExpertCategory) => {
     }
 
     const deleteExperts = result.isDenied
-    const { categories: updatedCategories, experts: updatedExperts } = deleteCategory(
-      category.id,
-      deleteExperts,
-      props.categories,
-      props.experts
-    )
-    emit('update', updatedCategories, updatedExperts)
+    deleteCategory(category.id, deleteExperts)
+    saveCategories(store.config.workspaceId)
+    emit('update')
   }
 }
 
@@ -207,7 +205,16 @@ const onClose = () => {
     padding-bottom: 0;
   }
   .panel-body {
-    padding: 0rem;
+    padding: 0rem 1rem;
+    table.table-plain {
+      td {
+        padding: 0.25rem 0.75rem;
+      }
+    }
+
+  }
+  .panel-footer {
+    padding: 1rem;
   }
 }
 

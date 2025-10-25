@@ -199,8 +199,7 @@ import LlmFactory, { favoriteMockEngine, ILlmManager } from '../llms/llm'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
 import Message from '../models/message'
-import { getCategoryLabel } from '../services/categories'
-import { commandI18n, expertI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from '../services/i18n'
+import { commandI18n, expertI18n, categoryI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Command, CustomInstruction, Expert, MessageExecutionType } from '../types/index'
 import { McpServerWithTools, McpToolUnique } from '../types/mcp'
@@ -381,7 +380,7 @@ const categoriesWithExperts = computed(() => {
     .map(c => ({
       id: c.id,
       icon: c.icon,
-      name: getCategoryLabel(c.id, store.expertCategories)
+      name: categoryI18n(c, 'name')
     }))
 
   // Sort alphabetically by name

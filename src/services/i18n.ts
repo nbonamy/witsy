@@ -1,5 +1,5 @@
 
-import { anyDict, Command, Expert } from '../types/index'
+import { anyDict, Command, Expert, ExpertCategory } from '../types/index'
 import { createI18n, hasLocalization, allLanguages } from '../main/i18n.base'
 import { WritableComputedRef } from 'vue'
 import { I18n, Locale } from 'vue-i18n'
@@ -62,6 +62,7 @@ const tllm: CallableFunction = (...args: any[]) => i18nLlm?.global?.t(...args)
 
 type i18nCommandAttr = 'label' | 'template'
 type i18nExpertAttr = 'name' | 'prompt' | 'description'
+type i18nCategoryAttr = 'name'
 
 const commandI18n = (command: Command|null, attr: i18nCommandAttr): string => {
   if (!command) return ''
@@ -81,6 +82,16 @@ const expertI18n = (expert: Expert|null, attr: i18nExpertAttr): string => {
 
 const expertI18nDefault = (expert: Expert|null, attr: i18nExpertAttr): string => {
   return expert ? tllm(`experts.experts.${expert.id}.${attr}`) : ''
+}
+
+const categoryI18n = (category: ExpertCategory|null, attr: i18nCategoryAttr): string => {
+  if (!category) return ''
+  if (category && category[attr]) return category[attr]
+  return categoryI18nDefault(category, attr)
+}
+
+const categoryI18nDefault = (category: ExpertCategory|null, attr: i18nCategoryAttr): string => {
+  return category ? tllm(`experts.categories.${category.id}.${attr}`) : ''
 }
 
 const fullExpertI18n = (expert: Expert|null): Expert => {
@@ -110,5 +121,7 @@ export {
   commandI18nDefault,
   expertI18n,
   expertI18nDefault,
+  categoryI18n,
+  categoryI18nDefault,
   fullExpertI18n,
 }

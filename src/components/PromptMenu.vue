@@ -163,8 +163,7 @@ import { BrainIcon, FeatherIcon, FolderIcon, HammerIcon, LightbulbIcon, Papercli
 import { computed, onMounted, ref, watch } from 'vue'
 import * as ts from '../composables/tool_selection'
 import { enabledPlugins } from '../plugins/plugins'
-import { getCategoryLabel } from '../services/categories'
-import { expertI18n, t } from '../services/i18n'
+import { expertI18n, categoryI18n, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Expert } from '../types/index'
 import { ToolSelection } from '../types/llm'
@@ -257,7 +256,7 @@ const categoriesWithExperts = computed(() => {
     .map(c => ({
       id: c.id,
       icon: c.icon,
-      name: getCategoryLabel(c.id, store.expertCategories)
+      name: categoryI18n(c, 'name')
     }))
 
   // Sort alphabetically by name
