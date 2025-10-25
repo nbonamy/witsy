@@ -222,13 +222,21 @@ Each commit is atomic and can be reverted independently:
 8. Step 1: Remove service functions
 
 ## Key Learnings
-(To be filled in after implementation)
 
 ### Design Patterns
-- TBD
+- **Inline Panel UI**: Adding management UI directly in the context where it's needed (ExpertsList) provides better UX than separate screens or modals
+- **Computed Properties for Filtering**: Using Vue computed properties to filter system vs user categories keeps the UI reactive and logic centralized
+- **Service Layer Separation**: Keeping CRUD operations in a separate service file (categories.ts) makes code more testable and reusable
+- **Immutable Updates**: Always returning new arrays/objects rather than mutating prevents Vue reactivity issues and makes state changes explicit
 
 ### Ways of Working
-- TBD
+- **Test-First Mindset**: Writing comprehensive tests immediately after implementing features catches edge cases early
+- **Incremental Commits**: Small, focused commits with descriptive messages create a clear history and easy rollback points
+- **Lint Between Steps**: Running linter after each change prevents technical debt accumulation
+- **Edge Case Protection**: Protecting system data (read-only categories) at both UI and logic levels ensures data integrity
 
 ### Technical Insights
-- TBD
+- **Dialog Patterns**: Using Dialog.show() with three buttons (confirm/deny/cancel) follows existing Witsy patterns and provides clear user choices
+- **Ref Arrays in Vue**: Using `ref<HTMLInputElement[]>()` for dynamic elements requires careful indexing in nextTick callbacks
+- **Type Safety**: TypeScript const assertions (`'deleted' as const`) prevent type widening and catch bugs at compile time
+- **IPC Coordination**: When updating multiple stores (categories + experts), save both atomically and reload to keep UI in sync
