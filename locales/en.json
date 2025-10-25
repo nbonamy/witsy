@@ -2631,6 +2631,9 @@
       "lmstudio": {
         "apiBaseURL": "API Base URL"
       },
+      "minimax": {
+        "groupId": "Group ID"
+      },
       "meta": {
         "aboutModels": "More about Meta Llama models",
         "pricing": "Meta Llama pricing"
