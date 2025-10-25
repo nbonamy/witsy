@@ -1,19 +1,17 @@
 <template>
-  <div class="category-manager panel">
-    <div class="panel-header">
-      <h3>{{ t('settings.experts.categoryManager.title') }}</h3>
-      <button class="close-button" @click="onClose">
-        <XIcon />
-      </button>
-    </div>
-    <div class="panel-content">
-      <div v-if="categories.length === 0" class="empty-state">
+  <div class="panel category-manager">
+    <header class="panel-header">
+      <label>{{ t('settings.experts.categoryManager.title') }}</label>
+      <XIcon class="icon" @click="onClose" />
+    </header>
+    <main class="panel-body" :class="{ empty: categories.length === 0 }">
+      <div v-if="categories.length === 0" class="panel-empty">
         {{ t('settings.experts.categoryManager.empty') }}
       </div>
-      <table v-else class="category-list">
+      <table v-else class="table-plain">
         <tbody>
-          <tr v-for="category in categories" :key="category.id" class="category-row">
-            <td class="category-name">
+          <tr v-for="category in categories" :key="category.id">
+            <td>
               <input
                 v-if="editingId === category.id"
                 v-model="editingName"
@@ -21,39 +19,37 @@
                 @keydown.enter="saveEdit(category.id)"
                 @keydown.escape="cancelEdit"
                 @blur="saveEdit(category.id)"
+                @click.stop
                 ref="editInput"
                 class="edit-input"
               />
-              <span v-else>{{ category.name }}</span>
-              <span class="category-count">({{ getExpertCount(category.id) }})</span>
+              <span v-else @click="startEdit(category)">
+                {{ category.name || getCategoryLabel(category.id, categories) }}
+                <span class="count">({{ getExpertCount(category.id) }})</span>
+              </span>
             </td>
-            <td class="category-actions">
-              <button
-                @click="startEdit(category)"
-                class="action-button"
-                :title="t('common.edit')"
-                :disabled="category.type === 'system'"
-              >
-                <PencilIcon />
-              </button>
-              <button
-                @click="onDelete(category)"
-                class="action-button delete"
-                :title="t('common.delete')"
-                :disabled="category.type === 'system'"
-              >
-                <Trash2Icon />
-              </button>
+            <td>
+              <div class="actions">
+                <PencilIcon
+                  @click="startEdit(category)"
+                  :class="{ disabled: category.type === 'system' }"
+                />
+                <Trash2Icon
+                  class="error"
+                  @click="onDelete(category)"
+                  :class="{ disabled: category.type === 'system' }"
+                />
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
-      <div class="new-category-section">
-        <button @click="onNewCategory" class="button default">
-          <PlusIcon />{{ t('settings.experts.categoryManager.newCategory') }}
-        </button>
-      </div>
-    </div>
+    </main>
+    <footer class="panel-footer">
+      <button @click="onNewCategory">
+        <PlusIcon />{{ t('settings.experts.categoryManager.newCategory') }}
+      </button>
+    </footer>
   </div>
 </template>
 
@@ -61,7 +57,7 @@
 import { PencilIcon, PlusIcon, Trash2Icon, XIcon } from 'lucide-vue-next'
 import { computed, nextTick, ref } from 'vue'
 import Dialog from '../composables/dialog'
-import { createCategory, deleteCategory, updateCategory } from '../services/categories'
+import { createCategory, deleteCategory, getCategoryLabel, updateCategory } from '../services/categories'
 import { t } from '../services/i18n'
 import { Expert, ExpertCategory } from '../types/index'
 
@@ -205,149 +201,26 @@ const onClose = () => {
 <style scoped>
 .category-manager {
   margin-bottom: 1rem;
-  background: var(--background-color);
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-}
+  padding: 0.5rem;
 
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.panel-header h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.close-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  color: var(--text-color);
-  display: flex;
-  align-items: center;
-}
-
-.close-button:hover {
-  color: var(--highlight-color);
-}
-
-.close-button svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.panel-content {
-  padding: 1rem;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-secondary-color);
-  font-style: italic;
-}
-
-.category-list {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
-}
-
-.category-row {
-  border-bottom: 1px solid var(--border-color);
-}
-
-.category-row:last-child {
-  border-bottom: none;
-}
-
-.category-name {
-  padding: 0.75rem 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.category-name span {
-  flex: 1;
-}
-
-.category-count {
-  color: var(--text-secondary-color);
-  font-size: 0.9em;
+  .panel-header {
+    padding-bottom: 0;
+  }
+  .panel-body {
+    padding: 0rem;
+  }
 }
 
 .edit-input {
-  flex: 1;
+  width: 100%;
   padding: 0.25rem 0.5rem;
   border: 1px solid var(--highlight-color);
   border-radius: 0.25rem;
-  background: var(--background-color);
-  color: var(--text-color);
-  font-size: 1rem;
+  font-size: 14px;
 }
 
-.edit-input:focus {
-  outline: none;
-  border-color: var(--highlight-color);
-}
-
-.category-actions {
-  padding: 0.75rem 0.5rem;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.action-button {
-  background: none;
-  border: none;
+td:first-child {
+  width: 100%;
   cursor: pointer;
-  padding: 0.25rem;
-  color: var(--text-color);
-  display: inline-flex;
-  align-items: center;
-  margin-left: 0.5rem;
-}
-
-.action-button:hover:not(:disabled) {
-  color: var(--highlight-color);
-}
-
-.action-button.delete:hover:not(:disabled) {
-  color: var(--color-error);
-}
-
-.action-button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.action-button svg {
-  width: 1rem;
-  height: 1rem;
-}
-
-.new-category-section {
-  display: flex;
-  justify-content: center;
-  padding-top: 0.5rem;
-}
-
-.new-category-section .button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.new-category-section .button svg {
-  width: 1rem;
-  height: 1rem;
 }
 </style>

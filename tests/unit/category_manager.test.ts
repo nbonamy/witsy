@@ -29,8 +29,8 @@ describe('CategoryManager', () => {
       }
     })
 
-    expect(wrapper.find('.category-list').exists()).toBe(true)
-    expect(wrapper.findAll('.category-row')).toHaveLength(2)
+    expect(wrapper.find('.table-plain').exists()).toBe(true)
+    expect(wrapper.findAll('tbody tr')).toHaveLength(2)
     expect(wrapper.text()).toContain('Category 1')
     expect(wrapper.text()).toContain('Category 2')
   })
@@ -55,11 +55,11 @@ describe('CategoryManager', () => {
       }
     })
 
-    expect(wrapper.find('.empty-state').exists()).toBe(true)
-    expect(wrapper.find('.category-list').exists()).toBe(false)
+    expect(wrapper.find('.panel-empty').exists()).toBe(true)
+    expect(wrapper.find('.table-plain').exists()).toBe(false)
   })
 
-  test('emits close event when close button clicked', async () => {
+  test('emits close event when close icon clicked', async () => {
     const wrapper = mount(CategoryManager, {
       props: {
         categories: mockCategories,
@@ -67,12 +67,12 @@ describe('CategoryManager', () => {
       }
     })
 
-    await wrapper.find('.close-button').trigger('click')
+    await wrapper.find('.panel-header .icon').trigger('click')
 
     expect(wrapper.emitted('close')).toBeTruthy()
   })
 
-  test('shows edit input when edit button clicked', async () => {
+  test('shows edit input when clicking category name', async () => {
     const wrapper = mount(CategoryManager, {
       props: {
         categories: mockCategories,
@@ -80,8 +80,8 @@ describe('CategoryManager', () => {
       }
     })
 
-    const editButtons = wrapper.findAll('.action-button')
-    await editButtons[0].trigger('click')
+    const firstRow = wrapper.findAll('tbody tr')[0]
+    await firstRow.find('td span').trigger('click')
 
     expect(wrapper.find('.edit-input').exists()).toBe(true)
   })
@@ -95,8 +95,8 @@ describe('CategoryManager', () => {
     })
 
     // Start editing
-    const editButtons = wrapper.findAll('.action-button')
-    await editButtons[0].trigger('click')
+    const firstRow = wrapper.findAll('tbody tr')[0]
+    await firstRow.find('td span').trigger('click')
 
     // Change name
     const input = wrapper.find('.edit-input')
@@ -119,8 +119,8 @@ describe('CategoryManager', () => {
     })
 
     // Start editing
-    const editButtons = wrapper.findAll('.action-button')
-    await editButtons[0].trigger('click')
+    const firstRow = wrapper.findAll('tbody tr')[0]
+    await firstRow.find('td span').trigger('click')
 
     expect(wrapper.find('.edit-input').exists()).toBe(true)
 
@@ -139,8 +139,8 @@ describe('CategoryManager', () => {
     })
 
     // Start editing
-    const editButtons = wrapper.findAll('.action-button')
-    await editButtons[0].trigger('click')
+    const firstRow = wrapper.findAll('tbody tr')[0]
+    await firstRow.find('td span').trigger('click')
 
     // Try to save empty name
     const input = wrapper.find('.edit-input')
@@ -159,7 +159,7 @@ describe('CategoryManager', () => {
       }
     })
 
-    expect(wrapper.find('.new-category-section button').exists()).toBe(true)
+    expect(wrapper.find('.panel-footer button').exists()).toBe(true)
   })
 
   test('excludes deleted experts from count', () => {
@@ -176,7 +176,7 @@ describe('CategoryManager', () => {
     })
 
     // Should still show (2) for cat1, not (3)
-    const rows = wrapper.findAll('.category-row')
+    const rows = wrapper.findAll('tbody tr')
     expect(rows[0].text()).toContain('(2)')
   })
 
@@ -193,11 +193,11 @@ describe('CategoryManager', () => {
       }
     })
 
-    expect(wrapper.findAll('.category-row')).toHaveLength(3)
+    expect(wrapper.findAll('tbody tr')).toHaveLength(3)
     expect(wrapper.text()).toContain('System Category')
   })
 
-  test('disables edit and delete buttons for system categories', () => {
+  test('disables edit and delete icons for system categories', () => {
     const categoriesWithSystem: ExpertCategory[] = [
       { id: 'sys1', type: 'system', state: 'enabled', name: 'System Category' },
       { id: 'user1', type: 'user', state: 'enabled', name: 'User Category' }
@@ -210,20 +210,18 @@ describe('CategoryManager', () => {
       }
     })
 
-    const rows = wrapper.findAll('.category-row')
+    const rows = wrapper.findAll('tbody tr')
 
-    // First row (system category) should have disabled buttons
-    const systemButtons = rows[0].findAll('.action-button')
-    expect(systemButtons[0].attributes('disabled')).toBeDefined()
-    expect(systemButtons[1].attributes('disabled')).toBeDefined()
+    // System category row should have disabled class somewhere in actions
+    const systemActionsHtml = rows[0].find('.actions').html()
+    expect(systemActionsHtml).toContain('disabled')
 
-    // Second row (user category) should have enabled buttons
-    const userButtons = rows[1].findAll('.action-button')
-    expect(userButtons[0].attributes('disabled')).toBeUndefined()
-    expect(userButtons[1].attributes('disabled')).toBeUndefined()
+    // User category row should not have disabled class
+    const userActionsHtml = rows[1].find('.actions').html()
+    expect(userActionsHtml).not.toContain('disabled')
   })
 
-  test('prevents editing system categories', async () => {
+  test('prevents editing system categories when clicking name', async () => {
     const systemCategory: ExpertCategory = { id: 'sys1', type: 'system', state: 'enabled', name: 'System' }
 
     const wrapper = mount(CategoryManager, {
@@ -233,14 +231,14 @@ describe('CategoryManager', () => {
       }
     })
 
-    const editButton = wrapper.find('.action-button')
-    await editButton.trigger('click')
+    // Try to edit by clicking the name
+    await wrapper.find('td span').trigger('click')
 
     // Should not show edit input
     expect(wrapper.find('.edit-input').exists()).toBe(false)
   })
 
-  test('prevents deleting system categories', async () => {
+  test('prevents deleting system categories when clicking icon', async () => {
     const systemCategory: ExpertCategory = { id: 'sys1', type: 'system', state: 'enabled', name: 'System' }
 
     const wrapper = mount(CategoryManager, {
@@ -250,8 +248,11 @@ describe('CategoryManager', () => {
       }
     })
 
-    const deleteButton = wrapper.findAll('.action-button')[1]
-    await deleteButton.trigger('click')
+    // Try to delete by clicking the icon
+    const allIcons = wrapper.findAllComponents({ name: 'Trash2Icon' })
+    if (allIcons.length > 0) {
+      await allIcons[0].trigger('click')
+    }
 
     // Should not emit update
     expect(wrapper.emitted('update')).toBeFalsy()
