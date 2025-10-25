@@ -41,9 +41,87 @@ export default class TTSMiniMax extends TTSEngine {
     super(config)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private getApiKey(): string {
+    return this.config.engines.minimax?.apiKey
+  }
+
+  private getGroupId(): string {
+    return this.config.engines.minimax?.groupId
+  }
+
+  private buildRequestPayload(text: string, opts?: { model?: string, voice?: string }) {
+    const model = opts?.model || this.config.tts.model || TTSMiniMax.models[0].id
+    const voice = opts?.voice || this.config.tts.voice || TTSMiniMax.voices('')[0].id
+
+    return {
+      text,
+      model,
+      voice_setting: {
+        voice_id: voice,
+        speed: 0.95,
+        pitch: -1,
+        emotion: 'neutral'
+      },
+      language_boost: 'English',
+      stream: false
+    }
+  }
+
+  private hexToBuffer(hex: string): ArrayBuffer {
+    const bytes = new Uint8Array(hex.length / 2)
+    for (let i = 0; i < hex.length; i += 2) {
+      bytes[i / 2] = parseInt(hex.substr(i, 2), 16)
+    }
+    return bytes.buffer as ArrayBuffer
+  }
+
   async synthetize(text: string, opts?: { model?: string, voice?: string }): Promise<SynthesisResponse> {
-    // TODO: Implementation in next step
-    throw new Error('Not implemented')
+
+    const apiKey = this.getApiKey()
+    if (!apiKey) {
+      throw new Error('MiniMax API key not configured')
+    }
+
+    const groupId = this.getGroupId()
+    if (!groupId) {
+      throw new Error('MiniMax Group ID not configured')
+    }
+
+    const payload = this.buildRequestPayload(text, opts)
+    const url = `https://api.minimaxi.chat/v1/t2a_v2?GroupId=${groupId}`
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`MiniMax API error: ${response.status} ${errorText}`)
+    }
+
+    const data = await response.json()
+
+    if (!data.data?.audio) {
+      throw new Error('No audio data in response')
+    }
+
+    const audioBuffer = this.hexToBuffer(data.data.audio)
+    const blob = new Blob([audioBuffer], { type: 'audio/mp3' })
+
+    return new Promise<SynthesisResponse>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onloadend = () => resolve({
+        type: 'audio',
+        mimeType: 'audio/mp3',
+        content: reader.result as string
+      })
+      reader.onerror = reject
+      reader.readAsDataURL(blob)
+    })
   }
 }
