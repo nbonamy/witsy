@@ -222,34 +222,34 @@ export default class Generator {
       // proxy
       if (!error.status && (cause.includes('proxy') || cause.includes('network'))) {
         console.error('Network error:', cause)
-        response.setText(t('generator.errors.networkError'))
+        response.setText(t('generator.errors.networkError', { error: error.message }))
         return 'error'
       }
 
       // missing api key
       else if ([401, 403].includes(status) || message.includes('401') || message.includes('apikey')) {
         console.error('Missing API key:', status, message)
-        response.setText(t('generator.errors.missingApiKey'))
+        response.setText(t('generator.errors.missingApiKey', { error: error.message }))
         return 'missing_api_key'
       }
 
       // out of credits
       else if ([400, 402].includes(status) && (message.includes('credit') || message.includes('balance'))) {
         console.error('Out of credits:', status, message)
-        response.setText(t('generator.errors.outOfCredits'))
+        response.setText(t('generator.errors.outOfCredits', { error: error.message }))
         return 'out_of_credits'
 
       // quota exceeded
-      } else if ([429].includes(status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many'))) {
+      } else if ([413, 429].includes(status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many') || message.includes('tokens per minute'))) {
         console.error('Quota exceeded:', status, message)
-        response.setText(t('generator.errors.quotaExceeded'))
+        response.setText(t('generator.errors.quotaExceeded', { error: error.message }))
         return 'quota_exceeded'
 
       // context length or function description too long
       } else if ([400, 429].includes(status) && (message.includes('context length') || message.includes('too long') || message.includes('too large'))) {
         if (message.includes('function.description')) {
           console.error('Function description too long:', status, message)
-          response.setText(t('generator.errors.pluginDescriptionTooLong'))
+          response.setText(t('generator.errors.pluginDescriptionTooLong', { error: error.message }))
           return 'function_description_too_long'
         } else {
           console.error('Context too long:', status, message)
@@ -271,13 +271,13 @@ export default class Generator {
       // invalid model
       } else if ([404].includes(status) && message.includes('model')) {
         console.error('Provider reports invalid model:', status, message)
-        response.setText(t('generator.errors.invalidModel'))
+        response.setText(t('generator.errors.invalidModel', { error: error.message }))
         return 'invalid_model'
 
       // thinking cannot be disabled
       } else if ([400].includes(status) && message.includes('only works in thinking mode')) {
         console.error('Invalid budget:', status, message)
-        response.setText(t('generator.errors.onlyThinkingMode'))
+        response.setText(t('generator.errors.onlyThinkingMode', { error: error.message }))
         return 'invalid_budget'
 
       // invalid budget
@@ -289,7 +289,7 @@ export default class Generator {
           const max = parseInt(match[2], 10)
           response.setText(t('generator.errors.invalidBudgetKnown', { min, max }))
         } else {
-          response.setText(t('generator.errors.invalidBudgetUnknown'))
+          response.setText(t('generator.errors.invalidBudgetUnknown', { error: error.message }))
         }
         return 'invalid_budget'
 
@@ -298,14 +298,14 @@ export default class Generator {
         console.error('Error while generating text:', status, message)
         if (response.content === '') {
           if (opts?.contextWindowSize || opts?.maxTokens || opts?.temperature || opts?.top_k || opts?.top_p || Object.keys(opts?.customOpts || {}).length > 0) {
-            response.setText(t('generator.errors.tryWithoutParams'))
+            response.setText(t('generator.errors.tryWithoutParams', { error: error.message }))
           } else if (llm.plugins.length > 0) {
             response.setText(t('generator.errors.tryWithoutPlugins', { error: error.message }))
           } else {
             response.setText(t('generator.errors.couldNotGenerate', { error: error.message }))
           }
         } else {
-          response.appendText({ type: 'content', text: t('generator.errors.cannotContinue'), done: true })
+          response.appendText({ type: 'content', text: t('generator.errors.cannotContinue', { error: error.message }), done: true })
         }
         return 'error'
       }
