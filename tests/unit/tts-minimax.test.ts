@@ -235,3 +235,123 @@ test('TTSMiniMax synthetize non-streaming returns base64', async () => {
   expect(typeof result.content).toBe('string')
   expect(result.content).toMatch(/^data:audio\/mp3;base64,/)
 })
+
+test('TTSMiniMax getVoices returns static voices when API key missing', async () => {
+  const config = {
+    ...defaults,
+    engines: { minimax: {} }
+  } as unknown as Configuration
+
+  const engine = new TTSMiniMax(config)
+  const voices = await engine.getVoices('speech-02-hd')
+
+  expect(voices.length).toBeGreaterThan(0)
+  expect(voices[0].id).toBe('Wise_Woman')
+})
+
+test('TTSMiniMax getVoices returns static voices when Group ID missing', async () => {
+  const config = {
+    ...defaults,
+    engines: { minimax: { apiKey: 'test-key' } }
+  } as unknown as Configuration
+
+  const engine = new TTSMiniMax(config)
+  const voices = await engine.getVoices('speech-02-hd')
+
+  expect(voices.length).toBeGreaterThan(0)
+  expect(voices[0].id).toBe('Wise_Woman')
+})
+
+test('TTSMiniMax getVoices fetches from API successfully', async () => {
+  const config = {
+    ...defaults,
+    engines: {
+      minimax: {
+        apiKey: 'test-api-key',
+        groupId: 'test-group-id'
+      }
+    }
+  } as unknown as Configuration
+
+  mockFetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({
+      data: {
+        voices: [
+          { voice_id: 'Voice_A', name: 'Voice A' },
+          { voice_id: 'Voice_C', name: 'Voice C' },
+          { voice_id: 'Voice_B', name: 'Voice B' }
+        ]
+      }
+    })
+  })
+
+  const engine = new TTSMiniMax(config)
+  const voices = await engine.getVoices('speech-02-hd')
+
+  expect(mockFetch).toHaveBeenCalledWith(
+    'https://api.minimaxi.chat/v1/query/voice_list?GroupId=test-group-id',
+    expect.objectContaining({
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer test-api-key'
+      }
+    })
+  )
+
+  expect(voices.length).toBe(3)
+  expect(voices[0].id).toBe('Voice_A')
+  expect(voices[0].label).toBe('Voice A')
+  // Check sorting
+  expect(voices[0].label).toBe('Voice A')
+  expect(voices[1].label).toBe('Voice B')
+  expect(voices[2].label).toBe('Voice C')
+})
+
+test('TTSMiniMax getVoices falls back to static on API error', async () => {
+  const config = {
+    ...defaults,
+    engines: {
+      minimax: {
+        apiKey: 'test-api-key',
+        groupId: 'test-group-id'
+      }
+    }
+  } as unknown as Configuration
+
+  mockFetch.mockResolvedValueOnce({
+    ok: false,
+    status: 500
+  })
+
+  const engine = new TTSMiniMax(config)
+  const voices = await engine.getVoices('speech-02-hd')
+
+  expect(voices.length).toBeGreaterThan(0)
+  expect(voices[0].id).toBe('Wise_Woman')
+})
+
+test('TTSMiniMax getVoices falls back to static on missing data', async () => {
+  const config = {
+    ...defaults,
+    engines: {
+      minimax: {
+        apiKey: 'test-api-key',
+        groupId: 'test-group-id'
+      }
+    }
+  } as unknown as Configuration
+
+  mockFetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({
+      data: {}
+    })
+  })
+
+  const engine = new TTSMiniMax(config)
+  const voices = await engine.getVoices('speech-02-hd')
+
+  expect(voices.length).toBeGreaterThan(0)
+  expect(voices[0].id).toBe('Wise_Woman')
+})

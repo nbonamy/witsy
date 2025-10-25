@@ -41,6 +41,53 @@ export default class TTSMiniMax extends TTSEngine {
     super(config)
   }
 
+  async getVoices(model: string): Promise<TTSVoice[]> {
+    const apiKey = this.getApiKey()
+    if (!apiKey) {
+      console.warn('MiniMax API key not configured, returning static voices')
+      return TTSMiniMax.voices(model)
+    }
+
+    const groupId = this.getGroupId()
+    if (!groupId) {
+      console.warn('MiniMax Group ID not configured, returning static voices')
+      return TTSMiniMax.voices(model)
+    }
+
+    try {
+      const url = `https://api.minimaxi.chat/v1/query/voice_list?GroupId=${groupId}`
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`
+        }
+      })
+
+      if (!response.ok) {
+        console.error(`Failed to fetch voices: ${response.status}`)
+        return TTSMiniMax.voices(model)
+      }
+
+      const data = await response.json()
+
+      if (!data.data?.voices) {
+        console.error('No voices data in response')
+        return TTSMiniMax.voices(model)
+      }
+
+      // Sort voices alphabetically by label
+      const voices = data.data.voices.map((voice: any) => ({
+        id: voice.voice_id || voice.id,
+        label: voice.name || voice.voice_id || voice.id
+      })).sort((a: TTSVoice, b: TTSVoice) => a.label.localeCompare(b.label))
+
+      return voices
+    } catch (error) {
+      console.error('Error fetching MiniMax voices:', error)
+      return TTSMiniMax.voices(model)
+    }
+  }
+
   private getApiKey(): string {
     return this.config.engines.minimax?.apiKey
   }
