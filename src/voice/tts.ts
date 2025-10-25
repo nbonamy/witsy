@@ -6,6 +6,7 @@ import TTSOpenAI from './tts-openai'
 import TTSGroq from './tts-groq'
 import TTSElevenLabs from './tts-elevenlabs'
 import TTSFalAi from './tts-falai'
+import TTSMiniMax from './tts-minimax'
 
 export const getTTSEngines = () => {
   return [
@@ -13,6 +14,7 @@ export const getTTSEngines = () => {
     { id: 'elevenlabs', label: engineNames.elevenlabs },
     { id: 'falai', label: engineNames.falai },
     { id: 'groq', label: engineNames.groq },
+    { id: 'minimax', label: engineNames.minimax },
     { id: 'custom', label: 'Custom OpenAI' },
   ]
 }
@@ -31,6 +33,8 @@ const getTTSEngine = (config: Configuration): TTSEngine => {
     return new TTSElevenLabs(config)
   // } else if (engine === 'kokoro') {
   //   return new TTSKokoro(config)
+  } else if (engine === 'minimax') {
+    return new TTSMiniMax(config)
   } else if (engine === 'custom') {
     return new TTSOpenAI(config, config.tts.customOpenAI.baseURL)
   } else {
@@ -52,6 +56,8 @@ export const getTTSModels = (engine: string) => {
   //   return TTSReplicate.models
   // } else if (engine === 'kokoro') {
   //   return TTSKokoro.models
+  } else if (engine === 'minimax') {
+    return TTSMiniMax.models
   } else if (engine === 'custom') {
     return []
   }
