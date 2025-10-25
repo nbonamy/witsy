@@ -2,17 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.0.4] - WIP
+## [3.1.0] - WIP
+
+### Added
+- Agents categories
+- More error reporting
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
+## [3.0.4] - 2025-10-24
 
 ### Added
 - Knowledge plugin to automatically connect knowledge base connections (https://github.com/nbonamy/witsy/issues/450)
 - Set folder default settings dialog (https://github.com/nbonamy/witsy/issues/454)
+- Better error reporting for OpenRouter failures (https://github.com/nbonamy/witsy/issues/458)
 
 ### Changed
 - N/A
 
 ### Fixed
 - Prompt menu not showing in some languages (https://github.com/nbonamy/witsy/issues/455)
+- Bug: Play/Pause and stop button for read aloud is gone (https://github.com/nbonamy/witsy/issues/459)
+- Cannot use Mistral model (https://github.com/nbonamy/witsy/issues/456)
 
 ### Removed
 - N/A
