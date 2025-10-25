@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { beforeAll, describe, expect, test, vi } from 'vitest'
+import { beforeAll, describe, expect, test } from 'vitest'
 import CategoryManager from '../../src/components/CategoryManager.vue'
 import { Expert, ExpertCategory } from '../../src/types'
 import { useWindowMock } from '../mocks/window'

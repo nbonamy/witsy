@@ -13,6 +13,15 @@
       </option>
     </select>
   </div>
+
+  <CategoryManager
+    v-if="showCategoryManager"
+    :categories="allCategories"
+    :experts="experts"
+    @update="onCategoriesUpdate"
+    @close="closeCategoryManager"
+  />
+
   <div class="list-actions">
     <div class="list-action new" @click.prevent="onNew"><PlusIcon />{{ t('settings.experts.new') }}</div>
     <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
@@ -21,6 +30,7 @@
     <div class="flex-push" />
     <ContextMenuTrigger class="list-action menu" position="below-right" ref="moreButton">
       <template #menu>
+        <div class="item" @click="handleActionClick('manageCategories')">{{ t('settings.experts.manageCategories') }}</div>
         <div class="item" @click="handleActionClick('export')">{{ t('settings.experts.export') }}</div>
         <div class="item" @click="handleActionClick('import')">{{ t('settings.experts.import') }}</div>
         <div class="item" @click="handleActionClick('select')">{{ t('settings.experts.enableAll') }}</div>
@@ -61,10 +71,11 @@
 import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, ref } from 'vue'
+import CategoryManager from '../components/CategoryManager.vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import Dialog from '../composables/dialog'
 import useReorderTable from '../composables/reorder_table'
-import { getCategoryLabel } from '../services/categories'
+import { getCategoryLabel, saveCategories } from '../services/categories'
 import { newExpert, saveExperts } from '../services/experts'
 import { expertI18n, t } from '../services/i18n'
 import { store } from '../services/store'
@@ -75,6 +86,7 @@ const selected = ref<Expert>(null)
 const moreButton = ref<HTMLElement>(null)
 const searchQuery = ref('')
 const categoryFilter = ref<string>('')
+const showCategoryManager = ref(false)
 
 const reorderExperts = useReorderTable((ids: string[]) => {
   experts.value.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
@@ -82,6 +94,10 @@ const reorderExperts = useReorderTable((ids: string[]) => {
 })
 
 const emit = defineEmits([ 'create', 'edit' ])
+
+const allCategories = computed(() => {
+  return store.expertCategories.filter(c => c.state === 'enabled')
+})
 
 const availableCategories = computed(() => {
   const catIds = new Set<string>()
@@ -153,7 +169,9 @@ const handleActionClick = async (action: string) => {
   const visibleIds = new Set(filteredExperts.value.map(e => e.id))
 
   // process
-  if (action === 'select') {
+  if (action === 'manageCategories') {
+    showCategoryManager.value = true
+  } else if (action === 'select') {
     experts.value.forEach((expert: Expert) => {
       if (visibleIds.has(expert.id) && expert.state === 'disabled') {
         expert.state = 'enabled'
@@ -309,6 +327,23 @@ const load = () => {
 const save = () => {
   store.experts = experts.value
   saveExperts(store.config.workspaceId)
+}
+
+const onCategoriesUpdate = (updatedCategories: ExpertCategory[], updatedExperts: Expert[]) => {
+  // Update store
+  store.expertCategories = updatedCategories
+  store.experts = updatedExperts
+
+  // Save both to backend
+  saveCategories(store.config.workspaceId, updatedCategories)
+  saveExperts(store.config.workspaceId)
+
+  // Reload local copy
+  load()
+}
+
+const closeCategoryManager = () => {
+  showCategoryManager.value = false
 }
 
 defineExpose({ load })
