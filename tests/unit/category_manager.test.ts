@@ -196,4 +196,64 @@ describe('CategoryManager', () => {
     expect(wrapper.findAll('.category-row')).toHaveLength(3)
     expect(wrapper.text()).toContain('System Category')
   })
+
+  test('disables edit and delete buttons for system categories', () => {
+    const categoriesWithSystem: ExpertCategory[] = [
+      { id: 'sys1', type: 'system', state: 'enabled', name: 'System Category' },
+      { id: 'user1', type: 'user', state: 'enabled', name: 'User Category' }
+    ]
+
+    const wrapper = mount(CategoryManager, {
+      props: {
+        categories: categoriesWithSystem,
+        experts: []
+      }
+    })
+
+    const rows = wrapper.findAll('.category-row')
+
+    // First row (system category) should have disabled buttons
+    const systemButtons = rows[0].findAll('.action-button')
+    expect(systemButtons[0].attributes('disabled')).toBeDefined()
+    expect(systemButtons[1].attributes('disabled')).toBeDefined()
+
+    // Second row (user category) should have enabled buttons
+    const userButtons = rows[1].findAll('.action-button')
+    expect(userButtons[0].attributes('disabled')).toBeUndefined()
+    expect(userButtons[1].attributes('disabled')).toBeUndefined()
+  })
+
+  test('prevents editing system categories', async () => {
+    const systemCategory: ExpertCategory = { id: 'sys1', type: 'system', state: 'enabled', name: 'System' }
+
+    const wrapper = mount(CategoryManager, {
+      props: {
+        categories: [systemCategory],
+        experts: []
+      }
+    })
+
+    const editButton = wrapper.find('.action-button')
+    await editButton.trigger('click')
+
+    // Should not show edit input
+    expect(wrapper.find('.edit-input').exists()).toBe(false)
+  })
+
+  test('prevents deleting system categories', async () => {
+    const systemCategory: ExpertCategory = { id: 'sys1', type: 'system', state: 'enabled', name: 'System' }
+
+    const wrapper = mount(CategoryManager, {
+      props: {
+        categories: [systemCategory],
+        experts: []
+      }
+    })
+
+    const deleteButton = wrapper.findAll('.action-button')[1]
+    await deleteButton.trigger('click')
+
+    // Should not emit update
+    expect(wrapper.emitted('update')).toBeFalsy()
+  })
 })

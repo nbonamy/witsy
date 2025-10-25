@@ -28,10 +28,20 @@
               <span class="category-count">({{ getExpertCount(category.id) }})</span>
             </td>
             <td class="category-actions">
-              <button @click="startEdit(category)" class="action-button" :title="t('common.edit')">
+              <button
+                @click="startEdit(category)"
+                class="action-button"
+                :title="t('common.edit')"
+                :disabled="category.type === 'system'"
+              >
                 <PencilIcon />
               </button>
-              <button @click="onDelete(category)" class="action-button delete" :title="t('common.delete')">
+              <button
+                @click="onDelete(category)"
+                class="action-button delete"
+                :title="t('common.delete')"
+                :disabled="category.type === 'system'"
+              >
                 <Trash2Icon />
               </button>
             </td>
@@ -74,6 +84,10 @@ const getExpertCount = (categoryId: string): number => {
 }
 
 const startEdit = async (category: ExpertCategory) => {
+  // Don't allow editing system categories
+  if (category.type === 'system') {
+    return
+  }
   editingId.value = category.id
   editingName.value = category.name || ''
   await nextTick()
@@ -136,6 +150,11 @@ const onNewCategory = async () => {
 }
 
 const onDelete = async (category: ExpertCategory) => {
+  // Don't allow deleting system categories
+  if (category.type === 'system') {
+    return
+  }
+
   const expertCount = getExpertCount(category.id)
 
   if (expertCount === 0) {
@@ -297,12 +316,17 @@ const onClose = () => {
   margin-left: 0.5rem;
 }
 
-.action-button:hover {
+.action-button:hover:not(:disabled) {
   color: var(--highlight-color);
 }
 
-.action-button.delete:hover {
+.action-button.delete:hover:not(:disabled) {
   color: var(--color-error);
+}
+
+.action-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .action-button svg {
