@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
 - N/A
 
 ### Fixed
-- N/A
+- Chat color with dark mode (https://github.com/nbonamy/witsy/issues/464)
 
 ### Removed
 - N/A
