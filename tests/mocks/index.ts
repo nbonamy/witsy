@@ -40,6 +40,9 @@ export const createI18nMock = (callback?: () => Partial<{
     commandI18n: vi.fn((command, attr) => command?.[attr] ?? `command_${command?.id}_${attr}_{input}`),
     commandI18nDefault: vi.fn((command, attr) => `command_default_${command?.id}_${attr}${attr == 'template' ? "-{input}" : ""}`),
 
+    categoryI18n: vi.fn((category, attr) => category?.[attr] ?? `category_${category?.id}_${attr}`),
+    categoryI18nDefault: vi.fn((category, attr) => `category_default_${category?.id}_${attr}`),
+
     fullExpertI18n: function(expert) {
       return expert ? {
         ...expert,

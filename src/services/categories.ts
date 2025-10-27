@@ -1,26 +1,49 @@
+import { Expert, ExpertCategory } from '../types/index'
+import { store } from './store'
 
-import { ExpertCategory } from '../types/index'
-import { t } from './i18n'
-
-export const getCategoryById = (categoryId?: string, categories?: ExpertCategory[]): ExpertCategory | undefined => {
-  if (!categoryId || !categories) return undefined
-  return categories.find(c => c.id === categoryId)
+export const createCategory = (name: string): ExpertCategory => {
+  return {
+    id: crypto.randomUUID(),
+    type: 'user',
+    state: 'enabled',
+    name: name,
+  }
 }
 
-export const getCategoryLabel = (categoryId?: string, categories?: ExpertCategory[]): string => {
-  if (!categoryId || !categories) return 'Uncategorized'
-  const category = getCategoryById(categoryId, categories)
-  if (!category) return 'Uncategorized'
+export const deleteCategory = (
+  categoryId: string,
+  deleteExperts: boolean,
+): void => {
 
-  // Try to get i18n label
-  try {
-    const label = t(`experts.categories.${category.id}.name`)
-    if (label && !label.startsWith('experts.categories')) {
-      return label
-    }
-  } catch {
-    // Fallback to default
+  // System categories cannot be deleted
+  const category = store.expertCategories.find(c => c.id === categoryId)
+  if (!category || category.type === 'system') return
+
+  // Remove user category
+  store.expertCategories = store.expertCategories.filter(c => c.id !== categoryId)
+
+  // Handle experts in this category
+  const updatedExperts: Expert[] = [...store.experts]
+
+  if (deleteExperts) {
+    // Delete experts: system experts are soft-deleted, user experts are removed
+    store.experts = updatedExperts.map(e => {
+      if (e.categoryId === categoryId) {
+        if (e.type === 'system') {
+          return { ...e, state: 'deleted' as const }
+        }
+        return null // Will be filtered out
+      }
+      return e
+    }).filter(e => e !== null) as Expert[]
+  } else {
+    // Keep experts but uncategorize them
+    store.experts = updatedExperts.map(e => {
+      if (e.categoryId === categoryId) {
+        return { ...e, categoryId: undefined }
+      }
+      return e
+    })
   }
 
-  return 'Uncategorized'
 }

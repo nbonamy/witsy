@@ -2691,7 +2691,21 @@
       "sortAlpha": "Sort alphabetically",
       "sortState": "Sort by state",
       "sortUsage": "Sort by usage",
-      "usage": "Usage"
+      "usage": "Usage",
+      "manageCategories": "Manage Categories",
+      "categoryManager": {
+        "title": "Manage Categories",
+        "newCategory": "New Category",
+        "categoryName": "Category Name",
+        "confirmDelete": "Delete Category",
+        "keepExperts": "Keep Experts",
+        "deleteExperts": "Delete Experts",
+        "deleteText": "What would you like to do with the experts in this category?",
+        "close": "Close",
+        "empty": "No categories yet",
+        "duplicateName": "A category with this name already exists",
+        "toggleVisibility": "Toggle Visibility"
+      }
     },
     "general": {
       "darkTint": "Dark tint",
