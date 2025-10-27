@@ -83,6 +83,7 @@ export class LlmContext {
           }
         },
 
+        // @ts-expect-error partial mock
         interpreter: {
           python: async (script: string): Promise<any> => {
             try {
@@ -95,17 +96,6 @@ export class LlmContext {
           },
           pyodide: async (script: string): Promise<any> => {
             return await pyodide.runPythonCode(script)
-          },
-          downloadPyodide: async (): Promise<any> => {
-            try {
-              await pyodide.downloadPyodideRuntime()
-              return { success: true }
-            } catch (error) {
-              return { success: false, error: error.message }
-            }
-          },
-          isPyodideCached: (): Promise<boolean> => {
-            return Promise.resolve(pyodide.isPyodideCached())
           },
         },
 
