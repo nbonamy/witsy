@@ -1,0 +1,7 @@
+{
+  "plugins": {
+    "python": {
+      "enabled": false
+    }
+  }
+}

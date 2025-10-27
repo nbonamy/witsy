@@ -519,7 +519,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       resize: vi.fn(),
     },
     interpreter: {
-      python: vi.fn(async () => ({ result: ['bonjour'] }))
+      python: vi.fn(async () => ({ result: ['bonjour'] })),
+      pyodide: vi.fn(async () => ({ result: 'bonjour' }))
     },
     markdown: {
       render: vi.fn(renderMarkdown),

@@ -28,6 +28,7 @@ import LocalSearch from './search';
 
 import * as IPC from '../ipc_consts';
 import * as agents from './agents';
+import * as pyodide from './pyodide';
 import * as backup from './backup';
 import * as cliInstaller from './cli_installer';
 import * as commands from './commands';
@@ -478,6 +479,27 @@ export const installIpc = (
       console.log('Error while running python', error);
       return { error: error || 'Unknown error' }
     }
+  })
+
+  ipcMain.handle(IPC.INTERPRETER.PYODIDE_RUN, async (event, payload) => {
+    return await pyodide.runPythonCode(payload)
+  })
+
+  ipcMain.handle(IPC.INTERPRETER.PYODIDE_DOWNLOAD, async () => {
+    try {
+      await pyodide.downloadPyodideRuntime()
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  })
+
+  ipcMain.handle(IPC.INTERPRETER.PYODIDE_IS_CACHED, () => {
+    return pyodide.isPyodideCached()
+  })
+
+  ipcMain.handle(IPC.INTERPRETER.PYODIDE_CLEAR_CACHE, async () => {
+    return pyodide.clearPyodideCache();
   })
 
   ipcMain.on(IPC.AUTOMATION.GET_TEXT, (event, payload) => {

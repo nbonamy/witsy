@@ -472,6 +472,10 @@ declare global {
       }
       interpreter: {
         python(code: string): Promise<any>
+        pyodide(code: string): Promise<any>
+        downloadPyodide(): Promise<any>
+        isPyodideCached(): Promise<boolean>
+        clearPyodideCache(): Promise<void>
       }
       mcp: {
         isAvailable(): boolean

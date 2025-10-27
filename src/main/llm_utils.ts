@@ -7,6 +7,7 @@ import { loadAgents, saveAgentRun } from './agents'
 import { loadSettings } from './config'
 import { getLocaleMessages } from './i18n'
 import { runPython } from './interpreter'
+import * as pyodide from './pyodide'
 import Mcp from './mcp'
 import LocalSearch from './search'
 import DocumentRepository from '../rag/docrepo'
@@ -91,6 +92,20 @@ export class LlmContext {
               console.log('Error while running python', error);
               return { error: error || 'Unknown error' }
             }
+          },
+          pyodide: async (script: string): Promise<any> => {
+            return await pyodide.runPythonCode(script)
+          },
+          downloadPyodide: async (): Promise<any> => {
+            try {
+              await pyodide.downloadPyodideRuntime()
+              return { success: true }
+            } catch (error) {
+              return { success: false, error: error.message }
+            }
+          },
+          isPyodideCached: (): Promise<boolean> => {
+            return Promise.resolve(pyodide.isPyodideCached())
           },
         },
 

@@ -170,6 +170,10 @@ export const MARKDOWN = {
 
 export const INTERPRETER = {
   PYTHON_RUN: 'code-python-run',
+  PYODIDE_RUN: 'code-pyodide-run',
+  PYODIDE_DOWNLOAD: 'code-pyodide-download',
+  PYODIDE_IS_CACHED: 'code-pyodide-is-cached',
+  PYODIDE_CLEAR_CACHE: 'code-pyodide-clear-cache',
 } as const;
 
 export const MCP = {
