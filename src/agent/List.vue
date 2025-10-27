@@ -50,6 +50,9 @@
                   <div class="item export" @click="$emit('export', agent)">
                     {{ t('agent.help.export') }}
                   </div>
+                  <div class="item duplicate" @click="$emit('duplicate', agent)">
+                    {{ t('agent.help.duplicate') }}
+                  </div>
                   <div class="item delete" @click="$emit('delete', agent)">
                     {{ t('agent.help.delete') }}
                   </div>
@@ -76,7 +79,7 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Agent, AgentRun } from '../types/agents'
 
-const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'export', 'importA2A', 'importJson'])
+const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson'])
 
 const props = defineProps({
   agents: Array as PropType<Agent[]>,

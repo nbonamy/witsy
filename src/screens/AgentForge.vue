@@ -13,7 +13,7 @@
       </template>
 
       <template v-else>
-        <List class="sp-main" :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
+        <List class="sp-main" :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @duplicate="duplicateAgent" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
       </template>
 
     </template>
@@ -158,6 +158,13 @@ const runAgent = (agent: Agent, opts?: Record<string, string>) => {
     await executor.run('manual', prompt)
     running.value = null
   })
+}
+
+const duplicateAgent = (data: any) => {
+  const agent = Agent.fromJson(data)
+  const duplicated = agent.duplicate(t('agent.copySuffix'))
+  window.api.agents.save(store.config.workspaceId, duplicated)
+  store.loadAgents()
 }
 
 const deleteAgent = (agent: Agent) => {
