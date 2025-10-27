@@ -13,60 +13,73 @@
       </option>
     </select>
   </div>
-  <div class="list-actions">
-    <div class="list-action new" @click.prevent="onNew"><PlusIcon />{{ t('settings.experts.new') }}</div>
-    <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
-    <div class="list-action copy" @click.prevent="onCopy(selected)" v-if="selected"><CopyIcon />{{ t('settings.experts.copy') }}</div>
-    <div class="list-action delete" @click.prevent="onDelete" v-if="selected"><Trash2Icon />{{ t('common.delete') }}</div>
-    <div class="flex-push" />
-    <ContextMenuTrigger class="list-action menu" position="below-right" ref="moreButton">
-      <template #menu>
-        <div class="item" @click="handleActionClick('export')">{{ t('settings.experts.export') }}</div>
-        <div class="item" @click="handleActionClick('import')">{{ t('settings.experts.import') }}</div>
-        <div class="item" @click="handleActionClick('select')">{{ t('settings.experts.enableAll') }}</div>
-        <div class="item" @click="handleActionClick('unselect')">{{ t('settings.experts.disableAll') }}</div>
-        <div class="item" @click="handleActionClick('deleteAll')">{{ t('settings.experts.deleteAll') }}</div>
-        <div class="item" @click="handleActionClick('sortAlpha')">{{ t('settings.experts.sortAlpha') }}</div>
-        <div class="item" @click="handleActionClick('sortEnabled')">{{ t('settings.experts.sortState') }}</div>
-        <div class="item" @click="handleActionClick('sortUsage')">{{ t('settings.experts.sortUsage') }}</div>
-      </template>
-    </ContextMenuTrigger>
-  </div>
-  <div class="experts sticky-table-container">
-    <table>
-      <thead>
-        <tr>
-          <th v-for="column in columns" :key="column.field">{{ column.title }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="expert in filteredExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
-            @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="reorderExperts.onDragStart" @dragover="reorderExperts.onDragOver" @dragend="reorderExperts.onDragEnd">
-          <td class="enabled"><input type="checkbox" class="sm" :checked="expert.state=='enabled'" @click="onEnabled(expert)" @dblclick.stop /></td>
-          <td class="name">{{ name(expert) }}</td>
-          <td class="category">{{ expert.categoryId ? getCategoryLabel(expert.categoryId, store.expertCategories) : '-' }}</td>
-          <!-- <td class="usage">{{ expert.stats?.timesUsed || '-' }}</td> -->
-          <td class="move">
-            <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
-            <button @click.prevent="onMoveUp(expert)" @dblclick.stop>▲</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+
+  <CategoryManager
+    v-if="showCategoryManager"
+    :categories="allCategories"
+    :experts="experts"
+    @update="onCategoriesUpdate"
+    @close="closeCategoryManager"
+  />
+
+  <template v-else>
+
+    <div class="list-actions">
+      <div class="list-action new" @click.prevent="onNew"><PlusIcon />{{ t('settings.experts.new') }}</div>
+      <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
+      <div class="list-action copy" @click.prevent="onCopy(selected)" v-if="selected"><CopyIcon />{{ t('settings.experts.copy') }}</div>
+      <div class="list-action delete" @click.prevent="onDelete" v-if="selected"><Trash2Icon />{{ t('common.delete') }}</div>
+      <div class="flex-push" />
+      <ContextMenuTrigger class="list-action menu" position="below-right" ref="moreButton">
+        <template #menu>
+          <div class="item" @click="handleActionClick('manageCategories')">{{ t('settings.experts.manageCategories') }}</div>
+          <div class="item" @click="handleActionClick('export')">{{ t('settings.experts.export') }}</div>
+          <div class="item" @click="handleActionClick('import')">{{ t('settings.experts.import') }}</div>
+          <div class="item" @click="handleActionClick('select')">{{ t('settings.experts.enableAll') }}</div>
+          <div class="item" @click="handleActionClick('unselect')">{{ t('settings.experts.disableAll') }}</div>
+          <div class="item" @click="handleActionClick('deleteAll')">{{ t('settings.experts.deleteAll') }}</div>
+          <div class="item" @click="handleActionClick('sortAlpha')">{{ t('settings.experts.sortAlpha') }}</div>
+          <div class="item" @click="handleActionClick('sortEnabled')">{{ t('settings.experts.sortState') }}</div>
+          <div class="item" @click="handleActionClick('sortUsage')">{{ t('settings.experts.sortUsage') }}</div>
+        </template>
+      </ContextMenuTrigger>
+    </div>
+    <div class="experts sticky-table-container">
+      <table>
+        <thead>
+          <tr>
+            <th v-for="column in columns" :key="column.field">{{ column.title }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="expert in filteredExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
+              @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="reorderExperts.onDragStart" @dragover="reorderExperts.onDragOver" @dragend="reorderExperts.onDragEnd">
+            <td class="enabled"><input type="checkbox" class="sm" :checked="expert.state=='enabled'" @click="onEnabled(expert)" @dblclick.stop /></td>
+            <td class="name">{{ name(expert) }}</td>
+            <td class="category">{{ expert.categoryId ? categoryI18n(getCategory(expert), 'name') : '-' }}</td>
+            <!-- <td class="usage">{{ expert.stats?.timesUsed || '-' }}</td> -->
+            <td class="move">
+              <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
+              <button @click.prevent="onMoveUp(expert)" @dblclick.stop>▲</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </template>
 </template>
 
 <script setup lang="ts">
 
 import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import CategoryManager from '../components/CategoryManager.vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import Dialog from '../composables/dialog'
 import useReorderTable from '../composables/reorder_table'
-import { getCategoryLabel } from '../services/categories'
 import { newExpert, saveExperts } from '../services/experts'
-import { expertI18n, t } from '../services/i18n'
+import { expertI18n, categoryI18n, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Expert, ExpertCategory } from '../types/index'
 
@@ -75,6 +88,7 @@ const selected = ref<Expert>(null)
 const moreButton = ref<HTMLElement>(null)
 const searchQuery = ref('')
 const categoryFilter = ref<string>('')
+const showCategoryManager = ref(false)
 
 const reorderExperts = useReorderTable((ids: string[]) => {
   experts.value.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
@@ -82,6 +96,10 @@ const reorderExperts = useReorderTable((ids: string[]) => {
 })
 
 const emit = defineEmits([ 'create', 'edit' ])
+
+const allCategories = computed(() => {
+  return store.expertCategories.filter(c => c.state === 'enabled')
+})
 
 const availableCategories = computed(() => {
   const catIds = new Set<string>()
@@ -92,12 +110,20 @@ const availableCategories = computed(() => {
   })
   return store.expertCategories.filter(c => catIds.has(c.id) && c.state === 'enabled').map((c: ExpertCategory) => ({
     id: c.id,
-    name: getCategoryLabel(c.id, store.expertCategories)
+    name: categoryI18n(c, 'name')
   })).sort((a, b) => a.name.localeCompare(b.name))
 })
 
 const filteredExperts = computed(() => {
   let result = experts.value?.filter((expert: Expert) => expert.state != 'deleted') || []
+
+  // Hide experts with disabled categories
+  const enabledCategoryIds = new Set(
+    store.expertCategories
+      .filter(c => c.state === 'enabled')
+      .map(c => c.id)
+  )
+  result = result.filter(e => !e.categoryId || enabledCategoryIds.has(e.categoryId))
 
   // Apply search filter
   if (searchQuery.value) {
@@ -122,8 +148,22 @@ const filteredExperts = computed(() => {
   return result
 })
 
+// Clear category filter if selected category becomes disabled
+watch(() => store.expertCategories, () => {
+  if (categoryFilter.value) {
+    const selectedCat = store.expertCategories.find(c => c.id === categoryFilter.value)
+    if (!selectedCat || selectedCat.state !== 'enabled') {
+      categoryFilter.value = ''
+    }
+  }
+}, { deep: true })
+
 const name = (expert: Expert) => {
   return expert.name || expertI18n(expert, 'name')
+}
+
+const getCategory = (expert: Expert): ExpertCategory => {
+  return store.expertCategories.find(c => c.id === expert.categoryId)
 }
 
 const columns = [
@@ -153,7 +193,9 @@ const handleActionClick = async (action: string) => {
   const visibleIds = new Set(filteredExperts.value.map(e => e.id))
 
   // process
-  if (action === 'select') {
+  if (action === 'manageCategories') {
+    showCategoryManager.value = true
+  } else if (action === 'select') {
     experts.value.forEach((expert: Expert) => {
       if (visibleIds.has(expert.id) && expert.state === 'disabled') {
         expert.state = 'enabled'
@@ -309,6 +351,14 @@ const load = () => {
 const save = () => {
   store.experts = experts.value
   saveExperts(store.config.workspaceId)
+}
+
+const onCategoriesUpdate = () => {
+  load()
+}
+
+const closeCategoryManager = () => {
+  showCategoryManager.value = false
 }
 
 defineExpose({ load })

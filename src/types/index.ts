@@ -230,7 +230,7 @@ export type ExternalApp = {
 export type ExpertCategory = {
   id: string
   type: 'system' | 'user'
-  state: 'enabled' | 'disabled' | 'deleted'
+  state: 'enabled' | 'disabled'
   name?: string
   icon?: string
 }

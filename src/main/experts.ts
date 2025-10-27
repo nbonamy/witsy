@@ -65,13 +65,16 @@ const loadExpertData = (source: App|string, workspaceId: string): ExpertData => 
     }
   }
 
+  // needed
+  const defaultCategories = Array.isArray(defaultExpertsData.categories) ? defaultExpertsData.categories : (defaultExpertsData as any).categories
+  const defaultExperts = Array.isArray(defaultExpertsData) ? defaultExpertsData : (defaultExpertsData as any).experts
+
   // migrations can update
   let updated = false
 
   // migrate old experts format
-  const defaultExperts = Array.isArray(defaultExpertsData) ? defaultExpertsData : (defaultExpertsData as any).experts
   const expertData: ExpertData = {
-    categories: defaultExpertsData.categories as ExpertCategory[],
+    categories: defaultCategories as ExpertCategory[],
     experts: defaultExperts as Expert[],
   }
   
@@ -124,7 +127,16 @@ const loadExpertData = (source: App|string, workspaceId: string): ExpertData => 
     }
 
   }
-  
+
+  // add new categories
+  for (const category of defaultCategories) {
+    const c = expertData.categories.find((cat: ExpertCategory) => cat.id === category.id)
+    if (c == null) {
+      expertData.categories.push(category as ExpertCategory)
+      updated = true
+    }
+  }
+
   // now add new experts
   for (const prompt of defaultExperts) {
     const p = expertData.experts.find((prt: Expert) => prt.id === prompt.id)
