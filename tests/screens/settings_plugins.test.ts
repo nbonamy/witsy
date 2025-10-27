@@ -229,10 +229,26 @@ test('python settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
   await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=python]').trigger('click')
   const python = tab.findComponent({ name: 'SettingsPython' })
+
+  // Test enable checkbox
   expect(python.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(python.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
   await python.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
   expect(store.config.plugins.python.enabled).toBe(true)
+
+  // Test runtime radio buttons (default is embedded)
+  const radioButtons = python.findAll('input[type=radio]')
+  expect(radioButtons.length).toBe(2)
+  expect(radioButtons[0].element.value).toBe('embedded')
+  expect(radioButtons[1].element.value).toBe('native')
+  expect(store.config.plugins.python.runtime).toBe('embedded')
+
+  // Switch to native runtime to show binpath input
+  await radioButtons[1].setValue(true)
+  expect(store.config.plugins.python.runtime).toBe('native')
+  await python.vm.$nextTick()
+
+  // Now test binpath input (only visible when native is selected)
   expect(python.find<HTMLInputElement>('input[type=text]').element.value).toBe('python3')
   await python.findAll('button')[0].trigger('click')
   expect(window.api.file.find).toHaveBeenCalled()

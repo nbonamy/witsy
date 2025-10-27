@@ -180,3 +180,23 @@ test('Save apiKeys settings with safeKeys disabled', () => {
   expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
   expect(Store.prototype.set).not.toHaveBeenCalled()
 })
+
+test('Backwards compatibility: Python plugin with binpath', () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/python-binpath')
+  const loaded = config.loadSettings(app)
+  expect(loaded.plugins.python.runtime).toBe('native')
+  expect(loaded.plugins.python.binpath).toBe('/usr/bin/python3')
+})
+
+test('Backwards compatibility: Python plugin without binpath', () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/python-no-binpath')
+  const loaded = config.loadSettings(app)
+  expect(loaded.plugins.python.runtime).toBe('embedded')
+})
+
+test('Python plugin with runtime already set', () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/python-with-runtime')
+  const loaded = config.loadSettings(app)
+  expect(loaded.plugins.python.runtime).toBe('native')
+  expect(loaded.plugins.python.binpath).toBe('/opt/python3')
+})

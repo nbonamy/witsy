@@ -13,7 +13,10 @@ export default class extends Plugin {
   }
 
   isEnabled(): boolean {
-    return this.config?.enabled && this.config?.binpath != null
+    // Plugin is enabled if:
+    // 1. enabled flag is true AND
+    // 2. Either using embedded runtime OR has binpath for native runtime
+    return this.config?.enabled && (this.config?.runtime === 'embedded' || this.config?.binpath != null)
   }
 
   getName(): string {
@@ -21,7 +24,11 @@ export default class extends Plugin {
   }
 
   getDescription(): string {
-    return 'Execute Python code and return the result'
+    if (this.config?.runtime === 'embedded') {
+      return 'Execute Python code in a secure sandboxed environment (embedded runtime)'
+    } else {
+      return 'Execute Python code using native Python binary'
+    }
   }
 
   getPreparationDescription(): string {
@@ -54,19 +61,34 @@ export default class extends Plugin {
    
   async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
 
-    // make sure last line is a print
+    // Route to appropriate runtime based on config
+    const runtime = this.config?.runtime || 'embedded'
+
     let script = parameters.script
-    const lines = script.split('\n')
-    const lastLine = lines[lines.length - 1]
-    if (!lastLine.includes('print(')) {
-      lines[lines.length - 1] = `print(${lastLine})`
-      script = lines.join('\n')
+    let output: any
+
+    if (runtime === 'embedded') {
+      // Pyodide: Execute directly, returns value automatically
+      output = await window.api.interpreter.pyodide(script)
+    } else {
+      // Native Python: Make sure last line is a print
+      const lines = script.split('\n')
+      const lastLine = lines[lines.length - 1]
+      if (!lastLine.includes('print(')) {
+        lines[lines.length - 1] = `print(${lastLine})`
+        script = lines.join('\n')
+      }
+      output = await window.api.interpreter.python(script)
     }
 
-    // now run it
-    const output = await window.api.interpreter.python(script)
-    if (output.error) return output
-    else return { result: output.result.join('\n') }
+    // Handle result
+    if (output.error) {
+      return output
+    } else {
+      // Native Python returns array, Pyodide returns string
+      const result = Array.isArray(output.result) ? output.result.join('\n') : output.result
+      return { result }
+    }
   }  
 
 }

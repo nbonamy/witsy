@@ -1,0 +1,9 @@
+{
+  "plugins": {
+    "python": {
+      "enabled": true,
+      "runtime": "native",
+      "binpath": "/opt/python3"
+    }
+  }
+}

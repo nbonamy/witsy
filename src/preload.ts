@@ -188,6 +188,10 @@ contextBridge.exposeInMainWorld(
     },
     interpreter: {
       python: (code: string): Promise<any> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYTHON_RUN, code) },
+      pyodide: (code: string): Promise<any> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYODIDE_RUN, code) },
+      downloadPyodide: (): Promise<any> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYODIDE_DOWNLOAD) },
+      isPyodideCached: (): Promise<boolean> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYODIDE_IS_CACHED) },
+      clearPyodideCache: (): Promise<void> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYODIDE_CLEAR_CACHE) },
     },
     mcp: {
       isAvailable: (): boolean => { return ipcRenderer.sendSync(IPC.MCP.IS_AVAILABLE) },

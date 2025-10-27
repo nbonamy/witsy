@@ -152,6 +152,7 @@
     "plist": "^3.1.0",
     "portfinder": "^1.0.37",
     "powershell": "^2.3.3",
+    "pyodide": "^0.29.0",
     "python-shell": "^5.0.0",
     "replicate": "^1.1.0",
     "sweetalert2": "^11.23.0",
