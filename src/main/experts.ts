@@ -112,7 +112,7 @@ const loadExpertData = (source: App|string, workspaceId: string): ExpertData => 
 
     // assign categoryId from defaults for system experts if missing
     if (expert.type === 'system' && !expert.categoryId) {
-      if (defaultExpert?.categoryId) {
+      if (defaultExpert.categoryId === undefined) {
         expert.categoryId = defaultExpert.categoryId
         updated = true
       }
