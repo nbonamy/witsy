@@ -50,6 +50,7 @@ export interface Agent {
   webhookToken: string|null
   invocationValues: Record<string, string>
   buildPrompt: (step: number, parameters: anyDict) => string|null
+  duplicate: (nameSuffix?: string) => Agent
   getPreparationDescription?: () => string
   getRunningDescription?: (args: any) => string
   getCompletedDescription?: (args: any, results: any) => string

@@ -286,6 +286,28 @@ test('Emits export event when clicking export option in context menu', async () 
   expect(wrapper.emitted('export')![0]).toEqual([store.agents[0]]) // First agent in array
 })
 
+test('Emits duplicate event when clicking duplicate option in context menu', async () => {
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents },
+    attachTo: document.body
+  })
+
+  // Find the ContextMenuTrigger and click it to open the menu
+  const contextMenuTrigger = wrapper.findComponent({ name: 'ContextMenuTrigger' })
+  await contextMenuTrigger.find('.trigger').trigger('click')
+  await nextTick()
+
+  // Find the ContextMenuPlus component and click the duplicate item
+  const contextMenuPlus = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(contextMenuPlus.exists()).toBe(true)
+
+  const duplicateItem = contextMenuPlus.find('.item.duplicate')
+  await duplicateItem.trigger('click')
+
+  expect(wrapper.emitted('duplicate')).toBeTruthy()
+  expect(wrapper.emitted('duplicate')![0]).toEqual([store.agents[0]]) // First agent in array
+})
+
 test('Event handlers prevent bubbling for action buttons', async () => {
   const wrapper: VueWrapper<any> = mount(List, {
     props: { agents: store.agents }

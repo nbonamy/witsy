@@ -204,6 +204,7 @@
     "yes": "Yes"
   },
   "agent": {
+    "copySuffix": "Copy",
     "create": {
       "goal": {
         "title": "Agent Goal"
@@ -311,6 +312,7 @@
       "clearHistory": "Clear all history for this agent",
       "delete": "Delete this agent",
       "deleteRun": "Delete this run",
+      "duplicate": "Duplicate this agent",
       "edit": "Edit this agent",
       "export": "Export agent",
       "import": "Import agent",
