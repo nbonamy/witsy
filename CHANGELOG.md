@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Agents categories
 - More error reporting
+- Sandboxed python runtime
+- Duplicate agent
 
 ### Changed
 - N/A
