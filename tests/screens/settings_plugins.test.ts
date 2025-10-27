@@ -236,15 +236,17 @@ test('python settings', async () => {
   await python.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
   expect(store.config.plugins.python.enabled).toBe(true)
 
-  // Test runtime radio buttons (default is embedded)
-  const radioButtons = python.findAll('input[type=radio]')
-  expect(radioButtons.length).toBe(2)
-  expect(radioButtons[0].element.value).toBe('embedded')
-  expect(radioButtons[1].element.value).toBe('native')
+  // Test runtime select dropdown (default is embedded)
+  const runtimeSelect = python.find('select[name=runtime]')
+  expect(runtimeSelect.exists()).toBeTruthy()
+  const options = runtimeSelect.findAll('option')
+  expect(options.length).toBe(2)
+  expect(options[0].element.value).toBe('embedded')
+  expect(options[1].element.value).toBe('native')
   expect(store.config.plugins.python.runtime).toBe('embedded')
 
   // Switch to native runtime to show binpath input
-  await radioButtons[1].setValue(true)
+  await runtimeSelect.setValue('native')
   expect(store.config.plugins.python.runtime).toBe('native')
   await python.vm.$nextTick()
 

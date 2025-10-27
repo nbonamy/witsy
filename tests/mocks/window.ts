@@ -520,7 +520,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     interpreter: {
       python: vi.fn(async () => ({ result: ['bonjour'] })),
-      pyodide: vi.fn(async () => ({ result: 'bonjour' }))
+      pyodide: vi.fn(async () => ({ result: 'bonjour' })),
+      downloadPyodide: vi.fn(async () => ({ success: true })),
+      isPyodideCached: vi.fn(async () => false),
+      clearPyodideCache: vi.fn(async () => {}),
     },
     markdown: {
       render: vi.fn(renderMarkdown),
