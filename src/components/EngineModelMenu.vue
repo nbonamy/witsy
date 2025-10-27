@@ -1,6 +1,6 @@
 <template>
   <ContextMenuPlus
-    :css-classes="cssClasses"
+    :css-classes="`${cssClasses??''} engine-model-menu`"
     :anchor="anchor"
     :position="position"
     :teleport="teleport"
@@ -201,7 +201,16 @@ const handleModelClick = (engine: string, model: string) => {
 
 </script>
 
+<style>
+.context-menu.engine-model-menu {
+  min-width: 240px;
+  max-width: unset;
+}
+</style>
+
 <style scoped>
+
+
 .engine-item {
   display: flex;
   align-items: center;

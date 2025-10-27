@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - Duplicate agent
 
 ### Changed
-- N/A
+- Wider engine/model menu (https://github.com/nbonamy/witsy/issues/463)
 
 ### Fixed
 - Chat color with dark mode (https://github.com/nbonamy/witsy/issues/464)
