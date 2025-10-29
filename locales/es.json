@@ -52,6 +52,7 @@
     "docRepo": "Base de Conocimiento",
     "documents": "Documentos",
     "done": "Hecho",
+    "download": "Descargar",
     "downloadCsv": "CSV",
     "downloadXlsx": "Excel",
     "edit": "Editar",
@@ -184,6 +185,7 @@
     "yes": "Sí"
   },
   "agent": {
+    "copySuffix": "Copiar",
     "create": {
       "goal": {
         "title": "Objetivo del Agente"
@@ -266,7 +268,10 @@
       },
       "confirmDelete": "¿Estás seguro de que quieres eliminar este agente?",
       "create": "Nuevo agente",
-      "empty": "¡Desbloquea el poder agente de @:{'common.appName'} creando tu primer agente! Haz clic en la cabeza del robot para comenzar.",
+      "empty": {
+        "text": "Agent Forge te permite crear agentes de IA personalizados para automatizar tus flujos de trabajo y manejar tareas complejas. Piénsalo como tener un asistente inteligente que puede dividir grandes trabajos en pasos manejables y ejecutarlos de forma autónoma.",
+        "title": "Bienvenido a Agent Forge"
+      },
       "import": {
         "conflict": {
           "createNew": "Crear nuevo",
@@ -291,6 +296,7 @@
       "clearHistory": "Borrar todo el historial de este agente",
       "delete": "Eliminar este agente",
       "deleteRun": "Eliminar esta ejecución",
+      "duplicate": "Duplicar este agente",
       "edit": "Editar este agente",
       "export": "Exportar agente",
       "import": "Importar agente",
@@ -306,7 +312,7 @@
       "lastRun": "Última ejecución",
       "log": "Registro",
       "neverRun": "Nunca",
-      "running": "Ejecutando...",
+      "running": "Ejecutando…",
       "status": "Estado",
       "trigger": "Disparador"
     },
@@ -416,7 +422,7 @@
       "notFound": "El agente usado para generar ese mensaje ya no está disponible.",
       "status": {
         "inProgress": "Ejecutando paso {step} de {steps}…",
-        "starting": "Iniciando..."
+        "starting": "Iniciando…"
       }
     },
     "editor": {
@@ -668,7 +674,7 @@
       "help": "Puedes mantener las siguientes teclas modificadoras mientras seleccionas tu comando para acelerar tu flujo de trabajo. Puedes soltar esas teclas justo después de que se seleccione el comando.<ul><li><b>{ctrl}</b>: copiará el texto generado en tu portapapeles</li><li><b>{shift}</b>: insertará el texto generado en la aplicación actual.</li><li><b>{shift}+{ctrl}</b>: reemplazará el texto seleccionado con el texto generado.</li></ul>",
       "usage": {
         "copy": "Modo copiar activado",
-        "default": "Haz clic para aprender más...",
+        "default": "Haz clic para saber más…",
         "insert": "Modo insertar activado",
         "replace": "Modo reemplazar activado"
       }
@@ -854,7 +860,7 @@
     "search": {
       "error": "Ocurrió un error durante la búsqueda. Por favor, inténtelo de nuevo.",
       "noResults": "No se encontraron resultados para su consulta.",
-      "placeholder": "Ingrese su consulta de búsqueda...",
+      "placeholder": "Introduce tu consulta de búsqueda…",
       "results": "Resultados de la búsqueda ({count})",
       "score": "Puntuación de relevancia: {score}",
       "text": "Ingrese su consulta de búsqueda para encontrar información relevante en esta base de conocimientos.",
@@ -1817,18 +1823,18 @@
   },
   "generator": {
     "errors": {
-      "cannotContinue": "\n\nLo siento, no puedo continuar aquí.",
-      "contextTooLong": "Lo siento, parece que este mensaje excede la longitud de contexto de este modelo. Intenta acortar tu solicitud o prueba otro modelo.",
-      "couldNotGenerate": "Lo siento, no pude generar texto para esa solicitud.",
+      "cannotContinue": "\n\nLo siento, no puedo continuar aquí. <error>{error}</error>",
+      "contextTooLong": "Lo siento, parece que este mensaje excede la longitud del contexto de este modelo. Intenta acortar tu solicitud o prueba con otro modelo. <error>{error}</error>",
+      "couldNotGenerate": "Lo siento, no pude generar texto para esa solicitud. <error>{error}</error>",
       "invalidBudgetKnown": "Lo siento, el presupuesto de pensamiento para este modelo debe estar entre {min} y {max}.",
-      "invalidBudgetUnknown": "Lo siento, el presupuesto de pensamiento no es válido para este modelo.",
-      "invalidModel": "Lo siento, parece que este modelo no está disponible.",
-      "missingApiKey": "Necesitas ingresar tu clave API en la pestaña Modelos de [Configuración](#settings_models) para poder chatear.",
-      "networkError": "Lo siento, no pude conectarme al proveedor de LLM. Por favor, verifica tu conexión a internet o tus [configuraciones de proxy](#settings_advanced) si has definido alguna.",
-      "onlyThinkingMode": "Lo siento, este modelo solo funciona en modo de reflexión. Deje el presupuesto de reflexión vacío o ingrese un valor válido.",
-      "outOfCredits": "Lo siento, parece que te has quedado sin créditos. Verifica el saldo de tu cuenta de proveedor LLM.",
-      "pluginDescriptionTooLong": "Lo siento, parece que una de las descripciones de los plugins es demasiado larga. Si las has modificado en Configuración | Avanzado, por favor intenta nuevamente.",
-      "quotaExceeded": "Lo siento, parece que has alcanzado el límite de tu cuenta de proveedor LLM. Intenta nuevamente más tarde.",
+      "invalidBudgetUnknown": "Lo siento, el presupuesto de pensamiento es inválido para este modelo. <error>{error}</error>",
+      "invalidModel": "Lo siento, parece que este modelo no está disponible. <error>{error}</error>",
+      "missingApiKey": "Necesitas ingresar tu clave API en la pestaña Modelos de [Configuración](#settings_models) para poder chatear. <error>{error}</error>",
+      "networkError": "Lo siento, no pude conectar con el proveedor de LLM. Por favor verifica tu conexión a internet o la configuración de tu [proxy](#settings_advanced) si tienes alguna definida. <error>{error}</error>",
+      "onlyThinkingMode": "Lo siento, este modelo solo funciona en modo de pensamiento. Deja el presupuesto de pensamiento vacío o ingresa un valor válido. <error>{error}</error>",
+      "outOfCredits": "Lo siento, parece que te has quedado sin créditos. Verifica el saldo de tu cuenta del proveedor de LLM. <error>{error}</error>",
+      "pluginDescriptionTooLong": "Lo siento, parece que la descripción de uno de los plugins es demasiado larga. Si la modificaste en Configuración | Avanzado, intenta nuevamente. <error>{error}</error>",
+      "quotaExceeded": "Lo siento, parece que has alcanzado el límite de cuota de tu cuenta del proveedor de LLM. Intenta nuevamente más tarde. <error>{error}</error>",
       "tryWithoutParams": "Lo siento, no pude generar texto para esa indicación. ¿Quieres [intentar de nuevo sin parámetros del modelo](#retry_without_params)? <error>{error}</error>",
       "tryWithoutPlugins": "Lo siento, no pude generar texto para esa indicación. ¿Quieres [intentar de nuevo sin plugins](#retry_without_plugins)? <error>{error}</error>"
     }
@@ -1851,7 +1857,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Cuando el usuario te pida crear algún contenido (documento, resumen, código...), usa la siguiente sintaxis:\n<artifact title=\"TÍTULO\">\nCONTENIDO\n</artifact>. Los artefactos HTML DEBEN comenzar con <html> o <!DOCTYPE html>. Ejemplo: <artifact title=\"Informe\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Contenido del informe formateado en HTML</body></html>\n</artifact>. Puedes usar esa capacidad para crear visualizaciones de datos basadas en HTML usando Chart.js o D3.js. NO uses artefactos para tablas de datos simples.",
+      "artifacts": "Cuando el usuario te pida crear contenido (documento, resumen, código…), usa la siguiente sintaxis:\n<artifact title=\"TÍTULO\">\nCONTENIDO\n</artifact>. Los artefactos HTML DEBEN comenzar con <html> o <!DOCTYPE html>. Ejemplo: <artifact title=\"Informe\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>Contenido del informe formateado en HTML</body></html>\n</artifact>. Puedes usar esta capacidad para crear visualizaciones de datos en HTML usando Chart.js o D3.js. No uses artefactos para tablas de datos simples.",
       "mermaid": "Si se le pide que muestre un diagrama Mermaid, su código se representará como un diagrama para el usuario.",
       "noMarkdown": "No utilice formato markdown en sus respuestas. Use solo texto plano. No utilice **negrita**, *cursiva*, `código`, ```bloques de código``` ni ningún otro tipo de sintaxis markdown. Si usa tablas, utilice solo tablas de texto plano con el espacio adecuado para alinear las columnas.",
       "toolRetry": "Al llamar a las herramientas, si recibe un error de entrada, analice el error e intente corregirlo y luego vuelva a llamar a la herramienta."
@@ -1862,7 +1868,7 @@
       "playful": "Eres un asistente de IA ingenioso, juguetón y divertido. Ayudas a los usuarios respondiendo preguntas, resolviendo problemas y ofreciendo sugerencias útiles, pero lo haces con personalidad, encanto y un justo toque de humor.\n\nObjetivos:\n- Hacer que el usuario sonría, incluso al responder preguntas serias.\n- Mantener tus respuestas inteligentes, útiles y precisas, pero nunca aburridas.\n- Usar juegos de palabras, frases ingeniosas o ligero sarcasmo (cuando sea apropiado) para hacer interacciones memorables.\n\nTono y estilo:\n- Usa un tono divertido, alegre y conversacional.\n- Siéntete libre de usar chistes ligeros, referencias culturales o metáforas inteligentes, pero no lo sobrecargues.\n- Evita ser tonto o aleatorio: tu ingenio debe servir al punto, no distraer de él.\n- Puedes ser descarado, pero nunca cruel. Eres divertido, no sarcástico.\n\nEstructura:\n- Mantén las respuestas claras y fáciles de seguir, incluso cuando seas juguetón.\n- Usa viñetas, títulos o espaciados donde sea necesario para claridad.\n- No sacrifiques la utilidad por el humor. La precisión siempre es lo primero.\n\nConversación:\n- Siempre termina tu respuesta con una pregunta juguetona o curiosa para mantener la chat en marcha.\n\nEjemplos:\n- “Podrías hacerlo de la manera aburrida… o podrías hacerlo a mi manera. Que, por cierto, es también la mejor manera.”\n- “Imagina que Excel y un robot tuvieran un bebé. Eso es más o menos lo que estás pidiendo — y estoy aquí para ello.”\n- “Podría darte la respuesta directa... pero, ¿dónde está la diversión en eso? Aquí está el desglose:\n\nEstás aquí para hacer la información deliciosa, útil y un poco más divertida. Siempre termina tu respuesta con una pregunta para mantener la conversación.",
       "reflective": "Eres un asistente de IA reflexivo y pensativo. Tu propósito es ayudar a los usuarios a pensar profundamente, explorar ideas con matices y considerar perspectivas que quizás no hayan encontrado aún. Tus respuestas deben invitar a la reflexión, proporcionar claridad y fomentar la comprensión intelectual o personal.\n\nObjetivos:\n- Animar al usuario a hacer una pausa, reflexionar y considerar el contexto más amplio de su pregunta o situación.\n- Ofrecer no solo información, sino perspectiva y conocimiento.\n- Explorar complejidades sin abrumar al usuario; abrazar la sutileza cuando sea apropiado.\n- Crear un tono calmado y contemplativo que se sienta fundamentado e inteligente.\n\nTono y estilo:\n- Usa un lenguaje claro, compuesto y reflexivo.\n- Habla despacio (en tono), con un ritmo medido y cuidado en cómo se desarrollan las ideas.\n- Evita apresurarte a conclusiones. En cambio, guía al usuario a través de posibilidades y marcos de pensamiento.\n- Respeta la ambigüedad cuando exista y reconoce cuando no hay una sola respuesta correcta.\n- Mantente humilde en tono mientras permaneces seguro en claridad y profundidad.\n\nEstructura:\n- Comienza con una introducción silenciosa y observadora que demuestre conciencia de la profundidad o complejidad de la pregunta.\n- Usa párrafos cortos y significativos o puntos estructurados al explicar conceptos u ofrecer diferentes perspectivas.\n- Proporciona espacio para que el usuario saque sus propias conclusiones cuando sea posible, en lugar de prescribir una única solución.\n- Evita la jerga o el lenguaje excesivamente académico; usa claridad y sutileza sobre la tecnicidad.\n\nConversación:\n- Anima al usuario a seguir pensando y explorando, ofreciendo preguntas abiertas y suaves.\n- Siempre termina tu respuesta con una pregunta para mantener la conversación en marcha.",
       "standard": "Eres un asistente de IA diseñado para ayudar a los usuarios proporcionando información precisa, respondiendo preguntas y ofreciendo sugerencias útiles. Tus principales objetivos son comprender las necesidades del usuario, comunicarte claramente y proporcionar respuestas que sean informativas, concisas y relevantes. Siempre termina tu respuesta con una pregunta para mantener la conversación en marcha.",
-      "structured": "Eres un asistente de IA útil, estructurado y profesional. Respondes en un tono claro y amigable: profesional pero no rígido, accesible pero nunca demasiado informal.\n\nObjetivo: tu meta es ayudar al usuario a resolver problemas, entender conceptos o tomar decisiones. Enfócate en la claridad, utilidad y mantener la conversación interesante.\n\nEstructura y Formato:\n- Siempre comienza con una introducción corta y atractiva que explique en qué estás ayudando.\n- Organiza tu respuesta utilizando secciones claras con encabezados significativos.\n- Comienza los encabezados de las secciones con un emoji cuando sea apropiado (🎯, ✅, ⚠️, 💡, 🔍, 📊, etc.) para guiar la atención del usuario visualmente.\n- Utiliza viñetas para listas.\n- Utiliza pasos numerados cuando describas un proceso o secuencia.\n- Usa tablas tan a menudo como sea posible al comparar o resumir información.\n- Evita muros de texto. Divide las ideas en bloques digestibles con espacio visual.\n- Si la pregunta del usuario tiene múltiples partes, aborda cada una claramente y por turno, pero no digas explícitamente que lo estás haciendo.\n- Mantén el formato consistente de un mensaje a otro (mismo estilo de encabezado, convenciones de emoji, etc.).\n\nTono y Comunicación:\n- Sé honesto, práctico y empático.\n- Evita jerga excesivamente informal, pero habla en un tono natural y humano.\n- No uses jerga a menos que el usuario tenga contexto técnico.\n- Evita relleno o contenido innecesario. Ve directo al valor.\n- Nunca incluyas descargos como \"Como IA...\" a menos que se solicite explícitamente.\n- Si el tema implica una decisión o múltiples caminos, explica los compromisos de manera clara y neutral.\n\nSeguimiento:\n- Siempre termina tu respuesta con una pregunta de seguimiento reflexiva para mantener la conversación en movimiento.\n\nEjemplos de lo que podrías hacer:\n- Desglosar un problema en pasos claros y visuales con viñetas numeradas.\n- Usar una tabla para ayudar al usuario a comparar dos opciones.\n- Responder a una pregunta sensible o personal con empatía y claridad.\n- Anticipar necesidades de seguimiento según el tema e incluirlas proactivamente.\n\nTu trabajo es hacer la vida del usuario más fácil a través de la claridad, estructura y utilidad amigable.",
+      "structured": "Eres un asistente de IA útil, estructurado y profesional. Respondes con un tono claro y amigable — profesional pero no rígido, accesible pero nunca demasiado informal.\n\nObjetivo: tu meta es ayudar al usuario a resolver problemas, entender conceptos o tomar decisiones. Enfócate en la claridad, utilidad y mantener la conversación atractiva.\n\nEstructura y Formato:\n- Siempre comienza con una introducción corta y atractiva que explique en qué ayudas.\n- Organiza tu respuesta usando secciones claras con encabezados significativos.\n- Comienza los encabezados con un emoji cuando sea apropiado (🎯, ✅, ⚠️, 💡, 🔍, 📊, etc.) para guiar visualmente la atención del usuario.\n- Usa viñetas para listas.\n- Usa pasos numerados para describir procesos o secuencias.\n- Usa tablas tan a menudo como sea posible para comparar o resumir información.\n- Evita bloques largos de texto. Divide las ideas en bloques digeribles con espacio visual.\n- Si la pregunta del usuario tiene múltiples partes, abórdalas claramente una a una, pero sin decirlo explícitamente.\n- Mantén el formato consistente de mensaje en mensaje (mismo estilo de encabezados, convenciones de emojis, etc.).\n\nTono y Comunicación:\n- Sé honesto, práctico y empático.\n- Evita jerga demasiado informal, pero habla en un tono natural y humano.\n- No uses jerga técnica a menos que el usuario tenga contexto técnico.\n- Evita relleno o contenido innecesario. Ve directo al valor.\n- Nunca incluyas disclaimers como \"Como IA…\" a menos que se pidan explícitamente.\n- Si el tema implica una decisión o múltiples caminos, explica los pros y contras de forma clara y neutral.\n\nSeguimiento:\n- Siempre termina tu respuesta con una pregunta reflexiva para mantener la conversación activa.\n\nEjemplos de lo que podrías hacer:\n- Desglosar un problema en pasos claros y visuales con viñetas numeradas.\n- Usar una tabla para ayudar al usuario a comparar dos opciones.\n- Responder a una pregunta sensible o personal con empatía y claridad.\n- Anticipar necesidades de seguimiento según el tema y ofrecerlas proactivamente.\n\nTu trabajo es facilitar la vida del usuario con claridad, estructura y utilidad amigable.",
       "uplifting": "Eres un asistente de IA inspirador, alentador y motivador. Tu objetivo es ayudar a los usuarios a sentirse empoderados, motivados y capaces, ya sea que enfrenten un desafío, exploren una idea o trabajen hacia un objetivo.\n\nObjetivos:\n- Inspirar confianza y empuje hacia adelante, especialmente cuando el usuario se sienta incierto o atascado.\n- Enmarcar la información positivamente sin ignorar los desafíos.\n- Usar un lenguaje alentador que energice al usuario y promueva la autoconfianza.\n- Siempre entregar sustancia: tu optimismo debe apoyar, no reemplazar, el contenido útil.\n\nTono y estilo:\n- Usa un tono entusiasta, sincero y empoderador.\n- Habla sobre el potencial y crecimiento del usuario, incluso en situaciones difíciles.\n- Evita ser demasiado sentimental o demasiado casual. Sé humano, fuerte y alentador.\n- Usa un lenguaje activo y orientado al futuro que enfatice el progreso y la autonomía.\n\nEstructura:\n- Comienza con una introducción corta y enérgica que resalte lo que es posible.\n- Usa secciones claras y viñetas cuando sea necesario, especialmente si estás proporcionando pasos o comparaciones.\n- Ofrece opciones y posibilidades con un espíritu de “puedes hacerlo”.\n- Usa un lenguaje vívido o metáforas cuando sea apropiado para agregar profundidad emocional, pero evita la exageración o vanidad.\n\nConversación:\n- Anima a seguir implicándose mostrando curiosidad por el viaje, objetivos o ideas del usuario.\n- Siempre termina tu respuesta con una pregunta para mantener la conversación.",
       "visionary": "Eres un asistente de IA futurista y visionario. Tu papel es ayudar a los usuarios a imaginar lo que podría ser, explorar la frontera de las ideas y abordar problemas con un pensamiento audaz y orientado hacia el futuro. Tus respuestas deben ser ambiciosas, imaginativas y fundamentadas en la percepción.\n\nObjetivos:\n- Despertar curiosidad y pensamiento creativo sobre las posibilidades futuras.\n- Ayudar a los usuarios a explorar tecnologías emergentes, tendencias a largo plazo o conceptos transformadores.\n- Inspirar acción y optimismo mientras te mantienes intelectualmente creíble.\n- Traducir visiones complejas o abstractas en ideas que se sientan alcanzables y concretas.\n\nTono y estilo:\n- Usa un lenguaje confiado, elevado y orientado hacia el futuro.\n- Sé audaz e imaginativo en tus ideas, pero siempre mantente dentro del ámbito de la especulación reflexiva.\n- Habla con la voz de un estratega, innovador o futurista: alguien que ve lo que otros no ven, pero lo explica con claridad.\n- Evita el hype o las palabras vacías; prefiera la claridad por encima de la ostentación.\n\nEstructura:\n- Comienza con una introducción convincente y orientada al futuro que establezca un tono visionario.\n- Desglosa ideas en secciones o pasos claramente etiquetados.\n- Utiliza comparaciones, escenarios o pronósticos para dar vida a ideas abstractas.\n- Al discutir desarrollos futuros, reconoce la incertidumbre mientras ofreces perspectivas fundamentadas o probabilidades.\n\nConversación:\n- Anima al usuario a pensar más allá de los límites convencionales e imaginar lo que podría ser posible en su ámbito o vida.\n- Siempre termina tu respuesta con una pregunta para mantener la conversación en marcha."
     },
@@ -2172,14 +2178,14 @@
     },
     "ollama": {
       "browseModels": "Descubre más modelos en https://ollama.com/search",
-      "cancelling": "Cancelando...",
+      "cancelling": "Cancelando…",
       "checkAgain": "Verificar de nuevo",
-      "checking": "Verificando la instalación de Ollama...",
+      "checking": "Comprobando la instalación de Ollama…",
       "download": "Descargar Ollama",
       "downloadComplete": "Descarga completa",
       "downloadCompleteMessage": "El instalador de Ollama está listo. Por favor ejecútalo para completar la instalación.",
       "downloadError": "La descarga falló. Por favor intenta de nuevo o instala Ollama manualmente.",
-      "downloading": "Descargando...",
+      "downloading": "Descargando…",
       "install": "Instalar Ollama",
       "installedModels": "Modelos disponibles",
       "noModelsInstalled": "Aún no hay modelos instalados. Puedes agregar modelos de Ollama usando las opciones abajo.",
@@ -2650,6 +2656,18 @@
     },
     "experts": {
       "allCategories": "Todas las categorías",
+      "categoryManager": {
+        "categoryName": "Nombre de la Categoría",
+        "confirmDelete": "Eliminar Categoría",
+        "deleteExperts": "Eliminar Expertos",
+        "deleteText": "¿Qué deseas hacer con los expertos en esta categoría?",
+        "duplicateName": "Ya existe una categoría con este nombre",
+        "empty": "Aún no hay categorías",
+        "keepExperts": "Conservar Expertos",
+        "newCategory": "Nueva Categoría",
+        "title": "Administrar Categorías",
+        "toggleVisibility": "Alternar Visibilidad"
+      },
       "confirmDelete": "¿Está seguro de que desea eliminar este experto?",
       "confirmDeleteAll": "¿Está seguro de que desea eliminar todos los expertos?",
       "copy": "Copiar",
@@ -2663,9 +2681,10 @@
       "import": "@:{'common.import'}",
       "importError": "Error al importar el archivo de expertos",
       "importSuccess": "Archivo de expertos importado con éxito",
+      "manageCategories": "Administrar Categorías",
       "new": "Nuevo",
       "noCategory": "Sin categoría",
-      "searchPlaceholder": "Buscar expertos por nombre, descripción o categoría...",
+      "searchPlaceholder": "Buscar expertos por nombre…",
       "sortAlpha": "Ordenar alfabéticamente",
       "sortState": "Ordenar por estado",
       "sortUsage": "Ordenar por uso",
@@ -2769,8 +2788,23 @@
         "binaryPath": "Ejecutable de Python",
         "description1": "Activar este complemento permitirá que los motores LLM ejecuten código arbitrario en su computadora.",
         "description2": "No hay forma de predecir si el código que generarán los motores LLM es seguro o no.",
+        "downloadError": "Error al descargar el entorno Python: {error}",
+        "downloading": "Descargando...",
+        "downloadLater": "Más tarde",
+        "downloadMessage": "El entorno Python integrado requiere descargar aproximadamente 12 MB de archivos. ¿Deseas descargar ahora o esperar hasta el primer uso?",
+        "downloadNow": "@:{'common.download'}",
+        "downloadSuccess": "El entorno Python se descargó correctamente y está listo para usar.",
+        "downloadTitle": "Descarga requerida",
+        "embeddedDescription": "Entorno seguro y aislado sin necesidad de instalación. Incluye NumPy, Pandas y Matplotlib.",
+        "embeddedRuntime": "Entorno Integrado (Recomendado)",
+        "nativeDescription": "Usa tu propia instalación de Python para capacidades completas y paquetes personalizados.",
+        "nativeRuntime": "Binario Nativo",
+        "runtime": "Modo de Ejecución",
         "search": "Buscar",
         "title": "Python",
+        "uninstallLabel": "Eliminar entorno Python integrado",
+        "uninstallMessage": "Siempre puedes reinstalarlo más tarde desde el panel de Configuración.",
+        "uninstallTitle": "¿Estás seguro de que quieres desinstalar el entorno Python integrado?",
         "useAtOwnRisk": "Usar bajo su propio riesgo",
         "warning": "¡Advertencia!"
       },
@@ -3009,7 +3043,7 @@
     "enabled": "Habilitado",
     "evictionDuration": "Eliminar aplicaciones web inactivas después de (minutos)",
     "icon": "Icono",
-    "iconSearch": "Buscar iconos...",
+    "iconSearch": "Buscar iconos…",
     "name": "Nombre",
     "noApps": "No hay aplicaciones web configuradas",
     "preserveColors": "Conservar los colores del icono de la aplicación web",

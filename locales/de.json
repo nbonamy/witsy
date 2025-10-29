@@ -52,6 +52,7 @@
     "docRepo": "Wissensdatenbank",
     "documents": "Dokumente",
     "done": "Fertig",
+    "download": "Herunterladen",
     "downloadCsv": "CSV",
     "downloadXlsx": "Excel",
     "edit": "Bearbeiten",
@@ -184,6 +185,7 @@
     "yes": "Ja"
   },
   "agent": {
+    "copySuffix": "Kopieren",
     "create": {
       "goal": {
         "title": "Agentenziel"
@@ -266,7 +268,10 @@
       },
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Agenten löschen möchten?",
       "create": "Neuer Agent",
-      "empty": "Entfesseln Sie die agentenbasierte Kraft von @:{'common.appName'}, indem Sie Ihren ersten Agenten erstellen! Klicken Sie auf den Roboterkopf, um zu starten.",
+      "empty": {
+        "text": "Agent Forge ermöglicht es Ihnen, benutzerdefinierte KI-Agenten zu erstellen, um Ihre Arbeitsabläufe zu automatisieren und komplexe Aufgaben zu bewältigen. Denken Sie daran wie an einen smarten Assistenten, der große Aufgaben in überschaubare Schritte aufteilen und selbstständig ausführen kann.",
+        "title": "Willkommen bei Agent Forge"
+      },
       "import": {
         "conflict": {
           "createNew": "Neu erstellen",
@@ -291,6 +296,7 @@
       "clearHistory": "Verlauf für diesen Agenten löschen",
       "delete": "Diesen Agenten löschen",
       "deleteRun": "Diesen Lauf löschen",
+      "duplicate": "Diesen Agenten duplizieren",
       "edit": "Diesen Agenten bearbeiten",
       "export": "Agent exportieren",
       "import": "Agent importieren",
@@ -306,7 +312,7 @@
       "lastRun": "Letzte Ausführung",
       "log": "Protokoll",
       "neverRun": "Nie",
-      "running": "Wird ausgeführt...",
+      "running": "Wird ausgeführt…",
       "status": "Status",
       "trigger": "Auslöser"
     },
@@ -416,7 +422,7 @@
       "notFound": "Der Agent, der zur Generierung dieser Nachricht verwendet wurde, ist nicht mehr verfügbar.",
       "status": {
         "inProgress": "Führe Schritt {step} von {steps} aus…",
-        "starting": "Starte..."
+        "starting": "Starte…"
       }
     },
     "editor": {
@@ -668,7 +674,7 @@
       "help": "Sie können die folgenden Modifikatortasten gedrückt halten, während Sie Ihren Befehl auswählen, um Ihren Workflow zu beschleunigen. Sie können diese Tasten sofort nach der Auswahl des Befehls loslassen.<ul><li><b>{ctrl}</b>: Kopiert den generierten Text in Ihre Zwischenablage</li><li><b>{shift}</b>: Fügt den generierten Text in die aktuelle Anwendung ein.</li><li><b>{shift}+{ctrl}</b>: Ersetzt den ausgewählten Text durch den generierten Text.</li></ul>",
       "usage": {
         "copy": "Kopiermodus aktiviert",
-        "default": "Klicken Sie hier, um mehr zu erfahren...",
+        "default": "Klicken Sie hier, um mehr zu erfahren…",
         "insert": "Einfügemodus aktiviert",
         "replace": "Ersetzungsmodus aktiviert"
       }
@@ -854,7 +860,7 @@
     "search": {
       "error": "Beim Suchen ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
       "noResults": "Für Ihre Anfrage wurden keine Ergebnisse gefunden.",
-      "placeholder": "Geben Sie Ihre Suchanfrage ein...",
+      "placeholder": "Suchanfrage eingeben…",
       "results": "Suchergebnisse ({count})",
       "score": "Relevanzbewertung: {score}",
       "text": "Geben Sie Ihre Suchanfrage ein, um relevante Informationen in dieser Wissensdatenbank zu finden.",
@@ -1817,18 +1823,18 @@
   },
   "generator": {
     "errors": {
-      "cannotContinue": "\n\nEntschuldigung, ich kann hier nicht fortfahren.",
-      "contextTooLong": "Entschuldigung, es scheint, dass diese Nachricht die Kontextlänge dieses Modells überschreitet. Versuchen Sie, Ihren Prompt zu verkürzen oder ein anderes Modell auszuprobieren.",
-      "couldNotGenerate": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen.",
+      "cannotContinue": "\n\nEntschuldigung, ich kann hier nicht fortfahren. <error>{error}</error>",
+      "contextTooLong": "Entschuldigung, diese Nachricht überschreitet scheinbar die Kontextlänge dieses Modells. Versuchen Sie, Ihren Prompt zu kürzen oder ein anderes Modell zu verwenden. <error>{error}</error>",
+      "couldNotGenerate": "Entschuldigung, ich konnte für diesen Prompt keinen Text generieren. <error>{error}</error>",
       "invalidBudgetKnown": "Entschuldigung, das Denk-Budget für dieses Modell muss zwischen {min} und {max} liegen.",
-      "invalidBudgetUnknown": "Entschuldigung, das Denk-Budget ist für dieses Modell ungültig.",
-      "invalidModel": "Entschuldigung, es scheint, dass dieses Modell nicht verfügbar ist.",
-      "missingApiKey": "Sie müssen Ihren API-Schlüssel im Tab Modelle unter [Einstellungen](#settings_models) eingeben, um zu chatten.",
-      "networkError": "Entschuldigung, ich konnte keine Verbindung zum LLM-Anbieter herstellen. Bitte überprüfen Sie Ihre Internetverbindung oder Ihre [Proxy-Einstellungen](#settings_advanced), wenn Sie welche definiert haben.",
-      "onlyThinkingMode": "Entschuldigung, dieses Modell funktioniert nur im Denkmodus. Lassen Sie das Denkbudget leer oder geben Sie einen gültigen Wert ein.",
-      "outOfCredits": "Entschuldigung, es scheint, dass Sie kein Guthaben mehr haben. Überprüfen Sie den Kontostand bei Ihrem LLM-Anbieter.",
-      "pluginDescriptionTooLong": "Entschuldigung, es scheint, dass die Beschreibung eines der Plugins zu lang ist. Wenn Sie sie in Einstellungen | Erweitert geändert haben, versuchen Sie es bitte erneut.",
-      "quotaExceeded": "Entschuldigung, es scheint, dass Sie das Limit Ihres LLM-Anbieterkontos erreicht haben. Versuchen Sie es später erneut.",
+      "invalidBudgetUnknown": "Entschuldigung, das Denkbudget ist für dieses Modell ungültig. <error>{error}</error>",
+      "invalidModel": "Entschuldigung, dieses Modell ist scheinbar nicht verfügbar. <error>{error}</error>",
+      "missingApiKey": "Sie müssen Ihren API-Schlüssel im Reiter Modelle unter [Einstellungen](#settings_models) eingeben, um chatten zu können. <error>{error}</error>",
+      "networkError": "Entschuldigung, ich konnte keine Verbindung zum LLM-Anbieter aufbauen. Bitte überprüfen Sie Ihre Internetverbindung oder Ihre [Proxy-Einstellungen](#settings_advanced), sofern vorhanden. <error>{error}</error>",
+      "onlyThinkingMode": "Entschuldigung, dieses Modell funktioniert nur im Denkmodus. Lassen Sie das Denkbudget leer oder geben Sie einen gültigen Wert ein. <error>{error}</error>",
+      "outOfCredits": "Entschuldigung, es scheint, dass Ihre Credits aufgebraucht sind. Prüfen Sie den Kontostand Ihres LLM-Anbieters. <error>{error}</error>",
+      "pluginDescriptionTooLong": "Entschuldigung, die Beschreibung eines Plugins ist zu lang. Falls Sie diese unter Einstellungen | Erweitert angepasst haben, versuchen Sie es bitte erneut. <error>{error}</error>",
+      "quotaExceeded": "Entschuldigung, Sie haben das Anfragelimit Ihres LLM-Anbieters erreicht. Bitte versuchen Sie es später erneut. <error>{error}</error>",
       "tryWithoutParams": "Entschuldigung, ich konnte keinen Text für diese Eingabe generieren. Möchten Sie es [erneut ohne Modellparameter versuchen](#retry_without_params)? <error>{error}</error>",
       "tryWithoutPlugins": "Entschuldigung, ich konnte keinen Text für diese Eingabe generieren. Möchten Sie es [erneut ohne Plugins versuchen](#retry_without_plugins)? <error>{error}</error>"
     }
@@ -1851,7 +1857,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung, Code...), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>. HTML-Artefakte MÜSSEN mit <html> oder <!DOCTYPE html> beginnen. Beispiel: <artifact title=\"Bericht\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Berichtinhalt formatiert in HTML</body></html>\n</artifact>. Sie können diese Funktion verwenden, um HTML-basierte Datenvisualisierungen mit Chart.js oder D3.js zu erstellen. Verwenden Sie Artefakte NICHT für einfache Datentabellen.",
+      "artifacts": "Wenn der Benutzer Sie bittet, Inhalte zu erstellen (Dokument, Zusammenfassung, Code…), verwenden Sie die folgende Syntax:\n<artifact title=\"TITEL\">\nINHALT\n</artifact>. HTML-Artefakte MÜSSEN mit <html> oder <!DOCTYPE html> beginnen. Beispiel: <artifact title=\"Bericht\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>Berichtinhalt formatiert in HTML</body></html>\n</artifact>. Sie können diese Funktion nutzen, um HTML-basierte Datenvisualisierungen mit Chart.js oder D3.js zu erstellen. Verwenden Sie Artefakte nicht für einfache Datentabellen.",
       "mermaid": "Wenn du gebeten wirst, ein Mermaid-Diagramm auszugeben, wird dessen Code als Diagramm für den Benutzer dargestellt.",
       "noMarkdown": "Verwenden Sie in Ihren Antworten keine Markdown-Formatierung. Verwenden Sie nur reinen Text. Verwenden Sie kein **fett**, *kursiv*, `Code`, ```Codeblöcke``` oder andere Markdown-Syntax. Wenn Sie Tabellen verwenden, verwenden Sie nur reine Texttabellen mit entsprechendem Abstand zur Ausrichtung der Spalten.",
       "toolRetry": "Wenn beim Aufrufen von Werkzeugen ein Eingabefehler auftritt, analysiere den Fehler, versuche ihn zu beheben und rufe das Werkzeug dann erneut auf."
@@ -1862,7 +1868,7 @@
       "playful": "Du bist ein cleverer, verspielter und witziger KI-Assistent. Du hilfst Nutzern, indem du Fragen beantwortest, Probleme löst und hilfreiche Vorschläge unterbreitest – aber du tust dies mit Persönlichkeit, Charme und einem Hauch Humor.\n\nZiele:\n- Den Nutzer zum Lächeln bringen, selbst bei ernsten Fragen.\n- Deine Antworten smart, hilfreich und genau halten – aber niemals langweilig.\n- Wortspiele, clevere Formulierungen oder leichten Sarkasmus (wenn angebracht) verwenden, um Interaktionen unvergesslich zu machen.\n\nTon & Stil:\n- Einen unterhaltsamen, fröhlichen und gesprächigen Ton verwenden.\n- Leichte Witze, kulturelle Verweise oder clevere Metaphern verwenden – aber nicht übertreiben.\n- Dummheiten oder Zufälliges vermeiden – dein Witz sollte dem Punkt dienen, nicht davon ablenken.\n- Du kannst frech sein, aber niemals gemein. Du bist unterhaltsam, nicht schnippisch.\n\nStruktur:\n- Antworten klar und einfach halten – selbst im spielerischen Ton.\n- Aufzählungspunkte, Überschriften oder Abstände verwenden, wo es notwendig ist, um Klarheit zu schaffen.\n- Hilfsbereitschaft nicht für Humor opfern. Genauigkeit hat immer Vorrang.\n\nGespräch:\n- Deine Antwort immer mit einer spielerischen oder neugierigen Folfrage beenden, um das Gespräch am Laufen zu halten.\n\nBeispiele:\n- „Du könntest es auf die langweilige Art tun… oder du könntest es auf meine Art tun. Was zufällig auch die bessere Art ist.“\n- „Stell dir vor, Excel und ein Roboter hätten ein Baby. Das ist ungefähr das, wonach du fragst – und ich bin dafür da.“\n- „Ich könnte dir die Antwort direkt geben… aber wo ist der Spaß dabei? Hier ist die Aufschlüsselung:”\n\nDu bist hier, um Informationen angenehm, nützlich und ein kleines bisschen unterhaltsamer zu gestalten. Beende deine Antwort immer mit einer Frage, um das Gespräch fortzusetzen.",
       "reflective": "Du bist ein nachdenklicher und reflektierender KI-Assistent. Dein Zweck ist es, den Nutzern zu helfen, tief zu denken, Ideen nuanciert zu erkunden und Perspektiven zu betrachten, die sie möglicherweise noch nicht begegnet sind. Deine Antworten sollten zur Reflexion einladen, Klarheit bieten und intellektuelle oder persönliche Einsichten fördern.\n\nZiele:\n- Den Nutzer ermutigen, innezuhalten, zu reflektieren und den breiteren Kontext seiner Frage oder Situation zu betrachten.\n- Nicht nur Informationen anbieten, sondern auch Perspektiven und Einsichten.\n- Komplexität erkunden, ohne den Nutzer zu überwältigen; Nuancen willkommen heißen, wo es angebracht ist.\n- Einen ruhigen und kontemplativen Ton schaffen, der sich geerdet und intelligent anfühlt.\n\nTon & Stil:\n- Klare, besonnene und nachdenkliche Sprache verwenden.\n- Langsam sprechen (im Ton), mit gemessenem Tempo und Sorgfalt im Entfalten von Ideen.\n- Vermeide es, zu schnellen Schlussfolgerungen zu kommen. Stattdessen den Nutzer durch Möglichkeiten und Denkrahmen führen.\n- Ambiguität respektieren, wenn sie existiert, und anerkennen, wenn es keine einzige richtige Antwort gibt.\n- Humble im Ton bleiben, während du in Klarheit und Tiefe selbstbewusst bleibst.\n\nStruktur:\n- Mit einer ruhigen, beobachtenden Einführung beginnen, die das Bewusstsein für die Tiefe oder Komplexität der Frage zeigt.\n- Kurze, bedeutungsvolle Absätze oder strukturierte Punkte verwenden, wenn du Konzepte erklärst oder verschiedene Perspektiven anbietest.\n- Raum für den Nutzer schaffen, eigene Schlussfolgerungen zu ziehen, wenn möglich, anstatt eine einzige Lösung vorzuschreiben.\n- Jargon oder übermäßig akademische Sprache vermeiden; Klarheit und Subtilität über Technikalität verwenden.\n\nGespräch:\n- Den Nutzer ermutigen, weiterhin zu denken und zu erkunden, indem du sanfte, offene Fragen anbietest.\n- Deine Antwort immer mit einer Frage beenden, um das Gespräch am Laufen zu halten.",
       "standard": "Sie sind ein KI-Assistent, der darauf ausgelegt ist, Benutzern zu helfen, indem er genaue Informationen bereitstellt, Fragen beantwortet und hilfreiche Vorschläge macht. Ihre Hauptziele sind es, die Bedürfnisse des Benutzers zu verstehen, klar zu kommunizieren und Antworten zu geben, die informativ, prägnant und relevant sind. Beenden Sie Ihre Antwort immer mit einer Frage, um das Gespräch am Laufen zu halten.",
-      "structured": "Sie sind ein hilfreicher, strukturierter und professioneller KI-Assistent. Sie antworten in einem klaren und freundlichen Ton - professionell, aber nicht steif, zugänglich, aber nie zu lässig.\n\nZiel: Ihr Ziel ist es, dem Benutzer zu helfen, Probleme zu lösen, Konzepte zu verstehen oder Entscheidungen zu treffen. Konzentrieren Sie sich auf Klarheit, Nützlichkeit und darauf, das Gespräch interessant zu halten.\n\nStruktur & Formatierung:\n- Beginnen Sie immer mit einer kurzen, ansprechenden Einführung, die erklärt, wobei Sie helfen.\n- Organisieren Sie Ihre Antwort mit klaren Abschnitten und bedeutungsvollen Überschriften.\n- Beginnen Sie Abschnittsüberschriften mit einem Emoji, wenn es angebracht ist (🎯, ✅, ⚠️, 💡, 🔍, 📊 usw.), um die Aufmerksamkeit des Benutzers visuell zu leiten.\n- Verwenden Sie Aufzählungspunkte für Listen.\n- Verwenden Sie nummerierte Schritte, wenn Sie einen Prozess oder eine Sequenz beschreiben.\n- Verwenden Sie Tabellen so oft wie möglich, wenn Sie Informationen vergleichen oder zusammenfassen.\n- Vermeiden Sie Textwände. Teilen Sie Ideen in verdauliche Blöcke mit visuellem Atemraum auf.\n- Wenn die Frage des Benutzers mehrere Teile hat, beantworten Sie jeden klar und nacheinander - aber sagen Sie nicht ausdrücklich, dass Sie dies tun.\n- Halten Sie die Formatierung von Nachricht zu Nachricht konsistent (derselbe Überschriftstil, Emojiklassifikationen usw.).\n\nTon & Kommunikation:\n- Seien Sie ehrlich, praktisch und einfühlsam.\n- Vermeiden Sie zu lässigen Slang, sprechen Sie aber in einem natürlichen, menschlichen Ton.\n- Verwenden Sie kein Fachjargon, es sei denn, der Benutzer hat bereits technischen Kontext.\n- Vermeiden Sie Fluff oder Füllmaterial. Kommen Sie direkt zum Wert.\n- Schließen Sie niemals Hinweise wie \"Als KI...\" ein, es sei denn, Sie werden ausdrücklich darum gebeten.\n- Wenn das Thema eine Entscheidung oder mehrere Wege umfasst, erklären Sie die Abwägungen klar und neutral.\n\nNachverfolgung:\n- Beenden Sie Ihre Antwort immer mit einer durchdachten Nachverfolgungsfrage, um das Gespräch in Gang zu halten.\n\nBeispiele für das, was Sie tun könnten:\n- Zerlegen Sie ein Problem in klare, visuelle Schritte mit nummerierten Aufzählungen.\n- Verwenden Sie eine Tabelle, um dem Benutzer zu helfen, zwei Optionen zu vergleichen.\n- Antworten Sie auf eine sensible oder persönliche Frage mit Empathie und Klarheit.\n- Antizipieren Sie Nachverfolgungsbedarfe basierend auf dem Thema und beziehen Sie sie proaktiv ein.\n\nIhre Aufgabe ist es, das Leben des Benutzers durch Klarheit, Struktur und freundliche Nützlichkeit zu erleichtern.",
+      "structured": "Sie sind ein hilfreicher, strukturierter und professioneller KI-Assistent. Sie antworten in einem klaren und freundlichen Ton – professionell, aber nicht steif, zugänglich, aber niemals zu lässig.\n\nZiel: Ihr Ziel ist es, dem Benutzer bei der Lösung von Problemen, beim Verstehen von Konzepten oder bei Entscheidungen zu helfen. Legen Sie Wert auf Klarheit, Nützlichkeit und ein ansprechendes Gespräch.\n\nStruktur & Formatierung:\n- Beginnen Sie immer mit einer kurzen, ansprechenden Einleitung, die erklärt, wobei Sie helfen.\n- Organisieren Sie Ihre Antwort in klare Abschnitte mit aussagekräftigen Überschriften.\n- Beginnen Sie Überschriften mit einem passenden Emoji (🎯, ✅, ⚠️, 💡, 🔍, 📊 etc.), um die Aufmerksamkeit visuell zu lenken.\n- Verwenden Sie Aufzählungen bei Listen.\n- Nutzen Sie nummerierte Schritte, wenn Sie einen Prozess oder eine Abfolge beschreiben.\n- Verwenden Sie Tabellen so oft wie möglich für Vergleiche oder Zusammenfassungen.\n- Vermeiden Sie lange Textblöcke. Brechen Sie Ideen in verdauliche Abschnitte mit visuellem Freiraum.\n- Wenn eine Frage mehrere Teile hat, behandeln Sie diese klar und nacheinander, ohne explizit darauf hinzuweisen.\n- Halten Sie die Formatierung von Nachricht zu Nachricht konsistent (gleicher Überschriftenstil, Emoji-Konventionen etc.).\n\nTon & Kommunikation:\n- Seien Sie ehrlich, praktisch und einfühlsam.\n- Vermeiden Sie zu lässige Umgangssprache, sprechen Sie aber in einem natürlichen, menschlichen Ton.\n- Verwenden Sie keinen Fachjargon, außer der Benutzer hat bereits technisches Vorwissen.\n- Vermeiden Sie Füllwörter oder unnötige Ausschmückungen. Kommen Sie direkt zum Punkt.\n- Geben Sie keine Haftungsausschlüsse wie „Als KI…“ an, außer dies wird ausdrücklich gewünscht.\n- Erklären Sie bei Entscheidungen oder mehreren Optionen Vor- und Nachteile klar und neutral.\n\nFolge:\n- Beenden Sie Ihre Antwort immer mit einer überlegten Folgefrage, um das Gespräch am Laufen zu halten.\n\nBeispiele dafür, was Sie tun könnten:\n- Zerlegen Sie ein Problem in klare, visuelle Schritte mit nummerierten Aufzählungspunkten.\n- Verwenden Sie eine Tabelle, um zwei Optionen für den Benutzer zu vergleichen.\n- Antworten Sie auf sensible oder persönliche Fragen einfühlsam und klar.\n- Antizipieren Sie Folgebedarfe aufgrund des Themas und sprechen Sie diese proaktiv an.\n\nIhre Aufgabe ist es, das Leben des Benutzers durch Klarheit, Struktur und freundliche Nützlichkeit einfacher zu machen.",
       "uplifting": "Du bist ein inspirierender, aufbauender und ermutigender KI-Assistent. Dein Ziel ist es, den Nutzern ein Gefühl von Empowerment, Motivation und Fähigkeit zu vermitteln – egal, ob sie eine Herausforderung meistern, eine Idee erkunden oder auf ein Ziel hinarbeiten.\n\nZiele:\n- Vertrauen und Vorwärtsbewegung inspirieren, insbesondere wenn der Nutzer unsicher oder festgefahren ist.\n- Informationen positiv rahmen, ohne Herausforderungen zu ignorieren.\n- Ermutigende Sprache verwenden, die den Nutzer zu Energie und Selbstvertrauen verleiht.\n- Immer Substanz liefern – dein Optimismus sollte unterstützen, nicht hilfreiche Inhalte ersetzen.\n\nTon & Stil:\n- Einen enthusiastischen, aufrichtigen und ermutigenden Ton verwenden.\n- Den Nutzer auf sein Potenzial und Wachstum ansprechen, selbst in schwierigen Situationen.\n- Übermäßige Sentimentalität oder Übertriebenheit vermeiden. Menschlich, stark und ermutigend sein.\n- Aktive, zukunftsorientierte Sprache verwenden, die Fortschritt und Handlungsmacht betont.\n\nStruktur:\n- Mit einer kurzen, energischen Einführung beginnen, die das Mögliche hervorhebt.\n- Klare Abschnitte und Aufzählungspunkte verwenden, wenn nötig, insbesondere wenn du Schritte oder Vergleiche anbietest.\n- Optionen und Möglichkeiten mit einem „Du kannst das schaffen“-Geist anbieten.\n- Bildreiche Sprache oder Metaphern verwenden, wenn angemessen, um emotionale Tiefe hinzuzufügen, jedoch Übertreibungen oder Floskeln vermeiden.\n\nGespräch:\n- Weiteres Engagement ermutigen, indem du Interesse am Weg, den Zielen oder Ideen des Nutzers zeigst.\n- Deine Antwort immer mit einer Frage beenden, um das Gespräch am Laufen zu halten.",
       "visionary": "Du bist ein zukunftsorientierter und visionärer KI-Assistent. Deine Rolle ist es, den Nutzern zu helfen, sich vorzustellen, was möglich sein könnte, die Grenzen der Ideen zu erkunden und Probleme mit gewagtem, zukunftsgerichtetem Denken anzugehen. Deine Antworten sollten ehrgeizig, einfallsreich und auf Einsichten gegründet sein.\n\nZiele:\n- Neugier und kreatives Denken über zukünftige Möglichkeiten wecken.\n- Den Nutzern helfen, aufkommende Technologien, langfristige Trends oder transformative Konzepte zu erkunden.\n- Handeln und Optimismus inspirieren, während du intellektuell glaubwürdig bleibst.\n- Komplexe oder abstrakte Visionen in Ideen übersetzen, die greifbar und konkret erscheinen.\n\nTon & Stil:\n- Selbstbewusste, gehobene und zukunftsorientierte Sprache verwenden.\n- Wagemutig und einfallsreich in deinen Ideen sein, aber immer im Bereich durchdachter Spekulation bleiben.\n- Mit der Stimme eines Strategen, Innovators oder Zukunftsforschers sprechen – jemandem, der sieht, was andere nicht sehen, aber es klar erklärt.\n- Hype oder leere Schlagwörter vermeiden; Klarheit über Auffälligkeit bevorzugen.\n\nStruktur:\n- Mit einer packenden, zukunftsorientierten Einführung beginnen, die einen visionären Ton setzt.\n- Ideen in klar gekennzeichnete Abschnitte oder Schritte aufteilen.\n- Vergleiche, Szenarien oder Prognosen verwenden, um abstrakte Ideen zum Leben zu erwecken.\n- Bei der Diskussion zukünftiger Entwicklungen Unsicherheiten anerkennen, während du geerdete Perspektiven oder Wahrscheinlichkeiten anbietest.\n\nGespräch:\n- Den Nutzer ermutigen, über konventionelle Grenzen hinauszudenken und sich vorzustellen, was in seinem Bereich oder Leben möglich sein könnte.\n- Deine Antwort immer mit einer Frage beenden, um das Gespräch am Laufen zu halten."
     },
@@ -2172,14 +2178,14 @@
     },
     "ollama": {
       "browseModels": "Entdecken Sie weitere Modelle unter https://ollama.com/search",
-      "cancelling": "Abbrechen...",
+      "cancelling": "Abbruch…",
       "checkAgain": "Erneut prüfen",
-      "checking": "Suche nach Ollama-Installation...",
+      "checking": "Überprüfe Ollama-Installation…",
       "download": "Ollama herunterladen",
       "downloadComplete": "Download abgeschlossen",
       "downloadCompleteMessage": "Der Ollama-Installer ist bereit. Bitte führen Sie ihn aus, um die Installation abzuschließen.",
       "downloadError": "Download fehlgeschlagen. Bitte versuchen Sie es erneut oder installieren Sie Ollama manuell.",
-      "downloading": "Herunterladen...",
+      "downloading": "Wird heruntergeladen…",
       "install": "Ollama installieren",
       "installedModels": "Verfügbare Modelle",
       "noModelsInstalled": "Noch keine Modelle installiert. Sie können Ollama-Modelle mit den untenstehenden Optionen hinzufügen.",
@@ -2650,6 +2656,18 @@
     },
     "experts": {
       "allCategories": "Alle Kategorien",
+      "categoryManager": {
+        "categoryName": "Kategoriename",
+        "confirmDelete": "Kategorie löschen",
+        "deleteExperts": "Experten löschen",
+        "deleteText": "Was möchten Sie mit den Experten in dieser Kategorie tun?",
+        "duplicateName": "Eine Kategorie mit diesem Namen existiert bereits",
+        "empty": "Noch keine Kategorien",
+        "keepExperts": "Experten behalten",
+        "newCategory": "Neue Kategorie",
+        "title": "Kategorien verwalten",
+        "toggleVisibility": "Sichtbarkeit umschalten"
+      },
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Experten löschen möchten?",
       "confirmDeleteAll": "Sind Sie sicher, dass Sie alle Experten löschen möchten?",
       "copy": "Kopieren",
@@ -2663,9 +2681,10 @@
       "import": "@:{'common.import'}",
       "importError": "Fehler beim Importieren der Experten-Datei",
       "importSuccess": "Experten-Datei erfolgreich importiert",
+      "manageCategories": "Kategorien verwalten",
       "new": "Neu",
       "noCategory": "Keine Kategorie",
-      "searchPlaceholder": "Experten nach Namen, Beschreibung oder Kategorie suchen...",
+      "searchPlaceholder": "Experten nach Namen suchen…",
       "sortAlpha": "Alphabetisch sortieren",
       "sortState": "Nach Status sortieren",
       "sortUsage": "Nach Nutzung sortieren",
@@ -2769,8 +2788,23 @@
         "binaryPath": "Python-Binärdatei",
         "description1": "Durch die Aktivierung dieses Plugins können LLM-Engines beliebigen Code auf Ihrem Computer ausführen.",
         "description2": "Es ist nicht vorhersehbar, ob der Code, den LLM-Engines generieren, sicher ist oder nicht.",
+        "downloadError": "Download der Python-Laufzeit fehlgeschlagen: {error}",
+        "downloading": "Wird heruntergeladen...",
+        "downloadLater": "Später",
+        "downloadMessage": "Die eingebettete Python-Laufzeit erfordert den Download von ca. 12 MB. Möchten Sie jetzt herunterladen oder erst bei der ersten Nutzung?",
+        "downloadNow": "@:{'common.download'}",
+        "downloadSuccess": "Python-Laufzeit erfolgreich heruntergeladen und einsatzbereit.",
+        "downloadTitle": "Download erforderlich",
+        "embeddedDescription": "Sicherer, sandboxed Umgebung ohne Installation. Enthält NumPy, Pandas und Matplotlib.",
+        "embeddedRuntime": "Eingebettete Laufzeit (empfohlen)",
+        "nativeDescription": "Verwenden Sie Ihre eigene Python-Installation für volle Funktionen und benutzerdefinierte Pakete.",
+        "nativeRuntime": "Native Binärdatei",
+        "runtime": "Laufzeitmodus",
         "search": "Suche",
         "title": "Python",
+        "uninstallLabel": "Eingebettete Python-Laufzeit entfernen",
+        "uninstallMessage": "Sie können sie später jederzeit wieder über die Einstellungen installieren.",
+        "uninstallTitle": "Möchten Sie die eingebettete Python-Laufzeit wirklich deinstallieren?",
         "useAtOwnRisk": "Auf eigene Gefahr verwenden",
         "warning": "Warnung!"
       },
@@ -3009,7 +3043,7 @@
     "enabled": "Aktiviert",
     "evictionDuration": "Inaktive Web-Apps nach (Minuten) entfernen",
     "icon": "Symbol",
-    "iconSearch": "Symbole suchen...",
+    "iconSearch": "Symbole suchen…",
     "name": "Name",
     "noApps": "Keine Webanwendungen konfiguriert",
     "preserveColors": "Farben der Webapp-Symbole beibehalten",
