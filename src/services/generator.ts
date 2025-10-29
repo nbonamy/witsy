@@ -49,8 +49,14 @@ export default class Generator {
     const response = messages[messages.length - 1]
     const conversation = this.getConversation(messages)
 
-    // get the models
+    // check config
     const engineConfig: EngineConfig = this.config.engines[llm.getId()]
+    if (!engineConfig?.models?.chat?.length) {
+      response.setText(t('generator.errors.missingApiKey'))
+      return 'missing_api_key'
+    }
+
+    // check the model
     const model = engineConfig?.models?.chat?.find((m: Model) => m.id === opts.model)
     const visionModel = engineConfig?.models?.chat?.find((m: Model) => m.id === engineConfig.model?.vision)
     if (!model) {
