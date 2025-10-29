@@ -4,6 +4,7 @@
     type="window" 
     ref="dialog"
     @save="onSave"
+    width="44rem"
   >
     <template #header>
       {{ t('mcp.tools') }}
@@ -133,13 +134,6 @@ const close = () => {
 defineExpose({ show, close })
 
 </script>
-
-<style>
-#mcp-tool-selector .swal2-popup {
-  width: 44rem !important;
-  max-width: 44rem !important;
-}
-</style>
 
 <style scoped>
 

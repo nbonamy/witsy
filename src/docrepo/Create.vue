@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="docrepo-create" ref="dialog" @save="onSave">
+  <ModalDialog id="docrepo-create" ref="dialog" @save="onSave" width="32rem">
     <template #header>
       {{ t('docRepo.create.title') }}
     </template>
@@ -81,11 +81,6 @@ defineExpose({ show, close })
 </script>
 
 <style>
-
-#docrepo-create .swal2-popup {
-  width: 28rem !important;
-  max-width: 28rem !important;
-}
 
 #docrepo-create .warning {
   color: var(--warning-color);

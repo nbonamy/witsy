@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="agent-picker" ref="dialog">
+  <ModalDialog id="agent-picker" ref="dialog" width="36rem">
     <template #header>
       {{ t('agent.picker.title') }}
     </template>
@@ -98,8 +98,6 @@ defineExpose({
 
 #agent-picker .swal2-popup {
   
-  max-width: 36rem !important;
-
   .agent-list {
     max-height: 400px;
     overflow-y: auto;

@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="docrepo-config" ref="dialog" @save="onSave">
+  <ModalDialog id="docrepo-config" ref="dialog" @save="onSave" width="32rem">
     <template #header>
       {{ t('docRepo.config.title') }}
     </template>
@@ -117,10 +117,6 @@ defineExpose({ show, close })
 </script>
 
 <style>
-
-#docrepo-config .swal2-popup {
-  max-width: 32rem !important;
-}
 
 #docrepo-config .input-with-suffix {
   display: flex;
