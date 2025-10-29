@@ -65,7 +65,7 @@ export default class extends Plugin {
   }
 
   getCompletedDescription(tool: string, args: any, results: any): string | undefined {
-    if (results.error) {
+    if (!results || !results.results || results.error) {
       return t('plugins.search.error')
     } else {
       return t('plugins.search.completed', { query: args.query, count: results.results.length })
