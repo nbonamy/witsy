@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="create-engine" ref="dialog" @save="onSave">
+  <ModalDialog id="create-engine" ref="dialog" @save="onSave" width="28rem">
     <template #header>
       {{ t('engine.create.title') }}
     </template> 
@@ -121,12 +121,3 @@ defineExpose({
 })
 
 </script>
-
-
-<style>
-
-#create-engine .swal2-popup {
-  max-width: 24rem !important;
-}
-
-</style>

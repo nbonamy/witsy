@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="prompt-builder" ref="dialog" @save="onSave">
+  <ModalDialog id="prompt-builder" ref="dialog" @save="onSave" width="24rem">
     <template #header>
       {{ title }}
     </template> 
@@ -108,8 +108,6 @@ defineExpose({
 <style>
 
 #prompt-builder .swal2-popup {
-  max-width: 24rem !important;
-
   textarea {
     min-height: 8lh;
     resize: vertical;
