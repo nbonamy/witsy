@@ -4,12 +4,7 @@
     <template v-if="mode === 'list'">
     
       <template v-if="store.agents.length === 0">
-        <div class="sp-main">
-          <main class="empty">
-            <IconAgent @click="onCreate()" />
-            {{ t('agent.forge.empty') }}
-          </main>
-        </div>
+        <Empty class="sp-main" @click="onCreate()" />
       </template>
 
       <template v-else>
@@ -35,8 +30,8 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
-import IconAgent from '../../assets/agent.svg?component'
 import Editor from '../agent/Editor.vue'
+import Empty from '../agent/Empty.vue'
 import List from '../agent/List.vue'
 import View from '../agent/View.vue'
 import PromptBuilder from '../components/PromptBuilder.vue'
@@ -248,41 +243,5 @@ const onImportJson = async () => {
 
 </script>
 
-
 <style scoped>
-
-.split-pane {
-  
-  .sp-main {
-
-    main {
-    
-      &.empty {
-
-        padding: 10% 25%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 10rem;
-        gap: 2rem;
-        text-align: center;
-
-        color: var(--faded-text-color);
-        font-family: var(--font-family-serif);
-        font-size: 22px;
-        font-weight: var(--font-weight-medium);
-        line-height: 1.5;
-
-        svg {
-          cursor: pointer;
-          width: 10rem;
-          height: 10rem;
-          opacity: 20%;
-        }
-      }
-
-    }
-  }
-}
-
 </style>

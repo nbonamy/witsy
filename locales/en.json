@@ -287,7 +287,10 @@
       },
       "confirmDelete": "Are you sure you want to delete this agent?",
       "create": "New Agent",
-      "empty": "Unlock the agentic power of @:{'common.appName'} by creating your first agent! Click the robot head to get started.",
+      "empty": {
+        "text": "Agent Forge lets you create custom AI agents to automate your workflows and handle complex tasks. Think of it as having a smart assistant that can break down big jobs into manageable steps and execute them autonomously.",
+        "title": "Welcome to the Agent Forge"
+      },
       "import": {
         "conflict": {
           "createNew": "Create New",
