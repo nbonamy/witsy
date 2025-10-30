@@ -24,7 +24,7 @@
       <select v-model="categoryId">
         <option value="">{{ t('settings.experts.noCategory') }}</option>
         <option v-for="cat in allCategories" :key="cat.id" :value="cat.id">
-          {{ categoryI18n(cat, 'name') }}
+          {{ cat.name }}
         </option>
       </select>
     </div>
