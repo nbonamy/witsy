@@ -26,6 +26,7 @@ vi.mock('../../src/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
+  LlmManager.prototype.isEngineConfigured = vi.fn(() => true)
   LlmManager.prototype.getEngineName = () => 'mock'
   LlmManager.prototype.getCustomEngines = () => []
   LlmManager.prototype.getFavoriteId = () => 'favid'
