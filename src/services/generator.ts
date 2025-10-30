@@ -1,4 +1,5 @@
 import { LlmChunk, LlmCompletionOpts, LlmEngine, LlmResponse, Model } from 'multi-llm-ts'
+import LlmFactory from '../llms/llm'
 import Message from '../models/message'
 import { Configuration, EngineConfig } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
@@ -49,14 +50,21 @@ export default class Generator {
     const response = messages[messages.length - 1]
     const conversation = this.getConversation(messages)
 
-    // check config
-    const engineConfig: EngineConfig = this.config.engines[llm.getId()]
-    if (!engineConfig?.models?.chat?.length) {
+    // check readiness
+    const llmManager = LlmFactory.manager(this.config)
+    if (!llmManager.isEngineConfigured(llm.getId())) {
       response.setText(t('generator.errors.missingApiKey'))
       return 'missing_api_key'
     }
 
+    // check config
+    if (!llmManager.isEngineReady(llm.getId())) {
+      response.setText(t('generator.errors.invalidModel'))
+      return 'invalid_model'
+    }
+
     // check the model
+    const engineConfig: EngineConfig = this.config.engines[llm.getId()]
     const model = engineConfig?.models?.chat?.find((m: Model) => m.id === opts.model)
     const visionModel = engineConfig?.models?.chat?.find((m: Model) => m.id === engineConfig.model?.vision)
     if (!model) {
