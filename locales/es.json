@@ -16,7 +16,7 @@
     "clear": "Limpiar",
     "clickToStart": "Haz clic en el blob para comenzar a chatear",
     "close": "Cerrar",
-    "colon": "noespaciado",
+    "colon": "notspaced",
     "comboBox": {
       "help": "Selecciona un modelo de la lista o escribe un nombre de modelo que sepas que existe."
     },
