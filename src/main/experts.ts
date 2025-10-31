@@ -79,6 +79,19 @@ const loadExpertData = (source: App|string, workspaceId: string): ExpertData => 
   }
   
   if (Array.isArray(jsonData)) {
+
+    // this is a migration from old array format
+    // as this is a breaking change we backup the old file
+    try {
+      if (!process.env.TEST) {
+        const backupFile = expertsFile.replace('.json', '-backup-v2.json')
+        fs.copyFileSync(expertsFile, backupFile)
+      }
+    } catch (error) {
+      console.warn('Error creating experts backup file', error)
+    }
+
+    // migrate to new format
     expertData.experts = jsonData as Expert[]
     updated = true
   } else if (jsonData?.categories && jsonData?.experts) {
