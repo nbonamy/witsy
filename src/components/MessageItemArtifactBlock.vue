@@ -74,7 +74,10 @@ const onDownloadFormat = async (action: string) => {
         gfm: true,
         useImgAltText: true,
       })
-      filename = addExtension(filename, '.txt')
+      const index = filename.lastIndexOf('.')
+      if (index === -1 || index < filename.length - 5) {
+        filename = addExtension(filename, '.txt')
+      }
       break
 
     case 'raw':
