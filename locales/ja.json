@@ -1876,7 +1876,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "ユーザーがコンテンツ（文書、要約、コードなど）の作成を依頼した場合、以下の構文を使用してください：\n<artifact title=\"TITLE\">\n内容\n</artifact>。HTMLアーティファクトは必ず<html>または<!DOCTYPE html>で始めてください。例：<artifact title=\"レポート\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>HTML形式で書かれたレポート内容</body></html>\n</artifact>。この機能を使ってChart.jsやD3.jsを使ったHTMLベースのデータビジュアライゼーションを作成できます。単純なデータテーブルにはアーティファクトを使わないでください。",
+      "artifacts": "ユーザーがコンテンツ（文書、要約、コードなど）の作成を依頼した場合、次の構文を使用してください：\n<artifact title=\"TITLE\">\n内容\n</artifact>。HTMLアーティファクトは必ず<html>または<!DOCTYPE html>で始めてください。例：<artifact title=\"Report\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>HTML形式のレポート内容</body></html>\n</artifact>。この機能はChart.jsやD3.jsを使用したHTMLベースのデータ可視化の作成に利用できます。単純なデータテーブルにはアーティファクトを使用しないでください。コードのアーティファクトの場合は、<artifact title=\"FILENAME.EXT\">\nコード\n</artifact>の形式を使用してください。",
       "mermaid": "Mermaidチャートの出力を求められた場合、そのコードはユーザーに図として表示されます。",
       "noMarkdown": "回答にマークダウン形式を使わないでください。プレーンテキストのみを使用してください。**太字**、*斜体*、`コード`、```コードブロック```やその他のマークダウン構文は使用しないでください。表を使う場合は、カラムが揃うように適切な間隔を空けたプレーンテキストの表のみを使用してください。",
       "toolRetry": "ツールを呼び出す際に入力エラーが発生した場合は、エラーを分析して修正を試み、その後ツールの呼び出しを再試行してください。"
