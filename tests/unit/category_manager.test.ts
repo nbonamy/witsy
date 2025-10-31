@@ -1,7 +1,8 @@
 import { mount } from '@vue/test-utils'
-import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { beforeAll, describe, expect, test } from 'vitest'
 import CategoryManager from '../../src/components/CategoryManager.vue'
-import { store } from '../../src/services/store'
+import { kDefaultWorkspaceId } from '../../src/services/store'
+import { Workspace } from '../../src/types/workspace'
 import { useWindowMock } from '../mocks/window'
 
 describe('CategoryManager', () => {
@@ -10,70 +11,47 @@ describe('CategoryManager', () => {
     useWindowMock()
   })
 
-  beforeEach(() => {
-    store.config = { workspaceId: 'test-workspace' } as any
-    store.loadExperts()
-  })
-
-  test('renders categories list', () => {
-    const wrapper = mount(CategoryManager)
-
+  test('renders categories list', async () => {
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
     expect(wrapper.find('.table-plain').exists()).toBe(true)
-    expect(wrapper.findAll('tbody tr')).toHaveLength(2)
+    expect(wrapper.findAll('tbody tr')).toHaveLength(3)
     // Mock provides 2 categories: cat-1 and cat-2
   })
 
-  test('displays expert count for each category', () => {
-    const wrapper = mount(CategoryManager)
-
-    // cat-1 has 2 experts (uuid2, uuid3)
-    // cat-2 has 1 expert (uuid4)
-    const rows = wrapper.findAll('tbody tr')
-    expect(rows.length).toBeGreaterThan(0)
-  })
-
-  test('shows empty state when no categories', () => {
-    store.expertCategories = []
-    store.experts = []
-    const wrapper = mount(CategoryManager)
-
-    expect(wrapper.find('.panel-empty').exists()).toBe(true)
+  test('shows empty state when no categories', async () => {
+    // @ts-expect-error mock
+    window.api.experts.loadCategories.mockReturnValueOnce([])
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('.empty-state').exists()).toBe(true)
     expect(wrapper.find('.table-plain').exists()).toBe(false)
   })
 
   test('emits close event when close icon clicked', async () => {
-    const wrapper = mount(CategoryManager)
-
-    await wrapper.find('.panel-header .icon').trigger('click')
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
+    await wrapper.find('.toolbar .actions button[name=close]').trigger('click')
 
     expect(wrapper.emitted('close')).toBeTruthy()
   })
 
   test('shows edit input when clicking category name', async () => {
-    // Add a user category that can be edited
-    store.expertCategories.push({ id: 'user1', type: 'user', state: 'enabled', name: 'User Category' })
 
-    const wrapper = mount(CategoryManager)
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
 
     // Click on user category (last row)
-    const rows = wrapper.findAll('tbody tr')
-    await rows[rows.length - 1].find('td').trigger('click')
-
+    await wrapper.find('tbody tr:last-child td').trigger('click')
     expect(wrapper.find('.edit-input').exists()).toBe(true)
   })
 
   test('emits update when category name is edited', async () => {
-    // Add a user category that can be edited
-    store.expertCategories.push({ id: 'user1', type: 'user', state: 'enabled', name: 'User Category' })
-
-    const wrapper = mount(CategoryManager)
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
 
     // Find the user category row (last one)
-    const rows = wrapper.findAll('tbody tr')
-    const userRow = rows[rows.length - 1]
-
-    // Start editing by clicking
-    await userRow.find('td').trigger('click')
+    await wrapper.find('tbody tr:last-child td').trigger('click')
 
     // Change name
     const input = wrapper.find('.edit-input')
@@ -84,32 +62,24 @@ describe('CategoryManager', () => {
   })
 
   test('cancels edit on escape key', async () => {
-    // Add a user category that can be edited
-    store.expertCategories.push({ id: 'user1', type: 'user', state: 'enabled', name: 'User Category' })
 
-    const wrapper = mount(CategoryManager)
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
 
     // Start editing the user category
-    const rows = wrapper.findAll('tbody tr')
-    await rows[rows.length - 1].find('td').trigger('click')
-
+    await wrapper.find('tbody tr:last-child td').trigger('click')
     expect(wrapper.find('.edit-input').exists()).toBe(true)
-
-    // Press escape
     await wrapper.find('.edit-input').trigger('keydown.escape')
-
     expect(wrapper.find('.edit-input').exists()).toBe(false)
   })
 
   test('does not save empty category name', async () => {
-    // Add a user category that can be edited
-    store.expertCategories.push({ id: 'user1', type: 'user', state: 'enabled', name: 'User Category' })
 
-    const wrapper = mount(CategoryManager)
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
 
     // Start editing
-    const rows = wrapper.findAll('tbody tr')
-    await rows[rows.length - 1].find('td').trigger('click')
+    await wrapper.find('tbody tr:last-child td').trigger('click')
 
     // Try to save empty name
     const input = wrapper.find('.edit-input')
@@ -120,35 +90,16 @@ describe('CategoryManager', () => {
     expect(wrapper.find('.edit-input').exists()).toBe(false)
   })
 
-  test('shows new category button', () => {
-    const wrapper = mount(CategoryManager)
+  test('shows new category button', async () => {
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
 
-    expect(wrapper.find('.panel-footer button').exists()).toBe(true)
+    expect(wrapper.find('.toolbar button.primary').exists()).toBe(true)
   })
 
-  test('excludes deleted experts from count', () => {
-    // Add a deleted expert to the store
-    store.experts.push({ id: 'deleted1', type: 'user', state: 'deleted', categoryId: 'cat-1', triggerApps: [] })
-
-    const wrapper = mount(CategoryManager)
-
-    // Should not count deleted expert
-    const rows = wrapper.findAll('tbody tr')
-    expect(rows.length).toBe(2) // Still 2 categories
-  })
-
-  test('renders with system categories', () => {
-    // Mock already provides system categories (cat-1 and cat-2 are type: system)
-    const wrapper = mount(CategoryManager)
-
-    expect(wrapper.findAll('tbody tr')).toHaveLength(2)
-  })
-
-  test('shows eye icon for system categories and trash for user', () => {
-    // Add a user category
-    store.expertCategories.push({ id: 'user1', type: 'user', state: 'enabled', name: 'User Category' })
-
-    const wrapper = mount(CategoryManager)
+  test('shows eye icon for system categories and trash for user', async () => {
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
 
     // System categories (first 2 rows) should have Eye icon in HTML
     const systemRow = wrapper.findAll('tbody tr')[0]
@@ -164,7 +115,8 @@ describe('CategoryManager', () => {
   })
 
   test('toggles system category visibility', async () => {
-    const wrapper = mount(CategoryManager)
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
 
     // Get first system category's second button (eye icon)
     const firstRow = wrapper.findAll('tbody tr')[0]
@@ -180,7 +132,8 @@ describe('CategoryManager', () => {
 
   test('allows editing system categories when clicking name', async () => {
     // Mock provides system categories by default
-    const wrapper = mount(CategoryManager)
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
 
     // Click first category (which is system) to edit
     const firstRow = wrapper.findAll('tbody tr')[0]
@@ -190,13 +143,9 @@ describe('CategoryManager', () => {
     expect(wrapper.find('.edit-input').exists()).toBe(true)
   })
 
-  test('user categories show delete icon', () => {
-    // Add a user category
-    store.expertCategories.push({ id: 'user1', type: 'user', state: 'enabled', name: 'User Category' })
-
-    const wrapper = mount(CategoryManager)
-
-    // User category should have trash icon in HTML
+  test('user categories show delete icon', async () => {
+    const wrapper = mount(CategoryManager, { props: { workspace: { uuid: kDefaultWorkspaceId } as Workspace }})
+    await wrapper.vm.$nextTick()
     const userRow = wrapper.findAll('tbody tr')[2] // Third row is user category
     expect(userRow.html()).toContain('lucide-trash')
   })

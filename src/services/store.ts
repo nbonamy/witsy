@@ -5,7 +5,6 @@ import { Workspace } from '../types/workspace'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadAgents } from './agents'
-import { loadExperts, loadCategories } from './experts'
 import features from '../../defaults/features.json'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
@@ -127,8 +126,8 @@ export const store: Store = reactive({
   },
 
   loadExperts: async (): Promise<void> => {
-    loadCategories(store.config.workspaceId)
-    loadExperts(store.config.workspaceId)
+    store.experts = window.api.experts.load(store.config.workspaceId)
+    store.expertCategories = window.api.experts.loadCategories(store.config.workspaceId)
   },
 
   loadAgents: (): void => {

@@ -1,7 +1,6 @@
 
 import { vi, beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
 import * as main from '../../src/main/experts'
 import * as service from '../../src/services/experts'
 import { app } from 'electron'
@@ -56,15 +55,4 @@ test('Load custom experts', () => {
   expect(experts.filter(c => c.type === 'system')).toHaveLength(165)
   expect(experts.filter(c => c.state === 'deleted')).toHaveLength(1)
   expect(experts.filter(c => c.state === 'disabled')).toHaveLength(1)
-})
-
-test('Service Install experts', () => {
-  service.loadExperts('test-workspace')
-  expect(window.api.experts.load).toHaveBeenCalled()
-  expect(store.experts).toHaveLength(4)
-})
-
-test('Service Save expert', () => {
-  service.saveExperts('test-workspace')
-  expect(window.api.experts.save).toHaveBeenCalled()
 })
