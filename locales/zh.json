@@ -174,6 +174,7 @@
     "spellcheck": {
       "add": "添加到字典"
     },
+    "status": "状态",
     "stop": "停止",
     "title": "Title",
     "tools": "工具",
@@ -2563,15 +2564,16 @@
     },
     "commands": {
       "confirmDelete": "你确定要删除这个命令吗？",
-      "disableAll": "全部禁用",
-      "enableAll": "全部启用",
       "export": "导出",
       "exportError": "导出命令文件失败",
       "exportSuccess": "命令文件导出成功",
       "import": "@:{'common.import'}",
       "importError": "导入命令文件失败",
       "importSuccess": "命令文件导入成功",
-      "new": "新建"
+      "itemCount": "无命令|1 个命令|{count} 个命令",
+      "itemsSelected": "未选择|已选择 {count} 项|已选择 {count} 项",
+      "new": "新建",
+      "toggle": "切换"
     },
     "deepResearch": {
       "breadth": "研究广度",
@@ -2687,7 +2689,6 @@
         "empty": "暂无分类",
         "keepExperts": "保留专家",
         "newCategory": "新建分类",
-        "title": "管理分类",
         "toggleVisibility": "切换可见性"
       },
       "confirmDelete": "你确定要删除这个专家吗？",
@@ -2703,14 +2704,15 @@
       "import": "@:{'common.import'}",
       "importError": "导入专家文件失败",
       "importSuccess": "专家文件导入成功",
+      "itemCount": "无专家|1 位专家|{count} 位专家",
+      "itemsSelected": "未选择|已选择 {count} 项|已选择 {count} 项",
       "manageCategories": "管理分类",
       "new": "新建",
       "noCategory": "无类别",
       "searchPlaceholder": "按名称搜索专家…",
       "sortAlpha": "按字母顺序排序",
       "sortState": "按状态排序",
-      "sortUsage": "按使用量排序",
-      "usage": "使用量"
+      "toggle": "切换"
     },
     "general": {
       "darkTint": "深色",

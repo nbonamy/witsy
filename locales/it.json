@@ -155,6 +155,7 @@
     "spellcheck": {
       "add": "Aggiungi al dizionario"
     },
+    "status": "Stato",
     "stop": "Ferma",
     "title": "Title",
     "tools": "Strumenti",
@@ -2541,15 +2542,16 @@
     },
     "commands": {
       "confirmDelete": "Sei sicuro di voler eliminare questo comando?",
-      "disableAll": "Disabilita tutto",
-      "enableAll": "Abilita tutto",
       "export": "Esporta",
       "exportError": "Errore durante l'esportazione del file dei comandi",
       "exportSuccess": "File dei comandi esportato con successo",
       "import": "@:{'common.import'}",
       "importError": "Errore durante l'importazione del file dei comandi",
       "importSuccess": "File dei comandi importato con successo",
-      "new": "Nuovo"
+      "itemCount": "Nessun comando|1 comando|{count} comandi",
+      "itemsSelected": "Nessuno selezionato|{count} selezionato|{count} selezionati",
+      "new": "Nuovo",
+      "toggle": "Attiva/disattiva"
     },
     "deepResearch": {
       "breadth": "Ampiezza della ricerca",
@@ -2665,7 +2667,6 @@
         "empty": "Ancora nessuna categoria",
         "keepExperts": "Mantieni Esperti",
         "newCategory": "Nuova Categoria",
-        "title": "Gestisci Categorie",
         "toggleVisibility": "Alterna Visibilità"
       },
       "confirmDelete": "Sei sicuro di voler eliminare questo esperto?",
@@ -2681,14 +2682,15 @@
       "import": "@:{'common.import'}",
       "importError": "Errore durante l'importazione del file esperti",
       "importSuccess": "File esperti importato con successo",
+      "itemCount": "Nessun esperto|1 esperto|{count} esperti",
+      "itemsSelected": "Nessuno selezionato|{count} selezionato|{count} selezionati",
       "manageCategories": "Gestisci Categorie",
       "new": "Nuovo",
       "noCategory": "Nessuna categoria",
       "searchPlaceholder": "Cerca esperti per nome…",
       "sortAlpha": "Ordina alfabeticamente",
       "sortState": "Ordina per stato",
-      "sortUsage": "Ordina per utilizzo",
-      "usage": "Utilizzo"
+      "toggle": "Attiva/disattiva"
     },
     "general": {
       "darkTint": "Tonalità scura",

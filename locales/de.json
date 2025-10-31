@@ -155,6 +155,7 @@
     "spellcheck": {
       "add": "Zum Wörterbuch hinzufügen"
     },
+    "status": "Status",
     "stop": "Stop",
     "title": "Title",
     "tools": "Werkzeuge",
@@ -2541,15 +2542,16 @@
     },
     "commands": {
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Befehl löschen möchten?",
-      "disableAll": "Alle deaktivieren",
-      "enableAll": "Alle aktivieren",
       "export": "Exportieren",
       "exportError": "Fehler beim Exportieren der Befehlsdatei",
       "exportSuccess": "Befehlsdatei erfolgreich exportiert",
       "import": "@:{'common.import'}",
       "importError": "Fehler beim Importieren der Befehlsdatei",
       "importSuccess": "Befehlsdatei erfolgreich importiert",
-      "new": "Neu"
+      "itemCount": "Keine Befehle|1 Befehl|{count} Befehle",
+      "itemsSelected": "Keine ausgewählt|{count} ausgewählt|{count} ausgewählt",
+      "new": "Neu",
+      "toggle": "Umschalten"
     },
     "deepResearch": {
       "breadth": "Breite der Forschung",
@@ -2665,7 +2667,6 @@
         "empty": "Noch keine Kategorien",
         "keepExperts": "Experten behalten",
         "newCategory": "Neue Kategorie",
-        "title": "Kategorien verwalten",
         "toggleVisibility": "Sichtbarkeit umschalten"
       },
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Experten löschen möchten?",
@@ -2681,14 +2682,15 @@
       "import": "@:{'common.import'}",
       "importError": "Fehler beim Importieren der Experten-Datei",
       "importSuccess": "Experten-Datei erfolgreich importiert",
+      "itemCount": "Keine Experten|1 Experte|{count} Experten",
+      "itemsSelected": "Keine ausgewählt|{count} ausgewählt|{count} ausgewählt",
       "manageCategories": "Kategorien verwalten",
       "new": "Neu",
       "noCategory": "Keine Kategorie",
       "searchPlaceholder": "Experten nach Namen suchen…",
       "sortAlpha": "Alphabetisch sortieren",
       "sortState": "Nach Status sortieren",
-      "sortUsage": "Nach Nutzung sortieren",
-      "usage": "Nutzung"
+      "toggle": "Umschalten"
     },
     "general": {
       "darkTint": "Dunkler Farbton",

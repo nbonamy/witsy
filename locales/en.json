@@ -168,13 +168,13 @@
     "selectNone": "Unselect All",
     "settings": "Settings",
     "shortcut": "Shortcut",
-    "status": "Status",
     "showLess": "Show Less",
     "showMore": "Show More",
     "sortBy": "Sort By",
     "spellcheck": {
       "add": "Add to dictionary"
     },
+    "status": "Status",
     "stop": "Stop",
     "title": "Title",
     "tools": "Tools",
@@ -2563,8 +2563,6 @@
     },
     "commands": {
       "confirmDelete": "Are you sure you want to delete this command?",
-      "disableAll": "Disable all",
-      "enableAll": "Enable all",
       "export": "Export",
       "exportError": "Failed to export commands file",
       "exportSuccess": "Commands file exported successfully",
@@ -2690,7 +2688,6 @@
         "empty": "No categories yet",
         "keepExperts": "Keep Experts",
         "newCategory": "New Category",
-        "title": "Manage Categories",
         "toggleVisibility": "Toggle Visibility"
       },
       "confirmDelete": "Are you sure you want to delete this expert?",
@@ -2714,9 +2711,7 @@
       "searchPlaceholder": "Search experts by name…",
       "sortAlpha": "Sort alphabetically",
       "sortState": "Sort by state",
-      "sortUsage": "Sort by usage",
-      "toggle": "Toggle",
-      "usage": "Usage"
+      "toggle": "Toggle"
     },
     "general": {
       "darkTint": "Dark tint",

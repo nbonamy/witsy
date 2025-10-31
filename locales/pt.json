@@ -174,6 +174,7 @@
     "spellcheck": {
       "add": "Adicionar ao dicionário"
     },
+    "status": "Status",
     "stop": "Parar",
     "title": "Title",
     "tools": "Ferramentas",
@@ -2563,15 +2564,16 @@
     },
     "commands": {
       "confirmDelete": "Tem certeza de que deseja excluir este comando?",
-      "disableAll": "Desativar tudo",
-      "enableAll": "Ativar tudo",
       "export": "Exportar",
       "exportError": "Falha ao exportar arquivo de comandos",
       "exportSuccess": "Arquivo de comandos exportado com sucesso",
       "import": "@:{'common.import'}",
       "importError": "Falha ao importar arquivo de comandos",
       "importSuccess": "Arquivo de comandos importado com sucesso",
-      "new": "Novo"
+      "itemCount": "Nenhum comando|1 comando|{count} comandos",
+      "itemsSelected": "Nenhum selecionado|{count} selecionado|{count} selecionados",
+      "new": "Novo",
+      "toggle": "Alternar"
     },
     "deepResearch": {
       "breadth": "Abrangência da pesquisa",
@@ -2687,7 +2689,6 @@
         "empty": "Nenhuma categoria ainda",
         "keepExperts": "Manter Especialistas",
         "newCategory": "Nova Categoria",
-        "title": "Gerenciar Categorias",
         "toggleVisibility": "Alternar Visibilidade"
       },
       "confirmDelete": "Tem certeza de que deseja excluir este especialista?",
@@ -2703,14 +2704,15 @@
       "import": "@:{'common.import'}",
       "importError": "Falha ao importar arquivo de especialistas",
       "importSuccess": "Arquivo de especialistas importado com sucesso",
+      "itemCount": "Nenhum especialista|1 especialista|{count} especialistas",
+      "itemsSelected": "Nenhum selecionado|{count} selecionado|{count} selecionados",
       "manageCategories": "Gerenciar Categorias",
       "new": "Novo",
       "noCategory": "Sem categoria",
       "searchPlaceholder": "Pesquisar especialistas pelo nome…",
       "sortAlpha": "Ordenar alfabeticamente",
       "sortState": "Ordenar por estado",
-      "sortUsage": "Ordenar por uso",
-      "usage": "Uso"
+      "toggle": "Alternar"
     },
     "general": {
       "darkTint": "Tonificação escura",
