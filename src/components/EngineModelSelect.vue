@@ -50,14 +50,16 @@ import EngineLogo from './EngineLogo.vue'
 import EngineModelMenu from './EngineModelMenu.vue'
 
 interface Props {
-  engine: string
-  model: string
+  engine?: string
+  model?: string
   position?: MenuPosition
   defaultLabel?: string
   cssClasses?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  engine: '',
+  model: '',
   position: 'below',
 })
 
