@@ -17,6 +17,7 @@ export type MenuCallbacks = {
   forge: () => void
   backupExport: () => void
   backupImport: () => void
+  importMarkdown: () => void
   importOpenAI: () => void
 }
 
@@ -128,6 +129,10 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
         {
           label: t('menu.file.import.title'),
           submenu: [
+            {
+              label: t('menu.file.import.markdown'),
+              click: () => callbacks.importMarkdown()
+            },
             {
               label: t('menu.file.import.openai'),
               click: () => callbacks.importOpenAI()

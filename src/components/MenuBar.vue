@@ -127,7 +127,7 @@ const getWebappIcon = (iconName: string) => {
   return (icons as any)[iconName] || icons.Globe
 }
 
-const emit = defineEmits(['change', 'new-chat', 'run-onboarding'])
+const emit = defineEmits(['change', 'new-chat', 'run-onboarding', 'import-markdown'])
 
 const mode = ref('chat')
 
@@ -143,6 +143,13 @@ onMounted(() => {
     mode.value = props.mode
   })
 })
+
+const onImportMarkdown = () => {
+  const chatData = window.api.import.markdown()
+  if (chatData) {
+    emit('import-markdown', chatData)
+  }
+}
 
 const onAppMenu = (event: Event) => {
 
@@ -167,6 +174,7 @@ const onAppMenu = (event: Event) => {
           { label: t('menu.file.backupExport'), divided: 'up', onClick: () => setTimeout(() => window.api.backup.export(), 0) },
           { label: t('menu.file.backupImport'), onClick: () => setTimeout(() => window.api.backup.import(), 0) },
           { label: t('menu.file.import.title'), divided: 'up', children: [
+            { label: t('menu.file.import.markdown'), onClick: () => setTimeout(() => onImportMarkdown(), 0) },
             { label: t('menu.file.import.openai'), onClick: () => setTimeout(() => window.api.import.openai(store.config.workspaceId), 0) }
           ] },
           { label: t('menu.file.closeWindow'), divided: 'up', onClick: () => window.api.main.close() },

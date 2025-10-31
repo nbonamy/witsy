@@ -447,11 +447,18 @@
     "fork": {
       "title": "Conversation en fourche"
     },
+    "import": {
+      "error": "Une erreur est survenue lors de l'importation du chat.",
+      "invalidFormat": "Format markdown invalide. Format attendu : # Titre, ## Système/Vous/Assistant",
+      "success": "Chat importé avec succès",
+      "successDetail": "La conversation a été importée et ajoutée à votre historique de chat."
+    },
     "role": {
       "assistant": "Assistant",
       "system": "Système",
       "user": "Vous"
-    }
+    },
+    "unknownModel": "Modèle inconnu"
   },
   "chatList": {
     "displayMode": {
@@ -2043,6 +2050,7 @@
       "closeWindow": "Fermer la fenêtre",
       "designStudio": "@:{'designStudio.title'}",
       "import": {
+        "markdown": "Fichier Markdown…",
         "openai": "Export de données ChatGPT…",
         "title": "Importer"
       },

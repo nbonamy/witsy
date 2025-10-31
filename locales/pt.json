@@ -466,11 +466,18 @@
     "fork": {
       "title": "Dividir chat"
     },
+    "import": {
+      "error": "Ocorreu um erro ao tentar importar o chat.",
+      "invalidFormat": "Formato markdown inválido. Formato esperado: # Título, ## Sistema/Você/Assistente",
+      "success": "Chat importado com sucesso",
+      "successDetail": "A conversa foi importada e adicionada ao seu histórico de chat."
+    },
     "role": {
       "assistant": "Assistente",
       "system": "Sistema",
       "user": "Você"
-    }
+    },
+    "unknownModel": "Modelo Desconhecido"
   },
   "chatList": {
     "displayMode": {
@@ -2062,6 +2069,7 @@
       "closeWindow": "Fechar Janela",
       "designStudio": "@:{'designStudio.title'}",
       "import": {
+        "markdown": "Arquivo Markdown…",
         "openai": "Exportação de dados do ChatGPT…",
         "title": "Importar"
       },

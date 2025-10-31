@@ -32,6 +32,7 @@ import { fixPath } from './main/utils';
 //import { useI18n } from './main/i18n';
 import { HttpServer } from './main/http_server';
 import { installIpc } from './main/ipc';
+import { importMarkdown } from './main/import_md';
 import { importOpenAI } from './main/import_oai';
 import { installHttpTriggers } from './main/http_triggers';
 import { installAgentWebhook } from './main/agent_webhook';
@@ -117,6 +118,7 @@ const installMenu = () => {
     forge: window.openAgentForgeWindow,
     backupExport: async () => await backup.exportBackup(app),
     backupImport: async () => await backup.importBackup(app, quitApp),
+    importMarkdown: async () => await importMarkdown(app, settings.workspaceId),
     importOpenAI: async () => await importOpenAI(app, settings.workspaceId),
   }, settings.shortcuts);
 }

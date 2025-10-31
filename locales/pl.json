@@ -466,11 +466,18 @@
     "fork": {
       "title": "Rozwidl czat"
     },
+    "import": {
+      "error": "Wystąpił błąd podczas próby zaimportowania czatu.",
+      "invalidFormat": "Nieprawidłowy format markdown. Oczekiwany format: # Tytuł, ## System/Ty/Asystent",
+      "success": "Czat zaimportowany pomyślnie",
+      "successDetail": "Konwersacja została zaimportowana i dodana do historii czatu."
+    },
     "role": {
       "assistant": "Asystent",
       "system": "System",
       "user": "Ty"
-    }
+    },
+    "unknownModel": "Nieznany model"
   },
   "chatList": {
     "displayMode": {
@@ -2062,6 +2069,7 @@
       "closeWindow": "Zamknij okno",
       "designStudio": "@:{'designStudio.title'}",
       "import": {
+        "markdown": "Plik Markdown…",
         "openai": "Eksport danych ChatGPT…",
         "title": "Importuj"
       },

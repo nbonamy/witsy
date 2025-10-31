@@ -167,7 +167,11 @@ const authorName = computed(() => {
 
 const modelInfo = computed(() => {
   if (props.message.role === 'assistant') {
-    return `${props.message.engine}/${props.message.model}`
+    if (props.message.engine && props.message.model) {
+      return `${props.message.engine}/${props.message.model}`
+    } else {
+      return t('chat.unknownModel')
+    }
   }
   return ''
 })
