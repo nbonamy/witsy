@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Chat color with dark mode (https://github.com/nbonamy/witsy/issues/464)
+- Ollama Chain of Thought / Reasoning in Prompt (https://github.com/nbonamy/witsy/issues/467)
 
 ### Removed
 - N/A
