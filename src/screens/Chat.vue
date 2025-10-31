@@ -651,11 +651,11 @@ const onRetryGeneration = async (message: Message) => {
     return
   }
 
-  // now remove all messages after this one
-  assistant.value.chat.messages.splice(index)
+  // Get the last message before mutating (to avoid triggering Vue reactivity)
+  const lastMessage = assistant.value.chat.messages[index-1]
 
-  // now pop the last message
-  const lastMessage = assistant.value.chat.messages.pop()
+  // now remove all messages after this one (including the one we're retrying)
+  assistant.value.chat.messages.splice(index-1)
 
   // depends if this is an agent response or not
   if (message.agentId) {
