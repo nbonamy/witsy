@@ -16,7 +16,7 @@
     "clear": "Löschen",
     "clickToStart": "Klicken Sie auf die Blase, um mit dem Chatten zu beginnen",
     "close": "Schließen",
-    "colon": "nichtabstand",
+    "colon": "notspaced",
     "comboBox": {
       "help": "Wählen Sie ein Modell aus der Liste aus oder geben Sie einen Modellnamen ein, von dem Sie wissen, dass er existiert."
     },
