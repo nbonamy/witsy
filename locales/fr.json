@@ -155,6 +155,7 @@
     "spellcheck": {
       "add": "Ajouter au dictionnaire"
     },
+    "status": "Statut",
     "stop": "Arrêter",
     "title": "Title",
     "tools": "Outils",
@@ -2541,15 +2542,16 @@
     },
     "commands": {
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette commande ?",
-      "disableAll": "Désactiver tout",
-      "enableAll": "Activer tout",
       "export": "Exporter",
       "exportError": "Échec de l'exportation du fichier de commandes",
       "exportSuccess": "Fichier de commandes exporté avec succès",
       "import": "@:{'common.import'}",
       "importError": "Échec de l'importation du fichier de commandes",
       "importSuccess": "Fichier de commandes importé avec succès",
-      "new": "Nouveau"
+      "itemCount": "Aucune commande|1 commande|{count} commandes",
+      "itemsSelected": "Aucun sélectionné|{count} sélectionné|{count} sélectionnés",
+      "new": "Nouveau",
+      "toggle": "Basculer"
     },
     "deepResearch": {
       "breadth": "Étendue de la recherche",
@@ -2665,7 +2667,6 @@
         "empty": "Pas encore de catégories",
         "keepExperts": "Conserver les experts",
         "newCategory": "Nouvelle catégorie",
-        "title": "Gérer les catégories",
         "toggleVisibility": "Basculer la visibilité"
       },
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet expert ?",
@@ -2681,14 +2682,15 @@
       "import": "@:{'common.import'}",
       "importError": "Échec de l'importation du fichier d'experts",
       "importSuccess": "Fichier d'experts importé avec succès",
+      "itemCount": "Aucun expert|1 expert|{count} experts",
+      "itemsSelected": "Aucun sélectionné|{count} sélectionné|{count} sélectionnés",
       "manageCategories": "Gérer les catégories",
       "new": "Nouveau",
       "noCategory": "Aucune catégorie",
       "searchPlaceholder": "Rechercher des experts par nom…",
       "sortAlpha": "Trier alphabétiquement",
       "sortState": "Trier par statut",
-      "sortUsage": "Trier par utilisation",
-      "usage": "Utilisation"
+      "toggle": "Basculer"
     },
     "general": {
       "darkTint": "Nuance sombre",

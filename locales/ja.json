@@ -174,6 +174,7 @@
     "spellcheck": {
       "add": "辞書に追加"
     },
+    "status": "状態",
     "stop": "停止",
     "title": "Title",
     "tools": "ツール",
@@ -2563,15 +2564,16 @@
     },
     "commands": {
       "confirmDelete": "このコマンドを削除してもよろしいですか？",
-      "disableAll": "すべて無効にする",
-      "enableAll": "すべて有効にする",
       "export": "エクスポート",
       "exportError": "コマンドファイルのエクスポートに失敗しました",
       "exportSuccess": "コマンドファイルが正常にエクスポートされました",
       "import": "@:{'common.import'}",
       "importError": "コマンドファイルのインポートに失敗しました",
       "importSuccess": "コマンドファイルが正常にインポートされました",
-      "new": "新規"
+      "itemCount": "コマンドなし|1 件のコマンド|{count} 件のコマンド",
+      "itemsSelected": "選択なし|{count} 件選択済み|{count} 件選択済み",
+      "new": "新規",
+      "toggle": "切り替え"
     },
     "deepResearch": {
       "breadth": "リサーチの広さ",
@@ -2687,7 +2689,6 @@
         "empty": "まだカテゴリーはありません",
         "keepExperts": "エキスパートを保持する",
         "newCategory": "新しいカテゴリー",
-        "title": "カテゴリー管理",
         "toggleVisibility": "表示切替"
       },
       "confirmDelete": "このエキスパートを削除してもよろしいですか？",
@@ -2703,14 +2704,15 @@
       "import": "@:{'common.import'}",
       "importError": "エキスパートファイルのインポートに失敗しました",
       "importSuccess": "エキスパートファイルが正常にインポートされました",
+      "itemCount": "エキスパートなし|1 名のエキスパート|{count} 名のエキスパート",
+      "itemsSelected": "選択なし|{count} 件選択済み|{count} 件選択済み",
       "manageCategories": "カテゴリー管理",
       "new": "新規",
       "noCategory": "カテゴリーなし",
       "searchPlaceholder": "名前でエキスパートを検索…",
       "sortAlpha": "アルファベット順にソート",
       "sortState": "状態別にソート",
-      "sortUsage": "使用回数で並べ替え",
-      "usage": "使用回数"
+      "toggle": "切り替え"
     },
     "general": {
       "darkTint": "ダークティント",
