@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Wider engine/model menu (https://github.com/nbonamy/witsy/issues/463)
+- Download button for text mangles python export (https://github.com/nbonamy/witsy/issues/468)
 
 ### Fixed
 - Chat color with dark mode (https://github.com/nbonamy/witsy/issues/464)
