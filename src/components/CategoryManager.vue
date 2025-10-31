@@ -1,82 +1,104 @@
 <template>
-  <div class="panel category-manager">
-    <header class="panel-header">
-      <label>{{ t('settings.experts.categoryManager.title') }}</label>
-      <XIcon class="icon" @click="onClose" />
-    </header>
-    <main class="panel-body" :class="{ empty: categoriesSorted.length === 0 }">
-      <div v-if="categoriesSorted.length === 0" class="panel-empty">
-        {{ t('settings.experts.categoryManager.empty') }}
-      </div>
-      <table v-else class="table-plain">
-        <tbody>
-          <tr v-for="category in categoriesSorted" :key="category.id">
-            <td @click="startEdit(category)">
-              <input
-                v-if="editingCategory?.id === category.id"
-                v-model="editingName"
-                type="text"
-                @keydown.enter="saveEdit"
-                @keydown.escape="cancelEdit"
-                @blur="saveEdit"
-                @click.stop
-                ref="editInput"
-                class="edit-input"
-              />
-              <template v-else>
-                {{ category.name || categoryI18n(category, 'name') }}
-              </template>
-            </td>
-            <td>
-              <div class="actions">
-                <ButtonIcon @click="startEdit(category)"><PencilIcon /></ButtonIcon>
-                <ButtonIcon v-if="category.type === 'system'" @click="toggleVisibility(category)" :title="t('settings.experts.categoryManager.toggleVisibility')">
-                  <Eye v-if="category.state === 'enabled'" />
-                  <EyeOff v-else />
-                </ButtonIcon>
-                <ButtonIcon v-else @click="onDelete(category)"><Trash2Icon class="error" /></ButtonIcon>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </main>
-    <footer class="panel-footer">
-      <button @click="onNewCategory">
-        <PlusIcon />{{ t('settings.experts.categoryManager.newCategory') }}
+  <div class="category-manager list-with-toolbar">
+    <div class="toolbar" v-if="categoriesSorted.length > 0">
+      <button name="new" class="primary" @click="onNewCategory">
+        <PlusIcon />
+        {{ t('settings.experts.categoryManager.newCategory') }}
       </button>
-    </footer>
+      <div class="actions">
+        <button name="close" @click="onClose">{{ t('common.done') }}</button>
+      </div>
+    </div>
+    <table class="table-plain" v-if="categoriesSorted.length > 0">
+      <thead>
+        <tr>
+          <th>{{ t('common.name') }}</th>
+          <th>{{ t('common.actions') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="category in categoriesSorted" :key="category.id" class="category">
+          <td class="name" @click="startEdit(category)">
+            <input
+              v-if="editingCategory?.id === category.id"
+              v-model="editingName"
+              type="text"
+              @keydown.enter="saveEdit"
+              @keydown.escape="cancelEdit"
+              @blur="saveEdit"
+              @click.stop
+              ref="editInput"
+              class="edit-input"
+            />
+            <template v-else>
+              {{ category.name || categoryI18n(category, 'name') }}
+            </template>
+          </td>
+          <td>
+            <div class="actions">
+              <ButtonIcon @click="startEdit(category)"><PencilIcon /></ButtonIcon>
+              <ButtonIcon v-if="category.type === 'system'" @click="toggleVisibility(category)" :title="t('settings.experts.categoryManager.toggleVisibility')">
+                <Eye v-if="category.state === 'enabled'" />
+                <EyeOff v-else />
+              </ButtonIcon>
+              <ButtonIcon v-else @click="onDelete(category)"><Trash2Icon class="error" /></ButtonIcon>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty-state" v-if="categoriesSorted.length === 0">
+      <p>{{ t('settings.experts.categoryManager.empty') }}</p>
+      <button type="button" class="primary" @click="onNewCategory">
+        <PlusIcon />
+        {{ t('settings.experts.categoryManager.newCategory') }}
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Eye, EyeOff, PencilIcon, PlusIcon, Trash2Icon, XIcon } from 'lucide-vue-next'
-import { saveCategories } from '../services/experts'
-import { computed, nextTick, ref } from 'vue'
+import { Eye, EyeOff, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
+import { computed, nextTick, onMounted, ref, toRaw } from 'vue'
 import Dialog from '../composables/dialog'
 import { createCategory, deleteCategory } from '../services/categories'
-import { t, categoryI18n, categoryI18nDefault } from '../services/i18n'
-import { store } from '../services/store'
+import { categoryI18n, categoryI18nDefault, t } from '../services/i18n'
 import { Expert, ExpertCategory } from '../types/index'
+import { Workspace } from '../types/workspace'
 import ButtonIcon from './ButtonIcon.vue'
+
+const props = defineProps<{
+  workspace: Workspace
+}>()
 
 const emit = defineEmits<{
   update: []
   close: []
 }>()
 
+const experts = ref<Expert[]>([])
+const categories = ref<ExpertCategory[]>([])
 const editingCategory = ref<ExpertCategory | null>(null)
 const editingName = ref('')
 const editInput = ref<HTMLInputElement[]>([])
 
+onMounted(() => {
+  load()
+})
+
+const load = () => {
+  experts.value = window.api.experts.load(props.workspace.uuid)
+  categories.value = window.api.experts.loadCategories(props.workspace.uuid)
+}
+
 const categoriesSorted = computed(() => {
-  return [...store.expertCategories].sort((a, b) => {
+  return [...categories.value.sort((a, b) => {
     return categoryI18n(a, 'name').localeCompare(categoryI18n(b, 'name'))
-  })
+  })]
 })
 
 const getExpertCount = (categoryId: string): number => {
-  return store.experts.filter((e: Expert) => e.categoryId === categoryId && e.state !== 'deleted').length
+  return experts.value.filter((e: Expert) => e.categoryId === categoryId && e.state !== 'deleted').length
 }
 
 const startEdit = async (category: ExpertCategory) => {
@@ -96,7 +118,7 @@ const saveEdit = () => {
   }
 
   // Check for duplicate names
-  const duplicate = store.expertCategories.find(
+  const duplicate = categories.value.find(
     c => c.id !== editingCategory.value!.id && c.name?.toLowerCase() === editingName.value.trim().toLowerCase()
   )
   if (duplicate) {
@@ -113,7 +135,7 @@ const saveEdit = () => {
 
   // Update the category name directly
   editingCategory.value.name = newName
-  saveCategories(store.config.workspaceId)
+  save()
   emit('update')
   cancelEdit()
 }
@@ -137,7 +159,7 @@ const onNewCategory = async () => {
   }
 
   // Check for duplicate names
-  const duplicate = store.expertCategories.find(
+  const duplicate = categories.value.find(
     c => c.name?.toLowerCase() === result.value.trim().toLowerCase()
   )
   if (duplicate) {
@@ -146,15 +168,15 @@ const onNewCategory = async () => {
   }
 
   const newCategory = createCategory(result.value.trim())
-  store.expertCategories.push(newCategory)
-  saveCategories(store.config.workspaceId)
+  categories.value.push(newCategory)
+  save()
   emit('update')
 }
 
 const toggleVisibility = (category: ExpertCategory) => {
   // Toggle between enabled and disabled (no confirmation needed)
   category.state = category.state === 'enabled' ? 'disabled' : 'enabled'
-  saveCategories(store.config.workspaceId)
+  save()
   emit('update')
 }
 
@@ -175,8 +197,8 @@ const onDelete = async (category: ExpertCategory) => {
     })
 
     if (result.isConfirmed) {
-      store.expertCategories = store.expertCategories.filter(c => c.id !== category.id)
-      saveCategories(store.config.workspaceId)
+      categories.value = categories.value.filter(c => c.id !== category.id)
+      save()
       emit('update')
     }
   
@@ -197,40 +219,49 @@ const onDelete = async (category: ExpertCategory) => {
     }
 
     const deleteExperts = result.isDenied
-    deleteCategory(category.id, deleteExperts)
-    saveCategories(store.config.workspaceId)
+    const update = deleteCategory(experts.value, categories.value, category.id, deleteExperts)
+    experts.value = update.experts
+    categories.value = update.categories
+    save()
     emit('update')
   }
+}
+
+const save = () => {
+  window.api.experts.save(props.workspace.uuid, toRaw(experts.value))
+  window.api.experts.saveCategories(props.workspace.uuid, toRaw(categories.value))
 }
 
 const onClose = () => {
   emit('close')
 }
+
 </script>
 
 <style scoped>
 .category-manager {
-  margin-bottom: 1rem;
-  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
 
-  .panel-header {
-    padding-bottom: 0;
-  }
-  .panel-body {
-    padding: 0rem 1rem;
-    table.table-plain {
-      td {
-        padding: 0.25rem 0.75rem;
-        .actions {
-          margin: 0;
-        }
-      }
-    }
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-text-secondary);
+}
 
-  }
-  .panel-footer {
-    padding: 1rem;
-  }
+.empty-state button.primary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .edit-input {
@@ -239,10 +270,5 @@ const onClose = () => {
   border: 1px solid var(--highlight-color);
   border-radius: 0.25rem;
   font-size: 14px;
-}
-
-td:first-child {
-  width: 100%;
-  cursor: pointer;
 }
 </style>

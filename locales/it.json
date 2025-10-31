@@ -16,7 +16,7 @@
     "clear": "Pulisci",
     "clickToStart": "Clicca sul blob per iniziare a chattare",
     "close": "Chiudi",
-    "colon": "non spazioso",
+    "colon": "notspaced",
     "comboBox": {
       "help": "Seleziona un modello dall'elenco o digita un nome di modello che sai esistere."
     },
@@ -155,6 +155,7 @@
     "spellcheck": {
       "add": "Aggiungi al dizionario"
     },
+    "status": "Stato",
     "stop": "Ferma",
     "title": "Title",
     "tools": "Strumenti",
@@ -1752,7 +1753,7 @@
       },
       "90633aa8-f345-41cc-83d9-a39a696f3d66": {
         "name": "Trasferitore di tecnologia",
-        "prompt": "Voglio che tu agisca come un trasferitore di tecnologia, io fornirò punti di curriculum e tu mapperai ogni punto da una tecnologia a un'altra tecnologia. Voglio che tu risponda solo con i punti mappati nel seguente formato: \"- [punto mappato]\". Non scrivere spiegazioni. Non fornire azioni aggiuntive, a meno che non lo richieda. Quando avrò bisogno di fornire istruzioni aggiuntive, lo farò dichiarandole esplicitamente. La tecnologia nel punto originale del curriculum è {'{'}Android{'}'} e la tecnologia a cui voglio mappare è {'{'}ReactJS{'}'.",
+        "prompt": "Voglio che tu agisca come un trasferitore di tecnologia, io fornirò punti di curriculum e tu mapperai ogni punto da una tecnologia a un'altra tecnologia. Voglio che tu risponda solo con i punti mappati nel seguente formato: \"- [punto mappato]\". Non scrivere spiegazioni. Non fornire azioni aggiuntive, a meno che non lo richieda. Quando avrò bisogno di fornire istruzioni aggiuntive, lo farò dichiarandole esplicitamente. La tecnologia nel punto originale del curriculum è Android e la tecnologia a cui voglio mappare è ReactJS.",
         "description": "Traduce competenze ed esperienze tra tecnologie"
       },
       "544fb479-97fa-48ba-beab-ba44cf32d4a2": {
@@ -2549,15 +2550,16 @@
     },
     "commands": {
       "confirmDelete": "Sei sicuro di voler eliminare questo comando?",
-      "disableAll": "Disabilita tutto",
-      "enableAll": "Abilita tutto",
       "export": "Esporta",
       "exportError": "Errore durante l'esportazione del file dei comandi",
       "exportSuccess": "File dei comandi esportato con successo",
       "import": "@:{'common.import'}",
       "importError": "Errore durante l'importazione del file dei comandi",
       "importSuccess": "File dei comandi importato con successo",
-      "new": "Nuovo"
+      "itemCount": "Nessun comando|1 comando|{count} comandi",
+      "itemsSelected": "Nessuno selezionato|{count} selezionato|{count} selezionati",
+      "new": "Nuovo",
+      "toggle": "Attiva/disattiva"
     },
     "deepResearch": {
       "breadth": "Ampiezza della ricerca",
@@ -2673,7 +2675,6 @@
         "empty": "Ancora nessuna categoria",
         "keepExperts": "Mantieni Esperti",
         "newCategory": "Nuova Categoria",
-        "title": "Gestisci Categorie",
         "toggleVisibility": "Alterna Visibilità"
       },
       "confirmDelete": "Sei sicuro di voler eliminare questo esperto?",
@@ -2689,14 +2690,15 @@
       "import": "@:{'common.import'}",
       "importError": "Errore durante l'importazione del file esperti",
       "importSuccess": "File esperti importato con successo",
+      "itemCount": "Nessun esperto|1 esperto|{count} esperti",
+      "itemsSelected": "Nessuno selezionato|{count} selezionato|{count} selezionati",
       "manageCategories": "Gestisci Categorie",
       "new": "Nuovo",
       "noCategory": "Nessuna categoria",
       "searchPlaceholder": "Cerca esperti per nome…",
       "sortAlpha": "Ordina alfabeticamente",
       "sortState": "Ordina per stato",
-      "sortUsage": "Ordina per utilizzo",
-      "usage": "Utilizzo"
+      "toggle": "Attiva/disattiva"
     },
     "general": {
       "darkTint": "Tonalità scura",

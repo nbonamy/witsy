@@ -16,7 +16,7 @@
     "clear": "Limpiar",
     "clickToStart": "Haz clic en el blob para comenzar a chatear",
     "close": "Cerrar",
-    "colon": "noespaciado",
+    "colon": "notspaced",
     "comboBox": {
       "help": "Selecciona un modelo de la lista o escribe un nombre de modelo que sepas que existe."
     },
@@ -155,6 +155,7 @@
     "spellcheck": {
       "add": "Agregar al diccionario"
     },
+    "status": "Estado",
     "stop": "Detener",
     "title": "Title",
     "tools": "Herramientas",
@@ -2549,15 +2550,16 @@
     },
     "commands": {
       "confirmDelete": "¿Está seguro de que desea eliminar este comando?",
-      "disableAll": "Deshabilitar todo",
-      "enableAll": "Habilitar todo",
       "export": "Exportar",
       "exportError": "Error al exportar el archivo de comandos",
       "exportSuccess": "Archivo de comandos exportado con éxito",
       "import": "@:{'common.import'}",
       "importError": "Error al importar el archivo de comandos",
       "importSuccess": "Archivo de comandos importado con éxito",
-      "new": "Nuevo"
+      "itemCount": "Sin comandos|1 comando|{count} comandos",
+      "itemsSelected": "Ninguno seleccionado|{count} seleccionado|{count} seleccionados",
+      "new": "Nuevo",
+      "toggle": "Alternar"
     },
     "deepResearch": {
       "breadth": "Amplitud de la investigación",
@@ -2673,7 +2675,6 @@
         "empty": "Aún no hay categorías",
         "keepExperts": "Conservar Expertos",
         "newCategory": "Nueva Categoría",
-        "title": "Administrar Categorías",
         "toggleVisibility": "Alternar Visibilidad"
       },
       "confirmDelete": "¿Está seguro de que desea eliminar este experto?",
@@ -2689,14 +2690,15 @@
       "import": "@:{'common.import'}",
       "importError": "Error al importar el archivo de expertos",
       "importSuccess": "Archivo de expertos importado con éxito",
+      "itemCount": "Sin expertos|1 experto|{count} expertos",
+      "itemsSelected": "Ninguno seleccionado|{count} seleccionado|{count} seleccionados",
       "manageCategories": "Administrar Categorías",
       "new": "Nuevo",
       "noCategory": "Sin categoría",
       "searchPlaceholder": "Buscar expertos por nombre…",
       "sortAlpha": "Ordenar alfabéticamente",
       "sortState": "Ordenar por estado",
-      "sortUsage": "Ordenar por uso",
-      "usage": "Uso"
+      "toggle": "Alternar"
     },
     "general": {
       "darkTint": "Tinte oscuro",

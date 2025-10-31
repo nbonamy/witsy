@@ -1,104 +1,167 @@
 <template>
-  <div class="list-filters form form-large">
-    <input
-      v-model="searchQuery"
-      type="search"
-      :placeholder="t('settings.experts.searchPlaceholder')"
-      class="search-input"
-    />
-    <select v-model="categoryFilter" class="category-filter">
-      <option value="">{{ t('settings.experts.allCategories') }}</option>
-      <option v-for="cat in availableCategories" :key="cat.id" :value="cat.id">
-        {{ cat.name }}
-      </option>
-    </select>
-  </div>
 
   <CategoryManager
     v-if="showCategoryManager"
-    :categories="allCategories"
-    :experts="experts"
+    :workspace="workspace"
     @update="onCategoriesUpdate"
     @close="closeCategoryManager"
   />
 
-  <template v-else>
+  <div class="list-with-toolbar" v-else>
 
-    <div class="list-actions">
-      <div class="list-action new" @click.prevent="onNew"><PlusIcon />{{ t('settings.experts.new') }}</div>
-      <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><PencilIcon />{{ t('common.edit') }}</div>
-      <div class="list-action copy" @click.prevent="onCopy(selected)" v-if="selected"><CopyIcon />{{ t('settings.experts.copy') }}</div>
-      <div class="list-action delete" @click.prevent="onDelete" v-if="selected"><Trash2Icon />{{ t('common.delete') }}</div>
-      <div class="flex-push" />
-      <ContextMenuTrigger class="list-action menu" position="below-right" ref="moreButton">
-        <template #menu>
-          <div class="item" @click="handleActionClick('manageCategories')">{{ t('settings.experts.manageCategories') }}</div>
-          <div class="item" @click="handleActionClick('export')">{{ t('settings.experts.export') }}</div>
-          <div class="item" @click="handleActionClick('import')">{{ t('settings.experts.import') }}</div>
-          <div class="item" @click="handleActionClick('select')">{{ t('settings.experts.enableAll') }}</div>
-          <div class="item" @click="handleActionClick('unselect')">{{ t('settings.experts.disableAll') }}</div>
-          <div class="item" @click="handleActionClick('deleteAll')">{{ t('settings.experts.deleteAll') }}</div>
-          <div class="item" @click="handleActionClick('sortAlpha')">{{ t('settings.experts.sortAlpha') }}</div>
-          <div class="item" @click="handleActionClick('sortEnabled')">{{ t('settings.experts.sortState') }}</div>
-          <div class="item" @click="handleActionClick('sortUsage')">{{ t('settings.experts.sortUsage') }}</div>
-        </template>
-      </ContextMenuTrigger>
+    <div class="list-filters form form-large">
+      <input
+        v-model="searchQuery"
+        type="search"
+        :placeholder="t('settings.experts.searchPlaceholder')"
+        class="search-input"
+      />
+      <select v-model="categoryFilter" class="category-filter">
+        <option value="">{{ t('settings.experts.allCategories') }}</option>
+        <option v-for="cat in availableCategories" :key="cat.id" :value="cat.id">
+          {{ cat.name }}
+        </option>
+      </select>
     </div>
-    <div class="experts sticky-table-container">
-      <table>
-        <thead>
-          <tr>
-            <th v-for="column in columns" :key="column.field">{{ column.title }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="expert in filteredExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
-              @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="reorderExperts.onDragStart" @dragover="reorderExperts.onDragOver" @dragend="reorderExperts.onDragEnd">
-            <td class="enabled"><input type="checkbox" class="sm" :checked="expert.state=='enabled'" @click="onEnabled(expert)" @dblclick.stop /></td>
-            <td class="name">{{ name(expert) }}</td>
-            <td class="category">{{ expert.categoryId ? categoryI18n(getCategory(expert), 'name') : '-' }}</td>
-            <!-- <td class="usage">{{ expert.stats?.timesUsed || '-' }}</td> -->
-            <td class="move">
-              <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
-              <button @click.prevent="onMoveUp(expert)" @dblclick.stop>▲</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+
+    <div class="toolbar" v-if="filteredExperts.length > 0">
+      <div class="functional-controls">
+        <div class="item-count">
+          <input type="checkbox" v-model="allSelected" @change="onToggleAll" />
+          <span>{{ selectedExperts.length > 0 ? t('settings.experts.itemsSelected', { count: selectedExperts.length }) : t('settings.experts.itemCount', { count: filteredExperts.length }) }}</span>
+        </div>
+        <div class="actions">
+
+          <button type="button" class="primary" name="new" @click="onNew" v-if="selectedExperts.length === 0"><PlusIcon />{{ t('settings.experts.new') }}</button>
+          <button type="button" class="primary" name="copy" @click="onCopy" v-if="selectedExperts.length === 1"><PlusIcon />{{ t('common.copy') }}</button>
+          <button type="button" class="secondary" name="toggle" @click="onToggle" v-if="selectedExperts.length"><ListTodoIcon />{{ t('settings.experts.toggle') }}</button>
+          <button type="button" class="secondary" name="delete" @click="onDelete" v-if="selectedExperts.length"><Trash2Icon />{{ t('common.delete') }}</button>
+
+        </div>
+      </div>
+
+      <div class="actions">
+
+        <ContextMenuTrigger class="sort-button" position="below-right" :bordered="true">
+          <template #trigger>
+            <div class="button sort">{{ t('settings.experts.sortAlpha') }}<ChevronDownIcon /></div>
+          </template>
+          <template #menu>
+            <div class="item" @click="handleActionClick('sortAlpha')">{{ t('settings.experts.sortAlpha') }}</div>
+            <div class="item" @click="handleActionClick('sortEnabled')">{{ t('settings.experts.sortState') }}</div>
+          </template>
+        </ContextMenuTrigger>
+
+
+        <ContextMenuTrigger class="toolbar-menu" position="below-right" :bordered="true">
+          <template #menu>
+            <div class="item" @click="handleActionClick('manageCategories')">{{ t('settings.experts.manageCategories') }}</div>
+            <!-- <div class="item" @click="handleActionClick('export')">{{ t('settings.experts.export') }}</div>
+            <div class="item" @click="handleActionClick('import')">{{ t('settings.experts.import') }}</div>
+            <div class="item" @click="handleActionClick('select')">{{ t('settings.experts.enableAll') }}</div>
+            <div class="item" @click="handleActionClick('unselect')">{{ t('settings.experts.disableAll') }}</div>
+            <div class="item" @click="handleActionClick('deleteAll')">{{ t('settings.experts.deleteAll') }}</div> -->
+          </template>
+        </ContextMenuTrigger>
+
+      </div>
     </div>
-  </template>
+
+    <table class="table-plain" v-if="filteredExperts.length > 0">
+      <thead>
+        <tr>
+          <th>{{ t('common.name') }}</th>
+          <!-- <th>{{ t('common.category') }}</th> -->
+          <th>{{ t('common.status') }}</th>
+          <th>{{ t('common.actions') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="expert in filteredExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="{ selected: selectedExperts.includes(expert.id) }"
+            draggable="true" @dragstart="reorderExperts.onDragStart" @dragover="reorderExperts.onDragOver" @dragend="reorderExperts.onDragEnd">
+          <td class="name">
+            <div>
+              <input type="checkbox" :value="expert.id" v-model="selectedExperts" />
+              <BrainIcon />
+              {{ name(expert) }}
+            </div>
+          </td>
+          <!-- <td class="category">{{ expert.categoryId ? categoryI18n(getCategory(expert), 'name') : '-' }}</td> -->
+          <td class="enabled">
+            <ButtonSwitch :checked="expert.state=='enabled'" @change="() => onEnabled(expert)" />
+          </td>
+          <td>
+            <div class="actions">
+              <ButtonIcon class="edit" @click="onEdit(expert)"><PencilIcon /></ButtonIcon>
+              <ContextMenuTrigger position="below-right">
+                <template #menu>
+                  <div class="item" @click="onDeleteSingle(expert)">{{ t('common.delete') }}</div>
+                  <div class="item" @click="onMoveUp(expert)">{{ t('common.moveUp') }}</div>
+                  <div class="item" @click="onMoveDown(expert)">{{ t('common.moveDown') }}</div>
+                </template>
+              </ContextMenuTrigger>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="empty-state" v-if="filteredExperts.length === 0">
+      <p>{{ t('settings.experts.empty') }}</p>
+      <button type="button" class="primary" @click="onNew">
+        <PlusIcon />
+        {{ t('settings.experts.new') }}
+      </button>
+    </div>
+  </div>
+
 </template>
 
 <script setup lang="ts">
 
-import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
+import { BrainIcon, ChevronDownIcon, ListTodoIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import CategoryManager from '../components/CategoryManager.vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import Dialog from '../composables/dialog'
 import useReorderTable from '../composables/reorder_table'
-import { newExpert, saveExperts } from '../services/experts'
-import { expertI18n, categoryI18n, t } from '../services/i18n'
-import { store } from '../services/store'
+import { newExpert } from '../services/experts'
+import { categoryI18n, expertI18n, t } from '../services/i18n'
 import { Expert, ExpertCategory } from '../types/index'
+import { Workspace } from '../types/workspace'
+import ButtonSwitch from './ButtonSwitch.vue'
+
+const props = defineProps<{
+  workspace: Workspace
+}>()
+
+const emit = defineEmits<{
+  'create': []
+  'edit': [ Expert ]
+  'save': []
+}>()
 
 const experts = ref<Expert[]>(null)
-const selected = ref<Expert>(null)
-const moreButton = ref<HTMLElement>(null)
+const categories = ref<ExpertCategory[]>([])
+const selectedExperts = ref<string[]>([])
 const searchQuery = ref('')
 const categoryFilter = ref<string>('')
 const showCategoryManager = ref(false)
+const currentSort = ref<'alpha' | 'enabled'>('alpha')
+
+onMounted(() => {
+  load()
+})
 
 const reorderExperts = useReorderTable((ids: string[]) => {
   experts.value.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
   save()
 })
 
-const emit = defineEmits([ 'create', 'edit' ])
-
 const allCategories = computed(() => {
-  return store.expertCategories.filter(c => c.state === 'enabled')
+  return categories.value.filter(c => c.state === 'enabled')
 })
 
 const availableCategories = computed(() => {
@@ -108,7 +171,7 @@ const availableCategories = computed(() => {
       catIds.add(e.categoryId)
     }
   })
-  return store.expertCategories.filter(c => catIds.has(c.id) && c.state === 'enabled').map((c: ExpertCategory) => ({
+  return categories.value.filter(c => catIds.has(c.id) && c.state === 'enabled').map((c: ExpertCategory) => ({
     id: c.id,
     name: categoryI18n(c, 'name')
   })).sort((a, b) => a.name.localeCompare(b.name))
@@ -119,7 +182,7 @@ const filteredExperts = computed(() => {
 
   // Hide experts with disabled categories
   const enabledCategoryIds = new Set(
-    store.expertCategories
+    categories.value
       .filter(c => c.state === 'enabled')
       .map(c => c.id)
   )
@@ -149,40 +212,65 @@ const filteredExperts = computed(() => {
 })
 
 // Clear category filter if selected category becomes disabled
-watch(() => store.expertCategories, () => {
+watch(() => categories.value, () => {
   if (categoryFilter.value) {
-    const selectedCat = store.expertCategories.find(c => c.id === categoryFilter.value)
+    const selectedCat = categories.value.find(c => c.id === categoryFilter.value)
     if (!selectedCat || selectedCat.state !== 'enabled') {
       categoryFilter.value = ''
     }
   }
 }, { deep: true })
 
+const allSelected = computed({
+  get: () => selectedExperts.value.length === filteredExperts.value.length && filteredExperts.value.length > 0,
+  set: (value: boolean) => {
+    if (value) {
+      selectedExperts.value = filteredExperts.value.map(e => e.id)
+    } else {
+      selectedExperts.value = []
+    }
+  }
+})
+
+const onToggleAll = () => {
+  // Handled by computed setter
+}
+const onToggle = () => {
+  if (selectedExperts.value.length === 0) return
+
+  // Get the first selected expert
+  const firstExpert = experts.value.find(e => e.id === selectedExperts.value[0])
+  if (!firstExpert) return
+
+  // If first expert is enabled, disable all selected; otherwise enable all
+  const targetState = firstExpert.state === 'enabled' ? 'disabled' : 'enabled'
+
+  selectedExperts.value.forEach(id => {
+    const expert = experts.value.find(e => e.id === id)
+    if (expert) {
+      expert.state = targetState
+    }
+  })
+
+  save()
+}
+
 const name = (expert: Expert) => {
   return expert.name || expertI18n(expert, 'name')
 }
 
 const getCategory = (expert: Expert): ExpertCategory => {
-  return store.expertCategories.find(c => c.id === expert.categoryId)
+  return categories.value.find(c => c.id === expert.categoryId)
 }
 
-const columns = [
-  // { field: 'pin', title: '' },
-  { field: 'enabled', title: '' },
-  { field: 'name', title: t('common.name') },
-  { field: 'category', title: t('common.category') },
-  // { field: 'usage', title: t('settings.experts.usage') },
-  { field: 'move', title: t('common.move'), },
-]
-
 const onMoveDown = (expert: Expert) => {
-  if (reorderExperts.moveDown(expert, experts.value, '.settings .experts .sticky-table-container')) {
+  if (reorderExperts.moveDown(expert, experts.value, '.settings .experts table')) {
     save()
   }
 }
 
 const onMoveUp = (expert: Expert) => {
-  if (reorderExperts.moveUp(expert, experts.value, '.settings .experts .sticky-table-container')) {
+  if (reorderExperts.moveUp(expert, experts.value, '.settings .experts table')) {
     save()
   }
 }
@@ -216,6 +304,7 @@ const handleActionClick = async (action: string) => {
   } else if (action === 'deleteAll') {
     deleteAll(visibleIds)
   } else if (action === 'sortAlpha') {
+    currentSort.value = 'alpha'
     experts.value.sort((a, b) => {
       const aName = a.name || expertI18n(a, 'name')
       const bName = b.name || expertI18n(b, 'name')
@@ -223,6 +312,7 @@ const handleActionClick = async (action: string) => {
     })
     save()
   } else if (action === 'sortEnabled') {
+    currentSort.value = 'enabled'
     experts.value.sort((a, b) => {
       if (a.state === b.state) {
         const aName = a.name || expertI18n(a, 'name')
@@ -246,8 +336,7 @@ const handleActionClick = async (action: string) => {
 }
 
 const onImport = () => {
-  if (window.api.experts.import(store.config.workspaceId)) {
-    store.loadExperts()
+  if (window.api.experts.import(props.workspace.uuid)) {
     load()
     Dialog.alert(t('settings.experts.importSuccess'))
   } else {
@@ -256,22 +345,22 @@ const onImport = () => {
 }
 
 const onExport = () => {
-  if (window.api.experts.export(store.config.workspaceId)) {
+  if (window.api.experts.export(props.workspace.uuid)) {
     Dialog.alert(t('settings.experts.exportSuccess'))
   } else {
     Dialog.alert(t('settings.experts.exportError'))
   }
 }
 
-const onSelect = (expert: Expert) => {
-  selected.value = expert
-}
-
 const onNew = () => {
-  emit('create', selected.value)
+  emit('create')
 }
 
-const onCopy = (expert: Expert) => {
+const onCopy = () => {
+
+  if (selectedExperts.value.length !== 1) { console.log('Copy expert: invalid selection'); return }
+  const expert = experts.value.find(e => e.id === selectedExperts.value[0])
+  if (!expert) { console.log('Copy expert: expert not found'); return }
 
   const copy = newExpert()
   copy.id = uuidv4()
@@ -283,8 +372,8 @@ const onCopy = (expert: Expert) => {
 
   const index = experts.value.indexOf(expert)
   experts.value.splice(index + 1, 0, copy)
+  selectedExperts.value = [copy.id]
 
-  selected.value = copy
   save()
 
 }
@@ -294,21 +383,51 @@ const onEdit = (expert: Expert) => {
 }
 
 const onDelete = () => {
+  if (selectedExperts.value.length === 0) return
+
   Dialog.show({
     target: document.querySelector('.settings .experts'),
-    title: t('settings.experts.confirmDelete'),
+    title: t('settings.experts.confirmDelete', { count: selectedExperts.value.length }),
     text: t('common.confirmation.cannotUndo'),
     confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      if (selected.value.type == 'system') {
-        selected.value.state = 'deleted'
+      const selectedIds = new Set(selectedExperts.value)
+
+      // Mark system experts as deleted
+      experts.value.forEach((expert: Expert) => {
+        if (selectedIds.has(expert.id) && expert.type === 'system') {
+          expert.state = 'deleted'
+        }
+      })
+
+      // Remove user experts
+      experts.value = experts.value.filter((expert: Expert) =>
+        expert.type === 'system' || !selectedIds.has(expert.id)
+      )
+
+      selectedExperts.value = []
+      save()
+    }
+  })
+}
+
+const onDeleteSingle = (expert: Expert) => {
+  Dialog.show({
+    target: document.querySelector('.settings .experts'),
+    title: t('settings.experts.confirmDelete', { count: 1 }),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      if (expert.type == 'system') {
+        expert.state = 'deleted'
       } else {
-        const index = experts.value.indexOf(selected.value)
+        const index = experts.value.indexOf(expert)
         experts.value.splice(index, 1)
       }
-      selected.value = null
       save()
     }
   })
@@ -333,7 +452,7 @@ const deleteAll = (visibleIds: Set<string>) => {
       experts.value = experts.value.filter((expert: Expert) =>
         expert.type === 'system' || !visibleIds.has(expert.id)
       )
-      selected.value = null
+      selectedExperts.value = []
       save()
     }
   })
@@ -345,12 +464,14 @@ const onEnabled = (expert: Expert) => {
 }
 
 const load = () => {
-  experts.value = JSON.parse(JSON.stringify(store.experts))
+  experts.value = window.api.experts.load(props.workspace.uuid)
+  categories.value = window.api.experts.loadCategories(props.workspace.uuid)
 }
 
 const save = () => {
-  store.experts = experts.value
-  saveExperts(store.config.workspaceId)
+  window.api.experts.save(props.workspace.uuid, JSON.parse(JSON.stringify(experts.value)))
+  window.api.experts.saveCategories(props.workspace.uuid, JSON.parse(JSON.stringify(categories.value)))
+  emit('save')
 }
 
 const onCategoriesUpdate = () => {
@@ -368,10 +489,12 @@ defineExpose({ load })
 
 <style scoped>
 
+/* Component-specific styles - common styles in css/list-with-toolbar.css */
+
 .list-filters {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   overflow: visible;
 }
 
@@ -381,36 +504,6 @@ defineExpose({ load })
 
 .category-filter {
   min-width: 150px;
-}
-
-.experts {
-  border: 0.5px solid var(--border-color);
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  font-weight: 600;
-  background: var(--background-secondary);
-}
-
-.section-header .icon {
-  width: 16px;
-  height: 16px;
-  color: var(--color-primary);
-}
-
-.pin button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-.category, .usage {
-  text-align: center;
 }
 
 </style>
