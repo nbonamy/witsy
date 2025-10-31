@@ -2,13 +2,17 @@
 /* List with Toolbar - Common styling for list components with toolbars */
 
 .list-with-toolbar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 
   /* ========================================
     TOOLBAR LAYOUT
   ======================================== */
 
   .toolbar {
-    margin-top: 1rem;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -102,11 +106,36 @@
   }
 
   /* ========================================
+    FILTERS LAYOUT
+  ======================================== */
+
+  .list-filters {
+    flex-shrink: 0;
+  }
+
+  /* ========================================
     TABLE COMMON STYLES
   ======================================== */
 
   table {
+    display: block;
+    flex: 1;
     width: 100%;
+    overflow-y: auto;
+    min-height: 0;
+    padding-right: 0.5rem;
+  }
+
+
+  table::-webkit-scrollbar {
+    height: 1rem;
+    width: .25rem;
+  }
+
+  table thead,
+  table tbody {
+    display: table;
+    table-layout: fixed;
   }
 
   table th, table td {
@@ -156,13 +185,16 @@
   ======================================== */
 
   .empty-state {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 1rem;
     text-align: center;
     padding: 40px 20px;
     color: var(--color-text-secondary);
+    min-height: 0;
   }
 
   .empty-state button.primary {
