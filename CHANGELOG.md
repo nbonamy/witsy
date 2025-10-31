@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - More error reporting
 - Sandboxed python runtime
 - Duplicate agent
+- Import Markdown back into conversations (https://github.com/nbonamy/witsy/issues/469)
 
 ### Changed
 - Wider engine/model menu (https://github.com/nbonamy/witsy/issues/463)
