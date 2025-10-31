@@ -1,0 +1,214 @@
+
+/* List with Toolbar - Common styling for list components with toolbars */
+
+.list-with-toolbar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+
+  /* ========================================
+    TOOLBAR LAYOUT
+  ======================================== */
+
+  .toolbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    min-height: 40px;
+  }
+
+  .functional-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  /* ========================================
+    ITEM COUNT / SELECTION INFO
+  ======================================== */
+
+  .item-count {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-right: 0;
+  }
+
+  .item-count input[type="checkbox"] {
+    margin: 0;
+  }
+
+  .item-count span {
+    font-size: 12px;
+    color: var(--color-text-primary);
+  }
+
+  /* ========================================
+    TOOLBAR ACTIONS & BUTTONS
+  ======================================== */
+
+  .toolbar .actions {
+    display: flex;
+    align-items: center;
+    margin-top: 0 !important;
+    gap: 0.75rem;
+  }
+
+  .toolbar button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: transparent;
+  }
+
+  .toolbar button.primary {
+    border: none;
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  .toolbar button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ========================================
+    SORT BUTTON
+  ======================================== */
+
+  .sort-button {
+    display: inline-flex;
+  }
+
+  .button.sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+  }
+
+  .toolbar button.sort {
+    min-width: auto;
+    padding: 0.5rem;
+  }
+
+  .toolbar button.sort span {
+    margin-right: 0.25rem;
+  }
+
+  /* ========================================
+    FILTERS LAYOUT
+  ======================================== */
+
+  .list-filters {
+    flex-shrink: 0;
+  }
+
+  /* ========================================
+    TABLE COMMON STYLES
+  ======================================== */
+
+  table {
+    display: block;
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    min-height: 0;
+    padding-right: 0.5rem;
+  }
+
+
+  table::-webkit-scrollbar {
+    height: 1rem;
+    width: .25rem;
+  }
+
+  table thead,
+  table tbody {
+    display: table;
+    table-layout: fixed;
+  }
+
+  table th, table td {
+    white-space: nowrap;
+  }
+
+  table th:first-child,
+  table td:first-child {
+    width: 100%;
+  }
+
+  table th:last-child,
+  table td:last-child {
+    text-align: right;
+    justify-content: flex-end;
+  }
+
+  table td:first-child div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  table td:first-child svg {
+    width: var(--icon-lg);
+    height: var(--icon-lg);
+    flex-shrink: 0;
+  }
+
+  /* table td:has(.button-icon) {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  } */
+
+  table td:has(button) {
+    padding-left: 0.5rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  table td .actions {
+    margin-top: 0 !important;
+  }
+
+  /* ========================================
+    EMPTY STATE
+  ======================================== */
+
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--color-text-secondary);
+    min-height: 0;
+  }
+
+  .empty-state button.primary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .empty-state button.primary svg {
+    width: 16px;
+    height: 16px;
+  }
+
+}

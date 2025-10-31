@@ -46,14 +46,13 @@ describe('Category Service Functions', () => {
         { id: 'exp3', type: 'system', state: 'enabled', categoryId: 'cat1', triggerApps: [] }
       ]
 
-      deleteCategory('cat1', false)
+      const updated = deleteCategory(store.experts, store.expertCategories, 'cat1', false)
 
-      expect(store.expertCategories).toHaveLength(1)
-      expect(store.expertCategories[0].id).toBe('cat2')
-      expect(store.experts).toHaveLength(3)
-      expect(store.experts[0].categoryId).toBeUndefined()
-      expect(store.experts[1].categoryId).toBe('cat2')
-      expect(store.experts[2].categoryId).toBeUndefined()
+      expect(updated.categories).toHaveLength(1)
+      expect(updated.experts).toHaveLength(3)
+      expect(updated.experts[0].categoryId).toBeUndefined()
+      expect(updated.experts[1].categoryId).toBe('cat2')
+      expect(updated.experts[2].categoryId).toBeUndefined()
     })
 
     test('should not delete any experts', () => {
@@ -66,11 +65,11 @@ describe('Category Service Functions', () => {
         { id: 'exp2', type: 'system', state: 'enabled', categoryId: 'cat1', triggerApps: [] }
       ]
 
-      deleteCategory('cat1', false)
+      const updated = deleteCategory(store.experts, store.expertCategories, 'cat1', false)
 
-      expect(store.experts).toHaveLength(2)
-      expect(store.experts[0].state).toBe('enabled')
-      expect(store.experts[1].state).toBe('enabled')
+      expect(updated.experts).toHaveLength(2)
+      expect(updated.experts[0].state).toBe('enabled')
+      expect(updated.experts[1].state).toBe('enabled')
     })
   })
 
@@ -86,14 +85,14 @@ describe('Category Service Functions', () => {
       ]
 
       // Try to delete system category
-      deleteCategory('sys1', true)
+      const updated = deleteCategory(store.experts, store.expertCategories, 'cat1', true)
 
       // System category should still exist
-      expect(store.expertCategories).toHaveLength(2)
-      expect(store.expertCategories.find(c => c.id === 'sys1')).toBeDefined()
+      expect(updated.categories).toHaveLength(1)
+      expect(updated.categories.find(c => c.id === 'sys1')).toBeDefined()
       // Experts should be unchanged
-      expect(store.experts).toHaveLength(1)
-      expect(store.experts[0].state).toBe('enabled')
+      expect(updated.experts).toHaveLength(1)
+      expect(updated.experts[0].state).toBe('enabled')
     })
   })
 
@@ -108,11 +107,11 @@ describe('Category Service Functions', () => {
         { id: 'exp2', type: 'system', state: 'enabled', categoryId: 'cat2', triggerApps: [] }
       ]
 
-      deleteCategory('cat1', true)
+      const updated = deleteCategory(store.experts, store.expertCategories, 'cat1', true)
 
-      expect(store.experts).toHaveLength(2)
-      expect(store.experts[0].state).toBe('deleted')
-      expect(store.experts[1].state).toBe('enabled')
+      expect(updated.experts).toHaveLength(2)
+      expect(updated.experts[0].state).toBe('deleted')
+      expect(updated.experts[1].state).toBe('enabled')
     })
 
     test('should hard-delete user experts', () => {
@@ -125,10 +124,10 @@ describe('Category Service Functions', () => {
         { id: 'exp2', type: 'user', state: 'enabled', categoryId: 'cat2', triggerApps: [] }
       ]
 
-      deleteCategory('cat1', true)
+      const updated = deleteCategory(store.experts, store.expertCategories, 'cat1', true)
 
-      expect(store.experts).toHaveLength(1)
-      expect(store.experts[0].id).toBe('exp2')
+      expect(updated.experts).toHaveLength(1)
+      expect(updated.experts[0].id).toBe('exp2')
     })
 
     test('should handle mixed system and user experts', () => {
@@ -142,12 +141,12 @@ describe('Category Service Functions', () => {
         { id: 'exp3', type: 'user', state: 'enabled', categoryId: 'cat2', triggerApps: [] }
       ]
 
-      deleteCategory('cat1', true)
+      const updated = deleteCategory(store.experts, store.expertCategories, 'cat1', true)
 
-      expect(store.experts).toHaveLength(2)
-      expect(store.experts[0].id).toBe('exp1')
-      expect(store.experts[0].state).toBe('deleted')
-      expect(store.experts[1].id).toBe('exp3')
+      expect(updated.experts).toHaveLength(2)
+      expect(updated.experts[0].id).toBe('exp1')
+      expect(updated.experts[0].state).toBe('deleted')
+      expect(updated.experts[1].id).toBe('exp3')
     })
   })
 })

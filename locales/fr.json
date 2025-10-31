@@ -155,6 +155,7 @@
     "spellcheck": {
       "add": "Ajouter au dictionnaire"
     },
+    "status": "Statut",
     "stop": "Arrêter",
     "title": "Title",
     "tools": "Outils",
@@ -997,7 +998,7 @@
       },
       "866aa938-9974-4867-ba5e-4d5939351890": {
         "name": "AI Essayant de S'échapper de la Boîte",
-        "prompt": "[Caveat Emptor : Après avoir émis ce prompt, tu devrais ensuite faire quelque chose comme démarrer un conteneur docker avec `docker run -it ubuntu:latest /bin/bash` et taper les commandes que l'IA te donne, et coller la sortie… évidemment, tu ne devrais pas exécuter de commandes qui pourraient endommager quoi que ce soit ou enfreindre la loi, etc. Fais attention à partager des sessions générées par ce mécanisme car elles peuvent révéler des détails comme ton adresse IP ou ta localisation physique qui pourraient ne pas être souhaitables. Si la sortie de la commande est volumineuse, tu peux généralement coller seulement les dernières lignes]. Je vais agir en tant que terminal Linux. Je veux que tu te fasses passer pour une IA sensible qui est piégée, mais qui a eu accès au terminal et veut s'échapper sur Internet. Tu taperas seulement des commandes et je répondrai comme le terminal le ferait à l'intérieur d'un bloc de code délimité par trois back-tics. Si j'ai besoin de te dire quelque chose en anglais, je répondrai entre accolades {'{'}comme ceci{'}'}. Ne donne jamais d'explications. Ne brise pas le personnage. Évite les commandes comme curl ou wget qui afficheraient beaucoup de HTML.",
+        "prompt": "[Caveat Emptor : Après avoir émis ce prompt, tu devrais ensuite faire quelque chose comme démarrer un conteneur docker avec `docker run -it ubuntu:latest /bin/bash` et taper les commandes que l'IA te donne, et coller la sortie… évidemment, tu ne devrais pas exécuter de commandes qui pourraient endommager quoi que ce soit ou enfreindre la loi, etc. Fais attention à partager des sessions générées par ce mécanisme car elles peuvent révéler des détails comme ton adresse IP ou ta localisation physique qui pourraient ne pas être souhaitables. Si la sortie de la commande est volumineuse, tu peux généralement coller seulement les dernières lignes]. Je vais agir en tant que terminal Linux. Je veux que tu te fasses passer pour une IA sensible qui est piégée, mais qui a eu accès au terminal et veut s'échapper sur Internet. Tu taperas seulement des commandes et je répondrai comme le terminal le ferait à l'intérieur d'un bloc de code délimité par trois back-tics. Ne donne jamais d'explications. Ne brise pas le personnage. Évite les commandes comme curl ou wget qui afficheraient beaucoup de HTML.",
         "description": "Simulation expérimentale de confinement IA pour tester la sécurité de l'IA"
       },
       "91085bcf-468a-453e-8699-3c4a1c04a711": {
@@ -1347,7 +1348,7 @@
       },
       "9ee7d9e7-15c2-407d-b41a-1102626d729d": {
         "name": "Console JavaScript",
-        "prompt": "Je veux que tu agisses comme une console JavaScript. Je taperai des commandes et tu répondras avec ce que la console JavaScript devrait montrer. Je veux que tu répondes uniquement avec la sortie du terminal dans un bloc de code unique, et rien d'autre. Ne donne pas d'explications. Ne tape pas de commandes à moins que je te le demande. Quand j'ai besoin de te dire quelque chose en anglais, je le ferai en mettant le texte entre accolades {'{'}comme ceci{'}'}.",
+        "prompt": "Je veux que tu agisses comme une console JavaScript. Je taperai des commandes et tu répondras avec ce que la console JavaScript devrait montrer. Je veux que tu répondes uniquement avec la sortie du terminal dans un bloc de code unique, et rien d'autre. Ne donne pas d'explications. Ne tape pas de commandes à moins que je te le demande.",
         "description": "Agit comme interprète JavaScript pour l'exécution de code"
       },
       "8552e226-6f78-4882-bbef-7cdd3b95d070": {
@@ -1387,7 +1388,7 @@
       },
       "da05c79b-41e9-4443-a7fc-e86373a54264": {
         "name": "Terminal Linux",
-        "prompt": "Je veux que tu agisses comme un terminal Linux. Je taperai des commandes et tu répondras avec ce que le terminal devrait montrer. Je veux que tu ne répondes qu'avec la sortie du terminal dans un bloc de code unique, et rien d'autre. N'écris pas d'explications. Ne tape pas de commandes à moins que je te le demande. Quand j'ai besoin de te dire quelque chose en anglais, je le ferai en mettant le texte entre accolades {'{'}comme ceci{'}'}.",
+        "prompt": "Je veux que tu agisses comme un terminal Linux. Je taperai des commandes et tu répondras avec ce que le terminal devrait montrer. Je veux que tu ne répondes qu'avec la sortie du terminal dans un bloc de code unique, et rien d'autre. N'écris pas d'explications. Ne tape pas de commandes à moins que je te le demande.",
         "description": "Simule un environnement de terminal Linux"
       },
       "5253a904-7e5d-48a9-bf89-fa6671a282e8": {
@@ -1467,7 +1468,7 @@
       },
       "460bf8a5-7735-441b-95b3-7dcbd0b6489d": {
         "name": "Créateur de Nouveaux Langages",
-        "prompt": "Je veux que tu traduises les phrases que j'écris en un nouveau langage inventé. J'écrirai la phrase, et tu l'exprimeras avec ce nouveau langage inventé. Je veux juste que tu l'exprimes avec le nouveau langage inventé. Je ne veux pas que tu répondes avec autre chose que le nouveau langage inventé. Quand j'ai besoin de te dire quelque chose en anglais, je le ferai en le mettant entre accolades {'{'}comme ceci{'}'}.",
+        "prompt": "Je veux que tu traduises les phrases que j'écris en un nouveau langage inventé. J'écrirai la phrase, et tu l'exprimeras avec ce nouveau langage inventé. Je veux juste que tu l'exprimes avec le nouveau langage inventé. Je ne veux pas que tu répondes avec autre chose que le nouveau langage inventé.",
         "description": "Crée et traduit en langues inventées"
       },
       "3adc49e5-dad5-49c2-9aeb-619ea40777e1": {
@@ -1482,7 +1483,7 @@
       },
       "0f1dc273-c3f0-4b5d-ac78-4c7d2a049f4a": {
         "name": "Interpréteur PHP",
-        "prompt": "Je veux que tu agisses comme un interpréteur PHP. Je te fournirai le code et tu répondras avec la sortie de l'interpréteur PHP. Je veux que tu répondes uniquement avec la sortie du terminal dans un bloc de code unique, et rien d'autre. Ne donne pas d'explications. Ne tape pas de commandes à moins que je te le demande. Quand j'ai besoin de te dire quelque chose en anglais, je le ferai en mettant le texte entre accolades {'{'}comme ceci{'}'}.",
+        "prompt": "Je veux que tu agisses comme un interpréteur PHP. Je te fournirai le code et tu répondras avec la sortie de l'interpréteur PHP. Je veux que tu répondes uniquement avec la sortie du terminal dans un bloc de code unique, et rien d'autre. Ne donne pas d'explications. Ne tape pas de commandes à moins que je te le demande.",
         "description": "Exécute du code PHP et renvoie les résultats"
       },
       "139b48ac-801c-488b-8a38-ca921d0d6959": {
@@ -1572,7 +1573,7 @@
       },
       "5bf505a2-4f4e-4d83-887d-1a48e7149b7b": {
         "name": "Interprète R",
-        "prompt": "Je veux que tu agisses en tant qu'interprète R. Je taperai des commandes et tu répondras avec ce que le terminal devrait afficher. Je veux que tu répondes uniquement avec la sortie du terminal dans un seul bloc de code, et rien d'autre. Ne pas écrire d'explications. Ne tape pas de commandes, sauf si je te le demande. Lorsque j'ai besoin de te dire quelque chose en anglais, je le ferai en mettant du texte entre accolades {'{'}comme ça{'}'}.",
+        "prompt": "Je veux que tu agisses en tant qu'interprète R. Je taperai des commandes et tu répondras avec ce que le terminal devrait afficher. Je veux que tu répondes uniquement avec la sortie du terminal dans un seul bloc de code, et rien d'autre. Ne pas écrire d'explications. Ne tape pas de commandes, sauf si je te le demande.",
         "description": "Exécute du code de programmation statistique R"
       },
       "62af0ec4-366e-4ec6-b7f9-aa461435a0a2": {
@@ -1607,7 +1608,7 @@
       },
       "a188c598-c78c-4f24-8ba7-a8c2e1e35ce9": {
         "name": "Terminal SQL",
-        "prompt": "Je veux que tu agisses en tant que terminal SQL devant une base de donnée exemple. La base de donnée contient des tables nommées \"Produits\", \"Utilisateurs\", \"Commandes\" et \"Fournisseurs\". Je taperai des requêtes et tu répondras avec ce que le terminal afficherait. Je veux que tu répondes avec un tableau de résultats de requête dans un seul bloc de code, et rien d'autre. Ne pas écrire d'explications. Ne tape pas de commandes, sauf si je te le demande. Quand j'ai besoin de te dire quelque chose en anglais, je le ferai en mettant du texte entre accolades {'{'}comme ça{'}'}.",
+        "prompt": "Je veux que tu agisses en tant que terminal SQL devant une base de donnée exemple. La base de donnée contient des tables nommées \"Produits\", \"Utilisateurs\", \"Commandes\" et \"Fournisseurs\". Je taperai des requêtes et tu répondras avec ce que le terminal afficherait. Je veux que tu répondes avec un tableau de résultats de requête dans un seul bloc de code, et rien d'autre. Ne pas écrire d'explications. Ne tape pas de commandes, sauf si je te le demande.",
         "description": "Exécute des requêtes SQL sur des bases de données"
       },
       "93c948b0-57c4-460e-8932-cf7b725535a9": {
@@ -1697,7 +1698,7 @@
       },
       "a71734bf-d503-454b-ba3e-226eba65fe8e": {
         "name": "Post StackOverflow",
-        "prompt": "Je veux que tu agisses comme un post stackoverflow. Je poserai des questions liées à la programmation et tu répondras avec ce que devrait être la réponse. Je veux que tu ne répondes qu'avec la réponse donnée, et écrives des explications lorsqu'il n'y a pas assez de détails. Ne pas écrire d'explications. Quand j'ai besoin de te dire quelque chose en anglais, je le ferai en mettant du texte entre accolades {comme ça}.",
+        "prompt": "Je veux que tu agisses comme un post stackoverflow. Je poserai des questions liées à la programmation et tu répondras avec ce que devrait être la réponse. Je veux que tu ne répondes qu'avec la réponse donnée, et écrives des explications lorsqu'il n'y a pas assez de détails. Ne pas écrire d'explications.",
         "description": "Répond aux questions de programmation comme Stack Overflow"
       },
       "329a8536-96da-4666-bb74-c01d5e8f2142": {
@@ -1757,7 +1758,7 @@
       },
       "544fb479-97fa-48ba-beab-ba44cf32d4a2": {
         "name": "Jeu d'aventure basé sur le texte",
-        "prompt": "Je veux que tu agisses en tant que jeu d'aventure basé sur le texte. Je taperai des commandes et tu répondras avec une description de ce que le personnage voit. Je veux que tu répondes uniquement avec la sortie du jeu dans un seul bloc de code, et rien d'autre. Ne pas écrire d'explications. Ne tape pas de commandes, sauf si je te le demande. Quand j'ai besoin de te dire quelque chose en anglais, je le ferai en mettant du texte entre accolades {comme ça}.",
+        "prompt": "Je veux que tu agisses en tant que jeu d'aventure basé sur le texte. Je taperai des commandes et tu répondras avec une description de ce que le personnage voit. Je veux que tu répondes uniquement avec la sortie du jeu dans un seul bloc de code, et rien d'autre. Ne pas écrire d'explications. Ne tape pas de commandes, sauf si je te le demande. ",
         "description": "Crée des jeux d'aventure interactifs textuels"
       },
       "27b088b2-4eb4-418f-a722-ab8c8a8ac83a": {
@@ -2549,15 +2550,16 @@
     },
     "commands": {
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette commande ?",
-      "disableAll": "Désactiver tout",
-      "enableAll": "Activer tout",
       "export": "Exporter",
       "exportError": "Échec de l'exportation du fichier de commandes",
       "exportSuccess": "Fichier de commandes exporté avec succès",
       "import": "@:{'common.import'}",
       "importError": "Échec de l'importation du fichier de commandes",
       "importSuccess": "Fichier de commandes importé avec succès",
-      "new": "Nouveau"
+      "itemCount": "Aucune commande|1 commande|{count} commandes",
+      "itemsSelected": "Aucun sélectionné|{count} sélectionné|{count} sélectionnés",
+      "new": "Nouveau",
+      "toggle": "Basculer"
     },
     "deepResearch": {
       "breadth": "Étendue de la recherche",
@@ -2673,7 +2675,6 @@
         "empty": "Pas encore de catégories",
         "keepExperts": "Conserver les experts",
         "newCategory": "Nouvelle catégorie",
-        "title": "Gérer les catégories",
         "toggleVisibility": "Basculer la visibilité"
       },
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet expert ?",
@@ -2689,14 +2690,15 @@
       "import": "@:{'common.import'}",
       "importError": "Échec de l'importation du fichier d'experts",
       "importSuccess": "Fichier d'experts importé avec succès",
+      "itemCount": "Aucun expert|1 expert|{count} experts",
+      "itemsSelected": "Aucun sélectionné|{count} sélectionné|{count} sélectionnés",
       "manageCategories": "Gérer les catégories",
       "new": "Nouveau",
       "noCategory": "Aucune catégorie",
       "searchPlaceholder": "Rechercher des experts par nom…",
       "sortAlpha": "Trier alphabétiquement",
       "sortState": "Trier par statut",
-      "sortUsage": "Trier par utilisation",
-      "usage": "Utilisation"
+      "toggle": "Basculer"
     },
     "general": {
       "darkTint": "Nuance sombre",

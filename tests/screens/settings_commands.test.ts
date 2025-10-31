@@ -65,9 +65,9 @@ beforeEach(() => {
 test('Renders', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
-  expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
-  expect(tab.findAll('.sticky-table-container tr.command button')).toHaveLength(82)
+  expect(tab.findAll('.list-with-toolbar')).toHaveLength(1)
+  expect(tab.findAll('.list-with-toolbar table tr.command')).toHaveLength(41)
+  expect(tab.findAll('.toolbar')).toHaveLength(1)
 
 })
 
@@ -75,9 +75,10 @@ test('Disable items', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
   expect(store.commands[0].state).toBe('enabled')
-  await tab.find('.sticky-table-container tr.command:nth-of-type(1) input[type=checkbox]').trigger('click')
+  // Click the checkbox input inside ButtonSwitch
+  await tab.find('.list-with-toolbar table tr.command:nth-of-type(1) td.enabled .button-switch input.switch-input').trigger('change')
   expect(store.commands[0].state).toBe('disabled')
-  await tab.find('.sticky-table-container tr.command:nth-of-type(1) input[type=checkbox]').trigger('click')
+  await tab.find('.list-with-toolbar table tr.command:nth-of-type(1) td.enabled .button-switch input.switch-input').trigger('change')
   expect(store.commands[0].state).toBe('enabled')
 
 })
@@ -85,14 +86,26 @@ test('Disable items', async () => {
 test('Move items', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
-  const first = tab.find('.sticky-table-container tr.command').attributes('data-id')
-  const second = tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')
-  await tab.find('.sticky-table-container tr.command:nth-of-type(2) button:nth-of-type(2)').trigger('click')
-  expect (tab.find('.sticky-table-container tr.command').attributes('data-id')).toBe(second)
-  expect (tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')).toBe(first)
-  await tab.find('.sticky-table-container tr.command:nth-of-type(1) button:nth-of-type(1)').trigger('click')
-  expect (tab.find('.sticky-table-container tr.command').attributes('data-id')).toBe(first)
-  expect (tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')).toBe(second)
+  const first = tab.find('.list-with-toolbar table tr.command').attributes('data-id')
+  const second = tab.find('.list-with-toolbar table tr.command:nth-of-type(2)').attributes('data-id')
+
+  // Open context menu on second row and click move up
+  await tab.find('.list-with-toolbar table tr.command:nth-of-type(2) .context-menu-trigger .trigger').trigger('click')
+  await tab.vm.$nextTick()
+  await tab.findAll('.context-menu .item')[1].trigger('click') // moveUp is second item
+  await tab.vm.$nextTick()
+
+  expect (tab.find('.list-with-toolbar table tr.command').attributes('data-id')).toBe(second)
+  expect (tab.find('.list-with-toolbar table tr.command:nth-of-type(2)').attributes('data-id')).toBe(first)
+
+  // Open context menu on first row and click move down
+  await tab.find('.list-with-toolbar table tr.command:nth-of-type(1) .context-menu-trigger .trigger').trigger('click')
+  await tab.vm.$nextTick()
+  await tab.findAll('.context-menu .item')[2].trigger('click') // moveDown is third item
+  await tab.vm.$nextTick()
+
+  expect (tab.find('.list-with-toolbar table tr.command').attributes('data-id')).toBe(first)
+  expect (tab.find('.list-with-toolbar table tr.command:nth-of-type(2)').attributes('data-id')).toBe(second)
 
 })
 
@@ -100,20 +113,17 @@ test('New command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
   const editor = tab.findComponent({ name: 'CommandEditor' })
-  await tab.find('.list-actions .list-action.new').trigger('click')
-
-  // for test stability
-  tab.vm.selected = null
+  await tab.find('.toolbar button[name="new"]').trigger('click')
 
   // new command creates
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
+  expect(tab.findAll('.list-with-toolbar table tr.command')).toHaveLength(41)
   await editor.find('[name=label]').setValue('command')
   await editor.find('[name=template]').setValue('{input}')
   await editor.find('button.default').trigger('click')
 
   // check
   expect(store.commands).toHaveLength(42)
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(42)
+  expect(tab.findAll('.list-with-toolbar table tr.command')).toHaveLength(42)
   expect(store.commands[41]).toStrictEqual({
     id: expect.any(String),
     type: 'user',
@@ -132,7 +142,9 @@ test('Edit user command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
   const editor = tab.findComponent({ name: 'CommandEditor' })
-  await tab.find('.sticky-table-container tr.command:nth-of-type(42)').trigger('dblclick')
+
+  // Click edit button for the 42nd command
+  await tab.find('.list-with-toolbar table tr.command:nth-of-type(42) .button-icon.edit').trigger('click')
 
   expect(editor.find<HTMLInputElement>('[name=label]').element.value).toBe('command')
   expect(editor.find<HTMLTextAreaElement>('[name=template]').element.value).toBe('{input}')
@@ -170,7 +182,7 @@ test('Edit user command', async () => {
 
   // check
   expect(store.commands).toHaveLength(42)
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(42)
+  expect(tab.findAll('.list-with-toolbar table tr.command')).toHaveLength(42)
   expect(store.commands[41]).toStrictEqual({
     id: expect.any(String),
     type: 'user',
@@ -189,7 +201,7 @@ test('Edit system command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
   const editor = tab.findComponent({ name: 'CommandEditor' })
-  await tab.find('.sticky-table-container tr.command:nth-of-type(2)').trigger('dblclick')
+  await tab.find('.list-with-toolbar table tr.command:nth-of-type(2) .button-icon.edit').trigger('click')
 
   expect(store.commands[1].label).toBeUndefined()
   expect(store.commands[1].template).toBeUndefined()
@@ -206,7 +218,7 @@ test('Edit system command', async () => {
   await editor.find('button.default').trigger('click')
 
   expect(store.commands).toHaveLength(42)
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(42)
+  expect(tab.findAll('.list-with-toolbar table tr.command')).toHaveLength(42)
   expect(store.commands[1]).toMatchObject({
     id: 'command',
     type: 'system',
@@ -214,7 +226,7 @@ test('Edit system command', async () => {
     template: '{input}',
   })
 
-  await tab.find('.sticky-table-container tr.command:nth-of-type(2)').trigger('dblclick')
+  await tab.find('.list-with-toolbar table tr.command:nth-of-type(2) .button-icon.edit').trigger('click')
 
   expect(editor.find<HTMLInputElement>('[name=label]').element.value).toBe('command')
   expect(editor.find<HTMLTextAreaElement>('[name=template]').element.value).toBe('{input}')
@@ -234,16 +246,26 @@ test('Edit system command', async () => {
 test('Edit ask me anything', async () => {
   const tab = await switchToTab(wrapper, commandsIndex)
   const editor = tab.findComponent({ name: 'CommandEditor' })
-  await tab.find('.sticky-table-container tr.command:nth-of-type(1)').trigger('dblclick')
+  await tab.find('.list-with-toolbar table tr.command:nth-of-type(1) .button-icon.edit').trigger('click')
   expect(editor.find<HTMLTextAreaElement>('[name=template]').element.disabled).toBe(true)
 })
 
 test('Delete command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
-  await tab.find('.sticky-table-container tr.command:nth-of-type(42)').trigger('click')
-  await tab.find('.list-actions .list-action.delete').trigger('click')
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
+  // Check current command count first
+  const currentCount = tab.findAll('.list-with-toolbar table tr.command').length
+  expect(currentCount).toBe(42)
+
+  // Select the last command via checkbox
+  await tab.find(`.list-with-toolbar table tr.command:nth-of-type(${currentCount}) td.name input[type="checkbox"]`).setValue(true)
+  await tab.vm.$nextTick()
+
+  // Click the delete button in the toolbar
+  await tab.find('.toolbar button[name="delete"]').trigger('click')
+  await tab.vm.$nextTick()
+
+  expect(tab.findAll('.list-with-toolbar table tr.command')).toHaveLength(41)
   expect(store.commands).toHaveLength(41)
 
 })
@@ -252,7 +274,7 @@ test('Context Menu', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
   expect(tab.findAll('.context-menu')).toHaveLength(0)
-  await tab.find('.list-actions .list-action.menu .trigger').trigger('click')
+  await tab.find('.toolbar .toolbar-menu .trigger').trigger('click')
   await tab.vm.$nextTick()
   expect(tab.findAll('.context-menu')).toHaveLength(1)
 

@@ -733,7 +733,7 @@ table.table-plain {
   border-collapse: collapse;
   
   th, td {
-    padding: 0.25rem;
+    padding: 0.75rem;
     vertical-align: middle;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
@@ -750,30 +750,14 @@ table.table-plain {
     .actions {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0rem;
 
       svg {
         cursor: pointer;
-        width: var(--icon-md);
-        height: var(--icon-md);
-      }
-    }
-  }
-
-  &.table-plain-spaced {
-
-    td, th {
-      padding: 1rem;
-    }
-
-    td .actions {
-      gap: 0.25rem;
-      svg {
         width: var(--icon-lg);
         height: var(--icon-lg);
       }
     }
-
   }
 
 }

@@ -191,8 +191,9 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       ] as Expert[]),
       save: vi.fn(),
       loadCategories: vi.fn(() => [
-        { id: 'cat-1', type: 'system', state: 'enabled', icon: 'Code2', color: 'text-green-500' },
-        { id: 'cat-2', type: 'system', state: 'enabled', icon: 'Briefcase', color: 'text-purple-500' }
+        { id: 'cat-1', type: 'system', state: 'enabled', icon: 'Code2' },
+        { id: 'cat-2', type: 'system', state: 'enabled', icon: 'Briefcase' },
+        { id: 'cat-3', type: 'user', state: 'enabled', icon: 'Briefcase' }
       ] as ExpertCategory[]),
       saveCategories: vi.fn(),
       import: vi.fn(),
