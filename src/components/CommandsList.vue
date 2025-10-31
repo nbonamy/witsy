@@ -297,10 +297,3 @@ const save = () => {
 defineExpose({ load })
 
 </script>
-
-
-<style scoped>
-
-/* Component-specific styles - common styles in css/list-with-toolbar.css */
-
-</style>
