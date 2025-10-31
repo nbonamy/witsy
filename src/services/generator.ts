@@ -1,4 +1,4 @@
-import { LlmChunk, LlmCompletionOpts, LlmEngine, LlmResponse, Model } from 'multi-llm-ts'
+import { LlmChunk, LlmChunkTool, LlmCompletionOpts, LlmEngine, LlmResponse, Model } from 'multi-llm-ts'
 import LlmFactory from '../llms/llm'
 import Message from '../models/message'
 import { Configuration, EngineConfig } from '../types/config'
@@ -103,20 +103,26 @@ export default class Generator {
           ...opts
         })
 
-        // // fake tool calls
-        // for (const toolCall of llmResponse.toolCalls) {
-        //   const chunk: LlmChunk = {
-        //     type: 'tool',
-        //     id: crypto.randomUUID(),
-        //     name: toolCall.name,
-        //     call: {
-        //       params: toolCall.params,
-        //       result: toolCall.result
-        //     },
-        //     done: true
-        //   }
-        //   callback?.call(null, chunk)
-        // }
+        // fake tool calls
+        try {
+          for (const toolCall of llmResponse.toolCalls) {
+            const chunk: LlmChunkTool = {
+              type: 'tool',
+              id: crypto.randomUUID(),
+              name: toolCall.name,
+              state: 'completed',
+              call: {
+                params: toolCall.params,
+                result: toolCall.result
+              },
+              done: true
+            }
+            response.addToolCall(chunk)
+            llmCallback?.call(null, chunk)
+          }
+        } catch (error) {
+          console.error('Error processing tool calls', error)
+        }
 
         // fake streaming
         const chunk: LlmChunk = {
