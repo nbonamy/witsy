@@ -12,7 +12,7 @@
     </header>
 
     <main>
-      <table class="table-plain table-plain-spaced">
+      <table class="table-plain">
 
         <thead>
           <tr>
