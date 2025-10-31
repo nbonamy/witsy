@@ -252,6 +252,7 @@ export const BACKUP = {
 } as const;
 
 export const IMPORT = {
+  MARKDOWN: 'import-markdown',
   OPENAI: 'import-openai',
 } as const;
 

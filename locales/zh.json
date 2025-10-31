@@ -466,11 +466,18 @@
     "fork": {
       "title": "分叉聊天"
     },
+    "import": {
+      "error": "导入聊天时发生错误。",
+      "invalidFormat": "无效的Markdown格式。预期格式：# 标题, ## 系统/您/助手",
+      "success": "聊天导入成功",
+      "successDetail": "该对话已导入并添加到您的聊天记录中。"
+    },
     "role": {
       "assistant": "助手",
       "system": "系统",
       "user": "你"
-    }
+    },
+    "unknownModel": "未知模型"
   },
   "chatList": {
     "displayMode": {
@@ -2062,6 +2069,7 @@
       "closeWindow": "关闭窗口",
       "designStudio": "@:{'designStudio.title'}",
       "import": {
+        "markdown": "导入Markdown文件…",
         "openai": "ChatGPT 数据导出…",
         "title": "导入"
       },

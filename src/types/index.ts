@@ -541,6 +541,7 @@ declare global {
         import(): boolean
       }
       import: {
+        markdown(): any
         openai(workspaceId: string): boolean
       }
       ollama: {

@@ -466,11 +466,18 @@
     "fork": {
       "title": "チャットをフォーク"
     },
+    "import": {
+      "error": "チャットのインポート中にエラーが発生しました。",
+      "invalidFormat": "無効なマークダウン形式です。予想される形式：# タイトル、## System/You/Assistant",
+      "success": "チャットが正常にインポートされました",
+      "successDetail": "会話がインポートされ、チャット履歴に追加されました。"
+    },
     "role": {
       "assistant": "アシスタント",
       "system": "システム",
       "user": "あなた"
-    }
+    },
+    "unknownModel": "不明なモデル"
   },
   "chatList": {
     "displayMode": {
@@ -2062,6 +2069,7 @@
       "closeWindow": "ウィンドウを閉じる",
       "designStudio": "@:{'designStudio.title'}",
       "import": {
+        "markdown": "Markdownファイル…",
         "openai": "ChatGPTデータのエクスポート…",
         "title": "インポート"
       },

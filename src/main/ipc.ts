@@ -52,6 +52,7 @@ import * as workspace from './workspace';
 import { AGENT_API_BASE_PATH } from './agent_webhook';
 import { HttpServer } from './http_server';
 import { importOpenAI } from './import_oai';
+import { importMarkdown } from './import_md';
 
 export const installIpc = (
   store: Store,
@@ -284,6 +285,11 @@ export const installIpc = (
 
   ipcMain.on(IPC.IMPORT.OPENAI, async (event, workspaceId: string) => {
     event.returnValue = await importOpenAI(app, workspaceId);
+  });
+
+  ipcMain.on(IPC.IMPORT.MARKDOWN, async (event) => {
+    const chat = await importMarkdown(app);
+    event.returnValue = chat || null;
   });
 
   ipcMain.on(IPC.AGENTS.OPEN_FORGE,  () => {

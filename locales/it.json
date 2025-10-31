@@ -447,11 +447,18 @@
     "fork": {
       "title": "Fork chat in Italian"
     },
+    "import": {
+      "error": "Si è verificato un errore durante il tentativo di importare la chat.",
+      "invalidFormat": "Formato markdown non valido. Formato previsto: # Titolo, ## Sistema/Tu/Assistente",
+      "success": "Chat importata con successo",
+      "successDetail": "La conversazione è stata importata e aggiunta alla tua cronologia chat."
+    },
     "role": {
       "assistant": "Assistente",
       "system": "Sistema",
       "user": "Tu"
-    }
+    },
+    "unknownModel": "Modello sconosciuto"
   },
   "chatList": {
     "displayMode": {
@@ -2043,6 +2050,7 @@
       "closeWindow": "Chiudi Finestra",
       "designStudio": "@:{'designStudio.title'}",
       "import": {
+        "markdown": "File Markdown…",
         "openai": "Esportazione dati ChatGPT…",
         "title": "Importa"
       },

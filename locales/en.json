@@ -465,11 +465,24 @@
     "fork": {
       "title": "Fork chat"
     },
+    "import": {
+      "error": "An error occurred while trying to import the chat.",
+      "errorMultiple": "Failed to import {count} file(s)",
+      "errors": "Errors",
+      "invalidFormat": "Invalid markdown format. Expected format: # Title, ## System/You/Assistant",
+      "partialSuccess": "{success} chat(s) imported successfully, {error} failed",
+      "partialSuccessTitle": "Import completed with errors",
+      "success": "Chat imported successfully",
+      "successDetail": "The conversation has been imported and added to your chat history.",
+      "successMultiple": "{count} chats imported successfully",
+      "successMultipleDetail": "{count} conversations have been imported and added to your chat history."
+    },
     "role": {
       "assistant": "Assistant",
       "system": "System",
       "user": "You"
-    }
+    },
+    "unknownModel": "Unknown Model"
   },
   "chatList": {
     "displayMode": {
@@ -2061,6 +2074,7 @@
       "closeWindow": "Close Window",
       "designStudio": "@:{'designStudio.title'}",
       "import": {
+        "markdown": "Markdown file…",
         "openai": "ChatGPT data export…",
         "title": "Import"
       },

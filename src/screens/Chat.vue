@@ -172,6 +172,21 @@ const onNewChat = async (payload?: any) => {
   }
 }
 
+const importChat = (chatData: any) => {
+  // Parse the chat from JSON
+  const chat = Chat.fromJson(chatData)
+
+  // Add to history (no folder)
+  store.addChat(chat)
+
+  // Load the chat
+  assistant.value.setChat(chat)
+  updateChatEngineModel()
+
+  // Emit event
+  emitEvent('new-llm-chunk', null)
+}
+
 const onNewChatInFolder = (folderId: string) => {
   
   // get
@@ -739,6 +754,7 @@ const onMainViewChanged = (mode: MenuBarMode) => {
 
 defineExpose({
   newChat: onNewChat,
+  importChat,
   startDictation: () => chatArea.value?.startDictation(),
 })
 

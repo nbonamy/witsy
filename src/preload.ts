@@ -257,6 +257,7 @@ contextBridge.exposeInMainWorld(
       import: (): boolean => { return ipcRenderer.sendSync(IPC.BACKUP.IMPORT) },
     },
     import: {
+      markdown: (): any => { return ipcRenderer.sendSync(IPC.IMPORT.MARKDOWN) },
       openai: (workspaceId: string): boolean => { return ipcRenderer.sendSync(IPC.IMPORT.OPENAI, workspaceId) },
     },
     ollama: {
