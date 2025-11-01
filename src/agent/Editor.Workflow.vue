@@ -54,6 +54,7 @@
             <button class="docrepo" :id="`docrepo-menu-anchor-${index}`" :disabled="!docRepos.length" @click="onDocRepo(index)" :class="{ 'active': hasDocRepo(index) }"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
             <button class="tools" :id="`tools-menu-anchor-${index}`" @click="onTools(index)" :class="{ 'active': hasTools(index) }"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
             <button class="agents" :id="`agents-menu-anchor-${index}`" @click="onAgents(index)" :disabled="availableAgents.length === 0" :class="{ 'active': hasAgents(index) }"><AgentIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
+            <button class="expert" :id="`expert-menu-anchor-${index}`" @click="onExpert(index)" :class="{ 'active': hasExpert(index) }"><BrainIcon /> {{ t('agent.create.workflow.expert') }}</button>
             <button class="structured-output" @click="onStructuredOutput(index)" :class="{ 'active': hasJsonSchema(index) }"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
           </div>
         </div>
@@ -137,10 +138,44 @@
       </div>
     </template>
   </ContextMenuPlus>
+
+  <!-- Expert Context Menu -->
+  <ContextMenuPlus
+    v-if="expertMenuVisible && expertMenuStepIndex >= 0"
+    :anchor="`#expert-menu-anchor-${expertMenuStepIndex}`"
+    position="above"
+    :hover-highlight="false"
+    @close="onCloseExpertMenu"
+  >
+    <template #default="{ withFilter }">
+      {{ withFilter(true) }}
+      <!-- Categories with experts -->
+      <div v-for="cat in categoriesWithExperts" :key="cat.id" :data-submenu-slot="`expertCategory-${cat.id}`">
+        <FolderIcon class="icon" />
+        <span>{{ cat.name }}</span>
+      </div>
+
+      <template v-if="uncategorizedExperts.length">
+        <div v-for="exp in uncategorizedExperts" :key="exp.id" @click="selectExpert(exp.id)">
+          <BrainIcon class="icon" />
+          <span>{{ exp.name }}</span>
+        </div>
+      </template>
+    </template>
+
+    <!-- Category submenus for experts -->
+    <template v-for="cat in categoriesWithExperts" :key="`submenu-${cat.id}`" #[`expertCategory-${cat.id}`]="">
+      <div v-for="exp in expertsByCategory[cat.id]" :key="exp.id" @click="selectExpert(exp.id)">
+        <BrainIcon class="icon" />
+        <span>{{ exp.name }}</span>
+      </div>
+    </template>
+
+</ContextMenuPlus>
 </template>
 
 <script setup lang="ts">
-import { BlocksIcon, BracesIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
+import { BlocksIcon, BracesIcon, BrainIcon, ChevronDownIcon, ChevronRightIcon, FolderIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed, PropType, ref, watch } from 'vue'
 import AgentIcon from '../../assets/agent.svg?component'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
@@ -150,7 +185,7 @@ import Dialog from '../composables/dialog'
 import * as ts from '../composables/tool_selection'
 import Agent from '../models/agent'
 import AgentSelector from '../screens/AgentSelector.vue'
-import { t } from '../services/i18n'
+import { expertI18n, categoryI18n, t } from '../services/i18n'
 import { extractPromptInputs } from '../services/prompt'
 import { processJsonSchema } from '../services/schema'
 import { store } from '../services/store'
@@ -186,6 +221,8 @@ const docRepoMenuVisible = ref(false)
 const docRepoMenuStepIndex = ref(-1)
 const agentsMenuVisible = ref(false)
 const agentsMenuStepIndex = ref(-1)
+const expertMenuVisible = ref(false)
+const expertMenuStepIndex = ref(-1)
 
 // Watch for prop changes
 watch(() => props.expandedStep, (newValue) => {
@@ -213,6 +250,10 @@ const hasTools = (index: number) => {
 
 const hasAgents = (index: number) => {
   return props.agent.steps[index]?.agents && props.agent.steps[index].agents.length > 0
+}
+
+const hasExpert = (index: number) => {
+  return !!props.agent.steps[index]?.expert
 }
 
 const hasJsonSchema = (index: number) => {
@@ -383,6 +424,66 @@ const clearAllAgents = () => {
 
 const onSaveAgents = (agents: string[]) => {
   props.agent.steps[expandedStep.value].agents = agents
+}
+
+// Expert menu functionality
+const expertsMenuItems = computed(() => {
+  return store.experts
+    .filter((e) => e.state === 'enabled')
+    .map(e => ({
+      id: e.id,
+      name: e.name || expertI18n(e, 'name'),
+      categoryId: e.categoryId
+    }))
+})
+
+const categoriesWithExperts = computed(() => {
+  const catIds = new Set<string>()
+  expertsMenuItems.value.forEach(exp => {
+    if (exp.categoryId) catIds.add(exp.categoryId)
+  })
+
+  const categories = store.expertCategories
+    .filter(c => c.state === 'enabled' && catIds.has(c.id))
+    .map(c => ({
+      id: c.id,
+      name: categoryI18n(c, 'name')
+    }))
+
+  return categories.sort((a, b) => a.name.localeCompare(b.name))
+})
+
+const expertsByCategory = computed(() => {
+  const grouped: Record<string, typeof expertsMenuItems.value> = {}
+  expertsMenuItems.value.forEach(exp => {
+    const catId = exp.categoryId || 'uncategorized'
+    if (!grouped[catId]) grouped[catId] = []
+    grouped[catId].push(exp)
+  })
+  return grouped
+})
+
+const uncategorizedExperts = computed(() => {
+  return expertsMenuItems.value.filter(exp => !exp.categoryId)
+})
+
+const onExpert = (index: number) => {
+  expandedStep.value = index
+  emit('update:expanded-step', expandedStep.value)
+  expertMenuStepIndex.value = index
+  expertMenuVisible.value = true
+}
+
+const onCloseExpertMenu = () => {
+  expertMenuVisible.value = false
+  expertMenuStepIndex.value = -1
+}
+
+const selectExpert = (expertId: string | null) => {
+  if (expertMenuStepIndex.value >= 0) {
+    props.agent.steps[expertMenuStepIndex.value].expert = expertId || undefined
+  }
+  onCloseExpertMenu()
 }
 
 const onStructuredOutput = async (index: number) => {

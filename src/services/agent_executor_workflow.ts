@@ -6,11 +6,11 @@ import { replacePromptInputs } from '../services/prompt'
 import { processJsonSchema } from '../services/schema'
 import { AgentRun, AgentRunTrigger, AgentStep } from '../types/agents'
 import { Configuration } from '../types/config'
-import { Chat } from '../types/index'
+import { Chat, Expert } from '../types/index'
 import { DocRepoQueryResponseItem } from '../types/rag'
 import AgentExecutorBase from './agent_executor_base'
 import Generator, { GenerationCallback, GenerationOpts, GenerationResult, LlmChunkCallback } from './generator'
-import { getLlmLocale, i18nInstructions, setLlmLocale, t } from './i18n'
+import { fullExpertI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from './i18n'
 import LlmUtils from './llm_utils'
 
 export interface AgentWorkflowExecutorOpts extends GenerationOpts {
@@ -79,6 +79,12 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
         llmLocale = getLlmLocale()
         setLlmLocale(this.agent.locale)
         this.config.llm.forceLocale = true
+      }
+
+      // load experts if any step uses them (JIT optimization)
+      let experts: Expert[] = []
+      if (this.agent.steps.some((s) => s.expert)) {
+        experts = window.api.experts.load(this.workspaceId)
       }
 
       // now we can loop on steps
@@ -167,6 +173,15 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
         const userMessage = new Message('user', stepPrompt)
         userMessage.engine = opts.engine
         userMessage.model = opts.model
+
+        // attach expert if configured for this step
+        if (step.expert) {
+          const expert = experts.find(e => e.id === step.expert)
+          if (expert) {
+            userMessage.setExpert(fullExpertI18n(expert))
+          }
+        }
+
         run.messages.push(userMessage)
 
         // add messages to chat

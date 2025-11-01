@@ -112,6 +112,8 @@
     "model": "Model",
     "modelPlaceholder": "Wpisz nazwę modelu lub wybierz z listy",
     "move": "Przenieś",
+    "moveDown": "Przenieś w dół",
+    "moveUp": "Przenieś w górę",
     "name": "Nazwa",
     "new": "Nowy",
     "newChat": "New Conversation",
@@ -246,15 +248,16 @@
       "workflow": {
         "addStep": "Dodaj krok",
         "confirmDeleteStep": "Czy na pewno chcesz usunąć ten krok?",
-        "customAgents": "Przypisz współagentów",
-        "customTools": "Dodaj narzędzia",
+        "customAgents": "Współadagenci",
+        "customTools": "Narzędzia",
         "description": "@:{'common.description'}",
-        "docRepo": "Dodaj wiedzę",
+        "docRepo": "Wiedza",
         "error": {
           "emptyStepPrompt": "Prompt kroku #{step} nie może być pusty.",
           "missingDocRepo": "Krok #{step} korzysta z bazy wiedzy, ale w podpowiedzi nie zdefiniowano zmiennej {'{'}{'{'}facts{'}'}{'}'}. Proszę dodaj zmienną w formacie {'{'}{'{'}facts{'}'}{'}'} do swojej podpowiedzi.",
           "structuredOutput": "Błąd podczas parsowania schematu strukturalnego wyniku."
         },
+        "expert": "Ekspert",
         "help": {
           "connect": "Połącz wynik poprzednich kroków za pomocą zmiennych {'{'}{'{'}output.#{'}'}{'}'} (np. {'{'}{'{'}output.1{'}'}{'}'} dla wyniku kroku 1)",
           "description": "Opis będzie używany do przekazywania aktualizacji postępu podczas wykonywania agenta",
@@ -469,9 +472,15 @@
     },
     "import": {
       "error": "Wystąpił błąd podczas próby zaimportowania czatu.",
+      "errorMultiple": "Nie udało się zaimportować {count} pliku(ów)",
+      "errors": "Błędy",
       "invalidFormat": "Nieprawidłowy format markdown. Oczekiwany format: # Tytuł, ## System/Ty/Asystent",
+      "partialSuccess": "Pomyślnie zaimportowano {success} czat(y), {error} nie powiodło się",
+      "partialSuccessTitle": "Import zakończony z błędami",
       "success": "Czat zaimportowany pomyślnie",
-      "successDetail": "Konwersacja została zaimportowana i dodana do historii czatu."
+      "successDetail": "Konwersacja została zaimportowana i dodana do historii czatu.",
+      "successMultiple": "Pomyślnie zaimportowano {count} czatów",
+      "successMultipleDetail": "Zaimportowano {count} rozmów i dodano je do historii czatu."
     },
     "role": {
       "assistant": "Asystent",
@@ -2572,6 +2581,9 @@
     },
     "commands": {
       "confirmDelete": "Czy na pewno chcesz usunąć to polecenie?",
+      "copy": "@:{'common.copy'}",
+      "defaults": "Domyślne",
+      "empty": "Nie zdefiniowano jeszcze żadnych poleceń",
       "export": "Eksport",
       "exportError": "Nie udało się wyeksportować pliku poleceń",
       "exportSuccess": "Plik poleceń wyeksportowany pomyślnie",
@@ -2705,6 +2717,7 @@
       "deleteAll": "Usuń wszystko",
       "descriptionPlaceholder": "Krótki opis tego, czym zajmuje się ten ekspert",
       "disableAll": "Wyłącz wszystko",
+      "empty": "Nie zdefiniowano jeszcze ekspertów",
       "enableAll": "Włącz wszystko",
       "export": "Eksport",
       "exportError": "Nie udało się wyeksportować pliku ekspertów",
