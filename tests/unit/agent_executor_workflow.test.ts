@@ -788,3 +788,169 @@ test('Agent loads no tools when tools is empty array', async () => {
 
   expect(run.status).toBe('success')
 })
+
+test('Expert attachment to workflow step', async () => {
+  // Create a test expert
+  const testExpert = {
+    id: 'test-expert-1',
+    type: 'user' as const,
+    name: 'Test Expert',
+    prompt: 'You are a test expert with specialized knowledge.',
+    state: 'enabled' as const,
+    triggerApps: []
+  }
+
+  // Mock window.api.experts.load to return our test expert
+  vi.mocked(window.api.experts.load).mockReturnValueOnce([testExpert])
+
+  // Setup agent with expert on first step
+  testAgent.steps = [{
+    prompt: 'Analyze this data',
+    tools: null,
+    agents: [],
+    expert: testExpert.id,
+  }]
+
+  // Run (experts will be loaded JIT)
+  const run = await runAgent('manual', 'Test data')
+
+  expect(run.status).toBe('success')
+  expect(run.messages).toHaveLength(3) // system, user, assistant
+
+  // Verify user message has expert attached
+  const userMessage = run.messages[1]
+  expect(userMessage.role).toBe('user')
+  expect(userMessage.expert).toBeDefined()
+  expect(userMessage.expert?.id).toBe(testExpert.id)
+  expect(userMessage.expert?.name).toBe(testExpert.name)
+})
+
+test('Expert prompt prepended to message content', async () => {
+  // Create a test expert
+  const testExpert = {
+    id: 'test-expert-2',
+    type: 'user' as const,
+    name: 'Code Expert',
+    prompt: 'Focus on code quality and best practices.',
+    state: 'enabled' as const,
+    triggerApps: []
+  }
+
+  // Mock window.api.experts.load to return our test expert
+  vi.mocked(window.api.experts.load).mockReturnValueOnce([testExpert])
+
+  // Setup agent with expert
+  testAgent.steps = [{
+    prompt: 'Review this code',
+    tools: null,
+    agents: [],
+    expert: testExpert.id,
+  }]
+
+  // Run (experts will be loaded JIT)
+  const run = await runAgent('manual', 'function test() {}')
+
+  expect(run.status).toBe('success')
+
+  // Verify contentForModel includes expert prompt
+  const userMessage = run.messages[1]
+  const contentForModel = userMessage.contentForModel
+  expect(contentForModel).toContain(testExpert.prompt)
+  expect(contentForModel).toContain('function test() {}')
+  // Expert prompt should come first
+  expect(contentForModel.indexOf(testExpert.prompt)).toBeLessThan(contentForModel.indexOf('function test() {}'))
+})
+
+test('Workflow step without expert works normally', async () => {
+  // Setup agent without expert
+  testAgent.steps = [{
+    prompt: 'Normal step without expert',
+    tools: null,
+    agents: [],
+    // No expert field
+  }]
+
+  // No need to mock experts.load since step doesn't use expert
+  const run = await runAgent('manual', 'Test prompt')
+
+  expect(run.status).toBe('success')
+
+  // Verify user message does NOT have expert attached
+  const userMessage = run.messages[1]
+  expect(userMessage.role).toBe('user')
+  expect(userMessage.expert).toBeUndefined()
+})
+
+test('Multi-step workflow with different experts per step', async () => {
+  const expert1 = {
+    id: 'expert-step1',
+    type: 'user' as const,
+    name: 'Step 1 Expert',
+    prompt: 'Expert 1 instructions.',
+    state: 'enabled' as const,
+    triggerApps: []
+  }
+
+  const expert2 = {
+    id: 'expert-step2',
+    type: 'user' as const,
+    name: 'Step 2 Expert',
+    prompt: 'Expert 2 instructions.',
+    state: 'enabled' as const,
+    triggerApps: []
+  }
+
+  // Mock window.api.experts.load to return both experts
+  vi.mocked(window.api.experts.load).mockReturnValueOnce([expert1, expert2])
+
+  // Setup multi-step agent with different experts
+  testAgent.steps = [
+    {
+      prompt: 'First step',
+      tools: null,
+      agents: [],
+      expert: expert1.id,
+    },
+    {
+      prompt: 'Second step using {{output.1}}',
+      tools: null,
+      agents: [],
+      expert: expert2.id,
+    }
+  ]
+
+  const run = await runAgent('manual', 'Test')
+
+  expect(run.status).toBe('success')
+  // system + (user1 + assistant1) + (user2 + assistant2) = 5 messages
+  expect(run.messages).toHaveLength(5)
+
+  // Verify first user message has expert1
+  const user1Message = run.messages[1]
+  expect(user1Message.expert?.id).toBe(expert1.id)
+
+  // Verify second user message has expert2
+  const user2Message = run.messages[3]
+  expect(user2Message.expert?.id).toBe(expert2.id)
+})
+
+test('Expert not found in experts array is ignored', async () => {
+  // Setup agent with non-existent expert
+  testAgent.steps = [{
+    prompt: 'Test prompt',
+    tools: null,
+    agents: [],
+    expert: 'non-existent-expert-id',
+  }]
+
+  // Mock window.api.experts.load to return empty array (no matching expert)
+  vi.mocked(window.api.experts.load).mockReturnValueOnce([])
+
+  const run = await runAgent('manual', 'Test')
+
+  expect(run.status).toBe('success')
+
+  // Verify user message does NOT have expert (since it wasn't found)
+  const userMessage = run.messages[1]
+  expect(userMessage.expert).toBeUndefined()
+})

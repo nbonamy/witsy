@@ -112,6 +112,8 @@
     "model": "模型",
     "modelPlaceholder": "输入模型名称或选择一个",
     "move": "移动",
+    "moveDown": "下移",
+    "moveUp": "上移",
     "name": "名称",
     "new": "新建",
     "newChat": "New Conversation",
@@ -246,15 +248,16 @@
       "workflow": {
         "addStep": "添加步骤",
         "confirmDeleteStep": "您确定要删除此步骤吗？",
-        "customAgents": "分配协同代理",
-        "customTools": "添加工具",
+        "customAgents": "协同代理",
+        "customTools": "工具",
         "description": "@:{'common.description'}",
-        "docRepo": "添加知识",
+        "docRepo": "知识库",
         "error": {
           "emptyStepPrompt": "步骤 #{step} 的提示不能为空。",
           "missingDocRepo": "步骤 #{step} 使用了知识库，但提示中未定义 {'{'}{'{'}facts{'}'}{'}'} 变量。请在您的提示中添加形如 {'{'}{'{'}facts{'}'}{'}'} 的变量。",
           "structuredOutput": "解析结构化输出 schema 时出错。"
         },
+        "expert": "专家",
         "help": {
           "connect": "使用 {'{'}{'{'}output.#{'}'}{'}'} 变量连接前一步骤的输出（例如，第1步的输出为 {'{'}{'{'}output.1{'}'}{'}'}）",
           "description": "描述将用于在代理执行过程中提供进度更新",
@@ -469,9 +472,15 @@
     },
     "import": {
       "error": "导入聊天时发生错误。",
+      "errorMultiple": "导入 {count} 个文件失败",
+      "errors": "错误",
       "invalidFormat": "无效的Markdown格式。预期格式：# 标题, ## 系统/您/助手",
+      "partialSuccess": "{success} 个聊天导入成功，{error} 个失败",
+      "partialSuccessTitle": "导入完成，但存在错误",
       "success": "聊天导入成功",
-      "successDetail": "该对话已导入并添加到您的聊天记录中。"
+      "successDetail": "该对话已导入并添加到您的聊天记录中。",
+      "successMultiple": "{count} 个聊天导入成功",
+      "successMultipleDetail": "{count} 个对话已导入并添加到您的聊天记录中。"
     },
     "role": {
       "assistant": "助手",
@@ -2572,6 +2581,9 @@
     },
     "commands": {
       "confirmDelete": "你确定要删除这个命令吗？",
+      "copy": "@:{'common.copy'}",
+      "defaults": "默认值",
+      "empty": "尚未定义任何命令",
       "export": "导出",
       "exportError": "导出命令文件失败",
       "exportSuccess": "命令文件导出成功",
@@ -2705,6 +2717,7 @@
       "deleteAll": "全部删除",
       "descriptionPlaceholder": "简要描述该专家的工作内容",
       "disableAll": "全部禁用",
+      "empty": "尚未定义任何专家",
       "enableAll": "全部启用",
       "export": "导出",
       "exportError": "导出专家文件失败",

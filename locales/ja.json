@@ -112,6 +112,8 @@
     "model": "モデル",
     "modelPlaceholder": "モデルを入力するかリストから選択してください",
     "move": "移動",
+    "moveDown": "下へ移動",
+    "moveUp": "上へ移動",
     "name": "名前",
     "new": "新規",
     "newChat": "New Conversation",
@@ -246,15 +248,16 @@
       "workflow": {
         "addStep": "ステップを追加",
         "confirmDeleteStep": "このステップを本当に削除しますか？",
-        "customAgents": "協力エージェントを割り当てる",
-        "customTools": "ツールを追加",
+        "customAgents": "共同エージェント",
+        "customTools": "ツール",
         "description": "@:{'common.description'}",
-        "docRepo": "知識を追加",
+        "docRepo": "ナレッジ",
         "error": {
           "emptyStepPrompt": "ステップ#{step}のプロンプトは空にできません。",
           "missingDocRepo": "ステップ#{step}はナレッジベースを使用していますが、プロンプトに{'{'}{'{'}facts{'}'}{'}'}という変数が定義されていません。{'{'}{'{'}facts{'}'}{'}'}形式の変数をプロンプトに追加してください。",
           "structuredOutput": "構造化出力スキーマの解析中にエラーが発生しました。"
         },
+        "expert": "エキスパート",
         "help": {
           "connect": "前のステップの出力を{'{'}{'{'}output.#{'}'}{'}'}変数（例：ステップ1の出力には{'{'}{'{'}output.1{'}'}{'}'}）を使って接続します",
           "description": "エージェント実行中の進捗状況の更新に説明が使われます。",
@@ -469,9 +472,15 @@
     },
     "import": {
       "error": "チャットのインポート中にエラーが発生しました。",
+      "errorMultiple": "{count} 件のファイルのインポートに失敗しました",
+      "errors": "エラー",
       "invalidFormat": "無効なマークダウン形式です。予想される形式：# タイトル、## System/You/Assistant",
+      "partialSuccess": "{success} 件のチャットが正常にインポートされ、{error} 件は失敗しました",
+      "partialSuccessTitle": "エラーが発生しましたがインポートが完了しました",
       "success": "チャットが正常にインポートされました",
-      "successDetail": "会話がインポートされ、チャット履歴に追加されました。"
+      "successDetail": "会話がインポートされ、チャット履歴に追加されました。",
+      "successMultiple": "{count} 件のチャットが正常にインポートされました",
+      "successMultipleDetail": "{count} 件の会話がインポートされ、チャット履歴に追加されました。"
     },
     "role": {
       "assistant": "アシスタント",
@@ -2572,6 +2581,9 @@
     },
     "commands": {
       "confirmDelete": "このコマンドを削除してもよろしいですか？",
+      "copy": "@:{'common.copy'}",
+      "defaults": "デフォルト",
+      "empty": "まだコマンドが定義されていません",
       "export": "エクスポート",
       "exportError": "コマンドファイルのエクスポートに失敗しました",
       "exportSuccess": "コマンドファイルが正常にエクスポートされました",
@@ -2705,6 +2717,7 @@
       "deleteAll": "すべて削除する",
       "descriptionPlaceholder": "このエキスパートの簡単な説明",
       "disableAll": "すべて無効にする",
+      "empty": "まだエキスパートが定義されていません",
       "enableAll": "すべて有効にする",
       "export": "エクスポート",
       "exportError": "エキスパートファイルのエクスポートに失敗しました",

@@ -93,6 +93,8 @@
     "model": "Modell",
     "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste",
     "move": "Verschieben",
+    "moveDown": "Nach unten verschieben",
+    "moveUp": "Nach oben verschieben",
     "name": "Name",
     "new": "Neu",
     "newChat": "New Conversation",
@@ -227,15 +229,16 @@
       "workflow": {
         "addStep": "Schritt hinzufügen",
         "confirmDeleteStep": "Sind Sie sicher, dass Sie diesen Schritt löschen möchten?",
-        "customAgents": "Co-Agenten zuweisen",
-        "customTools": "Werkzeuge hinzufügen",
+        "customAgents": "Co-Agenten",
+        "customTools": "Werkzeuge",
         "description": "@:{'common.description'}",
-        "docRepo": "Wissen hinzufügen",
+        "docRepo": "Wissensdatenbank",
         "error": {
           "emptyStepPrompt": "Die Eingabeaufforderung für Schritt #{step} darf nicht leer sein.",
           "missingDocRepo": "Schritt #{step} verwendet eine Wissensdatenbank, aber keine {'{'}{'{'}facts{'}'}{'}'}-Variable ist im Prompt definiert. Bitte fügen Sie eine Variable der Form {'{'}{'{'}facts{'}'}{'}'} zu Ihrem Prompt hinzu.",
           "structuredOutput": "Fehler beim Parsen des strukturierten Ausgabeschemas."
         },
+        "expert": "Experte",
         "help": {
           "connect": "Verbinden Sie die Ausgabe vorheriger Schritte mithilfe von {'{'}{'{'}output.#{'}'}{'}'} Variablen (z. B. {'{'}{'{'}output.1{'}'}{'}'} für die Ausgabe von Schritt 1)",
           "description": "Die Beschreibung wird verwendet, um während der Ausführung des Agenten Fortschrittsaktualisierungen bereitzustellen.",
@@ -450,9 +453,15 @@
     },
     "import": {
       "error": "Beim Versuch, den Chat zu importieren, ist ein Fehler aufgetreten.",
+      "errorMultiple": "Import von {count} Datei(en) fehlgeschlagen",
+      "errors": "Fehler",
       "invalidFormat": "Ungültiges Markdown-Format. Erwartetes Format: # Titel, ## System/You/Assistant",
+      "partialSuccess": "{success} Chat(s) erfolgreich importiert, {error} fehlgeschlagen",
+      "partialSuccessTitle": "Import mit Fehlern abgeschlossen",
       "success": "Chat erfolgreich importiert",
-      "successDetail": "Das Gespräch wurde importiert und zu deinem Chatverlauf hinzugefügt."
+      "successDetail": "Das Gespräch wurde importiert und zu deinem Chatverlauf hinzugefügt.",
+      "successMultiple": "{count} Chats erfolgreich importiert",
+      "successMultipleDetail": "{count} Unterhaltungen wurden importiert und zu deinem Chat-Verlauf hinzugefügt."
     },
     "role": {
       "assistant": "Assistent",
@@ -2550,6 +2559,9 @@
     },
     "commands": {
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Befehl löschen möchten?",
+      "copy": "@:{'common.copy'}",
+      "defaults": "Standardeinstellungen",
+      "empty": "Noch keine Befehle definiert",
       "export": "Exportieren",
       "exportError": "Fehler beim Exportieren der Befehlsdatei",
       "exportSuccess": "Befehlsdatei erfolgreich exportiert",
@@ -2683,6 +2695,7 @@
       "deleteAll": "Alle löschen",
       "descriptionPlaceholder": "Kurze Beschreibung, was dieser Experte tut",
       "disableAll": "Alle deaktivieren",
+      "empty": "Noch keine Experten definiert",
       "enableAll": "Alle aktivieren",
       "export": "Exportieren",
       "exportError": "Fehler beim Exportieren der Expertendatei",

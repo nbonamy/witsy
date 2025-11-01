@@ -93,6 +93,8 @@
     "model": "Modello",
     "modelPlaceholder": "Inserisci un nome di modello o seleziona uno",
     "move": "Sposta",
+    "moveDown": "Sposta giù",
+    "moveUp": "Sposta su",
     "name": "Nome",
     "new": "Nuovo",
     "newChat": "New Conversation",
@@ -227,15 +229,16 @@
       "workflow": {
         "addStep": "Aggiungi passaggio",
         "confirmDeleteStep": "Sei sicuro di voler eliminare questo passaggio?",
-        "customAgents": "Assegna Co-Agenti",
-        "customTools": "Aggiungi Strumenti",
+        "customAgents": "Co-agenti",
+        "customTools": "Strumenti",
         "description": "@:{'common.description'}",
-        "docRepo": "Aggiungi Conoscenza",
+        "docRepo": "Conoscenza",
         "error": {
           "emptyStepPrompt": "Il prompt del passaggio #{step} non può essere vuoto.",
           "missingDocRepo": "Il passaggio #{step} utilizza una Base di Conoscenza ma nessuna variabile {'{'}{'{'}facts{'}'}{'}'} è definita nel prompt. Per favore aggiungi una variabile della forma {'{'}{'{'}facts{'}'}{'}'} al tuo prompt.",
           "structuredOutput": "Errore durante l'analisi dello schema di output strutturato."
         },
+        "expert": "Esperto",
         "help": {
           "connect": "Collega l'output dei passaggi precedenti usando le variabili {'{'}{'{'}output.# {'}'}{'}'} (es. {'{'}{'{'}output.1{'}'}{'}'} per l'output del passaggio 1)",
           "description": "La descrizione verrà utilizzata per fornire aggiornamenti sul progresso durante l'esecuzione dell'agente",
@@ -450,9 +453,15 @@
     },
     "import": {
       "error": "Si è verificato un errore durante il tentativo di importare la chat.",
+      "errorMultiple": "Impossibile importare {count} file",
+      "errors": "Errori",
       "invalidFormat": "Formato markdown non valido. Formato previsto: # Titolo, ## Sistema/Tu/Assistente",
+      "partialSuccess": "{success} chat importate con successo, {error} fallite",
+      "partialSuccessTitle": "Importazione completata con errori",
       "success": "Chat importata con successo",
-      "successDetail": "La conversazione è stata importata e aggiunta alla tua cronologia chat."
+      "successDetail": "La conversazione è stata importata e aggiunta alla tua cronologia chat.",
+      "successMultiple": "{count} chat importate con successo",
+      "successMultipleDetail": "{count} conversazioni sono state importate e aggiunte alla cronologia chat."
     },
     "role": {
       "assistant": "Assistente",
@@ -2550,6 +2559,9 @@
     },
     "commands": {
       "confirmDelete": "Sei sicuro di voler eliminare questo comando?",
+      "copy": "@:{'common.copy'}",
+      "defaults": "Predefiniti",
+      "empty": "Nessun comando definito",
       "export": "Esporta",
       "exportError": "Errore durante l'esportazione del file dei comandi",
       "exportSuccess": "File dei comandi esportato con successo",
@@ -2683,6 +2695,7 @@
       "deleteAll": "Elimina tutto",
       "descriptionPlaceholder": "Breve descrizione di ciò che fa questo esperto",
       "disableAll": "Disabilita tutto",
+      "empty": "Nessun esperto definito",
       "enableAll": "Abilita tutto",
       "export": "Esporta",
       "exportError": "Errore durante l'esportazione del file esperti",
