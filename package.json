@@ -20,6 +20,7 @@
     "cli": "tsx src/cli/main.ts",
     "build:cli": "node build/build-cli.mjs",
     "test": "vitest --run",
+    "test:ai": "vitest --run --config vitest.config.ai.mjs",
     "test:notify": "vitest --watch --reporter=default --reporter=./tests/reporter/notify.ts",
     "test:watch": "vitest --watch",
     "test:ci": "vitest --coverage.enabled=true --coverage.reporter='text-summary'",
