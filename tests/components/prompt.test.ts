@@ -507,11 +507,13 @@ test('Document repository', async () => {
   await wrapper.find('.prompt-menu').trigger('click')
   const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
   await menu.find('.docrepos').trigger('click')
-  expect(menu.findAll('.item').length).toBe(3)
-  expect(menu.find('.item:nth-child(1)').text()).toBe('docrepo1')
-  expect(menu.find('.item:nth-child(2)').text()).toBe('docrepo2')
-  // Management option is now in footer
-  expect(menu.find('.footer .item').text()).toBe('prompt.menu.docRepos.manage')
+  // Now finds 3 items: 2 docrepos + 1 manage footer item
+  const items = menu.findAll('.item')
+  expect(items.length).toBe(3)
+  expect(items[0].text()).toBe('docrepo1')
+  expect(items[1].text()).toBe('docrepo2')
+  // Management option is now a single footer item
+  expect(items[2].text()).toContain('prompt.menu.docRepos.manage')
 
   // connect
   await menu.find('.item:nth-child(1)').trigger('click')

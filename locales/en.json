@@ -2406,6 +2406,7 @@
         "title": "Knowledge"
       },
       "experts": {
+        "manage": "Manage Experts",
         "none": "No Expert",
         "title": "@:{'common.experts'}"
       },
