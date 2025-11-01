@@ -2293,35 +2293,32 @@
       "default": {
         "completed": "Filesystem operation completed",
         "error": "Error during filesystem operation: {error}",
-        "running": "Performing filesystem operation…",
-        "starting": "Preparing filesystem operation…"
+        "running": "Performing filesystem operation…"
       },
       "delete": {
         "completed": "Successfully deleted {path}",
         "declined": "User declined to delete {path}",
         "error": "Error while deleting {path}",
-        "running": "Deleting {path}…",
-        "starting": "Preparing to delete {path}…"
+        "running": "Deleting {path}…"
       },
+      "description": "Use this tool to list, read, write and optionally delete file from the filesystem of the user. Use absolute paths only. If you cannot determine the absolute path, ask the user for clarification.",
       "invalidPath": "This operation is not part of the allowed paths: {path}",
       "list": {
         "completed": "No item found in {path} | Found 1 item in {path} | Found {count} items in {path}",
         "error": "Error while listing contents of {path}",
-        "running": "Listing contents of {path}…",
-        "starting": "Preparing to list directory contents…"
+        "running": "Listing contents of {path}…"
       },
       "read": {
         "completed": "File {path} read successfully",
         "error": "Error while reading file {path}",
-        "running": "Reading file {path}…",
-        "starting": "Preparing to read file…"
+        "running": "Reading file {path}…"
       },
+      "starting": "Initializing filesystem access…",
       "write": {
         "completed": "Successfully wrote file {path}",
         "declined": "User declined to overwrite {path}",
         "error": "Error while writing file {path}",
-        "running": "Writing file {path}…",
-        "starting": "Preparing to write file…"
+        "running": "Writing file {path}…"
       }
     },
     "image": {
@@ -3066,6 +3063,7 @@
   "tray": {
     "menu": {
       "designStudio": "@:{'menu.file.designStudio'}",
+      "httpServer": "🌐 HTTP Server running on port {port}",
       "installUpdate": "Install update and restart…",
       "mainWindow": "@:{'menu.file.mainWindow'}",
       "quickPrompt": "@:{'menu.file.quickPrompt'}",

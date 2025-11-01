@@ -11,8 +11,10 @@ const context: PluginExecutionContext = {
   model: 'mock',
 }
 
+const workspaceId = 'workspace1'
+
 beforeEach(() => {
-  
+
   vi.clearAllMocks()
   useWindowMock()
 
@@ -33,53 +35,36 @@ beforeEach(() => {
 })
 
 test('Filesystem plugin initialization', () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
-  expect(plugin.getName()).toBe('Filesystem Access')
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  expect(plugin.getName()).toBe('filesystem')
   expect(plugin.isEnabled()).toBe(true)
 })
 
-test('Filesystem plugin tools', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
-  const tools = await plugin.getTools()
-  expect(tools).toHaveLength(3)
-  expect(tools[0].function.name).toBe('filesystem_list')
-  expect(tools[1].function.name).toBe('filesystem_read')
-  expect(tools[2].function.name).toBe('filesystem_write')
+test('Filesystem plugin parameters', () => {
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const params = plugin.getParameters()
+  expect(params).toHaveLength(4)
+  expect(params[0].name).toBe('action')
+  expect(params[0].enum).toEqual(['list', 'read', 'write'])
+  expect(params[1].name).toBe('path')
+  expect(params[2].name).toBe('content')
+  expect(params[3].name).toBe('includeHidden')
 })
 
-test('Filesystem plugin tools with write rights', async () => {
+test('Filesystem plugin parameters with write rights', () => {
   store.config.plugins.filesystem.allowWrite = true
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
-  const tools = await plugin.getTools()
-  expect(tools).toHaveLength(4)
-  expect(tools[0].function.name).toBe('filesystem_list')
-  expect(tools[1].function.name).toBe('filesystem_read')
-  expect(tools[2].function.name).toBe('filesystem_write')
-  expect(tools[3].function.name).toBe('filesystem_delete')
-})
-
-test('Filesystem plugin handles tools correctly', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
-  expect(plugin.handlesTool('filesystem_list')).toBe(true)
-  expect(plugin.handlesTool('filesystem_read')).toBe(true)
-  expect(plugin.handlesTool('filesystem_write')).toBe(true)
-  expect(plugin.handlesTool('filesystem_delete')).toBe(false)
-  expect(plugin.handlesTool('unknown_tool')).toBe(false)
-})
-
-test('Filesystem plugin handles tools correctly - write allowed', async () => {
-  store.config.plugins.filesystem.allowWrite = true
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
-  expect(plugin.handlesTool('filesystem_list')).toBe(true)
-  expect(plugin.handlesTool('filesystem_read')).toBe(true)
-  expect(plugin.handlesTool('filesystem_write')).toBe(true)
-  expect(plugin.handlesTool('filesystem_delete')).toBe(true)
-  expect(plugin.handlesTool('unknown_tool')).toBe(false)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const params = plugin.getParameters()
+  expect(params).toHaveLength(4)
+  expect(params[0].name).toBe('action')
+  expect(params[0].enum).toEqual(['list', 'read', 'write', 'delete'])
+  expect(params[1].name).toBe('path')
+  expect(params[2].name).toBe('content')
+  expect(params[3].name).toBe('includeHidden')
 })
 
 test('Filesystem plugin map path to allowed paths', () => {
-
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   expect(plugin.mapToAllowedPaths('/tmp/test')).toBe('/tmp/test')
   expect(plugin.mapToAllowedPaths('Documents')).toBe('/home/user/Documents')
   expect(plugin.mapToAllowedPaths('~/Documents/test')).toBe('/home/user/Documents/test')
@@ -87,25 +72,35 @@ test('Filesystem plugin map path to allowed paths', () => {
   expect(plugin.mapToAllowedPaths('Documents/test/subdir')).toBe('/home/user/Documents/test/subdir')
 })
 
+test('Filesystem plugin map path - subdirectory resolution', () => {
+  // Test the subdirectory resolution path where allowed path + ./ + target exists
+  window.api.file.exists = vi.fn((path: string) => {
+    return path === '/home/user/Documents/./subdir/file.txt'
+  })
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = plugin.mapToAllowedPaths('subdir/file.txt')
+  expect(result).toBe('/home/user/Documents/./subdir/file.txt')
+})
+
 test('Filesystem plugin path validation', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const allowedResult = await plugin.execute(context, {
-    tool: 'filesystem_list',
-    parameters: { path: '/tmp/test' }
+    action: 'list',
+    path: '/tmp/test'
   })
   expect(allowedResult.error).toBeUndefined()
   const disallowedResult = await plugin.execute(context, {
-    tool: 'filesystem_list',
-    parameters: { path: '/etc/passwd' }
+    action: 'list',
+    path: '/etc/passwd'
   })
   expect(disallowedResult.error).toContain('plugins.filesystem.invalidPath')
 })
 
 test('Filesystem plugin list directory', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const result = await plugin.execute(context, {
-    tool: 'filesystem_list',
-    parameters: { path: '/tmp/test' }
+    action: 'list',
+    path: '/tmp/test'
   })
   expect(window.api.file.listDirectory).toHaveBeenCalledWith('/tmp/test', false)
   expect(result.items).toEqual([
@@ -115,29 +110,31 @@ test('Filesystem plugin list directory', async () => {
 })
 
 test('Filesystem plugin list directory with hidden files', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   await plugin.execute(context, {
-    tool: 'filesystem_list',
-    parameters: { path: '/tmp/test', includeHidden: true }
+    action: 'list',
+    path: '/tmp/test',
+    includeHidden: true
   })
   expect(window.api.file.listDirectory).toHaveBeenCalledWith('/tmp/test', true)
 })
 
 test('Filesystem plugin read file', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const result = await plugin.execute(context, {
-    tool: 'filesystem_read',
-    parameters: { path: '/tmp/test.txt' }
+    action: 'read',
+    path: '/tmp/test.txt'
   })
   expect(window.api.file.read).toHaveBeenCalledWith('/tmp/test.txt')
-  expect(result.contents).toBe('/tmp/test.txt_encoded') 
+  expect(result.contents).toBe('/tmp/test.txt_encoded')
 })
 
 test('Filesystem plugin write file - new file', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
-    const result = await plugin.execute(context, {
-    tool: 'filesystem_write',
-    parameters: { path: '/tmp/newfile.txt', content: 'test content' }
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'write',
+    path: '/tmp/newfile.txt',
+    content: 'test content'
   })
   expect(window.api.file.exists).toHaveBeenCalledWith('/tmp/newfile.txt')
   expect(window.api.file.write).toHaveBeenCalledWith('/tmp/newfile.txt', 'test content')
@@ -145,10 +142,11 @@ test('Filesystem plugin write file - new file', async () => {
 })
 
 test('Filesystem plugin write file - overwrite disallowed', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const result = await plugin.execute(context, {
-    tool: 'filesystem_write',
-    parameters: { path: '/home/user/Documents/test', content: 'test content' }
+    action: 'write',
+    path: '/home/user/Documents/test',
+    content: 'test content'
   })
   expect(result.error).toContain('File already exists')
   expect(window.api.file.write).not.toHaveBeenCalled()
@@ -156,10 +154,11 @@ test('Filesystem plugin write file - overwrite disallowed', async () => {
 
 test('Filesystem plugin write file - overwrite allowed', async () => {
   store.config.plugins.filesystem.allowWrite = true
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const result = await plugin.execute(context, {
-    tool: 'filesystem_write',
-    parameters: { path: '/home/user/Documents/test', content: 'test content' }
+    action: 'write',
+    path: '/home/user/Documents/test',
+    content: 'test content'
   })
   expect(result.success).toBe(true)
   expect(Dialog.show).toHaveBeenCalled()
@@ -169,10 +168,11 @@ test('Filesystem plugin write file - overwrite allowed', async () => {
 test('Filesystem plugin write file - overwrite allowed and skipped', async () => {
   store.config.plugins.filesystem.allowWrite = true
   store.config.plugins.filesystem.skipConfirmation = true
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const result = await plugin.execute(context, {
-    tool: 'filesystem_write',
-    parameters: { path: '/home/user/Documents/test', content: 'test content' }
+    action: 'write',
+    path: '/home/user/Documents/test',
+    content: 'test content'
   })
   expect(result.success).toBe(true)
   expect(Dialog.show).not.toHaveBeenCalled()
@@ -180,21 +180,21 @@ test('Filesystem plugin write file - overwrite allowed and skipped', async () =>
 })
 
 test('Filesystem plugin delete file - disallowed', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const result = await plugin.execute(context, {
-    tool: 'filesystem_delete',
-    parameters: { path: '/home/user/Documents/test', content: 'test content' }
+    action: 'delete',
+    path: '/home/user/Documents/test'
   })
-  expect(result.error).toContain('not handled')
+  expect(result.error).toContain('Deletion is not allowed')
   expect(window.api.file.delete).not.toHaveBeenCalled()
 })
 
 test('Filesystem plugin delete file - allowed', async () => {
   store.config.plugins.filesystem.allowWrite = true
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const result = await plugin.execute(context, {
-    tool: 'filesystem_delete',
-    parameters: { path: '/home/user/Documents/test', content: 'test content' }
+    action: 'delete',
+    path: '/home/user/Documents/test'
   })
   expect(result.success).toBe(true)
   expect(Dialog.show).toHaveBeenCalled()
@@ -204,10 +204,10 @@ test('Filesystem plugin delete file - allowed', async () => {
 test('Filesystem plugin delete file - allowed and skipped', async () => {
   store.config.plugins.filesystem.allowWrite = true
   store.config.plugins.filesystem.skipConfirmation = true
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const result = await plugin.execute(context, {
-    tool: 'filesystem_delete',
-    parameters: { path: '/home/user/Documents/test', content: 'test content' }
+    action: 'delete',
+    path: '/home/user/Documents/test'
   })
   expect(result.success).toBe(true)
   expect(Dialog.show).not.toHaveBeenCalled()
@@ -216,46 +216,151 @@ test('Filesystem plugin delete file - allowed and skipped', async () => {
 
 test('Filesystem plugin disabled', () => {
   const disabledConfig = { enabled: false, allowedPaths: [], allowWrite: false, skipConfirmation: false }
-  const plugin = new FilesystemPlugin(disabledConfig)
+  const plugin = new FilesystemPlugin(disabledConfig, workspaceId)
   expect(plugin.isEnabled()).toBe(false)
 })
 
 test('Filesystem plugin no allowed paths', () => {
   const noPathsConfig = { enabled: true, allowedPaths: [], allowWrite: false, skipConfirmation: false }
-  const plugin = new FilesystemPlugin(noPathsConfig)
+  const plugin = new FilesystemPlugin(noPathsConfig, workspaceId)
   expect(plugin.isEnabled()).toBe(false)
 })
 
 test('Filesystem plugin status descriptions', () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
-  expect(plugin.getPreparationDescription('filesystem_list')).toBe('plugins.filesystem.list.starting')
-  expect(plugin.getPreparationDescription('filesystem_read')).toBe('plugins.filesystem.read.starting')
-  expect(plugin.getPreparationDescription('filesystem_write')).toBe('plugins.filesystem.write.starting')
-  expect(plugin.getRunningDescription('filesystem_list', { path: '/tmp' })).toBe('plugins.filesystem.list.running')
-  expect(plugin.getRunningDescription('filesystem_read', { path: '/tmp/file.txt' })).toBe('plugins.filesystem.read.running')
-  expect(plugin.getCompletedDescription('filesystem_list', { path: '/tmp' }, { success: true, items: [1, 2] })).toBe('plugins.filesystem.list.completed')
-  expect(plugin.getCompletedDescription('filesystem_read', { path: '/tmp/file.txt' }, { success: true, contents: 'test' })).toBe('plugins.filesystem.read.completed')
-  expect(plugin.getCompletedDescription('filesystem_write', { path: '/tmp/file.txt' }, { success: true })).toBe('plugins.filesystem.write.completed')
-  expect(plugin.getCompletedDescription('filesystem_list', {}, { success: false, error: 'test error' })).toBe('plugins.filesystem.list.error')
-  expect(plugin.getCompletedDescription('filesystem_read', {}, { success: false, error: 'test error' })).toBe('plugins.filesystem.read.error')
-  expect(plugin.getCompletedDescription('filesystem_write', {}, { success: false, error: 'test error' })).toBe('plugins.filesystem.write.error')
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  expect(plugin.getPreparationDescription()).toBe('plugins.filesystem.starting')
+  expect(plugin.getRunningDescription('filesystem', { action: 'list', path: '/tmp' })).toBe('plugins.filesystem.list.running')
+  expect(plugin.getRunningDescription('filesystem', { action: 'read', path: '/tmp/file.txt' })).toBe('plugins.filesystem.read.running')
+  expect(plugin.getRunningDescription('filesystem', { action: 'write', path: '/tmp/file.txt' })).toBe('plugins.filesystem.write.running')
+  expect(plugin.getRunningDescription('filesystem', { action: 'delete', path: '/tmp/file.txt' })).toBe('plugins.filesystem.delete.running')
+  expect(plugin.getCompletedDescription('filesystem', { action: 'list', path: '/tmp' }, { success: true, items: [1, 2] })).toBe('plugins.filesystem.list.completed')
+  expect(plugin.getCompletedDescription('filesystem', { action: 'read', path: '/tmp/file.txt' }, { success: true, contents: 'test' })).toBe('plugins.filesystem.read.completed')
+  expect(plugin.getCompletedDescription('filesystem', { action: 'write', path: '/tmp/file.txt' }, { success: true })).toBe('plugins.filesystem.write.completed')
+  expect(plugin.getCompletedDescription('filesystem', { action: 'delete', path: '/tmp/file.txt' }, { success: true })).toBe('plugins.filesystem.delete.completed')
+  expect(plugin.getCompletedDescription('filesystem', { action: 'list', path: '/tmp' }, { success: false, error: 'test error' })).toBe('plugins.filesystem.list.error')
+  expect(plugin.getCompletedDescription('filesystem', { action: 'read', path: '/tmp/file.txt' }, { success: false, error: 'test error' })).toBe('plugins.filesystem.read.error')
+  expect(plugin.getCompletedDescription('filesystem', { action: 'write', path: '/tmp/file.txt' }, { success: false, error: 'test error' })).toBe('plugins.filesystem.write.error')
+  expect(plugin.getCompletedDescription('filesystem', { action: 'delete', path: '/tmp/file.txt' }, { success: false, error: 'test error' })).toBe('plugins.filesystem.delete.error')
 })
 
-test('Filesystem plugin unknown tool', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+test('Filesystem plugin unknown action', async () => {
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const result = await plugin.execute(context, {
-    tool: 'unknown_tool',
-    parameters: { path: '/tmp/test' }
+    action: 'unknown_action' as any,
+    path: '/tmp/test'
   })
-  expect(result.error).toContain('not handled by this plugin')
+  expect(result.error).toContain('Unknown action')
 })
 
-test('Filesystem plugin with tools enabled filter', async () => {
-  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
-  plugin.toolsEnabled = ['filesystem_list']
-  const tools = await plugin.getTools()
-  expect(tools).toHaveLength(1)
-  expect(tools[0].function.name).toBe('filesystem_list')
-  expect(plugin.handlesTool('filesystem_list')).toBe(true)
-  expect(plugin.handlesTool('filesystem_read')).toBe(false)
+test('Filesystem plugin list directory - error handling', async () => {
+  window.api.file.listDirectory = vi.fn(() => {
+    throw new Error('Directory not found')
+  })
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'list',
+    path: '/tmp/test'
+  })
+  expect(result.success).toBe(false)
+  expect(result.error).toContain('plugins.filesystem.list.error')
+})
+
+test('Filesystem plugin read file - error handling', async () => {
+  window.api.file.read = vi.fn(() => {
+    throw new Error('File not found')
+  })
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'read',
+    path: '/tmp/test.txt'
+  })
+  expect(result.success).toBe(false)
+  expect(result.error).toContain('plugins.filesystem.read.error')
+})
+
+test('Filesystem plugin write file - error handling', async () => {
+  store.config.plugins.filesystem.allowWrite = true
+  store.config.plugins.filesystem.skipConfirmation = true
+  window.api.file.write = vi.fn(() => {
+    throw new Error('Write failed')
+  })
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'write',
+    path: '/tmp/test.txt',
+    content: 'test'
+  })
+  expect(result.success).toBe(false)
+  expect(result.error).toContain('plugins.filesystem.write.error')
+})
+
+test('Filesystem plugin write file - user declines confirmation', async () => {
+  store.config.plugins.filesystem.allowWrite = true
+  store.config.plugins.filesystem.skipConfirmation = false
+  vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: false } as any)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'write',
+    path: '/home/user/Documents/test',
+    content: 'test'
+  })
+  expect(result.success).toBe(false)
+  expect(result.error).toContain('plugins.filesystem.write.declined')
+  expect(window.api.file.write).not.toHaveBeenCalled()
+})
+
+test('Filesystem plugin delete file - user declines confirmation', async () => {
+  store.config.plugins.filesystem.allowWrite = true
+  store.config.plugins.filesystem.skipConfirmation = false
+  vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: false } as any)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'delete',
+    path: '/home/user/Documents/test'
+  })
+  expect(result.success).toBe(false)
+  expect(result.error).toContain('plugins.filesystem.delete.declined')
+  expect(window.api.file.delete).not.toHaveBeenCalled()
+})
+
+test('Filesystem plugin delete file - error handling', async () => {
+  store.config.plugins.filesystem.allowWrite = true
+  store.config.plugins.filesystem.skipConfirmation = true
+  window.api.file.delete = vi.fn(() => {
+    throw new Error('Delete failed')
+  })
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'delete',
+    path: '/home/user/Documents/test'
+  })
+  expect(result.success).toBe(false)
+  expect(result.error).toContain('plugins.filesystem.delete.error')
+})
+
+test('Filesystem plugin delete file - delete returns false', async () => {
+  store.config.plugins.filesystem.allowWrite = true
+  store.config.plugins.filesystem.skipConfirmation = true
+  window.api.file.delete = vi.fn(() => false)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'delete',
+    path: '/home/user/Documents/test'
+  })
+  expect(result.success).toBe(false)
+  expect(result.error).toContain('plugins.filesystem.delete.error')
+})
+
+test('Filesystem plugin write file - write returns false', async () => {
+  store.config.plugins.filesystem.allowWrite = true
+  store.config.plugins.filesystem.skipConfirmation = true
+  window.api.file.write = vi.fn(() => false)
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'write',
+    path: '/tmp/test.txt',
+    content: 'test'
+  })
+  expect(result.success).toBe(false)
+  expect(result.error).toContain('plugins.filesystem.write.error')
 })

@@ -2275,35 +2275,31 @@
       "default": {
         "completed": "Operazione sul filesystem completata",
         "error": "Errore durante l'operazione sul filesystem: {error}",
-        "running": "Esecuzione operazione sul filesystem…",
-        "starting": "Preparazione operazione sul filesystem…"
+        "running": "Esecuzione operazione sul filesystem…"
       },
       "delete": {
         "completed": "Cancellazione di {path} avvenuta con successo",
         "declined": "L'utente ha rifiutato di cancellare {path}",
         "error": "Errore durante la cancellazione di {path}",
-        "running": "Cancellazione di {path} in corso…",
-        "starting": "Preparazione cancellazione di {path}…"
+        "running": "Cancellazione di {path} in corso…"
       },
       "invalidPath": "Questa operazione non fa parte dei percorsi consentiti: {path}",
       "list": {
         "completed": "Nessun elemento trovato in {path} | 1 elemento trovato in {path} | {count} elementi trovati in {path}",
         "error": "Errore durante l'elenco dei contenuti di {path}",
-        "running": "Elenco contenuti di {path} in corso…",
-        "starting": "Preparazione elenco contenuti della directory…"
+        "running": "Elenco contenuti di {path} in corso…"
       },
       "read": {
         "completed": "File {path} letto con successo",
         "error": "Errore durante la lettura del file {path}",
-        "running": "Lettura file {path} in corso…",
-        "starting": "Preparazione lettura file…"
+        "running": "Lettura file {path} in corso…"
       },
+      "starting": "Inizializzazione dell'accesso al filesystem…",
       "write": {
         "completed": "File {path} scritto con successo",
         "declined": "L'utente ha rifiutato di sovrascrivere {path}",
         "error": "Errore durante la scrittura del file {path}",
-        "running": "Scrittura file {path} in corso…",
-        "starting": "Preparazione scrittura file…"
+        "running": "Scrittura file {path} in corso…"
       }
     },
     "image": {

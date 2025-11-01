@@ -2294,35 +2294,31 @@
       "default": {
         "completed": "文件系统操作完成",
         "error": "文件系统操作出错：{error}",
-        "running": "正在执行文件系统操作…",
-        "starting": "准备文件系统操作…"
+        "running": "正在执行文件系统操作…"
       },
       "delete": {
         "completed": "成功删除 {path}",
         "declined": "用户拒绝删除 {path}",
         "error": "删除 {path} 时出错",
-        "running": "正在删除 {path}…",
-        "starting": "准备删除 {path}…"
+        "running": "正在删除 {path}…"
       },
       "invalidPath": "此操作不在允许路径范围内：{path}",
       "list": {
         "completed": "在 {path} 中未发现项目 | 在 {path} 中发现 1 个项目 | 在 {path} 中发现 {count} 个项目",
         "error": "列出 {path} 内容时出错",
-        "running": "正在列出 {path} 的内容…",
-        "starting": "准备列出目录内容…"
+        "running": "正在列出 {path} 的内容…"
       },
       "read": {
         "completed": "成功读取文件 {path}",
         "error": "读取文件 {path} 时出错",
-        "running": "正在读取文件 {path}…",
-        "starting": "准备读取文件…"
+        "running": "正在读取文件 {path}…"
       },
+      "starting": "初始化文件系统访问…",
       "write": {
         "completed": "成功写入文件 {path}",
         "declined": "用户拒绝覆盖 {path}",
         "error": "写入文件 {path} 时出错",
-        "running": "正在写入文件 {path}…",
-        "starting": "准备写入文件…"
+        "running": "正在写入文件 {path}…"
       }
     },
     "image": {

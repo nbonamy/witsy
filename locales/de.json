@@ -2275,35 +2275,31 @@
       "default": {
         "completed": "Dateisystem-Operation abgeschlossen",
         "error": "Fehler bei Dateisystem-Operation: {error}",
-        "running": "Führe Dateisystem-Operation aus…",
-        "starting": "Bereite Dateisystem-Operation vor…"
+        "running": "Führe Dateisystem-Operation aus…"
       },
       "delete": {
         "completed": "Löschen von {path} erfolgreich",
         "declined": "Benutzer lehnte Löschen von {path} ab",
         "error": "Fehler beim Löschen von {path}",
-        "running": "Lösche {path}…",
-        "starting": "Bereite Löschung von {path} vor…"
+        "running": "Lösche {path}…"
       },
       "invalidPath": "Dieser Pfad ist nicht in den erlaubten Pfaden enthalten: {path}",
       "list": {
         "completed": "Keine Elemente in {path} gefunden | 1 Element in {path} gefunden | {count} Elemente in {path} gefunden",
         "error": "Fehler beim Auflisten der Inhalte von {path}",
-        "running": "Liste Inhalte von {path} auf…",
-        "starting": "Bereite Verzeichnisauflistung vor…"
+        "running": "Liste Inhalte von {path} auf…"
       },
       "read": {
         "completed": "Datei {path} erfolgreich gelesen",
         "error": "Fehler beim Lesen der Datei {path}",
-        "running": "Lese Datei {path}…",
-        "starting": "Bereite Dateilesen vor…"
+        "running": "Lese Datei {path}…"
       },
+      "starting": "Dateisystemzugriff wird initialisiert…",
       "write": {
         "completed": "Datei {path} erfolgreich geschrieben",
         "declined": "Benutzer lehnte Überschreiben von {path} ab",
         "error": "Fehler beim Schreiben der Datei {path}",
-        "running": "Schreibe Datei {path}…",
-        "starting": "Bereite Dateischreiben vor…"
+        "running": "Schreibe Datei {path}…"
       }
     },
     "image": {
