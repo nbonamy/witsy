@@ -35,11 +35,6 @@
       <!-- image for backwards compatibility -->
       <MessageItemMediaBlock :url="imageUrl" @media-loaded="onMediaLoaded(message)" v-if="message.type == 'image' && imageUrl" />
 
-      <!-- expert -->
-       <div v-if="message.expert" class="expert text variable-font-size">
-        <p><BrainIcon/> {{ message.expert.name }}</p>
-      </div>
-
       <!-- content -->
       <div class="message-content" v-if="message.type == 'text' && message.content !== null">
         <MessageItemBody :message="message" :show-tool-calls="showToolCalls" @media-loaded="onMediaLoaded" />
@@ -59,7 +54,7 @@
 
 <script setup lang="ts">
 
-import { BrainIcon, LoaderCircleIcon } from 'lucide-vue-next'
+import { LoaderCircleIcon } from 'lucide-vue-next'
 import { computed, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
 import AgentIcon from '../../assets/agent.svg?component'
 import UserAvatar from '../../assets/person.crop.circle.svg?component'
