@@ -1,6 +1,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { createI18nMock } from '../mocks/index'
+import { stubTeleport } from '../mocks/stubs'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Editor from '../../src/agent/Editor.vue'
@@ -822,4 +823,99 @@ test('Expert button respects hasExpert state', async () => {
 
   expertButton = wrapper.find('.step-actions .expert')
   expect(expertButton.classes()).toContain('active')
+})
+
+test('Selecting docrepo from menu updates step', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Initially step should have no docrepo
+  expect(agent.steps[0].docrepo).toBeUndefined()
+
+  // Click docrepo button to open menu
+  const docrepoButton = wrapper.find('.step-actions .docrepo')
+  await docrepoButton.trigger('click')
+  await nextTick()
+
+  // Menu should be visible
+  const docrepoMenu = wrapper.findComponent({ name: 'DocReposMenu' })
+  expect(docrepoMenu.exists()).toBe(true)
+
+  // Click on the first docrepo in the menu
+  const firstDocRepo = docrepoMenu.find('.item:first-child')
+  await firstDocRepo.trigger('click')
+  await nextTick()
+
+  // Step should now have the docrepo
+  expect(agent.steps[0].docrepo).toBe('uuid1')
+})
+
+test('Selecting expert from menu updates step', async () => {
+  // Create test expert
+  const testExpert = {
+    id: 'expert-1',
+    type: 'user' as const,
+    name: 'Test Expert',
+    prompt: 'Expert instructions',
+    state: 'enabled' as const,
+    triggerApps: []
+  }
+  store.experts = [testExpert]
+
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Initially step should have no expert
+  expect(agent.steps[0].expert).toBeUndefined()
+
+  // Click expert button to open menu
+  const expertButton = wrapper.find('.step-actions .expert')
+  await expertButton.trigger('click')
+  await nextTick()
+
+  // Menu should be visible
+  const expertMenu = wrapper.findComponent({ name: 'ExpertsMenu' })
+  expect(expertMenu.exists()).toBe(true)
+
+  // Click on the first expert in the menu
+  const firstExpert = expertMenu.find('.item:first-child')
+  await firstExpert.trigger('click')
+  await nextTick()
+
+  // Step should now have the expert
+  expect(agent.steps[0].expert).toBe('expert-1')
 })

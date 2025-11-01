@@ -1027,7 +1027,7 @@ const handleManageDocRepo = () => {
 }
 
 const handleManageExperts = () => {
-  // window.api.docrepo.open()
+  window.api.settings.open({ initialTab: 'experts' })
   closePromptMenu()
 }
 
