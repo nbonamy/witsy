@@ -2294,35 +2294,31 @@
       "default": {
         "completed": "Operacja na systemie plików zakończona",
         "error": "Błąd podczas operacji na systemie plików: {error}",
-        "running": "Wykonuję operację na systemie plików…",
-        "starting": "Przygotowuję operację na systemie plików…"
+        "running": "Wykonuję operację na systemie plików…"
       },
       "delete": {
         "completed": "Pomyślnie usunięto {path}",
         "declined": "Użytkownik odmówił usunięcia {path}",
         "error": "Błąd podczas usuwania {path}",
-        "running": "Usuwam {path}…",
-        "starting": "Przygotowuję do usunięcia {path}…"
+        "running": "Usuwam {path}…"
       },
       "invalidPath": "Ta operacja nie jest częścią dozwolonych ścieżek: {path}",
       "list": {
         "completed": "Nie znaleziono elementów w {path} | Znaleziono 1 element w {path} | Znaleziono {count} elementów w {path}",
         "error": "Błąd podczas listowania zawartości {path}",
-        "running": "Listuję zawartość {path}…",
-        "starting": "Przygotowuję listę zawartości katalogu…"
+        "running": "Listuję zawartość {path}…"
       },
       "read": {
         "completed": "Plik {path} odczytany pomyślnie",
         "error": "Błąd podczas odczytu pliku {path}",
-        "running": "Odczytuję plik {path}…",
-        "starting": "Przygotowuję do odczytu pliku…"
+        "running": "Odczytuję plik {path}…"
       },
+      "starting": "Inicjalizacja dostępu do systemu plików…",
       "write": {
         "completed": "Pomyślnie zapisano plik {path}",
         "declined": "Użytkownik odmówił nadpisania {path}",
         "error": "Błąd podczas zapisu pliku {path}",
-        "running": "Zapisuję plik {path}…",
-        "starting": "Przygotowuję do zapisu pliku…"
+        "running": "Zapisuję plik {path}…"
       }
     },
     "image": {

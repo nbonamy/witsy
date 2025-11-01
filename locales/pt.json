@@ -2294,35 +2294,31 @@
       "default": {
         "completed": "Operação no sistema de arquivos concluída",
         "error": "Erro durante operação no sistema de arquivos: {error}",
-        "running": "Executando operação no sistema de arquivos…",
-        "starting": "Preparando operação no sistema de arquivos…"
+        "running": "Executando operação no sistema de arquivos…"
       },
       "delete": {
         "completed": "{path} deletado com sucesso",
         "declined": "Usuário recusou deletar {path}",
         "error": "Erro ao deletar {path}",
-        "running": "Deletando {path}…",
-        "starting": "Preparando para deletar {path}…"
+        "running": "Deletando {path}…"
       },
       "invalidPath": "Esta operação não faz parte dos caminhos permitidos: {path}",
       "list": {
         "completed": "Nenhum item encontrado em {path} | 1 item encontrado em {path} | {count} itens encontrados em {path}",
         "error": "Erro ao listar conteúdo de {path}",
-        "running": "Listando conteúdo de {path}…",
-        "starting": "Preparando para listar conteúdo do diretório…"
+        "running": "Listando conteúdo de {path}…"
       },
       "read": {
         "completed": "Arquivo {path} lido com sucesso",
         "error": "Erro ao ler arquivo {path}",
-        "running": "Lendo arquivo {path}…",
-        "starting": "Preparando para ler arquivo…"
+        "running": "Lendo arquivo {path}…"
       },
+      "starting": "Inicializando acesso ao sistema de arquivos…",
       "write": {
         "completed": "Arquivo {path} escrito com sucesso",
         "declined": "Usuário recusou sobrescrever {path}",
         "error": "Erro ao escrever arquivo {path}",
-        "running": "Escrevendo arquivo {path}…",
-        "starting": "Preparando para escrever arquivo…"
+        "running": "Escrevendo arquivo {path}…"
       }
     },
     "image": {
