@@ -51,10 +51,10 @@
             </div>
           </div>
           <div class="panel-footer step-actions" v-if="expandedStep === index">
+            <button class="expert" :id="`expert-menu-anchor-${index}`" @click="onExpert(index)" :class="{ 'active': hasExpert(index) }"><BrainIcon /> {{ t('agent.create.workflow.expert') }}</button>
             <button class="docrepo" :id="`docrepo-menu-anchor-${index}`" @click="onDocRepo(index)" :class="{ 'active': hasDocRepo(index) }"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
             <button class="tools" :id="`tools-menu-anchor-${index}`" @click="onTools(index)" :class="{ 'active': hasTools(index) }"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
             <button class="agents" :id="`agents-menu-anchor-${index}`" @click="onAgents(index)" :disabled="availableAgents.length === 0" :class="{ 'active': hasAgents(index) }"><AgentIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
-            <button class="expert" :id="`expert-menu-anchor-${index}`" @click="onExpert(index)" :class="{ 'active': hasExpert(index) }"><BrainIcon /> {{ t('agent.create.workflow.expert') }}</button>
             <button class="structured-output" @click="onStructuredOutput(index)" :class="{ 'active': hasJsonSchema(index) }"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
           </div>
         </div>
