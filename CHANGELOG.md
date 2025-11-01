@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Download button for text mangles python export (https://github.com/nbonamy/witsy/issues/468)
 - Filesystem plugin rewrite
 - More LLM provider error reporting
+- Menu refactor
 
 ### Fixed
 - Chat color with dark mode (https://github.com/nbonamy/witsy/issues/464)
