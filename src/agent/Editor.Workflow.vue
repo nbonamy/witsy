@@ -171,6 +171,13 @@
       </div>
     </template>
 
+    <template #footer v-if="hasExpert(expertMenuStepIndex)">
+      <div @click="selectExpert(null)">
+        <Trash2Icon class="icon" />
+        {{ t('common.clear') }}
+      </div>
+    </template>
+
 </ContextMenuPlus>
 </template>
 
