@@ -1511,6 +1511,7 @@
   "prompt.menu.deepResearch.title": "@:{'common.deepResearch'}",
   "prompt.menu.docRepos.manage": "Manage Knowledge Base",
   "prompt.menu.docRepos.title": "Knowledge",
+  "prompt.menu.experts.manage": "Manage Experts",
   "prompt.menu.experts.none": "No Expert",
   "prompt.menu.experts.title": "@:{'common.experts'}",
   "prompt.menu.instructions.title": "Writing Style",

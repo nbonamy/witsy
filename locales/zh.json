@@ -2406,6 +2406,7 @@
         "title": "知识库"
       },
       "experts": {
+        "manage": "管理专家",
         "none": "无专家",
         "title": "@:{'common.experts'}"
       },

@@ -2384,6 +2384,7 @@
         "title": "Conocimiento"
       },
       "experts": {
+        "manage": "Gestionar expertos",
         "none": "Sin experto",
         "title": "@:{'common.experts'}"
       },

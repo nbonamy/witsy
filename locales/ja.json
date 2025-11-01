@@ -2406,6 +2406,7 @@
         "title": "ナレッジ"
       },
       "experts": {
+        "manage": "エキスパートを管理",
         "none": "エキスパートなし",
         "title": "@:{'common.experts'}"
       },
