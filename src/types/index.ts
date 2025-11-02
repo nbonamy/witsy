@@ -358,7 +358,7 @@ declare global {
         delete(filepath: string): boolean
         find(name: string): string
         listDirectory(dirPath: string, includeHidden?: boolean): ListDirectoryResponse
-        pickFile(opts: FilePickParams): string|string[]|FileContents
+        pickFile(opts: FilePickParams): null|string|string[]|FileContents
         pickDirectory(): string
         openInExplorer(filePath: string): void
       }
@@ -426,7 +426,8 @@ declare global {
       }
       agents: {
         forge(): void
-        load(workspaceId: string): any[]
+        list(workspaceId: string): any[]
+        load(workspaceId: string, agentId: string): Agent|null
         save(workspaceId: string, agent: Agent): boolean
         delete(workspaceId: string, agentId: string): boolean
         getRuns(workspaceId: string, agentId: string): AgentRun[]

@@ -151,7 +151,8 @@ contextBridge.exposeInMainWorld(
     },
     agents: {
       forge(): void { return ipcRenderer.send(IPC.AGENTS.OPEN_FORGE) },
-      load: (workspaceId: string): any[] => { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.LOAD, workspaceId)).map((a: any) => Agent.fromJson(a)) },
+      list: (workspaceId: string): any[] => { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.LIST, workspaceId)).map((a: any) => Agent.fromJson(a)) },
+      load(workspaceId: string, agentId: string): Agent|null { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.LOAD, JSON.stringify({ workspaceId, agentId }))) },
       save(workspaceId: string, agent: Agent): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE, JSON.stringify({ workspaceId, agent })) },
       delete(workspaceId: string, agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE, JSON.stringify({ workspaceId, agentId })) },
       getRuns(workspaceId: string, agentId: string): AgentRun[] { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.GET_RUNS, JSON.stringify({ workspaceId, agentId }))) },

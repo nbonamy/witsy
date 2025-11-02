@@ -48,6 +48,13 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
       toolCalls: [],
     }
 
+    // if not ephemeral, save it now
+    if (!opts?.ephemeral) {
+      this.agent.lastRunId = run.uuid
+      this.saveAgent()
+      this.saveRun(run)
+    }
+
     // we need to store each step output
     const outputs: string[] = []
 

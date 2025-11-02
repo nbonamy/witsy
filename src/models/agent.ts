@@ -9,6 +9,7 @@ export default class Agent implements AgentBase {
   source: AgentSource
   createdAt: number
   updatedAt: number
+  lastRunId?: string
   name: string
   description: string
   type: AgentType
@@ -60,6 +61,7 @@ export default class Agent implements AgentBase {
     agent.source = obj.source || 'witsy'
     agent.createdAt = obj.createdAt ?? Date.now()
     agent.updatedAt = obj.updatedAt ?? Date.now()
+    agent.lastRunId = obj.lastRunId
     agent.name = obj.name
     agent.description = obj.description
     agent.type = obj.type ?? 'runnable'

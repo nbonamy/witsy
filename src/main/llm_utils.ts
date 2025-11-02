@@ -1,17 +1,18 @@
 import { App } from 'electron'
+import DocumentRepository from '../rag/docrepo'
 import { initI18n } from '../services/i18n'
 import { Agent, AgentRun } from '../types/agents'
 import { Configuration } from '../types/config'
-import { anyDict } from '../types/index'
-import { loadAgents, saveAgentRun } from './agents'
+import { anyDict, Expert } from '../types/index'
+import { DocumentBase } from '../types/rag'
+import * as agents from './agents'
 import { loadSettings } from './config'
+import * as experts from './experts'
 import { getLocaleMessages } from './i18n'
 import { runPython } from './interpreter'
-import * as pyodide from './pyodide'
 import Mcp from './mcp'
+import * as pyodide from './pyodide'
 import LocalSearch from './search'
-import DocumentRepository from '../rag/docrepo'
-import { DocumentBase } from '../types/rag'
 
 /**
  * Base class for LLM operations that need global mocks and i18n
@@ -65,12 +66,25 @@ export class LlmContext {
 
         // @ts-expect-error partial mock
         agents: {
-          load: (wsId: string): Agent[] => {
-            return loadAgents(this.app, wsId)
+          list: (wsId: string): Agent[] => {
+            return agents.listAgents(this.app, wsId)
+          },
+          load: (wsId: string, agentId: string): Agent|null => {
+            return agents.loadAgent(this.app, wsId, agentId)
+          },
+          save: (wsId: string, agent: anyDict): boolean => {
+            return agents.saveAgent(this.app, wsId, agent)
           },
           saveRun: (wsId: string, run: AgentRun): boolean =>  {
-            return saveAgentRun(this.app, wsId, run)
+            return agents.saveAgentRun(this.app, wsId, run)
           },
+        },
+
+        // @ts-expect-error partial mock
+        experts: {
+          load: (wsId: string): Expert[] => {
+            return experts.loadExperts(this.app, wsId)
+          }
         },
 
         // @ts-expect-error partial mock

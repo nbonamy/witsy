@@ -43,6 +43,10 @@ export default class AgentExecutorBase {
     return false
   }
 
+  protected saveAgent(): void {
+    window.api.agents.save(this.workspaceId, JSON.parse(JSON.stringify(this.agent)))
+  }
+
   protected saveRun(run: AgentRun): void {
     window.api.agents.saveRun(this.workspaceId, {
       ...run,
@@ -61,7 +65,7 @@ export default class AgentExecutorBase {
 
     // and now add tools for running agents
     const allAgents = [
-      ...window.api.agents.load(this.workspaceId),
+      ...window.api.agents.list(this.workspaceId),
       ...(opts?.agents ?? []),
     ]
 

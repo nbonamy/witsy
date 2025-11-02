@@ -201,7 +201,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     agents: {
       forge: vi.fn(),
-      load: vi.fn(() => [
+      list: vi.fn(() => [
         Agent.fromJson({
           uuid: 'agent1',
           source: 'witsy',
@@ -210,6 +210,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           type: 'runnable',
           createdAt: Date.now() - 86400000,
           updatedAt: Date.now() - 3600000,
+          lastRunId: 'run3',
           engine: 'mock',
           model: 'chat',
           modelOpts: {},
@@ -242,6 +243,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           type: 'support',
           createdAt: Date.now() - 172800000,
           updatedAt: Date.now() - 7200000,
+          lastRunId: 'workflow-run1',
           engine: 'mock',
           model: 'chat',
           modelOpts: {},
@@ -283,6 +285,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           invocationValues: { input: 'test' }
         })
       ]),
+      load: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
       getRuns: vi.fn((workspaceId: string, agentId: string) => {

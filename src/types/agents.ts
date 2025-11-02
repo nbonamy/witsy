@@ -36,6 +36,7 @@ export interface Agent {
   source: AgentSource
   createdAt: number
   updatedAt: number
+  lastRunId?: string
   name: string
   description: string
   type: AgentType

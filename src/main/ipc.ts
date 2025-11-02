@@ -296,8 +296,13 @@ export const installIpc = (
     //window.openAgentForgeWindow();
   });
 
-  ipcMain.on(IPC.AGENTS.LOAD, (event, workspaceId) => {
-    event.returnValue = JSON.stringify(agents.loadAgents(app, workspaceId));
+  ipcMain.on(IPC.AGENTS.LIST, (event, workspaceId) => {
+    event.returnValue = JSON.stringify(agents.listAgents(app, workspaceId));
+  });
+
+  ipcMain.on(IPC.AGENTS.LOAD, (event, payload) => {
+    const { workspaceId, agentId } = JSON.parse(payload);
+    event.returnValue = JSON.stringify(agents.loadAgent(app, workspaceId, agentId));
   });
 
   ipcMain.on(IPC.AGENTS.SAVE, (event, payload) => {

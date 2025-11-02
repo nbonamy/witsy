@@ -165,7 +165,7 @@ describe('AgentExecutor - Main Process Integration', () => {
 
     // Mock module functions
     vi.mocked(configModule.loadSettings).mockReturnValue(mockConfig)
-    vi.mocked(agentsModule.loadAgents).mockReturnValue([])
+    vi.mocked(agentsModule.listAgents).mockReturnValue([])
     vi.mocked(agentsModule.saveAgentRun).mockReturnValue(true)
     vi.mocked(interpreterModule.runPython).mockResolvedValue('python result')
     vi.mocked(workspaceModule.listWorkspaces).mockReturnValue([
@@ -205,7 +205,6 @@ describe('AgentExecutor - Main Process Integration', () => {
       prompt: 'Execute test with all available tools',
       tools: null, // This enables ALL tools including knowledge plugin
       agents: [],
-      docrepo: null
     }]
 
     // Run the agent - this should call installGlobalMock internally
@@ -248,7 +247,6 @@ describe('AgentExecutor - Main Process Integration', () => {
       prompt: 'Test',
       tools: null,
       agents: [],
-      docrepo: null
     }]
 
     await executor.runAgent('workspace1', testAgent, 'manual', 'Test')
@@ -278,7 +276,6 @@ describe('AgentExecutor - Main Process Integration', () => {
       prompt: 'Test',
       tools: null,
       agents: [],
-      docrepo: null
     }]
 
     // Run agent twice
