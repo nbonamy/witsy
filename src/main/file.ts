@@ -1,15 +1,17 @@
-import { ExternalApp } from '../types/index';
-import { FileContents, FileSaveParams, FileDownloadParams, FilePickParams, FileProperties } from '../types/file';
-import { DirectoryItem } from '../types/filesystem';
-import { App, dialog } from 'electron';
-import { extensionToMimeType as e2mt } from 'multi-llm-ts';
-import { execSync } from 'child_process';
 import autolib from 'autolib';
+import { execSync } from 'child_process';
+import { App, dialog } from 'electron';
 import icns from 'icns-lib';
-import plist from 'plist';
-import process from 'process'
-import path from 'node:path';
+import { minimatch } from 'minimatch';
+import { extensionToMimeType as e2mt } from 'multi-llm-ts';
 import fs from 'node:fs';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
+import plist from 'plist';
+import process from 'process';
+import { FileContents, FileDownloadParams, FilePickParams, FileProperties, FileSaveParams } from '../types/file';
+import { DirectoryItem } from '../types/filesystem';
+import { ExternalApp } from '../types/index';
 
 export const extensionToMimeType = (ext: string): string => {
   if (ext === '.mp4') return 'video/mp4'
@@ -214,7 +216,7 @@ export const listFilesRecursively = (directoryPath: string): string[] => {
 export const listDirectory = (app: App, dirPath: string, includeHidden: boolean = false): DirectoryItem[] => {
   try {
     const items = fs.readdirSync(dirPath, { withFileTypes: true })
-    
+
     return items
       .filter(item => includeHidden || !item.name.startsWith('.'))
       .map(item => {
@@ -224,7 +226,7 @@ export const listDirectory = (app: App, dirPath: string, includeHidden: boolean 
           fullPath: itemPath,
           isDirectory: item.isDirectory()
         }
-        
+
         if (!item.isDirectory()) {
           try {
             const stats = fs.statSync(itemPath)
@@ -233,13 +235,61 @@ export const listDirectory = (app: App, dirPath: string, includeHidden: boolean 
             // Ignore errors for individual files
           }
         }
-        
+
         return result
       })
   } catch (error) {
     console.error('Error while listing directory', error)
     throw error
   }
+}
+
+export const findFiles = async (app: App, basePath: string, pattern: string, maxResults: number = 10): Promise<string[]> => {
+  const results: string[] = []
+
+  try {
+    const findFilesRecursive = async (currentPath: string, depth: number = 0): Promise<boolean> => {
+      // Safety limit to prevent infinite recursion
+      if (depth > 50) return false
+
+      try {
+        const items = await fsPromises.readdir(currentPath, { withFileTypes: true })
+
+        for (const item of items) {
+          // Stop if we've reached the max results
+          if (results.length >= maxResults) return true
+
+          // Skip hidden files and system files
+          if (item.name.startsWith('.') || item.name === 'node_modules') continue
+
+          const itemPath = path.join(currentPath, item.name)
+
+          if (item.isDirectory()) {
+            // Recursively search subdirectories
+            if (await findFilesRecursive(itemPath, depth + 1)) return true
+          } else {
+            // Check if file matches the pattern
+            if (minimatch(itemPath, pattern) || minimatch(item.name, pattern)) {
+              results.push(itemPath)
+            }
+          }
+        }
+      } catch (error) {
+        // Silently skip directories we can't read (permissions, etc.)
+        console.debug('Skipping directory due to error:', currentPath, error)
+      }
+
+      return results.length >= maxResults
+    }
+
+    await findFilesRecursive(basePath)
+
+  } catch (error) {
+    console.error('Error while finding files', error)
+    throw error
+  }
+
+  return results
 }
 
 export const fileExists = (app: App, filePath: string): boolean => {

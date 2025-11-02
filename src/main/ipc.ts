@@ -465,6 +465,15 @@ export const installIpc = (
     event.returnValue = file.writeFile(app, filePath, content);
   });
 
+  ipcMain.handle(IPC.FILE.FIND_FILES, async (event, basePath, pattern, maxResults) => {
+    try {
+      return await file.findFiles(app, basePath, pattern, maxResults);
+    } catch (error) {
+      console.error('Error while finding files', error);
+      throw error;
+    }
+  });
+
   ipcMain.on(IPC.FILE.NORMALIZE_PATH, (event, filePath) => {
     event.returnValue = file.normalizePath(app, filePath);
   });

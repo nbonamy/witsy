@@ -2,7 +2,7 @@
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
-import { DeleteFileResponse, ListDirectoryResponse, ReadFileResponse, WriteFileResponse } from '../types/filesystem'
+import { DeleteFileResponse, FindFilesResponse, ListDirectoryResponse, ReadFileResponse, WriteFileResponse } from '../types/filesystem'
 import { anyDict } from '../types/index'
 import Plugin, { PluginConfig } from './plugin'
 
@@ -15,10 +15,12 @@ export interface FilesystemPluginConfig extends PluginConfig {
 }
 
 type FileSystemArgs = {
-  action: 'list' | 'read' | 'write' | 'delete'
+  action: 'list' | 'read' | 'write' | 'delete' | 'find'
   path: string
   content?: string
   includeHidden?: boolean
+  pattern?: string
+  maxResults?: number
 }
 
 export default class extends Plugin {
@@ -42,11 +44,11 @@ export default class extends Plugin {
   }
 
   getParameters(): PluginParameter[] {
-    
+
     return [{
       name: 'action',
       type: 'string',
-      enum: ['list', 'read', 'write', ...(this.config.allowWrite ? ['delete'] : [])],
+      enum: ['list', 'read', 'write', 'find', ...(this.config.allowWrite ? ['delete'] : [])],
       description: 'The filesystem tool to use',
       required: true,
     }, {
@@ -58,6 +60,16 @@ export default class extends Plugin {
       name: 'content',
       type: 'string',
       description: 'The content to write to the file (only for write action)',
+      required: false,
+    }, {
+      name: 'pattern',
+      type: 'string',
+      description: 'Glob pattern to match files (e.g., "*.ts", "**/*.json") (only for find action)',
+      required: false,
+    }, {
+      name: 'maxResults',
+      type: 'number',
+      description: 'Maximum number of results to return (default: 10) (only for find action)',
       required: false,
     }, {
       name: 'includeHidden',
@@ -82,13 +94,15 @@ export default class extends Plugin {
         return t('plugins.filesystem.write.running', { path: args.path })
       case 'delete':
         return t('plugins.filesystem.delete.running', { path: args.path })
+      case 'find':
+        return t('plugins.filesystem.find.running', { path: args.path, pattern: args.pattern })
       default:
         return t('plugins.filesystem.default.running')
     }
   }
 
   getCompletedDescription(name: string, args: FileSystemArgs, results: any): string | undefined {
-    
+
     switch (args.action) {
 
       case 'list':
@@ -106,7 +120,11 @@ export default class extends Plugin {
       case 'delete':
         if (!results.success) return t('plugins.filesystem.delete.error', { path: args.path, error: results.error || 'Unknown error' })
         else return t('plugins.filesystem.delete.completed', { path: args.path })
-      
+
+      case 'find':
+        if (!results.success) return t('plugins.filesystem.find.error', { path: args.path, error: results.error || 'Unknown error' })
+        else return t('plugins.filesystem.find.completed', { path: args.path, count: results.count || 0 })
+
       default:
         if (results.error) return t('plugins.filesystem.default.error', { tool: name, error: results.error })
         return t('plugins.filesystem.default.completed')
@@ -160,7 +178,7 @@ export default class extends Plugin {
   }
 
   async execute(context: PluginExecutionContext, parameters: FileSystemArgs): Promise<anyDict> {
-    
+
     const path = await this.mapToAllowedPaths(parameters.path)
     if (!path) {
       return { error: t('plugins.filesystem.invalidPath', { path: parameters.path }) }
@@ -179,7 +197,10 @@ export default class extends Plugin {
 
         case 'delete':
           return await this.deleteFile(path)
-        
+
+        case 'find':
+          return await this.findFiles(path, parameters.pattern, parameters.maxResults)
+
         default:
           return { error: `Unknown action: ${parameters.action}` }
       }
@@ -203,11 +224,24 @@ export default class extends Plugin {
   private async readFile(filePath: string): Promise<ReadFileResponse> {
     try {
       const content = window.api.file.read(filePath)
-      content.contents = atob(content.contents)
+
+      // Determine file format from extension
+      const ext = filePath.split('.').pop()?.toLowerCase() || ''
+      const extractableFormats = ['pdf', 'docx', 'pptx', 'xlsx', 'txt']
+
+      let textContent: string
+      if (extractableFormats.includes(ext)) {
+        // Extract text from documents
+        textContent = window.api.file.extractText(content.contents, ext)
+      } else {
+        // For other files, just decode base64
+        textContent = atob(content.contents)
+      }
+
       return {
         success: true,
         path: filePath,
-        contents: content.contents,
+        contents: textContent,
       }
     } catch (error) {
       return {
@@ -261,6 +295,36 @@ export default class extends Plugin {
 
     } catch (error) {
       return { success: false, error: t('plugins.filesystem.delete.error', { path: filePath, error: error.message }) }
+    }
+  }
+
+  private async findFiles(basePath: string, pattern: string, maxResults?: number): Promise<FindFilesResponse> {
+    try {
+      // Validate pattern
+      if (!pattern) {
+        return {
+          success: false,
+          error: t('plugins.filesystem.find.noPattern')
+        }
+      }
+
+      // Set default maxResults if not provided
+      const limit = maxResults || 10
+
+      // Call the file API (now async)
+      const files = await window.api.file.findFiles(basePath, pattern, limit)
+
+      return {
+        success: true,
+        files,
+        count: files.length,
+        truncated: files.length >= limit
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: t('plugins.filesystem.find.error', { path: basePath, error: error.message })
+      }
     }
   }
 

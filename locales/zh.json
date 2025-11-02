@@ -2302,6 +2302,12 @@
         "error": "删除 {path} 时出错",
         "running": "正在删除 {path}…"
       },
+      "find": {
+        "completed": "在 {path} 中未找到文件 | 在 {path} 中找到 1 个文件 | 在 {path} 中找到 {count} 个文件",
+        "error": "在 {path} 中查找文件时出错：{error}",
+        "noPattern": "查找操作未提供模式",
+        "running": "正在 {path} 中查找匹配 '{pattern}' 的文件…"
+      },
       "invalidPath": "此操作不在允许路径范围内：{path}",
       "list": {
         "completed": "在 {path} 中未发现项目 | 在 {path} 中发现 1 个项目 | 在 {path} 中发现 {count} 个项目",

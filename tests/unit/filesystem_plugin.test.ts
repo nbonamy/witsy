@@ -43,24 +43,28 @@ test('Filesystem plugin initialization', () => {
 test('Filesystem plugin parameters', () => {
   const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const params = plugin.getParameters()
-  expect(params).toHaveLength(4)
+  expect(params).toHaveLength(6)
   expect(params[0].name).toBe('action')
-  expect(params[0].enum).toEqual(['list', 'read', 'write'])
+  expect(params[0].enum).toEqual(['list', 'read', 'write', 'find'])
   expect(params[1].name).toBe('path')
   expect(params[2].name).toBe('content')
-  expect(params[3].name).toBe('includeHidden')
+  expect(params[3].name).toBe('pattern')
+  expect(params[4].name).toBe('maxResults')
+  expect(params[5].name).toBe('includeHidden')
 })
 
 test('Filesystem plugin parameters with write rights', () => {
   store.config.plugins.filesystem.allowWrite = true
   const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const params = plugin.getParameters()
-  expect(params).toHaveLength(4)
+  expect(params).toHaveLength(6)
   expect(params[0].name).toBe('action')
-  expect(params[0].enum).toEqual(['list', 'read', 'write', 'delete'])
+  expect(params[0].enum).toEqual(['list', 'read', 'write', 'find', 'delete'])
   expect(params[1].name).toBe('path')
   expect(params[2].name).toBe('content')
-  expect(params[3].name).toBe('includeHidden')
+  expect(params[3].name).toBe('pattern')
+  expect(params[4].name).toBe('maxResults')
+  expect(params[5].name).toBe('includeHidden')
 })
 
 test('Filesystem plugin map path to allowed paths', () => {
@@ -126,7 +130,8 @@ test('Filesystem plugin read file', async () => {
     path: '/tmp/test.txt'
   })
   expect(window.api.file.read).toHaveBeenCalledWith('/tmp/test.txt')
-  expect(result.contents).toBe('/tmp/test.txt_encoded')
+  expect(window.api.file.extractText).toHaveBeenCalledWith('/tmp/test.txt_encoded', 'txt')
+  expect(result.contents).toBe('/tmp/test.txt_encoded_extracted')
 })
 
 test('Filesystem plugin write file - new file', async () => {
@@ -233,14 +238,17 @@ test('Filesystem plugin status descriptions', () => {
   expect(plugin.getRunningDescription('filesystem', { action: 'read', path: '/tmp/file.txt' })).toBe('plugins.filesystem.read.running')
   expect(plugin.getRunningDescription('filesystem', { action: 'write', path: '/tmp/file.txt' })).toBe('plugins.filesystem.write.running')
   expect(plugin.getRunningDescription('filesystem', { action: 'delete', path: '/tmp/file.txt' })).toBe('plugins.filesystem.delete.running')
+  expect(plugin.getRunningDescription('filesystem', { action: 'find', path: '/tmp', pattern: '*.txt' })).toBe('plugins.filesystem.find.running')
   expect(plugin.getCompletedDescription('filesystem', { action: 'list', path: '/tmp' }, { success: true, items: [1, 2] })).toBe('plugins.filesystem.list.completed')
   expect(plugin.getCompletedDescription('filesystem', { action: 'read', path: '/tmp/file.txt' }, { success: true, contents: 'test' })).toBe('plugins.filesystem.read.completed')
   expect(plugin.getCompletedDescription('filesystem', { action: 'write', path: '/tmp/file.txt' }, { success: true })).toBe('plugins.filesystem.write.completed')
   expect(plugin.getCompletedDescription('filesystem', { action: 'delete', path: '/tmp/file.txt' }, { success: true })).toBe('plugins.filesystem.delete.completed')
+  expect(plugin.getCompletedDescription('filesystem', { action: 'find', path: '/tmp', pattern: '*.txt' }, { success: true, count: 3 })).toBe('plugins.filesystem.find.completed')
   expect(plugin.getCompletedDescription('filesystem', { action: 'list', path: '/tmp' }, { success: false, error: 'test error' })).toBe('plugins.filesystem.list.error')
   expect(plugin.getCompletedDescription('filesystem', { action: 'read', path: '/tmp/file.txt' }, { success: false, error: 'test error' })).toBe('plugins.filesystem.read.error')
   expect(plugin.getCompletedDescription('filesystem', { action: 'write', path: '/tmp/file.txt' }, { success: false, error: 'test error' })).toBe('plugins.filesystem.write.error')
   expect(plugin.getCompletedDescription('filesystem', { action: 'delete', path: '/tmp/file.txt' }, { success: false, error: 'test error' })).toBe('plugins.filesystem.delete.error')
+  expect(plugin.getCompletedDescription('filesystem', { action: 'find', path: '/tmp', pattern: '*.txt' }, { success: false, error: 'test error' })).toBe('plugins.filesystem.find.error')
 })
 
 test('Filesystem plugin unknown action', async () => {
@@ -363,4 +371,67 @@ test('Filesystem plugin write file - write returns false', async () => {
   })
   expect(result.success).toBe(false)
   expect(result.error).toContain('plugins.filesystem.write.error')
+})
+
+test('Filesystem plugin find files', async () => {
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'find',
+    path: '/tmp',
+    pattern: '*.txt'
+  })
+  expect(window.api.file.findFiles).toHaveBeenCalledWith('/tmp', '*.txt', 10)
+  expect(result.success).toBe(true)
+  expect(result.files).toEqual(['/home/user/file1.txt', '/home/user/subdir/file2.txt'])
+  expect(result.count).toBe(2)
+  expect(result.truncated).toBe(false)
+})
+
+test('Filesystem plugin find files with maxResults', async () => {
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'find',
+    path: '/tmp',
+    pattern: '*.txt',
+    maxResults: 1
+  })
+  expect(window.api.file.findFiles).toHaveBeenCalledWith('/tmp', '*.txt', 1)
+  expect(result.success).toBe(true)
+  expect(result.files).toEqual(['/home/user/file1.txt'])
+  expect(result.count).toBe(1)
+  expect(result.truncated).toBe(true)
+})
+
+test('Filesystem plugin find files - no pattern', async () => {
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'find',
+    path: '/tmp'
+  })
+  expect(result.success).toBe(false)
+  expect(result.error).toContain('plugins.filesystem.find.noPattern')
+})
+
+test('Filesystem plugin find files - error handling', async () => {
+  window.api.file.findFiles = vi.fn(() => {
+    throw new Error('Search failed')
+  })
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'find',
+    path: '/tmp',
+    pattern: '*.txt'
+  })
+  expect(result.success).toBe(false)
+  expect(result.error).toContain('plugins.filesystem.find.error')
+})
+
+test('Filesystem plugin find files - invalid path', async () => {
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+  const result = await plugin.execute(context, {
+    action: 'find',
+    path: '/etc',
+    pattern: '*.conf'
+  })
+  expect(result.error).toContain('plugins.filesystem.invalidPath')
 })

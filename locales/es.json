@@ -2283,6 +2283,12 @@
         "error": "Error al eliminar {path}",
         "running": "Eliminando {path}…"
       },
+      "find": {
+        "completed": "No se encontraron archivos en {path} | Se encontró 1 archivo en {path} | Se encontraron {count} archivos en {path}",
+        "error": "Error al buscar archivos en {path}: {error}",
+        "noPattern": "No se proporcionó un patrón para la operación de búsqueda",
+        "running": "Buscando archivos que coincidan con '{pattern}' en {path}…"
+      },
       "invalidPath": "Esta operación no forma parte de las rutas permitidas: {path}",
       "list": {
         "completed": "No se encontró ningún elemento en {path} | Se encontró 1 elemento en {path} | Se encontraron {count} elementos en {path}",

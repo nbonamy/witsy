@@ -2283,6 +2283,12 @@
         "error": "Errore durante la cancellazione di {path}",
         "running": "Cancellazione di {path} in corso…"
       },
+      "find": {
+        "completed": "Nessun file trovato in {path} | Trovato 1 file in {path} | Trovati {count} file in {path}",
+        "error": "Errore durante la ricerca di file in {path}: {error}",
+        "noPattern": "Nessun pattern fornito per l'operazione di ricerca",
+        "running": "Ricerca di file corrispondenti a '{pattern}' in {path}…"
+      },
       "invalidPath": "Questa operazione non fa parte dei percorsi consentiti: {path}",
       "list": {
         "completed": "Nessun elemento trovato in {path} | 1 elemento trovato in {path} | {count} elementi trovati in {path}",

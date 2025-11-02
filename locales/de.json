@@ -2283,6 +2283,12 @@
         "error": "Fehler beim Löschen von {path}",
         "running": "Lösche {path}…"
       },
+      "find": {
+        "completed": "Keine Dateien in {path} gefunden | 1 Datei in {path} gefunden | {count} Dateien in {path} gefunden",
+        "error": "Fehler beim Finden von Dateien in {path}: {error}",
+        "noPattern": "Kein Muster für die Suchoperation angegeben",
+        "running": "Suche nach Dateien, die '{pattern}' in {path} entsprechen…"
+      },
       "invalidPath": "Dieser Pfad ist nicht in den erlaubten Pfaden enthalten: {path}",
       "list": {
         "completed": "Keine Elemente in {path} gefunden | 1 Element in {path} gefunden | {count} Elemente in {path} gefunden",

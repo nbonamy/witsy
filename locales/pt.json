@@ -2302,6 +2302,12 @@
         "error": "Erro ao deletar {path}",
         "running": "Deletando {path}…"
       },
+      "find": {
+        "completed": "Nenhum arquivo encontrado em {path} | 1 arquivo encontrado em {path} | {count} arquivos encontrados em {path}",
+        "error": "Erro ao encontrar arquivos em {path}: {error}",
+        "noPattern": "Nenhum padrão fornecido para a operação de busca",
+        "running": "Procurando arquivos que correspondam a '{pattern}' em {path}…"
+      },
       "invalidPath": "Esta operação não faz parte dos caminhos permitidos: {path}",
       "list": {
         "completed": "Nenhum item encontrado em {path} | 1 item encontrado em {path} | {count} itens encontrados em {path}",
