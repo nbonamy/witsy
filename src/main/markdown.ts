@@ -87,8 +87,7 @@ const mdPostprocess = (html: string) => {
   // and our own <tool> content as-is: <tool>...</tool>
   let postprocessed = html
   postprocessed = postprocessed.replace(/&lt;think&gt;/g, '<think>').replace(/&lt;\/think&gt;/g, '</think>')
-  postprocessed = postprocessed.replace(/&lt;tool (id|index)=&quot;(\d+)&quot;&gt;/g, '<tool $1="$2">').replace(/&lt;\/tool&gt;/g, '</tool>')
-  postprocessed = postprocessed.replace(/&lt;tool (id|index)=&quot;(\d+)&quot;&gt;/g, '<tool $1="$2">').replace(/&lt;\/tool&gt;/g, '</tool>')
+  postprocessed = postprocessed.replace(/&lt;tool (id|index)=&quot;([^&]+)&quot;&gt;/g, '<tool $1="$2">').replace(/&lt;\/tool&gt;/g, '</tool>')
   return postprocessed
 }
   

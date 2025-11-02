@@ -63,20 +63,22 @@ export const closeOpenMarkdownTags = (input: string): string => {
 
   const codeTags = ['```', '~~~', '`', '"']
 
+  // track active tags: remove tool call tags as id could contain anything...
+  const processedInput = input.replace(/<tool[^>]*?><\/tool>/g, '')
+
   let i: number = 0
   const stack: string[] = []
   let inCodeBlock = false
 
-  // track active tags: remove tool call tags as id could contain anything...
-  while (i < input.replace(/<tool[^>]*?><\/tool>/g, '').length) {
+  while (i < processedInput.length) {
 
     let matched = false
     for (const tag of mdTags) {
 
-      if (input.startsWith(tag, i)) {
-        
+      if (processedInput.startsWith(tag, i)) {
+
         // we do not stack the tag if it is at the end of the input
-        const stackCurrent = (i + tag.length < input.length)
+        const stackCurrent = (i + tag.length < processedInput.length)
 
         // Handle code blocks specially
         if (codeTags.includes(tag)) {

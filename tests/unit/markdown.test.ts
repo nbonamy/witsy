@@ -83,6 +83,24 @@ test('render mix', () => {
   expect(html).toContain('<p><think>Reasoning...</think># &lt;b&gt;instructions.chat.standard:\n&quot;Title&quot;&lt;/b&gt;</p>')
 })
 
+test('render tool with numeric id', () => {
+  const markdown = '<tool id="123"></tool>'
+  const html = renderMarkdown(markdown)
+  expect(html).toContain('<p><tool id="123"></tool></p>')
+})
+
+test('render tool with alphanumeric id', () => {
+  const markdown = '<tool id="call_w6Z8Wj8hhEOaQqRhJbCmLV7e"></tool>'
+  const html = renderMarkdown(markdown)
+  expect(html).toContain('<p><tool id="call_w6Z8Wj8hhEOaQqRhJbCmLV7e"></tool></p>')
+})
+
+test('render tool with index', () => {
+  const markdown = '<tool index="0"></tool>'
+  const html = renderMarkdown(markdown)
+  expect(html).toContain('<p><tool index="0"></tool></p>')
+})
+
 test('close open markdowntags', () => {
 
   // invalid
