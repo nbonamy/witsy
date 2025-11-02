@@ -107,7 +107,7 @@ describe('Scheduler', () => {
 
     // Mock module functions
     vi.mocked(configModule.loadSettings).mockReturnValue(mockConfig)
-    vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
+    vi.mocked(agentsModule.listAgents).mockReturnValue(mockAgents)
     vi.mocked(agentsModule.saveAgentRun).mockReturnValue(true)
     vi.mocked(interpreterModule.runPython).mockResolvedValue('python result')
     vi.mocked(workspaceModule.listWorkspaces).mockReturnValue([{uuid: '123'} as WorkspaceHeader])
@@ -186,7 +186,7 @@ describe('Scheduler', () => {
     })
 
     mockAgents = [agent1, agent2]
-    vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
+    vi.mocked(agentsModule.listAgents).mockReturnValue(mockAgents)
 
     // Mock cron parser to return a time that's not due
     const mockInterval = {
@@ -211,7 +211,7 @@ describe('Scheduler', () => {
     })
 
     mockAgents = [agent]
-    vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
+    vi.mocked(agentsModule.listAgents).mockReturnValue(mockAgents)
 
     // Mock cron parser to return current time (schedule is due)
     const now = Date.now()
@@ -241,7 +241,7 @@ describe('Scheduler', () => {
     })
 
     mockAgents = [agent]
-    vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
+    vi.mocked(agentsModule.listAgents).mockReturnValue(mockAgents)
 
     // Mock cron parser to return current time (schedule is due)
     const now = Date.now()
@@ -265,7 +265,7 @@ describe('Scheduler', () => {
     })
 
     mockAgents = [agent]
-    vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
+    vi.mocked(agentsModule.listAgents).mockReturnValue(mockAgents)
 
     // Mock cron parser to throw error
     mockCronParser.parse.mockImplementation(() => {
@@ -288,7 +288,7 @@ describe('Scheduler', () => {
     })
 
     mockAgents = [agent]
-    vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
+    vi.mocked(agentsModule.listAgents).mockReturnValue(mockAgents)
 
     const now = Date.now()
     const tolerance = 30 * 1000 // 30 seconds
@@ -317,7 +317,7 @@ describe('Scheduler', () => {
     })
 
     mockAgents = [agent]
-    vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
+    vi.mocked(agentsModule.listAgents).mockReturnValue(mockAgents)
 
     const now = Date.now()
     const tolerance = 30 * 1000
@@ -359,7 +359,7 @@ describe('Scheduler', () => {
     })
 
     mockAgents = [agent1, agent2, agent3]
-    vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
+    vi.mocked(agentsModule.listAgents).mockReturnValue(mockAgents)
 
     const now = Date.now()
 
@@ -405,7 +405,7 @@ describe('Scheduler', () => {
     })
 
     mockAgents = [scheduledAgent, nonScheduledAgent]
-    vi.mocked(agentsModule.loadAgents).mockReturnValue(mockAgents)
+    vi.mocked(agentsModule.listAgents).mockReturnValue(mockAgents)
 
     // Simulate it's 9:00:15 AM (15 seconds past due - within tolerance)
     const now = new Date('2024-01-01T09:00:15.000Z').getTime()

@@ -5,7 +5,7 @@
 
     <main>
       
-      <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" />
+      <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" @import-markdown="onImportMarkdown" />
       
       <Chat ref="chat" :style="{ display: mode === 'chat' ? undefined : 'none' }" :extra="viewParams" />
       <DesignStudio :style="{ display: mode === 'studio' ? undefined : 'none' }" />
@@ -205,6 +205,11 @@ const onDictate = () => {
 
 const onNewChat = () => {
   chat.value?.newChat()
+  onMode('chat')
+}
+
+const onImportMarkdown = (chatData: any) => {
+  chat.value?.importChat(chatData)
   onMode('chat')
 }
 

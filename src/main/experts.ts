@@ -65,17 +65,33 @@ const loadExpertData = (source: App|string, workspaceId: string): ExpertData => 
     }
   }
 
+  // needed
+  const defaultCategories = Array.isArray(defaultExpertsData.categories) ? defaultExpertsData.categories : (defaultExpertsData as any).categories
+  const defaultExperts = Array.isArray(defaultExpertsData) ? defaultExpertsData : (defaultExpertsData as any).experts
+
   // migrations can update
   let updated = false
 
   // migrate old experts format
-  const defaultExperts = Array.isArray(defaultExpertsData) ? defaultExpertsData : (defaultExpertsData as any).experts
   const expertData: ExpertData = {
-    categories: defaultExpertsData.categories as ExpertCategory[],
+    categories: defaultCategories as ExpertCategory[],
     experts: defaultExperts as Expert[],
   }
   
   if (Array.isArray(jsonData)) {
+
+    // this is a migration from old array format
+    // as this is a breaking change we backup the old file
+    try {
+      if (!process.env.TEST) {
+        const backupFile = expertsFile.replace('.json', '-backup-v2.json')
+        fs.copyFileSync(expertsFile, backupFile)
+      }
+    } catch (error) {
+      console.warn('Error creating experts backup file', error)
+    }
+
+    // migrate to new format
     expertData.experts = jsonData as Expert[]
     updated = true
   } else if (jsonData?.categories && jsonData?.experts) {
@@ -109,7 +125,7 @@ const loadExpertData = (source: App|string, workspaceId: string): ExpertData => 
 
     // assign categoryId from defaults for system experts if missing
     if (expert.type === 'system' && !expert.categoryId) {
-      if (defaultExpert?.categoryId) {
+      if (defaultExpert.categoryId !== undefined) {
         expert.categoryId = defaultExpert.categoryId
         updated = true
       }
@@ -124,7 +140,16 @@ const loadExpertData = (source: App|string, workspaceId: string): ExpertData => 
     }
 
   }
-  
+
+  // add new categories
+  for (const category of defaultCategories) {
+    const c = expertData.categories.find((cat: ExpertCategory) => cat.id === category.id)
+    if (c == null) {
+      expertData.categories.push(category as ExpertCategory)
+      updated = true
+    }
+  }
+
   // now add new experts
   for (const prompt of defaultExperts) {
     const p = expertData.experts.find((prt: Expert) => prt.id === prompt.id)

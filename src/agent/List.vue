@@ -12,7 +12,7 @@
     </header>
 
     <main>
-      <table class="table-plain table-plain-spaced">
+      <table class="table-plain">
 
         <thead>
           <tr>
@@ -25,7 +25,7 @@
         </thead>
 
         <tbody>
-          <tr v-for="agent in agents">
+          <tr v-for="agent in store.agents" :key="`${agent.uuid}-${agent.lastRunId}`">
             <td>{{ agent.name }}</td>
             <td>{{ agent.description }}</td>
             <td>{{ t(`agent.forge.list.${agent.type}`) }}</td>
@@ -49,6 +49,9 @@
                   </div>
                   <div class="item export" @click="$emit('export', agent)">
                     {{ t('agent.help.export') }}
+                  </div>
+                  <div class="item duplicate" @click="$emit('duplicate', agent)">
+                    {{ t('agent.help.duplicate') }}
                   </div>
                   <div class="item delete" @click="$emit('delete', agent)">
                     {{ t('agent.help.delete') }}
@@ -76,33 +79,18 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Agent, AgentRun } from '../types/agents'
 
-const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'export', 'importA2A', 'importJson'])
+const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson'])
 
-const props = defineProps({
-  agents: Array as PropType<Agent[]>,
-})
-
-const runs = ref<Record<string, AgentRun[]>>({})
 const startingAgents = ref<string[]>([])
 
 onMounted(() => {
-  loadAllRuns()
-  watch(() => props.agents, loadAllRuns, { deep: true })
+  store.loadAgents()
   window.api.on('agent-run-update', onAgentRunUpdate)
 })
 
 onUnmounted(() => {
   window.api.off('agent-run-update', onAgentRunUpdate)
 })
-
-const loadAllRuns = () => {
-  if (!props.agents) return
-  const newCache: Record<string, AgentRun[]> = {}
-  for (const agent of props.agents) {
-    newCache[agent.uuid] = window.api.agents.getRuns(store.config.workspaceId, agent.uuid)
-  }
-  runs.value = newCache
-}
 
 const onAgentRun = async (agent: Agent) => {
   emit('run', agent)
@@ -114,17 +102,15 @@ const onAgentRun = async (agent: Agent) => {
 }
 
 const onAgentRunUpdate = (data: { agentId: string }) => {
-  if (data.agentId && runs.value[data.agentId] !== undefined) {
-    runs.value[data.agentId] = window.api.agents.getRuns(store.config.workspaceId, data.agentId)
-  }
+  store.loadAgents()
 }
 
 const lastRun = (agent: Agent) => {
-  const agentRuns = runs.value[agent.uuid] || []
-  if (agentRuns.length === 0) return t('agent.history.neverRun')
-  const lastRun = agentRuns[agentRuns.length - 1]
-  if (lastRun.status === 'running') return t('agent.history.running')
-  return useTimeAgo().format(new Date(lastRun.createdAt))
+  if (!agent.lastRunId) return t('agent.history.neverRun')
+  const agentRun = window.api.agents.getRun(store.config.workspaceId, agent.uuid, agent.lastRunId)
+  if (!agentRun) return t('agent.history.neverRun')
+  if (agentRun.status === 'running') return t('agent.history.running')
+  return useTimeAgo().format(new Date(agentRun.createdAt))
 }
 
 </script>

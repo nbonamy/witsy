@@ -4,16 +4,11 @@
     <template v-if="mode === 'list'">
     
       <template v-if="store.agents.length === 0">
-        <div class="sp-main">
-          <main class="empty">
-            <IconAgent @click="onCreate()" />
-            {{ t('agent.forge.empty') }}
-          </main>
-        </div>
+        <Empty class="sp-main" @click="onCreate()" />
       </template>
 
       <template v-else>
-        <List class="sp-main" :agents="store.agents" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
+        <List class="sp-main" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @duplicate="duplicateAgent" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
       </template>
 
     </template>
@@ -35,8 +30,8 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
-import IconAgent from '../../assets/agent.svg?component'
 import Editor from '../agent/Editor.vue'
+import Empty from '../agent/Empty.vue'
 import List from '../agent/List.vue'
 import View from '../agent/View.vue'
 import PromptBuilder from '../components/PromptBuilder.vue'
@@ -160,6 +155,13 @@ const runAgent = (agent: Agent, opts?: Record<string, string>) => {
   })
 }
 
+const duplicateAgent = (data: any) => {
+  const agent = Agent.fromJson(data)
+  const duplicated = agent.duplicate(t('agent.copySuffix'))
+  window.api.agents.save(store.config.workspaceId, duplicated)
+  store.loadAgents()
+}
+
 const deleteAgent = (agent: Agent) => {
   Dialog.show({
     title: t('agent.forge.confirmDelete'),
@@ -241,41 +243,5 @@ const onImportJson = async () => {
 
 </script>
 
-
 <style scoped>
-
-.split-pane {
-  
-  .sp-main {
-
-    main {
-    
-      &.empty {
-
-        padding: 10% 25%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 10rem;
-        gap: 2rem;
-        text-align: center;
-
-        color: var(--faded-text-color);
-        font-family: var(--font-family-serif);
-        font-size: 22px;
-        font-weight: var(--font-weight-medium);
-        line-height: 1.5;
-
-        svg {
-          cursor: pointer;
-          width: 10rem;
-          height: 10rem;
-          opacity: 20%;
-        }
-      }
-
-    }
-  }
-}
-
 </style>

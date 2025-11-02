@@ -24,7 +24,7 @@
       <select v-model="categoryId">
         <option value="">{{ t('settings.experts.noCategory') }}</option>
         <option v-for="cat in allCategories" :key="cat.id" :value="cat.id">
-          {{ getCategoryLabel(cat.id, store.expertCategories) }}
+          {{ cat.name }}
         </option>
       </select>
     </div>
@@ -62,11 +62,10 @@
 import { CircleAlertIcon, MinusIcon, PlusIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import Dialog from '../composables/dialog'
-import { getCategoryLabel } from '../services/categories'
-import { expertI18n, expertI18nDefault, t } from '../services/i18n'
+import { expertI18n, expertI18nDefault, categoryI18n, t } from '../services/i18n'
 import { store } from '../services/store'
 import { FileContents } from '../types/file'
-import { Expert, ExternalApp } from '../types/index'
+import { Expert, ExpertCategory, ExternalApp } from '../types/index'
 import EngineModelSelect from './EngineModelSelect.vue'
 
 const emit = defineEmits(['expert-modified']);
@@ -87,7 +86,11 @@ const selectedApp = ref(null)
 const diffLang = ref(false)
 const isEdited = ref(false)
 
-const allCategories = computed(() => store.expertCategories.filter(c => c.state === 'enabled'))
+const allCategories = computed(() => store.expertCategories.filter(c => c.state === 'enabled').map((c: ExpertCategory) => ({
+    id: c.id,
+    name: categoryI18n(c, 'name')
+  })).sort((a, b) => a.name.localeCompare(b.name))
+)
 
 const icons: Record<string, FileContents> = {}
 

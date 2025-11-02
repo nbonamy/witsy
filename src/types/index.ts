@@ -230,7 +230,7 @@ export type ExternalApp = {
 export type ExpertCategory = {
   id: string
   type: 'system' | 'user'
-  state: 'enabled' | 'disabled' | 'deleted'
+  state: 'enabled' | 'disabled'
   name?: string
   icon?: string
 }
@@ -357,8 +357,9 @@ declare global {
         write(filePath: string, content: string): boolean
         delete(filepath: string): boolean
         find(name: string): string
+        findFiles(basePath: string, pattern: string, maxResults?: number): Promise<string[]>
         listDirectory(dirPath: string, includeHidden?: boolean): ListDirectoryResponse
-        pickFile(opts: FilePickParams): string|string[]|FileContents
+        pickFile(opts: FilePickParams): null|string|string[]|FileContents
         pickDirectory(): string
         openInExplorer(filePath: string): void
       }
@@ -426,7 +427,8 @@ declare global {
       }
       agents: {
         forge(): void
-        load(workspaceId: string): any[]
+        list(workspaceId: string): any[]
+        load(workspaceId: string, agentId: string): Agent|null
         save(workspaceId: string, agent: Agent): boolean
         delete(workspaceId: string, agentId: string): boolean
         getRuns(workspaceId: string, agentId: string): AgentRun[]
@@ -472,6 +474,10 @@ declare global {
       }
       interpreter: {
         python(code: string): Promise<any>
+        pyodide(code: string): Promise<any>
+        downloadPyodide(): Promise<any>
+        isPyodideCached(): Promise<boolean>
+        clearPyodideCache(): Promise<void>
       }
       mcp: {
         isAvailable(): boolean
@@ -537,6 +543,7 @@ declare global {
         import(): boolean
       }
       import: {
+        markdown(): any
         openai(workspaceId: string): boolean
       }
       ollama: {

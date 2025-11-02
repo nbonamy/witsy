@@ -1,4 +1,5 @@
-import { LlmChunk, LlmCompletionOpts, LlmEngine, LlmResponse, Model } from 'multi-llm-ts'
+import { LlmChunk, LlmChunkTool, LlmCompletionOpts, LlmEngine, LlmResponse, Model } from 'multi-llm-ts'
+import LlmFactory from '../llms/llm'
 import Message from '../models/message'
 import { Configuration, EngineConfig } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
@@ -49,7 +50,20 @@ export default class Generator {
     const response = messages[messages.length - 1]
     const conversation = this.getConversation(messages)
 
-    // get the models
+    // check readiness
+    const llmManager = LlmFactory.manager(this.config)
+    if (!llmManager.isEngineConfigured(llm.getId())) {
+      response.setText(t('generator.errors.missingApiKey'))
+      return 'missing_api_key'
+    }
+
+    // check config
+    if (!llmManager.isEngineReady(llm.getId())) {
+      response.setText(t('generator.errors.invalidModel'))
+      return 'invalid_model'
+    }
+
+    // check the model
     const engineConfig: EngineConfig = this.config.engines[llm.getId()]
     const model = engineConfig?.models?.chat?.find((m: Model) => m.id === opts.model)
     const visionModel = engineConfig?.models?.chat?.find((m: Model) => m.id === engineConfig.model?.vision)
@@ -89,20 +103,26 @@ export default class Generator {
           ...opts
         })
 
-        // // fake tool calls
-        // for (const toolCall of llmResponse.toolCalls) {
-        //   const chunk: LlmChunk = {
-        //     type: 'tool',
-        //     id: crypto.randomUUID(),
-        //     name: toolCall.name,
-        //     call: {
-        //       params: toolCall.params,
-        //       result: toolCall.result
-        //     },
-        //     done: true
-        //   }
-        //   callback?.call(null, chunk)
-        // }
+        // fake tool calls
+        try {
+          for (const toolCall of llmResponse.toolCalls) {
+            const chunk: LlmChunkTool = {
+              type: 'tool',
+              id: crypto.randomUUID(),
+              name: toolCall.name,
+              state: 'completed',
+              call: {
+                params: toolCall.params,
+                result: toolCall.result
+              },
+              done: true
+            }
+            response.addToolCall(chunk)
+            llmCallback?.call(null, chunk)
+          }
+        } catch (error) {
+          console.error('Error processing tool calls', error)
+        }
 
         // fake streaming
         const chunk: LlmChunk = {

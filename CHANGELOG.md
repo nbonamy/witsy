@@ -5,14 +5,26 @@ All notable changes to this project will be documented in this file.
 ## [3.1.0] - WIP
 
 ### Added
-- Agents categories
-- More error reporting
+- Experts categories
+- Sandboxed python runtime
+- Duplicate agent
+- Experts attached to agent step
+- Import Markdown back into conversations (https://github.com/nbonamy/witsy/issues/469)
+- MiniMax Text-to-Speech API (https://github.com/nbonamy/witsy/issues/461)
 
 ### Changed
-- N/A
+- Wider engine/model menu (https://github.com/nbonamy/witsy/issues/463)
+- Download button for text mangles python export (https://github.com/nbonamy/witsy/issues/468)
+- Update to Soniox v3 endpoint (https://github.com/nbonamy/witsy/pull/457)
+- Filesystem plugin rewrite
+- More LLM provider error reporting
+- Menu refactor
 
 ### Fixed
-- N/A
+- Chat color with dark mode (https://github.com/nbonamy/witsy/issues/464)
+- Ollama Chain of Thought / Reasoning in Prompt (https://github.com/nbonamy/witsy/issues/467)
+- Knowledge Base is not shown / can´t be chosen in some languages (https://github.com/nbonamy/witsy/issues/474)
+- Tool calls not showing on main chat when not streaming (https://github.com/nbonamy/witsy/issues/451)
 
 ### Removed
 - N/A

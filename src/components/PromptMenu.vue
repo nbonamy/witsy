@@ -1,175 +1,28 @@
 <template>
-  <ContextMenuPlus 
+  <ContextMenuPlus
     ref="contextMenuPlus"
     :anchor="anchor"
     :position="position"
     :teleport="teleport"
     :show-filter="false"
     :hover-highlight="false"
+    :items="composedMenuItems"
     @close="$emit('close')"
-  >
-    <!-- Main menu template -->
-    <template #default>
-
-      <div v-if="enableInstructions" class="instructions" data-submenu-slot="instructionsSubmenu" >
-        <FeatherIcon class="icon" /> {{ t('prompt.menu.instructions.title') }}
-      </div>
-
-      <div v-if="enableTools" class="tools" data-submenu-slot="toolsSubmenu">
-        <HammerIcon class="icon" /> {{ t('prompt.menu.tools.title') }}
-      </div>
-      
-      <div v-if="enableDocRepo" class="docrepos" data-submenu-slot="docReposSubmenu" >
-        <LightbulbIcon class="icon" /> {{ t('prompt.menu.docRepos.title') }}
-      </div>
-      
-      <div v-if="enableExperts && expertsMenuItems.length > 0" class="experts" data-submenu-slot="expertsSubmenu" >
-        <BrainIcon class="icon" /> {{ t('prompt.menu.experts.title') }}
-      </div>
-      
-      <div v-if="enableDeepResearch" class="deepresearch" @click="handleDeepResearchClick" >
-        <TelescopeIcon class="icon" /> {{ t('prompt.menu.deepResearch.title') }}
-      </div>
-
-      <div v-if="enableAttachments && (enableExperts || enableDocRepo || enableInstructions)" class="separator" >
-        <hr>
-      </div>
-      
-      <div v-if="enableAttachments" class="attachments" @click="handleAttachmentClick" >
-        <PaperclipIcon class="icon" />{{ t('prompt.menu.attach.title') }}
-      </div>
-      
-    </template>
-
-    <template #expertsSubmenu="{ withFilter }">
-      {{ withFilter(true) }}
-      <!-- Categories with experts -->
-      <div v-for="cat in categoriesWithExperts" :key="cat.id" :data-submenu-slot="`expertCategory-${cat.id}`">
-        <FolderIcon class="icon" />
-        <span>{{ cat.name }}</span>
-      </div>
-
-      <template v-if="uncategorizedExperts.length">
-        <div v-for="exp in uncategorizedExperts" :key="exp.id" @click="handleExpertClick(exp.id)">
-          <BrainIcon class="icon" />
-          <span>{{ exp.name }}</span>
-        </div>
-      </template>
-
-    </template>
-
-    <!-- Category submenus for experts -->
-    <template v-for="cat in categoriesWithExperts" :key="`submenu-${cat.id}`" #[`expertCategory-${cat.id}`]="">
-      <div v-for="exp in expertsByCategory[cat.id]" :key="exp.id" @click="handleExpertClick(exp.id)">
-        <BrainIcon class="icon" />
-        <span>{{ exp.name }}</span>
-      </div>
-    </template>
-
-    <template #docReposSubmenu="{ withFilter }">
-      {{ withFilter(true) }}
-      <div v-for="docRepo in docReposMenuItems" :key="docRepo.uuid" @click="handleDocRepoClick(docRepo.uuid)" >
-        <LightbulbIcon class="icon" /><span>{{ docRepo.name }}</span>
-      </div>
-    </template>
-
-    <template #docReposSubmenuFooter>
-      <div @click="handleManageDocRepo">
-        <SettingsIcon class="icon" /> {{ t('prompt.menu.docRepos.manage') }}
-      </div>
-    </template>
-
-    <template #instructionsSubmenu="{ withFilter }">
-      {{ withFilter(true) }}
-      <div @click="handleInstructionsClick('null')" >
-        <span>{{ t('prompt.instructions.default') }}</span>
-      </div>
-      <div v-for="instructionId in instructionIds" :key="instructionId" @click="handleInstructionsClick(instructionId)" >
-        <span>{{ t(`settings.llm.instructions.${instructionId}`) }}</span>
-      </div>
-      <div v-for="custom in customInstructions" :key="custom.id" @click="handleInstructionsClick(`custom:${custom.id}`)" >
-        <span>{{ custom.label }}</span>
-      </div>
-    </template>
-
-    <template #toolsSubmenu="{ withFilter }">
-      {{ withFilter(true) }}
-      <div class="plugin-group" data-submenu-slot="pluginsSubMenu">
-        <input type="checkbox" :checked="pluginsStatusComputed === 'all'" :data-indeterminate="pluginsStatusComputed === 'some'" @click.stop="handlePluginsClick()" />
-        <span>{{ t('prompt.menu.tools.plugins') }}</span>
-      </div>
-      <template v-for="serverWithTools in mcpServersWithTools" :key="serverWithTools.uuid">
-        <div v-if="serverWithTools.tools.length > 0" class="server-group" :data-submenu-slot="`tools-${serverWithTools.uuid}`">
-          <input type="checkbox" :checked="serverToolsStatus(serverWithTools) === 'all'" :data-indeterminate="serverToolsStatus(serverWithTools) === 'some'" @click.stop="handleServerToolsClick(serverWithTools)" />
-          <span>{{ getServerDisplayName(serverWithTools) }}</span>
-        </div>
-      </template>
-    </template>
-
-    <template #toolsSubmenuFooter>
-      <div class="footer-select">
-        <button @click="handleSelectAllTools()">
-         {{  t('common.selectAll') }}
-        </button>
-        <button @click="handleUnselectAllTools()">
-          {{  t('common.unselectAll') }}
-        </button>
-      </div>
-    </template>
-
-    <template #pluginsSubMenu="{ withFilter }">
-      {{ withFilter(true) }}
-      <div v-for="plugin in enabledPlugins(store.config)" :key="plugin" :data-id="plugin" @click="handlePluginClick(plugin)">
-        <input type="checkbox" :checked="pluginStatus(plugin) === 'all'"  />
-        <span>{{ t(`settings.plugins.${plugin}.title`) }}</span>
-      </div>
-    </template>
-
-    <template #pluginsSubMenuFooter>
-      <div class="footer-select">
-        <button @click="handleSelectAllPlugins">
-         {{  t('common.selectAll') }}
-        </button>
-        <button @click="handleUnselectAllPlugins">
-          {{  t('common.unselectAll') }}
-        </button>
-      </div>
-    </template>
-
-    <template v-for="serverWithTools in mcpServersWithTools" :key="serverWithTools.uuid" v-slot:[`tools-${serverWithTools.uuid}`]="{ withFilter }">
-      {{ withFilter(true) }}
-      <div v-for="tool in serverWithTools.tools" :key="tool.name" :data-id="tool.uuid" @click.stop="handleServerToolClick(serverWithTools, tool)">
-        <input type="checkbox" :checked="serverToolStatus(serverWithTools, tool) === 'all'"  />
-        <span>{{ tool.name }}</span>
-      </div>
-    </template>
-
-    <template v-for="serverWithTools in mcpServersWithTools" :key="serverWithTools.uuid" v-slot:[`tools-${serverWithTools.uuid}Footer`]="">
-      <div class="footer-select">
-        <button @click="handleSelectAllServerTools(serverWithTools)">
-         {{  t('common.selectAll') }}
-        </button>
-        <button @click="handleUnselectAllServerTools(serverWithTools)">
-          {{  t('common.unselectAll') }}
-        </button>
-      </div>
-    </template>
-
-</ContextMenuPlus>
+  />
 </template>
 
 <script setup lang="ts">
-import { BrainIcon, FeatherIcon, FolderIcon, HammerIcon, LightbulbIcon, PaperclipIcon, SettingsIcon, TelescopeIcon } from 'lucide-vue-next'
-import { computed, onMounted, ref, watch } from 'vue'
-import * as ts from '../composables/tool_selection'
-import { enabledPlugins } from '../plugins/plugins'
-import { getCategoryLabel } from '../services/categories'
-import { expertI18n, t } from '../services/i18n'
+import { BrainIcon, FeatherIcon, HammerIcon, LightbulbIcon, PaperclipIcon, TelescopeIcon } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import { useDocReposMenu } from '../composables/useDocReposMenu'
+import { useExpertsMenu } from '../composables/useExpertsMenu'
+import { useInstructionsMenu } from '../composables/useInstructionsMenu'
+import { useToolsMenu } from '../composables/useToolsMenu'
+import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { Expert } from '../types/index'
+import type { MenuItem } from '../types/menu'
 import { ToolSelection } from '../types/llm'
-import { McpServer, McpServerWithTools, McpTool, McpToolUnique } from '../types/mcp'
-import { DocumentBase } from '../types/rag'
+import { McpServerWithTools, McpTool } from '../types/mcp'
 import ContextMenuPlus from './ContextMenuPlus.vue'
 
 // Props
@@ -223,245 +76,122 @@ const emit = defineEmits<Emits>()
 
 // Reactive data
 const contextMenuPlus = ref()
-const docRepos = ref<DocumentBase[]>([])
-const allPluginsTools = ref<ToolSelection>([])
-const mcpServersWithTools = ref<McpServerWithTools[]>([])
-const pluginsStatusComputed = ref<ts.ToolStatus>('all')
 
-// Built-in instruction IDs
-const instructionIds = ['standard', 'structured', 'playful', 'empathic', 'uplifting', 'reflective', 'visionary']
+// Use tools menu composable (only if tools enabled)
+const toolsLogic = props.enableTools ? useToolsMenu({
+  toolSelection: computed(() => props.toolSelection),
+  contextMenuRef: contextMenuPlus,
+  emit,
+}) : null
 
-const expertsMenuItems = computed(() => {
-  return store.experts
-    .filter((expert: Expert) => expert.state === 'enabled')
-    .map(expert => ({
-      id: expert.id,
-      name: expert.name || expertI18n(expert, 'name'),
-      prompt: expert.prompt || expertI18n(expert, 'prompt'),
-      categoryId: expert.categoryId
-    }))
-})
+// Use experts menu composable (only if experts enabled)
+const expertsLogic = props.enableExperts ? useExpertsMenu({
+  emit,
+  footerMode: 'manage',
+}) : null
 
-const categoriesWithExperts = computed(() => {
-  // Get categories that have at least one enabled expert
-  const catIds = new Set<string>()
-  expertsMenuItems.value.forEach(exp => {
-    if (exp.categoryId) {
-      catIds.add(exp.categoryId)
-    }
-  })
+// Use docrepos menu composable (only if docrepo enabled)
+const docReposLogic = props.enableDocRepo ? useDocReposMenu({
+  emit,
+  footerMode: 'manage',
+}) : null
 
-  // Get category objects and add labels
-  const categories = store.expertCategories
-    .filter(c => c.state === 'enabled' && catIds.has(c.id))
-    .map(c => ({
-      id: c.id,
-      icon: c.icon,
-      name: getCategoryLabel(c.id, store.expertCategories)
-    }))
+// Use instructions menu composable (only if instructions enabled)
+const instructionsLogic = props.enableInstructions ? useInstructionsMenu({
+  emit,
+}) : null
 
-  // Sort alphabetically by name
-  return categories.sort((a, b) => a.name.localeCompare(b.name))
-})
 
-const expertsByCategory = computed(() => {
-  const grouped: Record<string, typeof expertsMenuItems.value> = {}
+// Compose all menu items
+const composedMenuItems = computed<MenuItem[]>(() => {
+  const items: MenuItem[] = []
 
-  expertsMenuItems.value.forEach(exp => {
-    const catId = exp.categoryId || 'uncategorized'
-    if (!grouped[catId]) grouped[catId] = []
-    grouped[catId].push(exp)
-  })
-
-  // Keep experts in original order (from store.experts)
-  return grouped
-})
-
-const uncategorizedExperts = computed(() => {
-  return expertsMenuItems.value.filter(exp => !exp.categoryId)
-})
-
-const docReposMenuItems = computed(() => {
-  return docRepos.value.map(docRepo => ({
-    uuid: docRepo.uuid,
-    name: docRepo.name,
-    description: (docRepo as any).description || ''
-  }))
-})
-
-const customInstructions = computed(() => {
-  return store.config.llm.customInstructions || []
-})
-
-onMounted(async () => {
-
-  if (props.enableDocRepo) {
-    loadDocRepos()
-    window.api.on('docrepo-modified', loadDocRepos)
+  // Instructions submenu (from composable)
+  if (props.enableInstructions && instructionsLogic) {
+    items.push({
+      id: 'instructions',
+      label: t('prompt.menu.instructions.title'),
+      icon: FeatherIcon,
+      submenu: instructionsLogic.menuItems.value,
+      showFilter: instructionsLogic.showFilter,
+      cssClass: 'instructions',
+    })
   }
 
-  if (props.enableTools) {
-    mcpServersWithTools.value = await window.api.mcp.getAllServersWithTools()
-    allPluginsTools.value = await ts.allPluginsTools()
-
-    watch(props, async () => {
-      pluginsStatusComputed.value = await ts.pluginsStatus(props.toolSelection)
-    }, { deep: true, immediate: true })
-
+  // Tools submenu (from composable)
+  if (props.enableTools && toolsLogic) {
+    items.push({
+      id: 'tools',
+      label: t('prompt.menu.tools.title'),
+      icon: HammerIcon,
+      submenu: toolsLogic.menuItems.value,
+      footer: toolsLogic.footerItems.value,
+      showFilter: toolsLogic.showFilter, // Piloted by useToolsMenuItems
+    })
   }
 
+  // DocRepos submenu (from composable)
+  if (props.enableDocRepo && docReposLogic) {
+    items.push({
+      id: 'docrepos',
+      label: t('prompt.menu.docRepos.title'),
+      icon: LightbulbIcon,
+      submenu: docReposLogic.menuItems.value,
+      footer: docReposLogic.footerItems.value,
+      showFilter: docReposLogic.showFilter,
+      cssClass: 'docrepos',
+    })
+  }
+
+  // Experts submenu (from composable)
+  if (props.enableExperts && expertsLogic && expertsLogic.menuItems.value.length > 0) {
+    items.push({
+      id: 'experts',
+      label: t('prompt.menu.experts.title'),
+      icon: BrainIcon,
+      submenu: expertsLogic.menuItems.value,
+      footer: expertsLogic.footerItems.value,
+      showFilter: expertsLogic.showFilter,
+      cssClass: 'experts',
+    })
+  }
+
+  // Deep Research (simple item, no submenu)
+  if (props.enableDeepResearch) {
+    items.push({
+      id: 'deepresearch',
+      label: t('prompt.menu.deepResearch.title'),
+      icon: TelescopeIcon,
+      cssClass: 'deepresearch',
+      onClick: () => {
+        emit('deepResearchToggled')
+        emit('close')
+      },
+    })
+  }
+
+  // Separator before attachments
+  if (props.enableAttachments && (props.enableExperts || props.enableDocRepo || props.enableInstructions || props.enableDeepResearch)) {
+    items.push({
+      id: 'separator',
+      type: 'separator',
+    })
+  }
+
+  // Attachments (simple item, no submenu)
+  if (props.enableAttachments) {
+    items.push({
+      id: 'attachments',
+      label: t('prompt.menu.attach.title'),
+      icon: PaperclipIcon,
+      cssClass: 'attachments',
+      onClick: () => {
+        emit('attachRequested')
+      },
+    })
+  }
+
+  return items
 })
-
-
-const loadDocRepos = () => {
-  try {
-    docRepos.value = window.api?.docrepo?.list(store.config.workspaceId) || []
-  } catch (error) {
-    console.error('Failed to load document repositories:', error)
-    docRepos.value = []
-  }
-}
-
-const pluginStatus = (pluginName: string): ts.ToolStatus => {
-  return ts.pluginStatus(props.toolSelection, pluginName)
-}
-
-const serverToolsStatus = (server: McpServerWithTools): ts.ToolStatus => {
-  return ts.serverToolsStatus(mcpServersWithTools.value, props.toolSelection, server)
-}
-
-const serverToolStatus = (server: McpServerWithTools, tool: McpToolUnique): ts.ToolStatus => {
-  return ts.serverToolStatus(mcpServersWithTools.value, props.toolSelection, server, tool)
-}
-
-const handleExpertClick = (expertId: string) => {
-  emit('close')
-  if (expertId === 'none') {
-    emit('expertSelected', null)
-  } else {
-    emit('expertSelected', expertId)
-  }
-}
-
-// const handleManageExperts = () => {
-//   emit('close')
-//   emit('manageExperts')
-// }
-
-const handleDocRepoClick = (docRepoUuid: string) => {
-  emit('close')
-  emit('docRepoSelected', docRepoUuid)
-}
-
-const handleManageDocRepo = () => {
-  emit('close')
-  emit('manageDocRepo')
-}
-
-const handleInstructionsClick = (instructionId: string) => {
-  emit('instructionsSelected', instructionId)
-  emit('close')
-}
-
-const handleSelectAllTools = () => {
-  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
-  emit('selectAllTools', visibleIds)
-}
-
-const handleUnselectAllTools = () => {
-  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
-  emit('unselectAllTools', visibleIds)
-}
-
-const handleSelectAllPlugins = () => {
-  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
-  emit('selectAllPlugins', visibleIds)
-}
-
-const handleUnselectAllPlugins = () => {
-  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
-  emit('unselectAllPlugins', visibleIds)
-}
-
-const handleSelectAllServerTools = (server: McpServerWithTools) => {
-  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
-  emit('selectAllServerTools', server, visibleIds)
-}
-
-const handleUnselectAllServerTools = (server: McpServerWithTools) => {
-  const visibleIds = contextMenuPlus.value?.getVisibleItemIds() || null
-  emit('unselectAllServerTools', server, visibleIds)
-}
-
-const handlePluginsClick = () => {
-  emit('allPluginsToggle')
-}
-
-const handlePluginClick = (pluginName: string) => {
-  emit('pluginToggle', pluginName)
-}
-
-const handleServerToolsClick = (server: McpServerWithTools) => {
-  emit('allServerToolsToggle', server)
-}
-
-const handleServerToolClick = (server: McpServerWithTools, tool: McpTool) => {
-  emit('serverToolToggle', server, tool)
-}
-
-const getServerDisplayName = (server: McpServer): string => {
-  return server.label || server.command || server.url || 'Unknown Server'
-}
-
-const handleAttachmentClick = () => {
-  emit('attachRequested')
-}
-
-const handleDeepResearchClick = () => {
-  emit('deepResearchToggled')
-  emit('close')
-}
 
 </script>
-
-<style scoped>
-
-.server-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.tool-description {
-  opacity: 0.7;
-  font-size: 0.9em;
-  margin-left: 8px;
-}
-
-.icon {
-  width: 16px;
-  height: 16px;
-}
-
-.count {
-  margin-left: auto;
-  opacity: 0.6;
-  font-size: 0.9em;
-}
-
-.footer-select {
-  display: flex;
-  align-items: center;
-  button {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    svg {
-      width: var(--icon-lg);
-      height: var(--icon-lg);
-    }
-  }
-}
-
-</style>

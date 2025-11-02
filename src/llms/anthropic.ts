@@ -1,6 +1,5 @@
 
 import { Anthropic, ChatModel, LlmCompletionOpts } from 'multi-llm-ts'
-import { MessageCreateParamsBase } from '@anthropic-ai/sdk/resources/beta/messages/messages'
 import { store } from '../services/store'
 import ComputerPlugin from '../plugins/computer'
 
@@ -24,7 +23,7 @@ const getFallbackModel = (): string => {
 
 export default class AnthropicEngine extends Anthropic {
 
-  getCompletionOpts(model: ChatModel, opts?: LlmCompletionOpts): Omit<MessageCreateParamsBase, 'model'|'messages'|'stream'|'tools'|'tool_choice'> {
+  getCompletionOpts(model: ChatModel, opts?: LlmCompletionOpts): any {
 
     // we need opts
     if (!opts) opts = {} 

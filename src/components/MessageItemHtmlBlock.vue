@@ -85,10 +85,47 @@ const extractBodyContent = (htmlContent: string) => {
   return htmlContent.slice(bodyTagEnd + 1, bodyEnd)
 }
 
+const isDarkMode = () => {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+}
+
+const getDarkModeCSS = () => {
+  return `
+    <style>
+      *:not([style*="color"]) {
+        color: ${getComputedStyle(document.documentElement).getPropertyValue('--color-on-surface').trim()};
+      }
+    </style>
+  `
+}
+
+const injectDarkModeCSS = (htmlContent: string) => {
+  if (!isDarkMode()) {
+    return htmlContent
+  }
+
+  const darkModeCSS = getDarkModeCSS()
+
+  // Find the head tag and inject CSS
+  const headEndIndex = htmlContent.indexOf('</head>')
+  if (headEndIndex !== -1) {
+    return htmlContent.substring(0, headEndIndex) + darkModeCSS + htmlContent.substring(headEndIndex)
+  }
+
+  // If no head tag, try to inject after opening html tag
+  const htmlTagEnd = htmlContent.indexOf('>')
+  if (htmlTagEnd !== -1 && htmlContent.substring(0, htmlTagEnd + 1).toLowerCase().includes('<html')) {
+    return htmlContent.substring(0, htmlTagEnd + 1) + '<head>' + darkModeCSS + '</head>' + htmlContent.substring(htmlTagEnd + 1)
+  }
+
+  // Otherwise, prepend to the content
+  return darkModeCSS + htmlContent
+}
+
 const html = computed(() => {
-  // Non-transient: return full HTML content
+  // Non-transient: return full HTML content with dark mode CSS injected
   if (!props.transient) {
-    return extractHtmlContent()
+    return injectDarkModeCSS(extractHtmlContent())
   }
 
   // Transient: wait for head to complete
@@ -96,7 +133,7 @@ const html = computed(() => {
     return '' // No iframe yet
   }
 
-  // Transient with head complete: return cached HTML with listener
+  // Transient with head complete: return cached HTML with listener (already has CSS injected)
   return initialHtmlWithListener.value
 })
 
@@ -129,8 +166,9 @@ const updateIframeContent = () => {
     const headEndIndex = htmlContent.indexOf('</head>') + 7
     const headSection = htmlContent.substring(0, headEndIndex)
 
-    // Inject listener before </head> and add empty body
-    const htmlWithListener = headSection.replace('</head>', listenerScript + '</head>')
+    // Inject dark mode CSS and listener before </head> and add empty body
+    const darkModeCSS = isDarkMode() ? getDarkModeCSS() : ''
+    const htmlWithListener = headSection.replace('</head>', darkModeCSS + listenerScript + '</head>')
     initialHtmlWithListener.value = htmlWithListener + '<body></body></html>'
 
     headComplete.value = true

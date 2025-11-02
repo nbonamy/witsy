@@ -8,7 +8,7 @@
       <div class="title">{{ t('settings.tabs.experts') }}</div>
     </header>
     <main class="sliding-root" :class="{ visible: !edited }">
-      <ExpertsList ref="list" @edit="onEdit" @create="onCreate" />
+      <ExpertsList ref="list" :workspace="store.workspace" @edit="onEdit" @create="onCreate" />
     </main>
     <main class="editor sliding-pane" :class="{ visible: edited }"> 
       <ExpertEditor ref="editor" :expert="edited" @expert-modified="onExpertModified"/>
@@ -22,7 +22,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { ref } from 'vue'
 import ExpertEditor from '../components/ExpertEditor.vue'
 import ExpertsList from '../components/ExpertsList.vue'
-import { newExpert, saveExperts } from '../services/experts'
+import { newExpert } from '../services/experts'
 import { expertI18n, t } from '../services/i18n'
 import { store } from '../services/store'
 import { Expert } from '../types/index'
@@ -32,8 +32,7 @@ const editor = ref(null)
 const selected = ref<Expert>(null)
 const edited = ref<Expert>(null)
 
-const onCreate = (current: Expert) => {
-  selected.value = current
+const onCreate = () => {
   edited.value =  newExpert()
 }
 
@@ -88,7 +87,7 @@ const onExpertModified = (payload: Expert) => {
 
   // done
   edited.value = null
-  saveExperts(store.config.workspaceId)
+  window.api.experts.save(store.workspace.uuid, store.experts)
   load()
 }
 
