@@ -154,7 +154,7 @@ const loadAgentRun = async () => {
 
     // Load agent definition to get step descriptions
     if (!agent.value) {
-      const agents = window.api.agents.load(store.config.workspaceId)
+      const agents = window.api.agents.list(store.config.workspaceId)
       agent.value = agents.find(a => a.uuid === props.agentId)
     }
 

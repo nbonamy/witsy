@@ -3,7 +3,7 @@ import { CronExpressionParser } from 'cron-parser'
 import { App } from 'electron'
 import DocumentRepository from '../rag/docrepo'
 import { AgentExecutor } from './agent_utils'
-import { loadAgents } from './agents'
+import { listAgents } from './agents'
 import Mcp from './mcp'
 import { listWorkspaces } from './workspace'
 
@@ -47,7 +47,7 @@ export default class Scheduler extends AgentExecutor {
       for (const workspace of workspaces) {
 
         // iterate over all agents
-        const agents = loadAgents(this.app, workspace.uuid)
+        const agents = listAgents(this.app, workspace.uuid)
         for (const agent of agents) {
 
           try {

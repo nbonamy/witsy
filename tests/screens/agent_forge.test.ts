@@ -101,8 +101,8 @@ test('Export agent calls file.save with correct JSON', async () => {
   expect(exportedAgent.uuid).toBe(agent.uuid)
   expect(exportedAgent.name).toBe(agent.name)
   expect(exportedAgent.description).toBe(agent.description)
-  expect(saveCall.properties.filename).toBe(`${agent.name}.json`)
-  expect(saveCall.properties.prompt).toBe(true)
+  expect(saveCall?.properties?.filename).toBe(`${agent.name}.json`)
+  expect(saveCall?.properties?.prompt).toBe(true)
 })
 
 test('Import agent without conflict saves with original UUID', async () => {
