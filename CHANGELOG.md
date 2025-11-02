@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - Ollama Chain of Thought / Reasoning in Prompt (https://github.com/nbonamy/witsy/issues/467)
 - Knowledge Base is not shown / can´t be chosen in some languages (https://github.com/nbonamy/witsy/issues/474)
 - Tool calls not showing on main chat when not streaming (https://github.com/nbonamy/witsy/issues/451)
+- Trailing underscore sometimes appearing on messages
 
 ### Removed
 - N/A
