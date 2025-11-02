@@ -10,10 +10,12 @@ All notable changes to this project will be documented in this file.
 - Duplicate agent
 - Experts attached to agent step
 - Import Markdown back into conversations (https://github.com/nbonamy/witsy/issues/469)
+- MiniMax Text-to-Speech API (https://github.com/nbonamy/witsy/issues/461)
 
 ### Changed
 - Wider engine/model menu (https://github.com/nbonamy/witsy/issues/463)
 - Download button for text mangles python export (https://github.com/nbonamy/witsy/issues/468)
+- Update to Soniox v3 endpoint (https://github.com/nbonamy/witsy/pull/457)
 - Filesystem plugin rewrite
 - More LLM provider error reporting
 - Menu refactor
