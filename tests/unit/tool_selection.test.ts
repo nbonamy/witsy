@@ -430,10 +430,11 @@ describe('tool_selection', () => {
       expect(result).toEqual(['filesystem_list', 'filesystem_read', 'filesystem_write', 'tool2_1', 'tool3_2', 'tool4_2'])
     })
 
-    test('should return all tools when visibleToolIds is empty', async () => {
+    test('should return null (all tools selected) when visibleToolIds is empty', async () => {
       const visibleIds: string[] = []
       const result = await toolSelection.handleUnselectAllTools(visibleIds)
-      expect(result).toEqual(['web_search', 'filesystem_list', 'filesystem_read', 'filesystem_write', 'tool1_1', 'tool2_1', 'tool3_2', 'tool4_2'])
+      // When filter shows 0 items, unselecting 0 tools means all remain selected (null)
+      expect(result).toBeNull()
     })
   })
 

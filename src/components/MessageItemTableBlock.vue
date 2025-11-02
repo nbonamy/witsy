@@ -69,9 +69,10 @@ const onDownloadFormat = async (action: string) => {
 
 <style scoped>
 
-.panel {
+.artifact {
 
   position: relative;
+  user-select: text;
 
   border-color: transparent;
   &:hover {

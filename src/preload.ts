@@ -84,6 +84,7 @@ contextBridge.exposeInMainWorld(
       write: (filePath: string, content: string): any => { return ipcRenderer.sendSync(IPC.FILE.WRITE_FILE, filePath, content) },
       delete: (filepath: string): void => { return ipcRenderer.sendSync(IPC.FILE.DELETE_FILE, filepath) },
       find: (name: string): string => { return ipcRenderer.sendSync(IPC.FILE.FIND_PROGRAM, name) },
+      findFiles: (basePath: string, pattern: string, maxResults?: number): Promise<string[]> => { return ipcRenderer.invoke(IPC.FILE.FIND_FILES, basePath, pattern, maxResults) },
       listDirectory: (dirPath: string, includeHidden?: boolean): ListDirectoryResponse => { return ipcRenderer.sendSync(IPC.FILE.LIST_DIRECTORY, dirPath, includeHidden) },
       pickFile: (opts: FilePickParams): string|strDict|string[] => { return ipcRenderer.sendSync(IPC.FILE.PICK_FILE, JSON.stringify(opts)) },
       pickDirectory: (): string => { return ipcRenderer.sendSync(IPC.FILE.PICK_DIRECTORY) },
@@ -151,7 +152,8 @@ contextBridge.exposeInMainWorld(
     },
     agents: {
       forge(): void { return ipcRenderer.send(IPC.AGENTS.OPEN_FORGE) },
-      load: (workspaceId: string): any[] => { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.LOAD, workspaceId)).map((a: any) => Agent.fromJson(a)) },
+      list: (workspaceId: string): any[] => { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.LIST, workspaceId)).map((a: any) => Agent.fromJson(a)) },
+      load(workspaceId: string, agentId: string): Agent|null { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.LOAD, JSON.stringify({ workspaceId, agentId }))) },
       save(workspaceId: string, agent: Agent): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE, JSON.stringify({ workspaceId, agent })) },
       delete(workspaceId: string, agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE, JSON.stringify({ workspaceId, agentId })) },
       getRuns(workspaceId: string, agentId: string): AgentRun[] { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.GET_RUNS, JSON.stringify({ workspaceId, agentId }))) },
@@ -188,6 +190,10 @@ contextBridge.exposeInMainWorld(
     },
     interpreter: {
       python: (code: string): Promise<any> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYTHON_RUN, code) },
+      pyodide: (code: string): Promise<any> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYODIDE_RUN, code) },
+      downloadPyodide: (): Promise<any> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYODIDE_DOWNLOAD) },
+      isPyodideCached: (): Promise<boolean> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYODIDE_IS_CACHED) },
+      clearPyodideCache: (): Promise<void> => { return ipcRenderer.invoke(IPC.INTERPRETER.PYODIDE_CLEAR_CACHE) },
     },
     mcp: {
       isAvailable: (): boolean => { return ipcRenderer.sendSync(IPC.MCP.IS_AVAILABLE) },
@@ -253,6 +259,7 @@ contextBridge.exposeInMainWorld(
       import: (): boolean => { return ipcRenderer.sendSync(IPC.BACKUP.IMPORT) },
     },
     import: {
+      markdown: (): any => { return ipcRenderer.sendSync(IPC.IMPORT.MARKDOWN) },
       openai: (workspaceId: string): boolean => { return ipcRenderer.sendSync(IPC.IMPORT.OPENAI, workspaceId) },
     },
     ollama: {

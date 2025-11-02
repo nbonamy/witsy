@@ -6,35 +6,102 @@
       <ChevronRightIcon ref="chevronTemplate" style="display: none;" class="chevron-template" />
       <div class="context-menu" :class="cssClasses" :style="position" @keydown="onKeyDown" @keyup="onKeyUp" v-bind="$attrs">
       <!-- Top level filter or back/filter header -->
-      <div v-if="showFilter || currentSubmenu" class="header">
-        <div v-if="currentSubmenu" class="back-button" @click="goBack" ref="backButton">
+      <div v-if="showFilter || currentSubmenu || (items && dataSubmenuStack.length > 0)" class="header">
+        <div v-if="currentSubmenu || (items && dataSubmenuStack.length > 0)" class="back-button" @click="goBack" ref="backButton">
           <MoveLeftIcon />
         </div>
         <div v-if="shouldShowCurrentFilter" class="filter-input">
           <input v-model="filter" :placeholder="t('common.search')" autofocus="true" @keydown.stop="onKeyDown" @keyup.stop="onKeyUp" />
         </div>
-        <div v-else-if="currentSubmenu" class="back-label">
+        <div v-else-if="currentSubmenu || (items && dataSubmenuStack.length > 0)" class="back-label">
           Back
         </div>
       </div>
       
-      <div class="actions" ref="list">        
-        <!-- Show main menu or submenu content -->
-        <template v-if="!currentSubmenu">
-          <slot :filter="filter" :selected="selected" :withFilter="setSubmenuFilter" />
+      <div class="actions" ref="list">
+        <!-- Data-driven mode: render from items prop -->
+        <template v-if="items && items.length">
+          <template v-for="item in (currentDataItems || items)" :key="`${item.id}-${item.checked}-${item.indeterminate}`">
+            <!-- Separator -->
+            <div v-if="item.type === 'separator'" class="item separator">
+              <hr>
+            </div>
+            <!-- Regular item, checkbox, or group -->
+            <div
+              v-else
+              class="item"
+              :class="{
+                'has-submenu': !!item.submenu,
+                'disabled': item.disabled,
+                [item.cssClass || '']: !!item.cssClass
+              }"
+              :data-id="item.id"
+              @click="handleDataItemClick(item)"
+            >
+              <component v-if="item.icon" :is="item.icon" class="icon" />
+              <input
+                v-if="item.type === 'checkbox'"
+                type="checkbox"
+                :checked="item.checked"
+                :data-indeterminate="item.indeterminate"
+                @click.stop="item.onClick && item.onClick()"
+              />
+              <span>{{ item.label }}</span>
+              <ChevronRightIcon v-if="item.submenu" class="chevron-icon" />
+            </div>
+          </template>
         </template>
+
+        <!-- Slot-based mode: use existing slot rendering (backward compatible) -->
         <template v-else>
-          <slot :name="currentSubmenu" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
+          <template v-if="!currentSubmenu">
+            <slot :filter="filter" :selected="selected" :withFilter="setSubmenuFilter" />
+          </template>
+          <template v-else>
+            <slot :name="currentSubmenu" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
+          </template>
         </template>
       </div>
-      
+
       <!-- Footer section -->
       <div v-if="hasFooter" class="footer" ref="footer">
-        <template v-if="!currentSubmenu">
-          <slot name="footer" :filter="filter" :selected="selected" :withFilter="setSubmenuFilter" />
+        <!-- Data-driven footer -->
+        <template v-if="items && currentDataFooter && currentDataFooter.length">
+          <!-- Multiple items = buttons (Select All / Unselect All) -->
+          <div v-if="currentDataFooter.length > 1" class="footer-select">
+            <button
+              v-for="footerItem in currentDataFooter"
+              :key="footerItem.id"
+              :class="{ 'disabled': footerItem.disabled }"
+              :disabled="footerItem.disabled"
+              @click.stop="footerItem.onClick && footerItem.onClick()"
+            >
+              <component v-if="footerItem.icon" :is="footerItem.icon" />
+              {{ footerItem.label }}
+            </button>
+          </div>
+          <!-- Single item = menu item (Clear / Manage) -->
+          <div
+            v-else
+            v-for="footerItem in currentDataFooter"
+            :key="footerItem.id"
+            class="item"
+            :class="{ 'disabled': footerItem.disabled }"
+            @click.stop="footerItem.onClick && footerItem.onClick()"
+          >
+            <component v-if="footerItem.icon" :is="footerItem.icon" class="icon" />
+            <span>{{ footerItem.label }}</span>
+          </div>
         </template>
-        <template v-else>
-          <slot :name="`${currentSubmenu}Footer`" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
+
+        <!-- Slot-based footer (backward compatible) -->
+        <template v-else-if="!items">
+          <template v-if="!currentSubmenu">
+            <slot name="footer" :filter="filter" :selected="selected" :withFilter="setSubmenuFilter" />
+          </template>
+          <template v-else>
+            <slot :name="`${currentSubmenu}Footer`" :filter="filter" :selected="selected" :goBack="goBack" :withFilter="setSubmenuFilter" />
+          </template>
         </template>
       </div>
     </div>
@@ -48,6 +115,7 @@ import { ChevronRightIcon, MoveLeftIcon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, onUnmounted, ref, useSlots, watch } from 'vue'
 import Overlay from '../components/Overlay.vue'
 import { t } from '../services/i18n'
+import type { MenuItem } from '../types/menu'
 
 export type MenuPosition = 'below' | 'above' | 'right' | 'left' | 'above-right' | 'above-left' | 'below-right' | 'below-left'
 
@@ -87,6 +155,14 @@ const props = defineProps({
   cssClasses: {
     type: String,
     required: false
+  },
+  items: {
+    type: Array as () => MenuItem[],
+    required: false
+  },
+  footerItems: {
+    type: Array as () => MenuItem[],
+    required: false
   }
 })
 
@@ -99,10 +175,21 @@ const filter = ref('')
 const selected = ref(null)
 const currentSubmenu = ref(null)
 const chevronTemplate = ref(null)
-const submenuStack = ref([]) // Navigation stack for multi-level submenus
+const submenuStack = ref([]) // Navigation stack for multi-level submenus (slot-based)
 const position = ref(null)
 
+// Data-driven menu state
+const dataSubmenuStack = ref<MenuItem[]>([]) // Stack of MenuItem objects for navigation
+const currentDataItems = ref<MenuItem[] | null>(null) // Current level of items being displayed
+
 const shouldShowCurrentFilter = computed(() => {
+  // Data-driven mode
+  if (props.items && dataSubmenuStack.value.length > 0) {
+    const currentSubmenuItem = dataSubmenuStack.value[dataSubmenuStack.value.length - 1]
+    return currentSubmenuItem.showFilter ?? false
+  }
+
+  // Slot-based mode
   if (!currentSubmenu.value) {
     return props.showFilter
   }
@@ -113,11 +200,78 @@ const shouldShowCurrentFilter = computed(() => {
 const currentSubmenuHasFilter = ref(false)
 
 const hasFooter = computed(() => {
+  // Data-driven mode
+  if (props.items && currentDataFooter.value && currentDataFooter.value.length) {
+    return true
+  }
+  // Slot-based mode
   if (!currentSubmenu.value) {
     return !!$slots.footer
   }
   return !!$slots[`${currentSubmenu.value}Footer`]
 })
+
+// Computed property for current footer items in data-driven mode
+const currentDataFooter = computed(() => {
+  if (!props.items) return null
+
+  // If we're in a submenu, get the footer from the current submenu item
+  if (dataSubmenuStack.value.length > 0) {
+    const currentItem = dataSubmenuStack.value[dataSubmenuStack.value.length - 1]
+    return currentItem.footer || null
+  }
+
+  // At root level, use footerItems prop if provided
+  return props.footerItems || null
+})
+
+// Handler for data-driven item clicks
+const handleDataItemClick = (item: MenuItem) => {
+  if (item.disabled) return
+
+  if (item.submenu && item.submenu.length > 0) {
+    // Navigate to submenu
+    dataSubmenuStack.value.push(item)
+    currentDataItems.value = item.submenu
+    filter.value = '' // Clear filter when entering submenu
+  } else if (item.onClick) {
+    // Execute click handler
+    item.onClick()
+    if (props.autoClose) {
+      emit('close')
+    }
+  }
+}
+
+// Handler for going back in data-driven mode
+const goBackData = () => {
+  if (dataSubmenuStack.value.length > 0) {
+    dataSubmenuStack.value.pop()
+    filter.value = '' // Clear filter when going back
+
+    if (dataSubmenuStack.value.length === 0) {
+      // Back to root
+      currentDataItems.value = null
+    } else {
+      // Back to parent submenu - need to rebuild path through CURRENT items
+      // This ensures we get the updated MenuItem objects with fresh checkbox states
+      let current: MenuItem[] | undefined = props.items
+      for (const stackItem of dataSubmenuStack.value) {
+        const found = current?.find(item => item.id === stackItem.id)
+        if (found?.submenu) {
+          current = found.submenu
+        } else {
+          // Path no longer exists, go to root
+          currentDataItems.value = null
+          dataSubmenuStack.value = []
+          return
+        }
+      }
+
+      currentDataItems.value = current || null
+    }
+  }
+}
 
 const calculatePosition = () => {
   // Mouse coordinate mode
@@ -198,11 +352,14 @@ onMounted(() => {
     }
 
     // Add classes, chevron icons and event listeners after content is rendered
-    nextTick(() => {
-      addClasses()
-      addChevronIcons()
-      addEventListeners()
-    })
+    // Skip for data-driven mode (items already have proper classes)
+    if (!props.items) {
+      nextTick(() => {
+        addClasses()
+        addChevronIcons()
+        addEventListeners()
+      })
+    }
   }
 
   if (isTestMode) {
@@ -220,6 +377,28 @@ onUnmounted(() => {
   document.removeEventListener('keyup', onKeyDown)
 })
 
+// Watch for items changes and update currentDataItems if in a submenu
+watch(() => props.items, (newItems) => {
+  if (!newItems || !currentDataItems.value || dataSubmenuStack.value.length === 0) return
+
+  // Rebuild the currentDataItems path by traversing the new items structure
+  let current: MenuItem[] | undefined = newItems
+  for (const stackItem of dataSubmenuStack.value) {
+    const found = current?.find(item => item.id === stackItem.id)
+    if (found?.submenu) {
+      current = found.submenu
+    } else {
+      // Path no longer exists, go back to root
+      currentDataItems.value = null
+      dataSubmenuStack.value = []
+      return
+    }
+  }
+
+  // Update currentDataItems with the new submenu reference
+  currentDataItems.value = current || null
+}, { deep: true })
+
 // Watch for filter changes and apply filtering
 watch(filter, (newFilter) => {
   nextTick(() => {
@@ -228,12 +407,15 @@ watch(filter, (newFilter) => {
 })
 
 // Watch for content changes to add classes, chevron icons and event listeners
+// Only for slot-based mode
 watch([currentSubmenu], () => {
-  nextTick(() => {
-    addClasses()
-    addChevronIcons()
-    addEventListeners()
-  })
+  if (!props.items) {
+    nextTick(() => {
+      addClasses()
+      addChevronIcons()
+      addEventListeners()
+    })
+  }
 }, { flush: 'post' })
 
 // Watch for selected changes to apply/remove the selected class
@@ -408,7 +590,13 @@ const setSubmenuFilter = (hasFilter: boolean) => {
 }
 
 const goBack = () => {
-  // Pop from stack if there are previous submenus
+  // Data-driven mode
+  if (props.items) {
+    goBackData()
+    return
+  }
+
+  // Slot-based mode (original behavior)
   if (submenuStack.value.length > 0) {
     currentSubmenu.value = submenuStack.value.pop()
   } else {
@@ -693,6 +881,14 @@ defineExpose({
 /* Hide footer border when actions has no visible items */
 .actions:not(:has(.item:not([style*="display: none"]))) + .footer {
   border-top: none;
+}
+
+/* Footer button styling */
+:deep(.footer-select) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
 }
 
 </style>

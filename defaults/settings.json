@@ -444,7 +444,8 @@
       "enabled": true
     },
     "python": {
-      "enabled": false
+      "enabled": false,
+      "runtime": "embedded"
     },
     "search": {
       "enabled": false,

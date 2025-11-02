@@ -50,6 +50,7 @@ export const FILE = {
   DOWNLOAD: 'download',
   DELETE_FILE: 'delete-file',
   FIND_PROGRAM: 'find-program',
+  FIND_FILES: 'find-files',
   GET_TEXT_CONTENT: 'get-text-content',
   GET_APP_INFO: 'get-app-info',
   LIST_DIRECTORY: 'list-directory',
@@ -94,6 +95,7 @@ export const EXPERTS = {
 
 export const AGENTS = {
   OPEN_FORGE: 'agents-open-forge',
+  LIST: 'agents-list',
   LOAD: 'agents-load',
   SAVE: 'agents-save',
   DELETE: 'agents-delete',
@@ -170,6 +172,10 @@ export const MARKDOWN = {
 
 export const INTERPRETER = {
   PYTHON_RUN: 'code-python-run',
+  PYODIDE_RUN: 'code-pyodide-run',
+  PYODIDE_DOWNLOAD: 'code-pyodide-download',
+  PYODIDE_IS_CACHED: 'code-pyodide-is-cached',
+  PYODIDE_CLEAR_CACHE: 'code-pyodide-clear-cache',
 } as const;
 
 export const MCP = {
@@ -248,6 +254,7 @@ export const BACKUP = {
 } as const;
 
 export const IMPORT = {
+  MARKDOWN: 'import-markdown',
   OPENAI: 'import-openai',
 } as const;
 

@@ -2,7 +2,7 @@ import { App } from 'electron'
 import DocumentRepository from '../rag/docrepo'
 import { createAgentExecutor } from '../services/agent_utils'
 import { Agent, AgentRun, AgentRunTrigger } from '../types/agents'
-import { loadAgents } from './agents'
+import { listAgents } from './agents'
 import { LlmContext } from './llm_utils'
 import Mcp from './mcp'
 import { listWorkspaces } from './workspace'
@@ -27,7 +27,7 @@ export function generateWebhookToken(app: App, workspaceId: string, agentId: str
     const workspaces = listWorkspaces(app)
 
     for (const workspace of workspaces) {
-      const agents = loadAgents(app, workspace.uuid)
+      const agents = listAgents(app, workspace.uuid)
       for (const agent of agents) {
         // Skip the agent we're generating for
         if (workspace.uuid === workspaceId && agent.uuid === agentId) {
@@ -57,7 +57,7 @@ export function findAgentByWebhookToken(app: App, token: string): { agent: Agent
   const workspaces = listWorkspaces(app)
 
   for (const workspace of workspaces) {
-    const agents = loadAgents(app, workspace.uuid)
+    const agents = listAgents(app, workspace.uuid)
     const agent = agents.find(a => a.webhookToken === token)
 
     if (agent) {

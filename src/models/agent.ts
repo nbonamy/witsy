@@ -9,6 +9,7 @@ export default class Agent implements AgentBase {
   source: AgentSource
   createdAt: number
   updatedAt: number
+  lastRunId?: string
   name: string
   description: string
   type: AgentType
@@ -60,6 +61,7 @@ export default class Agent implements AgentBase {
     agent.source = obj.source || 'witsy'
     agent.createdAt = obj.createdAt ?? Date.now()
     agent.updatedAt = obj.updatedAt ?? Date.now()
+    agent.lastRunId = obj.lastRunId
     agent.name = obj.name
     agent.description = obj.description
     agent.type = obj.type ?? 'runnable'
@@ -97,7 +99,30 @@ export default class Agent implements AgentBase {
     return replacePromptInputs(this.steps[step].prompt, parameters)
 
   }
-  
+
+  duplicate(nameSuffix = 'Copy'): Agent {
+    const duplicated = new Agent()
+    duplicated.uuid = crypto.randomUUID()
+    duplicated.source = this.source
+    duplicated.createdAt = Date.now()
+    duplicated.updatedAt = Date.now()
+    duplicated.name = `${this.name} - ${nameSuffix}`
+    duplicated.description = this.description
+    duplicated.type = this.type
+    duplicated.engine = this.engine
+    duplicated.model = this.model
+    duplicated.modelOpts = this.modelOpts ? { ...this.modelOpts } : null
+    duplicated.disableStreaming = this.disableStreaming
+    duplicated.locale = this.locale
+    duplicated.instructions = this.instructions
+    duplicated.parameters = this.parameters ? [...this.parameters] : []
+    duplicated.steps = this.steps ? JSON.parse(JSON.stringify(this.steps)) : []
+    duplicated.schedule = this.schedule
+    duplicated.webhookToken = this.webhookToken
+    duplicated.invocationValues = this.invocationValues ? { ...this.invocationValues } : {}
+    return duplicated
+  }
+
   getPreparationDescription?: () => string
   getRunningDescription?: (args: any) => string
   getCompletedDescription?: (args: any, results: any) => string

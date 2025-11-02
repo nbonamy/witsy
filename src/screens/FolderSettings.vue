@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="folder-settings" ref="dialog" type="window" @save="onSave">
+  <ModalDialog id="folder-settings" ref="dialog" type="window" @save="onSave" width="44rem">
     <template #header>
       {{ t('folderSettings.title') }}
     </template>
@@ -255,10 +255,6 @@ defineExpose({ show, close })
 </script>
 
 <style>
-#folder-settings .swal2-popup {
-  width: 44rem !important;
-  max-width: 44rem !important;
-}
 
 .control-group button {
   height: 38px;

@@ -1,5 +1,12 @@
 <template>
+
   <div v-if="message.type == 'text'">
+
+    <!-- expert -->
+      <div v-if="message.expert" class="expert text variable-font-size">
+      <p><BrainIcon /> {{ message.expert.name }}</p>
+    </div>
+
     <template v-if="reasoningBlocks.length">
       <div @click="onToggleReasoning" class="toggle-reasoning">
         <ChevronDownIcon v-if="showReasoning" />
@@ -13,15 +20,18 @@
         </div>
       </div>
     </template>
+
     <div v-for="block in contentBlocks">
       <MessageItemBodyBlock :block="block" :transient="message.transient" @media-loaded="onMediaLoaded(message)" />
     </div>
+
   </div>
+
 </template>
 
 <script setup lang="ts">
 
-import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
+import { BrainIcon, ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { computed, inject, onMounted, PropType, ref, watch } from 'vue'
 import useEventBus from '../composables/event_bus'
 import Message from '../models/message'

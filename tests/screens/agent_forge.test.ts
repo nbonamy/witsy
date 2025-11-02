@@ -7,7 +7,10 @@ import { useWindowMock } from '../mocks/window'
 
 // Mock the i18n service
 vi.mock('../../src/services/i18n', () => ({
-  t: (key: string) => key
+  t: (key: string) => {
+    if (key === 'agent.copySuffix') return 'Copy'
+    return key
+  }
 }))
 
 // Mock Dialog
@@ -23,7 +26,7 @@ vi.mock('../../src/agent/List.vue', () => ({
   default: {
     name: 'List',
     props: ['agents'],
-    emits: ['create', 'view', 'edit', 'run', 'delete', 'export', 'importA2A', 'importJson'],
+    emits: ['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson'],
     template: '<div class="list-mock"></div>'
   }
 }))
@@ -98,8 +101,8 @@ test('Export agent calls file.save with correct JSON', async () => {
   expect(exportedAgent.uuid).toBe(agent.uuid)
   expect(exportedAgent.name).toBe(agent.name)
   expect(exportedAgent.description).toBe(agent.description)
-  expect(saveCall.properties.filename).toBe(`${agent.name}.json`)
-  expect(saveCall.properties.prompt).toBe(true)
+  expect(saveCall?.properties?.filename).toBe(`${agent.name}.json`)
+  expect(saveCall?.properties?.prompt).toBe(true)
 })
 
 test('Import agent without conflict saves with original UUID', async () => {
@@ -298,4 +301,104 @@ test('Import canceled when user dismisses file picker', async () => {
   // Verify no dialogs shown and no agent saved
   expect(Dialog.show).not.toHaveBeenCalled()
   expect(window.api.agents.save).not.toHaveBeenCalled()
+})
+
+test('Duplicates agent when duplicate event is emitted', async () => {
+  const wrapper = mount(AgentForge)
+  await flushPromises()
+
+  const originalAgent = store.agents[0]
+  const originalUuid = originalAgent.uuid
+  const originalName = originalAgent.name
+
+  // Trigger duplicate from list
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('duplicate', originalAgent)
+  await flushPromises()
+
+  // Verify save was called with duplicated agent
+  expect(window.api.agents.save).toHaveBeenCalledTimes(1)
+  const savedAgent = vi.mocked(window.api.agents.save).mock.calls[0][1]
+
+  // Verify duplicated agent has different UUID
+  expect(savedAgent.uuid).not.toBe(originalUuid)
+
+  // Verify duplicated agent has " - Copy" suffix
+  expect(savedAgent.name).toBe(`${originalName} - Copy`)
+
+  // Verify other properties are copied
+  expect(savedAgent.description).toBe(originalAgent.description)
+  expect(savedAgent.type).toBe(originalAgent.type)
+  expect(savedAgent.engine).toBe(originalAgent.engine)
+  expect(savedAgent.model).toBe(originalAgent.model)
+
+  // Verify store.loadAgents was called
+  expect(store.agents.length).toBeGreaterThan(0)
+})
+
+test('Duplicated agent has new timestamps', async () => {
+  const wrapper = mount(AgentForge)
+  await flushPromises()
+
+  const originalAgent = store.agents[0]
+  const originalCreatedAt = originalAgent.createdAt
+
+  // Wait a bit to ensure different timestamps
+  await new Promise(resolve => setTimeout(resolve, 10))
+
+  // Trigger duplicate from list
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('duplicate', originalAgent)
+  await flushPromises()
+
+  // Verify save was called
+  const savedAgent = vi.mocked(window.api.agents.save).mock.calls[0][1]
+
+  // Verify timestamps are different (or at least not older)
+  expect(savedAgent.createdAt).toBeGreaterThanOrEqual(originalCreatedAt)
+  expect(savedAgent.updatedAt).toBeGreaterThanOrEqual(originalCreatedAt)
+})
+
+test('Duplicated agent has no runs attached', async () => {
+  const wrapper = mount(AgentForge)
+  await flushPromises()
+
+  const originalAgent = store.agents[0]
+
+  // Mock getRuns to return runs for original agent
+  vi.mocked(window.api.agents.getRuns).mockImplementation((workspaceId: string, agentId: string) => {
+    if (agentId === originalAgent.uuid) {
+      return [{
+        uuid: 'run-1',
+        agentId: originalAgent.uuid,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        trigger: 'manual',
+        status: 'success',
+        prompt: 'Test prompt',
+        messages: [],
+        toolCalls: []
+      }]
+    }
+    return []
+  })
+
+  // Verify original agent has runs
+  const originalRuns = window.api.agents.getRuns(store.config.workspaceId, originalAgent.uuid)
+  expect(originalRuns).toHaveLength(1)
+
+  // Trigger duplicate from list
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('duplicate', originalAgent)
+  await flushPromises()
+
+  // Get the duplicated agent
+  const savedAgent = vi.mocked(window.api.agents.save).mock.calls[0][1]
+
+  // Verify duplicated agent has different UUID
+  expect(savedAgent.uuid).not.toBe(originalAgent.uuid)
+
+  // Verify duplicated agent has no runs (getRuns returns empty array for new UUID)
+  const duplicatedRuns = window.api.agents.getRuns(store.config.workspaceId, savedAgent.uuid)
+  expect(duplicatedRuns).toHaveLength(0)
 })

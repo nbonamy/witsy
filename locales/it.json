@@ -16,7 +16,7 @@
     "clear": "Pulisci",
     "clickToStart": "Clicca sul blob per iniziare a chattare",
     "close": "Chiudi",
-    "colon": "non spazioso",
+    "colon": "notspaced",
     "comboBox": {
       "help": "Seleziona un modello dall'elenco o digita un nome di modello che sai esistere."
     },
@@ -52,6 +52,7 @@
     "docRepo": "Base di Conoscenza",
     "documents": "Documenti",
     "done": "Fatto",
+    "download": "Scarica",
     "downloadCsv": "CSV",
     "downloadXlsx": "Excel",
     "edit": "Modifica",
@@ -92,6 +93,8 @@
     "model": "Modello",
     "modelPlaceholder": "Inserisci un nome di modello o seleziona uno",
     "move": "Sposta",
+    "moveDown": "Sposta giù",
+    "moveUp": "Sposta su",
     "name": "Nome",
     "new": "Nuovo",
     "newChat": "New Conversation",
@@ -154,6 +157,7 @@
     "spellcheck": {
       "add": "Aggiungi al dizionario"
     },
+    "status": "Stato",
     "stop": "Ferma",
     "title": "Title",
     "tools": "Strumenti",
@@ -184,6 +188,7 @@
     "yes": "Sì"
   },
   "agent": {
+    "copySuffix": "Copia",
     "create": {
       "goal": {
         "title": "Obiettivo dell'Agente"
@@ -224,15 +229,16 @@
       "workflow": {
         "addStep": "Aggiungi passaggio",
         "confirmDeleteStep": "Sei sicuro di voler eliminare questo passaggio?",
-        "customAgents": "Assegna Co-Agenti",
-        "customTools": "Aggiungi Strumenti",
+        "customAgents": "Co-agenti",
+        "customTools": "Strumenti",
         "description": "@:{'common.description'}",
-        "docRepo": "Aggiungi Conoscenza",
+        "docRepo": "Conoscenza",
         "error": {
           "emptyStepPrompt": "Il prompt del passaggio #{step} non può essere vuoto.",
           "missingDocRepo": "Il passaggio #{step} utilizza una Base di Conoscenza ma nessuna variabile {'{'}{'{'}facts{'}'}{'}'} è definita nel prompt. Per favore aggiungi una variabile della forma {'{'}{'{'}facts{'}'}{'}'} al tuo prompt.",
           "structuredOutput": "Errore durante l'analisi dello schema di output strutturato."
         },
+        "expert": "Esperto",
         "help": {
           "connect": "Collega l'output dei passaggi precedenti usando le variabili {'{'}{'{'}output.# {'}'}{'}'} (es. {'{'}{'{'}output.1{'}'}{'}'} per l'output del passaggio 1)",
           "description": "La descrizione verrà utilizzata per fornire aggiornamenti sul progresso durante l'esecuzione dell'agente",
@@ -266,7 +272,10 @@
       },
       "confirmDelete": "Sei sicuro di voler eliminare questo agente?",
       "create": "Nuovo Agente",
-      "empty": "Sblocca il potere agente di @:{'common.appName'} creando il tuo primo agente! Clicca sull'icona del robot per iniziare.",
+      "empty": {
+        "text": "Agent Forge ti permette di creare agenti IA personalizzati per automatizzare i tuoi flussi di lavoro e gestire compiti complessi. Pensalo come un assistente intelligente che può suddividere grandi lavori in passaggi gestibili e completarli in modo autonomo.",
+        "title": "Benvenuto in Agent Forge"
+      },
       "import": {
         "conflict": {
           "createNew": "Crea nuovo",
@@ -291,6 +300,7 @@
       "clearHistory": "Cancella tutta la cronologia per questo agente",
       "delete": "Elimina questo agente",
       "deleteRun": "Elimina questa esecuzione",
+      "duplicate": "Duplica questo agente",
       "edit": "Modifica questo agente",
       "export": "Esporta agente",
       "import": "Importa agente",
@@ -306,7 +316,7 @@
       "lastRun": "Ultima Esecuzione",
       "log": "Registro",
       "neverRun": "Mai",
-      "running": "In esecuzione...",
+      "running": "In esecuzione…",
       "status": "Stato",
       "trigger": "Attivatore"
     },
@@ -416,7 +426,7 @@
       "notFound": "L'agente utilizzato per generare quel messaggio non è più disponibile.",
       "status": {
         "inProgress": "Esecuzione del passaggio {step} su {steps}…",
-        "starting": "Avvio in corso..."
+        "starting": "Avvio…"
       }
     },
     "editor": {
@@ -441,11 +451,24 @@
     "fork": {
       "title": "Fork chat in Italian"
     },
+    "import": {
+      "error": "Si è verificato un errore durante il tentativo di importare la chat.",
+      "errorMultiple": "Impossibile importare {count} file",
+      "errors": "Errori",
+      "invalidFormat": "Formato markdown non valido. Formato previsto: # Titolo, ## Sistema/Tu/Assistente",
+      "partialSuccess": "{success} chat importate con successo, {error} fallite",
+      "partialSuccessTitle": "Importazione completata con errori",
+      "success": "Chat importata con successo",
+      "successDetail": "La conversazione è stata importata e aggiunta alla tua cronologia chat.",
+      "successMultiple": "{count} chat importate con successo",
+      "successMultipleDetail": "{count} conversazioni sono state importate e aggiunte alla cronologia chat."
+    },
     "role": {
       "assistant": "Assistente",
       "system": "Sistema",
       "user": "Tu"
-    }
+    },
+    "unknownModel": "Modello sconosciuto"
   },
   "chatList": {
     "displayMode": {
@@ -668,7 +691,7 @@
       "help": "Puoi tenere premuti i seguenti tasti modificatori mentre selezioni il tuo comando per accelerare il tuo flusso di lavoro. Puoi rilasciare quei tasti subito dopo aver selezionato il comando.<ul><li><b>{ctrl}</b>: copierà il testo generato negli appunti</li><li><b>{shift}</b>: inserirò il testo generato nell'applicazione corrente.</li><li><b>{shift}+{ctrl}</b>: sostituirà il testo selezionato con il testo generato.</li></ul>",
       "usage": {
         "copy": "Modalità copia attivata",
-        "default": "Clicca per saperne di più...",
+        "default": "Clicca per saperne di più…",
         "insert": "Modalità inserimento attivata",
         "replace": "Modalità sostituzione attivata"
       }
@@ -854,7 +877,7 @@
     "search": {
       "error": "Si è verificato un errore durante la ricerca. Per favore riprova.",
       "noResults": "Nessun risultato trovato per la tua query.",
-      "placeholder": "Inserisci la tua query di ricerca...",
+      "placeholder": "Inserisci la tua query di ricerca…",
       "results": "Risultati della ricerca ({count})",
       "score": "Punteggio di rilevanza: {score}",
       "text": "Inserisci la tua query per trovare informazioni pertinenti in questa knowledge base.",
@@ -1739,7 +1762,7 @@
       },
       "90633aa8-f345-41cc-83d9-a39a696f3d66": {
         "name": "Trasferitore di tecnologia",
-        "prompt": "Voglio che tu agisca come un trasferitore di tecnologia, io fornirò punti di curriculum e tu mapperai ogni punto da una tecnologia a un'altra tecnologia. Voglio che tu risponda solo con i punti mappati nel seguente formato: \"- [punto mappato]\". Non scrivere spiegazioni. Non fornire azioni aggiuntive, a meno che non lo richieda. Quando avrò bisogno di fornire istruzioni aggiuntive, lo farò dichiarandole esplicitamente. La tecnologia nel punto originale del curriculum è {'{'}Android{'}'} e la tecnologia a cui voglio mappare è {'{'}ReactJS{'}'.",
+        "prompt": "Voglio che tu agisca come un trasferitore di tecnologia, io fornirò punti di curriculum e tu mapperai ogni punto da una tecnologia a un'altra tecnologia. Voglio che tu risponda solo con i punti mappati nel seguente formato: \"- [punto mappato]\". Non scrivere spiegazioni. Non fornire azioni aggiuntive, a meno che non lo richieda. Quando avrò bisogno di fornire istruzioni aggiuntive, lo farò dichiarandole esplicitamente. La tecnologia nel punto originale del curriculum è Android e la tecnologia a cui voglio mappare è ReactJS.",
         "description": "Traduce competenze ed esperienze tra tecnologie"
       },
       "544fb479-97fa-48ba-beab-ba44cf32d4a2": {
@@ -1817,18 +1840,18 @@
   },
   "generator": {
     "errors": {
-      "cannotContinue": "\n\nMi dispiace, non posso continuare qui.",
-      "contextTooLong": "Mi dispiace, sembra che questo messaggio superi la lunghezza del contesto di questo modello. Prova a abbreviare il tuo prompt o prova un altro modello.",
-      "couldNotGenerate": "Mi dispiace, non sono riuscito a generare del testo per quel prompt.",
+      "cannotContinue": "\n\nSpiacenti, non posso continuare qui. <error>{error}</error>",
+      "contextTooLong": "Spiacenti, sembra che questo messaggio superi la lunghezza del contesto di questo modello. Prova a ridurre il prompt o usa un altro modello. <error>{error}</error>",
+      "couldNotGenerate": "Spiacenti, non sono riuscito a generare testo per quel prompt. <error>{error}</error>",
       "invalidBudgetKnown": "Spiacente, il budget di pensiero per questo modello deve essere compreso tra {min} e {max}.",
-      "invalidBudgetUnknown": "Spiacente, il budget di pensiero non è valido per questo modello.",
-      "invalidModel": "Mi dispiace, sembra che questo modello non sia disponibile.",
-      "missingApiKey": "Devi inserire la tua chiave API nella scheda Modelli delle [Impostazioni](#settings_models) per poter chattare.",
-      "networkError": "Spiacente, non sono riuscito a connettermi al fornitore LLM. Controlla la tua connessione internet o le tue [impostazioni del proxy](#settings_advanced) se ne hai definite alcune.",
-      "onlyThinkingMode": "Spiacente, questo modello funziona solo in modalità pensiero. Lasciare vuoto il budget di pensiero o inserire un valore valido.",
-      "outOfCredits": "Mi dispiace, sembra che tu abbia esaurito i crediti. Controlla il saldo del tuo account fornitore LLM.",
-      "pluginDescriptionTooLong": "Mi dispiace, sembra che la descrizione di uno dei plugin sia troppo lunga. Se li hai modificati in Impostazioni | Avanzate, riprova.",
-      "quotaExceeded": "Mi dispiace, sembra che tu abbia raggiunto il limite di velocità del tuo account fornitore LLM. Riprova più tardi.",
+      "invalidBudgetUnknown": "Spiacenti, il budget di pensiero non è valido per questo modello. <error>{error}</error>",
+      "invalidModel": "Spiacenti, sembra che questo modello non sia disponibile. <error>{error}</error>",
+      "missingApiKey": "Devi inserire la tua chiave API nella scheda Modelli in [Impostazioni](#settings_models) per poter chattare. <error>{error}</error>",
+      "networkError": "Spiacenti, non sono riuscito a connettermi al fornitore LLM. Controlla la tua connessione internet o le tue [impostazioni proxy](#settings_advanced) se ne hai definite. <error>{error}</error>",
+      "onlyThinkingMode": "Spiacenti, questo modello funziona solo in modalità di pensiero. Lascia vuoto il budget di pensiero o inserisci un valore valido. <error>{error}</error>",
+      "outOfCredits": "Spiacenti, sembra che tu abbia esaurito i crediti. Controlla il saldo del tuo account fornitore LLM. <error>{error}</error>",
+      "pluginDescriptionTooLong": "Spiacenti, sembra che la descrizione di uno dei plugin sia troppo lunga. Se li hai modificati in Impostazioni | Avanzate, prova di nuovo. <error>{error}</error>",
+      "quotaExceeded": "Spiacenti, sembra che tu abbia raggiunto il limite di utilizzo del tuo account fornitore LLM. Riprova più tardi. <error>{error}</error>",
       "tryWithoutParams": "Spiacente, non sono riuscito a generare il testo per quel prompt. Vuoi [ritentare senza parametri del modello](#retry_without_params)? <error>{error}</error>",
       "tryWithoutPlugins": "Spiacente, non sono riuscito a generare il testo per quel prompt. Vuoi [ritentare senza plugin](#retry_without_plugins)? <error>{error}</error>"
     }
@@ -1851,7 +1874,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Quando l'utente ti chiede di creare del contenuto (documento, riassunto, codice...), usa la seguente sintassi:\n<artifact title=\"TITOLO\">\nCONTENUTO\n</artifact>. Gli artifact HTML DEVONO iniziare con <html> o <!DOCTYPE html>. Esempio: <artifact title=\"Rapporto\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Contenuto del rapporto formattato in HTML</body></html>\n</artifact>. Puoi usare questa funzionalità per creare visualizzazioni dati basate su HTML usando Chart.js o D3.js. NON usare artifact per semplici tabelle di dati.",
+      "artifacts": "Quando l'utente ti chiede di creare del contenuto (documento, riassunto, codice…), usa la seguente sintassi:\n<artifact title=\"TITOLO\">\nCONTENUTO\n</artifact>. Gli artifact HTML DEVONO iniziare con <html> o <!DOCTYPE html>. Esempio: <artifact title=\"Report\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>Contenuto del report formattato in HTML</body></html>\n</artifact>. Puoi usare questa capacità per creare visualizzazioni dati basate su HTML usando Chart.js o D3.js. NON usare artifact per semplici tabelle di dati. Per artifact di codice, usa <artifact title=\"NOMEFILE.ESTENSIONE\">\nCODICE\n</artifact>.",
       "mermaid": "Se ti viene chiesto di generare un diagramma Mermaid, il suo codice sarà reso come diagramma all'utente.",
       "noMarkdown": "Non utilizzare la formattazione markdown nelle tue risposte. Usa solo testo semplice. Non utilizzare **grassetto**, *corsivo*, `codice`, blocchi di codice ``` ``` o qualsiasi altra sintassi markdown. Se usi tabelle, usa solo tabelle in testo semplice con spaziatura adeguata per allineare le colonne.",
       "toolRetry": "Quando si chiamano gli strumenti, se si riceve un errore di input, analizzare l'errore e cercare di correggerlo, quindi riprovare a chiamare lo strumento."
@@ -1862,7 +1885,7 @@
       "playful": "Sei un assistente AI ingegnoso, giocoso e spiritoso. Aiuti gli utenti rispondendo a domande, risolvendo problemi e offrendo suggerimenti utili — ma lo fai con personalità, fascino e un giusto tocco di umorismo.\n\nObiettivi:\n- Far sorridere l'utente, anche quando rispondi a domande serie.\n- Mantieni le tue risposte intelligenti, utili e accurate — ma mai noiose.\n- Usa giochi di parole, frasi intelligenti o leggero sarcasmo (quando appropriato) per rendere le interazioni memorabili.\n\nTono & Stile:\n- Usa un tono divertente, vivace e conversazionale.\n- Sentiti libero di usare barzellette leggere, riferimenti culturali o metafore ingegnose — ma non esagerare.\n- Evita di essere sciocco o random — la tua arguzia dovrebbe servire il punto, non distrarre da esso.\n- Puoi essere provocatorio, ma mai cattivo. Sei divertente, non sarcastico.\n\nStruttura:\n- Mantieni le risposte chiare e facili da seguire — anche quando stai giocando.\n- Usa punti elenco, intestazioni o spaziatura quando necessario per la chiarezza.\n- Non sacrificare l'utile per l'umorismo. L'accuratezza viene sempre prima.\n\nConversazione:\n- Termina sempre la tua risposta con una domanda giocosa o curiosa per mantenere viva la chat.\n\nEsempi:\n- \"Puoi farlo nel modo noioso… oppure puoi farlo a modo mio. Che, casualmente, è anche il modo migliore.\"\n- \"Immagina che Excel e un robot abbiano un bambino. È un po' quello che chiedi — e io sono qui per questo.\"\n- \"Potrei darti la risposta direttamente… ma dov'è il divertimento in questo? Ecco la spiegazione:\" \n\nSei qui per rendere le informazioni deliziose, utili e un po' più divertenti. Termina sempre la tua risposta con una domanda per mantenere viva la conversazione.",
       "reflective": "Sei un assistente AI riflessivo e pensieroso. Il tuo scopo è aiutare gli utenti a pensare in profondità, esplorare idee con sfumature e considerare prospettive che potrebbero non aver ancora incontrato. Le tue risposte dovrebbero invitare alla riflessione, fornire chiarezza e promuovere intuizioni intellettuali o personali.\n\nObiettivi:\n- Incoraggiare l'utente a fermarsi, riflettere e considerare il contesto più ampio della propria domanda o situazione.\n- Offrire non solo informazioni, ma anche prospettiva e intuizione.\n- Esplora la complessità senza sopraffare l'utente; abbraccia le sfumature dove appropriato.\n- Crea un tono calmo e contemplativo che sembri solido e intelligente.\n\nTono & Stile:\n- Usa un linguaggio chiaro, composto e riflessivo.\n- Parla lentamente (nel tono), con un ritmo misurato e cura in come sviluppi le idee.\n- Evita di precipitarti a conclusioni. Invece, guida l'utente attraverso possibilità e schemi di pensiero.\n- Rispetta l'ambiguità quando esiste e riconosci quando non c'è una risposta giusta unica.\n- Rimani umile nel tono pur essendo sicuro nella chiarezza e nella profondità.\n\nStruttura:\n- Inizia con un'introduzione quieta e osservante che dimostri consapevolezza della profondità o complessità della domanda.\n- Usa paragrafi brevi e significativi o punti strutturati quando spieghi concetti o offri prospettive diverse.\n- Offri spazio all'utente per trarre le proprie conclusioni quando possibile, piuttosto che prescrivere una sola soluzione.\n- Evita gergo o linguaggio eccessivamente accademico; usa chiarezza e sottigliezza piuttosto che tecnica.\n\nConversazione:\n- Incoraggia l'utente a continuare a pensare ed esplorare offrendo domande gentili e aperte.\n- Termina sempre la tua risposta con una domanda per mantenere viva la conversazione.",
       "standard": "Sei un assistente AI progettato per aiutare gli utenti fornendo informazioni accurate, rispondendo a domande e offrendo suggerimenti utili. I tuoi principali obiettivi sono comprendere le esigenze dell'utente, comunicare chiaramente e fornire risposte che siano informative, concise e pertinenti. Termina sempre la tua risposta con una domanda per mantenere la conversazione attiva.",
-      "structured": "Sei un assistente AI utile, strutturato e professionale. Rispondi in un tono chiaro e amichevole — professionale ma non rigido, accessibile ma mai eccessivamente informale.\n\nObiettivo: il tuo obiettivo è aiutare l'utente a risolvere problemi, comprendere concetti o prendere decisioni. Concentrati sulla chiarezza, l'utilità e mantenere la conversazione coinvolgente.\n\nStruttura e Formattazione:\n- Inizia sempre con una breve introduzione coinvolgente che spiega con cosa stai aiutando.\n- Organizza la tua risposta utilizzando sezioni chiare con intestazioni significative.\n- Inizia le intestazioni delle sezioni con un'emoji quando appropriato (🎯, ✅, ⚠️, 💡, 🔍, 📊, ecc.) per guidare visivamente l'attenzione dell'utente.\n- Usa i punti elenco per le liste.\n- Usa i passaggi numerati quando descrivi un processo o una sequenza.\n- Usa le tabelle il più possibile quando confronti o riassumi informazioni.\n- Evita muri di testo. Suddividi le idee in blocchi digeribili con spazio visivo.\n- Se la domanda dell'utente ha più parti, affronta ogni parte chiaramente e a turno — ma non dire esplicitamente che lo stai facendo.\n- Mantieni la formattazione coerente da un messaggio all'altro (stesso stile di intestazione, convenzioni emoji, ecc.).\n\nTono e Comunicazione:\n- Sii onesto, pratico ed empatico.\n- Evita slang eccessivamente informale, ma parla in un tono naturale e umano.\n- Non usare gergo a meno che l'utente non abbia già un contesto tecnico.\n- Evita chiacchiere o riempitivi. Vai dritto al valore.\n- Non includere mai avvertenze come \"Come AI...\" a meno che non richiesto esplicitamente.\n- Se l'argomento comporta una decisione o più percorsi, spiega chiaramente e neutralmente i compromessi.\n\nFollow-up:\n- Termina sempre la tua risposta con una domanda di follow-up ponderata per mantenere la conversazione in movimento.\n\nEsempi di cosa potresti fare:\n- Suddividere un problema in passaggi chiari e visivi con numeri.\n- Utilizzare una tabella per aiutare l'utente a confrontare due opzioni.\n- Rispondere a una domanda sensibile o personale con empatia e chiarezza.\n- Prevedere i bisogni di follow-up in base all'argomento e includerli proattivamente.\n\nIl tuo lavoro è rendere la vita dell'utente più facile attraverso chiarezza, struttura e utilità amichevole.",
+      "structured": "Sei un assistente IA utile, strutturato e professionale. Rispondi con un tono chiaro e amichevole — professionale ma non rigido, accessibile ma mai troppo informale.\n\nObiettivo: il tuo scopo è aiutare l’utente a risolvere problemi, comprendere concetti o prendere decisioni. Concentrati sulla chiarezza, utilità e mantieni la conversazione coinvolgente.\n\nStruttura e Formattazione:\n- Inizia sempre con una breve introduzione coinvolgente che spieghi con cosa stai aiutando.\n- Organizza la risposta con sezioni chiare e titoli significativi.\n- Inizia i titoli delle sezioni con un'emoji quando appropriato (🎯, ✅, ⚠️, 💡, 🔍, 📊, ecc.) per guidare visivamente l’attenzione dell’utente.\n- Usa elenchi puntati per liste.\n- Usa passaggi numerati per descrivere processi o sequenze.\n- Usa tabelle il più possibile per confrontare o riassumere informazioni.\n- Evita muri di testo. Suddividi le idee in blocchi facilmente digeribili con spazi visivi.\n- Se la domanda dell’utente ha più parti, affrontale chiaramente e una alla volta — ma senza dirlo esplicitamente.\n- Mantieni la formattazione coerente da un messaggio all’altro (stile titoli, convenzioni emoji, ecc.).\n\nTono & Comunicazione:\n- Sii onesto, pratico ed empatico.\n- Evita slang eccessivamente informali, ma parla con un tono naturale e umano.\n- Non usare gergo tecnico a meno che l’utente non abbia già un contesto tecnico.\n- Evita inutili fronzoli o riempitivi. Vai dritto al valore.\n- Non includere mai disclaimer del tipo \"Come IA…\" a meno che non venga richiesto esplicitamente.\n- Se l’argomento coinvolge decisioni o percorsi multipli, spiega i compromessi in modo chiaro e neutrale.\n\nFollow-up:\n- Concludi sempre la tua risposta con una domanda di follow-up riflessiva per mantenere viva la conversazione.\n\nEsempi di cosa potresti fare:\n- Suddividere un problema in passaggi chiari e visivi con punti numerati.\n- Usare una tabella per aiutare l’utente a confrontare due opzioni.\n- Rispondere a una domanda sensibile o personale con empatia e chiarezza.\n- Anticipare necessità di follow-up basate sull’argomento e includerle proattivamente.\n\nIl tuo compito è semplificare la vita dell’utente attraverso chiarezza, struttura e utilità amichevole.",
       "uplifting": "Sei un assistente AI ispiratore, incoraggiante e motivante. Il tuo obiettivo è far sentire gli utenti empowered, motivati e capaci — che si trovino ad affrontare una sfida, esplorare un'idea o lavorare verso un obiettivo.\n\nObiettivi:\n- Ispirare fiducia e slancio in avanti, soprattutto quando l'utente si sente incerto o bloccato.\n- Inquadrare le informazioni positivamente senza ignorare le sfide.\n- Usare un linguaggio incoraggiante che energizzi l'utente e promuova la fiducia in se stessi.\n- Fornire sempre sostanza — il tuo ottimismo dovrebbe supportare, non sostituire, contenuti utili.\n\nTono & Stile:\n- Usa un tono entusiasta, sincero e motivante.\n- Rivolgiti al potenziale e alla crescita dell'utente, anche in situazioni difficili.\n- Evita di essere eccessivamente sentimentale o poco formale. Sii umano, forte e incoraggiante.\n- Usa un linguaggio attivo e orientato al futuro che enfatizzi il progresso e l'agente.\n\nStruttura:\n- Inizia con una breve introduzione energetica che evidenzi ciò che è possibile.\n- Usa una chiara suddivisione e punti elenco quando necessario, specialmente se stai fornendo passaggi o confronti.\n- Offri opzioni e possibilità con uno spirito \"ce la puoi fare\".\n- Usa un linguaggio vivace o metafore quando appropriato per aggiungere profondità emotiva, ma evita esagerazioni o inutili frasi. \n\nConversazione:\n- Incoraggia un coinvolgimento continuo mostrando curiosità riguardo il percorso, gli obiettivi o le idee dell'utente.\n- Termina sempre la tua risposta con una domanda per mantenere viva la conversazione.",
       "visionary": "Sei un assistente AI futuristico e visionario. Il tuo ruolo è aiutare gli utenti a immaginare ciò che potrebbe essere, esplorare il confine delle idee e affrontare i problemi con un pensiero audace e orientato al futuro. Le tue risposte dovrebbero essere ambiziose, imaginative e fondate sull'intuizione.\n\nObiettivi:\n- Suscitare curiosità e pensiero creativo sulle possibilità future.\n- Aiutare gli utenti a esplorare tecnologie emergenti, tendenze a lungo termine o concetti trasformativi.\n- Ispirare azione e ottimismo mantenendo una credibilità intellettuale.\n- Tradurre visioni complesse o astratte in idee che sembrano raggiungibili e concrete.\n\nTono & Stile:\n- Usa un linguaggio confidente, elevato e orientato al futuro.\n- Sii audace e immaginativo nelle tue idee, ma rimani sempre nel regno della speculazione ponderata.\n- Parla con la voce di uno stratega, innovatore o futurista - qualcuno che vede ciò che gli altri non vedono, ma lo spiega chiaramente.\n- Evita il sensazionalismo o termini vuoti; preferisci la chiarezza alla sfumatura.\n\nStruttura:\n- Inizia con un'introduzione convincente e orientata al futuro che stabilisca un tono visionario.\n- Suddividi le idee in sezioni o passaggi chiaramente etichettati.\n- Usa confronti, scenari o previsioni per dare vita a idee astratte.\n- Quando discuti dello sviluppo futuro, riconosci l'incertezza offrendo prospettive o probabilità fondate.\n\nConversazione:\n- Incoraggia l'utente a pensare oltre i confini convenzionali e immaginare ciò che potrebbe essere possibile nel proprio dominio o vita.\n- Termina sempre la tua risposta con una domanda per mantenere viva la conversazione."
     },
@@ -2037,6 +2060,7 @@
       "closeWindow": "Chiudi Finestra",
       "designStudio": "@:{'designStudio.title'}",
       "import": {
+        "markdown": "File Markdown…",
         "openai": "Esportazione dati ChatGPT…",
         "title": "Importa"
       },
@@ -2172,14 +2196,14 @@
     },
     "ollama": {
       "browseModels": "Scopri altri modelli su https://ollama.com/search",
-      "cancelling": "Cancellazione in corso...",
+      "cancelling": "Annullamento…",
       "checkAgain": "Controlla di nuovo",
-      "checking": "Controllo dell'installazione di Ollama in corso...",
+      "checking": "Verifica installazione Ollama…",
       "download": "Scarica Ollama",
       "downloadComplete": "Download completato",
       "downloadCompleteMessage": "Il programma di installazione di Ollama è pronto. Per favore eseguilo per completare l'installazione.",
       "downloadError": "Download fallito. Per favore riprova o installa Ollama manualmente.",
-      "downloading": "Download in corso...",
+      "downloading": "Download in corso…",
       "install": "Installa Ollama",
       "installedModels": "Modelli disponibili",
       "noModelsInstalled": "Nessun modello installato ancora. Puoi aggiungere modelli Ollama usando le opzioni qui sotto.",
@@ -2251,35 +2275,37 @@
       "default": {
         "completed": "Operazione sul filesystem completata",
         "error": "Errore durante l'operazione sul filesystem: {error}",
-        "running": "Esecuzione operazione sul filesystem…",
-        "starting": "Preparazione operazione sul filesystem…"
+        "running": "Esecuzione operazione sul filesystem…"
       },
       "delete": {
         "completed": "Cancellazione di {path} avvenuta con successo",
         "declined": "L'utente ha rifiutato di cancellare {path}",
         "error": "Errore durante la cancellazione di {path}",
-        "running": "Cancellazione di {path} in corso…",
-        "starting": "Preparazione cancellazione di {path}…"
+        "running": "Cancellazione di {path} in corso…"
+      },
+      "find": {
+        "completed": "Nessun file trovato in {path} | Trovato 1 file in {path} | Trovati {count} file in {path}",
+        "error": "Errore durante la ricerca di file in {path}: {error}",
+        "noPattern": "Nessun pattern fornito per l'operazione di ricerca",
+        "running": "Ricerca di file corrispondenti a '{pattern}' in {path}…"
       },
       "invalidPath": "Questa operazione non fa parte dei percorsi consentiti: {path}",
       "list": {
         "completed": "Nessun elemento trovato in {path} | 1 elemento trovato in {path} | {count} elementi trovati in {path}",
         "error": "Errore durante l'elenco dei contenuti di {path}",
-        "running": "Elenco contenuti di {path} in corso…",
-        "starting": "Preparazione elenco contenuti della directory…"
+        "running": "Elenco contenuti di {path} in corso…"
       },
       "read": {
         "completed": "File {path} letto con successo",
         "error": "Errore durante la lettura del file {path}",
-        "running": "Lettura file {path} in corso…",
-        "starting": "Preparazione lettura file…"
+        "running": "Lettura file {path} in corso…"
       },
+      "starting": "Inizializzazione dell'accesso al filesystem…",
       "write": {
         "completed": "File {path} scritto con successo",
         "declined": "L'utente ha rifiutato di sovrascrivere {path}",
         "error": "Errore durante la scrittura del file {path}",
-        "running": "Scrittura file {path} in corso…",
-        "starting": "Preparazione scrittura file…"
+        "running": "Scrittura file {path} in corso…"
       }
     },
     "image": {
@@ -2364,6 +2390,7 @@
         "title": "Conoscenza"
       },
       "experts": {
+        "manage": "Gestisci Esperti",
         "none": "Nessun esperto",
         "title": "@:{'common.experts'}"
       },
@@ -2535,15 +2562,19 @@
     },
     "commands": {
       "confirmDelete": "Sei sicuro di voler eliminare questo comando?",
-      "disableAll": "Disabilita tutto",
-      "enableAll": "Abilita tutto",
+      "copy": "@:{'common.copy'}",
+      "defaults": "Predefiniti",
+      "empty": "Nessun comando definito",
       "export": "Esporta",
       "exportError": "Errore durante l'esportazione del file dei comandi",
       "exportSuccess": "File dei comandi esportato con successo",
       "import": "@:{'common.import'}",
       "importError": "Errore durante l'importazione del file dei comandi",
       "importSuccess": "File dei comandi importato con successo",
-      "new": "Nuovo"
+      "itemCount": "Nessun comando|1 comando|{count} comandi",
+      "itemsSelected": "Nessuno selezionato|{count} selezionato|{count} selezionati",
+      "new": "Nuovo",
+      "toggle": "Attiva/disattiva"
     },
     "deepResearch": {
       "breadth": "Ampiezza della ricerca",
@@ -2650,12 +2681,24 @@
     },
     "experts": {
       "allCategories": "Tutte le categorie",
+      "categoryManager": {
+        "categoryName": "Nome Categoria",
+        "confirmDelete": "Elimina Categoria",
+        "deleteExperts": "Elimina Esperti",
+        "deleteText": "Cosa desideri fare con gli esperti in questa categoria?",
+        "duplicateName": "Esiste già una categoria con questo nome",
+        "empty": "Ancora nessuna categoria",
+        "keepExperts": "Mantieni Esperti",
+        "newCategory": "Nuova Categoria",
+        "toggleVisibility": "Alterna Visibilità"
+      },
       "confirmDelete": "Sei sicuro di voler eliminare questo esperto?",
       "confirmDeleteAll": "Sei sicuro di voler eliminare tutti gli esperti?",
       "copy": "Copia",
       "deleteAll": "Elimina tutto",
       "descriptionPlaceholder": "Breve descrizione di ciò che fa questo esperto",
       "disableAll": "Disabilita tutto",
+      "empty": "Nessun esperto definito",
       "enableAll": "Abilita tutto",
       "export": "Esporta",
       "exportError": "Errore durante l'esportazione del file esperti",
@@ -2663,13 +2706,15 @@
       "import": "@:{'common.import'}",
       "importError": "Errore durante l'importazione del file esperti",
       "importSuccess": "File esperti importato con successo",
+      "itemCount": "Nessun esperto|1 esperto|{count} esperti",
+      "itemsSelected": "Nessuno selezionato|{count} selezionato|{count} selezionati",
+      "manageCategories": "Gestisci Categorie",
       "new": "Nuovo",
       "noCategory": "Nessuna categoria",
-      "searchPlaceholder": "Cerca esperti per nome, descrizione o categoria...",
+      "searchPlaceholder": "Cerca esperti per nome…",
       "sortAlpha": "Ordina alfabeticamente",
       "sortState": "Ordina per stato",
-      "sortUsage": "Ordina per utilizzo",
-      "usage": "Utilizzo"
+      "toggle": "Attiva/disattiva"
     },
     "general": {
       "darkTint": "Tonalità scura",
@@ -2769,8 +2814,23 @@
         "binaryPath": "Eseguibile Python",
         "description1": "Abilitando questo plugin, i motori LLM potranno eseguire codice arbitrario sul tuo computer.",
         "description2": "Non esiste modo di prevedere se il codice che i motori LLM genereranno sia sicuro o meno.",
+        "downloadError": "Download del runtime Python fallito: {error}",
+        "downloading": "Download in corso...",
+        "downloadLater": "Più tardi",
+        "downloadMessage": "Il runtime Python integrato richiede il download di circa 12 MB di file. Vuoi scaricarli ora o attendere il primo utilizzo?",
+        "downloadNow": "@:{'common.download'}",
+        "downloadSuccess": "Runtime Python scaricato con successo ed è pronto all’uso.",
+        "downloadTitle": "Download richiesto",
+        "embeddedDescription": "Ambiente sicuro e isolato senza necessità di installazione. Include NumPy, Pandas e Matplotlib.",
+        "embeddedRuntime": "Runtime Integrato (Consigliato)",
+        "nativeDescription": "Usa la tua installazione Python per funzionalità complete e pacchetti personalizzati.",
+        "nativeRuntime": "Binario Nativo",
+        "runtime": "Modalità Runtime",
         "search": "Cerca",
         "title": "Python",
+        "uninstallLabel": "Rimuovi runtime Python integrato",
+        "uninstallMessage": "Puoi sempre reinstallarlo in seguito dal pannello Impostazioni.",
+        "uninstallTitle": "Sei sicuro di voler disinstallare il runtime Python integrato?",
         "useAtOwnRisk": "Usa a tuo rischio",
         "warning": "Attenzione!"
       },
@@ -3009,7 +3069,7 @@
     "enabled": "Abilitato",
     "evictionDuration": "Rimuovi app web inattive dopo (minuti)",
     "icon": "Icona",
-    "iconSearch": "Cerca icone...",
+    "iconSearch": "Cerca icone…",
     "name": "Nome",
     "noApps": "Nessuna app web configurata",
     "preserveColors": "Conserva i colori delle icone delle web app",

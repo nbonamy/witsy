@@ -13,7 +13,7 @@ export const agentsDirPath = (app: App, workspaceId: string): string => {
   return path.join(workspacePath, 'agents')
 }
 
-export const loadAgents = (source: App|string, workspaceId: string): Agent[] => {
+export const listAgents = (source: App|string, workspaceId: string): Agent[] => {
 
   // init
   const agents: Agent[] = []
@@ -45,6 +45,21 @@ export const loadAgents = (source: App|string, workspaceId: string): Agent[] => 
   // done
   return agents
 
+}
+
+export const loadAgent = (source: App|string, workspaceId: string, agentId: string): Agent|null => {
+
+  // init
+  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
+  const filePath = path.join(agentsDir, agentId + '.json')
+
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8')
+    return Agent.fromJson(JSON.parse(content))
+  } catch (error) {
+    console.log('Error reading agent file', filePath, error)
+    return null
+  }
 }
 
 export const saveAgent = (source: App|string, workspaceId: string, json: anyDict): boolean => {

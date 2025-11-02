@@ -31,7 +31,7 @@ const mockApp = {} as App
 beforeEach(() => {
   vi.clearAllMocks()
   vi.mocked(workspaceModule.listWorkspaces).mockReturnValue([])
-  vi.mocked(agentsModule.loadAgents).mockReturnValue([])
+  vi.mocked(agentsModule.listAgents).mockReturnValue([])
   vi.mocked(agentsModule.saveAgent).mockReturnValue(true)
 })
 
@@ -55,7 +55,7 @@ test('generateWebhookToken ensures uniqueness', () => {
     { uuid: 'workspace-1', name: 'Workspace 1' }
   ])
 
-  vi.mocked(agentsModule.loadAgents).mockReturnValue([
+  vi.mocked(agentsModule.listAgents).mockReturnValue([
     existingAgent,
     { uuid: 'agent-1', webhookToken: null }
   ])
@@ -68,7 +68,7 @@ test('generateWebhookToken ensures uniqueness', () => {
 })
 
 test('generateWebhookToken returns unique token for agent', () => {
-  vi.mocked(agentsModule.loadAgents).mockReturnValue([
+  vi.mocked(agentsModule.listAgents).mockReturnValue([
     { uuid: 'agent-1', webhookToken: null } as any
   ])
 
@@ -88,7 +88,7 @@ test('generateWebhookToken throws after max attempts', () => {
   // Create 10 agents with different tokens that will collide with any generated token
   const tokens = ['aaaaaaaa', 'bbbbbbbb', 'cccccccc', 'dddddddd', 'eeeeeeee', 'ffffffff', 'gggggggg', 'hhhhhhhh', 'iiiiiiii', 'jjjjjjjj']
 
-  vi.mocked(agentsModule.loadAgents).mockReturnValue(
+  vi.mocked(agentsModule.listAgents).mockReturnValue(
     tokens.map((token, i) => ({ uuid: `existing-${i}`, webhookToken: token } as any))
   )
 
@@ -117,7 +117,7 @@ test('findAgentByWebhookToken finds agent in first workspace', () => {
     { uuid: 'workspace-2', name: 'Workspace 2' }
   ])
 
-  vi.mocked(agentsModule.loadAgents).mockImplementation((app: App, workspaceId: string) => {
+  vi.mocked(agentsModule.listAgents).mockImplementation((app: App, workspaceId: string) => {
     if (workspaceId === 'workspace-1') {
       return [targetAgent]
     }
@@ -144,7 +144,7 @@ test('findAgentByWebhookToken finds agent in second workspace', () => {
     { uuid: 'workspace-2', name: 'Workspace 2' }
   ])
 
-  vi.mocked(agentsModule.loadAgents).mockImplementation((app: App, workspaceId: string) => {
+  vi.mocked(agentsModule.listAgents).mockImplementation((app: App, workspaceId: string) => {
     if (workspaceId === 'workspace-2') {
       return [targetAgent]
     }
@@ -164,7 +164,7 @@ test('findAgentByWebhookToken returns null for invalid token', () => {
     { uuid: 'workspace-1', name: 'Workspace 1' }
   ])
 
-  vi.mocked(agentsModule.loadAgents).mockReturnValue([
+  vi.mocked(agentsModule.listAgents).mockReturnValue([
     { uuid: 'agent-1', webhookToken: 'validtoken' }
   ])
 
@@ -180,14 +180,14 @@ test('findAgentByWebhookToken searches all workspaces', () => {
     { uuid: 'workspace-3', name: 'Workspace 3' }
   ])
 
-  vi.mocked(agentsModule.loadAgents).mockReturnValue([])
+  vi.mocked(agentsModule.listAgents).mockReturnValue([])
 
   findAgentByWebhookToken(mockApp, 'notfound')
 
-  expect(agentsModule.loadAgents).toHaveBeenCalledTimes(3)
-  expect(agentsModule.loadAgents).toHaveBeenCalledWith(mockApp, 'workspace-1')
-  expect(agentsModule.loadAgents).toHaveBeenCalledWith(mockApp, 'workspace-2')
-  expect(agentsModule.loadAgents).toHaveBeenCalledWith(mockApp, 'workspace-3')
+  expect(agentsModule.listAgents).toHaveBeenCalledTimes(3)
+  expect(agentsModule.listAgents).toHaveBeenCalledWith(mockApp, 'workspace-1')
+  expect(agentsModule.listAgents).toHaveBeenCalledWith(mockApp, 'workspace-2')
+  expect(agentsModule.listAgents).toHaveBeenCalledWith(mockApp, 'workspace-3')
 })
 
 test('AgentExecutor sets up mocks and calls AgentWorkflowExecutor', async () => {

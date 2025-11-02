@@ -26,6 +26,7 @@ export type AgentStep = {
   tools?: string[]|null
   agents?: string[]
   docrepo?: string
+  expert?: string
   jsonSchema?: string
   structuredOutput?: AgentStepStructuredOutput
 }
@@ -35,6 +36,7 @@ export interface Agent {
   source: AgentSource
   createdAt: number
   updatedAt: number
+  lastRunId?: string
   name: string
   description: string
   type: AgentType
@@ -50,6 +52,7 @@ export interface Agent {
   webhookToken: string|null
   invocationValues: Record<string, string>
   buildPrompt: (step: number, parameters: anyDict) => string|null
+  duplicate: (nameSuffix?: string) => Agent
   getPreparationDescription?: () => string
   getRunningDescription?: (args: any) => string
   getCompletedDescription?: (args: any, results: any) => string

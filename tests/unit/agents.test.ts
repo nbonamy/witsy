@@ -39,7 +39,7 @@ beforeEach(() => {
 })
 
 test('Load agents', () => {
-  const agents = main.loadAgents(app, 'test-workspace')
+  const agents = main.listAgents(app, 'test-workspace')
   expect(agents).toHaveLength(2)
   expect(agents[0]).toMatchObject({
     uuid: 'agent1',

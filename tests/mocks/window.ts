@@ -191,8 +191,9 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       ] as Expert[]),
       save: vi.fn(),
       loadCategories: vi.fn(() => [
-        { id: 'cat-1', type: 'system', state: 'enabled', icon: 'Code2', color: 'text-green-500' },
-        { id: 'cat-2', type: 'system', state: 'enabled', icon: 'Briefcase', color: 'text-purple-500' }
+        { id: 'cat-1', type: 'system', state: 'enabled', icon: 'Code2' },
+        { id: 'cat-2', type: 'system', state: 'enabled', icon: 'Briefcase' },
+        { id: 'cat-3', type: 'user', state: 'enabled', icon: 'Briefcase' }
       ] as ExpertCategory[]),
       saveCategories: vi.fn(),
       import: vi.fn(),
@@ -200,7 +201,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     agents: {
       forge: vi.fn(),
-      load: vi.fn(() => [
+      list: vi.fn(() => [
         Agent.fromJson({
           uuid: 'agent1',
           source: 'witsy',
@@ -209,6 +210,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           type: 'runnable',
           createdAt: Date.now() - 86400000,
           updatedAt: Date.now() - 3600000,
+          lastRunId: 'run3',
           engine: 'mock',
           model: 'chat',
           modelOpts: {},
@@ -241,6 +243,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           type: 'support',
           createdAt: Date.now() - 172800000,
           updatedAt: Date.now() - 7200000,
+          lastRunId: 'workflow-run1',
           engine: 'mock',
           model: 'chat',
           modelOpts: {},
@@ -282,6 +285,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           invocationValues: { input: 'test' }
         })
       ]),
+      load: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
       getRuns: vi.fn((workspaceId: string, agentId: string) => {
@@ -380,6 +384,13 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       write: vi.fn(() => true),
       delete: vi.fn(() => true),
       find: vi.fn(() => 'file.ext'),
+      findFiles: vi.fn(async (basePath: string, pattern: string, maxResults?: number): Promise<string[]> => {
+        const limit = maxResults || 10
+        return [
+          '/home/user/file1.txt',
+          '/home/user/subdir/file2.txt',
+        ].slice(0, limit)
+      }),
       listDirectory: vi.fn((dirPath: string, includeHidden?: boolean): ListDirectoryResponse => ({
         success: true,
         items: [
@@ -519,7 +530,11 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       resize: vi.fn(),
     },
     interpreter: {
-      python: vi.fn(async () => ({ result: ['bonjour'] }))
+      python: vi.fn(async () => ({ result: ['bonjour'] })),
+      pyodide: vi.fn(async () => ({ result: 'bonjour' })),
+      downloadPyodide: vi.fn(async () => ({ success: true })),
+      isPyodideCached: vi.fn(async () => false),
+      clearPyodideCache: vi.fn(async () => {}),
     },
     markdown: {
       render: vi.fn(renderMarkdown),

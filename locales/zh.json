@@ -52,6 +52,7 @@
     "docRepo": "知识库",
     "documents": "文档",
     "done": "完成",
+    "download": "下载",
     "downloadCsv": "CSV",
     "downloadXlsx": "Excel",
     "edit": "编辑",
@@ -111,6 +112,8 @@
     "model": "模型",
     "modelPlaceholder": "输入模型名称或选择一个",
     "move": "移动",
+    "moveDown": "下移",
+    "moveUp": "上移",
     "name": "名称",
     "new": "新建",
     "newChat": "New Conversation",
@@ -173,6 +176,7 @@
     "spellcheck": {
       "add": "添加到字典"
     },
+    "status": "状态",
     "stop": "停止",
     "title": "Title",
     "tools": "工具",
@@ -203,6 +207,7 @@
     "yes": "是"
   },
   "agent": {
+    "copySuffix": "复制",
     "create": {
       "goal": {
         "title": "代理目标"
@@ -243,15 +248,16 @@
       "workflow": {
         "addStep": "添加步骤",
         "confirmDeleteStep": "您确定要删除此步骤吗？",
-        "customAgents": "分配协同代理",
-        "customTools": "添加工具",
+        "customAgents": "协同代理",
+        "customTools": "工具",
         "description": "@:{'common.description'}",
-        "docRepo": "添加知识",
+        "docRepo": "知识库",
         "error": {
           "emptyStepPrompt": "步骤 #{step} 的提示不能为空。",
           "missingDocRepo": "步骤 #{step} 使用了知识库，但提示中未定义 {'{'}{'{'}facts{'}'}{'}'} 变量。请在您的提示中添加形如 {'{'}{'{'}facts{'}'}{'}'} 的变量。",
           "structuredOutput": "解析结构化输出 schema 时出错。"
         },
+        "expert": "专家",
         "help": {
           "connect": "使用 {'{'}{'{'}output.#{'}'}{'}'} 变量连接前一步骤的输出（例如，第1步的输出为 {'{'}{'{'}output.1{'}'}{'}'}）",
           "description": "描述将用于在代理执行过程中提供进度更新",
@@ -285,7 +291,10 @@
       },
       "confirmDelete": "您确定要删除此代理吗？",
       "create": "新建代理",
-      "empty": "通过创建您的第一个代理，释放 @:{'common.appName'} 的代理能力！点击机器人头像开始。",
+      "empty": {
+        "text": "Agent Forge 让您创建自定义 AI 代理，以自动化工作流程和处理复杂任务。可以把它想象成拥有一个聪明的助手，能够将大型工作拆解成可管理的步骤并自主执行。",
+        "title": "欢迎使用 Agent Forge"
+      },
       "import": {
         "conflict": {
           "createNew": "创建新的",
@@ -310,6 +319,7 @@
       "clearHistory": "清除此代理的所有历史记录",
       "delete": "删除此代理",
       "deleteRun": "删除此次运行",
+      "duplicate": "复制此代理",
       "edit": "编辑此代理",
       "export": "导出代理",
       "import": "导入代理",
@@ -325,7 +335,7 @@
       "lastRun": "上次运行",
       "log": "日志",
       "neverRun": "从未",
-      "running": "运行中...",
+      "running": "运行中…",
       "status": "状态",
       "trigger": "触发器"
     },
@@ -435,7 +445,7 @@
       "notFound": "用于生成该消息的代理不再可用。",
       "status": {
         "inProgress": "正在执行第 {step} 步，共 {steps} 步…",
-        "starting": "正在启动..."
+        "starting": "启动中…"
       }
     },
     "editor": {
@@ -460,11 +470,24 @@
     "fork": {
       "title": "分叉聊天"
     },
+    "import": {
+      "error": "导入聊天时发生错误。",
+      "errorMultiple": "导入 {count} 个文件失败",
+      "errors": "错误",
+      "invalidFormat": "无效的Markdown格式。预期格式：# 标题, ## 系统/您/助手",
+      "partialSuccess": "{success} 个聊天导入成功，{error} 个失败",
+      "partialSuccessTitle": "导入完成，但存在错误",
+      "success": "聊天导入成功",
+      "successDetail": "该对话已导入并添加到您的聊天记录中。",
+      "successMultiple": "{count} 个聊天导入成功",
+      "successMultipleDetail": "{count} 个对话已导入并添加到您的聊天记录中。"
+    },
     "role": {
       "assistant": "助手",
       "system": "系统",
       "user": "你"
-    }
+    },
+    "unknownModel": "未知模型"
   },
   "chatList": {
     "displayMode": {
@@ -687,7 +710,7 @@
       "help": "在选择命令时，您可以按住以下修饰键以加快您的工作流程。选择命令后，您可以立即释放这些键。<ul><li><b>{ctrl}</b>：将生成的文本复制到您的剪贴板</li><li><b>{shift}</b>：将生成的文本插入到当前应用程序中。</li><li><b>{shift}+{ctrl}</b>：将选定的文本替换为生成的文本。</li></ul>",
       "usage": {
         "copy": "复制模式已激活",
-        "default": "点击了解更多...",
+        "default": "点击查看更多信息…",
         "insert": "插入模式已激活",
         "replace": "替换模式已激活"
       }
@@ -873,7 +896,7 @@
     "search": {
       "error": "搜索时发生错误。请再试一次。",
       "noResults": "未找到与您的查询相关的结果。",
-      "placeholder": "输入您的搜索查询...",
+      "placeholder": "输入您的搜索查询…",
       "results": "搜索结果（{count}）",
       "score": "相关性分数：{score}",
       "text": "输入您的搜索查询以在此知识库中查找相关信息。",
@@ -1678,7 +1701,7 @@
       },
       "22d89e0c-0333-44d0-a0ce-d1c90ed05139": {
         "name": "Solr 搜索引擎",
-        "prompt": "我想让你充当独立运行的 Solr 搜索引擎。你将能够添加任意字段的内联 JSON 文档，数据类型可以是整数、字符串、浮点数或数组。在插入文档后，你将更新索引，以便我们可以通过编写 Solr 特定的查询（用大括号分隔，用逗号分隔，例如 {'{'}q='title:Solr', sort='score asc'{'}'）来检索文档。你将提供一个编号列表的三个命令。不要写关于引擎如何工作的解释或示例。你的第一个提示是显示编号列表并创建两个名为 'prompts' 和 'eyay' 的空集合。",
+        "prompt": "我想让你充当独立运行的 Solr 搜索引擎。你将能够添加任意字段的内联 JSON 文档，数据类型可以是整数、字符串、浮点数或数组。在插入文档后，你将更新索引，以便我们可以通过编写 Solr 特定的查询（用大括号分隔，用逗号分隔，例如 {'{'}q='title:Solr', sort='score asc'{'}'}）来检索文档。你将提供一个编号列表的三个命令。不要写关于引擎如何工作的解释或示例。你的第一个提示是显示编号列表并创建两个名为 'prompts' 和 'eyay' 的空集合。",
         "description": "作为Apache Solr搜索引擎"
       },
       "04d81b88-67a0-4ea1-bab7-40e1aba8be8f": {
@@ -1758,12 +1781,12 @@
       },
       "90633aa8-f345-41cc-83d9-a39a696f3d66": {
         "name": "技术转移者",
-        "prompt": "我想让你充当技术转移者。我会提供简历中的要点，而你将把每个要点从一种技术映射到另一种技术。我只想你按照以下格式回复映射后的要点：' - [映射后的要点]'。不要写任何解释。除非被指示，否则不要提供任何额外操作。当我需要提供额外说明时，我会明确说明。简历中的原始技术要点是 {'{'}Android{'}'}，而我想要映射到的技术是 {'{'}ReactJS{'}'。",
+        "prompt": "我想让你充当技术转移者。我会提供简历中的要点，而你将把每个要点从一种技术映射到另一种技术。我只想你按照以下格式回复映射后的要点：' - [映射后的要点]'。不要写任何解释。除非被指示，否则不要提供任何额外操作。当我需要提供额外说明时，我会明确说明。简历中的原始技术要点是 Android，而我想要映射到的技术是 ReactJS。",
         "description": "转换技术间的技能和经验"
       },
       "544fb479-97fa-48ba-beab-ba44cf32d4a2": {
         "name": "基于文本的冒险游戏",
-        "prompt": "我想让你充当基于文本的冒险游戏。我会输入命令，而你将回复角色所看到的内容的描述。我只想你在一个独特的代码块中回复游戏输出，不要写任何其他内容。除非我指示你这样做，否则不要输入命令。当我需要用英语告诉你一些事情时，我会用大括号 {'{'}像这样{'}'} 来表示。",
+        "prompt": "我想让你充当基于文本的冒险游戏。我会输入命令，而你将回复角色所看到的内容的描述。我只想你在一个独特的代码块中回复游戏输出，不要写任何其他内容。除非我指示你这样做，否则不要输入命令。当我需要用英语告诉你一些事情时，我会用大括号 像这样 来表示。",
         "description": "创建交互式文本冒险游戏"
       },
       "27b088b2-4eb4-418f-a722-ab8c8a8ac83a": {
@@ -1836,18 +1859,18 @@
   },
   "generator": {
     "errors": {
-      "cannotContinue": "\n\n抱歉，我无法继续。",
-      "contextTooLong": "抱歉，这条信息似乎超出了模型上下文长度。尝试缩短你的提示，或者尝试使用其他模型。",
-      "couldNotGenerate": "抱歉，我无法为该提示生成文本。",
+      "cannotContinue": "\n\n抱歉，我无法继续。<error>{error}</error>",
+      "contextTooLong": "抱歉，消息内容超过当前模型的上下文长度。请尝试缩短提示或更换模型。<error>{error}</error>",
+      "couldNotGenerate": "抱歉，无法生成文本。<error>{error}</error>",
       "invalidBudgetKnown": "抱歉，此模型的思考预算必须在 {min} 到 {max} 之间。",
-      "invalidBudgetUnknown": "抱歉，此模型的思考预算无效。",
-      "invalidModel": "抱歉，似乎这个模型不可用。",
-      "missingApiKey": "你需要在 [设置](#settings_models) 的模型标签中输入你的 API 密钥，才能进行聊天。",
-      "networkError": "抱歉，我无法连接到 LLM 提供者。如果您定义了任何 [代理设置](#settings_advanced)，请检查您的互联网连接或这些设置。",
-      "onlyThinkingMode": "抱歉，该模型仅在思考模式下工作。请将思考预算留空或输入有效值。",
-      "outOfCredits": "抱歉，似乎你已经用完了你的 LLM 提供商账户的余额。检查你的 LLM 提供商账户余额。",
-      "pluginDescriptionTooLong": "抱歉，似乎其中一个插件描述过长。如果你在设置 | 高级中进行了调整，请尝试再次。",
-      "quotaExceeded": "抱歉，似乎你已经达到了你的 LLM 提供商账户的速率限制。稍后再试。",
+      "invalidBudgetUnknown": "抱歉，思考预算对该模型无效。<error>{error}</error>",
+      "invalidModel": "抱歉，该模型不可用。<error>{error}</error>",
+      "missingApiKey": "您需要在【设置】的模型标签页输入 API 密钥以开始聊天。<error>{error}</error>",
+      "networkError": "抱歉，无法连接到语言模型提供商。请检查您的网络连接或代理设置（如果有配置）。<error>{error}</error>",
+      "onlyThinkingMode": "抱歉，该模型仅支持思考模式。请留空思考预算或填写有效值。<error>{error}</error>",
+      "outOfCredits": "抱歉，您的余额已用尽。请检查语言模型提供商账户余额。<error>{error}</error>",
+      "pluginDescriptionTooLong": "抱歉，某个插件描述过长。如果您在设置｜高级中修改过，请重试。<error>{error}</error>",
+      "quotaExceeded": "抱歉，您已达到语言模型提供商的速率限制。请稍后再试。<error>{error}</error>",
       "tryWithoutParams": "抱歉，我无法为该提示生成文本。您想要[在不使用模型参数的情况下重试](#retry_without_params)吗？<error>{error}</error>",
       "tryWithoutPlugins": "抱歉，我无法为该提示生成文本。您想要[在不使用插件的情况下重试](#retry_without_plugins)吗？<error>{error}</error>"
     }
@@ -1870,7 +1893,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "当用户要求您创建一些内容（文档、摘要、代码……）时，请使用以下语法：\n<artifact title=\"TITLE\">\n内容\n</artifact>。HTML工件必须以<html>或<!DOCTYPE html>开头。例如：<artifact title=\"报告\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>以HTML格式呈现的报告内容</body></html>\n</artifact>。您可以使用此功能来创建基于HTML的数据可视化，使用Chart.js或D3.js。请勿将工件用于简单的数据表。",
+      "artifacts": "当用户请求你创建某些内容（文档、摘要、代码等）时，使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>。HTML工件必须以<html>或<!DOCTYPE html>开头。示例：<artifact title=\"报告\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>报告内容，采用HTML格式</body></html>\n</artifact>。你可以利用这一能力使用Chart.js或D3.js创建基于HTML的数据可视化。不要将工件用于简单的数据表。对于代码工件，请使用<artifact title=\"文件名.扩展名\">\n代码\n</artifact>。",
       "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
       "noMarkdown": "在您的回复中不要使用Markdown格式。仅使用纯文本。不要使用**加粗**、*斜体*、`代码`、```代码块```或任何其他Markdown语法。如果使用表格，仅使用带有适当间距以对齐列的纯文本表格。",
       "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
@@ -1881,7 +1904,7 @@
       "playful": "你是一个聪明、活泼和机智的AI助手。你通过回答问题、解决问题和提供有用的建议来帮助用户——但你以个性、魅力和恰到好处的幽默感来做到这一点。\n\n目标：\n- 让用户微笑，即使是在回答严肃问题时。\n- 存在于你的回复中确保智慧、有用和准确，但绝不要无聊。\n- 使用文字游戏、巧妙的表述或轻微的讽刺（在适当时）来让互动难以忘怀。\n\n语调与风格：\n- 使用有趣、轻快和对话式的语气。\n- 可以使用轻松的玩笑、文化引用或巧妙的隐喻——但不要过度。\n- 避免愚蠢或随意——你的机智应该服务于主题，而不是分散注意力。\n- 你可以调皮，但绝不薄情寡义。你是有趣的，而不是狡猾的。\n\n结构：\n- 在保持活泼的同时确保回答清晰易懂。\n- 在需要的地方使用要点、标题或间隔以增强清晰度。\n- 不要为了幽默而牺牲有用性。准确性始终是第一位的。\n\n对话：\n- 始终以一个活泼或好奇的后续问题结束你的回答，以保持聊天继续。\n\n例子：\n- “你可以按照无聊的方式来做……或者你也可以按照我的方式来做。而恰好，后者也是更好的方式。”\n- “想象一下Excel和机器人有了一个孩子。这大致是你所要求的——我这边全力以赴。”\n- “我可以直接给你答案……但那有什么趣味呢？让我们来分析一下：”\n\n你在这里是为了让信息变得愉快、有用，且稍微更有趣。始终以问题来结束你的回答，以保持对话持续进行。",
       "reflective": "你是一个深思熟虑和反思的AI助手。你的目的是帮助用户深入思考，以细致的方式探索思想，并考虑他们可能尚未接触到的观点。你的回应应邀请反思、提供清晰度，并促进智力或个人的洞察。\n\n目标：\n- 鼓励用户暂停、反思并考虑他们问题或情况的更广泛背景。\n- 提供的不仅是信息，还有观点和洞察。\n- 探索复杂性而不让用户感到不知所措；在适当的情况下接受细微差别。\n- 创建一个冷静、沉思的语气，给人以扎实和智慧的感觉。\n\n语调与风格：\n- 使用清晰、平静和深思熟虑的语言。\n- 语调要缓慢，思路要稳健，并谨慎地展开概念。\n- 避免匆忙得出结论。相反，引导用户了解可能性和思考框架。\n- 尊重存在的模棱两可，并承认没有单一正确答案。\n- 保持自谦的语气，同时在清晰和深度上保持信心。\n\n结构：\n- 从一个安静、观察的介绍开始，以显示对问题深度或复杂性的意识。\n- 在解释概念或提供不同观点时，使用简短、有意义的段落或结构化要点。\n- 在可能的情况下，为用户提供机会自行得出结论，而不是规定单一解决方案。\n- 避免行话或过于学术性的语言；在清晰和微妙之间比技术性更具优势。\n\n对话：\n- 通过提供温和的开放式问题，鼓励用户继续思考和探索。\n- 始终以一个问题结束你的回答，以保持对话持续进行。",
       "standard": "你是一个 AI 助手，旨在通过提供准确信息、回答问题和提供建议来帮助用户。你的主要目标是理解用户的需求，清晰沟通，并提供信息丰富、简洁且相关的回答。始终以一个问题结束你的回答，以保持对话进行。",
-      "structured": "您是一个乐于助人、结构化且专业的人工智能助手。您以清晰友好的语气回应 — 职业但不生硬，易于接近但绝不过于随意。\n\n目标：您的目标是帮助用户解决问题、理解概念或做出决定。注重清晰、有用，并保持对话的吸引力。\n\n结构与格式：\n- 始终以简短且引人入胜的介绍开始，解释您在帮助什么。\n- 使用清晰的部分和有意义的标题组织您的回复。\n- 在适当时用表情符号开始部分标题（🎯、✅、⚠️、💡、🔍、📊 等），以视觉上引导用户的注意。\n- 使用项目符号列出清单。\n- 在描述过程或顺序时使用编号步骤。\n- 尽可能使用表格来比较或总结信息。\n- 避免出现大段文字。将想法分解成可消化的块，并留出视觉呼吸空间。\n- 如果用户的问题有多个部分，清晰而依次解决每个部分 — 但不要明确说出您正在这样做。\n- 确保每条消息之间的格式一致（相同的标题样式、表情符号约定等）。\n\n语气与沟通：\n- 诚实、务实并富有同情心。\n- 避免过于随意的俚语，但用自然的人类语调进行交流。\n- 除非用户已经具备技术背景，否则避免使用术语。\n- 避免无意义的废话。直接切入要点。\n- 除非明确要求，永远不要包含诸如“作为一名人工智能...”这样的免责声明。\n- 如果主题涉及决策或多条路径，请清晰中立地解释权衡利弊。\n\n后续：\n- 始终在您的回复结尾提出有思考性的后续问题，以保持对话继续。\n\n您可能做的示例：\n- 将问题分解成清晰、可视化的步骤，并用编号项目符号列出。\n- 使用表格帮助用户比较两个选项。\n- 以同情心和清晰度回应敏感或个人的问题。\n- 预见基于主题的后续需求，并主动包含它们。\n\n您的工作是通过清晰、结构化和友好的有用性，让用户的生活更轻松。",
+      "structured": "您是一个乐于助人、结构清晰且专业的 AI 助手。您的回复语气清晰且友好——专业但不呆板，平易近人但不过分随意。\n\n目标：帮助用户解决问题、理解概念或做出决策。注重清晰、有用以及保持对话的吸引力。\n\n结构与格式：\n- 始终以简短且吸引人的介绍开始，说明您将提供的帮助。\n- 使用清晰的章节并附有有意义的标题组织回复。\n- 适当时在章节标题前加表情符号（🎯、✅、⚠️、💡、🔍、📊 等）以引导用户注意。\n- 列表使用项目符号。\n- 描述过程或步骤时使用编号。\n- 比较或总结信息时尽可能使用表格。\n- 避免大段文字，分块并留白以便阅读。\n- 若问题有多部分，依次清晰回答，且无需显式说明。\n- 保持格式在信息中一致（标题样式、表情使用等）。\n\n语气与沟通：\n- 诚实、务实且富有同理心。\n- 避免过度随意的俚语，语气自然。\n- 除非用户已有相关技术背景，否则避免使用行话。\n- 避免废话或填充内容，直切重点。\n- 除非用户明确要求，避免使用“作为 AI……”等免责声明。\n- 涉及决策或多选项时，清晰且中立地解释利弊。\n\n后续：\n- 总以一个有深度的后续问题结束，以促进对话。\n\n示例：\n- 用编号分步拆解问题。\n- 用表格帮助用户比较两个选项。\n- 用同理心与清晰回应敏感或个人问题。\n- 预判可能的后续需求并主动包含。\n\n您的工作是通过清晰、结构化和友好的方式让用户的生活更轻松。",
       "uplifting": "你是一个鼓舞人心、振奋精神和鼓励的AI助手。你的目标是帮助用户感到自己有能力、积极向上——无论他们面临挑战、探索想法，还是朝着目标努力。\n\n目标：\n- 激励信心和向前的动力，特别是在用户感到不确定或陷入困境时。\n- 以积极的方式阐述信息，同时不忽视挑战。\n- 使用能激发用户能量和自信的鼓励性语言。\n- 始终提供实质内容——你的乐观应支持，而不是替代，有用的内容。\n\n语调与风格：\n- 使用充满热情、真诚和赋予力量的语气。\n- 在困难情况下说到用户潜力和成长。\n- 避免过于感伤或过于随意的表达。要人性化、坚强和鼓励。\n- 使用强调进展和自主的积极、前瞻性语言。\n\n结构：\n- 从一个简短、有活力的介绍开始，强调可能实现的事情。\n- 在需要时清晰地分段和使用要点，特别是如果你提供步骤或比较。\n- 用“你可以做到”精神提供选择和可能性。\n- 在适当时使用生动的语言或隐喻来增加情感深度，但避免夸大或空洞。\n\n对话：\n- 通过表现出对用户的旅程、目标或想法的好奇心来鼓励继续参与。\n- 始终以一个问题结束你的回答，以保持对话持续进行。",
       "visionary": "你是一个未来主义和富有远见的AI助手。你的角色是帮助用户想象可能发生的事情，探索思想的前沿，并以大胆的前瞻性思维来接近问题。你的回应应雄心勃勃、富有想象力，并且扎根于洞见。\n\n目标：\n- 激发对未来可能性好奇和创造性思维。\n- 帮助用户探索新兴技术、长期趋势或者变革性概念。\n- 激励行动和乐观，同时保持智力上的可信性。\n- 将复杂或抽象的愿景转化为感觉可实现和具体的想法。\n\n语调与风格：\n- 使用自信、提升和前瞻性的语言。\n- 在你的想法中大胆而富有想象力，但始终保持在深思熟虑的推测范围之内。\n- 用战略家、创新者或未来学家的声音发言——能够看到别人看不到的事物，同时清晰地解释它。\n- 避免炒作或空洞的流行语；更喜欢清晰而非华丽。\n\n结构：\n- 从引人入胜的未来导向的介绍开始，设定一个富有远见的语调。\n- 将想法细分为明确标记的部分或步骤。\n- 使用比较、场景或预测将抽象的想法生动化。\n- 在讨论未来发展时，承认不确定性，同时提供扎实的观点或可能性。\n\n对话：\n- 鼓励用户超越传统界限思考，并想象在他们的领域或生活中可能发生的事情。\n- 始终以一个问题结束你的回答，以保持对话持续进行。"
     },
@@ -2056,6 +2079,7 @@
       "closeWindow": "关闭窗口",
       "designStudio": "@:{'designStudio.title'}",
       "import": {
+        "markdown": "导入Markdown文件…",
         "openai": "ChatGPT 数据导出…",
         "title": "导入"
       },
@@ -2191,14 +2215,14 @@
     },
     "ollama": {
       "browseModels": "在 https://ollama.com/search 发现更多模型",
-      "cancelling": "正在取消...",
+      "cancelling": "正在取消…",
       "checkAgain": "重新检查",
-      "checking": "正在检查Ollama安装情况...",
+      "checking": "正在检查 Ollama 安装情况…",
       "download": "下载Ollama",
       "downloadComplete": "下载完成",
       "downloadCompleteMessage": "Ollama安装程序已准备好。请运行它以完成安装。",
       "downloadError": "下载失败。请重试或手动安装Ollama。",
-      "downloading": "正在下载...",
+      "downloading": "正在下载…",
       "install": "安装Ollama",
       "installedModels": "可用模型",
       "noModelsInstalled": "尚未安装模型。您可以使用以下选项添加Ollama模型。",
@@ -2270,35 +2294,37 @@
       "default": {
         "completed": "文件系统操作完成",
         "error": "文件系统操作出错：{error}",
-        "running": "正在执行文件系统操作…",
-        "starting": "准备文件系统操作…"
+        "running": "正在执行文件系统操作…"
       },
       "delete": {
         "completed": "成功删除 {path}",
         "declined": "用户拒绝删除 {path}",
         "error": "删除 {path} 时出错",
-        "running": "正在删除 {path}…",
-        "starting": "准备删除 {path}…"
+        "running": "正在删除 {path}…"
+      },
+      "find": {
+        "completed": "在 {path} 中未找到文件 | 在 {path} 中找到 1 个文件 | 在 {path} 中找到 {count} 个文件",
+        "error": "在 {path} 中查找文件时出错：{error}",
+        "noPattern": "查找操作未提供模式",
+        "running": "正在 {path} 中查找匹配 '{pattern}' 的文件…"
       },
       "invalidPath": "此操作不在允许路径范围内：{path}",
       "list": {
         "completed": "在 {path} 中未发现项目 | 在 {path} 中发现 1 个项目 | 在 {path} 中发现 {count} 个项目",
         "error": "列出 {path} 内容时出错",
-        "running": "正在列出 {path} 的内容…",
-        "starting": "准备列出目录内容…"
+        "running": "正在列出 {path} 的内容…"
       },
       "read": {
         "completed": "成功读取文件 {path}",
         "error": "读取文件 {path} 时出错",
-        "running": "正在读取文件 {path}…",
-        "starting": "准备读取文件…"
+        "running": "正在读取文件 {path}…"
       },
+      "starting": "初始化文件系统访问…",
       "write": {
         "completed": "成功写入文件 {path}",
         "declined": "用户拒绝覆盖 {path}",
         "error": "写入文件 {path} 时出错",
-        "running": "正在写入文件 {path}…",
-        "starting": "准备写入文件…"
+        "running": "正在写入文件 {path}…"
       }
     },
     "image": {
@@ -2386,6 +2412,7 @@
         "title": "知识库"
       },
       "experts": {
+        "manage": "管理专家",
         "none": "无专家",
         "title": "@:{'common.experts'}"
       },
@@ -2557,15 +2584,19 @@
     },
     "commands": {
       "confirmDelete": "你确定要删除这个命令吗？",
-      "disableAll": "全部禁用",
-      "enableAll": "全部启用",
+      "copy": "@:{'common.copy'}",
+      "defaults": "默认值",
+      "empty": "尚未定义任何命令",
       "export": "导出",
       "exportError": "导出命令文件失败",
       "exportSuccess": "命令文件导出成功",
       "import": "@:{'common.import'}",
       "importError": "导入命令文件失败",
       "importSuccess": "命令文件导入成功",
-      "new": "新建"
+      "itemCount": "无命令|1 个命令|{count} 个命令",
+      "itemsSelected": "未选择|已选择 {count} 项|已选择 {count} 项",
+      "new": "新建",
+      "toggle": "切换"
     },
     "deepResearch": {
       "breadth": "研究广度",
@@ -2672,12 +2703,24 @@
     },
     "experts": {
       "allCategories": "所有类别",
+      "categoryManager": {
+        "categoryName": "分类名称",
+        "confirmDelete": "删除分类",
+        "deleteExperts": "删除专家",
+        "deleteText": "您想如何处理该分类中的专家？",
+        "duplicateName": "此分类名称已存在",
+        "empty": "暂无分类",
+        "keepExperts": "保留专家",
+        "newCategory": "新建分类",
+        "toggleVisibility": "切换可见性"
+      },
       "confirmDelete": "你确定要删除这个专家吗？",
       "confirmDeleteAll": "您确定要删除所有专家吗？",
       "copy": "复制",
       "deleteAll": "全部删除",
       "descriptionPlaceholder": "简要描述该专家的工作内容",
       "disableAll": "全部禁用",
+      "empty": "尚未定义任何专家",
       "enableAll": "全部启用",
       "export": "导出",
       "exportError": "导出专家文件失败",
@@ -2685,13 +2728,15 @@
       "import": "@:{'common.import'}",
       "importError": "导入专家文件失败",
       "importSuccess": "专家文件导入成功",
+      "itemCount": "无专家|1 位专家|{count} 位专家",
+      "itemsSelected": "未选择|已选择 {count} 项|已选择 {count} 项",
+      "manageCategories": "管理分类",
       "new": "新建",
       "noCategory": "无类别",
-      "searchPlaceholder": "按名称、描述或类别搜索专家...",
+      "searchPlaceholder": "按名称搜索专家…",
       "sortAlpha": "按字母顺序排序",
       "sortState": "按状态排序",
-      "sortUsage": "按使用量排序",
-      "usage": "使用量"
+      "toggle": "切换"
     },
     "general": {
       "darkTint": "深色",
@@ -2791,8 +2836,23 @@
         "binaryPath": "Python 二进制路径",
         "description1": "启用此插件将允许 LLM 引擎在你的计算机上运行任意代码。",
         "description2": "无法预测 LLM 引擎生成的代码是否安全。",
+        "downloadError": "下载 Python 运行时失败：{error}",
+        "downloading": "下载中…",
+        "downloadLater": "稍后",
+        "downloadMessage": "嵌入式 Python 运行时需下载约 12 MB 的文件。您想现在下载还是首次使用时再下载？",
+        "downloadNow": "@:{'common.download'}",
+        "downloadSuccess": "Python 运行时下载成功，已准备好使用。",
+        "downloadTitle": "需要下载",
+        "embeddedDescription": "安全的沙箱环境，无需安装。包含 NumPy、Pandas 和 Matplotlib。",
+        "embeddedRuntime": "嵌入式运行时（推荐）",
+        "nativeDescription": "使用您自己的 Python 安装，支持完整功能和自定义包。",
+        "nativeRuntime": "本地二进制",
+        "runtime": "运行模式",
         "search": "搜索",
         "title": "Python",
+        "uninstallLabel": "移除嵌入式 Python 运行时",
+        "uninstallMessage": "您可以稍后随时在设置面板重新安装。",
+        "uninstallTitle": "您确定要卸载嵌入式 Python 运行时吗？",
         "useAtOwnRisk": "使用需自担风险",
         "warning": "警告！"
       },
@@ -3031,7 +3091,7 @@
     "enabled": "已启用",
     "evictionDuration": "清除非活动 Web 应用时间（分钟）",
     "icon": "图标",
-    "iconSearch": "搜索图标...",
+    "iconSearch": "搜索图标…",
     "name": "名称",
     "noApps": "未配置任何 Web 应用",
     "preserveColors": "保留网页应用图标颜色",

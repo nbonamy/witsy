@@ -339,6 +339,20 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
     delete config.shortcuts.chat
   }
 
+  // backwards compatibility: Python plugin runtime mode
+  if (config.plugins.python) {
+    // If runtime not specified in user overrides but binpath exists, set to native
+    // Check overrides (not merged config) because defaults already set runtime: 'embedded'
+    const hadRuntimeInOverrides = overrides.plugins?.python?.runtime
+    if (!hadRuntimeInOverrides && config.plugins.python.binpath) {
+      config.plugins.python.runtime = 'native'
+    }
+    // Otherwise ensure it has a runtime (will be 'embedded' from defaults)
+    if (!config.plugins.python.runtime) {
+      config.plugins.python.runtime = 'embedded'
+    }
+  }
+
   // nullify defaults
   nullifyDefaults(config)
 

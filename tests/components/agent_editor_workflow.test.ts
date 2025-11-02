@@ -1,6 +1,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { createI18nMock } from '../mocks/index'
+import { stubTeleport } from '../mocks/stubs'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Editor from '../../src/agent/Editor.vue'
@@ -645,4 +646,276 @@ test('Shows existing jsonSchema in dialog input', async () => {
   expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
     inputValue: existingSchema
   }))
+})
+
+test('Can attach expert to workflow step', async () => {
+  // Create test expert
+  const testExpert = {
+    id: 'expert-1',
+    type: 'user' as const,
+    name: 'Test Expert',
+    prompt: 'Expert instructions',
+    state: 'enabled' as const,
+    triggerApps: []
+  }
+  store.experts = [testExpert]
+
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Expert button should exist
+  const expertButton = wrapper.find('.step-actions .expert')
+  expect(expertButton.exists()).toBe(true)
+  expect(expertButton.text()).toContain('agent.create.workflow.expert')
+
+  // Initially expert button should not be active
+  expect(expertButton.classes()).not.toContain('active')
+
+  // Manually attach expert (simulating menu interaction)
+  agent.steps[0].expert = testExpert.id
+  await nextTick()
+
+  // Verify expert was attached to step
+  expect(agent.steps[0].expert).toBe(testExpert.id)
+})
+
+test('Can remove expert from workflow step', async () => {
+  // Create test expert
+  const testExpert = {
+    id: 'expert-1',
+    type: 'user' as const,
+    name: 'Test Expert',
+    prompt: 'Expert instructions',
+    state: 'enabled' as const,
+    triggerApps: []
+  }
+  store.experts = [testExpert]
+
+  const agent = new Agent()
+  agent.steps = [
+    {
+      prompt: 'Step 1',
+      tools: null,
+      agents: [],
+      expert: testExpert.id  // Already has expert attached
+    }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Expert button should be active
+  const expertButton = wrapper.find('.step-actions .expert')
+  expect(expertButton.classes()).toContain('active')
+
+  // Manually remove expert (simulating clear action)
+  agent.steps[0].expert = undefined
+  await nextTick()
+
+  // Verify expert was removed from step
+  expect(agent.steps[0].expert).toBeUndefined()
+})
+
+test('Expert button exists and works correctly', async () => {
+  // Create test experts
+  const expert1 = {
+    id: 'expert-1',
+    type: 'user' as const,
+    name: 'Expert One',
+    prompt: 'Instructions',
+    state: 'enabled' as const,
+    triggerApps: []
+  }
+
+  const expert2 = {
+    id: 'expert-2',
+    type: 'user' as const,
+    name: 'Expert Two',
+    prompt: 'Instructions',
+    state: 'enabled' as const,
+    triggerApps: []
+  }
+
+  store.experts = [expert1, expert2]
+
+  const agent = new Agent()
+  agent.steps = [{ prompt: 'Step 1', tools: null, agents: [] }]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Expert button should exist
+  const expertButton = wrapper.find('.step-actions .expert')
+  expect(expertButton.exists()).toBe(true)
+  expect(expertButton.text()).toContain('agent.create.workflow.expert')
+})
+
+test('Expert button respects hasExpert state', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step without expert', tools: null, agents: [] },
+    { prompt: 'Step with expert', tools: null, agents: [], expert: 'some-expert-id' }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Expand first step (no expert)
+  const stepHeaders = wrapper.findAll('.step-panel .panel-header')
+  await stepHeaders[0].trigger('click')
+  await nextTick()
+
+  let expertButton = wrapper.find('.step-actions .expert')
+  expect(expertButton.classes()).not.toContain('active')
+
+  // Expand second step (has expert)
+  await stepHeaders[1].trigger('click')
+  await nextTick()
+
+  expertButton = wrapper.find('.step-actions .expert')
+  expect(expertButton.classes()).toContain('active')
+})
+
+test('Selecting docrepo from menu updates step', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Initially step should have no docrepo
+  expect(agent.steps[0].docrepo).toBeUndefined()
+
+  // Click docrepo button to open menu
+  const docrepoButton = wrapper.find('.step-actions .docrepo')
+  await docrepoButton.trigger('click')
+  await nextTick()
+
+  // Menu should be visible
+  const docrepoMenu = wrapper.findComponent({ name: 'DocReposMenu' })
+  expect(docrepoMenu.exists()).toBe(true)
+
+  // Click on the first docrepo in the menu
+  const firstDocRepo = docrepoMenu.find('.item:first-child')
+  await firstDocRepo.trigger('click')
+  await nextTick()
+
+  // Step should now have the docrepo
+  expect(agent.steps[0].docrepo).toBe('uuid1')
+})
+
+test('Selecting expert from menu updates step', async () => {
+  // Create test expert
+  const testExpert = {
+    id: 'expert-1',
+    type: 'user' as const,
+    name: 'Test Expert',
+    prompt: 'Expert instructions',
+    state: 'enabled' as const,
+    triggerApps: []
+  }
+  store.experts = [testExpert]
+
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Initially step should have no expert
+  expect(agent.steps[0].expert).toBeUndefined()
+
+  // Click expert button to open menu
+  const expertButton = wrapper.find('.step-actions .expert')
+  await expertButton.trigger('click')
+  await nextTick()
+
+  // Menu should be visible
+  const expertMenu = wrapper.findComponent({ name: 'ExpertsMenu' })
+  expect(expertMenu.exists()).toBe(true)
+
+  // Click on the first expert in the menu
+  const firstExpert = expertMenu.find('.item:first-child')
+  await firstExpert.trigger('click')
+  await nextTick()
+
+  // Step should now have the expert
+  expect(agent.steps[0].expert).toBe('expert-1')
 })

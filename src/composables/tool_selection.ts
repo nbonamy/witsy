@@ -84,7 +84,6 @@ export const validateToolSelection = async (toolSelection: ToolSelection): Promi
       toolSelection = null
     }
   }
-  // console.log('Validated tool selection:', toolSelection)
   return toolSelection
 }
 
@@ -178,24 +177,25 @@ export const handleServerToolToggle = async (toolSelection: ToolSelection, serve
 }
 
 export const handleSelectAllTools = async (visibleToolIds?: string[] | null): Promise<ToolSelection> => {
-  if (visibleToolIds === null || !visibleToolIds) {
+  if (visibleToolIds === null || visibleToolIds === undefined) {
     // No filter active, select all tools
-    return null
+    const allTools = await initToolSelectionWithAllTools()
+    return validateToolSelection(allTools)
   }
-  
-  // Filter active, return only visible tools
-  return visibleToolIds
+
+  // Filter active (or empty array), return only visible tools
+  return validateToolSelection(visibleToolIds)
 }
 
 export const handleUnselectAllTools = async (visibleToolIds?: string[] | null): Promise<ToolSelection> => {
-  if (visibleToolIds === null || !visibleToolIds) {
-    // No filter active, unselect all tools  
+  if (visibleToolIds === null || visibleToolIds === undefined) {
+    // No filter active, unselect all tools
     return []
   }
-  
-  // Filter active, need to get current selection and remove only visible tools
+
+  // Filter active (or empty array), need to get current selection and remove only visible tools
   const allTools = await initToolSelectionWithAllTools()
-  return allTools.filter(tool => !visibleToolIds.includes(tool))
+  return validateToolSelection(allTools.filter(tool => !visibleToolIds.includes(tool)))
 }
 
 export const handleSelectAllPlugins = async (toolSelection: ToolSelection, visiblePluginIds?: string[] | null): Promise<ToolSelection> => {

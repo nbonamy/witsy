@@ -65,7 +65,7 @@ export default class extends Plugin {
   }
 
   getCompletedDescription(tool: string, args: any, results: any): string | undefined {
-    if (results.error) {
+    if (!results || !results.results || results.error) {
       return t('plugins.search.error')
     } else {
       return t('plugins.search.completed', { query: args.query, count: results.results.length })
@@ -337,13 +337,15 @@ export default class extends Plugin {
     results: SearchResultItem[],
     context: PluginExecutionContext
   ): Promise<void> {
-    for (const result of results) {
-      const html = await this.runWithAbort(
-        fetch(result.url, { signal: context.abortSignal }).then(response => response.text()),
-        context.abortSignal
-      )
-      result.content = this.htmlToText(html)
-    }
+    await Promise.all(
+      results.map(async (result) => {
+        const html = await this.runWithAbort(
+          fetch(result.url, { signal: context.abortSignal }).then(response => response.text()),
+          context.abortSignal
+        )
+        result.content = this.htmlToText(html)
+      })
+    )
   }
 
 }

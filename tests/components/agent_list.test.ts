@@ -39,9 +39,7 @@ beforeEach(() => {
 })
 
 test('Renders agent list component', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
-  })
+  const wrapper: VueWrapper<any> = mount(List)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.agents-list')).toBeTruthy()
 })
@@ -65,9 +63,7 @@ test('Shows table with agent rows', async () => {
 })
 
 test('Shows all agents in table rows', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
-  })
+  const wrapper: VueWrapper<any> = mount(List)
   
   // Should have all 3 agents in table rows
   const rows = wrapper.findAll('tbody tr')
@@ -75,9 +71,7 @@ test('Shows all agents in table rows', async () => {
 })
 
 test('Displays agent information correctly', async () => {
-  const wrapper: VueWrapper<any> = mount(List, {
-    props: { agents: store.agents }
-  })
+  const wrapper: VueWrapper<any> = mount(List)
 
   const firstRow = wrapper.find('tbody tr')
   const cells = firstRow.findAll('td')
@@ -91,10 +85,10 @@ test('Displays agent information correctly', async () => {
 
 test('Shows "Running..." for agent with running execution', async () => {
   // Mock getRuns to return a running execution for agent1 BEFORE mounting
-  const getRunsSpy = vi.spyOn(window.api.agents, 'getRuns').mockImplementation((workspaceId: string, agentId: string) => {
+  const getRunsSpy = vi.spyOn(window.api.agents, 'getRun').mockImplementation((workspaceId: string, agentId: string, runId: string) => {
     if (agentId === 'agent1') {
-      return [{
-        uuid: 'run-running',
+      return {
+        uuid: runId,
         agentId: 'agent1',
         createdAt: Date.now() - 1000,
         updatedAt: Date.now() - 1000,
@@ -103,9 +97,9 @@ test('Shows "Running..." for agent with running execution', async () => {
         prompt: 'Test prompt',
         messages: [],
         toolCalls: []
-      }]
+      }
     }
-    return []
+    return null
   })
 
   const wrapper: VueWrapper<any> = mount(List, {
@@ -124,9 +118,7 @@ test('Shows "Running..." for agent with running execution', async () => {
 })
 
 test('Displays agents in array order', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
-  })
+  const wrapper: VueWrapper<any> = mount(List)
   
   const rows = wrapper.findAll('tbody tr')
   const firstRowCells = rows.at(0)?.findAll('td')
@@ -138,9 +130,8 @@ test('Displays agents in array order', async () => {
 })
 
 test('Shows empty table when no agents', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: [] } 
-  })
+  store.agents = []
+  const wrapper: VueWrapper<any> = mount(List)
   
   const table = wrapper.find('table')
   expect(table.exists()).toBe(true)
@@ -164,32 +155,27 @@ test('Shows action buttons for each agent', async () => {
 })
 
 test('Emits view event when clicking view button', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
-  })
+  const wrapper: VueWrapper<any> = mount(List)
   
   const viewButton = wrapper.find('.view')
   await viewButton.trigger('click')
   
   expect(wrapper.emitted('view')).toBeTruthy()
-  expect(wrapper.emitted('view')![0]).toEqual([store.agents[0]]) // First agent in array
+  expect((wrapper.emitted('view')![0][0] as any).uuid).toEqual(store.agents[0].uuid) // First agent in array
 })
 
 test('Emits run event when clicking run button', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
-  })
+  const wrapper: VueWrapper<any> = mount(List)
   
   const runButton = wrapper.find('.run')
   await runButton.trigger('click')
   
   expect(wrapper.emitted('run')).toBeTruthy()
-  expect(wrapper.emitted('run')![0]).toEqual([store.agents[0]]) // First agent in array
+  expect((wrapper.emitted('run')![0][0] as any).uuid).toEqual(store.agents[0].uuid) // First agent in array
 })
 
 test('Emits edit event when clicking edit option in context menu', async () => {
   const wrapper: VueWrapper<any> = mount(List, {
-    props: { agents: store.agents },
     attachTo: document.body
   })
 
@@ -211,7 +197,6 @@ test('Emits edit event when clicking edit option in context menu', async () => {
 
 test('Emits delete event when clicking delete option in context menu', async () => {
   const wrapper: VueWrapper<any> = mount(List, {
-    props: { agents: store.agents },
     attachTo: document.body
   })
 
@@ -284,6 +269,28 @@ test('Emits export event when clicking export option in context menu', async () 
 
   expect(wrapper.emitted('export')).toBeTruthy()
   expect(wrapper.emitted('export')![0]).toEqual([store.agents[0]]) // First agent in array
+})
+
+test('Emits duplicate event when clicking duplicate option in context menu', async () => {
+  const wrapper: VueWrapper<any> = mount(List, {
+    props: { agents: store.agents },
+    attachTo: document.body
+  })
+
+  // Find the ContextMenuTrigger and click it to open the menu
+  const contextMenuTrigger = wrapper.findComponent({ name: 'ContextMenuTrigger' })
+  await contextMenuTrigger.find('.trigger').trigger('click')
+  await nextTick()
+
+  // Find the ContextMenuPlus component and click the duplicate item
+  const contextMenuPlus = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(contextMenuPlus.exists()).toBe(true)
+
+  const duplicateItem = contextMenuPlus.find('.item.duplicate')
+  await duplicateItem.trigger('click')
+
+  expect(wrapper.emitted('duplicate')).toBeTruthy()
+  expect(wrapper.emitted('duplicate')![0]).toEqual([store.agents[0]]) // First agent in array
 })
 
 test('Event handlers prevent bubbling for action buttons', async () => {

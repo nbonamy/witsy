@@ -32,8 +32,7 @@ const editor = ref(null)
 const selected = ref<Command>(null)
 const edited = ref<Command>(null)
 
-const onCreate = (current: Command) => {
-  selected.value = current
+const onCreate = () => {
   edited.value = newCommand()
 }
 

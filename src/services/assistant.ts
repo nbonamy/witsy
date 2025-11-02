@@ -1,19 +1,20 @@
 
+import { LlmEngine } from 'multi-llm-ts'
 import { Expert, MessageExecutionType } from 'types'
 import { Configuration } from 'types/config'
-import { LlmEngine } from 'multi-llm-ts'
-import { fullExpertI18n, getLlmLocale, setLlmLocale } from './i18n'
-import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback, GenerationCallback } from './generator'
-import { availablePlugins } from '../plugins/plugins'
+import { markRaw } from 'vue'
+import LlmFactory, { ILlmManager } from '../llms/llm'
+import Attachment from '../models/attachment'
 import Chat from '../models/chat'
 import Message from '../models/message'
-import Attachment from '../models/attachment'
-import LlmFactory, { ILlmManager } from '../llms/llm'
-import LlmUtils from './llm_utils'
+import { availablePlugins } from '../plugins/plugins'
+import { DeepResearch } from './deepresearch'
+import DeepResearchAL from './deepresearch_al'
 import DeepResearchMultiAgent from './deepresearch_ma'
 import DeepResearchMultiStep from './deepresearch_ms'
-import DeepResearchAL from './deepresearch_al'
-import { DeepResearch } from './deepresearch'
+import Generator, { GenerationCallback, GenerationOpts, GenerationResult, LlmChunkCallback } from './generator'
+import { fullExpertI18n, getLlmLocale, setLlmLocale } from './i18n'
+import LlmUtils from './llm_utils'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
@@ -69,7 +70,8 @@ export default class {
   }
 
   setLlm(llm: LlmEngine) {
-    this.llm = llm
+    // do not create a reactive llm
+    this.llm = markRaw(llm)
   }
 
   hasLlm() {

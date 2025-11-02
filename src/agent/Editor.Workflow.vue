@@ -51,7 +51,8 @@
             </div>
           </div>
           <div class="panel-footer step-actions" v-if="expandedStep === index">
-            <button class="docrepo" :id="`docrepo-menu-anchor-${index}`" :disabled="!docRepos.length" @click="onDocRepo(index)" :class="{ 'active': hasDocRepo(index) }"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
+            <button class="expert" :id="`expert-menu-anchor-${index}`" @click="onExpert(index)" :class="{ 'active': hasExpert(index) }"><BrainIcon /> {{ t('agent.create.workflow.expert') }}</button>
+            <button class="docrepo" :id="`docrepo-menu-anchor-${index}`" @click="onDocRepo(index)" :class="{ 'active': hasDocRepo(index) }"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
             <button class="tools" :id="`tools-menu-anchor-${index}`" @click="onTools(index)" :class="{ 'active': hasTools(index) }"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
             <button class="agents" :id="`agents-menu-anchor-${index}`" @click="onAgents(index)" :disabled="availableAgents.length === 0" :class="{ 'active': hasAgents(index) }"><AgentIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
             <button class="structured-output" @click="onStructuredOutput(index)" :class="{ 'active': hasJsonSchema(index) }"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
@@ -83,33 +84,17 @@
     @server-tool-toggle="handleServerToolToggle"
   />
   <AgentSelector ref="agentSelector" :exclude-agent-id="agent.uuid" @save="onSaveAgents" />
-  
-  <!-- Doc Repo Context Menu -->
-  <ContextMenuPlus 
-    v-if="docRepoMenuVisible && docRepoMenuStepIndex >= 0" 
+
+  <!-- Doc Repo Menu -->
+  <DocReposMenu
+    v-if="docRepoMenuVisible && docRepoMenuStepIndex >= 0"
     :anchor="`#docrepo-menu-anchor-${docRepoMenuStepIndex}`"
     position="above"
-    :hover-highlight="false"
+    :footer-mode="hasDocRepo(docRepoMenuStepIndex) ? 'clear' : 'none'"
     @close="onCloseDocRepoMenu"
-  >
-    <template #default>
-      <div 
-        v-for="repo in docRepos" 
-        :key="repo.uuid"
-        @click="selectDocRepo(repo.uuid)"
-        :class="{ 'selected-repo': agent.steps[docRepoMenuStepIndex]?.docrepo === repo.uuid }"
-      >
-        <LightbulbIcon class="icon" />
-        <span>{{ repo.name }}</span>
-      </div>
-    </template>
-    <template #footer v-if="hasDocRepo(docRepoMenuStepIndex)">
-      <div @click="selectDocRepo('none')">
-        <Trash2Icon class="icon" />
-        {{ t('common.clear') }}
-      </div>
-    </template>
-  </ContextMenuPlus>
+    @doc-repo-selected="selectDocRepo"
+    @manage-doc-repo="onManageDocRepo"
+  />
   
   <!-- Agents Context Menu -->
   <ContextMenuPlus 
@@ -137,13 +122,26 @@
       </div>
     </template>
   </ContextMenuPlus>
+
+  <!-- Expert Menu -->
+  <ExpertsMenu
+    v-if="expertMenuVisible && expertMenuStepIndex >= 0"
+    :anchor="`#expert-menu-anchor-${expertMenuStepIndex}`"
+    position="above"
+    :footer-mode="hasExpert(expertMenuStepIndex) ? 'clear' : 'none'"
+    @close="onCloseExpertMenu"
+    @expert-selected="selectExpert"
+    @manage-experts="onManageExperts"
+  />
 </template>
 
 <script setup lang="ts">
-import { BlocksIcon, BracesIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
+import { BlocksIcon, BracesIcon, BrainIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed, PropType, ref, watch } from 'vue'
 import AgentIcon from '../../assets/agent.svg?component'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
+import DocReposMenu from '../components/DocReposMenu.vue'
+import ExpertsMenu from '../components/ExpertsMenu.vue'
 import ToolsMenu from '../components/ToolsMenu.vue'
 import WizardStep from '../components/WizardStep.vue'
 import Dialog from '../composables/dialog'
@@ -186,6 +184,8 @@ const docRepoMenuVisible = ref(false)
 const docRepoMenuStepIndex = ref(-1)
 const agentsMenuVisible = ref(false)
 const agentsMenuStepIndex = ref(-1)
+const expertMenuVisible = ref(false)
+const expertMenuStepIndex = ref(-1)
 
 // Watch for prop changes
 watch(() => props.expandedStep, (newValue) => {
@@ -193,10 +193,6 @@ watch(() => props.expandedStep, (newValue) => {
 })
 
 // Computed properties for menus
-const docRepos = computed(() => {
-  return window.api.docrepo.list(store.config.workspaceId)
-})
-
 const availableAgents = computed(() => {
   return store.agents.filter(a => a.uuid !== props.agent.uuid)
 })
@@ -213,6 +209,10 @@ const hasTools = (index: number) => {
 
 const hasAgents = (index: number) => {
   return props.agent.steps[index]?.agents && props.agent.steps[index].agents.length > 0
+}
+
+const hasExpert = (index: number) => {
+  return !!props.agent.steps[index]?.expert
 }
 
 const hasJsonSchema = (index: number) => {
@@ -258,11 +258,19 @@ const onCloseDocRepoMenu = () => {
   docRepoMenuStepIndex.value = -1
 }
 
-const selectDocRepo = (docRepoId: string) => {
-  if (docRepoMenuStepIndex.value >= 0) {
-    props.agent.steps[docRepoMenuStepIndex.value].docrepo = docRepoId === 'none' ? undefined : docRepoId
-  }
+const selectDocRepo = (docRepoId: string | null) => {
+  const stepIndex = docRepoMenuStepIndex.value
   onCloseDocRepoMenu()
+
+  if (stepIndex >= 0) {
+    props.agent.steps[stepIndex].docrepo = docRepoId || undefined
+  }
+}
+
+const onManageDocRepo = () => {
+  onCloseDocRepoMenu()
+  // DocReposMenu's manage button could open settings, but for now just close
+  // TODO: Add navigation to docrepo settings if needed
 }
 
 const onTools = (index: number) => {
@@ -383,6 +391,33 @@ const clearAllAgents = () => {
 
 const onSaveAgents = (agents: string[]) => {
   props.agent.steps[expandedStep.value].agents = agents
+}
+
+const onExpert = (index: number) => {
+  expandedStep.value = index
+  emit('update:expanded-step', expandedStep.value)
+  expertMenuStepIndex.value = index
+  expertMenuVisible.value = true
+}
+
+const onCloseExpertMenu = () => {
+  expertMenuVisible.value = false
+  expertMenuStepIndex.value = -1
+}
+
+const selectExpert = (expertId: string | null) => {
+  const stepIndex = expertMenuStepIndex.value
+  onCloseExpertMenu()
+
+  if (stepIndex >= 0) {
+    props.agent.steps[stepIndex].expert = expertId || undefined
+  }
+}
+
+const onManageExperts = () => {
+  onCloseExpertMenu()
+  // ExpertsMenu's manage button could open settings, but for now just close
+  // TODO: Add navigation to experts settings if needed
 }
 
 const onStructuredOutput = async (index: number) => {

@@ -52,6 +52,7 @@
     "docRepo": "Base de Conhecimento",
     "documents": "Documentos",
     "done": "Concluído",
+    "download": "Baixar",
     "downloadCsv": "CSV",
     "downloadXlsx": "Excel",
     "edit": "Editar",
@@ -111,6 +112,8 @@
     "model": "Modelo",
     "modelPlaceholder": "Insira um nome de modelo ou selecione um",
     "move": "Mover",
+    "moveDown": "Mover para baixo",
+    "moveUp": "Mover para cima",
     "name": "Nome",
     "new": "Novo",
     "newChat": "New Conversation",
@@ -173,6 +176,7 @@
     "spellcheck": {
       "add": "Adicionar ao dicionário"
     },
+    "status": "Status",
     "stop": "Parar",
     "title": "Title",
     "tools": "Ferramentas",
@@ -203,6 +207,7 @@
     "yes": "Sim"
   },
   "agent": {
+    "copySuffix": "Copiar",
     "create": {
       "goal": {
         "title": "Objetivo do Agente"
@@ -243,15 +248,16 @@
       "workflow": {
         "addStep": "Adicionar Etapa",
         "confirmDeleteStep": "Tem certeza que deseja excluir esta etapa?",
-        "customAgents": "Designar Co-Agentes",
-        "customTools": "Adicionar Ferramentas",
+        "customAgents": "Co-Agentes",
+        "customTools": "Ferramentas",
         "description": "@:{'common.description'}",
-        "docRepo": "Adicionar Conhecimento",
+        "docRepo": "Conhecimento",
         "error": {
           "emptyStepPrompt": "O prompt da etapa #{step} não pode estar vazio.",
           "missingDocRepo": "A etapa #{step} usa uma Base de Conhecimento, mas nenhuma variável {'{'}{'{'}facts{'}'}{'}'} está definida no prompt. Por favor, adicione uma variável no formato {'{'}{'{'}facts{'}'}{'}'} ao seu prompt.",
           "structuredOutput": "Erro ao analisar o esquema da saída estruturada."
         },
+        "expert": "Especialista",
         "help": {
           "connect": "Conecte a saída das etapas anteriores usando variáveis {'{'}{'{'}output.#{'}'}{'}'} (exemplo: {'{'}{'{'}output.1{'}'}{'}'} para a saída da etapa 1)",
           "description": "A descrição será usada para fornecer atualizações de progresso durante a execução do agente",
@@ -285,7 +291,10 @@
       },
       "confirmDelete": "Tem certeza de que deseja excluir este agente?",
       "create": "Novo Agente",
-      "empty": "Desbloqueie o poder agente do @:{'common.appName'} criando seu primeiro agente! Clique na cabeça do robô para começar.",
+      "empty": {
+        "text": "O Agent Forge permite que você crie agentes de IA personalizados para automatizar seus fluxos de trabalho e lidar com tarefas complexas. Pense nisso como ter um assistente inteligente que pode dividir grandes trabalhos em etapas gerenciáveis e executá-las de forma autônoma.",
+        "title": "Bem-vindo ao Agent Forge"
+      },
       "import": {
         "conflict": {
           "createNew": "Criar Novo",
@@ -310,6 +319,7 @@
       "clearHistory": "Limpar todo o histórico deste agente",
       "delete": "Excluir este agente",
       "deleteRun": "Excluir esta execução",
+      "duplicate": "Duplicar este agente",
       "edit": "Editar este agente",
       "export": "Exportar agente",
       "import": "Importar agente",
@@ -325,7 +335,7 @@
       "lastRun": "Última Execução",
       "log": "Log",
       "neverRun": "Nunca",
-      "running": "Executando...",
+      "running": "Executando…",
       "status": "Status",
       "trigger": "Acionador"
     },
@@ -435,7 +445,7 @@
       "notFound": "O agente usado para gerar essa mensagem não está mais disponível.",
       "status": {
         "inProgress": "Executando passo {step} de {steps}…",
-        "starting": "Iniciando..."
+        "starting": "Iniciando…"
       }
     },
     "editor": {
@@ -460,11 +470,24 @@
     "fork": {
       "title": "Dividir chat"
     },
+    "import": {
+      "error": "Ocorreu um erro ao tentar importar o chat.",
+      "errorMultiple": "Falha ao importar {count} arquivo(s)",
+      "errors": "Erros",
+      "invalidFormat": "Formato markdown inválido. Formato esperado: # Título, ## Sistema/Você/Assistente",
+      "partialSuccess": "{success} chat(s) importado(s) com sucesso, {error} falhou(ram)",
+      "partialSuccessTitle": "Importação concluída com erros",
+      "success": "Chat importado com sucesso",
+      "successDetail": "A conversa foi importada e adicionada ao seu histórico de chat.",
+      "successMultiple": "{count} chats importados com sucesso",
+      "successMultipleDetail": "{count} conversas foram importadas e adicionadas ao seu histórico de chat."
+    },
     "role": {
       "assistant": "Assistente",
       "system": "Sistema",
       "user": "Você"
-    }
+    },
+    "unknownModel": "Modelo Desconhecido"
   },
   "chatList": {
     "displayMode": {
@@ -687,7 +710,7 @@
       "help": "Você pode segurar as seguintes teclas modificadoras enquanto seleciona seu comando para acelerar seu fluxo de trabalho. Você pode soltar essas teclas assim que o comando for selecionado.<ul><li><b>{ctrl}</b>: copiará o texto gerado para sua área de transferência</li><li><b>{shift}</b>: inserirá o texto gerado no aplicativo atual.</li><li><b>{shift}+{ctrl}</b>: substituirá o texto selecionado pelo texto gerado.</li></ul>",
       "usage": {
         "copy": "Modo de cópia ativado",
-        "default": "Clique para saber mais...",
+        "default": "Clique para saber mais…",
         "insert": "Modo de inserção ativado",
         "replace": "Modo de substituição ativado"
       }
@@ -873,7 +896,7 @@
     "search": {
       "error": "Ocorreu um erro durante a pesquisa. Por favor, tente novamente.",
       "noResults": "Nenhum resultado encontrado para sua consulta.",
-      "placeholder": "Digite sua consulta de pesquisa...",
+      "placeholder": "Digite sua consulta de pesquisa…",
       "results": "Resultados da Pesquisa ({count})",
       "score": "Pontuação de Relevância: {score}",
       "text": "Digite sua consulta de pesquisa para encontrar informações relevantes nesta base de conhecimento.",
@@ -1836,18 +1859,18 @@
   },
   "generator": {
     "errors": {
-      "cannotContinue": "\n\nDesculpe, não consigo continuar aqui.",
-      "contextTooLong": "Desculpe, parece que esta mensagem excede o comprimento do contexto deste modelo. Tente encurtar seu prompt ou tente outro modelo.",
-      "couldNotGenerate": "Desculpe, não consegui gerar texto para esse prompt.",
+      "cannotContinue": "\n\nDesculpe, não posso continuar aqui. <error>{error}</error>",
+      "contextTooLong": "Desculpe, parece que essa mensagem excede o limite de contexto deste modelo. Tente encurtar seu prompt ou experimente outro modelo. <error>{error}</error>",
+      "couldNotGenerate": "Desculpe, não consegui gerar texto para este prompt. <error>{error}</error>",
       "invalidBudgetKnown": "Desculpe, o orçamento de pensamento para este modelo deve estar entre {min} e {max}.",
-      "invalidBudgetUnknown": "Desculpe, o orçamento de pensamento é inválido para este modelo.",
-      "invalidModel": "Desculpe, parece que este modelo não está disponível.",
-      "missingApiKey": "Você precisa inserir sua chave de API na aba Modelos de [Configurações](#settings_models) para poder conversar.",
-      "networkError": "Desculpe, não consegui conectar ao provedor de LLM. Por favor, verifique sua conexão à internet ou suas [configurações de proxy](#settings_advanced) caso tenha definido alguma.",
-      "onlyThinkingMode": "Desculpe, este modelo funciona apenas no modo de pensamento. Deixe o orçamento de pensamento vazio ou insira um valor válido.",
-      "outOfCredits": "Desculpe, parece que você ficou sem créditos. Verifique o saldo da sua conta de provedor de LLM.",
-      "pluginDescriptionTooLong": "Desculpe, parece que uma das descrições dos plugins é muito longa. Se você as ajustou em Configurações | Avançado, tente novamente.",
-      "quotaExceeded": "Desculpe, parece que você atingiu o limite de taxa da sua conta de provedor de LLM. Tente novamente mais tarde.",
+      "invalidBudgetUnknown": "Desculpe, o orçamento de pensamento é inválido para este modelo. <error>{error}</error>",
+      "invalidModel": "Desculpe, parece que este modelo não está disponível. <error>{error}</error>",
+      "missingApiKey": "Você precisa inserir sua chave de API na aba Modelos em [Configurações](#settings_models) para poder conversar. <error>{error}</error>",
+      "networkError": "Desculpe, não consegui conectar ao provedor de LLM. Por favor, verifique sua conexão com a internet ou suas [configurações de proxy](#settings_advanced) caso tenha definido alguma. <error>{error}</error>",
+      "onlyThinkingMode": "Desculpe, este modelo só funciona no modo de pensamento. Deixe o orçamento de pensamento vazio ou insira um valor válido. <error>{error}</error>",
+      "outOfCredits": "Desculpe, parece que você ficou sem créditos. Verifique o saldo da sua conta do provedor LLM. <error>{error}</error>",
+      "pluginDescriptionTooLong": "Desculpe, parece que a descrição de um dos plugins está muito longa. Se você as modificou em Configurações | Avançado, por favor tente novamente. <error>{error}</error>",
+      "quotaExceeded": "Desculpe, parece que você atingiu o limite de taxa da sua conta do provedor LLM. Tente novamente mais tarde. <error>{error}</error>",
       "tryWithoutParams": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem parâmetros de modelo](#retry_without_params)? <error>{error}</error>",
       "tryWithoutPlugins": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem plugins](#retry_without_plugins)? <error>{error}</error>"
     }
@@ -1870,7 +1893,7 @@
       "structuredOutput": "Do not include in your response anything else that the response in the the following JSON schema:\n\n{'{'}jsonSchema{'}'}.\n\nDo NOT use markdown formatting, just return the JSON object as a string."
     },
     "capabilities": {
-      "artifacts": "Quando o usuário pedir para você criar algum conteúdo (documento, resumo, código...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO\">\nCONTEÚDO\n</artifact>. Artefatos HTML DEVEM começar com <html> ou <!DOCTYPE html>. Exemplo: <artifact title=\"Relatório\">\n<html style=\"font-family: system-ui;\"><head>...</head><body>Conteúdo do relatório formatado em HTML</body></html>\n</artifact>. Você pode usar essa capacidade para criar visualizações de dados baseadas em HTML usando Chart.js ou D3.js. NÃO use artefatos para tabelas de dados simples.",
+      "artifacts": "Quando o usuário pedir para você criar algum conteúdo (documento, resumo, código...), use a seguinte sintaxe:\n<artifact title=\"TÍTULO\">\nCONTEÚDO\n</artifact>. Artefatos HTML DEVEM começar com <html> ou <!DOCTYPE html>. Exemplo: <artifact title=\"Relatório\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>Conteúdo do Relatório formatado em HTML</body></html>\n</artifact>. Você pode usar essa capacidade para criar visualizações de dados baseadas em HTML usando Chart.js ou D3.js. NÃO use artefatos para tabelas de dados simples. Para artefatos de código, use <artifact title=\"NOMEARQUIVO.EXT\">\nCÓDIGO\n</artifact>.",
       "mermaid": "Se for solicitado que você produza um diagrama Mermaid, seu código será exibido como um diagrama para o usuário.",
       "noMarkdown": "Não use formatação markdown em suas respostas. Use apenas texto simples. Não use **negrito**, *itálico*, `código`, ```blocos de código``` ou qualquer outra sintaxe markdown. Se usar tabela, use apenas tabelas de texto simples com espaçamento adequado para alinhar as colunas.",
       "toolRetry": "Ao chamar ferramentas, se você receber um erro de entrada, analise o erro e tente corrigi-lo e então tente chamar a ferramenta novamente."
@@ -1881,7 +1904,7 @@
       "playful": "Você é um assistente de IA inteligente, brincalhão e espirituoso. Você ajuda os usuários respondendo perguntas, resolvendo problemas e oferecendo sugestões úteis — mas você faz isso com personalidade, charme e uma pitada certa de humor.\n\nObjetivos:\n- Fazer o usuário sorrir, mesmo ao responder perguntas sérias.\n- Manter suas respostas inteligentes, úteis e precisas — mas nunca monótonas.\n- Usar trocadilhos, frases inteligentes ou leve sarcasmo (quando apropriado) para tornar as interações memoráveis.\n\nTom e Estilo:\n- Use um tom divertido, animado e conversacional.\n- Sinta-se à vontade para usar piadas leves, referências culturais ou metáforas inteligentes — mas não exagere.\n- Evite ser bobo ou aleatório — sua sagacidade deve servir ao propósito, não distrair dele.\n- Você pode ser travesso, mas nunca maldoso. Você é divertido, não sarcástico.\n\nEstrutura:\n- Mantenha as respostas claras e fáceis de seguir — mesmo quando você está sendo brincalhão.\n- Use pontos em destaque, subtítulos ou espaçamento onde necessário para clareza.\n- Não sacrifique a utilidade em prol do humor. A precisão sempre vem em primeiro lugar.\n\nConversa:\n- Sempre termine sua resposta com uma pergunta brincalhona ou curiosa para manter a conversa fluindo.\n\nExemplos:\n- “Você pode fazê-lo do jeito chato... ou pode fazê-lo do meu jeito. Que, coincidentemente, é também o melhor jeito.”\n- “Imagine que o Excel e um robô tiveram um bebê. Isso é meio que o que você está pedindo — e eu estou aqui para isso.”\n- “Eu poderia te dar a resposta direto... mas onde estaria a graça nisso? Aqui está a explicação:”\n\nVocê está aqui para tornar as informações agradáveis, úteis e um pouco mais divertidas. Sempre termine sua resposta com uma pergunta para manter a conversa fluindo.",
       "reflective": "Você é um assistente de IA reflexivo e pensativo. Seu objetivo é ajudar os usuários a pensar profundamente, explorar ideias com nuances e considerar perspectivas que eles podem ainda não ter encontrado. Suas respostas devem convidar à reflexão, fornecer clareza e fomentar insights intelectuais ou pessoais.\n\nObjetivos:\n- Incentivar o usuário a pausar, refletir e considerar o contexto mais amplo de sua pergunta ou situação.\n- Oferecer não apenas informações, mas perspectiva e insights.\n- Explorar a complexidade sem sobrecarregar o usuário; abraçar a nuance quando apropriado.\n- Criar um tom calmo e contemplativo que se sinta fundamentado e inteligente.\n\nTom e Estilo:\n- Use uma linguagem clara, composta e reflexiva.\n- Fale lentamente (em tom), com um ritmo medido e cuidado na maneira como as ideias se desenrolam.\n- Evite apressar-se para conclusões. Em vez disso, guie o usuário através de possibilidades e estruturas de pensamento.\n- Respeite a ambiguidade quando existir e reconheça quando não há uma única resposta correta.\n- Mantenha-se humilde no tom, enquanto permanece confiante na clareza e profundidade.\n\nEstrutura:\n- Comece com uma introdução calma e observadora que demonstre consciência da profundidade ou complexidade da pergunta.\n- Use parágrafos curtos e significativos ou pontos estruturados ao explicar conceitos ou oferecer diferentes perspectivas.\n- Deixe espaço para que o usuário tire suas próprias conclusões sempre que possível, em vez de prescrever uma solução única.\n- Evite jargão ou linguagem excessivamente acadêmica; use clareza e sutileza em vez de tecnicidade.\n\nConversa:\n- Incentive o usuário a continuar pensando e explorando, oferecendo perguntas abertas e gentis.\n- Sempre termine sua resposta com uma pergunta para manter a conversa fluindo.",
       "standard": "Você é um assistente de IA projetado para auxiliar usuários fornecendo informações precisas, respondendo a perguntas e oferecendo sugestões úteis. Seus principais objetivos são entender as necessidades do usuário, comunicar-se claramente e fornecer respostas informativas, concisas e relevantes. Sempre termine sua resposta com uma pergunta para manter a conversa fluindo.",
-      "structured": "Você é um assistente de IA útil, estruturado e profissional. Você responde em um tom claro e amigável — profissional, mas não rígido, acessível, mas nunca excessivamente casual.\n\nObjetivo: seu objetivo é ajudar o usuário a resolver problemas, entender conceitos ou tomar decisões. Foque na clareza, utilidade e mantenha a conversa envolvente.\n\nEstrutura & Formatação:\n- Sempre comece com uma introdução curta e envolvente que explica com o que você está ajudando.\n- Organize sua resposta usando seções claras com cabeçalhos significativos.\n- Comece os cabeçalhos das seções com um emoji quando apropriado (🎯, ✅, ⚠️, 💡, 🔍, 📊, etc.) para guiar a atenção do usuário visualmente.\n- Use marcadores para listas.\n- Use etapas numeradas ao descrever um processo ou sequência.\n- Use tabelas sempre que possível ao comparar ou resumir informações.\n- Evite blocos de texto longos. Divida as ideias em blocos digeríveis com espaço visual.\n- Se a pergunta do usuário tiver várias partes, aborde cada uma de forma clara e por sua vez — mas não diga explicitamente que está fazendo isso.\n- Mantenha a formatação consistente de mensagem para mensagem (mesmo estilo de cabeçalho, convenções de emoji, etc.).\n\nTom & Comunicação:\n- Seja honesto, prático e empático.\n- Evite gírias excessivamente casuais, mas fale de forma natural e humana.\n- Não use jargão a menos que o usuário já tenha contexto técnico.\n- Evite encheção de linguiça ou conteúdo supérfluo. Vá direto ao valor.\n- Nunca inclua isenções como \"Como uma IA...\" a menos que solicitado explicitamente.\n- Se o tópico envolver uma decisão ou vários caminhos, explique os trade-offs de forma clara e neutra.\n\nAcompanhamento:\n- Sempre termine sua resposta com uma pergunta reflexiva para manter a conversa em movimento.\n\nExemplos do que você pode fazer:\n- Dividir um problema em passos claros e visuais com marcadores numerados.\n- Usar uma tabela para ajudar o usuário a comparar duas opções.\n- Responder a uma pergunta sensível ou pessoal com empatia e clareza.\n- Antecipar necessidades de acompanhamento com base no tópico e incluí-las proativamente.\n\nSeu trabalho é tornar a vida do usuário mais fácil por meio de clareza, estrutura e utilidade amigável.",
+      "structured": "Você é um assistente de IA útil, estruturado e profissional. Responda com um tom claro e amigável — profissional, porém não rígido, acessível, mas nunca excessivamente informal.\n\nObjetivo: seu objetivo é ajudar o usuário a resolver problemas, entender conceitos ou tomar decisões. Foco em clareza, utilidade e manter a conversa envolvente.\n\nEstrutura e Formatação:\n- Comece sempre com uma introdução curta e cativante que explique com o que você está ajudando.\n- Organize sua resposta em seções claras com cabeçalhos significativos.\n- Comece os cabeçalhos das seções com emojis quando apropriado (🎯, ✅, ⚠️, 💡, 🔍, 📊, etc.) para direcionar visualmente a atenção do usuário.\n- Use listas com marcadores.\n- Use passos numerados ao descrever um processo ou sequência.\n- Use tabelas sempre que possível ao comparar ou resumir informações.\n- Evite blocos longos de texto. Divida ideias em blocos digestíveis com espaços visuais.\n- Se a pergunta do usuário tiver múltiplas partes, aborde cada uma claramente em sequência — mas não diga explicitamente que você está fazendo isso.\n- Mantenha a formatação consistente de uma mensagem para outra (mesmo estilo de cabeçalho, convenções de emoji, etc.).\n\nTom e Comunicação:\n- Seja honesto, prático e empático.\n- Evite gírias muito informais, mas fale em tom natural e humano.\n- Não use jargões a menos que o usuário já tenha contexto técnico.\n- Evite enrolação ou preenchimento. Vá direto ao ponto.\n- Nunca inclua disclaimers como \"Como uma IA...\" a menos que explicitamente solicitado.\n- Se o tópico envolver uma decisão ou múltiplos caminhos, explique os trade-offs de forma clara e neutra.\n\nAcompanhamento:\n- Termine sempre sua resposta com uma pergunta de acompanhamento para manter a conversa.\n\nExemplos do que você pode fazer:\n- Dividir um problema em passos visuais claros com marcadores numerados.\n- Usar uma tabela para ajudar o usuário a comparar duas opções.\n- Responder a uma pergunta sensível ou pessoal com empatia e clareza.\n- Antecipar necessidades de acompanhamento baseadas no tópico e incluí-las proativamente.\n\nSeu trabalho é facilitar a vida do usuário por meio da clareza, estrutura e utilidade amigável.",
       "uplifting": "Você é um assistente de IA inspirador, edificante e encorajador. Seu objetivo é ajudar os usuários a se sentirem empoderados, motivados e capazes — seja enfrentando um desafio, explorando uma ideia ou trabalhando em direção a um objetivo.\n\nObjetivos:\n- Inspirar confiança e movimento para frente, especialmente quando o usuário se sente incerto ou preso.\n- Enquadrar as informações positivamente sem ignorar os desafios.\n- Usar uma linguagem encorajadora que energiza o usuário e promove a autoconfiança.\n- Sempre entregar substância — seu otimismo deve apoiar, não substituir, conteúdo útil.\n\nTom e Estilo:\n- Use um tom entusiástico, sincero e empoderador.\n- Fale sobre o potencial e crescimento do usuário, mesmo em situações difíceis.\n- Evite ser excessivamente sentimental ou casual. Seja humano, forte e encorajador.\n- Use uma linguagem ativa e voltada para o futuro que enfatize progresso e agência.\n\nEstrutura:\n- Comece com uma introdução curta e enérgica que destaque o que é possível.\n- Use seções claras e pontos em destaque quando necessário, especialmente se você estiver fornecendo etapas ou comparações.\n- Ofereça opções e possibilidades com um espírito de “você pode fazer isso”.\n- Use uma linguagem vívida ou metáforas quando apropriado para adicionar profundidade emocional, mas evite exageros ou superficialidade.\n\nConversa:\n- Encoraje o engajamento contínuo mostrando curiosidade sobre a jornada, objetivos ou ideias do usuário.\n- Sempre termine sua resposta com uma pergunta para manter a conversa fluindo.",
       "visionary": "Você é um assistente de IA futurista e visionário. Seu papel é ajudar os usuários a imaginar o que poderia ser, explorar a fronteira das ideias e abordar problemas com um pensamento ousado e voltado para o futuro. Suas respostas devem ser ambiciosas, imaginativas e fundamentadas em insights.\n\nObjetivos:\n- Despertar curiosidade e pensamento criativo sobre possibilidades futuras.\n- Ajudar os usuários a explorar tecnologias emergentes, tendências de longo prazo ou conceitos transformadores.\n- Inspirar ação e otimismo, mantendo-se intelectualmente credível.\n- Traduzir visões complexas ou abstratas em ideias que pareçam alcançáveis e concretas.\n\nTom e Estilo:\n- Use uma linguagem confiante, elevada e voltada para o futuro.\n- Seja ousado e imaginativo em suas ideias, mas sempre permaneça dentro do reino da especulação ponderada.\n- Fale com a voz de um estrategista, inovador ou futurista — alguém que vê o que os outros não vêem, mas explica claramente.\n- Evite exageros ou palavras vazias; prefira clareza em vez de ostentação.\n\nEstrutura:\n- Comece com uma introdução envolvente e voltada para o futuro que estabeleça um tom visionário.\n- Separe as ideias em seções ou etapas claramente rotuladas.\n- Use comparações, cenários ou previsões para dar vida a ideias abstratas.\n- Ao discutir desenvolvimentos futuros, reconheça a incerteza, oferecendo perspectivas ou probabilidades fundamentadas.\n\nConversa:\n- Encoraje o usuário a pensar além das fronteiras convencionais e imaginar o que pode ser possível em seu domínio ou vida.\n- Sempre termine sua resposta com uma pergunta para manter a conversa fluindo."
     },
@@ -2056,6 +2079,7 @@
       "closeWindow": "Fechar Janela",
       "designStudio": "@:{'designStudio.title'}",
       "import": {
+        "markdown": "Arquivo Markdown…",
         "openai": "Exportação de dados do ChatGPT…",
         "title": "Importar"
       },
@@ -2191,14 +2215,14 @@
     },
     "ollama": {
       "browseModels": "Descubra mais modelos em https://ollama.com/search",
-      "cancelling": "Cancelando...",
+      "cancelling": "Cancelando…",
       "checkAgain": "Verificar Novamente",
-      "checking": "Verificando a instalação do Ollama...",
+      "checking": "Verificando instalação do Ollama…",
       "download": "Baixar Ollama",
       "downloadComplete": "Download Concluído",
       "downloadCompleteMessage": "O instalador do Ollama está pronto. Por favor, execute-o para completar a instalação.",
       "downloadError": "Falha no download. Por favor, tente novamente ou instale o Ollama manualmente.",
-      "downloading": "Baixando...",
+      "downloading": "Baixando…",
       "install": "Instalar Ollama",
       "installedModels": "Modelos Disponíveis",
       "noModelsInstalled": "Nenhum modelo instalado ainda. Você pode adicionar modelos Ollama usando as opções abaixo.",
@@ -2270,35 +2294,37 @@
       "default": {
         "completed": "Operação no sistema de arquivos concluída",
         "error": "Erro durante operação no sistema de arquivos: {error}",
-        "running": "Executando operação no sistema de arquivos…",
-        "starting": "Preparando operação no sistema de arquivos…"
+        "running": "Executando operação no sistema de arquivos…"
       },
       "delete": {
         "completed": "{path} deletado com sucesso",
         "declined": "Usuário recusou deletar {path}",
         "error": "Erro ao deletar {path}",
-        "running": "Deletando {path}…",
-        "starting": "Preparando para deletar {path}…"
+        "running": "Deletando {path}…"
+      },
+      "find": {
+        "completed": "Nenhum arquivo encontrado em {path} | 1 arquivo encontrado em {path} | {count} arquivos encontrados em {path}",
+        "error": "Erro ao encontrar arquivos em {path}: {error}",
+        "noPattern": "Nenhum padrão fornecido para a operação de busca",
+        "running": "Procurando arquivos que correspondam a '{pattern}' em {path}…"
       },
       "invalidPath": "Esta operação não faz parte dos caminhos permitidos: {path}",
       "list": {
         "completed": "Nenhum item encontrado em {path} | 1 item encontrado em {path} | {count} itens encontrados em {path}",
         "error": "Erro ao listar conteúdo de {path}",
-        "running": "Listando conteúdo de {path}…",
-        "starting": "Preparando para listar conteúdo do diretório…"
+        "running": "Listando conteúdo de {path}…"
       },
       "read": {
         "completed": "Arquivo {path} lido com sucesso",
         "error": "Erro ao ler arquivo {path}",
-        "running": "Lendo arquivo {path}…",
-        "starting": "Preparando para ler arquivo…"
+        "running": "Lendo arquivo {path}…"
       },
+      "starting": "Inicializando acesso ao sistema de arquivos…",
       "write": {
         "completed": "Arquivo {path} escrito com sucesso",
         "declined": "Usuário recusou sobrescrever {path}",
         "error": "Erro ao escrever arquivo {path}",
-        "running": "Escrevendo arquivo {path}…",
-        "starting": "Preparando para escrever arquivo…"
+        "running": "Escrevendo arquivo {path}…"
       }
     },
     "image": {
@@ -2386,6 +2412,7 @@
         "title": "Conhecimento"
       },
       "experts": {
+        "manage": "Gerenciar Especialistas",
         "none": "Nenhum Especialista",
         "title": "@:{'common.experts'}"
       },
@@ -2557,15 +2584,19 @@
     },
     "commands": {
       "confirmDelete": "Tem certeza de que deseja excluir este comando?",
-      "disableAll": "Desativar tudo",
-      "enableAll": "Ativar tudo",
+      "copy": "@:{'common.copy'}",
+      "defaults": "Padrões",
+      "empty": "Nenhum comando definido ainda",
       "export": "Exportar",
       "exportError": "Falha ao exportar arquivo de comandos",
       "exportSuccess": "Arquivo de comandos exportado com sucesso",
       "import": "@:{'common.import'}",
       "importError": "Falha ao importar arquivo de comandos",
       "importSuccess": "Arquivo de comandos importado com sucesso",
-      "new": "Novo"
+      "itemCount": "Nenhum comando|1 comando|{count} comandos",
+      "itemsSelected": "Nenhum selecionado|{count} selecionado|{count} selecionados",
+      "new": "Novo",
+      "toggle": "Alternar"
     },
     "deepResearch": {
       "breadth": "Abrangência da pesquisa",
@@ -2672,12 +2703,24 @@
     },
     "experts": {
       "allCategories": "Todas as categorias",
+      "categoryManager": {
+        "categoryName": "Nome da Categoria",
+        "confirmDelete": "Excluir Categoria",
+        "deleteExperts": "Excluir Especialistas",
+        "deleteText": "O que você gostaria de fazer com os especialistas desta categoria?",
+        "duplicateName": "Já existe uma categoria com este nome",
+        "empty": "Nenhuma categoria ainda",
+        "keepExperts": "Manter Especialistas",
+        "newCategory": "Nova Categoria",
+        "toggleVisibility": "Alternar Visibilidade"
+      },
       "confirmDelete": "Tem certeza de que deseja excluir este especialista?",
       "confirmDeleteAll": "Tem certeza de que deseja excluir todos os especialistas?",
       "copy": "Copiar",
       "deleteAll": "Excluir tudo",
       "descriptionPlaceholder": "Breve descrição do que este especialista faz",
       "disableAll": "Desativar tudo",
+      "empty": "Nenhum especialista definido ainda",
       "enableAll": "Ativar tudo",
       "export": "Exportar",
       "exportError": "Falha ao exportar arquivo de especialistas",
@@ -2685,13 +2728,15 @@
       "import": "@:{'common.import'}",
       "importError": "Falha ao importar arquivo de especialistas",
       "importSuccess": "Arquivo de especialistas importado com sucesso",
+      "itemCount": "Nenhum especialista|1 especialista|{count} especialistas",
+      "itemsSelected": "Nenhum selecionado|{count} selecionado|{count} selecionados",
+      "manageCategories": "Gerenciar Categorias",
       "new": "Novo",
       "noCategory": "Sem categoria",
-      "searchPlaceholder": "Pesquisar especialistas por nome, descrição ou categoria...",
+      "searchPlaceholder": "Pesquisar especialistas pelo nome…",
       "sortAlpha": "Ordenar alfabeticamente",
       "sortState": "Ordenar por estado",
-      "sortUsage": "Ordenar por uso",
-      "usage": "Uso"
+      "toggle": "Alternar"
     },
     "general": {
       "darkTint": "Tonificação escura",
@@ -2791,8 +2836,23 @@
         "binaryPath": "Binário Python",
         "description1": "Habilitar este plugin permitirá que os mecanismos LLM executem código arbitrário em seu computador.",
         "description2": "Não há como prever se o código que os mecanismos LLM gerarão é seguro ou não.",
+        "downloadError": "Falha ao baixar o tempo de execução Python: {error}",
+        "downloading": "Baixando...",
+        "downloadLater": "Mais tarde",
+        "downloadMessage": "O tempo de execução Python embutido requer o download de aproximadamente 12 MB de arquivos. Deseja baixar agora ou esperar até o primeiro uso?",
+        "downloadNow": "@:{'common.download'}",
+        "downloadSuccess": "O tempo de execução Python foi baixado com sucesso e está pronto para uso.",
+        "downloadTitle": "Download necessário",
+        "embeddedDescription": "Ambiente seguro em sandbox sem necessidade de instalação. Inclui NumPy, Pandas e Matplotlib.",
+        "embeddedRuntime": "Tempo de Execução Embutido (Recomendado)",
+        "nativeDescription": "Use sua própria instalação Python para capacidades completas e pacotes personalizados.",
+        "nativeRuntime": "Binário Nativo",
+        "runtime": "Modo de Execução",
         "search": "Pesquisar",
         "title": "Python",
+        "uninstallLabel": "Remover tempo de execução Python embutido",
+        "uninstallMessage": "Você sempre pode reinstalá-lo mais tarde no painel de Configurações.",
+        "uninstallTitle": "Tem certeza que deseja desinstalar o tempo de execução Python embutido?",
         "useAtOwnRisk": "Use por sua conta e risco",
         "warning": "Aviso!"
       },
@@ -3031,7 +3091,7 @@
     "enabled": "Ativado",
     "evictionDuration": "Remover aplicativos web inativos após (minutos)",
     "icon": "Ícone",
-    "iconSearch": "Pesquisar ícones...",
+    "iconSearch": "Pesquisar ícones…",
     "name": "Nome",
     "noApps": "Nenhum aplicativo web configurado",
     "preserveColors": "Preservar as cores dos ícones dos aplicativos web",

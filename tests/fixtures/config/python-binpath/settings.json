@@ -1,0 +1,8 @@
+{
+  "plugins": {
+    "python": {
+      "enabled": true,
+      "binpath": "/usr/bin/python3"
+    }
+  }
+}

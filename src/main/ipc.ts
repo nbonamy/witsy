@@ -28,6 +28,7 @@ import LocalSearch from './search';
 
 import * as IPC from '../ipc_consts';
 import * as agents from './agents';
+import * as pyodide from './pyodide';
 import * as backup from './backup';
 import * as cliInstaller from './cli_installer';
 import * as commands from './commands';
@@ -51,6 +52,7 @@ import * as workspace from './workspace';
 import { AGENT_API_BASE_PATH } from './agent_webhook';
 import { HttpServer } from './http_server';
 import { importOpenAI } from './import_oai';
+import { importMarkdown } from './import_md';
 
 export const installIpc = (
   store: Store,
@@ -285,12 +287,22 @@ export const installIpc = (
     event.returnValue = await importOpenAI(app, workspaceId);
   });
 
+  ipcMain.on(IPC.IMPORT.MARKDOWN, async (event) => {
+    const chat = await importMarkdown(app);
+    event.returnValue = chat || null;
+  });
+
   ipcMain.on(IPC.AGENTS.OPEN_FORGE,  () => {
     //window.openAgentForgeWindow();
   });
 
-  ipcMain.on(IPC.AGENTS.LOAD, (event, workspaceId) => {
-    event.returnValue = JSON.stringify(agents.loadAgents(app, workspaceId));
+  ipcMain.on(IPC.AGENTS.LIST, (event, workspaceId) => {
+    event.returnValue = JSON.stringify(agents.listAgents(app, workspaceId));
+  });
+
+  ipcMain.on(IPC.AGENTS.LOAD, (event, payload) => {
+    const { workspaceId, agentId } = JSON.parse(payload);
+    event.returnValue = JSON.stringify(agents.loadAgent(app, workspaceId, agentId));
   });
 
   ipcMain.on(IPC.AGENTS.SAVE, (event, payload) => {
@@ -453,6 +465,15 @@ export const installIpc = (
     event.returnValue = file.writeFile(app, filePath, content);
   });
 
+  ipcMain.handle(IPC.FILE.FIND_FILES, async (event, basePath, pattern, maxResults) => {
+    try {
+      return await file.findFiles(app, basePath, pattern, maxResults);
+    } catch (error) {
+      console.error('Error while finding files', error);
+      throw error;
+    }
+  });
+
   ipcMain.on(IPC.FILE.NORMALIZE_PATH, (event, filePath) => {
     event.returnValue = file.normalizePath(app, filePath);
   });
@@ -478,6 +499,27 @@ export const installIpc = (
       console.log('Error while running python', error);
       return { error: error || 'Unknown error' }
     }
+  })
+
+  ipcMain.handle(IPC.INTERPRETER.PYODIDE_RUN, async (event, payload) => {
+    return await pyodide.runPythonCode(payload)
+  })
+
+  ipcMain.handle(IPC.INTERPRETER.PYODIDE_DOWNLOAD, async () => {
+    try {
+      await pyodide.downloadPyodideRuntime()
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  })
+
+  ipcMain.handle(IPC.INTERPRETER.PYODIDE_IS_CACHED, () => {
+    return pyodide.isPyodideCached()
+  })
+
+  ipcMain.handle(IPC.INTERPRETER.PYODIDE_CLEAR_CACHE, async () => {
+    return pyodide.clearPyodideCache();
   })
 
   ipcMain.on(IPC.AUTOMATION.GET_TEXT, (event, payload) => {

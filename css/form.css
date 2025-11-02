@@ -57,8 +57,8 @@
       .control-group {
         &:has(input[type=text]), &:has(select) {
           button {
-            padding-top: 6.25px;
-            padding-bottom: 6.25px;
+            height: 30px;
+            padding: 0 0.5rem;
           }
         }
       }
