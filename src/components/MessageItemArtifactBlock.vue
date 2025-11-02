@@ -127,3 +127,11 @@ const onDownloadFormat = async (action: string) => {
 }
 
 </script>
+
+<style scoped>
+
+.artifact {
+  user-select: text;
+}
+
+</style>

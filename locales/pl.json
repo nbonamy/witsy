@@ -2302,6 +2302,12 @@
         "error": "Błąd podczas usuwania {path}",
         "running": "Usuwam {path}…"
       },
+      "find": {
+        "completed": "Nie znaleziono plików w {path} | Znaleziono 1 plik w {path} | Znaleziono {count} pliki w {path}",
+        "error": "Błąd podczas wyszukiwania plików w {path}: {error}",
+        "noPattern": "Nie podano wzorca do operacji wyszukiwania",
+        "running": "Wyszukiwanie plików pasujących do '{pattern}' w {path}…"
+      },
       "invalidPath": "Ta operacja nie jest częścią dozwolonych ścieżek: {path}",
       "list": {
         "completed": "Nie znaleziono elementów w {path} | Znaleziono 1 element w {path} | Znaleziono {count} elementów w {path}",

@@ -2301,7 +2301,13 @@
         "error": "Error while deleting {path}",
         "running": "Deleting {path}…"
       },
-      "description": "Use this tool to list, read, write and optionally delete file from the filesystem of the user. Use absolute paths only. If you cannot determine the absolute path, ask the user for clarification.",
+      "description": "Use this tool to list, read, write, find and optionally delete file from the filesystem of the user. Use absolute paths only. If you cannot determine the absolute path, ask the user for clarification.",
+      "find": {
+        "completed": "No files found in {path} | Found 1 file in {path} | Found {count} files in {path}",
+        "error": "Error while finding files in {path}: {error}",
+        "noPattern": "No pattern provided for find operation",
+        "running": "Finding files matching '{pattern}' in {path}…"
+      },
       "invalidPath": "This operation is not part of the allowed paths: {path}",
       "list": {
         "completed": "No item found in {path} | Found 1 item in {path} | Found {count} items in {path}",

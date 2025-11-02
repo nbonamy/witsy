@@ -84,6 +84,7 @@ contextBridge.exposeInMainWorld(
       write: (filePath: string, content: string): any => { return ipcRenderer.sendSync(IPC.FILE.WRITE_FILE, filePath, content) },
       delete: (filepath: string): void => { return ipcRenderer.sendSync(IPC.FILE.DELETE_FILE, filepath) },
       find: (name: string): string => { return ipcRenderer.sendSync(IPC.FILE.FIND_PROGRAM, name) },
+      findFiles: (basePath: string, pattern: string, maxResults?: number): Promise<string[]> => { return ipcRenderer.invoke(IPC.FILE.FIND_FILES, basePath, pattern, maxResults) },
       listDirectory: (dirPath: string, includeHidden?: boolean): ListDirectoryResponse => { return ipcRenderer.sendSync(IPC.FILE.LIST_DIRECTORY, dirPath, includeHidden) },
       pickFile: (opts: FilePickParams): string|strDict|string[] => { return ipcRenderer.sendSync(IPC.FILE.PICK_FILE, JSON.stringify(opts)) },
       pickDirectory: (): string => { return ipcRenderer.sendSync(IPC.FILE.PICK_DIRECTORY) },

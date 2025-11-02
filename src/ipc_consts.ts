@@ -50,6 +50,7 @@ export const FILE = {
   DOWNLOAD: 'download',
   DELETE_FILE: 'delete-file',
   FIND_PROGRAM: 'find-program',
+  FIND_FILES: 'find-files',
   GET_TEXT_CONTENT: 'get-text-content',
   GET_APP_INFO: 'get-app-info',
   LIST_DIRECTORY: 'list-directory',

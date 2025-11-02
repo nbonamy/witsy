@@ -384,6 +384,13 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       write: vi.fn(() => true),
       delete: vi.fn(() => true),
       find: vi.fn(() => 'file.ext'),
+      findFiles: vi.fn(async (basePath: string, pattern: string, maxResults?: number): Promise<string[]> => {
+        const limit = maxResults || 10
+        return [
+          '/home/user/file1.txt',
+          '/home/user/subdir/file2.txt',
+        ].slice(0, limit)
+      }),
       listDirectory: vi.fn((dirPath: string, includeHidden?: boolean): ListDirectoryResponse => ({
         success: true,
         items: [

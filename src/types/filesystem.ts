@@ -27,6 +27,13 @@ export type DeleteFileSuccess = {
   path: string
 }
 
+export type FindFilesSuccess = {
+  success: true
+  files: string[]
+  count: number
+  truncated: boolean
+}
+
 export type FilesystemError = {
   success: false
   error: string
@@ -36,3 +43,4 @@ export type ListDirectoryResponse = ListDirectorySuccess | FilesystemError
 export type ReadFileResponse = ReadFileSuccess | FilesystemError
 export type WriteFileResponse = WriteFileSuccess | FilesystemError
 export type DeleteFileResponse = DeleteFileSuccess | FilesystemError
+export type FindFilesResponse = FindFilesSuccess | FilesystemError

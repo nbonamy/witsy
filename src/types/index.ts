@@ -357,6 +357,7 @@ declare global {
         write(filePath: string, content: string): boolean
         delete(filepath: string): boolean
         find(name: string): string
+        findFiles(basePath: string, pattern: string, maxResults?: number): Promise<string[]>
         listDirectory(dirPath: string, includeHidden?: boolean): ListDirectoryResponse
         pickFile(opts: FilePickParams): null|string|string[]|FileContents
         pickDirectory(): string

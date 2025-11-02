@@ -2283,6 +2283,12 @@
         "error": "Erreur lors de la suppression de {path}",
         "running": "Suppression de {path}…"
       },
+      "find": {
+        "completed": "Aucun fichier trouvé dans {path} | 1 fichier trouvé dans {path} | {count} fichiers trouvés dans {path}",
+        "error": "Erreur lors de la recherche de fichiers dans {path} : {error}",
+        "noPattern": "Aucun modèle fourni pour l’opération de recherche",
+        "running": "Recherche de fichiers correspondant à '{pattern}' dans {path}…"
+      },
       "invalidPath": "Cette opération ne fait pas partie des chemins autorisés : {path}",
       "list": {
         "completed": "Aucun élément trouvé dans {path} | 1 élément trouvé dans {path} | {count} éléments trouvés dans {path}",
