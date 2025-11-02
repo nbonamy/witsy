@@ -78,14 +78,14 @@ describe('STTSoniox', () => {
     
     // Verify file upload call
     const [uploadUrl, uploadOptions] = fetchMock.mock.calls[0]
-    expect(uploadUrl).toBe('https://api.soniox.com/v1/files')
+    expect(uploadUrl).toBe('https://api.soniox.com/v3/files')
     expect(uploadOptions.method).toBe('POST')
     expect(uploadOptions.headers['Authorization']).toBe('Bearer test-api-key')
     expect(uploadOptions.body).toBeInstanceOf(FormData)
     
     // Verify transcription creation call
     const [createUrl, createOptions] = fetchMock.mock.calls[1]
-    expect(createUrl).toBe('https://api.soniox.com/v1/transcriptions')
+    expect(createUrl).toBe('https://api.soniox.com/v3/transcriptions')
     expect(createOptions.method).toBe('POST')
     expect(createOptions.headers['Authorization']).toBe('Bearer test-api-key')
     
@@ -126,7 +126,7 @@ describe('STTSoniox', () => {
       onclose: any
       
       constructor(public url: string) {
-        expect(url).toBe('wss://stt-rt.soniox.com/transcribe-websocket')
+        expect(url).toBe('wss://api.soniox.com/v3/streaming/speech-to-text')
         
         setTimeout(() => {
           this.readyState = WebSocket.OPEN
