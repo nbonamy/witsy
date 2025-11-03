@@ -69,7 +69,7 @@
 <script setup lang="ts">
 
 import { EyeIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
-import { PropType, onMounted, onUnmounted, ref, watch } from 'vue'
+import { PropType, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import LogoA2A from '../../assets/a2a.svg?component'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
@@ -88,7 +88,7 @@ onMounted(() => {
   window.api.on('agent-run-update', onAgentRunUpdate)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   window.api.off('agent-run-update', onAgentRunUpdate)
 })
 

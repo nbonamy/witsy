@@ -60,7 +60,7 @@
 <script setup lang="ts">
 
 import { CheckIcon, FolderPlusIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
-import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
@@ -94,7 +94,7 @@ onMounted(async () => {
   loadDocRepos()
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   window.api.off('docrepo-modified', loadDocRepos)
 })
 

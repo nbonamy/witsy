@@ -349,7 +349,7 @@ describe('useVoiceRecording Composable', () => {
 
   describe('Cleanup', () => {
     it('cleans up on unmount when recording', async () => {
-      // This test is more about ensuring the onUnmounted hook is registered
+      // This test is more about ensuring the onBeforeUnmount hook is registered
       // We can't easily test unmounting in this context, but we can verify
       // the stopRecording method works
       const { startRecording, stopRecording } = useVoiceRecording()

@@ -55,7 +55,7 @@
 <script setup lang="ts">
 
 import { LoaderCircleIcon } from 'lucide-vue-next'
-import { computed, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
+import { computed, onMounted, onBeforeUnmount, PropType, ref, watch } from 'vue'
 import AgentIcon from '../../assets/agent.svg?component'
 import UserAvatar from '../../assets/person.crop.circle.svg?component'
 import useAppearanceTheme from '../composables/appearance_theme'
@@ -140,7 +140,7 @@ onMounted(() => {
   
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (updateLinkInterval) {
     clearInterval(updateLinkInterval)
   }

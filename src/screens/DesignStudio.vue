@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { ImagePlusIcon, ListRestartIcon } from 'lucide-vue-next'
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import DrawingCanvas from '../components/DrawingCanvas.vue'
@@ -123,7 +123,7 @@ onMounted(() => {
 
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   store.removeListener('workspaceSwitched', initializeChat)
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('paste', onPaste)

@@ -12,7 +12,7 @@
 
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
 import { PauseCircleIcon, PlayCircleIcon, XCircleIcon } from 'lucide-vue-next'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 import Loader from '../components/Loader.vue'
 import useAudioPlayer, { AudioStatus, textMaxLength } from '../composables/audio_player'
 import { store } from '../services/store'
@@ -37,7 +37,7 @@ onMounted(async () => {
   play(text)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   audioPlayer.removeListener(onAudioPlayerStatus)
 })
 
