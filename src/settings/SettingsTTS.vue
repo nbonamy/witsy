@@ -81,7 +81,7 @@
 <script setup lang="ts">
 
 import { PlayIcon, SquareIcon } from 'lucide-vue-next'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import RefreshButton from '../components/RefreshButton.vue'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
@@ -160,7 +160,7 @@ onMounted(() => {
   audioPlayer.addListener(onAudioPlayerStatus)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   audioPlayer.removeListener(onAudioPlayerStatus)
 })
 

@@ -15,7 +15,7 @@
 
 import { ArrowDownIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
-import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
+import { computed, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef } from 'vue'
 import Chat from '../models/chat'
 import { store } from '../services/store'
 import MessageItem from './MessageItem.vue'
@@ -53,7 +53,7 @@ onMounted(() => {
   scrollDown()
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   window.api.off('read-aloud-selection', onReadAloudSelection)
 })
 

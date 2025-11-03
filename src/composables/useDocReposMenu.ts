@@ -1,5 +1,5 @@
 import { LightbulbIcon, SettingsIcon, XIcon } from 'lucide-vue-next'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import type { MenuItem } from '../types/menu'
@@ -33,7 +33,7 @@ export function useDocReposMenu(options: UseDocReposMenuOptions) {
   })
 
   // Clean up listener
-  onUnmounted(() => {
+  onBeforeUnmount(() => {
     window.api.off('docrepo-modified', loadDocRepos)
   })
 

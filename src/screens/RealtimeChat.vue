@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import AnimatedBlob from '../components/AnimatedBlob.vue'
@@ -165,7 +165,7 @@ onMounted(() => {
 
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   stopSession()
 })
 

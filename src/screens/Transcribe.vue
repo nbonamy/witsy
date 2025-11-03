@@ -118,7 +118,7 @@
 
 <script setup lang="ts">
 
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import LangSelect from '../components/LangSelect.vue'
 import Loader from '../components/Loader.vue'
@@ -202,7 +202,7 @@ onMounted(async () => {
 
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
 
   // save
   store.transcribeState = {

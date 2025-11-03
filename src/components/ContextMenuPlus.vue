@@ -112,7 +112,7 @@
 <script setup lang="ts">
 
 import { ChevronRightIcon, MoveLeftIcon } from 'lucide-vue-next'
-import { computed, nextTick, onMounted, onUnmounted, ref, useSlots, watch } from 'vue'
+import { computed, nextTick, onMounted, onBeforeUnmount, ref, useSlots, watch } from 'vue'
 import Overlay from '../components/Overlay.vue'
 import { t } from '../services/i18n'
 import type { MenuItem } from '../types/menu'
@@ -372,7 +372,7 @@ onMounted(() => {
   document.addEventListener('keyup', onKeyDown)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   document.removeEventListener('keydown', onKeyUp)
   document.removeEventListener('keyup', onKeyDown)
 })

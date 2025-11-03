@@ -10,7 +10,7 @@
 
 import { CircleXIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 
@@ -25,7 +25,7 @@ onMounted(() => {
   window.api.on('computer-status', onComputerStatus)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   window.api.off('computer-status', onComputerStatus)
 })
 

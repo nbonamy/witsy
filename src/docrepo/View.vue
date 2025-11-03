@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import { ChevronDownIcon, CircleAlertIcon } from 'lucide-vue-next'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import EngineLogo from '../components/EngineLogo.vue'
 import { togglePanel } from '../composables/panel'
 import { t } from '../services/i18n'
@@ -81,7 +81,7 @@ onMounted(() => {
   window.api.on('docrepo-model-downloaded', onModelReady)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   window.api.off('docrepo-model-downloaded', onModelReady)
 })
 

@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { LlmEngine } from 'multi-llm-ts'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt, { SendPromptParams } from '../components/Prompt.vue'
@@ -187,7 +187,7 @@ onMounted(() => {
 
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   window.api.off('start-dictation', onStartDictation)
   audioPlayer.removeListener(onAudioPlayerStatus)
   clearTimeout(undoStackCheckTimeout)
