@@ -175,16 +175,25 @@ const Dialog = {
 const setupClipboardCopy = (dialogElement: any, opts: DialogOptions) => {
   
   const handleCopyToClipboard = (ev: KeyboardEvent) => {
-  
+
     const isMac = window.api.platform === 'darwin'
     const copyKeyPressed = isMac ? ev.metaKey && ev.key === 'c' : ev.ctrlKey && ev.key === 'c'
-    
+
     if (copyKeyPressed) {
-      // Don't interfere if user is selecting text in an input
-      const activeElement = document.activeElement
-      if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
-        const selection = window.getSelection()?.toString()
-        if (selection && selection.length > 0) {
+      // Check if text is selected within dialog content elements
+      const selection = window.getSelection()
+      if (selection && selection.toString().length > 0) {
+        const range = selection.getRangeAt(0)
+        const ancestor = range.commonAncestorContainer
+
+        // Check if selection is within title, html-container, or content
+        const title = dialogElement.querySelector('.swal2-title')
+        const htmlContainer = dialogElement.querySelector('.swal2-html-container')
+        const content = dialogElement.querySelector('.swal2-content')
+
+        if ((title && title.contains(ancestor)) ||
+            (htmlContainer && htmlContainer.contains(ancestor)) ||
+            (content && content.contains(ancestor))) {
           return // Let default copy behavior handle selected text
         }
       }

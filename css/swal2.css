@@ -71,6 +71,7 @@ div:where(.swal2-container) h2:where(.swal2-title) {
   font-weight: var(--font-weight-medium);
   margin-top: 12px;
   max-width: unset;
+  user-select: text;
 }
 
 div:where(.swal2-container):not(:has(.swal2-icon)) h2:where(.swal2-title),
@@ -83,6 +84,10 @@ div:where(.swal2-container):has(.swal2-html-container:empty) h2:where(.swal2-tit
   margin-bottom: 1rem;
 }
 
+div:where(.swal2-container) .swal2-content {
+  user-select: text;
+}
+
 div:where(.swal2-container) .swal2-html-container {
   text-align: left;
   color: var(--dimmed-text-color);
@@ -92,6 +97,7 @@ div:where(.swal2-container) .swal2-html-container {
   padding-bottom: 1rem;
   padding-left: 2rem;
   padding-right: 2rem;
+  user-select: text;
 }
 
 /* div:where(.swal2-container):has(.swal2-actions) .swal2-html-container {
