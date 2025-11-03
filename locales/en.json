@@ -365,6 +365,7 @@
       "updatedAt": "Completion time"
     },
     "status": {
+      "canceled": "🚫 Canceled",
       "error": "❌ Error",
       "running": "⏳ Running",
       "success": "✅ Success"
@@ -2663,12 +2664,12 @@
       "lmstudio": {
         "apiBaseURL": "API Base URL"
       },
-      "minimax": {
-        "groupId": "Group ID"
-      },
       "meta": {
         "aboutModels": "More about Meta Llama models",
         "pricing": "Meta Llama pricing"
+      },
+      "minimax": {
+        "groupId": "Group ID"
       },
       "mistralai": {
         "aboutModels": "More about MistralAI models",
