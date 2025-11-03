@@ -366,6 +366,7 @@
       "updatedAt": "完了時間"
     },
     "status": {
+      "canceled": "🚫 キャンセル済み",
       "error": "❌ エラー",
       "running": "⏳ 実行中",
       "success": "✅ 成功"
@@ -2666,6 +2667,9 @@
       "meta": {
         "aboutModels": "Meta Llamaモデルについてさらに詳しく",
         "pricing": "Meta Llamaの料金"
+      },
+      "minimax": {
+        "groupId": "グループID"
       },
       "mistralai": {
         "aboutModels": "MistralAIモデルについてさらに詳しく",

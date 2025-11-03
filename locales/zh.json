@@ -366,6 +366,7 @@
       "updatedAt": "完成时间"
     },
     "status": {
+      "canceled": "🚫 已取消",
       "error": "❌ 错误",
       "running": "⏳ 运行中",
       "success": "✅ 成功"
@@ -2666,6 +2667,9 @@
       "meta": {
         "aboutModels": "更多关于 Meta Llama 模型的信息",
         "pricing": "Meta Llama 定价"
+      },
+      "minimax": {
+        "groupId": "组ID"
       },
       "mistralai": {
         "aboutModels": "了解更多关于 MistralAI 模型的信息",

@@ -347,6 +347,7 @@
       "updatedAt": "Abschlusszeit"
     },
     "status": {
+      "canceled": "🚫 Abgebrochen",
       "error": "❌ Fehler",
       "running": "⏳ Läuft",
       "success": "✅ Erfolg"
@@ -2644,6 +2645,9 @@
       "meta": {
         "aboutModels": "Mehr über Meta Llama-Modelle",
         "pricing": "Meta Llama-Preise"
+      },
+      "minimax": {
+        "groupId": "Gruppen-ID"
       },
       "mistralai": {
         "aboutModels": "Mehr über MistralAI-Modelle",
