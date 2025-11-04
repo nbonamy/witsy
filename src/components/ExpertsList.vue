@@ -93,7 +93,7 @@
           <td>
             <div class="actions">
               <ButtonIcon class="edit" @click="onEdit(expert)"><PencilIcon /></ButtonIcon>
-              <ContextMenuTrigger position="below-right">
+              <ContextMenuTrigger position="above-right">
                 <template #menu>
                   <div class="item" @click="onDeleteSingle(expert)">{{ t('common.delete') }}</div>
                   <div class="item" @click="onMoveUp(expert)">{{ t('common.moveUp') }}</div>
