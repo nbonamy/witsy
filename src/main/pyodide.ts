@@ -22,6 +22,7 @@ import path from 'path'
  * - Call runPythonCode() to execute Python scripts
  * - First call may download ~12MB (cached for subsequent app launches)
  * - Subsequent calls are instant (reuses in-memory instance)
+ * - Additional packages (numpy, pandas, etc.) load on-demand when first used
  */
 
 // Configuration
@@ -31,6 +32,8 @@ const PYODIDE_CONFIG = {
   cacheDir: 'pyodide-cache',
   cdnURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.0/full/',  // Only used for downloads
 }
+
+const PYODIDE_PACKAGES = ['numpy', 'pandas', 'scipy', 'scikit-learn', 'statsmodels', 'matplotlib']
 
 const FILES_TO_CACHE = [
   'pyodide.asm.wasm',
@@ -192,7 +195,10 @@ async function initializePyodide(): Promise<PyodideInterface> {
     // Pyodide's loadPyodide expects a filesystem path in Node.js context
     console.log('[Pyodide] Initializing from cache:', cacheDir)
 
-    initializationPromise = loadPyodide({ indexURL: cacheDir })
+    initializationPromise = loadPyodide({
+      indexURL: cacheDir,
+      packages: PYODIDE_PACKAGES
+    })
     pyodideInstance = await initializationPromise
 
     console.log('[Pyodide] Initialized successfully from cache')
@@ -203,7 +209,9 @@ async function initializePyodide(): Promise<PyodideInterface> {
 
     // Fallback to CDN - use default indexURL (Pyodide handles CDN loading in Node.js)
     // Note: Don't specify indexURL with URLs in Node.js, it tries to parse them as paths
-    initializationPromise = loadPyodide()
+    initializationPromise = loadPyodide({
+      packages: PYODIDE_PACKAGES
+    })
 
     try {
       pyodideInstance = await initializationPromise
@@ -230,16 +238,23 @@ export async function runPythonCode(script: string): Promise<{ result?: string; 
     // Initialize Pyodide if needed
     const pyodide = await initializePyodide()
 
+    // Capture stdout
+    const stdoutLines: string[] = []
+    pyodide.setStdout({ batched: (msg) => stdoutLines.push(msg) })
+
     // Execute the script
     const result = await pyodide.runPythonAsync(script)
 
     // Schedule disposal after TTL
     scheduleDisposal()
 
-    // Convert result to string
+    // Use result if available, otherwise fall back to stdout
     let resultStr: string
+    const stdoutOutput = stdoutLines.join('\n')
+
     if (result === undefined || result === null) {
-      resultStr = String(result)
+      // If no return value, use stdout (if any), otherwise show null/undefined
+      resultStr = stdoutOutput || String(result)
     } else if (typeof result === 'object') {
       // Try to convert to JSON, fallback to string representation
       try {

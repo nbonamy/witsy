@@ -65,6 +65,7 @@ describe('Pyodide Manager', () => {
     // Create mock Pyodide instance
     mockPyodide = {
       runPythonAsync: vi.fn(),
+      setStdout: vi.fn(),
     }
 
     // Mock loadPyodide to return our mock
@@ -144,6 +145,44 @@ describe('Pyodide Manager', () => {
     expect(result).toEqual({ result: 'null' })
   })
 
+  test('should capture stdout from print statements', async () => {
+    // Mock stdout capture
+    let stdoutCallback: ((msg: string) => void) | null = null
+    mockPyodide.setStdout.mockImplementation((opts: any) => {
+      stdoutCallback = opts.batched
+    })
+    mockPyodide.runPythonAsync.mockImplementation(async () => {
+      // Simulate print output
+      if (stdoutCallback) {
+        stdoutCallback('Hello from Python')
+      }
+      return undefined
+    })
+
+    const result = await runPythonCode('print("Hello from Python")')
+
+    expect(mockPyodide.setStdout).toHaveBeenCalled()
+    expect(result).toEqual({ result: 'Hello from Python' })
+  })
+
+  test('should use return value and ignore stdout when both present', async () => {
+    let stdoutCallback: ((msg: string) => void) | null = null
+    mockPyodide.setStdout.mockImplementation((opts: any) => {
+      stdoutCallback = opts.batched
+    })
+    mockPyodide.runPythonAsync.mockImplementation(async () => {
+      if (stdoutCallback) {
+        stdoutCallback('Debug output')
+      }
+      return 42
+    })
+
+    const result = await runPythonCode('print("Debug output"); 21 * 2')
+
+    // Should only return the result, not stdout
+    expect(result).toEqual({ result: '42' })
+  })
+
   test('should handle Python errors', async () => {
     mockPyodide.runPythonAsync.mockRejectedValue(new Error('NameError: name "undefined_var" is not defined'))
 
@@ -177,7 +216,8 @@ describe('Pyodide Manager', () => {
 
     // Should use filesystem path for cached files (not file:// URL in Node.js)
     expect(mockLoadPyodide).toHaveBeenCalledWith({
-      indexURL: expect.stringContaining('pyodide-cache')
+      indexURL: expect.stringContaining('pyodide-cache'),
+      packages: ['numpy', 'pandas', 'scipy', 'scikit-learn', 'statsmodels', 'matplotlib']
     })
   })
 
@@ -212,8 +252,10 @@ describe('Pyodide Manager', () => {
     // Should have been called twice (cache fail, then CDN)
     expect(mockLoadPyodide).toHaveBeenCalledTimes(2)
 
-    // Second call should use default (no indexURL) to let Pyodide handle CDN
-    expect(mockLoadPyodide.mock.calls[1][0]).toBeUndefined()
+    // Second call should include packages but no indexURL
+    expect(mockLoadPyodide.mock.calls[1][0]).toEqual({
+      packages: ['numpy', 'pandas', 'scipy', 'scikit-learn', 'statsmodels', 'matplotlib']
+    })
   })
 
   test('should dispose Pyodide after TTL expires', async () => {
