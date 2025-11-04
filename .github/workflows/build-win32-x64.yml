@@ -20,6 +20,23 @@ jobs:
         uses: beaconbrigade/package-json-version@v0.3.2
       - name: Install Dependencies
         run: npm ci
+      - name: Setup DigiCert Code Signing Tools
+        uses: digicert/ssm-code-signing@v1.0.0
+      - name: Setup Certificate
+        run: |
+          echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/Certificate_pkcs12.p12
+        shell: bash
+      - name: Set DigiCert Environment Variables
+        run: |
+          echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV"
+          echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
+          echo "SM_CLIENT_CERT_FILE=D:\\Certificate_pkcs12.p12" >> "$GITHUB_ENV"
+          echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
+          echo "SM_CODE_SIGNING_CERT_SHA1_HASH=${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }}" >> "$GITHUB_ENV"
+        shell: bash
+      - name: Sync Certificates
+        run: smctl windows certsync
+        shell: cmd
       - name: Build script
         run: ./build/build.ps1
         env:
