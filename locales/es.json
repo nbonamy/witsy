@@ -2465,7 +2465,7 @@
     "importError": "Error al importar el archivo del documento",
     "loadingError": "Error al cargar el archivo del documento",
     "new": "Nuevo Documento",
-    "placeholder": "Comienza a escribir tu documento o\n¡pídele a @:{'common.appName'} que escriba algo por ti!\n\nUna vez que empieces, puedes pedirle a @:{'common.appName'}\nque haga modificaciones en tu documento.\n\nSi resalta una parte de tu texto,\n@:{'common.appName'} solo actualizará esa parte.\n\n¡También echa un vistazo al Asistente de Escritura\nen la barra de acción en la esquina inferior derecha!\n\n¡Inténtalo!",
+    "placeholder": "Empieza a escribir tu documento o\n¡pídele a @:{'common.appName'} que escriba algo por ti!\n\nUna vez que comiences, puedes pedirle a @:{'common.appName'}\nque haga modificaciones en tu documento.\n\nSi resaltas una parte de tu texto,\n@:{'common.appName'} solo actualizará esa parte.\n\n¡También revisa el Asistente de Escritura\nen la barra de acciones en la esquina inferior derecha!\n\n¡Inténtalo!",
     "rename": {
       "prompt": "Introduce un nuevo título",
       "title": "Renombrar Documento"
