@@ -117,7 +117,11 @@ const config: ForgeConfig = {
   makers: process.env.TEST ? [ new MakerZIP() ] : [
     /* xplat  */ new MakerZIP({}, ['linux', 'win32', 'darwin']),
     /* darwin */ new MakerDMG(dmgOptions, ['darwin']),
-    /* win32  */ new MakerSquirrel({}),
+    /* win32  */ new MakerSquirrel({
+      ...(process.env.SM_CODE_SIGNING_CERT_SHA1_HASH ? {
+        signWithParams: `/sha1 ${process.env.SM_CODE_SIGNING_CERT_SHA1_HASH} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256`
+      } : {})
+    }),
     /* linux  */ new MakerRpm({}), new MakerDeb({})
   ],
   plugins: [
