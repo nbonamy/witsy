@@ -416,6 +416,17 @@
         "image": ""
       }
     },
+    "minimax": {
+      "apiKey": "",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
+    },
     "fireworks": {
       "apiKey": "",
       "models": {
