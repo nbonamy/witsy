@@ -2487,7 +2487,7 @@
     "importError": "导入文档文件时出错",
     "loadingError": "加载文档文件时出错",
     "new": "新建文档",
-    "placeholder": "开始输入您的文档，或\n让 @:{'common.appName'} 为您写点什么！\n\n开始后，您可以让 @:{'common.appName'}\n对您的文档进行修改。\n\n如果您高亮选中部分文本，\n@:{'common.appName'} 只会更新这一部分。\n\n还可以查看右下角操作栏中的写作助手！\n\n试试看吧！",
+    "placeholder": "开始输入您的文档，或\n请 @:{'common.appName'} 为您写点什么！\n\n一旦开始，您可以请 @:{'common.appName'}\n对您的文档进行修改。\n\n如果您高亮选中部分文本，\n@:{'common.appName'} 将只更新这部分内容。\n\n还可以查看右侧操作栏中的写作助手！\n\n试试看吧！",
     "rename": {
       "prompt": "请输入新标题",
       "title": "重命名文档"
