@@ -1562,7 +1562,7 @@
   "scratchpad.importError": "Error importing document file",
   "scratchpad.loadingError": "Error while loading document file",
   "scratchpad.new": "New Document",
-  "scratchpad.placeholder": "Start typing your document or\nask @:{'common.appName'} to write something for you!\n\nOnce you start, you can ask @:{'common.appName'}\nto make modifications on your document.\n\nIf you highlight a portion of your text,\n@:{'common.appName'} will only update this portion.\n\nAlso check out the Writing Assistant\nin the action bar in the lower right corner!\n\nGive it a go!",
+  "scratchpad.placeholder": "Start typing your document or\nask @:{'common.appName'} to write something for you!\n\nOnce you start, you can ask @:{'common.appName'}\nto make modifications on your document.\n\nIf you highlight a portion of your text,\n@:{'common.appName'} will only update this portion.\n\nAlso check out the Writing Assistant\nin the action bar on the right!\n\nGive it a go!",
   "scratchpad.rename.prompt": "Enter a new title",
   "scratchpad.rename.title": "Rename Document",
   "scratchpad.renameError": "Error renaming document",

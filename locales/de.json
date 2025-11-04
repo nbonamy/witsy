@@ -2465,7 +2465,7 @@
     "importError": "Fehler beim Importieren der Dokumentdatei",
     "loadingError": "Fehler beim Laden der Dokumentdatei",
     "new": "Neues Dokument",
-    "placeholder": "Beginnen Sie mit der Eingabe Ihres Dokuments oder\nbitten Sie @:{'common.appName'}, etwas für Sie zu schreiben!\n\nSobald Sie beginnen, können Sie @:{'common.appName'}\nbitten, Änderungen an Ihrem Dokument vorzunehmen.\n\nWenn Sie einen Teil Ihres Textes markieren,\nwird @:{'common.appName'} nur diesen Abschnitt aktualisieren.\n\nSchauen Sie sich auch den Schreibassistenten\nin der Aktionsleiste unten rechts an!\n\nProbieren Sie es aus!",
+    "placeholder": "Beginnen Sie, Ihr Dokument zu schreiben oder\nfragen Sie @:{'common.appName'}, etwas für Sie zu schreiben!\n\nSobald Sie loslegen, können Sie @:{'common.appName'} bitten,\nÄnderungen an Ihrem Dokument vorzunehmen.\n\nWenn Sie einen Teil Ihres Textes markieren,\nwird @:{'common.appName'} nur diesen Teil aktualisieren.\n\nSchauen Sie sich auch den Schreibassistenten\nin der Aktionsleiste rechts an!\n\nProbieren Sie es aus!",
     "rename": {
       "prompt": "Geben Sie einen neuen Titel ein",
       "title": "Dokument umbenennen"

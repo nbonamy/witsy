@@ -2465,7 +2465,7 @@
     "importError": "Erreur lors de l'importation du fichier de document",
     "loadingError": "Erreur lors du chargement du fichier de document",
     "new": "Nouveau document",
-    "placeholder": "Commencez à taper votre document ou\ndemandez à @:{'common.appName'} d'écrire quelque chose pour vous !\n\nUne fois que vous commencez, vous pouvez demander à @:{'common.appName'}\nde faire des modifications sur votre document.\n\nSi vous surlignez une portion de votre texte,\n@:{'common.appName'} ne mettra à jour que cette portion.\n\nDécouvrez également l'Assistant d'écriture\ndans la barre d'actions en bas à droite !\n\nEssayez-le !",
+    "placeholder": "Commencez à taper votre document ou\ndemandez à @:{'common.appName'} d'écrire quelque chose pour vous !\n\nUne fois que vous commencez, vous pouvez demander à @:{'common.appName'}\nde faire des modifications sur votre document.\n\nSi vous surlignez une partie de votre texte,\n@:{'common.appName'} ne mettra à jour que cette partie.\n\nDécouvrez aussi l'Assistant d'Écriture\ndans la barre d'action à droite !\n\nEssayez-le !",
     "rename": {
       "prompt": "Entrez un nouveau titre",
       "title": "Renommer le document"
