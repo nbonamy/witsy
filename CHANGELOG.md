@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Cannot Add New Experts (https://github.com/nbonamy/witsy/issues/477)
+- Minimax implementation fix (https://github.com/nbonamy/witsy/issues/478)
 
 ### Removed
 - N/A
