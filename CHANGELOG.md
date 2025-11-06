@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.1.1] - WIP
 
 ### Added
-- N/A
+- Easy QoL: right-click context menu to copy/paste in messages chat field (https://github.com/nbonamy/witsy/issues/480)
 
 ### Changed
 - N/A
