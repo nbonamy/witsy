@@ -1,5 +1,5 @@
 
-import { app, BrowserWindow, ContextMenuParams, Menu, MenuItem, Notification } from 'electron';
+import { app, BrowserWindow, clipboard, ContextMenuParams, Menu, MenuItem, Notification } from 'electron';
 import { MainWindowMode } from '../../types/index';
 import { CreateWindowOpts } from '../../types/window';
 import { loadSettings, saveSettings } from '../config';
@@ -73,7 +73,12 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
       menu.append(new MenuItem({ role: 'cut' }))
     }
 
-    menu.append(new MenuItem({ role: 'paste' }))
+    // paste for clipboard content
+    if (clipboard.availableFormats().length > 0) {
+      menu.append(new MenuItem({ role: 'paste' }))
+    }
+
+    // select all always as we don't really know
     menu.append(new MenuItem({ role: 'selectAll' }))
 
     if (params.selectionText.length > 0 && contextMenuContext) {
@@ -93,15 +98,15 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
         click: () => mainWindow.webContents.send('read-aloud-selection', { context: contextMenuContext, selection: params.selectionText }),
       }));
 
-      // menu.append(new MenuItem({
-      //   type: 'separator',
-      // }));
-
     }
 
     // spellchecker context menu
     // not reliable in macOS so disabled there (https://github.com/electron/electron/issues/24455)
     if (process.platform !== 'darwin') {
+
+      menu.append(new MenuItem({
+        type: 'separator',
+      }));
 
       // Add each spelling suggestion
       for (const suggestion of params.dictionarySuggestions) {
