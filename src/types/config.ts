@@ -41,7 +41,6 @@ export type EngineConfig = WitsyEngineCreateOpts & {
   hideDatedModels?: boolean
   disableTools?: boolean
   voices?: TTSVoice[]
-  groupId?: string
 }
 
 export type CustomEngineConfig = EngineConfig & {

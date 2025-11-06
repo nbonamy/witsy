@@ -137,16 +137,15 @@ test('Custom OpenAI', async () => {
 })
 
 test('MiniMax data', async () => {
-  expect(TTSMiniMax.models.length).toBe(4)
+  expect(TTSMiniMax.models.length).toBe(6)
   expect(TTSMiniMax.voices('speech-02-hd').length).toBeGreaterThan(0)
-  expect(TTSMiniMax.voices('speech-02-hd')[0].id).toBe('Wise_Woman')
+  expect(TTSMiniMax.voices('speech-02-hd')[0].id).toBe('Calm_Man')
 })
 
 test('MiniMax', async () => {
   store.config.tts.engine = 'minimax'
   store.config.engines.minimax = {
     apiKey: 'test-key',
-    groupId: 'test-group'
   }
   const tts = getTTSEngine(store.config)
   expect(tts).toBeDefined()

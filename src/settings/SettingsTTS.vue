@@ -28,10 +28,6 @@
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="minimaxAPIKey" @blur="save" />
     </div>
-    <div class="form-field" v-if="engine === 'minimax'">
-      <label>{{ t('settings.engines.minimax.groupId') }}</label>
-      <input v-model="minimaxGroupId" @blur="save" />
-    </div>
     <div class="form-field" v-if="engine !== 'custom'">
       <label>{{ t('settings.voice.model') }}</label>
       <select v-model="model" @change="onChangeModel">
@@ -104,7 +100,6 @@ const groqAPIKey = ref(null)
 const falaiAPIKey = ref(null)
 const elevenlabsAPIKey = ref(null)
 const minimaxAPIKey = ref(null)
-const minimaxGroupId = ref(null)
 const baseURL = ref('')
 const audio= ref<HTMLAudioElement|null>(null)
   const audioState= ref<{state: string, messageId: string|null}>({
@@ -225,7 +220,6 @@ const load = () => {
   falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
   elevenlabsAPIKey.value = store.config.engines.elevenlabs?.apiKey || ''
   minimaxAPIKey.value = store.config.engines.minimax?.apiKey || ''
-  minimaxGroupId.value = store.config.engines.minimax?.groupId || ''
   baseURL.value = store.config.tts.customOpenAI?.baseURL || ''
 }
 
@@ -241,7 +235,6 @@ const save = () => {
     store.config.engines.minimax = { models: {}, model: {} } as any
   }
   store.config.engines.minimax.apiKey = minimaxAPIKey.value
-  store.config.engines.minimax.groupId = minimaxGroupId.value
   store.config.tts.customOpenAI.baseURL = baseURL.value
   store.saveSettings()
 }

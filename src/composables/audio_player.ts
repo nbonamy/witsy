@@ -96,10 +96,12 @@ class AudioPlayer {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
+          if (!this.player) break;
           this.player.feed(value);
         }
       } else if ('read' in response.content) {
         for await (const chunk of response.content as AsyncIterable<Uint8Array>) {
+          if (!this.player) break;
           this.player.feed(chunk);
         }
       } else {
