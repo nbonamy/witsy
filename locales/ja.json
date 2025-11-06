@@ -366,6 +366,7 @@
       "updatedAt": "完了時間"
     },
     "status": {
+      "canceled": "🚫 キャンセル済み",
       "error": "❌ エラー",
       "running": "⏳ 実行中",
       "success": "✅ 成功"
@@ -2486,7 +2487,7 @@
     "importError": "ドキュメントファイルのインポート中にエラーが発生しました",
     "loadingError": "ドキュメントファイルの読み込み中にエラーが発生しました",
     "new": "新規ドキュメント",
-    "placeholder": "ドキュメントを入力開始、または\n@:{'common.appName'}に何かを書かせてみましょう！\n\n始めたら@:{'common.appName'}に\nドキュメントの修正を依頼できます。\n\nテキストの一部を選択すると、\n@:{'common.appName'}はその部分のみ更新します。\n\n右下のアクションバーの\nライティングアシスタントもぜひご利用ください！\n\nお試しください！",
+    "placeholder": "ドキュメントの入力を始めるか\n@:{'common.appName'} に何かを書いてもらいましょう！\n\n入力を開始すると、@:{'common.appName'} に\nドキュメントの修正を依頼できます。\n\nテキストの一部をハイライトすると、\n@:{'common.appName'} はその部分だけを更新します。\n\nまた、右のアクションバーにある\nライティングアシスタントもチェックしてみてください！\n\nぜひお試しください！",
     "rename": {
       "prompt": "新しいタイトルを入力してください",
       "title": "ドキュメントの名前を変更"
@@ -2666,6 +2667,9 @@
       "meta": {
         "aboutModels": "Meta Llamaモデルについてさらに詳しく",
         "pricing": "Meta Llamaの料金"
+      },
+      "minimax": {
+        "groupId": "グループID"
       },
       "mistralai": {
         "aboutModels": "MistralAIモデルについてさらに詳しく",

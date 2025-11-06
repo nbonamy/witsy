@@ -3,16 +3,16 @@ import { MakerDMG, MakerDMGConfig } from '@electron-forge/maker-dmg';
 import { MakerRpm } from '@electron-forge/maker-rpm';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
+import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { VitePlugin } from '@electron-forge/plugin-vite';
-import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-
 import prePackage from './build/prepackage';
+import { purgeAutolib, purgeLibnut, purgeOnnxRuntime } from './build/purge_native';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -117,7 +117,11 @@ const config: ForgeConfig = {
   makers: process.env.TEST ? [ new MakerZIP() ] : [
     /* xplat  */ new MakerZIP({}, ['linux', 'win32', 'darwin']),
     /* darwin */ new MakerDMG(dmgOptions, ['darwin']),
-    /* win32  */ new MakerSquirrel({}),
+    /* win32  */ new MakerSquirrel({
+      ...(process.env.SM_CODE_SIGNING_CERT_SHA1_HASH ? {
+        signWithParams: `/sha1 ${process.env.SM_CODE_SIGNING_CERT_SHA1_HASH} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256`
+      } : {})
+    }),
     /* linux  */ new MakerRpm({}), new MakerDeb({})
   ],
   plugins: [
@@ -207,40 +211,14 @@ const config: ForgeConfig = {
      * Remove non-matching architecture binaries from onnxruntime-node
      */
     packageAfterPrune: async (forgeConfig, buildPath, electronVersion, platform, arch) => {
-      console.log(`🧹 Cleaning up onnxruntime-node binaries for ${platform}-${arch}`);
+      console.log(`🧹 Cleaning up platform-specific binaries for ${platform}-${arch}`);
 
-      const onnxRuntimePath = path.join(buildPath, 'node_modules', 'onnxruntime-node', 'bin', 'napi-v3');
-
-      if (!fs.existsSync(onnxRuntimePath)) {
-        console.log(`⚠️  onnxruntime-node path not found: ${onnxRuntimePath}`);
-        return;
-      }
-
-      // Define directories to remove based on platform and arch
-      const dirsToRemove: string[] = [];
-
-      if (platform === 'linux' && arch === 'x64') {
-        dirsToRemove.push('linux/arm64', 'darwin', 'win32');
-      } else if (platform === 'linux' && arch === 'arm64') {
-        dirsToRemove.push('linux/x64', 'darwin', 'win32');
-      } else if (platform === 'darwin' && arch === 'x64') {
-        dirsToRemove.push('linux', 'darwin/arm64', 'win32');
-      } else if (platform === 'darwin' && arch === 'arm64') {
-        dirsToRemove.push('linux', 'darwin/x64', 'win32');
-      } else if (platform === 'win32' && arch === 'x64') {
-        dirsToRemove.push('linux', 'darwin', 'win32/arm64');
-      }
-
-      // Remove the directories
-      for (const dir of dirsToRemove) {
-        const fullPath = path.join(onnxRuntimePath, dir);
-        if (fs.existsSync(fullPath)) {
-          console.log(`🗑️  Removing: ${dir}`);
-          fs.rmSync(fullPath, { recursive: true, force: true });
-        }
-      }
+      purgeOnnxRuntime(buildPath, platform, arch);
+      purgeLibnut(buildPath, platform);
+      purgeAutolib(buildPath, platform, arch);
 
       console.log(`✅ Cleanup complete`);
+
     }
   
   //   /*

@@ -34,7 +34,7 @@
 <script setup lang="ts">
 
 import { ArrowLeftRightIcon, CornerDownLeftIcon, MessageSquareIcon, PenIcon, RotateCcwIcon, XCircleIcon } from 'lucide-vue-next'
-import { onMounted, onUnmounted, PropType, ref } from 'vue'
+import { onMounted, onBeforeUnmount, PropType, ref } from 'vue'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
@@ -96,7 +96,7 @@ onMounted(() => {
 
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   document.removeEventListener('keydown', onKeyDown)
   audioPlayer.removeListener(onAudioPlayerStatus)
 })

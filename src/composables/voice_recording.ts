@@ -1,4 +1,4 @@
-import { ref, computed, onUnmounted, readonly } from 'vue'
+import { ref, computed, onBeforeUnmount, readonly } from 'vue'
 import { store } from '../services/store'
 import useAudioRecorder from './audio_recorder'
 import useTranscriber from './transcriber'
@@ -184,7 +184,7 @@ export default function useVoiceRecording(options: VoiceRecordingOptions = {}) {
   }
 
   // === CLEANUP ===
-  onUnmounted(() => {
+  onBeforeUnmount(() => {
     if (isRecording.value) {
       stopRecording(true)
     }

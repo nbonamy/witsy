@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { DocRepoAddDocResponse, DocumentQueueItem } from '../types/rag'
 import Dialog from './dialog'
 
@@ -43,7 +43,7 @@ export function useDocRepoEvents() {
     })
   })
 
-  onUnmounted(() => {
+  onBeforeUnmount(() => {
     window.api.off('docrepo-process-item-start', onProcessItemStart)
     window.api.off('docrepo-process-item-done', onProcessItemDone)
     window.api.off('docrepo-add-document-done', onAddDocDone)
