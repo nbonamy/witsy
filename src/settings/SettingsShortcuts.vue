@@ -142,7 +142,7 @@ defineExpose({ load })
     }
 
     button {
-      padding: 6px 1rem;
+      height: 32px;
     }
 
     button.clear-all {

@@ -115,7 +115,7 @@ const onKeyDown = (event: KeyboardEvent) => {
   --vs-min-height: auto;
   --vs-menu-height: v-bind(`${height}px`);
   --vs-menu-z-index: 100;
-  --vs-padding: 2.75px 12px;
+  --vs-padding: 6px 8px;
   --vs-font-size: var(--form-large-font-size);
   --vs-text-color: var(--control-text-color);
   --vs-background-color: var(--control-bg-color);

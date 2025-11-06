@@ -1,7 +1,7 @@
 <template>
   <div class="studio-settings">
     <main>
-    <div class="form form-vertical">
+    <div class="form form-large form-vertical">
 
       <div class="form-field media-type">
         <label>{{ t('designStudio.mediaType.label') }}</label>

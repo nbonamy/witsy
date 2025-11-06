@@ -121,7 +121,7 @@ const onMenuOpened = async () => {
 
   --vs-min-height: auto;
   --vs-menu-height: v-bind(`${height}px`);
-  --vs-padding: 2.75px 12px;
+  --vs-padding: 6px 8px;
   --vs-font-size: var(--form-large-font-size);
   --vs-text-color: var(--control-text-color);
   --vs-background-color: var(--control-bg-color);
@@ -161,6 +161,7 @@ const onMenuOpened = async () => {
       left: 3.2px;
 
       button {
+        height: auto !important;
         box-shadow: none;
         filter: brightness(2.0);
         padding: 0 !important;
@@ -175,6 +176,7 @@ const onMenuOpened = async () => {
 
         display: flex;
         align-items: center;
+        padding-left: 2px;
         gap: 0.6em;
 
         .capability {

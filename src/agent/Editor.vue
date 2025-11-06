@@ -341,6 +341,12 @@ const save = async () => {
   background-color: var(--background-color-light);
   overflow: hidden;
 
+  &:deep {
+    input:not([type=checkbox]):not([type=range]), textarea, select {
+      background-color: var(--background-color) !important;
+    }
+  }
+
   header {
     position: sticky;
     button {
