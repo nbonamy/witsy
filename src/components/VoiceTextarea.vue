@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { MicIcon } from 'lucide-vue-next'
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import useAudioRecorder from '../composables/audio_recorder'
 import useTranscriber from '../composables/transcriber'
 import { store } from '../services/store'
@@ -212,7 +212,7 @@ onMounted(() => {
   })
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (isRecording.value) {
     stopRecording()
   }

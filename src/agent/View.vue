@@ -46,7 +46,7 @@
 <script setup lang="ts">
 
 import { ChevronLeftIcon } from 'lucide-vue-next'
-import { PropType, onMounted, onUnmounted, ref, watch } from 'vue'
+import { PropType, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
@@ -81,7 +81,7 @@ onMounted(() => {
   window.api.on('agent-run-update', onAgentRunUpdate)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   window.api.off('agent-run-update', onAgentRunUpdate)
 })
 

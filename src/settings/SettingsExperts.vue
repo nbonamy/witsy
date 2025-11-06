@@ -19,7 +19,7 @@
 <script setup lang="ts">
 
 import { v4 as uuidv4 } from 'uuid'
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 import ExpertEditor from '../components/ExpertEditor.vue'
 import ExpertsList from '../components/ExpertsList.vue'
 import { newExpert } from '../services/experts'
@@ -62,7 +62,7 @@ const onExpertModified = (payload: Expert) => {
     if (selectedIndex !== -1) {
       store.experts.splice(selectedIndex, 0, expert)
     } else {
-      store.experts.push(expert)
+      store.experts.unshift(expert)
     }
     
   } else {
@@ -87,7 +87,7 @@ const onExpertModified = (payload: Expert) => {
 
   // done
   edited.value = null
-  window.api.experts.save(store.workspace.uuid, store.experts)
+  window.api.experts.save(store.workspace.uuid, toRaw(store.experts))
   load()
 }
 

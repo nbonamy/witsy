@@ -115,7 +115,7 @@
 import { CpuIcon, DownloadIcon, ImageIcon, WrenchIcon, ZapIcon } from 'lucide-vue-next'
 import type { ChatModel } from 'multi-llm-ts'
 import { Ollama, } from 'ollama/dist/browser.cjs'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 import EngineLogo from '../components/EngineLogo.vue'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 import Dialog from '../composables/dialog'
@@ -140,7 +140,7 @@ onMounted(() => {
   setupIpcListeners()
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   removeIpcListeners()
 })
 

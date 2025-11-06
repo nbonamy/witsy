@@ -112,7 +112,7 @@
 <script setup lang="ts">
 
 import { Trash2Icon } from 'lucide-vue-next'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/vue3-json-viewer.css'
 import ButtonIcon from '../components/ButtonIcon.vue'
@@ -187,7 +187,7 @@ onMounted(() => {
   window.api.on('network', onNetworkRequest)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   window.api.off('network', onNetworkRequest)
 })
 

@@ -2,7 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.1.0] - WIP
+## [3.1.1] - WIP
+
+### Added
+- N/A
+
+### Changed
+- N/A
+
+### Fixed
+- Cannot Add New Experts (https://github.com/nbonamy/witsy/issues/477)
+
+### Removed
+- N/A
+
+
+## [3.1.0] - 2025-11-02
 
 ### Added
 - Experts categories

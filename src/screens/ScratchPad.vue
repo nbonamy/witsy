@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { LlmEngine } from 'multi-llm-ts'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt, { SendPromptParams } from '../components/Prompt.vue'
@@ -187,7 +187,7 @@ onMounted(() => {
 
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   window.api.off('start-dictation', onStartDictation)
   audioPlayer.removeListener(onAudioPlayerStatus)
   clearTimeout(undoStackCheckTimeout)
@@ -195,17 +195,6 @@ onUnmounted(() => {
 
 const onStartDictation = () => {
   prompt.value?.startDictation()
-}
-
-const updateTitle = () => {
-  let title = 'Scratchpad'
-  if (currentTitle.value) {
-    title += ' - ' + currentTitle.value
-    if (checkIfModified()) {
-      title += ' *'
-    }
-  }
-  document.title = title
 }
 
 const loadScratchpadsList = () => {
@@ -232,9 +221,6 @@ const resetState = () => {
 
   // init llm
   initLlm()
-
-  // done
-  updateTitle()
 
 }
 
@@ -454,9 +440,6 @@ const onSelectScratchpad = async (scratchpad: ScratchpadHeader) => {
     // init llm based on loaded chat or defaults
     initLlm()
 
-    // done
-    updateTitle()
-
   } catch (err) {
     console.error(err)
     Dialog.alert(t('scratchpad.loadingError'))
@@ -542,7 +525,6 @@ const onSave = async () => {
     if (success) {
       // Initialize undo stack with saved content as baseline
       initializeUndoStack(data.contents)
-      updateTitle()
       loadScratchpadsList()
       // Update selected scratchpad
       selectedScratchpad.value = scratchpads.value.find(s => s.uuid === currentScratchpadId.value)
@@ -639,7 +621,6 @@ const onRenameScratchpad = async () => {
       // Update current title if renaming current scratchpad
       if (currentScratchpadId.value === scratchpad.uuid) {
         currentTitle.value = result.value
-        updateTitle()
       }
       loadScratchpadsList()
     } else {

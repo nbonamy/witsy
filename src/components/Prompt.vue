@@ -186,7 +186,7 @@
 
 import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, FolderIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, MoveLeftIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
 import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
-import { computed, nextTick, onMounted, onUnmounted, PropType, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onBeforeUnmount, PropType, ref, watch } from 'vue'
 import Waveform from '../components/Waveform.vue'
 import useAudioRecorder from '../composables/audio_recorder'
 import Dialog from '../composables/dialog'
@@ -460,7 +460,7 @@ onMounted(() => {
 
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   window.api.off('docrepo-modified', loadDocRepos)
   document.removeEventListener('keydown', onShortcutDown)
   document.removeEventListener('keydown', onEscapeKey)

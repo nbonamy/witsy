@@ -347,6 +347,7 @@
       "updatedAt": "Ora di completamento"
     },
     "status": {
+      "canceled": "🚫 Annullato",
       "error": "❌ Errore",
       "running": "⏳ In esecuzione",
       "success": "✅ Successo"
@@ -2464,7 +2465,7 @@
     "importError": "Errore durante l'importazione del file documento",
     "loadingError": "Errore durante il caricamento del file documento",
     "new": "Nuovo Documento",
-    "placeholder": "Inizia a digitare il tuo documento o\nchiedi a @:{'common.appName'} di scrivere qualcosa per te!\n\nUna volta iniziato puoi chiedere a @:{'common.appName'}\ndi fare modifiche al tuo documento.\n\nSe evidenzi una porzione di testo,\n@:{'common.appName'} aggiornerà solo quella parte.\n\nDai un'occhiata anche all'Assistente di Scrittura\nnella barra delle azioni in basso a destra!\n\nProvalo ora!",
+    "placeholder": "Inizia a scrivere il tuo documento o\nchiedi a @:{'common.appName'} di scrivere qualcosa per te!\n\nUna volta iniziato, puoi chiedere a @:{'common.appName'}\ndi apportare modifiche al tuo documento.\n\nSe evidenzi una parte del testo,\n@:{'common.appName'} aggiornerà solo quella parte.\n\nDai anche un'occhiata all'Assistente di Scrittura\nnella barra delle azioni a destra!\n\nProvalo!",
     "rename": {
       "prompt": "Inserisci un nuovo titolo",
       "title": "Rinomina Documento"
@@ -2644,6 +2645,9 @@
       "meta": {
         "aboutModels": "Ulteriori informazioni sui modelli Meta Llama",
         "pricing": "Prezzi dei modelli Meta Llama"
+      },
+      "minimax": {
+        "groupId": "ID gruppo"
       },
       "mistralai": {
         "aboutModels": "Ulteriori informazioni sui modelli MistralAI",

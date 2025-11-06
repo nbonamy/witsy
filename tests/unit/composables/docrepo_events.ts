@@ -81,7 +81,7 @@ describe('useDocRepoEvents', () => {
     wrapper.unmount()
   })
 
-  test('onUnmounted - unregisters event listeners', () => {
+  test('onBeforeUnmount - unregisters event listeners', () => {
     const wrapper = mount(TestComponent)
 
     wrapper.unmount()

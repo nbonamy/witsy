@@ -66,7 +66,7 @@
 <script setup lang="ts">
 
 import { CheckCircleIcon, CircleUserIcon, InfoIcon, SettingsIcon, XCircleIcon } from 'lucide-vue-next'
-import { computed, onUnmounted, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
 
@@ -142,7 +142,7 @@ const canLeave = async (): Promise<boolean> => {
 }
 
 // Clean up polling on unmount
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (pollInterval) {
     clearInterval(pollInterval)
     pollInterval = null

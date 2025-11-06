@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { EllipsisVerticalIcon } from 'lucide-vue-next'
 import ContextMenuPlus, { type MenuPosition } from './ContextMenuPlus.vue'
 import ButtonIcon from './ButtonIcon.vue'
@@ -66,7 +66,7 @@ onMounted(() => {
   document.addEventListener('keydown', handleEscape)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   document.removeEventListener('keydown', handleEscape)
 })
 

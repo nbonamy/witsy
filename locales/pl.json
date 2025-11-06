@@ -366,6 +366,7 @@
       "updatedAt": "Czas zakończenia"
     },
     "status": {
+      "canceled": "🚫 Anulowano",
       "error": "❌ Błąd",
       "running": "⏳ Uruchomiono",
       "success": "✅ Sukces"
@@ -2486,7 +2487,7 @@
     "importError": "Błąd podczas importowania pliku dokumentu",
     "loadingError": "Błąd podczas ładowania pliku dokumentu",
     "new": "Nowy dokument",
-    "placeholder": "Zacznij pisać swój dokument lub\npoproś @:{'common.appName'}, aby coś dla Ciebie napisał!\n\nPo rozpoczęciu możesz poprosić @:{'common.appName'}\no modyfikacje w Twoim dokumencie.\n\nJeśli zaznaczysz fragment tekstu,\n@:{'common.appName'} zaktualizuje tylko ten fragment.\n\nSprawdź także Asystenta Pisania\nw pasku akcji w prawym dolnym rogu!\n\nSpróbuj!",
+    "placeholder": "Zacznij pisać swój dokument lub\npoproś @:{'common.appName'}, aby coś dla Ciebie napisał!\n\nGdy zaczniesz, możesz poprosić @:{'common.appName'},\naby wprowadził zmiany w Twoim dokumencie.\n\nJeśli zaznaczysz fragment tekstu,\n@:{'common.appName'} zaktualizuje tylko ten fragment.\n\nSprawdź także Asystenta Pisania\nw pasku akcji po prawej stronie!\n\nSpróbuj!",
     "rename": {
       "prompt": "Wprowadź nowy tytuł",
       "title": "Zmień nazwę dokumentu"
@@ -2666,6 +2667,9 @@
       "meta": {
         "aboutModels": "Więcej o modelach Meta Llama",
         "pricing": "Cennik Meta Llama"
+      },
+      "minimax": {
+        "groupId": "ID grupy"
       },
       "mistralai": {
         "aboutModels": "Więcej informacji o modelach MistralAI",

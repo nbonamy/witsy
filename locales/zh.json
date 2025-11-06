@@ -366,6 +366,7 @@
       "updatedAt": "完成时间"
     },
     "status": {
+      "canceled": "🚫 已取消",
       "error": "❌ 错误",
       "running": "⏳ 运行中",
       "success": "✅ 成功"
@@ -2486,7 +2487,7 @@
     "importError": "导入文档文件时出错",
     "loadingError": "加载文档文件时出错",
     "new": "新建文档",
-    "placeholder": "开始输入您的文档，或\n让 @:{'common.appName'} 为您写点东西！\n\n一旦开始，您可以让 @:{'common.appName'}\n对您的文档进行修改。\n\n如果您高亮了部分文本，\n@:{'common.appName'} 将只更新这部分内容。\n\n还可以查看位于右下角操作栏的写作助手！\n\n试试看吧！",
+    "placeholder": "开始输入您的文档，或\n请 @:{'common.appName'} 为您写点什么！\n\n一旦开始，您可以请 @:{'common.appName'}\n对您的文档进行修改。\n\n如果您高亮选中部分文本，\n@:{'common.appName'} 将只更新这部分内容。\n\n还可以查看右侧操作栏中的写作助手！\n\n试试看吧！",
     "rename": {
       "prompt": "请输入新标题",
       "title": "重命名文档"
@@ -2666,6 +2667,9 @@
       "meta": {
         "aboutModels": "更多关于 Meta Llama 模型的信息",
         "pricing": "Meta Llama 定价"
+      },
+      "minimax": {
+        "groupId": "组ID"
       },
       "mistralai": {
         "aboutModels": "了解更多关于 MistralAI 模型的信息",

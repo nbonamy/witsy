@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { LlmEngine } from 'multi-llm-ts'
-import { computed, onMounted, onUnmounted, provide, ref } from 'vue'
+import { computed, onMounted, onBeforeUnmount, provide, ref } from 'vue'
 import OutputPanel from '../components/OutputPanel.vue'
 import Prompt, { SendPromptParams } from '../components/Prompt.vue'
 import ResizableHorizontal from '../components/ResizableHorizontal.vue'
@@ -122,7 +122,7 @@ onMounted(() => {
 
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
   window.api.off('start-dictation', onDictate)
