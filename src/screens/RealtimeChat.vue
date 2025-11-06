@@ -8,7 +8,7 @@
       </header>
 
       <main>
-        <div class="form form-vertical">
+        <div class="form form-large form-vertical">
           <div class="form-field">
             <label>{{ t('common.provider') }}</label>
             <select class="tool" v-model="engine" @change="onChangeEngine">
