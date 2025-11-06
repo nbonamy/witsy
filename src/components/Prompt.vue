@@ -12,7 +12,7 @@
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
         <div v-if="command" class="icon left command" @click="onClickActiveCommand"><CommandIcon /></div>
-        <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
+        <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" @paste="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
       </div>
     </div>
     <div class="actions">
@@ -1311,7 +1311,7 @@ const onKeyDown = (event: KeyboardEvent) => {
   }
 }
 
-const onKeyUp = (event: KeyboardEvent) => {
+const onKeyUp = (event: Event) => {
   nextTick(() => {
     autoGrow(event.target as HTMLElement)
   })

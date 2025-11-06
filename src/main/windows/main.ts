@@ -1,10 +1,10 @@
 
+import { app, BrowserWindow, ContextMenuParams, Menu, MenuItem, Notification } from 'electron';
 import { MainWindowMode } from '../../types/index';
 import { CreateWindowOpts } from '../../types/window';
-import { app, BrowserWindow, ContextMenuParams, Menu, MenuItem, Notification } from 'electron';
-import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen, undockWindow } from './index';
 import { loadSettings, saveSettings } from '../config';
 import { useI18n } from '../i18n';
+import { createWindow, electronStore, ensureOnCurrentScreen, titleBarOptions, undockWindow } from './index';
 
 const storeBoundsId = 'main.bounds'
 
@@ -68,11 +68,18 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
     })
 
     // if we have a selection add options
-    if (contextMenuContext && params.selectionText.length > 0) {
+    if (params.selectionText.length > 0) {
+      menu.append(new MenuItem({ role: 'copy' }))
+      menu.append(new MenuItem({ role: 'cut' }))
+    }
+
+    menu.append(new MenuItem({ role: 'paste' }))
+    menu.append(new MenuItem({ role: 'selectAll' }))
+
+    if (params.selectionText.length > 0 && contextMenuContext) {
 
       menu.append(new MenuItem({
-        label: useI18n(app)('common.copy'),
-        click: () => mainWindow.webContents.copy(),
+        type: 'separator',
       }));
 
       // menu.append(new MenuItem({
