@@ -22,7 +22,7 @@
     "test": "vitest --run",
     "test:ai": "vitest --run --config vitest.config.ai.mjs",
     "test:notify": "vitest --watch --reporter=default --reporter=./tests/reporter/notify.ts",
-    "test:watch": "vitest --watch",
+    "test:watch": "vitest --watch --silent",
     "test:ci": "vitest --coverage.enabled=true --coverage.reporter='text-summary'",
     "test:ui": "vitest --ui --coverage.enabled=true",
     "test:e2e": "WITSY_HOME=/tmp vitest --config ./vitest.config.e2e.mjs './tests/e2e/**' ./tests/e2e/**",
