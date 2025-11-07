@@ -1,7 +1,7 @@
 
 <template>
   <Teleport to="body">
-    <div :id="id" class="dialog swal2-center swal2-backdrop-show" :class="klass" v-bind="$attrs" ref="dialog">
+    <div :id="id" class="dialog" :class="klass" v-bind="$attrs" ref="dialog">
       <div class="swal2-popup swal2-show form form-large" :class="{ 'form-vertical': form === 'vertical' }" :style="popupStyle">
         <div class="swal2-icon swal2-icon-show" v-if="icon && type === 'alert'">
           <div class="swal2-icon-content">
@@ -74,7 +74,9 @@ const props = defineProps({
 
 const klass = computed(() => {
   return {
+    'swal2-center': visible.value,
     'swal2-container': visible.value,
+    'swal2-backdrop-show': visible.value,
     visible: visible.value,
     [props.type]: visible.value
   }
