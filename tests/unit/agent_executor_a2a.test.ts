@@ -65,7 +65,9 @@ test('AgentA2AExecutor Creation', () => {
 })
 
 test('Basic A2A Agent Run - Success', async () => {
-  const run = await executor!.run('manual', 'Hello A2A agent', { ephemeral: true })
+  // A2A agents typically have empty prompts, so we pass the user's message directly
+  testAgent.steps[0].prompt = '{{message}}'
+  const run = await executor!.run('manual', { message: 'Hello A2A agent' }, { ephemeral: true })
 
   expect(run).toBeDefined()
   expect(run.uuid).toBeDefined()
@@ -83,8 +85,9 @@ test('Basic A2A Agent Run - Success', async () => {
 
 test('A2A Agent Run with Chat Integration', async () => {
   const chat = new Chat()
+  testAgent.steps[0].prompt = '{{message}}'
 
-  const run = await executor!.run('manual', 'Chat integration test', {
+  const run = await executor!.run('manual', { message: 'Chat integration test' }, {
     chat,
     ephemeral: true
   })
@@ -97,12 +100,13 @@ test('A2A Agent Run with Chat Integration', async () => {
 })
 
 test('A2A Agent Run handles abort signal', async () => {
+  testAgent.steps[0].prompt = '{{message}}'
   const abortController = new AbortController()
 
   // Abort before starting
   abortController.abort()
 
-  const run = await executor!.run('manual', 'Abort test', {
+  const run = await executor!.run('manual', { message: 'Abort test' }, {
     abortSignal: abortController.signal
   })
 
@@ -110,12 +114,13 @@ test('A2A Agent Run handles abort signal', async () => {
 })
 
 test('A2A Agent Run with a2aContext', async () => {
+  testAgent.steps[0].prompt = '{{message}}'
   const a2aContext = {
     currentTaskId: 'task-123',
     currentContextId: 'context-456'
   }
 
-  const run = await executor!.run('manual', 'Context test', {
+  const run = await executor!.run('manual', { message: 'Context test' }, {
     a2aContext,
     ephemeral: true
   })
@@ -124,12 +129,13 @@ test('A2A Agent Run with a2aContext', async () => {
 })
 
 test('A2A Agent Run with callback', async () => {
+  testAgent.steps[0].prompt = '{{message}}'
   const chunks: any[] = []
   const callback = (chunk: any) => {
     if (chunk) chunks.push(chunk)
   }
 
-  const run = await executor!.run('manual', 'Callback test', {
+  const run = await executor!.run('manual', { message: 'Callback test' }, {
     callback,
     ephemeral: true
   })
@@ -140,6 +146,7 @@ test('A2A Agent Run with callback', async () => {
 })
 
 test('A2A Agent Run handles status chunks', async () => {
+  testAgent.steps[0].prompt = '{{message}}'
   // Mock A2A client to return status chunks
   const A2AClient = (await import('../../src/services/a2a-client')).default
   vi.mocked(A2AClient).mockImplementationOnce(() => ({
@@ -152,7 +159,7 @@ test('A2A Agent Run handles status chunks', async () => {
 
   const freshExecutor = new AgentA2AExecutor(store.config, store.workspace.uuid, testAgent)
   const chat = new Chat()
-  const run = await freshExecutor.run('manual', 'Status test', {
+  const run = await freshExecutor.run('manual', { message: 'Status test' }, {
     chat,
     ephemeral: true
   })
@@ -164,6 +171,7 @@ test('A2A Agent Run handles status chunks', async () => {
 })
 
 test('A2A Agent Run handles artifact chunks', async () => {
+  testAgent.steps[0].prompt = '{{message}}'
   // Mock A2A client to return artifact chunks
   const A2AClient = (await import('../../src/services/a2a-client')).default
   vi.mocked(A2AClient).mockImplementation(() => ({
@@ -173,7 +181,7 @@ test('A2A Agent Run handles artifact chunks', async () => {
     })
   }) as any)
 
-  const run = await executor!.run('manual', 'Artifact test', { ephemeral: true })
+  const run = await executor!.run('manual', { message: 'Artifact test' }, { ephemeral: true })
 
   expect(run.status).toBe('success')
   expect(run.messages[2].content).toContain('<artifact title="test.txt">')
@@ -181,9 +189,10 @@ test('A2A Agent Run handles artifact chunks', async () => {
 })
 
 test('A2A Agent Run with non-ephemeral storage', async () => {
+  testAgent.steps[0].prompt = '{{message}}'
   const saveSpy = vi.spyOn(window.api.agents, 'saveRun')
 
-  const run = await executor!.run('manual', 'Storage test', {
+  const run = await executor!.run('manual', { message: 'Storage test' }, {
     ephemeral: false
   })
 
@@ -192,6 +201,7 @@ test('A2A Agent Run with non-ephemeral storage', async () => {
 })
 
 test('A2A Agent Run handles errors', async () => {
+  testAgent.steps[0].prompt = '{{message}}'
   // Create new executor with fresh mock that throws
   const A2AClient = (await import('../../src/services/a2a-client')).default
   vi.mocked(A2AClient).mockImplementationOnce(() => ({
@@ -202,13 +212,14 @@ test('A2A Agent Run handles errors', async () => {
   }) as any)
 
   const freshExecutor = new AgentA2AExecutor(store.config, store.workspace.uuid, testAgent)
-  const run = await freshExecutor.run('manual', 'Error test', { ephemeral: true })
+  const run = await freshExecutor.run('manual', { message: 'Error test' }, { ephemeral: true })
 
   expect(run.status).toBe('error')
   expect(run.error).toBe('A2A connection failed')
 })
 
 test('A2A Agent Run different triggers', async () => {
+  testAgent.steps[0].prompt = '{{message}}'
   const triggers = ['manual', 'schedule', 'webhook', 'workflow'] as const
 
   for (const trigger of triggers) {
@@ -221,7 +232,7 @@ test('A2A Agent Run different triggers', async () => {
     }) as any)
 
     const freshExecutor = new AgentA2AExecutor(store.config, store.workspace.uuid, testAgent)
-    const run = await freshExecutor.run(trigger, `${trigger} test`, { ephemeral: true })
+    const run = await freshExecutor.run(trigger, { message: `${trigger} test` }, { ephemeral: true })
     expect(run.trigger).toBe(trigger)
     expect(run.status).toBe('success')
   }

@@ -79,7 +79,7 @@ const createTestAgent = (overrides: Partial<Agent> = {}): Agent => {
 
 const runAgent = async (
   trigger: AgentRunTrigger = 'manual',
-  prompt?: string,
+  values: Record<string, string> = {},
   opts: Partial<AgentWorkflowExecutorOpts> = {},
   generationCallback?: (event: string) => void
 ): Promise<AgentRun> => {
@@ -93,8 +93,8 @@ const runAgent = async (
   }
 
   // Run the agent
-  const run = await executor!.run(trigger, prompt, defaultOpts, generationCallback)
-  
+  const run = await executor!.run(trigger, values, defaultOpts, generationCallback)
+
   // Wait for completion if not ephemeral
   if (!defaultOpts.ephemeral) {
     await vi.waitUntil(() => run.status !== 'running')
@@ -145,14 +145,14 @@ test('AgentWorkflowExecutor Creation', () => {
 })
 
 test('Basic Agent Run - Success', async () => {
-  const run = await runAgent('manual', 'Hello there')
+  const run = await runAgent('manual', { name: 'there' })
 
   expect(run).toBeDefined()
   expect(run.uuid).toBeDefined()
   expect(run.agentId).toBe(testAgent.uuid)
   expect(run.trigger).toBe('manual')
   expect(run.status).toBe('success')
-  expect(run.prompt).toBe('Hello there')
+  expect(run.prompt).toBe('Hello there, how can I help you today?')
   expect(run.messages).toHaveLength(3) // system, user, assistant
   expect(run.messages[0].role).toBe('system')
   expect(run.messages[1].role).toBe('user')
@@ -166,12 +166,12 @@ test('Agent Run with Parameters', async () => {
     description: 'User name',
     required: true
   }]
-  
-  const run = await runAgent('manual', 'Test prompt')
+
+  const run = await runAgent('manual', { name: 'Test' })
 
   expect(run.status).toBe('success')
-  // The first step uses the provided prompt, not the step prompt
-  expect(run.messages[1].content).toBe('Test prompt')
+  // The first step uses the provided values in the template
+  expect(run.messages[1].content).toBe('Hello Test, how can I help you today?')
 })
 
 test('Agent Run with Multiple Steps', async () => {
@@ -188,12 +188,12 @@ test('Agent Run with Multiple Steps', async () => {
     }
   ]
 
-  const run = await runAgent('manual', 'Multi-step test')
+  const run = await runAgent('manual', { input: 'Multi-step test' })
 
   expect(run.status).toBe('success')
   expect(run.messages).toHaveLength(5) // system, user1, assistant1, user2, assistant2
-  // First step uses provided prompt
-  expect(run.messages[1].content).toBe('Multi-step test')
+  // First step uses provided values in template
+  expect(run.messages[1].content).toBe('Step 1: Multi-step test')
   // Second step uses step prompt with output replacement
   expect(run.messages[3].content).toContain('Step 2: Based on')
 })
@@ -202,11 +202,11 @@ test('Agent Run with Chat Integration', async () => {
   const chat = new Chat()
   chat.setEngineModel('mock', 'chat')
   
-  const run = await runAgent('manual', 'Chat integration test', { chat })
+  const run = await runAgent('manual', { name: 'Chat integration test' }, { chat })
 
   expect(run.status).toBe('success')
   expect(chat.messages).toHaveLength(3)
-  expect(chat.messages[1].content).toBe('Chat integration test')
+  expect(chat.messages[1].content).toBe('Hello Chat integration test, how can I help you today?')
   expect(chat.messages[2].agentId).toBe(testAgent.uuid)
   expect(chat.messages[2].agentRunId).toBe(run.uuid)
 })
@@ -215,7 +215,7 @@ test('Agent Run with Engine Override', async () => {
   // Agent engine takes precedence, so we need to clear it to test override
   testAgent.engine = null
   
-  const run = await runAgent('manual', 'Engine test', { engine: 'custom-mock' })
+  const run = await runAgent('manual', { name: 'Engine test' }, { engine: 'custom-mock' })
 
   expect(run.status).toBe('success')
   expect(run.messages[1].engine).toBe('custom-mock')
@@ -226,7 +226,7 @@ test('Agent Run with Model Override', async () => {
   // Agent model takes precedence, so we need to clear it to test override
   testAgent.model = null
   
-  const run = await runAgent('manual', 'Model test', { model: 'custom-model' })
+  const run = await runAgent('manual', { name: 'Model test' }, { model: 'custom-model' })
 
   expect(run.status).toBe('success')
   // The LlmManager mock will return its default model, not the custom one
@@ -238,7 +238,7 @@ test('Agent Run with Model Override', async () => {
 test('Agent Run with Streaming Disabled', async () => {
   testAgent.disableStreaming = true
   
-  const run = await runAgent('manual', 'No streaming test')
+  const run = await runAgent('manual', { name: 'No streaming test' })
 
   expect(run.status).toBe('success')
   // Check if generate was called with streaming: false
@@ -252,7 +252,7 @@ test('Agent Run with Streaming Disabled', async () => {
 test('Agent Run with Streaming Enabled', async () => {
   testAgent.disableStreaming = false
 
-  const run = await runAgent('manual', 'Streaming test')
+  const run = await runAgent('manual', { name: 'Streaming test' })
 
   expect(run.status).toBe('success')
   // Check if generate was called with streaming: true
@@ -266,7 +266,7 @@ test('Agent Run with Streaming Enabled', async () => {
 test('Agent Run with Custom Locale', async () => {
   testAgent.locale = 'es-ES'
   
-  const run = await runAgent('manual', 'Locale test')
+  const run = await runAgent('manual', { name: 'Locale test' })
 
   expect(run.status).toBe('success')
   // Locale should be applied during run and restored after
@@ -286,7 +286,7 @@ test('Agent Run with LLM Callback', async () => {
     return 'success'
   })
 
-  const run = await runAgent('manual', 'Callback test', { callback })
+  const run = await runAgent('manual', { name: 'Callback test' }, { callback })
 
   expect(run.status).toBe('success')
   expect(chunks.length).toBeGreaterThan(0)
@@ -298,7 +298,7 @@ test('Agent Run with Generation Callbacks', async () => {
     events.push(event)
   }
 
-  const run = await runAgent('manual', 'Generation callback test', { model: 'chat' }, generationCallback)
+  const run = await runAgent('manual', { name: 'Generation callback test' }, { model: 'chat' }, generationCallback)
 
   expect(run.status).toBe('success')
   expect(events).toContain('before_generation')
@@ -311,7 +311,7 @@ test('Agent Run with Structured Output', async () => {
     structure: {} as any // Mock ZodType
   }
 
-  const run = await runAgent('manual', 'Structured output test')
+  const run = await runAgent('manual', { name: 'Structured output test' })
 
   expect(run.status).toBe('success')
   // Check if generate was called with structuredOutput
@@ -325,7 +325,7 @@ test('Agent Run with Structured Output', async () => {
 test('Agent Run with Tools Filter', async () => {
   testAgent.steps[0].tools = ['search_internet', 'run_python_code']
 
-  const run = await runAgent('manual', 'Tools test')
+  const run = await runAgent('manual', { name: 'Tools test' })
 
   expect(run.status).toBe('success')
   // Tools should be filtered and added to LLM
@@ -334,7 +334,7 @@ test('Agent Run with Tools Filter', async () => {
 test('Agent Run with Sub-Agents', async () => {
   testAgent.steps[0].agents = ['agent1', 'agent2']
 
-  const run = await runAgent('manual', 'Sub-agents test')
+  const run = await runAgent('manual', { name: 'Sub-agents test' })
 
   expect(run.status).toBe('success')
   // Sub-agents should be loaded and added as plugins
@@ -352,9 +352,10 @@ test('Agent Run without Prompt', async () => {
 test('Agent Run with Empty Prompt', async () => {
   testAgent.steps[0].prompt = ''
 
-  const run = await runAgent('manual', '')
+  const run = await runAgent('manual', {})
 
-  expect(run).toBeNull()
+  expect(run.status).toBe('error')
+  expect(run.error).toBe('Step 1 has an empty prompt after variable substitution')
 })
 
 test('Agent Run with Tool Calls', async () => {
@@ -369,7 +370,7 @@ test('Agent Run with Tool Calls', async () => {
     return 'success'
   })
 
-  const run = await runAgent('manual', 'Tool call test')
+  const run = await runAgent('manual', { name: 'Tool call test' })
 
   expect(run.status).toBe('success')
   expect(run.toolCalls).toHaveLength(1)
@@ -382,7 +383,7 @@ test('Agent Run Error Handling', async () => {
   // Mock generate to throw error
   spyGenerate.mockRejectedValue(new Error('Test error'))
 
-  const run = await runAgent('manual', 'Error test')
+  const run = await runAgent('manual', { name: 'Error test' })
 
   expect(run.status).toBe('error')
   expect(run.error).toBe('Test error')
@@ -390,7 +391,7 @@ test('Agent Run Error Handling', async () => {
 })
 
 test('Agent Run with Non-ephemeral Storage', async () => {
-  const run = await runAgent('manual', 'Storage test', { ephemeral: false })
+  const run = await runAgent('manual', { name: 'Storage test' }, { ephemeral: false })
 
   expect(run.status).toBe('success')
   // Should call saveRun multiple times for non-ephemeral runs
@@ -412,7 +413,7 @@ test('Agent Run with Model Options', async () => {
     maxTokens: 100
   }
 
-  const run = await runAgent('manual', 'Model options test')
+  const run = await runAgent('manual', { name: 'Model options test' })
 
   expect(run.status).toBe('success')
   // Check if generate was called with model options
@@ -430,7 +431,7 @@ test('Agent Run with Streaming Not Supported Error', async () => {
     .mockResolvedValueOnce('streaming_not_supported')
     .mockResolvedValueOnce('success')
 
-  const run = await runAgent('manual', 'Streaming error test')
+  const run = await runAgent('manual', { name: 'Streaming error test' })
 
   expect(run.status).toBe('success')
   expect(spyGenerate).toHaveBeenCalledTimes(2) // Should retry without streaming
@@ -439,7 +440,7 @@ test('Agent Run with Streaming Not Supported Error', async () => {
 test('Agent Run System Instructions', async () => {
   testAgent.instructions = 'Custom agent instructions'
 
-  const run = await runAgent('manual', 'Instructions test')
+  const run = await runAgent('manual', { name: 'Instructions test' })
 
   expect(run.status).toBe('success')
   expect(run.messages[0].content).toContain('Custom agent instructions')
@@ -449,7 +450,7 @@ test('Agent Run with Chat Locale Override', async () => {
   const chat = new Chat()
   chat.locale = 'de-DE'
   
-  const run = await runAgent('manual', 'Chat locale test', { chat })
+  const run = await runAgent('manual', { name: 'Chat locale test' }, { chat })
 
   expect(run.status).toBe('success')
   expect(chat.locale).toBe('de-DE')
@@ -460,7 +461,7 @@ test('Agent Run with Chat Model Options', async () => {
   chat.modelOpts = { temperature: 0.5 }
   testAgent.modelOpts = { temperature: 0.9 }
 
-  const run = await runAgent('manual', 'Chat model opts test', { chat })
+  const run = await runAgent('manual', { name: 'Chat model opts test' }, { chat })
 
   expect(run.status).toBe('success')
   // Agent model options should override chat model options
@@ -587,13 +588,13 @@ test('Agent Run with Docrepo - No Sources', async () => {
   // Mock docrepo.query to return empty results
   window.api.docrepo.query = vi.fn().mockResolvedValue([])
   
-  const run = await runAgent('manual', 'Docrepo test')
+  const run = await runAgent('manual', { name: 'Docrepo test' })
 
   expect(run.status).toBe('success')
-  expect(window.api.docrepo.query).toHaveBeenCalledWith('uuid1', 'Docrepo test')
-  
+  expect(window.api.docrepo.query).toHaveBeenCalledWith('uuid1', 'Hello Docrepo test, how can I help you today?')
+
   // Prompt should not be modified when no sources are found
-  expect(run.messages[1].content).toBe('Docrepo test')
+  expect(run.messages[1].content).toBe('Hello Docrepo test, how can I help you today?')
 })
 
 test('Agent Run with Docrepo - With Sources', async () => {
@@ -606,14 +607,14 @@ test('Agent Run with Docrepo - With Sources', async () => {
   ]
   window.api.docrepo.query = vi.fn().mockResolvedValue(mockSources)
   
-  const run = await runAgent('manual', 'Docrepo query test')
+  const run = await runAgent('manual', { name: 'Docrepo query test' })
 
   expect(run.status).toBe('success')
-  expect(window.api.docrepo.query).toHaveBeenCalledWith('uuid2', 'Docrepo query test')
-  
+  expect(window.api.docrepo.query).toHaveBeenCalledWith('uuid2', 'Hello Docrepo query test, how can I help you today?')
+
   // Prompt should be augmented with docrepo instructions
   const userMessage = run.messages[1]
-  expect(userMessage.content).toContain('Docrepo query test')
+  expect(userMessage.content).toContain('Hello Docrepo query test, how can I help you today?')
   expect(userMessage.content).toContain('instructions.agent.docquery')
 })
 
@@ -642,13 +643,13 @@ test('Agent Run with Docrepo - Multiple Steps', async () => {
       { content: 'Step 2 context', score: 0.8, metadata: { uuid: 'doc2' } }
     ])
 
-  const run = await runAgent('manual', 'Multi-step docrepo test')
+  const run = await runAgent('manual', { input: 'Multi-step docrepo test' })
 
   expect(run.status).toBe('success')
-  
+
   // Should have called docrepo.query for both steps
   expect(window.api.docrepo.query).toHaveBeenCalledTimes(2)
-  expect(window.api.docrepo.query).toHaveBeenNthCalledWith(1, 'uuid1', 'Multi-step docrepo test')
+  expect(window.api.docrepo.query).toHaveBeenNthCalledWith(1, 'uuid1', 'Step 1: Multi-step docrepo test')
   expect(window.api.docrepo.query).toHaveBeenNthCalledWith(2, 'uuid2', expect.stringContaining('Step 2: Based on'))
 
   // Messages should include docrepo instructions
@@ -662,10 +663,10 @@ test('Agent Run with Docrepo - Error Handling', async () => {
   // Mock docrepo.query to throw an error
   window.api.docrepo.query = vi.fn().mockRejectedValue(new Error('Docrepo not found'))
   
-  const run = await runAgent('manual', 'Docrepo error test')
+  const run = await runAgent('manual', { name: 'Docrepo error test' })
 
   expect(run.status).toBe('error')
-  expect(window.api.docrepo.query).toHaveBeenCalledWith('invalid-uuid', 'Docrepo error test')
+  expect(window.api.docrepo.query).toHaveBeenCalledWith('invalid-uuid', 'Hello Docrepo error test, how can I help you today?')
   expect(run.error).toBe('Docrepo not found')
 })
 
@@ -699,16 +700,17 @@ test('Agent Run with Docrepo - Second Step Uses Output Variable', async () => {
     { content: 'Additional context from docrepo', score: 0.9, metadata: { uuid: 'doc1' } }
   ])
 
-  const run = await runAgent('manual', 'Step output docrepo test')
+  const run = await runAgent('manual', { query: 'Step output docrepo test' })
 
   expect(run.status).toBe('success')
-  
+
   // The second step should have used the output from the first step in its docrepo query
-  expect(window.api.docrepo.query).toHaveBeenCalledWith('uuid1', expect.stringContaining('Summary based on analysis'))
+  // The docrepo query gets the step prompt with {{output.1}} replaced by step 1's output
+  expect(window.api.docrepo.query).toHaveBeenCalledWith('uuid1', expect.stringContaining('Analysis result from step 1'))
   
   // The second step's message should contain the docrepo instructions
   const secondStepMessage = run.messages[3]
-  expect(secondStepMessage.content).toContain('Summary based on analysis')
+  expect(secondStepMessage.content).toContain('Based on Analysis result from step 1')
   expect(secondStepMessage.content).toContain('instructions.agent.docquery')
 })
 
@@ -726,7 +728,7 @@ test('Agent delegates to llmManager.loadTools', async () => {
     agents: [],
   }]
 
-  const run = await runAgent('manual', 'Test prompt')
+  const run = await runAgent('manual', { name: 'Test prompt' })
 
   // Verify llmManager.loadTools was called with correct arguments
   expect(mockLoadTools).toHaveBeenCalledWith(
@@ -751,7 +753,7 @@ test('Agent loads all tools when tools is null', async () => {
     agents: [],
   }]
 
-  const run = await runAgent('manual', 'Test prompt')
+  const run = await runAgent('manual', { name: 'Test prompt' })
 
   // Verify llmManager.loadTools was called with null (load all)
   expect(mockLoadTools).toHaveBeenCalledWith(
@@ -776,7 +778,7 @@ test('Agent loads no tools when tools is empty array', async () => {
     agents: [],
   }]
 
-  const run = await runAgent('manual', 'Test prompt')
+  const run = await runAgent('manual', { name: 'Test prompt' })
 
   // Verify llmManager.loadTools was called with empty array (load none)
   expect(mockLoadTools).toHaveBeenCalledWith(
@@ -812,7 +814,7 @@ test('Expert attachment to workflow step', async () => {
   }]
 
   // Run (experts will be loaded JIT)
-  const run = await runAgent('manual', 'Test data')
+  const run = await runAgent('manual', { name: 'Test data' })
 
   expect(run.status).toBe('success')
   expect(run.messages).toHaveLength(3) // system, user, assistant
@@ -841,14 +843,14 @@ test('Expert prompt prepended to message content', async () => {
 
   // Setup agent with expert
   testAgent.steps = [{
-    prompt: 'Review this code',
+    prompt: 'Review this code: {{code}}',
     tools: null,
     agents: [],
     expert: testExpert.id,
   }]
 
   // Run (experts will be loaded JIT)
-  const run = await runAgent('manual', 'function test() {}')
+  const run = await runAgent('manual', { code: 'function test() {}' })
 
   expect(run.status).toBe('success')
 
@@ -856,6 +858,7 @@ test('Expert prompt prepended to message content', async () => {
   const userMessage = run.messages[1]
   const contentForModel = userMessage.contentForModel
   expect(contentForModel).toContain(testExpert.prompt)
+  expect(contentForModel).toContain('Review this code')
   expect(contentForModel).toContain('function test() {}')
   // Expert prompt should come first
   expect(contentForModel.indexOf(testExpert.prompt)).toBeLessThan(contentForModel.indexOf('function test() {}'))
@@ -871,7 +874,7 @@ test('Workflow step without expert works normally', async () => {
   }]
 
   // No need to mock experts.load since step doesn't use expert
-  const run = await runAgent('manual', 'Test prompt')
+  const run = await runAgent('manual', { name: 'Test prompt' })
 
   expect(run.status).toBe('success')
 
@@ -919,7 +922,7 @@ test('Multi-step workflow with different experts per step', async () => {
     }
   ]
 
-  const run = await runAgent('manual', 'Test')
+  const run = await runAgent('manual', { name: 'Test' })
 
   expect(run.status).toBe('success')
   // system + (user1 + assistant1) + (user2 + assistant2) = 5 messages
@@ -946,7 +949,7 @@ test('Expert not found in experts array is ignored', async () => {
   // Mock window.api.experts.load to return empty array (no matching expert)
   vi.mocked(window.api.experts.load).mockReturnValueOnce([])
 
-  const run = await runAgent('manual', 'Test')
+  const run = await runAgent('manual', { name: 'Test' })
 
   expect(run.status).toBe('success')
 

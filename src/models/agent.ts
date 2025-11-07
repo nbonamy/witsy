@@ -1,6 +1,5 @@
 
 import { LlmModelOpts, PluginParameter } from 'multi-llm-ts'
-import { extractPromptInputs, replacePromptInputs } from '../services/prompt'
 import { Agent as AgentBase, AgentSource, AgentStep, AgentType } from '../types/agents'
 
 export default class Agent implements AgentBase {
@@ -81,23 +80,6 @@ export default class Agent implements AgentBase {
     agent.getCompletedDescription = completedDescription
     agent.getErrorDescription = errorDescription
     return agent
-  }
-
-  buildPrompt(step: number, parameters: Record<string, any>): string|null {
-
-    // need a prompt
-    if (!this.steps[step] || !this.steps[step].prompt) return null
-
-    // make sure we have the value for each
-    const promptInputs = extractPromptInputs(this.steps[step].prompt)
-    for (const promptInput of promptInputs) {
-      if (!parameters[promptInput.name]) {
-        parameters[promptInput.name] = promptInput.defaultValue ?? ''
-      }
-    }
-
-    return replacePromptInputs(this.steps[step].prompt, parameters)
-
   }
 
   duplicate(nameSuffix = 'Copy'): Agent {

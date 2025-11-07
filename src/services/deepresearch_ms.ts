@@ -63,11 +63,11 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
         
       // we start by running the planning agent
       const planner = new AgentWorkflowExecutor(this.config, this.workspaceId, dr.planningAgent)
-      const run = await planner.run('workflow', dr.planningAgent.buildPrompt(0, {
+      const run = await planner.run('workflow', {
         userQuery: researchTopic,
-        numSections: opts.breadth,
-        numQueriesPerSection: opts.depth
-      }), {
+        numSections: opts.breadth.toString(),
+        numQueriesPerSection: opts.depth.toString()
+      }, {
         ephemeral: true,
         ...opts
       })
@@ -183,10 +183,10 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
           // now we can run the analysis agent on the results
           const analyzer = new AgentWorkflowExecutor(this.config, this.workspaceId, dr.analysisAgent)
-          const analysis = await analyzer.run('workflow', dr.analysisAgent.buildPrompt(0, {
+          const analysis = await analyzer.run('workflow', {
             sectionObjective: section.description,
             rawInformation: searchResults[index].reduce((acc, result) => acc + `\n${result.title}\n${result.content}\n`, ''),
-          }), {
+          }, {
             ephemeral: true,
             ...opts
           })
@@ -214,12 +214,12 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
           // now we can run the section agent to generate the section content
           const sectionGenerator = new AgentWorkflowExecutor(this.config, this.workspaceId, dr.writerAgent)
-          const sectionContent = await sectionGenerator.run('workflow', dr.writerAgent.buildPrompt(0, {
-            sectionNumber: index + 1,
+          const sectionContent = await sectionGenerator.run('workflow', {
+            sectionNumber: (index + 1).toString(),
             sectionTitle: section.title,
             sectionObjective: section.description,
             keyLearnings: keyLearnings.join('\n')
-          }), {
+          }, {
             ephemeral: true,
             ...opts
           })
@@ -244,26 +244,26 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
       // run agents
       const synthesis = new AgentWorkflowExecutor(this.config, this.workspaceId, dr.synthesisAgent)
-      const execSummary = await synthesis.run('workflow', dr.synthesisAgent.buildPrompt(0, {
+      const execSummary = await synthesis.run('workflow', {
         researchTopic: researchTopic,
         keyLearnings: allKeyLearnings.join('\n'),
         outputType: 'executive_summary',
-      }), { ephemeral: true, ...opts })
-      const conclusion = await synthesis.run('workflow', dr.synthesisAgent.buildPrompt(0, {
+      }, { ephemeral: true, ...opts })
+      const conclusion = await synthesis.run('workflow', {
         researchTopic: researchTopic,
         keyLearnings: allKeyLearnings.join('\n'),
         outputType: 'conclusion',
-      }), { ephemeral: true, ...opts })
+      }, { ephemeral: true, ...opts })
 
       // generate title
       const status5 = await llmUtils.generateStatusUpdate(this.engine.getId(), this.model, `Generating title for the report`)
       response.appendText({ type: 'content', text: status5 + '\n\n', done: false })
       response.transient = true
       const titleExecutor = new AgentWorkflowExecutor(this.config, this.workspaceId, dr.titleAgent)
-      const titleResult = await titleExecutor.run('workflow', dr.titleAgent.buildPrompt(0, {
+      const titleResult = await titleExecutor.run('workflow', {
         researchTopic: researchTopic,
-        keyLearnings: allKeyLearnings,
-      }), { ephemeral: true, ...opts })
+        keyLearnings: allKeyLearnings.join('\n'),
+      }, { ephemeral: true, ...opts })
       
       // extract title from the result
       const titleMessage = titleResult.messages[titleResult.messages.length - 1]

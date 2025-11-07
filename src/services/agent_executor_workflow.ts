@@ -33,7 +33,7 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
     this.llmUtils = new LlmUtils(config)
   }
 
-  async run(trigger: AgentRunTrigger, prompt?: string, opts?: AgentWorkflowExecutorOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
+  async run(trigger: AgentRunTrigger, values: Record<string, string>, opts?: AgentWorkflowExecutorOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
 
     // create a run
     const run: AgentRun = {
@@ -43,7 +43,7 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
       updatedAt: Date.now(),
       trigger: trigger,
       status: 'running',
-      prompt: prompt,
+      prompt: null, // Will be computed from first step
       messages: [],
       toolCalls: [],
     }
@@ -106,15 +106,24 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
         // get step
         const step: AgentStep = this.agent.steps[stepIdx]
 
-        // check
-        let stepPrompt = stepIdx === 0 ? (prompt?.trim() || step.prompt) : replacePromptInputs(step.prompt,
-          outputs.reduce((acc: Record<string, string>, output, idx) => {
+        // merge user values with system values (output.N from previous steps)
+        const allValues = {
+          ...values,
+          ...outputs.reduce((acc: Record<string, string>, output, idx) => {
             acc[`output.${idx + 1}`] = output
             return acc
           }, {})
-        )
-        if (!stepPrompt.length) {
-          return null
+        }
+
+        // replace variables in step prompt
+        let stepPrompt = replacePromptInputs(step.prompt || '', allValues)
+        if (!stepPrompt.trim().length) {
+          throw new Error(`Step ${stepIdx + 1} has an empty prompt after variable substitution`)
+        }
+
+        // store the first step prompt in the run for historical purposes
+        if (stepIdx === 0) {
+          run.prompt = stepPrompt
         }
 
         // docrepo

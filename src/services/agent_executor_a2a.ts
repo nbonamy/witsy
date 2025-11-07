@@ -2,6 +2,7 @@
 import { LlmChunkContent } from 'multi-llm-ts'
 import Agent from '../models/agent'
 import Message from '../models/message'
+import { replacePromptInputs } from './prompt'
 import { A2APromptOpts, AgentRun, AgentRunTrigger } from '../types/agents'
 import { Configuration } from '../types/config'
 import A2AClient from './a2a-client'
@@ -24,7 +25,10 @@ export default class AgentA2AExecutor extends AgentExecutorBase {
     super(config, workspaceId, agent)
   }
 
-  async run(trigger: AgentRunTrigger, prompt?: string, opts?: AgentA2AExecutorOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
+  async run(trigger: AgentRunTrigger, values: Record<string, string>, opts?: AgentA2AExecutorOpts, generationCallback?: GenerationCallback): Promise<AgentRun> {
+
+    // Build prompt from agent's first step template and provided values
+    const prompt = replacePromptInputs(this.agent.steps[0]?.prompt || '', values)
 
     // create a run
     const run: AgentRun = {
@@ -55,7 +59,7 @@ export default class AgentA2AExecutor extends AgentExecutorBase {
       }
 
       // add user message
-      const userMessage = new Message('user', prompt || '')
+      const userMessage = new Message('user', prompt)
       run.messages.push(userMessage)
 
       // add messages to chat

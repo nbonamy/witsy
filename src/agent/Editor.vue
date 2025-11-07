@@ -82,11 +82,12 @@
           />
 
           <EditorInvocation ref="stepInvocation"
-            :agent="agent" 
-            :visible="isStepVisible(kStepInvocation)" 
-            :next-button-text="t('common.save')" 
-            @prev="onPrevStep" 
-            @next="validateInvocation" 
+            :agent="agent"
+            :visible="isStepVisible(kStepInvocation)"
+            :next-button-text="t('common.save')"
+            :error="informationError"
+            @prev="onPrevStep"
+            @next="validateInvocation"
           />
 
         </div>
@@ -107,7 +108,7 @@ import TriggerIcon from '../../assets/trigger.svg?component'
 import Dialog from '../composables/dialog'
 import Agent from '../models/agent'
 import { t } from '../services/i18n'
-import { extractPromptInputs } from '../services/prompt'
+import { extractPromptInputs, extractAllWorkflowInputs } from '../services/prompt'
 import { store } from '../services/store'
 import EditorGeneral from './Editor.General.vue'
 import EditorInvocation from './Editor.Invocation.vue'
@@ -301,11 +302,12 @@ const resetWizard = () => {
 
 const save = async () => {
 
-  if (agent.value.schedule) {
-    const inputs = extractPromptInputs(agent.value.steps[0].prompt)
+  if (agent.value.schedule || agent.value.webhookToken) {
+    const inputs = extractAllWorkflowInputs(agent.value.steps)
     for (const input of inputs) {
-      if (agent.value.invocationValues[input.name] === undefined) {
-        
+      const value = agent.value.invocationValues[input.name]
+      if (value === undefined || !value.trim()) {
+
         const rc = await Dialog.show({
           title: t('agent.create.invocation.missingInputs.title'),
           text: t('agent.create.invocation.missingInputs.text'),
@@ -318,6 +320,7 @@ const save = async () => {
         if (rc.isConfirmed) {
           return
         }
+        break
       }
     }
   }

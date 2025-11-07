@@ -73,17 +73,25 @@ test('webhook endpoint returns 404 for invalid token', async () => {
   expect(mockRes.end).toHaveBeenCalledWith(JSON.stringify({ success: false, error: 'Agent not found' }))
 })
 
-test('webhook endpoint returns 400 if prompt building fails', async () => {
+test('webhook endpoint successfully triggers agent with no params', async () => {
   const mockAgent = {
     uuid: 'agent-1',
     name: 'Test Agent',
-    buildPrompt: vi.fn().mockReturnValue(null)
+    invocationValues: {}
+  }
+
+  const mockRun = {
+    uuid: 'run-1',
+    agentId: 'agent-1',
+    status: 'success'
   }
 
   vi.mocked(agentUtilsModule.findAgentByWebhookToken).mockReturnValue({
     agent: mockAgent as any,
     workspaceId: 'workspace-1'
   })
+
+  mockRunAgentFn.mockResolvedValue(mockRun as any)
 
   installAgentWebhook(mockHttpServer as HttpServer, mockApp, mockMcp)
 
@@ -94,16 +102,21 @@ test('webhook endpoint returns 400 if prompt building fails', async () => {
 
   await handler(mockReq, mockRes, mockUrl)
 
-  expect(mockAgent.buildPrompt).toHaveBeenCalledWith(0, {})
-  expect(mockRes.writeHead).toHaveBeenCalledWith(400, { 'Content-Type': 'application/json' })
-  expect(mockRes.end).toHaveBeenCalledWith(JSON.stringify({ success: false, error: 'Failed to build prompt' }))
+  expect(mockRunAgentFn).toHaveBeenCalledWith(
+    'workspace-1',
+    mockAgent,
+    'webhook',
+    {},
+    expect.any(String)
+  )
+  expect(mockRes.writeHead).toHaveBeenCalledWith(200, { 'Content-Type': 'application/json' })
 })
 
 test('webhook endpoint successfully triggers agent with GET params', async () => {
   const mockAgent = {
     uuid: 'agent-1',
     name: 'Test Agent',
-    buildPrompt: vi.fn().mockReturnValue('Generated prompt with name=John')
+    invocationValues: {}
   }
 
   const mockRun = {
@@ -128,12 +141,11 @@ test('webhook endpoint successfully triggers agent with GET params', async () =>
 
   await handler(mockReq, mockRes, mockUrl)
 
-  expect(mockAgent.buildPrompt).toHaveBeenCalledWith(0, { name: 'John', age: '30' })
   expect(mockRunAgentFn).toHaveBeenCalledWith(
     'workspace-1',
     mockAgent,
     'webhook',
-    'Generated prompt with name=John',
+    { name: 'John', age: '30' },
     expect.any(String)
   )
   expect(mockRes.writeHead).toHaveBeenCalledWith(200, { 'Content-Type': 'application/json' })
@@ -149,7 +161,7 @@ test('webhook endpoint successfully triggers agent with POST JSON', async () => 
   const mockAgent = {
     uuid: 'agent-2',
     name: 'Test Agent 2',
-    buildPrompt: vi.fn().mockReturnValue('Generated prompt with task=Deploy')
+    invocationValues: {}
   }
 
   const mockRun = {
@@ -190,12 +202,11 @@ test('webhook endpoint successfully triggers agent with POST JSON', async () => 
 
   await handlerPromise
 
-  expect(mockAgent.buildPrompt).toHaveBeenCalledWith(0, { task: 'Deploy', env: 'production' })
   expect(mockRunAgentFn).toHaveBeenCalledWith(
     'workspace-2',
     mockAgent,
     'webhook',
-    'Generated prompt with task=Deploy',
+    { task: 'Deploy', env: 'production' },
     expect.any(String)
   )
   expect(mockRes.end).toHaveBeenCalledWith(expect.stringContaining('"success":true'))
@@ -210,7 +221,7 @@ test('webhook endpoint returns 200 even if agent fails asynchronously', async ()
   const mockAgent = {
     uuid: 'agent-3',
     name: 'Error Agent',
-    buildPrompt: vi.fn().mockReturnValue('Some prompt')
+    invocationValues: {}
   }
 
   vi.mocked(agentUtilsModule.findAgentByWebhookToken).mockReturnValue({
@@ -239,7 +250,7 @@ test('webhook endpoint combines GET and POST parameters', async () => {
   const mockAgent = {
     uuid: 'agent-4',
     name: 'Combined Params Agent',
-    buildPrompt: vi.fn().mockReturnValue('Prompt with all params')
+    invocationValues: {}
   }
 
   const mockRun = {
@@ -279,7 +290,13 @@ test('webhook endpoint combines GET and POST parameters', async () => {
 
   await handlerPromise
 
-  expect(mockAgent.buildPrompt).toHaveBeenCalledWith(0, { fromQuery: 'yes', fromBody: 'also' })
+  expect(mockRunAgentFn).toHaveBeenCalledWith(
+    'workspace-4',
+    mockAgent,
+    'webhook',
+    { fromQuery: 'yes', fromBody: 'also' },
+    expect.any(String)
+  )
 })
 
 test('installAgentWebhook registers status endpoint', () => {

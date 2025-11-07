@@ -66,11 +66,8 @@ export default class Scheduler extends AgentExecutor {
 
               try {
 
-                // build a prompt
-                const prompt = agent.buildPrompt(0, agent.invocationValues)
-
-                // now run it
-                this.runAgent(workspace.uuid, agent, 'schedule', prompt)
+                // run the agent with invocation values
+                this.runAgent(workspace.uuid, agent, 'schedule', agent.invocationValues || {})
 
               } catch (error) {
                 console.log(`Error running agent ${agent.name}`, error)

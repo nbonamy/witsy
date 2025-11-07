@@ -78,7 +78,7 @@ export class AgentExecutor extends LlmContext {
     workspaceId: string,
     agent: Agent,
     trigger: AgentRunTrigger,
-    prompt: string,
+    values: Record<string, string>,
     runId?: string
   ): Promise<AgentRun> {
 
@@ -87,7 +87,7 @@ export class AgentExecutor extends LlmContext {
 
     // Create executor for this agent
     const executor = createAgentExecutor(config, workspaceId, agent)
-    return await executor.run(trigger, prompt, { runId, model: agent.model } )
+    return await executor.run(trigger, values, { runId, model: agent.model } )
   }
 
 }

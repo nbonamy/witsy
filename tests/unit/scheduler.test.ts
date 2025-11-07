@@ -52,7 +52,6 @@ describe('Scheduler', () => {
       locale: 'en-US',
       schedule: null,
       invocationValues: {},
-      buildPrompt: vi.fn(),
       ...overrides
     })
     return agent
@@ -196,18 +195,16 @@ describe('Scheduler', () => {
 
     await scheduler.check()
 
-    expect(agent1.buildPrompt).not.toHaveBeenCalled()
     expect(mockCronParser.parse).toHaveBeenCalledWith('0 * * * *', expect.any(Object))
+    expect(scheduler.runAgent).not.toHaveBeenCalled()
   })
 
   test('check() runs agent when schedule is due', async () => {
-    const mockPrompt = 'Generated prompt for scheduled run'
     const agent = createMockAgent({
       uuid: 'scheduled-agent',
       name: 'Scheduled Agent',
       schedule: '0 * * * *',
-      invocationValues: { param1: 'value1' },
-      buildPrompt: vi.fn().mockReturnValue(mockPrompt)
+      invocationValues: { param1: 'value1' }
     })
 
     mockAgents = [agent]
@@ -225,8 +222,7 @@ describe('Scheduler', () => {
 
     await scheduler.check()
 
-    expect(agent.buildPrompt).toHaveBeenCalledWith(0, { param1: 'value1' })
-    expect(scheduler.runAgent).toHaveBeenCalledWith('123', agent, 'schedule', mockPrompt)
+    expect(scheduler.runAgent).toHaveBeenCalledWith('123', agent, 'schedule', { param1: 'value1' })
   })
 
   test('check() handles agent execution errors gracefully', async () => {
@@ -234,14 +230,16 @@ describe('Scheduler', () => {
       uuid: 'error-agent',
       name: 'Error Agent',
       schedule: '0 * * * *',
-      invocationValues: {},
-      buildPrompt: vi.fn().mockImplementation(() => {
-        throw new Error('Build prompt error')
-      })
+      invocationValues: {}
     })
 
     mockAgents = [agent]
     vi.mocked(agentsModule.listAgents).mockReturnValue(mockAgents)
+
+    // Mock runAgent to throw a synchronous error
+    vi.mocked(scheduler.runAgent).mockImplementation(() => {
+      throw new Error('Agent execution error')
+    })
 
     // Mock cron parser to return current time (schedule is due)
     const now = Date.now()
@@ -254,7 +252,7 @@ describe('Scheduler', () => {
     await scheduler.check()
 
     expect(console.log).toHaveBeenCalledWith('Error running agent Error Agent', expect.any(Error))
-    expect(scheduler.runAgent).not.toHaveBeenCalled()
+    expect(scheduler.runAgent).toHaveBeenCalled()
   })
 
   test('check() handles cron parsing errors gracefully', async () => {
@@ -275,7 +273,7 @@ describe('Scheduler', () => {
     await scheduler.check()
 
     expect(console.log).toHaveBeenCalledWith('Error checking schedule for Invalid Cron Agent', expect.any(Error))
-    expect(agent.buildPrompt).not.toHaveBeenCalled()
+    expect(scheduler.runAgent).not.toHaveBeenCalled()
   })
 
   test('check() uses tolerance correctly for schedule detection', async () => {
@@ -283,8 +281,7 @@ describe('Scheduler', () => {
       uuid: 'tolerance-agent',
       name: 'Tolerance Agent',
       schedule: '0 * * * *',
-      invocationValues: {},
-      buildPrompt: vi.fn().mockReturnValue('test prompt')
+      invocationValues: {}
     })
 
     mockAgents = [agent]
@@ -302,11 +299,11 @@ describe('Scheduler', () => {
 
     await scheduler.check()
 
-    expect(mockCronParser.parse).toHaveBeenCalledWith('0 * * * *', { 
-      currentDate: now - tolerance 
+    expect(mockCronParser.parse).toHaveBeenCalledWith('0 * * * *', {
+      currentDate: now - tolerance
     })
     // Math.abs((now + tolerance - 1000) - now) = tolerance - 1000 < tolerance, so should be due
-    expect(agent.buildPrompt).toHaveBeenCalled()
+    expect(scheduler.runAgent).toHaveBeenCalled()
   })
 
   test('check() does not run agent when schedule is not due', async () => {
@@ -331,7 +328,6 @@ describe('Scheduler', () => {
 
     await scheduler.check()
 
-    expect(agent.buildPrompt).not.toHaveBeenCalled()
     expect(scheduler.runAgent).not.toHaveBeenCalled()
   })
 
@@ -340,16 +336,14 @@ describe('Scheduler', () => {
       uuid: 'agent1',
       name: 'Agent 1',
       schedule: '0 * * * *',
-      invocationValues: {},
-      buildPrompt: vi.fn().mockReturnValue('prompt 1')
+      invocationValues: {}
     })
 
     const agent2 = createMockAgent({
       uuid: 'agent2',
       name: 'Agent 2',
       schedule: '30 * * * *',
-      invocationValues: {},
-      buildPrompt: vi.fn().mockReturnValue('prompt 2')
+      invocationValues: {}
     })
 
     const agent3 = createMockAgent({
@@ -372,10 +366,8 @@ describe('Scheduler', () => {
 
     await scheduler.check()
 
-    expect(agent1.buildPrompt).toHaveBeenCalled()
-    expect(agent2.buildPrompt).not.toHaveBeenCalled()
-    expect(agent3.buildPrompt).not.toHaveBeenCalled()
     expect(scheduler.runAgent).toHaveBeenCalledTimes(1)
+    expect(scheduler.runAgent).toHaveBeenCalledWith('123', agent1, 'schedule', {})
   })
 
   test('check() reschedules itself after processing', async () => {
@@ -394,8 +386,7 @@ describe('Scheduler', () => {
       uuid: 'scheduled-1',
       name: 'Daily Report Agent',
       schedule: '0 9 * * *', // 9 AM daily
-      invocationValues: { format: 'pdf' },
-      buildPrompt: vi.fn().mockReturnValue('Generate daily report in pdf format')
+      invocationValues: { format: 'pdf' }
     })
 
     const nonScheduledAgent = createMockAgent({
@@ -410,7 +401,7 @@ describe('Scheduler', () => {
     // Simulate it's 9:00:15 AM (15 seconds past due - within tolerance)
     const now = new Date('2024-01-01T09:00:15.000Z').getTime()
     const scheduledTime = new Date('2024-01-01T09:00:00.000Z').getTime()
-    
+
     const mockInterval = {
       next: () => ({ getTime: () => scheduledTime })
     }
@@ -420,12 +411,8 @@ describe('Scheduler', () => {
     // Call check directly instead of start to test the scheduling logic
     await scheduler.check()
 
-    // Verify the scheduled agent was processed
-    expect(scheduledAgent.buildPrompt).toHaveBeenCalledWith(0, { format: 'pdf' })
-    expect(nonScheduledAgent.buildPrompt).not.toHaveBeenCalled()
-
-    // Verify runAgent was called
-    expect(scheduler.runAgent).toHaveBeenCalledWith('123', scheduledAgent, 'schedule', 'Generate daily report in pdf format')
+    // Verify runAgent was called with invocationValues
+    expect(scheduler.runAgent).toHaveBeenCalledWith('123', scheduledAgent, 'schedule', { format: 'pdf' })
 
     // Verify console logging
     expect(console.log).toHaveBeenCalledWith('Agent Daily Report Agent is due to run')
