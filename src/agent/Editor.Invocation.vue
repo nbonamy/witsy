@@ -1,5 +1,5 @@
 <template>
-  <WizardStep :visible="visible" :next-button-text="nextButtonText" @prev="$emit('prev')" @next="onNext">
+  <WizardStep :visible="visible" :next-button-text="nextButtonText" :error="error" @prev="$emit('prev')" @next="onNext">
     <template #header>
       <label>{{ t('agent.create.invocation.title') }}</label>
     </template>
@@ -43,7 +43,7 @@
         </div>
       </template>
 
-      <template v-if="(agent.schedule || webhookEnabled)&& promptInputs(0).length">
+      <template v-if="(agent.schedule || webhookEnabled) && allWorkflowInputs.length">
 
         <div class="form-field">
           <label for="prompt">{{ t('agent.create.invocation.variables') }}</label>
@@ -55,7 +55,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="input in promptInputs(0)" :key="input.name">
+              <tr v-for="input in allWorkflowInputs" :key="input.name">
                 <td>{{ input.name }}</td>
                 <td><input type="text" v-model="invocationInputs[input.name]" :placeholder="input.defaultValue" @input="saveInvocationInputs"/></td>
               </tr>
@@ -63,11 +63,6 @@
           </table>
         </div>
 
-        <div class="form-field">
-          <label for="prompt">{{ t('agent.create.invocation.prompt') }}</label>
-          <textarea v-model="invocationPrompt" readonly></textarea>
-        </div>
-      
       </template>
 
     </template>
@@ -75,15 +70,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, PropType } from 'vue'
-import { RefreshCwIcon, CopyIcon } from 'lucide-vue-next'
-import { t } from '../services/i18n'
 import { CronExpressionParser } from 'cron-parser'
-import { extractPromptInputs } from '../services/prompt'
-import { store } from '../services/store'
-import WizardStep from '../components/WizardStep.vue'
+import { CopyIcon, RefreshCwIcon } from 'lucide-vue-next'
+import { computed, onMounted, PropType, ref, watch } from 'vue'
 import Scheduler from '../components/Scheduler.vue'
+import WizardStep from '../components/WizardStep.vue'
 import Agent from '../models/agent'
+import { t } from '../services/i18n'
+import { extractAllWorkflowInputs } from '../services/prompt'
+import { store } from '../services/store'
 
 const props = defineProps({
   agent: {
@@ -95,6 +90,10 @@ const props = defineProps({
     default: false,
   },
   nextButtonText: {
+    type: String,
+    default: '',
+  },
+  error: {
     type: String,
     default: '',
   },
@@ -136,32 +135,16 @@ const nextRuns = computed(() => {
   }
 })
 
-const invocationPrompt = computed(() => {
-  const values = {...props.agent.invocationValues }
-  const inputs = extractPromptInputs(props.agent.steps[0].prompt)
-  inputs.forEach(input => {
-    if (!values[input.name]?.length) {
-      values[input.name] = t('agent.create.invocation.missingInput', { name: input.name })
-    }
-  })
-  return props.agent.buildPrompt(0, values)
+// Get all unique inputs from all workflow steps
+const allWorkflowInputs = computed(() => {
+  return extractAllWorkflowInputs(props.agent.steps)
 })
 
-const promptInputs = (step: number) => {
-  return extractPromptInputs(props.agent.steps[step].prompt).map((input) => {
-    if (input.name.startsWith('output.')) {
-      input.description = t('agent.create.workflow.help.outputVarDesc', { step: input.name.split('.')[1] })
-    }
-    return input
-  })
-}
-
-// prepare inputs for the invocation screen
 const prepareAgentInvocationInputs = () => {
   invocationInputs.value = {}
-  const inputs = extractPromptInputs(props.agent.steps[0].prompt)
+  const inputs = extractAllWorkflowInputs(props.agent.steps)
   inputs.forEach(input => {
-    invocationInputs.value[input.name] = props.agent.invocationValues[input.name] || input.defaultValue|| ''
+    invocationInputs.value[input.name] = props.agent.invocationValues[input.name] || input.defaultValue || ''
   })
 }
 
@@ -190,6 +173,8 @@ const onCopyUrl = () => {
 }
 
 const validate = (): string|null => {
+  // Validation intentionally happens in save() via Dialog.show()
+  // This allows users to fix issues or override with "Save anyway"
   return null
 }
 
@@ -201,8 +186,8 @@ watch(() => props.visible, (newVisible) => {
 })
 
 // Load HTTP port on mount
-onMounted(async () => {
-  httpPort.value = await window.api.app.getHttpPort()
+onMounted(() => {
+  httpPort.value = window.api.app.getHttpPort()
 })
 
 defineExpose({ validate })

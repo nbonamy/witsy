@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="prompt-builder" ref="dialog" @save="onSave" width="24rem">
+  <ModalDialog id="create-agent-run" ref="dialog" @save="onSave" width="24rem">
     <template #header>
       {{ title }}
     </template> 
@@ -24,7 +24,8 @@
 import { computed, ref } from 'vue'
 import { t } from '../services/i18n'
 import ModalDialog from '../components/ModalDialog.vue'
-import { getMissingInputs, PromptInput, replacePromptInputs } from '../services/prompt'
+import { extractAllWorkflowInputs, PromptInput } from '../services/prompt'
+import { Agent } from '../types/agents'
 
 defineProps({
   title: {
@@ -38,10 +39,9 @@ defineProps({
 })
 
 const dialog = ref(null)
-const prompt = ref('')
 const inputs = ref<PromptInput[]>([])
 const values = ref<Record<string, string>>({})
-const callback = ref<((prompt: string) => void) | null>(null)
+const callback = ref<((values: Record<string, string>) => void) | null>(null)
 
 const fields = computed(() => [
   ...inputs.value.map(input => ({
@@ -59,41 +59,39 @@ const onCancel = () => {
 }
 
 const onSave = () => {
-  const result = prompt.value?.length ? replacePromptInputs(prompt.value, values.value) : values.value.prompt || ''
-  if (!result.trim().length) return
-  callback.value(result)
+  // Validate that all required values are present
+  const hasEmptyRequired = inputs.value.some(input =>
+    !values.value[input.name]?.trim() && !input.defaultValue
+  )
+  if (hasEmptyRequired) return
+
+  callback.value(values.value)
   close()
 }
 
 defineExpose({
-  show: (template: string, opts: Record<string, string>, cb: (prompt: string) => void) => {
+  show: (agent: Agent, opts: Record<string, string>, cb: (values: Record<string, string>) => void) => {
 
-    prompt.value = template
     callback.value = cb
+    values.value = { ...opts }
 
-    if (!template) {
+    // Extract all inputs from all workflow steps
+    const allInputs = extractAllWorkflowInputs(agent.steps)
 
-      inputs.value = [
-        { name: 'prompt', description: t('common.prompt'), control: 'textarea' },
-      ]
-      values.value = { prompt: opts.prompt || '' }
+    // Find missing inputs
+    inputs.value = allInputs.filter(input => typeof opts[input.name] === 'undefined')
 
-    } else {
-
-      values.value = opts
-
-      inputs.value = getMissingInputs(prompt.value, opts)
-      for (const input of inputs.value) {
-        if (!values.value[input.name]) {
-          values.value[input.name] = input.defaultValue || ''
-        }
+    // Set default values for missing inputs
+    for (const input of inputs.value) {
+      if (!values.value[input.name]) {
+        values.value[input.name] = input.defaultValue || ''
       }
+    }
 
-      if (inputs.value.length === 0) {
-        onSave()
-        return
-      }
-
+    // If no inputs are missing, auto-submit
+    if (inputs.value.length === 0) {
+      onSave()
+      return
     }
 
     dialog.value.show()
@@ -107,7 +105,7 @@ defineExpose({
 
 <style>
 
-#prompt-builder .swal2-popup {
+#create-agent-run .swal2-popup {
   textarea {
     min-height: 8lh;
     resize: vertical;

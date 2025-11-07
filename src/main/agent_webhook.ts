@@ -36,20 +36,16 @@ export function installAgentWebhook(httpServer: HttpServer, app: App, mcp: Mcp, 
       // Parse parameters from request
       const params = await parseParams(req, parsedUrl)
 
-      // Build prompt with parameters
-      const prompt = agent.buildPrompt(0, {
+      // Merge invocation values with request parameters
+      const values = {
         ...agent.invocationValues,
         ...params
-      })
-      if (!prompt) {
-        sendError(res, 'Failed to build prompt', 400)
-        return
       }
 
       // Run agent
       const runId = crypto.randomUUID()
       const executor = new AgentExecutor(app, mcp, docRepo)
-      executor.runAgent(workspaceId, agent, 'webhook', prompt, runId)
+      executor.runAgent(workspaceId, agent, 'webhook', values, runId)
 
       sendJson(res, {
         success: true,

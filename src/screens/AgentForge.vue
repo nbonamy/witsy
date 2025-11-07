@@ -21,7 +21,7 @@
       <View class="sp-main" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)"/>
     </template>
 
-    <PromptBuilder :title="running?.name ?? ''" ref="builder" />
+    <CreateAgentRun :title="running?.name ?? ''" ref="builder" />
   
   </div>
 
@@ -34,7 +34,7 @@ import Editor from '../agent/Editor.vue'
 import Empty from '../agent/Empty.vue'
 import List from '../agent/List.vue'
 import View from '../agent/View.vue'
-import PromptBuilder from '../components/PromptBuilder.vue'
+import CreateAgentRun from '../components/CreateAgentRun.vue'
 import Dialog from '../composables/dialog'
 import Agent from '../models/agent'
 import A2AClient from '../services/a2a-client'
@@ -148,9 +148,9 @@ const editAgent = (agent: Agent) => {
 
 const runAgent = (agent: Agent, opts?: Record<string, string>) => {
   running.value = agent
-  builder.value.show(agent.steps[0].prompt, opts || {}, async (prompt: string) => {
+  builder.value.show(agent, opts || {}, async (values: Record<string, string>) => {
     const executor = new AgentWorkflowExecutor(store.config, store.workspace.uuid, agent)
-    await executor.run('manual', prompt)
+    await executor.run('manual', values)
     running.value = null
   })
 }

@@ -15,6 +15,7 @@ import Generator from '../../src/services/generator'
 import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../../src/services/agent_executor_workflow'
 import { AgentRun, AgentRunTrigger } from '../../src/types/agents'
 import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
+import { replacePromptInputs } from '../../src/services/prompt'
 
 // Mock dependencies
 vi.mock('../../src/plugins/search')
@@ -193,7 +194,7 @@ test('Planning agent configuration', () => {
 })
 
 test('Planning agent prompt building', () => {
-  const prompt = dr.planningAgent.buildPrompt(0, {
+  const prompt = replacePromptInputs(dr.planningAgent.steps[0].prompt, {
     userQuery: 'quantum computing',
     numSections: 3,
     numQueriesPerSection: 2
@@ -223,7 +224,7 @@ test('Search agent configuration', () => {
 })
 
 test('Search agent prompt building', () => {
-  const prompt = dr.searchAgent.buildPrompt(0, {
+  const prompt = replacePromptInputs(dr.searchAgent.steps[0].prompt, {
     searchQuery: 'quantum entanglement',
     maxResults: 10
   })
@@ -250,7 +251,7 @@ test('Analysis agent configuration', () => {
 })
 
 test('Analysis agent prompt building', () => {
-  const prompt = dr.analysisAgent.buildPrompt(0, {
+  const prompt = replacePromptInputs(dr.analysisAgent.steps[0].prompt, {
     sectionObjective: 'Understand quantum mechanics',
     rawInformation: 'Quantum particles exhibit wave-particle duality...'
   })
@@ -275,7 +276,7 @@ test('Writer agent configuration', () => {
 })
 
 test('Writer agent prompt building', () => {
-  const prompt = dr.writerAgent.buildPrompt(0, {
+  const prompt = replacePromptInputs(dr.writerAgent.steps[0].prompt, {
     sectionNumber: 1,
     sectionTitle: 'Quantum Entanglement',
     sectionObjective: 'Explain quantum entanglement',
@@ -309,7 +310,7 @@ test('Title agent configuration', () => {
 })
 
 test('Title agent prompt building', () => {
-  const prompt = dr.titleAgent.buildPrompt(0, {
+  const prompt = replacePromptInputs(dr.titleAgent.steps[0].prompt, {
     researchTopic: 'Quantum Computing Applications',
     keyLearnings: ['Quantum computers can solve optimization problems', 'They show promise in cryptography', 'Current limitations exist in error rates']
   })
@@ -341,7 +342,7 @@ test('Synthesis agent configuration', () => {
 })
 
 test('Synthesis agent prompt building for executive summary', () => {
-  const prompt = dr.synthesisAgent.buildPrompt(0, {
+  const prompt = replacePromptInputs(dr.synthesisAgent.steps[0].prompt, {
     researchTopic: 'Quantum Computing',
     keyLearnings: ['Quantum computers use qubits', 'They can solve certain problems exponentially faster'],
     outputType: 'executive_summary'
@@ -353,7 +354,7 @@ test('Synthesis agent prompt building for executive summary', () => {
 })
 
 test('Synthesis agent prompt building for conclusion', () => {
-  const prompt = dr.synthesisAgent.buildPrompt(0, {
+  const prompt = replacePromptInputs(dr.synthesisAgent.steps[0].prompt, {
     researchTopic: 'Quantum Computing',
     keyLearnings: ['Quantum computers use qubits'],
     outputType: 'conclusion'
@@ -426,10 +427,10 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
   // @ts-expect-error mock
   vi.mocked(AgentWorkflowExecutor).mockImplementation((config: Configuration, workspaceId: string, agent: Agent) => {
     return {
-      run: vi.fn().mockImplementation(async (trigger: AgentRunTrigger, prompt: string, options: AgentWorkflowExecutorOpts) => {
+      run: vi.fn().mockImplementation(async (trigger: AgentRunTrigger, values: Record<string, string>, options: AgentWorkflowExecutorOpts) => {
         const agentName = agent.name
         executionLog.push(`agent:${agentName}`)
-        agentCalls.push({ agent: agentName, prompt, options })
+        agentCalls.push({ agent: agentName, values, options })
 
         switch (agentName) {
           case 'planning':
@@ -448,18 +449,15 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
             ]}
 
           case 'writer':
-            // Extract section info for content generation
-            const titleMatch = prompt.match(/Section Title: (.+?)(?:\n|$)/)
-            const numberMatch = prompt.match(/Section Number: (.+?)(?:\n|$)/)
-            const sectionTitle = titleMatch ? titleMatch[1] : 'Unknown Section'
-            const sectionNumber = numberMatch ? numberMatch[1] : '?'
+            // Extract section info from values
+            const sectionTitle = values.sectionTitle || 'Unknown Section'
+            const sectionNumber = values.sectionNumber || '?'
             return { messages: [
               new Message('assistant', `## ${sectionNumber}. ${sectionTitle}\n\n` )
             ]}
 
           case 'synthesis':
-            const outputTypeMatch = prompt.match(/Output Type: (.+?)(?:\n|$)/)
-            const outputType = outputTypeMatch ? outputTypeMatch[1] : 'unknown'
+            const outputType = values.outputType || 'unknown'
             
             if (outputType === 'executive_summary') {
               return { messages: [
@@ -535,27 +533,27 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
 
   // Verify the planning agent was called with correct parameters
   const planningCall = agentCalls.find(call => call.agent === 'planning')
-  expect(planningCall.prompt).toContain('Research topic')
-  expect(planningCall.prompt).toContain('3 sections')
-  expect(planningCall.prompt).toContain('2 search queries')
+  expect(planningCall.values.userQuery).toContain('Research topic')
+  expect(planningCall.values.numSections).toBe('3')
+  expect(planningCall.values.numQueriesPerSection).toBe('2')
 
   // Verify analysis agents received section objectives
   const analysisCalls = agentCalls.filter(call => call.agent === 'analysis')
   expect(analysisCalls).toHaveLength(2)
-  expect(analysisCalls[0].prompt).toContain('Objective 1')
-  expect(analysisCalls[1].prompt).toContain('Objective 2')
+  expect(analysisCalls[0].values.sectionObjective).toContain('Objective 1')
+  expect(analysisCalls[1].values.sectionObjective).toContain('Objective 2')
 
   // Verify writer agents received proper section data
   const writerCalls = agentCalls.filter(call => call.agent === 'writer')
   expect(writerCalls).toHaveLength(2)
-  expect(writerCalls[0].prompt).toContain('Section 1')
-  expect(writerCalls[1].prompt).toContain('Section 2')
+  expect(writerCalls[0].values.sectionTitle).toContain('Section 1')
+  expect(writerCalls[1].values.sectionTitle).toContain('Section 2')
 
   // Verify synthesis agents were called for both executive summary and conclusion
   const synthesisCalls = agentCalls.filter(call => call.agent === 'synthesis')
   expect(synthesisCalls).toHaveLength(2)
-  expect(synthesisCalls[0].prompt).toContain('executive_summary')
-  expect(synthesisCalls[1].prompt).toContain('conclusion')
+  expect(synthesisCalls[0].values.outputType).toBe('executive_summary')
+  expect(synthesisCalls[1].values.outputType).toBe('conclusion')
 
   // Verify generateStatusUpdate was called 6 times
   // (before planning, after planning, after search, before synthesis, before title, final)

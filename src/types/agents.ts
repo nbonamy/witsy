@@ -1,6 +1,6 @@
 
 import { LlmModelOpts, LlmStructuredOutput, PluginParameter } from 'multi-llm-ts'
-import { anyDict, Message, ToolCall } from './index'
+import { Message, ToolCall } from './index'
 
 export type A2APromptOpts = {
   currentTaskId?: string
@@ -13,6 +13,7 @@ export type AgentType = 'runnable' | 'support'
 
 export const kAgentStepVarOutputPrefix = 'output.'
 export const kAgentStepVarFacts = 'facts'
+export const kAgentStepVarRunOutput = 'run-output'
 
 export type AgentStepStructuredOutput = LlmStructuredOutput
 
@@ -51,7 +52,6 @@ export interface Agent {
   schedule: string|null
   webhookToken: string|null
   invocationValues: Record<string, string>
-  buildPrompt: (step: number, parameters: anyDict) => string|null
   duplicate: (nameSuffix?: string) => Agent
   getPreparationDescription?: () => string
   getRunningDescription?: (args: any) => string

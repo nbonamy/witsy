@@ -436,7 +436,7 @@ declare global {
         saveRun(workspaceId: string, run: AgentRun): boolean
         deleteRun(workspaceId: string, agentId: string, runId: string): boolean
         deleteRuns(workspaceId: string, agentId: string): boolean
-        generateWebhookToken(workspaceId: string, agentId: string): string
+        generateWebhookToken(workspaceId: string, agentId: string): Promise<string>
         getApiBasePath(): string
       }
       docrepo: {

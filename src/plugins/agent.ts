@@ -4,7 +4,7 @@ import { AgentA2AExecutorOpts } from '../services/agent_executor_a2a'
 import { AgentWorkflowExecutorOpts } from '../services/agent_executor_workflow'
 import { createAgentExecutor } from '../services/agent_utils'
 import { t } from '../services/i18n'
-import { extractPromptInputs, replacePromptInputs } from '../services/prompt'
+import { extractPromptInputs } from '../services/prompt'
 import { Agent } from '../types/agents'
 import { Configuration } from '../types/config'
 import { anyDict } from '../types/index'
@@ -164,14 +164,10 @@ export default class extends Plugin {
         }
       }
 
-      // we need to build the prompt
-      const prompt = replacePromptInputs(this.agent.steps[0].prompt || '', parameters)
-      //console.log(`Running agent ${this.agent.name} with prompt:`, prompt)
-
       // create executor and run with appropriate opts
       const executor = createAgentExecutor(this.config, this.workspaceId, this.agent)
       const executorOpts = this.agent.source === 'a2a' ? this.opts.a2aOpts : this.opts.workflowOpts
-      const run = await executor.run('workflow', prompt, executorOpts)
+      const run = await executor.run('workflow', parameters, executorOpts)
       
       if (run.status === 'success') {
 

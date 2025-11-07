@@ -8,7 +8,7 @@ import { GenerationCallback } from './generator'
 import { store } from './store'
 
 export interface AgentExecutor {
-  run(trigger: AgentRunTrigger, prompt?: string, opts?: any, generationCallback?: GenerationCallback): Promise<AgentRun>
+  run(trigger: AgentRunTrigger, values: Record<string, string>, opts?: any, generationCallback?: GenerationCallback): Promise<AgentRun>
 }
 
 /**

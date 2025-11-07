@@ -3,7 +3,7 @@
     <ChatSidebar :chat="assistant.chat" @new-chat="onNewChat" @run-agent="onRunAgent" ref="sidebar" />
     <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop-generation="onStopGeneration" />
     <ChatEditor :chat="assistant.chat" :dialog-title="chatEditorTitle" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
-    <PromptBuilder :title="agent?.name ?? ''" ref="builder" />
+    <CreateAgentRun :title="agent?.name ?? ''" ref="builder" />
     <AgentPicker ref="picker" />
   </div>
 </template>
@@ -16,7 +16,7 @@ import ChatArea from '../components/ChatArea.vue'
 import ChatSidebar from '../components/ChatSidebar.vue'
 import { MenuBarMode } from '../components/MenuBar.vue'
 import { SendPromptParams } from '../components/Prompt.vue'
-import PromptBuilder from '../components/PromptBuilder.vue'
+import CreateAgentRun from '../components/CreateAgentRun.vue'
 import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
 import useTipsManager from '../composables/tips_manager'
@@ -48,7 +48,7 @@ const sidebar= ref<typeof ChatSidebar>(null)
 const chatEditorTitle = ref('')
 const chatEditorConfirmButtonText = ref('common.save')
 const chatEditorCallback= ref<ChatEditorCallback>(() => {})
-const builder = ref<typeof PromptBuilder>(null)
+const builder = ref<typeof CreateAgentRun>(null)
 const picker = ref<typeof AgentPicker>(null)
 const agent = ref<Agent|null>(null)
 let abortController: AbortController | null = null
@@ -484,7 +484,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // if the chat is still in an agentic context then run the agent
   const agent = isAgentConversation(assistant.value.chat)
   if (agent) {
-    runAgent(agent, prompt, assistant.value.chat.lastMessage()?.a2aContext)
+    // For A2A continuation, pass the prompt in a dict
+    // The A2A executor will use agent.steps[0].prompt as template, or use the prompt value directly if no template
+    runAgent(agent, { prompt }, assistant.value.chat.lastMessage()?.a2aContext)
     return
   }
 
@@ -602,20 +604,20 @@ const onRunAgent = async (agentId?: string) => {
     return
   }
 
-  builder.value.show(agent.value.steps[0].prompt, {}, async (prompt: string) => {
+  builder.value.show(agent.value, {}, async (values: Record<string, string>) => {
 
     // we need a new chat
     assistant.value.initChat()
     updateChatEngineModel()
 
     // and run it
-    runAgent(agent.value, prompt)
+    runAgent(agent.value, values)
 
   })
 
 }
 
-const runAgent = async (agent: Agent, prompt: string, a2aContext?: A2APromptOpts) => {
+const runAgent = async (agent: Agent, values: Record<string, string>, a2aContext?: A2APromptOpts) => {
 
   // create abort controller for this agent run
   abortController = new AbortController()
@@ -623,7 +625,7 @@ const runAgent = async (agent: Agent, prompt: string, a2aContext?: A2APromptOpts
   // create executor for this agent
   const executor = createAgentExecutor(store.config, store.workspace.uuid, agent)
 
-  await executor.run('manual', prompt, {
+  await executor.run('manual', values, {
     streaming: true,
     ephemeral: false,
     model: assistant.value.chat.model,
@@ -683,8 +685,9 @@ const onRetryGeneration = async (message: Message) => {
       return
     }
 
-    // now we can run it
-    runAgent(agent, lastMessage.content)
+    // now we can run it - for retry, pass the message content as the prompt value
+    // We use a generic 'prompt' key since we don't know the original variable names
+    runAgent(agent, { prompt: lastMessage.content })
 
   } else {
 

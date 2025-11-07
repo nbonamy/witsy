@@ -264,7 +264,7 @@
           "docRepo": "Facts extracted from the collection will be appended to your prompt.",
           "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "Output of step #{step}",
-          "prompt": "The custom instructions for the agent",
+          "prompt": "Describe what you want the agent to do in this step of your workflow",
           "title": "Design your multi-step workflow. Prompt templates will be used to execute each step. You can include \"variables\" that will be substituted with the values provided by the user when the agent is executed. Use the format {'{'}{'{'}name:description:value{'}'}{'}'} to define a variable (the description will guide the user when prompted for a value). Both the description and the default value are optional."
         },
         "jsonSchema": "JSON…",
