@@ -67,19 +67,28 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
       }, 500);
     })
 
+    // some flags
+    const canDoText = ['input-text', 'text-area'].includes(params.formControlType) || params.isEditable;
+    const hasSelection = params.selectionText && params.selectionText.length > 0;
+    const hasPasteableContent = clipboard.availableFormats().length > 0;
+
     // if we have a selection add options
-    if (params.selectionText.length > 0) {
+    if (canDoText && hasSelection && params.editFlags.canCopy) {
       menu.append(new MenuItem({ role: 'copy' }))
+    }
+    if (canDoText && hasSelection && params.editFlags.canCut) {
       menu.append(new MenuItem({ role: 'cut' }))
     }
 
     // paste for clipboard content
-    if (clipboard.availableFormats().length > 0) {
+    if (canDoText && hasPasteableContent && params.editFlags.canPaste) {
       menu.append(new MenuItem({ role: 'paste' }))
     }
 
     // select all always as we don't really know
-    menu.append(new MenuItem({ role: 'selectAll' }))
+    if (canDoText && params.editFlags.canSelectAll) {
+      menu.append(new MenuItem({ role: 'selectAll' }))
+    }
 
     if (params.selectionText.length > 0 && contextMenuContext) {
 
