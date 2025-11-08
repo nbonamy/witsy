@@ -303,7 +303,7 @@ export default class extends Plugin {
       html = main[0]
     }
 
-    return convert(html, {
+    let text = convert(html, {
       wordwrap: false,
       selectors: [
         { selector: 'nav', format: 'skip' },
@@ -315,6 +315,15 @@ export default class extends Plugin {
         { selector: 'a', format: 'skip' },
       ]
     })
+
+    // Clean up repeated bullet points and excessive whitespace
+    text = text.replace(/(\n\s*\*\s*)+/g, '\n* ')  // Remove repeated "* " sequences
+    text = text.replace(/\*\s*\*\s*/g, '')         // Remove "* * " patterns
+    text = text.replace(/\n\s*-{3,}\s*\n/g, '\n')  // Remove horizontal rules (--- or more)
+    text = text.replace(/\n{3,}/g, '\n\n')         // Reduce multiple newlines to max 2
+    text = text.trim()
+
+    return text
   }
 
   truncateContent(content: string): string {
