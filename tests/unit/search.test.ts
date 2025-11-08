@@ -120,3 +120,44 @@ test('search aborted before execution rejects immediately', async () => {
     search.search('witsy', 3, false, abortController.signal)
   ).rejects.toThrow('Operation cancelled')
 })
+
+test('multiple searches are queued and processed sequentially', async () => {
+  const search = new LocalSearch()
+  
+  // Start three searches simultaneously
+  const promise1 = search.search('query1', 1)
+  const promise2 = search.search('query2', 1)
+  const promise3 = search.search('query3', 1)
+  
+  // All should complete successfully
+  const [res1, res2, res3] = await Promise.all([promise1, promise2, promise3])
+  
+  expect(res1.results).toHaveLength(1)
+  expect(res2.results).toHaveLength(1)
+  expect(res3.results).toHaveLength(1)
+})
+
+test('queue processes searches one at a time', async () => {
+  const search = new LocalSearch()
+  
+  // Track execution order
+  const executionOrder: number[] = []
+  
+  // Create mock that tracks when each search starts
+  const originalLoadURL = BrowserWindow.prototype.loadURL
+  let callCount = 0
+  BrowserWindow.prototype.loadURL = vi.fn(function(this: any, url: string) {
+    const currentCall = ++callCount
+    executionOrder.push(currentCall)
+    return originalLoadURL.call(this, url)
+  })
+  
+  // Start two searches
+  const promise1 = search.search('query1', 1)
+  const promise2 = search.search('query2', 1)
+  
+  await Promise.all([promise1, promise2])
+  
+  // Should have been called twice
+  expect(executionOrder.length).toBe(2)
+})

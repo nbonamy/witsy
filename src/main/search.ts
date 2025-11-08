@@ -3,6 +3,7 @@ import { BrowserWindow } from 'electron'
 import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
+import PQueue from 'p-queue'
 import { LocalSearchResponse, LocalSearchResult } from '../types/index'
 import { deleteFile } from './file'
 import { getTextContent } from './text'
@@ -33,12 +34,31 @@ const grabGoogleResults = `
 export default class LocalSearch {
 
   private searchWindow: BrowserWindow | null = null
+  private searchQueue: PQueue
+
+  constructor() {
+    // Initialize queue with concurrency of 1 and 30 second timeout
+    this.searchQueue = new PQueue({
+      concurrency: 1,
+      timeout: 30000,
+      throwOnTimeout: true,
+    })
+
+    // Add event listeners for observability
+    this.searchQueue.on('active', () => {
+      console.log(`[search] Queue became active. Size: ${this.searchQueue.size}, Pending: ${this.searchQueue.pending}`)
+    })
+
+    this.searchQueue.on('idle', () => {
+      console.log('[search] Queue became idle')
+    })
+  }
 
   public async test(): Promise<boolean> {
 
     try {
       
-      const response = await this.search('What is Witsy?', 1, true)
+      const response = await this.searchQueue.add(() => this.doSearch('What is Witsy?', 1, true))
       console.log('Test search results:', response.results?.map(r => r.url))
       if (response.results?.length > 0) {
         return true
@@ -53,6 +73,10 @@ export default class LocalSearch {
   }
 
   public search(query: string, num: number = 5, testMode: boolean = false, abortSignal?: AbortSignal): Promise<LocalSearchResponse> {
+    return this.searchQueue.add(() => this.doSearch(query, num, testMode, abortSignal))
+  }
+
+  private doSearch(query: string, num: number = 5, testMode: boolean = false, abortSignal?: AbortSignal): Promise<LocalSearchResponse> {
 
     return new Promise((resolve, reject) => {
 
@@ -129,7 +153,8 @@ export default class LocalSearch {
           }
 
           // in real mode, set up random click on a result (5-10 seconds delay)
-          if (!testMode && googleResults.length > 0) {
+          // Only do this if no more searches are queued
+          if (!testMode && googleResults.length > 0 && this.searchQueue.size === 0) {
             const randomDelay = 5000 + Math.random() * 5000 // 5-10 seconds
             const randomIndex = Math.floor(Math.random() * googleResults.length)
             setTimeout(() => {
@@ -143,6 +168,8 @@ export default class LocalSearch {
                 console.error('[search] failed to click result:', err)
               })
             }, randomDelay)
+          } else if (!testMode && googleResults.length > 0) {
+            console.log('[search] Skipping random click, more searches queued')
           }
 
           // now iterate
