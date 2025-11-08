@@ -4,19 +4,23 @@ import LocalSearch from '../../src/main/search'
 
 vi.mock('electron', async () => {
   const BrowserWindow = vi.fn(function() {
+    const handler = (signal: string, callback: () => void) => {
+      if (signal === 'dom-ready' || signal === 'did-finish-load') {
+        callback()
+      }
+    }
     // @ts-expect-error mock
     this.webContents = {
       setMaxListeners: vi.fn(),
       session: {
         on: vi.fn(),
+        once: vi.fn(),
+        setMaxListeners: vi.fn(),
         getUserAgent: vi.fn(() => 'Mozilla/5.0 Witsy/1.0.0 Electron/28.0.0 Safari/537.36'),
         setUserAgent: vi.fn(),
       },
-      on: vi.fn((signal, callback) => {
-        if (signal === 'dom-ready' || signal === 'did-finish-load') {
-          callback()
-        }
-      }),
+      on: vi.fn(handler),
+      once: vi.fn(handler),
       executeJavaScript: vi.fn((script) => {
         if (script === 'document.body.outerHTML') {
           return `<html><body>test</body></html>`
@@ -38,7 +42,13 @@ vi.mock('electron', async () => {
     // @ts-expect-error mock
     this.hide = vi.fn()
     // @ts-expect-error mock
-    this.isDestroyed = vi.fn(() => false)
+    let destroyed = false
+    // @ts-expect-error mock
+    this.isDestroyed = vi.fn(() => destroyed)
+    // @ts-expect-error mock
+    this.close = vi.fn(() => { destroyed = true })
+    // @ts-expect-error mock
+    this.destroy = vi.fn(() => { destroyed = true })
   })
   BrowserWindow.prototype.loadURL = vi.fn()
   return { BrowserWindow }
