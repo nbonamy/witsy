@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Agent: can use user variables at all steps
+- Local search: optimizations and captcha handling
 
 ### Fixed
 - Webapp persistance storage fix
