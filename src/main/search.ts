@@ -597,6 +597,7 @@ export default class LocalSearch {
         webSecurity: true,
         allowRunningInsecureContent: false,
         experimentalFeatures: true,
+        javascript: true,
       },
     })
 
@@ -635,7 +636,7 @@ export default class LocalSearch {
         sandbox: true,
         autoplayPolicy: 'user-gesture-required',
         disableDialogs: true,
-        partition: crypto.randomUUID(),
+        partition: 'persist:search',
         webSecurity: true,
         allowRunningInsecureContent: false,
         experimentalFeatures: true,
