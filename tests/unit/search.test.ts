@@ -2,6 +2,18 @@
 import { vi, expect, test } from 'vitest'
 import LocalSearch from '../../src/main/search'
 
+// Mock fetch for content fetching
+// @ts-expect-error mock
+global.fetch = vi.fn(async () => {
+  return {
+    ok: true,
+    headers: {
+      get: () => 'text/html',
+    },
+    text: async () => '<html><body>test</body></html>',
+  }
+})
+
 vi.mock('electron', async () => {
   const BrowserWindow = vi.fn(function() {
     const handler = (signal: string, callback: () => void) => {
@@ -59,9 +71,9 @@ test('search', async () => {
   const search = new LocalSearch()
   const res = await search.search('witsy', 3)
   expect(res).toEqual({ results: [
-    { title: 'title', url: 'url1', content: '<html><body>test</body></html>' },
-    { title: 'title', url: 'url2', content: '<html><body>test</body></html>' },
-    { title: 'title', url: 'url4', content: '<html><body>test</body></html>' },
+    { title: 'title1', url: 'url1', html: '<html><body>test</body></html>' },
+    { title: 'title2', url: 'url2', html: '<html><body>test</body></html>' },
+    { title: 'title4', url: 'url4', html: '<html><body>test</body></html>' },
   ]})
 
 })
@@ -72,9 +84,9 @@ test('search with abortSignal - basic completion', async () => {
 
   const res = await search.search('witsy', 3, false, abortController.signal)
   expect(res).toEqual({ results: [
-    { title: 'title', url: 'url1', content: '<html><body>test</body></html>' },
-    { title: 'title', url: 'url2', content: '<html><body>test</body></html>' },
-    { title: 'title', url: 'url4', content: '<html><body>test</body></html>' },
+    { title: 'title1', url: 'url1', html: '<html><body>test</body></html>' },
+    { title: 'title2', url: 'url2', html: '<html><body>test</body></html>' },
+    { title: 'title4', url: 'url4', html: '<html><body>test</body></html>' },
   ]})
 })
 

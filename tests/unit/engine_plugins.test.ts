@@ -311,8 +311,8 @@ test('Search Plugin Local', async () => {
   expect(await search.execute(context, { query: 'test' })).toStrictEqual({
     query: 'test',
     results: [
-      { title: 'title1', url: 'url1', content: 'page_con' },
-      { title: 'title2', url: 'url2', content: 'page_con' }
+      { title: 'title1', url: 'url1', content: 'page1_co' },
+      { title: 'title2', url: 'url2', content: 'page2_co' }
     ],
   })
   expect(window.api.search.query).toHaveBeenLastCalledWith('test', 5, expect.any(String))
