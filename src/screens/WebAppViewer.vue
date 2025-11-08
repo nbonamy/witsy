@@ -8,7 +8,7 @@
     <webview
       ref="webviewRef"
       :data-webapp-id="webapp.id"
-      partition="persist:webview"
+      :partition="partition"
       allowpopups
       :style="{ width: '100%', height: '100%', display: isLoading ? 'none' : 'flex' }"
     />
@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 
-import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watch, computed } from 'vue'
 import Loader from '../components/Loader.vue'
 import { WebApp } from '../types/workspace'
 
@@ -34,6 +34,8 @@ const emit = defineEmits<{
 const webviewRef = ref<HTMLElement | null>(null)
 const isLoading = ref(false)
 let hasLoadedSrc = false
+
+const partition = computed(() => `persist:webapp_${props.webapp.name}`)
 
 // Update lastUsed when component becomes visible
 watch(() => props.visible, (isVisible) => {
