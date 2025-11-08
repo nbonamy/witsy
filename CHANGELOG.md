@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 ## [3.1.1] - WIP
 
 ### Added
+- N/A
+
+### Changed
+- Agent: can use user variables at all steps
+
+### Fixed
+- Webapp persistance storage fix
+
+### Removed
+- N/A
+
+
+## [3.1.1] - 2025-11-06
+
+### Added
 - Easy QoL: right-click context menu to copy/paste in messages chat field (https://github.com/nbonamy/witsy/issues/480)
 
 ### Changed
