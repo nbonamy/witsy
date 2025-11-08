@@ -1,42 +1,34 @@
 import { App, dialog } from 'electron'
 import fs from 'fs'
 import path from 'path'
-import { useI18n } from '../main/i18n'
+import { getLocaleMessages, useI18n } from '../main/i18n'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import { pickFile } from './file'
 import { loadHistory, saveHistory } from './history'
 
 // Build a map of all role translations from all locales
-const buildRoleTranslationMap = (): Map<string, 'system' | 'user' | 'assistant'> => {
+const buildRoleTranslationMap = (app: App): Map<string, 'system' | 'user' | 'assistant'> => {
   const roleMap = new Map<string, 'system' | 'user' | 'assistant'>()
 
-  // Get all locale files
-  const localesPath = path.join(__dirname, '../../locales')
-  const localeFiles = fs.readdirSync(localesPath).filter(f => f.endsWith('.json'))
-
-  for (const localeFile of localeFiles) {
-    try {
-      const localePath = path.join(localesPath, localeFile)
-      const locale = JSON.parse(fs.readFileSync(localePath, 'utf-8'))
-
-      if (locale.chat?.role) {
-        const { system, user, assistant } = locale.chat.role
-        if (system) roleMap.set(system, 'system')
-        if (user) roleMap.set(user, 'user')
-        if (assistant) roleMap.set(assistant, 'assistant')
-      }
-    } catch (error) {
-      console.error(`Error reading locale file ${localeFile}:`, error)
+  // Get all locale messages
+  const allMessages = getLocaleMessages(app)
+  for (const locale of Object.keys(allMessages)) {
+    const messages = allMessages[locale]
+    if (messages.chat?.role) {
+      const { system, user, assistant } = messages.chat.role
+      if (system) roleMap.set(system, 'system')
+      if (user) roleMap.set(user, 'user')
+      if (assistant) roleMap.set(assistant, 'assistant')
     }
   }
 
   return roleMap
 }
 
-export const parseMarkdownChat = (markdown: string): Chat => {
+export const parseMarkdownChat = (app: App, markdown: string): Chat => {
   const lines = markdown.split('\n')
-  const roleMap = buildRoleTranslationMap()
+  const roleMap = buildRoleTranslationMap(app)
 
   let title = ''
   let currentRole: 'system' | 'user' | 'assistant' | null = null
@@ -208,7 +200,7 @@ async function importSingleFile(app: App, file: string, workspaceId?: string): P
     }
 
     // Parse the markdown
-    const chat = parseMarkdownChat(contents)
+    const chat = parseMarkdownChat(app, contents)
 
     // If workspaceId is provided, save to history (single file mode)
     if (workspaceId) {
