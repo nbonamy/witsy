@@ -298,7 +298,8 @@ export type LocalSearchResponse = {
 export type LocalSearchResult = {
   url: string
   title: string
-  content: string
+  content?: string  // For PDFs/files (extracted text)
+  html?: string     // For HTML pages (raw HTML)
 }
 
 declare global {

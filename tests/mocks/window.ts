@@ -570,8 +570,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     search: {
       query: vi.fn(async () => ({ results: [
-        { title: 'title1', url: 'url1', content: '<html>page_content1<img src="test" /></html>' },
-        { title: 'title2', url: 'url2', content: '<html>header<main id="main">page_content2</main></html>' },
+        { title: 'title1', url: 'url1', content: 'page1_content' },
+        { title: 'title2', url: 'url2', html: '<html>header<main id="main">page2_content</main></html>' },
       ]})),
       cancel: vi.fn(),
       test: vi.fn(),

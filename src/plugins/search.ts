@@ -154,7 +154,7 @@ export default class extends Plugin {
         results: response.results.map(result => ({
           title: result.title,
           url: result.url,
-          content: this.htmlToText(result.content)
+          content: result.content || (result.html ? this.htmlToText(result.html) : '')
         }))
       }
 
