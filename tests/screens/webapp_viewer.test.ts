@@ -29,7 +29,7 @@ test('WebAppViewer renders with correct structure', () => {
   const webview = wrapper.find('webview')
   expect(webview.exists()).toBe(true)
   expect(webview.attributes('data-webapp-id')).toBe('test-app')
-  expect(webview.attributes('partition')).toBe('persist:webview')
+  expect(webview.attributes('partition')).toBe('persist:webapp_Test App')
   expect(webview.attributes('allowpopups')).toBeDefined()
 })
 
