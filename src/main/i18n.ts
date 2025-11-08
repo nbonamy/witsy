@@ -58,7 +58,7 @@ export const useI18nLlm = (app: App): CallableFunction => {
   return i18n.global.t as CallableFunction
 }
 
-export const getLocaleMessages = (app: App): anyDict => {
+export const getLocaleMessages = (app: App): Record<string, any> => {
 
   // already calculated?
   if (Object.keys(messages).length) {

@@ -1,47 +1,37 @@
-import { vi, beforeEach, expect, test } from 'vitest'
+import { app } from 'electron'
+import { beforeEach, expect, test, vi } from 'vitest'
 import { parseMarkdownChat } from '../../src/main/import_md'
 
-// Mock fs module
-vi.mock('fs', () => ({
-  default: {
-    readdirSync: vi.fn(() => ['en.json', 'fr.json', 'es.json']),
-    readFileSync: vi.fn((path: string) => {
-      if (path.includes('en.json')) {
-        return JSON.stringify({
-          chat: {
-            role: {
-              system: 'System',
-              user: 'You',
-              assistant: 'Assistant'
-            }
-          }
-        })
+vi.mock('../../src/main/i18n', () => ({
+  getLocaleMessages: () => ({
+    en: {
+      chat: {
+        role: {
+          system: 'System',
+          user: 'You',
+          assistant: 'Assistant'
+        }
       }
-      if (path.includes('fr.json')) {
-        return JSON.stringify({
-          chat: {
-            role: {
-              system: 'Système',
-              user: 'Vous',
-              assistant: 'Assistant'
-            }
-          }
-        })
+    },
+    fr: {
+      chat: {
+        role: {
+          system: 'Système',
+          user: 'Vous',
+          assistant: 'Assistant'
+        }
       }
-      if (path.includes('es.json')) {
-        return JSON.stringify({
-          chat: {
-            role: {
-              system: 'Sistema',
-              user: 'Tú',
-              assistant: 'Asistente'
-            }
-          }
-        })
+    },
+    es: {
+      chat: {
+        role: {
+          system: 'Sistema',
+          user: 'Tú',
+          assistant: 'Asistente'
+        }
       }
-      return '{}'
-    })
-  }
+    }
+  })
 }))
 
 beforeEach(() => {
@@ -64,7 +54,7 @@ This is a user message.
 This is an assistant response.
 `
 
-  const chat = parseMarkdownChat(markdown)
+  const chat = parseMarkdownChat(app, markdown)
 
   expect(chat.title).toBe('Test Chat')
   expect(chat.messages).toHaveLength(3)
@@ -92,7 +82,7 @@ Ceci est un message utilisateur.
 Ceci est une réponse de l'assistant.
 `
 
-  const chat = parseMarkdownChat(markdown)
+  const chat = parseMarkdownChat(app, markdown)
 
   expect(chat.title).toBe('Chat de Test')
   expect(chat.messages).toHaveLength(3)
@@ -117,7 +107,7 @@ Este es un mensaje del usuario.
 Esta es una respuesta del asistente.
 `
 
-  const chat = parseMarkdownChat(markdown)
+  const chat = parseMarkdownChat(app, markdown)
 
   expect(chat.title).toBe('Chat de Prueba')
   expect(chat.messages).toHaveLength(3)
@@ -147,7 +137,7 @@ Assistant line 2
 Assistant line 3
 `
 
-  const chat = parseMarkdownChat(markdown)
+  const chat = parseMarkdownChat(app, markdown)
 
   expect(chat.messages[0].content).toBe('Line 1\nLine 2\nLine 3')
   expect(chat.messages[1].content).toBe('User line 1\nUser line 2')
@@ -160,7 +150,7 @@ test('parseMarkdownChat should throw error for missing title', () => {
 Test message
 `
 
-  expect(() => parseMarkdownChat(markdown)).toThrow('No title found')
+  expect(() => parseMarkdownChat(app, markdown)).toThrow('No title found')
 })
 
 test('parseMarkdownChat should throw error when no valid role found', () => {
@@ -176,7 +166,7 @@ More content
 `
 
   // The first H2 "Unknown Role" is not a valid role
-  expect(() => parseMarkdownChat(markdown)).toThrow('First section after title must be a valid role')
+  expect(() => parseMarkdownChat(app, markdown)).toThrow('First section after title must be a valid role')
 })
 
 test('parseMarkdownChat should throw error for no messages', () => {
@@ -185,7 +175,7 @@ test('parseMarkdownChat should throw error for no messages', () => {
 Some content without role headers.
 `
 
-  expect(() => parseMarkdownChat(markdown)).toThrow('No valid role found after title')
+  expect(() => parseMarkdownChat(app, markdown)).toThrow('No valid role found after title')
 })
 
 test('parseMarkdownChat should preserve H1 headers in message content', () => {
@@ -204,7 +194,7 @@ More content after H1.
 User message
 `
 
-  const chat = parseMarkdownChat(markdown)
+  const chat = parseMarkdownChat(app, markdown)
 
   expect(chat.messages[0].content).toContain('# This is H1 in content')
   expect(chat.messages[0].content).toContain('This is a message with a heading.')
@@ -235,7 +225,7 @@ More content here.
 User reply
 `
 
-  const chat = parseMarkdownChat(markdown)
+  const chat = parseMarkdownChat(app, markdown)
 
   expect(chat.messages).toHaveLength(3)
   expect(chat.messages[0].role).toBe('system')
@@ -254,8 +244,8 @@ This is content but System2 is not a valid role.
 `
 
   // System2 is not a valid role
-  expect(() => parseMarkdownChat(markdown)).toThrow('First section after title must be a valid role')
-  expect(() => parseMarkdownChat(markdown)).toThrow('System2')
+  expect(() => parseMarkdownChat(app, markdown)).toThrow('First section after title must be a valid role')
+  expect(() => parseMarkdownChat(app, markdown)).toThrow('System2')
 })
 
 test('parseMarkdownChat should handle complex markdown with multiple header levels', () => {
@@ -292,7 +282,7 @@ def greet(name):
 - Prints a greeting
 `
 
-  const chat = parseMarkdownChat(markdown)
+  const chat = parseMarkdownChat(app, markdown)
 
   expect(chat.title).toBe('Python Code Example')
   expect(chat.messages).toHaveLength(3)

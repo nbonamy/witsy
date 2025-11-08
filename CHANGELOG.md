@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.1.1] - WIP
+## [3.1.2] - WIP
 
 ### Added
 - N/A
@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Webapp persistance storage fix
+- Import Markdown failing in Release
 
 ### Removed
 - N/A
