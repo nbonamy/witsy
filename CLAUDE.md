@@ -112,3 +112,14 @@ All the CSS variables are defined in `./css/index.css`. Use those variables and 
 npm run test:ai            # Unit tests
 npm run test:ci            # With coverage
 ```
+
+### Analyzing Coverage Gaps
+To identify files with the most uncovered lines and prioritize testing efforts:
+
+```bash
+node tools/coverage_gaps.js              # Show top 20 files with most uncovered lines
+node tools/coverage_gaps.js --limit 10   # Show top 10 files
+node tools/coverage_gaps.js --filter src/components  # Filter to specific directory
+```
+
+This script runs coverage analysis and outputs files sorted by absolute number of uncovered lines, making it easy to identify the biggest testing gaps. Unlike percentage-based coverage, this helps find files where adding tests will have the most impact (e.g., a 1000-line file at 80% coverage has more uncovered code than a 10-line file at 0%).
