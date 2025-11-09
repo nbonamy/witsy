@@ -54,6 +54,10 @@ export default class AgentExecutorBase {
     })
   }
 
+  protected get codeExecutionMode(): boolean {
+    return this.config.llm.codeExecution.modes.includes('agent')
+  }
+
   protected async loadToolsAndAgents(engine: LlmEngine, tools: ToolSelection, agents: string[], opts?: { engine?: string, model?: string, agents?: Agent[] }): Promise<void> {
 
     // dynamic imports to avoid circular dependency
@@ -61,7 +65,7 @@ export default class AgentExecutorBase {
     const AgentPlugin = (await import('../plugins/agent')).default
 
     // load plugins using llmManager
-    await this.llmManager.loadTools(engine, this.workspaceId, availablePlugins, tools)
+    await this.llmManager.loadTools(engine, this.workspaceId, availablePlugins, tools, { codeExecutionMode: this.codeExecutionMode })
 
     // and now add tools for running agents
     const allAgents = [

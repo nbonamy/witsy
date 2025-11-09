@@ -29,6 +29,9 @@
     "imageResize": 768,
     "defaults": [],
     "customInstructions": [],
+    "codeExecution": {
+      "modes": []
+    },
     "additionalInstructions": {
       "toolRetry": true,
       "datetime": true,

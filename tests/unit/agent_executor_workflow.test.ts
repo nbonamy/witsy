@@ -735,7 +735,8 @@ test('Agent delegates to llmManager.loadTools', async () => {
     expect.any(Object), // engine (LlmEngine instance)
     expect.any(String), // workspaceId
     {},                 // availablePlugins (mocked as {})
-    ['plugin1', 'plugin2', 'tool1'] // tools
+    ['plugin1', 'plugin2', 'tool1'], // tools
+    { codeExecutionMode: false }, // options
   )
 
   expect(run.status).toBe('success')
@@ -760,7 +761,8 @@ test('Agent loads all tools when tools is null', async () => {
     expect.any(Object),
     expect.any(String),
     {},
-    null
+    null,
+    { codeExecutionMode: false },
   )
 
   expect(run.status).toBe('success')
@@ -785,7 +787,8 @@ test('Agent loads no tools when tools is empty array', async () => {
     expect.any(Object),
     expect.any(String),
     {},
-    []
+    [],
+    { codeExecutionMode: false },
   )
 
   expect(run.status).toBe('success')
