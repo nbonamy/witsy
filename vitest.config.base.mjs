@@ -44,6 +44,7 @@ export function getBaseConfig() {
           'src/automations/windows.ts',
           'src/composables/pcm-processor.js',
           'src/main/ipc.ts',
+          'src/main/cli_installer.ts',
           'src/plugins/vega.ts',
           'src/types/**/*',
           'src/cli/main.ts',
