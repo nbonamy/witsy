@@ -431,11 +431,12 @@ const onSendPrompt = async (params: SendPromptParams) => {
     }
 
     // load tools as configured per prompt
-    llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools)
+    const codeExecutionMode: boolean = false//store.config.llm.codeExecution.modes.includes('chat')
+    llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools, { codeExecutionMode })
 
     // system instructions
     const llmUtils = new LlmUtils(store.config)
-    const systemInstructions = llmUtils.getSystemInstructions(instructions)
+    const systemInstructions = llmUtils.getSystemInstructions(instructions, { codeExecution: codeExecutionMode })
     if (chat.value.messages.length === 0) {
       chat.value.addMessage(new Message('system', systemInstructions))
     } else if (instructions) {

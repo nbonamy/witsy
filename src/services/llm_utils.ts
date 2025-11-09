@@ -10,6 +10,7 @@ import { getLlmLocale, i18nInstructions, localeToLangName } from './i18n'
 
 export interface InstructionsModifiers {
   noMarkdown?: boolean
+  codeExecution?: boolean
 }
 
 export type TaskComplexity = 'simple' | 'normal' | 'complex'
@@ -242,6 +243,11 @@ Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Statu
       if (lang.length) {
         instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setLang', { lang })
       }
+    }
+
+    // code execution
+    if (modifiers?.codeExecution) {
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.codeExecution')
     }
 
     // retry tools

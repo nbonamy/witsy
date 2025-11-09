@@ -366,7 +366,7 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
       // Yield status update: starting step
       yield {
         type: 'status',
-        status: `Executing step ${step.id}: ${step.tool}`
+        status: step.description || `Executing step ${step.id}: ${step.tool}`
       }
 
       try {

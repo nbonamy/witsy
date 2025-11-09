@@ -3,12 +3,12 @@
     <div class="tool-search-result-icons">
       <img v-for="result in toolCall.result.results" :src="getFaviconUrl(result.url)" class="favicon" @error="onFaviconError" />
     </div>
-    {{ t('plugins.search.completed', { query: toolCall.params.query, count: toolCall.result.results.length }) }}
+    {{ t('plugins.search.completed', { query: toolCall.params.query, count: toolCall.result.results?.length ?? 0 }) }}
   </div>
   <div v-else class="expanded">
     <div class="header" @click="expanded = false">
       <XIcon class="close" />
-      {{ t('plugins.search.completed', { query: toolCall.params.query, count: toolCall.result.results.length }) }}
+      {{ t('plugins.search.completed', { query: toolCall.params.query, count: toolCall.result.results?.length ?? 0 }) }}
     </div>
     <MessageItemSearchToolBlock class="results" :tool-call="toolCall"  />
   </div>

@@ -11,6 +11,7 @@ import { DocRepoQueryResponseItem } from '../types/rag'
 import AgentExecutorBase from './agent_executor_base'
 import Generator, { GenerationCallback, GenerationOpts, GenerationResult, LlmChunkCallback } from './generator'
 import { fullExpertI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from './i18n'
+import { v7 as uuidv7 } from 'uuid'
 import LlmUtils from './llm_utils'
 
 export interface AgentWorkflowExecutorOpts extends GenerationOpts {
@@ -37,7 +38,7 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
 
     // create a run
     const run: AgentRun = {
-      uuid: opts?.runId || crypto.randomUUID(),
+      uuid: opts?.runId || uuidv7(),
       agentId: this.agent.uuid,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -72,7 +73,7 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
       }
 
       // update agent instructions
-      run.messages[0].content = this.llmUtils.getSystemInstructions(this.agent.instructions)
+      run.messages[0].content = this.llmUtils.getSystemInstructions(this.agent.instructions, { codeExecution: this.codeExecutionMode })
 
       // save it
       if (!opts?.ephemeral) {
