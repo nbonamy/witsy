@@ -426,7 +426,7 @@ test('Transient message', async () => {
 })
 
 test('Tool call running calling', async () => {
-  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: false })
+  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'running', status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
   expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
   expect(wrapper.find('.body .message-transient').text()).toBe('Calling a tool')
@@ -435,7 +435,7 @@ test('Tool call running calling', async () => {
 
 test('Tool call running never', async () => {
   store.config.appearance.chat.showToolCalls = 'never'
-  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: false })
+  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'running', status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
   expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
   expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
@@ -443,7 +443,7 @@ test('Tool call running never', async () => {
 
 test('Tool call running always', async () => {
   store.config.appearance.chat.showToolCalls = 'always'
-  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: false })
+  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'running',status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
   expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
   expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
@@ -451,7 +451,7 @@ test('Tool call running always', async () => {
 
 test('Tool call done calling', async () => {
   store.config.appearance.chat.showToolCalls = 'calling'
-  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
+  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'completed', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
   expect(wrapper.find('.actions .tools').exists()).toBe(true)
@@ -459,7 +459,7 @@ test('Tool call done calling', async () => {
 
 test('Tool call done never', async () => {
   store.config.appearance.chat.showToolCalls = 'never'
-  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
+  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'completed', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
   expect(wrapper.find('.actions .tools').exists()).toBe(true)
@@ -467,7 +467,7 @@ test('Tool call done never', async () => {
 
 test('Tool call done always', async () => {
   store.config.appearance.chat.showToolCalls = 'always'
-  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
+  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'completed', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
   expect(wrapper.find('.actions .tools').exists()).toBe(false)
@@ -495,7 +495,7 @@ test('Run user actions', async () => {
 test('Run assistant text actions', async () => {
   
   store.config.appearance.chat.showToolCalls = 'calling'
-  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
+  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'completed', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
   
   // copy as text
