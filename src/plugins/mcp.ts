@@ -46,7 +46,7 @@ export default class extends MultiToolPlugin {
     }
   }
 
-  async getTools(): Promise<any> {
+  async getTools(): Promise<LlmTool[]> {
     try {
       this.tools = await window.api.mcp.getLlmTools()
       if (this.toolsEnabled) {

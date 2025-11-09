@@ -2286,6 +2286,22 @@
       "error": "Error while downloading content",
       "running": "Downloading content…"
     },
+    "code_exec": {
+      "getToolsInfo": {
+        "completed": "Retrieved information about {count} tools",
+        "description": "Get detailed information including calling parameters about some tools. The tools available are:\n{tools}",
+        "error": "Error while retrieving tools information: {error}",
+        "running": "Retrieving tools information…"
+      },
+      "runProgram": {
+        "completed": "Program executed successfully",
+        "description": "Run a program provided as a JSON object in the format specified in your instructions",
+        "error": "Error while executing program: {error}",
+        "running": "Executing program…"
+      },
+      "error": "Workflow failed: {error}",
+      "preparing": "Preparing to execute workflow…"
+    },
     "filesystem": {
       "confirmWrite": {
         "text": "{path}",
@@ -2799,6 +2815,10 @@
       "browse": {
         "description": "This plugin allows LLM engines to download content from the Internet and use it to generate more accurate responses.",
         "title": "Download"
+      },
+      "code_exec": {
+        "description": "This plugin allows LLM engines to execute multi-step workflows by chaining tool calls together with variable substitution between steps.",
+        "title": "Code Execution"
       },
       "filesystem": {
         "allowedPaths": "Allowed Directories",
