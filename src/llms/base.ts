@@ -2,6 +2,7 @@
 import * as llm from 'multi-llm-ts'
 import defaults from '../../defaults/settings.json'
 import { imageFormats, textFormats } from '../models/attachment'
+import CodeExecutionPlugin from '../plugins/code_exec'
 import { PluginInstance, PluginsList } from '../plugins/plugins'
 import { store } from '../services/store'
 import { Configuration, CustomEngineConfig, EngineConfig } from '../types/config'
@@ -472,7 +473,9 @@ export default class LlmManagerBase implements ILlmManager {
     engineConfig.model[type] = models[0].id
   }
 
-  loadTools = async (engine: llm.LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection): Promise<void> => {
+  loadTools = async (engine: llm.LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection, opts?: {
+    codeExecutionMode?: boolean
+  }): Promise<void> => {
 
     // clear
     engine.clearPlugins()
@@ -485,7 +488,7 @@ export default class LlmManagerBase implements ILlmManager {
     // add plugins
     const customPluginsAdded: Record<string, PluginInstance> = {}
     for (const pluginName in availablePlugins) {
-      
+
       const pluginClass = availablePlugins[pluginName]
       const plugin: PluginInstance = new pluginClass(this.config.plugins[pluginName], workspaceId)
 
@@ -525,9 +528,11 @@ export default class LlmManagerBase implements ILlmManager {
 
     }
 
-    // // code exec
-    // const codeExecPlugin = new CodeExecutionPlugin()
-    // await codeExecPlugin.install(engine)
+    // code exec
+    if (opts?.codeExecutionMode) {
+      // const codeExecPlugin = new CodeExecutionPlugin()
+      // await codeExecPlugin.install(engine)
+    }
 
   }
 

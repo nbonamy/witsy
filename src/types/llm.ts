@@ -50,5 +50,7 @@ export interface ILlmManager {
   initModels(): Promise<void>
   loadModels(engine: string): Promise<boolean>
   
-  loadTools(engine: LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection): Promise<void>
+  loadTools(engine: LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection, opts?: {
+    codeExecutionMode?: boolean
+  }): Promise<void>
 }

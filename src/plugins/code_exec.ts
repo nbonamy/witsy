@@ -1,17 +1,7 @@
+
+import { anyDict } from '../types/index'
 import { IPlugin, LlmEngine, LlmTool, MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
 import { t } from '../services/i18n'
-import { anyDict } from '../types/index'
-import Plugin from './plugin'
-
-export type ProgramStep = {
-  id: string
-  tool: string
-  args: anyDict
-}
-
-export type Program = {
-  steps: ProgramStep[]
-}
 
 export const kCodeExecutionPluginPrefix = 'code_exec_'
 
@@ -509,7 +499,7 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
 
     const plugin = this.plugins.find((plugin) => plugin.getName() === tool)
     if (plugin) {
-      return plugin as Plugin
+      return plugin as IPlugin
     }
 
     // try multi-tools
