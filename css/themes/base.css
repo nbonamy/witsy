@@ -4,6 +4,14 @@
   margin-bottom: 32px;
 }
 
+.message:has(.actions) {
+  margin-bottom: 0px !important;
+}
+
+.message:has(.edit-textarea) {
+  margin-bottom: 16px !important;
+}
+
 .message .media-container {
   margin-bottom: 12px;
 }
@@ -203,10 +211,6 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-}
-
-.message:hover {
-  margin-bottom: 0px !important;
 }
 
 .message .action {
