@@ -9,7 +9,10 @@
       <template v-else>
         <EngineLogo :engine="message.engine || chat.engine!" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
         <UserAvatar class="avatar" v-else />
-        <div class="name variable-font-size">{{ authorName }}</div>
+        <div class="name variable-font-size">
+          {{ authorName }}
+          <span class="edited-indicator" v-if="message.role == 'assistant' && message.edited">{{ t('chat.edited') }}</span>
+        </div>
       </template>
     </div>
     
@@ -37,7 +40,21 @@
 
       <!-- content -->
       <div class="message-content" v-if="message.type == 'text' && message.content !== null">
-        <MessageItemBody :message="message" :show-tool-calls="showToolCalls" @media-loaded="onMediaLoaded" />
+        <div v-if="isEditing" class="edit-container form form-large">
+          <textarea
+            v-model="editedContent"
+            class="edit-textarea"
+            :placeholder="t('chat.editPlaceholder')"
+            @keydown.meta.enter="saveEdit"
+            @keydown.ctrl.enter="saveEdit"
+            @keydown.escape="cancelEditing"
+          ></textarea>
+          <div class="edit-actions">
+            <button @click="cancelEditing" class="tertiary">{{ t('chat.cancel') }}</button>
+            <button @click="saveEdit" class="primary">{{ t('chat.save') }}</button>
+          </div>
+        </div>
+        <MessageItemBody v-else :message="message" :show-tool-calls="showToolCalls" @media-loaded="onMediaLoaded" />
       </div>
 
       <!-- transient information -->
@@ -47,7 +64,7 @@
       </div>
 
     </div>
-    <MessageItemActions :message="message" :read-aloud="onReadAloud" :audio-state="audioState" @show-tools="onShowTools" v-if="hovered" />
+    <MessageItemActions :message="message" :read-aloud="onReadAloud" :audio-state="audioState" @show-tools="onShowTools" v-if="hovered && !isEditing" />
     <audio ref="audio" />
   </div>
 </template>
@@ -107,6 +124,8 @@ const audioState = ref<{state: string, messageId: string|null}>({
   state: 'idle',
   messageId: null,
 })
+const isEditing = ref(false)
+const editedContent = ref('')
 
 // onUpdated is not called for an unknown reason
 // so let's hack it
@@ -253,6 +272,44 @@ const onContextMenu = (event: MouseEvent) => {
   window.api.main.setContextMenuContext(props.message.uuid)
 }
 
+const startEditing = () => {
+  isEditing.value = true
+  editedContent.value = props.message.content
+}
+
+const cancelEditing = () => {
+  isEditing.value = false
+  editedContent.value = ''
+}
+
+const saveEdit = () => {
+  if (editedContent.value.trim() === '') {
+    return
+  }
+
+  if (props.message.role === 'user') {
+    // Emit event for resending
+    emitEvent('resend-after-edit', {
+      message: props.message,
+      newContent: editedContent.value
+    })
+  } else {
+    // For assistant messages, just update content
+    props.message.updateContent(editedContent.value)
+    store.saveHistory()
+  }
+
+  isEditing.value = false
+  editedContent.value = ''
+}
+
+// Listen for edit events from MessageItemActions
+onEvent('edit-message', (messageId: string) => {
+  if (messageId === props.message.uuid) {
+    startEditing()
+  }
+})
+
 defineExpose({
   message: props.message,
   readAloud: (text?: string) => {
@@ -284,6 +341,31 @@ defineExpose({
   * {
     font-family: var(--messages-font);
   }
+}
+
+.edited-indicator {
+  margin-left: var(--space-4);
+  font-size: var(--font-size-12);
+  color: var(--color-on-surface-variant);
+  font-style: italic;
+}
+
+.edit-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.edit-textarea {
+  min-height: 8lh;
+  resize: vertical;
+}
+
+.edit-actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: flex-end;
+  margin: 0;
 }
 
 .expert {

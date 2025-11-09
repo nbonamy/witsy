@@ -76,6 +76,7 @@ export interface Message extends IMessageBase {
   status?: string
   toolCalls: ToolCall[]
   usage?: LlmUsage
+  edited: boolean
   attachments: Attachment[]
   setStatus(status: string|null): void
   setExpert(expert: Expert): void
@@ -85,6 +86,7 @@ export interface Message extends IMessageBase {
   clearToolCalls(): void
   isVideo(): boolean
   delete(): void
+  updateContent(newContent: string): void
 }
 
 export type CustomInstruction = {

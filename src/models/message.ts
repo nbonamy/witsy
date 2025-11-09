@@ -22,6 +22,7 @@ export default class Message extends MessageBase implements IMessage {
   status?: string
   toolCalls: ToolCall[]
   usage?: LlmUsage
+  edited: boolean
 
   declare attachments: Attachment[]
 
@@ -37,6 +38,7 @@ export default class Message extends MessageBase implements IMessage {
     this.toolCalls = []
     this.attachments = []
     this.transient = (content == null)
+    this.edited = false
     if (content === undefined) {
       this.setText(null)
     } else if (typeof content === 'string') {
@@ -53,7 +55,7 @@ export default class Message extends MessageBase implements IMessage {
     message.model = obj.model || null
     message.execType = obj.execType || (obj.deepResearch ? 'deepresearch' : (obj.agentId ? 'agent' : 'prompt'))
     message.createdAt = obj.createdAt
-    message.attachments = 
+    message.attachments =
       obj.attachment ? [ Attachment.fromJson(obj.attachment) ] :
       (obj.attachments ? obj.attachments.map(Attachment.fromJson) : [])
     message.reasoning = obj.reasoning || null
@@ -69,6 +71,7 @@ export default class Message extends MessageBase implements IMessage {
       status: undefined
     })) || []
     message.usage = obj.usage || undefined
+    message.edited = obj.edited || false
     return message
   }
 
@@ -175,6 +178,11 @@ export default class Message extends MessageBase implements IMessage {
         window.api.file.delete(attachment.url)
       }
     }
+  }
+
+  updateContent(newContent: string): void {
+    this.content = newContent
+    this.edited = true
   }
 
 }
