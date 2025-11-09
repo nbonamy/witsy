@@ -117,9 +117,12 @@ npm run test:ci            # With coverage
 To identify files with the most uncovered lines and prioritize testing efforts:
 
 ```bash
-node tools/coverage_gaps.js              # Show top 20 files with most uncovered lines
-node tools/coverage_gaps.js --limit 10   # Show top 10 files
+node tools/coverage_gaps.js                          # Show top 20 files with most uncovered lines
+node tools/coverage_gaps.js --limit 10               # Show top 10 files
 node tools/coverage_gaps.js --filter src/components  # Filter to specific directory
+node tools/coverage_gaps.js --show-lines             # Show which lines are uncovered
 ```
 
 This script runs coverage analysis and outputs files sorted by absolute number of uncovered lines, making it easy to identify the biggest testing gaps. Unlike percentage-based coverage, this helps find files where adding tests will have the most impact (e.g., a 1000-line file at 80% coverage has more uncovered code than a 10-line file at 0%).
+
+Use `--show-lines` to see exactly which line numbers are not covered, formatted as ranges (e.g., "132,361-367,372-375").
