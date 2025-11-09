@@ -143,7 +143,7 @@
     "mermaid": "^11.11.0",
     "minimatch": "^10.0.3",
     "mitt": "^3.0.1",
-    "multi-llm-ts": "^4.6.0-beta7",
+    "multi-llm-ts": "^4.6.0-beta8",
     "number-flip-animation": "github:nbonamy/number-flip-animation",
     "officeparser": "^5.2.0",
     "ollama": "^0.6.0",

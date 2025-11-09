@@ -1,13 +1,13 @@
 
-import { Configuration, CustomEngineConfig, EngineConfig } from '../types/config'
-import { GetChatEnginesOpts, ILlmManager, ToolSelection } from '../types/llm'
-import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel } from './anthropic'
-import { areAllToolsEnabled, areToolsDisabled, favoriteMockEngine } from './llm'
+import * as llm from 'multi-llm-ts'
+import defaults from '../../defaults/settings.json'
 import { imageFormats, textFormats } from '../models/attachment'
 import { PluginInstance, PluginsList } from '../plugins/plugins'
-import defaults from '../../defaults/settings.json'
 import { store } from '../services/store'
-import * as llm from 'multi-llm-ts'
+import { Configuration, CustomEngineConfig, EngineConfig } from '../types/config'
+import { GetChatEnginesOpts, ILlmManager, ToolSelection } from '../types/llm'
+import { getFallbackModel as getAnthropicFallbackModel, isSpecializedModel as isSpecialAnthropicModel } from './anthropic'
+import { areAllToolsEnabled, areToolsDisabled, favoriteMockEngine } from './llm'
 
 export const engineNames: Record<string, string> = {
   'anthropic': 'Anthropic',
@@ -524,6 +524,10 @@ export default class LlmManagerBase implements ILlmManager {
       }
 
     }
+
+    // // code exec
+    // const codeExecPlugin = new CodeExecutionPlugin()
+    // await codeExecPlugin.install(engine)
 
   }
 

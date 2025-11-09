@@ -8,6 +8,7 @@
   <IdCardIcon v-else-if="tool === 'memory' || tool === kMemoryPluginName"/>
   <SquarePlayIcon v-else-if="tool === 'youtube' || tool === kYoutubePluginName"/>
   <FolderIcon v-else-if="tool === 'filesystem' || tool === kFilesystemPluginName"/>
+  <WorkflowIcon v-else-if="tool.startsWith(kCodeExecutionPluginPrefix)"/>
   <VegaIcon v-else-if="tool === 'vega' || tool === kVegaPluginName"/>
   <McpIcon v-else-if="tool === 'mcp'" />
   <Plug2Icon v-else />
@@ -15,11 +16,12 @@
 
 <script setup lang="ts">
 
-import { CloudDownloadIcon, FolderIcon, GlobeIcon, IdCardIcon, LightbulbIcon, PaletteIcon, Plug2Icon, SquarePlayIcon, VideoIcon } from 'lucide-vue-next'
+import { CloudDownloadIcon, FolderIcon, GlobeIcon, IdCardIcon, LightbulbIcon, PaletteIcon, Plug2Icon, SquarePlayIcon, VideoIcon, WorkflowIcon } from 'lucide-vue-next'
 import McpIcon from '../../assets/mcp.svg?component'
 import PythonIcon from '../../assets/python.svg?component'
 import VegaIcon from '../../assets/vega.svg?component'
 import { kBrowsePluginName } from '../plugins/browse'
+import { kCodeExecutionPluginPrefix } from '../plugins/code_exec'
 import { kFilesystemPluginName } from '../plugins/filesystem'
 import { kImagePluginName } from '../plugins/image'
 import { kKnowledgePluginPrefix } from '../plugins/knowledge'
