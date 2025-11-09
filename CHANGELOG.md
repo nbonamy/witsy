@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Webapp persistance storage fix
 - Import Markdown failing in Release
+- Message refresh bug when streaming
 
 ### Removed
 - N/A

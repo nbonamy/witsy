@@ -128,9 +128,9 @@ onMounted(() => {
     showReasoning.value = value
   })
 
-  watch(() => props.message.content, () => {
+  watch(() => props.message, () => {
     performComputation()
-  })
+  }, { deep: true, immediate: true })
 
 })
 
@@ -232,17 +232,24 @@ const computeBlocks = (content: string|null): Block[] => {
     }
     
     // Process the match based on its type
-    if (matchType === 'tool') {
+    if (matchType === 'tool' && props.showToolCalls !== 'never') {
       if (props.message.toolCalls.length) {
+        
+        // Find the corresponding tool call based on id or index
         const toolCall =
           match[1] === 'id' ? props.message.toolCalls.find(call => call.id === match[2]) :
           match[1] === 'index' ? props.message.toolCalls[parseInt(match[2])] : null
-        if (toolCall && toolCall.done) {
-          if (props.showToolCalls === 'always') {
-            blocks.push({ type: 'tool', toolCall: toolCall })
-          } else if (toolCall.name === kSearchPluginName) {
-            blocks.push({ type: 'search', toolCall: toolCall })
+        if (toolCall) {
+
+          // if not done it was already displayed as transient, so we skip it
+          if (toolCall.done && props.showToolCalls === 'always') {
+            if (toolCall.name === kSearchPluginName) {
+              blocks.push({ type: 'search', toolCall })
+            } else {
+              blocks.push({ type: 'tool', toolCall })
+            }
           }
+
         }
       }
     } else if (matchType === 'media1' || matchType === 'media2') {
