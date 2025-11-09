@@ -112,11 +112,11 @@ test('Save history', async () => {
       messages: [
         {
           uuid: '1', engine: null, model: null, createdAt: 0, role: 'system', type: 'text', content: 'Hi', reasoning: null,
-          execType: 'prompt', toolCalls: [], attachments: [], transient: false, uiOnly: false
+          execType: 'prompt', toolCalls: [], attachments: [], transient: false, uiOnly: false, edited: false
         },
         {
           uuid: '2', engine: 'engine', model: 'model', createdAt: 0, role: 'user', type: 'text', content: 'Hello', reasoning: null,
-          execType: 'prompt', toolCalls: [], attachments: [], transient: false, uiOnly: false
+          execType: 'prompt', toolCalls: [], attachments: [], transient: false, uiOnly: false, edited: false
         }
       ]
     } ],

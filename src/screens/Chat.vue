@@ -74,6 +74,7 @@ onMounted(() => {
   onEvent('delete-folder', onDeleteFolder)
   onEvent('select-chat', onSelectChat)
   onEvent('retry-generation', onRetryGeneration)
+  onEvent('resend-after-edit', onResendAfterEdit)
   onEvent('toggle-sidebar', onToggleSidebar)
   onEvent('main-view-changed', onMainViewChanged)
 
@@ -698,6 +699,46 @@ const onRetryGeneration = async (message: Message) => {
       docrepo: assistant.value.chat.docrepo,
       expert: lastMessage.expert,
       execType: lastMessage.execType,
+    })
+
+  }
+
+}
+
+const onResendAfterEdit = async (payload: { message: Message, newContent: string }) => {
+
+  // find the message in the chat
+  const index = assistant.value.chat.messages.findIndex((m) => m.uuid === payload.message.uuid)
+  if (index === -1) {
+    return
+  }
+
+  // Remove this message and all messages after it
+  assistant.value.chat.messages.splice(index)
+
+  // Resend with the updated content
+  if (payload.message.agentId) {
+
+    // make sure the agent still exists
+    const agent = store.agents.find((a) => a.uuid === payload.message.agentId)
+    if (!agent) {
+      await Dialog.waitUntilClosed()
+      Dialog.alert(t('chat.agent.notFound'))
+      return
+    }
+
+    // Run the agent with the new content
+    runAgent(agent, { prompt: payload.newContent })
+
+  } else {
+
+    onSendPrompt({
+      instructions: assistant.value.chat.instructions,
+      prompt: payload.newContent,
+      attachments: payload.message.attachments,
+      docrepo: assistant.value.chat.docrepo,
+      expert: payload.message.expert,
+      execType: payload.message.execType,
     })
 
   }
