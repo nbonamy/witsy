@@ -9,8 +9,11 @@
       <div class="action retry" v-if="message.role == 'assistant'" @click="onRetry(message)">
         <RotateCcwIcon /> {{ t('common.retry') }}
       </div>
-      <div class="action edit" v-if="message.role == 'user' && message.type == 'text'" @click="onEdit(message)">
+      <div class="action edit" v-if="message.type == 'text'" @click="onEdit(message)">
         <PencilIcon /> {{ t('common.edit') }}
+      </div>
+      <div class="action quote" v-if="message.role == 'user' && message.type == 'text'" @click="onQuote(message)">
+        <QuoteIcon /> {{ t('common.quote') }}
       </div>
       <div class="action delete" v-if="message.role == 'user' && message.type == 'text'" @click="onDelete(message)">
         <Trash2Icon /> {{ t('common.delete') }}
@@ -27,7 +30,7 @@
 
 <script setup lang="ts">
 
-import { ChartNoAxesColumnIncreasingIcon, GitBranchIcon, PencilIcon, RotateCcwIcon, Trash2Icon, WrenchIcon } from 'lucide-vue-next'
+import { ChartNoAxesColumnIncreasingIcon, GitBranchIcon, PencilIcon, QuoteIcon, RotateCcwIcon, Trash2Icon, WrenchIcon } from 'lucide-vue-next'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
 import Dialog from '../composables/dialog'
@@ -90,6 +93,10 @@ const onRetry = (message: Message) => {
 }
 
 const onEdit = (message: Message) => {
+  emitEvent('edit-message', message.uuid)
+}
+
+const onQuote = (message: Message) => {
   emitEvent('set-prompt', message)
 }
 

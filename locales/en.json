@@ -137,6 +137,7 @@
       "fieldsRequired": "Make sure you enter a value for the required fields."
     },
     "reset": "Reset",
+    "quote": "Quote",
     "retry": "Retry",
     "runAgent": "Run agent",
     "save": "Save",
@@ -487,6 +488,10 @@
       "system": "System",
       "user": "You"
     },
+    "edited": "(edited)",
+    "editPlaceholder": "Edit message...",
+    "save": "Save",
+    "cancel": "Cancel",
     "unknownModel": "Unknown Model"
   },
   "chatList": {

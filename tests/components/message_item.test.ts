@@ -130,7 +130,7 @@ test('Assistant text message', async () => {
   expect(wrapper.find('.actions .read').exists()).toBe(true)
   expect(wrapper.find('.actions .retry').exists()).toBe(true)
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
-  expect(wrapper.find('.actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.actions .edit').exists()).toBe(true)
   expect(wrapper.find('.actions .usage').exists()).toBe(true)
   expect(wrapper.find('.actions .tools').exists()).toBe(false)
 })
@@ -172,7 +172,7 @@ test('Assistant image markdown message', async () => {
   expect(wrapper.find('.actions .read').exists()).toBe(true)
   expect(wrapper.find('.actions .retry').exists()).toBe(true)
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
-  expect(wrapper.find('.actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.actions .edit').exists()).toBe(true)
   expect(wrapper.find('.actions .usage').exists()).toBe(false)
   expect(wrapper.find('.actions .tools').exists()).toBe(false)
 })
@@ -482,10 +482,13 @@ test('Toggle actions', async () => {
 })
 
 test('Run user actions', async () => {
-  
+
   const wrapper = await mount(userMessage)
 
   await wrapper.find('.actions .edit').trigger('click')
+  expect(emitEventMock).toHaveBeenLastCalledWith('edit-message', userMessage.uuid)
+
+  await wrapper.find('.actions .quote').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('set-prompt', userMessage)
 
   await wrapper.find('.actions .delete').trigger('click')
@@ -752,4 +755,175 @@ test('Table download context menu', async () => {
   expect(menuItems.length).toBe(2)
   expect(menuItems[0].text()).toContain('common.downloadCsv')
   expect(menuItems[1].text()).toContain('common.downloadXlsx')
+})
+
+test('Message editing - User message edit mode toggle', async () => {
+
+  const wrapper = await mount(userMessage)
+
+  // Initially not in edit mode
+  expect(wrapper.find('.edit-container').exists()).toBe(false)
+  expect(wrapper.find('.message-content .edit-textarea').exists()).toBe(false)
+
+  // Trigger edit event
+  await wrapper.find('.actions .edit').trigger('click')
+  expect(emitEventMock).toHaveBeenLastCalledWith('edit-message', userMessage.uuid)
+
+  // Manually trigger the event handler since emitEvent is mocked
+  wrapper.vm.startEditing()
+  await nextTick()
+
+  // Now in edit mode
+  expect(wrapper.find('.edit-container').exists()).toBe(true)
+  expect(wrapper.find('.edit-textarea').exists()).toBe(true)
+  expect(wrapper.find('.edit-actions button.primary').exists()).toBe(true)
+  expect(wrapper.find('.edit-actions button.tertiary').exists()).toBe(true)
+})
+
+test('Message editing - Cancel editing', async () => {
+
+  const wrapper = await mount(userMessage)
+
+  // Enter edit mode
+  wrapper.vm.startEditing()
+  await nextTick()
+  expect(wrapper.find('.edit-container').exists()).toBe(true)
+
+  // Change the content
+  const textarea = wrapper.find('.edit-textarea')
+  await textarea.setValue('Modified content')
+  expect((textarea.element as HTMLTextAreaElement).value).toBe('Modified content')
+
+  // Cancel editing
+  await wrapper.find('.edit-actions button.tertiary').trigger('click')
+  await nextTick()
+
+  // Should exit edit mode
+  expect(wrapper.find('.edit-container').exists()).toBe(false)
+  // Original content unchanged
+  expect(userMessage.content).not.toBe('Modified content')
+})
+
+test('Message editing - Save user message edit triggers resend', async () => {
+
+  const wrapper = await mount(userMessage)
+
+  // Enter edit mode
+  wrapper.vm.startEditing()
+  await nextTick()
+
+  // Change the content
+  const textarea = wrapper.find('.edit-textarea')
+  await textarea.setValue('Modified user message')
+
+  // Save editing
+  await wrapper.find('.edit-actions button.primary').trigger('click')
+  await nextTick()
+
+  // Should emit resend-after-edit event
+  expect(emitEventMock).toHaveBeenCalledWith('resend-after-edit', {
+    message: userMessage,
+    newContent: 'Modified user message'
+  })
+
+  // Should exit edit mode
+  expect(wrapper.find('.edit-container').exists()).toBe(false)
+})
+
+test('Message editing - Save assistant message edit updates content', async () => {
+
+  const editedMessage = new Message('assistant', 'Original assistant content')
+  const wrapper = await mount(editedMessage)
+
+  // Enter edit mode
+  wrapper.vm.startEditing()
+  await nextTick()
+
+  // Change the content
+  const textarea = wrapper.find('.edit-textarea')
+  await textarea.setValue('Modified assistant content')
+
+  // Save editing
+  await wrapper.find('.edit-actions button.primary').trigger('click')
+  await nextTick()
+
+  // Should update content and set edited flag
+  expect(editedMessage.content).toBe('Modified assistant content')
+  expect(editedMessage.edited).toBe(true)
+
+  // Should exit edit mode
+  expect(wrapper.find('.edit-container').exists()).toBe(false)
+})
+
+test('Message editing - Edited indicator shows for edited assistant messages', async () => {
+
+  const editedMessage = new Message('assistant', 'Content')
+  editedMessage.edited = true
+
+  const wrapper = await mount(editedMessage, false)
+
+  // Should show edited indicator
+  expect(wrapper.find('.edited-indicator').exists()).toBe(true)
+  expect(wrapper.find('.edited-indicator').text()).toBe('chat.edited')
+})
+
+test('Message editing - Edited indicator not shown for unedited messages', async () => {
+
+  const uneditedMessage = new Message('assistant', 'Content')
+  uneditedMessage.edited = false
+
+  const wrapper = await mount(uneditedMessage, false)
+
+  // Should not show edited indicator
+  expect(wrapper.find('.edited-indicator').exists()).toBe(false)
+})
+
+test('Message editing - Empty content cannot be saved', async () => {
+
+  const wrapper = await mount(userMessage)
+
+  // Enter edit mode
+  wrapper.vm.startEditing()
+  await nextTick()
+
+  // Clear the content
+  const textarea = wrapper.find('.edit-textarea')
+  await textarea.setValue('   ')
+
+  // Try to save
+  await wrapper.find('.edit-actions button.primary').trigger('click')
+  await nextTick()
+
+  // Should still be in edit mode (save rejected)
+  expect(wrapper.find('.edit-container').exists()).toBe(true)
+})
+
+test('Message editing - Keyboard shortcuts work', async () => {
+
+  const wrapper = await mount(userMessage)
+
+  // Enter edit mode
+  wrapper.vm.startEditing()
+  await nextTick()
+
+  const textarea = wrapper.find('.edit-textarea')
+  await textarea.setValue('Modified content')
+
+  // Test Escape key for cancel
+  await textarea.trigger('keydown.escape')
+  await nextTick()
+  expect(wrapper.find('.edit-container').exists()).toBe(false)
+
+  // Enter edit mode again
+  wrapper.vm.startEditing()
+  await nextTick()
+  await textarea.setValue('Modified content again')
+
+  // Test Cmd+Enter for save (on Mac)
+  await textarea.trigger('keydown.meta.enter')
+  await nextTick()
+  expect(emitEventMock).toHaveBeenCalledWith('resend-after-edit', {
+    message: userMessage,
+    newContent: 'Modified content again'
+  })
 })
