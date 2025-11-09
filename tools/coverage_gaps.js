@@ -5,17 +5,19 @@
  *
  * This script analyzes test coverage to identify files with the most uncovered lines.
  * It runs vitest with JSON coverage output, then parses the results to count uncovered
- * statements per file.
+ * statements per file and shows which specific lines are uncovered.
  *
  * Usage:
- *   node tools/coverage_gaps.js [--limit N] [--filter path/pattern]
+ *   node tools/coverage_gaps.js [--limit N] [--filter path/pattern] [--show-lines]
  *
  * Options:
  *   --limit N            Show top N files (default: 20)
  *   --filter pattern     Only show files matching pattern (e.g., "src/components")
+ *   --show-lines         Show uncovered line numbers for each file
  *
  * Output:
  *   Lists files sorted by number of uncovered lines, with total lines and coverage %.
+ *   Optionally shows which specific lines are uncovered.
  */
 
 const { execSync } = require('child_process');
@@ -26,6 +28,7 @@ const path = require('path');
 const args = process.argv.slice(2);
 let limit = 20;
 let filterPattern = null;
+let showLines = false;
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--limit' && args[i + 1]) {
@@ -34,6 +37,8 @@ for (let i = 0; i < args.length; i++) {
   } else if (args[i] === '--filter' && args[i + 1]) {
     filterPattern = args[i + 1];
     i++;
+  } else if (args[i] === '--show-lines') {
+    showLines = true;
   }
 }
 
@@ -61,6 +66,46 @@ if (!fs.existsSync(coveragePath)) {
 
 const coverage = JSON.parse(fs.readFileSync(coveragePath, 'utf-8'));
 
+/**
+ * Convert line numbers to compact ranges
+ * e.g., [1,2,3,5,6,8] -> "1-3,5-6,8"
+ */
+function formatLineRanges(lines) {
+  if (lines.length === 0) return '';
+
+  lines.sort((a, b) => a - b);
+  const ranges = [];
+  let rangeStart = lines[0];
+  let rangeEnd = lines[0];
+
+  for (let i = 1; i < lines.length; i++) {
+    if (lines[i] === rangeEnd + 1) {
+      rangeEnd = lines[i];
+    } else {
+      if (rangeStart === rangeEnd) {
+        ranges.push(String(rangeStart));
+      } else if (rangeEnd === rangeStart + 1) {
+        ranges.push(`${rangeStart},${rangeEnd}`);
+      } else {
+        ranges.push(`${rangeStart}-${rangeEnd}`);
+      }
+      rangeStart = lines[i];
+      rangeEnd = lines[i];
+    }
+  }
+
+  // Add the last range
+  if (rangeStart === rangeEnd) {
+    ranges.push(String(rangeStart));
+  } else if (rangeEnd === rangeStart + 1) {
+    ranges.push(`${rangeStart},${rangeEnd}`);
+  } else {
+    ranges.push(`${rangeStart}-${rangeEnd}`);
+  }
+
+  return ranges.join(',');
+}
+
 // Analyze each file
 const results = [];
 
@@ -70,15 +115,23 @@ for (const [filePath, data] of Object.entries(coverage)) {
     continue;
   }
 
-  // Count uncovered statements
+  // Count uncovered statements and collect line numbers
   const statements = data.s || {};
+  const statementMap = data.statementMap || {};
   let totalStatements = 0;
   let uncoveredStatements = 0;
+  const uncoveredLines = new Set();
 
   for (const [key, count] of Object.entries(statements)) {
     totalStatements++;
     if (count === 0) {
       uncoveredStatements++;
+
+      // Get the line number for this statement
+      const stmt = statementMap[key];
+      if (stmt && stmt.start) {
+        uncoveredLines.add(stmt.start.line);
+      }
     }
   }
 
@@ -95,7 +148,8 @@ for (const [filePath, data] of Object.entries(coverage)) {
     total: totalStatements,
     uncovered: uncoveredStatements,
     covered: totalStatements - uncoveredStatements,
-    coveragePct: parseFloat(coveragePct)
+    coveragePct: parseFloat(coveragePct),
+    uncoveredLines: Array.from(uncoveredLines)
   });
 }
 
@@ -116,10 +170,18 @@ for (const result of topResults) {
   const coverage = String(result.coveragePct + '%').padEnd(8);
 
   console.log(`${uncovered}\t${total}\t${coverage}\t${result.file}`);
+
+  if (showLines && result.uncoveredLines.length > 0) {
+    const lineRanges = formatLineRanges(result.uncoveredLines);
+    console.log(`         \t     \t        \t  Lines: ${lineRanges}`);
+  }
 }
 
 console.log('\n' + '='.repeat(80));
 console.log(`Showing top ${topResults.length} files with most coverage gaps`);
 if (filterPattern) {
   console.log(`Filter: ${filterPattern}`);
+}
+if (!showLines) {
+  console.log('Use --show-lines to see uncovered line numbers');
 }
