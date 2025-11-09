@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.1.2] - WIP
 
 ### Added
-- N/A
+- Edit messages, quote user message (https://github.com/nbonamy/witsy/issues/479)
 
 ### Changed
 - Agent: can use user variables at all steps
