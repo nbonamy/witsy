@@ -25,7 +25,7 @@
         </thead>
 
         <tbody>
-          <tr v-for="agent in store.agents" :key="`${agent.uuid}-${agent.lastRunId}`">
+          <tr v-for="agent in agents.sort((a: Agent, b: Agent) => a.name.localeCompare(b.name))" :key="`${agent.uuid}-${agent.lastRunId}`">
             <td>{{ agent.name }}</td>
             <td>{{ agent.description }}</td>
             <td>{{ t(`agent.forge.list.${agent.type}`) }}</td>
@@ -81,10 +81,11 @@ import { Agent, AgentRun } from '../types/agents'
 
 const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson'])
 
+const agents = ref<Agent[]>([])
 const startingAgents = ref<string[]>([])
 
 onMounted(() => {
-  store.loadAgents()
+  agents.value = window.api.agents.list(store.config.workspaceId)
   window.api.on('agent-run-update', onAgentRunUpdate)
 })
 
@@ -102,7 +103,13 @@ const onAgentRun = async (agent: Agent) => {
 }
 
 const onAgentRunUpdate = (data: { agentId: string }) => {
-  store.loadAgents()
+  const index = agents.value.findIndex(a => a.uuid === data.agentId)
+  const agent = window.api.agents.load(store.config.workspaceId, data.agentId)
+  if (index === -1) {
+    agents.value.push(agent)
+  } else {
+    agents.value.splice(index, 1, agent)
+  }
 }
 
 const lastRun = (agent: Agent) => {

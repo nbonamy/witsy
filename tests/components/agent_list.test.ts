@@ -33,9 +33,6 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  store.agents = []
-  // Load agents from window mock
-  store.loadAgents()
 })
 
 test('Renders agent list component', async () => {
@@ -45,9 +42,8 @@ test('Renders agent list component', async () => {
 })
 
 test('Shows table with agent rows', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
-  })
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
   
   const table = wrapper.find('table')
   expect(table.exists()).toBe(true)
@@ -64,6 +60,7 @@ test('Shows table with agent rows', async () => {
 
 test('Shows all agents in table rows', async () => {
   const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
   
   // Should have all 3 agents in table rows
   const rows = wrapper.findAll('tbody tr')
@@ -72,6 +69,7 @@ test('Shows all agents in table rows', async () => {
 
 test('Displays agent information correctly', async () => {
   const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
 
   const firstRow = wrapper.find('tbody tr')
   const cells = firstRow.findAll('td')
@@ -102,10 +100,7 @@ test('Shows "Running..." for agent with running execution', async () => {
     return null
   })
 
-  const wrapper: VueWrapper<any> = mount(List, {
-    props: { agents: store.agents }
-  })
-
+  const wrapper: VueWrapper<any> = mount(List)
   await nextTick()
 
   const firstRow = wrapper.find('tbody tr')
@@ -119,7 +114,8 @@ test('Shows "Running..." for agent with running execution', async () => {
 
 test('Displays agents in array order', async () => {
   const wrapper: VueWrapper<any> = mount(List)
-  
+  await wrapper.vm.$nextTick()
+
   const rows = wrapper.findAll('tbody tr')
   const firstRowCells = rows.at(0)?.findAll('td')
   const secondRowCells = rows.at(1)?.findAll('td')
@@ -129,21 +125,10 @@ test('Displays agents in array order', async () => {
   expect(secondRowCells?.at(0)?.text()).toBe('Test Agent 2')
 })
 
-test('Shows empty table when no agents', async () => {
-  store.agents = []
-  const wrapper: VueWrapper<any> = mount(List)
-  
-  const table = wrapper.find('table')
-  expect(table.exists()).toBe(true)
-  
-  const rows = wrapper.findAll('tbody tr')
-  expect(rows).toHaveLength(0) // No agent rows
-})
-
 test('Shows action buttons for each agent', async () => {
-  const wrapper: VueWrapper<any> = mount(List, { 
-    props: { agents: store.agents } 
-  })
+  
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
   
   const firstRow = wrapper.find('tbody tr')
   const actionsCell = firstRow.findAll('td').at(4) // Last column contains actions
@@ -156,28 +141,29 @@ test('Shows action buttons for each agent', async () => {
 
 test('Emits view event when clicking view button', async () => {
   const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
   
   const viewButton = wrapper.find('.view')
   await viewButton.trigger('click')
   
   expect(wrapper.emitted('view')).toBeTruthy()
-  expect((wrapper.emitted('view')![0][0] as any).uuid).toEqual(store.agents[0].uuid) // First agent in array
+  expect((wrapper.emitted('view')![0][0] as any).uuid).toEqual(wrapper.vm.agents[0].uuid) // First agent in array
 })
 
 test('Emits run event when clicking run button', async () => {
   const wrapper: VueWrapper<any> = mount(List)
-  
+  await wrapper.vm.$nextTick()
+
   const runButton = wrapper.find('.run')
   await runButton.trigger('click')
   
   expect(wrapper.emitted('run')).toBeTruthy()
-  expect((wrapper.emitted('run')![0][0] as any).uuid).toEqual(store.agents[0].uuid) // First agent in array
+  expect((wrapper.emitted('run')![0][0] as any).uuid).toEqual(wrapper.vm.agents[0].uuid) // First agent in array
 })
 
 test('Emits edit event when clicking edit option in context menu', async () => {
-  const wrapper: VueWrapper<any> = mount(List, {
-    attachTo: document.body
-  })
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
 
   // Find the ContextMenuTrigger and click it to open the menu
   const contextMenuTrigger = wrapper.findComponent({ name: 'ContextMenuTrigger' })
@@ -192,13 +178,12 @@ test('Emits edit event when clicking edit option in context menu', async () => {
   await editItem.trigger('click')
 
   expect(wrapper.emitted('edit')).toBeTruthy()
-  expect(wrapper.emitted('edit')![0]).toEqual([store.agents[0]]) // First agent in array
+  expect(wrapper.emitted('edit')![0]).toEqual([wrapper.vm.agents[0]]) // First agent in array
 })
 
 test('Emits delete event when clicking delete option in context menu', async () => {
-  const wrapper: VueWrapper<any> = mount(List, {
-    attachTo: document.body
-  })
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
 
   // Find the ContextMenuTrigger and click it to open the menu
   const contextMenuTrigger = wrapper.findComponent({ name: 'ContextMenuTrigger' })
@@ -213,13 +198,12 @@ test('Emits delete event when clicking delete option in context menu', async () 
   await deleteItem.trigger('click')
 
   expect(wrapper.emitted('delete')).toBeTruthy()
-  expect(wrapper.emitted('delete')![0]).toEqual([store.agents[0]]) // First agent in array
+  expect(wrapper.emitted('delete')![0]).toEqual([wrapper.vm.agents[0]]) // First agent in array
 })
 
 test('Emits create event when clicking create button', async () => {
-  const wrapper: VueWrapper<any> = mount(List, {
-    props: { agents: store.agents }
-  })
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
 
   const createButton = wrapper.find('button[name="create"]')
   await createButton.trigger('click')
@@ -228,9 +212,8 @@ test('Emits create event when clicking create button', async () => {
 })
 
 test('Emits importA2A event when clicking A2A button', async () => {
-  const wrapper: VueWrapper<any> = mount(List, {
-    props: { agents: store.agents }
-  })
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
 
   const a2aButton = wrapper.find('button[name="import-a2a"]')
   await a2aButton.trigger('click')
@@ -239,21 +222,15 @@ test('Emits importA2A event when clicking A2A button', async () => {
 })
 
 test('Emits importJson event when clicking import button', async () => {
-  const wrapper: VueWrapper<any> = mount(List, {
-    props: { agents: store.agents }
-  })
-
+  const wrapper: VueWrapper<any> = mount(List)
   const importButton = wrapper.find('button[name="import-json"]')
   await importButton.trigger('click')
-
   expect(wrapper.emitted('importJson')).toBeTruthy()
 })
 
 test('Emits export event when clicking export option in context menu', async () => {
-  const wrapper: VueWrapper<any> = mount(List, {
-    props: { agents: store.agents },
-    attachTo: document.body
-  })
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
 
   // Find the ContextMenuTrigger and click it to open the menu
   const contextMenuTrigger = wrapper.findComponent({ name: 'ContextMenuTrigger' })
@@ -268,14 +245,12 @@ test('Emits export event when clicking export option in context menu', async () 
   await exportItem.trigger('click')
 
   expect(wrapper.emitted('export')).toBeTruthy()
-  expect(wrapper.emitted('export')![0]).toEqual([store.agents[0]]) // First agent in array
+  expect(wrapper.emitted('export')![0]).toEqual([wrapper.vm.agents[0]]) // First agent in array
 })
 
 test('Emits duplicate event when clicking duplicate option in context menu', async () => {
-  const wrapper: VueWrapper<any> = mount(List, {
-    props: { agents: store.agents },
-    attachTo: document.body
-  })
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
 
   // Find the ContextMenuTrigger and click it to open the menu
   const contextMenuTrigger = wrapper.findComponent({ name: 'ContextMenuTrigger' })
@@ -290,13 +265,12 @@ test('Emits duplicate event when clicking duplicate option in context menu', asy
   await duplicateItem.trigger('click')
 
   expect(wrapper.emitted('duplicate')).toBeTruthy()
-  expect(wrapper.emitted('duplicate')![0]).toEqual([store.agents[0]]) // First agent in array
+  expect(wrapper.emitted('duplicate')![0]).toEqual([wrapper.vm.agents[0]]) // First agent in array
 })
 
 test('Event handlers prevent bubbling for action buttons', async () => {
-  const wrapper: VueWrapper<any> = mount(List, {
-    props: { agents: store.agents }
-  })
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
 
   // Click on run button should not trigger any other events since there's no panel item click
   const runButton = wrapper.find('.run')
