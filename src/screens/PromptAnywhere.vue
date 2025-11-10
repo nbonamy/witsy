@@ -620,7 +620,7 @@ const onResponseResize = (deltaX: number) => {
 .anywhere {
 
   .prompt, .response {
-    opacity: 0.95;
+    opacity: 0.98;
     background-color: var(--anywhere-bg-color);
   }
 
