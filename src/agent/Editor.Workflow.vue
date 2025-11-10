@@ -30,7 +30,13 @@
             <div class="form-field">
               <label for="prompt">{{ t('common.prompt') }}</label>
               <div class="help">{{ t('agent.create.workflow.help.prompt') }}</div>
-              <textarea v-model="agent.steps[index].prompt"></textarea>
+              <div class="prompt">
+                <div class="prompt-toolbar">
+                  <ButtonIcon @click="onInsertSystemVariable(index)" :id="`system-var-anchor-${index}`"><BracesIcon />{{ t('agent.create.workflow.insertSystemVariable') }}</ButtonIcon>
+                  <ButtonIcon @click="onCreateUserVariable(index)" :id="`plus-icon-${index}`"><PlusIcon />{{ t('agent.create.workflow.createUserVariable') }}</ButtonIcon>
+                </div>
+                <textarea v-model="agent.steps[index].prompt" name="prompt" :ref="(el: any) => setTextareaRef(el, index)"></textarea>
+              </div>
               <div class="help" v-if="index > 0">{{ t('agent.create.workflow.help.connect') }}</div>
               <div class="help" v-if="step.docrepo">{{ t('agent.create.workflow.help.docRepo') }}</div>
             </div>
@@ -133,12 +139,33 @@
     @expert-selected="selectExpert"
     @manage-experts="onManageExperts"
   />
+
+  <!-- System Variables Menu -->
+  <ContextMenuPlus
+    v-if="systemVarMenuVisible && systemVarMenuStepIndex >= 0"
+    :anchor="`#system-var-anchor-${systemVarMenuStepIndex}`"
+    position="below"
+    @close="onCloseSystemVarMenu"
+  >
+    <template #default>
+      <div @click.stop="insertPreviousStepOutput" :class="{ disabled: systemVarMenuStepIndex === 0 }" >
+        <span>{{ t('agent.create.workflow.systemVar.previousStep') }}</span>
+      </div>
+    </template>
+  </ContextMenuPlus>
+
+  <!-- Create Variable Dialog -->
+  <CreateUserVariable
+    ref="createVariableDialog"
+    @create="onVariableCreated"
+  />
 </template>
 
 <script setup lang="ts">
 import { BlocksIcon, BracesIcon, BrainIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed, PropType, ref, watch } from 'vue'
 import AgentIcon from '../../assets/agent.svg?component'
+import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import DocReposMenu from '../components/DocReposMenu.vue'
 import ExpertsMenu from '../components/ExpertsMenu.vue'
@@ -154,6 +181,7 @@ import { processJsonSchema } from '../services/schema'
 import { store } from '../services/store'
 import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from '../types/agents'
 import { McpServerWithTools, McpToolUnique } from '../types/mcp'
+import CreateUserVariable from './CreateUserVariable.vue'
 
 const props = defineProps({
   agent: {
@@ -186,6 +214,14 @@ const agentsMenuVisible = ref(false)
 const agentsMenuStepIndex = ref(-1)
 const expertMenuVisible = ref(false)
 const expertMenuStepIndex = ref(-1)
+
+// Variable insertion refs
+const textareaRefs = ref<Record<number, HTMLTextAreaElement>>({})
+const caretPosition = ref<number>(0)
+const activeStepIndex = ref<number>(-1)
+const systemVarMenuVisible = ref(false)
+const systemVarMenuStepIndex = ref(-1)
+const createVariableDialog = ref(null)
 
 // Watch for prop changes
 watch(() => props.expandedStep, (newValue) => {
@@ -477,6 +513,96 @@ const onDeleteStep = async (index: number) => {
   }
 }
 
+// Variable insertion helpers
+const setTextareaRef = (el: HTMLTextAreaElement | null, index: number) => {
+  if (el) {
+    textareaRefs.value[index] = el
+  }
+}
+
+const saveCaretPosition = (index: number) => {
+  const textarea = textareaRefs.value[index]
+  if (textarea) {
+    caretPosition.value = textarea.selectionStart
+    activeStepIndex.value = index
+  }
+}
+
+const insertVariableAtCaret = (variableText: string) => {
+  if (activeStepIndex.value < 0) return
+
+  const stepIndex = activeStepIndex.value
+  const prompt = props.agent.steps[stepIndex].prompt
+  const beforeCaret = prompt.substring(0, caretPosition.value)
+  const afterCaret = prompt.substring(caretPosition.value)
+
+  props.agent.steps[stepIndex].prompt = beforeCaret + variableText + afterCaret
+
+  // Restore focus and caret position after variable insertion
+  const textarea = textareaRefs.value[stepIndex]
+  if (textarea) {
+    const newCaretPos = caretPosition.value + variableText.length
+    setTimeout(() => {
+      textarea.focus()
+      textarea.setSelectionRange(newCaretPos, newCaretPos)
+    }, 0)
+  }
+}
+
+const getExistingVariableNames = (index: number): string[] => {
+  const prompt = props.agent.steps[index].prompt
+  const regex = /\{\{([^:}]+)(?::[^:}]*)?(?::[^}]*)?\}\}/g
+  const names: string[] = []
+  let match
+  while ((match = regex.exec(prompt)) !== null) {
+    names.push(match[1])
+  }
+  return names
+}
+
+const onInsertSystemVariable = (index: number) => {
+  saveCaretPosition(index)
+  systemVarMenuStepIndex.value = index
+  systemVarMenuVisible.value = true
+}
+
+const onCloseSystemVarMenu = () => {
+  systemVarMenuVisible.value = false
+  systemVarMenuStepIndex.value = -1
+}
+
+const insertSystemVariable = (variableName: string) => {
+  onCloseSystemVarMenu()
+  insertVariableAtCaret(`{{${variableName}}}`)
+}
+
+const insertPreviousStepOutput = () => {
+  if (systemVarMenuStepIndex.value === 0) return
+  insertSystemVariable(`${kAgentStepVarOutputPrefix}${systemVarMenuStepIndex.value}`)
+}
+
+const onCreateUserVariable = (index: number) => {
+  saveCaretPosition(index)
+  const existingVars = getExistingVariableNames(index)
+  createVariableDialog.value.show(existingVars)
+}
+
+const onVariableCreated = (variableData: { name: string, description: string, defaultValue: string }) => {
+  const { name, description, defaultValue } = variableData
+  let variableText = `{{${name}`
+  if (description) {
+    variableText += `:${description}`
+    if (defaultValue) {
+      variableText += `:${defaultValue}`
+    }
+  } else if (defaultValue) {
+    variableText += `::${defaultValue}`
+  }
+  variableText += '}}'
+
+  insertVariableAtCaret(variableText)
+}
+
 const onNext = () => {
   emit('next')
 }
@@ -530,20 +656,21 @@ defineExpose({ validate })
     background-color: var(--background-color-light);
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
-    font-family: monospace;
     font-size: 12.5px;
   }
 
   .prompt-inputs {
+    
+    margin: 0.5rem 0rem;
 
     th {
-      border: none;
       font-weight: 600;
     }
 
     th, td {
-      font-family: monospace;
+      border: none;
       font-size: 12px;
+      padding: 0.375rem 0.75rem;
     }
 
     td:first-child {
@@ -618,6 +745,31 @@ defineExpose({ validate })
         padding-top: 0px;
         input, textarea, select {
           background-color: var(--color-surface);
+        }
+
+        .prompt {
+          width: 100%;
+          position: relative;
+
+          .prompt-toolbar {
+            height: calc(2rem + 1px);
+            background-color: var(--color-surface);
+            border: 1px solid var(--border-color);  
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+            &:deep() .button-icon {
+              font-size: var(--font-size-12);
+            }
+          }
+
+          textarea {
+            border-top: none;
+            padding: 0.75rem;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+          }
+
+
         }
       }
     }

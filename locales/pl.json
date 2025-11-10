@@ -248,6 +248,23 @@
       "workflow": {
         "addStep": "Dodaj krok",
         "confirmDeleteStep": "Czy na pewno chcesz usunąć ten krok?",
+        "createUserVariable": "Utwórz niestandardową zmienną",
+        "createVariable": {
+          "defaultPlaceholder": "Opcjonalna wartość domyślna",
+          "defaultValue": "Wartość domyślna",
+          "defaultValueHelper": "Podaj wartość domyślną",
+          "descPlaceholder": "Opcjonalny opis",
+          "description": "Opis",
+          "descriptionHelper": "Opis pomoże użytkownikowi przy podawaniu wartości",
+          "error": {
+            "nameDuplicate": "Zmienna o nazwie \"{name}\" już istnieje w tym zapytaniu.",
+            "nameRequired": "Nazwa zmiennej jest wymagana.",
+            "nameSystem": "Nazwa \"{name}\" jest zarezerwowana dla zmiennych systemowych."
+          },
+          "name": "Nazwa zmiennej",
+          "nameHelper": "Ustaw jasną, opisową nazwę",
+          "namePlaceholder": "np. customerName, projectTitle"
+        },
         "customAgents": "Współadagenci",
         "customTools": "Narzędzia",
         "description": "@:{'common.description'}",
@@ -267,11 +284,15 @@
           "prompt": "Opisz, co chcesz, aby agent zrobił w tym kroku twojego przepływu pracy",
           "title": "Zaprojektuj swój wieloetapowy przepływ pracy. Szablony promptów będą używane do wykonania każdego kroku. Możesz uwzględnić „zmienne”, które zostaną zastąpione wartościami podanymi przez użytkownika podczas uruchamiania agenta. Użyj formatu {'{'}{'{'}name:description:value{'}'}{'}'} do zdefiniowania zmiennej (opis będzie wskazówką dla użytkownika przy wprowadzaniu wartości). Zarówno opis, jak i domyślna wartość są opcjonalne."
         },
+        "insertSystemVariable": "Wstaw zmienną systemową",
         "jsonSchema": "JSON…",
         "step": "Krok {step}",
         "structuredOutput": {
           "text": "Określ <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">prosty schemat JSON</a>, aby zdefiniować oczekiwany format wyjściowy tego kroku.",
           "title": "Schemat JSON"
+        },
+        "systemVar": {
+          "previousStep": "Wynik poprzedniego kroku"
         },
         "title": "Przepływ pracy"
       }

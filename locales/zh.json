@@ -248,6 +248,23 @@
       "workflow": {
         "addStep": "添加步骤",
         "confirmDeleteStep": "您确定要删除此步骤吗？",
+        "createUserVariable": "创建自定义变量",
+        "createVariable": {
+          "defaultPlaceholder": "可选默认值",
+          "defaultValue": "默认值",
+          "defaultValueHelper": "提供一个默认值",
+          "descPlaceholder": "可选描述",
+          "description": "描述",
+          "descriptionHelper": "当提示输入值时，描述将指导用户",
+          "error": {
+            "nameDuplicate": "此提示中已存在名为“{name}”的变量。",
+            "nameRequired": "变量名称为必填项。",
+            "nameSystem": "名称“{name}”已被系统变量保留。"
+          },
+          "name": "变量名称",
+          "nameHelper": "设置清晰、描述性的名称",
+          "namePlaceholder": "例如 customerName，projectTitle"
+        },
         "customAgents": "协同代理",
         "customTools": "工具",
         "description": "@:{'common.description'}",
@@ -267,11 +284,15 @@
           "prompt": "描述您希望代理在工作流程此步骤中执行的操作",
           "title": "设计您的多步骤工作流。提示模板将用于执行每个步骤。您可以包含“变量”，这些变量将在执行代理时用用户提供的值替换。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示输入值时指导用户）。描述和值都是可选的。"
         },
+        "insertSystemVariable": "插入系统变量",
         "jsonSchema": "JSON…",
         "step": "步骤 {step}",
         "structuredOutput": {
           "text": "指定一个<a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">简单的JSON模式</a>来定义此步骤的预期输出格式。",
           "title": "JSON schema"
+        },
+        "systemVar": {
+          "previousStep": "上一步输出"
         },
         "title": "工作流"
       }

@@ -248,6 +248,23 @@
       "workflow": {
         "addStep": "Adicionar Etapa",
         "confirmDeleteStep": "Tem certeza que deseja excluir esta etapa?",
+        "createUserVariable": "Criar variável personalizada",
+        "createVariable": {
+          "defaultPlaceholder": "Valor padrão opcional",
+          "defaultValue": "Valor padrão",
+          "defaultValueHelper": "Forneça um valor padrão",
+          "descPlaceholder": "Descrição opcional",
+          "description": "Descrição",
+          "descriptionHelper": "A descrição irá guiar o usuário quando for solicitado um valor",
+          "error": {
+            "nameDuplicate": "Já existe uma variável chamada \"{name}\" neste prompt.",
+            "nameRequired": "O nome da variável é obrigatório.",
+            "nameSystem": "O nome \"{name}\" é reservado para variáveis do sistema."
+          },
+          "name": "Nome da variável",
+          "nameHelper": "Defina um nome claro e descritivo",
+          "namePlaceholder": "ex: nomeCliente, tituloProjeto"
+        },
         "customAgents": "Co-Agentes",
         "customTools": "Ferramentas",
         "description": "@:{'common.description'}",
@@ -267,11 +284,15 @@
           "prompt": "Descreva o que você quer que o agente faça nesta etapa do seu fluxo de trabalho",
           "title": "Desenhe seu fluxo de trabalho em múltiplas etapas. Templates de prompt serão usados para executar cada etapa. Você pode incluir \"variáveis\" que serão substituídas pelos valores fornecidos pelo usuário quando o agente for executado. Use o formato {'{'}{'{'}nome:descrição:valor{'}'}{'}'} para definir uma variável (a descrição guiará o usuário quando solicitado um valor). Tanto a descrição quanto o valor padrão são opcionais."
         },
+        "insertSystemVariable": "Inserir variável do sistema",
         "jsonSchema": "JSON…",
         "step": "Passo {step}",
         "structuredOutput": {
           "text": "Especifique um <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">esquema JSON simples</a> para definir o formato de saída esperado desta etapa.",
           "title": "Esquema JSON"
+        },
+        "systemVar": {
+          "previousStep": "Saída da etapa anterior"
         },
         "title": "Fluxo de trabalho"
       }

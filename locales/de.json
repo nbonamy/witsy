@@ -229,6 +229,23 @@
       "workflow": {
         "addStep": "Schritt hinzufügen",
         "confirmDeleteStep": "Sind Sie sicher, dass Sie diesen Schritt löschen möchten?",
+        "createUserVariable": "Benutzerdefinierte Variable erstellen",
+        "createVariable": {
+          "defaultPlaceholder": "Optionaler Standardwert",
+          "defaultValue": "Standardwert",
+          "defaultValueHelper": "Geben Sie einen Standardwert an",
+          "descPlaceholder": "Optionale Beschreibung",
+          "description": "Beschreibung",
+          "descriptionHelper": "Die Beschreibung hilft dem Nutzer bei der Eingabe eines Werts",
+          "error": {
+            "nameDuplicate": "Eine Variable mit dem Namen \"{name}\" existiert bereits in diesem Prompt.",
+            "nameRequired": "Variablenname ist erforderlich.",
+            "nameSystem": "Der Name \"{name}\" ist für Systemvariablen reserviert."
+          },
+          "name": "Variablenname",
+          "nameHelper": "Geben Sie einen klaren, beschreibenden Namen an",
+          "namePlaceholder": "z.B. kundenName, projektTitel"
+        },
         "customAgents": "Co-Agenten",
         "customTools": "Werkzeuge",
         "description": "@:{'common.description'}",
@@ -248,11 +265,15 @@
           "prompt": "Beschreiben Sie, was der Agent in diesem Schritt Ihres Workflows tun soll",
           "title": "Entwerfen Sie Ihren mehrstufigen Arbeitsablauf. Vorlagen für Eingabeaufforderungen werden verwendet, um jeden Schritt auszuführen. Sie können \"Variablen\" einfügen, die durch die vom Benutzer beim Ausführen des Agenten bereitgestellten Werte ersetzt werden. Verwenden Sie das Format {'{'}{'{'}name:beschreibung:wert{'}'}{'}'}, um eine Variable zu definieren (die Beschreibung wird den Benutzer beim Abfragen eines Werts leiten). Sowohl die Beschreibung als auch der Standardwert sind optional."
         },
+        "insertSystemVariable": "Systemvariable einfügen",
         "jsonSchema": "JSON…",
         "step": "Schritt {step}",
         "structuredOutput": {
           "text": "Geben Sie ein <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">einfaches JSON-Schema</a> an, um das erwartete Ausgabeformat dieses Schrittes zu definieren.",
           "title": "JSON-Schema"
+        },
+        "systemVar": {
+          "previousStep": "Ausgabe vorheriger Schritt"
         },
         "title": "Arbeitsablauf"
       }
