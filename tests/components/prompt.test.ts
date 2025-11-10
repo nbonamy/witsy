@@ -10,12 +10,52 @@ import Prompt from '../../src/components/Prompt.vue'
 import Chat from '../../src/models/chat'
 import Attachment from '../../src/models/attachment'
 import { getLlmLocale } from '../../src/services/i18n'
+import Dialog from '../../src/composables/dialog'
 
 enableAutoUnmount(afterAll)
 
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
 })
+
+vi.mock('../../src/composables/dialog', () => ({
+  default: {
+    show: vi.fn(),
+    alert: vi.fn()
+  }
+}))
+
+vi.mock('../../src/voice/stt', () => ({
+  isSTTReady: vi.fn(() => true),
+}))
+
+vi.mock('../../src/composables/audio_recorder', () => ({
+  default: vi.fn(() => ({
+    initialize: vi.fn(),
+    start: vi.fn(),
+    stop: vi.fn(),
+    release: vi.fn(),
+    getAnalyser: vi.fn(() => ({
+      getByteTimeDomainData: vi.fn()
+    })),
+    getBufferLength: vi.fn(() => 1024)
+  })),
+}))
+
+vi.mock('../../src/composables/transcriber', () => ({
+  default: vi.fn(() => ({
+    transcriber: {
+      initialize: vi.fn(),
+      requiresPcm16bits: false,
+      requiresStreaming: false,
+      transcribe: vi.fn().mockResolvedValue({ text: 'test transcription' }),
+      startStreaming: vi.fn(),
+      sendStreamingChunk: vi.fn(),
+      endStreaming: vi.fn()
+    },
+    processStreamingError: vi.fn()
+  }))
+}))
 
 let wrapper: VueWrapper<any>
 let chat: Chat|null = null
@@ -723,7 +763,162 @@ test('Removes from favorites', async () => {
 
   // Click the remove button
   await removeButton.trigger('click')
-  
+
   // Should be removed from favorites in store
   expect(store.config.llm.favorites).toHaveLength(1)
+})
+
+test('handleManageDocRepo opens docrepo settings', async () => {
+  // Open prompt menu first
+  await wrapper.find('.prompt-menu').trigger('click')
+  await wrapper.vm.$nextTick()
+
+  // Call handleManageDocRepo
+  wrapper.vm.handleManageDocRepo()
+
+  // Should call IPC to open docrepo
+  expect(window.api.docrepo.open).toHaveBeenCalled()
+  // Should close the prompt menu
+  expect(wrapper.vm.showPromptMenu).toBe(false)
+})
+
+test('handleManageExperts opens experts settings', async () => {
+  // Open prompt menu first
+  await wrapper.find('.prompt-menu').trigger('click')
+  await wrapper.vm.$nextTick()
+
+  // Call handleManageExperts
+  wrapper.vm.handleManageExperts()
+
+  // Should call IPC to open settings on experts tab
+  expect(window.api.settings.open).toHaveBeenCalledWith({ initialTab: 'experts' })
+  // Should close the prompt menu
+  expect(wrapper.vm.showPromptMenu).toBe(false)
+})
+
+test('onNoEngineAvailable shows dialog and opens settings on confirm', async () => {
+  // Mock Dialog.show to return confirmed
+  vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false, value: undefined })
+
+  // Call onNoEngineAvailable
+  await wrapper.vm.onNoEngineAvailable()
+
+  // Should show dialog
+  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
+    title: expect.any(String),
+    text: expect.any(String),
+    showCancelButton: true
+  }))
+
+  // Should open settings on models tab
+  expect(window.api.settings.open).toHaveBeenCalledWith({ initialTab: 'models' })
+})
+
+test('onNoEngineAvailable does not open settings when cancelled', async () => {
+  // Mock Dialog.show to return cancelled
+  vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: false, isDenied: false, isDismissed: true, value: undefined })
+
+  vi.clearAllMocks()
+
+  // Call onNoEngineAvailable
+  await wrapper.vm.onNoEngineAvailable()
+
+  // Should show dialog
+  expect(Dialog.show).toHaveBeenCalled()
+
+  // Should NOT open settings
+  expect(window.api.settings.open).not.toHaveBeenCalled()
+})
+
+test('categoriesWithExperts filters and sorts categories', () => {
+  const categories = wrapper.vm.categoriesWithExperts
+
+  // Should be an array
+  expect(Array.isArray(categories)).toBe(true)
+
+  // Each category should have required properties
+  categories.forEach(cat => {
+    expect(cat).toHaveProperty('id')
+    expect(cat).toHaveProperty('name')
+    expect(cat).toHaveProperty('icon')
+  })
+
+  // Should be sorted alphabetically by name
+  for (let i = 1; i < categories.length; i++) {
+    expect(categories[i].name.localeCompare(categories[i-1].name)).toBeGreaterThanOrEqual(0)
+  }
+})
+
+test('expertsByCategory groups experts by category', () => {
+  const grouped = wrapper.vm.expertsByCategory
+
+  // Should be an object
+  expect(typeof grouped).toBe('object')
+
+  // Each group should be an array
+  Object.values(grouped).forEach(group => {
+    expect(Array.isArray(group)).toBe(true)
+  })
+})
+
+test('uncategorizedExperts returns only experts without category', () => {
+  const uncategorized = wrapper.vm.uncategorizedExperts
+
+  // Should be an array
+  expect(Array.isArray(uncategorized)).toBe(true)
+
+  // None should have a categoryId
+  uncategorized.forEach(exp => {
+    expect(exp.categoryId).toBeUndefined()
+  })
+})
+
+test('startDictation initializes transcriber and audio recorder', async () => {
+  // Call startDictation
+  await wrapper.vm.startDictation()
+
+  // Should initialize transcriber
+  expect(wrapper.vm.transcriber.initialize).toHaveBeenCalled()
+
+  // Should initialize audio recorder with config
+  expect(wrapper.vm.audioRecorder.initialize).toHaveBeenCalledWith(expect.objectContaining({
+    pcm16bitStreaming: expect.any(Boolean),
+    listener: expect.objectContaining({
+      onNoiseDetected: expect.any(Function),
+      onAudioChunk: expect.any(Function),
+      onSilenceDetected: expect.any(Function),
+      onRecordingComplete: expect.any(Function)
+    })
+  }))
+})
+
+test('onDictate starts dictation when not dictating', async () => {
+  // Ensure not dictating
+  wrapper.vm.dictating = false
+
+  // Clear previous calls
+  vi.clearAllMocks()
+
+  // Call onDictate
+  await wrapper.vm.onDictate()
+
+  // Should initialize transcriber (proof that startDictation was called)
+  expect(wrapper.vm.transcriber.initialize).toHaveBeenCalled()
+
+  // Should initialize audio recorder
+  expect(wrapper.vm.audioRecorder.initialize).toHaveBeenCalled()
+})
+
+test('onDictate stops dictation when already dictating', async () => {
+  // Set dictating to true
+  wrapper.vm.dictating = true
+
+  // Call onDictate
+  await wrapper.vm.onDictate()
+
+  // Should stop transcriber streaming
+  expect(wrapper.vm.transcriber.endStreaming).toHaveBeenCalled()
+
+  // Should stop audio recorder
+  expect(wrapper.vm.audioRecorder.stop).toHaveBeenCalled()
 })

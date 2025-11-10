@@ -27,6 +27,7 @@ const path = require('path');
 // Parse command line arguments
 const args = process.argv.slice(2);
 let limit = 20;
+let skipRunningTests = false;
 let filterPattern = null;
 let showLines = false;
 
@@ -39,21 +40,27 @@ for (let i = 0; i < args.length; i++) {
     i++;
   } else if (args[i] === '--show-lines') {
     showLines = true;
+  } else if (args[i] === '--skip-tests') {
+    skipRunningTests = true;  
   }
 }
 
-console.log('Running coverage analysis...');
-console.log('This may take a minute...\n');
+if (!skipRunningTests) {
 
-// Run vitest with JSON coverage
-try {
-  execSync('npx vitest --run --coverage.enabled=true --coverage.reporter=json --silent=true --reporter=dot', {
-    stdio: 'ignore',
-    maxBuffer: 50 * 1024 * 1024
-  });
-} catch (error) {
-  // Vitest may exit with non-zero even on success if tests fail
-  // Continue anyway as we're interested in coverage
+  console.log('Running coverage analysis...');
+  console.log('This may take a minute...\n');
+
+  // Run vitest with JSON coverage
+  try {
+    execSync('npx vitest --run --coverage.enabled=true --coverage.reporter=json --silent=true --reporter=dot', {
+      stdio: 'ignore',
+      maxBuffer: 50 * 1024 * 1024
+    });
+  } catch (error) {
+    // Vitest may exit with non-zero even on success if tests fail
+    // Continue anyway as we're interested in coverage
+  }
+
 }
 
 // Read coverage JSON
