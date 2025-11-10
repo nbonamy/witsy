@@ -50,8 +50,8 @@
             @keydown.escape="cancelEditing"
           ></textarea>
           <div class="edit-actions">
+            <button @click="saveEdit" class="primary">{{ t('chat.send') }}</button>
             <button @click="cancelEditing" class="tertiary">{{ t('chat.cancel') }}</button>
-            <button @click="saveEdit" class="primary">{{ t('chat.save') }}</button>
           </div>
         </div>
         <MessageItemBody v-else :message="message" :show-tool-calls="showToolCalls" @media-loaded="onMediaLoaded" />
@@ -357,14 +357,16 @@ defineExpose({
 }
 
 .edit-textarea {
-  min-height: 8lh;
+  min-height: 6lh;
   resize: vertical;
+  flex: 0 1 auto;
 }
 
 .edit-actions {
+  flex-shrink: 0;
   display: flex;
   gap: var(--space-4);
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin: 0;
 }
 
