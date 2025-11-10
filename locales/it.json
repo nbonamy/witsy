@@ -229,6 +229,23 @@
       "workflow": {
         "addStep": "Aggiungi passaggio",
         "confirmDeleteStep": "Sei sicuro di voler eliminare questo passaggio?",
+        "createUserVariable": "Crea variabile personalizzata",
+        "createVariable": {
+          "defaultPlaceholder": "Valore predefinito opzionale",
+          "defaultValue": "Valore predefinito",
+          "defaultValueHelper": "Fornisci un valore predefinito",
+          "descPlaceholder": "Descrizione opzionale",
+          "description": "Descrizione",
+          "descriptionHelper": "La descrizione guiderà l'utente quando gli verrà richiesto un valore",
+          "error": {
+            "nameDuplicate": "Una variabile con nome \"{name}\" esiste già in questo prompt.",
+            "nameRequired": "Il nome della variabile è obbligatorio.",
+            "nameSystem": "Il nome \"{name}\" è riservato per le variabili di sistema."
+          },
+          "name": "Nome variabile",
+          "nameHelper": "Imposta un nome chiaro e descrittivo",
+          "namePlaceholder": "es. nomeCliente, titoloProgetto"
+        },
         "customAgents": "Co-agenti",
         "customTools": "Strumenti",
         "description": "@:{'common.description'}",
@@ -248,11 +265,15 @@
           "prompt": "Descrivi cosa vuoi che l'agente faccia in questo passaggio del tuo flusso di lavoro",
           "title": "Progetta il tuo flusso di lavoro multi-step. I modelli di prompt verranno usati per eseguire ogni passaggio. Puoi includere \"variabili\" che saranno sostituite con i valori forniti dall'utente quando l'agente viene eseguito. Usa il formato {'{'}{'{'}nome:descrizione:valore{'}'}{'}'} per definire una variabile (la descrizione guiderà l'utente quando gli verrà richiesto un valore). Sia la descrizione sia il valore predefinito sono opzionali."
         },
+        "insertSystemVariable": "Inserisci variabile di sistema",
         "jsonSchema": "JSON…",
         "step": "Passo {step}",
         "structuredOutput": {
           "text": "Specifica uno <a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">schema JSON semplice</a> per definire il formato di output previsto per questo passaggio.",
           "title": "Schema JSON"
+        },
+        "systemVar": {
+          "previousStep": "Output del passo precedente"
         },
         "title": "Flusso di lavoro"
       }

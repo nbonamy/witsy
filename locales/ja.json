@@ -248,6 +248,23 @@
       "workflow": {
         "addStep": "ステップを追加",
         "confirmDeleteStep": "このステップを本当に削除しますか？",
+        "createUserVariable": "Create custom variable",
+        "createVariable": {
+          "defaultPlaceholder": "Optional default value",
+          "defaultValue": "Default Value",
+          "defaultValueHelper": "Provide a default value",
+          "descPlaceholder": "Optional description",
+          "description": "Description",
+          "descriptionHelper": "The description will guide the user when prompted for a value",
+          "error": {
+            "nameDuplicate": "A variable named \"{name}\" already exists in this prompt.",
+            "nameRequired": "Variable name is required.",
+            "nameSystem": "The name \"{name}\" is reserved for system variables."
+          },
+          "name": "Variable Name",
+          "nameHelper": "Set a clear, descriptive name",
+          "namePlaceholder": "e.g. customerName, projectTitle"
+        },
         "customAgents": "共同エージェント",
         "customTools": "ツール",
         "description": "@:{'common.description'}",
@@ -267,11 +284,15 @@
           "prompt": "このワークフローのステップでエージェントに行ってほしいことを説明してください",
           "title": "複数ステップのワークフローを設計します。各ステップの実行にはプロンプトテンプレートが使用されます。エージェント実行時にユーザーが提供した値に置き換えられる「変数」を含めることができます。変数は{'{'}{'{'}name:description:value{'}'}{'}'}の形式で定義してください（説明は値を入力する際のユーザーのガイドになります）。説明とデフォルト値はどちらも任意です。"
         },
+        "insertSystemVariable": "Insert system variable",
         "jsonSchema": "JSON…",
         "step": "ステップ {step}",
         "structuredOutput": {
           "text": "このステップの期待される出力形式を定義するために、<a href=\"https://github.com/nbonamy/witsy/wiki/Agents-JSON-format\" target=\"_blank\">簡単なJSONスキーマ</a>を指定してください。",
           "title": "JSONスキーマ"
+        },
+        "systemVar": {
+          "previousStep": "Previous Step Output"
         },
         "title": "ワークフロー"
       }

@@ -919,3 +919,450 @@ test('Selecting expert from menu updates step', async () => {
   // Step should now have the expert
   expect(agent.steps[0].expert).toBe('expert-1')
 })
+
+test('prompt textarea exists in workflow steps', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'test prompt', tools: [], agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Get the textarea element
+  const textarea = wrapper.find('textarea[name="prompt"]')
+  expect(textarea.exists()).toBe(true)
+  expect(textarea.element.value).toBe('test prompt')
+})
+
+test('Shows insert system variable button in prompt toolbar', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Should show insert system variable button
+  const sysVarButton = wrapper.find('#system-var-anchor-0')
+  expect(sysVarButton.exists()).toBe(true)
+  expect(sysVarButton.text()).toContain('agent.create.workflow.insertSystemVariable')
+})
+
+test('Shows create user variable button in prompt toolbar', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Should show create user variable button
+  const createVarButton = wrapper.find('#plus-icon-0')
+  expect(createVarButton.exists()).toBe(true)
+  expect(createVarButton.text()).toContain('agent.create.workflow.createUserVariable')
+})
+
+test('Clicking insert system variable button opens menu', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] },
+    { prompt: 'Step 2', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Expand second step
+  const stepHeaders = wrapper.findAll('.step-panel .panel-header')
+  await stepHeaders[1].trigger('click')
+  await nextTick()
+
+  // Click insert system variable button
+  const sysVarButton = wrapper.find('#system-var-anchor-1')
+  await sysVarButton.trigger('click')
+  await nextTick()
+
+  // Menu should be visible
+  const sysVarMenu = wrapper.findComponent({ name: 'ContextMenuPlus' })
+  expect(sysVarMenu.exists()).toBe(true)
+})
+
+test('System variable menu shows previous step output option', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] },
+    { prompt: 'Step 2', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Expand second step
+  const stepHeaders = wrapper.findAll('.step-panel .panel-header')
+  await stepHeaders[1].trigger('click')
+  await nextTick()
+
+  // Click insert system variable button
+  const sysVarButton = wrapper.find('#system-var-anchor-1')
+  await sysVarButton.trigger('click')
+  await nextTick()
+
+  // Wait for menu items to be rendered and classes added
+  await nextTick()
+
+  // Menu should show previous step option
+  const menuItems = wrapper.findAll('.context-menu .item')
+  const previousStepOption = menuItems.find(item => item.text().includes('agent.create.workflow.systemVar.previousStep'))
+  expect(previousStepOption).toBeTruthy()
+})
+
+test('Previous step output option is disabled for first step', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Click insert system variable button on first step
+  const sysVarButton = wrapper.find('#system-var-anchor-0')
+  await sysVarButton.trigger('click')
+  await nextTick()
+
+  // Wait for menu items to be rendered and classes added
+  await nextTick()
+
+  // Previous step option should be disabled
+  const menuItems = wrapper.findAll('.context-menu .item')
+  const previousStepOption = menuItems.find(item => item.text().includes('agent.create.workflow.systemVar.previousStep'))
+  expect(previousStepOption?.classes()).toContain('disabled')
+})
+
+test('Clicking previous step output inserts variable at caret', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] },
+    { prompt: 'Hello ', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Expand second step
+  const stepHeaders = wrapper.findAll('.step-panel .panel-header')
+  await stepHeaders[1].trigger('click')
+  await nextTick()
+
+  // Set caret position in textarea
+  const textarea = wrapper.find('textarea[name="prompt"]')
+  const textareaElement = textarea.element as HTMLTextAreaElement
+  textareaElement.selectionStart = 6 // After "Hello "
+  textareaElement.selectionEnd = 6
+
+  // Click insert system variable button
+  const sysVarButton = wrapper.find('#system-var-anchor-1')
+  await sysVarButton.trigger('click')
+  await nextTick()
+
+  // Wait for menu items to be rendered and classes added
+  await nextTick()
+
+  // Click previous step option
+  const menuItems = wrapper.findAll('.context-menu .item')
+  const previousStepOption = menuItems.find(item => item.text().includes('agent.create.workflow.systemVar.previousStep'))
+  await previousStepOption!.trigger('click')
+  await nextTick()
+
+  // Should insert variable (output.1 refers to step 1, which is at index 0)
+  expect(agent.steps[1].prompt).toBe('Hello {{output.1}}')
+})
+
+test('Clicking create user variable button opens dialog', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Click create user variable button
+  const createVarButton = wrapper.find('#plus-icon-0')
+  await createVarButton.trigger('click')
+  await nextTick()
+
+  // CreateUserVariable component should be visible
+  const createVarDialog = wrapper.findComponent({ name: 'CreateUserVariable' })
+  expect(createVarDialog.exists()).toBe(true)
+})
+
+test('Creating user variable inserts it at caret position', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Hello ', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Set caret position in textarea
+  const textarea = wrapper.find('textarea[name="prompt"]')
+  const textareaElement = textarea.element as HTMLTextAreaElement
+  textareaElement.selectionStart = 6 // After "Hello "
+  textareaElement.selectionEnd = 6
+
+  // Click create user variable button
+  const createVarButton = wrapper.find('#plus-icon-0')
+  await createVarButton.trigger('click')
+  await nextTick()
+
+  // Emit variable created event
+  const createVarDialog = wrapper.findComponent({ name: 'CreateUserVariable' })
+  createVarDialog.vm.$emit('create', {
+    name: 'userName',
+    description: 'User name',
+    defaultValue: 'John'
+  })
+  await nextTick()
+
+  // Should insert variable with description and default value
+  expect(agent.steps[0].prompt).toBe('Hello {{userName:User name:John}}')
+})
+
+test('User variable without description but with default value uses :: separator', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Count: ', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Set caret position
+  const textarea = wrapper.find('textarea[name="prompt"]')
+  const textareaElement = textarea.element as HTMLTextAreaElement
+  textareaElement.selectionStart = 7
+  textareaElement.selectionEnd = 7
+
+  // Click create user variable button
+  const createVarButton = wrapper.find('#plus-icon-0')
+  await createVarButton.trigger('click')
+  await nextTick()
+
+  // Emit variable with only default value
+  const createVarDialog = wrapper.findComponent({ name: 'CreateUserVariable' })
+  createVarDialog.vm.$emit('create', {
+    name: 'count',
+    description: '',
+    defaultValue: '5'
+  })
+  await nextTick()
+
+  // Should use :: separator when no description
+  expect(agent.steps[0].prompt).toBe('Count: {{count::5}}')
+})
+
+test('User variable with only name has no separators', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Name: ', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Set caret position
+  const textarea = wrapper.find('textarea[name="prompt"]')
+  const textareaElement = textarea.element as HTMLTextAreaElement
+  textareaElement.selectionStart = 6
+  textareaElement.selectionEnd = 6
+
+  // Click create user variable button
+  const createVarButton = wrapper.find('#plus-icon-0')
+  await createVarButton.trigger('click')
+  await nextTick()
+
+  // Emit variable with only name
+  const createVarDialog = wrapper.findComponent({ name: 'CreateUserVariable' })
+  createVarDialog.vm.$emit('create', {
+    name: 'userName',
+    description: '',
+    defaultValue: ''
+  })
+  await nextTick()
+
+  // Should have no separators
+  expect(agent.steps[0].prompt).toBe('Name: {{userName}}')
+})
+
+test('Variable insertion preserves text before and after caret', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Hello world', tools: null, agents: [] }
+  ]
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Set caret position in middle of text
+  const textarea = wrapper.find('textarea[name="prompt"]')
+  const textareaElement = textarea.element as HTMLTextAreaElement
+  textareaElement.selectionStart = 6 // After "Hello "
+  textareaElement.selectionEnd = 6
+
+  // Click create user variable button
+  const createVarButton = wrapper.find('#plus-icon-0')
+  await createVarButton.trigger('click')
+  await nextTick()
+
+  // Emit variable created event
+  const createVarDialog = wrapper.findComponent({ name: 'CreateUserVariable' })
+  createVarDialog.vm.$emit('create', {
+    name: 'there',
+    description: '',
+    defaultValue: ''
+  })
+  await nextTick()
+
+  // Should insert variable in the middle
+  expect(agent.steps[0].prompt).toBe('Hello {{there}}world')
+})
