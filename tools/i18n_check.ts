@@ -32,6 +32,8 @@ const EXCLUDE_FROM_UNUSED_PATTERNS = [
   /^experts\.experts\..*$/,
   /^settings\.plugins\.[^.]+\.title$/,
   /^tray\.notification\..*$/,
+  /^workspace\.invites\..*$/,
+  /^workspace\.roles\..*$/
 ]
 
 // Key prefixes to exclude from processing (extraction and en.json addition)
@@ -224,14 +226,20 @@ Example response:
 ]`;
 
     // Send the request to the LLM
+    let result = '';
     console.log(`Translating ${texts.length} strings to ${localeName}...`);
-    const result = await engine.complete(engine.buildModel(model), [
+    const stream = await engine.generate(engine.buildModel(model), [
       new llm.Message('system', system),
       new llm.Message('user', JSON.stringify(texts)),
     ]);
+    for await (const chunk of stream) {
+      if (chunk.type === 'content') {
+        result += chunk.text;
+      }
+    }
 
-    if (result.content) {
-      const parsedResult = JSON.parse(result.content);
+    if (result) {
+      const parsedResult = JSON.parse(result);
       parsedResult.forEach((entry: {key: string, translation: string}) => {
         translations.set(entry.key, entry.translation);
       });
