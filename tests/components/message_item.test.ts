@@ -91,7 +91,7 @@ test('Render', async () => {
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.role').exists()).toBe(true)
   expect(wrapper.find('.body').exists()).toBe(true)
-  expect(wrapper.find('.actions').exists()).toBe(false)
+  expect(wrapper.find('.actions').classes()).not.toContain('visible')
 })
 
 test('User message', async () => {
@@ -476,9 +476,9 @@ test('Tool call done always', async () => {
 test('Toggle actions', async () => {
   const wrapper = await mount(userMessage, false)
   await wrapper.trigger('mouseenter')
-  expect (wrapper.find('.actions').exists()).toBe(true)
+  expect(wrapper.find('.actions').classes()).toContain('visible')
   await wrapper.trigger('mouseleave')
-  expect (wrapper.find('.actions').exists()).toBe(false)
+  expect(wrapper.find('.actions').classes()).not.toContain('visible')
 })
 
 test('Run user actions', async () => {
