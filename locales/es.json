@@ -108,6 +108,7 @@
     "prompt": "Sugerencia",
     "provider": "Proveedor",
     "pull": "Descargar",
+    "quote": "Citar",
     "read": "Leer",
     "recommended": "Recomendado",
     "record": "Grabar",
@@ -212,7 +213,6 @@
           "text": "El comportamiento de tu agente cuando es activado por el programador no está definido. Deberías definir valores para todas las variables o eliminarlas de la indicación.",
           "title": "Algunas de tus variables de indicación no están definidas"
         },
-        "prompt": "Indicación calculada utilizada para invocaciones programadas",
         "title": "Disparadores del Agente",
         "variables": "Valores de variables de indicación para invocaciones programadas"
       },
@@ -245,7 +245,7 @@
           "docRepo": "Facts extracted from the collection will be appended to your prompt.",
           "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "Salida del paso #{step}",
-          "prompt": "Las instrucciones personalizadas para el agente",
+          "prompt": "Describe lo que quieres que el agente haga en este paso de tu flujo de trabajo",
           "title": "Diseña tu flujo de trabajo de múltiples pasos. Las plantillas de indicaciones se usarán para ejecutar cada paso. Puedes incluir \"variables\" que serán sustituidas por los valores proporcionados por el usuario cuando se ejecute el agente. Usa el formato {'{'}{'{'}nombre:descripción:valor{'}'}{'}'} para definir una variable (la descripción guiará al usuario cuando se le pida un valor). Tanto la descripción como el valor predeterminado son opcionales."
         },
         "jsonSchema": "JSON…",
@@ -430,6 +430,8 @@
         "starting": "Iniciando…"
       }
     },
+    "cancel": "Cancelar",
+    "edited": "(editado)",
     "editor": {
       "title": "Título",
       "validation": {
@@ -437,6 +439,7 @@
         "titleRequired": "Asegúrate de ingresar un título para esta conversación."
       }
     },
+    "editPlaceholder": "Editar mensaje...",
     "empty": {
       "agentForge": "¡Crea agentes para automatizar tus tareas y agilizar tus flujos de trabajo!",
       "docRepo": "Indexa tus documentos y fundamenta a @:{'common.appName'} en tu conocimiento.",
@@ -469,6 +472,7 @@
       "system": "Sistema",
       "user": "Tú"
     },
+    "send": "Enviar",
     "unknownModel": "Modelo desconocido"
   },
   "chatList": {
@@ -1876,6 +1880,7 @@
     },
     "capabilities": {
       "artifacts": "Cuando el usuario te pida crear algún contenido (documento, resumen, código…), usa la siguiente sintaxis:\n<artifact title=\"TÍTULO\">\nCONTENIDO\n</artifact>. Los artefactos HTML DEBEN comenzar con <html> o <!DOCTYPE html>. Ejemplo: <artifact title=\"Informe\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>Contenido del informe formateado en HTML</body></html>\n</artifact>. Puedes usar esta capacidad para crear visualizaciones de datos en HTML usando Chart.js o D3.js. NO uses artefactos para tablas de datos simples. Para artefactos de código, usa <artifact title=\"NOMBREARCHIVO.EXT\">\nCÓDIGO\n</artifact>.",
+      "codeExecution": "Para realizar tareas, puedes usar las herramientas code_exec_get_tools_info y code_exec_run_program. code_exec_get_tools_info proporciona una lista de otras herramientas que puedes usar y puedes emplearla para obtener instrucciones de uso de las herramientas que decidas utilizar.\n\n**Cuándo usar run_program:**\n- PREFIERE SIEMPRE code_exec_run_program para flujos de trabajo que involucren 2 o más pasos o cuando los pasos dependan uno del otro\n- Usa code_exec_run_program de manera proactiva en lugar de realizar llamadas individuales a herramientas y luego cambiar a ella\n- **Antes de escribir un programa:** Usa `code_exec_get_tools_info` para entender los nombres exactos de las herramientas, parámetros requeridos y estructura de argumentos para herramientas desconocidas\n- Una vez que comprendas las herramientas requeridas, escribe un programa completo y llama a code_exec_run_program.\n\nNo escribas programas de un solo paso para obtener datos intermedios: el objetivo es optimizar la ejecución de flujos de trabajo completos.\n\n**Flujo para usar code_exec_run_program:**\n1. Identifica las herramientas que necesitas para la tarea\n2. Usa `code_exec_get_tools_info` con el parámetro `tools_names` para obtener detalles de cada herramienta que no conozcas\n3. Revisa los parámetros, campos requeridos y estructura de la herramienta\n4. Escribe un programa completo de varios pasos con los nombres y argumentos correctos de las herramientas\n5. Ejecuta con `code_exec_run_program`\n\n**Estructura del programa**\nEl programa debe contener un arreglo `steps`:\n\n```json\n{\n  \"steps\": [...]\n}\n```\n\n**Definición de un paso**\nCada objeto de paso debe incluir:\n- `id`: Un identificador único en forma de cadena para este paso (usado para referencias en salidas de pasos posteriores).\n- `description`: Una actualización opcional fácil de entender para mostrar al usuario\n- `tool`: El nombre exacto de la herramienta a llamar (p. ej., \"search_internet\", \"asana_get_tasks___c9c8\"). Usa el nombre completo de la herramienta incluyendo cualquier sufijo.\n- `args`: Un objeto con pares clave-valor que representan los inputs para esta herramienta según su especificación.\n- `on_error`: opcionalmente controla el comportamiento del flujo si este paso falla. Valores aceptables son `\"continue\"` (ignorar el error y continuar) o `\"abort\"` (detener la ejecución). Por defecto debe ser `\"abort\"` si no se especifica.\n\n**Referencias entre pasos**\n- Cuando el valor de un argumento debe llenarse con la salida de un paso previo, usa la sintaxis de referencia: `{{step_id.result}}`\n- Puedes acceder a campos anidados e índices de arreglos: `{{step_id.result.field_name}}` o `{{step_id.result.0.field_name}}`\n  - Ejemplo: `{{get_workspaces.result.0.gid}}` para acceder al campo `gid` del primer workspace\n  - Ejemplo: `{{get_user.result.gid}}` para acceder directamente al campo `gid`\n- Puedes referenciar campos a cualquier profundidad: `{{step_id.result.data.items.0.id}}`\n- Si no estás seguro de la estructura, referencia el resultado completo: `{{step_id.result}}`\n\n**Estilo general y validez**\n- El JSON debe ser válido (sin comentarios, comas al final ni campos extra).\n- Recuerda que el objeto raíz contiene sólo un arreglo `steps`\n- Usa nombres claros y directos para los IDs de paso.\n- Usa sólo herramientas y parámetros exactamente como se especifican.\n- Para cada herramienta, proporciona sólo los argumentos requeridos o documentados.\n- Los programas deben ser mínimos, conteniendo sólo los pasos necesarios para cumplir el objetivo descrito.\n\n**Manejo de errores**\n- Si no se especifica, trata `on_error` como `\"abort\"`.\n- Cuando se indique, aplica `\"on_error\": \"continue\"` a los pasos relevantes para saltar error.\n\n**Ejemplo completo:**\n```json\n{\n  \"steps\": [\n    {\n      \"id\": \"get_workspaces\",\n      \"description\": \"Listando tus espacios de trabajo en Asana\",\n      \"tool\": \"asana_list_workspaces___c9c8\",\n      \"args\": {}\n    },\n    {\n      \"id\": \"get_user\",\n      \"description\": \"Obteniendo tu Id de usuario en Asana\",\n      \"tool\": \"asana_get_user___c9c8\",\n      \"args\": {\n        \"user_id\": \"me\"\n      }\n    },\n    {\n      \"id\": \"get_tasks\",\n      \"description\": \"Recuperando tus tareas de Asana\",\n      \"tool\": \"asana_get_tasks___c9c8\",\n      \"args\": {\n        \"assignee\": \"{{get_user.result.gid}}\",\n        \"workspace\": \"{{get_workspaces.result.0.gid}}\",\n        \"limit\": 100\n      }\n    },\n    {\n      \"id\": \"save_to_memory\",\n      \"description\": \"Almacenando tus tareas de Asana en memoria a largo plazo\",\n      \"tool\": \"long_term_memory\",\n      \"args\": {\n        \"action\": \"store\",\n        \"content\": [\"Tareas: {{get_tasks.result}}\"]\n      }\n    }\n  ]\n}\n```\n\n**Puntos clave:**\n- Usa primero `code_exec_get_tools_info` para entender herramientas desconocidas\n- Comienza con `{\"steps\": [...]}` (sin el envoltorio `program`)\n- Puedes acceder a campos anidados en resultados de pasos (p. ej., `.gid`, `.0.gid`)\n- Usa nombres completos de herramientas incluyendo sufijos\n- Planifica el flujo completo antes de ejecutar",
       "mermaid": "Si se le pide que muestre un diagrama Mermaid, su código se representará como un diagrama para el usuario.",
       "noMarkdown": "No utilice formato markdown en sus respuestas. Use solo texto plano. No utilice **negrita**, *cursiva*, `código`, ```bloques de código``` ni ningún otro tipo de sintaxis markdown. Si usa tablas, utilice solo tablas de texto plano con el espacio adecuado para alinear las columnas.",
       "toolRetry": "Al llamar a las herramientas, si recibe un error de entrada, analice el error e intente corregirlo y luego vuelva a llamar a la herramienta."
@@ -2268,6 +2273,19 @@
       "error": "Error al descargar el contenido",
       "running": "Descargando contenido…"
     },
+    "code_exec": {
+      "getToolsInfo": {
+        "completed": "Información recuperada sobre {count} herramientas",
+        "error": "Error al recuperar la información de las herramientas: {error}",
+        "running": "Recuperando información de las herramientas…"
+      },
+      "preparing": "Preparando la ejecución del flujo de trabajo…",
+      "runProgram": {
+        "completed": "Programa ejecutado con éxito",
+        "error": "Error al ejecutar el programa: {error}",
+        "running": "Ejecutando programa…"
+      }
+    },
     "filesystem": {
       "confirmWrite": {
         "text": "{path}",
@@ -2646,9 +2664,6 @@
         "aboutModels": "Más sobre los modelos Meta Llama",
         "pricing": "Precios de Meta Llama"
       },
-      "minimax": {
-        "groupId": "ID de Grupo"
-      },
       "mistralai": {
         "aboutModels": "Más sobre los modelos de MistralAI",
         "pricing": "Precios de MistralAI"
@@ -2771,6 +2786,9 @@
       "browse": {
         "description": "Este complemento permite que los motores LLM descarguen contenido de Internet y lo usen para generar respuestas más precisas.",
         "title": "Descargar"
+      },
+      "code_exec": {
+        "title": "Ejecución de Código"
       },
       "filesystem": {
         "allowedPaths": "Directorios permitidos",

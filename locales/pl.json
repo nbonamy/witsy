@@ -127,6 +127,7 @@
     "prompt": "Podpowiedź",
     "provider": "Dostawca",
     "pull": "Pobierz",
+    "quote": "Cytuj",
     "read": "Czytaj",
     "recommended": "Polecane",
     "record": "Nagrywaj",
@@ -231,7 +232,6 @@
           "text": "Zachowanie Twojego agenta wywołanego przez harmonogram jest niezdefiniowane. Powinieneś zdefiniować wartości dla wszystkich zmiennych lub usunąć je z promptu.",
           "title": "Niektóre z Twoich zmiennych promptu nie są zdefiniowane"
         },
-        "prompt": "Obliczony prompt używany dla zaplanowanych wywołań",
         "title": "Wyzwalacze agenta",
         "variables": "Wartości zmiennych promptu dla zaplanowanych wywołań"
       },
@@ -264,7 +264,7 @@
           "docRepo": "Facts extracted from the collection will be appended to your prompt.",
           "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "Wynik kroku #{step}",
-          "prompt": "Niestandardowe instrukcje dla agenta",
+          "prompt": "Opisz, co chcesz, aby agent zrobił w tym kroku twojego przepływu pracy",
           "title": "Zaprojektuj swój wieloetapowy przepływ pracy. Szablony promptów będą używane do wykonania każdego kroku. Możesz uwzględnić „zmienne”, które zostaną zastąpione wartościami podanymi przez użytkownika podczas uruchamiania agenta. Użyj formatu {'{'}{'{'}name:description:value{'}'}{'}'} do zdefiniowania zmiennej (opis będzie wskazówką dla użytkownika przy wprowadzaniu wartości). Zarówno opis, jak i domyślna wartość są opcjonalne."
         },
         "jsonSchema": "JSON…",
@@ -449,6 +449,8 @@
         "starting": "Uruchamianie…"
       }
     },
+    "cancel": "Anuluj",
+    "edited": "(edytowano)",
     "editor": {
       "title": "Tytuł",
       "validation": {
@@ -456,6 +458,7 @@
         "titleRequired": "Upewnij się, że wprowadziłeś tytuł tego czatu."
       }
     },
+    "editPlaceholder": "Edytuj wiadomość...",
     "empty": {
       "agentForge": "Twórz agentów, aby automatyzować swoje zadania i usprawnić przepływy pracy!",
       "docRepo": "Indeksuj swoje dokumenty i opieraj @:{'common.appName'} na swojej wiedzy!",
@@ -488,6 +491,7 @@
       "system": "System",
       "user": "Ty"
     },
+    "send": "Wyślij",
     "unknownModel": "Nieznany model"
   },
   "chatList": {
@@ -1895,6 +1899,7 @@
     },
     "capabilities": {
       "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś zawartości (dokument, streszczenie, kod…), użyj następującej składni:\n<artifact title=\"TYTUŁ\">\nZAWARTOŚĆ\n</artifact>. Artefakty HTML MUSZĄ zaczynać się od <html> lub <!DOCTYPE html>. Przykład: <artifact title=\"Raport\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>Zawartość raportu sformatowana w HTML</body></html>\n</artifact>. Możesz użyć tej funkcji do tworzenia wizualizacji danych opartych na HTML za pomocą Chart.js lub D3.js. NIE używaj artefaktów do prostych tabel danych. Dla artefaktów kodu używaj <artifact title=\"NAZWA_PLIKU.EXT\">\nKOD\n</artifact>.",
+      "codeExecution": "Aby wykonać zadania, możesz używać narzędzi code_exec_get_tools_info i code_exec_run_program. code_exec_get_tools_info zapewnia listę dostępnych narzędzi, które możesz wykorzystać, oraz możesz go użyć, aby uzyskać instrukcje wywołania dla narzędzi, które zdecydujesz się użyć.\n\n**Kiedy używać run_program:**\n- ZAWSZE preferuj code_exec_run_program dla przepływów pracy obejmujących 2 lub więcej kroków lub gdy kroki zależą od siebie\n- Korzystaj z code_exec_run_program proaktywnie, zamiast wykonywać pojedyncze wywołania narzędzi i dopiero potem przechodzić do niego\n- **Przed napisaniem programu:** użyj `code_exec_get_tools_info`, aby poznać dokładne nazwy narzędzi, wymagane parametry i strukturę argumentów dla nieznanych narzędzi\n- Gdy już poznasz potrzebne narzędzia, napisz kompletny program i wywołaj code_exec_run_program.\n\nNie twórz programów jednoetapowych tylko po to, by pobierać dane pośrednie: celem jest usprawnienie wykonania pełnych przepływów pracy.\n\n**Przebieg użycia code_exec_run_program:**\n1. Zidentyfikuj, które narzędzia potrzebujesz do zadania\n2. Użyj `code_exec_get_tools_info` z parametrem `tools_names`, aby uzyskać szczegóły dla każdego narzędzia, którego nie znasz\n3. Przejrzyj parametry narzędzia, wymagane pola i jego strukturę\n4. Napisz kompletny, wieloetapowy program, używając poprawnych nazw narzędzi i argumentów\n5. Wykonaj program za pomocą `code_exec_run_program`\n\n**Struktura programu**\nProgram musi zawierać tablicę `steps`:\n\n```json\n{\n  \"steps\": [...]\n}\n```\n\n**Definicja kroku**\nKażdy obiekt kroku musi zawierać:\n- `id`: unikalny identyfikator ciąg znaków dla tego kroku (używany w odwołaniach do wyjścia w późniejszych krokach)\n- `description`: opcjonalna przyjazna dla użytkownika informacja o statusie do wyświetlenia\n- `tool`: dokładna nazwa wywoływanego narzędzia (np. \"search_internet\", \"asana_get_tasks___c9c8\"). Używaj pełnej nazwy narzędzia, włącznie z wszelkimi sufiksami.\n- `args`: obiekt z parami klucz-wartość reprezentujący dane wejściowe dla tego narzędzia zgodnie z jego specyfikacją.\n- `on_error`: opcjonalnie kontroluje zachowanie przepływu jeśli krok się nie powiedzie. Dozwolone wartości to `\"continue\"` (ignoruj błąd i kontynuuj) albo `\"abort\"` (przerwij wykonanie). Domyślnie jest `\"abort\"`, jeśli nie określono.\n\n**Odwołania między krokami**\n- Gdy wartość argumentu kroku powinna pochodzić z wyniku poprzedniego kroku, użyj składni odwołania: `{{step_id.result}}`\n- MOŻESZ dostępować do zagnieżdżonych pól i indeksów tablic: `{{step_id.result.field_name}}` lub `{{step_id.result.0.field_name}}`\n  - Przykład: `{{get_workspaces.result.0.gid}}` aby uzyskać pole `gid` pierwszego workspace\n  - Przykład: `{{get_user.result.gid}}` aby odwołać się bezpośrednio do pola `gid`\n- Możesz odnosić się do pól na dowolnej głębokości: `{{step_id.result.data.items.0.id}}`\n- Jeśli nie jesteś pewien struktury, odwołuj się do całego wyniku: `{{step_id.result}}`\n\n**Styl ogólny i ważność**\n- JSON musi być poprawny (bez komentarzy, przecinków na końcu czy dodatkowych pól).\n- Obiekt główny zawiera tylko tablicę `steps`\n- Stosuj jasne i bezpośrednie nazwy identyfikatorów kroków.\n- Używaj tylko narzędzi i parametrów dokładnie tak, jak podano w specyfikacji.\n- Dla każdego narzędzia podawaj tylko wymagane lub udokumentowane argumenty.\n- Programy powinny być minimalne, zawierać tylko tyle kroków, ile potrzeba do realizacji celu.\n\n**Obsługa błędów**\n- Jeśli nie określono, traktuj `on_error` jako `\"abort\"`.\n- Jeśli wskazano, zastosuj `\"on_error\": \"continue\"` dla odpowiednich kroków, by pominąć je przy błędzie.\n\n**Kompletny przykład:**\n```json\n{\n  \"steps\": [\n    {\n      \"id\": \"get_workspaces\",\n      \"description\": \"Wyświetlanie twoich workspace'ów Asany\",\n      \"tool\": \"asana_list_workspaces___c9c8\",\n      \"args\": {}\n    },\n    {\n      \"id\": \"get_user\",\n      \"description\": \"Pozyskiwanie twojego identyfikatora użytkownika Asany\",\n      \"tool\": \"asana_get_user___c9c8\",\n      \"args\": {\n        \"user_id\": \"me\"\n      }\n    },\n    {\n      \"id\": \"get_tasks\",\n      \"description\": \"Pobieranie twoich zadań w Asanie\",\n      \"tool\": \"asana_get_tasks___c9c8\",\n      \"args\": {\n        \"assignee\": \"{{get_user.result.gid}}\",\n        \"workspace\": \"{{get_workspaces.result.0.gid}}\",\n        \"limit\": 100\n      }\n    },\n    {\n      \"id\": \"save_to_memory\",\n      \"description\": \"Zapisanie twoich zadań Asana w pamięci długotrwałej\",\n      \"tool\": \"long_term_memory\",\n      \"args\": {\n        \"action\": \"store\",\n        \"content\": [\"Zadania: {{get_tasks.result}}\"]\n      }\n    }\n  ]\n}\n```\n\n**Najważniejsze punkty:**\n- Najpierw użyj `code_exec_get_tools_info`, aby poznać nieznane narzędzia\n- Zaczynaj od `{\"steps\": [...]}` (bez opakowania `program`)\n- Możesz odwoływać się do zagnieżdżonych pól wyników kroków (np. `.gid`, `.0.gid`)\n- Używaj pełnych nazw narzędzi łącznie z sufiksami\n- Zaplanuj pełen przepływ pracy przed wykonaniem",
       "mermaid": "Jeśli zostaniesz poproszony o wygenerowanie wykresu Mermaid, jego kod zostanie wyświetlony użytkownikowi jako diagram.",
       "noMarkdown": "Nie używaj formatowania markdown w swoich odpowiedziach. Używaj tylko zwykłego tekstu. Nie używaj **pogrubienia**, *kursywy*, `kodu`, ```bloków kodu``` ani żadnej innej składni markdown. Jeśli używasz tabeli, korzystaj wyłącznie z tabel w zwykłym tekście z odpowiednimi odstępami do wyrównania kolumn.",
       "toolRetry": "Podczas wywoływania narzędzi, jeśli otrzymasz błąd wejścia, przeanalizuj błąd i spróbuj go naprawić, a następnie ponownie wywołaj narzędzie."
@@ -2287,6 +2292,19 @@
       "error": "Błąd podczas pobierania zawartości",
       "running": "Pobieranie zawartości…"
     },
+    "code_exec": {
+      "getToolsInfo": {
+        "completed": "Pobrano informacje o {count} narzędziach",
+        "error": "Błąd podczas pobierania informacji o narzędziach: {error}",
+        "running": "Pobieranie informacji o narzędziach…"
+      },
+      "preparing": "Przygotowywanie do wykonania przepływu pracy…",
+      "runProgram": {
+        "completed": "Program wykonany pomyślnie",
+        "error": "Błąd podczas wykonywania programu: {error}",
+        "running": "Wykonywanie programu…"
+      }
+    },
     "filesystem": {
       "confirmWrite": {
         "text": "{path}",
@@ -2668,9 +2686,6 @@
         "aboutModels": "Więcej o modelach Meta Llama",
         "pricing": "Cennik Meta Llama"
       },
-      "minimax": {
-        "groupId": "ID grupy"
-      },
       "mistralai": {
         "aboutModels": "Więcej informacji o modelach MistralAI",
         "pricing": "Ceny MistralAI"
@@ -2799,6 +2814,9 @@
       "browse": {
         "description": "Ta wtyczka umożliwia silnikom LLM pobieranie treści z Internetu i wykorzystywanie ich do generowania dokładniejszych odpowiedzi.",
         "title": "Pobierz"
+      },
+      "code_exec": {
+        "title": "Wykonywanie kodu"
       },
       "filesystem": {
         "allowedPaths": "Dozwolone katalogi",
