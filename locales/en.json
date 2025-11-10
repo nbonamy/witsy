@@ -127,6 +127,7 @@
     "prompt": "Prompt",
     "provider": "Provider",
     "pull": "Pull",
+    "quote": "Quote",
     "read": "Read",
     "recommended": "Recommended",
     "record": "Record",
@@ -137,7 +138,6 @@
       "fieldsRequired": "Make sure you enter a value for the required fields."
     },
     "reset": "Reset",
-    "quote": "Quote",
     "retry": "Retry",
     "runAgent": "Run agent",
     "save": "Save",
@@ -232,7 +232,6 @@
           "text": "Behavior of your agent when triggered by the scheduler is undefined. You should either define values for all variables or remove them from the prompt.",
           "title": "Some of your prompt variables are not defined"
         },
-        "prompt": "Calculated prompt used for scheduled invocations",
         "title": "Agent Triggers",
         "variables": "Prompt variables values for scheduled invocations"
       },
@@ -449,6 +448,8 @@
         "starting": "Starting…"
       }
     },
+    "cancel": "Cancel",
+    "edited": "(edited)",
     "editor": {
       "title": "Title",
       "validation": {
@@ -456,6 +457,7 @@
         "titleRequired": "Make sure you enter a title for this chat."
       }
     },
+    "editPlaceholder": "Edit message...",
     "empty": {
       "agentForge": "Create agents to automate your tasks and streamline your workflows!",
       "docRepo": "Index your documents and ground @:{'common.appName'} into your knowledge!",
@@ -488,10 +490,7 @@
       "system": "System",
       "user": "You"
     },
-    "edited": "(edited)",
-    "editPlaceholder": "Edit message...",
-    "save": "Save",
-    "cancel": "Cancel",
+    "send": "Send",
     "unknownModel": "Unknown Model"
   },
   "chatList": {
@@ -2299,14 +2298,13 @@
         "error": "Error while retrieving tools information: {error}",
         "running": "Retrieving tools information…"
       },
+      "preparing": "Preparing to execute workflow…",
       "runProgram": {
         "completed": "Program executed successfully",
         "description": "Run a program provided as a JSON object in the format specified in your instructions",
         "error": "Error while executing program: {error}",
         "running": "Executing program…"
-      },
-      "error": "Workflow failed: {error}",
-      "preparing": "Preparing to execute workflow…"
+      }
     },
     "filesystem": {
       "confirmWrite": {
@@ -2690,9 +2688,6 @@
         "aboutModels": "More about Meta Llama models",
         "pricing": "Meta Llama pricing"
       },
-      "minimax": {
-        "groupId": "Group ID"
-      },
       "mistralai": {
         "aboutModels": "More about MistralAI models",
         "pricing": "MistralAI pricing"
@@ -2823,7 +2818,6 @@
         "title": "Download"
       },
       "code_exec": {
-        "description": "This plugin allows LLM engines to execute multi-step workflows by chaining tool calls together with variable substitution between steps.",
         "title": "Code Execution"
       },
       "filesystem": {

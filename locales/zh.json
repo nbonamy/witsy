@@ -127,6 +127,7 @@
     "prompt": "提示",
     "provider": "提供者",
     "pull": "拉取",
+    "quote": "引用",
     "read": "读取",
     "recommended": "推荐",
     "record": "记录",
@@ -231,7 +232,6 @@
           "text": "当调度器触发您的代理时，行为未定义。您应定义所有变量的值或将其从提示中移除。",
           "title": "您的部分提示变量未定义"
         },
-        "prompt": "用于计划调用的计算提示",
         "title": "代理触发器",
         "variables": "计划调用的提示变量值"
       },
@@ -264,7 +264,7 @@
           "docRepo": "Facts extracted from the collection will be appended to your prompt.",
           "factsVarDesc": "Facts extracted from the collection",
           "outputVarDesc": "步骤 #{step} 的输出",
-          "prompt": "代理的自定义指令",
+          "prompt": "描述您希望代理在工作流程此步骤中执行的操作",
           "title": "设计您的多步骤工作流。提示模板将用于执行每个步骤。您可以包含“变量”，这些变量将在执行代理时用用户提供的值替换。使用格式 {'{'}{'{'}name:description:value{'}'}{'}'} 来定义变量（描述将在提示输入值时指导用户）。描述和值都是可选的。"
         },
         "jsonSchema": "JSON…",
@@ -449,6 +449,8 @@
         "starting": "启动中…"
       }
     },
+    "cancel": "取消",
+    "edited": "（已编辑）",
     "editor": {
       "title": "标题",
       "validation": {
@@ -456,6 +458,7 @@
         "titleRequired": "请为此次聊天输入标题。"
       }
     },
+    "editPlaceholder": "编辑消息...",
     "empty": {
       "agentForge": "创建代理以自动执行任务并简化工作流程！",
       "docRepo": "索引您的文档并将@:{'common.appName'}根植于您的知识中！",
@@ -488,6 +491,7 @@
       "system": "系统",
       "user": "你"
     },
+    "send": "发送",
     "unknownModel": "未知模型"
   },
   "chatList": {
@@ -1895,6 +1899,7 @@
     },
     "capabilities": {
       "artifacts": "当用户请求你创建某些内容（文档、摘要、代码等）时，使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>。HTML工件必须以<html>或<!DOCTYPE html>开头。示例：<artifact title=\"报告\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>报告内容，采用HTML格式</body></html>\n</artifact>。你可以利用这一能力使用Chart.js或D3.js创建基于HTML的数据可视化。不要将工件用于简单的数据表。对于代码工件，请使用<artifact title=\"文件名.扩展名\">\n代码\n</artifact>。",
+      "codeExecution": "要完成任务，您可以使用 code_exec_get_tools_info 和 code_exec_run_program 这两个工具。code_exec_get_tools_info 提供您可以使用的其他工具列表，您可以用它来获取您决定使用的工具的调用说明。\n\n**何时使用 run_program：**\n- 对于包含 2 个或更多步骤或步骤相互依赖的工作流程，始终优先使用 code_exec_run_program\n- 主动使用 code_exec_run_program，而不是先分别调用单个工具再切换过来\n- **在编写程序之前：** 使用 `code_exec_get_tools_info` 来了解陌生工具的准确名称、必需参数和参数结构\n- 一旦您了解所需工具，编写完整的程序并调用 code_exec_run_program。\n\n不要编写单步程序来检索中间数据：目标是简化完整工作流程的执行。\n\n**使用 code_exec_run_program 的工作流程：**\n1. 确认任务需要的工具\n2. 使用 `code_exec_get_tools_info` 和 `tools_names` 参数获取不熟悉工具的详细信息\n3. 审查工具的参数、必填字段和结构\n4. 编写包含正确工具名称和参数的完整多步骤程序\n5. 使用 `code_exec_run_program` 执行\n\n**程序结构**\n程序必须包含一个 `steps` 数组：\n\n```json\n{\n  \"steps\": [...]\n}\n```\n\n**步骤定义**\n每个步骤对象必须包括：\n- `id`：此步骤的唯一字符串标识符（用于后续步骤的输出引用）\n- `description`：可选的用户友好状态更新，显示给用户\n- `tool`：调用工具的完整名称（例如，\"search_internet\"、\"asana_get_tasks___c9c8\"），包括任何后缀\n- `args`：一个包含该工具输入键值对的对象，如工具规范所述\n- `on_error`：可选，用于控制步骤失败时的工作流程行为。可选值为 `\"continue\"`（忽略错误继续）或 `\"abort\"`（停止执行）。如果未指定，默认应为 `\"abort\"`。\n\n**步骤间的引用**\n- 当步骤的参数值应取自先前步骤的输出时，使用引用语法：`{{step_id.result}}`\n- 可以访问嵌套字段和数组索引：`{{step_id.result.field_name}}` 或 `{{step_id.result.0.field_name}}`\n  - 例如：`{{get_workspaces.result.0.gid}}` 访问第一个工作区的 `gid` 字段\n  - 例如：`{{get_user.result.gid}}` 直接访问 `gid` 字段\n- 可以引用任意深度的字段：`{{step_id.result.data.items.0.id}}`\n- 不确定结构时可引用整个结果：`{{step_id.result}}`\n\n**通用风格与有效性**\n- JSON 必须有效（无注释、尾随逗号或多余字段）\n- 根对象只包含一个 `steps` 数组\n- 步骤 ID 使用清晰明确的名称\n- 仅使用完全指定的工具和参数\n- 对每个工具只提供必需或文档中说明的参数\n- 程序应简洁，仅包含完成目标所需的步骤\n\n**错误处理**\n- 未指定时，`on_error` 默认为 `\"abort\"`\n- 按指示时，对相关步骤使用 `\"on_error\": \"continue\"` 以失败时跳过\n\n**完整示例：**\n```json\n{\n  \"steps\": [\n    {\n      \"id\": \"get_workspaces\",\n      \"description\": \"列出您的 Asana 工作区\",\n      \"tool\": \"asana_list_workspaces___c9c8\",\n      \"args\": {}\n    },\n    {\n      \"id\": \"get_user\",\n      \"description\": \"获取您的 Asana 用户 ID\",\n      \"tool\": \"asana_get_user___c9c8\",\n      \"args\": {\n        \"user_id\": \"me\"\n      }\n    },\n    {\n      \"id\": \"get_tasks\",\n      \"description\": \"检索您的 Asana 任务\",\n      \"tool\": \"asana_get_tasks___c9c8\",\n      \"args\": {\n        \"assignee\": \"{{get_user.result.gid}}\",\n        \"workspace\": \"{{get_workspaces.result.0.gid}}\",\n        \"limit\": 100\n      }\n    },\n    {\n      \"id\": \"save_to_memory\",\n      \"description\": \"将您的 Asana 任务存入长期记忆\",\n      \"tool\": \"long_term_memory\",\n      \"args\": {\n        \"action\": \"store\",\n        \"content\": [\"任务：{{get_tasks.result}}\"]\n      }\n    }\n  ]\n}\n```\n\n**关键点：**\n- 先使用 `code_exec_get_tools_info` 了解不熟悉的工具\n- 以 `{ \"steps\": [...] }` 开始（无 `program` 外壳）\n- 可访问结果中嵌套字段（如 `.gid`，`.0.gid`）\n- 使用包含后缀的完整工具名称\n- 在执行前规划完整工作流程",
       "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
       "noMarkdown": "在您的回复中不要使用Markdown格式。仅使用纯文本。不要使用**加粗**、*斜体*、`代码`、```代码块```或任何其他Markdown语法。如果使用表格，仅使用带有适当间距以对齐列的纯文本表格。",
       "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
@@ -2287,6 +2292,19 @@
       "error": "下载内容时出错",
       "running": "正在下载内容…"
     },
+    "code_exec": {
+      "getToolsInfo": {
+        "completed": "已检索到关于 {count} 个工具的信息",
+        "error": "检索工具信息时出错：{error}",
+        "running": "正在检索工具信息……"
+      },
+      "preparing": "准备执行工作流程……",
+      "runProgram": {
+        "completed": "程序执行成功",
+        "error": "执行程序时出错：{error}",
+        "running": "正在执行程序……"
+      }
+    },
     "filesystem": {
       "confirmWrite": {
         "text": "{path}",
@@ -2668,9 +2686,6 @@
         "aboutModels": "更多关于 Meta Llama 模型的信息",
         "pricing": "Meta Llama 定价"
       },
-      "minimax": {
-        "groupId": "组ID"
-      },
       "mistralai": {
         "aboutModels": "了解更多关于 MistralAI 模型的信息",
         "pricing": "MistralAI 定价"
@@ -2793,6 +2808,9 @@
       "browse": {
         "description": "此插件允许 LLM 引擎从互联网下载内容，并使用它生成更准确的回答。",
         "title": "下载"
+      },
+      "code_exec": {
+        "title": "代码执行"
       },
       "filesystem": {
         "allowedPaths": "允许的目录",
