@@ -17,12 +17,15 @@ vi.mock('../../tools/i18n_sort', () => ({
 vi.mock('multi-llm-ts', () => ({
   igniteEngine: vi.fn(() => ({
     buildModel: vi.fn(() => 'mocked-model'),
-    complete: vi.fn(() => Promise.resolve({
-      content: JSON.stringify([
-        { "key": "changed_english", "translation": "Nouveau texte anglais" },
-        { "key": "missing_key", "translation": "Cette clé existe en anglais mais pas en français" }
-      ])
-    }))
+    generate: vi.fn(async function* () {
+      yield {
+        type: 'content',
+        text: JSON.stringify([
+          { "key": "changed_english", "translation": "Nouveau texte anglais" },
+          { "key": "missing_key", "translation": "Cette clé existe en anglais mais pas en français" }
+        ])
+      }
+    })
   })),
   Message: vi.fn((role, content) => ({ role, content }))
 }))
