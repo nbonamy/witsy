@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.1.2] - WIP
+## [3.2.0] - WIP
 
 ### Added
 - Edit messages, quote user message (https://github.com/nbonamy/witsy/issues/479)
