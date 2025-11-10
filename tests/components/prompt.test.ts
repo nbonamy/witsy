@@ -57,6 +57,15 @@ vi.mock('../../src/composables/transcriber', () => ({
   }))
 }))
 
+vi.mock('../../src/composables/image_utils', () => ({
+  default: {
+    resize: vi.fn((dataUrl, maxSize, callback) => {
+      // Simulate successful resize by calling the callback with modified content
+      callback('resized_base64_content', 'image/png')
+    })
+  }
+}))
+
 let wrapper: VueWrapper<any>
 let chat: Chat|null = null
 
@@ -921,4 +930,359 @@ test('onDictate stops dictation when already dictating', async () => {
 
   // Should stop audio recorder
   expect(wrapper.vm.audioRecorder.stop).toHaveBeenCalled()
+})
+
+test('onPaste ignores text clipboard items', async () => {
+  const initialAttachmentsLength = wrapper.vm.attachments.length
+
+  // Create paste event with text
+  const textItem = {
+    kind: 'string',
+    getAsFile: vi.fn()
+  }
+
+  const event = {
+    clipboardData: {
+      items: [textItem]
+    }
+  } as any
+
+  wrapper.vm.onPaste(event)
+  await wrapper.vm.$nextTick()
+
+  // Should not add any attachments
+  expect(wrapper.vm.attachments).toHaveLength(initialAttachmentsLength)
+})
+
+test('onPaste processes image file from clipboard', async () => {
+  const initialAttachmentsLength = wrapper.vm.attachments.length
+
+  // Create a fake Blob
+  const blob = new Blob(['fake image data'], { type: 'image/png' })
+
+  const fileItem = {
+    kind: 'file',
+    getAsFile: vi.fn(() => blob)
+  }
+
+  const event = {
+    clipboardData: {
+      items: [fileItem]
+    },
+    preventDefault: vi.fn()
+  } as any
+
+  // Mock FileReader
+  const mockFileReader = {
+    readyState: FileReader.DONE,
+    result: 'data:image/png;base64,ZmFrZV9pbWFnZV9kYXRh',
+    onload: null as any,
+    readAsDataURL: vi.fn(function(this: any) {
+      // Simulate successful read
+      setTimeout(() => {
+        if (this.onload) {
+          this.onload({
+            target: {
+              readyState: FileReader.DONE,
+              result: this.result
+            }
+          })
+        }
+      }, 0)
+    })
+  }
+
+  global.FileReader = vi.fn(() => mockFileReader) as any
+
+  wrapper.vm.onPaste(event)
+
+  // Wait for FileReader to complete
+  await vi.waitFor(() => {
+    expect(wrapper.vm.attachments.length).toBeGreaterThan(initialAttachmentsLength)
+  }, { timeout: 1000 })
+
+  // Should add attachment
+  expect(wrapper.vm.attachments.length).toBeGreaterThan(initialAttachmentsLength)
+  const attachment = wrapper.vm.attachments[wrapper.vm.attachments.length - 1]
+  expect(attachment.url).toBe('clipboard://')
+})
+
+test('onPaste shows error for unsupported format', async () => {
+  // Mock canProcessFormat to return false
+  wrapper.vm.llmManager.canProcessFormat = vi.fn(() => false)
+
+  const blob = new Blob(['fake data'], { type: 'application/unknown' })
+
+  const fileItem = {
+    kind: 'file',
+    getAsFile: vi.fn(() => blob)
+  }
+
+  const event = {
+    clipboardData: {
+      items: [fileItem]
+    },
+    preventDefault: vi.fn()
+  } as any
+
+  // Mock FileReader
+  const mockFileReader = {
+    readyState: FileReader.DONE,
+    result: 'data:application/unknown;base64,ZmFrZV9kYXRh',
+    onload: null as any,
+    readAsDataURL: vi.fn(function(this: any) {
+      setTimeout(() => {
+        if (this.onload) {
+          this.onload({
+            target: {
+              readyState: FileReader.DONE,
+              result: this.result
+            }
+          })
+        }
+      }, 0)
+    })
+  }
+
+  global.FileReader = vi.fn(() => mockFileReader) as any
+
+  wrapper.vm.onPaste(event)
+
+  // Wait for FileReader and processing
+  await vi.waitFor(() => {
+    expect(Dialog.alert).toHaveBeenCalled()
+  }, { timeout: 1000 })
+
+  // Should show error dialog
+  expect(Dialog.alert).toHaveBeenCalled()
+})
+
+test('onDragOver prevents default and sets dropEffect', () => {
+  // Enable attachments
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableAttachments: true } })
+
+  const event = {
+    preventDefault: vi.fn(),
+    dataTransfer: {
+      dropEffect: ''
+    }
+  } as any
+
+  wrapper.vm.onDragOver(event)
+
+  expect(event.preventDefault).toHaveBeenCalled()
+  expect(event.dataTransfer.dropEffect).toBe('copy')
+})
+
+test('onDragOver does nothing when attachments disabled', () => {
+  // Disable attachments
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableAttachments: false } })
+
+  const event = {
+    preventDefault: vi.fn(),
+    dataTransfer: {
+      dropEffect: ''
+    }
+  } as any
+
+  wrapper.vm.onDragOver(event)
+
+  expect(event.preventDefault).not.toHaveBeenCalled()
+})
+
+test('onDragEnter sets isDragOver to true', () => {
+  // Enable attachments
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableAttachments: true } })
+
+  expect(wrapper.vm.isDragOver).toBe(false)
+
+  const event = {
+    preventDefault: vi.fn()
+  } as any
+
+  wrapper.vm.onDragEnter(event)
+
+  expect(wrapper.vm.isDragOver).toBe(true)
+  expect(event.preventDefault).toHaveBeenCalled()
+})
+
+test('onDragLeave sets isDragOver to false when leaving dropzone', () => {
+  // Enable attachments
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableAttachments: true } })
+  wrapper.vm.isDragOver = true
+
+  // Create a related target that is NOT a special div (add a child to make it not special)
+  const relatedTarget = document.createElement('div')
+  const child = document.createElement('span')
+  relatedTarget.appendChild(child)
+
+  const event = {
+    preventDefault: vi.fn(),
+    currentTarget: {
+      contains: vi.fn(() => false)
+    },
+    relatedTarget: relatedTarget
+  } as any
+
+  wrapper.vm.onDragLeave(event)
+
+  expect(wrapper.vm.isDragOver).toBe(false)
+})
+
+test('onDragLeave does nothing when entering child element', () => {
+  // Enable attachments
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableAttachments: true } })
+  wrapper.vm.isDragOver = true
+
+  const relatedTarget = document.createElement('div')
+
+  const event = {
+    preventDefault: vi.fn(),
+    currentTarget: {
+      contains: vi.fn(() => true) // Still within dropzone
+    },
+    relatedTarget: relatedTarget
+  } as any
+
+  wrapper.vm.onDragLeave(event)
+
+  // Should still be true because we're still over the dropzone
+  expect(wrapper.vm.isDragOver).toBe(true)
+})
+
+test('onDrop processes dropped image file', async () => {
+  // Enable attachments
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableAttachments: true } })
+  wrapper.vm.isDragOver = true
+
+  const initialAttachmentsLength = wrapper.vm.attachments.length
+
+  // Create a fake file
+  const file = new File(['fake image data'], 'test.png', { type: 'image/png' })
+
+  const event = {
+    preventDefault: vi.fn(),
+    dataTransfer: {
+      files: [file]
+    }
+  } as any
+
+  // Mock FileReader
+  const mockFileReader = {
+    readyState: FileReader.DONE,
+    result: 'data:image/png;base64,ZmFrZV9pbWFnZV9kYXRh',
+    onload: null as any,
+    onerror: null as any,
+    readAsDataURL: vi.fn(function(this: any) {
+      setTimeout(() => {
+        if (this.onload) {
+          this.onload({
+            target: {
+              readyState: FileReader.DONE,
+              result: this.result
+            }
+          })
+        }
+      }, 0)
+    })
+  }
+
+  global.FileReader = vi.fn(() => mockFileReader) as any
+
+  await wrapper.vm.onDrop(event)
+
+  // Wait for FileReader to complete
+  await vi.waitFor(() => {
+    expect(wrapper.vm.attachments.length).toBeGreaterThan(initialAttachmentsLength)
+  }, { timeout: 1000 })
+
+  expect(event.preventDefault).toHaveBeenCalled()
+  expect(wrapper.vm.isDragOver).toBe(false)
+  expect(wrapper.vm.attachments.length).toBeGreaterThan(initialAttachmentsLength)
+})
+
+test('onDrop shows error for unsupported file format', async () => {
+  // Enable attachments
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableAttachments: true } })
+
+  // Mock canProcessFormat to return false
+  wrapper.vm.llmManager.canProcessFormat = vi.fn(() => false)
+
+  const file = new File(['fake data'], 'test.xyz', { type: 'application/unknown' })
+
+  const event = {
+    preventDefault: vi.fn(),
+    dataTransfer: {
+      files: [file]
+    }
+  } as any
+
+  await wrapper.vm.onDrop(event)
+  await wrapper.vm.$nextTick()
+
+  // Should show error dialog
+  expect(Dialog.alert).toHaveBeenCalled()
+})
+
+test('onDrop does nothing when no files', async () => {
+  // Enable attachments
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableAttachments: true } })
+
+  const initialAttachmentsLength = wrapper.vm.attachments.length
+
+  const event = {
+    preventDefault: vi.fn(),
+    dataTransfer: {
+      files: []
+    }
+  } as any
+
+  await wrapper.vm.onDrop(event)
+  await wrapper.vm.$nextTick()
+
+  // Should not add any attachments
+  expect(wrapper.vm.attachments).toHaveLength(initialAttachmentsLength)
+})
+
+test('onAttach adds supported file via file picker', async () => {
+  // Mock canProcessFormat to return true
+  wrapper.vm.llmManager.canProcessFormat = vi.fn(() => true)
+
+  // Mock window.api.file.pickFile to return file paths
+  vi.mocked(window.api.file.pickFile).mockReturnValue(['image1.png', 'image2.png'])
+
+  const initialLength = wrapper.vm.attachments.length
+
+  await wrapper.vm.onAttach()
+
+  // Wait for attachments to be added
+  await vi.waitFor(() => {
+    expect(wrapper.vm.attachments.length).toBeGreaterThan(initialLength)
+  }, { timeout: 1000 })
+
+  // Should have called pickFile
+  expect(window.api.file.pickFile).toHaveBeenCalledWith({ multiselection: true })
+
+  // Should have read both files
+  expect(window.api.file.read).toHaveBeenCalledWith('image1.png')
+  expect(window.api.file.read).toHaveBeenCalledWith('image2.png')
+})
+
+test('onAttach shows error for unsupported file format', async () => {
+  // Mock canProcessFormat to return false
+  wrapper.vm.llmManager.canProcessFormat = vi.fn(() => false)
+
+  // Mock window.api.file.pickFile to return a file
+  vi.mocked(window.api.file.pickFile).mockReturnValue(['unsupported.xyz'])
+
+  const initialLength = wrapper.vm.attachments.length
+
+  await wrapper.vm.onAttach()
+  await wrapper.vm.$nextTick()
+
+  // Should not add attachment
+  expect(wrapper.vm.attachments).toHaveLength(initialLength)
+
+  // Should show error dialog
+  expect(Dialog.alert).toHaveBeenCalled()
 })

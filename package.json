@@ -24,7 +24,7 @@
     "test:notify": "vitest --watch --reporter=default --reporter=./tests/reporter/notify.ts",
     "test:watch": "vitest --watch --silent",
     "test:ci": "vitest --coverage.enabled=true --coverage.reporter='text-summary' --silent",
-    "test:ui": "vitest --ui --coverage.enabled=true",
+    "test:ui": "vitest --ui --coverage.enabled=true --silent",
     "test:e2e": "WITSY_HOME=/tmp vitest --config ./vitest.config.e2e.mjs './tests/e2e/**' ./tests/e2e/**",
     "typecheck": "npm run lint",
     "type-check": "npm run typecheck"
