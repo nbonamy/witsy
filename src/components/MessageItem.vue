@@ -64,7 +64,7 @@
       </div>
 
     </div>
-    <MessageItemActions :message="message" :read-aloud="onReadAloud" :audio-state="audioState" @show-tools="onShowTools" v-if="hovered && !isEditing" />
+    <MessageItemActions :message="message" :read-aloud="onReadAloud" :audio-state="audioState" @show-tools="onShowTools" :class="{ visible: hovered }" v-if="!isEditing"/>
     <audio ref="audio" />
   </div>
 </template>

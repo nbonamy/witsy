@@ -1,11 +1,11 @@
 
 .message {
   display: flex;
-  margin-bottom: 32px;
+  margin-bottom: 1rem;
 }
 
-.message:has(.actions) {
-  margin-bottom: 0px !important;
+.message:has(.edit-container) {
+  margin-bottom: 2rem;
 }
 
 .message .media-container {
@@ -207,6 +207,10 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  visibility: hidden;
+  &.visible {
+    visibility: visible;
+  }
 }
 
 .message .action {

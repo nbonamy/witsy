@@ -9,6 +9,12 @@
   padding: 0px 16px;
 }
 
+.messages.conversation .message .body:has(.edit-container) {
+  padding: 1rem;
+  padding-right: 2rem;
+  width: 100%;
+}
+
 .messages.conversation .message .role {
   display: none;
 }
