@@ -8,10 +8,6 @@
   margin-bottom: 0px !important;
 }
 
-.message:has(.edit-textarea) {
-  margin-bottom: 16px !important;
-}
-
 .message .media-container {
   margin-bottom: 12px;
 }
