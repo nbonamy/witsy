@@ -2,7 +2,6 @@
 import * as llm from 'multi-llm-ts'
 import defaults from '../../defaults/settings.json'
 import { imageFormats, textFormats } from '../models/attachment'
-// import CodeExecutionPlugin from '../plugins/code_exec'
 import { PluginInstance, PluginsList } from '../plugins/plugins'
 import { store } from '../services/store'
 import { Configuration, CustomEngineConfig, EngineConfig } from '../types/config'
@@ -473,7 +472,7 @@ export default class LlmManagerBase implements ILlmManager {
     engineConfig.model[type] = models[0].id
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   loadTools = async (engine: llm.LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection, opts?: {
     codeExecutionMode?: boolean
   }): Promise<void> => {
@@ -529,11 +528,12 @@ export default class LlmManagerBase implements ILlmManager {
 
     }
 
-    // // code exec
-    // if (engine.plugins.length && opts?.codeExecutionMode) {
-    //   const codeExecPlugin = new CodeExecutionPlugin()
-    //   await codeExecPlugin.install(engine)
-    // }
+    // code exec
+    if (engine.plugins.length && opts?.codeExecutionMode) {
+      const { default: CodeExecutionPlugin } = await import('../plugins/code_exec')
+      const codeExecPlugin = new CodeExecutionPlugin()
+      await codeExecPlugin.install(engine)
+    }
 
   }
 
