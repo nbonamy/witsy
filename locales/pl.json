@@ -3077,7 +3077,7 @@
     }
   },
   "transcribe": {
-    "autoStart": "Rozpocznij transkrypcję po otwarciu okna",
+    "autoStart": "Rozpocznij nową transkrypcję po otwarciu okna",
     "clickToRecord": "Kliknij przycisk nagrywania, gdy będziesz gotowy!",
     "dropzone": "Upuść plik audio",
     "errors": {

@@ -3049,7 +3049,7 @@
     }
   },
   "transcribe": {
-    "autoStart": "Iniciar transcripción al abrir la ventana",
+    "autoStart": "Iniciar una nueva transcripción cuando se abra la ventana",
     "clickToRecord": "¡Haz clic en el botón de grabar cuando estés listo!",
     "dropzone": "Suelta el archivo de audio",
     "errors": {

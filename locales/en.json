@@ -3079,7 +3079,7 @@
     }
   },
   "transcribe": {
-    "autoStart": "Start transcribing when window opens",
+    "autoStart": "Start a new transcription when window opens",
     "clickToRecord": "Click the record button when you are ready!",
     "dropzone": "Drop audio file",
     "errors": {
