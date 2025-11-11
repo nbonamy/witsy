@@ -3071,7 +3071,7 @@
     }
   },
   "transcribe": {
-    "autoStart": "窗口打开时开始转录",
+    "autoStart": "窗口打开时开始新的转录",
     "clickToRecord": "准备好了就点击录音按钮！",
     "dropzone": "放入音频文件",
     "errors": {

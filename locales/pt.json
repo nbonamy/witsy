@@ -3071,7 +3071,7 @@
     }
   },
   "transcribe": {
-    "autoStart": "Iniciar transcrição quando a janela abrir",
+    "autoStart": "Iniciar uma nova transcrição quando a janela for aberta",
     "clickToRecord": "Clique no botão de gravar quando estiver pronto!",
     "dropzone": "Solte o arquivo de áudio",
     "errors": {
