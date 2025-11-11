@@ -1,17 +1,56 @@
 
-import { anyDict } from '../types/index'
 import { IPlugin, LlmEngine, LlmTool, MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
 import { t } from '../services/i18n'
+import LlmUtils from '../services/llm_utils'
+import { generateSimpleSchema } from '../services/schema'
+import { anyDict } from '../types/index'
 
 export const kCodeExecutionPluginPrefix = 'code_exec_'
+
+class VariableResolutionError extends Error {
+  constructor(toolName: string) {
+    super(toolName)
+  }
+  get toolName(): string {
+    return this.message
+  }
+}
 
 export default class CodeExecutionPlugin extends MultiToolPlugin {
 
   private plugins: IPlugin[] = []
   private tools: LlmTool[] = []
+  private toolResultSchemas: Record<string, any> = {}
+
+  constructor() {
+    super()
+    this.loadSchemas()
+  }
 
   isEnabled(): boolean {
     return true
+  }
+
+  private loadSchemas(): void {
+    try {
+      const codeExecData = window.api.codeExecution.load()
+      if (codeExecData && codeExecData.schemas) {
+        this.toolResultSchemas = codeExecData.schemas
+      }
+    } catch (error) {
+      console.warn('[code_exec] Failed to load schemas:', error)
+    }
+  }
+
+  private saveSchemas(): void {
+    try {
+      let codeExecData = window.api.codeExecution.load()
+      if (!codeExecData) codeExecData = { schemas: {} }
+      codeExecData.schemas = this.toolResultSchemas
+      window.api.codeExecution.save(codeExecData)
+    } catch (error) {
+      console.error('[code_exec] Failed to save schemas:', error)
+    }
   }
 
   async install(engine: LlmEngine): Promise<void> {
@@ -65,6 +104,7 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
               tools_names: {
                 type: 'array',
                 description: 'The name of the tools to get information about',
+                items: { type: 'string' },
               }
             },
             required: ['tools_names']
@@ -144,37 +184,21 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
   }
 
   /**
-   * Describe the structure of a value for error messages
+   * Get schema for a tool from the schemas map, formatted as a string
    */
-  private describeStructure(value: any, maxKeys: number = 10): string {
-    if (value === null) return 'null'
-    if (value === undefined) return 'undefined'
-
-    if (Array.isArray(value)) {
-      if (value.length === 0) return 'empty array'
-      return `array with length ${value.length} (valid indices: 0-${value.length - 1})`
+  private getSchemaDescription(toolName: string): string {
+    const schema = this.toolResultSchemas[toolName]
+    if (schema) {
+      return JSON.stringify(schema.schema)
     }
-
-    if (typeof value === 'object') {
-      const keys = Object.keys(value)
-      if (keys.length === 0) return 'empty object'
-      const shown = keys.slice(0, maxKeys)
-      const more = keys.length > maxKeys ? `, ... and ${keys.length - maxKeys} more` : ''
-      return `object with keys: [${shown.map(k => `'${k}'`).join(', ')}${more}]`
-    }
-
-    // Primitives
-    const typeStr = typeof value
-    if (typeof value === 'string' && value.length > 50) {
-      return `${typeStr} (${value.substring(0, 50)}...)`
-    }
-    return `${typeStr} (${value})`
+    return 'Schema not available'
   }
 
   /**
    * Resolve a path like "step_id.result.data.0.gid" to the actual value
    */
   private resolvePath(path: string, results: Map<string, any>): any {
+    
     const parts = path.split('.')
     const firstPart = parts[0]
 
@@ -187,8 +211,9 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
       throw new Error(`Step "${stepId}" has not been executed yet`)
     }
 
-    // Get the step result wrapper
+    // Get the step result wrapper and tool name for schema lookup
     const stepData = results.get(stepId)
+    const toolName = stepData.tool
 
     // Check if we're accessing a metadata property (tool/args/result)
     // We need to parse bracket notation to check the property name without brackets
@@ -208,29 +233,19 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
     // Handle bracket notation on the step ID itself
     if (stepIndex !== null) {
       if (!Array.isArray(value)) {
-        throw new Error(
-          `Failed to resolve '{{${path}}}' at index '[${stepIndex}]': ` +
-          `${stepId} is ${this.describeStructure(value)}, not an array`
-        )
+        throw new VariableResolutionError(toolName)
       }
       if (stepIndex >= value.length) {
-        throw new Error(
-          `Failed to resolve '{{${path}}}' at index '[${stepIndex}]': ` +
-          `Array ${stepId} has length ${value.length} (valid indices: 0-${value.length - 1})`
-        )
+        throw new VariableResolutionError(toolName)
       }
       value = value[stepIndex]
     }
 
     for (let i = 1; i < parts.length; i++) {
       const part = parts[i]
-      const currentPathSoFar = parts.slice(0, i).join('.')
 
       if (value === null || value === undefined) {
-        throw new Error(
-          `Failed to resolve '{{${path}}}' at '${part}': ` +
-          `${currentPathSoFar} is ${value === null ? 'null' : 'undefined'}`
-        )
+        throw new VariableResolutionError(toolName)
       }
 
       // Parse bracket notation if present (e.g., "result[0]")
@@ -242,59 +257,36 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
         if (Array.isArray(value)) {
           const index = parseInt(parsed.name, 10)
           if (index >= value.length) {
-            throw new Error(
-              `Failed to resolve '{{${path}}}' at index '${parsed.name}': ` +
-              `Array ${currentPathSoFar} has length ${value.length} (valid indices: 0-${value.length - 1})`
-            )
+        throw new VariableResolutionError(toolName)
           }
           value = value[index]
         } else {
-          throw new Error(
-            `Failed to resolve '{{${path}}}' at '${parsed.name}': ` +
-            `${currentPathSoFar} is ${this.describeStructure(value)}, not an array`
-          )
+          throw new VariableResolutionError(toolName)
         }
       } else if (parsed.name) {
         // Property access
         if (typeof value === 'object' && !Array.isArray(value)) {
           if (!(parsed.name in value)) {
-            throw new Error(
-              `Failed to resolve '{{${path}}}' at '${parsed.name}': ` +
-              `Available in ${currentPathSoFar}: ${this.describeStructure(value)}`
-            )
+        throw new VariableResolutionError(toolName)
           }
           value = value[parsed.name]
         } else {
-          throw new Error(
-            `Failed to resolve '{{${path}}}' at '${parsed.name}': ` +
-            `${currentPathSoFar} is ${this.describeStructure(value)}, not an object`
-          )
+          throw new VariableResolutionError(toolName)
         }
       }
 
       // Then, handle bracket index if present (e.g., the [0] part of "result[0]")
       if (parsed.index !== null) {
-        const propertyPath = i === 1 ? `${stepId}.${parsed.name}` : `${currentPathSoFar}.${parsed.name}`
-
         if (value === null || value === undefined) {
-          throw new Error(
-            `Failed to resolve '{{${path}}}' at index '[${parsed.index}]': ` +
-            `${propertyPath} is ${value === null ? 'null' : 'undefined'}`
-          )
+          throw new VariableResolutionError(toolName)
         }
 
         if (!Array.isArray(value)) {
-          throw new Error(
-            `Failed to resolve '{{${path}}}' at index '[${parsed.index}]': ` +
-            `${propertyPath} is ${this.describeStructure(value)}, not an array`
-          )
+          throw new VariableResolutionError(toolName)
         }
 
         if (parsed.index >= value.length) {
-          throw new Error(
-            `Failed to resolve '{{${path}}}' at index '[${parsed.index}]': ` +
-            `Array ${propertyPath} has length ${value.length} (valid indices: 0-${value.length - 1})`
-          )
+          throw new VariableResolutionError(toolName)
         }
 
         value = value[parsed.index]
@@ -303,9 +295,30 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
     return value
   }
 
-  /**
-   * Execute with streaming updates
-   */
+  getError(res: any) {
+    if (res.error) {
+      return res.error
+    }
+    if (typeof res === 'string' && res.toLowerCase().startsWith('error')) {
+      try {
+        const parsed = LlmUtils.parseJson(res)
+        if (parsed) {
+          if (parsed.error) {
+            return parsed.error
+          } else if (parsed.message) {
+            return parsed.message
+          } else {
+            return parsed
+          }
+        }
+      } catch {
+        return res
+      }
+      return res
+    }
+    return null
+  }
+
   async *executeWithUpdates(context: PluginExecutionContext, payload: any) {
 
     const { tool, parameters } = payload
@@ -322,11 +335,16 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
               error: `Tool "${name}" not found`
             }
           }
-          return {
+          const toolInfo: any = {
             name: foundTool.function.name,
             description: foundTool.function.description,
             parameters: foundTool.function.parameters
           }
+          // Add result_schema if available
+          if (this.toolResultSchemas[name]) {
+            toolInfo.result_schema = this.getSchemaDescription(name)
+          }
+          return toolInfo
         })
       }}
       return
@@ -355,6 +373,7 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
     for (const step of steps) {
       // Check abort before each step
       if (context.abortSignal?.aborted) {
+        this.saveSchemas()
         yield {
           type: 'result',
           result: { error: 'Workflow cancelled' },
@@ -370,13 +389,30 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
       }
 
       try {
+        
         // Resolve variables in args
-        const resolvedArgs = this.resolveVariables(step.args, results)
+        let resolvedArgs = {}
+        try {
+          resolvedArgs = this.resolveVariables(step.args, results)
+        } catch (error: any) {
+          if (error instanceof VariableResolutionError) {
+            let errorMessage = `Failed to resolve variables in "${JSON.stringify(step.args)}" for step "${step.id}". `
+            if (error.toolName && this.toolResultSchemas[error.toolName]) {
+              errorMessage += `Expected schema for "${error.toolName}":\n${this.getSchemaDescription(error.toolName)}`
+            } else {
+              errorMessage += `Please check the argument structure and variable references.`
+            }
+            throw new Error(errorMessage)
+          } else {
+            throw error
+          }
+        }
 
         // Get the plugin for this tool
         const plugin = this.getPluginForTool(step.tool)
         if (!plugin) {
           const error = `Tool "${step.tool}" not found`
+          this.saveSchemas()
           yield {
             type: 'status',
             status: `Failed step ${step.id}: ${error}`
@@ -414,14 +450,16 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
         }
 
         // check error
-        if (result.error || (typeof result === 'string' && result.toLowerCase().startsWith('error'))) {
+        let err = this.getError(result)
+        if (err) {
+          this.saveSchemas()
           yield {
             type: 'status',
-            status: `Failed step ${step.id}: ${result.error}`
+            status: `Failed step ${step.id}: ${err}`
           }
           yield {
             type: 'result',
-            result: { error: result.error, failedStep: step.id }
+            result: { error: err, failedStep: step.id }
           }
           return
         }
@@ -432,14 +470,16 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
         }
 
         // check error
-        if (result.error || (typeof result === 'string' && result.toLowerCase().startsWith('error'))) {
+        err = this.getError(result)
+        if (err) {
+          this.saveSchemas()
           yield {
             type: 'status',
-            status: `Failed step ${step.id}: ${result.error}`
+            status: `Failed step ${step.id}: ${err}`
           }
           yield {
             type: 'result',
-            result: { error: result.error, failedStep: step.id }
+            result: { error: err, failedStep: step.id }
           }
           return
         }
@@ -452,6 +492,18 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
         })
         finalResult = result
 
+        // Generate and store schema for this tool's result
+        try {
+          const schema = generateSimpleSchema(result)
+          if (!this.toolResultSchemas[step.tool]) {
+            this.toolResultSchemas[step.tool] = {}
+          }
+          this.toolResultSchemas[step.tool].schema = schema
+        } catch (schemaError) {
+          // Silently fail schema generation - not critical
+          console.warn(`Failed to generate schema for ${step.tool}:`, schemaError)
+        }
+
         // Yield status update: completed step
         yield {
           type: 'status',
@@ -459,7 +511,8 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
         }
 
       } catch (error: any) {
-        const errorMessage = error instanceof Error ? error.message : String(error)
+        const errorMessage = (error instanceof Error ? error.message : String(error)) || 'Unknown error'
+        this.saveSchemas()
         yield {
           type: 'status',
           status: `Failed step ${step.id}: ${errorMessage}`
@@ -476,6 +529,7 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
     }
 
     // Return final result
+    this.saveSchemas()
     yield {
       type: 'result',
       result: finalResult

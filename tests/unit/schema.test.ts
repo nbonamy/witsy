@@ -1,11 +1,141 @@
-import { test, expect } from 'vitest'
-import { parseSimpleFormatToZod, processJsonSchema } from '../../src/services/schema'
+import { test, expect, describe } from 'vitest'
+import { generateSimpleSchema, parseSimpleFormatToZod, processJsonSchema } from '../../src/services/schema'
 import { z } from 'zod'
+
+describe('generateSimpleSchema', () => {
+  test('handles primitive types', () => {
+    expect(generateSimpleSchema('hello')).toBe('string')
+    expect(generateSimpleSchema(42)).toBe('number')
+    expect(generateSimpleSchema(true)).toBe('boolean')
+    expect(generateSimpleSchema(false)).toBe('boolean')
+  })
+
+  test('handles null and undefined', () => {
+    expect(generateSimpleSchema(null)).toBe('unknown')
+    expect(generateSimpleSchema(undefined)).toBe('unknown')
+  })
+
+  test('handles empty arrays', () => {
+    expect(generateSimpleSchema([])).toEqual([])
+  })
+
+  test('handles arrays of primitives', () => {
+    expect(generateSimpleSchema(['a', 'b', 'c'])).toEqual(['string'])
+    expect(generateSimpleSchema([1, 2, 3])).toEqual(['number'])
+    expect(generateSimpleSchema([true, false])).toEqual(['boolean'])
+  })
+
+  test('handles mixed type arrays using first element', () => {
+    expect(generateSimpleSchema([1, 'hello', true])).toEqual(['number'])
+    expect(generateSimpleSchema(['hello', 1, true])).toEqual(['string'])
+    expect(generateSimpleSchema([true, 'hello', 1])).toEqual(['boolean'])
+  })
+
+  test('handles simple objects', () => {
+    const data = {
+      name: 'John',
+      age: 30,
+      active: true
+    }
+    expect(generateSimpleSchema(data)).toEqual({
+      name: 'string',
+      age: 'number',
+      active: 'boolean'
+    })
+  })
+
+  test('handles nested objects', () => {
+    const data = {
+      user: {
+        name: 'John',
+        profile: {
+          age: 30,
+          verified: true
+        }
+      }
+    }
+    expect(generateSimpleSchema(data)).toEqual({
+      user: {
+        name: 'string',
+        profile: {
+          age: 'number',
+          verified: 'boolean'
+        }
+      }
+    })
+  })
+
+  test('handles arrays of objects', () => {
+    const data = {
+      items: [
+        { id: 1, name: 'Item 1' },
+        { id: 2, name: 'Item 2' }
+      ]
+    }
+    expect(generateSimpleSchema(data)).toEqual({
+      items: [{
+        id: 'number',
+        name: 'string'
+      }]
+    })
+  })
+
+  test('handles complex nested structures', () => {
+    const data = {
+      status: 'success',
+      count: 5,
+      items: [],
+      data: {
+        users: [
+          { id: 1, name: 'John', tags: ['admin', 'user'] }
+        ],
+        metadata: {
+          timestamp: '2024-01-01',
+          version: 2,
+          valid: true
+        }
+      }
+    }
+    expect(generateSimpleSchema(data)).toEqual({
+      status: 'string',
+      count: 'number',
+      items: [],
+      data: {
+        users: [{
+          id: 'number',
+          name: 'string',
+          tags: ['string']
+        }],
+        metadata: {
+          timestamp: 'string',
+          version: 'number',
+          valid: 'boolean'
+        }
+      }
+    })
+  })
+
+  test('handles objects with null/undefined values', () => {
+    const data = {
+      name: 'John',
+      email: null,
+      phone: undefined,
+      age: 30
+    }
+    expect(generateSimpleSchema(data)).toEqual({
+      name: 'string',
+      email: 'unknown',
+      phone: 'unknown',
+      age: 'number'
+    })
+  })
+})
 
 test('parseSimpleFormatToZod handles simple string types', () => {
   expect(parseSimpleFormatToZod('string')).toBeInstanceOf(z.ZodString)
   expect(parseSimpleFormatToZod('number')).toBeInstanceOf(z.ZodNumber)
   expect(parseSimpleFormatToZod('boolean')).toBeInstanceOf(z.ZodBoolean)
+  expect(parseSimpleFormatToZod('unknown')).toBeInstanceOf(z.ZodString)
 })
 
 test('parseSimpleFormatToZod handles array types', () => {

@@ -530,6 +530,10 @@ declare global {
         retrieve(query: string): string[]
         delete(uuid: string): void
       }
+      codeExecution: {
+        load(): { schemas: Record<string, any> }
+        save(data: { schemas: Record<string, any> }): void
+      }
       search: {
         query(query: string, num: number, signalId?: string): Promise<LocalSearchResponse>
         cancel(signalId: string): void

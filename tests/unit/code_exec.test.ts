@@ -202,6 +202,53 @@ describe('CodeExecutionPlugin', () => {
       )
       expect(desc).toContain('Something went wrong')
     })
+
+    test('includes result_schema when tool has been executed', async () => {
+      // First, run a program to generate a schema
+      const mockTool = new MockPlugin('test_tool_1', () => ({
+        status: 'success',
+        count: 42,
+        items: ['a', 'b', 'c']
+      }))
+      mockEngine.plugins = [mockTool]
+      await plugin.install(mockEngine)
+
+      await plugin.execute({} as any, {
+        tool: `${kCodeExecutionPluginPrefix}run_program`,
+        parameters: {
+          program: {
+            steps: [
+              { id: 'step1', tool: 'test_tool_1', args: {} }
+            ]
+          }
+        }
+      })
+
+      // Now call get_tools_info to check if result_schema is included
+      const result = await plugin.execute({} as any, {
+        tool: `${kCodeExecutionPluginPrefix}get_tools_info`,
+        parameters: {
+          tools_names: ['test_tool_1']
+        }
+      })
+
+      expect(result.tools_info).toHaveLength(1)
+      expect(result.tools_info[0]).toHaveProperty('result_schema')
+      // Simple schema format
+      expect(result.tools_info[0].result_schema).toEqual("{\"status\":\"string\",\"count\":\"number\",\"items\":[\"string\"]}")
+    })
+
+    test('does not include result_schema when tool has not been executed', async () => {
+      const result = await plugin.execute({} as any, {
+        tool: `${kCodeExecutionPluginPrefix}get_tools_info`,
+        parameters: {
+          tools_names: ['test_tool_2']
+        }
+      })
+
+      expect(result.tools_info).toHaveLength(1)
+      expect(result.tools_info[0]).not.toHaveProperty('result_schema')
+    })
   })
 
   describe('run_program tool - Basic Execution', () => {
@@ -625,12 +672,12 @@ describe('CodeExecutionPlugin', () => {
         }
       })
 
-      expect(result.error).toContain('Failed to resolve')
-      expect(result.error).toContain('nonexistent')
-      expect(result.error).toContain('Available in get_data')
-      expect(result.error).toContain("'status'")
-      expect(result.error).toContain("'count'")
-      expect(result.error).toContain("'items'")
+      // Now returns simple schema instead of descriptive error
+      expect(result.error).toContain('status')
+      expect(result.error).toContain('count')
+      expect(result.error).toContain('items')
+      expect(result.error).toContain('"string"')
+      expect(result.error).toContain('"number"')
     })
 
     test('enhanced error: shows array length when index out of bounds', async () => {
@@ -654,10 +701,10 @@ describe('CodeExecutionPlugin', () => {
         }
       })
 
-      expect(result.error).toContain('Failed to resolve')
-      expect(result.error).toContain('at index \'5\'')
-      expect(result.error).toContain('length 3')
-      expect(result.error).toContain('valid indices: 0-2')
+      // Now returns simple schema instead of descriptive error
+      expect(result.error).toContain('items')
+      expect(result.error).toContain('"string"')
+      expect(result.error).toContain('[')
     })
 
     test('enhanced error: accessing property on primitive', async () => {
@@ -681,10 +728,9 @@ describe('CodeExecutionPlugin', () => {
         }
       })
 
-      expect(result.error).toContain('Failed to resolve')
-      expect(result.error).toContain('at \'length\'')
-      expect(result.error).toContain('step1.message is string')
-      expect(result.error).toContain('not an object')
+      // Now returns simple schema instead of descriptive error
+      expect(result.error).toContain('message')
+      expect(result.error).toContain('"string"')
     })
 
     test('enhanced error: bracket notation with non-array', async () => {
@@ -708,9 +754,9 @@ describe('CodeExecutionPlugin', () => {
         }
       })
 
-      expect(result.error).toContain('Failed to resolve')
-      expect(result.error).toContain('[0]')
-      expect(result.error).toContain('not an array')
+      // Now returns simple schema instead of descriptive error
+      expect(result.error).toContain('count')
+      expect(result.error).toContain('"number"')
     })
 
     test('enhanced error: bracket notation index out of bounds', async () => {
@@ -734,10 +780,9 @@ describe('CodeExecutionPlugin', () => {
         }
       })
 
-      expect(result.error).toContain('Failed to resolve')
-      expect(result.error).toContain('[5]')
-      expect(result.error).toContain('length 2')
-      expect(result.error).toContain('valid indices: 0-1')
+      // Now returns simple schema instead of descriptive error
+      expect(result.error).toContain('"string"')
+      expect(result.error).toContain('[')
     })
 
     test('error when tool returns error object', async () => {

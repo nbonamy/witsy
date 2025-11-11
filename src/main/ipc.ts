@@ -31,6 +31,7 @@ import * as agents from './agents';
 import * as pyodide from './pyodide';
 import * as backup from './backup';
 import * as cliInstaller from './cli_installer';
+import * as codeExec from './code_exec';
 import * as commands from './commands';
 import * as config from './config';
 import * as experts from './experts';
@@ -883,6 +884,14 @@ export const installIpc = (
 
   ipcMain.on(IPC.MEMORY.DELETE, async (event, payload) => {
     event.returnValue = await memoryManager.delete(payload);
+  });
+
+  ipcMain.on(IPC.CODE_EXECUTION.LOAD, (event) => {
+    event.returnValue = JSON.stringify(codeExec.loadCodeExecutionData(app));
+  });
+
+  ipcMain.on(IPC.CODE_EXECUTION.SAVE, (event, payload) => {
+    codeExec.saveCodeExecutionData(app, JSON.parse(payload));
   });
 
   // Track active search operations
