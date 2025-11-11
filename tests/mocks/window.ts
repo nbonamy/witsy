@@ -568,6 +568,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       retrieve: vi.fn((query: string) => query === 'fact' ? [ 'fact1' ] : []),
       delete: vi.fn(),
     },
+    codeExecution: {
+      load: vi.fn(() => ({ schemas: {} })),
+      save: vi.fn(),
+    },
     search: {
       query: vi.fn(async () => ({ results: [
         { title: 'title1', url: 'url1', content: 'page1_content' },

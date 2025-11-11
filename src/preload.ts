@@ -243,6 +243,10 @@ contextBridge.exposeInMainWorld(
       retrieve: (query: string): string[] => { return ipcRenderer.sendSync(IPC.MEMORY.RETRIEVE, query) },
       delete: (uuid: string): void => { return ipcRenderer.sendSync(IPC.MEMORY.DELETE, uuid) },
     },
+    codeExecution: {
+      load: (): { schemas: Record<string, any> } => { return JSON.parse(ipcRenderer.sendSync(IPC.CODE_EXECUTION.LOAD)) },
+      save: (data: { schemas: Record<string, any> }) => { return ipcRenderer.send(IPC.CODE_EXECUTION.SAVE, JSON.stringify(data)) },
+    },
     search: {
       query: (query: string, num: number = 5, signalId?: string): Promise<LocalSearchResponse> => { return ipcRenderer.invoke(IPC.SEARCH.QUERY, { query, num, signalId }) },
       cancel: (signalId: string): void => { ipcRenderer.send(IPC.SEARCH.CANCEL, signalId) },
