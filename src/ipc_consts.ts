@@ -280,3 +280,8 @@ export const WORKSPACE = {
 export const CLI = {
   INSTALL: 'cli-install',
 } as const;
+
+export const CODE_EXECUTION = {
+  LOAD: 'code-execution-load',
+  SAVE: 'code-execution-save',
+} as const;
