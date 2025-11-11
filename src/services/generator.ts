@@ -81,8 +81,49 @@ export default class Generator {
       let sources: DocRepoQueryResponseItem[] = [];
       if (opts.docrepo) {
         const userMessage = conversation[conversation.length - 1];
+
+        // get the doc repo name for display
+        const allDocRepos = window.api.docrepo.list(this.config.workspaceId) as any[]
+        const docRepo = allDocRepos.find((repo: any) => repo.uuid === opts.docrepo)
+        const docRepoName = docRepo?.name || 'Knowledge Base'
+
+        // add dummy tool call in "running" state before the query
+        const toolCallId = crypto.randomUUID()
+        const runningToolCall: LlmChunkTool = {
+          type: 'tool',
+          id: toolCallId,
+          name: 'search_knowledge_base',
+          state: 'running',
+          status: t('plugins.knowledge.running', { query: userMessage.content, docrepo: docRepoName }),
+          call: {
+            params: {
+              docRepoName: docRepoName,
+              query: userMessage.content,
+            },
+            result: null
+          },
+          done: false
+        }
+        response.addToolCall(runningToolCall, !opts.noToolsInContent)
+        llmCallback?.call(null, runningToolCall)
+
+        // perform the query
         sources = await window.api.docrepo.query(opts.docrepo, userMessage.content);
         //console.log('Sources', JSON.stringify(sources, null, 2));
+
+        // update tool call to "completed" state with results
+        const completedToolCall: LlmChunkTool = JSON.parse(JSON.stringify(runningToolCall))
+        completedToolCall.state = 'completed'
+        completedToolCall.status = t('plugins.knowledge.completed', { docrepo: docRepoName, count: sources.length })
+        completedToolCall.call.result = {
+          count: sources.length,
+          sources
+        }
+        completedToolCall.done = true
+        response.addToolCall(completedToolCall, !opts.noToolsInContent)
+        llmCallback?.call(null, completedToolCall)
+
+        // add context to the conversation if sources were found
         if (sources.length > 0) {
           const context = sources.map((source) => source.content).join('\n\n');
           const instructions = i18nInstructions(this.config, 'instructions.chat.docquery')
