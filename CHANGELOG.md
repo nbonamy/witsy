@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Edit messages, quote user message (https://github.com/nbonamy/witsy/issues/479)
+- Show RAG search results
 
 ### Changed
 - Agent: can use user variables at all steps
