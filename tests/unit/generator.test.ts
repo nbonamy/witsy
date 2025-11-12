@@ -532,3 +532,169 @@ test('Generator finalizes message correctly', async () => {
   expect(messages[2].type).toBe('text')
   expect(messages[2].transient).toBe(false)
 })
+
+// ============================================================================
+// Doc Repo Query Tests
+// ============================================================================
+
+test('Generator adds dummy tool call when doc repo is queried with results', async () => {
+  const generator = new Generator(store.config)
+  const messages = [
+    new Message('system', 'System'),
+    new Message('user', 'What is the capital of France?'),
+    new Message('assistant', '')
+  ]
+
+  // Mock doc repo list with a test repo
+  const mockList = vi.fn().mockReturnValue([
+    { uuid: 'test-repo-id', name: 'Geography Knowledge Base', workspaceId: store.config.workspaceId }
+  ])
+  window.api.docrepo.list = mockList
+
+  // Mock doc repo query with results
+  const mockQuery = vi.fn().mockResolvedValue([
+    { content: 'Paris is the capital of France', metadata: { title: 'Geography', uuid: 'doc1' }, score: 0.95 },
+    { content: 'France is in Europe', metadata: { title: 'European Countries', uuid: 'doc2' }, score: 0.85 }
+  ])
+  window.api.docrepo.query = mockQuery
+
+  llmMock.generate.mockReturnValue((async function* () {
+    yield { type: 'content', text: 'Paris', done: true } as LlmChunk
+  })())
+
+  const chunks: LlmChunk[] = []
+  const result = await generator.generate(llmMock, messages, {
+    model: 'chat',
+    streaming: true,
+    docrepo: 'test-repo-id'
+  }, (chunk) => {
+    if (chunk) chunks.push(chunk)
+  })
+
+  expect(result).toBe('success')
+  expect(mockQuery).toHaveBeenCalledWith('test-repo-id', 'What is the capital of France?')
+
+  // Check that tool calls were added
+  expect(messages[2].toolCalls).toHaveLength(1)
+  const toolCall = messages[2].toolCalls[0]
+  expect(toolCall.name).toBe('search_knowledge_base')
+  expect(toolCall.state).toBe('completed')
+  expect(toolCall.params.query).toBe('What is the capital of France?')
+  expect(toolCall.params.docRepoName).toBe('Geography Knowledge Base')
+  expect(toolCall.result.count).toBe(2)
+  expect(toolCall.result.sources).toHaveLength(2)
+  // Check full source objects are included
+  expect(toolCall.result.sources[0].content).toBe('Paris is the capital of France')
+  expect(toolCall.result.sources[0].metadata.title).toBe('Geography')
+  expect(toolCall.result.sources[0].score).toBe(0.95)
+  expect(toolCall.result.sources[1].content).toBe('France is in Europe')
+  expect(toolCall.result.sources[1].metadata.title).toBe('European Countries')
+  expect(toolCall.result.sources[1].score).toBe(0.85)
+
+  // Verify that callback was called with both running and completed tool calls
+  const toolChunks = chunks.filter(c => c.type === 'tool')
+  expect(toolChunks.length).toBeGreaterThanOrEqual(2) // at least running and completed
+})
+
+test('Generator adds dummy tool call when doc repo query returns no results', async () => {
+  const generator = new Generator(store.config)
+  const messages = [
+    new Message('system', 'System'),
+    new Message('user', 'What is the capital of Mars?'),
+    new Message('assistant', '')
+  ]
+
+  // Mock doc repo list
+  const mockList = vi.fn().mockReturnValue([
+    { uuid: 'test-repo-id', name: 'Space Facts', workspaceId: store.config.workspaceId }
+  ])
+  window.api.docrepo.list = mockList
+
+  // Mock doc repo query with no results
+  const mockQuery = vi.fn().mockResolvedValue([])
+  window.api.docrepo.query = mockQuery
+
+  llmMock.generate.mockReturnValue((async function* () {
+    yield { type: 'content', text: 'I dont know', done: true } as LlmChunk
+  })())
+
+  const result = await generator.generate(llmMock, messages, {
+    model: 'chat',
+    streaming: true,
+    docrepo: 'test-repo-id'
+  })
+
+  expect(result).toBe('success')
+  expect(mockQuery).toHaveBeenCalledWith('test-repo-id', 'What is the capital of Mars?')
+
+  // Check that tool call was added with zero results
+  expect(messages[2].toolCalls).toHaveLength(1)
+  const toolCall = messages[2].toolCalls[0]
+  expect(toolCall.name).toBe('search_knowledge_base')
+  expect(toolCall.state).toBe('completed')
+  expect(toolCall.result.count).toBe(0)
+  expect(toolCall.result.sources).toHaveLength(0)
+})
+
+test('Generator respects noToolsInContent option for doc repo tool calls', async () => {
+  const generator = new Generator(store.config)
+  const messages = [
+    new Message('system', 'System'),
+    new Message('user', 'Query'),
+    new Message('assistant', '')
+  ]
+
+  // Mock doc repo list
+  const mockList = vi.fn().mockReturnValue([
+    { uuid: 'test-repo-id', name: 'Test Repo', workspaceId: store.config.workspaceId }
+  ])
+  window.api.docrepo.list = mockList
+
+  // Mock doc repo query
+  const mockQuery = vi.fn().mockResolvedValue([
+    { content: 'Result', metadata: { title: 'Doc', uuid: 'doc1' }, score: 0.9 }
+  ])
+  window.api.docrepo.query = mockQuery
+
+  llmMock.generate.mockReturnValue((async function* () {
+    yield { type: 'content', text: 'Response', done: true } as LlmChunk
+  })())
+
+  await generator.generate(llmMock, messages, {
+    model: 'chat',
+    streaming: true,
+    docrepo: 'test-repo-id',
+    noToolsInContent: true
+  })
+
+  // Tool call should be in toolCalls array
+  expect(messages[2].toolCalls).toHaveLength(1)
+
+  // But should not be in content (no <tool> placeholder)
+  expect(messages[2].content).not.toContain('<tool')
+})
+
+test('Generator works without doc repo option', async () => {
+  const generator = new Generator(store.config)
+  const messages = [
+    new Message('system', 'System'),
+    new Message('user', 'Hello'),
+    new Message('assistant', '')
+  ]
+
+  const mockQuery = vi.fn()
+  window.api.docrepo.query = mockQuery
+
+  llmMock.generate.mockReturnValue((async function* () {
+    yield { type: 'content', text: 'Hi', done: true } as LlmChunk
+  })())
+
+  const result = await generator.generate(llmMock, messages, {
+    model: 'chat',
+    streaming: true
+  })
+
+  expect(result).toBe('success')
+  expect(mockQuery).not.toHaveBeenCalled()
+  expect(messages[2].toolCalls).toHaveLength(0)
+})
