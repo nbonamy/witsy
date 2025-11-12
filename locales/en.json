@@ -460,7 +460,8 @@
       "exportMarkdown": "Export as Markdown",
       "exportPdf": "Export as PDF",
       "makeTemporary": "Temporary Chat",
-      "saveChat": "Save Chat"
+      "saveChat": "Save Chat",
+      "usage": "Usage"
     },
     "agent": {
       "notFound": "The agent used to generate that message is not available anymore.",
