@@ -292,7 +292,7 @@
           "title": "Esquema JSON"
         },
         "systemVar": {
-          "previousStep": "Saída da etapa anterior"
+          "previousStep": "Saída das etapas anteriores"
         },
         "title": "Fluxo de trabalho"
       }

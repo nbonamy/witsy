@@ -292,7 +292,7 @@
           "title": "JSON Schema"
         },
         "systemVar": {
-          "previousStep": "Previous Step Output"
+          "previousStep": "Previous Steps Output"
         },
         "title": "Workflow"
       }
