@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Edit messages, quote user message (https://github.com/nbonamy/witsy/issues/479)
+- Conversation usage reporting
 - Show RAG search results
 
 ### Changed

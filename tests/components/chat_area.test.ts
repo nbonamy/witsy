@@ -10,6 +10,7 @@ import ChatArea from '../../src/components/ChatArea.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 import { defaultCapabilities } from 'multi-llm-ts'
+import Dialog from '../../src/composables/dialog'
 
 enableAutoUnmount(afterAll)
 
@@ -83,10 +84,11 @@ test('Context menu empty chat', async () => {
   await wrapper.find('.sp-main > header .menu .trigger').trigger('click')
   expect(wrapper.find('.context-menu .item').exists()).toBe(true)
   const items = wrapper.findAll('.context-menu .item')
-  expect(items.length).toBe(5)
+  expect(items.length).toBe(6)
   expect(items[2].classes()).toContain('disabled') // exportMarkdown
   expect(items[3].classes()).toContain('disabled') // exportPdf
-  expect(items[4].classes()).toContain('disabled') // delete
+  expect(items[4].classes()).toContain('disabled') // usage
+  expect(items[5].classes()).toContain('disabled') // delete
 })
 
 test('Context menu normal chat', async () => {
@@ -95,10 +97,11 @@ test('Context menu normal chat', async () => {
   await wrapper.find('.sp-main > header .menu .trigger').trigger('click')
   expect(wrapper.find('.context-menu .item').exists()).toBe(true)
   const items = wrapper.findAll('.context-menu .item')
-  expect(items.length).toBe(5)
+  expect(items.length).toBe(6)
   expect(items[2].classes()).not.toContain('disabled') // exportMarkdown
   expect(items[3].classes()).not.toContain('disabled') // exportPdf
-  expect(items[4].classes()).toContain('disabled') // delete (not saved yet)
+  expect(items[4].classes()).toContain('disabled') // usage (no usage data)
+  expect(items[5].classes()).toContain('disabled') // delete (not saved yet)
 })
 
 test('Context menu temporary chat', async () => {
@@ -108,7 +111,7 @@ test('Context menu temporary chat', async () => {
   await wrapper.find('.sp-main > header .menu .trigger').trigger('click')
   expect(wrapper.find('.context-menu .item').exists()).toBe(true)
   const items = wrapper.findAll('.context-menu .item')
-  expect(items.length).toBe(5)
+  expect(items.length).toBe(6)
   expect(items[0].text()).toContain('saveChat') // toggle_temp shows "save"
 })
 
@@ -184,7 +187,7 @@ test('Context menu delete', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.sp-main > header .menu .trigger').trigger('click')
   const items = wrapper.findAll('.context-menu .item')
-  await items[4].trigger('click') // delete
+  await items[5].trigger('click') // delete (shifted from 4 to 5 due to usage menu item)
   expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', chat!.uuid)
 })
 
@@ -403,4 +406,50 @@ test('Model settings defaults', async () => {
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
 
+})
+
+test('Context menu usage disabled when no usage data', async () => {
+  addMessagesToChat()
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
+  await wrapper.find('.sp-main > header .menu .trigger').trigger('click')
+  const items = wrapper.findAll('.context-menu .item')
+  expect(items[4].text()).toContain('chat.actions.usage')
+  expect(items[4].classes()).toContain('disabled') // usage (no usage data)
+})
+
+test('Context menu usage shows dialog with total usage', async () => {
+  addMessagesToChat()
+
+  // Add usage data to messages
+  const message1 = chat!.messages[0]
+  message1.usage = {
+    prompt_tokens: 100,
+    completion_tokens: 50,
+  }
+
+  const message2 = chat!.messages[1]
+  message2.usage = {
+    prompt_tokens: 200,
+    completion_tokens: 100,
+    prompt_tokens_details: {
+      cached_tokens: 50,
+    },
+    completion_tokens_details: {
+      reasoning_tokens: 25,
+    }
+  }
+
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
+  await wrapper.find('.sp-main > header .menu .trigger').trigger('click')
+  const items = wrapper.findAll('.context-menu .item')
+  expect(items[4].text()).toContain('chat.actions.usage')
+  expect(items[4].classes()).not.toContain('disabled')
+  await items[4].trigger('click') // usage
+
+  // Check that Dialog.show was called
+  expect(Dialog.show).toHaveBeenCalledWith({
+    title: 'message.actions.usage.title_default_total=450',
+    html: 'message.actions.usage.prompt_default_prompt=300<br/>message.actions.usage.cached_default_cached=50<br/>message.actions.usage.response_default_completion=150<br/>message.actions.usage.reasoning_default_reasoning=25'
+
+  })
 })
