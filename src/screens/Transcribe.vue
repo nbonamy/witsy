@@ -148,7 +148,7 @@ const engine = ref('')
 const model = ref('')
 const locale = ref('')
 const pushToTalk = ref(false)
-const state= ref<State>('idle')
+const state = ref<State>('idle')
 const transcription = ref('')
 const autoStart = ref(false)
 const foregroundColorActive = ref('')
@@ -229,9 +229,15 @@ const onFileModified = (file: string) => {
 }
 
 const load = () => {
-  transcription.value = store.transcribeState.transcription
+
+  pushToTalk.value = store.config.stt.pushToTalk
+  autoStart.value = store.config.stt.autoStart
   locale.value = store.config.stt.locale || ''
   engine.value = store.config.stt.engine
+
+  if (!autoStart.value) {
+    transcription.value = store.transcribeState.transcription
+  }
   
   // Validate that the current model is valid for the selected engine
   const availableModels = getSTTModels(engine.value) ?? []
@@ -246,8 +252,6 @@ const load = () => {
     model.value = ''
   }
   
-  pushToTalk.value = store.config.stt.pushToTalk
-  autoStart.value = store.config.stt.autoStart
 }
 
 const onChangeEngine = () => {

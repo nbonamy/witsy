@@ -48,6 +48,11 @@
             {{ t('chat.actions.exportPdf') }}
           </div>
           <div class="item"
+               :class="{ disabled: !hasUsage() }"
+               @click="hasUsage() && handleActionClick('usage')">
+            {{ t('chat.actions.usage') }}
+          </div>
+          <div class="item"
                :class="{ disabled: !isSaved() }"
                @click="isSaved() && handleActionClick('delete')">
             {{ t('common.delete') }}
@@ -136,7 +141,11 @@ const hasMessages = () => {
   return props.chat.hasMessages()
 }
 
-const historyProvider = (event: KeyboardEvent): string[] => {
+const hasUsage = () => {
+  return props.chat.messages.some(m => m.usage)
+}
+
+const historyProvider = (): string[] => {
 
   // start with chat messages
   const chatMessages = props.chat?.messages.filter(m => m.role === 'user') || []
@@ -211,6 +220,8 @@ const handleActionClick = async (action: string) => {
     onExportMarkdown()
   } else if (action == 'exportPdf') {
     onExportPdf()
+  } else if (action == 'usage') {
+    onShowUsage()
   } else if (action == 'modelSettings') {
     showModelSettings.value = !showModelSettings.value
   }
@@ -297,6 +308,48 @@ const onExportPdf = async () => {
       text: t('chat.export.error'),
     })
   }
+}
+
+const onShowUsage = () => {
+
+  // Calculate total usage across all messages
+  const totalUsage = {
+    prompt_tokens: 0,
+    completion_tokens: 0,
+    cached_tokens: 0,
+    reasoning_tokens: 0,
+  }
+
+  for (const message of props.chat.messages) {
+    if (message.usage) {
+      totalUsage.prompt_tokens += message.usage.prompt_tokens || 0
+      totalUsage.completion_tokens += message.usage.completion_tokens || 0
+      if (message.usage.prompt_tokens_details?.cached_tokens) {
+        totalUsage.cached_tokens += message.usage.prompt_tokens_details.cached_tokens
+      }
+      if (message.usage.completion_tokens_details?.reasoning_tokens) {
+        totalUsage.reasoning_tokens += message.usage.completion_tokens_details.reasoning_tokens
+      }
+    }
+  }
+
+  // Build text in the same format as message usage
+  const totalTokens = totalUsage.prompt_tokens + totalUsage.completion_tokens
+  const text = [
+    t('message.actions.usage.prompt', { prompt: totalUsage.prompt_tokens }),
+    totalUsage.cached_tokens ?
+      t('message.actions.usage.cached', { cached: totalUsage.cached_tokens }) :
+      null,
+    t('message.actions.usage.response', { completion: totalUsage.completion_tokens }),
+    totalUsage.reasoning_tokens ?
+      t('message.actions.usage.reasoning', { reasoning: totalUsage.reasoning_tokens }) :
+      null,
+  ].filter(Boolean).join('<br/>')
+
+  Dialog.show({
+    title: t('message.actions.usage.title', { total: totalTokens }),
+    html: text,
+  })
 }
 
 const onHideDeepResearchUsage = () => {
