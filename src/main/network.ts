@@ -2,6 +2,7 @@
 import { NetworkRequest } from '../types/index'
 import { BrowserWindow } from 'electron'
 import { debugWindow } from './windows/debug'
+import { HttpServer } from './http_server'
 
 const TTL = (process.env.DEBUG ? 10 : 3) * 60 * 1000
 
@@ -103,8 +104,9 @@ export default (window: BrowserWindow) => {
     }
 
     if (
+      url.includes(`localhost:${(HttpServer.getInstance().getPort())}`) ||
       url.includes('googlefonts') ||
-      url.includes('googleapis.com') ||
+      url.includes('fonts.googleapis.com') ||
       url.includes('googleusercontent.com') ||
       url.includes('gstatic.com')
     ) {
