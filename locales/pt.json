@@ -2065,12 +2065,25 @@
     "smithery": "Smithery",
     "tools": "@:{'common.tools'}",
     "toolsCount": "Nenhuma ferramenta ativada|1 ferramenta ativada|{count} ferramentas ativadas",
+    "toolTester": {
+      "clear": "Limpar",
+      "complexTypeNotSupported": "Tipos de parâmetros complexos não suportados no MVP",
+      "execute": "Executar",
+      "executing": "Executando...",
+      "noParameters": "Esta ferramenta não possui parâmetros",
+      "parameters": "Parâmetros",
+      "result": "Resultado",
+      "selectTool": "Selecionar ferramenta",
+      "title": "Testar ferramentas do servidor MCP {name}",
+      "tryAgain": "Tentar novamente"
+    },
     "tooltips": {
       "deleteServer": "Excluir servidor",
       "editServer": "Editar servidor",
       "restartServer": "Reiniciar servidor",
       "startServer": "Iniciar servidor",
       "stopServer": "Pausar servidor",
+      "testTools": "Ferramentas de teste",
       "viewLogs": "Ver logs do servidor",
       "viewTools": "Ver ferramentas disponíveis"
     },

@@ -89,6 +89,9 @@
                   <div class="item logs" @click="showLogs(server)" v-if="hasLogs(server)">
                     {{ t('mcp.tooltips.viewLogs') }}
                   </div>
+                  <div class="item test-tools" @click="onTestTools(server)" v-if="isRunning(server)">
+                    {{ t('mcp.tooltips.testTools') }}
+                  </div>
                   <div class="item edit" @click="onEdit(server)">
                     {{ t('mcp.tooltips.editServer') }}
                   </div>
@@ -127,7 +130,14 @@
       @save="onToolSelectionSave"
       @cancel="onToolSelectionCancel"
     />
-    
+
+    <!-- Tool Tester Dialog -->
+    <McpToolTester
+      ref="toolTester"
+      :serverUuid="testServerUuid"
+      :tools="testServerTools"
+    />
+
   </div>
 </template>
 
@@ -140,6 +150,7 @@ import McpIcon from '../../assets/mcp.svg?component'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import McpToolSelector from '../components/McpToolSelector.vue'
+import McpToolTester from '../components/McpToolTester.vue'
 import Spinner from '../components/Spinner.vue'
 import Dialog from '../composables/dialog'
 import { t } from '../services/i18n'
@@ -156,9 +167,12 @@ const props = defineProps({
 
 const selected = ref(null)
 const toolSelector = ref<InstanceType<typeof McpToolSelector>>()
+const toolTester = ref<InstanceType<typeof McpToolTester>>()
 const currentServerTools = ref<McpTool[]>([])
 const currentToolSelection = ref<ToolSelection>(null)
 const currentServer = ref<McpServer|null>(null)
+const testServerUuid = ref<string>('')
+const testServerTools = ref<McpTool[]>([])
 
 const emit = defineEmits([ 'edit', 'create', 'reload', 'restart', 'restart-server' ])
 
@@ -280,6 +294,11 @@ const onToolSelectionCancel = () => {
   currentServer.value = null
   currentServerTools.value = []
   currentToolSelection.value = null
+}
+
+const onTestTools = async (server: McpServer) => {
+  if (!isRunning(server)) return
+  toolTester.value?.show(server)
 }
 
 const onRestart = async () => {

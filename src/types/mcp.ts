@@ -40,7 +40,13 @@ export type McpClient = {
 
 export type McpTool = {
   name: string
+  function: string
   description: string
+  inputSchema?: {
+    type: 'object'
+    properties?: Record<string, any>
+    required?: string[]
+  }
 }
 
 export type McpToolUnique = {

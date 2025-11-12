@@ -2065,12 +2065,25 @@
     "smithery": "Smithery",
     "tools": "@:{'common.tools'}",
     "toolsCount": "无工具启用|已启用 1 个工具|已启用 {count} 个工具",
+    "toolTester": {
+      "clear": "清除",
+      "complexTypeNotSupported": "MVP 中不支持复杂参数类型",
+      "execute": "执行",
+      "executing": "执行中...",
+      "noParameters": "该工具无参数",
+      "parameters": "参数",
+      "result": "结果",
+      "selectTool": "选择工具",
+      "title": "测试 {name} MCP 服务器工具",
+      "tryAgain": "重试"
+    },
     "tooltips": {
       "deleteServer": "删除服务器",
       "editServer": "编辑服务器",
       "restartServer": "重启服务器",
       "startServer": "启动服务器",
       "stopServer": "暂停服务器",
+      "testTools": "测试工具",
       "viewLogs": "查看服务器日志",
       "viewTools": "查看可用工具"
     },
