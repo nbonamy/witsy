@@ -1161,6 +1161,137 @@ test('Clicking previous step output inserts variable at caret', async () => {
   expect(agent.steps[1].prompt).toBe('Hello {{output.1}}')
 })
 
+test('Previous step output shows dialog for step 3+', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', description: 'First step', tools: null, agents: [] },
+    { prompt: 'Step 2', description: 'Second step', tools: null, agents: [] },
+    { prompt: 'Step 3', description: 'Third step', tools: null, agents: [] },
+    { prompt: 'Hello ', tools: null, agents: [] }
+  ]
+
+  // Mock Dialog.show to simulate user selecting step 2
+  vi.spyOn(Dialog, 'show').mockResolvedValue({
+    isConfirmed: true,
+    value: '2'
+  } as any)
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Expand fourth step (index 3)
+  const stepHeaders = wrapper.findAll('.step-panel .panel-header')
+  await stepHeaders[3].trigger('click')
+  await nextTick()
+
+  // Set caret position in textarea
+  const textarea = wrapper.find('textarea[name="prompt"]')
+  const textareaElement = textarea.element as HTMLTextAreaElement
+  textareaElement.selectionStart = 6 // After "Hello "
+  textareaElement.selectionEnd = 6
+
+  // Click insert system variable button
+  const sysVarButton = wrapper.find('#system-var-anchor-3')
+  await sysVarButton.trigger('click')
+  await nextTick()
+
+  // Wait for menu items to be rendered and classes added
+  await nextTick()
+
+  // Click previous step option
+  const menuItems = wrapper.findAll('.context-menu .item')
+  const previousStepOption = menuItems.find(item => item.text().includes('agent.create.workflow.systemVar.previousStep'))
+  await previousStepOption!.trigger('click')
+  await nextTick()
+
+  // Should show dialog with step options
+  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
+    title: 'agent.create.workflow.systemVar.previousStep',
+    input: 'select',
+    inputOptions: expect.objectContaining({
+      '1': expect.stringContaining('Step 1'),
+      '2': expect.stringContaining('Step 2'),
+      '3': expect.stringContaining('Step 3')
+    })
+  }))
+
+  // Should insert the selected step output (step 2)
+  expect(agent.steps[3].prompt).toBe('Hello {{output.2}}')
+})
+
+test('Previous step output dialog can be cancelled', async () => {
+  const agent = new Agent()
+  agent.steps = [
+    { prompt: 'Step 1', tools: null, agents: [] },
+    { prompt: 'Step 2', tools: null, agents: [] },
+    { prompt: 'Step 3', tools: null, agents: [] },
+    { prompt: 'Hello ', tools: null, agents: [] }
+  ]
+
+  // Mock Dialog.show to simulate user cancelling
+  vi.spyOn(Dialog, 'show').mockResolvedValue({
+    isConfirmed: false
+  } as any)
+
+  const wrapper: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      mode: 'edit',
+      agent: agent
+    }
+  })
+  await nextTick()
+
+  // Navigate to workflow step
+  const steps = wrapper.findAll('.wizard-step')
+  const workflowStep = steps.find(step => step.text().includes('agent.create.workflow.title'))
+  await workflowStep!.trigger('click')
+  await nextTick()
+
+  // Expand fourth step
+  const stepHeaders = wrapper.findAll('.step-panel .panel-header')
+  await stepHeaders[3].trigger('click')
+  await nextTick()
+
+  // Set caret position in textarea
+  const textarea = wrapper.find('textarea[name="prompt"]')
+  const textareaElement = textarea.element as HTMLTextAreaElement
+  textareaElement.selectionStart = 6
+  textareaElement.selectionEnd = 6
+
+  // Click insert system variable button
+  const sysVarButton = wrapper.find('#system-var-anchor-3')
+  await sysVarButton.trigger('click')
+  await nextTick()
+
+  // Wait for menu items to be rendered
+  await nextTick()
+
+  // Click previous step option
+  const menuItems = wrapper.findAll('.context-menu .item')
+  const previousStepOption = menuItems.find(item => item.text().includes('agent.create.workflow.systemVar.previousStep'))
+  await previousStepOption!.trigger('click')
+  await nextTick()
+
+  // Dialog was shown
+  expect(Dialog.show).toHaveBeenCalled()
+
+  // Should NOT insert anything (prompt unchanged)
+  expect(agent.steps[3].prompt).toBe('Hello ')
+})
+
 test('Clicking create user variable button opens dialog', async () => {
   const agent = new Agent()
   agent.steps = [

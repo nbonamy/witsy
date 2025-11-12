@@ -163,7 +163,7 @@
 
 <script setup lang="ts">
 import { BlocksIcon, BracesIcon, BrainIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
-import { computed, PropType, ref, watch } from 'vue'
+import { computed, PropType, nextTick, ref, watch } from 'vue'
 import AgentIcon from '../../assets/agent.svg?component'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
@@ -576,9 +576,45 @@ const insertSystemVariable = (variableName: string) => {
   insertVariableAtCaret(`{{${variableName}}}`)
 }
 
-const insertPreviousStepOutput = () => {
+const insertPreviousStepOutput = async () => {
+
   if (systemVarMenuStepIndex.value === 0) return
-  insertSystemVariable(`${kAgentStepVarOutputPrefix}${systemVarMenuStepIndex.value}`)
+
+  // For step 2 (index 1), directly insert step 1 output
+  if (systemVarMenuStepIndex.value === 1) {
+    insertSystemVariable(`${kAgentStepVarOutputPrefix}1`)
+    return
+  }
+
+  systemVarMenuVisible.value = false
+  await nextTick()
+
+  // For step 3+ (index 2+), show dialog with all previous steps in reverse order
+  const stepIndex = systemVarMenuStepIndex.value
+  const inputOptions: Record<string, string> = {}
+
+  // Build options in reverse order (most recent first)
+  for (let i = 0; i <= stepIndex - 1; i++) {
+    const stepNumber = i + 1
+    const stepDescription = props.agent.steps[i].description || `Step ${stepNumber}`
+    inputOptions[stepNumber.toString()] = `Step ${stepNumber} Output${stepDescription !== `Step ${stepNumber}` ? ` (${stepDescription})` : ''}`
+  }
+
+  const rc = await Dialog.show({
+    title: t('agent.create.workflow.systemVar.previousStep'),
+    text: 'Select which step output to insert:',
+    input: 'select',
+    inputOptions,
+    inputValue: (stepIndex).toString(), // Default to most recent step
+    showCancelButton: true,
+    confirmButtonText: t('common.insert'),
+  })
+
+  if (rc.isConfirmed && rc.value) {
+    insertSystemVariable(`${kAgentStepVarOutputPrefix}${rc.value}`)
+  } else {
+    onCloseSystemVarMenu()
+  }
 }
 
 const onCreateUserVariable = (index: number) => {

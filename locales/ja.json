@@ -292,7 +292,7 @@
           "title": "JSONスキーマ"
         },
         "systemVar": {
-          "previousStep": "Previous Step Output"
+          "previousStep": "前のステップの出力"
         },
         "title": "ワークフロー"
       }

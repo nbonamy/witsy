@@ -292,7 +292,7 @@
           "title": "JSON schema"
         },
         "systemVar": {
-          "previousStep": "上一步输出"
+          "previousStep": "前一步输出"
         },
         "title": "工作流"
       }

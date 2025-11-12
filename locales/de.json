@@ -273,7 +273,7 @@
           "title": "JSON-Schema"
         },
         "systemVar": {
-          "previousStep": "Ausgabe vorheriger Schritt"
+          "previousStep": "Ausgabe des vorherigen Schritts"
         },
         "title": "Arbeitsablauf"
       }
