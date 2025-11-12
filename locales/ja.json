@@ -2065,12 +2065,25 @@
     "smithery": "Smithery",
     "tools": "@:{'common.tools'}",
     "toolsCount": "ツールが有効になっていません|1つのツールが有効になりました|{count}つのツールが有効になりました",
+    "toolTester": {
+      "clear": "クリア",
+      "complexTypeNotSupported": "MVPでは複雑なパラメータータイプはサポートされていません",
+      "execute": "実行",
+      "executing": "実行中...",
+      "noParameters": "このツールにはパラメーターがありません",
+      "parameters": "パラメーター",
+      "result": "結果",
+      "selectTool": "ツールを選択",
+      "title": "{name} MCP サーバーツールのテスト",
+      "tryAgain": "再試行"
+    },
     "tooltips": {
       "deleteServer": "サーバーを削除",
       "editServer": "サーバーを編集",
       "restartServer": "サーバーを再起動",
       "startServer": "サーバーを起動",
       "stopServer": "サーバーを一時停止",
+      "testTools": "ツールをテスト",
       "viewLogs": "サーバーログを見る",
       "viewTools": "利用可能なツールを見る"
     },

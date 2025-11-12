@@ -909,7 +909,9 @@ export default class {
     const tools = await this.getCachedTools(client)
     return tools.tools.map((tool: any) => ({
       name: tool.name,
-      description: tool.description    
+      function: this.uniqueToolName(client.server, tool.name),
+      description: tool.description,
+      inputSchema: tool.inputSchema
     }))
 
   }
