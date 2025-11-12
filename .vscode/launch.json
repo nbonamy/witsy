@@ -32,6 +32,15 @@
       "runtimeArgs": ["ts-node", "./src/cli/main.ts"],
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "i18n_check",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["ts-node", "./tools/i18n_check.ts"],
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "console": "integratedTerminal"
     }
   ]
 }
