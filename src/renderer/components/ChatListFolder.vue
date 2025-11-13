@@ -35,7 +35,7 @@
 
 import { EllipsisVertical, MessageCirclePlusIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import useEventBus from '../composables/event_bus'
 import Chat from '../../models/chat'
 import FolderSettings from '../screens/FolderSettings.vue'

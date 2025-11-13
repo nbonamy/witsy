@@ -16,7 +16,7 @@ vi.mock('../../src/renderer/services/i18n', async () => {
 })
 
 
-vi.mock('../../src/renderer/composables/transcriber', () => {
+vi.mock('../../src/renderer/utils/transcriber', () => {
   return { default: vi.fn(() => ({
     transcriber: {
       initialize: vi.fn(),
@@ -31,14 +31,14 @@ vi.mock('../../src/renderer/composables/transcriber', () => {
   })) }
 })
 
-vi.mock('../../src/renderer/composables/dialog', () => ({
+vi.mock('../../src/renderer/utils/dialog', () => ({
   default: {
     alert: vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false })),
     show: vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false })),
   }
 }))
 
-vi.mock('../../src/renderer/composables/audio_recorder', () => ({
+vi.mock('../../src/renderer/utils/audio_recorder', () => ({
   default: vi.fn(() => ({
     initialize: vi.fn(async () => Promise.resolve()),
     start: vi.fn(() => {

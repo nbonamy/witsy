@@ -7,7 +7,7 @@ import { store } from '../../src/renderer/services/store'
 import McpServers from '../../src/renderer/screens/McpServers.vue'
 import List from '../../src/renderer/mcp/List.vue'
 import Editor from '../../src/renderer/mcp/Editor.vue'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 import { stubTeleport } from '../mocks/stubs'
 
 let mcp: VueWrapper<any>

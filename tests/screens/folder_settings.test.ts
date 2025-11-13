@@ -6,7 +6,7 @@ import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks/index'
 import FolderSettings from '../../src/renderer/screens/FolderSettings.vue'
 import { store } from '../../src/renderer/services/store'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 import Expert from '../../src/models/expert'
 
 enableAutoUnmount(afterAll)

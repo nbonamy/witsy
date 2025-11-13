@@ -1,10 +1,10 @@
 import { vi, test, expect, describe, beforeAll, beforeEach } from 'vitest'
 import { useWindowMock } from '../../mocks/window'
 import { useMcpServer, OAuthStatus } from '../../../src/renderer/composables/mcp'
-import Dialog from '../../../src/renderer/composables/dialog'
+import Dialog from '../../../src/renderer/utils/dialog'
 
 // Mock dialog
-vi.mock('../../../src/renderer/composables/dialog', () => ({
+vi.mock('../../../src/renderer/utils/dialog', () => ({
   default: {
     show: vi.fn(() => Promise.resolve({ isConfirmed: true })),
     alert: vi.fn(() => Promise.resolve({ isConfirmed: true })),

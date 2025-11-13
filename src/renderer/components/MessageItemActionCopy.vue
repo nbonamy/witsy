@@ -9,7 +9,7 @@
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { ClipboardIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import Message from '../../models/message'
 import { t } from '../services/i18n'
 import { store } from '../services/store'

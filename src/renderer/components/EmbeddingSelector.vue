@@ -51,7 +51,7 @@ import LlmFactory from '../services/llms/llm'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 import RefreshButton from '../components/RefreshButton.vue'
 import Combobox from '../components/Combobox.vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 
 const engine = defineModel('engine', { default: 'openai' })
 const model = defineModel('model', { default: 'text-embedding-ada-002' })

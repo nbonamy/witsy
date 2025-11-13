@@ -141,7 +141,7 @@ vi.mock('../../src/renderer/services/video', async () => ({
   }
 }))
 
-vi.mock('../../src/renderer/composables/dialog.ts', () => ({
+vi.mock('../../src/renderer/utils/dialog.ts', () => ({
   default: {
     show: vi.fn(() => ({ isConfirmed: true }))
   }

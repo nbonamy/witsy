@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { beforeAll, beforeEach, expect, test, vi } from 'vitest'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 import AgentForge from '../../src/renderer/screens/AgentForge.vue'
 import { store } from '../../src/renderer/services/store'
 import { useWindowMock } from '../mocks/window'
@@ -14,7 +14,7 @@ vi.mock('../../src/renderer/services/i18n', () => ({
 }))
 
 // Mock Dialog
-vi.mock('../../src/renderer/composables/dialog', () => ({
+vi.mock('../../src/renderer/utils/dialog', () => ({
   default: {
     show: vi.fn(),
     waitUntilClosed: vi.fn()

@@ -6,7 +6,7 @@ import { useWindowMock } from '../mocks/window'
 
 import Notes from '../../src/renderer/docrepo/Notes.vue'
 import NoteEditor from '../../src/renderer/docrepo/NoteEditor.vue'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 import { DocumentBase, DocumentSource } from '../../src/types/rag'
 
 // mock i18n

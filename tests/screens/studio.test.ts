@@ -12,7 +12,7 @@ import defaultSettings from '../../defaults/settings.json'
 import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 enableAutoUnmount(afterEach)
 

@@ -3,7 +3,7 @@ import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/renderer/services/store'
 import FilesystemPlugin from '../../src/renderer/services/plugins/filesystem'
 import { PluginExecutionContext } from 'multi-llm-ts'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 global.atob = (str: string) => str
 

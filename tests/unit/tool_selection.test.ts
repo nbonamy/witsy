@@ -1,6 +1,6 @@
 import { vi, test, expect, describe, beforeAll } from 'vitest'
 import type { McpToolUnique } from '../../src/types/mcp'
-import * as toolSelection from '../../src/renderer/composables/tool_selection'
+import * as toolSelection from '../../src/renderer/utils/tool_selection'
 import { useWindowMock } from '../mocks/window'
 
 // Mock dependencies

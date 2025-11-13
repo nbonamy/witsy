@@ -5,7 +5,7 @@ import { useDocRepoEvents } from '../../../src/renderer/composables/useDocRepoEv
 import { useWindowMock } from '../../mocks/window'
 
 // Mock dialog
-vi.mock('../../../src/renderer/composables/dialog', () => ({
+vi.mock('../../../src/renderer/utils/dialog', () => ({
   default: {
     alert: vi.fn(() => Promise.resolve()),
   }

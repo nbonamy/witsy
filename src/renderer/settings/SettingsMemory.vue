@@ -26,7 +26,7 @@
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import EmbeddingSelector from '../components/EmbeddingSelector.vue'
 import MemoryInspector from '../screens/MemoryInspector.vue'
 

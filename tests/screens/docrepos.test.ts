@@ -7,7 +7,7 @@ import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/renderer/services/store'
 import DocRepos from '../../src/renderer/screens/DocRepos.vue'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 enableAutoUnmount(afterAll)
 

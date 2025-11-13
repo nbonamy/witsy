@@ -74,7 +74,7 @@
 <script setup lang="ts">
 import { LlmModelOpts, LlmReasoningEffort, LlmVerbosity } from 'multi-llm-ts'
 import { computed, ref, watch } from 'vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import LlmFactory from '../services/llms/llm'
 import VariableEditor from '../screens/VariableEditor.vue'
 import { t } from '../services/i18n'

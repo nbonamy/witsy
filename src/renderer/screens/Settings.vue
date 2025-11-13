@@ -44,7 +44,7 @@ import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, Com
 import { nextTick, onMounted, PropType, ref, watch } from 'vue'
 import { MenuBarMode } from '../components/MenuBar.vue'
 import useEventBus from '../composables/event_bus'
-import { installTabs, showActiveTab } from '../composables/tabs'
+import { installTabs, showActiveTab } from '../utils/tabs'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import SettingsAdvanced from '../settings/SettingsAdvanced.vue'

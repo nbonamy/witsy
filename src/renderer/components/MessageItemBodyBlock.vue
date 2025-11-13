@@ -15,7 +15,7 @@
 
 import { h, nextTick, PropType, ref, render } from 'vue'
 import { InfoIcon } from 'lucide-vue-next'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { ToolCall } from 'types/index'

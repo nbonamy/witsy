@@ -144,7 +144,7 @@ import { t } from '../services/i18n'
 import defaults from '../../../defaults/settings.json'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import { getSTTEngines, getSTTEngine, getSTTModels, requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import LangSelect from '../components/LangSelect.vue'
 
 type InitModelMode = 'download' | 'verify'

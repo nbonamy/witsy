@@ -5,7 +5,7 @@ import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/renderer/services/store'
 import Editor from '../../src/renderer/agent/Editor.vue'
 import Agent from '../../src/models/agent'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 import { stubTeleport } from '../mocks/stubs'
 import { nextTick } from 'vue'
 

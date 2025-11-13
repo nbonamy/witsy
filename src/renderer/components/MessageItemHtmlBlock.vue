@@ -35,7 +35,7 @@
 import { ChevronDownIcon, ClipboardCheckIcon, ClipboardIcon, DownloadIcon, EyeOffIcon, ScanEyeIcon } from 'lucide-vue-next'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useArtifactCopy } from '../composables/artifact_copy'
-import { togglePanel } from '../composables/panel'
+import { togglePanel } from '../utils/panel'
 import Message from '../../models/message'
 import { t } from '../services/i18n'
 import { addExtension, extractCodeBlockContent, extractHtmlContent as extractHtml } from '../services/markdown'

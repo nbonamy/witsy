@@ -38,7 +38,7 @@
 import { ChevronDownIcon, CircleAlertIcon } from 'lucide-vue-next'
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import EngineLogo from '../components/EngineLogo.vue'
-import { togglePanel } from '../composables/panel'
+import { togglePanel } from '../utils/panel'
 import { t } from '../services/i18n'
 import { DocumentBase } from 'types/rag'
 import Files from './Files.vue'
