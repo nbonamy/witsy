@@ -1,11 +1,11 @@
 import { mount } from '@vue/test-utils'
 import { beforeAll, describe, expect, test, vi } from 'vitest'
 import { defineComponent, nextTick } from 'vue'
-import { useDocRepoEvents } from '../../../src/composables/useDocRepoEvents'
+import { useDocRepoEvents } from '../../../src/renderer/composables/useDocRepoEvents'
 import { useWindowMock } from '../../mocks/window'
 
 // Mock dialog
-vi.mock('../../../src/composables/dialog', () => ({
+vi.mock('../../../src/renderer/utils/dialog', () => ({
   default: {
     alert: vi.fn(() => Promise.resolve()),
   }

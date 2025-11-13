@@ -1,11 +1,11 @@
 import { App, dialog } from 'electron'
 import fs from 'fs'
 import path from 'path'
-import { getLocaleMessages, useI18n } from '../main/i18n'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import { pickFile } from './file'
 import { loadHistory, saveHistory } from './history'
+import { getLocaleMessages, useI18n } from './i18n'
 
 // Build a map of all role translations from all locales
 const buildRoleTranslationMap = (app: App): Map<string, 'system' | 'user' | 'assistant'> => {

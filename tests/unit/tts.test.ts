@@ -1,13 +1,13 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import defaults from '../../defaults/settings.json'
-import getTTSEngine from '../../src/voice/tts'
-import TTSFalAi from '../../src/voice/tts-falai'
-import TTSElevenLabs from '../../src/voice/tts-elevenlabs'
-import TTSGroq from '../../src/voice/tts-groq'
-import TTSOpenAI from '../../src/voice/tts-openai'
-import TTSMiniMax from '../../src/voice/tts-minimax'
+import getTTSEngine from '../../src/renderer/voice/tts'
+import TTSFalAi from '../../src/renderer/voice/tts-falai'
+import TTSElevenLabs from '../../src/renderer/voice/tts-elevenlabs'
+import TTSGroq from '../../src/renderer/voice/tts-groq'
+import TTSOpenAI from '../../src/renderer/voice/tts-openai'
+import TTSMiniMax from '../../src/renderer/voice/tts-minimax'
 
 // @ts-expect-error mocking
 global.fetch = vi.fn(async (url) => ({

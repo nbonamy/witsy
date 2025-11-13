@@ -4,14 +4,14 @@ import { afterAll, beforeAll, beforeEach, expect, test, vi } from 'vitest'
 import { stubTeleport } from '../mocks/stubs'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks/index'
-import FolderSettings from '../../src/screens/FolderSettings.vue'
-import { store } from '../../src/services/store'
-import Dialog from '../../src/composables/dialog'
+import FolderSettings from '../../src/renderer/screens/FolderSettings.vue'
+import { store } from '../../src/renderer/services/store'
+import Dialog from '../../src/renderer/utils/dialog'
 import Expert from '../../src/models/expert'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

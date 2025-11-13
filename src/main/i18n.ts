@@ -1,5 +1,5 @@
 
-import { anyDict } from '../types/index'
+import { anyDict } from 'types/index'
 import { App } from 'electron'
 import { createI18n } from './i18n.base'
 import { loadSettings } from './config'
@@ -11,8 +11,8 @@ import de from '../../locales/de.json'
 import it from '../../locales/it.json'
 import pl from '../../locales/pl.json'
 import pt from '../../locales/pt.json'
-import zh from "../../locales/zh.json"
-import ja from "../../locales/ja.json"
+import zh from '../../locales/zh.json'
+import ja from '../../locales/ja.json'
 
 import path from 'path'
 import fs from 'fs'

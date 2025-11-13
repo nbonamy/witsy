@@ -1,6 +1,6 @@
 
 import { ShortcutsConfig } from 'types/config'
-import { CreateWindowOpts } from '../types/window'
+import { CreateWindowOpts } from 'types/window'
 import { App, BrowserWindow, Menu, shell } from 'electron'
 import { shortcutAccelerator } from './shortcuts'
 import * as window from './window'

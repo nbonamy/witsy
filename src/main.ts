@@ -1,9 +1,9 @@
 
-import process from 'node:process';
-import { app, BrowserWindow, dialog, nativeTheme, systemPreferences, Menu, Notification } from 'electron';
+import { app, BrowserWindow, dialog, Menu, nativeTheme, Notification, systemPreferences } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
-import Store from 'electron-store';
 import log from 'electron-log/main';
+import Store from 'electron-store';
+import process from 'node:process';
 
 // Prevent EPIPE errors from crashing the app
 process.on('uncaughtException', (error) => {
@@ -15,37 +15,37 @@ process.on('uncaughtException', (error) => {
   log.error('Uncaught exception:', error);
 });
 
+import PromptAnywhere from './main/automations/anywhere';
+import Automator from './main/automations/automator';
+import Commander from './main/automations/commander';
+import ReadAloud from './main/automations/readaloud';
+import Transcriber from './main/automations/transcriber';
 import AutoUpdater from './main/autoupdate';
-import Automator from './automations/automator';
-import Commander from './automations/commander';
-import PromptAnywhere from './automations/anywhere';
-import ReadAloud from './automations/readaloud';
-import Transcriber from './automations/transcriber';
-import DocumentRepository from './rag/docrepo';
-import DocumentMonitor from './rag/docmonitor';
-import MemoryManager from './main/memory';
-import TrayIconManager from './main/tray';
-import Scheduler from './main/scheduler';
 import Mcp from './main/mcp';
+import MemoryManager from './main/memory';
+import DocumentMonitor from './main/rag/docmonitor';
+import DocumentRepository from './main/rag/docrepo';
+import Scheduler from './main/scheduler';
+import TrayIconManager from './main/tray';
 
 import { fixPath } from './main/utils';
 //import { useI18n } from './main/i18n';
+import { installAgentWebhook } from './main/agent_webhook';
+import { checkAndInstallCLI } from './main/cli_installer';
+import { installApiEndpoints } from './main/http_api';
 import { HttpServer } from './main/http_server';
-import { installIpc } from './main/ipc';
+import { installHttpTriggers } from './main/http_triggers';
 import { importMarkdown } from './main/import_md';
 import { importOpenAI } from './main/import_oai';
-import { installHttpTriggers } from './main/http_triggers';
-import { installAgentWebhook } from './main/agent_webhook';
-import { installApiEndpoints } from './main/http_api';
-import { checkAndInstallCLI } from './main/cli_installer';
+import { installIpc } from './main/ipc';
 
-import * as config from './main/config';
-import * as shortcuts from './main/shortcuts';
-import * as window from './main/window';
-import * as menu from './main/menu';
 import * as backup from './main/backup';
-import * as workspace from './main/workspace';
+import * as config from './main/config';
+import * as menu from './main/menu';
+import * as shortcuts from './main/shortcuts';
 import * as webview from './main/webview';
+import * as window from './main/window';
+import * as workspace from './main/workspace';
 
 let mcp: Mcp;
 let scheduler: Scheduler;

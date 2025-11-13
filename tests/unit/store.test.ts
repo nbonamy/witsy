@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock, listeners } from '../mocks/window'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'

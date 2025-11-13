@@ -1,6 +1,6 @@
 
-import { anyDict } from '../types/index'
-import { AgentRun } from '../types/agents'
+import { anyDict } from 'types/index'
+import { AgentRun } from 'types/agents'
 import { App } from 'electron'
 import { notifyBrowserWindows } from './windows'
 import { workspaceFolderPath } from './workspace'

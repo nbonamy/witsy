@@ -1,7 +1,7 @@
 
 import { app, BrowserWindow, clipboard, ContextMenuParams, Menu, MenuItem, Notification } from 'electron';
-import { MainWindowMode } from '../../types/index';
-import { CreateWindowOpts } from '../../types/window';
+import { MainWindowMode } from 'types/index';
+import { CreateWindowOpts } from 'types/window';
 import { loadSettings, saveSettings } from '../config';
 import { useI18n } from '../i18n';
 import { createWindow, electronStore, ensureOnCurrentScreen, titleBarOptions, undockWindow } from './index';

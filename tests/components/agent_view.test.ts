@@ -2,17 +2,17 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { createI18nMock } from '../mocks/index'
 import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
-import View from '../../src/agent/View.vue'
+import View from '../../src/renderer/agent/View.vue'
 import { nextTick } from 'vue'
-import useEventBus from '../../src/composables/event_bus'
+import useEventBus from '../../src/renderer/composables/event_bus'
 
 const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

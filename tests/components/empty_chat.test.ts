@@ -4,11 +4,11 @@ import { mount, enableAutoUnmount, VueWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
-import { store } from '../../src/services/store'
-import EmptyChat from '../../src/components/EmptyChat.vue'
+import { store } from '../../src/renderer/services/store'
+import EmptyChat from '../../src/renderer/components/EmptyChat.vue'
 
 // Mock the i18n service
-vi.mock('../../src/services/i18n', () => createI18nMock())
+vi.mock('../../src/renderer/services/i18n', () => createI18nMock())
 
 enableAutoUnmount(afterAll)
 

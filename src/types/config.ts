@@ -1,7 +1,7 @@
 
 import { ChatModel, EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
 import { CustomInstruction, DesignStudioMediaType, Shortcut, strDict, TTSVoice } from './index'
-import { PluginConfig } from '../plugins/plugin'
+import { PluginConfig } from '../renderer/services/plugins/plugin'
 import { McpClaudeServer, McpServer, McpServerState, McpOAuthConfig } from './mcp'
 import { ToolSelection } from './llm'
 

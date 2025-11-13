@@ -1,5 +1,5 @@
 
-import { anyDict } from '../types/index'
+import { anyDict } from 'types/index'
 import { I18n, createI18n as _createI18n } from 'vue-i18n'
 
 export const allLanguages = [

@@ -1,6 +1,6 @@
 import { config } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
-import { vTooltip } from './src/directives/tooltip'
+import { vTooltip } from './src/renderer/directives/tooltip'
 import { vi } from 'vitest'
 
 const i18n = createI18n({
@@ -28,7 +28,7 @@ vi.mock('sweetalert2/dist/sweetalert2.js', () => ({
 }))
 
 // Mock Dialog service to prevent SweetAlert2 DOM-related errors in tests
-vi.mock('./src/composables/dialog', () => ({
+vi.mock('./src/renderer/utils/dialog', () => ({
   default: {
     alert: vi.fn(() => Promise.resolve({
       isConfirmed: true,
@@ -47,7 +47,7 @@ vi.mock('./src/composables/dialog', () => ({
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
 
-vi.mock('./src/composables/event_bus', () => ({
+vi.mock('./src/renderer/composables/event_bus', () => ({
   default: () => ({
     onEvent: onEventMock,
     emitEvent: emitEventMock
@@ -58,7 +58,7 @@ vi.mock('./src/composables/event_bus', () => ({
 export { onEventMock, emitEventMock }
 
 // Mock Automator class
-vi.mock('./src/automations/automator', () => {
+vi.mock('./src/main/automations/automator', () => {
   const Automator = vi.fn()
   Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
   Automator.prototype.moveCaretBelow = vi.fn()

@@ -5,10 +5,10 @@ import { HttpServer } from '../../../src/main/http_server'
 import { installHttpTriggers } from '../../../src/main/http_triggers'
 import * as window from '../../../src/main/window'
 import * as config from '../../../src/main/config'
-import PromptAnywhere from '../../../src/automations/anywhere'
-import Commander from '../../../src/automations/commander'
-import ReadAloud from '../../../src/automations/readaloud'
-import Transcriber from '../../../src/automations/transcriber'
+import PromptAnywhere from '../../../src/main/automations/anywhere'
+import Commander from '../../../src/main/automations/commander'
+import ReadAloud from '../../../src/main/automations/readaloud'
+import Transcriber from '../../../src/main/automations/transcriber'
 
 // Mock window module
 vi.mock('../../../src/main/window', () => ({
@@ -31,25 +31,25 @@ vi.mock('../../../src/main/config', () => ({
 }))
 
 // Mock automation modules
-vi.mock('../../../src/automations/anywhere', () => ({
+vi.mock('../../../src/main/automations/anywhere', () => ({
   default: {
     open: vi.fn().mockResolvedValue(undefined),
   },
 }))
 
-vi.mock('../../../src/automations/commander', () => ({
+vi.mock('../../../src/main/automations/commander', () => ({
   default: {
     initCommand: vi.fn().mockResolvedValue(undefined),
   },
 }))
 
-vi.mock('../../../src/automations/readaloud', () => ({
+vi.mock('../../../src/main/automations/readaloud', () => ({
   default: {
     read: vi.fn().mockResolvedValue(undefined),
   },
 }))
 
-vi.mock('../../../src/automations/transcriber', () => ({
+vi.mock('../../../src/main/automations/transcriber', () => ({
   default: {
     initTranscription: vi.fn().mockResolvedValue(undefined),
   },

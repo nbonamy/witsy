@@ -4,23 +4,23 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { createI18nMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import { switchToTab, tabs } from './settings_utils'
-import Settings from '../../src/screens/Settings.vue'
+import Settings from '../../src/renderer/screens/Settings.vue'
 import { findModelSelectorPlus } from '../utils'
 import { ChatModel } from 'multi-llm-ts'
-import Dialog from '../../src/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 enableAutoUnmount(afterAll)
 
 HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/services/store.ts', async (importOriginal) => {
+vi.mock('../../src/renderer/services/store.ts', async (importOriginal) => {
   const commands = await import('../../defaults/commands.json')
   const mod: any = await importOriginal()
   return {

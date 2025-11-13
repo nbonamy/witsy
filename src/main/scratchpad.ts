@@ -1,7 +1,7 @@
 
 import { App } from 'electron'
 import { workspaceFolderPath } from './workspace'
-import { ScratchpadHeader, ScratchpadData } from '../types/index'
+import { ScratchpadHeader, ScratchpadData } from 'types/index'
 import path from 'path'
 import fs from 'fs'
 

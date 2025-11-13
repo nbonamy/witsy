@@ -1,6 +1,6 @@
 
 import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStreamingResponse, EngineCreateOpts, ModelCapabilities, ChatModel, ModelMetadata, ModelGeneric } from 'multi-llm-ts'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import Message from '../../src/models/message'
 import { RandomChunkStream, InfiniteStream } from './streams'
 import Attachment from '../../src/models/attachment'

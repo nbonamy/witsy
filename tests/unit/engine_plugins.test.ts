@@ -2,16 +2,16 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
-import { store } from '../../src/services/store'
-import Image from '../../src/plugins/image'
-import Video from '../../src/plugins/video'
-import Browse from '../../src/plugins/browse'
-import Search from '../../src/plugins/search'
-import Python from '../../src/plugins/python'
-import YouTube from '../../src/plugins/youtube'
-import Memory from '../../src/plugins/memory'
-import Computer from '../../src/plugins/computer'
-import Mcp from '../../src/plugins/mcp'
+import { store } from '../../src/renderer/services/store'
+import Image from '../../src/renderer/services/plugins/image'
+import Video from '../../src/renderer/services/plugins/video'
+import Browse from '../../src/renderer/services/plugins/browse'
+import Search from '../../src/renderer/services/plugins/search'
+import Python from '../../src/renderer/services/plugins/python'
+import YouTube from '../../src/renderer/services/plugins/youtube'
+import Memory from '../../src/renderer/services/plugins/memory'
+import Computer from '../../src/renderer/services/plugins/computer'
+import Mcp from '../../src/renderer/services/plugins/mcp'
 import { MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
 import { HfInference } from '@huggingface/inference'
 import { GoogleGenAI } from '@google/genai'
@@ -60,11 +60,11 @@ global.fetch = vi.fn(async (url: string) => {
 })
 
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/services/download.ts', async () => {
+vi.mock('../../src/renderer/services/download.ts', async () => {
   return {
     saveFileContents: vi.fn(() => 'file://file_saved'),
     download: vi.fn(() => 'file://file_downloaded'),

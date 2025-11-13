@@ -3,9 +3,9 @@ import { beforeAll, beforeEach, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
-import SettingsSidebar from '../../src/settings/SettingsSidebar.vue'
-import Dialog from '../../src/composables/dialog'
+import { store } from '../../src/renderer/services/store'
+import SettingsSidebar from '../../src/renderer/settings/SettingsSidebar.vue'
+import Dialog from '../../src/renderer/utils/dialog'
 
 beforeAll(() => {
   useWindowMock()

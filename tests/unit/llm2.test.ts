@@ -1,15 +1,15 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
-import LlmFactory, { ILlmManager } from '../../src/llms/llm'
+import { store } from '../../src/renderer/services/store'
+import LlmFactory, { ILlmManager } from '../../src/renderer/services/llms/llm'
 import {
   ModelsList, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels,
   loadOllamaModels, loadOpenAIModels, loadAzureModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels,
   defaultCapabilities
 } from 'multi-llm-ts'
-import LlmManagerBase from '../../src/llms/base'
-import OpenRouter from '../../src/llms/openrouter'
+import LlmManagerBase from '../../src/renderer/services/llms/base'
+import OpenRouter from '../../src/renderer/services/llms/openrouter'
 import { EngineConfig } from '../../src/types/config'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {

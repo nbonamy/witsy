@@ -1,6 +1,6 @@
 
-import { anyDict } from '../../types/index';
-import { Application } from '../../types/automation';
+import { anyDict } from 'types/index';
+import { Application } from 'types/automation';
 import { app, BrowserWindow, screen } from 'electron';
 import { createWindow, ensureOnCurrentScreen, releaseFocus } from './index';
 //import MacosAutomator from '../../automations/macos';

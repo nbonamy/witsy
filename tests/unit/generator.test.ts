@@ -1,8 +1,8 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { LlmChunk } from 'multi-llm-ts'
 import { useWindowMock } from '../mocks/window'
-import Generator from '../../src/services/generator'
-import { store } from '../../src/services/store'
+import Generator from '../../src/renderer/services/generator'
+import { store } from '../../src/renderer/services/store'
 import Message from '../../src/models/message'
 
 let llmMock: any
