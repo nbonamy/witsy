@@ -2805,10 +2805,10 @@
         "editor": {
           "instructions": "@:{'common.instructions'}",
           "label": "@:{'common.label'}",
-          "title": "Anweisungs-Editor"
+          "title": "Stil-Editor"
         },
         "empathic": "❤️ Warm und empathisch",
-        "label": "@:{'common.instructions'}",
+        "label": "Schreibstile",
         "playful": "😜 Verspielt und witzig",
         "reflective": "🤔 Nachdenklich und reflektierend",
         "standard": "📘 Einfach und informativ",

@@ -2535,7 +2535,7 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "Enregistrer les requêtes rapides dans l'historique",
-      "conversationLength": "Messages par conversation",
+      "conversationLength": "Messages par Conversation",
       "enableHttpEndpoints": "Activer les points de terminaison HTTP (API, déclencheurs, webhooks)",
       "header": "Paramètres divers",
       "httpServer": "Serveur HTTP en cours d'exécution sur le port {port}",
@@ -2798,17 +2798,17 @@
     "llm": {
       "capabilities": {
         "artifacts": "Demander au modèle de créer des artefacts",
-        "title": "Instructions supplémentaires"
+        "title": "Instructions Supplémentaires"
       },
       "disableStreaming": "Désactiver le streaming",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",
           "label": "@:{'common.label'}",
-          "title": "Éditeur d'instructions"
+          "title": "Éditeur de Style d'Écriture"
         },
         "empathic": "❤️ Chaleureux et empathique",
-        "label": "@:{'common.instructions'}",
+        "label": "Styles d'Écriture",
         "playful": "😜 Joueur et spirituel",
         "reflective": "🤔 Réfléchi et contemplatif",
         "standard": "📘 Direct et informatif",

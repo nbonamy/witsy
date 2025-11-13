@@ -2559,7 +2559,7 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "Always save prompt sessions in chat history",
-      "conversationLength": "Messages per conversation",
+      "conversationLength": "Messages per Conversation",
       "enableHttpEndpoints": "Enable HTTP endpoints (API, triggers, webhooks)",
       "header": "Miscellaneous settings",
       "httpServer": "HTTP Server running on port {port}",
@@ -2822,17 +2822,17 @@
     "llm": {
       "capabilities": {
         "artifacts": "Instruct model to create artifacts",
-        "title": "Additional instructions"
+        "title": "Additional Instructions"
       },
       "disableStreaming": "Disable streaming",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",
           "label": "@:{'common.label'}",
-          "title": "Instruction Editor"
+          "title": "Writing Style Editor"
         },
         "empathic": "❤️ Warm and empathic",
-        "label": "@:{'common.instructions'}",
+        "label": "Writing Styles",
         "playful": "😜 Playful and witty",
         "reflective": "🤔 Thoughtful and reflective",
         "standard": "📘 Straightforward and informative",

@@ -2557,7 +2557,7 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "始终在聊天历史中保存提示会话",
-      "conversationLength": "每段对话的消息数量",
+      "conversationLength": "每次对话消息数",
       "enableHttpEndpoints": "启用HTTP端点（API、触发器、Webhook）",
       "header": "杂项设置",
       "httpServer": "HTTP 服务器运行在端口 {port}",
@@ -2827,10 +2827,10 @@
         "editor": {
           "instructions": "@:{'common.instructions'}",
           "label": "@:{'common.label'}",
-          "title": "指令编辑器"
+          "title": "写作风格编辑器"
         },
         "empathic": "❤️ 温暖和同理心",
-        "label": "@:{'common.instructions'}",
+        "label": "写作风格",
         "playful": "😜 活泼而机智",
         "reflective": "🤔 深思熟虑和反思",
         "standard": "📘 直接且信息丰富",
