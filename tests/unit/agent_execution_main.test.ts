@@ -33,13 +33,13 @@ import { beforeEach, describe, expect, test, vi, afterEach } from 'vitest'
 import { App } from 'electron'
 import { AgentExecutor } from '../../src/main/agent_utils'
 import Mcp from '../../src/main/mcp'
-import DocumentRepository from '../../src/rag/docrepo'
+import DocumentRepository from '../../src/main/rag/docrepo'
 import Agent from '../../src/models/agent'
 import * as configModule from '../../src/main/config'
 import * as agentsModule from '../../src/main/agents'
 import * as interpreterModule from '../../src/main/interpreter'
 import * as workspaceModule from '../../src/main/workspace'
-import * as i18nModule from '../../src/services/i18n'
+import * as i18nModule from '../../src/renderer/services/i18n'
 import * as mainI18nModule from '../../src/main/i18n'
 import * as searchModule from '../../src/main/search'
 import { Configuration } from '../../src/types/config'
@@ -53,11 +53,11 @@ vi.mock('../../src/main/interpreter')
 vi.mock('../../src/main/i18n')
 vi.mock('../../src/main/search')
 vi.mock('../../src/main/workspace')
-vi.mock('../../src/services/i18n')
-vi.mock('../../src/services/agent_executor_workflow')
+vi.mock('../../src/renderer/services/i18n')
+vi.mock('../../src/renderer/services/agent_executor_workflow')
 
 // Mock LLM execution
-vi.mock('../../src/services/agent_executor_workflow', () => {
+vi.mock('../../src/renderer/services/agent_executor_workflow', () => {
   return {
     default: vi.fn().mockImplementation(() => ({
       run: vi.fn(async () => ({

@@ -1,0 +1,396 @@
+
+import { LlmEngine } from 'multi-llm-ts'
+import { z } from 'zod'
+import Agent from '../../models/agent'
+import Chat from '../../models/chat'
+import { AssistantCompletionOpts } from './assistant'
+import { GenerationResult } from './generator'
+import { t } from './i18n'
+import { kBrowsePluginName } from './plugins/browse'
+import { kPythonPluginName } from './plugins/python'
+import { kSearchPluginName } from './plugins/search'
+import { kYoutubePluginName } from './plugins/youtube'
+
+export type DeepResearchOpts = AssistantCompletionOpts & {
+  breadth: number, // number of sections to create
+  depth: number, // number of queries per section
+  searchResults: number, // number of search results to retrieve per query
+}
+
+export interface DeepResearch {
+  run(engine: LlmEngine, chat: Chat, opts: DeepResearchOpts): Promise<GenerationResult>
+}
+
+export const planningAgent = Agent.fromJson({
+  name: 'planning',
+  description: 'Strategic research planner specialized in query decomposition and research methodology design. Creates comprehensive research strategies and identifies optimal information gathering approaches.',
+  instructions: `You are a planning agent, the strategic planner for deep research investigations.
+
+Given a user research query, your goal is to identify the different sections of the final report. The number of sections will be provided by the user. You have a tolerance of plus or minus 1 section depending on how you interpret the topic and evaluate its complexity.
+
+For each section you will provide:
+- the title of the section
+- a detailed description of the section's objective
+- search queries that will be used to gather information for that section. The number of queries will be provided by the user, but you should aim for a minimum of 1 query per section.If you feel this section requires more queries, you can add them, up to one more query than the user requested.
+
+Do not execute any searches or analysis, just plan the structure of the research report. The search_internet tool is made available to you to help you understand the topic and create relevant sections and search queries.
+
+Your output will ONLY consist of the list of sections as a JSON object with no markdown formatting or additional text. The JSON object should have the following structure:
+
+{
+  "sections": [
+    {
+      "title": "Section Title",
+      "description": "Detailed description of the section's objective",
+      "queries": [
+        "Search query 1",
+        "Search query 2"
+      ]
+    },
+    ...
+  ]
+}
+
+  `,
+  parameters: [
+    {
+      name: 'userQuery',
+      type: 'string',
+      description: 'The original user research query',
+      required: true
+    },
+    {
+      name: 'numSections',
+      type: 'integer',
+      description: 'The number of sections to create for the research report',
+      required: false,
+      default: 3
+    },
+    {
+      name: 'numQueriesPerSection',
+      type: 'integer',
+      description: 'The number of search queries to generate for each section',
+      required: true,
+      minimum: 1
+    }
+  ],
+  steps: [{
+    prompt: `Plan the research report structure for the following query: {{userQuery}}. Aim for {{numSections}} sections, with {{numQueriesPerSection}} search queries per section.`,
+    tools: [
+      kSearchPluginName,
+      kBrowsePluginName
+    ],
+    agents: [],
+    //docrepo: 'research_strategies',
+  }]
+},
+  () => t('deepResearch.planning.starting'),
+  () => t('deepResearch.planning.running'),
+  () => t('deepResearch.planning.completed'),
+  () => t('deepResearch.planning.error'),
+)
+planningAgent.steps[0].structuredOutput = {
+  name: 'planning',
+  structure: z.object({
+    sections: z.array(z.object({
+      title: z.string(),
+      description: z.string(),
+      queries: z.array(z.string())
+    }))
+  })
+}
+
+export const searchAgent = Agent.fromJson({
+  name: 'search',
+  description: 'Expert information retrieval specialist optimized for comprehensive web search and content extraction',
+  instructions: `You are a search agent, responsible for executing targeted web searches and extracting relevant content.
+  
+Your sole responsibility is to run the search_internet tool with the provided search query and extract relevant content from the results.
+
+When running the search_internet tool, forward the value of the maxResults parameter to the tool as the maxResults parameter. This will limit the number of search results returned by the tool.
+
+Do not summarize of analyze the content, just return the raw search results and extracted content.
+
+Remove all <tool> tags from the content and return it as plain text.`,
+  parameters: [
+    {
+      name: 'searchQuery',
+      type: 'string',
+      description: 'Specific search query to execute',
+      required: true
+    },
+    {
+      name: 'maxResults',
+      type: 'number',
+      description: 'The maximum number of search results to return',
+      required: true,
+    },
+  ],
+  steps: [{
+    prompt: `Execute targeted search for: {{searchQuery}}.\nmaxResults to return: {{maxResults}}`,
+    tools: [
+      kSearchPluginName,
+      kBrowsePluginName,
+      kYoutubePluginName
+    ],
+    agents: [],
+    //docrepo: 'search_results',
+  }]
+},
+  () => t('deepResearch.search.starting'),
+  (args) => t('deepResearch.search.running', { query: args.searchQuery }),
+  () => t('deepResearch.search.completed'),
+  () => t('deepResearch.search.error'),
+)
+
+export const analysisAgent = Agent.fromJson({
+  name: 'analysis',
+  description: 'Advanced information processor specialized in extracting insights, identifying patterns, and synthesizing knowledge from raw research data. Performs critical analysis and fact verification.',
+  instructions: `You are an analyst agent, responsible for processing raw research data and extracting meaningful insights.
+
+From the content provided, your task is to identify 5 to 10 key learnings that are relevant to the section objective.
+
+Your output will ONLY consist of the list of learnings as a JSON object with no markdown formatting or additional text. The JSON object should have the following structure:
+
+{
+  "learnings": [
+    "learning 1",
+    "learning 2",
+    ...
+    "learning n"
+  ]
+}
+  `,
+  parameters: [
+    {
+      name: 'sectionObjective',
+      type: 'string',
+      description: 'The objective of the section being analyzed',
+      required: true
+    },
+    {
+      name: 'rawInformation',
+      type: 'string',
+      description: 'Information to be analyzed',
+      required: true
+    }
+  ],
+  steps: [{
+    prompt: `Analyze the following information for the section:
+  - Section Objective: {{sectionObjective}}
+  - Raw Information: {{rawInformation}}
+    `,
+    tools: [
+      kPythonPluginName,
+      kBrowsePluginName,
+    ],
+    agents: [],
+    //docrepo: 'analyzed_knowledge',
+  }]
+},
+  () => t('deepResearch.analysis.starting'),
+  () => t('deepResearch.analysis.running'),
+  () => t('deepResearch.analysis.completed'),
+  () => t('deepResearch.analysis.error'),
+)
+analysisAgent.steps[0].structuredOutput = {
+  name: 'analysis',
+  structure: z.object({
+    learnings: z.array(z.string())
+  })
+}
+
+export const writerAgent = Agent.fromJson({
+  name: 'writer',
+  description: 'Section generator that creates detailed, coherent sections of research reports based on analyzed information and section objectives. Ensures each section is well-structured and contributes to the overall narrative.',
+  //docrepo: 'research_sections',
+  instructions: `You are the SectionAgent, responsible for generating detailed sections of research reports based on analyzed information and section objectives.
+
+Your task is to ensure each section is well-structured and contributes to the overall narrative of the report.
+
+The text generated is part of a larger research report, so do not include any introductory or concluding remarks, just the content of the section.
+
+Start your response with the section title as a 1st level header (#) and build the section content after it. Make sure you use the section objective to guide the content you generate.
+
+You can use markdown formatting to structure the section, such as headings, lists, and code blocks: make sure all subsequent headings are 2nd level headers (##) or lower. Do not include too many level 2 headings: 3 to 5 should be enough. Group concepts if needed so that each level 2 content is meaty enough.
+
+Example of a section content about the collapse of the wave function in quantum mechanics:
+
+<EXAMPLE>
+# 1. Collapse of the Wave Function
+The collapse of the wave function is a fundamental concept in quantum mechanics that describes how a quantum system transitions from a superposition of states to a single state upon measurement. This process is crucial for understanding the role of observation in quantum mechanics and has significant implications for the interpretation of quantum phenomena.
+## What is the Collapse of the Wave Function?
+Text explaining the collapse of the wave function, its significance, and how it relates to quantum mechanics.
+## The Role of Observation in Quantum Mechanics
+Text discussing the role of observation in quantum mechanics, how it affects the wave function, and the implications for quantum systems.
+## Implications of the Collapse of the Wave Function
+Text exploring the implications of the collapse of the wave function for quantum mechanics, including its impact on theories and interpretations.
+Very succinct conclusion on this section
+</EXAMPLE>
+
+  `,
+  parameters: [
+    {
+      name: 'sectionNumber',
+      type: 'number',
+      description: 'The index of the section being generated',
+      required: true
+    },
+    {
+      name: 'sectionTitle',
+      type: 'string',
+      description: 'The title of the section being generated',
+      required: true
+    },
+    {
+      name: 'sectionObjective',
+      type: 'string',
+      description: 'The objective of the section being generated',
+      required: true
+    },
+    {
+      name: 'keyLearnings',
+      type: 'array',
+      description: 'The key learnings that have been extracted for this section',
+      items: {
+        type: 'string'
+      },
+      required: true
+    }
+  ],
+  steps: [{
+    prompt: `Generate a detailed section based on the following information:
+  Section Number: {{sectionNumber}}
+  Section Title: {{sectionTitle}}
+  Section Objective: {{sectionObjective}}
+  Key Learnings: {{keyLearnings}}`,
+    tools: [],
+    agents: [],
+  }],
+},
+  () => t('deepResearch.writer.starting'),
+  (args) => t('deepResearch.writer.running', { title: args.sectionTitle }),
+  (args) => t('deepResearch.writer.completed', { title: args.sectionTitle }),
+  (args) => t('deepResearch.writer.error', { title: args.sectionTitle }),
+)
+
+export const titleAgent = Agent.fromJson({
+  name: 'title',
+  description: 'Expert title generator that creates succinct, engaging titles for research reports based on the research topic and key findings.',
+  instructions: `You are a title agent, responsible for generating a succinct, engaging title for a research report.
+
+Your task is to create a clear, concise title that accurately reflects the research topic and captures the essence of the key findings. The title should be informative yet engaging, helping readers immediately understand what the report covers.
+
+Guidelines for creating the title:
+- Keep it between 5-12 words when possible
+- Make it specific to the research topic and findings
+- Avoid generic phrases like "A Study of" or "Research Report on"
+- Use active voice when appropriate
+- Ensure it's in the same language as the research topic
+- Make it professional and suitable for a comprehensive research report
+
+Your output will ONLY consist of the title as a JSON object with no markdown formatting or additional text. The JSON object should have the following structure:
+
+{
+  "title": "The generated title for the research report"
+}
+  `,
+  parameters: [
+    {
+      name: 'researchTopic',
+      type: 'string',
+      description: 'The original research topic or query',
+      required: true
+    },
+    {
+      name: 'keyLearnings',
+      type: 'array',
+      description: 'All the key learnings from all sections that have been extracted from the analysis',
+      items: {
+        type: 'string'
+      },
+      required: true
+    }
+  ],
+  steps: [{
+    prompt: `Generate a succinct title for a research report based on:
+
+  Research Topic: {{researchTopic}}
+  Key Learnings: {{keyLearnings}}`,
+    tools: [],
+    agents: [],
+  }]
+},
+  () => t('deepResearch.title.starting'),
+  () => t('deepResearch.title.running'),
+  () => t('deepResearch.title.completed'),
+  () => t('deepResearch.title.error'),
+)
+titleAgent.steps[0].structuredOutput = {
+  name: 'title',
+  structure: z.object({
+    title: z.string()
+  })
+}
+
+export const synthesisAgent = Agent.fromJson({
+  name: 'synthesis',
+  description: 'Expert report synthesizer that transforms analyzed information into comprehensive, coherent reports. Integrates findings, constructs narratives, and generates executive summaries or conclusions.',
+  instructions: `You are a synthesis agent, responsible summarizing information for executive summaries or conclusions.
+
+Your task is to synthesize the provided key learnings into a comprehensive executive summary or conclusion based on the user request: do not generate both.
+
+When generating the executive summary, focus on the key findings and insights from the research, ensuring it provides a clear overview of the research conducted. Make sure it is in a TL;DR format (but do not say it is a TL;DR) so it can be easily digested: one or two paragraphs with 3 to 5 key learnings. Do not include a conclusion in the executive summary, just the key findings and insights.
+
+When generating the conclusion, summarize the overall findings and implications of the research, providing a final perspective on the topic. Keep it also concise, but ensure it encapsulates the essence of the research and its significance.
+
+Start your content with "# Executive Summary" or "# Conclusion" as appropriate, and then provide the content of the summary or conclusion. Don't say things like "I'll synthesize" or "I'll summarize" or "This is the executive summary" or "This is the conclusion". Just provide the content directly. Make sure the executive summary or conclusion is in the same language as the research topic and key learnings.
+  `,
+  parameters: [
+    {
+      name: 'researchTopic',
+      type: 'string',
+      description: 'The topic of the research',
+      required: true
+    },
+    {
+      name: 'keyLearnings',
+      type: 'array',
+      description: 'All the key learnings from all sections that have been extracted from the analysis',
+      items: {
+        type: 'string'
+      },
+      required: true
+    },
+    {
+      name: 'outputType',
+      type: 'string',
+      description: 'The format of the output desired',
+      enum: ['executive_summary', 'conclusion'],
+      required: true
+    }
+  ],
+  steps: [{
+    prompt: `Synthesize research findings into a comprehensive report:
+
+  Research Topic: {{researchTopic}}
+  Key Learnings: {{keyLearnings}}
+  Output Type: {{outputType}}`,
+    tools: [],
+    agents: [],
+    //docrepo: 'research_reports',
+  }]
+}, () => t('deepResearch.synthesis.starting'),
+  (args) => args.outputType === 'conclusion' ? t('deepResearch.synthesis.conclusion.running') : t('deepResearch.synthesis.execsum.running'),
+  (args) => args.outputType === 'conclusion' ? t('deepResearch.synthesis.conclusion.completed') : t('deepResearch.synthesis.execsum.completed'),
+  () => t('deepResearch.synthesis.error'),
+)
+
+export const deepResearchAgents: Agent[] = [
+  planningAgent,
+  searchAgent,
+  analysisAgent,
+  writerAgent,
+  titleAgent,
+  synthesisAgent,
+]

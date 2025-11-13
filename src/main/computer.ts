@@ -1,7 +1,7 @@
 
-import { ComputerAction } from 'types/index'
 import { Display, desktopCapturer, screen } from 'electron'
-import nut from '../automations/computer_nut'
+import { ComputerAction } from 'types/index'
+import nut from './automations/computer_nut'
 
 //
 // code from https://github.com/corbt/agent.exe

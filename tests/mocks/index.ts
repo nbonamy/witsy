@@ -1,7 +1,7 @@
 
 
 import { vi } from 'vitest'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 
 export const createI18nMock = (callback?: () => Partial<{
   locale: string

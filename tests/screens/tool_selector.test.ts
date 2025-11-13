@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18nMock } from '../mocks'
-import ToolSelector from '../../src/screens/ToolSelector.vue'
+import ToolSelector from '../../src/renderer/screens/ToolSelector.vue'
 import { stubTeleport } from '../mocks/stubs'
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
 // Mock the store configuration
-vi.mock('../../src/services/store', () => ({
+vi.mock('../../src/renderer/services/store', () => ({
   store: {
     config: {
       plugins: {
@@ -28,7 +28,7 @@ vi.mock('../../src/services/store', () => ({
 }))
 
 // Mock plugins with test data
-vi.mock('../../src/plugins/plugins', () => {
+vi.mock('../../src/renderer/services/plugins/plugins', () => {
   const MockPlugin = class {
     constructor(config: any) {
       this.config = config

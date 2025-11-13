@@ -1,5 +1,5 @@
 
-import { PluginsList } from '../plugins/plugins'
+import { PluginsList } from '../renderer/services/plugins/plugins'
 import { ChatModel, LlmEngine } from 'multi-llm-ts'
 
 export type GetChatEnginesOpts = {

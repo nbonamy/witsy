@@ -1,15 +1,15 @@
 
-import { Folder, History } from '../types/index'
-import { extensionToMimeType } from 'multi-llm-ts'
 import { App, dialog } from 'electron'
-import { pickFile } from './file'
-import { useI18n } from '../main/i18n'
-import { loadHistory, saveHistory } from './history'
+import fs from 'fs'
+import { extensionToMimeType } from 'multi-llm-ts'
+import path from 'path'
+import { Folder, History } from 'types/index'
+import Attachment from '../models/attachment'
 import Chat, { DEFAULT_TITLE } from '../models/chat'
 import Message from '../models/message'
-import Attachment from '../models/attachment'
-import path from 'path'
-import fs from 'fs'
+import { pickFile } from './file'
+import { loadHistory, saveHistory } from './history'
+import { useI18n } from './i18n'
 
 const DEFAULT_FOLDER_NAME = 'ChatGPT'
 

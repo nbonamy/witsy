@@ -2,9 +2,9 @@
 import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import { switchToTab, tabs } from './settings_utils'
-import Settings from '../../src/screens/Settings.vue'
+import Settings from '../../src/renderer/screens/Settings.vue'
 import { wait } from '../../src/main/utils'
 import {
   ModelsList, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels,

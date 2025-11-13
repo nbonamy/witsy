@@ -5,13 +5,13 @@ import { nextTick } from 'vue'
 import { createI18nMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
-import { store } from '../../src/services/store'
-import DocRepos from '../../src/screens/DocRepos.vue'
-import Dialog from '../../src/composables/dialog'
+import { store } from '../../src/renderer/services/store'
+import DocRepos from '../../src/renderer/screens/DocRepos.vue'
+import Dialog from '../../src/renderer/composables/dialog'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

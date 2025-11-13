@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
-import useVoiceRecording from '../../src/composables/voice_recording'
+import { store } from '../../src/renderer/services/store'
+import useVoiceRecording from '../../src/renderer/composables/voice_recording'
 
 // Create controllable mock instances
 const mockAudioRecorder = {
@@ -27,11 +27,11 @@ const mockTranscriber = {
   endStreaming: vi.fn()
 }
 
-vi.mock('../../src/composables/audio_recorder', () => ({
+vi.mock('../../src/renderer/composables/audio_recorder', () => ({
   default: vi.fn(() => mockAudioRecorder),
 }))
 
-vi.mock('../../src/composables/transcriber', () => ({
+vi.mock('../../src/renderer/composables/transcriber', () => ({
   default: vi.fn(() => ({
     transcriber: mockTranscriber
   }))

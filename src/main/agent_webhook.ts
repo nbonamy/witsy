@@ -1,5 +1,5 @@
 import { App } from 'electron'
-import DocumentRepository from '../rag/docrepo'
+import DocumentRepository from './rag/docrepo'
 import { AgentExecutor, findAgentByWebhookToken } from './agent_utils'
 import { getAgentRun } from './agents'
 import { HttpServer } from './http_server'

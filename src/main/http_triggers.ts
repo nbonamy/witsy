@@ -1,13 +1,13 @@
 import { App } from 'electron'
+import PromptAnywhere from './automations/anywhere'
+import Automator from './automations/automator'
+import Commander from './automations/commander'
+import ReadAloud from './automations/readaloud'
+import Transcriber from './automations/transcriber'
 import { HttpServer } from './http_server'
-import { sendJson, sendError, parseParams, isHttpEndpointsEnabled } from './http_utils'
+import { isHttpEndpointsEnabled, parseParams, sendError, sendJson } from './http_utils'
 import { putCachedText } from './utils'
 import * as window from './window'
-import Automator from '../automations/automator'
-import PromptAnywhere from '../automations/anywhere'
-import Commander from '../automations/commander'
-import ReadAloud from '../automations/readaloud'
-import Transcriber from '../automations/transcriber'
 
 /**
  * Install HTTP trigger endpoints on the server

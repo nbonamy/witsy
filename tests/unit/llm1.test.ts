@@ -3,10 +3,10 @@ import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { OpenAI, Anthropic, Azure, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter, MultiToolPlugin, ChatModel, defaultCapabilities } from 'multi-llm-ts'
 import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
-import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
-import { store } from '../../src/services/store'
+import LlmFactory, { favoriteMockEngine } from '../../src/renderer/services/llms/llm'
+import { store } from '../../src/renderer/services/store'
 import defaults from '../../defaults/settings.json'
-import { PluginsList } from '../../src/plugins/plugins'
+import { PluginsList } from '../../src/renderer/services/plugins/plugins'
 import { installMockModels } from '../mocks/llm'
 
 beforeAll(() => {

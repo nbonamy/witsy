@@ -4,26 +4,26 @@
 import { vi, expect, test, beforeEach } from 'vitest'
 import { Configuration } from '../../src/types/config'
 import { LlmEngine } from 'multi-llm-ts'
-import DeepResearchMultiStep from '../../src/services/deepresearch_ms'
-import DeepResearchMultiAgent from '../../src/services/deepresearch_ma'
-import DeepResearchAL, { mainLoopAgent, getComponentType } from '../../src/services/deepresearch_al'
-import * as dr from '../../src/services/deepresearch'
+import DeepResearchMultiStep from '../../src/renderer/services/deepresearch_ms'
+import DeepResearchMultiAgent from '../../src/renderer/services/deepresearch_ma'
+import DeepResearchAL, { mainLoopAgent, getComponentType } from '../../src/renderer/services/deepresearch_al'
+import * as dr from '../../src/renderer/services/deepresearch'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
-import SearchPlugin from '../../src/plugins/search'
-import Generator from '../../src/services/generator'
-import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../../src/services/agent_executor_workflow'
+import SearchPlugin from '../../src/renderer/services/plugins/search'
+import Generator from '../../src/renderer/services/generator'
+import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../../src/renderer/services/agent_executor_workflow'
 import { AgentRun, AgentRunTrigger } from '../../src/types/agents'
 import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
-import { replacePromptInputs } from '../../src/services/prompt'
+import { replacePromptInputs } from '../../src/renderer/services/prompt'
 
 // Mock dependencies
-vi.mock('../../src/plugins/search')
-vi.mock('../../src/services/generator')
-vi.mock('../../src/plugins/agent')
+vi.mock('../../src/renderer/services/plugins/search')
+vi.mock('../../src/renderer/services/generator')
+vi.mock('../../src/renderer/services/plugins/agent')
 
 // Mock LlmUtils
-vi.mock('../../src/services/llm_utils', () => {
+vi.mock('../../src/renderer/services/llm_utils', () => {
   return {
     default: vi.fn().mockImplementation(() => ({
       generateStatusUpdate: vi.fn().mockResolvedValue('Status update generated'),
@@ -36,7 +36,7 @@ vi.mock('../../src/services/llm_utils', () => {
 })
 
 // Mock LlmFactory
-vi.mock('../../src/llms/llm', () => {
+vi.mock('../../src/renderer/services/llms/llm', () => {
   const mockLlm = {
     getId: () => 'test-engine',
     getName: () => 'Test Engine',
@@ -55,7 +55,7 @@ vi.mock('../../src/llms/llm', () => {
 })
 
 // Mock useTools
-vi.mock('../../src/composables/tools', () => ({
+vi.mock('../../src/renderer/composables/tools', () => ({
   useTools: vi.fn().mockReturnValue({
     getAllAvailableTools: vi.fn().mockResolvedValue({ allTools: [] }),
     getToolsForGeneration: vi.fn().mockResolvedValue('')
@@ -63,7 +63,7 @@ vi.mock('../../src/composables/tools', () => ({
 }))
 
 // Mock LlmUtils
-vi.mock('../../src/services/llm_utils', () => {
+vi.mock('../../src/renderer/services/llm_utils', () => {
   const parseJson = (content: string): any => JSON.parse(content)
   const MockLlmUtils = vi.fn().mockImplementation(() => ({
     generateStatusUpdate: vi.fn().mockResolvedValue('Status update generated'),
@@ -80,7 +80,7 @@ vi.mock('../../src/services/llm_utils', () => {
 })
 
 // Mock AgentWorkflowExecutor properly
-vi.mock('../../src/services/agent_executor_workflow', () => {
+vi.mock('../../src/renderer/services/agent_executor_workflow', () => {
   return {
     default: vi.fn()
   }
@@ -557,7 +557,7 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
 
   // Verify generateStatusUpdate was called 6 times
   // (before planning, after planning, after search, before synthesis, before title, final)
-  const LlmUtilsMock = vi.mocked(await import('../../src/services/llm_utils')).default
+  const LlmUtilsMock = vi.mocked(await import('../../src/renderer/services/llm_utils')).default
   const llmUtilsInstance = LlmUtilsMock.mock.results[0]?.value
   expect(llmUtilsInstance.generateStatusUpdate).toHaveBeenCalledTimes(6)
 

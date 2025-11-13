@@ -5,16 +5,16 @@ import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
 import { emitEventMock } from '../../vitest.setup'
 import { stubTeleport } from '../mocks/stubs'
-import { store } from '../../src/services/store'
-import ChatArea from '../../src/components/ChatArea.vue'
+import { store } from '../../src/renderer/services/store'
+import ChatArea from '../../src/renderer/components/ChatArea.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 import { defaultCapabilities } from 'multi-llm-ts'
-import Dialog from '../../src/composables/dialog'
+import Dialog from '../../src/renderer/composables/dialog'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

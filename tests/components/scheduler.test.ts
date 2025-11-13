@@ -1,7 +1,7 @@
 
 import { expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import Scheduler from '../../src/components/Scheduler.vue'
+import Scheduler from '../../src/renderer/components/Scheduler.vue'
 
 const mnt = async (schedule: string): Promise<VueWrapper<any>> => {
   const wrapper = mount(Scheduler, { props: { modelValue: schedule } })

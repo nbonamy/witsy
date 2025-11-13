@@ -3,20 +3,20 @@ import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { createI18nMock } from '../mocks'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { store } from '../../src/services/store'
-import McpServers from '../../src/screens/McpServers.vue'
-import List from '../../src/mcp/List.vue'
-import Editor from '../../src/mcp/Editor.vue'
-import Dialog from '../../src/composables/dialog'
+import { store } from '../../src/renderer/services/store'
+import McpServers from '../../src/renderer/screens/McpServers.vue'
+import List from '../../src/renderer/mcp/List.vue'
+import Editor from '../../src/renderer/mcp/Editor.vue'
+import Dialog from '../../src/renderer/composables/dialog'
 import { stubTeleport } from '../mocks/stubs'
 
 let mcp: VueWrapper<any>
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/components/ContextMenuPlus.vue', () => ({
+vi.mock('../../src/renderer/components/ContextMenuPlus.vue', () => ({
   default: {
     name: 'ContextMenuPlus',
     props: ['anchor', 'position'],

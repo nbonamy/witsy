@@ -1,5 +1,5 @@
 
-import { strDict } from '../types/index';
+import { strDict } from 'types/index';
 import { execSync } from 'node:child_process'
 import fs from 'fs'
 

@@ -1,10 +1,10 @@
 import { App } from 'electron'
-import DocumentRepository from '../rag/docrepo'
-import { createAgentExecutor } from '../services/agent_utils'
-import { Agent, AgentRun, AgentRunTrigger } from '../types/agents'
+import { Agent, AgentRun, AgentRunTrigger } from 'types/agents'
+import { createAgentExecutor } from '../renderer/services/agent_utils'
 import { listAgents } from './agents'
 import { LlmContext } from './llm_utils'
 import Mcp from './mcp'
+import DocumentRepository from './rag/docrepo'
 import { listWorkspaces } from './workspace'
 
 /**

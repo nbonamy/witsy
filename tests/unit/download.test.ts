@@ -3,8 +3,8 @@
 import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
-import { store } from '../../src/services/store'
-import * as download from '../../src/services/download'
+import { store } from '../../src/renderer/services/store'
+import * as download from '../../src/renderer/services/download'
 
 beforeAll(() => {
   useWindowMock()

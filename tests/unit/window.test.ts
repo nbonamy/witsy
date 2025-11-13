@@ -2,7 +2,7 @@
 import { BrowserWindow, Menu } from 'electron'
 import { beforeAll, beforeEach, expect, Mock, test, vi } from 'vitest'
 import * as window from '../../src/main/window'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import { Application } from '../../src/types/automation'
 import { useWindowMock } from '../mocks/window'
 

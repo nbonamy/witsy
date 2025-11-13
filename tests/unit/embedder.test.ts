@@ -1,7 +1,7 @@
 
 import { test, expect, vi, beforeEach } from 'vitest'
 import { app } from 'electron'
-import Embedder  from '../../src/rag/embedder'
+import Embedder  from '../../src/main/rag/embedder'
 import defaultSettings from '../../defaults/settings.json'
 import { Ollama } from 'ollama'
 import OpenAI from 'openai'

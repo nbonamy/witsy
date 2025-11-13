@@ -1,9 +1,9 @@
 import { App, Menu, nativeImage, Tray } from 'electron';
 import path from 'path';
-import PromptAnywhere from '../automations/anywhere';
-import Commander from '../automations/commander';
-import ReadAloud from '../automations/readaloud';
-import Transcriber from '../automations/transcriber';
+import PromptAnywhere from './automations/anywhere';
+import Commander from './automations/commander';
+import ReadAloud from './automations/readaloud';
+import Transcriber from './automations/transcriber';
 import AutoUpdater from './autoupdate';
 import { loadSettings } from './config';
 import { useI18n } from './i18n';

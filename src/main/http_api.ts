@@ -1,16 +1,16 @@
 import { App } from 'electron'
-import { engineNames } from '../llms/base'
-import LlmFactory from '../llms/llm'
 import Chat from '../models/chat'
 import Message from '../models/message'
-import DocumentRepository from '../rag/docrepo'
-import Assistant from '../services/assistant'
+import Assistant from '../renderer/services/assistant'
+import { engineNames } from '../renderer/services/llms/base'
+import LlmFactory from '../renderer/services/llms/llm'
 import * as config from './config'
 import { loadHistory, saveHistory } from './history'
 import { HttpServer } from './http_server'
 import { isHttpEndpointsEnabled, parseParams, sendError, sendJson } from './http_utils'
 import { LlmContext } from './llm_utils'
 import Mcp from './mcp'
+import DocumentRepository from './rag/docrepo'
 
 /**
  * Install HTTP API endpoints on the server
