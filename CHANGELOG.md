@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Edit messages, quote user message (https://github.com/nbonamy/witsy/issues/479)
+- LocalAI image models not listed in Design Studio (https://github.com/nbonamy/witsy/issues/482)
 - Conversation usage reporting
 - Show RAG search results
 - MCP Tool tester

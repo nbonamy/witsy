@@ -282,7 +282,18 @@ const models = computed(() => {
   }
 
   if (hasFixedModels.value) {
-    return store.config.engines[engine.value]?.models?.[mediaType.value] || []
+
+    // load models for the media type
+    let models = store.config.engines[engine.value]?.models?.[mediaType.value] || []
+
+    // for openai custom base url fallback to chat models if no models are found for the media type
+    if (!models.length && engine.value === 'openai' && store.config.engines.openai.baseURL) {
+      models = store.config.engines[engine.value]?.models?.chat || []
+    }
+
+    // done
+    return models
+
   } else {
     return addCurrentModel([
       ...store.config.studio.favorites.filter((f) => f.engine === engine.value).map((f) => ({ id: f.model, name: f.model })),
@@ -346,7 +357,7 @@ const customParams = computed((): Parameter[] => {
   }
 
   // openai gpt-image
-  if (engine.value === 'openai' && model.value.startsWith('gpt-image-')) {
+  if (engine.value === 'openai' && model.value && model.value.startsWith('gpt-image-')) {
     return [
     { label: t('designStudio.parameters.quality'),  key: 'quality',  type: 'select', values: [ 'auto', 'low', 'medium', 'high' ] },
     { label: t('designStudio.parameters.size'),  key: 'size',  type: 'select', values: [ 'auto', '1024x1024', '1536x1024', '1024x1536' ] },
