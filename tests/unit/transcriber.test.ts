@@ -1,7 +1,7 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
-import Transcriber from '../../src/automations/transcriber'
-import Automator from '../../src/automations/automator'
+import Transcriber from '../../src/main/automations/transcriber'
+import Automator from '../../src/main/automations/automator'
 import * as window from '../../src/main/window'
 
 // mock windows

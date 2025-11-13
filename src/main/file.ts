@@ -9,9 +9,9 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import plist from 'plist';
 import process from 'process';
-import { FileContents, FileDownloadParams, FilePickParams, FileProperties, FileSaveParams } from '../types/file';
-import { DirectoryItem } from '../types/filesystem';
-import { ExternalApp } from '../types/index';
+import { FileContents, FileDownloadParams, FilePickParams, FileProperties, FileSaveParams } from 'types/file';
+import { DirectoryItem } from 'types/filesystem';
+import { ExternalApp } from 'types/index';
 
 export const extensionToMimeType = (ext: string): string => {
   if (ext === '.mp4') return 'video/mp4'

@@ -5,23 +5,23 @@ import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
 import { emitEventMock } from '../../vitest.setup'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import { stubTeleport } from '../mocks/stubs'
-import MessageItem from '../../src/components/MessageItem.vue'
-import MessageItemHtmlBlock from '../../src/components/MessageItemHtmlBlock.vue'
+import MessageItem from '../../src/renderer/components/MessageItem.vue'
+import MessageItemHtmlBlock from '../../src/renderer/components/MessageItemHtmlBlock.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
-import Dialog from '../../src/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 enableAutoUnmount(afterAll)
 
 const readAloudMock = vi.fn()
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/composables/audio_player', async () => {
+vi.mock('../../src/renderer/audio/audio_player', async () => {
   return { default: () => ({
     addListener: vi.fn(),
     removeListener: vi.fn(),

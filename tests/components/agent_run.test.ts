@@ -3,8 +3,8 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
-import Run from '../../src/agent/Run.vue'
+import { store } from '../../src/renderer/services/store'
+import Run from '../../src/renderer/agent/Run.vue'
 import Message from '../../src/models/message'
 import { AgentRun } from '../../src/types/agents'
 import enMessages from '../../locales/en.json'
@@ -16,7 +16,7 @@ beforeAll(async () => {
   window.api.config.getI18nMessages = vi.fn(() => ({ en: enMessages }))
 
   // Re-initialize i18n with actual messages
-  const { initI18n } = await import('../../src/services/i18n')
+  const { initI18n } = await import('../../src/renderer/services/i18n')
   initI18n()
 
   store.load()

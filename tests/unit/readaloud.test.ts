@@ -1,8 +1,8 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
 import { app, Notification } from 'electron'
-import ReadAloud from '../../src/automations/readaloud'
-import Automator from '../../src/automations/automator'
+import ReadAloud from '../../src/main/automations/readaloud'
+import Automator from '../../src/main/automations/automator'
 import * as window from '../../src/main/window'
 import * as utils from '../../src/main/utils'
 

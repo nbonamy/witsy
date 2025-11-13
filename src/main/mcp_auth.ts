@@ -5,8 +5,8 @@ import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { OAuthClientInformation, OAuthClientInformationFull, OAuthClientMetadata, OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js'
 import { app, App, shell } from 'electron'
-import { useI18n } from '../main/i18n'
 import { HttpServer } from './http_server'
+import { useI18n } from './i18n'
 
 export type OnTokensUpdatedCallback = (tokens: OAuthTokens, scope: string) => void
 

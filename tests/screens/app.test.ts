@@ -2,13 +2,13 @@
 import { expect, test, beforeAll, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import App from '../../src/App.vue'
-import Main from '../../src/screens/Main.vue'
-import CommandPicker from '../../src/screens/CommandPicker.vue'
-import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
-import RealtimeChat from '../../src/screens/RealtimeChat.vue'
-import Transcribe from '../../src/screens/Transcribe.vue'
-import ReadAloud from '../../src/screens/ReadAloud.vue'
+import App from '../../src/renderer/App.vue'
+import Main from '../../src/renderer/screens/Main.vue'
+import CommandPicker from '../../src/renderer/screens/CommandPicker.vue'
+import PromptAnywhere from '../../src/renderer/screens/PromptAnywhere.vue'
+import RealtimeChat from '../../src/renderer/screens/RealtimeChat.vue'
+import Transcribe from '../../src/renderer/screens/Transcribe.vue'
+import ReadAloud from '../../src/renderer/screens/ReadAloud.vue'
 
 enableAutoUnmount(afterAll)
 

@@ -1,6 +1,6 @@
 
 import { BrowserWindow } from 'electron'
-import { LocalSearchResponse, LocalSearchResult } from '../types/index'
+import { LocalSearchResponse, LocalSearchResult } from 'types/index'
 import { getTextContent } from './text'
 import { getCleanUserAgent } from './utils'
 import { Mutex } from './sync'

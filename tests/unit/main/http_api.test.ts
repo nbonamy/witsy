@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { IncomingMessage } from 'http'
 import { installApiEndpoints } from '../../../src/main/http_api'
 import { HttpServer } from '../../../src/main/http_server'
-import LlmFactory from '../../../src/llms/llm'
-import Assistant from '../../../src/services/assistant'
+import LlmFactory from '../../../src/renderer/services/llms/llm'
+import Assistant from '../../../src/renderer/services/assistant'
 import * as config from '../../../src/main/config'
 import { App } from 'electron'
 import Mcp from '../../../src/main/mcp'
@@ -11,9 +11,9 @@ import Mcp from '../../../src/main/mcp'
 type RouteHandler = (req: IncomingMessage, res: any, parsedUrl?: URL) => Promise<void> | void
 
 vi.mock('../../../src/main/config')
-vi.mock('../../../src/services/assistant')
+vi.mock('../../../src/renderer/services/assistant')
 
-vi.mock('../../../src/llms/llm', () => ({
+vi.mock('../../../src/renderer/services/llms/llm', () => ({
   default: {
     manager: vi.fn()
   }

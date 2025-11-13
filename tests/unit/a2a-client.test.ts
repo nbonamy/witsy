@@ -1,5 +1,5 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import A2AClient, { A2AChunk } from '../../src/services/a2a-client'
+import A2AClient, { A2AChunk } from '../../src/renderer/services/a2a-client'
 import Agent from '../../src/models/agent'
 
 // Mock the A2A SDK

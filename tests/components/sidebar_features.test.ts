@@ -3,8 +3,8 @@ import { beforeAll, expect, test, beforeEach, afterAll } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
-import SidebarFeatures from '../../src/components/SidebarFeatures.vue'
+import { store } from '../../src/renderer/services/store'
+import SidebarFeatures from '../../src/renderer/components/SidebarFeatures.vue'
 
 enableAutoUnmount(afterAll)
 

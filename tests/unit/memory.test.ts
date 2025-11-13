@@ -20,7 +20,7 @@ vi.mock('electron', async() => {
   }
 })
 
-vi.mock('../../src/rag/embedder', async() => {
+vi.mock('../../src/main/rag/embedder', async() => {
   const Embedder = vi.fn()
   Embedder.prototype.embed = vi.fn((texts: string[]) => {
     if (texts[0].includes('squash') && texts[0].includes('tennis')) return Array(texts.length).fill(embeddings['squashtennis'])

@@ -2,14 +2,14 @@
 import { vi, beforeAll, beforeEach, test, expect } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 // Restore the real Dialog module for this test since we're testing Dialog itself
-vi.unmock('../../src/composables/dialog')
-import Dialog from '../../src/composables/dialog'
+vi.unmock('../../src/renderer/utils/dialog')
+import Dialog from '../../src/renderer/utils/dialog'
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

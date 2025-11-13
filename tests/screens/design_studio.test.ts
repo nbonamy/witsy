@@ -2,16 +2,16 @@
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { defaultCapabilities } from 'multi-llm-ts'
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from 'vitest'
-import DesignStudio from '../../src/screens/DesignStudio.vue'
-import { store } from '../../src/services/store'
+import DesignStudio from '../../src/renderer/screens/DesignStudio.vue'
+import { store } from '../../src/renderer/services/store'
 import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
 import LlmMock from '../mocks/llm'
 import { useBrowserMock, useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
-import Dialog from '../../src/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
-vi.mock('../../src/llms/manager.ts', async () => {
+vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
@@ -24,7 +24,7 @@ vi.mock('../../src/llms/manager.ts', async () => {
   return { default: LlmManager }
 })
 
-vi.mock('../../src/composables/dialog', () => ({
+vi.mock('../../src/renderer/utils/dialog', () => ({
   default: {
     show: vi.fn(),
     alert: vi.fn()

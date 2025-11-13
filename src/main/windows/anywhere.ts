@@ -1,6 +1,6 @@
 
 import { anyDict } from 'types/index';
-import { Application } from '../../types/automation';
+import { Application } from 'types/automation';
 import { app, BrowserWindow } from 'electron';
 import { createWindow, getCurrentScreen, ensureOnCurrentScreen, releaseFocus, getWindowScreen, getFullscreenBounds } from './index';
 import { useI18n } from '../i18n';

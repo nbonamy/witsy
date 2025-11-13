@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { extractPromptInputs, replacePromptInputs, getMissingInputs, extractAllWorkflowInputs } from '../../src/services/prompt'
+import { extractPromptInputs, replacePromptInputs, getMissingInputs, extractAllWorkflowInputs } from '../../src/renderer/services/prompt'
 
 test('extractPromptInputs - simple input without description', () => {
   const prompt = 'Hello {{name}}, how are you?'

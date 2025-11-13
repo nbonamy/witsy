@@ -1,13 +1,13 @@
 
-import { strDict } from '../../types/index';
-import { CreateWindowOpts, ReleaseFocusOpts } from '../../types/window';
+import { strDict } from 'types/index';
+import { CreateWindowOpts, ReleaseFocusOpts } from 'types/window';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, Display, screen, shell } from 'electron';
 import { promptAnywhereWindow } from './anywhere';
 import { commandPicker } from './commands';
 import { mainWindow } from './main';
 import { wait } from '../utils';
-import MacosAutomator from '../../automations/macos';
-import WindowsAutomator from '../../automations/windows';
+import MacosAutomator from '../automations/macos';
+import WindowsAutomator from '../automations/windows';
 import interceptNetwork from '../network';
 import * as config from '../config';
 import Store from 'electron-store';

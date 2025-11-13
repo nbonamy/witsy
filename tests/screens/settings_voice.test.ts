@@ -2,15 +2,15 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import { switchToTab, tabs } from './settings_utils'
-import Settings from '../../src/screens/Settings.vue'
+import Settings from '../../src/renderer/screens/Settings.vue'
 
 let wrapper: VueWrapper<any>
 const voiceIndex = tabs.indexOf('settingsVoice')
 
-vi.mock('../../src/voice/stt-whisper', async (importOriginal) => {
-  const { default: STTWhisper } = await importOriginal<typeof import('../../src/voice/stt-whisper')>()
+vi.mock('../../src/renderer/voice/stt-whisper', async (importOriginal) => {
+  const { default: STTWhisper } = await importOriginal<typeof import('../../src/renderer/voice/stt-whisper')>()
   STTWhisper.prototype.isModelDownloaded = vi.fn(() => Promise.resolve(true))
   return { default: STTWhisper }
 })

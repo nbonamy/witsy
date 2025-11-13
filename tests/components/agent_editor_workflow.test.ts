@@ -3,15 +3,15 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { createI18nMock } from '../mocks/index'
 import { stubTeleport } from '../mocks/stubs'
 import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
-import Editor from '../../src/agent/Editor.vue'
+import { store } from '../../src/renderer/services/store'
+import Editor from '../../src/renderer/agent/Editor.vue'
 import Agent from '../../src/models/agent'
-import Dialog from '../../src/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 import { nextTick } from 'vue'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

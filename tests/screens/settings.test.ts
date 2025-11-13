@@ -2,13 +2,13 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import { tabs, switchToTab, getTab } from './settings_utils'
-import Settings from '../../src/screens/Settings.vue'
+import Settings from '../../src/renderer/screens/Settings.vue'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../src/services/store.ts', async (importOriginal) => {
+vi.mock('../../src/renderer/services/store.ts', async (importOriginal) => {
   const mod: any = await importOriginal()
   return {
     store: {
@@ -18,7 +18,7 @@ vi.mock('../../src/services/store.ts', async (importOriginal) => {
   }
 })
 
-vi.mock('../../src/composables/appearance_theme.ts', async () => {
+vi.mock('../../src/renderer/composables/appearance_theme.ts', async () => {
   return { default: () => ({
     getTheme: () => store.config.appearance.theme === 'system' ? 'light' : store.config.appearance.theme
   })}

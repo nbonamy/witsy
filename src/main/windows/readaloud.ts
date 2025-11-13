@@ -1,5 +1,5 @@
 
-import { anyDict } from '../../types/index';
+import { anyDict } from 'types/index';
 import { app, BrowserWindow } from 'electron';
 import { createWindow, getCenteredCoordinates } from './index';
 import { useI18n } from '../i18n';

@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { arrayToCSV, arrayToXLSX, parseHtmlTable } from '../../src/services/table_data'
+import { arrayToCSV, arrayToXLSX, parseHtmlTable } from '../../src/renderer/services/table_data'
 
 test('parseHtmlTable - simple table', () => {
   const html = `
