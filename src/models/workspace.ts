@@ -1,7 +1,7 @@
 
-import { FavoriteModel } from '../types/config'
-import { ToolSelection } from '../types/llm'
-import { WebApp } from '../types/workspace'
+import { FavoriteModel } from 'types/config'
+import { ToolSelection } from 'types/llm'
+import { WebApp } from 'types/workspace'
 
 export default class Workspace {
 

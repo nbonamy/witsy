@@ -1,9 +1,9 @@
 import { vi, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/services/store'
-import FilesystemPlugin from '../../src/plugins/filesystem'
+import { store } from '../../src/renderer/services/store'
+import FilesystemPlugin from '../../src/renderer/services/plugins/filesystem'
 import { PluginExecutionContext } from 'multi-llm-ts'
-import Dialog from '../../src/composables/dialog'
+import Dialog from '../../src/renderer/composables/dialog'
 
 global.atob = (str: string) => str
 

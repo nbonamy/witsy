@@ -3,8 +3,8 @@ import { app, dialog } from 'electron'
 import log from 'electron-log/main'
 import fs from 'fs'
 import path from 'path'
-import { useI18n } from '../main/i18n'
 import * as config from './config'
+import { useI18n } from './i18n'
 
 function isSymlinkValid(symlinkPath: string, expectedTarget: string): boolean {
   try {

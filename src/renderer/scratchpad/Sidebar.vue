@@ -1,0 +1,119 @@
+<template>
+  <div class="sp-sidebar">
+
+    <header>
+      <div class="title">{{ t('scratchpad.title') }}</div>
+      <ButtonIcon class="import" v-tooltip="{ text: t('common.import'), position: 'bottom' }" @click="onImport">
+        <FileUpIcon />
+      </ButtonIcon>
+      <ButtonIcon class="config" v-tooltip="{ text: t('common.settings'), position: 'bottom' }" @click="onSettings">
+        <Settings2Icon />
+      </ButtonIcon>
+    </header>
+
+    <main>
+      <div class="history-section">
+        <div class="history-title">{{ t('scratchpad.history.documents') }}</div>
+        <History :scratchpads="scratchpads" :selectedScratchpad="selectedScratchpad" :contextMenuTarget="contextMenuTarget" @select-scratchpad="onSelectScratchpad" @context-menu="onContextMenu" />
+      </div>
+    </main>
+
+    <footer>
+      <button class="cta" @click="emitEvent('action', 'clear')">
+        <NotebookPenIcon />{{ t('scratchpad.new') }}
+      </button>
+    </footer>
+
+  </div>
+</template>
+
+<script setup lang="ts">
+
+import { FileUpIcon, NotebookPenIcon, Settings2Icon } from 'lucide-vue-next'
+import ButtonIcon from '../components/ButtonIcon.vue'
+import History from './History.vue'
+import useEventBus from '../composables/event_bus'
+import { t } from '../services/i18n'
+import { ScratchpadHeader } from 'types/index'
+
+const { emitEvent } = useEventBus()
+
+defineProps({
+  fileUrl: String,
+  scratchpads: {
+    type: Array as () => ScratchpadHeader[],
+    default: (): ScratchpadHeader[] => []
+  },
+  selectedScratchpad: {
+    type: Object as () => ScratchpadHeader | null,
+    default: (): ScratchpadHeader | null => null
+  },
+  contextMenuTarget: {
+    type: Object as () => ScratchpadHeader | null,
+    default: (): ScratchpadHeader | null => null
+  }
+})
+
+const onSettings = () => {
+  emitEvent('action', 'settings')
+}
+
+const onImport = () => {
+  emitEvent('action', 'import')
+}
+
+const onSelectScratchpad = (scratchpad: ScratchpadHeader) => {
+  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+}
+
+const onContextMenu = ({ event, scratchpad }: { event: MouseEvent, scratchpad: ScratchpadHeader }) => {
+  emitEvent('action', { type: 'context-menu', value: { event, scratchpad } })
+}
+
+</script>
+
+<style scoped>
+
+.sp-sidebar {
+  flex: 0 0 var(--large-panel-width);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  main {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .history-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .history-title {
+    flex: 0 0 auto;
+    font-size: 15px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--sidebar-text-color);
+    margin-bottom: 0.75rem;
+    padding-left: 0.25rem;
+  }
+
+  .history-section :deep(.history) {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  footer {
+    flex-shrink: 0;
+  }
+}
+
+</style>

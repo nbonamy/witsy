@@ -1,7 +1,7 @@
 
 import { LlmModelOpts } from 'multi-llm-ts'
-import { Chat as ChatBase } from '../types/index'
-import { ToolSelection } from '../types/llm'
+import { Chat as ChatBase } from 'types/index'
+import { ToolSelection } from 'types/llm'
 import Message from './message'
 
 export const DEFAULT_TITLE = 'New Chat'

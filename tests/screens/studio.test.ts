@@ -3,20 +3,20 @@ import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
-import { store, kMediaChatId } from '../../src/services/store'
+import { store, kMediaChatId } from '../../src/renderer/services/store'
 import { DEFAULT_WORKSPACE_ID } from '../../src/main/workspace'
 import { Configuration } from '../../src/types/config'
-import ImageCreator from '../../src/services/image'
-import DesignStudio from '../../src/screens/DesignStudio.vue'
+import ImageCreator from '../../src/renderer/services/image'
+import DesignStudio from '../../src/renderer/screens/DesignStudio.vue'
 import defaultSettings from '../../defaults/settings.json'
 import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
-import Dialog from '../../src/composables/dialog'
+import Dialog from '../../src/renderer/composables/dialog'
 
 enableAutoUnmount(afterEach)
 
-vi.mock('../../src/services/image', async (importOriginal) => {
+vi.mock('../../src/renderer/services/image', async (importOriginal) => {
   const mod: any = await importOriginal()
   mod.default.prototype.execute = vi.fn(async (engine: string, model: string, parameters: any) => {
     return { url: `file://${engine}/${model}/${parameters.prompt}` }

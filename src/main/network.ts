@@ -1,5 +1,5 @@
 
-import { NetworkRequest } from '../types/index'
+import { NetworkRequest } from 'types/index'
 import { BrowserWindow } from 'electron'
 import { debugWindow } from './windows/debug'
 import { HttpServer } from './http_server'

@@ -4,13 +4,13 @@ import { generateWebhookToken, findAgentByWebhookToken, AgentExecutor } from '..
 import * as workspaceModule from '../../../src/main/workspace'
 import * as agentsModule from '../../../src/main/agents'
 import * as configModule from '../../../src/main/config'
-import AgentWorkflowExecutor from '../../../src/services/agent_executor_workflow'
+import AgentWorkflowExecutor from '../../../src/renderer/services/agent_executor_workflow'
 
 // Mock dependencies
 vi.mock('../../../src/main/workspace')
 vi.mock('../../../src/main/agents')
 vi.mock('../../../src/main/config')
-vi.mock('../../../src/services/agent_executor_workflow')
+vi.mock('../../../src/renderer/services/agent_executor_workflow')
 vi.mock('../../../src/main/interpreter', () => ({
   runPython: vi.fn()
 }))
@@ -22,7 +22,7 @@ vi.mock('../../../src/main/search', () => ({
 vi.mock('../../../src/main/i18n', () => ({
   getLocaleMessages: vi.fn(() => ({}))
 }))
-vi.mock('../../../src/services/i18n', () => ({
+vi.mock('../../../src/renderer/services/i18n', () => ({
   initI18n: vi.fn()
 }))
 

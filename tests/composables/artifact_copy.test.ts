@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
-import { useArtifactCopy } from '../../src/composables/artifact_copy'
+import { useArtifactCopy } from '../../src/renderer/composables/artifact_copy'
 
 // Mock clipboard API
 Object.assign(navigator, {

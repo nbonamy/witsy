@@ -1,7 +1,7 @@
 
 import { CronExpressionParser } from 'cron-parser'
 import { App } from 'electron'
-import DocumentRepository from '../rag/docrepo'
+import DocumentRepository from './rag/docrepo'
 import { AgentExecutor } from './agent_utils'
 import { listAgents } from './agents'
 import Mcp from './mcp'

@@ -1,6 +1,6 @@
 import { test, expect } from 'vitest'
 import { renderMarkdown } from '../../src/main/markdown'
-import { addExtension, closeOpenMarkdownTags, extractCodeBlockContent, extractHtmlContent, getCodeBlocks, isHtmlContent } from '../../src/services/markdown'
+import { addExtension, closeOpenMarkdownTags, extractCodeBlockContent, extractHtmlContent, getCodeBlocks, isHtmlContent } from '../../src/renderer/services/markdown'
 
 test('renders markdown', () => {
   const markdown = '# Hello World'

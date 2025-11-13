@@ -1,11 +1,11 @@
 
 import { vi, beforeAll, expect, test } from 'vitest'
 import { app } from 'electron'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import { createI18n } from 'vue-i18n'
 import { useWindowMock } from '../mocks/window'
 import { getLocaleUI, getLocaleLLM, useI18n } from '../../src/main/i18n'
-import { commandI18n, commandI18nDefault, expertI18n, expertI18nDefault, i18nInstructions, localeToLangName } from '../../src/services/i18n'
+import { commandI18n, commandI18nDefault, expertI18n, expertI18nDefault, i18nInstructions, localeToLangName } from '../../src/renderer/services/i18n'
 import { Command, Expert } from '../../src/types'
 
 vi.mock('electron', async() => {
@@ -31,14 +31,9 @@ vi.mock('../../src/main/config', async() => {
 
 beforeAll(() => {
   useWindowMock()
-  store.config = {
-    general: {
-      locale: ''
-    },
-    llm: {
-      locale: ''
-    }
-  }
+  store.loadSettings()
+  store.config.general.locale = ''
+  store.config.llm.locale = ''
 })
 
 test('Get UI Locale', async () => {

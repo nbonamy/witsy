@@ -4,25 +4,25 @@ import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
 import LlmMock, { installMockModels } from '../mocks/llm'
-import { store } from '../../src/services/store'
-import Dialog from '../../src/composables/dialog'
+import { store } from '../../src/renderer/services/store'
+import Dialog from '../../src/renderer/composables/dialog'
 import defaultSettings from '../../defaults/settings.json'
-import ScratchPad from '../../src/screens/ScratchPad.vue'
-import Prompt, { SendPromptParams } from '../../src/components/Prompt.vue'
-import EditableText from '../../src/components/EditableText.vue'
-import Sidebar from '../../src/scratchpad/Sidebar.vue'
-import ActionBar from '../../src/scratchpad/ActionBar.vue'
+import ScratchPad from '../../src/renderer/screens/ScratchPad.vue'
+import Prompt, { SendPromptParams } from '../../src/renderer/components/Prompt.vue'
+import EditableText from '../../src/renderer/components/EditableText.vue'
+import Sidebar from '../../src/renderer/scratchpad/Sidebar.vue'
+import ActionBar from '../../src/renderer/scratchpad/ActionBar.vue'
 import Attachment from '../../src/models/attachment'
 
-vi.unmock('../../src/composables/event_bus')
-import useEventBus  from '../../src/composables/event_bus'
+vi.unmock('../../src/renderer/composables/event_bus')
+import useEventBus  from '../../src/renderer/composables/event_bus'
 import { defaultCapabilities } from 'multi-llm-ts'
-import LlmManager from '../../src/llms/manager'
+import LlmManager from '../../src/renderer/services/llms/manager'
 const { emitEvent } = useEventBus()
 
 // Unmock EventBus for this test - scratchpad needs real event handling
 
-vi.mock('../../src/llms/manager.ts', async () => {
+vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
@@ -44,7 +44,7 @@ vi.mock('../../src/llms/manager.ts', async () => {
 	return { default: LlmManager }
 })
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

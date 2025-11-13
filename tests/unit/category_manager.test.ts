@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { beforeAll, describe, expect, test } from 'vitest'
-import CategoryManager from '../../src/components/CategoryManager.vue'
-import { kDefaultWorkspaceId } from '../../src/services/store'
+import CategoryManager from '../../src/renderer/components/CategoryManager.vue'
+import { kDefaultWorkspaceId } from '../../src/renderer/services/store'
 import { Workspace } from '../../src/types/workspace'
 import { useWindowMock } from '../mocks/window'
 

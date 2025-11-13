@@ -1,5 +1,5 @@
 
-import { anyDict } from '../types/index'
+import { anyDict } from 'types/index'
 import { App } from 'electron'
 import { createI18n } from './i18n.base'
 import { loadSettings } from './config'

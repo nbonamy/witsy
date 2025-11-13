@@ -1,5 +1,5 @@
 import { vi, expect, test, beforeEach } from 'vitest'
-import { executeIpcWithAbort } from '../../src/plugins/ipc_abort_helper'
+import { executeIpcWithAbort } from '../../src/renderer/services/plugins/ipc_abort_helper'
 
 // Mock window.api
 global.window = {

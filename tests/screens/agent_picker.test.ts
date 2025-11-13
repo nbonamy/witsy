@@ -3,13 +3,13 @@ import { mount, enableAutoUnmount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
 import { stubTeleport } from '../mocks/stubs'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import Agent from '../../src/models/agent'
-import AgentPicker from '../../src/screens/AgentPicker.vue'
+import AgentPicker from '../../src/renderer/screens/AgentPicker.vue'
 
 enableAutoUnmount(afterEach)
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

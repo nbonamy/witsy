@@ -4,10 +4,10 @@ import { nextTick } from 'vue'
 import { McpTool } from '../../src/types/mcp'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
-import McpToolSelector from '../../src/components/McpToolSelector.vue'
+import McpToolSelector from '../../src/renderer/components/McpToolSelector.vue'
 import { stubTeleport } from '../mocks/stubs'
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

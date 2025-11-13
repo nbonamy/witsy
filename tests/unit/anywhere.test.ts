@@ -1,8 +1,8 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import { store } from '../../src/services/store'
+import { store } from '../../src/renderer/services/store'
 import defaults from '../../defaults/settings.json'
-import PromptAnywhere from '../../src/automations/anywhere'
+import PromptAnywhere from '../../src/main/automations/anywhere'
 import * as window from '../../src/main/window'
 import { Configuration, InstructionsConfig } from '../../src/types/config'
 

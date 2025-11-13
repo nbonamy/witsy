@@ -2,7 +2,7 @@
 import { vi, beforeAll, expect, test, beforeEach, afterAll } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
-import InputObfuscated from '../../src/components/InputObfuscated.vue'
+import InputObfuscated from '../../src/renderer/components/InputObfuscated.vue'
 
 enableAutoUnmount(afterAll)
 

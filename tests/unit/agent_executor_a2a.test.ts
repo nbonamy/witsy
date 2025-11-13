@@ -1,19 +1,19 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { createI18nMock } from '../mocks'
-import { store } from '../../src/services/store'
-import AgentA2AExecutor from '../../src/services/agent_executor_a2a'
+import { store } from '../../src/renderer/services/store'
+import AgentA2AExecutor from '../../src/renderer/services/agent_executor_a2a'
 import Agent from '../../src/models/agent'
 import Chat from '../../src/models/chat'
 import { installMockModels } from '../mocks/llm'
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock(() => ({
     locale: store.config.llm.locale
   }))
 })
 
-vi.mock('../../src/services/a2a-client.ts', () => {
+vi.mock('../../src/renderer/services/a2a-client.ts', () => {
   return {
     default: vi.fn().mockImplementation(() => ({
       execute: vi.fn(async function* () {
@@ -148,7 +148,7 @@ test('A2A Agent Run with callback', async () => {
 test('A2A Agent Run handles status chunks', async () => {
   testAgent.steps[0].prompt = '{{message}}'
   // Mock A2A client to return status chunks
-  const A2AClient = (await import('../../src/services/a2a-client')).default
+  const A2AClient = (await import('../../src/renderer/services/a2a-client')).default
   vi.mocked(A2AClient).mockImplementationOnce(() => ({
     execute: async function* () {
       yield { type: 'status', taskId: 'task-1', contextId: 'ctx-1' }
@@ -173,7 +173,7 @@ test('A2A Agent Run handles status chunks', async () => {
 test('A2A Agent Run handles artifact chunks', async () => {
   testAgent.steps[0].prompt = '{{message}}'
   // Mock A2A client to return artifact chunks
-  const A2AClient = (await import('../../src/services/a2a-client')).default
+  const A2AClient = (await import('../../src/renderer/services/a2a-client')).default
   vi.mocked(A2AClient).mockImplementation(() => ({
     execute: vi.fn(async function* () {
       yield { type: 'artifact', name: 'test.txt', content: 'File content here' }
@@ -203,7 +203,7 @@ test('A2A Agent Run with non-ephemeral storage', async () => {
 test('A2A Agent Run handles errors', async () => {
   testAgent.steps[0].prompt = '{{message}}'
   // Create new executor with fresh mock that throws
-  const A2AClient = (await import('../../src/services/a2a-client')).default
+  const A2AClient = (await import('../../src/renderer/services/a2a-client')).default
   vi.mocked(A2AClient).mockImplementationOnce(() => ({
     // eslint-disable-next-line require-yield
     execute: async function* () {
@@ -224,7 +224,7 @@ test('A2A Agent Run different triggers', async () => {
 
   for (const trigger of triggers) {
     // Reset mock for each iteration
-    const A2AClient = (await import('../../src/services/a2a-client')).default
+    const A2AClient = (await import('../../src/renderer/services/a2a-client')).default
     vi.mocked(A2AClient).mockImplementation(() => ({
       execute: async function* () {
         yield { type: 'content', text: 'Response', done: true }

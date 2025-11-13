@@ -1,7 +1,7 @@
 
 import { LlmChunkContent, LlmChunkTool, LlmRole, LlmUsage, Message as MessageBase } from 'multi-llm-ts'
-import { Message as IMessage, MessageExecutionType, MessageType, ToolCall } from '../types'
-import { A2APromptOpts } from '../types/agents'
+import { Message as IMessage, MessageExecutionType, MessageType, ToolCall } from 'types'
+import { A2APromptOpts } from 'types/agents'
 import Attachment from './attachment'
 import Expert from './expert'
 

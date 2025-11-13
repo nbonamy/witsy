@@ -1,10 +1,10 @@
 
 
 import { LlmTool } from 'multi-llm-ts';
-import { Application, RunCommandParams } from '../types/automation';
-import { Configuration } from '../types/config';
-import { Command, History } from '../types/index';
-import { McpInstallStatus, McpServerWithTools, McpTool } from '../types/mcp';
+import { Application, RunCommandParams } from 'types/automation';
+import { Configuration } from 'types/config';
+import { Command, History } from 'types/index';
+import { McpInstallStatus, McpServerWithTools, McpTool } from 'types/mcp';
 
 import { app, clipboard, ipcMain, nativeImage, nativeTheme, shell } from 'electron';
 import Store from 'electron-store';
@@ -13,12 +13,12 @@ import path from 'node:path';
 import process from 'node:process';
 import { getCachedText } from './utils';
 
-import PromptAnywhere from '../automations/anywhere';
-import Automation, { AutomationAction } from '../automations/automation';
-import Commander, { askMeAnythingId, notEditablePrompts } from '../automations/commander';
-import Transcriber from '../automations/transcriber';
-import DocumentRepository from '../rag/docrepo';
-import Embedder from '../rag/embedder';
+import PromptAnywhere from './automations/anywhere';
+import Automation, { AutomationAction } from './automations/automation';
+import Commander, { askMeAnythingId, notEditablePrompts } from './automations/commander';
+import Transcriber from './automations/transcriber';
+import DocumentRepository from './rag/docrepo';
+import Embedder from './rag/embedder';
 import AutoUpdater from './autoupdate';
 import Computer from './computer';
 import Mcp from './mcp';

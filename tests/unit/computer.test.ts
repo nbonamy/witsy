@@ -2,7 +2,7 @@
 import { vi, test, expect } from 'vitest'
 import { screen } from 'electron'
 import Computer from '../../src/main/computer'
-import nut from '../../src/automations/computer_nut'
+import nut from '../../src/main/automations/computer_nut'
 import { mouse, keyboard } from '@nut-tree-fork/nut-js'
 
 const spyMove = vi.spyOn(nut, 'mouseMove')

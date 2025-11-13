@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
-import { vTooltip } from './directives/tooltip'
-import i18n from './services/i18n'
-import App from './App.vue'
+import { vTooltip } from './renderer/directives/tooltip'
+import i18n from './renderer/services/i18n'
+import App from './renderer/App.vue'
 
 try {
   const app = createApp(App)

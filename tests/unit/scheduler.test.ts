@@ -7,7 +7,7 @@ import * as configModule from '../../src/main/config'
 import * as agentsModule from '../../src/main/agents'
 import * as interpreterModule from '../../src/main/interpreter'
 import * as workspaceModule from '../../src/main/workspace'
-import * as i18nModule from '../../src/services/i18n'
+import * as i18nModule from '../../src/renderer/services/i18n'
 import * as mainI18nModule from '../../src/main/i18n'
 import { WorkspaceHeader } from '../../src/types/workspace'
 
@@ -20,8 +20,8 @@ vi.mock('../../src/main/interpreter')
 vi.mock('../../src/main/i18n')
 vi.mock('../../src/main/search')
 vi.mock('../../src/main/workspace')
-vi.mock('../../src/services/agent_executor_workflow')
-vi.mock('../../src/services/i18n')
+vi.mock('../../src/renderer/services/agent_executor_workflow')
+vi.mock('../../src/renderer/services/i18n')
 
 // Mock CronExpressionParser
 const mockCronParser = {

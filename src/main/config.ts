@@ -1,13 +1,13 @@
 
-import { anyDict } from '../types/index'
-import { Configuration } from '../types/config'
 import { App, safeStorage } from 'electron'
-import { favoriteMockEngine } from '../llms/llm'
 import Store from 'electron-store'
-import defaultSettings from '../../defaults/settings.json'
-import Monitor from './monitor'
-import path from 'path'
 import fs from 'fs'
+import path from 'path'
+import { Configuration } from 'types/config'
+import { anyDict } from 'types/index'
+import defaultSettings from '../../defaults/settings.json'
+import { favoriteMockEngine } from '../renderer/services/llms/llm'
+import Monitor from './monitor'
 
 type ApiKeyEntry = {
   name: string

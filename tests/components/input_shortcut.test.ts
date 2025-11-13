@@ -2,7 +2,7 @@
 import { vi, beforeAll, expect, test, beforeEach, afterAll } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
-import InputShortcut from '../../src/components/InputShortcut.vue'
+import InputShortcut from '../../src/renderer/components/InputShortcut.vue'
 
 enableAutoUnmount(afterAll)
 

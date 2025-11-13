@@ -1,12 +1,12 @@
 
-import { MemoryFact } from '../types/index'
 import { App } from 'electron'
-import VectorDB from '../rag/vectordb'
-import Embedder from '../rag/embedder'
-import defaultSettings from '../../defaults/settings.json'
-import * as config from '../main/config'
-import path from 'path'
 import fs from 'fs'
+import path from 'path'
+import { MemoryFact } from 'types/index'
+import defaultSettings from '../../defaults/settings.json'
+import * as config from './config'
+import Embedder from './rag/embedder'
+import VectorDB from './rag/vectordb'
 
 export default class MemoryManager {
 
