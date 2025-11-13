@@ -11,27 +11,27 @@
 <script setup lang="ts">
 
 import { LlmChunkContent } from 'multi-llm-ts'
+import { A2APromptOpts, Agent } from 'types/agents'
+import { strDict } from 'types/index'
 import { nextTick, onMounted, ref, watch } from 'vue'
+import Chat from '../../models/chat'
+import Message from '../../models/message'
 import ChatArea from '../components/ChatArea.vue'
 import ChatSidebar from '../components/ChatSidebar.vue'
+import CreateAgentRun from '../components/CreateAgentRun.vue'
 import { MenuBarMode } from '../components/MenuBar.vue'
 import { SendPromptParams } from '../components/Prompt.vue'
-import CreateAgentRun from '../components/CreateAgentRun.vue'
 import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
 import useTipsManager from '../composables/tips_manager'
-import LlmFactory from '../services/llms/llm'
-import Chat from '../../models/chat'
-import Message from '../../models/message'
 import { createAgentExecutor, isAgentConversation } from '../services/agent_utils'
 import Assistant from '../services/assistant'
 import { saveFileContents } from '../services/download'
 import { GenerationEvent } from '../services/generator'
 import { t } from '../services/i18n'
 import LlmUtils from '../services/llm_utils'
+import LlmFactory from '../services/llms/llm'
 import { store } from '../services/store'
-import { A2APromptOpts, Agent } from 'types/agents'
-import { strDict } from 'types/index'
 import AgentPicker from './AgentPicker.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 
@@ -41,7 +41,6 @@ const { onEvent, emitEvent } = useEventBus()
 const tipsManager = useTipsManager(store)
 const llmManager = LlmFactory.manager(store.config)
 const assistant = ref(new Assistant(store.config))
-
 const chatArea= ref<typeof ChatArea>(null)
 const chatEditor= ref<typeof ChatEditor>(null)
 const sidebar= ref<typeof ChatSidebar>(null)
@@ -51,6 +50,7 @@ const chatEditorCallback= ref<ChatEditorCallback>(() => {})
 const builder = ref<typeof CreateAgentRun>(null)
 const picker = ref<typeof AgentPicker>(null)
 const agent = ref<Agent|null>(null)
+
 let abortController: AbortController | null = null
 
 const props = defineProps({
