@@ -1,6 +1,6 @@
 
 import { Configuration } from 'types/config'
-import { engineNames } from '../services/llms/base'
+import { engineNames } from '../services/llms/consts'
 import { TTSEngine } from './tts-engine'
 import TTSOpenAI from './tts-openai'
 import TTSGroq from './tts-groq'

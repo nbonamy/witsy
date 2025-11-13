@@ -7,34 +7,10 @@ import { imageFormats, textFormats } from '../../../models/attachment'
 import { PluginInstance, PluginsList } from '../plugins/plugins'
 import { store } from '../store'
 import { getFallbackModel as getAnthropicFallbackModel, isSpecializedModel as isSpecialAnthropicModel } from './anthropic'
-import { areAllToolsEnabled, areToolsDisabled, favoriteMockEngine } from './llm'
+import { favoriteMockEngine } from './consts'
+import { areAllToolsEnabled, areToolsDisabled } from './llm'
 
-export const engineNames: Record<string, string> = {
-  'anthropic': 'Anthropic',
-  'cerebras': 'Cerebras',
-  'deepseek': 'DeepSeek',
-  'elevenlabs': 'ElevenLabs',
-  'falai': 'fal.ai', 
-  'fireworks': 'Fireworks.ai',
-  'gladia': 'Gladia',
-  'google': 'Google',
-  'groq': 'Groq',
-  'huggingface': 'HuggingFace',
-  'lmstudio': 'LM Studio',
-  'meta': 'Meta',
-  'minimax': 'MiniMax',
-  'mistralai': 'Mistral AI',
-  'nvidia': 'nVidia',
-  'ollama': 'Ollama',
-  'openai': 'OpenAI',
-  'openrouter': 'OpenRouter',
-  'replicate': 'Replicate',
-  'sdwebui': 'Stable Diffusion web UI',
-  'soniox': 'Soniox',
-  'speechmatics': 'Speechmatics',
-  'whisper': 'Whisper',
-  'xai': 'xAI',
-}
+export { engineNames } from './consts'
 
 export default class LlmManagerBase implements ILlmManager {
 
@@ -152,8 +128,28 @@ export default class LlmManagerBase implements ILlmManager {
   }
   
   getChatEngineModel = (acceptSpecializedModels: boolean = true): { engine: string, model: string } => {
-    const engine = this.config.llm.engine
-    const model = this.getDefaultChatModel(engine, acceptSpecializedModels)
+    
+    let engine = this.config.llm.engine
+    let model = this.getDefaultChatModel(engine, acceptSpecializedModels)
+
+    // check it is a valid model for this workspace
+    const workspaceModels = store.workspace?.models || []
+    if (workspaceModels.length) {
+      const workspaceModel = workspaceModels.find(m => m.engine === engine && m.model === model) 
+      if (!workspaceModel) {
+        const workspaceEngineModels = workspaceModels.filter(m => m.engine === engine)
+        if (workspaceEngineModels.length) {
+          model = workspaceEngineModels[0].model
+          this.setChatModel(engine, model)
+        } else {
+          const firstModel = workspaceModels[0]
+          engine = firstModel.engine
+          model = firstModel.model
+          this.setChatModel(engine, model)
+        }
+      }
+    }
+
     if (!this.isFavoriteEngine(engine)) {
       return { engine, model }
     } else {
