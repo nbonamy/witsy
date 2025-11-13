@@ -21,7 +21,7 @@ vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/renderer/utils/audio_player', async () => {
+vi.mock('../../src/renderer/audio/audio_player', async () => {
   return { default: () => ({
     addListener: vi.fn(),
     removeListener: vi.fn(),

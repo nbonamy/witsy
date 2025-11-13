@@ -16,7 +16,7 @@ vi.mock('../../src/renderer/services/i18n', async () => {
 })
 
 
-vi.mock('../../src/renderer/utils/transcriber', () => {
+vi.mock('../../src/renderer/audio/transcriber', () => {
   return { default: vi.fn(() => ({
     transcriber: {
       initialize: vi.fn(),
@@ -38,7 +38,7 @@ vi.mock('../../src/renderer/utils/dialog', () => ({
   }
 }))
 
-vi.mock('../../src/renderer/utils/audio_recorder', () => ({
+vi.mock('../../src/renderer/audio/audio_recorder', () => ({
   default: vi.fn(() => ({
     initialize: vi.fn(async () => Promise.resolve()),
     start: vi.fn(() => {

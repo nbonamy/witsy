@@ -1,6 +1,6 @@
 
 import { Configuration } from 'types/config'
-import { isAudioRecordingSupported } from '../utils/audio_recorder'
+import { isAudioRecordingSupported } from '../audio/audio_recorder'
 import { engineNames } from '../services/llms/base'
 import STTFalAi from './stt-falai'
 import STTFireworks from './stt-fireworks'

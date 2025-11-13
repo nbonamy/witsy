@@ -52,8 +52,8 @@
 <script setup lang="ts">
 import { MicIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, onBeforeUnmount, ref, watch } from 'vue'
-import useAudioRecorder from '../utils/audio_recorder'
-import useTranscriber from '../utils/transcriber'
+import useAudioRecorder from '../audio/audio_recorder'
+import useTranscriber from '../audio/transcriber'
 import { store } from '../services/store'
 import { isSTTReady, StreamingChunk } from '../voice/stt'
 import ButtonIcon from './ButtonIcon.vue'
