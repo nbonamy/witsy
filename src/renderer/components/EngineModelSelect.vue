@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import { ChevronDownIcon } from 'lucide-vue-next'
 import { nextTick, ref } from 'vue'
-import { engineNames } from '../services/llms/base'
+import { engineNames } from '../services/llms/consts'
 import LlmFactory from '../services/llms/llm'
 import { store } from '../services/store'
 import { MenuPosition } from './ContextMenuPlus.vue'

@@ -64,7 +64,7 @@
 import type { ChatModel } from 'multi-llm-ts'
 import { computed, nextTick, onMounted, ref } from 'vue'
 import useAppearanceTheme from '../composables/appearance_theme'
-import { engineNames } from '../services/llms/base'
+import { engineNames } from '../services/llms/consts'
 import LlmFactory from '../services/llms/llm'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
