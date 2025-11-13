@@ -1,8 +1,8 @@
 
 import { type Configuration } from 'types/config'
 import { t } from '../services/i18n'
+import Dialog from '../utils/dialog'
 import { getSTTEngine, StreamingChunk, StreamingChunkError, STTEngine, TranscribeResponse } from '../voice/stt'
-import Dialog from './dialog'
 
 class Transcriber {
 

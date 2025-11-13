@@ -29,7 +29,7 @@ vi.mock('../../src/renderer/voice/stt', () => ({
   isSTTReady: vi.fn(() => true),
 }))
 
-vi.mock('../../src/renderer/utils/audio_recorder', () => ({
+vi.mock('../../src/renderer/audio/audio_recorder', () => ({
   default: vi.fn(() => ({
     initialize: vi.fn(),
     start: vi.fn(),
@@ -42,7 +42,7 @@ vi.mock('../../src/renderer/utils/audio_recorder', () => ({
   })),
 }))
 
-vi.mock('../../src/renderer/utils/transcriber', () => ({
+vi.mock('../../src/renderer/audio/transcriber', () => ({
   default: vi.fn(() => ({
     transcriber: {
       initialize: vi.fn(),
