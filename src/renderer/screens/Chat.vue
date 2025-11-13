@@ -246,7 +246,6 @@ const onSelectChat = (chat: Chat) => {
 }
 
 const onRenameChat = async (chat: Chat) => {
-  // prompt
   const { value: title } = await Dialog.show({
     title: t('main.chat.rename'),
     input: 'text',
