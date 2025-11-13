@@ -5,7 +5,7 @@ import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/renderer/services/store'
 import Editor from '../../src/renderer/agent/Editor.vue'
 import Agent from '../../src/models/agent'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 import { nextTick } from 'vue'
 
 enableAutoUnmount(afterAll)
@@ -14,7 +14,7 @@ vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/renderer/composables/dialog', () => ({
+vi.mock('../../src/renderer/utils/dialog', () => ({
   default: {
     show: vi.fn(),
     waitUntilClosed: vi.fn()

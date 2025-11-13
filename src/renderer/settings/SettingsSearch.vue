@@ -76,7 +76,7 @@
 import { ref } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const enabled = ref(false)

@@ -5,7 +5,7 @@ import { computed, onMounted, ref, watch, type Ref } from 'vue'
 import { t } from '../services/i18n'
 import { enabledPlugins } from '../services/plugins/plugins'
 import { store } from '../services/store'
-import * as ts from './tool_selection'
+import * as ts from '../utils/tool_selection'
 
 export interface UseToolsMenuOptions {
   toolSelection: Ref<ToolSelection | undefined>

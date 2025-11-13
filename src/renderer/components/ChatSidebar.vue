@@ -55,14 +55,14 @@
 import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCirclePlusIcon, MessagesSquareIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
 import { nextTick, onMounted, ref } from 'vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import Chat from '../../models/chat'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { ChatListMode } from 'types/config'
 import ChatList from './ChatList.vue'
 
-import useTipsManager from '../composables/tips_manager'
+import useTipsManager from '../utils/tips_manager'
 const tipsManager = useTipsManager(store)
 
 import useEventBus from '../composables/event_bus'

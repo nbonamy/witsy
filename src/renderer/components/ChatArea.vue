@@ -97,9 +97,9 @@
 
 import { EllipsisVerticalIcon, MessageCirclePlusIcon, PanelRightCloseIcon, PanelRightOpenIcon, SlidersHorizontalIcon, X } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import useEventBus from '../composables/event_bus'
-import useTipsManager from '../composables/tips_manager'
+import useTipsManager from '../utils/tips_manager'
 import LlmFactory, { ILlmManager } from '../services/llms/llm'
 import Chat from '../../models/chat'
 import ModelSettings from '../screens/ModelSettings.vue'

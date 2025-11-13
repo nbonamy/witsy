@@ -45,7 +45,7 @@
 
 import { MinusIcon, PlusIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 

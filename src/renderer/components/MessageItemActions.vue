@@ -33,7 +33,7 @@
 import { ChartNoAxesColumnIncreasingIcon, GitBranchIcon, PencilIcon, QuoteIcon, RotateCcwIcon, Trash2Icon, WrenchIcon } from 'lucide-vue-next'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import Message from '../../models/message'
 import { t } from '../services/i18n'
 import { store } from '../services/store'

@@ -66,7 +66,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import AnimatedBlob from '../components/AnimatedBlob.vue'
 import NumberFlip from '../components/NumberFlip.vue'
-import useTipsManager from '../composables/tips_manager'
+import useTipsManager from '../utils/tips_manager'
 
 const tipsManager = useTipsManager(store)
 

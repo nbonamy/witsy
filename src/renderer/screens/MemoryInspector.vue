@@ -39,7 +39,7 @@ import { ref } from 'vue'
 import { t } from '../services/i18n'
 import { MemoryFact } from 'types/index'
 import ModalDialog from '../components/ModalDialog.vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 
 const dialog = ref(null)
 const contents = ref([])

@@ -48,7 +48,7 @@
 import { ChevronLeftIcon } from 'lucide-vue-next'
 import { PropType, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { Agent, AgentRun } from 'types/agents'

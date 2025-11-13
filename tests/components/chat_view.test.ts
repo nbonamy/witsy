@@ -12,7 +12,7 @@ import ChatView from '../../src/renderer/screens/Chat.vue'
 import ChatSidebar from '../../src/renderer/components/ChatSidebar.vue'
 import ChatArea from '../../src/renderer/components/ChatArea.vue'
 import Assistant from '../../src/renderer/services/assistant'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 vi.unmock('../../src/renderer/composables/event_bus')
 import useEventBus  from '../../src/renderer/composables/event_bus'

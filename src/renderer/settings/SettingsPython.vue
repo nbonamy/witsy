@@ -50,7 +50,7 @@
 
 import { ref } from 'vue'
 import SpinningIcon from '../components/SpinningIcon.vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 

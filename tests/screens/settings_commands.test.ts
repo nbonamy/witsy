@@ -9,7 +9,7 @@ import { switchToTab, tabs } from './settings_utils'
 import Settings from '../../src/renderer/screens/Settings.vue'
 import { findModelSelectorPlus } from '../utils'
 import { ChatModel } from 'multi-llm-ts'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 enableAutoUnmount(afterAll)
 

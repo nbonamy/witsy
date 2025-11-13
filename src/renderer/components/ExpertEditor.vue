@@ -61,7 +61,7 @@
 
 import { CircleAlertIcon, MinusIcon, PlusIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import { expertI18n, expertI18nDefault, categoryI18n, t } from '../services/i18n'
 import { store } from '../services/store'
 import { FileContents } from 'types/file'

@@ -5,7 +5,7 @@ import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/renderer/services/store'
 import SettingsSidebar from '../../src/renderer/settings/SettingsSidebar.vue'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 beforeAll(() => {
   useWindowMock()

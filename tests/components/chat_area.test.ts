@@ -10,7 +10,7 @@ import ChatArea from '../../src/renderer/components/ChatArea.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 import { defaultCapabilities } from 'multi-llm-ts'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 enableAutoUnmount(afterAll)
 

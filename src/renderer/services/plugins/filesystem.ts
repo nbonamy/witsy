@@ -1,6 +1,6 @@
 
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
-import Dialog from '../../composables/dialog'
+import Dialog from '../../utils/dialog'
 import { t } from '../i18n'
 import { DeleteFileResponse, FindFilesResponse, ListDirectoryResponse, ReadFileResponse, WriteFileResponse } from 'types/filesystem'
 import { anyDict } from 'types/index'

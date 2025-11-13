@@ -32,7 +32,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import ModalDialog from '../components/ModalDialog.vue'
 import EmbeddingSelector from '../components/EmbeddingSelector.vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 
 // emits
 const emit = defineEmits([ 'save' ])

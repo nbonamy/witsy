@@ -9,7 +9,7 @@ import Attachment from '../../src/models/attachment'
 import LlmMock from '../mocks/llm'
 import { useBrowserMock, useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
@@ -24,7 +24,7 @@ vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
   return { default: LlmManager }
 })
 
-vi.mock('../../src/renderer/composables/dialog', () => ({
+vi.mock('../../src/renderer/utils/dialog', () => ({
   default: {
     show: vi.fn(),
     alert: vi.fn()

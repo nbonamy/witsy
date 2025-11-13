@@ -46,8 +46,8 @@
 <script setup lang="ts">
 import { ChevronDownIcon, GlobeIcon, MapIcon, PlusIcon, RefreshCwIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed } from 'vue'
-import Dialog from '../composables/dialog'
-import { togglePanel } from '../composables/panel'
+import Dialog from '../utils/dialog'
+import { togglePanel } from '../utils/panel'
 import { useDocRepoEvents } from '../composables/useDocRepoEvents'
 import { t } from '../services/i18n'
 import { DocumentBase, DocumentSource } from 'types/rag'

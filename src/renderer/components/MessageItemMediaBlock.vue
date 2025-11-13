@@ -15,7 +15,7 @@
 
 import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, InfoIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import useEventBus from '../composables/event_bus'
 import Message from '../../models/message'
 const { emitEvent } = useEventBus()

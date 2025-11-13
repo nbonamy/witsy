@@ -27,7 +27,7 @@ vi.mock('../../src/renderer/composables/appearance_theme.ts', async () => {
   })}
 })
 
-vi.mock('../../src/renderer/composables/dialog.ts', () => ({
+vi.mock('../../src/renderer/utils/dialog.ts', () => ({
   default: {
     show: vi.fn()
   }
@@ -311,7 +311,7 @@ test('Settings LLM edit custom instruction', async () => {
 
 test('Settings LLM delete custom instruction with confirmation', async () => {
   
-  const Dialog = await import('../../src/renderer/composables/dialog')
+  const Dialog = await import('../../src/renderer/utils/dialog')
   
   // Add a custom instruction and select it
   const customInstruction: CustomInstruction = {
@@ -356,7 +356,7 @@ test('Settings LLM delete custom instruction with confirmation', async () => {
 
 test('Settings LLM delete custom instruction canceled', async () => {
   
-  const Dialog = await import('../../src/renderer/composables/dialog')
+  const Dialog = await import('../../src/renderer/utils/dialog')
   
   // Add a custom instruction and select it
   const customInstruction: CustomInstruction = {

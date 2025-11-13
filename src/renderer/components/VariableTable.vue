@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { MinusIcon, PlusIcon } from 'lucide-vue-next'
-import Dialog from '../composables/dialog'
+import Dialog from '../utils/dialog'
 import { t } from '../services/i18n'
 
 const props = defineProps({

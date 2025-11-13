@@ -11,7 +11,7 @@ import MessageItem from '../../src/renderer/components/MessageItem.vue'
 import MessageItemHtmlBlock from '../../src/renderer/components/MessageItemHtmlBlock.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
-import Dialog from '../../src/renderer/composables/dialog'
+import Dialog from '../../src/renderer/utils/dialog'
 
 enableAutoUnmount(afterAll)
 
@@ -21,7 +21,7 @@ vi.mock('../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/renderer/composables/audio_player', async () => {
+vi.mock('../../src/renderer/utils/audio_player', async () => {
   return { default: () => ({
     addListener: vi.fn(),
     removeListener: vi.fn(),
