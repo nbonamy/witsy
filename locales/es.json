@@ -2535,7 +2535,7 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "Guardar siempre las sesiones de solicitud en el historial de chat",
-      "conversationLength": "Mensajes por conversación",
+      "conversationLength": "Mensajes por Conversación",
       "enableHttpEndpoints": "Habilitar puntos finales HTTP (API, desencadenadores, webhooks)",
       "header": "Configuraciones misceláneas",
       "httpServer": "Servidor HTTP funcionando en el puerto {port}",
@@ -2798,17 +2798,17 @@
     "llm": {
       "capabilities": {
         "artifacts": "Instruir al modelo para crear artefactos",
-        "title": "Instrucciones adicionales"
+        "title": "Instrucciones Adicionales"
       },
       "disableStreaming": "Desactivar streaming",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",
           "label": "@:{'common.label'}",
-          "title": "Editor de instrucciones"
+          "title": "Editor de Estilo de Escritura"
         },
         "empathic": "❤️ Cálido y empático",
-        "label": "@:{'common.instructions'}",
+        "label": "Estilos de Escritura",
         "playful": "😜 Divertido e ingenioso",
         "reflective": "🤔 Reflexivo y pensativo",
         "standard": "📘 Directo e informativo",

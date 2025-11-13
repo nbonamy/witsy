@@ -2557,7 +2557,7 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "Zawsze zapisuj sesje podpowiedzi w historii czatu",
-      "conversationLength": "Wiadomości na konwersację",
+      "conversationLength": "Wiadomości na rozmowę",
       "enableHttpEndpoints": "Włącz punkty końcowe HTTP (API, wyzwalacze, webhooki)",
       "header": "Ustawienia różne",
       "httpServer": "Serwer HTTP działa na porcie {port}",
@@ -2820,17 +2820,17 @@
     "llm": {
       "capabilities": {
         "artifacts": "Nakaz modelowi tworzenia artefaktów",
-        "title": "Dodatkowe instrukcje"
+        "title": "Dodatkowe Instrukcje"
       },
       "disableStreaming": "Wyłącz przesyłanie streaming",
       "instructions": {
         "editor": {
           "instructions": "@:{'common.instructions'}",
           "label": "@:{'common.label'}",
-          "title": "Edytor instrukcji"
+          "title": "Edytor Stylu Pisania"
         },
         "empathic": "❤️ Ciepły i empatyczny",
-        "label": "@:{'common.instructions'}",
+        "label": "Style Pisania",
         "playful": "😜 Zabawny i dowcipny",
         "reflective": "🤔 Przemyślany i refleksyjny",
         "standard": "📘 Prosto i informacyjnie",
