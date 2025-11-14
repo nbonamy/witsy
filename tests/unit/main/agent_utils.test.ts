@@ -57,7 +57,7 @@ test('generateWebhookToken ensures uniqueness', () => {
 
   vi.mocked(agentsModule.listAgents).mockReturnValue([
     existingAgent,
-    { uuid: 'agent-1', webhookToken: null }
+    { uuid: 'agent-1', webhookToken: null } as any
   ])
 
   const token = generateWebhookToken(mockApp, 'workspace-1', 'agent-1')
@@ -117,9 +117,9 @@ test('findAgentByWebhookToken finds agent in first workspace', () => {
     { uuid: 'workspace-2', name: 'Workspace 2' }
   ])
 
-  vi.mocked(agentsModule.listAgents).mockImplementation((app: App, workspaceId: string) => {
+  vi.mocked(agentsModule.listAgents).mockImplementation((app: App|string, workspaceId: string) => {
     if (workspaceId === 'workspace-1') {
-      return [targetAgent]
+      return [targetAgent] as any
     }
     return []
   })
@@ -144,9 +144,9 @@ test('findAgentByWebhookToken finds agent in second workspace', () => {
     { uuid: 'workspace-2', name: 'Workspace 2' }
   ])
 
-  vi.mocked(agentsModule.listAgents).mockImplementation((app: App, workspaceId: string) => {
+  vi.mocked(agentsModule.listAgents).mockImplementation((app: App|string, workspaceId: string) => {
     if (workspaceId === 'workspace-2') {
-      return [targetAgent]
+      return [targetAgent] as any
     }
     return []
   })
@@ -165,7 +165,7 @@ test('findAgentByWebhookToken returns null for invalid token', () => {
   ])
 
   vi.mocked(agentsModule.listAgents).mockReturnValue([
-    { uuid: 'agent-1', webhookToken: 'validtoken' }
+    { uuid: 'agent-1', webhookToken: 'validtoken' } as any
   ])
 
   const result = findAgentByWebhookToken(mockApp, 'invalidtoken')
@@ -223,10 +223,10 @@ test('AgentExecutor sets up mocks and calls AgentWorkflowExecutor', async () => 
 
   // @ts-expect-error partial types
   const executor = new AgentExecutor(mockApp, mockMcp)
-  const result = await executor.runAgent('workspace-1', mockAgent, 'webhook', 'Test prompt')
+  const result = await executor.runAgent('workspace-1', mockAgent, 'webhook', { prompt: 'Test prompt' })
 
   expect(AgentWorkflowExecutor).toHaveBeenCalledWith(mockConfig, 'workspace-1', mockAgent)
-  expect(mockExecutor.run).toHaveBeenCalledWith('webhook', 'Test prompt', expect.objectContaining({
+  expect(mockExecutor.run).toHaveBeenCalledWith('webhook', { prompt: 'Test prompt' }, expect.objectContaining({
     model: undefined,
     runId: undefined
   }))
