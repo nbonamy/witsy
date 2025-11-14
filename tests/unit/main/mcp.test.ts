@@ -516,6 +516,49 @@ test('Name conversion', async () => {
   expect(mcp.originalToolName('tool3_____s1')).toBe('tool3')
 })
 
+test('uniqueToolName 64 character limit', async () => {
+  const mcp = new Mcp(app)
+  const server: McpServer = {
+    uuid: '1234-5678-90ab-cdef',
+    registryId: 'test',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'script.js',
+    toolSelection: null
+  }
+
+  // Test normal case - short name gets suffix
+  const shortName = 'search_files'
+  const shortResult = (mcp as any).uniqueToolName(server, shortName)
+  expect(shortResult).toBe('search_files___cdef')
+  expect(shortResult.length).toBe(19)
+
+  // Test edge case - name that results in exactly 64 chars with suffix
+  const edgeName = 'a_tool_name_that_is_exactly_fifty_seven_chars_long_abcdef' // 57 chars + 7 suffix = 64
+  const edgeResult = (mcp as any).uniqueToolName(server, edgeName)
+  expect(edgeResult).toBe('a_tool_name_that_is_exactly_fifty_seven_chars_long_abcdef___cdef')
+  expect(edgeResult.length).toBe(64)
+
+  // Test name that would exceed 64 chars with suffix - should fallback to original
+  const overName = 'a_tool_name_that_is_exactly_fifty_eight_chars_long_abcdefg' // 58 chars + 7 suffix = 65
+  const overResult = (mcp as any).uniqueToolName(server, overName)
+  expect(overResult).toBe(overName) // Should return original name, no suffix
+  expect(overResult.length).toBe(58)
+
+  // Test long name - exceeds 64 chars, should fallback to original
+  const longName = 'a_very_long_tool_name_that_exceeds_the_maximum_allowed_length_of_64_characters_when_combined_with_suffix'
+  const longResult = (mcp as any).uniqueToolName(server, longName)
+  expect(longResult).toBe(longName) // Should return original name
+  expect(longResult.length).toBe(104) // Original length preserved
+
+  // Verify originalToolName can handle both cases
+  expect(mcp.originalToolName(shortResult)).toBe(shortName)
+  expect(mcp.originalToolName(edgeResult)).toBe(edgeName)
+  expect(mcp.originalToolName(overResult)).toBe(overName) // No suffix to remove
+  expect(mcp.originalToolName(longResult)).toBe(longName) // No suffix to remove
+})
+
 test('Call tool', async () => {
   const mcp = new Mcp(app)
   await mcp.connect()
