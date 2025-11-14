@@ -1,10 +1,10 @@
 
 import { BrowserWindow, Menu } from 'electron'
 import { beforeAll, beforeEach, expect, Mock, test, vi } from 'vitest'
-import * as window from '../../src/main/window'
-import { store } from '../../src/renderer/services/store'
-import { Application } from '../../src/types/automation'
-import { useWindowMock } from '../mocks/window'
+import * as window from '../../../src/main/window'
+import { store } from '../../../src/renderer/services/store'
+import { Application } from '../../../src/types/automation'
+import { useWindowMock } from '../../mocks/window'
 
 global.MAIN_WINDOW_VITE_DEV_SERVER_URL = 'http://localhost:3000/'
 global.MAIN_WINDOW_VITE_NAME = 'vite'
@@ -109,11 +109,11 @@ vi.mock('electron', async () => {
   }
 })
 
-vi.mock('../../src/main/i18n', () => ({
+vi.mock('../../../src/main/i18n', () => ({
   useI18n: vi.fn(() => (key: string) => key)
 }))
 
-vi.mock('../../src/main/utils', async () => {
+vi.mock('../../../src/main/utils', async () => {
   return {
     wait: vi.fn(),
     putCachedText: vi.fn(() => 'textId')

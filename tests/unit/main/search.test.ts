@@ -1,6 +1,6 @@
 
 import { vi, expect, test } from 'vitest'
-import LocalSearch from '../../src/main/search'
+import LocalSearch from '../../../src/main/search'
 
 // Mock fetch for content fetching
 // @ts-expect-error mock

@@ -1,5 +1,5 @@
 import { vi, beforeEach, expect, test, describe } from 'vitest'
-import { StorageSingleton, MemoryPlugin } from '../../src/renderer/services/agent_storage'
+import { StorageSingleton, MemoryPlugin } from '../../../../src/renderer/services/agent_storage'
 
 describe('StorageSingleton', () => {
   let storage: StorageSingleton

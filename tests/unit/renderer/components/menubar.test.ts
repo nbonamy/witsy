@@ -1,9 +1,9 @@
 
 import { beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/renderer/services/store'
-import MenuBar from '../../src/renderer/components/MenuBar.vue'
+import { useWindowMock } from '../../../mocks/window'
+import { store } from '../../../../src/renderer/services/store'
+import MenuBar from '../../../../src/renderer/components/MenuBar.vue'
 
 beforeAll(() => {
   useWindowMock()

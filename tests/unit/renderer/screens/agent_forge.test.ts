@@ -1,12 +1,12 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { beforeAll, beforeEach, expect, test, vi } from 'vitest'
-import Dialog from '../../src/renderer/utils/dialog'
-import AgentForge from '../../src/renderer/screens/AgentForge.vue'
-import { store } from '../../src/renderer/services/store'
-import { useWindowMock } from '../mocks/window'
+import Dialog from '../../../../src/renderer/utils/dialog'
+import AgentForge from '../../../../src/renderer/screens/AgentForge.vue'
+import { store } from '../../../../src/renderer/services/store'
+import { useWindowMock } from '../../../mocks/window'
 
 // Mock the i18n service
-vi.mock('../../src/renderer/services/i18n', () => ({
+vi.mock('../../../../src/renderer/services/i18n', () => ({
   t: (key: string) => {
     if (key === 'agent.copySuffix') return 'Copy'
     return key
@@ -14,7 +14,7 @@ vi.mock('../../src/renderer/services/i18n', () => ({
 }))
 
 // Mock Dialog
-vi.mock('../../src/renderer/utils/dialog', () => ({
+vi.mock('../../../../src/renderer/utils/dialog', () => ({
   default: {
     show: vi.fn(),
     waitUntilClosed: vi.fn()
@@ -22,7 +22,7 @@ vi.mock('../../src/renderer/utils/dialog', () => ({
 }))
 
 // Mock components
-vi.mock('../../src/renderer/agent/List.vue', () => ({
+vi.mock('../../../../src/renderer/agent/List.vue', () => ({
   default: {
     name: 'List',
     props: ['agents'],
@@ -31,7 +31,7 @@ vi.mock('../../src/renderer/agent/List.vue', () => ({
   }
 }))
 
-vi.mock('../../src/renderer/agent/Editor.vue', () => ({
+vi.mock('../../../../src/renderer/agent/Editor.vue', () => ({
   default: {
     name: 'Editor',
     props: ['mode', 'agent'],
@@ -40,7 +40,7 @@ vi.mock('../../src/renderer/agent/Editor.vue', () => ({
   }
 }))
 
-vi.mock('../../src/renderer/agent/View.vue', () => ({
+vi.mock('../../../../src/renderer/agent/View.vue', () => ({
   default: {
     name: 'View',
     props: ['agent'],
@@ -49,7 +49,7 @@ vi.mock('../../src/renderer/agent/View.vue', () => ({
   }
 }))
 
-vi.mock('../../src/renderer/components/PromptBuilder.vue', () => ({
+vi.mock('../../../../src/renderer/components/PromptBuilder.vue', () => ({
   default: {
     name: 'PromptBuilder',
     props: ['title'],

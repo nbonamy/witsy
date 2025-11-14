@@ -2,18 +2,18 @@
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { defaultCapabilities } from 'multi-llm-ts'
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from 'vitest'
-import MessageItem from '../../src/renderer/components/MessageItem.vue'
-import Prompt, { SendPromptParams } from '../../src/renderer/components/Prompt.vue'
-import LlmManager from '../../src/renderer/services/llms/manager'
-import Attachment from '../../src/models/attachment'
-import Message from '../../src/models/message'
-import PromptAnywhere from '../../src/renderer/screens/PromptAnywhere.vue'
-import { store } from '../../src/renderer/services/store'
-import { Expert } from '../../src/types'
-import LlmMock, { installMockModels, setLlmDefaults } from '../mocks/llm'
-import { useBrowserMock, useWindowMock } from '../mocks/window'
+import MessageItem from '../../../../src/renderer/components/MessageItem.vue'
+import Prompt, { SendPromptParams } from '../../../../src/renderer/components/Prompt.vue'
+import LlmManager from '../../../../src/renderer/services/llms/manager'
+import Attachment from '../../../../src/models/attachment'
+import Message from '../../../../src/models/message'
+import PromptAnywhere from '../../../../src/renderer/screens/PromptAnywhere.vue'
+import { store } from '../../../../src/renderer/services/store'
+import { Expert } from '../../../../src/types'
+import LlmMock, { installMockModels, setLlmDefaults } from '../../../mocks/llm'
+import { useBrowserMock, useWindowMock } from '../../../mocks/window'
 
-vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
+vi.mock('../../../../src/renderer/services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)

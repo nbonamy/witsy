@@ -1,8 +1,8 @@
 
 import { vi, beforeAll, expect, test } from 'vitest'
-import { useWindowMock } from '../mocks/window'
-import * as main from '../../src/main/experts'
-import * as service from '../../src/renderer/services/experts'
+import { useWindowMock } from '../../../mocks/window'
+import * as main from '../../../../src/main/experts'
+import * as service from '../../../../src/renderer/services/experts'
 import { app } from 'electron'
 
 vi.mock('electron', async() => {

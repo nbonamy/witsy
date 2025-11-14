@@ -1,8 +1,8 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import { useWindowMock } from '../mocks/window'
-import KnowledgePlugin from '../../src/renderer/services/plugins/knowledge'
-import { DocumentBase } from '../../src/types/rag'
+import { useWindowMock } from '../../../../mocks/window'
+import KnowledgePlugin from '../../../../../src/renderer/services/plugins/knowledge'
+import { DocumentBase } from '../../../../../src/types/rag'
 
 beforeAll(() => {
   useWindowMock()

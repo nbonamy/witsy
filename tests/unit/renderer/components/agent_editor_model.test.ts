@@ -1,15 +1,15 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { createI18nMock } from '../mocks/index'
-import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/renderer/services/store'
-import Editor from '../../src/renderer/agent/Editor.vue'
-import Agent from '../../src/models/agent'
+import { createI18nMock } from '../../../mocks/index'
+import { useWindowMock } from '../../../mocks/window'
+import { store } from '../../../../src/renderer/services/store'
+import Editor from '../../../../src/renderer/agent/Editor.vue'
+import Agent from '../../../../src/models/agent'
 import { nextTick } from 'vue'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../src/renderer/services/i18n', async () => {
+vi.mock('../../../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

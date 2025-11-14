@@ -3,8 +3,8 @@ import { app } from 'electron'
 import Store from 'electron-store'
 import fs from 'fs'
 import { beforeEach, expect, test, vi, Mock } from 'vitest'
-import defaultSettings from '../../defaults/settings.json'
-import * as config from '../../src/main/config'
+import defaultSettings from '../../../defaults/settings.json'
+import * as config from '../../../src/main/config'
 
 vi.mock('electron', async () => {
   return {

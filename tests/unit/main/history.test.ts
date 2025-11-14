@@ -1,8 +1,8 @@
 
 import { expect, test, vi } from 'vitest'
-import { extractAttachmentsFromHistory, listUnusedAttachments, loadHistory, saveHistory, kUnusedDelay } from '../../src/main/history'
+import { extractAttachmentsFromHistory, listUnusedAttachments, loadHistory, saveHistory, kUnusedDelay } from '../../../src/main/history'
 import { App, app } from 'electron'
-import Chat from '../../src/models/chat'
+import Chat from '../../../src/models/chat'
 import fs from 'fs'
 
 vi.mock('electron', async() => {

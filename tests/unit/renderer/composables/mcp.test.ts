@@ -1,7 +1,7 @@
 import { vi, test, expect, describe, beforeAll, beforeEach } from 'vitest'
-import { useWindowMock } from '../../mocks/window'
-import { useMcpServer, OAuthStatus } from '../../../src/renderer/composables/mcp'
-import Dialog from '../../../src/renderer/utils/dialog'
+import { useWindowMock } from '../../../mocks/window'
+import { useMcpServer, OAuthStatus } from '../../../../src/renderer/composables/mcp'
+import Dialog from '../../../../src/renderer/utils/dialog'
 
 // Mock dialog
 vi.mock('../../../src/renderer/utils/dialog', () => ({

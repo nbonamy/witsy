@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import ContextMenuPlus from '../../src/renderer/components/ContextMenuPlus.vue'
+import ContextMenuPlus from '../../../../src/renderer/components/ContextMenuPlus.vue'
 
 // Mock the i18n service
-vi.mock('../../src/renderer/services/i18n', () => ({
+vi.mock('../../../../src/renderer/services/i18n', () => ({
   t: (key: string) => key
 }))
 
 // Mock the Overlay component
-vi.mock('../../src/renderer/components/Overlay.vue', () => ({
+vi.mock('../../../../src/renderer/components/Overlay.vue', () => ({
   default: {
     name: 'Overlay',
     template: '<div class="overlay-mock" @click="$emit(\'click\')"></div>'

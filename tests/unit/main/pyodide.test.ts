@@ -1,6 +1,6 @@
 
 import { vi, beforeEach, afterEach, expect, test, describe } from 'vitest'
-import { runPythonCode, isPyodideInitialized, resetPyodide } from '../../src/main/pyodide'
+import { runPythonCode, isPyodideInitialized, resetPyodide } from '../../../src/main/pyodide'
 import fs from 'fs'
 
 // Mock electron

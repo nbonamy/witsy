@@ -1,8 +1,8 @@
 
 import { vi, test, expect, beforeEach } from 'vitest'
 import { BrowserWindow } from 'electron'
-import { debugWindow } from '../../src/main/windows/debug'
-import interceptNetwork  from '../../src/main/network'
+import { debugWindow } from '../../../src/main/windows/debug'
+import interceptNetwork  from '../../../src/main/network'
 
 global.MAIN_WINDOW_VITE_DEV_SERVER_URL = 'http://localhost:3000/'
 global.MAIN_WINDOW_VITE_NAME = 'vite'
@@ -24,7 +24,7 @@ vi.mock('electron', () => {
   return { BrowserWindow }
 })
 
-vi.mock('../../src/main/windows/debug.ts', () => {
+vi.mock('../../../src/main/windows/debug.ts', () => {
   return {
     debugWindow: {
       webContents: {

@@ -1,10 +1,10 @@
 import { vi, beforeEach, expect, test, describe } from 'vitest'
 import { app, dialog } from 'electron'
-import * as backup from '../../src/main/backup'
-import * as file from '../../src/main/file'
-import * as config from '../../src/main/config'
-import * as commands from '../../src/main/commands'
-import defaultSettings from '../../defaults/settings.json'
+import * as backup from '../../../src/main/backup'
+import * as file from '../../../src/main/file'
+import * as config from '../../../src/main/config'
+import * as commands from '../../../src/main/commands'
+import defaultSettings from '../../../defaults/settings.json'
 import fs from 'fs'
 import archiver from 'archiver'
 import extractZip from 'extract-zip'
@@ -25,26 +25,26 @@ vi.mock('electron', () => ({
   }
 }))
 
-vi.mock('../../src/main/file', () => ({
+vi.mock('../../../src/main/file', () => ({
   pickDirectory: vi.fn(),
   pickFile: vi.fn()
 }))
 
-vi.mock('../../src/main/config', () => ({
+vi.mock('../../../src/main/config', () => ({
   settingsFilePath: vi.fn(() => '/mock/userdata/settings.json'),
   apiKeysFilePath: vi.fn(() => '/mock/userdata/apiKeys.json'),
   loadSettings: vi.fn(() => defaultSettings),
 }))
 
-vi.mock('../../src/main/history', () => ({
+vi.mock('../../../src/main/history', () => ({
   historyFilePath: vi.fn(() => '/mock/userdata/history.json')
 }))
 
-vi.mock('../../src/main/experts', () => ({
+vi.mock('../../../src/main/experts', () => ({
   expertsFilePath: vi.fn(() => '/mock/userdata/experts.json')
 }))
 
-vi.mock('../../src/main/commands', () => ({
+vi.mock('../../../src/main/commands', () => ({
   commandsFilePath: vi.fn(() => '/mock/userdata/commands.json')
 }))
 

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { app } from 'electron'
-import * as scratchpad from '../../src/main/scratchpad'
-import { ScratchpadData } from '../../src/types/index'
+import * as scratchpad from '../../../src/main/scratchpad'
+import { ScratchpadData } from '../../../src/types/index'
 import fs from 'fs'
 import path from 'path'
 

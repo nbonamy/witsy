@@ -2,13 +2,13 @@
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { defaultCapabilities } from 'multi-llm-ts'
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from 'vitest'
-import Chat from '../../src/renderer/screens/Chat.vue'
-import { store } from '../../src/renderer/services/store'
-import LlmMock from '../mocks/llm'
-import { useBrowserMock, useWindowMock } from '../mocks/window'
-import { stubTeleport } from '../mocks/stubs'
+import Chat from '../../../../src/renderer/screens/Chat.vue'
+import { store } from '../../../../src/renderer/services/store'
+import LlmMock from '../../../mocks/llm'
+import { useBrowserMock, useWindowMock } from '../../../mocks/window'
+import { stubTeleport } from '../../../mocks/stubs'
 
-vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
+vi.mock('../../../../src/renderer/services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
@@ -30,7 +30,7 @@ vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
   return { default: LlmManager }
 })
 
-vi.mock('../../src/renderer/utils/dialog', () => ({
+vi.mock('../../../../src/renderer/utils/dialog', () => ({
   default: {
     show: vi.fn(),
     alert: vi.fn()

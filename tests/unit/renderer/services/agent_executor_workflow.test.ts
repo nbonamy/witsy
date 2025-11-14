@@ -1,18 +1,18 @@
 import { defaultCapabilities, LlmChunk } from 'multi-llm-ts'
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import { useWindowMock } from '../mocks/window'
-import { createI18nMock } from '../mocks'
-import { store } from '../../src/renderer/services/store'
-import { AgentRun, AgentRunTrigger } from '../../src/types/agents'
-import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../../src/renderer/services/agent_executor_workflow'
-import Generator from '../../src/renderer/services/generator'
-import Agent from '../../src/models/agent'
-import Chat from '../../src/models/chat'
-import LlmMock, { installMockModels } from '../mocks/llm'
+import { useWindowMock } from '../../../mocks/window'
+import { createI18nMock } from '../../../mocks'
+import { store } from '../../../../src/renderer/services/store'
+import { AgentRun, AgentRunTrigger } from '../../../../src/types/agents'
+import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '../../../../src/renderer/services/agent_executor_workflow'
+import Generator from '../../../../src/renderer/services/generator'
+import Agent from '../../../../src/models/agent'
+import Chat from '../../../../src/models/chat'
+import LlmMock, { installMockModels } from '../../../mocks/llm'
 
 
 // Mock dependencies
-vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
+vi.mock('../../../../src/renderer/services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
@@ -29,13 +29,13 @@ vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
   return { default: LlmManager }
 })
 
-vi.mock('../../src/renderer/services/i18n', async () => {
+vi.mock('../../../../src/renderer/services/i18n', async () => {
   return createI18nMock(() => ({
     locale: store.config.llm.locale
   }))
 })
 
-vi.mock('../../src/renderer/services/a2a-client.ts', () => {
+vi.mock('../../../../src/renderer/services/a2a-client.ts', () => {
   return {
     default: vi.fn().mockImplementation(() => ({
       execute: vi.fn(async function* () {
@@ -46,7 +46,7 @@ vi.mock('../../src/renderer/services/a2a-client.ts', () => {
   }
 })
 
-vi.mock('../../src/renderer/services/plugins/plugins.ts', () => {
+vi.mock('../../../../src/renderer/services/plugins/plugins.ts', () => {
   return {
     availablePlugins: {}
   }

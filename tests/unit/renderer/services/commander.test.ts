@@ -1,14 +1,14 @@
 
 import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { app, Notification } from 'electron'
-import { Command } from '../../src/types/index'
-import { store } from '../../src/renderer/services/store'
-import defaults from '../../defaults/settings.json'
-import * as window from '../../src/main/window'
-import Commander, { notEditablePrompts } from '../../src/main/automations/commander'
-import Automator from '../../src/main/automations/automator'
-import LlmMock from '../mocks/llm'
-import { getCachedText, putCachedText } from '../../src/main/utils'
+import { Command } from '../../../../src/types/index'
+import { store } from '../../../../src/renderer/services/store'
+import defaults from '../../../../defaults/settings.json'
+import * as window from '../../../../src/main/window'
+import Commander, { notEditablePrompts } from '../../../../src/main/automations/commander'
+import Automator from '../../../../src/main/automations/automator'
+import LlmMock from '../../../mocks/llm'
+import { getCachedText, putCachedText } from '../../../../src/main/utils'
 
 let cachedTextId: string|null = null
 
@@ -31,7 +31,7 @@ vi.mock('electron', async() => {
 })
 
 // mock windows
-vi.mock('../../src/main/window.ts', async () => {
+vi.mock('../../../../src/main/window.ts', async () => {
   return {
     openCommandPicker: vi.fn(),
     openPromptAnywhere: vi.fn((params) => {
@@ -44,7 +44,7 @@ vi.mock('../../src/main/window.ts', async () => {
 })
 
 // mock llm
-vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
+vi.mock('../../../../src/renderer/services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
   LlmManager.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
@@ -52,7 +52,7 @@ vi.mock('../../src/renderer/services/llms/manager.ts', async () => {
 })
 
 // mock i18n
-vi.mock('../../src/main/i18n.ts', async () => {
+vi.mock('../../../../src/main/i18n.ts', async () => {
   return {
     useI18n: vi.fn(() => (key: string) => key),
     useI18nLlm: vi.fn(() => (key: string) => `${key}:"{input}"`)

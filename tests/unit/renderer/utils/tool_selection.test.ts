@@ -1,10 +1,10 @@
 import { vi, test, expect, describe, beforeAll } from 'vitest'
-import type { McpToolUnique } from '../../src/types/mcp'
-import * as toolSelection from '../../src/renderer/utils/tool_selection'
-import { useWindowMock } from '../mocks/window'
+import type { McpToolUnique } from '../../../../src/types/mcp'
+import * as toolSelection from '../../../../src/renderer/utils/tool_selection'
+import { useWindowMock } from '../../../mocks/window'
 
 // Mock dependencies
-vi.mock('../../src/renderer/services/plugins/plugins', () => {
+vi.mock('../../../../src/renderer/services/plugins/plugins', () => {
   return {
     availablePlugins: {
       'search': class MockSearchPlugin {
@@ -45,7 +45,7 @@ vi.mock('../../src/renderer/services/plugins/plugins', () => {
   }
 })
 
-vi.mock('../../src/renderer/services/store', () => ({
+vi.mock('../../../../src/renderer/services/store', () => ({
   store: {
     config: {
       plugins: {

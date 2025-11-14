@@ -1,22 +1,22 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
-import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createI18nMock } from '../mocks'
-import { emitEventMock } from '../../vitest.setup'
-import { store } from '../../src/renderer/services/store'
-import Transcribe from '../../src/renderer/screens/Transcribe.vue'
-import Waveform from '../../src/renderer/components/Waveform.vue'
-import { TranscribeResponse } from '../../src/renderer/voice/stt'
+import { useWindowMock, useBrowserMock } from '../../../mocks/window'
+import { createI18nMock } from '../../../mocks'
+import { emitEventMock } from '../../../../vitest.setup'
+import { store } from '../../../../src/renderer/services/store'
+import Transcribe from '../../../../src/renderer/screens/Transcribe.vue'
+import Waveform from '../../../../src/renderer/components/Waveform.vue'
+import { TranscribeResponse } from '../../../../src/renderer/voice/stt'
 
 enableAutoUnmount(afterEach)
 
-vi.mock('../../src/renderer/services/i18n', async () => {
+vi.mock('../../../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
 
-vi.mock('../../src/renderer/audio/transcriber', () => {
+vi.mock('../../../../src/renderer/audio/transcriber', () => {
   return { default: vi.fn(() => ({
     transcriber: {
       initialize: vi.fn(),
@@ -31,14 +31,14 @@ vi.mock('../../src/renderer/audio/transcriber', () => {
   })) }
 })
 
-vi.mock('../../src/renderer/utils/dialog', () => ({
+vi.mock('../../../../src/renderer/utils/dialog', () => ({
   default: {
     alert: vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false })),
     show: vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false })),
   }
 }))
 
-vi.mock('../../src/renderer/audio/audio_recorder', () => ({
+vi.mock('../../../../src/renderer/audio/audio_recorder', () => ({
   default: vi.fn(() => ({
     initialize: vi.fn(async () => Promise.resolve()),
     start: vi.fn(() => {

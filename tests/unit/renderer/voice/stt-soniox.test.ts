@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import STTSoniox from '../../src/renderer/voice/stt-soniox'
+import STTSoniox from '../../../../src/renderer/voice/stt-soniox'
 
 const makeConfig = (overrides: any = {}) => ({
   stt: {

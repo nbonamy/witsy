@@ -1,5 +1,5 @@
 import { test, expect, vi, beforeEach } from 'vitest'
-import { getCachedText, putCachedText, fixPath, wait } from '../../src/main/utils'
+import { getCachedText, putCachedText, fixPath, wait } from '../../../src/main/utils'
 
 // Mock node:child_process
 vi.mock('node:child_process')
