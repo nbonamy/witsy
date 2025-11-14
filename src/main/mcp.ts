@@ -964,7 +964,6 @@ export default class {
     return name.replace(/___....$/, '')
   }
 
-
   protected uniqueToolName(server: McpServer, name: string): string {
     return `${name}___${server.uuid.padStart(4, '_').slice(-4)}`
   }
