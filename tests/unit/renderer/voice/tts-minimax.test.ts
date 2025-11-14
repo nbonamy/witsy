@@ -1,10 +1,10 @@
 
 import { expect, test, vi, beforeEach, afterEach, describe } from 'vitest'
-import TTSMiniMax from '../../src/renderer/voice/tts-minimax'
-import defaults from '../../defaults/settings.json'
-import { Configuration } from '../../src/types/config'
+import TTSMiniMax from '../../../../src/renderer/voice/tts-minimax'
+import defaults from '../../../../defaults/settings.json'
+import { Configuration } from '../../../../src/types/config'
 
-vi.mock('../../src/main/ipc.ts', () => ({}))
+vi.mock('../../../../src/main/ipc.ts', () => ({}))
 
 // Mock fetch
 const mockFetch = vi.fn()

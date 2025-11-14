@@ -1,8 +1,8 @@
 
 import { vi, beforeAll, expect, test, Mock } from 'vitest'
 import { app, Menu } from 'electron'
-import AutoUpdater from '../../src/main/autoupdate'
-import Tray from '../../src/main/tray'
+import AutoUpdater from '../../../src/main/autoupdate'
+import Tray from '../../../src/main/tray'
 
 vi.mock('electron', () => {
   const Tray = vi.fn();
@@ -41,7 +41,7 @@ vi.mock('electron', () => {
   }
 })
 
-vi.mock('../../src/main/i18n', () => ({
+vi.mock('../../../src/main/i18n', () => ({
   useI18n: vi.fn(() => (key: string) => key)
 }))
 

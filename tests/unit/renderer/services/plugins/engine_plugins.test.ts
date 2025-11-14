@@ -1,22 +1,22 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import { useWindowMock } from '../mocks/window'
-import { createI18nMock } from '../mocks'
-import { store } from '../../src/renderer/services/store'
-import Image from '../../src/renderer/services/plugins/image'
-import Video from '../../src/renderer/services/plugins/video'
-import Browse from '../../src/renderer/services/plugins/browse'
-import Search from '../../src/renderer/services/plugins/search'
-import Python from '../../src/renderer/services/plugins/python'
-import YouTube from '../../src/renderer/services/plugins/youtube'
-import Memory from '../../src/renderer/services/plugins/memory'
-import Computer from '../../src/renderer/services/plugins/computer'
-import Mcp from '../../src/renderer/services/plugins/mcp'
+import { useWindowMock } from '../../../../mocks/window'
+import { createI18nMock } from '../../../../mocks'
+import { store } from '../../../../../src/renderer/services/store'
+import Image from '../../../../../src/renderer/services/plugins/image'
+import Video from '../../../../../src/renderer/services/plugins/video'
+import Browse from '../../../../../src/renderer/services/plugins/browse'
+import Search from '../../../../../src/renderer/services/plugins/search'
+import Python from '../../../../../src/renderer/services/plugins/python'
+import YouTube from '../../../../../src/renderer/services/plugins/youtube'
+import Memory from '../../../../../src/renderer/services/plugins/memory'
+import Computer from '../../../../../src/renderer/services/plugins/computer'
+import Mcp from '../../../../../src/renderer/services/plugins/mcp'
 import { MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
 import { HfInference } from '@huggingface/inference'
 import { GoogleGenAI } from '@google/genai'
 import { fal } from '@fal-ai/client'
-import tavily from '../../src/vendor/tavily'
+import tavily from '../../../../../src/vendor/tavily'
 import Perplexity from '@perplexity-ai/perplexity_ai'
 import { Exa } from 'exa-js'
 import Replicate from 'replicate'
@@ -60,11 +60,11 @@ global.fetch = vi.fn(async (url: string) => {
 })
 
 
-vi.mock('../../src/renderer/services/i18n', async () => {
+vi.mock('../../../../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/renderer/services/download.ts', async () => {
+vi.mock('../../../../../src/renderer/services/download.ts', async () => {
   return {
     saveFileContents: vi.fn(() => 'file://file_saved'),
     download: vi.fn(() => 'file://file_downloaded'),
@@ -92,7 +92,7 @@ vi.mock('@perplexity-ai/perplexity_ai', async () => {
 })
 
 // tavily
-vi.mock('../../src/vendor/tavily', async () => {
+vi.mock('../../../../../src/vendor/tavily', async () => {
   const Tavily = vi.fn()
   Tavily.prototype.search = vi.fn(() => ({ results: [
     { title: 'title', url: 'url', content: 'content' }

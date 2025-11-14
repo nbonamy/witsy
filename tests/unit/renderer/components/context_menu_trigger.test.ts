@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import ContextMenuTrigger from '../../src/renderer/components/ContextMenuTrigger.vue'
+import ContextMenuTrigger from '../../../../src/renderer/components/ContextMenuTrigger.vue'
 
 // Mock the i18n service
-vi.mock('../../src/renderer/services/i18n', () => ({
+vi.mock('../../../../src/renderer/services/i18n', () => ({
   t: (key: string) => key
 }))
 
 // Mock the ContextMenuPlus component
-vi.mock('../../src/renderer/components/ContextMenuPlus.vue', () => ({
+vi.mock('../../../../src/renderer/components/ContextMenuPlus.vue', () => ({
   default: {
     name: 'ContextMenuPlus',
     props: ['anchor', 'position'],

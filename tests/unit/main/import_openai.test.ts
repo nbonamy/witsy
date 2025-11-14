@@ -1,8 +1,8 @@
 import { vi, beforeEach, expect, test, describe } from 'vitest'
 import { app } from 'electron'
-import * as importOai from '../../src/main/import_oai'
-import * as history from '../../src/main/history'
-import { History } from '../../src/types'
+import * as importOai from '../../../src/main/import_oai'
+import * as history from '../../../src/main/history'
+import { History } from '../../../src/types'
 import fs from 'fs'
 
 // Mock electron app
@@ -23,7 +23,7 @@ vi.mock('fs', () => ({
 }))
 
 // Mock history module
-vi.mock('../../src/main/history', () => ({
+vi.mock('../../../src/main/history', () => ({
   loadHistory: vi.fn(),
   saveHistory: vi.fn(),
 }))

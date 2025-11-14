@@ -2,16 +2,16 @@
 import { vi, beforeAll, beforeEach, expect, test, afterAll, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { createI18nMock } from '../mocks'
-import { useWindowMock } from '../mocks/window'
-import { stubTeleport } from '../mocks/stubs'
-import { store } from '../../src/renderer/services/store'
-import DocRepos from '../../src/renderer/screens/DocRepos.vue'
-import Dialog from '../../src/renderer/utils/dialog'
+import { createI18nMock } from '../../../mocks'
+import { useWindowMock } from '../../../mocks/window'
+import { stubTeleport } from '../../../mocks/stubs'
+import { store } from '../../../../src/renderer/services/store'
+import DocRepos from '../../../../src/renderer/screens/DocRepos.vue'
+import Dialog from '../../../../src/renderer/utils/dialog'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../src/renderer/services/i18n', async () => {
+vi.mock('../../../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

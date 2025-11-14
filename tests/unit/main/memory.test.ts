@@ -1,7 +1,7 @@
 
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
-import MemoryManager from '../../src/main/memory'
-import embeddings from '../fixtures/embedder.json'
+import MemoryManager from '../../../src/main/memory'
+import embeddings from '../../fixtures/embedder.json'
 import { app } from 'electron'
 import path from 'path'
 import fs from 'fs'
@@ -20,7 +20,7 @@ vi.mock('electron', async() => {
   }
 })
 
-vi.mock('../../src/main/rag/embedder', async() => {
+vi.mock('../../../src/main/rag/embedder', async() => {
   const Embedder = vi.fn()
   Embedder.prototype.embed = vi.fn((texts: string[]) => {
     if (texts[0].includes('squash') && texts[0].includes('tennis')) return Array(texts.length).fill(embeddings['squashtennis'])

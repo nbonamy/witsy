@@ -1,10 +1,10 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
 import { app, Notification } from 'electron'
-import ReadAloud from '../../src/main/automations/readaloud'
-import Automator from '../../src/main/automations/automator'
-import * as window from '../../src/main/window'
-import * as utils from '../../src/main/utils'
+import ReadAloud from '../../../../src/main/automations/readaloud'
+import Automator from '../../../../src/main/automations/automator'
+import * as window from '../../../../src/main/window'
+import * as utils from '../../../../src/main/utils'
 
 // mock electron
 vi.mock('electron', async() => {
@@ -24,7 +24,7 @@ vi.mock('electron', async() => {
   }
 })
 
-vi.mock('../../src/main/window.ts', async () => {
+vi.mock('../../../../src/main/window.ts', async () => {
   return {
     releaseFocus: vi.fn(),
     openReadAloudPalette: vi.fn(),
@@ -32,11 +32,11 @@ vi.mock('../../src/main/window.ts', async () => {
   }
 })
 
-vi.mock('../../src/main/i18n', () => ({
+vi.mock('../../../../src/main/i18n', () => ({
   useI18n: vi.fn(() => (key: string) => key)
 }))
 
-vi.mock('../../src/main/utils', async () => {
+vi.mock('../../../../src/main/utils', async () => {
   return {
     wait: vi.fn(),
     putCachedText: vi.fn(() => 'textId')

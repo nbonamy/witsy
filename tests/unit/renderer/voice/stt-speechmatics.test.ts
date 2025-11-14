@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import STTSpeechmatics from '../../src/renderer/voice/stt-speechmatics'
+import STTSpeechmatics from '../../../../src/renderer/voice/stt-speechmatics'
 
 // Mock the Speechmatics SDK
 vi.mock('@speechmatics/auth', () => ({

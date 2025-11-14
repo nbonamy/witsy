@@ -1,13 +1,13 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { stubTeleport } from '../mocks/stubs'
-import { store } from '../../src/renderer/services/store'
+import { useWindowMock, useBrowserMock } from '../../../mocks/window'
+import { stubTeleport } from '../../../mocks/stubs'
+import { store } from '../../../../src/renderer/services/store'
 import { switchToTab, tabs } from './settings_utils'
-import Settings from '../../src/renderer/screens/Settings.vue'
+import Settings from '../../../../src/renderer/screens/Settings.vue'
 import { ModelsList, loadAzureModels, loadOpenAIModels } from 'multi-llm-ts'
-import { CustomEngineConfig } from '../../src/types/config'
+import { CustomEngineConfig } from '../../../../src/types/config'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()

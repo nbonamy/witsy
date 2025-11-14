@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest'
-import { vTooltip } from '../../src/renderer/directives/tooltip'
-import { useWindowMock } from '../mocks/window'
+import { vTooltip } from '../../../../src/renderer/directives/tooltip'
+import { useWindowMock } from '../../../mocks/window'
 
 // Simple test component that uses the tooltip directive
 const TestComponent = {

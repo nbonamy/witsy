@@ -1,11 +1,11 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { useWindowMock } from '../mocks/window'
-import { store } from '../../src/renderer/services/store'
-import MessageList from '../../src/renderer/components/MessageList.vue'
-import Message from '../../src/models/message'
-import Chat from '../../src/models/chat'
+import { useWindowMock } from '../../../mocks/window'
+import { store } from '../../../../src/renderer/services/store'
+import MessageList from '../../../../src/renderer/components/MessageList.vue'
+import Message from '../../../../src/models/message'
+import Chat from '../../../../src/models/chat'
 
 enableAutoUnmount(afterAll)
 

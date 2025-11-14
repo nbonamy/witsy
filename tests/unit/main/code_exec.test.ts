@@ -1,9 +1,9 @@
 import { vi, expect, test, beforeEach, describe } from 'vitest'
-import CodeExecutionPlugin, { kCodeExecutionPluginPrefix } from '../../src/renderer/services/plugins/code_exec'
+import CodeExecutionPlugin, { kCodeExecutionPluginPrefix } from '../../../src/renderer/services/plugins/code_exec'
 import { Plugin, MultiToolPlugin } from 'multi-llm-ts'
 
 // Mock i18n
-vi.mock('../../src/renderer/services/i18n', () => ({
+vi.mock('../../../src/renderer/services/i18n', () => ({
   t: (key: string, params?: any) => {
     const translations: Record<string, string> = {
       'plugins.code_exec.preparing': 'Preparing to execute workflow…',

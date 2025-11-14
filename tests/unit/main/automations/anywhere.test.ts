@@ -1,10 +1,10 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import { store } from '../../src/renderer/services/store'
-import defaults from '../../defaults/settings.json'
-import PromptAnywhere from '../../src/main/automations/anywhere'
-import * as window from '../../src/main/window'
-import { Configuration, InstructionsConfig } from '../../src/types/config'
+import { store } from '../../../../src/renderer/services/store'
+import defaults from '../../../../defaults/settings.json'
+import PromptAnywhere from '../../../../src/main/automations/anywhere'
+import * as window from '../../../../src/main/window'
+import { Configuration, InstructionsConfig } from '../../../../src/types/config'
 
 vi.mock('electron', async() => {
   return {
@@ -15,14 +15,14 @@ vi.mock('electron', async() => {
 })
 
 // mock config
-vi.mock('../../src/main/config.ts', async () => {
+vi.mock('../../../../src/main/config.ts', async () => {
   return {
     loadSettings: () => defaults,
   }
 })  
 
 // mock windows
-vi.mock('../../src/main/window.ts', async () => {
+vi.mock('../../../../src/main/window.ts', async () => {
   return {
     promptAnywhereWindow: null,
     openPromptAnywhere: vi.fn(),

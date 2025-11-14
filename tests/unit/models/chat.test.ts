@@ -1,7 +1,7 @@
 import { beforeAll, expect, test } from 'vitest'
-import Chat from '../../src/models/chat'
-import Message from '../../src/models/message'
-import { useWindowMock } from '../mocks/window'
+import Chat from '../../../src/models/chat'
+import Message from '../../../src/models/message'
+import { useWindowMock } from '../../mocks/window'
 
 beforeAll(() => {
   useWindowMock()

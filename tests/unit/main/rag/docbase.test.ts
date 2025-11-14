@@ -1,9 +1,9 @@
 
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
-import DocumentBaseImpl from '../../src/main/rag/docbase'
-import DocumentSourceImpl from '../../src/main/rag/docsource'
-import embeddings from '../fixtures/embedder.json'
-import defaultSettings from '../../defaults/settings.json'
+import DocumentBaseImpl from '../../../../src/main/rag/docbase'
+import DocumentSourceImpl from '../../../../src/main/rag/docsource'
+import embeddings from '../../../fixtures/embedder.json'
+import defaultSettings from '../../../../defaults/settings.json'
 import { LocalIndex } from 'vectra'
 import { app } from 'electron'
 import path from 'path'
@@ -23,7 +23,7 @@ vi.mock('electron', async() => {
   }
 })
 
-vi.mock('../../src/main/config', async() => {
+vi.mock('../../../../src/main/config', async() => {
   return {
     loadSettings: vi.fn(() => {
       return {
@@ -33,7 +33,7 @@ vi.mock('../../src/main/config', async() => {
   }
 })
 
-vi.mock('../../src/main/rag/embedder', async() => {
+vi.mock('../../../../src/main/rag/embedder', async() => {
   const Embedder = vi.fn()
   Embedder.prototype.embed = vi.fn((texts: string[]) => {
     if (texts[0].includes('squash') && texts[0].includes('tennis')) return Array(texts.length).fill(embeddings['squashtennis'])
@@ -44,7 +44,7 @@ vi.mock('../../src/main/rag/embedder', async() => {
   return { default: Embedder }
 })
 
-vi.mock('../../src/main/rag/loader', async() => {
+vi.mock('../../../../src/main/rag/loader', async() => {
   const mockGetSitemapUrls = vi.fn(() => Promise.resolve([]))
   const Loader = vi.fn()
   Loader.prototype.isParseable = vi.fn(() => true)
@@ -53,7 +53,7 @@ vi.mock('../../src/main/rag/loader', async() => {
   return { default: Loader, mockGetSitemapUrls }
 })
 
-vi.mock('../../src/main/file', async() => {
+vi.mock('../../../../src/main/file', async() => {
   return {
     listFilesRecursively: vi.fn(() => [])
   }
@@ -81,7 +81,7 @@ afterEach(() => {
 })
 
 test('addSitemap creates child URL documents', async () => {
-  const { mockGetSitemapUrls } = await import('../../src/main/rag/loader')
+  const { mockGetSitemapUrls } = await import('../../../../src/main/rag/loader')
   mockGetSitemapUrls.mockResolvedValue([
     'https://example.com/page1',
     'https://example.com/page2',
@@ -108,7 +108,7 @@ test('addSitemap creates child URL documents', async () => {
 })
 
 test('addSitemap handles callback frequency', async () => {
-  const { mockGetSitemapUrls } = await import('../../src/main/rag/loader')
+  const { mockGetSitemapUrls } = await import('../../../../src/main/rag/loader')
   mockGetSitemapUrls.mockResolvedValue([
     'https://example.com/page1',
     'https://example.com/page2',
@@ -131,13 +131,13 @@ test('addSitemap handles callback frequency', async () => {
 })
 
 test('addSitemap handles errors gracefully', async () => {
-  const { mockGetSitemapUrls } = await import('../../src/main/rag/loader')
+  const { mockGetSitemapUrls } = await import('../../../../src/main/rag/loader')
   mockGetSitemapUrls.mockResolvedValue([
     'https://example.com/page1',
     'https://example.com/page2'
   ])
 
-  const Loader = (await import('../../src/main/rag/loader')).default
+  const Loader = (await import('../../../../src/main/rag/loader')).default
   const loadSpy = vi.spyOn(Loader.prototype, 'load')
     .mockResolvedValueOnce('Content 1')
     .mockRejectedValueOnce(new Error('Load failed'))
@@ -157,7 +157,7 @@ test('addSitemap handles errors gracefully', async () => {
 })
 
 test('addFolder creates child file documents', async () => {
-  const { listFilesRecursively } = await import('../../src/main/file')
+  const { listFilesRecursively } = await import('../../../../src/main/file')
   vi.mocked(listFilesRecursively).mockReturnValue([
     '/path/to/file1.txt',
     '/path/to/file2.pdf'
@@ -177,7 +177,7 @@ test('addFolder creates child file documents', async () => {
 })
 
 test('addFolder handles callback frequency', async () => {
-  const { listFilesRecursively } = await import('../../src/main/file')
+  const { listFilesRecursively } = await import('../../../../src/main/file')
   vi.mocked(listFilesRecursively).mockReturnValue([
     '/path/to/file1.txt',
     '/path/to/file2.pdf',

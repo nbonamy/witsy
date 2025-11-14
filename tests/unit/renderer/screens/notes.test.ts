@@ -1,19 +1,19 @@
 import { mount, VueWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { createI18nMock } from '../mocks'
-import { useWindowMock } from '../mocks/window'
+import { createI18nMock } from '../../../mocks'
+import { useWindowMock } from '../../../mocks/window'
 
-import Notes from '../../src/renderer/docrepo/Notes.vue'
-import NoteEditor from '../../src/renderer/docrepo/NoteEditor.vue'
-import Dialog from '../../src/renderer/utils/dialog'
-import { DocumentBase, DocumentSource } from '../../src/types/rag'
+import Notes from '../../../../src/renderer/docrepo/Notes.vue'
+import NoteEditor from '../../../../src/renderer/docrepo/NoteEditor.vue'
+import Dialog from '../../../../src/renderer/utils/dialog'
+import { DocumentBase, DocumentSource } from '../../../../src/types/rag'
 
 // mock i18n
-vi.mock('../../src/renderer/services/i18n', () => createI18nMock())
+vi.mock('../../../../src/renderer/services/i18n', () => createI18nMock())
 
 // mock components
-vi.mock('../../src/renderer/components/Spinner.vue', () => ({ default: { name: 'Spinner', template: '<div class="spinner">Loading...</div>' } }))
+vi.mock('../../../../src/renderer/components/Spinner.vue', () => ({ default: { name: 'Spinner', template: '<div class="spinner">Loading...</div>' } }))
 
 const mockSelectedRepo: DocumentBase = {
   uuid: 'uuid1',

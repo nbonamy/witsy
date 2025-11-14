@@ -2,18 +2,18 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { ChatModel } from 'multi-llm-ts'
-import { useWindowMock } from '../mocks/window'
-import { createI18nMock } from '../mocks'
-import { kDefaultWorkspaceId, store } from '../../src/renderer/services/store'
-import SettingsExperts from '../../src/renderer/screens/Settings.vue'
-import { Workspace } from '../../src/types/workspace'
+import { useWindowMock } from '../../../mocks/window'
+import { createI18nMock } from '../../../mocks'
+import { kDefaultWorkspaceId, store } from '../../../../src/renderer/services/store'
+import SettingsExperts from '../../../../src/renderer/screens/Settings.vue'
+import { Workspace } from '../../../../src/types/workspace'
 
 enableAutoUnmount(afterAll)
 
 HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
 
-vi.mock('../../src/renderer/services/i18n', async () => {
+vi.mock('../../../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 

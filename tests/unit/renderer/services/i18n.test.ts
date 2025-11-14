@@ -1,12 +1,12 @@
 
 import { vi, beforeAll, expect, test } from 'vitest'
 import { app } from 'electron'
-import { store } from '../../src/renderer/services/store'
+import { store } from '../../../../src/renderer/services/store'
 import { createI18n } from 'vue-i18n'
-import { useWindowMock } from '../mocks/window'
-import { getLocaleUI, getLocaleLLM, useI18n } from '../../src/main/i18n'
-import { commandI18n, commandI18nDefault, expertI18n, expertI18nDefault, i18nInstructions, localeToLangName } from '../../src/renderer/services/i18n'
-import { Command, Expert } from '../../src/types'
+import { useWindowMock } from '../../../mocks/window'
+import { getLocaleUI, getLocaleLLM, useI18n } from '../../../../src/main/i18n'
+import { commandI18n, commandI18nDefault, expertI18n, expertI18nDefault, i18nInstructions, localeToLangName } from '../../../../src/renderer/services/i18n'
+import { Command, Expert } from '../../../../src/types'
 
 vi.mock('electron', async() => {
   return {
@@ -23,7 +23,7 @@ vi.mock('vue-i18n', async() => {
   }
 })
 
-vi.mock('../../src/main/config', async() => {
+vi.mock('../../../../src/main/config', async() => {
   return {
     loadSettings: vi.fn(() => store.config)
   }

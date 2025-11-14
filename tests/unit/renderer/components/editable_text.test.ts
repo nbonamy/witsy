@@ -1,7 +1,7 @@
 
 import { vi, test, expect, afterAll } from 'vitest'
 import { mount, enableAutoUnmount } from '@vue/test-utils'
-import EditableText from '../../src/renderer/components/EditableText.vue'
+import EditableText from '../../../../src/renderer/components/EditableText.vue'
 
 enableAutoUnmount(afterAll)
 

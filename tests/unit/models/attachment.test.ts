@@ -1,7 +1,7 @@
 
 import { beforeAll, test, expect } from 'vitest'
-import { useWindowMock } from '../mocks/window'
-import Attachment from '../../src/models/attachment'
+import { useWindowMock } from '../../mocks/window'
+import Attachment from '../../../src/models/attachment'
 
 beforeAll(() => {
   useWindowMock()

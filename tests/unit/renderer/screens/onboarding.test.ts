@@ -1,28 +1,28 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test, describe } from 'vitest'
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { useWindowMock } from '../mocks/window'
-import { createI18nMock } from '../mocks'
-import { store } from '../../src/renderer/services/store'
-import Onboarding from '../../src/renderer/screens/Onboarding.vue'
-import Welcome from '../../src/renderer/onboarding/Welcome.vue'
-import Chat from '../../src/renderer/onboarding/Chat.vue'
-import Ollama from '../../src/renderer/onboarding/Ollama.vue'
-import Studio from '../../src/renderer/onboarding/Studio.vue'
-import Voice from '../../src/renderer/onboarding/Voice.vue'
-import Permissions from '../../src/renderer/onboarding/Permissions.vue'
-import Instructions from '../../src/renderer/onboarding/Instructions.vue'
-import Done from '../../src/renderer/onboarding/Done.vue'
+import { useWindowMock } from '../../../mocks/window'
+import { createI18nMock } from '../../../mocks'
+import { store } from '../../../../src/renderer/services/store'
+import Onboarding from '../../../../src/renderer/screens/Onboarding.vue'
+import Welcome from '../../../../src/renderer/onboarding/Welcome.vue'
+import Chat from '../../../../src/renderer/onboarding/Chat.vue'
+import Ollama from '../../../../src/renderer/onboarding/Ollama.vue'
+import Studio from '../../../../src/renderer/onboarding/Studio.vue'
+import Voice from '../../../../src/renderer/onboarding/Voice.vue'
+import Permissions from '../../../../src/renderer/onboarding/Permissions.vue'
+import Instructions from '../../../../src/renderer/onboarding/Instructions.vue'
+import Done from '../../../../src/renderer/onboarding/Done.vue'
 
 enableAutoUnmount(afterAll)
 
 const screensMacOS = [Welcome, Chat, Ollama, Studio, Voice, Permissions, Instructions, Done]
 const screensOthers = [Welcome, Chat, Ollama, Studio, Voice, Instructions, Done]
 
-vi.mock('../../src/renderer/services/i18n', async () => {
+vi.mock('../../../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/renderer/services/llms/manager', async () => {
+vi.mock('../../../../src/renderer/services/llms/manager', async () => {
   return { 
     default: class {
       config: any
@@ -71,7 +71,7 @@ vi.mock('../../src/renderer/services/llms/manager', async () => {
   }
 })
 
-vi.mock('../../src/renderer/services/assistant', async () => {
+vi.mock('../../../../src/renderer/services/assistant', async () => {
   return { 
     default: class {
       constructor() {}
@@ -103,7 +103,7 @@ vi.mock('../../src/renderer/services/assistant', async () => {
 })
 
 // Mock voice engines
-vi.mock('../../src/renderer/voice/stt', async () => {
+vi.mock('../../../../src/renderer/voice/stt', async () => {
   return {
     getSTTEngines: () => [
       { id: 'openai', name: 'OpenAI Whisper' },
@@ -114,7 +114,7 @@ vi.mock('../../src/renderer/voice/stt', async () => {
   }
 })
 
-vi.mock('../../src/renderer/voice/tts', async () => {
+vi.mock('../../../../src/renderer/voice/tts', async () => {
   return {
     getTTSEngines: () => [
       { id: 'openai', name: 'OpenAI TTS' },
@@ -125,7 +125,7 @@ vi.mock('../../src/renderer/voice/tts', async () => {
   }
 })
 
-vi.mock('../../src/renderer/services/image', async () => ({
+vi.mock('../../../../src/renderer/services/image', async () => ({
   default: {
     getEngines: () => [
       { id: 'openai', name: 'OpenAI' }
@@ -133,7 +133,7 @@ vi.mock('../../src/renderer/services/image', async () => ({
   }
 }))
 
-vi.mock('../../src/renderer/services/video', async () => ({
+vi.mock('../../../../src/renderer/services/video', async () => ({
   default: {
     getEngines: () => [
       { id: 'openai', name: 'OpenAI' }
@@ -141,7 +141,7 @@ vi.mock('../../src/renderer/services/video', async () => ({
   }
 }))
 
-vi.mock('../../src/renderer/utils/dialog.ts', () => ({
+vi.mock('../../../../src/renderer/utils/dialog.ts', () => ({
   default: {
     show: vi.fn(() => ({ isConfirmed: true }))
   }

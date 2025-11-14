@@ -1,12 +1,12 @@
 
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
-import { RagConfig } from '../../src/types/config'
-import DocumentRepository from '../../src/main/rag/docrepo'
-import DocumentSourceImpl from '../../src/main/rag/docsource'
-import DocumentBaseImpl from '../../src/main/rag/docbase'
-import { DocumentMetadata } from '../../src/types/rag'
-import embeddings from '../fixtures/embedder.json'
-import defaultSettings from '../../defaults/settings.json'
+import { RagConfig } from '../../../../src/types/config'
+import DocumentRepository from '../../../../src/main/rag/docrepo'
+import DocumentSourceImpl from '../../../../src/main/rag/docsource'
+import DocumentBaseImpl from '../../../../src/main/rag/docbase'
+import { DocumentMetadata } from '../../../../src/types/rag'
+import embeddings from '../../../fixtures/embedder.json'
+import defaultSettings from '../../../../defaults/settings.json'
 import { LocalIndex } from 'vectra'
 import { app } from 'electron'
 import path from 'path'
@@ -26,7 +26,7 @@ vi.mock('electron', async() => {
   }
 })
 
-vi.mock('../../src/main/config', async() => {
+vi.mock('../../../../src/main/config', async() => {
   return {
     loadSettings: vi.fn(() => {
       return {
@@ -36,7 +36,7 @@ vi.mock('../../src/main/config', async() => {
   }
 })
 
-vi.mock('../../src/main/rag/embedder', async() => {
+vi.mock('../../../../src/main/rag/embedder', async() => {
   const Embedder: any = vi.fn()
   Embedder.prototype.embed = vi.fn((texts: string[]) => {
     if (texts[0].includes('squash') && texts[0].includes('tennis')) return Array(texts.length).fill(embeddings['squashtennis'])

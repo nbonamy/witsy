@@ -1,6 +1,6 @@
 
 import { test, expect } from 'vitest'
-import Ollama from '../../src/renderer/services/llms/ollama'
+import Ollama from '../../../../../src/renderer/services/llms/ollama'
 import { EngineCreateOpts } from 'multi-llm-ts'
 
 test('Ollama no keep-alive', () => {

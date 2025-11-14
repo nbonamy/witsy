@@ -1,6 +1,6 @@
 
 import { expect, test } from 'vitest'
-import { shortcutAccelerator } from '../../src/main/shortcuts'
+import { shortcutAccelerator } from '../../../src/main/shortcuts'
 
 test('Shortcuts Keys', async () => {
   

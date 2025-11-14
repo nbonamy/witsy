@@ -1,30 +1,30 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { VueWrapper, enableAutoUnmount, mount, flushPromises } from '@vue/test-utils'
-import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createI18nMock } from '../mocks/index'
-import { setLlmDefaults } from '../mocks/llm'
-import { store } from '../../src/renderer/services/store'
-import Chat from '../../src/models/chat'
-import Message from '../../src/models/message'
-import Attachment from '../../src/models/attachment'
-import ChatView from '../../src/renderer/screens/Chat.vue'
-import ChatSidebar from '../../src/renderer/components/ChatSidebar.vue'
-import ChatArea from '../../src/renderer/components/ChatArea.vue'
-import Assistant from '../../src/renderer/services/assistant'
-import Dialog from '../../src/renderer/utils/dialog'
+import { useWindowMock, useBrowserMock } from '../../../mocks/window'
+import { createI18nMock } from '../../../mocks/index'
+import { setLlmDefaults } from '../../../mocks/llm'
+import { store } from '../../../../src/renderer/services/store'
+import Chat from '../../../../src/models/chat'
+import Message from '../../../../src/models/message'
+import Attachment from '../../../../src/models/attachment'
+import ChatView from '../../../../src/renderer/screens/Chat.vue'
+import ChatSidebar from '../../../../src/renderer/components/ChatSidebar.vue'
+import ChatArea from '../../../../src/renderer/components/ChatArea.vue'
+import Assistant from '../../../../src/renderer/services/assistant'
+import Dialog from '../../../../src/renderer/utils/dialog'
 
-vi.unmock('../../src/renderer/composables/event_bus')
-import useEventBus  from '../../src/renderer/composables/event_bus'
+vi.unmock('../../../../src/renderer/composables/event_bus')
+import useEventBus  from '../../../../src/renderer/composables/event_bus'
 const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterEach)
 
-vi.mock('../../src/renderer/services/i18n', async () => {
+vi.mock('../../../../src/renderer/services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../src/renderer/services/assistant', async () => {
+vi.mock('../../../../src/renderer/services/assistant', async () => {
   const Assistant = vi.fn()
   Assistant.prototype.setConfig = vi.fn()
   Assistant.prototype.setChat = vi.fn((chat) => {

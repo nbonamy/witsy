@@ -3,9 +3,9 @@ import { net } from 'electron'
 import { spawn } from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
-import { mainWindow } from '../../src/main/windows/main'
-import * as IPC from '../../src/ipc_consts'
-import { startDownload, cancelDownload, openInFileExplorer, getDownloadStatus } from '../../src/main/ollama'
+import { mainWindow } from '../../../src/main/windows/main'
+import * as IPC from '../../../src/ipc_consts'
+import { startDownload, cancelDownload, openInFileExplorer, getDownloadStatus } from '../../../src/main/ollama'
 import { EventEmitter } from 'events'
 
 // Mock electron modules
@@ -32,7 +32,7 @@ vi.mock('path', () => ({
 }))
 
 // Mock main window
-vi.mock('../../src/main/windows/main', () => ({
+vi.mock('../../../src/main/windows/main', () => ({
   mainWindow: {
     webContents: {
       send: vi.fn()
