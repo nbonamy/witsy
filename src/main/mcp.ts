@@ -965,7 +965,15 @@ export default class {
   }
 
   protected uniqueToolName(server: McpServer, name: string): string {
-    return `${name}___${server.uuid.padStart(4, '_').slice(-4)}`
+    const suffix = `___${server.uuid.padStart(4, '_').slice(-4)}`
+    const uniqueName = `${name}${suffix}`
+
+    // If the unique name exceeds 64 characters, fallback to original name
+    if (uniqueName.length > 64) {
+      return name
+    }
+
+    return uniqueName
   }
 
   private translateError(errorMessage: string): string {
