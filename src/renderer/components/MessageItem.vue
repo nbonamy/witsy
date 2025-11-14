@@ -111,6 +111,7 @@ const props = defineProps({
     required: true,
   },
   showRole: { type: Boolean, default: true },
+  showToolCalls: { type: Boolean, default: true },
   showActions: { type: Boolean, default: true },
 })
 
@@ -119,7 +120,7 @@ const emits = defineEmits(['media-loaded'])
 const theme = ref('light')
 const hovered = ref(false)
 const audio = ref<HTMLAudioElement|null>(null)
-const showToolCalls = ref<ChatToolMode>(store.config.appearance.chat.showToolCalls)
+const showToolCalls = ref<ChatToolMode>()
 const audioState = ref<{state: string, messageId: string|null}>({
   state: 'idle',
   messageId: null,
@@ -131,6 +132,13 @@ const editedContent = ref('')
 // so let's hack it
 let updateLinkInterval: NodeJS.Timeout|null = null 
 onMounted(() => {
+
+  // show tool calls
+  if (props.showToolCalls) {
+    showToolCalls.value = store.config.appearance.chat.showToolCalls
+  } else {
+    showToolCalls.value = 'never'
+  }
 
   // make sure links are going outside
   updateLinkInterval = setInterval(() => {
