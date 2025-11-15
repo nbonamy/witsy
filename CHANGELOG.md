@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Agent refresh issues
+- Design Studio Drawing Canvas icons
 
 ### Removed
 - N/A
