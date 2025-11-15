@@ -37,20 +37,21 @@
 
 <script setup lang="ts">
 import { LlmEngine } from 'multi-llm-ts'
-import { computed, onMounted, onBeforeUnmount, provide, ref } from 'vue'
+import { anyDict, ExternalApp } from 'types/'
+import { CodeExecutionMode } from 'types/config'
+import { ToolSelection } from 'types/llm'
+import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
+import Chat from '../../models/chat'
+import Message from '../../models/message'
 import OutputPanel from '../components/OutputPanel.vue'
 import Prompt, { SendPromptParams } from '../components/Prompt.vue'
 import ResizableHorizontal from '../components/ResizableHorizontal.vue'
-import LlmFactory, { ILlmManager } from '../services/llms/llm'
-import Chat from '../../models/chat'
-import Message from '../../models/message'
-import { availablePlugins } from '../services/plugins/plugins'
 import Generator from '../services/generator'
 import { fullExpertI18n, i18nInstructions, t } from '../services/i18n'
-import { store } from '../services/store'
-import { anyDict, ExternalApp } from 'types/'
-import { ToolSelection } from 'types/llm'
 import LlmUtils from '../services/llm_utils'
+import LlmFactory, { ILlmManager } from '../services/llms/llm'
+import { availablePlugins } from '../services/plugins/plugins'
+import { store } from '../services/store'
 
 const promptChatTimeout = 1000 * 60 * 5
 
@@ -431,12 +432,12 @@ const onSendPrompt = async (params: SendPromptParams) => {
     }
 
     // load tools as configured per prompt
-    const codeExecutionMode: boolean = false//store.config.llm.codeExecution.modes.includes('chat')
+    const codeExecutionMode: CodeExecutionMode = store.config.llm.codeExecution
     llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools, { codeExecutionMode })
 
     // system instructions
     const llmUtils = new LlmUtils(store.config)
-    const systemInstructions = llmUtils.getSystemInstructions(instructions, { codeExecution: codeExecutionMode })
+    const systemInstructions = llmUtils.getSystemInstructions(instructions, { codeExecutionMode })
     if (chat.value.messages.length === 0) {
       chat.value.addMessage(new Message('system', systemInstructions))
     } else if (instructions) {

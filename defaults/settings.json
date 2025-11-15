@@ -29,9 +29,7 @@
     "imageResize": 768,
     "defaults": [],
     "customInstructions": [],
-    "codeExecution": {
-      "modes": []
-    },
+    "codeExecution": "disabled",
     "additionalInstructions": {
       "toolRetry": true,
       "datetime": true,

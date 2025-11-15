@@ -146,7 +146,7 @@ test('Changes tools', async () => {
   expect(store.config.prompt.tools).toStrictEqual([])
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' } as SendPromptParams)
   expect(LlmManager.prototype.loadTools).toHaveBeenLastCalledWith(wrapper.vm.llm, expect.any(String), expect.any(Object), [], {
-    codeExecutionMode: false
+    codeExecutionMode: 'disabled'
   })
 })
 

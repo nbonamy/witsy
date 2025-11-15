@@ -1,7 +1,7 @@
 
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { ChatModel } from 'multi-llm-ts'
-import { Configuration } from 'types/config'
+import { CodeExecutionMode, Configuration } from 'types/config'
 import { z } from 'zod'
 import Message from '../../models/message'
 import Generator from './generator'
@@ -10,7 +10,7 @@ import LlmFactory from './llms/llm'
 
 export interface InstructionsModifiers {
   noMarkdown?: boolean
-  codeExecution?: boolean
+  codeExecutionMode?: CodeExecutionMode
 }
 
 export type TaskComplexity = 'simple' | 'normal' | 'complex'
@@ -246,8 +246,11 @@ Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Statu
     }
 
     // code execution
-    if (modifiers?.codeExecution) {
-      instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.codeExecution')
+    if (modifiers?.codeExecutionMode && modifiers.codeExecutionMode !== 'disabled') {
+      const instructionKey = modifiers.codeExecutionMode === 'program'
+        ? 'instructions.capabilities.codeExecutionProgram'
+        : 'instructions.capabilities.codeExecutionProxy'
+      instr += '\n\n' + i18nInstructions(this.config, instructionKey)
     }
 
     // retry tools

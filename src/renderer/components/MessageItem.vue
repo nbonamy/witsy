@@ -120,7 +120,7 @@ const emits = defineEmits(['media-loaded'])
 const theme = ref('light')
 const hovered = ref(false)
 const audio = ref<HTMLAudioElement|null>(null)
-const showToolCalls = ref<ChatToolMode>()
+const showToolCalls = ref<ChatToolMode>('always')
 const audioState = ref<{state: string, messageId: string|null}>({
   state: 'idle',
   messageId: null,

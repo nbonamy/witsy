@@ -8,6 +8,7 @@
       <div class="title">{{ t('settings.tabs.llm') }}</div>
     </header>
     <main class="sliding-root form form-vertical form-large" :class="{ visible: !selectedInstruction }">
+      
       <div class="form-field chat-prompt">
         <label>{{ t('settings.llm.instructions.label') }}</label>
         <select v-model="instructions" @change="save">
@@ -26,6 +27,7 @@
           <button type="button" @click="onDeleteInstruction" :disabled="!isCustomInstructionSelected">{{ t('common.delete') }}</button>
         </div>
       </div>
+      
       <div class="form-field capabilities">
         <label>{{ t('settings.llm.capabilities.title') }}</label>
           <div class="form-field horizontal">
@@ -33,6 +35,18 @@
             <label for="artifacts-instructions">{{ t('settings.llm.capabilities.artifacts') }}</label>
           </div>
       </div>
+      
+      <!-- <div class="form-field code-execution">
+        <label>{{ t('settings.llm.codeExecution.label') }}</label>
+        <select v-model="codeExecution" @change="save">
+          <option value="disabled">{{ t('settings.llm.codeExecution.disabled') }}</option>
+          <option value="proxy">{{ t('settings.llm.codeExecution.proxy') }}</option>
+          <option value="program">{{ t('settings.llm.codeExecution.program') }}</option>
+        </select>
+        <div class="help" v-if="codeExecution === 'proxy'">{{ t('settings.llm.codeExecution.proxyHelp') }}</div>
+        <div class="help" v-if="codeExecution === 'program'">{{ t('settings.llm.codeExecution.programHelp') }}</div>
+      </div> -->
+      
       <div class="form-field quick-prompt">
         <label>{{ t('settings.general.promptLLMModel') }}</label>
         <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />
@@ -44,6 +58,7 @@
           </div>
         </div>
       </div>
+      
       <div class="form-field localeLLM">
         <label>{{ t('settings.general.localeLLM') }}</label>
         <div class="form-subgroup">
@@ -54,10 +69,12 @@
           </div>
         </div>
       </div>
+      
       <div class="form-field length">
         <label>{{ t('settings.advanced.conversationLength') }}</label>
         <input type="number" min="1" v-model="conversationLength" @change="save">
       </div>
+
     </main>
     <main class="editor sliding-pane" :class="{ visible: selectedInstruction }">
       <InstructionEditor :instruction="selectedInstruction" @cancel="onEditInstruction(null)" @save="onInstructionSaved" />
@@ -76,7 +93,7 @@ import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import Dialog from '../utils/dialog'
 import { hasLocalization, i18nInstructions, t } from '../services/i18n'
 import { store } from '../services/store'
-import { InstructionsType } from 'types/config'
+import { CodeExecutionMode, InstructionsType } from 'types/config'
 import { CustomInstruction } from 'types/index'
 
 const instructions = ref<InstructionsType>('structured')
@@ -88,6 +105,7 @@ const isLocalized = ref(false)
 const forceLocale = ref(false)
 const conversationLength = ref(null)
 const artifactsInstructions = ref(false)
+const codeExecution = ref<CodeExecutionMode>('disabled')
 const customInstructions = ref<CustomInstruction[]>([])
 const selectedInstruction = ref<CustomInstruction | null>(null)
 
@@ -123,6 +141,7 @@ const load = () => {
   localeLLM.value = store.config.llm.locale
   forceLocale.value = store.config.llm.forceLocale
   artifactsInstructions.value = store.config.llm.additionalInstructions.artifacts
+  codeExecution.value = store.config.llm.codeExecution || 'disabled'
   conversationLength.value = store.config.llm.conversationLength || 5
   customInstructions.value = store.config.llm.customInstructions || []
   onChangeLocaleLLM()
@@ -136,6 +155,7 @@ const save = () => {
   store.config.llm.locale = localeLLM.value
   store.config.llm.forceLocale = forceLocale.value
   store.config.llm.additionalInstructions.artifacts = artifactsInstructions.value
+  store.config.llm.codeExecution = codeExecution.value
   store.config.llm.conversationLength = conversationLength.value
   store.config.llm.customInstructions = customInstructions.value
   store.saveSettings()

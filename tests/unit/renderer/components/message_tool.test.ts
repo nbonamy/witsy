@@ -115,7 +115,7 @@ test('Params and result rendering', async () => {
 test('Does not toggle when text is being selected', async () => {
 
   vi.useFakeTimers()
-  
+
   const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
     id: 'tool4',
     name: 'tool4',
@@ -133,7 +133,7 @@ test('Does not toggle when text is being selected', async () => {
 
   // Simulate selectstart (user starts selecting text)
   await wrapper.find('.tool-container').trigger('selectstart')
-  
+
   // Click should not toggle when selecting
   await wrapper.find('.tool-container').trigger('click')
   expect(wrapper.find('.tool-header .tool-unfold').exists()).toBe(true)
@@ -143,7 +143,7 @@ test('Does not toggle when text is being selected', async () => {
 
   // Simulate mouseup (user finished selecting text, but text is still selected)
   await wrapper.find('.tool-container').trigger('mouseup')
-  
+
   // Fast-forward the timer by 250ms
   vi.advanceTimersByTime(250)
 
@@ -155,5 +155,83 @@ test('Does not toggle when text is being selected', async () => {
   expect(wrapper.find('.tool-result').exists()).toBe(true)
 
   vi.useRealTimers()
+
+})
+
+test('Unwraps proxy tool calls (actualToolCall)', async () => {
+
+  const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
+    id: 'tool5',
+    name: 'code_exec_call_tool',
+    status: undefined,
+    done: true,
+    params: {
+      tool_name: 'search_internet',
+      parameters: { query: 'test query' }
+    },
+    result: { results: ['result1', 'result2'] },
+  }}})
+
+  await wrapper.find('.tool-container').trigger('click')
+
+  // Should display the unwrapped tool name
+  expect(wrapper.find('.tool-header .tool-name').text()).toBe('message.toolCall.call_default_name=search_internet')
+
+  // Params should show the unwrapped tool name and parameters
+  expect(wrapper.findAll('.tool-params .tool-value')).toHaveLength(2)
+  expect(wrapper.find('.tool-params .tool-value:nth-of-type(1)').text()).toBe('toolsearch_internet')
+  expect(wrapper.find('.tool-params .tool-value:nth-of-type(2)').text()).toBe('querytest query')
+
+  // Result should still be shown
+  expect(wrapper.findAll('.tool-result .tool-value')).toHaveLength(1)
+  expect(wrapper.find('.tool-result .tool-value:nth-of-type(1)').text()).toContain('result1')
+
+})
+
+test('Does not unwrap non-proxy tool calls', async () => {
+
+  const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
+    id: 'tool6',
+    name: 'search_internet',
+    status: undefined,
+    done: true,
+    params: { query: 'direct query' },
+    result: { results: ['result'] },
+  }}})
+
+  await wrapper.find('.tool-container').trigger('click')
+
+  // Should display the original tool name
+  expect(wrapper.find('.tool-header .tool-name').text()).toBe('message.toolCall.call_default_name=search_internet')
+
+  // Params should show the original tool name and parameters
+  expect(wrapper.findAll('.tool-params .tool-value')).toHaveLength(2)
+  expect(wrapper.find('.tool-params .tool-value:nth-of-type(1)').text()).toBe('toolsearch_internet')
+  expect(wrapper.find('.tool-params .tool-value:nth-of-type(2)').text()).toBe('querydirect query')
+
+})
+
+test('Handles proxy tool without parameters field', async () => {
+
+  const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
+    id: 'tool7',
+    name: 'code_exec_call_tool',
+    status: undefined,
+    done: true,
+    params: {
+      tool_name: 'get_time'
+      // No 'parameters' field
+    },
+    result: { time: '12:00' },
+  }}})
+
+  await wrapper.find('.tool-container').trigger('click')
+
+  // Should display the unwrapped tool name
+  expect(wrapper.find('.tool-header .tool-name').text()).toBe('message.toolCall.call_default_name=get_time')
+
+  // Params should show the unwrapped tool name with empty parameters
+  expect(wrapper.findAll('.tool-params .tool-value')).toHaveLength(1)
+  expect(wrapper.find('.tool-params .tool-value:nth-of-type(1)').text()).toBe('toolget_time')
 
 })
