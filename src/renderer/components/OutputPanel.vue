@@ -14,7 +14,7 @@
         <MessageSquareIcon /> {{ t('common.chat') }}
       </div>
       <div class="action scratchpad" v-if="!message.transient" @click="onScratchPad">
-        <PenIcon /> {{ t('common.write') }}
+        <FileEditIcon /> {{ t('common.write') }}
       </div>
       <div class="action retry" v-if="!message.transient" @click="onRetry(message)">
         <RotateCcwIcon /> {{ t('common.retry') }}
@@ -33,18 +33,18 @@
 
 <script setup lang="ts">
 
-import { ArrowLeftRightIcon, CornerDownLeftIcon, MessageSquareIcon, PenIcon, RotateCcwIcon, XCircleIcon } from 'lucide-vue-next'
-import { onMounted, onBeforeUnmount, PropType, ref } from 'vue'
+import { ArrowLeftRightIcon, CornerDownLeftIcon, MessageSquareIcon, RotateCcwIcon, XCircleIcon } from 'lucide-vue-next'
+import { Application } from 'types/automation'
+import { onBeforeUnmount, onMounted, PropType, ref } from 'vue'
+import Message from '../../models/message'
+import useAudioPlayer, { AudioStatus } from '../audio/audio_player'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import useAudioPlayer, { AudioStatus } from '../audio/audio_player'
-import Dialog from '../utils/dialog'
 import useEventBus from '../composables/event_bus'
-import Message from '../../models/message'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { Application } from 'types/automation'
+import Dialog from '../utils/dialog'
 
 const { onEvent } = useEventBus()
 
@@ -182,7 +182,8 @@ const onChat = async () => {
 }
 
 const onScratchPad = async () => {
-  window.api.scratchpad.open(props.message.content)
+  const uuid = window.api.scratchpad.create(store.config.workspaceId, props.message.content)
+  window.api.scratchpad.open(store.config.workspaceId, uuid)
   emit('close')
 }
 

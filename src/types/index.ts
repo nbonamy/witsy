@@ -504,7 +504,8 @@ declare global {
         completeOAuthFlow(serverUuid: string, authCode: string): Promise<boolean>
       }
       scratchpad: {
-        open(textId?: string): void
+        create(workspaceId: string, text: string): string
+        open(workspaceId: string, uuid: string): void
         list(workspaceId: string): ScratchpadHeader[]
         load(workspaceId: string, uuid: string): ScratchpadData | null
         save(workspaceId: string, data: ScratchpadData): boolean
