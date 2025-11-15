@@ -2,6 +2,7 @@
 
 import { vi } from 'vitest'
 import { store } from '../../src/renderer/services/store'
+import { Expert } from '../../src/types'
 
 export const createI18nMock = (callback?: () => Partial<{
   locale: string
@@ -43,7 +44,7 @@ export const createI18nMock = (callback?: () => Partial<{
     categoryI18n: vi.fn((category, attr) => category?.[attr] ?? `category_${category?.id}_${attr}`),
     categoryI18nDefault: vi.fn((category, attr) => `category_default_${category?.id}_${attr}`),
 
-    fullExpertI18n: function(expert) {
+    fullExpertI18n: function(expert: Expert) {
       return expert ? {
         ...expert,
         name: this.expertI18n(expert, 'name'),

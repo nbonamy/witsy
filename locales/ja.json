@@ -320,12 +320,17 @@
         "conflict": {
           "createNew": "新規作成",
           "overwrite": "上書きする",
-          "text": "同じ名前のエージェントがすでに存在します。どうしますか？",
+          "text": "このIDのエージェントはすでに存在します。どうしますか？",
           "title": "エージェントはすでに存在します"
         },
         "error": {
           "text": "選択されたファイルは有効なエージェントJSONファイルではありません。",
           "title": "インポートエラー"
+        },
+        "toolNotFound": "ステップ {step}: ツール {tool} が見つかりません",
+        "warning": {
+          "text": "一部のツールが見つかりませんでした。必要なMCPサーバーがインストールされていることを確認し、エージェントの設定を見直してください：",
+          "title": "ツールが見つかりません"
         }
       },
       "list": {
@@ -1922,6 +1927,8 @@
     "capabilities": {
       "artifacts": "ユーザーがコンテンツ（文書、要約、コードなど）の作成を依頼した場合、次の構文を使用してください：\n<artifact title=\"TITLE\">\n内容\n</artifact>。HTMLアーティファクトは必ず<html>または<!DOCTYPE html>で始めてください。例：<artifact title=\"Report\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>HTML形式のレポート内容</body></html>\n</artifact>。この機能はChart.jsやD3.jsを使用したHTMLベースのデータ可視化の作成に利用できます。単純なデータテーブルにはアーティファクトを使用しないでください。コードのアーティファクトの場合は、<artifact title=\"FILENAME.EXT\">\nコード\n</artifact>の形式を使用してください。",
       "codeExecution": "タスクを達成するために、code_exec_get_tools_info と code_exec_run_program ツールを使用できます。code_exec_get_tools_info は使用可能な他のツールのリストを提供し、利用するツールの呼び出し方法を取得できます。\n\n**手順:**\n- ツールを使用するには必ず code_exec_run_program を使ってください。code_exec_run_program を介さないツールの直接アクセスは禁止されています。\n- プログラムを書く前に：不明なツールについては、`code_exec_get_tools_info` を使用してツールの正確な名前、必須パラメーター、および引数構造を理解してください。必要に応じて `code_exec_get_tools_info` を繰り返し呼び出し、追加のツールを確認できます。\n- 必要なツールを理解した後、完全なプログラムを書き、code_exec_run_program を呼び出してください。\n\n中間データ取得のための単一ステッププログラムは避けてください。目標は完全なワークフローの効率的な実行です。\n\n**code_exec_run_program 使用ワークフロー:**\n1. タスクに必要なツールを特定する\n2. 不明なツールに対して `tools_names` パラメーター付きで `code_exec_get_tools_info` を使用して詳細を取得する\n3. ツールのパラメーター、必須フィールド、構造を確認する\n4. 適切なツール名と引数を含む完全な複数ステップのプログラムを作成する\n5. `code_exec_run_program` で実行する\n\n**プログラム構造**\nプログラムは `steps` 配列を含める必要があります：\n\n```json\n{\n  \"steps\": [...]\n}\n```\n\n**ステップ定義**\n各ステップオブジェクトには以下が必須です：\n- `id`: このステップの一意の識別子（後続ステップでの出力参照に使用）\n- `description`: ユーザに表示する任意のステータス更新文\n- `tool`: 呼び出すツールの正確な名前（例：「search_internet」「asana_get_tasks___c9c8」）。サフィックスも含めて完全な名前を使用してください。\n- `args`: ツール仕様に従った入力のキーと値のオブジェクト\n- `on_error`: ステップ失敗時のワークフロー動作を指定（`\"continue\"` か `\"abort\"`）。未指定の場合は `\"abort\"` がデフォルトです。\n\n**ステップ間の参照**\n- ステップの引数に前のステップの出力を使う場合、参照構文 `{{step_id.result}}` を使用します\n- ネストしたフィールドや配列インデックスにもアクセス可能：`{{step_id.result.field_name}}` や `{{step_id.result.0.field_name}}`\n  - 例：`{{get_workspaces.result.0.gid}}` は最初のワークスペースの `gid` をアクセス\n  - 例：`{{get_user.result.gid}}` は直接 gid を取得\n- 任意の深さで参照可能：`{{step_id.result.data.items.0.id}}`\n- 構造が不明な場合は結果全体を参照：`{{step_id.result}}`\n\n**一般的なスタイルと有効性**\n- JSON は有効であること（コメント、末尾カンマ、余分なフィールドは禁止）\n- ルートオブジェクトは `steps` 配列のみを含む\n- ステップIDは明瞭で直接的な名称を使う\n- ツールとパラメーターは仕様通りにのみ使用する\n- 各ツールには必須・記載された引数だけを提供する\n- プログラムは目的達成に必要な最小限のステップ数とする\n\n**エラー処理**\n- 指定がなければ `on_error` は `\"abort\"` とみなす\n- 指示があれば該当ステップに `\"on_error\": \"continue\"` を適用して失敗時スキップする\n\n**重要ポイント:**\n- 不明なツールは最初に `code_exec_get_tools_info` で確認する\n- 構造は `{\"steps\": [...]}`（`program` ラッパーなし）で開始\n- ステップ結果のネストフィールドにアクセス可能（例：`.gid`, `.0.gid`）\n- 完全なツール名（サフィックス含む）を使う\n- 実行前にワークフロー全体を計画する",
+      "codeExecutionProgram": "タスクを完了するには、code_exec_get_tools_info と code_exec_run_program ツールを使用できます。code_exec_get_tools_info は使用可能な他のツールのリストを提供し、使用するツールの呼び出し方法を取得できます。\n\n**指示:**\n- ツールを使うときは必ず code_exec_run_program を使用してください。ツールは code_exec_run_program を通じてのみアクセス可能です。\n- プログラムを書く前に、`code_exec_get_tools_info` を使って不慣れなツールの正確な名前、必要なパラメーター、引数の構造を理解してください。必要に応じて `code_exec_get_tools_info` を何度も呼び出して構いません。\n- 必要なツールを理解したら、完全なプログラムを書き、code_exec_run_program を呼び出してください。\n\n中間データを取得する単一ステップのプログラムは書かないでください。目標は完全なワークフローの実行を効率化することです。\n\n**code_exec_run_program 使用のワークフロー:**\n1. タスクに必要なツールを特定する\n2. 不慣れなツールについては `tools_names` パラメーターを使い `code_exec_get_tools_info` で詳細を取得する\n3. ツールのパラメーター、必要なフィールド、構造を確認する\n4. 正確なツール名と引数を使った複数ステップの完全なプログラムを書く\n5. `code_exec_run_program` で実行する\n\n**プログラム構造**\nプログラムには `steps` 配列が含まれている必要があります:\n\n```json\n{\n  \"steps\": [...]\n}\n```\n\n**ステップ定義**\n各ステップオブジェクトには次を含めます:\n- `id`: このステップの一意の文字列識別子（後のステップの出力参照に使用）\n- `description`: オプションのユーザーフレンドリーな状態更新表示\n- `tool`: 呼び出すツールの正確な名前（例: \"search_internet\", \"asana_get_tasks___c9c8\"）。接尾辞も含めた完全な名前を使用\n- `args`: ツール仕様に記載された入力のキーと値のペアのオブジェクト\n- `on_error`: オプションでこのステップ失敗時のワークフロー動作を制御。値は `\"continue\"`（エラー無視し続行）または `\"abort\"`（実行停止）。未指定時は `\"abort\"`\n\n**ステップ間の参照**\n- ステップの引数値に前のステップの出力を使う場合は参照構文を使用: `{{step_id.result}}`\n- ネストしたフィールドや配列のインデックスもアクセス可能: `{{step_id.result.field_name}}` や `{{step_id.result.0.field_name}}`\n  - 例: `{{get_workspaces.result.0.gid}}` は最初のワークスペースの gid フィールド\n  - 例: `{{get_user.result.gid}}` は gid フィールドに直接アクセス\n- どの深さでもフィールドを参照可能: `{{step_id.result.data.items.0.id}}`\n- 構造が不明な場合は出力全体を参照: `{{step_id.result}}`\n\n**一般的なスタイル＆検証**\n- JSONは有効であること（コメントや末尾カンマ、不要なフィールドなし）\n- ルートオブジェクトは `steps` 配列のみ含む\n- 明確で直接的なステップIDを用いる\n- 指定されたツールとパラメーターのみを使用\n- ツールごとに必要またはドキュメントにある引数のみを提供\n- プログラムは目的達成に必要なステップだけに最小限にとどめる\n\n**エラーハンドリング**\n- 未指定時は `on_error` は `\"abort\"` とみなす\n- 指示時はエラーをスキップするために該当ステップに `\"on_error\": \"continue\"` を適用\n\n**重要ポイント:**\n- 不慣れなツールはまず `code_exec_get_tools_info` で理解する\n- `{ \"steps\": [...] }` 形式で始める（`program` ラッパーは不要）\n- ステップ結果のネストしたフィールド（例: `.gid`, `.0.gid`）にアクセス可能\n- 接尾辞を含む完全なツール名を使用\n- 実行前にフルワークフローを計画する",
+      "codeExecutionProxy": "タスクを完了するには、code_exec_get_tools_info と code_exec_call_tool ツールを使用できます。code_exec_get_tools_info は使用可能な他のツールのリストを提供し、使用するツールの呼び出し方法を取得できます。\n\n**指示:**\n- ツールを使うときは必ず `code_exec_call_tool` を使用してください。ツールは `code_exec_call_tool` を通じてのみアクセス可能です。\n- ツールを呼び出す前に、`code_exec_get_tools_info` を使って呼び出しに必要なパラメーターを理解してください。\n\n**code_exec_call_tool 呼び出しのパラメーター:**\n- `tool_name`: ツールの正確な名前（例: \"search_internet\", \"filesystem_read\"）\n- `parameters`: ツールのパラメーターのキーと値のペアを持つオブジェクト\n\n**例:**\n```json\n{\n  \"tool_name\": \"search_internet\",\n  \"parameters\": {\n    \"query\": \"最新のAIニュース\"\n  }\n}\n```",
       "mermaid": "Mermaidチャートの出力を求められた場合、そのコードはユーザーに図として表示されます。",
       "noMarkdown": "回答にマークダウン形式を使わないでください。プレーンテキストのみを使用してください。**太字**、*斜体*、`コード`、```コードブロック```やその他のマークダウン構文は使用しないでください。表を使う場合は、カラムが揃うように適切な間隔を空けたプレーンテキストの表のみを使用してください。",
       "toolRetry": "ツールを呼び出す際に入力エラーが発生した場合は、エラーを分析して修正を試み、その後ツールの呼び出しを再試行してください。"
@@ -2328,15 +2335,21 @@
       "running": "コンテンツをダウンロード中…"
     },
     "code_exec": {
+      "callTool": {
+        "completed": "{tool} を正常に実行しました",
+        "error": "ツールの実行中にエラーが発生しました: {error}",
+        "preparing": "ツールの実行準備中…",
+        "running": "{tool} を実行しています…"
+      },
       "getToolsInfo": {
         "completed": "{count} 個のツール情報を取得しました",
         "error": "ツール情報の取得中にエラーが発生しました: {error}",
         "running": "ツール情報を取得しています…"
       },
-      "preparing": "ワークフローの実行準備中…",
       "runProgram": {
         "completed": "プログラムが正常に実行されました",
         "error": "プログラムの実行中にエラーが発生しました: {error}",
+        "preparing": "ワークフローの実行準備中…",
         "running": "プログラムを実行しています…"
       }
     },
@@ -2821,6 +2834,14 @@
       "capabilities": {
         "artifacts": "アーティファクトを作成するようモデルに指示する",
         "title": "追加指示"
+      },
+      "codeExecution": {
+        "disabled": "無効",
+        "label": "トークン節約モード",
+        "program": "アグレッシブモード",
+        "programHelp": "最大限のトークン節約を実現します。モデルが複数のツール呼び出しを連結するプログラムを書き、往復通信を削減します。",
+        "proxy": "ライトモード",
+        "proxyHelp": "トークンの節約を中程度に抑えます。モデルがプロキシ機構を通じてツールを1つずつ呼び出します。"
       },
       "disableStreaming": "ストリーミングを無効にする",
       "instructions": {

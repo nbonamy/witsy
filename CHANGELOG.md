@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.1] - WIP
+
+### Added
+- N/A
+
+### Changed
+- Agent import tries MCP tool remapping
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
 ## [3.2.0] - 2025-11-12
 
 ### Added
