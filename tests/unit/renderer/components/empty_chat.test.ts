@@ -37,6 +37,7 @@ test('Shows greeting heading', async () => {
 
 test('Shows agent shortcuts when agents exist', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
+  await wrapper.vm.$nextTick()
 
   // Should show shortcuts header
   const header = wrapper.find('.shortcuts-header')
@@ -51,6 +52,7 @@ test('Shows agent shortcuts when agents exist', async () => {
 
 test('Shows agent names and descriptions in shortcuts', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
+  await wrapper.vm.$nextTick()
 
   const shortcuts = wrapper.findAllComponents({ name: 'HomeShortcut' })
   expect(shortcuts.length).toBeGreaterThan(0)
@@ -63,6 +65,7 @@ test('Shows agent names and descriptions in shortcuts', async () => {
 
 test('Shows "show more" button initially', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
+  await wrapper.vm.$nextTick()
 
   const showMoreBtn = wrapper.find('.shortcuts-header .icon')
   expect(showMoreBtn.exists()).toBe(true)
@@ -71,6 +74,7 @@ test('Shows "show more" button initially', async () => {
 
 test('Expands shortcuts when clicking show more', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
+  await wrapper.vm.$nextTick()
 
   // Initially shows max 3
   let shortcuts = wrapper.findAllComponents({ name: 'HomeShortcut' })
@@ -93,6 +97,7 @@ test('Expands shortcuts when clicking show more', async () => {
 
 test('Collapses shortcuts when clicking show less', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
+  await wrapper.vm.$nextTick()
 
   // Expand first
   const showMoreBtn = wrapper.find('.shortcuts-header .icon')
@@ -119,6 +124,7 @@ test('Collapses shortcuts when clicking show less', async () => {
 
 test('Emits run-agent event when clicking a shortcut', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
+  await wrapper.vm.$nextTick()
 
   const shortcuts = wrapper.findAllComponents({ name: 'HomeShortcut' })
   expect(shortcuts.length).toBeGreaterThan(0)
