@@ -81,7 +81,7 @@ test('Settings LLM basic functionality', async () => {
   
   const manager = LlmFactory.manager(store.config)
   const tab = await switchToTab(wrapper, tabs.indexOf('settingsLLM'))
-  expect(tab.findAll('.form-field')).toHaveLength(11) // Added code execution field
+  expect(tab.findAll('.form-field')).toHaveLength(10)
   expect(tab.findAll('.form-field.localeLLM select option')).toHaveLength(21)
   expect(findModelSelectorPlus(wrapper).exists()).toBe(true)
   expect(store.config.prompt.engine).toBe('')
