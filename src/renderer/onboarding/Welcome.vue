@@ -4,7 +4,7 @@
   <section>
 
     <header>
-      <img class="logo" src="../../assets/icon.png" alt="Logo" />
+      <img class="logo" src="../../../assets/icon.png" alt="Logo" />
       <h1>{{ t('onboarding.welcome.title') }}</h1>
       <h3>{{ t('onboarding.welcome.subtitle') }}</h3>
     </header>
