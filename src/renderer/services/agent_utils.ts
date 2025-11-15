@@ -1,10 +1,12 @@
 import { AgentRun, AgentRunTrigger } from 'types/agents'
 import { Configuration } from 'types/config'
 import { Chat } from 'types/index'
+import { McpToolUnique } from 'types/mcp'
 import Agent from '../../models/agent'
 import AgentA2AExecutor from './agent_executor_a2a'
 import AgentWorkflowExecutor from './agent_executor_workflow'
 import { GenerationCallback } from './generator'
+import { t } from './i18n'
 import { store } from './store'
 
 export interface AgentExecutor {
@@ -47,4 +49,52 @@ export function isAgentConversation(chat: Chat): Agent|null {
   // nope
   return null
 
+}
+
+/**
+ * Remap MCP tool references in an imported agent to match local tool names
+ * Returns the remapped agent and a list of warnings for unmatched tools
+ */
+export async function remapAgentMcpTools(agent: Agent): Promise<{ agent: Agent, warnings: string[] }> {
+
+  const warnings: string[] = []
+
+  // Get all available MCP tools from local servers
+  const serversWithTools = await window.api.mcp.getAllServersWithTools()
+  const allTools: McpToolUnique[] = serversWithTools.flatMap(({ tools }) => tools)
+
+  // Process each step in the agent
+  agent.steps.forEach((step, stepIndex) => {
+    if (!step.tools || step.tools.length === 0) return
+
+    const remappedTools: string[] = []
+
+    step.tools.forEach((toolFunction) => {
+
+      if (!window.api.mcp.isMcpToolName(toolFunction)) {
+        // Not an MCP tool reference, keep as is
+        remappedTools.push(toolFunction)
+        return
+      }
+
+      // Strip suffix to get original tool name
+      const originalName = window.api.mcp.originalToolName(toolFunction)
+
+      // Find matching local tools by original name
+      const matches = allTools.filter(tool => tool.name === originalName)
+
+      if (matches.length === 1) {
+        // Exactly one match - remap to local tool function name
+        remappedTools.push(matches[0].uuid)
+      } else {
+        // No match or multiple matches - add warning
+        warnings.push(t('agent.forge.import.toolNotFound', { step: stepIndex + 1, tool: originalName }))
+      }
+    })
+
+    // Update step with remapped tools
+    step.tools = remappedTools
+  })
+
+  return { agent, warnings }
 }

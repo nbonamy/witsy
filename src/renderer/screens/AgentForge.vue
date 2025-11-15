@@ -29,20 +29,21 @@
 
 <script setup lang="ts">
 
+import { AgentType } from 'types/agents'
+import { FileContents } from 'types/file'
 import { ref } from 'vue'
+import Agent from '../../models/agent'
 import Editor from '../agent/Editor.vue'
 import Empty from '../agent/Empty.vue'
 import List from '../agent/List.vue'
 import View from '../agent/View.vue'
 import CreateAgentRun from '../components/CreateAgentRun.vue'
-import Dialog from '../utils/dialog'
-import Agent from '../../models/agent'
 import A2AClient from '../services/a2a-client'
 import AgentWorkflowExecutor from '../services/agent_executor_workflow'
+import { remapAgentMcpTools } from '../services/agent_utils'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { AgentType } from 'types/agents'
-import { FileContents } from 'types/file'
+import Dialog from '../utils/dialog'
 
 defineProps({
   extra: Object
@@ -202,8 +203,11 @@ const onImportJson = async () => {
     const jsonContent = window.api.base64.decode(fileContents.contents)
     const importedAgent = Agent.fromJson(JSON.parse(jsonContent))
 
+    // Remap MCP tools to local tool names
+    const { agent: remappedAgent, warnings } = await remapAgentMcpTools(importedAgent)
+
     // Check for UUID conflict
-    const existingAgent = store.agents.find(a => a.uuid === importedAgent.uuid)
+    const existingAgent = store.agents.find(a => a.uuid === remappedAgent.uuid)
 
     if (existingAgent) {
       const result = await Dialog.show({
@@ -221,14 +225,24 @@ const onImportJson = async () => {
 
       // If user chose "Create New", generate new UUID
       if (result.isDenied) {
-        importedAgent.uuid = crypto.randomUUID()
-        importedAgent.createdAt = Date.now()
-        importedAgent.updatedAt = Date.now()
+        remappedAgent.uuid = crypto.randomUUID()
+        remappedAgent.createdAt = Date.now()
+        remappedAgent.updatedAt = Date.now()
       }
     }
 
-    window.api.agents.save(store.config.workspaceId, importedAgent)
+    window.api.agents.save(store.config.workspaceId, remappedAgent)
     store.loadAgents()
+
+    // Show warnings if any tools couldn't be remapped
+    if (warnings.length > 0) {
+      await Dialog.show({
+        title: t('agent.forge.import.warning.title'),
+        html: t('agent.forge.import.warning.text') + '<br><br>' + warnings.join('<br>'),
+        confirmButtonText: t('common.ok'),
+      })
+      await Dialog.waitUntilClosed()
+    }
 
   } catch (error) {
     console.error('Error importing agent:', error)

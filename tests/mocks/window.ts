@@ -1,14 +1,14 @@
 
 import { vi } from 'vitest'
-import { renderMarkdown } from '../../src/main/markdown'
-import { Command, Expert, ExpertCategory } from '../../src/types/index'
-import { AgentRun, AgentRunStatus, AgentRunTrigger } from '../../src/types/agents'
-import { McpInstallStatus } from '../../src/types/mcp'
-import { ListDirectoryResponse } from '../../src/types/filesystem'
-import { FilePickParams } from '../../src/types/file'
-import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
 import defaultSettings from '../../defaults/settings.json'
+import { renderMarkdown } from '../../src/main/markdown'
 import Agent from '../../src/models/agent'
+import { AgentRun, AgentRunStatus, AgentRunTrigger } from '../../src/types/agents'
+import { FilePickParams } from '../../src/types/file'
+import { ListDirectoryResponse } from '../../src/types/filesystem'
+import { Command, Expert, ExpertCategory } from '../../src/types/index'
+import { McpInstallStatus, McpServerWithTools } from '../../src/types/mcp'
+import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
 
 const listeners: ((signal: string) => void)[] = []
 
@@ -510,7 +510,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
             { uuid: 'tool4_2', name: 'tool4', description: 'description4' }
           ]
         }
-      ]),
+      ] as unknown as McpServerWithTools[]),
       //@ts-expect-error not sure about the type: 'function' complain
       getLlmTools: vi.fn(async () => [
         { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },
@@ -519,7 +519,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       callTool: vi.fn(async (tool: string) => (tool === 'tool2' ? {
         content: [ { text: 'result2' } ],
       } : { result: 'result' })),
-      originalToolName: vi.fn((name: string) => name),
+      isMcpToolName: vi.fn((name: string) => /___....$/.test(name)),
+      originalToolName: vi.fn((name: string) => name.replace(/___....$/, '')),
       detectOAuth: vi.fn(async () => ({ requiresOAuth: false })),
       startOAuthFlow: vi.fn(async () => JSON.stringify({ tokens: {}, clientInformation: {}, clientMetadata: {} })),
     },
@@ -667,4 +668,5 @@ const useBrowserMock = () => {
 
 }
 
-export { useWindowMock, useBrowserMock, listeners }
+export { listeners, useBrowserMock, useWindowMock }
+

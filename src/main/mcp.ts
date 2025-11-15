@@ -960,6 +960,10 @@ export default class {
 
   }
 
+  isMcpToolName = (name: string): boolean => {
+    return /___....$/.test(name)
+  }
+
   originalToolName(name: string): string {
     return name.replace(/___....$/, '')
   }

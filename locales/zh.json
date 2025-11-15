@@ -320,12 +320,17 @@
         "conflict": {
           "createNew": "创建新的",
           "overwrite": "覆盖",
-          "text": "具有此名称的代理已存在。您想要怎么做？",
+          "text": "具有此ID的代理已存在。您想怎么做？",
           "title": "代理已存在"
         },
         "error": {
           "text": "所选文件不是有效的代理 JSON 文件。",
           "title": "导入错误"
+        },
+        "toolNotFound": "步骤 {step}：未找到工具 {tool}",
+        "warning": {
+          "text": "未能找到部分工具。请确保已安装所需的MCP服务器，并检查代理配置：",
+          "title": "未找到工具"
         }
       },
       "list": {
@@ -1922,6 +1927,8 @@
     "capabilities": {
       "artifacts": "当用户请求你创建某些内容（文档、摘要、代码等）时，使用以下语法：\n<artifact title=\"标题\">\n内容\n</artifact>。HTML工件必须以<html>或<!DOCTYPE html>开头。示例：<artifact title=\"报告\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>报告内容，采用HTML格式</body></html>\n</artifact>。你可以利用这一能力使用Chart.js或D3.js创建基于HTML的数据可视化。不要将工件用于简单的数据表。对于代码工件，请使用<artifact title=\"文件名.扩展名\">\n代码\n</artifact>。",
       "codeExecution": "为了完成任务，你可以使用 code_exec_get_tools_info 和 code_exec_run_program 工具。code_exec_get_tools_info 会提供你可以使用的其他工具列表，你可以使用它获取你选择使用的工具的调用说明。\n\n**使用说明：**\n- 始终使用 code_exec_run_program 来使用工具。除 code_exec_run_program 外，其他工具不可访问。\n- 编写程序前：使用 `code_exec_get_tools_info` 来了解不熟悉工具的确切名称、所需参数及参数结构。如果你发现需要的工具超过最初计划，可以反复调用 `code_exec_get_tools_info`。\n- 一旦理解所需工具，编写完整程序并调用 code_exec_run_program。\n\n不要编写单步程序来获取中间数据：目标是简化完整工作流的执行。\n\n**使用 code_exec_run_program 的工作流程：**\n1. 确定任务所需工具\n2. 使用带 `tools_names` 参数的 `code_exec_get_tools_info` 获取不熟悉工具的详细信息\n3. 审查工具的参数、必填字段及结构\n4. 编写完整多步骤程序，包含正确的工具名和参数\n5. 使用 `code_exec_run_program` 执行\n\n**程序结构**\n程序必须包含一个 `steps` 数组：\n\n```json\n{'{'}\n  \"steps\": [...]\n{'}'}\n```\n\n**步骤定义**\n每个步骤对象必须包括：\n- `id`：该步骤的唯一字符串标识符（用于后续步骤中输出引用）。\n- `description`：可选的用户友好状态更新，用于显示给用户\n- `tool`：确切的工具调用名（例如 \"search_internet\", \"asana_get_tasks___c9c8\"）。使用完整的工具名称包括任何后缀。\n- `args`：键值对对象，表示此工具的输入参数，如工具说明中所述。\n- `on_error`：可选，控制该步骤失败时的工作流行为。可接受值为 `\"continue\"`（忽略错误继续）或 `\"abort\"`（停止执行）。默认不指定时为 `\"abort\"`。\n\n**步骤间引用**\n- 当一个步骤的参数值应填写为前一步骤输出时，使用引用语法：`{'{'}{'{'}step_id.result{'}'}{'}'}`\n- 你可以访问嵌套字段和数组索引：`{'{'}{'{'}step_id.result.field_name{'}'}{'}'}` 或 `{'{'}{'{'}step_id.result.0.field_name{'}'}{'}'}`\n  - 例：`{'{'}{'{'}get_workspaces.result.0.gid{'}'}{'}'}` 访问第一个工作区的 `gid` 字段\n  - 例：`{'{'}{'{'}get_user.result.gid{'}'}{'}'}` 直接访问 `gid` 字段\n- 你可引用任意深度字段：`{'{'}{'{'}step_id.result.data.items.0.id{'}'}{'}'}`\n- 不确定结构时，可引用整个结果：`{'{'}{'{'}step_id.result{'}'}{'}'}`\n\n**常规风格与有效性**\n- JSON 必须有效（无注释、无尾逗号或多余字段）。\n- 根对象仅包含 `steps` 数组\n- 步骤 ID 使用清晰直接的名称\n- 仅使用工具说明中指定的工具和参数\n- 每个工具只提供必填或文档中说明的参数\n- 程序应简洁，仅包含完成目标所需步骤\n\n**错误处理**\n- 未指定时，`on_error` 默认为 `\"abort\"`。\n- 按指示对相关步骤设置 `\"on_error\": \"continue\"` 跳过失败。\n\n**关键点：**\n- 先用 `code_exec_get_tools_info` 了解不熟悉工具\n- 程序结构为 `{'{'}\"steps\": [...]{'}'}` （无 `program` 包装）\n- 可访问步骤结果中的嵌套字段（如 `.gid`、`.0.gid`）\n- 使用完整工具名称（含后缀）\n- 先规划完整工作流，再执行",
+      "codeExecutionProgram": "为完成任务，您可以使用 code_exec_get_tools_info 和 code_exec_run_program 工具。code_exec_get_tools_info 提供可用工具列表，您可以用它获取所选工具的调用说明。\n\n**使用说明：**\n- 始终使用 code_exec_run_program 来调用工具。工具仅能通过 code_exec_run_program 访问。\n- 编写程序前：使用 `code_exec_get_tools_info` 了解不熟悉工具的准确名称、必需参数和参数结构。若发现需要更多工具，可重复调用 `code_exec_get_tools_info`。\n- 理解所需工具后，编写完整程序并调用 code_exec_run_program。\n\n请勿编写单步程序仅获取中间数据：目标是简化完整工作流程的执行。\n\n**使用 code_exec_run_program 的工作流程：**\n1. 确定任务所需工具\n2. 使用带 `tools_names` 参数的 `code_exec_get_tools_info` 获取每个不熟悉工具的详情\n3. 审核工具的参数、必填字段和结构\n4. 编写包含正确工具名和参数的完整多步程序\n5. 使用 `code_exec_run_program` 执行\n\n**程序结构**\n程序必须包含一个 `steps` 数组：\n\n```json\n{\n  \"steps\": [...]\n}\n```\n\n**步骤定义**\n每个步骤对象须包含：\n- `id`：步骤唯一字符串标识（用于后续步骤中的输出引用）\n- `description`：可选的用户友好状态更新显示\n- `tool`：调用工具的准确名称（如 \"search_internet\"，\"asana_get_tasks___c9c8\"）。请使用含后缀的完整工具名。\n- `args`：表示该工具输入的键值对对象，遵照其规格说明\n- `on_error`：可选，控制此步失败时的流程行为。可接受的值为 `\"continue\"`（忽略错误继续）或 `\"abort\"`（停止执行）。若未指定，默认应为 `\"abort\"`。\n\n**步骤间引用**\n- 当步骤参数值需填充前序步骤输出时，使用引用语法：`{{step_id.result}}`\n- 可访问嵌套字段和数组索引：`{{step_id.result.field_name}}` 或 `{{step_id.result.0.field_name}}`\n  - 例如：`{{get_workspaces.result.0.gid}}` 访问第一个工作区的 gid 字段\n  - 例如：`{{get_user.result.gid}}` 直接访问 gid 字段\n- 可引用任意深度字段：`{{step_id.result.data.items.0.id}}`\n- 结构不确定时，可引用整个结果：`{{step_id.result}}`\n\n**一般风格与有效性**\n- JSON 必须有效（无注释、尾随逗号或额外字段）\n- 根对象仅包含 `steps` 数组\n- 使用清晰、直接的步骤 ID\n- 严格使用指定的工具和参数\n- 对每个工具，只提供必需或文档说明的参数\n- 程序应精简，仅包含完成目标所需步骤\n\n**错误处理**\n- 未指定时，`on_error` 视为 `\"abort\"`\n- 按指示对相关步骤应用 `\"on_error\": \"continue\"` 以在失败时跳过\n\n**关键点：**\n- 首先使用 `code_exec_get_tools_info` 理解不熟悉工具\n- 以 `{ \"steps\": [...] }` 开始（无 `program` 包裹）\n- 可访问步骤结果中的嵌套字段（如 `.gid`，`.0.gid`）\n- 使用含后缀的完整工具名称\n- 规划完整工作流程后再执行",
+      "codeExecutionProxy": "为完成任务，您可以使用 code_exec_get_tools_info 和 code_exec_call_tool 工具。code_exec_get_tools_info 提供可用工具列表，您可以用它获取所选工具的调用说明。\n\n**使用说明：**\n- 始终使用 `code_exec_call_tool` 来调用工具。工具仅能通过 `code_exec_call_tool` 访问。\n- 调用工具前：使用 `code_exec_get_tools_info` 理解调用工具所需参数。\n\n**调用 `code_exec_call_tool` 的参数：**\n- `tool_name`：工具的准确名称（例如 \"search_internet\"，\"filesystem_read\"）\n- `parameters`：一个包含工具参数的键值对对象\n\n**示例：**\n```json\n{\n  \"tool_name\": \"search_internet\",\n  \"parameters\": {\n    \"query\": \"关于AI的最新新闻\"\n  }\n}\n```",
       "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
       "noMarkdown": "在您的回复中不要使用Markdown格式。仅使用纯文本。不要使用**加粗**、*斜体*、`代码`、```代码块```或任何其他Markdown语法。如果使用表格，仅使用带有适当间距以对齐列的纯文本表格。",
       "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
@@ -2328,15 +2335,21 @@
       "running": "正在下载内容…"
     },
     "code_exec": {
+      "callTool": {
+        "completed": "成功执行 {tool}",
+        "error": "执行工具时出错：{error}",
+        "preparing": "准备执行工具…",
+        "running": "正在执行 {tool}…"
+      },
       "getToolsInfo": {
         "completed": "已检索到关于 {count} 个工具的信息",
         "error": "检索工具信息时出错：{error}",
         "running": "正在检索工具信息……"
       },
-      "preparing": "准备执行工作流程……",
       "runProgram": {
         "completed": "程序执行成功",
         "error": "执行程序时出错：{error}",
+        "preparing": "准备执行工作流程…",
         "running": "正在执行程序……"
       }
     },
@@ -2821,6 +2834,14 @@
       "capabilities": {
         "artifacts": "指示模型创建工件",
         "title": "附加指令"
+      },
+      "codeExecution": {
+        "disabled": "已禁用",
+        "label": "令牌节省器",
+        "program": "激进模式",
+        "programHelp": "最大化令牌节省。模型编写程序以链式调用多个工具，减少交互往返。",
+        "proxy": "轻模式",
+        "proxyHelp": "适度节省令牌。模型通过代理机制一次调用一个工具。"
       },
       "disableStreaming": "禁用流式传输",
       "instructions": {
