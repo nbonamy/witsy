@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.2.1] - WIP
 
 ### Added
-- N/A
+- Scratchpad action on assistant messages
 
 ### Changed
 - Agent import tries MCP tool remapping
