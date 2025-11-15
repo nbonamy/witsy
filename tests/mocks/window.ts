@@ -456,6 +456,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     scratchpad: {
       open: vi.fn(),
+      create: vi.fn(() => 'test-uuid'),
       list: vi.fn(() => [
         { uuid: 'scratchpad1', title: 'Test Scratchpad 1', lastModified: Date.now() - 3600000 },
         { uuid: 'scratchpad2', title: 'Test Scratchpad 2', lastModified: Date.now() - 7200000 },

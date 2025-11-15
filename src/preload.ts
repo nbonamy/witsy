@@ -217,7 +217,8 @@ contextBridge.exposeInMainWorld(
       completeOAuthFlow: (serverUuid: string, authCode: string): Promise<boolean> => { return ipcRenderer.invoke(IPC.MCP.COMPLETE_OAUTH_FLOW, JSON.stringify({ serverUuid, authCode })) },
     },
     scratchpad: {
-      open: (textId?: string): void => { return ipcRenderer.send(IPC.SCRATCHPAD.OPEN, textId) },
+      create: (workspaceId: string, text: string): string => { return ipcRenderer.sendSync(IPC.SCRATCHPAD.CREATE, { workspaceId, text }) },
+      open: (workspaceId: string, uuid: string): void => { return ipcRenderer.send(IPC.SCRATCHPAD.OPEN, { workspaceId, uuid }) },
       list: (workspaceId: string): any[] => { return ipcRenderer.sendSync(IPC.SCRATCHPAD.LIST, workspaceId) },
       load: (workspaceId: string, uuid: string): any => { return ipcRenderer.sendSync(IPC.SCRATCHPAD.LOAD, { workspaceId, uuid }) },
       save: (workspaceId: string, data: any): boolean => { return ipcRenderer.sendSync(IPC.SCRATCHPAD.SAVE, { workspaceId, data }) },

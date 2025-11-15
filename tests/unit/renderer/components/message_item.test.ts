@@ -106,13 +106,14 @@ test('User message', async () => {
   expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(false)
   expect(wrapper.find('.body .think').exists()).toBe(false)
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.actions .scratchpad').exists()).toBe(false)
   expect(wrapper.find('.actions .read').exists()).toBe(false)
   expect(wrapper.find('.actions .retry').exists()).toBe(false)
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(true)
   expect(wrapper.find('.actions .usage').exists()).toBe(false)
   expect(wrapper.find('.actions .tools').exists()).toBe(false)
-  
+
 })
 
 test('Assistant text message', async () => {
@@ -127,6 +128,7 @@ test('Assistant text message', async () => {
   expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(false)
   expect(wrapper.find('.body .think').exists()).toBe(false)
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.actions .scratchpad').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(true)
   expect(wrapper.find('.actions .retry').exists()).toBe(true)
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
@@ -148,6 +150,7 @@ test('Assistant legacy image message', async () => {
   expect(wrapper.find('.body .message-transient').exists()).toBe(false)
   expect(wrapper.find('.body img').attributes('src')).toBe('https://example.com/image.jpg')
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.actions .scratchpad').exists()).toBe(false)
   expect(wrapper.find('.actions .read').exists()).toBe(false)
   expect(wrapper.find('.actions .retry').exists()).toBe(true)
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
@@ -169,6 +172,7 @@ test('Assistant image markdown message', async () => {
   expect(wrapper.find('.body .message-transient').exists()).toBe(false)
   expect(wrapper.find('.body .media-container img').attributes('src')).toBe('https://example.com/image.jpg')
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.actions .scratchpad').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(true)
   expect(wrapper.find('.actions .retry').exists()).toBe(true)
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
@@ -505,6 +509,11 @@ test('Run assistant text actions', async () => {
   await wrapper.find('.actions .copy').trigger('click')
   expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('Hi\n\n1. One\n\n2. Two')
   expect(wrapper.find('.actions .copy').text()).toBe('common.copied')
+
+  // scratchpad
+  await wrapper.find('.actions .scratchpad').trigger('click')
+  expect(window.api.scratchpad.create).toHaveBeenLastCalledWith(store.config.workspaceId, '**Hi**\n\n1. One \n\n2. Two')
+  expect(window.api.scratchpad.open).toHaveBeenLastCalledWith(store.config.workspaceId, 'test-uuid')
 
   // copy as markdown
   store.config.appearance.chat.copyFormat = 'markdown'

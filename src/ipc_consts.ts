@@ -202,6 +202,7 @@ export const MCP = {
 
 export const SCRATCHPAD = {
   OPEN: 'scratchpad-open',
+  CREATE: 'scratchpad-create',
   LIST: 'scratchpad-list',
   LOAD: 'scratchpad-load',
   SAVE: 'scratchpad-save',
