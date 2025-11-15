@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - Agent import tries MCP tool remapping
 
 ### Fixed
-- N/A
+- Agent refresh issues
 
 ### Removed
 - N/A
