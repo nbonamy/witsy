@@ -69,7 +69,8 @@
 <script setup lang="ts">
 
 import { EyeIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
-import { PropType, onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import { Agent } from 'types/agents'
+import { onMounted, ref, watch } from 'vue'
 import LogoA2A from '../../../assets/a2a.svg?component'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
@@ -77,7 +78,6 @@ import SpinningIcon from '../components/SpinningIcon.vue'
 import { useTimeAgo } from '../composables/ago'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { Agent, AgentRun } from 'types/agents'
 
 const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson'])
 
@@ -85,12 +85,10 @@ const agents = ref<Agent[]>([])
 const startingAgents = ref<string[]>([])
 
 onMounted(() => {
-  agents.value = window.api.agents.list(store.config.workspaceId)
-  window.api.on('agent-run-update', onAgentRunUpdate)
-})
-
-onBeforeUnmount(() => {
-  window.api.off('agent-run-update', onAgentRunUpdate)
+  agents.value = store.agents
+  watch(() => store.agents, (newAgents) => {
+    agents.value = newAgents
+  })
 })
 
 const onAgentRun = async (agent: Agent) => {
