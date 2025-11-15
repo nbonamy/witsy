@@ -68,7 +68,7 @@
 
 
 import { ChevronDownIcon, ChevronUpIcon, LightbulbIcon, PlugIcon } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import useEventBus from '../composables/event_bus'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
@@ -81,9 +81,23 @@ type Shortcut = {
   run: () => void
 }
 
+const shortcuts = ref<Shortcut[]>([])
+const showAllShortcuts = ref(false)
+
 const emit = defineEmits(['run-agent'])
 
-const shortcuts = computed((): Shortcut[] => {
+onMounted(() => {
+  load()
+  window.api.on('agents-updated', load)
+  window.api.on('agent-run-updated', load)
+})
+
+onBeforeUnmount(() => {
+  window.api.off('agents-updated', load)
+  window.api.off('agent-run-updated', load)
+})
+
+const load = () => {
 
   const lastRuns: Record<string, number> = {}
 
@@ -93,7 +107,7 @@ const shortcuts = computed((): Shortcut[] => {
     return runs.length > 0 ? runs[runs.length - 1].createdAt : agent.createdAt
   }
 
-  return store.agents.sort((a, b) => {
+  shortcuts.value = store.agents.sort((a, b) => {
 
     if (!lastRuns[a.uuid]) {
       lastRuns[a.uuid] = getLastRun(a)
@@ -113,9 +127,7 @@ const shortcuts = computed((): Shortcut[] => {
     }
   })).slice(0, showAllShortcuts.value ? undefined : 3);
 
-});
-
-const showAllShortcuts = ref(false)
+}
 
 const openAgentForge = () => {
   useEventBus().emitEvent('set-main-window-mode', 'agents')
