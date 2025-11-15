@@ -85,11 +85,13 @@ const agents = ref<Agent[]>([])
 const startingAgents = ref<string[]>([])
 
 onMounted(() => {
-  agents.value = store.agents
-  watch(() => store.agents, (newAgents) => {
-    agents.value = newAgents
-  })
+  load()
+  watch(() => store.agents, load)
 })
+
+const load = () => {
+  agents.value = store.agents.sort((a: Agent, b: Agent) => a.name.localeCompare(b.name))
+}
 
 const onAgentRun = async (agent: Agent) => {
   emit('run', agent)
@@ -98,16 +100,6 @@ const onAgentRun = async (agent: Agent) => {
     const idx = startingAgents.value.indexOf(agent.uuid)
     if (idx !== -1) startingAgents.value.splice(idx, 1)
   }, 1000)
-}
-
-const onAgentRunUpdate = (data: { agentId: string }) => {
-  const index = agents.value.findIndex(a => a.uuid === data.agentId)
-  const agent = window.api.agents.load(store.config.workspaceId, data.agentId)
-  if (index === -1) {
-    agents.value.push(agent)
-  } else {
-    agents.value.splice(index, 1, agent)
-  }
 }
 
 const lastRun = (agent: Agent) => {
