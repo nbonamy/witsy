@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.1] - WIP
+
+### Added
+- Scratchpad action on assistant messages
+
+### Changed
+- Agent import tries MCP tool remapping
+
+### Fixed
+- Agent refresh issues
+- Design Studio Drawing Canvas icons
+
+### Removed
+- N/A
+
+
 ## [3.2.0] - 2025-11-12
 
 ### Added

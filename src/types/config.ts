@@ -87,7 +87,7 @@ export type ModelDefaults = {
 
 export type InstructionsType = 'standard' | 'structured' | 'playful' | 'empathic' | 'uplifting' | 'reflective' | 'visionary' | string
 
-export type CodeExecutionMode = 'chat' | 'agent'
+export type CodeExecutionMode = 'disabled' | 'proxy' | 'program'
 
 export type LLMConfig = {
   instructions: InstructionsType  
@@ -99,9 +99,7 @@ export type LLMConfig = {
   imageResize: number
   defaults: ModelDefaults[]
   customInstructions: CustomInstruction[]
-  codeExecution: {
-    modes: CodeExecutionMode[]
-  }
+  codeExecution: CodeExecutionMode
   additionalInstructions: {
     toolRetry: boolean
     datetime: boolean

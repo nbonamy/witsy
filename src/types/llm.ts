@@ -1,6 +1,7 @@
 
 import { PluginsList } from '../renderer/services/plugins/plugins'
 import { ChatModel, LlmEngine } from 'multi-llm-ts'
+import { CodeExecutionMode } from './config'
 
 export type GetChatEnginesOpts = {
   favorites?: boolean
@@ -51,6 +52,6 @@ export interface ILlmManager {
   loadModels(engine: string): Promise<boolean>
   
   loadTools(engine: LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection, opts?: {
-    codeExecutionMode?: boolean
+    codeExecutionMode?: CodeExecutionMode
   }): Promise<void>
 }

@@ -1,26 +1,14 @@
-import { vi, expect, test, beforeEach, describe } from 'vitest'
-import CodeExecutionPlugin, { kCodeExecutionPluginPrefix } from '../../../src/renderer/services/plugins/code_exec'
+import { vi, expect, test, beforeEach, describe, beforeAll } from 'vitest'
 import { Plugin, MultiToolPlugin } from 'multi-llm-ts'
+import { useWindowMock } from '../../mocks/window'
+import { createI18nMock } from '../../mocks'
+import CodeExecutionProgramPlugin from '../../../src/renderer/services/plugins/code_exec_program'
+import { kCodeExecutionPluginPrefix } from '../../../src/renderer/services/plugins/code_exec_base'
 
-// Mock i18n
-vi.mock('../../../src/renderer/services/i18n', () => ({
-  t: (key: string, params?: any) => {
-    const translations: Record<string, string> = {
-      'plugins.code_exec.preparing': 'Preparing to execute workflow…',
-      'plugins.code_exec.getToolsInfo.running': `Getting info for ${params?.count || 0} tools…`,
-      'plugins.code_exec.getToolsInfo.completed': `Retrieved info for ${params?.count || 0} tools`,
-      'plugins.code_exec.getToolsInfo.error': `Error getting tools info: ${params?.error || 'unknown'}`,
-      'plugins.code_exec.getToolsInfo.description': `Get detailed information about specific tools.\n\nAvailable tools:\n${params?.tools || ''}`,
-      'plugins.code_exec.runProgram.running': `Executing workflow with ${params?.count || 0} steps…`,
-      'plugins.code_exec.runProgram.completed': `Completed workflow with ${params?.count || 0} steps`,
-      'plugins.code_exec.runProgram.error': `Workflow failed: ${params?.error || 'unknown'}`,
-      'plugins.code_exec.runProgram.description': 'Execute a multi-step workflow by calling other tools sequentially with variable substitution',
-    }
-    return translations[key] || key
-  }
-}))
+vi.mock('../../../src/renderer/services/i18n', async () => {
+  return createI18nMock()
+})
 
-// Mock plugin for testing
 class MockPlugin extends Plugin {
   private mockExecute: any
   private pluginName: string
@@ -52,13 +40,17 @@ class MockPlugin extends Plugin {
   }
 }
 
-describe('CodeExecutionPlugin', () => {
-  let plugin: CodeExecutionPlugin
+describe('CodeExecutionProgramPlugin', () => {
+  let plugin: CodeExecutionProgramPlugin
   let mockEngine: any
+
+  beforeAll(() => {
+    useWindowMock()
+  })
 
   beforeEach(() => {
     vi.clearAllMocks()
-    plugin = new CodeExecutionPlugin({}, 'test-workspace')
+    plugin = new CodeExecutionProgramPlugin()
 
     mockEngine = {
       plugins: [],
@@ -182,7 +174,7 @@ describe('CodeExecutionPlugin', () => {
       const desc = plugin.getRunningDescription(`${kCodeExecutionPluginPrefix}get_tools_info`, {
         tools_names: ['tool1', 'tool2', 'tool3']
       })
-      expect(desc).toContain('3 tools')
+      expect(desc).toEqual('plugins.code_exec.getToolsInfo.running_default_count=3')
     })
 
     test('getCompletedDescription returns correct message', () => {
@@ -191,7 +183,7 @@ describe('CodeExecutionPlugin', () => {
         { tools_names: ['tool1', 'tool2'] },
         { tools_info: [{}, {}] }
       )
-      expect(desc).toContain('2 tools')
+      expect(desc).toEqual('plugins.code_exec.getToolsInfo.completed_default_count=2')
     })
 
     test('getCompletedDescription handles error', () => {
@@ -362,7 +354,7 @@ describe('CodeExecutionPlugin', () => {
       const desc = plugin.getRunningDescription(`${kCodeExecutionPluginPrefix}run_program`, {
         program: { steps: [{ id: 's1' }, { id: 's2' }] }
       })
-      expect(desc).toContain('2 steps')
+      expect(desc).toEqual('plugins.code_exec.runProgram.running_default_count=2')
     })
 
     test('getCompletedDescription returns correct message', async () => {
@@ -373,7 +365,7 @@ describe('CodeExecutionPlugin', () => {
         { program: { steps: [{ id: 's1' }, { id: 's2' }] } },
         { result: 'ok' }
       )
-      expect(desc).toContain('2 steps')
+      expect(desc).toEqual('plugins.code_exec.runProgram.completed_default_count=2')
     })
 
     test('getCompletedDescription handles error', async () => {

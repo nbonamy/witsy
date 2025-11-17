@@ -1,7 +1,7 @@
 <template>
   <div class="tool-container" :class="{ canceled: toolCall.state === 'canceled' }" @click="toggleOpen" @selectstart="onSelectStart" @mouseup="onMouseUp">
     <div class="tool-header">
-      <PluginIcon :tool="name" />
+      <PluginIcon :tool="name" :tool-call="toolCall"/>
       <div class="tool-name">{{ title }}</div>
       <div v-if="!toolCall.done" class="tool-loader">
         <Loader /><Loader /><Loader />
@@ -10,29 +10,29 @@
       <ChevronRightIcon v-else class="tool-fold" />
     </div>
     <div class="tool-results" v-if="isOpen">
-      <MessageItemSearchToolBlock v-if="toolCall.name === kSearchPluginName && toolCall.result?.results?.length" :toolCall="toolCall" /> 
+      <MessageItemSearchToolBlock v-if="actualToolCall.name === kSearchPluginName && actualToolCall.result?.results?.length" :toolCall="actualToolCall" /> 
     </div>
-    <div class="tool-values tool-params" v-if="toolCall?.params && isOpen">
+    <div class="tool-values tool-params" v-if="actualToolCall?.params && isOpen">
       <div class="tool-values-header">
         {{ t('message.toolCall.params') }}
       </div>
       <div class="tool-values-list">
         <div class="tool-value">
           <div class="value-key">tool</div>
-          <div class="value-value">{{ toolCall.name }}</div>
+          <div class="value-value">{{ actualToolCall.name }}</div>
         </div>
-        <div class="tool-value" v-for="(value, key) in toolCall.params" :key="key">
+        <div class="tool-value" v-for="(value, key) in actualToolCall.params" :key="key">
           <div class="value-key">{{ key }}</div>
           <div class="value-value">{{ value }}</div>
         </div>
       </div>
     </div>
-    <div class="tool-values tool-result" v-if="toolCall?.result && isOpen">
+    <div class="tool-values tool-result" v-if="actualToolCall?.result && isOpen">
       <div class="tool-values-header">
         {{ t('message.toolCall.results') }}
       </div>
       <div class="tool-values-list">
-        <div class="tool-value" v-for="(value, key) in toolCall.result" :key="key">
+        <div class="tool-value" v-for="(value, key) in actualToolCall.result" :key="key">
           <div class="value-key">{{ key }}</div>
           <div class="value-value">{{ value }}</div>
         </div>
@@ -44,10 +44,11 @@
 <script setup lang="ts">
 
 import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
-import { computed, onMounted, ref } from 'vue'
-import { kSearchPluginName } from '../services/plugins/search'
-import { t } from '../services/i18n'
 import { ToolCall } from 'types/index'
+import { computed, onMounted, ref } from 'vue'
+import { t } from '../services/i18n'
+import { kCodeExecutionProxyPluginToolName } from '../services/plugins/code_exec_proxy'
+import { kSearchPluginName } from '../services/plugins/search'
 import Loader from './Loader.vue'
 import MessageItemSearchToolBlock from './MessageItemSearchToolBlock.vue'
 import PluginIcon from './PluginIcon.vue'
@@ -62,17 +63,29 @@ const props = defineProps({
 const isOpen = ref(false)
 const isSelecting = ref(false)
 
+const actualToolCall = computed((): ToolCall => {
+  if (props.toolCall.name === kCodeExecutionProxyPluginToolName && props.toolCall.params) {
+    return {
+      ...props.toolCall,
+      name: props.toolCall.params.tool_name,
+      params: props.toolCall.params.parameters || {},
+    }
+  } else {
+    return props.toolCall
+  }
+})
+
 const name = computed(() => {
   if (props.toolCall.status?.includes('MCP')) {
     return 'mcp'
   } else {
-    return props.toolCall.name || ''
+    return actualToolCall.value.name || ''
   }
 })
 
 const title = computed(() => {
   if (props.toolCall.status) return props.toolCall.status
-  const toolName = props.toolCall.name || ''
+  const toolName = actualToolCall.value.name || ''
   const name = window.api.mcp.originalToolName(toolName)
   return t('message.toolCall.call', { name })
 })

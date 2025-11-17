@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "cli": "tsx src/cli/main.ts",
     "build:cli": "node build/build-cli.mjs",
     "test": "vitest --run",
-    "test:ai": "vitest --run --config vitest.config.ai.mjs",
+    "test:ai": "vitest --run --silent --reporter=./tests/reporter/silent.ts",
     "test:notify": "vitest --watch --reporter=default --reporter=./tests/reporter/notify.ts",
     "test:watch": "vitest --watch --silent",
     "test:ci": "vitest --coverage.enabled=true --coverage.reporter='text-summary' --silent",

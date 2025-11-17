@@ -763,6 +763,10 @@ export const installIpc = (
     }
   });
 
+  ipcMain.on(IPC.MCP.IS_MCP_TOOL_NAME, (event, payload) => {
+    event.returnValue = mcp ? mcp.isMcpToolName(payload) : false;
+  });
+
   ipcMain.on(IPC.MCP.ORIGINAL_TOOL_NAME, (event, payload) => {
     event.returnValue = mcp ? mcp.originalToolName(payload) : null;
   });
@@ -782,16 +786,32 @@ export const installIpc = (
     return mcp ? await mcp.completeOAuthFlow(serverUuid, authCode) : false;
   });
 
-  ipcMain.on(IPC.SCRATCHPAD.OPEN, async (_, payload) => {
+  ipcMain.on(IPC.SCRATCHPAD.CREATE, (event, { workspaceId, text }) => {
+    const uuid = crypto.randomUUID();
+    const now = Date.now();
+    const scratchpadData = {
+      uuid,
+      title: 'Untitled',
+      contents: { content: text },
+      chat: null as any,
+      createdAt: now,
+      lastModified: now
+    };
+    scratchpadManager.saveScratchpad(app, workspaceId, scratchpadData);
+    event.returnValue = uuid;
+  });
+
+  ipcMain.on(IPC.SCRATCHPAD.OPEN, async (_, { uuid }) => {
     // Switch main window to scratchpad mode instead of opening new window
     if (window.mainWindow) {
       window.mainWindow.show();
       window.mainWindow.focus();
-      // Pass textId via query params event
-      const params: any = { view: 'scratchpad' };
-      if (payload) {
-        params.textId = payload;
-      }
+
+      const params: any = {
+        view: 'scratchpad',
+        scratchpadId: uuid
+      };
+
       window.mainWindow.webContents.send('query-params', params);
     }
   });

@@ -10,8 +10,8 @@
         <div class="toolbar-section">
           
           <div class="toolbar-group">
-            <button @click="undo"><RotateCcwIcon /></button>
-            <button @click="redo"><RotateCwIcon /></button>
+            <button @click="undo"><UndoIcon /></button>
+            <button @click="redo"><RedoIcon /></button>
           </div>
 
           <button @click="reset" title="Clear">
@@ -20,7 +20,7 @@
 
           <div class="button-group">
             <button @click="setMode('draw')" :class="{ active: mode === 'draw' }" title="Draw">
-              <PenIconcil />
+              <PencilIcon />
             </button>
             <button @click="setMode('erase')" :class="{ active: mode === 'erase' }" title="Erase">
               <EraserIcon />
@@ -78,6 +78,7 @@
 </template>
 
 <script setup lang="ts">
+import { EraserIcon, PencilIcon, RedoIcon, Trash2Icon, UndoIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, ref } from 'vue'
 import VueDrawingCanvas from 'vue-drawing-canvas'
 import { t } from '../services/i18n'
@@ -312,12 +313,12 @@ const onSave = async () => {
   }
 
   input[type=color] {
-    width: 2rem;
-    height: 2rem;
+    width: 2.25rem;
+    height: 2.25rem;
   }
 
   .size-control select {
-    height: 2rem;
+    height: 2.25rem;
   }
 
 }

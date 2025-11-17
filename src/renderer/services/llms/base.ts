@@ -1,6 +1,6 @@
 
 import * as llm from 'multi-llm-ts'
-import { Configuration, CustomEngineConfig, EngineConfig } from 'types/config'
+import { CodeExecutionMode, Configuration, CustomEngineConfig, EngineConfig } from 'types/config'
 import { GetChatEnginesOpts, ILlmManager, ToolSelection } from 'types/llm'
 import defaults from '../../../../defaults/settings.json'
 import { imageFormats, textFormats } from '../../../models/attachment'
@@ -470,7 +470,7 @@ export default class LlmManagerBase implements ILlmManager {
 
    
   loadTools = async (engine: llm.LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection, opts?: {
-    codeExecutionMode?: boolean
+    codeExecutionMode?: CodeExecutionMode
   }): Promise<void> => {
 
     // clear
@@ -525,12 +525,17 @@ export default class LlmManagerBase implements ILlmManager {
     }
 
     // code exec
-    if (engine.plugins.length && opts?.codeExecutionMode) {
-      const { default: CodeExecutionPlugin } = await import('../plugins/code_exec')
-      const codeExecPlugin = new CodeExecutionPlugin()
-      await codeExecPlugin.install(engine)
+    if (engine.plugins.length) {
+      if (opts?.codeExecutionMode === 'proxy') {
+        const { default: CodeExecutionProxyPlugin } = await import('../plugins/code_exec_proxy')
+        const codeExecPlugin = new CodeExecutionProxyPlugin()
+        await codeExecPlugin.install(engine)
+      } else if (opts?.codeExecutionMode === 'program') {
+        const { default: CodeExecutionProgramPlugin } = await import('../plugins/code_exec_program')
+        const codeExecPlugin = new CodeExecutionProgramPlugin()
+        await codeExecPlugin.install(engine)
+      }
     }
-
   }
 
 }
