@@ -18,6 +18,7 @@ export default class DocumentRepository {
   queue: DocumentQueueItem[] = []
   processing = false
   listeners: DocRepoListener[] = []
+  activeProcessingTasks = new Map<string, AbortController>()
 
   constructor(app: App) {
     this.app = app
@@ -227,7 +228,7 @@ export default class DocumentRepository {
 
     // connect
     const base = await this.connect(baseId)
-    
+
     // check if it exists
     console.log('[rag] Adding document', origin)
     let document: DocumentSourceImpl = base.documents.find(d => d.origin == origin)
@@ -235,14 +236,19 @@ export default class DocumentRepository {
       document = new DocumentSourceImpl(crypto.randomUUID(), type, origin, title)
     }
 
+    // use document UUID as task ID and create abort controller
+    const taskId = document.uuid
+    const abortController = new AbortController()
+    this.activeProcessingTasks.set(taskId, abortController)
+
     // add to queue
-    this.queue.push({ uuid: document.uuid, baseId, type, origin, title, operation: 'add', fromUserAction })
+    this.queue.push({ uuid: document.uuid, baseId, type, origin, title, operation: 'add', fromUserAction, taskId })
 
     // process
     this.processQueue()
 
     // done
-    return document.uuid
+    return taskId
 
   }
 
@@ -250,13 +256,13 @@ export default class DocumentRepository {
 
     // connect
     const base = await this.connect(baseId)
-    
+
     // find the parent document
     const parentDoc = base.documents.find(d => d.uuid === parentDocId)
     if (!parentDoc) {
       throw new Error('Parent document not found')
     }
-    
+
     // check if child already exists
     console.log('[rag] Adding child document', origin, 'to parent', parentDoc.origin)
     let childDoc = parentDoc.items.find(item => item.origin === origin)
@@ -265,8 +271,13 @@ export default class DocumentRepository {
       // Don't add to parent's items yet - wait for successful processing
     }
 
+    // use child document UUID as task ID and create abort controller
+    const taskId = childDoc.uuid
+    const abortController = new AbortController()
+    this.activeProcessingTasks.set(taskId, abortController)
+
     // add to queue (we still need to process the actual content)
-    this.queue.push({ uuid: childDoc.uuid, baseId, type, origin, parentDocId, operation: 'add', fromUserAction })
+    this.queue.push({ uuid: childDoc.uuid, baseId, type, origin, parentDocId, operation: 'add', fromUserAction, taskId })
 
     // process
     this.processQueue()
@@ -274,7 +285,7 @@ export default class DocumentRepository {
     // don't save yet - wait for successful processing
 
     // done
-    return childDoc.uuid
+    return taskId
 
   }
 
@@ -463,6 +474,27 @@ export default class DocumentRepository {
     // not found
     return null
 
+  }
+
+  cancelTask(taskId: string): void {
+    // find the task in queue
+    const queueIndex = this.queue.findIndex(item => item.taskId === taskId)
+
+    if (queueIndex === 0) {
+      const abortController = this.activeProcessingTasks.get(taskId)
+      if (abortController) {
+        console.log('[rag] Aborting task:', taskId)
+        abortController.abort()
+        // Note: cleanup happens in notifyQueueItemResult after processing completes
+      } else {
+        console.warn('[rag] Task not found:', taskId)
+      }
+    } else if (queueIndex !== -1) {
+      // task is still in queue (not being processed yet)
+      console.log('[rag] Removing task from queue:', taskId)
+      this.queue.splice(queueIndex, 1)
+      this.activeProcessingTasks.delete(taskId)
+    }
   }
 
   isSourceSupported(type: SourceType, origin: string): boolean {
@@ -678,6 +710,9 @@ export default class DocumentRepository {
   }
 
   private async processAddOperation(queueItem: DocumentQueueItem, base: DocumentBaseImpl): Promise<void> {
+    // get abort controller for this task
+    const abortController = queueItem.taskId ? this.activeProcessingTasks.get(queueItem.taskId) : undefined
+
     if (queueItem.parentDocId) {
       // First, find and add the child to the parent's items if not already there
       const parentDoc = base.documents.find(d => d.uuid === queueItem.parentDocId)
@@ -688,9 +723,9 @@ export default class DocumentRepository {
           parentDoc.items.push(childDoc)
         }
       }
-      await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+      await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save(), abortController)
     } else {
-      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, queueItem.title, () => this.save())
+      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, queueItem.title, () => this.save(), abortController)
     }
   }
 
@@ -705,20 +740,29 @@ export default class DocumentRepository {
   }
 
   private async processUpdateOperation(queueItem: DocumentQueueItem, base: DocumentBaseImpl): Promise<void> {
+    // get abort controller for this task
+    const abortController = queueItem.taskId ? this.activeProcessingTasks.get(queueItem.taskId) : undefined
+
     // For updates, we essentially re-add the document
     if (queueItem.parentDocId) {
-      await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
+      await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save(), abortController)
     } else {
-      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, undefined, () => this.save())
+      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, undefined, () => this.save(), abortController)
     }
   }
 
   private async handleOperationError(queueItem: DocumentQueueItem, base: DocumentBaseImpl): Promise<void> {
-    // If there was an error and it's a child document add operation, remove it from parent's items
-    if (queueItem.operation === 'add' && queueItem.parentDocId) {
-      this.removeChildFromParent(queueItem, base)
+    // If there was an error during add operation, remove the document
+    if (queueItem.operation === 'add') {
+      if (queueItem.parentDocId) {
+        // Remove child from parent's items
+        this.removeChildFromParent(queueItem, base)
+      } else {
+        // Remove top-level document from base
+        this.removeDocumentFromBase(queueItem, base)
+      }
     }
-    
+
     // If there was an error during delete operation, still clean up in-memory structures
     if (queueItem.operation === 'delete') {
       if (queueItem.parentDocId) {
@@ -747,9 +791,14 @@ export default class DocumentRepository {
   }
 
   private notifyQueueItemResult(queueItem: DocumentQueueItem, error: Error | null): void {
-    
+
+    // Clean up abort controller
+    if (queueItem.taskId) {
+      this.activeProcessingTasks.delete(queueItem.taskId)
+    }
+
     if (error) {
-      
+
       if (queueItem.fromUserAction) {
         const eventName = queueItem.operation === 'delete' ? 'docrepo-del-document-error' : 'docrepo-add-document-error'
         notifyBrowserWindows(eventName, {
@@ -758,15 +807,15 @@ export default class DocumentRepository {
           queueLength: this.queueLength()
         })
       }
-    
+
     } else {
-    
+
       const eventName = queueItem.operation === 'delete' ? 'docrepo-del-document-done' : 'docrepo-add-document-done'
       notifyBrowserWindows(eventName, {
         queueItem,
         queueLength: this.queueLength()
       })
-      
+
       // Notify listeners about document changes
       if (queueItem.operation === 'delete') {
         this.notifyDocumentRemoved(queueItem.origin)

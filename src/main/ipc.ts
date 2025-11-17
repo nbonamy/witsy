@@ -624,7 +624,17 @@ export const installIpc = (
   ipcMain.handle(IPC.DOCREPO.ADD_DOCUMENT, async (_, payload) => {
     try {
       const { baseId, type, origin, title } = payload;
-      await docRepo.addDocumentSource(baseId, type, origin, true, title);
+      return await docRepo.addDocumentSource(baseId, type, origin, true, title);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  });
+
+  ipcMain.handle(IPC.DOCREPO.CANCEL_TASK, async (_, payload) => {
+    try {
+      const { taskId } = payload;
+      docRepo.cancelTask(taskId);
     } catch (error) {
       console.error(error);
       throw error;

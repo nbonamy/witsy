@@ -18,24 +18,31 @@
             <div class="subtext" v-else>{{ filesize(doc.fileSize) }}</div>
           </div>
           <div class="actions">
-            <div class="tag info" v-if="processingItems.includes(doc.uuid)">{{ t('docRepo.status.wip') }}</div>
+            <div class="tag info" v-if="processingItems.includes(doc.uuid)">
+              {{ t('docRepo.status.wip') }}
+            </div>
             <div class="tag success" v-else>{{ t('docRepo.status.done') }}</div>
             <SearchIcon
               :style="{ visibility: doc.type === 'folder' ? 'visible' : 'hidden' }"
-              class="icon view-contents" 
+              class="icon view-contents"
               v-tooltip="{ text: t('docRepo.view.tooltips.viewContents'), position: 'left' }"
-              @click="onViewFolderContents(doc)" 
+              @click="onViewFolderContents(doc)"
             />
             <FolderIcon
               v-if="doc.type === 'file' || doc.type === 'folder'"
-              class="icon open-in-explorer" 
+              class="icon open-in-explorer"
               v-tooltip="{ text: t('docRepo.view.tooltips.openInExplorer'), position: 'left' }"
-              @click="onOpenInExplorer(doc)" 
+              @click="onOpenInExplorer(doc)"
             />
-            <Trash2Icon
-              class="icon remove" :class="{ disabled: processingItems.includes(doc.uuid) }"
+            <Trash2Icon v-if="!processingItems.includes(doc.uuid)"
+              class="icon remove"
               v-tooltip="{ text: t('common.delete'), position: 'left' }"
-              @click="onDelDoc(doc)" 
+              @click="onDelDoc(doc)"
+            />
+            <SquareIcon v-else
+              class="icon cancel-task"
+              v-tooltip="{ text: t('common.cancel'), position: 'left' }"
+              @click="onCancelTask(doc)"
             />
           </div>
         </div>
@@ -54,7 +61,7 @@
 
 <script setup lang="ts">
 import { filesize } from 'filesize'
-import { ChevronDownIcon, FileIcon, FileImageIcon, FilePlusIcon, FileSpreadsheetIcon, FileTextIcon, FolderIcon, FolderPlusIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
+import { ChevronDownIcon, FileIcon, FileImageIcon, FilePlusIcon, FileSpreadsheetIcon, FileTextIcon, FolderIcon, FolderPlusIcon, SearchIcon, SquareIcon, Trash2Icon, XIcon } from 'lucide-vue-next'
 import { extensionToMimeType } from 'multi-llm-ts'
 import { computed, ref } from 'vue'
 import Dialog from '../utils/dialog'
@@ -75,6 +82,7 @@ const { loading, processingItems } = useDocRepoEvents('file')
 // internal state
 const folderRef = ref<InstanceType<typeof Folder> | null>(null)
 const selectedFolder = ref<DocumentSource | null>(null)
+const taskIds = ref<Map<string, string>>(new Map()) // Map doc.uuid to taskId
 
 const files = computed(() => {
   return props.selectedRepo.documents.filter(doc => ['file', 'folder'].includes(doc.type))
@@ -136,7 +144,12 @@ const onAddFiles = async () => {
     // Don't await - let documents be added to queue asynchronously
     // The UI will be updated via IPC events when processing completes
     for (const file of files) {
-      window.api.docrepo.addDocument(props.selectedRepo.uuid, 'file', file).catch(error => {
+      const promise = window.api.docrepo.addDocument(props.selectedRepo.uuid, 'file', file)
+      promise.then(taskId => {
+        // Store task ID for this file
+        // Map by origin (file path) since we don't have doc.uuid yet
+        taskIds.value.set(file, taskId)
+      }).catch(error => {
         console.error('Error adding file:', error)
       })
     }
@@ -154,7 +167,11 @@ const onAddFolder = async () => {
   try {
     // Don't await - let folder be added to queue asynchronously
     // The UI will be updated via IPC events when processing completes
-    window.api.docrepo.addDocument(props.selectedRepo.uuid, 'folder', folder).catch(error => {
+    const promise = window.api.docrepo.addDocument(props.selectedRepo.uuid, 'folder', folder)
+    promise.then(taskId => {
+      // Store task ID for this folder
+      taskIds.value.set(folder, taskId)
+    }).catch(error => {
       console.error('Error adding folder:', error)
     })
   } catch (error) {
@@ -193,5 +210,17 @@ const onViewFolderContents = (doc: DocumentSource) => {
   if (doc.type !== 'folder') return
   selectedFolder.value = doc
   folderRef.value?.show()
+}
+
+const onCancelTask = async (doc: DocumentSource) => {
+  const taskId = taskIds.value.get(doc.origin)
+  if (taskId) {
+    try {
+      await window.api.docrepo.cancelTask(taskId)
+      taskIds.value.delete(doc.origin)
+    } catch (error) {
+      console.error('Error cancelling task:', error)
+    }
+  }
 }
 </script>

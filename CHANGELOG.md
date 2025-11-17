@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Agent refresh issues
 - Design Studio Drawing Canvas icons
-- Large documents embedding freezes UI
+- Large documents embedding fixes
 
 ### Removed
 - N/A

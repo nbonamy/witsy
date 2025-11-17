@@ -17,12 +17,17 @@ export default class {
 
   // Non-blocking implementation of recursive character text splitting
   // Based on LangChain's RecursiveCharacterTextSplitter but with yields to prevent UI blocking
-  async split(text: string): Promise<string[]> {
-    return this.splitTextRecursive(text, this.separators)
+  async split(text: string, abortController?: AbortController): Promise<string[]> {
+    return this.splitTextRecursive(text, this.separators, abortController)
   }
 
-  private async splitTextRecursive(text: string, separators: string[]): Promise<string[]> {
+  private async splitTextRecursive(text: string, separators: string[], abortController?: AbortController): Promise<string[]> {
     const finalChunks: string[] = []
+
+    // Check if cancelled
+    if (abortController?.signal.aborted) {
+      throw new Error()
+    }
 
     // Find appropriate separator
     let separator = separators[separators.length - 1]
@@ -48,16 +53,19 @@ export default class {
     let iterationCount = 0
 
     for (const s of splits) {
-      // Yield every 100 iterations to prevent blocking
+      // Yield every 100 iterations to prevent blocking and check for cancellation
       if (++iterationCount % 100 === 0) {
         await new Promise(resolve => setImmediate(resolve))
+        if (abortController?.signal.aborted) {
+      throw new Error()
+        }
       }
 
       if (s.length < this.chunkSize) {
         goodSplits.push(s)
       } else {
         if (goodSplits.length > 0) {
-          const mergedText = await this.mergeSplits(goodSplits, separator)
+          const mergedText = await this.mergeSplits(goodSplits, separator, abortController)
           finalChunks.push(...mergedText)
           goodSplits.length = 0
         }
@@ -65,14 +73,14 @@ export default class {
         if (!newSeparators) {
           finalChunks.push(s)
         } else {
-          const otherChunks = await this.splitTextRecursive(s, newSeparators)
+          const otherChunks = await this.splitTextRecursive(s, newSeparators, abortController)
           finalChunks.push(...otherChunks)
         }
       }
     }
 
     if (goodSplits.length > 0) {
-      const mergedText = await this.mergeSplits(goodSplits, separator)
+      const mergedText = await this.mergeSplits(goodSplits, separator, abortController)
       finalChunks.push(...mergedText)
     }
 
@@ -89,16 +97,19 @@ export default class {
     return splits.filter(s => s !== "")
   }
 
-  private async mergeSplits(splits: string[], separator: string): Promise<string[]> {
+  private async mergeSplits(splits: string[], separator: string, abortController?: AbortController): Promise<string[]> {
     const docs: string[] = []
     const currentDoc: string[] = []
     let total = 0
     let iterationCount = 0
 
     for (const d of splits) {
-      // Yield every 100 iterations to prevent blocking
+      // Yield every 100 iterations to prevent blocking and check for cancellation
       if (++iterationCount % 100 === 0) {
         await new Promise(resolve => setImmediate(resolve))
+        if (abortController?.signal.aborted) {
+          throw new Error()
+        }
       }
 
       const len = d.length

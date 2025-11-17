@@ -117,6 +117,7 @@ export const DOCREPO = {
   UPDATE: 'docrepo-update',
   DELETE: 'docrepo-delete',
   ADD_DOCUMENT: 'docrepo-add-document',
+  CANCEL_TASK: 'docrepo-cancel-task',
   REMOVE_DOCUMENT: 'docrepo-remove-document',
   QUERY: 'docrepo-query',
   IS_EMBEDDING_AVAILABLE: 'docrepo-is-embedding-available',

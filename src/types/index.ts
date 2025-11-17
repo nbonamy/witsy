@@ -452,7 +452,8 @@ declare global {
         update(baseId: string, title: string, description?: string): void
         delete(baseId: string): void
         isSourceSupported(type: SourceType, origin: string): boolean
-        addDocument(id: string, type: SourceType, origin: string, title?: string): Promise<void>
+        addDocument(id: string, type: SourceType, origin: string, title?: string): Promise<string>
+        cancelTask(taskId: string): Promise<void>
         removeDocument(id: string, docId: string): Promise<boolean>
         query(id: string, text: string): Promise<DocRepoQueryResponseItem[]>
         getCurrentQueueItem(): Promise<DocumentQueueItem|null>
