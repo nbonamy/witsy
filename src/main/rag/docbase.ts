@@ -110,7 +110,7 @@ export default class DocumentBaseImpl {
         console.error('[rag] Error adding document', error)
         this.documents = this.documents.filter(d => d.uuid !== source.uuid)
         callback?.()
-        return null
+        throw error
       }
 
     }
@@ -175,7 +175,6 @@ export default class DocumentBaseImpl {
     const maxDocumentSizeMB = config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
     if (text.length > maxDocumentSizeMB * 1024 * 1024) {
       const sizeMB = (text.length / (1024 * 1024)).toFixed(1)
-      console.log(`[rag] Document is too large (${sizeMB}MB, max ${maxDocumentSizeMB}MB)`, source.origin)
       throw new Error(`Document is too large: ${sizeMB}MB (maximum allowed: ${maxDocumentSizeMB}MB). Please reduce the file size or adjust the limit in settings.`)
     }
 

@@ -753,7 +753,7 @@ export default class DocumentRepository {
       if (queueItem.fromUserAction) {
         const eventName = queueItem.operation === 'delete' ? 'docrepo-del-document-error' : 'docrepo-add-document-error'
         notifyBrowserWindows(eventName, {
-          ...queueItem,
+          queueItem,
           error: error.message,
           queueLength: this.queueLength()
         })
@@ -763,7 +763,7 @@ export default class DocumentRepository {
     
       const eventName = queueItem.operation === 'delete' ? 'docrepo-del-document-done' : 'docrepo-add-document-done'
       notifyBrowserWindows(eventName, {
-        ...queueItem,
+        queueItem,
         queueLength: this.queueLength()
       })
       

@@ -58,7 +58,7 @@ const props = defineProps<{
 }>()
 
 // use composable for IPC events
-const { loading, processingItems } = useDocRepoEvents()
+const { loading, processingItems } = useDocRepoEvents('url')
 
 const webResources = computed(() => {
   return props.selectedRepo.documents.filter(doc => ['url', 'sitemap'].includes(doc.type))
