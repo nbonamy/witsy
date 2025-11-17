@@ -29,6 +29,7 @@ enableAutoUnmount(afterAll)
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
+  store.loadAgents()
 })
 
 beforeEach(() => {

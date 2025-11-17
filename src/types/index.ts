@@ -497,13 +497,15 @@ declare global {
         getLlmTools(): Promise<LlmTool[]>
         callTool(name: string, parameters: anyDict, signalId?: string): any
         cancelTool(signalId: string): void
+        isMcpToolName(name: string): boolean
         originalToolName(name: string): string
         detectOAuth(type: 'http' | 'sse', url: string, headers: Record<string, string>): Promise<any>
         startOAuthFlow(type: 'http' | 'sse', url: string, clientMetadata: any, clientCredentials?: { client_id: string; client_secret: string }): Promise<string>
         completeOAuthFlow(serverUuid: string, authCode: string): Promise<boolean>
       }
       scratchpad: {
-        open(textId?: string): void
+        create(workspaceId: string, text: string): string
+        open(workspaceId: string, uuid: string): void
         list(workspaceId: string): ScratchpadHeader[]
         load(workspaceId: string, uuid: string): ScratchpadData | null
         save(workspaceId: string, data: ScratchpadData): boolean

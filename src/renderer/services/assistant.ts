@@ -119,14 +119,14 @@ export default class {
       this.chat.addMessage(new Message('system', ''))
     }
 
-    // needed
-    const codeExecutionMode: boolean = this.config.llm.codeExecution.modes.includes('chat')
+    // code execution mode from config
+    const codeExecutionMode = this.config.llm.codeExecution
 
     // update system message with latest instructions
     const llmUtils = new LlmUtils(this.config)
     this.chat.messages[0].content = llmUtils.getSystemInstructions(this.chat.instructions, {
       noMarkdown: opts.noMarkdown,
-      codeExecution: codeExecutionMode
+      codeExecutionMode
     })
 
     // make sure we have the right engine and model
@@ -151,7 +151,7 @@ export default class {
 
     // make sure llm has latest tools
     if (!this.llmManager.isComputerUseModel(opts.engine, opts.model)) {
-      await this.llmManager.loadTools(this.llm, this.workspaceId, availablePlugins, this.chat.tools, { codeExecutionMode, })
+      await this.llmManager.loadTools(this.llm, this.workspaceId, availablePlugins, this.chat.tools, { codeExecutionMode })
     } else {
       this.llm.clearPlugins()
     }

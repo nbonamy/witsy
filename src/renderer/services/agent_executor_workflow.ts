@@ -73,7 +73,7 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
       }
 
       // update agent instructions
-      run.messages[0].content = this.llmUtils.getSystemInstructions(this.agent.instructions, { codeExecution: this.codeExecutionMode })
+      run.messages[0].content = this.llmUtils.getSystemInstructions(this.agent.instructions, { codeExecutionMode: this.codeExecutionMode })
 
       // save it
       if (!opts?.ephemeral) {

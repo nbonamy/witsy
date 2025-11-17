@@ -18,6 +18,7 @@
       <div class="action delete" v-if="message.role == 'user' && message.type == 'text'" @click="onDelete(message)">
         <Trash2Icon /> {{ t('common.delete') }}
       </div>
+      <MessageItemActionScratchpad :message="message" />
       <div class="action fork" @click="onFork(message)">
         <GitBranchIcon /> {{ t('common.fork') }}
       </div>
@@ -31,12 +32,13 @@
 <script setup lang="ts">
 
 import { ChartNoAxesColumnIncreasingIcon, GitBranchIcon, PencilIcon, QuoteIcon, RotateCcwIcon, Trash2Icon, WrenchIcon } from 'lucide-vue-next'
+import Message from '../../models/message'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import Dialog from '../utils/dialog'
-import Message from '../../models/message'
+import MessageItemActionScratchpad from '../components/MessageItemActionScratchpad.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
+import Dialog from '../utils/dialog'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()

@@ -193,6 +193,7 @@ export const MCP = {
   GET_LLM_TOOLS: 'mcp-get-tools',
   CALL_TOOL: 'mcp-call-tool',
   CANCEL_TOOL: 'mcp-cancel-tool',
+  IS_MCP_TOOL_NAME: 'mcp-is-mcp-tool-name',
   ORIGINAL_TOOL_NAME: 'mcp-original-tool-name',
   DETECT_OAUTH: 'mcp-detect-oauth',
   START_OAUTH_FLOW: 'mcp-start-oauth-flow',
@@ -201,6 +202,7 @@ export const MCP = {
 
 export const SCRATCHPAD = {
   OPEN: 'scratchpad-open',
+  CREATE: 'scratchpad-create',
   LIST: 'scratchpad-list',
   LOAD: 'scratchpad-load',
   SAVE: 'scratchpad-save',

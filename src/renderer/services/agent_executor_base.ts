@@ -1,6 +1,6 @@
 import { LlmEngine } from 'multi-llm-ts'
 import { AgentRun } from 'types/agents'
-import { Configuration } from 'types/config'
+import { CodeExecutionMode, Configuration } from 'types/config'
 import { ToolSelection } from 'types/llm'
 import Agent from '../../models/agent'
 import LlmFactory, { ILlmManager } from './llms/llm'
@@ -54,8 +54,8 @@ export default class AgentExecutorBase {
     })
   }
 
-  protected get codeExecutionMode(): boolean {
-    return this.config.llm.codeExecution.modes.includes('agent')
+  protected get codeExecutionMode(): CodeExecutionMode {
+    return this.config.llm.codeExecution
   }
 
   protected async loadToolsAndAgents(engine: LlmEngine, tools: ToolSelection, agents: string[], opts?: { engine?: string, model?: string, agents?: Agent[] }): Promise<void> {

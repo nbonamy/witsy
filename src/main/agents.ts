@@ -82,6 +82,7 @@ export const saveAgent = (source: App|string, workspaceId: string, json: anyDict
   // write file
   try {
     fs.writeFileSync(filePath, JSON.stringify(agent, null, 2))
+    notifyBrowserWindows('agents-updated', { workspaceId })
     return true
   } catch (error) {
     console.log('Error saving agent', filePath, error)
@@ -117,6 +118,7 @@ export const deleteAgent = (source: App|string, workspaceId: string, agentId: st
   }
   
   // done
+  notifyBrowserWindows('agents-updated', { workspaceId })
   return true
 
 }

@@ -320,12 +320,17 @@
         "conflict": {
           "createNew": "Utwórz nowego",
           "overwrite": "Nadpisz",
-          "text": "Agent o tej nazwie już istnieje. Co chcesz zrobić?",
+          "text": "Agent z tym ID już istnieje. Co chcesz zrobić?",
           "title": "Agent już istnieje"
         },
         "error": {
           "text": "Wybrany plik nie jest prawidłowym plikiem JSON agenta.",
           "title": "Błąd importu"
+        },
+        "toolNotFound": "Krok {step}: narzędzie {tool} nie zostało znalezione",
+        "warning": {
+          "text": "Niektóre narzędzia nie zostały znalezione. Upewnij się, że wymagane serwery MCP są zainstalowane i sprawdź konfigurację agenta:",
+          "title": "Nie znaleziono narzędzi"
         }
       },
       "list": {
@@ -1926,6 +1931,8 @@
     "capabilities": {
       "artifacts": "Gdy użytkownik poprosi Cię o stworzenie jakiejś zawartości (dokument, streszczenie, kod…), użyj następującej składni:\n<artifact title=\"TYTUŁ\">\nZAWARTOŚĆ\n</artifact>. Artefakty HTML MUSZĄ zaczynać się od <html> lub <!DOCTYPE html>. Przykład: <artifact title=\"Raport\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>Zawartość raportu sformatowana w HTML</body></html>\n</artifact>. Możesz użyć tej funkcji do tworzenia wizualizacji danych opartych na HTML za pomocą Chart.js lub D3.js. NIE używaj artefaktów do prostych tabel danych. Dla artefaktów kodu używaj <artifact title=\"NAZWA_PLIKU.EXT\">\nKOD\n</artifact>.",
       "codeExecution": "Aby wykonać zadania, możesz używać narzędzi code_exec_get_tools_info oraz code_exec_run_program. code_exec_get_tools_info dostarcza listę innych narzędzi, z których możesz korzystać, oraz umożliwia uzyskanie instrukcji wywołania dla narzędzi, które zdecydujesz się użyć.\n\n**INSTRUKCJE:**\n- ZAWSZE używaj code_exec_run_program do korzystania z narzędzi. Narzędzia są niedostępne inaczej niż przez code_exec_run_program\\n- Przed napisaniem programu: użyj `code_exec_get_tools_info`, aby poznać dokładne nazwy narzędzi, wymagane parametry i strukturę argumentów dla nieznanych narzędzi. Możesz wielokrotnie wywoływać `code_exec_get_tools_info`, jeśli okaże się, że potrzebujesz więcej narzędzi niż początkowo planowano.\n- Gdy poznasz wymagane narzędzia, napisz kompletny program i wywołaj code_exec_run_program.\n\nNie pisz programów jednoetapowych, aby pobierać dane pośrednie: celem jest usprawnienie wykonania pełnych przepływów pracy.\n\n**Przebieg użycia code_exec_run_program:**\n1. Zidentyfikuj, jakich narzędzi potrzebujesz do zadania\n2. Użyj `code_exec_get_tools_info` z parametrem `tools_names`, aby uzyskać szczegóły o każdym nieznanym narzędziu\n3. Zapoznaj się z parametrami narzędzi, wymaganymi polami i strukturą\n4. Napisz kompletny, wieloetapowy program z poprawnymi nazwami narzędzi i argumentami\n5. Uruchom go za pomocą `code_exec_run_program`\n\n**Struktura programu**\nProgram musi zawierać tablicę `steps`:\n\n```json\n{'{'}\n  \"steps\": [...]\n{'}'}\n```\n\n**Definicja kroku**\nKażdy obiekt kroku musi zawierać:\n- `id`: unikalny identyfikator w postaci tekstu (używany do odwołań do wyniku w kolejnych krokach)\n- `description`: opcjonalne przyjazne użytkownikowi powiadomienie o postępie\n- `tool`: dokładną nazwę narzędzia do wywołania (np. \"search_internet\", \"asana_get_tasks___c9c8\"). Używaj pełnych nazw wraz z sufiksami.\n- `args`: obiekt z parami klucz-wartość reprezentujących wejścia dla tego narzędzia zgodnie z jego specyfikacją.\n- `on_error`: opcjonalnie kontroluje zachowanie przepływu w przypadku błędu w tym kroku. Dozwolone wartości to `\"continue\"` (ignoruj błąd i kontynuuj) lub `\"abort\"` (przerwij wykonanie). Domyślna wartość to `\"abort\"` jeśli nie podano.\n\n**Odwołania między krokami**\n- Jeśli argument kroku powinien zostać wypełniony wynikiem poprzedniego kroku, użyj składni referencji: `{'{'}{'{'}step_id.result{'}'}{'}'}`\n- MOŻESZ odwoływać się do pól zagnieżdżonych i indeksów tablic: `{'{'}{'{'}step_id.result.field_name{'}'}{'}'}` lub `{'{'}{'{'}step_id.result.0.field_name{'}'}{'}'}`\n  - Przykład: `{'{'}{'{'}get_workspaces.result.0.gid{'}'}{'}'}` aby uzyskać pole `gid` pierwszego obszaru roboczego\n  - Przykład: `{'{'}{'{'}get_user.result.gid{'}'}{'}'}` aby uzyskać pole `gid` bezpośrednio\n- Możesz odwoływać się do pól na dowolnej głębokości: `{'{'}{'{'}step_id.result.data.items.0.id{'}'}{'}'}`\n- Gdy nie jesteś pewien struktury, odwołuj się do całego wyniku: `{'{'}{'{'}step_id.result{'}'}{'}'}`\n\n**Ogólny styl i poprawność**\n- JSON musi być poprawny (bez komentarzy, przecinków na końcu, lub dodatkowych pól)\n- Obiekt główny zawiera tylko tablicę `steps`\n- Używaj jasnych i bezpośrednich nazw dla identyfikatorów kroków\n- Używaj tylko narzędzi i parametrów zgodnie ze specyfikacją\n- Dla każdego narzędzia podawaj tylko wymagane lub udokumentowane argumenty\n- Programy powinny być minimalne, zawierać tylko tyle kroków, ile potrzeba do osiągnięcia celu\n\n**Obsługa błędów**\n- Jeśli nie podano, traktuj `on_error` jako `\"abort\"`\n- Gdy jest to wskazane, zastosuj `\"on_error\": \"continue\"` by pominąć błąd i kontynuować\n\n**Kluczowe punkty:**\n- Najpierw użyj `code_exec_get_tools_info`, aby zrozumieć nieznane narzędzia\n- Rozpocznij od `{'{'}\"steps\": [...]{'}'}` (bez opakowania `program`)\n- Możesz się odwoływać do zagnieżdżonych pól w wynikach kroków (np. `.gid`, `.0.gid`)\n- Używaj pełnych nazw narzędzi, wliczając sufiksy\n- Zaplanuj cały przepływ pracy przed wykonaniem",
+      "codeExecutionProgram": "Aby wykonywać zadania, możesz używać narzędzi code_exec_get_tools_info i code_exec_run_program. code_exec_get_tools_info dostarcza listę innych narzędzi, których możesz użyć, oraz instrukcje wywołań dla wybranych narzędzi.\n\n**INSTRUKCJE:**\n- ZAWSZE używaj code_exec_run_program do korzystania z narzędzi. Narzędzia nie są dostępne poza code_exec_run_program\n- Przed napisaniem programu: użyj `code_exec_get_tools_info`, aby poznać dokładne nazwy narzędzi, wymagane parametry i strukturę argumentów dla nieznanych narzędzi. Możesz wywoływać `code_exec_get_tools_info` wielokrotnie, jeśli okaże się, że potrzebujesz więcej narzędzi niż początkowo planowano.\n- Po zrozumieniu wymaganych narzędzi, napisz kompletny program i wywołaj code_exec_run_program.\n\nNie twórz programów jednoetapowych do pobierania danych pośrednich: celem jest usprawnienie wykonania pełnych workflow.\n\n**Przebieg użycia code_exec_run_program:**\n1. Zidentyfikuj narzędzia potrzebne do zadania\n2. Użyj `code_exec_get_tools_info` z parametrem `tools_names`, aby poznać szczegóły każdego nieznanego narzędzia\n3. Przejrzyj parametry narzędzia, wymagane pola i strukturę\n4. Napisz kompletny program wieloetapowy z poprawnymi nazwami narzędzi i argumentami\n5. Wykonaj za pomocą `code_exec_run_program`\n\n**Struktura programu**\nProgram musi zawierać tablicę `steps`:\n\n```json\n{\n  \"steps\": [...] \n}\n```\n\n**Definicja kroku**\nKażdy obiekt kroku musi zawierać:\n- `id`: Unikalny identyfikator kroku (łańcuch znaków) używany do odniesień w wynikach późniejszych kroków.\n- `description`: Opcjonalny przyjazny dla użytkownika komunikat statusu\n- `tool`: Dokładna nazwa narzędzia do wywołania (np. \"search_internet\", \"asana_get_tasks___c9c8\"). Użyj pełnej nazwy narzędzia, łącznie z sufiksami.\n- `args`: Obiekt par klucz-wartość reprezentujący wejścia dla tego narzędzia zgodnie z jego specyfikacją.\n- `on_error`: opcjonalnie kontroluje zachowanie workflow w razie błędu kroku. Akceptowane wartości to `\"continue\"` (ignoruj błąd i kontynuuj) lub `\"abort\"` (przerwij wykonanie). Domyślnie `\"abort\"` jeśli nie podano.\n\n**Odniesienia między krokami**\n- Aby wypełnić wartość argumentu wynikiem poprzedniego kroku, użyj składni referencji: `{{step_id.result}}`\n- MOŻNA uzyskiwać dostęp do zagnieżdżonych pól i indeksów tablic: `{{step_id.result.field_name}}` lub `{{step_id.result.0.field_name}}`\n  - Przykład: `{{get_workspaces.result.0.gid}}` aby uzyskać pole `gid` pierwszego workspace\n  - Przykład: `{{get_user.result.gid}}` aby uzyskać pole `gid` bezpośrednio\n- Możesz odwoływać się do pól na dowolnej głębokości: `{{step_id.result.data.items.0.id}}`\n- Gdy nie jesteś pewny struktury, odniesienie do całego wyniku: `{{step_id.result}}`\n\n**Styl i poprawność**\n- JSON musi być poprawny (bez komentarzy, przecinków końcowych lub dodatkowych pól).\n- Obiekt root zawiera tylko tablicę `steps`\n- Używaj jasnych i bezpośrednich nazw dla ID kroków\n- Używaj tylko narzędzi i parametrów dokładnie tak, jak określono\n- Podaj tylko wymagane lub udokumentowane argumenty dla każdego narzędzia\n- Programy powinny być minimalne, zawierać tylko tyle kroków ile potrzeba do osiągnięcia celu\n\n**Obsługa błędów**\n- Jeśli nie podano, traktuj `on_error` jako `\"abort\"`\n- Jeśli nakazano, ustaw `\"on_error\": \"continue\"` w odpowiednich krokach, by pominąć błąd\n\n**Ważne:**\n- Najpierw używaj `code_exec_get_tools_info` aby poznać nieznane narzędzia\n- Zacznij od `{\"steps\": [...]}` (bez wrappera `program`)\n- Możesz uzyskiwać dostęp do zagnieżdżonych pól w wynikach kroków (np. `.gid`, `.0.gid`)\n- Używaj pełnych nazw narzędzi wraz z sufiksami\n- Zaplanuj pełny workflow przed wykonaniem",
+      "codeExecutionProxy": "Aby wykonywać zadania, możesz używać narzędzi code_exec_get_tools_info i code_exec_call_tool. code_exec_get_tools_info dostarcza listę innych narzędzi, których możesz użyć, oraz instrukcje wywołań dla wybranych narzędzi.\n\n**INSTRUKCJE:**\n- ZAWSZE używaj `code_exec_call_tool` do korzystania z narzędzi. Narzędzia nie są dostępne poza `code_exec_call_tool`\n- PRZED wywołaniem narzędzia: użyj `code_exec_get_tools_info`, aby poznać wymagane parametry wywołania narzędzia.\n\n**Parametry wywołania `code_exec_call_tool`:**\n- `tool_name`: Dokładna nazwa narzędzia (np. \"search_internet\", \"filesystem_read\")\n- `parameters`: Obiekt par klucz-wartość z parametrami narzędzia\n\n**Przykład:**\n```json\n{\n  \"tool_name\": \"search_internet\",\n  \"parameters\": {\n    \"query\": \"latest news about AI\"\n  }\n}\n```",
       "mermaid": "Jeśli zostaniesz poproszony o wygenerowanie wykresu Mermaid, jego kod zostanie wyświetlony użytkownikowi jako diagram.",
       "noMarkdown": "Nie używaj formatowania markdown w swoich odpowiedziach. Używaj tylko zwykłego tekstu. Nie używaj **pogrubienia**, *kursywy*, `kodu`, ```bloków kodu``` ani żadnej innej składni markdown. Jeśli używasz tabeli, korzystaj wyłącznie z tabel w zwykłym tekście z odpowiednimi odstępami do wyrównania kolumn.",
       "toolRetry": "Podczas wywoływania narzędzi, jeśli otrzymasz błąd wejścia, przeanalizuj błąd i spróbuj go naprawić, a następnie ponownie wywołaj narzędzie."
@@ -2332,15 +2339,21 @@
       "running": "Pobieranie zawartości…"
     },
     "code_exec": {
+      "callTool": {
+        "completed": "Pomyślnie wykonano {tool}",
+        "error": "Błąd podczas wykonywania narzędzia: {error}",
+        "preparing": "Przygotowywanie do wywołania narzędzia...",
+        "running": "Wykonywanie {tool}..."
+      },
       "getToolsInfo": {
         "completed": "Pobrano informacje o {count} narzędziach",
         "error": "Błąd podczas pobierania informacji o narzędziach: {error}",
         "running": "Pobieranie informacji o narzędziach…"
       },
-      "preparing": "Przygotowywanie do wykonania przepływu pracy…",
       "runProgram": {
         "completed": "Program wykonany pomyślnie",
         "error": "Błąd podczas wykonywania programu: {error}",
+        "preparing": "Przygotowywanie do wykonania workflow...",
         "running": "Wykonywanie programu…"
       }
     },
@@ -2825,6 +2838,14 @@
       "capabilities": {
         "artifacts": "Nakaz modelowi tworzenia artefaktów",
         "title": "Dodatkowe Instrukcje"
+      },
+      "codeExecution": {
+        "disabled": "Wyłączone",
+        "label": "Oszczędzanie tokenów",
+        "program": "Tryb agresywny",
+        "programHelp": "Maksymalne oszczędzanie tokenów. Model tworzy programy łączące wiele wywołań narzędzi, ograniczając wymianę informacji w obie strony.",
+        "proxy": "Tryb lekki",
+        "proxyHelp": "Umiarkowane oszczędzanie tokenów. Model wywołuje narzędzia pojedynczo przez mechanizm proxy."
       },
       "disableStreaming": "Wyłącz przesyłanie streaming",
       "instructions": {

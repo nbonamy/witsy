@@ -1,11 +1,9 @@
 
-import { IPlugin, LlmEngine, LlmTool, MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
+import { LlmTool, MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
 import { anyDict } from 'types/index'
 import { t } from '../i18n'
-import LlmUtils from '../llm_utils'
 import { generateSimpleSchema } from '../schema'
-
-export const kCodeExecutionPluginPrefix = 'code_exec_'
+import CodeExecutionBase, { kCodeExecutionPluginPrefix } from './code_exec_base'
 
 class VariableResolutionError extends Error {
   constructor(toolName: string) {
@@ -16,48 +14,16 @@ class VariableResolutionError extends Error {
   }
 }
 
-export default class CodeExecutionPlugin extends MultiToolPlugin {
-
-  private plugins: IPlugin[] = []
-  private tools: LlmTool[] = []
-  private toolResultSchemas: Record<string, any> = {}
-
-  constructor() {
-    super()
-    this.loadSchemas()
-  }
+/**
+ * Advanced code execution plugin for multi-step workflow orchestration.
+ * Provides tools for:
+ * - run_program: Execute multi-step workflows with variable substitution
+ * - get_tools_info: Get information about available tools
+ */
+export default class CodeExecutionProgramPlugin extends CodeExecutionBase implements MultiToolPlugin {
 
   isEnabled(): boolean {
     return true
-  }
-
-  private loadSchemas(): void {
-    try {
-      const codeExecData = window.api.codeExecution.load()
-      if (codeExecData && codeExecData.schemas) {
-        this.toolResultSchemas = codeExecData.schemas
-      }
-    } catch (error) {
-      console.warn('[code_exec] Failed to load schemas:', error)
-    }
-  }
-
-  private saveSchemas(): void {
-    try {
-      let codeExecData = window.api.codeExecution.load()
-      if (!codeExecData) codeExecData = { schemas: {} }
-      codeExecData.schemas = this.toolResultSchemas
-      window.api.codeExecution.save(codeExecData)
-    } catch (error) {
-      console.error('[code_exec] Failed to save schemas:', error)
-    }
-  }
-
-  async install(engine: LlmEngine): Promise<void> {
-    this.plugins = engine.plugins
-    this.tools = await (engine as any).getAvailableTools()
-    engine.clearPlugins()
-    engine.addPlugin(this)
   }
 
   getName(): string {
@@ -65,7 +31,7 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
   }
 
   getPreparationDescription(): string {
-    return t('plugins.code_exec.preparing')
+    return t('plugins.code_exec.runProgram.preparing')
   }
 
   getRunningDescription(tool: string, args: anyDict): string {
@@ -110,30 +76,32 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
             required: ['tools_names']
           }
         }
-      }, {
-      type: 'function' as const,
-      function: {
-        name: `${kCodeExecutionPluginPrefix}run_program`,
-        description: t('plugins.code_exec.runProgram.description'),
-        parameters: {
-          type: 'object',
-          properties: {
-            program: {
-              type: 'object',
-              description: 'The program to execute with a steps array. Each step has: id (string), tool (string), args (object with {{step_id.path}} for variable substitution)',
-            }
-          },
-          required: ['program']
+      },
+      {
+        type: 'function' as const,
+        function: {
+          name: `${kCodeExecutionPluginPrefix}run_program`,
+          description: t('plugins.code_exec.runProgram.description'),
+          parameters: {
+            type: 'object',
+            properties: {
+              program: {
+                type: 'object',
+                description: 'The program to execute with a steps array. Each step has: id (string), tool (string), args (object with {{step_id.path}} for variable substitution)',
+              }
+            },
+            required: ['program']
+          }
         }
       }
-    }]
+    ]
   }
 
   handlesTool(name: string): boolean {
     return name.startsWith(kCodeExecutionPluginPrefix)
   }
 
-  private toString(value: any): string {
+  private valueToString(value: any): string {
     if (value === null) return 'null'
     if (value === undefined) return 'undefined'
     if (typeof value === 'object' || Array.isArray(value)) {
@@ -154,7 +122,7 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
       // Find all {{variable}} patterns
       return value.replace(/\{\{([^}]+)\}\}/g, (match, path) => {
         const resolved = this.resolvePath(path.trim(), results)
-        return resolved !== undefined ? this.toString(resolved) : match
+        return resolved !== undefined ? this.valueToString(resolved) : match
       })
     } else if (Array.isArray(value)) {
       return value.map(item => this.resolveVariables(item, results))
@@ -184,21 +152,10 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
   }
 
   /**
-   * Get schema for a tool from the schemas map, formatted as a string
-   */
-  private getSchemaDescription(toolName: string): string {
-    const schema = this.toolResultSchemas[toolName]
-    if (schema) {
-      return JSON.stringify(schema.schema)
-    }
-    return 'Schema not available'
-  }
-
-  /**
    * Resolve a path like "step_id.result.data.0.gid" to the actual value
    */
   private resolvePath(path: string, results: Map<string, any>): any {
-    
+
     const parts = path.split('.')
     const firstPart = parts[0]
 
@@ -295,30 +252,74 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
     return value
   }
 
-  getError(res: any) {
-    if (res.error) {
-      return res.error
+  /**
+   * Execute a single tool call
+   */
+  protected async callTool(context: PluginExecutionContext, toolName: string, args: anyDict): Promise<any> {
+    // Get the plugin for this tool
+    const plugin = this.getPluginForTool(toolName)
+    if (!plugin) {
+      return { error: `Tool "${toolName}" not found` }
     }
-    if (typeof res === 'string' && res.toLowerCase().startsWith('error')) {
-      try {
-        const parsed = LlmUtils.parseJson(res)
-        if (parsed) {
-          if (parsed.error) {
-            return parsed.error
-          } else if (parsed.message) {
-            return parsed.message
-          } else {
-            return parsed
-          }
-        }
-      } catch {
-        return res
-      }
-      return res
-    }
-    return null
-  }
 
+    // Handle args for multi-tool plugins
+    let toolArgs = args
+    if (plugin instanceof MultiToolPlugin) {
+      toolArgs = {
+        tool: toolName,
+        parameters: args
+      }
+    }
+
+    // Execute the tool
+    const response = await plugin.execute(context, toolArgs)
+
+    // Unwrap response to get result
+    let result: any = response
+    if (typeof response === 'object' && response !== null && 'result' in response) {
+      result = response.result
+    }
+    if (typeof result === 'string') {
+      try {
+        result = JSON.parse(result)
+      } catch {
+        // Not JSON, keep as string
+      }
+    }
+
+    // Check error
+    let err = this.getError(result)
+    if (err) {
+      return { error: err }
+    }
+
+    // Auto-unwrap .data for easier access
+    if (result.data) {
+      result = result.data
+    }
+
+    // Check error again after unwrapping
+    err = this.getError(result)
+    if (err) {
+      return { error: err }
+    }
+
+    // Generate and store schema for this tool's result
+    try {
+      const schema = generateSimpleSchema(result)
+      if (!this.toolResultSchemas[toolName]) {
+        this.toolResultSchemas[toolName] = {}
+      }
+      this.toolResultSchemas[toolName].schema = schema
+      this.saveSchemas()
+    } catch (schemaError) {
+      // Silently fail schema generation - not critical
+      console.warn(`Failed to generate schema for ${toolName}:`, schemaError)
+    }
+
+    return result
+  }
+  
   async *executeWithUpdates(context: PluginExecutionContext, payload: any) {
 
     const { tool, parameters } = payload
@@ -326,27 +327,8 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
     if (tool === `${kCodeExecutionPluginPrefix}get_tools_info`) {
       yield {
         type: 'result',
-        result: {
-          tools_info: parameters.tools_names.map((name: string) => {
-          const foundTool = this.tools.find(t => t.function.name === name)
-          if (!foundTool) {
-            return {
-              name,
-              error: `Tool "${name}" not found`
-            }
-          }
-          const toolInfo: any = {
-            name: foundTool.function.name,
-            description: foundTool.function.description,
-            parameters: foundTool.function.parameters
-          }
-          // Add result_schema if available
-          if (this.toolResultSchemas[name]) {
-            toolInfo.result_schema = this.getSchemaDescription(name)
-          }
-          return toolInfo
-        })
-      }}
+        result: this.getToolsInfo(parameters.tools_names)
+      }
       return
     }
 
@@ -389,7 +371,7 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
       }
 
       try {
-        
+
         // Resolve variables in args
         let resolvedArgs = {}
         try {
@@ -408,69 +390,11 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
           }
         }
 
-        // Get the plugin for this tool
-        const plugin = this.getPluginForTool(step.tool)
-        if (!plugin) {
-          const error = `Tool "${step.tool}" not found`
-          this.saveSchemas()
-          yield {
-            type: 'status',
-            status: `Failed step ${step.id}: ${error}`
-          }
-          yield {
-            type: 'result',
-            result: { error, failedStep: step.id }
-          }
-          return
-        }
+        // Use base class call_tool method
+        const result = await this.callTool(context, step.tool, resolvedArgs)
 
-        // handle args for multi-tool plugins
-        let toolArgs = resolvedArgs
-        if (plugin instanceof MultiToolPlugin) {
-          toolArgs = {
-            tool: step.tool,
-            parameters: resolvedArgs
-          }
-        }
-
-        // Execute the tool
-        const response = await plugin.execute(context, toolArgs)
-
-        // hopefully JSON
-        let result: any = response
-        if (typeof response === 'object' && response !== null && 'result' in response) {
-          result = response.result
-        }
-        if (typeof result === 'string') {
-          try {
-            result = JSON.parse(result)
-          } catch {
-            // Not JSON, keep as string
-          }
-        }
-
-        // check error
-        let err = this.getError(result)
-        if (err) {
-          this.saveSchemas()
-          yield {
-            type: 'status',
-            status: `Failed step ${step.id}: ${err}`
-          }
-          yield {
-            type: 'result',
-            result: { error: err, failedStep: step.id }
-          }
-          return
-        }
-
-        // make it easier to access in later steps
-        if (result.data) {
-          result = result.data
-        }
-
-        // check error
-        err = this.getError(result)
+        // Check for errors
+        const err = this.getError(result)
         if (err) {
           this.saveSchemas()
           yield {
@@ -491,18 +415,6 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
           result: result
         })
         finalResult = result
-
-        // Generate and store schema for this tool's result
-        try {
-          const schema = generateSimpleSchema(result)
-          if (!this.toolResultSchemas[step.tool]) {
-            this.toolResultSchemas[step.tool] = {}
-          }
-          this.toolResultSchemas[step.tool].schema = schema
-        } catch (schemaError) {
-          // Silently fail schema generation - not critical
-          console.warn(`Failed to generate schema for ${step.tool}:`, schemaError)
-        }
 
         // Yield status update: completed step
         yield {
@@ -547,27 +459,5 @@ export default class CodeExecutionPlugin extends MultiToolPlugin {
       }
     }
     return lastResult
-  }
-
-  protected getPluginForTool(tool: string): IPlugin|null {
-
-    const plugin = this.plugins.find((plugin) => plugin.getName() === tool)
-    if (plugin) {
-      return plugin as IPlugin
-    }
-
-    // try multi-tools
-    for (const plugin of Object.values(this.plugins)) {
-      if (plugin instanceof MultiToolPlugin) {
-        const multiToolPlugin = plugin as MultiToolPlugin
-        if (multiToolPlugin.handlesTool(tool)) {
-          return plugin
-        }
-      }
-    }
-
-    // not found
-    return null
-
   }
 }

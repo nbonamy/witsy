@@ -37,25 +37,25 @@
 
 <script setup lang="ts">
 import { LlmEngine } from 'multi-llm-ts'
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { FileContents } from 'types/file'
+import { ScratchpadData, ScratchpadHeader } from 'types/index'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import Chat from '../../models/chat'
+import Message from '../../models/message'
+import useAudioPlayer, { AudioState, AudioStatus } from '../audio/audio_player'
 import ContextMenuPlus from '../components/ContextMenuPlus.vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt, { SendPromptParams } from '../components/Prompt.vue'
-import useAudioPlayer, { AudioState, AudioStatus } from '../audio/audio_player'
-import Dialog from '../utils/dialog'
 import useEventBus from '../composables/event_bus'
-import LlmFactory, { ILlmManager } from '../services/llms/llm'
-import Chat from '../../models/chat'
-import Message from '../../models/message'
-import { availablePlugins } from '../services/plugins/plugins'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
 import ScratchpadSettings from '../scratchpad/Settings.vue'
 import ScratchpadSidebar from '../scratchpad/Sidebar.vue'
 import Generator, { GenerationResult } from '../services/generator'
 import { fullExpertI18n, i18nInstructions, t } from '../services/i18n'
+import LlmFactory, { ILlmManager } from '../services/llms/llm'
+import { availablePlugins } from '../services/plugins/plugins'
 import { store } from '../services/store'
-import { FileContents } from 'types/file'
-import { ScratchpadHeader, ScratchpadData } from 'types/index'
+import Dialog from '../utils/dialog'
 
 export interface ToolbarAction {
   type: string,
@@ -180,12 +180,20 @@ onMounted(() => {
   resetState()
 
   // query params
-  if (props.extra && props.extra.textId) {
-    const text = window.api.automation.getText(props.extra.textId)
-    editor.value.setContent({ content: text })
+  if (props.extra && props.extra.scratchpadId) {
+    loadScratchpadsList()
+    onSelectScratchpad({ uuid: props.extra.scratchpadId } as ScratchpadHeader)
   }
 
 })
+
+// Watch for extra prop changes (when component is already mounted)
+watch(() => props.extra, (newExtra) => {
+  if (newExtra && newExtra.scratchpadId) {
+    loadScratchpadsList()
+    onSelectScratchpad({ uuid: newExtra.scratchpadId } as ScratchpadHeader)
+  }
+}, { deep: true })
 
 onBeforeUnmount(() => {
   window.api.off('start-dictation', onStartDictation)

@@ -69,7 +69,8 @@
 <script setup lang="ts">
 
 import { EyeIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
-import { PropType, onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import { Agent } from 'types/agents'
+import { onMounted, ref, watch } from 'vue'
 import LogoA2A from '../../../assets/a2a.svg?component'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
@@ -77,7 +78,6 @@ import SpinningIcon from '../components/SpinningIcon.vue'
 import { useTimeAgo } from '../composables/ago'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { Agent, AgentRun } from 'types/agents'
 
 const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson'])
 
@@ -85,13 +85,13 @@ const agents = ref<Agent[]>([])
 const startingAgents = ref<string[]>([])
 
 onMounted(() => {
-  agents.value = window.api.agents.list(store.config.workspaceId)
-  window.api.on('agent-run-update', onAgentRunUpdate)
+  load()
+  watch(() => store.agents, load)
 })
 
-onBeforeUnmount(() => {
-  window.api.off('agent-run-update', onAgentRunUpdate)
-})
+const load = () => {
+  agents.value = store.agents.sort((a: Agent, b: Agent) => a.name.localeCompare(b.name))
+}
 
 const onAgentRun = async (agent: Agent) => {
   emit('run', agent)
@@ -100,16 +100,6 @@ const onAgentRun = async (agent: Agent) => {
     const idx = startingAgents.value.indexOf(agent.uuid)
     if (idx !== -1) startingAgents.value.splice(idx, 1)
   }, 1000)
-}
-
-const onAgentRunUpdate = (data: { agentId: string }) => {
-  const index = agents.value.findIndex(a => a.uuid === data.agentId)
-  const agent = window.api.agents.load(store.config.workspaceId, data.agentId)
-  if (index === -1) {
-    agents.value.push(agent)
-  } else {
-    agents.value.splice(index, 1, agent)
-  }
 }
 
 const lastRun = (agent: Agent) => {
