@@ -928,6 +928,10 @@
       "text": "Enter your search query to find relevant information in this knowledge base.",
       "title": "Search Knowledge Base"
     },
+    "status": {
+      "done": "Ready",
+      "wip": "Indexing"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

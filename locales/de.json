@@ -910,6 +910,10 @@
       "text": "Geben Sie Ihre Suchanfrage ein, um relevante Informationen in dieser Wissensdatenbank zu finden.",
       "title": "Wissensdatenbank durchsuchen"
     },
+    "status": {
+      "done": "Fertig",
+      "wip": "Indizierung"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

@@ -929,6 +929,10 @@
       "text": "输入您的搜索查询以在此知识库中查找相关信息。",
       "title": "搜索知识库"
     },
+    "status": {
+      "done": "已完成",
+      "wip": "编制中"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

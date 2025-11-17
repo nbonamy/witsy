@@ -604,7 +604,7 @@ export default class DocumentRepository {
   }
 
   private async processQueue(): Promise<void> {
-    
+
     // we are already processing
     if (this.processing) {
       return
@@ -635,12 +635,12 @@ export default class DocumentRepository {
         // remove item from queue and save
         this.queue.shift()
         this.save()
-        
+
         // notify about the result
         this.notifyQueueItemResult(queueItem, error)
-      
+
       }
-    
+
     } catch (error) {
       console.error('[rag] Error processing document', error)
     }

@@ -929,6 +929,10 @@
       "text": "ナレッジベース内で関連情報を見つけるために検索クエリを入力してください。",
       "title": "ナレッジベース検索"
     },
+    "status": {
+      "done": "準備完了",
+      "wip": "インデックス作成中"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {
