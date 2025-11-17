@@ -929,6 +929,10 @@
       "text": "Digite sua consulta de pesquisa para encontrar informações relevantes nesta base de conhecimento.",
       "title": "Pesquisar Base de Conhecimento"
     },
+    "status": {
+      "done": "Pronto",
+      "wip": "Indexando"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

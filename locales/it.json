@@ -910,6 +910,10 @@
       "text": "Inserisci la tua query per trovare informazioni pertinenti in questa knowledge base.",
       "title": "Cerca nella Knowledge Base"
     },
+    "status": {
+      "done": "Pronto",
+      "wip": "Indicizzazione"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Import Markdown failing in Release
 - Message refresh bug when streaming
 - Commands menu disappeared (https://github.com/nbonamy/witsy/issues/486)
+- Large documents embedding freezes UI
 
 ### Removed
 - N/A

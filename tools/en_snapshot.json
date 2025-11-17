@@ -613,6 +613,8 @@
   "docRepo.search.score": "Relevance Score: {score}",
   "docRepo.search.text": "Enter your search query to find relevant information in this knowledge base.",
   "docRepo.search.title": "Search Knowledge Base",
+  "docRepo.status.wip": "Indexing",
+  "docRepo.status.done": "Ready",
   "docRepo.view.noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
   "docRepo.view.tooltips.addFile": "Add files",
   "docRepo.view.tooltips.addFolder": "Add folder",

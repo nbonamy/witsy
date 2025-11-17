@@ -910,6 +910,10 @@
       "text": "Ingrese su consulta de búsqueda para encontrar información relevante en esta base de conocimientos.",
       "title": "Buscar en la Base de Conocimientos"
     },
+    "status": {
+      "done": "Listo",
+      "wip": "Indexando"
+    },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the buttons below to add documents or folders.",
       "tooltips": {

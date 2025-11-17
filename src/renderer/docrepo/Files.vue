@@ -18,8 +18,8 @@
             <div class="subtext" v-else>{{ filesize(doc.fileSize) }}</div>
           </div>
           <div class="actions">
-            <div class="tag info" v-if="processingItems.includes(doc.uuid)">Indexing</div>
-            <div class="tag success" v-else>Ready</div>
+            <div class="tag info" v-if="processingItems.includes(doc.uuid)">{{ t('docRepo.status.wip') }}</div>
+            <div class="tag success" v-else>{{ t('docRepo.status.done') }}</div>
             <SearchIcon
               :style="{ visibility: doc.type === 'folder' ? 'visible' : 'hidden' }"
               class="icon view-contents" 
@@ -33,7 +33,7 @@
               @click="onOpenInExplorer(doc)" 
             />
             <Trash2Icon
-              class="icon remove" 
+              class="icon remove" :class="{ disabled: processingItems.includes(doc.uuid) }"
               v-tooltip="{ text: t('common.delete'), position: 'left' }"
               @click="onDelDoc(doc)" 
             />
@@ -133,8 +133,12 @@ const onAddFiles = async () => {
   
   loading.value = true
   try {
+    // Don't await - let documents be added to queue asynchronously
+    // The UI will be updated via IPC events when processing completes
     for (const file of files) {
-      await window.api.docrepo.addDocument(props.selectedRepo.uuid, 'file', file)
+      window.api.docrepo.addDocument(props.selectedRepo.uuid, 'file', file).catch(error => {
+        console.error('Error adding file:', error)
+      })
     }
   } catch (error) {
     console.error('Error adding files:', error)
@@ -148,7 +152,11 @@ const onAddFolder = async () => {
   if (!folder) return
   loading.value = true
   try {
-    await window.api.docrepo.addDocument(props.selectedRepo.uuid, 'folder', folder)
+    // Don't await - let folder be added to queue asynchronously
+    // The UI will be updated via IPC events when processing completes
+    window.api.docrepo.addDocument(props.selectedRepo.uuid, 'folder', folder).catch(error => {
+      console.error('Error adding folder:', error)
+    })
   } catch (error) {
     console.error('Error adding folder:', error)
     loading.value = false

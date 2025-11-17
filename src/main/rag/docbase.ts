@@ -174,8 +174,9 @@ export default class DocumentBaseImpl {
     // check the size
     const maxDocumentSizeMB = config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
     if (text.length > maxDocumentSizeMB * 1024 * 1024) {
-      console.log(`[rag] Document is too large (max ${maxDocumentSizeMB}MB)`, source.origin)
-      throw new Error(`Document is too large (max ${maxDocumentSizeMB}MB)`)
+      const sizeMB = (text.length / (1024 * 1024)).toFixed(1)
+      console.log(`[rag] Document is too large (${sizeMB}MB, max ${maxDocumentSizeMB}MB)`, source.origin)
+      throw new Error(`Document is too large: ${sizeMB}MB (maximum allowed: ${maxDocumentSizeMB}MB). Please reduce the file size or adjust the limit in settings.`)
     }
 
     // set title if web page
@@ -207,7 +208,7 @@ export default class DocumentBaseImpl {
     let batchIndex = 0
     const embedder = await Embedder.init(this.app, config, this.embeddingEngine, this.embeddingModel)
     while (chunks.length > 0) {
-      
+
       // log
       if (++batchIndex % logInterval === 0) {
         console.log(`[rag] Embedding batch ${batchIndex} of ${batchCount} (${chunks.length} chunks left)`)
@@ -232,6 +233,7 @@ export default class DocumentBaseImpl {
           transactionSize = 0
         }
       }
+
     }
 
     // finalize
