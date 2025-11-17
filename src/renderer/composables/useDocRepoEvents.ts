@@ -2,7 +2,8 @@ import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { DocRepoAddDocResponse, DocumentQueueItem } from 'types/rag'
 import Dialog from '../utils/dialog'
 
-export function useDocRepoEvents() {
+export function useDocRepoEvents(type: string) {
+  
   const loading = ref(false)
   const processingItems = ref<string[]>([])
 
@@ -22,7 +23,9 @@ export function useDocRepoEvents() {
   const onAddDocError = (payload: DocRepoAddDocResponse) => {
     const queueLength = payload.queueLength
     loading.value = queueLength > 0
-    Dialog.alert(payload.error)
+    if (payload.queueItem?.type === type) {
+      Dialog.alert(payload.error)
+    }
   }
 
   const onDelDocDone = () => {

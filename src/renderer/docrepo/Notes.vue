@@ -58,7 +58,7 @@ const props = defineProps<{
 }>()
 
 // use composable for IPC events
-const { loading, processingItems } = useDocRepoEvents()
+const { loading, processingItems } = useDocRepoEvents('text')
 
 // internal state
 const noteEditorRef = ref<InstanceType<typeof NoteEditor> | null>(null)

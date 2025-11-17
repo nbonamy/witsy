@@ -70,7 +70,7 @@ const props = defineProps<{
 }>()
 
 // use composable for IPC events
-const { loading, processingItems } = useDocRepoEvents()
+const { loading, processingItems } = useDocRepoEvents('file')
 
 // internal state
 const folderRef = ref<InstanceType<typeof Folder> | null>(null)
