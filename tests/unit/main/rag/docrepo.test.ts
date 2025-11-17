@@ -615,3 +615,126 @@ test('Docrepo add child document with missing parent', async () => {
   // Cleanup
   fs.rmSync(tempFile, { force: true })
 })
+
+test('Docrepo cancel task in queue', async () => {
+
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Add multiple documents to queue
+  const tempdir = createTempDir()
+  await docrepo.addDocumentSource(docbase, 'file', path.join(tempdir, 'docrepo.json'), true)
+  const taskId2 = await docrepo.addDocumentSource(docbase, 'file', path.join(tempdir, 'docrepo2.json'), true)
+
+  // Cancel the second task before it starts processing
+  expect(docrepo.queueLength()).toBe(2)
+  docrepo.cancelTask(taskId2)
+
+  // Wait for first task to complete
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // Check that only first document was added
+  const list = docrepo.list('workspace')
+  expect(list[0].documents).toHaveLength(1)
+  expect(list[0].documents[0].origin).toBe(path.join(tempdir, 'docrepo.json'))
+
+  fs.rmSync(tempdir, { recursive: true, force: true })
+})
+
+test('Docrepo cancel currently processing task', async () => {
+
+  ragConfig.chunkSize = 100
+  ragConfig.chunkOverlap = 20
+
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Add a very large folder to ensure long processing time
+  const tempdir = createTempDir()
+  // Add many more files to make processing slower
+  for (let i = 0; i < 10; i++) {
+    const largeFile = path.join(tempdir, `large${i}.json`)
+    fs.writeFileSync(largeFile, JSON.stringify({ data: 'x'.repeat(50000) }))
+  }
+
+  const taskId = await docrepo.addDocumentSource(docbase, 'folder', tempdir, true)
+
+  // Wait for processing to start
+  await new Promise(resolve => setTimeout(resolve, 100))
+
+  // Cancel while processing
+  docrepo.cancelTask(taskId)
+
+  // Wait for queue to be empty
+  await vi.waitUntil(() => docrepo.queueLength() == 0, { timeout: 10000 })
+
+  // Folder might be added but children should be cancelled
+  // Just verify no crash and queue cleared
+  const list = docrepo.list('workspace')
+  expect(list[0].documents.length).toBeLessThanOrEqual(1)
+
+  // If folder was added, it should have fewer than all children
+  if (list[0].documents.length === 1) {
+    expect(list[0].documents[0].items.length).toBeLessThan(10)
+  }
+
+  fs.rmSync(tempdir, { recursive: true, force: true })
+})
+
+test('Docrepo cancel folder processing', async () => {
+
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Create folder with multiple files
+  const tempdir = createTempDir()
+
+  const taskId = await docrepo.addDocumentSource(docbase, 'folder', tempdir, true)
+
+  // Wait a bit for processing to start
+  await new Promise(resolve => setTimeout(resolve, 50))
+
+  // Cancel while processing folder children
+  docrepo.cancelTask(taskId)
+
+  // Wait for queue to be empty
+  await vi.waitUntil(() => docrepo.queueLength() == 0, { timeout: 5000 })
+
+  // Folder might be partially added - just verify no crash and queue cleared
+  const list = docrepo.list('workspace')
+  expect(list[0].documents.length).toBeLessThanOrEqual(1)
+
+  fs.rmSync(tempdir, { recursive: true, force: true })
+})
+
+test('Docrepo cancel non-existent task', () => {
+
+  const docrepo = new DocumentRepository(app)
+
+  // Cancelling a non-existent task should not throw
+  expect(() => docrepo.cancelTask('non-existent-task-id')).not.toThrow()
+})
+
+test('Docrepo cancel task at queue position 0', async () => {
+
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Add a document
+  const tempFile = path.join(os.tmpdir(), 'test_doc.json')
+  fs.writeFileSync(tempFile, '{"test": "data"}')
+
+  const taskId = await docrepo.addDocumentSource(docbase, 'file', tempFile, true)
+
+  // Immediately cancel (task should be at index 0, being processed)
+  docrepo.cancelTask(taskId)
+
+  // Wait for queue to be empty
+  await vi.waitUntil(() => docrepo.queueLength() == 0, { timeout: 5000 })
+
+  // Document should not be added
+  const list = docrepo.list('workspace')
+  expect(list[0].documents).toHaveLength(0)
+
+  fs.rmSync(tempFile, { force: true })
+})

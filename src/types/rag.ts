@@ -78,6 +78,7 @@ export interface DocumentQueueItem {
   parentDocId?: string
   operation: 'add' | 'update' | 'delete'
   fromUserAction: boolean
+  taskId?: string
 }
 
 export type DocRepoAddDocResponse = {

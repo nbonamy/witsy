@@ -72,7 +72,7 @@ export default class DocumentBaseImpl {
     }
   }
 
-  async addDocumentSource(uuid: string, type: SourceType, url: string, title?: string, callback?: VoidFunction): Promise<string|null> {
+  async addDocumentSource(uuid: string, type: SourceType, url: string, title?: string, callback?: VoidFunction, abortController?: AbortController): Promise<string|null> {
 
     // check existing
     let source = this.documents.find(d => d.uuid === uuid)
@@ -88,14 +88,14 @@ export default class DocumentBaseImpl {
       // we add first so container is visible
       this.documents.push(source)
       callback?.()
-      await this.addFolder(source, callback)
+      await this.addFolder(source, callback, abortController)
 
     } else if (type === 'sitemap') {
 
       // we add first so container is visible
       this.documents.push(source)
       callback?.()
-      await this.addSitemap(source, callback)
+      await this.addSitemap(source, callback, abortController)
 
     } else {
 
@@ -105,7 +105,7 @@ export default class DocumentBaseImpl {
 
       // we add only when it's done
       try {
-        await this.addDocument(source, callback)
+        await this.addDocument(source, callback, abortController)
       } catch (error) {
         console.error('[rag] Error adding document', error)
         this.documents = this.documents.filter(d => d.uuid !== source.uuid)
@@ -123,7 +123,7 @@ export default class DocumentBaseImpl {
 
   }
 
-  async processChildDocumentSource(uuid: string, type: SourceType, url: string, callback: VoidFunction): Promise<string> {
+  async processChildDocumentSource(uuid: string, type: SourceType, url: string, callback: VoidFunction, abortController?: AbortController): Promise<string> {
 
     // find existing child document in any folder
     let source: DocumentSourceImpl | undefined
@@ -139,7 +139,7 @@ export default class DocumentBaseImpl {
     }
 
     // only process the content - don't add to root documents array
-    await this.addDocument(source, callback)
+    await this.addDocument(source, callback, abortController)
 
     // log
     console.log(`[rag] Processed child document "${source.url}" in database "${this.name}"`)
@@ -149,10 +149,15 @@ export default class DocumentBaseImpl {
 
   }
 
-  async addDocument(source: DocumentSourceImpl, callback?: VoidFunction): Promise<void> {
+  async addDocument(source: DocumentSourceImpl, callback?: VoidFunction, abortController?: AbortController): Promise<void> {
 
     // make sure we are connected
     await this.connect()
+
+    // check if cancelled
+    if (abortController?.signal.aborted) {
+      throw new Error()
+    }
 
     // needed
     const config: Configuration = loadSettings(this.app)
@@ -169,6 +174,11 @@ export default class DocumentBaseImpl {
     if (!text) {
       console.log('[rag] Unable to load document', source.origin)
       throw new Error('Unable to load document')
+    }
+
+    // check if cancelled after loading
+    if (abortController?.signal.aborted) {
+      throw new Error()
     }
 
     // check the size
@@ -189,7 +199,7 @@ export default class DocumentBaseImpl {
     // now split
     console.log(`[rag] Splitting document into chunks`)
     const splitter = new Splitter(config)
-    const chunks = await splitter.split(text)
+    const chunks = await splitter.split(text, abortController)
 
     // loose estimate of the batch size based on:
     // 1 token = 4 bytes
@@ -203,40 +213,55 @@ export default class DocumentBaseImpl {
     let transactionSize = 0
     await this.db.beginTransaction()
 
-    // now embed and store
-    let batchIndex = 0
-    const embedder = await Embedder.init(this.app, config, this.embeddingEngine, this.embeddingModel)
-    while (chunks.length > 0) {
+    try {
+      // now embed and store
+      let batchIndex = 0
+      const embedder = await Embedder.init(this.app, config, this.embeddingEngine, this.embeddingModel)
+      while (chunks.length > 0) {
 
-      // log
-      if (++batchIndex % logInterval === 0) {
-        console.log(`[rag] Embedding batch ${batchIndex} of ${batchCount} (${chunks.length} chunks left)`)
-      }
-
-      // embed
-      const batch = chunks.splice(0, batchSize)
-      const embeddings = await embedder.embed(batch)
-      //console.log('Embeddings', JSON.stringify(embeddings, null, 2))
-
-      // store each embedding as a document
-      for (let i = 0; i < batch.length; i++) {
-        await this.db.insert(source.uuid, batch[i], embeddings[i], {
-          uuid: source.uuid,
-          type: source.type,
-          title: source.title,
-          url: source.url
-        })
-        if (++transactionSize === 1000) {
-          await this.db.commitTransaction()
-          await this.db.beginTransaction()
-          transactionSize = 0
+        // check if cancelled before each batch
+        if (abortController?.signal.aborted) {
+      throw new Error()
         }
+
+        // log
+        if (++batchIndex % logInterval === 0) {
+          console.log(`[rag] Embedding batch ${batchIndex} of ${batchCount} (${chunks.length} chunks left)`)
+        }
+
+        // embed
+        const batch = chunks.splice(0, batchSize)
+        const embeddings = await embedder.embed(batch)
+        //console.log('Embeddings', JSON.stringify(embeddings, null, 2))
+
+        // store each embedding as a document
+        for (let i = 0; i < batch.length; i++) {
+          await this.db.insert(source.uuid, batch[i], embeddings[i], {
+            uuid: source.uuid,
+            type: source.type,
+            title: source.title,
+            url: source.url
+          })
+          if (++transactionSize === 1000) {
+            await this.db.commitTransaction()
+            await this.db.beginTransaction()
+            transactionSize = 0
+          }
+        }
+
       }
 
+      // finalize
+      await this.db.commitTransaction()
+    } catch (error) {
+      // Cancel transaction on error or cancellation
+      try {
+        this.db.cancelTransaction()
+      } catch (cancelError) {
+        console.error('[rag] Error cancelling transaction:', cancelError)
+      }
+      throw error
     }
-
-    // finalize
-    await this.db.commitTransaction()
 
     // Update metadata after successful processing (for file system sources only)
     if (source.type === 'file' || source.type === 'folder') {
@@ -257,15 +282,22 @@ export default class DocumentBaseImpl {
   private async addChildDocuments(
     source: DocumentSourceImpl,
     childItems: Array<{ type: SourceType, origin: string }>,
-    callback: VoidFunction
+    callback: VoidFunction,
+    abortController?: AbortController
   ): Promise<void> {
     await this.connect()
 
     let added = 0
     for (const item of childItems) {
+      // Check if cancelled before processing each child
+      if (abortController?.signal.aborted) {
+        throw new Error()
+      }
+
       try {
         const doc = new DocumentSourceImpl(crypto.randomUUID(), item.type, item.origin)
-        await this.addDocument(doc)
+        // Don't pass callback to addDocument - we control callback frequency here
+        await this.addDocument(doc, undefined, abortController)
         source.items.push(doc)
 
         if ((++added) % ADD_COMMIT_EVERY === 0) {
@@ -278,18 +310,18 @@ export default class DocumentBaseImpl {
     callback?.()
   }
 
-  async addFolder(source: DocumentSourceImpl, callback: VoidFunction): Promise<void> {
+  async addFolder(source: DocumentSourceImpl, callback: VoidFunction, abortController?: AbortController): Promise<void> {
     const files = file.listFilesRecursively(source.origin)
     const items = files.map(f => ({ type: 'file' as SourceType, origin: f }))
-    await this.addChildDocuments(source, items, callback)
+    await this.addChildDocuments(source, items, callback, abortController)
   }
 
-  async addSitemap(source: DocumentSourceImpl, callback: VoidFunction): Promise<void> {
+  async addSitemap(source: DocumentSourceImpl, callback: VoidFunction, abortController?: AbortController): Promise<void> {
     const config: Configuration = loadSettings(this.app)
     const loader = new Loader(config)
     const urls = await loader.getSitemapUrls(source.origin)
     const items = urls.map(url => ({ type: 'url' as SourceType, origin: url }))
-    await this.addChildDocuments(source, items, callback)
+    await this.addChildDocuments(source, items, callback, abortController)
   }
 
   async deleteDocumentSource(docId: string, callback?: VoidFunction): Promise<void> {

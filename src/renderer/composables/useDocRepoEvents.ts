@@ -23,7 +23,7 @@ export function useDocRepoEvents(type: string) {
   const onAddDocError = (payload: DocRepoAddDocResponse) => {
     const queueLength = payload.queueLength
     loading.value = queueLength > 0
-    if (payload.queueItem?.type === type) {
+    if (payload.queueItem?.type === type && payload.error?.length) {
       Dialog.alert(payload.error)
     }
   }
