@@ -622,7 +622,7 @@ const onSendPrompt = () => {
       prompt: message,
       attachments: attachments.value,
       docrepo: docrepo.value,
-      expert: expert.value,
+      expert: store.experts.find((e) => e.id === expert.value?.id),
       execType: deepResearchActive.value ? 'deepresearch' : 'prompt',
     }
     emit('prompt', sendPromptParams)
