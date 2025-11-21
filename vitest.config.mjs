@@ -34,6 +34,7 @@ export default defineConfig({
       '@main': path.resolve(__dirname, 'src/main'),
       '@models': path.resolve(__dirname, 'src/models'),
       '@renderer': path.resolve(__dirname, 'src/renderer'),
+      '@root': path.resolve(__dirname, './'),
       '@screens': path.resolve(__dirname, 'src/renderer/screens'),
       '@services': path.resolve(__dirname, 'src/renderer/services'),
       '@tests': path.resolve(__dirname, 'tests'),

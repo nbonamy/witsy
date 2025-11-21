@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { emitEventMock } from '../../../../vitest.setup'
+import { emitEventMock } from '@root/vitest.setup'
 import { useWindowMock } from '../../../mocks/window'
 import { store } from '../../../../src/renderer/services/store'
 import ChatSidebar from '../../../../src/renderer/components/ChatSidebar.vue'

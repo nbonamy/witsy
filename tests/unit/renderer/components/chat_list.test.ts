@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { createI18nMock } from '../../../mocks/index'
-import { emitEventMock } from '../../../../vitest.setup'
+import { emitEventMock } from '@root/vitest.setup'
 import { useWindowMock } from '../../../mocks/window'
 import { stubTeleport } from '../../../mocks/stubs'
 import { store } from '../../../../src/renderer/services/store'

@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../../../mocks/window'
 import { createI18nMock } from '../../../mocks'
-import { emitEventMock } from '../../../../vitest.setup'
+import { emitEventMock } from '@root/vitest.setup'
 import { stubTeleport } from '../../../mocks/stubs'
 import { store } from '../../../../src/renderer/services/store'
 import Prompt from '../../../../src/renderer/components/Prompt.vue'
@@ -846,7 +846,7 @@ test('categoriesWithExperts filters and sorts categories', () => {
   expect(Array.isArray(categories)).toBe(true)
 
   // Each category should have required properties
-  categories.forEach(cat => {
+  categories.forEach((cat: any) => {
     expect(cat).toHaveProperty('id')
     expect(cat).toHaveProperty('name')
     expect(cat).toHaveProperty('icon')
@@ -877,7 +877,7 @@ test('uncategorizedExperts returns only experts without category', () => {
   expect(Array.isArray(uncategorized)).toBe(true)
 
   // None should have a categoryId
-  uncategorized.forEach(exp => {
+  uncategorized.forEach((exp: any) => {
     expect(exp.categoryId).toBeUndefined()
   })
 })

@@ -19,6 +19,7 @@
       "@main/*": [ "main/*" ],
       "@models/*": [ "models/*" ],
       "@renderer/*": [ "renderer/*" ],
+      "@root/*": [ "../*" ],
       "@screens/*": [ "renderer/screens/*" ],
       "@services/*": [ "renderer/services/*" ],
       "@tests/*": [ "../tests/*" ]

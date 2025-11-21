@@ -4,7 +4,7 @@ import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-util
 import { nextTick } from 'vue'
 import { useWindowMock } from '@tests/mocks/window'
 import { createI18nMock } from '@tests/mocks'
-import { emitEventMock } from '../../../../vitest.setup'
+import { emitEventMock } from '@root/vitest.setup'
 import { store } from '@services/store'
 import { stubTeleport } from '@tests/mocks/stubs'
 import MessageItem from '@components/MessageItem.vue'
