@@ -1,6 +1,6 @@
 
 import { Configuration } from 'types/config'
-import defaultSettings from '../../../defaults/settings.json'
+import defaultSettings from '@root/defaults/settings.json'
 
 export default class {
 

@@ -1,5 +1,5 @@
 import { computed, onBeforeUnmount, readonly, ref } from 'vue'
-import { store } from '../services/store'
+import { store } from '@services/store'
 import { StreamingChunk } from '../voice/stt'
 import useAudioRecorder from './audio_recorder'
 import useTranscriber from './transcriber'

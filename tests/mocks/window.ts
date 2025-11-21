@@ -1,14 +1,14 @@
 
 import { vi } from 'vitest'
-import defaultSettings from '../../defaults/settings.json'
-import { renderMarkdown } from '../../src/main/markdown'
-import Agent from '../../src/models/agent'
-import { AgentRun, AgentRunStatus, AgentRunTrigger } from '../../src/types/agents'
-import { FilePickParams } from '../../src/types/file'
-import { ListDirectoryResponse } from '../../src/types/filesystem'
-import { Command, Expert, ExpertCategory } from '../../src/types/index'
-import { McpInstallStatus, McpServerWithTools } from '../../src/types/mcp'
-import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
+import defaultSettings from '@root/defaults/settings.json'
+import { renderMarkdown } from '@main/markdown'
+import Agent from '@models/agent'
+import { AgentRun, AgentRunStatus, AgentRunTrigger } from '@/types/agents'
+import { FilePickParams } from '@/types/file'
+import { ListDirectoryResponse } from '@/types/filesystem'
+import { Command, Expert, ExpertCategory } from '@/types/index'
+import { McpInstallStatus, McpServerWithTools } from '@/types/mcp'
+import { DocRepoQueryResponseItem, DocumentBase } from '@/types/rag'
 
 const listeners: ((signal: string) => void)[] = []
 

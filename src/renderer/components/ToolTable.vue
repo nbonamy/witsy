@@ -23,9 +23,9 @@
 
 import { ToolSelection } from 'types/llm'
 import { ref, onMounted } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import { useTools, Tool } from '../composables/tools'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import { useTools, Tool } from '@composables/tools'
 
 const tools = ref<Tool[]>([])
 

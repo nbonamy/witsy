@@ -37,8 +37,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import ModalDialog from '../components/ModalDialog.vue'
-import Agent from '../../models/agent'
-import { t } from '../services/i18n'
+import Agent from '@models/agent'
+import { t } from '@services/i18n'
 
 interface Props {
   agent: Agent

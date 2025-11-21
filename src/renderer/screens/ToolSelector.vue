@@ -21,7 +21,7 @@
 
 import { ToolSelection } from 'types/llm'
 import { ref } from 'vue'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 import ModalDialog from '../components/ModalDialog.vue'
 import ToolTable from '../components/ToolTable.vue'
 

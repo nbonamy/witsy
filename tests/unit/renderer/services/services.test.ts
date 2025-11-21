@@ -1,9 +1,9 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
-import { store } from '../../../../src/renderer/services/store'
-import Falai from '../../../../src/renderer/services/falai'
-import HuggingFace from '../../../../src/renderer/services/huggingface'
-import Replicate from '../../../../src/renderer/services/replicate'
+import { store } from '@services/store'
+import Falai from '@services/falai'
+import HuggingFace from '@services/huggingface'
+import Replicate from '@services/replicate'
 
 let falai_call = 0
 

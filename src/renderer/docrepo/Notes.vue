@@ -45,10 +45,10 @@
 <script setup lang="ts">
 import { ChevronDownIcon, FilePlusIcon, FileTextIcon, PencilIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
-import Dialog from '../utils/dialog'
-import { togglePanel } from '../utils/panel'
-import { useDocRepoEvents } from '../composables/useDocRepoEvents'
-import { t } from '../services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import { togglePanel } from '@renderer/utils/panel'
+import { useDocRepoEvents } from '@composables/useDocRepoEvents'
+import { t } from '@services/i18n'
 import { DocumentBase, DocumentSource } from 'types/rag'
 import NoteEditor from './NoteEditor.vue'
 

@@ -16,6 +16,7 @@
       "@/*": [ "./*" ],
       "@components/*": [ "renderer/components/*" ],
       "@composables/*": [ "renderer/composables/*" ],
+      "@css/*": [ "../css/*" ],
       "@main/*": [ "main/*" ],
       "@models/*": [ "models/*" ],
       "@renderer/*": [ "renderer/*" ],

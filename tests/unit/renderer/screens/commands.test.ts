@@ -1,8 +1,8 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
-import { useWindowMock } from '../../../mocks/window'
+import { useWindowMock } from '@tests/mocks/window'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
-import CommandPicker from '../../../../src/renderer/screens/CommandPicker.vue'
+import CommandPicker from '@screens/CommandPicker.vue'
 
 enableAutoUnmount(afterAll)
 

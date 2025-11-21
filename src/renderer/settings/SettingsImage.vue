@@ -79,12 +79,12 @@
 <script setup lang="ts">
 
 import { ref, computed, nextTick } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import { baseURL as sdwebuiDefaultBaseURL } from '../services/sdwebui'
-import ModelLoaderFactory from '../services/model_loader'
-import Dialog from '../utils/dialog'
-import ImageCreator from '../services/image'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import { baseURL as sdwebuiDefaultBaseURL } from '@services/sdwebui'
+import ModelLoaderFactory from '@services/model_loader'
+import Dialog from '@renderer/utils/dialog'
+import ImageCreator from '@services/image'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import RefreshButton from '../components/RefreshButton.vue'
 import Combobox from '../components/Combobox.vue'

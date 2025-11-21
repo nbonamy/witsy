@@ -28,11 +28,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
 import ModalDialog from '../components/ModalDialog.vue'
 import EmbeddingSelector from '../components/EmbeddingSelector.vue'
-import Dialog from '../utils/dialog'
+import Dialog from '@renderer/utils/dialog'
 
 // emits
 const emit = defineEmits([ 'save' ])

@@ -1,5 +1,5 @@
 import { test, expect, describe } from 'vitest'
-import { generateSimpleSchema, parseSimpleFormatToZod, processJsonSchema } from '../../../../src/renderer/services/schema'
+import { generateSimpleSchema, parseSimpleFormatToZod, processJsonSchema } from '@services/schema'
 import { z } from 'zod'
 
 describe('generateSimpleSchema', () => {

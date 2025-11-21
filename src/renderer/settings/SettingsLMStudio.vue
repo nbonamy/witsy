@@ -25,13 +25,13 @@
 <script setup lang="ts">
 
 import { computed, ref } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
 import { ChatModel, defaultCapabilities, } from 'multi-llm-ts'
-import Dialog from '../utils/dialog'
-import LlmFactory from '../services/llms/llm'
+import Dialog from '@renderer/utils/dialog'
+import LlmFactory from '@services/llms/llm'
 import RefreshButton from '../components/RefreshButton.vue'
-import defaults from '../../../defaults/settings.json'
+import defaults from '@root/defaults/settings.json'
 import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 
 const baseURL = ref(null)

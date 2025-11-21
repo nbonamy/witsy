@@ -59,21 +59,21 @@ import { ActivityIcon } from 'lucide-vue-next'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import Fullscreen from '../components/Fullscreen.vue'
 import MenuBar, { MenuBarMode } from '../components/MenuBar.vue'
-import useEventBus from '../composables/event_bus'
-import useWebappManager from '../composables/webapp_manager'
-import AgentForge from '../screens/AgentForge.vue'
-import Chat from '../screens/Chat.vue'
-import DesignStudio from '../screens/DesignStudio.vue'
-import DocRepos from '../screens/DocRepos.vue'
-import McpServers from '../screens/McpServers.vue'
-import Onboarding from '../screens/Onboarding.vue'
-import RealtimeChat from '../screens/RealtimeChat.vue'
-import ScratchPad from '../screens/ScratchPad.vue'
-import Settings from '../screens/Settings.vue'
-import Transcribe from '../screens/Transcribe.vue'
-import WebAppViewer from '../screens/WebAppViewer.vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import useEventBus from '@composables/event_bus'
+import useWebappManager from '@composables/webapp_manager'
+import AgentForge from '@screens/AgentForge.vue'
+import Chat from '@screens/Chat.vue'
+import DesignStudio from '@screens/DesignStudio.vue'
+import DocRepos from '@screens/DocRepos.vue'
+import McpServers from '@screens/McpServers.vue'
+import Onboarding from '@screens/Onboarding.vue'
+import RealtimeChat from '@screens/RealtimeChat.vue'
+import ScratchPad from '@screens/ScratchPad.vue'
+import Settings from '@screens/Settings.vue'
+import Transcribe from '@screens/Transcribe.vue'
+import WebAppViewer from '@screens/WebAppViewer.vue'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 import { anyDict } from 'types/index'
 
 const { emitEvent, onEvent } = useEventBus()
@@ -229,7 +229,7 @@ const onOnboardingDone = () => {
 
 <style>
 @import 'sweetalert2/dist/sweetalert2.css';
-@import '../../../css/swal2.css';
+@import '@css/swal2.css';
 </style>
 
 <style>

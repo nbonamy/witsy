@@ -62,13 +62,13 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import useAppearanceTheme from '../composables/appearance_theme'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import useAppearanceTheme from '@composables/appearance_theme'
 import LangSelect from '../components/LangSelect.vue'
 
 // events
-import useEventBus from '../composables/event_bus'
+import useEventBus from '@composables/event_bus'
 const { emitEvent } = useEventBus()
 
 // init

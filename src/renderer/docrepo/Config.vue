@@ -58,10 +58,10 @@
 <script setup lang="ts">
 
 import { ref, onMounted } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
 import ModalDialog from '../components/ModalDialog.vue'
-import defaultSettings from '../../../defaults/settings.json'
+import defaultSettings from '@root/defaults/settings.json'
 
 const dialog = ref(null)
 const maxDocumentSizeMB = ref(null)

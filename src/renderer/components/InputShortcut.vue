@@ -10,7 +10,7 @@
 
 import { XCircleIcon } from 'lucide-vue-next';
 import { ModelRef, computed } from 'vue';
-import { Shortcut, disabledShortcutKey } from '../../types/index';
+import { Shortcut, disabledShortcutKey } from 'types/index';
 
 const value: ModelRef<Shortcut|undefined> = defineModel()
 

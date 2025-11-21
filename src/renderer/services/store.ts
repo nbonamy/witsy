@@ -1,7 +1,7 @@
 
 import { reactive } from 'vue'
-import features from '../../../defaults/features.json'
-import Chat from '../../models/chat'
+import features from '@root/defaults/features.json'
+import Chat from '@models/chat'
 import { Configuration } from 'types/config'
 import { Folder, History, Store, StoreEvent } from 'types/index'
 import { Workspace } from 'types/workspace'

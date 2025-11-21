@@ -42,8 +42,8 @@ import { ImageIcon, WrenchIcon, ZapIcon } from 'lucide-vue-next'
 import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 import { computed, nextTick, ref } from 'vue'
 import VueSelect from 'vue3-select-component'
-import LlmFactory, { ILlmManager } from '../services/llms/llm'
-import { store } from '../services/store'
+import LlmFactory, { ILlmManager } from '@services/llms/llm'
+import { store } from '@services/store'
 
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 

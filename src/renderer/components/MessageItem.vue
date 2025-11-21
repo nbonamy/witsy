@@ -73,8 +73,8 @@
 
 import { LoaderCircleIcon } from 'lucide-vue-next'
 import { computed, onMounted, onBeforeUnmount, PropType, ref, watch } from 'vue'
-import AgentIcon from '../../../assets/agent.svg?component'
-import UserAvatar from '../../../assets/person.crop.circle.svg?component'
+import AgentIcon from '@root/assets/agent.svg?component'
+import UserAvatar from '@root/assets/person.crop.circle.svg?component'
 import useAppearanceTheme from '@composables/appearance_theme'
 import useAudioPlayer, { AudioStatus } from '@renderer/audio/audio_player'
 import Attachment from '@models/attachment'

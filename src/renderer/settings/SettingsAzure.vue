@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 
 const emit = defineEmits(['createCustom'])
 

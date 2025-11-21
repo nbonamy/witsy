@@ -9,7 +9,7 @@ import ja from 'javascript-time-ago/locale/ja'
 import pt from 'javascript-time-ago/locale/pt'
 import ru from 'javascript-time-ago/locale/ru'
 import zh from 'javascript-time-ago/locale/zh'
-import { store } from '../services/store'
+import { store } from '@services/store'
 
 let initialized = false
 

@@ -57,11 +57,11 @@
 <script setup lang="ts">
 
 import { ref, onMounted } from 'vue'
-import { t } from '../services/i18n'
-import Dialog from '../utils/dialog'
+import { t } from '@services/i18n'
+import Dialog from '@renderer/utils/dialog'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import ModalDialog from '../components/ModalDialog.vue'
-import defaults from '../../../defaults/settings.json'
+import defaults from '@root/defaults/settings.json'
 
 const dialog = ref(null)
 const label = ref(null)

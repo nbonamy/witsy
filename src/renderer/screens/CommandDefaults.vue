@@ -29,8 +29,8 @@
 <script setup lang="ts">
 
 import { ref, computed } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
 import ModalDialog from '../components/ModalDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'

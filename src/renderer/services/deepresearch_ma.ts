@@ -1,8 +1,8 @@
 
 import { LlmChunk, LlmEngine } from 'multi-llm-ts'
 import { Configuration } from 'types/config'
-import Chat from '../../models/chat'
-import Message from '../../models/message'
+import Chat from '@models/chat'
+import Message from '@models/message'
 import * as dr from './deepresearch'
 import Generator, { GenerationResult } from './generator'
 import AgentPlugin, { AgentStorage } from './plugins/agent'

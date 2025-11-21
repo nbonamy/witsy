@@ -2,9 +2,9 @@
 import { beforeAll, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { useWindowMock } from '../../../mocks/window'
-import WebAppViewer from '../../../../src/renderer/screens/WebAppViewer.vue'
-import { WebApp } from '../../../../src/types/workspace'
+import { useWindowMock } from '@tests/mocks/window'
+import WebAppViewer from '@screens/WebAppViewer.vue'
+import { WebApp } from '@/types/workspace'
 
 beforeAll(() => {
   useWindowMock()

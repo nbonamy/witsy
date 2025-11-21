@@ -1,28 +1,28 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
-import { useWindowMock, useBrowserMock } from '../../../mocks/window'
-import { createI18nMock } from '../../../mocks'
-import LlmMock, { installMockModels } from '../../../mocks/llm'
-import { store } from '../../../../src/renderer/services/store'
-import Dialog from '../../../../src/renderer/utils/dialog'
-import defaultSettings from '../../../../defaults/settings.json'
-import ScratchPad from '../../../../src/renderer/screens/ScratchPad.vue'
-import Prompt, { SendPromptParams } from '../../../../src/renderer/components/Prompt.vue'
-import EditableText from '../../../../src/renderer/components/EditableText.vue'
-import Sidebar from '../../../../src/renderer/scratchpad/Sidebar.vue'
-import ActionBar from '../../../../src/renderer/scratchpad/ActionBar.vue'
-import Attachment from '../../../../src/models/attachment'
+import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
+import LlmMock, { installMockModels } from '@tests/mocks/llm'
+import { store } from '@services/store'
+import Dialog from '@renderer/utils/dialog'
+import defaultSettings from '@root/defaults/settings.json'
+import ScratchPad from '@screens/ScratchPad.vue'
+import Prompt, { SendPromptParams } from '@components/Prompt.vue'
+import EditableText from '@components/EditableText.vue'
+import Sidebar from '@renderer/scratchpad/Sidebar.vue'
+import ActionBar from '@renderer/scratchpad/ActionBar.vue'
+import Attachment from '@models/attachment'
 
-vi.unmock('../../../../src/renderer/composables/event_bus')
-import useEventBus  from '../../../../src/renderer/composables/event_bus'
+vi.unmock('@renderer/composables/event_bus')
+import useEventBus  from '@composables/event_bus'
 import { defaultCapabilities } from 'multi-llm-ts'
-import LlmManager from '../../../../src/renderer/services/llms/manager'
+import LlmManager from '@services/llms/manager'
 const { emitEvent } = useEventBus()
 
 // Unmock EventBus for this test - scratchpad needs real event handling
 
-vi.mock('../../../../src/renderer/services/llms/manager.ts', async () => {
+vi.mock('@services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
@@ -44,7 +44,7 @@ vi.mock('../../../../src/renderer/services/llms/manager.ts', async () => {
 	return { default: LlmManager }
 })
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 

@@ -1,7 +1,7 @@
 
 import { vi, expect, test, beforeEach, afterEach, beforeAll, afterAll } from 'vitest'
-import Monitor from '../../../src/main/monitor'
-import { wait } from '../../../src/main/utils'
+import Monitor from '@main/monitor'
+import { wait } from '@main/utils'
 import path from 'path'
 import fs from 'fs'
 import os from 'os'

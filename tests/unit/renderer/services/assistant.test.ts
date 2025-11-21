@@ -1,14 +1,14 @@
 
 import { defaultCapabilities, LlmChunk } from 'multi-llm-ts'
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import { useWindowMock } from '../../../mocks/window'
-import { createI18nMock } from '../../../mocks'
-import { store } from '../../../../src/renderer/services/store'
-import Assistant, { AssistantCompletionOpts } from '../../../../src/renderer/services/assistant'
-import Attachment from '../../../../src/models/attachment'
-import LlmMock, { installMockModels } from '../../../mocks/llm'
+import { useWindowMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
+import { store } from '@services/store'
+import Assistant, { AssistantCompletionOpts } from '@services/assistant'
+import Attachment from '@models/attachment'
+import LlmMock, { installMockModels } from '@tests/mocks/llm'
 
-vi.mock('../../../../src/renderer/services/llms/manager.ts', async () => {
+vi.mock('@services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
@@ -26,13 +26,13 @@ vi.mock('../../../../src/renderer/services/llms/manager.ts', async () => {
 	return { default: LlmManager }
 })
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock(() => ({
     locale: store.config.llm.locale
   }))
 })
 
-vi.mock('../../../../src/renderer/services/download.ts', async () => {
+vi.mock('@services/download.ts', async () => {
   return {
     saveFileContents: vi.fn(() => 'local_file.png'),
   }

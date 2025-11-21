@@ -1,11 +1,11 @@
 
-import { WorkspaceHeader, Workspace } from '../types/workspace'
+import { WorkspaceHeader, Workspace } from 'types/workspace'
 import { App } from 'electron'
 import { agentsDirPath } from './agents'
 import { docrepoFilePath } from './rag/utils'
 import { attachmentsFilePath, historyFilePath } from './history'
 import { notifyBrowserWindows } from './windows'
-import WorkspaceModel from '../models/workspace'
+import WorkspaceModel from '@models/workspace'
 import path from 'path'
 import fs from 'fs'
 

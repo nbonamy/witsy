@@ -76,10 +76,10 @@
 import FloatingVue, { vTooltip } from 'floating-vue'
 import { CircleXIcon, ClipboardCheckIcon, ClipboardIcon, FoldVerticalIcon, GraduationCapIcon, ListIcon, MoveLeftIcon, PencilLineIcon, RedoIcon, SaveIcon, SparklesIcon, SpellCheckIcon, StopCircleIcon, TypeOutlineIcon, UndoIcon, UnfoldVerticalIcon, Volume2Icon } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 
 // bus
-import useEventBus from '../composables/event_bus'
+import useEventBus from '@composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 defineProps({

@@ -26,7 +26,7 @@ import MemoryManager from './memory';
 import MacOSPermissions from './permissions';
 import LocalSearch from './search';
 
-import * as IPC from '../ipc_consts';
+import * as IPC from '@/ipc_consts';
 import * as agents from './agents';
 import * as pyodide from './pyodide';
 import * as backup from './backup';

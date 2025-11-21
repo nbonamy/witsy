@@ -1,6 +1,6 @@
 import { vi, expect, test, beforeEach, Mock } from 'vitest'
 import { IncomingMessage, ServerResponse } from 'node:http'
-import { sendJson, sendError, parseParams } from '../../../src/main/http_utils'
+import { sendJson, sendError, parseParams } from '@main/http_utils'
 
 let mockRes: Partial<ServerResponse>
 let mockReq: Partial<IncomingMessage>

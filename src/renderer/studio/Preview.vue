@@ -53,9 +53,9 @@ import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, FullscreenIcon, InfoIc
 import { nextTick, onMounted, ref, watch } from 'vue'
 import ButtonIcon from '../components/ButtonIcon.vue'
 import Loader from '../components/Loader.vue'
-import Dialog from '../utils/dialog'
-import Message from '../../models/message'
-import { t } from '../services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import Message from '@models/message'
+import { t } from '@services/i18n'
 
 const props = defineProps({
   message: {

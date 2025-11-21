@@ -44,14 +44,14 @@
 import { CustomEngineConfig } from 'types/config'
 import { Model } from 'multi-llm-ts'
 import { ref, computed, nextTick } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import { getEmbeddingModels } from '../services/llms/ollama'
-import LlmFactory from '../services/llms/llm'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import { getEmbeddingModels } from '@services/llms/ollama'
+import LlmFactory from '@services/llms/llm'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 import RefreshButton from '../components/RefreshButton.vue'
 import Combobox from '../components/Combobox.vue'
-import Dialog from '../utils/dialog'
+import Dialog from '@renderer/utils/dialog'
 
 const engine = defineModel('engine', { default: 'openai' })
 const model = defineModel('model', { default: 'text-embedding-ada-002' })

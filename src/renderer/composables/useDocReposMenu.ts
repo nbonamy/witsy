@@ -2,8 +2,8 @@ import { LightbulbIcon, SettingsIcon, XIcon } from 'lucide-vue-next'
 import type { MenuItem } from 'types/menu'
 import type { DocumentBase } from 'types/rag'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 
 export interface UseDocReposMenuOptions {
   emit: (event: any, ...args: any[]) => void

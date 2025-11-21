@@ -9,8 +9,8 @@
 <script setup lang="ts">
 
 import { PlayIcon, SquareIcon, XIcon } from 'lucide-vue-next'
-import Message from '../../models/message'
-import { t } from '../services/i18n'
+import Message from '@models/message'
+import { t } from '@services/i18n'
 
 const props = defineProps({
   message: {

@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import { t } from '../services/i18n'
-import Message from '../../models/message'
+import { t } from '@services/i18n'
+import Message from '@models/message'
 
 defineProps({
   history: {

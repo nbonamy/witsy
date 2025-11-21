@@ -44,7 +44,7 @@
 <script setup lang="ts">
 
 import { ref, watch } from 'vue'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 import { ToolSelection } from 'types/llm'
 import { McpTool } from 'types/mcp'
 import ModalDialog from './ModalDialog.vue'

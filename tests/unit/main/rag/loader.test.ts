@@ -1,7 +1,7 @@
 
 import { expect, test, vi, beforeEach } from 'vitest'
-import Loader from '../../../../src/main/rag/loader'
-import { Configuration } from '../../../../src/types/config'
+import Loader from '@main/rag/loader'
+import { Configuration } from '@/types/config'
 
 const mockConfig = {} as Configuration
 

@@ -1,6 +1,6 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import A2AClient, { A2AChunk } from '../../../../src/renderer/services/a2a-client'
-import Agent from '../../../../src/models/agent'
+import A2AClient, { A2AChunk } from '@services/a2a-client'
+import Agent from '@models/agent'
 
 // Mock the A2A SDK
 vi.mock('@a2a-js/sdk', () => ({

@@ -1,15 +1,15 @@
 
 import { vi, expect, test, beforeEach, Mock } from 'vitest'
 import { clipboard } from 'electron'
-import Automation, { AutomationAction }  from '../../../../src/main/automations/automation'
-import MacosAutomator from '../../../../src/main/automations/macos'
-import RobotAutomator from '../../../../src/main/automations/robot'
-import * as window from '../../../../src/main/window'
+import Automation, { AutomationAction }  from '@main/automations/automation'
+import MacosAutomator from '@main/automations/macos'
+import RobotAutomator from '@main/automations/robot'
+import * as window from '@main/window'
 
-vi.unmock('../../../../src/main/automations/automator')
-import Automator from '../../../../src/main/automations/automator'
+vi.unmock('@main/automations/automator')
+import Automator from '@main/automations/automator'
 
-let clipboardText = undefined
+let clipboardText: string | undefined = undefined
 
 vi.mock('electron', () => ({
   clipboard: {
@@ -20,7 +20,7 @@ vi.mock('electron', () => ({
   }
 }))
 
-vi.mock(`../../../../src/main/automations/${process.platform === 'darwin' ? 'macos' : 'robot'}.ts`, async () => {
+vi.mock(`@main/automations/${process.platform === 'darwin' ? 'macos' : 'robot'}.ts`, async () => {
   const MockAutomator = vi.fn()
   MockAutomator.prototype.getForemostApp = vi.fn()
   MockAutomator.prototype.selectAll = vi.fn()
@@ -32,7 +32,7 @@ vi.mock(`../../../../src/main/automations/${process.platform === 'darwin' ? 'mac
 })
 
 // mock windows
-vi.mock('../../../../src/main/window.ts', async () => {
+vi.mock('@main/window.ts', async () => {
   return {
     openPromptAnywhere: vi.fn(),
     closePromptAnywhere: vi.fn(),

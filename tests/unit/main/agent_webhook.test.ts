@@ -1,22 +1,22 @@
 import { vi, expect, test, beforeEach, Mock } from 'vitest'
 import { App } from 'electron'
-import { installAgentWebhook } from '../../../src/main/agent_webhook'
-import { HttpServer } from '../../../src/main/http_server'
-import * as agentUtilsModule from '../../../src/main/agent_utils'
-import * as configModule from '../../../src/main/config'
-import * as agentsModule from '../../../src/main/agents'
-import Mcp from '../../../src/main/mcp'
+import { installAgentWebhook } from '@main/agent_webhook'
+import { HttpServer } from '@main/http_server'
+import * as agentUtilsModule from '@main/agent_utils'
+import * as configModule from '@main/config'
+import * as agentsModule from '@main/agents'
+import Mcp from '@main/mcp'
 
-vi.mock('../../../src/main/http_server')
-vi.mock('../../../src/main/config')
-vi.mock('../../../src/main/agents')
+vi.mock('@main/http_server')
+vi.mock('@main/config')
+vi.mock('@main/agents')
 
 // Create shared mock function that will be used by all instances
 const mockRunAgentFn = vi.fn()
 
 // Mock agent utils
-vi.mock('../../../src/main/agent_utils', async () => {
-  const actual = await vi.importActual('../../../src/main/agent_utils')
+vi.mock('@main/agent_utils', async () => {
+  const actual = await vi.importActual('@main/agent_utils')
   return {
     ...actual,
     findAgentByWebhookToken: vi.fn(),

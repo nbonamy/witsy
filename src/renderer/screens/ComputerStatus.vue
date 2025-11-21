@@ -11,8 +11,8 @@
 import { CircleXIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
 import { onMounted, onBeforeUnmount, ref } from 'vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 
 // init stuff
 store.loadSettings()

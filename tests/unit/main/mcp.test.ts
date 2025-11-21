@@ -1,14 +1,14 @@
 
 import { vi, test, expect, beforeEach } from 'vitest'
-import type { McpServer } from '../../../src/types/mcp'
+import type { McpServer } from '@/types/mcp'
 import { app } from 'electron'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
-import mcpConfig from '../../fixtures/mcp.json'
-import Mcp from '../../../src/main/mcp'
-import { Configuration } from '../../../src/types/config'
+import mcpConfig from '@tests/fixtures/mcp.json'
+import Mcp from '@main/mcp'
+import { Configuration } from '@/types/config'
 
 vi.mock('electron', async() => {
   return {
@@ -19,7 +19,7 @@ vi.mock('electron', async() => {
   }
 })
 
-vi.mock('../../../src/main/i18n', () => ({
+vi.mock('@main/i18n', () => ({
   useI18n: vi.fn(() => (key: string) => key)
 }))
 
@@ -42,7 +42,7 @@ vi.mock('child_process', async () => {
 
 let config: Configuration = mcpConfig as unknown as Configuration
 
-vi.mock('../../../src/main/config', async () => {
+vi.mock('@main/config', async () => {
   return {
     settingsFilePath: vi.fn(() => './tests/fixtures/config1.json'),
     saveSettings: vi.fn((_, cfg) => config = cfg),

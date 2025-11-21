@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions, displayShortcutHelp, clearShortcutHelp, getDefaultFooterRightText, padContent } from '../../../src/cli/display'
-import { state } from '../../../src/cli/state'
+import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions, displayShortcutHelp, clearShortcutHelp, getDefaultFooterRightText, padContent } from '@/cli/display'
+import { state } from '@/cli/state'
 import { VirtualTerminal } from './VirtualTerminal'
-import { ChatCli, MessageCli } from '../../../src/cli/models'
+import { ChatCli, MessageCli } from '@/cli/models'
 
 describe('CLI Display Requirements', () => {
   let terminal: VirtualTerminal

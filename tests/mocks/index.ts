@@ -1,8 +1,8 @@
 
 
 import { vi } from 'vitest'
-import { store } from '../../src/renderer/services/store'
-import { Expert } from '../../src/types'
+import { store } from '@services/store'
+import { Expert } from '@/types'
 
 export const createI18nMock = (callback?: () => Partial<{
   locale: string

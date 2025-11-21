@@ -1,7 +1,7 @@
 import { ToolSelection } from 'types/llm'
 import { McpServerWithTools, McpToolUnique } from 'types/mcp'
-import { availablePlugins, pluginToolName, pluginTools } from '../services/plugins/plugins'
-import { store } from '../services/store'
+import { availablePlugins, pluginToolName, pluginTools } from '@services/plugins/plugins'
+import { store } from '@services/store'
 
 export type ToolStatus = 'all' | 'some' | 'none'
 

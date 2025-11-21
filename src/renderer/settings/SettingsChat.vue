@@ -89,9 +89,9 @@
 
 import { ChatListLayout, ChatToolMode, TextFormat } from 'types/config';
 import { ref, computed } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import Message from '../../models/message'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import Message from '@models/message'
 import MessageItem from '../components/MessageItem.vue'
 
 const theme = ref(null)

@@ -50,8 +50,8 @@
 
 import { DeepResearchRuntime } from 'types/config'
 import { ref } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
 
 const runtime = ref<DeepResearchRuntime>('ms')
 const breadth = ref(4)

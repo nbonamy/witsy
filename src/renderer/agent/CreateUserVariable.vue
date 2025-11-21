@@ -45,10 +45,10 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
-import { kAgentStepVarFacts, kAgentStepVarOutputPrefix, kAgentStepVarRunOutput } from '../../types/agents'
+import { kAgentStepVarFacts, kAgentStepVarOutputPrefix, kAgentStepVarRunOutput } from 'types/agents'
 import ModalDialog from '../components/ModalDialog.vue'
-import Dialog from '../utils/dialog'
-import { t } from '../services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import { t } from '@services/i18n'
 
 const dialog = ref(null)
 const variableName = ref('')
