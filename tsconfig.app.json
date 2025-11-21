@@ -5,10 +5,16 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
+      "@main/*": [ "src/main/*" ],
+      "@renderer/*": [ "src/renderer/*" ],
+      "@components/*": [ "src/renderer/components/*" ],
+      "@composables/*": [ "src/renderer/composables/*" ],
+      "@services/*": [ "src/renderer/services/*" ],
+      "@screens/*": [ "src/renderer/screens/*" ],
+      "@/*": [ "src/*" ],
       "@types/*": [ "src/types/*" ],
-      "@composables/*": [ "src/composables/*" ],
-      "@components/*": [ "src/components/*" ],
-      "@services/*": [ "src/services/*" ],
+      "@models/*": [ "src/models/*" ],
+      "@tests/*": [ "tests/*" ]
     }
   },
   "include": [
