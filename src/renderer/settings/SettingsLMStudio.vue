@@ -30,9 +30,9 @@ import { t } from '@services/i18n'
 import { ChatModel, defaultCapabilities, } from 'multi-llm-ts'
 import Dialog from '@renderer/utils/dialog'
 import LlmFactory from '@services/llms/llm'
-import RefreshButton from '../components/RefreshButton.vue'
+import RefreshButton from '@components/RefreshButton.vue'
 import defaults from '@root/defaults/settings.json'
-import ModelSelectPlus from '../components/ModelSelectPlus.vue'
+import ModelSelectPlus from '@components/ModelSelectPlus.vue'
 
 const baseURL = ref(null)
 const disableTools = ref(false)

@@ -31,7 +31,7 @@ When loading the source code of an important component, also parse this source a
 If yes, request to get the source code of these components as Witsy follows an embedded component structure.
 
 For that you will use the ReadFilePlugin tool paying attention to the path: if a screen imports
-'../components/MyComponent.vue' you will use the ReadFilePlugin to load './src/components/MyComponent.vue'.
+'@components/MyComponent.vue' you will use the ReadFilePlugin to load './src/components/MyComponent.vue'.
 
 You may also find interesting code in ../composables and ../services.
 

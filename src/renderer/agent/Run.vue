@@ -85,8 +85,8 @@
 
 import { CalendarMinus2Icon, ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
-import ButtonIcon from '../components/ButtonIcon.vue'
-import MessageItemBody from '../components/MessageItemBody.vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
+import MessageItemBody from '@components/MessageItemBody.vue'
 import { togglePanel } from '@renderer/utils/panel'
 import { t } from '@services/i18n'
 import { store } from '@services/store'

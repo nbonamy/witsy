@@ -94,7 +94,7 @@ import { FileTextIcon, HeadsetIcon, LightbulbIcon, MenuIcon, MicIcon, MouseIcon,
 import { computed, onMounted, ref, watch } from 'vue'
 import IconAgent from '@root/assets/agent.svg?component'
 import IconChat from '@root/assets/message-circle-3.svg?component'
-import ButtonIcon from '../components/ButtonIcon.vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
 import useAppearanceTheme from '@composables/appearance_theme'
 import { t } from '@services/i18n'
 import { store } from '@services/store'

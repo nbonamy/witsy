@@ -18,7 +18,7 @@
 <script setup lang="ts">
 
 import { onMounted, onBeforeUnmount, ref, watch, computed } from 'vue'
-import Loader from '../components/Loader.vue'
+import Loader from '@components/Loader.vue'
 import { WebApp } from 'types/workspace'
 
 const props = defineProps<{

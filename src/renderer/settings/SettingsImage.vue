@@ -85,9 +85,9 @@ import { baseURL as sdwebuiDefaultBaseURL } from '@services/sdwebui'
 import ModelLoaderFactory from '@services/model_loader'
 import Dialog from '@renderer/utils/dialog'
 import ImageCreator from '@services/image'
-import InputObfuscated from '../components/InputObfuscated.vue'
-import RefreshButton from '../components/RefreshButton.vue'
-import Combobox from '../components/Combobox.vue'
+import InputObfuscated from '@components/InputObfuscated.vue'
+import RefreshButton from '@components/RefreshButton.vue'
+import Combobox from '@components/Combobox.vue'
 
 const enabled = ref(false)
 const engine = ref(null)

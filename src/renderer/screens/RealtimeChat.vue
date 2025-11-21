@@ -64,8 +64,8 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { store } from '@services/store'
 import { t } from '@services/i18n'
-import AnimatedBlob from '../components/AnimatedBlob.vue'
-import NumberFlip from '../components/NumberFlip.vue'
+import AnimatedBlob from '@components/AnimatedBlob.vue'
+import NumberFlip from '@components/NumberFlip.vue'
 import useTipsManager from '@renderer/utils/tips_manager'
 
 const tipsManager = useTipsManager(store)
