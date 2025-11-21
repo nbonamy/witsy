@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, expect, test, afterEach, Mock } from 'vitest
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../../../mocks/window'
 import { createI18nMock } from '../../../mocks'
-import { emitEventMock } from '../../../../vitest.setup'
+import { emitEventMock } from '@root/vitest.setup'
 import { store } from '../../../../src/renderer/services/store'
 import Transcribe from '../../../../src/renderer/screens/Transcribe.vue'
 import Waveform from '../../../../src/renderer/components/Waveform.vue'
