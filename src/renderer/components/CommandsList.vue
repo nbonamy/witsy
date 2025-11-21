@@ -94,7 +94,7 @@ import CommandDefaults from '../screens/CommandDefaults.vue'
 import { newCommand, saveCommands } from '../services/commands'
 import { commandI18n, t } from '../services/i18n'
 import { store } from '../services/store'
-import { Command } from 'types/'
+import { Command } from 'types'
 
 const emit = defineEmits<{
   'create': []

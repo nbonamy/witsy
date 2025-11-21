@@ -2,26 +2,26 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { useWindowMock } from '../../../mocks/window'
-import { createI18nMock } from '../../../mocks'
+import { useWindowMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
 import { emitEventMock } from '../../../../vitest.setup'
-import { store } from '../../../../src/renderer/services/store'
-import { stubTeleport } from '../../../mocks/stubs'
-import MessageItem from '../../../../src/renderer/components/MessageItem.vue'
-import MessageItemHtmlBlock from '../../../../src/renderer/components/MessageItemHtmlBlock.vue'
-import Message from '../../../../src/models/message'
-import Chat from '../../../../src/models/chat'
-import Dialog from '../../../../src/renderer/utils/dialog'
+import { store } from '@services/store'
+import { stubTeleport } from '@tests/mocks/stubs'
+import MessageItem from '@components/MessageItem.vue'
+import MessageItemHtmlBlock from '@components/MessageItemHtmlBlock.vue'
+import Message from '@models/message'
+import Chat from '@models/chat'
+import Dialog from '@renderer/utils/dialog'
 
 enableAutoUnmount(afterAll)
 
 const readAloudMock = vi.fn()
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../../../src/renderer/audio/audio_player', async () => {
+vi.mock('@renderer/audio/audio_player', async () => {
   return { default: () => ({
     addListener: vi.fn(),
     removeListener: vi.fn(),

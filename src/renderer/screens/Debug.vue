@@ -119,7 +119,7 @@ import ButtonIcon from '../components/ButtonIcon.vue'
 import Loader from '../components/Loader.vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import { NetworkRequest, WebSocketFrame } from 'types/'
+import { NetworkRequest, WebSocketFrame } from 'types'
 
 // load store
 store.loadSettings()
