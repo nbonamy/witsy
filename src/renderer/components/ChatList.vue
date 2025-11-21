@@ -15,14 +15,14 @@
 <script setup lang="ts">
 
 import { computed, onMounted, PropType, ref } from 'vue'
-import Chat from '../../models/chat'
-import { t } from '../services/i18n'
-import { kMediaChatId, store } from '../services/store'
+import Chat from '@models/chat'
+import { t } from '@services/i18n'
+import { kMediaChatId, store } from '@services/store'
 import { ChatListMode } from 'types/config'
 import ChatListFolder from './ChatListFolder.vue'
 import ChatListTimeline from './ChatListTimeline.vue'
 import ContextMenuPlus from './ContextMenuPlus.vue'
-import useEventBus from '../composables/event_bus'
+import useEventBus from '@composables/event_bus'
 
 const { emitEvent } = useEventBus()
 

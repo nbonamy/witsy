@@ -1,5 +1,5 @@
 
-import { store } from '../services/store'
+import { store } from '@services/store'
 
 export default function useAppearanceTheme() {
   return {

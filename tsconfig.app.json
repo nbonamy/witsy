@@ -6,11 +6,14 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [ "src/*" ],
+      "@assets/*": [ "assets/*" ],
       "@components/*": [ "src/renderer/components/*" ],
       "@composables/*": [ "src/renderer/composables/*" ],
+      "@css/*": [ "css/*" ],
       "@main/*": [ "src/main/*" ],
       "@models/*": [ "src/models/*" ],
       "@renderer/*": [ "src/renderer/*" ],
+      "@root/*": [ "./*" ],
       "@screens/*": [ "src/renderer/screens/*" ],
       "@services/*": [ "src/renderer/services/*" ],
       "@tests/*": [ "tests/*" ]

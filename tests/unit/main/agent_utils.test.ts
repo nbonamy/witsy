@@ -1,28 +1,28 @@
 import { vi, expect, test, beforeEach } from 'vitest'
 import { App } from 'electron'
-import { generateWebhookToken, findAgentByWebhookToken, AgentExecutor } from '../../../src/main/agent_utils'
-import * as workspaceModule from '../../../src/main/workspace'
-import * as agentsModule from '../../../src/main/agents'
-import * as configModule from '../../../src/main/config'
-import AgentWorkflowExecutor from '../../../src/renderer/services/agent_executor_workflow'
+import { generateWebhookToken, findAgentByWebhookToken, AgentExecutor } from '@main/agent_utils'
+import * as workspaceModule from '@main/workspace'
+import * as agentsModule from '@main/agents'
+import * as configModule from '@main/config'
+import AgentWorkflowExecutor from '@services/agent_executor_workflow'
 
 // Mock dependencies
-vi.mock('../../../src/main/workspace')
-vi.mock('../../../src/main/agents')
-vi.mock('../../../src/main/config')
-vi.mock('../../../src/renderer/services/agent_executor_workflow')
-vi.mock('../../../src/main/interpreter', () => ({
+vi.mock('@main/workspace')
+vi.mock('@main/agents')
+vi.mock('@main/config')
+vi.mock('@services/agent_executor_workflow')
+vi.mock('@main/interpreter', () => ({
   runPython: vi.fn()
 }))
-vi.mock('../../../src/main/search', () => ({
+vi.mock('@main/search', () => ({
   default: vi.fn().mockImplementation(() => ({
     search: vi.fn()
   }))
 }))
-vi.mock('../../../src/main/i18n', () => ({
+vi.mock('@main/i18n', () => ({
   getLocaleMessages: vi.fn(() => ({}))
 }))
-vi.mock('../../../src/renderer/services/i18n', () => ({
+vi.mock('@services/i18n', () => ({
   initI18n: vi.fn()
 }))
 

@@ -1,7 +1,7 @@
 import { Configuration } from 'types/config'
-import { availablePlugins, PluginInstance } from '../services/plugins/plugins'
+import { availablePlugins, PluginInstance } from '@services/plugins/plugins'
 import { Plugin } from 'multi-llm-ts'
-import McpPlugin from '../services/plugins/mcp'
+import McpPlugin from '@services/plugins/mcp'
 
 export type Tool = {
   id: string

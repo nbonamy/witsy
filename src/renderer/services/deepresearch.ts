@@ -1,8 +1,8 @@
 
 import { LlmEngine } from 'multi-llm-ts'
 import { z } from 'zod'
-import Agent from '../../models/agent'
-import Chat from '../../models/chat'
+import Agent from '@models/agent'
+import Chat from '@models/chat'
 import { AssistantCompletionOpts } from './assistant'
 import { GenerationResult } from './generator'
 import { t } from './i18n'

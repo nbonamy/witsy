@@ -47,14 +47,14 @@ import { computed, onMounted, ref } from 'vue'
 import EngineLogo from '../components/EngineLogo.vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Spinner from '../components/Spinner.vue'
-import { t } from '../services/i18n'
-import { engineNames } from '../services/llms/consts'
-import LlmManager from '../services/llms/manager'
-import { store } from '../services/store'
+import { t } from '@services/i18n'
+import { engineNames } from '@services/llms/consts'
+import LlmManager from '@services/llms/manager'
+import { store } from '@services/store'
 import { preventTabOnLastEngineGridInput } from './index'
 
 import { ChevronDownIcon } from 'lucide-vue-next'
-import useAppearanceTheme from '../composables/appearance_theme'
+import useAppearanceTheme from '@composables/appearance_theme'
 const appearanceTheme = useAppearanceTheme()
 
 const isExpanded = ref(false)
@@ -127,7 +127,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 </script>
 
 <style scoped>
-@import '../../../css/onboarding.css';
+@import '@css/onboarding.css';
 
 .engines-grid .engine:nth-child(n+7) {
   display: none;

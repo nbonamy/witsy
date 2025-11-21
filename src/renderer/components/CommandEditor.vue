@@ -48,11 +48,11 @@
 
 import { Command } from 'types/index'
 import { onMounted, ref, computed, watch, PropType } from 'vue'
-import { store } from '../services/store'
-import { t, commandI18n, commandI18nDefault } from '../services/i18n'
+import { store } from '@services/store'
+import { t, commandI18n, commandI18nDefault } from '@services/i18n'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelectPlus from '../components/ModelSelectPlus.vue'
-import Dialog from '../utils/dialog'
+import Dialog from '@renderer/utils/dialog'
 import { CircleAlertIcon } from 'lucide-vue-next'
 
 const emit = defineEmits(['command-modified']);

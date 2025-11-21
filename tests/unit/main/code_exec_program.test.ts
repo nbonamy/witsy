@@ -1,11 +1,11 @@
 import { vi, expect, test, beforeEach, describe, beforeAll } from 'vitest'
 import { Plugin, MultiToolPlugin } from 'multi-llm-ts'
-import { useWindowMock } from '../../mocks/window'
-import { createI18nMock } from '../../mocks'
-import CodeExecutionProgramPlugin from '../../../src/renderer/services/plugins/code_exec_program'
-import { kCodeExecutionPluginPrefix } from '../../../src/renderer/services/plugins/code_exec_base'
+import { useWindowMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
+import CodeExecutionProgramPlugin from '@services/plugins/code_exec_program'
+import { kCodeExecutionPluginPrefix } from '@services/plugins/code_exec_base'
 
-vi.mock('../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 

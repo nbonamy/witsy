@@ -45,9 +45,9 @@
 
 import { MinusIcon, PlusIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
-import Dialog from '../utils/dialog'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import Dialog from '@renderer/utils/dialog'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 
 const enabled = ref(false)
 const allowedPaths = ref<string[]>([])

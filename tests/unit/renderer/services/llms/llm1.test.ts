@@ -1,13 +1,13 @@
 
 import { beforeAll, expect, test } from 'vitest'
-import { useWindowMock } from '../../../../mocks/window'
+import { useWindowMock } from '@tests/mocks/window'
 import { OpenAI, Anthropic, Azure, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter, MultiToolPlugin, ChatModel, defaultCapabilities } from 'multi-llm-ts'
-import { Plugin1, Plugin2, Plugin3 } from '../../../../mocks/plugins'
-import LlmFactory, { favoriteMockEngine } from '../../../../../src/renderer/services/llms/llm'
-import { store } from '../../../../../src/renderer/services/store'
-import defaults from '../../../../../defaults/settings.json'
-import { PluginsList } from '../../../../../src/renderer/services/plugins/plugins'
-import { installMockModels } from '../../../../mocks/llm'
+import { Plugin1, Plugin2, Plugin3 } from '@tests/mocks/plugins'
+import LlmFactory, { favoriteMockEngine } from '@services/llms/llm'
+import { store } from '@services/store'
+import defaults from '@root/defaults/settings.json'
+import { PluginsList } from '@services/plugins/plugins'
+import { installMockModels } from '@tests/mocks/llm'
 
 beforeAll(() => {
   useWindowMock({ customEngine: true, favoriteModels: true })

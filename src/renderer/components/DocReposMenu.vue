@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useDocReposMenu } from '../composables/useDocReposMenu'
+import { useDocReposMenu } from '@composables/useDocReposMenu'
 import ContextMenuPlus from './ContextMenuPlus.vue'
 
 // Props

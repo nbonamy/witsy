@@ -67,8 +67,8 @@
 
 import { CheckCircleIcon, CircleUserIcon, InfoIcon, SettingsIcon, XCircleIcon } from 'lucide-vue-next'
 import { computed, onBeforeUnmount, ref } from 'vue'
-import Dialog from '../utils/dialog'
-import { t } from '../services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import { t } from '@services/i18n'
 
 // Permission states
 const accessibilityGranted = ref(false)

@@ -18,7 +18,7 @@
 
 import { XIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 import { ToolCall } from 'types/index'
 import MessageItemSearchToolBlock from './MessageItemSearchToolBlock.vue'
 

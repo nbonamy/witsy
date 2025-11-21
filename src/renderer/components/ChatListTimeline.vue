@@ -7,10 +7,10 @@
 
 <script setup lang="ts">
 
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 import ChatListItem from './ChatListItem.vue'
-import Chat from '../../models/chat'
+import Chat from '@models/chat'
 
 defineProps({
   chats: {

@@ -1,6 +1,6 @@
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { DocRepoAddDocResponse, DocumentQueueItem } from 'types/rag'
-import Dialog from '../utils/dialog'
+import Dialog from '@renderer/utils/dialog'
 
 export function useDocRepoEvents(type: string) {
   

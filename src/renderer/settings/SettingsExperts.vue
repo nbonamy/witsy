@@ -22,9 +22,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { ref, toRaw } from 'vue'
 import ExpertEditor from '../components/ExpertEditor.vue'
 import ExpertsList from '../components/ExpertsList.vue'
-import { newExpert } from '../services/experts'
-import { expertI18n, t } from '../services/i18n'
-import { store } from '../services/store'
+import { newExpert } from '@services/experts'
+import { expertI18n, t } from '@services/i18n'
+import { store } from '@services/store'
 import { Expert } from 'types/index'
 
 const list = ref(null)

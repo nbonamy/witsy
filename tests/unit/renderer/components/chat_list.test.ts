@@ -1,18 +1,18 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { createI18nMock } from '../../../mocks/index'
+import { createI18nMock } from '@tests/mocks/index'
 import { emitEventMock } from '@root/vitest.setup'
-import { useWindowMock } from '../../../mocks/window'
-import { stubTeleport } from '../../../mocks/stubs'
-import { store } from '../../../../src/renderer/services/store'
-import ChatList from '../../../../src/renderer/components/ChatList.vue'
-import Chat from '../../../../src/models/chat'
-import Message from '../../../../src/models/message'
+import { useWindowMock } from '@tests/mocks/window'
+import { stubTeleport } from '@tests/mocks/stubs'
+import { store } from '@services/store'
+import ChatList from '@components/ChatList.vue'
+import Chat from '@models/chat'
+import Message from '@models/message'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 

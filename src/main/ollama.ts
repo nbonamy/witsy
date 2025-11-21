@@ -3,7 +3,7 @@ import { spawn } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { mainWindow } from './windows/main';
-import * as IPC from '../ipc_consts';
+import * as IPC from '@/ipc_consts';
 
 interface DownloadState {
   downloadId: string;

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import STTFireworks from '../../../../src/renderer/voice/stt-fireworks'
+import STTFireworks from '@renderer/voice/stt-fireworks'
 
 const makeConfig = (overrides: any = {}) => ({
   stt: {

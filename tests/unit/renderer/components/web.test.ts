@@ -1,14 +1,14 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { useWindowMock } from '../../../mocks/window'
-import { createI18nMock } from '../../../mocks'
-import Web from '../../../../src/renderer/docrepo/Web.vue'
-import { DocumentBase } from '../../../../src/types/rag'
+import { useWindowMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
+import Web from '@renderer/docrepo/Web.vue'
+import { DocumentBase } from '@/types/rag'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 

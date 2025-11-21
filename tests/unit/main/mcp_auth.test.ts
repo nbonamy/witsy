@@ -1,6 +1,6 @@
 import { vi, test, expect, beforeEach, describe } from 'vitest'
 import { app } from 'electron'
-import McpOAuthManager, { McpOAuthClientProvider } from '../../../src/main/mcp_auth'
+import McpOAuthManager, { McpOAuthClientProvider } from '@main/mcp_auth'
 
 // Mock Electron
 vi.mock('electron', () => ({
@@ -32,7 +32,7 @@ const mockHttpServerInstance = {
   getBaseUrl: vi.fn(() => 'http://localhost:8090')
 }
 
-vi.mock('../../../src/main/http_server', () => ({
+vi.mock('@main/http_server', () => ({
   HttpServer: {
     getInstance: vi.fn(() => mockHttpServerInstance)
   }
@@ -46,7 +46,7 @@ vi.mock('portfinder', () => ({
   getPortPromise: vi.fn(() => Promise.resolve(8090))
 }))
 
-vi.mock('../../../src/main/i18n', () => ({
+vi.mock('@main/i18n', () => ({
   useI18n: vi.fn(() => (key: string) => key)
 }))
 

@@ -4,7 +4,7 @@ import { AgentRun } from 'types/agents'
 import { App } from 'electron'
 import { notifyBrowserWindows } from './windows'
 import { workspaceFolderPath } from './workspace'
-import Agent from '../models/agent'
+import Agent from '@models/agent'
 import path from 'path'
 import fs from 'fs'
 

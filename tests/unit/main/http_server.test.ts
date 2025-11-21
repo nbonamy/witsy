@@ -1,6 +1,6 @@
 import { vi, expect, test, beforeEach, afterEach } from 'vitest'
 import { IncomingMessage, ServerResponse } from 'node:http'
-import { HttpServer } from '../../../src/main/http_server'
+import { HttpServer } from '@main/http_server'
 
 // Mock portfinder
 vi.mock('portfinder', () => ({

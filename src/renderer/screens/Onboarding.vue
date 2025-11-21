@@ -48,8 +48,8 @@ import Permissions from '../onboarding/Permissions.vue'
 import Studio from '../onboarding/Studio.vue'
 import Voice from '../onboarding/Voice.vue'
 import Welcome from '../onboarding/Welcome.vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 
 defineEmits(['close']);
 

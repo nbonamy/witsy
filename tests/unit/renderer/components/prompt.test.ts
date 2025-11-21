@@ -1,35 +1,35 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { useWindowMock, useBrowserMock } from '../../../mocks/window'
-import { createI18nMock } from '../../../mocks'
+import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
 import { emitEventMock } from '@root/vitest.setup'
-import { stubTeleport } from '../../../mocks/stubs'
-import { store } from '../../../../src/renderer/services/store'
-import Prompt from '../../../../src/renderer/components/Prompt.vue'
-import Chat from '../../../../src/models/chat'
-import Attachment from '../../../../src/models/attachment'
-import { getLlmLocale } from '../../../../src/renderer/services/i18n'
-import Dialog from '../../../../src/renderer/utils/dialog'
+import { stubTeleport } from '@tests/mocks/stubs'
+import { store } from '@services/store'
+import Prompt from '@components/Prompt.vue'
+import Chat from '@models/chat'
+import Attachment from '@models/attachment'
+import { getLlmLocale } from '@services/i18n'
+import Dialog from '@renderer/utils/dialog'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../../../src/renderer/utils/dialog', () => ({
+vi.mock('@renderer/utils/dialog', () => ({
   default: {
     show: vi.fn(),
     alert: vi.fn()
   }
 }))
 
-vi.mock('../../../../src/renderer/voice/stt', () => ({
+vi.mock('@renderer/voice/stt', () => ({
   isSTTReady: vi.fn(() => true),
 }))
 
-vi.mock('../../../../src/renderer/audio/audio_recorder', () => ({
+vi.mock('@renderer/audio/audio_recorder', () => ({
   default: vi.fn(() => ({
     initialize: vi.fn(),
     start: vi.fn(),
@@ -42,7 +42,7 @@ vi.mock('../../../../src/renderer/audio/audio_recorder', () => ({
   })),
 }))
 
-vi.mock('../../../../src/renderer/audio/transcriber', () => ({
+vi.mock('@renderer/audio/transcriber', () => ({
   default: vi.fn(() => ({
     transcriber: {
       initialize: vi.fn(),
@@ -57,7 +57,7 @@ vi.mock('../../../../src/renderer/audio/transcriber', () => ({
   }))
 }))
 
-vi.mock('../../../../src/renderer/utils/image_utils', () => ({
+vi.mock('@renderer/utils/image_utils', () => ({
   default: {
     resize: vi.fn((dataUrl, maxSize, callback) => {
       // Simulate successful resize by calling the callback with modified content

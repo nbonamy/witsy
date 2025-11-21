@@ -1,7 +1,7 @@
 import { vi, test, expect, describe, beforeAll, beforeEach } from 'vitest'
-import { useWindowMock } from '../../../mocks/window'
-import { useTools } from '../../../../src/renderer/composables/tools'
-import { store } from '../../../../src/renderer/services/store'
+import { useWindowMock } from '@tests/mocks/window'
+import { useTools } from '@composables/tools'
+import { store } from '@services/store'
 
 beforeAll(() => {
   useWindowMock()

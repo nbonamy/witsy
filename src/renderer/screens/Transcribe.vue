@@ -124,15 +124,15 @@ import LangSelect from '../components/LangSelect.vue'
 import Loader from '../components/Loader.vue'
 import Waveform from '../components/Waveform.vue'
 import useAudioRecorder from '../audio/audio_recorder'
-import Dialog from '../utils/dialog'
+import Dialog from '@renderer/utils/dialog'
 import useTranscriber from '../audio/transcriber'
-import Attachment from '../../models/attachment'
-import { allLanguages, commandI18n, t } from '../services/i18n'
-import { store } from '../services/store'
+import Attachment from '@models/attachment'
+import { allLanguages, commandI18n, t } from '@services/i18n'
+import { store } from '@services/store'
 import { getSTTEngines, getSTTModels, StreamingChunk } from '../voice/stt'
 
 import { AudioWaveformIcon, CircleIcon, DiscIcon, GlobeIcon, MicIcon, MinimizeIcon, UploadIcon, WandIcon } from 'lucide-vue-next'
-import useEventBus from '../composables/event_bus'
+import useEventBus from '@composables/event_bus'
 const { emitEvent } = useEventBus()
 
 // init stuff

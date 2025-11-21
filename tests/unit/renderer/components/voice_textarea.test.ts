@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { useWindowMock } from '../../../mocks/window'
-import { store } from '../../../../src/renderer/services/store'
-import VoiceTextarea from '../../../../src/renderer/components/VoiceTextarea.vue'
+import { useWindowMock } from '@tests/mocks/window'
+import { store } from '@services/store'
+import VoiceTextarea from '@components/VoiceTextarea.vue'
 
-vi.mock('../../../../src/renderer/voice/stt', () => ({
+vi.mock('@renderer/voice/stt', () => ({
   isSTTReady: vi.fn(() => true),
 }))
 
-vi.mock('../../../../src/renderer/audio/audio_recorder', () => ({
+vi.mock('@renderer/audio/audio_recorder', () => ({
   default: vi.fn(() => ({
     initialize: vi.fn(),
     start: vi.fn(),
@@ -22,7 +22,7 @@ vi.mock('../../../../src/renderer/audio/audio_recorder', () => ({
   })),
 }))
 
-vi.mock('../../../../src/renderer/audio/transcriber', () => ({
+vi.mock('@renderer/audio/transcriber', () => ({
   default: vi.fn(() => ({
     transcriber: {
       initialize: vi.fn(),

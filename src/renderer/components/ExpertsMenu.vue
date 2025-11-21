@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useExpertsMenu } from '../composables/useExpertsMenu'
+import { useExpertsMenu } from '@composables/useExpertsMenu'
 import ContextMenuPlus from './ContextMenuPlus.vue'
 
 // Props

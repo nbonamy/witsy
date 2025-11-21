@@ -20,7 +20,7 @@ import { CodeXmlIcon, DownloadIcon, SunMoonIcon } from 'lucide-vue-next'
 import mermaid, { RenderResult } from 'mermaid'
 import { onMounted, ref } from 'vue'
 
-import useEventBus from '../composables/event_bus'
+import useEventBus from '@composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({

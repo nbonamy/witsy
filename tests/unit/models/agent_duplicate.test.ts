@@ -1,9 +1,9 @@
 import { vi, beforeAll, expect, test, describe } from 'vitest'
-import Agent from '../../../src/models/agent'
-import { useWindowMock } from '../../mocks/window'
+import Agent from '@models/agent'
+import { useWindowMock } from '@tests/mocks/window'
 
 // Mock i18n
-vi.mock('../../../src/renderer/services/i18n', () => ({
+vi.mock('@services/i18n', () => ({
   t: (key: string) => {
     if (key === 'agent.copySuffix') return 'Copy'
     return key

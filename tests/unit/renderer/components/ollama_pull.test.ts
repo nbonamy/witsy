@@ -1,12 +1,12 @@
 
 import { vi, beforeAll, expect, test, beforeEach, afterAll } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { useWindowMock } from '../../../mocks/window'
-import { store } from '../../../../src/renderer/services/store'
-import OllamaModelPull from '../../../../src/renderer/components/OllamaModelPull.vue'
-import Combobox from '../../../../src/renderer/components/Combobox.vue'
+import { useWindowMock } from '@tests/mocks/window'
+import { store } from '@services/store'
+import OllamaModelPull from '@components/OllamaModelPull.vue'
+import Combobox from '@components/Combobox.vue'
 import { Ollama } from 'multi-llm-ts'
-import { EngineConfig } from '../../../../src/types/config'
+import { EngineConfig } from '@/types/config'
 
 enableAutoUnmount(afterAll)
 

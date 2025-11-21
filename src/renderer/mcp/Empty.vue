@@ -9,8 +9,8 @@
 
 <script setup lang="ts">
 import { Plug2Icon } from 'lucide-vue-next'
-import McpIcon from '../../../assets/mcp.svg?component'
-import { t } from '../services/i18n'
+import McpIcon from '@root/assets/mcp.svg?component'
+import { t } from '@services/i18n'
 
 const emit = defineEmits(['click'])
 

@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach, afterEach } from 'vitest'
-import { state } from '../../../src/cli/state'
-import { saveCliConfig, loadCliConfig } from '../../../src/cli/config'
+import { state } from '@/cli/state'
+import { saveCliConfig, loadCliConfig } from '@/cli/config'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'

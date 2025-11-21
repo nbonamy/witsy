@@ -1,18 +1,18 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { createI18nMock } from '../../../mocks/index'
-import { useWindowMock } from '../../../mocks/window'
-import { store } from '../../../../src/renderer/services/store'
-import Editor from '../../../../src/renderer/agent/Editor.vue'
-import Agent from '../../../../src/models/agent'
-import Dialog from '../../../../src/renderer/utils/dialog'
-import { stubTeleport } from '../../../mocks/stubs'
+import { createI18nMock } from '@tests/mocks/index'
+import { useWindowMock } from '@tests/mocks/window'
+import { store } from '@services/store'
+import Editor from '@renderer/agent/Editor.vue'
+import Agent from '@models/agent'
+import Dialog from '@renderer/utils/dialog'
+import { stubTeleport } from '@tests/mocks/stubs'
 import { nextTick } from 'vue'
 
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 

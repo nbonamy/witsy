@@ -2,8 +2,8 @@ import { BrainIcon, FolderIcon, SettingsIcon, XIcon } from 'lucide-vue-next'
 import type { Expert } from 'types/index'
 import type { MenuItem } from 'types/menu'
 import { computed } from 'vue'
-import { categoryI18n, expertI18n, t } from '../services/i18n'
-import { store } from '../services/store'
+import { categoryI18n, expertI18n, t } from '@services/i18n'
+import { store } from '@services/store'
 
 export interface UseExpertsMenuOptions {
   emit: (event: any, ...args: any[]) => void

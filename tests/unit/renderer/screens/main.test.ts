@@ -1,11 +1,11 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, enableAutoUnmount } from '@vue/test-utils'
-import { useWindowMock } from '../../../mocks/window'
-import Main from '../../../../src/renderer/screens/Main.vue'
+import { useWindowMock } from '@tests/mocks/window'
+import Main from '@screens/Main.vue'
 
-vi.unmock('../../../../src/renderer/composables/event_bus')
-import useEventBus from '../../../../src/renderer/composables/event_bus'
+vi.unmock('@renderer/composables/event_bus')
+import useEventBus from '@composables/event_bus'
 const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterAll)

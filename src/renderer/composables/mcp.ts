@@ -1,7 +1,7 @@
 import { anyDict } from 'types/index'
 import { McpServerType } from 'types/mcp'
-import { t } from '../services/i18n'
-import Dialog from '../utils/dialog'
+import { t } from '@services/i18n'
+import Dialog from '@renderer/utils/dialog'
 
 export type OAuthStatus = {
   checking?: boolean

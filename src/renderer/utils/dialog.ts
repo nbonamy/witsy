@@ -1,7 +1,7 @@
 
 import { convert } from 'html-to-text'
 import Swal, { DialogResult as SwalDialogResult } from 'sweetalert2/dist/sweetalert2.js'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 
 export type DialogOptions = {
   title: string

@@ -14,7 +14,7 @@
 <script setup lang="ts">
 
 import { computed } from 'vue'
-import { allLanguages } from '../services/i18n'
+import { allLanguages } from '@services/i18n'
 
 const locale = defineModel()
 

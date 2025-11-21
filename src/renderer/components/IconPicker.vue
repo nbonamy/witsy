@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { icons } from 'lucide-vue-next'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 
 const props = defineProps<{
   modelValue: string | null | undefined

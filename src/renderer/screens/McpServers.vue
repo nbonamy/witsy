@@ -16,7 +16,7 @@
 import { nextTick, onMounted, ref } from 'vue'
 import Editor, { McpCreateType } from '../mcp/Editor.vue'
 import List from '../mcp/List.vue'
-import { store } from '../services/store'
+import { store } from '@services/store'
 import { McpServer } from 'types/mcp'
 
 const list = ref(null)

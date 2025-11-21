@@ -10,8 +10,8 @@
 
 import { ChatModel } from 'multi-llm-ts'
 import { computed, ComputedRef } from 'vue'
-import { store } from '../services/store'
-import LlmFactory, { ILlmManager } from '../services/llms/llm'
+import { store } from '@services/store'
+import LlmFactory, { ILlmManager } from '@services/llms/llm'
 
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 

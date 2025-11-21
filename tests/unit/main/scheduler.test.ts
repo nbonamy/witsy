@@ -1,27 +1,27 @@
 import { beforeEach, describe, expect, test, vi, afterEach } from 'vitest'
 import { App } from 'electron'
-import Scheduler from '../../../src/main/scheduler'
-import Mcp from '../../../src/main/mcp'
-import Agent from '../../../src/models/agent'
-import * as configModule from '../../../src/main/config'
-import * as agentsModule from '../../../src/main/agents'
-import * as interpreterModule from '../../../src/main/interpreter'
-import * as workspaceModule from '../../../src/main/workspace'
-import * as i18nModule from '../../../src/renderer/services/i18n'
-import * as mainI18nModule from '../../../src/main/i18n'
-import { WorkspaceHeader } from '../../../src/types/workspace'
+import Scheduler from '@main/scheduler'
+import Mcp from '@main/mcp'
+import Agent from '@models/agent'
+import * as configModule from '@main/config'
+import * as agentsModule from '@main/agents'
+import * as interpreterModule from '@main/interpreter'
+import * as workspaceModule from '@main/workspace'
+import * as i18nModule from '@services/i18n'
+import * as mainI18nModule from '@main/i18n'
+import { WorkspaceHeader } from '@/types/workspace'
 
 // Mock external dependencies
 vi.mock('cron-parser')
-vi.mock('../../../src/main/config')
-vi.mock('../../../src/main/agents')
-vi.mock('../../../src/main/agent_utils')
-vi.mock('../../../src/main/interpreter')
-vi.mock('../../../src/main/i18n')
-vi.mock('../../../src/main/search')
-vi.mock('../../../src/main/workspace')
-vi.mock('../../../src/renderer/services/agent_executor_workflow')
-vi.mock('../../../src/renderer/services/i18n')
+vi.mock('@main/config')
+vi.mock('@main/agents')
+vi.mock('@main/agent_utils')
+vi.mock('@main/interpreter')
+vi.mock('@main/i18n')
+vi.mock('@main/search')
+vi.mock('@main/workspace')
+vi.mock('@services/agent_executor_workflow')
+vi.mock('@services/i18n')
 
 // Mock CronExpressionParser
 const mockCronParser = {

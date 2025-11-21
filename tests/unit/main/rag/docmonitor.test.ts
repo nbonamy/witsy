@@ -1,6 +1,6 @@
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
-import DocumentMonitor from '../../../../src/main/rag/docmonitor'
-import DocumentSourceImpl from '../../../../src/main/rag/docsource'
+import DocumentMonitor from '@main/rag/docmonitor'
+import DocumentSourceImpl from '@main/rag/docsource'
 import { watch as chokidarWatch } from 'chokidar'
 import fs from 'fs'
 import { app } from 'electron'

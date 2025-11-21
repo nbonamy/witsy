@@ -29,8 +29,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      '@assets': path.resolve(__dirname, 'assets'),
       '@components': path.resolve(__dirname, 'src/renderer/components'),
       '@composables': path.resolve(__dirname, 'src/renderer/composables'),
+      '@css': path.resolve(__dirname, 'css'),
       '@main': path.resolve(__dirname, 'src/main'),
       '@models': path.resolve(__dirname, 'src/models'),
       '@renderer': path.resolve(__dirname, 'src/renderer'),
@@ -38,6 +40,7 @@ export default defineConfig({
       '@screens': path.resolve(__dirname, 'src/renderer/screens'),
       '@services': path.resolve(__dirname, 'src/renderer/services'),
       '@tests': path.resolve(__dirname, 'tests'),
+      'types': path.resolve(__dirname, 'src/types'),
     }
   },
   test: {

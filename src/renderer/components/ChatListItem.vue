@@ -11,10 +11,10 @@
 
 <script setup lang="ts">
 
-import Chat from '../../models/chat'
-import { store } from '../services/store'
+import Chat from '@models/chat'
+import { store } from '@services/store'
 
-import useEventBus from '../composables/event_bus'
+import useEventBus from '@composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({

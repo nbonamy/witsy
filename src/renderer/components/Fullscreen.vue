@@ -9,7 +9,7 @@
 
 import { XIcon } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
-import useEventBus from '../composables/event_bus'
+import useEventBus from '@composables/event_bus'
 import { strDict } from 'types/index'
 
 const { onEvent } = useEventBus()
