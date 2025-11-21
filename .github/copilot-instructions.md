@@ -92,7 +92,7 @@ Never use simulated `wait` statements using an "await Promise" pattern. In most 
 All the IPC methods are mocked in `tests/mocks/window.ts`. In most cases, if you need to test IPC calls, you should
 
 ```typescript
-import { useWindowMock } from '../mocks/window
+import { useWindowMock } from '@tests/mocks/window'
 ```
 
 and use the `windowMock` in `beforeAll` (or maybe `beforeEach`).
