@@ -20,8 +20,8 @@
 
 import { v4 as uuidv4 } from 'uuid'
 import { ref } from 'vue'
-import CommandEditor from '../components/CommandEditor.vue'
-import CommandsList from '../components/CommandsList.vue'
+import CommandEditor from '@components/CommandEditor.vue'
+import CommandsList from '@components/CommandsList.vue'
 import { newCommand, saveCommands } from '@services/commands'
 import { commandI18n, t } from '@services/i18n'
 import { store } from '@services/store'

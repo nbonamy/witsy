@@ -39,7 +39,7 @@
 
 import { XIcon } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
-import LangSelect from '../components/LangSelect.vue'
+import LangSelect from '@components/LangSelect.vue'
 import Chat from '../onboarding/Chat.vue'
 import Done from '../onboarding/Done.vue'
 import Instructions from '../onboarding/Instructions.vue'

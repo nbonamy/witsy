@@ -87,9 +87,9 @@
 
 import { IdCardLanyardIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
-import Loader from '../components/Loader.vue'
-import MessageItemBody from '../components/MessageItemBody.vue'
-import Prompt from '../components/Prompt.vue'
+import Loader from '@components/Loader.vue'
+import MessageItemBody from '@components/MessageItemBody.vue'
+import Prompt from '@components/Prompt.vue'
 import Dialog from '@renderer/utils/dialog'
 import LlmManager from '@services/llms/manager'
 import Chat from '@models/chat'

@@ -61,7 +61,7 @@
 
 import { CheckIcon, FolderPlusIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
-import ButtonIcon from '../components/ButtonIcon.vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
 import Dialog from '@renderer/utils/dialog'
 import useEventBus from '@composables/event_bus'
 import Config from '../docrepo/Config.vue'

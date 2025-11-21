@@ -41,7 +41,7 @@ Never try to run the application during your process.
 In the renderer process, the state is managed through the store object: 
 
 ```typescript
-import { store } from '../services/store'
+import { store } from '@services/store'
 ```
 
 This store is a Vue 3 reactive object that holds the application state, including user preferences, conversation history and other relevant data.

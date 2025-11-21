@@ -22,9 +22,9 @@
 
 import { v4 as uuidv4 } from 'uuid'
 import { ref } from 'vue'
-import SidebarFeatures from '../components/SidebarFeatures.vue'
-import WebAppEditor from '../components/WebAppEditor.vue'
-import WebAppsList from '../components/WebAppsList.vue'
+import SidebarFeatures from '@components/SidebarFeatures.vue'
+import WebAppEditor from '@components/WebAppEditor.vue'
+import WebAppsList from '@components/WebAppsList.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { WebApp } from 'types/workspace'

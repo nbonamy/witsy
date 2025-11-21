@@ -60,7 +60,7 @@
 import { ref, onMounted } from 'vue'
 import { store } from '@services/store'
 import { t } from '@services/i18n'
-import ModalDialog from '../components/ModalDialog.vue'
+import ModalDialog from '@components/ModalDialog.vue'
 import defaultSettings from '@root/defaults/settings.json'
 
 const dialog = ref(null)

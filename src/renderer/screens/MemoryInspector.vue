@@ -38,7 +38,7 @@
 import { ref } from 'vue'
 import { t } from '@services/i18n'
 import { MemoryFact } from 'types/index'
-import ModalDialog from '../components/ModalDialog.vue'
+import ModalDialog from '@components/ModalDialog.vue'
 import Dialog from '@renderer/utils/dialog'
 
 const dialog = ref(null)

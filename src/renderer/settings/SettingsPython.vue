@@ -49,7 +49,7 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
-import SpinningIcon from '../components/SpinningIcon.vue'
+import SpinningIcon from '@components/SpinningIcon.vue'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'

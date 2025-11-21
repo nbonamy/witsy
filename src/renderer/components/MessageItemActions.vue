@@ -33,9 +33,9 @@
 
 import { ChartNoAxesColumnIncreasingIcon, GitBranchIcon, PencilIcon, QuoteIcon, RotateCcwIcon, Trash2Icon, WrenchIcon } from 'lucide-vue-next'
 import Message from '@models/message'
-import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
-import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import MessageItemActionScratchpad from '../components/MessageItemActionScratchpad.vue'
+import MessageItemActionCopy from '@components/MessageItemActionCopy.vue'
+import MessageItemActionRead from '@components/MessageItemActionRead.vue'
+import MessageItemActionScratchpad from '@components/MessageItemActionScratchpad.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import Dialog from '@renderer/utils/dialog'

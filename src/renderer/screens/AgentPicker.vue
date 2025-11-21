@@ -30,7 +30,7 @@
 import { computed, ref } from 'vue'
 import LogoA2A from '@root/assets/a2a.svg?component'
 import AgentIcon from '@root/assets/agent.svg?component'
-import ModalDialog from '../components/ModalDialog.vue'
+import ModalDialog from '@components/ModalDialog.vue'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'

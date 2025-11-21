@@ -30,7 +30,7 @@
 <script setup lang="ts">
 
 import { FileUpIcon, NotebookPenIcon, Settings2Icon } from 'lucide-vue-next'
-import ButtonIcon from '../components/ButtonIcon.vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
 import History from './History.vue'
 import useEventBus from '@composables/event_bus'
 import { t } from '@services/i18n'

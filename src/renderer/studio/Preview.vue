@@ -51,8 +51,8 @@
 
 import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, FullscreenIcon, InfoIcon, RedoIcon, Trash2Icon, UndoIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, ref, watch } from 'vue'
-import ButtonIcon from '../components/ButtonIcon.vue'
-import Loader from '../components/Loader.vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
+import Loader from '@components/Loader.vue'
 import Dialog from '@renderer/utils/dialog'
 import Message from '@models/message'
 import { t } from '@services/i18n'

@@ -60,9 +60,9 @@ import { store } from '@services/store'
 import { t } from '@services/i18n'
 import LlmFactory from '@services/llms/llm'
 import Dialog from '@renderer/utils/dialog'
-import RefreshButton from '../components/RefreshButton.vue'
-import ModelSelectPlus from '../components/ModelSelectPlus.vue'
-import InputObfuscated from '../components/InputObfuscated.vue'
+import RefreshButton from '@components/RefreshButton.vue'
+import ModelSelectPlus from '@components/ModelSelectPlus.vue'
+import InputObfuscated from '@components/InputObfuscated.vue'
 import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 
 const vertexai = ref(false)

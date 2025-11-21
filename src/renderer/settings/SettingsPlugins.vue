@@ -22,7 +22,7 @@
 <script setup lang="ts">
 
 import { computed, nextTick, ref } from 'vue'
-import PluginIcon from '../components/PluginIcon.vue'
+import PluginIcon from '@components/PluginIcon.vue'
 import { availablePlugins } from '@services/plugins/plugins'
 import { t } from '@services/i18n'
 import SettingsBrowse from './SettingsBrowse.vue'

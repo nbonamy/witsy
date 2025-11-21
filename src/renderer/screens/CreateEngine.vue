@@ -59,8 +59,8 @@
 import { ref, onMounted } from 'vue'
 import { t } from '@services/i18n'
 import Dialog from '@renderer/utils/dialog'
-import InputObfuscated from '../components/InputObfuscated.vue'
-import ModalDialog from '../components/ModalDialog.vue'
+import InputObfuscated from '@components/InputObfuscated.vue'
+import ModalDialog from '@components/ModalDialog.vue'
 import defaults from '@root/defaults/settings.json'
 
 const dialog = ref(null)

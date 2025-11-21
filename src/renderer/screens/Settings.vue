@@ -42,7 +42,7 @@
 
 import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref, watch } from 'vue'
-import { MenuBarMode } from '../components/MenuBar.vue'
+import { MenuBarMode } from '@components/MenuBar.vue'
 import useEventBus from '@composables/event_bus'
 import { installTabs, showActiveTab } from '@renderer/utils/tabs'
 import { t } from '@services/i18n'

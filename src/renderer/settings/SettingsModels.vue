@@ -29,7 +29,7 @@
 
 import { CirclePlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed, nextTick, ref } from 'vue'
-import EngineLogo from '../components/EngineLogo.vue'
+import EngineLogo from '@components/EngineLogo.vue'
 import Dialog from '@renderer/utils/dialog'
 import LlmFactory, { ILlmManager } from '@services/llms/llm'
 import CreateEngine from '@screens/CreateEngine.vue'

@@ -49,9 +49,9 @@
 <script setup lang="ts">
 import { ImagePlusIcon, ListRestartIcon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
-import ButtonIcon from '../components/ButtonIcon.vue'
-import ContextMenuPlus from '../components/ContextMenuPlus.vue'
-import DrawingCanvas from '../components/DrawingCanvas.vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
+import ContextMenuPlus from '@components/ContextMenuPlus.vue'
+import DrawingCanvas from '@components/DrawingCanvas.vue'
 import Dialog from '@renderer/utils/dialog'
 import useEventBus from '@composables/event_bus'
 import Attachment from '@models/attachment'

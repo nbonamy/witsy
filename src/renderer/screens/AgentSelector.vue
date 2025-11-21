@@ -38,7 +38,7 @@
 import { ref, computed } from 'vue'
 import { store } from '@services/store'
 import { t } from '@services/i18n'
-import ModalDialog from '../components/ModalDialog.vue'
+import ModalDialog from '@components/ModalDialog.vue'
 import Agent from '@models/agent'
 
 const props = defineProps({

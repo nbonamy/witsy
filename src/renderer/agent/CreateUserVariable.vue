@@ -46,7 +46,7 @@
 
 import { ref } from 'vue'
 import { kAgentStepVarFacts, kAgentStepVarOutputPrefix, kAgentStepVarRunOutput } from 'types/agents'
-import ModalDialog from '../components/ModalDialog.vue'
+import ModalDialog from '@components/ModalDialog.vue'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 

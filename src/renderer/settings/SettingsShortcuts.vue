@@ -55,7 +55,7 @@
 import { ref } from 'vue'
 import { store } from '@services/store'
 import { t } from '@services/i18n'
-import InputShortcut from '../components/InputShortcut.vue'
+import InputShortcut from '@components/InputShortcut.vue'
 
 const prompt = ref(null)
 const chat = ref(null)

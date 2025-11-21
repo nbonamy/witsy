@@ -57,8 +57,8 @@
 
 import { ActivityIcon } from 'lucide-vue-next'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import Fullscreen from '../components/Fullscreen.vue'
-import MenuBar, { MenuBarMode } from '../components/MenuBar.vue'
+import Fullscreen from '@components/Fullscreen.vue'
+import MenuBar, { MenuBarMode } from '@components/MenuBar.vue'
 import useEventBus from '@composables/event_bus'
 import useWebappManager from '@composables/webapp_manager'
 import AgentForge from '@screens/AgentForge.vue'

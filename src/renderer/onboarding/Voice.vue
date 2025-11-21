@@ -39,9 +39,9 @@
 <script setup lang="ts">
 
 import { computed, ref } from 'vue'
-import EngineLogo from '../components/EngineLogo.vue'
-import InputObfuscated from '../components/InputObfuscated.vue'
-import Spinner from '../components/Spinner.vue'
+import EngineLogo from '@components/EngineLogo.vue'
+import InputObfuscated from '@components/InputObfuscated.vue'
+import Spinner from '@components/Spinner.vue'
 import { t } from '@services/i18n'
 import { engineNames } from '@services/llms/consts'
 import { store } from '@services/store'

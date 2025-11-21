@@ -119,10 +119,10 @@
 <script setup lang="ts">
 
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
-import ContextMenuPlus from '../components/ContextMenuPlus.vue'
-import LangSelect from '../components/LangSelect.vue'
-import Loader from '../components/Loader.vue'
-import Waveform from '../components/Waveform.vue'
+import ContextMenuPlus from '@components/ContextMenuPlus.vue'
+import LangSelect from '@components/LangSelect.vue'
+import Loader from '@components/Loader.vue'
+import Waveform from '@components/Waveform.vue'
 import useAudioRecorder from '../audio/audio_recorder'
 import Dialog from '@renderer/utils/dialog'
 import useTranscriber from '../audio/transcriber'
