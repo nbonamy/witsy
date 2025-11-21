@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { LlmEngine } from 'multi-llm-ts'
-import { anyDict, ExternalApp } from 'types/'
+import { anyDict, ExternalApp } from 'types'
 import { CodeExecutionMode } from 'types/config'
 import { ToolSelection } from 'types/llm'
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'

@@ -14,7 +14,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint '**/*.ts' && echo '0 linting error' && vue-tsc --noEmit && echo '0 TypeScript error'",
+    "lint": "eslint '**/*.ts' && echo '0 linting error' && vue-tsc --noEmit --project tsconfig.lint.json && echo '0 TypeScript error'",
     "lint:watch": "node build/lint-watch.mjs",
     "credits": "npx @opengovsg/credits-generator",
     "cli": "tsx src/cli/main.ts",
