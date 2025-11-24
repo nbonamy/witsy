@@ -1,17 +1,17 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { useWindowMock } from '../../../mocks/window'
-import { store } from '../../../../src/renderer/services/store'
-import List from '../../../../src/renderer/agent/List.vue'
+import { useWindowMock } from '@tests/mocks/window'
+import { store } from '@services/store'
+import List from '@renderer/agent/List.vue'
 
 // Mock the i18n service
-vi.mock('../../../../src/renderer/services/i18n', () => ({
+vi.mock('@services/i18n', () => ({
   t: (key: string) => key
 }))
 
 // Mock the ContextMenuPlus component
-vi.mock('../../../../src/renderer/components/ContextMenuPlus.vue', () => ({
+vi.mock('@components/ContextMenuPlus.vue', () => ({
   default: {
     name: 'ContextMenuPlus',
     props: ['anchor', 'position'],

@@ -113,8 +113,8 @@
 
 import { ChevronRightIcon, MoveLeftIcon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, onBeforeUnmount, ref, useSlots, watch } from 'vue'
-import Overlay from '../components/Overlay.vue'
-import { t } from '../services/i18n'
+import Overlay from '@components/Overlay.vue'
+import { t } from '@services/i18n'
 import type { MenuItem } from 'types/menu'
 
 export type MenuPosition = 'below' | 'above' | 'right' | 'left' | 'above-right' | 'above-left' | 'below-right' | 'below-left'

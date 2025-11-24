@@ -1,18 +1,18 @@
 
 import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { useWindowMock, useBrowserMock } from '../../../mocks/window'
-import { store } from '../../../../src/renderer/services/store'
+import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
+import { store } from '@services/store'
 import { switchToTab, tabs } from './settings_utils'
-import Settings from '../../../../src/renderer/screens/Settings.vue'
-import { wait } from '../../../../src/main/utils'
+import Settings from '@screens/Settings.vue'
+import { wait } from '@main/utils'
 import {
   ModelsList, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels,
   loadOllamaModels, loadOpenAIModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels,
   loadMetaModels,
   loadLMStudioModels
 } from 'multi-llm-ts'
-import { findModelSelectorPlus } from '../../../utils'
+import { findModelSelectorPlus } from '@tests/utils'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()

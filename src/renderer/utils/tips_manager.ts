@@ -1,5 +1,5 @@
 import { Store } from 'types/index'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 import Dialog from './dialog'
 
 export type TipId = 

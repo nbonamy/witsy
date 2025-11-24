@@ -1,6 +1,6 @@
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
 import { PythonShell } from 'python-shell'
-import { runPython } from '../../../src/main/interpreter'
+import { runPython } from '@main/interpreter'
 
 // Mock python-shell
 vi.mock('python-shell', () => ({

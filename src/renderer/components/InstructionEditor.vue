@@ -18,9 +18,9 @@
 
 <script setup lang="ts">
 
-import { CustomInstruction } from 'types/'
+import { CustomInstruction } from 'types'
 import { ref, computed, watch } from 'vue'
-import { i18nInstructions, t } from '../services/i18n'
+import { i18nInstructions, t } from '@services/i18n'
 
 interface Props {
   instruction: CustomInstruction | null

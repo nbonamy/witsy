@@ -1,17 +1,17 @@
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { defaultCapabilities } from 'multi-llm-ts'
 import { afterAll, beforeAll, beforeEach, expect, test, vi } from 'vitest'
-import { stubTeleport } from '../../../mocks/stubs'
-import { useWindowMock } from '../../../mocks/window'
-import { createI18nMock } from '../../../mocks/index'
-import FolderSettings from '../../../../src/renderer/screens/FolderSettings.vue'
-import { store } from '../../../../src/renderer/services/store'
-import Dialog from '../../../../src/renderer/utils/dialog'
-import Expert from '../../../../src/models/expert'
+import { stubTeleport } from '@tests/mocks/stubs'
+import { useWindowMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks/index'
+import FolderSettings from '@screens/FolderSettings.vue'
+import { store } from '@services/store'
+import Dialog from '@renderer/utils/dialog'
+import Expert from '@models/expert'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 

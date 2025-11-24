@@ -109,7 +109,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import ContextMenuPlus, { type MenuPosition } from '../components/ContextMenuPlus.vue'
+import ContextMenuPlus, { type MenuPosition } from '@components/ContextMenuPlus.vue'
 
 defineProps({
   anchor: {

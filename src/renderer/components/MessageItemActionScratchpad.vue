@@ -7,9 +7,9 @@
 <script setup lang="ts">
 
 import { FileEditIcon } from 'lucide-vue-next'
-import Message from '../../models/message'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import Message from '@models/message'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 
 const props = defineProps({
   message: {

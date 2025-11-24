@@ -25,8 +25,8 @@
 
 <script setup lang="ts">
 import { MinusIcon, PlusIcon } from 'lucide-vue-next'
-import Dialog from '../utils/dialog'
-import { t } from '../services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import { t } from '@services/i18n'
 
 const props = defineProps({
   variables: {

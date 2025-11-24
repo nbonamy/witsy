@@ -1,8 +1,8 @@
 
-import { AgentRun } from '../../../src/types'
+import { AgentRun } from '@/types'
 import { vi, beforeAll, expect, test, beforeEach } from 'vitest'
-import { useWindowMock } from '../../mocks/window'
-import * as main from '../../../src/main/agents'
+import { useWindowMock } from '@tests/mocks/window'
+import * as main from '@main/agents'
 import { app } from 'electron'
 import fs from 'fs'
 
@@ -24,7 +24,7 @@ vi.mock('fs', async (importOriginal) => {
   }}
 })
 
-vi.mock('../../../src/main/windows/index', async () => {
+vi.mock('@main/windows/index', async () => {
   return {
     notifyBrowserWindows: vi.fn(),
   }

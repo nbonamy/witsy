@@ -1,4 +1,4 @@
-import { AgentStep, kAgentStepVarFacts, kAgentStepVarOutputPrefix, kAgentStepVarRunOutput } from '../../types/agents'
+import { AgentStep, kAgentStepVarFacts, kAgentStepVarOutputPrefix, kAgentStepVarRunOutput } from 'types/agents'
 
 export type PromptInput = {
   name: string

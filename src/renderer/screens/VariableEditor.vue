@@ -25,9 +25,9 @@
 <script setup lang="ts">
 
 import { ref, onMounted, watch, PropType } from 'vue'
-import { t } from '../services/i18n'
-import Dialog from '../utils/dialog'
-import ModalDialog from '../components/ModalDialog.vue'
+import { t } from '@services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import ModalDialog from '@components/ModalDialog.vue'
 
 const dialog = ref(null)
 const key = ref('')

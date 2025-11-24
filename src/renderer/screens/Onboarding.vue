@@ -39,7 +39,7 @@
 
 import { XIcon } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
-import LangSelect from '../components/LangSelect.vue'
+import LangSelect from '@components/LangSelect.vue'
 import Chat from '../onboarding/Chat.vue'
 import Done from '../onboarding/Done.vue'
 import Instructions from '../onboarding/Instructions.vue'
@@ -48,8 +48,8 @@ import Permissions from '../onboarding/Permissions.vue'
 import Studio from '../onboarding/Studio.vue'
 import Voice from '../onboarding/Voice.vue'
 import Welcome from '../onboarding/Welcome.vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 
 defineEmits(['close']);
 

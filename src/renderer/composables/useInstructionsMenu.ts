@@ -1,7 +1,7 @@
 import type { MenuItem } from 'types/menu'
 import { computed } from 'vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 
 export interface UseInstructionsMenuOptions {
   emit: (event: any, ...args: any[]) => void

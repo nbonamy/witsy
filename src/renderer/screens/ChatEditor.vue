@@ -29,14 +29,14 @@
 <script setup lang="ts">
 
 import { ref, onMounted, watch, PropType } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import Dialog from '../utils/dialog'
-import ModalDialog from '../components/ModalDialog.vue'
-import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelect from '../components/ModelSelect.vue'
-import LlmFactory, { ILlmManager } from '../services/llms/llm'
-import Chat from '../../models/chat'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import ModalDialog from '@components/ModalDialog.vue'
+import EngineSelect from '@components/EngineSelect.vue'
+import ModelSelect from '@components/ModelSelect.vue'
+import LlmFactory, { ILlmManager } from '@services/llms/llm'
+import Chat from '@models/chat'
 
 export type ChatEditorCallback = ({title, engine, model}: {title: string, engine: string, model: string}) => void
 

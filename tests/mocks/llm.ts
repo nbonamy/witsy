@@ -1,9 +1,9 @@
 
 import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStreamingResponse, EngineCreateOpts, ModelCapabilities, ChatModel, ModelMetadata, ModelGeneric } from 'multi-llm-ts'
-import { store } from '../../src/renderer/services/store'
-import Message from '../../src/models/message'
+import { store } from '@services/store'
+import Message from '@models/message'
 import { RandomChunkStream, InfiniteStream } from './streams'
-import Attachment from '../../src/models/attachment'
+import Attachment from '@models/attachment'
 
 export const setLlmDefaults = (engine: string, model: string) => {
   store.config.llm.engine = engine

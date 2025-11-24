@@ -2,7 +2,7 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
-import en from '../locales/en.json'
+import en from '@root/locales/en.json'
 
 // Function to sort a dictionary recursively
 function sortObjectRecursively(locale: string, path: string, obj: any): any {

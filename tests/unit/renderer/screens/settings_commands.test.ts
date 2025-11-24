@@ -1,27 +1,27 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { createI18nMock } from '../../../mocks'
-import { useWindowMock } from '../../../mocks/window'
-import { stubTeleport } from '../../../mocks/stubs'
-import { store } from '../../../../src/renderer/services/store'
+import { createI18nMock } from '@tests/mocks'
+import { useWindowMock } from '@tests/mocks/window'
+import { stubTeleport } from '@tests/mocks/stubs'
+import { store } from '@services/store'
 import { switchToTab, tabs } from './settings_utils'
-import Settings from '../../../../src/renderer/screens/Settings.vue'
-import { findModelSelectorPlus } from '../../../utils'
+import Settings from '@screens/Settings.vue'
+import { findModelSelectorPlus } from '@tests/utils'
 import { ChatModel } from 'multi-llm-ts'
-import Dialog from '../../../../src/renderer/utils/dialog'
+import Dialog from '@renderer/utils/dialog'
 
 enableAutoUnmount(afterAll)
 
 HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 
-vi.mock('../../../../src/renderer/services/store.ts', async (importOriginal) => {
-  const commands = await import('../../../../defaults/commands.json')
+vi.mock('@services/store.ts', async (importOriginal) => {
+  const commands = await import('@root/defaults/commands.json')
   const mod: any = await importOriginal()
   return {
     clone: mod.clone,

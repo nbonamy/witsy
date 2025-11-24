@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import ContextMenuPlus from '../../../../src/renderer/components/ContextMenuPlus.vue'
-import type { MenuItem } from '../../../../src/types/menu'
+import ContextMenuPlus from '@components/ContextMenuPlus.vue'
+import type { MenuItem } from '@/types/menu'
 
 // Helper to mount and wait for menu to render
 async function mountMenu(items: MenuItem[]) {

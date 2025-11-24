@@ -1,8 +1,8 @@
 
 import { vi, test, expect } from 'vitest'
 import { app } from 'electron'
-import { getLocaleMessages } from '../../../src/main/i18n'
-import { createI18n } from '../../../src/main/i18n.base'
+import { getLocaleMessages } from '@main/i18n'
+import { createI18n } from '@main/i18n.base'
 
 vi.mock('electron', () => {
   return {

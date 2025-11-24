@@ -73,10 +73,10 @@
 
 import { icons, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { ref } from 'vue'
-import Dialog from '../utils/dialog'
-import useReorderTable from '../composables/reorder_table'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import Dialog from '@renderer/utils/dialog'
+import useReorderTable from '@composables/reorder_table'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 import { WebApp } from 'types/workspace'
 
 const emit = defineEmits(['edit', 'create'])

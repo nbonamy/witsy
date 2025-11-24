@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import { store } from '../../../../src/renderer/services/store'
-import SDWebUI from '../../../../src/renderer/services/sdwebui'
+import { store } from '@services/store'
+import SDWebUI from '@services/sdwebui'
 
 // @ts-expect-error mocking
 global.fetch = async (url: string) => {

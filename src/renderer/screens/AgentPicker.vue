@@ -28,15 +28,15 @@
 <script setup lang="ts">
 
 import { computed, ref } from 'vue'
-import LogoA2A from '../../../assets/a2a.svg?component'
-import AgentIcon from '../../../assets/agent.svg?component'
-import ModalDialog from '../components/ModalDialog.vue'
-import Dialog from '../utils/dialog'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import LogoA2A from '@root/assets/a2a.svg?component'
+import AgentIcon from '@root/assets/agent.svg?component'
+import ModalDialog from '@components/ModalDialog.vue'
+import Dialog from '@renderer/utils/dialog'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 import { Agent } from 'types/agents'
 
-import useEventBus from '../composables/event_bus'
+import useEventBus from '@composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const dialog = ref(null)

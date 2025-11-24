@@ -29,11 +29,11 @@
 <script setup lang="ts">
 import { Settings2Icon } from 'lucide-vue-next'
 import { PropType, ref } from 'vue'
-import EngineModelSelect from '../components/EngineModelSelect.vue'
-import LangSelect from '../components/LangSelect.vue'
-import WizardStep from '../components/WizardStep.vue'
-import Agent from '../../models/agent'
-import { t } from '../services/i18n'
+import EngineModelSelect from '@components/EngineModelSelect.vue'
+import LangSelect from '@components/LangSelect.vue'
+import WizardStep from '@components/WizardStep.vue'
+import Agent from '@models/agent'
+import { t } from '@services/i18n'
 import EditorSettings from './Editor.Settings.vue'
 
 const props = defineProps({

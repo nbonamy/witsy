@@ -1,8 +1,8 @@
 import { app } from 'electron'
 import { beforeEach, expect, test, vi } from 'vitest'
-import { parseMarkdownChat } from '../../../src/main/import_md'
+import { parseMarkdownChat } from '@main/import_md'
 
-vi.mock('../../../src/main/i18n', () => ({
+vi.mock('@main/i18n', () => ({
   getLocaleMessages: () => ({
     en: {
       chat: {

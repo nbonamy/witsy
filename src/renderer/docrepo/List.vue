@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from 'lucide-vue-next'
 import { DocumentBase } from 'types/rag'
-import ButtonIcon from '../components/ButtonIcon.vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
 
 // props  
 const props = defineProps<{

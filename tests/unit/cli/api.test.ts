@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach, afterEach, vi } from 'vitest'
-import { WitsyAPI } from '../../../src/cli/api'
-import { state } from '../../../src/cli/state'
+import { WitsyAPI } from '@/cli/api'
+import { state } from '@/cli/state'
 
 // Setup fetch mock
 global.fetch = vi.fn()

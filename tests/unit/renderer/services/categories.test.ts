@@ -1,7 +1,7 @@
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
-import { createCategory, deleteCategory } from '../../../../src/renderer/services/categories'
-import { store } from '../../../../src/renderer/services/store'
-import { useWindowMock } from '../../../mocks/window'
+import { createCategory, deleteCategory } from '@services/categories'
+import { store } from '@services/store'
+import { useWindowMock } from '@tests/mocks/window'
 
 describe('Category Service Functions', () => {
 

@@ -1,15 +1,15 @@
 
 import { vi, beforeAll, afterAll, expect, test } from 'vitest'
 import { mount, enableAutoUnmount } from '@vue/test-utils'
-import { useWindowMock } from '../../../mocks/window'
-import { createI18nMock } from '../../../mocks'
-import { store } from '../../../../src/renderer/services/store'
-import MessageItemToolBlock from '../../../../src/renderer/components/MessageItemToolBlock.vue'
+import { useWindowMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
+import { store } from '@services/store'
+import MessageItemToolBlock from '@components/MessageItemToolBlock.vue'
 import { beforeEach } from 'node:test'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 

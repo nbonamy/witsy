@@ -10,7 +10,7 @@
 
 import { EyeIcon, EyeOffIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
-import { store } from '../services/store'
+import { store } from '@services/store'
 
 defineProps({
   name: {

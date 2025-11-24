@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useToolsMenu } from '../composables/useToolsMenu'
+import { useToolsMenu } from '@composables/useToolsMenu'
 import type { ToolSelection } from 'types/llm'
 import type { McpServerWithTools, McpTool } from 'types/mcp'
 import ContextMenuPlus from './ContextMenuPlus.vue'

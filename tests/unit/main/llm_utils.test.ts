@@ -1,14 +1,14 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { defaultCapabilities } from 'multi-llm-ts'
-import { useWindowMock } from '../../mocks/window'
-import { createI18nMock } from '../../mocks'
-import { store } from '../../../src/renderer/services/store'
-import LlmUtils from '../../../src/renderer/services/llm_utils'
-import Message from '../../../src/models/message'
-import LlmMock, { installMockModels } from '../../mocks/llm'
-import LlmManager from '../../../src/renderer/services/llms/manager'
+import { useWindowMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
+import { store } from '@services/store'
+import LlmUtils from '@services/llm_utils'
+import Message from '@models/message'
+import LlmMock, { installMockModels } from '@tests/mocks/llm'
+import LlmManager from '@services/llms/manager'
 
-vi.mock('../../../src/renderer/services/llms/manager.ts', async () => {
+vi.mock('@services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
@@ -31,7 +31,7 @@ vi.mock('../../../src/renderer/services/llms/manager.ts', async () => {
   return { default: LlmManager }
 })
 
-vi.mock('../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock(() => ({
     locale: store.config.llm.locale
   }))

@@ -1,11 +1,11 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
-import Transcriber from '../../../../src/main/automations/transcriber'
-import Automator from '../../../../src/main/automations/automator'
-import * as window from '../../../../src/main/window'
+import Transcriber from '@main/automations/transcriber'
+import Automator from '@main/automations/automator'
+import * as window from '@main/window'
 
 // mock windows
-vi.mock('../../../../src/main/window.ts', async () => {
+vi.mock('@main/window.ts', async () => {
   return {
     mainWindow: {
       minimize: vi.fn(),

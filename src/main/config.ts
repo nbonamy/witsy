@@ -5,7 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import { Configuration } from 'types/config'
 import { anyDict } from 'types/index'
-import defaultSettings from '../../defaults/settings.json'
+import defaultSettings from '@root/defaults/settings.json'
 import { favoriteMockEngine } from '../renderer/services/llms/llm'
 import Monitor from './monitor'
 

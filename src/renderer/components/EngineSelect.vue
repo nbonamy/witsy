@@ -23,8 +23,8 @@
 
 import { CustomEngineConfig } from 'types/config'
 import { computed } from 'vue'
-import { store } from '../services/store'
-import LlmFactory, { favoriteMockEngine } from '../services/llms/llm'
+import { store } from '@services/store'
+import LlmFactory, { favoriteMockEngine } from '@services/llms/llm'
 
 const llmManager = LlmFactory.manager(store.config)
 

@@ -1,7 +1,7 @@
 
 import { LlmChunkTool, LlmEngine, addUsages } from 'multi-llm-ts'
 import { Configuration } from 'types/config'
-import Chat from '../../models/chat'
+import Chat from '@models/chat'
 import AgentWorkflowExecutor from './agent_executor_workflow'
 import * as dr from './deepresearch'
 import { GenerationResult } from './generator'

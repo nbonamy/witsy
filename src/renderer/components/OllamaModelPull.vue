@@ -26,9 +26,9 @@
 
 import { ref, nextTick, Ref } from 'vue'
 import { ChatModel, Ollama } from 'multi-llm-ts'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import Dialog from '../utils/dialog'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import Dialog from '@renderer/utils/dialog'
 import Combobox from './Combobox.vue'
 import ModelSelectPlus from './ModelSelectPlus.vue'
 import { ProgressResponse } from 'ollama'

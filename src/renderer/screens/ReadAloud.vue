@@ -13,9 +13,9 @@
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
 import { PauseCircleIcon, PlayCircleIcon, XCircleIcon } from 'lucide-vue-next'
 import { onMounted, onBeforeUnmount, ref } from 'vue'
-import Loader from '../components/Loader.vue'
+import Loader from '@components/Loader.vue'
 import useAudioPlayer, { AudioStatus, textMaxLength } from '../audio/audio_player'
-import { store } from '../services/store'
+import { store } from '@services/store'
 
 // init stuff
 store.loadSettings()

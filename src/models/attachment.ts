@@ -1,5 +1,5 @@
 
-import { Attachment as IAttachment } from 'types/'
+import { Attachment as IAttachment } from 'types'
 import { Attachment as AttachmentBase, extensionToMimeType } from 'multi-llm-ts'
 
 export { textFormats } from 'multi-llm-ts'

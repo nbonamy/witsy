@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeEach, afterEach } from 'vitest'
-import { loadCliConfig, saveCliConfig, CliConfig } from '../../../src/cli/config'
+import { loadCliConfig, saveCliConfig, CliConfig } from '@/cli/config'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'

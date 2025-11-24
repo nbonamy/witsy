@@ -85,13 +85,13 @@
 
 import { CalendarMinus2Icon, ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
-import ButtonIcon from '../components/ButtonIcon.vue'
-import MessageItemBody from '../components/MessageItemBody.vue'
-import { togglePanel } from '../utils/panel'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import ButtonIcon from '@components/ButtonIcon.vue'
+import MessageItemBody from '@components/MessageItemBody.vue'
+import { togglePanel } from '@renderer/utils/panel'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 import { AgentRun } from 'types/agents'
-import Message from '../../models/message'
+import Message from '@models/message'
 
 type StepMessages = {
   prompt: Message

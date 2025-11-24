@@ -61,16 +61,16 @@
 
 import { CheckIcon, FolderPlusIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
-import ButtonIcon from '../components/ButtonIcon.vue'
-import Dialog from '../utils/dialog'
-import useEventBus from '../composables/event_bus'
+import ButtonIcon from '@components/ButtonIcon.vue'
+import Dialog from '@renderer/utils/dialog'
+import useEventBus from '@composables/event_bus'
 import Config from '../docrepo/Config.vue'
 import Create from '../docrepo/Create.vue'
 import Empty from '../docrepo/Empty.vue'
 import List from '../docrepo/List.vue'
 import View from '../docrepo/View.vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 import { DocumentBase } from 'types/rag'
 
 const { onEvent } = useEventBus()

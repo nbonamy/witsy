@@ -33,12 +33,12 @@
 
 import { BrainIcon, ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { computed, inject, onMounted, PropType, ref, watch } from 'vue'
-import useEventBus from '../composables/event_bus'
-import Message from '../../models/message'
-import { kSearchPluginName } from '../services/plugins/search'
-import { t } from '../services/i18n'
-import { closeOpenMarkdownTags, getCodeBlocks, isHtmlContent } from '../services/markdown'
-import { store } from '../services/store'
+import useEventBus from '@composables/event_bus'
+import Message from '@models/message'
+import { kSearchPluginName } from '@services/plugins/search'
+import { t } from '@services/i18n'
+import { closeOpenMarkdownTags, getCodeBlocks, isHtmlContent } from '@services/markdown'
+import { store } from '@services/store'
 import { ChatToolMode } from 'types/config'
 import MessageItemBodyBlock, { Block } from './MessageItemBodyBlock.vue'
 

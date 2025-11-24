@@ -4,7 +4,7 @@
   <section>
 
     <header>
-      <img class="logo" src="../../../assets/icon.png" alt="Logo" />
+      <img class="logo" src="@assets/icon.png" alt="Logo" />
       <h1>{{ t('onboarding.welcome.title') }}</h1>
       <h3>{{ t('onboarding.welcome.subtitle') }}</h3>
     </header>
@@ -50,8 +50,8 @@
 <script setup lang="ts">
 
 import { MessageSquareQuoteIcon, MicIcon, NotebookPenIcon, PaletteIcon, TelescopeIcon } from 'lucide-vue-next'
-import AgentIcon from '../../../assets/agent.svg?component'
-import { t } from '../services/i18n'
+import AgentIcon from '@root/assets/agent.svg?component'
+import { t } from '@services/i18n'
 
 </script>
 

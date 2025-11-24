@@ -1,17 +1,17 @@
 import { vi, beforeEach, afterEach, expect, test, describe } from 'vitest'
 import { IncomingMessage, ServerResponse } from 'node:http'
 import { App } from 'electron'
-import { HttpServer } from '../../../src/main/http_server'
-import { installHttpTriggers } from '../../../src/main/http_triggers'
-import * as window from '../../../src/main/window'
-import * as config from '../../../src/main/config'
-import PromptAnywhere from '../../../src/main/automations/anywhere'
-import Commander from '../../../src/main/automations/commander'
-import ReadAloud from '../../../src/main/automations/readaloud'
-import Transcriber from '../../../src/main/automations/transcriber'
+import { HttpServer } from '@main/http_server'
+import { installHttpTriggers } from '@main/http_triggers'
+import * as window from '@main/window'
+import * as config from '@main/config'
+import PromptAnywhere from '@main/automations/anywhere'
+import Commander from '@main/automations/commander'
+import ReadAloud from '@main/automations/readaloud'
+import Transcriber from '@main/automations/transcriber'
 
 // Mock window module
-vi.mock('../../../src/main/window', () => ({
+vi.mock('@main/window', () => ({
   openMainWindow: vi.fn(),
   openSettingsWindow: vi.fn(),
   openDesignStudioWindow: vi.fn(),
@@ -22,7 +22,7 @@ vi.mock('../../../src/main/window', () => ({
 }))
 
 // Mock config module
-vi.mock('../../../src/main/config', () => ({
+vi.mock('@main/config', () => ({
   loadSettings: vi.fn().mockReturnValue({
     general: {
       enableHttpEndpoints: true
@@ -31,25 +31,25 @@ vi.mock('../../../src/main/config', () => ({
 }))
 
 // Mock automation modules
-vi.mock('../../../src/main/automations/anywhere', () => ({
+vi.mock('@main/automations/anywhere', () => ({
   default: {
     open: vi.fn().mockResolvedValue(undefined),
   },
 }))
 
-vi.mock('../../../src/main/automations/commander', () => ({
+vi.mock('@main/automations/commander', () => ({
   default: {
     initCommand: vi.fn().mockResolvedValue(undefined),
   },
 }))
 
-vi.mock('../../../src/main/automations/readaloud', () => ({
+vi.mock('@main/automations/readaloud', () => ({
   default: {
     read: vi.fn().mockResolvedValue(undefined),
   },
 }))
 
-vi.mock('../../../src/main/automations/transcriber', () => ({
+vi.mock('@main/automations/transcriber', () => ({
   default: {
     initTranscription: vi.fn().mockResolvedValue(undefined),
   },

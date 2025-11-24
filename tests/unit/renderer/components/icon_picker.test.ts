@@ -2,8 +2,8 @@
 import { beforeAll, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { useWindowMock } from '../../../mocks/window'
-import IconPicker from '../../../../src/renderer/components/IconPicker.vue'
+import { useWindowMock } from '@tests/mocks/window'
+import IconPicker from '@components/IconPicker.vue'
 
 beforeAll(() => {
   useWindowMock()

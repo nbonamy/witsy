@@ -149,7 +149,7 @@
 import { computed, ref } from 'vue'
 import { JsonViewer } from 'vue3-json-viewer'
 import { McpServer, McpTool } from 'types/mcp'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 import ModalDialog from './ModalDialog.vue'
 import Loader from './Loader.vue'
 

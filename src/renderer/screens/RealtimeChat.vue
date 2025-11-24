@@ -62,11 +62,11 @@
 <script setup lang="ts">
 
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import AnimatedBlob from '../components/AnimatedBlob.vue'
-import NumberFlip from '../components/NumberFlip.vue'
-import useTipsManager from '../utils/tips_manager'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import AnimatedBlob from '@components/AnimatedBlob.vue'
+import NumberFlip from '@components/NumberFlip.vue'
+import useTipsManager from '@renderer/utils/tips_manager'
 
 const tipsManager = useTipsManager(store)
 

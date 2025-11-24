@@ -2,20 +2,20 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { WitsyAPI } from '../../../src/cli/api'
-import { COMMANDS, handleCommand, initialize, handleHelp, handleClear, handleSave, handleTitle, handleRetry, handleQuit, executeCommand, handlePort, handleMessage, handleModel } from '../../../src/cli/commands'
-import { state } from '../../../src/cli/state'
-import { ChatCli, MessageCli } from '../../../src/cli/models'
-import { resetDisplay, displayFooter, clearFooter } from '../../../src/cli/display'
-import { promptInput } from '../../../src/cli/input'
-import { selectOption } from '../../../src/cli/select'
+import { WitsyAPI } from '@/cli/api'
+import { COMMANDS, handleCommand, initialize, handleHelp, handleClear, handleSave, handleTitle, handleRetry, handleQuit, executeCommand, handlePort, handleMessage, handleModel } from '@/cli/commands'
+import { state } from '@/cli/state'
+import { ChatCli, MessageCli } from '@/cli/models'
+import { resetDisplay, displayFooter, clearFooter } from '@/cli/display'
+import { promptInput } from '@/cli/input'
+import { selectOption } from '@/cli/select'
 
 // Setup fetch mock
 global.fetch = vi.fn()
 
 // Mock dependencies
-vi.mock('../../../src/cli/api')
-vi.mock('../../../src/cli/display', () => ({
+vi.mock('@/cli/api')
+vi.mock('@/cli/display', () => ({
   grayText: (s: string) => s,
   padContent: (text: string) => `  ${text}  `,
   resetDisplay: vi.fn(),
@@ -27,10 +27,10 @@ vi.mock('../../../src/cli/display', () => ({
   stopPulseAnimation: vi.fn(),
   successText: (s: string) => s,
 }))
-vi.mock('../../../src/cli/input', () => ({
+vi.mock('@/cli/input', () => ({
   promptInput: vi.fn(),
 }))
-vi.mock('../../../src/cli/select', () => ({
+vi.mock('@/cli/select', () => ({
   selectOption: vi.fn(),
 }))
 vi.mock('chalk', () => ({
