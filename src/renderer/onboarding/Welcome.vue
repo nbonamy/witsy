@@ -90,6 +90,7 @@ section {
     gap: 5rem;
 
     .feature {
+      --delay: 0s;
       display: flex;
       flex-direction: column;
       align-items: center;

@@ -83,7 +83,7 @@ defineExpose({ show, close })
 <style>
 
 #docrepo-create .warning {
-  color: var(--warning-color);
+  color: var(--color-warning);
   font-size: 0.9rem;
   margin-bottom: 1rem;
   padding: 1rem;

@@ -240,7 +240,7 @@ const emit = defineEmits(['delete'])
       .text {
         margin: 0;
         padding: 0;
-        font-size: var(--agent-font-size);
+        font-size: var(--font-size-14);
         text-align: left;
       }
     }
@@ -292,9 +292,9 @@ const emit = defineEmits(['delete'])
 }
 
 .error-text {
-  color: var(--text-error);
+  color: var(--color-error);
   padding: 0.5rem;
-  background-color: var(--bg-error);
+  background-color: var(--color-error-container);
   border-radius: 4px;
   font-family: monospace;
   font-size: 0.9rem;

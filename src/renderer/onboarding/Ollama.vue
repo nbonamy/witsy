@@ -403,7 +403,7 @@ defineExpose({
     .section-icon {
       width: var(--icon-lg);
       height: var(--icon-lg);
-      color: var(--accent-color);
+      color: var(--highlight-color);
       opacity: 0.8;
     }
   }
@@ -482,7 +482,7 @@ defineExpose({
     .section-icon {
       width: var(--icon-lg);
       height: var(--icon-lg);
-      color: var(---color);
+      color: var(--text-color);
       opacity: 0.8;
     }
   }
@@ -493,7 +493,7 @@ defineExpose({
 }
 
 .error {
-  color: var(--error-color);
+  color: var(--color-error);
 }
 
 </style>

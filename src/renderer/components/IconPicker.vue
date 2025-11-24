@@ -111,7 +111,7 @@ defineExpose({
   border: 1px solid transparent;
   border-radius: 0.25rem;
   transition: all 0.2s;
-  background: var(--control-background-color);
+  background: var(--control-bg-color);
 
   &.selected {
     background: var(--highlight-color);

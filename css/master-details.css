@@ -51,7 +51,7 @@
         display: flex;
         border-radius: 6px;
         font-size: var(--master-list--item-font-size);
-        color: var(--settings-normal-text-color);
+        color: var(--text-color);
         cursor: pointer;
         gap: 0.5rem;
 
@@ -62,16 +62,16 @@
         }
 
         .icon {
-          color: var(--settings-normal-text-color);
+          color: var(--text-color);
           width: 1.125rem;
           height: 1.125rem;
         }
 
         &.selected {
-          background-color: var(--settings-selected-bg-color);
-          color: var(--settings-selected-text-color);
+          background-color: var(--sidebar-selected-color);
+          color: var(--text-color);
           .icon {
-            color: var(--settings-selected-text-color);
+            color: var(--text-color);
           }
         }
       }

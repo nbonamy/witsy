@@ -252,7 +252,7 @@ const onClose = () => {
   gap: 1rem;
   text-align: center;
   padding: 40px 20px;
-  color: var(--color-text-secondary);
+  color: var(--dimmed-text-color);
 }
 
 .empty-state button.primary {

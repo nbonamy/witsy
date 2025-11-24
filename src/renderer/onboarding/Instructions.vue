@@ -363,7 +363,7 @@ header {
 }
 
 .assistant-message {
-  --messages-font: Garamond, Georgia, Times, 'Times New Roman', serif;
+  --font-family-base: Garamond, Georgia, Times, 'Times New Roman', serif;
   font-size: 1.2rem;
   border-radius: 1rem;
   max-width: 100%;

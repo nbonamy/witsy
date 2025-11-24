@@ -244,7 +244,7 @@ defineExpose({
 .response {
   box-shadow: var(--window-box-shadow);
   background-color: var(--window-bg-color);
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-sm);
   padding: 32px 0px 16px 32px;
   color: var(--text-color);
   display: flex;

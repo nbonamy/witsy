@@ -4,7 +4,7 @@
   --split-pane-header-height: 32px;
   --split-pane-sidebar-list-item-selected-bg-color: var(--tabs-header-selected-bg-color);
   --split-pane-sidebar-list-item-selected-text-color: var(--tabs-header-selected-text-color);
-  --split-pane-sidebar-list-item-hover-bg-color: var(--hover-bg-color);
+  --split-pane-sidebar-list-item-hover-bg-color: var(--sidebar-selected-color);
 
   display: flex;
   width: 100%;

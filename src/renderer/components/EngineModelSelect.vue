@@ -158,14 +158,14 @@ const onModelSelected = (engine: string | null, model: string | null) => {
 
 .default-label {
   font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
+  color: var(--dimmed-text-color);
 }
 
 .chevron {
   width: var(--icon-md);
   height: var(--icon-md);
-  color: var(--color-text-secondary);
-  fill: var(--color-text-secondary);
+  color: var(--dimmed-text-color);
+  fill: var(--dimmed-text-color);
   transition: transform 0.2s ease;
   flex-shrink: 0;
 }

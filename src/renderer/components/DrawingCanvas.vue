@@ -329,7 +329,7 @@ const onSave = async () => {
   justify-content: center;
   align-items: center;
   padding: 1rem;
-  background-color: var(--background-color-secondary);
+  background-color: var(--background-color-light);
   overflow: auto;
   min-height: 400px;
 }

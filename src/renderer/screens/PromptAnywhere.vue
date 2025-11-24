@@ -583,7 +583,7 @@ const onResponseResize = (deltaX: number) => {
 
     --width-ratio: 2.25;
     --padding-top: 12%;
-    --border-radius: 16px;
+    --radius-sm: 16px;
 
     position: relative;
     padding-left: 16px;
@@ -599,7 +599,7 @@ const onResponseResize = (deltaX: number) => {
 
     .prompt {
       box-shadow: var(--window-box-shadow);
-      border-radius: var(--border-radius);
+      border-radius: var(--radius-sm);
       resize: horizontal;
       padding: 1rem 1.25rem;
     }
