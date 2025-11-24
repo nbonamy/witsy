@@ -309,7 +309,7 @@ defineExpose({ show, close })
 }
 
 .required {
-  color: var(--error-color);
+  color: var(--color-error);
   font-weight: bold;
 }
 
@@ -331,7 +331,7 @@ defineExpose({ show, close })
 
 .unsupported-type {
   padding: 0.5rem;
-  background-color: var(--panel-background-color);
+  background-color: var(--background-color);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   color: var(--faded-text-color);
@@ -360,10 +360,10 @@ defineExpose({ show, close })
 
 .error-message {
   padding: 1rem;
-  background-color: var(--error-background-color);
-  border: 1px solid var(--error-color);
+  background-color: var(--color-error-container);
+  border: 1px solid var(--color-error);
   border-radius: 4px;
-  color: var(--error-color);
+  color: var(--color-error);
 }
 
 .result-display {

@@ -30,7 +30,7 @@ const itemRefs = useTemplateRef<typeof MessageItem>('items')
 
 const fontStyle = computed(() => {
   return {
-    '--messages-font': store.config.appearance.chat.fontFamily,
+    '--font-family-base': store.config.appearance.chat.fontFamily,
   }
 })
 

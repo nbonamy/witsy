@@ -156,7 +156,7 @@ defineExpose({ load })
 
 .note {
   font-size: 12px;
-  color: var(--color-text-secondary);
+  color: var(--dimmed-text-color);
   margin-top: 8px;
   font-style: italic;
 }

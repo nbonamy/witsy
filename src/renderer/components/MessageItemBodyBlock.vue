@@ -186,7 +186,7 @@ const showError = (errorContent: string) => {
 <style scoped>
 
 .text, .text * {
-  font-family: var(--messages-font);
+  font-family: var(--font-family-base);
 }
 
 </style>

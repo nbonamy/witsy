@@ -134,8 +134,8 @@ const onMenuOpened = async () => {
   --vs-menu-border: 1px solid var(--control-border-color);
   --vs-option-opacity-menu-open: 0.7;
   --vs-option-padding: 0.5rem 0.75rem;
-  --vs-option-hover-background-color: var(--settings-selected-bg-color);
-  --vs-option-hover-text-color: var(--settings-selected-text-color);
+  --vs-option-hover-background-color: var(--sidebar-selected-color);
+  --vs-option-hover-text-color: var(--text-color);
   --vs-option-selected-background-color: var(--highlight-color);
   --vs-option-selected-text-color: var(--highlighted-color);
   --vs-option-text-color: var(--text-color);

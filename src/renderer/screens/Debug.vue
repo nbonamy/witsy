@@ -346,8 +346,8 @@ const selectRequest = (request: NetworkRequest) => {
     }
 
     &.active {
-      border-bottom-color: var(--primary-color, #2196F3);
-      color: var(--primary-color, #2196F3);
+      border-bottom-color: var(--color-primary, #2196F3);
+      color: var(--color-primary, #2196F3);
     }
 
   }

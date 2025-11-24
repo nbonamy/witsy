@@ -70,8 +70,8 @@ const selectRepo = (repo: DocumentBase) => {
 
 
 .list-item.selected {
-  background-color: var(--split-pane-sidebar-list-item-selected-bg-color) !important;
-  color: var(--split-pane-sidebar-list-item-selected-text-color) !important;
+  background-color: var(--sidebar-selected-color) !important;
+  color: var(--text-color) !important;
   border-radius: 8px;
 }
 

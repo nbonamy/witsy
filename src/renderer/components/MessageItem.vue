@@ -347,7 +347,7 @@ defineExpose({
 
 .role {
   * {
-    font-family: var(--messages-font);
+    font-family: var(--font-family-base);
   }
 }
 

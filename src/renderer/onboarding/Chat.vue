@@ -145,7 +145,7 @@ const onKeyDown = (event: KeyboardEvent) => {
   margin-top: 1rem;
   padding: 0.75rem;
   cursor: pointer;
-  color: var(--primary-color);
+  color: var(--color-primary);
   font-size: 0.9rem;
   font-weight: var(--font-weight-medium);
   border-radius: 0.5rem;
@@ -153,7 +153,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 }
 
 .show-more:hover {
-  background-color: var(--hover-background-color);
+  background-color: var(--sidebar-selected-color);
 }
 
 .show-more svg {

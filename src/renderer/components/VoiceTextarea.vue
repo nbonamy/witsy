@@ -292,9 +292,7 @@ onBeforeUnmount(() => {
     }
 
     .voice-button.recording {
-      background-color: rgba(var(--highlight-color-rgb), 0.15);
       border-color: var(--highlight-color);
-      animation: pulse 1.5s infinite;
     }
 
     .voice-button.recording :deep(svg) {
@@ -302,7 +300,6 @@ onBeforeUnmount(() => {
     }
 
     .voice-button.processing {
-      background-color: rgba(var(--highlight-color-rgb), 0.1);
       border-color: var(--highlight-color);
     }
 
@@ -322,18 +319,6 @@ onBeforeUnmount(() => {
 
   }
 
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(var(--highlight-color-rgb), 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(var(--highlight-color-rgb), 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(var(--highlight-color-rgb), 0);
-  }
 }
 
 @keyframes rotate {

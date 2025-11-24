@@ -194,12 +194,12 @@ defineExpose({
 }
 
 .permission-card.granted {
-  border-color: var(--success-color);
+  border-color: var(--color-success);
   background-color: rgba(34, 197, 94, 0.12);
 }
 
 .permission-card.denied {
-  border-color: var(--error-color);
+  border-color: var(--color-error);
   background-color: rgba(245, 158, 11, 0.12);
 }
 
@@ -241,13 +241,13 @@ defineExpose({
   align-items: center;
   gap: 1rem;
   padding: 0rem 1.5rem;
-  background-color: var(--background-alt-color);
+  background-color: var(--background-color-light);
   border-radius: 12px;
 }
 
 .info-icon {
   font-size: 1.5rem;
-  color: var(--accent-color);
+  color: var(--highlight-color);
   flex-shrink: 0;
 }
 

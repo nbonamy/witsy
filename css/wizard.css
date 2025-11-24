@@ -60,7 +60,7 @@
         }
 
         .icon {
-          width: 1var(--icon-lg);
+          width: var(--icon-lg);
           height: var(--icon-lg);
         }
 

@@ -144,7 +144,7 @@ const onDelete = () => {
 }
 
 .status-text {
-  color: var(--color-text-secondary);
+  color: var(--dimmed-text-color);
   font-style: italic;
   margin-top: 4px;
 }
