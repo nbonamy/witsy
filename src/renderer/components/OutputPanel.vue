@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 
-import { ArrowLeftRightIcon, CornerDownLeftIcon, MessageSquareIcon, RotateCcwIcon, XCircleIcon } from 'lucide-vue-next'
+import { ArrowLeftRightIcon, CornerDownLeftIcon, FileEditIcon, MessageSquareIcon, RotateCcwIcon, XCircleIcon } from 'lucide-vue-next'
 import { Application } from 'types/automation'
 import { onBeforeUnmount, onMounted, PropType, ref } from 'vue'
 import Message from '@models/message'

@@ -7,6 +7,8 @@
 </template>
 
 <script setup lang="ts">
+import { MessageCircleIcon, PlusIcon } from 'lucide-vue-next';
+
 </script>
 
 <style scoped>

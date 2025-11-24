@@ -1,5 +1,7 @@
 
 import tsParser from '@typescript-eslint/parser'
+import vueParser from 'vue-eslint-parser'
+import vuePlugin from 'eslint-plugin-vue'
 import { fixupConfigRules } from '@eslint/compat'
 import { FlatCompat } from '@eslint/eslintrc'
 import { fileURLToPath } from 'node:url'
@@ -15,29 +17,58 @@ const compat = new FlatCompat({
   allConfig: js.configs.all
 })
 
-export default [...fixupConfigRules(compat.extends(
-  'eslint:recommended',
-  'plugin:@typescript-eslint/eslint-recommended',
-  'plugin:@typescript-eslint/recommended',
-  'plugin:import/recommended',
-  'plugin:import/electron',
-  'plugin:import/typescript',
-)), {
-  languageOptions: {
-    globals: {
-      ...globals.browser,
-      ...globals.node,
+export default [
+  // TypeScript files configuration
+  ...fixupConfigRules(compat.extends(
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended',
+    'plugin:import/electron',
+    'plugin:import/typescript',
+  )).map(config => ({
+    ...config,
+    files: ['**/*.ts'], // Only apply to .ts files
+  })),
+  {
+    files: ['**/*.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+      parser: tsParser,
     },
-    parser: tsParser,
-  },
-  settings: {
-    'import/resolver': {
-      typescript: {
-        project: './tsconfig.json'
+    settings: {
+      'import/resolver': {
+        typescript: {
+          project: './tsconfig.json'
+        }
       }
-    }
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
   },
-  rules: {
-    '@typescript-eslint/no-explicit-any': 'off',
+  // Vue-specific configuration
+  {
+    files: ['**/*.vue'],
+    plugins: {
+      vue: vuePlugin,
+    },
+    languageOptions: {
+      parser: vueParser,
+      parserOptions: {
+        parser: tsParser,
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      // ONLY enforce that components used in templates are defined/imported
+      'vue/no-undef-components': ['error', {
+        ignorePatterns: ['webview'], // Electron built-in component
+      }],
+    },
   },
-}]
+]
