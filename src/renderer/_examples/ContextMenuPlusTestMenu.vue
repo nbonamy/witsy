@@ -14,7 +14,7 @@
       <div 
         data-submenu-slot="editSubmenu"
       >
-        <PenIconcil class="icon" />
+        <PencilIcon class="icon" />
         Edit
       </div>
       
@@ -65,7 +65,7 @@
         Cut
       </div>
       <div @click="handleSubmenuAction('paste')">
-        <ClipboardIcon2 class="icon" />
+        <ClipboardIcon class="icon" />
         Paste
       </div>
     </template>
@@ -108,8 +108,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import ContextMenuPlus, { type MenuPosition } from '@components/ContextMenuPlus.vue'
+import { ClipboardIcon, FileIcon, FolderIcon, PencilIcon, RotateCcwIcon, RotateCwIcon, ScissorsIcon, Trash2Icon } from 'lucide-vue-next'
+import { computed } from 'vue'
 
 defineProps({
   anchor: {
