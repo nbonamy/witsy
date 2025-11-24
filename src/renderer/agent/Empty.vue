@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { PlusIcon } from 'lucide-vue-next'
-import AgentIcon from '@root/assets/agent.svg?component'
+import AgentIcon from '@assets/agent.svg?component'
 import { t } from '@services/i18n'
 
 const emit = defineEmits(['click'])

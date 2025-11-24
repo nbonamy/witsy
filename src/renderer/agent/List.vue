@@ -71,7 +71,7 @@
 import { EyeIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
 import { Agent } from 'types/agents'
 import { onMounted, ref, watch } from 'vue'
-import LogoA2A from '@root/assets/a2a.svg?component'
+import LogoA2A from '@assets/a2a.svg?component'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import ContextMenuTrigger from '@components/ContextMenuTrigger.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'

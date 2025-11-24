@@ -18,9 +18,9 @@
 
 import { CloudDownloadIcon, FolderIcon, GlobeIcon, IdCardIcon, LightbulbIcon, PaletteIcon, Plug2Icon, SquarePlayIcon, VideoIcon, WorkflowIcon } from 'lucide-vue-next'
 import { computed } from 'vue'
-import McpIcon from '@root/assets/mcp.svg?component'
-import PythonIcon from '@root/assets/python.svg?component'
-import VegaIcon from '@root/assets/vega.svg?component'
+import McpIcon from '@assets/mcp.svg?component'
+import PythonIcon from '@assets/python.svg?component'
+import VegaIcon from '@assets/vega.svg?component'
 import { ToolCall } from 'types/index'
 import { kBrowsePluginName } from '@services/plugins/browse'
 import { kCodeExecutionPluginPrefix } from '@services/plugins/code_exec_base'

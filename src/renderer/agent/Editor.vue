@@ -103,8 +103,8 @@
 
 import { BoxIcon, Settings2Icon } from 'lucide-vue-next'
 import { computed, onMounted, PropType, ref, watch } from 'vue'
-import FlowIcon from '@root/assets/flow.svg?component'
-import TriggerIcon from '@root/assets/trigger.svg?component'
+import FlowIcon from '@assets/flow.svg?component'
+import TriggerIcon from '@assets/trigger.svg?component'
 import Dialog from '@renderer/utils/dialog'
 import Agent from '@models/agent'
 import { t } from '@services/i18n'
