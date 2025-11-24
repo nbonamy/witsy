@@ -778,7 +778,7 @@ export const installIpc = (
   });
 
   ipcMain.on(IPC.MCP.ORIGINAL_TOOL_NAME, (event, payload) => {
-    event.returnValue = mcp ? mcp.originalToolName(payload) : null;
+    event.returnValue = Mcp.originalToolName(payload);
   });
 
   ipcMain.handle(IPC.MCP.DETECT_OAUTH, async (_, payload): Promise<any> => {
