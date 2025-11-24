@@ -9,6 +9,7 @@ import Generator from '@services/generator'
 import Agent from '@models/agent'
 import Chat from '@models/chat'
 import LlmMock, { installMockModels } from '@tests/mocks/llm'
+import { ExternalApp } from 'types'
 
 
 // Mock dependencies
@@ -17,7 +18,7 @@ vi.mock('@services/llms/manager.ts', async () => {
   LlmManager.prototype.initModels = vi.fn()
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
   LlmManager.prototype.getEngineName = () => 'mock'
-  LlmManager.prototype.getCustomEngines = () => []
+  LlmManager.prototype.getCustomEngines = (): string[] => []
   LlmManager.prototype.getFavoriteId = () => 'favid'
   LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
   LlmManager.prototype.getChatModel = vi.fn(() => ({ id: 'chat', name: 'chat', ...defaultCapabilities }))
@@ -358,27 +359,6 @@ test('Agent Run with Empty Prompt', async () => {
   expect(run.error).toBe('Step 1 has an empty prompt after variable substitution')
 })
 
-test('Agent Run with Tool Calls', async () => {
-  // Mock the generate method to call the callback with tool chunks
-  spyGenerate.mockImplementation(async (llm, messages, opts, callback) => {
-    // Simulate tool calls via callback
-    if (callback) {
-      callback({ type: 'tool', id: 'tool1', name: 'test_tool', state:'running', call: { params: { test: 'param' }, result: null }, done: false })
-      callback({ type: 'tool', id: 'tool1', name: 'test_tool', state:'running', call: { params: { test: 'param' }, result: 'tool result' }, done: true })
-      callback({ type: 'content', text: 'Final response', done: true })
-    }
-    return 'success'
-  })
-
-  const run = await runAgent('manual', { name: 'Tool call test' })
-
-  expect(run.status).toBe('success')
-  expect(run.toolCalls).toHaveLength(1)
-  expect(run.toolCalls[0].name).toBe('test_tool')
-  expect(run.toolCalls[0].params).toEqual({ test: 'param' })
-  expect(run.toolCalls[0].result).toBe('tool result')
-})
-
 test('Agent Run Error Handling', async () => {
   // Mock generate to throw error
   spyGenerate.mockRejectedValue(new Error('Test error'))
@@ -401,7 +381,7 @@ test('Agent Run Different Triggers', async () => {
   const triggers: AgentRunTrigger[] = ['manual', 'schedule', 'webhook', 'workflow']
   
   for (const trigger of triggers) {
-    const run = await runAgent(trigger, `${trigger} test`)
+    const run = await runAgent(trigger, { prompt: `${trigger} test` })
     expect(run.trigger).toBe(trigger)
     expect(run.status).toBe('success')
   }
@@ -479,7 +459,7 @@ test('AgentWorkflowExecutor aborts when abortSignal is aborted before first step
   abortController.abort()
 
   // Start the run with aborted signal
-  const run = await executor!.run('manual', 'Abort test', {
+  const run = await executor!.run('manual', { prompt: 'Abort test' }, {
     model: 'chat',
     streaming: true,
     abortSignal: abortController.signal
@@ -513,7 +493,7 @@ test('AgentWorkflowExecutor aborts between multi-step execution', async () => {
     return 'success'
   })
 
-  const run = await executor!.run('manual', 'Multi-step abort test', {
+  const run = await executor!.run('manual', { prompt: 'Multi-step abort test' }, {
     model: 'chat',
     abortSignal: abortController.signal
   })
@@ -533,7 +513,7 @@ test('AgentWorkflowExecutor aborts before docrepo query', async () => {
   // Abort before run starts
   abortController.abort()
 
-  const run = await executor!.run('manual', 'Docrepo abort test', {
+  const run = await executor!.run('manual', { prompt: 'Docrepo abort test' }, {
     model: 'chat',
     abortSignal: abortController.signal
   })
@@ -549,7 +529,7 @@ test('AgentWorkflowExecutor aborts before tool loading', async () => {
   // Abort before run starts
   abortController.abort()
 
-  const run = await executor!.run('manual', 'Tools abort test', {
+  const run = await executor!.run('manual', { prompt: 'Tools abort test' }, {
     model: 'chat',
     abortSignal: abortController.signal
   })
@@ -572,7 +552,7 @@ test('AgentWorkflowExecutor aborts before titling', async () => {
     return 'success'
   })
 
-  const run = await executor!.run('manual', 'Titling abort test', {
+  const run = await executor!.run('manual', { prompt: 'Titling abort test' }, {
     model: 'chat',
     chat,
     abortSignal: abortController.signal
@@ -802,7 +782,7 @@ test('Expert attachment to workflow step', async () => {
     name: 'Test Expert',
     prompt: 'You are a test expert with specialized knowledge.',
     state: 'enabled' as const,
-    triggerApps: []
+    triggerApps: [] as ExternalApp[]
   }
 
   // Mock window.api.experts.load to return our test expert
@@ -838,7 +818,7 @@ test('Expert prompt prepended to message content', async () => {
     name: 'Code Expert',
     prompt: 'Focus on code quality and best practices.',
     state: 'enabled' as const,
-    triggerApps: []
+    triggerApps: [] as ExternalApp[]
   }
 
   // Mock window.api.experts.load to return our test expert
@@ -894,7 +874,7 @@ test('Multi-step workflow with different experts per step', async () => {
     name: 'Step 1 Expert',
     prompt: 'Expert 1 instructions.',
     state: 'enabled' as const,
-    triggerApps: []
+    triggerApps: [] as ExternalApp[]
   }
 
   const expert2 = {
@@ -903,7 +883,7 @@ test('Multi-step workflow with different experts per step', async () => {
     name: 'Step 2 Expert',
     prompt: 'Expert 2 instructions.',
     state: 'enabled' as const,
-    triggerApps: []
+    triggerApps: [] as ExternalApp[]
   }
 
   // Mock window.api.experts.load to return both experts

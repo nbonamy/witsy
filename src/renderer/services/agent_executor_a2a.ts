@@ -40,7 +40,6 @@ export default class AgentA2AExecutor extends AgentExecutorBase {
       status: 'running',
       prompt: prompt,
       messages: [],
-      toolCalls: [],
     }
 
     try {

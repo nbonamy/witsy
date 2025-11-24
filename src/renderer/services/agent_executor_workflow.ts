@@ -46,7 +46,6 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
       status: 'running',
       prompt: null, // Will be computed from first step
       messages: [],
-      toolCalls: [],
     }
 
     // if not ephemeral, save it now
@@ -331,16 +330,6 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
     }, (chunk: LlmChunk) => {
 
       //console.log('chunk', chunk)
-
-      if (chunk.type === 'tool' && chunk.done) {
-        run.toolCalls.push({
-          id: chunk.id,
-          name: chunk.name,
-          done: chunk.done,
-          params: chunk.call.params,
-          result: chunk.call.result
-        })
-      }
 
       if (opts.callback) {
         opts.callback(chunk)
