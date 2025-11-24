@@ -78,6 +78,8 @@ The project includes a variety of CSS classes available globally:
 
 Make sure you use globally available CSS variables and don't create your own styles.
 
+CSS variable usage is validated with Stylelint. Run `npm run lint:css` to check that all `var(--...)` references use defined variables. The linter imports variable definitions from `css/variables.css` and `css/index.css`.
+
 ### Testing Patterns
 - **Unit Tests**: `tests/unit/` using Vitest + Vue Test Utils
 - **Mocking**: LLM providers mocked in tests via `LlmMock` class
