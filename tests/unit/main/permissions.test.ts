@@ -2,7 +2,7 @@
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
 import { execSync } from 'child_process'
 import { shell, systemPreferences } from 'electron'
-import MacOSPermissions from '../../../src/main/permissions'
+import MacOSPermissions from '@main/permissions'
 
 // Mock electron modules
 vi.mock('electron', () => ({

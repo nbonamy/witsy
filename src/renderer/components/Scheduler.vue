@@ -79,7 +79,7 @@
 <script setup lang="ts">
 
 import { ref, onMounted, watch } from 'vue'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 
 const schedule = defineModel({
   type: String,

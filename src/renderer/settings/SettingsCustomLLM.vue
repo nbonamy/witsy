@@ -64,19 +64,19 @@
 </template>
 
 <script setup lang="ts">
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 
 import { ChatModel } from 'multi-llm-ts'
 import { CustomEngineConfig } from 'types/config'
 import { computed, onMounted, ref, watch } from 'vue'
-import defaults from '../../../defaults/settings.json'
-import Combobox from '../components/Combobox.vue'
-import InputObfuscated from '../components/InputObfuscated.vue'
-import RefreshButton from '../components/RefreshButton.vue'
-import Dialog from '../utils/dialog'
-import LlmFactory from '../services/llms/llm'
-import LlmManager from '../services/llms/manager'
-import { store } from '../services/store'
+import defaults from '@root/defaults/settings.json'
+import Combobox from '@components/Combobox.vue'
+import InputObfuscated from '@components/InputObfuscated.vue'
+import RefreshButton from '@components/RefreshButton.vue'
+import Dialog from '@renderer/utils/dialog'
+import LlmFactory from '@services/llms/llm'
+import LlmManager from '@services/llms/manager'
+import { store } from '@services/store'
 
 const props = defineProps({
   engine: {

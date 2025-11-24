@@ -32,8 +32,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { DocumentSource } from 'types/rag'
-import { t } from '../services/i18n'
-import ModalDialog from '../components/ModalDialog.vue'
+import { t } from '@services/i18n'
+import ModalDialog from '@components/ModalDialog.vue'
 
 // Props
 const props = defineProps({

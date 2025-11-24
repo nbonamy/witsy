@@ -21,8 +21,8 @@
 <script setup lang="ts">
 
 import { computed } from 'vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 
 const features = [
   { key: 'studio', label: 'designStudio.title' },

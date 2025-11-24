@@ -1,6 +1,6 @@
 import { App } from 'electron'
-import Chat from '../models/chat'
-import Message from '../models/message'
+import Chat from '@models/chat'
+import Message from '@models/message'
 import Assistant from '../renderer/services/assistant'
 import { engineNames } from '../renderer/services/llms/base'
 import LlmFactory from '../renderer/services/llms/llm'

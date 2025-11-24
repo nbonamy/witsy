@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { LightbulbIcon, PlusIcon } from 'lucide-vue-next';
-import { t } from '../services/i18n';
+import { t } from '@services/i18n';
 
 const emit = defineEmits(['click'])
 

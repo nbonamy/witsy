@@ -1,7 +1,7 @@
 
 import { App, globalShortcut } from 'electron';
-import { ShortcutCallbacks } from '../types/automation';
-import { Shortcut, disabledShortcutKey } from '../types/index';
+import { ShortcutCallbacks } from 'types/automation';
+import { Shortcut, disabledShortcutKey } from 'types/index';
 import { loadSettings } from './config';
 
 

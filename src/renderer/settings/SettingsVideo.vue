@@ -60,14 +60,14 @@
 <script setup lang="ts">
 
 import { ref, computed, nextTick } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import Dialog from '../utils/dialog'
-import RefreshButton from '../components/RefreshButton.vue'
-import InputObfuscated from '../components/InputObfuscated.vue'
-import Combobox from '../components/Combobox.vue'
-import VideoCreator from '../services/video'
-import ModelLoaderFactory from '../services/model_loader'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import RefreshButton from '@components/RefreshButton.vue'
+import InputObfuscated from '@components/InputObfuscated.vue'
+import Combobox from '@components/Combobox.vue'
+import VideoCreator from '@services/video'
+import ModelLoaderFactory from '@services/model_loader'
 
 const enabled = ref(false)
 const engine = ref(null)

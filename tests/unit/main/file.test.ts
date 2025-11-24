@@ -1,6 +1,6 @@
 
 import { vi, expect, test } from 'vitest'
-import * as file from '../../../src/main/file'
+import * as file from '@main/file'
 import { app, dialog } from 'electron'
 import path from 'path'
 import fs from 'fs'

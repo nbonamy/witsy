@@ -2,10 +2,10 @@ import type { ToolSelection } from 'types/llm'
 import type { McpServer, McpServerWithTools, McpTool, McpToolUnique } from 'types/mcp'
 import type { MenuItem } from 'types/menu'
 import { computed, onMounted, ref, watch, type Ref } from 'vue'
-import { t } from '../services/i18n'
-import { enabledPlugins } from '../services/plugins/plugins'
-import { store } from '../services/store'
-import * as ts from '../utils/tool_selection'
+import { t } from '@services/i18n'
+import { enabledPlugins } from '@services/plugins/plugins'
+import { store } from '@services/store'
+import * as ts from '@renderer/utils/tool_selection'
 
 export interface UseToolsMenuOptions {
   toolSelection: Ref<ToolSelection | undefined>

@@ -85,10 +85,10 @@
 </template>
 
 <script setup lang="ts">
-import { i18nInstructions, t } from '../services/i18n'
+import { i18nInstructions, t } from '@services/i18n'
 
 import { computed, ref } from 'vue'
-import { store } from '../services/store'
+import { store } from '@services/store'
 import { ProxyMode } from 'types/config'
 import { anyDict } from 'types/index'
 

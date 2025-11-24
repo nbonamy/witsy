@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { McpTool } from '../../../../src/types/mcp'
-import { useWindowMock } from '../../../mocks/window'
-import { createI18nMock } from '../../../mocks'
-import McpToolSelector from '../../../../src/renderer/components/McpToolSelector.vue'
-import { stubTeleport } from '../../../mocks/stubs'
+import { McpTool } from '@/types/mcp'
+import { useWindowMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
+import McpToolSelector from '@components/McpToolSelector.vue'
+import { stubTeleport } from '@tests/mocks/stubs'
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 

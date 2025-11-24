@@ -1,7 +1,7 @@
 import { LlmChunk, LlmChunkTool, LlmCompletionOpts, LlmEngine, LlmResponse, Model } from 'multi-llm-ts'
 import { Configuration, EngineConfig } from 'types/config'
 import { DocRepoQueryResponseItem } from 'types/rag'
-import Message from '../../models/message'
+import Message from '@models/message'
 import { i18nInstructions, t } from './i18n'
 import LlmFactory from './llms/llm'
 

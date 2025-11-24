@@ -1,12 +1,12 @@
 
 import { beforeAll, beforeEach, test, expect, vi, describe } from 'vitest'
-import { useWindowMock } from '../../../mocks/window'
-import { store } from '../../../../src/renderer/services/store'
-import useTipsManager from '../../../../src/renderer/utils/tips_manager'
-import Dialog from '../../../../src/renderer/utils/dialog'
+import { useWindowMock } from '@tests/mocks/window'
+import { store } from '@services/store'
+import useTipsManager from '@renderer/utils/tips_manager'
+import Dialog from '@renderer/utils/dialog'
 
 // Mock dialog
-vi.mock('../../../../src/renderer/utils/dialog', () => ({
+vi.mock('@renderer/utils/dialog', () => ({
   default: {
     show: vi.fn(() => Promise.resolve({ isConfirmed: true, value: true })),
   },

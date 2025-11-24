@@ -36,9 +36,9 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import ModalDialog from '../components/ModalDialog.vue'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import ModalDialog from '@components/ModalDialog.vue'
 
 const dialog = ref(null)
 const fontFamily = ref(null)

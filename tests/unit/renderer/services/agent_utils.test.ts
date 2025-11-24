@@ -1,11 +1,11 @@
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest'
-import Agent from '../../../../src/models/agent'
-import { useWindowMock } from '../../../mocks/window'
-import { createI18nMock } from '../../../mocks'
-import { remapAgentMcpTools } from '../../../../src/renderer/services/agent_utils'
-import { McpServerWithTools, McpToolUnique } from '../../../../src/types/mcp'
+import Agent from '@models/agent'
+import { useWindowMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
+import { remapAgentMcpTools } from '@services/agent_utils'
+import { McpServerWithTools, McpToolUnique } from '@/types/mcp'
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 

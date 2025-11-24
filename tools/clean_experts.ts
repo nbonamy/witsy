@@ -1,5 +1,5 @@
 
-import experts from '../defaults/experts.json'
+import experts from '@root/defaults/experts.json'
 import { igniteEngine, Message } from 'multi-llm-ts';
 import fs from 'fs'
 

@@ -41,7 +41,7 @@ Never try to run the application during your process.
 In the renderer process, the state is managed through the store object: 
 
 ```typescript
-import { store } from '../services/store'
+import { store } from '@services/store'
 ```
 
 This store is a Vue 3 reactive object that holds the application state, including user preferences, conversation history and other relevant data.
@@ -94,7 +94,7 @@ Never use simulated `wait` statements using an "await Promise" pattern. In most 
 All the IPC methods are mocked in `tests/mocks/window.ts`. In most cases, if you need to test IPC calls, you should
 
 ```typescript
-import { useWindowMock } from '../mocks/window
+import { useWindowMock } from '@tests/mocks/window'
 ```
 
 and use the `windowMock` in `beforeAll` (or maybe `beforeEach`).

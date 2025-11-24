@@ -81,7 +81,7 @@
 import { EraserIcon, PencilIcon, RedoIcon, Trash2Icon, UndoIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, ref } from 'vue'
 import VueDrawingCanvas from 'vue-drawing-canvas'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 
 const props = defineProps({
   backgroundImage: {

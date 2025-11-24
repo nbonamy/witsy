@@ -2,7 +2,7 @@
 import { anyDict, Command, Expert, ExpertCategory } from 'types/index'
 import { WritableComputedRef } from 'vue'
 import { I18n, Locale } from 'vue-i18n'
-import { allLanguages, createI18n, hasLocalization } from '../../main/i18n.base'
+import { allLanguages, createI18n, hasLocalization } from '@main/i18n.base'
 
 let i18n: I18n|null = null
 let i18nLlm: I18n|null = null

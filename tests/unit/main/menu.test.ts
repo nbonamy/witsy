@@ -1,7 +1,7 @@
 
 import { test, expect, vi } from 'vitest'
 import { app, Menu } from 'electron'
-import { installMenu } from '../../../src/main/menu'
+import { installMenu } from '@main/menu'
 
 vi.mock('electron', () => ({
   app: {

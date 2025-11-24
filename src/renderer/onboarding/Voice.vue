@@ -39,17 +39,17 @@
 <script setup lang="ts">
 
 import { computed, ref } from 'vue'
-import EngineLogo from '../components/EngineLogo.vue'
-import InputObfuscated from '../components/InputObfuscated.vue'
-import Spinner from '../components/Spinner.vue'
-import { t } from '../services/i18n'
-import { engineNames } from '../services/llms/consts'
-import { store } from '../services/store'
+import EngineLogo from '@components/EngineLogo.vue'
+import InputObfuscated from '@components/InputObfuscated.vue'
+import Spinner from '@components/Spinner.vue'
+import { t } from '@services/i18n'
+import { engineNames } from '@services/llms/consts'
+import { store } from '@services/store'
 import { getSTTEngines, getSTTModels } from '../voice/stt'
 import { getTTSEngines, getTTSModels } from '../voice/tts'
 import { preventTabOnLastEngineGridInput } from './index'
 
-import useAppearanceTheme from '../composables/appearance_theme'
+import useAppearanceTheme from '@composables/appearance_theme'
 const appearanceTheme = useAppearanceTheme()
 
 const status = ref<Record<string, string>>({})
@@ -158,5 +158,5 @@ defineExpose({
 </script>
 
 <style scoped>
-@import '../../../css/onboarding.css';
+@import '@css/onboarding.css';
 </style>

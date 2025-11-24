@@ -3,9 +3,9 @@ import { anyDict } from 'types/index';
 import { Application } from 'types/automation';
 import { app, BrowserWindow, screen } from 'electron';
 import { createWindow, ensureOnCurrentScreen, releaseFocus } from './index';
-//import MacosAutomator from '../../automations/macos';
-//import WindowsAutomator from '../../automations/windows';
-//import Computer from '../../automations/computer_nut';
+//import MacosAutomator from '@main/automations/macos';
+//import WindowsAutomator from '@main/automations/windows';
+//import Computer from '@main/automations/computer_nut';
 import autolib from 'autolib';
 import { wait } from '../utils';
 

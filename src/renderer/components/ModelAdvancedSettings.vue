@@ -74,11 +74,11 @@
 <script setup lang="ts">
 import { LlmModelOpts, LlmReasoningEffort, LlmVerbosity } from 'multi-llm-ts'
 import { computed, ref, watch } from 'vue'
-import Dialog from '../utils/dialog'
-import LlmFactory from '../services/llms/llm'
-import VariableEditor from '../screens/VariableEditor.vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import Dialog from '@renderer/utils/dialog'
+import LlmFactory from '@services/llms/llm'
+import VariableEditor from '@screens/VariableEditor.vue'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 import VariableTable from './VariableTable.vue'
 
 const props = defineProps<{

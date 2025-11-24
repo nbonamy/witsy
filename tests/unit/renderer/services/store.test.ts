@@ -1,11 +1,11 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import { useWindowMock, listeners } from '../../../mocks/window'
-import { store } from '../../../../src/renderer/services/store'
-import { DEFAULT_WORKSPACE_ID } from '../../../../src/main/workspace'
-import Chat from '../../../../src/models/chat'
-import Message from '../../../../src/models/message'
-import defaultSettings from '../../../../defaults/settings.json'
+import { useWindowMock, listeners } from '@tests/mocks/window'
+import { store } from '@services/store'
+import { DEFAULT_WORKSPACE_ID } from '@main/workspace'
+import Chat from '@models/chat'
+import Message from '@models/message'
+import defaultSettings from '@root/defaults/settings.json'
 
 const chats = [
   new Chat(),

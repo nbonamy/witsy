@@ -1,5 +1,5 @@
 import { vi, test, expect, describe, beforeEach } from 'vitest'
-import useReorderTable from '../../../../src/renderer/composables/reorder_table'
+import useReorderTable from '@composables/reorder_table'
 
 describe('useReorderTable', () => {
   let callback: ReturnType<typeof vi.fn>

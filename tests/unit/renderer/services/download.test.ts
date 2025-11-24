@@ -1,10 +1,10 @@
 
 
 import { beforeAll, expect, test } from 'vitest'
-import { useWindowMock } from '../../../mocks/window'
-import { DEFAULT_WORKSPACE_ID } from '../../../../src/main/workspace'
-import { store } from '../../../../src/renderer/services/store'
-import * as download from '../../../../src/renderer/services/download'
+import { useWindowMock } from '@tests/mocks/window'
+import { DEFAULT_WORKSPACE_ID } from '@main/workspace'
+import { store } from '@services/store'
+import * as download from '@services/download'
 
 beforeAll(() => {
   useWindowMock()

@@ -24,11 +24,11 @@
 <script setup lang="ts">
 
 import { ref, computed } from 'vue'
-import { store } from '../services/store'
-import { t } from '../services/i18n'
-import Dialog from '../utils/dialog'
-import EmbeddingSelector from '../components/EmbeddingSelector.vue'
-import MemoryInspector from '../screens/MemoryInspector.vue'
+import { store } from '@services/store'
+import { t } from '@services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import EmbeddingSelector from '@components/EmbeddingSelector.vue'
+import MemoryInspector from '@screens/MemoryInspector.vue'
 
 const enabled = ref(false)
 const hasFacts = ref(false)

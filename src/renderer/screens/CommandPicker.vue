@@ -28,9 +28,9 @@
 
 import { InfoIcon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
-import { commandI18n, t } from '../services/i18n'
-import { store } from '../services/store'
-import { anyDict, Command, ExternalApp } from 'types/'
+import { commandI18n, t } from '@services/i18n'
+import { store } from '@services/store'
+import { anyDict, Command, ExternalApp } from 'types'
 import { CommandAction } from 'types/automation'
 
 // load store

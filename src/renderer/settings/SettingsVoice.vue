@@ -22,7 +22,7 @@
 <script setup lang="ts">
 
 import { ref, computed, nextTick } from 'vue'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 import { MicIcon, Volume2Icon } from 'lucide-vue-next'
 import SettingsTTS from './SettingsTTS.vue'
 import SettingsSTT from './SettingsSTT.vue'

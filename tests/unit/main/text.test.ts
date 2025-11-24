@@ -1,6 +1,6 @@
 
 import { vi, expect, test } from 'vitest'
-import { getTextContent } from '../../../src/main/text'
+import { getTextContent } from '@main/text'
 import fs from 'fs'
 
 vi.mock('electron', async () => {

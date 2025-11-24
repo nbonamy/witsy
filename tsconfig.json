@@ -11,24 +11,27 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "types": ["vite-svg-loader"],
     "paths": {
-      "@types/*": ["types/*"]
+      "@/*": [ "./*" ],
+      "@components/*": [ "renderer/components/*" ],
+      "@composables/*": [ "renderer/composables/*" ],
+      "@css/*": [ "../css/*" ],
+      "@main/*": [ "main/*" ],
+      "@models/*": [ "models/*" ],
+      "@renderer/*": [ "renderer/*" ],
+      "@root/*": [ "../*" ],
+      "@screens/*": [ "renderer/screens/*" ],
+      "@services/*": [ "renderer/services/*" ],
+      "@tests/*": [ "../tests/*" ]
     }
   },
+  "include": [
+    "forge.env.d.ts",
+    "src/**/*",
+    "tests/**/*"
+  ],
   "exclude": [
-    "./tests/**/*.ts",
     "./tools/**/*.ts",
   ]
-  // "files": [],
-  // "references": [
-  //   {
-  //     "path": "./tsconfig.node.json"
-  //   },
-  //   {
-  //     "path": "./tsconfig.app.json"
-  //   },
-  //   {
-  //     "path": "./tsconfig.vitest.json"
-  //   }
-  // ]
 }

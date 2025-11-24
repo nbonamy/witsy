@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { FileTextIcon } from 'lucide-vue-next'
-import { t } from '../services/i18n'
+import { t } from '@services/i18n'
 import { ScratchpadHeader } from 'types/index'
 
 defineProps({

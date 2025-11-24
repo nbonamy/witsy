@@ -2,7 +2,7 @@
 import { App, Notification } from 'electron'
 import { RunCommandParams } from 'types/automation'
 import { Configuration } from 'types/config'
-import LlmFactory, { ILlmManager } from '../../renderer/services/llms/llm'
+import LlmFactory, { ILlmManager } from '@renderer/services/llms/llm'
 import { loadSettings } from '../config'
 import { useI18n, useI18nLlm } from '../i18n'
 import { getCachedText, putCachedText } from '../utils'

@@ -15,9 +15,9 @@
 
 import { h, nextTick, PropType, ref, render } from 'vue'
 import { InfoIcon } from 'lucide-vue-next'
-import Dialog from '../utils/dialog'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import Dialog from '@renderer/utils/dialog'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 import { ToolCall } from 'types/index'
 import MessageItemArtifactBlock from './MessageItemArtifactBlock.vue'
 import MessageItemHtmlBlock from './MessageItemHtmlBlock.vue'

@@ -2,7 +2,7 @@ import { LlmEngine } from 'multi-llm-ts'
 import { AgentRun } from 'types/agents'
 import { CodeExecutionMode, Configuration } from 'types/config'
 import { ToolSelection } from 'types/llm'
-import Agent from '../../models/agent'
+import Agent from '@models/agent'
 import LlmFactory, { ILlmManager } from './llms/llm'
 
 export interface AgentExecutorOpts {

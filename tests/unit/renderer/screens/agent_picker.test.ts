@@ -1,15 +1,15 @@
 import { vi, beforeAll, afterEach, expect, test, describe } from 'vitest'
 import { mount, enableAutoUnmount, VueWrapper } from '@vue/test-utils'
-import { useWindowMock } from '../../../mocks/window'
-import { createI18nMock } from '../../../mocks'
-import { stubTeleport } from '../../../mocks/stubs'
-import { store } from '../../../../src/renderer/services/store'
-import Agent from '../../../../src/models/agent'
-import AgentPicker from '../../../../src/renderer/screens/AgentPicker.vue'
+import { useWindowMock } from '@tests/mocks/window'
+import { createI18nMock } from '@tests/mocks'
+import { stubTeleport } from '@tests/mocks/stubs'
+import { store } from '@services/store'
+import Agent from '@models/agent'
+import AgentPicker from '@screens/AgentPicker.vue'
 
 enableAutoUnmount(afterEach)
 
-vi.mock('../../../../src/renderer/services/i18n', async () => {
+vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 

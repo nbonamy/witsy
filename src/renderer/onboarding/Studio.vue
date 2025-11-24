@@ -39,19 +39,19 @@
 <script setup lang="ts">
 
 import { computed, ref } from 'vue'
-import EngineLogo from '../components/EngineLogo.vue'
-import InputObfuscated from '../components/InputObfuscated.vue'
-import Spinner from '../components/Spinner.vue'
-import { t } from '../services/i18n'
-import ImageCreator from '../services/image'
-import { engineNames } from '../services/llms/consts'
-import LlmManager from '../services/llms/manager'
-import ModelLoaderFactory from '../services/model_loader'
-import { store } from '../services/store'
-import VideoCreator from '../services/video'
+import EngineLogo from '@components/EngineLogo.vue'
+import InputObfuscated from '@components/InputObfuscated.vue'
+import Spinner from '@components/Spinner.vue'
+import { t } from '@services/i18n'
+import ImageCreator from '@services/image'
+import { engineNames } from '@services/llms/consts'
+import LlmManager from '@services/llms/manager'
+import ModelLoaderFactory from '@services/model_loader'
+import { store } from '@services/store'
+import VideoCreator from '@services/video'
 import { preventTabOnLastEngineGridInput } from './index'
 
-import useAppearanceTheme from '../composables/appearance_theme'
+import useAppearanceTheme from '@composables/appearance_theme'
 const appearanceTheme = useAppearanceTheme()
 
 const status = ref<Record<string, string>>({})
@@ -164,5 +164,5 @@ defineExpose({
 </script>
 
 <style scoped>
-@import '../../../css/onboarding.css';
+@import '@css/onboarding.css';
 </style>

@@ -1,17 +1,17 @@
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { defaultCapabilities } from 'multi-llm-ts'
 import { afterAll, beforeAll, beforeEach, expect, test, vi } from 'vitest'
-import LlmFactory from '../../../../src/renderer/services/llms/llm'
-import Settings from '../../../../src/renderer/screens/Settings.vue'
-import { store } from '../../../../src/renderer/services/store'
-import { CustomInstruction } from '../../../../src/types/index'
-import { useWindowMock } from '../../../mocks/window'
-import { findModelSelectorPlus } from '../../../utils'
+import LlmFactory from '@services/llms/llm'
+import Settings from '@screens/Settings.vue'
+import { store } from '@services/store'
+import { CustomInstruction } from '@/types/index'
+import { useWindowMock } from '@tests/mocks/window'
+import { findModelSelectorPlus } from '@tests/utils'
 import { switchToTab, tabs } from './settings_utils'
 
 enableAutoUnmount(afterAll)
 
-vi.mock('../../../../src/renderer/services/store.ts', async (importOriginal) => {
+vi.mock('@services/store.ts', async (importOriginal) => {
   const mod: any = await importOriginal()
   return {
     store: {
@@ -21,13 +21,13 @@ vi.mock('../../../../src/renderer/services/store.ts', async (importOriginal) => 
   }
 })
 
-vi.mock('../../../../src/renderer/composables/appearance_theme.ts', async () => {
+vi.mock('@renderer/composables/appearance_theme.ts', async () => {
   return { default: () => ({
     getTheme: () => store.config.appearance.theme === 'system' ? 'light' : store.config.appearance.theme
   })}
 })
 
-vi.mock('../../../../src/renderer/utils/dialog.ts', () => ({
+vi.mock('@renderer/utils/dialog.ts', () => ({
   default: {
     show: vi.fn()
   }
@@ -311,7 +311,7 @@ test('Settings LLM edit custom instruction', async () => {
 
 test('Settings LLM delete custom instruction with confirmation', async () => {
   
-  const Dialog = await import('../../../../src/renderer/utils/dialog')
+  const Dialog = await import('@renderer/utils/dialog')
   
   // Add a custom instruction and select it
   const customInstruction: CustomInstruction = {
@@ -356,7 +356,7 @@ test('Settings LLM delete custom instruction with confirmation', async () => {
 
 test('Settings LLM delete custom instruction canceled', async () => {
   
-  const Dialog = await import('../../../../src/renderer/utils/dialog')
+  const Dialog = await import('@renderer/utils/dialog')
   
   // Add a custom instruction and select it
   const customInstruction: CustomInstruction = {

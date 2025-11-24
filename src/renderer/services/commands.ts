@@ -1,6 +1,6 @@
 
 import { Command } from 'types/index'
-import defaultCommands from '../../../defaults/commands.json'
+import defaultCommands from '@root/defaults/commands.json'
 import { store } from './store'
 
 export const newCommand = (): Command => {

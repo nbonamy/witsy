@@ -78,19 +78,19 @@
 
 import { PlayIcon, SquareIcon } from 'lucide-vue-next'
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
-import InputObfuscated from '../components/InputObfuscated.vue'
-import RefreshButton from '../components/RefreshButton.vue'
+import InputObfuscated from '@components/InputObfuscated.vue'
+import RefreshButton from '@components/RefreshButton.vue'
 import useAudioPlayer, { AudioStatus } from '../audio/audio_player'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
 import { getTTSModels, getTTSEngines } from '../voice/tts'
 import TTSElevenLabs from '../voice/tts-elevenlabs'
 import TTSFalAi from '../voice/tts-falai'
 import TTSGroq from '../voice/tts-groq'
 import TTSOpenAI from '../voice/tts-openai'
 import TTSMiniMax from '../voice/tts-minimax'
-import defaults from '../../../defaults/settings.json'
-import Dialog from '../utils/dialog'
+import defaults from '@root/defaults/settings.json'
+import Dialog from '@renderer/utils/dialog'
 
 const engine = ref('openai')
 const voice = ref(null)

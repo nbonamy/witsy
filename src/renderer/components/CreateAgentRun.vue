@@ -22,9 +22,9 @@
 <script setup lang="ts">
 
 import { computed, ref } from 'vue'
-import { t } from '../services/i18n'
-import ModalDialog from '../components/ModalDialog.vue'
-import { extractAllWorkflowInputs, PromptInput } from '../services/prompt'
+import { t } from '@services/i18n'
+import ModalDialog from '@components/ModalDialog.vue'
+import { extractAllWorkflowInputs, PromptInput } from '@services/prompt'
 import { Agent } from 'types/agents'
 
 defineProps({

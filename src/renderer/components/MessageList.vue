@@ -16,11 +16,11 @@
 import { ArrowDownIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
 import { computed, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef } from 'vue'
-import Chat from '../../models/chat'
-import { store } from '../services/store'
+import Chat from '@models/chat'
+import { store } from '@services/store'
 import MessageItem from './MessageItem.vue'
 
-import useEventBus from '../composables/event_bus'
+import useEventBus from '@composables/event_bus'
 const { onEvent } = useEventBus()
 
 const divScroller = ref<HTMLElement|null>(null)

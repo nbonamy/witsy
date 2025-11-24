@@ -60,9 +60,9 @@
 <script setup lang="ts">
 import { Eye, EyeOff, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, ref, toRaw } from 'vue'
-import Dialog from '../utils/dialog'
-import { createCategory, deleteCategory } from '../services/categories'
-import { categoryI18n, categoryI18nDefault, t } from '../services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import { createCategory, deleteCategory } from '@services/categories'
+import { categoryI18n, categoryI18nDefault, t } from '@services/i18n'
 import { Expert, ExpertCategory } from 'types/index'
 import { Workspace } from 'types/workspace'
 import ButtonIcon from './ButtonIcon.vue'

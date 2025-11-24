@@ -17,7 +17,7 @@
 
 import { BarChart3Icon, FileCodeIcon, FileJsonIcon, FileSpreadsheetIcon, FileTextIcon } from 'lucide-vue-next'
 import { computed } from 'vue'
-import Attachment from '../../models/attachment'
+import Attachment from '@models/attachment'
 
 const emit = defineEmits(['click', 'image-click'])
 

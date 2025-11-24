@@ -37,10 +37,10 @@
 <script setup lang="ts">
 
 import { ref, onMounted } from 'vue'
-import useAppearanceTheme from '../composables/appearance_theme'
+import useAppearanceTheme from '@composables/appearance_theme'
 
 // events
-import useEventBus from '../composables/event_bus'
+import useEventBus from '@composables/event_bus'
 const { onEvent } = useEventBus()
 
 // init stuff

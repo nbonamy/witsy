@@ -1,7 +1,7 @@
 
 import { expect, test, describe, beforeEach } from 'vitest'
-import Splitter from '../../../../src/main/rag/splitter'
-import { Configuration } from '../../../../src/types/config'
+import Splitter from '@main/rag/splitter'
+import { Configuration } from '@/types/config'
 
 const mockConfig: Configuration = {
   rag: {

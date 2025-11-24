@@ -21,8 +21,8 @@
 
 import { DownloadIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
-import { t } from '../services/i18n'
-import { arrayToCSV, arrayToXLSX, downloadFile, parseHtmlTable } from '../services/table_data'
+import { t } from '@services/i18n'
+import { arrayToCSV, arrayToXLSX, downloadFile, parseHtmlTable } from '@services/table_data'
 import ContextMenuTrigger from './ContextMenuTrigger.vue'
 
 const downloadButton = ref<HTMLElement>()

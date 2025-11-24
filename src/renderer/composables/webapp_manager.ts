@@ -1,6 +1,6 @@
 import { WebApp } from 'types/workspace'
 import { ref } from 'vue'
-import { store } from '../services/store'
+import { store } from '@services/store'
 
 export default function useWebappManager() {
   const loadedWebapps = ref<WebApp[]>([])

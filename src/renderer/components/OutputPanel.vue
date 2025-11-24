@@ -36,15 +36,15 @@
 import { ArrowLeftRightIcon, CornerDownLeftIcon, MessageSquareIcon, RotateCcwIcon, XCircleIcon } from 'lucide-vue-next'
 import { Application } from 'types/automation'
 import { onBeforeUnmount, onMounted, PropType, ref } from 'vue'
-import Message from '../../models/message'
+import Message from '@models/message'
 import useAudioPlayer, { AudioStatus } from '../audio/audio_player'
-import MessageItem from '../components/MessageItem.vue'
-import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
-import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import useEventBus from '../composables/event_bus'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
-import Dialog from '../utils/dialog'
+import MessageItem from '@components/MessageItem.vue'
+import MessageItemActionCopy from '@components/MessageItemActionCopy.vue'
+import MessageItemActionRead from '@components/MessageItemActionRead.vue'
+import useEventBus from '@composables/event_bus'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
+import Dialog from '@renderer/utils/dialog'
 
 const { onEvent } = useEventBus()
 

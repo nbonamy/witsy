@@ -115,11 +115,11 @@ import { Trash2Icon } from 'lucide-vue-next'
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/vue3-json-viewer.css'
-import ButtonIcon from '../components/ButtonIcon.vue'
-import Loader from '../components/Loader.vue'
-import { t } from '../services/i18n'
-import { store } from '../services/store'
-import { NetworkRequest, WebSocketFrame } from 'types/'
+import ButtonIcon from '@components/ButtonIcon.vue'
+import Loader from '@components/Loader.vue'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
+import { NetworkRequest, WebSocketFrame } from 'types'
 
 // load store
 store.loadSettings()

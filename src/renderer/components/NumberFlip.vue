@@ -48,6 +48,6 @@ onMounted(() => {
 </script>
 
 <style>
-@import '../../../node_modules/number-flip-animation/dist/styles.css';
+@import '@root/node_modules/number-flip-animation/dist/styles.css';
 </style>
 

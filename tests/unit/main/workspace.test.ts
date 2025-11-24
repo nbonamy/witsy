@@ -1,7 +1,7 @@
 import { vi, beforeEach, expect, test, describe } from 'vitest'
-import { useWindowMock } from '../../mocks/window'
-import * as workspace from '../../../src/main/workspace'
-import { DEFAULT_WORKSPACE_ID } from '../../../src/main/workspace'
+import { useWindowMock } from '@tests/mocks/window'
+import * as workspace from '@main/workspace'
+import { DEFAULT_WORKSPACE_ID } from '@main/workspace'
 import { app } from 'electron'
 import fs from 'fs'
 

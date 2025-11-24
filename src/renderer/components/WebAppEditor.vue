@@ -41,9 +41,9 @@
 
 import { GlobeIcon } from 'lucide-vue-next'
 import { onMounted, ref, watch } from 'vue'
-import IconPicker from '../components/IconPicker.vue'
-import Dialog from '../utils/dialog'
-import { t } from '../services/i18n'
+import IconPicker from '@components/IconPicker.vue'
+import Dialog from '@renderer/utils/dialog'
+import { t } from '@services/i18n'
 import { WebApp } from 'types/workspace'
 
 const emit = defineEmits(['webapp-modified'])
