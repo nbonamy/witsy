@@ -146,7 +146,7 @@
 import { BracesIcon, CloudUploadIcon, LinkIcon, PauseIcon, PlayIcon, PowerIcon, RefreshCwIcon, SearchIcon } from 'lucide-vue-next'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { computed, nextTick, PropType, ref } from 'vue'
-import McpIcon from '@root/assets/mcp.svg?component'
+import McpIcon from '@assets/mcp.svg?component'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import ContextMenuTrigger from '@components/ContextMenuTrigger.vue'
 import McpToolSelector from '@components/McpToolSelector.vue'

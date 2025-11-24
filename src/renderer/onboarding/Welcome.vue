@@ -50,7 +50,7 @@
 <script setup lang="ts">
 
 import { MessageSquareQuoteIcon, MicIcon, NotebookPenIcon, PaletteIcon, TelescopeIcon } from 'lucide-vue-next'
-import AgentIcon from '@root/assets/agent.svg?component'
+import AgentIcon from '@assets/agent.svg?component'
 import { t } from '@services/i18n'
 
 </script>

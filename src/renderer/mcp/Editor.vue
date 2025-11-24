@@ -143,8 +143,8 @@
 
 import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref } from 'vue'
-import McpIcon from '@root/assets/mcp.svg?component'
-import SmitheryIcon from '@root/assets/smithery.svg?component'
+import McpIcon from '@assets/mcp.svg?component'
+import SmitheryIcon from '@assets/smithery.svg?component'
 import InputObfuscated from '@components/InputObfuscated.vue'
 import Spinner from '@components/Spinner.vue'
 import VariableTable from '@components/VariableTable.vue'

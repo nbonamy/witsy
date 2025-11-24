@@ -164,7 +164,7 @@
 <script setup lang="ts">
 import { BlocksIcon, BracesIcon, BrainIcon, ChevronDownIcon, ChevronRightIcon, LightbulbIcon, MousePointerClickIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed, nextTick, PropType, ref, watch } from 'vue'
-import AgentIcon from '@root/assets/agent.svg?component'
+import AgentIcon from '@assets/agent.svg?component'
 import Agent from '@models/agent'
 import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from 'types/agents'
 import { McpServerWithTools, McpToolUnique } from 'types/mcp'

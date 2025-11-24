@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import AgentIcon from '@root/assets/agent.svg?component'
+import AgentIcon from '@assets/agent.svg?component'
 
 defineProps({
   icon: { },
