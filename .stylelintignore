@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+out/
+.vite/
+
+# Test coverage
+coverage/
+
+# Generated files
+*.min.css

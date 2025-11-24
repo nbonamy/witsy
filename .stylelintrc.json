@@ -1,0 +1,46 @@
+{
+  "extends": [
+    "stylelint-config-recommended",
+    "stylelint-config-recommended-vue"
+  ],
+  "plugins": [
+    "@lyliya/stylelint-value-no-unknown-custom-properties"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.vue"],
+      "customSyntax": "postcss-html"
+    }
+  ],
+  "rules": {
+    "lyliya/value-no-unknown-custom-properties": [
+      true,
+      {
+        "importFrom": [
+          "css/variables.css",
+          "css/index.css"
+        ]
+      }
+    ],
+    "property-no-unknown": true,
+    "unit-no-unknown": true,
+    "function-no-unknown": true,
+    "color-no-invalid-hex": true,
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["deep", "global", "slotted"]
+      }
+    ],
+    "no-descending-specificity": null,
+    "no-duplicate-selectors": null,
+    "no-empty-source": null,
+    "font-family-no-missing-generic-family-keyword": null,
+    "declaration-property-value-keyword-no-deprecated": null,
+    "property-no-deprecated": null,
+    "declaration-block-no-duplicate-properties": null,
+    "declaration-block-no-shorthand-property-overrides": null,
+    "selector-type-no-unknown": null,
+    "declaration-property-value-no-unknown": null
+  }
+}
