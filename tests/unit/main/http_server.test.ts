@@ -21,7 +21,7 @@ beforeEach(async () => {
 
   // Create mock server
   mockServer = {
-    listen: vi.fn((port: number, callback: () => void) => {
+    listen: vi.fn((port: number, hostname: string, callback: () => void) => {
       callback()
     }),
     on: vi.fn(),
@@ -265,4 +265,13 @@ test('throws error when registering duplicate route', () => {
   expect(() => {
     httpServer.register('/test', vi.fn())
   }).toThrow("Path conflict: Route '/test' already registered")
+})
+
+test('server binds to localhost only for security', () => {
+  // Verify that the server.listen was called with localhost hostname
+  expect(mockServer.listen).toHaveBeenCalledWith(
+    8090,
+    '127.0.0.1',
+    expect.any(Function)
+  )
 })
