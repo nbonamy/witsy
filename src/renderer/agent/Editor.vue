@@ -24,7 +24,7 @@
               <Settings2Icon class="icon" /> {{ t('agent.create.information.title') }}
             </div>
 
-            <!-- <div class="md-master-list-item" :class="{ selected: isStepVisible(kStepGoal), disabled: !isStepCompleted(kStepGoal) }" @click="onStepClick(kStepGoal)" v-if="hasStep(kStepGoal)">
+            <!-- <div class="wizard-step" :class="{ selected: isStepVisible(kStepGoal), disabled: !isStepCompleted(kStepGoal) }" @click="onStepClick(kStepGoal)" v-if="hasStep(kStepGoal)">
               <TargetIcon class="logo" /> {{ t('agent.create.goal.title') }}
             </div> -->
 
