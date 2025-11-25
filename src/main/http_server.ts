@@ -156,7 +156,7 @@ export class HttpServer {
       }
     })
 
-    this.server.listen(this.port, () => {
+    this.server.listen(this.port, '127.0.0.1', () => {
       console.log(`[http] Server listening on http://localhost:${this.port}`)
     })
 
