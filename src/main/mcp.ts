@@ -22,7 +22,7 @@ type ToolsCacheEntry = {
   timestamp: number
 }
 
-export default class {
+export default class Mcp {
 
   private readonly CACHE_TTL_MS = 10 * 60 * 1000 // 10 minutes
 
@@ -950,7 +950,7 @@ export default class {
     }
 
     // remove unique suffix
-    const tool = this.originalToolName(name)
+    const tool = Mcp.originalToolName(name)
     console.log(`[mcp] Calling MCP tool`, tool, args)
 
     return await client.client.callTool({
@@ -964,7 +964,7 @@ export default class {
     return /___....$/.test(name)
   }
 
-  originalToolName(name: string): string {
+  public static originalToolName(name: string): string {
     return name.replace(/___....$/, '')
   }
 

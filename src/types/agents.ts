@@ -1,6 +1,6 @@
 
 import { LlmModelOpts, LlmStructuredOutput, PluginParameter } from 'multi-llm-ts'
-import { Message, ToolCall } from './index'
+import { Message } from './index'
 
 export type A2APromptOpts = {
   currentTaskId?: string
@@ -72,6 +72,4 @@ export type AgentRun = {
   prompt: string
   error?: string
   messages: Message[]
-  toolCalls: ToolCall[]
 }
-

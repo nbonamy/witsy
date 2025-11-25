@@ -62,9 +62,7 @@ vi.mock('@modelcontextprotocol/sdk/client/stdio.js', async () => {
 
 vi.mock('@modelcontextprotocol/sdk/client/sse.js', async () => {
   const SSEClientTransport = vi.fn(function(url, options) {
-    // @ts-expect-error mock
     this.options = options
-    // @ts-expect-error mock
     this.finishAuth = vi.fn()
   })
   SSEClientTransport.prototype.start = vi.fn()
@@ -75,9 +73,7 @@ vi.mock('@modelcontextprotocol/sdk/client/sse.js', async () => {
 
 vi.mock('@modelcontextprotocol/sdk/client/streamableHttp.js', async () => {
   const StreamableHTTPClientTransport = vi.fn(function(url, options) {
-    // @ts-expect-error mock
     this.options = options
-    // @ts-expect-error mock
     this.finishAuth = vi.fn()
   })
   StreamableHTTPClientTransport.prototype.start = vi.fn()
@@ -109,11 +105,9 @@ let count = 1
 const mockConnect = vi.fn()
 vi.mock('@modelcontextprotocol/sdk/client/index.js', async () => {
   const Client = vi.fn(function() {
-    // @ts-expect-error mock
     this.id = count++
   })
   Client.prototype.connect = vi.fn(function(transport) { 
-    // @ts-expect-error mock
     this.transport = transport 
     return mockConnect()
   })
@@ -126,9 +120,7 @@ vi.mock('@modelcontextprotocol/sdk/client/index.js', async () => {
     ]
   }))
   Client.prototype.callTool = vi.fn(function(params) {
-    // @ts-expect-error mock
     if (this.id == 1) return { toolResult: `${this.id}-${params.name}-${params.arguments.arg}-result` }
-    // @ts-expect-error mock
     else return { content: [ { type: 'text', text: `${this.id}-${params.name}-${params.arguments.arg}-result` }]}
   })
   return { Client }
@@ -511,9 +503,8 @@ test('Does not connect twice', async () => {
 })
 
 test('Name conversion', async () => {
-  const mcp = new Mcp(app)
-  expect(mcp.originalToolName('tool1___90ab')).toBe('tool1')
-  expect(mcp.originalToolName('tool3_____s1')).toBe('tool3')
+  expect(Mcp.originalToolName('tool1___90ab')).toBe('tool1')
+  expect(Mcp.originalToolName('tool3_____s1')).toBe('tool3')
 })
 
 test('uniqueToolName 64 character limit', async () => {
@@ -553,10 +544,10 @@ test('uniqueToolName 64 character limit', async () => {
   expect(longResult.length).toBe(104) // Original length preserved
 
   // Verify originalToolName can handle both cases
-  expect(mcp.originalToolName(shortResult)).toBe(shortName)
-  expect(mcp.originalToolName(edgeResult)).toBe(edgeName)
-  expect(mcp.originalToolName(overResult)).toBe(overName) // No suffix to remove
-  expect(mcp.originalToolName(longResult)).toBe(longName) // No suffix to remove
+  expect(Mcp.originalToolName(shortResult)).toBe(shortName)
+  expect(Mcp.originalToolName(edgeResult)).toBe(edgeName)
+  expect(Mcp.originalToolName(overResult)).toBe(overName) // No suffix to remove
+  expect(Mcp.originalToolName(longResult)).toBe(longName) // No suffix to remove
 })
 
 test('Call tool', async () => {
