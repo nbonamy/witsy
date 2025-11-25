@@ -2,13 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.2.1] - WIP
+## [3.2.1] - 2025-11-24
 
 ### Added
 - Scratchpad action on assistant messages
 
 ### Changed
 - Agent import tries MCP tool remapping
+- HTTP server listens on localhost only
 
 ### Fixed
 - Agent refresh issues
