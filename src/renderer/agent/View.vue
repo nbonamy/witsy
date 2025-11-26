@@ -112,7 +112,11 @@ const selectLatestRun = () => {
     : runs.value.filter(run => run.trigger !== 'workflow')
   
   if (filteredRuns.length > 0) {
-    selection.value = [filteredRuns[filteredRuns.length - 1]]
+    const latestRun = filteredRuns[filteredRuns.length - 1]
+    if (selection.value.length === 0) {
+      selection.value = [latestRun]
+      return
+    }
   } else {
     selection.value = []
   }
