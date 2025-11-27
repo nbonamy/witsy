@@ -254,30 +254,36 @@ export const store: Store = reactive({
         }
       }
 
-      // Save old-style history.json for backwards compatibility
-      // (full chat objects with messages for now, will switch to metadata later)
-      const chatsToSave = store.history.chats
+      // Save metadata-only history.json
+      const metadata = store.history.chats
         .filter((chat: Chat) => {
           return chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))
         })
-
-      const chatsCopy = JSON.parse(JSON.stringify(chatsToSave))
-      for (const chat of chatsCopy) {
-        for (const message of chat.messages) {
-          for (const attachment of message.attachments) {
-            attachment.content = null
-          }
-        }
-      }
+        .map((chat: Chat) => ({
+          uuid: chat.uuid,
+          title: chat.title,
+          createdAt: chat.createdAt,
+          lastModified: chat.lastModified,
+          engine: chat.engine,
+          model: chat.model,
+          instructions: chat.instructions,
+          disableStreaming: chat.disableStreaming,
+          tools: chat.tools,
+          locale: chat.locale,
+          docrepo: chat.docrepo,
+          modelOpts: chat.modelOpts,
+          temporary: chat.temporary,
+          messageCount: chat.messages?.length || 0
+        }))
 
       const history = {
         folders: JSON.parse(JSON.stringify(store.history.folders)),
-        chats: chatsCopy,
+        chats: metadata,
         quickPrompts: JSON.parse(JSON.stringify(store.history.quickPrompts || [])),
       }
 
-      // save
-      window.api.history.save(store.config.workspaceId, history)
+      // save metadata (cast to any as we're saving ChatMetadata[] not Chat[])
+      window.api.history.save(store.config.workspaceId, history as any)
 
     } catch (error) {
       console.log('Error saving history data', error)

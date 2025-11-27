@@ -121,6 +121,9 @@ export const migrateHistoryToIndividualChats = (
   // Save new metadata-only history.json
   try {
     fs.writeFileSync(historyPath, JSON.stringify(newHistory, null, 2))
+    console.log(`Successfully migrated ${successCount} chats to individual files`)
+    console.log(`Created metadata-only history.json with ${metadata.length} chat entries`)
+    console.log(`Original history backed up to ${backupPath}`)
   } catch (error) {
     console.error('Failed to write new history.json:', error)
     // Restore from backup
@@ -128,10 +131,6 @@ export const migrateHistoryToIndividualChats = (
     fs.rmSync(chatsDir, { recursive: true, force: true })
     return false
   }
-
-  console.log(`Successfully migrated ${successCount} chats to individual files`)
-  console.log(`Created metadata-only history.json with ${metadata.length} chat entries`)
-  console.log(`Original history backed up to ${backupPath}`)
 
   return true
 }
