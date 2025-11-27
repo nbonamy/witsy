@@ -6,7 +6,7 @@ import { LlmChunk, LlmTool } from 'multi-llm-ts';
 import * as IPC from './ipc_consts';
 import { Size } from './main/computer';
 import Agent from './models/agent';
-import { Command, ComputerAction, Expert, ExpertCategory, ExternalApp, LocalSearchResponse, MainWindowMode, NetworkRequest, OpenSettingsPayload, anyDict, strDict } from './types';
+import { Chat, Command, ComputerAction, Expert, ExpertCategory, ExternalApp, History, LocalSearchResponse, MainWindowMode, NetworkRequest, OpenSettingsPayload, anyDict, strDict } from './types';
 import { AgentRun } from './types/agents';
 import { Application, RunCommandParams } from './types/automation';
 import { Configuration } from './types/config';
@@ -112,6 +112,16 @@ contextBridge.exposeInMainWorld(
     history: {
       load: (workspaceId: string): History => { return JSON.parse(ipcRenderer.sendSync(IPC.HISTORY.LOAD, workspaceId)) },
       save: (workspaceId: string, data: History) => { return ipcRenderer.send(IPC.HISTORY.SAVE, JSON.stringify({ workspaceId, history: data })) },
+      loadChat: (workspaceId: string, chatId: string): Chat | null => {
+        const result = ipcRenderer.sendSync(IPC.HISTORY.LOAD_CHAT, workspaceId, chatId);
+        return result === 'null' ? null : JSON.parse(result);
+      },
+      saveChat: (workspaceId: string, chat: Chat): boolean => {
+        return ipcRenderer.sendSync(IPC.HISTORY.SAVE_CHAT, JSON.stringify({ workspaceId, chat }));
+      },
+      deleteChat: (workspaceId: string, chatId: string): boolean => {
+        return ipcRenderer.sendSync(IPC.HISTORY.DELETE_CHAT, workspaceId, chatId);
+      },
     },
     automation: {
       getText: (id: string): string => { return ipcRenderer.sendSync(IPC.AUTOMATION.GET_TEXT, id) },

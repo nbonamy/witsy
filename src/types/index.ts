@@ -388,6 +388,9 @@ declare global {
       history: {
         load(workspaceId: string): History
         save(workspaceId: string, history: History): void
+        loadChat(workspaceId: string, chatId: string): Chat | null
+        saveChat(workspaceId: string, chat: Chat): boolean
+        deleteChat(workspaceId: string, chatId: string): boolean
       }
       automation: {
         getText(id: string): string

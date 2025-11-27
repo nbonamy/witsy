@@ -37,6 +37,7 @@ import * as config from './config';
 import * as experts from './experts';
 import * as file from './file';
 import * as google from './google';
+import * as chat from './chat';
 import * as history from './history';
 import * as i18n from './i18n';
 import * as interpreter from './interpreter';
@@ -208,6 +209,19 @@ export const installIpc = (
   ipcMain.on(IPC.HISTORY.SAVE, (event, payload) => {
     const { workspaceId, history: historyData } = JSON.parse(payload);
     event.returnValue = history.saveHistory(app, workspaceId, historyData as History);
+  });
+
+  ipcMain.on(IPC.HISTORY.LOAD_CHAT, (event, workspaceId, chatId) => {
+    event.returnValue = JSON.stringify(chat.loadChat(app, workspaceId, chatId));
+  });
+
+  ipcMain.on(IPC.HISTORY.SAVE_CHAT, (event, payload) => {
+    const { workspaceId, chat: chatData } = JSON.parse(payload);
+    event.returnValue = chat.saveChat(app, workspaceId, chatData);
+  });
+
+  ipcMain.on(IPC.HISTORY.DELETE_CHAT, (event, workspaceId, chatId) => {
+    event.returnValue = chat.deleteChat(app, workspaceId, chatId);
   });
 
   ipcMain.on(IPC.COMMANDS.LOAD, (event) => {
