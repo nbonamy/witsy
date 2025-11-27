@@ -95,7 +95,7 @@ export type CustomInstruction = {
   instructions: string
 }
 
-export interface Chat {
+export interface ChatBase {
   uuid: string
   title?: string
   createdAt: number
@@ -108,9 +108,11 @@ export interface Chat {
   locale?: string
   docrepo?: string
   modelOpts?: LlmModelOpts
-  messages?: Message[]
   temporary: boolean
-  loadMessages(workspaceId: string): Promise<void>
+}
+
+export interface Chat extends ChatBase {
+  messages?: Message[]
   patchFromJson(jsonChat: any): boolean
   disableTools(): void
   enableAllTools(): void
@@ -122,26 +124,10 @@ export interface Chat {
   deleteMessagesStarting(message: Message): void
   fork(message: Message): Chat
   lastMessage(): Message
-  subtitle(): string
   delete(): void
 }
 
-export type ChatMetadata = {
-  uuid: string
-  title?: string
-  createdAt: number
-  lastModified: number
-  engine?: string
-  model?: string
-  instructions?: string
-  disableStreaming: boolean
-  tools: ToolSelection
-  locale?: string
-  docrepo?: string
-  modelOpts?: LlmModelOpts
-  temporary: boolean
-  messageCount: number
-}
+export type ChatMetadata = ChatBase
 
 export type Folder = {
   id: string

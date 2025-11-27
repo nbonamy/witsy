@@ -48,15 +48,6 @@ test('Patch from JSON', () => {
   expect(chat.messages.length).toBe(1)
 })
 
-test('Subtitle', () => {
-  const chat = new Chat('title')
-  chat.addMessage(new Message('system', 'instructions'))
-  chat.addMessage(new Message('user', 'content'))
-  expect(chat.subtitle()).toBe('')
-  chat.addMessage(new Message('assistant', 'this is the subtitle'))
-  expect(chat.subtitle()).toBe('this is the subtitle')
-})
-
 test('Delete', () => {
   const chat = new Chat('title')
   chat.addMessage(Message.fromJson({ role: 'role', type: 'image', content: 'file' })) 

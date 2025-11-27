@@ -37,6 +37,9 @@ chats[1].messages[1].model = 'model'
 beforeAll(() => {
   useWindowMock()
   window.api.history.load = vi.fn(() => ({ folders: [], chats: chats, quickPrompts: [] }))
+  window.api.history.loadChat = vi.fn((workspaceId: string, chatId: string) => {
+    return chats.find(c => c.uuid === chatId) || null
+  })
 })
 
 beforeEach(() => {
@@ -80,7 +83,6 @@ test('Reload settings without changing reference', async () => {
   expect(store.config.llm.engine).toBe('openai')
   expect(store.config.plugins).toBeDefined()
   defaultSettings.llm.engine = 'xai'
-  // @ts-expect-error unkown
   delete defaultSettings.plugins
   listeners.map(l => l('settings'))
   expect(window.api.config?.load).toHaveBeenCalledTimes(2)
@@ -97,11 +99,32 @@ test('Load history', async () => {
 })
 
 test('Save history', async () => {
+  store.load()
+  store.loadChat('123')
   store.saveHistory()
-  expect(window.api.history?.save).toHaveBeenCalled()
-  expect(window.api.history?.save).toHaveBeenLastCalledWith(DEFAULT_WORKSPACE_ID, {
+  expect(window.api.history.saveChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, {
+    uuid: '123',
+    engine: 'engine',
+    model: 'model',
+    disableStreaming: false,
+    tools: null,
+    temporary: false,
+    modelOpts: { temperature: 1 },
+    messages: expect.arrayContaining([
+      {
+        uuid: '1', engine: null, model: null, createdAt: 0, role: 'system', type: 'text', content: 'Hi', reasoning: null,
+        execType: 'prompt', toolCalls: [], attachments: [], transient: false, uiOnly: false, edited: false
+      },
+      {
+        uuid: '2', engine: 'engine', model: 'model', createdAt: 0, role: 'user', type: 'text', content: 'Hello', reasoning: null,
+        execType: 'prompt', toolCalls: [], attachments: [], transient: false, uiOnly: false, edited: false
+      }
+    ])
+  })
+  expect(window.api.history.save).toHaveBeenLastCalledWith(DEFAULT_WORKSPACE_ID, {
     folders: [],
-    chats: [ {
+    chats: expect.arrayContaining([
+      expect.any(Object), {
       uuid: '123',
       engine: 'engine',
       model: 'model',
@@ -109,17 +132,7 @@ test('Save history', async () => {
       tools: null,
       temporary: false,
       modelOpts: { temperature: 1 },
-      messages: [
-        {
-          uuid: '1', engine: null, model: null, createdAt: 0, role: 'system', type: 'text', content: 'Hi', reasoning: null,
-          execType: 'prompt', toolCalls: [], attachments: [], transient: false, uiOnly: false, edited: false
-        },
-        {
-          uuid: '2', engine: 'engine', model: 'model', createdAt: 0, role: 'user', type: 'text', content: 'Hello', reasoning: null,
-          execType: 'prompt', toolCalls: [], attachments: [], transient: false, uiOnly: false, edited: false
-        }
-      ]
-    } ],
+    } ]),
     quickPrompts: [],
   })
 })

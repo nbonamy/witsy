@@ -61,45 +61,39 @@ beforeAll(() => {
     return settings
   }
   
-  window.api.history.load = vi.fn(() => ({
-    folders: [],
-    chats: [
-      Chat.fromJson({
-        uuid: kMediaChatId,
-        messages: [
-          new Message('system', 'This is a system message.'),
-          Message.fromJson({
-            uuid: '1',
-            role: 'user',
-            type: 'text',
-            createdAt: 1,
-            content: 'prompt1',
-            engine: 'openai',
-            model: 'dall-e-3',
-            attachment: new Attachment('', 'image/jpeg', 'file://url1.jpg')
-          }),
-          Message.fromJson({
-            uuid: '2',
-            role: 'user',
-            type: 'image',
-            createdAt: 2,
-            content: 'prompt2',
-            engine: 'replicate',
-            model: 'replicate1',
-            attachment: new Attachment('', 'image/jpeg', 'file://url2.jpg') // Updated to include .jpg
-          })
-        ]
-      })      
-    ],
-    quickPrompts: []
-  }))
-
+  window.api.history.loadChat = vi.fn(() => {
+    return Chat.fromJson({
+      uuid: kMediaChatId,
+      messages: [
+        new Message('system', 'This is a system message.'),
+        Message.fromJson({
+          uuid: '1',
+          role: 'user',
+          type: 'text',
+          createdAt: 1,
+          content: 'prompt1',
+          engine: 'openai',
+          model: 'dall-e-3',
+          attachment: new Attachment('', 'image/jpeg', 'file://url1.jpg')
+        }),
+        Message.fromJson({
+          uuid: '2',
+          role: 'user',
+          type: 'image',
+          createdAt: 2,
+          content: 'prompt2',
+          engine: 'replicate',
+          model: 'replicate1',
+          attachment: new Attachment('', 'image/jpeg', 'file://url2.jpg') // Updated to include .jpg
+        })
+      ]
+    })
+  })
 
 })
 
 beforeEach(() => {
   store.loadSettings()
-  store.loadHistory()
 })
 
 test('Renders', async () => {
@@ -231,8 +225,11 @@ test('Generates - Basic', async () => {
   expect(wrapper.vm.undoStack).toHaveLength(0)
   expect(wrapper.vm.redoStack).toHaveLength(0)
 
-  expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(wrapper.vm.chat.messages).toHaveLength(4)
+  expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(window.api.history.saveChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, expect.objectContaining({
+    messages: expect.arrayContaining([ wrapper.vm.chat.messages[3] ])
+  }))
 
 })
 
@@ -281,8 +278,11 @@ test('Generates - Custom Params OpenAI', async () => {
     toolCalls: [ expect.objectContaining({ params: { quality: 'hd', style: 'vivid' } }) ]
   })
 
-  expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(wrapper.vm.chat.messages).toHaveLength(4)
+  expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(window.api.history.saveChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, expect.objectContaining({
+    messages: expect.arrayContaining([ wrapper.vm.chat.messages[3] ])
+  }))
 
 })
 
@@ -330,8 +330,11 @@ test('Generates - Custom Params HuggingFace', async () => {
     toolCalls: [ expect.objectContaining({ params: { negative_prompt: 'no no no', width: 1000 } }) ]
   })
 
-  expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(wrapper.vm.chat.messages).toHaveLength(4)
+  expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(window.api.history.saveChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, expect.objectContaining({
+    messages: expect.arrayContaining([ wrapper.vm.chat.messages[3] ])
+  }))
 
 })
 
@@ -388,15 +391,18 @@ test('Generates - User Params', async () => {
     toolCalls: [ expect.objectContaining({ params: { string: 'value', number: 100, boolean: true } }) ]
   })
 
-  expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(wrapper.vm.chat.messages).toHaveLength(4)
+  expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(window.api.history.saveChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, expect.objectContaining({
+    messages: expect.arrayContaining([ wrapper.vm.chat.messages[3] ])
+  }))
 
 })
 
 test('Preview', async () => {
 
   const wrapper: VueWrapper<any> = mount(DesignStudio)
-  wrapper.vm.selection = [store.history.chats[0].messages[1]]
+  wrapper.vm.selection = [wrapper.vm.chat.messages[1]]
   await wrapper.vm.$nextTick()
 
   // rendered
@@ -499,8 +505,8 @@ test('Edit', async () => {
   expect(window.api.file.delete).toHaveBeenLastCalledWith('file://file_saved')
 
   expect(wrapper.vm.selection).toHaveLength(1)
-  expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(wrapper.vm.chat.messages).toHaveLength(4)
+  expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
 
   expect(wrapper.vm.undoStack).toHaveLength(1)
   expect(wrapper.vm.redoStack).toHaveLength(0)
@@ -556,8 +562,8 @@ test('Edit with preserve', async () => {
   expect(window.api.file.delete).toHaveBeenLastCalledWith('file://file_saved')
 
   expect(wrapper.vm.selection).toHaveLength(1)
-  expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(wrapper.vm.chat.messages).toHaveLength(4)
+  expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
 
   expect(wrapper.vm.undoStack).toHaveLength(0)
   expect(wrapper.vm.redoStack).toHaveLength(0)
@@ -600,8 +606,8 @@ test('Undo / Redo', async () => {
   expect(wrapper.vm.redoStack).toHaveLength(1)
 
   expect(wrapper.vm.selection).toHaveLength(1)
-  expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(wrapper.vm.chat.messages).toHaveLength(4)
+  expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
 
   expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
@@ -638,8 +644,8 @@ test('Undo / Redo', async () => {
   expect(wrapper.vm.redoStack).toHaveLength(0)
 
   expect(wrapper.vm.selection).toHaveLength(1)
-  expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
+  expect(wrapper.vm.chat.messages).toHaveLength(4)
+  expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
 
   expect(wrapper.vm.undoStack[0]).toMatchObject({
     role: 'user',

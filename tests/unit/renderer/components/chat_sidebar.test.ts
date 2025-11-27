@@ -31,6 +31,15 @@ beforeEach(() => {
     chat.messages.push(new Message('assistant', `Subtitle ${i}`))
     store.addChat(chat)
   }
+  window.api.history.searchMessages = vi.fn((workspaceId: string, excludeChats: string[], filter: string): string[] => {
+    const results = []
+    for (const chat of store.history.chats) {
+      if (chat.title.includes(filter) || chat.messages?.some(m => m.content.includes(filter))) {
+        results.push(chat.uuid)
+      }
+    }
+    return results
+  })
 })
 
 test('No chat', async () => {
@@ -109,7 +118,7 @@ test('Filter Textbox', async () => {
 
 test('Filter All', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  wrapper.vm.filter = 'Subtitle'
+  wrapper.vm.filter = 'Chat'
   await wrapper.vm.$nextTick()
   expect(wrapper.findAll('.chat')).toHaveLength(10)
 })

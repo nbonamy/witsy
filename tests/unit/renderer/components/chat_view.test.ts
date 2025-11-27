@@ -71,16 +71,37 @@ beforeAll(() => {
         docrepo: 'docrepo',
         engine: 'openai',
         model: 'gpt-4.1',
-        messages: [
+      })
+    ], quickPrompts: ['prompt']
+  })
+
+  window.api.history.saveChat = (workspaceId: string, chat: Chat) => {
+    const index = store.history?.chats.findIndex(c => c.uuid === chat.uuid) ?? -1
+    if (index >= 0) {
+      store.history!.chats[index] = chat
+    } else {
+      store.history?.chats.push(chat)
+    }
+    return true
+  }
+
+  window.api.history.loadChat = (workspaceId: string, chatId: string) => {
+    const chat = store.history?.chats.find(c => c.uuid === chatId)
+    if (!chat.messages) {
+      if (chatId === 'chat') {
+        chat.messages = [
           new Message('system', 'instructions'),
           new Message('user', 'prompt1'),
           new Message('assistant', 'response1'),
           Message.fromJson({ role: 'user', content: 'prompt2', expert: { id: 'expert' }, attachment: { content: 'attachment', url: 'url', saved: true } }),
           new Message('assistant', 'response2'),  
         ]
-      })
-    ], quickPrompts: ['prompt']
-  })
+      } else {
+        chat.messages = []
+      }
+    }
+    return chat
+  }
 
 })
 
@@ -354,7 +375,7 @@ test('Delete folder', async () => {
 test('Select chat', async () => {
   store.config.llm.engine = 'mock'
   const wrapper: VueWrapper<any> = mount(ChatView)
-  emitEvent('select-chat', store.history.chats[0])
+  emitEvent('select-chat', store.history.chats[0].uuid)
   expect(Assistant.prototype.setChat).toHaveBeenLastCalledWith(store.history.chats[0])
   expect(wrapper.vm.assistant.chat.tools).toBeNull()
   expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
@@ -369,7 +390,7 @@ test('Select chat', async () => {
 
 test('Fork Chat on Assistant Message', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  emitEvent('select-chat', store.history.chats[0])
+  emitEvent('select-chat', store.history.chats[0].uuid)
   wrapper.vm.forkChat(store.history.chats[0], store.history.chats[0].messages[2], 'title2', 'engine2', 'model2')
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[1].title).toBe('title2')
@@ -383,7 +404,7 @@ test('Fork Chat on Assistant Message', async () => {
 test('Fork Chat on User Message', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
   expect(store.history.chats).toHaveLength(1)
-  emitEvent('select-chat', store.history.chats[0])
+  emitEvent('select-chat', store.history.chats[0].uuid)
   expect(store.history.chats).toHaveLength(1)
   wrapper.vm.forkChat(store.history.chats[0], store.history.chats[0].messages[3], 'title2', 'engine2', 'model2')
   expect(store.history.chats).toHaveLength(2)
@@ -406,7 +427,7 @@ test('Fork Chat on User Message', async () => {
 
 test('Delete Message', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  emitEvent('select-chat', store.history.chats[0])
+  emitEvent('select-chat', store.history.chats[0].uuid)
   const chat = wrapper.vm.assistant.chat
   expect(chat.messages).toHaveLength(5)
   await wrapper.vm.onDeleteMessage(chat.messages[3])

@@ -51,14 +51,18 @@ export default class Chat implements ChatBase {
     chat.locale = obj.locale || undefined
     chat.docrepo = obj.docrepo || undefined
     chat.temporary = obj.temporary || false
-    chat.messages = []
-    // Handle both ChatMetadata (no messages) and full Chat objects
+    chat.messages = undefined
+
+    // load messages
     if (obj.messages && Array.isArray(obj.messages)) {
+      chat.messages = []
       for (const msg of obj.messages) {
         const message = Message.fromJson(msg)
         chat.messages.push(message)
       }
     }
+
+    // done
     return chat
   }
 
@@ -113,14 +117,6 @@ export default class Chat implements ChatBase {
     this.model = model
   }
 
-  subtitle(): string {
-    if (this.messages.length > 2 && this.messages[2].type == 'text') {
-      return this.messages[2].content.replace(/<[^>]*>/g, '')
-    } else {
-      return ''
-    }
-  }
-
   initTitle(): void {
     this.title = this.title || DEFAULT_TITLE
   }
@@ -130,24 +126,7 @@ export default class Chat implements ChatBase {
   }
 
   hasMessages(): boolean {
-    return this.messages.length > 1
-  }
-
-  async loadMessages(workspaceId: string): Promise<void> {
-    // If already loaded (has messages), do nothing
-    if (this.messages.length > 0) {
-      return
-    }
-
-    // Load full chat from file
-    const fullChat = window.api.history.loadChat(workspaceId, this.uuid)
-    if (fullChat && fullChat.messages) {
-      this.messages = []
-      for (const msg of fullChat.messages) {
-        const message = Message.fromJson(msg)
-        this.messages.push(message)
-      }
-    }
+    return (this.messages?.length ?? 0) > 1
   }
 
   addMessage(message: Message): void {

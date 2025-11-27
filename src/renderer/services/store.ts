@@ -200,7 +200,6 @@ export const store: Store = reactive({
 
     // add to history
     store.history.chats.push(chat)
-    store.loadChat(chat.uuid)
     store.saveHistory()
 
   },
@@ -275,12 +274,15 @@ export const store: Store = reactive({
 
       // prepare chats to save
       const chatsToSave = store.history.chats.filter(chat => isChatValid(chat)).map((chat: Chat) => {
-        const clone = JSON.parse(JSON.stringify(chat))
-        if (clone.messages) {
-          window.api.history.saveChat(store.config.workspaceId, clone)
+        if (chat.messages) {
+          // we need double parse/stringify for the test to pass because vitest will capture the clone
+          // whose messages will be deleted before it returns to the test assertion
+          window.api.history.saveChat(store.config.workspaceId, JSON.parse(JSON.stringify(chat)))
+          const clone = JSON.parse(JSON.stringify(chat))
           delete clone.messages
+          return clone
         }
-        return clone
+        return chat
       })
 
       // delete chat files that are no longer in history

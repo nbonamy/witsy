@@ -48,7 +48,6 @@ type ChatMetadata = {
   title?: string
   createdAt: number
   lastModified: number
-  messageCount: number       // For quick reference
   engine?: string
   model?: string
   // ... other Chat properties EXCEPT messages

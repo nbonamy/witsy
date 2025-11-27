@@ -23,26 +23,10 @@ export const chatFilePath = (app: App, workspaceId: string, chatId: string): str
   return path.join(chatsFolderPath, `${chatId}.json`)
 }
 
-/**
- * Convert Chat to ChatMetadata (strip messages)
- */
 export const chatToMetadata = (chat: Chat): ChatMetadata => {
-  return {
-    uuid: chat.uuid,
-    title: chat.title,
-    createdAt: chat.createdAt,
-    lastModified: chat.lastModified,
-    engine: chat.engine,
-    model: chat.model,
-    instructions: chat.instructions,
-    disableStreaming: chat.disableStreaming,
-    tools: chat.tools,
-    locale: chat.locale,
-    docrepo: chat.docrepo,
-    modelOpts: chat.modelOpts,
-    temporary: chat.temporary,
-    messageCount: chat.messages?.length || 0
-  }
+  const clone: ChatMetadata = JSON.parse(JSON.stringify(chat))
+  delete (clone as any).messages
+  return clone
 }
 
 /**

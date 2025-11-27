@@ -354,6 +354,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     history: {
       load: vi.fn(() => ({ folders: [ ], chats: [ ], quickPrompts: [ ] })),
       save: vi.fn(),
+      loadChat: vi.fn(() => null),
+      saveChat: vi.fn(() => true),
+      deleteChat: vi.fn(() => true),
+      searchMessages: vi.fn(() => []),
     },
     base64:{
       decode: (s) => `${s}_decoded`,
@@ -435,7 +439,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       create: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
-      addDocument: vi.fn(async () => {}),
+      addDocument: vi.fn(async () => 'uuid'),
       removeDocument: vi.fn(async () => true),
       query: vi.fn(async () => [
         {
@@ -452,7 +456,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         } as DocRepoQueryResponseItem
       ]),
       getCurrentQueueItem: vi.fn(async () => null),
-      isSourceSupported: vi.fn((type: string, origin: string) => origin.startsWith('file'))
+      isSourceSupported: vi.fn((type: string, origin: string) => origin.startsWith('file')),
+      cancelTask: vi.fn(),
     },
     scratchpad: {
       open: vi.fn(),

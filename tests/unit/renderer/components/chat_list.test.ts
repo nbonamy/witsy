@@ -108,7 +108,7 @@ test('Change chat (non-select mode)', async () => {
   const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined } } )
   expect(wrapper.findAll('.selected')).toHaveLength(0)
   await wrapper.findAll('.chat').at(3)!.trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('select-chat', store.history.chats[3])
+  expect(emitEventMock).toHaveBeenLastCalledWith('select-chat', store.history.chats[3].uuid)
 })
 
 test('Select chat (select mode)', async () => {
