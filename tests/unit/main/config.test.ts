@@ -200,3 +200,9 @@ test('Python plugin with runtime already set', () => {
   expect(loaded.plugins.python.runtime).toBe('native')
   expect(loaded.plugins.python.binpath).toBe('/opt/python3')
 })
+
+test('Backwards compatibility: old codeExecution object format', () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/old-code-execution')
+  const loaded = config.loadSettings(app)
+  expect(loaded.llm.codeExecution).toBe('disabled')
+})

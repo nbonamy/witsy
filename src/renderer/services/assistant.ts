@@ -1,6 +1,6 @@
 
 import { LlmEngine } from 'multi-llm-ts'
-import { Configuration } from 'types/config'
+import { CodeExecutionMode, Configuration } from 'types/config'
 import { markRaw } from 'vue'
 import Attachment from '@models/attachment'
 import Chat from '@models/chat'
@@ -120,7 +120,7 @@ export default class {
     }
 
     // code execution mode from config
-    const codeExecutionMode = this.config.llm.codeExecution
+    const codeExecutionMode: CodeExecutionMode = this.config.llm.codeExecution
 
     // update system message with latest instructions
     const llmUtils = new LlmUtils(this.config)
