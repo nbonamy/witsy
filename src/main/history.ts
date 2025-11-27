@@ -4,6 +4,7 @@ import { App } from 'electron'
 import { notifyBrowserWindows } from './windows'
 import { workspaceFolderPath } from './workspace'
 import { loadAllChats } from './chat'
+import { migrateHistoryToIndividualChats } from './migration'
 import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
@@ -29,16 +30,24 @@ export const attachmentsFilePath = (app: App, workspaceId: string): string => {
 export const loadHistory = async (app: App, workspaceId: string): Promise<History> => {
 
   // needed
-  const filepath = historyFilePath(app, workspaceId) 
+  const filepath = historyFilePath(app, workspaceId)
 
   // check existence
   if (!fs.existsSync(filepath)) {
     return { folders: [], chats: [], quickPrompts: [] }
   }
 
+  // Try to migrate to individual chat files if not already done
+  // This is a one-time automatic migration
+  try {
+    migrateHistoryToIndividualChats(app, workspaceId)
+  } catch (error) {
+    console.error('Migration failed, continuing with old format:', error)
+  }
+
   // local
   try {
-    
+
     // load it
     let history: History = JSON.parse(fs.readFileSync(filepath, 'utf-8'))
 

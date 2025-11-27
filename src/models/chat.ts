@@ -50,10 +50,14 @@ export default class Chat implements ChatBase {
     chat.modelOpts = obj.modelOpts || undefined
     chat.locale = obj.locale || undefined
     chat.docrepo = obj.docrepo || undefined
+    chat.temporary = obj.temporary || false
     chat.messages = []
-    for (const msg of obj.messages) {
-      const message = Message.fromJson(msg)
-      chat.messages.push(message)
+    // Handle both ChatMetadata (no messages) and full Chat objects
+    if (obj.messages && Array.isArray(obj.messages)) {
+      for (const msg of obj.messages) {
+        const message = Message.fromJson(msg)
+        chat.messages.push(message)
+      }
     }
     return chat
   }
@@ -122,6 +126,23 @@ export default class Chat implements ChatBase {
 
   hasMessages(): boolean {
     return this.messages.length > 1
+  }
+
+  async loadMessages(workspaceId: string): Promise<void> {
+    // If already loaded (has messages), do nothing
+    if (this.messages.length > 0) {
+      return
+    }
+
+    // Load full chat from file
+    const fullChat = window.api.history.loadChat(workspaceId, this.uuid)
+    if (fullChat && fullChat.messages) {
+      this.messages = []
+      for (const msg of fullChat.messages) {
+        const message = Message.fromJson(msg)
+        this.messages.push(message)
+      }
+    }
   }
 
   addMessage(message: Message): void {

@@ -1,8 +1,8 @@
 
 import { App } from 'electron'
-import { History } from 'types/index'
+import { History, ChatMetadata } from 'types/index'
 import { historyFilePath } from './history'
-import { chatsFolder, saveChat, listChatIds } from './chat'
+import { chatsFolder, saveChat, listChatIds, chatToMetadata } from './chat'
 import fs from 'fs'
 
 /**
@@ -110,12 +110,27 @@ export const migrateHistoryToIndividualChats = (
   }
 
   // Create new metadata-only history.json
-  // Note: At this point we're NOT changing the format yet
-  // We're keeping the full history.json intact for backwards compatibility
-  // The new chat files are additional, not replacements
-  // This allows gradual migration and rollback if needed
+  const metadata: ChatMetadata[] = oldHistory.chats.map(chatToMetadata)
+
+  const newHistory = {
+    folders: oldHistory.folders,
+    chats: metadata,
+    quickPrompts: oldHistory.quickPrompts
+  }
+
+  // Save new metadata-only history.json
+  try {
+    fs.writeFileSync(historyPath, JSON.stringify(newHistory, null, 2))
+  } catch (error) {
+    console.error('Failed to write new history.json:', error)
+    // Restore from backup
+    fs.copyFileSync(backupPath, historyPath)
+    fs.rmSync(chatsDir, { recursive: true, force: true })
+    return false
+  }
 
   console.log(`Successfully migrated ${successCount} chats to individual files`)
+  console.log(`Created metadata-only history.json with ${metadata.length} chat entries`)
   console.log(`Original history backed up to ${backupPath}`)
 
   return true

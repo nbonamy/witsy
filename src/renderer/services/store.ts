@@ -206,6 +206,9 @@ export const store: Store = reactive({
 
   removeChat: (chat: Chat): void => {
 
+    // Delete chat file
+    window.api.history.deleteChat(store.config.workspaceId, chat.uuid)
+
     // remove from folders
     for (const folder of store.history.folders) {
       folder.chats = folder.chats.filter((id) => id !== chat.uuid)
@@ -236,30 +239,50 @@ export const store: Store = reactive({
 
     try {
 
-      // we need to srip attachment contents
-      const history = {
-        folders: JSON.parse(JSON.stringify(store.history.folders)),
-        chats: JSON.parse(JSON.stringify(store.history.chats)).filter((chat: Chat) => {
-          return chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))
-        }),
-        quickPrompts: JSON.parse(JSON.stringify(store.history.quickPrompts || [])),
-        //padPrompts: JSON.parse(JSON.stringify(store.history.padPrompts || [])),
+      // Save each individual chat to its own file
+      for (const chat of store.history.chats) {
+        // Only save chats that should be persisted
+        if (chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))) {
+          // Strip attachment contents before saving
+          const chatCopy = JSON.parse(JSON.stringify(chat))
+          for (const message of chatCopy.messages) {
+            for (const attachment of message.attachments) {
+              attachment.content = null
+            }
+          }
+          window.api.history.saveChat(store.config.workspaceId, chatCopy)
+        }
       }
-      for (const chat of history.chats) {
+
+      // Save old-style history.json for backwards compatibility
+      // (full chat objects with messages for now, will switch to metadata later)
+      const chatsToSave = store.history.chats
+        .filter((chat: Chat) => {
+          return chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))
+        })
+
+      const chatsCopy = JSON.parse(JSON.stringify(chatsToSave))
+      for (const chat of chatsCopy) {
         for (const message of chat.messages) {
           for (const attachment of message.attachments) {
             attachment.content = null
           }
         }
       }
-      
+
+      const history = {
+        folders: JSON.parse(JSON.stringify(store.history.folders)),
+        chats: chatsCopy,
+        quickPrompts: JSON.parse(JSON.stringify(store.history.quickPrompts || [])),
+      }
+
       // save
       window.api.history.save(store.config.workspaceId, history)
-  
+
     } catch (error) {
       console.log('Error saving history data', error)
     }
-  
+
   },
   
   dump: (): void => {

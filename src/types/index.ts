@@ -110,6 +110,7 @@ export interface Chat {
   modelOpts?: LlmModelOpts
   messages: Message[]
   temporary: boolean
+  loadMessages(workspaceId: string): Promise<void>
   patchFromJson(jsonChat: any): boolean
   disableTools(): void
   enableAllTools(): void
@@ -123,6 +124,23 @@ export interface Chat {
   lastMessage(): Message
   subtitle(): string
   delete(): void
+}
+
+export type ChatMetadata = {
+  uuid: string
+  title?: string
+  createdAt: number
+  lastModified: number
+  engine?: string
+  model?: string
+  instructions?: string
+  disableStreaming: boolean
+  tools: ToolSelection
+  locale?: string
+  docrepo?: string
+  modelOpts?: LlmModelOpts
+  temporary: boolean
+  messageCount: number
 }
 
 export type Folder = {

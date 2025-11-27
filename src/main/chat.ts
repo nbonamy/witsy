@@ -1,5 +1,5 @@
 
-import { Chat } from 'types/index'
+import { Chat, ChatMetadata } from 'types/index'
 import { App } from 'electron'
 import { workspaceFolderPath } from './workspace'
 import path from 'path'
@@ -21,6 +21,28 @@ export const chatsFolder = (app: App, workspaceId: string): string => {
 export const chatFilePath = (app: App, workspaceId: string, chatId: string): string => {
   const chatsFolderPath = chatsFolder(app, workspaceId)
   return path.join(chatsFolderPath, `${chatId}.json`)
+}
+
+/**
+ * Convert Chat to ChatMetadata (strip messages)
+ */
+export const chatToMetadata = (chat: Chat): ChatMetadata => {
+  return {
+    uuid: chat.uuid,
+    title: chat.title,
+    createdAt: chat.createdAt,
+    lastModified: chat.lastModified,
+    engine: chat.engine,
+    model: chat.model,
+    instructions: chat.instructions,
+    disableStreaming: chat.disableStreaming,
+    tools: chat.tools,
+    locale: chat.locale,
+    docrepo: chat.docrepo,
+    modelOpts: chat.modelOpts,
+    temporary: chat.temporary,
+    messageCount: chat.messages?.length || 0
+  }
 }
 
 /**
