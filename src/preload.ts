@@ -122,6 +122,9 @@ contextBridge.exposeInMainWorld(
       deleteChat: (workspaceId: string, chatId: string): boolean => {
         return ipcRenderer.sendSync(IPC.HISTORY.DELETE_CHAT, workspaceId, chatId);
       },
+      searchMessages: (workspaceId: string, query: string): string[] => {
+        return ipcRenderer.sendSync(IPC.HISTORY.SEARCH_MESSAGES, workspaceId, query);
+      },
     },
     automation: {
       getText: (id: string): string => { return ipcRenderer.sendSync(IPC.AUTOMATION.GET_TEXT, id) },

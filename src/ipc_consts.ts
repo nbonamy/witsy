@@ -74,6 +74,7 @@ export const HISTORY = {
   LOAD_CHAT: 'history-load-chat',
   SAVE_CHAT: 'history-save-chat',
   DELETE_CHAT: 'history-delete-chat',
+  SEARCH_MESSAGES: 'history-search-messages',
 } as const;
 
 export const COMMANDS = {

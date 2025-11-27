@@ -409,6 +409,7 @@ declare global {
         loadChat(workspaceId: string, chatId: string): Chat | null
         saveChat(workspaceId: string, chat: Chat): boolean
         deleteChat(workspaceId: string, chatId: string): boolean
+        searchMessages(workspaceId: string, query: string): string[]
       }
       automation: {
         getText(id: string): string

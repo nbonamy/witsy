@@ -53,13 +53,34 @@ defineExpose({
   unselectAll: () => { selection.value = [] },
 })
 
-const visibleChats = computed(() => store.history.chats.filter((c: Chat) => {
-  if (c.uuid === kMediaChatId) return false
-  if (props.filter.trim().length === 0) return true
-  if (c.title?.toLowerCase().includes(props.filter.trim().toLowerCase())) return true
-  if (c.messages.some(m => m.content?.toLowerCase().includes(props.filter.trim().toLowerCase()))) return true
-  return false
-}).toSorted((a: Chat, b: Chat) => b.lastModified - a.lastModified))
+const visibleChats = computed(() => {
+  const query = props.filter.trim()
+
+  if (query.length === 0) {
+    return store.history.chats
+      .filter((c: Chat) => c.uuid !== kMediaChatId)
+      .toSorted((a: Chat, b: Chat) => b.lastModified - a.lastModified)
+  }
+
+  // Search in titles first
+  const matchingByTitle = new Set<string>()
+  store.history.chats.forEach((c: Chat) => {
+    if (c.uuid === kMediaChatId) return
+    if (c.title?.toLowerCase().includes(query.toLowerCase())) {
+      matchingByTitle.add(c.uuid)
+    }
+  })
+
+  // Search in message content across all chat files
+  const matchingInMessages = window.api.history.searchMessages(store.config.workspaceId, query)
+
+  // Combine results
+  const allMatchingIds = new Set([...matchingByTitle, ...matchingInMessages])
+
+  return store.history.chats
+    .filter((c: Chat) => allMatchingIds.has(c.uuid))
+    .toSorted((a: Chat, b: Chat) => b.lastModified - a.lastModified)
+})
 
 const selection = ref<string[]>([])
 const divChats = ref<HTMLElement|null>(null)

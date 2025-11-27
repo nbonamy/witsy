@@ -137,3 +137,32 @@ export const loadAllChats = (app: App, workspaceId: string): Chat[] => {
 
   return chats
 }
+
+/**
+ * Search across all chat files for matching content
+ */
+export const searchChatsInMessages = (
+  app: App,
+  workspaceId: string,
+  query: string
+): string[] => {
+  const lowerQuery = query.toLowerCase()
+  const matchingChatIds: string[] = []
+  const chatIds = listChatIds(app, workspaceId)
+
+  for (const chatId of chatIds) {
+    const chat = loadChat(app, workspaceId, chatId)
+    if (!chat) continue
+
+    // Search in messages
+    const hasMatch = chat.messages?.some(m =>
+      m.content?.toLowerCase().includes(lowerQuery)
+    )
+
+    if (hasMatch) {
+      matchingChatIds.push(chatId)
+    }
+  }
+
+  return matchingChatIds
+}
