@@ -235,7 +235,10 @@ const updateChatEngineModel = () => {
   }
 }
 
-const onSelectChat = (chat: Chat) => {
+const onSelectChat = async (chat: Chat) => {
+  // Load messages from file if not already loaded (lazy loading)
+  await chat.loadMessages(store.config.workspaceId)
+
   // create a new assistant to allow parallel querying
   // this will be garbage collected anyway
   assistant.value = new Assistant(store.config)
