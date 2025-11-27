@@ -8,11 +8,11 @@ Witsy is a cross-platform Electron-based desktop AI assistant that serves as a u
 
 ### Core Structure
 - **Main Process** (`src/main/`): Electron main process handling system integration, IPC, and native APIs
-- **Renderer Process** (`src/`): Vue 3 frontend with Vite bundling 
+- **Renderer Process** (`src/renderer`): Vue 3 frontend with Vite bundling 
 - **Preload Scripts** (`src/preload.ts`): Secure IPC bridge between main and renderer
-- **LLM Integration** (`src/llms/`): Multi-provider LLM abstraction layer using `multi-llm-ts`
-- **Plugin System** (`src/plugins/`): Extensible tools for search, filesystem, python execution, etc.
-- **Automation** (`src/automations/`): Cross-platform automation for "Prompt Anywhere" and AI commands
+- **LLM Integration** (`src/renderer/services/llms/`): Multi-provider LLM abstraction layer using `multi-llm-ts`
+- **Plugin System** (`src/renderer/services/plugins/`): Extensible tools for search, filesystem, python execution, etc.
+- **Automation** (`src/main/automations/`): Cross-platform automation for "Prompt Anywhere" and AI commands
 
 ### Build System (Electron Forge + Vite)
 - **Development**: `npm start` - runs with hot reload
@@ -103,6 +103,8 @@ and use the `windowMock` in `beforeAll` (or maybe `beforeEach`).
 
 Witsy is localized using `vue-i18n`. All translations are stored in `./locales/*.json` and can be added or modified as needed. The main language is English, and other languages can be added by creating new JSON files in the locales directory. Only add translation for English when creating a new feature. If asked to add translations for other languages you can run `./tools/i18n_check.ts --fix` but never run this based on your own initiative.
 
+In the renderer process, always `import { t } from '@services/i18n'`.
+
 ### CSS Variables
 
 All the CSS variables are defined in `./css/index.css`. Use those variables and only those variables. Do not come up with new variables or use hardcoded values. If you need to add a new variable, please discuss it with the team first.
@@ -114,3 +116,17 @@ All the CSS variables are defined in `./css/index.css`. Use those variables and 
 npm run test:ai            # Unit tests
 npm run test:ci            # With coverage
 ```
+
+### Analyzing Coverage Gaps
+To identify files with the most uncovered lines and prioritize testing efforts:
+
+```bash
+node tools/coverage_gaps.js                          # Show top 20 files with most uncovered lines
+node tools/coverage_gaps.js --limit 10               # Show top 10 files
+node tools/coverage_gaps.js --filter src/components  # Filter to specific directory
+node tools/coverage_gaps.js --show-lines             # Show which lines are uncovered
+```
+
+This script runs coverage analysis and outputs files sorted by absolute number of uncovered lines, making it easy to identify the biggest testing gaps. Unlike percentage-based coverage, this helps find files where adding tests will have the most impact (e.g., a 1000-line file at 80% coverage has more uncovered code than a 10-line file at 0%).
+
+Use `--show-lines` to see exactly which line numbers are not covered, formatted as ranges (e.g., "132,361-367,372-375").
