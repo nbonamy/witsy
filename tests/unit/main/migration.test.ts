@@ -121,14 +121,16 @@ describe('migration.ts', () => {
       const historyPath = createHistoryFile(history)
       const backupPath = `${historyPath}.backup`
 
+      // Get original content before migration
+      const originalContent = fs.readFileSync(historyPath, 'utf-8')
+
       migrateHistoryToIndividualChats(app, workspaceId)
 
       // Verify backup exists
       expect(fs.existsSync(backupPath)).toBe(true)
 
-      // Verify backup content matches original
+      // Verify backup content matches original (before migration)
       const backupContent = fs.readFileSync(backupPath, 'utf-8')
-      const originalContent = fs.readFileSync(historyPath, 'utf-8')
       expect(backupContent).toBe(originalContent)
     })
 
