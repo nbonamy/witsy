@@ -3,6 +3,7 @@ import { History, Chat } from 'types/index'
 import { App } from 'electron'
 import { notifyBrowserWindows } from './windows'
 import { workspaceFolderPath } from './workspace'
+import { loadAllChats } from './chat'
 import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
@@ -83,7 +84,7 @@ export const loadHistory = async (app: App, workspaceId: string): Promise<Histor
 
 
     // clean-up in case deletions were missed
-    cleanAttachmentsFolder(app, workspaceId, history)
+    cleanAttachmentsFolder(app, workspaceId)
     
     // start monitors
     monitor.start(filepath)
@@ -112,9 +113,9 @@ export const saveHistory = (app: App, workspaceId: string, history: History) => 
   }
 }
 
-const cleanAttachmentsFolder = (app: App, workspaceId: string, history: History) => {
+const cleanAttachmentsFolder = (app: App, workspaceId: string) => {
 
-  const unusedAttachments = listUnusedAttachments(app, workspaceId, history.chats)
+  const unusedAttachments = listUnusedAttachments(app, workspaceId)
   for (const attachment of unusedAttachments) {
     try {
       console.log(`Deleting unused file: ${attachment}`)
@@ -125,13 +126,17 @@ const cleanAttachmentsFolder = (app: App, workspaceId: string, history: History)
   }
 }
 
-export const listUnusedAttachments = (app: App, workspaceId: string, chats: Chat[]): string[] => {
+export const listUnusedAttachments = (app: App, workspaceId: string): string[] => {
 
   // get the images path (workspace-relative)
   const imagesPath = path.join(workspaceFolderPath(app, workspaceId), 'images')
 
   // read all files in the images folder
   const files = listExistingAttachments(imagesPath)
+
+  // Load all chats from individual files (not from memory)
+  // This ensures we scan ALL chats, including those not currently loaded
+  const chats = loadAllChats(app, workspaceId)
 
   // now extract all the attachments in the chat
   const attachments = extractAttachmentsFromHistory(chats, imagesPath)
