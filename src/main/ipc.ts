@@ -224,8 +224,8 @@ export const installIpc = (
     event.returnValue = chat.deleteChat(app, workspaceId, chatId);
   });
 
-  ipcMain.on(IPC.HISTORY.SEARCH_MESSAGES, (event, workspaceId, query) => {
-    event.returnValue = chat.searchChatsInMessages(app, workspaceId, query);
+  ipcMain.on(IPC.HISTORY.SEARCH_MESSAGES, (event, workspaceId, excludeChats, query) => {
+    event.returnValue = chat.searchChatsInMessages(app, workspaceId, excludeChats, query);
   });
 
   ipcMain.on(IPC.COMMANDS.LOAD, (event) => {

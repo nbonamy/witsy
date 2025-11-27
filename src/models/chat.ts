@@ -20,7 +20,7 @@ export default class Chat implements ChatBase {
   modelOpts?: LlmModelOpts
   locale?: string
   docrepo?: string
-  messages: Message[]
+  messages?: Message[]
   temporary: boolean
 
   constructor(title?: string) {
@@ -79,6 +79,11 @@ export default class Chat implements ChatBase {
     this.modelOpts = obj.modelOpts
     this.locale = obj.locale
     this.docrepo = obj.docrepo
+
+    // we need message
+    if (!this.messages || !obj.messages) {
+      return patched
+    }
 
     // messages
     if (this.messages.length < obj.messages.length) {

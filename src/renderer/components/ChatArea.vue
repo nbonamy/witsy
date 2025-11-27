@@ -235,7 +235,7 @@ const onToggleTemporary = () => {
     }
   } else {
     props.chat.temporary = true
-    store.removeChat(props.chat)
+    store.removeChat(props.chat.uuid)
   }
 }
 

@@ -130,7 +130,7 @@ const toggleFolder = (id: string) => {
 }
 
 const onSelectChat = (chat: Chat) => {
-  emit('select', chat)
+  emit('select', chat.uuid)
 }
 
 const showChatContextMenu = (event: MouseEvent, chat: Chat) => {

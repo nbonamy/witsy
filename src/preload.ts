@@ -122,8 +122,8 @@ contextBridge.exposeInMainWorld(
       deleteChat: (workspaceId: string, chatId: string): boolean => {
         return ipcRenderer.sendSync(IPC.HISTORY.DELETE_CHAT, workspaceId, chatId);
       },
-      searchMessages: (workspaceId: string, query: string): string[] => {
-        return ipcRenderer.sendSync(IPC.HISTORY.SEARCH_MESSAGES, workspaceId, query);
+      searchMessages: (workspaceId: string, excludeChats: string[], query: string): string[] => {
+        return ipcRenderer.sendSync(IPC.HISTORY.SEARCH_MESSAGES, workspaceId, excludeChats, query);
       },
     },
     automation: {

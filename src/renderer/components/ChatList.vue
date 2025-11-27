@@ -72,7 +72,7 @@ const visibleChats = computed(() => {
   })
 
   // Search in message content across all chat files
-  const matchingInMessages = window.api.history.searchMessages(store.config.workspaceId, query)
+  const matchingInMessages = window.api.history.searchMessages(store.config.workspaceId, [kMediaChatId], query)
 
   // Combine results
   const allMatchingIds = new Set([...matchingByTitle, ...matchingInMessages])
@@ -101,15 +101,15 @@ onMounted(() => {
   })
 })
 
-const onSelectChat = (chat: Chat) => {
+const onSelectChat = (chatId: string) => {
   if (props.selectMode) {
-    if (selection.value.includes(chat.uuid)) {
-      selection.value = selection.value.filter((uuid) => uuid !== chat.uuid)
+    if (selection.value.includes(chatId)) {
+      selection.value = selection.value.filter((uuid) => uuid !== chatId)
     } else {
-      selection.value = [...selection.value, chat.uuid]
+      selection.value = [...selection.value, chatId]
     }
   } else {
-    emitEvent('select-chat', chat)
+    emitEvent('select-chat', chatId)
   }
 }
 

@@ -144,6 +144,7 @@ export const loadAllChats = (app: App, workspaceId: string): Chat[] => {
 export const searchChatsInMessages = (
   app: App,
   workspaceId: string,
+  excludeChats: string[],
   query: string
 ): string[] => {
   const lowerQuery = query.toLowerCase()
@@ -151,6 +152,11 @@ export const searchChatsInMessages = (
   const chatIds = listChatIds(app, workspaceId)
 
   for (const chatId of chatIds) {
+
+    if (excludeChats.includes(chatId)) {
+      continue
+    }
+
     const chat = loadChat(app, workspaceId, chatId)
     if (!chat) continue
 

@@ -1,10 +1,10 @@
 
-import { reactive } from 'vue'
-import features from '@root/defaults/features.json'
 import Chat from '@models/chat'
+import features from '@root/defaults/features.json'
 import { Configuration } from 'types/config'
 import { Folder, History, Store, StoreEvent } from 'types/index'
 import { Workspace } from 'types/workspace'
+import { reactive } from 'vue'
 import { loadAgents } from './agents'
 import { loadCommands } from './commands'
 import LlmFactory, { ILlmManager } from './llms/llm'
@@ -200,23 +200,52 @@ export const store: Store = reactive({
 
     // add to history
     store.history.chats.push(chat)
+    store.loadChat(chat.uuid)
     store.saveHistory()
 
   },
 
-  removeChat: (chat: Chat): void => {
+  removeChat: (chatId: string): void => {
 
     // Delete chat file
-    window.api.history.deleteChat(store.config.workspaceId, chat.uuid)
+    window.api.history.deleteChat(store.config.workspaceId, chatId)
 
     // remove from folders
     for (const folder of store.history.folders) {
-      folder.chats = folder.chats.filter((id) => id !== chat.uuid)
+      folder.chats = folder.chats.filter((id) => id !== chatId)
     }
 
     // remove from history
-    store.history.chats = store.history.chats.filter((c) => c.uuid !== chat.uuid)
+    store.history.chats = store.history.chats.filter((c) => c.uuid !== chatId)
     store.saveHistory()
+
+  },
+
+  loadChat(chatId: string): Chat {
+
+    for (const chat of store.history.chats) {
+      if (chat.uuid !== chatId && chat.messages) {
+        chat.messages = undefined
+      }
+    }
+
+    const index = store.history.chats.findIndex((c) => c.uuid === chatId)
+    if (index === -1) {
+      console.error('Chat not found in history:', chatId)
+      throw new Error(`Chat not found: ${chatId}`)
+    }
+
+    const chat = loadChat(chatId)
+    if (!chat) {
+      // not saved yet
+      return store.history.chats[index]
+    }
+
+    // update
+    store.history.chats.splice(index, 1, chat)
+
+    // done
+    return chat
 
   },
 
@@ -239,58 +268,52 @@ export const store: Store = reactive({
 
     try {
 
-      // Save each individual chat to its own file
-      for (const chat of store.history.chats) {
-        // Only save chats that should be persisted
-        if (chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))) {
-          // Strip attachment contents before saving
-          const chatCopy = JSON.parse(JSON.stringify(chat))
-          for (const message of chatCopy.messages) {
-            for (const attachment of message.attachments) {
-              attachment.content = null
-            }
-          }
-          window.api.history.saveChat(store.config.workspaceId, chatCopy)
+      // helper
+      const isChatValid = (chat: Chat): boolean => {
+        return chat.messages === undefined || chat.messages.length > 1 || store.history.folders.some((folder) => folder.chats.includes(chat.uuid))
+      }
+
+      // prepare chats to save
+      const chatsToSave = store.history.chats.filter(chat => isChatValid(chat)).map((chat: Chat) => {
+        const clone = JSON.parse(JSON.stringify(chat))
+        if (clone.messages) {
+          window.api.history.saveChat(store.config.workspaceId, clone)
+          delete clone.messages
+        }
+        return clone
+      })
+
+      // delete chat files that are no longer in history
+      const storeIds = store.history.chats.map((c) => c.uuid)
+      const saveIds = chatsToSave.map((c) => c.uuid)
+      for (const chatId of storeIds) {
+        if (!saveIds.includes(chatId)) {
+          window.api.history.deleteChat(store.config.workspaceId, chatId)
         }
       }
 
-      // Save metadata-only history.json
-      const metadata = store.history.chats
-        .filter((chat: Chat) => {
-          return chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))
-        })
-        .map((chat: Chat) => ({
-          uuid: chat.uuid,
-          title: chat.title,
-          createdAt: chat.createdAt,
-          lastModified: chat.lastModified,
-          engine: chat.engine,
-          model: chat.model,
-          instructions: chat.instructions,
-          disableStreaming: chat.disableStreaming,
-          tools: chat.tools,
-          locale: chat.locale,
-          docrepo: chat.docrepo,
-          modelOpts: chat.modelOpts,
-          temporary: chat.temporary,
-          messageCount: chat.messages?.length || 0
-        }))
-
+      // prepare
       const history = {
         folders: JSON.parse(JSON.stringify(store.history.folders)),
-        chats: metadata,
+        chats: JSON.parse(JSON.stringify(chatsToSave || [])),
         quickPrompts: JSON.parse(JSON.stringify(store.history.quickPrompts || [])),
       }
 
-      // save metadata (cast to any as we're saving ChatMetadata[] not Chat[])
-      window.api.history.save(store.config.workspaceId, history as any)
+      // save
+      window.api.history.save(store.config.workspaceId, history)
 
     } catch (error) {
       console.log('Error saving history data', error)
     }
 
   },
-  
+
+  unselectChat: (): void => {
+    for (const chat of store.history.chats) {
+      chat.messages = undefined
+    }
+  },
+
   dump: (): void => {
     console.dir(JSON.parse(JSON.stringify(store.config)))
   },
@@ -393,4 +416,10 @@ const mergeHistory = (jsonHistory: History): void => {
     }
   }
 
+}
+
+export const loadChat = (chatId: string): Chat | null => {
+  const json = window.api.history.loadChat(store.config.workspaceId, chatId)
+  if (!json) return null
+  return Chat.fromJson(json)
 }

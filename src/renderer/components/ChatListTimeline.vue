@@ -52,7 +52,7 @@ const getDay = (chat: Chat) => {
 }
 
 const onSelectChat = (chat: Chat) => {
-  emit('select', chat)
+  emit('select', chat.uuid)
 }
 
 const showContextMenu = (event: MouseEvent, chat: Chat) => {

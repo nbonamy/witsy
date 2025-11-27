@@ -108,7 +108,7 @@ export interface Chat {
   locale?: string
   docrepo?: string
   modelOpts?: LlmModelOpts
-  messages: Message[]
+  messages?: Message[]
   temporary: boolean
   loadMessages(workspaceId: string): Promise<void>
   patchFromJson(jsonChat: any): boolean
@@ -233,7 +233,9 @@ export interface Store {
   loadHistory(): void
   initChatWithDefaults(chat: Chat): void
   addChat(chat: Chat, folderId?: string): void
-  removeChat(chat: Chat): void
+  removeChat(chatId: string): void
+  loadChat(chatId: string): Chat
+  unselectChat(): void
   addQuickPrompt(prompt: string): void
   // addPadPrompt(prompt: string): void
   // mergeHistory(chats: any[]): void
@@ -409,7 +411,7 @@ declare global {
         loadChat(workspaceId: string, chatId: string): Chat | null
         saveChat(workspaceId: string, chat: Chat): boolean
         deleteChat(workspaceId: string, chatId: string): boolean
-        searchMessages(workspaceId: string, query: string): string[]
+        searchMessages(workspaceId: string, excludeChats: string[], query: string): string[]
       }
       automation: {
         getText(id: string): string

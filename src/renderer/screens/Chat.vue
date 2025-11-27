@@ -34,6 +34,7 @@ import LlmFactory from '@services/llms/llm'
 import { store } from '@services/store'
 import AgentPicker from './AgentPicker.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
+import { s } from 'vite/dist/node/types.d-aGj9QkWt'
 
 const { onEvent, emitEvent } = useEventBus()
 
@@ -140,12 +141,7 @@ onMounted(() => {
     if (params?.chatId) {
       console.log('[chat] props changed', params)
       store.loadHistory()
-      const chat: Chat = store.history.chats.find((c) => c.uuid === params.chatId)
-      if (chat) {
-        onSelectChat(chat)
-      } else {
-        console.log('Chat not found', params.chatId)
-      }
+      onSelectChat(params.chatId)
     }
     if (params?.text) {
       console.log('[chat] setting prompt text', params.text)
@@ -160,6 +156,7 @@ onMounted(() => {
 
 const onNewChat = async (payload?: any) => {
   const { prompt, attachments, submit } = payload || {}
+  store.unselectChat()
   assistant.value.initChat()
   updateChatEngineModel()
   if (prompt) chatArea.value?.setPrompt(prompt)
@@ -215,7 +212,7 @@ const onNewChatInFolder = (folderId: string) => {
   // init
   chat.initTitle()
   store.addChat(chat, folderId)
-  onSelectChat(chat)
+  onSelectChat(chat.uuid)
 
   // expert
   if (folder.defaults?.expert) {
@@ -235,9 +232,14 @@ const updateChatEngineModel = () => {
   }
 }
 
-const onSelectChat = async (chat: Chat) => {
+const onSelectChat = async (chatId: string) => {
+  
   // Load messages from file if not already loaded (lazy loading)
-  await chat.loadMessages(store.config.workspaceId)
+  const chat = store.loadChat(chatId)
+  if (!chat) {
+    console.error('Chat not found:', chatId)
+    return
+  }
 
   // create a new assistant to allow parallel querying
   // this will be garbage collected anyway
@@ -341,21 +343,8 @@ const onDeleteChat = async (chatId: string|string[]) => {
 }
 
 const deleteChats = (chatIds: string[]) => {
-
-  // fist remove from chat list
   for (const chatId of chatIds) {
-
-    // remove from chats list
-    let index = store.history.chats.findIndex((c) => c.uuid === chatId)
-    if (index != -1) {
-      store.history.chats[index].delete()
-      store.history.chats.splice(index, 1)
-    }
-
-    // remove from folders
-    for (const folder of store.history.folders) {
-      folder.chats = folder.chats.filter((c) => c !== chatId)
-    }
+    store.removeChat(chatId)
   }
 
   // if current chat
@@ -397,7 +386,7 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
   store.addChat(fork, folder?.id)
 
   // select
-  onSelectChat(fork)
+  onSelectChat(fork.uuid)
 
   // now send prompt
   if (messageIsFromUser) {
@@ -423,11 +412,12 @@ const onDeleteMessage = async (message: Message) => {
   })
   if (result.isConfirmed) {
     assistant.value.chat.deleteMessagesStarting(message)
-    store.saveHistory()
     if (assistant.value.chat.messages.length === 1) {
       assistant.value.chat.delete()
-      store.history.chats = store.history.chats.filter((c) => c.uuid !== assistant.value.chat.uuid)
+      store.removeChat(assistant.value.chat.uuid)
       onNewChat()
+    } else {
+      store.saveHistory()
     }
   }
 }

@@ -60,7 +60,7 @@ import Message from '@models/message'
 import { saveFileContents } from '@services/download'
 import { t } from '@services/i18n'
 import ImageCreator from '@services/image'
-import { kMediaChatId, kReferenceParamValue, store } from '@services/store'
+import { kMediaChatId, kReferenceParamValue, loadChat, store } from '@services/store'
 import VideoCreator from '@services/video'
 import History from '../studio/History.vue'
 import Preview from '../studio/Preview.vue'
@@ -132,7 +132,7 @@ onBeforeUnmount(() => {
 })
 
 const initializeChat = () => {
-  chat.value = store.history.chats.find(chat => chat.uuid === kMediaChatId)
+  chat.value = loadChat(kMediaChatId)
   if (!chat.value) {
     chat.value = Chat.fromJson({
       uuid: kMediaChatId,
@@ -141,7 +141,12 @@ const initializeChat = () => {
       messages: [],
     })
     chat.value.addMessage(new Message('system', 'Dummy chat to save created media'))
-    store.history.chats.push(chat.value)
+  }
+}
+
+const saveChat = () => {
+  if (chat.value) {
+    window.api.history.saveChat(store.config.workspaceId, JSON.parse(JSON.stringify(chat.value)))
   }
 }
 
@@ -243,7 +248,7 @@ const renameMedia = (msg: Message) => {
   }).then((result) => {
     if (result.isConfirmed) {
       msg.content = result.value
-      store.saveHistory()
+      saveChat()
     }
   })
 }
@@ -277,7 +282,7 @@ const deleteMedia = (messages: Message[]) => {
           }
         }
         chat.value.messages = chat.value.messages.filter((m) => m.uuid !== msg.uuid)
-        store.saveHistory()
+        saveChat()
 
       }
       
@@ -347,7 +352,7 @@ const onUndo = () => {
   if (undoStack.value.length === 0) return
   redoStack.value.push(backupCurrentMessage())
   updateMessage(undoStack.value.pop()!)
-  store.saveHistory()
+  saveChat()
 }
 
 const onRedo = () => {
@@ -355,7 +360,7 @@ const onRedo = () => {
   if (redoStack.value.length === 0) return
   undoStack.value.push(backupCurrentMessage())
   updateMessage(redoStack.value.pop()!)
-  store.saveHistory()
+  saveChat()
 }
 
 const updateMessage = (msg: Message) => {
@@ -450,7 +455,7 @@ const onDrawingSave = (drawing: { url: string, mimeType: string, filename: strin
     chat.value.messages.push(message)
     
     // Save history
-    store.saveHistory()
+    saveChat()
   } else {
     // No current message, create a new one
     processUpload(drawing.filename, drawing.mimeType, drawing.url)
@@ -739,7 +744,7 @@ const onMediaGenerationRequest = async (data: {
     }
 
     // save
-    store.saveHistory()
+    saveChat()
 
   } catch (e) {
 
