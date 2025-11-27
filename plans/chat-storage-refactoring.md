@@ -610,13 +610,133 @@ export const listUnusedAttachments = (
 
 **Total**: ~8-12 work sessions
 
-## Key Learnings (To be updated after implementation)
+## Implementation Status
+
+### Completed (Phase 1-4)
+
+✅ **Phase 1.1**: Chat Storage Service (`src/main/chat.ts`)
+- Implemented CRUD operations for individual chat files
+- 37 comprehensive tests passing
+- Commit: `feat: add individual chat file storage API with comprehensive tests`
+
+✅ **Phase 2**: IPC Layer Updates
+- Added new IPC constants for chat operations
+- Updated `src/main/ipc.ts` with loadChat, saveChat, deleteChat handlers
+- Updated `src/preload.ts` to expose new methods
+- Updated type definitions in `src/types/index.ts`
+- All linting passing
+- Commit: `feat: add IPC handlers for individual chat operations`
+
+✅ **Phase 4**: Migration Script
+- Implemented `src/main/migration.ts` with full backup/rollback support
+- 12 comprehensive tests covering all migration scenarios
+- Automatic backup creation before migration
+- Rollback on any failure
+- Preserves original backup (doesn't overwrite)
+- Commit: `feat: add migration script with backup and rollback support`
+
+✅ **Phase 6**: Attachment Cleanup Update
+- Modified `src/main/history.ts` to use `loadAllChats()`
+- Scans ALL chat files (not just loaded ones) for attachment references
+- All existing history tests still passing
+- Commit: `feat: update attachment cleanup to scan all chat files`
+
+### Next Steps (Remaining Work)
+
+**Phase 3**: Renderer Updates (NOT STARTED)
+- Update `src/renderer/services/store.ts` for lazy loading
+- Add loadedChats cache (Map<string, Chat>)
+- Implement async loadChat/saveChat/deleteChat methods
+- Update components to handle async chat loading
+- This is the BREAKING change that switches to the new architecture
+
+**Phase 5**: Search Implementation (NOT STARTED)
+- Add search IPC handler in `src/main/ipc.ts`
+- Implement searchChats() in `src/main/chat.ts`
+- Add UI component for global search
+
+### Current State
+
+The backend infrastructure is complete and non-breaking:
+- ✅ Individual chat file storage working
+- ✅ IPC layer ready for lazy loading
+- ✅ Migration script ready with backup/rollback
+- ✅ Attachment cleanup compatible with new structure
+- ⚠️ Old history.json format still in use (not migrated yet)
+- ⚠️ Renderer still loading all chats into memory
+
+**All changes so far are backwards compatible** - the app still works with the old monolithic history.json format.
+
+### Commit Strategy
+
+Small, testable commits completed so far:
+1. `chore: add chat storage refactoring plan`
+2. `feat: add individual chat file storage API with comprehensive tests`
+3. `feat: add IPC handlers for individual chat operations`
+4. `feat: add migration script with backup and rollback support`
+5. `feat: update attachment cleanup to scan all chat files`
+
+Next commits will complete the migration:
+6. `feat: implement lazy loading for chats in renderer` (BREAKING)
+7. `feat: add search across all chats`
+8. `test: update all component tests for lazy loading`
+9. `chore: cleanup old code and finalize migration`
+
+## Key Learnings
 
 ### Design Patterns
-- [To be filled during implementation]
+
+1. **Gradual Migration**: Built complete backend infrastructure before touching renderer
+   - Backend changes are non-breaking
+   - Can test thoroughly before switching frontend
+   - Easy rollback if needed
+
+2. **Test-Driven Development**: Wrote comprehensive tests for each module
+   - 37 tests for chat.ts
+   - 12 tests for migration.ts
+   - Tests caught edge cases early
+
+3. **Separation of Concerns**: Clean module boundaries
+   - `chat.ts`: File operations only
+   - `migration.ts`: One-time migration logic
+   - `history.ts`: Metadata management
+   - `ipc.ts`: Communication layer
 
 ### Ways of Working
-- [To be filled during implementation]
+
+1. **Small Commits**: Each commit is a complete, testable feature
+   - Easier to review
+   - Easier to debug if issues arise
+   - Clear history of changes
+
+2. **Backwards Compatibility First**: Old system keeps working
+   - New files are additive, not replacements
+   - Migration doesn't happen until ready
+   - Can ship partial implementation safely
+
+3. **Comprehensive Testing**: Test all edge cases
+   - Corrupted files
+   - Missing directories
+   - Failed writes
+   - Rollback scenarios
 
 ### Technical Insights
-- [To be filled during implementation]
+
+1. **File System Operations**: Important to handle errors gracefully
+   - Use try/catch for all fs operations
+   - Check existence before reading
+   - Create directories recursively
+
+2. **Backup Strategy**: Copy instead of rename during migration
+   - Preserves original during migration
+   - Allows rollback if anything fails
+   - Don't overwrite existing backups
+
+3. **IPC Serialization**: JSON.stringify/parse for complex objects
+   - Handle null returns carefully ("null" string vs null)
+   - Validate data on both sides
+
+4. **Testing Filesystem Code**: Use temp directories
+   - `fs.mkdtempSync()` for isolated tests
+   - Clean up in afterEach
+   - Test with actual files, not mocks
