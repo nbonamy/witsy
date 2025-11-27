@@ -1,0 +1,7 @@
+{
+  "llm": {
+    "codeExecution": {
+      "modes": ["chat"]
+    }
+  }
+}

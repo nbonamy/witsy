@@ -353,6 +353,10 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
     }
   }
 
+  // backwards compatibility: codeExecution changed from object to string
+  // This feature is now hidden, so just disable it if old format is found
+  config.llm.codeExecution = 'disabled'
+
   // nullify defaults
   nullifyDefaults(config)
 

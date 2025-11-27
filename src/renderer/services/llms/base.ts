@@ -469,6 +469,7 @@ export default class LlmManagerBase implements ILlmManager {
   }
 
    
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loadTools = async (engine: llm.LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection, opts?: {
     codeExecutionMode?: CodeExecutionMode
   }): Promise<void> => {
@@ -524,18 +525,18 @@ export default class LlmManagerBase implements ILlmManager {
 
     }
 
-    // code exec
-    if (engine.plugins.length) {
-      if (opts?.codeExecutionMode === 'proxy') {
-        const { default: CodeExecutionProxyPlugin } = await import('../plugins/code_exec_proxy')
-        const codeExecPlugin = new CodeExecutionProxyPlugin()
-        await codeExecPlugin.install(engine)
-      } else if (opts?.codeExecutionMode === 'program') {
-        const { default: CodeExecutionProgramPlugin } = await import('../plugins/code_exec_program')
-        const codeExecPlugin = new CodeExecutionProgramPlugin()
-        await codeExecPlugin.install(engine)
-      }
-    }
+    // // code exec
+    // if (engine.plugins.length) {
+    //   if (opts?.codeExecutionMode === 'proxy') {
+    //     const { default: CodeExecutionProxyPlugin } = await import('../plugins/code_exec_proxy')
+    //     const codeExecPlugin = new CodeExecutionProxyPlugin()
+    //     await codeExecPlugin.install(engine)
+    //   } else if (opts?.codeExecutionMode === 'program') {
+    //     const { default: CodeExecutionProgramPlugin } = await import('../plugins/code_exec_program')
+    //     const codeExecPlugin = new CodeExecutionProgramPlugin()
+    //     await codeExecPlugin.install(engine)
+    //   }
+    // }
   }
 
 }
