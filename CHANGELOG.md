@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.3] - WIP
+
+### Added
+- Add Support for Advanced Model Parameters like 'Thinking Mode' for Ollama model (https://github.com/nbonamy/witsy/issues/491)
+
+### Changed
+- Allow uploading raw text files (https://github.com/nbonamy/witsy/issues/494)
+- New Excel data extractor
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
+## [3.2.2] - 2025-11-27
+
+### Added
+- N/A
+
+### Changed
+- N/A
+
+### Fixed
+- [Bug] v3.2.1 SyntaxError causes input/send functionality to fail completely on Windows 11 (https://github.com/nbonamy/witsy/issues/493)
+- Unable to have a normal conversation (https://github.com/nbonamy/witsy/issues/492)
+
+### Removed
+- N/A
+
+
 ## [3.2.1] - 2025-11-24
 
 ### Added
