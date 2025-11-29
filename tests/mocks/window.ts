@@ -2,13 +2,13 @@
 import { vi } from 'vitest'
 import defaultSettings from '@root/defaults/settings.json'
 import { renderMarkdown } from '@main/markdown'
+import { AgentRun, AgentRunStatus, AgentRunTrigger } from 'types/agents'
+import { FilePickParams } from 'types/file'
+import { ListDirectoryResponse } from 'types/filesystem'
+import { Chat, Command, Expert, ExpertCategory } from 'types/index'
+import { McpInstallStatus, McpServerWithTools } from 'types/mcp'
+import { DocRepoQueryResponseItem, DocumentBase } from 'types/rag'
 import Agent from '@models/agent'
-import { AgentRun, AgentRunStatus, AgentRunTrigger } from '@/types/agents'
-import { FilePickParams } from '@/types/file'
-import { ListDirectoryResponse } from '@/types/filesystem'
-import { Command, Expert, ExpertCategory } from '@/types/index'
-import { McpInstallStatus, McpServerWithTools } from '@/types/mcp'
-import { DocRepoQueryResponseItem, DocumentBase } from '@/types/rag'
 
 const listeners: ((signal: string) => void)[] = []
 
@@ -354,7 +354,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     history: {
       load: vi.fn(() => ({ folders: [ ], chats: [ ], quickPrompts: [ ] })),
       save: vi.fn(),
-      loadChat: vi.fn(() => null),
+      loadChat: vi.fn((workspaceId: string, chatId: string) => ({
+        uuid: chatId,
+        messages: []
+      } as Chat)),
       saveChat: vi.fn(() => true),
       deleteChat: vi.fn(() => true),
       searchMessages: vi.fn(() => []),
