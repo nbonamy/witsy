@@ -2227,6 +2227,7 @@
     "localeDefault": "Domyślny",
     "maxCompletionTokens": "Maksymalna liczba tokenów odpowiedzi",
     "plugins": "Wtyczki",
+    "reasoning": "Rozumowanie",
     "reasoningBudget": "Budżet rozumowania (puste = 1024)",
     "reasoningEffort": "Wysiłek rozumowania",
     "streaming": "Streaming",

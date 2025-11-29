@@ -2208,6 +2208,7 @@
     "localeDefault": "🤖 Idioma predeterminado",
     "maxCompletionTokens": "Tokens máximos de completado",
     "plugins": "Complementos",
+    "reasoning": "Razonamiento",
     "reasoningBudget": "Presupuesto de razonamiento (vacío = 1024)",
     "reasoningEffort": "Esfuerzo de razonamiento",
     "streaming": "Streaming",
