@@ -80,7 +80,6 @@ test('Reload settings without changing reference', async () => {
   expect(store.config.llm.engine).toBe('openai')
   expect(store.config.plugins).toBeDefined()
   defaultSettings.llm.engine = 'xai'
-  // @ts-expect-error unkown
   delete defaultSettings.plugins
   listeners.map(l => l('settings'))
   expect(window.api.config?.load).toHaveBeenCalledTimes(2)
