@@ -28,13 +28,26 @@
 
       <!-- attachments -->
       <div class="attachments">
-        <AttachmentView v-for="attachment in message.attachments"
-          :attachment="attachment" class="attachment"
-          @click="onClickAttachment(attachment)"
-          @image-click="onClickImageAttachment(attachment)"
-          />
+        <template v-for="attachment in message.attachments">
+          <div class="attachment" v-if="attachment.isImage()">
+            <AttachmentView
+              :attachment="attachment" class="icon"
+              @click="onClickAttachment(attachment)"
+              @image-click="onClickImageAttachment(attachment)"
+            />
+          </div>
+        </template>
       </div>
-
+      <div class="attachments">
+        <template v-for="attachment in message.attachments">
+          <div class="attachment" v-if="!attachment.isImage()">
+            <AttachmentView :attachment="attachment" class="icon"/>
+            <template v-if="attachment.filepath != attachment.url">
+              {{  attachment.filenameShort  }}
+            </template>
+          </div>
+        </template>
+      </div>
       <!-- image for backwards compatibility -->
       <MessageItemMediaBlock :url="imageUrl" @media-loaded="onMediaLoaded(message)" v-if="message.type == 'image' && imageUrl" />
 

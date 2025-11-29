@@ -160,7 +160,7 @@ test('Saves text attachment', async () => {
 
 test('Saves pdf attachment', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  const attachment = new Attachment('pdf', 'text/pdf', 'file://pdf', false)
+  const attachment = new Attachment('pdf', 'application/pdf', 'file://pdf', false)
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'pdf_extracted_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')

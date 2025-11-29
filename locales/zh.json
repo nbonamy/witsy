@@ -2231,6 +2231,7 @@
     "localeDefault": "🤖 默认语言",
     "maxCompletionTokens": "最大完成令牌数",
     "plugins": "插件",
+    "reasoning": "推理",
     "reasoningBudget": "推理预算（为空则为1024）",
     "reasoningEffort": "推理努力",
     "streaming": "流媒体",

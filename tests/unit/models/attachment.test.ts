@@ -7,6 +7,17 @@ beforeAll(() => {
   useWindowMock()
 })
 
+test('isText()', async () => {
+  const text = new Attachment('text', 'text/plain', 'url', false)
+  expect(text.isText()).toBe(true)
+
+  const pdf = new Attachment('pdf', 'application/pdf', 'url', false)
+  expect(pdf.isText()).toBe(true)
+
+  const image = new Attachment('image', 'image/png', 'url', false)
+  expect(image.isText()).toBe(false)
+})
+
 test('Constructs without transformation', async () => {
   const text = new Attachment('text', 'text/plain', 'url', false)
   expect(text.content).toBe('text')
@@ -45,7 +56,7 @@ test('Load from contents', async () => {
 
   const pdf = new Attachment('pdf', 'application/pdf', 'url', false, true)
   expect(pdf.content).toBe('pdf_extracted')
-  expect(text.mimeType).toBe('text/plain')
+  expect(pdf.mimeType).toBe('application/pdf')
 
   const image = new Attachment('image_encoded', 'image/png', 'url', false, true)
   expect(image.content).toBe('image_encoded')

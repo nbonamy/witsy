@@ -1,6 +1,8 @@
 
 import PDFParser from 'pdf2json'
 import { parseOfficeAsync } from 'officeparser'
+import csvToMarkdown from 'csv-to-markdown-table'
+import * as XLSX from 'xlsx'
 
 export function getPDFRawTextContent(contents: Buffer): Promise<string> {
   const pdfParser = new PDFParser(undefined, 1)
@@ -31,6 +33,22 @@ export function getOfficeRawTextContent(contents: Buffer): Promise<string> {
   return parseOfficeAsync(contents)
 }
 
+export function getExcelRawTextContent(contents: Buffer): Promise<string> {
+  try {
+    let content = ''
+    const workbook = XLSX.read(contents, { type: 'buffer' })
+    for (const sheetName of workbook.SheetNames) {
+      const worksheet = workbook.Sheets[sheetName]
+      const sheet = XLSX.utils.sheet_to_csv(worksheet)
+      content += `Sheet: ${sheetName}\n`
+      content += csvToMarkdown(sheet, ',').split('\n').map(l => l.trim()).join('\n') + '\n\n'
+    }
+    return Promise.resolve(content.trim())
+  } catch {
+    return getOfficeRawTextContent(contents)
+  }
+}
+
 export function getTextContent(b64contents: string, format: string): Promise<string> {
   switch (format) {
     case 'txt':
@@ -39,8 +57,9 @@ export function getTextContent(b64contents: string, format: string): Promise<str
       return getPDFRawTextContent(Buffer.from(b64contents, 'base64'))
     case 'docx':
     case 'pptx':
-    case 'xlsx':
       return getOfficeRawTextContent(Buffer.from(b64contents, 'base64'))
+    case 'xlsx':
+      return getExcelRawTextContent(Buffer.from(b64contents, 'base64'))
     default:
       return Promise.resolve(b64contents)
   }

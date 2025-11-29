@@ -1406,6 +1406,7 @@
   "modelSettings.localeDefault": "🤖 Default language",
   "modelSettings.maxCompletionTokens": "Max Completion Tokens",
   "modelSettings.plugins": "Plugins",
+  "modelSettings.reasoning": "Reasoning",
   "modelSettings.reasoningBudget": "Reasoning Budget (empty = 1024)",
   "modelSettings.reasoningEffort": "Reasoning Effort",
   "modelSettings.streaming": "Streaming",

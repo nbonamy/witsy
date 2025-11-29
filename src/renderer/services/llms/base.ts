@@ -3,7 +3,7 @@ import * as llm from 'multi-llm-ts'
 import { CodeExecutionMode, Configuration, CustomEngineConfig, EngineConfig } from 'types/config'
 import { GetChatEnginesOpts, ILlmManager, ToolSelection } from 'types/llm'
 import defaults from '@root/defaults/settings.json'
-import { imageFormats, textFormats } from '@models/attachment'
+import { imageFormats, textFormats, parseableTextFormats } from '@models/attachment'
 import { PluginInstance, PluginsList } from '../plugins/plugins'
 import { store } from '../store'
 import { getFallbackModel as getAnthropicFallbackModel, isSpecializedModel as isSpecialAnthropicModel } from './anthropic'
@@ -279,7 +279,7 @@ export default class LlmManagerBase implements ILlmManager {
       if (m.capabilities.vision) return true
       return !!this.config.engines[engine].model?.vision
     } else {
-      return textFormats.includes(format.toLowerCase())
+      return textFormats.includes(format.toLowerCase()) || parseableTextFormats.includes(format.toLowerCase())
     }
   }
 

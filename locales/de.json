@@ -2212,6 +2212,7 @@
     "localeDefault": "🤖 Standardsprache",
     "maxCompletionTokens": "Maximale Abschluss-Tokens",
     "plugins": "Plugins",
+    "reasoning": "Schlussfolgerung",
     "reasoningBudget": "Rechenbudget (leer = 1024)",
     "reasoningEffort": "Überlegungsaufwand",
     "streaming": "Streaming",

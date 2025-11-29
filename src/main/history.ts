@@ -124,6 +124,9 @@ export const saveHistory = (app: App, workspaceId: string, history: History) => 
 
 const cleanAttachmentsFolder = (app: App, workspaceId: string) => {
 
+  // disabled to allow migration in future releases
+  return
+
   const unusedAttachments = listUnusedAttachments(app, workspaceId)
   for (const attachment of unusedAttachments) {
     try {
