@@ -513,6 +513,10 @@
       "successMultiple": "Pomyślnie zaimportowano {count} czatów",
       "successMultipleDetail": "Zaimportowano {count} rozmów i dodano je do historii czatu."
     },
+    "lazyLoad": {
+      "loading": "Ładowanie starszych wiadomości...",
+      "scrollUp": "Przewiń w górę, aby zobaczyć starsze wiadomości"
+    },
     "role": {
       "assistant": "Asystent",
       "system": "System",

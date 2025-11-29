@@ -494,6 +494,10 @@
       "successMultiple": "{count} chat importate con successo",
       "successMultipleDetail": "{count} conversazioni sono state importate e aggiunte alla cronologia chat."
     },
+    "lazyLoad": {
+      "loading": "Caricamento messaggi precedenti...",
+      "scrollUp": "Scorri verso l'alto per i messaggi precedenti"
+    },
     "role": {
       "assistant": "Assistente",
       "system": "Sistema",

@@ -494,6 +494,10 @@
       "successMultiple": "{count} Chats erfolgreich importiert",
       "successMultipleDetail": "{count} Unterhaltungen wurden importiert und zu deinem Chat-Verlauf hinzugefügt."
     },
+    "lazyLoad": {
+      "loading": "Ältere Nachrichten werden geladen...",
+      "scrollUp": "Nach oben scrollen für ältere Nachrichten"
+    },
     "role": {
       "assistant": "Assistent",
       "system": "System",

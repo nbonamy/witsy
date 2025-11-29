@@ -1,7 +1,12 @@
 <template>
   <div class="messages-list" :style="fontStyle">
     <div class="messages" :class="[ chatTheme, 'size' + store.config.appearance.chat.fontSize ]" ref="divScroller" @scroll="onScroll">
-      <div v-for="message in chat?.messages" :key="message.uuid">
+      <div v-if="hasOlderMessages" class="load-more" ref="loadSentinel">
+        <span class="tag">
+          {{ isLoadingOlder ? t('chat.lazyLoad.loading') : t('chat.lazyLoad.scrollUp') }}
+        </span>
+      </div>
+      <div v-for="message in visibleMessages" :key="message.uuid">
         <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @media-loaded="onMediaLoaded" ref="items" />
       </div>
     </div>
@@ -15,18 +20,28 @@
 
 import { ArrowDownIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
-import { computed, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef } from 'vue'
+import { computed, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 import Chat from '@models/chat'
 import { store } from '@services/store'
+import { t } from '@services/i18n'
 import MessageItem from './MessageItem.vue'
 
 import useEventBus from '@composables/event_bus'
 const { onEvent } = useEventBus()
 
 const divScroller = ref<HTMLElement|null>(null)
+const loadSentinel = ref<HTMLElement|null>(null)
 const overflown = ref(false)
 
 const itemRefs = useTemplateRef<typeof MessageItem>('items')
+
+// Lazy loading state
+const INITIAL_MESSAGE_COUNT = 20
+const LOAD_MORE_COUNT = 20
+const SCROLL_THRESHOLD = 200
+
+const displayedMessageCount = ref(INITIAL_MESSAGE_COUNT)
+const isLoadingOlder = ref(false)
 
 const fontStyle = computed(() => {
   return {
@@ -45,6 +60,26 @@ const props = defineProps({
     type: String,
     required: true,
   }
+})
+
+// Computed properties for lazy loading
+const allMessages = computed(() => {
+  return props.chat?.messages?.filter(m => m.role !== 'system') || []
+})
+
+const visibleMessages = computed(() => {
+  const messages = allMessages.value
+  // Show the LAST N messages (most recent at bottom)
+  return messages.slice(-displayedMessageCount.value)
+})
+
+const hasOlderMessages = computed(() => {
+  return allMessages.value.length > displayedMessageCount.value
+})
+
+// Reset displayed count when chat changes
+watch(() => props.chat?.uuid, () => {
+  displayedMessageCount.value = INITIAL_MESSAGE_COUNT
 })
 
 onMounted(() => {
@@ -131,10 +166,46 @@ const onNewChunk = async (chunk: LlmChunk) => {
 
 }
 
+const loadOlderMessages = async () => {
+  if (isLoadingOlder.value || !hasOlderMessages.value) {
+    return
+  }
+
+  isLoadingOlder.value = true
+
+  // Save current scroll position
+  const oldScrollHeight = divScroller.value!.scrollHeight
+  const oldScrollTop = divScroller.value!.scrollTop
+
+  // Load more messages
+  displayedMessageCount.value = Math.min(
+    displayedMessageCount.value + LOAD_MORE_COUNT,
+    allMessages.value.length
+  )
+
+  // Wait for DOM to update
+  await nextTick()
+
+  // Restore scroll position (adjust for new content height)
+  const newScrollHeight = divScroller.value!.scrollHeight
+  const scrollDelta = newScrollHeight - oldScrollHeight
+  divScroller.value!.scrollTop = oldScrollTop + scrollDelta
+
+  isLoadingOlder.value = false
+}
+
 const onScroll = () => {
-  overflown.value = divScroller.value!.scrollTop + divScroller.value!.clientHeight < divScroller.value!.scrollHeight - 1
+  if (!divScroller.value) return
+
+  overflown.value = divScroller.value.scrollTop + divScroller.value.clientHeight < divScroller.value.scrollHeight - 1
   scrollOnChunk = !overflown.value
-  divScroller.value?.focus()
+
+  // Load older messages when scrolling near top
+  if (hasOlderMessages.value && divScroller.value.scrollTop < SCROLL_THRESHOLD) {
+    loadOlderMessages()
+  }
+
+  divScroller.value.focus()
 }
 
 </script>
@@ -156,6 +227,19 @@ const onScroll = () => {
   padding-top: 32px;
   outline: none;
   scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-bg-color);
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 16px;
+
+  .tag {
+    padding: 0.375rem 0.75rem;
+    font-size: var(--font-size-12);
+  }
 }
 
 .overflow {

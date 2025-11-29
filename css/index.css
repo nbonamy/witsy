@@ -823,6 +823,9 @@ table.table-plain {
   font-size: 10.5px;
   border-radius: 0.75rem;
 
+  background-color: var(--color-surface-low);
+  color: var(--color-on-surface);
+
   &.info {
     background-color: var(--color-secondary-container);
     color: var(--color-secondary);

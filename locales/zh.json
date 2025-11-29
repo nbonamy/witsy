@@ -513,6 +513,10 @@
       "successMultiple": "{count} 个聊天导入成功",
       "successMultipleDetail": "{count} 个对话已导入并添加到您的聊天记录中。"
     },
+    "lazyLoad": {
+      "loading": "正在加载较早的消息...",
+      "scrollUp": "向上滚动查看较早的消息"
+    },
     "role": {
       "assistant": "助手",
       "system": "系统",

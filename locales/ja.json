@@ -513,6 +513,10 @@
       "successMultiple": "{count} 件のチャットが正常にインポートされました",
       "successMultipleDetail": "{count} 件の会話がインポートされ、チャット履歴に追加されました。"
     },
+    "lazyLoad": {
+      "loading": "古いメッセージを読み込み中...",
+      "scrollUp": "古いメッセージを見るには上にスクロールしてください"
+    },
     "role": {
       "assistant": "アシスタント",
       "system": "システム",
