@@ -41,5 +41,15 @@ test('PowerPoint', async () => {
 test('Excel', async () => {
   const contents = fs.readFileSync('./tests/fixtures/sample.xlsx', 'base64')
   const text = await getTextContent(contents, 'xlsx')
-  expect(text).toContain('Hello from Excel')
+  expect(text).toBe(`Sheet: Sheet 1
+|                  |
+|------------------|
+| Hello from Excel |
+
+
+Sheet: Sheet2
+|           |        |       |
+|-----------|--------|-------|
+| Bye       | from   | Excel |
+| Au-revoir | depuis | Excel |`)
 })

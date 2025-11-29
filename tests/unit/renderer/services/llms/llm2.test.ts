@@ -180,10 +180,30 @@ test('Can process format', async () => {
     }
   }
 
-  // without autoVisionSwitch
+  // text formats are supported
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'py')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'js')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'ts')).toBe(true)
   expect(llmManager.canProcessFormat('openrouter', 'chat', 'txt')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'json')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'html')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'pdf')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'docx')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'xlsx')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'pptx')).toBe(true)
+
+  // some other binary formats
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'exe')).toBe(false)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'mp3')).toBe(false)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'wav')).toBe(false)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'zip')).toBe(false)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'dmg')).toBe(false)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'xsl')).toBe(false)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'doc')).toBe(false)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'ppt')).toBe(false)
+
+  // without autoVisionSwitch
   expect(llmManager.canProcessFormat('openrouter', 'chat', 'jpg')).toBe(false)
-  expect(llmManager.canProcessFormat('openrouter', 'vision', 'txt')).toBe(true)
   expect(llmManager.canProcessFormat('openrouter', 'vision', 'jpg')).toBe(true)
 
   // with autoVisionSwitch

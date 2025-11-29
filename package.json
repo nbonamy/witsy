@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -125,6 +125,7 @@
     "compute-cosine-similarity": "^1.1.0",
     "cron-parser": "^5.3.1",
     "cross-env": "^7.0.3",
+    "csv-to-markdown-table": "^1.6.3",
     "electron-log": "^5.4.3",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^8.2.0",
@@ -151,7 +152,7 @@
     "mermaid": "^11.11.0",
     "minimatch": "^10.0.3",
     "mitt": "^3.0.1",
-    "multi-llm-ts": "^4.6.0-beta8",
+    "multi-llm-ts": "^4.6.1",
     "number-flip-animation": "github:nbonamy/number-flip-animation",
     "officeparser": "^5.2.0",
     "ollama": "^0.6.0",
