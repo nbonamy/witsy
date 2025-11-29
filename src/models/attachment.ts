@@ -5,17 +5,21 @@ import { Attachment as AttachmentBase, extensionToMimeType } from 'multi-llm-ts'
 export { textFormats } from 'multi-llm-ts'
 export { imageFormats } from 'multi-llm-ts'
 
-const plainTextFormats = ['txt', 'csv', 'json', 'yml', 'yaml', 'xml', 'html', 'css', 'md']
+export const parseableTextFormats = [
+  'pdf', 'docx', 'pptx', 'xlsx'
+]
 
 export default class Attachment extends AttachmentBase implements IAttachment{
 
   url: string
+  filepath: string
   extracted: boolean
   saved: boolean
 
   constructor(content: string, mimeType: string, url: string = '', saved: boolean = false, load: boolean = false) {
     super(content, mimeType)
     this.url = url
+    this.filepath = url
     this.saved = saved
     this.extracted = false
     if (load) {
@@ -24,7 +28,9 @@ export default class Attachment extends AttachmentBase implements IAttachment{
   }
 
   get filename(): string {
-    return this.url.split('/').pop() || 'unknown'
+    if (this.filepath) return this.filepath.split('/').pop()
+    else if (this.url) return this.url.split('/').pop()
+    else return 'unknown'
   }
 
   get filenameShort(): string {
@@ -70,22 +76,27 @@ export default class Attachment extends AttachmentBase implements IAttachment{
   }
 
   static fromJson(obj: any): Attachment {
-    return new Attachment(obj.content, obj.mimeType || extensionToMimeType(obj.format || ''), obj.url, obj.saved || obj.downloaded)
+    const attachment = new Attachment(obj.content, obj.mimeType || extensionToMimeType(obj.format || ''), obj.url, obj.saved || obj.downloaded)
+    attachment.filepath = obj.filepath || ''
+    return attachment
   }
   
   extractText(): void {
 
     // get text
-    if (plainTextFormats.includes(this.format())) {
-      this.content = window.api.base64.decode(this.content)
-    } else {
+    if (parseableTextFormats.includes(this.format())) {
       const rawText = window.api.file.extractText(this.content, this.format())
-      this.mimeType = 'text/plain'
+      // this.mimeType = 'text/plain'
       this.content = rawText
+    } else {
+      this.content = window.api.base64.decode(this.content)
     }
 
     // save
     this.extracted = true
   }
 
+  isText(): boolean {
+    return super.isText() || parseableTextFormats.includes(this.format())
+  }
 }

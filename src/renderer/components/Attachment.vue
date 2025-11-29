@@ -1,21 +1,13 @@
 
 <template>
-
-  <div @click="emit('click', attachment)" v-if="attachment.isText()">
-    <FileTextIcon class="icon" v-if="attachment.format() === 'pdf'"/>
-    <BarChart3Icon class="icon" v-else-if="attachment.format() === 'xlsx'"/>
-    <FileTextIcon class="icon" v-else-if="attachment.format() === 'pptx'"/>
-    <FileSpreadsheetIcon class="icon" v-else-if="attachment.format() === 'csv'"/>
-    <FileJsonIcon class="icon" v-else-if="attachment.format() === 'json'"/>
-    <FileCodeIcon class="icon" v-else-if="attachment.format() === 'html'"/>
-    <FileTextIcon class="icon" v-else />
-  </div>
+  <component :is="icon" class="icon" v-if="attachment.isText()" @click="emit('click', attachment)" />
   <img :src="imageSrc" class="image" @click="emit('image-click', imageSrc)" v-else />
 </template>
 
 <script setup lang="ts">
 
-import { BarChart3Icon, FileCodeIcon, FileJsonIcon, FileSpreadsheetIcon, FileTextIcon } from 'lucide-vue-next'
+import { BarChart3Icon, FileCodeIcon, FileSpreadsheetIcon, FileTextIcon } from 'lucide-vue-next'
+import { codeFormats, configFormats } from 'multi-llm-ts'
 import { computed } from 'vue'
 import Attachment from '@models/attachment'
 
@@ -25,6 +17,21 @@ const props = defineProps({
   attachment: {
     type: Attachment,
     required: true,
+  }
+})
+
+const icon = computed(() => {
+  switch (props.attachment.format()) {
+    case 'xlsx':
+      return BarChart3Icon
+    case 'csv':
+      return FileSpreadsheetIcon
+    default:
+      if (codeFormats.includes(props.attachment.format()) || configFormats.includes(props.attachment.format())) {
+        return FileCodeIcon
+      } else {
+        return FileTextIcon
+      }
   }
 })
 

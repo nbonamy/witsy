@@ -35,6 +35,7 @@ export interface Attachment extends IAttachmentBase {
   url: string
   extracted: boolean
   saved: boolean
+  filepath: string
   get filename(): string
   get filenameShort(): string
   extractText(): void
