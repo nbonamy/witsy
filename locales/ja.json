@@ -2227,6 +2227,7 @@
     "localeDefault": "🤖 デフォルト言語",
     "maxCompletionTokens": "最大完了トークン数",
     "plugins": "プラグイン",
+    "reasoning": "推論",
     "reasoningBudget": "推論予算（空欄の場合は1024）",
     "reasoningEffort": "推論の労力",
     "streaming": "ストリーミング",

@@ -54,6 +54,16 @@
     <label>{{ t('modelSettings.thinkingBudget') }}</label>
     <input name="thinkingBudget" v-model="thinkingBudget" @change="emitUpdate" />
   </div>
+  <div class="form-field" v-if="isThinkSupported">
+    <label>{{ t('modelSettings.reasoning') }}</label>
+    <select name="think" v-model="think" @change="emitUpdate">
+      <option :value="undefined">{{ t('common.default') }}</option>
+      <option value="false">{{ t('common.disabled') }}</option>
+      <option value="low">{{ t('common.low') }}</option>
+      <option value="medium">{{ t('common.medium') }}</option>
+      <option value="high">{{ t('common.high') }}</option>
+    </select>
+  </div>
 
   <div class="form-field custom" v-if="modelHasCustomParams">
     <label>{{ t('modelSettings.customParams') }}</label>
@@ -72,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { LlmModelOpts, LlmReasoningEffort, LlmVerbosity } from 'multi-llm-ts'
+import { LlmModelOpts, LlmOllamaThink, LlmReasoningEffort, LlmVerbosity } from 'multi-llm-ts'
 import { computed, ref, watch } from 'vue'
 import Dialog from '@renderer/utils/dialog'
 import LlmFactory from '@services/llms/llm'
@@ -105,6 +115,7 @@ const reasoningBudget = ref<number | undefined>(undefined)
 const reasoningEffort = ref<LlmReasoningEffort | undefined>(undefined)
 const verbosity = ref<LlmVerbosity | undefined>(undefined)
 const thinkingBudget = ref<number | undefined>(undefined)
+const think = ref<LlmOllamaThink | undefined>(undefined)
 const customParams = ref<Record<string, any>>({})
 const selectedParam = ref<{ key: string, value: any } | null>(null)
 
@@ -118,6 +129,7 @@ const isReasoningFlagSupported = computed(() => props.engine === 'anthropic' || 
 const isReasoningEffortSupported = computed(() => props.engine === 'openai')
 const isVerbositySupported = computed(() => props.engine === 'openai' && props.model.startsWith('gpt-5'))
 const isThinkingBudgetSupported = computed(() => props.engine === 'google')
+const isThinkSupported = computed(() => props.engine === 'ollama')
 const modelHasCustomParams = computed(() => llmManager.isCustomEngine(props.engine))
 
 // Watch for modelValue changes from parent
@@ -133,6 +145,7 @@ watch(() => props.modelValue, (newValue) => {
     reasoningEffort.value = newValue.reasoningEffort
     verbosity.value = newValue.verbosity
     thinkingBudget.value = newValue.thinkingBudget
+    think.value = newValue.think
     customParams.value = newValue.customOpts || {}
   } else {
     // Reset to defaults
@@ -146,6 +159,7 @@ watch(() => props.modelValue, (newValue) => {
     reasoningEffort.value = undefined
     verbosity.value = undefined
     thinkingBudget.value = undefined
+    think.value = undefined
     customParams.value = {}
   }
 }, { immediate: true, deep: true })
@@ -198,6 +212,7 @@ const emitUpdate = () => {
     const reasoningEffortValue = reasoningEffort.value ?? undefined
     const verbosityValue = verbosity.value ?? undefined
     const thinkingBudgetValue = parseUserInput('Thinking Budget', thinkingBudget, 'int', 0)
+    const thinkValue = think.value === 'false' ? false : (think.value ?? undefined)
 
     // Build and emit modelOpts
     const modelOpts: LlmModelOpts = {
@@ -211,6 +226,7 @@ const emitUpdate = () => {
       reasoningEffort: reasoningEffortValue,
       verbosity: verbosityValue,
       thinkingBudget: thinkingBudgetValue,
+      think: thinkValue,
       customOpts: Object.keys(customParams.value).length > 0 ? customParams.value : undefined,
     }
 

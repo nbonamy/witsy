@@ -4,7 +4,7 @@
     <div class="form-subgroup">
       <div class="control-group">
         <ModelSelectPlus
-          v-if="'capabilities' in pullableModels[0]"
+          v-if="false && 'capabilities' in pullableModels[0]"
           id="pull_model"
           :engine="'ollama'"
           :models="pullableModels as ChatModel[]"

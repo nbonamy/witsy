@@ -2225,6 +2225,7 @@
     "localeDefault": "🤖 Default language",
     "maxCompletionTokens": "Max Completion Tokens",
     "plugins": "Plugins",
+    "reasoning": "Reasoning",
     "reasoningBudget": "Reasoning Budget (empty = 1024)",
     "reasoningEffort": "Reasoning Effort",
     "streaming": "Streaming",
