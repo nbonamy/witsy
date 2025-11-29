@@ -212,6 +212,8 @@ const emitUpdate = () => {
     const reasoningEffortValue = reasoningEffort.value ?? undefined
     const verbosityValue = verbosity.value ?? undefined
     const thinkingBudgetValue = parseUserInput('Thinking Budget', thinkingBudget, 'int', 0)
+
+    // @ts-expect-error safe conversion
     const thinkValue = think.value === 'false' ? false : (think.value ?? undefined)
 
     // Build and emit modelOpts
