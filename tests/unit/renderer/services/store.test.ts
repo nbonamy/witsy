@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock, listeners } from '@tests/mocks/window'
 import { store } from '@services/store'
-import { DEFAULT_WORKSPACE_ID } from '@main/workspace'
+import { kDefaultWorkspaceId, kHistoryVersion } from '@/consts'
 import Chat from '@models/chat'
 import Message from '@models/message'
 import defaultSettings from '@root/defaults/settings.json'
@@ -36,7 +36,7 @@ chats[1].messages[1].model = 'model'
 
 beforeAll(() => {
   useWindowMock()
-  window.api.history.load = vi.fn(() => ({ folders: [], chats: chats, quickPrompts: [] }))
+  window.api.history.load = vi.fn(() => ({ version: kHistoryVersion, folders: [], chats: chats, quickPrompts: [] }))
 })
 
 beforeEach(() => {
@@ -98,7 +98,8 @@ test('Load history', async () => {
 test('Save history', async () => {
   store.saveHistory()
   expect(window.api.history?.save).toHaveBeenCalled()
-  expect(window.api.history?.save).toHaveBeenLastCalledWith(DEFAULT_WORKSPACE_ID, {
+  expect(window.api.history?.save).toHaveBeenLastCalledWith(kDefaultWorkspaceId, {
+    version: 1,
     folders: [],
     chats: [ {
       uuid: '123',

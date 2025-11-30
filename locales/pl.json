@@ -1982,6 +1982,10 @@
       "keepConversations": "Prowadzenie rozmów",
       "rename": "Zmień nazwę folderu"
     },
+    "historyVersionMismatch": {
+      "text": "Wersja Twojej historii konwersacji jest nowsza niż wersja aplikacji. Proszę zaktualizuj @:{'common.appName'} do najnowszej wersji, aby zapewnić kompatybilność. Historia konwersacji będzie wyłączona podczas tej sesji.",
+      "title": "Niezgodność wersji historii konwersacji"
+    },
     "message": {
       "confirmDelete": "Czy na pewno chcesz usunąć tę wiadomość? Ta wiadomość i wszystkie następne wiadomości rozmowy zostaną usunięte."
     },

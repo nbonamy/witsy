@@ -1963,6 +1963,10 @@
       "keepConversations": "Conserva conversazioni",
       "rename": "Rinomina cartella"
     },
+    "historyVersionMismatch": {
+      "text": "La versione della cronologia delle conversazioni è più recente della versione dell'applicazione. Si prega di aggiornare @:{'common.appName'} all'ultima versione per garantire la compatibilità. La cronologia delle conversazioni sarà disabilitata durante questa sessione.",
+      "title": "Versione della cronologia delle conversazioni non corrispondente"
+    },
     "message": {
       "confirmDelete": "Sei sicuro di voler eliminare questo messaggio? Questo messaggio e tutti i successivi messaggi della conversazione verranno eliminati."
     },

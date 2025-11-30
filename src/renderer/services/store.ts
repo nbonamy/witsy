@@ -1,17 +1,17 @@
 
-import { reactive } from 'vue'
-import features from '@root/defaults/features.json'
+import { kHistoryVersion } from '@/consts'
 import Chat from '@models/chat'
+import features from '@root/defaults/features.json'
 import { Configuration } from 'types/config'
 import { Folder, History, Store, StoreEvent } from 'types/index'
 import { Workspace } from 'types/workspace'
+import { reactive } from 'vue'
 import { loadAgents } from './agents'
 import { loadCommands } from './commands'
 import LlmFactory, { ILlmManager } from './llms/llm'
 import LlmManager from './llms/manager'
 
-export const kMediaChatId = '00000000-0000-0000-0000-000000000000'
-export const kDefaultWorkspaceId = '00000000-0000-0000-0000-000000000000'
+export { kDefaultWorkspaceId, kMediaChatId } from '@/consts'
 export const kReferenceParamValue = '<media>'
 
 export const store: Store = reactive({
@@ -236,8 +236,14 @@ export const store: Store = reactive({
 
     try {
 
+      // do not overwrite newer version
+      if (store.history.version > kHistoryVersion) {
+        return
+      }
+
       // we need to srip attachment contents
       const history = {
+        version: store.history.version,
         folders: JSON.parse(JSON.stringify(store.history.folders)),
         chats: JSON.parse(JSON.stringify(store.history.chats)).filter((chat: Chat) => {
           return chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))
@@ -306,8 +312,19 @@ const loadWorkspace = (): void => {
 const loadHistory = (): void => {
 
   try {
-    store.history = { folders: [], chats: [], quickPrompts: [], /*padPrompts: []*/ }
+
+    // reset
+    store.history = { version: undefined, folders: [], chats: [], quickPrompts: [], /*padPrompts: []*/ }
+
+    // load and check version
     const history = window.api.history.load(store.config.workspaceId)
+    if (history.version > kHistoryVersion) {
+      store.history.version = history.version
+      return
+    }
+
+    // update local
+    store.history.version = history.version
     store.history.folders = history.folders || []
     store.history.quickPrompts = history.quickPrompts || []
     //store.history.padPrompts = history.padPrompts || []
@@ -315,6 +332,7 @@ const loadHistory = (): void => {
       const chat = Chat.fromJson(jsonChat)
       store.history.chats.push(chat)
     }
+
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving history data', error)

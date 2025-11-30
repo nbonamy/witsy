@@ -1,15 +1,14 @@
 
-import { WorkspaceHeader, Workspace } from 'types/workspace'
 import { App } from 'electron'
-import { agentsDirPath } from './agents'
-import { docrepoFilePath } from './rag/utils'
-import { attachmentsFilePath, historyFilePath } from './history'
-import { notifyBrowserWindows } from './windows'
-import WorkspaceModel from '@models/workspace'
-import path from 'path'
 import fs from 'fs'
-
-export const DEFAULT_WORKSPACE_ID = '00000000-0000-0000-0000-000000000000'
+import path from 'path'
+import { Workspace, WorkspaceHeader } from 'types/workspace'
+import WorkspaceModel from '../models/workspace'
+import { agentsDirPath } from './agents'
+import { kDefaultWorkspaceId } from '../consts'
+import { attachmentsFilePath, historyFilePath } from './history'
+import { docrepoFilePath } from './rag/utils'
+import { notifyBrowserWindows } from './windows'
 
 export const workspacesFolder = (app: App): string => {
   const userDataPath = app.getPath('userData')
@@ -117,7 +116,7 @@ export const initializeWorkspace = (app: App, workspaceId: string): void => {
   })
 
   // if it is not the default one there is not much else we can do
-  if (workspaceId !== DEFAULT_WORKSPACE_ID) return
+  if (workspaceId !== kDefaultWorkspaceId) return
 
   // otherwise we can migrate legacy stuff
   migrateExistingItemsToWorkspace(app, workspaceId);
