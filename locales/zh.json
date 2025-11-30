@@ -1986,6 +1986,10 @@
       "keepConversations": "保留聊天记录",
       "rename": "重命名文件夹"
     },
+    "historyVersionMismatch": {
+      "text": "您的对话历史版本比应用程序版本更新。请将 @:{'common.appName'} 更新至最新版本以确保兼容性。本次会话期间对话历史将被禁用。",
+      "title": "转换历史版本不匹配"
+    },
     "message": {
       "confirmDelete": "您确定要删除此消息吗？此消息及对话的所有后续消息将被删除。"
     },

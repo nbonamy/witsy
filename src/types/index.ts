@@ -148,6 +148,7 @@ export type Folder = {
 }
 
 export type History = {
+  version: number
   folders: Folder[]
   chats: Chat[]
   quickPrompts: string[]

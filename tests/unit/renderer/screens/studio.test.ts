@@ -4,7 +4,7 @@ import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '@tests/mocks/window'
 import { stubTeleport } from '@tests/mocks/stubs'
 import { store, kMediaChatId } from '@services/store'
-import { DEFAULT_WORKSPACE_ID } from '@main/workspace'
+import { kDefaultWorkspaceId, kHistoryVersion } from '@/consts'
 import { Configuration } from '@/types/config'
 import ImageCreator from '@services/image'
 import DesignStudio from '@screens/DesignStudio.vue'
@@ -89,6 +89,40 @@ beforeAll(() => {
       ]
     })
   })
+  window.api.history.load = vi.fn(() => ({
+    version: kHistoryVersion,
+    folders: [],
+    chats: [
+      Chat.fromJson({
+        uuid: kMediaChatId,
+        messages: [
+          new Message('system', 'This is a system message.'),
+          Message.fromJson({
+            uuid: '1',
+            role: 'user',
+            type: 'text',
+            createdAt: 1,
+            content: 'prompt1',
+            engine: 'openai',
+            model: 'dall-e-3',
+            attachment: new Attachment('', 'image/jpeg', 'file://url1.jpg')
+          }),
+          Message.fromJson({
+            uuid: '2',
+            role: 'user',
+            type: 'image',
+            createdAt: 2,
+            content: 'prompt2',
+            engine: 'replicate',
+            model: 'replicate1',
+            attachment: new Attachment('', 'image/jpeg', 'file://url2.jpg') // Updated to include .jpg
+          })
+        ]
+      })      
+    ],
+    quickPrompts: []
+  }))
+
 
 })
 
@@ -227,7 +261,7 @@ test('Generates - Basic', async () => {
 
   expect(wrapper.vm.chat.messages).toHaveLength(4)
   expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
-  expect(window.api.history.saveChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, expect.objectContaining({
+  expect(window.api.history.saveChat).toHaveBeenCalledWith(kDefaultWorkspaceId, expect.objectContaining({
     messages: expect.arrayContaining([ wrapper.vm.chat.messages[3] ])
   }))
 
@@ -280,7 +314,7 @@ test('Generates - Custom Params OpenAI', async () => {
 
   expect(wrapper.vm.chat.messages).toHaveLength(4)
   expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
-  expect(window.api.history.saveChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, expect.objectContaining({
+  expect(window.api.history.saveChat).toHaveBeenCalledWith(kDefaultWorkspaceId, expect.objectContaining({
     messages: expect.arrayContaining([ wrapper.vm.chat.messages[3] ])
   }))
 
@@ -332,7 +366,7 @@ test('Generates - Custom Params HuggingFace', async () => {
 
   expect(wrapper.vm.chat.messages).toHaveLength(4)
   expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
-  expect(window.api.history.saveChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, expect.objectContaining({
+  expect(window.api.history.saveChat).toHaveBeenCalledWith(kDefaultWorkspaceId, expect.objectContaining({
     messages: expect.arrayContaining([ wrapper.vm.chat.messages[3] ])
   }))
 
@@ -393,7 +427,7 @@ test('Generates - User Params', async () => {
 
   expect(wrapper.vm.chat.messages).toHaveLength(4)
   expect(wrapper.vm.chat.messages[3]).toMatchObject(wrapper.vm.selection[0])
-  expect(window.api.history.saveChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, expect.objectContaining({
+  expect(window.api.history.saveChat).toHaveBeenCalledWith(kDefaultWorkspaceId, expect.objectContaining({
     messages: expect.arrayContaining([ wrapper.vm.chat.messages[3] ])
   }))
 
@@ -459,7 +493,7 @@ test('Upload', async () => {
       filename: expect.any(String),
       directory: 'userData',
       subdir: 'images',
-      workspace: DEFAULT_WORKSPACE_ID,
+      workspace: kDefaultWorkspaceId,
       prompt: false
     }
   })

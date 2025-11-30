@@ -55,12 +55,12 @@
 
 <script setup lang="ts">
 
-import { ActivityIcon } from 'lucide-vue-next'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { kHistoryVersion } from '@/consts'
 import Fullscreen from '@components/Fullscreen.vue'
 import MenuBar, { MenuBarMode } from '@components/MenuBar.vue'
 import useEventBus from '@composables/event_bus'
 import useWebappManager from '@composables/webapp_manager'
+import Dialog from '@renderer/utils/dialog'
 import AgentForge from '@screens/AgentForge.vue'
 import Chat from '@screens/Chat.vue'
 import DesignStudio from '@screens/DesignStudio.vue'
@@ -74,7 +74,9 @@ import Transcribe from '@screens/Transcribe.vue'
 import WebAppViewer from '@screens/WebAppViewer.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+import { ActivityIcon } from 'lucide-vue-next'
 import { anyDict } from 'types/index'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
 const { emitEvent, onEvent } = useEventBus()
 const { loadedWebapps, loadWebapp, updateLastUsed, onNavigate, setupEviction, cleanup } = useWebappManager()
@@ -125,11 +127,23 @@ onMounted(() => {
   // dictation
   window.api.on('start-dictation', onDictate)
 
-  // show onboarding when window opens
+  // window open stuff
   window.api.on('window-opened', () => {
+
+    // history version check
+    if (store.history.version != null && store.history.version > kHistoryVersion) {
+      Dialog.show({
+        title: t('main.historyVersionMismatch.title'),
+        text: t('main.historyVersionMismatch.text'),
+      })
+      return
+    }
+
+    // show onboarding when window opens
     if (!store.config.general.onboardingDone) {
       setTimeout(() => showOnboarding.value = true, 500)
     }
+
   })
 
   // show it again

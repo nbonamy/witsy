@@ -1967,6 +1967,10 @@
       "keepConversations": "Konversationen behalten",
       "rename": "Ordner umbenennen"
     },
+    "historyVersionMismatch": {
+      "text": "Die Version deiner Konversationshistorie ist neuer als die Anwendungs-Version. Bitte aktualisiere @:{'common.appName'} auf die neueste Version, um die Kompatibilität sicherzustellen. Die Konversationshistorie wird während dieser Sitzung deaktiviert.",
+      "title": "Versionskonflikt in der Konversationshistorie"
+    },
     "message": {
       "confirmDelete": "Sind Sie sicher, dass Sie diese Nachricht löschen möchten? Diese Nachricht und alle nachfolgenden Nachrichten des Gesprächs werden gelöscht."
     },

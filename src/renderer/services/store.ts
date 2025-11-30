@@ -1,4 +1,5 @@
 
+import { kHistoryVersion } from '@/consts'
 import Chat from '@models/chat'
 import features from '@root/defaults/features.json'
 import { Configuration } from 'types/config'
@@ -10,8 +11,7 @@ import { loadCommands } from './commands'
 import LlmFactory, { ILlmManager } from './llms/llm'
 import LlmManager from './llms/manager'
 
-export const kMediaChatId = '00000000-0000-0000-0000-000000000000'
-export const kDefaultWorkspaceId = '00000000-0000-0000-0000-000000000000'
+export { kDefaultWorkspaceId, kMediaChatId } from '@/consts'
 export const kReferenceParamValue = '<media>'
 
 export const store: Store = reactive({
@@ -267,6 +267,11 @@ export const store: Store = reactive({
 
     try {
 
+      // do not overwrite newer version
+      if (store.history.version > kHistoryVersion) {
+        return
+      }
+
       // helper
       const isChatValid = (chat: Chat): boolean => {
         return chat.messages === undefined || chat.messages.length > 1 || store.history.folders.some((folder) => folder.chats.includes(chat.uuid))
@@ -296,6 +301,7 @@ export const store: Store = reactive({
 
       // prepare
       const history = {
+        version: kHistoryVersion,
         folders: JSON.parse(JSON.stringify(store.history.folders)),
         chats: JSON.parse(JSON.stringify(chatsToSave || [])),
         quickPrompts: JSON.parse(JSON.stringify(store.history.quickPrompts || [])),
@@ -360,8 +366,19 @@ const loadWorkspace = (): void => {
 const loadHistory = (): void => {
 
   try {
-    store.history = { folders: [], chats: [], quickPrompts: [], /*padPrompts: []*/ }
+
+    // reset
+    store.history = { version: undefined, folders: [], chats: [], quickPrompts: [], /*padPrompts: []*/ }
+
+    // load and check version
     const history = window.api.history.load(store.config.workspaceId)
+    if (history.version > kHistoryVersion) {
+      store.history.version = history.version
+      return
+    }
+
+    // update local
+    store.history.version = history.version
     store.history.folders = history.folders || []
     store.history.quickPrompts = history.quickPrompts || []
     //store.history.padPrompts = history.padPrompts || []
@@ -369,6 +386,7 @@ const loadHistory = (): void => {
       const chat = Chat.fromJson(jsonChat)
       store.history.chats.push(chat)
     }
+
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving history data', error)

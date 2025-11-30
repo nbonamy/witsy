@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock, listeners } from '@tests/mocks/window'
 import { store } from '@services/store'
-import { DEFAULT_WORKSPACE_ID } from '@main/workspace'
+import { kDefaultWorkspaceId, kHistoryVersion } from '@/consts'
 import Chat from '@models/chat'
 import Message from '@models/message'
 import defaultSettings from '@root/defaults/settings.json'
@@ -36,7 +36,7 @@ chats[1].messages[1].model = 'model'
 
 beforeAll(() => {
   useWindowMock()
-  window.api.history.load = vi.fn(() => ({ folders: [], chats: chats, quickPrompts: [] }))
+  window.api.history.load = vi.fn(() => ({ version: kHistoryVersion, folders: [], chats: chats, quickPrompts: [] }))
   window.api.history.loadChat = vi.fn((workspaceId: string, chatId: string) => {
     return chats.find(c => c.uuid === chatId) || null
   })
@@ -108,7 +108,7 @@ test('Save history', async () => {
   store.load()
   store.loadChat('123')
   store.saveHistory()
-  expect(window.api.history.saveChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, {
+  expect(window.api.history.saveChat).toHaveBeenCalledWith(kDefaultWorkspaceId, {
     uuid: '123',
     engine: 'engine',
     model: 'model',
@@ -127,7 +127,8 @@ test('Save history', async () => {
       }
     ])
   })
-  expect(window.api.history.save).toHaveBeenLastCalledWith(DEFAULT_WORKSPACE_ID, {
+  expect(window.api.history.save).toHaveBeenLastCalledWith(kDefaultWorkspaceId, {
+    version: kHistoryVersion,
     folders: [],
     chats: expect.arrayContaining([
       expect.any(Object), {
@@ -182,7 +183,7 @@ test('Load chat - successful load from file', async () => {
   // Load chat should call IPC and restore messages
   const chat = store.loadChat('123')
 
-  expect(window.api.history.loadChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, '123')
+  expect(window.api.history.loadChat).toHaveBeenCalledWith(kDefaultWorkspaceId, '123')
   expect(chat).toBeDefined()
   expect(chat.uuid).toBe('123')
   expect(chat.messages).toHaveLength(2)
@@ -198,7 +199,7 @@ test('Load chat - chat not saved yet (returns metadata)', async () => {
   // Should return the chat from history without messages
   const chat = store.loadChat('123')
 
-  expect(window.api.history.loadChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, '123')
+  expect(window.api.history.loadChat).toHaveBeenCalledWith(kDefaultWorkspaceId, '123')
   expect(chat).toBeDefined()
   expect(chat.uuid).toBe('123')
 })
@@ -283,13 +284,13 @@ test('Save history - handles chats without messages', async () => {
 
   // Should not call saveChat for chats without messages
   expect(window.api.history.saveChat).not.toHaveBeenCalledWith(
-    DEFAULT_WORKSPACE_ID,
+    kDefaultWorkspaceId,
     expect.objectContaining({ uuid: 'metadata-only' })
   )
 
   // Should include in history.save
   expect(window.api.history.save).toHaveBeenLastCalledWith(
-    DEFAULT_WORKSPACE_ID,
+    kDefaultWorkspaceId,
     expect.objectContaining({
       chats: expect.arrayContaining([
         expect.objectContaining({ uuid: 'metadata-only' })
@@ -306,7 +307,7 @@ test('Save history - deletes orphaned chat files', async () => {
   store.removeChat('123')
 
   // Should call deleteChat
-  expect(window.api.history.deleteChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, '123')
+  expect(window.api.history.deleteChat).toHaveBeenCalledWith(kDefaultWorkspaceId, '123')
 })
 
 test('Remove chat - removes from folders', async () => {
@@ -391,7 +392,7 @@ test('Save history - filters out empty chats not in folders', async () => {
 
   // Should not save the empty chat to history.json
   expect(window.api.history.save).toHaveBeenLastCalledWith(
-    DEFAULT_WORKSPACE_ID,
+    kDefaultWorkspaceId,
     expect.objectContaining({
       chats: expect.not.arrayContaining([
         expect.objectContaining({ uuid: 'empty-chat' })
@@ -400,7 +401,7 @@ test('Save history - filters out empty chats not in folders', async () => {
   )
 
   // Should also delete the chat file
-  expect(window.api.history.deleteChat).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, 'empty-chat')
+  expect(window.api.history.deleteChat).toHaveBeenCalledWith(kDefaultWorkspaceId, 'empty-chat')
 })
 
 test('Save history - keeps empty chats that are in folders', async () => {
@@ -428,7 +429,7 @@ test('Save history - keeps empty chats that are in folders', async () => {
 
   // Should save the chat because it's in a folder
   expect(window.api.history.save).toHaveBeenLastCalledWith(
-    DEFAULT_WORKSPACE_ID,
+    kDefaultWorkspaceId,
     expect.objectContaining({
       chats: expect.arrayContaining([
         expect.objectContaining({ uuid: 'empty-in-folder' })
@@ -437,7 +438,7 @@ test('Save history - keeps empty chats that are in folders', async () => {
   )
 
   // Should NOT delete the chat file
-  expect(window.api.history.deleteChat).not.toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, 'empty-in-folder')
+  expect(window.api.history.deleteChat).not.toHaveBeenCalledWith(kDefaultWorkspaceId, 'empty-in-folder')
 })
 
 test('Save history - keeps chats with undefined messages', async () => {
@@ -457,7 +458,7 @@ test('Save history - keeps chats with undefined messages', async () => {
 
   // Should save the metadata chat
   expect(window.api.history.save).toHaveBeenLastCalledWith(
-    DEFAULT_WORKSPACE_ID,
+    kDefaultWorkspaceId,
     expect.objectContaining({
       chats: expect.arrayContaining([
         expect.objectContaining({ uuid: 'metadata-chat' })
@@ -466,7 +467,7 @@ test('Save history - keeps chats with undefined messages', async () => {
   )
 
   // Should NOT delete the chat file
-  expect(window.api.history.deleteChat).not.toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, 'metadata-chat')
+  expect(window.api.history.deleteChat).not.toHaveBeenCalledWith(kDefaultWorkspaceId, 'metadata-chat')
 })
 
 test('Save history - handles chats with 2+ messages correctly', async () => {
@@ -481,7 +482,7 @@ test('Save history - handles chats with 2+ messages correctly', async () => {
 
   // Should save both the individual file AND the metadata
   expect(window.api.history.saveChat).toHaveBeenCalledWith(
-    DEFAULT_WORKSPACE_ID,
+    kDefaultWorkspaceId,
     expect.objectContaining({
       uuid: '123',
       messages: expect.arrayContaining([
@@ -492,7 +493,7 @@ test('Save history - handles chats with 2+ messages correctly', async () => {
   )
 
   expect(window.api.history.save).toHaveBeenCalledWith(
-    DEFAULT_WORKSPACE_ID,
+    kDefaultWorkspaceId,
     expect.objectContaining({
       chats: expect.arrayContaining([
         expect.objectContaining({ uuid: '123' })

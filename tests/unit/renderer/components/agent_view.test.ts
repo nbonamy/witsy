@@ -3,7 +3,7 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { createI18nMock } from '@tests/mocks/index'
 import { useWindowMock } from '@tests/mocks/window'
 import { store } from '@services/store'
-import { DEFAULT_WORKSPACE_ID } from '@main/workspace'
+import { kDefaultWorkspaceId } from '@/consts'
 import View from '@renderer/agent/View.vue'
 import { nextTick } from 'vue'
 import useEventBus from '@composables/event_bus'
@@ -287,7 +287,7 @@ test('Handles clear history from History component', async () => {
   await nextTick()
 
   // Dialog mock confirms by default, so API should be called
-  expect(vi.mocked(window.api.agents.deleteRuns)).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, 'agent1')
+  expect(vi.mocked(window.api.agents.deleteRuns)).toHaveBeenCalledWith(kDefaultWorkspaceId, 'agent1')
 })
 
 test('Handles delete run from Run component', async () => {
@@ -302,7 +302,7 @@ test('Handles delete run from Run component', async () => {
   await nextTick()
 
   // Dialog mock confirms by default, so API should be called
-  expect(vi.mocked(window.api.agents.deleteRun)).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, 'agent1', expect.any(String))
+  expect(vi.mocked(window.api.agents.deleteRun)).toHaveBeenCalledWith(kDefaultWorkspaceId, 'agent1', expect.any(String))
 })
 
 test('Filters runs based on showWorkflows setting', async () => {
@@ -362,7 +362,7 @@ test('Handles agent run update event', async () => {
   await nextTick()
 
   // Should have reloaded runs
-  expect(window.api.agents.getRuns).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, agent.uuid)
+  expect(window.api.agents.getRuns).toHaveBeenCalledWith(kDefaultWorkspaceId, agent.uuid)
 })
 
 test('Ignores agent run update for different agent', async () => {
@@ -420,7 +420,7 @@ test('Context menu action deletes runs', async () => {
 
   // Check that delete was called for all selected runs (user confirms by default)
   expect(window.api.agents.deleteRun).toHaveBeenCalledTimes(3)
-  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, agent.uuid, 'run1')
-  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, agent.uuid, 'run2')
-  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(DEFAULT_WORKSPACE_ID, agent.uuid, 'run3')
+  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(kDefaultWorkspaceId, agent.uuid, 'run1')
+  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(kDefaultWorkspaceId, agent.uuid, 'run2')
+  expect(window.api.agents.deleteRun).toHaveBeenCalledWith(kDefaultWorkspaceId, agent.uuid, 'run3')
 })

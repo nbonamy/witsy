@@ -1,14 +1,15 @@
 
 import { vi } from 'vitest'
-import defaultSettings from '@root/defaults/settings.json'
+import { kDefaultWorkspaceId, kHistoryVersion } from '@/consts'
+import { AgentRun, AgentRunStatus, AgentRunTrigger } from '@/types/agents'
+import { FilePickParams } from '@/types/file'
+import { ListDirectoryResponse } from '@/types/filesystem'
+import { Command, Expert, ExpertCategory } from '@/types/index'
+import { McpInstallStatus, McpServerWithTools } from '@/types/mcp'
+import { DocRepoQueryResponseItem, DocumentBase } from '@/types/rag'
 import { renderMarkdown } from '@main/markdown'
-import { AgentRun, AgentRunStatus, AgentRunTrigger } from 'types/agents'
-import { FilePickParams } from 'types/file'
-import { ListDirectoryResponse } from 'types/filesystem'
-import { Chat, Command, Expert, ExpertCategory } from 'types/index'
-import { McpInstallStatus, McpServerWithTools } from 'types/mcp'
-import { DocRepoQueryResponseItem, DocumentBase } from 'types/rag'
 import Agent from '@models/agent'
+import defaultSettings from '@root/defaults/settings.json'
 
 const listeners: ((signal: string) => void)[] = []
 
@@ -352,7 +353,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       generateWebhookToken: vi.fn(async () => 'webhook-token'),
     },
     history: {
-      load: vi.fn(() => ({ folders: [ ], chats: [ ], quickPrompts: [ ] })),
+      version: kHistoryVersion,
+      load: vi.fn(() => ({ version: kHistoryVersion, folders: [ ], chats: [ ], quickPrompts: [ ] })),
       save: vi.fn(),
       loadChat: vi.fn((workspaceId: string, chatId: string) => ({
         uuid: chatId,
@@ -442,7 +444,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       create: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
-      addDocument: vi.fn(async () => 'uuid'),
+      addDocument: vi.fn(async () =>  'uuid'),
       removeDocument: vi.fn(async () => true),
       query: vi.fn(async () => [
         {
@@ -595,6 +597,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       import: vi.fn(() => true),
     },
     workspace: {
+      defaultId: kDefaultWorkspaceId,
       list: vi.fn(() => []),
       load: vi.fn(() => null),
       save: vi.fn(() => true),
