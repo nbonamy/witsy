@@ -1,7 +1,7 @@
 import { vi, beforeEach, expect, test, describe } from 'vitest'
 import { useWindowMock } from '@tests/mocks/window'
 import * as workspace from '@main/workspace'
-import { DEFAULT_WORKSPACE_ID } from '@main/workspace'
+import { kDefaultWorkspaceId } from '@/consts'
 import { app } from 'electron'
 import fs from 'fs'
 
@@ -204,7 +204,7 @@ describe('migrateExistingItemsToWorkspace', () => {
   })
 
   test('should migrate existing folders and files to workspace', () => {
-    const workspaceId = DEFAULT_WORKSPACE_ID
+    const workspaceId = kDefaultWorkspaceId
     
     // Set up existing sources (in userData)
     existingSources = [ 'agents', 'images', 'history.json' ]
@@ -229,7 +229,7 @@ describe('migrateExistingItemsToWorkspace', () => {
   })
 
   test('should not migrate if items already exist in workspace', () => {
-    const workspaceId = DEFAULT_WORKSPACE_ID
+    const workspaceId = kDefaultWorkspaceId
     
     // Set up existing sources and destinations (conflict scenario)
     existingSources = ['agents', 'commands.json']
@@ -242,7 +242,7 @@ describe('migrateExistingItemsToWorkspace', () => {
   })
 
   test('should return false when no items to migrate', () => {
-    const workspaceId = DEFAULT_WORKSPACE_ID
+    const workspaceId = kDefaultWorkspaceId
     
     // Set up no existing sources
     existingSources = []
@@ -255,7 +255,7 @@ describe('migrateExistingItemsToWorkspace', () => {
   })
 
   test('should migrate partial items successfully', () => {
-    const workspaceId = DEFAULT_WORKSPACE_ID
+    const workspaceId = kDefaultWorkspaceId
     
     // Set up only some existing sources
     existingSources = ['agents', 'commands.json']
@@ -276,7 +276,7 @@ describe('migrateExistingItemsToWorkspace', () => {
   })
 
   test('should continue migration even if some items fail', () => {
-    const workspaceId = DEFAULT_WORKSPACE_ID
+    const workspaceId = kDefaultWorkspaceId
 
     // Set up existing sources
     existingSources = ['agents', 'commands.json', 'experts.json']

@@ -1,12 +1,13 @@
 
-import { History, Chat } from 'types/index'
 import { App } from 'electron'
-import { notifyBrowserWindows } from './windows'
-import { workspaceFolderPath } from './workspace'
-import Monitor from './monitor'
-import path from 'path'
 import fs from 'fs'
 import { LlmModelOpts } from 'multi-llm-ts'
+import path from 'path'
+import { Chat, History } from 'types/index'
+import Monitor from './monitor'
+import { notifyBrowserWindows } from './windows'
+import { workspaceFolderPath } from './workspace'
+import { kHistoryVersion } from '../consts'
 
 export const kUnusedDelay = 3600000
 
@@ -32,7 +33,7 @@ export const loadHistory = async (app: App, workspaceId: string): Promise<Histor
 
   // check existence
   if (!fs.existsSync(filepath)) {
-    return { folders: [], chats: [], quickPrompts: [] }
+    return { version: kHistoryVersion, folders: [], chats: [], quickPrompts: [] }
   }
 
   // local
@@ -41,10 +42,20 @@ export const loadHistory = async (app: App, workspaceId: string): Promise<Histor
     // load it
     let history: History = JSON.parse(fs.readFileSync(filepath, 'utf-8'))
 
+    // check version
+    if (history.version && history.version !== kHistoryVersion) {
+      return {
+        version: history.version,
+        folders: [],
+        chats: [],
+        quickPrompts: []
+      }
+    } 
+
     // backwards compatibility
     if (Array.isArray(history)) {
       console.log('Upgrading history data')
-      history = { folders: [], chats: history, quickPrompts: []}
+      history = { version: kHistoryVersion, folders: [], chats: history, quickPrompts: []}
     }
 
     // backwards compatibility for folder defaults
@@ -89,6 +100,7 @@ export const loadHistory = async (app: App, workspaceId: string): Promise<Histor
     monitor.start(filepath)
 
     // done
+    history.version = kHistoryVersion
     return history
   
   } catch (error) {
@@ -102,6 +114,11 @@ export const loadHistory = async (app: App, workspaceId: string): Promise<Histor
 
 export const saveHistory = (app: App, workspaceId: string, history: History) => {
   try {
+
+    // check version
+    if (history.version !== kHistoryVersion) {
+      return
+    }
 
     // local
     const filepath = historyFilePath(app, workspaceId) 

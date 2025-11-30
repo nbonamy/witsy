@@ -57,6 +57,11 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
     ...opts,
   });
 
+  // notify
+  mainWindow.webContents.once('did-finish-load', () => {
+    mainWindow.webContents.send('window-opened');
+  });
+
   mainWindow.webContents.on('context-menu', (event, params: ContextMenuParams) => {
     
     // init
@@ -217,11 +222,6 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   if (process.env.DEBUG && firstOpen) {
     mainWindow.webContents.openDevTools({ mode: 'right' });
   }
-
-  // notify
-  mainWindow.webContents.once('did-finish-load', () => {
-    mainWindow.webContents.send('window-opened');
-  });
 
   // record
   firstOpen = false;

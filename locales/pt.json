@@ -1982,6 +1982,10 @@
       "keepConversations": "Manter conversas",
       "rename": "Renomear Pasta"
     },
+    "historyVersionMismatch": {
+      "text": "A versão do seu histórico de conversas é mais recente do que a versão do aplicativo. Por favor, atualize o @:{'common.appName'} para a versão mais recente para garantir compatibilidade. O histórico de conversas será desativado durante esta sessão.",
+      "title": "Versão do histórico de conversas incompatível"
+    },
     "message": {
       "confirmDelete": "Tem certeza de que deseja excluir esta mensagem? Esta mensagem e todas as mensagens subsequentes da conversa serão excluídas."
     },

@@ -1,0 +1,18 @@
+{
+  "version": 0,
+  "folders": [
+    {
+      "id": "1",
+      "name": "Test",
+      "chats": []
+    }
+  ],
+  "chats": [
+    {
+      "uuid": "1",
+      "title": "Test Chat",
+      "messages": []
+    }
+  ],
+  "quickPrompts": ["test"]
+}

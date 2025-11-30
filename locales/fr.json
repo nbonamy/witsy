@@ -1963,6 +1963,10 @@
       "keepConversations": "Conserver les conversations",
       "rename": "Renommer le dossier"
     },
+    "historyVersionMismatch": {
+      "text": "La version de votre historique de conversation est plus récente que celle de l'application. Veuillez mettre à jour @:{'common.appName'} vers la dernière version pour assurer la compatibilité. L'historique des conversations sera désactivé durant cette session.",
+      "title": "Incompatibilité de version de l'historique des conversions"
+    },
     "message": {
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce message ? Ce message et tous les messages suivants de la conversation seront supprimés."
     },

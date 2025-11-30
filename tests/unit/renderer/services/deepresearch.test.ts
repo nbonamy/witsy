@@ -14,7 +14,7 @@ import SearchPlugin from '@services/plugins/search'
 import Generator from '@services/generator'
 import AgentWorkflowExecutor, { AgentWorkflowExecutorOpts } from '@services/agent_executor_workflow'
 import { AgentRun, AgentRunTrigger } from '@/types/agents'
-import { DEFAULT_WORKSPACE_ID } from '@main/workspace'
+import { kDefaultWorkspaceId } from '@/consts'
 import { replacePromptInputs } from '@services/prompt'
 
 // Mock dependencies
@@ -377,7 +377,7 @@ test('Synthesis agent parameters', () => {
 })
 
 test('DeepResearchMultiStep creation', () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, kDefaultWorkspaceId)
   expect(deepResearch).toBeInstanceOf(DeepResearchMultiStep)
   expect(deepResearch.config).toBe(mockConfig)
 })
@@ -386,7 +386,7 @@ test('DeepResearchMultiStep complete agent chain execution', async () => {
   // Reset mocks to track calls
   vi.clearAllMocks()
 
-  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, kDefaultWorkspaceId)
   const chat = new Chat()
   chat.messages = [
     new Message('system', 'You are a deep research assistant'),
@@ -574,7 +574,7 @@ test('DeepResearchMultiStep JSON parsing error handling', async () => {
   // @ts-expect-error mock
   vi.mocked(AgentWorkflowExecutor).mockImplementation(() => mockExecutorInstance)
   
-  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, kDefaultWorkspaceId)
   const chat = new Chat()
   chat.messages = [
     new Message('system', 'You are a helpful assistant'),
@@ -591,7 +591,7 @@ test('DeepResearchMultiStep JSON parsing error handling', async () => {
 })
 
 test('DeepResearchMultiStep abort handling', async () => {
-  const deepResearch = new DeepResearchMultiStep(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearch = new DeepResearchMultiStep(mockConfig, kDefaultWorkspaceId)
   const chat = new Chat()
   chat.messages = [
     new Message('system', 'You are a helpful assistant'),
@@ -636,14 +636,14 @@ test('DeepResearchMultiStep abort handling', async () => {
 
 
 test('DeepResearchMultiAgent creation', () => {
-  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, kDefaultWorkspaceId)
   expect(deepResearch).toBeInstanceOf(DeepResearchMultiAgent)
   expect(deepResearch.config).toBe(mockConfig)
   expect(deepResearch.storage).toEqual({})
 })
 
 test('DeepResearchMultiAgent storage and retrieval', async () => {
-  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, kDefaultWorkspaceId)
   const testData = { key: 'value', number: 42 }
   
   const id = await deepResearch.store(testData)
@@ -655,7 +655,7 @@ test('DeepResearchMultiAgent storage and retrieval', async () => {
 })
 
 test('DeepResearchMultiAgent retrieve non-existent key', async () => {
-  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, kDefaultWorkspaceId)
   const result = await deepResearch.retrieve('non-existent-key')
   expect(result).toBeUndefined()
 })
@@ -663,7 +663,7 @@ test('DeepResearchMultiAgent retrieve non-existent key', async () => {
 test('DeepResearchMultiAgent engine setup', async () => {
   vi.clearAllMocks()
   
-  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, kDefaultWorkspaceId)
   const chat = new Chat()
   chat.messages = []
 
@@ -682,7 +682,7 @@ test('DeepResearchMultiAgent engine setup', async () => {
 test('DeepResearchMultiAgent system message setup', async () => {
   vi.clearAllMocks()
   
-  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, kDefaultWorkspaceId)
   const chat = new Chat()
   chat.messages = []
 
@@ -705,7 +705,7 @@ test('DeepResearchMultiAgent system message setup', async () => {
 test('DeepResearchMultiAgent generator call', async () => {
   vi.clearAllMocks()
   
-  const deepResearch = new DeepResearchMultiAgent(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearch = new DeepResearchMultiAgent(mockConfig, kDefaultWorkspaceId)
   const chat = new Chat()
   chat.messages = []
 
@@ -790,7 +790,7 @@ test('DeepResearchAgentLoop - Main loop agent schema', () => {
 })
 
 test('DeepResearchAgentLoop - Constructor initializes agent mapping', () => {
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
 
   // @ts-expect-error accessing private property for testing
   const agentMap = deepResearchAL.deepResearchAgents
@@ -805,7 +805,7 @@ test('DeepResearchAgentLoop - Constructor initializes agent mapping', () => {
 })
 
 test('DeepResearchAgentLoop - Uses mainLoopAgent by default', () => {
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
 
   // Verify the class is instantiated correctly
   expect(deepResearchAL).toBeDefined()
@@ -825,7 +825,7 @@ test('DeepResearchAgentLoop - getComponentType helper maps agent names correctly
 })
 
 test('DeepResearchAgentLoop - buildReflectionContext with no reflections', () => {
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
 
   // @ts-expect-error accessing private method for testing
   const context = deepResearchAL.buildReflectionContext()
@@ -834,7 +834,7 @@ test('DeepResearchAgentLoop - buildReflectionContext with no reflections', () =>
 })
 
 test('DeepResearchAgentLoop - buildReflectionContext with reflections', () => {
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
 
   // @ts-expect-error accessing private property for testing
   deepResearchAL.reflections = [
@@ -851,7 +851,7 @@ test('DeepResearchAgentLoop - buildReflectionContext with reflections', () => {
 })
 
 test('DeepResearchAgentLoop - buildReflectionContext with tool abortions', () => {
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
 
   // @ts-expect-error accessing private property for testing
   deepResearchAL.toolAbortions = [{
@@ -869,7 +869,7 @@ test('DeepResearchAgentLoop - buildReflectionContext with tool abortions', () =>
 })
 
 test('DeepResearchAgentLoop - resolveToolPlugins returns empty for no catalog', () => {
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
 
   // @ts-expect-error accessing private method for testing
   const plugins = deepResearchAL.resolveToolPlugins(['search_internet'])
@@ -878,7 +878,7 @@ test('DeepResearchAgentLoop - resolveToolPlugins returns empty for no catalog', 
 })
 
 test('DeepResearchAgentLoop - generateStatusUpdate sets transient and status', async () => {
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
   const message = new Message('assistant', '')
   const opts = { ...mockOpts, engine: 'test-engine', model: 'test-model' }
 
@@ -1020,7 +1020,7 @@ test('DeepResearchAgentLoop - Full workflow with mocked Generator', async () => 
     stop: vi.fn()
   }))
 
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
   const result = await deepResearchAL.run(mockEngine, chat, mockOpts)
 
   expect(result).toBe('success')
@@ -1085,7 +1085,7 @@ test('DeepResearchAgentLoop - Workflow with search and analysis', async () => {
     stop: vi.fn()
   }))
 
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
   const result = await deepResearchAL.run(mockEngine, chat, mockOpts)
 
   expect(result).toBe('success')
@@ -1104,7 +1104,7 @@ test('DeepResearchAgentLoop - Error handling in runAgentLoop', async () => {
     stop: vi.fn()
   }))
 
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
   const result = await deepResearchAL.run(mockEngine, chat, mockOpts)
 
   expect(result).toBe('error')
@@ -1147,7 +1147,7 @@ test('DeepResearchAgentLoop - Abort signal handling', async () => {
     stop: vi.fn()
   }))
 
-  const deepResearchAL = new DeepResearchAL(mockConfig, DEFAULT_WORKSPACE_ID)
+  const deepResearchAL = new DeepResearchAL(mockConfig, kDefaultWorkspaceId)
   const result = await deepResearchAL.run(mockEngine, chat, { ...mockOpts, abortSignal: abortController.signal })
 
   expect(result).toBe('stopped')

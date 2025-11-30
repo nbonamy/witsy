@@ -4,7 +4,7 @@ import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '@tests/mocks/window'
 import { stubTeleport } from '@tests/mocks/stubs'
 import { store, kMediaChatId } from '@services/store'
-import { DEFAULT_WORKSPACE_ID } from '@main/workspace'
+import { kDefaultWorkspaceId, kHistoryVersion } from '@/consts'
 import { Configuration } from '@/types/config'
 import ImageCreator from '@services/image'
 import DesignStudio from '@screens/DesignStudio.vue'
@@ -62,6 +62,7 @@ beforeAll(() => {
   }
   
   window.api.history.load = vi.fn(() => ({
+    version: kHistoryVersion,
     folders: [],
     chats: [
       Chat.fromJson({
@@ -453,7 +454,7 @@ test('Upload', async () => {
       filename: expect.any(String),
       directory: 'userData',
       subdir: 'images',
-      workspace: DEFAULT_WORKSPACE_ID,
+      workspace: kDefaultWorkspaceId,
       prompt: false
     }
   })

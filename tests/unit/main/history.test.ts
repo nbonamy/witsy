@@ -1,9 +1,11 @@
 
-import { expect, test, vi } from 'vitest'
+import { expect, test, vi, describe } from 'vitest'
 import { extractAttachmentsFromHistory, listUnusedAttachments, loadHistory, saveHistory, kUnusedDelay } from '@main/history'
 import { App, app } from 'electron'
+import { kHistoryVersion } from '@/consts'
 import Chat from '@models/chat'
 import fs from 'fs'
+import { History } from '@/types/index'
 
 vi.mock('electron', async() => {
   return {
@@ -15,11 +17,13 @@ vi.mock('electron', async() => {
   
 vi.mock('fs', async (importOriginal) => {
   const mod: any = await importOriginal()
+  const realReadFileSync = mod.readFileSync
   return { default: {
     ...mod,
     unlinkSync: vi.fn(),
     writeFileSync: vi.fn(),
     existsSync: vi.fn(() => true),
+    readFileSync: vi.fn((path: string, encoding?: string) => realReadFileSync(path, encoding)),
     readdirSync: vi.fn(() => [
       'image1.png',
       'image2.png',
@@ -176,4 +180,92 @@ test('Unused attachments', async () => {
       { url: 'file://images/image5.png' }
     ] } ] },
   ] as Chat[])).toEqual(['workspaces/test-workspace/images/image1.png', 'workspaces/test-workspace/images/image2.png', 'workspaces/test-workspace/images/image4.png', 'workspaces/test-workspace/images/image5.png'])
+})
+
+describe('Version handling', () => {
+
+  test('Load history with current version', async () => {
+    const history = await loadHistory(app, 'test-workspace')
+    expect(history.version).toBe(kHistoryVersion)
+    expect(history.folders).toHaveLength(2)
+    expect(history.chats).toHaveLength(3)
+  })
+
+  test('Load history without version (backward compatibility)', async () => {
+    const history = await loadHistory(app, 'version-test-no-version')
+    expect(history.version).toBe(kHistoryVersion)
+    expect(history.folders).toHaveLength(0)
+    expect(history.chats).toHaveLength(0)
+  })
+
+  test('Load history with array format (backward compatibility)', async () => {
+    const history = await loadHistory(app, 'version-test-array')
+    expect(history.version).toBe(kHistoryVersion)
+    expect(history.folders).toHaveLength(0)
+    expect(history.chats).toHaveLength(2)
+    expect(history.quickPrompts).toHaveLength(0)
+  })
+
+  test('Load history with newer version', async () => {
+    const history = await loadHistory(app, 'version-test-newer')
+    expect(history.version).toBe(2)
+    expect(history.folders).toHaveLength(0)
+    expect(history.chats).toHaveLength(0)
+    expect(history.quickPrompts).toHaveLength(0)
+  })
+
+  test('Load history with version 0 (treated as no version)', async () => {
+    const history = await loadHistory(app, 'version-test-older')
+    // Version 0 is falsy, so treated same as missing version - gets upgraded
+    expect(history.version).toBe(kHistoryVersion)
+    expect(history.folders).toHaveLength(1)
+    expect(history.chats).toHaveLength(1)
+    expect(history.quickPrompts).toHaveLength(1)
+  })
+
+  test('Save history with current version', async () => {
+    const history: History = {
+      version: kHistoryVersion,
+      folders: [],
+      chats: [],
+      quickPrompts: []
+    }
+
+    saveHistory(app, 'version-test', history)
+    expect(fs.writeFileSync).toHaveBeenCalled()
+
+    const savedData = JSON.parse(vi.mocked(fs.writeFileSync).mock.calls[0][1] as string)
+    expect(savedData.version).toBe(kHistoryVersion)
+  })
+
+  test('Save history with newer version does not write', async () => {
+    vi.clearAllMocks()
+    const history: History = {
+      version: kHistoryVersion + 1,
+      folders: [],
+      chats: [],
+      quickPrompts: []
+    }
+
+    saveHistory(app, 'version-test', history)
+    expect(fs.writeFileSync).not.toHaveBeenCalled()
+  })
+
+  test('Save history with older version does not write', async () => {
+    vi.clearAllMocks()
+    const history: History = {
+      version: kHistoryVersion - 1,
+      folders: [],
+      chats: [],
+      quickPrompts: []
+    }
+
+    saveHistory(app, 'version-test', history)
+    expect(fs.writeFileSync).not.toHaveBeenCalled()
+  })
+
+  test('Loaded history always gets current version assigned', async () => {
+    const history = await loadHistory(app, 'version-test-no-version')
+    expect(history.version).toBe(kHistoryVersion)
+  })
 })
