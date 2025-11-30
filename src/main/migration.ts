@@ -1,9 +1,10 @@
 
 import { App } from 'electron'
-import { History, ChatMetadata } from 'types/index'
+import { History, ChatMetadata, Chat } from 'types/index'
 import { historyFilePath } from './history'
 import { chatsFolder, saveChat, listChatIds, chatToMetadata } from './chat'
 import fs from 'fs'
+import { kHistoryVersion } from '@/consts'
 
 /**
  * Migrate history.json from monolithic format to individual chat files
@@ -13,13 +14,8 @@ export const migrateHistoryToIndividualChats = (
   app: App,
   workspaceId: string
 ): boolean => {
+  
   const historyPath = historyFilePath(app, workspaceId)
-
-  // Check if history.json exists
-  if (!fs.existsSync(historyPath)) {
-    console.log('No history.json to migrate')
-    return false
-  }
 
   // Check if already migrated by looking for existing chat files
   const chatsDir = chatsFolder(app, workspaceId)
@@ -112,9 +108,10 @@ export const migrateHistoryToIndividualChats = (
   // Create new metadata-only history.json
   const metadata: ChatMetadata[] = oldHistory.chats.map(chatToMetadata)
 
-  const newHistory = {
+  const newHistory: History = {
+    version: kHistoryVersion,
     folders: oldHistory.folders,
-    chats: metadata,
+    chats: metadata as Chat[],
     quickPrompts: oldHistory.quickPrompts
   }
 

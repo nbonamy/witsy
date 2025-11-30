@@ -38,19 +38,17 @@ export const loadHistory = async (app: App, workspaceId: string): Promise<Histor
     return { version: kHistoryVersion, folders: [], chats: [], quickPrompts: [] }
   }
 
-  // Try to migrate to individual chat files if not already done
-  // This is a one-time automatic migration
-  try {
-    migrateHistoryToIndividualChats(app, workspaceId)
-  } catch (error) {
-    console.error('Migration failed, continuing with old format:', error)
-  }
-
   // local
   try {
 
     // load it
     let history: History = JSON.parse(fs.readFileSync(filepath, 'utf-8'))
+
+    // migration from v1
+    if (!history.version || history.version <= 1) {
+      migrateHistoryToIndividualChats(app, workspaceId)
+      history = JSON.parse(fs.readFileSync(filepath, 'utf-8'))
+    }
 
     // check version
     if (history.version && history.version !== kHistoryVersion) {
@@ -60,7 +58,7 @@ export const loadHistory = async (app: App, workspaceId: string): Promise<Histor
         chats: [],
         quickPrompts: []
       }
-    } 
+    }
 
     // backwards compatibility
     if (Array.isArray(history)) {
