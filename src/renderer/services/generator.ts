@@ -4,6 +4,7 @@ import { DocRepoQueryResponseItem } from 'types/rag'
 import Message from '@models/message'
 import { i18nInstructions, t } from './i18n'
 import LlmFactory from './llms/llm'
+import { Expert } from '@/types'
 
 export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title' | 'generation_done'
 
@@ -14,6 +15,7 @@ export interface GenerationOpts extends LlmCompletionOpts {
   streaming?: boolean
   docrepo?: string
   sources?: boolean
+  expert?: Expert
   noToolsInContent?: boolean
 }
 

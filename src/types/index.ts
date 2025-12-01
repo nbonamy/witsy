@@ -59,13 +59,13 @@ export type ToolCallInfo = {
 
 export type MessageType = 'text' | 'image'
 
-export type MessageExecutionType = 'prompt' | 'deepresearch' | 'agent'
+export type MessageExecutionMode = 'prompt' | 'deepresearch' | 'agent'
 
 export interface Message extends IMessageBase {
   uuid: string
   type: MessageType
   uiOnly: boolean
-  execType: MessageExecutionType
+  execMode: MessageExecutionMode
   createdAt: number
   engine: string
   model: string

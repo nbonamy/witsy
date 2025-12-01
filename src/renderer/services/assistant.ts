@@ -1,11 +1,11 @@
 
-import { LlmEngine } from 'multi-llm-ts'
-import { CodeExecutionMode, Configuration } from 'types/config'
-import { markRaw } from 'vue'
+import { MessageExecutionMode } from '@/types'
 import Attachment from '@models/attachment'
 import Chat from '@models/chat'
 import Message from '@models/message'
-import { Expert, MessageExecutionType } from 'types'
+import { LlmEngine } from 'multi-llm-ts'
+import { CodeExecutionMode, Configuration } from 'types/config'
+import { markRaw } from 'vue'
 import { DeepResearch } from './deepresearch'
 import DeepResearchAL from './deepresearch_al'
 import DeepResearchMultiAgent from './deepresearch_ma'
@@ -18,11 +18,10 @@ import { availablePlugins } from './plugins/plugins'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
-  execType?: MessageExecutionType
+  execMode?: MessageExecutionMode
   titling?: boolean
   instructions?: string|null
   attachments?: Attachment[]
-  expert?: Expert
   noMarkdown?: boolean
 }
 
@@ -164,7 +163,7 @@ export default class {
     userMessage.setExpert(fullExpertI18n(opts.expert))
     userMessage.engine = opts.engine
     userMessage.model = opts.model
-    userMessage.execType = opts?.execType || 'prompt'
+    userMessage.execMode = opts?.execMode || 'prompt'
     opts.attachments.map(a => userMessage.attach(a))
     this.chat.addMessage(userMessage)
 
@@ -179,7 +178,7 @@ export default class {
     const assistantMessage = new Message('assistant')
     assistantMessage.engine = opts.engine
     assistantMessage.model = opts.model
-    assistantMessage.execType = opts?.execType || 'prompt'
+    assistantMessage.execMode = opts?.execMode || 'prompt'
     this.chat.addMessage(assistantMessage)
     llmCallback?.call(null, null)
 
@@ -188,7 +187,7 @@ export default class {
 
     // deep research will come with its own instructions
     let rc: GenerationResult = 'error'
-    if (userMessage.execType === 'deepresearch') {
+    if (userMessage.execMode === 'deepresearch') {
       // const dpOpts = useDeepResearchMultiAgent(this.config, this.llm, this.chat, opts)
       // this.chat.messages[0].content = this.getSystemInstructions(this.chat.messages[0].content)
       // opts = { ...opts, ...dpOpts }

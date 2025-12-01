@@ -169,7 +169,7 @@ test('Sends prompt', async () => {
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: null, execType: 'prompt',
+    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: null, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -179,7 +179,7 @@ test('Sends prompt with instructions', async () => {
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', instructions: 'instructions' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: 'instructions', attachments: [], docrepo: null, expert: null, execType: 'prompt',
+    model: 'gpt-4.1', instructions: 'instructions', attachments: [], docrepo: null, expert: null, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -189,7 +189,7 @@ test('Sends prompt with attachment', async () => {
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: ['file'] })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: null, attachments: ['file'], docrepo: null, expert: null, execType: 'prompt',
+    model: 'gpt-4.1', instructions: null, attachments: ['file'], docrepo: null, expert: null, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -199,7 +199,7 @@ test('Sends prompt with doc repo', async () => {
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', docrepo: 'docrepo' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: 'docrepo', expert: null, execType: 'prompt',
+    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: 'docrepo', expert: null, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -209,17 +209,17 @@ test('Sends prompt with expert', async () => {
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: { id: 'expert', prompt: 'system' }, execType: 'prompt',
+    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: { id: 'expert', prompt: 'system' }, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with deepResearch', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', execType: 'deepresearch' })
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', execMode: 'deepresearch' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: null, execType: 'deepresearch',
+    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: null, execMode: 'deepresearch',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -362,7 +362,7 @@ test('Select chat', async () => {
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', attachments: [], docrepo: null, expert: null, execType: 'prompt',
+    model: 'gpt-4.1', attachments: [], docrepo: null, expert: null, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -399,7 +399,7 @@ test('Fork Chat on User Message', async () => {
     }) ],
     docrepo: 'docrepo',
     expert: expect.objectContaining({ id: 'expert'}),
-    execType: 'prompt',
+    execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })

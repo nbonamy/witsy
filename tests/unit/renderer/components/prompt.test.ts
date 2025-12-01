@@ -166,7 +166,7 @@ test('Send on click', async () => {
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     prompt: 'this is my prompt',
     attachments: [],
-    execType: 'prompt',
+    execMode: 'prompt',
   })
   expect(prompt.element.value).toBe('')
 })
@@ -179,7 +179,7 @@ test('Sends on enter', async () => {
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     prompt: 'this is my prompt',
     attachments: [],
-    execType: 'prompt',
+    execMode: 'prompt',
   })
   expect(prompt.element.value).toBe('')
 })
@@ -200,7 +200,7 @@ test('Sends with right parameters', async () => {
     ]),
     expert: expect.objectContaining({ id: 'uuid3', name: 'actor3', prompt: 'prompt3' }),
     docrepo: 'docrepo',
-    execType: 'deepresearch',
+    execMode: 'deepresearch',
   }])
   expect(prompt.element.value).toBe('')
 })
@@ -525,7 +525,7 @@ test('Stores command for later', async () => {
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
-    execType: 'prompt',
+    execMode: 'prompt',
   })
 })
 
@@ -543,7 +543,7 @@ test('Selects command and run', async () => {
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
-    execType: 'prompt',
+    execMode: 'prompt',
   })
 })
 

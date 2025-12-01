@@ -184,26 +184,26 @@
 
 <script setup lang="ts">
 
-import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, FolderIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, MoveLeftIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
-import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
-import { computed, nextTick, onMounted, onBeforeUnmount, PropType, ref, watch } from 'vue'
 import Waveform from '@components/Waveform.vue'
-import useAudioRecorder from '../audio/audio_recorder'
-import Dialog from '@renderer/utils/dialog'
 import useEventBus from '@composables/event_bus'
-import ImageUtils from '@renderer/utils/image_utils'
-import useTipsManager from '@renderer/utils/tips_manager'
-import * as ts from '@renderer/utils/tool_selection'
-import useTranscriber from '../audio/transcriber'
-import LlmFactory, { favoriteMockEngine, ILlmManager } from '@services/llms/llm'
 import Attachment from '@models/attachment'
 import Chat from '@models/chat'
 import Message from '@models/message'
-import { commandI18n, expertI18n, categoryI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from '@services/i18n'
+import Dialog from '@renderer/utils/dialog'
+import ImageUtils from '@renderer/utils/image_utils'
+import useTipsManager from '@renderer/utils/tips_manager'
+import * as ts from '@renderer/utils/tool_selection'
+import { categoryI18n, commandI18n, expertI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from '@services/i18n'
+import LlmFactory, { favoriteMockEngine, ILlmManager } from '@services/llms/llm'
 import { store } from '@services/store'
-import { Command, CustomInstruction, Expert, MessageExecutionType } from 'types/index'
+import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, FolderIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
+import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
+import { Command, CustomInstruction, Expert, MessageExecutionMode } from 'types/index'
 import { McpServerWithTools, McpToolUnique } from 'types/mcp'
 import { DocumentBase } from 'types/rag'
+import { computed, nextTick, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue'
+import useAudioRecorder from '../audio/audio_recorder'
+import useTranscriber from '../audio/transcriber'
 import { isSTTReady, StreamingChunk } from '../voice/stt'
 import AttachmentView from './Attachment.vue'
 import ButtonIcon from './ButtonIcon.vue'
@@ -219,7 +219,7 @@ export type SendPromptParams = {
   attachments?: Attachment[]
   docrepo?: string,
   expert?: Expert,
-  execType?: MessageExecutionType
+  execMode?: MessageExecutionMode
 }
 
 export type RunAgentParams = {
@@ -623,7 +623,7 @@ const onSendPrompt = () => {
       attachments: attachments.value,
       docrepo: docrepo.value,
       expert: store.experts.find((e) => e.id === expert.value?.id),
-      execType: deepResearchActive.value ? 'deepresearch' : 'prompt',
+      execMode: deepResearchActive.value ? 'deepresearch' : 'prompt',
     }
     emit('prompt', sendPromptParams)
     attachments.value = []
