@@ -28,21 +28,23 @@ export interface AssistantCompletionOpts extends GenerationOpts {
 export default class {
 
   config: Configuration
-  workspaceId: string
   llmManager: ILlmManager
   deepResearch: DeepResearch
   llm: LlmEngine|null
   chat: Chat
 
-  constructor(config: Configuration, workspaceId?: string) {
+  constructor(config: Configuration) {
     this.config = config
     this.llm = null
     this.deepResearch = null
-    this.workspaceId = workspaceId || config.workspaceId
     this.llmManager = LlmFactory.manager(config)
     this.chat = new Chat()
   }
 
+  get workspaceId(): string {
+    return this.config.workspaceId
+  }
+  
   setChat(chat: Chat) {
     this.chat = chat
   }

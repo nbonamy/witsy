@@ -14,7 +14,7 @@ vi.mock('@services/llms/manager.ts', async () => {
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
   LlmManager.prototype.isEngineConfigured = vi.fn(() => true)
   LlmManager.prototype.getEngineName = () => 'mock'
-  LlmManager.prototype.getCustomEngines = () => []
+  LlmManager.prototype.getCustomEngines = (): string[] => []
   LlmManager.prototype.getFavoriteId = () => 'favid'
   LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
   LlmManager.prototype.getChatModel = vi.fn(() => ({ id: 'chat', name: 'chat', ...defaultCapabilities }))
@@ -88,7 +88,7 @@ beforeEach(() => {
   }
 
   // init assistant
-  assistant = new Assistant(store.config, store.workspace.uuid)
+  assistant = new Assistant(store.config)
   assistant!.setLlm(new LlmMock({}))
   assistant.initLlm = () => {}
 })
