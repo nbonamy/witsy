@@ -141,7 +141,7 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp, 
       }
 
       // Create assistant and chat
-      const assistant = new Assistant(settings, settings.workspaceId)
+      const assistant = new Assistant(settings)
       const chat = new Chat()
       chat.setEngineModel(engine, model)
       assistant.setChat(chat)
