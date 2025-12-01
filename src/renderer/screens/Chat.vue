@@ -405,7 +405,7 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
       attachments: message.attachments,
       docrepo: fork.docrepo,
       expert: message.expert,
-      execType: message.execType || 'prompt',
+      execMode: message.execMode || 'prompt',
     })
   }
 }
@@ -479,7 +479,7 @@ const onDeleteFolder = async (folderId: string) => {
 const onSendPrompt = async (params: SendPromptParams) => {
 
   // deconstruct params
-  const { instructions, prompt, attachments, docrepo, expert, execType } = params
+  const { instructions, prompt, attachments, docrepo, expert, execMode } = params
 
   // if the chat is still in an agentic context then run the agent
   const agent = isAgentConversation(assistant.value.chat)
@@ -533,7 +533,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     attachments: attachments || [],
     docrepo: docrepo || null,
     expert: expert || null,
-    execType: execType || 'prompt',
+    execMode: execMode || 'prompt',
     abortSignal: abortController.signal,
   }, (chunk) => {
   
@@ -697,7 +697,7 @@ const onRetryGeneration = async (message: Message) => {
       attachments: lastMessage.attachments,
       docrepo: assistant.value.chat.docrepo,
       expert: lastMessage.expert,
-      execType: lastMessage.execType,
+      execMode: lastMessage.execMode,
     })
 
   }
@@ -737,7 +737,7 @@ const onResendAfterEdit = async (payload: { message: Message, newContent: string
       attachments: payload.message.attachments,
       docrepo: assistant.value.chat.docrepo,
       expert: payload.message.expert,
-      execType: payload.message.execType,
+      execMode: payload.message.execMode,
     })
 
   }

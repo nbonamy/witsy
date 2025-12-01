@@ -1,6 +1,6 @@
 
 import { LlmChunkContent, LlmChunkTool, LlmRole, LlmUsage, Message as MessageBase } from 'multi-llm-ts'
-import { Message as IMessage, MessageExecutionType, MessageType, ToolCall } from 'types'
+import { Message as IMessage, MessageExecutionMode, MessageType, ToolCall } from 'types'
 import { A2APromptOpts } from 'types/agents'
 import Attachment from './attachment'
 import Expert from './expert'
@@ -10,7 +10,7 @@ export default class Message extends MessageBase implements IMessage {
   uuid: string
   type: MessageType
   uiOnly: boolean
-  execType: MessageExecutionType
+  execMode: MessageExecutionMode
   createdAt: number
   engine: string
   model: string
@@ -34,7 +34,7 @@ export default class Message extends MessageBase implements IMessage {
     this.createdAt = Date.now()
     this.type = 'text'
     this.uiOnly = false
-    this.execType = 'prompt'
+    this.execMode = 'prompt'
     this.toolCalls = []
     this.attachments = []
     this.transient = (content == null)
@@ -53,7 +53,7 @@ export default class Message extends MessageBase implements IMessage {
     message.uiOnly = obj.uiOnly || false
     message.engine = obj.engine || null
     message.model = obj.model || null
-    message.execType = obj.execType || (obj.deepResearch ? 'deepresearch' : (obj.agentId ? 'agent' : 'prompt'))
+    message.execMode = obj.execMode || (obj.deepResearch ? 'deepresearch' : (obj.agentId ? 'agent' : 'prompt'))
     message.createdAt = obj.createdAt
     message.attachments =
       obj.attachment ? [ Attachment.fromJson(obj.attachment) ] :

@@ -31,7 +31,7 @@ test('Build from JSON', () => {
   expect(message1.uuid).toBe('uuid')
   expect(message1.role).toBe('role')
   expect(message1.type).toBe('text')
-  expect(message1.execType).toBe('prompt')
+  expect(message1.execMode).toBe('prompt')
   expect(message1.content).toBe('content')
   expect(message1.attachments).toStrictEqual([])
   expect(message1.transient).toBe(false)
@@ -43,14 +43,14 @@ test('Build from JSON', () => {
     createdAt: 1,
     role: 'role',
     content: 'content',
-    execType: 'deepresearch',
+    execMode: 'deepresearch',
     attachment: null,
     transient: true,
   })
   expect(message2.uuid).toBe('uuid')
   expect(message2.role).toBe('role')
   expect(message2.type).toBe('text')
-  expect(message2.execType).toBe('deepresearch')
+  expect(message2.execMode).toBe('deepresearch')
   expect(message2.content).toBe('content')
   expect(message2.attachments).toStrictEqual([])
   expect(message2.transient).toBe(false)
@@ -69,7 +69,7 @@ test('Build from JSON', () => {
   expect(message3.uuid).toBe('uuid')
   expect(message3.role).toBe('role')
   expect(message3.type).toBe('text')
-  expect(message3.execType).toBe('deepresearch')
+  expect(message3.execMode).toBe('deepresearch')
   expect(message3.content).toBe('content')
   expect(message3.attachments).toHaveLength(1)
   expect(message3.transient).toBe(false)
@@ -91,7 +91,7 @@ test('Build from JSON', () => {
   expect(message4.uuid).toBe('uuid')
   expect(message4.role).toBe('role')
   expect(message4.type).toBe('text')
-  expect(message4.execType).toBe('agent')
+  expect(message4.execMode).toBe('agent')
   expect(message4.content).toBe('content')
   expect(message4.attachments).toHaveLength(2)
   expect(message4.transient).toBe(false)

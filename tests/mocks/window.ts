@@ -1,6 +1,5 @@
 
-import { vi } from 'vitest'
-import { kDefaultWorkspaceId, kHistoryVersion } from '@/consts'
+import { kHistoryVersion } from '@/consts'
 import { AgentRun, AgentRunStatus, AgentRunTrigger } from '@/types/agents'
 import { FilePickParams } from '@/types/file'
 import { ListDirectoryResponse } from '@/types/filesystem'
@@ -10,6 +9,7 @@ import { DocRepoQueryResponseItem, DocumentBase } from '@/types/rag'
 import { renderMarkdown } from '@main/markdown'
 import Agent from '@models/agent'
 import defaultSettings from '@root/defaults/settings.json'
+import { vi } from 'vitest'
 
 const listeners: ((signal: string) => void)[] = []
 
@@ -353,7 +353,6 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       generateWebhookToken: vi.fn(async () => 'webhook-token'),
     },
     history: {
-      version: kHistoryVersion,
       load: vi.fn(() => ({ version: kHistoryVersion, folders: [ ], chats: [ ], quickPrompts: [ ] })),
       save: vi.fn(),
     },
@@ -437,7 +436,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       create: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
-      addDocument: vi.fn(async () =>  'uuid'),
+      addDocument: vi.fn(async () => 'uuid'),
       removeDocument: vi.fn(async () => true),
       query: vi.fn(async () => [
         {
@@ -590,7 +589,6 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       import: vi.fn(() => true),
     },
     workspace: {
-      defaultId: kDefaultWorkspaceId,
       list: vi.fn(() => []),
       load: vi.fn(() => null),
       save: vi.fn(() => true),
