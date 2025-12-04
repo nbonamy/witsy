@@ -43,7 +43,7 @@ export const loadHistory = async (app: App, workspaceId: string): Promise<Histor
     let history: History = JSON.parse(fs.readFileSync(filepath, 'utf-8'))
 
     // check version
-    if (history.version && history.version !== kHistoryVersion) {
+    if (history.version && history.version > kHistoryVersion) {
       return {
         version: history.version,
         folders: [],
