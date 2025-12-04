@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.2.3] - WIP
+## [3.2.3] - 2015-12-03
 
 ### Added
 - Add Support for Advanced Model Parameters like 'Thinking Mode' for Ollama model (https://github.com/nbonamy/witsy/issues/491)
