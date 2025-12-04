@@ -390,6 +390,7 @@
 
 * {
   font-family: var(--font-family-base);
+  color: var(--text-color);
 }
 
 /* to display emojis on widows */
