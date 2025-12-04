@@ -39,6 +39,7 @@ const emit = defineEmits(['click'])
     margin: 0 0 0.5rem 0;
     font-size: 1.5rem;
     font-weight: var(--font-weight-semibold);
+    color: var(--text-color);
   }
   
   p {
