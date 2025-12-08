@@ -106,12 +106,13 @@ test('Renders default icon for unknown plugin', async () => {
 test('Unwraps proxy tool call to show correct icon', async () => {
   const toolCall: ToolCall = {
     id: 'test1',
-    name: 'code_exec_call_tool',
+    function: 'code_exec_call_tool',
     done: true,
-    params: {
+    args: {
       tool_name: 'search',
       parameters: { query: 'test' }
-    }
+    },
+    result: {}
   }
 
   const wrapper = mount(PluginIcon, {
@@ -129,12 +130,13 @@ test('Unwraps proxy tool call to show correct icon', async () => {
 test('Unwraps proxy tool call to browse plugin', async () => {
   const toolCall: ToolCall = {
     id: 'test2',
-    name: 'code_exec_call_tool',
+    function: 'code_exec_call_tool',
     done: true,
-    params: {
+    args: {
       tool_name: 'browse',
       parameters: { url: 'https://example.com' }
-    }
+    },
+    result: {}
   }
 
   const wrapper = mount(PluginIcon, {
@@ -152,12 +154,13 @@ test('Unwraps proxy tool call to browse plugin', async () => {
 test('Shows workflow icon for proxy tool without tool_name param', async () => {
   const toolCall: ToolCall = {
     id: 'test3',
-    name: 'code_exec_call_tool',
+    function: 'code_exec_call_tool',
     done: true,
-    params: {
+    args: {
       // No tool_name parameter
       some_other_param: 'value'
-    }
+    },
+    result: {}
   }
 
   const wrapper = mount(PluginIcon, {

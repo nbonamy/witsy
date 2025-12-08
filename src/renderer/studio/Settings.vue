@@ -308,7 +308,7 @@ const canEdit = computed(() => {
 })
 
 const canAttach = computed(() => {
-  return engine.value === 'google' && model.value.includes('-image')
+  return engine.value === 'google' && (model.value.includes('-image') || model.value.includes('nano-banana') )
 })
 
 const modelHasDefaults = computed(() => {
@@ -444,7 +444,7 @@ const canTransform = computed(() => {
   return ['falai', 'replicate'].includes(engine.value) ||
     //(engine.value === 'google' && mediaType.value === 'image' && !props.currentMedia?.isVideo()) ||
     (engine.value === 'openai' && model.value.startsWith('gpt-image-') && mediaType.value === 'image' && !props.currentMedia?.isVideo()) ||
-    (engine.value === 'google' && model.value.includes('-image') && mediaType.value === 'image' && !props.currentMedia?.isVideo())
+    (engine.value === 'google' && (model.value.includes('-image') || model.value.includes('nano-banana')) && mediaType.value === 'image' && !props.currentMedia?.isVideo())
 })
 
 const canUpload = computed(() => {

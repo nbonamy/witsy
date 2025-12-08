@@ -1,6 +1,6 @@
 
 import { Size } from 'electron'
-import { Attachment as IAttachmentBase, Message as IMessageBase, LlmChunk, LlmChunkTool, LlmModelOpts, LlmTool, LlmUsage } from 'multi-llm-ts'
+import { Attachment as IAttachmentBase, Message as IMessageBase, LlmChunk, LlmChunkTool, LlmModelOpts, LlmTool, LlmToolCall, LlmUsage } from 'multi-llm-ts'
 import { Application, RunCommandParams } from './automation'
 import { Configuration } from './config'
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './file'
@@ -43,13 +43,10 @@ export interface Attachment extends IAttachmentBase {
   b64Contents(): string
 }
 
-export type ToolCall = {
-  id: string
+export type ToolCall = LlmToolCall & {
   state?: 'preparing' | 'running' | 'completed' | 'canceled' | 'error'
   status?: string
   done: boolean
-  name: string
-  params: any
   result: any
 }
 

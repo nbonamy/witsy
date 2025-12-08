@@ -123,6 +123,7 @@ export default class LlmUtils {
       const model = llmManager.getChatModel(selectedEngine, titlingModel)
       const response = await llm.complete(model, messages, {
         tools: false,
+        toolCallsInThread: false,
         reasoningEffort: 'low',
         thinkingBudget: 0,
         reasoning: false,
@@ -299,7 +300,7 @@ Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Statu
     const toolCalls = message.toolCalls?.length
       ? message.toolCalls
         .filter(tc => tc.state === 'completed')
-        .map(tc => `- ${tc.name}:\n  Parameters: ${JSON.stringify(tc.params)}`).join('\n')//\n  Results: ${JSON.stringify(tc.result)}`).join('\n')
+        .map(tc => `- ${tc.function}:\n  Parameters: ${JSON.stringify(tc.args)}`).join('\n')//\n  Results: ${JSON.stringify(tc.result)}`).join('\n')
       : 'None'
 
     const evaluationInstructions = `You are a quality evaluator for autonomous agent outputs.

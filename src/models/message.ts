@@ -20,10 +20,10 @@ export default class Message extends MessageBase implements IMessage {
   a2aContext?: A2APromptOpts
   transient: boolean
   status?: string
-  toolCalls: ToolCall[]
   usage?: LlmUsage
   edited: boolean
 
+  declare toolCalls: ToolCall[]
   declare attachments: Attachment[]
 
   constructor(role: LlmRole, content?: string) {
@@ -59,20 +59,56 @@ export default class Message extends MessageBase implements IMessage {
       obj.attachment ? [ Attachment.fromJson(obj.attachment) ] :
       (obj.attachments ? obj.attachments.map(Attachment.fromJson) : [])
     message.reasoning = obj.reasoning || null
+    message.thoughtSignature = obj.thoughtSignature || undefined
     message.transient = false
     message.expert = obj.expert ? Expert.fromJson(obj.expert) : undefined
     message.agentId = obj.agentId || undefined
     message.agentRunId = obj.agentRunId || undefined
     message.a2aContext = obj.a2aContext || undefined
-    message.toolCalls = obj.toolCalls || obj.toolCall?.calls?.map((tc: any, idx: number) => ({
-      ...tc,
-      id: (idx + 1).toString(),
-      done: true,
-      status: undefined
-    })) || []
     message.usage = obj.usage || undefined
     message.edited = obj.edited || false
+
+    // tool calls had different formats
+
+    if (obj.toolCalls && Array.isArray(obj.toolCalls)) {
+      
+      message.toolCalls = obj.toolCalls?.map((tc: any): ToolCall => {
+        const toolCall: ToolCall = {
+          ...tc,
+          id: tc.id || tc.tool_call_id,
+          function: tc.function || tc.name,
+          args: tc.args || tc.params,
+        }
+        delete (toolCall as any).name
+        delete (toolCall as any).params
+        delete (toolCall as any).tool_call_id
+        return toolCall
+      })
+    
+    } else if (obj.toolCall && Array.isArray(obj.toolCall.calls)) {
+      
+      message.toolCalls = obj.toolCall?.calls?.map((tc: any, idx: number): ToolCall => {
+        const toolCall: ToolCall = {
+          ...tc,
+          id: (idx + 1).toString(),
+          function: tc.function || tc.name,
+          args: tc.args || tc.params,
+          done: true,
+          status: undefined,
+        }
+        delete (toolCall as any).name
+        delete (toolCall as any).params
+        delete (toolCall as any).tool_call_id
+        return toolCall
+      })
+    
+    } else {
+      message.toolCalls = []
+    }
+    
+    // done
     return message
+  
   }
 
   get contentForModel(): string {
@@ -122,6 +158,9 @@ export default class Message extends MessageBase implements IMessage {
 
   appendText(chunk: LlmChunkContent) {
     super.appendText(chunk)
+    if (chunk.thoughtSignature) {
+      this.thoughtSignature = chunk.thoughtSignature
+    }
     if (chunk?.done) {
       this.transient = false
     }
@@ -131,7 +170,7 @@ export default class Message extends MessageBase implements IMessage {
     
     // find previous
     let call = this.toolCalls.find(c => c.id === toolCall.id)
-    if (call && (call.done || call.name !== toolCall.name)) {
+    if (call && (call.done || call.function !== toolCall.name)) {
       // google does not have a unique id
       // so we use done to move to the next one
       call = null
@@ -142,17 +181,18 @@ export default class Message extends MessageBase implements IMessage {
       call.state = toolCall.state
       call.done = toolCall.done
       call.status = toolCall.status
-      call.params = toolCall.call?.params || null
+      call.args = toolCall.call?.params || null
       call.result = toolCall.call?.result || null
     } else {
       this.toolCalls.push({
         id: toolCall.id,
-        name: toolCall.name,
+        function: toolCall.name,
         state: toolCall.state,
         status: toolCall.status,
         done: toolCall.done,
-        params: toolCall.call?.params || null,
+        args: toolCall.call?.params || null,
         result: toolCall.call?.result || null,
+        thoughtSignature: toolCall.thoughtSignature || null,
       })
       if (addToContent) {
         this.appendText({

@@ -240,7 +240,7 @@ const computeBlocks = (content: string|null): Block[] => {
         if (toolCall && toolCall.done) {
           if (props.showToolCalls === 'always') {
             blocks.push({ type: 'tool', toolCall: toolCall })
-          } else if (toolCall.name === kSearchPluginName) {
+          } else if (toolCall.function === kSearchPluginName) {
             blocks.push({ type: 'search', toolCall: toolCall })
           }
         }
@@ -258,7 +258,7 @@ const computeBlocks = (content: string|null): Block[] => {
         for (const call of props.message.toolCalls) {
           const toolPath = call.result?.path || call.result?.url
           if (toolPath === match[match.length - 1] || toolPath === decodeURIComponent(match[match.length - 1])) {
-            prompt = call.params.prompt
+            prompt = call.args.prompt
             break
           }
         }

@@ -47,8 +47,8 @@ const props = defineProps({
 })
 
 const name = computed(() => {
-  if (props.tool === kCodeExecutionProxyPluginToolName && props.toolCall?.params?.tool_name) {
-    return props.toolCall.params.tool_name
+  if (props.tool === kCodeExecutionProxyPluginToolName && props.toolCall?.args?.tool_name) {
+    return props.toolCall.args.tool_name
   } else {
     return props.tool
   }

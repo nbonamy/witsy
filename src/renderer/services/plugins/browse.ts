@@ -107,6 +107,7 @@ export default class extends Plugin {
 
       // assume it's plain text
       return {
+        title: new URL(parameters.url).hostname,
         content: this.extractSearchChunks(source, parameters),
       }
 
@@ -131,7 +132,7 @@ export default class extends Plugin {
 
     // done
     return {
-      title: title,
+      title: title ?? new URL(parameters.url).hostname,
       content: this.extractSearchChunks(text, parameters),
     }
   }
@@ -145,7 +146,7 @@ export default class extends Plugin {
     const text = window.api.file.extractText(content, format)
 
     return {
-      title: response.url,
+      title: new URL(response.url).hostname,
       content: this.extractSearchChunks(text, parameters),
     }
   }

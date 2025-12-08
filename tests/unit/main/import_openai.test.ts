@@ -192,7 +192,7 @@ describe('OpenAI Import', () => {
           },
           'msg-4': {
             id: 'msg-4',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'assistant' },
               create_time: 1672531260,
@@ -214,6 +214,7 @@ describe('OpenAI Import', () => {
 
       // Mock history
       const mockHistory: History = {
+        version: 1,
         folders: [],
         chats: [],
         quickPrompts: []
@@ -263,6 +264,7 @@ describe('OpenAI Import', () => {
 
     beforeEach(() => {
       mockHistory = {
+        version: 1,
         folders: [],
         chats: [],
         quickPrompts: []
@@ -391,7 +393,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any[],
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -412,8 +414,8 @@ describe('OpenAI Import', () => {
       const assistantMessage = chat.messages[1]
       expect(assistantMessage.role).toBe('assistant')
       expect(assistantMessage.toolCalls).toHaveLength(1)
-      expect(assistantMessage.toolCalls[0].name).toBe('dalle')
-      expect(assistantMessage.toolCalls[0].params.prompt).toBe('A cute orange cat sitting in a garden')
+      expect(assistantMessage.toolCalls[0].function).toBe('dalle')
+      expect(assistantMessage.toolCalls[0].args.prompt).toBe('A cute orange cat sitting in a garden')
       expect(assistantMessage.content).toContain('![A cute orange cat sitting in a garden]')
     })
 
@@ -457,7 +459,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any[],
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -484,7 +486,7 @@ describe('OpenAI Import', () => {
           'client-created-root': { children: ['msg-1'] },
           'msg-1': {
             id: 'msg-1',
-            children: [],
+            children: [] as any[],
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -525,7 +527,7 @@ describe('OpenAI Import', () => {
           },
           'msg-2': {
             id: 'msg-2',
-            children: [],
+            children: [] as any[],
             message: {
               author: { role: 'assistant' },
               end_turn: true,
@@ -571,7 +573,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any[],
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -605,7 +607,7 @@ describe('OpenAI Import', () => {
               metadata: {
                 attachments: [{
                   id: 'file-bad',
-                  name: null, // This should cause an error
+                  name: null as any, // This should cause an error
                   mime_type: 'application/pdf'
                 }]
               },
@@ -623,7 +625,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any[],
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -675,7 +677,7 @@ describe('OpenAI Import', () => {
           },
           'msg-4': {
             id: 'msg-4',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -730,7 +732,7 @@ describe('OpenAI Import', () => {
           },
           'msg-4': {
             id: 'msg-4',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -782,7 +784,7 @@ describe('OpenAI Import', () => {
           },
           'msg-4': {
             id: 'msg-4',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -834,7 +836,7 @@ describe('OpenAI Import', () => {
           },
           'msg-4': {
             id: 'msg-4',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -889,7 +891,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -941,7 +943,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -1014,7 +1016,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -1077,7 +1079,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -1133,7 +1135,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -1175,7 +1177,7 @@ describe('OpenAI Import', () => {
           'client-created-root': { children: ['msg-1'] },
           'msg-1': { id: 'msg-1', children: ['msg-2'], message: { author: { role: 'user' }, content: { parts: ['Hello'] } } },
           'msg-2': { id: 'msg-2', children: ['msg-3'], message: { author: { role: 'assistant' }, end_turn: true, content: { parts: ['Hi'] } } },
-          'msg-3': { id: 'msg-3', children: [], message: { author: { role: 'user' }, end_turn: true, content: { parts: ['Bye'] } } }
+          'msg-3': { id: 'msg-3', children: [] as any, message: { author: { role: 'user' }, end_turn: true, content: { parts: ['Bye'] } } }
         }
       }, {
         id: 'conv-2',
@@ -1185,7 +1187,7 @@ describe('OpenAI Import', () => {
           'client-created-root': { children: ['msg-1'] },
           'msg-1': { id: 'msg-1', children: ['msg-2'], message: { author: { role: 'user' }, content: { parts: ['Hello'] } } },
           'msg-2': { id: 'msg-2', children: ['msg-3'], message: { author: { role: 'assistant' }, end_turn: true, content: { parts: ['Hi'] } } },
-          'msg-3': { id: 'msg-3', children: [], message: { author: { role: 'user' }, end_turn: true, content: { parts: ['Bye'] } } }
+          'msg-3': { id: 'msg-3', children: [] as any, message: { author: { role: 'user' }, end_turn: true, content: { parts: ['Bye'] } } }
         }
       }]
 
@@ -1223,7 +1225,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -1268,7 +1270,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'user' },
               end_turn: true,
@@ -1317,7 +1319,7 @@ describe('OpenAI Import', () => {
           },
           'msg-2': {
             id: 'msg-2',
-            children: [],
+            children: [] as any,
             message: {
               author: { role: 'assistant' },
               end_turn: true,
@@ -1366,7 +1368,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any,
             message: { author: { role: 'user' }, content: { parts: ['Thanks'] } }
           }
         }
@@ -1408,7 +1410,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any,
             message: { author: { role: 'user' }, content: { parts: ['Thanks'] } }
           }
         }
@@ -1449,7 +1451,7 @@ describe('OpenAI Import', () => {
           },
           'msg-3': {
             id: 'msg-3',
-            children: [],
+            children: [] as any,
             message: { author: { role: 'user' }, content: { parts: ['Thanks'] } }
           }
         }

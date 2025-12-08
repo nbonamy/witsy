@@ -97,8 +97,48 @@ test('Build from JSON', () => {
   expect(message4.transient).toBe(false)
   expect(message4.toolCalls).toStrictEqual([])
 
-  // backwards compatibility with toolCall
+  // tool calls
   const message5 = Message.fromJson({
+    uuid: 'uuid',
+    type: 'text',
+    createdAt: 1,
+    role: 'role',
+    content: 'content',
+    toolCalls: [
+      { id: '1', function: 'tool1', args: ['arg1'], result: 'result1' },
+      { id: '2', function: 'tool2', args: ['arg2'], result: 'result2' },
+    ],
+    transient: true,
+  })
+  expect(message5.toolCalls).toStrictEqual([
+    { id: '1', function: 'tool1', args: ['arg1'], result: 'result1' },
+    { id: '2', function: 'tool2', args: ['arg2'], result: 'result2' }
+  ])
+
+})
+
+test('Build from JSON - tool calls backward compatibility', () => {
+
+  // tool calls
+  const message5 = Message.fromJson({
+    uuid: 'uuid',
+    type: 'text',
+    createdAt: 1,
+    role: 'role',
+    content: 'content',
+    toolCalls: [
+      { id: '1', name: 'tool1', params: ['arg1'], result: 'result1' },
+      { id: '2', name: 'tool2', params: ['arg2'], result: 'result2' },
+    ],
+    transient: true,
+  })
+  expect(message5.toolCalls).toStrictEqual([
+    { id: '1', function: 'tool1', args: ['arg1'], result: 'result1' },
+    { id: '2', function: 'tool2', args: ['arg2'], result: 'result2' }
+  ])
+
+  // backwards compatibility with toolCall
+  const message6 = Message.fromJson({
     uuid: 'uuid',
     type: 'text',
     createdAt: 1,
@@ -110,9 +150,9 @@ test('Build from JSON', () => {
     ], status: 'done' },
     transient: true,
   })
-  expect(message5.toolCalls).toStrictEqual([
-    { id: '1', name: 'tool1', done: true, status: undefined, params: ['arg1'], result: 'result1' },
-    { id: '2', name: 'tool2', done: true, status: undefined, params: ['arg2'], result: 'result2' }
+  expect(message6.toolCalls).toStrictEqual([
+    { id: '1', function: 'tool1', done: true, status: undefined, args: ['arg1'], result: 'result1' },
+    { id: '2', function: 'tool2', done: true, status: undefined, args: ['arg2'], result: 'result2' }
   ])
 
 })
@@ -139,21 +179,21 @@ test('Tool call message', () => {
   const message = new Message('user')
 
   // same tool update
-  message.addToolCall({ type: 'tool', id: '1', name: 'tool1', status: 'Preparing the tool', done: false })
+  message.addToolCall({ type: 'tool', id: '1', name: 'tool1', state: 'preparing', status: 'Preparing the tool', done: false })
   expect(message.toolCalls).toHaveLength(1)
-  message.addToolCall({ type: 'tool', id: '1', name: 'tool1', status: 'Calling the tool', done: false })
+  message.addToolCall({ type: 'tool', id: '1', name: 'tool1', state: 'running', status: 'Calling the tool', done: false })
   expect(message.toolCalls).toHaveLength(1)
-  message.addToolCall({ type: 'tool', id: '1', name: 'tool1', status: undefined, done: true })
+  message.addToolCall({ type: 'tool', id: '1', name: 'tool1', state: 'completed', status: undefined, done: true })
   expect(message.toolCalls).toHaveLength(1)
 
   // new tool
-  message.addToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: false })
+  message.addToolCall({ type: 'tool', id: '2', name: 'tool2', state: 'preparing', status: 'Preparing the tool', done: false })
   expect(message.toolCalls).toHaveLength(2)
-  message.addToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: true })
+  message.addToolCall({ type: 'tool', id: '2', name: 'tool2', state: 'preparing', status: 'Preparing the tool', done: true })
   expect(message.toolCalls).toHaveLength(2)
 
   // special google case
-  message.addToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: false })
+  message.addToolCall({ type: 'tool', id: '2', name: 'tool2', state: 'preparing', status: 'Preparing the tool', done: false })
   expect(message.toolCalls).toHaveLength(3)
 
 })

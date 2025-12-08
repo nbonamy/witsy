@@ -264,7 +264,7 @@ test('Browse Plugin', async () => {
     content: 'fetched_content'
   })
   expect(await browse.execute(context, { url: 'https://google.com/dummy.pdf' })).toStrictEqual({
-    title: 'https://google.com/dummy.pdf',
+    title: 'google.com',
     content: 'cGRm_extracted'
   })
 })

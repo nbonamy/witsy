@@ -19,8 +19,11 @@ beforeEach(() => {
   store.config.engines.mock = {
     models: {
       chat: [
-        { id: 'chat', name: 'Chat Model', capabilities: { tools: true, vision: false, reasoning: false } }
+        { id: 'chat', name: 'Chat Model', capabilities: { tools: true, vision: false, reasoning: false, caching: true } }
       ]
+    },
+    model: {
+      chat: 'chat'
     }
   }
 
@@ -75,7 +78,7 @@ test('Generator stops when abortSignal is aborted', async () => {
   const maxCalls = 5
 
   // Create a stream that simulates long generation and throws AbortError when aborted
-  llmMock.generate.mockImplementation((model, conv, opts) => {
+  llmMock.generate.mockImplementation((model: string, conv: any, opts: any) => {
     return (async function* () {
       while (callCount < maxCalls) {
         // Check abort signal like real engines do
@@ -470,7 +473,7 @@ test('Generator handles tool calls in streaming', async () => {
   expect(result).toBe('success')
   expect(chunks.some(c => c.type === 'tool')).toBe(true)
   expect(messages[2].toolCalls).toHaveLength(1)
-  expect(messages[2].toolCalls[0].name).toBe('get_weather')
+  expect(messages[2].toolCalls[0].function).toBe('get_weather')
 })
 
 test('Generator tracks usage information', async () => {
@@ -482,7 +485,7 @@ test('Generator tracks usage information', async () => {
   ]
 
   llmMock.generate.mockReturnValue((async function* () {
-    yield { type: 'usage', usage: { inputTokens: 10, outputTokens: 20, totalTokens: 30 } } as LlmChunk
+    yield { type: 'usage', usage: { prompt_tokens: 10, completion_tokens: 20 } } as LlmChunk
     yield { type: 'content', text: 'Response', done: true } as LlmChunk
   })())
 
@@ -490,8 +493,8 @@ test('Generator tracks usage information', async () => {
 
   expect(result).toBe('success')
   expect(messages[2].usage).toBeDefined()
-  expect(messages[2].usage.inputTokens).toBe(10)
-  expect(messages[2].usage.outputTokens).toBe(20)
+  expect(messages[2].usage.prompt_tokens).toBe(10)
+  expect(messages[2].usage.completion_tokens).toBe(20)
 })
 
 test('Generator handles transient messages', async () => {
@@ -577,10 +580,10 @@ test('Generator adds dummy tool call when doc repo is queried with results', asy
   // Check that tool calls were added
   expect(messages[2].toolCalls).toHaveLength(1)
   const toolCall = messages[2].toolCalls[0]
-  expect(toolCall.name).toBe('search_knowledge_base')
+  expect(toolCall.function).toBe('search_knowledge_base')
   expect(toolCall.state).toBe('completed')
-  expect(toolCall.params.query).toBe('What is the capital of France?')
-  expect(toolCall.params.docRepoName).toBe('Geography Knowledge Base')
+  expect(toolCall.args.query).toBe('What is the capital of France?')
+  expect(toolCall.args.docRepoName).toBe('Geography Knowledge Base')
   expect(toolCall.result.count).toBe(2)
   expect(toolCall.result.sources).toHaveLength(2)
   // Check full source objects are included
@@ -630,7 +633,7 @@ test('Generator adds dummy tool call when doc repo query returns no results', as
   // Check that tool call was added with zero results
   expect(messages[2].toolCalls).toHaveLength(1)
   const toolCall = messages[2].toolCalls[0]
-  expect(toolCall.name).toBe('search_knowledge_base')
+  expect(toolCall.function).toBe('search_knowledge_base')
   expect(toolCall.state).toBe('completed')
   expect(toolCall.result.count).toBe(0)
   expect(toolCall.result.sources).toHaveLength(0)
