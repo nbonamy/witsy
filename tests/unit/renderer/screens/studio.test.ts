@@ -279,7 +279,7 @@ test('Generates - Custom Params OpenAI', async () => {
     attachments: [ expect.objectContaining({
       url: 'file://openai/dall-e-3/prompt'
     }) ],
-    toolCalls: [ expect.objectContaining({ params: { quality: 'hd', style: 'vivid' } }) ]
+    toolCalls: [ expect.objectContaining({ args: { quality: 'hd', style: 'vivid' } }) ]
   })
 
   expect(store.history.chats[0].messages).toHaveLength(4)
@@ -328,7 +328,7 @@ test('Generates - Custom Params HuggingFace', async () => {
     attachments: [ expect.objectContaining({
       url: 'file://huggingface/huggingface1/prompt'
     }) ],
-    toolCalls: [ expect.objectContaining({ params: { negative_prompt: 'no no no', width: 1000 } }) ]
+    toolCalls: [ expect.objectContaining({ args: { negative_prompt: 'no no no', width: 1000 } }) ]
   })
 
   expect(store.history.chats[0].messages).toHaveLength(4)
@@ -386,7 +386,7 @@ test('Generates - User Params', async () => {
     attachments: [ expect.objectContaining({
       url: 'file://replicate/replicate1/prompt'
     }) ],
-    toolCalls: [ expect.objectContaining({ params: { string: 'value', number: 100, boolean: true } }) ]
+    toolCalls: [ expect.objectContaining({ args: { string: 'value', number: 100, boolean: true } }) ]
   })
 
   expect(store.history.chats[0].messages).toHaveLength(4)

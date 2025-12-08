@@ -27,10 +27,10 @@ test('Basic rendering of done', async () => {
   
   const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
     id: 'tool1',
-    name: 'tool1',
+    function: 'tool1',
     status: undefined,
     done: true,
-    params: { key: 'value' },
+    args: { key: 'value' },
     result: { result: 'result' },
   }}})
 
@@ -57,10 +57,10 @@ test('Basic rendering of running', async () => {
   
   const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
     id: 'tool2',
-    name: 'tool2',
+    function: 'tool2',
     status: 'running',
     done: false,
-    params: { key: 'value' },
+    args: { key: 'value' },
     result: undefined,
   }}})
 
@@ -88,10 +88,10 @@ test('Params and result rendering', async () => {
 
   const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
     id: 'tool3',
-    name: 'tool3',
+    function: 'tool3',
     status: undefined,
     done: true,
-    params: { key1: 'value1', key2: 'value2' },
+    args: { key1: 'value1', key2: 'value2' },
     result: { result: 'response' },
   }}})
 
@@ -118,10 +118,10 @@ test('Does not toggle when text is being selected', async () => {
 
   const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
     id: 'tool4',
-    name: 'tool4',
+    function: 'tool4',
     status: undefined,
     done: true,
-    params: { key: 'value' },
+    args: { key: 'value' },
     result: { result: 'result' },
   }}})
 
@@ -162,10 +162,10 @@ test('Unwraps proxy tool calls (actualToolCall)', async () => {
 
   const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
     id: 'tool5',
-    name: 'code_exec_call_tool',
+    function: 'code_exec_call_tool',
     status: undefined,
     done: true,
-    params: {
+    args: {
       tool_name: 'search_internet',
       parameters: { query: 'test query' }
     },
@@ -192,10 +192,10 @@ test('Does not unwrap non-proxy tool calls', async () => {
 
   const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
     id: 'tool6',
-    name: 'search_internet',
+    function: 'search_internet',
     status: undefined,
     done: true,
-    params: { query: 'direct query' },
+    args: { query: 'direct query' },
     result: { results: ['result'] },
   }}})
 
@@ -215,10 +215,10 @@ test('Handles proxy tool without parameters field', async () => {
 
   const wrapper = mount(MessageItemToolBlock, { props: { toolCall: {
     id: 'tool7',
-    name: 'code_exec_call_tool',
+    function: 'code_exec_call_tool',
     status: undefined,
     done: true,
-    params: {
+    args: {
       tool_name: 'get_time'
       // No 'parameters' field
     },

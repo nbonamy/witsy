@@ -10,18 +10,18 @@
       <ChevronRightIcon v-else class="tool-fold" />
     </div>
     <div class="tool-results" v-if="isOpen">
-      <MessageItemSearchToolBlock v-if="actualToolCall.name === kSearchPluginName && actualToolCall.result?.results?.length" :toolCall="actualToolCall" /> 
+      <MessageItemSearchToolBlock v-if="actualToolCall.function === kSearchPluginName && actualToolCall.result?.results?.length" :toolCall="actualToolCall" /> 
     </div>
-    <div class="tool-values tool-params" v-if="actualToolCall?.params && isOpen">
+    <div class="tool-values tool-params" v-if="actualToolCall?.args && isOpen">
       <div class="tool-values-header">
         {{ t('message.toolCall.params') }}
       </div>
       <div class="tool-values-list">
         <div class="tool-value">
           <div class="value-key">tool</div>
-          <div class="value-value">{{ actualToolCall.name }}</div>
+          <div class="value-value">{{ actualToolCall.function }}</div>
         </div>
-        <div class="tool-value" v-for="(value, key) in actualToolCall.params" :key="key">
+        <div class="tool-value" v-for="(value, key) in actualToolCall.args" :key="key">
           <div class="value-key">{{ key }}</div>
           <div class="value-value">{{ value }}</div>
         </div>
@@ -64,11 +64,11 @@ const isOpen = ref(false)
 const isSelecting = ref(false)
 
 const actualToolCall = computed((): ToolCall => {
-  if (props.toolCall.name === kCodeExecutionProxyPluginToolName && props.toolCall.params) {
+  if (props.toolCall.function === kCodeExecutionProxyPluginToolName && props.toolCall.args) {
     return {
       ...props.toolCall,
-      name: props.toolCall.params.tool_name,
-      params: props.toolCall.params.parameters || {},
+      function: props.toolCall.args.tool_name,
+      args: props.toolCall.args.parameters || {},
     }
   } else {
     return props.toolCall
@@ -79,13 +79,13 @@ const name = computed(() => {
   if (props.toolCall.status?.includes('MCP')) {
     return 'mcp'
   } else {
-    return actualToolCall.value.name || ''
+    return actualToolCall.value.function || ''
   }
 })
 
 const title = computed(() => {
   if (props.toolCall.status) return props.toolCall.status
-  const toolName = actualToolCall.value.name || ''
+  const toolName = actualToolCall.value.function || ''
   const name = window.api.mcp.originalToolName(toolName)
   return t('message.toolCall.call', { name })
 })

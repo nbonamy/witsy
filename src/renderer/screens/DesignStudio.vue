@@ -220,7 +220,7 @@ const handleActionClick = async (action: string) => {
         engine: msg.engine,
         model: msg.model,
         prompt: msg.content,
-        params: msg.toolCalls?.[0]?.params || {}
+        params: msg.toolCalls?.[0]?.args || {}
       })
     })
   } else if (action === 'rename') {
@@ -731,8 +731,8 @@ const onMediaGenerationRequest = async (data: {
       }
       message.toolCalls = [{
         id: crypto.randomUUID(),
-        name: data.action,
-        params: params,
+        function: data.action,
+        args: params,
         result: 'success',
         done: true
       }]

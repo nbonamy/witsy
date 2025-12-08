@@ -117,8 +117,8 @@ const onInfo = () => {
   // add extra params
   if (props.message.toolCalls) {
     props.message.toolCalls.forEach((call) => {
-      Object.keys(call.params).forEach((key) => {
-        text += `\n${key}: ${call.params[key]}`
+      Object.keys(call.args).forEach((key) => {
+        text += `\n${key}: ${call.args[key]}`
       })
     })
   }
