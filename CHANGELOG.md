@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - [Google] Support for Gemini 3 Preview (thoughtSignature)
 - [Google] Support for Nano Banana Pro
+- Favorites management (https://github.com/nbonamy/witsy/issues/499)
 
 ### Changed
 - N/A
@@ -16,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - [Anthropic] Multi tool calling
 - [Deepseek] Function calling with Deepseek-Reasoner
 - [Mistral] Reasoning tokens
+- Favorites should be available anywhere a model can be selected (https://github.com/nbonamy/witsy/issues/498)
 
 ### Removed
 - N/A
