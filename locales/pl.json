@@ -1907,6 +1907,7 @@
       "outOfCredits": "Przepraszam, wygląda na to, że skończyły Ci się kredyty. Sprawdź saldo swojego konta u dostawcy LLM. <error>{error}</error>",
       "pluginDescriptionTooLong": "Przepraszam, opis jednego z wtyczek jest zbyt długi. Jeśli modyfikowałeś je w Ustawieniach | Zaawansowane, spróbuj ponownie. <error>{error}</error>",
       "quotaExceeded": "Przepraszam, wygląda na to, że osiągnąłeś limit zapytań swojego konta u dostawcy LLM. Spróbuj ponownie później. <error>{error}</error>",
+      "tooManyTools": "Przepraszamy, wygląda na to, że wybrałeś zbyt wiele wtyczek dla tego modelu. Spróbuj zmniejszyć liczbę wtyczek. <error>{error}</error>",
       "tryWithoutParams": "Przepraszam, nie udało się wygenerować tekstu dla tego zapytania. Czy chcesz [spróbować ponownie bez parametrów modelu](#retry_without_params)? <error>{error}</error>",
       "tryWithoutPlugins": "Przepraszam, nie udało się wygenerować tekstu dla tego zapytania. Czy chcesz [spróbować ponownie bez wtyczek](#retry_without_plugins)? <error>{error}</error>"
     }

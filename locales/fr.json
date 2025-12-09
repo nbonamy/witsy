@@ -1888,6 +1888,7 @@
       "outOfCredits": "Désolé, il semble que vous ayez épuisé vos crédits. Vérifiez le solde de votre compte fournisseur de LLM. <error>{error}</error>",
       "pluginDescriptionTooLong": "Désolé, il semble que la description de l'un des plugins soit trop longue. Si vous les avez modifiées dans Paramètres | Avancé, veuillez réessayer. <error>{error}</error>",
       "quotaExceeded": "Désolé, il semble que vous ayez atteint la limite de taux de votre compte fournisseur de LLM. Réessayez plus tard. <error>{error}</error>",
+      "tooManyTools": "Désolé, il semble que vous ayez sélectionné trop de plugins pour ce modèle. Essayez de réduire le nombre de plugins. <error>{error}</error>",
       "tryWithoutParams": "Désolé, je n'ai pas pu générer de texte pour cette invite. Voulez-vous [réessayer sans les paramètres du modèle](#retry_without_params) ? <error>{error}</error>",
       "tryWithoutPlugins": "Désolé, je n'ai pas pu générer de texte pour cette invite. Voulez-vous [réessayer sans les plugins](#retry_without_plugins) ? <error>{error}</error>"
     }

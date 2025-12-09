@@ -1907,6 +1907,7 @@
       "outOfCredits": "Desculpe, parece que você ficou sem créditos. Verifique o saldo da sua conta do provedor LLM. <error>{error}</error>",
       "pluginDescriptionTooLong": "Desculpe, parece que a descrição de um dos plugins está muito longa. Se você as modificou em Configurações | Avançado, por favor tente novamente. <error>{error}</error>",
       "quotaExceeded": "Desculpe, parece que você atingiu o limite de taxa da sua conta do provedor LLM. Tente novamente mais tarde. <error>{error}</error>",
+      "tooManyTools": "Desculpe, parece que você selecionou muitos plugins para este modelo. Tente reduzir o número de plugins. <error>{error}</error>",
       "tryWithoutParams": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem parâmetros de modelo](#retry_without_params)? <error>{error}</error>",
       "tryWithoutPlugins": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem plugins](#retry_without_plugins)? <error>{error}</error>"
     }

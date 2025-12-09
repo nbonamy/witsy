@@ -1888,6 +1888,7 @@
       "outOfCredits": "Entschuldigung, es scheint, dass Ihre Credits aufgebraucht sind. Prüfen Sie den Kontostand Ihres LLM-Anbieters. <error>{error}</error>",
       "pluginDescriptionTooLong": "Entschuldigung, die Beschreibung eines Plugins ist zu lang. Falls Sie diese unter Einstellungen | Erweitert angepasst haben, versuchen Sie es bitte erneut. <error>{error}</error>",
       "quotaExceeded": "Entschuldigung, Sie haben das Anfragelimit Ihres LLM-Anbieters erreicht. Bitte versuchen Sie es später erneut. <error>{error}</error>",
+      "tooManyTools": "Entschuldigung, es scheint, dass Sie zu viele Plugins für dieses Modell ausgewählt haben. Versuchen Sie, die Anzahl der Plugins zu reduzieren. <error>{error}</error>",
       "tryWithoutParams": "Entschuldigung, ich konnte keinen Text für diese Eingabe generieren. Möchten Sie es [erneut ohne Modellparameter versuchen](#retry_without_params)? <error>{error}</error>",
       "tryWithoutPlugins": "Entschuldigung, ich konnte keinen Text für diese Eingabe generieren. Möchten Sie es [erneut ohne Plugins versuchen](#retry_without_plugins)? <error>{error}</error>"
     }

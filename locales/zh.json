@@ -1907,6 +1907,7 @@
       "outOfCredits": "抱歉，您的余额已用尽。请检查语言模型提供商账户余额。<error>{error}</error>",
       "pluginDescriptionTooLong": "抱歉，某个插件描述过长。如果您在设置｜高级中修改过，请重试。<error>{error}</error>",
       "quotaExceeded": "抱歉，您已达到语言模型提供商的速率限制。请稍后再试。<error>{error}</error>",
+      "tooManyTools": "抱歉，您似乎为此模型选择了过多的插件。请尝试减少插件数量。<error>{error}</error>",
       "tryWithoutParams": "抱歉，我无法为该提示生成文本。您想要[在不使用模型参数的情况下重试](#retry_without_params)吗？<error>{error}</error>",
       "tryWithoutPlugins": "抱歉，我无法为该提示生成文本。您想要[在不使用插件的情况下重试](#retry_without_plugins)吗？<error>{error}</error>"
     }

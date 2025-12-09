@@ -1906,6 +1906,7 @@
       "outOfCredits": "Sorry, it seems you have run out of credits. Check the balance of your LLM provider account. <error>{error}</error>",
       "pluginDescriptionTooLong": "Sorry, it seems that one of the plugins description is too long. If you tweaked them in Settings | Advanced, please try again. <error>{error}</error>",
       "quotaExceeded": "Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later. <error>{error}</error>",
+      "tooManyTools": "Sorry, it seems you have selected too many plugins for this model. Try to reduce the number of plugins. <error>{error}</error>",
       "tryWithoutParams": "Sorry, I could not generate text for that prompt. Do you want to [try again without model parameters](#retry_without_params)? <error>{error}</error>",
       "tryWithoutPlugins": "Sorry, I could not generate text for that prompt. Do you want to [try again without plugins](#retry_without_plugins)? <error>{error}</error>"
     }
