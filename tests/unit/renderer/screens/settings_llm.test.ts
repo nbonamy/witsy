@@ -6,7 +6,6 @@ import Settings from '@screens/Settings.vue'
 import { store } from '@services/store'
 import { CustomInstruction } from '@/types/index'
 import { useWindowMock } from '@tests/mocks/window'
-import { findModelSelectorPlus } from '@tests/utils'
 import { switchToTab, tabs } from './settings_utils'
 
 enableAutoUnmount(afterAll)
@@ -78,15 +77,16 @@ beforeEach(async () => {
 })
 
 test('Settings LLM basic functionality', async () => {
-  
-  const manager = LlmFactory.manager(store.config)
+
   const tab = await switchToTab(wrapper, tabs.indexOf('settingsLLM'))
   expect(tab.findAll('.form-field')).toHaveLength(10)
   expect(tab.findAll('.form-field.localeLLM select option')).toHaveLength(21)
-  expect(findModelSelectorPlus(wrapper).exists()).toBe(true)
+
+  // Check EngineModelSelect exists
+  const engineModelSelect = tab.findComponent({ name: 'EngineModelSelect' })
+  expect(engineModelSelect.exists()).toBe(true)
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
-  expect(tab.findAll('.form-field.quick-prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
 
   // set default prompt
   expect(store.config.llm.instructions).toBe('standard')
@@ -94,18 +94,16 @@ test('Settings LLM basic functionality', async () => {
   expect(store.config.llm.instructions).toBe('playful')
   vi.clearAllMocks()
 
-  // set prompt engine
-  tab.find('.form-field.quick-prompt select.engine').setValue('anthropic')
+  // set prompt engine and model via EngineModelSelect
+  await engineModelSelect.vm.$emit('modelSelected', 'anthropic', 'model1')
   await wrapper.vm.$nextTick()
   expect(store.config.llm.forceLocale).toBe(false)
   expect(store.config.prompt.engine).toBe('anthropic')
   expect(store.config.prompt.model).toBe('model1')
   vi.clearAllMocks()
-  
-  // set prompt model
-  const modelSelect = findModelSelectorPlus(tab)
-  await modelSelect.open()
-  await modelSelect.select(1)
+
+  // change model
+  await engineModelSelect.vm.$emit('modelSelected', 'anthropic', 'model2')
   await wrapper.vm.$nextTick()
   expect(store.config.prompt.model).toBe('model2')
   vi.clearAllMocks()
