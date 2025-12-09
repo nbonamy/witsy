@@ -9,12 +9,12 @@
         <input type="text" v-model="title" />
       </div>
       <div class="form-field">
-        <label>{{ t('common.llmProvider') }}</label>
-        <EngineSelect v-model="engine" @change="onChangeEngine"/>
-      </div>
-      <div class="form-field">
         <label>{{ t('common.llmModel') }}</label>
-        <ModelSelect v-model="model" :engine="engine" />
+        <EngineModelSelect
+          :engine="engine"
+          :model="model"
+          @modelSelected="onModelSelected"
+        />
       </div>
     </template> 
     <template #footer>
@@ -29,13 +29,10 @@
 <script setup lang="ts">
 
 import { ref, onMounted, watch, PropType } from 'vue'
-import { store } from '@services/store'
 import { t } from '@services/i18n'
 import Dialog from '@renderer/utils/dialog'
 import ModalDialog from '@components/ModalDialog.vue'
-import EngineSelect from '@components/EngineSelect.vue'
-import ModelSelect from '@components/ModelSelect.vue'
-import LlmFactory, { ILlmManager } from '@services/llms/llm'
+import EngineModelSelect from '@components/EngineModelSelect.vue'
 import Chat from '@models/chat'
 
 export type ChatEditorCallback = ({title, engine, model}: {title: string, engine: string, model: string}) => void
@@ -75,9 +72,9 @@ const close = () => {
   dialog.value.close()
 }
 
-const onChangeEngine = () => {
-  const llmManager: ILlmManager = LlmFactory.manager(store.config)
-  model.value = llmManager.getDefaultChatModel(engine.value, false)
+const onModelSelected = (selectedEngine: string | null, selectedModel: string | null) => {
+  if (selectedEngine) engine.value = selectedEngine
+  if (selectedModel) model.value = selectedModel
 }
 
 const onCancel = () => {
