@@ -281,8 +281,8 @@ test('Favorites update', () => {
   llmManager.addFavoriteModel('mock', 'chat2')
   expect(llmManager.getChatModels(favoriteMockEngine)).toStrictEqual([
     { id: 'mock-chat', name: 'mock_label/chat', meta: {}, capabilities: expect.any(Object) },
+    { id: 'mock-vision', name: 'mock_label/vision', meta: {}, capabilities: expect.any(Object) },
     { id: 'mock-chat2', name: 'mock_label/chat2', meta: {}, capabilities: expect.any(Object) },
-    { id: 'mock-vision', name: 'mock_label/vision', meta: {}, capabilities: expect.any(Object) }
   ])
 
   llmManager.removeFavoriteModel(favoriteMockEngine, 'mock-chat2')
