@@ -1907,6 +1907,7 @@
       "outOfCredits": "申し訳ありません、クレジットが不足しているようです。LLMプロバイダーのアカウント残高をご確認ください。<error>{error}</error>",
       "pluginDescriptionTooLong": "申し訳ありません、プラグインの説明のいずれかが長すぎるようです。設定｜詳細で調整した場合は、再度お試しください。<error>{error}</error>",
       "quotaExceeded": "申し訳ありません、LLMプロバイダーのアカウントでレート制限に達したようです。後で再度お試しください。<error>{error}</error>",
+      "tooManyTools": "申し訳ありません、このモデルにはプラグインが多すぎるようです。プラグインの数を減らしてください。<error>{error}</error>",
       "tryWithoutParams": "申し訳ありませんが、そのプロンプトでテキストを生成できませんでした。[モデルパラメータなしで再試行しますか](#retry_without_params)? <error>{error}</error>",
       "tryWithoutPlugins": "申し訳ありませんが、そのプロンプトでテキストを生成できませんでした。[プラグインなしで再試行しますか](#retry_without_plugins)? <error>{error}</error>"
     }

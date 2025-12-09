@@ -33,6 +33,7 @@ export type GenerationResult =
   'function_description_too_long' |
   'function_call_not_supported' |
   'streaming_not_supported' |
+  'too_many_tools' |
   'error'
 
 export default class Generator {
@@ -308,12 +309,22 @@ export default class Generator {
         response.setText(t('generator.errors.quotaExceeded', { error: error.message }))
         return 'quota_exceeded'
 
+      // too many tools
+      } else if ([400].includes(status) && (message.includes('array too long') || message.includes('maximum tools'))) {
+          console.error('Too many tools provided:', status, message)
+          response.setText(t('generator.errors.tooManyTools', { error: error.message }))
+          return 'too_many_tools'
+
       // context length or function description too long
       } else if ([400, 429].includes(status) && (message.includes('context length') || message.includes('too long') || message.includes('too large'))) {
         if (message.includes('function.description')) {
           console.error('Function description too long:', status, message)
           response.setText(t('generator.errors.pluginDescriptionTooLong', { error: error.message }))
           return 'function_description_too_long'
+        } else if (message.includes('tools') && message.includes('array too long')) {
+          console.error('Too many tools provided:', status, message)
+          response.setText(t('generator.errors.tooManyTools', { error: error.message }))
+          return 'too_many_tools'
         } else {
           console.error('Context too long:', status, message)
           response.setText(t('generator.errors.contextTooLong'))

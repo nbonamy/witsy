@@ -1888,6 +1888,7 @@
       "outOfCredits": "Spiacenti, sembra che tu abbia esaurito i crediti. Controlla il saldo del tuo account fornitore LLM. <error>{error}</error>",
       "pluginDescriptionTooLong": "Spiacenti, sembra che la descrizione di uno dei plugin sia troppo lunga. Se li hai modificati in Impostazioni | Avanzate, prova di nuovo. <error>{error}</error>",
       "quotaExceeded": "Spiacenti, sembra che tu abbia raggiunto il limite di utilizzo del tuo account fornitore LLM. Riprova più tardi. <error>{error}</error>",
+      "tooManyTools": "Spiacente, sembra che tu abbia selezionato troppi plugin per questo modello. Prova a ridurre il numero di plugin. <error>{error}</error>",
       "tryWithoutParams": "Spiacente, non sono riuscito a generare il testo per quel prompt. Vuoi [ritentare senza parametri del modello](#retry_without_params)? <error>{error}</error>",
       "tryWithoutPlugins": "Spiacente, non sono riuscito a generare il testo per quel prompt. Vuoi [ritentare senza plugin](#retry_without_plugins)? <error>{error}</error>"
     }
