@@ -367,6 +367,11 @@ export default class Generator {
         }
         return 'invalid_budget'
 
+      // anthropic: streaming required
+      } else if ([0].includes(status) && message.includes('streaming is required')) {
+        console.warn('Anthropic model requires streaming:', status, message)
+        return this.generate(llm, messages, { ...opts, streaming: true }, llmCallback)
+
       // final error: depends if we already have some content and if plugins are enabled
       } else {
         console.error('Error while generating text:', status, message)
