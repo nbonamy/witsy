@@ -256,10 +256,6 @@ defineExpose({ show, close })
 
 <style>
 
-.control-group button {
-  height: 38px;
-}
-
 .context-menu.folder-settings {
   max-width: unset;
   width: 39.5rem;

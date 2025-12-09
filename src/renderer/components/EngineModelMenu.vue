@@ -118,21 +118,8 @@ const availableEngines = computed(() => {
       return !llmManager.isFavoriteEngine(engine)
     })
     .sort((a, b) => {
-      const aIsFav = llmManager.isFavoriteEngine(a)
-      const bIsFav = llmManager.isFavoriteEngine(b)
-
-      // Both favorites: sort by position in favorites array
-      if (aIsFav && bIsFav) {
-        const aIndex = store.config.llm.favorites.findIndex(f => f.engine === a || f.id === a)
-        const bIndex = store.config.llm.favorites.findIndex(f => f.engine === b || f.id === b)
-        return aIndex - bIndex
-      }
-
-      // One is favorite: favorite comes first
-      if (aIsFav) return -1
-      if (bIsFav) return 1
-
-      // Neither is favorite: alphabetical order
+      if (llmManager.isFavoriteEngine(a)) return -1
+      if (llmManager.isFavoriteEngine(b)) return 1
       const nameA = llmManager.getEngineName(a).toLowerCase()
       const nameB = llmManager.getEngineName(b).toLowerCase()
       return nameA.localeCompare(nameB)
