@@ -9,6 +9,7 @@
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><AppWindowMacIcon class="icon" /></SettingsTab>
           <SettingsTab class="sidebar" :title="t('settings.tabs.sidebar')" @change="load(settingsSidebar)" :checked="initialTab == 'sidebar'" v-if="store.isFeatureEnabled('webapps')"><PanelsTopLeftIcon class="icon" /></SettingsTab>
           <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BoxIcon class="icon" /></SettingsTab>
+          <SettingsTab class="favorites" :title="t('settings.tabs.favorites')" @change="load(settingsFavorites)" :checked="initialTab == 'favorites'"><StarIcon class="icon" /></SettingsTab>
           <SettingsTab class="chat" :title="t('settings.tabs.chat')"><AppWindowIcon class="icon" /></SettingsTab>
           <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
@@ -25,6 +26,7 @@
       <SettingsGeneral ref="settingsGeneral" />
       <SettingsSidebar ref="settingsSidebar" v-if="store.isFeatureEnabled('webapps')" />
       <SettingsLLM ref="settingsLLM" />
+      <SettingsFavorites ref="settingsFavorites" />
       <SettingsChat ref="settingsChat" />
       <SettingsDeepResearch ref="settingsDeepResearch" />
       <SettingsModels ref="settingsModels" />
@@ -40,7 +42,7 @@
 
 <script setup lang="ts">
 
-import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
+import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, StarIcon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref, watch } from 'vue'
 import { MenuBarMode } from '@components/MenuBar.vue'
 import useEventBus from '@composables/event_bus'
@@ -52,6 +54,7 @@ import SettingsChat from '../settings/SettingsChat.vue'
 import SettingsCommands from '../settings/SettingsCommands.vue'
 import SettingsDeepResearch from '../settings/SettingsDeepResearch.vue'
 import SettingsExperts from '../settings/SettingsExperts.vue'
+import SettingsFavorites from '../settings/SettingsFavorites.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
 import SettingsModels from '../settings/SettingsModels.vue'
@@ -77,6 +80,7 @@ const tabs = ref<HTMLElement>(null)
 const initialTab = ref('general')
 const settingsGeneral = ref(null)
 const settingsLLM = ref(null)
+const settingsFavorites = ref(null)
 const settingsChat = ref(null)
 const settingsDeepResearch = ref(null)
 const settingsModels = ref(null)
@@ -92,6 +96,7 @@ const settingsSidebar = ref(null)
 const settings = [
   settingsGeneral,
   settingsLLM,
+  settingsFavorites,
   settingsChat,
   settingsDeepResearch,
   settingsModels,

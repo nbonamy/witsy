@@ -1,7 +1,6 @@
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { defaultCapabilities } from 'multi-llm-ts'
 import { afterAll, beforeAll, beforeEach, expect, test, vi } from 'vitest'
-import LlmFactory from '@services/llms/llm'
 import Settings from '@screens/Settings.vue'
 import { store } from '@services/store'
 import { CustomInstruction } from '@/types/index'

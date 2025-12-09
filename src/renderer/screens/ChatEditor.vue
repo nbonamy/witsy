@@ -5,16 +5,16 @@
     </template>
     <template #body>
       <div class="form-field">
-        <label>{{ t('chat.editor.title') }}</label>
-        <input type="text" v-model="title" />
-      </div>
-      <div class="form-field">
         <label>{{ t('common.llmModel') }}</label>
         <EngineModelSelect
           :engine="engine"
           :model="model"
           @modelSelected="onModelSelected"
         />
+      </div>
+      <div class="form-field">
+        <label>{{ t('chat.editor.title') }}</label>
+        <input type="text" v-model="title" />
       </div>
     </template> 
     <template #footer>
@@ -107,3 +107,9 @@ defineExpose({
 })
 
 </script>
+
+<style scoped>
+.engine-model-select {
+  width: calc(100% - 2rem);
+}
+</style>

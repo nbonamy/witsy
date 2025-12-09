@@ -122,6 +122,25 @@ export default class LlmManagerBase implements ILlmManager {
     store.saveSettings()
   }
 
+  reorderFavorites = (index: number, direction: 'up' | 'down') => {
+    if (index < 0 || index >= this.config.llm.favorites.length) {
+      return
+    }
+
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex < 0 || newIndex >= this.config.llm.favorites.length) {
+      return
+    }
+
+    // Swap the favorites
+    const temp = this.config.llm.favorites[index]
+    this.config.llm.favorites[index] = this.config.llm.favorites[newIndex]
+    this.config.llm.favorites[newIndex] = temp
+
+    store.saveSettings()
+  }
+
   getFallbackModel = (engine: string): string => {
     if (engine === 'anthropic') return getAnthropicFallbackModel()
     return null

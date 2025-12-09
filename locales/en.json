@@ -2817,6 +2817,17 @@
       "sortState": "Sort by state",
       "toggle": "Toggle"
     },
+    "favorites": {
+      "add": "Add Favorite",
+      "addFirst": "Add Your First Favorite",
+      "addModal": {
+        "title": "Add Favorite Model"
+      },
+      "empty": "No favorite models yet. Add your most-used models for quick access.",
+      "moveDown": "Move down",
+      "moveUp": "Move up",
+      "remove": "Remove favorite"
+    },
     "general": {
       "darkTint": "Dark tint",
       "forceLocale": "Ask model to always speak this language (results may vary)",
@@ -3016,6 +3027,7 @@
       "commands": "Commands",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
+      "favorites": "Favorites",
       "general": "General",
       "llm": "LLM",
       "models": "Models",

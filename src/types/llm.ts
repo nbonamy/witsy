@@ -33,6 +33,7 @@ export interface ILlmManager {
   getFavoriteModel(id: string): { engine: string, model: string } | null
   addFavoriteModel(engine: string, model: string): void
   removeFavoriteModel(engine: string, model: string): void
+  reorderFavorites(index: number, direction: 'up' | 'down'): void
 
   isComputerUseModel(engine: string, model: string): boolean
 
