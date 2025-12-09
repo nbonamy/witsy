@@ -6,6 +6,12 @@ import CodeExecutionBase, { kCodeExecutionPluginPrefix } from './code_exec_base'
 
 export const kCodeExecutionProxyPluginToolName = `${kCodeExecutionPluginPrefix}call_tool`
 
+type ProxyArgs = {
+  tools_names?: string[]
+  tool_name?: string
+  parameters?: anyDict
+}
+
 /**
  * Proxy code execution plugin that transparently forwards tool calls to underlying plugins.
  * Provides two tools:
@@ -30,20 +36,20 @@ export default class CodeExecutionProxyPlugin extends CodeExecutionBase {
     return t('plugins.code_exec.callTool.preparing')
   }
 
-  getRunningDescription(tool: string, args: anyDict): string {
+  getRunningDescription(tool: string, args: ProxyArgs): string {
     if (tool === `${kCodeExecutionPluginPrefix}get_tools_info`) {
       return t('plugins.code_exec.getToolsInfo.running', { count: args?.tools_names?.length })
     } else if (tool === `${kCodeExecutionPluginPrefix}call_tool`) {
       const plugin = this.getPlugin(args.tool_name)
       if (plugin) {
-        return plugin.getRunningDescription(args.tool_name, args.args)
+        return plugin.getRunningDescription(args.tool_name, args.parameters)
       } else {
         return t('plugins.code_exec.callTool.running', { tool: args?.tool_name })
       }
     }
   }
 
-  getCompletedDescription(tool: string, args: anyDict, results: anyDict): string | undefined {
+  getCompletedDescription(tool: string, args: ProxyArgs, results: anyDict): string | undefined {
     if (tool === `${kCodeExecutionPluginPrefix}get_tools_info`) {
       if (results.error) {
         return t('plugins.code_exec.getToolsInfo.error', { error: results.error })
@@ -53,7 +59,7 @@ export default class CodeExecutionProxyPlugin extends CodeExecutionBase {
     else if (tool === `${kCodeExecutionPluginPrefix}call_tool`) {
       const plugin = this.getPlugin(args.tool_name)
       if (plugin) {
-        return plugin.getCompletedDescription(args.tool_name, args.args, results)
+        return plugin.getCompletedDescription(args.tool_name, args.parameters, results)
       } else if (results.error) {
         return t('plugins.code_exec.callTool.error', { error: results.error })
       } else {
@@ -111,7 +117,9 @@ export default class CodeExecutionProxyPlugin extends CodeExecutionBase {
   }
 
   async execute(context: PluginExecutionContext, parameters: anyDict): Promise<any> {
-    const { tool, parameters: args } = parameters
+
+    const tool: string = parameters.tool
+    const args: ProxyArgs = parameters.parameters
 
     if (tool === `${kCodeExecutionPluginPrefix}get_tools_info`) {
       return this.getToolsInfo(args.tools_names)

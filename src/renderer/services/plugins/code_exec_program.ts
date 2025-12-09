@@ -5,6 +5,18 @@ import { t } from '../i18n'
 import { generateSimpleSchema } from '../schema'
 import CodeExecutionBase, { kCodeExecutionPluginPrefix } from './code_exec_base'
 
+type ProgramArgs = {
+  tools_names?: string[]
+  program?: {
+    steps: Array<{
+      id: string
+      tool: string
+      args: anyDict
+      description?: string
+    }>
+  }
+}
+
 class VariableResolutionError extends Error {
   constructor(toolName: string) {
     super(toolName)
@@ -34,7 +46,7 @@ export default class CodeExecutionProgramPlugin extends CodeExecutionBase implem
     return t('plugins.code_exec.runProgram.preparing')
   }
 
-  getRunningDescription(tool: string, args: anyDict): string {
+  getRunningDescription(tool: string, args: ProgramArgs): string {
     if (tool === `${kCodeExecutionPluginPrefix}get_tools_info`) {
       return t('plugins.code_exec.getToolsInfo.running', { count: args?.tools_names?.length })
     } else if (tool === `${kCodeExecutionPluginPrefix}run_program`) {
@@ -42,7 +54,7 @@ export default class CodeExecutionProgramPlugin extends CodeExecutionBase implem
     }
   }
 
-  getCompletedDescription(tool: string, args: anyDict, results: anyDict): string | undefined {
+  getCompletedDescription(tool: string, args: ProgramArgs, results: anyDict): string | undefined {
     if (tool === `${kCodeExecutionPluginPrefix}get_tools_info`) {
       if (results.error) {
         return t('plugins.code_exec.getToolsInfo.error', { error: results.error })
@@ -322,7 +334,8 @@ export default class CodeExecutionProgramPlugin extends CodeExecutionBase implem
   
   async *executeWithUpdates(context: PluginExecutionContext, payload: any) {
 
-    const { tool, parameters } = payload
+    const tool: string = payload.tool
+    const parameters: ProgramArgs = payload.parameters
 
     if (tool === `${kCodeExecutionPluginPrefix}get_tools_info`) {
       yield {
@@ -340,7 +353,7 @@ export default class CodeExecutionProgramPlugin extends CodeExecutionBase implem
       return
     }
 
-    const steps = parameters.program?.steps ?? parameters.steps
+    const steps = parameters.program?.steps ?? (parameters as any).steps
     if (!steps || !Array.isArray(steps)) {
       yield {
         type: 'result',
