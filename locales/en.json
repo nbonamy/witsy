@@ -2826,6 +2826,7 @@
       "empty": "No favorite models yet. Add your most-used models for quick access.",
       "moveDown": "Move down",
       "moveUp": "Move up",
+      "pick": "Pick a model to add to favorites",
       "remove": "Remove favorite"
     },
     "general": {

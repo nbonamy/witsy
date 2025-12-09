@@ -2,82 +2,69 @@
   <div class="tab-content">
     <header>
       <div class="title">{{ t('settings.tabs.favorites') }}</div>
-      <div class="actions">
-        <button name="add" class="large primary" @click="showAddFavoriteModal">
-          <PlusIcon />{{ t('settings.favorites.add') }}
-        </button>
-      </div>
     </header>
-    <main>
-      <table class="table-plain" v-if="favorites.length > 0">
-        <thead>
-          <tr>
-            <th>{{ t('common.llmProvider') }}</th>
-            <th>{{ t('common.llmModel') }}</th>
-            <th>{{ t('common.actions') }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(favorite, index) in favorites" :key="favorite.id">
-            <td>
-              <div class="engine-cell">
-                <EngineLogo :engine="favorite.engine" :grayscale="false" />
-                {{ getEngineName(favorite.engine) }}
-              </div>
-            </td>
-            <td>{{ getModelName(favorite.engine, favorite.model) }}</td>
-            <td>
-              <div class="actions">
-                <ButtonIcon
-                  :disabled="index === favorites.length - 1"
-                  v-tooltip="{ text: t('settings.favorites.moveDown'), position: 'top-left' }"
-                  @click="moveDown(index)"
-                ><ChevronDownIcon /></ButtonIcon>
-                <ButtonIcon
-                  :disabled="index === 0"
-                  v-tooltip="{ text: t('settings.favorites.moveUp'), position: 'top-left' }"
-                  @click="moveUp(index)"
-                ><ChevronUpIcon /></ButtonIcon>
-                <ContextMenuTrigger position="below-right">
-                  <template #menu>
-                    <div class="item delete" @click="removeFavorite(index)">
-                      {{ t('settings.favorites.remove') }}
-                    </div>
-                  </template>
-                </ContextMenuTrigger>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div v-else class="empty-state">
-        <div class="empty-message">{{ t('settings.favorites.empty') }}</div>
+    <main class="form form-vertical form-large">
+      <div class="form-field">
+        <div class="control-group">
+          <EngineModelSelect
+            :engine="selectedEngine"
+            :model="selectedModel"
+            :favorites="false"
+            :default-label="t('settings.favorites.pick')"
+            @modelSelected="onModelSelectedForAdd"
+          />
+          <button name="add" class="large primary" @click="onAddFavorite">
+            <PlusIcon />{{ t('settings.favorites.add') }}
+          </button>
+        </div>
       </div>
+      <div class="form-field">
+        <table class="table-plain" v-if="favorites.length > 0">
+          <thead>
+            <tr>
+              <th>{{ t('common.llmProvider') }}</th>
+              <th>{{ t('common.llmModel') }}</th>
+              <th>{{ t('common.actions') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(favorite, index) in favorites" :key="favorite.id">
+              <td class="engine-cell">
+                <div>
+                  <EngineLogo :engine="favorite.engine" :grayscale="false" />
+                  {{ getEngineName(favorite.engine) }}
+                </div>
+              </td>
+              <td class="model-cell">{{ getModelName(favorite.engine, favorite.model) }}</td>
+              <td>
+                <div class="actions">
+                  <ButtonIcon
+                    :disabled="index === favorites.length - 1"
+                    v-tooltip="{ text: t('settings.favorites.moveDown'), position: 'top-left' }"
+                    @click="moveDown(index)"
+                  ><ChevronDownIcon /></ButtonIcon>
+                  <ButtonIcon
+                    :disabled="index === 0"
+                    v-tooltip="{ text: t('settings.favorites.moveUp'), position: 'top-left' }"
+                    @click="moveUp(index)"
+                  ><ChevronUpIcon /></ButtonIcon>
+                  <ContextMenuTrigger position="below-right">
+                    <template #menu>
+                      <div class="item delete" @click="removeFavorite(index)">
+                        {{ t('settings.favorites.remove') }}
+                      </div>
+                    </template>
+                  </ContextMenuTrigger>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-      <!-- Add Favorite Modal -->
-      <ModalDialog id="add-favorite-modal" ref="addFavoriteDialog" @save="onAddFavorite" width="400px">
-        <template #header>
-          <div class="title">{{ t('settings.favorites.addModal.title') }}</div>
-        </template>
-        <template #body>
-          <div class="form-field">
-            <label>{{ t('common.llmModel') }}</label>
-            <EngineModelSelect
-              :engine="selectedEngine"
-              :model="selectedModel"
-              :favorites="false"
-              @modelSelected="onModelSelectedForAdd"
-            />
-          </div>
-        </template>
-        <template #footer>
-          <div class="buttons">
-            <button @click="closeAddFavoriteModal" class="tertiary">{{ t('common.cancel') }}</button>
-            <button @click="onAddFavorite" class="primary" :disabled="!selectedEngine || !selectedModel">{{ t('settings.favorites.add') }}</button>
-          </div>
-        </template>
-      </ModalDialog>
+        <div v-else class="empty-state">
+          <div class="empty-message">{{ t('settings.favorites.empty') }}</div>
+        </div>
+      </div>
     </main>
   </div>
 </template>
@@ -89,7 +76,6 @@ import ButtonIcon from '@components/ButtonIcon.vue'
 import ContextMenuTrigger from '@components/ContextMenuTrigger.vue'
 import EngineLogo from '@components/EngineLogo.vue'
 import EngineModelSelect from '@components/EngineModelSelect.vue'
-import ModalDialog from '@components/ModalDialog.vue'
 import { engineNames } from '@services/llms/consts'
 import LlmFactory, { ILlmManager } from '@services/llms/llm'
 import { t } from '@services/i18n'
@@ -97,7 +83,6 @@ import { store } from '@services/store'
 
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
-const addFavoriteDialog = ref(null)
 const selectedEngine = ref('')
 const selectedModel = ref('')
 
@@ -131,16 +116,6 @@ const removeFavorite = (index: number) => {
   llmManager.removeFavoriteModel(favorite.engine, favorite.model)
 }
 
-const showAddFavoriteModal = () => {
-  selectedEngine.value = ''
-  selectedModel.value = ''
-  addFavoriteDialog.value.show()
-}
-
-const closeAddFavoriteModal = () => {
-  addFavoriteDialog.value.close()
-}
-
 const onModelSelectedForAdd = (engine: string | null, model: string | null) => {
   selectedEngine.value = engine || ''
   selectedModel.value = model || ''
@@ -158,7 +133,8 @@ const onAddFavorite = () => {
     llmManager.addFavoriteModel(selectedEngine.value, selectedModel.value)
   }
 
-  closeAddFavoriteModal()
+  selectedEngine.value = ''
+  selectedModel.value = ''
 }
 
 const load = () => {
@@ -175,6 +151,7 @@ header {
 
 main {
   padding: 4rem;
+  gap: 1rem !important;
 }
 
 .empty-state {
@@ -190,16 +167,32 @@ main {
 }
 
 .engine-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  .logo {
-    width: var(--icon-xl);
-    height: var(--icon-xl);
+  width: 50%;
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    .logo {
+      width: var(--icon-xl);
+      height: var(--icon-xl);
+    }
   }
+}
+
+.model-cell {
+  width: 50%;
+  white-space: nowrap;
 }
 
 .engine-model-select {
   width: calc(100% - 2rem);
+  &:deep() .select-box {
+    width: auto;
+  }
 }
+
+table {
+  width: 100%;
+}
+
 </style>
