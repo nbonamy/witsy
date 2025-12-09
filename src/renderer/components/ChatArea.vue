@@ -24,7 +24,7 @@
 
       <ContextMenuTrigger class="menu" :position="chatMenuPosition" v-if="chat?.title || store.isFeatureEnabled('chat.temporary')">
         <template #trigger>
-          <EllipsisVerticalIcon />
+          <MoreVerticalIcon />
         </template>
         <template #menu>
           <div v-if="store.isFeatureEnabled('chat.temporary')"
@@ -68,7 +68,7 @@
           <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
           <div class="spacer"></div> -->
           <!-- <SlidersHorizontalIcon class="icon settings" @click="showModelSettings = !showModelSettings" /> -->
-          <!-- <EllipsisVerticalIcon class="icon" @click="onMenu" />
+          <!-- <MoreVerticalIcon class="icon" @click="onMenu" />
         </div> -->
         
         <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
@@ -95,21 +95,21 @@
 
 <script setup lang="ts">
 
-import { EllipsisVerticalIcon, MessageCirclePlusIcon, PanelRightCloseIcon, PanelRightOpenIcon, SlidersHorizontalIcon, X } from 'lucide-vue-next'
-import { computed, onMounted, ref } from 'vue'
-import Dialog from '@renderer/utils/dialog'
 import useEventBus from '@composables/event_bus'
-import useTipsManager from '@renderer/utils/tips_manager'
-import LlmFactory, { ILlmManager } from '@services/llms/llm'
 import Chat from '@models/chat'
+import Dialog from '@renderer/utils/dialog'
+import useTipsManager from '@renderer/utils/tips_manager'
 import ModelSettings from '@screens/ModelSettings.vue'
 import { t } from '@services/i18n'
+import LlmFactory, { ILlmManager } from '@services/llms/llm'
 import { exportToPdf } from '@services/pdf'
 import { kMediaChatId, store } from '@services/store'
+import { MessageCirclePlusIcon, MoreVerticalIcon, PanelRightCloseIcon, PanelRightOpenIcon, SlidersHorizontalIcon, X } from 'lucide-vue-next'
 import { Expert, Message } from 'types/index'
+import { computed, onMounted, ref } from 'vue'
 import ButtonIcon from './ButtonIcon.vue'
-import ContextMenuTrigger from './ContextMenuTrigger.vue'
 import { MenuPosition } from './ContextMenuPlus.vue'
+import ContextMenuTrigger from './ContextMenuTrigger.vue'
 import EmptyChat from './EmptyChat.vue'
 import MessageList from './MessageList.vue'
 import Prompt, { SendPromptParams } from './Prompt.vue'

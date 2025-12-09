@@ -32,12 +32,12 @@ describe('ContextMenuTrigger', () => {
   })
 
   describe('Basic Functionality', () => {
-    it('renders with default EllipsisVerticalIcon trigger', async () => {
+    it('renders with default MoreVerticalIcon trigger', async () => {
       wrapper = mount(ContextMenuTrigger)
       await nextTick()
       
       expect(wrapper.find('.trigger').exists()).toBe(true)
-      expect(wrapper.find('svg').exists()).toBe(true) // EllipsisVerticalIcon
+      expect(wrapper.find('svg').exists()).toBe(true) // MoreVerticalIcon
     })
 
     it('renders with custom trigger slot content', async () => {

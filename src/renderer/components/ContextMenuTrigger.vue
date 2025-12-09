@@ -10,7 +10,7 @@
       tabindex="0"
     >
       <slot name="trigger">
-        <EllipsisVerticalIcon />
+        <MoreVerticalIcon />
       </slot>
     </ButtonIcon>
     
@@ -29,10 +29,10 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { EllipsisVerticalIcon } from 'lucide-vue-next'
-import ContextMenuPlus, { type MenuPosition } from './ContextMenuPlus.vue'
+import { MoreVerticalIcon } from 'lucide-vue-next'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import ButtonIcon from './ButtonIcon.vue'
+import ContextMenuPlus, { type MenuPosition } from './ContextMenuPlus.vue'
 
 const props = defineProps({
   position: {
