@@ -60,6 +60,7 @@ export default class Message extends MessageBase implements IMessage {
       (obj.attachments ? obj.attachments.map(Attachment.fromJson) : [])
     message.reasoning = obj.reasoning || null
     message.thoughtSignature = obj.thoughtSignature || undefined
+    message.reasoningDetails = obj.reasoningDetails || undefined
     message.transient = false
     message.expert = obj.expert ? Expert.fromJson(obj.expert) : undefined
     message.agentId = obj.agentId || undefined
@@ -200,6 +201,16 @@ export default class Message extends MessageBase implements IMessage {
           text: `<tool id="${toolCall.id}"></tool>`,
           done: false,
         })
+      }
+    }
+
+    // reasoning details
+    if (toolCall.reasoningDetails) {
+      const reasoningDetails = Array.isArray(toolCall.reasoningDetails) ? toolCall.reasoningDetails : [toolCall.reasoningDetails]
+      if (Array.isArray(this.reasoningDetails)) {
+        this.reasoningDetails = this.reasoningDetails.concat(reasoningDetails)
+      } else {
+        this.reasoningDetails = reasoningDetails
       }
     }
 
