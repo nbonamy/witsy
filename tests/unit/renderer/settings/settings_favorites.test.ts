@@ -75,10 +75,6 @@ test('Settings Favorites can add a favorite', async () => {
   await switchToTab(wrapper, tabs.indexOf('settingsFavorites'))
   const settingsComponent = wrapper.getComponent({ ref: 'settingsFavorites' })
 
-  // Call showAddFavoriteModal directly
-  settingsComponent.vm.showAddFavoriteModal()
-  await wrapper.vm.$nextTick()
-
   // Select a model
   settingsComponent.vm.onModelSelectedForAdd('anthropic', 'claude-3-5-sonnet')
   await wrapper.vm.$nextTick()
