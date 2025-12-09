@@ -187,7 +187,7 @@ export default class LlmManagerBase implements ILlmManager {
           capabilities: model?.capabilities ?? llm.defaultCapabilities.capabilities,
           meta: model?.meta ?? { id: f.model, name: f.model },
         }
-      }).sort((a, b) => a.name.localeCompare(b.name))
+      })
     } else {
       return this.config.engines[engine]?.models?.chat || []
     }

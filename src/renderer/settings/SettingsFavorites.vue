@@ -154,6 +154,12 @@ main {
   gap: 1rem !important;
 }
 
+.control-group {
+  button {
+    height: 44px;
+  }
+}
+
 .empty-state {
   display: flex;
   align-items: center;
