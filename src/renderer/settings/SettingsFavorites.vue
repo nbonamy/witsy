@@ -56,7 +56,7 @@
       </div>
 
       <!-- Add Favorite Modal -->
-      <ModalDialog id="add-favorite-modal" ref="addFavoriteDialog" @save="onAddFavorite">
+      <ModalDialog id="add-favorite-modal" ref="addFavoriteDialog" @save="onAddFavorite" width="400px">
         <template #header>
           <div class="title">{{ t('settings.favorites.addModal.title') }}</div>
         </template>
@@ -66,6 +66,7 @@
             <EngineModelSelect
               :engine="selectedEngine"
               :model="selectedModel"
+              :favorites="false"
               @modelSelected="onModelSelectedForAdd"
             />
           </div>
@@ -73,7 +74,7 @@
         <template #footer>
           <div class="buttons">
             <button @click="closeAddFavoriteModal" class="tertiary">{{ t('common.cancel') }}</button>
-            <button @click="onAddFavorite" class="primary" :disabled="!selectedEngine || !selectedModel">{{ t('common.add') }}</button>
+            <button @click="onAddFavorite" class="primary" :disabled="!selectedEngine || !selectedModel">{{ t('settings.favorites.add') }}</button>
           </div>
         </template>
       </ModalDialog>
@@ -192,6 +193,10 @@ main {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  .logo {
+    width: var(--icon-xl);
+    height: var(--icon-xl);
+  }
 }
 
 .engine-model-select {

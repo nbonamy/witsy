@@ -79,11 +79,13 @@ interface Props {
   teleport?: boolean
   defaultLabel?: string
   cssClasses?: string
+  favorites?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   position: 'below',
   teleport: true,
+  favorites: true
 })
 
 // Emits
@@ -111,7 +113,11 @@ const availableEngines = computed(() => {
       return llmManager.isEngineReady(engine) && llmManager.hasChatModels(engine)
     }).filter((engine) => {
       return !llmManager.isFavoriteEngine(engine) || store.isFeatureEnabled('favorites')
-    }).sort((a, b) => {
+    }).filter((engine) => {
+      if (props.favorites) return true
+      return !llmManager.isFavoriteEngine(engine)
+    })
+    .sort((a, b) => {
       if (llmManager.isFavoriteEngine(a)) return -1
       if (llmManager.isFavoriteEngine(b)) return 1
       const nameA = llmManager.getEngineName(a).toLowerCase()

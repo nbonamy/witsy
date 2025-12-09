@@ -5,6 +5,7 @@ export const tabs = [
   'settingsGeneral',
   'settingsSidebar',
   'settingsLLM',
+  'settingsFavorites',
   'settingsChat',
   'settingsDeepResearch',
   'settingsModels',
