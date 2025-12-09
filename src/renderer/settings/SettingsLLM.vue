@@ -49,8 +49,12 @@
       
       <div class="form-field quick-prompt">
         <label>{{ t('settings.general.promptLLMModel') }}</label>
-        <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />
-        <ModelSelectPlus class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
+        <EngineModelSelect
+          :engine="engine"
+          :model="model"
+          :defaultLabel="t('settings.general.lastOneUsed')"
+          @modelSelected="onModelSelected"
+        />
         <div class="form-subgroup">
           <div class="form-field horizontal">
             <input type="checkbox" id="disable-streaming" name="disableStreaming" v-model="disableStreaming" @change="save" />
@@ -86,10 +90,9 @@
 
 import { ChevronLeftIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
-import EngineSelect from '@components/EngineSelect.vue'
+import EngineModelSelect from '@components/EngineModelSelect.vue'
 import InstructionEditor from '@components/InstructionEditor.vue'
 import LangSelect from '@components/LangSelect.vue'
-import ModelSelectPlus from '@components/ModelSelectPlus.vue'
 import Dialog from '@renderer/utils/dialog'
 import { hasLocalization, i18nInstructions, t } from '@services/i18n'
 import { store } from '@services/store'
@@ -108,17 +111,6 @@ const artifactsInstructions = ref(false)
 const codeExecution = ref<CodeExecutionMode>('disabled')
 const customInstructions = ref<CustomInstruction[]>([])
 const selectedInstruction = ref<CustomInstruction | null>(null)
-
-const models = computed(() => {
-  if (!engine.value || engine.value == '') return []
-  if (!store.config.engines[engine.value]) {
-    engine.value = ''
-    model.value = ''
-    save()
-    return []
-  }
-  return store.config.engines[engine.value].models.chat
-})
 
 const isCustomInstructionSelected = computed(() => {
   const defaultInstructions = ['standard', 'structured', 'playful', 'empathic', 'uplifting', 'reflective', 'visionary']
@@ -161,13 +153,9 @@ const save = () => {
   store.saveSettings()
 }
 
-const onChangeEngine = () => {
-  if (engine.value == '') model.value = ''
-  else model.value = store.config.engines[engine.value].models.chat?.[0]?.id
-  save()
-}
-
-const onChangeModel = () => {
+const onModelSelected = (selectedEngine: string | null, selectedModel: string | null) => {
+  engine.value = selectedEngine || ''
+  model.value = selectedModel || ''
   save()
 }
 
@@ -292,6 +280,10 @@ defineExpose({ load })
 
 .localeLLM div.checkbox div.label {
   margin-top: 2px;
+}
+
+.engine-model-select {
+  width: calc(100% - 2rem);
 }
 
 </style>
