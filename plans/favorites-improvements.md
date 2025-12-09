@@ -4,7 +4,7 @@
 - #498: Favorites should be available anywhere a model can be selected
 - #499: Favorites management
 
-**Status:** Ready for implementation
+**Status:** ✅ COMPLETED
 
 ---
 
@@ -36,20 +36,19 @@ Two interconnected features to improve favorites UX:
 **Goal:** Replace basic model selector with `EngineModelSelect` to show favorites
 
 **Tasks:**
-- [ ] Replace model selection UI in `ChatEditor.vue`
+- [x] Replace model selection UI in `ChatEditor.vue`
   - Switch from `EngineSelect` + `ModelSelect` to `EngineModelSelect`
   - Ensure favorites appear at top of selection menu
   - Test forking with favorite model
 
-- [ ] Update `tests/unit/screens/ChatEditor.test.ts`
-  - Update tests for new component
-  - Verify no regressions in fork functionality
+- [x] Update tests (no existing tests for ChatEditor)
+  - Verified no regressions
 
-- [ ] Run lint and tests
+- [x] Run lint and tests
   - `npm run lint`
-  - `npm run test:ai -- ChatEditor`
+  - All checks passed
 
-- [ ] **Commit**: `feat: add favorites support to fork dialog`
+- [x] **Commit**: `feat: add favorites support to fork dialog`
 
 ---
 
@@ -58,19 +57,21 @@ Two interconnected features to improve favorites UX:
 **Goal:** Allow users to select favorites as their default model
 
 **Tasks:**
-- [ ] Update `SettingsLLM.vue` default model selector
+- [x] Update `SettingsLLM.vue` default model selector
   - Replace `EngineSelect` + `ModelSelectPlus` with `EngineModelSelect`
   - Test that selecting favorite as default works correctly
   - Verify config saves and persists
 
-- [ ] Update related tests if needed
-  - Update `tests/unit/settings/SettingsLLM.test.ts` if necessary
+- [x] Update related tests
+  - Updated `tests/unit/renderer/screens/settings_llm.test.ts`
+  - All tests passing
 
-- [ ] Run lint and tests
+- [x] Run lint and tests
   - `npm run lint`
   - `npm run test:ai -- SettingsLLM`
+  - All passing
 
-- [ ] **Commit**: `feat: add favorites to settings default model`
+- [x] **Commit**: `feat: add favorites to settings default model`
 
 ---
 
@@ -79,19 +80,19 @@ Two interconnected features to improve favorites UX:
 **Goal:** Allow agent creation with favorite models
 
 **Tasks:**
-- [ ] Update `AgentForge.vue` model selection
-  - Add `EngineModelSelect` for agent model selection
-  - Ensure favorites work when creating new agents
-  - Test agent creation flow with favorite model
+- [x] Update `AgentForge.vue` model selection
+  - Already using `EngineModelSelect` component
+  - Favorites work correctly when creating agents
+  - Tested agent creation flow with favorite model
 
-- [ ] Update related tests if needed
-  - Update `tests/unit/screens/AgentForge.test.ts` if necessary
+- [x] Update related tests if needed
+  - No changes needed - existing tests passing
 
-- [ ] Run lint and tests
-  - `npm run lint`
-  - `npm run test:ai -- AgentForge`
+- [x] Run lint and tests
+  - `npm run lint` - All passing
+  - `npm run test:ai -- AgentForge` - All passing
 
-- [ ] **Commit**: `feat: add favorites to agent forge`
+- [x] **Note**: No commit needed - AgentForge already had favorites support
 
 ---
 
@@ -100,44 +101,46 @@ Two interconnected features to improve favorites UX:
 **Goal:** Dedicated interface for managing favorites in settings
 
 **Tasks:**
-- [ ] Create `SettingsFavorites.vue` component
-  - List all favorites with engine logo + model name
-  - Remove button for each favorite
-  - Up/down buttons for reordering (affects Alt+1-9 keyboard shortcuts)
-  - "Add Favorite" button to open model browser
-  - Empty state message when no favorites exist
-  - Use existing CSS variables and patterns
+- [x] Create `SettingsFavorites.vue` component
+  - Table layout with three columns: Engine, Model, Actions
+  - Engine column shows logo + name using EngineLogo component
+  - Up/down ButtonIcon components for reordering
+  - ContextMenuTrigger with delete option
+  - Empty state with helpful message
+  - Uses CSS variables from variables.css
 
-- [ ] Create model browser modal for adding favorites
-  - Modal showing all engines + models grouped by engine
-  - Use similar UI patterns to `EngineModelMenu`
-  - Select model → adds to favorites
-  - No search/filter for now (can add later if needed)
+- [x] Create model browser modal for adding favorites
+  - ModalDialog with EngineModelSelect component
+  - Shows all engines + models
+  - Prevents duplicate favorites
+  - Simple and clean UI
 
-- [ ] Add `reorderFavorites(index, direction)` to LLM manager
-  - Move favorite up or down in `config.llm.favorites` array
-  - Handle edge cases (already at top/bottom)
-  - Persist changes to config
-  - Located in `src/renderer/services/llms/base.ts`
+- [x] Add `reorderFavorites(index, direction)` to LLM manager
+  - Implemented in `src/renderer/services/llms/base.ts`
+  - Swaps favorites at given index with neighbor
+  - Handles edge cases (already at top/bottom)
+  - Persists changes via store.saveSettings()
+  - Added to ILlmManager interface in `src/types/llm.ts`
 
-- [ ] Add Favorites tab to Settings
-  - Update `Settings.vue` to include new Favorites tab
-  - Add navigation item and route
-  - Add i18n strings (English only): `locales/en.json`
+- [x] Add Favorites tab to Settings
+  - Updated `Settings.vue` with StarIcon tab
+  - Added settingsFavorites ref and component registration
+  - Added i18n strings in `locales/en.json`
+  - Tab navigation working correctly
 
-- [ ] Write tests for `SettingsFavorites.vue`
-  - Test adding favorites through model browser
-  - Test removing favorites
-  - Test reordering (up/down)
-  - Test edge cases (empty state, can't move past boundaries)
-  - Mock window IPC calls appropriately
+- [x] Write tests for `SettingsFavorites.vue`
+  - Created `tests/unit/renderer/settings/settings_favorites.test.ts`
+  - 9 comprehensive tests covering all functionality
+  - Tests: empty state, display, add, remove, move up/down, disabled states, duplicates
+  - Updated `settings_utils.ts` to include settingsFavorites in tabs array
+  - All tests passing
 
-- [ ] Run lint and tests
-  - `npm run lint`
-  - `npm run lint:css` (validate CSS variable usage)
-  - `npm run test:ai -- SettingsFavorites`
+- [x] Run lint and tests
+  - `npm run lint` - All passing
+  - `npm run lint:css` - All passing (fixed CSS variable usage)
+  - `npm run test:ai -- SettingsFavorites` - All 9 tests passing
 
-- [ ] **Commit**: `feat: add favorites management ui`
+- [x] **Commit**: `feat: add favorites management ui`
 
 ---
 
@@ -146,24 +149,24 @@ Two interconnected features to improve favorites UX:
 **Goal:** Ensure everything works together seamlessly
 
 **Tasks:**
-- [ ] Test complete user flows end-to-end
-  - Add favorite via heart button in chat
-  - Manage favorites in settings (add/remove/reorder)
-  - Select favorite in fork dialog
-  - Select favorite as default model in settings
-  - Select favorite when creating agent
-  - Verify keyboard shortcuts (Alt+1-9) reflect reordered favorites
+- [x] Test complete user flows end-to-end
+  - Add favorite via heart button in chat ✓
+  - Manage favorites in settings (add/remove/reorder) ✓
+  - Select favorite in fork dialog ✓
+  - Select favorite as default model in settings ✓
+  - Select favorite when creating agent ✓
+  - Verify keyboard shortcuts (Alt+1-9) reflect reordered favorites ✓
 
-- [ ] Check CSS usage compliance
-  - Run `npm run lint:css`
-  - Fix any variable reference issues
+- [x] Check CSS usage compliance
+  - `npm run lint:css` - All passing
+  - Fixed all CSS variable references to use defined variables
 
-- [ ] Run full test suite
-  - `npm run lint`
-  - `npm run test:ai`
-  - Fix any failures or regressions
+- [x] Run full test suite
+  - `npm run lint` - All passing
+  - `npm run test:ai` - All 2536 tests passing
+  - No regressions detected
 
-- [ ] Manual testing checklist
+- [x] Manual testing checklist
   - Fork dialog shows favorites ✓
   - Settings default model shows favorites ✓
   - Agent forge shows favorites ✓
@@ -171,7 +174,7 @@ Two interconnected features to improve favorites UX:
   - Reordering updates keyboard shortcuts ✓
   - Empty state displays correctly ✓
 
-- [ ] **Commit**: `chore: finalize favorites improvements`
+- [x] **Note**: No separate commit needed - changes were committed as part of Phase 4
 
 ---
 
@@ -196,4 +199,33 @@ Two interconnected features to improve favorites UX:
 
 ## Key Learnings
 
-(To be filled in at the end of implementation)
+### Design Patterns
+
+1. **Component Standardization**: Using `EngineModelSelect` + `EngineModelMenu` consistently across all model selection points creates a unified UX and reduces code duplication. This pattern should be the default for any future model selection needs.
+
+2. **Table Layout Pattern**: For list-based settings UIs, the `table-plain` pattern from `agent/List.vue` provides excellent structure:
+   - Three-column layout: Entity (with icon), Details, Actions
+   - Actions column: IconButtons for quick operations + ContextMenuTrigger for destructive actions
+   - Disabled state on boundary conditions (first/last items for move operations)
+
+3. **Modal Composition**: Reusing existing components (EngineModelSelect) inside modals keeps the UI consistent and reduces implementation time. No need to rebuild selection logic.
+
+### Testing Approach
+
+4. **Component Method Testing**: When UI interactions are complex (modals, multi-step flows), directly calling component methods in tests (`vm.showModal()`, `vm.onAction()`) is more reliable than simulating clicks and waiting for state changes. This is acceptable when testing component logic rather than pure user interactions.
+
+5. **Test Navigation Utilities**: Centralizing tab navigation logic in `settings_utils.ts` makes tests cleaner and easier to maintain. Always update the tabs array when adding new settings tabs.
+
+### CSS & Styling
+
+6. **CSS Variable Enforcement**: Running `npm run lint:css` before finalizing work catches incorrect variable usage early. Always reference `css/variables.css` and `css/index.css` for the canonical list of available variables.
+
+7. **Existing Component Reuse**: Before creating custom styling, check if existing components (ButtonIcon, ContextMenuTrigger, EngineLogo) already provide the needed functionality. The component library is extensive.
+
+### Implementation Strategy
+
+8. **Incremental Development**: Breaking work into small phases with lint + test at each step prevents regressions and makes debugging easier. Each phase should be independently committable.
+
+9. **Interface Updates**: When adding methods to manager classes, always update the corresponding interface (`ILlmManager`) immediately to maintain type safety across the codebase.
+
+10. **User Feedback Integration**: When user feedback indicates the design is too creative or doesn't match existing patterns, pivot immediately to match established patterns. Consistency > creativity in UI implementation.
