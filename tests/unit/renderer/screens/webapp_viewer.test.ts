@@ -175,3 +175,147 @@ test('WebAppViewer passes correct webapp data', () => {
   const webview = wrapper.find('webview')
   expect(webview.attributes('data-webapp-id')).toBe('chatgpt')
 })
+
+test('WebAppViewer shows toolbar when visible and not loading', async () => {
+  const webapp: WebApp = {
+    id: 'test-app',
+    name: 'Test App',
+    url: 'https://example.com',
+    enabled: true
+  }
+
+  const wrapper = mount(WebAppViewer, {
+    props: {
+      webapp,
+      visible: true
+    }
+  })
+
+  // Mock webview navigation methods
+  const webview = wrapper.find('webview').element as any
+  webview.canGoBack = () => false
+  webview.canGoForward = () => false
+
+  // Simulate webview loading completion
+  webview.dispatchEvent(new Event('did-finish-load'))
+  await nextTick()
+
+  const toolbar = wrapper.find('.webapp-toolbar')
+  expect(toolbar.exists()).toBe(true)
+})
+
+test('WebAppViewer hides toolbar while loading', async () => {
+  const webapp: WebApp = {
+    id: 'test-app',
+    name: 'Test App',
+    url: 'https://example.com',
+    enabled: true
+  }
+
+  const wrapper = mount(WebAppViewer, {
+    props: {
+      webapp,
+      visible: false
+    }
+  })
+
+  // Switch to visible to trigger loading
+  await wrapper.setProps({ visible: true })
+  await nextTick()
+
+  // Toolbar should not be visible while loading
+  const toolbar = wrapper.find('.webapp-toolbar')
+  expect(toolbar.exists()).toBe(false)
+
+  // Loading indicator should be present
+  const loading = wrapper.find('.loading')
+  expect(loading.exists()).toBe(true)
+})
+
+test('WebAppViewer toolbar has all navigation buttons', async () => {
+  const webapp: WebApp = {
+    id: 'test-app',
+    name: 'Test App',
+    url: 'https://example.com',
+    enabled: true
+  }
+
+  const wrapper = mount(WebAppViewer, {
+    props: {
+      webapp,
+      visible: true
+    }
+  })
+
+  // Mock webview navigation methods
+  const webview = wrapper.find('webview').element as any
+  webview.canGoBack = () => false
+  webview.canGoForward = () => false
+
+  // Simulate webview loading completion
+  webview.dispatchEvent(new Event('did-finish-load'))
+  await nextTick()
+
+  const buttons = wrapper.findAllComponents({ name: 'ButtonIcon' })
+  expect(buttons.length).toBe(4) // home, back, forward, reload
+})
+
+test('WebAppViewer back and forward buttons start disabled', async () => {
+  const webapp: WebApp = {
+    id: 'test-app',
+    name: 'Test App',
+    url: 'https://example.com',
+    enabled: true
+  }
+
+  const wrapper = mount(WebAppViewer, {
+    props: {
+      webapp,
+      visible: true
+    }
+  })
+
+  // Mock webview navigation methods
+  const webview = wrapper.find('webview').element as any
+  webview.canGoBack = () => false
+  webview.canGoForward = () => false
+
+  // Simulate webview loading completion
+  webview.dispatchEvent(new Event('did-finish-load'))
+  await nextTick()
+
+  const buttons = wrapper.findAllComponents({ name: 'ButtonIcon' })
+  // buttons[1] is back, buttons[2] is forward
+  expect(buttons[1].attributes('disabled')).toBeDefined()
+  expect(buttons[2].attributes('disabled')).toBeDefined()
+})
+
+test('WebAppViewer home and reload buttons are never disabled', async () => {
+  const webapp: WebApp = {
+    id: 'test-app',
+    name: 'Test App',
+    url: 'https://example.com',
+    enabled: true
+  }
+
+  const wrapper = mount(WebAppViewer, {
+    props: {
+      webapp,
+      visible: true
+    }
+  })
+
+  // Mock webview navigation methods
+  const webview = wrapper.find('webview').element as any
+  webview.canGoBack = () => false
+  webview.canGoForward = () => false
+
+  // Simulate webview loading completion
+  webview.dispatchEvent(new Event('did-finish-load'))
+  await nextTick()
+
+  const buttons = wrapper.findAllComponents({ name: 'ButtonIcon' })
+  // buttons[0] is home, buttons[3] is reload
+  expect(buttons[0].attributes('disabled')).toBeUndefined()
+  expect(buttons[3].attributes('disabled')).toBeUndefined()
+})
