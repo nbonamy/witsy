@@ -48,6 +48,7 @@ const LINKED_TRANSLATION_REGEX = /^@:\{'.*'\}$/
 // Parse command line arguments
 const args = process.argv.slice(2)
 const shouldDelete = !args.includes('--no-delete')
+const englishOnly = args.includes('--en')
 
 // Helper types
 interface LocaleData {
@@ -326,9 +327,10 @@ async function getCandidatesForDeletion(): Promise<Set<string>> {
 }
 
 // Function to load locales from disk
-function loadLocales(): { [locale: string]: LocaleData } {
+function loadLocales(onlyEnglish: boolean = false): { [locale: string]: LocaleData } {
   const localeFiles = fs.readdirSync(LOCALES_DIR)
     .filter(file => file.endsWith('.json'))
+    .filter(file => !onlyEnglish || file === 'en.json')
     .map(file => path.join(LOCALES_DIR, file))
 
   if (localeFiles.length === 0) {
@@ -473,7 +475,7 @@ function detectMissingTranslations(
 }
 
 // Function to get candidates for translation (now much smaller and focused)
-async function getCandidatesForTranslation(unusedKeys: Set<string>): Promise<{
+async function getCandidatesForTranslation(unusedKeys: Set<string>, onlyEnglish: boolean = false): Promise<{
   keyUsages: Map<string, KeyUsage>
   locales: { [locale: string]: LocaleData }
   candidateKeys: string[]
@@ -483,7 +485,7 @@ async function getCandidatesForTranslation(unusedKeys: Set<string>): Promise<{
 }> {
   try {
     // Load all locale data once
-    const locales = loadLocales()
+    const locales = loadLocales(onlyEnglish)
     
     // Extract key usages from source files
     const keyUsages = extractKeyUsages(locales)
@@ -623,7 +625,7 @@ async function translateCandidatesForTranslation(
 }
 
 // Function to report unused keys (candidates for deletion)
-async function reportUnusedKeys(unusedKeys: Set<string>): Promise<boolean> {
+async function reportUnusedKeys(unusedKeys: Set<string>, onlyEnglish: boolean = false): Promise<boolean> {
   if (unusedKeys.size === 0) {
     console.log('\n✅ No unused keys found.')
     return false
@@ -633,6 +635,7 @@ async function reportUnusedKeys(unusedKeys: Set<string>): Promise<boolean> {
     // Get all locale files
     const localeFiles = fs.readdirSync(LOCALES_DIR)
       .filter(file => file.endsWith('.json'))
+      .filter(file => !onlyEnglish || file === 'en.json')
       .map(file => path.join(LOCALES_DIR, file))
 
     let hasUnusedKeys = false
@@ -903,16 +906,18 @@ function saveLocaleFiles(locales: { [locale: string]: LocaleData }): void {
 }
 
 // Main execution function
-export async function i18n_check(shouldFix: boolean = args.includes('--fix')) {
-  
+export async function i18n_check(shouldFix: boolean = args.includes('--fix'), onlyEnglish: boolean = englishOnly) {
+
   // Step 1: Identify candidates for deletion (unused keys)
   const candidatesForDeletion = shouldDelete ? await getCandidatesForDeletion() : new Set<string>()
-  
+
   // Step 2: Load all locales once and identify candidates for translation
-  const { locales, keyUsages, keysNeedingEnglish, keysWithChangedEnglish, missingTranslations } = await getCandidatesForTranslation(candidatesForDeletion)
-  
-  // Step 3: Get wrong linked translations data
-  const { enData, wrongLinkedTranslations } = getWrongLinkedTranslations(locales)
+  const { locales, keyUsages, keysNeedingEnglish, keysWithChangedEnglish, missingTranslations } = await getCandidatesForTranslation(candidatesForDeletion, onlyEnglish)
+
+  // Step 3: Get wrong linked translations data (skip if English only)
+  const { enData, wrongLinkedTranslations } = onlyEnglish
+    ? { enData: flatten(locales.en), wrongLinkedTranslations: [] as Array<{locale: string, keys: string[]}> }
+    : getWrongLinkedTranslations(locales)
   
   if (shouldFix) {
     
@@ -940,12 +945,12 @@ export async function i18n_check(shouldFix: boolean = args.includes('--fix')) {
   } else {
 
     // Report results when not fixing (in logical order)
-    const hasUnusedTranslations = await reportUnusedKeys(candidatesForDeletion)
-    const hasWrongLinkedTranslations = await reportWrongLinkedTranslations(wrongLinkedTranslations)
+    const hasUnusedTranslations = await reportUnusedKeys(candidatesForDeletion, onlyEnglish)
+    const hasWrongLinkedTranslations = onlyEnglish ? false : await reportWrongLinkedTranslations(wrongLinkedTranslations)
     const hasMissingEnglishTranslations = await reportMissingEnglishTranslations(keyUsages, keysNeedingEnglish)
-    const hasChangedEnglishTranslations = await reportChangedEnglishTranslations(keyUsages, keysWithChangedEnglish, locales)
-    const hasMissingTranslations = await reportMissingTranslations(keyUsages, missingTranslations)
-    
+    const hasChangedEnglishTranslations = onlyEnglish ? false : await reportChangedEnglishTranslations(keyUsages, keysWithChangedEnglish, locales)
+    const hasMissingTranslations = onlyEnglish ? false : await reportMissingTranslations(keyUsages, missingTranslations)
+
     if (hasMissingTranslations || hasUnusedTranslations || hasMissingEnglishTranslations || hasChangedEnglishTranslations || hasWrongLinkedTranslations) {
       process.exit(1)
     }
