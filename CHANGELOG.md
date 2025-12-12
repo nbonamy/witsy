@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - [Openrouter] Support for reasoning models
 - [Google] Support for Nano Banana Pro
 - Favorites management (https://github.com/nbonamy/witsy/issues/499)
+- Facet navigation toolbar
 
 ### Changed
 - N/A

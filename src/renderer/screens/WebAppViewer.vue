@@ -5,6 +5,43 @@
       <Loader />
       <Loader />
     </div>
+
+    <!-- Navigation Toolbar -->
+    <div v-if="!isLoading" class="webapp-toolbar">
+      <ButtonIcon
+        @click="goHome"
+        v-tooltip="{ text: 'Go to home page', position: 'bottom' }"
+      >
+        <HomeIcon :size="16" />
+      </ButtonIcon>
+
+      <div class="toolbar-separator"></div>
+
+      <ButtonIcon
+        @click="goBack"
+        :disabled="!canGoBack"
+        v-tooltip="{ text: 'Go back', position: 'bottom' }"
+      >
+        <ArrowLeftIcon :size="16" />
+      </ButtonIcon>
+      <ButtonIcon
+        @click="goForward"
+        :disabled="!canGoForward"
+        v-tooltip="{ text: 'Go forward', position: 'bottom' }"
+      >
+        <ArrowRightIcon :size="16" />
+      </ButtonIcon>
+
+      <div class="toolbar-separator"></div>
+
+      <ButtonIcon
+        @click="reload"
+        v-tooltip="{ text: 'Reload', position: 'bottom' }"
+      >
+        <RotateCwIcon :size="16" />
+      </ButtonIcon>
+    </div>
+
     <webview
       ref="webviewRef"
       :data-webapp-id="webapp.id"
@@ -19,6 +56,8 @@
 
 import { onMounted, onBeforeUnmount, ref, watch, computed } from 'vue'
 import Loader from '@components/Loader.vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
+import { ArrowLeftIcon, ArrowRightIcon, HomeIcon, RotateCwIcon } from 'lucide-vue-next'
 import { WebApp } from 'types/workspace'
 
 const props = defineProps<{
@@ -36,6 +75,48 @@ const isLoading = ref(false)
 let hasLoadedSrc = false
 
 const partition = computed(() => `persist:webapp_${props.webapp.name}`)
+
+// Navigation state
+const canGoBack = ref(false)
+const canGoForward = ref(false)
+
+// Navigation methods
+const goHome = () => {
+  const webview = webviewRef.value as any
+  if (webview) {
+    webview.loadURL(props.webapp.url)
+  }
+}
+
+const goBack = () => {
+  const webview = webviewRef.value as any
+  if (webview && canGoBack.value) {
+    webview.goBack()
+  }
+}
+
+const goForward = () => {
+  const webview = webviewRef.value as any
+  if (webview && canGoForward.value) {
+    webview.goForward()
+  }
+}
+
+const reload = () => {
+  const webview = webviewRef.value as any
+  if (webview) {
+    webview.reload()
+  }
+}
+
+// Update navigation state
+const updateNavigationState = () => {
+  const webview = webviewRef.value as any
+  if (webview) {
+    canGoBack.value = webview.canGoBack()
+    canGoForward.value = webview.canGoForward()
+  }
+}
 
 // Update lastUsed when component becomes visible
 watch(() => props.visible, (isVisible) => {
@@ -59,11 +140,17 @@ onMounted(() => {
   const handleDidFinishLoad = () => {
     //console.log(`[WebApp ${props.webapp.id}] Page loaded`)
     isLoading.value = false
+    updateNavigationState()
+  }
+
+  const handleDidNavigate = () => {
+    updateNavigationState()
   }
 
   const handleDidNavigateInPage = (event: any) => {
     //console.log(`[WebApp ${props.webapp.id}] Navigated to:`, event.url)
     emit('navigate', event.url)
+    updateNavigationState()
   }
 
   const handleDomReady = async () => {
@@ -79,12 +166,14 @@ onMounted(() => {
 
   // Attach event listeners
   webview.addEventListener('did-finish-load', handleDidFinishLoad)
+  webview.addEventListener('did-navigate', handleDidNavigate)
   webview.addEventListener('did-navigate-in-page', handleDidNavigateInPage)
   webview.addEventListener('dom-ready', handleDomReady)
 
   // Cleanup on unmount
   onBeforeUnmount(() => {
     webview.removeEventListener('did-finish-load', handleDidFinishLoad)
+    webview.removeEventListener('did-navigate', handleDidNavigate)
     webview.removeEventListener('did-navigate-in-page', handleDidNavigateInPage)
     webview.removeEventListener('dom-ready', handleDomReady)
   })
@@ -126,5 +215,38 @@ onMounted(() => {
       height: 24px;
     }
   }
+}
+
+/* Toolbar */
+.webapp-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-self: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  margin-top: var(--space-4);
+  background-color: var(--background-color);
+
+  svg {
+    width: var(--icon-lg);
+    height: var(--icon-lg);
+  }
+}
+
+.toolbar-separator {
+  width: 1px;
+  height: 24px;
+  background-color: var(--color-outline-variant);
+  margin: 0 var(--space-2);
+}
+
+/* Disabled button state */
+.webapp-toolbar :deep(.button-icon:disabled) {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 </style>
