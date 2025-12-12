@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.0] - WIP
+## [3.3.0] - 2025-12-11
 
 ### Added
 - [Google] Support for Gemini 3 Preview (thoughtSignature)
