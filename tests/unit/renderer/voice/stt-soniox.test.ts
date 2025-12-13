@@ -243,6 +243,77 @@ describe('STTSoniox', () => {
     expect(errorChunks[0].error).toMatch(/Connection (failed|closed unexpectedly)/)
   })
 
+  it('should reset streaming state when restarting mid-session', async () => {
+    const engine = new STTSoniox(makeConfig() as any)
+
+    const sockets: MockWebSocket[] = []
+
+    type Handler = (() => void) | ((event: any) => void) | undefined
+
+    class MockWebSocket {
+      readyState = WebSocket.CONNECTING
+      onopen: Handler
+      onmessage: Handler
+      onerror: Handler
+      onclose: Handler
+
+      constructor(public url: string) {
+        sockets.push(this)
+      }
+
+      send(data: any) {
+        if (typeof data === 'string') {
+          const config = JSON.parse(data)
+          expect(config.api_key).toBe('test-api-key')
+        }
+      }
+
+      close(code?: number, reason?: string) {
+        this.readyState = WebSocket.CLOSED
+        this.onclose?.({ code: code ?? 1000, reason: reason ?? '' })
+      }
+
+      triggerOpen() {
+        this.readyState = WebSocket.OPEN
+        this.onopen?.()
+      }
+
+      emitTokens(text: string) {
+        this.onmessage?.({
+          data: JSON.stringify({ tokens: [{ text, is_final: true }] })
+        })
+      }
+    }
+
+    // @ts-expect-error mocking
+    global.WebSocket = MockWebSocket
+
+    const chunks: any[] = []
+
+    await engine.startStreaming('realtime-transcription', (chunk) => {
+      chunks.push(chunk)
+    })
+
+    sockets[0].triggerOpen()
+    sockets[0].emitTokens('hello ')
+    sockets[0].emitTokens('world')
+
+    const firstSessionText = chunks.filter(c => c.type === 'text').at(-1)
+    expect(firstSessionText?.content).toBe('hello world')
+
+    await engine.startStreaming('realtime-transcription', (chunk) => {
+      chunks.push(chunk)
+    })
+
+    expect(sockets[0].readyState).toBe(WebSocket.CLOSED)
+
+    sockets[1].triggerOpen()
+    sockets[1].emitTokens('fresh start')
+
+    const restartedText = chunks.filter(c => c.type === 'text').at(-1)
+    expect(restartedText?.content).toBe('fresh start')
+  })
+
   it('should require API key for transcription', async () => {
     const configWithoutKey = makeConfig()
     configWithoutKey.engines.soniox.apiKey = ''
