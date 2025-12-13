@@ -59,6 +59,11 @@ export default class STTSoniox implements STTEngine {
     return STTSoniox.requiresDownload()
   }
 
+  private resetStreamingState(): void {
+    this.finalTranscript = ''
+    this.pendingError = null
+  }
+
   async initialize(callback?: ProgressCallback): Promise<void> {
     callback?.({ status: 'ready', task: 'soniox', model: this.config.stt.model })
   }
@@ -277,13 +282,19 @@ export default class STTSoniox implements STTEngine {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async startStreaming(model: string, callback: StreamingCallback, opts?: Record<string, any>): Promise<void> {
     if (this.ws) {
-      console.warn('WebSocket already active')
-      return
+      try {
+        this.ws.close(1000, 'Restarting Soniox stream')
+      } catch (error) {
+        console.warn('Failed to close existing Soniox stream', error)
+      }
+      this.ws = null
     }
+
+    this.resetStreamingState()
 
     const apiKey = this.config.engines?.soniox?.apiKey
     if (!apiKey) {
-      callback({ 
+      callback({
         type: 'error', 
         status: 'not_authorized', 
         error: 'Missing Soniox API key. Please configure your API key in Settings > Audio > Speech to Text.' 
@@ -385,10 +396,11 @@ export default class STTSoniox implements STTEngine {
         } else {
           callback({ type: 'status', status: 'done' })
         }
-        
+
         this.ws = null
+        this.resetStreamingState()
       }
-      
+
     } catch (error) {
       console.error('Failed to create WebSocket:', error)
       callback({ 
