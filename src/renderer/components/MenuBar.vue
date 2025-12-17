@@ -108,7 +108,7 @@ const isFeatureHidden = (featureKey: string): boolean => {
 }
 
 const hasComputerUse = computed(() => {
-  const hasConfig = store.isFeatureEnabled('voiceMode') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
+  const hasConfig = store.isFeatureEnabled('computerUse') && store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.computer?.find(m => m.id === 'computer-use')
   return hasConfig && !isFeatureHidden('computerUse')
 })
 
