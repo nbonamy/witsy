@@ -83,15 +83,15 @@
 
 <script setup lang="ts">
 
-import { CalendarMinus2Icon, ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
-import { computed, onMounted, ref, watch } from 'vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import MessageItemBody from '@components/MessageItemBody.vue'
+import AgentRun from '@models/agent_run'
+import Message from '@models/message'
 import { togglePanel } from '@renderer/utils/panel'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import { AgentRun } from 'types/agents'
-import Message from '@models/message'
+import { CalendarMinus2Icon, ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
+import { computed, onMounted, ref, watch } from 'vue'
 
 type StepMessages = {
   prompt: Message
@@ -150,7 +150,7 @@ onMounted(() => {
 const loadAgentRun = async () => {
   try {
     clearTimeout(refreshTimeout)
-    run.value = window.api.agents.getRun(store.config.workspaceId, props.agentId, props.runId)
+    run.value = AgentRun.fromJson(window.api.agents.getRun(store.config.workspaceId, props.agentId, props.runId))
 
     // Load agent definition to get step descriptions
     if (!agent.value) {
