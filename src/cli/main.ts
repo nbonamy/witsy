@@ -28,7 +28,7 @@ function parseCliArgs() {
 ${chalk.bold('Witsy CLI')} - AI Assistant Command Line Interface
 
 ${chalk.bold('Usage:')}
-  witsy-cli [options]
+  witsy [options]
 
 ${chalk.bold('Options:')}
   -p, --port <port>    Connect to Witsy on specified port (default: 8090)
