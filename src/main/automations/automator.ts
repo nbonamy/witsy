@@ -98,7 +98,7 @@ export default class Automator {
       }
 
       // paste it
-      this.pasteClipboard();
+      await this.pasteClipboard();
 
       // restore
       await Automation.writeTextToClipboard(clipboardText);
