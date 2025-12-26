@@ -280,7 +280,7 @@ const computeBlocks = (content: string|null): Block[] => {
       // Render the markdown table to HTML
       const tableMarkdown = match[0]
       const tableHtml = window.api.markdown.render(tableMarkdown)
-      blocks.push({ type: 'table', content: tableHtml })
+      blocks.push({ type: 'table', content: highlightSearch(tableHtml) })
     }
     
     // Update lastIndex to continue after this match
@@ -291,6 +291,14 @@ const computeBlocks = (content: string|null): Block[] => {
   // done
   //console.log('Computed blocks:', content, blocks)
   return blocks
+}
+
+const highlightSearch = (html: string): string => {
+  if (store.chatState.filter) {
+    const regex = new RegExp(store.chatState.filter, 'gi')
+    html = html.replace(regex, (match) => `<mark>${match}</mark>`);
+  }
+  return html
 }
 
 const closeOpenArtifactTags = (content: string) => {

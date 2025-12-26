@@ -94,12 +94,6 @@ let customRenderTimeout: NodeJS.Timeout|null = null
 
 const mdRender = (content: string) => {
 
-  // highlight code
-  if (store.chatState.filter) {
-    const regex = new RegExp(store.chatState.filter, 'gi')
-    content = content.replace(regex, (match) => `==${match}==`);
-  }
-
   // convert to html 
   var html = window.api.markdown.render(content)
 
@@ -116,6 +110,12 @@ const mdRender = (content: string) => {
   html = html.replace(/&lt;error&gt;([\s\S]*?)&lt;\/error&gt;/g, `
     <span class="error-icon-placeholder" data-error="$1"></span>
   `)
+
+  // highlight code
+  if (store.chatState.filter) {
+    const regex = new RegExp(store.chatState.filter, 'gi')
+    html = html.replace(regex, (match) => `<mark>${match}</mark>`);
+  }
 
   // render error icons and mermaid blocks
   nextTick(() => {
