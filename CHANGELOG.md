@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.1] - WIP
+
+### Added
+- N/A
+
+### Changed
+- N/A
+
+### Fixed
+- Search text highlighting adds equal signs to text formatted as code (https://github.com/nbonamy/witsy/issues/509)
+
+### Removed
+- N/A
+
+
 ## [3.3.0] - 2025-12-11
 
 ### Added
