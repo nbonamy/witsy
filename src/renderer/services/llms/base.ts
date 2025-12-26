@@ -400,7 +400,6 @@ export default class LlmManagerBase implements ILlmManager {
     // openai names are not great
     if (engine === 'openai') {
 
-
       // filter
       if (store.config.engines.openai.hideDatedModels) {
         models.chat = models.chat.filter(m => !m.id.match(/\d{4}-\d{2}-\d{2}$/i))
@@ -432,14 +431,42 @@ export default class LlmManagerBase implements ILlmManager {
 
     // google are worse
     if (engine === 'google') {
+      
+      // skip old models
       models.chat = models.chat.filter(m => !m.id.includes('-1.5-') && !m.id.includes('-2.0-') && m.id !== 'gemini-exp-1206')
+      
+      // sort gemini 1st
       models.chat = models.chat.sort((a, b) => {
+
+        // gemini first
         if (a.id.includes('gemini') && !b.id.includes('gemini')) return -1
         if (!a.id.includes('gemini') && b.id.includes('gemini')) return 1
-        if (a.id.includes('preview') && !b.id.includes('preview')) return 1
-        if (!a.id.includes('preview') && b.id.includes('preview')) return -1
+
+        // gemma last
+        if (a.id.includes('gemma') && !b.id.includes('gemma')) return 1
+        if (!a.id.includes('gemma') && b.id.includes('gemma')) return -1
+
+        // extract version numbers (e.g., "2.5", "3", "3.0") and sort latest first
+        const versionA = a.id.match(/-(\d+(?:\.\d+)?)-/)?.[1]
+        const versionB = b.id.match(/-(\d+(?:\.\d+)?)-/)?.[1]
+        if (versionA && versionB) {
+          const numA = parseFloat(versionA)
+          const numB = parseFloat(versionB)
+          if (numA !== numB) return numB - numA // latest first
+        } else if (versionA && b.id.endsWith('-latest')) {
+          return 1 // a has version, b doesn't
+        } else if (versionB && a.id.endsWith('-latest')) {
+          return -1 // b has version, a doesn't
+        }
+
+        // lite last
+        if (a.id.includes('lite') && !b.id.includes('lite')) return 1
+        if (!a.id.includes('lite') && b.id.includes('lite')) return -1
+
+        // otherwise keep order
         return 0
       })
+    
     }
 
     // save in store
