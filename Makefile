@@ -19,6 +19,16 @@ export NODE_OPTIONS := --max_old_space_size=4096
 
 default: increment-build-number mac-arm64
 
+# Watch mode for lint and test
+watch-all:
+	@command -v tmux > /dev/null || (echo "Please install tmux: brew install tmux" && exit 1)
+	@tmux new-session \; \
+		set-option -g mouse on \; \
+		send-keys 'npm run lint:watch' C-m \; \
+		split-window -v \; \
+		send-keys 'npm run test:watch' C-m \; \
+		select-pane -t 0
+		
 test:
 	npx vitest --run
 
