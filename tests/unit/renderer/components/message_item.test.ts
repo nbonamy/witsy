@@ -77,6 +77,7 @@ beforeEach(() => {
   // reset some stuff
   botMessageImageLegacy.setImage('https://example.com/image.jpg')
   botMessageTransient.transient = true
+  store.chatState.filter = null
 
 })
 
@@ -935,4 +936,46 @@ test('Message editing - Keyboard shortcuts work', async () => {
     message: userMessage,
     newContent: 'Modified content again'
   })
+})
+
+test('Search highlight in text block', async () => {
+  const botMessageText: Message = new Message('assistant', '**Hi**\n\n1. One \n\n2. Two')
+  store.chatState.filter = 'One'
+  const wrapper = await mount(botMessageText)
+  const marks = wrapper.findAll('mark')
+  expect(marks.length).toBe(1)
+  expect(marks[0].text()).toBe('One')
+})
+
+test('Search highlight is case-insensitive', async () => {
+  const botMessageText: Message = new Message('assistant', '**Hi**\n\n1. One \n\n2. Two')
+  store.chatState.filter = 'one'
+  const wrapper = await mount(botMessageText)
+  const marks = wrapper.findAll('mark')
+  expect(marks.length).toBe(1)
+  expect(marks[0].text()).toBe('One')
+})
+
+test('Search highlight multiple matches', async () => {
+  const botMessageText = new Message('assistant', 'Hello hello HELLO world')
+  store.chatState.filter = 'hello'
+  const wrapper = await mount(botMessageText)
+  const marks = wrapper.findAll('mark')
+  expect(marks.length).toBe(3)
+})
+
+test('Search highlight in table block', async () => {
+  store.chatState.filter = 'Alice'
+  const wrapper = await mount(botMessageTable)
+  const tableBlock = wrapper.find('.artifact')
+  expect(tableBlock.exists()).toBe(true)
+  const marks = tableBlock.findAll('mark')
+  expect(marks.length).toBe(1)
+  expect(marks[0].text()).toBe('Alice')
+})
+
+test('No highlight when filter is empty', async () => {
+  const wrapper = await mount(botMessageText)
+  const marks = wrapper.findAll('mark')
+  expect(marks.length).toBe(0)
 })
