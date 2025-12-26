@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Search text highlighting adds equal signs to text formatted as code (https://github.com/nbonamy/witsy/issues/509)
 - Fix Soniox streaming buffer (https://github.com/nbonamy/witsy/pull/507)
+- Gemini Models don't receive any images (https://github.com/nbonamy/witsy/issues/503)
 
 ### Removed
 - N/A
