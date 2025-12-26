@@ -65,7 +65,8 @@ const selectRepo = (repo: DocumentBase) => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  height: 2rem;
+  padding: 0 0.5rem;
+  height: 2.5rem;
 }
 
 
