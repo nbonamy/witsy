@@ -31,6 +31,7 @@ describe('useDocRepoEvents', () => {
 
     expect(wrapper.vm.loading).toBe(false)
     expect(wrapper.vm.processingItems).toEqual([])
+    expect(wrapper.vm.processingBases).toEqual([])
 
     wrapper.unmount()
   })
@@ -51,6 +52,7 @@ describe('useDocRepoEvents', () => {
   test('onMounted - processes current queue item if exists', async () => {
     vi.mocked(window.api.docrepo.getCurrentQueueItem).mockResolvedValueOnce({
       uuid: 'doc1',
+      baseId: 'base1',
       type: 'file',
       origin: '/tmp/file1'
     } as any)
@@ -60,6 +62,7 @@ describe('useDocRepoEvents', () => {
     await nextTick()
 
     expect(wrapper.vm.processingItems).toEqual(['doc1'])
+    expect(wrapper.vm.processingBases).toEqual(['base1'])
 
     wrapper.unmount()
   })
@@ -67,6 +70,7 @@ describe('useDocRepoEvents', () => {
   test('onMounted - processes current queue item with parentDocId', async () => {
     vi.mocked(window.api.docrepo.getCurrentQueueItem).mockResolvedValueOnce({
       uuid: 'doc1',
+      baseId: 'base1',
       parentDocId: 'parent1',
       type: 'file',
       origin: '/tmp/file1'
@@ -77,6 +81,7 @@ describe('useDocRepoEvents', () => {
     await nextTick()
 
     expect(wrapper.vm.processingItems).toEqual(['parent1'])
+    expect(wrapper.vm.processingBases).toEqual(['base1'])
 
     wrapper.unmount()
   })
