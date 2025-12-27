@@ -65,6 +65,24 @@
     </select>
   </div>
 
+  <template v-if="engine === 'openai'">
+    <div class="form-field">
+      <label>{{ t('modelSettings.serviceTier') }}</label>
+      <select name="serviceTier" v-model="serviceTier" @change="emitUpdate">
+        <option :value="undefined">{{ t('common.default') }}</option>
+        <option value="auto">Auto</option>
+        <option value="default">Default</option>
+        <option value="flex">Flex</option>
+        <option value="scale">Scale</option>
+        <option value="priority">Priority</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>{{ t('modelSettings.timeout') }}</label>
+      <input name="timeout" v-model="timeout" @change="emitUpdate" />
+    </div>
+  </template>
+
   <div class="form-field custom" v-if="modelHasCustomParams">
     <label>{{ t('modelSettings.customParams') }}</label>
     <VariableTable
@@ -90,6 +108,7 @@ import VariableEditor from '@screens/VariableEditor.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import VariableTable from './VariableTable.vue'
+import { LlmOpenAIServiceTier } from 'multi-llm-ts'
 
 const props = defineProps<{
   engine: string
@@ -116,6 +135,8 @@ const reasoningEffort = ref<LlmReasoningEffort | undefined>(undefined)
 const verbosity = ref<LlmVerbosity | undefined>(undefined)
 const thinkingBudget = ref<number | undefined>(undefined)
 const think = ref<LlmOllamaThink | undefined>(undefined)
+const serviceTier = ref<LlmOpenAIServiceTier | undefined>(undefined)
+const timeout = ref<number | undefined>(undefined)
 const customParams = ref<Record<string, any>>({})
 const selectedParam = ref<{ key: string, value: any } | null>(null)
 
@@ -146,6 +167,8 @@ watch(() => props.modelValue, (newValue) => {
     verbosity.value = newValue.verbosity
     thinkingBudget.value = newValue.thinkingBudget
     think.value = newValue.think
+    serviceTier.value = newValue.serviceTier
+    timeout.value = newValue.timeout
     customParams.value = newValue.customOpts || {}
   } else {
     // Reset to defaults
@@ -160,6 +183,8 @@ watch(() => props.modelValue, (newValue) => {
     verbosity.value = undefined
     thinkingBudget.value = undefined
     think.value = undefined
+    serviceTier.value = undefined
+    timeout.value = undefined
     customParams.value = {}
   }
 }, { immediate: true, deep: true })
@@ -212,6 +237,8 @@ const emitUpdate = () => {
     const reasoningEffortValue = reasoningEffort.value ?? undefined
     const verbosityValue = verbosity.value ?? undefined
     const thinkingBudgetValue = parseUserInput('Thinking Budget', thinkingBudget, 'int', 0)
+    const serviceTierValue = serviceTier.value ?? undefined
+    const timeoutValue = parseUserInput('Timeout', timeout, 'int', 0)
 
     // @ts-expect-error safe conversion
     const thinkValue = think.value === 'false' ? false : (think.value ?? undefined)
@@ -229,6 +256,8 @@ const emitUpdate = () => {
       verbosity: verbosityValue,
       thinkingBudget: thinkingBudgetValue,
       think: thinkValue,
+      serviceTier: serviceTierValue,
+      timeout: timeoutValue,
       customOpts: Object.keys(customParams.value).length > 0 ? customParams.value : undefined,
     }
 
