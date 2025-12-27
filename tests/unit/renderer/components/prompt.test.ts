@@ -184,6 +184,36 @@ test('Sends on enter', async () => {
   expect(prompt.element.value).toBe('')
 })
 
+test('Not send on shift enter', async () => {
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('this is my prompt')
+  await prompt.trigger('keydown', { key: 'Enter', shiftKey: true })
+  expect(emitEventMock.mock.calls.filter(c => c[0] !== 'prompt-resize').length).toBe(0)
+})
+
+test('Sends on shift enter when sendKey is shiftEner', async () => {
+  store.config.appearance.chat.sendKey = 'shiftEner'
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('this is my prompt')
+  await prompt.trigger('keydown', { key: 'Enter', shiftKey: true })
+  expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
+    prompt: 'this is my prompt',
+    attachments: [],
+    execMode: 'prompt',
+  })
+  expect(prompt.element.value).toBe('')
+  store.config.appearance.chat.sendKey = 'enter'
+})
+
+test('Not send on enter when sendKey is shiftEner', async () => {
+  store.config.appearance.chat.sendKey = 'shiftEner'
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('this is my prompt')
+  await prompt.trigger('keydown.Enter')
+  expect(emitEventMock.mock.calls.filter(c => c[0] !== 'prompt-resize').length).toBe(0)
+  store.config.appearance.chat.sendKey = 'enter'
+})
+
 test('Sends with right parameters', async () => {
   wrapper.vm.attachments = [ new Attachment('image64', 'image/png', 'file://image.png') ]
   wrapper.vm.expert = store.experts[2]
@@ -203,13 +233,6 @@ test('Sends with right parameters', async () => {
     execMode: 'deepresearch',
   }])
   expect(prompt.element.value).toBe('')
-})
-
-test('Not send on shift enter', async () => {
-  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
-  await prompt.setValue('this is my prompt')
-  await prompt.trigger('keydown.enter.shift')
-  expect(emitEventMock.mock.calls.filter(c => c[0] !== 'prompt-resize').length).toBe(0)
 })
 
 // test('Autogrow', async () => {

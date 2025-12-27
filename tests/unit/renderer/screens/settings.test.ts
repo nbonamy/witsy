@@ -133,12 +133,21 @@ test('Settings General', async () => {
 test('Settings Chat', async () => {
   
   const tab = await switchToTab(wrapper, tabs.indexOf('settingsChat'))
-  expect(tab.findAll('.form-field')).toHaveLength(9)
+  expect(tab.findAll('.form-field')).toHaveLength(10)
 
   expect(store.config.appearance.chat.theme).not.toBe('conversation')
   tab.find('.form-field.theme select').setValue('conversation')
   expect(store.config.appearance.chat.theme).toBe('conversation')
   expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  expect(store.config.appearance.chat.sendKey).toBe('enter')
+  tab.find('.form-field.send-key select').setValue('shiftEner')
+  expect(store.config.appearance.chat.sendKey).toBe('shiftEner')
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  tab.find('.form-field.send-key select').setValue('enter')
+  expect(store.config.appearance.chat.sendKey).toBe('enter')
+  expect(store.saveSettings).toHaveBeenCalledTimes(2)
   vi.clearAllMocks()
 
   expect(store.config.appearance.chat.copyFormat).toBe('text')

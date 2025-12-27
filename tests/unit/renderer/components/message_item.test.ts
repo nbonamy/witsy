@@ -930,7 +930,7 @@ test('Message editing - Keyboard shortcuts work', async () => {
   await textarea.setValue('Modified content again')
 
   // Test Cmd+Enter for save (on Mac)
-  await textarea.trigger('keydown.meta.enter')
+  await textarea.trigger('keydown', { key: 'Enter', metaKey: true })
   await nextTick()
   expect(emitEventMock).toHaveBeenCalledWith('resend-after-edit', {
     message: userMessage,

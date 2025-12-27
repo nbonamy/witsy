@@ -171,11 +171,14 @@ export type ChatToolMode = 'never' | 'calling' | 'always'
 
 export type TextFormat = 'text' | 'markdown'
 
+export type SendKey = 'enter' | 'shiftEner'
+
 export type ChatAppearance = {
   showReasoning: boolean
   theme: string
   fontFamily: string
   fontSize: number
+  sendKey: SendKey
   autoPreview: {
     html: boolean
   }
