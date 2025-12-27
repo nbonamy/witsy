@@ -1,9 +1,10 @@
-import { App } from 'electron'
 import Chat from '@models/chat'
 import Message from '@models/message'
+import { App } from 'electron'
 import Assistant from '../renderer/services/assistant'
 import { engineNames } from '../renderer/services/llms/base'
 import LlmFactory from '../renderer/services/llms/llm'
+import CliPlugin, { WorkDirAccess } from './cli_plugin'
 import * as config from './config'
 import { loadHistory, saveHistory } from './history'
 import { HttpServer } from './http_server'
@@ -166,6 +167,22 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp, 
         sendError(res, `Failed to initialize LLM for engine '${engine}'`, 500)
         return
       }
+      
+      // load default tools
+      // llmManager.loadTools(assistant.llm!, kDefaultWorkspaceId, availablePlugins, chat.tools, {})
+
+      // Add CLI plugin if workDir is provided with access
+      if (params.workDir && typeof params.workDir === 'object') {
+        const workDir = params.workDir as { path?: string | null; access?: WorkDirAccess }
+        if (workDir.path && workDir.access && workDir.access !== 'none') {
+          const cliPlugin = new CliPlugin({
+            workDirPath: workDir.path,
+            workDirAccess: workDir.access
+          })
+          assistant.llm!.addPlugin(cliPlugin)
+          console.log(`[http] CLI plugin added: ${workDir.path} (${workDir.access})`)
+        }
+      }
 
       if (stream) {
         // Streaming mode - SSE
@@ -178,6 +195,7 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp, 
         const abortController = new AbortController()
         await assistant.prompt(prompt, {
           model,
+          keepLlm: true,
           streaming: true,
           titling: false,
           noMarkdown,

@@ -3,6 +3,13 @@
 import { CliConfig } from './config'
 import { ChatCli } from './models'
 
+export type WorkDirAccess = 'none' | 'ro' | 'rw'
+
+export interface WorkDir {
+  path: string | null
+  access: WorkDirAccess
+}
+
 export interface CLIState {
   port: number
   debug: boolean
@@ -11,6 +18,7 @@ export interface CLIState {
   chat: ChatCli
   userDataPath: string
   cliConfig: CliConfig | null
+  workDir: WorkDir
 }
 
 export const state: CLIState = {
@@ -20,5 +28,9 @@ export const state: CLIState = {
   model: null,
   chat: new ChatCli('CLI Session'),
   userDataPath: '',
-  cliConfig: null
+  cliConfig: null,
+  workDir: {
+    path: null,
+    access: 'none'
+  }
 }
