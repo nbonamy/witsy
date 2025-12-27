@@ -894,6 +894,10 @@
     },
     "file": {
       "error": {
+        "fileTooLarge": {
+          "text": "Os seguintes arquivos excedem o tamanho máximo do documento:<br/><br/>{files}<br/><br/>Processar arquivos grandes pode levar mais tempo e usar mais recursos. Deseja continuar?",
+          "title": "Arquivos grandes detectados"
+        },
         "formatNotSupported": {
           "title": "File format not supported"
         }
@@ -2647,6 +2651,11 @@
         "html": "HTML",
         "title": "Pré-visualizações automáticas"
       },
+      "sendKey": {
+        "enter": "Enter envia, Shift+Enter para nova linha",
+        "shiftEnter": "Enter para nova linha, Shift+Enter envia",
+        "title": "Atalho para enviar mensagem"
+      },
       "showToolCalls": {
         "always": "Sempre",
         "calling": "Durante a execução da ferramenta apenas",
@@ -2698,6 +2707,7 @@
         "aboutModels": "Mais sobre os modelos Anthropic",
         "pricing": "Preços Anthropic"
       },
+      "apiBaseURL": "URL base da API",
       "apiKey": "Chave de API",
       "azure": {
         "create": "Criar conexão com a implantação Azure",
@@ -2756,7 +2766,6 @@
       },
       "openai": {
         "aboutModels": "Mais sobre os modelos OpenAI",
-        "apiBaseURL": "URL Base da API",
         "pricing": "Preços OpenAI"
       },
       "openrouter": {
@@ -2814,6 +2823,14 @@
       "sortAlpha": "Ordenar alfabeticamente",
       "sortState": "Ordenar por estado",
       "toggle": "Alternar"
+    },
+    "favorites": {
+      "add": "Adicionar aos Favoritos",
+      "empty": "Ainda não há modelos favoritos. Adicione seus modelos mais usados para acesso rápido.",
+      "moveDown": "Mover para baixo",
+      "moveUp": "Mover para cima",
+      "pick": "Escolha um modelo para adicionar aos favoritos",
+      "remove": "Remover favorito"
     },
     "general": {
       "darkTint": "Tonificação escura",
@@ -3008,6 +3025,7 @@
       "commands": "Comandos",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
+      "favorites": "Favoritos",
       "general": "Geral",
       "llm": "LLM",
       "models": "Modelos",

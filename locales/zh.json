@@ -894,6 +894,10 @@
     },
     "file": {
       "error": {
+        "fileTooLarge": {
+          "text": "以下文件超出最大文档大小：<br/><br/>{files}<br/><br/>处理大文件可能需要更长时间并消耗更多资源。您想继续吗？",
+          "title": "检测到大文件"
+        },
         "formatNotSupported": {
           "title": "File format not supported"
         }
@@ -2647,6 +2651,11 @@
         "html": "HTML",
         "title": "自动预览"
       },
+      "sendKey": {
+        "enter": "按 Enter 发送，Shift+Enter 换行",
+        "shiftEnter": "按 Enter 换行，Shift+Enter 发送",
+        "title": "发送消息快捷键"
+      },
       "showToolCalls": {
         "always": "总是",
         "calling": "仅在工具执行期间",
@@ -2698,6 +2707,7 @@
         "aboutModels": "了解更多关于 Anthropic 模型的信息",
         "pricing": "Anthropic 定价"
       },
+      "apiBaseURL": "API 基础网址",
       "apiKey": "API 密钥",
       "azure": {
         "create": "创建 Azure 部署连接",
@@ -2756,7 +2766,6 @@
       },
       "openai": {
         "aboutModels": "了解更多关于 OpenAI 模型的信息",
-        "apiBaseURL": "API 基础 URL",
         "pricing": "OpenAI 定价"
       },
       "openrouter": {
@@ -2814,6 +2823,14 @@
       "sortAlpha": "按字母顺序排序",
       "sortState": "按状态排序",
       "toggle": "切换"
+    },
+    "favorites": {
+      "add": "添加收藏",
+      "empty": "尚无收藏模型。添加您最常用的模型以便快速访问。",
+      "moveDown": "下移",
+      "moveUp": "上移",
+      "pick": "选择一个模型添加到收藏夹",
+      "remove": "移除收藏"
     },
     "general": {
       "darkTint": "深色",
@@ -3008,6 +3025,7 @@
       "commands": "命令",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
+      "favorites": "收藏夹",
       "general": "常规",
       "llm": "LLM",
       "models": "模型",

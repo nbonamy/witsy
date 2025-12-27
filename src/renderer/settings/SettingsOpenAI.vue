@@ -27,7 +27,7 @@
       <ModelSelectPlus id="vision" v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
     </div>
     <div class="form-field">
-      <label>{{ t('settings.engines.openai.apiBaseURL') }}</label>
+      <label>{{ t('settings.engines.apiBaseURL') }}</label>
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
     <div class="form-field horizontal">

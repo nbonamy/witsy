@@ -875,6 +875,10 @@
     },
     "file": {
       "error": {
+        "fileTooLarge": {
+          "text": "Die folgenden Dateien überschreiten die maximale Dokumentgröße:<br/><br/>{files}<br/><br/>Die Verarbeitung großer Dateien kann länger dauern und mehr Ressourcen benötigen. Möchten Sie fortfahren?",
+          "title": "Große Dateien erkannt"
+        },
         "formatNotSupported": {
           "title": "File format not supported"
         }
@@ -2625,6 +2629,11 @@
         "html": "HTML",
         "title": "Automatische Vorschauen"
       },
+      "sendKey": {
+        "enter": "Enter sendet, Shift+Enter für neue Zeile",
+        "shiftEnter": "Enter für neue Zeile, Shift+Enter sendet",
+        "title": "Nachrichten-Schnellzugriff"
+      },
       "showToolCalls": {
         "always": "Immer",
         "calling": "Nur während der Tool-Ausführung",
@@ -2676,6 +2685,7 @@
         "aboutModels": "Mehr über Anthropic-Modelle",
         "pricing": "Anthropic-Preise"
       },
+      "apiBaseURL": "API Basis-URL",
       "apiKey": "API-Schlüssel",
       "azure": {
         "create": "Azure-Deployment-Verbindung erstellen",
@@ -2734,7 +2744,6 @@
       },
       "openai": {
         "aboutModels": "Mehr über OpenAI-Modelle",
-        "apiBaseURL": "API Base URL",
         "pricing": "OpenAI-Preise"
       },
       "openrouter": {
@@ -2792,6 +2801,14 @@
       "sortAlpha": "Alphabetisch sortieren",
       "sortState": "Nach Status sortieren",
       "toggle": "Umschalten"
+    },
+    "favorites": {
+      "add": "Favorit hinzufügen",
+      "empty": "Noch keine Favoritenmodelle. Fügen Sie Ihre meistgenutzten Modelle für schnellen Zugriff hinzu.",
+      "moveDown": "Nach unten verschieben",
+      "moveUp": "Nach oben verschieben",
+      "pick": "Modell zum Hinzufügen zu Favoriten auswählen",
+      "remove": "Favoriten entfernen"
     },
     "general": {
       "darkTint": "Dunkler Farbton",
@@ -2986,6 +3003,7 @@
       "commands": "Befehle",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
+      "favorites": "Favoriten",
       "general": "Allgemein",
       "llm": "LLM",
       "models": "Modelle",

@@ -894,6 +894,10 @@
     },
     "file": {
       "error": {
+        "fileTooLarge": {
+          "text": "以下のファイルは最大ドキュメントサイズを超えています:<br/><br/>{files}<br/><br/>大きなファイルの処理には時間がかかり、より多くのリソースを使用する場合があります。続行しますか？",
+          "title": "大きなファイルが検出されました"
+        },
         "formatNotSupported": {
           "title": "File format not supported"
         }
@@ -2647,6 +2651,11 @@
         "html": "HTML",
         "title": "自動プレビュー"
       },
+      "sendKey": {
+        "enter": "Enterで送信、Shift+Enterで改行",
+        "shiftEnter": "Enterで改行、Shift+Enterで送信",
+        "title": "メッセージ送信ショートカット"
+      },
       "showToolCalls": {
         "always": "常に",
         "calling": "ツール実行中のみ",
@@ -2698,6 +2707,7 @@
         "aboutModels": "Anthropicモデルについてさらに詳しく",
         "pricing": "Anthropicの料金"
       },
+      "apiBaseURL": "APIベースURL",
       "apiKey": "APIキー",
       "azure": {
         "create": "Azureデプロイメント接続を作成",
@@ -2756,7 +2766,6 @@
       },
       "openai": {
         "aboutModels": "OpenAIモデルについてさらに詳しく",
-        "apiBaseURL": "APIベースURL",
         "pricing": "OpenAIの料金"
       },
       "openrouter": {
@@ -2814,6 +2823,14 @@
       "sortAlpha": "アルファベット順にソート",
       "sortState": "状態別にソート",
       "toggle": "切り替え"
+    },
+    "favorites": {
+      "add": "お気に入りに追加",
+      "empty": "まだお気に入りのモデルはありません。よく使うモデルを追加して、素早くアクセスしましょう。",
+      "moveDown": "下に移動",
+      "moveUp": "上に移動",
+      "pick": "お気に入りに追加するモデルを選択",
+      "remove": "お気に入りから削除"
     },
     "general": {
       "darkTint": "ダークティント",
@@ -3014,6 +3031,7 @@
       "commands": "コマンド",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
+      "favorites": "お気に入り",
       "general": "一般",
       "llm": "LLM",
       "models": "モデル",
