@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 - N/A
 
 ### Changed
-- N/A
+- Ability to Submit Large Files Manually (https://github.com/nbonamy/witsy/issues/497)
 
 ### Fixed
 - Automator.pasteText restores clipboard before paste completes (https://github.com/nbonamy/witsy/issues/505)
