@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.3.1] - WIP
 
 ### Added
-- N/A
+- Multi-line input support - allow typing Enter when writing a prompt (https://github.com/nbonamy/witsy/issues/510)
 
 ### Changed
 - Ability to Submit Large Files Manually (https://github.com/nbonamy/witsy/issues/497)

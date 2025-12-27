@@ -2659,6 +2659,11 @@
         "never": "Never",
         "title": "Show tool calls"
       },
+      "sendKey": {
+        "enter": "Enter sends, Shift+Enter for new line",
+        "shiftEnter": "Enter for new line, Shift+Enter sends",
+        "title": "Send message shortcut"
+      },
       "theme": "Chat theme",
       "themes": {
         "conversation": "Conversation",

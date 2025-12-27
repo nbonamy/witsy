@@ -18,6 +18,13 @@
           <option value="conversation">{{ t('settings.chat.themes.conversation') }}</option>
         </select>
       </div>
+      <div class="form-field send-key">
+        <label>{{ t('settings.chat.sendKey.title') }}</label>
+        <select v-model="sendKey" @change="save">
+          <option value="enter">{{ t('settings.chat.sendKey.enter') }}</option>
+          <option value="shiftEner">{{ t('settings.chat.sendKey.shiftEnter') }}</option>
+        </select>
+      </div>
       <div class="form-field previews">
         <label>{{ t('settings.chat.previews.title') }}</label>
       </div>
@@ -87,7 +94,7 @@
 
 <script setup lang="ts">
 
-import { ChatListLayout, ChatToolMode, TextFormat } from 'types/config';
+import { ChatListLayout, ChatToolMode, SendKey, TextFormat } from 'types/config';
 import { ref, computed } from 'vue'
 import { store } from '@services/store'
 import { t } from '@services/i18n'
@@ -99,6 +106,7 @@ const fontSize = ref(null)
 const fontFamily = ref('')
 const previewHtml = ref(true)
 const copyFormat = ref<TextFormat>('text')
+const sendKey = ref<SendKey>('enter')
 const showToolCalls = ref<ChatToolMode>('calling')
 const layout = ref<ChatListLayout>('normal')
 const fonts = ref(window.api.app.listFonts())
@@ -114,6 +122,7 @@ const load = () => {
   theme.value = store.config.appearance.chat.theme || 'openai'
   layout.value = store.config.appearance.chatList.layout || 'normal'
   copyFormat.value = store.config.appearance.chat.copyFormat || 'text'
+  sendKey.value = store.config.appearance.chat.sendKey || 'enter'
   previewHtml.value = store.config.appearance.chat.autoPreview.html ?? true
   showToolCalls.value = store.config.appearance.chat.showToolCalls || 'calling'
   fontFamily.value = store.config.appearance.chat.fontFamily || ''
@@ -124,6 +133,7 @@ const save = () => {
   store.config.appearance.chat.theme = theme.value
   store.config.appearance.chat.fontFamily = fontFamily.value
   store.config.appearance.chat.fontSize = fontSize.value
+  store.config.appearance.chat.sendKey = sendKey.value
   store.config.appearance.chatList.layout = layout.value
   store.config.appearance.chat.autoPreview.html = previewHtml.value
   store.config.appearance.chat.showToolCalls = showToolCalls.value

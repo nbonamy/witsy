@@ -1208,9 +1208,9 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'Enter') {
     if (event.isComposing) return
-    if (event.shiftKey) {
-
-    } else {
+    const sendKey = store.config.appearance.chat.sendKey || 'enter'
+    const shouldSend = sendKey === 'enter' ? !event.shiftKey : event.shiftKey
+    if (shouldSend) {
       onSendPrompt()
       event.preventDefault()
       event.stopPropagation()

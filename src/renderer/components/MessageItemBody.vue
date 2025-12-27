@@ -149,7 +149,7 @@ const computeBlocks = (content: string|null): Block[] => {
 
   // user message does not have this
   if (props.message.role !== 'assistant') {
-    return [{ type: 'text', content }]
+    return content.split('\n').map(p => ({ type: 'text', content: p }))
   }
 
   // if transient make sure we close markdown tags
