@@ -875,6 +875,10 @@
     },
     "file": {
       "error": {
+        "fileTooLarge": {
+          "text": "I seguenti file superano la dimensione massima del documento:<br/><br/>{files}<br/><br/>Elaborare file di grandi dimensioni potrebbe richiedere più tempo e utilizzare più risorse. Vuoi continuare?",
+          "title": "File di grandi dimensioni rilevati"
+        },
         "formatNotSupported": {
           "title": "File format not supported"
         }
@@ -2625,6 +2629,11 @@
         "html": "HTML",
         "title": "Anteprime automatiche"
       },
+      "sendKey": {
+        "enter": "Invio per inviare, Shift+Invio per nuova riga",
+        "shiftEnter": "Invio per nuova riga, Shift+Invio per inviare",
+        "title": "Scorciatoia invio messaggio"
+      },
       "showToolCalls": {
         "always": "Sempre",
         "calling": "Solo durante l'esecuzione dello strumento",
@@ -2676,6 +2685,7 @@
         "aboutModels": "Ulteriori informazioni sui modelli Anthropic",
         "pricing": "Prezzi Anthropic"
       },
+      "apiBaseURL": "URL base API",
       "apiKey": "Chiave API",
       "azure": {
         "create": "Crea connessione al deployment Azure",
@@ -2734,7 +2744,6 @@
       },
       "openai": {
         "aboutModels": "Ulteriori informazioni sui modelli OpenAI",
-        "apiBaseURL": "URL di base API",
         "pricing": "Prezzi OpenAI"
       },
       "openrouter": {
@@ -2792,6 +2801,14 @@
       "sortAlpha": "Ordina alfabeticamente",
       "sortState": "Ordina per stato",
       "toggle": "Attiva/disattiva"
+    },
+    "favorites": {
+      "add": "Aggiungi ai preferiti",
+      "empty": "Ancora nessun modello preferito. Aggiungi i modelli che usi di più per un accesso rapido.",
+      "moveDown": "Sposta giù",
+      "moveUp": "Sposta su",
+      "pick": "Seleziona un modello da aggiungere ai preferiti",
+      "remove": "Rimuovi preferito"
     },
     "general": {
       "darkTint": "Tonalità scura",
@@ -2986,6 +3003,7 @@
       "commands": "Comandi",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
+      "favorites": "Preferiti",
       "general": "Generale",
       "llm": "LLM",
       "models": "Modelli",

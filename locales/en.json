@@ -2653,16 +2653,16 @@
         "html": "HTML",
         "title": "Automatic previews"
       },
+      "sendKey": {
+        "enter": "Enter sends, Shift+Enter for new line",
+        "shiftEnter": "Enter for new line, Shift+Enter sends",
+        "title": "Send message shortcut"
+      },
       "showToolCalls": {
         "always": "Always",
         "calling": "During tool execution only",
         "never": "Never",
         "title": "Show tool calls"
-      },
-      "sendKey": {
-        "enter": "Enter sends, Shift+Enter for new line",
-        "shiftEnter": "Enter for new line, Shift+Enter sends",
-        "title": "Send message shortcut"
       },
       "theme": "Chat theme",
       "themes": {
@@ -2709,6 +2709,7 @@
         "aboutModels": "More about Anthropic models",
         "pricing": "Anthropic pricing"
       },
+      "apiBaseURL": "API Base URL",
       "apiKey": "API key",
       "azure": {
         "create": "Create Azure deployment connection",
@@ -2720,7 +2721,6 @@
       },
       "chatModel": "Chat model",
       "custom": {
-        "apiBaseURL": "API Base URL",
         "apiSpecification": "API Specification",
         "apiVersion": "API Version",
         "confirmDelete": "Are you sure you want to delete this custom provider?",
@@ -2767,7 +2767,6 @@
       },
       "openai": {
         "aboutModels": "More about OpenAI models",
-        "apiBaseURL": "API Base URL",
         "pricing": "OpenAI pricing"
       },
       "openrouter": {
@@ -2828,10 +2827,6 @@
     },
     "favorites": {
       "add": "Add Favorite",
-      "addFirst": "Add Your First Favorite",
-      "addModal": {
-        "title": "Add Favorite Model"
-      },
       "empty": "No favorite models yet. Add your most-used models for quick access.",
       "moveDown": "Move down",
       "moveUp": "Move up",

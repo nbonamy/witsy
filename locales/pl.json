@@ -894,6 +894,10 @@
     },
     "file": {
       "error": {
+        "fileTooLarge": {
+          "text": "Następujące pliki przekraczają maksymalny rozmiar dokumentu:<br/><br/>{files}<br/><br/>Przetwarzanie dużych plików może zająć więcej czasu i zużyć więcej zasobów. Czy chcesz kontynuować?",
+          "title": "Wykryto duże pliki"
+        },
         "formatNotSupported": {
           "title": "File format not supported"
         }
@@ -2647,6 +2651,11 @@
         "html": "HTML",
         "title": "Automatyczne podglądy"
       },
+      "sendKey": {
+        "enter": "Enter wysyła, Shift+Enter nowa linia",
+        "shiftEnter": "Enter nowa linia, Shift+Enter wysyła",
+        "title": "Skrót do wysyłania wiadomości"
+      },
       "showToolCalls": {
         "always": "Zawsze",
         "calling": "Tylko podczas wykonywania narzędzi",
@@ -2698,6 +2707,7 @@
         "aboutModels": "Więcej o modelach antropicznych",
         "pricing": "Ceny antropiczne"
       },
+      "apiBaseURL": "Podstawowy URL API",
       "apiKey": "Klucz API",
       "azure": {
         "create": "Utwórz połączenie z wdrożeniem Azure",
@@ -2756,7 +2766,6 @@
       },
       "openai": {
         "aboutModels": "Więcej informacji o modelach OpenAI",
-        "apiBaseURL": "Bazowy adres URL API",
         "pricing": "Ceny OpenAI"
       },
       "openrouter": {
@@ -2814,6 +2823,14 @@
       "sortAlpha": "Sortuj alfabetycznie",
       "sortState": "Sortuj według stanu",
       "toggle": "Przełącz"
+    },
+    "favorites": {
+      "add": "Dodaj do ulubionych",
+      "empty": "Brak ulubionych modeli. Dodaj najczęściej używane modele, aby mieć do nich szybki dostęp.",
+      "moveDown": "Przesuń w dół",
+      "moveUp": "Przesuń w górę",
+      "pick": "Wybierz model do dodania do ulubionych",
+      "remove": "Usuń z ulubionych"
     },
     "general": {
       "darkTint": "Ciemny odcień",
@@ -3014,6 +3031,7 @@
       "commands": "Polecenia",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
+      "favorites": "Ulubione",
       "general": "Ogólne",
       "llm": "LLM",
       "models": "Modele",

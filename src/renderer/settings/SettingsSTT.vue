@@ -80,7 +80,7 @@
     <template v-else>
       
       <div class="form-field">
-        <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
+        <label>{{ t('settings.engines.apiBaseURL') }}</label>
         <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @change="save"/>
       </div>
       <div class="form-field">

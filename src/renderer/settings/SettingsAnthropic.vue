@@ -22,6 +22,10 @@
       <label>{{ t('settings.engines.vision.model') }}</label>
       <ModelSelectPlus v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
     </div>
+    <div class="form-field">
+      <label>{{ t('settings.engines.apiBaseURL') }}</label>
+      <input name="baseURL" v-model="baseURL" placeholder="https://api.anthropic.com" @keydown.enter.prevent="save" @change="save"/>
+    </div>
     <div class="form-field horizontal">
       <input type="checkbox" id="anthropic-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
       <label for="anthropic-disable-tools">{{  t('settings.engines.disableTools') }}</label>
@@ -42,6 +46,7 @@ import InputObfuscated from '@components/InputObfuscated.vue'
 import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 
 const apiKey = ref(null)
+const baseURL = ref(null)
 const disableTools = ref(false)
 const chat_model = ref(null)
 const vision_model = ref<string>(null)
@@ -56,6 +61,7 @@ const vision_models = computed(() => {
 
 const load = () => {
   apiKey.value = store.config.engines.anthropic?.apiKey || ''
+  baseURL.value = store.config.engines.anthropic?.baseURL || ''
   chat_models.value = store.config.engines.anthropic?.models?.chat || []
   chat_model.value = store.config.engines.anthropic?.model?.chat || ''
   vision_model.value = store.config.engines.anthropic?.model?.vision || ''
@@ -90,6 +96,7 @@ const onKeyChange = () => {
 
 const save = () => {
   store.config.engines.anthropic.apiKey = apiKey.value
+  store.config.engines.anthropic.baseURL = baseURL.value
   store.config.engines.anthropic.model.chat = chat_model.value
   store.config.engines.anthropic.model.vision = vision_model.value
   store.config.engines.anthropic.disableTools = disableTools.value
