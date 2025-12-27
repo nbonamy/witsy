@@ -151,7 +151,7 @@ export default class extends Plugin {
     for (const allowedPath of this.config.allowedPaths) {
       const normalizedAllowed = window.api.file.normalize(allowedPath)
       const path = window.api.file.normalize(`${normalizedAllowed}/./${targetPath}`)
-      if (window.api.file.exists(path)) {
+      if (path.startsWith(normalizedAllowed) && window.api.file.exists(path)) {
         return path
       }
     }
@@ -167,7 +167,7 @@ export default class extends Plugin {
       const allowedParts = normalizedAllowed.split(dirSep)
       if (allowedParts.length && allowedParts[allowedParts.length - 1] === targetParts[0]) {
         const targetPath = allowedParts.slice(0, -1).join(dirSep) + dirSep + path
-        if (window.api.file.exists(targetPath)) {
+        if (targetPath.startsWith(normalizedAllowed) && window.api.file.exists(targetPath)) {
           return targetPath
         }
       }

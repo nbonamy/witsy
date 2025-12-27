@@ -1,4 +1,5 @@
 
+import path from 'path'
 import { kHistoryVersion } from '@/consts'
 import { AgentRun, AgentRunStatus, AgentRunTrigger } from '@/types/agents'
 import { FilePickParams } from '@/types/file'
@@ -367,13 +368,16 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     file: {
       normalize: vi.fn((filePath: string) => {
+        // Handle tilde expansion
         if (filePath.startsWith('~/')) {
-          return filePath.replace('~', '/home/user')
+          filePath = filePath.replace('~', '/home/user')
         }
+        // Handle relative paths - prepend home directory
         if (!filePath.startsWith('/')) {
-          return `/home/user/${filePath}`
+          filePath = `/home/user/${filePath}`
         }
-        return filePath
+        // Use real path.normalize to properly resolve .. sequences
+        return path.normalize(filePath)
       }),
       exists: vi.fn((filePath: string) => filePath.includes('existing')),
       stats: vi.fn(() => ({
