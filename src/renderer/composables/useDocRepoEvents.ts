@@ -3,16 +3,21 @@ import { DocRepoAddDocResponse, DocumentQueueItem } from 'types/rag'
 import Dialog from '@renderer/utils/dialog'
 
 export function useDocRepoEvents(type: string) {
-  
+
   const loading = ref(false)
   const processingItems = ref<string[]>([])
+  const processingBases = ref<string[]>([])
 
   const onProcessItemStart = (payload: DocumentQueueItem) => {
     processingItems.value.push(payload.parentDocId ?? payload.uuid)
+    if (!processingBases.value.includes(payload.baseId)) {
+      processingBases.value.push(payload.baseId)
+    }
   }
 
   const onProcessItemDone = (payload: DocumentQueueItem) => {
     processingItems.value = processingItems.value.filter(id => id !== (payload.parentDocId ?? payload.uuid))
+    processingBases.value = processingBases.value.filter(id => id !== payload.baseId)
   }
 
   const onAddDocDone = (payload: DocRepoAddDocResponse) => {
@@ -56,6 +61,7 @@ export function useDocRepoEvents(type: string) {
 
   return {
     loading,
-    processingItems
+    processingItems,
+    processingBases
   }
 }

@@ -388,3 +388,22 @@ test('Cancels editing when Escape key is pressed', async () => {
   expect(wrapper.vm.selectedRepo?.name).toBe('docrepo1') // Should remain unchanged
   expect(window.api.docrepo.update).not.toHaveBeenCalled()
 })
+
+test('Shows spinner for processing repos', async () => {
+  // Mock getCurrentQueueItem to return a processing item for uuid2
+  vi.mocked(window.api.docrepo.getCurrentQueueItem).mockResolvedValueOnce({
+    uuid: 'doc1',
+    baseId: 'uuid2',
+    type: 'file',
+    origin: '/tmp/file1'
+  } as any)
+
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  await nextTick()
+  await nextTick()
+
+  // Spinner should be visible for uuid2 (docrepo2) but not uuid1 (docrepo1)
+  expect(wrapper.find('.split-pane .list-item:nth-child(1) .spinner').exists()).toBe(false)
+  expect(wrapper.find('.split-pane .list-item:nth-child(2) .spinner').exists()).toBe(true)
+})

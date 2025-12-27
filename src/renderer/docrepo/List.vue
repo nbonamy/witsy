@@ -10,6 +10,7 @@
           <div class="info">
             <div class="text">{{ repo.name }}</div>
           </div>
+          <Spinner v-if="processingBases.includes(repo.uuid)" />
           <ButtonIcon class="trailing" v-if="selectedRepo?.uuid === repo.uuid">
             <ChevronRightIcon />
           </ButtonIcon>
@@ -23,6 +24,11 @@
 import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from 'lucide-vue-next'
 import { DocumentBase } from 'types/rag'
 import ButtonIcon from '@components/ButtonIcon.vue'
+import Spinner from '@components/Spinner.vue'
+import { useDocRepoEvents } from '@composables/useDocRepoEvents'
+
+// use composable for IPC events
+const { processingBases } = useDocRepoEvents('base')
 
 // props  
 const props = defineProps<{
