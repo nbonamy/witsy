@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.3.1] - WIP
 
 ### Added
+- Add priority selection option for OpenAI (https://github.com/nbonamy/witsy/issues/508)
 - Multi-line input support - allow typing Enter when writing a prompt (https://github.com/nbonamy/witsy/issues/510)
 - Cloudflare AI Gateway observability (https://github.com/nbonamy/witsy/issues/511)
 - Status of Knowledge Base Updates (https://github.com/nbonamy/witsy/issues/512)
