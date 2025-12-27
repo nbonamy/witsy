@@ -9,7 +9,7 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import plist from 'plist';
 import process from 'process';
-import { FileContents, FileDownloadParams, FilePickParams, FileProperties, FileSaveParams } from 'types/file';
+import { FileContents, FileDownloadParams, FilePickParams, FileProperties, FileSaveParams, FileStats } from 'types/file';
 import { DirectoryItem } from 'types/filesystem';
 import { ExternalApp } from 'types/index';
 
@@ -298,6 +298,23 @@ export const fileExists = (app: App, filePath: string): boolean => {
   } catch (error) {
     console.error('Error while checking file existence', error)
     return false
+  }
+}
+
+export const fileStats = (app: App, filePath: string): FileStats | null => {
+  try {
+    const stats = fs.lstatSync(filePath)
+    return {
+      size: stats.size,
+      isFile: stats.isFile(),
+      isDirectory: stats.isDirectory(),
+      isSymbolicLink: stats.isSymbolicLink(),
+      modifiedAt: stats.mtimeMs,
+      createdAt: stats.birthtimeMs,
+    }
+  } catch (error) {
+    console.error('Error while getting file stats', error)
+    return null
   }
 }
 

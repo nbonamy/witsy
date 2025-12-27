@@ -120,16 +120,16 @@ test('Updates configuration', async () => {
   const config = wrapper.findComponent({ name: 'Config' })
   console.log(config.html())
 
-  expect(config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').element.value).toBe('1')
-  expect(config.find<HTMLInputElement>('[name=chunkSize]').element.value).toBe('500')
-  expect(config.find<HTMLInputElement>('[name=chunkOverlap]').element.value).toBe('50')
+  expect(config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').element.value).toBe('8')
+  expect(config.find<HTMLInputElement>('[name=chunkSize]').element.value).toBe('1000')
+  expect(config.find<HTMLInputElement>('[name=chunkOverlap]').element.value).toBe('200')
   expect(config.find<HTMLInputElement>('[name=searchResultCount]').element.value).toBe('5')
   expect(config.find<HTMLInputElement>('[name=relevanceCutOff]').element.value).toBe('0.2')
 
   // Test reset
   await config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').setValue('2')
   await config.find<HTMLButtonElement>('button[name=reset]').trigger('click')
-  expect(config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').element.value).toBe('1')
+  expect(config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').element.value).toBe('8')
 
   // Update values and save
   await config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').setValue('2')
@@ -168,8 +168,8 @@ test('Adds documents', async () => {
   await wrapper.find('.split-pane .sp-main button[name=addDocs]').trigger('click')
   expect(window.api.file.pickFile).toHaveBeenCalled()
   expect(window.api.docrepo.addDocument).toHaveBeenCalledTimes(2)
-  expect((window.api.docrepo.addDocument as Mock).mock.calls[0]).toStrictEqual(['uuid1', 'file', 'file4'])
-  expect((window.api.docrepo.addDocument as Mock).mock.calls[1]).toStrictEqual(['uuid1', 'file', 'file5'])
+  expect((window.api.docrepo.addDocument as Mock).mock.calls[0]).toStrictEqual(['uuid1', 'file', 'file4', { skipSizeCheck: false }])
+  expect((window.api.docrepo.addDocument as Mock).mock.calls[1]).toStrictEqual(['uuid1', 'file', 'file5', { skipSizeCheck: false }])
   await wrapper.find('.split-pane .sp-main button[name=addFolder]').trigger('click')
   expect(window.api.file.pickDirectory).toHaveBeenCalled()
   expect(window.api.docrepo.addDocument).toHaveBeenCalledTimes(3)
@@ -186,7 +186,7 @@ test('Adds supported documents successfully', async () => {
   await wrapper.find('.split-pane .sp-main button[name=addDocs]').trigger('click')
   
   expect(window.api.docrepo.isSourceSupported).toHaveBeenCalledWith('file', 'file')
-  expect(window.api.docrepo.addDocument).toHaveBeenCalledWith('uuid1', 'file', 'file')
+  expect(window.api.docrepo.addDocument).toHaveBeenCalledWith('uuid1', 'file', 'file', { skipSizeCheck: false })
   expect(Dialog.alert).not.toHaveBeenCalled()
 })
 

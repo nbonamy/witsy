@@ -68,6 +68,7 @@ import Dialog from '@renderer/utils/dialog'
 import { togglePanel } from '@renderer/utils/panel'
 import { useDocRepoEvents } from '@composables/useDocRepoEvents'
 import { t } from '@services/i18n'
+import { store } from '@services/store'
 import { DocumentBase, DocumentSource } from 'types/rag'
 import Folder from './Folder.vue'
 
@@ -120,7 +121,7 @@ const onAddFiles = async () => {
   if (!props.selectedRepo) return
   const files = window.api.file.pickFile({ multiselection: true }) as string[]
   if (!files) return
-  
+
   // Check if all files are supported
   const unsupportedFiles: string[] = []
   for (const file of files) {
@@ -128,7 +129,7 @@ const onAddFiles = async () => {
       unsupportedFiles.push(file)
     }
   }
-  
+
   // Show error for unsupported files
   if (unsupportedFiles.length > 0) {
     const fileNames = unsupportedFiles.map(f => f.split('/').pop() || f)
@@ -138,13 +139,40 @@ const onAddFiles = async () => {
     })
     return
   }
-  
+
+  // Check file sizes
+  let skipSizeCheck = false
+  const maxSizeBytes = (store.config.rag.maxDocumentSizeMB ?? 16) * 1024 * 1024
+  const filesTooLarge: string[] = []
+  for (const file of files) {
+    const stats = window.api.file.stats(file)
+    if (stats && stats.size > maxSizeBytes) {
+      filesTooLarge.push(file)
+    }
+  }
+
+  // Show confirmation for large files
+  if (filesTooLarge.length > 0) {
+    const fileNames = filesTooLarge.map(f => f.split('/').pop() || f)
+    const result = await Dialog.show({
+      target: document.querySelector('.docrepos'),
+      title: t('docRepo.file.error.fileTooLarge.title'),
+      html: t('docRepo.file.error.fileTooLarge.text', { files: fileNames.join('<br/>') }),
+      confirmButtonText: t('common.continue'),
+      showCancelButton: true,
+    })
+    if (!result.isConfirmed) {
+      return
+    }
+    skipSizeCheck = true
+  }
+
   loading.value = true
   try {
     // Don't await - let documents be added to queue asynchronously
     // The UI will be updated via IPC events when processing completes
     for (const file of files) {
-      const promise = window.api.docrepo.addDocument(props.selectedRepo.uuid, 'file', file)
+      const promise = window.api.docrepo.addDocument(props.selectedRepo.uuid, 'file', file, { skipSizeCheck })
       promise.then(taskId => {
         // Store task ID for this file
         // Map by origin (file path) since we don't have doc.uuid yet

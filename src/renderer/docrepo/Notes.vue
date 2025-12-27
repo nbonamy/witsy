@@ -80,7 +80,7 @@ const onNoteSave = async (noteData: { title: string, content: string }) => {
   // Use the new API with explicit title parameter
   loading.value = true
   try {
-    await window.api.docrepo.addDocument(props.selectedRepo.uuid, 'text', noteData.content, noteData.title)
+    await window.api.docrepo.addDocument(props.selectedRepo.uuid, 'text', noteData.content, { title: noteData.title, skipSizeCheck: true })
   } catch (error) {
     console.error('Error adding note:', error)
     loading.value = false
@@ -94,7 +94,7 @@ const onNoteUpdate = async (updateData: { note: DocumentSource, title: string, c
     // First remove the old document
     await window.api.docrepo.removeDocument(props.selectedRepo.uuid, updateData.note.uuid)
     // Then add the updated document
-    await window.api.docrepo.addDocument(props.selectedRepo.uuid, 'text', updateData.content, updateData.title)
+    await window.api.docrepo.addDocument(props.selectedRepo.uuid, 'text', updateData.content, { title: updateData.title, skipSizeCheck: true })
   } catch (error) {
     console.error('Error updating note:', error)
     loading.value = false

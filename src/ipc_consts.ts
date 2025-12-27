@@ -55,6 +55,7 @@ export const FILE = {
   GET_APP_INFO: 'get-app-info',
   LIST_DIRECTORY: 'list-directory',
   FILE_EXISTS: 'file-exists',
+  FILE_STATS: 'file-stats',
   WRITE_FILE: 'write-file',
   NORMALIZE_PATH: 'normalize-path',
   OPEN_IN_EXPLORER: 'open-in-explorer',

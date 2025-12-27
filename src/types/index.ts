@@ -3,11 +3,11 @@ import { Size } from 'electron'
 import { Attachment as IAttachmentBase, Message as IMessageBase, LlmChunk, LlmChunkTool, LlmModelOpts, LlmTool, LlmToolCall, LlmUsage } from 'multi-llm-ts'
 import { Application, RunCommandParams } from './automation'
 import { Configuration } from './config'
-import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './file'
+import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams, FileStats } from './file'
 import { ListDirectoryResponse } from './filesystem'
 import { ToolSelection } from './llm'
 import { McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from './mcp'
-import { DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
+import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
 import { Workspace, WorkspaceHeader } from './workspace'
 import { A2APromptOpts, Agent, AgentRun } from './agents'
 
@@ -348,6 +348,7 @@ declare global {
         decode(data: string): string
       }
       file: {
+        stats(filePath: string): FileStats
         normalize(filePath: string): string
         exists(filePath: string): boolean
         read(filepath: string): FileContents
@@ -451,7 +452,7 @@ declare global {
         update(baseId: string, title: string, description?: string): void
         delete(baseId: string): void
         isSourceSupported(type: SourceType, origin: string): boolean
-        addDocument(id: string, type: SourceType, origin: string, title?: string): Promise<string>
+        addDocument(id: string, type: SourceType, origin: string, opts?: AddDocumentOptions): Promise<string>
         cancelTask(taskId: string): Promise<void>
         removeDocument(id: string, docId: string): Promise<boolean>
         query(id: string, text: string): Promise<DocRepoQueryResponseItem[]>
