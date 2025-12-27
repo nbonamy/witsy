@@ -1,6 +1,6 @@
 
 import { App } from 'electron'
-import { SourceType, DocumentQueueItem, DocRepoQueryResponseItem, DocRepoListener } from 'types/rag'
+import { SourceType, DocumentQueueItem, DocRepoQueryResponseItem, DocRepoListener, AddDocumentOptions } from 'types/rag'
 import { notifyBrowserWindows } from '../window'
 import { docrepoFilePath } from './utils'
 import DocumentBaseImpl from './docbase'
@@ -224,7 +224,7 @@ export default class DocumentRepository {
 
   }
 
-  async addDocumentSource(baseId: string, type: SourceType, origin: string, fromUserAction: boolean, title?: string): Promise<string> {
+  async addDocumentSource(baseId: string, type: SourceType, origin: string, fromUserAction: boolean, opts?: AddDocumentOptions): Promise<string> {
 
     // connect
     const base = await this.connect(baseId)
@@ -233,7 +233,7 @@ export default class DocumentRepository {
     console.log('[rag] Adding document', origin)
     let document: DocumentSourceImpl = base.documents.find(d => d.origin == origin)
     if (!document) {
-      document = new DocumentSourceImpl(crypto.randomUUID(), type, origin, title)
+      document = new DocumentSourceImpl(crypto.randomUUID(), type, origin, opts?.title)
     }
 
     // use document UUID as task ID and create abort controller
@@ -242,7 +242,7 @@ export default class DocumentRepository {
     this.activeProcessingTasks.set(taskId, abortController)
 
     // add to queue
-    this.queue.push({ uuid: document.uuid, baseId, type, origin, title, operation: 'add', fromUserAction, taskId })
+    this.queue.push({ uuid: document.uuid, baseId, type, origin, opts, operation: 'add', fromUserAction, taskId })
 
     // process
     this.processQueue()
@@ -590,7 +590,9 @@ export default class DocumentRepository {
         // Re-add the document to update its content in the database
         if (modifiedDoc.items && modifiedDoc.items.length > 0) {
           // It's a folder
-          await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, undefined, () => this.save())
+          await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, {
+            callback: () => this.save()
+          })
         } else {
           // Check if it's a child item
           let isChildItem = false
@@ -598,7 +600,9 @@ export default class DocumentRepository {
             if (rootDoc.type === 'folder' && rootDoc.items) {
               const childExists = rootDoc.items.some(item => item.uuid === modifiedDoc.uuid)
               if (childExists) {
-                await base.processChildDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, () => this.save())
+                await base.processChildDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, {
+                  callback: () => this.save()
+                })
                 isChildItem = true
                 break
               }
@@ -607,7 +611,9 @@ export default class DocumentRepository {
           
           if (!isChildItem) {
             // It's a root document
-            await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, undefined, () => this.save())
+            await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, {
+              callback: () => this.save()
+            })
           }
         }
       } catch (error) {
@@ -623,11 +629,15 @@ export default class DocumentRepository {
         if (parentFolder) {
           // Add as child to folder
           parentFolder.items.push(addedDoc)
-          await base.processChildDocumentSource(addedDoc.uuid, addedDoc.type, addedDoc.origin, () => this.save())
+          await base.processChildDocumentSource(addedDoc.uuid, addedDoc.type, addedDoc.origin, {
+            callback: () => this.save()
+          })
         } else {
           // Add as root document
           base.documents.push(addedDoc)
-          await base.addDocumentSource(addedDoc.uuid, addedDoc.type, addedDoc.origin, undefined, () => this.save())
+          await base.addDocumentSource(addedDoc.uuid, addedDoc.type, addedDoc.origin, {
+            callback: () => this.save()
+          })
         }
       } catch (error) {
         console.error(`[rag] Error adding new document ${addedDoc.origin}:`, error)
@@ -649,6 +659,8 @@ export default class DocumentRepository {
 
       // empty the queue
       while (this.queue.length > 0) {
+
+        // get the item
         const queueItem = this.queue[0]
 
         // get the base
@@ -710,6 +722,7 @@ export default class DocumentRepository {
   }
 
   private async processAddOperation(queueItem: DocumentQueueItem, base: DocumentBaseImpl): Promise<void> {
+    
     // get abort controller for this task
     const abortController = queueItem.taskId ? this.activeProcessingTasks.get(queueItem.taskId) : undefined
 
@@ -723,9 +736,17 @@ export default class DocumentRepository {
           parentDoc.items.push(childDoc)
         }
       }
-      await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save(), abortController)
+      await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, {
+        ...queueItem.opts,
+        callback: () => this.save(),
+        abortSignal: abortController?.signal
+      })
     } else {
-      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, queueItem.title, () => this.save(), abortController)
+      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, {
+        ...queueItem.opts,
+        callback: () => this.save(),
+        abortSignal: abortController?.signal
+      })
     }
   }
 
@@ -745,9 +766,17 @@ export default class DocumentRepository {
 
     // For updates, we essentially re-add the document
     if (queueItem.parentDocId) {
-      await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save(), abortController)
+      await base.processChildDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, {
+        ...queueItem.opts,
+        callback: () => this.save(),
+        abortSignal: abortController?.signal
+      })
     } else {
-      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, undefined, () => this.save(), abortController)
+      await base.addDocumentSource(queueItem.uuid, queueItem.type, queueItem.origin, {
+        ...queueItem.opts,
+        callback: () => this.save(),
+        abortSignal: abortController?.signal
+      })
     }
   }
 

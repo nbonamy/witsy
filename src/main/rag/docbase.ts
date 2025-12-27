@@ -2,7 +2,7 @@
 import { App } from 'electron'
 import fs from 'fs'
 import { Configuration } from 'types/config'
-import { DocRepoQueryResponseItem, SourceType } from 'types/rag'
+import { AddDocumentOptions, DocRepoQueryResponseItem, SourceType } from 'types/rag'
 import defaultSettings from '@root/defaults/settings.json'
 import { loadSettings } from '../config'
 import * as file from '../file'
@@ -72,14 +72,14 @@ export default class DocumentBaseImpl {
     }
   }
 
-  async addDocumentSource(uuid: string, type: SourceType, url: string, title?: string, callback?: VoidFunction, abortController?: AbortController): Promise<string|null> {
+  async addDocumentSource(uuid: string, type: SourceType, url: string, opts?: AddDocumentOptions): Promise<string|null> {
 
     // check existing
     let source = this.documents.find(d => d.uuid === uuid)
     if (source) {
       await this.deleteDocumentSource(uuid)
     } else {
-      source = new DocumentSourceImpl(uuid, type, url, title)
+      source = new DocumentSourceImpl(uuid, type, url, opts?.title)
     }
 
     // add if
@@ -87,29 +87,29 @@ export default class DocumentBaseImpl {
 
       // we add first so container is visible
       this.documents.push(source)
-      callback?.()
-      await this.addFolder(source, callback, abortController)
+      opts?.callback?.()
+      await this.addFolder(source, opts)
 
     } else if (type === 'sitemap') {
 
       // we add first so container is visible
       this.documents.push(source)
-      callback?.()
-      await this.addSitemap(source, callback, abortController)
+      opts?.callback?.()
+      await this.addSitemap(source, opts)
 
     } else {
 
       // we add first so container is visible
       this.documents.push(source)
-      callback?.()
+      opts?.callback?.()
 
       // we add only when it's done
       try {
-        await this.addDocument(source, callback, abortController)
+        await this.addDocument(source, opts)
       } catch (error) {
         console.error('[rag] Error adding document', error)
         this.documents = this.documents.filter(d => d.uuid !== source.uuid)
-        callback?.()
+        opts?.callback?.()
         throw error
       }
 
@@ -123,7 +123,7 @@ export default class DocumentBaseImpl {
 
   }
 
-  async processChildDocumentSource(uuid: string, type: SourceType, url: string, callback: VoidFunction, abortController?: AbortController): Promise<string> {
+  async processChildDocumentSource(uuid: string, type: SourceType, url: string, opts?: AddDocumentOptions): Promise<string> {
 
     // find existing child document in any folder
     let source: DocumentSourceImpl | undefined
@@ -139,7 +139,7 @@ export default class DocumentBaseImpl {
     }
 
     // only process the content - don't add to root documents array
-    await this.addDocument(source, callback, abortController)
+    await this.addDocument(source, opts)
 
     // log
     console.log(`[rag] Processed child document "${source.url}" in database "${this.name}"`)
@@ -149,13 +149,13 @@ export default class DocumentBaseImpl {
 
   }
 
-  async addDocument(source: DocumentSourceImpl, callback?: VoidFunction, abortController?: AbortController): Promise<void> {
+  async addDocument(source: DocumentSourceImpl, opts?: AddDocumentOptions): Promise<void> {
 
     // make sure we are connected
     await this.connect()
 
     // check if cancelled
-    if (abortController?.signal.aborted) {
+    if (opts?.abortSignal?.aborted) {
       throw new Error()
     }
 
@@ -177,15 +177,17 @@ export default class DocumentBaseImpl {
     }
 
     // check if cancelled after loading
-    if (abortController?.signal.aborted) {
+    if (opts?.abortSignal?.aborted) {
       throw new Error()
     }
 
     // check the size
-    const maxDocumentSizeMB = config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
-    if (text.length > maxDocumentSizeMB * 1024 * 1024) {
-      const sizeMB = (text.length / (1024 * 1024)).toFixed(1)
-      throw new Error(`Document is too large: ${sizeMB}MB (maximum allowed: ${maxDocumentSizeMB}MB). Please reduce the file size or adjust the limit in settings.`)
+    if (opts?.skipSizeCheck !== true) {
+      const maxDocumentSizeMB = config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
+      if (text.length > maxDocumentSizeMB * 1024 * 1024) {
+        const sizeMB = (text.length / (1024 * 1024)).toFixed(1)
+        throw new Error(`Document is too large: ${sizeMB}MB (maximum allowed: ${maxDocumentSizeMB}MB). Please reduce the file size or adjust the limit in settings.`)
+      }
     }
 
     // set title if web page
@@ -199,7 +201,7 @@ export default class DocumentBaseImpl {
     // now split
     console.log(`[rag] Splitting document into chunks`)
     const splitter = new Splitter(config)
-    const chunks = await splitter.split(text, abortController)
+    const chunks = await splitter.split(text, opts?.abortSignal)
 
     // loose estimate of the batch size based on:
     // 1 token = 4 bytes
@@ -220,8 +222,8 @@ export default class DocumentBaseImpl {
       while (chunks.length > 0) {
 
         // check if cancelled before each batch
-        if (abortController?.signal.aborted) {
-      throw new Error()
+        if (opts?.abortSignal?.aborted) {
+          throw new Error()
         }
 
         // log
@@ -275,53 +277,52 @@ export default class DocumentBaseImpl {
     }
 
     // done
-    callback?.()
+    opts?.callback?.()
 
   }
 
   private async addChildDocuments(
     source: DocumentSourceImpl,
     childItems: Array<{ type: SourceType, origin: string }>,
-    callback: VoidFunction,
-    abortController?: AbortController
+    opts?: AddDocumentOptions
   ): Promise<void> {
     await this.connect()
 
     let added = 0
     for (const item of childItems) {
       // Check if cancelled before processing each child
-      if (abortController?.signal.aborted) {
+      if (opts?.abortSignal?.aborted) {
         throw new Error()
       }
 
       try {
         const doc = new DocumentSourceImpl(crypto.randomUUID(), item.type, item.origin)
         // Don't pass callback to addDocument - we control callback frequency here
-        await this.addDocument(doc, undefined, abortController)
+        await this.addDocument(doc, {... opts, callback: undefined })
         source.items.push(doc)
 
         if ((++added) % ADD_COMMIT_EVERY === 0) {
-          callback?.()
+          opts?.callback?.()
         }
       } catch (error) {
         console.error('Error adding child document', item.origin, error)
       }
     }
-    callback?.()
+    opts?.callback?.()
   }
 
-  async addFolder(source: DocumentSourceImpl, callback: VoidFunction, abortController?: AbortController): Promise<void> {
+  async addFolder(source: DocumentSourceImpl, opts?: AddDocumentOptions): Promise<void> {
     const files = file.listFilesRecursively(source.origin)
     const items = files.map(f => ({ type: 'file' as SourceType, origin: f }))
-    await this.addChildDocuments(source, items, callback, abortController)
+    await this.addChildDocuments(source, items, opts)
   }
 
-  async addSitemap(source: DocumentSourceImpl, callback: VoidFunction, abortController?: AbortController): Promise<void> {
+  async addSitemap(source: DocumentSourceImpl, opts?: AddDocumentOptions): Promise<void> {
     const config: Configuration = loadSettings(this.app)
     const loader = new Loader(config)
     const urls = await loader.getSitemapUrls(source.origin)
     const items = urls.map(url => ({ type: 'url' as SourceType, origin: url }))
-    await this.addChildDocuments(source, items, callback, abortController)
+    await this.addChildDocuments(source, items, opts)
   }
 
   async deleteDocumentSource(docId: string, callback?: VoidFunction): Promise<void> {

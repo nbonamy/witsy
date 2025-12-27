@@ -462,6 +462,10 @@ export const installIpc = (
     event.returnValue = file.fileExists(app, filePath);
   });
 
+  ipcMain.on(IPC.FILE.FILE_STATS, (event, filePath) => {
+    event.returnValue = file.fileStats(app, filePath);
+  });
+
   ipcMain.on(IPC.FILE.WRITE_FILE, (event, filePath, content) => {
     event.returnValue = file.writeFile(app, filePath, content);
   });
@@ -623,8 +627,8 @@ export const installIpc = (
 
   ipcMain.handle(IPC.DOCREPO.ADD_DOCUMENT, async (_, payload) => {
     try {
-      const { baseId, type, origin, title } = payload;
-      return await docRepo.addDocumentSource(baseId, type, origin, true, title);
+      const { baseId, type, origin, opts } = payload;
+      return await docRepo.addDocumentSource(baseId, type, origin, true, opts);
     } catch (error) {
       console.error(error);
       throw error;

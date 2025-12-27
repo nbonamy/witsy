@@ -893,6 +893,10 @@
     },
     "file": {
       "error": {
+        "fileTooLarge": {
+          "text": "The following files exceed the maximum document size:<br/><br/>{files}<br/><br/>Processing large files may take longer and use more resources. Do you want to continue?",
+          "title": "Large files detected"
+        },
         "formatNotSupported": {
           "title": "File format not supported"
         }

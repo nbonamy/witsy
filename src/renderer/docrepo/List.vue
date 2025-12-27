@@ -57,7 +57,7 @@ const selectRepo = (repo: DocumentBase) => {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .list-item {

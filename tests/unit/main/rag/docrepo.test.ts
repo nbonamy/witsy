@@ -228,6 +228,25 @@ test('Docrepo large document', async () => {
   
 })
 
+test('Docrepo large document - skip file size check', async () => {
+  
+  ragConfig.maxDocumentSizeMB = 0.0001
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+  await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'), true, { skipSizeCheck: true })
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // check docrepo
+  const list = docrepo.list('workspace')
+  expect(list[0].documents).toHaveLength(1)
+
+  // check the database
+  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const items = await db.listItems()
+  expect(items).toHaveLength(1)
+  
+})
+
 test('Docrepo update document', async () => {
   
   ragConfig.chunkSize = 500
@@ -373,8 +392,8 @@ test('Docrepo query', async () => {
 test('Docrepo query score', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
-  const docid1 = await docrepo.addDocumentSource(docbase, 'text', 'Angela was born in 1980', true, 'Title1')
-  const docid2 = await docrepo.addDocumentSource(docbase, 'text', 'squash is more fun than tennis', true, 'Title2')
+  const docid1 = await docrepo.addDocumentSource(docbase, 'text', 'Angela was born in 1980', true, { title: 'Title1' })
+  const docid2 = await docrepo.addDocumentSource(docbase, 'text', 'squash is more fun than tennis', true, { title: 'Title2' })
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // with zero relevance cut off to check sorting

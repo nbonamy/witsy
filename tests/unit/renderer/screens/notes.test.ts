@@ -1,6 +1,6 @@
 import { mount, VueWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createI18nMock } from '@tests/mocks'
 import { useWindowMock } from '@tests/mocks/window'
 
@@ -121,7 +121,7 @@ describe('Notes', () => {
   it('Shows empty state when no notes exist', async () => {
     const emptyRepo = {
       ...mockSelectedRepo,
-      documents: []
+      documents: [] as DocumentSource[]
     }
     
     await wrapper.setProps({ selectedRepo: emptyRepo })
@@ -156,7 +156,7 @@ describe('Notes', () => {
       'uuid1',
       'text', 
       noteData.content,
-      noteData.title
+      { title:  noteData.title, skipSizeCheck: true }
     )
   })
 
@@ -184,7 +184,7 @@ describe('Notes', () => {
       origin: 'Original content',
       filename: '',
       url: 'Original content',
-      items: [],
+      items: [] as DocumentSource[],
       lastModified: 0,
       fileSize: 0
     }
@@ -206,7 +206,7 @@ describe('Notes', () => {
       'uuid1',
       'text', 
       'Updated content',
-      'Updated Title'
+      { title: 'Updated Title', skipSizeCheck: true }
     )
   })
 

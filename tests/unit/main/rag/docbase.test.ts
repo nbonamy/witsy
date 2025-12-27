@@ -1,5 +1,6 @@
 
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
+import { RagConfig } from 'types/config'
 import DocumentBaseImpl from '@main/rag/docbase'
 import DocumentSourceImpl from '@main/rag/docsource'
 import embeddings from '@tests/fixtures/embedder.json'
@@ -10,7 +11,7 @@ import path from 'path'
 import fs from 'fs'
 import os from 'os'
 
-let ragConfig
+let ragConfig: RagConfig
 
 vi.mock('electron', async() => {
   return {
@@ -40,6 +41,7 @@ vi.mock('@main/rag/embedder', async() => {
     else if (texts[0].includes('squash')) return Array(texts.length).fill(embeddings['squash'])
     else return Array(texts.length).fill(embeddings['other'])
   })
+  // @ts-expect-error mock
   Embedder['init'] = vi.fn(() => new Embedder())
   return { default: Embedder }
 })
@@ -81,6 +83,8 @@ afterEach(() => {
 })
 
 test('addSitemap creates child URL documents', async () => {
+
+  // @ts-expect-error mock
   const { mockGetSitemapUrls } = await import('@main/rag/loader')
   mockGetSitemapUrls.mockResolvedValue([
     'https://example.com/page1',
@@ -91,7 +95,7 @@ test('addSitemap creates child URL documents', async () => {
   const docbase = await createDocBase()
   const sitemap = new DocumentSourceImpl(crypto.randomUUID(), 'sitemap', 'https://example.com/sitemap.xml')
 
-  await docbase.addSitemap(sitemap, () => {})
+  await docbase.addSitemap(sitemap)
 
   expect(sitemap.items).toHaveLength(3)
   expect(sitemap.items[0].type).toBe('url')
@@ -108,6 +112,8 @@ test('addSitemap creates child URL documents', async () => {
 })
 
 test('addSitemap handles callback frequency', async () => {
+
+  // @ts-expect-error mock
   const { mockGetSitemapUrls } = await import('@main/rag/loader')
   mockGetSitemapUrls.mockResolvedValue([
     'https://example.com/page1',
@@ -122,7 +128,7 @@ test('addSitemap handles callback frequency', async () => {
   const sitemap = new DocumentSourceImpl(crypto.randomUUID(), 'sitemap', 'https://example.com/sitemap.xml')
 
   const callback = vi.fn()
-  await docbase.addSitemap(sitemap, callback)
+  await docbase.addSitemap(sitemap, { callback })
 
   // Callback should be called at commit intervals (ADD_COMMIT_EVERY = 5) plus once at end
   expect(callback).toHaveBeenCalledTimes(2)
@@ -131,6 +137,8 @@ test('addSitemap handles callback frequency', async () => {
 })
 
 test('addSitemap handles errors gracefully', async () => {
+
+  // @ts-expect-error mock
   const { mockGetSitemapUrls } = await import('@main/rag/loader')
   mockGetSitemapUrls.mockResolvedValue([
     'https://example.com/page1',
@@ -146,7 +154,7 @@ test('addSitemap handles errors gracefully', async () => {
   const sitemap = new DocumentSourceImpl(crypto.randomUUID(), 'sitemap', 'https://example.com/sitemap.xml')
 
   const callback = vi.fn()
-  await docbase.addSitemap(sitemap, callback)
+  await docbase.addSitemap(sitemap, { callback })
 
   // Should have only 1 item (second one failed)
   expect(sitemap.items).toHaveLength(1)
@@ -166,7 +174,7 @@ test('addFolder creates child file documents', async () => {
   const docbase = await createDocBase()
   const folder = new DocumentSourceImpl(crypto.randomUUID(), 'folder', '/path/to')
 
-  await docbase.addFolder(folder, () => {})
+  await docbase.addFolder(folder)
 
   expect(folder.items).toHaveLength(2)
   expect(folder.items[0].type).toBe('file')
@@ -191,7 +199,7 @@ test('addFolder handles callback frequency', async () => {
   const folder = new DocumentSourceImpl(crypto.randomUUID(), 'folder', '/path/to')
 
   const callback = vi.fn()
-  await docbase.addFolder(folder, callback)
+  await docbase.addFolder(folder, { callback })
 
   // Callback should be called at commit intervals (ADD_COMMIT_EVERY = 5) plus once at end
   expect(callback).toHaveBeenCalledTimes(2)

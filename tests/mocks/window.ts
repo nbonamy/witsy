@@ -376,6 +376,14 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         return filePath
       }),
       exists: vi.fn((filePath: string) => filePath.includes('existing')),
+      stats: vi.fn(() => ({
+        size: 1024,
+        isFile: true,
+        isDirectory: false,
+        isSymbolicLink: false,
+        modifiedAt: Date.now(),
+        createdAt: Date.now(),
+      })),
       read: vi.fn((filepath: string) => { return { url: filepath, contents: `${filepath}_encoded`, mimeType: 'whatever' } }),
       readIcon: vi.fn(),
       extractText: vi.fn((s) => `${s}_extracted`),

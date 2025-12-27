@@ -35,3 +35,12 @@ export type FilePickParams = {
     extensions: string[]
   }>
 }
+
+export type FileStats = {
+  size: number
+  isFile: boolean
+  isDirectory: boolean
+  isSymbolicLink: boolean
+  modifiedAt: number
+  createdAt: number
+}

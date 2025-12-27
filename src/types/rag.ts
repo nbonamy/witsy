@@ -30,6 +30,13 @@ export type SourceType = 'file'|'folder'|'url'|'sitemap'|'text'
 
 // export type DocumentSource =  DocumentSourceFile | DocumentSourceFolder | DocumentSourceUrl | DocumentSourceText
 
+export type AddDocumentOptions = {
+  title?: string
+  skipSizeCheck?: boolean
+  callback?: VoidFunction
+  abortSignal?: AbortSignal
+}
+
 export type DocumentSource = {
   uuid: string
   type: SourceType
@@ -78,6 +85,7 @@ export interface DocumentQueueItem {
   parentDocId?: string
   operation: 'add' | 'update' | 'delete'
   fromUserAction: boolean
+  opts?: AddDocumentOptions
   taskId?: string
 }
 

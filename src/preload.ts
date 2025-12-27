@@ -10,10 +10,10 @@ import { Command, ComputerAction, Expert, ExpertCategory, ExternalApp, LocalSear
 import { AgentRun } from './types/agents';
 import { Application, RunCommandParams } from './types/automation';
 import { Configuration } from './types/config';
-import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './types/file';
+import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams, FileStats } from './types/file';
 import { ListDirectoryResponse } from './types/filesystem';
 import { McpServer, McpStatus, McpTool } from './types/mcp';
-import { DocRepoQueryResponseItem, DocumentQueueItem, SourceType } from './types/rag';
+import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentQueueItem, SourceType } from './types/rag';
 import { Workspace, WorkspaceHeader } from './types/workspace';
 
 contextBridge.exposeInMainWorld(
@@ -75,6 +75,7 @@ contextBridge.exposeInMainWorld(
     file: {
       normalize: (filePath: string): string => { return ipcRenderer.sendSync(IPC.FILE.NORMALIZE_PATH, filePath) },
       exists: (filePath: string): boolean => { return ipcRenderer.sendSync(IPC.FILE.FILE_EXISTS, filePath) },
+      stats: (filePath: string): FileStats | null => { return ipcRenderer.sendSync(IPC.FILE.FILE_STATS, filePath) },
       read: (filepath: string): FileContents => { return ipcRenderer.sendSync(IPC.FILE.READ_FILE, filepath) },
       readIcon: (filepath: string): FileContents => { return ipcRenderer.sendSync(IPC.FILE.READ_ICON, filepath) },
       extractText: (contents: string, format: string): string => { return ipcRenderer.sendSync(IPC.FILE.GET_TEXT_CONTENT, contents, format) },
@@ -172,7 +173,7 @@ contextBridge.exposeInMainWorld(
       create(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): string { return ipcRenderer.sendSync(IPC.DOCREPO.CREATE, { workspaceId, title, embeddingEngine, embeddingModel }) },
       update(baseId: string, title: string, description?: string): void { return ipcRenderer.sendSync(IPC.DOCREPO.UPDATE, { baseId, title, description }) },
       delete(baseId: string): void { return ipcRenderer.sendSync(IPC.DOCREPO.DELETE, baseId) },
-      addDocument(baseId: string, type: SourceType, origin: string, title?: string): Promise<string> { return ipcRenderer.invoke(IPC.DOCREPO.ADD_DOCUMENT, { baseId, type, origin, title }) },
+      addDocument(baseId: string, type: SourceType, origin: string, opts?: AddDocumentOptions): Promise<string> { return ipcRenderer.invoke(IPC.DOCREPO.ADD_DOCUMENT, { baseId, type, origin, opts }) },
       cancelTask(taskId: string): Promise<void> { return ipcRenderer.invoke(IPC.DOCREPO.CANCEL_TASK, { taskId }) },
       removeDocument(baseId: string, docId: string): Promise<boolean> { return ipcRenderer.invoke(IPC.DOCREPO.REMOVE_DOCUMENT, { baseId, docId }) },
       query(baseId: string, text: string): Promise<DocRepoQueryResponseItem[]> { return ipcRenderer.invoke(IPC.DOCREPO.QUERY, { baseId, text }) },
