@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.1] - WIP
+## [3.3.1] - 2025-12-27
 
 ### Added
 - Add priority selection option for OpenAI (https://github.com/nbonamy/witsy/issues/508)
