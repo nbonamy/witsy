@@ -5,6 +5,7 @@ import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
 import { clearFooter, displayConversation, displayFooter, grayText, padContent, resetDisplay, startPulseAnimation, stopPulseAnimation, successText } from './display'
+import { applyFolderAccess, getFolderAccessLabel, promptFolderAccess } from './folder'
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
 import { selectOption } from './select'
@@ -18,6 +19,7 @@ export const COMMANDS = [
   { name: '/help', value: 'help', description: 'Show this help message' },
   { name: '/port', value: 'port', description: 'Change server port' },
   { name: '/model', value: 'model', description: 'Select engine and model' },
+  { name: '/folder', value: 'folder', description: 'Change folder access' },
   { name: '/title', value: 'title', description: 'Set conversation title' },
   { name: '/save', value: 'save', description: 'Save conversation' },
   { name: '/retry', value: 'retry', description: 'Retry last message' },
@@ -203,6 +205,40 @@ export async function handleModel() {
     resetDisplay(() => {
       console.log(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`))
       console.log(chalk.dim('Make sure Witsy is running'))
+      console.log()
+    })
+  }
+}
+
+export async function handleFolder() {
+  try {
+    const access = await promptFolderAccess()
+    applyFolderAccess(access)
+
+    // Persist selection to cli.json (per folder)
+    if (state.cliConfig && state.userDataPath) {
+      const cwd = process.cwd()
+      if (!state.cliConfig.workDirs) {
+        state.cliConfig.workDirs = {}
+      }
+      state.cliConfig.workDirs[cwd] = { access }
+      saveCliConfig(state.userDataPath, state.cliConfig)
+    }
+
+    const label = getFolderAccessLabel()
+    console.log(chalk.yellow(`\n✓ ${label}\n`))
+
+    // Redraw entire screen
+    resetDisplay()
+
+  } catch (error: any) {
+    // Handle cancellation (Escape key)
+    if (error?.message?.includes('cancelled')) {
+      resetDisplay()
+      return
+    }
+    resetDisplay(() => {
+      console.log(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`))
       console.log()
     })
   }
@@ -620,6 +656,9 @@ export async function executeCommand(command: string) {
     case 'model':
       await handleModel()
       break
+    case 'folder':
+      await handleFolder()
+      break
     case 'title':
       await handleTitle()
       break
@@ -689,6 +728,24 @@ export async function initialize() {
     if (!cliConfig.engine || !cliConfig.model) {
       state.cliConfig.engine = state.engine
       state.cliConfig.model = state.model
+      saveCliConfig(state.userDataPath, state.cliConfig)
+    }
+
+    // Handle folder access - use saved preference for current folder or prompt
+    const cwd = process.cwd()
+    const savedConfig = cliConfig.workDirs?.[cwd]
+    if (savedConfig?.access) {
+      applyFolderAccess(savedConfig.access)
+    } else {
+      // First run for this folder - prompt for folder access
+      const access = await promptFolderAccess()
+      applyFolderAccess(access)
+
+      // Save preference for this folder
+      if (!state.cliConfig.workDirs) {
+        state.cliConfig.workDirs = {}
+      }
+      state.cliConfig.workDirs[cwd] = { access }
       saveCliConfig(state.userDataPath, state.cliConfig)
     }
   } catch {

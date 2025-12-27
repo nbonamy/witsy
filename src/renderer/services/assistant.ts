@@ -18,6 +18,7 @@ import { availablePlugins } from './plugins/plugins'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
+  keepLlm?: boolean
   execMode?: MessageExecutionMode
   titling?: boolean
   instructions?: string|null
@@ -145,16 +146,20 @@ export default class {
     this.chat.docrepo = opts.docrepo
 
     // we need an llm
-    this.initLlm(opts.engine)
+    if (opts?.keepLlm !== true) {
+      this.initLlm(opts.engine)
+    }
     if (this.llm === null) {
       return null
     }
 
     // make sure llm has latest tools
-    if (!this.llmManager.isComputerUseModel(opts.engine, opts.model)) {
-      await this.llmManager.loadTools(this.llm, this.workspaceId, availablePlugins, this.chat.tools, { codeExecutionMode })
-    } else {
-      this.llm.clearPlugins()
+    if (opts?.keepLlm !== true) {
+      if (!this.llmManager.isComputerUseModel(opts.engine, opts.model)) {
+        await this.llmManager.loadTools(this.llm, this.workspaceId, availablePlugins, this.chat.tools, { codeExecutionMode })
+      } else {
+        this.llm.clearPlugins()
+      }
     }
 
     // save this
