@@ -78,12 +78,13 @@ test('Filesystem plugin map path to allowed paths', () => {
 
 test('Filesystem plugin map path - subdirectory resolution', () => {
   // Test the subdirectory resolution path where allowed path + ./ + target exists
-  window.api.file.exists = vi.fn((path: string) => {
-    return path === '/home/user/Documents/./subdir/file.txt'
+  // Note: path.normalize removes ./ so the path becomes /home/user/Documents/subdir/file.txt
+  window.api.file.exists = vi.fn((p: string) => {
+    return p === '/home/user/Documents/subdir/file.txt'
   })
   const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
   const result = plugin.mapToAllowedPaths('subdir/file.txt')
-  expect(result).toBe('/home/user/Documents/./subdir/file.txt')
+  expect(result).toBe('/home/user/Documents/subdir/file.txt')
 })
 
 test('Filesystem plugin path validation', async () => {
@@ -432,6 +433,34 @@ test('Filesystem plugin find files - invalid path', async () => {
     action: 'find',
     path: '/etc',
     pattern: '*.conf'
+  })
+  expect(result.error).toContain('plugins.filesystem.invalidPath')
+})
+
+test('Filesystem plugin path traversal prevention - relative path escape', () => {
+  // The global mock now uses real path.normalize which resolves .. sequences
+  // Mock file.exists to return true for any path (simulating the file exists)
+  window.api.file.exists = vi.fn(() => true)
+
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+
+  // Attempt to traverse outside allowed path using ../
+  // path.normalize resolves /tmp/../../../etc/passwd to /etc/passwd
+  // Even if file.exists returns true, mapToAllowedPaths should return null
+  // because the resolved path doesn't start with the allowed path
+  const result = plugin.mapToAllowedPaths('../../../etc/passwd')
+  expect(result).toBeNull()
+})
+
+test('Filesystem plugin path traversal prevention - action blocked', async () => {
+  // The global mock uses real path.normalize
+  window.api.file.exists = vi.fn(() => true)
+
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem, workspaceId)
+
+  const result = await plugin.execute(context, {
+    action: 'read',
+    path: '../../../etc/passwd'
   })
   expect(result.error).toContain('plugins.filesystem.invalidPath')
 })
