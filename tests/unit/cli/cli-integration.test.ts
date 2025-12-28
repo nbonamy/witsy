@@ -127,18 +127,23 @@ describe('CLI Integration - Chunk Processing', () => {
     } as unknown as Response
   }
 
-  test('content → tools → content produces correct newlines', async () => {
+  test('content → tools → content with reasoning produces correct newlines', async () => {
     // Import handleMessage here to get fresh module with our mocks
     const { handleMessage } = await import('@/cli/commands')
 
-    // Chunks: content → empty → tool1 → tool2 → empty → content
+    // Chunks: reasoning → content → empty → reasoning → tool1 → tool2 → reasoning → empty → content
+    // Reasoning chunks should be ignored and not affect output
     const chunks = [
+      JSON.stringify({ type: 'reasoning', text: 'Let me think...', done: false }),
+      JSON.stringify({ type: 'reasoning', text: 'Still thinking...', done: false }),
       JSON.stringify({ type: 'content', text: 'Hello', done: false }),
       JSON.stringify({ type: 'content', text: '   ', done: false }), // skipped
+      JSON.stringify({ type: 'reasoning', text: 'About to use tools', done: false }),
       JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Running 1', done: false }),
       JSON.stringify({ type: 'tool', id: 'tool-2', status: 'Running 2', done: false }),
       JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Done 1', done: true }),
       JSON.stringify({ type: 'tool', id: 'tool-2', status: 'Done 2', done: true }),
+      JSON.stringify({ type: 'reasoning', text: 'Tools done, writing response', done: false }),
       JSON.stringify({ type: 'content', text: '', done: false }), // skipped
       JSON.stringify({ type: 'content', text: 'World', done: false }),
     ]
@@ -146,7 +151,7 @@ describe('CLI Integration - Chunk Processing', () => {
     vi.mocked(fetch).mockResolvedValueOnce(createMockStreamResponse(chunks))
     await handleMessage('test')
 
-    // Expected output (VirtualTerminal trims trailing empty lines):
+    // Expected output (reasoning chunks don't affect output):
     // "  Hello  " (padded content)
     // "" (blank - content→tool transition)
     // "✓ Done 1"
