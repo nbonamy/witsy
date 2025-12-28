@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.X.Y] - WIP
+
+### Added
+- CLI filesystem access
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
 ## [3.3.1] - 2025-12-27
 
 ### Added
