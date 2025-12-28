@@ -356,3 +356,85 @@ export function stopPulseAnimation(interval: NodeJS.Timeout | null): void {
   currentAnimationText = ''
 }
 
+// Multi-tool animation state
+interface ActiveToolState {
+  index: number      // 0-based line offset from first tool
+  status: string     // Current status text
+  completed: boolean // Whether tool has finished
+}
+
+const activeToolStates = new Map<string, ActiveToolState>()
+let toolCount = 0
+
+export function initToolsDisplay(): void {
+  activeToolStates.clear()
+  toolCount = 0
+}
+
+export function addTool(toolId: string, status: string): void {
+  // Add blank line before each tool except the first
+  if (toolCount > 0) {
+    process.stdout.write('\n')
+    toolCount++ // count the blank line
+  }
+  toolCount++
+  activeToolStates.set(toolId, { index: toolCount - 1, status, completed: false })
+  // Write line for this tool
+  process.stdout.write(secondaryText(getToolAnimationFrame()) + ` ${status}\n`)
+}
+
+export function updateToolStatus(toolId: string, status: string): void {
+  const state = activeToolStates.get(toolId)
+  if (state && !state.completed) {
+    state.status = status
+  }
+}
+
+export function completeTool(toolId: string, finalStatus: string): void {
+  const state = activeToolStates.get(toolId)
+  if (state) {
+    state.completed = true
+    state.status = finalStatus
+
+    // Calculate how many lines to move up from current position
+    // Cursor is at line toolCount (one below last tool)
+    const linesUp = toolCount - state.index
+
+    // Move up, update line, move back down
+    process.stdout.write(ansiEscapes.cursorUp(linesUp))
+    process.stdout.write(ansiEscapes.cursorTo(0))
+    process.stdout.write(ansiEscapes.eraseLine)
+    process.stdout.write(successText('✓') + ` ${finalStatus}`)
+    process.stdout.write(ansiEscapes.cursorDown(linesUp))
+    process.stdout.write(ansiEscapes.cursorTo(0))
+  }
+}
+
+export function startToolsAnimation(): NodeJS.Timeout {
+  return setInterval(() => {
+    // Update all non-completed tools
+    for (const [, state] of activeToolStates) {
+      if (!state.completed) {
+        const linesUp = toolCount - state.index
+        process.stdout.write(ansiEscapes.cursorUp(linesUp))
+        process.stdout.write(ansiEscapes.cursorTo(0))
+        process.stdout.write(ansiEscapes.eraseLine)
+        process.stdout.write(secondaryText(getToolAnimationFrame()) + ` ${state.status}`)
+        process.stdout.write(ansiEscapes.cursorDown(linesUp))
+        process.stdout.write(ansiEscapes.cursorTo(0))
+      }
+    }
+  }, 150)
+}
+
+export function stopToolsAnimation(interval: NodeJS.Timeout | null): void {
+  if (interval) {
+    clearInterval(interval)
+  }
+}
+
+export function clearToolsDisplay(): void {
+  activeToolStates.clear()
+  toolCount = 0
+}
+

@@ -4,7 +4,7 @@ import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
-import { clearFooter, displayConversation, displayFooter, grayText, padContent, resetDisplay, startPulseAnimation, stopPulseAnimation, successText, updatePulseAnimation } from './display'
+import { addTool, clearFooter, clearToolsDisplay, completeTool, displayConversation, displayFooter, grayText, initToolsDisplay, padContent, resetDisplay, startPulseAnimation, startToolsAnimation, stopPulseAnimation, stopToolsAnimation, updateToolStatus } from './display'
 import { applyFolderAccess, getFolderAccessLabel, promptFolderAccess } from './folder'
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
@@ -469,14 +469,15 @@ export async function handleMessage(message: string) {
   // Use terminal-kit to grab input for escape key handling
   let keyHandler: any = null
   let animationInterval: NodeJS.Timeout | null = null
+  let toolsAnimationInterval: NodeJS.Timeout | null = null
 
   try {
 
-    let inTools = false
     let inReasoning = false
     let lastOutput: 'none' | 'content' | 'tool' = 'none'
     let firstChunk = true
     const streamPadder = new StreamPadder()
+    const activeToolIds = new Set<string>()
 
     // Start loading animation
     const loadingVerb = loadingVerbs[Math.floor(Math.random() * loadingVerbs.length)]
@@ -502,7 +503,7 @@ export async function handleMessage(message: string) {
 
       const chunk: LlmChunk = JSON.parse(payload)
 
-      // Stop animation on first chunk
+      // Stop loading animation on first chunk
       if (firstChunk) {
         stopPulseAnimation(animationInterval)
         animationInterval = null
@@ -544,38 +545,42 @@ export async function handleMessage(message: string) {
 
       } else if (chunk.type === 'tool') {
 
-        if (!inTools) {
-          // Flush any buffered content before tool output
-          streamPadder.flush()
-          // Add blank line before tool
-          if (lastOutput === 'content') {
-            // Content doesn't end with newline, so need 2: one to end line, one for blank
-            console.log()
-            console.log()
-          } else if (lastOutput === 'tool') {
-            // Tool already ended its line, just need blank line
-            console.log()
+        const toolId = chunk.id
+
+        // Handle new tool appearing
+        if (!activeToolIds.has(toolId)) {
+          if (activeToolIds.size === 0) {
+            // First tool - handle transition from content/previous tools
+            streamPadder.flush()
+            if (lastOutput === 'content') {
+              // Content doesn't end with newline, so need 2: one to end line, one for blank
+              console.log()
+              console.log()
+            } else if (lastOutput === 'tool') {
+              // Previous tool batch ended, add blank line
+              console.log()
+            }
+            initToolsDisplay()
+            toolsAnimationInterval = startToolsAnimation()
           }
-          inTools = true
+          activeToolIds.add(toolId)
+          addTool(toolId, chunk.status || 'Processing...')
         } else {
-          // Same tool, different status - clear line for update
-          process.stdout.write(ansiEscapes.cursorTo(0))
-          process.stdout.write(ansiEscapes.eraseLine)
+          // Update existing tool status
+          updateToolStatus(toolId, chunk.status || 'Processing...')
         }
 
+        // Handle tool completion
         if (chunk.done) {
-          stopPulseAnimation(animationInterval)
-          animationInterval = null
-          process.stdout.write(successText('✓') + ` ${chunk.status}`)
-          console.log()
-          inTools = false
-          lastOutput = 'tool'
-        } else {
-          if (!animationInterval) {
-            animationInterval = startPulseAnimation(chunk.status)
-          } else {
-            // Update animation text if status changed
-            updatePulseAnimation(chunk.status)
+          completeTool(toolId, chunk.status || 'Done')
+          activeToolIds.delete(toolId)
+
+          // Check if all tools are done
+          if (activeToolIds.size === 0) {
+            stopToolsAnimation(toolsAnimationInterval)
+            toolsAnimationInterval = null
+            clearToolsDisplay()
+            lastOutput = 'tool'
           }
         }
 
@@ -640,8 +645,10 @@ export async function handleMessage(message: string) {
     }
 
   } finally {
-    // Cleanup: stop animation, ungrab input and remove key listener
+    // Cleanup: stop animations, ungrab input and remove key listener
     stopPulseAnimation(animationInterval)
+    stopToolsAnimation(toolsAnimationInterval)
+    clearToolsDisplay()
     if (keyHandler) {
       term.removeListener('key', keyHandler)
     }
