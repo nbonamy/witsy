@@ -4,32 +4,41 @@ import chalk from 'chalk'
 import { selectOption } from './select'
 import { state, WorkDirAccess } from './state'
 
+export type FolderAccessResult = WorkDirAccess | 'clear' | null
+
 const FOLDER_ACCESS_CHOICES = [
-  { name: 'No filesystem access', value: 'none' as WorkDirAccess, description: 'AI cannot read or write files' },
+  { name: 'Read-write access', value: 'rw' as WorkDirAccess, description: 'AI can read and write files' },
   { name: 'Read-only access', value: 'ro' as WorkDirAccess, description: 'AI can read files in current folder' },
-  { name: 'Read-write access', value: 'rw' as WorkDirAccess, description: 'AI can read and write files' }
+  { name: 'No filesystem access', value: 'none' as WorkDirAccess, description: 'AI cannot read or write files' }
+]
+
+const FOLDER_ACCESS_CHOICES_WITH_CLEAR = [
+  ...FOLDER_ACCESS_CHOICES,
+  { name: 'Clear saved preference', value: 'clear' as const, description: 'Remove saved setting for this folder' }
 ]
 
 /**
  * Prompt user for folder access level
- * Returns the selected access level or 'none' if cancelled
+ * Returns the selected access level, or null if cancelled
+ * @param includeClear - Whether to include the "clear" option (for /folder command)
  */
-export async function promptFolderAccess(): Promise<WorkDirAccess> {
+export async function promptFolderAccess(includeClear = false): Promise<FolderAccessResult> {
   const cwd = process.cwd()
+  const folderName = cwd.length > 40 ? '…' + cwd.slice(-40) : cwd
 
-  console.log(chalk.dim(`\n  Current folder: ${cwd}\n`))
+  const choices = includeClear ? FOLDER_ACCESS_CHOICES_WITH_CLEAR : FOLDER_ACCESS_CHOICES
 
   const selectedAccess = await selectOption({
-    title: 'Grant AI access to current folder?',
-    choices: FOLDER_ACCESS_CHOICES
+    title: `Grant AI access to ${chalk.white(folderName)}?`,
+    choices
   })
 
-  // If cancelled (empty string), default to 'none'
+  // If cancelled (empty string), return null
   if (!selectedAccess) {
-    return 'none'
+    return null
   }
 
-  return selectedAccess
+  return selectedAccess as FolderAccessResult
 }
 
 /**

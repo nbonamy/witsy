@@ -9,7 +9,7 @@ import { applyFolderAccess, getFolderAccessLabel, promptFolderAccess } from './f
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
 import { selectOption } from './select'
-import { state } from './state'
+import { state, WorkDirAccess } from './state'
 
 const term = terminalKit.terminal
 
@@ -212,12 +212,36 @@ export async function handleModel() {
 
 export async function handleFolder() {
   try {
-    const access = await promptFolderAccess()
+    const access = await promptFolderAccess(true)
+
+    // If cancelled, just redraw and return
+    if (access === null) {
+      resetDisplay()
+      return
+    }
+
+    const cwd = process.cwd()
+
+    // Handle clear option
+    if (access === 'clear') {
+      // Remove saved config for this folder
+      if (state.cliConfig?.workDirs?.[cwd]) {
+        delete state.cliConfig.workDirs[cwd]
+        if (state.userDataPath) {
+          saveCliConfig(state.userDataPath, state.cliConfig)
+        }
+      }
+      // Apply 'none' for this session
+      applyFolderAccess('none')
+      console.log(chalk.yellow('\n✓ Saved preference cleared\n'))
+      resetDisplay()
+      return
+    }
+
     applyFolderAccess(access)
 
     // Persist selection to cli.json (per folder)
     if (state.cliConfig && state.userDataPath) {
-      const cwd = process.cwd()
       if (!state.cliConfig.workDirs) {
         state.cliConfig.workDirs = {}
       }
@@ -688,6 +712,8 @@ export async function executeCommand(command: string) {
 }
 
 export async function initialize() {
+  const cwd = process.cwd()
+
   // Try to connect with short timeout
   const connected = await api.connectWithTimeout(state.port, 2000)
 
@@ -731,27 +757,39 @@ export async function initialize() {
       saveCliConfig(state.userDataPath, state.cliConfig)
     }
 
-    // Handle folder access - use saved preference for current folder or prompt
-    const cwd = process.cwd()
+    // Handle folder access - use saved preference for current folder
     const savedConfig = cliConfig.workDirs?.[cwd]
     if (savedConfig?.access) {
       applyFolderAccess(savedConfig.access)
-    } else {
-      // First run for this folder - prompt for folder access
-      const access = await promptFolderAccess()
-      applyFolderAccess(access)
-
-      // Save preference for this folder
-      if (!state.cliConfig.workDirs) {
-        state.cliConfig.workDirs = {}
-      }
-      state.cliConfig.workDirs[cwd] = { access }
-      saveCliConfig(state.userDataPath, state.cliConfig)
     }
+    // If no saved config, we'll prompt after resetDisplay()
   } catch {
     state.engine = null
     state.model = null
   }
 
+  // Display initial screen
   resetDisplay()
+
+  // Prompt for folder access if no saved config for this folder
+  if (!state.cliConfig?.workDirs?.[cwd]?.access) {
+    // Note: includeClear=false so 'clear' is never returned
+    const access = await promptFolderAccess(false) as WorkDirAccess | null
+
+    // If cancelled, apply 'none' but don't save
+    if (access === null) {
+      applyFolderAccess('none')
+    } else {
+      applyFolderAccess(access)
+
+      // Save preference for this folder
+      if (state.cliConfig && state.userDataPath) {
+        if (!state.cliConfig.workDirs) {
+          state.cliConfig.workDirs = {}
+        }
+        state.cliConfig.workDirs[cwd] = { access }
+        saveCliConfig(state.userDataPath, state.cliConfig)
+      }
+    }
+  }
 }
