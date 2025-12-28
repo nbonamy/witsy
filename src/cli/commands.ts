@@ -4,7 +4,7 @@ import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
-import { clearFooter, displayConversation, displayFooter, grayText, padContent, resetDisplay, startPulseAnimation, stopPulseAnimation, successText } from './display'
+import { clearFooter, displayConversation, displayFooter, grayText, padContent, resetDisplay, startPulseAnimation, stopPulseAnimation, successText, updatePulseAnimation } from './display'
 import { applyFolderAccess, getFolderAccessLabel, promptFolderAccess } from './folder'
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
@@ -474,6 +474,7 @@ export async function handleMessage(message: string) {
 
     let inTools = false
     let inReasoning = false
+    let lastOutput: 'none' | 'content' | 'tool' = 'none'
     let firstChunk = true
     const streamPadder = new StreamPadder()
 
@@ -529,18 +530,35 @@ export async function handleMessage(message: string) {
 
       if (chunk.type === 'content') {
 
+        // Skip empty/whitespace-only content chunks entirely
+        if (!chunk.text?.trim()) return
+
+        // Add blank line when transitioning from tool to content
+        if (lastOutput === 'tool') {
+          console.log()
+        }
+        lastOutput = 'content'
+
         response += chunk.text
         streamPadder.write(chunk.text)
 
       } else if (chunk.type === 'tool') {
 
         if (!inTools) {
-          if (response.length > 0 && !response.endsWith('\n')) {
+          // Flush any buffered content before tool output
+          streamPadder.flush()
+          // Add blank line before tool
+          if (lastOutput === 'content') {
+            // Content doesn't end with newline, so need 2: one to end line, one for blank
             console.log()
+            console.log()
+          } else if (lastOutput === 'tool') {
+            // Tool already ended its line, just need blank line
             console.log()
           }
           inTools = true
         } else {
+          // Same tool, different status - clear line for update
           process.stdout.write(ansiEscapes.cursorTo(0))
           process.stdout.write(ansiEscapes.eraseLine)
         }
@@ -550,11 +568,14 @@ export async function handleMessage(message: string) {
           animationInterval = null
           process.stdout.write(successText('✓') + ` ${chunk.status}`)
           console.log()
-          console.log()
           inTools = false
+          lastOutput = 'tool'
         } else {
           if (!animationInterval) {
             animationInterval = startPulseAnimation(chunk.status)
+          } else {
+            // Update animation text if status changed
+            updatePulseAnimation(chunk.status)
           }
         }
 

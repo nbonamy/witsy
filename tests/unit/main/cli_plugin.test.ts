@@ -589,9 +589,9 @@ describe('CliPlugin', () => {
       expect(plugin.getCompletedDescription('', { action: 'read_file', path: 'test.txt' }, successResult)).toContain('Read')
     })
 
-    test('getCompletedDescription returns error messages', () => {
+    test('getCompletedDescription returns failure messages', () => {
       const errorResult = { success: false, error: 'File not found' }
-      expect(plugin.getCompletedDescription('', { action: 'read_file', path: 'test.txt' }, errorResult)).toContain('Error')
+      expect(plugin.getCompletedDescription('', { action: 'read_file', path: 'test.txt' }, errorResult)).toContain('Failed')
     })
   })
 })

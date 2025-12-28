@@ -1,10 +1,10 @@
 import Chat from '@models/chat'
 import Message from '@models/message'
 import { App } from 'electron'
-import Assistant from '../renderer/services/assistant'
 import { engineNames } from '../renderer/services/llms/base'
 import LlmFactory from '../renderer/services/llms/llm'
-import CliPlugin, { WorkDirAccess } from './cli_plugin'
+import AssistantApi from './assistant_api'
+import { WorkDirAccess } from './cli_plugin'
 import * as config from './config'
 import { loadHistory, saveHistory } from './history'
 import { HttpServer } from './http_server'
@@ -141,48 +141,33 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp, 
         return
       }
 
-      // Create assistant and chat
-      const assistant = new Assistant(settings)
-      const chat = new Chat()
-      chat.setEngineModel(engine, model)
-      assistant.setChat(chat)
+      // Parse workDir if provided
+      let workDir = null
+      if (params.workDir && typeof params.workDir === 'object') {
+        const wd = params.workDir as { path?: string | null; access?: WorkDirAccess }
+        if (wd.path && wd.access && wd.access !== 'none') {
+          workDir = { path: wd.path, access: wd.access }
+        }
+      }
 
-      // Deserialize messages
+      // Create AssistantApi with workDir configuration
+      const assistant = new AssistantApi(settings, workDir)
+      assistant.initializeChat(engine, model)
+
+      // Deserialize and add messages (except last user message which is the prompt)
       const messages = thread.map((msg: any) => Message.fromJson(msg))
-      messages.forEach(msg => chat.addMessage(msg))
-
-      console.log(`[http] /api/complete - engine: ${engine}, model: ${model}, messages: ${messages.length}`)
-
-      // Get the last user message as the prompt
       const lastUserMessage = messages.filter(m => m.role === 'user').pop()
       if (!lastUserMessage) {
         sendError(res, 'No user message found in thread', 400)
         return
       }
+
+      // Add all messages except the last user message (that's our prompt)
+      const historyMessages = messages.slice(0, messages.lastIndexOf(lastUserMessage))
+      assistant.addMessages(historyMessages)
+
       const prompt = lastUserMessage.content || ''
-
-      // Initialize LLM
-      assistant.initLlm(engine)
-      if (!assistant.hasLlm()) {
-        sendError(res, `Failed to initialize LLM for engine '${engine}'`, 500)
-        return
-      }
-      
-      // load default tools
-      // llmManager.loadTools(assistant.llm!, kDefaultWorkspaceId, availablePlugins, chat.tools, {})
-
-      // Add CLI plugin if workDir is provided with access
-      if (params.workDir && typeof params.workDir === 'object') {
-        const workDir = params.workDir as { path?: string | null; access?: WorkDirAccess }
-        if (workDir.path && workDir.access && workDir.access !== 'none') {
-          const cliPlugin = new CliPlugin({
-            workDirPath: workDir.path,
-            workDirAccess: workDir.access
-          })
-          assistant.llm!.addPlugin(cliPlugin)
-          console.log(`[http] CLI plugin added: ${workDir.path} (${workDir.access})`)
-        }
-      }
+      console.log(`[http] /api/complete - engine: ${engine}, model: ${model}, messages: ${messages.length}${workDir ? `, workDir: ${workDir.path} (${workDir.access})` : ''}`)
 
       if (stream) {
         // Streaming mode - SSE
@@ -194,13 +179,11 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp, 
 
         const abortController = new AbortController()
         await assistant.prompt(prompt, {
+          engine,
           model,
-          keepLlm: true,
-          streaming: true,
-          titling: false,
           noMarkdown,
           abortSignal: abortController.signal,
-        }, (chunk: any) => {
+        }, (chunk) => {
           if (chunk) {
             res.write(`data: ${JSON.stringify(chunk)}\n\n`)
           }
@@ -212,15 +195,15 @@ export function installApiEndpoints(httpServer: HttpServer, app: App, mcp: Mcp, 
         // Non-streaming mode - JSON response
         const abortController = new AbortController()
         await assistant.prompt(prompt, {
+          engine,
           model,
-          streaming: false,
           noMarkdown,
           abortSignal: abortController.signal,
         }, () => {
           // Chunks will be accumulated in the assistant's response message
         })
 
-        const response = chat.lastMessage()
+        const response = assistant.getLastMessage()
         sendJson(res, {
           success: true,
           response: {
