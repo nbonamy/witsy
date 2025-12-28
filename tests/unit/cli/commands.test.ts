@@ -26,6 +26,14 @@ vi.mock('@/cli/display', () => ({
   startPulseAnimation: vi.fn(() => ({} as NodeJS.Timeout)),
   stopPulseAnimation: vi.fn(),
   successText: (s: string) => s,
+  // Multi-tool animation functions
+  initToolsDisplay: vi.fn(),
+  addTool: vi.fn(),
+  updateToolStatus: vi.fn(),
+  completeTool: vi.fn(),
+  startToolsAnimation: vi.fn(() => ({} as NodeJS.Timeout)),
+  stopToolsAnimation: vi.fn(),
+  clearToolsDisplay: vi.fn(),
 }))
 vi.mock('@/cli/input', () => ({
   promptInput: vi.fn(),
