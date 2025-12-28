@@ -153,37 +153,58 @@ export default class CliPlugin extends Plugin {
       case 'move_file':
         return `Moving ${args.path} to ${args.newPath}...`
       case 'run_command':
-        return `Running: ${args.command}...`
+        return `Running \`${this.truncateCommand(args.command || '', 40)}\``
       default:
-        return 'Performing operation...'
+        return 'Working...'
     }
   }
 
   getCompletedDescription(_tool: string, args: CliArgs, results: CliResponse): string | undefined {
-    if (!results.success) {
-      return `Error: ${results.error}`
-    }
-
     switch (args.action) {
       case 'read_file':
-        return `Read ${results.linesRead} lines from ${args.path}`
+        return results.success
+          ? `Read ${results.linesRead} lines from ${args.path}`
+          : `Failed to read ${args.path}`
       case 'edit_file':
-        return `Edited ${results.linesModified} lines in ${args.path}`
+        return results.success
+          ? `Edited ${results.linesModified} lines in ${args.path}`
+          : `Failed to edit ${args.path}`
       case 'write_file':
-        return `Wrote ${results.totalLines} lines to ${args.path}`
+        return results.success
+          ? `Wrote ${results.totalLines} lines to ${args.path}`
+          : `Failed to write ${args.path}`
       case 'create_file':
-        return `Created ${args.path}`
+        return results.success
+          ? `Created ${args.path}`
+          : `Failed to create ${args.path}`
       case 'create_directory':
-        return `Created directory ${args.path}`
+        return results.success
+          ? `Created directory ${args.path}`
+          : `Failed to create directory ${args.path}`
       case 'delete_file':
-        return `Deleted ${args.path}`
+        return results.success
+          ? `Deleted ${args.path}`
+          : `Failed to delete ${args.path}`
       case 'move_file':
-        return `Moved ${args.path} to ${args.newPath}`
-      case 'run_command':
-        return `Command completed (exit code ${results.exitCode})`
+        return results.success
+          ? `Moved ${args.path} to ${args.newPath}`
+          : `Failed to move ${args.path}`
+      case 'run_command': {
+        const cmd = this.truncateCommand(args.command || '')
+        return results.success
+          ? `Ran \`${cmd}\``
+          : `\`${cmd}\` failed (exit ${results.exitCode})`
+      }
       default:
-        return 'Operation completed'
+        return results.success ? 'Operation completed' : 'Operation failed'
     }
+  }
+
+  private truncateCommand(command: string, maxLength: number = 50): string {
+    if (command.length <= maxLength) {
+      return command
+    }
+    return command.slice(0, maxLength - 3) + '...'
   }
 
   validatePath(targetPath: string): string | null {

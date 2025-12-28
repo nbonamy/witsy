@@ -3,7 +3,7 @@ import { IncomingMessage } from 'http'
 import { installApiEndpoints } from '@main/http_api'
 import { HttpServer } from '@main/http_server'
 import LlmFactory from '@services/llms/llm'
-import Assistant from '@services/assistant'
+import AssistantApi from '@main/assistant_api'
 import * as config from '@main/config'
 import { App } from 'electron'
 import Mcp from '@main/mcp'
@@ -11,7 +11,7 @@ import Mcp from '@main/mcp'
 type RouteHandler = (req: IncomingMessage, res: any, parsedUrl?: URL) => Promise<void> | void
 
 vi.mock('@main/config')
-vi.mock('@services/assistant')
+vi.mock('@main/assistant_api')
 
 vi.mock('@services/llms/llm', () => ({
   default: {
@@ -197,16 +197,16 @@ describe('HTTP API Endpoints', () => {
   })
 
   describe('POST /api/complete', () => {
-    let mockAssistant: any
+    let mockAssistantApi: any
 
     beforeEach(() => {
-      mockAssistant = {
-        setChat: vi.fn(),
-        initLlm: vi.fn(),
-        hasLlm: vi.fn(() => true),
-        prompt: vi.fn()
+      mockAssistantApi = {
+        initializeChat: vi.fn(),
+        addMessages: vi.fn(),
+        prompt: vi.fn(),
+        getLastMessage: vi.fn(() => ({ content: 'Test response' }))
       }
-      vi.mocked(Assistant).mockReturnValue(mockAssistant)
+      vi.mocked(AssistantApi).mockImplementation(() => mockAssistantApi)
     })
 
     test('handles non-streaming completion', async () => {
@@ -235,17 +235,8 @@ describe('HTTP API Endpoints', () => {
       } as any
       const mockUrl = new URL('http://localhost/api/complete')
 
-      // Mock the chat's last message to return our test response
-      const mockChat = {
-        lastMessage: vi.fn(() => ({ content: 'Hello! How are you?' }))
-      }
-
-      // Mock setChat to capture the chat instance
-      mockAssistant.setChat.mockImplementation((chat: any) => {
-        // Replace methods on the real chat object with our mocks
-        chat.lastMessage = mockChat.lastMessage
-        mockAssistant.chat = chat
-      })
+      // Mock getLastMessage to return our test response
+      mockAssistantApi.getLastMessage.mockReturnValue({ content: 'Hello! How are you?' })
 
       await handler!(mockReq, mockRes, mockUrl)
 
@@ -280,7 +271,7 @@ describe('HTTP API Endpoints', () => {
       } as any
       const mockUrl = new URL('http://localhost/api/complete')
 
-      mockAssistant.prompt.mockImplementation(async (_prompt: string, _opts: any, callback: (chunk: any) => void) => {
+      mockAssistantApi.prompt.mockImplementation(async (_prompt: string, _opts: any, callback: (chunk: any) => void) => {
         callback({ type: 'content', text: 'Hello!', done: false })
       })
 
@@ -319,7 +310,7 @@ describe('HTTP API Endpoints', () => {
       } as any
       const mockUrl = new URL('http://localhost/api/complete')
 
-      mockAssistant.prompt.mockImplementation(async (_prompt: string, opts: any, callback: (chunk: any) => void) => {
+      mockAssistantApi.prompt.mockImplementation(async (_prompt: string, opts: any, callback: (chunk: any) => void) => {
         expect(opts.engine).toBe('openai')
         expect(opts.model).toBe('gpt-4')
         callback({ type: 'content', text: 'test', done: true })
@@ -327,7 +318,7 @@ describe('HTTP API Endpoints', () => {
 
       await handler!(mockReq, mockRes, mockUrl)
 
-      expect(mockAssistant.prompt).toHaveBeenCalled()
+      expect(mockAssistantApi.prompt).toHaveBeenCalled()
     })
 
     test('passes noMarkdown parameter to assistant', async () => {
@@ -355,20 +346,10 @@ describe('HTTP API Endpoints', () => {
       } as any
       const mockUrl = new URL('http://localhost/api/complete')
 
-      // Mock the chat's last message
-      const mockChat = {
-        lastMessage: vi.fn(() => ({ content: 'Test response' }))
-      }
-
-      mockAssistant.setChat.mockImplementation((chat: any) => {
-        chat.lastMessage = mockChat.lastMessage
-        mockAssistant.chat = chat
-      })
-
       await handler!(mockReq, mockRes, mockUrl)
 
       // Verify that prompt was called with noMarkdown option
-      expect(mockAssistant.prompt).toHaveBeenCalledWith(
+      expect(mockAssistantApi.prompt).toHaveBeenCalledWith(
         'Hello',
         expect.objectContaining({
           noMarkdown: true

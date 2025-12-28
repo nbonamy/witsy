@@ -328,21 +328,31 @@ function getToolAnimationFrame(): string {
   return frame
 }
 
+// Track current animation text so it can be updated
+let currentAnimationText = ''
+
 export function startPulseAnimation(text: string): NodeJS.Timeout {
+  currentAnimationText = text
+
   // Display initial frame
-  process.stdout.write(chalk.blueBright(getToolAnimationFrame()) + ` ${text}`)
+  process.stdout.write(chalk.blueBright(getToolAnimationFrame()) + ` ${currentAnimationText}`)
 
   // Start animation interval
   return setInterval(() => {
     process.stdout.write(ansiEscapes.cursorTo(0))
     process.stdout.write(ansiEscapes.eraseLine)
-    process.stdout.write(secondaryText(getToolAnimationFrame()) + ` ${text}`)
+    process.stdout.write(secondaryText(getToolAnimationFrame()) + ` ${currentAnimationText}`)
   }, 150)
+}
+
+export function updatePulseAnimation(text: string): void {
+  currentAnimationText = text
 }
 
 export function stopPulseAnimation(interval: NodeJS.Timeout | null): void {
   if (interval) {
     clearInterval(interval)
   }
+  currentAnimationText = ''
 }
 
