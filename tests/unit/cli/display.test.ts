@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions, displayShortcutHelp, clearShortcutHelp, getDefaultFooterRightText, padContent, initToolsDisplay, addTool, updateToolStatus, completeTool, startToolsAnimation, stopToolsAnimation, clearToolsDisplay, resetAnimationIndex } from '@/cli/display'
+import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions, displayShortcutHelp, clearShortcutHelp, getDefaultFooterRightText, padContent, initToolsDisplay, addTool, completeTool, startToolsAnimation, stopToolsAnimation, clearToolsDisplay, resetAnimationIndex } from '@/cli/display'
 import { state } from '@/cli/state'
 import { VirtualTerminal } from './VirtualTerminal'
 import { ChatCli, MessageCli } from '@/cli/models'
@@ -959,62 +959,7 @@ describe('CLI Display Requirements', () => {
       expect(true).toBe(true)
     })
 
-    test('content and tools integration - exact newline output', () => {
-      // This test simulates the chunk processing flow in handleMessage:
-      // content → empty content → tool 1 → tool 2 → empty content → content
-      //
-      // Expected output:
-      // "content
-      //
-      // ✓ tool call 1
-      //
-      // ✓ tool call 2
-      //
-      // content"
-
-      // Simulate StreamPadder writing content (no trailing newline - StreamPadder buffers)
-      process.stdout.write('  content  ')
-      let lastOutput: 'none' | 'content' | 'tool' = 'content'
-
-      // Empty content chunk - should be skipped (no output)
-
-      // First tool - transition from content to tools
-      // Content doesn't end with newline, so we need 2: one to end line, one blank
-      if (lastOutput === 'content') {
-        console.log() // end current line
-        console.log() // blank line
-      }
-      initToolsDisplay()
-      addTool('tool-1', 'Running tool 1')
-
-      // Second tool - just adds with blank line between
-      addTool('tool-2', 'Running tool 2')
-
-      // Complete tools
-      completeTool('tool-1', 'tool call 1')
-      completeTool('tool-2', 'tool call 2')
-      clearToolsDisplay()
-      lastOutput = 'tool'
-
-      // Empty content chunk - should be skipped (no output)
-
-      // Second content chunk - transition from tool to content
-      if (lastOutput === 'tool') {
-        console.log() // blank line after tools
-      }
-      process.stdout.write('  content  ')
-      // Note: last line not terminated with \n
-
-      // Assert exact output with proper newlines
-      // '  content  ' is 11 chars, so pad to 80 with 69 spaces
-      const expected = `  content
-
-✓ tool call 1
-
-✓ tool call 2
-
-` + '  content  ' + ' '.repeat(69)
-      expect(terminal.getVisibleText()).toBe(expected)
-    })
+    // Note: Integration tests for content → tools → content flow
+    // are in cli-integration.test.ts which tests the real chunk processing
   })
 })
