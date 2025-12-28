@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions, displayShortcutHelp, clearShortcutHelp, getDefaultFooterRightText, padContent } from '@/cli/display'
+import { displayHeader, displayFooter, displayConversation, repositionFooter, updateFooterRightText, resetDisplay, clearFooter, eraseLines, displayCommandSuggestions, displayShortcutHelp, clearShortcutHelp, getDefaultFooterRightText, padContent, initToolsDisplay, addTool, updateToolStatus, completeTool, startToolsAnimation, stopToolsAnimation, clearToolsDisplay, resetAnimationIndex } from '@/cli/display'
 import { state } from '@/cli/state'
 import { VirtualTerminal } from './VirtualTerminal'
 import { ChatCli, MessageCli } from '@/cli/models'
@@ -814,6 +814,207 @@ describe('CLI Display Requirements', () => {
       // Assert: Normal footer restored at correct position
       expect(terminal.contains('/ for commands')).toBe(false)
       expect(terminal.contains('OpenAI · GPT-4')).toBe(true)
+    })
+  })
+
+  describe('Requirement: Multi-Tool Animation', () => {
+    beforeEach(() => {
+      // Reset animation index to get predictable frames
+      resetAnimationIndex()
+    })
+
+    afterEach(() => {
+      // Clean up after each test
+      clearToolsDisplay()
+    })
+
+    test('single tool should display without leading blank line', () => {
+      // Arrange & Act
+      initToolsDisplay()
+      addTool('tool-1', 'Running npm test')
+
+      // Assert: Single tool, no blank line before (last line padded to 80 chars)
+      const expected = '⋅ Running npm test' + ' '.repeat(80 - 18)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('two tools should have blank line between them', () => {
+      // Arrange & Act
+      initToolsDisplay()
+      addTool('tool-1', 'Running npm test')
+      addTool('tool-2', 'Running npm lint')
+
+      // Assert: Two tools with blank line between (last line padded)
+      const expected = `⋅ Running npm test
+
+` + '∘ Running npm lint' + ' '.repeat(80 - 18)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('three tools should have blank lines between each', () => {
+      // Arrange & Act
+      initToolsDisplay()
+      addTool('tool-1', 'Running npm test')
+      addTool('tool-2', 'Running npm lint')
+      addTool('tool-3', 'Running npm build')
+
+      // Assert: Three tools with blank lines between each (last line padded)
+      const expected = `⋅ Running npm test
+
+∘ Running npm lint
+
+` + '○ Running npm build' + ' '.repeat(80 - 19)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('completeTool should replace animation with checkmark', () => {
+      // Arrange
+      initToolsDisplay()
+      addTool('tool-1', 'Running npm test')
+
+      // Act
+      completeTool('tool-1', 'Ran npm test')
+
+      // Assert: Checkmark replaces animation frame (last line padded)
+      const expected = '✓ Ran npm test' + ' '.repeat(80 - 14)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('completeTool should update correct tool in multi-tool display', () => {
+      // Arrange
+      initToolsDisplay()
+      addTool('tool-1', 'Running npm test')
+      addTool('tool-2', 'Running npm lint')
+      addTool('tool-3', 'Running npm build')
+
+      // Act: Complete middle tool
+      completeTool('tool-2', 'Ran npm lint')
+
+      // Assert: Middle tool shows checkmark, others unchanged (last line padded)
+      const expected = `⋅ Running npm test
+
+✓ Ran npm lint
+
+` + '○ Running npm build' + ' '.repeat(80 - 19)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('multiple tools complete in any order', () => {
+      // Arrange
+      initToolsDisplay()
+      addTool('tool-1', 'Running npm test')
+      addTool('tool-2', 'Running npm lint')
+      addTool('tool-3', 'Running npm build')
+
+      // Act: Complete in different order (3, 1, 2)
+      completeTool('tool-3', 'Ran npm build')
+      completeTool('tool-1', 'Ran npm test')
+      completeTool('tool-2', 'Ran npm lint')
+
+      // Assert: All show checkmarks in original positions (last line padded)
+      const expected = `✓ Ran npm test
+
+✓ Ran npm lint
+
+` + '✓ Ran npm build' + ' '.repeat(80 - 15)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('initToolsDisplay should reset state for new batch', () => {
+      // Arrange: First batch
+      initToolsDisplay()
+      addTool('tool-1', 'First batch 1')
+      addTool('tool-2', 'First batch 2')
+
+      // Act: Reset and start new batch
+      clearToolsDisplay()
+      terminal.clear()
+      resetAnimationIndex()
+      initToolsDisplay()
+      addTool('tool-3', 'Second batch')
+
+      // Assert: Only new tool, no blank line (it's first in new batch)
+      const expected = '⋅ Second batch' + ' '.repeat(80 - 14)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('startToolsAnimation should return interval', () => {
+      // Arrange
+      initToolsDisplay()
+      addTool('tool-1', 'Running test')
+
+      // Act
+      const interval = startToolsAnimation()
+
+      // Assert
+      expect(interval).toBeDefined()
+
+      // Cleanup
+      stopToolsAnimation(interval)
+    })
+
+    test('stopToolsAnimation should handle null interval', () => {
+      // Act & Assert: Should not throw
+      stopToolsAnimation(null)
+      expect(true).toBe(true)
+    })
+
+    test('content and tools integration - exact newline output', () => {
+      // This test simulates the chunk processing flow in handleMessage:
+      // content → empty content → tool 1 → tool 2 → empty content → content
+      //
+      // Expected output:
+      // "content
+      //
+      // ✓ tool call 1
+      //
+      // ✓ tool call 2
+      //
+      // content"
+
+      // Simulate StreamPadder writing content (no trailing newline - StreamPadder buffers)
+      process.stdout.write('  content  ')
+      let lastOutput: 'none' | 'content' | 'tool' = 'content'
+
+      // Empty content chunk - should be skipped (no output)
+
+      // First tool - transition from content to tools
+      // Content doesn't end with newline, so we need 2: one to end line, one blank
+      if (lastOutput === 'content') {
+        console.log() // end current line
+        console.log() // blank line
+      }
+      initToolsDisplay()
+      addTool('tool-1', 'Running tool 1')
+
+      // Second tool - just adds with blank line between
+      addTool('tool-2', 'Running tool 2')
+
+      // Complete tools
+      completeTool('tool-1', 'tool call 1')
+      completeTool('tool-2', 'tool call 2')
+      clearToolsDisplay()
+      lastOutput = 'tool'
+
+      // Empty content chunk - should be skipped (no output)
+
+      // Second content chunk - transition from tool to content
+      if (lastOutput === 'tool') {
+        console.log() // blank line after tools
+      }
+      process.stdout.write('  content  ')
+      // Note: last line not terminated with \n
+
+      // Assert exact output with proper newlines
+      // '  content  ' is 11 chars, so pad to 80 with 69 spaces
+      const expected = `  content
+
+✓ tool call 1
+
+✓ tool call 2
+
+` + '  content  ' + ' '.repeat(69)
+      expect(terminal.getVisibleText()).toBe(expected)
     })
   })
 })

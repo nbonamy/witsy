@@ -328,6 +328,10 @@ function getToolAnimationFrame(): string {
   return frame
 }
 
+export function resetAnimationIndex(): void {
+  animationIndex = 0
+}
+
 // Track current animation text so it can be updated
 let currentAnimationText = ''
 
