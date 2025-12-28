@@ -3,11 +3,18 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
+import { WorkDirAccess } from './state'
+
+export interface WorkDirConfig {
+  access: WorkDirAccess
+}
+
 export interface CliConfig {
   engine?: { id: string; name: string }
   model?: { id: string; name: string }
   historySize: number
   history: string[]
+  workDirs?: Record<string, WorkDirConfig>  // path -> config
 }
 
 const DEFAULT_CONFIG: CliConfig = {
