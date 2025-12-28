@@ -131,102 +131,52 @@ describe('CLI Integration - Chunk Processing', () => {
     // Import handleMessage here to get fresh module with our mocks
     const { handleMessage } = await import('@/cli/commands')
 
-    // Define chunks to simulate:
-    // 1. Content "Hello"
-    // 2. Empty content (should be skipped)
-    // 3. Tool 1 start
-    // 4. Tool 2 start
-    // 5. Tool 1 complete
-    // 6. Tool 2 complete
-    // 7. Empty content (should be skipped)
-    // 8. Content "World"
+    // Chunks: content → empty → tool1 → tool2 → empty → content
     const chunks = [
       JSON.stringify({ type: 'content', text: 'Hello', done: false }),
-      JSON.stringify({ type: 'content', text: '   ', done: false }), // empty/whitespace
-      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Running tool 1', done: false }),
-      JSON.stringify({ type: 'tool', id: 'tool-2', status: 'Running tool 2', done: false }),
-      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Tool 1 done', done: true }),
-      JSON.stringify({ type: 'tool', id: 'tool-2', status: 'Tool 2 done', done: true }),
-      JSON.stringify({ type: 'content', text: '', done: false }), // empty
+      JSON.stringify({ type: 'content', text: '   ', done: false }), // skipped
+      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Running 1', done: false }),
+      JSON.stringify({ type: 'tool', id: 'tool-2', status: 'Running 2', done: false }),
+      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Done 1', done: true }),
+      JSON.stringify({ type: 'tool', id: 'tool-2', status: 'Done 2', done: true }),
+      JSON.stringify({ type: 'content', text: '', done: false }), // skipped
       JSON.stringify({ type: 'content', text: 'World', done: false }),
     ]
 
     vi.mocked(fetch).mockResolvedValueOnce(createMockStreamResponse(chunks))
-
     await handleMessage('test')
 
-    // Get the output and verify structure
-    const output = terminal.getVisibleText()
+    // Expected output (VirtualTerminal trims trailing empty lines):
+    // "  Hello  " (padded content)
+    // "" (blank - content→tool transition)
+    // "✓ Done 1"
+    // "" (blank between tools)
+    // "✓ Done 2"
+    // "" (blank - tool→content transition)
+    // "  World  " (padded content, last line padded to 80 chars)
+    const expected = `  Hello
 
-    // Should have:
-    // - "Hello" (content, padded)
-    // - blank line (content → tool transition)
-    // - "✓ Tool 1 done"
-    // - blank line (between tools)
-    // - "✓ Tool 2 done"
-    // - blank line (tool → content transition)
-    // - "World" (content, padded)
-    // - blank lines after response
+✓ Done 1
 
-    // Verify key structural elements
-    expect(output).toContain('Hello')
-    expect(output).toContain('✓ Tool 1 done')
-    expect(output).toContain('✓ Tool 2 done')
-    expect(output).toContain('World')
+✓ Done 2
 
-    // Verify the newline structure by checking line positions
-    const lines = output.split('\n')
-
-    // Find the lines with our content
-    const helloLineIdx = lines.findIndex(l => l.includes('Hello'))
-    const tool1LineIdx = lines.findIndex(l => l.includes('Tool 1 done'))
-    const tool2LineIdx = lines.findIndex(l => l.includes('Tool 2 done'))
-    const worldLineIdx = lines.findIndex(l => l.includes('World'))
-
-    expect(helloLineIdx).toBeGreaterThanOrEqual(0)
-    expect(tool1LineIdx).toBeGreaterThan(helloLineIdx)
-    expect(tool2LineIdx).toBeGreaterThan(tool1LineIdx)
-    expect(worldLineIdx).toBeGreaterThan(tool2LineIdx)
-
-    // Verify blank line between Hello and first tool (content → tool transition)
-    expect(tool1LineIdx - helloLineIdx).toBeGreaterThanOrEqual(2) // at least 1 blank line
-
-    // Verify blank line between tools
-    expect(tool2LineIdx - tool1LineIdx).toBe(2) // exactly 1 blank line between
-
-    // Verify blank line between last tool and World (tool → content transition)
-    expect(worldLineIdx - tool2LineIdx).toBeGreaterThanOrEqual(2) // at least 1 blank line
+` + '  World  ' + ' '.repeat(80 - 9)
+    expect(terminal.getVisibleText()).toBe(expected)
   })
 
-  test('multiple tool batches have correct spacing', async () => {
+  test('tools only - no content before or after', async () => {
     const { handleMessage } = await import('@/cli/commands')
 
-    // Simulate: tool batch 1 → content → tool batch 2
     const chunks = [
-      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Batch 1 tool', done: false }),
-      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Batch 1 done', done: true }),
-      JSON.stringify({ type: 'content', text: 'Middle content', done: false }),
-      JSON.stringify({ type: 'tool', id: 'tool-2', status: 'Batch 2 tool', done: false }),
-      JSON.stringify({ type: 'tool', id: 'tool-2', status: 'Batch 2 done', done: true }),
+      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Running', done: false }),
+      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Done', done: true }),
     ]
 
     vi.mocked(fetch).mockResolvedValueOnce(createMockStreamResponse(chunks))
-
     await handleMessage('test')
 
-    const output = terminal.getVisibleText()
-
-    expect(output).toContain('Batch 1 done')
-    expect(output).toContain('Middle content')
-    expect(output).toContain('Batch 2 done')
-
-    const lines = output.split('\n')
-    const batch1Idx = lines.findIndex(l => l.includes('Batch 1 done'))
-    const middleIdx = lines.findIndex(l => l.includes('Middle content'))
-    const batch2Idx = lines.findIndex(l => l.includes('Batch 2 done'))
-
-    // Verify spacing: batch1 → blank → content → blank → batch2
-    expect(middleIdx - batch1Idx).toBeGreaterThanOrEqual(2)
-    expect(batch2Idx - middleIdx).toBeGreaterThanOrEqual(2)
+    // Expected: just the tool output (last line padded to 80 chars)
+    const expected = '✓ Done' + ' '.repeat(80 - 6)
+    expect(terminal.getVisibleText()).toBe(expected)
   })
 })
