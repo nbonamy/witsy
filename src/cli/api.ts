@@ -59,7 +59,8 @@ export class WitsyAPI {
         engine: state.engine?.id,
         model: state.model?.id,
         noMarkdown: true,
-        thread
+        thread,
+        workDir: state.workDir
       }),
       signal
     })
