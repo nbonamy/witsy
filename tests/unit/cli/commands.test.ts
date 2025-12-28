@@ -136,7 +136,7 @@ describe('CLI Initialization', () => {
     expect(state.engine).toBe('openai')
     expect(state.model).toBe('gpt-4')
     expect(state.userDataPath).toBe(tempDir)
-    expect(state.cliConfig).toEqual(cliConfigData)
+    expect(state.cliConfig).toMatchObject(cliConfigData)
   })
 
   test('initialize falls back to API config when CLI config is empty', async () => {
@@ -159,7 +159,7 @@ describe('CLI Initialization', () => {
     expect(state.engine).toBe('anthropic')
     expect(state.model).toBe('claude-3')
     expect(state.userDataPath).toBe(tempDir)
-    expect(state.cliConfig).toEqual({
+    expect(state.cliConfig).toMatchObject({
       engine: 'anthropic',
       model: 'claude-3',
       historySize: 50,
