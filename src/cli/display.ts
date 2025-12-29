@@ -13,8 +13,8 @@ const VERSION = typeof __WITSY_VERSION__ !== 'undefined' ? __WITSY_VERSION__ : '
 export const primaryText = chalk.rgb(215, 119, 87)
 export const secondaryText = chalk.rgb(101, 113, 153)
 export const tertiaryText = chalk.rgb(180, 142, 238)
-export const successText = chalk.greenBright
-export const errorText = chalk.redBright
+export const successText = chalk.rgb(78, 186, 101)
+export const errorText = chalk.rgb(255, 107, 128)
 export const grayText = chalk.rgb(139, 148, 156)
 
 export function resetDisplay(beforeFooter?: () => void) {

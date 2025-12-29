@@ -393,7 +393,7 @@ class StreamPadder {
 
     // Output complete lines with padding
     for (const line of lines) {
-      const paddedLine = this.padLine(line)
+      const paddedLine = this.padLine(line, this.isFirstLine)
       process.stdout.write(paddedLine + '\n')
       this.isFirstLine = false
     }
@@ -402,29 +402,39 @@ class StreamPadder {
   flush(): void {
     // Output any remaining content in buffer
     if (this.buffer.length > 0) {
-      const paddedLine = this.padLine(this.buffer)
+      const paddedLine = this.padLine(this.buffer, this.isFirstLine)
       process.stdout.write(paddedLine)
       this.buffer = ''
+      this.isFirstLine = false
     }
   }
 
-  private padLine(line: string): string {
+  resetFirstLine(): void {
+    this.isFirstLine = true
+  }
+
+  private padLine(line: string, isFirstLine: boolean = false): string {
     const maxLineWidth = this.terminalWidth - 4
     const words = line.split(' ')
     const paddedLines: string[] = []
     let currentLine = ''
+    let firstLineProcessed = false
 
     for (const word of words) {
       // If word alone is longer than maxLineWidth, break it
       if (word.length > maxLineWidth) {
         // Flush current line if not empty
         if (currentLine) {
-          paddedLines.push(`  ${currentLine.trimEnd()}  `)
+          const prefix = isFirstLine && !firstLineProcessed ? '⏺ ' : '  '
+          paddedLines.push(`${prefix}${currentLine.trimEnd()}  `)
+          firstLineProcessed = true
           currentLine = ''
         }
         // Break long word into chunks
         for (let i = 0; i < word.length; i += maxLineWidth) {
-          paddedLines.push(`  ${word.slice(i, i + maxLineWidth)}  `)
+          const prefix = isFirstLine && !firstLineProcessed ? '⏺ ' : '  '
+          paddedLines.push(`${prefix}${word.slice(i, i + maxLineWidth)}  `)
+          firstLineProcessed = true
         }
         continue
       }
@@ -436,14 +446,17 @@ class StreamPadder {
         currentLine = testLine
       } else {
         // Line would be too long, flush current line and start new one
-        paddedLines.push(`  ${currentLine.trimEnd()}  `)
+        const prefix = isFirstLine && !firstLineProcessed ? '⏺ ' : '  '
+        paddedLines.push(`${prefix}${currentLine.trimEnd()}  `)
+        firstLineProcessed = true
         currentLine = word
       }
     }
 
     // Flush remaining line
     if (currentLine) {
-      paddedLines.push(`  ${currentLine.trimEnd()}  `)
+      const prefix = isFirstLine && !firstLineProcessed ? '⏺ ' : '  '
+      paddedLines.push(`${prefix}${currentLine.trimEnd()}  `)
     }
 
     return paddedLines.join('\n')
@@ -556,6 +569,7 @@ export async function handleMessage(message: string) {
         // Add blank line when transitioning from tool to content
         if (lastOutput === 'tool') {
           console.log()
+          streamPadder.resetFirstLine()
         }
         lastOutput = 'content'
 

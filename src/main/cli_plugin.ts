@@ -173,7 +173,13 @@ export default class CliPlugin extends Plugin {
 
       case 'list_files':
         if (results.success) {
-          return `${header}\n  └ Found ${results.fileCount} items`
+          // Show the actual file list in the completion message
+          const lines = results.content?.split('\n') || []
+          const formattedLines = lines.map((line, i) => {
+            if (i === 0) return `  └ ${line}`
+            return `    ${line}`
+          }).join('\n')
+          return `${header}\n${formattedLines}`
         } else {
           return `${header}\n  └ Failed to list directory`
         }
@@ -483,19 +489,21 @@ export default class CliPlugin extends Plugin {
         return a.name.localeCompare(b.name)
       })
 
-      // Format as list with type indicators - show first 3, then summary
+      // Format as list - show first 3, then summary
+      // Directories get trailing separator, files shown as-is
       const maxDisplay = 3
       const displayEntries = sorted.slice(0, maxDisplay)
       const lines = displayEntries.map(entry => {
-        const type = entry.isDirectory() ? '[DIR]' : '[FILE]'
-        const name = entry.name
-        return `${type.padEnd(7)} ${name}`
+        const name = entry.isDirectory()
+          ? entry.name + path.sep
+          : entry.name
+        return name
       })
 
       // Add summary line if there are more items
       if (sorted.length > maxDisplay) {
         const remaining = sorted.length - maxDisplay
-        lines.push(`... + ${remaining} more items`)
+        lines.push(`... +${remaining} more items`)
       }
 
       const content = lines.join('\n')
