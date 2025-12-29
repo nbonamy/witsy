@@ -3,6 +3,7 @@
 import chalk from 'chalk'
 import ansiEscapes from 'ansi-escapes'
 import { state } from './state'
+import { ToolExecutionState } from 'multi-llm-ts'
 
 // Version is injected at build time via esbuild define
 declare const __WITSY_VERSION__: string
@@ -13,6 +14,7 @@ export const primaryText = chalk.rgb(215, 119, 87)
 export const secondaryText = chalk.rgb(101, 113, 153)
 export const tertiaryText = chalk.rgb(180, 142, 238)
 export const successText = chalk.greenBright
+export const errorText = chalk.redBright
 export const grayText = chalk.rgb(139, 148, 156)
 
 export function resetDisplay(beforeFooter?: () => void) {
@@ -364,11 +366,93 @@ export function stopPulseAnimation(interval: NodeJS.Timeout | null): void {
 interface ActiveToolState {
   index: number      // 0-based line offset from first tool
   status: string     // Current status text
+  lineCount: number  // Number of lines this tool occupies
   completed: boolean // Whether tool has finished
+  prefix: string     // Display prefix (animation frame or checkmark)
 }
 
 const activeToolStates = new Map<string, ActiveToolState>()
 let toolCount = 0
+
+// Helper to count lines in a status string
+function countLines(text: string): number {
+  return text.split('\n').length
+}
+
+// Helper to write tool lines with formatting
+function writeToolLines(status: string, prefix: string): void {
+  const lines = status.split('\n')
+  lines.forEach((line, i) => {
+    if (i > 0) process.stdout.write('\n')
+    if (i === 0) {
+      // First line: bold the tool name (before the "(")
+      const parenIndex = line.indexOf('(')
+      if (parenIndex > 0) {
+        const toolName = line.substring(0, parenIndex)
+        const rest = line.substring(parenIndex)
+        process.stdout.write(`${prefix} ${chalk.bold(toolName)}${rest}`)
+      } else {
+        process.stdout.write(`${prefix} ${line}`)
+      }
+    } else {
+      // Detail lines: gray
+      process.stdout.write(chalk.rgb(164, 164, 164)(line))
+    }
+  })
+}
+
+// Helper to rewrite a tool's output at its position
+function rewriteToolAt(state: ActiveToolState, newStatus: string, prefix: string): void {
+  const oldLineCount = state.lineCount
+  const newLineCount = countLines(newStatus)
+  const lineDiff = newLineCount - oldLineCount
+
+  // Calculate cursor movement BEFORE adjusting counts (cursor is still at old position)
+  const linesUp = toolCount - state.index
+
+  // Update line counts and adjust all subsequent tools' positions
+  if (lineDiff !== 0) {
+    state.lineCount = newLineCount
+    toolCount += lineDiff
+
+    // Adjust all subsequent tools' start positions
+    for (const [, otherTool] of activeToolStates) {
+      if (otherTool.index > state.index) {
+        otherTool.index += lineDiff
+      }
+    }
+  }
+
+  state.status = newStatus
+
+  // Move cursor to tool's first line
+  if (linesUp > 0) {
+    process.stdout.write(ansiEscapes.cursorUp(linesUp))
+  }
+  process.stdout.write(ansiEscapes.cursorTo(0))
+
+  // Erase from here to end of screen to clear old content
+  process.stdout.write(ansiEscapes.eraseDown)
+
+  // Write this tool's new content
+  writeToolLines(newStatus, prefix)
+
+  // Rewrite all subsequent tools at their new positions
+  const subsequentTools = Array.from(activeToolStates.values())
+    .filter(tool => tool.index > state.index)
+    .sort((a, b) => a.index - b.index)
+
+  for (const tool of subsequentTools) {
+    // Blank line before tool
+    process.stdout.write('\n\n')
+    // Write tool content using stored prefix
+    writeToolLines(tool.status, tool.prefix)
+  }
+
+  // Cursor is now at end of last line, move to toolCount position
+  process.stdout.write('\n')
+  process.stdout.write(ansiEscapes.cursorTo(0))
+}
 
 export function initToolsDisplay(): void {
   activeToolStates.clear()
@@ -376,15 +460,23 @@ export function initToolsDisplay(): void {
 }
 
 export function addTool(toolId: string, status: string): void {
+  const lineCount = countLines(status)
+  const prefix = secondaryText(getToolAnimationFrame())
+
   // Add blank line before each tool except the first
   if (toolCount > 0) {
     process.stdout.write('\n')
-    toolCount++ // count the blank line
+    toolCount++
   }
-  toolCount++
-  activeToolStates.set(toolId, { index: toolCount - 1, status, completed: false })
-  // Write line for this tool
-  process.stdout.write(secondaryText(getToolAnimationFrame()) + ` ${status}\n`)
+
+  activeToolStates.set(toolId, { index: toolCount, status, lineCount, completed: false, prefix })
+
+  // Write initial status
+  writeToolLines(status, prefix)
+
+  // Move cursor to next line (this line is not part of the tool's count)
+  process.stdout.write('\n')
+  toolCount += lineCount
 }
 
 export function updateToolStatus(toolId: string, status: string): void {
@@ -394,38 +486,21 @@ export function updateToolStatus(toolId: string, status: string): void {
   }
 }
 
-export function completeTool(toolId: string, finalStatus: string): void {
+export function completeTool(toolId: string, finalState: ToolExecutionState, finalStatus: string): void {
   const state = activeToolStates.get(toolId)
   if (state) {
     state.completed = true
-    state.status = finalStatus
-
-    // Calculate how many lines to move up from current position
-    // Cursor is at line toolCount (one below last tool)
-    const linesUp = toolCount - state.index
-
-    // Move up, update line, move back down
-    process.stdout.write(ansiEscapes.cursorUp(linesUp))
-    process.stdout.write(ansiEscapes.cursorTo(0))
-    process.stdout.write(ansiEscapes.eraseLine)
-    process.stdout.write(successText('✓') + ` ${finalStatus}`)
-    process.stdout.write(ansiEscapes.cursorDown(linesUp))
-    process.stdout.write(ansiEscapes.cursorTo(0))
+    state.prefix = finalState === 'completed' ? successText('⏺') : errorText('⏺')
+    rewriteToolAt(state, finalStatus, state.prefix)
   }
 }
 
 export function startToolsAnimation(): NodeJS.Timeout {
   return setInterval(() => {
-    // Update all non-completed tools
     for (const [, state] of activeToolStates) {
       if (!state.completed) {
-        const linesUp = toolCount - state.index
-        process.stdout.write(ansiEscapes.cursorUp(linesUp))
-        process.stdout.write(ansiEscapes.cursorTo(0))
-        process.stdout.write(ansiEscapes.eraseLine)
-        process.stdout.write(secondaryText(getToolAnimationFrame()) + ` ${state.status}`)
-        process.stdout.write(ansiEscapes.cursorDown(linesUp))
-        process.stdout.write(ansiEscapes.cursorTo(0))
+        state.prefix = secondaryText(getToolAnimationFrame())
+        rewriteToolAt(state, state.status, state.prefix)
       }
     }
   }, 150)

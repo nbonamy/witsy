@@ -139,64 +139,102 @@ export default class CliPlugin extends Plugin {
   getRunningDescription(_tool: string, args: CliArgs): string {
     switch (args.action) {
       case 'read_file':
-        return `Reading ${args.path}...`
+        return `Read(${args.path})`
       case 'edit_file':
-        return `Editing ${args.path}...`
+        return `Edit(${args.path})`
       case 'write_file':
-        return `Writing ${args.path}...`
+        return `Write(${args.path})`
       case 'create_file':
-        return `Creating file ${args.path}...`
+        return `Create(${args.path})`
       case 'create_directory':
-        return `Creating directory ${args.path}...`
+        return `CreateDir(${args.path})`
       case 'delete_file':
-        return `Deleting ${args.path}...`
+        return `Delete(${args.path})`
       case 'move_file':
-        return `Moving ${args.path} to ${args.newPath}...`
+        return `Move(${args.path} → ${args.newPath})`
       case 'run_command':
-        return `Running \`${this.truncateCommand(args.command || '', 40)}\``
+        return `Bash(${this.truncateCommand(args.command || '', 50)})`
       default:
         return 'Working...'
     }
   }
 
   getCompletedDescription(_tool: string, args: CliArgs, results: CliResponse): string | undefined {
+    const header = this.getRunningDescription(_tool, args)
+
     switch (args.action) {
       case 'read_file':
-        return results.success
-          ? `Read ${results.linesRead} lines from ${args.path}`
-          : `Failed to read ${args.path}`
+        if (results.success) {
+          return `${header}\n  └ Read ${results.linesRead} lines`
+        } else {
+          return `${header}\n  └ Failed to read file`
+        }
+
       case 'edit_file':
-        return results.success
-          ? `Edited ${results.linesModified} lines in ${args.path}`
-          : `Failed to edit ${args.path}`
+        if (results.success) {
+          return `${header}\n  └ Edited ${results.linesModified} lines`
+        } else {
+          return `${header}\n  └ Failed to edit file`
+        }
+
       case 'write_file':
-        return results.success
-          ? `Wrote ${results.totalLines} lines to ${args.path}`
-          : `Failed to write ${args.path}`
+        if (results.success) {
+          return `${header}\n  └ Wrote ${results.totalLines} lines`
+        } else {
+          return `${header}\n  └ Failed to write file`
+        }
+
       case 'create_file':
-        return results.success
-          ? `Created ${args.path}`
-          : `Failed to create ${args.path}`
+        if (results.success) {
+          return `${header}\n  └ File created`
+        } else {
+          return `${header}\n  └ Failed to create file`
+        }
+
       case 'create_directory':
-        return results.success
-          ? `Created directory ${args.path}`
-          : `Failed to create directory ${args.path}`
+        if (results.success) {
+          return `${header}\n  └ Directory created`
+        } else {
+          return `${header}\n  └ Failed to create directory`
+        }
+
       case 'delete_file':
-        return results.success
-          ? `Deleted ${args.path}`
-          : `Failed to delete ${args.path}`
+        if (results.success) {
+          return `${header}\n  └ File deleted`
+        } else {
+          return `${header}\n  └ Failed to delete file`
+        }
+
       case 'move_file':
-        return results.success
-          ? `Moved ${args.path} to ${args.newPath}`
-          : `Failed to move ${args.path}`
+        if (results.success) {
+          return `${header}\n  └ File moved`
+        } else {
+          return `${header}\n  └ Failed to move file`
+        }
+
       case 'run_command': {
-        const cmd = this.truncateCommand(args.command || '')
-        return results.success
-          ? `Ran \`${cmd}\``
-          : `\`${cmd}\` failed (exit ${results.exitCode})`
+        if (results.success) {
+          const formattedOutput = this.formatOutput(results.stdout || '')
+          if (formattedOutput) {
+            return `${header}\n  └${formattedOutput.substring(1)}` // Remove leading space since └ adds spacing
+          } else {
+            return `${header}\n  └ Command completed (no output)`
+          }
+        } else {
+          const errorHeader = `Command failed with exit code ${results.exitCode}`
+          const formattedError = this.formatOutput(results.stderr || '')
+          if (formattedError) {
+            return `${header}\n  └ ${errorHeader}\n   ${formattedError.substring(1)}` // Align error output
+          } else {
+            return `${header}\n  └ ${errorHeader}`
+          }
+        }
       }
+
       default:
-        return results.success ? 'Operation completed' : 'Operation failed'
+        return results.success
+          ? `${header}\n  └ Operation completed`
+          : `${header}\n  └ Operation failed`
     }
   }
 
@@ -205,6 +243,41 @@ export default class CliPlugin extends Plugin {
       return command
     }
     return command.slice(0, maxLength - 3) + '...'
+  }
+
+  private formatOutput(output: string, maxLines: number = 3): string {
+    if (!output) {
+      return ''
+    }
+
+    const lines = output.split('\n').filter(line => line.length > 0)
+
+    if (lines.length === 0) {
+      return ''
+    }
+
+    if (lines.length <= maxLines) {
+      return lines.map((line, i) => {
+        // First line: 2 spaces (will be used after "└ ")
+        // Subsequent lines: 4 spaces (to align with content after "└ ")
+        const indent = i === 0 ? '  ' : '    '
+        return `${indent}${line}`
+      }).join('\n')
+    }
+
+    // More than maxLines - show first maxLines with truncation
+    const firstLines = lines
+      .slice(0, maxLines)
+      .map((line, i) => {
+        const indent = i === 0 ? '  ' : '    '
+        return `${indent}${line}`
+      })
+      .join('\n')
+    const remainingCount = lines.length - maxLines
+    const pluralSuffix = remainingCount === 1 ? 'line' : 'lines'
+    const truncationMessage = `    ... +${remainingCount} more ${pluralSuffix}` // 4 spaces to align
+
+    return `${firstLines}\n${truncationMessage}`
   }
 
   validatePath(targetPath: string): string | null {

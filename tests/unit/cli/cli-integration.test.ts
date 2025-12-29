@@ -32,6 +32,7 @@ vi.mock('chalk', () => ({
     rgb: () => (s: string) => s,
     italic: { dim: (s: string) => s },
     greenBright: (s: string) => s,
+    redBright: (s: string) => s,
     blueBright: (s: string) => s,
   },
 }))
@@ -154,16 +155,16 @@ describe('CLI Integration - Chunk Processing', () => {
     // Expected output (reasoning chunks don't affect output):
     // "  Hello  " (padded content)
     // "" (blank - content→tool transition)
-    // "✓ Done 1"
+    // "⏺ Done 1"
     // "" (blank between tools)
-    // "✓ Done 2"
+    // "⏺ Done 2"
     // "" (blank - tool→content transition)
     // "  World  " (padded content, last line padded to 80 chars)
     const expected = `  Hello
 
-✓ Done 1
+⏺ Done 1
 
-✓ Done 2
+⏺ Done 2
 
 ` + '  World  ' + ' '.repeat(80 - 9)
     expect(terminal.getVisibleText()).toBe(expected)
@@ -181,7 +182,44 @@ describe('CLI Integration - Chunk Processing', () => {
     await handleMessage('test')
 
     // Expected: just the tool output (last line padded to 80 chars)
-    const expected = '✓ Done' + ' '.repeat(80 - 6)
+    const expected = '⏺ Done' + ' '.repeat(80 - 6)
+    expect(terminal.getVisibleText()).toBe(expected)
+  })
+
+  test('failed tool shows error state', async () => {
+    const { handleMessage } = await import('@/cli/commands')
+
+    const chunks = [
+      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Running', done: false }),
+      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Command failed with exit code 127', done: true }),
+    ]
+
+    vi.mocked(fetch).mockResolvedValueOnce(createMockStreamResponse(chunks))
+    await handleMessage('test')
+
+    // Expected: tool with error state (status contains "failed")
+    // The finalState should be overridden to 'error' because status contains "failed"
+    const expected = '⏺ Command failed with exit code 127' + ' '.repeat(80 - 35)
+    expect(terminal.getVisibleText()).toBe(expected)
+  })
+
+  test('mixed success and failed tools', async () => {
+    const { handleMessage } = await import('@/cli/commands')
+
+    const chunks = [
+      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Running 1', done: false }),
+      JSON.stringify({ type: 'tool', id: 'tool-2', status: 'Running 2', done: false }),
+      JSON.stringify({ type: 'tool', id: 'tool-1', status: 'Done 1', done: true }),
+      JSON.stringify({ type: 'tool', id: 'tool-2', status: 'Command failed', done: true }),
+    ]
+
+    vi.mocked(fetch).mockResolvedValueOnce(createMockStreamResponse(chunks))
+    await handleMessage('test')
+
+    // Expected: tool-1 success (green), tool-2 error (red - status contains "failed")
+    const expected = `⏺ Done 1
+
+⏺ Command failed` + ' '.repeat(80 - 16)
     expect(terminal.getVisibleText()).toBe(expected)
   })
 })

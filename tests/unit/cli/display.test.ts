@@ -873,10 +873,10 @@ describe('CLI Display Requirements', () => {
       addTool('tool-1', 'Running npm test')
 
       // Act
-      completeTool('tool-1', 'Ran npm test')
+      completeTool('tool-1', 'completed', 'Ran npm test')
 
       // Assert: Checkmark replaces animation frame (last line padded)
-      const expected = '✓ Ran npm test' + ' '.repeat(80 - 14)
+      const expected = '⏺ Ran npm test' + ' '.repeat(80 - 14)
       expect(terminal.getVisibleText()).toBe(expected)
     })
 
@@ -888,12 +888,12 @@ describe('CLI Display Requirements', () => {
       addTool('tool-3', 'Running npm build')
 
       // Act: Complete middle tool
-      completeTool('tool-2', 'Ran npm lint')
+      completeTool('tool-2', 'completed', 'Ran npm lint')
 
       // Assert: Middle tool shows checkmark, others unchanged (last line padded)
       const expected = `⋅ Running npm test
 
-✓ Ran npm lint
+⏺ Ran npm lint
 
 ` + '○ Running npm build' + ' '.repeat(80 - 19)
       expect(terminal.getVisibleText()).toBe(expected)
@@ -907,16 +907,16 @@ describe('CLI Display Requirements', () => {
       addTool('tool-3', 'Running npm build')
 
       // Act: Complete in different order (3, 1, 2)
-      completeTool('tool-3', 'Ran npm build')
-      completeTool('tool-1', 'Ran npm test')
-      completeTool('tool-2', 'Ran npm lint')
+      completeTool('tool-3', 'completed', 'Ran npm build')
+      completeTool('tool-1', 'completed', 'Ran npm test')
+      completeTool('tool-2', 'completed', 'Ran npm lint')
 
       // Assert: All show checkmarks in original positions (last line padded)
-      const expected = `✓ Ran npm test
+      const expected = `⏺ Ran npm test
 
-✓ Ran npm lint
+⏺ Ran npm lint
 
-` + '✓ Ran npm build' + ' '.repeat(80 - 15)
+` + '⏺ Ran npm build' + ' '.repeat(80 - 15)
       expect(terminal.getVisibleText()).toBe(expected)
     })
 
@@ -961,5 +961,130 @@ describe('CLI Display Requirements', () => {
 
     // Note: Integration tests for content → tools → content flow
     // are in cli-integration.test.ts which tests the real chunk processing
+  })
+
+  describe('Requirement: Multi-line Tool Status', () => {
+    beforeEach(() => {
+      resetAnimationIndex()
+    })
+
+    afterEach(() => {
+      clearToolsDisplay()
+    })
+
+    test('single tool with 2-line status should display correctly', () => {
+      // Arrange & Act
+      initToolsDisplay()
+      addTool('tool-1', 'Read(test.txt)\n  └ Read 5 lines')
+
+      // Assert: Two lines, first with animation
+      const expected = `⋅ Read(test.txt)
+` + '  └ Read 5 lines' + ' '.repeat(80 - 16)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('single tool with 3-line status should display correctly', () => {
+      // Arrange & Act
+      initToolsDisplay()
+      addTool('tool-1', 'Bash(ls -la)\n  └ file1.txt\n    file2.txt')
+
+      // Assert: Three lines, first with animation
+      const expected = `⋅ Bash(ls -la)
+  └ file1.txt
+` + '    file2.txt' + ' '.repeat(80 - 13)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('two multi-line tools should have blank line between', () => {
+      // Arrange & Act
+      initToolsDisplay()
+      addTool('tool-1', 'Read(a.txt)\n  └ Read 10 lines')
+      addTool('tool-2', 'Read(b.txt)\n  └ Read 20 lines')
+
+      // Assert: Blank line between tools
+      const expected = `⋅ Read(a.txt)
+  └ Read 10 lines
+
+∘ Read(b.txt)
+` + '  └ Read 20 lines' + ' '.repeat(80 - 17)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('completeTool should update multi-line tool correctly', () => {
+      // Arrange
+      initToolsDisplay()
+      addTool('tool-1', 'Read(test.txt)\n  └ Reading...')
+
+      // Act: Complete with different status
+      completeTool('tool-1', 'completed', 'Read(test.txt)\n  └ Read 100 lines')
+
+      // Assert: Updated status with checkmark
+      const expected = `⏺ Read(test.txt)
+` + '  └ Read 100 lines' + ' '.repeat(80 - 18)
+      expect(terminal.getVisibleText()).toBe(expected)
+    })
+
+    test('completeTool should handle line count increase', () => {
+      // Arrange: Tool with 2 lines
+      initToolsDisplay()
+      addTool('tool-1', 'Bash(ls)\n  └ Running...')
+      addTool('tool-2', 'Read(test.txt)')
+
+      // Act: Complete tool-1 with 4 lines
+      completeTool('tool-1', 'completed', 'Bash(ls)\n  └ file1.txt\n    file2.txt\n    ... +10 more lines')
+
+      // Assert: Tool-1 expanded, tool-2 should still be visible
+      const lines = terminal.getVisibleText().split('\n')
+      expect(lines[0]).toContain('⏺ Bash(ls)')
+      expect(lines[1]).toContain('  └ file1.txt')
+      expect(lines[2]).toContain('    file2.txt')
+      expect(lines[3]).toContain('    ... +10 more lines')
+      expect(lines[4]).toBe('')  // blank line
+      expect(lines[5]).toContain('∘ Read(test.txt)')  // tool-2 has frame '∘' (second tool gets second frame)
+    })
+
+    test('completeTool should handle line count decrease', () => {
+      // Arrange: Tool with 4 lines
+      initToolsDisplay()
+      addTool('tool-1', 'Bash(ls)\n  └ file1.txt\n    file2.txt\n    ... +10 more lines')
+      addTool('tool-2', 'Read(test.txt)')
+
+      // Act: Complete tool-1 with 2 lines
+      completeTool('tool-1', 'completed', 'Bash(ls)\n  └ Done')
+
+      // Assert: Tool-1 shrunk, tool-2 should still be visible
+      const lines = terminal.getVisibleText().split('\n')
+      expect(lines[0]).toContain('⏺ Bash(ls)')
+      expect(lines[1]).toContain('  └ Done')
+      expect(lines[2]).toBe('')  // blank line
+      expect(lines[3]).toContain('∘ Read(test.txt)')  // tool-2 has frame '∘'
+    })
+
+    test('multiple multi-line tools completing should maintain positions', () => {
+      // Arrange
+      initToolsDisplay()
+      addTool('tool-1', 'Read(a.txt)\n  └ Reading...')
+      addTool('tool-2', 'Bash(ls)\n  └ Running...')
+      addTool('tool-3', 'Write(b.txt)\n  └ Writing...')
+
+      // Act: Complete middle tool with more lines
+      completeTool('tool-2', 'completed', 'Bash(ls)\n  └ file1.txt\n    file2.txt\n    file3.txt')
+
+      // Assert: All tools visible in correct positions
+      const lines = terminal.getVisibleText().split('\n')
+      // Tool 1
+      expect(lines[0]).toContain('⋅ Read(a.txt)')
+      expect(lines[1]).toContain('  └ Reading...')
+      expect(lines[2]).toBe('')  // blank
+      // Tool 2 (expanded)
+      expect(lines[3]).toContain('⏺ Bash(ls)')
+      expect(lines[4]).toContain('  └ file1.txt')
+      expect(lines[5]).toContain('    file2.txt')
+      expect(lines[6]).toContain('    file3.txt')
+      expect(lines[7]).toBe('')  // blank
+      // Tool 3
+      expect(lines[8]).toContain('○ Write(b.txt)')
+      expect(lines[9]).toContain('  └ Writing...')
+    })
   })
 })
