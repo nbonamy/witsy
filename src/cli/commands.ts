@@ -4,7 +4,7 @@ import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
-import { addTool, clearFooter, clearToolsDisplay, completeTool, displayConversation, displayFooter, grayText, initToolsDisplay, padContent, resetDisplay, startPulseAnimation, startToolsAnimation, stopPulseAnimation, stopToolsAnimation, updateToolStatus } from './display'
+import { activeToolStates, addTool, clearFooter, clearToolsDisplay, completeTool, displayConversation, displayFooter, grayText, initToolsDisplay, padContent, resetDisplay, startPulseAnimation, startToolsAnimation, stopPulseAnimation, stopToolsAnimation, updateToolStatus } from './display'
 import { applyFolderAccess, getFolderAccessLabel, promptFolderAccess } from './folder'
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
@@ -534,11 +534,23 @@ export async function handleMessage(message: string) {
         // Skip empty/whitespace-only content chunks entirely
         if (!chunk.text?.trim()) return
 
+        // Complete any pending tools before switching to content output
+        // This ensures tools are finalized before content is displayed
+        if (activeToolIds.size > 0) {
+          for (const toolId of activeToolIds) {
+            const toolState = activeToolStates.get(toolId)
+            const finalStatus = toolState?.status || 'Processing...'
+            completeTool(toolId, 'completed', finalStatus)
+          }
+          activeToolIds.clear()
+        }
+
         // Stop tools animation if running (content takes over display)
         // This prevents cursor position issues when content is interspersed with tools
         if (toolsAnimationInterval) {
           stopToolsAnimation(toolsAnimationInterval)
           toolsAnimationInterval = null
+          clearToolsDisplay()
         }
 
         // Add blank line when transitioning from tool to content
