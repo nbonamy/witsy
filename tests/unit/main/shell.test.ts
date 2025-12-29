@@ -38,10 +38,11 @@ describe('Shell Executor', () => {
       expect(result.dangersDetected).toContain('privilege escalation (sudo)')
     })
 
-    it('should detect command chaining operators', () => {
+    it('should allow command chaining operators', () => {
+      // COMMENTED OUT: Command chaining is now allowed
       const result = analyzeCommand('ls && rm file')
-      expect(result.hasForbiddenOperators).toBe(true)
-      expect(result.dangersDetected).toContain('command chaining operators (&&, ||, ;)')
+      expect(result.hasForbiddenOperators).toBe(false)
+      expect(result.dangersDetected).not.toContain('command chaining operators (&&, ||, ;)')
     })
 
     it('should allow safe commands', () => {

@@ -119,7 +119,7 @@ const shellSafety = `## Shell Command Safety
 For your security and the user's protection:
 - All shell commands execute ONLY within the working directory
 - Commands with dangerous patterns (rm -rf, dd, sudo, etc.) are blocked
-- Command chaining operators (&&, ||, ;) are blocked for security
+- Command chaining operators (&&, ||, ;) are allowed
 - Pipes (|) and redirects (>, >>) are allowed for legitimate workflows`
 
 /**
@@ -130,7 +130,7 @@ const shellSafetyReadWrite = `## Shell Command Safety
 For your security and the user's protection:
 - All shell commands execute ONLY within the working directory
 - Commands with dangerous patterns (rm -rf, dd, sudo, etc.) are blocked
-- Command chaining operators (&&, ||, ;) are blocked for security
+- Command chaining operators (&&, ||, ;) are allowed
 - Pipes (|) and redirects (>, >>) are allowed for legitimate workflows
 
 **IMPORTANT - File Operations:**
