@@ -17,11 +17,10 @@ export interface CliPluginConfig {
 }
 
 type CliAction =
-  | 'read_file'
   | 'list_files'
+  | 'read_file'
   | 'edit_file'
   | 'write_file'
-  | 'create_file'
   | 'create_directory'
   | 'delete_file'
   | 'move_file'
@@ -77,7 +76,7 @@ export default class CliPlugin extends Plugin {
 
   getParameters(): PluginParameter[] {
     const writeActions: CliAction[] = this.config.workDirAccess === 'rw'
-      ? ['edit_file', 'write_file', 'create_file', 'create_directory', 'delete_file', 'move_file']
+      ? ['edit_file', 'write_file', 'create_directory', 'delete_file', 'move_file']
       : []
 
     return [{
@@ -148,8 +147,6 @@ export default class CliPlugin extends Plugin {
         return `Edit(${args.path})`
       case 'write_file':
         return `Write(${args.path})`
-      case 'create_file':
-        return `Create(${args.path})`
       case 'create_directory':
         return `CreateDir(${args.path})`
       case 'delete_file':
@@ -193,13 +190,6 @@ export default class CliPlugin extends Plugin {
           return `${header}\n  └ Wrote ${results.totalLines} lines`
         } else {
           return `${header}\n  └ Failed to write file`
-        }
-
-      case 'create_file':
-        if (results.success) {
-          return `${header}\n  └ File created`
-        } else {
-          return `${header}\n  └ Failed to create file`
         }
 
       case 'create_directory':
@@ -360,15 +350,6 @@ export default class CliPlugin extends Plugin {
           }
           return this.writeFile(parameters.path, parameters.content || '', parameters.lastModified)
 
-        case 'create_file':
-          if (this.config.workDirAccess !== 'rw') {
-            return { success: false, error: 'Write access not granted' }
-          }
-          if (!parameters.path) {
-            return { success: false, error: 'Missing path parameter' }
-          }
-          return this.createFile(parameters.path, parameters.content || '')
-
         case 'create_directory':
           if (this.config.workDirAccess !== 'rw') {
             return { success: false, error: 'Write access not granted' }
@@ -502,12 +483,20 @@ export default class CliPlugin extends Plugin {
         return a.name.localeCompare(b.name)
       })
 
-      // Format as list with type indicators
-      const lines = sorted.map(entry => {
+      // Format as list with type indicators - show first 3, then summary
+      const maxDisplay = 3
+      const displayEntries = sorted.slice(0, maxDisplay)
+      const lines = displayEntries.map(entry => {
         const type = entry.isDirectory() ? '[DIR]' : '[FILE]'
         const name = entry.name
         return `${type.padEnd(7)} ${name}`
       })
+
+      // Add summary line if there are more items
+      if (sorted.length > maxDisplay) {
+        const remaining = sorted.length - maxDisplay
+        lines.push(`... + ${remaining} more items`)
+      }
 
       const content = lines.join('\n')
 
@@ -593,28 +582,6 @@ export default class CliPlugin extends Plugin {
       }
     }
 
-    fs.writeFileSync(filePath, content, 'utf-8')
-    const lines = content.split('\n')
-    const newStats = fs.statSync(filePath)
-
-    return {
-      success: true,
-      totalLines: lines.length,
-      lastModified: newStats.mtimeMs
-    }
-  }
-
-  private createFile(targetPath: string, content: string): CliResponse {
-    const filePath = this.validatePath(targetPath)
-    if (!filePath) {
-      return { success: false, error: `Path not allowed: ${targetPath}` }
-    }
-
-    // Check if file already exists
-    if (fs.existsSync(filePath)) {
-      return { success: false, error: `File already exists: ${targetPath}` }
-    }
-
     // Create parent directories if needed
     const dir = path.dirname(filePath)
     if (!fs.existsSync(dir)) {
@@ -623,10 +590,12 @@ export default class CliPlugin extends Plugin {
 
     fs.writeFileSync(filePath, content, 'utf-8')
     const lines = content.split('\n')
+    const newStats = fs.statSync(filePath)
 
     return {
       success: true,
-      totalLines: lines.length
+      totalLines: lines.length,
+      lastModified: newStats.mtimeMs
     }
   }
 
