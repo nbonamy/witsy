@@ -71,7 +71,6 @@ describe('CliPlugin', () => {
       expect(actionParam?.enum).toContain('read_file')
       expect(actionParam?.enum).toContain('write_file')
       expect(actionParam?.enum).toContain('edit_file')
-      expect(actionParam?.enum).toContain('create_file')
       expect(actionParam?.enum).toContain('create_directory')
       expect(actionParam?.enum).toContain('delete_file')
       expect(actionParam?.enum).toContain('move_file')
@@ -242,10 +241,10 @@ describe('CliPlugin', () => {
     })
   })
 
-  describe('create_file', () => {
+  describe('write_file', () => {
     test('creates new file', async () => {
       const result = await plugin.execute({ model: 'test' }, {
-        action: 'create_file',
+        action: 'write_file',
         path: 'new.txt',
         content: 'hello'
       })
@@ -254,9 +253,9 @@ describe('CliPlugin', () => {
       expect(fs.existsSync(path.join(tempDir, 'new.txt'))).toBe(true)
     })
 
-    test('creates parent directories', async () => {
+    test('creates parent directories when creating new file', async () => {
       const result = await plugin.execute({ model: 'test' }, {
-        action: 'create_file',
+        action: 'write_file',
         path: 'subdir/nested/file.txt',
         content: 'content'
       })
@@ -265,18 +264,18 @@ describe('CliPlugin', () => {
       expect(fs.existsSync(path.join(tempDir, 'subdir/nested/file.txt'))).toBe(true)
     })
 
-    test('fails if file exists', async () => {
+    test('overwrites existing file', async () => {
       const filePath = path.join(tempDir, 'existing.txt')
-      fs.writeFileSync(filePath, 'content')
+      fs.writeFileSync(filePath, 'old content')
 
       const result = await plugin.execute({ model: 'test' }, {
-        action: 'create_file',
+        action: 'write_file',
         path: 'existing.txt',
         content: 'new content'
       })
 
-      expect(result.success).toBe(false)
-      expect(result.error).toContain('already exists')
+      expect(result.success).toBe(true)
+      expect(fs.readFileSync(filePath, 'utf-8')).toBe('new content')
     })
   })
 
