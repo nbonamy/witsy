@@ -18,6 +18,7 @@ export interface CliPluginConfig {
 
 type CliAction =
   | 'read_file'
+  | 'list_files'
   | 'edit_file'
   | 'write_file'
   | 'create_file'
@@ -47,6 +48,7 @@ type CliResponse = {
   totalLines?: number
   linesRead?: number
   linesModified?: number
+  fileCount?: number
   stdout?: string
   stderr?: string
   exitCode?: number
@@ -81,7 +83,7 @@ export default class CliPlugin extends Plugin {
     return [{
       name: 'action',
       type: 'string',
-      enum: ['read_file', 'run_command', ...writeActions],
+      enum: ['read_file', 'list_files', 'run_command', ...writeActions],
       description: 'The operation to perform',
       required: true,
     }, {
@@ -117,7 +119,7 @@ export default class CliPlugin extends Plugin {
     }, {
       name: 'command',
       type: 'string',
-      description: 'Shell command to execute (for run_command). Note: rm, mv, and command chaining (&&, ||, ;) are blocked for safety.',
+      description: 'Shell command to execute (for run_command). Note: rm and mv are blocked for safety (use file operation actions instead).',
       required: false,
     }, {
       name: 'cwd',
@@ -140,6 +142,8 @@ export default class CliPlugin extends Plugin {
     switch (args.action) {
       case 'read_file':
         return `Read(${args.path})`
+      case 'list_files':
+        return `List(${args.path})`
       case 'edit_file':
         return `Edit(${args.path})`
       case 'write_file':
@@ -168,6 +172,13 @@ export default class CliPlugin extends Plugin {
           return `${header}\n  └ Read ${results.linesRead} lines`
         } else {
           return `${header}\n  └ Failed to read file`
+        }
+
+      case 'list_files':
+        if (results.success) {
+          return `${header}\n  └ Found ${results.fileCount} items`
+        } else {
+          return `${header}\n  └ Failed to list directory`
         }
 
       case 'edit_file':
@@ -316,6 +327,12 @@ export default class CliPlugin extends Plugin {
           }
           return this.readFile(parameters.path, parameters.start, parameters.end)
 
+        case 'list_files':
+          if (!parameters.path) {
+            return { success: false, error: 'Missing path parameter' }
+          }
+          return this.listFiles(parameters.path)
+
         case 'edit_file':
           if (this.config.workDirAccess !== 'rw') {
             return { success: false, error: 'Write access not granted' }
@@ -410,7 +427,7 @@ export default class CliPlugin extends Plugin {
 
     const stats = fs.statSync(filePath)
     if (stats.isDirectory()) {
-      return { success: false, error: `Path is a directory: ${targetPath}` }
+      return { success: false, error: `Path is a directory: ${targetPath}. Use list_files action to list directory contents.` }
     }
 
     const fileContent = fs.readFileSync(filePath, 'utf-8')
@@ -457,6 +474,51 @@ export default class CliPlugin extends Plugin {
       lastModified,
       totalLines: allLines.length,
       linesRead: allLines.length
+    }
+  }
+
+  private listFiles(targetPath: string): CliResponse {
+    const dirPath = this.validatePath(targetPath)
+    if (!dirPath) {
+      return { success: false, error: `Path not allowed: ${targetPath}` }
+    }
+
+    if (!fs.existsSync(dirPath)) {
+      return { success: false, error: `Path not found: ${targetPath}` }
+    }
+
+    const stats = fs.statSync(dirPath)
+    if (!stats.isDirectory()) {
+      return { success: false, error: `Path is not a directory: ${targetPath}. Use read_file to read file contents.` }
+    }
+
+    try {
+      const entries = fs.readdirSync(dirPath, { withFileTypes: true })
+
+      // Sort: directories first, then files, alphabetically within each group
+      const sorted = entries.sort((a, b) => {
+        if (a.isDirectory() && !b.isDirectory()) return -1
+        if (!a.isDirectory() && b.isDirectory()) return 1
+        return a.name.localeCompare(b.name)
+      })
+
+      // Format as list with type indicators
+      const lines = sorted.map(entry => {
+        const type = entry.isDirectory() ? '[DIR]' : '[FILE]'
+        const name = entry.name
+        return `${type.padEnd(7)} ${name}`
+      })
+
+      const content = lines.join('\n')
+
+      return {
+        success: true,
+        content,
+        fileCount: entries.length
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error)
+      return { success: false, error: `Failed to list directory: ${message}` }
     }
   }
 
@@ -657,15 +719,16 @@ export default class CliPlugin extends Plugin {
       }
     }
 
-    if (analysis.hasForbiddenOperators) {
-      return {
-        success: false,
-        stdout: '',
-        stderr: 'Command chaining operators (&&, ||, ;) are not allowed for security.',
-        exitCode: 1,
-        error: 'Command chaining is blocked'
-      }
-    }
+    // COMMENTED OUT: Too restrictive - allow command chaining for now
+    // if (analysis.hasForbiddenOperators) {
+    //   return {
+    //     success: false,
+    //     stdout: '',
+    //     stderr: 'Command chaining operators (&&, ||, ;) are not allowed for security.',
+    //     exitCode: 1,
+    //     error: 'Command chaining is blocked'
+    //   }
+    // }
 
     // In CLI context, block dangerous commands (no confirmation dialog available)
     if (analysis.isDangerous) {

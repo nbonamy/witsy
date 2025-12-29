@@ -118,15 +118,17 @@ export function analyzeCommand(command: string, restrictToPath?: string): Comman
 
   // Check for forbidden operators (&&, ||, ;)
   // Allow pipes (|) and redirects (>, >>)
-  const forbiddenOperators = /(&&|\|\||;(?!\s*$))/
-  const hasForbiddenOperators = forbiddenOperators.test(command)
+  // COMMENTED OUT: Too restrictive - allow command chaining for now
+  // const forbiddenOperators = /(&&|\|\||;(?!\s*$))/
+  // const hasForbiddenOperators = forbiddenOperators.test(command)
+  const hasForbiddenOperators = false
 
-  if (hasForbiddenOperators) {
-    dangersDetected.push('command chaining operators (&&, ||, ;)')
-  }
+  // if (hasForbiddenOperators) {
+  //   dangersDetected.push('command chaining operators (&&, ||, ;)')
+  // }
 
   return {
-    isDangerous: isDangerous || hasForbiddenOperators,
+    isDangerous: isDangerous, // || hasForbiddenOperators,
     dangersDetected,
     hasForbiddenOperators,
     blockedCommand

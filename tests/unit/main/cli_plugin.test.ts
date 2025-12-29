@@ -510,34 +510,34 @@ describe('CliPlugin', () => {
       expect(result.error).toContain('blocked')
     })
 
-    test('blocks command chaining with &&', async () => {
+    test('allows command chaining with &&', async () => {
+      // COMMENTED OUT: Command chaining is now allowed
       const result = await plugin.execute({ model: 'test' }, {
         action: 'run_command',
         command: 'echo a && echo b'
       })
 
-      expect(result.success).toBe(false)
-      expect(result.error).toContain('chaining')
+      expect(result.success).toBe(true)
     })
 
-    test('blocks command chaining with ||', async () => {
+    test('allows command chaining with ||', async () => {
+      // COMMENTED OUT: Command chaining is now allowed
       const result = await plugin.execute({ model: 'test' }, {
         action: 'run_command',
         command: 'echo a || echo b'
       })
 
-      expect(result.success).toBe(false)
-      expect(result.error).toContain('chaining')
+      expect(result.success).toBe(true)
     })
 
-    test('blocks command chaining with ;', async () => {
+    test('allows command chaining with ;', async () => {
+      // COMMENTED OUT: Command chaining is now allowed
       const result = await plugin.execute({ model: 'test' }, {
         action: 'run_command',
         command: 'echo a; echo b'
       })
 
-      expect(result.success).toBe(false)
-      expect(result.error).toContain('chaining')
+      expect(result.success).toBe(true)
     })
 
     test('allows pipes', async () => {
