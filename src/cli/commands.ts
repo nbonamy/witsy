@@ -534,6 +534,13 @@ export async function handleMessage(message: string) {
         // Skip empty/whitespace-only content chunks entirely
         if (!chunk.text?.trim()) return
 
+        // Stop tools animation if running (content takes over display)
+        // This prevents cursor position issues when content is interspersed with tools
+        if (toolsAnimationInterval) {
+          stopToolsAnimation(toolsAnimationInterval)
+          toolsAnimationInterval = null
+        }
+
         // Add blank line when transitioning from tool to content
         if (lastOutput === 'tool') {
           console.log()

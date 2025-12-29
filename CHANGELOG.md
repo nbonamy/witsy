@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.X.Y] - WIP
 
 ### Added
-- CLI filesystem access
+- CLI filesystem access and tool display fixes
 
 ### Changed
 - N/A
