@@ -371,7 +371,7 @@ interface ActiveToolState {
   prefix: string     // Display prefix (animation frame or checkmark)
 }
 
-const activeToolStates = new Map<string, ActiveToolState>()
+export const activeToolStates = new Map<string, ActiveToolState>()
 let toolCount = 0
 
 // Helper to count lines in a status string
