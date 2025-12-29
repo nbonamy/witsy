@@ -3,7 +3,7 @@ import * as os from 'os'
 import * as path from 'path'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { WitsyAPI } from '@/cli/api'
-import { COMMANDS, handleCommand, initialize, handleHelp, handleClear, handleSave, handleTitle, handleRetry, handleQuit, executeCommand, handlePort, handleMessage, handleModel } from '@/cli/commands'
+import { COMMANDS, handleCommand, initialize, handleHelp, handleClear, handleSave, handleTitle, handleRetry, handleQuit, executeCommand, handlePort, handleMessage, handleModel, isToolError } from '@/cli/commands'
 import { state } from '@/cli/state'
 import { ChatCli, MessageCli } from '@/cli/models'
 import { resetDisplay, displayFooter, clearFooter } from '@/cli/display'
@@ -628,5 +628,40 @@ describe('Command Handlers', () => {
 
     // Should execute help command
     expect(clearFooter).toHaveBeenCalled()
+  })
+})
+
+describe('isToolError', () => {
+  test('detects "failed" (case insensitive)', () => {
+    expect(isToolError('Command failed')).toBe(true)
+    expect(isToolError('Failed to execute')).toBe(true)
+    expect(isToolError('FAILED')).toBe(true)
+  })
+
+  test('detects "timed out" (case insensitive)', () => {
+    expect(isToolError('Command timed out')).toBe(true)
+    expect(isToolError('Timed Out')).toBe(true)
+    expect(isToolError('TIMED OUT')).toBe(true)
+  })
+
+  test('detects "error" (case insensitive)', () => {
+    expect(isToolError('Error occurred')).toBe(true)
+    expect(isToolError('ERROR: something went wrong')).toBe(true)
+    expect(isToolError('An error happened')).toBe(true)
+  })
+
+  test('returns false for success messages', () => {
+    expect(isToolError('Command completed')).toBe(false)
+    expect(isToolError('Done')).toBe(false)
+    expect(isToolError('Success')).toBe(false)
+    expect(isToolError('Processing...')).toBe(false)
+  })
+
+  test('returns false for undefined', () => {
+    expect(isToolError(undefined)).toBe(false)
+  })
+
+  test('returns false for empty string', () => {
+    expect(isToolError('')).toBe(false)
   })
 })
