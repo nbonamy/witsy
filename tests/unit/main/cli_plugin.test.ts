@@ -241,6 +241,98 @@ describe('CliPlugin', () => {
     })
   })
 
+  describe('list_files', () => {
+    test('lists files and directories with separator', async () => {
+      // Create test structure
+      fs.writeFileSync(path.join(tempDir, 'file1.txt'), 'content')
+      fs.writeFileSync(path.join(tempDir, 'file2.json'), 'content')
+      fs.mkdirSync(path.join(tempDir, 'subdir'))
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'list_files',
+        path: '.'
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.fileCount).toBe(3)
+      // Directories should have trailing separator
+      expect(result.content).toContain('subdir' + path.sep)
+      // Files should not
+      expect(result.content).toContain('file1.txt')
+      expect(result.content).toContain('file2.json')
+    })
+
+    test('shows only first 3 items with summary', async () => {
+      // Create 5 files
+      for (let i = 1; i <= 5; i++) {
+        fs.writeFileSync(path.join(tempDir, `file${i}.txt`), 'content')
+      }
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'list_files',
+        path: '.'
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.fileCount).toBe(5)
+      // Should show first 3 items
+      expect(result.content).toContain('file1.txt')
+      expect(result.content).toContain('file2.txt')
+      expect(result.content).toContain('file3.txt')
+      // Should NOT show items 4 and 5
+      expect(result.content).not.toContain('file4.txt')
+      expect(result.content).not.toContain('file5.txt')
+      // Should have summary line
+      expect(result.content).toContain('... +2 more items')
+    })
+
+    test('shows all items when 3 or fewer', async () => {
+      fs.writeFileSync(path.join(tempDir, 'file1.txt'), 'content')
+      fs.writeFileSync(path.join(tempDir, 'file2.txt'), 'content')
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'list_files',
+        path: '.'
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.fileCount).toBe(2)
+      expect(result.content).toContain('file1.txt')
+      expect(result.content).toContain('file2.txt')
+      // Should NOT have summary line
+      expect(result.content).not.toContain('more items')
+    })
+
+    test('sorts directories first', async () => {
+      fs.writeFileSync(path.join(tempDir, 'aaa.txt'), 'content')
+      fs.mkdirSync(path.join(tempDir, 'zzz'))
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'list_files',
+        path: '.'
+      })
+
+      expect(result.success).toBe(true)
+      const lines = result.content?.split('\n') || []
+      // Directory should come first despite alphabetical order
+      expect(lines[0]).toContain('zzz' + path.sep)
+      expect(lines[1]).toContain('aaa.txt')
+    })
+
+    test('fails on non-directory', async () => {
+      const filePath = path.join(tempDir, 'test.txt')
+      fs.writeFileSync(filePath, 'content')
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'list_files',
+        path: 'test.txt'
+      })
+
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('not a directory')
+    })
+  })
+
   describe('write_file', () => {
     test('creates new file', async () => {
       const result = await plugin.execute({ model: 'test' }, {

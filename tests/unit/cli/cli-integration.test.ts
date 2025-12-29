@@ -153,20 +153,20 @@ describe('CLI Integration - Chunk Processing', () => {
     await handleMessage('test')
 
     // Expected output (reasoning chunks don't affect output):
-    // "  Hello  " (padded content)
+    // "⏺ Hello  " (padded content with prefix on first line)
     // "" (blank - content→tool transition)
     // "⏺ Done 1"
     // "" (blank between tools)
     // "⏺ Done 2"
     // "" (blank - tool→content transition)
-    // "  World  " (padded content, last line padded to 80 chars)
-    const expected = `  Hello
+    // "⏺ World  " (padded content with prefix on first line, last line padded to 80 chars)
+    const expected = `⏺ Hello
 
 ⏺ Done 1
 
 ⏺ Done 2
 
-` + '  World  ' + ' '.repeat(80 - 9)
+` + '⏺ World  ' + ' '.repeat(80 - 9)
     expect(terminal.getVisibleText()).toBe(expected)
   })
 
