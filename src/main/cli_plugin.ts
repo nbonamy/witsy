@@ -228,7 +228,10 @@ export default class CliPlugin extends Plugin {
             return `${header}\n  └ Command completed (no output)`
           }
         } else {
-          const errorHeader = `Command failed with exit code ${results.exitCode}`
+          // Exit code 124 indicates timeout
+          const errorHeader = results.exitCode === 124
+            ? 'Command timed out'
+            : `Command failed with exit code ${results.exitCode}`
           const formattedError = this.formatOutput(results.stderr || '')
           if (formattedError) {
             return `${header}\n  └ ${errorHeader}\n   ${formattedError.substring(1)}` // Align error output
