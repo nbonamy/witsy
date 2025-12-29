@@ -15,6 +15,17 @@ const term = terminalKit.terminal
 
 const api = new WitsyAPI()
 
+/**
+ * Determines if a tool status indicates an error/failure
+ */
+export function isToolError(status: string | undefined): boolean {
+  if (!status) return false
+  const lowerStatus = status.toLowerCase()
+  return lowerStatus.includes('failed') ||
+         lowerStatus.includes('timed out') ||
+         lowerStatus.includes('error')
+}
+
 export const COMMANDS = [
   { name: '/help', value: 'help', description: 'Show this help message' },
   { name: '/port', value: 'port', description: 'Change server port' },
@@ -606,7 +617,7 @@ export async function handleMessage(message: string) {
         // Handle tool completion
         if (chunk.done) {
           // Override state to 'error' if status indicates failure
-          const finalState = (chunk.status?.includes('failed') || chunk.status?.includes('Failed'))
+          const finalState = isToolError(chunk.status)
             ? 'error'
             : (chunk.state || 'completed')
           completeTool(toolId, finalState, chunk.status || 'Done')
