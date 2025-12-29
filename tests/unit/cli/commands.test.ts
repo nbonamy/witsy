@@ -50,6 +50,7 @@ vi.mock('chalk', () => ({
     rgb: () => (s: string) => s,
     italic: { dim: (s: string) => s },
     greenBright: (s: string) => s,
+    redBright: (s: string) => s,
     blueBright: (s: string) => s,
   },
 }))

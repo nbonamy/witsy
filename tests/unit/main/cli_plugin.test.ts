@@ -578,10 +578,10 @@ describe('CliPlugin', () => {
 
   describe('description methods', () => {
     test('getRunningDescription returns appropriate messages', () => {
-      expect(plugin.getRunningDescription('', { action: 'read_file', path: 'test.txt' })).toContain('Reading')
-      expect(plugin.getRunningDescription('', { action: 'write_file', path: 'test.txt' })).toContain('Writing')
-      expect(plugin.getRunningDescription('', { action: 'delete_file', path: 'test.txt' })).toContain('Deleting')
-      expect(plugin.getRunningDescription('', { action: 'run_command', command: 'echo hi' })).toContain('Running')
+      expect(plugin.getRunningDescription('', { action: 'read_file', path: 'test.txt' })).toBe('Read(test.txt)')
+      expect(plugin.getRunningDescription('', { action: 'write_file', path: 'test.txt' })).toBe('Write(test.txt)')
+      expect(plugin.getRunningDescription('', { action: 'delete_file', path: 'test.txt' })).toBe('Delete(test.txt)')
+      expect(plugin.getRunningDescription('', { action: 'run_command', command: 'echo hi' })).toBe('Bash(echo hi)')
     })
 
     test('getCompletedDescription returns success messages', () => {

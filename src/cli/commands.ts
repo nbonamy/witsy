@@ -470,6 +470,7 @@ export async function handleMessage(message: string) {
   let keyHandler: any = null
   let animationInterval: NodeJS.Timeout | null = null
   let toolsAnimationInterval: NodeJS.Timeout | null = null
+  const activeToolIds = new Set<string>()
 
   try {
 
@@ -477,7 +478,6 @@ export async function handleMessage(message: string) {
     let lastOutput: 'none' | 'content' | 'tool' = 'none'
     let firstChunk = true
     const streamPadder = new StreamPadder()
-    const activeToolIds = new Set<string>()
 
     // Start loading animation
     const loadingVerb = loadingVerbs[Math.floor(Math.random() * loadingVerbs.length)]
@@ -579,7 +579,11 @@ export async function handleMessage(message: string) {
 
         // Handle tool completion
         if (chunk.done) {
-          completeTool(toolId, chunk.status || 'Done')
+          // Override state to 'error' if status indicates failure
+          const finalState = (chunk.status?.includes('failed') || chunk.status?.includes('Failed'))
+            ? 'error'
+            : (chunk.state || 'completed')
+          completeTool(toolId, finalState, chunk.status || 'Done')
           activeToolIds.delete(toolId)
 
           // Check if all tools are done
@@ -652,6 +656,14 @@ export async function handleMessage(message: string) {
     }
 
   } finally {
+    // Complete any outstanding tools before cleanup
+    if (activeToolIds.size > 0) {
+      for (const toolId of activeToolIds) {
+        completeTool(toolId, 'error', 'Tool execution interrupted')
+      }
+      activeToolIds.clear()
+    }
+
     // Cleanup: stop animations, ungrab input and remove key listener
     stopPulseAnimation(animationInterval)
     stopToolsAnimation(toolsAnimationInterval)
