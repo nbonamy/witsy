@@ -507,10 +507,10 @@ export async function handleMessage(message: string) {
     const loadingVerb = loadingVerbs[Math.floor(Math.random() * loadingVerbs.length)]
     animationInterval = startPulseAnimation(`${loadingVerb}… ` + grayText('(esc to interrupt)'))
 
-    // Grab input using terminal-kit and listen for Escape key
+    // Grab input using terminal-kit and listen for Escape or Ctrl+C to interrupt
     term.grabInput(true)
     keyHandler = term.on('key', (key: string) => {
-      if (key === 'ESCAPE') {
+      if (key === 'ESCAPE' || key === 'CTRL_C') {
         cancelled = true
         controller.abort()
       }

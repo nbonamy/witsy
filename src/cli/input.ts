@@ -1,5 +1,6 @@
 // Custom input handler using terminal-kit's witsyInputField
 
+import ansiEscapes from 'ansi-escapes'
 import terminalKit from 'terminal-kit'
 import { clearShortcutHelp, displayShortcutHelp, repositionFooter, resetDisplay, updateFooterRightText } from './display'
 import { state } from './state'
@@ -52,12 +53,11 @@ export async function promptInput(options: InputOptions): Promise<string> {
       const promptText = options.prompt
       process.stdout.write(promptText)
 
-      // Helper: handle resize
+      // Helper: handle resize - just abort and let main loop restart fresh
       const handleResize = () => {
-        resetDisplay()
-        if (controller) {
-          controller.redraw()
-        }
+        cleanup()
+        process.stdout.write(ansiEscapes.clearTerminal)
+        resolve('')  // Empty string triggers resetDisplay() + continue in main loop
       }
 
       // Helper: cleanup

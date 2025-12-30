@@ -697,9 +697,15 @@ export function witsyInputField( options , callback ) {
 					var extraLines = end.y - start.y ;
 					computeAllCoordinate() ;
 					extraLines -= end.y - start.y ;
+					// Clear everything from input start (including footer) for clean redraw
+					this.moveTo( start.x , start.y ) ;
+					this.eraseDisplayBelow() ;
 					redraw( extraLines , true ) ;
 					this.moveTo( cursor.x , cursor.y ) ;
 				}
+
+				// Notify about text change for footer repositioning
+				callOnTextChange( 'UP' ) ;
 			}
 		} else if ( cursor.y === start.y ) {
 			// On first line but not at first character → move to start
@@ -744,9 +750,15 @@ export function witsyInputField( options , callback ) {
 					var extraLines = end.y - start.y ;
 					computeAllCoordinate() ;
 					extraLines -= end.y - start.y ;
+					// Clear everything from input start (including footer) for clean redraw
+					this.moveTo( start.x , start.y ) ;
+					this.eraseDisplayBelow() ;
 					redraw( extraLines , true ) ;
 					this.moveTo( cursor.x , cursor.y ) ;
 				}
+
+				// Notify about text change for footer repositioning
+				callOnTextChange( 'DOWN' ) ;
 			}
 		} else if ( cursor.y === end.y ) {
 			// On last line but not at last character → move to end
