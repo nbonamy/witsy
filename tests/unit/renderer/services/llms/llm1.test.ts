@@ -259,8 +259,8 @@ test('Favorite models', () => {
   installMockModels()
 
   expect(llmManager.getChatModels(favoriteMockEngine)).toStrictEqual([
-    { id: 'mock-chat', name: 'mock_label/chat', meta: {}, capabilities: { tools: true, vision: false, reasoning: false } },
-    { id: 'mock-vision', name: 'mock_label/vision', meta: {}, capabilities: { tools: true, vision: true, reasoning: false } }
+    { id: 'mock-chat', name: 'mock_label/chat', meta: {}, capabilities: { tools: true, vision: false, reasoning: false, caching: false } },
+    { id: 'mock-vision', name: 'mock_label/vision', meta: {}, capabilities: { tools: true, vision: true, reasoning: false, caching: false } }
   ])
 
   expect(llmManager.isFavoriteModel('mock', 'chat')).toBe(true)
