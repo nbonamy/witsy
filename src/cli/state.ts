@@ -1,6 +1,7 @@
 // CLI State Management
 
 import { CliConfig } from './config'
+import { Root } from './components'
 import { ChatCli } from './models'
 
 export type WorkDirAccess = 'none' | 'ro' | 'rw'
@@ -19,6 +20,7 @@ export interface CLIState {
   userDataPath: string
   cliConfig: CliConfig | null
   workDir: WorkDir
+  componentTree: Root | null
 }
 
 export const state: CLIState = {
@@ -32,5 +34,6 @@ export const state: CLIState = {
   workDir: {
     path: null,
     access: 'none'
-  }
+  },
+  componentTree: null
 }
