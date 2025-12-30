@@ -9,7 +9,7 @@ import { clearFooter, displayFooter, grayText, padContent, resetDisplay } from '
 import { promptInput } from './input'
 import { selectOption } from './select'
 import { state } from './state'
-import { initializeTree } from './tree'
+import { initializeTree, addUserMessage, renderTree } from './tree'
 
 // Parse command line arguments
 function parseCliArgs() {
@@ -149,21 +149,28 @@ async function main() {
         }
       }
 
-      // Clear the footer (bottom separator + status) that was displayed above
-      clearFooter()
-
-      // Handle chat message
-      // Display user message with "> " prefix and gray color
-      console.log()
-      const paddedUserContent = padContent(trimmed)
-      console.log(grayText('> ' + paddedUserContent.slice(2))) // Remove left padding
-      console.log() // Blank line
+      // Add user message to component tree and re-render
+      if (state.componentTree) {
+        addUserMessage(trimmed)
+        renderTree()
+      } else {
+        // Fallback to old behavior
+        clearFooter()
+        console.log()
+        const paddedUserContent = padContent(trimmed)
+        console.log(grayText('> ' + paddedUserContent.slice(2)))
+        console.log()
+      }
 
       // Stream assistant response
       await handleMessage(trimmed)
 
-      // Print footer for next prompt
-      displayFooter()
+      // Re-render tree to show final state (or display footer in fallback mode)
+      if (state.componentTree) {
+        renderTree()
+      } else {
+        displayFooter()
+      }
     
     } catch (error) {
       console.error(chalk.red(`\nError: ${error instanceof Error ? error.message : 'Unknown error'}\n`))
