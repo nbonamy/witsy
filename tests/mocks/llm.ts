@@ -1,5 +1,5 @@
 
-import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStreamingResponse, EngineCreateOpts, ModelCapabilities, ChatModel, ModelMetadata, ModelGeneric } from 'multi-llm-ts'
+import { LlmEngine, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStreamingResponse, EngineCreateOpts, ModelCapabilities, ChatModel, ModelMetadata, ModelGeneric, LlmStreamingContext, LlmCompletionPayloadContent } from 'multi-llm-ts'
 import { store } from '@services/store'
 import Message from '@models/message'
 import { RandomChunkStream, InfiniteStream } from './streams'
@@ -9,7 +9,7 @@ export const setLlmDefaults = (engine: string, model: string) => {
   store.config.llm.engine = engine
   store.config.engines[engine] = {
     models: { chat: [
-      { id: model, name: model, capabilities: { tools: true, vision: false, reasoning: false } }
+      { id: model, name: model, capabilities: { tools: true, vision: false, reasoning: false, caching: false } }
     ] },
     model: { chat: model }
   }
@@ -19,9 +19,9 @@ export const installMockModels = () => {
   store.config.engines.mock = {
     label: 'mock_label',
     models: { chat: [
-      { id: 'chat', meta: {}, capabilities: { tools: true, vision: false, reasoning: false } },
-      { id: 'chat2', meta: {}, capabilities: { tools: true, vision: false, reasoning: false } },
-      { id: 'vision', meta: {}, capabilities: { tools: true, vision: true, reasoning: false } },
+      { id: 'chat', meta: {}, capabilities: { tools: true, vision: false, reasoning: false, caching: false } },
+      { id: 'chat2', meta: {}, capabilities: { tools: true, vision: false, reasoning: false, caching: false } },
+      { id: 'vision', meta: {}, capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
     ] },
     model: { chat: 'chat', vision: 'vision' },
   }
@@ -42,6 +42,7 @@ class LlmError extends Error {
 }
 
 export default class LlmMock extends LlmEngine {
+
   constructor(config: EngineCreateOpts) {
     super(config)
   }
@@ -130,7 +131,8 @@ export default class LlmMock extends LlmEngine {
     }
   }
 
-  addImageToPayload(attachment: Attachment, payload: LLmCompletionPayload) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  addImageToPayload(model: ChatModel, attachment: Attachment, payload: LlmCompletionPayloadContent, opts?: LlmCompletionOpts) {
     payload.images = [ attachment.content ]
   }
 
@@ -142,6 +144,11 @@ export default class LlmMock extends LlmEngine {
       original_prompt: prompt,
       content: 'image_content'
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected syncToolHistoryToThread(context: LlmStreamingContext): void {
+    throw new Error('Method not implemented.')
   }
 
 }
