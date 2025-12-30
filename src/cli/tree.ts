@@ -1,5 +1,6 @@
 // Component tree management utilities
 
+import ansiEscapes from 'ansi-escapes'
 import {
   Root,
   Header,
@@ -12,7 +13,6 @@ import {
   ToolCall,
   ActivityIndicator,
 } from './components'
-import { getDefaultFooterLeftText, getDefaultFooterRightText } from './display'
 import { state } from './state'
 
 // Initialize the component tree with standard layout
@@ -31,10 +31,8 @@ export function initializeTree(): Root {
   const prompt = new Prompt('> ')
   root.appendChild(prompt)
 
-  // Footer
+  // Footer (computes its own text from state)
   const footer = new Footer()
-  footer.setLeftText(getDefaultFooterLeftText())
-  footer.setRightText(getDefaultFooterRightText())
   root.appendChild(footer)
 
   state.componentTree = root
@@ -49,13 +47,83 @@ export function getTree(): Root {
   return state.componentTree
 }
 
-// Update footer text based on current state
+// Update footer (marks dirty so it re-renders with current state)
 export function updateFooter(inputText?: string): void {
   const tree = getTree()
   const footer = tree.find('footer') as Footer | null
   if (footer) {
-    footer.setLeftText(getDefaultFooterLeftText())
-    footer.setRightText(getDefaultFooterRightText(inputText))
+    if (inputText !== undefined) {
+      footer.setInputText(inputText)
+    }
+    footer.markDirty()
+  }
+}
+
+// Render the entire tree to terminal (replaces resetDisplay)
+export function renderTree(): void {
+  const tree = getTree()
+  const width = process.stdout.columns || 80
+
+  // Clear terminal
+  process.stdout.write(ansiEscapes.clearTerminal)
+  process.stdout.write(ansiEscapes.cursorTo(0, 0))
+
+  // Rebuild messages from chat state
+  rebuildTreeFromMessages()
+
+  // Update footer
+  updateFooter()
+
+  // Render all components
+  let currentRow = 0
+  for (const child of tree.getChildren()) {
+    const lines = child.render(width)
+    for (const line of lines) {
+      process.stdout.write(ansiEscapes.cursorTo(0, currentRow))
+      process.stdout.write(line)
+      currentRow++
+    }
+    child.clearDirty()
+    child.setCachedHeight(lines.length)
+  }
+
+  // Position cursor at the prompt (after the "> ")
+  const prompt = tree.find('prompt') as Prompt | null
+  if (prompt) {
+    // Find prompt position
+    let promptRow = 0
+    for (const child of tree.getChildren()) {
+      if (child.id === 'prompt') break
+      promptRow += child.getCachedHeight()
+    }
+    process.stdout.write(ansiEscapes.cursorTo(2, promptRow))
+  }
+}
+
+// Render footer only (for incremental updates)
+export function renderFooter(): void {
+  const tree = getTree()
+  const footer = tree.find('footer') as Footer | null
+  if (!footer) return
+
+  const width = process.stdout.columns || 80
+
+  // Calculate footer position
+  let footerRow = 0
+  for (const child of tree.getChildren()) {
+    if (child.id === 'footer') break
+    footerRow += child.getCachedHeight()
+  }
+
+  // Update footer text
+  updateFooter()
+
+  // Render footer
+  const lines = footer.render(width)
+  for (let i = 0; i < lines.length; i++) {
+    process.stdout.write(ansiEscapes.cursorTo(0, footerRow + i))
+    process.stdout.write(ansiEscapes.eraseLine)
+    process.stdout.write(lines[i])
   }
 }
 

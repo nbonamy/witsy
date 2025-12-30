@@ -3,6 +3,7 @@
 import chalk from 'chalk'
 import ansiEscapes from 'ansi-escapes'
 import { state } from './state'
+import { renderTree } from './tree'
 import { ToolExecutionState } from 'multi-llm-ts'
 
 // Version is injected at build time via esbuild define
@@ -18,6 +19,16 @@ export const errorText = chalk.rgb(255, 107, 128)
 export const grayText = chalk.rgb(139, 148, 156)
 
 export function resetDisplay(beforeFooter?: () => void) {
+  // Use component tree if available
+  if (state.componentTree) {
+    if (beforeFooter) {
+      beforeFooter()
+    }
+    renderTree()
+    return
+  }
+
+  // Fallback to old behavior
   console.clear()
   displayHeader()
   displayConversation()
