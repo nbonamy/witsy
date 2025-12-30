@@ -139,14 +139,18 @@ export function repositionFooter(initialInputY: number, previousLineCount: numbe
   // Save current cursor position (don't interrupt terminal-kit's rendering)
   process.stdout.write(ansiEscapes.cursorSavePosition)
 
-  // Go to old footer position and erase it
-  process.stdout.write(ansiEscapes.cursorTo(0, initialInputY + previousLineCount - 1))
-  process.stdout.write(ansiEscapes.eraseDown)
+  // Clear old footer position when shrinking (old footer won't be overwritten)
+  if (newLineCount < previousLineCount) {
+    const oldFooterY = initialInputY + previousLineCount - 1
+    process.stdout.write(ansiEscapes.cursorTo(0, oldFooterY))
+    process.stdout.write(ansiEscapes.eraseLine)
+    process.stdout.write(ansiEscapes.cursorTo(0, oldFooterY + 1))
+    process.stdout.write(ansiEscapes.eraseLine)
+  }
 
-  // Move to new footer position
-  process.stdout.write(ansiEscapes.cursorTo(0, initialInputY + newLineCount - 1))
-
-  // Render footer at new position
+  // Move to new footer position and render
+  const newFooterY = initialInputY + newLineCount - 1
+  process.stdout.write(ansiEscapes.cursorTo(0, newFooterY))
   renderFooterContent(undefined, inputText)
 
   // Restore cursor - let terminal-kit continue rendering
@@ -382,6 +386,7 @@ function countLines(text: string): number {
 // Helper to write tool lines with formatting
 function writeToolLines(status: string, prefix: string): void {
   const lines = status.split('\n')
+  const termWidth = process.stdout.columns || 80
   lines.forEach((line, i) => {
     if (i > 0) process.stdout.write('\n')
     if (i === 0) {
@@ -395,8 +400,10 @@ function writeToolLines(status: string, prefix: string): void {
         process.stdout.write(`${prefix} ${line}`)
       }
     } else {
-      // Detail lines: gray
-      process.stdout.write(chalk.rgb(164, 164, 164)(line))
+      // Detail lines: gray, truncated to terminal width
+      const maxLen = termWidth - 1  // Leave 1 char margin
+      const truncated = line.length > maxLen ? line.substring(0, maxLen - 1) + '…' : line
+      process.stdout.write(chalk.rgb(164, 164, 164)(truncated))
     }
   })
 }
