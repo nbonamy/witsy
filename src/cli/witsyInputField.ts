@@ -683,6 +683,16 @@ export function witsyInputField( options , callback ) {
 		return offset_ ;
 	} ;
 
+	var clearInput = () => {
+		computeAllCoordinate() ;
+		this.moveTo( start.x , start.y ) ;
+		for (let y = start.y ; y <= end.y ; y++) {
+			this.moveTo(y == start.y ? 2 : 0, y ) ;
+			this.eraseLineAfter() ;
+		}
+		this.moveTo( start.x , start.y ) ;
+	} ;
+
 	// Helper function to handle witsyUp action (Witsy addition)
 	var handleWitsyUp = () => {
 		computeAllCoordinate() ;
@@ -697,9 +707,7 @@ export function witsyInputField( options , callback ) {
 					var extraLines = end.y - start.y ;
 					computeAllCoordinate() ;
 					extraLines -= end.y - start.y ;
-					// Clear everything from input start (including footer) for clean redraw
-					this.moveTo( start.x , start.y ) ;
-					this.eraseDisplayBelow() ;
+					clearInput() ;
 					redraw( extraLines , true ) ;
 					this.moveTo( cursor.x , cursor.y ) ;
 				}
@@ -750,9 +758,7 @@ export function witsyInputField( options , callback ) {
 					var extraLines = end.y - start.y ;
 					computeAllCoordinate() ;
 					extraLines -= end.y - start.y ;
-					// Clear everything from input start (including footer) for clean redraw
-					this.moveTo( start.x , start.y ) ;
-					this.eraseDisplayBelow() ;
+					clearInput() ;
 					redraw( extraLines , true ) ;
 					this.moveTo( cursor.x , cursor.y ) ;
 				}
@@ -1002,6 +1008,10 @@ export function witsyInputField( options , callback ) {
 					if ( echo ) {
 						computeAllCoordinate() ;
 						redraw() ;
+						this.moveTo( 0 , end.y ) ;
+						this.eraseLineAfter() ;
+						this.moveTo( cursor.x , cursor.y ) ;
+						
 					}
 					break ;
 
