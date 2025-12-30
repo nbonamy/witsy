@@ -1008,10 +1008,9 @@ export function witsyInputField( options , callback ) {
 					if ( echo ) {
 						computeAllCoordinate() ;
 						redraw() ;
-						this.moveTo( 0 , end.y ) ;
+						this.moveTo(inputs[ inputIndex ].length - offset + 1, cursor.y) ;
 						this.eraseLineAfter() ;
-						this.moveTo( cursor.x , cursor.y ) ;
-						
+						this.moveTo(0, cursor.y) ;
 					}
 					break ;
 
