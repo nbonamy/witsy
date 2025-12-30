@@ -291,35 +291,75 @@ Tests in `tests/unit/cli/components/`
 ## Usage Example (After Implementation)
 
 ```typescript
-// In commands.ts handleMessage()
-const root = state.componentTree!
+// Using tree.ts utilities
+import {
+  initializeTree,
+  getTree,
+  addUserMessage,
+  addAssistantMessage,
+  showActivity,
+  hideActivity,
+  startToolAnimations,
+  stopToolAnimations
+} from './tree'
+
+// Initialize tree (done in main.ts)
+initializeTree()
 
 // Add user message
-const userMsg = new UserMessage(message)
-root.insertBefore(userMsg, root.find('prompt'))
+const userMsg = addUserMessage(message)
 
 // Show activity indicator
-const indicator = new ActivityIndicator('Thinking...')
-root.insertBefore(indicator, root.find('prompt'))
-root.startAnimation('loading', () => {
-  indicator.advance()
-  root.updateComponent(indicator)
-}, 150)
+showActivity('Thinking...')
 
 // Create assistant message
-const assistantMsg = new AssistantMessage()
-root.insertBefore(assistantMsg, root.find('prompt'))
+const assistantMsg = addAssistantMessage()
 
 // As tools execute...
-const tool = new ToolCall(toolId, 'tool_name(args)')
-assistantMsg.appendChild(tool)
-root.updateComponent(assistantMsg)
+const tool = assistantMsg.addToolCall(toolId, 'tool_name(args)')
+startToolAnimations(assistantMsg)
 
 // Tool status changes (2 lines → 5 lines)
 tool.updateStatus('tool_name(args)\n  line1\n  line2\n  line3')
-root.updateComponent(tool)  // Framework handles line insertion!
+getTree().updateComponent(tool)  // Framework handles line insertion!
 
 // Tool completes
 tool.complete('completed', 'tool_name(args)\n  result')
-root.updateComponent(tool)
+stopToolAnimations()
+
+// Hide activity indicator
+hideActivity()
 ```
+
+## Implementation Status
+
+### Completed
+- [x] Phase 1: Component base class and Root layout engine
+- [x] Phase 2: Simple components (Header, Empty, Text, Footer)
+- [x] Phase 3: Tool components (ToolCall, ActivityIndicator)
+- [x] Phase 4: Message containers (UserMessage, AssistantMessage)
+- [x] Phase 5: Prompt component
+- [x] Phase 6: Integration (tree initialized in main.ts)
+- [x] Phase 7: Menu component
+
+### Pending
+- [ ] Phase 8: Cleanup deprecated display functions (optional - existing code works alongside new framework)
+
+## Key Learnings
+
+### Design Patterns
+1. **Component tree approach** - Works well for CLI rendering. Each component knows its height and renders to string array.
+2. **Central animation manager** - Root handles all animation intervals, making cleanup reliable.
+3. **Position caching** - Root tracks positions to enable incremental updates without full redraws.
+4. **Utility module (tree.ts)** - Provides convenience functions, making the framework easier to use.
+
+### Implementation Notes
+1. **Incremental migration** - Framework can coexist with existing display code. No need for big-bang rewrite.
+2. **Testing** - 160 unit tests for components ensure reliability.
+3. **Line insertion/deletion** - The key `updateComponent()` method in Root handles this automatically.
+4. **TypeScript** - Strong typing helps catch errors early.
+
+### Files Created
+- `src/cli/components/` - Component implementations
+- `src/cli/tree.ts` - Tree utility functions
+- `tests/unit/cli/components/` - Unit tests
