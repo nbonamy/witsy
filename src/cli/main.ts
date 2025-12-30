@@ -9,6 +9,7 @@ import { clearFooter, displayFooter, grayText, padContent, resetDisplay } from '
 import { promptInput } from './input'
 import { selectOption } from './select'
 import { state } from './state'
+import { initializeTree } from './tree'
 
 // Parse command line arguments
 function parseCliArgs() {
@@ -74,6 +75,10 @@ async function main() {
   process.stdout.write(ansiEscapes.clearTerminal)
 
   await initialize()
+
+  // Initialize component tree (for future use)
+  // The tree is now available via state.componentTree
+  initializeTree()
 
   // Main input loop
   while (true) {
