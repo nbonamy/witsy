@@ -44,3 +44,23 @@ export type FileStats = {
   modifiedAt: number
   createdAt: number
 }
+
+export type SearchMatch = {
+  file: string
+  line: number
+  content: string
+  isMatch: boolean  // true for actual match, false for context line
+}
+
+export type SearchOptions = {
+  glob?: string
+  caseInsensitive?: boolean
+  contextLines?: number
+  maxResults?: number
+}
+
+export type SearchResult = {
+  matches: SearchMatch[]
+  filesSearched: number
+  truncated: boolean
+}

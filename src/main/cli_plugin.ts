@@ -4,6 +4,7 @@
 import * as fs from 'fs'
 import { Plugin, PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import * as path from 'path'
+import { searchContent } from './file'
 import { analyzeCommand, executeCommand as shellExecuteCommand } from './shell'
 
 // Maximum file size for AI read operations (10,000 tokens × 4 characters per token)
@@ -19,6 +20,7 @@ export interface CliPluginConfig {
 type CliAction =
   | 'list_files'
   | 'read_file'
+  | 'search'
   | 'edit_file'
   | 'write_file'
   | 'create_directory'
@@ -37,6 +39,12 @@ type CliArgs = {
   command?: string
   cwd?: string
   timeout?: number
+  // search parameters
+  pattern?: string
+  glob?: string
+  caseInsensitive?: boolean
+  contextLines?: number
+  maxResults?: number
 }
 
 type CliResponse = {
@@ -48,6 +56,7 @@ type CliResponse = {
   linesRead?: number
   linesModified?: number
   fileCount?: number
+  matchCount?: number
   stdout?: string
   stderr?: string
   exitCode?: number
@@ -82,7 +91,7 @@ export default class CliPlugin extends Plugin {
     return [{
       name: 'action',
       type: 'string',
-      enum: ['read_file', 'list_files', 'run_command', ...writeActions],
+      enum: ['read_file', 'list_files', 'search', 'run_command', ...writeActions],
       description: 'The operation to perform',
       required: true,
     }, {
@@ -130,6 +139,31 @@ export default class CliPlugin extends Plugin {
       type: 'number',
       description: 'Timeout in milliseconds for run_command (default: 15000, max: 60000)',
       required: false,
+    }, {
+      name: 'pattern',
+      type: 'string',
+      description: 'Search pattern - regular expression (for search)',
+      required: false,
+    }, {
+      name: 'glob',
+      type: 'string',
+      description: 'File pattern filter, e.g., "*.ts" or "**/*.js" (for search)',
+      required: false,
+    }, {
+      name: 'caseInsensitive',
+      type: 'boolean',
+      description: 'Case insensitive search (for search, default: false)',
+      required: false,
+    }, {
+      name: 'contextLines',
+      type: 'number',
+      description: 'Number of context lines before and after each match (for search, default: 0)',
+      required: false,
+    }, {
+      name: 'maxResults',
+      type: 'number',
+      description: 'Maximum number of matches to return (for search, default: 100)',
+      required: false,
     }]
   }
 
@@ -143,6 +177,8 @@ export default class CliPlugin extends Plugin {
         return `Read(${args.path})`
       case 'list_files':
         return `List(${args.path})`
+      case 'search':
+        return `Search(${args.pattern}${args.glob ? `, ${args.glob}` : ''})`
       case 'edit_file':
         return `Edit(${args.path})`
       case 'write_file':
@@ -182,6 +218,26 @@ export default class CliPlugin extends Plugin {
           return `${header}\n${formattedLines}`
         } else {
           return `${header}\n  └ Failed to list directory`
+        }
+
+      case 'search':
+        if (results.success) {
+          const count = results.matchCount || 0
+          const suffix = count === 1 ? 'match' : 'matches'
+          if (count === 0) {
+            return `${header}\n  └ No matches found`
+          }
+          // Show first few results
+          const lines = results.content?.split('\n') || []
+          const formattedLines = lines.slice(0, 3).map((line, i) => {
+            if (i === 0) return `  └ ${line}`
+            return `    ${line}`
+          }).join('\n')
+          const moreCount = lines.length > 3 ? lines.length - 3 : 0
+          const moreText = moreCount > 0 ? `\n    ... +${moreCount} more ${suffix}` : ''
+          return `${header}\n${formattedLines}${moreText}`
+        } else {
+          return `${header}\n  └ Search failed`
         }
 
       case 'edit_file':
@@ -331,6 +387,36 @@ export default class CliPlugin extends Plugin {
             return { success: false, error: 'Missing path parameter' }
           }
           return this.listFiles(parameters.path)
+
+        case 'search': {
+          if (!parameters.pattern) {
+            return { success: false, error: 'Missing pattern parameter' }
+          }
+          const searchPath = this.validatePath(parameters.path || '.')
+          if (!searchPath) {
+            return { success: false, error: `Path not allowed: ${parameters.path}` }
+          }
+          if (!fs.existsSync(searchPath)) {
+            return { success: false, error: `Path not found: ${parameters.path}` }
+          }
+          const result = searchContent(searchPath, parameters.pattern, {
+            glob: parameters.glob,
+            caseInsensitive: parameters.caseInsensitive,
+            contextLines: parameters.contextLines,
+            maxResults: parameters.maxResults
+          })
+          // Format matches as grep-like output
+          const content = result.matches.map(m => {
+            const prefix = m.isMatch ? '' : ' '
+            return `${m.file}:${m.line}:${prefix}${m.content}`
+          }).join('\n')
+          return {
+            success: true,
+            content,
+            matchCount: result.matches.filter(m => m.isMatch).length,
+            fileCount: result.filesSearched
+          }
+        }
 
         case 'edit_file':
           if (this.config.workDirAccess !== 'rw') {

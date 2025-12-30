@@ -333,6 +333,153 @@ describe('CliPlugin', () => {
     })
   })
 
+  describe('search', () => {
+    test('finds pattern in files', async () => {
+      fs.writeFileSync(path.join(tempDir, 'file1.txt'), 'hello world\nfoo bar')
+      fs.writeFileSync(path.join(tempDir, 'file2.txt'), 'goodbye world')
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search',
+        pattern: 'world'
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.matchCount).toBe(2)
+      expect(result.content).toContain('file1.txt:1:hello world')
+      expect(result.content).toContain('file2.txt:1:goodbye world')
+    })
+
+    test('searches in specific path', async () => {
+      fs.mkdirSync(path.join(tempDir, 'subdir'))
+      fs.writeFileSync(path.join(tempDir, 'root.txt'), 'hello')
+      fs.writeFileSync(path.join(tempDir, 'subdir', 'nested.txt'), 'hello')
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search',
+        pattern: 'hello',
+        path: 'subdir'
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.matchCount).toBe(1)
+      expect(result.content).toContain('nested.txt')
+      expect(result.content).not.toContain('root.txt')
+    })
+
+    test('filters by glob pattern', async () => {
+      fs.writeFileSync(path.join(tempDir, 'file.txt'), 'test content')
+      fs.writeFileSync(path.join(tempDir, 'file.js'), 'test content')
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search',
+        pattern: 'test',
+        glob: '*.txt'
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.matchCount).toBe(1)
+      expect(result.content).toContain('file.txt')
+      expect(result.content).not.toContain('file.js')
+    })
+
+    test('case insensitive search', async () => {
+      fs.writeFileSync(path.join(tempDir, 'test.txt'), 'Hello World\nHELLO world')
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search',
+        pattern: 'hello',
+        caseInsensitive: true
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.matchCount).toBe(2)
+    })
+
+    test('case sensitive search by default', async () => {
+      fs.writeFileSync(path.join(tempDir, 'test.txt'), 'Hello World\nhello world')
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search',
+        pattern: 'hello'
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.matchCount).toBe(1)
+      expect(result.content).toContain('hello world')
+      expect(result.content).not.toContain('Hello')
+    })
+
+    test('respects maxResults limit', async () => {
+      fs.writeFileSync(path.join(tempDir, 'test.txt'), 'match\nmatch\nmatch\nmatch\nmatch')
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search',
+        pattern: 'match',
+        maxResults: 2
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.matchCount).toBe(2)
+    })
+
+    test('includes context lines', async () => {
+      fs.writeFileSync(path.join(tempDir, 'test.txt'), 'line1\nline2\nmatch\nline4\nline5')
+
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search',
+        pattern: 'match',
+        contextLines: 1
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.content).toContain('line2')
+      expect(result.content).toContain('match')
+      expect(result.content).toContain('line4')
+    })
+
+    test('fails on invalid regex', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search',
+        pattern: '[invalid'
+      })
+
+      // Returns empty result rather than error for invalid regex
+      expect(result.success).toBe(true)
+      expect(result.matchCount).toBe(0)
+    })
+
+    test('fails on path outside workDir', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search',
+        pattern: 'test',
+        path: '/etc'
+      })
+
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('not allowed')
+    })
+
+    test('fails on non-existent path', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search',
+        pattern: 'test',
+        path: 'nonexistent'
+      })
+
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('not found')
+    })
+
+    test('requires pattern parameter', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'search'
+      })
+
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Missing pattern')
+    })
+  })
+
   describe('write_file', () => {
     test('creates new file', async () => {
       const result = await plugin.execute({ model: 'test' }, {
