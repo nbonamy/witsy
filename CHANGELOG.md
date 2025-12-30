@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - CLI filesystem access and tool display fixes
+- SearXNG support
 
 ### Changed
 - N/A
