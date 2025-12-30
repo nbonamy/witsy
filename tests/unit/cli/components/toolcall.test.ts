@@ -1,0 +1,163 @@
+import { expect, test, describe } from 'vitest'
+import { ToolCall } from '../../../../src/cli/components/toolcall'
+
+describe('ToolCall', () => {
+
+  describe('constructor', () => {
+    test('uses provided id', () => {
+      const tool = new ToolCall('tool-1', 'test_tool(args)')
+      expect(tool.id).toBe('tool-1')
+    })
+
+    test('stores initial status', () => {
+      const tool = new ToolCall('tool-1', 'my_tool(arg1, arg2)')
+      expect(tool.getStatus()).toBe('my_tool(arg1, arg2)')
+    })
+
+    test('starts in running state', () => {
+      const tool = new ToolCall('tool-1', 'test')
+      expect(tool.getState()).toBe('running')
+      expect(tool.isCompleted()).toBe(false)
+    })
+  })
+
+  describe('status management', () => {
+    test('updateStatus changes status', () => {
+      const tool = new ToolCall('tool-1', 'initial')
+      tool.updateStatus('updated')
+      expect(tool.getStatus()).toBe('updated')
+    })
+
+    test('updateStatus marks dirty', () => {
+      const tool = new ToolCall('tool-1', 'initial')
+      tool.clearDirty()
+
+      tool.updateStatus('updated')
+
+      expect(tool.isDirty()).toBe(true)
+    })
+
+    test('updateStatus same value does not mark dirty', () => {
+      const tool = new ToolCall('tool-1', 'same')
+      tool.clearDirty()
+
+      tool.updateStatus('same')
+
+      expect(tool.isDirty()).toBe(false)
+    })
+  })
+
+  describe('completion', () => {
+    test('complete sets completed state', () => {
+      const tool = new ToolCall('tool-1', 'running')
+
+      tool.complete('completed')
+
+      expect(tool.getState()).toBe('completed')
+      expect(tool.isCompleted()).toBe(true)
+    })
+
+    test('complete sets error state', () => {
+      const tool = new ToolCall('tool-1', 'running')
+
+      tool.complete('error')
+
+      expect(tool.getState()).toBe('error')
+      expect(tool.isCompleted()).toBe(true)
+    })
+
+    test('complete with final status updates status', () => {
+      const tool = new ToolCall('tool-1', 'running')
+
+      tool.complete('completed', 'final result')
+
+      expect(tool.getStatus()).toBe('final result')
+    })
+
+    test('complete marks dirty', () => {
+      const tool = new ToolCall('tool-1', 'running')
+      tool.clearDirty()
+
+      tool.complete('completed')
+
+      expect(tool.isDirty()).toBe(true)
+    })
+  })
+
+  describe('animation', () => {
+    test('advanceAnimation marks dirty when running', () => {
+      const tool = new ToolCall('tool-1', 'running')
+      tool.clearDirty()
+
+      tool.advanceAnimation()
+
+      expect(tool.isDirty()).toBe(true)
+    })
+
+    test('advanceAnimation does nothing when completed', () => {
+      const tool = new ToolCall('tool-1', 'running')
+      tool.complete('completed')
+      tool.clearDirty()
+
+      tool.advanceAnimation()
+
+      expect(tool.isDirty()).toBe(false)
+    })
+  })
+
+  describe('height calculation', () => {
+    test('single line status returns 1', () => {
+      const tool = new ToolCall('tool-1', 'single line')
+      expect(tool.calculateHeight(80)).toBe(1)
+    })
+
+    test('multi-line status returns correct count', () => {
+      const tool = new ToolCall('tool-1', 'line1\nline2\nline3')
+      expect(tool.calculateHeight(80)).toBe(3)
+    })
+  })
+
+  describe('rendering', () => {
+    test('renders tool name in bold', () => {
+      const tool = new ToolCall('tool-1', 'my_tool(arg)')
+      const lines = tool.render(80)
+
+      // Check that output contains the tool name
+      expect(lines[0]).toContain('my_tool')
+    })
+
+    test('renders multiple lines', () => {
+      const tool = new ToolCall('tool-1', 'tool()\n  detail1\n  detail2')
+      const lines = tool.render(80)
+
+      expect(lines.length).toBe(3)
+    })
+
+    test('truncates long detail lines', () => {
+      const longDetail = 'a'.repeat(200)
+      const tool = new ToolCall('tool-1', `tool()\n${longDetail}`)
+      const lines = tool.render(80)
+
+      // Detail line should be truncated with ellipsis
+      expect(lines[1].length).toBeLessThanOrEqual(80)
+    })
+
+    test('completed state shows success prefix', () => {
+      const tool = new ToolCall('tool-1', 'tool()')
+      tool.complete('completed')
+      const lines = tool.render(80)
+
+      // Should have success colored ⏺
+      expect(lines[0]).toContain('⏺')
+    })
+
+    test('error state shows error prefix', () => {
+      const tool = new ToolCall('tool-1', 'tool()')
+      tool.complete('error')
+      const lines = tool.render(80)
+
+      // Should have error colored ⏺
+      expect(lines[0]).toContain('⏺')
+    })
+  })
+})
