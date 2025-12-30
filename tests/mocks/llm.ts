@@ -115,7 +115,7 @@ export default class LlmMock extends LlmEngine {
   async stop() {
   }
 
-  async *nativeChunkToLlmChunk(chunk: any): AsyncGenerator<LlmChunk, void, void> {
+  async *processNativeChunk(chunk: any): AsyncGenerator<LlmChunk, void, void> {
     if (chunk.toString('utf8') == '<DONE>') {
       yield {
         type: 'content',
