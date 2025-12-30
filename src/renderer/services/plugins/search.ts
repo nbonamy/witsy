@@ -44,7 +44,8 @@ export default class extends Plugin {
       (this.config.engine == 'brave' && this.config.braveApiKey?.trim().length > 0) ||
       (this.config.engine == 'exa' && this.config.exaApiKey?.trim().length > 0) ||
       (this.config.engine == 'perplexity' && this.config.perplexityApiKey?.trim().length > 0) ||
-      (this.config.engine == 'tavily' && this.config.tavilyApiKey?.trim().length > 0)
+      (this.config.engine == 'tavily' && this.config.tavilyApiKey?.trim().length > 0) ||
+      (this.config.engine == 'searxng' && this.config.searxngUrl?.trim().length > 0)
     )
   }
 
@@ -113,6 +114,8 @@ export default class extends Plugin {
       response = await this.perplexity(context, parameters, maxResults)
     } else if (this.config.engine === 'tavily') {
       response = await this.tavily(context, parameters, maxResults)
+    } else if (this.config.engine === 'searxng') {
+      response = await this.searxng(context, parameters, maxResults)
     } else {
       response = { error: 'Invalid engine' }
     }
@@ -289,6 +292,45 @@ export default class extends Plugin {
       }
       //console.log('Tavily response:', response)
       return response
+
+    } catch (error) {
+      return { error: error.message }
+    }
+  }
+
+  async searxng(context: PluginExecutionContext, parameters: anyDict, maxResults: number): Promise<SearchResponse> {
+
+    try {
+
+      // build the search URL
+      const baseUrl = this.config.searxngUrl.replace(/\/$/, '')
+      const searchUrl = `${baseUrl}/search?q=${encodeURIComponent(parameters.query)}&format=json`
+
+      const response = await this.runWithAbort(
+        fetch(searchUrl, {
+          headers: {
+            'Accept': 'application/json',
+          },
+          signal: context.abortSignal
+        }),
+        context.abortSignal
+      )
+
+      const data = await response.json()
+
+      // SearXNG returns results in data.results array
+      // content in SearXNG is often brief, so enrich with full content
+      const results = (data.results || []).slice(0, maxResults)
+      await this.enrichResultsWithContent(results, context)
+
+      return {
+        query: parameters.query,
+        results: results.map((result: any) => ({
+          title: result.title,
+          url: result.url,
+          content: result.content
+        }))
+      }
 
     } catch (error) {
       return { error: error.message }

@@ -18,6 +18,7 @@
         <option value="brave">Brave</option>
         <option value="perplexity">Perplexity</option>
         <option value="tavily">Tavily</option>
+        <option value="searxng">SearXNG</option>
       </select>
     </div>
 
@@ -61,10 +62,18 @@
       </div>
     </div>
 
+    <div class="form-field" v-if="engine == 'searxng'">
+      <label>{{ t('settings.plugins.search.searxngUrl') }}</label>
+      <div class="form-subgroup">
+        <input type="text" v-model="searxngUrl" name="searxngUrl" @change="save" placeholder="https://searxng.example.com" />
+        <p>{{ t('settings.plugins.search.searxngNote') }}</p>
+      </div>
+    </div>
+
     <div class="form-field">
       <label>{{ t('settings.plugins.search.contentLength') }}</label>
       <div class="form-subgroup">
-        <div>{{ t('settings.plugins.search.truncateTo') }}&nbsp; <input type="text" name="contentLength" v-model="contentLength" @change="save" />&nbsp; {{ t('settings.plugins.search.characters') }}</div>
+        <div>{{ t('settings.plugins.search.truncateTo') }}&nbsp; <input type="number" step="100" name="contentLength" v-model="contentLength" @change="save" />&nbsp; {{ t('settings.plugins.search.characters') }}</div>
         <p>{{ t('settings.plugins.search.truncationWarning') }}</p>
       </div>
     </div>
@@ -86,6 +95,7 @@ const braveApiKey = ref(null)
 const exaApiKey = ref(null)
 const perplexityApiKey = ref(null)
 const tavilyApiKey = ref(null)
+const searxngUrl = ref('')
 const localTestResult = ref(null)
 
 const load = () => {
@@ -96,6 +106,7 @@ const load = () => {
   exaApiKey.value = store.config.plugins.search.exaApiKey || ''
   perplexityApiKey.value = store.config.plugins.search.perplexityApiKey || ''
   tavilyApiKey.value = store.config.plugins.search.tavilyApiKey || ''
+  searxngUrl.value = store.config.plugins.search.searxngUrl || ''
 }
 
 const onTestLocal = async () => {
@@ -119,6 +130,7 @@ const save = () => {
   store.config.plugins.search.exaApiKey = exaApiKey.value
   store.config.plugins.search.perplexityApiKey = perplexityApiKey.value
   store.config.plugins.search.tavilyApiKey = tavilyApiKey.value
+  store.config.plugins.search.searxngUrl = searxngUrl.value
   store.saveSettings()
 }
 
@@ -129,8 +141,8 @@ defineExpose({ load })
 
 <style scoped>
 
-.form .form-field .form-subgroup input {
-  width: 40px;
+.form .form-field .form-subgroup input[type=number] {
+  width: 64px;
 }
 
 .success {

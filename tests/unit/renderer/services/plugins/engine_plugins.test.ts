@@ -38,6 +38,22 @@ global.fetch = vi.fn(async (url: string) => {
       },
       blob: () => new Blob([new TextEncoder().encode('pdf')], { type: 'application/pdf' })
     }
+  } else if (url.includes('searxng')) {
+    // SearXNG response format
+    return {
+      url,
+      ok: true,
+      headers: {
+        // @ts-expect-error mock
+        get: () => 'application/json',
+      },
+      json: () => ({
+        results: [
+          { url: 'url1', title: 'title1', content: 'content1' },
+          { url: 'url2', title: 'title2', content: 'content2' }
+        ]
+      })
+    }
   } else {
     return {
       url,
@@ -373,6 +389,25 @@ test('Search Plugin Tavily', async () => {
     ]
   })
   expect(tavily.prototype.search).toHaveBeenLastCalledWith('test', { max_results: 5 })
+  expect(window.api.search.query).not.toHaveBeenCalled()
+})
+
+test('Search Plugin SearXNG', async () => {
+  store.config.plugins.search.engine = 'searxng'
+  store.config.plugins.search.searxngUrl = 'https://searxng.example.com'
+  const search = new Search(store.config.plugins.search, 'test-workspace')
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { url: 'url1', title: 'title1', content: 'fetched_' },
+      { url: 'url2', title: 'title2', content: 'fetched_' }
+    ]
+  })
+  expect(fetch).toHaveBeenCalledWith('https://searxng.example.com/search?q=test&format=json', {
+    headers: {
+      'Accept': 'application/json',
+    }
+  })
   expect(window.api.search.query).not.toHaveBeenCalled()
 })
 
