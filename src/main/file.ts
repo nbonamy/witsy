@@ -9,7 +9,7 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import plist from 'plist';
 import process from 'process';
-import { FileContents, FileDownloadParams, FilePickParams, FileProperties, FileSaveParams, FileStats } from 'types/file';
+import { FileContents, FileDownloadParams, FilePickParams, FileProperties, FileSaveParams, FileStats, SearchMatch, SearchOptions, SearchResult } from 'types/file';
 import { DirectoryItem } from 'types/filesystem';
 import { ExternalApp } from 'types/index';
 
@@ -526,4 +526,137 @@ export const getAppInfo = async (app: App, filepath: string): Promise<ExternalAp
   // too bad
   return null
 
+}
+
+// Directories to skip when searching
+const SKIP_DIRECTORIES = new Set([
+  'node_modules', 'dist', 'build', 'coverage', '.git', '.svn', '.hg'
+])
+
+/**
+ * Find files recursively with glob filtering
+ */
+const findFilesForSearch = (dir: string, globPattern?: string, maxFiles: number = 1000): string[] => {
+  const files: string[] = []
+  const stack: string[] = [dir]
+
+  while (stack.length > 0 && files.length < maxFiles) {
+    const currentDir = stack.pop()!
+
+    let entries: fs.Dirent[]
+    try {
+      entries = fs.readdirSync(currentDir, { withFileTypes: true })
+    } catch {
+      continue
+    }
+
+    for (const entry of entries) {
+      if (files.length >= maxFiles) break
+
+      // Skip hidden files and common non-code directories
+      if (entry.name.startsWith('.') || SKIP_DIRECTORIES.has(entry.name)) {
+        continue
+      }
+
+      const fullPath = path.join(currentDir, entry.name)
+
+      if (entry.isDirectory()) {
+        stack.push(fullPath)
+      } else if (entry.isFile()) {
+        if (globPattern) {
+          const relativePath = path.relative(dir, fullPath)
+          if (!minimatch(relativePath, globPattern, { matchBase: true })) {
+            continue
+          }
+        }
+        files.push(fullPath)
+      }
+    }
+  }
+
+  return files
+}
+
+/**
+ * Search for content inside files
+ */
+export const searchContent = (
+  basePath: string,
+  pattern: string,
+  options: SearchOptions = {}
+): SearchResult => {
+  const { glob, caseInsensitive = false, contextLines = 0, maxResults = 100 } = options
+
+  // Validate regex pattern
+  let regex: RegExp
+  try {
+    regex = new RegExp(pattern, caseInsensitive ? 'gi' : 'g')
+  } catch {
+    return { matches: [], filesSearched: 0, truncated: false }
+  }
+
+  const matches: SearchMatch[] = []
+  let truncated = false
+
+  // Handle file vs directory
+  const stats = fs.statSync(basePath)
+  const files = stats.isFile() ? [basePath] : findFilesForSearch(basePath, glob)
+
+  for (const file of files) {
+    if (matches.length >= maxResults) {
+      truncated = true
+      break
+    }
+
+    let content: string
+    try {
+      content = fs.readFileSync(file, 'utf-8')
+    } catch {
+      continue
+    }
+
+    // Skip binary files
+    if (content.includes('\0')) continue
+
+    const lines = content.split('\n')
+    const relativePath = path.relative(basePath, file)
+    const displayPath = relativePath || path.basename(file)
+
+    for (let i = 0; i < lines.length; i++) {
+      if (matches.length >= maxResults) {
+        truncated = true
+        break
+      }
+
+      regex.lastIndex = 0
+      if (regex.test(lines[i])) {
+        if (contextLines > 0) {
+          const startLine = Math.max(0, i - contextLines)
+          const endLine = Math.min(lines.length - 1, i + contextLines)
+
+          for (let j = startLine; j <= endLine; j++) {
+            matches.push({
+              file: displayPath,
+              line: j + 1,
+              content: lines[j],
+              isMatch: j === i
+            })
+          }
+        } else {
+          matches.push({
+            file: displayPath,
+            line: i + 1,
+            content: lines[i],
+            isMatch: true
+          })
+        }
+      }
+    }
+  }
+
+  return {
+    matches,
+    filesSearched: files.length,
+    truncated
+  }
 }
