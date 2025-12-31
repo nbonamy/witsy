@@ -3,13 +3,61 @@
 import ansiEscapes from 'ansi-escapes'
 import chalk from 'chalk'
 import { parseArgs } from 'node:util'
-import { COMMANDS, handleClear, handleCommand, handleMessage, handleQuit, initialize } from './commands'
+import { COMMANDS, CommandResult, executeCommand, handleMessage, handleQuit, initialize } from './commands'
 import { saveCliConfig } from './config'
 import { clearFooter, displayFooter, grayText, padContent, resetDisplay } from './display'
 import { promptInput } from './input'
 import { selectOption } from './select'
 import { state } from './state'
-import { initializeTree, addUserMessage, renderTree } from './tree'
+import { initializeTree, addUserMessage, renderTree, getTree, StatusText } from './tree'
+
+// Handle command result - returns true if should continue loop, false if should exit
+async function handleCommandResult(result: CommandResult): Promise<boolean> {
+  // Show notification via StatusText
+  if (result.notification) {
+    const tree = getTree()
+    const status = tree.find('status') as StatusText | null
+    if (status) {
+      // Format notification with color
+      const message = result.notification.type === 'error'
+        ? chalk.red(`✗ ${result.notification.message}`)
+        : result.notification.type === 'success'
+          ? chalk.yellow(`✓ ${result.notification.message}`)
+          : chalk.dim(result.notification.message)
+      status.setRightText(message)
+    }
+  }
+
+  // Display content if provided (for help, history, etc.)
+  if (result.content) {
+    // For now, just print to console - later could be a component
+    for (const line of result.content) {
+      console.log(line)
+    }
+  }
+
+  // Handle actions
+  if (result.action === 'quit') {
+    console.log(chalk.yellow('\n  Goodbye! 👋'))
+    process.exit(0)
+  }
+
+  if (result.action === 'retry' && result.retryContent) {
+    // Redraw without the removed messages
+    renderTree()
+    // Re-send the message
+    addUserMessage(result.retryContent)
+    renderTree()
+    await handleMessage(result.retryContent)
+    renderTree()
+  }
+
+  if (result.action === 'redraw') {
+    renderTree()
+  }
+
+  return true
+}
 
 // Parse command line arguments
 function parseCliArgs() {
@@ -90,15 +138,18 @@ async function main() {
 
       // Handle Ctrl+C (always exit)
       if (userInput === '__CTRL_C__') {
-        handleQuit()
+        const result = handleQuit()
+        await handleCommandResult(result)
       }
 
       // Handle Ctrl+D (clear if messages exist, else exit)
       if (userInput === '__CTRL_D__') {
         if (state.chat.messages.length > 0) {
-          await handleClear()
+          const result = await executeCommand('clear')
+          await handleCommandResult(result)
         } else {
-          handleQuit()
+          const result = handleQuit()
+          await handleCommandResult(result)
         }
         continue
       }
@@ -115,6 +166,8 @@ async function main() {
 
       // Handle commands
       if (trimmed.startsWith('/')) {
+        let commandToExecute: string
+
         // If just "/", show command selector
         if (trimmed === '/') {
           const selectedCommand = await selectOption({
@@ -124,16 +177,19 @@ async function main() {
 
           // If empty (cancelled), just redraw and continue
           if (!selectedCommand) {
-            resetDisplay()
+            renderTree()
             continue
           }
 
-          // selectOption returns value field, need to prepend "/"
-          await handleCommand('/' + selectedCommand)
+          commandToExecute = selectedCommand
         } else {
-          await handleCommand(trimmed)
+          // Extract command from "/command args"
+          commandToExecute = trimmed.slice(1).split(' ')[0].toLowerCase()
         }
-        // displayFooter already called by handleCommand redraw
+
+        // Execute command and handle result
+        const result = await executeCommand(commandToExecute)
+        await handleCommandResult(result)
         continue
       }
 
@@ -180,7 +236,8 @@ async function main() {
 
 // Handle Ctrl+C gracefully
 process.on('SIGINT', () => {
-  handleQuit()
+  const result = handleQuit()
+  handleCommandResult(result)
 })
 
 // Run
