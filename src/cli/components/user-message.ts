@@ -20,15 +20,12 @@ export class UserMessage extends Component {
     return this.textComponent.getContent()
   }
 
-  // Height is text height + 1 blank line after
+  // Height is just text height (Text includes its own trailing blank)
   calculateHeight(width: number): number {
-    return this.textComponent.calculateHeight(width) + 1
+    return this.textComponent.calculateHeight(width)
   }
 
   render(width: number): string[] {
-    const lines = this.textComponent.render(width)
-    // Add blank line after message
-    lines.push('')
-    return lines
+    return this.textComponent.render(width)
   }
 }

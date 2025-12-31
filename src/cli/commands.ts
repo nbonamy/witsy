@@ -4,12 +4,23 @@ import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
-import { activeToolStates, addTool, clearFooter, clearToolsDisplay, completeTool, displayConversation, displayFooter, grayText, initToolsDisplay, padContent, resetDisplay, startPulseAnimation, startToolsAnimation, stopPulseAnimation, stopToolsAnimation, updateToolStatus } from './display'
+import { clearFooter, displayConversation, displayFooter, grayText, padContent, resetDisplay } from './display'
 import { applyFolderAccess, getFolderAccessLabel, promptFolderAccess } from './folder'
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
 import { selectOption } from './select'
 import { state, WorkDirAccess } from './state'
+import {
+  showActivity,
+  hideActivity,
+  addAssistantMessage,
+  renderComponent,
+  renderFromComponent,
+  getTree,
+  AssistantMessage,
+  Text,
+  ToolCall,
+} from './tree'
 
 const term = terminalKit.terminal
 
@@ -383,103 +394,12 @@ export async function handleHistory() {
   displayConversation()
 }
 
-// Helper class to handle streaming content with padding
-class StreamPadder {
-  private buffer = ''
-  private isFirstLine = true
-  private terminalWidth: number
-
-  constructor() {
-    this.terminalWidth = process.stdout.columns || 80
-  }
-
-  write(text: string): void {
-    this.buffer += text
-
-    // Process complete lines (those ending with \n)
-    const lines = this.buffer.split('\n')
-
-    // Keep the last incomplete line in the buffer
-    this.buffer = lines.pop() || ''
-
-    // Output complete lines with padding
-    for (const line of lines) {
-      const paddedLine = this.padLine(line, this.isFirstLine)
-      process.stdout.write(paddedLine + '\n')
-      this.isFirstLine = false
-    }
-  }
-
-  flush(): void {
-    // Output any remaining content in buffer
-    if (this.buffer.length > 0) {
-      const paddedLine = this.padLine(this.buffer, this.isFirstLine)
-      process.stdout.write(paddedLine)
-      this.buffer = ''
-      this.isFirstLine = false
-    }
-  }
-
-  resetFirstLine(): void {
-    this.isFirstLine = true
-  }
-
-  private padLine(line: string, isFirstLine: boolean = false): string {
-    const maxLineWidth = this.terminalWidth - 4
-    const words = line.split(' ')
-    const paddedLines: string[] = []
-    let currentLine = ''
-    let firstLineProcessed = false
-
-    for (const word of words) {
-      // If word alone is longer than maxLineWidth, break it
-      if (word.length > maxLineWidth) {
-        // Flush current line if not empty
-        if (currentLine) {
-          const prefix = isFirstLine && !firstLineProcessed ? '⏺ ' : '  '
-          paddedLines.push(`${prefix}${currentLine.trimEnd()}  `)
-          firstLineProcessed = true
-          currentLine = ''
-        }
-        // Break long word into chunks
-        for (let i = 0; i < word.length; i += maxLineWidth) {
-          const prefix = isFirstLine && !firstLineProcessed ? '⏺ ' : '  '
-          paddedLines.push(`${prefix}${word.slice(i, i + maxLineWidth)}  `)
-          firstLineProcessed = true
-        }
-        continue
-      }
-
-      // Try adding word to current line
-      const testLine = currentLine ? `${currentLine} ${word}` : word
-
-      if (testLine.length <= maxLineWidth) {
-        currentLine = testLine
-      } else {
-        // Line would be too long, flush current line and start new one
-        const prefix = isFirstLine && !firstLineProcessed ? '⏺ ' : '  '
-        paddedLines.push(`${prefix}${currentLine.trimEnd()}  `)
-        firstLineProcessed = true
-        currentLine = word
-      }
-    }
-
-    // Flush remaining line
-    if (currentLine) {
-      const prefix = isFirstLine && !firstLineProcessed ? '⏺ ' : '  '
-      paddedLines.push(`${prefix}${currentLine.trimEnd()}  `)
-    }
-
-    return paddedLines.join('\n')
-  }
-}
-
 export async function handleMessage(message: string) {
 
   // Update chat engine/model before each message (user can change model mid-conversation)
   state.chat.setEngineModel(state.engine?.id || '', state.model?.id || '')
 
-  // Create and add user message
+  // Create and add user message to state
   const userMessage = new MessageCli('user', message)
   userMessage.engine = state.engine?.id || ''
   userMessage.model = state.model?.id || ''
@@ -488,24 +408,24 @@ export async function handleMessage(message: string) {
   // Setup abort controller for cancellation
   const controller = new AbortController()
   let cancelled = false
-  let response = '' // Declare here so it's accessible in catch block
+  let response = ''
+
+  // Component tree state
+  let assistantMsg: AssistantMessage | null = null
+  let currentTextComponent: Text | null = null
+  const toolComponents = new Map<string, ToolCall>()
 
   // Use terminal-kit to grab input for escape key handling
   let keyHandler: any = null
-  let animationInterval: NodeJS.Timeout | null = null
-  let toolsAnimationInterval: NodeJS.Timeout | null = null
-  const activeToolIds = new Set<string>()
 
   try {
 
     let inReasoning = false
-    let lastOutput: 'none' | 'content' | 'tool' = 'none'
     let firstChunk = true
-    const streamPadder = new StreamPadder()
 
-    // Start loading animation
+    // Start loading animation using component tree
     const loadingVerb = loadingVerbs[Math.floor(Math.random() * loadingVerbs.length)]
-    animationInterval = startPulseAnimation(`${loadingVerb}… ` + grayText('(esc to interrupt)'))
+    showActivity(`${loadingVerb}… ` + grayText('(esc to interrupt)'))
 
     // Grab input using terminal-kit and listen for Escape or Ctrl+C to interrupt
     term.grabInput(true)
@@ -516,130 +436,110 @@ export async function handleMessage(message: string) {
       }
     })
 
-    // Build thread for API (convert to simple format for /api/complete)
+    // Build thread for API
     const thread = state.chat.messages.map(msg => ({
       role: msg.role,
       content: msg.content
     }))
 
-    // Stream assistant response (no prefix, just content in white/default color)
+    // Stream assistant response
     await api.complete(thread, (payload: string) => {
 
       const chunk: LlmChunk = JSON.parse(payload)
 
       // Stop loading animation on first chunk
       if (firstChunk) {
-        stopPulseAnimation(animationInterval)
-        animationInterval = null
-        process.stdout.write(ansiEscapes.cursorTo(0))
-        process.stdout.write(ansiEscapes.eraseLine)
+        hideActivity()
         firstChunk = false
+
+        // Create assistant message component
+        assistantMsg = addAssistantMessage()
+        renderFromComponent(assistantMsg.id)
       }
 
       if (chunk.type === 'reasoning') {
         if (!inReasoning) {
           const thinkingVerb = thinkingVerbs[Math.floor(Math.random() * thinkingVerbs.length)]
-          animationInterval = startPulseAnimation(`${thinkingVerb}…`)
+          showActivity(`${thinkingVerb}…`)
         }
         inReasoning = true
         return
       }
 
       if (inReasoning) {
-        stopPulseAnimation(animationInterval)
-        animationInterval = null
-        process.stdout.write(ansiEscapes.cursorTo(0))
-        process.stdout.write(ansiEscapes.eraseLine)
+        hideActivity()
         inReasoning = false
       }
 
-      if (chunk.type === 'content') {
+      if (chunk.type === 'content' && assistantMsg) {
 
         // Skip empty/whitespace-only content chunks entirely
         if (!chunk.text?.trim()) return
 
-        // Complete any pending tools before switching to content output
-        // This ensures tools are finalized before content is displayed
-        if (activeToolIds.size > 0) {
-          for (const toolId of activeToolIds) {
-            const toolState = activeToolStates.get(toolId)
-            const finalStatus = toolState?.status || 'Processing...'
-            completeTool(toolId, 'completed', finalStatus)
-          }
-          activeToolIds.clear()
-        }
-
-        // Stop tools animation if running (content takes over display)
-        // This prevents cursor position issues when content is interspersed with tools
-        if (toolsAnimationInterval) {
-          stopToolsAnimation(toolsAnimationInterval)
-          toolsAnimationInterval = null
-          clearToolsDisplay()
-        }
-
-        // Add blank line when transitioning from tool to content
-        if (lastOutput === 'tool') {
-          console.log()
-          streamPadder.resetFirstLine()
-        }
-        lastOutput = 'content'
-
         response += chunk.text
-        streamPadder.write(chunk.text)
 
-      } else if (chunk.type === 'tool') {
+        // Get or create text component
+        if (!currentTextComponent) {
+          currentTextComponent = assistantMsg.addText('')
+        }
+
+        // Append content and re-render
+        currentTextComponent.appendContent(chunk.text)
+        renderComponent(assistantMsg.id)
+
+      } else if (chunk.type === 'tool' && assistantMsg) {
 
         const toolId = chunk.id
 
         // Handle new tool appearing
-        if (!activeToolIds.has(toolId)) {
-          if (activeToolIds.size === 0) {
-            // First tool - handle transition from content/previous tools
-            streamPadder.flush()
-            if (lastOutput === 'content') {
-              // Content doesn't end with newline, so need 2: one to end line, one for blank
-              console.log()
-              console.log()
-            } else if (lastOutput === 'tool') {
-              // Previous tool batch ended, add blank line
-              console.log()
-            }
-            initToolsDisplay()
-            toolsAnimationInterval = startToolsAnimation()
+        if (!toolComponents.has(toolId)) {
+          const tree = getTree()
+          const tool = assistantMsg.addToolCall(toolId, chunk.status || 'Processing...')
+          toolComponents.set(toolId, tool)
+
+          // Start tool animation if not already running
+          if (!tree.hasAnimation('tools')) {
+            tree.startAnimation('tools', () => {
+              for (const [, t] of toolComponents) {
+                if (!t.isCompleted()) {
+                  t.advanceAnimation()
+                }
+              }
+              if (assistantMsg) {
+                renderComponent(assistantMsg.id)
+              }
+            }, 150)
           }
-          activeToolIds.add(toolId)
-          addTool(toolId, chunk.status || 'Processing...')
+
+          renderComponent(assistantMsg.id)
         } else {
           // Update existing tool status
-          updateToolStatus(toolId, chunk.status || 'Processing...')
+          const tool = toolComponents.get(toolId)!
+          tool.updateStatus(chunk.status || 'Processing...')
+          renderComponent(assistantMsg.id)
         }
 
         // Handle tool completion
         if (chunk.done) {
-          // Override state to 'error' if status indicates failure
-          const finalState = isToolError(chunk.status)
-            ? 'error'
-            : (chunk.state || 'completed')
-          completeTool(toolId, finalState, chunk.status || 'Done')
-          activeToolIds.delete(toolId)
+          const tool = toolComponents.get(toolId)!
+          const finalState = isToolError(chunk.status) ? 'error' : 'completed'
+          tool.complete(finalState, chunk.status || 'Done')
+          renderComponent(assistantMsg.id)
 
           // Check if all tools are done
-          if (activeToolIds.size === 0) {
-            stopToolsAnimation(toolsAnimationInterval)
-            toolsAnimationInterval = null
-            clearToolsDisplay()
-            lastOutput = 'tool'
+          const allDone = Array.from(toolComponents.values()).every(t => t.isCompleted())
+          if (allDone) {
+            getTree().stopAnimation('tools')
           }
         }
 
+        // Reset text component so next content creates a new one after tools
+        currentTextComponent = null
       }
 
     }, controller.signal)
 
-    // Flush any remaining buffered content
-    streamPadder.flush()
-
-    // Create and add assistant response (if we got any content)
+    // Create and add assistant response to state (if we got any content)
     if (response.length > 0) {
       const assistantMessage = new MessageCli('assistant', response)
       assistantMessage.engine = state.engine?.id || ''
@@ -647,15 +547,12 @@ export async function handleMessage(message: string) {
       state.chat.addMessage(assistantMessage)
     }
 
-    // Blank line after response
-    console.log('\n')
-
     // Auto-save if chat has been saved before
     if (state.chat.uuid) {
       try {
         await api.saveConversation(state.chat)
       } catch {
-        console.log(chalk.dim('(Auto-save failed)'))
+        // Ignore save errors
       }
     }
 
@@ -663,8 +560,6 @@ export async function handleMessage(message: string) {
 
     // Handle cancellation
     if (cancelled || (error instanceof Error && error.name === 'AbortError')) {
-      console.log(chalk.yellow('\n(Cancelled)\n'))
-
       // Keep partial response if we got any
       if (response && response.length > 0) {
         const assistantMessage = new MessageCli('assistant', response)
@@ -677,34 +572,41 @@ export async function handleMessage(message: string) {
           try {
             await api.saveConversation(state.chat)
           } catch {
-            console.log(chalk.dim('(Auto-save failed)'))
+            // Ignore save errors
           }
         }
       } else {
         // No response - remove user message
         state.chat.messages.pop()
+
+        // Remove assistant message component if it was added
+        if (assistantMsg) {
+          getTree().removeChild(assistantMsg)
+        }
       }
     } else {
-      console.log(chalk.red(`\nError: ${error instanceof Error ? error.message : 'Unknown error'}`))
-      console.log(chalk.dim('Make sure Witsy is running\n'))
-
       // Remove the user message we just added
       state.chat.messages.pop()
+
+      // Remove assistant message component if it was added
+      if (assistantMsg) {
+        getTree().removeChild(assistantMsg)
+      }
     }
 
   } finally {
-    // Complete any outstanding tools before cleanup
-    if (activeToolIds.size > 0) {
-      for (const toolId of activeToolIds) {
-        completeTool(toolId, 'error', 'Tool execution interrupted')
+    // Stop all animations
+    hideActivity()
+    getTree().stopAnimation('tools')
+
+    // Mark all tools as complete if interrupted
+    for (const [, tool] of toolComponents) {
+      if (!tool.isCompleted()) {
+        tool.complete('error', 'Interrupted')
       }
-      activeToolIds.clear()
     }
 
-    // Cleanup: stop animations, ungrab input and remove key listener
-    stopPulseAnimation(animationInterval)
-    stopToolsAnimation(toolsAnimationInterval)
-    clearToolsDisplay()
+    // Cleanup: ungrab input and remove key listener
     if (keyHandler) {
       term.removeListener('key', keyHandler)
     }

@@ -65,9 +65,10 @@ export class ToolCall extends Component {
     }
   }
 
-  calculateHeight(): number {
-    // Count lines in status
-    return this.status.split('\n').length
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  calculateHeight(_width?: number): number {
+    // Count lines in status + trailing blank for spacing
+    return this.status.split('\n').length + 1
   }
 
   render(width: number): string[] {
@@ -94,6 +95,9 @@ export class ToolCall extends Component {
         result.push(chalk.rgb(164, 164, 164)(truncated))
       }
     })
+
+    // Trailing blank for spacing
+    result.push('')
 
     return result
   }

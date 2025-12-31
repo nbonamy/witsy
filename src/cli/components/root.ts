@@ -23,6 +23,115 @@ export class Root extends Component {
     super('root')
   }
 
+  // Override appendChild to set up callbacks
+  appendChild(child: Component): void {
+    super.appendChild(child)
+    child.setSizeChangeCallback(this.handleSizeChange.bind(this))
+    child.setRenderCallback(this.handleRenderRequest.bind(this))
+  }
+
+  // Override removeChild to clean up callbacks
+  removeChild(child: Component): void {
+    child.setSizeChangeCallback(null)
+    child.setRenderCallback(null)
+    super.removeChild(child)
+  }
+
+  // Handle render request from a component
+  private handleRenderRequest(component: Component): void {
+    // Save cursor
+    process.stdout.write(ansiEscapes.cursorSavePosition)
+
+    // Find component's row and re-render it
+    let row = 0
+    for (const child of this.children) {
+      if (child.id === component.id) {
+        const oldHeight = component.getCachedHeight()
+        const lines = component.render(this.termWidth)
+        const newHeight = lines.length
+
+        // Render the component
+        for (let i = 0; i < lines.length; i++) {
+          process.stdout.write(ansiEscapes.cursorTo(0, row + i))
+          process.stdout.write(ansiEscapes.eraseLine)
+          process.stdout.write(lines[i])
+        }
+
+        // If component shrunk, clear extra lines
+        if (newHeight < oldHeight) {
+          for (let i = newHeight; i < oldHeight; i++) {
+            process.stdout.write(ansiEscapes.cursorTo(0, row + i))
+            process.stdout.write(ansiEscapes.eraseLine)
+          }
+        }
+
+        component.setCachedHeight(newHeight)
+        component.clearDirty()
+        break
+      }
+      row += child.getCachedHeight()
+    }
+
+    // Restore cursor
+    process.stdout.write(ansiEscapes.cursorRestorePosition)
+  }
+
+  // Handle size change notification from a component
+  private handleSizeChange(component: Component, oldHeight: number, newHeight: number): void {
+    // Save cursor
+    process.stdout.write(ansiEscapes.cursorSavePosition)
+
+    // Re-render from this component down
+    this.renderFromComponent(component, oldHeight, newHeight)
+
+    // Restore cursor
+    process.stdout.write(ansiEscapes.cursorRestorePosition)
+  }
+
+  // Re-render from a component down (handles height changes)
+  private renderFromComponent(component: Component, oldHeight: number, newHeight: number): void {
+    // Find component's row
+    let startRow = 0
+    let foundComponent = false
+
+    for (const child of this.children) {
+      if (child.id === component.id) {
+        foundComponent = true
+        break
+      }
+      startRow += child.getCachedHeight()
+    }
+
+    if (!foundComponent) return
+
+    // If shrinking, clear extra lines first
+    if (newHeight < oldHeight) {
+      const clearFrom = startRow + newHeight
+      process.stdout.write(ansiEscapes.cursorTo(0, clearFrom))
+      process.stdout.write(ansiEscapes.eraseDown)
+    }
+
+    // Render from this component to end
+    let currentRow = startRow
+    let rendering = false
+
+    for (const child of this.children) {
+      if (child.id === component.id) {
+        rendering = true
+      }
+      if (rendering) {
+        const lines = child.render(this.termWidth)
+        for (const line of lines) {
+          process.stdout.write(ansiEscapes.cursorTo(0, currentRow))
+          process.stdout.write(ansiEscapes.eraseLine)
+          process.stdout.write(line)
+          currentRow++
+        }
+        child.setCachedHeight(lines.length)
+      }
+    }
+  }
+
   // Root doesn't render itself, just its children
   calculateHeight(width: number): number {
     let total = 0

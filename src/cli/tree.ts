@@ -4,8 +4,8 @@ import ansiEscapes from 'ansi-escapes'
 import {
   Root,
   Header,
-  Empty,
-  Footer,
+  Separator,
+  StatusText,
   Prompt,
   UserMessage,
   AssistantMessage,
@@ -16,24 +16,34 @@ import {
 import { state } from './state'
 
 // Initialize the component tree with standard layout
+// Structure: Header (with trailing space) → [Messages] → Separator → Prompt → Separator → StatusText
 export function initializeTree(): Root {
   const root = new Root()
 
-  // Header
+  // Header (includes its own trailing blank line for spacing)
   const header = new Header(state.port)
   root.appendChild(header)
+  header.setCachedHeight(header.calculateHeight())
 
-  // Empty line after header
-  const spacer = new Empty(1, 'spacer')
-  root.appendChild(spacer)
+  // Top separator (above input)
+  const topSeparator = new Separator('separator-top')
+  root.appendChild(topSeparator)
+  topSeparator.setCachedHeight(topSeparator.calculateHeight())
 
-  // Prompt (initially 1 line)
+  // Prompt/Input area (initially 1 line)
   const prompt = new Prompt('> ')
   root.appendChild(prompt)
+  prompt.setCachedHeight(prompt.calculateHeight())
 
-  // Footer (computes its own text from state)
-  const footer = new Footer()
-  root.appendChild(footer)
+  // Bottom separator (below input)
+  const bottomSeparator = new Separator('separator-bottom')
+  root.appendChild(bottomSeparator)
+  bottomSeparator.setCachedHeight(bottomSeparator.calculateHeight())
+
+  // Status text (model info, message count)
+  const status = new StatusText()
+  root.appendChild(status)
+  status.setCachedHeight(status.calculateHeight())
 
   state.componentTree = root
   return root
@@ -47,15 +57,15 @@ export function getTree(): Root {
   return state.componentTree
 }
 
-// Update footer (marks dirty so it re-renders with current state)
-export function updateFooter(inputText?: string): void {
+// Update status text (marks dirty so it re-renders with current state)
+export function updateStatus(inputText?: string): void {
   const tree = getTree()
-  const footer = tree.find('footer') as Footer | null
-  if (footer) {
+  const status = tree.find('status') as StatusText | null
+  if (status) {
     if (inputText !== undefined) {
-      footer.setInputText(inputText)
+      status.setInputText(inputText)
     }
-    footer.markDirty()
+    status.markDirty()
   }
 }
 
@@ -71,8 +81,8 @@ export function renderTree(): void {
   // Rebuild messages from chat state
   rebuildTreeFromMessages()
 
-  // Update footer
-  updateFooter()
+  // Update status
+  updateStatus()
 
   // Render all components
   let currentRow = 0
@@ -85,6 +95,7 @@ export function renderTree(): void {
     }
     child.clearDirty()
     child.setCachedHeight(lines.length)
+    // process.stderr.write(`renderTree: ${child.id} at row ${startRow}, height ${lines.length}\n`)
   }
 
   // Position cursor at the prompt (after the "> ")
@@ -100,42 +111,24 @@ export function renderTree(): void {
   }
 }
 
-// Render footer only (for incremental updates)
-export function renderFooter(): void {
-  const tree = getTree()
-  const footer = tree.find('footer') as Footer | null
-  if (!footer) return
+// Render status area (bottom separator + status text) - for incremental updates
+export function renderStatusArea(): void {
+  // Update status text
+  updateStatus()
 
-  const width = process.stdout.columns || 80
-
-  // Calculate footer position
-  let footerRow = 0
-  for (const child of tree.getChildren()) {
-    if (child.id === 'footer') break
-    footerRow += child.getCachedHeight()
-  }
-
-  // Update footer text
-  updateFooter()
-
-  // Render footer
-  const lines = footer.render(width)
-  for (let i = 0; i < lines.length; i++) {
-    process.stdout.write(ansiEscapes.cursorTo(0, footerRow + i))
-    process.stdout.write(ansiEscapes.eraseLine)
-    process.stdout.write(lines[i])
-  }
+  // renderFromComponent handles cursor save/restore internally
+  renderFromComponent('separator-bottom')
 }
 
-// Add a user message to the tree
+// Add a user message to the tree (before separator-top)
 export function addUserMessage(content: string): UserMessage {
   const tree = getTree()
-  const prompt = tree.find('prompt')
+  const separatorTop = tree.find('separator-top')
 
   const userMsg = new UserMessage(content, `user-${Date.now()}`)
 
-  if (prompt) {
-    tree.insertBefore(userMsg, prompt)
+  if (separatorTop) {
+    tree.insertBefore(userMsg, separatorTop)
   } else {
     tree.appendChild(userMsg)
   }
@@ -143,15 +136,15 @@ export function addUserMessage(content: string): UserMessage {
   return userMsg
 }
 
-// Add an assistant message container to the tree
+// Add an assistant message container to the tree (before separator-top)
 export function addAssistantMessage(): AssistantMessage {
   const tree = getTree()
-  const prompt = tree.find('prompt')
+  const separatorTop = tree.find('separator-top')
 
   const assistantMsg = new AssistantMessage(`assistant-${Date.now()}`)
 
-  if (prompt) {
-    tree.insertBefore(assistantMsg, prompt)
+  if (separatorTop) {
+    tree.insertBefore(assistantMsg, separatorTop)
   } else {
     tree.appendChild(assistantMsg)
   }
@@ -159,26 +152,29 @@ export function addAssistantMessage(): AssistantMessage {
   return assistantMsg
 }
 
-// Show activity indicator
+// Show activity indicator (before separator-top)
 export function showActivity(text: string): ActivityIndicator {
   const tree = getTree()
-  const prompt = tree.find('prompt')
+  const separatorTop = tree.find('separator-top')
 
   // Remove any existing activity indicator
   hideActivity()
 
   const indicator = new ActivityIndicator(text, 'activity')
 
-  if (prompt) {
-    tree.insertBefore(indicator, prompt)
+  if (separatorTop) {
+    tree.insertBefore(indicator, separatorTop)
   } else {
     tree.appendChild(indicator)
   }
 
+  // Render from the indicator down
+  renderFromComponent('activity')
+
   // Start animation
   tree.startAnimation('activity', () => {
     indicator.advanceAnimation()
-    tree.updateComponent(indicator)
+    renderComponent('activity')
   }, 150)
 
   return indicator
@@ -191,7 +187,18 @@ export function hideActivity(): void {
 
   if (indicator) {
     tree.stopAnimation('activity')
+
+    // Find what comes after indicator to re-render from there
+    const children = tree.getChildren()
+    const idx = children.findIndex(c => c.id === 'activity')
+    const nextId = idx >= 0 && idx < children.length - 1 ? children[idx + 1].id : null
+
     tree.removeChild(indicator)
+
+    // Re-render from next component (or do nothing if indicator was last)
+    if (nextId) {
+      renderFromComponent(nextId)
+    }
   }
 }
 
@@ -225,16 +232,17 @@ export function stopToolAnimations(): void {
   tree.stopAnimation('tools')
 }
 
+// Fixed component IDs that should not be removed
+const FIXED_COMPONENTS = ['header', 'separator-top', 'prompt', 'separator-bottom', 'status', 'activity']
+
 // Rebuild tree from chat messages (for resetDisplay)
 export function rebuildTreeFromMessages(): void {
   const tree = getTree()
 
-  // Remove all messages (keep header, spacer, prompt, footer)
+  // Remove all messages (keep fixed components)
   const toRemove: string[] = []
   for (const child of tree.getChildren()) {
-    if (child.id !== 'header' && child.id !== 'spacer' &&
-        child.id !== 'prompt' && child.id !== 'footer' &&
-        child.id !== 'activity') {
+    if (!FIXED_COMPONENTS.includes(child.id)) {
       toRemove.push(child.id)
     }
   }
@@ -246,27 +254,27 @@ export function rebuildTreeFromMessages(): void {
     }
   }
 
-  // Add messages from chat state
-  const prompt = tree.find('prompt')
+  // Add messages from chat state (before separator-top)
+  const separatorTop = tree.find('separator-top')
 
   for (const msg of state.chat.messages) {
     if (msg.role === 'user') {
       const userMsg = new UserMessage(msg.content, `user-${Date.now()}-${Math.random()}`)
-      if (prompt) {
-        tree.insertBefore(userMsg, prompt)
+      if (separatorTop) {
+        tree.insertBefore(userMsg, separatorTop)
       }
     } else if (msg.role === 'assistant') {
       const assistantMsg = new AssistantMessage(`assistant-${Date.now()}-${Math.random()}`)
-      const text = new Text(msg.content, 'default')
+      const text = new Text(msg.content, 'assistant')
       assistantMsg.appendChild(text)
-      if (prompt) {
-        tree.insertBefore(assistantMsg, prompt)
+      if (separatorTop) {
+        tree.insertBefore(assistantMsg, separatorTop)
       }
     }
   }
 
-  // Update footer
-  updateFooter()
+  // Update status
+  updateStatus()
 }
 
 // Clear all messages from tree
@@ -275,9 +283,7 @@ export function clearMessages(): void {
 
   const toRemove: string[] = []
   for (const child of tree.getChildren()) {
-    if (child.id !== 'header' && child.id !== 'spacer' &&
-        child.id !== 'prompt' && child.id !== 'footer' &&
-        child.id !== 'activity') {
+    if (!FIXED_COMPONENTS.includes(child.id)) {
       toRemove.push(child.id)
     }
   }
@@ -289,7 +295,7 @@ export function clearMessages(): void {
     }
   }
 
-  updateFooter()
+  updateStatus()
 }
 
 // Get prompt component
@@ -298,31 +304,165 @@ export function getPrompt(): Prompt | null {
   return tree.find('prompt') as Prompt | null
 }
 
-// Update prompt line count (for footer repositioning)
-export function updatePromptLineCount(inputText: string): boolean {
+
+// Calculate a component's row position in the tree
+export function getComponentRow(componentId: string): number {
   const tree = getTree()
-  const prompt = getPrompt()
+  const width = process.stdout.columns || 80
+  let row = 0
 
-  if (!prompt) return false
-
-  const termWidth = tree.getTermWidth()
-  const newLineCount = prompt.calculateInputLineCount(inputText, termWidth)
-  const oldLineCount = prompt.getLineCount()
-
-  if (newLineCount !== oldLineCount) {
-    prompt.setLineCount(newLineCount)
-    return true // Height changed
+  for (const child of tree.getChildren()) {
+    if (child.id === componentId) {
+      return row
+    }
+    // Use cached height, but fall back to calculateHeight if cache is 0
+    const height = child.getCachedHeight() || child.calculateHeight(width)
+    if (child.getCachedHeight() === 0) {
+      // process.stderr.write(`WARNING: ${child.id} has cachedHeight 0, using calculateHeight=${height}\n`)
+      child.setCachedHeight(height)
+    }
+    row += height
   }
 
-  return false // No change
+  return -1 // Not found
+}
+
+// Render a specific component at its position (incremental update)
+export function renderComponent(componentId: string): void {
+  const tree = getTree()
+  const component = tree.find(componentId)
+  if (!component) return
+
+  const width = process.stdout.columns || 80
+  const startRow = getComponentRow(componentId)
+  if (startRow < 0) return
+
+  const oldHeight = component.getCachedHeight()
+  const lines = component.render(width)
+  const newHeight = lines.length
+
+  // Save cursor position
+  process.stdout.write(ansiEscapes.cursorSavePosition)
+
+  // Handle height change
+  if (newHeight > oldHeight) {
+    // Need to insert lines - move to end of old component and insert
+    process.stdout.write(ansiEscapes.cursorTo(0, startRow + oldHeight))
+    // Insert blank lines by scrolling down
+    for (let i = 0; i < newHeight - oldHeight; i++) {
+      process.stdout.write('\n')
+    }
+  } else if (newHeight < oldHeight) {
+    // Need to delete lines - we'll handle this by clearing and re-rendering below components
+  }
+
+  // Render the component
+  for (let i = 0; i < lines.length; i++) {
+    process.stdout.write(ansiEscapes.cursorTo(0, startRow + i))
+    process.stdout.write(ansiEscapes.eraseLine)
+    process.stdout.write(lines[i])
+  }
+
+  // If component shrank, we need to re-render everything below
+  if (newHeight < oldHeight) {
+    // Clear the extra lines
+    for (let i = newHeight; i < oldHeight; i++) {
+      process.stdout.write(ansiEscapes.cursorTo(0, startRow + i))
+      process.stdout.write(ansiEscapes.eraseLine)
+    }
+
+    // Re-render components below this one
+    let currentRow = startRow + newHeight
+    let foundComponent = false
+    for (const child of tree.getChildren()) {
+      if (foundComponent) {
+        const childLines = child.render(width)
+        for (const line of childLines) {
+          process.stdout.write(ansiEscapes.cursorTo(0, currentRow))
+          process.stdout.write(ansiEscapes.eraseLine)
+          process.stdout.write(line)
+          currentRow++
+        }
+        child.setCachedHeight(childLines.length)
+      }
+      if (child.id === componentId) {
+        foundComponent = true
+      }
+    }
+  }
+
+  component.setCachedHeight(newHeight)
+  component.clearDirty()
+
+  // Restore cursor position
+  process.stdout.write(ansiEscapes.cursorRestorePosition)
+}
+
+// Render from a specific component downward (for when components are added/removed)
+export function renderFromComponent(componentId: string): void {
+  const tree = getTree()
+  const width = process.stdout.columns || 80
+
+  // DEBUG: Log cached heights
+  const debugHeights: string[] = []
+  for (const child of tree.getChildren()) {
+    debugHeights.push(`${child.id}:${child.getCachedHeight()}`)
+  }
+  // process.stderr.write(`renderFromComponent(${componentId}) heights: ${debugHeights.join(', ')}\n`)
+
+  const startRow = getComponentRow(componentId)
+  // process.stderr.write(`startRow for ${componentId}: ${startRow}\n`)
+  if (startRow < 0) return
+
+  // Save cursor
+  process.stdout.write(ansiEscapes.cursorSavePosition)
+
+  // Erase from startRow down
+  process.stdout.write(ansiEscapes.cursorTo(0, startRow))
+  process.stdout.write(ansiEscapes.eraseDown)
+
+  // Render from componentId to end
+  let foundStart = false
+  let currentRow = startRow
+
+  for (const child of tree.getChildren()) {
+    if (child.id === componentId) {
+      foundStart = true
+    }
+    if (foundStart) {
+      const lines = child.render(width)
+      for (const line of lines) {
+        process.stdout.write(ansiEscapes.cursorTo(0, currentRow))
+        process.stdout.write(line)
+        currentRow++
+      }
+      child.setCachedHeight(lines.length)
+      child.clearDirty()
+    }
+  }
+
+  // Restore cursor
+  process.stdout.write(ansiEscapes.cursorRestorePosition)
+}
+
+// Position cursor after the last rendered content (for streaming)
+export function positionCursorAtEnd(): void {
+  const tree = getTree()
+  let row = 0
+
+  for (const child of tree.getChildren()) {
+    row += child.getCachedHeight()
+  }
+
+  process.stdout.write(ansiEscapes.cursorTo(0, row))
 }
 
 // Export component types for convenience
 export {
   Root,
   Header,
-  Empty,
-  Footer,
+  Separator,
+  StatusText,
   Prompt,
   UserMessage,
   AssistantMessage,

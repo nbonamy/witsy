@@ -23,9 +23,10 @@ export class Header extends Component {
     }
   }
 
-  // Header is always 4 lines (3 logo lines + blank line after)
-  calculateHeight(): number {
-    return 4
+  // Header is 5 lines (blank + 3 logo lines + trailing blank for spacing)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  calculateHeight(_width?: number): number {
+    return 5
   }
 
   render(): string[] {
@@ -34,6 +35,7 @@ export class Header extends Component {
       `${primaryText('  ██  █  ██')}  ${chalk.bold('Witsy CLI')} ${grayText('v' + VERSION)}`,
       `${primaryText('  ██ ███ ██')}  ${grayText('AI Assistant · Command Line Interface')}`,
       `${primaryText('   ███ ███')}   ${grayText(`http://localhost:${this.port}`)}`,
+      '', // Trailing blank for spacing
     ]
   }
 }

@@ -1,6 +1,6 @@
 // Prompt component - wrapper for input field area
 // Note: The actual input is rendered by witsyInputField, this component
-// just tracks the height/position for the layout system
+// tracks the height/position for the layout system and notifies tree of changes
 
 import { Component } from './component'
 
@@ -22,20 +22,28 @@ export class Prompt extends Component {
     return this.promptText
   }
 
-  // Called when input text changes and line count is recalculated
-  setLineCount(count: number): void {
-    if (this.lineCount !== count) {
-      this.lineCount = count
-      this.markDirty()
-    }
-  }
-
   getLineCount(): number {
     return this.lineCount
   }
 
+  // Called when input text changes - calculates new height and notifies tree if changed
+  // Returns true if height changed
+  onInputChange(inputText: string, termWidth: number): boolean {
+    const newLineCount = this.calculateInputLineCount(inputText, termWidth)
+
+    if (newLineCount !== this.lineCount) {
+      const oldHeight = this.lineCount
+      this.lineCount = newLineCount
+      // Notify tree of size change - tree will re-render from here down
+      this.notifySizeChange(oldHeight, newLineCount)
+      return true
+    }
+
+    return false
+  }
+
   // Calculate line count based on input text
-  calculateInputLineCount(inputText: string, termWidth: number): number {
+  private calculateInputLineCount(inputText: string, termWidth: number): number {
     const lines = inputText.split('\n')
     let totalLines = 0
 
@@ -53,7 +61,8 @@ export class Prompt extends Component {
   }
 
   // Height is the current line count (dynamic based on input)
-  calculateHeight(): number {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  calculateHeight(_width?: number): number {
     return this.lineCount
   }
 

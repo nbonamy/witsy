@@ -2,56 +2,36 @@
 
 import ansiEscapes from 'ansi-escapes'
 import terminalKit from 'terminal-kit'
-import { clearShortcutHelp, displayShortcutHelp, repositionFooter, resetDisplay, updateFooterRightText } from './display'
+import { resetDisplay } from './display'
 import { state } from './state'
+import { inputEvents, DOUBLE_ESCAPE_DELAY } from './events'
+import {
+  getTree,
+  Prompt,
+} from './tree'
 import { witsyInputField } from './witsyInputField'
 
 const term = terminalKit.terminal
 
 interface InputOptions {
-  prompt: string
+  prompt?: string  // Custom prompt (if not using Prompt component)
 }
 
-// Calculate line count correctly - accounts for both explicit newlines and wrapping
-const calculateLineCount = (promptText: string, text: string): number => {
-  const termWidth = process.stdout.columns || 80
-
-  // Split text into logical lines (by \n)
-  const lines = text.split('\n')
-
-  // Calculate total visual lines
-  let totalLines = 0
-
-  // First line includes the prompt
-  const firstLineLength = promptText.length + (lines[0]?.length || 0) + 1
-  totalLines += Math.max(1, Math.ceil(firstLineLength / termWidth))
-
-  // Subsequent lines don't have prompt
-  for (let i = 1; i < lines.length; i++) {
-    const lineLength = lines[i].length
-    totalLines += Math.max(1, Math.ceil(lineLength / termWidth))
-  }
-
-  return totalLines
-}
-
-export async function promptInput(options: InputOptions): Promise<string> {
+export async function promptInput(options: InputOptions = {}): Promise<string> {
 
   return new Promise((resolve, reject) => {
 
-    term.getCursorLocation((error, x, y) => {
+    term.getCursorLocation(() => {
 
       // State
-      let previousLineCount = 1
       let escapePressed = false
       let escapeTimer: NodeJS.Timeout | null = null
       let controller: any = null
-      const initialInputY = y
-      let helpShowing = false
 
-      // Show prompt
-      const promptText = options.prompt
-      process.stdout.write(promptText)
+      // If custom prompt provided, write it (for command dialogs)
+      if (options.prompt) {
+        process.stdout.write(options.prompt)
+      }
 
       // Helper: handle resize - just abort and let main loop restart fresh
       const handleResize = () => {
@@ -83,36 +63,20 @@ export async function promptInput(options: InputOptions): Promise<string> {
         debug: state.debug,
 
         onCharacter: (char: string, text: string) => {
-          // Clear help on any key press (if help is showing)
-          if (helpShowing) {
-            // Pass current text (character hasn't been inserted yet)
-            clearShortcutHelp(initialInputY, previousLineCount, text)
-            helpShowing = false
-          }
-
-          // If '?' pressed on empty prompt, show help and prevent character insertion
-          if (char === '?' && text === '') {
-            displayShortcutHelp(initialInputY, previousLineCount)
-            helpShowing = true
-            return true // Prevent default (don't insert the '?')
-          }
-
-          return false // Allow default behavior
+          // Emit keydown event - if consumed, prevent default
+          const consumed = inputEvents.emit({ type: 'keydown', key: char, text })
+          return consumed
         },
 
         onTextChange: (text: string) => {
+          // Notify prompt of input change - it will notify tree if height changed
+          const tree = getTree()
+          const prompt = tree.find('prompt') as Prompt | null
+          const termWidth = process.stdout.columns || 80
+          prompt?.onInputChange(text, termWidth)
 
-          // Calculate line count ourselves
-          const calculatedLineCount = calculateLineCount(promptText, text)
-
-          // ONLY update when line count changes
-          if (calculatedLineCount !== previousLineCount) {
-            repositionFooter(initialInputY, previousLineCount, calculatedLineCount, text)
-            previousLineCount = calculatedLineCount
-          } else if (state.chat.messages.length === 0) {
-            // If no messages, update footer to show/hide shortcuts hint based on input
-            updateFooterRightText(initialInputY, previousLineCount, undefined, text)
-          }
+          // Emit keyup event so components can react to text changes
+          inputEvents.emit({ type: 'keyup', key: '', text })
 
           // When "/" typed, immediately trigger command selector
           if (text === '/') {
@@ -138,34 +102,38 @@ export async function promptInput(options: InputOptions): Promise<string> {
         },
 
         onEscape: (text: string) => {
+          // Emit keydown for ESCAPE so components can react
+          inputEvents.emit({ type: 'keydown', key: 'ESCAPE', text })
+
           // If input is empty, nothing to clear - ignore escape
           if (text.length === 0) {
             return
           }
 
-          // ESCAPE double-tap logic
+          // ESCAPE double-tap state machine
           if (escapePressed) {
-            // Second escape - clear terminal and redraw everything
+            // Second escape within timeout - clear input
             escapePressed = false
+            if (escapeTimer) {
+              clearTimeout(escapeTimer)
+              escapeTimer = null
+            }
 
-            // Cleanup
+            // Emit input-cleared event
+            inputEvents.emit({ type: 'input-cleared', key: '', text: '' })
+
+            // Cleanup and resolve
             cleanup()
-
-            // Clear terminal and redraw
             resetDisplay()
             resolve('')
 
           } else {
-            // First escape - show message
+            // First escape - start timeout
             escapePressed = true
-            updateFooterRightText(initialInputY, previousLineCount, 'Press Escape again to clear', text)
-
-            // Start 1-second timer
             escapeTimer = setTimeout(() => {
               escapePressed = false
               escapeTimer = null
-              updateFooterRightText(initialInputY, previousLineCount, undefined, text)
-            }, 1000)
+            }, DOUBLE_ESCAPE_DELAY)
           }
         },
       }, (error: Error | undefined, input: string) => {

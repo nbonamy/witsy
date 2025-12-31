@@ -3,12 +3,8 @@
 import chalk from 'chalk'
 import ansiEscapes from 'ansi-escapes'
 import { state } from './state'
-import { renderTree } from './tree'
+import { renderTree, getTree } from './tree'
 import { ToolExecutionState } from 'multi-llm-ts'
-
-// Version is injected at build time via esbuild define
-declare const __WITSY_VERSION__: string
-const VERSION = typeof __WITSY_VERSION__ !== 'undefined' ? __WITSY_VERSION__ : 'dev'
 
 // override gray
 export const primaryText = chalk.rgb(215, 119, 87)
@@ -19,33 +15,13 @@ export const errorText = chalk.rgb(255, 107, 128)
 export const grayText = chalk.rgb(139, 148, 156)
 
 export function resetDisplay(beforeFooter?: () => void) {
-  // Use component tree if available
-  if (state.componentTree) {
-    if (beforeFooter) {
-      beforeFooter()
-    }
-    renderTree()
-    return
-  }
+  // Ensure tree is initialized
+  getTree()
 
-  // Fallback to old behavior
-  console.clear()
-  displayHeader()
-  displayConversation()
   if (beforeFooter) {
     beforeFooter()
   }
-  displayFooter()
-}
-
-export function displayHeader() {
-  console.clear()
-
-  console.log(`
-${primaryText('  ██  █  ██')}  ${chalk.bold('Witsy CLI')} ${grayText('v' + VERSION)}
-${primaryText('  ██ ███ ██')}  ${grayText('AI Assistant · Command Line Interface')}
-${primaryText('   ███ ███')}   ${grayText(`http://localhost:${state.port}`)}
-`)
+  renderTree()
 }
 
 export function getDefaultFooterLeftText(): string {
@@ -131,85 +107,6 @@ export function eraseLines(count: number) {
   }
 }
 
-export function updateFooterRightText(initialInputY: number, lineCount: number, text?: string, inputText?: string) {
-
-  // Save cursor position
-  process.stdout.write(ansiEscapes.cursorSavePosition)
-
-  // Move to footer line
-  process.stdout.write(ansiEscapes.cursorTo(0, initialInputY + lineCount - 1))
-  process.stdout.write(ansiEscapes.eraseDown)
-  renderFooterContent(text, inputText)
-
-  // Restore cursor position
-  process.stdout.write(ansiEscapes.cursorRestorePosition)
-}
-
-export function repositionFooter(initialInputY: number, previousLineCount: number, newLineCount: number, inputText?: string) {
-
-  // Save current cursor position (don't interrupt terminal-kit's rendering)
-  process.stdout.write(ansiEscapes.cursorSavePosition)
-
-  // Clear old footer position when shrinking (old footer won't be overwritten)
-  if (newLineCount < previousLineCount) {
-    const oldFooterY = initialInputY + previousLineCount - 1
-    process.stdout.write(ansiEscapes.cursorTo(0, oldFooterY))
-    process.stdout.write(ansiEscapes.eraseLine)
-    process.stdout.write(ansiEscapes.cursorTo(0, oldFooterY + 1))
-    process.stdout.write(ansiEscapes.eraseLine)
-  }
-
-  // Move to new footer position and render
-  const newFooterY = initialInputY + newLineCount - 1
-  process.stdout.write(ansiEscapes.cursorTo(0, newFooterY))
-  renderFooterContent(undefined, inputText)
-
-  // Restore cursor - let terminal-kit continue rendering
-  process.stdout.write(ansiEscapes.cursorRestorePosition)
-}
-
-export function displayShortcutHelp(initialInputY: number, lineCount: number): void {
-  // Save cursor position
-  process.stdout.write(ansiEscapes.cursorSavePosition)
-
-  // Move to footer line (where the status text normally appears)
-  process.stdout.write(ansiEscapes.cursorTo(0, initialInputY + lineCount))
-  process.stdout.write(ansiEscapes.eraseDown)
-
-  // Define 3 columns (currently using only first 2)
-  const col1Width = 25
-  const col2Width = 30
-  // const col3Width = remaining space (reserved for future)
-
-  // First row: / for commands | double tap esc to clear input
-  const row1Col1 = '/ for commands'
-  const row1Col2 = 'double tap esc to clear input'
-  process.stdout.write(grayText('  ' + row1Col1.padEnd(col1Width) + row1Col2.padEnd(col2Width)))
-
-  // Move to next line
-  process.stdout.write('\n')
-
-  // Second row: empty | shift + ⏎ for newline
-  const row2Col1 = ''
-  const row2Col2 = 'shift + ⏎ for newline'
-  process.stdout.write(grayText('  ' + row2Col1.padEnd(col1Width) + row2Col2.padEnd(col2Width)))
-
-  // Restore cursor position
-  process.stdout.write(ansiEscapes.cursorRestorePosition)
-}
-
-export function clearShortcutHelp(initialInputY: number, lineCount: number, inputText?: string): void {
-  // Save cursor position
-  process.stdout.write(ansiEscapes.cursorSavePosition)
-
-  // Move to footer line and redraw the normal footer
-  process.stdout.write(ansiEscapes.cursorTo(0, initialInputY + lineCount - 1))
-  process.stdout.write(ansiEscapes.eraseDown)
-  renderFooterContent(undefined, inputText)
-
-  // Restore cursor position
-  process.stdout.write(ansiEscapes.cursorRestorePosition)
-}
 
 export function displayCommandSuggestions(
   commands: Array<{ name: string; description: string }>,

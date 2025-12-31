@@ -19,7 +19,7 @@ export class AssistantMessage extends Component {
 
   // Add text content to this message
   addText(content: string): Text {
-    const text = new Text(content, 'default')
+    const text = new Text(content, 'assistant')
     this.appendChild(text)
     return text
   }
@@ -39,41 +39,20 @@ export class AssistantMessage extends Component {
     return this.children.filter(c => c instanceof ToolCall) as ToolCall[]
   }
 
-  // Height is sum of children heights + blank lines between + blank line after
+  // Height is sum of children heights (each child includes its own trailing blank)
   calculateHeight(width: number): number {
     let total = 0
-    for (let i = 0; i < this.children.length; i++) {
-      total += this.children[i].calculateHeight(width)
-      // Add blank line between children (not after last)
-      if (i < this.children.length - 1) {
-        total += 1
-      }
-    }
-    // Add blank line after the whole message
-    if (this.children.length > 0) {
-      total += 1
+    for (const child of this.children) {
+      total += child.calculateHeight(width)
     }
     return total
   }
 
   render(width: number): string[] {
     const lines: string[] = []
-
-    for (let i = 0; i < this.children.length; i++) {
-      const childLines = this.children[i].render(width)
-      lines.push(...childLines)
-
-      // Add blank line between children (not after last)
-      if (i < this.children.length - 1) {
-        lines.push('')
-      }
+    for (const child of this.children) {
+      lines.push(...child.render(width))
     }
-
-    // Add blank line after the whole message
-    if (this.children.length > 0) {
-      lines.push('')
-    }
-
     return lines
   }
 }

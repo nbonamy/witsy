@@ -86,9 +86,7 @@ async function main() {
     try {
       // Top separator is already visible from init or previous iteration
       // Prompt will appear below it
-      const userInput = await promptInput({
-        prompt: '> ',
-      })
+      const userInput = await promptInput()
 
       // Handle Ctrl+C (always exit)
       if (userInput === '__CTRL_C__') {

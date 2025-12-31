@@ -3,7 +3,7 @@
 import { Component } from './component'
 import { grayText } from '../display'
 
-export type TextStyle = 'default' | 'user' | 'gray'
+export type TextStyle = 'default' | 'user' | 'assistant' | 'gray'
 
 export class Text extends Component {
   private content: string
@@ -44,12 +44,16 @@ export class Text extends Component {
 
   calculateHeight(width: number): number {
     this.ensureCache(width)
-    return this.cachedLines.length
+    // Content lines + trailing blank for spacing
+    return this.cachedLines.length + 1
   }
 
   render(width: number): string[] {
     this.ensureCache(width)
-    return this.applyStyle(this.cachedLines)
+    const styled = this.applyStyle(this.cachedLines)
+    // Add trailing blank for spacing
+    styled.push('')
+    return styled
   }
 
   private ensureCache(width: number): void {
@@ -69,6 +73,15 @@ export class Text extends Component {
             return grayText('> ' + line.slice(2))
           }
           return grayText(line)
+        })
+      case 'assistant':
+        // Assistant messages: "⏺ " prefix on first line
+        return lines.map((line, i) => {
+          if (i === 0) {
+            // Replace leading spaces with "⏺ " for first line
+            return '⏺ ' + line.slice(2)
+          }
+          return line
         })
       case 'gray':
         return lines.map(line => grayText(line))

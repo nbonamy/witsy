@@ -2,6 +2,12 @@
 
 let idCounter = 0
 
+// Callback type for size change notifications
+export type SizeChangeCallback = (component: Component, oldHeight: number, newHeight: number) => void
+
+// Callback type for render requests
+export type RenderCallback = (component: Component) => void
+
 export abstract class Component {
   readonly id: string
   parent: Component | null = null
@@ -9,8 +15,39 @@ export abstract class Component {
   protected cachedHeight: number = 0
   protected dirty: boolean = true
 
+  // Callback for notifying tree of size changes
+  private onSizeChange: SizeChangeCallback | null = null
+
+  // Callback for requesting re-render
+  private onRequestRender: RenderCallback | null = null
+
   constructor(id?: string) {
     this.id = id ?? `component-${++idCounter}`
+  }
+
+  // Set the size change callback (called by Root when adding to tree)
+  setSizeChangeCallback(callback: SizeChangeCallback | null): void {
+    this.onSizeChange = callback
+  }
+
+  // Set the render callback (called by Root when adding to tree)
+  setRenderCallback(callback: RenderCallback | null): void {
+    this.onRequestRender = callback
+  }
+
+  // Components call this when their size changes
+  protected notifySizeChange(oldHeight: number, newHeight: number): void {
+    if (this.onSizeChange && oldHeight !== newHeight) {
+      this.cachedHeight = newHeight
+      this.onSizeChange(this, oldHeight, newHeight)
+    }
+  }
+
+  // Components call this to request a re-render
+  protected requestRender(): void {
+    if (this.onRequestRender) {
+      this.onRequestRender(this)
+    }
   }
 
   // Calculate height in terminal lines (must be implemented by subclasses)
