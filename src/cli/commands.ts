@@ -4,7 +4,7 @@ import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
-import { clearFooter, displayConversation, displayFooter, grayText, padContent, resetDisplay } from './display'
+import { displayConversation, displayFooter, grayText, resetDisplay } from './display'
 import { applyFolderAccess, getFolderAccessLabel, promptFolderAccess } from './folder'
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
@@ -25,6 +25,22 @@ import {
 const term = terminalKit.terminal
 
 const api = new WitsyAPI()
+
+// Command result types
+export type NotificationType = 'success' | 'error' | 'info'
+
+export interface CommandNotification {
+  type: NotificationType
+  message: string
+}
+
+export interface CommandResult {
+  success: boolean
+  notification?: CommandNotification
+  action?: 'quit' | 'retry' | 'redraw'
+  retryContent?: string  // For retry action
+  content?: string[]     // Lines to display (for help, history, etc.)
+}
 
 /**
  * Determines if a tool status indicates an error/failure
@@ -78,17 +94,17 @@ const thinkingVerbs = [
   'Cerebrating'
 ]
 
-export async function handleHelp() {
-
-  clearFooter()
-
-  console.log(chalk.yellow('\nAvailable Commands:'))
-  for (const cmd of COMMANDS) {
-    console.log(chalk.dim(`  ${cmd.name.padEnd(20)} ${cmd.description}`))
+export async function handleHelp(): Promise<CommandResult> {
+  const lines: string[] = [
+    '',
+    chalk.yellow('Available Commands:'),
+    ...COMMANDS.map(cmd => chalk.dim(`  ${cmd.name.padEnd(20)} ${cmd.description}`)),
+    ''
+  ]
+  return {
+    success: true,
+    content: lines
   }
-  console.log()
-
-  displayFooter()
 }
 
 export async function handlePort() {
@@ -326,20 +342,22 @@ export async function handleTitle() {
   resetDisplay()
 }
 
-export async function handleClear() {
+export async function handleClear(): Promise<CommandResult> {
   state.chat = new ChatCli('CLI Session')
-  console.log(chalk.yellow('\n✓ Conversation history cleared\n'))
-
-  // Redraw screen without messages
-  resetDisplay()
+  return {
+    success: true,
+    notification: { type: 'success', message: 'Conversation history cleared' },
+    action: 'redraw'
+  }
 }
 
-export async function handleRetry() {
+export async function handleRetry(): Promise<CommandResult> {
   // Check if there are any messages
   if (state.chat.messages.length === 0) {
-    console.log(chalk.red('\nNo message to retry\n'))
-    displayFooter()
-    return
+    return {
+      success: false,
+      notification: { type: 'error', message: 'No message to retry' }
+    }
   }
 
   // Find last user message by iterating backwards
@@ -351,11 +369,12 @@ export async function handleRetry() {
     }
   }
 
-  // If no user message found (shouldn't happen, but handle it)
+  // If no user message found
   if (lastUserIndex === -1) {
-    console.log(chalk.red('\nNo user message to retry\n'))
-    displayFooter()
-    return
+    return {
+      success: false,
+      notification: { type: 'error', message: 'No user message to retry' }
+    }
   }
 
   // Get the content of the last user message
@@ -364,24 +383,13 @@ export async function handleRetry() {
   // Remove the last user message and everything after it
   state.chat.messages.splice(lastUserIndex)
 
-  // Redraw screen with updated conversation (without the removed messages)
-  resetDisplay()
-
-  // Now clear the footer to make room for the retry
-  clearFooter()
-
-  // Display the user message again (same as main loop does)
-  console.log()
-  const paddedRetryContent = padContent(lastUserContent)
-  console.log(grayText('> ' + paddedRetryContent.slice(2))) // Remove left padding
-  console.log() // Blank line
-
-  // Call handleMessage with the last user content
-  // This will use CURRENT state.engine/state.model, not the old ones
-  await handleMessage(lastUserContent)
-
-  // Display footer for next prompt
-  displayFooter()
+  // Return action to retry with the content
+  // Main.ts will handle displaying and calling handleMessage
+  return {
+    success: true,
+    action: 'retry',
+    retryContent: lastUserContent
+  }
 }
 
 export async function handleHistory() {
@@ -614,15 +622,13 @@ export async function handleMessage(message: string) {
   }
 }
 
-export async function handleSave() {
-
-  clearFooter()
-
+export async function handleSave(): Promise<CommandResult> {
   // Check if there are messages to save
   if (state.chat.messages.length === 0) {
-    console.log(chalk.red('\nNo conversation to save\n'))
-    displayFooter()
-    return
+    return {
+      success: false,
+      notification: { type: 'error', message: 'No conversation to save' }
+    }
   }
 
   try {
@@ -632,15 +638,20 @@ export async function handleSave() {
     // Update chat UUID to enable auto-save
     state.chat.uuid = chatId
 
-    console.log(chalk.yellow('\n✓ Conversation saved to workspace'))
-    console.log(chalk.dim('  Auto-save enabled for this conversation\n'))
+    return {
+      success: true,
+      notification: { type: 'success', message: 'Conversation saved · Auto-save enabled' }
+    }
 
   } catch (error) {
-    console.log(chalk.red(`\nError saving conversation: ${error instanceof Error ? error.message : 'Unknown error'}`))
-    console.log(chalk.dim('Make sure Witsy is running\n'))
+    return {
+      success: false,
+      notification: {
+        type: 'error',
+        message: `Error saving: ${error instanceof Error ? error.message : 'Unknown error'}`
+      }
+    }
   }
-
-  displayFooter()
 }
 
 export async function handleCommand(commandInput: string) {
@@ -649,51 +660,49 @@ export async function handleCommand(commandInput: string) {
   await executeCommand(cmd.toLowerCase())
 }
 
-export function handleQuit() {
-  clearFooter()
-  console.log(chalk.yellow('\n  Goodbye! 👋'))
-  process.exit(0)
+export function handleQuit(): CommandResult {
+  return {
+    success: true,
+    notification: { type: 'info', message: 'Goodbye! 👋' },
+    action: 'quit'
+  }
 }
 
-export async function executeCommand(command: string) {
+export async function executeCommand(command: string): Promise<CommandResult> {
   switch (command) {
     case 'help':
-      await handleHelp()
-      break
+      return await handleHelp()
     case 'port':
       await handlePort()
-      break
+      return { success: true, action: 'redraw' }
     case 'model':
       await handleModel()
-      break
+      return { success: true, action: 'redraw' }
     case 'folder':
       await handleFolder()
-      break
+      return { success: true, action: 'redraw' }
     case 'title':
       await handleTitle()
-      break
+      return { success: true, action: 'redraw' }
     case 'save':
-      await handleSave()
-      break
+      return await handleSave()
     case 'retry':
-      await handleRetry()
-      break
+      return await handleRetry()
     case 'clear':
-      await handleClear()
-      break
+      return await handleClear()
     // case 'history':
-    //   await handleHistory()
-    //   break
+    //   return await handleHistory()
     case 'exit':
     case 'quit':
-      handleQuit()
-      break
+      return handleQuit()
     default:
-      resetDisplay(() => {
-        console.log(chalk.red(`\nUnknown command: /${command}`))
-        console.log(chalk.dim('Type /help for available commands\n'))
-      })
-
+      return {
+        success: false,
+        notification: {
+          type: 'error',
+          message: `Unknown command: /${command}. Type /help for available commands`
+        }
+      }
   }
 }
 
