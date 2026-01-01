@@ -4,15 +4,17 @@ import { Text } from '../../../../src/cli/components/text'
 describe('Text', () => {
 
   describe('basic rendering', () => {
-    test('renders empty content as single line', () => {
+    test('renders empty content as single line plus trailing blank', () => {
       const text = new Text('')
-      expect(text.calculateHeight(80)).toBe(1)
-      expect(text.render(80)).toEqual(['    '])
+      // 1 content line + 1 trailing blank for spacing
+      expect(text.calculateHeight(80)).toBe(2)
+      expect(text.render(80)).toEqual(['    ', ''])
     })
 
-    test('renders short content on one line', () => {
+    test('renders short content on one line plus trailing blank', () => {
       const text = new Text('Hello world')
-      expect(text.calculateHeight(80)).toBe(1)
+      // 1 content line + 1 trailing blank for spacing
+      expect(text.calculateHeight(80)).toBe(2)
       const lines = text.render(80)
       expect(lines[0]).toContain('Hello world')
     })
@@ -35,12 +37,14 @@ describe('Text', () => {
 
     test('preserves newlines', () => {
       const text = new Text('Line 1\nLine 2\nLine 3')
-      expect(text.calculateHeight(80)).toBe(3)
+      // 3 content lines + 1 trailing blank
+      expect(text.calculateHeight(80)).toBe(4)
     })
 
     test('handles empty paragraphs', () => {
       const text = new Text('Para 1\n\nPara 2')
-      expect(text.calculateHeight(80)).toBe(3)
+      // 3 content lines (including empty paragraph) + 1 trailing blank
+      expect(text.calculateHeight(80)).toBe(4)
     })
 
     test('breaks very long words', () => {
@@ -135,7 +139,8 @@ describe('Text', () => {
       // Second call with same width uses cache
       const height = text.calculateHeight(80)
 
-      expect(height).toBe(1)
+      // 1 content line + 1 trailing blank
+      expect(height).toBe(2)
     })
 
     test('recalculates for different width', () => {

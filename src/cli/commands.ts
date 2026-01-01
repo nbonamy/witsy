@@ -4,8 +4,8 @@ import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
 import { loadCliConfig, saveCliConfig } from './config'
-import { displayConversation, displayFooter, grayText, resetDisplay } from './display'
-import { applyFolderAccess, getFolderAccessLabel, promptFolderAccess } from './folder'
+import { grayText, resetDisplay } from './display'
+import { applyFolderAccess, promptFolderAccess } from './folder'
 import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
 import { selectOption } from './select'
@@ -62,7 +62,6 @@ export const COMMANDS = [
   { name: '/save', value: 'save', description: 'Save conversation' },
   { name: '/retry', value: 'retry', description: 'Retry last message' },
   { name: '/clear', value: 'clear', description: 'Clear conversation history' },
-  // { name: '/history', value: 'history', description: 'Show conversation history' },
   { name: '/exit', value: 'exit', description: 'Exit the CLI' }
 ]
 
@@ -107,31 +106,33 @@ export async function handleHelp(): Promise<CommandResult> {
   }
 }
 
-export async function handlePort() {
-
-  process.stdout.write(ansiEscapes.cursorUp(1))
-  process.stdout.write(ansiEscapes.eraseDown)
-
+export async function handlePort(): Promise<CommandResult> {
   const portStr = await promptInput({
     prompt: 'Enter port number: ',
+    dialogMode: true,
   })
+
+  // Cancelled or empty
+  if (!portStr) {
+    return { success: true, action: 'redraw' }
+  }
 
   const port = parseInt(portStr)
   if (isNaN(port) || port < 1 || port > 65535) {
-    console.log(chalk.red('\nInvalid port number (must be 1-65535)\n'))
-    displayFooter()
-    return
+    return {
+      success: false,
+      notification: { type: 'error', message: 'Invalid port number (must be 1-65535)' }
+    }
   }
 
   // Test connection to new port
-  console.log(chalk.dim(`\nTesting connection to port ${port}.…`))
   const connected = await api.connectWithTimeout(port, 2000)
 
   if (!connected) {
-    console.log(chalk.red(`\n✗ Cannot connect to Witsy on port ${port}`))
-    console.log(chalk.dim('  Make sure Witsy is running on that port\n'))
-    displayFooter()
-    return
+    return {
+      success: false,
+      notification: { type: 'error', message: `Cannot connect to Witsy on port ${port}` }
+    }
   }
 
   // Update port and fetch new config
@@ -142,11 +143,10 @@ export async function handlePort() {
 
     // Check if HTTP endpoints are enabled
     if (!config.enableHttpEndpoints) {
-      console.log(chalk.red('\n✗ HTTP endpoints are disabled'))
-      console.log(chalk.dim('  Enable HTTP endpoints in Witsy settings to use the CLI'))
-      console.log(chalk.dim('  Settings > Advanced > Enable HTTP endpoints\n'))
-      displayFooter()
-      return
+      return {
+        success: false,
+        notification: { type: 'error', message: 'HTTP endpoints are disabled in Witsy settings' }
+      }
     }
 
     state.userDataPath = config.userDataPath
@@ -160,23 +160,28 @@ export async function handlePort() {
       saveCliConfig(state.userDataPath, state.cliConfig)
     }
 
-    console.log(chalk.yellow(`\n✓ Connected to Witsy on port ${state.port}\n`))
+    return {
+      success: true,
+      // notification: { type: 'success', message: `Connected to Witsy on port ${state.port}` },
+      action: 'redraw'
+    }
   } catch {
-    console.log(chalk.red(`\n✗ Error fetching config from port ${port}\n`))
+    return {
+      success: false,
+      notification: { type: 'error', message: `Error fetching config from port ${port}` }
+    }
   }
-
-  // Redraw entire screen
-  resetDisplay()
 }
 
-export async function handleModel() {
+export async function handleModel(): Promise<CommandResult> {
   try {
-
     const engines = await api.getEngines()
 
     if (engines.length === 0) {
-      console.log(chalk.red('\nNo engines available\n'))
-      return
+      return {
+        success: false,
+        notification: { type: 'error', message: 'No engines available' }
+      }
     }
 
     const selectedEngineId = await selectOption({
@@ -187,20 +192,19 @@ export async function handleModel() {
       }))
     })
 
-    // If empty (cancelled), just redraw and return
+    // If empty (cancelled), just redraw
     if (!selectedEngineId) {
-      resetDisplay()
-      return
+      return { success: true, action: 'redraw' }
     }
 
     const selectedEngine = engines.find(e => e.id === selectedEngineId)!
     const models = await api.getModels(selectedEngineId)
 
     if (models.length === 0) {
-      resetDisplay(() => {
-        console.log(chalk.red('\nNo models available\n'))
-      })
-      return
+      return {
+        success: false,
+        notification: { type: 'error', message: 'No models available' }
+      }
     }
 
     const selectedModelId = await selectOption({
@@ -211,10 +215,9 @@ export async function handleModel() {
       }))
     })
 
-    // If empty (cancelled), just redraw and return
+    // If empty (cancelled), just redraw
     if (!selectedModelId) {
-      resetDisplay()
-      return
+      return { success: true, action: 'redraw' }
     }
 
     const selectedModel = models.find(m => m.id === selectedModelId)!
@@ -229,33 +232,31 @@ export async function handleModel() {
       saveCliConfig(state.userDataPath, state.cliConfig)
     }
 
-    console.log(chalk.yellow(`\n✓ Selected ${selectedEngine.name} / ${selectedModel.name}\n`))
-
-    // Redraw entire screen
-    resetDisplay()
+    return {
+      success: true,
+      // notification: { type: 'success', message: `Selected ${selectedEngine.name} / ${selectedModel.name}` },
+      action: 'redraw'
+    }
 
   } catch (error: any) {
     // Handle cancellation (Escape key)
     if (error?.message?.includes('cancelled')) {
-      resetDisplay()
-      return
+      return { success: true, action: 'redraw' }
     }
-    resetDisplay(() => {
-      console.log(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`))
-      console.log(chalk.dim('Make sure Witsy is running'))
-      console.log()
-    })
+    return {
+      success: false,
+      notification: { type: 'error', message: error instanceof Error ? error.message : 'Unknown error' }
+    }
   }
 }
 
-export async function handleFolder() {
+export async function handleFolder(): Promise<CommandResult> {
   try {
     const access = await promptFolderAccess(true)
 
-    // If cancelled, just redraw and return
+    // If cancelled, just redraw
     if (access === null) {
-      resetDisplay()
-      return
+      return { success: true, action: 'redraw' }
     }
 
     const cwd = process.cwd()
@@ -271,9 +272,11 @@ export async function handleFolder() {
       }
       // Apply 'none' for this session
       applyFolderAccess('none')
-      console.log(chalk.yellow('\n✓ Saved preference cleared\n'))
-      resetDisplay()
-      return
+      return {
+        success: true,
+        // notification: { type: 'success', message: 'Saved preference cleared' },
+        action: 'redraw'
+      }
     }
 
     applyFolderAccess(access)
@@ -287,39 +290,36 @@ export async function handleFolder() {
       saveCliConfig(state.userDataPath, state.cliConfig)
     }
 
-    const label = getFolderAccessLabel()
-    console.log(chalk.yellow(`\n✓ ${label}\n`))
-
-    // Redraw entire screen
-    resetDisplay()
+    return {
+      success: true,
+      // notification: { type: 'success', message: getFolderAccessLabel() },
+      action: 'redraw'
+    }
 
   } catch (error: any) {
     // Handle cancellation (Escape key)
     if (error?.message?.includes('cancelled')) {
-      resetDisplay()
-      return
+      return { success: true, action: 'redraw' }
     }
-    resetDisplay(() => {
-      console.log(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`))
-      console.log()
-    })
+    return {
+      success: false,
+      notification: { type: 'error', message: error instanceof Error ? error.message : 'Unknown error' }
+    }
   }
 }
 
-export async function handleTitle() {
-
-  process.stdout.write(ansiEscapes.cursorUp(1))
-  process.stdout.write(ansiEscapes.eraseDown)
-
+export async function handleTitle(): Promise<CommandResult> {
   const title = await promptInput({
     prompt: 'Enter conversation title: ',
+    dialogMode: true,
   })
 
   const trimmedTitle = title.trim()
   if (!trimmedTitle) {
-    console.log(chalk.red('\nTitle cannot be empty\n'))
-    displayFooter()
-    return
+    return {
+      success: false,
+      notification: { type: 'error', message: 'Title cannot be empty' }
+    }
   }
 
   // Update chat title
@@ -329,24 +329,32 @@ export async function handleTitle() {
   if (state.chat.uuid) {
     try {
       await api.saveConversation(state.chat)
-      console.log(chalk.yellow(`\n✓ Title updated and saved: "${trimmedTitle}"\n`))
+      return {
+        success: true,
+        // notification: { type: 'success', message: `Title updated and saved: "${trimmedTitle}"` },
+        action: 'redraw'
+      }
     } catch {
-      console.log(chalk.yellow(`\n✓ Title updated: "${trimmedTitle}"`))
-      console.log(chalk.red('  (Auto-save failed)\n'))
+      return {
+        success: true,
+        // notification: { type: 'success', message: `Title updated: "${trimmedTitle}" (auto-save failed)` },
+        action: 'redraw'
+      }
     }
-  } else {
-    console.log(chalk.yellow(`\n✓ Title updated: "${trimmedTitle}"\n`))
   }
 
-  // Redraw entire screen
-  resetDisplay()
+  return {
+    success: true,
+    // notification: { type: 'success', message: `Title updated: "${trimmedTitle}"` },
+    action: 'redraw'
+  }
 }
 
 export async function handleClear(): Promise<CommandResult> {
   state.chat = new ChatCli('CLI Session')
   return {
     success: true,
-    notification: { type: 'success', message: 'Conversation history cleared' },
+    // notification: { type: 'success', message: 'Conversation history cleared' },
     action: 'redraw'
   }
 }
@@ -390,16 +398,6 @@ export async function handleRetry(): Promise<CommandResult> {
     action: 'retry',
     retryContent: lastUserContent
   }
-}
-
-export async function handleHistory() {
-  if (state.chat.messages.length === 0) {
-    console.log(chalk.dim('\nNo conversation history\n'))
-    return
-  }
-
-  // Just display the conversation
-  displayConversation()
 }
 
 export async function handleMessage(message: string) {
@@ -640,7 +638,7 @@ export async function handleSave(): Promise<CommandResult> {
 
     return {
       success: true,
-      notification: { type: 'success', message: 'Conversation saved · Auto-save enabled' }
+      // notification: { type: 'success', message: 'Conversation saved · Auto-save enabled' }
     }
 
   } catch (error) {
@@ -673,25 +671,19 @@ export async function executeCommand(command: string): Promise<CommandResult> {
     case 'help':
       return await handleHelp()
     case 'port':
-      await handlePort()
-      return { success: true, action: 'redraw' }
+      return await handlePort()
     case 'model':
-      await handleModel()
-      return { success: true, action: 'redraw' }
+      return await handleModel()
     case 'folder':
-      await handleFolder()
-      return { success: true, action: 'redraw' }
+      return await handleFolder()
     case 'title':
-      await handleTitle()
-      return { success: true, action: 'redraw' }
+      return await handleTitle()
     case 'save':
       return await handleSave()
     case 'retry':
       return await handleRetry()
     case 'clear':
       return await handleClear()
-    // case 'history':
-    //   return await handleHistory()
     case 'exit':
     case 'quit':
       return handleQuit()

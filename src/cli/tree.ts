@@ -111,6 +111,34 @@ export function renderTree(): void {
   }
 }
 
+// Render dialog mode - shows only header and positions cursor for input
+// Used for command dialogs like /port, /title, etc.
+export function renderDialog(promptText: string): void {
+  const tree = getTree()
+  const width = process.stdout.columns || 80
+
+  // Clear terminal
+  process.stdout.write(ansiEscapes.clearTerminal)
+  process.stdout.write(ansiEscapes.cursorTo(0, 0))
+
+  // Render only the header
+  const header = tree.find('header')
+  let currentRow = 0
+  if (header) {
+    const lines = header.render(width)
+    for (const line of lines) {
+      process.stdout.write(ansiEscapes.cursorTo(0, currentRow))
+      process.stdout.write(line)
+      currentRow++
+    }
+  }
+
+  // Write the prompt text
+  process.stdout.write('\n')
+  process.stdout.write(ansiEscapes.cursorTo(2, currentRow+1))
+  process.stdout.write(promptText)
+}
+
 // Render status area (bottom separator + status text) - for incremental updates
 export function renderStatusArea(): void {
   // Update status text

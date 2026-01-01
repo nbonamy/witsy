@@ -106,14 +106,16 @@ describe('ToolCall', () => {
   })
 
   describe('height calculation', () => {
-    test('single line status returns 1', () => {
+    test('single line status returns 2 (1 + trailing blank)', () => {
       const tool = new ToolCall('tool-1', 'single line')
-      expect(tool.calculateHeight(80)).toBe(1)
+      // 1 content line + 1 trailing blank for spacing
+      expect(tool.calculateHeight(80)).toBe(2)
     })
 
-    test('multi-line status returns correct count', () => {
+    test('multi-line status returns correct count plus trailing blank', () => {
       const tool = new ToolCall('tool-1', 'line1\nline2\nline3')
-      expect(tool.calculateHeight(80)).toBe(3)
+      // 3 content lines + 1 trailing blank for spacing
+      expect(tool.calculateHeight(80)).toBe(4)
     })
   })
 
@@ -126,11 +128,12 @@ describe('ToolCall', () => {
       expect(lines[0]).toContain('my_tool')
     })
 
-    test('renders multiple lines', () => {
+    test('renders multiple lines plus trailing blank', () => {
       const tool = new ToolCall('tool-1', 'tool()\n  detail1\n  detail2')
       const lines = tool.render(80)
 
-      expect(lines.length).toBe(3)
+      // 3 content lines + 1 trailing blank
+      expect(lines.length).toBe(4)
     })
 
     test('truncates long detail lines', () => {

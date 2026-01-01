@@ -8,15 +8,15 @@ describe('Header', () => {
     expect(header.id).toBe('header')
   })
 
-  test('calculateHeight returns 4', () => {
+  test('calculateHeight returns 5 (blank + 3 logo + trailing blank)', () => {
     const header = new Header(8090)
-    expect(header.calculateHeight(80)).toBe(4)
+    expect(header.calculateHeight(80)).toBe(5)
   })
 
-  test('render returns 4 lines', () => {
+  test('render returns 5 lines', () => {
     const header = new Header(8090)
     const lines = header.render(80)
-    expect(lines.length).toBe(4)
+    expect(lines.length).toBe(5)
   })
 
   test('render includes port', () => {

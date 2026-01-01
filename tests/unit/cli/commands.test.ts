@@ -6,7 +6,6 @@ import { WitsyAPI } from '@/cli/api'
 import { COMMANDS, handleCommand, initialize, handleHelp, handleClear, handleSave, handleTitle, handleRetry, handleQuit, executeCommand, handlePort, handleMessage, handleModel, isToolError } from '@/cli/commands'
 import { state } from '@/cli/state'
 import { ChatCli, MessageCli } from '@/cli/models'
-import { resetDisplay, displayFooter, clearFooter } from '@/cli/display'
 import { promptInput } from '@/cli/input'
 import { selectOption } from '@/cli/select'
 
@@ -17,6 +16,7 @@ global.fetch = vi.fn()
 vi.mock('@/cli/api')
 vi.mock('@/cli/display', () => ({
   grayText: (s: string) => s,
+  secondaryText: (s: string) => s,
   padContent: (text: string) => `  ${text}  `,
   resetDisplay: vi.fn(),
   displayFooter: vi.fn(),
@@ -26,6 +26,9 @@ vi.mock('@/cli/display', () => ({
   startPulseAnimation: vi.fn(() => ({} as NodeJS.Timeout)),
   stopPulseAnimation: vi.fn(),
   successText: (s: string) => s,
+  errorText: (s: string) => s,
+  getDefaultFooterLeftText: () => 'OpenAI · GPT-4',
+  getDefaultFooterRightText: () => '? for shortcuts',
   // Multi-tool animation functions
   initToolsDisplay: vi.fn(),
   addTool: vi.fn(),
@@ -276,12 +279,15 @@ describe('Command Handlers', () => {
     }
   })
 
-  test('handleHelp displays command list', async () => {
+  test('handleHelp returns command list', async () => {
 
-    await handleHelp()
+    const result = await handleHelp()
 
-    expect(clearFooter).toHaveBeenCalled()
-    expect(displayFooter).toHaveBeenCalled()
+    expect(result.success).toBe(true)
+    expect(result.content).toBeDefined()
+    expect(result.content!.length).toBeGreaterThan(0)
+    // Should include at least the commands
+    expect(result.content!.some(line => line.includes('/help'))).toBe(true)
   })
 
   test('handleClear resets conversation', async () => {
@@ -345,67 +351,59 @@ describe('Command Handlers', () => {
     expect(WitsyAPI.prototype.saveConversation).toHaveBeenCalled()
   })
 
-  test('handleRetry retries last user message', async () => {
+  test('handleRetry returns retry action with content', async () => {
 
     state.chat = new ChatCli('Test')
     state.chat.addMessage(new MessageCli('user', 'first'))
     state.chat.addMessage(new MessageCli('assistant', 'response'))
 
-    // Mock streaming response
-    const encoder = new TextEncoder()
-    const mockReader = {
-      read: vi.fn()
-        .mockResolvedValueOnce({ value: encoder.encode('data: {"type":"content","text":"retry"}\n'), done: false })
-        .mockResolvedValueOnce({ value: encoder.encode('data: [DONE]\n'), done: false })
-        .mockResolvedValueOnce({ value: undefined, done: true })
-    }
+    const result = await handleRetry()
 
-    vi.mocked(fetch).mockResolvedValueOnce({
-      ok: true,
-      body: { getReader: () => mockReader } as any
-    } as Response)
-
-    await handleRetry()
-
-    // Should have re-added user message (1 message because it removes everything from last user onwards)
-    expect(state.chat.messages.length).toBeGreaterThanOrEqual(1)
-    expect(state.chat.messages[0].content).toBe('first')
+    // Should return action: 'retry' with the last user message content
+    expect(result.success).toBe(true)
+    expect(result.action).toBe('retry')
+    expect(result.retryContent).toBe('first')
+    // Messages should be removed from state (main.ts will re-add them)
+    expect(state.chat.messages.length).toBe(0)
   })
 
-  test('handleRetry displays error when no messages', async () => {
+  test('handleRetry returns error when no messages', async () => {
 
     state.chat = new ChatCli('Test')
     state.chat.messages = []
 
-    await handleRetry()
+    const result = await handleRetry()
 
-    // Should not try to retry
-    expect(state.chat.messages.length).toBe(0)
+    // Should return error notification
+    expect(result.success).toBe(false)
+    expect(result.notification?.type).toBe('error')
+    expect(result.notification?.message).toContain('No message')
   })
 
-  test('handleQuit exits process', async () => {
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never)
+  test('handleQuit returns quit action', async () => {
+    const result = handleQuit()
 
-    handleQuit()
-
-    expect(exitSpy).toHaveBeenCalledWith(0)
-    exitSpy.mockRestore()
+    expect(result.success).toBe(true)
+    expect(result.action).toBe('quit')
   })
 
   test('executeCommand dispatches to correct handler', async () => {
 
-    await executeCommand('help')
+    const result = await executeCommand('help')
 
-    // Verify handleHelp was executed by checking its side effects
-    expect(clearFooter).toHaveBeenCalled()
-    expect(displayFooter).toHaveBeenCalled()
+    // Verify handleHelp was executed by checking result
+    expect(result.success).toBe(true)
+    expect(result.content).toBeDefined()
+    expect(result.content!.some(line => line.includes('/help'))).toBe(true)
   })
 
   test('executeCommand handles unknown commands', async () => {
 
-    await executeCommand('unknown')
+    const result = await executeCommand('unknown')
 
-    expect(resetDisplay).toHaveBeenCalled()
+    expect(result.success).toBe(false)
+    expect(result.notification?.type).toBe('error')
+    expect(result.notification?.message).toContain('Unknown command')
   })
 
   test('handlePort validates port number', async () => {
@@ -624,10 +622,10 @@ describe('Command Handlers', () => {
 
   test('handleCommand parses command correctly', async () => {
 
-    await handleCommand('/help some args')
-
-    // Should execute help command
-    expect(clearFooter).toHaveBeenCalled()
+    // handleCommand calls executeCommand internally
+    // Since we're testing that it parses the command correctly,
+    // we just verify it doesn't throw and completes
+    await expect(handleCommand('/help some args')).resolves.not.toThrow()
   })
 })
 

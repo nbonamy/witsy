@@ -8,13 +8,15 @@ import { inputEvents, DOUBLE_ESCAPE_DELAY } from './events'
 import {
   getTree,
   Prompt,
+  renderDialog,
 } from './tree'
 import { witsyInputField } from './witsyInputField'
 
 const term = terminalKit.terminal
 
 interface InputOptions {
-  prompt?: string  // Custom prompt (if not using Prompt component)
+  prompt?: string       // Custom prompt text (for command dialogs)
+  dialogMode?: boolean  // If true, show only header + prompt (hide messages/footer)
 }
 
 export async function promptInput(options: InputOptions = {}): Promise<string> {
@@ -28,8 +30,11 @@ export async function promptInput(options: InputOptions = {}): Promise<string> {
       let escapeTimer: NodeJS.Timeout | null = null
       let controller: any = null
 
-      // If custom prompt provided, write it (for command dialogs)
-      if (options.prompt) {
+      // Dialog mode: show only header + prompt
+      if (options.dialogMode && options.prompt) {
+        renderDialog(options.prompt)
+      } else if (options.prompt) {
+        // Legacy: just write the prompt text
         process.stdout.write(options.prompt)
       }
 
@@ -59,16 +64,21 @@ export async function promptInput(options: InputOptions = {}): Promise<string> {
       controller = witsyInputField.call(term, {
 
         cancelable: true,
-        history: state.cliConfig?.history || [],
+        history: options.dialogMode ? [] : (state.cliConfig?.history || []),
         debug: state.debug,
 
         onCharacter: (char: string, text: string) => {
+          // In dialog mode, don't emit events to components
+          if (options.dialogMode) return false
           // Emit keydown event - if consumed, prevent default
           const consumed = inputEvents.emit({ type: 'keydown', key: char, text })
           return consumed
         },
 
         onTextChange: (text: string) => {
+          // In dialog mode, skip component notifications
+          if (options.dialogMode) return
+
           // Notify prompt of input change - it will notify tree if height changed
           const tree = getTree()
           const prompt = tree.find('prompt') as Prompt | null
@@ -94,6 +104,11 @@ export async function promptInput(options: InputOptions = {}): Promise<string> {
           }
           if (key === 'CTRL_D') {
             cleanup()
+            // In dialog mode, Ctrl+D cancels (returns empty)
+            if (options.dialogMode) {
+              resolve('')
+              return true
+            }
             resolve('__CTRL_D__')
             return true // Prevent default
           }
@@ -102,6 +117,13 @@ export async function promptInput(options: InputOptions = {}): Promise<string> {
         },
 
         onEscape: (text: string) => {
+          // In dialog mode, escape cancels (returns empty)
+          if (options.dialogMode) {
+            cleanup()
+            resolve('')
+            return
+          }
+
           // Emit keydown for ESCAPE so components can react
           inputEvents.emit({ type: 'keydown', key: 'ESCAPE', text })
 
@@ -152,5 +174,5 @@ export async function promptInput(options: InputOptions = {}): Promise<string> {
     })
 
   })
-  
+
 }

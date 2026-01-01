@@ -56,6 +56,12 @@ async function handleCommandResult(result: CommandResult): Promise<boolean> {
     renderTree()
   }
 
+  // Always redraw if there was a notification but no explicit action
+  // This ensures we return to normal display after dialog mode
+  if (result.notification && !result.action) {
+    renderTree()
+  }
+
   return true
 }
 
