@@ -6,8 +6,8 @@ import { Text } from './text'
 export class UserMessage extends Component {
   private textComponent: Text
 
-  constructor(content: string, id?: string) {
-    super(id)
+  constructor(content: string) {
+    super()
     this.textComponent = new Text(content, 'user')
     this.appendChild(this.textComponent)
   }

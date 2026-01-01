@@ -1,7 +1,5 @@
 // Component base class for CLI rendering framework
 
-let idCounter = 0
-
 // Callback type for size change notifications
 export type SizeChangeCallback = (component: Component, oldHeight: number, newHeight: number) => void
 
@@ -9,11 +7,12 @@ export type SizeChangeCallback = (component: Component, oldHeight: number, newHe
 export type RenderCallback = (component: Component) => void
 
 export abstract class Component {
-  readonly id: string
+  private _id: string = ''
   parent: Component | null = null
   protected children: Component[] = []
   protected cachedHeight: number = 0
   protected dirty: boolean = true
+  protected _visible: boolean = true
 
   // Callback for notifying tree of size changes
   private onSizeChange: SizeChangeCallback | null = null
@@ -21,8 +20,37 @@ export abstract class Component {
   // Callback for requesting re-render
   private onRequestRender: RenderCallback | null = null
 
-  constructor(id?: string) {
-    this.id = id ?? `component-${++idCounter}`
+  constructor() {
+    // id is set by Root.appendChild
+  }
+
+  // Id is set by Root when added to tree
+  get id(): string {
+    return this._id
+  }
+
+  setId(id: string): void {
+    this._id = id
+  }
+
+  // Visibility (like v-if in Vue)
+  get visible(): boolean {
+    return this._visible
+  }
+
+  setVisible(visible: boolean): void {
+    if (this._visible !== visible) {
+      this._visible = visible
+      this.markDirty()
+    }
+  }
+
+  show(): void {
+    this.setVisible(true)
+  }
+
+  hide(): void {
+    this.setVisible(false)
   }
 
   // Set the size change callback (called by Root when adding to tree)
@@ -150,9 +178,4 @@ export abstract class Component {
   childCount(): number {
     return this.children.length
   }
-}
-
-// Reset ID counter (useful for testing)
-export function resetComponentIdCounter(): void {
-  idCounter = 0
 }

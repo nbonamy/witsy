@@ -4,13 +4,14 @@ import { ActivityIndicator } from '../../../../src/cli/components/activity-indic
 describe('ActivityIndicator', () => {
 
   describe('constructor', () => {
-    test('default id is "activity"', () => {
+    test('id starts empty', () => {
       const indicator = new ActivityIndicator()
-      expect(indicator.id).toBe('activity')
+      expect(indicator.id).toBe('')
     })
 
-    test('custom id', () => {
-      const indicator = new ActivityIndicator('loading', 'custom-id')
+    test('id is set via setId', () => {
+      const indicator = new ActivityIndicator('loading')
+      indicator.setId('custom-id')
       expect(indicator.id).toBe('custom-id')
     })
 

@@ -12,7 +12,7 @@ export class Header extends Component {
   private port: number
 
   constructor(port: number) {
-    super('header')
+    super()
     this.port = port
   }
 

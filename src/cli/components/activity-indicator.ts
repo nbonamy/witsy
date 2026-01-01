@@ -21,8 +21,8 @@ export class ActivityIndicator extends Component {
   private text: string
   private animationFrame: number = 0
 
-  constructor(text: string = '', id?: string) {
-    super(id ?? 'activity')
+  constructor(text: string = '') {
+    super()
     this.text = text
   }
 

@@ -12,6 +12,9 @@ export class Root extends Component {
   // Track positions: componentId -> { startRow, height }
   private positions: Map<string, ComponentPosition> = new Map()
 
+  // Id to component mapping (for fast lookup)
+  private idMap: Map<string, Component> = new Map()
+
   // Central animation manager
   private animations: Map<string, NodeJS.Timeout> = new Map()
 
@@ -20,21 +23,53 @@ export class Root extends Component {
   private termHeight: number = process.stdout.rows || 24
 
   constructor() {
-    super('root')
+    super()
+    this.setId('root')
   }
 
-  // Override appendChild to set up callbacks
-  appendChild(child: Component): void {
+  // Override appendChild to take id and set up callbacks
+  appendChild(child: Component, id?: string): void {
+    // Generate id if not provided
+    const componentId = id ?? `component-${this.idMap.size + 1}`
+
+    // Check uniqueness
+    if (this.idMap.has(componentId)) {
+      throw new Error(`Component with id "${componentId}" already exists`)
+    }
+
+    // Set id and register
+    child.setId(componentId)
+    this.idMap.set(componentId, child)
+
     super.appendChild(child)
     child.setSizeChangeCallback(this.handleSizeChange.bind(this))
     child.setRenderCallback(this.handleRenderRequest.bind(this))
   }
 
-  // Override removeChild to clean up callbacks
+  // Override insertBefore to take id
+  insertBefore(child: Component, before: Component, id?: string): void {
+    const componentId = id ?? `component-${this.idMap.size + 1}`
+    if (this.idMap.has(componentId)) {
+      throw new Error(`Component with id "${componentId}" already exists`)
+    }
+    child.setId(componentId)
+    this.idMap.set(componentId, child)
+    super.insertBefore(child, before)
+    child.setSizeChangeCallback(this.handleSizeChange.bind(this))
+    child.setRenderCallback(this.handleRenderRequest.bind(this))
+  }
+
+  // Override removeChild to clean up callbacks and id map
   removeChild(child: Component): void {
     child.setSizeChangeCallback(null)
     child.setRenderCallback(null)
+    this.idMap.delete(child.id)
     super.removeChild(child)
+  }
+
+  // Fast lookup by id
+  find(id: string): Component | null {
+    return this.idMap.get(id) ?? null
   }
 
   // Handle render request from a component

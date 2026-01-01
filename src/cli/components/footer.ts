@@ -10,7 +10,7 @@ export class Footer extends Component {
   private inputText: string = ''
 
   constructor() {
-    super('footer')
+    super()
   }
 
   // Set custom left text (overrides auto-computed)

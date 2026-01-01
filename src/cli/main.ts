@@ -9,7 +9,7 @@ import { clearFooter, displayFooter, grayText, padContent, resetDisplay } from '
 import { promptInput } from './input'
 import { selectOption } from './select'
 import { state } from './state'
-import { initializeTree, addUserMessage, renderTree, getTree, StatusText } from './tree'
+import { initializeTree, addUserMessage, renderTree, getTree, StatusText, showGoodbye } from './tree'
 
 // Handle command result - returns true if should continue loop, false if should exit
 async function handleCommandResult(result: CommandResult): Promise<boolean> {
@@ -38,7 +38,7 @@ async function handleCommandResult(result: CommandResult): Promise<boolean> {
 
   // Handle actions
   if (result.action === 'quit') {
-    console.log(chalk.yellow('\n  Goodbye! 👋'))
+    showGoodbye()
     process.exit(0)
   }
 
@@ -242,8 +242,8 @@ async function main() {
 
 // Handle Ctrl+C gracefully
 process.on('SIGINT', () => {
-  const result = handleQuit()
-  handleCommandResult(result)
+  showGoodbye()
+  process.exit(0)
 })
 
 // Run

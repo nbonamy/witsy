@@ -9,7 +9,7 @@ export class Prompt extends Component {
   private lineCount: number = 1
 
   constructor(promptText: string = '> ') {
-    super('prompt')
+    super()
     this.promptText = promptText
   }
 

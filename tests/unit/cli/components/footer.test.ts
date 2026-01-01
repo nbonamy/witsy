@@ -3,9 +3,9 @@ import { Footer } from '../../../../src/cli/components/footer'
 
 describe('Footer', () => {
 
-  test('has id "footer"', () => {
+  test('id starts empty', () => {
     const footer = new Footer()
-    expect(footer.id).toBe('footer')
+    expect(footer.id).toBe('')
   })
 
   test('calculateHeight returns 2', () => {

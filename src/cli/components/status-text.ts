@@ -13,7 +13,7 @@ export class StatusText extends Component {
   private escapeMessageTimer: NodeJS.Timeout | null = null
 
   constructor() {
-    super('status')
+    super()
     // Subscribe to input events
     inputEvents.subscribe(this.handleInputEvent.bind(this))
   }

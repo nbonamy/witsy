@@ -13,8 +13,14 @@ describe('Empty', () => {
     expect(empty.calculateHeight(80)).toBe(3)
   })
 
-  test('custom id', () => {
-    const empty = new Empty(1, 'spacer')
+  test('id starts empty', () => {
+    const empty = new Empty(1)
+    expect(empty.id).toBe('')
+  })
+
+  test('id is set via setId', () => {
+    const empty = new Empty(1)
+    empty.setId('spacer')
     expect(empty.id).toBe('spacer')
   })
 

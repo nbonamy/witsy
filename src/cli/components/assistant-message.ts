@@ -6,13 +6,14 @@ import { ToolCall } from './toolcall'
 
 export class AssistantMessage extends Component {
 
-  constructor(id?: string) {
-    super(id)
+  constructor() {
+    super()
   }
 
   // Add a tool call to this message
   addToolCall(toolId: string, status: string): ToolCall {
-    const tool = new ToolCall(toolId, status)
+    const tool = new ToolCall(status)
+    tool.setId(toolId)
     this.appendChild(tool)
     return tool
   }

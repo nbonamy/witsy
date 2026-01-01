@@ -4,9 +4,9 @@ import { Prompt } from '../../../../src/cli/components/prompt'
 describe('Prompt', () => {
 
   describe('constructor', () => {
-    test('has id "prompt"', () => {
+    test('id starts empty', () => {
       const prompt = new Prompt()
-      expect(prompt.id).toBe('prompt')
+      expect(prompt.id).toBe('')
     })
 
     test('default prompt text is "> "', () => {

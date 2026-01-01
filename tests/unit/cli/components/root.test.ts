@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach, vi, afterEach } from 'vitest'
-import { Component, resetComponentIdCounter } from '../../../../src/cli/components/component'
+import { Component } from '../../../../src/cli/components/component'
 import { Root } from '../../../../src/cli/components/root'
 
 // Concrete test component
@@ -7,8 +7,8 @@ class TestComponent extends Component {
   private height: number
   private content: string
 
-  constructor(id: string, height: number = 1, content: string = '') {
-    super(id)
+  constructor(height: number = 1, content: string = '') {
+    super()
     this.height = height
     this.content = content
   }
@@ -39,7 +39,6 @@ describe('Root', () => {
   let originalRows: number | undefined
 
   beforeEach(() => {
-    resetComponentIdCounter()
     output = []
 
     // Mock stdout.write
@@ -80,12 +79,48 @@ describe('Root', () => {
     })
   })
 
+  describe('appendChild', () => {
+    test('assigns id to child', () => {
+      const root = new Root()
+      const child = new TestComponent(1)
+      root.appendChild(child, 'my-child')
+      expect(child.id).toBe('my-child')
+    })
+
+    test('auto-generates id if not provided', () => {
+      const root = new Root()
+      const child = new TestComponent(1)
+      root.appendChild(child)
+      expect(child.id).toMatch(/^component-\d+$/)
+    })
+
+    test('throws on duplicate id', () => {
+      const root = new Root()
+      root.appendChild(new TestComponent(1), 'same-id')
+      expect(() => root.appendChild(new TestComponent(1), 'same-id')).toThrow()
+    })
+  })
+
+  describe('find', () => {
+    test('finds child by id', () => {
+      const root = new Root()
+      const child = new TestComponent(1)
+      root.appendChild(child, 'child-1')
+      expect(root.find('child-1')).toBe(child)
+    })
+
+    test('returns null for unknown id', () => {
+      const root = new Root()
+      expect(root.find('unknown')).toBeNull()
+    })
+  })
+
   describe('calculateHeight', () => {
     test('sums children heights', () => {
       const root = new Root()
-      root.appendChild(new TestComponent('c1', 3))
-      root.appendChild(new TestComponent('c2', 5))
-      root.appendChild(new TestComponent('c3', 2))
+      root.appendChild(new TestComponent(3), 'c1')
+      root.appendChild(new TestComponent(5), 'c2')
+      root.appendChild(new TestComponent(2), 'c3')
 
       expect(root.calculateHeight(80)).toBe(10)
     })
@@ -94,8 +129,8 @@ describe('Root', () => {
   describe('render', () => {
     test('renders all children lines', () => {
       const root = new Root()
-      root.appendChild(new TestComponent('c1', 2, 'content1'))
-      root.appendChild(new TestComponent('c2', 1, 'content2'))
+      root.appendChild(new TestComponent(2, 'content1'), 'c1')
+      root.appendChild(new TestComponent(1, 'content2'), 'c2')
 
       const lines = root.render(80)
       expect(lines).toEqual(['content1', 'content1', 'content2'])
@@ -105,13 +140,13 @@ describe('Root', () => {
   describe('position tracking', () => {
     test('calculates positions after renderFull', () => {
       const root = new Root()
-      const c1 = new TestComponent('c1', 3)
-      const c2 = new TestComponent('c2', 2)
-      const c3 = new TestComponent('c3', 4)
+      const c1 = new TestComponent(3)
+      const c2 = new TestComponent(2)
+      const c3 = new TestComponent(4)
 
-      root.appendChild(c1)
-      root.appendChild(c2)
-      root.appendChild(c3)
+      root.appendChild(c1, 'c1')
+      root.appendChild(c2, 'c2')
+      root.appendChild(c3, 'c3')
       root.renderFull()
 
       expect(root.getPosition(c1)).toEqual({ startRow: 1, height: 3 })
@@ -123,8 +158,8 @@ describe('Root', () => {
   describe('updateComponent', () => {
     test('updates component in place when height unchanged', () => {
       const root = new Root()
-      const c1 = new TestComponent('c1', 2)
-      root.appendChild(c1)
+      const c1 = new TestComponent(2)
+      root.appendChild(c1, 'c1')
       root.renderFull()
 
       output = [] // Reset output
@@ -136,8 +171,8 @@ describe('Root', () => {
 
     test('clears dirty flag after update', () => {
       const root = new Root()
-      const c1 = new TestComponent('c1', 2)
-      root.appendChild(c1)
+      const c1 = new TestComponent(2)
+      root.appendChild(c1, 'c1')
       root.renderFull()
 
       c1.markDirty()

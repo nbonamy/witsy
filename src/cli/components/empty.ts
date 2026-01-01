@@ -5,8 +5,8 @@ import { Component } from './component'
 export class Empty extends Component {
   private lines: number
 
-  constructor(lines: number = 1, id?: string) {
-    super(id ?? 'empty')
+  constructor(lines: number = 1) {
+    super()
     this.lines = lines
   }
 

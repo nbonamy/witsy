@@ -5,8 +5,8 @@ import { secondaryText } from '../display'
 
 export class Separator extends Component {
 
-  constructor(id?: string) {
-    super(id)
+  constructor() {
+    super()
   }
 
   // Separator is always 1 line

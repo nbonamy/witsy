@@ -12,6 +12,7 @@ import {
   Text,
   ToolCall,
   ActivityIndicator,
+  Goodbye,
 } from './components'
 import { state } from './state'
 
@@ -22,28 +23,33 @@ export function initializeTree(): Root {
 
   // Header (includes its own trailing blank line for spacing)
   const header = new Header(state.port)
-  root.appendChild(header)
+  root.appendChild(header, 'header')
   header.setCachedHeight(header.calculateHeight())
 
   // Top separator (above input)
-  const topSeparator = new Separator('separator-top')
-  root.appendChild(topSeparator)
+  const topSeparator = new Separator()
+  root.appendChild(topSeparator, 'separator-top')
   topSeparator.setCachedHeight(topSeparator.calculateHeight())
 
   // Prompt/Input area (initially 1 line)
   const prompt = new Prompt('> ')
-  root.appendChild(prompt)
+  root.appendChild(prompt, 'prompt')
   prompt.setCachedHeight(prompt.calculateHeight())
 
   // Bottom separator (below input)
-  const bottomSeparator = new Separator('separator-bottom')
-  root.appendChild(bottomSeparator)
+  const bottomSeparator = new Separator()
+  root.appendChild(bottomSeparator, 'separator-bottom')
   bottomSeparator.setCachedHeight(bottomSeparator.calculateHeight())
 
   // Status text (model info, message count)
   const status = new StatusText()
-  root.appendChild(status)
+  root.appendChild(status, 'status')
   status.setCachedHeight(status.calculateHeight())
+
+  // Goodbye message (hidden by default, shown on exit)
+  const goodbye = new Goodbye()
+  goodbye.hide()
+  root.appendChild(goodbye, 'goodbye')
 
   state.componentTree = root
   return root
@@ -84,9 +90,14 @@ export function renderTree(): void {
   // Update status
   updateStatus()
 
-  // Render all components
+  // Render all visible components
   let currentRow = 0
   for (const child of tree.getChildren()) {
+    // Skip hidden components (like v-if in Vue)
+    if (!child.visible) {
+      child.setCachedHeight(0)
+      continue
+    }
     const lines = child.render(width)
     for (const line of lines) {
       process.stdout.write(ansiEscapes.cursorTo(0, currentRow))
@@ -95,17 +106,18 @@ export function renderTree(): void {
     }
     child.clearDirty()
     child.setCachedHeight(lines.length)
-    // process.stderr.write(`renderTree: ${child.id} at row ${startRow}, height ${lines.length}\n`)
   }
 
-  // Position cursor at the prompt (after the "> ")
+  // Position cursor at the prompt (after the "> ") if visible
   const prompt = tree.find('prompt') as Prompt | null
-  if (prompt) {
+  if (prompt?.visible) {
     // Find prompt position
     let promptRow = 0
     for (const child of tree.getChildren()) {
       if (child.id === 'prompt') break
-      promptRow += child.getCachedHeight()
+      if (child.visible) {
+        promptRow += child.getCachedHeight()
+      }
     }
     process.stdout.write(ansiEscapes.cursorTo(2, promptRow))
   }
@@ -139,6 +151,23 @@ export function renderDialog(promptText: string): void {
   process.stdout.write(promptText)
 }
 
+// Show goodbye state - hide prompt area, show goodbye message
+export function showGoodbye(): void {
+  const tree = getTree()
+
+  // Hide prompt area components
+  tree.find('separator-top')?.hide()
+  tree.find('prompt')?.hide()
+  tree.find('separator-bottom')?.hide()
+  tree.find('status')?.hide()
+
+  // Show goodbye (it's a fixed component, always exists after initializeTree)
+  tree.find('goodbye').show()
+
+  // Render the updated tree
+  renderTree()
+}
+
 // Render status area (bottom separator + status text) - for incremental updates
 export function renderStatusArea(): void {
   // Update status text
@@ -153,12 +182,13 @@ export function addUserMessage(content: string): UserMessage {
   const tree = getTree()
   const separatorTop = tree.find('separator-top')
 
-  const userMsg = new UserMessage(content, `user-${Date.now()}`)
+  const userMsg = new UserMessage(content)
+  const msgId = `user-${Date.now()}`
 
   if (separatorTop) {
-    tree.insertBefore(userMsg, separatorTop)
+    tree.insertBefore(userMsg, separatorTop, msgId)
   } else {
-    tree.appendChild(userMsg)
+    tree.appendChild(userMsg, msgId)
   }
 
   return userMsg
@@ -169,12 +199,13 @@ export function addAssistantMessage(): AssistantMessage {
   const tree = getTree()
   const separatorTop = tree.find('separator-top')
 
-  const assistantMsg = new AssistantMessage(`assistant-${Date.now()}`)
+  const assistantMsg = new AssistantMessage()
+  const msgId = `assistant-${Date.now()}`
 
   if (separatorTop) {
-    tree.insertBefore(assistantMsg, separatorTop)
+    tree.insertBefore(assistantMsg, separatorTop, msgId)
   } else {
-    tree.appendChild(assistantMsg)
+    tree.appendChild(assistantMsg, msgId)
   }
 
   return assistantMsg
@@ -188,12 +219,12 @@ export function showActivity(text: string): ActivityIndicator {
   // Remove any existing activity indicator
   hideActivity()
 
-  const indicator = new ActivityIndicator(text, 'activity')
+  const indicator = new ActivityIndicator(text)
 
   if (separatorTop) {
-    tree.insertBefore(indicator, separatorTop)
+    tree.insertBefore(indicator, separatorTop, 'activity')
   } else {
-    tree.appendChild(indicator)
+    tree.appendChild(indicator, 'activity')
   }
 
   // Render from the indicator down
@@ -260,17 +291,14 @@ export function stopToolAnimations(): void {
   tree.stopAnimation('tools')
 }
 
-// Fixed component IDs that should not be removed
-const FIXED_COMPONENTS = ['header', 'separator-top', 'prompt', 'separator-bottom', 'status', 'activity']
-
 // Rebuild tree from chat messages (for resetDisplay)
 export function rebuildTreeFromMessages(): void {
   const tree = getTree()
 
-  // Remove all messages (keep fixed components)
+  // Remove all message components (user-* and assistant-*)
   const toRemove: string[] = []
   for (const child of tree.getChildren()) {
-    if (!FIXED_COMPONENTS.includes(child.id)) {
+    if (child.id.startsWith('user-') || child.id.startsWith('assistant-')) {
       toRemove.push(child.id)
     }
   }
@@ -285,18 +313,21 @@ export function rebuildTreeFromMessages(): void {
   // Add messages from chat state (before separator-top)
   const separatorTop = tree.find('separator-top')
 
-  for (const msg of state.chat.messages) {
+  for (let i = 0; i < state.chat.messages.length; i++) {
+    const msg = state.chat.messages[i]
     if (msg.role === 'user') {
-      const userMsg = new UserMessage(msg.content, `user-${Date.now()}-${Math.random()}`)
+      const userMsg = new UserMessage(msg.content)
+      const msgId = `user-${i}`
       if (separatorTop) {
-        tree.insertBefore(userMsg, separatorTop)
+        tree.insertBefore(userMsg, separatorTop, msgId)
       }
     } else if (msg.role === 'assistant') {
-      const assistantMsg = new AssistantMessage(`assistant-${Date.now()}-${Math.random()}`)
+      const assistantMsg = new AssistantMessage()
       const text = new Text(msg.content, 'assistant')
       assistantMsg.appendChild(text)
+      const msgId = `assistant-${i}`
       if (separatorTop) {
-        tree.insertBefore(assistantMsg, separatorTop)
+        tree.insertBefore(assistantMsg, separatorTop, msgId)
       }
     }
   }
@@ -311,7 +342,7 @@ export function clearMessages(): void {
 
   const toRemove: string[] = []
   for (const child of tree.getChildren()) {
-    if (!FIXED_COMPONENTS.includes(child.id)) {
+    if (child.id.startsWith('user-') || child.id.startsWith('assistant-')) {
       toRemove.push(child.id)
     }
   }

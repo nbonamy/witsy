@@ -1,13 +1,13 @@
-import { expect, test, describe, beforeEach } from 'vitest'
-import { Component, resetComponentIdCounter } from '../../../../src/cli/components/component'
+import { expect, test, describe } from 'vitest'
+import { Component } from '../../../../src/cli/components/component'
 
 // Concrete test component
 class TestComponent extends Component {
   private height: number
   private content: string
 
-  constructor(id: string, height: number = 1, content: string = '') {
-    super(id)
+  constructor(height: number = 1, content: string = '') {
+    super()
     this.height = height
     this.content = content
   }
@@ -31,28 +31,23 @@ class TestComponent extends Component {
 
 describe('Component', () => {
 
-  beforeEach(() => {
-    resetComponentIdCounter()
-  })
-
-  describe('constructor', () => {
-    test('generates auto id when none provided', () => {
-      const comp1 = new TestComponent(undefined as unknown as string)
-      const comp2 = new TestComponent(undefined as unknown as string)
-      expect(comp1.id).toBe('component-1')
-      expect(comp2.id).toBe('component-2')
+  describe('id management', () => {
+    test('id starts empty', () => {
+      const comp = new TestComponent()
+      expect(comp.id).toBe('')
     })
 
-    test('uses provided id', () => {
-      const comp = new TestComponent('my-id')
+    test('setId sets the id', () => {
+      const comp = new TestComponent()
+      comp.setId('my-id')
       expect(comp.id).toBe('my-id')
     })
   })
 
   describe('tree manipulation', () => {
     test('appendChild adds child', () => {
-      const parent = new TestComponent('parent')
-      const child = new TestComponent('child')
+      const parent = new TestComponent()
+      const child = new TestComponent()
 
       parent.appendChild(child)
 
@@ -62,8 +57,8 @@ describe('Component', () => {
     })
 
     test('appendChild marks parent dirty', () => {
-      const parent = new TestComponent('parent')
-      const child = new TestComponent('child')
+      const parent = new TestComponent()
+      const child = new TestComponent()
       parent.clearDirty()
 
       parent.appendChild(child)
@@ -72,10 +67,10 @@ describe('Component', () => {
     })
 
     test('insertBefore inserts at correct position', () => {
-      const parent = new TestComponent('parent')
-      const child1 = new TestComponent('child1')
-      const child2 = new TestComponent('child2')
-      const child3 = new TestComponent('child3')
+      const parent = new TestComponent()
+      const child1 = new TestComponent()
+      const child2 = new TestComponent()
+      const child3 = new TestComponent()
 
       parent.appendChild(child1)
       parent.appendChild(child3)
@@ -85,10 +80,10 @@ describe('Component', () => {
     })
 
     test('insertBefore appends if reference not found', () => {
-      const parent = new TestComponent('parent')
-      const child1 = new TestComponent('child1')
-      const child2 = new TestComponent('child2')
-      const notChild = new TestComponent('not-child')
+      const parent = new TestComponent()
+      const child1 = new TestComponent()
+      const child2 = new TestComponent()
+      const notChild = new TestComponent()
 
       parent.appendChild(child1)
       parent.insertBefore(child2, notChild)
@@ -97,10 +92,10 @@ describe('Component', () => {
     })
 
     test('insertAfter inserts at correct position', () => {
-      const parent = new TestComponent('parent')
-      const child1 = new TestComponent('child1')
-      const child2 = new TestComponent('child2')
-      const child3 = new TestComponent('child3')
+      const parent = new TestComponent()
+      const child1 = new TestComponent()
+      const child2 = new TestComponent()
+      const child3 = new TestComponent()
 
       parent.appendChild(child1)
       parent.appendChild(child3)
@@ -110,9 +105,9 @@ describe('Component', () => {
     })
 
     test('removeChild removes child', () => {
-      const parent = new TestComponent('parent')
-      const child1 = new TestComponent('child1')
-      const child2 = new TestComponent('child2')
+      const parent = new TestComponent()
+      const child1 = new TestComponent()
+      const child2 = new TestComponent()
 
       parent.appendChild(child1)
       parent.appendChild(child2)
@@ -124,8 +119,8 @@ describe('Component', () => {
     })
 
     test('removeChild marks parent dirty', () => {
-      const parent = new TestComponent('parent')
-      const child = new TestComponent('child')
+      const parent = new TestComponent()
+      const child = new TestComponent()
       parent.appendChild(child)
       parent.clearDirty()
 
@@ -137,10 +132,14 @@ describe('Component', () => {
 
   describe('find', () => {
     test('finds component by id', () => {
-      const root = new TestComponent('root')
-      const child1 = new TestComponent('child1')
-      const child2 = new TestComponent('child2')
-      const grandchild = new TestComponent('grandchild')
+      const root = new TestComponent()
+      root.setId('root')
+      const child1 = new TestComponent()
+      child1.setId('child1')
+      const child2 = new TestComponent()
+      child2.setId('child2')
+      const grandchild = new TestComponent()
+      grandchild.setId('grandchild')
 
       root.appendChild(child1)
       root.appendChild(child2)
@@ -152,25 +151,26 @@ describe('Component', () => {
     })
 
     test('finds self', () => {
-      const comp = new TestComponent('self')
+      const comp = new TestComponent()
+      comp.setId('self')
       expect(comp.find('self')).toBe(comp)
     })
   })
 
   describe('dirty state', () => {
     test('starts dirty', () => {
-      const comp = new TestComponent('test')
+      const comp = new TestComponent()
       expect(comp.isDirty()).toBe(true)
     })
 
     test('clearDirty clears flag', () => {
-      const comp = new TestComponent('test')
+      const comp = new TestComponent()
       comp.clearDirty()
       expect(comp.isDirty()).toBe(false)
     })
 
     test('markDirty sets flag', () => {
-      const comp = new TestComponent('test')
+      const comp = new TestComponent()
       comp.clearDirty()
       comp.markDirty()
       expect(comp.isDirty()).toBe(true)
@@ -179,7 +179,7 @@ describe('Component', () => {
 
   describe('height caching', () => {
     test('caches height', () => {
-      const comp = new TestComponent('test', 5)
+      const comp = new TestComponent(5)
       comp.setCachedHeight(5)
       expect(comp.getCachedHeight()).toBe(5)
     })
@@ -187,9 +187,9 @@ describe('Component', () => {
 
   describe('child access', () => {
     test('indexOf returns correct index', () => {
-      const parent = new TestComponent('parent')
-      const child1 = new TestComponent('child1')
-      const child2 = new TestComponent('child2')
+      const parent = new TestComponent()
+      const child1 = new TestComponent()
+      const child2 = new TestComponent()
 
       parent.appendChild(child1)
       parent.appendChild(child2)
@@ -199,9 +199,9 @@ describe('Component', () => {
     })
 
     test('childAt returns correct child', () => {
-      const parent = new TestComponent('parent')
-      const child1 = new TestComponent('child1')
-      const child2 = new TestComponent('child2')
+      const parent = new TestComponent()
+      const child1 = new TestComponent()
+      const child2 = new TestComponent()
 
       parent.appendChild(child1)
       parent.appendChild(child2)
@@ -209,6 +209,40 @@ describe('Component', () => {
       expect(parent.childAt(0)).toBe(child1)
       expect(parent.childAt(1)).toBe(child2)
       expect(parent.childAt(2)).toBeNull()
+    })
+  })
+
+  describe('visibility', () => {
+    test('starts visible', () => {
+      const comp = new TestComponent()
+      expect(comp.visible).toBe(true)
+    })
+
+    test('hide sets visible to false', () => {
+      const comp = new TestComponent()
+      comp.hide()
+      expect(comp.visible).toBe(false)
+    })
+
+    test('show sets visible to true', () => {
+      const comp = new TestComponent()
+      comp.hide()
+      comp.show()
+      expect(comp.visible).toBe(true)
+    })
+
+    test('setVisible marks dirty on change', () => {
+      const comp = new TestComponent()
+      comp.clearDirty()
+      comp.setVisible(false)
+      expect(comp.isDirty()).toBe(true)
+    })
+
+    test('setVisible does not mark dirty if same value', () => {
+      const comp = new TestComponent()
+      comp.clearDirty()
+      comp.setVisible(true)  // Already true
+      expect(comp.isDirty()).toBe(false)
     })
   })
 })

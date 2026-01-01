@@ -3,9 +3,9 @@ import { Header } from '../../../../src/cli/components/header'
 
 describe('Header', () => {
 
-  test('has id "header"', () => {
+  test('id starts empty', () => {
     const header = new Header(8090)
-    expect(header.id).toBe('header')
+    expect(header.id).toBe('')
   })
 
   test('calculateHeight returns 5 (blank + 3 logo + trailing blank)', () => {

@@ -9,8 +9,9 @@ describe('UserMessage', () => {
       expect(msg.getContent()).toBe('Hello world')
     })
 
-    test('custom id', () => {
-      const msg = new UserMessage('Hello', 'msg-1')
+    test('id is set via setId', () => {
+      const msg = new UserMessage('Hello')
+      msg.setId('msg-1')
       expect(msg.id).toBe('msg-1')
     })
   })

@@ -11,8 +11,9 @@ describe('AssistantMessage', () => {
       expect(msg.childCount()).toBe(0)
     })
 
-    test('custom id', () => {
-      const msg = new AssistantMessage('msg-1')
+    test('id is set via setId', () => {
+      const msg = new AssistantMessage()
+      msg.setId('msg-1')
       expect(msg.id).toBe('msg-1')
     })
   })

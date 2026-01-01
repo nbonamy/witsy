@@ -25,8 +25,8 @@ export class ToolCall extends Component {
   private state: ToolState = 'running'
   private animationFrame: number = 0
 
-  constructor(id: string, status: string) {
-    super(id)
+  constructor(status: string) {
+    super()
     this.status = status
   }
 

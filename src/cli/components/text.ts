@@ -11,8 +11,8 @@ export class Text extends Component {
   private cachedLines: string[] = []
   private cachedWidth: number = 0
 
-  constructor(content: string = '', style: TextStyle = 'default', id?: string) {
-    super(id)
+  constructor(content: string = '', style: TextStyle = 'default') {
+    super()
     this.content = content
     this.style = style
   }

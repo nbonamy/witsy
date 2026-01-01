@@ -1,6 +1,6 @@
 // CLI Components framework
 
-export { Component, resetComponentIdCounter } from './component'
+export { Component } from './component'
 export { Root, ComponentPosition } from './root'
 export { Header } from './header'
 export { Empty } from './empty'
@@ -13,3 +13,4 @@ export { ActivityIndicator } from './activity-indicator'
 export { UserMessage } from './user-message'
 export { AssistantMessage } from './assistant-message'
 export { Prompt } from './prompt'
+export { Goodbye } from './goodbye'
