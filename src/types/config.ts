@@ -241,6 +241,9 @@ export type STTConfig = {
   whisper: {
     gpu: boolean
   }
+  parakeet?: {
+    gpu: boolean
+  }
   soniox?: {
     cleanup?: boolean
     audioFormat?: string

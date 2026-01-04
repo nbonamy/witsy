@@ -158,6 +158,7 @@
     "ollama": "^0.6.0",
     "openai": "^6.7.0",
     "openai-speech-stream-player": "^1.0.8",
+    "parakeet.js": "^0.0.3",
     "pdf2json": "^3.2.0",
     "plist": "^3.1.0",
     "portfinder": "^1.0.37",

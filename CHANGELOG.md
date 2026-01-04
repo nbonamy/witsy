@@ -2,10 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.X.Y] - WIP
+## [3.3.2] - 2026-01-04
 
 ### Added
 - CLI filesystem access and tool display fixes
+- Parakeet local model support (https://github.com/nbonamy/witsy/issues/471)
 - SearXNG support
 
 ### Changed

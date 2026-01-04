@@ -10,6 +10,7 @@ import STTHuggingFace from './stt-huggingface'
 import STTMistral from './stt-mistral'
 import STTNvidia from './stt-nvidia'
 import STTOpenAI from './stt-openai'
+import STTParakeet from './stt-parakeet'
 import STTSoniox from './stt-soniox'
 import STTSpeechmatics from './stt-speechmatics'
 import STTWhisper from './stt-whisper'
@@ -139,6 +140,7 @@ export const getSTTEngines = () => {
     { id: 'mistralai', label: engineNames.mistralai },
     { id: 'soniox', label: engineNames.soniox },
     { id: 'whisper', label: engineNames.whisper },
+    { id: 'parakeet', label: engineNames.parakeet },
     { id: 'custom', label: 'Custom OpenAI' },
   ]
 }
@@ -164,6 +166,8 @@ export const getSTTModels = (engine: string) => {
     return STTMistral.models
   } else if (engine === 'whisper') {
     return STTWhisper.models
+  } else if (engine === 'parakeet') {
+    return STTParakeet.models
   } else if (engine === 'soniox') {
     return STTSoniox.models
   } else if (engine === 'custom') {
@@ -185,6 +189,8 @@ export const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTNvidia(config)
   } else if (engine === 'whisper') {
     return new STTWhisper(config)
+  } else if (engine === 'parakeet') {
+    return new STTParakeet(config)
   } else if (engine === 'gladia') {
     return new STTGladia(config)
   } else if (engine === 'fireworks') {
@@ -215,6 +221,8 @@ export const requiresDownload = (engine: string): boolean => {
     return STTNvidia.requiresDownload()
   } else if (engine === 'whisper') {
     return STTWhisper.requiresDownload()
+  } else if (engine === 'parakeet') {
+    return STTParakeet.requiresDownload()
   } else if (engine === 'gladia') {
     return STTGladia.requiresDownload()
   } else if (engine === 'fireworks') {
