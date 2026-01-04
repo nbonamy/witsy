@@ -12,6 +12,7 @@ import STTNvidia from '@renderer/voice/stt-nvidia'
 import STTOpenAI from '@renderer/voice/stt-openai'
 import STTSpeechmatics from '@renderer/voice/stt-speechmatics'
 import STTWhisper from '@renderer/voice/stt-whisper'
+import STTParakeet from '@renderer/voice/stt-parakeet'
 import STTSoniox from '@renderer/voice/stt-soniox'
 import { fal } from '@fal-ai/client'
 import { Configuration } from '@/types/config'
@@ -210,6 +211,29 @@ vi.mock('webm-to-wav-converter', async () => {
   }
 })
 
+vi.mock('parakeet.js', async () => {
+  const mockModel = {
+    transcribe: vi.fn(async () => ({ utterance_text: 'transcribed' }))
+  }
+  return {
+    getParakeetModel: vi.fn(async (repoId: string, opts: any) => {
+      opts?.progress?.({ file: 'encoder.onnx', loaded: 100, total: 100 })
+      return {
+        urls: {
+          encoderUrl: 'mock-encoder-url',
+          decoderUrl: 'mock-decoder-url',
+          tokenizerUrl: 'mock-tokenizer-url',
+          preprocessorUrl: 'mock-preprocessor-url'
+        },
+        filenames: { encoder: 'encoder.onnx', decoder: 'decoder.onnx' }
+      }
+    }),
+    ParakeetModel: {
+      fromUrls: vi.fn(async () => mockModel)
+    }
+  }
+})
+
 
 beforeAll(() => {
   window.AudioContext = vi.fn()
@@ -230,6 +254,7 @@ test('Requires download', () => {
   expect(requiresDownload('groq')).toBe(false)
   expect(requiresDownload('soniox')).toBe(false)
   expect(requiresDownload('whisper')).toBe(true)
+  expect(requiresDownload('parakeet')).toBe(true)
 })
 
 test('Instantiates OpenAI by default', async () => {
@@ -313,6 +338,20 @@ test('Instantiates Whisper', async () => {
   expect(engine.requiresDownload()).toBe(true)
   await engine.initialize(initCallback)
   expect(initCallback).toHaveBeenLastCalledWith(expect.objectContaining({ task:'automatic-speech-recognition', status: 'initiate', model: expect.any(String) }))
+  await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
+})
+
+test('Instantiates Parakeet', async () => {
+  store.config.stt.engine = 'parakeet'
+  store.config.stt.model = 'istupakov/parakeet-tdt-0.6b-v2-onnx'
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTParakeet)
+  expect(engine).toHaveProperty('transcribe')
+  expect(engine.isReady()).toBe(false)
+  expect(engine.requiresDownload()).toBe(true)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenCalledWith(expect.objectContaining({ status: 'progress' }))
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 

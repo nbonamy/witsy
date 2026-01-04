@@ -19,6 +19,7 @@ export const engineNames: Record<string, string> = {
   'ollama': 'Ollama',
   'openai': 'OpenAI',
   'openrouter': 'OpenRouter',
+  'parakeet': 'Parakeet',
   'replicate': 'Replicate',
   'sdwebui': 'Stable Diffusion web UI',
   'soniox': 'Soniox',
