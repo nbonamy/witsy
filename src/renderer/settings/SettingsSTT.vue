@@ -376,7 +376,7 @@ const deleteLocalModels = async () => {
         engine.deleteAllModels()
       }
     }
-    if (engine.value === 'whisper') {
+    if (engine.value === 'whisper' || engine.value === 'parakeet') {
       model.value = ''
     }
   })
