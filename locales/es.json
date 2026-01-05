@@ -50,6 +50,7 @@
     "differentLocales": "Tu configuración regional del LLM es diferente de la de tu interfaz. Los textos mostrados están en la configuración regional del LLM o en tu configuración regional si los has personalizado.",
     "disabled": "Desactivado",
     "docRepo": "Base de Conocimiento",
+    "docRepos": "Bases de Conocimiento",
     "documents": "Documentos",
     "done": "Hecho",
     "download": "Descargar",
@@ -1873,7 +1874,6 @@
       "hide": "Ocultar configuraciones avanzadas",
       "show": "Mostrar configuraciones avanzadas"
     },
-    "docrepo": "Base de conocimiento predeterminada",
     "expert": "Experto predeterminado",
     "noDocRepo": "Ninguno",
     "noExpert": "Ninguno",

@@ -50,6 +50,7 @@
     "differentLocales": "您的语言模型语言与界面语言不同。显示的文本为语言模型的语言或您自定义的语言。",
     "disabled": "已禁用",
     "docRepo": "知识库",
+    "docRepos": "知识库",
     "documents": "文档",
     "done": "完成",
     "download": "下载",
@@ -1892,7 +1893,6 @@
       "hide": "隐藏高级设置",
       "show": "显示高级设置"
     },
-    "docrepo": "默认知识库",
     "expert": "默认专家",
     "noDocRepo": "无",
     "noExpert": "无",

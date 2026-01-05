@@ -50,6 +50,7 @@
     "differentLocales": "Ihre LLM-Lokalisierung ist anders als Ihre Schnittstellenlokalisierung. Die angezeigten Texte sind in der LLM-Lokalisierung oder Ihrer Lokalisierung, wenn Sie sie angepasst haben.",
     "disabled": "Deaktiviert",
     "docRepo": "Wissensdatenbank",
+    "docRepos": "Wissensdatenbanken",
     "documents": "Dokumente",
     "done": "Fertig",
     "download": "Herunterladen",
@@ -1873,7 +1874,6 @@
       "hide": "Erweiterte Einstellungen ausblenden",
       "show": "Erweiterte Einstellungen anzeigen"
     },
-    "docrepo": "Standard Wissensdatenbank",
     "expert": "Standard Experte",
     "noDocRepo": "Keine",
     "noExpert": "Keine",

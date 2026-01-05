@@ -57,7 +57,7 @@
           </div>
 
           <div class="form-field">
-            <label>{{ t('folderSettings.docrepo') }}</label>
+            <label>{{ t('common.docRepos') }}</label>
             <button id="docrepos-menu-anchor" @click.prevent="showDocReposMenu = !showDocReposMenu">
               {{ getDocReposLabel() }}
             </button>
