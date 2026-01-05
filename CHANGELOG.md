@@ -6,11 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - CLI filesystem access and tool display fixes
-- Parakeet local model support (https://github.com/nbonamy/witsy/issues/471)
+- Parakeet STT local model support (https://github.com/nbonamy/witsy/issues/471)
 - SearXNG support
 
 ### Changed
-- Ability search multiple knowledge bases
+- Ability to search multiple knowledge bases
 - Knowledge base access from expert
 
 ### Fixed
