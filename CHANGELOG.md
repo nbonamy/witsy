@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - SearXNG support
 
 ### Changed
-- N/A
+- Ability search multiple knowledge bases
 
 ### Fixed
 - N/A

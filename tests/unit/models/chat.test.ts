@@ -76,7 +76,7 @@ test('Fork', () => {
     lastModified: 1,
     engine: 'engine',
     model: 'model',
-    docrero: 'docrepo',
+    docrepos: ['docrepo'],
     tools: [ 'tool1' ],
     messages: [
       { uuid: '1', role: 'role1', content: 'content1' },
@@ -85,7 +85,7 @@ test('Fork', () => {
       { uuid: '4', role: 'role4', content: 'content4' },
     ]
   })
-  
+
   const fork = chat.fork(chat.messages[2])
   expect(fork.uuid).not.toBe(chat.uuid)
   expect(fork.title).toBe(chat.title)
@@ -93,7 +93,7 @@ test('Fork', () => {
   expect(fork.lastModified).not.toBe(chat.lastModified)
   expect(fork.engine).toBe(chat.engine)
   expect(fork.model).toBe(chat.model)
-  expect(fork.docrepo).toBe(chat.docrepo)
+  expect(fork.docrepos).toStrictEqual(chat.docrepos)
   expect(fork.tools).toBe(chat.tools)
   expect(fork.messages.length).toBe(3)
   expect(fork.messages[0]).toMatchObject({ uuid: expect.not.stringMatching('^1$'), role: 'role1', content: 'content1' })
@@ -110,7 +110,7 @@ test('Delete Message', () => {
     lastModified: 1,
     engine: 'engine',
     model: 'model',
-    docrero: 'docrepo',
+    docrepos: ['docrepo'],
     tools: [],
     messages: [
       { uuid: '1', role: 'role1', content: 'content1' },
@@ -119,10 +119,48 @@ test('Delete Message', () => {
       { uuid: '4', role: 'role4', content: 'content4' },
     ]
   })
-  
+
   chat.deleteMessagesStarting(chat.messages[2])
   expect(chat.messages.length).toBe(2)
   expect(chat.messages[0].uuid).toBe('1')
   expect(chat.messages[1].uuid).toBe('2')
 
+})
+
+test('Migrate legacy docrepo to docrepos on fromJson', () => {
+  // Test with legacy docrepo field (backwards compatibility)
+  const chat = Chat.fromJson({
+    uuid: 'uuid',
+    title: 'title',
+    createdAt: 1,
+    lastModified: 1,
+    docrepo: 'legacy-docrepo',
+    messages: []
+  })
+  expect(chat.docrepos).toStrictEqual(['legacy-docrepo'])
+})
+
+test('Prefer docrepos over legacy docrepo on fromJson', () => {
+  // If both exist, docrepos takes precedence
+  const chat = Chat.fromJson({
+    uuid: 'uuid',
+    title: 'title',
+    createdAt: 1,
+    lastModified: 1,
+    docrepo: 'legacy-docrepo',
+    docrepos: ['new-docrepo1', 'new-docrepo2'],
+    messages: []
+  })
+  expect(chat.docrepos).toStrictEqual(['new-docrepo1', 'new-docrepo2'])
+})
+
+test('Migrate legacy docrepo to docrepos on patchFromJson', () => {
+  const chat = new Chat('title')
+  chat.patchFromJson({
+    title: 'new title',
+    lastModified: 2,
+    docrepo: 'legacy-docrepo',
+    messages: []
+  })
+  expect(chat.docrepos).toStrictEqual(['legacy-docrepo'])
 })

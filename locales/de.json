@@ -250,6 +250,7 @@
         "customTools": "Werkzeuge",
         "description": "@:{'common.description'}",
         "docRepo": "Wissensdatenbank",
+        "docReposCount": "{count} Wissensdatenbanken",
         "error": {
           "emptyStepPrompt": "Die Eingabeaufforderung für Schritt #{step} darf nicht leer sein.",
           "missingDocRepo": "Schritt #{step} verwendet eine Wissensdatenbank, aber keine {'{'}{'{'}facts{'}'}{'}'}-Variable ist im Prompt definiert. Bitte fügen Sie eine Variable der Form {'{'}{'{'}facts{'}'}{'}'} zu Ihrem Prompt hinzu.",

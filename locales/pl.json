@@ -269,6 +269,7 @@
         "customTools": "Narzędzia",
         "description": "@:{'common.description'}",
         "docRepo": "Wiedza",
+        "docReposCount": "{count} Bazy Wiedzy",
         "error": {
           "emptyStepPrompt": "Prompt kroku #{step} nie może być pusty.",
           "missingDocRepo": "Krok #{step} korzysta z bazy wiedzy, ale w podpowiedzi nie zdefiniowano zmiennej {'{'}{'{'}facts{'}'}{'}'}. Proszę dodaj zmienną w formacie {'{'}{'{'}facts{'}'}{'}'} do swojej podpowiedzi.",

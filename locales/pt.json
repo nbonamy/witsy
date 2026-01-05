@@ -269,6 +269,7 @@
         "customTools": "Ferramentas",
         "description": "@:{'common.description'}",
         "docRepo": "Conhecimento",
+        "docReposCount": "{count} Bases de Conhecimento",
         "error": {
           "emptyStepPrompt": "O prompt da etapa #{step} não pode estar vazio.",
           "missingDocRepo": "A etapa #{step} usa uma Base de Conhecimento, mas nenhuma variável {'{'}{'{'}facts{'}'}{'}'} está definida no prompt. Por favor, adicione uma variável no formato {'{'}{'{'}facts{'}'}{'}'} ao seu prompt.",

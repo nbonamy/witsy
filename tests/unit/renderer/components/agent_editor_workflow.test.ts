@@ -320,7 +320,7 @@ test('Shows docrepo button in workflow steps', async () => {
 test('Shows docrepo help text when docrepo is selected', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Step 1', tools: null, agents: [], docrepo: 'uuid1' }
+    { prompt: 'Step 1', tools: null, agents: [], docrepos: ['uuid1'] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -847,7 +847,7 @@ test('Selecting docrepo from menu updates step', async () => {
   await nextTick()
 
   // Initially step should have no docrepo
-  expect(agent.steps[0].docrepo).toBeUndefined()
+  expect(agent.steps[0].docrepos).toBeUndefined()
 
   // Click docrepo button to open menu
   const docrepoButton = wrapper.find('.step-actions .docrepo')
@@ -863,8 +863,8 @@ test('Selecting docrepo from menu updates step', async () => {
   await firstDocRepo.trigger('click')
   await nextTick()
 
-  // Step should now have the docrepo
-  expect(agent.steps[0].docrepo).toBe('uuid1')
+  // Step should now have the docrepos
+  expect(agent.steps[0].docrepos).toStrictEqual(['uuid1'])
 })
 
 test('Selecting expert from menu updates step', async () => {

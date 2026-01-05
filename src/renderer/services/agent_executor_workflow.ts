@@ -3,7 +3,6 @@ import { LlmChunk, LlmEngine } from 'multi-llm-ts'
 import { AgentRun, AgentRunTrigger, AgentStep } from 'types/agents'
 import { Configuration } from 'types/config'
 import { Chat, Expert } from 'types/index'
-import { DocRepoQueryResponseItem } from 'types/rag'
 import { v7 as uuidv7 } from 'uuid'
 import Agent from '@models/agent'
 import Message from '@models/message'
@@ -126,17 +125,18 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
           run.prompt = stepPrompt
         }
 
-        // docrepo
-        if (step.docrepo) {
+        // @ts-expect-error backwards compatibility: migrate docrepo to docrepos
+        const stepDocRepos = step.docrepos?.length ? step.docrepos : (step.docrepo ? [step.docrepo] : [])
+        if (stepDocRepos.length) {
 
           // check abort before expensive query
           if (this.checkAbort(run, opts)) {
             return run
           }
 
-          const sources: DocRepoQueryResponseItem[] = await window.api.docrepo.query(step.docrepo, stepPrompt);
-          if (sources.length) {
-            const context = sources.map((source) => source.content).join('\n\n');
+          // query all docrepos and merge results
+          const { context } = await LlmUtils.queryDocRepos(this.config, stepDocRepos, stepPrompt)
+          if (context) {
             const instructions = i18nInstructions(this.config, 'instructions.agent.docquery')
             stepPrompt += `\n\n${instructions.replace('{context}', context)}`
           }
@@ -153,7 +153,7 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
         const defaults: GenerationOpts = {
           ... this.llmManager.getChatEngineModel(),
           structuredOutput: stepStructuredOutput,
-          docrepo: null,
+          docrepos: null,
           sources: true,
           citations: true,
         }
