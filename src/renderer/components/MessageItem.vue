@@ -155,9 +155,14 @@ onMounted(() => {
 
   // make sure links are going outside
   updateLinkInterval = setInterval(() => {
-    document.querySelectorAll<HTMLLinkElement>('.messages a').forEach(link => {
-      link.target = "_blank"
-    })
+    try {
+      if (typeof document === 'undefined') return
+      document.querySelectorAll<HTMLLinkElement>('.messages a').forEach(link => {
+        link.target = "_blank"
+      })
+    } catch {
+      // ignore
+    }
   }, 500)
 
   // audio listener init
