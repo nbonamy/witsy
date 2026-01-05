@@ -269,6 +269,7 @@
         "customTools": "Tools",
         "description": "@:{'common.description'}",
         "docRepo": "Knowledge",
+        "docReposCount": "{count} Knowledge Bases",
         "error": {
           "emptyStepPrompt": "Step #{step} prompt cannot be empty.",
           "missingDocRepo": "Step #{step} uses a Knowledge Base but no {'{'}{'{'}facts{'}'}{'}'} variable is defined in the prompt. Please add a variable of the form {'{'}{'{'}facts{'}'}{'}'} to your prompt.",

@@ -4,6 +4,7 @@ import { DocRepoQueryResponseItem } from 'types/rag'
 import Message from '@models/message'
 import { i18nInstructions, t } from './i18n'
 import LlmFactory from './llms/llm'
+import LlmUtils from './llm_utils'
 import { Expert } from '@/types'
 
 export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title' | 'generation_done'
@@ -13,7 +14,7 @@ export type GenerationCallback = (event: GenerationEvent) => void
 export interface GenerationOpts extends LlmCompletionOpts {
   model: string
   streaming?: boolean
-  docrepo?: string
+  docrepos?: string[]
   sources?: boolean
   expert?: Expert
   noToolsInContent?: boolean
@@ -82,55 +83,21 @@ export default class Generator {
 
       // rag?
       let sources: DocRepoQueryResponseItem[] = [];
-      if (opts.docrepo) {
+      if (opts.docrepos?.length) {
         const userMessage = conversation[conversation.length - 1];
 
-        // get the doc repo name for display
-        const allDocRepos = window.api.docrepo.list(this.config.workspaceId) as any[]
-        const docRepo = allDocRepos.find((repo: any) => repo.uuid === opts.docrepo)
-        const docRepoName = docRepo?.name || 'Knowledge Base'
-
-        // add dummy tool call in "running" state before the query
-        const toolCallId = crypto.randomUUID()
-        const runningToolCall: LlmChunkTool = {
-          type: 'tool',
-          id: toolCallId,
-          name: 'search_knowledge_base',
-          state: 'running',
-          status: t('plugins.knowledge.running', { query: userMessage.content, docrepo: docRepoName }),
-          call: {
-            params: {
-              docRepoName: docRepoName,
-              query: userMessage.content,
-            },
-            result: null
-          },
-          done: false
-        }
-        response.addToolCall(runningToolCall, !opts.noToolsInContent)
-        llmCallback?.call(null, runningToolCall)
-
-        // perform the query
-        sources = await window.api.docrepo.query(opts.docrepo, userMessage.content);
-        //console.log('Sources', JSON.stringify(sources, null, 2));
-
-        // update tool call to "completed" state with results
-        const completedToolCall: LlmChunkTool = JSON.parse(JSON.stringify(runningToolCall))
-        completedToolCall.state = 'completed'
-        completedToolCall.status = t('plugins.knowledge.completed', { docrepo: docRepoName, count: sources.length })
-        completedToolCall.call.result = {
-          count: sources.length,
-          sources
-        }
-        completedToolCall.done = true
-        response.addToolCall(completedToolCall, !opts.noToolsInContent)
-        llmCallback?.call(null, completedToolCall)
+        // query all docrepos with tool call status updates
+        const result = await LlmUtils.queryDocRepos(this.config, opts.docrepos, userMessage.content, {
+          response,
+          noToolsInContent: opts.noToolsInContent,
+          onToolCallStatus: (toolCall) => llmCallback?.call(null, toolCall)
+        })
+        sources = result.sources
 
         // add context to the conversation if sources were found
-        if (sources.length > 0) {
-          const context = sources.map((source) => source.content).join('\n\n');
+        if (result.context) {
           const instructions = i18nInstructions(this.config, 'instructions.chat.docquery')
-          const prompt = instructions.replace('{context}', context).replace('{query}', userMessage.content);
+          const prompt = instructions.replace('{context}', result.context).replace('{query}', userMessage.content);
           conversation[conversation.length - 1] = new Message('user', prompt);
         }
       }
@@ -219,7 +186,7 @@ export default class Generator {
       }
 
       // append sources
-      if (opts.docrepo && opts.sources && sources && sources.length > 0) {
+      if (opts.docrepos?.length && opts.sources && sources && sources.length > 0) {
 
         // reduce to unique sources based on metadata.id
         const uniqueSourcesMap = new Map();

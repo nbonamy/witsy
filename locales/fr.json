@@ -250,6 +250,7 @@
         "customTools": "Outils",
         "description": "@:{'common.description'}",
         "docRepo": "Connaissances",
+        "docReposCount": "{count} bases de connaissances",
         "error": {
           "emptyStepPrompt": "L'invite de l’étape #{step} ne peut pas être vide.",
           "missingDocRepo": "L'étape #{step} utilise une base de connaissances mais aucune variable {'{'}{'{'}facts{'}'}{'}'} n'est définie dans l'invite. Veuillez ajouter une variable de la forme {'{'}{'{'}facts{'}'}{'}'} à votre invite.",

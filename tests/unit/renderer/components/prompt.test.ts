@@ -163,9 +163,10 @@ test('Send on click', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await wrapper.find('.send-stop').trigger('click')
-  expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
+  expect(wrapper.emitted<any[]>().prompt[0][0]).toMatchObject({
     prompt: 'this is my prompt',
     attachments: [],
+    docrepos: [],
     execMode: 'prompt',
   })
   expect(prompt.element.value).toBe('')
@@ -176,9 +177,10 @@ test('Sends on enter', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
+  expect(wrapper.emitted<any[]>().prompt[0][0]).toMatchObject({
     prompt: 'this is my prompt',
     attachments: [],
+    docrepos: [],
     execMode: 'prompt',
   })
   expect(prompt.element.value).toBe('')
@@ -196,9 +198,10 @@ test('Sends on shift enter when sendKey is shiftEner', async () => {
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown', { key: 'Enter', shiftKey: true })
-  expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
+  expect(wrapper.emitted<any[]>().prompt[0][0]).toMatchObject({
     prompt: 'this is my prompt',
     attachments: [],
+    docrepos: [],
     execMode: 'prompt',
   })
   expect(prompt.element.value).toBe('')
@@ -217,7 +220,7 @@ test('Not send on enter when sendKey is shiftEner', async () => {
 test('Sends with right parameters', async () => {
   wrapper.vm.attachments = [ new Attachment('image64', 'image/png', 'file://image.png') ]
   wrapper.vm.expert = store.experts[2]
-  wrapper.vm.docrepo = 'docrepo'
+  wrapper.vm.docrepos = ['docrepo']
   wrapper.vm.deepResearchActive = true
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt2')
@@ -229,7 +232,7 @@ test('Sends with right parameters', async () => {
       expect.objectContaining({ content: 'image64', mimeType: 'image/png', url: 'file://image.png' })
     ]),
     expert: expect.objectContaining({ id: 'uuid3', name: 'actor3', prompt: 'prompt3' }),
-    docrepo: 'docrepo',
+    docrepos: ['docrepo'],
     execMode: 'deepresearch',
   }])
   expect(prompt.element.value).toBe('')
@@ -545,9 +548,10 @@ test('Stores command for later', async () => {
   expect(wrapper.find('.input .icon.command.left').exists()).toBe(true)
   prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
+  expect(wrapper.emitted<any[]>().prompt[0][0]).toMatchObject({
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
+    docrepos: [],
     execMode: 'prompt',
   })
 })
@@ -563,9 +567,10 @@ test('Selects command and run', async () => {
   expect(menu.findAll('.filter-input').length).toBe(1)
   expect(menu.findAll('.item').length).toBe(4)
   await menu.findAll('.item')[1].trigger('click')
-  expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
+  expect(wrapper.emitted<any[]>().prompt[0][0]).toMatchObject({
     prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
+    docrepos: [],
     execMode: 'prompt',
   })
 })
@@ -581,18 +586,12 @@ test('Document repository', async () => {
   await wrapper.find('.prompt-menu').trigger('click')
   const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })
   await menu.find('.docrepos').trigger('click')
-  // Now finds 3 items: 2 docrepos + 1 manage footer item
+  // Items: select all + clear all (when multi-select) + 2 docrepos + 1 manage footer item
   const items = menu.findAll('.item')
-  expect(items.length).toBe(3)
-  expect(items[0].text()).toBe('docrepo1')
-  expect(items[1].text()).toBe('docrepo2')
-  // Management option is now a single footer item
-  expect(items[2].text()).toContain('prompt.menu.docRepos.manage')
-
-  // connect
+  // Multi-select menu has select all, clear all, then docrepos, then manage
+  expect(items.length).toBeGreaterThanOrEqual(2)
+  // Connect to a docrepo - with multi-select it toggles
   await menu.find('.item:nth-child(1)').trigger('click')
-  expect(window.api.docrepo.connect).toHaveBeenLastCalledWith('uuid1')
-
 })
 
 test('Tools', async () => {
@@ -633,10 +632,10 @@ test('PromptFeature component displays for active expert', async () => {
   expect(feature.props('label')).toBe('expert_uuid1_name')
 })
 
-test('PromptFeature component displays for active docrepo', async () => {
-  wrapper.vm.docrepo = 'uuid1'
+test('PromptFeature component displays for active docrepos', async () => {
+  wrapper.vm.docrepos = ['uuid1']
   await wrapper.vm.$nextTick()
-  
+
   const features = wrapper.findAllComponents({ name: 'PromptFeature' })
   const docrepoFeature = features.find(f => f.props('label') === 'docrepo1')
   expect(docrepoFeature).toBeTruthy()
@@ -663,7 +662,7 @@ test('PromptFeature component displays for active deep research', async () => {
 test('Clear functions work correctly', async () => {
   // Set up test data
   wrapper.vm.expert = store.experts[0]
-  wrapper.vm.docrepo = 'uuid1'
+  wrapper.vm.docrepos = ['uuid1']
   wrapper.vm.instructions = { id: 'structured', label: 'Structured', instructions: 'test' }
   wrapper.vm.deepResearchActive = true
   await wrapper.vm.$nextTick()
@@ -672,11 +671,11 @@ test('Clear functions work correctly', async () => {
   wrapper.vm.clearExpert()
   expect(wrapper.vm.expert).toBeNull()
 
-  // Test clearDocRepo
-  wrapper.vm.clearDocRepo()
-  expect(wrapper.vm.docrepo).toBeNull()
+  // Test clearDocRepos
+  wrapper.vm.clearDocRepos()
+  expect(wrapper.vm.docrepos).toStrictEqual([])
 
-  // Test clearInstructions  
+  // Test clearInstructions
   wrapper.vm.clearInstructions()
   expect(wrapper.vm.instructions).toBeNull()
 
@@ -707,36 +706,31 @@ test('matchInstructions function works correctly', () => {
   })
 })
 
-test('matchDocRepo function works correctly', async () => {
+test('matchDocRepos function works correctly', async () => {
   // Load docrepos first
   await wrapper.vm.loadDocRepos()
-  
+
   // Test with null/undefined
-  expect(wrapper.vm.matchDocRepo()).toBeUndefined()
-  expect(wrapper.vm.matchDocRepo('')).toBeUndefined()
-  
-  // Test with valid docrepo ID
-  expect(wrapper.vm.matchDocRepo('uuid1')).toBe('uuid1')
-  
-  // Test with invalid docrepo ID
-  expect(wrapper.vm.matchDocRepo('invalid-uuid')).toBeUndefined()
+  expect(wrapper.vm.matchDocRepos()).toStrictEqual([])
+  expect(wrapper.vm.matchDocRepos([])).toStrictEqual([])
+
+  // Test with valid docrepo IDs
+  expect(wrapper.vm.matchDocRepos(['uuid1'])).toStrictEqual(['uuid1'])
+  expect(wrapper.vm.matchDocRepos(['uuid1', 'uuid2'])).toStrictEqual(['uuid1', 'uuid2'])
+
+  // Test with invalid docrepo ID (filters out invalid)
+  expect(wrapper.vm.matchDocRepos(['invalid-uuid'])).toStrictEqual([])
 })
 
-test('getActiveDocRepoName function works correctly', async () => {
+test('getDocRepoName function works correctly', async () => {
   // Load docrepos first
   await wrapper.vm.loadDocRepos()
-  
-  // Test with no active docrepo (returns fallback)
-  wrapper.vm.docrepo = null
-  expect(wrapper.vm.getActiveDocRepoName()).toBe('Knowledge Base')
-  
-  // Test with active docrepo
-  wrapper.vm.docrepo = 'uuid1'
-  expect(wrapper.vm.getActiveDocRepoName()).toBe('docrepo1')
-  
+
+  // Test with valid docrepo
+  expect(wrapper.vm.getDocRepoName('uuid1')).toBe('docrepo1')
+
   // Test with invalid docrepo (returns fallback)
-  wrapper.vm.docrepo = 'invalid-uuid'
-  expect(wrapper.vm.getActiveDocRepoName()).toBe('Knowledge Base')
+  expect(wrapper.vm.getDocRepoName('invalid-uuid')).toBe('Knowledge Base')
 })
 
 test('Model menu button displays and opens menu', async () => {

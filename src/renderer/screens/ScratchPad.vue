@@ -740,7 +740,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     const rc: GenerationResult = await generator.generate(llm, chat.value.messages, {
       ...chat.value.modelOpts,
       model: chat.value.model,
-      docrepo: chat.value.docrepo,
+      docrepos: chat.value.docrepos,
       sources: false,
       abortSignal: abortController.signal,
     })

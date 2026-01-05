@@ -1,20 +1,26 @@
-import { LightbulbIcon, SettingsIcon, XIcon } from 'lucide-vue-next'
+import { SettingsIcon, XIcon } from 'lucide-vue-next'
 import type { MenuItem } from 'types/menu'
 import type { DocumentBase } from 'types/rag'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, Ref } from 'vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 
 export interface UseDocReposMenuOptions {
   emit: (event: any, ...args: any[]) => void
   footerMode?: 'manage' | 'clear' | 'none'
+  multiSelect?: boolean
+  selectedDocRepos?: Ref<string[]>
 }
 
 export function useDocReposMenu(options: UseDocReposMenuOptions) {
-  const { emit, footerMode = 'none' } = options
+  const { emit, footerMode = 'none', multiSelect = false, selectedDocRepos } = options
 
   // Reactive data
   const docRepos = ref<DocumentBase[]>([])
+  const internalSelection = ref<string[]>([])
+
+  // Use provided selection or internal
+  const currentSelection = computed(() => selectedDocRepos?.value ?? internalSelection.value)
 
   // Load document repositories
   const loadDocRepos = () => {
@@ -37,27 +43,87 @@ export function useDocReposMenu(options: UseDocReposMenuOptions) {
     window.api.off('docrepo-modified', loadDocRepos)
   })
 
+  // Toggle selection for multi-select mode
+  const toggleDocRepo = (uuid: string) => {
+    const current = [...currentSelection.value]
+    const index = current.indexOf(uuid)
+    if (index === -1) {
+      current.push(uuid)
+    } else {
+      current.splice(index, 1)
+    }
+    if (selectedDocRepos) {
+      selectedDocRepos.value = current
+    } else {
+      internalSelection.value = current
+    }
+    emit('docReposChanged', current)
+  }
+
   // Event handlers
   const handleDocRepoClick = (docRepoUuid: string) => {
-    emit('docRepoSelected', docRepoUuid)
+    if (multiSelect) {
+      toggleDocRepo(docRepoUuid)
+    } else {
+      emit('docRepoSelected', docRepoUuid)
+    }
   }
 
   const handleManageDocRepos = () => {
     emit('manageDocRepo')
   }
 
+  const handleSelectAll = () => {
+    const allUuids = docRepos.value.map(r => r.uuid)
+    if (selectedDocRepos) {
+      selectedDocRepos.value = allUuids
+    } else {
+      internalSelection.value = allUuids
+    }
+    emit('docReposChanged', allUuids)
+  }
+
+  const handleClearAll = () => {
+    if (selectedDocRepos) {
+      selectedDocRepos.value = []
+    } else {
+      internalSelection.value = []
+    }
+    emit('docReposChanged', [])
+  }
+
   // Generate menu items
   const menuItems = computed<MenuItem[]>(() => {
-    return docRepos.value.map(docRepo => ({
-      id: `docrepo-${docRepo.uuid}`,
-      label: docRepo.name,
-      icon: LightbulbIcon,
-      onClick: () => handleDocRepoClick(docRepo.uuid),
-    }))
+    return docRepos.value.map(docRepo => {
+      const isSelected = currentSelection.value.includes(docRepo.uuid)
+      return {
+        id: `docrepo-${docRepo.uuid}`,
+        label: docRepo.name,
+        checked: multiSelect ? isSelected : undefined,
+        type: multiSelect ? 'checkbox' as const : undefined,
+        onClick: () => handleDocRepoClick(docRepo.uuid),
+      }
+    })
   })
 
   // Footer items for the docrepos menu
   const footerItems = computed<MenuItem[]>(() => {
+    if (multiSelect) {
+      // Multi-select mode: Select All / Clear All buttons
+      return [
+        {
+          id: 'docrepos-select-all',
+          label: t('common.selectAll'),
+          onClick: handleSelectAll,
+        },
+        {
+          id: 'docrepos-clear-all',
+          label: t('common.unselectAll'),
+          onClick: handleClearAll,
+        },
+      ]
+    }
+
     if (footerMode === 'none') {
       return []
     }
@@ -89,5 +155,7 @@ export function useDocReposMenu(options: UseDocReposMenuOptions) {
     footerItems,
     showFilter: true,
     docRepos,
+    currentSelection,
+    toggleDocRepo,
   }
 }

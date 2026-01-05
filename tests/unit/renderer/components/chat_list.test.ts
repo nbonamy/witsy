@@ -234,7 +234,7 @@ test('Folder defaults', async () => {
       tools: [],
       instructions: 'instructions',
       locale: 'locale',
-      docrepo: 'docrepo',
+      docrepos: ['docrepo'],
     }
   } ]
 
@@ -295,13 +295,13 @@ test('Folder defaults', async () => {
     tools: [],
     instructions: 'instructions',
     locale: 'locale',
-    docrepo: 'docrepo',
+    docrepos: ['docrepo'],
     expert: null,//'expert',
     modelOpts: {
       temperature: 0.7,
       customOpts: {
         custom: 'custom'
-      } 
+      }
     }
   })
 
@@ -323,7 +323,7 @@ test('Folder defaults', async () => {
     tools: [],
     instructions: 'instructions',
     locale: 'locale',
-    docrepo: 'docrepo',
+    docrepos: ['docrepo'],
     expert: 'expert',
     modelOpts: {
       temperature: 0.7,

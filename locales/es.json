@@ -250,6 +250,7 @@
         "customTools": "Herramientas",
         "description": "@:{'common.description'}",
         "docRepo": "Conocimiento",
+        "docReposCount": "{count} Bases de Conocimiento",
         "error": {
           "emptyStepPrompt": "La indicación del paso #{step} no puede estar vacía.",
           "missingDocRepo": "El paso #{step} usa una Base de Conocimiento pero no se ha definido una variable {'{'}{'{'}facts{'}'}{'}'} en la indicación. Por favor, añade una variable con la forma {'{'}{'{'}facts{'}'}{'}'} a tu indicación.",

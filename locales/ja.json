@@ -269,6 +269,7 @@
         "customTools": "ツール",
         "description": "@:{'common.description'}",
         "docRepo": "ナレッジ",
+        "docReposCount": "{count} ナレッジベース",
         "error": {
           "emptyStepPrompt": "ステップ#{step}のプロンプトは空にできません。",
           "missingDocRepo": "ステップ#{step}はナレッジベースを使用していますが、プロンプトに{'{'}{'{'}facts{'}'}{'}'}という変数が定義されていません。{'{'}{'{'}facts{'}'}{'}'}形式の変数をプロンプトに追加してください。",

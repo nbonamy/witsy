@@ -250,6 +250,7 @@
         "customTools": "Strumenti",
         "description": "@:{'common.description'}",
         "docRepo": "Conoscenza",
+        "docReposCount": "{count} Basi di conoscenza",
         "error": {
           "emptyStepPrompt": "Il prompt del passaggio #{step} non può essere vuoto.",
           "missingDocRepo": "Il passaggio #{step} utilizza una Base di Conoscenza ma nessuna variabile {'{'}{'{'}facts{'}'}{'}'} è definita nel prompt. Per favore aggiungi una variabile della forma {'{'}{'{'}facts{'}'}{'}'} al tuo prompt.",

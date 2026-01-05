@@ -569,7 +569,7 @@ test('Generator adds dummy tool call when doc repo is queried with results', asy
   const result = await generator.generate(llmMock, messages, {
     model: 'chat',
     streaming: true,
-    docrepo: 'test-repo-id'
+    docrepos: ['test-repo-id']
   }, (chunk) => {
     if (chunk) chunks.push(chunk)
   })
@@ -624,7 +624,7 @@ test('Generator adds dummy tool call when doc repo query returns no results', as
   const result = await generator.generate(llmMock, messages, {
     model: 'chat',
     streaming: true,
-    docrepo: 'test-repo-id'
+    docrepos: ['test-repo-id']
   })
 
   expect(result).toBe('success')
@@ -666,7 +666,7 @@ test('Generator respects noToolsInContent option for doc repo tool calls', async
   await generator.generate(llmMock, messages, {
     model: 'chat',
     streaming: true,
-    docrepo: 'test-repo-id',
+    docrepos: ['test-repo-id'],
     noToolsInContent: true
   })
 

@@ -104,7 +104,7 @@ export interface Chat {
   disableStreaming: boolean
   tools: ToolSelection
   locale?: string
-  docrepo?: string
+  docrepos?: string[]
   modelOpts?: LlmModelOpts
   messages: Message[]
   temporary: boolean
@@ -134,7 +134,7 @@ export type Folder = {
     tools: ToolSelection
     instructions?: string
     locale?: string
-    docrepo?: string
+    docrepos?: string[]
     expert?: string
     modelOpts?: LlmModelOpts
   }

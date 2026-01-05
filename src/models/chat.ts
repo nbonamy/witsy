@@ -19,7 +19,7 @@ export default class Chat implements ChatBase {
   tools: ToolSelection
   modelOpts?: LlmModelOpts
   locale?: string
-  docrepo?: string
+  docrepos?: string[]
   messages: Message[]
   temporary: boolean
 
@@ -49,7 +49,7 @@ export default class Chat implements ChatBase {
     chat.tools = obj.disableTools === true ? [] : (obj.tools || null)
     chat.modelOpts = obj.modelOpts || undefined
     chat.locale = obj.locale || undefined
-    chat.docrepo = obj.docrepo || undefined
+    chat.docrepos = obj.docrepos?.length ? obj.docrepos : (obj.docrepo ? [obj.docrepo] : undefined)
     chat.messages = []
     for (const msg of obj.messages) {
       const message = Message.fromJson(msg)
@@ -74,7 +74,7 @@ export default class Chat implements ChatBase {
     this.tools = obj.disableTools === true ? [] : (obj.tools || null)
     this.modelOpts = obj.modelOpts
     this.locale = obj.locale
-    this.docrepo = obj.docrepo
+    this.docrepos = obj.docrepos?.length ? obj.docrepos : (obj.docrepo ? [obj.docrepo] : undefined)
 
     // messages
     if (this.messages.length < obj.messages.length) {

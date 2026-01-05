@@ -419,7 +419,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   try {
 
     // deconstruct params
-    const { instructions, prompt, attachments, docrepo, expert } = params
+    const { instructions, prompt, attachments, docrepos, expert } = params
     //console.log('PromptAnywhere.onSendPrompt', prompt, attachment, docrepo, expert)
   
     // this should not happen but it happens
@@ -473,7 +473,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
       ...chat.value.modelOpts,
       model: chat.value.model,
       streaming: !chat.value.disableStreaming,
-      docrepo: docrepo,
+      docrepos: docrepos,
       sources: true,
       abortSignal: abortController.signal,
     })
@@ -547,7 +547,7 @@ const onRetry = () => {
     instructions: chat.value.instructions,
     prompt: lastMessage.content,
     attachments: lastMessage.attachments,
-    docrepo: chat.value.docrepo,
+    docrepos: chat.value.docrepos,
     expert: lastMessage.expert
   })
 

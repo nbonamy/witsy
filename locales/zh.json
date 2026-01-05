@@ -269,6 +269,7 @@
         "customTools": "工具",
         "description": "@:{'common.description'}",
         "docRepo": "知识库",
+        "docReposCount": "{count} 个知识库",
         "error": {
           "emptyStepPrompt": "步骤 #{step} 的提示不能为空。",
           "missingDocRepo": "步骤 #{step} 使用了知识库，但提示中未定义 {'{'}{'{'}facts{'}'}{'}'} 变量。请在您的提示中添加形如 {'{'}{'{'}facts{'}'}{'}'} 的变量。",
