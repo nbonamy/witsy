@@ -1,5 +1,5 @@
 <template>
-  <div class="expert-editor form form-vertical form-large" @keydown.enter="onSave">
+  <div class="expert-editor form form-vertical form-large" @keydown.enter="onSave" @click="onEditorClick">
     <div class="form-field" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
       <label class="no-colon"><CircleAlertIcon /></label>
       <div>{{ t('common.differentLocales') }}</div>
@@ -32,6 +32,21 @@
       <label>{{ t('common.llmProvider') }}</label>
       <EngineModelSelect :engine="engine" :model="model" :default-label="t('experts.editor.useDefault')" @model-selected="onModelSelected" />
     </div>
+    <div class="form-field">
+      <label>{{ t('folderSettings.docrepo') }}</label>
+      <button id="expert-docrepos-menu-anchor" @click.prevent="showDocReposMenu = !showDocReposMenu">
+        {{ getDocReposLabel() }}
+      </button>
+      <DocReposMenu
+        v-if="showDocReposMenu"
+        anchor="#expert-docrepos-menu-anchor"
+        position="below"
+        :multi-select="true"
+        :selected-doc-repos="docrepos"
+        @close="showDocReposMenu = false"
+        @doc-repos-changed="onDocReposChanged"
+      />
+    </div>
     <div class="form-field" v-if="supportTriggerApps">
       <label>{{ t('experts.editor.triggerApps') }}</label>
       <div class="form-subgroup list-with-actions">
@@ -61,11 +76,13 @@
 
 import { CircleAlertIcon, MinusIcon, PlusIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
+import DocReposMenu from '@components/DocReposMenu.vue'
 import Dialog from '@renderer/utils/dialog'
 import { expertI18n, expertI18nDefault, categoryI18n, t } from '@services/i18n'
 import { store } from '@services/store'
 import { FileContents } from 'types/file'
 import { Expert, ExpertCategory, ExternalApp } from 'types/index'
+import { DocumentBase } from 'types/rag'
 import EngineModelSelect from './EngineModelSelect.vue'
 
 const emit = defineEmits(['expert-modified']);
@@ -81,6 +98,9 @@ const categoryId = ref<string>('')
 const prompt = ref(null)
 const engine = ref(null)
 const model = ref(null)
+const docrepos = ref<string[]>([])
+const docRepos = ref<DocumentBase[]>([])
+const showDocReposMenu = ref(false)
 const triggerApps = ref([])
 const selectedApp = ref(null)
 const diffLang = ref(false)
@@ -101,6 +121,35 @@ const iconData = (app: ExternalApp) => {
   return `data:${icon.mimeType};base64,${icon.contents}`
 }
 
+const loadDocRepos = () => {
+  try {
+    docRepos.value = window.api?.docrepo?.list(store.config.workspaceId) || []
+  } catch (error) {
+    console.error('Failed to load document repositories:', error)
+    docRepos.value = []
+  }
+}
+
+const getDocReposLabel = (): string => {
+  if (docrepos.value.length === 0) return t('folderSettings.noDocRepo')
+  if (docrepos.value.length === 1) {
+    const repo = docRepos.value.find(r => r.uuid === docrepos.value[0])
+    return repo?.name || t('folderSettings.noDocRepo')
+  }
+  return t('agent.create.workflow.docReposCount', { count: docrepos.value.length })
+}
+
+const onDocReposChanged = (uuids: string[]) => {
+  docrepos.value = uuids
+}
+
+const onEditorClick = (event: MouseEvent) => {
+  const target = event.target as HTMLElement
+  if (!target.closest('.docrepos-menu') && !target.closest('#expert-docrepos-menu-anchor')) {
+    showDocReposMenu.value = false
+  }
+}
+
 const onChangeText = () => {
   if (!props.expert) isEdited.value = false
   isEdited.value = ((props.expert?.type === 'system') && (name.value !== expertI18nDefault(props.expert, 'name') || prompt.value !== expertI18nDefault(props.expert, 'prompt')))
@@ -112,6 +161,7 @@ const onModelSelected = (e: string, m: string) => {
 }
 
 onMounted(async () => {
+  loadDocRepos()
   watch(() => props || {}, async () => {
 
     // update values
@@ -122,9 +172,11 @@ onMounted(async () => {
     prompt.value = props.expert?.id ? (props.expert?.prompt || expertI18n(props.expert, 'prompt')) : ''
     engine.value = props.expert?.engine || ''
     model.value = props.expert?.model || ''
+    docrepos.value = props.expert?.docrepos || []
     triggerApps.value = JSON.parse(JSON.stringify(props.expert?.triggerApps || []))
     diffLang.value = window.api.config.localeUI() !== window.api.config.localeLLM()
     selectedApp.value = null
+    showDocReposMenu.value = false
     onChangeText()
 
     // load icons
@@ -196,6 +248,7 @@ const onSave = (event: Event) => {
     categoryId: categoryId.value || undefined,
     prompt: prompt.value === expertI18nDefault(props.expert, 'prompt') ? undefined : prompt.value,
     ...(engine.value?.length && model.value?.length ? { engine: engine.value, model: model.value } : {}),
+    docrepos: docrepos.value.length ? docrepos.value : undefined,
     triggerApps: triggerApps.value.map((app) => {
       if (app.icon.contents) {
         app.icon = app.icon.url.replace('file://', '')
