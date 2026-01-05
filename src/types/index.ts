@@ -245,6 +245,7 @@ export type Expert = {
   categoryId?: string
   engine?: string
   model?: string
+  docrepos?: string[]
   state: 'enabled' | 'disabled' | 'deleted',
   triggerApps: ExternalApp[]
   stats?: {

@@ -82,6 +82,11 @@ const onExpertModified = (payload: Expert) => {
       delete expert.engine
       delete expert.model
     }
+    if (payload.docrepos?.length) {
+      expert.docrepos = payload.docrepos
+    } else {
+      delete expert.docrepos
+    }
     expert.triggerApps = payload.triggerApps
   }
 

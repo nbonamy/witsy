@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Ability search multiple knowledge bases
+- Knowledge base access from expert
 
 ### Fixed
 - N/A

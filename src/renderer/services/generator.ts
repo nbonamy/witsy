@@ -81,13 +81,18 @@ export default class Generator {
 
     try {
 
-      // rag?
+      // rag: merge expert docrepos with user-selected docrepos
+      const effectiveDocrepos = [
+        ...(opts.docrepos || []),
+        ...(opts.expert?.docrepos || [])
+      ].filter((uuid, index, self) => self.indexOf(uuid) === index) // deduplicate
+
       let sources: DocRepoQueryResponseItem[] = [];
-      if (opts.docrepos?.length) {
+      if (effectiveDocrepos?.length) {
         const userMessage = conversation[conversation.length - 1];
 
         // query all docrepos with tool call status updates
-        const result = await LlmUtils.queryDocRepos(this.config, opts.docrepos, userMessage.content, {
+        const result = await LlmUtils.queryDocRepos(this.config, effectiveDocrepos, userMessage.content, {
           response,
           noToolsInContent: opts.noToolsInContent,
           onToolCallStatus: (toolCall) => llmCallback?.call(null, toolCall)
@@ -186,7 +191,7 @@ export default class Generator {
       }
 
       // append sources
-      if (opts.docrepos?.length && opts.sources && sources && sources.length > 0) {
+      if (effectiveDocrepos?.length && opts.sources && sources && sources.length > 0) {
 
         // reduce to unique sources based on metadata.id
         const uniqueSourcesMap = new Map();
