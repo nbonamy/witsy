@@ -41,7 +41,14 @@ beforeEach(() => {
 test('queryDocRepos returns empty for no docrepos', async () => {
   const result = await LlmUtils.queryDocRepos(config, [], 'test query')
   expect(result.sources).toEqual([])
-  expect(result.context).toBe('')
+  expect(result.context).toBe('instructions.chat.docrepoNoResults')
+})
+
+test('queryDocRepos returns no results message when query returns empty', async () => {
+  window.api.docrepo.query = vi.fn(() => Promise.resolve([]))
+  const result = await LlmUtils.queryDocRepos(config, ['repo1'], 'test query')
+  expect(result.sources).toEqual([])
+  expect(result.context).toBe('instructions.chat.docrepoNoResults')
 })
 
 test('queryDocRepos queries single docrepo', async () => {

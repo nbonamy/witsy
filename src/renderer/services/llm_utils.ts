@@ -438,10 +438,15 @@ Evaluate this output and return your assessment.`
     // sort by relevance score
     sources.sort((a, b) => b.score - a.score)
 
-    // format context with titles
-    const context = sources.map(source =>
-      `[Source: ${source.metadata.title}]\n${source.content}`
-    ).join('\n\n---\n\n')
+    // format context with titles (or no results message)
+    let context: string
+    if (sources.length === 0) {
+      context = i18nInstructions(config, 'instructions.chat.docrepoNoResults')
+    } else {
+      context = sources.map(source =>
+        `[Source: ${source.metadata.title}]\n${source.content}`
+      ).join('\n\n---\n\n')
+    }
 
     return { sources, context }
   }
