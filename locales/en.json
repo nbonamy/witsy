@@ -50,6 +50,7 @@
     "differentLocales": "Your LLM locale is different than your interface locale. The texts displayed are im the LLM locale or your locale if you customized them.",
     "disabled": "Disabled",
     "docRepo": "Knowledge Base",
+    "docRepos": "Knowledge Bases",
     "documents": "Documents",
     "done": "Done",
     "download": "Download",
@@ -1891,7 +1892,6 @@
       "hide": "Hide Advanced Settings",
       "show": "Show Advanced Settings"
     },
-    "docrepo": "Default Knowledge Base",
     "expert": "Default Expert",
     "noDocRepo": "None",
     "noExpert": "None",

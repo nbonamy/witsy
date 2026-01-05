@@ -50,6 +50,7 @@
     "differentLocales": "La tua lingua LLM è diversa dalla tua lingua dell'interfaccia. I testi visualizzati sono nella lingua del LLM o nella tua lingua se li hai personalizzati.",
     "disabled": "Disabilitato",
     "docRepo": "Base di Conoscenza",
+    "docRepos": "Basi di Conoscenza",
     "documents": "Documenti",
     "done": "Fatto",
     "download": "Scarica",
@@ -1873,7 +1874,6 @@
       "hide": "Nascondi impostazioni avanzate",
       "show": "Mostra impostazioni avanzate"
     },
-    "docrepo": "Base di conoscenza predefinita",
     "expert": "Esperto predefinito",
     "noDocRepo": "Nessuno",
     "noExpert": "Nessuno",

@@ -50,6 +50,7 @@
     "differentLocales": "Język modelu LLM różni się od języka interfejsu. Teksty mogą być wyświetlane w języku modelu lub w Twoim języku, jeśli zostały przetłumaczone.",
     "disabled": "Wyłączony",
     "docRepo": "Baza wiedzy",
+    "docRepos": "Bazy Wiedzy",
     "documents": "Dokumenty",
     "done": "Gotowe",
     "download": "Pobierz",
@@ -1892,7 +1893,6 @@
       "hide": "Ukryj zaawansowane ustawienia",
       "show": "Pokaż zaawansowane ustawienia"
     },
-    "docrepo": "Domyślna baza wiedzy",
     "expert": "Domyślny ekspert",
     "noDocRepo": "Brak",
     "noExpert": "Brak",
