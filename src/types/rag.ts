@@ -69,6 +69,7 @@ export type DocumentBase = {
 export type DocRepoQueryResponseItem = {
   content: string
   score: number
+  rrfScore?: number
   metadata: DocumentSource
 }
 

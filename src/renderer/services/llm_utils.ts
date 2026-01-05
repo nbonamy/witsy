@@ -404,9 +404,10 @@ Evaluate this output and return your assessment.`
     }
 
     // query all docrepos in parallel
+    let results: DocRepoQueryResponseItem[][]
     if (opts?.onToolCallStatus) {
       // with status updates
-      const results = await Promise.all(
+      results = await Promise.all(
         toolCalls.map(async ({ uuid, name, toolCall }) => {
           const docRepoSources = await window.api.docrepo.query(uuid, query)
 
@@ -422,21 +423,25 @@ Evaluate this output and return your assessment.`
           return docRepoSources
         })
       )
-      for (const docRepoSources of results) {
-        sources.push(...docRepoSources)
-      }
     } else {
       // simple parallel query without status updates
-      const results = await Promise.all(
+      results = await Promise.all(
         docrepoUuids.map(uuid => window.api.docrepo.query(uuid, query))
       )
-      for (const docRepoSources of results) {
-        sources.push(...docRepoSources)
-      }
     }
 
-    // sort by relevance score
-    sources.sort((a, b) => b.score - a.score)
+    // assign RRF scores and merge results
+    // RRF formula: 1/(k + rank) where k=60 is standard, rank is 1-based
+    const RRF_K = 60
+    for (const docRepoSources of results) {
+      docRepoSources.forEach((source, index) => {
+        source.rrfScore = 1 / (RRF_K + index + 1)
+      })
+      sources.push(...docRepoSources)
+    }
+
+    // sort by RRF score (handles cross-source ranking better than raw embedding scores)
+    sources.sort((a, b) => (b.rrfScore ?? 0) - (a.rrfScore ?? 0))
 
     // format context with titles (or no results message)
     let context: string

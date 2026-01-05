@@ -68,24 +68,29 @@ test('queryDocRepos queries multiple docrepos in parallel', async () => {
   expect(result.sources).toHaveLength(4)
 })
 
-test('queryDocRepos sorts results by score descending', async () => {
+test('queryDocRepos sorts results by RRF score', async () => {
   const result = await LlmUtils.queryDocRepos(config, ['repo1', 'repo2'], 'test query')
 
-  // Scores: 0.9, 0.8, 0.6, 0.5
-  expect(result.sources[0].score).toBe(0.9)
-  expect(result.sources[1].score).toBe(0.8)
-  expect(result.sources[2].score).toBe(0.6)
-  expect(result.sources[3].score).toBe(0.5)
+  // With RRF, rank within each source matters more than raw scores
+  // repo1: [0.8 (rank 1), 0.6 (rank 2)]
+  // repo2: [0.9 (rank 1), 0.5 (rank 2)]
+  // RRF scores: rank 1 = 1/(60+1) ≈ 0.0164, rank 2 = 1/(60+2) ≈ 0.0161
+  // Top-ranked items from each repo come first (tied RRF), then second-ranked items
+  const rrfScores = result.sources.map(s => s.rrfScore)
+  expect(rrfScores[0]).toBeCloseTo(1/61, 5) // rank 1 from first processed repo
+  expect(rrfScores[1]).toBeCloseTo(1/61, 5) // rank 1 from second processed repo
+  expect(rrfScores[2]).toBeCloseTo(1/62, 5) // rank 2
+  expect(rrfScores[3]).toBeCloseTo(1/62, 5) // rank 2
 })
 
 test('queryDocRepos formats context with titles', async () => {
   const result = await LlmUtils.queryDocRepos(config, ['repo1', 'repo2'], 'test query')
 
-  // Context should be sorted by score (Doc C first with 0.9)
-  expect(result.context).toContain('[Source: Doc C]')
-  expect(result.context).toContain('Content from repo2')
+  // Context should contain all sources with their titles
   expect(result.context).toContain('[Source: Doc A]')
   expect(result.context).toContain('Content from repo1')
+  expect(result.context).toContain('[Source: Doc C]')
+  expect(result.context).toContain('Content from repo2')
   expect(result.context).toContain('---')
 })
 
