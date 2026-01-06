@@ -143,7 +143,7 @@ export default class extends Plugin {
     const content = b64.split(',')[1]
     const contentType = response.headers.get('content-type')
     const format = mimeTypeToExtension(contentType)
-    const text = window.api.file.extractText(content, format)
+    const text = await window.api.file.extractText(content, format)
 
     return {
       title: new URL(response.url).hostname,

@@ -19,7 +19,7 @@ vi.mock('@services/llms/manager.ts', async () => {
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
   LlmManager.prototype.isEngineConfigured = vi.fn(() => true)
   LlmManager.prototype.getEngineName = () => 'mock'
-  LlmManager.prototype.getCustomEngines = () => []
+  LlmManager.prototype.getCustomEngines = () => [] as any[]
   LlmManager.prototype.getFavoriteId = () => 'favid'
   LlmManager.prototype.isFavoriteModel = vi.fn(() => false)
   LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
@@ -178,12 +178,14 @@ test('Submits prompt without streaming', async () => {
 
 test('Submits system prompt with params', async () => {
   const wrapper = await prompt({ instructions: 'instructions', attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[0] })
+  await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.findComponent(MessageItem).text()).toContain('[{"role":"system","content":"instructions"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Submits system user with params', async () => {
   const wrapper = await prompt({ attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[2] })
+  await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.findComponent(MessageItem).text()).toContain('[{"role":"system","content":"instructions.chat.standard"},{"role":"user","content":"prompt3\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })

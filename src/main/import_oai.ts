@@ -516,7 +516,7 @@ const createAttachment = (name: string, filepath: string, mimeType: string, atta
   copyFile(filepath, targetPath)
 
   // now create the attachment
-  const attachment = new Attachment('', mimeType, `file://${targetPath}`, true, false)
+  const attachment = new Attachment('', mimeType, `file://${targetPath}`, true)
   attachment.title = name
   return attachment
 

@@ -52,7 +52,7 @@ export default class Generator {
 
     // get messages
     const response = messages[messages.length - 1]
-    const conversation = this.getConversation(messages)
+    const conversation = await this.getConversation(messages)
 
     // check readiness
     const llmManager = LlmFactory.manager(this.config)
@@ -366,7 +366,7 @@ export default class Generator {
     }
   }
 
-  getConversation(messages: Message[]): Message[] {
+  async getConversation(messages: Message[]): Promise<Message[]> {
     const conversationLength = this.config.llm.conversationLength
     const chatMessages = messages.filter((msg) => msg.role !== 'system')
     const conversation = [
@@ -376,7 +376,7 @@ export default class Generator {
     for (const message of conversation) {
       for (const attachment of message.attachments) {
         if (attachment && !attachment.content) {
-          attachment.loadContents()
+          await attachment.loadContents()
         }
       }
     }

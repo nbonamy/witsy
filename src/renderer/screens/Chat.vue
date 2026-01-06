@@ -510,7 +510,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // save the attachment
   for (const attachment of attachments ?? []) {
     if (attachment?.saved === false) {
-      attachment.loadContents()
+      await attachment.loadContents()
       const fileUrl = saveFileContents(attachment.format(), attachment.b64Contents())
       if (fileUrl) {
         attachment.saved = true

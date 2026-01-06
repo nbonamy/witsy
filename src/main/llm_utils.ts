@@ -7,12 +7,14 @@ import { initI18n } from '../renderer/services/i18n'
 import * as agents from './agents'
 import { loadSettings } from './config'
 import * as experts from './experts'
+import * as file from './file'
 import { getLocaleMessages } from './i18n'
 import { runPython } from './interpreter'
 import Mcp from './mcp'
 import * as pyodide from './pyodide'
 import DocumentRepository from './rag/docrepo'
 import LocalSearch from './search'
+import * as text from './text'
 
 /**
  * Base class for LLM operations that need global mocks and i18n
@@ -50,6 +52,8 @@ export class LlmContext {
 
     global.window = {
       api: {
+
+        platform: process.platform,
 
         // @ts-expect-error partial mock
         config: {
@@ -132,6 +136,40 @@ export class LlmContext {
           callTool: (name: string, parameters: anyDict, signalId?: string) => {
             return this.mcp?.callTool(name, parameters)
           },
+        },
+
+        // @ts-expect-error partial mock
+        file: {
+          normalize: (filePath: string) => file.normalizePath(this.app, filePath),
+          exists: (filePath: string) => file.fileExists(this.app, filePath),
+          listDirectory: (dirPath: string, includeHidden?: boolean) => {
+            try {
+              return {
+                success: true,
+                items: file.listDirectory(this.app, dirPath, includeHidden)
+              }
+            } catch (error) {
+              console.error('Error while listing directory', error);
+              return {
+                success: false,
+                error: error.message
+              }
+            }
+          },
+          findFiles: async (basePath: string, pattern: string, maxResults?: number) => {
+            try {
+              return await file.findFiles(this.app, basePath, pattern, maxResults)
+            } catch (error) {
+              console.error('Error while finding files', error);
+              return []
+            }
+          },
+          read: (filePath: string) => file.getFileContents(this.app, filePath),
+          write: (filePath: string, contents: string) => file.writeFile(this.app, filePath, contents),
+          delete: (filePath: string) => file.deleteFile(filePath),
+          extractText: (contents: string, format: string) => {
+            return text.getTextContent(contents, format)
+          }
         },
 
         // @ts-expect-error partial mock

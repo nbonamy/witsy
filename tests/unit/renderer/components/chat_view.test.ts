@@ -16,6 +16,7 @@ import Dialog from '@renderer/utils/dialog'
 
 vi.unmock('@renderer/composables/event_bus')
 import useEventBus  from '@composables/event_bus'
+import { kHistoryVersion } from '@/consts'
 const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterEach)
@@ -46,6 +47,7 @@ beforeAll(() => {
   useBrowserMock()
 
   window.api.history.load = () => ({
+    version: kHistoryVersion,
     folders: [
       { id: 'folder1', name: 'Folder', chats: [] },
       { id: 'folder2', name: 'Folder', chats: [], defaults: {
@@ -130,25 +132,25 @@ test('Resets assistant', async () => {
 
 test('Saves text attachment', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  const attachment = new Attachment('text', 'text/plain', 'file://text', false)
+  const attachment = new Attachment('text', 'text/plain', 'file://text')
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
+  await vi.waitUntil(() => attachment.saved)
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'text_decoded_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
-  expect(attachment.saved).toBe(true)
 })
 
 test('Saves pdf attachment', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  const attachment = new Attachment('pdf', 'application/pdf', 'file://pdf', false)
+  const attachment = new Attachment('pdf', 'application/pdf', 'file://pdf')
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
+  await vi.waitUntil(() => attachment.saved)
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'pdf_extracted_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
-  expect(attachment.saved).toBe(true)
 })
 
 test('Saves image attachment', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  const attachment = new Attachment('image', 'image/png', 'file://image', false)
+  const attachment = new Attachment('image', 'image/png', 'file://image')
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'image', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
