@@ -17,7 +17,7 @@ const SNAPSHOT_FILE = path.join(TOOLS_DIR, 'en_snapshot.json')
 const I18N_KEY_PATTERN_T = /[ "](?:\$t|t)\(['"]([^'"]+)['"]/g
 const I18N_KEY_PATTERN_I = /i18nInstructions\((?:[^,]+),\s*['"]([^'"]+)['"]/g
 const DEFAULT_ENGINE = 'openai'
-const DEFAULT_MODEL = 'gpt-4.1-mini'
+const DEFAULT_MODEL = 'gpt-5-mini'
 
 // Keys that should be excluded from unused key detection (programmatically referenced)
 const EXCLUDE_FROM_UNUSED_PATTERNS = [
