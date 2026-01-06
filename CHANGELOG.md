@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.2] - 2026-01-04
+## [3.3.2] - 2026-01-XX
 
 ### Added
 - CLI filesystem access and tool display fixes
@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
 - Knowledge base access from expert
 
 ### Fixed
-- N/A
+- Fileystem access for scheduled agents
 
 ### Removed
 - N/A
