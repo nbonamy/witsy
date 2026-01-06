@@ -1,9 +1,9 @@
 
 import { Configuration } from 'types/config'
-import Anthropic, { getComputerInfo } from './anthropic'
+import Anthropic, { getComputerInfo as getAnthropicComputerInfo } from './anthropic'
 import LlmManagerBase from './base'
 import * as llm from 'multi-llm-ts'
-import Google from './google'
+import Google, { getComputerInfo as getGoogleComputerInfo } from './google'
 import Ollama from './ollama'
 import OpenRouter from './openrouter'
 
@@ -81,10 +81,10 @@ export default class LlmManager extends LlmManagerBase {
       }
 
       // select
-      if (engine === 'anthropic') return new Anthropic(this.config.engines.anthropic, getComputerInfo())
+      if (engine === 'anthropic') return new Anthropic(this.config.engines.anthropic, getAnthropicComputerInfo())
       if (engine === 'cerebras') return new llm.Cerebras(this.config.engines.cerebras)
       if (engine === 'deepseek') return new llm.DeepSeek(this.config.engines.deepseek)
-      if (engine === 'google') return new Google(this.config.engines.google)
+      if (engine === 'google') return new Google(this.config.engines.google, getGoogleComputerInfo())
       if (engine === 'groq') return new llm.Groq({ ...this.config.engines.groq, maxRetries: 0 })
       if (engine === 'lmstudio') return new llm.LMStudio(this.config.engines.lmstudio)
       if (engine === 'meta') return new llm.Meta(this.config.engines.meta)
@@ -118,13 +118,13 @@ export default class LlmManager extends LlmManagerBase {
     console.log('Loading models for', engine)
     let models: llm.ModelsList|null = null
     if (engine === 'anthropic') {
-      models = await llm.loadAnthropicModels(this.config.engines.anthropic, getComputerInfo())
+      models = await llm.loadAnthropicModels(this.config.engines.anthropic, getAnthropicComputerInfo())
     } else if (engine === 'cerebras') {
       models = await llm.loadCerebrasModels(this.config.engines.cerebras)
     } else if (engine === 'deepseek') {
       models = await llm.loadDeepSeekModels(this.config.engines.deepseek)
     } else if (engine === 'google') {
-      models = await llm.loadGoogleModels(this.config.engines.google)
+      models = await llm.loadGoogleModels(this.config.engines.google, getGoogleComputerInfo())
     } else if (engine === 'groq') {
       models = await llm.loadGroqModels(this.config.engines.groq)
     } else if (engine === 'lmstudio') {

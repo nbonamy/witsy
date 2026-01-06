@@ -69,7 +69,10 @@ export default class Generator {
 
     // check the model
     const engineConfig: EngineConfig = this.config.engines[llm.getId()]
-    const model = engineConfig?.models?.chat?.find((m: Model) => m.id === opts.model)
+    let model = engineConfig?.models?.chat?.find((m: Model) => m.id === opts.model)
+    if (!model) {
+      model = engineConfig?.models?.computer?.find((m: Model) => m.id === opts.model)
+    }
     const visionModel = engineConfig?.models?.chat?.find((m: Model) => m.id === engineConfig.model?.vision)
     if (!model) {
       response.setText(t('generator.errors.invalidModel'))

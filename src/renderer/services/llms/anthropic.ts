@@ -14,7 +14,8 @@ const getComputerInfo = () =>{
 }
 
 const isSpecializedModel = (model: string): boolean => {
-  return model === 'computer-use'
+  if (!store.config.engines.anthropic.apiKey) return false
+  return new Anthropic(store.config.engines.anthropic).isComputerUseModel(model)
 }
 
 const getFallbackModel = (): string => {

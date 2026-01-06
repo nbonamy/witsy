@@ -14,6 +14,7 @@
           <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
           <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><Plug2Icon class="icon" /></SettingsTab>
+          <SettingsTab class="computeruse" :title="t('settings.tabs.computerUse')" :checked="initialTab == 'computeruse'"><MouseIcon class="icon" /></SettingsTab>
           <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><WandIcon class="icon" /></SettingsTab>
           <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><BrainIcon class="icon" /></SettingsTab>
           <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
@@ -31,6 +32,7 @@
       <SettingsDeepResearch ref="settingsDeepResearch" />
       <SettingsModels ref="settingsModels" />
       <SettingsPlugins ref="settingsPlugins" />
+      <SettingsComputerUse ref="settingsComputerUse" />
       <SettingsCommands ref="settingsCommands" />
       <SettingsExperts ref="settingsExperts" />
       <SettingsVoice ref="settingsVoice" />
@@ -42,7 +44,7 @@
 
 <script setup lang="ts">
 
-import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, StarIcon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
+import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, MouseIcon, PanelsTopLeftIcon, Plug2Icon, StarIcon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref, watch } from 'vue'
 import { MenuBarMode } from '@components/MenuBar.vue'
 import useEventBus from '@composables/event_bus'
@@ -59,6 +61,7 @@ import SettingsGeneral from '../settings/SettingsGeneral.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
 import SettingsModels from '../settings/SettingsModels.vue'
 import SettingsPlugins from '../settings/SettingsPlugins.vue'
+import SettingsComputerUse from '../settings/SettingsComputerUse.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
 import SettingsSidebar from '../settings/SettingsSidebar.vue'
 import SettingsTab from '../settings/SettingsTab.vue'
@@ -85,6 +88,7 @@ const settingsChat = ref(null)
 const settingsDeepResearch = ref(null)
 const settingsModels = ref(null)
 const settingsPlugins = ref(null)
+const settingsComputerUse = ref(null)
 const settingsMcp = ref(null)
 const settingsCommands = ref(null)
 const settingsExperts = ref(null)
@@ -101,6 +105,7 @@ const settings = [
   settingsDeepResearch,
   settingsModels,
   settingsPlugins,
+  settingsComputerUse,
   settingsMcp,
   settingsCommands,
   settingsExperts,

@@ -773,14 +773,22 @@ const onToggleSidebar = () => {
 }
 
 const onMainViewChanged = (mode: MenuBarMode) => {
-  
+
   if (mode !== 'computer-use') {
     return
   }
 
   assistant.value.initChat()
-  assistant.value.chat.engine = 'anthropic'
-  assistant.value.chat.model = 'computer-use'
+
+  // Use configured provider
+  const provider = store.config.computerUse.provider
+  if (provider === 'google') {
+    assistant.value.chat.engine = 'google'
+    assistant.value.chat.model = store.config.engines.google.models?.computer?.[0].id || 'computer-use'
+  } else {
+    assistant.value.chat.engine = 'anthropic'
+    assistant.value.chat.model = store.config.engines.anthropic.models?.computer?.[0].id || 'computer-use'
+  }
 
   const llmUtils = new LlmUtils(store.config)
   const instructions = new Message('system', llmUtils.getSystemInstructions())

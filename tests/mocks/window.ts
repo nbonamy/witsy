@@ -566,6 +566,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       close: vi.fn(),
       updateStatus: vi.fn(),
     },
+    computerBrowser: {
+      isAvailable: vi.fn(() => true),
+      executeAction: vi.fn(async () => ({ url: 'https://example.com', screenshot: 'browser_screenshot' })),
+    },
     readaloud: {
       closePalette: vi.fn(),
     },

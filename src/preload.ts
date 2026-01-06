@@ -239,6 +239,11 @@ contextBridge.exposeInMainWorld(
       close: (): void => { return ipcRenderer.send(IPC.COMPUTER.CLOSE) },
       stop: (): void => { return ipcRenderer.send(IPC.COMPUTER.STOP) },
     },
+    computerBrowser: {
+      isAvailable: (): boolean => { return ipcRenderer.sendSync(IPC.COMPUTER_BROWSER.IS_AVAILABLE) },
+      executeAction: (action: ComputerAction): Promise<{ url: string, screenshot: string }> => { return ipcRenderer.invoke(IPC.COMPUTER_BROWSER.EXECUTE_ACTION, action) },
+      hide: (): void => { ipcRenderer.send(IPC.COMPUTER_BROWSER.HIDE) },
+    },
     memory: {
       reset: (): void => { ipcRenderer.send(IPC.MEMORY.RESET) },
       isNotEmpty: (): boolean => { return ipcRenderer.sendSync(IPC.MEMORY.HAS_FACTS) },

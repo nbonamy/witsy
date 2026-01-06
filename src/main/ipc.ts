@@ -21,6 +21,7 @@ import DocumentRepository from './rag/docrepo';
 import Embedder from './rag/embedder';
 import AutoUpdater from './autoupdate';
 import Computer from './computer';
+import ComputerBrowser from './windows/computer_browser';
 import Mcp from './mcp';
 import MemoryManager from './memory';
 import MacOSPermissions from './permissions';
@@ -894,6 +895,19 @@ export const installIpc = (
     try {
       window.computerStatusWindow?.webContents.send('computer-status', payload);
     } catch { /* empty */ }
+  });
+
+  // Computer Browser (Google Computer Use)
+  ipcMain.on(IPC.COMPUTER_BROWSER.IS_AVAILABLE, (event) => {
+    event.returnValue = ComputerBrowser.isAvailable();
+  });
+
+  ipcMain.handle(IPC.COMPUTER_BROWSER.EXECUTE_ACTION, async (_, action) => {
+    return await ComputerBrowser.executeAction(action);
+  });
+
+  ipcMain.on(IPC.COMPUTER_BROWSER.HIDE, () => {
+    ComputerBrowser.hide();
   });
 
   ipcMain.on(IPC.MEMORY.RESET, async () => {

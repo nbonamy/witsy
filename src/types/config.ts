@@ -5,6 +5,10 @@ import { PluginConfig } from '../renderer/services/plugins/plugin'
 import { McpClaudeServer, McpServer, McpServerState, McpOAuthConfig } from './mcp'
 import { ToolSelection } from './llm'
 
+export type ComputerUseConfig = {
+  provider: 'anthropic' | 'google'
+}
+
 export type Configuration = {
   workspaceId: string
   general: GeneralConfig
@@ -24,6 +28,7 @@ export type Configuration = {
   tts: TTSConfig
   rag: RagConfig
   realtime: RealtimeConfig
+  computerUse: ComputerUseConfig
   mcp: McpConfig
   mcpServers: Record<string, McpClaudeServer>
   features?: Record<string, any>
@@ -274,7 +279,7 @@ export type ModelsConfig = {
   videoEdit?: Model[]
   embedding?: Model[]
   realtime?: Model[]
-  computer?: Model[]
+  computer?: ChatModel[]
   tts?: Model[]
   stt?: Model[]
 }

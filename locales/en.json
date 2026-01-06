@@ -2690,6 +2690,13 @@
       "new": "New",
       "toggle": "Toggle"
     },
+    "computerUse": {
+      "provider": {
+        "anthropic": "Anthropic (Claude)",
+        "google": "Google (Gemini)",
+        "label": "Provider"
+      }
+    },
     "deepResearch": {
       "breadth": "Breadth of research",
       "breadths": {

@@ -123,7 +123,7 @@ test('google settings', async () => {
   expect(store.config.engines.google.apiKey).toBe('api-key')
   expect(loadGoogleModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
-  }))
+  }), expect.anything())
   const visionModelSelect = findModelSelectorPlus(google, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)

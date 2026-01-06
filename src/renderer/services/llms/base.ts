@@ -1,12 +1,13 @@
 
 import * as llm from 'multi-llm-ts'
-import { CodeExecutionMode, Configuration, CustomEngineConfig, EngineConfig } from 'types/config'
+import { CodeExecutionMode, Configuration, CustomEngineConfig, EngineConfig, ModelsConfig } from 'types/config'
 import { GetChatEnginesOpts, ILlmManager, ToolSelection } from 'types/llm'
 import defaults from '@root/defaults/settings.json'
 import { imageFormats, textFormats, parseableTextFormats } from '@models/attachment'
 import { PluginInstance, PluginsList } from '../plugins/plugins'
 import { store } from '../store'
 import { getFallbackModel as getAnthropicFallbackModel, isSpecializedModel as isSpecialAnthropicModel } from './anthropic'
+import { getFallbackModel as getGoogleFallbackModel, isSpecializedModel as isSpecialGoogleModel } from './google'
 import { favoriteMockEngine } from './consts'
 import { areAllToolsEnabled, areToolsDisabled } from './llm'
 
@@ -63,6 +64,7 @@ export default class LlmManagerBase implements ILlmManager {
   
   isSpecializedModel = (engine: string, model: string): boolean => {
     if (engine === 'anthropic') return isSpecialAnthropicModel(model)
+    if (engine === 'google') return isSpecialGoogleModel(model)
     return false
   }
 
@@ -98,7 +100,7 @@ export default class LlmManagerBase implements ILlmManager {
   }
 
   isComputerUseModel = (engine: string, model: string): boolean => {
-    return (engine === 'anthropic' && model === 'computer-use')
+    return store.config.engines[engine]?.models?.computer?.some(m => m.id === model)
   }
 
   removeFavoriteModel = (engine: string, model: string) => {
@@ -143,6 +145,7 @@ export default class LlmManagerBase implements ILlmManager {
 
   getFallbackModel = (engine: string): string => {
     if (engine === 'anthropic') return getAnthropicFallbackModel()
+    if (engine === 'google') return getGoogleFallbackModel()
     return null
   }
   
@@ -474,7 +477,7 @@ export default class LlmManagerBase implements ILlmManager {
       chat: [],
       image: [],
       ...models
-    }
+    } as ModelsConfig
 
     // now select valid models
     this.selectValidModel(engine, engineConfig, 'chat')

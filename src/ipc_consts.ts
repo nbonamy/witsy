@@ -289,3 +289,9 @@ export const CODE_EXECUTION = {
   LOAD: 'code-execution-load',
   SAVE: 'code-execution-save',
 } as const;
+
+export const COMPUTER_BROWSER = {
+  IS_AVAILABLE: 'computer-browser-is-available',
+  EXECUTE_ACTION: 'computer-browser-execute-action',
+  HIDE: 'computer-browser-hide',
+} as const;

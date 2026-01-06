@@ -10,6 +10,7 @@ export const tabs = [
   'settingsDeepResearch',
   'settingsModels',
   'settingsPlugins',
+  'settingsComputerUse',
   'settingsCommands',
   'settingsExperts',
   'settingsVoice',

@@ -1,4 +1,5 @@
 
+import { ChatModel } from 'multi-llm-ts'
 import { Configuration, ModelType } from 'types/config'
 import { listModels, PipelineType } from '@huggingface/hub'
 import { ModelLoader } from './model_loader'
@@ -53,7 +54,7 @@ export default class HuggingFace implements ModelLoader {
         this.config.engines.huggingface.models[type].push({
           id: model.name,
           name: model.name,
-        })
+        } as ChatModel)
       }
 
       // fallback

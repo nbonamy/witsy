@@ -177,6 +177,9 @@
   "realtime": {
     "engine": "openai"
   },
+  "computerUse": {
+    "provider": "anthropic"
+  },
   "engines": {
     "__favorites__": {
       "models": {
@@ -495,6 +498,9 @@
       "skipConfirmation": false
     },
     "knowledge": {
+      "enabled": true
+    },
+    "computer": {
       "enabled": true
     }
   },

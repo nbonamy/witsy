@@ -1,5 +1,26 @@
 import { GenerateContentConfig } from '@google/genai'
 import { ChatModel, Google, LlmCompletionOpts } from 'multi-llm-ts'
+import ComputerGooglePlugin from '../plugins/computer_google'
+import { store } from '../store'
+
+const getComputerInfo = () => {
+  if (!window.api.computerBrowser?.isAvailable()) return null
+  const plugin = new ComputerGooglePlugin(store.config.plugins.computer, store.config.workspaceId)
+  return {
+    plugin: plugin,
+    screenSize: () => ({ width: 1440, height: 900 }),
+    screenNumber: () => 1,
+  }
+}
+
+const isSpecializedModel = (model: string): boolean => {
+  if (!store.config.engines.google.apiKey) return false
+  return new Google(store.config.engines.google).isComputerUseModel(model)
+}
+
+const getFallbackModel = (): string => {
+  return 'gemini-2.5-pro-preview-06-05'
+}
 
 export default class GoogleEngine extends Google {
 
@@ -17,5 +38,7 @@ export default class GoogleEngine extends Google {
     return await super.getGenerationConfig(model, opts)
 
   }
-  
+
 }
+
+export { getComputerInfo, getFallbackModel, isSpecializedModel }
