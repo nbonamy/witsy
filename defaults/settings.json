@@ -199,9 +199,9 @@
         "image": []
       },
       "model": {
-        "chat": "gpt-4.1",
+        "chat": "gpt-5.2",
         "image": "gpt-image-1",
-        "vision": "gpt-4.1"
+        "vision": "gpt-5.2"
       },
       "realtime": {
         "model": "gpt-4o-mini-realtime-preview",
@@ -214,9 +214,9 @@
         "image": []
       },
       "model": {
-        "chat": "claude-3-5-haiku-20241022",
+        "chat": "claude-sonnet-4-5-20250929",
         "image": "",
-        "vision": "claude-3-5-haiku-20241022"
+        "vision": "claude-sonnet-4-5-20250929"
       }
     },
     "google": {
@@ -226,10 +226,10 @@
         "image": []
       },
       "model": {
-        "chat": "gemini-2.5-flash",
+        "chat": "gemini-pro-latest",
         "image": "gemini-2.0-flash-exp",
         "imageEdit": "gemini-2.0-flash-exp",
-        "vision": "gemini-1.5-pro-latest"
+        "vision": "gemini-pro-latest"
       }
     },
     "groq": {
