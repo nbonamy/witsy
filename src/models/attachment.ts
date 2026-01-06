@@ -16,15 +16,18 @@ export default class Attachment extends AttachmentBase implements IAttachment{
   extracted: boolean
   saved: boolean
 
-  constructor(content: string, mimeType: string, url: string = '', saved: boolean = false, load: boolean = false) {
+  constructor(content: string, mimeType: string, url: string = '', saved: boolean = false) {
     super(content, mimeType)
     this.url = url
     this.filepath = url
     this.saved = saved
     this.extracted = false
-    if (load) {
-      this.loadContents()
-    }
+  }
+
+  static async load(content: string, mimeType: string, url: string = '', saved: boolean = false): Promise<Attachment> {
+    const attachment = new Attachment(content, mimeType, url, saved)
+    await attachment.loadContents()
+    return attachment
   }
 
   get filename(): string {
@@ -44,12 +47,12 @@ export default class Attachment extends AttachmentBase implements IAttachment{
     return filename + extension
   }
 
-  loadContents(): void {
+  async loadContents(): Promise<void> {
 
     // not if we already have
     if (this.content) {
       if (this.isText() && !this.extracted) {
-        this.extractText()
+        await this.extractText()
       }
       return
     }
@@ -62,7 +65,7 @@ export default class Attachment extends AttachmentBase implements IAttachment{
     // text formats
     if (this.content) {
       if (this.isText()) {
-        this.extractText()
+        await this.extractText()
       }
     } 
   }
@@ -81,13 +84,20 @@ export default class Attachment extends AttachmentBase implements IAttachment{
     return attachment
   }
   
-  extractText(): void {
+  async extractText(): Promise<void> {
 
     // get text
     if (parseableTextFormats.includes(this.format())) {
-      const rawText = window.api.file.extractText(this.content, this.format())
-      // this.mimeType = 'text/plain'
-      this.content = rawText
+
+      try {
+        this.content = await window.api.file.extractText(this.content, this.format())
+      } catch (e) {
+        if (this.saved) {
+          this.content = await window.api.file.extractText(this.content, 'txt')
+        } else {
+          throw e;
+        }
+      }
     } else {
       this.content = window.api.base64.decode(this.content)
     }

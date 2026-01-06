@@ -699,7 +699,7 @@ const attach = async (contents: string, mimeType: string, url: string) => {
       attachments.value.push(toAttach)
     }
   } else if (toAttach.isText()) {
-    toAttach.loadContents()
+    await toAttach.loadContents()
     if (!toAttach.content) {
       Dialog.alert(`${url.split('/').pop()}: ${t('prompt.attachment.emptyError.title')}`, t('prompt.attachment.emptyError.text'))
       return

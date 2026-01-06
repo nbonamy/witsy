@@ -232,7 +232,7 @@ export default class extends Plugin {
       let textContent: string
       if (extractableFormats.includes(ext)) {
         // Extract text from documents
-        textContent = window.api.file.extractText(content.contents, ext)
+        textContent = await window.api.file.extractText(content.contents, ext)
       } else {
         // For other files, just decode base64
         textContent = atob(content.contents)

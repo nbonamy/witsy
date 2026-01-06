@@ -687,7 +687,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   if (processing.value) {
     return
   }
-  
+
   // deconstruct params
   const { prompt, attachments, expert } = params
   
@@ -695,6 +695,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
   if (!prompt) {
     return
   }
+  
+  // set
+  processing.value = true
   
   // get text and selection
   const contents = editor.value.getContent()
@@ -718,7 +721,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   const userMessage = new Message('user', finalPrompt)
   userMessage.setExpert(fullExpertI18n(expert))
   for (const attachment of attachments ?? []) {
-    attachment.loadContents()
+    await attachment.loadContents()
     userMessage.attach(attachment)
   }
   chat.value.addMessage(userMessage)
@@ -736,7 +739,6 @@ const onSendPrompt = async (params: SendPromptParams) => {
     abortController = new AbortController()
 
     // now generate
-    processing.value = true
     const rc: GenerationResult = await generator.generate(llm, chat.value.messages, {
       ...chat.value.modelOpts,
       model: chat.value.model,
@@ -779,12 +781,15 @@ const onSendPrompt = async (params: SendPromptParams) => {
   } catch (err) {
     console.error(err)
     Dialog.alert(t('scratchpad.generationError'))
-  }
+  
+  } finally {
 
-  // done
-  emitEvent('llm-done', null)
-  processing.value = false
-    
+    // done
+    emitEvent('llm-done', null)
+    processing.value = false
+
+  }
+      
 }
 
 const onStopPrompting = async () => {

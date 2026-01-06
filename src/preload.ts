@@ -78,7 +78,7 @@ contextBridge.exposeInMainWorld(
       stats: (filePath: string): FileStats | null => { return ipcRenderer.sendSync(IPC.FILE.FILE_STATS, filePath) },
       read: (filepath: string): FileContents => { return ipcRenderer.sendSync(IPC.FILE.READ_FILE, filepath) },
       readIcon: (filepath: string): FileContents => { return ipcRenderer.sendSync(IPC.FILE.READ_ICON, filepath) },
-      extractText: (contents: string, format: string): string => { return ipcRenderer.sendSync(IPC.FILE.GET_TEXT_CONTENT, contents, format) },
+      extractText: (contents: string, format: string): Promise<string> => { return ipcRenderer.invoke(IPC.FILE.GET_TEXT_CONTENT, contents, format) },
       getAppInfo: (filepath: string): ExternalApp => { return ipcRenderer.sendSync(IPC.FILE.GET_APP_INFO, filepath) },
       save: (opts: FileSaveParams): string => { return ipcRenderer.sendSync(IPC.FILE.SAVE_FILE, JSON.stringify(opts)) },
       download: (opts: FileDownloadParams): string => { return ipcRenderer.sendSync(IPC.FILE.DOWNLOAD, JSON.stringify(opts)) },

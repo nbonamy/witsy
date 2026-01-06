@@ -38,8 +38,8 @@ export interface Attachment extends IAttachmentBase {
   filepath: string
   get filename(): string
   get filenameShort(): string
-  extractText(): void
-  loadContents(): void
+  extractText(): Promise<void>
+  loadContents(): Promise<void>
   b64Contents(): string
 }
 
@@ -354,7 +354,7 @@ declare global {
         exists(filePath: string): boolean
         read(filepath: string): FileContents
         readIcon(filepath: string): FileContents
-        extractText(contents: string, format: string): string
+        extractText(contents: string, format: string): Promise<string>
         getAppInfo(filepath: string): ExternalApp
         save(opts: FileSaveParams): string
         download(opts: FileDownloadParams): string
