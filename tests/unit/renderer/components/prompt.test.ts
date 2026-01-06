@@ -91,7 +91,7 @@ beforeEach(() => {
   store.loadSettings()
   store.config.llm.imageResize = 0
   store.config.engines.openai.models.chat.push(
-    { id: 'gpt-4.1', name: 'gpt-4.1', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
+    { id: 'gpt-5.2', name: 'gpt-5.2', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
   )
   store.config.engines.mock = {
     models: {
