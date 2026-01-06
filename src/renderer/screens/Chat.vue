@@ -557,10 +557,10 @@ const onSendPrompt = async (params: SendPromptParams) => {
         done: false,
       } as LlmChunkContent)
 
-      // for computer use
-      if (isUsingComputer()) {
-        window.api.computer.start()
-      }
+      // // for computer use
+      // if (isUsingComputer()) {
+      //   window.api.computer.start()
+      // }
 
       // make sure the chat is part of history
       if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {

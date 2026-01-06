@@ -3043,6 +3043,7 @@
       "advanced": "Advanced",
       "chat": "Chat",
       "commands": "Commands",
+      "computerUse": "Computer Use",
       "deepResearch": "@:{'common.deepResearch'}",
       "experts": "@:{'common.experts'}",
       "favorites": "Favorites",

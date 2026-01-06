@@ -14,7 +14,7 @@
           <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
           <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><Plug2Icon class="icon" /></SettingsTab>
-          <SettingsTab class="computeruse" :title="t('settings.tabs.computerUse')" :checked="initialTab == 'computeruse'"><MouseIcon class="icon" /></SettingsTab>
+          <SettingsTab class="computeruse" :title="t('settings.tabs.computerUse')" @change="load(settingsComputerUse)" :checked="initialTab == 'computeruse'"><MonitorIcon class="icon" /></SettingsTab>
           <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><WandIcon class="icon" /></SettingsTab>
           <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><BrainIcon class="icon" /></SettingsTab>
           <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 
-import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, MouseIcon, PanelsTopLeftIcon, Plug2Icon, StarIcon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
+import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, MonitorIcon, PanelsTopLeftIcon, Plug2Icon, StarIcon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref, watch } from 'vue'
 import { MenuBarMode } from '@components/MenuBar.vue'
 import useEventBus from '@composables/event_bus'

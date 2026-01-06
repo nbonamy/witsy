@@ -19,7 +19,7 @@ const isSpecializedModel = (model: string): boolean => {
 }
 
 const getFallbackModel = (): string => {
-  return 'gemini-2.5-pro-preview-06-05'
+  return 'gemini-2.5-flash'
 }
 
 export default class GoogleEngine extends Google {
