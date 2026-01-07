@@ -57,7 +57,7 @@
             </div>
           </div>
           <div class="panel-footer step-actions" v-if="expandedStep === index">
-            <button class="expert" :id="`expert-menu-anchor-${index}`" @click="onExpert(index)" :class="{ 'active': hasExpert(index) }"><BrainIcon /> {{ t('agent.create.workflow.expert') }}</button>
+            <button class="expert" :id="`expert-menu-anchor-${index}`" @click="onExpert(index)" :class="{ 'active': hasExpert(index) }"><BrainIcon /> {{ getExpertLabel(index) }}</button>
             <button class="docrepo" :id="`docrepo-menu-anchor-${index}`" @click="onDocRepos(index)" :class="{ 'active': hasDocRepos(index) }"><LightbulbIcon /> {{ getDocReposLabel(index) }}</button>
             <button class="tools" :id="`tools-menu-anchor-${index}`" @click="onTools(index)" :class="{ 'active': hasTools(index) }"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
             <button class="agents" :id="`agents-menu-anchor-${index}`" @click="onAgents(index)" :disabled="availableAgents.length === 0" :class="{ 'active': hasAgents(index) }"><AgentIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
@@ -178,7 +178,7 @@ import WizardStep from '@components/WizardStep.vue'
 import Dialog from '@renderer/utils/dialog'
 import * as ts from '@renderer/utils/tool_selection'
 import AgentSelector from '@screens/AgentSelector.vue'
-import { t } from '@services/i18n'
+import { expertI18n, t } from '@services/i18n'
 import { extractPromptInputs } from '@services/prompt'
 import { processJsonSchema } from '@services/schema'
 import { store } from '@services/store'
@@ -267,6 +267,14 @@ const hasAgents = (index: number) => {
 
 const hasExpert = (index: number) => {
   return !!props.agent.steps[index]?.expert
+}
+
+const getExpertLabel = (index: number): string => {
+  const expertId = props.agent.steps[index]?.expert
+  if (!expertId) return t('agent.create.workflow.expert')
+  const expert = store.experts.find(e => e.id === expertId)
+  if (!expert) return t('agent.create.workflow.expert')
+  return expert.name || expertI18n(expert, 'name')
 }
 
 const hasJsonSchema = (index: number) => {
