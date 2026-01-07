@@ -35,6 +35,7 @@ test('Shows workflow step with step panels', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -63,7 +64,8 @@ test('Can expand and collapse workflow steps', async () => {
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
-    props: { 
+    props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -99,6 +101,7 @@ test('Shows step management buttons in workflow', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -134,6 +137,7 @@ test('Shows ToolSelector and AgentSelector components', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -167,6 +171,7 @@ test('Workflow step handles multiple steps correctly', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -196,6 +201,7 @@ test('Adds new workflow step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -231,6 +237,7 @@ test('Deletes workflow step with confirmation', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -269,6 +276,7 @@ test('Shows tools and agents buttons in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -299,6 +307,7 @@ test('Shows docrepo button in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -325,6 +334,7 @@ test('Shows docrepo help text when docrepo is selected', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -355,6 +365,7 @@ test('Selecting docrepo opens dialog and updates step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -386,6 +397,7 @@ test('Docrepo selection updates agent step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -413,11 +425,12 @@ test('Docrepo selection can be cleared by selecting none', async () => {
 
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Step 1', tools: null, agents: [], docrepo: 'uuid1' }
+    { prompt: 'Step 1', tools: null, agents: [], docrepos: ['uuid1'] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -448,6 +461,7 @@ test('Shows prompt inputs table in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -477,6 +491,7 @@ test('Shows JSON schema button in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -503,6 +518,7 @@ test('Updates step jsonSchema when valid JSON is provided', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: { 
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -549,7 +565,8 @@ test('Clears step jsonSchema when empty JSON is provided', async () => {
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
-    props: { 
+    props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -584,7 +601,8 @@ test('Preserves existing jsonSchema when dialog is cancelled', async () => {
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
-    props: { 
+    props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -621,7 +639,8 @@ test('Shows existing jsonSchema in dialog input', async () => {
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
-    props: { 
+    props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -656,7 +675,7 @@ test('Can attach expert to workflow step', async () => {
     name: 'Test Expert',
     prompt: 'Expert instructions',
     state: 'enabled' as const,
-    triggerApps: []
+    triggerApps: [] as any[]
   }
   store.experts = [testExpert]
 
@@ -667,6 +686,7 @@ test('Can attach expert to workflow step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -688,11 +708,9 @@ test('Can attach expert to workflow step', async () => {
   expect(expertButton.classes()).not.toContain('active')
 
   // Manually attach expert (simulating menu interaction)
-  agent.steps[0].expert = testExpert.id
-  await nextTick()
-
-  // Verify expert was attached to step
-  expect(agent.steps[0].expert).toBe(testExpert.id)
+  wrapper.vm.agent.steps[0].expert = testExpert.id
+  await wrapper.vm.$nextTick()
+  expect(expertButton.text()).toContain('Test Expert')
 })
 
 test('Can remove expert from workflow step', async () => {
@@ -703,7 +721,7 @@ test('Can remove expert from workflow step', async () => {
     name: 'Test Expert',
     prompt: 'Expert instructions',
     state: 'enabled' as const,
-    triggerApps: []
+    triggerApps: [] as any[]
   }
   store.experts = [testExpert]
 
@@ -719,6 +737,7 @@ test('Can remove expert from workflow step', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -751,7 +770,7 @@ test('Expert button exists and works correctly', async () => {
     name: 'Expert One',
     prompt: 'Instructions',
     state: 'enabled' as const,
-    triggerApps: []
+    triggerApps: [] as any[]
   }
 
   const expert2 = {
@@ -760,7 +779,7 @@ test('Expert button exists and works correctly', async () => {
     name: 'Expert Two',
     prompt: 'Instructions',
     state: 'enabled' as const,
-    triggerApps: []
+    triggerApps: [] as any[]
   }
 
   store.experts = [expert1, expert2]
@@ -770,6 +789,7 @@ test('Expert button exists and works correctly', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -797,6 +817,7 @@ test('Expert button respects hasExpert state', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -834,6 +855,7 @@ test('Selecting docrepo from menu updates step', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     ...stubTeleport,
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -875,7 +897,7 @@ test('Selecting expert from menu updates step', async () => {
     name: 'Test Expert',
     prompt: 'Expert instructions',
     state: 'enabled' as const,
-    triggerApps: []
+    triggerApps: [] as any[]
   }
   store.experts = [testExpert]
 
@@ -887,6 +909,7 @@ test('Selecting expert from menu updates step', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     ...stubTeleport,
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -928,6 +951,7 @@ test('prompt textarea exists in workflow steps', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -939,10 +963,10 @@ test('prompt textarea exists in workflow steps', async () => {
   await workflowStep!.trigger('click')
   await nextTick()
 
-  // Get the textarea element
+  // Get the textarea (plain textarea since VariableTextarea is temporarily disabled)
   const textarea = wrapper.find('textarea[name="prompt"]')
   expect(textarea.exists()).toBe(true)
-  expect(textarea.element.value).toBe('test prompt')
+  expect((textarea.element as HTMLTextAreaElement).value).toBe('test prompt')
 })
 
 test('Shows insert system variable button in prompt toolbar', async () => {
@@ -953,6 +977,7 @@ test('Shows insert system variable button in prompt toolbar', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -979,6 +1004,7 @@ test('Shows create user variable button in prompt toolbar', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1007,6 +1033,7 @@ test('Clicking insert system variable button opens menu', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     ...stubTeleport,
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1044,6 +1071,7 @@ test('System variable menu shows previous step output option', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     ...stubTeleport,
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1084,6 +1112,7 @@ test('Previous step output option is disabled for first step', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     ...stubTeleport,
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1120,6 +1149,7 @@ test('Clicking previous step output inserts variable at caret', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     ...stubTeleport,
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1179,6 +1209,7 @@ test('Previous step output shows dialog for step 3+', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     ...stubTeleport,
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1248,6 +1279,7 @@ test('Previous step output dialog can be cancelled', async () => {
   const wrapper: VueWrapper<any> = mount(Editor, {
     ...stubTeleport,
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1300,6 +1332,7 @@ test('Clicking create user variable button opens dialog', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1330,6 +1363,7 @@ test('Creating user variable inserts it at caret position', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1374,6 +1408,7 @@ test('User variable without description but with default value uses :: separator
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1418,6 +1453,7 @@ test('User variable with only name has no separators', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
@@ -1462,6 +1498,7 @@ test('Variable insertion preserves text before and after caret', async () => {
 
   const wrapper: VueWrapper<any> = mount(Editor, {
     props: {
+      workspace: null,
       mode: 'edit',
       agent: agent
     }
