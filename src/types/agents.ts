@@ -62,9 +62,15 @@ export interface Agent {
 export type AgentRunTrigger = 'manual' | 'schedule' | 'webhook' | 'workflow'
 export type AgentRunStatus = 'running' | 'success' | 'canceled' | 'error'
 
+export interface AgentInfo {
+  name: string
+  steps: { description?: string }[]
+}
+
 export interface AgentRun {
   uuid: string
   agentId: string
+  agentInfo?: AgentInfo
   createdAt: number
   updatedAt: number
   trigger: AgentRunTrigger

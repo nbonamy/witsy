@@ -34,6 +34,10 @@ export default class AgentA2AExecutor extends AgentExecutorBase {
     const run: AgentRun = {
       uuid: opts.runId || crypto.randomUUID(),
       agentId: this.agent.uuid,
+      agentInfo: {
+        name: this.agent.name,
+        steps: this.agent.steps.map(s => ({ description: s.description })),
+      },
       createdAt: Date.now(),
       updatedAt: Date.now(),
       trigger: trigger,
