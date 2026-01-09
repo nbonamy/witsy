@@ -160,6 +160,22 @@ test('Basic Agent Run - Success', async () => {
   expect(run.messages[2].role).toBe('assistant')
 })
 
+test('Agent Run captures agentInfo', async () => {
+  testAgent.name = 'Captured Agent Name'
+  testAgent.steps = [
+    { prompt: 'Step 1', description: 'First step description', tools: null, agents: [] },
+    { prompt: 'Step 2: {{output.1}}', description: 'Second step description', tools: null, agents: [] },
+  ]
+
+  const run = await runAgent('manual', { name: 'test' })
+
+  expect(run.agentInfo).toBeDefined()
+  expect(run.agentInfo!.name).toBe('Captured Agent Name')
+  expect(run.agentInfo!.steps).toHaveLength(2)
+  expect(run.agentInfo!.steps[0].description).toBe('First step description')
+  expect(run.agentInfo!.steps[1].description).toBe('Second step description')
+})
+
 test('Agent Run with Parameters', async () => {
   testAgent.parameters = [{
     name: 'name',

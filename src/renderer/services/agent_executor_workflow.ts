@@ -40,6 +40,10 @@ export default class AgentWorkflowExecutor extends AgentExecutorBase {
     const run: AgentRun = {
       uuid: opts?.runId || uuidv7(),
       agentId: this.agent.uuid,
+      agentInfo: {
+        name: this.agent.name,
+        steps: this.agent.steps.map(s => ({ description: s.description })),
+      },
       createdAt: Date.now(),
       updatedAt: Date.now(),
       trigger: trigger,

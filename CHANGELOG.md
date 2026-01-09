@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.3] - WIP
+
+### Added
+- N/A
+
+### Changed
+- Agent runs now capture agent info (name, step descriptions) for standalone display
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
 ## [3.3.2] - 2026-01-04
 
 ### Added

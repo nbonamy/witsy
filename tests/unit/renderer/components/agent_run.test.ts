@@ -218,6 +218,58 @@ describe('Run.vue', () => {
     expect(outputHeaders[1].exists()).toBe(true)
   })
 
+  test('displays step descriptions from agentInfo', async () => {
+    const mockRun = createMockRun({
+      agentInfo: {
+        name: 'Test Agent',
+        steps: [
+          { description: 'First step from agentInfo' },
+          { description: 'Second step from agentInfo' },
+        ],
+      },
+    })
+    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
+
+    const wrapper = mount(Run, {
+      props: {
+        agentId: 'test-agent-456',
+        runId: 'test-run-123',
+      },
+    })
+
+    await nextTick()
+
+    const outputHeaders = wrapper.findAll('.output-panel .panel-header label')
+    expect(outputHeaders[0].text()).toContain('First step from agentInfo')
+    expect(outputHeaders[1].text()).toContain('Second step from agentInfo')
+  })
+
+  test('falls back to agent definition when agentInfo not available', async () => {
+    const mockRun = createMockRun()  // No agentInfo
+    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
+    window.api.agents.list = vi.fn().mockReturnValue([{
+      uuid: 'test-agent-456',
+      name: 'Fallback Agent',
+      steps: [
+        { description: 'First step from agent def' },
+        { description: 'Second step from agent def' },
+      ],
+    }])
+
+    const wrapper = mount(Run, {
+      props: {
+        agentId: 'test-agent-456',
+        runId: 'test-run-123',
+      },
+    })
+
+    await nextTick()
+
+    const outputHeaders = wrapper.findAll('.output-panel .panel-header label')
+    expect(outputHeaders[0].text()).toContain('First step from agent def')
+    expect(outputHeaders[1].text()).toContain('Second step from agent def')
+  })
+
   test('shows no outputs message when no messages available', async () => {
     const mockRun = createMockRun({
       messages: [

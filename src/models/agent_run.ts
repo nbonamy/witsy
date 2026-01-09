@@ -1,11 +1,12 @@
 
-import { AgentRun as AgentRunBase, AgentRunStatus, AgentRunTrigger } from 'types/agents'
+import { AgentInfo, AgentRun as AgentRunBase, AgentRunStatus, AgentRunTrigger } from 'types/agents'
 import Message from './message'
 
 export default class AgentRun implements AgentRunBase {
 
   uuid: string
   agentId: string
+  agentInfo?: AgentInfo
   createdAt: number
   updatedAt: number
   trigger: AgentRunTrigger
@@ -29,6 +30,7 @@ export default class AgentRun implements AgentRunBase {
     const run = new AgentRun()
     run.uuid = obj.uuid || crypto.randomUUID()
     run.agentId = obj.agentId || ''
+    run.agentInfo = obj.agentInfo || undefined
     run.createdAt = obj.createdAt
     run.updatedAt = obj.updatedAt
     run.trigger = obj.trigger || 'manual'

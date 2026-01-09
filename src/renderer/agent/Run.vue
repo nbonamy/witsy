@@ -152,8 +152,8 @@ const loadAgentRun = async () => {
     clearTimeout(refreshTimeout)
     run.value = AgentRun.fromJson(window.api.agents.getRun(store.config.workspaceId, props.agentId, props.runId))
 
-    // Load agent definition to get step descriptions
-    if (!agent.value) {
+    // Fallback: load agent definition for older runs without agentInfo
+    if (!run.value.agentInfo && !agent.value) {
       const agents = window.api.agents.list(store.config.workspaceId)
       agent.value = agents.find(a => a.uuid === props.agentId)
     }
@@ -174,7 +174,7 @@ const formatDate = (date: number) => {
 
 const getOutputTitle = (index: number) => {
   const num = index + 1
-  const stepDescription = agent.value?.steps?.[index]?.description || ''
+  const stepDescription = run.value?.agentInfo?.steps?.[index]?.description || agent.value?.steps?.[index]?.description || ''
   return stepDescription ? `${t('agent.run.outputItem', { index: num })} - ${stepDescription}` : t('agent.run.outputItem', { index: num })
 }
 
