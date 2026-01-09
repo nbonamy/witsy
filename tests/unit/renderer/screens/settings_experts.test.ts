@@ -35,6 +35,14 @@ beforeAll(() => {
   }
   window.api.config.localeLLM = () => store.config.llm.locale || 'en-US'
 
+  // Mock docrepo API
+  window.api.docrepo = {
+    list: vi.fn(() => [
+      { uuid: 'repo1', name: 'Knowledge Base 1', workspaceId: kDefaultWorkspaceId },
+      { uuid: 'repo2', name: 'Knowledge Base 2', workspaceId: kDefaultWorkspaceId },
+    ]),
+  } as any
+
 })
 
 beforeEach(() => {
@@ -232,6 +240,35 @@ test('Copy expert', async () => {
       description: 'expert_uuid1_description',
       prompt: 'expert_uuid1_prompt',
       state: 'enabled',
+    })
+  ]))
+
+})
+
+test('New expert with docrepos', async () => {
+
+  await wrapper.find('button[name="new"]').trigger('click')
+
+  const editor = wrapper.findComponent({ name: 'ExpertEditor' })
+  await editor.find('[name=name]').setValue('expert_with_kb')
+  await editor.find('[name=prompt]').setValue('prompt_with_kb')
+
+  // Set docrepos via the editor's internal state
+  editor.vm.docrepos = ['repo1', 'repo2']
+  await wrapper.vm.$nextTick()
+
+  await editor.find('button.default').trigger('click')
+  await wrapper.vm.$nextTick()
+
+  expect(window.api.experts.save).toHaveBeenCalledWith(kDefaultWorkspaceId, expect.arrayContaining([
+    expect.objectContaining({
+      id: expect.any(String),
+      type: 'user',
+      name: 'expert_with_kb',
+      prompt: 'prompt_with_kb',
+      docrepos: ['repo1', 'repo2'],
+      triggerApps: [],
+      state: 'enabled'
     })
   ]))
 

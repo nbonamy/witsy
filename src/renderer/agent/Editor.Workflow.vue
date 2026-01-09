@@ -38,7 +38,7 @@
                 <textarea v-model="agent.steps[index].prompt" name="prompt" :ref="(el: any) => setTextareaRef(el, index)"></textarea>
               </div>
               <div class="help" v-if="index > 0">{{ t('agent.create.workflow.help.connect') }}</div>
-              <div class="help" v-if="step.docrepo">{{ t('agent.create.workflow.help.docRepo') }}</div>
+              <div class="help" v-if="hasDocRepos(index)">{{ t('agent.create.workflow.help.docRepo') }}</div>
             </div>
             <div class="variables" v-if="promptInputs(index).length">
               <label for="prompt">{{ t('agent.create.information.promptInputs') }}</label>
@@ -57,8 +57,8 @@
             </div>
           </div>
           <div class="panel-footer step-actions" v-if="expandedStep === index">
-            <button class="expert" :id="`expert-menu-anchor-${index}`" @click="onExpert(index)" :class="{ 'active': hasExpert(index) }"><BrainIcon /> {{ t('agent.create.workflow.expert') }}</button>
-            <button class="docrepo" :id="`docrepo-menu-anchor-${index}`" @click="onDocRepo(index)" :class="{ 'active': hasDocRepo(index) }"><LightbulbIcon /> {{ t('agent.create.workflow.docRepo') }}</button>
+            <button class="expert" :id="`expert-menu-anchor-${index}`" @click="onExpert(index)" :class="{ 'active': hasExpert(index) }"><BrainIcon /> {{ getExpertLabel(index) }}</button>
+            <button class="docrepo" :id="`docrepo-menu-anchor-${index}`" @click="onDocRepos(index)" :class="{ 'active': hasDocRepos(index) }"><LightbulbIcon /> {{ getDocReposLabel(index) }}</button>
             <button class="tools" :id="`tools-menu-anchor-${index}`" @click="onTools(index)" :class="{ 'active': hasTools(index) }"><BlocksIcon /> {{ t('agent.create.workflow.customTools') }}</button>
             <button class="agents" :id="`agents-menu-anchor-${index}`" @click="onAgents(index)" :disabled="availableAgents.length === 0" :class="{ 'active': hasAgents(index) }"><AgentIcon /> {{ t('agent.create.workflow.customAgents') }}</button>
             <button class="structured-output" @click="onStructuredOutput(index)" :class="{ 'active': hasJsonSchema(index) }"><BracesIcon /> {{ t('agent.create.workflow.jsonSchema') }}</button>
@@ -96,9 +96,10 @@
     v-if="docRepoMenuVisible && docRepoMenuStepIndex >= 0"
     :anchor="`#docrepo-menu-anchor-${docRepoMenuStepIndex}`"
     position="above"
-    :footer-mode="hasDocRepo(docRepoMenuStepIndex) ? 'clear' : 'none'"
+    :multi-select="true"
+    :selected-doc-repos="getStepDocRepos(docRepoMenuStepIndex)"
     @close="onCloseDocRepoMenu"
-    @doc-repo-selected="selectDocRepo"
+    @doc-repos-changed="onDocReposChanged"
     @manage-doc-repo="onManageDocRepo"
   />
   
@@ -177,7 +178,7 @@ import WizardStep from '@components/WizardStep.vue'
 import Dialog from '@renderer/utils/dialog'
 import * as ts from '@renderer/utils/tool_selection'
 import AgentSelector from '@screens/AgentSelector.vue'
-import { t } from '@services/i18n'
+import { expertI18n, t } from '@services/i18n'
 import { extractPromptInputs } from '@services/prompt'
 import { processJsonSchema } from '@services/schema'
 import { store } from '@services/store'
@@ -233,8 +234,25 @@ const availableAgents = computed(() => {
   return store.agents.filter(a => a.uuid !== props.agent.uuid)
 })
 
-const hasDocRepo = (index: number) => {
-  return !!props.agent.steps[index]?.docrepo
+const hasDocRepos = (index: number) => {
+  const step = props.agent.steps[index]
+  return step?.docrepos?.length > 0
+}
+
+const getStepDocRepos = (index: number): string[] => {
+  const step = props.agent.steps[index]
+  return step?.docrepos?.length ? step.docrepos : []
+}
+
+const getDocReposLabel = (index: number): string => {
+  const count = getStepDocRepos(index).length
+  if (count === 0) return t('agent.create.workflow.docRepo')
+  if (count === 1) {
+    const docRepos = window.api.docrepo.list(store.config.workspaceId) as any[]
+    const docRepo = docRepos.find((r: any) => r.uuid === getStepDocRepos(index)[0])
+    return docRepo?.name || t('agent.create.workflow.docRepo')
+  }
+  return t('agent.create.workflow.docReposCount', { count })
 }
 
 const hasTools = (index: number) => {
@@ -249,6 +267,14 @@ const hasAgents = (index: number) => {
 
 const hasExpert = (index: number) => {
   return !!props.agent.steps[index]?.expert
+}
+
+const getExpertLabel = (index: number): string => {
+  const expertId = props.agent.steps[index]?.expert
+  if (!expertId) return t('agent.create.workflow.expert')
+  const expert = store.experts.find(e => e.id === expertId)
+  if (!expert) return t('agent.create.workflow.expert')
+  return expert.name || expertI18n(expert, 'name')
 }
 
 const hasJsonSchema = (index: number) => {
@@ -282,7 +308,7 @@ const onAddStep = (index: number) => {
   emit('update:expanded-step', expandedStep.value)
 }
 
-const onDocRepo = (index: number) => {
+const onDocRepos = (index: number) => {
   expandedStep.value = index
   emit('update:expanded-step', expandedStep.value)
   docRepoMenuStepIndex.value = index
@@ -294,12 +320,10 @@ const onCloseDocRepoMenu = () => {
   docRepoMenuStepIndex.value = -1
 }
 
-const selectDocRepo = (docRepoId: string | null) => {
+const onDocReposChanged = (docRepoIds: string[]) => {
   const stepIndex = docRepoMenuStepIndex.value
-  onCloseDocRepoMenu()
-
   if (stepIndex >= 0) {
-    props.agent.steps[stepIndex].docrepo = docRepoId || undefined
+    props.agent.steps[stepIndex].docrepos = docRepoIds.length ? docRepoIds : undefined
   }
 }
 

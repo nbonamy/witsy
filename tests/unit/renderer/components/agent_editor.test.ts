@@ -739,7 +739,7 @@ test('Shows docrepo button in workflow steps', async () => {
 test('Shows docrepo help text when docrepo is selected', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Step 1', tools: null, agents: [], docrepo: 'uuid1' }
+    { prompt: 'Step 1', tools: null, agents: [], docrepos: ['uuid1'] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -1430,11 +1430,11 @@ test('Agents button is disabled when no agents available', async () => {
 test('Buttons show active styling when content is configured', async () => {
   const agent = new Agent()
   agent.steps = [
-    { 
-      prompt: 'Step 1', 
-      tools: ['tool1'], 
-      agents: ['agent1'], 
-      docrepo: 'repo1',
+    {
+      prompt: 'Step 1',
+      tools: ['tool1'],
+      agents: ['agent1'],
+      docrepos: ['repo1'],
       jsonSchema: '{"name": "string"}'
     }
   ]

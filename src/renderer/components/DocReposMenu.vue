@@ -6,7 +6,7 @@
     :position="position"
     :teleport="teleport"
     :show-filter="true"
-    :hover-highlight="false"
+    :hover-highlight="!multiSelect"
     :items="menuItems"
     :footer-items="footerItems"
     @close="$emit('close')"
@@ -24,18 +24,23 @@ interface Props {
   position?: 'below' | 'above' | 'right' | 'left' | 'above-right' | 'above-left' | 'below-right' | 'below-left'
   teleport?: boolean
   footerMode?: 'manage' | 'clear' | 'none'
+  multiSelect?: boolean
+  selectedDocRepos?: string[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
   position: 'below',
   teleport: true,
   footerMode: 'none',
+  multiSelect: false,
+  selectedDocRepos: () => [],
 })
 
 // Emits
 interface Emits {
   close: []
   docRepoSelected: [docRepoUuid: string]
+  docReposChanged: [docRepoUuids: string[]]
   manageDocRepo: []
 }
 
@@ -48,6 +53,8 @@ const contextMenuPlus = ref()
 const { menuItems, footerItems } = useDocReposMenu({
   emit,
   footerMode: props.footerMode,
+  multiSelect: props.multiSelect,
+  selectedDocRepos: props.multiSelect ? ref([...props.selectedDocRepos]) : undefined,
 })
 
 </script>

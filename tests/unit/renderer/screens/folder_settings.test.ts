@@ -75,7 +75,7 @@ beforeEach(() => {
       locale: 'fr-FR',
       instructions: 'Test instructions',
       expert: 'expert1',
-      docrepo: 'repo1',
+      docrepos: ['repo1'],
     }
   }, {
     id: 'folder2',
@@ -94,7 +94,7 @@ test('Shows dialog with existing defaults', async () => {
   expect(wrapper.find<HTMLSelectElement>('[name="plugins"]').element.value).toBe('false')
   expect(wrapper.find<HTMLTextAreaElement>('[name="instructions"]').element.value).toBe('Test instructions')
   expect(wrapper.find<HTMLSelectElement>('[name="expert"]').element.value).toBe('expert1')
-  expect(wrapper.find<HTMLSelectElement>('[name="docrepo"]').element.value).toBe('repo1')
+  expect(wrapper.vm.docrepos).toStrictEqual(['repo1'])
   expect(wrapper.find<HTMLSelectElement>('[name="locale"]').element.value).toBe('fr-FR')
 
   // Toggle to advanced mode to check advanced fields
@@ -111,7 +111,7 @@ test('Shows dialog with default values when no defaults exist', async () => {
   expect(wrapper.find<HTMLSelectElement>('[name="plugins"]').element.value).toBe('false')
   expect(wrapper.find<HTMLTextAreaElement>('[name="instructions"]').element.value).toBe('')
   expect(wrapper.find<HTMLSelectElement>('[name="expert"]').element.value).toBe('')
-  expect(wrapper.find<HTMLSelectElement>('[name="docrepo"]').element.value).toBe('')
+  expect(wrapper.vm.docrepos).toStrictEqual([])
 })
 
 test('Shows only enabled experts in dropdown', async () => {
@@ -126,16 +126,18 @@ test('Shows only enabled experts in dropdown', async () => {
   expect(expertOptions[2].text()).toBe('Expert Two')
 })
 
-test('Shows all docrepos in dropdown', async () => {
+test('Loads docrepos for selection', async () => {
   await wrapper.vm.show(store.history.folders[0])
   await wrapper.vm.$nextTick()
 
-  const docrepoOptions = wrapper.find('[name="docrepo"]').findAll('option')
-  // Should have "None" option + 2 repos
-  expect(docrepoOptions).toHaveLength(3)
-  expect(docrepoOptions[0].text()).toBe('folderSettings.noDocRepo')
-  expect(docrepoOptions[1].text()).toBe('Knowledge Base 1')
-  expect(docrepoOptions[2].text()).toBe('Knowledge Base 2')
+  // Docrepos should be loaded
+  expect(wrapper.vm.docRepos).toHaveLength(2)
+  expect(wrapper.vm.docRepos[0].name).toBe('Knowledge Base 1')
+  expect(wrapper.vm.docRepos[1].name).toBe('Knowledge Base 2')
+
+  // Button should show selected docrepo name
+  const docrepoButton = wrapper.find('#docrepos-menu-anchor')
+  expect(docrepoButton.text()).toBe('Knowledge Base 1')
 })
 
 test('Toggles advanced settings', async () => {
@@ -159,20 +161,15 @@ test('Saves folder defaults', async () => {
   // Set basic fields
   await wrapper.find('[name="instructions"]').setValue('Test instructions 2')
   await wrapper.find('[name="expert"]').setValue('expert2')
-  await wrapper.find('[name="docrepo"]').setValue('repo2')
-
-  // // Toggle to advanced mode to set locale
-  // await wrapper.find('button[name="advanced"]').trigger('click')
-  // await wrapper.vm.$nextTick()
-  // 
-  // await wrapper.find('[name="locale"]').setValue('fr-FR')
+  wrapper.vm.docrepos = ['repo2']
+  await wrapper.vm.$nextTick()
 
   await wrapper.find('.dialog-footer button[name="save"]').trigger('click')
   await wrapper.vm.$nextTick()
 
   expect(store.history.folders[0].defaults!.instructions).toBe('Test instructions 2')
   expect(store.history.folders[0].defaults!.expert).toBe('expert2')
-  expect(store.history.folders[0].defaults!.docrepo).toBe('repo2')
+  expect(store.history.folders[0].defaults!.docrepos).toStrictEqual(['repo2'])
 })
 
 test('Removes empty modelOpts when no advanced settings', async () => {

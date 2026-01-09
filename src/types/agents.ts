@@ -26,7 +26,7 @@ export type AgentStep = {
   prompt?: string
   tools?: string[]|null
   agents?: string[]
-  docrepo?: string
+  docrepos?: string[]
   expert?: string
   jsonSchema?: string
   structuredOutput?: AgentStepStructuredOutput

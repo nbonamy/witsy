@@ -4,7 +4,7 @@
       {{ t('folderSettings.title') }}
     </template>
     <template #body>
-      <div class="form form-vertical">
+      <div class="form form-vertical" @click="onDialogClick">
         <template v-if="!showAdvanced">
 
           <div class="form-field">
@@ -57,13 +57,19 @@
           </div>
 
           <div class="form-field">
-            <label>{{ t('folderSettings.docrepo') }}</label>
-            <select name="docrepo" v-model="docrepo">
-              <option value="">{{ t('folderSettings.noDocRepo') }}</option>
-              <option v-for="repo in docRepos" :key="repo.uuid" :value="repo.uuid">
-                {{ repo.name }}
-              </option>
-            </select>
+            <label>{{ t('common.docRepos') }}</label>
+            <button id="docrepos-menu-anchor" @click.prevent="showDocReposMenu = !showDocReposMenu">
+              {{ getDocReposLabel() }}
+            </button>
+            <DocReposMenu
+              v-if="showDocReposMenu"
+              anchor="#docrepos-menu-anchor"
+              position="below"
+              :multi-select="true"
+              :selected-doc-repos="docrepos"
+              @close="showDocReposMenu = false"
+              @doc-repos-changed="onDocReposChanged"
+            />
           </div>
 
         </template>
@@ -110,6 +116,7 @@
 <script setup lang="ts">
 import { LlmModelOpts } from 'multi-llm-ts'
 import { computed, onMounted, ref } from 'vue'
+import DocReposMenu from '@components/DocReposMenu.vue'
 import EngineModelSelect from '@components/EngineModelSelect.vue'
 import LangSelect from '@components/LangSelect.vue'
 import ModalDialog from '@components/ModalDialog.vue'
@@ -136,13 +143,34 @@ const disableTools = ref<boolean>(false)
 const tools = ref<ToolSelection>(null)
 const instructions = ref<string>('')
 const expert = ref<string | null>(null)
-const docrepo = ref<string | null>(null)
+const docrepos = ref<string[]>([])
 const showAdvanced = ref(false)
+const showDocReposMenu = ref(false)
 
 const docRepos = ref<DocumentBase[]>([])
 const enabledExperts = computed(() => {
   return store.experts.filter((exp: Expert) => exp.state === 'enabled')
 })
+
+const getDocReposLabel = (): string => {
+  if (docrepos.value.length === 0) return t('folderSettings.noDocRepo')
+  if (docrepos.value.length === 1) {
+    const repo = docRepos.value.find(r => r.uuid === docrepos.value[0])
+    return repo?.name || t('folderSettings.noDocRepo')
+  }
+  return t('agent.create.workflow.docReposCount', { count: docrepos.value.length })
+}
+
+const onDocReposChanged = (uuids: string[]) => {
+  docrepos.value = uuids
+}
+
+const onDialogClick = (event: MouseEvent) => {
+  const target = event.target as HTMLElement
+  if (!target.closest('.docrepos-menu') && !target.closest('#docrepos-menu-anchor')) {
+    showDocReposMenu.value = false
+  }
+}
 
 // Computed property to bridge individual refs with LlmModelOpts for ModelAdvancedSettings
 const modelOpts = ref<LlmModelOpts | undefined>(undefined)
@@ -176,7 +204,7 @@ const show = (folder: Folder) => {
     tools.value = folder.defaults.tools || null
     instructions.value = folder.defaults.instructions || ''
     expert.value = folder.defaults.expert || null
-    docrepo.value = folder.defaults.docrepo || null
+    docrepos.value = folder.defaults.docrepos || []
     modelOpts.value = folder.defaults.modelOpts || undefined
   } else {
     // Use defaults
@@ -189,7 +217,7 @@ const show = (folder: Folder) => {
     tools.value = null
     instructions.value = ''
     expert.value = null
-    docrepo.value = null
+    docrepos.value = []
     modelOpts.value = undefined
   }
 
@@ -242,7 +270,7 @@ const onSave = () => {
       instructions: instructions.value.trim() || null,
       locale: locale.value.trim() || null,
       expert: expert.value,
-      docrepo: docrepo.value,
+      docrepos: docrepos.value.length ? docrepos.value : undefined,
       modelOpts: modelOpts.value && Object.keys(modelOpts.value).length > 0 ? modelOpts.value : null,
     }
 

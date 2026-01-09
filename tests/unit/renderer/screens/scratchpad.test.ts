@@ -28,7 +28,7 @@ vi.mock('@services/llms/manager.ts', async () => {
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
   LlmManager.prototype.isEngineConfigured = vi.fn(() => true)
   LlmManager.prototype.getEngineName = () => 'mock'
-  LlmManager.prototype.getCustomEngines = () => []
+  LlmManager.prototype.getCustomEngines = () => [] as any[]
   LlmManager.prototype.getFavoriteId = () => 'favid'
   LlmManager.prototype.isFavoriteModel = vi.fn(() => false)
   LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])

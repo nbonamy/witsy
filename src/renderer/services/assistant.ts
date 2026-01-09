@@ -103,7 +103,7 @@ export default class {
       instructions: null,
       titling: true,
       attachments: [],
-      docrepo: null,
+      docrepos: null,
       expert: null,
       sources: true,
       citations: true,
@@ -136,14 +136,14 @@ export default class {
     // so engine and model are null so we need to keep opts ones...
     opts.engine = this.chat.engine || opts.engine
     opts.model = this.chat.model || opts.model
-    opts.docrepo = this.chat.docrepo || opts.docrepo
+    opts.docrepos = this.chat.docrepos || opts.docrepos
 
     // disable streaming
     opts.streaming = opts.streaming ?? (this.chat.disableStreaming !== true)
 
     // make sure chat options are set
     this.chat.setEngineModel(opts.engine, opts.model)
-    this.chat.docrepo = opts.docrepo
+    this.chat.docrepos = opts.docrepos
 
     // we need an llm
     if (opts?.keepLlm !== true) {

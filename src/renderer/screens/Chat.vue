@@ -208,7 +208,8 @@ const onNewChatInFolder = (folderId: string) => {
     chat.tools = folder.defaults.tools
     chat.instructions = folder.defaults.instructions
     chat.locale = folder.defaults.locale
-    chat.docrepo = folder.defaults.docrepo
+    // @ts-expect-error backwards compatibility: migrate docrepo to docrepos
+    chat.docrepos = folder.defaults.docrepos?.length ? folder.defaults.docrepos : (folder.defaults.docrepo ? [folder.defaults.docrepo] : undefined)
     chat.modelOpts = folder.defaults.modelOpts
   }
 
@@ -403,7 +404,7 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
       instructions: chat.instructions,
       prompt: message.content,
       attachments: message.attachments,
-      docrepo: fork.docrepo,
+      docrepos: fork.docrepos,
       expert: message.expert,
       execMode: message.execMode || 'prompt',
     })
@@ -479,7 +480,7 @@ const onDeleteFolder = async (folderId: string) => {
 const onSendPrompt = async (params: SendPromptParams) => {
 
   // deconstruct params
-  const { instructions, prompt, attachments, docrepo, expert, execMode } = params
+  const { instructions, prompt, attachments, docrepos, expert, execMode } = params
 
   // if the chat is still in an agentic context then run the agent
   const agent = isAgentConversation(assistant.value.chat)
@@ -509,7 +510,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // save the attachment
   for (const attachment of attachments ?? []) {
     if (attachment?.saved === false) {
-      attachment.loadContents()
+      await attachment.loadContents()
       const fileUrl = saveFileContents(attachment.format(), attachment.b64Contents())
       if (fileUrl) {
         attachment.saved = true
@@ -531,7 +532,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     model: assistant.value.chat.model,
     instructions: instructions || assistant.value.chat.instructions,
     attachments: attachments || [],
-    docrepo: docrepo || null,
+    docrepos: docrepos || null,
     expert: expert || null,
     execMode: execMode || 'prompt',
     abortSignal: abortController.signal,
@@ -695,7 +696,7 @@ const onRetryGeneration = async (message: Message) => {
       instructions: assistant.value.chat.instructions,
       prompt: lastMessage.content,
       attachments: lastMessage.attachments,
-      docrepo: assistant.value.chat.docrepo,
+      docrepos: assistant.value.chat.docrepos,
       expert: lastMessage.expert,
       execMode: lastMessage.execMode,
     })
@@ -735,7 +736,7 @@ const onResendAfterEdit = async (payload: { message: Message, newContent: string
       instructions: assistant.value.chat.instructions,
       prompt: payload.newContent,
       attachments: payload.message.attachments,
-      docrepo: assistant.value.chat.docrepo,
+      docrepos: assistant.value.chat.docrepos,
       expert: payload.message.expert,
       execMode: payload.message.execMode,
     })

@@ -16,6 +16,7 @@ import Dialog from '@renderer/utils/dialog'
 
 vi.unmock('@renderer/composables/event_bus')
 import useEventBus  from '@composables/event_bus'
+import { kHistoryVersion } from '@/consts'
 const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterEach)
@@ -46,6 +47,7 @@ beforeAll(() => {
   useBrowserMock()
 
   window.api.history.load = () => ({
+    version: kHistoryVersion,
     folders: [
       { id: 'folder1', name: 'Folder', chats: [] },
       { id: 'folder2', name: 'Folder', chats: [], defaults: {
@@ -55,7 +57,7 @@ beforeAll(() => {
         tools: [ 'tool1' ],
         locale: 'en',
         instructions: 'instructions',
-        docrepo: 'docrepo',
+        docrepos: ['docrepo'],
         expert: 'uuid1',
         modelOpts: {
           temperature: 0.7,
@@ -70,7 +72,7 @@ beforeAll(() => {
         title: 'title',
         docrepo: 'docrepo',
         engine: 'openai',
-        model: 'gpt-4.1',
+        model: 'gpt-5.2',
         messages: [
           new Message('system', 'instructions'),
           new Message('user', 'prompt1'),
@@ -118,37 +120,37 @@ test('Resets assistant', async () => {
   })
 
   // load witbout defaults
-  setLlmDefaults('openai', 'gpt-4.1-mini')
+  setLlmDefaults('openai', 'gpt-5.2-mini')
   emitEvent('new-chat', null)
   expect(Assistant.prototype.initChat).toHaveBeenLastCalledWith()
   expect(wrapper.vm.assistant.chat.title).toBeUndefined()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
-  expect(wrapper.vm.assistant.chat.model).toBe('gpt-4.1-mini')
+  expect(wrapper.vm.assistant.chat.model).toBe('gpt-5.2-mini')
   expect(wrapper.vm.assistant.chat.tools).toBeNull()
   expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
 })
 
 test('Saves text attachment', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  const attachment = new Attachment('text', 'text/plain', 'file://text', false)
+  const attachment = new Attachment('text', 'text/plain', 'file://text')
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
+  await vi.waitUntil(() => attachment.saved)
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'text_decoded_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
-  expect(attachment.saved).toBe(true)
 })
 
 test('Saves pdf attachment', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  const attachment = new Attachment('pdf', 'application/pdf', 'file://pdf', false)
+  const attachment = new Attachment('pdf', 'application/pdf', 'file://pdf')
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
+  await vi.waitUntil(() => attachment.saved)
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'pdf_extracted_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
-  expect(attachment.saved).toBe(true)
 })
 
 test('Saves image attachment', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  const attachment = new Attachment('image', 'image/png', 'file://image', false)
+  const attachment = new Attachment('image', 'image/png', 'file://image')
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'image', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
@@ -169,7 +171,7 @@ test('Sends prompt', async () => {
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: null, execMode: 'prompt',
+    model: 'gpt-5.2', instructions: null, attachments: [], docrepos: null, expert: null, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -179,7 +181,7 @@ test('Sends prompt with instructions', async () => {
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', instructions: 'instructions' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: 'instructions', attachments: [], docrepo: null, expert: null, execMode: 'prompt',
+    model: 'gpt-5.2', instructions: 'instructions', attachments: [], docrepos: null, expert: null, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -189,17 +191,17 @@ test('Sends prompt with attachment', async () => {
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: ['file'] })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: null, attachments: ['file'], docrepo: null, expert: null, execMode: 'prompt',
+    model: 'gpt-5.2', instructions: null, attachments: ['file'], docrepos: null, expert: null, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
 
-test('Sends prompt with doc repo', async () => {
+test('Sends prompt with doc repos', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', docrepo: 'docrepo' })
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', docrepos: ['docrepo'] })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: 'docrepo', expert: null, execMode: 'prompt',
+    model: 'gpt-5.2', instructions: null, attachments: [], docrepos: ['docrepo'], expert: null, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -209,7 +211,7 @@ test('Sends prompt with expert', async () => {
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: { id: 'expert', prompt: 'system' }, execMode: 'prompt',
+    model: 'gpt-5.2', instructions: null, attachments: [], docrepos: null, expert: { id: 'expert', prompt: 'system' }, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -219,7 +221,7 @@ test('Sends prompt with deepResearch', async () => {
   await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', execMode: 'deepresearch' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: null, execMode: 'deepresearch',
+    model: 'gpt-5.2', instructions: null, attachments: [], docrepos: null, expert: null, execMode: 'deepresearch',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -272,7 +274,7 @@ test('New chat in folder with defaults', async () => {
   expect(wrapper.vm.assistant.chat.tools).toStrictEqual(['tool1'])
   expect(wrapper.vm.assistant.chat.locale).toBe('en')
   expect(wrapper.vm.assistant.chat.instructions).toBe('instructions')
-  expect(wrapper.vm.assistant.chat.docrepo).toBe('docrepo')
+  expect(wrapper.vm.assistant.chat.docrepos).toStrictEqual(['docrepo'])
   expect(wrapper.vm.assistant.chat.modelOpts).toStrictEqual({
     temperature: 0.7,
     customOpts: {
@@ -362,7 +364,7 @@ test('Select chat', async () => {
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', expect.objectContaining({
-    model: 'gpt-4.1', attachments: [], docrepo: null, expert: null, execMode: 'prompt',
+    model: 'gpt-5.2', attachments: [], docrepos: null, expert: null, execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),
   }), expect.any(Function), expect.any(Function))
 })
@@ -397,7 +399,7 @@ test('Fork Chat on User Message', async () => {
     attachments: [ expect.objectContaining({
       content: 'attachment',
     }) ],
-    docrepo: 'docrepo',
+    docrepos: ['docrepo'],
     expert: expect.objectContaining({ id: 'expert'}),
     execMode: 'prompt',
     abortSignal: expect.any(AbortSignal),

@@ -107,7 +107,7 @@ test('Assistant parameters', async () => {
     model: 'chat',
     instructions: null,
     attachments: [],
-    docrepo: null,
+    docrepos: null,
     expert: null,
     sources: true,
     streaming: true,
@@ -269,17 +269,17 @@ test('Assistant ignores empty prompt', async () => {
 })
 
 test('Assistant System Expert', async () => {
-  const content = await prompt('Hello LLM', { expert: store.experts[0], docrepo: undefined } as AssistantCompletionOpts)
+  const content = await prompt('Hello LLM', { expert: store.experts[0], docrepos: undefined } as AssistantCompletionOpts)
   expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":"expert_uuid1_prompt\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant User Expert', async () => {
-  const content = await prompt('Hello LLM', { expert: store.experts[2], docrepo: undefined } as AssistantCompletionOpts)
+  const content = await prompt('Hello LLM', { expert: store.experts[2], docrepos: undefined } as AssistantCompletionOpts)
   expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":"prompt3\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant DocRepo', async () => {
-  const content = await prompt('Hello LLM', { docrepo: 'docrepo' } as AssistantCompletionOpts)
+  const content = await prompt('Hello LLM', { docrepos: ['docrepo'] } as AssistantCompletionOpts)
   expect(window.api.docrepo?.query).toHaveBeenLastCalledWith('docrepo', 'Hello LLM')
   expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":"instructions.chat.docquery_fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
 })

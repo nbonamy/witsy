@@ -28,7 +28,7 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
       chat: [
         { id: 'o1', name: 'o1', capabilities: defaultCapabilities.capabilities },
         { id: 'gpt-4o', name: 'gpt-4o', capabilities: defaultCapabilities.capabilities },
-        { id: 'gpt-4.1', name: 'gpt-4.1', capabilities: defaultCapabilities.capabilities },
+        { id: 'gpt-5.2', name: 'gpt-5.2', capabilities: defaultCapabilities.capabilities },
       ],
       image: [
         { id: 'image', name: 'image' }
@@ -88,7 +88,7 @@ test('Selects valid model', async () => {
   // when current model is not valid, fallback to defaults
   store.config.engines.openai.model.chat = 'chat'
   manager.selectValidModel('openai', store.config.engines.openai, 'chat')
-  expect(store.config.engines.openai.model.chat).toBe('gpt-4.1')
+  expect(store.config.engines.openai.model.chat).toBe('gpt-5.2')
 
   // when both are invalid, fallback to 1st model
   store.config.engines.openai.model.chat = 'chat'
