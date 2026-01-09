@@ -78,7 +78,7 @@ test('Generator stops when abortSignal is aborted', async () => {
   const maxCalls = 5
 
   // Create a stream that simulates long generation and throws AbortError when aborted
-  llmMock.generate.mockImplementation((model: string, conv: any, opts: any) => {
+  llmMock.generate.mockImplementation((_model: string, _conv: any, opts: any) => {
     return (async function* () {
       while (callCount < maxCalls) {
         // Check abort signal like real engines do
@@ -811,4 +811,120 @@ test('Generator uses only expert docrepos when user has none', async () => {
   expect(mockQuery).toHaveBeenCalledTimes(1)
   expect(mockQuery).toHaveBeenCalledWith('expert-repo', 'Expert query')
   expect(messages[2].toolCalls).toHaveLength(1)
+})
+
+test('Generator preserves expert on user message when docrepos are queried', async () => {
+  const generator = new Generator(store.config)
+
+  // Create user message with an expert that has a prompt
+  const userMessage = new Message('user', 'What is the answer?')
+  userMessage.expert = {
+    id: 'test-expert',
+    type: 'user',
+    state: 'enabled',
+    name: 'Test Expert',
+    prompt: 'You must always respond in JSON format with specific fields.',
+    triggerApps: []
+  }
+
+  const messages = [
+    new Message('system', 'System'),
+    userMessage,
+    new Message('assistant', '')
+  ]
+
+  // Mock doc repo list
+  const mockList = vi.fn().mockReturnValue([
+    { uuid: 'test-repo', name: 'Test KB', workspaceId: store.config.workspaceId }
+  ])
+  window.api.docrepo.list = mockList
+
+  // Mock doc repo query with results
+  const mockQuery = vi.fn().mockResolvedValue([
+    { content: 'Some context', metadata: { title: 'Doc', uuid: 'doc1' }, score: 0.9 }
+  ])
+  window.api.docrepo.query = mockQuery
+
+  let conversationSentToLlm: Message[] = []
+  llmMock.generate.mockImplementation((_model: any, conversation: Message[]) => {
+    conversationSentToLlm = conversation
+    return (async function* () {
+      yield { type: 'content', text: 'Response', done: true } as LlmChunk
+    })()
+  })
+
+  const result = await generator.generate(llmMock, messages, {
+    model: 'chat',
+    streaming: true,
+    docrepos: ['test-repo']
+  })
+
+  expect(result).toBe('success')
+
+  // The key assertion: expert should still be on the user message sent to the LLM
+  // This was the bug - we were replacing the message instead of updating its content
+  const userMessageSentToLlm = conversationSentToLlm[conversationSentToLlm.length - 1]
+  expect(userMessageSentToLlm.expert).toBeDefined()
+  expect(userMessageSentToLlm.expert!.id).toBe('test-expert')
+  expect(userMessageSentToLlm.expert!.prompt).toBe('You must always respond in JSON format with specific fields.')
+})
+
+test('Generator combines expert prompt with RAG context in contentForModel', async () => {
+  const generator = new Generator(store.config)
+
+  // Mock i18nInstructions to return a real template
+  const i18n = await import('@services/i18n')
+  const docqueryTemplate = 'Use context to answer.\n\nCONTEXT:\n{context}\n\nQUERY: {query}'
+  vi.spyOn(i18n, 'i18nInstructions').mockReturnValue(docqueryTemplate)
+
+  // Create user message with an expert
+  const userMessage = new Message('user', 'What is the capital of France?')
+  userMessage.expert = {
+    id: 'json-expert',
+    type: 'user',
+    state: 'enabled',
+    name: 'JSON Expert',
+    prompt: 'Always respond in JSON format.',
+    triggerApps: []
+  }
+
+  const messages = [
+    new Message('system', 'System'),
+    userMessage,
+    new Message('assistant', '')
+  ]
+
+  // Mock doc repo
+  window.api.docrepo.list = vi.fn().mockReturnValue([
+    { uuid: 'geo-repo', name: 'Geography KB', workspaceId: store.config.workspaceId }
+  ])
+  window.api.docrepo.query = vi.fn().mockResolvedValue([
+    { content: 'Paris is the capital.', metadata: { title: 'Facts', uuid: 'doc1' }, score: 0.95 }
+  ])
+
+  let userMessageSentToLlm: Message | null = null
+  llmMock.generate.mockImplementation((_model: any, conversation: Message[]) => {
+    userMessageSentToLlm = conversation[conversation.length - 1]
+    return (async function* () {
+      yield { type: 'content', text: '{"answer": "Paris"}', done: true } as LlmChunk
+    })()
+  })
+
+  await generator.generate(llmMock, messages, {
+    model: 'chat',
+    streaming: true,
+    docrepos: ['geo-repo']
+  })
+
+  // contentForModel is what multi-llm-ts sends to the LLM
+  // It prepends expert.prompt to the message content
+  const expectedPrompt =
+    'Always respond in JSON format.\n' +  // expert prompt (prepended by contentForModel)
+    'Use context to answer.\n\n' +         // docquery template start
+    'CONTEXT:\n' +
+    '[Source: Facts]\n' +                  // RAG context with source title
+    'Paris is the capital.\n\n' +
+    'QUERY: What is the capital of France?' // original query
+
+  expect(userMessageSentToLlm!.contentForModel).toBe(expectedPrompt)
 })

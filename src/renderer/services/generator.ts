@@ -103,7 +103,7 @@ export default class Generator {
         if (result.context) {
           const instructions = i18nInstructions(this.config, 'instructions.chat.docquery')
           const prompt = instructions.replace('{context}', result.context).replace('{query}', userMessage.content);
-          conversation[conversation.length - 1] = new Message('user', prompt);
+          userMessage.content = prompt;
         }
       }
 
