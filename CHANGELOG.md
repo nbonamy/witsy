@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Knowledge base access from expert
 
 ### Fixed
+- Expert output format ignored when Knowledge Base attached
 - Fileystem access for scheduled agents
 
 ### Removed
