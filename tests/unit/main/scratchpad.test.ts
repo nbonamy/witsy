@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { app } from 'electron'
 import * as scratchpad from '@main/scratchpad'
-import { ScratchpadData } from '@/types/index'
+import { Chat, ScratchpadData } from '@/types/index'
 import fs from 'fs'
 import path from 'path'
 
@@ -60,9 +60,9 @@ describe('Scratchpad File Management', () => {
       uuid: 'uuid1',
       title: 'Test Doc',
       contents: { content: 'test' },
-      chat: null,
-      undoStack: [],
-      redoStack: [],
+      chat: null as Chat,
+      undoStack: [] as any,
+      redoStack: [] as any,
       createdAt: 1000,
       lastModified: 2000
     }
@@ -104,9 +104,9 @@ describe('Scratchpad File Management', () => {
       uuid: 'uuid1',
       title: 'Old Title',
       contents: {},
-      chat: null,
-      undoStack: [],
-      redoStack: [],
+      chat: null as Chat,
+      undoStack: [] as any[],
+      redoStack: [] as any[],
       createdAt: 1000,
       lastModified: 1000
     }
@@ -139,9 +139,9 @@ describe('Scratchpad File Management', () => {
   test('importScratchpad creates new scratchpad with metadata', () => {
     const externalData = {
       contents: { content: 'imported' },
-      chat: null,
-      undoStack: [],
-      redoStack: []
+      chat: null as Chat,
+      undoStack: [] as any[],
+      redoStack: [] as any[]
     }
 
     vi.mocked(fs.mkdirSync).mockReturnValue(undefined)

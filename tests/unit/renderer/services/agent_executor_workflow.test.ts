@@ -580,17 +580,18 @@ test('AgentWorkflowExecutor aborts before titling', async () => {
 
 test('Agent Run with Docrepo - No Sources', async () => {
   testAgent.steps[0].docrepo = 'uuid1'
-  
+
   // Mock docrepo.query to return empty results
   window.api.docrepo.query = vi.fn().mockResolvedValue([])
-  
+
   const run = await runAgent('manual', { name: 'Docrepo test' })
 
   expect(run.status).toBe('success')
   expect(window.api.docrepo.query).toHaveBeenCalledWith('uuid1', 'Hello Docrepo test, how can I help you today?')
 
-  // Prompt should not be modified when no sources are found
-  expect(run.messages[1].content).toBe('Hello Docrepo test, how can I help you today?')
+  // Prompt should include docquery instructions with no-results context
+  expect(run.messages[1].content).toContain('Hello Docrepo test, how can I help you today?')
+  expect(run.messages[1].content).toContain('instructions.agent.docquery')
 })
 
 test('Agent Run with Docrepo - With Sources', async () => {

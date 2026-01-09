@@ -37,6 +37,7 @@ interface Props {
   enableAttachments?: boolean
   enableDeepResearch?: boolean
   toolSelection?: ToolSelection
+  selectedDocRepos?: string[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -48,6 +49,7 @@ const props = withDefaults(defineProps<Props>(), {
   enableTools: true,
   enableAttachments: true,
   enableDeepResearch: true,
+  selectedDocRepos: () => [],
 })
 
 // Emits
@@ -56,6 +58,7 @@ interface Emits {
   expertSelected: [expertId: string]
   manageExperts: []
   docRepoSelected: [docRepoUuid: string]
+  docReposChanged: [docRepoUuids: string[]]
   manageDocRepo: []
   instructionsSelected: [instructionId: string]
   selectAllTools: [visibleIds?: string[] | null]
@@ -91,9 +94,12 @@ const expertsLogic = props.enableExperts ? useExpertsMenu({
 }) : null
 
 // Use docrepos menu composable (only if docrepo enabled)
+const selectedDocReposRef = ref([...props.selectedDocRepos])
 const docReposLogic = props.enableDocRepo ? useDocReposMenu({
   emit,
-  footerMode: 'manage',
+  footerMode: 'none',
+  multiSelect: true,
+  selectedDocRepos: selectedDocReposRef,
 }) : null
 
 // Use instructions menu composable (only if instructions enabled)

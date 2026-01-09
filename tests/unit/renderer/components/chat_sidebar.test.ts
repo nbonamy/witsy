@@ -7,6 +7,7 @@ import { store } from '@services/store'
 import ChatSidebar from '@components/ChatSidebar.vue'
 import Chat from '@models/chat'
 import Message from '@models/message'
+import { kHistoryVersion } from '@/consts'
 
 enableAutoUnmount(afterAll)
 
@@ -20,7 +21,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   const now = new Date()
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 1).getTime();
-  store.history = { folders: [], chats: [], quickPrompts: [] }
+  store.history = { version: kHistoryVersion, folders: [], chats: [], quickPrompts: [] }
   for (let i = 0; i < 10; i++) {
     const chat = new Chat()
     chat.title = `Chat ${i}`

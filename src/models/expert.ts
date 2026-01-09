@@ -11,6 +11,7 @@ export default class Expert implements ExpertBase {
   categoryId?: string;
   engine?: string;
   model?: string;
+  docrepos?: string[];
   state: 'enabled' | 'disabled' | 'deleted';
   triggerApps: ExternalApp[];
   stats?: {
@@ -28,6 +29,7 @@ export default class Expert implements ExpertBase {
     expert.categoryId = obj.categoryId
     expert.engine = obj.engine
     expert.model = obj.model
+    expert.docrepos = obj.docrepos
     expert.state = obj.state
     expert.triggerApps = []
     expert.stats = obj.stats

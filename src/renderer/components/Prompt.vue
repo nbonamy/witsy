@@ -36,10 +36,11 @@
       />
       
       <PromptFeature
-        v-if="docrepo"
+        v-for="uuid in docrepos"
+        :key="uuid"
         :icon="LightbulbIcon"
-        :label="getActiveDocRepoName()"
-        @clear="clearDocRepo"
+        :label="getDocRepoName(uuid)"
+        @clear="removeDocRepo(uuid)"
       />
       
       <PromptFeature
@@ -151,10 +152,11 @@
       :enable-attachments="enableAttachments"
       :enable-deep-research="enableDeepResearch"
       :tool-selection="chat.tools"
+      :selected-doc-repos="docrepos"
       @close="closePromptMenu"
       @expert-selected="handleExpertClick"
       @manage-experts="handleManageExperts"
-      @doc-repo-selected="handlePromptMenuDocRepo"
+      @doc-repos-changed="handleDocReposChanged"
       @manage-doc-repo="handleManageDocRepo"
       @instructions-selected="handlePromptMenuInstructions"
       @select-all-tools="handleSelectAllTools"
@@ -217,7 +219,7 @@ export type SendPromptParams = {
   prompt: string,
   instructions?: string,
   attachments?: Attachment[]
-  docrepo?: string,
+  docrepos?: string[],
   expert?: Expert,
   execMode?: MessageExecutionMode
 }
@@ -313,7 +315,7 @@ const instructions = ref<CustomInstruction>(undefined)
 const expert = ref<Expert>(undefined)
 const command = ref<Command>(undefined)
 const attachments = ref<Attachment[]>([])
-const docrepo = ref<string>(undefined)
+const docrepos = ref<string[]>([])
 const input = ref<HTMLTextAreaElement>(null)
 const docRepos = ref<DocumentBase[]>([])
 const showExperts = ref(false)
@@ -454,7 +456,7 @@ onMounted(() => {
 
   // reset doc repo and expert
   watch(() => props.chat || {}, () => {
-    docrepo.value = matchDocRepo(props.chat?.docrepo)
+    docrepos.value = matchDocRepos(props.chat?.docrepos)
     instructions.value = matchInstructions(props.chat?.instructions)
   }, { immediate: true })
 
@@ -516,10 +518,9 @@ const matchInstructions = (instructions?: string): CustomInstruction|null => {
   }
 }
 
-const matchDocRepo = (docRepoId?: string): string | undefined => {
-  if (!docRepoId) return undefined
-  const exists = docRepos.value.some(repo => repo.uuid === docRepoId)
-  return exists ? docRepoId : undefined
+const matchDocRepos = (docRepoIds?: string[]): string[] => {
+  if (!docRepoIds?.length) return []
+  return docRepoIds.filter(id => docRepos.value.some(repo => repo.uuid === id))
 }
 
 const defaultPrompt = (conversationMode: string) => {
@@ -621,7 +622,7 @@ const onSendPrompt = () => {
       instructions: instructions.value?.instructions,
       prompt: message,
       attachments: attachments.value,
-      docrepo: docrepo.value,
+      docrepos: docrepos.value,
       expert: store.experts.find((e) => e.id === expert.value?.id),
       execMode: deepResearchActive.value ? 'deepresearch' : 'prompt',
     }
@@ -698,7 +699,7 @@ const attach = async (contents: string, mimeType: string, url: string) => {
       attachments.value.push(toAttach)
     }
   } else if (toAttach.isText()) {
-    toAttach.loadContents()
+    await toAttach.loadContents()
     if (!toAttach.content) {
       Dialog.alert(`${url.split('/').pop()}: ${t('prompt.attachment.emptyError.title')}`, t('prompt.attachment.emptyError.text'))
       return
@@ -1016,9 +1017,8 @@ const closeModelMenu = async () => {
   input.value.focus()
 }
 
-const handlePromptMenuDocRepo = (docRepoUuid: string) => {
-  setDocRepo(docRepoUuid)
-  closePromptMenu()
+const handleDocReposChanged = (docRepoUuids: string[]) => {
+  setDocRepos(docRepoUuids)
 }
 
 const handleManageDocRepo = () => {
@@ -1052,19 +1052,14 @@ const onNoEngineAvailable = async () => {
   }
 }
 
-const setDocRepo = (docRepoUuid: string | null) => {
-  if (docRepoUuid) {
-    window.api.docrepo.connect(docRepoUuid)
-    docrepo.value = docRepoUuid
-    if (props.chat) {
-      props.chat.docrepo = docRepoUuid
-    }
-  } else {
-    window.api.docrepo.disconnect()
-    docrepo.value = null
-    if (props.chat) {
-      props.chat.docrepo = null
-    }
+const removeDocRepo = (uuid: string) => {
+  setDocRepos(docrepos.value.filter(id => id !== uuid))
+}
+
+const setDocRepos = (uuids: string[]) => {
+  docrepos.value = uuids
+  if (props.chat) {
+    props.chat.docrepos = uuids.length ? uuids : undefined
   }
 }
 
@@ -1343,8 +1338,8 @@ const clearExpert = () => {
   expert.value = null
 }
 
-const clearDocRepo = () => {
-  setDocRepo(null)
+const clearDocRepos = () => {
+  setDocRepos([])
 }
 
 const clearInstructions = () => {
@@ -1355,10 +1350,9 @@ const clearDeepResearch = () => {
   deepResearchActive.value = false
 }
 
-const getActiveDocRepoName = () => {
-  const activeUuid = docrepo.value || props.chat?.docrepo
-  const activeDoc = docRepos.value.find(doc => doc.uuid === activeUuid)
-  return activeDoc?.name || 'Knowledge Base'
+const getDocRepoName = (uuid: string) => {
+  const doc = docRepos.value.find(d => d.uuid === uuid)
+  return doc?.name || 'Knowledge Base'
 }
 
 defineExpose({

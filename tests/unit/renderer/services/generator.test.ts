@@ -198,7 +198,7 @@ test('Generator works without abortSignal (optional)', async () => {
 // Conversation Management Tests
 // ============================================================================
 
-test('Generator getConversation with length 1', () => {
+test('Generator getConversation with length 1', async () => {
   const generator = new Generator(store.config)
   store.config.llm.conversationLength = 1
 
@@ -210,7 +210,7 @@ test('Generator getConversation with length 1', () => {
     new Message('assistant', 'Response 2'),
   ]
 
-  const conversation = generator.getConversation(messages)
+  const conversation = await generator.getConversation(messages)
 
   // getConversation excludes last message with slice(-conversationLength * 2, -1)
   // With length=1, it gets last 2 messages (1 pair) excluding the very last
@@ -219,7 +219,7 @@ test('Generator getConversation with length 1', () => {
   expect(conversation[1].content).toBe('Hello 2')
 })
 
-test('Generator getConversation with length 2', () => {
+test('Generator getConversation with length 2', async () => {
   const generator = new Generator(store.config)
   store.config.llm.conversationLength = 2
 
@@ -231,14 +231,14 @@ test('Generator getConversation with length 2', () => {
     new Message('assistant', 'Response 2'),
   ]
 
-  const conversation = generator.getConversation(messages)
+  const conversation = await generator.getConversation(messages)
 
   // With length=2, it gets last 4 messages (2 pairs) excluding the very last
   expect(conversation).toHaveLength(4) // system + last 3 chat messages
   expect(conversation.map((m: Message) => m.role)).toEqual(['system', 'user', 'assistant', 'user'])
 })
 
-test('Generator getConversation preserves system message', () => {
+test('Generator getConversation preserves system message', async () => {
   const generator = new Generator(store.config)
   store.config.llm.conversationLength = 1
 
@@ -250,13 +250,13 @@ test('Generator getConversation preserves system message', () => {
     new Message('assistant', 'Response 2'),
   ]
 
-  const conversation = generator.getConversation(messages)
+  const conversation = await generator.getConversation(messages)
 
   expect(conversation[0].role).toBe('system')
   expect(conversation[0].content).toBe('Important system instructions')
 })
 
-test('Generator getConversation with more messages than length', () => {
+test('Generator getConversation with more messages than length', async () => {
   const generator = new Generator(store.config)
   store.config.llm.conversationLength = 1
 
@@ -270,7 +270,7 @@ test('Generator getConversation with more messages than length', () => {
     new Message('assistant', 'Response 3'),
   ]
 
-  const conversation = generator.getConversation(messages)
+  const conversation = await generator.getConversation(messages)
 
   // With length=1, should only include system + last pair (excluding very last message)
   expect(conversation).toHaveLength(2) // system + 'Hello 3' (excludes 'Response 3')
@@ -569,7 +569,7 @@ test('Generator adds dummy tool call when doc repo is queried with results', asy
   const result = await generator.generate(llmMock, messages, {
     model: 'chat',
     streaming: true,
-    docrepo: 'test-repo-id'
+    docrepos: ['test-repo-id']
   }, (chunk) => {
     if (chunk) chunks.push(chunk)
   })
@@ -624,7 +624,7 @@ test('Generator adds dummy tool call when doc repo query returns no results', as
   const result = await generator.generate(llmMock, messages, {
     model: 'chat',
     streaming: true,
-    docrepo: 'test-repo-id'
+    docrepos: ['test-repo-id']
   })
 
   expect(result).toBe('success')
@@ -666,7 +666,7 @@ test('Generator respects noToolsInContent option for doc repo tool calls', async
   await generator.generate(llmMock, messages, {
     model: 'chat',
     streaming: true,
-    docrepo: 'test-repo-id',
+    docrepos: ['test-repo-id'],
     noToolsInContent: true
   })
 
@@ -700,4 +700,115 @@ test('Generator works without doc repo option', async () => {
   expect(result).toBe('success')
   expect(mockQuery).not.toHaveBeenCalled()
   expect(messages[2].toolCalls).toHaveLength(0)
+})
+
+test('Generator merges expert docrepos with user docrepos', async () => {
+  const generator = new Generator(store.config)
+  const messages = [
+    new Message('system', 'System'),
+    new Message('user', 'What is the answer?'),
+    new Message('assistant', '')
+  ]
+
+  // Mock doc repo list with test repos
+  const mockList = vi.fn().mockReturnValue([
+    { uuid: 'user-repo', name: 'User Knowledge Base', workspaceId: store.config.workspaceId },
+    { uuid: 'expert-repo', name: 'Expert Knowledge Base', workspaceId: store.config.workspaceId }
+  ])
+  window.api.docrepo.list = mockList
+
+  // Mock doc repo query
+  const mockQuery = vi.fn().mockResolvedValue([
+    { content: 'Result', metadata: { title: 'Doc', uuid: 'doc1' }, score: 0.9 }
+  ])
+  window.api.docrepo.query = mockQuery
+
+  llmMock.generate.mockReturnValue((async function* () {
+    yield { type: 'content', text: 'Answer', done: true } as LlmChunk
+  })())
+
+  const result = await generator.generate(llmMock, messages, {
+    model: 'chat',
+    streaming: true,
+    docrepos: ['user-repo'],
+    expert: { id: 'expert1', type: 'user', state: 'enabled', docrepos: ['expert-repo'], triggerApps: [] }
+  })
+
+  expect(result).toBe('success')
+  // Both repos should be queried
+  expect(mockQuery).toHaveBeenCalledTimes(2)
+  expect(mockQuery).toHaveBeenCalledWith('user-repo', 'What is the answer?')
+  expect(mockQuery).toHaveBeenCalledWith('expert-repo', 'What is the answer?')
+})
+
+test('Generator deduplicates overlapping docrepos', async () => {
+  const generator = new Generator(store.config)
+  const messages = [
+    new Message('system', 'System'),
+    new Message('user', 'Query'),
+    new Message('assistant', '')
+  ]
+
+  // Mock doc repo list
+  const mockList = vi.fn().mockReturnValue([
+    { uuid: 'shared-repo', name: 'Shared Knowledge Base', workspaceId: store.config.workspaceId }
+  ])
+  window.api.docrepo.list = mockList
+
+  // Mock doc repo query
+  const mockQuery = vi.fn().mockResolvedValue([])
+  window.api.docrepo.query = mockQuery
+
+  llmMock.generate.mockReturnValue((async function* () {
+    yield { type: 'content', text: 'Response', done: true } as LlmChunk
+  })())
+
+  const result = await generator.generate(llmMock, messages, {
+    model: 'chat',
+    streaming: true,
+    docrepos: ['shared-repo'],
+    expert: { id: 'expert1', type: 'user', state: 'enabled', docrepos: ['shared-repo'], triggerApps: [] }
+  })
+
+  expect(result).toBe('success')
+  // Same repo should only be queried once (deduplication)
+  expect(mockQuery).toHaveBeenCalledTimes(1)
+  expect(mockQuery).toHaveBeenCalledWith('shared-repo', 'Query')
+})
+
+test('Generator uses only expert docrepos when user has none', async () => {
+  const generator = new Generator(store.config)
+  const messages = [
+    new Message('system', 'System'),
+    new Message('user', 'Expert query'),
+    new Message('assistant', '')
+  ]
+
+  // Mock doc repo list
+  const mockList = vi.fn().mockReturnValue([
+    { uuid: 'expert-repo', name: 'Expert Knowledge Base', workspaceId: store.config.workspaceId }
+  ])
+  window.api.docrepo.list = mockList
+
+  // Mock doc repo query
+  const mockQuery = vi.fn().mockResolvedValue([
+    { content: 'Expert knowledge', metadata: { title: 'Expert Doc', uuid: 'doc1' }, score: 0.9 }
+  ])
+  window.api.docrepo.query = mockQuery
+
+  llmMock.generate.mockReturnValue((async function* () {
+    yield { type: 'content', text: 'Response', done: true } as LlmChunk
+  })())
+
+  const result = await generator.generate(llmMock, messages, {
+    model: 'chat',
+    streaming: true,
+    // No user docrepos
+    expert: { id: 'expert1', type: 'user', state: 'enabled', docrepos: ['expert-repo'], triggerApps: [] }
+  })
+
+  expect(result).toBe('success')
+  expect(mockQuery).toHaveBeenCalledTimes(1)
+  expect(mockQuery).toHaveBeenCalledWith('expert-repo', 'Expert query')
+  expect(messages[2].toolCalls).toHaveLength(1)
 })

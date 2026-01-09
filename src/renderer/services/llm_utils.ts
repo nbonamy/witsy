@@ -1,11 +1,12 @@
 
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
-import { ChatModel } from 'multi-llm-ts'
+import { ChatModel, LlmChunkTool } from 'multi-llm-ts'
 import { CodeExecutionMode, Configuration } from 'types/config'
+import { DocRepoQueryResponseItem } from 'types/rag'
 import { z } from 'zod'
 import Message from '@models/message'
 import Generator from './generator'
-import { getLlmLocale, i18nInstructions, localeToLangName } from './i18n'
+import { getLlmLocale, i18nInstructions, localeToLangName, t } from './i18n'
 import LlmFactory from './llms/llm'
 
 export interface InstructionsModifiers {
@@ -358,6 +359,101 @@ Evaluate this output and return your assessment.`
       console.warn('[llm_utils] Quality evaluation error:', error)
       return { quality: 'pass', feedback: 'Evaluation error, assuming pass' }
     }
+  }
+
+  /**
+   * Query multiple document repositories and return merged, sorted results with formatted context.
+   * Optionally emits tool call status updates for UI feedback.
+   */
+  static async queryDocRepos(
+    config: Configuration,
+    docrepoUuids: string[],
+    query: string,
+    opts?: {
+      response?: Message
+      noToolsInContent?: boolean
+      onToolCallStatus?: (toolCall: LlmChunkTool) => void
+    }
+  ): Promise<{ sources: DocRepoQueryResponseItem[], context: string }> {
+
+    const allDocRepos = window.api.docrepo.list(config.workspaceId) as any[]
+    const sources: DocRepoQueryResponseItem[] = []
+
+    // prepare tool calls if callbacks provided
+    const toolCalls: { uuid: string, name: string, toolCall: LlmChunkTool }[] = []
+    if (opts?.onToolCallStatus) {
+      for (const docrepoUuid of docrepoUuids) {
+        const docRepo = allDocRepos.find((repo: any) => repo.uuid === docrepoUuid)
+        const docRepoName = docRepo?.name || 'Knowledge Base'
+        const runningToolCall: LlmChunkTool = {
+          type: 'tool',
+          id: crypto.randomUUID(),
+          name: 'search_knowledge_base',
+          state: 'running',
+          status: t('plugins.knowledge.running', { query, docrepo: docRepoName }),
+          call: {
+            params: { docRepoName, query },
+            result: null
+          },
+          done: false
+        }
+        toolCalls.push({ uuid: docrepoUuid, name: docRepoName, toolCall: runningToolCall })
+        opts.response?.addToolCall(runningToolCall, !opts.noToolsInContent)
+        opts.onToolCallStatus(runningToolCall)
+      }
+    }
+
+    // query all docrepos in parallel
+    let results: DocRepoQueryResponseItem[][]
+    if (opts?.onToolCallStatus) {
+      // with status updates
+      results = await Promise.all(
+        toolCalls.map(async ({ uuid, name, toolCall }) => {
+          const docRepoSources = await window.api.docrepo.query(uuid, query)
+
+          // emit completed status immediately
+          const completedToolCall: LlmChunkTool = JSON.parse(JSON.stringify(toolCall))
+          completedToolCall.state = 'completed'
+          completedToolCall.status = t('plugins.knowledge.completed', { docrepo: name, count: docRepoSources.length })
+          completedToolCall.call.result = { count: docRepoSources.length, sources: docRepoSources }
+          completedToolCall.done = true
+          opts.response?.addToolCall(completedToolCall, !opts.noToolsInContent)
+          opts.onToolCallStatus!(completedToolCall)
+
+          return docRepoSources
+        })
+      )
+    } else {
+      // simple parallel query without status updates
+      results = await Promise.all(
+        docrepoUuids.map(uuid => window.api.docrepo.query(uuid, query))
+      )
+    }
+
+    // assign RRF scores and merge results
+    // RRF formula: 1/(k + rank) where k=60 is standard, rank is 1-based
+    const RRF_K = 60
+    for (const docRepoSources of results) {
+      docRepoSources.forEach((source, index) => {
+        source.rrfScore = 1 / (RRF_K + index + 1)
+      })
+      sources.push(...docRepoSources)
+    }
+
+    // sort by RRF score (handles cross-source ranking better than raw embedding scores)
+    sources.sort((a, b) => (b.rrfScore ?? 0) - (a.rrfScore ?? 0))
+
+    // format context with titles (or no results message)
+    let context: string
+    if (sources.length === 0) {
+      context = i18nInstructions(config, 'instructions.chat.docrepoNoResults')
+    } else {
+      context = sources.map(source =>
+        `[Source: ${source.metadata.title}]\n${source.content}`
+      ).join('\n\n---\n\n')
+    }
+
+    return { sources, context }
   }
 
 }

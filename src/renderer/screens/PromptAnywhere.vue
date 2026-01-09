@@ -69,6 +69,7 @@ const output = ref(null)
 const chat = ref<Chat>(null)
 const response = ref<Message>(null)
 const showReplace = ref(false)
+const processing = ref(false)
 
 const containerTop = ref(0)
 const containerLeft = ref(0)
@@ -418,8 +419,11 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   try {
 
+    // set
+    processing.value = true
+
     // deconstruct params
-    const { instructions, prompt, attachments, docrepo, expert } = params
+    const { instructions, prompt, attachments, docrepos, expert } = params
     //console.log('PromptAnywhere.onSendPrompt', prompt, attachment, docrepo, expert)
   
     // this should not happen but it happens
@@ -456,7 +460,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     const userMessage = new Message('user', finalPrompt)
     userMessage.setExpert(fullExpertI18n(expert))
     for (const attachment of attachments ?? []) {
-      attachment.loadContents()
+      await attachment.loadContents()
       userMessage.attach(attachment)
     }
     chat.value.addMessage(userMessage)
@@ -473,7 +477,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
       ...chat.value.modelOpts,
       model: chat.value.model,
       streaming: !chat.value.disableStreaming,
-      docrepo: docrepo,
+      docrepos: docrepos,
       sources: true,
       abortSignal: abortController.signal,
     })
@@ -494,8 +498,14 @@ const onSendPrompt = async (params: SendPromptParams) => {
     }
 
   } catch (err) {
+
     console.error(err)
     response.value.setText('An error occurred while generating the response.')
+  
+  } finally {
+
+    processing.value = false
+    
   }
 
 }
@@ -547,7 +557,7 @@ const onRetry = () => {
     instructions: chat.value.instructions,
     prompt: lastMessage.content,
     attachments: lastMessage.attachments,
-    docrepo: chat.value.docrepo,
+    docrepos: chat.value.docrepos,
     expert: lastMessage.expert
   })
 

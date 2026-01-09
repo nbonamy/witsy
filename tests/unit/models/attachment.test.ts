@@ -50,38 +50,38 @@ test('Constructs without transformation', async () => {
 })
 
 test('Load from contents', async () => {
-  const text = new Attachment('text', 'text/plain', 'url', false, true)
+  const text = await Attachment.load('text', 'text/plain', 'url', false)
   expect(text.content).toBe('text_decoded')
   expect(text.mimeType).toBe('text/plain')
 
-  const pdf = new Attachment('pdf', 'application/pdf', 'url', false, true)
+  const pdf = await Attachment.load('pdf', 'application/pdf', 'url', false)
   expect(pdf.content).toBe('pdf_extracted')
   expect(pdf.mimeType).toBe('application/pdf')
 
-  const image = new Attachment('image_encoded', 'image/png', 'url', false, true)
+  const image = await Attachment.load('image_encoded', 'image/png', 'url', false)
   expect(image.content).toBe('image_encoded')
   expect(image.mimeType).toBe('image/png')
 })
 
 test('Load from url', async () => {
-  const text = new Attachment('', 'text/plain', 'file://text', false, true)
+  const text = await Attachment.load('', 'text/plain', 'file://text', false)
   expect(text.content).toBe('text_encoded_decoded')
 
-  const pdf = new Attachment('', 'application/pdf', 'file://pdf', false, true)
+  const pdf = await Attachment.load('', 'application/pdf', 'file://pdf', false)
   expect(pdf.content).toBe('pdf_encoded_extracted')
 
-  const image = new Attachment('', 'image/png', 'file://image', false, true)
+  const image = await Attachment.load('', 'image/png', 'file://image', false)
   expect(image.content).toBe('image_encoded')
 })
 
 test('Base64 contents', async () => {
-  const text = new Attachment('text', 'text/plain', 'url', false, true)
+  const text = await Attachment.load('text', 'text/plain', 'url', false)
   expect(text.b64Contents()).toBe('text_decoded_encoded')
 
-  const pdf = new Attachment('pdf', 'application/pdf', 'url', false, true)
+  const pdf = await Attachment.load('pdf', 'application/pdf', 'url', false)
   expect(pdf.b64Contents()).toBe('pdf_extracted_encoded')
 
-  const image = new Attachment('image_encoded', 'image/png', 'url', false, true)
+  const image = await Attachment.load('image_encoded', 'image/png', 'url', false)
   expect(image.b64Contents()).toBe('image_encoded')
 })
 

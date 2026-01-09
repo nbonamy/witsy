@@ -435,8 +435,8 @@ export const installIpc = (
     event.returnValue = await file.downloadFile(app, JSON.parse(payload));
   });
 
-  ipcMain.on(IPC.FILE.GET_TEXT_CONTENT, async (event, contents, format) => {
-    event.returnValue = await text.getTextContent(contents, format);
+  ipcMain.handle(IPC.FILE.GET_TEXT_CONTENT, async (event, contents, format) => {
+    return await text.getTextContent(contents, format);
   });
 
   ipcMain.on(IPC.FILE.GET_APP_INFO, async (event, payload) => {

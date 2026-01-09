@@ -1,5 +1,5 @@
 <template>
-  <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false)">
+  <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false)" ref="div">
     
     <div class="role" :class="message.role" v-if="showRole" v-tooltip="{ text: modelInfo, anchor: '.name', position: 'below' }">
       <template v-if="agent">
@@ -130,6 +130,7 @@ const props = defineProps({
 
 const emits = defineEmits(['media-loaded'])
 
+const div = ref<HTMLElement|null>(null)
 const theme = ref('light')
 const hovered = ref(false)
 const audio = ref<HTMLAudioElement|null>(null)
@@ -155,9 +156,13 @@ onMounted(() => {
 
   // make sure links are going outside
   updateLinkInterval = setInterval(() => {
-    document.querySelectorAll<HTMLLinkElement>('.messages a').forEach(link => {
-      link.target = "_blank"
-    })
+    try {
+      div.value?.querySelectorAll<HTMLLinkElement>('a').forEach(link => {
+        link.target = "_blank"
+      })
+    } catch {
+      // ignore
+    }
   }, 500)
 
   // audio listener init

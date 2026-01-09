@@ -3,72 +3,67 @@
 
   <div class="scheduler">
 
-    <select name="interval" v-model="interval" @change="save">
-      <option value="">{{ t('common.schedule.disabled') }}</option>
-      <option value="m">{{ t('common.schedule.minutes') }}</option>
-      <option value="h">{{ t('common.schedule.hourly') }}</option>
-      <option value="d">{{ t('common.schedule.daily') }}</option>
-      <option value="w">{{ t('common.schedule.weekly') }}</option>
-      <option value="M">{{ t('common.schedule.monthly') }}</option>
+    <select name="interval" v-model="interval" @change="save" :disabled="disabled">
+      <option v-if="intervals.includes('')" value="">{{ t('common.schedule.disabled') }}</option>
+      <option v-if="intervals.includes('m')" value="m">{{ t('common.schedule.minutes') }}</option>
+      <option v-if="intervals.includes('h')" value="h">{{ t('common.schedule.hourly') }}</option>
+      <option v-if="intervals.includes('d')" value="d">{{ t('common.schedule.daily') }}</option>
+      <option v-if="intervals.includes('w')" value="w">{{ t('common.schedule.weekly') }}</option>
+      <option v-if="intervals.includes('M')" value="M">{{ t('common.schedule.monthly') }}</option>
     </select>
 
     <template v-if="interval === 'm'">
       <span>{{ t('common.schedule.every') }}</span>
-      <input type="text" name="every" v-model="every" @input="save" />
+      <input type="number" name="every" v-model.number="every" min="1" max="59" step="1" @input="save" />
       <span>{{ t('common.schedule.minutes') }}</span>
     </template>
 
     <template v-else-if="interval === 'h'">
       <span>{{ t('common.schedule.every') }}</span>
-      <input type="text" name="every" v-model="every" @input="save" />
-      <span>{{ t('common.schedule.hours_on_minute') }}</span>  
-      <input type="text" name="on" v-model="on" @input="save" />
+      <input type="number" name="every" v-model.number="every" min="1" max="23" step="1" @input="save" />
+      <span>{{ t('common.schedule.hours_on_minute') }}</span>
+      <input type="number" name="on" v-model.number="on" min="0" max="59" step="1" @input="save" />
     </template>
 
     <template v-else-if="interval === 'd'">
       <span>{{ t('common.schedule.every') }}</span>
-      <input type="text" name="every" v-model="every" @input="save" />
+      <input type="number" name="every" v-model.number="every" min="1" max="31" step="1" @input="save" />
       <span>{{ t('common.schedule.days_at') }}</span>
-      <input type="text" class="time" name="at" v-model="at" placeholder="HH:MM" @input="save" />
+      <input type="time" class="time" name="at" v-model="at" @input="save" />
     </template>
 
-    <table v-else-if="interval === 'w'"><tbody>
-      <tr>
-        <td>{{ t('common.schedule.every') }}</td>
-        <td>
-          <input type="checkbox" id="schedule-mon" name="mon" :checked="on.includes('1')" @input="onDay(1)" /><label for="schedule-mon" class="no-colon">{{ t('common.schedule.monday') }}</label>
-          <input type="checkbox" id="schedule-tue" name="tue" :checked="on.includes('2')" @input="onDay(2)" /><label for="schedule-tue" class="no-colon">{{ t('common.schedule.tuesday') }}</label>
-          <input type="checkbox" id="schedule-wed" name="wed" :checked="on.includes('3')" @input="onDay(3)" /><label for="schedule-wed" class="no-colon">{{ t('common.schedule.wednesday') }}</label>
-          <input type="checkbox" id="schedule-thu" name="thu" :checked="on.includes('4')" @input="onDay(4)" /><label for="schedule-thu" class="no-colon">{{ t('common.schedule.thursday') }}</label>
-        </td>
-      </tr>
-      <tr>
-        <td>&nbsp;</td>
-        <td>
-          <input type="checkbox" id="schedule-fri" name="fri" :checked="on.includes('5')" @input="onDay(5)" /><label for="schedule-fri" class="no-colon">{{ t('common.schedule.friday') }}</label>
-          <input type="checkbox" id="schedule-sat" name="sat" :checked="on.includes('6')" @input="onDay(6)" /><label for="schedule-sat" class="no-colon">{{ t('common.schedule.saturday') }}</label>
-          <input type="checkbox" id="schedule-sun" name="sun" :checked="on.includes('0')" @input="onDay(0)" /><label for="schedule-sun" class="no-colon">{{ t('common.schedule.sunday') }}</label>
-        </td>
-      </tr>
-      <tr>
-        <td>{{ t('common.schedule.at') }}</td>
-        <td><input type="text" class="time" name="at" v-model="at" placeholder="HH:MM" @input="save" /></td>
-      </tr>
-    </tbody></table>
+    <div v-else-if="interval === 'w'" class="weekly">
+      <div class="row">
+        <span class="label">{{ t('common.schedule.every') }}</span>
+        <div class="days-grid">
+          <div class="day"><input type="checkbox" id="schedule-mon" name="mon" :checked="weekDays.includes(1)" @change="onDay(1)" /><label for="schedule-mon" class="no-colon">{{ t('common.schedule.monday') }}</label></div>
+          <div class="day"><input type="checkbox" id="schedule-tue" name="tue" :checked="weekDays.includes(2)" @change="onDay(2)" /><label for="schedule-tue" class="no-colon">{{ t('common.schedule.tuesday') }}</label></div>
+          <div class="day"><input type="checkbox" id="schedule-wed" name="wed" :checked="weekDays.includes(3)" @change="onDay(3)" /><label for="schedule-wed" class="no-colon">{{ t('common.schedule.wednesday') }}</label></div>
+          <div class="day"><input type="checkbox" id="schedule-thu" name="thu" :checked="weekDays.includes(4)" @change="onDay(4)" /><label for="schedule-thu" class="no-colon">{{ t('common.schedule.thursday') }}</label></div>
+          <div class="day"><input type="checkbox" id="schedule-fri" name="fri" :checked="weekDays.includes(5)" @change="onDay(5)" /><label for="schedule-fri" class="no-colon">{{ t('common.schedule.friday') }}</label></div>
+          <div class="day"><input type="checkbox" id="schedule-sat" name="sat" :checked="weekDays.includes(6)" @change="onDay(6)" /><label for="schedule-sat" class="no-colon">{{ t('common.schedule.saturday') }}</label></div>
+          <div class="day"><input type="checkbox" id="schedule-sun" name="sun" :checked="weekDays.includes(0)" @change="onDay(0)" /><label for="schedule-sun" class="no-colon">{{ t('common.schedule.sunday') }}</label></div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label">{{ t('common.schedule.at') }}</span>
+        <input type="time" class="time" name="at" v-model="at" @input="save" />
+      </div>
+    </div>
 
     <table v-else-if="interval === 'M'"><tbody>
       <tr>
         <td><span>{{ t('common.schedule.on_the') }}</span></td>
-        <td>
-          <input type="text" name="on" v-model="on" @input="save" />
-          <span>{{ t('common.schedule.day_of_every') }}</span>
-          <input type="text" name="every" v-model="every" @input="save" />
-          <span>{{ t('common.schedule.months') }}</span>
+        <td class="nowrap">
+          <input type="number" name="on" v-model.number="on" min="1" max="31" step="1" @input="save" />
+          <span style="margin: 0 4px;">{{ t('common.schedule.day_of_every') }}</span>
+          <input type="number" name="every" v-model.number="every" min="1" max="12" step="1" @input="save" />
+          <span style="margin-left: 4px;">{{ t('common.schedule.months') }}</span>
         </td>
       </tr>
       <tr>
         <td><span>{{ t('common.schedule.at') }}</span></td>
-        <td><input type="text" class="time" name="at" v-model="at" placeholder="HH:MM" @input="save" /></td>
+        <td><input type="time" class="time" name="at" v-model="at" @input="save" /></td>
       </tr>
     </tbody></table>
 
@@ -78,7 +73,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { t } from '@services/i18n'
 
 const schedule = defineModel({
@@ -86,10 +81,24 @@ const schedule = defineModel({
   default: '',
 })
 
+export type SchedulerInterval = '' | 'm' | 'h' | 'd' | 'w' | 'M'
+
+const props = defineProps({
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  intervals: {
+    type: Array as () => SchedulerInterval[],
+    default: () => ['', 'm', 'h', 'd', 'w', 'M'],
+  },
+})
+
 const interval = ref('')
-const on = ref('')
-const every = ref('')
+const on = ref<number>(0)
+const every = ref<number>(1)
 const at = ref('')
+const weekDays = ref<number[]>([])
 
 const emit = defineEmits(['change'])
 
@@ -98,12 +107,13 @@ onMounted(() => {
 })
 
 const update = () => {
-  
+
   // clear
   interval.value = ''
-  on.value = ''
-  every.value = ''
+  on.value = 0
+  every.value = 1
   at.value = ''
+  weekDays.value = []
 
   // if no schedule, return
   if (!schedule.value) {
@@ -117,28 +127,31 @@ const update = () => {
   const months = parts[3]
   const weeks = parts[4]
 
-  const time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+  // Parse time safely
+  const hoursNum = parseInt(hours) || 0
+  const minutesNum = parseInt(minutes) || 0
+  const time = `${hoursNum.toString().padStart(2, '0')}:${minutesNum.toString().padStart(2, '0')}`
 
   if (weeks != '*') {
     interval.value = 'w'
-    on.value = weeks
-    every.value = ''
+    weekDays.value = weeks.split(',').map(d => parseInt(d)).filter(d => !isNaN(d))
+    every.value = 1
     at.value = time
     return
   }
 
   if (months != '*') {
     interval.value = 'M'
-    on.value = days
-    every.value = months.split('/')[1] ?? '1'
+    on.value = parseInt(days) || 1
+    every.value = parseInt(months.split('/')[1]) || 1
     at.value = time
     return
   }
 
   if (days != '*' && days != '*/1') {
     interval.value = 'd'
-    on.value = ''
-    every.value = days.split('/')[1] ?? '1'
+    on.value = 0
+    every.value = parseInt(days.split('/')[1]) || 1
     at.value = time
     return
   }
@@ -146,24 +159,24 @@ const update = () => {
   // Handle daily schedule (days = '*' or days = '*/1') but only if hours and minutes are NOT patterns
   if ((days == '*' || days == '*/1') && hours != '*' && minutes != '*' && !hours.includes('/') && !minutes.includes('/')) {
     interval.value = 'd'
-    on.value = ''
-    every.value = '1'
+    on.value = 0
+    every.value = 1
     at.value = time
     return
   }
 
   if (hours != '*') {
     interval.value = 'h'
-    on.value = minutes
-    every.value = hours.split('/')[1] ?? '1'
+    on.value = parseInt(minutes) || 0
+    every.value = parseInt(hours.split('/')[1]) || 1
     at.value = ''
     return
   }
 
   if (minutes != '*') {
     interval.value = 'm'
-    on.value = ''
-    every.value = minutes.split('/')[1] ?? '1'
+    on.value = 0
+    every.value = parseInt(minutes.split('/')[1]) || 1
     at.value = ''
     return
   }
@@ -171,15 +184,13 @@ const update = () => {
 }
 
 const onDay = (day: number) => {
-  const days = on.value == '.' ? [] : on.value.split(',')
-  const index = days.indexOf(day.toString())
+  const index = weekDays.value.indexOf(day)
   if (index !== -1) {
-    days.splice(index, 1)
+    weekDays.value.splice(index, 1)
   } else {
-    days.push(day.toString())
-    days.sort((a, b) => parseInt(a) - parseInt(b))
+    weekDays.value.push(day)
+    weekDays.value.sort((a, b) => a - b)
   }
-  on.value = days.join(',')
   save()
 }
 
@@ -192,42 +203,39 @@ const save = () => {
     return
   }
 
-  // get time
+  // Parse time safely - at.value is in "HH:MM" format from time input
   let hours = 0
   let minutes = 0
-  if (at.value.includes(':')) {
+  if (at.value && at.value.includes(':')) {
     const [h, m] = at.value.split(':')
-    hours = parseInt(h)
-    minutes = parseInt(m)
+    hours = parseInt(h) || 0
+    minutes = parseInt(m) || 0
   }
 
-  // default
-  if (every.value == '') {
-    every.value = '1'
-  }
-  if (on.value == '') {
-    on.value = interval.value === 'w' ? '.' : '0'
-  }
+  // Ensure valid defaults
+  const safeEvery = every.value && every.value >= 1 ? every.value : 1
+  const safeOn = on.value && on.value >= 0 ? on.value : 0
 
   if (interval.value === 'w') {
-    if (on.value === '') schedule.value = ''
-    else schedule.value = `${minutes} ${hours} * * ${on.value}`
+    const daysStr = weekDays.value.length > 0 ? weekDays.value.join(',') : '.'
+    schedule.value = `${minutes} ${hours} * * ${daysStr}`
   }
 
   if (interval.value === 'M') {
-    schedule.value = `${minutes} ${hours} ${on.value} */${every.value} *`
+    const dayOfMonth = safeOn >= 1 ? safeOn : 1
+    schedule.value = `${minutes} ${hours} ${dayOfMonth} */${safeEvery} *`
   }
 
   if (interval.value === 'd') {
-    schedule.value = `${minutes} ${hours} */${every.value} * *`
+    schedule.value = `${minutes} ${hours} */${safeEvery} * *`
   }
 
   if (interval.value === 'h') {
-    schedule.value = `${on.value} */${every.value} * * *`
+    schedule.value = `${safeOn} */${safeEvery} * * *`
   }
 
   if (interval.value === 'm') {
-    schedule.value = `*/${every.value} * * * *`
+    schedule.value = `*/${safeEvery} * * * *`
   }
 
   // done
@@ -241,7 +249,7 @@ const save = () => {
 <style scoped>
 
 .scheduler {
-  
+
   display: flex;
   flex-direction: row;
   align-items: baseline;
@@ -251,17 +259,67 @@ const save = () => {
     width: auto !important;
   }
 
-  input {
-    width: 32px !important;
+  input[type=number] {
+    max-width: 56px !important;
     text-align: center;
+    -moz-appearance: textfield;
 
-    &.time {
-      width: 64px !important;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
   }
 
+  input[type=time] {
+    max-width: 128px !important;
+    text-align: center;
+  }
+
+  .weekly {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+
+      .label {
+        min-width: 40px;
+        text-align: right;
+      }
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px 8px;
+
+      .day {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+
+        input[type=checkbox] {
+          margin: 0;
+        }
+
+        label {
+          margin-left: 4px;
+        }
+      }
+    }
+  }
+
+  &:has(table) {
+    align-items: flex-start;
+  }
+
   table {
-    
+
     td {
 
       &:first-child {
@@ -269,32 +327,17 @@ const save = () => {
         padding-right: 4px;
       }
 
-      input[type=text] {
+      &.nowrap {
+        white-space: nowrap;
+      }
+
+      span {
+        margin-top: 0px;
+      }
+
+      input[type=number],
+      input[type=time] {
         margin: 0px 4px;
-      }
-
-      input[type=checkbox] {
-        margin-top: 0px;
-        margin-bottom: 0px;
-        position: relative;
-        top: -4px;
-      }
-
-      input[type=checkbox]:checked {
-        margin-top: 0px;
-        margin-bottom: 0px;
-        position: relative;
-        top: -5px;
-      }
-      
-      input[type=checkbox]:checked:after {
-        left: 0px !important;
-      }
-      
-      label {
-        margin-right: 4px;
-        position: relative;
-        top: -6px;
       }
     }
   }
