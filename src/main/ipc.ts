@@ -571,8 +571,10 @@ export const installIpc = (
     await Transcriber.insertTranscription(payload);
   });
 
-  ipcMain.handle(IPC.TRANSCRIBE.APPLE_CLI, async (_, audioBlob: Buffer, options?: sttApple.AppleTranscribeOptions) => {
-    return await sttApple.transcribeWithAppleCLI(audioBlob, options);
+  ipcMain.handle(IPC.TRANSCRIBE.APPLE_CLI, async (_, audioData: ArrayBuffer, options?: sttApple.AppleTranscribeOptions) => {
+    // Convert ArrayBuffer to Buffer
+    const buffer = Buffer.from(audioData);
+    return await sttApple.transcribeWithAppleCLI(buffer, options);
   });
 
   ipcMain.on(IPC.DOCREPO.OPEN, () => {

@@ -39,38 +39,39 @@ Integrate Apple's new SpeechAnalyzer API (macOS 26+) as an STT engine option via
 
 ### Phase 1: Swift CLI Tool
 
-Create a new Swift package in `tools/speech-analyzer-cli/`:
+~~Create a new Swift package in `tools/speech-analyzer-cli/`:~~
+**Used forked https://github.com/nbonamy/apple-speechanalyzer-cli-example instead**
 
-- [ ] Initialize Swift package with Speech framework dependency
-- [ ] Implement CLI argument parsing (file path, locale, output format)
-- [ ] Implement SpeechAnalyzer transcription logic
-- [ ] Handle model download/availability checking
-- [ ] Output JSON: `{ "text": "...", "segments": [...], "error": null }`
-- [ ] Build universal binary (arm64 + x86_64)
-- [ ] Test standalone with sample audio files
+- [x] ~~Initialize Swift package with Speech framework dependency~~ Used existing repo
+- [x] ~~Implement CLI argument parsing (file path, locale, output format)~~ Already implemented
+- [x] ~~Implement SpeechAnalyzer transcription logic~~ Already implemented
+- [x] Handle model download/availability checking - Auto-downloads on first use
+- [x] ~~Output JSON~~ Outputs plain text (simpler, no segments needed)
+- [x] Build universal binary (arm64 + x86_64) - Created `build-universal.sh`
+- [x] Test standalone with sample audio files - Tested with ~/Desktop/test.wav
 
 ### Phase 2: Witsy Integration
 
-- [ ] Add `stt-apple.ts` engine following existing patterns (see `stt-whisper.ts`)
-- [ ] Implement `transcribe()` that spawns CLI tool
-- [ ] Handle model availability check (CLI tool with `--check-model` flag)
-- [ ] Add engine to `getSTTEngine()` factory in `stt.ts`
-- [ ] Add "Apple" option in SettingsSTT.vue (macOS 26+ only)
-- [ ] Add locale selection UI (use `--list-locales` from CLI)
+- [x] Add `stt-apple.ts` engine following existing patterns
+- [x] Implement `transcribe()` that spawns CLI tool via IPC (main process)
+- [x] ~~Handle model availability check~~ Not needed - auto-downloads
+- [x] Add engine to `getSTTEngine()` factory in `stt.ts`
+- [x] Add "Apple" option in SettingsSTT.vue (macOS 26+ only)
+- [x] ~~Add locale selection UI~~ Already exists - uses existing LangSelect component
 
 ### Phase 3: Model Management
 
-- [ ] CLI tool: `--download-model <locale>` command
-- [ ] CLI tool: `--list-installed` command
-- [ ] UI: Show download progress/status in settings
-- [ ] Handle "model not installed" error gracefully
+- [x] ~~CLI tool: `--download-model <locale>` command~~ Not needed - auto-downloads on first use
+- [x] ~~CLI tool: `--list-installed` command~~ Not needed
+- [x] ~~UI: Show download progress/status in settings~~ CLI outputs to stderr during download
+- [x] Handle "model not installed" error gracefully - CLI handles download automatically
 
 ### Phase 4: Testing & Polish
 
 - [ ] Unit tests for stt-apple.ts
 - [ ] Test with various audio formats (wav, mp3, m4a)
 - [ ] Test with different locales
-- [ ] Verify macOS version detection works correctly
+- [ ] Verify macOS version detection works correctly (currently returns true on all macOS)
 - [ ] Update any relevant documentation
 
 ## CLI Tool Interface

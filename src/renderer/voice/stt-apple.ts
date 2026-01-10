@@ -89,12 +89,11 @@ export default class STTApple implements STTEngine {
 
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
     try {
-      // Convert Blob to Buffer
+      // Convert Blob to ArrayBuffer (can be sent via IPC)
       const arrayBuffer = await audioBlob.arrayBuffer()
-      const buffer = Buffer.from(arrayBuffer)
 
       // Call main process IPC to run CLI
-      const result = await window.api.invoke(TRANSCRIBE.APPLE_CLI, buffer, {
+      const result = await window.api.invoke(TRANSCRIBE.APPLE_CLI, arrayBuffer, {
         locale: this.config.stt.locale || '',
         live: false,
       })
