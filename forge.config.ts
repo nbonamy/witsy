@@ -42,11 +42,11 @@ if (isDarwin) {
         entitlements: './build/Entitlements.darwin.plist'
       }; },
     },
-    osxNotarize: {
-      appleId: process.env.APPLE_ID,
-      appleIdPassword: process.env.APPLE_PASSWORD,
-      teamId: process.env.APPLE_TEAM_ID
-    }
+    // osxNotarize: {
+    //   appleId: process.env.APPLE_ID,
+    //   appleIdPassword: process.env.APPLE_PASSWORD,
+    //   teamId: process.env.APPLE_TEAM_ID
+    // }
   }
 }
 
@@ -92,7 +92,6 @@ const config: ForgeConfig = {
             const binaries = [
               'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node',
               'node_modules/autolib/build/Release/autolib.node',
-              'assets/apple-speechanalyzer-cli',
             ];
 
             binaries.forEach((binary) => {
@@ -104,6 +103,23 @@ const config: ForgeConfig = {
                 });
               } else {
                 throw new Error(`❌ Binary not found for signing: ${binaryPath}`);
+              }
+            });
+
+            // Sign extraResource binaries (they're in Resources/, not Resources/app/)
+            const extraBinaries = [
+              '../assets/apple-speechanalyzer-cli',
+            ];
+
+            extraBinaries.forEach((binary) => {
+              const binaryPath = path.join(buildPath, binary);
+              const identify = process.env.IDENTIFY_DARWIN_CODE;
+              if (fs.existsSync(binaryPath)) {
+                execSync(`codesign --deep --force --verbose --sign "${identify}" "${binaryPath}"`, {
+                  stdio: 'inherit',
+                });
+              } else {
+                console.warn(`⚠️  Extra binary not found for signing (will be signed later): ${binaryPath}`);
               }
             });
           }
