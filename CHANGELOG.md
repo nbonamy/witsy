@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.3] - WIP
+## [3.4.0] - WIP
 
 ### Added
 - Parakeet WebGPU support
