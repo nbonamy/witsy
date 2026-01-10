@@ -6,7 +6,9 @@ import { store } from '@services/store'
 import { Application } from '@/types/automation'
 import { useWindowMock } from '@tests/mocks/window'
 
+// @ts-expect-error mock
 global.MAIN_WINDOW_VITE_DEV_SERVER_URL = 'http://localhost:3000/'
+// @ts-expect-error mock
 global.MAIN_WINDOW_VITE_NAME = 'vite'
 
 vi.mock('electron', async () => {
@@ -39,6 +41,7 @@ vi.mock('electron', async () => {
   BrowserWindow.prototype.setSize = vi.fn()
   BrowserWindow.prototype.setOpacity = vi.fn()
   BrowserWindow.prototype.setIgnoreMouseEvents = vi.fn()
+  // @ts-expect-error mock
   BrowserWindow['getAllWindows'] = vi.fn(() => {
     const window1 = new BrowserWindow()
     const window2 = new BrowserWindow()
@@ -120,7 +123,7 @@ vi.mock('@main/utils', async () => {
   }
 })
 
-const expectCreateWebPreferences = (callParams) => {
+const expectCreateWebPreferences = (callParams: any) => {
   expect(callParams.webPreferences.nodeIntegration).toBe(false)
   expect(callParams.webPreferences.contextIsolation).toBe(true)
   expect(callParams.webPreferences.webSecurity).toBe(false)
@@ -293,11 +296,11 @@ test('Open Readaloud window', async () => {
 })
 
 test('Open Transcribe window', async () => {
-  window.openTranscribePalette()
+  window.openAudioBooth()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    queryParams: { view: 'dictation', }
+    queryParams: { view: 'booth', }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?view=dictation#')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?view=booth#')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })

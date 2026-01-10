@@ -241,6 +241,8 @@ beforeAll(() => {
   window.AudioContext.prototype.decodeAudioData = () => {
     return { getChannelData: () => {} }
   }
+  // @ts-expect-error mocking
+  window.AudioContext.prototype.close = vi.fn()
 })
 
 beforeEach(() => {

@@ -63,7 +63,12 @@
       <input type="checkbox" id="whisper-gpu" v-model="whisperGPU" @change="save" />
       <label for="whisper-gpu">{{ t('settings.voice.useWebGpu') }}</label>
     </div>
-    
+
+    <div class="form-field horizontal" v-if="engine == 'parakeet'">
+      <input type="checkbox" id="parakeet-gpu" v-model="parakeetGPU" @change="save" />
+      <label for="parakeet-gpu">{{ t('settings.voice.useWebGpu') }}</label>
+    </div>
+
     <div class="form-field" v-if="engine != 'custom'">
       <label>{{ t('settings.voice.model') }}</label>
       <div class="form-subgroup">
@@ -127,25 +132,52 @@
       </select>
     </div> -->
     
+    <div class="form-field test-area">
+      <label>{{ t('settings.voice.test') }}</label>
+      <div class="test-input">
+        <textarea class="test-result" v-model="testResult" readonly rows="2" :placeholder="t('settings.voice.testPlaceholder')"></textarea>
+        <div class="test-controls">
+          <Waveform
+            v-if="isRecording"
+            :width="32"
+            :height="12"
+            foreground-color-inactive="var(--control-placeholder-text-color)"
+            foreground-color-active="red"
+            :audio-recorder="voiceRecording.audioRecorder"
+            :is-recording="true"
+          />
+          <ButtonIcon @click.prevent="toggleTest" :disabled="!canTest">
+            <SpinningIcon v-if="isProcessing" :spinning="true" />
+            <MicIcon v-else :class="{ recording: isRecording }" />
+          </ButtonIcon>
+        </div>
+      </div>
+    </div>
+
     <div class="form-field" v-if="requiresDownload(engine)">
       <label></label>
       <button @click.prevent="deleteLocalModels">{{ t('settings.voice.deleteLocalModels') }}</button>
     </div>
-    
+
   </div>
 </template>
 
 <script setup lang="ts">
 
 import { Configuration } from 'types/config'
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { store } from '@services/store'
 import { t } from '@services/i18n'
 import defaults from '@root/defaults/settings.json'
 import InputObfuscated from '@components/InputObfuscated.vue'
-import { getSTTEngines, getSTTEngine, getSTTModels, requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
+import { getSTTEngines, getSTTEngine, getSTTModels, requiresDownload, isSTTReady, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
 import Dialog from '@renderer/utils/dialog'
 import LangSelect from '@components/LangSelect.vue'
+import useVoiceRecording from '@renderer/audio/voice_recording'
+import Waveform from '@components/Waveform.vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
+import SpinningIcon from '@components/SpinningIcon.vue'
+import { MicIcon } from 'lucide-vue-next'
 
 type InitModelMode = 'download' | 'verify'
 let initMode: InitModelMode = 'download'
@@ -167,10 +199,33 @@ const nvidiaAPIKey = ref(null)
 const nvidiaPrompt = ref(null)
 const mistralPrompt = ref(null)
 const whisperGPU = ref(true)
+const parakeetGPU = ref(false)
 const baseURL = ref('')
 const duration = ref(null)
 const progress= ref<FilesProgressInfo|TaskStatus>(null)
 //const action = ref(null)
+
+// test recording
+const testResult = ref('')
+const voiceRecording = useVoiceRecording({
+  onTranscriptionComplete: (text: string) => {
+    testResult.value = text
+  },
+  onTranscriptionChunk: (text: string) => {
+    testResult.value = text
+  },
+  autoStopOnSilence: true,
+})
+
+const isRecording = computed(() => voiceRecording.state.value === 'recording')
+const isProcessing = computed(() => voiceRecording.state.value === 'processing')
+const canTest = computed(() => {
+  // local engines don't need API keys
+  if (engine.value === 'whisper' || engine.value === 'parakeet') {
+    return model.value?.length > 0
+  }
+  return isSTTReady(store.config)
+})
 
 const models = computed(() => {
 
@@ -222,6 +277,7 @@ const load = () => {
   nvidiaPrompt.value = store.config.stt.nvidia?.prompt || null
   mistralPrompt.value = store.config.stt.mistralai?.prompt || null
   whisperGPU.value = store.config.stt.whisper.gpu ?? true
+  parakeetGPU.value = store.config.stt.parakeet?.gpu ?? false
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
 
@@ -237,12 +293,12 @@ const save = () => {
   store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
   store.config.engines.soniox.apiKey = sonioxAPIKey.value
-  if (!store.config.stt.soniox) store.config.stt.soniox = {}
   store.config.stt.soniox.cleanup = sonioxCleanup.value
   store.config.stt.customOpenAI.baseURL = baseURL.value
   store.config.stt.nvidia.prompt = nvidiaPrompt.value
   store.config.stt.mistralai.prompt = mistralPrompt.value
   store.config.stt.whisper.gpu = whisperGPU.value
+  store.config.stt.parakeet.gpu = parakeetGPU.value
   //store.config.stt.silenceAction = action.value
   store.saveSettings()
 }
@@ -382,6 +438,21 @@ const deleteLocalModels = async () => {
   })
 }
 
+const toggleTest = async () => {
+  if (isRecording.value) {
+    voiceRecording.stopRecording()
+  } else {
+    testResult.value = ''
+    voiceRecording.startRecording()
+  }
+}
+
+onBeforeUnmount(() => {
+  if (isRecording.value) {
+    voiceRecording.stopRecording()
+  }
+})
+
 defineExpose({ load })
 
 </script>
@@ -394,6 +465,33 @@ defineExpose({ load })
 
 .settings .form.form-vertical .form-field textarea {
   flex: 1 0 100px;
+}
+
+.test-input {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--control-border-color);
+  border-radius: var(--control-border-radius);
+  background-color: var(--control-bg-color);
+}
+
+.test-result {
+  flex: 1;
+  height: 1lh;
+  resize: none;
+  border: none;
+  background: transparent;
+}
+
+.test-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.test-controls svg.recording {
+  color: red;
 }
 
 </style>

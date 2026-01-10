@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - CLI filesystem access and tool display fixes
 - Parakeet STT local model support (https://github.com/nbonamy/witsy/issues/471)
+- New quick dictation window (Speech-to-text renamed to Audio Booth)
 - SearXNG support
 
 ### Changed

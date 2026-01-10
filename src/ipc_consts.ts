@@ -164,6 +164,10 @@ export const READALOUD = {
   CLOSE_PALETTE: 'readaloud-close-palette',
 } as const;
 
+export const DICTATION = {
+  CLOSE: 'dictation-close',
+} as const;
+
 export const TRANSCRIBE = {
   INSERT: 'transcribe-insert',
 } as const;

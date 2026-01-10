@@ -6,8 +6,23 @@ export default class Transcriber {
 
   static initTranscription = async (): Promise<void> => {
 
-    // open
-    await window.openTranscribePalette()
+    // if dictation window is already open, tell it to stop and transcribe
+    if (window.dictationWindow && !window.dictationWindow.isDestroyed()) {
+      window.dictationWindow.webContents.send('stop-and-transcribe');
+      return;
+    }
+
+    // capture the foremost app before opening the window
+    const automator = new Automator();
+    let sourceApp = null;
+    try {
+      sourceApp = await automator.getForemostApp();
+    } catch (error) {
+      console.error('Error getting foremost app', error);
+    }
+
+    // open the mini dictation window
+    window.openDictationWindow({ sourceApp });
 
   }
 

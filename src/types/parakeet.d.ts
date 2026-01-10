@@ -7,7 +7,7 @@ declare module 'parakeet.js' {
   }
 
   export interface GetParakeetModelOptions {
-    backend?: 'webgpu' | 'wasm'
+    backend?: 'webgpu' | 'webgpu-hybrid' | 'webgpu-strict' | 'wasm'
     encoderQuant?: 'fp32' | 'int8'
     decoderQuant?: 'fp32' | 'int8'
     preprocessor?: string

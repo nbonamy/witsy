@@ -201,7 +201,8 @@ export type ShortcutsConfig = {
   scratchpad: Shortcut
   command: Shortcut
   readaloud: Shortcut
-  transcribe: Shortcut
+  dictation: Shortcut
+  audioBooth: Shortcut
   realtime: Shortcut
   studio: Shortcut
   forge: Shortcut
@@ -247,6 +248,10 @@ export type STTConfig = {
   soniox?: {
     cleanup?: boolean
     audioFormat?: string
+  }
+  quickDictation: {
+    appearance: 'panel' | 'notch'
+    copyToClipboard: boolean
   }
   //silenceAction: SilenceAction
 }

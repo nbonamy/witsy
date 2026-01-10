@@ -569,6 +569,9 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     readaloud: {
       closePalette: vi.fn(),
     },
+    dictation: {
+      close: vi.fn(),
+    },
     whisper: {
       initialize: vi.fn(),
       transcribe: vi.fn(async () => ({ text: 'transcribed' })),

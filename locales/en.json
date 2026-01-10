@@ -2131,7 +2131,8 @@
       "deleteMedia": "Delete Media",
       "selectAll": "Select All",
       "startDictation": "Start Dictation",
-      "title": "Edit"
+      "title": "Edit",
+      "transcribe": "@:{'transcribe.title'}"
     },
     "file": {
       "agentForge": "@:{'agent.forge.title'}",
@@ -3022,6 +3023,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Usage: Highlight your text, press keyboard shortcut then choose an Al command",
+      "audioBooth": "@:{'tray.menu.audioBooth'}",
       "clearAll": "Clear all shortcuts",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
@@ -3085,8 +3087,16 @@
       },
       "spokenLanguage": "Spoken Language",
       "tabs": {
+        "quickDictation": "Quick Dictation",
         "speechToText": "Speech-to-Text",
         "textToSpeech": "Text-to-Speech"
+      },
+      "quickDictation": {
+        "appearance": "Appearance",
+        "appearancePanel": "Panel (bottom of screen)",
+        "appearanceNotch": "Notch (top of screen)",
+        "copyToClipboard": "Automatically copy dictated text to clipboard",
+        "escapeHint": "Press Escape once to stop recording and transcribe.<br/>Double-press Escape to cancel."
       },
       "tts": {
         "groqAcceptTermsReminder": "You need to <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accept the terms and conditions</a> to use the Groq model.",
@@ -3096,6 +3106,8 @@
         "serviceDisclaimer": "The service may stop working at any point in time.",
         "voice": "@:{'common.voice'}"
       },
+      "test": "Test",
+      "testPlaceholder": "Click Test to start recording…",
       "useWebGpu": "Use WebGPU",
       "verificationComplete": "Verification completed!",
       "verifying": "Verifying: {percent}%"
@@ -3175,13 +3187,14 @@
     "spaceToTalk": "Press and hold space to talk",
     "summarize": "Summarize",
     "summarizePrompt": "Summarize the text in a concise manner, using the same language it is written, plain and simple language and keep the same tense. Do not return anything other than the summary. Do not wrap responses in quotes.",
-    "title": "Speech-to-Text",
+    "title": "Audio Booth",
     "translate": "Translate to…",
     "translatePrompt": "Translate the following text in {lang}. Do not return anything other than the translation. Do not wrap responses in quotes.",
     "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
+      "audioBooth": "@:{'transcribe.title'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "httpServer": "🌐 HTTP Server running on port {port}",
       "installUpdate": "Install update and restart…",

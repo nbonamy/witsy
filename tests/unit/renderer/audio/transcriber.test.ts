@@ -10,9 +10,9 @@ vi.mock('@main/window.ts', async () => {
     mainWindow: {
       minimize: vi.fn(),
     },
+    dictationWindow: null,
     releaseFocus: vi.fn(),
-    openTranscribePalette: vi.fn(),
-    closeTranscribePalette: vi.fn(),
+    openDictationWindow: vi.fn(),
     isMainWindowFocused: vi.fn(() => false),
   }
 })
@@ -21,9 +21,9 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
-test('Open transcriber window', async () => {
+test('Open dictation window', async () => {
   await Transcriber.initTranscription()
-  expect(window.openTranscribePalette).toHaveBeenLastCalledWith()
+  expect(window.openDictationWindow).toHaveBeenCalledWith({ sourceApp: expect.anything() })
 })
 
 test('Insert transcription', async () => {

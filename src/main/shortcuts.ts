@@ -25,7 +25,8 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks): void 
   registerShortcut('scratchpad', config.shortcuts.scratchpad, callbacks.scratchpad);
   registerShortcut('command', config.shortcuts.command, callbacks.command);
   registerShortcut('readaloud', config.shortcuts.readaloud, callbacks.readaloud);
-  registerShortcut('transcribe', config.shortcuts.transcribe, callbacks.transcribe);
+  registerShortcut('dictation', config.shortcuts.dictation, callbacks.dictation);
+  registerShortcut('audioBooth', config.shortcuts.audioBooth, callbacks.audioBooth);
   registerShortcut('realtime', config.shortcuts.realtime, callbacks.realtime);
   registerShortcut('studio', config.shortcuts.studio, callbacks.studio);
   registerShortcut('forge', config.shortcuts.forge, callbacks.forge);

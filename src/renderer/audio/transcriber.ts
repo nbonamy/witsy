@@ -21,6 +21,14 @@ class Transcriber {
   }
 
   async initialize() {
+    // if engine already exists and is ready, skip initialization
+    if (this.engine && this.engine.isReady()) {
+      return
+    }
+    // dispose of old engine if it exists but is not ready
+    if (this.engine && 'dispose' in this.engine) {
+      (this.engine as any).dispose()
+    }
     this.engine = getSTTEngine(this.config)
     await this.engine.initialize()
   }

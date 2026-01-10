@@ -26,6 +26,11 @@ export default class STTParakeet implements STTEngine {
     return this.ready
   }
 
+  dispose(): void {
+    this.model = undefined
+    this.ready = false
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isStreamingModel(model: string): boolean {
     return false
@@ -40,14 +45,11 @@ export default class STTParakeet implements STTEngine {
   }
 
   async initialize(callback?: ProgressCallback): Promise<void> {
+    const modelId = this.config.stt.model || 'istupakov/parakeet-tdt-0.6b-v2-onnx'
+    const useGpu = this.config.stt.parakeet?.gpu ?? false
+    const backend = useGpu ? 'webgpu-hybrid' : 'wasm'
 
     try {
-
-      const modelId = this.config.stt.model || 'istupakov/parakeet-tdt-0.6b-v2-onnx'
-      const useGpu = this.config.stt.parakeet?.gpu ?? false
-      const backend = useGpu ? 'webgpu' : 'wasm'
-
-      // get model URLs with progress tracking
       callback?.({ status: 'initiate', name: modelId, file: '' } as ProgressInfo)
 
       const { urls, filenames } = await getParakeetModel(modelId, {
@@ -67,7 +69,6 @@ export default class STTParakeet implements STTEngine {
         }
       })
 
-      // create model instance
       this.model = await ParakeetModel.fromUrls({
         ...urls,
         filenames,
@@ -76,18 +77,17 @@ export default class STTParakeet implements STTEngine {
         verbose: false
       })
 
-      // warm up the model with a short silent audio
-      const warmupAudio = new Float32Array(16000) // 1 second of silence
+      // warm up the model
+      const warmupAudio = new Float32Array(16000)
       await this.model.transcribe(warmupAudio, 16000)
 
       this.ready = true
       callback?.({ status: 'ready' } as TaskStatus)
 
     } catch (error) {
-      console.error('[parakeet] error when initializing:', error)
+      console.error(`[parakeet] ${backend} initialization failed:`, error)
       callback?.({ status: 'error', message: (error as Error).message })
     }
-
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -100,21 +100,27 @@ export default class STTParakeet implements STTEngine {
         // we need to decode the audio file to PCM Float32 @ 16kHz
         const fileReader = new FileReader()
         fileReader.onloadend = async () => {
-          const audioCTX = new AudioContext({
-            sampleRate: 16000,
-          })
-          const arrayBuffer = fileReader.result as ArrayBuffer
-          const decoded = await audioCTX.decodeAudioData(arrayBuffer)
-          const pcmData = decoded.getChannelData(0)
+          let audioCTX: AudioContext | null = null
+          try {
+            audioCTX = new AudioContext({
+              sampleRate: 16000,
+            })
+            const arrayBuffer = fileReader.result as ArrayBuffer
+            const decoded = await audioCTX.decodeAudioData(arrayBuffer)
+            const pcmData = decoded.getChannelData(0)
 
-          // transcribe with parakeet
-          const result = await this.model!.transcribe(pcmData, 16000, {
-            returnTimestamps: false,
-            returnConfidences: false,
-            frameStride: 2 // balance between speed and accuracy
-          })
+            // transcribe with parakeet
+            const result = await this.model!.transcribe(pcmData, 16000, {
+              returnTimestamps: false,
+              returnConfidences: false,
+              frameStride: 2 // balance between speed and accuracy
+            })
 
-          resolve({ text: result.utterance_text || '' })
+            resolve({ text: result.utterance_text || '' })
+          } finally {
+            // always close the audio context to free resources
+            await audioCTX?.close()
+          }
 
         }
         fileReader.readAsArrayBuffer(audioBlob)
