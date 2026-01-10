@@ -1,7 +1,7 @@
 <template>
   <div class="dictation" :class="{ notch: isNotchAppearance }">
-    <div class="app-info" v-if="sourceApp">
-      <img class="icon" :src="iconData" />
+    <div class="app-info">
+      <img v-if="sourceApp" class="icon" :src="iconData" />
     </div>
     <div class="visualizer">
       <div class="processing" v-if="state === 'processing'">
@@ -15,19 +15,21 @@
       <CircleIcon v-if="state === 'recording'" class="recording" :size="16" color="red" fill="red" />
       <CircleIcon v-else-if="state === 'idle' || state === 'initializing'" class="idle" :size="16" :color="state === 'initializing' ? 'orange' : iconColor" :fill="state === 'initializing' ? 'orange' : 'transparent'" />
     </div>
+    <div class="hint">{{ t('dictation.hint') }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { computed, onMounted, onBeforeUnmount, ref, toRaw } from 'vue'
 import Loader from '@components/Loader.vue'
 import Waveform from '@components/Waveform.vue'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
+import { ExternalApp } from 'types'
+import { Application } from 'types/automation'
+import { computed, onBeforeUnmount, onMounted, ref, toRaw } from 'vue'
 import useAudioRecorder from '../audio/audio_recorder'
 import useTranscriber from '../audio/transcriber'
-import { store } from '@services/store'
-import { Application } from 'types/automation'
-import { ExternalApp } from 'types'
 
 import { CircleIcon } from 'lucide-vue-next'
 
@@ -292,7 +294,12 @@ const cancelRecording = () => {
 }
 
 const onKeyDown = (event: KeyboardEvent) => {
-  if (event.key === 'Escape') {
+  if (event.key === ' ') {
+    event.preventDefault()
+    if (state.value === 'recording') {
+      stopAndTranscribe()
+    }
+  } else if (event.key === 'Escape') {
     event.preventDefault()
 
     if (state.value === 'recording') {
@@ -320,13 +327,14 @@ const onKeyDown = (event: KeyboardEvent) => {
 
 .dictation {
   height: 100vh;
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  grid-template-rows: 1fr auto;
   align-items: center;
   background-color: var(--source-app-bg-color);
   color: var(--source-app-text-color);
   padding: 0 16px;
-  gap: 12px;
+  column-gap: 12px;
   -webkit-app-region: drag;
 }
 
@@ -346,9 +354,11 @@ const onKeyDown = (event: KeyboardEvent) => {
 }
 
 .app-info {
-  flex: 0 0 auto;
+  grid-column: 1;
+  grid-row: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
 
   .icon {
     width: 32px;
@@ -357,7 +367,8 @@ const onKeyDown = (event: KeyboardEvent) => {
 }
 
 .visualizer {
-  flex: 1;
+  grid-column: 2;
+  grid-row: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -378,13 +389,25 @@ const onKeyDown = (event: KeyboardEvent) => {
 }
 
 .status {
-  flex: 0 0 auto;
+  grid-column: 3;
+  grid-row: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
 
   .recording {
     animation: pulse 1s ease-in-out infinite;
   }
+}
+
+.hint {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 10.5px;
+  text-align: center;
+  margin-top: -12px;
+  padding-bottom: 8px;
+  color: var(--faded-text-color);
 }
 
 @keyframes pulse {
