@@ -463,7 +463,7 @@ declare global {
         closePalette(sourceApp: Application): void
       },
       dictation: {
-        close(sourceApp: Application): void
+        close(text: string, sourceApp: Application): void
       },
       whisper: {
         initialize(): void

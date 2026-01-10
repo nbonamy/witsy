@@ -253,38 +253,35 @@ const stopAndTranscribe = () => {
 
 const transcribeAndInsert = async (audioBlob: Blob) => {
 
+  let text = ''
+
   try {
-
     const response = await transcriber.transcribe(audioBlob)
-
     if (response.text && response.text.trim().length > 0) {
-      const text = response.text.trim()
-
-      // copy to clipboard if enabled
-      if (store.config.stt.quickDictation?.copyToClipboard) {
-        window.api.clipboard.writeText(text)
-      }
-
-      // insert text into source app
-      window.api.transcribe.insert(text)
+      text = response.text.trim()
     }
-
   } catch (error) {
     console.error('Error transcribing:', error)
-  } finally {
-    closeWindow()
   }
+
+  // copy to clipboard if enabled
+  if (text && store.config.stt.quickDictation?.copyToClipboard) {
+    window.api.clipboard.writeText(text)
+  }
+
+  // close window, release focus, and paste text
+  closeWindow(text)
 
 }
 
-const closeWindow = () => {
+const closeWindow = (text?: string) => {
   // stop and release recording to free the microphone
   if (state.value === 'recording') {
     audioRecorder.stop()
   }
   audioRecorder.release()
   state.value = 'idle'
-  window.api.dictation.close(toRaw(sourceApp.value))
+  window.api.dictation.close(text || '', toRaw(sourceApp.value))
 }
 
 const cancelRecording = () => {

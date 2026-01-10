@@ -562,8 +562,8 @@ export const installIpc = (
     await window.closeReadAloudPalette();
   });
 
-  ipcMain.on(IPC.DICTATION.CLOSE, async (_, sourceApp: Application) => {
-    await window.closeDictationWindow(sourceApp);
+  ipcMain.on(IPC.DICTATION.CLOSE, async (_, payload: { text: string, sourceApp: Application }) => {
+    await window.closeDictationWindow(payload.text, payload.sourceApp);
   });
 
   ipcMain.on(IPC.TRANSCRIBE.INSERT, async (_, payload) => {

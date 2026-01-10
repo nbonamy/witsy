@@ -4,6 +4,7 @@ import { anyDict } from 'types/index';
 import { app, BrowserWindow } from 'electron';
 import { createWindow, getCurrentScreen, releaseFocus } from './index';
 import { loadSettings } from '../config';
+import Automator from '../automations/automator';
 import process from 'node:process';
 
 export let dictationWindow: BrowserWindow = null;
@@ -97,16 +98,24 @@ export const prepareDictationWindow = (): void => {
 
 };
 
-export const closeDictationWindow = async (sourceApp?: Application): Promise<void> => {
+export const closeDictationWindow = async (text: string, sourceApp?: Application): Promise<void> => {
   try {
     if (dictationWindow && !dictationWindow.isDestroyed() && dictationWindow.isVisible()) {
       dictationWindow.hide();
     }
+
+    if (sourceApp) {
+      await releaseFocus({ sourceApp });
+    }
+
   } catch (error) {
     console.error('Error while hiding dictation window', error);
   }
-  if (sourceApp) {
-    await releaseFocus({ sourceApp });
+
+  // paste text after window is hidden and focus is released
+  if (text.trim().length > 0) {
+    const automator = new Automator();
+    await automator.pasteText(text);
   }
 };
 

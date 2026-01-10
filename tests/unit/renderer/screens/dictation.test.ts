@@ -214,7 +214,7 @@ test('Copies to clipboard when enabled', async () => {
   await wrapper.vm.transcribeAndInsert(new Blob())
 
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('transcribed text')
-  expect(window.api.transcribe.insert).toHaveBeenCalledWith('transcribed text')
+  expect(window.api.dictation.close).toHaveBeenCalledWith('transcribed text', null)
 })
 
 test('Does not copy to clipboard when disabled', async () => {
@@ -224,7 +224,7 @@ test('Does not copy to clipboard when disabled', async () => {
   await wrapper.vm.transcribeAndInsert(new Blob())
 
   expect(window.api.clipboard.writeText).not.toHaveBeenCalled()
-  expect(window.api.transcribe.insert).toHaveBeenCalledWith('transcribed text')
+  expect(window.api.dictation.close).toHaveBeenCalledWith('transcribed text', null)
 })
 
 test('Closes window after transcription', async () => {
@@ -232,7 +232,7 @@ test('Closes window after transcription', async () => {
 
   await wrapper.vm.transcribeAndInsert(new Blob())
 
-  expect(window.api.dictation.close).toHaveBeenCalled()
+  expect(window.api.dictation.close).toHaveBeenCalledWith('transcribed text', null)
 })
 
 test('Handles show event with sourceApp', async () => {
