@@ -874,6 +874,9 @@
       "title": "Dodatkowy parametr"
     }
   },
+  "dictation": {
+    "hint": "Naciśnij Spację lub Esc, aby zatrzymać dyktowanie"
+  },
   "docRepo": {
     "config": {
       "characters": "znaki",
@@ -3021,6 +3024,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Użycie: Podświetl tekst, naciśnij skrót klawiaturowy, a następnie wybierz polecenie AI.",
+      "audioBooth": "@:{'tray.menu.audioBooth'}",
       "clearAll": "Wyczyść wszystkie skróty",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
@@ -3069,6 +3073,13 @@
       "mistralApiKeyReminder": "Upewnij się, że wprowadziłeś swój klucz API Mistral w panelu Modele.",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Upewnij się, że wprowadziłeś swój klucz API OpenAI w panelu Modele.",
+      "quickDictation": {
+        "appearance": "Wygląd",
+        "appearanceNotch": "Wcięcie (na górze ekranu)",
+        "appearancePanel": "Panel (na dole ekranu)",
+        "copyToClipboard": "Automatycznie kopiuj dyktowany tekst do schowka",
+        "escapeHint": "Naciśnij Spację lub Esc, aby zatrzymać nagrywanie i rozpocząć transkrypcję.<br/>Podwójne naciśnięcie Esc anuluje."
+      },
       "selectModel": "Wybór modelu",
       "silenceDetection": "Wykrywanie ciszy",
       "silenceOptions": {
@@ -3084,9 +3095,12 @@
       },
       "spokenLanguage": "Język mówiony",
       "tabs": {
+        "quickDictation": "Szybkie dyktowanie",
         "speechToText": "Zamiana mowy na tekst",
         "textToSpeech": "Zamiana tekstu na mowę"
       },
+      "test": "Test",
+      "testPlaceholder": "Kliknij Test, aby rozpocząć nagrywanie…",
       "tts": {
         "groqAcceptTermsReminder": "Musisz <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">zaakceptować warunki i zasady</a>, aby korzystać z modelu Groq.",
         "kokoroReminder": "Pod warunkiem",
@@ -3174,13 +3188,14 @@
     "spaceToTalk": "Naciśnij i przytrzymaj spację, aby mówić",
     "summarize": "Podsumuj",
     "summarizePrompt": "Podsumuj tekst zwięźle, używając tego samego języka, w którym jest napisany, prostym i jasnym językiem, zachowując ten sam czas. Nie zwracaj niczego poza podsumowaniem. Nie umieszczaj odpowiedzi w cudzysłowach.",
-    "title": "Zamiana mowy na tekst",
+    "title": "Kabina audio",
     "translate": "Przetłumacz na…",
     "translatePrompt": "Przetłumacz poniższy tekst na {lang}. Nie zwracaj niczego poza tłumaczeniem. Nie umieszczaj odpowiedzi w cudzysłowach.",
     "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
+      "audioBooth": "@:{'transcribe.title'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "httpServer": "🌐 Serwer HTTP działa na porcie {port}",
       "installUpdate": "Zainstaluj aktualizację i uruchom ponownie...",

@@ -139,6 +139,16 @@ export default class {
         click: () => window.openDesignStudioWindow(),
       },
       {
+        label: t('tray.menu.audioBooth'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.audioBooth),
+        click: () => window.openAudioBooth(),
+      },
+      {
+        label: t('tray.menu.voiceMode'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.realtime),
+        click: () => window.openRealtimeChatWindow(),
+      },
+      {
         type: 'separator'
       },
       {
@@ -150,16 +160,6 @@ export default class {
         label: t('tray.menu.startDictation'),
         accelerator: shortcuts.shortcutAccelerator(configShortcuts?.dictation),
         click: () => Transcriber.initTranscription(),
-      },
-      {
-        label: t('tray.menu.audioBooth'),
-        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.audioBooth),
-        click: () => window.openAudioBooth(),
-      },
-      {
-        label: t('tray.menu.voiceMode'),
-        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.realtime),
-        click: () => window.openRealtimeChatWindow(),
       },
       {
         type: 'separator'
