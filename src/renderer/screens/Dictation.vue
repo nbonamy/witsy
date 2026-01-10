@@ -9,7 +9,7 @@
         <Loader />
         <Loader />
       </div>
-      <Waveform v-else :width="200" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state === 'recording'" />
+      <Waveform v-else :width="isNotchAppearance ? 240 : 200" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state === 'recording'" />
     </div>
     <div class="status">
       <CircleIcon v-if="state === 'recording'" class="recording" :size="16" color="red" fill="red" />
@@ -51,7 +51,6 @@ const appearance = ref<'panel' | 'notch'>('panel')
 const notchHeight = ref(0)
 const foregroundColorActive = ref('var(--text-color)')
 const foregroundColorInactive = ref('var(--icon-color)')
-let escapeTimeout: ReturnType<typeof setTimeout> | null = null
 let configHash = ''
 
 const isNotchAppearance = computed(() => appearance.value === 'notch')
@@ -179,9 +178,6 @@ onBeforeUnmount(() => {
   window.api.off('show', onShow)
   window.api.off('stop-and-transcribe', onStopAndTranscribe)
   window.api.off('file-modified', onFileModified)
-  if (escapeTimeout) {
-    clearTimeout(escapeTimeout)
-  }
   if (state.value === 'recording') {
     audioRecorder.stop()
   }
@@ -298,20 +294,8 @@ const onKeyDown = (event: KeyboardEvent) => {
     }
   } else if (event.key === 'Escape') {
     event.preventDefault()
-
     if (state.value === 'recording') {
-      if (escapeTimeout) {
-        // Double escape = cancel recording
-        clearTimeout(escapeTimeout)
-        escapeTimeout = null
-        cancelRecording()
-      } else {
-        // First escape = wait 200ms then stop and transcribe
-        escapeTimeout = setTimeout(() => {
-          escapeTimeout = null
-          stopAndTranscribe()
-        }, 200)
-      }
+      cancelRecording()
     } else if (state.value === 'idle' || state.value === 'initializing') {
       closeWindow()
     }
@@ -322,28 +306,45 @@ const onKeyDown = (event: KeyboardEvent) => {
 
 <style scoped>
 
-.dictation {
-  height: 100vh;
-  display: grid;
-  grid-template-columns: 32px 1fr 32px;
-  grid-template-rows: 1fr auto;
-  align-items: center;
+body {
   background-color: var(--source-app-bg-color);
+}
+
+.dictation {
+  
+  --padding-top: 1rem;
+  --padding-bottom: 0.5rem;
+  padding-top: var(--padding-top);
+  padding-bottom: var(--padding-bottom);
+  height: calc(100vh + var(--padding-top) + var(--padding-bottom));
+
+  background-color: var(--source-app-bg-color);
+  
+  display: grid;
+  grid-template-columns: 2rem 1fr 2rem;
+  grid-template-rows: 48px auto;
+  align-items: center;
   color: var(--source-app-text-color);
-  padding: 0 16px;
-  column-gap: 12px;
+  padding: 0 1rem;
+  column-gap: 0.75rem;
   -webkit-app-region: drag;
 }
 
 .dictation.notch {
-  padding-top: 8px;
-  height: calc(100vh - 8px);
+  
+  --padding-top: 0px;
+  --padding-bottom: 0.5rem;
+  padding-top: var(--padding-top);
+  padding-bottom: var(--padding-bottom);
+  height: calc(100vh - var(--padding-top) - var(--padding-bottom));
+  
+  grid-template-rows: 2rem 2rem auto;
   background-color: black;
   color: white;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
 }
 
 .dictation * {
@@ -385,6 +386,11 @@ const onKeyDown = (event: KeyboardEvent) => {
   }
 }
 
+.dictation.notch .visualizer {
+  grid-row: 2;
+  grid-column: 1 / -1;
+}
+
 .status {
   grid-column: 3;
   grid-row: 1;
@@ -392,19 +398,23 @@ const onKeyDown = (event: KeyboardEvent) => {
   align-items: center;
   justify-content: center;
 
-  .recording {
+  .recording, .idle {
     animation: pulse 1s ease-in-out infinite;
   }
 }
 
 .hint {
-  grid-column: 2;
   grid-row: 2;
-  font-size: 10.5px;
+  grid-column: 1 / -1;
+  margin-top: -2.5rem;
+  font-size: var(--font-size-12);
   text-align: center;
-  margin-top: -12px;
-  padding-bottom: 8px;
   color: var(--faded-text-color);
+}
+
+.dictation.notch .hint {
+  grid-row: 3;
+  margin-top: 0rem;
 }
 
 @keyframes pulse {
@@ -412,7 +422,7 @@ const onKeyDown = (event: KeyboardEvent) => {
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.75;
   }
 }
 

@@ -123,7 +123,7 @@ class AudioRecorder {
     this.mediaRecorder.onstop = async () => {
       console.log('[audio] recording stopped')
       const duration = new Date().getTime() - this.startRecordingTime
-      let mimeType = this.mediaRecorder.mimeType || 'audio/webm'
+      let mimeType = this.mediaRecorder?.mimeType || 'audio/webm'
       
       // Ensure we use audio MIME type for better compatibility
       if (mimeType === 'video/webm' || mimeType === 'video/webm;codecs=opus') {

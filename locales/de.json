@@ -3072,7 +3072,7 @@
         "textToSpeech": "Text zu Sprache"
       },
       "test": "Test",
-      "testPlaceholder": "Klicke auf Test, um die Aufnahme zu starten…",
+      "testPlaceholder": "Klicken Sie auf das Mikrofon, um die Diktierfunktion zu testen…",
       "tts": {
         "groqAcceptTermsReminder": "Sie müssen die <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">Allgemeinen Geschäftsbedingungen akzeptieren</a>, um das Groq-Modell zu verwenden.",
         "kokoroReminder": "Bereitgestellt",

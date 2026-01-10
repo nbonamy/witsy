@@ -3072,7 +3072,7 @@
         "textToSpeech": "Sintesi"
       },
       "test": "Test",
-      "testPlaceholder": "Fai clic su Test per avviare la registrazione…",
+      "testPlaceholder": "Fai clic sul microfono per testare la dettatura…",
       "tts": {
         "groqAcceptTermsReminder": "Devi <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accettare i termini e le condizioni</a> per utilizzare il modello Groq.",
         "kokoroReminder": "Fornito",

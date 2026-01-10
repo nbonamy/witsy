@@ -874,7 +874,7 @@
     }
   },
   "dictation": {
-    "hint": "Hit Space or Escape to stop dictation"
+    "hint": "Space to stop dictation - Esc to Cancel"
   },
   "docRepo": {
     "config": {
@@ -3101,7 +3101,7 @@
         "textToSpeech": "Text-to-Speech"
       },
       "test": "Test",
-      "testPlaceholder": "Click Test to start recording…",
+      "testPlaceholder": "Click the microphone to test dictation…",
       "tts": {
         "groqAcceptTermsReminder": "You need to <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accept the terms and conditions</a> to use the Groq model.",
         "kokoroReminder": "Provided",

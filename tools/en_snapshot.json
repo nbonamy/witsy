@@ -1989,7 +1989,7 @@
   "settings.voice.tabs.speechToText": "Speech-to-Text",
   "settings.voice.tabs.textToSpeech": "Text-to-Speech",
   "settings.voice.test": "Test",
-  "settings.voice.testPlaceholder": "Click Test to start recording…",
+  "settings.voice.testPlaceholder": "Click the microphone to test dictation…",
   "settings.voice.tts.groqAcceptTermsReminder": "You need to <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accept the terms and conditions</a> to use the Groq model.",
   "settings.voice.tts.kokoroReminder": "Provided",
   "settings.voice.tts.playbackError": "Failed to play audio. Please check your TTS configuration.",
