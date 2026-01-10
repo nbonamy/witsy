@@ -59,7 +59,7 @@ test('Creates tray', async () => {
   expect((Menu.buildFromTemplate as Mock).mock.calls[0][0].map((item: any) => item.label)).toEqual([
     'tray.menu.mainWindow', 'tray.menu.quickPrompt', 'tray.menu.runAiCommand', undefined,
     'tray.menu.scratchpad', 'tray.menu.designStudio', 'tray.menu.audioBooth', 'tray.menu.voiceMode', undefined,
-    'tray.menu.readAloud', 'tray.menu.startDictation', undefined,
+    'tray.menu.startDictation', 'tray.menu.readAloud', undefined,
     'tray.menu.settings', undefined,
     // 'tray.menu.httpServer', undefined,
     'tray.menu.quit'

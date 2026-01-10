@@ -23,7 +23,7 @@ const getWindowBounds = (appearance: 'panel' | 'notch') => {
   const useNotch = appearance === 'notch' && hasNotch();
   const width = 320;
   const notchPadding = 16;
-  let height = 64;
+  let height = useNotch ? 80 : 64;
 
   let x: number;
   let y: number;
@@ -62,7 +62,7 @@ export const prepareDictationWindow = (): void => {
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
-    resizable: false,
+    resizable: true,
     hiddenInMissionControl: true,
     transparent: useNotch,
     enableLargerThanScreen: useNotch,

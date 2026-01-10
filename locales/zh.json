@@ -3094,7 +3094,7 @@
         "textToSpeech": "文本转语音"
       },
       "test": "测试",
-      "testPlaceholder": "点击“测试”开始录制…",
+      "testPlaceholder": "点击麦克风测试听写…",
       "tts": {
         "groqAcceptTermsReminder": "您需要<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">接受条款和条件</a>以使用 Groq 模型。",
         "kokoroReminder": "已提供",

@@ -152,14 +152,14 @@ export default class {
         type: 'separator'
       },
       {
-        label: t('tray.menu.readAloud'),
-        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud),
-        click: () => ReadAloud.read(this.app),
-      },
-      {
         label: t('tray.menu.startDictation'),
         accelerator: shortcuts.shortcutAccelerator(configShortcuts?.dictation),
         click: () => Transcriber.initTranscription(),
+      },
+      {
+        label: t('tray.menu.readAloud'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud),
+        click: () => ReadAloud.read(this.app),
       },
       {
         type: 'separator'

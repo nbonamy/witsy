@@ -3100,7 +3100,7 @@
         "textToSpeech": "テキスト読み上げ"
       },
       "test": "テスト",
-      "testPlaceholder": "「テスト」をクリックして録音を開始…",
+      "testPlaceholder": "マイクをクリックして音声入力をテストしてください…",
       "tts": {
         "groqAcceptTermsReminder": "Groqモデルを使用するには、<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">利用規約に同意する</a>必要があります。",
         "kokoroReminder": "提供元",

@@ -3100,7 +3100,7 @@
         "textToSpeech": "Zamiana tekstu na mowę"
       },
       "test": "Test",
-      "testPlaceholder": "Kliknij Test, aby rozpocząć nagrywanie…",
+      "testPlaceholder": "Kliknij mikrofon, aby przetestować dyktowanie…",
       "tts": {
         "groqAcceptTermsReminder": "Musisz <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">zaakceptować warunki i zasady</a>, aby korzystać z modelu Groq.",
         "kokoroReminder": "Pod warunkiem",
