@@ -6,8 +6,8 @@ export default class Transcriber {
 
   static initTranscription = async (): Promise<void> => {
 
-    // if dictation window is already open, tell it to stop and transcribe
-    if (window.dictationWindow && !window.dictationWindow.isDestroyed()) {
+    // if dictation window is already open and visible, tell it to stop and transcribe
+    if (window.dictationWindow && !window.dictationWindow.isDestroyed() && window.dictationWindow.isVisible()) {
       window.dictationWindow.webContents.send('stop-and-transcribe');
       return;
     }

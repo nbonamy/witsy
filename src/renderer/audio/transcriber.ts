@@ -33,6 +33,14 @@ class Transcriber {
     await this.engine.initialize()
   }
 
+  reinitialize() {
+    // dispose of old engine
+    if (this.engine && 'dispose' in this.engine) {
+      (this.engine as any).dispose()
+    }
+    this.engine = null
+  }
+
   get ready(): boolean {
     return this.engine != null && this.engine.isReady()
   }
@@ -89,8 +97,10 @@ class Transcriber {
 }
 
 export default function useTranscriber(config: Configuration) {
+  const transcriber = new Transcriber(config)
   return {
-    transcriber: new Transcriber(config),
+    transcriber,
+    reinitialize: () => transcriber.reinitialize(),
     processStreamingError: async (chunk: StreamingChunkError) => {
 
       // process
