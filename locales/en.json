@@ -873,6 +873,9 @@
       "title": "Extra Parameter"
     }
   },
+  "dictation": {
+    "hint": "Hit Space or Escape to stop dictation"
+  },
   "docRepo": {
     "config": {
       "characters": "characters",
@@ -2131,8 +2134,7 @@
       "deleteMedia": "Delete Media",
       "selectAll": "Select All",
       "startDictation": "Start Dictation",
-      "title": "Edit",
-      "transcribe": "@:{'transcribe.title'}"
+      "title": "Edit"
     },
     "file": {
       "agentForge": "@:{'agent.forge.title'}",
@@ -3072,6 +3074,13 @@
       "mistralApiKeyReminder": "Make sure you enter your Mistral API key in the Models pane.",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
+      "quickDictation": {
+        "appearance": "Appearance",
+        "appearanceNotch": "Notch (top of screen)",
+        "appearancePanel": "Panel (bottom of screen)",
+        "copyToClipboard": "Automatically copy dictated text to clipboard",
+        "escapeHint": "Press Space or Escape to stop recording and transcribe.<br/>Double-press Escape to cancel."
+      },
       "selectModel": "Select a model",
       "silenceDetection": "Silence Detection",
       "silenceOptions": {
@@ -3091,13 +3100,8 @@
         "speechToText": "Speech-to-Text",
         "textToSpeech": "Text-to-Speech"
       },
-      "quickDictation": {
-        "appearance": "Appearance",
-        "appearancePanel": "Panel (bottom of screen)",
-        "appearanceNotch": "Notch (top of screen)",
-        "copyToClipboard": "Automatically copy dictated text to clipboard",
-        "escapeHint": "Press Escape once to stop recording and transcribe.<br/>Double-press Escape to cancel."
-      },
+      "test": "Test",
+      "testPlaceholder": "Click Test to start recording…",
       "tts": {
         "groqAcceptTermsReminder": "You need to <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accept the terms and conditions</a> to use the Groq model.",
         "kokoroReminder": "Provided",
@@ -3106,8 +3110,6 @@
         "serviceDisclaimer": "The service may stop working at any point in time.",
         "voice": "@:{'common.voice'}"
       },
-      "test": "Test",
-      "testPlaceholder": "Click Test to start recording…",
       "useWebGpu": "Use WebGPU",
       "verificationComplete": "Verification completed!",
       "verifying": "Verifying: {percent}%"
