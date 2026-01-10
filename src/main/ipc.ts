@@ -48,6 +48,7 @@ import * as shortcuts from './shortcuts';
 import * as text from './text';
 import * as webview from './webview';
 import * as window from './window';
+import * as sttApple from './stt_apple';
 import * as workspace from './workspace';
 
 import { AGENT_API_BASE_PATH } from './agent_webhook';
@@ -568,6 +569,10 @@ export const installIpc = (
 
   ipcMain.on(IPC.TRANSCRIBE.INSERT, async (_, payload) => {
     await Transcriber.insertTranscription(payload);
+  });
+
+  ipcMain.handle(IPC.TRANSCRIBE.APPLE_CLI, async (_, audioBlob: Buffer, options?: sttApple.AppleTranscribeOptions) => {
+    return await sttApple.transcribeWithAppleCLI(audioBlob, options);
   });
 
   ipcMain.on(IPC.DOCREPO.OPEN, () => {

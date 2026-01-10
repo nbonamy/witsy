@@ -170,6 +170,7 @@ export const DICTATION = {
 
 export const TRANSCRIBE = {
   INSERT: 'transcribe-insert',
+  APPLE_CLI: 'transcribe-apple-cli',
 } as const;
 
 export const MARKDOWN = {

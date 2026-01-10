@@ -81,6 +81,7 @@ const config: ForgeConfig = {
       'assets/icon.ico',
       'assets/gladia.png',
       'assets/speechmatics.png',
+      'assets/apple-speechanalyzer-cli',
       'dist/cli',
     ] as any,
     ...(process.env.TEST ? {} : osxPackagerConfig),
@@ -91,6 +92,7 @@ const config: ForgeConfig = {
             const binaries = [
               'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node',
               'node_modules/autolib/build/Release/autolib.node',
+              'assets/apple-speechanalyzer-cli',
             ];
 
             binaries.forEach((binary) => {
