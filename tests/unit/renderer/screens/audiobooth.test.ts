@@ -5,7 +5,7 @@ import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
 import { createI18nMock } from '@tests/mocks'
 import { emitEventMock } from '@root/vitest.setup'
 import { store } from '@services/store'
-import Transcribe from '@screens/Transcribe.vue'
+import AudioBooth from '@screens/AudioBooth.vue'
 import Waveform from '@components/Waveform.vue'
 import { TranscribeResponse } from '@renderer/voice/stt'
 
@@ -75,7 +75,7 @@ beforeEach(() => {
 })
 
 test('Renders correctly', () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('[name=autoStart]').exists()).toBe(true)
   expect(wrapper.find<HTMLInputElement>('[name=autoStart]').element.disabled).toBe(false)
@@ -101,7 +101,7 @@ test('Renders correctly', () => {
 
 test('Saves options', async () => {
   
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   
   await wrapper.find('[name=autoStart]').setValue(true)
   expect(store.config.stt.autoStart).toBe(true)
@@ -119,7 +119,7 @@ test('Saves options', async () => {
 })
 
 test('Records with button', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   await wrapper.find('.controls button[name=record]').trigger('click')
   await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
   expect(window.MediaRecorder.prototype.start).toHaveBeenCalled()
@@ -130,7 +130,7 @@ test('Records with button', async () => {
 })
 
 test('Records with icon', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   await wrapper.find('.visualizer .record').trigger('click')
   await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
   expect(window.MediaRecorder.prototype.start).toHaveBeenCalled()
@@ -142,7 +142,7 @@ test('Records with icon', async () => {
 })
 
 test('Records with space bar', async () => {
-  mount(Transcribe)
+  mount(AudioBooth)
   document.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }));
   await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
   expect(window.MediaRecorder.prototype.start).toHaveBeenCalled()
@@ -153,7 +153,7 @@ test('Records with space bar', async () => {
 })
 
 test('Records with push to talk', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   wrapper.vm.pushToTalk = true
   document.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }));
   await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
@@ -163,7 +163,7 @@ test('Records with push to talk', async () => {
 })
 
 test('Transcribes', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   await wrapper.vm.transcribe(new Blob())
   expect(wrapper.vm.transcription).toBe('transcribed')
   wrapper.vm.transcription += '.'
@@ -172,7 +172,7 @@ test('Transcribes', async () => {
 })
 
 test('Clears transcription', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   wrapper.vm.transcription = 'test'
   await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=clear]').trigger('click')
@@ -180,7 +180,7 @@ test('Clears transcription', async () => {
 })
 
 test('Inserts transcription', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   wrapper.vm.transcription = 'test'
   await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=insert]').trigger('click')
@@ -188,7 +188,7 @@ test('Inserts transcription', async () => {
 })
 
 test('Copies transcription', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   wrapper.vm.transcription = 'test'
   await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=copy]').trigger('click')
@@ -196,7 +196,7 @@ test('Copies transcription', async () => {
 })
 
 test('Summarizes transcription', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   wrapper.vm.transcription = 'test'
   await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=summarize]').trigger('click')
@@ -208,7 +208,7 @@ test('Summarizes transcription', async () => {
 })
 
 test('Translates transcription', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   wrapper.vm.transcription = 'test'
   await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=translate]').trigger('click')
@@ -221,7 +221,7 @@ test('Translates transcription', async () => {
 })
 
 test('Commands transcription', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   wrapper.vm.transcription = 'test'
   await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=commands]').trigger('click')
@@ -233,7 +233,7 @@ test('Commands transcription', async () => {
 })
 
 test('Keyboard shortcuts', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  const wrapper: VueWrapper<any> = mount(AudioBooth)
   wrapper.vm.transcription = 'test'
   await wrapper.vm.$nextTick()
 

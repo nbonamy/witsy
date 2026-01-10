@@ -339,6 +339,15 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
     delete config.shortcuts.chat
   }
 
+  // backwards compatibility: transcribe shortcut renamed to audioBooth
+  // @ts-expect-error backwards compatibility
+  if (config.shortcuts.transcribe) {
+    // @ts-expect-error backwards compatibility
+    config.shortcuts.audioBooth = config.shortcuts.transcribe
+    // @ts-expect-error backwards compatibility
+    delete config.shortcuts.transcribe
+  }
+
   // backwards compatibility: Python plugin runtime mode
   if (config.plugins.python) {
     // If runtime not specified in user overrides but binpath exists, set to native

@@ -7,7 +7,7 @@ import Main from '@screens/Main.vue'
 import CommandPicker from '@screens/CommandPicker.vue'
 import PromptAnywhere from '@screens/PromptAnywhere.vue'
 import RealtimeChat from '@screens/RealtimeChat.vue'
-import Transcribe from '@screens/Transcribe.vue'
+import Dictation from '@screens/Dictation.vue'
 import ReadAloud from '@screens/ReadAloud.vue'
 
 enableAutoUnmount(afterAll)
@@ -73,11 +73,11 @@ test('Renders realtime chat', () => {
   expect(wrapper.findComponent(RealtimeChat).exists()).toBe(true)
 })
 
-test('Renders transcriber', () => {
+test('Renders dictation', () => {
   // @ts-expect-error no-other-way
-  window.location = new URL('http://localhost/#/transcribe')
+  window.location = new URL('http://localhost/#/dictation')
   const wrapper = mount(App)
-  expect(wrapper.findComponent(Transcribe).exists()).toBe(true)
+  expect(wrapper.findComponent(Dictation).exists()).toBe(true)
 })
 
 test('Renders readaloud', () => {

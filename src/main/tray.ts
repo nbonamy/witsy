@@ -148,8 +148,13 @@ export default class {
       },
       {
         label: t('tray.menu.startDictation'),
-        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.transcribe),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.dictation),
         click: () => Transcriber.initTranscription(),
+      },
+      {
+        label: t('tray.menu.audioBooth'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.audioBooth),
+        click: () => window.openAudioBooth(),
       },
       {
         label: t('tray.menu.voiceMode'),

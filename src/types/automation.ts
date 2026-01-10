@@ -8,7 +8,8 @@ export interface ShortcutCallbacks {
   chat: () => void
   command: () => void
   readaloud: () => void
-  transcribe: () => void
+  dictation: () => void
+  audioBooth: () => void
   scratchpad: () => void
   realtime: () => void
   studio: () => void

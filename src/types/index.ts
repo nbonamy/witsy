@@ -14,7 +14,7 @@ import { A2APromptOpts, Agent, AgentRun } from './agents'
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
 
-export type MainWindowMode = 'none' | 'chat' | 'studio' | 'scratchpad' | 'dictation' | 'agents' | 'voice-mode' | 'docrepos' | 'mcp' | 'settings' | `webapp-${string}`
+export type MainWindowMode = 'none' | 'chat' | 'studio' | 'scratchpad' | 'booth' | 'agents' | 'voice-mode' | 'docrepos' | 'mcp' | 'settings' | `webapp-${string}`
 
 export type ScratchpadHeader = {
   uuid: string
@@ -461,6 +461,9 @@ declare global {
       },
       readaloud: {
         closePalette(sourceApp: Application): void
+      },
+      dictation: {
+        close(sourceApp: Application): void
       },
       whisper: {
         initialize(): void

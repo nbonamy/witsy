@@ -24,7 +24,7 @@
         <span>{{ t('scratchpad.title') }}</span>
       </MenuBarItem>
 
-      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')" v-if="store.isFeatureEnabled('dictation') && !isFeatureHidden('dictation')">
+      <MenuBarItem action="dictation" :active="mode === 'booth'" @click="emit('change', 'booth')" v-if="store.isFeatureEnabled('dictation') && !isFeatureHidden('dictation')">
         <MicIcon />
         <span>{{ t('transcribe.title') }}</span>
       </MenuBarItem>

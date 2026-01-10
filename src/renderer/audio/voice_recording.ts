@@ -58,7 +58,7 @@ export default function useVoiceRecording(options: VoiceRecordingOptions = {}) {
       if (state.value !== 'idle') return
 
       // Initialize transcriber
-      transcriber.initialize()
+      await transcriber.initialize()
 
       // Set up audio recorder with unified listener
       await audioRecorder.initialize({

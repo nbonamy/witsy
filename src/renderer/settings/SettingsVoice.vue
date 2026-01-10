@@ -23,21 +23,24 @@
 
 import { ref, computed, nextTick } from 'vue'
 import { t } from '@services/i18n'
-import { MicIcon, Volume2Icon } from 'lucide-vue-next'
+import { KeyboardIcon, MicIcon, Volume2Icon } from 'lucide-vue-next'
+import SettingsQuickDictation from './SettingsQuickDictation.vue'
 import SettingsTTS from './SettingsTTS.vue'
 import SettingsSTT from './SettingsSTT.vue'
 
-const current = ref('stt')
+const current = ref('quickDictation')
 const settings = ref(null)
 
 const available = computed(() => {
   return [
+    { id: 'quickDictation', label: t('settings.voice.tabs.quickDictation'), icon: KeyboardIcon },
     { id: 'stt', label: t('settings.voice.tabs.speechToText'), icon: MicIcon },
     { id: 'tts', label: t('settings.voice.tabs.textToSpeech'), icon: Volume2Icon },
   ]
 })
 
 const currentView = computed(() => {
+  if (current.value == 'quickDictation') return SettingsQuickDictation
   if (current.value == 'tts') return SettingsTTS
   if (current.value == 'stt') return SettingsSTT
 })

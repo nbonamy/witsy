@@ -34,12 +34,12 @@ beforeEach(async () => {
 test('should render', async () => {
   const tab = await switchToTab(wrapper, voiceIndex)
   expect(tab.find('.master-detail').exists()).toBeTruthy()
-  expect(tab.findComponent({ name: 'SettingsSTT' }).exists()).toBeTruthy()
+  expect(tab.findComponent({ name: 'SettingsQuickDictation' }).exists()).toBeTruthy()
 })
 
 test('stt settings', async () => {
   const tab = await switchToTab(wrapper, voiceIndex)
-  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(1)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(2)').trigger('click')
   const stt = tab.findComponent({ name: 'SettingsSTT' })
   expect(stt.find<HTMLSelectElement>('select[name=engine]').element.value).toBe('openai')
 
@@ -109,10 +109,10 @@ test('stt vocabulary load', async () => {
 
   store.config.stt.vocabulary = [
     { text: 'word1' }, { text: 'word2' }, { text: 'word3' }
-  ]  
+  ]
 
   const tab = await switchToTab(wrapper, voiceIndex)
-  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(1)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(2)').trigger('click')
   const stt = tab.findComponent({ name: 'SettingsSTT' })
 
   expect(stt.find<HTMLTextAreaElement>('textarea[name=vocabulary]').element.value).toBe('word1\nword2\nword3')
@@ -121,7 +121,7 @@ test('stt vocabulary load', async () => {
 
 test('tts settings', async () => {
   const tab = await switchToTab(wrapper, voiceIndex)
-  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(2)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(3)').trigger('click')
   const tts = tab.findComponent({ name: 'SettingsTTS' })
 
   // model

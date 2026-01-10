@@ -10,10 +10,10 @@ import { Locale } from 'vue-i18n'
 import useAppearanceTheme from './composables/appearance_theme'
 import Main from './screens/Main.vue'
 import CommandPicker from './screens/CommandPicker.vue'
+import Dictation from './screens/Dictation.vue'
 import PromptAnywhere from './screens/PromptAnywhere.vue'
 import RealtimeChat from './screens/RealtimeChat.vue'
 import ReadAloud from './screens/ReadAloud.vue'
-import Transcribe from './screens/Transcribe.vue'
 import ComputerStatus from './screens/ComputerStatus.vue'
 import Debug from './screens/Debug.vue'
 import i18n, { i18nLlm, t } from './services/i18n'
@@ -29,11 +29,11 @@ const appearanceTheme = useAppearanceTheme()
 const routes: { [key: string]: any } = {
   '/': Main,
   '/chat': Main,
-  '/commands': CommandPicker,
   '/prompt': PromptAnywhere,
+  '/commands': CommandPicker,
+  '/dictation': Dictation,
   '/readaloud': ReadAloud,
   '/realtime': RealtimeChat,
-  '/transcribe': Transcribe,
   '/computer': ComputerStatus,
   '/debug': Debug,
 }

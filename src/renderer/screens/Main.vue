@@ -10,7 +10,7 @@
       <Chat ref="chat" :style="{ display: mode === 'chat' ? undefined : 'none' }" :extra="viewParams" />
       <DesignStudio :style="{ display: mode === 'studio' ? undefined : 'none' }" />
       <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
-      <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
+      <AudioBooth v-if="mode === 'booth'" ref="audioBooth" />
     
       <AgentForge v-if="mode === 'agents'" />
       <McpServers v-if="mode === 'mcp'" />
@@ -70,7 +70,7 @@ import Onboarding from '@screens/Onboarding.vue'
 import RealtimeChat from '@screens/RealtimeChat.vue'
 import ScratchPad from '@screens/ScratchPad.vue'
 import Settings from '@screens/Settings.vue'
-import Transcribe from '@screens/Transcribe.vue'
+import AudioBooth from '@screens/AudioBooth.vue'
 import WebAppViewer from '@screens/WebAppViewer.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
@@ -82,7 +82,7 @@ const { emitEvent, onEvent } = useEventBus()
 const { loadedWebapps, loadWebapp, updateLastUsed, onNavigate, setupEviction, cleanup } = useWebappManager()
 
 const chat = ref<typeof Chat>(null)
-const transcribe = ref<typeof Transcribe>(null)
+const audioBooth = ref<typeof AudioBooth>(null)
 const realtime = ref<typeof RealtimeChat>(null)
 const settings = ref<typeof Settings>(null)
 const showOnboarding = ref(false)
@@ -210,8 +210,8 @@ const onMode = async (next: MenuBarMode) => {
 const onDictate = () => {
   if (mode.value === 'chat') {
     chat.value?.startDictation()
-  } else if (mode.value === 'dictation') {
-    transcribe.value?.startDictation()
+  } else if (mode.value === 'booth') {
+    audioBooth.value?.startDictation()
   } else if (mode.value === 'voice-mode') {
     realtime.value?.startDictation()
   }

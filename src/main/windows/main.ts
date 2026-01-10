@@ -18,7 +18,7 @@ export const getMainWindowMode = (): MainWindowMode => mainWindowMode
 
 export const mainWindowCanDictate = (): boolean => {
   return mainWindowMode === 'chat' ||
-    mainWindowMode === 'dictation' ||
+    mainWindowMode === 'booth' ||
     mainWindowMode === 'voice-mode'
 }
 

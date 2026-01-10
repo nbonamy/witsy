@@ -110,7 +110,10 @@
       "shift": true,
       "meta": true
     },
-    "transcribe": {
+    "dictation": {
+      "key": "none"
+    },
+    "audioBooth": {
       "key": "Space",
       "shift": true,
       "ctrl": true,
@@ -161,9 +164,16 @@
     "whisper": {
       "gpu": true
     },
+    "parakeet": {
+      "gpu": true
+    },
     "soniox": {
       "cleanup": false,
       "audioFormat": "auto"
+    },
+    "quickDictation": {
+      "appearance": "panel",
+      "copyToClipboard": false
     }
   },
   "tts": {

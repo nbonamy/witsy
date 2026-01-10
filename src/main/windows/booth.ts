@@ -1,11 +1,11 @@
 
 import { openMainWindow } from './main';
 
-export const openTranscribePalette = (): void => {
+export const openAudioBooth = (): void => {
 
   openMainWindow({
     queryParams: {
-      view: 'dictation',
+      view: 'booth',
     }
   });
   

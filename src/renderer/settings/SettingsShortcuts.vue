@@ -36,7 +36,11 @@
       </div>
       <div class="form-field">
         <label>{{ t('settings.shortcuts.dictation') }}</label>
-        <InputShortcut v-model="transcribe" @change="save" />
+        <InputShortcut v-model="dictation" @change="save" />
+      </div>
+      <div class="form-field">
+        <label>{{ t('settings.shortcuts.audioBooth') }}</label>
+        <InputShortcut v-model="audioBooth" @change="save" />
       </div>
       <div class="form-field">
         <label>{{ t('settings.shortcuts.voiceMode') }}</label>
@@ -62,7 +66,8 @@ const chat = ref(null)
 const scratchpad = ref(null)
 const command = ref(null)
 const readaloud = ref(null)
-const transcribe = ref(null)
+const dictation = ref(null)
+const audioBooth = ref(null)
 const realtime = ref(null)
 const studio = ref(null)
 
@@ -72,7 +77,8 @@ const load = () => {
   scratchpad.value = store.config.shortcuts.scratchpad
   command.value = store.config.shortcuts.command
   readaloud.value = store.config.shortcuts.readaloud
-  transcribe.value = store.config.shortcuts.transcribe
+  dictation.value = store.config.shortcuts.dictation
+  audioBooth.value = store.config.shortcuts.audioBooth
   realtime.value = store.config.shortcuts.realtime
   studio.value = store.config.shortcuts.studio
 }
@@ -83,7 +89,8 @@ const clearAll = () => {
   scratchpad.value = null
   command.value = null
   readaloud.value = null
-  transcribe.value = null
+  dictation.value = null
+  audioBooth.value = null
   realtime.value = null
   studio.value = null
   save()
@@ -95,7 +102,8 @@ const save = () => {
   store.config.shortcuts.scratchpad = scratchpad.value
   store.config.shortcuts.command = command.value
   store.config.shortcuts.readaloud = readaloud.value
-  store.config.shortcuts.transcribe = transcribe.value
+  store.config.shortcuts.dictation = dictation.value
+  store.config.shortcuts.audioBooth = audioBooth.value
   store.config.shortcuts.realtime = realtime.value
   store.config.shortcuts.studio = studio.value
   store.saveSettings()
@@ -112,9 +120,9 @@ defineExpose({ load })
 .tab-content:deep() {
 
   --label-width: 190px;
-  
+
   max-width: 600px;
-  
+
   .form-field {
 
     align-items: center;
