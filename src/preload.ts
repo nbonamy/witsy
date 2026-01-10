@@ -185,7 +185,7 @@ contextBridge.exposeInMainWorld(
       closePalette: (sourceApp: Application): void => { return ipcRenderer.send(IPC.READALOUD.CLOSE_PALETTE, sourceApp) },
     },
     dictation: {
-      close: (sourceApp: Application): void => { return ipcRenderer.send(IPC.DICTATION.CLOSE, sourceApp) },
+      close: (text: string, sourceApp: Application): void => { return ipcRenderer.send(IPC.DICTATION.CLOSE, { text, sourceApp }) },
     },
     transcribe: {
       insert(text: string): void { return ipcRenderer.send(IPC.TRANSCRIBE.INSERT, text) },
