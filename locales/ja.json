@@ -874,6 +874,9 @@
       "title": "追加パラメータ"
     }
   },
+  "dictation": {
+    "hint": "音声入力を停止するにはスペースキーまたはEscキーを押してください"
+  },
   "docRepo": {
     "config": {
       "characters": "文字",
@@ -3021,6 +3024,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "使用方法：テキストをハイライトし、キーボードショートカットを押し、AIコマンドを選択してください",
+      "audioBooth": "@:{'tray.menu.audioBooth'}",
       "clearAll": "すべてのショートカットをクリア",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
@@ -3069,6 +3073,13 @@
       "mistralApiKeyReminder": "モデルペインにMistralのAPIキーを入力してください。",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "モデルペインにOpenAI APIキーを入力していることを確認してください。",
+      "quickDictation": {
+        "appearance": "外観",
+        "appearanceNotch": "ノッチ（画面上部）",
+        "appearancePanel": "パネル（画面下部）",
+        "copyToClipboard": "音声入力したテキストを自動的にクリップボードにコピーする",
+        "escapeHint": "録音を停止して文字起こしするにはスペースキーまたはEscキーを押してください。<br/>Escキーを2回押すとキャンセルします。"
+      },
       "selectModel": "モデルを選択",
       "silenceDetection": "無音検出",
       "silenceOptions": {
@@ -3084,9 +3095,12 @@
       },
       "spokenLanguage": "話される言語",
       "tabs": {
+        "quickDictation": "クイック音声入力",
         "speechToText": "音声認識",
         "textToSpeech": "テキスト読み上げ"
       },
+      "test": "テスト",
+      "testPlaceholder": "「テスト」をクリックして録音を開始…",
       "tts": {
         "groqAcceptTermsReminder": "Groqモデルを使用するには、<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">利用規約に同意する</a>必要があります。",
         "kokoroReminder": "提供元",
@@ -3174,13 +3188,14 @@
     "spaceToTalk": "スペースを長押しして話す",
     "summarize": "要約する",
     "summarizePrompt": "テキストを簡潔に要約し、書かれているのと同じ言語を使用し、平易でシンプルな言葉で、同じ時制を保ってください。要約以外は何も返さないでください。応答を引用符で囲まないでください。",
-    "title": "音声認識",
+    "title": "オーディオブース",
     "translate": "翻訳する…",
     "translatePrompt": "以下のテキストを{lang}に翻訳してください。翻訳以外は何も返さないでください。応答を引用符で囲まないでください。",
     "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
+      "audioBooth": "@:{'transcribe.title'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "httpServer": "🌐 ポート {port} で HTTP サーバーが稼働中",
       "installUpdate": "アップデートをインストールして再起動…",

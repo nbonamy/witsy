@@ -855,6 +855,9 @@
       "title": "Zusätzlicher Parameter"
     }
   },
+  "dictation": {
+    "hint": "Drücke Leertaste oder Escape, um das Diktat zu beenden"
+  },
   "docRepo": {
     "config": {
       "characters": "Zeichen",
@@ -2993,6 +2996,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination und wählen Sie dann einen KI-Befehl aus.",
+      "audioBooth": "@:{'tray.menu.audioBooth'}",
       "clearAll": "Alle Tastenkombinationen löschen",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
@@ -3041,6 +3045,13 @@
       "mistralApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren Mistral API-Schlüssel im Bereich Modelle eingeben.",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren OpenAI-API-Schlüssel im Modellbereich eingegeben haben.",
+      "quickDictation": {
+        "appearance": "Erscheinungsbild",
+        "appearanceNotch": "Notch (oben am Bildschirm)",
+        "appearancePanel": "Panel (unten auf dem Bildschirm)",
+        "copyToClipboard": "Diktierten Text automatisch in die Zwischenablage kopieren",
+        "escapeHint": "Drücke Leertaste oder Escape, um die Aufnahme zu beenden und die Transkription zu starten.<br/>Drücke Escape zweimal, um abzubrechen."
+      },
       "selectModel": "Wählen Sie ein Modell aus",
       "silenceDetection": "Stille-Erkennung",
       "silenceOptions": {
@@ -3056,9 +3067,12 @@
       },
       "spokenLanguage": "Gesprochene Sprache",
       "tabs": {
+        "quickDictation": "Schnelles Diktat",
         "speechToText": "Sprache zu Text",
         "textToSpeech": "Text zu Sprache"
       },
+      "test": "Test",
+      "testPlaceholder": "Klicke auf Test, um die Aufnahme zu starten…",
       "tts": {
         "groqAcceptTermsReminder": "Sie müssen die <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">Allgemeinen Geschäftsbedingungen akzeptieren</a>, um das Groq-Modell zu verwenden.",
         "kokoroReminder": "Bereitgestellt",
@@ -3146,13 +3160,14 @@
     "spaceToTalk": "Drücken und halten Sie die Leertaste, um zu sprechen",
     "summarize": "Zusammenfassen",
     "summarizePrompt": "Fassen Sie den Text kurz und prägnant zusammen, verwenden Sie die gleiche Sprache, in der er geschrieben ist, einfache und klare Sprache und behalten Sie die gleiche Zeitform bei. Geben Sie nichts anderes als die Zusammenfassung zurück. Fassen Sie die Antworten nicht in Anführungszeichen.",
-    "title": "Diktiermodus",
+    "title": "Aufnahmekabine",
     "translate": "Übersetzen in…",
     "translatePrompt": "Übersetzen Sie den folgenden Text ins {lang}. Geben Sie nichts anderes als die Übersetzung zurück. Fassen Sie die Antworten nicht in Anführungszeichen.",
     "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
+      "audioBooth": "@:{'transcribe.title'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "httpServer": "🌐 HTTP-Server läuft auf Port {port}",
       "installUpdate": "Update installieren und neu starten…",

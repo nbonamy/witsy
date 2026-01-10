@@ -874,6 +874,9 @@
       "title": "额外参数"
     }
   },
+  "dictation": {
+    "hint": "按空格或 Esc 停止听写"
+  },
   "docRepo": {
     "config": {
       "characters": "字符",
@@ -3015,6 +3018,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "使用方法：突出显示你的文本，按下键盘快捷键，然后选择一个 AI 命令",
+      "audioBooth": "@:{'tray.menu.audioBooth'}",
       "clearAll": "清除所有快捷键",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
@@ -3063,6 +3067,13 @@
       "mistralApiKeyReminder": "请确保在模型面板中输入您的Mistral API密钥。",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "确保你在模型面板中输入了 OpenAI API 密钥。",
+      "quickDictation": {
+        "appearance": "外观",
+        "appearanceNotch": "刘海（屏幕顶部）",
+        "appearancePanel": "面板（屏幕底部）",
+        "copyToClipboard": "自动将听写文本复制到剪贴板",
+        "escapeHint": "按空格或 Esc 停止录制并转录。<br/>连续按两次 Esc 取消。"
+      },
       "selectModel": "选择模型",
       "silenceDetection": "静音检测",
       "silenceOptions": {
@@ -3078,9 +3089,12 @@
       },
       "spokenLanguage": "口语语言",
       "tabs": {
+        "quickDictation": "快速听写",
         "speechToText": "语音转文本",
         "textToSpeech": "文本转语音"
       },
+      "test": "测试",
+      "testPlaceholder": "点击“测试”开始录制…",
       "tts": {
         "groqAcceptTermsReminder": "您需要<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">接受条款和条件</a>以使用 Groq 模型。",
         "kokoroReminder": "已提供",
@@ -3168,13 +3182,14 @@
     "spaceToTalk": "按住空格键开始讲话",
     "summarize": "总结",
     "summarizePrompt": "用简洁的方式总结文本，使用文本原有语言，语言平实简单，保持相同时态。只返回总结内容，不返回其他内容。答案不要添加引号。",
-    "title": "语音转文本",
+    "title": "音频录音室",
     "translate": "翻译成…",
     "translatePrompt": "将以下文本翻译成{lang}。只返回翻译内容，不返回其他内容。答案不要添加引号。",
     "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
+      "audioBooth": "@:{'transcribe.title'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "httpServer": "🌐 HTTP 服务器正在端口 {port} 运行",
       "installUpdate": "安装更新并重启…",

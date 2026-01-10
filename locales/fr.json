@@ -855,6 +855,9 @@
       "title": "Paramètre supplémentaire"
     }
   },
+  "dictation": {
+    "hint": "Appuyez sur Espace ou Échap pour arrêter la dictée"
+  },
   "docRepo": {
     "config": {
       "characters": "caractères",
@@ -2993,6 +2996,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Utilisation : Surlignez votre texte, appuyez sur le raccourci clavier puis choisissez une commande IA",
+      "audioBooth": "@:{'tray.menu.audioBooth'}",
       "clearAll": "Effacer tous les raccourcis",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
@@ -3041,6 +3045,13 @@
       "mistralApiKeyReminder": "Assurez-vous d'entrer votre clé API Mistral dans le volet Modèles.",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Assurez-vous d'entrer votre clé API OpenAI dans l'onglet Modèles.",
+      "quickDictation": {
+        "appearance": "Apparence",
+        "appearanceNotch": "Encoche (en haut de l'écran)",
+        "appearancePanel": "Panneau (en bas de l'écran)",
+        "copyToClipboard": "Copier automatiquement le texte dicté dans le presse-papiers",
+        "escapeHint": "Appuyez sur Espace ou Échap pour arrêter l'enregistrement et transcrire.<br/>Appuyez deux fois sur Échap pour annuler."
+      },
       "selectModel": "Sélectionner un modèle",
       "silenceDetection": "Détection du silence",
       "silenceOptions": {
@@ -3056,9 +3067,12 @@
       },
       "spokenLanguage": "Langue parlée",
       "tabs": {
+        "quickDictation": "Dictée rapide",
         "speechToText": "Dictée",
         "textToSpeech": "Synthèse"
       },
+      "test": "Tester",
+      "testPlaceholder": "Cliquez sur Tester pour commencer l'enregistrement…",
       "tts": {
         "groqAcceptTermsReminder": "Vous devez <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accepter les termes et conditions</a> pour utiliser le modèle Groq.",
         "kokoroReminder": "Fourni par",
@@ -3146,13 +3160,14 @@
     "spaceToTalk": "Appuyez et maintenez la barre d'espace pour parler",
     "summarize": "Résumé",
     "summarizePrompt": "Résumez le texte de manière concise, en utilisant la même langue dans laquelle il est écrit, un langage simple et clair, et en gardant le même temps. Ne retournez rien d'autre que le résumé. Ne mettez pas les réponses entre guillemets.",
-    "title": "Dictée Vocale",
+    "title": "Cabine audio",
     "translate": "Traduire en…",
     "translatePrompt": "Traduisez le texte suivant en {lang}. Ne retournez rien d'autre que la traduction. Ne mettez pas les réponses entre guillemets.",
     "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
+      "audioBooth": "@:{'transcribe.title'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "httpServer": "🌐 Serveur HTTP en fonctionnement sur le port {port}",
       "installUpdate": "Installer la mise à jour et redémarrer…",
