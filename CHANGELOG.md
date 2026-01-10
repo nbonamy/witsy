@@ -2,7 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.2] - WIP
+## [3.3.3] - WIP
+
+### Added
+- Parakeet WebGPU support
+- New quick dictation window (Speech-to-text renamed to Audio Booth)
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
+## [3.3.2] - 2025-01-08
 
 ### Added
 - CLI filesystem access and tool display fixes
