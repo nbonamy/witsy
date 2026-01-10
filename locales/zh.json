@@ -3103,7 +3103,7 @@
         "serviceDisclaimer": "该服务可能随时停止工作。",
         "voice": "@:{'common.voice'}"
       },
-      "useWebGpu": "使用 WebGPU",
+      "useWebGpu": "使用 GPU 加速",
       "verificationComplete": "验证完成！",
       "verifying": "正在验证：{percent}%"
     }

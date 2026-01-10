@@ -3109,7 +3109,7 @@
         "serviceDisclaimer": "このサービスはいつでも停止する可能性があります。",
         "voice": "@:{'common.voice'}"
       },
-      "useWebGpu": "WebGPUを使用する",
+      "useWebGpu": "GPUアクセラレーションを使用する",
       "verificationComplete": "検証完了！",
       "verifying": "検証中: {percent}%"
     }

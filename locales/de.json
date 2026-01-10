@@ -3081,7 +3081,7 @@
         "serviceDisclaimer": "Der Dienst kann jederzeit eingestellt werden.",
         "voice": "@:{'common.voice'}"
       },
-      "useWebGpu": "WebGPU verwenden",
+      "useWebGpu": "GPU-Beschleunigung verwenden",
       "verificationComplete": "Verifizierung abgeschlossen!",
       "verifying": "Verifying: {percent}%"
     }
