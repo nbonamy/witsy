@@ -143,7 +143,7 @@ test('Escape key stops and transcribes when recording', async () => {
   expect(wrapper.vm.state).toBe('idle')
   expect(mockAudioRecorder.stop).toHaveBeenCalled()
   expect(mockAudioRecorder.release).toHaveBeenCalled()
-  expect(window.api.dictation.close).toHaveBeenCalled()
+  expect(window.api.dictation.close).toHaveBeenCalledWith('', null)
   expect(mockTranscriber.endStreaming).not.toHaveBeenCalled()
 })
 

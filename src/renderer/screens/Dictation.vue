@@ -51,6 +51,7 @@ const appearance = ref<'panel' | 'notch'>('panel')
 const notchHeight = ref(0)
 const foregroundColorActive = ref('var(--text-color)')
 const foregroundColorInactive = ref('var(--icon-color)')
+const cancelled = ref(false)
 let configHash = ''
 
 const isNotchAppearance = computed(() => appearance.value === 'notch')
@@ -101,6 +102,7 @@ const onShow = async (params: any) => {
   updateColors()
 
   // start recording
+  cancelled.value = false
   await startRecording()
 
 }
@@ -221,7 +223,9 @@ const startRecording = async () => {
             return
           }
           // transcribe and insert
-          await transcribeAndInsert(audioBlob)
+          if (!cancelled.value) {
+            await transcribeAndInsert(audioBlob)
+          }
         }
 
       }
@@ -282,6 +286,7 @@ const closeWindow = (text?: string) => {
 
 const cancelRecording = () => {
   if (state.value !== 'recording') return
+  cancelled.value = true
   audioRecorder.stop()
   closeWindow()
 }
