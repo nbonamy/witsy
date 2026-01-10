@@ -1,6 +1,5 @@
 import { Configuration } from 'types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
-import { TRANSCRIBE } from '@/ipc_consts'
 
 export default class STTApple implements STTEngine {
 
@@ -93,7 +92,7 @@ export default class STTApple implements STTEngine {
       const arrayBuffer = await audioBlob.arrayBuffer()
 
       // Call main process IPC to run CLI
-      const result = await window.api.invoke(TRANSCRIBE.APPLE_CLI, arrayBuffer, {
+      const result = await window.api.transcribe.appleCli(arrayBuffer, {
         locale: this.config.stt.locale || '',
         live: false,
       })
