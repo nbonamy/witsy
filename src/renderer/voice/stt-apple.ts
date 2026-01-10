@@ -1,5 +1,6 @@
 import { Configuration } from 'types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
+import * as webmConverter from 'webm-to-wav-converter'
 
 export default class STTApple implements STTEngine {
 
@@ -88,8 +89,11 @@ export default class STTApple implements STTEngine {
 
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
     try {
-      // Convert Blob to ArrayBuffer (can be sent via IPC)
-      const arrayBuffer = await audioBlob.arrayBuffer()
+      // Convert to WAV format for Apple CLI compatibility
+      const wavBlob = await webmConverter.getWaveBlob(audioBlob, false)
+
+      // Convert to ArrayBuffer (can be sent via IPC)
+      const arrayBuffer = await wavBlob.arrayBuffer()
 
       // Call main process IPC to run CLI
       const result = await window.api.transcribe.appleCli(arrayBuffer, {
