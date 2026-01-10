@@ -30,11 +30,10 @@ import { Application } from 'types/automation'
 import { ExternalApp } from 'types'
 
 import { CircleIcon } from 'lucide-vue-next'
-import { L } from 'vitest/dist/chunks/reporters.d.BFLkQcL6'
 
 // init stuff
 store.loadSettings()
-const { transcriber } = useTranscriber(store.config)
+const { transcriber, reinitialize } = useTranscriber(store.config)
 const audioRecorder = useAudioRecorder(store.config)
 
 type State = 'idle' | 'initializing' | 'recording' | 'processing'
@@ -51,6 +50,7 @@ const notchHeight = ref(0)
 const foregroundColorActive = ref('var(--text-color)')
 const foregroundColorInactive = ref('var(--icon-color)')
 let escapeTimeout: ReturnType<typeof setTimeout> | null = null
+let configHash = ''
 
 const isNotchAppearance = computed(() => appearance.value === 'notch')
 
@@ -61,43 +61,69 @@ const iconData = computed(() => {
   return `data:${appInfo.value.icon.mimeType};base64,${appInfo.value.icon.contents}`
 })
 
+// compute a hash of the STT config to detect changes
+const getConfigHash = () => {
+  const stt = store.config.stt
+  return JSON.stringify({ engine: stt.engine, model: stt.model, locale: stt.locale })
+}
+
+const onShow = async (params: any) => {
+
+  // parse source app
+  if (params?.sourceApp) {
+    try {
+      sourceApp.value = JSON.parse(params.sourceApp)
+      if (sourceApp.value?.path) {
+        appInfo.value = window.api.file.getAppInfo(sourceApp.value.path)
+      }
+    } catch (error) {
+      console.error('Error parsing sourceApp', error)
+      sourceApp.value = null
+      appInfo.value = null
+    }
+  } else {
+    sourceApp.value = null
+    appInfo.value = null
+  }
+
+  // parse appearance
+  if (params?.appearance) {
+    appearance.value = params.appearance as 'panel' | 'notch'
+  }
+
+  // parse notch height
+  if (params?.notchHeight) {
+    notchHeight.value = parseInt(params.notchHeight)
+  }
+
+  // set colors based on appearance
+  updateColors()
+
+  // start recording
+  await startRecording()
+
+}
+
 const onStopAndTranscribe = () => {
   if (state.value === 'recording') {
     stopAndTranscribe()
   }
 }
 
-onMounted(async () => {
-
-  // parse source app from query params
-  if (props.extra?.sourceApp) {
-    try {
-      sourceApp.value = JSON.parse(props.extra.sourceApp)
-      if (sourceApp.value?.path) {
-        appInfo.value = window.api.file.getAppInfo(sourceApp.value.path)
-      }
-    } catch (error) {
-      console.error('Error parsing sourceApp', error)
+const onFileModified = (file: string) => {
+  if (file === 'settings') {
+    store.loadSettings()
+    // check if STT config changed
+    const newHash = getConfigHash()
+    if (newHash !== configHash) {
+      console.log('[dictation] STT config changed, reinitializing engine')
+      configHash = newHash
+      reinitialize()
     }
   }
+}
 
-  // parse appearance from query params
-  if (props.extra?.appearance) {
-    appearance.value = props.extra.appearance as 'panel' | 'notch'
-  }
-
-  // parse notch height from query params
-  if (props.extra?.notchHeight) {
-    notchHeight.value = parseInt(props.extra.notchHeight)
-  }
-
-  // keyboard events
-  document.addEventListener('keydown', onKeyDown)
-
-  // listen for stop-and-transcribe from main process (when shortcut pressed again)
-  window.api.on('stop-and-transcribe', onStopAndTranscribe)
-
-  // set colors based on appearance
+const updateColors = () => {
   if (appearance.value === 'notch') {
     foregroundColorInactive.value = '#888'
     foregroundColorActive.value = 'white'
@@ -113,15 +139,44 @@ onMounted(async () => {
       console.error('Error getting colors:', error)
     }
   }
+}
 
-  // auto-start recording
-  await startRecording()
+onMounted(async () => {
+
+  // store initial config hash
+  configHash = getConfigHash()
+
+  // keyboard events
+  document.addEventListener('keydown', onKeyDown)
+
+  // listen for show event from main process (when window is shown)
+  window.api.on('show', onShow)
+
+  // listen for stop-and-transcribe from main process (when shortcut pressed again)
+  window.api.on('stop-and-transcribe', onStopAndTranscribe)
+
+  // listen for settings changes
+  window.api.on('file-modified', onFileModified)
+
+  // pre-initialize the transcriber only (no microphone access yet)
+  // this loads the model so subsequent shows are faster
+  try {
+    await transcriber.initialize()
+  } catch (error) {
+    console.error('Error pre-initializing transcriber:', error)
+  }
+
+  // NOTE: Don't start recording here based on initial props
+  // The window may be created hidden (background prep), so we wait for
+  // explicit 'show' event from main process to start recording
 
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', onKeyDown)
+  window.api.off('show', onShow)
   window.api.off('stop-and-transcribe', onStopAndTranscribe)
+  window.api.off('file-modified', onFileModified)
   if (escapeTimeout) {
     clearTimeout(escapeTimeout)
   }
@@ -137,7 +192,7 @@ const startRecording = async () => {
 
   try {
 
-    // initialize the transcriber
+    // initialize the transcriber (will reuse if already initialized)
     await transcriber.initialize()
 
     // init our recorder
@@ -221,6 +276,12 @@ const transcribeAndInsert = async (audioBlob: Blob) => {
 }
 
 const closeWindow = () => {
+  // stop and release recording to free the microphone
+  if (state.value === 'recording') {
+    audioRecorder.stop()
+  }
+  audioRecorder.release()
+  state.value = 'idle'
   window.api.dictation.close(toRaw(sourceApp.value))
 }
 

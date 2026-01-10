@@ -358,7 +358,7 @@ test('Open Debug window', async () => {
 })
 
 test('Utilities', async () => {
-  expect(window.persistentWindows().length).toBe(3)
+  expect(window.persistentWindows().length).toBe(4)
   expect(window.areAllWindowsClosed()).toBe(false)
 })
 

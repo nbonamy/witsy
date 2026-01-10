@@ -4,6 +4,7 @@ import { CreateWindowOpts, ReleaseFocusOpts } from 'types/window';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, Display, screen, shell } from 'electron';
 import { promptAnywhereWindow } from './anywhere';
 import { commandPicker } from './commands';
+import { dictationWindow } from './dictation';
 import { mainWindow } from './main';
 import { wait } from '../utils';
 import MacosAutomator from '@main/automations/macos';
@@ -346,7 +347,7 @@ export const releaseFocus = async (opts?: ReleaseFocusOpts) => {
 };
 
 export const persistentWindows = (): BrowserWindow[] => {
-  return [ mainWindow, promptAnywhereWindow, commandPicker ]
+  return [ mainWindow, promptAnywhereWindow, commandPicker, dictationWindow ]
 }
 
 export const areAllWindowsClosed = () => {

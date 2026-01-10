@@ -330,6 +330,7 @@ app.whenReady().then(async () => {
     window.prepareMainWindow();
     window.preparePromptAnywhere();
     window.prepareCommandPicker();
+    window.prepareDictationWindow();
   }
 
 });
