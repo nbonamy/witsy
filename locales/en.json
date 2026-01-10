@@ -3110,7 +3110,7 @@
         "serviceDisclaimer": "The service may stop working at any point in time.",
         "voice": "@:{'common.voice'}"
       },
-      "useWebGpu": "Use WebGPU",
+      "useWebGpu": "Use GPU acceleration",
       "verificationComplete": "Verification completed!",
       "verifying": "Verifying: {percent}%"
     }

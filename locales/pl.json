@@ -3109,7 +3109,7 @@
         "serviceDisclaimer": "Usługa może przestać działać w dowolnym momencie.",
         "voice": "@:{'common.voice'}"
       },
-      "useWebGpu": "Użyj WebGPU",
+      "useWebGpu": "Włącz akcelerację GPU",
       "verificationComplete": "Weryfikacja zakończona!",
       "verifying": "Weryfikacja: {percent}%"
     }

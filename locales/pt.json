@@ -3103,7 +3103,7 @@
         "serviceDisclaimer": "O serviço pode parar de funcionar a qualquer momento.",
         "voice": "@:{'common.voice'}"
       },
-      "useWebGpu": "Usar WebGPU",
+      "useWebGpu": "Usar aceleração de GPU",
       "verificationComplete": "Verificação concluída!",
       "verifying": "Verificando: {percent}%"
     }
