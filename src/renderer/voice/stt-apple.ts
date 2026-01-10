@@ -62,7 +62,7 @@ export default class STTApple implements STTEngine {
 
   isReady(): boolean {
     // Check if we're on macOS 26+
-    if (process.platform !== 'darwin') {
+    if (window.api.platform !== 'darwin') {
       return false
     }
     // TODO: Add version check for macOS 26+
@@ -87,6 +87,7 @@ export default class STTApple implements STTEngine {
     callback?.({ status: 'ready', task: 'apple', model: 'SpeechAnalyzer' })
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
     try {
       // Convert to WAV format for Apple CLI compatibility
