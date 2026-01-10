@@ -23,6 +23,7 @@
     <span v-if="engine === 'openai'">{{ t('settings.voice.openaiApiKeyReminder') }}</span>
     <span v-if="engine === 'groq'">{{ t('settings.voice.groqApiKeyReminder') }}</span>
     <span v-if="engine === 'mistralai'">{{ t('settings.voice.mistralApiKeyReminder') }}</span>
+    <span v-if="engine === 'apple'">{{ t('settings.voice.appleRequiresMacOS26') }}</span>
   
     <div class="form-field" v-if="engine == 'falai'">
       <label>{{ t('settings.engines.apiKey') }}</label>
@@ -221,7 +222,7 @@ const isRecording = computed(() => voiceRecording.state.value === 'recording')
 const isProcessing = computed(() => voiceRecording.state.value === 'processing')
 const canTest = computed(() => {
   // local engines don't need API keys
-  if (engine.value === 'whisper' || engine.value === 'parakeet') {
+  if (engine.value === 'whisper' || engine.value === 'parakeet' || engine.value === 'apple') {
     return model.value?.length > 0
   }
   return isSTTReady(store.config)

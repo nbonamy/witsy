@@ -14,6 +14,7 @@ import STTParakeet from './stt-parakeet'
 import STTSoniox from './stt-soniox'
 import STTSpeechmatics from './stt-speechmatics'
 import STTWhisper from './stt-whisper'
+import STTApple from './stt-apple'
 
 export type DownloadStatus = {
   state: 'initiate'|'download'|'done'
@@ -110,9 +111,12 @@ export const isSTTReady = (config: Configuration): boolean => {
     }
   }
 
-  // other require api keys
-  if (!config.engines[config.stt.engine]?.apiKey?.length) {
-    return false
+  // apple and whisper don't need API keys
+  const noApiKeyEngines = ['apple', 'whisper', 'parakeet']
+  if (!noApiKeyEngines.includes(config.stt.engine)) {
+    if (!config.engines[config.stt.engine]?.apiKey?.length) {
+      return false
+    }
   }
 
   // last but not least: we need a model!
@@ -141,6 +145,7 @@ export const getSTTEngines = () => {
     { id: 'soniox', label: engineNames.soniox },
     { id: 'whisper', label: engineNames.whisper },
     { id: 'parakeet', label: engineNames.parakeet },
+    { id: 'apple', label: 'Apple' },
     { id: 'custom', label: 'Custom OpenAI' },
   ]
 }
@@ -170,6 +175,8 @@ export const getSTTModels = (engine: string) => {
     return STTParakeet.models
   } else if (engine === 'soniox') {
     return STTSoniox.models
+  } else if (engine === 'apple') {
+    return [{ id: 'SpeechAnalyzer', label: 'SpeechAnalyzer' }]
   } else if (engine === 'custom') {
     return []
   }
@@ -203,6 +210,8 @@ export const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTOpenAI(config, config.stt.customOpenAI.baseURL)
   } else if (engine === 'soniox') {
     return new STTSoniox(config)
+  } else if (engine === 'apple') {
+    return new STTApple(config)
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }
@@ -234,7 +243,9 @@ export const requiresDownload = (engine: string): boolean => {
   } else if (engine === 'custom') {
     return STTOpenAI.requiresDownload()
   } else if (engine === 'soniox') {
-  return STTSoniox.requiresDownload()
+    return STTSoniox.requiresDownload()
+  } else if (engine === 'apple') {
+    return STTApple.requiresDownload()
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }
