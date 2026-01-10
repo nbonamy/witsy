@@ -189,6 +189,9 @@ contextBridge.exposeInMainWorld(
     },
     transcribe: {
       insert(text: string): void { return ipcRenderer.send(IPC.TRANSCRIBE.INSERT, text) },
+      appleCli(audioData: ArrayBuffer, options?: { locale?: string; live?: boolean }): Promise<{ text: string; error?: string }> {
+        return ipcRenderer.invoke(IPC.TRANSCRIBE.APPLE_CLI, audioData, options)
+      },
     },
     markdown: {
       render: (markdown: string): string => { return ipcRenderer.sendSync(IPC.MARKDOWN.RENDER, markdown) },

@@ -471,6 +471,7 @@ declare global {
       },
       transcribe: {
         insert(text: string): void
+        appleCli(audioData: ArrayBuffer, options?: { locale?: string; live?: boolean }): Promise<{ text: string; error?: string }>
       },
       clipboard: {
         readText(): string
