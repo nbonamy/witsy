@@ -29,7 +29,15 @@
 
             <!-- Server Icon -->
             <div class="server-icon">
-              <LinkIcon />
+              <img
+                v-if="getFaviconUrl(server) && !failedFavicons.has(server.uuid)"
+                :src="getFaviconUrl(server)"
+                class="server-favicon"
+                alt="Server icon"
+                @error="onFaviconError(server.uuid)"
+                @load="onFaviconLoad($event, server.uuid)"
+              />
+              <LinkIcon v-else />
             </div>
 
             <!-- Server Content -->
@@ -173,6 +181,7 @@ const currentToolSelection = ref<ToolSelection>(null)
 const currentServer = ref<McpServer|null>(null)
 const testServerUuid = ref<string>('')
 const testServerTools = ref<McpTool[]>([])
+const failedFavicons = ref<Set<string>>(new Set())
 
 const emit = defineEmits([ 'edit', 'create', 'reload', 'restart', 'restart-server' ])
 
@@ -195,14 +204,69 @@ const getDescription = (server: McpServer) => {
     }
     return label
   }
-  
-  
+
+
   if (['http', 'sse'].includes(server.type)) return server.url
   if (server.url.includes('@smithery/cli')) {
-    const index = server.command === 'cmd' && server.url.startsWith('/c') ? 2 : 0 
+    const index = server.command === 'cmd' && server.url.startsWith('/c') ? 2 : 0
     return server.url.replace('-y @smithery/cli@latest run ', '').split(' ')[index]
   }
   if (server.type == 'stdio') return server.command.split(/[\\/]/).pop() + ' ' + server.url
+}
+
+const getFaviconUrl = (server: McpServer) => {
+  // Only show favicons for http/sse servers with URLs
+  if (!['http', 'sse'].includes(server.type) || !server.url) {
+    return null
+  }
+
+  try {
+    // Extract domain from URL
+    // Examples:
+    // https://mcp.asana.com/sse -> asana.com
+    // https://api.githubcopilot.com/mcp/ -> github.com
+    const url = new URL(server.url)
+    const hostname = url.hostname
+
+    // Remove common subdomains to get the main domain
+    const parts = hostname.split('.')
+    let domain = hostname
+
+    // If we have more than 2 parts (e.g., mcp.asana.com), try to extract the main domain
+    if (parts.length > 2) {
+      // Get the last two parts (domain.tld)
+      domain = parts.slice(-2).join('.')
+
+      // Special case for known domains that should keep subdomain
+      // e.g., api.githubcopilot.com should use githubcopilot.com
+      if (parts[0] === 'api' || parts[0] === 'mcp') {
+        domain = parts.slice(-2).join('.')
+      }
+    }
+
+    // Use Google's favicon service
+    return `https://s2.googleusercontent.com/s2/favicons?sz=48&domain_url=${encodeURIComponent(domain)}`
+
+  } catch {
+    return null
+  }
+}
+
+const onFaviconError = (serverUuid: string) => {
+  // Track failed favicons to fallback to LinkIcon
+  failedFavicons.value.add(serverUuid)
+}
+
+const onFaviconLoad = (event: Event, serverUuid: string) => {
+  const img = event.target as HTMLImageElement
+
+  // Google's favicon service returns a generic globe icon for 404s
+  // We can detect this by checking if the image is suspiciously small
+  // or if it's the known default size (typically 16x16 even when scaled)
+  // For sz=48, Google's generic globe is still served, so we check naturalWidth
+  if (img.naturalWidth <= 16 || img.naturalHeight <= 16) {
+    failedFavicons.value.add(serverUuid)
+  }
 }
 
 const getToolsCount = (server: McpServer) => {
@@ -498,11 +562,17 @@ const validateServerJson = (json: string) => {
     align-items: center;
     justify-content: center;
   }
-  
+
   .server-icon svg {
     width: 24px;
     height: 24px;
     color: var(--text-color);
+  }
+
+  .server-favicon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
   }
   
   .server-content {
