@@ -14,7 +14,6 @@
     "category": "Catégorie",
     "chat": "Conversation",
     "clear": "Effacer",
-    "clickToStart": "Cliquez sur le blob pour commencer à discuter",
     "close": "Fermer",
     "colon": "spaced",
     "comboBox": {
@@ -2504,11 +2503,14 @@
     }
   },
   "realtimeChat": {
+    "callingVoice": "Appel en cours vers {voice}…",
+    "clickToTalk": "Cliquez pour parler à {voice}",
+    "connectedWithVoice": "Vous êtes maintenant connecté(e) avec {voice}",
     "errorPrefix": "Erreur : ",
-    "establishingConnection": "Établissement de la connexion…",
-    "requestingMicrophone": "Demande d'accès au microphone…",
-    "sessionEstablished": "Session établie avec succès !",
-    "title": "Chat vocal"
+    "title": "Chat vocal",
+    "toolsSelected": "Aucun outil sélectionné|1 outil sélectionné|{count} outils sélectionnés",
+    "transcript": "Transcription",
+    "transcriptionUnavailable": "*Transcription indisponible*"
   },
   "scratchpad": {
     "actions": {

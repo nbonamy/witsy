@@ -14,7 +14,6 @@
     "category": "Categoria",
     "chat": "Chat",
     "clear": "Pulisci",
-    "clickToStart": "Clicca sul blob per iniziare a chattare",
     "close": "Chiudi",
     "colon": "notspaced",
     "comboBox": {
@@ -2504,11 +2503,14 @@
     }
   },
   "realtimeChat": {
+    "callingVoice": "Chiamando {voice}…",
+    "clickToTalk": "Clicca per parlare con {voice}",
+    "connectedWithVoice": "Sei ora connesso con {voice}",
     "errorPrefix": "Errore: ",
-    "establishingConnection": "Stabilendo la connessione…",
-    "requestingMicrophone": "Richiesta di accesso al microfono…",
-    "sessionEstablished": "Sessione stabilita con successo!",
-    "title": "Chat Vocale"
+    "title": "Chat Vocale",
+    "toolsSelected": "Nessuno strumento selezionato|1 strumento selezionato|{count} strumenti selezionati",
+    "transcript": "Trascrizione",
+    "transcriptionUnavailable": "*Trascrizione non disponibile*"
   },
   "scratchpad": {
     "actions": {

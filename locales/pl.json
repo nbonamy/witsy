@@ -14,7 +14,6 @@
     "category": "Kategoria",
     "chat": "Czat",
     "clear": "Wyczyść",
-    "clickToStart": "Kliknij kropkę, aby rozpocząć czat",
     "close": "Zamknij",
     "colon": "notspaced",
     "comboBox": {
@@ -2526,11 +2525,14 @@
     }
   },
   "realtimeChat": {
+    "callingVoice": "Łączenie z {voice}…",
+    "clickToTalk": "Kliknij, aby porozmawiać z {voice}",
+    "connectedWithVoice": "Jesteś teraz połączony z {voice}",
     "errorPrefix": "Błąd: ",
-    "establishingConnection": "Nawiązywanie połączenia...",
-    "requestingMicrophone": "Proszę o dostęp do mikrofonu...",
-    "sessionEstablished": "Sesja ustanowiona",
-    "title": "Czat głosowy"
+    "title": "Czat głosowy",
+    "toolsSelected": "Brak wybranego narzędzia|1 wybrane narzędzie|{count} wybranych narzędzi",
+    "transcript": "Transkrypcja",
+    "transcriptionUnavailable": "*Transkrypcja niedostępna*"
   },
   "scratchpad": {
     "actions": {

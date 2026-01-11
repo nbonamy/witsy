@@ -14,7 +14,6 @@
     "category": "Categoría",
     "chat": "Chat",
     "clear": "Limpiar",
-    "clickToStart": "Haz clic en el blob para comenzar a chatear",
     "close": "Cerrar",
     "colon": "notspaced",
     "comboBox": {
@@ -2504,11 +2503,14 @@
     }
   },
   "realtimeChat": {
+    "callingVoice": "Llamando a {voice}…",
+    "clickToTalk": "Haz clic para hablar con {voice}",
+    "connectedWithVoice": "Ahora estás conectado con {voice}",
     "errorPrefix": "Error: ",
-    "establishingConnection": "Estableciendo conexión…",
-    "requestingMicrophone": "Solicitando acceso al micrófono…",
-    "sessionEstablished": "¡Sesión establecida con éxito!",
-    "title": "Chat de Voz"
+    "title": "Chat de Voz",
+    "toolsSelected": "Ninguna herramienta seleccionada|1 herramienta seleccionada|{count} herramientas seleccionadas",
+    "transcript": "Transcripción",
+    "transcriptionUnavailable": "*Transcripción no disponible*"
   },
   "scratchpad": {
     "actions": {

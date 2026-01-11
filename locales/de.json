@@ -14,7 +14,6 @@
     "category": "Kategorie",
     "chat": "Chat",
     "clear": "Löschen",
-    "clickToStart": "Klicken Sie auf die Blase, um mit dem Chatten zu beginnen",
     "close": "Schließen",
     "colon": "notspaced",
     "comboBox": {
@@ -2504,11 +2503,14 @@
     }
   },
   "realtimeChat": {
+    "callingVoice": "Rufe {voice} an…",
+    "clickToTalk": "Klicken Sie, um mit {voice} zu sprechen",
+    "connectedWithVoice": "Sie sind jetzt mit {voice} verbunden",
     "errorPrefix": "Fehler: ",
-    "establishingConnection": "Verbindung wird hergestellt…",
-    "requestingMicrophone": "Anforderung des Mikrofonzugriffs…",
-    "sessionEstablished": "Sitzung erfolgreich hergestellt!",
-    "title": "Sprachchat"
+    "title": "Sprachchat",
+    "toolsSelected": "Kein Werkzeug ausgewählt|1 Werkzeug ausgewählt|{count} Werkzeuge ausgewählt",
+    "transcript": "Transkript",
+    "transcriptionUnavailable": "*Transkription nicht verfügbar*"
   },
   "scratchpad": {
     "actions": {
