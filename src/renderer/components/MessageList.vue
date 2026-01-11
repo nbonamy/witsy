@@ -15,12 +15,13 @@
 
 import { ArrowDownIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
-import { computed, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef } from 'vue'
+import { computed, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef, PropType } from 'vue'
 import Chat from '@models/chat'
 import { store } from '@services/store'
 import MessageItem from './MessageItem.vue'
 
 import useEventBus from '@composables/event_bus'
+import { ChatTheme } from '@/types/config'
 const { onEvent } = useEventBus()
 
 const divScroller = ref<HTMLElement|null>(null)
@@ -34,12 +35,16 @@ const fontStyle = computed(() => {
   }
 })
 
-const chatTheme = computed(() => store.config.appearance.chat.theme)
+const chatTheme = computed(() => props.theme ?? store.config.appearance.chat.theme)
 
 const props = defineProps({
   chat: {
     type: Chat,
     required: true,
+  },
+  theme: {
+    type: String as PropType<ChatTheme>,
+    required: false,
   },
   conversationMode: {
     type: String,

@@ -2532,7 +2532,8 @@
     "establishingConnection": "Establishing connection…",
     "requestingMicrophone": "Requesting microphone access…",
     "sessionEstablished": "Session established successfully!",
-    "title": "Voice Chat"
+    "title": "Voice Chat",
+    "transcript": "Transcript"
   },
   "scratchpad": {
     "actions": {
