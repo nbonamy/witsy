@@ -1,9 +1,10 @@
 
 import { Application } from 'types/automation';
 import { anyDict } from 'types/index';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Notification } from 'electron';
 import { createWindow, getCurrentScreen, releaseFocus } from './index';
 import { loadSettings } from '../config';
+import { useI18n } from '../i18n';
 import Automator from '../automations/automator';
 import process from 'node:process';
 
@@ -121,13 +122,30 @@ export const closeDictationWindow = async (text: string, sourceApp?: Application
 
 export const openDictationWindow = (params: anyDict): void => {
 
+  // get settings to check clipboard option
+  const settings = loadSettings(app);
+  const copyToClipboard = settings.stt.quickDictation?.copyToClipboard || false;
+
+  // if no source app and no clipboard option, show notification instead
+  if (!params.sourceApp && !copyToClipboard) {
+    const t = useI18n(app);
+    try {
+      new Notification({
+        title: t('common.appName'),
+        body: t('dictation.noTargetError')
+      }).show();
+    } catch (error) {
+      console.error('Error showing notification', error);
+    }
+    return;
+  }
+
   // if window doesn't exist, create it
   if (!dictationWindow || dictationWindow.isDestroyed()) {
     prepareDictationWindow();
   }
 
-  // get settings for appearance mode
-  const settings = loadSettings(app);
+  // get appearance mode
   const appearance = settings.stt.quickDictation?.appearance || 'panel';
   const { x, y, width, height, useNotch, notchPadding } = getWindowBounds(appearance);
 
