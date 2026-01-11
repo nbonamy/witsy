@@ -60,12 +60,9 @@ const loading = ref<Record<string, boolean>>({})
 let timeouts: Record<string, NodeJS.Timeout> = {}
 
 const engines = computed(() => {
-  const sttEngines = getSTTEngines().map(e => e.id)
-  const ttsEngines = getTTSEngines().map(e => e.id)
-  return [...new Set([...ttsEngines, ...sttEngines])].filter(engine => {
-    if (engine === 'whisper' || engine === 'custom') return false
-    return true
-  }).sort()
+  const sttEngines = getSTTEngines().filter(e => e.type === 'api').map(e => e.id)
+  const ttsEngines = getTTSEngines().filter(e => e.type === 'api').map(e => e.id)
+  return [...new Set([...ttsEngines, ...sttEngines])].sort()
 })
 
 const onVisible = () => {
