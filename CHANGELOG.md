@@ -8,7 +8,8 @@ All notable changes to this project will be documented in this file.
 - Parakeet WebGPU support
 - Apple SpeechAnalyzer support (macOS 26+ required)
 - New quick dictation window (Speech-to-text renamed to Audio Booth)
-- Re-authenticate link in MCP server
+- Re-authenticate link in MCP server editor
+- Favicon display for HTTP/SSE MCP servers
 
 ### Changed
 - Voice Settings panels overhaul
