@@ -875,7 +875,7 @@
     }
   },
   "dictation": {
-    "hint": "Naciśnij Spację lub Esc, aby zatrzymać dyktowanie"
+    "hint": "Spacja, aby zatrzymać dyktowanie — Esc, aby anulować"
   },
   "docRepo": {
     "config": {
@@ -3051,6 +3051,7 @@
       "voice": "@:{'common.voice'}"
     },
     "voice": {
+      "appleRequiresMacOS26": "Wymaga macOS 26 (Tahoe) lub nowszego. Modele językowe zostaną pobrane automatycznie przy pierwszym użyciu.",
       "automatic": "Automatyczny",
       "customVocabulary": {
         "label": "Słownictwo niestandardowe (wsparcie zależy od modelu)",
@@ -3067,6 +3068,11 @@
       },
       "downloading": "Pobieranie: {percent}%",
       "engine": "Silnik",
+      "engineTypes": {
+        "api": "API (online)",
+        "custom": "Niestandardowy",
+        "local": "Lokalny (na urządzeniu, wymaga pobrania)"
+      },
       "groqApiKeyReminder": "Upewnij się, że wprowadziłeś swój klucz Groq API w panelu Models.",
       "initializationError": "Wystąpił błąd podczas inicjalizacji. Spróbuj ponownie.",
       "initializing": "Inicjalizacja...",

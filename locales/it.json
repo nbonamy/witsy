@@ -856,7 +856,7 @@
     }
   },
   "dictation": {
-    "hint": "Premi la barra spaziatrice o Esc per interrompere la dettatura"
+    "hint": "Barra spaziatrice per interrompere la dettatura - Esc per annullare"
   },
   "docRepo": {
     "config": {
@@ -3023,6 +3023,7 @@
       "voice": "@:{'common.voice'}"
     },
     "voice": {
+      "appleRequiresMacOS26": "Richiede macOS 26 (Tahoe) o successivo. I modelli linguistici verranno scaricati automaticamente al primo utilizzo.",
       "automatic": "🤖 Automatico",
       "customVocabulary": {
         "label": "Vocabolario personalizzato (il supporto varia in base al modello)",
@@ -3039,6 +3040,11 @@
       },
       "downloading": "Scaricamento: {percent}%",
       "engine": "Motore",
+      "engineTypes": {
+        "api": "API (online)",
+        "custom": "Personalizzato",
+        "local": "Locale (sul dispositivo, richiede il download)"
+      },
       "groqApiKeyReminder": "Assicurati di inserire la tua chiave API Groq nel pannello Modelli.",
       "initializationError": "Si è verificato un errore durante l'inizializzazione. Riprova.",
       "initializing": "Inizializzazione…",

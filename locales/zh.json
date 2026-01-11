@@ -875,7 +875,7 @@
     }
   },
   "dictation": {
-    "hint": "按空格或 Esc 停止听写"
+    "hint": "按空格键停止听写，按 Esc 取消"
   },
   "docRepo": {
     "config": {
@@ -3045,6 +3045,7 @@
       "voice": "@:{'common.voice'}"
     },
     "voice": {
+      "appleRequiresMacOS26": "需要 macOS 26（Tahoe）或更高版本。语言模型将在首次使用时自动下载。",
       "automatic": "🤖 自动",
       "customVocabulary": {
         "label": "自定义词汇（支持因型号而异）",
@@ -3061,6 +3062,11 @@
       },
       "downloading": "正在下载：{percent}%",
       "engine": "引擎",
+      "engineTypes": {
+        "api": "API（在线）",
+        "custom": "自定义",
+        "local": "本地（设备端，需下载）"
+      },
       "groqApiKeyReminder": "确保你在模型面板中输入了 Groq API 密钥。",
       "initializationError": "初始化过程中出现错误。请重试。",
       "initializing": "正在初始化…",
