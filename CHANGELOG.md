@@ -6,10 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Parakeet WebGPU support
+- Apple SpeechAnalyzer support (macOS 26+ required)
 - New quick dictation window (Speech-to-text renamed to Audio Booth)
 
 ### Changed
-- N/A
+- Voice Settings panels overhaul
 
 ### Fixed
 - N/A
