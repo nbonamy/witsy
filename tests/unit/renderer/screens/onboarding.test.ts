@@ -106,22 +106,34 @@ vi.mock('@services/assistant', async () => {
 vi.mock('@renderer/voice/stt', async () => {
   return {
     getSTTEngines: () => [
-      { id: 'openai', name: 'OpenAI Whisper' },
+      { id: 'openai', label: 'OpenAI', type: 'api' },
+      { id: 'groq', label: 'Groq', type: 'api' },
     ],
-    getSTTModels: () => [
-      { id: 'whisper-1', label: 'OpenAI Whisper V2' },
-    ],
+    getSTTModels: (engine: string) => {
+      if (engine === 'openai') {
+        return [{ id: 'whisper-1', name: 'Whisper V2' }]
+      } else if (engine === 'groq') {
+        return [{ id: 'whisper-large-v3', name: 'Whisper Large V3' }]
+      }
+      return []
+    },
   }
 })
 
 vi.mock('@renderer/voice/tts', async () => {
   return {
     getTTSEngines: () => [
-      { id: 'openai', name: 'OpenAI TTS' },
+      { id: 'openai', label: 'OpenAI', type: 'api' },
+      { id: 'elevenlabs', label: 'ElevenLabs', type: 'api' },
     ],
-    getTTSModels: () => [
-      { id: 'openai-tts', label: 'OpenAI TTS' },
-    ],
+    getTTSModels: (engine: string) => {
+      if (engine === 'openai') {
+        return [{ id: 'tts-1', name: 'TTS HD' }]
+      } else if (engine === 'elevenlabs') {
+        return [{ id: 'eleven_monolingual_v1', name: 'Eleven Monolingual v1' }]
+      }
+      return []
+    },
   }
 })
 
@@ -148,12 +160,12 @@ vi.mock('@renderer/utils/dialog.ts', () => ({
 }))
 
 beforeAll(() => {
-  
+
   useWindowMock()
   store.loadSettings()
-  
+
   // Ensure all engines have proper configuration structure for both chat and voice
-  const allEngines = ['openai', 'anthropic', 'google' ]
+  const allEngines = ['openai', 'anthropic', 'google', 'groq', 'elevenlabs']
   allEngines.forEach(engine => {
     if (!store.config.engines[engine]) {
       store.config.engines[engine] = { apiKey: '' } as any
@@ -764,32 +776,36 @@ describe('Voice Screen - Engine Configuration', () => {
   test('API key input functionality and store integration', async () => {
     // Start with clean state
     store.config.engines.openai.apiKey = ''
-    
+
     const wrapper = await mount(Voice)
     const component = wrapper.vm as any
     await component.onVisible?.()
-    
-    // Find the first API key input
+    await wrapper.vm.$nextTick()
+
+    // Find the first API key input for openai (engines are sorted, so openai is third: elevenlabs, groq, openai)
     const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
-    const firstInputComponent = inputComponents[0]
-    const actualInput = firstInputComponent.find('input')
-    
+    const openaiInputComponent = inputComponents[2] // openai is third in sorted order
+    const actualInput = openaiInputComponent.find('input')
+
     // Test setting an API key
     const testApiKey = 'sk-test-api-key-12345'
     await actualInput.setValue(testApiKey)
     await actualInput.trigger('keyup')
+    await wrapper.vm.$nextTick()
     expect(store.config.engines.openai.apiKey).toBe(testApiKey)
-    
+
     // Test clearing the API key
     await actualInput.setValue('')
     await actualInput.trigger('keyup')
+    await wrapper.vm.$nextTick()
     expect(store.config.engines.openai.apiKey).toBe('')
-    
+
     // Test API key changes update immediately
     await actualInput.setValue('new-key')
     await actualInput.trigger('keyup')
+    await wrapper.vm.$nextTick()
     expect(store.config.engines.openai.apiKey).toBe('new-key')
-    
+
     // Test that changes persist between component instances
     wrapper.unmount()
     await mount(Voice)
@@ -800,25 +816,27 @@ describe('Voice Screen - Engine Configuration', () => {
     const wrapper = await mount(Voice)
     const component = wrapper.vm as any
     await component.onVisible?.()
-    
-    // Find an API key input
+    await wrapper.vm.$nextTick()
+
+    // Find an API key input for openai (engines are sorted: elevenlabs, groq, openai)
     const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
-    const firstInput = inputComponents[0].find('input')
-    
+    const openaiInput = inputComponents[2].find('input') // openai is third in sorted order
+
     // Each engine should have a config section with status elements
     const configSections = wrapper.findAll('.config')
     expect(configSections.length).toBeGreaterThan(0)
-    
+
     // Each config section should have status span elements (even if empty)
     configSections.forEach(config => {
       const spans = config.findAll('span')
       expect(spans.length).toBeGreaterThan(0)
     })
-    
+
     // Test API key input functionality
-    await firstInput.setValue('test-key')
-    await firstInput.trigger('keyup')
-    
+    await openaiInput.setValue('test-key')
+    await openaiInput.trigger('keyup')
+    await wrapper.vm.$nextTick()
+
     // The store should be updated
     expect(store.config.engines.openai.apiKey).toBe('test-key')
   })
@@ -841,13 +859,18 @@ describe('Voice Screen - Engine Configuration', () => {
     store.config.engines.openai.models.tts = [
       { id: 'tts-1', name: 'TTS HD' }
     ]
-    
+
     const wrapper = await mount(Voice)
     const component = wrapper.vm as any
     await component.onVisible?.()
-    
-    // Should show status message (Voice component uses chat translations)
-    const statusSpan = wrapper.find('.status')
+    await wrapper.vm.$nextTick()
+
+    // Find the openai engine (third in sorted order: elevenlabs, groq, openai)
+    const engineDivs = wrapper.findAll('.engine')
+    const openaiEngineDiv = engineDivs[2]
+
+    // Should show status message for openai engine
+    const statusSpan = openaiEngineDiv.find('.status')
     expect(statusSpan.exists()).toBe(true)
     expect(statusSpan.text()).toBe('onboarding.voice.already_fr-FR_engine=OpenAIonboarding.voice.count_fr-FR_count=2')
   })
