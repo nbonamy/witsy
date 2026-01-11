@@ -14,7 +14,6 @@
     "category": "类别",
     "chat": "聊天",
     "clear": "清除",
-    "clickToStart": "点击气泡开始聊天",
     "close": "关闭",
     "colon": "notspaced",
     "comboBox": {
@@ -2526,11 +2525,14 @@
     }
   },
   "realtimeChat": {
+    "callingVoice": "正在呼叫 {voice}…",
+    "clickToTalk": "点击与 {voice} 交谈",
+    "connectedWithVoice": "您已与 {voice} 连接",
     "errorPrefix": "错误：",
-    "establishingConnection": "正在建立连接…",
-    "requestingMicrophone": "正在请求麦克风访问权限…",
-    "sessionEstablished": "会话成功建立！",
-    "title": "语音聊天"
+    "title": "语音聊天",
+    "toolsSelected": "未选择任何工具|已选择 1 个工具|已选择 {count} 个工具",
+    "transcript": "文字记录",
+    "transcriptionUnavailable": "*文字记录不可用*"
   },
   "scratchpad": {
     "actions": {

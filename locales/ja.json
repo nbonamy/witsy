@@ -14,7 +14,6 @@
     "category": "カテゴリー",
     "chat": "チャット",
     "clear": "クリア",
-    "clickToStart": "チャットを開始するにはアイコンをクリックしてください",
     "close": "閉じる",
     "colon": "notspaced",
     "comboBox": {
@@ -2526,11 +2525,14 @@
     }
   },
   "realtimeChat": {
+    "callingVoice": "{voice}を呼び出しています…",
+    "clickToTalk": "クリックして{voice}に話しかける",
+    "connectedWithVoice": "{voice}と接続されました",
     "errorPrefix": "エラー：",
-    "establishingConnection": "接続を確立しています…",
-    "requestingMicrophone": "マイクアクセスを要求しています…",
-    "sessionEstablished": "セッションが正常に確立されました！",
-    "title": "ボイスチャット"
+    "title": "ボイスチャット",
+    "toolsSelected": "ツールが選択されていません|1個のツールが選択されています|{count}個のツールが選択されています",
+    "transcript": "文字起こし",
+    "transcriptionUnavailable": "*文字起こしは利用できません*"
   },
   "scratchpad": {
     "actions": {

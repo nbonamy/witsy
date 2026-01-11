@@ -14,7 +14,6 @@
     "category": "Categoria",
     "chat": "Bate-papo",
     "clear": "Limpar",
-    "clickToStart": "Clique na bolha para começar a conversar",
     "close": "Fechar",
     "colon": "spaced",
     "comboBox": {
@@ -2526,11 +2525,14 @@
     }
   },
   "realtimeChat": {
+    "callingVoice": "Chamando {voice}…",
+    "clickToTalk": "Clique para falar com {voice}",
+    "connectedWithVoice": "Você agora está conectado com {voice}",
     "errorPrefix": "Erro: ",
-    "establishingConnection": "Estabelecendo conexão…",
-    "requestingMicrophone": "Solicitando acesso ao microfone…",
-    "sessionEstablished": "Sessão estabelecida com sucesso!",
-    "title": "Chat Vocal"
+    "title": "Chat Vocal",
+    "toolsSelected": "Nenhuma ferramenta selecionada|1 ferramenta selecionada|{count} ferramentas selecionadas",
+    "transcript": "Transcrição",
+    "transcriptionUnavailable": "*Transcrição indisponível*"
   },
   "scratchpad": {
     "actions": {
