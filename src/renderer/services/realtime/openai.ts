@@ -255,8 +255,9 @@ export class RealtimeOpenAI extends RealtimeEngine {
   private config: Configuration
   private session: RealtimeSession | null = null
   private currentModel: string = ''
-  private knownMessages: Map<string, string> = new Map()  // id -> content
-  private currentAssistantMessageId: string | null = null
+
+  // Message tracking - merge consecutive messages of same role
+  private messages: { id: string, role: 'user' | 'assistant', parts: { id: string, content: string }[] }[] = []
 
   constructor(config: Configuration, callbacks: RealtimeEngineCallbacks) {
     super(callbacks)
@@ -313,8 +314,8 @@ export class RealtimeOpenAI extends RealtimeEngine {
   close(): void {
     this.session?.close()
     this.session = null
-    this.knownMessages.clear()
-    this.currentAssistantMessageId = null
+    this.messages = []
+    this.toolCallToMessage.clear()
   }
 
   isConnected(): boolean {
@@ -439,71 +440,94 @@ export class RealtimeOpenAI extends RealtimeEngine {
     return data.value
   }
 
+  private static readonly TRANSCRIPTION_UNAVAILABLE = '*Transcription unavailable*'
+
   private getTranscript(item: RealtimeItem): string | null {
     if (item.type !== 'message' || !item.content?.length) return null
     const content = item.content[0]
     return (content.type === 'input_audio' || content.type === 'output_audio')
-      ? (content.transcript ?? null)
+      ? (content.transcript ?? RealtimeOpenAI.TRANSCRIPTION_UNAVAILABLE)
       : (content.type === 'input_text' || content.type === 'output_text')
       ? content.text
-      : null
+      : ''
+  }
+
+  private getCombinedContent(msg: { parts: { content: string }[] }): string {
+    return msg.parts.map(p => p.content).filter(c => c).join('\n\n')
   }
 
   private onHistoryAdded(item: RealtimeItem): void {
-    // console.log('History added:', JSON.stringify(item, null, 2))
+    if (item.type !== 'message') {
+      this.callbacks.onUsageUpdated(this.getUsage())
+      return
+    }
 
-    if (item.type === 'message') {
-      const transcript = this.getTranscript(item)
-      const role = item.role as 'user' | 'assistant'
+    console.log(`[realtime] added: role=${item.role}, id=${item.itemId}`)
 
-      // Track assistant message for tool calls
-      if (role === 'assistant') {
-        this.currentAssistantMessageId = item.itemId
+    const transcript = this.getTranscript(item) || ''
+    const role = item.role as 'user' | 'assistant'
+    const lastMessage = this.messages[this.messages.length - 1]
+
+    if (lastMessage && lastMessage.role === role) {
+      // Same role - append to existing message
+      lastMessage.parts.push({ id: item.itemId, content: transcript })
+      // Send only the new content (delta)
+      if (transcript) {
+        this.callbacks.onMessageUpdated(lastMessage.id, transcript, 'append')
       }
-
-      // Emit new message (even with empty content - will be updated later)
-      this.callbacks.onNewMessage({
-        id: item.itemId,
-        role,
-        content: transcript || '',
-      })
-      this.knownMessages.set(item.itemId, transcript || '')
+    } else {
+      // Different role - create new message
+      const msg = { id: item.itemId, role, parts: [{ id: item.itemId, content: transcript }] }
+      this.messages.push(msg)
+      this.callbacks.onNewMessage({ id: msg.id, role, content: transcript })
     }
 
     this.callbacks.onUsageUpdated(this.getUsage())
   }
 
   private onHistoryUpdated(history: RealtimeItem[]): void {
-    // console.log('History updated:', JSON.stringify(history, null, 2))
-
     for (const item of history) {
-      if (item.type === 'message') {
-        const transcript = this.getTranscript(item)
-        if (transcript === null) continue
+      if (item.type !== 'message') continue
 
-        const knownContent = this.knownMessages.get(item.itemId)
+      // console.log(`[realtime] updated: role=${item.role}, id=${item.itemId}`)
 
-        if (knownContent === undefined) {
-          // New message we haven't seen (shouldn't happen if history_added fires first)
-          const role = item.role as 'user' | 'assistant'
-          if (role === 'assistant') {
-            this.currentAssistantMessageId = item.itemId
-          }
-          this.callbacks.onNewMessage({
-            id: item.itemId,
-            role,
-            content: transcript,
-          })
-          this.knownMessages.set(item.itemId, transcript)
-        } else if (knownContent !== transcript) {
-          // Content changed (e.g., transcript filled in)
-          this.callbacks.onMessageUpdated(item.itemId, transcript)
-          this.knownMessages.set(item.itemId, transcript)
-        }
+      // Find message and part containing this SDK id
+      const msg = this.messages.find(m => m.parts.some(p => p.id === item.itemId))
+      if (!msg) {
+        console.warn('[realtime] unknown message id:', item.itemId)
+        continue
+      }
+
+      const part = msg.parts.find(p => p.id === item.itemId)!
+      const transcript = this.getTranscript(item) || ''
+
+      // Check if current content is placeholder
+      if (part.content === RealtimeOpenAI.TRANSCRIPTION_UNAVAILABLE && transcript !== part.content) {
+        part.content = transcript
+        this.callbacks.onMessageUpdated(msg.id, transcript, 'replace')
+      }
+      // Only emit if content grew (send delta only)
+      else if (transcript.length > part.content.length) {
+        const delta = transcript.slice(part.content.length)
+        part.content = transcript
+        this.callbacks.onMessageUpdated(msg.id, delta, 'append')
       }
     }
 
     this.callbacks.onUsageUpdated(this.getUsage())
+  }
+
+  // Track which message each tool call belongs to
+  private toolCallToMessage: Map<string, string> = new Map()
+
+  private getLastAssistantMessageId(): string {
+    // Find last assistant message
+    for (let i = this.messages.length - 1; i >= 0; i--) {
+      if (this.messages[i].role === 'assistant') {
+        return this.messages[i].id
+      }
+    }
+    return `assistant-${Date.now()}`
   }
 
   private onToolStart(
@@ -512,17 +536,20 @@ export class RealtimeOpenAI extends RealtimeEngine {
     tool: FunctionTool<RealtimeContextData<UnknownContext>>,
     details: { toolCall: protocol.ToolCallItem }
   ): void {
-    
-    // console.log('Tool start:', tool.name, details)
     if (details.toolCall.type !== 'function_call') {
       return
     }
 
-    // Use current assistant message or create a placeholder ID
-    const messageId = this.currentAssistantMessageId || `assistant-${Date.now()}`
+    const callId = details.toolCall.callId || crypto.randomUUID()
+    const messageId = this.getLastAssistantMessageId()
+
+    console.log(`[realtime] tool start: ${tool.name}, callId=${callId}, messageId=${messageId}`)
+
+    // Remember which message this tool call belongs to
+    this.toolCallToMessage.set(callId, messageId)
 
     this.callbacks.onMessageToolCall(messageId, {
-      id: details.toolCall.callId || crypto.randomUUID(),
+      id: callId,
       name: tool.name,
       status: 'running',
       params: details.toolCall.arguments,
@@ -536,20 +563,25 @@ export class RealtimeOpenAI extends RealtimeEngine {
     tool: FunctionTool<RealtimeContextData<UnknownContext>>,
     result: string, details: { toolCall: protocol.ToolCallItem }
   ): void {
-    
-    // console.log('Tool end:', tool.name, result, details)
     if (details.toolCall.type !== 'function_call') {
       return
     }
 
-    const messageId = this.currentAssistantMessageId || `assistant-${Date.now()}`
+    const callId = details.toolCall.callId || ''
+    // Use the message we recorded at start, or find last assistant
+    const messageId = this.toolCallToMessage.get(callId) || this.getLastAssistantMessageId()
+
+    console.log(`[realtime] tool end: ${tool.name}, callId=${callId}, messageId=${messageId}`)
 
     this.callbacks.onMessageToolCall(messageId, {
-      id: details.toolCall.callId || '',
+      id: callId,
       name: tool.name,
       status: 'completed',
       params: details.toolCall.arguments,
       result: result,
     })
+
+    // Cleanup
+    this.toolCallToMessage.delete(callId)
   }
 }

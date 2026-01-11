@@ -2530,11 +2530,10 @@
   "realtimeChat": {
     "errorPrefix": "Error: ",
     "establishingConnection": "Establishing connection…",
-    "noTools": "No tools",
     "requestingMicrophone": "Requesting microphone access…",
     "sessionEstablished": "Session established successfully!",
     "title": "Voice Chat",
-    "toolsSelected": "{count} tool(s)",
+    "toolsSelected": "No tool selected|1 tool selected|{count} tools selected",
     "transcript": "Transcript"
   },
   "scratchpad": {

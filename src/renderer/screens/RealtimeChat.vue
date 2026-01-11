@@ -171,9 +171,6 @@ const voices = computed(() => {
 })
 
 const toolsLabel = computed(() => {
-  if (toolSelection.value.length === 0) {
-    return t('realtimeChat.noTools')
-  }
   return t('realtimeChat.toolsSelected', { count: toolSelection.value.length })
 })
 
@@ -272,15 +269,21 @@ const onNewMessage = (message: RealtimeMessage) => {
   chat.value.messages.push(msg)
 }
 
-const onMessageUpdated = (id: string, content: string) => {
+const onMessageUpdated = (id: string, content: string, mode: 'append' | 'replace') => {
+  console.log(`[realtime] vue onMessageUpdated: id=${id}, mode=${mode}, content="${content.slice(0, 50)}..."`)
   const message = chat.value.messages.find(m => m.uuid === id)
   if (message) {
-    message.setText(content)
+    if (mode === 'replace') {
+      message.setText(content)
+    } else {
+      message.appendText({ type: 'content', text: content, done: false })
+    }
   }
 }
 
 const onMessageToolCall = (messageId: string, toolCall: RealtimeToolCall) => {
-  
+  console.log(`[realtime] vue onMessageToolCall: id=${messageId}, tool=${toolCall.name}, status=${toolCall.status}`)
+
   // Find the message or create one if needed
   let message = chat.value.messages.find(m => m.uuid === messageId)
   if (!message) {
@@ -515,49 +518,50 @@ defineExpose({
 
     padding: 2rem;
 
+    > div:first-child > .message.user {
+      margin-top: 0 !important;
+    }
+
     .message {
 
       margin-bottom: 0;
 
       .body {
-
         max-width: unset;
-
         .message-content {
           p {
             margin: 8px 0;
           }
+          .tool-container {
+            margin-top: 1rem;
+            font-size: 75%;
+          }
         }
 
       }
+      
 
       .actions {
-
-        height: 16px;
-
+        height: 32px;
         .action:not(.copy) {
           display: none;
         }
-
       }
 
       &.user {
-        .body {
+        margin-top: 1rem;
+        .body, .actions {
           margin-right: 0px;
-        }
-        .actions {
-          margin-right: 0px;
-          height: 32px;
         }
       }
 
       &.assistant {
-        .body {
+        .body, .actions {
           margin-left: 0px;
           padding-left: 0px;
         }
         .actions {
-          margin-left: 0px;
+          margin-top: -8px;
         }
       }
 
