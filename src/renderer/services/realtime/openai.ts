@@ -2,8 +2,8 @@
  * OpenAI Realtime implementation using OpenAI Agents SDK
  */
 
-import { tool } from '@openai/agents'
-import { RealtimeAgent, RealtimeItem, RealtimeSession } from '@openai/agents/realtime'
+import { Agent, FunctionTool, protocol, tool, UnknownContext } from '@openai/agents'
+import { RealtimeAgent, RealtimeContextData, RealtimeItem, RealtimeSession } from '@openai/agents/realtime'
 import { LlmTool, MultiToolPlugin, Plugin, PluginExecutionContext } from 'multi-llm-ts'
 import { z, ZodTypeAny } from 'zod'
 import { Configuration } from 'types/config'
@@ -13,7 +13,6 @@ import {
   RealtimeCostInfo,
   RealtimeEngine,
   RealtimeEngineCallbacks,
-  RealtimeMessage,
   RealtimeUsage,
   RealtimeVoice,
 } from './engine'
@@ -256,6 +255,8 @@ export class RealtimeOpenAI extends RealtimeEngine {
   private config: Configuration
   private session: RealtimeSession | null = null
   private currentModel: string = ''
+  private knownMessages: Map<string, string> = new Map()  // id -> content
+  private currentAssistantMessageId: string | null = null
 
   constructor(config: Configuration, callbacks: RealtimeEngineCallbacks) {
     super(callbacks)
@@ -312,6 +313,8 @@ export class RealtimeOpenAI extends RealtimeEngine {
   close(): void {
     this.session?.close()
     this.session = null
+    this.knownMessages.clear()
+    this.currentAssistantMessageId = null
   }
 
   isConnected(): boolean {
@@ -436,53 +439,117 @@ export class RealtimeOpenAI extends RealtimeEngine {
     return data.value
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private getTranscript(item: RealtimeItem): string | null {
+    if (item.type !== 'message' || !item.content?.length) return null
+    const content = item.content[0]
+    return (content.type === 'input_audio' || content.type === 'output_audio')
+      ? (content.transcript ?? null)
+      : (content.type === 'input_text' || content.type === 'output_text')
+      ? content.text
+      : null
+  }
+
   private onHistoryAdded(item: RealtimeItem): void {
     // console.log('History added:', JSON.stringify(item, null, 2))
+
+    if (item.type === 'message') {
+      const transcript = this.getTranscript(item)
+      const role = item.role as 'user' | 'assistant'
+
+      // Track assistant message for tool calls
+      if (role === 'assistant') {
+        this.currentAssistantMessageId = item.itemId
+      }
+
+      // Emit new message (even with empty content - will be updated later)
+      this.callbacks.onNewMessage({
+        id: item.itemId,
+        role,
+        content: transcript || '',
+      })
+      this.knownMessages.set(item.itemId, transcript || '')
+    }
+
     this.callbacks.onUsageUpdated(this.getUsage())
   }
 
   private onHistoryUpdated(history: RealtimeItem[]): void {
     // console.log('History updated:', JSON.stringify(history, null, 2))
 
-    // Convert SDK history items to RealtimeMessage objects
-    const messages: RealtimeMessage[] = []
     for (const item of history) {
-      if (item.type === 'message' && item.content?.length > 0) {
-        const content = item.content[0]
-        // Get transcript from audio content types
-        const transcript = (content.type === 'input_audio' || content.type === 'output_audio')
-          ? (content.transcript ?? '*Transcription unavailable*')
-          : (content.type === 'input_text' || content.type === 'output_text')
-          ? content.text
-          : null
-        if (transcript) {
-          messages.push({
+      if (item.type === 'message') {
+        const transcript = this.getTranscript(item)
+        if (transcript === null) continue
+
+        const knownContent = this.knownMessages.get(item.itemId)
+
+        if (knownContent === undefined) {
+          // New message we haven't seen (shouldn't happen if history_added fires first)
+          const role = item.role as 'user' | 'assistant'
+          if (role === 'assistant') {
+            this.currentAssistantMessageId = item.itemId
+          }
+          this.callbacks.onNewMessage({
             id: item.itemId,
-            role: item.role as 'user' | 'assistant',
+            role,
             content: transcript,
           })
+          this.knownMessages.set(item.itemId, transcript)
+        } else if (knownContent !== transcript) {
+          // Content changed (e.g., transcript filled in)
+          this.callbacks.onMessageUpdated(item.itemId, transcript)
+          this.knownMessages.set(item.itemId, transcript)
         }
       }
     }
 
-    this.callbacks.onMessagesUpdated(messages)
     this.callbacks.onUsageUpdated(this.getUsage())
   }
 
-  private onToolStart(_context: any, _agent: any, tool: any, details: any): void {
-    this.callbacks.onToolStart(
-      details.toolCallId || crypto.randomUUID(),
-      tool.name,
-      details.input
-    )
+  private onToolStart(
+    context: any,
+    agent: Agent<UnknownContext>,
+    tool: FunctionTool<RealtimeContextData<UnknownContext>>,
+    details: { toolCall: protocol.ToolCallItem }
+  ): void {
+    
+    // console.log('Tool start:', tool.name, details)
+    if (details.toolCall.type !== 'function_call') {
+      return
+    }
+
+    // Use current assistant message or create a placeholder ID
+    const messageId = this.currentAssistantMessageId || `assistant-${Date.now()}`
+
+    this.callbacks.onMessageToolCall(messageId, {
+      id: details.toolCall.callId || crypto.randomUUID(),
+      name: tool.name,
+      status: 'running',
+      params: details.toolCall.arguments,
+      result: null,
+    })
   }
 
-  private onToolEnd(_context: any, _agent: any, tool: any, result: any, details: any): void {
-    this.callbacks.onToolEnd(
-      details.toolCallId || '',
-      tool.name,
-      typeof result === 'string' ? result : JSON.stringify(result)
-    )
+  private onToolEnd(
+    context: any,
+    agent: Agent<UnknownContext>,
+    tool: FunctionTool<RealtimeContextData<UnknownContext>>,
+    result: string, details: { toolCall: protocol.ToolCallItem }
+  ): void {
+    
+    // console.log('Tool end:', tool.name, result, details)
+    if (details.toolCall.type !== 'function_call') {
+      return
+    }
+
+    const messageId = this.currentAssistantMessageId || `assistant-${Date.now()}`
+
+    this.callbacks.onMessageToolCall(messageId, {
+      id: details.toolCall.callId || '',
+      name: tool.name,
+      status: 'completed',
+      params: details.toolCall.arguments,
+      result: result,
+    })
   }
 }

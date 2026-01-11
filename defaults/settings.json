@@ -185,7 +185,8 @@
     }
   },
   "realtime": {
-    "engine": "openai"
+    "engine": "openai",
+    "tools": []
   },
   "engines": {
     "__favorites__": {

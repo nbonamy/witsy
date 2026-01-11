@@ -269,6 +269,7 @@ export type TTSConfig = {
 
 export type RealtimeConfig = {
   engine: string
+  tools: string[]
 }
 
 export type ModelType = 'chat' | 'image' | 'video' | 'embedding' | 'realtime' | 'computer' | 'tts' | 'stt' | 'imageEdit' | 'videoEdit'
