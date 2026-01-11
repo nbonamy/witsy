@@ -275,8 +275,10 @@ export class RealtimeOpenAI extends RealtimeEngine {
     // Create agent with instructions and tools
     const agent = new RealtimeAgent({
       name: 'Assistant',
+      voice: realtimeConfig.voice,
       instructions: realtimeConfig.instructions,
-      ...(tools.length > 0 ? { tools } : {})
+      ...(tools.length > 0 ? { tools } : {}),
+      ...(realtimeConfig.llmModel ? { llmModel: realtimeConfig.llmModel } : {})
     })
 
     // Create session with voice config
