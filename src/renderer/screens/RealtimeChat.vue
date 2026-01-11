@@ -64,17 +64,18 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { store } from '@services/store'
-import { t } from '@services/i18n'
 import AnimatedBlob from '@components/AnimatedBlob.vue'
-import NumberFlip from '@components/NumberFlip.vue'
 import MessageList from '@components/MessageList.vue'
-import useTipsManager from '@renderer/utils/tips_manager'
-import { RealtimeAgent, RealtimeSession, RealtimeItem } from '@openai/agents/realtime'
-import LlmUtils from '../services/llm_utils'
+import NumberFlip from '@components/NumberFlip.vue'
 import Chat from '@models/chat'
 import Message from '@models/message'
+import { RealtimeAgent, RealtimeItem, RealtimeSession } from '@openai/agents/realtime'
+import useTipsManager from '@renderer/utils/tips_manager'
+import { t } from '@services/i18n'
+import { buildRealtimeTools } from '@services/realtime_tools'
+import { store } from '@services/store'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import LlmUtils from '../services/llm_utils'
 
 const tipsManager = useTipsManager(store)
 
@@ -181,12 +182,64 @@ const onChangeEngine = () => {
   save()
 }
 
-const onHistoryAdded = () => {
+const onHistoryAdded = (item: RealtimeItem) => {
+  console.log('History added:', JSON.stringify(item, null, 2))
   updateUsageFromSession()
 }
 
+const onToolStart = (_context: any, _agent: any, tool: any, details: any) => {
+  console.log('Tool start:', tool.name, details)
+
+  // Find the last assistant message or create one
+  let assistantMessage = chat.value.messages.findLast(m => m.role === 'assistant')
+  if (!assistantMessage) {
+    assistantMessage = new Message('assistant', '')
+    chat.value.messages.push(assistantMessage)
+  }
+
+  // Add tool call in running state
+  assistantMessage.addToolCall({
+    type: 'tool',
+    id: details.toolCallId || crypto.randomUUID(),
+    name: tool.name,
+    state: 'running',
+    status: null,
+    done: false,
+    call: {
+      params: details.input,
+      result: null
+    }
+  }, false)
+}
+
+const onToolEnd = (_context: any, _agent: any, tool: any, result: any, details: any) => {
+  console.log('Tool end:', tool.name, result, details)
+
+  // Find the assistant message with this tool call
+  const assistantMessage = chat.value.messages.findLast(m => m.role === 'assistant')
+  if (assistantMessage) {
+    // Update tool call to completed state
+    assistantMessage.addToolCall({
+      type: 'tool',
+      id: details.toolCallId || '',
+      name: tool.name,
+      state: 'completed',
+      status: null,
+      done: true,
+      call: {
+        params: details.input,
+        result: typeof result === 'string' ? result : JSON.stringify(result)
+      }
+    }, false)
+  }
+}
+
 const onHistoryUpdated = (history: RealtimeItem[]) => {
-  
+
+  // log
+  console.log('History updated:', JSON.stringify(history, null, 2))
+  console.log('History item types:', history.map(h => ({ type: h.type, role: (h as any).role, contentTypes: (h as any).content?.map((c: any) => c.type) })))
+
   // Convert SDK history items to Message objects
   const messages: Message[] = []
   for (const item of history) {
@@ -194,7 +247,7 @@ const onHistoryUpdated = (history: RealtimeItem[]) => {
       const content = item.content[0]
       // Get transcript from audio content types
       const transcript = (content.type === 'input_audio' || content.type === 'output_audio')
-        ? content.transcript
+        ? (content.transcript ?? '*Transcription unavailable*')
         : (content.type === 'input_text' || content.type === 'output_text')
         ? content.text
         : null
@@ -295,7 +348,7 @@ const updateUsageFromSession = () => {
                      (textOutputTokens * TEXT_OUTPUT_COST)
   const totalCost = inputCost + outputCost
 
-  console.log('Cost calculated:', { inputCost, outputCost, totalCost })
+  // console.log('Cost calculated:', { inputCost, outputCost, totalCost })
 
   // Update session totals - update nested properties for reactivity
   sessionTotals.value.audioInputTokens = audioInputTokens
@@ -330,22 +383,39 @@ const startSession = async () => {
         }
       }
     })
+
+    // build tools from enabled plugins
+    const realtimeModel = store.config.engines.openai.realtime.model
+    const tools = await buildRealtimeTools(store.config, realtimeModel)
+
     const agent = new RealtimeAgent({
       name: 'Assistant',
       instructions: llmUtils.getSystemInstructions(null, {
         noMarkdown: true,
-      })
+      }),
+      tools,
     })
 
     session = new RealtimeSession(agent, {
       config: {
         voice: voice.value,
+        audio: {
+          input: {
+            transcription: {
+              model: 'gpt-4o-mini-transcribe',
+            }
+          }
+        }
       }
     });
 
     // Listen for history updates to build transcript
     session.on('history_updated', onHistoryUpdated)
     session.on('history_added', onHistoryAdded)
+
+    // Listen for tool events
+    session.on('agent_tool_start', onToolStart)
+    session.on('agent_tool_end', onToolEnd)
 
     // Reset chat for new session
     chat.value = new Chat()

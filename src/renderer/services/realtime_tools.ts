@@ -4,12 +4,14 @@
 
 import { tool } from '@openai/agents'
 import { z, ZodTypeAny } from 'zod'
-import { LlmTool, MultiToolPlugin, PluginExecutionContext, ChatModel, LlmEngine, Plugin } from 'multi-llm-ts'
-import { PluginInstance } from './plugins/plugins'
+import { LlmTool, MultiToolPlugin, PluginExecutionContext, Plugin } from 'multi-llm-ts'
+import { availablePlugins, enabledPlugins, PluginInstance } from './plugins/plugins'
+import { Configuration } from 'types/config'
 
 /**
  * Convert JSON Schema to Zod schema
  * This handles the conversion from OpenAI API tool format to OpenAI Agents SDK format
+ * Note: OpenAI structured outputs require all fields to be required, so we use .nullable() for optional fields
  */
 export function jsonSchemaToZod(schema: any): ZodTypeAny {
 
@@ -22,9 +24,9 @@ export function jsonSchemaToZod(schema: any): ZodTypeAny {
     for (const [key, prop] of Object.entries<any>(properties)) {
       let zodType = jsonSchemaToZod(prop)
 
-      // Make optional if not in required array
+      // For optional fields, use nullable (OpenAI requires all fields, but nullable is allowed)
       if (!required.includes(key)) {
-        zodType = zodType.optional()
+        zodType = zodType.nullable()
       }
 
       shape[key] = zodType
@@ -83,7 +85,7 @@ export function jsonSchemaToZod(schema: any): ZodTypeAny {
 export function convertToolToAgentsFormat(
   llmTool: LlmTool,
   plugin: PluginInstance,
-  model: ChatModel,
+  modelId: string,
   abortSignal?: AbortSignal
 ) {
   const func = llmTool.function
@@ -101,7 +103,7 @@ export function convertToolToAgentsFormat(
     execute: async (input: any) => {
       // Create execution context
       const context: PluginExecutionContext = {
-        model: model.id,
+        model: modelId,
         abortSignal
       }
 
@@ -159,22 +161,28 @@ function hasGetTools(plugin: PluginInstance): plugin is PluginInstance & { getTo
 }
 
 /**
- * Build tools from an LLM engine's available plugins
+ * Build tools from available plugins based on configuration
  * Returns array of tools ready for RealtimeAgent
  */
 export async function buildRealtimeTools(
-  engine: LlmEngine,
-  model: ChatModel,
+  config: Configuration,
+  modelId: string,
   abortSignal?: AbortSignal
 ) {
   const tools: ReturnType<typeof tool>[] = []
 
-  // Iterate through engine plugins and convert each to Agent SDK format
-  for (const iPlugin of engine.plugins) {
-    const plugin = iPlugin as PluginInstance
+  // Get list of enabled plugin names
+  const enabled = enabledPlugins(config, true) // include MCP
 
-    // Skip plugins that don't serialize in tools or aren't enabled
-    if (!plugin.serializeInTools() || !plugin.isEnabled()) {
+  // Iterate through enabled plugins and convert each to Agent SDK format
+  for (const pluginName of enabled) {
+    const pluginClass = availablePlugins[pluginName]
+    if (!pluginClass) continue
+
+    const plugin: PluginInstance = new pluginClass(config.plugins[pluginName], config.workspaceId)
+
+    // Skip plugins that don't serialize in tools
+    if (!plugin.serializeInTools()) {
       continue
     }
 
@@ -184,13 +192,13 @@ export async function buildRealtimeTools(
       const toolsArray = Array.isArray(pluginTools) ? pluginTools : [pluginTools]
 
       for (const llmTool of toolsArray) {
-        const agentTool = convertToolToAgentsFormat(llmTool, plugin, model, abortSignal)
+        const agentTool = convertToolToAgentsFormat(llmTool, plugin, modelId, abortSignal)
         tools.push(agentTool)
       }
     } else {
       // For regular plugins, build the tool from parameters
       const llmTool = pluginToLlmTool(plugin as Plugin)
-      const agentTool = convertToolToAgentsFormat(llmTool, plugin, model, abortSignal)
+      const agentTool = convertToolToAgentsFormat(llmTool, plugin, modelId, abortSignal)
       tools.push(agentTool)
     }
   }
