@@ -10,12 +10,12 @@ import TTSMiniMax from './tts-minimax'
 
 export const getTTSEngines = () => {
   return [
-    { id: 'openai', label: engineNames.openai },
-    { id: 'elevenlabs', label: engineNames.elevenlabs },
-    { id: 'falai', label: engineNames.falai },
-    { id: 'groq', label: engineNames.groq },
-    { id: 'minimax', label: engineNames.minimax },
-    { id: 'custom', label: 'Custom OpenAI' },
+    { id: 'openai', label: engineNames.openai, type: 'api' },
+    { id: 'elevenlabs', label: engineNames.elevenlabs, type: 'api' },
+    { id: 'falai', label: engineNames.falai, type: 'api' },
+    { id: 'groq', label: engineNames.groq, type: 'api' },
+    { id: 'minimax', label: engineNames.minimax, type: 'api' },
+    { id: 'custom', label: 'Custom OpenAI', type: 'custom' },
   ]
 }
 

@@ -133,20 +133,20 @@ export const isSTTReady = (config: Configuration): boolean => {
 
 export const getSTTEngines = () => {
   return [
-    { id: 'openai', label: engineNames.openai },
-    { id: 'fireworks', label: engineNames.fireworks },
-    { id: 'speechmatics', label: engineNames.speechmatics },
-    { id: 'gladia', label: engineNames.gladia },
-    { id: 'nvidia', label: engineNames.nvidia },
-    { id: 'falai', label: engineNames.falai },
-    //{ id: 'huggingface', label: engineNames.huggingface },
-    { id: 'groq', label: engineNames.groq },
-    { id: 'mistralai', label: engineNames.mistralai },
-    { id: 'soniox', label: engineNames.soniox },
-    { id: 'whisper', label: engineNames.whisper },
-    { id: 'parakeet', label: engineNames.parakeet },
-    { id: 'apple', label: 'Apple' },
-    { id: 'custom', label: 'Custom OpenAI' },
+    ...(window.api.platform === 'darwin' ? [{ id: 'apple', label: 'Apple', type: 'local' }] : []),
+    { id: 'parakeet', label: engineNames.parakeet, type: 'local' },
+    { id: 'whisper', label: engineNames.whisper, type: 'local' },
+    { id: 'falai', label: engineNames.falai, type: 'api' },
+    { id: 'fireworks', label: engineNames.fireworks, type: 'api' },
+    { id: 'gladia', label: engineNames.gladia, type: 'api' },
+    { id: 'groq', label: engineNames.groq, type: 'api' },
+    { id: 'mistralai', label: engineNames.mistralai, type: 'api' },
+    { id: 'nvidia', label: engineNames.nvidia, type: 'api' },
+    { id: 'openai', label: engineNames.openai, type: 'api' },
+    { id: 'soniox', label: engineNames.soniox, type: 'api' },
+    { id: 'speechmatics', label: engineNames.speechmatics, type: 'api' },
+    //{ id: 'huggingface', label: engineNames.huggingface, type: 'api' },
+    { id: 'custom', label: 'Custom OpenAI', type: 'custom' },
   ]
 }
 

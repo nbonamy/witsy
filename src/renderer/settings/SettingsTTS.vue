@@ -3,9 +3,16 @@
     <div class="form-field">
       <label>{{ t('settings.voice.engine') }}</label>
       <select v-model="engine" @change="onChangeEngine">
-        <option v-for="engine in engines" :key="engine.id" :value="engine.id">
-          {{ engine.label }}
-        </option>
+        <optgroup :label="t('settings.voice.engineTypes.api')">
+          <option v-for="engine in engines.filter(e => e.type === 'api')" :key="engine.id" :value="engine.id">
+            {{ engine.label }}
+          </option>
+        </optgroup>
+        <optgroup :label="t('settings.voice.engineTypes.custom')">
+          <option v-for="engine in engines.filter(e => e.type === 'custom')" :key="engine.id" :value="engine.id">
+            {{ engine.label }}
+          </option>
+        </optgroup>
       </select>
     </div>
     <div class="form-field" v-if="engine == 'openai'">
