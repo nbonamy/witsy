@@ -228,3 +228,64 @@ test('Handles show event with notch appearance', async () => {
   expect(wrapper.vm.appearance).toBe('notch')
   expect(wrapper.vm.notchHeight).toBe(16)
 })
+
+test('Adds visible class after show event in notch mode', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+
+  await wrapper.vm.onShow({
+    appearance: 'notch',
+    notchHeight: '16'
+  })
+
+  // wait for animation frame
+  await vi.waitFor(() => {
+    expect(wrapper.vm.isVisible).toBe(true)
+  })
+
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.dictation.notch.visible').exists()).toBe(true)
+})
+
+test('Adds closing class when closing in notch mode', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  wrapper.vm.appearance = 'notch'
+  wrapper.vm.isVisible = true
+  await wrapper.vm.$nextTick()
+
+  wrapper.vm.closeWindow('test text')
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.isClosing).toBe(true)
+  expect(wrapper.find('.dictation.closing').exists()).toBe(true)
+  expect(window.api.dictation.close).not.toHaveBeenCalled() // not called yet, waiting for animation
+})
+
+test('Calls close after animation ends in notch mode', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  wrapper.vm.appearance = 'notch'
+  wrapper.vm.isVisible = true
+  wrapper.vm.sourceApp = { name: 'TestApp', path: '/test' }
+  await wrapper.vm.$nextTick()
+
+  wrapper.vm.closeWindow('test text')
+  await wrapper.vm.$nextTick()
+
+  // simulate animationend event
+  wrapper.vm.onAnimationEnd()
+  await wrapper.vm.$nextTick()
+
+  expect(window.api.dictation.close).toHaveBeenCalledWith('test text', { name: 'TestApp', path: '/test' })
+  expect(wrapper.vm.isClosing).toBe(false)
+})
+
+test('Closes immediately in panel mode without animation', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  wrapper.vm.appearance = 'panel'
+  await wrapper.vm.$nextTick()
+
+  wrapper.vm.closeWindow('test text')
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.isClosing).toBe(false)
+  expect(window.api.dictation.close).toHaveBeenCalledWith('test text', null)
+})

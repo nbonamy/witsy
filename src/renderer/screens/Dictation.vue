@@ -1,5 +1,10 @@
 <template>
-  <div class="dictation" :class="{ notch: isNotchAppearance }">
+  <div
+    ref="dictationEl"
+    class="dictation"
+    :class="{ notch: isNotchAppearance, visible: isVisible, closing: isClosing }"
+    @animationend="onAnimationEnd"
+  >
     <div class="app-info">
       <img v-if="sourceApp" class="icon" :src="iconData" />
     </div>
@@ -44,6 +49,7 @@ const props = defineProps({
   extra: Object
 })
 
+const dictationEl = ref<HTMLElement | null>(null)
 const state = ref<State>('idle')
 const sourceApp = ref<Application | null>(null)
 const appInfo = ref<ExternalApp | null>(null)
@@ -52,7 +58,11 @@ const notchHeight = ref(0)
 const foregroundColorActive = ref('var(--text-color)')
 const foregroundColorInactive = ref('var(--icon-color)')
 const cancelled = ref(false)
+const isVisible = ref(false)
+const isClosing = ref(false)
 let configHash = ''
+let pendingCloseText: string | undefined
+let pendingCloseSourceApp: Application | null = null
 
 const isNotchAppearance = computed(() => appearance.value === 'notch')
 
@@ -100,6 +110,19 @@ const onShow = async (params: any) => {
 
   // set colors based on appearance
   updateColors()
+
+  // trigger animation for notch appearance
+  if (isNotchAppearance.value) {
+    isVisible.value = false
+    // use requestAnimationFrame to ensure initial state is rendered
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        isVisible.value = true
+      })
+    })
+  } else {
+    isVisible.value = true
+  }
 
   // start recording
   cancelled.value = false
@@ -281,7 +304,27 @@ const closeWindow = (text?: string) => {
   }
   audioRecorder.release()
   state.value = 'idle'
-  window.api.dictation.close(text || '', toRaw(sourceApp.value))
+
+  // animate collapse for notch appearance
+  if (isNotchAppearance.value) {
+    isClosing.value = true
+    pendingCloseText = text
+    pendingCloseSourceApp = toRaw(sourceApp.value)
+    // actual close happens in onAnimationEnd
+  } else {
+    window.api.dictation.close(text || '', toRaw(sourceApp.value))
+  }
+}
+
+const onAnimationEnd = () => {
+  if (isClosing.value) {
+    // animation complete, now actually close the window
+    isClosing.value = false
+    isVisible.value = false
+    window.api.dictation.close(pendingCloseText || '', pendingCloseSourceApp)
+    pendingCloseText = undefined
+    pendingCloseSourceApp = null
+  }
 }
 
 const cancelRecording = () => {
@@ -336,13 +379,13 @@ body {
 }
 
 .dictation.notch {
-  
+
   --padding-top: 0px;
   --padding-bottom: 0.5rem;
   padding-top: var(--padding-top);
   padding-bottom: var(--padding-bottom);
   height: calc(100vh - var(--padding-top) - var(--padding-bottom));
-  
+
   grid-template-rows: 2rem 2rem auto;
   background-color: black;
   color: white;
@@ -350,6 +393,41 @@ body {
   border-top-right-radius: 0;
   border-bottom-left-radius: 1rem;
   border-bottom-right-radius: 1rem;
+
+  /* animation setup - start hidden at notch size */
+  transform-origin: top center;
+  transform: scale(0.625, 0.25);
+  opacity: 0;
+}
+
+.dictation.notch.visible {
+  animation: notch-grow 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.dictation.notch.closing {
+  animation: notch-shrink 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes notch-grow {
+  from {
+    transform: scale(0.625, 0.25);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+
+@keyframes notch-shrink {
+  from {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.625, 0.25);
+    opacity: 0;
+  }
 }
 
 .dictation * {
