@@ -3,6 +3,8 @@
  * Enables vendor-agnostic implementation in RealtimeChat.vue
  */
 
+import { ToolSelection } from "@/types/llm"
+
 export const TRANSCRIPTION_UNAVAILABLE = '__TRANSCRIPTION_UNAVAILABLE__'
 
 export type RealtimeToolCall = {
@@ -56,7 +58,8 @@ export type RealtimeConfig = {
   model: string
   voice: string
   instructions: string
-  tools: string[] | null  // null = all tools, [] = no tools, [...] = specific tools
+  tools: ToolSelection
+  llmModel?: string
 }
 
 export type RealtimeVoice = {
