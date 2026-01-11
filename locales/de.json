@@ -856,7 +856,8 @@
     }
   },
   "dictation": {
-    "hint": "Leertaste zum Beenden der Diktierfunktion – Esc zum Abbrechen"
+    "hint": "Leertaste zum Beenden der Diktierfunktion – Esc zum Abbrechen",
+    "noTargetError": "@:{'common.appName'} konnte keine Zielanwendung für die Diktierfunktion identifizieren."
   },
   "docRepo": {
     "config": {
@@ -3073,12 +3074,19 @@
       },
       "spokenLanguage": "Gesprochene Sprache",
       "tabs": {
+        "configuration": "Konfiguration",
+        "model": "Modell",
         "quickDictation": "Schnelles Diktat",
         "speechToText": "Sprache zu Text",
         "textToSpeech": "Text zu Sprache"
       },
       "test": "Test",
-      "testPlaceholder": "Klicken Sie auf das Mikrofon, um die Diktierfunktion zu testen…",
+      "testPlaceholder": {
+        "idle": "Klicke auf das Mikrofon, um die Transkription zu testen…",
+        "initializing": "Transkription wird initialisiert…",
+        "processing": "Wird transkribiert…",
+        "recording": "Klicke auf das Mikrofon, um die Aufnahme zu stoppen und die Transkription zu starten…"
+      },
       "tts": {
         "groqAcceptTermsReminder": "Sie müssen die <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">Allgemeinen Geschäftsbedingungen akzeptieren</a>, um das Groq-Modell zu verwenden.",
         "kokoroReminder": "Bereitgestellt",

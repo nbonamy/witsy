@@ -875,7 +875,8 @@
     }
   },
   "dictation": {
-    "hint": "スペースキーで音声入力を停止 — Escキーでキャンセル"
+    "hint": "スペースキーで音声入力を停止 — Escキーでキャンセル",
+    "noTargetError": "@:{'common.appName'} はディクテーションのターゲットアプリケーションを特定できませんでした"
   },
   "docRepo": {
     "config": {
@@ -3101,12 +3102,19 @@
       },
       "spokenLanguage": "話される言語",
       "tabs": {
+        "configuration": "構成",
+        "model": "モデル",
         "quickDictation": "クイック音声入力",
         "speechToText": "音声認識",
         "textToSpeech": "テキスト読み上げ"
       },
       "test": "テスト",
-      "testPlaceholder": "マイクをクリックして音声入力をテストしてください…",
+      "testPlaceholder": {
+        "idle": "文字起こしをテストするにはマイクをクリックしてください…",
+        "initializing": "文字起こしを初期化しています…",
+        "processing": "文字起こし中…",
+        "recording": "録音を停止して文字起こしするにはマイクをクリックしてください…"
+      },
       "tts": {
         "groqAcceptTermsReminder": "Groqモデルを使用するには、<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">利用規約に同意する</a>必要があります。",
         "kokoroReminder": "提供元",

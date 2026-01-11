@@ -875,7 +875,8 @@
     }
   },
   "dictation": {
-    "hint": "Spacja, aby zatrzymać dyktowanie — Esc, aby anulować"
+    "hint": "Spacja, aby zatrzymać dyktowanie — Esc, aby anulować",
+    "noTargetError": "@:{'common.appName'} nie było w stanie zidentyfikować docelowej aplikacji do dyktowania"
   },
   "docRepo": {
     "config": {
@@ -3101,12 +3102,19 @@
       },
       "spokenLanguage": "Język mówiony",
       "tabs": {
+        "configuration": "Konfiguracja",
+        "model": "Model",
         "quickDictation": "Szybkie dyktowanie",
         "speechToText": "Zamiana mowy na tekst",
         "textToSpeech": "Zamiana tekstu na mowę"
       },
       "test": "Test",
-      "testPlaceholder": "Kliknij mikrofon, aby przetestować dyktowanie…",
+      "testPlaceholder": {
+        "idle": "Kliknij mikrofon, aby przetestować transkrypcję…",
+        "initializing": "Inicjalizowanie transkrypcji…",
+        "processing": "Trwa transkrypcja…",
+        "recording": "Kliknij mikrofon, aby zatrzymać nagrywanie i przekształcić mowę w tekst…"
+      },
       "tts": {
         "groqAcceptTermsReminder": "Musisz <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">zaakceptować warunki i zasady</a>, aby korzystać z modelu Groq.",
         "kokoroReminder": "Pod warunkiem",

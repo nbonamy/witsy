@@ -875,7 +875,8 @@
     }
   },
   "dictation": {
-    "hint": "Espaço para parar o ditado - Esc para cancelar"
+    "hint": "Espaço para parar o ditado - Esc para cancelar",
+    "noTargetError": "@:{'common.appName'} não conseguiu identificar um aplicativo para ditado"
   },
   "docRepo": {
     "config": {
@@ -3095,12 +3096,19 @@
       },
       "spokenLanguage": "Idioma Falado",
       "tabs": {
+        "configuration": "Configuração",
+        "model": "Modelo",
         "quickDictation": "Ditado Rápido",
         "speechToText": "Voz para Texto",
         "textToSpeech": "Texto para Voz"
       },
       "test": "Testar",
-      "testPlaceholder": "Clique no microfone para testar o ditado…",
+      "testPlaceholder": {
+        "idle": "Clique no microfone para testar a transcrição…",
+        "initializing": "Inicializando a transcrição…",
+        "processing": "Transcrevendo…",
+        "recording": "Clique no microfone para parar a gravação e transcrever…"
+      },
       "tts": {
         "groqAcceptTermsReminder": "Você precisa <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">aceitar os termos e condições</a> para usar o modelo Groq.",
         "kokoroReminder": "Fornecido",

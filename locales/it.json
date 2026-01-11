@@ -856,7 +856,8 @@
     }
   },
   "dictation": {
-    "hint": "Barra spaziatrice per interrompere la dettatura - Esc per annullare"
+    "hint": "Barra spaziatrice per interrompere la dettatura - Esc per annullare",
+    "noTargetError": "@:{'common.appName'} non è riuscito a individuare un'applicazione di destinazione per la dettatura"
   },
   "docRepo": {
     "config": {
@@ -3073,12 +3074,19 @@
       },
       "spokenLanguage": "Lingua parlata",
       "tabs": {
+        "configuration": "Configurazione",
+        "model": "Modello",
         "quickDictation": "Dettatura rapida",
         "speechToText": "Dettatura",
         "textToSpeech": "Sintesi"
       },
       "test": "Test",
-      "testPlaceholder": "Fai clic sul microfono per testare la dettatura…",
+      "testPlaceholder": {
+        "idle": "Clicca il microfono per testare la trascrizione…",
+        "initializing": "Inizializzazione della trascrizione…",
+        "processing": "Trascrizione in corso…",
+        "recording": "Clicca il microfono per interrompere la registrazione e trascrivere…"
+      },
       "tts": {
         "groqAcceptTermsReminder": "Devi <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accettare i termini e le condizioni</a> per utilizzare il modello Groq.",
         "kokoroReminder": "Fornito",
