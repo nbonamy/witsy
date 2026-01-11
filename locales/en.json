@@ -2528,13 +2528,14 @@
     }
   },
   "realtimeChat": {
+    "callingVoice": "Calling {voice}…",
+    "clickToTalk": "Click to talk to {voice}",
+    "connectedWithVoice": "You are now connected with {voice}",
     "errorPrefix": "Error: ",
-    "establishingConnection": "Establishing connection…",
-    "requestingMicrophone": "Requesting microphone access…",
-    "sessionEstablished": "Session established successfully!",
     "title": "Voice Chat",
     "toolsSelected": "No tool selected|1 tool selected|{count} tools selected",
-    "transcript": "Transcript"
+    "transcript": "Transcript",
+    "transcriptionUnavailable": "*Transcription unavailable*"
   },
   "scratchpad": {
     "actions": {

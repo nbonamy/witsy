@@ -3,6 +3,8 @@
  * Enables vendor-agnostic implementation in RealtimeChat.vue
  */
 
+export const TRANSCRIPTION_UNAVAILABLE = '__TRANSCRIPTION_UNAVAILABLE__'
+
 export type RealtimeToolCall = {
   id: string
   name: string
@@ -11,8 +13,10 @@ export type RealtimeToolCall = {
   result: string
 }
 
+export type RealtimeStatus = 'idle' | 'connecting' | 'connected' | 'error'
+
 export type RealtimeEngineCallbacks = {
-  onStatusChange: (status: string) => void
+  onStatusChange: (status: RealtimeStatus) => void
   onNewMessage: (message: RealtimeMessage) => void
   onMessageUpdated: (id: string, content: string, mode: 'append' | 'replace') => void
   onMessageToolCall: (messageId: string, toolCall: RealtimeToolCall) => void
