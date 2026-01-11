@@ -37,23 +37,26 @@
 
         <div class="status">{{ status }}</div>
 
-        <!-- <div class="transcript">
-          <div v-for="word in lastWords" :key="word" class="word" v-html="word" />
-        </div> -->
-
         <AnimatedBlob :active="state === 'active'" @click="onStart" ref="blob"/>
 
         <div class="cost-container">
           <div class="total">
             <div class="title">{{ t('common.estimatedCost') }}</div>
             <div class="value">$ <NumberFlip :value="sessionTotals.cost.total" :animate-initial-number="false" :formatter="(n: number) => n.toFixed(6)"/></div>
-            <div class="note">{{ t('common.basedOn') }}<br>gpt-4o-realtime-preview-2024-12-17<br>
-              <a href="https://openai.com/api/pricing" target="_blank">{{ t('common.costsAsOf') }}</a> 25/05/2025</div>
+            <div class="note">{{ t('common.basedOn') }} {{ model.includes('mini') ? 'gpt-realtime-mini' : 'gpt-realtime' }}<br>
+              <a href="https://platform.openai.com/docs/pricing" target="_blank">{{ t('common.costsAsOf') }}</a> 11/01/2026</div>
           </div>
         </div>
 
       </main>
 
+    </div>
+
+    <div class="sp-transcript">
+      <header>
+        <div class="title">{{ t('realtimeChat.transcript') }}</div>
+      </header>
+      <MessageList :chat="chat" theme="conversation" conversation-mode="" />
     </div>
 
   </div>
@@ -66,7 +69,12 @@ import { store } from '@services/store'
 import { t } from '@services/i18n'
 import AnimatedBlob from '@components/AnimatedBlob.vue'
 import NumberFlip from '@components/NumberFlip.vue'
+import MessageList from '@components/MessageList.vue'
 import useTipsManager from '@renderer/utils/tips_manager'
+import { RealtimeAgent, RealtimeSession, RealtimeItem } from '@openai/agents/realtime'
+import LlmUtils from '../services/llm_utils'
+import Chat from '@models/chat'
+import Message from '@models/message'
 
 const tipsManager = useTipsManager(store)
 
@@ -79,20 +87,18 @@ type Cost = {
 type Stats = {
   audioInputTokens: number,
   textInputTokens: number,
-  cachedInputTokens: number,
+  cachedAudioTokens: number,
+  cachedTextTokens: number,
   audioOutputTokens: number,
   textOutputTokens: number
   cost?: Cost
 }
 
-let peerConnection: RTCPeerConnection = null
-let audioContext: AudioContext = null
-let audioStream: MediaStream = null
-
-const sessionTotals= ref<Stats>({
+const sessionTotals = ref<Stats>({
   audioInputTokens: 0,
   textInputTokens: 0,
-  cachedInputTokens: 0,
+  cachedAudioTokens: 0,
+  cachedTextTokens: 0,
   audioOutputTokens: 0,
   textOutputTokens: 0,
   cost: {
@@ -105,12 +111,12 @@ const sessionTotals= ref<Stats>({
 const kWelcomeMessage = t('common.clickToStart')
 
 const blob = ref<typeof AnimatedBlob>(null)
-const engine= ref<string>('openai')
-const model= ref<string>('gpt-4o-mini-realtime-preview')
-const voice= ref<string>('ash')
+const engine = ref<string>('openai')
+const model = ref<string>('gpt-4o-mini-realtime-preview')
+const voice = ref<string>('ash')
 const status = ref(kWelcomeMessage)
-const state= ref<'idle'|'active'>('idle')
-const lastWords= ref<string[]>(['bon', 'jour', ' nicolas'])
+const state = ref<'idle'|'active'>('idle')
+const chat = ref<Chat>(new Chat())
 
 const engines = computed(() => ([
   { id: 'openai', name: 'OpenAI' },
@@ -144,7 +150,7 @@ const voices = computed(() => {
   }
 })
 
-let simInterval: NodeJS.Timeout
+let session: RealtimeSession | null = null
 
 onMounted(() => {
 
@@ -175,157 +181,207 @@ const onChangeEngine = () => {
   save()
 }
 
-const createRealtimeSession = async (inStream: MediaStream, token: String, voice: String) => {
+const onHistoryAdded = () => {
+  updateUsageFromSession()
+}
 
-  const pc = new RTCPeerConnection()
-
-  pc.ontrack = e => {
-    const audio = new Audio()
-    audio.srcObject = e.streams[0]
-    audio.play()
-  }
-
-  pc.addTrack(inStream.getTracks()[0])
-
-  const dc = pc.createDataChannel('oai-events')
-  dc.addEventListener('message', (e) => {
-    try {
-
-      blob.value.update()
-
-      const eventData = JSON.parse(e.data)
-
-      // logging
-      addEventToLog(eventData)
-
-      // word tracking
-      if (eventData.type === 'response.audio_transcript.delta') {
-        lastWords.value.push(eventData.delta)
-        if (lastWords.value.length > 5) {
-          lastWords.value.shift()
-        }
+const onHistoryUpdated = (history: RealtimeItem[]) => {
+  
+  // Convert SDK history items to Message objects
+  const messages: Message[] = []
+  for (const item of history) {
+    if (item.type === 'message' && item.content?.length > 0) {
+      const content = item.content[0]
+      // Get transcript from audio content types
+      const transcript = (content.type === 'input_audio' || content.type === 'output_audio')
+        ? content.transcript
+        : (content.type === 'input_text' || content.type === 'output_text')
+        ? content.text
+        : null
+      if (transcript) {
+        const message = new Message(item.role, transcript)
+        message.uuid = item.itemId
+        messages.push(message)
       }
-    
-      // usage / cost
-      if (eventData.type === 'response.done' &&
-        eventData.response &&
-        eventData.response.usage) {
-        const usage = eventData.response.usage
-        const inputDetails = usage.input_token_details
-        const outputDetails = usage.output_token_details
-        const cachedDetails = inputDetails.cached_tokens_details
-
-        const currentStats: Stats = {
-          audioInputTokens: inputDetails.audio_tokens - cachedDetails.audio_tokens,
-          textInputTokens: inputDetails.text_tokens - cachedDetails.text_tokens,
-          cachedInputTokens: inputDetails.cached_tokens,
-          audioOutputTokens: outputDetails.audio_tokens,
-          textOutputTokens: outputDetails.text_tokens
-        }
-
-        // log
-        //console.log(currentStats)
-
-        // update session totals
-        const costs = calculateCosts(currentStats)
-        updateSessionTotals(currentStats, costs)
-      }
-
-    
-    } catch (err) {
-      console.error('Error parsing event data:', err)
     }
-  })
-
-  const offer = await pc.createOffer()
-  await pc.setLocalDescription(offer)
-
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/sdp'
   }
+  chat.value.messages = messages
 
-  const opts = {
-    method: 'POST',
-    body: offer.sdp,
-    headers
-  }
-
-  const model = store.config.engines.openai.realtime.model
-  const resp = await fetch(`https://api.openai.com/v1/realtime?model=${model}&voice=${voice}`, opts)
-
-  await pc.setRemoteDescription({
-    type: 'answer',
-    sdp: await resp.text()
-  })
-
-  return pc
+  // Update usage/cost from session
+  updateUsageFromSession()
 }
 
-const calculateCosts = ({ audioInputTokens, textInputTokens, cachedInputTokens, audioOutputTokens, textOutputTokens }: Stats): Cost => {
+const updateUsageFromSession = () => {
 
-  // from https://openai.com/api/pricing
-  // for gpt-4o-realtime-preview-2025-05-25
-  const AUDIO_INPUT_COST = 0.00004 // $40 / million audio input tokens
-  const CACHED_AUDIO_COST = 0.0000025 // $2.5 / million cached audio tokens
-  const AUDIO_OUTPUT_COST = 0.00008 // $80 / million audio output tokens
-  const TEXT_INPUT_COST = 0.000005 // $5 / million text input tokens
-  const TEXT_OUTPUT_COST = 0.00002 // $20 / million text output tokens
+  if (!session) return
 
-  const audioInputCost = audioInputTokens * AUDIO_INPUT_COST
-  const cachedInputCost = cachedInputTokens * CACHED_AUDIO_COST
-  const textInputCost = textInputTokens * TEXT_INPUT_COST
-  const audioOutputCost = audioOutputTokens * AUDIO_OUTPUT_COST
-  const textOutputCost = textOutputTokens * TEXT_OUTPUT_COST
+  const usage = session.usage
 
-  return {
-    input: audioInputCost + cachedInputCost + textInputCost,
-    output: audioOutputCost + textOutputCost,
-    total: audioInputCost + cachedInputCost + textInputCost + audioOutputCost + textOutputCost
+  // Sum up token details from arrays
+  // Note: audio_tokens/text_tokens INCLUDE cached tokens, so we subtract to get non-cached
+  let totalAudioInput = 0
+  let totalTextInput = 0
+  let cachedAudioTokens = 0
+  let cachedTextTokens = 0
+  let audioOutputTokens = 0
+  let textOutputTokens = 0
+
+  type InputTokenDetails = {
+    audio_tokens?: number
+    text_tokens?: number
+    cached_tokens_details?: {
+      audio_tokens?: number
+      text_tokens?: number
+    }
   }
-}
 
-const updateSessionTotals = (currentStats: Stats, costs: Cost) => {
-  sessionTotals.value.audioInputTokens += currentStats.audioInputTokens
-  sessionTotals.value.textInputTokens += currentStats.textInputTokens
-  sessionTotals.value.cachedInputTokens += currentStats.cachedInputTokens
-  sessionTotals.value.audioOutputTokens += currentStats.audioOutputTokens
-  sessionTotals.value.textOutputTokens += currentStats.textOutputTokens
-  sessionTotals.value.cost.input += costs.input
-  sessionTotals.value.cost.output += costs.output
-  sessionTotals.value.cost.total += costs.total
-}
+  type OutputTokenDetails = {
+    audio_tokens?: number
+    text_tokens?: number
+  }
 
-const addEventToLog = (eventData: any) => {
-  //console.log(new Date().toISOString(), eventData);
+  for (const details of (usage.inputTokensDetails || []) as InputTokenDetails[]) {
+    totalAudioInput += details.audio_tokens || 0
+    totalTextInput += details.text_tokens || 0
+    // Cached tokens are nested in cached_tokens_details
+    if (details.cached_tokens_details) {
+      cachedAudioTokens += details.cached_tokens_details.audio_tokens || 0
+      cachedTextTokens += details.cached_tokens_details.text_tokens || 0
+    }
+  }
+
+  // Non-cached = total - cached
+  const audioInputTokens = totalAudioInput - cachedAudioTokens
+  const textInputTokens = totalTextInput - cachedTextTokens
+
+  for (const details of (usage.outputTokensDetails || []) as OutputTokenDetails[]) {
+    audioOutputTokens += details.audio_tokens || 0
+    textOutputTokens += details.text_tokens || 0
+  }
+
+  // Calculate costs based on model
+  // from https://platform.openai.com/docs/pricing (per 1M tokens)
+  const currentModel = store.config.engines.openai.realtime.model || ''
+  const isMini = currentModel.toLowerCase().includes('mini')
+
+  // gpt-realtime-mini pricing
+  const MINI_TEXT_INPUT = 0.0000006      // $0.60 / 1M
+  const MINI_TEXT_CACHED = 0.00000006    // $0.06 / 1M
+  const MINI_TEXT_OUTPUT = 0.0000024     // $2.40 / 1M
+  const MINI_AUDIO_INPUT = 0.00001       // $10.00 / 1M
+  const MINI_AUDIO_CACHED = 0.0000003    // $0.30 / 1M
+  const MINI_AUDIO_OUTPUT = 0.00002      // $20.00 / 1M
+
+  // gpt-realtime pricing
+  const FULL_TEXT_INPUT = 0.000004       // $4.00 / 1M
+  const FULL_TEXT_CACHED = 0.0000004     // $0.40 / 1M
+  const FULL_TEXT_OUTPUT = 0.000016      // $16.00 / 1M
+  const FULL_AUDIO_INPUT = 0.000032      // $32.00 / 1M
+  const FULL_AUDIO_CACHED = 0.0000004    // $0.40 / 1M
+  const FULL_AUDIO_OUTPUT = 0.000064     // $64.00 / 1M
+
+  const TEXT_INPUT_COST = isMini ? MINI_TEXT_INPUT : FULL_TEXT_INPUT
+  const TEXT_CACHED_COST = isMini ? MINI_TEXT_CACHED : FULL_TEXT_CACHED
+  const TEXT_OUTPUT_COST = isMini ? MINI_TEXT_OUTPUT : FULL_TEXT_OUTPUT
+  const AUDIO_INPUT_COST = isMini ? MINI_AUDIO_INPUT : FULL_AUDIO_INPUT
+  const AUDIO_CACHED_COST = isMini ? MINI_AUDIO_CACHED : FULL_AUDIO_CACHED
+  const AUDIO_OUTPUT_COST = isMini ? MINI_AUDIO_OUTPUT : FULL_AUDIO_OUTPUT
+
+  const inputCost = (audioInputTokens * AUDIO_INPUT_COST) +
+                    (cachedAudioTokens * AUDIO_CACHED_COST) +
+                    (cachedTextTokens * TEXT_CACHED_COST) +
+                    (textInputTokens * TEXT_INPUT_COST)
+  const outputCost = (audioOutputTokens * AUDIO_OUTPUT_COST) +
+                     (textOutputTokens * TEXT_OUTPUT_COST)
+  const totalCost = inputCost + outputCost
+
+  console.log('Cost calculated:', { inputCost, outputCost, totalCost })
+
+  // Update session totals - update nested properties for reactivity
+  sessionTotals.value.audioInputTokens = audioInputTokens
+  sessionTotals.value.textInputTokens = textInputTokens
+  sessionTotals.value.cachedAudioTokens = cachedAudioTokens
+  sessionTotals.value.cachedTextTokens = cachedTextTokens
+  sessionTotals.value.audioOutputTokens = audioOutputTokens
+  sessionTotals.value.textOutputTokens = textOutputTokens
+  sessionTotals.value.cost.input = inputCost
+  sessionTotals.value.cost.output = outputCost
+  sessionTotals.value.cost.total = totalCost
 }
 
 const startSession = async () => {
+  
   try {
 
     //status.className = 'status'
     status.value = t('realtimeChat.requestingMicrophone')
     state.value = 'active'
 
-    audioStream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: false
+    // init agent with instructions
+    const llmUtils = new LlmUtils({
+      ...store.config,
+      llm: {
+        ...store.config.llm,
+        additionalInstructions: {
+          datetime: true,
+          toolRetry: true,
+          artifacts: false,
+          mermaid: false,
+        }
+      }
+    })
+    const agent = new RealtimeAgent({
+      name: 'Assistant',
+      instructions: llmUtils.getSystemInstructions(null, {
+        noMarkdown: true,
+      })
     })
 
-    status.value = t('realtimeChat.establishingConnection')
+    session = new RealtimeSession(agent, {
+      config: {
+        voice: voice.value,
+      }
+    });
 
-    peerConnection = await createRealtimeSession(
-      audioStream,
-      store.config.engines.openai.apiKey,
-      voice.value
-    )
+    // Listen for history updates to build transcript
+    session.on('history_updated', onHistoryUpdated)
+    session.on('history_added', onHistoryAdded)
 
-    // simInterval = setInterval(() => {
-    //   //updateBlob()
-    // }, 250)
+    // Reset chat for new session
+    chat.value = new Chat()
 
-    //status.className = 'status success'
-    status.value = t('realtimeChat.sessionEstablished')
+    try {
+
+      status.value = t('realtimeChat.establishingConnection')
+
+      // get an ephemeral api key
+      const response = await fetch('https://api.openai.com/v1/realtime/client_secrets', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${store.config.engines.openai.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          session: {
+            type: 'realtime',
+            model: store.config.engines.openai.realtime.model,
+          }
+        })
+      })
+
+      const data = await response.json()
+      const ephemeralKey = data.value      
+
+      await session.connect({
+        apiKey: ephemeralKey,
+        model: store.config.engines.openai.realtime.model,
+      });
+
+      status.value = t('realtimeChat.sessionEstablished')
+
+    } catch (e) {
+      console.error(e);
+    }    
 
   } catch (err) {
     //status.className = 'status error'
@@ -338,20 +394,8 @@ const startSession = async () => {
 const stopSession = () => {
 
   // close
-  peerConnection?.close()
-  peerConnection = null
-
-  // close
-  audioContext?.close()
-  audioContext = null
-
-  // stop
-  audioStream?.getTracks().forEach(track => track.stop())
-  audioStream = null
-
-  // reset
-  clearInterval(simInterval)
-  simInterval = null
+  session?.close()
+  session = null
 
   // done
   status.value = kWelcomeMessage
@@ -359,7 +403,7 @@ const stopSession = () => {
 }
 
 const onStart = () => {
-  if (peerConnection || simInterval) {
+  if (session) {
     stopSession()
   } else {
     startSession()
@@ -401,13 +445,6 @@ defineExpose({
         margin-bottom: 2rem;
       }
 
-      .transcript {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        margin-bottom: 20px;
-      }
-
       .blobs {
         cursor: pointer;
       }
@@ -434,6 +471,82 @@ defineExpose({
 
     }
 
+  }
+
+  .sp-transcript {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 500px;
+    border-left: 1px solid var(--sidebar-border-color);
+    background-color: var(--message-list-bg-color);
+
+    header {
+      flex-shrink: 0;
+      padding: 16px;
+      border-bottom: 1px solid var(--sidebar-border-color);
+
+      .title {
+        font-weight: 500;
+      }
+    }
+
+    .messages-list {
+      flex: 1;
+      overflow: hidden;
+    }
+  }
+
+  &:deep() .messages {
+
+    padding: 2rem;
+    
+    .message {
+
+      margin-bottom: 0;
+
+      .body {
+
+        max-width: unset;
+
+        .message-content {
+          p {
+            margin: 8px 0;
+          }
+        }
+
+      }
+
+      .actions {
+
+        height: 16px;
+
+        .action:not(.copy) {
+          display: none;
+        }
+
+      }
+
+      &.user {
+        .body {
+          margin-right: 0px;
+        }
+        .actions {
+          margin-right: 0px;
+          height: 32px;
+        }
+      }
+
+      &.assistant {
+        .body {
+          margin-left: 0px;
+          padding-left: 0px;
+        }
+        .actions {
+          margin-left: 0px;
+        }
+      }
+
+    }
   }
 
 }

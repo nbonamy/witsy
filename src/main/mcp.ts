@@ -668,8 +668,6 @@ export default class Mcp {
       const client = new Client({
         name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
         version: '1.0.0'
-      }, {
-        capabilities: { tools: {} }
       })
 
       client.onerror = (e) => {
@@ -765,8 +763,6 @@ export default class Mcp {
       const client = new Client({
         name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
         version: '1.0.0'
-      }, {
-        capabilities: { tools: {} }
       })
 
       client.onerror = (e) => {
@@ -863,8 +859,6 @@ export default class Mcp {
       const client = new Client({
         name: `${useI18n(app)('common.appName').toLowerCase()}-oauth-client`,
         version: '1.0.0'
-      }, {
-        capabilities: { tools: {} }
       })
 
       client.onerror = (e) => {

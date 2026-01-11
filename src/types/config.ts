@@ -167,6 +167,8 @@ export type AutomationConfig = {
   altWinCopyPaste: boolean
 }
 
+export type ChatTheme = 'openai' | 'conversation'
+
 export type ChatToolMode = 'never' | 'calling' | 'always'
 
 export type TextFormat = 'text' | 'markdown'
@@ -175,7 +177,7 @@ export type SendKey = 'enter' | 'shiftEner'
 
 export type ChatAppearance = {
   showReasoning: boolean
-  theme: string
+  theme: ChatTheme
   fontFamily: string
   fontSize: number
   sendKey: SendKey
