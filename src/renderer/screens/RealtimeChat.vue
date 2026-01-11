@@ -264,6 +264,8 @@ const onMessagesUpdated = (messages: RealtimeMessage[]) => {
   chat.value.messages = messages.map(m => {
     const message = new Message(m.role, m.content)
     message.uuid = m.id
+    message.engine = engine.value
+    message.model = model.value
     return message
   })
 }
@@ -495,7 +497,7 @@ defineExpose({
   .sp-transcript {
     display: flex;
     flex-direction: column;
-    flex: 0 0 500px;
+    flex: 0 0 calc(var(--large-panel-width) * 1.5);
     border-left: 1px solid var(--sidebar-border-color);
     background-color: var(--message-list-bg-color);
 
