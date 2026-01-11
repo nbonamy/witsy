@@ -2055,6 +2055,7 @@
         "error": "Authentication setup failed",
         "errorText": "Failed to configure authentication. Please check your internet connection and try again.",
         "notRequired": "This server does not require authentication.",
+        "reAuthenticate": "Re-authenticate",
         "removeConfirm": "Delete authentication data",
         "removeConfirmText": "Are you sure you want to delete the authentication data? You will need to re-authorize if you want to use this server again.",
         "required": "Authentication is required to connect to this server",

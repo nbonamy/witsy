@@ -399,15 +399,55 @@ test('Editor pickers', async () => {
   expect(window.api.file.find).toHaveBeenCalledTimes(1)
   expect(window.api.file.pickFile).toHaveBeenCalledTimes(0)
   expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('file.ext')
- 
+
   await editor.find<HTMLButtonElement>('button[name=pickCommand]').trigger('click')
   expect(window.api.file.find).toHaveBeenCalledTimes(1)
   expect(window.api.file.pickFile).toHaveBeenCalledTimes(1)
   expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('image.png')
- 
+
   await editor.find<HTMLButtonElement>('button[name=pickScript]').trigger('click')
   expect(window.api.file.find).toHaveBeenCalledTimes(1)
   expect(window.api.file.pickFile).toHaveBeenCalledTimes(2)
   expect(editor.find<HTMLInputElement>('input[name=url]').element.value).toBe('image.png')
 
+})
+
+test('Re-authenticate reuses existing credentials', async () => {
+
+  const existingOAuthConfig = {
+    tokens: { access_token: 'existing-token' },
+    clientId: 'existing-client-id',
+    clientSecret: 'existing-client-secret',
+    scope: 'read write'
+  }
+
+  const server = {
+    uuid: 'test-server',
+    type: 'http',
+    url: 'http://localhost:3000',
+    oauth: existingOAuthConfig
+  }
+
+  const editor: VueWrapper<any> = mount(Editor, {
+    ...stubTeleport,
+    props: {
+      type: 'http',
+      server: server
+    }
+  })
+
+  await editor.vm.$nextTick()
+
+  // Verify oauth config is loaded
+  expect(editor.vm.oauthConfig).toEqual(existingOAuthConfig)
+
+  // Mock the OAuth detection to return no auth required (to prevent actual OAuth flow)
+  vi.mocked(window.api.mcp.detectOAuth).mockResolvedValueOnce({ requiresOAuth: false })
+
+  // Trigger re-authentication
+  await editor.vm.reAuthenticate()
+
+  // Verify that clientId and clientSecret were preserved
+  expect(editor.vm.oauthClientId).toBe('existing-client-id')
+  expect(editor.vm.oauthClientSecret).toBe('existing-client-secret')
 })

@@ -2038,6 +2038,7 @@
         "error": "Fehler bei der Einrichtung der Authentifizierung",
         "errorText": "Die Authentifizierung konnte nicht konfiguriert werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
         "notRequired": "Für diesen Server ist keine Authentifizierung erforderlich.",
+        "reAuthenticate": "Erneut authentifizieren",
         "removeConfirm": "Authentifizierungsdaten löschen",
         "removeConfirmText": "Sind Sie sicher, dass Sie die Authentifizierungsdaten löschen möchten? Sie müssen sich erneut autorisieren, wenn Sie diesen Server wieder verwenden möchten.",
         "required": "Authentifizierung ist erforderlich, um eine Verbindung zu diesem Server herzustellen",

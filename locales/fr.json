@@ -2038,6 +2038,7 @@
         "error": "Échec de la configuration de l'authentification",
         "errorText": "Échec de la configuration de l'authentification. Veuillez vérifier votre connexion Internet et réessayer.",
         "notRequired": "Ce serveur ne nécessite pas d'authentification.",
+        "reAuthenticate": "Se réauthentifier",
         "removeConfirm": "Supprimer les données d'authentification",
         "removeConfirmText": "Êtes-vous sûr de vouloir supprimer les données d'authentification ? Vous devrez réautoriser si vous souhaitez utiliser ce serveur à nouveau.",
         "required": "L'authentification est requise pour se connecter à ce serveur",
