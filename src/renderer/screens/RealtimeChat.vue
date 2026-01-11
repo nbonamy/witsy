@@ -104,11 +104,12 @@ import {
   RealtimeCostInfo,
   RealtimeEngine,
   RealtimeMessage,
+  RealtimeToolCall,
   RealtimeUsage
 } from '@services/realtime'
 import { store } from '@services/store'
 import { McpServerWithTools, McpToolUnique } from 'types/mcp'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import LlmUtils from '../services/llm_utils'
 
 const tipsManager = useTipsManager(store)
@@ -141,7 +142,7 @@ const voice = ref<string>('ash')
 const status = ref(kWelcomeMessage)
 const state = ref<'idle'|'active'>('idle')
 const chat = ref<Chat>(new Chat())
-const toolSelection = ref<string[]>([])  // Start with no tools
+const toolSelection = ref<string[]>(store.config.realtime.tools || [])
 const toolsMenuVisible = ref(false)
 
 let realtimeEngine: RealtimeEngine | null = null
@@ -198,6 +199,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   stopSession()
 })
+
+watch(toolSelection, () => {
+  save()
+}, { deep: true })
 
 const onChangeEngine = () => {
   model.value = store.config.engines[engine.value].realtime.model || models.value[0].id
@@ -259,58 +264,46 @@ const onStatusChange = (newStatus: string) => {
   status.value = newStatus
 }
 
-const onMessagesUpdated = (messages: RealtimeMessage[]) => {
-  // Convert RealtimeMessages to Message objects
-  chat.value.messages = messages.map(m => {
-    const message = new Message(m.role, m.content)
-    message.uuid = m.id
+const onNewMessage = (message: RealtimeMessage) => {
+  const msg = new Message(message.role, message.content)
+  msg.uuid = message.id
+  msg.engine = engine.value
+  msg.model = model.value
+  chat.value.messages.push(msg)
+}
+
+const onMessageUpdated = (id: string, content: string) => {
+  const message = chat.value.messages.find(m => m.uuid === id)
+  if (message) {
+    message.setText(content)
+  }
+}
+
+const onMessageToolCall = (messageId: string, toolCall: RealtimeToolCall) => {
+  
+  // Find the message or create one if needed
+  let message = chat.value.messages.find(m => m.uuid === messageId)
+  if (!message) {
+    message = new Message('assistant', '')
+    message.uuid = messageId
     message.engine = engine.value
     message.model = model.value
-    return message
-  })
-}
-
-const onToolStart = (toolCallId: string, toolName: string, input: any) => {
-  // Find the last assistant message or create one
-  let assistantMessage = chat.value.messages.findLast(m => m.role === 'assistant')
-  if (!assistantMessage) {
-    assistantMessage = new Message('assistant', '')
-    chat.value.messages.push(assistantMessage)
+    chat.value.messages.push(message)
   }
 
-  // Add tool call in running state
-  assistantMessage.addToolCall({
+  // Add/update tool call with marker in content
+  message.addToolCall({
     type: 'tool',
-    id: toolCallId,
-    name: toolName,
-    state: 'running',
+    id: toolCall.id,
+    name: toolCall.name,
+    state: toolCall.status === 'running' ? 'running' : 'completed',
     status: null,
-    done: false,
+    done: toolCall.status === 'completed',
     call: {
-      params: input,
-      result: null
+      params: JSON.parse(toolCall.params),
+      result: JSON.parse(toolCall.result),
     }
-  }, false)
-}
-
-const onToolEnd = (toolCallId: string, toolName: string, result: any) => {
-  // Find the assistant message with this tool call
-  const assistantMessage = chat.value.messages.findLast(m => m.role === 'assistant')
-  if (assistantMessage) {
-    // Update tool call to completed state
-    assistantMessage.addToolCall({
-      type: 'tool',
-      id: toolCallId,
-      name: toolName,
-      state: 'completed',
-      status: null,
-      done: true,
-      call: {
-        params: null,
-        result: result
-      }
-    }, false)
-  }
+  }, true)  // true = add marker to content for display
 }
 
 const onUsageUpdated = (usage: RealtimeUsage) => {
@@ -359,9 +352,9 @@ const startSession = async () => {
     // Create engine instance with callbacks
     realtimeEngine = createRealtimeEngine(engine.value, store.config, {
       onStatusChange,
-      onMessagesUpdated,
-      onToolStart,
-      onToolEnd,
+      onNewMessage,
+      onMessageUpdated,
+      onMessageToolCall,
       onUsageUpdated,
       onError,
     })
@@ -409,6 +402,7 @@ const onStart = () => {
 
 const save = () => {
   store.config.realtime.engine = engine.value
+  store.config.realtime.tools = toolSelection.value
   store.config.engines[engine.value].realtime.model = model.value
   store.config.engines[engine.value].realtime.voice = voice.value
   store.saveSettings()

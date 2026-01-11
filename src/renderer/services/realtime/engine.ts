@@ -3,11 +3,19 @@
  * Enables vendor-agnostic implementation in RealtimeChat.vue
  */
 
+export type RealtimeToolCall = {
+  id: string
+  name: string
+  status: 'running' | 'completed'
+  params: string
+  result: string
+}
+
 export type RealtimeEngineCallbacks = {
   onStatusChange: (status: string) => void
-  onMessagesUpdated: (messages: RealtimeMessage[]) => void
-  onToolStart: (toolCallId: string, toolName: string, input: any) => void
-  onToolEnd: (toolCallId: string, toolName: string, result: any) => void
+  onNewMessage: (message: RealtimeMessage) => void
+  onMessageUpdated: (id: string, content: string) => void
+  onMessageToolCall: (messageId: string, toolCall: RealtimeToolCall) => void
   onUsageUpdated: (usage: RealtimeUsage) => void
   onError: (error: Error) => void
 }

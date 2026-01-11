@@ -1,26 +1,26 @@
 diff --git a/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js b/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
-index 95d6f94..ac9542e 100644
+index ee48b40..93a5191 100644
 --- a/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
 +++ b/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
-@@ -78,7 +78,7 @@ class StdioClientTransport {
+@@ -76,7 +76,7 @@ class StdioClientTransport {
                      ...this._serverParams.env
                  },
-                 stdio: ['pipe', 'pipe', (_b = this._serverParams.stderr) !== null && _b !== void 0 ? _b : 'inherit'],
+                 stdio: ['pipe', 'pipe', this._serverParams.stderr ?? 'inherit'],
 -                shell: false,
-+                shell: node_process_1.default.platform === "win32",
-                 signal: this._abortController.signal,
++                node_process_1.default.platform === "win32",
                  windowsHide: node_process_1.default.platform === 'win32' && isElectron(),
                  cwd: this._serverParams.cwd
+             });
 diff --git a/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js b/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
-index d77c64d..3407efa 100644
+index e1e4b9c..73b10d4 100644
 --- a/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
 +++ b/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
-@@ -71,7 +71,7 @@ export class StdioClientTransport {
+@@ -69,7 +69,7 @@ export class StdioClientTransport {
                      ...this._serverParams.env
                  },
-                 stdio: ['pipe', 'pipe', (_b = this._serverParams.stderr) !== null && _b !== void 0 ? _b : 'inherit'],
+                 stdio: ['pipe', 'pipe', this._serverParams.stderr ?? 'inherit'],
 -                shell: false,
 +                shell: process.platform === "win32",
-                 signal: this._abortController.signal,
                  windowsHide: process.platform === 'win32' && isElectron(),
                  cwd: this._serverParams.cwd
+             });
