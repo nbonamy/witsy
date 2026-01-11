@@ -119,7 +119,7 @@
         <textarea class="test-result" v-model="testResult" readonly rows="2" :placeholder="testPlaceholder"></textarea>
         <div class="test-controls">
           <Waveform
-            v-if="isRecording"
+            v-if="state === 'recording'"
             :width="32"
             :height="12"
             foreground-color-inactive="var(--control-placeholder-text-color)"
@@ -128,8 +128,8 @@
             :is-recording="true"
           />
           <ButtonIcon @click.prevent="toggleTest" :disabled="!canTest">
-            <SpinningIcon v-if="isProcessing" :spinning="true" />
-            <MicIcon v-else :class="{ recording: isRecording, initializing: isInitializing }" />
+            <SpinningIcon v-if="state === 'processing'" :spinning="true" />
+            <MicIcon v-else :class="{ recording: state === 'recording', initializing: state === 'initializing' }" />
           </ButtonIcon>
         </div>
       </div>
@@ -193,22 +193,26 @@ const voiceRecordingInstance = shallowRef(useVoiceRecording({
   autoStopOnSilence: true,
 }))
 
-const isInitializing = ref(false)
-const isRecording = computed(() => voiceRecordingInstance.value.state.value === 'recording')
-const isProcessing = computed(() => voiceRecordingInstance.value.state.value === 'processing')
+type State = 'idle' | 'initializing' | 'recording' | 'processing'
+const state = ref<State>('idle')
 
-// Watch for when recording actually starts to clear initializing state
-watch(isRecording, (newValue) => {
-  if (newValue) {
-    isInitializing.value = false
+// Watch voice recording state and sync with our state
+watch(() => voiceRecordingInstance.value.state.value, (recordingState) => {
+  if (recordingState === 'recording' && state.value === 'initializing') {
+    state.value = 'recording'
+  } else if (recordingState === 'processing') {
+    state.value = 'processing'
+  } else if (recordingState === 'idle' && state.value !== 'initializing') {
+    state.value = 'idle'
   }
 })
 
 // Helper to refresh voiceRecording when config changes
 const refreshVoiceRecording = () => {
-  if (voiceRecordingInstance.value.state.value === 'recording') {
+  if (state.value === 'recording') {
     voiceRecordingInstance.value.stopRecording()
   }
+  state.value = 'idle'
   testResult.value = ''
   voiceRecordingInstance.value = useVoiceRecording({
     onTranscriptionComplete: (text: string) => {
@@ -220,13 +224,14 @@ const refreshVoiceRecording = () => {
     autoStopOnSilence: true,
   })
 }
+
 const canTest = computed(() => {
   // Can't test while initializing or processing (but can stop while recording)
-  if (isInitializing.value || isProcessing.value) {
+  if (state.value === 'initializing' || state.value === 'processing') {
     return false
   }
   // Can always stop recording
-  if (isRecording.value) {
+  if (state.value === 'recording') {
     return true
   }
   // local engines don't need API keys
@@ -237,13 +242,13 @@ const canTest = computed(() => {
 })
 
 const testPlaceholder = computed(() => {
-  if (isInitializing.value) {
+  if (state.value === 'initializing') {
     return t('settings.voice.testPlaceholder.initializing')
   }
-  if (isRecording.value) {
+  if (state.value === 'recording') {
     return t('settings.voice.testPlaceholder.recording')
   }
-  if (isProcessing.value) {
+  if (state.value === 'processing') {
     return t('settings.voice.testPlaceholder.processing')
   }
   return t('settings.voice.testPlaceholder.idle')
@@ -448,22 +453,22 @@ const deleteLocalModels = async () => {
 }
 
 const toggleTest = async () => {
-  if (isRecording.value) {
+  if (state.value === 'recording') {
     voiceRecordingInstance.value.stopRecording()
   } else {
     testResult.value = ''
-    isInitializing.value = true
+    state.value = 'initializing'
     try {
       await voiceRecordingInstance.value.startRecording()
     } catch (error) {
-      isInitializing.value = false
+      state.value = 'idle'
       console.error('[STT Test] Error starting recording:', error)
     }
   }
 }
 
 onBeforeUnmount(() => {
-  if (isRecording.value) {
+  if (state.value === 'recording') {
     voiceRecordingInstance.value.stopRecording()
   }
 })
