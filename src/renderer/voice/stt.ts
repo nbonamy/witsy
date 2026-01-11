@@ -131,9 +131,9 @@ export const isSTTReady = (config: Configuration): boolean => {
 
 }
 
-export const getSTTEngines = () => {
+export const getSTTEngines = (): { id: string, label: string, type: 'local' | 'api' | 'custom' }[] => {
   return [
-    ...(window.api.platform === 'darwin' ? [{ id: 'apple', label: 'Apple', type: 'local' }] : []),
+    ...(window.api.platform === 'darwin' ? [{ id: 'apple', label: 'Apple', type: 'local' as const }] : []),
     { id: 'parakeet', label: engineNames.parakeet, type: 'local' },
     { id: 'whisper', label: engineNames.whisper, type: 'local' },
     { id: 'falai', label: engineNames.falai, type: 'api' },

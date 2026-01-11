@@ -8,7 +8,7 @@ import TTSElevenLabs from './tts-elevenlabs'
 import TTSFalAi from './tts-falai'
 import TTSMiniMax from './tts-minimax'
 
-export const getTTSEngines = () => {
+export const getTTSEngines = (): { id: string, label: string, type: 'api' | 'custom' }[] => {
   return [
     { id: 'openai', label: engineNames.openai, type: 'api' },
     { id: 'elevenlabs', label: engineNames.elevenlabs, type: 'api' },
