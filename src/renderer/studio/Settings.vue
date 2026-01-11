@@ -228,7 +228,7 @@ const modelType = computed((): DesignStudioMediaType => {
 })
 
 const engines = computed(() => {
-  return creator[mediaType.value].getEngines(true)
+  return creator[mediaType.value].getEngines(true).sort((a, b) => a.name.localeCompare(b.name))
 })
 
 const hasFixedModels = computed(() => {
