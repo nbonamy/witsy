@@ -320,3 +320,48 @@ test('Shows no icon when no source app and clipboard disabled', async () => {
   expect(wrapper.find('.app-info img').exists()).toBe(false)
   expect(wrapper.find('.clipboard-icon').exists()).toBe(false)
 })
+
+test('Shows actions overlay when recording', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  wrapper.vm.state = 'recording'
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.find('.actions-overlay').exists()).toBe(true)
+  expect(wrapper.find('.finish-btn').exists()).toBe(true)
+  expect(wrapper.find('.cancel-btn').exists()).toBe(true)
+})
+
+test('Hides actions overlay when not recording', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  wrapper.vm.state = 'idle'
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.find('.actions-overlay').exists()).toBe(false)
+})
+
+test('Finish button calls stopAndTranscribe', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  wrapper.vm.state = 'recording'
+  await wrapper.vm.$nextTick()
+
+  const finishBtn = wrapper.find('.finish-btn')
+  await finishBtn.trigger('click')
+
+  expect(wrapper.vm.state).toBe('processing')
+  expect(mockTranscriber.endStreaming).toHaveBeenCalled()
+  expect(mockAudioRecorder.stop).toHaveBeenCalled()
+})
+
+test('Cancel button calls cancelRecording', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  wrapper.vm.state = 'recording'
+  await wrapper.vm.$nextTick()
+
+  const cancelBtn = wrapper.find('.cancel-btn')
+  await cancelBtn.trigger('click')
+
+  expect(wrapper.vm.state).toBe('idle')
+  expect(mockAudioRecorder.stop).toHaveBeenCalled()
+  expect(mockAudioRecorder.release).toHaveBeenCalled()
+  expect(window.api.dictation.close).toHaveBeenCalledWith('', null)
+})

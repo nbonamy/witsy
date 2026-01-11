@@ -2,8 +2,10 @@
   <div
     ref="dictationEl"
     class="dictation"
-    :class="{ notch: isNotchAppearance, visible: isVisible, closing: isClosing }"
+    :class="{ notch: isNotchAppearance, visible: isVisible, closing: isClosing, 'show-overlay': showOverlay }"
     @animationend="onAnimationEnd"
+    @mousemove="onMouseMove"
+    @mouseleave="onMouseLeave"
   >
     <div class="app-info">
       <img v-if="sourceApp" class="icon" :src="iconData" />
@@ -22,6 +24,18 @@
       <CircleIcon v-else-if="state === 'idle' || state === 'initializing'" class="idle" :size="16" :color="state === 'initializing' ? 'orange' : iconColor" :fill="state === 'initializing' ? 'orange' : 'transparent'" />
     </div>
     <div class="hint">{{ t('dictation.hint') }}</div>
+
+    <!-- Overlay with action buttons -->
+    <div class="actions-overlay" v-if="state === 'recording'">
+      <div class="actions">
+        <button class="action-btn finish-btn" @click="stopAndTranscribe">
+          <CheckIcon :size="16" />
+        </button>
+        <button class="action-btn cancel-btn" @click="cancelRecording">
+          <XIcon :size="16" />
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -37,7 +51,7 @@ import { computed, onBeforeUnmount, onMounted, ref, toRaw } from 'vue'
 import useAudioRecorder from '../audio/audio_recorder'
 import useTranscriber from '../audio/transcriber'
 
-import { CircleIcon, ClipboardIcon } from 'lucide-vue-next'
+import { CircleIcon, ClipboardIcon, CheckIcon, XIcon } from 'lucide-vue-next'
 
 // init stuff
 store.loadSettings()
@@ -61,6 +75,8 @@ const foregroundColorInactive = ref('var(--icon-color)')
 const cancelled = ref(false)
 const isVisible = ref(false)
 const isClosing = ref(false)
+const showOverlay = ref(false)
+const hasMouseMoved = ref(false)
 let configHash = ''
 let pendingCloseText: string | undefined
 let pendingCloseSourceApp: Application | null = null
@@ -85,6 +101,10 @@ const getConfigHash = () => {
 }
 
 const onShow = async (params: any) => {
+
+  // reset overlay state - only show on actual mouse enter
+  showOverlay.value = false
+  hasMouseMoved.value = false
 
   // parse source app
   if (params?.sourceApp) {
@@ -303,12 +323,17 @@ const transcribeAndInsert = async (audioBlob: Blob) => {
 }
 
 const closeWindow = (text?: string) => {
+
   // stop and release recording to free the microphone
   if (state.value === 'recording') {
     audioRecorder.stop()
   }
   audioRecorder.release()
   state.value = 'idle'
+
+  // reset overlay state
+  showOverlay.value = false
+  hasMouseMoved.value = false
 
   // animate collapse for notch appearance
   if (isNotchAppearance.value) {
@@ -339,6 +364,18 @@ const cancelRecording = () => {
   closeWindow()
 }
 
+const onMouseMove = () => {
+  if (!hasMouseMoved.value) {
+    hasMouseMoved.value = true
+  }
+  showOverlay.value = true
+}
+
+const onMouseLeave = () => {
+  showOverlay.value = false
+  hasMouseMoved.value = false
+}
+
 const onKeyDown = (event: KeyboardEvent) => {
   if (event.key === ' ') {
     event.preventDefault()
@@ -364,7 +401,7 @@ body {
 }
 
 .dictation {
-  
+
   --padding-top: 1rem;
   --padding-bottom: 0.5rem;
   padding-top: var(--padding-top);
@@ -372,7 +409,7 @@ body {
   height: calc(100vh + var(--padding-top) + var(--padding-bottom));
 
   background-color: var(--source-app-bg-color);
-  
+
   display: grid;
   grid-template-columns: 2rem 1fr 2rem;
   grid-template-rows: 48px auto;
@@ -381,6 +418,7 @@ body {
   padding: 0 1rem;
   column-gap: 0.75rem;
   -webkit-app-region: drag;
+  position: relative;
 }
 
 .dictation.notch {
@@ -508,6 +546,76 @@ body {
 .dictation.notch .hint {
   grid-row: 3;
   margin-top: 0rem;
+}
+
+.actions-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 1rem;
+  background-color: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease-in-out, background-color 0.15s ease-in-out;
+  border-radius: inherit;
+}
+
+.dictation.show-overlay .actions-overlay {
+  opacity: 1;
+  pointer-events: auto;
+  background-color: rgba(0, 0, 0, 0.66);
+}
+
+.dictation.notch .actions-overlay {
+  align-items: center;
+  padding-top: 0;
+}
+
+.dictation.notch.show-overlay .actions-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: var(--font-size-12);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  gap: 0.375rem;
+}
+
+.finish-btn {
+  background-color: color-mix(in srgb, var(--color-primary) 80%, transparent);
+  color: white;
+}
+
+.finish-btn:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 100%, transparent);
+}
+
+.cancel-btn {
+  background-color: color-mix(in srgb, var(--color-error) 80%, transparent);
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: color-mix(in srgb, var(--color-error) 100%, transparent);
 }
 
 @keyframes pulse {
