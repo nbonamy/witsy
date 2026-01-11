@@ -27,6 +27,12 @@
               <option v-for="voice in voices" :value="voice.id" :key="voice.id">{{ voice.name }}</option>
             </select>
           </div>
+          <div class="form-field">
+            <label>{{ t('common.tools') }}</label>
+            <button id="tools-menu-anchor" class="tools" :disabled="state === 'active'" @click="onTools">
+              <BlocksIcon /> {{ toolsLabel }}
+            </button>
+          </div>
         </div>
       </main>
     </div>
@@ -59,17 +65,38 @@
       <MessageList :chat="chat" theme="conversation" conversation-mode="" />
     </div>
 
+    <ToolsMenu
+      v-if="toolsMenuVisible"
+      anchor="#tools-menu-anchor"
+      position="below"
+      :tool-selection="toolSelection"
+      @close="onCloseToolsMenu"
+      @select-all-tools="handleSelectAllTools"
+      @unselect-all-tools="handleUnselectAllTools"
+      @select-all-plugins="handleSelectAllPlugins"
+      @unselect-all-plugins="handleUnselectAllPlugins"
+      @select-all-server-tools="handleSelectAllServerTools"
+      @unselect-all-server-tools="handleUnselectAllServerTools"
+      @all-plugins-toggle="handleAllPluginsToggle"
+      @plugin-toggle="handlePluginToggle"
+      @all-server-tools-toggle="handleAllServerToolsToggle"
+      @server-tool-toggle="handleServerToolToggle"
+    />
+
   </div>
 </template>
 
 <script setup lang="ts">
 
+import { BlocksIcon } from 'lucide-vue-next'
 import AnimatedBlob from '@components/AnimatedBlob.vue'
 import MessageList from '@components/MessageList.vue'
 import NumberFlip from '@components/NumberFlip.vue'
+import ToolsMenu from '@components/ToolsMenu.vue'
 import Chat from '@models/chat'
 import Message from '@models/message'
 import useTipsManager from '@renderer/utils/tips_manager'
+import * as ts from '@renderer/utils/tool_selection'
 import { t } from '@services/i18n'
 import {
   createRealtimeEngine,
@@ -80,6 +107,7 @@ import {
   RealtimeUsage
 } from '@services/realtime'
 import { store } from '@services/store'
+import { McpServerWithTools, McpToolUnique } from 'types/mcp'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import LlmUtils from '../services/llm_utils'
 
@@ -113,6 +141,8 @@ const voice = ref<string>('ash')
 const status = ref(kWelcomeMessage)
 const state = ref<'idle'|'active'>('idle')
 const chat = ref<Chat>(new Chat())
+const toolSelection = ref<string[]>([])  // Start with no tools
+const toolsMenuVisible = ref(false)
 
 let realtimeEngine: RealtimeEngine | null = null
 
@@ -137,6 +167,13 @@ const voices = computed(() => {
   } else {
     return getAvailableVoices(engine.value)
   }
+})
+
+const toolsLabel = computed(() => {
+  if (toolSelection.value.length === 0) {
+    return t('realtimeChat.noTools')
+  }
+  return t('realtimeChat.toolsSelected', { count: toolSelection.value.length })
 })
 
 onMounted(() => {
@@ -166,6 +203,55 @@ const onChangeEngine = () => {
   model.value = store.config.engines[engine.value].realtime.model || models.value[0].id
   voice.value = store.config.engines[engine.value].realtime.voice || voices.value[0].id
   save()
+}
+
+// Tools menu
+const onTools = () => {
+  toolsMenuVisible.value = true
+}
+
+const onCloseToolsMenu = () => {
+  toolsMenuVisible.value = false
+}
+
+const handleSelectAllTools = async (visibleIds?: string[] | null) => {
+  toolSelection.value = await ts.handleSelectAllTools(visibleIds)
+}
+
+const handleUnselectAllTools = async (visibleIds?: string[] | null) => {
+  toolSelection.value = await ts.handleUnselectAllTools(visibleIds)
+}
+
+const handleSelectAllPlugins = async (visibleIds?: string[] | null) => {
+  toolSelection.value = await ts.handleSelectAllPlugins(toolSelection.value, visibleIds)
+}
+
+const handleUnselectAllPlugins = async (visibleIds?: string[] | null) => {
+  toolSelection.value = await ts.handleUnselectAllPlugins(toolSelection.value, visibleIds)
+}
+
+const handleSelectAllServerTools = async (server: McpServerWithTools, visibleIds?: string[] | null) => {
+  toolSelection.value = await ts.handleSelectAllServerTools(toolSelection.value, server, visibleIds)
+}
+
+const handleUnselectAllServerTools = async (server: McpServerWithTools, visibleIds?: string[] | null) => {
+  toolSelection.value = await ts.handleUnselectAllServerTools(toolSelection.value, server, visibleIds)
+}
+
+const handleAllPluginsToggle = async () => {
+  toolSelection.value = await ts.handleAllPluginsToggle(toolSelection.value)
+}
+
+const handlePluginToggle = async (pluginName: string) => {
+  toolSelection.value = await ts.handlePluginToggle(toolSelection.value, pluginName)
+}
+
+const handleAllServerToolsToggle = async (server: McpServerWithTools) => {
+  toolSelection.value = await ts.handleAllServerToolsToggle(toolSelection.value, server)
+}
+
+const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolUnique) => {
+  toolSelection.value = await ts.handleServerToolToggle(toolSelection.value, server, tool)
 }
 
 // Callbacks from RealtimeEngine
@@ -288,6 +374,7 @@ const startSession = async () => {
       instructions: llmUtils.getSystemInstructions(null, {
         noMarkdown: true,
       }),
+      tools: toolSelection.value.length > 0 ? toolSelection.value : null,
     })
 
     status.value = t('realtimeChat.sessionEstablished')
@@ -341,6 +428,30 @@ defineExpose({
 
   .sp-sidebar {
     flex: 0 0 var(--large-panel-width);
+
+    button.tools {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--control-border-color);
+      border-radius: var(--control-border-radius);
+      background-color: var(--control-bg-color);
+      color: var(--control-text-color);
+      font-size: 14px;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
   }
 
   .sp-main {

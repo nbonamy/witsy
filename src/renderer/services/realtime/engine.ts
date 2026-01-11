@@ -44,6 +44,7 @@ export type RealtimeConfig = {
   model: string
   voice: string
   instructions: string
+  tools: string[] | null  // null = all tools, [] = no tools, [...] = specific tools
 }
 
 export type RealtimeVoice = {
