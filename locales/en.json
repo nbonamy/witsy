@@ -3068,6 +3068,11 @@
       },
       "downloading": "Downloading: {percent}%",
       "engine": "Engine",
+      "engineTypes": {
+        "local": "Local (on-device, requires download)",
+        "api": "API (online)",
+        "custom": "Custom"
+      },
       "appleRequiresMacOS26": "Requires macOS 26 (Tahoe) or later. Language models will be downloaded automatically on first use.",
       "groqApiKeyReminder": "Make sure you enter your Groq API key in the Models pane.",
       "initializationError": "An error occured during initialization. Please try again.",
