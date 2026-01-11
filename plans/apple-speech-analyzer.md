@@ -71,8 +71,8 @@ Integrate Apple's new SpeechAnalyzer API (macOS 26+) as an STT engine option via
 - [x] Test with various audio formats - Converts to WAV using webm-to-wav-converter
 - [x] Test with different locales - Uses existing LangSelect component
 - [x] Verify macOS version detection works correctly - Uses window.api.platform check
-- [ ] Unit tests for stt-apple.ts (deferred)
-- [ ] Add macOS 26 version check (currently allows all macOS versions)
+- [x] Unit tests for stt-apple.ts - 14 tests covering all major functionality
+- [ ] Add macOS 26 version check (currently allows all macOS versions) - Optional future enhancement
 
 ## Implementation Notes
 
