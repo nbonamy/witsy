@@ -875,7 +875,7 @@
     }
   },
   "dictation": {
-    "hint": "音声入力を停止するにはスペースキーまたはEscキーを押してください"
+    "hint": "スペースキーで音声入力を停止 — Escキーでキャンセル"
   },
   "docRepo": {
     "config": {
@@ -3051,6 +3051,7 @@
       "voice": "@:{'common.voice'}"
     },
     "voice": {
+      "appleRequiresMacOS26": "macOS 26（Tahoe）以降が必要です。言語モデルは初回使用時に自動でダウンロードされます。",
       "automatic": "🤖 自動",
       "customVocabulary": {
         "label": "カスタム語彙（モデルによってサポートは異なります）",
@@ -3067,6 +3068,11 @@
       },
       "downloading": "ダウンロード中: {percent}%",
       "engine": "エンジン",
+      "engineTypes": {
+        "api": "API（オンライン）",
+        "custom": "カスタム",
+        "local": "ローカル（端末上、ダウンロードが必要）"
+      },
       "groqApiKeyReminder": "モデルペインにGroq APIキーを入力していることを確認してください。",
       "initializationError": "初期化中にエラーが発生しました。もう一度お試しください。",
       "initializing": "初期化中…",
