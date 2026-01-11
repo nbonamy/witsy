@@ -28,6 +28,10 @@ export async function transcribeWithAppleCLI(
   const outputPath = path.join(tempDir, 'output.txt')
 
   try {
+
+    // log
+    console.log('[STT-Apple] Starting transcription with Apple CLI')
+
     // Write audio blob to temp file
     await fs.writeFile(inputPath, audioBlob)
 

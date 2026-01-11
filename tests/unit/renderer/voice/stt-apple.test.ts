@@ -23,7 +23,7 @@ global.window = {
 
 // Mock webm-to-wav-converter
 vi.mock('webm-to-wav-converter', () => ({
-  getWaveBlob: vi.fn(async (blob) => {
+  getWaveBlob: vi.fn(async () => {
     // Return a mock WAV blob with arrayBuffer method
     const mockBlob = new Blob(['wav-data'], { type: 'audio/wav' })
     // Add arrayBuffer method if not present
@@ -60,13 +60,11 @@ describe('STTApple', () => {
   })
 
   it('should not be ready on non-macOS', () => {
-    // @ts-expect-error mocking
     global.window.api.platform = 'win32'
     const engine = new STTApple(makeConfig() as any)
     expect(engine.isReady()).toBe(false)
 
     // Restore
-    // @ts-expect-error mocking
     global.window.api.platform = 'darwin'
   })
 
@@ -103,7 +101,6 @@ describe('STTApple', () => {
       text: 'Hello world',
       error: undefined,
     })
-    // @ts-expect-error mocking
     global.window.api.transcribe.appleCli = mockAppleCli
 
     const audioBlob = new Blob(['audio data'], { type: 'audio/webm' })
@@ -127,7 +124,6 @@ describe('STTApple', () => {
       text: 'Test',
       error: undefined,
     })
-    // @ts-expect-error mocking
     global.window.api.transcribe.appleCli = mockAppleCli
 
     const audioBlob = new Blob(['audio data'])
@@ -145,7 +141,6 @@ describe('STTApple', () => {
       text: '',
       error: 'CLI exited with code 1',
     })
-    // @ts-expect-error mocking
     global.window.api.transcribe.appleCli = mockAppleCli
 
     const audioBlob = new Blob(['audio data'])
@@ -158,7 +153,6 @@ describe('STTApple', () => {
 
     // Mock IPC to throw
     const mockAppleCli = vi.fn().mockRejectedValue(new Error('IPC failed'))
-    // @ts-expect-error mocking
     global.window.api.transcribe.appleCli = mockAppleCli
 
     const audioBlob = new Blob(['audio data'])
