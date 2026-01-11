@@ -2038,6 +2038,7 @@
         "error": "Fallo en la configuración de autenticación",
         "errorText": "No se pudo configurar la autenticación. Por favor, verifique su conexión a internet e intente de nuevo.",
         "notRequired": "Este servidor no requiere autenticación.",
+        "reAuthenticate": "Reautenticar",
         "removeConfirm": "Eliminar datos de autenticación",
         "removeConfirmText": "¿Está seguro de que desea eliminar los datos de autenticación? Tendrá que volver a autorizarse si desea usar este servidor otra vez.",
         "required": "Se requiere autenticación para conectarse a este servidor",

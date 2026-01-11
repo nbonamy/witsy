@@ -2038,6 +2038,7 @@
         "error": "Configurazione autenticazione fallita",
         "errorText": "Impossibile configurare l'autenticazione. Controlla la tua connessione internet e riprova.",
         "notRequired": "Questo server non richiede autenticazione.",
+        "reAuthenticate": "Riautenticare",
         "removeConfirm": "Elimina dati di autenticazione",
         "removeConfirmText": "Sei sicuro di voler eliminare i dati di autenticazione? Dovrai ri-autorizzarti se vorrai usare di nuovo questo server.",
         "required": "L'autenticazione è richiesta per connettersi a questo server",

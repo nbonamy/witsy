@@ -98,7 +98,11 @@
           <label>{{ t('mcp.serverEditor.oauth.title') }}</label>
           <template v-if="oauthConfig">
             <div>{{ t('mcp.serverEditor.oauth.successful') }}</div>
-            <div><a href="#" @click.prevent="removeOAuth">{{ t('common.delete') }}</a></div>
+            <div>
+              <a href="#" @click.prevent="reAuthenticate">{{ t('mcp.serverEditor.oauth.reAuthenticate') }}</a>
+              &nbsp;·&nbsp;
+              <a href="#" @click.prevent="removeOAuth">{{ t('common.delete') }}</a>
+            </div>
           </template>
           <template v-else>
             <div class="form-subgroup">
@@ -335,6 +339,17 @@ const setupOAuth = async (userInitiated: boolean) => {
   }
 }
 
+const reAuthenticate = async () => {
+  // Reuse existing client credentials if available
+  if (oauthConfig.value?.clientId) {
+    oauthClientId.value = oauthConfig.value.clientId
+  }
+  if (oauthConfig.value?.clientSecret) {
+    oauthClientSecret.value = oauthConfig.value.clientSecret
+  }
+  await initOauth(true)
+}
+
 const removeOAuth = async () => {
   const result = await Dialog.show({
     title: t('mcp.serverEditor.oauth.removeConfirm'),
@@ -343,7 +358,7 @@ const removeOAuth = async () => {
     cancelButtonText: t('common.cancel'),
     showCancelButton: true
   })
-  
+
   if (result.isConfirmed) {
     oauthConfig.value = null
   }

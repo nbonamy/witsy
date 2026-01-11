@@ -2057,6 +2057,7 @@
         "error": "Konfiguracja uwierzytelniania nie powiodła się",
         "errorText": "Nie udało się skonfigurować uwierzytelnienia. Sprawdź swoje połączenie internetowe i spróbuj ponownie.",
         "notRequired": "Ten serwer nie wymaga uwierzytelniania.",
+        "reAuthenticate": "Ponownie uwierzytelnij",
         "removeConfirm": "Usuń dane uwierzytelniające",
         "removeConfirmText": "Czy na pewno chcesz usunąć dane uwierzytelniające? Będziesz musiał ponownie autoryzować, aby ponownie korzystać z tego serwera.",
         "required": "Do połączenia z tym serwerem wymagane jest uwierzytelnienie",

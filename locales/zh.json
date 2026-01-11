@@ -2057,6 +2057,7 @@
         "error": "认证设置失败",
         "errorText": "配置认证失败。请检查您的网络连接并重试。",
         "notRequired": "此服务器不需要认证。",
+        "reAuthenticate": "重新进行身份验证",
         "removeConfirm": "删除认证数据",
         "removeConfirmText": "您确定要删除认证数据吗？如果想再次使用此服务器，您需要重新授权。",
         "required": "连接此服务器需要认证",
