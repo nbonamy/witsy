@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Voice Settings panels overhaul
+- Voice Chat tool access and transcript
 
 ### Fixed
 - N/A
