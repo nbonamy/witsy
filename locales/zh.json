@@ -875,7 +875,8 @@
     }
   },
   "dictation": {
-    "hint": "按空格键停止听写，按 Esc 取消"
+    "hint": "按空格键停止听写，按 Esc 取消",
+    "noTargetError": "@:{'common.appName'} 无法识别用于听写的目标应用程序。"
   },
   "docRepo": {
     "config": {
@@ -3095,12 +3096,19 @@
       },
       "spokenLanguage": "口语语言",
       "tabs": {
+        "configuration": "配置",
+        "model": "模型",
         "quickDictation": "快速听写",
         "speechToText": "语音转文本",
         "textToSpeech": "文本转语音"
       },
       "test": "测试",
-      "testPlaceholder": "点击麦克风测试听写…",
+      "testPlaceholder": {
+        "idle": "点击麦克风以测试转写…",
+        "initializing": "正在初始化转写…",
+        "processing": "正在转写…",
+        "recording": "点击麦克风以停止录音并开始转写…"
+      },
       "tts": {
         "groqAcceptTermsReminder": "您需要<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">接受条款和条件</a>以使用 Groq 模型。",
         "kokoroReminder": "已提供",
