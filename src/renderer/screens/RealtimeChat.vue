@@ -104,8 +104,10 @@ import {
   RealtimeCostInfo,
   RealtimeEngine,
   RealtimeMessage,
+  RealtimeStatus,
   RealtimeToolCall,
-  RealtimeUsage
+  RealtimeUsage,
+  TRANSCRIPTION_UNAVAILABLE,
 } from '@services/realtime'
 import { store } from '@services/store'
 import { McpServerWithTools, McpToolUnique } from 'types/mcp'
@@ -133,13 +135,10 @@ const sessionTotals = ref<Stats>({
   }
 })
 
-const kWelcomeMessage = t('common.clickToStart')
-
 const blob = ref<typeof AnimatedBlob>(null)
 const engine = ref<string>('openai')
 const model = ref<string>('gpt-mini-realtime')
 const voice = ref<string>('ash')
-const status = ref(kWelcomeMessage)
 const state = ref<'idle'|'active'>('idle')
 const chat = ref<Chat>(new Chat())
 const toolSelection = ref<string[]>(store.config.realtime.tools || [])
@@ -169,6 +168,14 @@ const voices = computed(() => {
     return getAvailableVoices(engine.value)
   }
 })
+
+const getVoiceName = (): string => {
+  return voices.value.find(v => v.id === voice.value)?.name || voice.value
+}
+
+const getIdleStatus = () => t('realtimeChat.clickToTalk', { voice: getVoiceName() })
+
+const status = ref(getIdleStatus())
 
 const toolsLabel = computed(() => {
   return t('realtimeChat.toolsSelected', { count: toolSelection.value.length })
@@ -201,9 +208,16 @@ watch(toolSelection, () => {
   save()
 }, { deep: true })
 
+watch(voice, () => {
+  if (state.value === 'idle') {
+    status.value = getIdleStatus()
+  }
+})
+
 const onChangeEngine = () => {
   model.value = store.config.engines[engine.value].realtime.model || models.value[0].id
   voice.value = store.config.engines[engine.value].realtime.voice || voices.value[0].id
+  status.value = getIdleStatus()
   save()
 }
 
@@ -256,13 +270,60 @@ const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolU
   toolSelection.value = await ts.handleServerToolToggle(toolSelection.value, server, tool)
 }
 
+// Helper to translate special markers in content
+const translateContent = (content: string): string => {
+  if (content === TRANSCRIPTION_UNAVAILABLE) {
+    return t('realtimeChat.transcriptionUnavailable')
+  }
+  return content
+}
+
+// Play a connection chime using Web Audio API
+const playConnectionChime = () => {
+  try {
+    const audioContext = new AudioContext()
+    const oscillator = audioContext.createOscillator()
+    const gainNode = audioContext.createGain()
+
+    oscillator.connect(gainNode)
+    gainNode.connect(audioContext.destination)
+
+    // Pleasant two-tone chime
+    oscillator.frequency.setValueAtTime(880, audioContext.currentTime) // A5
+    oscillator.frequency.setValueAtTime(1100, audioContext.currentTime + 0.1) // C#6
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3)
+
+    oscillator.start(audioContext.currentTime)
+    oscillator.stop(audioContext.currentTime + 0.3)
+  } catch (e) {
+    // Ignore audio errors
+  }
+}
+
 // Callbacks from RealtimeEngine
-const onStatusChange = (newStatus: string) => {
-  status.value = newStatus
+const onStatusChange = (newStatus: RealtimeStatus) => {
+  const voiceName = getVoiceName()
+  switch (newStatus) {
+    case 'idle':
+      status.value = getIdleStatus()
+      break
+    case 'connecting':
+      status.value = t('realtimeChat.callingVoice', { voice: voiceName })
+      break
+    case 'connected':
+      status.value = t('realtimeChat.connectedWithVoice', { voice: voiceName })
+      playConnectionChime()
+      break
+    case 'error':
+      status.value = t('realtimeChat.errorPrefix')
+      break
+  }
 }
 
 const onNewMessage = (message: RealtimeMessage) => {
-  const msg = new Message(message.role, message.content)
+  const msg = new Message(message.role, translateContent(message.content))
   msg.uuid = message.id
   msg.engine = engine.value
   msg.model = model.value
@@ -270,19 +331,20 @@ const onNewMessage = (message: RealtimeMessage) => {
 }
 
 const onMessageUpdated = (id: string, content: string, mode: 'append' | 'replace') => {
-  console.log(`[realtime] vue onMessageUpdated: id=${id}, mode=${mode}, content="${content.slice(0, 50)}..."`)
+  // console.log(`[realtime] vue onMessageUpdated: id=${id}, mode=${mode}, content="${content.slice(0, 50)}..."`)
   const message = chat.value.messages.find(m => m.uuid === id)
   if (message) {
+    const translated = translateContent(content)
     if (mode === 'replace') {
-      message.setText(content)
+      message.setText(translated)
     } else {
-      message.appendText({ type: 'content', text: content, done: false })
+      message.appendText({ type: 'content', text: translated, done: false })
     }
   }
 }
 
 const onMessageToolCall = (messageId: string, toolCall: RealtimeToolCall) => {
-  console.log(`[realtime] vue onMessageToolCall: id=${messageId}, tool=${toolCall.name}, status=${toolCall.status}`)
+  // console.log(`[realtime] vue onMessageToolCall: id=${messageId}, tool=${toolCall.name}, status=${toolCall.status}`)
 
   // Find the message or create one if needed
   let message = chat.value.messages.find(m => m.uuid === messageId)
@@ -335,7 +397,7 @@ const startSession = async () => {
 
   try {
 
-    status.value = t('realtimeChat.requestingMicrophone')
+    status.value = t('realtimeChat.callingVoice', { voice: getVoiceName() })
     state.value = 'active'
 
     // Init LlmUtils to get system instructions
@@ -375,8 +437,6 @@ const startSession = async () => {
       tools: toolSelection.value.length > 0 ? toolSelection.value : null,
     })
 
-    status.value = t('realtimeChat.sessionEstablished')
-
   } catch (err: any) {
     status.value = `${t('realtimeChat.errorPrefix')}${err.message}`
     console.error('Session error:', err)
@@ -391,7 +451,7 @@ const stopSession = () => {
   realtimeEngine = null
 
   // done
-  status.value = kWelcomeMessage
+  status.value = getIdleStatus()
   state.value = 'idle'
 }
 

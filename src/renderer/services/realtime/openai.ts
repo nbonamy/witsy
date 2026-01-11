@@ -15,6 +15,7 @@ import {
   RealtimeEngineCallbacks,
   RealtimeUsage,
   RealtimeVoice,
+  TRANSCRIPTION_UNAVAILABLE,
 } from './engine'
 
 /**
@@ -299,7 +300,7 @@ export class RealtimeOpenAI extends RealtimeEngine {
     this.session.on('agent_tool_end', this.onToolEnd.bind(this))
 
     // Get ephemeral key
-    this.callbacks.onStatusChange('Establishing connection...')
+    this.callbacks.onStatusChange('connecting')
     const ephemeralKey = await this.getEphemeralKey(realtimeConfig.model)
 
     // Connect session
@@ -308,7 +309,7 @@ export class RealtimeOpenAI extends RealtimeEngine {
       model: realtimeConfig.model,
     })
 
-    this.callbacks.onStatusChange('Session established')
+    this.callbacks.onStatusChange('connected')
   }
 
   close(): void {
@@ -440,13 +441,11 @@ export class RealtimeOpenAI extends RealtimeEngine {
     return data.value
   }
 
-  private static readonly TRANSCRIPTION_UNAVAILABLE = '*Transcription unavailable*'
-
   private getTranscript(item: RealtimeItem): string | null {
     if (item.type !== 'message' || !item.content?.length) return null
     const content = item.content[0]
     return (content.type === 'input_audio' || content.type === 'output_audio')
-      ? (content.transcript ?? RealtimeOpenAI.TRANSCRIPTION_UNAVAILABLE)
+      ? (content.transcript ?? TRANSCRIPTION_UNAVAILABLE)
       : (content.type === 'input_text' || content.type === 'output_text')
       ? content.text
       : ''
@@ -462,7 +461,7 @@ export class RealtimeOpenAI extends RealtimeEngine {
       return
     }
 
-    console.log(`[realtime] added: role=${item.role}, id=${item.itemId}`)
+    // console.log(`[realtime] added: role=${item.role}, id=${item.itemId}`)
 
     const transcript = this.getTranscript(item) || ''
     const role = item.role as 'user' | 'assistant'
@@ -502,7 +501,7 @@ export class RealtimeOpenAI extends RealtimeEngine {
       const transcript = this.getTranscript(item) || ''
 
       // Check if current content is placeholder
-      if (part.content === RealtimeOpenAI.TRANSCRIPTION_UNAVAILABLE && transcript !== part.content) {
+      if (part.content === TRANSCRIPTION_UNAVAILABLE && transcript !== part.content) {
         part.content = transcript
         this.callbacks.onMessageUpdated(msg.id, transcript, 'replace')
       }
@@ -543,7 +542,7 @@ export class RealtimeOpenAI extends RealtimeEngine {
     const callId = details.toolCall.callId || crypto.randomUUID()
     const messageId = this.getLastAssistantMessageId()
 
-    console.log(`[realtime] tool start: ${tool.name}, callId=${callId}, messageId=${messageId}`)
+    // console.log(`[realtime] tool start: ${tool.name}, callId=${callId}, messageId=${messageId}`)
 
     // Remember which message this tool call belongs to
     this.toolCallToMessage.set(callId, messageId)
@@ -571,7 +570,7 @@ export class RealtimeOpenAI extends RealtimeEngine {
     // Use the message we recorded at start, or find last assistant
     const messageId = this.toolCallToMessage.get(callId) || this.getLastAssistantMessageId()
 
-    console.log(`[realtime] tool end: ${tool.name}, callId=${callId}, messageId=${messageId}`)
+    // console.log(`[realtime] tool end: ${tool.name}, callId=${callId}, messageId=${messageId}`)
 
     this.callbacks.onMessageToolCall(messageId, {
       id: callId,
