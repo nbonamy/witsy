@@ -177,9 +177,15 @@ function hasGetTools(plugin: PluginInstance): plugin is PluginInstance & { getTo
 async function buildRealtimeTools(
   config: Configuration,
   modelId: string,
+  toolSelection: string[] | null,
   abortSignal?: AbortSignal
-) {
+): Promise<ReturnType<typeof tool>[]> {
   const tools: ReturnType<typeof tool>[] = []
+
+  // Empty array means no tools
+  if (toolSelection !== null && toolSelection.length === 0) {
+    return tools
+  }
 
   // Get list of enabled plugin names
   const enabled = enabledPlugins(config, true) // include MCP
@@ -202,12 +208,20 @@ async function buildRealtimeTools(
       const toolsArray = Array.isArray(pluginTools) ? pluginTools : [pluginTools]
 
       for (const llmTool of toolsArray) {
+        // Filter by tool selection (null = all tools allowed)
+        if (toolSelection !== null && !toolSelection.includes(llmTool.function.name)) {
+          continue
+        }
         const agentTool = convertToolToAgentsFormat(llmTool, plugin, modelId, abortSignal)
         tools.push(agentTool)
       }
     } else {
       // For regular plugins, build the tool from parameters
       const llmTool = pluginToLlmTool(plugin as Plugin)
+      // Filter by tool selection (null = all tools allowed)
+      if (toolSelection !== null && !toolSelection.includes(llmTool.function.name)) {
+        continue
+      }
       const agentTool = convertToolToAgentsFormat(llmTool, plugin, modelId, abortSignal)
       tools.push(agentTool)
     }
@@ -252,14 +266,14 @@ export class RealtimeOpenAI extends RealtimeEngine {
 
     this.currentModel = realtimeConfig.model
 
-    // Build tools from enabled plugins
-    const tools = await buildRealtimeTools(this.config, realtimeConfig.model)
+    // Build tools from enabled plugins (filtered by selection)
+    const tools = await buildRealtimeTools(this.config, realtimeConfig.model, realtimeConfig.tools)
 
     // Create agent with instructions and tools
     const agent = new RealtimeAgent({
       name: 'Assistant',
       instructions: realtimeConfig.instructions,
-      tools,
+      ...(tools.length > 0 ? { tools } : {})
     })
 
     // Create session with voice config
@@ -422,14 +436,14 @@ export class RealtimeOpenAI extends RealtimeEngine {
     return data.value
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onHistoryAdded(item: RealtimeItem): void {
-    console.log('History added:', JSON.stringify(item, null, 2))
+    // console.log('History added:', JSON.stringify(item, null, 2))
     this.callbacks.onUsageUpdated(this.getUsage())
   }
 
   private onHistoryUpdated(history: RealtimeItem[]): void {
-    console.log('History updated:', JSON.stringify(history, null, 2))
-    console.log('History item types:', history.map(h => ({ type: h.type, role: (h as any).role, contentTypes: (h as any).content?.map((c: any) => c.type) })))
+    // console.log('History updated:', JSON.stringify(history, null, 2))
 
     // Convert SDK history items to RealtimeMessage objects
     const messages: RealtimeMessage[] = []
@@ -457,7 +471,6 @@ export class RealtimeOpenAI extends RealtimeEngine {
   }
 
   private onToolStart(_context: any, _agent: any, tool: any, details: any): void {
-    console.log('Tool start:', tool.name, details)
     this.callbacks.onToolStart(
       details.toolCallId || crypto.randomUUID(),
       tool.name,
@@ -466,7 +479,6 @@ export class RealtimeOpenAI extends RealtimeEngine {
   }
 
   private onToolEnd(_context: any, _agent: any, tool: any, result: any, details: any): void {
-    console.log('Tool end:', tool.name, result, details)
     this.callbacks.onToolEnd(
       details.toolCallId || '',
       tool.name,
