@@ -3102,12 +3102,19 @@
       },
       "spokenLanguage": "Spoken Language",
       "tabs": {
+        "configuration": "Configuration",
+        "model": "Model",
         "quickDictation": "Quick Dictation",
         "speechToText": "Speech-to-Text",
         "textToSpeech": "Text-to-Speech"
       },
       "test": "Test",
-      "testPlaceholder": "Click the microphone to test dictation…",
+      "testPlaceholder": {
+        "idle": "Click the microphone to test transcription…",
+        "initializing": "Initializing transcription…",
+        "recording": "Click the microphone to stop recording and transcribe…",
+        "processing": "Transcribing…"
+      },
       "tts": {
         "groqAcceptTermsReminder": "You need to <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accept the terms and conditions</a> to use the Groq model.",
         "kokoroReminder": "Provided",
