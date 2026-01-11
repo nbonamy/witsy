@@ -154,3 +154,49 @@ test('tts settings', async () => {
   expect(store.config.tts.engine).toBe(engine2.element.value)
 
 })
+
+test('quick dictation settings', async () => {
+  const tab = await switchToTab(wrapper, voiceIndex)
+  // Find all clickable items and click the 3rd one (quickDictation: sttModel=0, sttConfig=1, quickDictation=2)
+  const items = tab.findAll('.master-detail .md-master-list .md-master-list-item')
+  await items[2].trigger('click')
+  const quickDictation = tab.findComponent({ name: 'SettingsQuickDictation' })
+
+  // appearance - default should be 'panel'
+  expect(quickDictation.find<HTMLSelectElement>('select[name=appearance]').element.value).toBe('panel')
+
+  // notch option should be available on macOS (mocked as darwin in window mock)
+  const appearanceOptions = quickDictation.find('select[name=appearance]').findAll('option')
+  expect(appearanceOptions.length).toBeGreaterThan(1)
+  expect(appearanceOptions.some(opt => opt.element.value === 'notch')).toBe(true)
+
+  // copy to clipboard - default should be false
+  expect(quickDictation.find<HTMLInputElement>('input#copy-to-clipboard').element.checked).toBe(false)
+
+  // change copy to clipboard
+  await quickDictation.find('input#copy-to-clipboard').setValue(true)
+  expect(store.config.stt.quickDictation.copyToClipboard).toBe(true)
+
+  // change appearance to notch
+  await quickDictation.find('select[name=appearance]').setValue('notch')
+  expect(store.config.stt.quickDictation.appearance).toBe('notch')
+
+})
+
+test('quick dictation load settings', async () => {
+  // Set config
+  store.config.stt.quickDictation = {
+    appearance: 'notch',
+    copyToClipboard: true
+  }
+
+  const tab = await switchToTab(wrapper, voiceIndex)
+  const items = tab.findAll('.master-detail .md-master-list .md-master-list-item')
+  await items[2].trigger('click')
+  const quickDictation = tab.findComponent({ name: 'SettingsQuickDictation' })
+
+  // should load saved values
+  expect(quickDictation.find<HTMLSelectElement>('select[name=appearance]').element.value).toBe('notch')
+  expect(quickDictation.find<HTMLInputElement>('input#copy-to-clipboard').element.checked).toBe(true)
+
+})
