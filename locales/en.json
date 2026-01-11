@@ -875,7 +875,7 @@
   },
   "dictation": {
     "hint": "Space to stop dictation - Esc to Cancel",
-    "noTargetError": "@:common.appName was not able to identify a target application for dictation"
+    "noTargetError": "@:{'common.appName'} was not able to identify a target application for dictation"
   },
   "docRepo": {
     "config": {
@@ -3113,8 +3113,8 @@
       "testPlaceholder": {
         "idle": "Click the microphone to test transcription…",
         "initializing": "Initializing transcription…",
-        "recording": "Click the microphone to stop recording and transcribe…",
-        "processing": "Transcribing…"
+        "processing": "Transcribing…",
+        "recording": "Click the microphone to stop recording and transcribe…"
       },
       "tts": {
         "groqAcceptTermsReminder": "You need to <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accept the terms and conditions</a> to use the Groq model.",
