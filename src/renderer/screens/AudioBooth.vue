@@ -13,9 +13,21 @@
           <div class="form-field">
             <label>{{ t('settings.voice.engine') }}</label>
             <select name="engine" v-model="engine" @change="onChangeEngine">
-              <option v-for="engine in getSTTEngines()" :key="engine.id" :value="engine.id">
-                {{ engine.label }}
-              </option>
+              <optgroup :label="t('settings.voice.engineTypes.local')">
+                <option v-for="engine in getSTTEngines().filter(e => e.type === 'local')" :key="engine.id" :value="engine.id">
+                  {{ engine.label }}
+                </option>
+              </optgroup>
+              <optgroup :label="t('settings.voice.engineTypes.api')">
+                <option v-for="engine in getSTTEngines().filter(e => e.type === 'api')" :key="engine.id" :value="engine.id">
+                  {{ engine.label }}
+                </option>
+              </optgroup>
+              <optgroup :label="t('settings.voice.engineTypes.custom')">
+                <option v-for="engine in getSTTEngines().filter(e => e.type === 'custom')" :key="engine.id" :value="engine.id">
+                  {{ engine.label }}
+                </option>
+              </optgroup>
             </select>
           </div>
           
