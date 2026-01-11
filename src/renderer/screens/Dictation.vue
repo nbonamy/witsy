@@ -7,6 +7,7 @@
   >
     <div class="app-info">
       <img v-if="sourceApp" class="icon" :src="iconData" />
+      <ClipboardIcon v-else-if="showClipboardIcon" class="clipboard-icon" :color="clipboardIconColor" />
     </div>
     <div class="visualizer">
       <div class="processing" v-if="state === 'processing'">
@@ -36,7 +37,7 @@ import { computed, onBeforeUnmount, onMounted, ref, toRaw } from 'vue'
 import useAudioRecorder from '../audio/audio_recorder'
 import useTranscriber from '../audio/transcriber'
 
-import { CircleIcon } from 'lucide-vue-next'
+import { CircleIcon, ClipboardIcon } from 'lucide-vue-next'
 
 // init stuff
 store.loadSettings()
@@ -67,6 +68,10 @@ let pendingCloseSourceApp: Application | null = null
 const isNotchAppearance = computed(() => appearance.value === 'notch')
 
 const iconColor = computed(() => isNotchAppearance.value ? '#888' : 'var(--icon-color)')
+
+const clipboardIconColor = computed(() => isNotchAppearance.value ? '#666' : 'var(--faded-text-color)')
+
+const showClipboardIcon = computed(() => !sourceApp.value && store.config.stt.quickDictation?.copyToClipboard)
 
 const iconData = computed(() => {
   if (!appInfo.value?.icon) return ''
@@ -444,6 +449,11 @@ body {
   .icon {
     width: 32px;
     height: 32px;
+  }
+
+  svg.clipboard-icon {
+    width: 24px;
+    height: 24px;
   }
 }
 

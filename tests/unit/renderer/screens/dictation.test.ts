@@ -289,3 +289,34 @@ test('Closes immediately in panel mode without animation', async () => {
   expect(wrapper.vm.isClosing).toBe(false)
   expect(window.api.dictation.close).toHaveBeenCalledWith('test text', null)
 })
+
+test('Shows clipboard icon when no source app but clipboard enabled', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  store.config.stt.quickDictation = { appearance: 'panel', copyToClipboard: true }
+  wrapper.vm.sourceApp = null
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.showClipboardIcon).toBe(true)
+  expect(wrapper.find('.clipboard-icon').exists()).toBe(true)
+})
+
+test('Shows app icon when source app is present', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  wrapper.vm.sourceApp = { name: 'TestApp', path: '/test' }
+  wrapper.vm.appInfo = { icon: { mimeType: 'image/png', contents: 'base64data' } }
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.find('.app-info img').exists()).toBe(true)
+  expect(wrapper.find('.clipboard-icon').exists()).toBe(false)
+})
+
+test('Shows no icon when no source app and clipboard disabled', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  store.config.stt.quickDictation = { appearance: 'panel', copyToClipboard: false }
+  wrapper.vm.sourceApp = null
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.showClipboardIcon).toBe(false)
+  expect(wrapper.find('.app-info img').exists()).toBe(false)
+  expect(wrapper.find('.clipboard-icon').exists()).toBe(false)
+})

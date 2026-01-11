@@ -874,7 +874,8 @@
     }
   },
   "dictation": {
-    "hint": "Space to stop dictation - Esc to Cancel"
+    "hint": "Space to stop dictation - Esc to Cancel",
+    "noTargetError": "@:common.appName was not able to identify a target application for dictation"
   },
   "docRepo": {
     "config": {
