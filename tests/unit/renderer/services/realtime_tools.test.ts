@@ -1,5 +1,5 @@
 import { test, expect, describe } from 'vitest'
-import { jsonSchemaToZod, convertToolToAgentsFormat } from '@services/realtime_tools'
+import { jsonSchemaToZod, convertToolToAgentsFormat } from '@services/realtime'
 import { LlmTool, Plugin, PluginParameter, PluginExecutionContext } from 'multi-llm-ts'
 
 describe('jsonSchemaToZod', () => {
