@@ -18,15 +18,27 @@ describe('RealtimeGemini', () => {
 
   describe('getAvailableVoices', () => {
 
-    test('returns Gemini voices', () => {
+    test('returns all 30 Gemini voices', () => {
       const voices = RealtimeGemini.getAvailableVoices()
-      expect(voices.length).toBeGreaterThan(0)
-      expect(voices.map(v => v.id)).toContain('Puck')
-      expect(voices.map(v => v.id)).toContain('Charon')
-      expect(voices.map(v => v.id)).toContain('Kore')
+      expect(voices).toHaveLength(30)
+      expect(voices.map(v => v.id)).toEqual([
+        'Achernar', 'Achird', 'Algenib', 'Algieba', 'Alnilam',
+        'Aoede', 'Autonoe', 'Callirrhoe', 'Charon', 'Despina',
+        'Enceladus', 'Erinome', 'Fenrir', 'Gacrux', 'Iapetus',
+        'Kore', 'Laomedeia', 'Leda', 'Orus', 'Puck',
+        'Pulcherrima', 'Rasalgethi', 'Sadachbia', 'Sadaltager', 'Schedar',
+        'Sulafat', 'Umbriel', 'Vindemiatrix', 'Zephyr', 'Zubenelgenubi'
+      ])
     })
 
-    test('voices have id and name', () => {
+    test('voices are sorted alphabetically', () => {
+      const voices = RealtimeGemini.getAvailableVoices()
+      const ids = voices.map(v => v.id)
+      const sorted = [...ids].sort()
+      expect(ids).toEqual(sorted)
+    })
+
+    test('voices have id and name matching', () => {
       const voices = RealtimeGemini.getAvailableVoices()
       for (const voice of voices) {
         expect(voice.id).toBeDefined()

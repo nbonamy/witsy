@@ -497,16 +497,38 @@ export class RealtimeGemini extends RealtimeEngine {
   }
 
   static getAvailableVoices(): RealtimeVoice[] {
-    // Gemini Live HD voices - subset of the 30 available
+    // All 30 Gemini Live HD voices
     return [
-      { id: 'Puck', name: 'Puck' },
-      { id: 'Charon', name: 'Charon' },
-      { id: 'Kore', name: 'Kore' },
-      { id: 'Fenrir', name: 'Fenrir' },
+      { id: 'Achernar', name: 'Achernar' },
+      { id: 'Achird', name: 'Achird' },
+      { id: 'Algenib', name: 'Algenib' },
+      { id: 'Algieba', name: 'Algieba' },
+      { id: 'Alnilam', name: 'Alnilam' },
       { id: 'Aoede', name: 'Aoede' },
+      { id: 'Autonoe', name: 'Autonoe' },
+      { id: 'Callirrhoe', name: 'Callirrhoe' },
+      { id: 'Charon', name: 'Charon' },
+      { id: 'Despina', name: 'Despina' },
+      { id: 'Enceladus', name: 'Enceladus' },
+      { id: 'Erinome', name: 'Erinome' },
+      { id: 'Fenrir', name: 'Fenrir' },
+      { id: 'Gacrux', name: 'Gacrux' },
+      { id: 'Iapetus', name: 'Iapetus' },
+      { id: 'Kore', name: 'Kore' },
+      { id: 'Laomedeia', name: 'Laomedeia' },
       { id: 'Leda', name: 'Leda' },
       { id: 'Orus', name: 'Orus' },
+      { id: 'Puck', name: 'Puck' },
+      { id: 'Pulcherrima', name: 'Pulcherrima' },
+      { id: 'Rasalgethi', name: 'Rasalgethi' },
+      { id: 'Sadachbia', name: 'Sadachbia' },
+      { id: 'Sadaltager', name: 'Sadaltager' },
+      { id: 'Schedar', name: 'Schedar' },
+      { id: 'Sulafat', name: 'Sulafat' },
+      { id: 'Umbriel', name: 'Umbriel' },
+      { id: 'Vindemiatrix', name: 'Vindemiatrix' },
       { id: 'Zephyr', name: 'Zephyr' },
+      { id: 'Zubenelgenubi', name: 'Zubenelgenubi' },
     ]
   }
 
@@ -534,9 +556,17 @@ export class RealtimeGemini extends RealtimeEngine {
       }
     }
 
+    // Handle interruption - user started speaking while model was responding
+    if (message.serverContent?.interrupted) {
+      // Stop audio playback immediately
+      this.stopPlayback()
+      // Reset playback context for next response
+      this.playbackContext = null
+      this.nextPlayTime = 0
+    }
+
     // Handle turn completion - finalize current message
     if (message.serverContent?.turnComplete) {
-      // console.log('[gemini] turn complete')
       // Reset assistant message state
       this.currentMessageId = null
       this.currentMessageContent = ''
