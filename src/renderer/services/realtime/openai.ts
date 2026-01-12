@@ -599,7 +599,6 @@ export class RealtimeOpenAI extends RealtimeEngine {
     this.toolCallToMessage.delete(callId)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private onError(error: any): void {
     // Extract message from various error formats (can be deeply nested)
     const message = error?.message ||
