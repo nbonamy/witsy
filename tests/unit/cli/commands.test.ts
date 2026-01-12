@@ -610,6 +610,51 @@ describe('Command Handlers', () => {
     expect(state.engine).toEqual({ id: 'openai', name: 'OpenAI' })
   })
 
+  test('handleModel handles model selection cancellation', async () => {
+    vi.mocked(WitsyAPI.prototype.getEngines).mockResolvedValue([
+      { id: 'openai', name: 'OpenAI' }
+    ])
+    vi.mocked(WitsyAPI.prototype.getModels).mockResolvedValue([
+      { id: 'gpt-4', name: 'GPT-4' }
+    ])
+    vi.mocked(selectOption)
+      .mockResolvedValueOnce('openai')  // Engine selected
+      .mockResolvedValueOnce('')         // Model cancelled
+
+    await handleModel()
+
+    // State should not change when model selection is cancelled
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+
+  test('handleModel handles API error with cancellation message', async () => {
+    vi.mocked(WitsyAPI.prototype.getEngines).mockRejectedValue(new Error('User cancelled'))
+
+    await handleModel()
+
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+
+  test('handleModel handles generic API error', async () => {
+    vi.mocked(WitsyAPI.prototype.getEngines).mockRejectedValue(new Error('Network failure'))
+
+    await handleModel()
+
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+
+  test('handlePort handles config fetch error', async () => {
+    vi.mocked(promptInput).mockResolvedValue('5000')
+    vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
+    vi.mocked(WitsyAPI.prototype.getConfig).mockRejectedValue(new Error('Config error'))
+
+    await handlePort()
+
+    // Port should still be set even if config fetch fails
+    expect(state.port).toBe(5000)
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+
   test('handleTitle rejects empty title', async () => {
 
     state.chat = new ChatCli('Old Title')
