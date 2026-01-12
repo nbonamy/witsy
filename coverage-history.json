@@ -1,5 +1,16 @@
 [
   {
+    "timestamp": "2026-01-12T14:29:25.308Z",
+    "commit": "a68421e2992ffb147bda3b32b97331470ea36b27",
+    "author": "Nicolas Bonamy",
+    "coverage": {
+      "statements": 78.34,
+      "branches": 80.88,
+      "functions": 70.38,
+      "lines": 78.34
+    }
+  },
+  {
     "timestamp": "2026-01-12T14:21:43.611Z",
     "commit": "0f8656fef51e69cc9bc8c800732011df7cc5a64b",
     "author": "Nicolas Bonamy",
