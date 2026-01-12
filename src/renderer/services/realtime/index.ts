@@ -45,9 +45,8 @@ export function getAvailableModels(engineId: string): { id: string, name: string
 export function supportsTools(engineId: string): boolean {
   switch (engineId) {
     case 'openai':
-      return true
     case 'google':
-      return false
+      return true
     default:
       return false
   }

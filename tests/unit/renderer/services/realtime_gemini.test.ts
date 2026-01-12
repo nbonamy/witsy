@@ -59,9 +59,9 @@ describe('RealtimeGemini', () => {
 
   describe('supportsTools', () => {
 
-    test('returns false', () => {
+    test('returns true', () => {
       const engine = new RealtimeGemini(mockConfig, mockCallbacks)
-      expect(engine.supportsTools).toBe(false)
+      expect(engine.supportsTools).toBe(true)
     })
 
   })
