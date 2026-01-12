@@ -189,8 +189,15 @@ describe('RealtimeOpenAI', () => {
 
     test('returns all OpenAI voices', () => {
       const voices = RealtimeOpenAI.getAvailableVoices()
-      expect(voices).toHaveLength(8)
-      expect(voices.map(v => v.id)).toEqual(['alloy', 'ash', 'ballad', 'coral', 'echo', 'sage', 'simmer', 'verse'])
+      expect(voices).toHaveLength(10)
+      expect(voices.map(v => v.id)).toEqual(['alloy', 'ash', 'ballad', 'cedar', 'coral', 'echo', 'marin', 'sage', 'shimmer', 'verse'])
+    })
+
+    test('voices are sorted alphabetically', () => {
+      const voices = RealtimeOpenAI.getAvailableVoices()
+      const ids = voices.map(v => v.id)
+      const sorted = [...ids].sort()
+      expect(ids).toEqual(sorted)
     })
 
     test('voices have id and name', () => {

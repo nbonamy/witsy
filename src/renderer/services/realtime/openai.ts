@@ -304,6 +304,7 @@ export class RealtimeOpenAI extends RealtimeEngine {
     this.session.on('history_added', this.onHistoryAdded.bind(this))
     this.session.on('agent_tool_start', this.onToolStart.bind(this))
     this.session.on('agent_tool_end', this.onToolEnd.bind(this))
+    this.session.on('error', this.onError.bind(this))
 
     // Get ephemeral key
     this.callbacks.onStatusChange('connecting')
@@ -420,10 +421,12 @@ export class RealtimeOpenAI extends RealtimeEngine {
       { id: 'alloy', name: 'Alloy' },
       { id: 'ash', name: 'Ash' },
       { id: 'ballad', name: 'Ballad' },
+      { id: 'cedar', name: 'Cedar' },
       { id: 'coral', name: 'Coral' },
       { id: 'echo', name: 'Echo' },
+      { id: 'marin', name: 'Marin' },
       { id: 'sage', name: 'Sage' },
-      { id: 'simmer', name: 'Simmer' },
+      { id: 'shimmer', name: 'Shimmer' },
       { id: 'verse', name: 'Verse' }
     ]
   }
@@ -476,8 +479,14 @@ export class RealtimeOpenAI extends RealtimeEngine {
     if (lastMessage && lastMessage.role === role) {
       // Same role - append to existing message
       lastMessage.parts.push({ id: item.itemId, content: transcript })
+      // Don't append if current content is TRANSCRIPTION_UNAVAILABLE - wait for replace
+      const currentContent = this.getCombinedContent(lastMessage)
+      if (currentContent === TRANSCRIPTION_UNAVAILABLE) {
+        // Skip appending - will be replaced when transcript arrives
+        return
+      }
       // Send only the new content (delta)
-      if (transcript) {
+      if (transcript && transcript !== TRANSCRIPTION_UNAVAILABLE) {
         this.callbacks.onMessageUpdated(lastMessage.id, transcript, 'append')
       }
     } else {
@@ -588,5 +597,19 @@ export class RealtimeOpenAI extends RealtimeEngine {
 
     // Cleanup
     this.toolCallToMessage.delete(callId)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private onError(error: any): void {
+    // Extract message from various error formats (can be deeply nested)
+    const message = error?.message ||
+      error?.error?.message ||
+      error?.error?.error?.message ||
+      (typeof error === 'string' ? error : JSON.stringify(error))
+    console.warn('[realtime] session error:', message)
+    // Only notify user of critical errors, not tool-not-found etc.
+    if (!message.includes('not found')) {
+      this.callbacks.onError(new Error(message))
+    }
   }
 }
