@@ -158,6 +158,7 @@ if (existingIndex >= 0) {
 const entry = {
   timestamp: new Date().toISOString(),
   commit: gitInfo.hash,
+  message: gitInfo.message,
   author: gitInfo.author,
   coverage: {
     statements: metrics.statements.pct,
