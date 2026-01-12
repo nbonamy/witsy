@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { beforeAll, beforeEach, expect, test, vi } from 'vitest'
 import Dialog from '@renderer/utils/dialog'
 import AgentForge from '@screens/AgentForge.vue'
@@ -78,7 +78,7 @@ beforeEach(() => {
 })
 
 test('Export agent calls file.save with correct JSON', async () => {
-  const wrapper = mount(AgentForge)
+  const wrapper: VueWrapper<any> = mount(AgentForge)
   const agent = store.agents[0]
 
   // Trigger export
@@ -106,7 +106,7 @@ test('Export agent calls file.save with correct JSON', async () => {
 })
 
 test('Import agent without conflict saves with original UUID', async () => {
-  const wrapper = mount(AgentForge)
+  const wrapper: VueWrapper<any> = mount(AgentForge)
 
   // Create a new agent that doesn't exist - use JSON.parse(JSON.stringify()) to remove functions
   const newAgent = JSON.parse(JSON.stringify({
@@ -140,7 +140,7 @@ test('Import agent without conflict saves with original UUID', async () => {
 })
 
 test('Import agent with conflict shows dialog', async () => {
-  const wrapper = mount(AgentForge)
+  const wrapper: VueWrapper<any> = mount(AgentForge)
 
   // Use existing agent UUID
   const existingAgent = store.agents[0]
@@ -182,7 +182,7 @@ test('Import agent with conflict shows dialog', async () => {
 })
 
 test('Import agent with conflict - user chooses overwrite', async () => {
-  const wrapper = mount(AgentForge)
+  const wrapper: VueWrapper<any> = mount(AgentForge)
 
   // Use existing agent UUID
   const existingAgent = store.agents[0]
@@ -221,7 +221,7 @@ test('Import agent with conflict - user chooses overwrite', async () => {
 })
 
 test('Import agent with conflict - user chooses create new', async () => {
-  const wrapper = mount(AgentForge)
+  const wrapper: VueWrapper<any> = mount(AgentForge)
 
   // Use existing agent UUID
   const existingAgent = store.agents[0]
@@ -263,7 +263,7 @@ test('Import agent with conflict - user chooses create new', async () => {
 })
 
 test('Import invalid JSON shows error dialog', async () => {
-  const wrapper = mount(AgentForge)
+  const wrapper: VueWrapper<any> = mount(AgentForge)
 
   // Mock file picker with invalid JSON
   const fileContents = {
@@ -288,7 +288,7 @@ test('Import invalid JSON shows error dialog', async () => {
 })
 
 test('Import canceled when user dismisses file picker', async () => {
-  const wrapper = mount(AgentForge)
+  const wrapper: VueWrapper<any> = mount(AgentForge)
 
   // Mock file picker returning null (user canceled)
   vi.mocked(window.api.file.pickFile).mockReturnValue(null)
@@ -304,7 +304,7 @@ test('Import canceled when user dismisses file picker', async () => {
 })
 
 test('Duplicates agent when duplicate event is emitted', async () => {
-  const wrapper = mount(AgentForge)
+  const wrapper: VueWrapper<any> = mount(AgentForge)
   await flushPromises()
 
   const originalAgent = store.agents[0]
@@ -337,7 +337,7 @@ test('Duplicates agent when duplicate event is emitted', async () => {
 })
 
 test('Duplicated agent has new timestamps', async () => {
-  const wrapper = mount(AgentForge)
+  const wrapper: VueWrapper<any> = mount(AgentForge)
   await flushPromises()
 
   const originalAgent = store.agents[0]
@@ -360,7 +360,7 @@ test('Duplicated agent has new timestamps', async () => {
 })
 
 test('Duplicated agent has no runs attached', async () => {
-  const wrapper = mount(AgentForge)
+  const wrapper: VueWrapper<any> = mount(AgentForge)
   await flushPromises()
 
   const originalAgent = store.agents[0]
@@ -401,4 +401,247 @@ test('Duplicated agent has no runs attached', async () => {
   // Verify duplicated agent has no runs (getRuns returns empty array for new UUID)
   const duplicatedRuns = window.api.agents.getRuns(store.config.workspaceId, savedAgent.uuid)
   expect(duplicatedRuns).toHaveLength(0)
+})
+
+test('Create agent transitions to create mode', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  expect(wrapper.vm.mode).toBe('list')
+
+  // Trigger create
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('create')
+  await flushPromises()
+
+  expect(wrapper.vm.mode).toBe('create')
+  expect(wrapper.vm.selected).not.toBeNull()
+  expect(wrapper.vm.selected.type).toBe('runnable')
+})
+
+test('Create agent uses workspace model if available', async () => {
+  // Setup workspace with models
+  store.workspace.models = [{ engine: 'anthropic', id: 'claude-3', model: 'claude-3' }]
+
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  // Trigger create
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('create')
+  await flushPromises()
+
+  expect(wrapper.vm.selected.engine).toBe('anthropic')
+  expect(wrapper.vm.selected.model).toBe('claude-3')
+
+  // Cleanup
+  store.workspace.models = []
+})
+
+test('View agent transitions to view mode', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  const agent = store.agents[0]
+
+  // Trigger view
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('view', agent)
+  await flushPromises()
+
+  expect(wrapper.vm.mode).toBe('view')
+  expect(wrapper.vm.selected).toBe(agent)
+})
+
+test('Edit agent transitions to edit mode', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  const agent = store.agents[0]
+
+  // Trigger edit
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('edit', agent)
+  await flushPromises()
+
+  expect(wrapper.vm.mode).toBe('edit')
+  expect(wrapper.vm.selected).toBe(agent)
+})
+
+test('Delete agent shows confirmation dialog', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  const agent = store.agents[0]
+
+  // Mock dialog to cancel
+  vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: false, isDenied: false, isDismissed: true, value: null })
+
+  // Trigger delete
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('delete', agent)
+  await flushPromises()
+
+  // Dialog should be shown
+  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
+    title: 'agent.forge.confirmDelete',
+    showCancelButton: true
+  }))
+
+  // Agent should NOT be deleted (user cancelled)
+  expect(window.api.agents.delete).not.toHaveBeenCalled()
+})
+
+test('Delete agent confirms and deletes', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  const agent = store.agents[0]
+
+  // Mock dialog to confirm
+  vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false, value: null })
+
+  // Trigger delete
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('delete', agent)
+  await flushPromises()
+
+  // Agent should be deleted
+  expect(window.api.agents.delete).toHaveBeenCalledWith(store.config.workspaceId, agent.uuid)
+})
+
+test('Editor cancel returns to list mode', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  // Go to create mode first
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('create')
+  await flushPromises()
+
+  expect(wrapper.vm.mode).toBe('create')
+
+  // Cancel from editor
+  const editorComponent = wrapper.findComponent({ name: 'Editor' })
+  editorComponent.vm.$emit('cancel')
+  await flushPromises()
+
+  expect(wrapper.vm.mode).toBe('list')
+})
+
+test('Editor save reloads agents and returns to list', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  // Go to create mode first
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('create')
+  await flushPromises()
+
+  // Save from editor
+  const editorComponent = wrapper.findComponent({ name: 'Editor' })
+  editorComponent.vm.$emit('save')
+  await flushPromises()
+
+  expect(wrapper.vm.mode).toBe('list')
+})
+
+test('View close returns to list mode', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  const agent = store.agents[0]
+
+  // Go to view mode
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('view', agent)
+  await flushPromises()
+
+  expect(wrapper.vm.mode).toBe('view')
+
+  // Close view
+  const viewComponent = wrapper.findComponent({ name: 'View' })
+  viewComponent.vm.$emit('close')
+  await flushPromises()
+
+  expect(wrapper.vm.mode).toBe('list')
+})
+
+test('View edit transitions to edit mode', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  const agent = store.agents[0]
+
+  // Go to view mode
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('view', agent)
+  await flushPromises()
+
+  // Edit from view
+  const viewComponent = wrapper.findComponent({ name: 'View' })
+  viewComponent.vm.$emit('edit', agent)
+  await flushPromises()
+
+  expect(wrapper.vm.mode).toBe('edit')
+})
+
+test('View delete shows dialog and returns to list', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  await flushPromises()
+
+  const agent = store.agents[0]
+
+  // Go to view mode
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('view', agent)
+  await flushPromises()
+
+  // Mock dialog to confirm
+  vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false, value: null })
+
+  // Delete from view
+  const viewComponent = wrapper.findComponent({ name: 'View' })
+  viewComponent.vm.$emit('delete', agent)
+  await flushPromises()
+
+  expect(window.api.agents.delete).toHaveBeenCalled()
+  expect(wrapper.vm.mode).toBe('list')
+})
+
+test('Import with warnings shows warning dialog', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+
+  // Create agent with MCP tools that will trigger warnings
+  const agentWithMcpTools = JSON.parse(JSON.stringify({
+    uuid: 'new-uuid-with-tools',
+    name: 'Agent With Tools',
+    description: 'Test',
+    type: 'runnable',
+    engine: 'openai',
+    model: 'gpt-4',
+    steps: [{
+      tools: ['unknown_tool___server1'],
+      agents: []
+    }]
+  }))
+
+  // Mock file picker
+  const fileContents = {
+    url: 'file://test.json',
+    mimeType: 'application/json',
+    contents: JSON.stringify(agentWithMcpTools)
+  }
+  vi.mocked(window.api.file.pickFile).mockReturnValue(fileContents)
+
+  // Mock Dialog.show to track calls
+  vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false, value: null })
+
+  // Trigger import
+  const listComponent = wrapper.findComponent({ name: 'List' })
+  listComponent.vm.$emit('importJson')
+  await flushPromises()
+
+  // Agent should be saved
+  expect(window.api.agents.save).toHaveBeenCalled()
 })

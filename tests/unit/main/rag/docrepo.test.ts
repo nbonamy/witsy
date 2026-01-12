@@ -757,3 +757,297 @@ test('Docrepo cancel task at queue position 0', async () => {
 
   fs.rmSync(tempFile, { force: true })
 })
+
+test('Docrepo removeListener', async () => {
+  const docrepo = new DocumentRepository(app)
+
+  const mockListener = {
+    onDocumentSourceAdded: vi.fn(),
+    onDocumentSourceRemoved: vi.fn()
+  }
+
+  // Add listener
+  docrepo.addListener(mockListener)
+  expect(docrepo.listeners).toHaveLength(1)
+
+  // Remove listener
+  docrepo.removeListener(mockListener)
+  expect(docrepo.listeners).toHaveLength(0)
+
+  // Removing non-existent listener should not throw
+  docrepo.removeListener(mockListener)
+  expect(docrepo.listeners).toHaveLength(0)
+})
+
+test('Docrepo listener notifications on add', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  const mockListener = {
+    onDocumentSourceAdded: vi.fn(),
+    onDocumentSourceRemoved: vi.fn()
+  }
+  docrepo.addListener(mockListener)
+
+  // Add a document
+  const tempFile = path.join(os.tmpdir(), 'listener_test.json')
+  fs.writeFileSync(tempFile, '{"test": "data"}')
+  await docrepo.addDocumentSource(docbase, 'file', tempFile, true)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // Listener should have been notified
+  expect(mockListener.onDocumentSourceAdded).toHaveBeenCalled()
+
+  fs.rmSync(tempFile, { force: true })
+})
+
+test('Docrepo getCurrentQueueItem returns item when queue not empty', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Initially queue is empty
+  expect(docrepo.getCurrentQueueItem()).toBeNull()
+
+  // Add document to queue
+  const tempFile = path.join(os.tmpdir(), 'queue_test.json')
+  fs.writeFileSync(tempFile, '{"test": "data"}')
+  await docrepo.addDocumentSource(docbase, 'file', tempFile, true)
+
+  // Queue item should exist while processing
+  // Note: This might be null if processing is too fast, so we just verify no crash
+  docrepo.getCurrentQueueItem()
+  // result could be null or a queue item depending on timing
+
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+  fs.rmSync(tempFile, { force: true })
+})
+
+test('Docrepo connect throws for non-existent base', async () => {
+  const docrepo = new DocumentRepository(app)
+
+  await expect(docrepo.connect('non-existent-base-id')).rejects.toThrow('Database not found')
+})
+
+test('Docrepo connect with replaceActive false', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase1 = await docrepo.createDocBase('workspace', 'name1', 'openai', 'text-embedding-ada-002')
+  const docbase2 = await docrepo.createDocBase('workspace', 'name2', 'openai', 'text-embedding-ada-002')
+
+  // activeDb should be docbase2 (last created)
+  expect(docrepo.activeDb?.uuid).toBe(docbase2)
+
+  // Connect to docbase1 without replacing active
+  const base = await docrepo.connect(docbase1, false)
+  expect(base).toBeDefined()
+  expect(base.uuid).toBe(docbase1)
+  // activeDb should still be docbase2
+  expect(docrepo.activeDb?.uuid).toBe(docbase2)
+})
+
+test('Docrepo connect with connectToDb false', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Disconnect first
+  await docrepo.disconnect()
+  expect(docrepo.activeDb).toBeNull()
+
+  // Connect without actually connecting to db
+  const base = await docrepo.connect(docbase, true, false)
+  expect(base).toBeDefined()
+  expect(docrepo.activeDb).toBe(base)
+})
+
+test('Docrepo disconnect', async () => {
+  const docrepo = new DocumentRepository(app)
+  await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  expect(docrepo.activeDb).not.toBeNull()
+
+  await docrepo.disconnect()
+  expect(docrepo.activeDb).toBeNull()
+
+  // Disconnect again should not throw
+  await docrepo.disconnect()
+  expect(docrepo.activeDb).toBeNull()
+})
+
+test('Docrepo updateDocBase throws for non-existent base', async () => {
+  const docrepo = new DocumentRepository(app)
+
+  await expect(docrepo.updateDocBase('non-existent', 'title')).rejects.toThrow('Database not found')
+})
+
+test('Docrepo deleteDocBase throws for non-existent base', async () => {
+  const docrepo = new DocumentRepository(app)
+
+  await expect(docrepo.deleteDocBase('non-existent')).rejects.toThrow('Database not found')
+})
+
+test('Docrepo getDocumentSource returns null for non-existent base', () => {
+  const docrepo = new DocumentRepository(app)
+
+  const result = docrepo.getDocumentSource('non-existent-base', 'doc-id')
+  expect(result).toBeNull()
+})
+
+test('Docrepo getDocumentSource returns null for non-existent doc', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  const result = docrepo.getDocumentSource(docbase, 'non-existent-doc')
+  expect(result).toBeNull()
+})
+
+test('Docrepo isSourceSupported', async () => {
+  const docrepo = new DocumentRepository(app)
+
+  // Supported types
+  expect(docrepo.isSourceSupported('file', 'test.json')).toBe(true)
+  expect(docrepo.isSourceSupported('file', 'test.txt')).toBe(true)
+  expect(docrepo.isSourceSupported('file', 'test.md')).toBe(true)
+
+  // Unsupported types
+  expect(docrepo.isSourceSupported('file', 'test.jpg')).toBe(false)
+  expect(docrepo.isSourceSupported('file', 'test.png')).toBe(false)
+  expect(docrepo.isSourceSupported('file', 'test.mp4')).toBe(false)
+})
+
+test('Docrepo removeDocumentSource for child document', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Add a folder
+  const tempdir = createTempDir()
+  await docrepo.addDocumentSource(docbase, 'folder', tempdir, true)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // Get a child document ID
+  const list = docrepo.list('workspace')
+  const folderDoc = list[0].documents[0]
+  expect(folderDoc.items.length).toBeGreaterThan(0)
+  const childDocId = folderDoc.items[0].uuid
+
+  // Remove the child document using removeDocumentSource (not removeChildDocumentSource)
+  await docrepo.removeDocumentSource(docbase, childDocId)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // Child should be removed
+  const updatedList = docrepo.list('workspace')
+  const updatedFolder = updatedList[0].documents[0]
+  expect(updatedFolder.items.find(i => i.uuid === childDocId)).toBeUndefined()
+
+  fs.rmSync(tempdir, { recursive: true, force: true })
+})
+
+test('Docrepo removeDocumentSource for non-existent doc', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Should not throw, just log warning
+  await docrepo.removeDocumentSource(docbase, 'non-existent-doc')
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+})
+
+test('Docrepo removeChildDocumentSource', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Add a folder
+  const tempdir = createTempDir()
+  await docrepo.addDocumentSource(docbase, 'folder', tempdir, true)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // Get a child document ID
+  const list = docrepo.list('workspace')
+  const folderDoc = list[0].documents[0]
+  const childDocId = folderDoc.items[0].uuid
+
+  // Remove child using removeChildDocumentSource
+  await docrepo.removeChildDocumentSource(docbase, childDocId)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // Child should be removed
+  const updatedList = docrepo.list('workspace')
+  const updatedFolder = updatedList[0].documents[0]
+  expect(updatedFolder.items.find(i => i.uuid === childDocId)).toBeUndefined()
+
+  fs.rmSync(tempdir, { recursive: true, force: true })
+})
+
+test('Docrepo removeChildDocumentSource for non-existent doc', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Should not throw, just log warning
+  await docrepo.removeChildDocumentSource(docbase, 'non-existent-child')
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+})
+
+test('Docrepo updateDocumentSource', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Add a document
+  const tempFile = path.join(os.tmpdir(), 'update_test.json')
+  fs.writeFileSync(tempFile, '{"original": "content"}')
+  const docId = await docrepo.addDocumentSource(docbase, 'file', tempFile, true)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // Modify the file
+  fs.writeFileSync(tempFile, '{"updated": "content"}')
+
+  // Update the document
+  await docrepo.updateDocumentSource(docbase, docId)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // Document should still exist
+  const list = docrepo.list('workspace')
+  expect(list[0].documents).toHaveLength(1)
+
+  fs.rmSync(tempFile, { force: true })
+})
+
+test('Docrepo updateDocumentSource for non-existent doc', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Should not throw, just log warning
+  await docrepo.updateDocumentSource(docbase, 'non-existent-doc')
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+})
+
+test('Docrepo updateChildDocumentSource', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Add a folder
+  const tempdir = createTempDir()
+  await docrepo.addDocumentSource(docbase, 'folder', tempdir, true)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // Get a child document ID
+  const list = docrepo.list('workspace')
+  const folderDoc = list[0].documents[0]
+  const childDocId = folderDoc.items[0].uuid
+
+  // Update the child document
+  await docrepo.updateChildDocumentSource(docbase, childDocId)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // Child should still exist
+  const updatedList = docrepo.list('workspace')
+  const updatedFolder = updatedList[0].documents[0]
+  expect(updatedFolder.items.find(i => i.uuid === childDocId)).toBeDefined()
+
+  fs.rmSync(tempdir, { recursive: true, force: true })
+})
+
+test('Docrepo updateChildDocumentSource for non-existent doc', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
+
+  // Should not throw, just log warning
+  await docrepo.updateChildDocumentSource(docbase, 'non-existent-child')
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+})

@@ -694,8 +694,521 @@ test('OAuth flow completion - server not found', async () => {
 test('OAuth flow completion - no OAuth config', async () => {
   const mcp = new Mcp(app)
   await mcp.connect()
-  
+
   const server = mcp.getServers()[0] // First server without OAuth
   const result = await mcp.completeOAuthFlow(server.uuid!, 'test-code')
   expect(result).toBe(false)
+})
+
+test('getCachedTools returns empty for previously failed server', async () => {
+  const mcp = new Mcp(app)
+
+  // Manually set a failed cache entry (tools = null)
+  const server: McpServer = {
+    uuid: 'test-server',
+    registryId: 'test',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  }
+
+  // Access private toolsCache
+  const cache = (mcp as any).toolsCache as Map<string, any>
+  cache.set('test-server', { tools: null, timestamp: 0 })
+
+  // Create a mock client
+  const mockClient = { server, client: {}, tools: [] }
+
+  // Call getCachedTools
+  const result = await (mcp as any).getCachedTools(mockClient)
+  expect(result).toEqual({ tools: [] })
+})
+
+test('getCachedTools handles listTools error', async () => {
+  const mcp = new Mcp(app)
+
+  const server: McpServer = {
+    uuid: 'error-server',
+    registryId: 'test',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  }
+
+  // Initialize logs for this server
+  mcp.logs['error-server'] = []
+
+  // Create mock client with failing listTools
+  const mockClient = {
+    server,
+    client: {
+      listTools: vi.fn().mockRejectedValue(new Error('Connection failed'))
+    },
+    tools: []
+  }
+
+  const result = await (mcp as any).getCachedTools(mockClient)
+  expect(result).toEqual([])
+
+  // Check that error was logged
+  expect(mcp.logs['error-server']).toContain('[mcp] Failed to get tools')
+
+  // Check that cache was set to null for future calls
+  const cache = (mcp as any).toolsCache as Map<string, any>
+  expect(cache.get('error-server').tools).toBeNull()
+})
+
+test('getStatus with cached non-persistent server tools', async () => {
+  const mcp = new Mcp(app)
+
+  // Manually add a cache entry for a server
+  const cache = (mcp as any).toolsCache as Map<string, any>
+  cache.set('1234-5678-90ab', {
+    tools: { tools: [{ name: 'cachedTool' }] },
+    timestamp: Date.now()
+  })
+
+  // Don't connect - so we're testing the cached non-persistent server path
+  const status = await mcp.getStatus()
+
+  // The server should show cached tools
+  const serverStatus = status.servers.find(s => s.uuid === '1234-5678-90ab')
+  expect(serverStatus).toBeDefined()
+  expect(serverStatus!.tools).toContain('cachedTool___90ab')
+})
+
+test('getStatus with cached null tools (error state)', async () => {
+  const mcp = new Mcp(app)
+
+  // Manually add a cache entry with null tools (error state)
+  const cache = (mcp as any).toolsCache as Map<string, any>
+  cache.set('1234-5678-90ab', {
+    tools: null,
+    timestamp: Date.now()
+  })
+
+  const status = await mcp.getStatus()
+
+  // The server should show null tools (error state)
+  const serverStatus = status.servers.find(s => s.uuid === '1234-5678-90ab')
+  expect(serverStatus).toBeDefined()
+  expect(serverStatus!.tools).toBeNull()
+})
+
+test('getServerTools returns tools for connected server', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  const tools = await mcp.getServerTools('1234-5678-90ab')
+  expect(tools).toHaveLength(3)
+  expect(tools[0]).toEqual({
+    name: 'tool1',
+    function: 'tool1___90ab',
+    description: 'tool1 description',
+    inputSchema: { type: 'object', properties: { arg: { type: 'string' }}, required: [] }
+  })
+})
+
+test('getServerTools returns empty for unknown server', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  const tools = await mcp.getServerTools('non-existent-server')
+  expect(tools).toEqual([])
+})
+
+test('isMcpToolName correctly identifies MCP tool names', () => {
+  const mcp = new Mcp(app)
+
+  expect(mcp.isMcpToolName('tool1___90ab')).toBe(true)
+  expect(mcp.isMcpToolName('tool3_____s1')).toBe(true)
+  expect(mcp.isMcpToolName('search___abcd')).toBe(true)
+
+  expect(mcp.isMcpToolName('regular_tool')).toBe(false)
+  expect(mcp.isMcpToolName('no_suffix')).toBe(false)
+  expect(mcp.isMcpToolName('tool___ab')).toBe(false) // Only 2 chars after ___
+})
+
+test('translateError translates connection errors', () => {
+  const mcp = new Mcp(app)
+  const translateError = (mcp as any).translateError.bind(mcp)
+
+  // Test fetch failed error
+  expect(translateError('fetch failed')).toBe('mcp.connectionErrors.fetchFailed')
+  expect(translateError('ECONNREFUSED')).toBe('mcp.connectionErrors.fetchFailed')
+
+  // Test auth errors
+  expect(translateError('POSTing to endpoint HTTP 500')).toBe('mcp.connectionErrors.authFailed')
+  expect(translateError('server_error occurred')).toBe('mcp.connectionErrors.authFailed')
+  expect(translateError('Internal Server Error')).toBe('mcp.connectionErrors.authFailed')
+
+  // Test unknown error (returns original)
+  expect(translateError('Some random error')).toBe('Some random error')
+})
+
+test('restartServer restarts an enabled server', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  expect(mcp.clients).toHaveLength(4)
+
+  // Restart one of the connected servers
+  const result = await mcp.restartServer('1234-5678-90ab')
+  expect(result).toBe(true)
+
+  // Server should still be connected
+  expect(mcp.clients).toHaveLength(4)
+})
+
+test('restartServer returns false for non-existent server', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  const result = await mcp.restartServer('non-existent-uuid')
+  expect(result).toBe(false)
+})
+
+test('restartServer returns false for disabled server', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  // Try to restart a disabled server
+  const result = await mcp.restartServer('3456-7890-abcd')
+  expect(result).toBe(false)
+})
+
+test('getAllServersWithTools handles error when getting tools', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  // Make getCachedTools fail for one client
+  const originalGetCachedTools = (mcp as any).getCachedTools
+  let callCount = 0;
+  (mcp as any).getCachedTools = vi.fn(async (client: any) => {
+    callCount++
+    if (callCount === 1) {
+      throw new Error('Failed to get tools')
+    }
+    return originalGetCachedTools.call(mcp, client)
+  })
+
+  const result = await mcp.getAllServersWithTools()
+
+  // First server should have empty tools due to error
+  expect(result[0].tools).toEqual([])
+  // Other servers should have tools
+  expect(result[1].tools.length).toBeGreaterThan(0)
+})
+
+test('connectToServer returns false for disabled server', async () => {
+  const mcp = new Mcp(app)
+
+  const server: McpServer = {
+    uuid: 'disabled-server',
+    registryId: 'disabled',
+    state: 'disabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  }
+
+  const result = await (mcp as any).connectToServer(server)
+  expect(result).toBe(false)
+})
+
+test('connectToServer handles connection failure', async () => {
+  const mcp = new Mcp(app)
+
+  // Make connect fail
+  mockConnect.mockRejectedValueOnce(new Error('Connection failed'))
+
+  const server: McpServer = {
+    uuid: 'fail-server',
+    registryId: 'fail',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  }
+
+  const result = await (mcp as any).connectToServer(server)
+  expect(result).toBe(false)
+
+  // Check that error state was cached
+  const cache = (mcp as any).toolsCache as Map<string, any>
+  expect(cache.get('fail-server').tools).toBeNull()
+})
+
+test('editServer with label on mcp server', async () => {
+  const mcp = new Mcp(app)
+
+  // Edit mcp server with label
+  expect(await mcp.editServer({
+    uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio',
+    command: 'npx', url: '-y run s1.js', label: '  Custom Label  ',
+    toolSelection: null
+  })).toBe(true)
+
+  // Check label was set
+  expect(config.mcp.mcpServersExtra['s1'].label).toBe('Custom Label')
+
+  // Clear label
+  expect(await mcp.editServer({
+    uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio',
+    command: 'npx', url: '-y run s1.js', label: '',
+    toolSelection: null
+  })).toBe(true)
+
+  // Check label was removed
+  expect(config.mcp.mcpServersExtra['s1'].label).toBeUndefined()
+})
+
+test('editServer returns false for unknown server', async () => {
+  const mcp = new Mcp(app)
+
+  const result = await mcp.editServer({
+    uuid: 'unknown-uuid',
+    registryId: 'unknown',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  })
+
+  expect(result).toBe(false)
+})
+
+test('updateTokens returns false for null uuid', async () => {
+  const mcp = new Mcp(app)
+
+  const result = await mcp.updateTokens(
+    { uuid: null, registryId: null, state: 'enabled', type: 'http', url: 'test', toolSelection: null },
+    { access_token: 'test', token_type: 'bearer' },
+    'read'
+  )
+
+  expect(result).toBe(false)
+})
+
+test('updateTokens saves tokens for normal server', async () => {
+  const mcp = new Mcp(app)
+
+  // Create a server with OAuth
+  await mcp.editServer({
+    uuid: null,
+    registryId: null,
+    state: 'enabled',
+    type: 'http',
+    url: 'http://localhost:4000',
+    oauth: { tokens: { access_token: 'old', token_type: 'bearer' } },
+    toolSelection: null
+  })
+
+  const server = mcp.getServers().find(s => s.url === 'http://localhost:4000')
+  expect(server).toBeDefined()
+
+  const result = await mcp.updateTokens(
+    server!,
+    { access_token: 'new-token', token_type: 'bearer' },
+    'read write'
+  )
+
+  expect(result).toBe(true)
+
+  // Check tokens were updated
+  const updatedServer = config.mcp.servers.find((s: any) => s.url === 'http://localhost:4000')
+  expect(updatedServer?.oauth?.tokens?.access_token).toBe('new-token')
+  expect(updatedServer?.oauth?.scope).toBe('read write')
+})
+
+test('deleteServer with @prefix mcp server', async () => {
+  const mcp = new Mcp(app)
+
+  // Add a server with @ prefix
+  config.mcpServers['@test-mcp'] = { command: 'node', args: ['test.js'] }
+  expect(mcp.getServers().find(s => s.uuid === 'test-mcp')).toBeDefined()
+
+  // Delete it
+  const result = mcp.deleteServer('test-mcp')
+  expect(result).toBe(true)
+  expect(config.mcpServers['@test-mcp']).toBeUndefined()
+})
+
+test('getInstallCommand returns null for unknown registry', () => {
+  const mcp = new Mcp(app)
+  const result = mcp.getInstallCommand('unknown-registry', 'server', 'key')
+  expect(result).toBeNull()
+})
+
+test('getInstallCommand without api key', () => {
+  const mcp = new Mcp(app)
+  const result = mcp.getInstallCommand('smithery', 'server', '')
+  expect(result).toBe('npx -y @smithery/cli@latest install server --client witsy')
+})
+
+test('mcpToOpenAI handles array type properties', () => {
+  const mcp = new Mcp(app)
+  const mcpToOpenAI = (mcp as any).mcpToOpenAI.bind(mcp)
+
+  const server: McpServer = {
+    uuid: 'test-server',
+    registryId: 'test',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  }
+
+  const tool = {
+    name: 'arrayTool',
+    description: 'Tool with array param',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        items: { type: 'array', items: { type: 'string' }, description: 'List of items' }
+      },
+      required: ['items']
+    }
+  }
+
+  const result = mcpToOpenAI(server, tool)
+  expect(result.function.parameters.properties.items).toEqual({
+    type: 'array',
+    description: 'List of items',
+    items: { type: 'string' }
+  })
+})
+
+test('mcpToOpenAI handles tool without description', () => {
+  const mcp = new Mcp(app)
+  const mcpToOpenAI = (mcp as any).mcpToOpenAI.bind(mcp)
+
+  const server: McpServer = {
+    uuid: 'test-server',
+    registryId: 'test',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  }
+
+  const tool = {
+    name: 'noDescTool',
+    inputSchema: { type: 'object', properties: {}, required: [] }
+  }
+
+  const result = mcpToOpenAI(server, tool)
+  expect(result.function.description).toBe('noDescTool')
+})
+
+test('mcpToOpenAI handles tool without inputSchema', () => {
+  const mcp = new Mcp(app)
+  const mcpToOpenAI = (mcp as any).mcpToOpenAI.bind(mcp)
+
+  const server: McpServer = {
+    uuid: 'test-server',
+    registryId: 'test',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  }
+
+  const tool = {
+    name: 'simpleTool',
+    description: 'A simple tool'
+  }
+
+  const result = mcpToOpenAI(server, tool)
+  expect(result.function.parameters).toEqual({
+    type: 'object',
+    properties: {},
+    required: []
+  })
+})
+
+test('getLlmTools skips tools not in toolSelection', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  // Server at index 2 has toolSelection: ['tool2'], so tool1 and tool3 should be skipped
+  const tools = await mcp.getLlmTools()
+
+  // Check that only tool2 from server 4567-890a-bcde is included
+  const serverBcdeTools = tools.filter(t => t.function.name.endsWith('___bcde'))
+  expect(serverBcdeTools).toHaveLength(1)
+  expect(serverBcdeTools[0].function.name).toBe('tool2___bcde')
+})
+
+test('updateTokens for mcp server with extra config', async () => {
+  const mcp = new Mcp(app)
+
+  // Setup mcp server with oauth config in extras
+  config.mcp.mcpServersExtra['s1'] = {
+    state: 'enabled',
+    oauth: { tokens: { access_token: 'old-token', token_type: 'bearer' } }
+  }
+
+  const server: McpServer = {
+    uuid: 's1',
+    registryId: 's1',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'npx',
+    url: '-y run s1.js',
+    toolSelection: null
+  }
+
+  const result = await mcp.updateTokens(
+    server,
+    { access_token: 'new-mcp-token', token_type: 'bearer' },
+    'read'
+  )
+
+  expect(result).toBe(true)
+  expect(config.mcp.mcpServersExtra['s1'].oauth.tokens.access_token).toBe('new-mcp-token')
+  expect(config.mcp.mcpServersExtra['s1'].oauth.scope).toBe('read')
+})
+
+test('updateTokens does not save if tokens unchanged', async () => {
+  const mcp = new Mcp(app)
+
+  // Create server with tokens
+  await mcp.editServer({
+    uuid: null,
+    registryId: null,
+    state: 'enabled',
+    type: 'http',
+    url: 'http://localhost:5000',
+    oauth: { tokens: { access_token: 'same', token_type: 'bearer' } },
+    toolSelection: null
+  })
+
+  const server = mcp.getServers().find(s => s.url === 'http://localhost:5000')
+  expect(server).toBeDefined()
+
+  // Clear mocks to check if saveSettings is called
+  vi.clearAllMocks()
+
+  // Update with same tokens - should not trigger save
+  const { saveSettings } = await import('@main/config')
+  const result = await mcp.updateTokens(
+    server!,
+    { access_token: 'same', token_type: 'bearer' },
+    'read'
+  )
+
+  expect(result).toBe(true)
+  // saveSettings should not have been called since tokens are the same
+  expect(saveSettings).not.toHaveBeenCalled()
 })
