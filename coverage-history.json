@@ -1,5 +1,17 @@
 [
   {
+    "timestamp": "2026-01-12T16:43:16.562Z",
+    "commit": "abcffccd7443e0f36556d344a1b599ca88cabc7a",
+    "message": "chore: add commit message to coverage history",
+    "author": "Nicolas Bonamy",
+    "coverage": {
+      "statements": 80.05,
+      "branches": 81.32,
+      "functions": 70.74,
+      "lines": 80.05
+    }
+  },
+  {
     "timestamp": "2026-01-12T15:36:34.446Z",
     "commit": "cece71012189cb548e5e45e8d7554c06b9b4a2f2",
     "author": "Nicolas Bonamy",
