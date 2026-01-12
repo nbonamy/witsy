@@ -439,7 +439,7 @@ const onSave = async () => {
 
       // save it
       loading.value = true
-      await window.api.mcp.editServer(server)
+      await window.api.mcp.editServer(JSON.parse(JSON.stringify(server)))
       emit('saved')
 
     }
