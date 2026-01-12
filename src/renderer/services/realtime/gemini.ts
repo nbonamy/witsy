@@ -2,16 +2,119 @@
  * Google Gemini Live implementation using @google/genai SDK
  */
 
-import { GoogleGenAI, Modality, Session } from '@google/genai'
+import { FunctionDeclaration, FunctionResponse, GoogleGenAI, Modality, Schema, Session, Type } from '@google/genai'
+import { LlmTool, MultiToolPlugin, Plugin, PluginExecutionContext } from 'multi-llm-ts'
 import { Configuration } from 'types/config'
+import { availablePlugins, enabledPlugins, PluginInstance } from '../plugins/plugins'
 import {
   RealtimeConfig,
   RealtimeCostInfo,
   RealtimeEngine,
   RealtimeEngineCallbacks,
+  RealtimeToolCall,
   RealtimeUsage,
   RealtimeVoice,
 } from './engine'
+
+/**
+ * Check if a plugin has getTools method (CustomToolPlugin or MultiToolPlugin)
+ */
+function hasGetTools(plugin: PluginInstance): plugin is PluginInstance & { getTools(): Promise<LlmTool | LlmTool[]> } {
+  return 'getTools' in plugin && typeof (plugin as any).getTools === 'function'
+}
+
+/**
+ * Build LlmTool from a regular Plugin using its parameters
+ */
+function pluginToLlmTool(plugin: Plugin): LlmTool {
+  return {
+    type: 'function',
+    function: {
+      name: plugin.getName(),
+      description: plugin.getDescription(),
+      parameters: {
+        type: 'object',
+        properties: plugin.getParameters().reduce((obj: any, param) => {
+          obj[param.name] = {
+            type: param.type || 'string',
+            description: param.description,
+            ...(param.enum ? { enum: param.enum } : {})
+          }
+          return obj
+        }, {}),
+        required: plugin.getParameters().filter(p => p.required).map(p => p.name)
+      }
+    }
+  }
+}
+
+/**
+ * Convert JSON Schema type to Google Schema Type
+ */
+function typeToSchemaType(type: string, properties?: any): Type {
+  if (type === 'string') return Type.STRING
+  if (type === 'number') return Type.NUMBER
+  if (type === 'integer') return Type.INTEGER
+  if (type === 'boolean') return Type.BOOLEAN
+  if (type === 'array') return Type.ARRAY
+  return properties ? Type.OBJECT : Type.STRING
+}
+
+/**
+ * Convert LlmTool to Google FunctionDeclaration format
+ */
+function llmToolToFunctionDeclaration(llmTool: LlmTool): FunctionDeclaration {
+  const func = llmTool.function
+  const googleProps: { [k: string]: Schema } = {}
+
+  for (const name of Object.keys(func.parameters.properties || {})) {
+    const props = func.parameters.properties[name]
+
+    // Build items schema if present
+    let itemsSchema: Schema | undefined
+    if (props.items) {
+      itemsSchema = {
+        type: typeToSchemaType(props.items.type, props.items?.properties),
+      }
+      // Convert array properties to Google Schema format if present
+      if (props.items.properties && Array.isArray(props.items.properties)) {
+        const itemProps: { [k: string]: Schema } = {}
+        for (const itemProp of props.items.properties) {
+          itemProps[itemProp.name] = {
+            type: typeToSchemaType(itemProp.type),
+            description: itemProp.description,
+          }
+        }
+        itemsSchema.properties = itemProps
+      }
+    }
+
+    googleProps[name] = {
+      type: typeToSchemaType(props.type),
+      description: props.description,
+      ...(props.enum ? { enum: props.enum } : {}),
+      ...(itemsSchema ? { items: itemsSchema } : {}),
+    }
+  }
+
+  return {
+    name: func.name,
+    description: func.description,
+    ...(Object.keys(func.parameters.properties || {}).length === 0 ? {} : {
+      parameters: {
+        type: Type.OBJECT,
+        properties: googleProps,
+        required: func.parameters.required,
+      }
+    })
+  }
+}
+
+type ToolEntry = {
+  llmTool: LlmTool
+  plugin: PluginInstance
+  declaration: FunctionDeclaration
+}
 
 export class RealtimeGemini extends RealtimeEngine {
 
@@ -42,24 +145,22 @@ export class RealtimeGemini extends RealtimeEngine {
     textOutputTokens: 0,
   }
 
+  // Tool support
+  private tools: Map<string, ToolEntry> = new Map()
+  private toolCallToMessage: Map<string, string> = new Map()
+
   constructor(config: Configuration, callbacks: RealtimeEngineCallbacks) {
     super(callbacks)
     this.config = config
   }
 
   get supportsTools(): boolean {
-    return false
+    return true
   }
 
   async connect(realtimeConfig: RealtimeConfig): Promise<void> {
     this.currentModel = realtimeConfig.model
     this.callbacks.onStatusChange('connecting')
-
-    // // console.log('[gemini] connecting with config:', {
-    //   model: realtimeConfig.model,
-    //   voice: realtimeConfig.voice,
-    //   hasInstructions: !!realtimeConfig.instructions,
-    // })
 
     // Reset state
     this.currentMessageId = null
@@ -72,14 +173,16 @@ export class RealtimeGemini extends RealtimeEngine {
       audioOutputTokens: 0,
       textOutputTokens: 0,
     }
+    this.tools.clear()
+    this.toolCallToMessage.clear()
+
+    // Build tools from plugins
+    const functionDeclarations = await this.buildTools(realtimeConfig.tools)
 
     const apiKey = this.config.engines.google.apiKey
-    // console.log('[gemini] API key present:', !!apiKey, 'length:', apiKey?.length)
-
     const ai = new GoogleGenAI({ apiKey })
 
     try {
-      // console.log('[gemini] calling ai.live.connect...')
       this.session = await ai.live.connect({
         model: realtimeConfig.model,
         config: {
@@ -93,6 +196,10 @@ export class RealtimeGemini extends RealtimeEngine {
           // Enable transcription for both input and output
           inputAudioTranscription: {},
           outputAudioTranscription: {},
+          // Add tools if any
+          ...(functionDeclarations.length > 0 ? {
+            tools: [{ functionDeclarations }]
+          } : {}),
         },
         callbacks: {
           onopen: async () => {
@@ -284,13 +391,70 @@ export class RealtimeGemini extends RealtimeEngine {
   }
 
   close(): void {
-    // console.log('[gemini] close called')
     this.stopAudioCapture()
     this.stopPlayback()
     this.session?.close()
     this.session = null
     this.currentMessageId = null
     this.currentMessageContent = ''
+    this.tools.clear()
+    this.toolCallToMessage.clear()
+  }
+
+  /**
+   * Build tools from enabled plugins based on configuration
+   */
+  private async buildTools(toolSelection: string[] | null): Promise<FunctionDeclaration[]> {
+    const declarations: FunctionDeclaration[] = []
+
+    // Empty array means no tools
+    if (toolSelection !== null && toolSelection.length === 0) {
+      return declarations
+    }
+
+    // Get list of enabled plugin names
+    const enabled = enabledPlugins(this.config, true) // include MCP
+
+    // Iterate through enabled plugins and convert each to Google format
+    for (const pluginName of enabled) {
+      const pluginClass = availablePlugins[pluginName]
+      if (!pluginClass) continue
+
+      const plugin: PluginInstance = new pluginClass(this.config.plugins[pluginName], this.config.workspaceId)
+
+      // Skip plugins that don't serialize in tools
+      if (!plugin.serializeInTools()) {
+        continue
+      }
+
+      // For custom/multi-tool plugins, get their tool definitions
+      if (hasGetTools(plugin)) {
+        const pluginTools = await plugin.getTools()
+        const toolsArray = Array.isArray(pluginTools) ? pluginTools : [pluginTools]
+
+        for (const llmTool of toolsArray) {
+          // Filter by tool selection (null = all tools allowed)
+          if (toolSelection !== null && !toolSelection.includes(llmTool.function.name)) {
+            continue
+          }
+          const declaration = llmToolToFunctionDeclaration(llmTool)
+          declarations.push(declaration)
+          this.tools.set(llmTool.function.name, { llmTool, plugin, declaration })
+        }
+      } else {
+        // For regular plugins, build the tool from parameters
+        const llmTool = pluginToLlmTool(plugin as Plugin)
+        // Filter by tool selection (null = all tools allowed)
+        if (toolSelection !== null && !toolSelection.includes(llmTool.function.name)) {
+          continue
+        }
+        const declaration = llmToolToFunctionDeclaration(llmTool)
+        declarations.push(declaration)
+        this.tools.set(llmTool.function.name, { llmTool, plugin, declaration })
+      }
+    }
+
+    return declarations
   }
 
   isConnected(): boolean {
@@ -384,11 +548,10 @@ export class RealtimeGemini extends RealtimeEngine {
     // Handle input transcription (user speech) - can be inputTranscript or inputTranscription
     let inputTranscript = message.serverContent?.inputTranscript || message.serverContent?.inputTranscription?.text
     if (inputTranscript) {
-      // Remove <noise> tags from transcription
-      inputTranscript = inputTranscript.replace(/<noise>/gi, '').trim()
-      if (!inputTranscript) return // Skip if only noise
+      // Remove <noise> tags from transcription (don't trim - preserve spaces!)
+      inputTranscript = inputTranscript.replace(/<noise>/gi, '')
+      if (!inputTranscript.trim()) return // Skip if only noise/whitespace
 
-      // console.log('[gemini] input transcript fragment:', inputTranscript)
       // Accumulate input transcription
       this.currentInputTranscript += inputTranscript
 
@@ -412,7 +575,6 @@ export class RealtimeGemini extends RealtimeEngine {
     // Handle output transcription (model speech) - comes as fragments
     const outputTranscript = message.serverContent?.outputTranscription?.text
     if (outputTranscript) {
-      // console.log('[gemini] output transcript fragment:', outputTranscript)
       // Accumulate and append the fragment
       this.currentMessageContent += outputTranscript
 
@@ -430,6 +592,11 @@ export class RealtimeGemini extends RealtimeEngine {
       }
     }
 
+    // Handle tool calls
+    if (message.toolCall?.functionCalls?.length) {
+      this.handleToolCalls(message.toolCall.functionCalls)
+    }
+
     // Handle usage metadata if available
     if (message.usageMetadata) {
       this.updateUsageFromMetadata(message.usageMetadata)
@@ -437,6 +604,116 @@ export class RealtimeGemini extends RealtimeEngine {
 
     // Always update usage callback
     this.callbacks.onUsageUpdated(this.getUsage())
+  }
+
+  /**
+   * Get or create current assistant message ID for tool calls
+   */
+  private getLastAssistantMessageId(): string {
+    if (this.currentMessageId) {
+      return this.currentMessageId
+    }
+    // Create new assistant message for tool calls
+    this.currentMessageId = `assistant-${Date.now()}`
+    this.callbacks.onNewMessage({
+      id: this.currentMessageId,
+      role: 'assistant',
+      content: ''
+    })
+    return this.currentMessageId
+  }
+
+  /**
+   * Handle tool calls from Gemini and send responses
+   */
+  private async handleToolCalls(functionCalls: { id?: string, name?: string, args?: Record<string, unknown> }[]): Promise<void> {
+    const responses: FunctionResponse[] = []
+    const messageId = this.getLastAssistantMessageId()
+
+    for (const fc of functionCalls) {
+      if (!fc.name) continue
+
+      const callId = fc.id || crypto.randomUUID()
+      const toolEntry = this.tools.get(fc.name)
+
+      if (!toolEntry) {
+        console.warn(`[gemini] unknown tool: ${fc.name}`)
+        responses.push({
+          id: callId,
+          name: fc.name,
+          response: { error: `Unknown tool: ${fc.name}` }
+        })
+        continue
+      }
+
+      // Track which message this tool call belongs to
+      this.toolCallToMessage.set(callId, messageId)
+
+      // Notify UI that tool is starting
+      const toolCallInfo: RealtimeToolCall = {
+        id: callId,
+        name: fc.name,
+        status: 'running',
+        params: JSON.stringify(fc.args || {}),
+        result: 'null',  // Must be valid JSON for RealtimeChat.vue JSON.parse
+      }
+      this.callbacks.onMessageToolCall(messageId, toolCallInfo)
+
+      try {
+        // Create execution context
+        const context: PluginExecutionContext = {
+          model: this.currentModel,
+        }
+
+        // Execute the tool
+        let result: any
+        if (toolEntry.plugin instanceof MultiToolPlugin) {
+          result = await toolEntry.plugin.execute(context, {
+            tool: fc.name,
+            parameters: fc.args || {}
+          })
+        } else {
+          result = await (toolEntry.plugin as Plugin).execute(context, fc.args || {})
+        }
+
+        // Add to responses
+        responses.push({
+          id: callId,
+          name: fc.name,
+          response: typeof result === 'string' ? { result } : result
+        })
+
+        // Notify UI that tool completed
+        this.callbacks.onMessageToolCall(messageId, {
+          ...toolCallInfo,
+          status: 'completed',
+          result: typeof result === 'string' ? result : JSON.stringify(result),
+        })
+
+      } catch (error: any) {
+        console.error(`[gemini] tool execution error for ${fc.name}:`, error)
+        responses.push({
+          id: callId,
+          name: fc.name,
+          response: { error: error.message || 'Tool execution failed' }
+        })
+
+        // Notify UI that tool completed with error
+        this.callbacks.onMessageToolCall(messageId, {
+          ...toolCallInfo,
+          status: 'completed',
+          result: `Error: ${error.message || 'Tool execution failed'}`,
+        })
+      }
+
+      // Cleanup tracking
+      this.toolCallToMessage.delete(callId)
+    }
+
+    // Send all tool responses back to Gemini
+    if (responses.length > 0 && this.session) {
+      this.session.sendToolResponse({ functionResponses: responses })
+    }
   }
 
   private handleTextContent(text: string, type: 'content' | 'reasoning' = 'content'): void {
