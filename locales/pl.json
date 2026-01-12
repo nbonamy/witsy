@@ -3085,8 +3085,9 @@
       "openaiApiKeyReminder": "Upewnij się, że wprowadziłeś swój klucz API OpenAI w panelu Modele.",
       "quickDictation": {
         "appearance": "Wygląd",
-        "appearanceNotch": "Wcięcie (na górze ekranu)",
-        "appearancePanel": "Panel (na dole ekranu)",
+        "appearanceBottom": "Dół ekranu",
+        "appearanceNotch": "Wcięcie",
+        "appearanceTop": "Góra ekranu",
         "copyToClipboard": "Automatycznie kopiuj dyktowany tekst do schowka",
         "escapeHint": "Naciśnij Spację lub Esc, aby zatrzymać nagrywanie i rozpocząć transkrypcję.<br/>Podwójne naciśnięcie Esc anuluje."
       },

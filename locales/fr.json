@@ -3057,8 +3057,9 @@
       "openaiApiKeyReminder": "Assurez-vous d'entrer votre clé API OpenAI dans l'onglet Modèles.",
       "quickDictation": {
         "appearance": "Apparence",
-        "appearanceNotch": "Encoche (en haut de l'écran)",
-        "appearancePanel": "Panneau (en bas de l'écran)",
+        "appearanceBottom": "Bas de l'écran",
+        "appearanceNotch": "Encoche",
+        "appearanceTop": "Haut de l'écran",
         "copyToClipboard": "Copier automatiquement le texte dicté dans le presse-papiers",
         "escapeHint": "Appuyez sur Espace ou Échap pour arrêter l'enregistrement et transcrire.<br/>Appuyez deux fois sur Échap pour annuler."
       },

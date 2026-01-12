@@ -162,12 +162,14 @@ test('quick dictation settings', async () => {
   await items[2].trigger('click')
   const quickDictation = tab.findComponent({ name: 'SettingsQuickDictation' })
 
-  // appearance - default should be 'panel'
-  expect(quickDictation.find<HTMLSelectElement>('select[name=appearance]').element.value).toBe('panel')
+  // appearance - default should be 'bottom'
+  expect(quickDictation.find<HTMLSelectElement>('select[name=appearance]').element.value).toBe('bottom')
 
-  // notch option should be available on macOS (mocked as darwin in window mock)
+  // all three options should be available
   const appearanceOptions = quickDictation.find('select[name=appearance]').findAll('option')
-  expect(appearanceOptions.length).toBeGreaterThan(1)
+  expect(appearanceOptions).toHaveLength(3)
+  expect(appearanceOptions.some(opt => opt.element.value === 'bottom')).toBe(true)
+  expect(appearanceOptions.some(opt => opt.element.value === 'top')).toBe(true)
   expect(appearanceOptions.some(opt => opt.element.value === 'notch')).toBe(true)
 
   // copy to clipboard - default should be false
@@ -177,13 +179,17 @@ test('quick dictation settings', async () => {
   await quickDictation.find('input#copy-to-clipboard').setValue(true)
   expect(store.config.stt.quickDictation.copyToClipboard).toBe(true)
 
+  // change appearance to top
+  await quickDictation.find('select[name=appearance]').setValue('top')
+  expect(store.config.stt.quickDictation.appearance).toBe('top')
+
   // change appearance to notch
   await quickDictation.find('select[name=appearance]').setValue('notch')
   expect(store.config.stt.quickDictation.appearance).toBe('notch')
 
 })
 
-test('quick dictation load settings', async () => {
+test('quick dictation load settings with notch', async () => {
   // Set config
   store.config.stt.quickDictation = {
     appearance: 'notch',
@@ -198,5 +204,23 @@ test('quick dictation load settings', async () => {
   // should load saved values
   expect(quickDictation.find<HTMLSelectElement>('select[name=appearance]').element.value).toBe('notch')
   expect(quickDictation.find<HTMLInputElement>('input#copy-to-clipboard').element.checked).toBe(true)
+
+})
+
+test('quick dictation load settings with top', async () => {
+  // Set config
+  store.config.stt.quickDictation = {
+    appearance: 'top',
+    copyToClipboard: false
+  }
+
+  const tab = await switchToTab(wrapper, voiceIndex)
+  const items = tab.findAll('.master-detail .md-master-list .md-master-list-item')
+  await items[2].trigger('click')
+  const quickDictation = tab.findComponent({ name: 'SettingsQuickDictation' })
+
+  // should load saved values
+  expect(quickDictation.find<HTMLSelectElement>('select[name=appearance]').element.value).toBe('top')
+  expect(quickDictation.find<HTMLInputElement>('input#copy-to-clipboard').element.checked).toBe(false)
 
 })

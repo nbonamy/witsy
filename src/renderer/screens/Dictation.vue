@@ -68,7 +68,7 @@ const dictationEl = ref<HTMLElement | null>(null)
 const state = ref<State>('idle')
 const sourceApp = ref<Application | null>(null)
 const appInfo = ref<ExternalApp | null>(null)
-const appearance = ref<'panel' | 'notch'>('panel')
+const appearance = ref<'bottom' | 'top' | 'notch'>('bottom')
 const notchHeight = ref(0)
 const foregroundColorActive = ref('var(--text-color)')
 const foregroundColorInactive = ref('var(--icon-color)')
@@ -125,7 +125,7 @@ const onShow = async (params: any) => {
 
   // parse appearance
   if (params?.appearance) {
-    appearance.value = params.appearance as 'panel' | 'notch'
+    appearance.value = params.appearance as 'bottom' | 'top' | 'notch'
   }
 
   // parse notch height
@@ -179,7 +179,7 @@ const updateColors = () => {
     foregroundColorInactive.value = '#888'
     foregroundColorActive.value = 'white'
   } else {
-    // grab colors from CSS for panel appearance
+    // grab colors from CSS for bottom/top appearance
     try {
       const dictationEl = document.querySelector('.dictation')
       if (dictationEl) {

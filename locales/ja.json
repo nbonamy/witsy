@@ -3085,8 +3085,9 @@
       "openaiApiKeyReminder": "モデルペインにOpenAI APIキーを入力していることを確認してください。",
       "quickDictation": {
         "appearance": "外観",
-        "appearanceNotch": "ノッチ（画面上部）",
-        "appearancePanel": "パネル（画面下部）",
+        "appearanceBottom": "画面下部",
+        "appearanceNotch": "ノッチ",
+        "appearanceTop": "画面上部",
         "copyToClipboard": "音声入力したテキストを自動的にクリップボードにコピーする",
         "escapeHint": "録音を停止して文字起こしするにはスペースキーまたはEscキーを押してください。<br/>Escキーを2回押すとキャンセルします。"
       },

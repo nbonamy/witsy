@@ -172,7 +172,7 @@
       "audioFormat": "auto"
     },
     "quickDictation": {
-      "appearance": "panel",
+      "appearance": "bottom",
       "copyToClipboard": false
     }
   },

@@ -3057,8 +3057,9 @@
       "openaiApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren OpenAI-API-Schlüssel im Modellbereich eingegeben haben.",
       "quickDictation": {
         "appearance": "Erscheinungsbild",
-        "appearanceNotch": "Notch (oben am Bildschirm)",
-        "appearancePanel": "Panel (unten auf dem Bildschirm)",
+        "appearanceBottom": "Am unteren Bildschirmrand",
+        "appearanceNotch": "Displaykerbe",
+        "appearanceTop": "Am oberen Bildschirmrand",
         "copyToClipboard": "Diktierten Text automatisch in die Zwischenablage kopieren",
         "escapeHint": "Drücke Leertaste oder Escape, um die Aufnahme zu beenden und die Transkription zu starten.<br/>Drücke Escape zweimal, um abzubrechen."
       },
