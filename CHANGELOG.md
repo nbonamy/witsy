@@ -5,12 +5,12 @@ All notable changes to this project will be documented in this file.
 ## [3.4.0] - WIP
 
 ### Added
-- Google Gemini Live support in Voice Chat
 - Parakeet WebGPU support
 - Apple SpeechAnalyzer support (macOS 26+ required)
 - New quick dictation window (Speech-to-text renamed to Audio Booth)
 - Re-authenticate link in MCP server editor
 - Favicon display for HTTP/SSE MCP servers
+- Google Gemini Live support in Voice Chat
 
 ### Changed
 - Voice Settings panels overhaul
