@@ -273,6 +273,11 @@ export default class McpOAuthManager {
       return true
     }
 
+    // 401 HTTP status code checks
+    if (error?.code === 401 || error?.status === 401 || error?.statusCode === 401) {
+      return true
+    }
+
     // Check for HTTP 401 errors with OAuth-specific messages
     const errorMessage = error?.message || ''
     const lowerMessage = errorMessage.toLowerCase()
