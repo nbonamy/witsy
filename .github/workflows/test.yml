@@ -18,7 +18,7 @@ jobs:
         id: test
         run: |
           set -o pipefail
-          npm run test:ci 2>&1 | tee test-output.txt
+          npx vitest --run --coverage.enabled=true --coverage.reporter=json --coverage.reporter=text-summary --silent=true 2>&1 | tee test-output.txt
           echo "SUMMARY=$(tail -5 test-output.txt | head -1)" > $GITHUB_OUTPUT
       - name: Capture coverage
         id: coverage
@@ -26,7 +26,19 @@ jobs:
           SUMMARY="${{ steps.test.outputs.SUMMARY }}"
           TOKENS=($SUMMARY)
           echo "COVERAGE=$(echo ${TOKENS[2]})" > $GITHUB_OUTPUT
+      - name: Record coverage history
+        if: github.ref == 'refs/heads/main'
+        run: node tools/coverage_record.js
+      - name: Commit coverage history
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add coverage-history.json
+          git diff --staged --quiet || git commit -m "chore: update coverage history"
+          git push
       - name: Create coverage badge
+        if: github.ref == 'refs/heads/main'
         uses: schneegans/dynamic-badges-action@v1.0.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
