@@ -1,7 +1,7 @@
 <template>
   <div class="chat split-pane">
     <ChatSidebar :chat="assistant.chat" @new-chat="onNewChat" @run-agent="onRunAgent" ref="sidebar" />
-    <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop-generation="onStopGeneration" />
+    <ChatArea :chat="assistant.chat" :is-left-most="!isSidebarVisible" ref="chatArea" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop-generation="onStopGeneration" />
     <ChatEditor :chat="assistant.chat" :dialog-title="chatEditorTitle" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
     <CreateAgentRun :title="agent?.name ?? ''" ref="builder" />
     <AgentPicker ref="picker" />
@@ -13,7 +13,7 @@
 import { LlmChunkContent } from 'multi-llm-ts'
 import { A2APromptOpts, Agent } from 'types/agents'
 import { strDict } from 'types/index'
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import Chat from '@models/chat'
 import Message from '@models/message'
 import ChatArea from '@components/ChatArea.vue'
@@ -52,6 +52,8 @@ const picker = ref<typeof AgentPicker>(null)
 const agent = ref<Agent|null>(null)
 
 let abortController: AbortController | null = null
+
+const isSidebarVisible = computed(() => sidebar.value?.isVisible() ?? true)
 
 const props = defineProps({
   extra: Object

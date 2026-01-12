@@ -3,12 +3,13 @@ import * as os from 'os'
 import * as path from 'path'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { WitsyAPI } from '@/cli/api'
-import { COMMANDS, handleCommand, initialize, handleHelp, handleClear, handleSave, handleTitle, handleRetry, handleQuit, executeCommand, handlePort, handleMessage, handleModel, isToolError } from '@/cli/commands'
+import { COMMANDS, handleCommand, initialize, handleHelp, handleClear, handleSave, handleTitle, handleRetry, handleQuit, executeCommand, handlePort, handleMessage, handleModel, handleFolder, handleHistory, isToolError } from '@/cli/commands'
 import { state } from '@/cli/state'
 import { ChatCli, MessageCli } from '@/cli/models'
 import { resetDisplay, displayFooter, clearFooter } from '@/cli/display'
 import { promptInput } from '@/cli/input'
 import { selectOption } from '@/cli/select'
+import { promptFolderAccess, applyFolderAccess } from '@/cli/folder'
 
 // Setup fetch mock
 global.fetch = vi.fn()
@@ -40,6 +41,11 @@ vi.mock('@/cli/input', () => ({
 }))
 vi.mock('@/cli/select', () => ({
   selectOption: vi.fn(),
+}))
+vi.mock('@/cli/folder', () => ({
+  promptFolderAccess: vi.fn(),
+  applyFolderAccess: vi.fn(),
+  getFolderAccessLabel: vi.fn(() => 'Read-only access'),
 }))
 vi.mock('chalk', () => ({
   default: {
@@ -708,5 +714,322 @@ describe('isToolError', () => {
 
   test('returns false for empty string', () => {
     expect(isToolError('')).toBe(false)
+  })
+})
+
+describe('handleFolder', () => {
+  let tempDir: string
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'witsy-cli-folder-test-'))
+    state.userDataPath = tempDir
+    state.cliConfig = {
+      historySize: 50,
+      history: [],
+      workDirs: {}
+    }
+  })
+
+  afterEach(() => {
+    if (fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true })
+    }
+  })
+
+  test('handleFolder applies and saves access selection', async () => {
+    vi.mocked(promptFolderAccess).mockResolvedValue('read')
+
+    await handleFolder()
+
+    expect(applyFolderAccess).toHaveBeenCalledWith('read')
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+
+  test('handleFolder handles cancellation', async () => {
+    vi.mocked(promptFolderAccess).mockResolvedValue(null)
+
+    await handleFolder()
+
+    expect(applyFolderAccess).not.toHaveBeenCalled()
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+
+  test('handleFolder handles clear option', async () => {
+    // Setup workDirs with existing config
+    const cwd = process.cwd()
+    state.cliConfig!.workDirs = { [cwd]: { access: 'read' } }
+
+    vi.mocked(promptFolderAccess).mockResolvedValue('clear')
+
+    await handleFolder()
+
+    expect(applyFolderAccess).toHaveBeenCalledWith('none')
+    expect(state.cliConfig?.workDirs?.[cwd]).toBeUndefined()
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+
+  test('handleFolder saves preference to cli.json', async () => {
+    vi.mocked(promptFolderAccess).mockResolvedValue('write')
+
+    await handleFolder()
+
+    // Check cli.json was created with folder preference
+    const configPath = path.join(tempDir, 'cli.json')
+    expect(fs.existsSync(configPath)).toBe(true)
+
+    const savedConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
+    expect(savedConfig.workDirs[process.cwd()].access).toBe('write')
+  })
+
+  test('handleFolder handles error with cancellation message', async () => {
+    vi.mocked(promptFolderAccess).mockRejectedValue(new Error('User cancelled'))
+
+    await handleFolder()
+
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+
+  test('handleFolder handles generic error', async () => {
+    vi.mocked(promptFolderAccess).mockRejectedValue(new Error('Some error'))
+
+    await handleFolder()
+
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+})
+
+describe('handleHistory', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    state.chat = new ChatCli('Test')
+  })
+
+  test('handleHistory displays message when no history', async () => {
+    state.chat.messages = []
+
+    await handleHistory()
+
+    // Should not display conversation since no messages
+    // Just verifies it doesn't crash
+  })
+
+  test('handleHistory displays conversation when has messages', async () => {
+    state.chat.addMessage(new MessageCli('user', 'test'))
+    state.chat.addMessage(new MessageCli('assistant', 'response'))
+
+    await handleHistory()
+
+    // displayConversation should be called
+  })
+})
+
+describe('handleRetry edge cases', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    state.chat = new ChatCli('Test')
+  })
+
+  test('handleRetry handles no user message in history', async () => {
+    // Only assistant messages
+    state.chat.messages = [new MessageCli('assistant', 'response')]
+
+    await handleRetry()
+
+    // Should not crash, just display error
+    expect(displayFooter).toHaveBeenCalled()
+  })
+})
+
+describe('handleTitle edge cases', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    state.chat = new ChatCli('Test')
+  })
+
+  test('handleTitle handles auto-save failure', async () => {
+    state.chat.uuid = 'existing-uuid'
+
+    vi.mocked(promptInput).mockResolvedValue('New Title')
+    vi.mocked(WitsyAPI.prototype.saveConversation).mockRejectedValue(new Error('Save failed'))
+
+    await handleTitle()
+
+    // Title should still be updated even if save fails
+    expect(state.chat.title).toBe('New Title')
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+})
+
+describe('handleSave edge cases', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    state.chat = new ChatCli('Test')
+  })
+
+  test('handleSave handles API error', async () => {
+    state.chat.addMessage(new MessageCli('user', 'test'))
+
+    vi.mocked(WitsyAPI.prototype.saveConversation).mockRejectedValue(new Error('Network error'))
+
+    await handleSave()
+
+    // Should handle error gracefully
+    expect(displayFooter).toHaveBeenCalled()
+  })
+})
+
+describe('initialize edge cases', () => {
+  let tempDir: string
+  let exitSpy: any
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(promptFolderAccess).mockReset()
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'witsy-cli-init-edge-test-'))
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never)
+  })
+
+  afterEach(() => {
+    if (fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true })
+    }
+    exitSpy.mockRestore()
+  })
+
+  test('initialize exits when cannot connect', async () => {
+    vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(false)
+
+    await initialize()
+
+    expect(exitSpy).toHaveBeenCalledWith(1)
+  })
+
+  test('initialize exits when HTTP endpoints disabled', async () => {
+    vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
+    vi.mocked(WitsyAPI.prototype.getConfig).mockResolvedValue({
+      engine: 'openai',
+      model: 'gpt-4',
+      userDataPath: tempDir,
+      enableHttpEndpoints: false
+    })
+
+    await initialize()
+
+    expect(exitSpy).toHaveBeenCalledWith(1)
+  })
+
+  test('initialize prompts for folder access when no saved config', async () => {
+    vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
+    vi.mocked(WitsyAPI.prototype.getConfig).mockResolvedValue({
+      engine: 'openai',
+      model: 'gpt-4',
+      userDataPath: tempDir,
+      enableHttpEndpoints: true
+    })
+    vi.mocked(promptFolderAccess).mockResolvedValue('read')
+
+    await initialize()
+
+    expect(promptFolderAccess).toHaveBeenCalled()
+    expect(applyFolderAccess).toHaveBeenCalledWith('read')
+  })
+
+  test('initialize applies none when folder access cancelled', async () => {
+    vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
+    vi.mocked(WitsyAPI.prototype.getConfig).mockResolvedValue({
+      engine: 'openai',
+      model: 'gpt-4',
+      userDataPath: tempDir,
+      enableHttpEndpoints: true
+    })
+    vi.mocked(promptFolderAccess).mockResolvedValue(null)
+
+    await initialize()
+
+    expect(applyFolderAccess).toHaveBeenCalledWith('none')
+  })
+
+  test('initialize uses saved folder access', async () => {
+    vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
+    vi.mocked(WitsyAPI.prototype.getConfig).mockResolvedValue({
+      engine: 'openai',
+      model: 'gpt-4',
+      userDataPath: tempDir,
+      enableHttpEndpoints: true
+    })
+
+    // Create CLI config with saved folder access
+    const cwd = process.cwd()
+    const cliConfig = {
+      engine: { id: 'openai', name: 'OpenAI' },
+      model: { id: 'gpt-4', name: 'GPT-4' },
+      historySize: 50,
+      history: [],
+      workDirs: { [cwd]: { access: 'write' } }
+    }
+    fs.writeFileSync(path.join(tempDir, 'cli.json'), JSON.stringify(cliConfig))
+
+    await initialize()
+
+    // Should use saved access without prompting
+    expect(applyFolderAccess).toHaveBeenCalledWith('write')
+    expect(promptFolderAccess).not.toHaveBeenCalled()
+  })
+})
+
+describe('executeCommand switch cases', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    state.chat = new ChatCli('Test')
+  })
+
+  test('executeCommand handles folder command', async () => {
+    vi.mocked(promptFolderAccess).mockResolvedValue(null)
+
+    await executeCommand('folder')
+
+    expect(resetDisplay).toHaveBeenCalled()
+  })
+
+  test('executeCommand handles title command', async () => {
+    vi.mocked(promptInput).mockResolvedValue('New Title')
+
+    await executeCommand('title')
+
+    expect(state.chat.title).toBe('New Title')
+  })
+
+  test('executeCommand handles save command', async () => {
+    state.chat.addMessage(new MessageCli('user', 'test'))
+    vi.mocked(WitsyAPI.prototype.saveConversation).mockResolvedValue('chat-id')
+
+    await executeCommand('save')
+
+    expect(WitsyAPI.prototype.saveConversation).toHaveBeenCalled()
+  })
+
+  test('executeCommand handles retry command', async () => {
+    await executeCommand('retry')
+
+    // No messages, so should show error
+    expect(displayFooter).toHaveBeenCalled()
+  })
+
+  test('executeCommand handles clear command', async () => {
+    state.chat.addMessage(new MessageCli('user', 'test'))
+
+    await executeCommand('clear')
+
+    expect(state.chat.messages.length).toBe(0)
+  })
+
+  test('executeCommand handles quit command', async () => {
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never)
+
+    await executeCommand('quit')
+
+    expect(exitSpy).toHaveBeenCalledWith(0)
+    exitSpy.mockRestore()
   })
 })

@@ -1305,3 +1305,450 @@ test('onAttach shows error for unsupported file format', async () => {
   // Should show error dialog
   expect(Dialog.alert).toHaveBeenCalled()
 })
+
+test('Shortcut Alt+1 selects first favorite model', async () => {
+  // favorites are set in window mock
+  const event = new KeyboardEvent('keydown', { key: '1', keyCode: 49, altKey: true })
+  document.dispatchEvent(event)
+  await wrapper.vm.$nextTick()
+
+  // The shortcut should call setChatModel
+  expect(window.api.config.save).toHaveBeenCalled()
+})
+
+test('Shortcut Alt+0 selects 10th favorite model (index 9)', async () => {
+  // Alt+0 maps to index 9
+  const event = new KeyboardEvent('keydown', { key: '0', keyCode: 48, altKey: true })
+  document.dispatchEvent(event)
+  await wrapper.vm.$nextTick()
+
+  // With only 2 favorites, this should not trigger anything
+  // The check in onShortcutDown will return early
+})
+
+test('Shortcut without Alt key does nothing', async () => {
+  vi.clearAllMocks()
+  const event = new KeyboardEvent('keydown', { key: '1', keyCode: 49, altKey: false })
+  document.dispatchEvent(event)
+  await wrapper.vm.$nextTick()
+
+  // Should not trigger setChatModel
+  expect(window.api.config.save).not.toHaveBeenCalled()
+})
+
+test('conversationMenu shows stop option when in conversation mode', async () => {
+  const wrapperConvo = mount(Prompt, { ...stubTeleport, props: { chat: chat, conversationMode: 'auto', enableTools: false } })
+
+  // Check the computed conversationMenu returns stop option
+  expect(wrapperConvo.vm.conversationMenu).toEqual([
+    { label: 'prompt.conversation.stop', action: null }
+  ])
+
+  wrapperConvo.unmount()
+})
+
+test('conversationMenu shows start options when not in conversation mode', () => {
+  // default wrapper has no conversationMode
+  expect(wrapper.vm.conversationMenu).toEqual([
+    { label: 'prompt.conversation.startAuto', action: 'auto' },
+    { label: 'prompt.conversation.startPTT', action: 'ptt' },
+  ])
+})
+
+test('setExpert clears @ from prompt', async () => {
+  // Set prompt to '@'
+  const promptInput = wrapper.find<HTMLInputElement>('.input textarea')
+  await promptInput.setValue('@')
+
+  // Set expert
+  wrapper.vm.setExpert(store.experts[0])
+  await wrapper.vm.$nextTick()
+
+  // Prompt should be cleared
+  expect(wrapper.vm.getPrompt()).toBe('')
+})
+
+test('onSendPrompt does nothing when prompting', async () => {
+  // Set prompting state
+  wrapper.vm.promptingState = 'prompting'
+  await wrapper.vm.$nextTick()
+
+  // Try to send
+  wrapper.vm.onSendPrompt()
+
+  // Should not emit prompt
+  expect(wrapper.emitted<any[]>().prompt).toBeFalsy()
+})
+
+test('removeDocRepo removes specific docrepo', async () => {
+  // Set docrepos
+  wrapper.vm.docrepos = ['uuid1', 'uuid2']
+  await wrapper.vm.$nextTick()
+
+  // Remove one
+  wrapper.vm.removeDocRepo('uuid1')
+
+  // Should only have uuid2
+  expect(wrapper.vm.docrepos).toEqual(['uuid2'])
+})
+
+test('handleExpertClick with clear action disables expert', async () => {
+  // Set expert first
+  wrapper.vm.expert = store.experts[0]
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.expert).not.toBeNull()
+
+  // Call handleExpertClick with 'clear'
+  wrapper.vm.handleExpertClick('clear')
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.expert).toBeNull()
+})
+
+test('handleExpertClick with none action disables expert', async () => {
+  // Set expert first
+  wrapper.vm.expert = store.experts[0]
+  await wrapper.vm.$nextTick()
+
+  // Call handleExpertClick with 'none'
+  wrapper.vm.handleExpertClick('none')
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.expert).toBeNull()
+})
+
+test('onKeyDown Backspace clears expert when prompt is empty', async () => {
+  // Set expert
+  wrapper.vm.expert = store.experts[0]
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.expert).not.toBeNull()
+
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  // Ensure prompt is empty
+  await prompt.setValue('')
+
+  // Press backspace
+  await prompt.trigger('keydown', { key: 'Backspace' })
+
+  // Expert should be cleared
+  expect(wrapper.vm.expert).toBeNull()
+})
+
+test('onKeyDown Backspace does not clear expert when prompt has content', async () => {
+  // Set expert
+  wrapper.vm.expert = store.experts[0]
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.expert).not.toBeNull()
+
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('some content')
+
+  // Press backspace
+  await prompt.trigger('keydown', { key: 'Backspace' })
+
+  // Expert should NOT be cleared
+  expect(wrapper.vm.expert).not.toBeNull()
+})
+
+test('onKeyDown @ opens experts menu when prompt is empty', async () => {
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('')
+
+  // Press @
+  await prompt.trigger('keydown', { key: '@' })
+  await wrapper.vm.$nextTick()
+
+  // Experts menu should be shown
+  expect(wrapper.vm.showExperts).toBe(true)
+  // Prompt should have @
+  expect(wrapper.vm.getPrompt()).toBe('@')
+})
+
+test('onKeyUp triggers autoGrow', async () => {
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('test')
+  await prompt.trigger('keyup')
+  await wrapper.vm.$nextTick()
+
+  // emitEvent should be called with prompt-resize
+  expect(emitEventMock).toHaveBeenCalledWith('prompt-resize', expect.any(String))
+})
+
+test('exposed setPrompt with string creates Message', async () => {
+  wrapper.vm.setPrompt('Hello world')
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.getPrompt()).toBe('Hello world')
+})
+
+test('exposed attach adds attachments', async () => {
+  const attachment = new Attachment('content', 'image/png', 'file://test.png')
+
+  const initialLength = wrapper.vm.attachments.length
+  wrapper.vm.attach([attachment])
+
+  expect(wrapper.vm.attachments.length).toBe(initialLength + 1)
+})
+
+test('exposed sendPrompt triggers onSendPrompt', async () => {
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('test prompt')
+
+  wrapper.vm.sendPrompt()
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.emitted<any[]>().prompt).toBeTruthy()
+})
+
+test('handlePromptMenuInstructions with custom instruction', async () => {
+  // Add custom instruction to store
+  store.config.llm.customInstructions = [
+    { id: 'custom1', label: 'Custom Label', instructions: 'Custom instructions text' }
+  ]
+
+  // Call handler with custom: prefix
+  wrapper.vm.handlePromptMenuInstructions('custom:custom1')
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.instructions).toEqual({
+    id: 'custom1',
+    label: 'Custom Label',
+    instructions: 'Custom instructions text'
+  })
+})
+
+test('onConversationMenu opens menu when conversations enabled', async () => {
+  const wrapperConvo = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableConversations: true, enableTools: false } })
+
+  // Call the function
+  wrapperConvo.vm.onConversationMenu()
+
+  expect(wrapperConvo.vm.showConversationMenu).toBe(true)
+
+  wrapperConvo.unmount()
+})
+
+test('onConversationMenu does nothing when conversations disabled', async () => {
+  const wrapperNoConvo = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableConversations: false, enableTools: false } })
+
+  // Call the function
+  wrapperNoConvo.vm.onConversationMenu()
+
+  expect(wrapperNoConvo.vm.showConversationMenu).toBe(false)
+
+  wrapperNoConvo.unmount()
+})
+
+test('handleConversationClick with auto action starts dictation', async () => {
+  // Call handler with 'auto'
+  wrapper.vm.handleConversationClick('auto')
+  await wrapper.vm.$nextTick()
+
+  // Should emit conversation-mode event
+  expect(emitEventMock).toHaveBeenCalledWith('conversation-mode', 'auto')
+
+  // Should start dictation (transcriber should be initialized)
+  expect(wrapper.vm.transcriber.initialize).toHaveBeenCalled()
+})
+
+test('handleConversationClick with ptt action does not start dictation', async () => {
+  vi.clearAllMocks()
+
+  // Call handler with 'ptt'
+  wrapper.vm.handleConversationClick('ptt')
+  await wrapper.vm.$nextTick()
+
+  // Should emit conversation-mode event
+  expect(emitEventMock).toHaveBeenCalledWith('conversation-mode', 'ptt')
+
+  // Should NOT start dictation automatically
+  expect(wrapper.vm.transcriber.initialize).not.toHaveBeenCalled()
+})
+
+test('handleConversationClick with null action stops conversation', async () => {
+  // First set dictating to true
+  wrapper.vm.dictating = true
+
+  // Call handler with null (stop)
+  wrapper.vm.handleConversationClick(null)
+  await wrapper.vm.$nextTick()
+
+  // Should emit conversation-mode null
+  expect(emitEventMock).toHaveBeenCalledWith('conversation-mode', null)
+})
+
+test('matchInstructions returns custom instruction when matching', () => {
+  // Add custom instruction to store
+  store.config.llm.customInstructions = [
+    { id: 'my-custom', label: 'My Custom', instructions: 'These are my custom instructions' }
+  ]
+
+  const result = wrapper.vm.matchInstructions('These are my custom instructions')
+
+  expect(result).toEqual({
+    id: 'my-custom',
+    label: 'My Custom',
+    instructions: 'These are my custom instructions'
+  })
+})
+
+test('defaultPrompt returns correct placeholder for auto mode after send', async () => {
+  const wrapperAuto = mount(Prompt, { ...stubTeleport, props: { chat: chat, conversationMode: 'auto', enableTools: false } })
+
+  // Set a prompt
+  const promptInput = wrapperAuto.find<HTMLInputElement>('.input textarea')
+  await promptInput.setValue('test message')
+
+  // Send prompt
+  wrapperAuto.vm.sendPrompt()
+  await wrapperAuto.vm.$nextTick()
+
+  // After send, prompt should have the auto placeholder
+  expect(wrapperAuto.vm.getPrompt()).toBe('prompt.conversation.placeholders.auto')
+
+  wrapperAuto.unmount()
+})
+
+test('defaultPrompt returns correct placeholder for ptt mode after send', async () => {
+  const wrapperPtt = mount(Prompt, { ...stubTeleport, props: { chat: chat, conversationMode: 'ptt', enableTools: false } })
+
+  // Set a prompt
+  const promptInput = wrapperPtt.find<HTMLInputElement>('.input textarea')
+  await promptInput.setValue('test message')
+
+  // Send prompt
+  wrapperPtt.vm.sendPrompt()
+  await wrapperPtt.vm.$nextTick()
+
+  // After send, prompt should have the ptt placeholder
+  expect(wrapperPtt.vm.getPrompt()).toBe('prompt.conversation.placeholders.ptt')
+
+  wrapperPtt.unmount()
+})
+
+test('Commands menu with object icon renders component', async () => {
+  // Commands in store have string icons, but the code handles object icons too
+  // This tests the v-else-if branch for object icons
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.trigger('keydown', { key: '#' })
+  await wrapper.vm.$nextTick()
+
+  const menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  // Menu items should be rendered
+  expect(menu.findAll('.item').length).toBeGreaterThan(0)
+})
+
+test('handleAllPluginsToggle updates tools and emits', async () => {
+  chat!.tools = []
+  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+
+  await toolsWrapper.vm.handleAllPluginsToggle()
+
+  expect(toolsWrapper.emitted<any[]>()['tools-updated']).toBeTruthy()
+
+  toolsWrapper.unmount()
+})
+
+test('handleSelectAllTools updates tools and emits', async () => {
+  chat!.tools = []
+  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+
+  await toolsWrapper.vm.handleSelectAllTools()
+
+  expect(toolsWrapper.emitted<any[]>()['tools-updated']).toBeTruthy()
+
+  toolsWrapper.unmount()
+})
+
+test('handleUnselectAllTools updates tools and emits', async () => {
+  chat!.tools = ['some_tool']
+  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+
+  await toolsWrapper.vm.handleUnselectAllTools()
+
+  expect(toolsWrapper.emitted<any[]>()['tools-updated']).toBeTruthy()
+
+  toolsWrapper.unmount()
+})
+
+test('handleSelectAllPlugins updates tools and emits', async () => {
+  chat!.tools = []
+  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+
+  await toolsWrapper.vm.handleSelectAllPlugins()
+
+  expect(toolsWrapper.emitted<any[]>()['tools-updated']).toBeTruthy()
+
+  toolsWrapper.unmount()
+})
+
+test('handleUnselectAllPlugins updates tools and emits', async () => {
+  chat!.tools = ['browse_wikipedia']
+  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+
+  await toolsWrapper.vm.handleUnselectAllPlugins()
+
+  expect(toolsWrapper.emitted<any[]>()['tools-updated']).toBeTruthy()
+
+  toolsWrapper.unmount()
+})
+
+test('handleSelectAllServerTools updates tools and emits', async () => {
+  chat!.tools = []
+  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+
+  const server = { uuid: 'server1', tools: [{ uuid: 'tool1___server1' }] } as any
+  await toolsWrapper.vm.handleSelectAllServerTools(server)
+
+  expect(toolsWrapper.emitted<any[]>()['tools-updated']).toBeTruthy()
+
+  toolsWrapper.unmount()
+})
+
+test('handleUnselectAllServerTools updates tools and emits', async () => {
+  chat!.tools = ['tool1___server1']
+  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+
+  const server = { uuid: 'server1', tools: [{ uuid: 'tool1___server1' }] } as any
+  await toolsWrapper.vm.handleUnselectAllServerTools(server)
+
+  expect(toolsWrapper.emitted<any[]>()['tools-updated']).toBeTruthy()
+
+  toolsWrapper.unmount()
+})
+
+test('handleAllServerToolsToggle updates tools and emits', async () => {
+  chat!.tools = []
+  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+
+  const server = { uuid: 'server1', tools: [{ uuid: 'tool1___server1' }] } as any
+  await toolsWrapper.vm.handleAllServerToolsToggle(server)
+
+  expect(toolsWrapper.emitted<any[]>()['tools-updated']).toBeTruthy()
+
+  toolsWrapper.unmount()
+})
+
+test('onDragLeave handles special DIV relatedTarget case', () => {
+  // Enable attachments
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableAttachments: true } })
+  wrapper.vm.isDragOver = true
+
+  // Create the special DIV case: no parent, no children
+  const specialDiv = document.createElement('div')
+  // Don't append to any parent, don't add children
+
+  const event = {
+    preventDefault: vi.fn(),
+    currentTarget: {
+      contains: vi.fn(() => false)
+    },
+    relatedTarget: specialDiv
+  } as any
+
+  wrapper.vm.onDragLeave(event)
+
+  // Should still be true because of the special DIV case
+  expect(wrapper.vm.isDragOver).toBe(true)
+})

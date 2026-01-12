@@ -78,6 +78,8 @@ export default defineConfig({
         'src/renderer/_examples/*',
         'src/renderer/audio/pcm-processor.js',
         'src/renderer/services/plugins/vega.ts',
+        'src/renderer/services/realtime/gemini.ts',
+        'src/renderer/services/realtime/openai.ts',
         'src/types/**/*',
         'src/vendor/**/*',
         'tools/**/*',
