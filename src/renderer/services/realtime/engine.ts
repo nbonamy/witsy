@@ -17,10 +17,12 @@ export type RealtimeToolCall = {
 
 export type RealtimeStatus = 'idle' | 'connecting' | 'connected' | 'error'
 
+export type RealtimeContentType = 'content' | 'reasoning'
+
 export type RealtimeEngineCallbacks = {
   onStatusChange: (status: RealtimeStatus) => void
   onNewMessage: (message: RealtimeMessage) => void
-  onMessageUpdated: (id: string, content: string, mode: 'append' | 'replace') => void
+  onMessageUpdated: (id: string, content: string, mode: 'append' | 'replace', type?: RealtimeContentType) => void
   onMessageToolCall: (messageId: string, toolCall: RealtimeToolCall) => void
   onUsageUpdated: (usage: RealtimeUsage) => void
   onError: (error: Error) => void
@@ -73,6 +75,8 @@ export abstract class RealtimeEngine {
   constructor(callbacks: RealtimeEngineCallbacks) {
     this.callbacks = callbacks
   }
+
+  abstract get supportsTools(): boolean
 
   abstract connect(config: RealtimeConfig): Promise<void>
   abstract close(): void

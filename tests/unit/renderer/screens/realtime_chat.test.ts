@@ -39,6 +39,7 @@ vi.mock('@services/realtime', () => ({
     { id: 'ash', name: 'Ash' },
     { id: 'echo', name: 'Echo' },
   ]),
+  supportsTools: vi.fn(() => true),
   TRANSCRIPTION_UNAVAILABLE: '__TRANSCRIPTION_UNAVAILABLE__',
 }))
 

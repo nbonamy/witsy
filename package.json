@@ -101,7 +101,7 @@
     "@el3um4s/run-vbs": "^1.1.2",
     "@excalidraw/markdown-to-text": "^0.1.2",
     "@fal-ai/client": "^1.6.2",
-    "@google/genai": "^1.27.0",
+    "@google/genai": "^1.35.0",
     "@huggingface/hub": "^2.6.2",
     "@huggingface/inference": "^2.8.1",
     "@huggingface/transformers": "^3.7.2",
