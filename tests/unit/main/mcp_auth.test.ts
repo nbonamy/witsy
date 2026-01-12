@@ -227,7 +227,7 @@ describe('McpOAuthManager', () => {
     test('returns true for dynamic client registration errors', () => {
       const error1 = new Error('Dynamic client registration required')
       const error2 = new Error('Server does not support dynamic client registration')
-      
+
       expect(manager.isOAuthRequiredError(error1)).toBe(true)
       expect(manager.isOAuthRequiredError(error2)).toBe(true)
     })
@@ -236,27 +236,71 @@ describe('McpOAuthManager', () => {
       const error1 = new Error('HTTP 401: invalid_token')
       const error2 = new Error('HTTP 401: missing authorization')
       const error3 = new Error('HTTP 401: authentication required')
-      
+
       expect(manager.isOAuthRequiredError(error1)).toBe(true)
       expect(manager.isOAuthRequiredError(error2)).toBe(true)
       expect(manager.isOAuthRequiredError(error3)).toBe(true)
+    })
+
+    test('returns true for 401 via error.code property', () => {
+      const error = { code: 401, message: 'Some error' }
+      expect(manager.isOAuthRequiredError(error)).toBe(true)
+    })
+
+    test('returns true for 401 via error.status property', () => {
+      const error = { status: 401, message: 'Some error' }
+      expect(manager.isOAuthRequiredError(error)).toBe(true)
+    })
+
+    test('returns true for 401 via error.statusCode property', () => {
+      const error = { statusCode: 401, message: 'Some error' }
+      expect(manager.isOAuthRequiredError(error)).toBe(true)
+    })
+
+    test('returns true for SSE 401 errors', () => {
+      const error = new Error('SSE error: Non-200 status code (401)')
+      expect(manager.isOAuthRequiredError(error)).toBe(true)
     })
 
     test('returns true for OAuth error responses', () => {
       const error1 = new Error('invalid_token')
       const error2 = new Error('access_denied')
       const error3 = new Error('insufficient_scope')
-      
+      const error4 = new Error('missing required authorization header')
+
       expect(manager.isOAuthRequiredError(error1)).toBe(true)
       expect(manager.isOAuthRequiredError(error2)).toBe(true)
       expect(manager.isOAuthRequiredError(error3)).toBe(true)
+      expect(manager.isOAuthRequiredError(error4)).toBe(true)
+    })
+
+    test('returns true for generic unauthorized message', () => {
+      const error = new Error('Request unauthorized')
+      expect(manager.isOAuthRequiredError(error)).toBe(true)
     })
 
     test('returns false for non-OAuth errors', () => {
       const error1 = new Error('Network timeout')
       const error2 = new Error('HTTP 500: Internal server error')
-      
+      const error3 = new Error('Connection refused')
+      const error4 = { code: 500, message: 'Server error' }
+
       expect(manager.isOAuthRequiredError(error1)).toBe(false)
+      expect(manager.isOAuthRequiredError(error2)).toBe(false)
+      expect(manager.isOAuthRequiredError(error3)).toBe(false)
+      expect(manager.isOAuthRequiredError(error4)).toBe(false)
+    })
+
+    test('handles null and undefined errors gracefully', () => {
+      expect(manager.isOAuthRequiredError(null)).toBe(false)
+      expect(manager.isOAuthRequiredError(undefined)).toBe(false)
+    })
+
+    test('handles error without message property', () => {
+      const error = { code: 401 }
+      expect(manager.isOAuthRequiredError(error)).toBe(true)
+
+      const error2 = { code: 500 }
       expect(manager.isOAuthRequiredError(error2)).toBe(false)
     })
   })
