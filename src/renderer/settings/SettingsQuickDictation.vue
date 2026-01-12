@@ -4,8 +4,9 @@
     <div class="form-field">
       <label>{{ t('settings.voice.quickDictation.appearance') }}</label>
       <select name="appearance" v-model="appearance" @change="save">
-        <option value="panel">{{ t('settings.voice.quickDictation.appearancePanel') }}</option>
-        <option v-if="canUseNotch" value="notch">{{ t('settings.voice.quickDictation.appearanceNotch') }}</option>
+        <option value="bottom">{{ t('settings.voice.quickDictation.appearanceBottom') }}</option>
+        <option value="top">{{ t('settings.voice.quickDictation.appearanceTop') }}</option>
+        <option value="notch">{{ t('settings.voice.quickDictation.appearanceNotch') }}</option>
       </select>
     </div>
 
@@ -21,28 +22,23 @@
 
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { store } from '@services/store'
 import { t } from '@services/i18n'
 
-const appearance = ref<'panel' | 'notch'>('panel')
+const appearance = ref<'bottom' | 'top' | 'notch'>('bottom')
 const copyToClipboard = ref(false)
-
-// Only show notch option on macOS
-const canUseNotch = computed(() => {
-  return window.api.platform === 'darwin'
-})
 
 const load = () => {
   const config = store.config.stt.quickDictation
-  appearance.value = config?.appearance ?? 'panel'
+  appearance.value = config?.appearance ?? 'bottom'
   copyToClipboard.value = config?.copyToClipboard ?? false
 }
 
 const save = () => {
   if (!store.config.stt.quickDictation) {
     store.config.stt.quickDictation = {
-      appearance: 'panel',
+      appearance: 'bottom',
       copyToClipboard: false
     }
   }

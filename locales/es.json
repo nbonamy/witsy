@@ -3057,8 +3057,9 @@
       "openaiApiKeyReminder": "Asegúrese de ingresar su clave API de OpenAI en el panel de Modelos.",
       "quickDictation": {
         "appearance": "Apariencia",
-        "appearanceNotch": "Muesca (parte superior de la pantalla)",
-        "appearancePanel": "Panel (parte inferior de la pantalla)",
+        "appearanceBottom": "Parte inferior de la pantalla",
+        "appearanceNotch": "Muesca",
+        "appearanceTop": "Parte superior de la pantalla",
         "copyToClipboard": "Copiar automáticamente el texto dictado al portapapeles",
         "escapeHint": "Pulsa Barra espaciadora o Escape para detener la grabación y transcribir.<br/>Pulsa Escape dos veces para cancelar."
       },

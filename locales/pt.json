@@ -3079,8 +3079,9 @@
       "openaiApiKeyReminder": "Certifique-se de inserir sua chave de API OpenAI no painel Modelos.",
       "quickDictation": {
         "appearance": "Aparência",
-        "appearanceNotch": "Entalhe (parte superior da tela)",
-        "appearancePanel": "Painel (parte inferior da tela)",
+        "appearanceBottom": "Parte inferior da tela",
+        "appearanceNotch": "Entalhe",
+        "appearanceTop": "Parte superior da tela",
         "copyToClipboard": "Copiar automaticamente o texto ditado para a área de transferência",
         "escapeHint": "Pressione Espaço ou Esc para parar a gravação e transcrever.<br/>Pressione Esc duas vezes para cancelar."
       },

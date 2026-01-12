@@ -3086,8 +3086,9 @@
       "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
       "quickDictation": {
         "appearance": "Appearance",
-        "appearanceNotch": "Notch (top of screen)",
-        "appearancePanel": "Panel (bottom of screen)",
+        "appearanceBottom": "Bottom of screen",
+        "appearanceNotch": "Notch",
+        "appearanceTop": "Top of screen",
         "copyToClipboard": "Automatically copy dictated text to clipboard",
         "escapeHint": "Press Space or Escape to stop recording and transcribe.<br/>Double-press Escape to cancel."
       },

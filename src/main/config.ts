@@ -368,6 +368,12 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
     config.llm.codeExecution = 'disabled'
   }
 
+  // backwards compatibility: quickDictation appearance 'panel' renamed to 'bottom'
+  // @ts-expect-error backwards compatibility
+  if (config.stt?.quickDictation?.appearance === 'panel') {
+    config.stt.quickDictation.appearance = 'bottom'
+  }
+
   // nullify defaults
   nullifyDefaults(config)
 

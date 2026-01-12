@@ -9,19 +9,11 @@ import Automator from '../automations/automator';
 import process from 'node:process';
 
 export let dictationWindow: BrowserWindow = null;
-let currentAppearance: 'panel' | 'notch' = 'panel';
+let currentAppearance: 'bottom' | 'top' | 'notch' = 'bottom';
 
-// Detect if current Mac has a notch (menu bar height > 30px indicates notch)
-export const hasNotch = (): boolean => {
-  if (process.platform !== 'darwin') return false;
-  const display = getCurrentScreen();
-  const menuBarHeight = display.workArea.y - display.bounds.y;
-  return menuBarHeight > 30;
-};
-
-const getWindowBounds = (appearance: 'panel' | 'notch') => {
+const getWindowBounds = (appearance: 'bottom' | 'top' | 'notch') => {
   const currentScreen = getCurrentScreen();
-  const useNotch = appearance === 'notch' && hasNotch();
+  const useNotch = appearance === 'notch';
   const width = 320;
   const notchPadding = 16;
   let height = useNotch ? 80 : 64;
@@ -30,10 +22,16 @@ const getWindowBounds = (appearance: 'panel' | 'notch') => {
   let y: number;
 
   if (useNotch) {
+    // Notch: centered at very top of screen, overlapping menu bar
     x = currentScreen.bounds.x + Math.round((currentScreen.bounds.width - width) / 2);
     y = currentScreen.bounds.y - 1;
     height = height + notchPadding;
+  } else if (appearance === 'top') {
+    // Top: centered at top of work area (below menu bar)
+    x = currentScreen.bounds.x + Math.round((currentScreen.workArea.width - width) / 2);
+    y = currentScreen.workArea.y + 16;
   } else {
+    // Bottom: centered at bottom of work area
     x = currentScreen.bounds.x + Math.round((currentScreen.workArea.width - width) / 2);
     y = currentScreen.workArea.y + currentScreen.workArea.height - height - 16;
   }
@@ -50,11 +48,11 @@ export const prepareDictationWindow = (): void => {
 
   // get settings for appearance mode
   const settings = loadSettings(app);
-  const appearance = settings.stt.quickDictation?.appearance || 'panel';
+  const appearance = settings.stt.quickDictation?.appearance || 'bottom';
   const { x, y, width, height, useNotch, notchPadding } = getWindowBounds(appearance);
 
   // track appearance mode
-  currentAppearance = useNotch ? 'notch' : 'panel';
+  currentAppearance = appearance;
 
   // create the window but keep it hidden
   dictationWindow = createWindow({
@@ -146,12 +144,11 @@ export const openDictationWindow = (params: anyDict): void => {
   }
 
   // get appearance mode
-  const appearance = settings.stt.quickDictation?.appearance || 'panel';
+  const appearance = settings.stt.quickDictation?.appearance || 'bottom';
   const { x, y, width, height, useNotch, notchPadding } = getWindowBounds(appearance);
 
   // check if appearance mode changed (requires window recreation for transparency)
-  const newAppearance = useNotch ? 'notch' : 'panel';
-  if (newAppearance !== currentAppearance) {
+  if (appearance !== currentAppearance) {
     // need to recreate window with different transparency
     dictationWindow.destroy();
     dictationWindow = null;
@@ -175,7 +172,7 @@ export const openDictationWindow = (params: anyDict): void => {
   // use setImmediate to ensure the event is sent after the window is fully shown
   const showParams = {
     sourceApp: params.sourceApp ? JSON.stringify(params.sourceApp) : null,
-    appearance: newAppearance,
+    appearance: appearance,
     notchHeight: useNotch ? notchPadding : 0
   };
 

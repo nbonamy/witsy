@@ -170,16 +170,23 @@ test('Notch appearance adds notch class', async () => {
   expect(wrapper.find('.dictation.notch').exists()).toBe(true)
 })
 
-test('Panel appearance does not add notch class', async () => {
+test('Bottom appearance does not add notch class', async () => {
   const wrapper: VueWrapper<any> = mount(Dictation)
-  wrapper.vm.appearance = 'panel'
+  wrapper.vm.appearance = 'bottom'
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.dictation.notch').exists()).toBe(false)
+})
+
+test('Top appearance does not add notch class', async () => {
+  const wrapper: VueWrapper<any> = mount(Dictation)
+  wrapper.vm.appearance = 'top'
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.dictation.notch').exists()).toBe(false)
 })
 
 test('Copies to clipboard when enabled', async () => {
   const wrapper: VueWrapper<any> = mount(Dictation)
-  store.config.stt.quickDictation = { appearance: 'panel', copyToClipboard: true }
+  store.config.stt.quickDictation = { appearance: 'bottom', copyToClipboard: true }
 
   await wrapper.vm.transcribeAndInsert(new Blob())
 
@@ -189,7 +196,7 @@ test('Copies to clipboard when enabled', async () => {
 
 test('Does not copy to clipboard when disabled', async () => {
   const wrapper: VueWrapper<any> = mount(Dictation)
-  store.config.stt.quickDictation = { appearance: 'panel', copyToClipboard: false }
+  store.config.stt.quickDictation = { appearance: 'bottom', copyToClipboard: false }
 
   await wrapper.vm.transcribeAndInsert(new Blob())
 
@@ -211,7 +218,7 @@ test('Handles show event with sourceApp', async () => {
 
   await wrapper.vm.onShow({
     sourceApp: JSON.stringify(sourceApp),
-    appearance: 'panel'
+    appearance: 'bottom'
   })
 
   expect(wrapper.vm.sourceApp).toEqual(sourceApp)
@@ -280,7 +287,7 @@ test('Calls close after animation ends in notch mode', async () => {
 
 test('Closes immediately in panel mode without animation', async () => {
   const wrapper: VueWrapper<any> = mount(Dictation)
-  wrapper.vm.appearance = 'panel'
+  wrapper.vm.appearance = 'bottom'
   await wrapper.vm.$nextTick()
 
   wrapper.vm.closeWindow('test text')
@@ -292,7 +299,7 @@ test('Closes immediately in panel mode without animation', async () => {
 
 test('Shows clipboard icon when no source app but clipboard enabled', async () => {
   const wrapper: VueWrapper<any> = mount(Dictation)
-  store.config.stt.quickDictation = { appearance: 'panel', copyToClipboard: true }
+  store.config.stt.quickDictation = { appearance: 'bottom', copyToClipboard: true }
   wrapper.vm.sourceApp = null
   await wrapper.vm.$nextTick()
 
@@ -312,7 +319,7 @@ test('Shows app icon when source app is present', async () => {
 
 test('Shows no icon when no source app and clipboard disabled', async () => {
   const wrapper: VueWrapper<any> = mount(Dictation)
-  store.config.stt.quickDictation = { appearance: 'panel', copyToClipboard: false }
+  store.config.stt.quickDictation = { appearance: 'bottom', copyToClipboard: false }
   wrapper.vm.sourceApp = null
   await wrapper.vm.$nextTick()
 

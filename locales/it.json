@@ -3057,8 +3057,9 @@
       "openaiApiKeyReminder": "Assicurati di inserire la tua chiave API OpenAI nel pannello Modelli.",
       "quickDictation": {
         "appearance": "Aspetto",
-        "appearanceNotch": "Tacca (parte superiore dello schermo)",
-        "appearancePanel": "Pannello (parte inferiore dello schermo)",
+        "appearanceBottom": "Parte inferiore dello schermo",
+        "appearanceNotch": "Tacca",
+        "appearanceTop": "Parte superiore dello schermo",
         "copyToClipboard": "Copia automaticamente il testo dettato negli appunti",
         "escapeHint": "Premi la barra spaziatrice o Esc per interrompere la registrazione e trascrivere.<br/>Premi due volte Esc per annullare."
       },

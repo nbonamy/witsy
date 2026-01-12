@@ -252,7 +252,7 @@ export type STTConfig = {
     audioFormat?: string
   }
   quickDictation: {
-    appearance: 'panel' | 'notch'
+    appearance: 'bottom' | 'top' | 'notch'
     copyToClipboard: boolean
   }
   //silenceAction: SilenceAction

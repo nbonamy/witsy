@@ -3079,8 +3079,9 @@
       "openaiApiKeyReminder": "确保你在模型面板中输入了 OpenAI API 密钥。",
       "quickDictation": {
         "appearance": "外观",
-        "appearanceNotch": "刘海（屏幕顶部）",
-        "appearancePanel": "面板（屏幕底部）",
+        "appearanceBottom": "屏幕底部",
+        "appearanceNotch": "刘海",
+        "appearanceTop": "屏幕顶部",
         "copyToClipboard": "自动将听写文本复制到剪贴板",
         "escapeHint": "按空格或 Esc 停止录制并转录。<br/>连续按两次 Esc 取消。"
       },
