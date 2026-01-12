@@ -1,5 +1,17 @@
 [
   {
+    "timestamp": "2026-01-12T20:35:33.724Z",
+    "commit": "b506a9dc54a2c29713ac30c582b7610b443aa5e5",
+    "message": "test: improve coverage to 82%",
+    "author": "Nicolas Bonamy",
+    "coverage": {
+      "statements": 82.36,
+      "branches": 82.19,
+      "functions": 72.54,
+      "lines": 82.36
+    }
+  },
+  {
     "timestamp": "2026-01-12T16:43:16.562Z",
     "commit": "abcffccd7443e0f36556d344a1b599ca88cabc7a",
     "message": "chore: add commit message to coverage history",
