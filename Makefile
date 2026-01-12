@@ -84,7 +84,7 @@ increment-build-number:
 
 commit-build-number:
 	@git add $(BUILD_NUMBER_FILE)
-	@git commit -m "increment build number"
+	@git commit -m "chore: increment build number"
 	@git push
 
 build-release:

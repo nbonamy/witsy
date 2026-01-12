@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.4.1] - WIP
+
+### Added
+- More Quick dictation options
+
+### Changed
+- N/A
+
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
 ## [3.4.0] - 2026-01-11
 
 ### Added
