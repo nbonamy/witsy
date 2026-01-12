@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.4.0] - WIP
+## [3.4.0] - 2026-01-11
 
 ### Added
 - Parakeet WebGPU support
