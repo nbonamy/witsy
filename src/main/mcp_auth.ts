@@ -273,14 +273,12 @@ export default class McpOAuthManager {
       return true
     }
 
-    // 401 HTTP status code checks
-    if (error?.code === 401 || error?.status === 401 || error?.statusCode === 401) {
-      return true
-    }
-
     // Check for HTTP 401 errors with OAuth-specific messages
     const errorMessage = error?.message || ''
     const lowerMessage = errorMessage.toLowerCase()
+
+    // 401 error?
+    const is401 = lowerMessage.includes('401') || error?.code === 401 || error?.status === 401 || error?.statusCode === 401
 
     // Treat dynamic client registration errors as OAuth requirement
     if (lowerMessage.includes('dynamic client registration') ||
@@ -289,12 +287,12 @@ export default class McpOAuthManager {
     }
 
     // Check for SSE 401 errors (from EventSource)
-    if (lowerMessage.includes('sse error') && lowerMessage.includes('401')) {
+    if (is401 && lowerMessage.includes('sse error')) {
       return true
     }
 
     // Look for OAuth-specific error patterns
-    if (lowerMessage.includes('http 401') && (
+    if (is401 && (
       lowerMessage.includes('invalid_token') ||
       lowerMessage.includes('missing') ||
       lowerMessage.includes('unauthorized') ||
@@ -306,12 +304,13 @@ export default class McpOAuthManager {
     // Check for common OAuth error responses
     if (lowerMessage.includes('invalid_token') ||
         lowerMessage.includes('access_denied') ||
+        lowerMessage.includes('missing required authorization header') ||
         lowerMessage.includes('insufficient_scope')) {
       return true
     }
 
     // Generic 401 status code check
-    if (lowerMessage.includes('401') || lowerMessage.includes('unauthorized')) {
+    if (is401 || lowerMessage.includes('unauthorized')) {
       return true
     }
 
