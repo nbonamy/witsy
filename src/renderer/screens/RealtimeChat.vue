@@ -27,7 +27,7 @@
               <option v-for="voice in voices" :value="voice.id" :key="voice.id">{{ voice.name }}</option>
             </select>
           </div>
-          <div class="form-field">
+          <div class="form-field" v-if="showToolsButton">
             <label>{{ t('common.tools') }}</label>
             <button id="tools-menu-anchor" class="tools" :disabled="state === 'active'" @click="onTools">
               <BlocksIcon /> {{ toolsLabel }}
@@ -100,7 +100,9 @@ import * as ts from '@renderer/utils/tool_selection'
 import { t } from '@services/i18n'
 import {
   createRealtimeEngine,
+  getAvailableModels,
   getAvailableVoices,
+  supportsTools,
   RealtimeCostInfo,
   RealtimeEngine,
   RealtimeMessage,
@@ -148,25 +150,25 @@ let realtimeEngine: RealtimeEngine | null = null
 
 const engines = computed(() => ([
   { id: 'openai', name: 'OpenAI' },
-  //{ id: 'gladia', name: 'Gladia' },
+  { id: 'google', name: 'Google' },
 ]))
 
 const models = computed(() => {
-  if (engine.value === 'gladia') {
-    return [ { id: 'solaria', name: 'Solaria' } ]
-  } else {
-    return store.config.engines[engine.value].models.realtime
+  // First check if models are configured in settings
+  const engineModels = store.config.engines[engine.value]?.models?.realtime
+  if (engineModels?.length) {
+    return engineModels
   }
+  // Fallback to engine-provided models
+  const fallbackModels = getAvailableModels(engine.value)
+  if (fallbackModels.length) {
+    return fallbackModels
+  }
+  return []
 })
 
 const voices = computed(() => {
-  if (engine.value === 'gladia') {
-    return [
-      { id: 'default', name: 'Default' },
-    ]
-  } else {
-    return getAvailableVoices(engine.value)
-  }
+  return getAvailableVoices(engine.value)
 })
 
 const getVoiceName = (): string => {
@@ -176,6 +178,8 @@ const getVoiceName = (): string => {
 const getIdleStatus = () => t('realtimeChat.clickToTalk', { voice: getVoiceName() })
 
 const status = ref(getIdleStatus())
+
+const showToolsButton = computed(() => supportsTools(engine.value))
 
 const toolsLabel = computed(() => {
   return t('realtimeChat.toolsSelected', { count: toolSelection.value.length })
@@ -330,15 +334,15 @@ const onNewMessage = (message: RealtimeMessage) => {
   chat.value.messages.push(msg)
 }
 
-const onMessageUpdated = (id: string, content: string, mode: 'append' | 'replace') => {
-  // console.log(`[realtime] vue onMessageUpdated: id=${id}, mode=${mode}, content="${content.slice(0, 50)}..."`)
+const onMessageUpdated = (id: string, content: string, mode: 'append' | 'replace', type: 'content' | 'reasoning' = 'content') => {
+  // console.log(`[realtime] vue onMessageUpdated: id=${id}, mode=${mode}, type=${type}, content="${content.slice(0, 50)}..."`)
   const message = chat.value.messages.find(m => m.uuid === id)
   if (message) {
     const translated = translateContent(content)
     if (mode === 'replace') {
       message.setText(translated)
     } else {
-      message.appendText({ type: 'content', text: translated, done: false })
+      message.appendText({ type, text: translated, done: false })
     }
   }
 }

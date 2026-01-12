@@ -265,6 +265,10 @@ export class RealtimeOpenAI extends RealtimeEngine {
     this.config = config
   }
 
+  get supportsTools(): boolean {
+    return true
+  }
+
   async connect(realtimeConfig: RealtimeConfig): Promise<void> {
 
     this.currentModel = realtimeConfig.model
