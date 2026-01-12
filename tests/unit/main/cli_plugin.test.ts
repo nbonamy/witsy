@@ -820,6 +820,21 @@ describe('CliPlugin', () => {
       expect(plugin.getRunningDescription('', { action: 'write_file', path: 'test.txt' })).toBe('Write(test.txt)')
       expect(plugin.getRunningDescription('', { action: 'delete_file', path: 'test.txt' })).toBe('Delete(test.txt)')
       expect(plugin.getRunningDescription('', { action: 'run_command', command: 'echo hi' })).toBe('Bash(echo hi)')
+      expect(plugin.getRunningDescription('', { action: 'list_files', path: 'dir' })).toBe('List(dir)')
+      expect(plugin.getRunningDescription('', { action: 'search', pattern: 'test', glob: '*.ts' })).toBe('Search(test, *.ts)')
+      expect(plugin.getRunningDescription('', { action: 'search', pattern: 'test' })).toBe('Search(test)')
+      expect(plugin.getRunningDescription('', { action: 'edit_file', path: 'test.txt' })).toBe('Edit(test.txt)')
+      expect(plugin.getRunningDescription('', { action: 'create_directory', path: 'newdir' })).toBe('CreateDir(newdir)')
+      expect(plugin.getRunningDescription('', { action: 'move_file', path: 'a.txt', newPath: 'b.txt' })).toContain('Move')
+      // @ts-expect-error testing unknown action
+      expect(plugin.getRunningDescription('', { action: 'unknown' })).toBe('Working...')
+    })
+
+    test('getRunningDescription truncates long commands', () => {
+      const longCommand = 'a'.repeat(100)
+      const result = plugin.getRunningDescription('', { action: 'run_command', command: longCommand })
+      expect(result).toContain('...')
+      expect(result.length).toBeLessThan(70)
     })
 
     test('getCompletedDescription returns success messages', () => {
@@ -830,6 +845,330 @@ describe('CliPlugin', () => {
     test('getCompletedDescription returns failure messages', () => {
       const errorResult = { success: false, error: 'File not found' }
       expect(plugin.getCompletedDescription('', { action: 'read_file', path: 'test.txt' }, errorResult)).toContain('Failed')
+    })
+
+    test('getCompletedDescription for list_files success', () => {
+      const result = plugin.getCompletedDescription('', { action: 'list_files', path: '.' }, {
+        success: true,
+        content: 'file1.txt\nfile2.txt',
+        fileCount: 2
+      })
+      expect(result).toContain('List')
+      expect(result).toContain('file1.txt')
+    })
+
+    test('getCompletedDescription for list_files failure', () => {
+      const result = plugin.getCompletedDescription('', { action: 'list_files', path: '.' }, {
+        success: false,
+        error: 'Not a directory'
+      })
+      expect(result).toContain('Failed to list')
+    })
+
+    test('getCompletedDescription for search success with matches', () => {
+      const result = plugin.getCompletedDescription('', { action: 'search', pattern: 'test' }, {
+        success: true,
+        content: 'file1.txt:1:test\nfile2.txt:5:test\nfile3.txt:10:test\nfile4.txt:15:test',
+        matchCount: 4
+      })
+      expect(result).toContain('Search')
+      expect(result).toContain('file1.txt')
+      expect(result).toContain('+1 more')
+    })
+
+    test('getCompletedDescription for search success no matches', () => {
+      const result = plugin.getCompletedDescription('', { action: 'search', pattern: 'test' }, {
+        success: true,
+        content: '',
+        matchCount: 0
+      })
+      expect(result).toContain('No matches found')
+    })
+
+    test('getCompletedDescription for search failure', () => {
+      const result = plugin.getCompletedDescription('', { action: 'search', pattern: 'test' }, {
+        success: false,
+        error: 'Invalid pattern'
+      })
+      expect(result).toContain('Search failed')
+    })
+
+    test('getCompletedDescription for edit_file', () => {
+      expect(plugin.getCompletedDescription('', { action: 'edit_file', path: 'test.txt' }, {
+        success: true,
+        linesModified: 5
+      })).toContain('Edited 5 lines')
+
+      expect(plugin.getCompletedDescription('', { action: 'edit_file', path: 'test.txt' }, {
+        success: false,
+        error: 'Error'
+      })).toContain('Failed to edit')
+    })
+
+    test('getCompletedDescription for write_file', () => {
+      expect(plugin.getCompletedDescription('', { action: 'write_file', path: 'test.txt' }, {
+        success: true,
+        totalLines: 10
+      })).toContain('Wrote 10 lines')
+
+      expect(plugin.getCompletedDescription('', { action: 'write_file', path: 'test.txt' }, {
+        success: false,
+        error: 'Error'
+      })).toContain('Failed to write')
+    })
+
+    test('getCompletedDescription for create_directory', () => {
+      expect(plugin.getCompletedDescription('', { action: 'create_directory', path: 'dir' }, {
+        success: true
+      })).toContain('Directory created')
+
+      expect(plugin.getCompletedDescription('', { action: 'create_directory', path: 'dir' }, {
+        success: false,
+        error: 'Error'
+      })).toContain('Failed to create')
+    })
+
+    test('getCompletedDescription for delete_file', () => {
+      expect(plugin.getCompletedDescription('', { action: 'delete_file', path: 'test.txt' }, {
+        success: true
+      })).toContain('File deleted')
+
+      expect(plugin.getCompletedDescription('', { action: 'delete_file', path: 'test.txt' }, {
+        success: false,
+        error: 'Error'
+      })).toContain('Failed to delete')
+    })
+
+    test('getCompletedDescription for move_file', () => {
+      expect(plugin.getCompletedDescription('', { action: 'move_file', path: 'a.txt', newPath: 'b.txt' }, {
+        success: true
+      })).toContain('File moved')
+
+      expect(plugin.getCompletedDescription('', { action: 'move_file', path: 'a.txt', newPath: 'b.txt' }, {
+        success: false,
+        error: 'Error'
+      })).toContain('Failed to move')
+    })
+
+    test('getCompletedDescription for run_command success with output', () => {
+      const result = plugin.getCompletedDescription('', { action: 'run_command', command: 'echo hi' }, {
+        success: true,
+        stdout: 'hello\nworld\nfoo\nbar\nbaz',
+        exitCode: 0
+      })
+      expect(result).toContain('Bash')
+      expect(result).toContain('hello')
+      expect(result).toContain('more lines')
+    })
+
+    test('getCompletedDescription for run_command success no output', () => {
+      const result = plugin.getCompletedDescription('', { action: 'run_command', command: 'true' }, {
+        success: true,
+        stdout: '',
+        exitCode: 0
+      })
+      expect(result).toContain('Command completed (no output)')
+    })
+
+    test('getCompletedDescription for run_command failure', () => {
+      const result = plugin.getCompletedDescription('', { action: 'run_command', command: 'false' }, {
+        success: false,
+        stderr: 'error message',
+        exitCode: 1
+      })
+      expect(result).toContain('failed with exit code 1')
+    })
+
+    test('getCompletedDescription for run_command timeout', () => {
+      const result = plugin.getCompletedDescription('', { action: 'run_command', command: 'sleep 100' }, {
+        success: false,
+        stderr: '',
+        exitCode: 124
+      })
+      expect(result).toContain('timed out')
+    })
+
+    test('getCompletedDescription for unknown action', () => {
+      // @ts-expect-error testing unknown action
+      expect(plugin.getCompletedDescription('', { action: 'unknown' }, { success: true })).toContain('Operation completed')
+      // @ts-expect-error testing unknown action
+      expect(plugin.getCompletedDescription('', { action: 'unknown' }, { success: false })).toContain('Operation failed')
+    })
+
+    test('getPreparationDescription', () => {
+      expect(plugin.getPreparationDescription()).toBe('Accessing filesystem...')
+    })
+  })
+
+  describe('edge cases', () => {
+    test('read_file requires path parameter', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'read_file'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Missing path')
+    })
+
+    test('list_files requires path parameter', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'list_files'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Missing path')
+    })
+
+    test('read_file fails on directory', async () => {
+      fs.mkdirSync(path.join(tempDir, 'subdir'))
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'read_file',
+        path: 'subdir'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('directory')
+    })
+
+    test('read_file fails on invalid start line', async () => {
+      fs.writeFileSync(path.join(tempDir, 'test.txt'), 'line1\nline2')
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'read_file',
+        path: 'test.txt',
+        start: 100
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Invalid line number')
+    })
+
+    test('read_file rejects file too large', async () => {
+      // Create a file larger than MAX_READ_FILE_CHARACTERS (40000)
+      const largeContent = 'x'.repeat(50000)
+      fs.writeFileSync(path.join(tempDir, 'large.txt'), largeContent)
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'read_file',
+        path: 'large.txt'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('too large')
+    })
+
+    test('edit_file requires start and end', async () => {
+      fs.writeFileSync(path.join(tempDir, 'test.txt'), 'line1')
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'edit_file',
+        path: 'test.txt',
+        content: 'new'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Missing start/end')
+    })
+
+    test('edit_file fails on invalid end line', async () => {
+      fs.writeFileSync(path.join(tempDir, 'test.txt'), 'line1\nline2')
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'edit_file',
+        path: 'test.txt',
+        start: 1,
+        end: 100,
+        content: 'new'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Invalid line number')
+    })
+
+    test('edit_file fails on missing file', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'edit_file',
+        path: 'notfound.txt',
+        start: 1,
+        end: 1,
+        content: 'new'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('not found')
+    })
+
+    test('write_file requires path parameter', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'write_file',
+        content: 'content'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Missing path')
+    })
+
+    test('create_directory requires path parameter', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'create_directory'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Missing path')
+    })
+
+    test('create_directory fails if file exists at path', async () => {
+      fs.writeFileSync(path.join(tempDir, 'file.txt'), 'content')
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'create_directory',
+        path: 'file.txt'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('File exists')
+    })
+
+    test('delete_file requires path parameter', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'delete_file'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Missing path')
+    })
+
+    test('move_file requires both path and newPath', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'move_file',
+        path: 'test.txt'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Missing path or newPath')
+    })
+
+    test('move_file rejects invalid newPath', async () => {
+      fs.writeFileSync(path.join(tempDir, 'test.txt'), 'content')
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'move_file',
+        path: 'test.txt',
+        newPath: '/etc/passwd'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('not allowed')
+    })
+
+    test('run_command requires command parameter', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        action: 'run_command'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Missing command')
+    })
+
+    test('unknown action returns error', async () => {
+      const result = await plugin.execute({ model: 'test' }, {
+        // @ts-expect-error testing unknown action
+        action: 'invalid_action'
+      })
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('Unknown action')
+    })
+
+    test('execute catches thrown errors', async () => {
+      // Simulate an error by passing an invalid path that triggers an exception
+      const badPlugin = new CliPlugin({
+        workDirPath: '/nonexistent/path/that/should/cause/issues',
+        workDirAccess: 'rw'
+      })
+      const result = await badPlugin.execute({ model: 'test' }, {
+        action: 'list_files',
+        path: '.'
+      })
+      expect(result.success).toBe(false)
     })
   })
 })

@@ -23,6 +23,7 @@ describe('HTTP API Endpoints', () => {
   let httpServer: HttpServer
   let mockApp: App
   let mockMcp: Mcp
+  let mockDocRepo: any
   let mockSettings: any
   let mockLlmManager: any
   let registeredRoutes: Map<string, RouteHandler>
@@ -36,8 +37,11 @@ describe('HTTP API Endpoints', () => {
       })
     } as any
 
-    mockApp = {} as App
+    mockApp = {
+      getPath: vi.fn(() => '/mock/user/data')
+    } as any
     mockMcp = {} as Mcp
+    mockDocRepo = {} as any
 
     mockSettings = {
       general: {
@@ -68,6 +72,68 @@ describe('HTTP API Endpoints', () => {
     vi.clearAllMocks()
   })
 
+  describe('GET /api/cli/config', () => {
+    test('returns CLI configuration', async () => {
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
+
+      const handler = registeredRoutes.get('/api/cli/config')
+      expect(handler).toBeDefined()
+
+      const mockReq = {} as IncomingMessage
+      const mockRes = {
+        writeHead: vi.fn(),
+        end: vi.fn()
+      } as any
+
+      await handler!(mockReq, mockRes)
+
+      expect(mockRes.writeHead).toHaveBeenCalledWith(200, { 'Content-Type': 'application/json' })
+      const response = JSON.parse(mockRes.end.mock.calls[0][0])
+      expect(response.engine).toEqual({ id: 'openai', name: 'OpenAI' })
+      expect(response.model).toEqual({ id: 'gpt-4', name: 'GPT-4' })
+      expect(response.userDataPath).toBe('/mock/user/data')
+      expect(response.enableHttpEndpoints).toBe(true)
+    })
+
+    test('returns unknown model name when model not found', async () => {
+      mockSettings.engines.openai.model.chat = 'unknown-model'
+
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
+
+      const handler = registeredRoutes.get('/api/cli/config')
+      const mockReq = {} as IncomingMessage
+      const mockRes = {
+        writeHead: vi.fn(),
+        end: vi.fn()
+      } as any
+
+      await handler!(mockReq, mockRes)
+
+      const response = JSON.parse(mockRes.end.mock.calls[0][0])
+      expect(response.model.id).toBe('unknown-model')
+      expect(response.model.name).toBe('unknown-model')
+    })
+
+    test('handles error gracefully', async () => {
+      vi.mocked(config.loadSettings).mockImplementation(() => {
+        throw new Error('Config error')
+      })
+
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
+
+      const handler = registeredRoutes.get('/api/cli/config')
+      const mockReq = {} as IncomingMessage
+      const mockRes = {
+        writeHead: vi.fn(),
+        end: vi.fn()
+      } as any
+
+      await handler!(mockReq, mockRes)
+
+      expect(mockRes.writeHead).toHaveBeenCalledWith(500, { 'Content-Type': 'application/json' })
+    })
+  })
+
   describe('HTTP Endpoints Disabled', () => {
     test('should return 404 when endpoints are disabled', async () => {
       const disabledSettings = {
@@ -78,7 +144,7 @@ describe('HTTP API Endpoints', () => {
       }
       vi.mocked(config.loadSettings).mockReturnValueOnce(disabledSettings)
 
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/engines')
       expect(handler).toBeDefined()
@@ -98,7 +164,7 @@ describe('HTTP API Endpoints', () => {
 
   describe('GET /api/engines', () => {
     test('returns list of configured engines', async () => {
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/engines')
       expect(handler).toBeDefined()
@@ -121,7 +187,7 @@ describe('HTTP API Endpoints', () => {
     test('filters out non-configured engines', async () => {
       mockLlmManager.isEngineConfigured = vi.fn((engine: string) => engine === 'openai')
 
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/engines')
       const mockReq = {} as IncomingMessage
@@ -136,11 +202,30 @@ describe('HTTP API Endpoints', () => {
       expect(response.engines).toHaveLength(1)
       expect(response.engines[0].id).toBe('openai')
     })
+
+    test('handles error gracefully', async () => {
+      mockLlmManager.getChatEngines = vi.fn(() => {
+        throw new Error('Engine error')
+      })
+
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
+
+      const handler = registeredRoutes.get('/api/engines')
+      const mockReq = {} as IncomingMessage
+      const mockRes = {
+        writeHead: vi.fn(),
+        end: vi.fn()
+      } as any
+
+      await handler!(mockReq, mockRes)
+
+      expect(mockRes.writeHead).toHaveBeenCalledWith(500, { 'Content-Type': 'application/json' })
+    })
   })
 
   describe('GET /api/models/:engine', () => {
     test('returns models for valid engine', async () => {
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/models/*')
       expect(handler).toBeDefined()
@@ -164,7 +249,7 @@ describe('HTTP API Endpoints', () => {
     test('returns 404 for non-configured engine', async () => {
       mockLlmManager.isEngineConfigured = vi.fn(() => false)
 
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/models/*')
       const mockReq = {} as IncomingMessage
@@ -180,7 +265,7 @@ describe('HTTP API Endpoints', () => {
     })
 
     test('returns 400 for missing engine parameter', async () => {
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/models/*')
       const mockReq = {} as IncomingMessage
@@ -210,7 +295,7 @@ describe('HTTP API Endpoints', () => {
     })
 
     test('handles non-streaming completion', async () => {
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/complete')
       expect(handler).toBeDefined()
@@ -247,7 +332,7 @@ describe('HTTP API Endpoints', () => {
     })
 
     test('handles streaming completion with SSE', async () => {
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/complete')
 
@@ -287,7 +372,7 @@ describe('HTTP API Endpoints', () => {
     })
 
     test('uses default engine and model when not specified', async () => {
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/complete')
 
@@ -322,7 +407,7 @@ describe('HTTP API Endpoints', () => {
     })
 
     test('passes noMarkdown parameter to assistant', async () => {
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/complete')
 
@@ -359,7 +444,7 @@ describe('HTTP API Endpoints', () => {
     })
 
     test('returns 400 for missing thread', async () => {
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/complete')
 
@@ -387,7 +472,7 @@ describe('HTTP API Endpoints', () => {
     test('returns 404 for non-configured engine', async () => {
       mockLlmManager.isEngineConfigured = vi.fn(() => false)
 
-      installApiEndpoints(httpServer, mockApp, mockMcp)
+      installApiEndpoints(httpServer, mockApp, mockMcp, mockDocRepo)
 
       const handler = registeredRoutes.get('/api/complete')
 

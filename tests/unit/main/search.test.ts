@@ -142,3 +142,62 @@ test('search aborted before execution rejects immediately', async () => {
     search.search('witsy', 3, false, abortController.signal)
   ).rejects.toThrow('Operation cancelled')
 })
+
+test('search in test mode shows window', async () => {
+  const search = new LocalSearch()
+  const res = await search.search('witsy', 3, true)
+  expect(res.results).toHaveLength(3)
+})
+
+test('test method returns true on success', async () => {
+  const search = new LocalSearch()
+  const result = await search.test()
+  expect(result).toBe(true)
+})
+
+test('search with PDF content', async () => {
+  // Mock fetch to return PDF content
+  const originalFetch = global.fetch
+  // @ts-expect-error mock
+  global.fetch = vi.fn(async () => {
+    return {
+      ok: true,
+      headers: {
+        get: () => 'application/pdf',
+      },
+      arrayBuffer: async () => new ArrayBuffer(8),
+    }
+  })
+
+  // Mock getTextContent
+  vi.doMock('@main/text', () => ({
+    getTextContent: vi.fn().mockResolvedValue('PDF content text')
+  }))
+
+  const search = new LocalSearch()
+  const res = await search.search('witsy', 3)
+
+  // Restore original fetch
+  global.fetch = originalFetch
+
+  expect(res.results).toBeDefined()
+})
+
+test('search handles fetch error', async () => {
+  // Mock fetch to simulate error
+  const originalFetch = global.fetch
+  // @ts-expect-error mock
+  global.fetch = vi.fn(async () => {
+    throw new Error('Network error')
+  })
+
+  const search = new LocalSearch()
+  // The search should handle the error gracefully
+  const res = await search.search('witsy', 3)
+
+  // Restore original fetch
+  global.fetch = originalFetch
+
+  // Results should be empty since all fetches failed
+  expect(res.results).toHaveLength(0)
+})

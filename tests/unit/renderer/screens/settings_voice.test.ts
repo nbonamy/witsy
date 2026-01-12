@@ -224,3 +224,4 @@ test('quick dictation load settings with top', async () => {
   expect(quickDictation.find<HTMLInputElement>('input#copy-to-clipboard').element.checked).toBe(false)
 
 })
+

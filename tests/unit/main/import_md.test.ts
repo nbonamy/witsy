@@ -1,6 +1,6 @@
-import { app } from 'electron'
-import { beforeEach, expect, test, vi } from 'vitest'
-import { parseMarkdownChat } from '@main/import_md'
+import { app, dialog } from 'electron'
+import { beforeEach, expect, test, vi, Mock } from 'vitest'
+import { parseMarkdownChat, importMarkdown } from '@main/import_md'
 
 vi.mock('@main/i18n', () => ({
   getLocaleMessages: () => ({
@@ -31,8 +31,39 @@ vi.mock('@main/i18n', () => ({
         }
       }
     }
-  })
+  }),
+  useI18n: () => (key: string, params?: any) => {
+    if (params) return `${key}: ${JSON.stringify(params)}`
+    return key
+  }
 }))
+
+vi.mock('@main/file', () => ({
+  pickFile: vi.fn()
+}))
+
+vi.mock('@main/history', () => ({
+  loadHistory: vi.fn(() => Promise.resolve({ chats: [] })),
+  saveHistory: vi.fn()
+}))
+
+vi.mock('fs', () => ({
+  default: {
+    readFileSync: vi.fn()
+  }
+}))
+
+vi.mock('electron', async () => {
+  return {
+    app: {
+      getPath: vi.fn(() => '/tmp'),
+      getLocale: vi.fn(() => 'en-US'),
+    },
+    dialog: {
+      showMessageBox: vi.fn(() => Promise.resolve({ response: 0 }))
+    }
+  }
+})
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -301,4 +332,171 @@ def greet(name):
   expect(chat.messages[2].role).toBe('assistant')
   expect(chat.messages[2].content).toContain('## Example: Python Basics')
   expect(chat.messages[2].content).toContain('## What this code does:')
+})
+
+// Tests for importMarkdown function
+import { pickFile } from '@main/file'
+import { loadHistory, saveHistory } from '@main/history'
+import fs from 'fs'
+
+test('importMarkdown returns null when no file is selected', async () => {
+  (pickFile as Mock).mockReturnValue(null)
+
+  const result = await importMarkdown(app)
+
+  expect(result).toBeNull()
+})
+
+test('importMarkdown returns null when empty array is selected', async () => {
+  (pickFile as Mock).mockReturnValue([])
+
+  const result = await importMarkdown(app)
+
+  expect(result).toBeNull()
+})
+
+test('importMarkdown imports single file without workspaceId', async () => {
+  const markdown = `# Test Chat
+
+## System
+
+System message
+
+## You
+
+User message
+`
+  ;(pickFile as Mock).mockReturnValue(['/test/file.md'])
+  ;(fs.readFileSync as Mock).mockReturnValue(markdown)
+
+  const result = await importMarkdown(app)
+
+  expect(result).not.toBeNull()
+  expect(result?.title).toBe('Test Chat')
+  expect(result?.messages).toHaveLength(2)
+})
+
+test('importMarkdown imports base64 encoded file', async () => {
+  const markdown = `# Base64 Chat
+
+## You
+
+Hello!
+
+## Assistant
+
+Hi there!
+`
+  const base64Content = Buffer.from(markdown).toString('base64')
+  ;(pickFile as Mock).mockReturnValue(['/test/file.md'])
+  ;(fs.readFileSync as Mock).mockReturnValue(base64Content)
+
+  const result = await importMarkdown(app)
+
+  expect(result).not.toBeNull()
+  expect(result?.title).toBe('Base64 Chat')
+})
+
+test('importMarkdown imports multiple files with workspaceId', async () => {
+  const markdown1 = `# Chat 1
+
+## You
+
+Message 1
+`
+  const markdown2 = `# Chat 2
+
+## Assistant
+
+Message 2
+`
+  ;(pickFile as Mock).mockReturnValue(['/test/file1.md', '/test/file2.md'])
+  ;(fs.readFileSync as Mock)
+    .mockReturnValueOnce(markdown1)
+    .mockReturnValueOnce(markdown2)
+  ;(loadHistory as Mock).mockResolvedValue({ chats: [] })
+
+  const result = await importMarkdown(app, 'workspace-123')
+
+  expect(result).toBeNull() // Returns null for multi-file import
+  expect(saveHistory).toHaveBeenCalled()
+  expect(dialog.showMessageBox).toHaveBeenCalledWith(
+    expect.objectContaining({
+      type: 'info'
+    })
+  )
+})
+
+test('importMarkdown shows error dialog for invalid file with workspaceId', async () => {
+  const invalidMarkdown = `Invalid content without proper headers`
+  ;(pickFile as Mock).mockReturnValue(['/test/file.md', '/test/file2.md'])
+  ;(fs.readFileSync as Mock).mockReturnValue(invalidMarkdown)
+  ;(loadHistory as Mock).mockResolvedValue({ chats: [] })
+
+  await importMarkdown(app, 'workspace-123')
+
+  expect(dialog.showMessageBox).toHaveBeenCalledWith(
+    expect.objectContaining({
+      type: 'error'
+    })
+  )
+})
+
+test('importMarkdown handles mixed success and failure', async () => {
+  const validMarkdown = `# Valid Chat
+
+## You
+
+Hello
+`
+  const invalidMarkdown = `No title or headers`
+  ;(pickFile as Mock).mockReturnValue(['/test/valid.md', '/test/invalid.md'])
+  ;(fs.readFileSync as Mock)
+    .mockReturnValueOnce(validMarkdown)
+    .mockReturnValueOnce(invalidMarkdown)
+  ;(loadHistory as Mock).mockResolvedValue({ chats: [] })
+
+  await importMarkdown(app, 'workspace-123')
+
+  expect(saveHistory).toHaveBeenCalled()
+  expect(dialog.showMessageBox).toHaveBeenCalledWith(
+    expect.objectContaining({
+      type: 'warning'
+    })
+  )
+})
+
+test('importMarkdown handles empty file', async () => {
+  ;(pickFile as Mock).mockReturnValue(['/test/empty.md'])
+  ;(fs.readFileSync as Mock).mockReturnValue('')
+  ;(loadHistory as Mock).mockResolvedValue({ chats: [] })
+
+  await importMarkdown(app, 'workspace-123')
+
+  expect(dialog.showMessageBox).toHaveBeenCalledWith(
+    expect.objectContaining({
+      type: 'error'
+    })
+  )
+})
+
+test('importMarkdown single file with workspaceId shows success dialog', async () => {
+  const markdown = `# Single Chat
+
+## You
+
+Hello!
+`
+  ;(pickFile as Mock).mockReturnValue('/test/file.md')
+  ;(fs.readFileSync as Mock).mockReturnValue(markdown)
+  ;(loadHistory as Mock).mockResolvedValue({ chats: [] })
+
+  await importMarkdown(app, 'workspace-123')
+
+  expect(saveHistory).toHaveBeenCalled()
+  expect(dialog.showMessageBox).toHaveBeenCalledWith(
+    expect.objectContaining({
+      type: 'info'
+    })
+  )
 })
