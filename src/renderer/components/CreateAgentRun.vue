@@ -105,7 +105,7 @@ defineExpose({
 
 <style>
 
-#create-agent-run .swal2-popup {
+#create-agent-run .modal-popup {
   textarea {
     min-height: 8lh;
     resize: vertical;
