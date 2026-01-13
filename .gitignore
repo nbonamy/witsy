@@ -105,5 +105,5 @@ officeParserTemp
 autolib/bin
 autolib/build
 
-# 
-.claude
+# claude code
+.claude/settings*.json
