@@ -1,5 +1,17 @@
 [
   {
+    "timestamp": "2026-01-13T00:48:58.984Z",
+    "commit": "3dbbba9cbe77adf97c7ba11f0b6ebccbf15d9f33",
+    "message": "refactor: decouple modal dialog styles from swal2",
+    "author": "Nicolas Bonamy",
+    "coverage": {
+      "statements": 82.38,
+      "branches": 82.22,
+      "functions": 72.57,
+      "lines": 82.38
+    }
+  },
+  {
     "timestamp": "2026-01-12T20:35:33.724Z",
     "commit": "b506a9dc54a2c29713ac30c582b7610b443aa5e5",
     "message": "test: improve coverage to 82%",
