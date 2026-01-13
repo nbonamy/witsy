@@ -1,5 +1,17 @@
 [
   {
+    "timestamp": "2026-01-13T01:48:54.005Z",
+    "commit": "bc23348c284466b01e1ec2c3907acd3afae1d5ca",
+    "message": "feat: add claude code commands for i18n, dod, and test",
+    "author": "Nicolas Bonamy",
+    "coverage": {
+      "statements": 82.4,
+      "branches": 82.25,
+      "functions": 72.57,
+      "lines": 82.4
+    }
+  },
+  {
     "timestamp": "2026-01-13T00:48:58.984Z",
     "commit": "3dbbba9cbe77adf97c7ba11f0b6ebccbf15d9f33",
     "message": "refactor: decouple modal dialog styles from swal2",
