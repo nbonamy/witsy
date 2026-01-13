@@ -319,7 +319,7 @@ test('File stats', async () => {
   expect(fileStats!.isFile).toBe(true)
   expect(fileStats!.isDirectory).toBe(false)
   expect(fileStats!.size).toBe(12) // 'test content'.length
-  expect(fileStats!.modifiedAt).toBeDefined()
+  expect(fileStats!.lastModified).toBeDefined()
   expect(fileStats!.createdAt).toBeDefined()
 
   // Test directory stats

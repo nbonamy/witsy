@@ -309,7 +309,7 @@ export const fileStats = (app: App, filePath: string): FileStats | null => {
       isFile: stats.isFile(),
       isDirectory: stats.isDirectory(),
       isSymbolicLink: stats.isSymbolicLink(),
-      modifiedAt: stats.mtimeMs,
+      lastModified: stats.mtimeMs,
       createdAt: stats.birthtimeMs,
     }
   } catch (error) {
