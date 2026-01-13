@@ -13,8 +13,7 @@
  *   --limit     Number of commits to show (default: auto-fit terminal)
  */
 
-const fs = require('fs');
-const path = require('path');
+const GIST_URL = 'https://gist.githubusercontent.com/nbonamy/fee06adf8df838e499209254e61da7f6/raw/coverage-history.json';
 
 // Parse arguments
 const args = process.argv.slice(2);
@@ -31,14 +30,18 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 
-// Load history
-const historyFile = path.join(process.cwd(), 'coverage-history.json');
-if (!fs.existsSync(historyFile)) {
-  console.error('Error: coverage-history.json not found');
+// Load history from gist
+async function main() {
+
+let history;
+try {
+  const response = await fetch(GIST_URL);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  history = await response.json();
+} catch (error) {
+  console.error('Error fetching coverage history from gist:', error.message);
   process.exit(1);
 }
-
-let history = JSON.parse(fs.readFileSync(historyFile, 'utf-8'));
 
 // History is newest-first, reverse for chronological display
 history = history.slice().reverse();
@@ -140,3 +143,7 @@ const trend = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
 
 console.log(`  Latest: ${latest.toFixed(2)}%  |  Change: ${diffStr} ${trend}  |  Commits: ${history.length}`);
 console.log();
+
+}
+
+main();
