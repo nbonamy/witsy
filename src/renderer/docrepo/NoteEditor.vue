@@ -102,7 +102,7 @@ defineExpose({
 
 <style>
 
-#note-editor .swal2-popup {
+#note-editor .modal-popup {
   max-width: 28rem;
   width: 28rem;
 

@@ -1,139 +1,52 @@
 
+/* swal2-specific styles - overrides for sweetalert2 behavior not covered by dialog.css */
+
+/* swal2 uses --icon-size internally, map to our variable */
 div:where(.swal2-container) {
-  --icon-size: 6rem;
+  --icon-size: var(--modal-icon-size, 6rem);
 }
 
-div:where(.swal2-container) div:where(.swal2-popup) {
-  padding-bottom: 0px;
-  background-color: var(--background-color);
-  border-radius: 2rem;
-  min-width: 16rem;
-  max-width: 20rem;
-  box-shadow: 
-    0 1px  1px  1px  rgba(0,0,0,0.06), 
-    0 2px  2px  2px  rgba(0,0,0,0.06), 
-    0 4px  4px  4px  rgba(0,0,0,0.06), 
-    0 8px  8px  8px  rgba(0,0,0,0.06), 
-    0 16px 16px 16px rgba(0,0,0,0.06),
-    0 24px 24px 24px rgba(0,0,0,0.06);
-}
-
-div:where(.swal2-container) div:where(.swal2-popup):has(.swal2-input:not([style*="display: none;"])),
-div:where(.swal2-container) div:where(.swal2-popup):has(.swal2-textarea:not([style*="display: none;"])),
-div:where(.swal2-container) div:where(.swal2-popup):has(input:not([style*="display: none;"])),
-div:where(.swal2-container) div:where(.swal2-popup):has(textarea:not([style*="display: none;"])) {
-  max-width: 28rem;
-}
-
-div:where(.swal2-container) div:where(.swal2-popup.x-large) {
-  max-width: 32rem !important;
-}
-
-div:where(.swal2-container).swal2-backdrop-show, div:where(.swal2-container).swal2-noanimation {
+/* swal2 backdrop class (in addition to .modal-backdrop) */
+div:where(.swal2-container).swal2-backdrop-show,
+div:where(.swal2-container).swal2-noanimation {
   background-color: color-mix(in srgb, #bbb, transparent 30%);
 }
 
 @media (prefers-color-scheme: dark) {
-  div:where(.swal2-container).swal2-backdrop-show, div:where(.swal2-container).swal2-noanimation {
+  div:where(.swal2-container).swal2-backdrop-show,
+  div:where(.swal2-container).swal2-noanimation {
     background-color: color-mix(in srgb, #444, transparent 30%);
   }
 }
 
-div:where(.swal2-container) .swal2-icon.hidden {
-  display: none !important;
+/* swal2-specific input classes */
+div:where(.swal2-container) .swal2-input,
+div:where(.swal2-container) .swal2-select {
+  width: auto;
 }
 
-div:where(.swal2-container) div:where(.swal2-icon) {
-  position: absolute;
-  top: calc(-0.33 * var(--icon-size));
-  left: calc(50% - var(--icon-size)/2);
-  width: var(--icon-size);
-  height: var(--icon-size);
-  border: none;
-  margin: 0 auto;
-  transform: rotate(5deg);
-  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.4));
-}
-
-div:where(.swal2-container) .swal2-icon-content img {
-  width: 100%;
-  height: 100%;
-}
-
-div:where(.swal2-container) h2:where(.swal2-title) {
-  padding: 3rem 2rem;
-  padding-top: calc(var(--icon-size) - 1.25rem);
-  padding-bottom: 0rem;
-  text-align: left;
-  color: var(--text-color);
-  font-size: 18px;
-  line-height: 150%;
-  font-weight: var(--font-weight-medium);
-  margin-top: 12px;
-  max-width: unset;
-  user-select: text;
-}
-
-div:where(.swal2-container):not(:has(.swal2-icon)) h2:where(.swal2-title),
-div:where(.swal2-container):has(.swal2-icon.hidden) h2:where(.swal2-title),
-div:where(.swal2-container):has(.swal2-icon[style*="display: none"]) h2:where(.swal2-title) {
-  padding-top: 2rem;
-}
-
-div:where(.swal2-container):has(.swal2-html-container:empty) h2:where(.swal2-title) {
-  margin-bottom: 1rem;
-}
-
-div:where(.swal2-container) .swal2-content {
-  user-select: text;
-}
-
-div:where(.swal2-container) .swal2-html-container {
-  text-align: left;
-  color: var(--dimmed-text-color);
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 150%;
-  padding-bottom: 1rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  user-select: text;
-}
-
-/* div:where(.swal2-container):has(.swal2-actions) .swal2-html-container {
-  padding-bottom: 0px;
-} */
-
-div:where(.swal2-container) .form.form-vertical div:where(.swal2-html-container) {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-
-  .form-field {
-    gap: 0.25rem;
+div:where(.swal2-container) .swal2-input,
+div:where(.swal2-container) .swal2-checkbox {
+  background-color: transparent;
+  color: var(--control-text-color) !important;
+  font-size: 12px;
+  input {
+    outline: none;
+    margin-right: 8px;
   }
 }
 
-div:where(.swal2-container) input:not([type="checkbox"]),
-div:where(.swal2-container) select,
-div:where(.swal2-container) textarea {
-  margin: 0.5rem 2rem 1rem 2rem;
-  background-color: var(--color-surface) !important;
-  border: 1px solid var(--control-border-color) !important;
-  border-radius: var(--control-border-radius) !important;
-  color: var(--control-text-color) !important;
-  font-size: 14px !important;
+/* swal2 input error state */
+div:where(.swal2-container) input:where(.swal2-input).swal2-inputerror,
+div:where(.swal2-container) input:where(.swal2-file).swal2-inputerror,
+div:where(.swal2-container) textarea:where(.swal2-textarea).swal2-inputerror {
+  border-color: var(--control-border-color) !important;
   box-shadow: none;
 }
 
-div:where(.swal2-container) .form-field input:not([type="checkbox"]),
-div:where(.swal2-container) .form-field select,
-div:where(.swal2-container) .form-field textarea {
-  margin: 0rem;
-}
-
+/* swal2 checkbox (uses different structure than standard checkboxes) */
 div:where(.swal2-container) .swal2-checkbox {
-  
+
   margin-bottom: 1rem;
 
   .swal2-label {
@@ -155,6 +68,7 @@ div:where(.swal2-container) .swal2-checkbox {
   }
 }
 
+/* swal2 textarea specific class */
 div:where(.swal2-container) textarea:where(.swal2-textarea) {
   height: 4rem;
   resize: none;
@@ -168,6 +82,7 @@ div:where(.swal2-container) div:where(.swal2-popup.x-large) textarea:where(.swal
   height: 10lh !important;
 }
 
+/* swal2 focus states for specific input classes */
 div:where(.swal2-container) input:where(.swal2-input):focus,
 div:where(.swal2-container) input:where(.swal2-file):focus,
 div:where(.swal2-container) select:where(.swal2-select):focus,
@@ -176,119 +91,26 @@ div:where(.swal2-container) textarea:where(.swal2-textarea):focus {
   outline: 1px solid #83aaf2;
 }
 
-div:where(.swal2-container) .swal2-input, div:where(.swal2-container) .swal2-select {
-  width: auto;
-}
-
-div:where(.swal2-container) .swal2-input, div:where(.swal2-container) .swal2-checkbox {
-  background-color: transparent;
-  color: var(--control-text-color) !important;
-  font-size: 12px;
-  input {
-    outline: none;
-    margin-right: 8px;
-  }
-}
-
-div:where(.swal2-container) input:where(.swal2-input).swal2-inputerror,
-div:where(.swal2-container) input:where(.swal2-file).swal2-inputerror,
-div:where(.swal2-container) textarea:where(.swal2-textarea).swal2-inputerror {
-  border-color: var(--control-border-color) !important;
-  box-shadow: none;
-}
-
-div:where(.swal2-container) div:where(.swal2-actions) {
-  width: 100%;
-  padding-bottom: 1.5rem;
-  padding-top: 0rem;
-  flex-direction: row-reverse;
-  justify-content: flex-start;
-  border-bottom-left-radius: 2rem;
-  border-bottom-right-radius: 2rem;
-  margin-top: 0rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  gap: 1rem;
-
-  button {
-    margin: 0 !important;
-  }
-}
-
-/* div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style*="display: inline-block;"]), */
-div:where(.swal2-container) div:where(.swal2-actions.actions-stacked) {
-  margin-top: 1rem;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.5rem;
-}
-
-/* div:where(.swal2-container) button:where(.swal2-styled) {
-  box-sizing: border-box;
-  width: auto !important;
-  margin: 0px !important;
-  padding: 4px 8px !important;
-  border-radius: .3rem !important;
-  border: 1px solid #cacaca !important;
-  box-shadow: 0px 2px 1.5px -2px rgba(0,0,0,.3) !important;
-  font-size: 13.5px !important;
-  font-weight: normal !important;
-  flex: 1;
-} */
-
+/* swal2 styled button overrides */
 div:where(.swal2-container) button:where(.swal2-styled) {
   font-size: 14px !important;
   box-shadow: none !important;
 }
 
+div:where(.swal2-container) div:where(.swal2-actions) {
+  width: 100%;
+}
+
+/* swal2 three-button layout (confirm/deny/cancel) */
 div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="display: inline-block;"]) button:where(.swal2-styled) {
   width: 100% !important;
 }
 
-div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="display: inline-block;"])  button:where(.swal2-styled):nth-child(4) {
+div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="display: inline-block;"]) button:where(.swal2-styled):nth-child(4) {
   margin-top: 12px !important;
 }
 
-div:where(.swal2-container) div:where(.swal2-validation-message) {
-  background-color: transparent;
-  margin-top: 0px;
-  justify-content: flex-start;
-  color: red;
-  font-size: 13.5px;
-  padding: 0rem 2rem;
-}
-
-div:where(.swal2-container) div:where(.swal2-validation-message)::before {
-  content: none;
-}
-
-div:where(.swal2-container) .swal2-html-container.list {
-  text-align: left;
-  max-height: 300px;
-  overflow-y: auto;
-  scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
-
-  ul {
-    margin: 0;
-    padding: 0;
-    li {
-      list-style: none;
-      margin-left: 0px;
-      margin-bottom: 8px;
-    }
-  }
-}
-
-div:where(.swal2-container) div:where(.swal2-popup):has(.sticky-table-container) {
-  width: 45rem !important;
-  max-width: 45rem !important;
-}
-
-div:where(.swal2-container) div:where(.swal2-html-container) div:where(.sticky-table-container) {
-  margin-top: 1rem;
-  scrollbar-color: var(--scrollbar-thumb-color) var(--dialog-body-bg-color);
-  max-height: 400px;
-  font-size: 14.5px;
-  text-align: left;
-  color: var(--text-color);
+/* swal2 content user-select (swal2-specific class) */
+div:where(.swal2-container) .swal2-content {
+  user-select: text;
 }

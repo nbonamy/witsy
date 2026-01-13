@@ -85,13 +85,19 @@ const Dialog = {
     // add the icon
     opts.iconHtml = undefined//opts.iconHtml ?? '<img src="">'
 
-    // add custom classes
+    // add custom classes (including agnostic modal-* classes for shared styling with ModalDialog)
+    const incomingCustomClass = opts.customClass || {}
     opts.customClass = {
-      popup: 'form form-large',
+      container: ['modal-container', incomingCustomClass.container].filter(Boolean).join(' '),
+      popup: ['modal-popup form form-large', incomingCustomClass.popup].filter(Boolean).join(' '),
+      icon: ['modal-icon', incomingCustomClass.icon].filter(Boolean).join(' '),
+      title: ['modal-title', incomingCustomClass.title].filter(Boolean).join(' '),
+      htmlContainer: ['modal-body', incomingCustomClass.htmlContainer].filter(Boolean).join(' '),
+      actions: ['modal-actions', incomingCustomClass.actions].filter(Boolean).join(' '),
+      validationMessage: ['modal-validation-message', incomingCustomClass.validationMessage].filter(Boolean).join(' '),
       confirmButton: opts.showCancelButton ? 'primary' : 'primary',
       cancelButton: 'tertiary',
       denyButton: 'secondary',
-      ...opts.customClass
     }
 
     // change text to texarea

@@ -71,7 +71,7 @@ describe('ToolSelector', () => {
     
     // Check modal dialog exists (real ModalDialog uses .dialog class)
     expect(wrapper.find('.dialog').exists()).toBe(true)
-    expect(wrapper.find('.swal2-popup').exists()).toBe(true)
+    expect(wrapper.find('.modal-popup').exists()).toBe(true)
     
     // Check tool table exists (correct class from ToolTable.vue)
     expect(wrapper.find('.tools').exists()).toBe(true)

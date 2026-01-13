@@ -96,7 +96,7 @@ defineExpose({
 
 <style>
 
-#agent-picker .swal2-popup {
+#agent-picker .modal-popup {
   
   .agent-list {
     max-height: 400px;

@@ -313,7 +313,7 @@ const onSearch = async () => {
   max-width: 700px !important;
 }
 
-.search-results-dialog .swal2-html-container {
+.search-results-dialog .modal-body {
   max-height: 60vh;
   overflow-y: auto;
   padding: 2rem;

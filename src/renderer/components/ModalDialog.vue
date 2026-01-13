@@ -1,20 +1,20 @@
 
 <template>
   <Teleport to="body">
-    <div :id="id" class="dialog" :class="klass" v-bind="$attrs" ref="dialog">
-      <div class="swal2-popup swal2-show form form-large" :class="{ 'form-vertical': form === 'vertical' }" :style="popupStyle">
-        <div class="swal2-icon swal2-icon-show" v-if="icon && type === 'alert'">
-          <div class="swal2-icon-content">
+    <div :id="id" class="dialog modal-container" :class="klass" v-bind="$attrs">
+      <div class="modal-popup form form-large" :class="{ 'form-vertical': form === 'vertical' }" :style="popupStyle">
+        <div class="modal-icon" v-if="icon && type === 'alert'">
+          <div class="modal-icon-content">
             <img src="/assets/icon.png" />
           </div>
         </div>
-        <h2 class="dialog-title swal2-title" ref="title">
+        <h2 class="dialog-title modal-title">
           <slot name="header"></slot>
         </h2>
-        <div class="dialog-body swal2-html-container" ref="content" :style="bodyStyle">
+        <div class="dialog-body modal-body" ref="content" :style="bodyStyle">
           <slot name="body"></slot>
         </div>
-        <div class="dialog-footer swal2-actions" ref="actions">
+        <div class="dialog-footer modal-actions" ref="actions">
           <slot name="footer"></slot>
         </div>
       </div>
@@ -30,8 +30,6 @@ export type DialogType = 'alert' | 'window'
 export type DialogForm = 'horizontal' | 'vertical'
 
 const visible = ref(false)
-const dialog = ref<HTMLElement|null>(null)
-const title = ref<HTMLElement|null>(null)
 const content = ref<HTMLElement|null>(null)
 const actions = ref<HTMLElement|null>(null)
 
@@ -74,9 +72,7 @@ const props = defineProps({
 
 const klass = computed(() => {
   return {
-    'swal2-center': visible.value,
-    'swal2-container': visible.value,
-    'swal2-backdrop-show': visible.value,
+    'modal-backdrop': visible.value,
     visible: visible.value,
     [props.type]: visible.value
   }
@@ -106,19 +102,8 @@ const show = async () => {
   if (buttons) {
     const children = Array.from(buttons.childNodes)
     for (let i = children.length - 1; i >= 0; i--) {
-
-      // style it
+      // move button out of the container
       const button = children[i] as HTMLElement
-      button.classList.add('swal2-styled')
-      // if (button.classList.contains('default') || button.classList.contains('alert-confirm')) {
-      //   button.classList.add('swal2-confirm')
-      //   button.classList.add('primary')
-      // } else {
-      //   button.classList.add('swal2-cancel')
-      //   button.classList.add('tertiary')
-      // }
-
-      // now move it
       actions.value.insertBefore(button, buttons)
     }
 
@@ -177,8 +162,14 @@ defineExpose({ show, close })
 
 .dialog {
   display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1060;
+  overflow-x: hidden;
+  overflow-y: auto;
   &.visible {
     display: grid;
+    place-items: center;
   }
 }
 

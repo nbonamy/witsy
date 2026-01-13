@@ -97,15 +97,11 @@
     </template>
 
     <template #footer>
-      <div class="advanced-settings">
-        <button name="advanced" @click="showAdvanced = !showAdvanced" class="tertiary">
+        <button name="save" @click="onSave" class="primary">{{ t('common.save') }}</button>
+        <button name="advanced" @click="showAdvanced = !showAdvanced" class="secondary">
           {{ showAdvanced ? t('folderSettings.advancedSettings.hide') : t('folderSettings.advancedSettings.show') }}
         </button>
-      </div>
-      <div class="buttons">
         <button name="cancel" @click="onCancel" class="tertiary" formnovalidate>{{ t('common.cancel') }}</button>
-        <button name="save" @click="onSave" class="primary">{{ t('common.save') }}</button>
-      </div>
     </template>
   
   </ModalDialog>
@@ -296,13 +292,6 @@ defineExpose({ show, close })
 
 .engine-model-select {
   width: calc(100% - 2rem);
-}
-
-.advanced-settings {
-  position: absolute;
-  left: 2rem;
-  color: var(--dimmed-text-color);
-  padding: 0.5rem 0;
 }
 
 </style>

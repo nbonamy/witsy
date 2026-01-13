@@ -43,10 +43,16 @@ test('Basic confirm', () => {
     title: 'Hello',
     text: undefined,
     customClass: {
-      'cancelButton': 'tertiary',
+      'container': 'modal-container',
+      'popup': 'modal-popup form form-large',
+      'icon': 'modal-icon',
+      'title': 'modal-title',
+      'htmlContainer': 'modal-body',
+      'actions': 'modal-actions',
+      'validationMessage': 'modal-validation-message',
       'confirmButton': 'primary',
+      'cancelButton': 'tertiary',
       'denyButton': 'secondary',
-      'popup': 'form form-large',
     },
     didOpen: expect.any(Function),
   })

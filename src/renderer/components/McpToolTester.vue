@@ -268,7 +268,7 @@ defineExpose({ show, close })
 <style>
 
 #mcp-tool-tester {
-  .swal2-html-container {
+  .modal-body {
     justify-content: flex-start;
   }
 }

@@ -141,7 +141,7 @@ defineExpose({
 
 <style>
 
-#folder-contents .swal2-popup {
+#folder-contents .modal-popup {
   width: 48rem;
   max-width: 48rem;
 }
