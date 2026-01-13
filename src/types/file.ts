@@ -37,12 +37,12 @@ export type FilePickParams = {
 }
 
 export type FileStats = {
+  createdAt: number
   size: number
   isFile: boolean
   isDirectory: boolean
   isSymbolicLink: boolean
-  modifiedAt: number
-  createdAt: number
+  lastModified: number
 }
 
 export type SearchMatch = {

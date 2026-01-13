@@ -385,7 +385,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         isFile: true,
         isDirectory: false,
         isSymbolicLink: false,
-        modifiedAt: Date.now(),
+        lastModified: Date.now(),
         createdAt: Date.now(),
       })),
       read: vi.fn((filepath: string) => { return { url: filepath, contents: `${filepath}_encoded`, mimeType: 'whatever' } }),
