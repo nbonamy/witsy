@@ -28,15 +28,13 @@ jobs:
           echo "COVERAGE=$(echo ${TOKENS[2]})" > $GITHUB_OUTPUT
       - name: Record coverage history
         if: github.ref == 'refs/heads/main'
-        run: node tools/coverage_record.js
-      - name: Commit coverage history
-        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GIST_SECRET }}
+          GIST_ID: "fee06adf8df838e499209254e61da7f6"
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add coverage-history.json
-          git diff --staged --quiet || git commit -m "chore: update coverage history"
-          git push
+          gh gist view $GIST_ID -f coverage-history.json > coverage-history.json 2>/dev/null || echo "[]" > coverage-history.json
+          node tools/coverage_record.js
+          gh gist edit $GIST_ID -a coverage-history.json
       - name: Create coverage badge
         if: github.ref == 'refs/heads/main'
         uses: schneegans/dynamic-badges-action@v1.0.0
