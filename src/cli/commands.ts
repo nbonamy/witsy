@@ -1,3 +1,4 @@
+import { kDefaultHttpPort } from '@/consts'
 import ansiEscapes from 'ansi-escapes'
 import chalk from 'chalk'
 import type { LlmChunk } from 'multi-llm-ts'
@@ -10,6 +11,10 @@ import { promptInput } from './input'
 import { ChatCli, MessageCli } from './models'
 import { selectOption } from './select'
 import { state, WorkDirAccess } from './state'
+
+export interface CliArgs {
+  port?: number
+}
 
 const term = terminalKit.terminal
 
@@ -126,8 +131,13 @@ export async function handlePort() {
     state.engine = config.engine
     state.model = config.model
 
-    // Update CLI config
+    // Update CLI config (including port, but only if non-default)
     if (state.cliConfig) {
+      if (port === kDefaultHttpPort) {
+        delete state.cliConfig.port
+      } else {
+        state.cliConfig.port = port
+      }
       state.cliConfig.engine = config.engine
       state.cliConfig.model = config.model
       saveCliConfig(state.userDataPath, state.cliConfig)
@@ -795,7 +805,7 @@ export async function executeCommand(command: string) {
   }
 }
 
-export async function initialize() {
+export async function initialize(args: CliArgs = {}) {
   const cwd = process.cwd()
 
   // Try to connect with short timeout
@@ -829,6 +839,32 @@ export async function initialize() {
     // Load CLI config from disk
     const cliConfig = loadCliConfig(state.userDataPath)
     state.cliConfig = cliConfig
+
+    // Handle port from CLI config (only if not overridden by -p argument)
+    if (!args.port && cliConfig.port && cliConfig.port !== state.port) {
+      // Try to connect to saved port
+      const savedPortConnected = await api.connectWithTimeout(cliConfig.port, 2000)
+      if (savedPortConnected) {
+        state.port = cliConfig.port
+      } else {
+        // Saved port doesn't work, clear it from config
+        delete state.cliConfig.port
+        saveCliConfig(state.userDataPath, state.cliConfig)
+      }
+    }
+
+    // Save port to config if it was specified via -p argument (only if non-default)
+    if (args.port) {
+      if (state.port === kDefaultHttpPort) {
+        if (state.cliConfig.port !== undefined) {
+          delete state.cliConfig.port
+          saveCliConfig(state.userDataPath, state.cliConfig)
+        }
+      } else if (state.cliConfig.port !== state.port) {
+        state.cliConfig.port = state.port
+        saveCliConfig(state.userDataPath, state.cliConfig)
+      }
+    }
 
     // Use CLI config values if present, otherwise fall back to API config
     state.engine = cliConfig.engine || config.engine

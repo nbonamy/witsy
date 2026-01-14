@@ -3,7 +3,7 @@
 import ansiEscapes from 'ansi-escapes'
 import chalk from 'chalk'
 import { parseArgs } from 'node:util'
-import { COMMANDS, handleClear, handleCommand, handleMessage, handleQuit, initialize } from './commands'
+import { COMMANDS, handleClear, handleCommand, handleMessage, handleQuit, initialize, CliArgs } from './commands'
 import { saveCliConfig } from './config'
 import { clearFooter, displayFooter, grayText, padContent, resetDisplay } from './display'
 import { promptInput } from './input'
@@ -11,7 +11,8 @@ import { selectOption } from './select'
 import { state } from './state'
 
 // Parse command line arguments
-function parseCliArgs() {
+function parseCliArgs(): CliArgs {
+  const args: CliArgs = {}
   try {
     const { values } = parseArgs({
       options: {
@@ -52,6 +53,7 @@ ${chalk.bold('Commands (during session):')}
         process.exit(1)
       }
       state.port = port
+      args.port = port
     }
 
     // Enable debug mode
@@ -63,17 +65,18 @@ ${chalk.bold('Commands (during session):')}
     console.log(chalk.dim('Use --help for usage information'))
     process.exit(1)
   }
+  return args
 }
 
 // Main loop
 async function main() {
 
   // Parse CLI arguments first
-  parseCliArgs()
+  const args = parseCliArgs()
 
   process.stdout.write(ansiEscapes.clearTerminal)
 
-  await initialize()
+  await initialize(args)
 
   // Main input loop
   while (true) {

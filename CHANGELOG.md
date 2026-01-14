@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 ## [3.4.1] - WIP
 
 ### Added
-- More Quick dictation options
+- More Quick dictation options and shortcuts
+- CLI port persistence (saves port when using -p or /port command)
 
 ### Changed
 - N/A
-
 
 ### Fixed
 - N/A
