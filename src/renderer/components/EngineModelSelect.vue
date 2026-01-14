@@ -13,7 +13,6 @@
         <template v-else>
           <EngineLogo 
             :engine="engine" 
-            :grayscale="false" 
             :custom-label="false" 
             class="engine-logo" 
           />
