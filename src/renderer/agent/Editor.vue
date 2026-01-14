@@ -345,7 +345,7 @@ const save = async () => {
   overflow: hidden;
 
   &:deep {
-    input:not([type=checkbox]):not([type=range]), textarea, select {
+    input:not([type=checkbox]):not([type=range]), textarea, select, .select-box {
       background-color: var(--background-color) !important;
     }
   }

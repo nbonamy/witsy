@@ -97,6 +97,7 @@ defineExpose({
   overflow-y: auto;
   align-content: flex-start;
   scrollbar-color: var(--scrollbar-thumb-color) var(--control-list-bg-color);
+  background: var(--control-bg-color);
 }
 
 .icon-item {

@@ -1,8 +1,8 @@
 
 <template>
   <div :class="[ 'logo', engine, background ? 'background' : '' ]">
-    <component v-if="isComponent" :is="logo" :class="[ 'svg', klass, grayscale ? 'grayscale' : '' ]" />
-    <img v-else :src="logo" :class="[ 'img', klass, grayscale ? 'grayscale' : '' ]" />
+    <component v-if="isComponent" :is="logo" :class="[ 'svg', klass, isGrayscale ? 'grayscale' : '' ]" />
+    <img v-else :src="logo" :class="[ 'img', klass, isGrayscale ? 'grayscale' : '' ]" />
     <div class="label" v-if="customLabel && label">{{ label }}</div>
   </div>
 </template>
@@ -34,7 +34,7 @@ import LogoOpenAI from '@assets/openai.svg?component'
 import LogoOpenRouter from '@assets/openrouter.svg?component'
 import LogoReplicate from '@assets/replicate.svg?component'
 import LogoXAI from '@assets/xai.svg?component'
-import { BookHeartIcon, StarIcon } from 'lucide-vue-next'
+import { BookHeartIcon } from 'lucide-vue-next'
 
 const llmManager = LlmFactory.manager(store.config)
 
@@ -72,7 +72,7 @@ const props = defineProps({
   },
   grayscale: {
     type: Boolean,
-    default: false
+    default: undefined
   },
   background: {
     type: Boolean,
@@ -114,6 +114,11 @@ const klass = computed(() => {
     if (engineConfig?.api === 'azure') return 'azure'
   }
   return 'custom'
+})
+
+const isGrayscale = computed(() => {
+  if (props.grayscale !== undefined) return props.grayscale
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
 })
 
 </script>

@@ -112,7 +112,7 @@ main {
       .info {
 
         border: 1px solid var(--control-border-color);
-        background-color: var(--control-disabled-bg-color);
+        background-color: var(--control-bg-color);
         border-radius: 0.5rem;
         padding: 0.75rem 1.25rem;
 

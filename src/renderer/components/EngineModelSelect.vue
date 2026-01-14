@@ -130,7 +130,7 @@ const onModelSelected = (engine: string | null, model: string | null) => {
   align-items: center;
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--control-border-color);
   border-radius: var(--control-border-radius);
   background-color: var(--control-bg-color);
   cursor: pointer;
