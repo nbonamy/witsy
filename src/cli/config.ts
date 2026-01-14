@@ -1,9 +1,26 @@
 // CLI configuration persistence
 
 import * as fs from 'fs'
+import * as os from 'os'
 import * as path from 'path'
 
 import { WorkDirAccess } from './state'
+
+/**
+ * Get the default user data path (same as Electron's app.getPath('userData'))
+ * This allows reading cli.json before connecting to the API
+ */
+export function getDefaultUserDataPath(): string {
+  const home = os.homedir()
+  switch (process.platform) {
+    case 'darwin':
+      return path.join(home, 'Library', 'Application Support', 'Witsy')
+    case 'win32':
+      return path.join(process.env.APPDATA || path.join(home, 'AppData', 'Roaming'), 'Witsy')
+    default:
+      return path.join(process.env.XDG_CONFIG_HOME || path.join(home, '.config'), 'Witsy')
+  }
+}
 
 export interface WorkDirConfig {
   access: WorkDirAccess

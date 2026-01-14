@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeEach, afterEach } from 'vitest'
-import { loadCliConfig, saveCliConfig, CliConfig } from '@/cli/config'
+import { loadCliConfig, saveCliConfig, getDefaultUserDataPath, CliConfig } from '@/cli/config'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
@@ -227,6 +227,26 @@ describe('CLI Config', () => {
       const saved = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
 
       expect(saved.port).toBeUndefined()
+    })
+  })
+
+  describe('getDefaultUserDataPath', () => {
+    test('returns path based on platform', () => {
+      const userDataPath = getDefaultUserDataPath()
+      const home = os.homedir()
+
+      // Should return a path containing 'Witsy'
+      expect(userDataPath).toContain('Witsy')
+
+      // Should be under home directory
+      if (process.platform === 'darwin') {
+        expect(userDataPath).toBe(path.join(home, 'Library', 'Application Support', 'Witsy'))
+      } else if (process.platform === 'win32') {
+        expect(userDataPath).toContain('Witsy')
+      } else {
+        // Linux
+        expect(userDataPath).toContain('Witsy')
+      }
     })
   })
 })
