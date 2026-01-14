@@ -859,7 +859,7 @@ defineExpose({
   color: var(--context-menu-selected-text-color);
   border-radius: 0.375rem;
   svg {
-    color: var(--context-menu-selected-text-color);
+    stroke: var(--context-menu-selected-text-color);
   }
 }
 

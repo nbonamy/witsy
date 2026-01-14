@@ -566,7 +566,7 @@ const validateServerJson = (json: string) => {
   .server-icon svg {
     width: 24px;
     height: 24px;
-    color: var(--text-color);
+    stroke: var(--text-color);
   }
 
   .server-favicon {

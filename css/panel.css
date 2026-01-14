@@ -180,7 +180,7 @@
       font-weight: var(--font-weight-medium);
       color: #1B4FB2;
       svg {
-        color: #1B4FB2;
+        stroke: #1B4FB2;
       }
     }
 

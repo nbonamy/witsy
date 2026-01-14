@@ -871,7 +871,7 @@ const onFullScreen = (url: string) => {
   svg {
     width: 4rem;
     height: 4rem;
-    color: var(--highlight-color);
+    stroke: var(--highlight-color);
     border-radius: 0.5rem;
     transform: scaleX(1.1) rotate(5deg);
   }
