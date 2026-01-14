@@ -21,9 +21,8 @@
 
 <script setup lang="ts">
 
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, ref, type Component } from 'vue'
 import PluginIcon from '@components/PluginIcon.vue'
-import { availablePlugins } from '@services/plugins/plugins'
 import { t } from '@services/i18n'
 import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsFilesystem from './SettingsFilesystem.vue'
@@ -32,11 +31,27 @@ import SettingsKnowledge from './SettingsKnowledge.vue'
 import SettingsMemory from './SettingsMemory.vue'
 import SettingsPython from './SettingsPython.vue'
 import SettingsSearch from './SettingsSearch.vue'
-import SettingsVega from './SettingsVega.vue'
 import SettingsVideo from './SettingsVideo.vue'
 import SettingsYouTube from './SettingsYouTube.vue'
 
-const currentPlugin = ref(Object.keys(availablePlugins)[0])
+type PluginSettingsEntry = {
+  labelKey: string
+  component: Component
+}
+
+const pluginSettingsRegistry: Record<string, PluginSettingsEntry> = {
+  knowledge: { labelKey: 'settings.plugins.knowledge.title', component: SettingsKnowledge },
+  search: { labelKey: 'settings.plugins.search.title', component: SettingsSearch },
+  browse: { labelKey: 'settings.plugins.browse.title', component: SettingsBrowse },
+  image: { labelKey: 'settings.plugins.image.title', component: SettingsImage },
+  video: { labelKey: 'settings.plugins.video.title', component: SettingsVideo },
+  youtube: { labelKey: 'settings.plugins.youtube.title', component: SettingsYouTube },
+  python: { labelKey: 'settings.plugins.python.title', component: SettingsPython },
+  memory: { labelKey: 'settings.plugins.memory.title', component: SettingsMemory },
+  filesystem: { labelKey: 'settings.plugins.filesystem.title', component: SettingsFilesystem },
+}
+
+const currentPlugin = ref(Object.keys(pluginSettingsRegistry)[0])
 const pluginSettings = ref(null)
 
 type PluginUI = {
@@ -45,27 +60,14 @@ type PluginUI = {
 }
 
 const plugins = computed((): PluginUI[] => {
-
-  let res = Object.keys(availablePlugins).filter(plugin => plugin != 'mcp').map(plugin => {
-    return {
-      id: plugin,
-      label: t(`settings.plugins.${plugin}.title`),
-    }
-  })
-  return res
+  return Object.keys(pluginSettingsRegistry).map(id => ({
+    id,
+    label: t(pluginSettingsRegistry[id].labelKey),
+  }))
 })
 
 const currentView = computed(() => {
-  if (currentPlugin.value == 'browse') return SettingsBrowse
-  if (currentPlugin.value == 'python') return SettingsPython
-  if (currentPlugin.value == 'search') return SettingsSearch
-  if (currentPlugin.value == 'image') return SettingsImage
-  if (currentPlugin.value == 'video') return SettingsVideo
-  if (currentPlugin.value == 'youtube') return SettingsYouTube
-  if (currentPlugin.value == 'memory') return SettingsMemory
-  if (currentPlugin.value == 'vega') return SettingsVega
-  if (currentPlugin.value == 'filesystem') return SettingsFilesystem
-  if (currentPlugin.value == 'knowledge') return SettingsKnowledge
+  return pluginSettingsRegistry[currentPlugin.value]?.component
 })
 
 const selectPlugin = (plugin: PluginUI) => {
