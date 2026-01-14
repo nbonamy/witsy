@@ -18,9 +18,9 @@ export default function useAppearanceTheme() {
     
     getTint(): string {
       if (this.isDark) {
-        return store.config.appearance.darkTint
+        return store.config.appearance?.darkTint || 'black'
       } else {
-        return store.config.appearance.lightTint
+        return store.config.appearance?.lightTint || 'white'
       }
     }
   }

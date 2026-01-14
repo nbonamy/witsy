@@ -36,7 +36,7 @@
       {{ t('docRepo.note.noNotes') }}
     </div>
     <div class="panel-footer">
-      <button name="addNote" @click="onAddNote"><FilePlusIcon /> {{ t('docRepo.note.add') }}</button>
+      <button name="addNote" class="secondary" @click="onAddNote"><FilePlusIcon /> {{ t('docRepo.note.add') }}</button>
     </div>
     <NoteEditor ref="noteEditorRef" @save="onNoteSave" @update="onNoteUpdate" />
   </div>

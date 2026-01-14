@@ -82,6 +82,7 @@
   --font-size-72: 72px;
 
   /* Font Weights */
+  --font-weight-light: 300;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -175,6 +176,8 @@
   --icon-md: 16px;
   --icon-lg: 20px;
   --icon-xl: 24px;
+  --icon-xxl: 32px;
+  --icon-xxxl: 40px;
 
   /* ========================================
     SHADOW SYSTEM
@@ -224,7 +227,7 @@
     --color-surface-highest: #505050;
 
     --color-on-surface: #e0e0e0;
-    --color-on-surface-variant: #9a9a9a;
+    --color-on-surface-variant: #d0d0d0;
 
     /* Border & Outline Colors - Dark Theme */
     --color-outline: #787878;
@@ -245,7 +248,7 @@
     --color-surface-highest: rgb(50, 60, 75);
 
     --color-on-surface: rgb(230, 230, 235);
-    --color-on-surface-variant: rgb(130, 150, 170);
+    --color-on-surface-variant: rgb(190, 210, 230);
 
     /* Border & Outline Colors - Dark Blue Theme */
     --color-outline: rgb(100, 110, 120);

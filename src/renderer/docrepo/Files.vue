@@ -52,8 +52,8 @@
       {{ t('docRepo.view.noDocuments') }}
     </div>
     <div class="panel-footer">
-      <button name="addDocs" @click="onAddFiles"><FilePlusIcon /> {{ t('docRepo.view.tooltips.addFile') }}</button>
-      <button name="addFolder" @click="onAddFolder"><FolderPlusIcon /> {{ t('docRepo.view.tooltips.addFolder') }}</button>
+      <button name="addDocs" class="secondary" @click="onAddFiles"><FilePlusIcon /> {{ t('docRepo.view.tooltips.addFile') }}</button>
+      <button name="addFolder" class="secondary" @click="onAddFolder"><FolderPlusIcon /> {{ t('docRepo.view.tooltips.addFolder') }}</button>
     </div>
     <Folder ref="folderRef" :folder="selectedFolder" @close="selectedFolder = null" />
   </div>

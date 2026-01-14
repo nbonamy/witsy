@@ -37,8 +37,8 @@
       {{ t('docRepo.web.noWeb') }}
     </div>
     <div class="panel-footer">
-      <button name="addUrl" @click="onAddUrl"><PlusIcon /> {{ t('docRepo.web.addUrl') }}</button>
-      <button name="addWebsite" @click="onAddWebsite"><MapIcon /> {{ t('docRepo.web.addWebsite') }}</button>
+      <button name="addUrl" class="secondary" @click="onAddUrl"><PlusIcon /> {{ t('docRepo.web.addUrl') }}</button>
+      <button name="addWebsite" class="secondary" @click="onAddWebsite"><MapIcon /> {{ t('docRepo.web.addWebsite') }}</button>
     </div>
   </div>
 </template>

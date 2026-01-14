@@ -118,6 +118,10 @@ const lastRun = (agent: Agent) => {
 
   header {
     border-bottom: none;
+
+    button[name=import-a2a] svg {
+      color: var(--color-primary);
+    }
   }
 
   main {
