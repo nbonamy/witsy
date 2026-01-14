@@ -133,7 +133,7 @@ defineExpose({
     svg {
       width: var(--icon-xl);
       height: var(--icon-xl);
-      color: var(--text-color);
+      stroke: var(--text-color);
     }
   }
 

@@ -117,7 +117,7 @@ defineExpose({
     background: var(--highlight-color);
     border-color: var(--highlight-color);
     svg {
-      color: var(--highlighted-color);
+      stroke: var(--highlighted-color);
       fill: var(--highlight-color);
     }
   }

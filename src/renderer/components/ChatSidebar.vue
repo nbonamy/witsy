@@ -341,7 +341,7 @@ defineExpose({
       }
 
       button[name=delete] svg {
-        color: var(--color-error);
+        stroke: var(--color-error);
       }
 
     }

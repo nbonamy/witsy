@@ -37,6 +37,9 @@
   .modal-backdrop {
     background-color: color-mix(in srgb, #444, transparent 30%);
   }
+  [data-tint=blue] .modal-backdrop {
+    background-color: color-mix(in srgb, #223344, transparent 30%);
+  }
 }
 
 .modal-icon {

@@ -778,7 +778,7 @@ defineExpose({ validate })
             border-radius: 6px;
             background-color: var(--color-on-surface);
             svg {
-              color: var(--color-on-primary);
+              stroke: var(--color-on-primary);
               width: var(--icon-xl);
               height:var(--icon-xl);
             }
@@ -847,7 +847,7 @@ defineExpose({ validate })
         background-color: var(--color-surface);
         color: var(--color-on-surface);
         svg {
-          color: var(--color-on-surface);
+          stroke: var(--color-on-surface);
         }
         
         &:disabled {
@@ -862,7 +862,7 @@ defineExpose({ validate })
         &.active {
           color: var(--color-primary);
           svg {
-            color: var(--color-primary);
+            stroke: var(--color-primary);
           }
         }
       }

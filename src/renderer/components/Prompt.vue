@@ -1593,7 +1593,7 @@ defineExpose({
       }
 
       svg {
-        color: var(--prompt-icon-color);
+        stroke: var(--prompt-icon-color);
         width: var(--icon-md);
         height: var(--icon-md);
       }
@@ -1618,7 +1618,7 @@ defineExpose({
       svg {
         width: var(--icon-md);
         height: var(--icon-md);
-        color: var(--color-surface);
+        stroke: var(--color-surface);
       }
 
       &:has(.disabled) {

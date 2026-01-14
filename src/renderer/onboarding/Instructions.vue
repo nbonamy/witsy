@@ -346,7 +346,7 @@ header {
     width: 4rem;
     height: 4rem;
     margin-bottom: 2rem;
-    color: var(--faded-text-color);
+    stroke: var(--faded-text-color);
   }
 
   h2 {
