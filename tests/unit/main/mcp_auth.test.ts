@@ -10,6 +10,11 @@ vi.mock('electron', () => ({
   },
   shell: {
     openExternal: vi.fn()
+  },
+  safeStorage: {
+    isEncryptionAvailable: vi.fn(() => false),
+    encryptString: vi.fn((s: string) => Buffer.from(s)),
+    decryptString: vi.fn((b: Buffer) => b.toString())
   }
 }))
 
@@ -314,7 +319,7 @@ describe('McpOAuthManager', () => {
       response_types: ['code']
     }
     
-    const provider = await manager.createOAuthProvider(customMetadata)
+    const provider = await manager.createOAuthProvider(customMetadata, () => {}, () => {})
     
     expect(provider.clientMetadata).toEqual(customMetadata)
   })
@@ -359,16 +364,14 @@ describe('McpOAuthManager', () => {
 
 describe('McpOAuthManager - Callback Functionality', () => {
   let manager: McpOAuthManager
-  let mockApp: App
 
   beforeEach(() => {
     vi.clearAllMocks()
     mockHttpServerInstance.registerRoute.mockClear()
     mockHttpServerInstance.listen.mockClear()
     mockHttpServerInstance.close.mockClear()
-    
-    mockApp = {} as App
-    manager = new McpOAuthManager(mockApp)
+
+    manager = new McpOAuthManager(app)
   })
 
   test('waitForCallback resolves with authorization code', async () => {

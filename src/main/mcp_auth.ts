@@ -1,10 +1,12 @@
 
+import { kDefaultHttpPort } from '@/consts'
 import { OAuthClientProvider, UnauthorizedError } from '@modelcontextprotocol/sdk/client/auth.js'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { OAuthClientInformation, OAuthClientInformationFull, OAuthClientMetadata, OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js'
 import { app, App, shell } from 'electron'
+import { loadSettings } from './config'
 import { HttpServer } from './http_server'
 import { useI18n } from './i18n'
 
@@ -95,9 +97,12 @@ export default class McpOAuthManager {
   }
 
   async getClientMetadata(scope?: string): Promise<OAuthClientMetadata> {
-    
+
+    // we need se ttings
+    const settings = loadSettings(this.app)
+
     // Ensure server is running to get the port
-    await this.httpServer.ensureServerRunning()
+    await this.httpServer.ensureServerRunning(settings?.general?.httpPort || kDefaultHttpPort)
     const callbackUrl = `${this.httpServer.getBaseUrl()}/mcp/callback`
     
     return {
@@ -196,7 +201,10 @@ export default class McpOAuthManager {
    * Wait for OAuth callback with a specific flow ID
    */
   async waitForCallback(flowId: string): Promise<string> {
-    await this.httpServer.ensureServerRunning()
+
+    const settings = loadSettings(this.app)
+
+    await this.httpServer.ensureServerRunning(settings?.general?.httpPort || kDefaultHttpPort)
     return new Promise<string>((resolve, reject) => {
       const timeout = setTimeout(() => {
         console.log(`[oauth] MCP OAuth callback timeout for flow ${flowId}`)

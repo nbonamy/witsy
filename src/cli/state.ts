@@ -1,5 +1,6 @@
 // CLI State Management
 
+import { kDefaultHttpPort } from '@/consts'
 import { CliConfig } from './config'
 import { ChatCli } from './models'
 
@@ -22,7 +23,7 @@ export interface CLIState {
 }
 
 export const state: CLIState = {
-  port: 8090,
+  port: kDefaultHttpPort,
   debug: false,
   engine: null,
   model: null,

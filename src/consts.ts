@@ -1,4 +1,5 @@
 
 export const kHistoryVersion = 1
+export const kDefaultHttpPort = 8090
 export const kDefaultWorkspaceId = '00000000-0000-0000-0000-000000000000'
 export const kMediaChatId = '00000000-0000-0000-0000-000000000000'
