@@ -10,6 +10,7 @@ export interface WorkDirConfig {
 }
 
 export interface CliConfig {
+  port?: number
   engine?: { id: string; name: string }
   model?: { id: string; name: string }
   historySize: number

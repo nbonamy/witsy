@@ -48,6 +48,24 @@ describe('CLI Config', () => {
       expect(config).toEqual(savedConfig)
     })
 
+    test('loads config with port', () => {
+      const savedConfig: CliConfig = {
+        port: 9000,
+        historySize: 50,
+        history: []
+      }
+
+      fs.writeFileSync(
+        path.join(tempDir, 'cli.json'),
+        JSON.stringify(savedConfig),
+        'utf-8'
+      )
+
+      const config = loadCliConfig(tempDir)
+
+      expect(config.port).toBe(9000)
+    })
+
     test('merges with defaults when fields are missing', () => {
       const partialConfig = {
         engine: 'openai'
@@ -180,6 +198,35 @@ describe('CLI Config', () => {
       // Check it's formatted (has newlines and indentation)
       expect(content).toContain('\n')
       expect(content).toContain('  ')
+    })
+
+    test('saves config with port', () => {
+      const config: CliConfig = {
+        port: 9000,
+        historySize: 50,
+        history: []
+      }
+
+      saveCliConfig(tempDir, config)
+
+      const filePath = path.join(tempDir, 'cli.json')
+      const saved = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
+
+      expect(saved.port).toBe(9000)
+    })
+
+    test('saves config without port when undefined', () => {
+      const config: CliConfig = {
+        historySize: 50,
+        history: []
+      }
+
+      saveCliConfig(tempDir, config)
+
+      const filePath = path.join(tempDir, 'cli.json')
+      const saved = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
+
+      expect(saved.port).toBeUndefined()
     })
   })
 })
