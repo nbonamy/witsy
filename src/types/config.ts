@@ -64,6 +64,7 @@ export type GeneralConfig = {
   webappEvictionMinutes: number
   enableHttpEndpoints: boolean
   cliInstallError: boolean
+  httpPort?: number
 }
 
 export type FavoriteModel = {

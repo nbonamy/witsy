@@ -719,7 +719,7 @@ test('getCachedTools returns empty for previously failed server', async () => {
   cache.set('test-server', { tools: null, timestamp: 0 })
 
   // Create a mock client
-  const mockClient = { server, client: {}, tools: [] }
+  const mockClient = { server, client: {}, tools: [] as any[] }
 
   // Call getCachedTools
   const result = await (mcp as any).getCachedTools(mockClient)
@@ -748,7 +748,7 @@ test('getCachedTools handles listTools error', async () => {
     client: {
       listTools: vi.fn().mockRejectedValue(new Error('Connection failed'))
     },
-    tools: []
+    tools: [] as any[]
   }
 
   const result = await (mcp as any).getCachedTools(mockClient)
@@ -1103,7 +1103,7 @@ test('mcpToOpenAI handles tool without description', () => {
 
   const tool = {
     name: 'noDescTool',
-    inputSchema: { type: 'object', properties: {}, required: [] }
+    inputSchema: { type: 'object', properties: {}, required: [] as any[] }
   }
 
   const result = mcpToOpenAI(server, tool)

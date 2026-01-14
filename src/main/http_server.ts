@@ -74,14 +74,14 @@ export class HttpServer {
   /**
    * Ensure the HTTP server is running
    */
-  async ensureServerRunning(): Promise<void> {
+  async ensureServerRunning(port: number): Promise<void> {
 
     if (this.server) {
       return
     }
 
-    // Find an available port starting from 8090
-    this.port = await portfinder.getPortPromise({ port: 8090 })
+    // Find an available port
+    this.port = await portfinder.getPortPromise({ port })
     console.log(`[http] Starting server on port ${this.port}`)
     
     this.server = this.createServer((req, res) => {

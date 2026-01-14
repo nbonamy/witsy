@@ -30,6 +30,7 @@ import TrayIconManager from './main/tray';
 
 import { fixPath } from './main/utils';
 //import { useI18n } from './main/i18n';
+import { kDefaultHttpPort } from './consts';
 import { installAgentWebhook } from './main/agent_webhook';
 import { checkAndInstallCLI } from './main/cli_installer';
 import { installApiEndpoints } from './main/http_api';
@@ -208,7 +209,7 @@ app.whenReady().then(async () => {
 
   // we need an http server
   const httpServer = HttpServer.getInstance();
-  await httpServer.ensureServerRunning();
+  await httpServer.ensureServerRunning(settings?.general?.httpPort || kDefaultHttpPort);
 
   // install HTTP triggers
   try {
