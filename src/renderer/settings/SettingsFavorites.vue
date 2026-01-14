@@ -31,7 +31,7 @@
             <tr v-for="(favorite, index) in favorites" :key="favorite.id">
               <td class="engine-cell">
                 <div>
-                  <EngineLogo :engine="favorite.engine" :grayscale="false" />
+                  <EngineLogo :engine="favorite.engine" />
                   {{ getEngineName(favorite.engine) }}
                 </div>
               </td>
