@@ -4,7 +4,7 @@ import chalk from 'chalk'
 import type { LlmChunk } from 'multi-llm-ts'
 import terminalKit from 'terminal-kit'
 import { WitsyAPI } from './api'
-import { loadCliConfig, saveCliConfig } from './config'
+import { getDefaultUserDataPath, loadCliConfig, saveCliConfig } from './config'
 import { activeToolStates, addTool, clearFooter, clearToolsDisplay, completeTool, displayConversation, displayFooter, grayText, initToolsDisplay, padContent, resetDisplay, startPulseAnimation, startToolsAnimation, stopPulseAnimation, stopToolsAnimation, updateToolStatus } from './display'
 import { applyFolderAccess, getFolderAccessLabel, promptFolderAccess } from './folder'
 import { promptInput } from './input'
@@ -808,6 +808,16 @@ export async function executeCommand(command: string) {
 export async function initialize(args: CliArgs = {}) {
   const cwd = process.cwd()
 
+  // Load CLI config first to get saved port (before connecting)
+  const defaultUserDataPath = getDefaultUserDataPath()
+  const cliConfig = loadCliConfig(defaultUserDataPath)
+  state.cliConfig = cliConfig
+
+  // Use saved port if no -p argument was provided
+  if (!args.port && cliConfig.port) {
+    state.port = cliConfig.port
+  }
+
   // Try to connect with short timeout
   const connected = await api.connectWithTimeout(state.port, 2000)
 
@@ -836,21 +846,15 @@ export async function initialize(args: CliArgs = {}) {
 
     state.userDataPath = config.userDataPath
 
-    // Load CLI config from disk
-    const cliConfig = loadCliConfig(state.userDataPath)
-    state.cliConfig = cliConfig
-
-    // Handle port from CLI config (only if not overridden by -p argument)
-    if (!args.port && cliConfig.port && cliConfig.port !== state.port) {
-      // Try to connect to saved port
-      const savedPortConnected = await api.connectWithTimeout(cliConfig.port, 2000)
-      if (savedPortConnected) {
-        state.port = cliConfig.port
-      } else {
-        // Saved port doesn't work, clear it from config
-        delete state.cliConfig.port
-        saveCliConfig(state.userDataPath, state.cliConfig)
+    // Reload CLI config from actual userDataPath if it differs from default
+    const defaultPath = getDefaultUserDataPath()
+    if (config.userDataPath !== defaultPath) {
+      const actualConfig = loadCliConfig(config.userDataPath)
+      // Merge: keep port from default path if it was used to connect
+      if (state.cliConfig.port) {
+        actualConfig.port = state.cliConfig.port
       }
+      state.cliConfig = actualConfig
     }
 
     // Save port to config if it was specified via -p argument (only if non-default)
@@ -867,18 +871,18 @@ export async function initialize(args: CliArgs = {}) {
     }
 
     // Use CLI config values if present, otherwise fall back to API config
-    state.engine = cliConfig.engine || config.engine
-    state.model = cliConfig.model || config.model
+    state.engine = state.cliConfig.engine || config.engine
+    state.model = state.cliConfig.model || config.model
 
     // If CLI config didn't have engine/model, save them now
-    if (!cliConfig.engine || !cliConfig.model) {
+    if (!state.cliConfig.engine || !state.cliConfig.model) {
       state.cliConfig.engine = state.engine
       state.cliConfig.model = state.model
       saveCliConfig(state.userDataPath, state.cliConfig)
     }
 
     // Handle folder access - use saved preference for current folder
-    const savedConfig = cliConfig.workDirs?.[cwd]
+    const savedConfig = state.cliConfig.workDirs?.[cwd]
     if (savedConfig?.access) {
       applyFolderAccess(savedConfig.access)
     }

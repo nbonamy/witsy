@@ -10,12 +10,20 @@ import { resetDisplay, displayFooter, clearFooter } from '@/cli/display'
 import { promptInput } from '@/cli/input'
 import { selectOption } from '@/cli/select'
 import { promptFolderAccess, applyFolderAccess } from '@/cli/folder'
+import * as cliConfig from '@/cli/config'
 
 // Setup fetch mock
 global.fetch = vi.fn()
 
 // Mock dependencies
 vi.mock('@/cli/api')
+vi.mock('@/cli/config', async (importOriginal) => {
+  const actual = await importOriginal<typeof cliConfig>()
+  return {
+    ...actual,
+    getDefaultUserDataPath: vi.fn(),
+  }
+})
 vi.mock('@/cli/display', () => ({
   grayText: (s: string) => s,
   padContent: (text: string) => `  ${text}  `,
@@ -111,6 +119,8 @@ describe('CLI Initialization', () => {
     vi.clearAllMocks()
     // Create temp directory for test config
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'witsy-cli-init-test-'))
+    // Mock getDefaultUserDataPath to return tempDir
+    vi.mocked(cliConfig.getDefaultUserDataPath).mockReturnValue(tempDir)
   })
 
   afterEach(() => {
@@ -198,6 +208,70 @@ describe('CLI Initialization', () => {
     // Should set null engine/model on error
     expect(state.engine).toBe(null)
     expect(state.model).toBe(null)
+  })
+
+  test('initialize uses saved port from CLI config', async () => {
+    // Save port 9000 in CLI config
+    const cliConfigData = {
+      port: 9000,
+      historySize: 50,
+      history: []
+    }
+    fs.writeFileSync(
+      path.join(tempDir, 'cli.json'),
+      JSON.stringify(cliConfigData),
+      'utf-8'
+    )
+
+    // Reset state.port to default
+    state.port = 8090
+
+    vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
+    vi.mocked(WitsyAPI.prototype.getConfig).mockResolvedValue({
+      engine: 'openai',
+      model: 'gpt-4',
+      userDataPath: tempDir,
+      enableHttpEndpoints: true
+    })
+
+    await initialize()
+
+    // Should use saved port
+    expect(state.port).toBe(9000)
+    // connectWithTimeout should have been called with saved port
+    expect(WitsyAPI.prototype.connectWithTimeout).toHaveBeenCalledWith(9000, 2000)
+  })
+
+  test('initialize uses -p argument port over saved port', async () => {
+    // Save port 9000 in CLI config
+    const cliConfigData = {
+      port: 9000,
+      historySize: 50,
+      history: []
+    }
+    fs.writeFileSync(
+      path.join(tempDir, 'cli.json'),
+      JSON.stringify(cliConfigData),
+      'utf-8'
+    )
+
+    // Set state.port to -p argument value
+    state.port = 8080
+
+    vi.mocked(WitsyAPI.prototype.connectWithTimeout).mockResolvedValue(true)
+    vi.mocked(WitsyAPI.prototype.getConfig).mockResolvedValue({
+      engine: 'openai',
+      model: 'gpt-4',
+      userDataPath: tempDir,
+      enableHttpEndpoints: true
+    })
+
+    // Pass port in args (simulating -p argument)
+    await initialize({ port: 8080 })
+
+    // Should use -p argument port, not saved port
+    expect(state.port).toBe(8080)
+    expect(WitsyAPI.prototype.connectWithTimeout).toHaveBeenCalledWith(8080, 2000)
   })
 })
 
@@ -887,6 +961,8 @@ describe('initialize edge cases', () => {
     vi.clearAllMocks()
     vi.mocked(promptFolderAccess).mockReset()
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'witsy-cli-init-edge-test-'))
+    // Mock getDefaultUserDataPath to return tempDir
+    vi.mocked(cliConfig.getDefaultUserDataPath).mockReturnValue(tempDir)
     exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never)
   })
 
