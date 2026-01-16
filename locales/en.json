@@ -2632,6 +2632,11 @@
         "video_plugin": "Video Plugin - Description"
       },
       "overridingHelp": "Custom prompts or instructions are applicable for all languages.",
+      "permissions": {
+        "grant": "Grant",
+        "header": "System Permissions",
+        "info": "These permissions enable features like Prompt Anywhere, AI Commands, and text dictation to work with other applications."
+      },
       "proxy": {
         "bypass": "Bypass system proxy",
         "custom": "Custom proxy",
@@ -2677,8 +2682,8 @@
       },
       "theme": "Chat theme",
       "themes": {
-        "conversation": "Conversation",
-        "openai": "OpenAI"
+        "conversation": "Bubbles",
+        "openai": "Classic"
       }
     },
     "commands": {

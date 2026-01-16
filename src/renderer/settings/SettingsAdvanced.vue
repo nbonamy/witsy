@@ -4,6 +4,23 @@
       <div class="title">{{ t('settings.tabs.advanced') }}</div>
     </header>
     <main class="form form-vertical form-large">
+      <template v-if="isMacOS">
+        <div class="form-field">
+          <label>{{ t('settings.advanced.permissions.header') }}</label>
+          <span>{{ t('settings.advanced.permissions.info') }}</span>
+        </div>
+        <div class="form-field permissions horizontal">
+          <label>{{ t('onboarding.permissions.accessibility.title') }}</label>
+          <span v-if="accessibilityGranted" class="granted">{{ t('onboarding.permissions.granted') }}</span>
+          <button v-else class="grant-btn" @click="openAccessibilitySettings">{{ t('settings.advanced.permissions.grant') }}</button>
+        </div>
+        <div class="form-field permissions horizontal">
+          <label>{{ t('onboarding.permissions.automation.title') }}</label>
+          <span v-if="automationGranted" class="granted">{{ t('onboarding.permissions.granted') }}</span>
+          <button v-else class="grant-btn" @click="openAutomationSettings">{{ t('settings.advanced.permissions.grant') }}</button>
+        </div>
+        <label>&nbsp;</label>
+      </template>
       <div class="form-field">
         <label>{{ t('settings.advanced.header') }}</label>
       </div>
@@ -87,10 +104,17 @@
 <script setup lang="ts">
 import { i18nInstructions, t } from '@services/i18n'
 
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { store } from '@services/store'
 import { ProxyMode } from 'types/config'
 import { anyDict } from 'types/index'
+
+const isMacOS = window.api.platform === 'darwin'
+
+// Permission states (macOS only)
+const accessibilityGranted = ref(false)
+const automationGranted = ref(false)
+let pollInterval: NodeJS.Timeout | null = null
 
 const prompt = ref(null)
 const isPromptOverridden = ref(false)
@@ -103,6 +127,50 @@ const customProxy = ref('')
 const imageResize = ref(null)
 
 const httpPort = computed(() => window.api.app.getHttpPort())
+
+// Permission check methods (macOS only)
+const checkPermissions = async () => {
+  if (!isMacOS) return
+  try {
+    accessibilityGranted.value = await window.api.permissions.checkAccessibility()
+    automationGranted.value = await window.api.permissions.checkAutomation()
+  } catch (error) {
+    console.error('Error checking permissions:', error)
+  }
+}
+
+const openAccessibilitySettings = async () => {
+  try {
+    await window.api.permissions.openAccessibilitySettings()
+  } catch (error) {
+    console.error('Error opening accessibility settings:', error)
+  }
+}
+
+const openAutomationSettings = async () => {
+  try {
+    await window.api.permissions.openAutomationSettings()
+  } catch (error) {
+    console.error('Error opening automation settings:', error)
+  }
+}
+
+const startPermissionPolling = () => {
+  if (!isMacOS || pollInterval) return
+  checkPermissions()
+  pollInterval = setInterval(checkPermissions, 1000)
+}
+
+const stopPermissionPolling = () => {
+  if (pollInterval) {
+    clearInterval(pollInterval)
+    pollInterval = null
+  }
+}
+
+onBeforeUnmount(() => {
+  stopPermissionPolling()
+})
 
 const load = () => {
   autoSavePrompt.value = store.config.prompt.autosave
@@ -161,7 +229,15 @@ const installCLI = async () => {
   }
 }
 
-defineExpose({ load })
+const onShow = () => {
+  startPermissionPolling()
+}
+
+const onHide = () => {
+  stopPermissionPolling()
+}
+
+defineExpose({ load, onShow, onHide })
 </script>
 
 
@@ -186,6 +262,31 @@ defineExpose({ load })
     display: block;
   }
 
+}
+
+.form-field.permissions-info {
+  margin: 0;
+  span {
+    font-size: 0.9rem;
+    color: var(--dimmed-text-color);
+  }
+}
+
+.form-field.permissions {
+  margin: 0;
+  label {
+    flex: 1;
+    font-weight: var(--font-weight-regular);
+  }
+  .granted {
+    font-weight: 600;
+    color: var(--color-success);
+    padding: 0.25rem 0.75rem;
+    border: 1px solid transparent;
+  }
+  .grant-btn {
+    padding: 0.25rem 0.75rem;
+  }
 }
 
 </style>

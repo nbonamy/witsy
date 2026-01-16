@@ -2630,6 +2630,11 @@
         "video_plugin": "Wtyczka wideo - Opis"
       },
       "overridingHelp": "Niestandardowe podpowiedzi lub instrukcje są stosowane dla wszystkich języków.",
+      "permissions": {
+        "grant": "Przyznaj",
+        "header": "Uprawnienia systemowe",
+        "info": "Te uprawnienia umożliwiają działanie funkcji, takich jak Prompt Anywhere, AI Commands i dyktowanie tekstu, we współpracy z innymi aplikacjami."
+      },
       "proxy": {
         "bypass": "Pomijaj serwer proxy systemowy",
         "custom": "Własny serwer proxy",
@@ -2675,8 +2680,8 @@
       },
       "theme": "Motyw czatu",
       "themes": {
-        "conversation": "Rozmowa",
-        "openai": "OpenAI"
+        "conversation": "Dymki",
+        "openai": "Klasyczny"
       }
     },
     "commands": {

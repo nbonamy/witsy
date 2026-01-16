@@ -2630,6 +2630,11 @@
         "video_plugin": "ビデオプラグイン - 説明"
       },
       "overridingHelp": "カスタムプロンプトまたは指示は、すべての言語に適用されます。",
+      "permissions": {
+        "grant": "付与",
+        "header": "システム権限",
+        "info": "これらの権限は、Prompt Anywhere、AI Commands、テキストのディクテーションなどの機能が他のアプリケーションで動作することを可能にします。"
+      },
       "proxy": {
         "bypass": "システムプロキシをバイパスする",
         "custom": "カスタムプロキシ",
@@ -2675,8 +2680,8 @@
       },
       "theme": "チャットテーマ",
       "themes": {
-        "conversation": "会話",
-        "openai": "OpenAI"
+        "conversation": "吹き出し",
+        "openai": "クラシック"
       }
     },
     "commands": {

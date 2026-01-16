@@ -2630,6 +2630,11 @@
         "video_plugin": "Plugin de Vídeo - Descrição"
       },
       "overridingHelp": "Prompts ou instruções personalizadas são aplicáveis para todos os idiomas.",
+      "permissions": {
+        "grant": "Conceder",
+        "header": "Permissões do sistema",
+        "info": "Estas permissões permitem que recursos como Prompt Anywhere, AI Commands e ditado de texto funcionem com outros aplicativos."
+      },
       "proxy": {
         "bypass": "Ignorar proxy do sistema",
         "custom": "Proxy personalizado",
@@ -2675,8 +2680,8 @@
       },
       "theme": "Tema do chat",
       "themes": {
-        "conversation": "Conversa",
-        "openai": "OpenAI"
+        "conversation": "Bolhas",
+        "openai": "Clássico"
       }
     },
     "commands": {
