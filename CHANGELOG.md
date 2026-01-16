@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - More Quick dictation options and shortcuts
 - CLI port persistence (saves port when using -p or /port command)
+- macOS permission options in Settings Advanced
 
 ### Changed
 - N/A
