@@ -2608,6 +2608,11 @@
         "video_plugin": "Video-Plugin - Beschreibung"
       },
       "overridingHelp": "Benutzerdefinierte Prompts oder Anweisungen gelten für alle Sprachen.",
+      "permissions": {
+        "grant": "Gewähren",
+        "header": "Systemberechtigungen",
+        "info": "Diese Berechtigungen ermöglichen Funktionen wie Prompt Anywhere, KI-Befehle und Textdiktat, mit anderen Anwendungen zusammenzuarbeiten."
+      },
       "proxy": {
         "bypass": "System-Proxy-Server umgehen",
         "custom": "Benutzerdefinierter Proxy",
@@ -2653,8 +2658,8 @@
       },
       "theme": "Chat-Theme",
       "themes": {
-        "conversation": "Unterhaltung",
-        "openai": "OpenAI"
+        "conversation": "Sprechblasen",
+        "openai": "Klassisch"
       }
     },
     "commands": {

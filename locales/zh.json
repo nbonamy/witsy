@@ -2630,6 +2630,11 @@
         "video_plugin": "视频插件 - 描述"
       },
       "overridingHelp": "自定义提示或指令适用于所有语言。",
+      "permissions": {
+        "grant": "授予",
+        "header": "系统权限",
+        "info": "这些权限使 Prompt Anywhere、AI Commands 和文本听写等功能能够在其他应用中正常工作。"
+      },
       "proxy": {
         "bypass": "绕过系统代理",
         "custom": "自定义代理",
@@ -2675,8 +2680,8 @@
       },
       "theme": "聊天主题",
       "themes": {
-        "conversation": "对话",
-        "openai": "OpenAI"
+        "conversation": "气泡",
+        "openai": "经典"
       }
     },
     "commands": {

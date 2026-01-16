@@ -183,6 +183,11 @@ const onMode = async (next: MenuBarMode) => {
 
   //console.log('[main] onMode', next)
 
+  // hide settings when leaving settings mode
+  if (mode.value === 'settings' && next !== 'settings') {
+    settings.value?.onHide()
+  }
+
   if (next === 'computer-use') {
     mode.value = 'chat'
   } else if (next === 'debug') {

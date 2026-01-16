@@ -6,18 +6,18 @@
       </header>
       <main>
         <ul>
-          <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><AppWindowMacIcon class="icon" /></SettingsTab>
+          <SettingsTab class="general" :title="t('settings.tabs.general')" @change="load(settingsGeneral)" :checked="initialTab == 'general'"><AppWindowMacIcon class="icon" /></SettingsTab>
           <SettingsTab class="sidebar" :title="t('settings.tabs.sidebar')" @change="load(settingsSidebar)" :checked="initialTab == 'sidebar'" v-if="store.isFeatureEnabled('webapps')"><PanelsTopLeftIcon class="icon" /></SettingsTab>
-          <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BoxIcon class="icon" /></SettingsTab>
+          <SettingsTab class="llm" :title="t('settings.tabs.llm')" @change="load(settingsLLM)" :checked="initialTab == 'llm'"><BoxIcon class="icon" /></SettingsTab>
           <SettingsTab class="favorites" :title="t('settings.tabs.favorites')" @change="load(settingsFavorites)" :checked="initialTab == 'favorites'"><StarIcon class="icon" /></SettingsTab>
-          <SettingsTab class="chat" :title="t('settings.tabs.chat')"><AppWindowIcon class="icon" /></SettingsTab>
-          <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
-          <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
-          <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><Plug2Icon class="icon" /></SettingsTab>
+          <SettingsTab class="chat" :title="t('settings.tabs.chat')" @change="load(settingsChat)"><AppWindowIcon class="icon" /></SettingsTab>
+          <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" @change="load(settingsDeepResearch)" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
+          <SettingsTab class="models" :title="t('settings.tabs.models')" @change="load(settingsModels)" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
+          <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" @change="load(settingsPlugins)" :checked="initialTab == 'plugins'"><Plug2Icon class="icon" /></SettingsTab>
           <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><WandIcon class="icon" /></SettingsTab>
           <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><BrainIcon class="icon" /></SettingsTab>
-          <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
-          <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><CommandIcon class="icon" /></SettingsTab>
+          <SettingsTab class="voice" :title="t('settings.tabs.voice')" @change="load(settingsVoice)" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
+          <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" @change="load(settingsShortcuts)" :checked="initialTab == 'shortcuts'"><CommandIcon class="icon" /></SettingsTab>
           <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BadgePlusIcon class="icon" /></SettingsTab>
         </ul>
       </main>
@@ -92,6 +92,7 @@ const settingsVoice = ref(null)
 const settingsShortcuts = ref(null)
 const settingsAdvanced = ref(null)
 const settingsSidebar = ref(null)
+const activeTab = ref(null)
 
 const settings = [
   settingsGeneral,
@@ -141,12 +142,14 @@ onMounted(async () => {
   // events
   onEvent('main-view-changed', (mode: MenuBarMode) => {
     if (mode === 'settings') {
-      onOpenSettings()
+      onShow()
     }
   })
 
-  // load
-  onOpenSettings(props.extra)
+  // initial load (data only, not show)
+  for (const setting of settings) {
+    setting.value?.load()
+  }
 
 })
 
@@ -157,27 +160,32 @@ const showTab = (tab: string) => {
   }
 }
 
-const onOpenSettings = (payload?: OpenSettingsPayload) => {
-
-  // load all panels
-  for (const setting of settings) {
-    setting.value?.load(payload)
-  }
-
-  // show
+const onShow = (payload?: OpenSettingsPayload) => {
+  // show active tab
   showActiveTab(tabs.value)
 
-  // show initial tab
-  nextTick(() => {
-    if (payload?.initialTab) {
-      showTab(payload.initialTab)
-    }
-  })
+  // show initial tab if specified
+  if (payload?.initialTab) {
+    nextTick(() => showTab(payload.initialTab))
+  }
 
+  // notify active tab it's visible
+  activeTab.value?.onShow?.()
+}
+
+const onHide = () => {
+  activeTab.value?.onHide?.()
 }
 
 const load = (tab: any) => {
+  // hide previous tab
+  activeTab.value?.onHide?.()
+  // set and show new tab
+  activeTab.value = tab
   tab.load()
+  tab.onShow?.()
 }
+
+defineExpose({ onShow, onHide })
 
 </script>
