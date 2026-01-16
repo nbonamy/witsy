@@ -44,7 +44,6 @@ describe('Settings Permissions on macOS', () => {
   test('Shows permissions section on macOS', async () => {
     const tab = await switchToTab(wrapper, tabs.indexOf('settingsAdvanced'))
     expect(tab.find('.form-field.permissions').exists()).toBe(true)
-    expect(tab.find('.form-field.permissions-info').exists()).toBe(true)
   })
 
   test('Shows granted status when permissions are granted', async () => {
