@@ -22,13 +22,13 @@
       <label>{{ t('settings.engines.vision.model') }}</label>
       <ModelSelectPlus v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
     </div>
-    <div class="form-field horizontal">
-      <input type="checkbox" id="meta-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
-      <label for="meta-disable-tools">{{  t('settings.engines.disableTools') }}</label>
-    </div>
     <div class="form-field">
       <label>{{ t('settings.engines.requestCooldown') }}</label>
       <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
+    </div>
+    <div class="form-field horizontal">
+      <input type="checkbox" id="meta-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
+      <label for="meta-disable-tools">{{  t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>

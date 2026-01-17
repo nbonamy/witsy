@@ -24,13 +24,13 @@
         <a href="https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-keep-a-model-loaded-in-memory-or-make-it-unload-immediately" target="_blank">{{ t('common.learnMore') }}</a>
       </div>
     </div>
-    <div class="form-field horizontal">
-      <input type="checkbox" id="ollama-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
-      <label for="ollama-disable-tools">{{ t('settings.engines.disableTools') }}</label>
-    </div>
     <div class="form-field">
       <label>{{ t('settings.engines.requestCooldown') }}</label>
       <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
+    </div>
+    <div class="form-field horizontal">
+      <input type="checkbox" id="ollama-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
+      <label for="ollama-disable-tools">{{ t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>
