@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - More Quick dictation options and keyboard shortcuts
 - CLI port persistence (saves port when using -p or /port command)
 - macOS permission options in Settings Advanced
+- Request cooldown time per provider
 - Parallel chats support
 
 ### Changed
