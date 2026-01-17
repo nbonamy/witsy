@@ -34,7 +34,11 @@
       <input type="checkbox" id="openai-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
       <label for="openai-disable-tools">{{  t('settings.engines.disableTools') }}</label>
     </div>
-  </div>  
+    <div class="form-field">
+      <label>{{ t('settings.engines.requestCooldown') }}</label>
+      <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -53,6 +57,7 @@ import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 const apiKey = ref(null)
 const baseURL = ref(null)
 const disableTools = ref(false)
+const requestCooldown = ref<number>(null)
 const hideDatedModels = ref(true)
 const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
@@ -74,6 +79,7 @@ const load = () => {
   chat_model.value = store.config.engines.openai?.model?.chat || ''
   vision_model.value = store.config.engines.openai?.model?.vision || ''
   disableTools.value = store.config.engines.openai?.disableTools || false
+  requestCooldown.value = store.config.engines.openai?.requestCooldown || null
 }
 
 const getModels = async (): Promise<boolean> => {
@@ -114,6 +120,7 @@ const save = () => {
   store.config.engines.openai.model.chat = chat_model.value
   store.config.engines.openai.model.vision = vision_model.value
   store.config.engines.openai.disableTools = disableTools.value
+  store.config.engines.openai.requestCooldown = requestCooldown.value || undefined
   store.saveSettings()
 }
 

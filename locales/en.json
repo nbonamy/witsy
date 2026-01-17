@@ -2750,6 +2750,8 @@
         "pricing": "DeepSeek pricing"
       },
       "disableTools": "Disable plugins for all models",
+      "requestCooldown": "Request cooldown (ms)",
+      "requestCooldownHint": "Minimum time in ms between API request starts during tool loops",
       "getApiKey": "Get your API key",
       "google": {
         "aboutModels": "More about Google models",

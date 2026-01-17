@@ -50,6 +50,10 @@
       <input type="checkbox" id="google-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
       <label for="google-disable-tools">{{  t('settings.engines.disableTools') }}</label>
     </div>
+    <div class="form-field">
+      <label>{{ t('settings.engines.requestCooldown') }}</label>
+      <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
+    </div>
   </div>
 </template>
 
@@ -70,6 +74,7 @@ const apiKey = ref(null)
 const project = ref('')
 const location = ref('')
 const disableTools = ref(false)
+const requestCooldown = ref<number>(null)
 const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
 const chat_models = ref<ChatModel[]>([])
@@ -90,6 +95,7 @@ const load = () => {
   chat_model.value = store.config.engines.google?.model?.chat || ''
   vision_model.value = store.config.engines.google?.model?.vision || ''
   disableTools.value = store.config.engines.google?.disableTools || false
+  requestCooldown.value = store.config.engines.google?.requestCooldown || null
 }
 
 const getModels = async (): Promise<boolean> => {
@@ -126,6 +132,7 @@ const save = () => {
   store.config.engines.google.model.chat = chat_model.value
   store.config.engines.google.model.vision = vision_model.value
   store.config.engines.google.disableTools = disableTools.value
+  store.config.engines.google.requestCooldown = requestCooldown.value || undefined
   store.saveSettings()
 }
 

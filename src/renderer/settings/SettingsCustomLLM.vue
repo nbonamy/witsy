@@ -60,6 +60,10 @@
       <input type="checkbox" id="custom-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
       <label for="custom-disable-tools">{{  t('settings.engines.disableTools') }}</label>
     </div>
+    <div class="form-field">
+      <label>{{ t('settings.engines.requestCooldown') }}</label>
+      <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
+    </div>
   </div>
 </template>
 
@@ -92,6 +96,7 @@ const baseURL = ref(null)
 const deployment = ref(null)
 const apiVersion = ref(null)
 const disableTools = ref(false)
+const requestCooldown = ref<number>(null)
 const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
 const chat_models = ref<ChatModel[]>([])
@@ -120,6 +125,7 @@ const load = () => {
   chat_model.value = engineConfig?.model?.chat || ''
   vision_model.value = engineConfig?.model?.vision || ''
   disableTools.value = engineConfig?.disableTools || false
+  requestCooldown.value = engineConfig?.requestCooldown || null
 }
 
 const getModels = async (): Promise<boolean> => {
@@ -175,6 +181,7 @@ const save = () => {
   engineConfig.model.chat = chat_model.value
   engineConfig.model.vision = vision_model.value
   engineConfig.disableTools = disableTools.value
+  engineConfig.requestCooldown = requestCooldown.value || undefined
 
   // now add model to models if it does not exist
   if (chat_model.value && !chat_models.value.find(m => m.id === chat_model.value)) {
