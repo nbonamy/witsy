@@ -3,7 +3,7 @@ import PromptAnywhere from './automations/anywhere'
 import Automator from './automations/automator'
 import Commander from './automations/commander'
 import ReadAloud from './automations/readaloud'
-import Transcriber from './automations/transcriber'
+import Dictation from './automations/dictation'
 import { HttpServer } from './http_server'
 import { isHttpEndpointsEnabled, parseParams, sendError, sendJson } from './http_utils'
 import { putCachedText } from './utils'
@@ -131,7 +131,7 @@ export function installHttpTriggers(httpServer: HttpServer, app: App): void {
     if (!isHttpEndpointsEnabled(app, res)) return
     try {
       await parseParams(req, parsedUrl)
-      await Transcriber.initTranscription()
+      await Dictation.initDictation()
       sendJson(res, { success: true, action: 'transcribe' })
     } catch (error) {
       sendError(res, error instanceof Error ? error.message : 'Internal server error', 500)

@@ -9,46 +9,144 @@
 <script setup lang="ts">
 
 import { XCircleIcon } from 'lucide-vue-next';
-import { ModelRef, computed } from 'vue';
-import { Shortcut, disabledShortcutKey } from 'types/index';
+import { computed } from 'vue';
+import { ElectronShortcut, NativeShortcut, Shortcut, disabledShortcutKey } from 'types/index';
+import { isNativeShortcut } from '@renderer/utils/shortcut';
 
-const value: ModelRef<Shortcut|undefined> = defineModel()
+const props = defineProps<{
+  acceptNative?: boolean
+}>()
+
+const value = defineModel<Shortcut|undefined>()
 
 const emit = defineEmits(['change']);
 
-const modifiers: { [key: string]: string } = {
-  'ctrl': window.api.platform === 'darwin' ? '⌃' : 'Ctrl+',
-  'alt': window.api.platform === 'darwin' ? '⌥' : 'Alt+',
-  'shift': window.api.platform === 'darwin' ? '⇧' : 'Shift+',
-  'meta': window.api.platform === 'darwin' ? '⌘' : 'Win+',
+const modifierSymbols = {
+  ctrl: window.api.platform === 'darwin' ? '⌃' : 'Ctrl+',
+  alt: window.api.platform === 'darwin' ? '⌥' : 'Alt+',
+  shift: window.api.platform === 'darwin' ? '⇧' : 'Shift+',
+  meta: window.api.platform === 'darwin' ? '⌘' : 'Win+',
+}
+
+const nativeModifierSymbols = {
+  // Right-side (single modifiers)
+  rightCommand: window.api.platform === 'darwin' ? 'Right ⌘' : 'Right Win',
+  rightOption: window.api.platform === 'darwin' ? 'Right ⌥' : 'Right Alt',
+  rightShift: window.api.platform === 'darwin' ? 'Right ⇧' : 'Right Shift',
+  rightControl: window.api.platform === 'darwin' ? 'Right ⌃' : 'Right Ctrl',
+  // Left-side (for combos, shown without "Left" prefix)
+  leftCommand: window.api.platform === 'darwin' ? '⌘' : 'Win',
+  leftOption: window.api.platform === 'darwin' ? '⌥' : 'Alt',
+  leftShift: window.api.platform === 'darwin' ? '⇧' : 'Shift',
+  leftControl: window.api.platform === 'darwin' ? '⌃' : 'Ctrl',
 }
 
 const display = computed(() => {
-  let display = ''
-  if (value.value != null && value.value.key !== disabledShortcutKey) {
-    for (const modifier of Object.keys(modifiers)) {
-      if (value.value[modifier]) {
-        display = display + modifiers[modifier]
-      }
+  if (value.value == null) return ''
+
+  // Native shortcut display
+  if (isNativeShortcut(value.value)) {
+    const parts: string[] = []
+    // Right-side modifiers
+    if (value.value.rightCommand) parts.push(nativeModifierSymbols.rightCommand)
+    if (value.value.rightOption) parts.push(nativeModifierSymbols.rightOption)
+    if (value.value.rightShift) parts.push(nativeModifierSymbols.rightShift)
+    if (value.value.rightControl) parts.push(nativeModifierSymbols.rightControl)
+    // Left-side modifiers (for combos)
+    if (value.value.leftControl) parts.push(nativeModifierSymbols.leftControl)
+    if (value.value.leftOption) parts.push(nativeModifierSymbols.leftOption)
+    if (value.value.leftShift) parts.push(nativeModifierSymbols.leftShift)
+    if (value.value.leftCommand) parts.push(nativeModifierSymbols.leftCommand)
+    if (value.value.key && value.value.key !== disabledShortcutKey) {
+      parts.push(value.value.key)
     }
-    display = display + value.value.key
+    return parts.join(window.api.platform === 'darwin' ? '' : '+')
   }
+
+  // Electron shortcut display
+  const electronShortcut = value.value as ElectronShortcut
+  if (electronShortcut.key === disabledShortcutKey) return ''
+
+  let display = ''
+  if (electronShortcut.ctrl) display += modifierSymbols.ctrl
+  if (electronShortcut.alt) display += modifierSymbols.alt
+  if (electronShortcut.shift) display += modifierSymbols.shift
+  if (electronShortcut.meta) display += modifierSymbols.meta
+  display += electronShortcut.key
   return display
 })
 
 const onDelete = () => {
-  value.value = { key: disabledShortcutKey }
+  if (props.acceptNative) {
+    value.value = { type: 'native' }
+  } else {
+    value.value = { type: 'electron', key: disabledShortcutKey }
+  }
   emit('change')
+}
+
+// Right-side native modifier keys only
+type NativeModifierKey = 'rightCommand' | 'rightShift' | 'rightOption' | 'rightControl'
+
+// Map event.code to native shortcut modifier (right-side only)
+const codeToNativeModifier: Record<string, NativeModifierKey> = {
+  'MetaRight': 'rightCommand',
+  'ShiftRight': 'rightShift',
+  'AltRight': 'rightOption',
+  'ControlRight': 'rightControl',
 }
 
 const onKeyDown = (event: KeyboardEvent) => {
 
   // delete
   if (event.key === 'Backspace' || event.key === 'Delete') {
-    value.value = { key: disabledShortcutKey }
-    emit('change')
+    onDelete()
     return
   }
+
+  // Check for native modifier-only shortcut when acceptNative is true
+  if (props.acceptNative) {
+    // Right-side single modifier
+    const rightModifierKey = codeToNativeModifier[event.code]
+    if (rightModifierKey) {
+      const shortcut: NativeShortcut = { type: 'native' }
+      shortcut[rightModifierKey] = true
+      value.value = shortcut
+      emit('change')
+      return
+    }
+
+    // Left-side modifier combinations (need 2 modifiers held)
+    const leftModifiers: Record<string, keyof NativeShortcut> = {
+      'MetaLeft': 'leftCommand',
+      'AltLeft': 'leftOption',
+      'ShiftLeft': 'leftShift',
+      'ControlLeft': 'leftControl',
+    }
+    const leftModifierKey = leftModifiers[event.code]
+    if (leftModifierKey) {
+      // Count how many modifiers are held
+      const heldCount = [event.metaKey, event.altKey, event.shiftKey, event.ctrlKey].filter(Boolean).length
+      if (heldCount >= 2) {
+        // Two or more left modifiers - create combo shortcut
+        const shortcut: NativeShortcut = { type: 'native' }
+        if (event.metaKey) shortcut.leftCommand = true
+        if (event.altKey) shortcut.leftOption = true
+        if (event.shiftKey) shortcut.leftShift = true
+        if (event.ctrlKey) shortcut.leftControl = true
+        value.value = shortcut
+        emit('change')
+      }
+      // Single left modifier alone - ignore (wait for second)
+      return
+    }
+  }
+
+  // Electron shortcut mode (modifier + key)
+  onKeyDownElectron(event)
+}
+
+const onKeyDownElectron = (event: KeyboardEvent) => {
 
   // must have at least one modifier
   if (!event.altKey && !event.shiftKey && !event.ctrlKey && !event.metaKey) {
@@ -85,6 +183,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   // seems ok
   value.value = {
+    type: 'electron',
     key: key,
     alt: event.altKey,
     shift: event.shiftKey,
@@ -103,12 +202,19 @@ const onKeyDown = (event: KeyboardEvent) => {
 <style scoped>
 
 .form-subgroup {
+  display: flex;
+  align-items: center;
   white-space: nowrap;
 }
 
 input {
+  flex: 0;
   width: auto !important;
   text-align: center;
+}
+
+button {
+  height: 32px;
 }
 
 .clear {

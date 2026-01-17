@@ -163,14 +163,33 @@ export type Command = {
 
 export const disabledShortcutKey: string = 'none'
 
-export type Shortcut = {
+// Electron shortcuts - handled by Electron's globalShortcut
+// Cannot distinguish left/right modifiers
+export type ElectronShortcut = {
+  type: 'electron'
   alt?: boolean
   ctrl?: boolean
   shift?: boolean
   meta?: boolean
   key: string
-  [key: string]: boolean | string
 }
+
+// Native shortcuts - handled by our native key monitor
+// Can distinguish left/right modifiers, always sends down/up events
+export type NativeShortcut = {
+  type: 'native'
+  leftCommand?: boolean
+  rightCommand?: boolean
+  leftShift?: boolean
+  rightShift?: boolean
+  leftOption?: boolean
+  rightOption?: boolean
+  leftControl?: boolean
+  rightControl?: boolean
+  key?: string // optional: if omitted with single modifier, it's modifier-only
+}
+
+export type Shortcut = ElectronShortcut | NativeShortcut
 
 export type ChatState = {
   filter: string|null
@@ -371,6 +390,8 @@ declare global {
         open(payload?: OpenSettingsPayload): void
       }
       shortcuts: {
+        areNativeShortcutsSupported(): boolean
+        isValidNativeShortcut(shortcut: NativeShortcut): boolean
         register(): void
         unregister(): void
       }

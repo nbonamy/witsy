@@ -79,6 +79,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
           {
             label: t('menu.file.newChat'),
             accelerator: shortcutAccelerator({
+              type: 'electron',
               ctrl: !isMac,
               meta: isMac,
               key: 'N'
@@ -158,12 +159,12 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
             { role: 'pasteAndMatchStyle' },
             ...(focusedWindow === window.mainWindow && window.getMainWindowMode() === 'chat' ? [{
               label: t('menu.edit.deleteChat'),
-              accelerator: shortcutAccelerator({ key: 'Backspace', meta: true }),
+              accelerator: shortcutAccelerator({ type: 'electron', key: 'Backspace', meta: true }),
               click: () => window.notifyBrowserWindows('delete-chat')
             }] : []),
             ...(focusedWindow === window.mainWindow && window.getMainWindowMode() === 'studio' ? [{
               label: t('menu.edit.deleteMedia'),
-              accelerator: shortcutAccelerator({ key: 'Backspace', meta: true }),
+              accelerator: shortcutAccelerator({ type: 'electron', key: 'Backspace', meta: true }),
               click: () => window.notifyBrowserWindows('delete-media')
             }] : []),
             { role: 'selectAll' },
@@ -187,7 +188,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
             { type: 'separator' },
             {
               label: t('menu.edit.startDictation'),
-              accelerator: shortcutAccelerator({ key: 'T', meta: true }),
+              accelerator: shortcutAccelerator({ type: 'electron', key: 'T', meta: true }),
               click: () => window.notifyFocusedWindow('start-dictation')
             }]: []
           ),

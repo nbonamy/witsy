@@ -31,8 +31,8 @@ describe('CLI Config', () => {
 
     test('loads config from file', () => {
       const savedConfig: CliConfig = {
-        engine: 'openai',
-        model: 'gpt-4',
+        engine: { id: 'openai', name: 'OpenAI' },
+        model: { id: 'gpt-4', name: 'GPT-4' },
         historySize: 100,
         history: ['command1', 'command2']
       }
@@ -89,7 +89,7 @@ describe('CLI Config', () => {
     test('uses default historySize when invalid', () => {
       const invalidConfig = {
         historySize: -10,
-        history: []
+        history: [] as string[]
       }
 
       fs.writeFileSync(
@@ -139,8 +139,8 @@ describe('CLI Config', () => {
   describe('saveCliConfig', () => {
     test('saves config to file', () => {
       const config: CliConfig = {
-        engine: 'openai',
-        model: 'gpt-4',
+        engine: { id: 'openai', name: 'OpenAI' },
+        model: { id: 'gpt-4', name: 'GPT-4' },
         historySize: 100,
         history: ['command1', 'command2']
       }
@@ -185,7 +185,8 @@ describe('CLI Config', () => {
 
     test('creates file with pretty formatting', () => {
       const config: CliConfig = {
-        engine: 'openai',
+        engine: { id: 'openai', name: 'OpenAI' },
+        model: { id: 'gpt-4', name: 'GPT-4' },
         historySize: 50,
         history: []
       }

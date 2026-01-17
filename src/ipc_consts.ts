@@ -148,6 +148,8 @@ export const CLIPBOARD = {
 export const SHORTCUTS = {
   REGISTER: 'shortcuts-register',
   UNREGISTER: 'shortcuts-unregister',
+  IS_NATIVE_SUPPORTED: 'shortcuts-is-native-supported',
+  IS_VALID_NATIVE: 'shortcuts-is-valid-native',
 } as const;
 
 export const CHAT = {

@@ -97,29 +97,35 @@
   },
   "shortcuts": {
     "main": {
+      "type": "electron",
       "key": "Space",
       "ctrl": true
     },
     "command": {
+      "type": "electron",
       "key": "Space",
       "alt": true,
       "ctrl": true
     },
     "prompt": {
+      "type": "electron",
       "key": "P",
       "shift": true,
       "meta": true
     },
     "dictation": {
+      "type": "electron",
       "key": "none"
     },
     "audioBooth": {
+      "type": "electron",
       "key": "Space",
       "shift": true,
       "ctrl": true,
       "alt": true
     },
     "readaloud": {
+      "type": "electron",
       "key": "Space",
       "alt": true,
       "shift": false,
@@ -127,11 +133,13 @@
       "meta": true
     },
     "scratchpad": {
+      "type": "electron",
       "key": "N",
       "meta": true,
       "alt": true
     },
     "realtime": {
+      "type": "electron",
       "key": "none"
     }
   },
@@ -173,7 +181,8 @@
     },
     "quickDictation": {
       "appearance": "bottom",
-      "copyToClipboard": false
+      "copyToClipboard": false,
+      "activation": "tap"
     }
   },
   "tts": {

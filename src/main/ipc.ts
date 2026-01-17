@@ -16,7 +16,8 @@ import { getCachedText } from './utils';
 import PromptAnywhere from './automations/anywhere';
 import Automation, { AutomationAction } from './automations/automation';
 import Commander, { askMeAnythingId, notEditablePrompts } from './automations/commander';
-import Transcriber from './automations/transcriber';
+import Dictation from './automations/dictation';
+import KeyMonitor from './keymonitor';
 import DocumentRepository from './rag/docrepo';
 import Embedder from './rag/embedder';
 import AutoUpdater from './autoupdate';
@@ -396,6 +397,14 @@ export const installIpc = (
     shortcuts.unregisterShortcuts();
   });
 
+  ipcMain.on(IPC.SHORTCUTS.IS_NATIVE_SUPPORTED, (event) => {
+    event.returnValue = KeyMonitor.isPlatformSupported();
+  });
+
+  ipcMain.on(IPC.SHORTCUTS.IS_VALID_NATIVE, (event, shortcut) => {
+    event.returnValue = KeyMonitor.parseNativeShortcut(shortcut) !== null;
+  });
+
   ipcMain.on(IPC.APP.FULLSCREEN, (_, payload) => {
     if (payload.window === 'main') {
       window.mainWindow.setFullScreen(payload.state);
@@ -568,7 +577,7 @@ export const installIpc = (
   });
 
   ipcMain.on(IPC.TRANSCRIBE.INSERT, async (_, payload) => {
-    await Transcriber.insertTranscription(payload);
+    await Dictation.insertTranscription(payload);
   });
 
   ipcMain.handle(IPC.TRANSCRIBE.APPLE_CLI, async (_, audioData: ArrayBuffer, options?: sttApple.AppleTranscribeOptions) => {

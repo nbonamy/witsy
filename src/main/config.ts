@@ -348,6 +348,14 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
     delete config.shortcuts.transcribe
   }
 
+  // backwards compatibility: shortcuts without type default to 'electron'
+  for (const key of Object.keys(config.shortcuts)) {
+    const shortcut = config.shortcuts[key as keyof typeof config.shortcuts]
+    if (shortcut && !shortcut.type) {
+      shortcut.type = 'electron'
+    }
+  }
+
   // backwards compatibility: Python plugin runtime mode
   if (config.plugins.python) {
     // If runtime not specified in user overrides but binpath exists, set to native

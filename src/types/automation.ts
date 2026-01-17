@@ -3,17 +3,41 @@ import { Command } from './index'
 
 declare module 'applescript'
 
+// Callback for Electron shortcuts (single trigger)
+export type ShortcutCallback = () => void
+
+// Callbacks for native shortcuts (down and up events)
+export type NativeShortcutCallback = {
+  onDown: () => void
+  onUp: () => void
+}
+
+// Electron shortcut callbacks
 export interface ShortcutCallbacks {
-  prompt: () => void
-  chat: () => void
-  command: () => void
-  readaloud: () => void
-  dictation: () => void
-  audioBooth: () => void
-  scratchpad: () => void
-  realtime: () => void
-  studio: () => void
-  forge: () => void
+  prompt: ShortcutCallback
+  chat: ShortcutCallback
+  command: ShortcutCallback
+  readaloud: ShortcutCallback
+  dictation: ShortcutCallback
+  audioBooth: ShortcutCallback
+  scratchpad: ShortcutCallback
+  realtime: ShortcutCallback
+  studio: ShortcutCallback
+  forge: ShortcutCallback
+}
+
+// Native shortcut callbacks (with down/up)
+export interface NativeShortcutCallbacks {
+  prompt: NativeShortcutCallback
+  chat: NativeShortcutCallback
+  command: NativeShortcutCallback
+  readaloud: NativeShortcutCallback
+  dictation: NativeShortcutCallback
+  audioBooth: NativeShortcutCallback
+  scratchpad: NativeShortcutCallback
+  realtime: NativeShortcutCallback
+  studio: NativeShortcutCallback
+  forge: NativeShortcutCallback
 }
 
 export type Application = {

@@ -3,7 +3,7 @@ import path from 'path';
 import PromptAnywhere from './automations/anywhere';
 import Commander from './automations/commander';
 import ReadAloud from './automations/readaloud';
-import Transcriber from './automations/transcriber';
+import Dictation from './automations/dictation';
 import AutoUpdater from './autoupdate';
 import { loadSettings } from './config';
 import { useI18n } from './i18n';
@@ -154,7 +154,7 @@ export default class {
       {
         label: t('tray.menu.startDictation'),
         accelerator: shortcuts.shortcutAccelerator(configShortcuts?.dictation),
-        click: () => Transcriber.initTranscription(),
+        click: () => Dictation.initDictation(),
       },
       {
         label: t('tray.menu.readAloud'),
