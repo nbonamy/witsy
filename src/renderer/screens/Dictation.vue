@@ -6,6 +6,7 @@
     @animationend="onAnimationEnd"
     @mousemove="onMouseMove"
     @mouseleave="onMouseLeave"
+    v-if="isVisible"
   >
     <div class="app-info">
       <img v-if="sourceApp" class="icon" :src="iconData" />

@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, type Ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 
 const props = defineProps({
   width: Number,
@@ -23,9 +23,45 @@ const props = defineProps({
 })
 
 const waveform= ref<HTMLCanvasElement|null>(null)
+let animationFrameId: number | null = null
+
+// Start/stop animation loop based on recording state
+watch(() => props.isRecording, (isRecording) => {
+  if (isRecording) {
+    startAnimation()
+  } else {
+    stopAnimation()
+  }
+})
+
+const startAnimation = () => {
+  if (animationFrameId === null) {
+    draw()
+  }
+}
+
+const stopAnimation = () => {
+  if (animationFrameId !== null) {
+    cancelAnimationFrame(animationFrameId)
+    animationFrameId = null
+  }
+  // Clear arrays to free memory
+  dataArray = null
+  previousDataArray = null
+  currentDataArray = null
+  lastSampleTime = 0
+  interpolationProgress = 0
+}
 
 onMounted(() => {
-  draw()
+  // Only start if already recording when mounted
+  if (props.isRecording) {
+    draw()
+  }
+})
+
+onBeforeUnmount(() => {
+  stopAnimation()
 })
 
 // drawing constants
@@ -137,11 +173,13 @@ const draw = () => {
 
     console.error('Error drawing waveform', e);
 
-  } finally {
+  }
 
-    // request next animation
-    requestAnimationFrame(() => draw())
-
+  // Only continue animation loop if still recording
+  if (props.isRecording) {
+    animationFrameId = requestAnimationFrame(() => draw())
+  } else {
+    animationFrameId = null
   }
 
 }
