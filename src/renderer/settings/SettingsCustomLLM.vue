@@ -56,13 +56,13 @@
         <input name="apiVersion" v-model="apiVersion" />
       </div>
     </template>
-    <div class="form-field horizontal">
-      <input type="checkbox" id="custom-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
-      <label for="custom-disable-tools">{{  t('settings.engines.disableTools') }}</label>
-    </div>
     <div class="form-field">
       <label>{{ t('settings.engines.requestCooldown') }}</label>
       <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
+    </div>
+    <div class="form-field horizontal">
+      <input type="checkbox" id="custom-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
+      <label for="custom-disable-tools">{{  t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>

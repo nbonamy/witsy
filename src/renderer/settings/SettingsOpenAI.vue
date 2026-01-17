@@ -30,13 +30,13 @@
       <label>{{ t('settings.engines.apiBaseURL') }}</label>
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
-    <div class="form-field horizontal">
-      <input type="checkbox" id="openai-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
-      <label for="openai-disable-tools">{{  t('settings.engines.disableTools') }}</label>
-    </div>
     <div class="form-field">
       <label>{{ t('settings.engines.requestCooldown') }}</label>
       <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
+    </div>
+    <div class="form-field horizontal">
+      <input type="checkbox" id="openai-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
+      <label for="openai-disable-tools">{{  t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>
