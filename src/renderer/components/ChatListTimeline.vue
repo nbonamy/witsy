@@ -1,7 +1,7 @@
 <template>
   <section v-for="c in chats" :key="c.uuid" :set="chatDay=getDay(c)">
     <div v-if="store.isFeatureEnabled('chat.dates') && chatDay != currDay" :set="currDay = chatDay" class="day">{{ currDay }}</div>
-    <ChatListItem :chat="c" :selection="selection" :active="active" :selectMode="selectMode" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)" :data-day="chatDay" />
+    <ChatListItem :chat="c" :selection="selection" :active="active" :selectMode="selectMode" :generating="generatingChatIds.includes(c.uuid)" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)" :data-day="chatDay" />
   </section>
 </template>
 
@@ -28,7 +28,11 @@ defineProps({
   selectMode: {
     type: Boolean,
     default: false,
-  }
+  },
+  generatingChatIds: {
+    type: Array as () => string[],
+    default: (): string[] => [],
+  },
 })
 
 let currDay: string|null = null

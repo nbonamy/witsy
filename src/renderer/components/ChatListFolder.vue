@@ -15,7 +15,7 @@
       </ButtonIcon>
     </div>
     <template v-for="chat in f.chats" :key="chat.uuid" v-if="isFolderExpanded(f.id)">
-      <ChatListItem :chat="chat" :selection="selection" :active="active" :selectMode="selectMode" @click="onSelectChat(chat)" @contextmenu.prevent="showChatContextMenu($event, chat)" />
+      <ChatListItem :chat="chat" :selection="selection" :active="active" :selectMode="selectMode" :generating="generatingChatIds.includes(chat.uuid)" @click="onSelectChat(chat)" @contextmenu.prevent="showChatContextMenu($event, chat)" />
     </template>
   </section>
   <ContextMenuPlus v-if="showMenu" @close="closeContextMenu" :mouseX="menuX" :mouseY="menuY">
@@ -68,7 +68,11 @@ const props = defineProps({
   selectMode: {
     type: Boolean,
     default: false,
-  }
+  },
+  generatingChatIds: {
+    type: Array as () => string[],
+    default: (): string[] => [],
+  },
 })
 
 const visibleFolders = computed(() => {

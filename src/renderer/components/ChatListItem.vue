@@ -5,6 +5,9 @@
       <div class="info" @dblclick="onRenameChat">
         <div class="title">{{ chat.title }}</div>
       </div>
+      <div class="generating-indicator" v-if="generating">
+        <Spinner />
+      </div>
     </div>
   </div>
 </template>
@@ -12,6 +15,7 @@
 <script setup lang="ts">
 
 import Chat from '@models/chat'
+import Spinner from './Spinner.vue'
 import { store } from '@services/store'
 
 import useEventBus from '@composables/event_bus'
@@ -33,6 +37,10 @@ const props = defineProps({
   selection: {
     type: Array<String>,
     required: true,
+  },
+  generating: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -102,6 +110,13 @@ const onRenameChat = () => {
         font-size: 14px;
       }
 
+    }
+
+    .generating-indicator {
+      margin-left: auto;
+      padding-right: 0.25rem;
+      display: flex;
+      align-items: center;
     }
 
   }

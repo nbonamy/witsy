@@ -33,7 +33,7 @@
       </div>
     </div>
     <main>
-      <ChatList :displayMode="displayMode" :chat="chat" :select-mode="selectMode" :filter="filter" ref="chatList" />
+      <ChatList :displayMode="displayMode" :chat="chat" :select-mode="selectMode" :filter="filter" :generating-chat-ids="generatingChatIds" ref="chatList" />
     </main>
     <footer v-if="!selectMode">
       <!-- <button class="run-agent cta" @click="onRunAgent"><MessageCircleMoreIcon /> {{ t('common.runAgent') }}</button> -->
@@ -71,6 +71,10 @@ const { emitEvent, onEvent } = useEventBus()
 defineProps({
   chat: {
     type: Chat,
+  },
+  generatingChatIds: {
+    type: Array as () => string[],
+    default: (): string[] => [],
   },
 })
 
