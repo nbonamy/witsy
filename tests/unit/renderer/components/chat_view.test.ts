@@ -102,10 +102,10 @@ test('Renders correctly', () => {
 test('Resets assistant', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
 
-  // load witb defaults
+  // load with defaults
   setLlmDefaults('mock', 'chat')
   emitEvent('new-chat', null)
-  expect(Assistant.prototype.initChat).toHaveBeenLastCalledWith()
+  // new-chat now creates a fresh Chat directly and uses setActiveSession
   expect(wrapper.vm.assistant.chat.title).toBeUndefined()
   expect(wrapper.vm.assistant.chat.engine).toBe('mock')
   expect(wrapper.vm.assistant.chat.model).toBe('chat')
@@ -119,10 +119,9 @@ test('Resets assistant', async () => {
     reasoning: true
   })
 
-  // load witbout defaults
+  // load without defaults
   setLlmDefaults('openai', 'gpt-5.2-mini')
   emitEvent('new-chat', null)
-  expect(Assistant.prototype.initChat).toHaveBeenLastCalledWith()
   expect(wrapper.vm.assistant.chat.title).toBeUndefined()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
   expect(wrapper.vm.assistant.chat.model).toBe('gpt-5.2-mini')

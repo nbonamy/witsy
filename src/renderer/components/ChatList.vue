@@ -1,8 +1,8 @@
 <template>
   <div class="chat-list">
     <div class="chats" ref="divChats">
-      <ChatListTimeline v-if="displayMode == 'timeline'" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
-      <ChatListFolder v-if="displayMode == 'folder'" :filtered="filter != ''" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
+      <ChatListTimeline v-if="displayMode == 'timeline'" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" :generating-chat-ids="generatingChatIds" @select="onSelectChat" @menu="showContextMenu"/>
+      <ChatListFolder v-if="displayMode == 'folder'" :filtered="filter != ''" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" :generating-chat-ids="generatingChatIds" @select="onSelectChat" @menu="showContextMenu"/>
     </div>
     <ContextMenuPlus v-if="showMenu" @close="closeContextMenu" :mouseX="menuX" :mouseY="menuY">
       <div class="item" @click="handleActionClick('rename')">{{ t('common.rename') }}</div>
@@ -43,6 +43,10 @@ const props = defineProps({
   filter: {
     type: String,
     default: '',
+  },
+  generatingChatIds: {
+    type: Array as () => string[],
+    default: (): string[] => [],
   },
 })
 

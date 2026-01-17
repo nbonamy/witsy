@@ -2,7 +2,8 @@
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { defaultCapabilities } from 'multi-llm-ts'
 import { afterEach, beforeAll, beforeEach, expect, test, vi } from 'vitest'
-import Chat from '@screens/Chat.vue'
+import ChatScreen from '@screens/Chat.vue'
+import ChatModel from '@models/chat'
 import { store } from '@services/store'
 import LlmMock from '@tests/mocks/llm'
 import { useBrowserMock, useWindowMock } from '@tests/mocks/window'
@@ -51,13 +52,13 @@ beforeEach(() => {
 })
 
 test('Renders correctly', () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.chat').exists()).toBe(true)
 })
 
 test('Registers window API event listeners', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Verify event listeners were registered
@@ -68,7 +69,7 @@ test('Registers window API event listeners', async () => {
 })
 
 test('Intercepts #settings link clicks', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Create a fake link element
@@ -97,7 +98,7 @@ test('Intercepts #settings link clicks', async () => {
 })
 
 test('Intercepts #retry_without_plugins link and disables tools', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Set up a chat with tools enabled
@@ -129,7 +130,7 @@ test('Intercepts #retry_without_plugins link and disables tools', async () => {
 })
 
 test('Intercepts #retry_without_params link and clears modelOpts', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Set up a chat with model opts
@@ -158,7 +159,7 @@ test('Intercepts #retry_without_params link and clears modelOpts', async () => {
 })
 
 test('onNewChat initializes a new chat', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Add some messages to current chat
@@ -173,7 +174,7 @@ test('onNewChat initializes a new chat', async () => {
 })
 
 test('onNewChat with payload sets prompt', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Spy on chatArea methods
@@ -185,12 +186,13 @@ test('onNewChat with payload sets prompt', async () => {
 })
 
 test('onStopGeneration aborts the controller', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
-  // Create an abort controller
-  wrapper.vm.abortController = new AbortController()
-  const abortSpy = vi.spyOn(wrapper.vm.abortController, 'abort')
+  // Get the active session and set up an abort controller
+  const session = wrapper.vm.activeSession
+  session.abortController = new AbortController()
+  const abortSpy = vi.spyOn(session.abortController, 'abort')
 
   // Trigger stop
   await wrapper.vm.onStopGeneration()
@@ -199,7 +201,7 @@ test('onStopGeneration aborts the controller', async () => {
 })
 
 test('onToggleSidebar calls sidebar hide when visible', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Make sidebar visible first
@@ -215,7 +217,7 @@ test('onToggleSidebar calls sidebar hide when visible', async () => {
 })
 
 test('onToggleSidebar calls sidebar show when hidden', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Hide sidebar first
@@ -231,7 +233,7 @@ test('onToggleSidebar calls sidebar show when hidden', async () => {
 })
 
 test('onRenameChat shows dialog and updates title', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   const chat = wrapper.vm.assistant.chat
@@ -247,7 +249,7 @@ test('onRenameChat shows dialog and updates title', async () => {
 })
 
 test('onRenameChat does nothing when cancelled', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   const chat = wrapper.vm.assistant.chat
@@ -263,7 +265,7 @@ test('onRenameChat does nothing when cancelled', async () => {
 })
 
 test('onDeleteChat shows confirmation dialog', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Mock Dialog.show to cancel
@@ -278,7 +280,7 @@ test('onDeleteChat shows confirmation dialog', async () => {
 })
 
 test('onUpdateAvailable shows dialog', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Mock Dialog.show
@@ -293,7 +295,7 @@ test('onUpdateAvailable shows dialog', async () => {
 })
 
 test('onUpdateAvailable applies update when confirmed', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Mock Dialog.show to confirm
@@ -310,7 +312,7 @@ test('onUpdateAvailable applies update when confirmed', async () => {
 })
 
 test('onRenameFolder shows dialog and updates name', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Setup folder in store
@@ -326,7 +328,7 @@ test('onRenameFolder shows dialog and updates name', async () => {
 })
 
 test('onDeleteFolder shows dialog with options', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Setup folder in store
@@ -348,7 +350,7 @@ test('onDeleteFolder shows dialog with options', async () => {
 })
 
 test('onDeleteFolder confirms and keeps conversations', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Setup folder in store with a chat
@@ -365,7 +367,7 @@ test('onDeleteFolder confirms and keeps conversations', async () => {
 })
 
 test('onDeleteFolder denies and deletes conversations', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Setup folder in store with a chat
@@ -385,7 +387,7 @@ test('onDeleteFolder denies and deletes conversations', async () => {
 })
 
 test('importChat adds chat to history', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   const initialChatCount = store.history.chats.length
@@ -401,7 +403,7 @@ test('importChat adds chat to history', async () => {
 })
 
 test('onMoveChat shows folder selection dialog', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Setup folders
@@ -422,7 +424,7 @@ test('onMoveChat shows folder selection dialog', async () => {
 })
 
 test('onForkChat sets up editor and shows it', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   // Spy on chatEditor.show
@@ -437,7 +439,7 @@ test('onForkChat sets up editor and shows it', async () => {
 })
 
 test('onDeleteMessage shows confirmation dialog', async () => {
-  const wrapper: VueWrapper<any> = mount(Chat, { ...stubTeleport })
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
   await wrapper.vm.$nextTick()
 
   const message = { uuid: 'msg1', role: 'assistant', content: 'test', delete: vi.fn() }
@@ -451,4 +453,119 @@ test('onDeleteMessage shows confirmation dialog', async () => {
   expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
     showCancelButton: true
   }))
+})
+
+// Parallel sessions tests
+
+test('Creates session on mount', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
+  await wrapper.vm.$nextTick()
+
+  // Should have an active session
+  expect(wrapper.vm.activeSessionId).not.toBeNull()
+  expect(wrapper.vm.activeSession).not.toBeNull()
+  expect(wrapper.vm.activeSession.status).toBe('idle')
+})
+
+test('Creates new session on new chat', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
+  await wrapper.vm.$nextTick()
+
+  const firstSessionId = wrapper.vm.activeSessionId
+
+  // Create new chat
+  await wrapper.vm.newChat()
+
+  // Should have a different session
+  expect(wrapper.vm.activeSessionId).not.toBe(firstSessionId)
+  expect(wrapper.vm.activeSession).not.toBeNull()
+})
+
+test('Switches session on select chat', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
+  await wrapper.vm.$nextTick()
+
+  const firstSessionId = wrapper.vm.activeSessionId
+
+  // Create another chat and select it
+  const newChat = new ChatModel()
+  wrapper.vm.onSelectChat(newChat)
+  await wrapper.vm.$nextTick()
+
+  // Should switch to new session
+  expect(wrapper.vm.activeSessionId).toBe(newChat.uuid)
+  expect(wrapper.vm.activeSessionId).not.toBe(firstSessionId)
+})
+
+test('Cleans up idle session when switching', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
+  await wrapper.vm.$nextTick()
+
+  const firstSessionId = wrapper.vm.activeSessionId
+
+  // Switch to another chat
+  const newChat = new ChatModel()
+  wrapper.vm.onSelectChat(newChat)
+  await wrapper.vm.$nextTick()
+
+  // Old idle session should be cleaned up
+  expect(wrapper.vm.sessions[firstSessionId]).toBeUndefined()
+})
+
+test('generatingChatIds returns empty when only active session is generating', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
+  await wrapper.vm.$nextTick()
+
+  // Set active session to generating
+  wrapper.vm.activeSession.status = 'generating'
+
+  // Should return empty array (user already sees streaming)
+  expect(wrapper.vm.generatingChatIds).toEqual([])
+})
+
+test('generatingChatIds returns ids when background session is generating', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
+  await wrapper.vm.$nextTick()
+
+  const firstSessionId = wrapper.vm.activeSessionId
+
+  // Set first session to generating
+  wrapper.vm.sessions[firstSessionId].status = 'generating'
+
+  // Create new chat (switch away)
+  await wrapper.vm.newChat()
+
+  // First session should now show in generatingChatIds
+  expect(wrapper.vm.generatingChatIds).toContain(firstSessionId)
+})
+
+test('setSessionStatus updates session status', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
+  await wrapper.vm.$nextTick()
+
+  const sessionId = wrapper.vm.activeSessionId
+
+  wrapper.vm.setSessionStatus(sessionId, 'generating')
+  expect(wrapper.vm.sessions[sessionId].status).toBe('generating')
+
+  wrapper.vm.setSessionStatus(sessionId, 'idle')
+  expect(wrapper.vm.sessions[sessionId].status).toBe('idle')
+})
+
+test('cleanupSession aborts and removes session', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
+  await wrapper.vm.$nextTick()
+
+  const sessionId = wrapper.vm.activeSessionId
+  const session = wrapper.vm.sessions[sessionId]
+
+  // Set up abort controller
+  session.abortController = new AbortController()
+  const abortSpy = vi.spyOn(session.abortController, 'abort')
+
+  // Cleanup
+  wrapper.vm.cleanupSession(sessionId)
+
+  expect(abortSpy).toHaveBeenCalled()
+  expect(wrapper.vm.sessions[sessionId]).toBeUndefined()
 })

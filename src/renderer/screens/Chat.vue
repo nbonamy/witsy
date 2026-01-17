@@ -1,6 +1,6 @@
 <template>
   <div class="chat split-pane">
-    <ChatSidebar :chat="assistant.chat" @new-chat="onNewChat" @run-agent="onRunAgent" ref="sidebar" />
+    <ChatSidebar :chat="assistant.chat" :generating-chat-ids="generatingChatIds" @new-chat="onNewChat" @run-agent="onRunAgent" ref="sidebar" />
     <ChatArea :chat="assistant.chat" :is-left-most="!isSidebarVisible" ref="chatArea" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop-generation="onStopGeneration" />
     <ChatEditor :chat="assistant.chat" :dialog-title="chatEditorTitle" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
     <CreateAgentRun :title="agent?.name ?? ''" ref="builder" />
@@ -14,6 +14,14 @@ import { LlmChunkContent } from 'multi-llm-ts'
 import { A2APromptOpts, Agent } from 'types/agents'
 import { strDict } from 'types/index'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
+
+export type ChatSessionStatus = 'idle' | 'generating'
+
+export interface ChatSession {
+  assistant: Assistant
+  abortController: AbortController | null
+  status: ChatSessionStatus
+}
 import Chat from '@models/chat'
 import Message from '@models/message'
 import ChatArea from '@components/ChatArea.vue'
@@ -40,7 +48,33 @@ const { onEvent, emitEvent } = useEventBus()
 // init stuff
 const tipsManager = useTipsManager(store)
 const llmManager = LlmFactory.manager(store.config)
-const assistant = ref(new Assistant(store.config))
+
+// session management for parallel chats
+const sessions = ref<Record<string, ChatSession>>({})
+const activeSessionId = ref<string | null>(null)
+
+// computed active session and assistant for template binding
+const activeSession = computed<ChatSession | null>(() => {
+  if (!activeSessionId.value) return null
+  return sessions.value[activeSessionId.value] ?? null
+})
+const assistant = computed(() => activeSession.value?.assistant ?? new Assistant(store.config))
+
+// expose generating chat IDs for sidebar indicator
+const generatingChatIds = computed(() => {
+  const ids: string[] = []
+  for (const chatId in sessions.value) {
+    if (sessions.value[chatId].status === 'generating') {
+      ids.push(chatId)
+    }
+  }
+  // if only the active session is generating, no need for spinner (user sees streaming)
+  if (ids.length === 1 && ids[0] === activeSessionId.value) {
+    return []
+  }
+  return ids
+})
+
 const chatArea= ref<typeof ChatArea>(null)
 const chatEditor= ref<typeof ChatEditor>(null)
 const sidebar= ref<typeof ChatSidebar>(null)
@@ -51,9 +85,54 @@ const builder = ref<typeof CreateAgentRun>(null)
 const picker = ref<typeof AgentPicker>(null)
 const agent = ref<Agent|null>(null)
 
-let abortController: AbortController | null = null
-
 const isSidebarVisible = computed(() => sidebar.value?.isVisible() ?? true)
+
+// session management helpers
+const createSession = (chat: Chat): ChatSession => {
+  const newAssistant = new Assistant(store.config)
+  newAssistant.setChat(chat)
+  return {
+    assistant: newAssistant,
+    abortController: null,
+    status: 'idle',
+  }
+}
+
+const setActiveSession = (chatId: string, chat: Chat): ChatSession => {
+  // cleanup old idle session if switching away
+  if (activeSessionId.value && activeSessionId.value !== chatId) {
+    const oldSession = sessions.value[activeSessionId.value]
+    if (oldSession?.status === 'idle') {
+      delete sessions.value[activeSessionId.value]
+    }
+  }
+
+  // get or create session
+  let session = sessions.value[chatId]
+  if (!session) {
+    session = createSession(chat)
+    sessions.value[chatId] = session
+  }
+
+  // set active
+  activeSessionId.value = chatId
+  return session
+}
+
+const cleanupSession = (chatId: string) => {
+  const session = sessions.value[chatId]
+  if (session) {
+    session.abortController?.abort()
+    delete sessions.value[chatId]
+  }
+}
+
+const setSessionStatus = (chatId: string, status: ChatSessionStatus) => {
+  const session = sessions.value[chatId]
+  if (session) {
+    session.status = status
+  }
+}
 
 const props = defineProps({
   extra: Object
@@ -162,7 +241,11 @@ onMounted(() => {
 
 const onNewChat = async (payload?: any) => {
   const { prompt, attachments, submit } = payload || {}
-  assistant.value.initChat()
+
+  // create a new chat and session
+  const newChat = new Chat()
+  const session = setActiveSession(newChat.uuid, newChat)
+
   updateChatEngineModel()
   if (prompt) chatArea.value?.setPrompt(prompt)
   if (attachments) chatArea.value?.attach(attachments)
@@ -182,8 +265,8 @@ const importChat = (chatData: any) => {
   // Add to history (no folder)
   store.addChat(chat)
 
-  // Load the chat
-  assistant.value.setChat(chat)
+  // Load the chat via session
+  setActiveSession(chat.uuid, chat)
   updateChatEngineModel()
 
   // Emit event
@@ -191,12 +274,15 @@ const importChat = (chatData: any) => {
 }
 
 const onNewChatInFolder = (folderId: string) => {
-  
-  // get
+
+  // get folder and create new chat
   const folder = store.history.folders.find((f) => f.id === folderId)
-  const chat = assistant.value.initChat()
-  
-  // engine and model 
+  const chat = new Chat()
+
+  // create session for this chat
+  setActiveSession(chat.uuid, chat)
+
+  // engine and model
   if (folder.defaults) {
     llmManager.setChatModel(folder.defaults.engine, folder.defaults.model)
   }
@@ -218,7 +304,6 @@ const onNewChatInFolder = (folderId: string) => {
   // init
   chat.initTitle()
   store.addChat(chat, folderId)
-  onSelectChat(chat)
 
   // expert
   if (folder.defaults?.expert) {
@@ -239,10 +324,8 @@ const updateChatEngineModel = () => {
 }
 
 const onSelectChat = (chat: Chat) => {
-  // create a new assistant to allow parallel querying
-  // this will be garbage collected anyway
-  assistant.value = new Assistant(store.config)
-  assistant.value.setChat(chat)
+  // switch to session for this chat (creates if needed, cleans up old idle session)
+  setActiveSession(chat.uuid, chat)
   nextTick(() => {
     emitEvent('new-llm-chunk', null)
   })
@@ -345,6 +428,9 @@ const deleteChats = (chatIds: string[]) => {
   // fist remove from chat list
   for (const chatId of chatIds) {
 
+    // cleanup session (aborts if generating)
+    cleanupSession(chatId)
+
     // remove from chats list
     let index = store.history.chats.findIndex((c) => c.uuid === chatId)
     if (index != -1) {
@@ -358,8 +444,8 @@ const deleteChats = (chatIds: string[]) => {
     }
   }
 
-  // if current chat
-  if (chatIds.includes(assistant.value.chat?.uuid)) {
+  // if current chat was deleted, create new chat
+  if (chatIds.includes(activeSessionId.value)) {
     emitEvent('new-chat', null)
   }
 
@@ -484,18 +570,23 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // deconstruct params
   const { instructions, prompt, attachments, docrepos, expert, execMode } = params
 
+  // capture the current session for this generation (allows parallel chats)
+  const session = activeSession.value
+  if (!session) return
+  const sessionChatId = session.assistant.chat.uuid
+
   // if the chat is still in an agentic context then run the agent
-  const agent = isAgentConversation(assistant.value.chat)
+  const agent = isAgentConversation(session.assistant.chat)
   if (agent) {
     // For A2A continuation, pass the prompt in a dict
     // The A2A executor will use agent.steps[0].prompt as template, or use the prompt value directly if no template
-    runAgent(agent, { prompt }, assistant.value.chat.lastMessage()?.a2aContext)
+    runAgent(agent, { prompt }, session.assistant.chat.lastMessage()?.a2aContext)
     return
   }
 
   // make sure we can have an llm
-  assistant.value.initLlm(store.config.llm.engine)
-  if (!assistant.value.hasLlm()) {
+  session.assistant.initLlm(store.config.llm.engine)
+  if (!session.assistant.hasLlm()) {
     const rc = await Dialog.show({
       title: t('prompt.noEngineAvailable.title'),
       text: t('prompt.noEngineAvailable.text'),
@@ -523,41 +614,46 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   // we will need that (function because chat may be updated later)
   const isUsingComputer = () => {
-    return llmManager.isComputerUseModel(assistant.value.chat.engine, assistant.value.chat.model)
+    return llmManager.isComputerUseModel(session.assistant.chat.engine, session.assistant.chat.model)
   }
 
-  // create abort controller for this prompt
-  abortController = new AbortController()
+  // create abort controller for this session
+  session.abortController = new AbortController()
+  setSessionStatus(sessionChatId, 'generating')
 
   // prompt
-  const rc = await assistant.value.prompt(prompt, {
-    model: assistant.value.chat.model,
-    instructions: instructions || assistant.value.chat.instructions,
+  const rc = await session.assistant.prompt(prompt, {
+    model: session.assistant.chat.model,
+    instructions: instructions || session.assistant.chat.instructions,
     attachments: attachments || [],
     docrepos: docrepos || null,
     expert: expert || null,
     execMode: execMode || 'prompt',
-    abortSignal: abortController.signal,
+    abortSignal: session.abortController.signal,
   }, (chunk) => {
-  
-    // if we get a chunk, emit it
-    emitEvent('new-llm-chunk', chunk)
+
+    // only emit chunk events for the active session
+    if (sessionChatId === activeSessionId.value) {
+      emitEvent('new-llm-chunk', chunk)
+    }
 
     // computer use
     if (isUsingComputer()) {
       window.api.computer.updateStatus(chunk)
     }
-  
+
   }, async (event: GenerationEvent) => {
 
     if (event === 'before_generation') {
 
-      // not very nice but gets the message list scrolling
-      emitEvent('new-llm-chunk', {
-        type: 'content',
-        text: '',
-        done: false,
-      } as LlmChunkContent)
+      // not very nice but gets the message list scrolling (only for active session)
+      if (sessionChatId === activeSessionId.value) {
+        emitEvent('new-llm-chunk', {
+          type: 'content',
+          text: '',
+          done: false,
+        } as LlmChunkContent)
+      }
 
       // for computer use
       if (isUsingComputer()) {
@@ -565,9 +661,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
       }
 
       // make sure the chat is part of history
-      if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
-        assistant.value.chat.initTitle()
-        store.addChat(assistant.value.chat)
+      if (!session.assistant.chat.temporary && !store.history.chats.find((c) => c.uuid === session.assistant.chat.uuid)) {
+        session.assistant.chat.initTitle()
+        store.addChat(session.assistant.chat)
       }
 
     } else if (event === 'plugins_disabled') {
@@ -582,9 +678,15 @@ const onSendPrompt = async (params: SendPromptParams) => {
     window.api.computer.close()
   }
 
-  // done with deep research
-  if (rc === 'success') {
+  // done with deep research (only for active session)
+  if (rc === 'success' && sessionChatId === activeSessionId.value) {
     chatArea.value?.setDeepResearch(false)
+  }
+
+  // generation complete - update status and cleanup if not active
+  setSessionStatus(sessionChatId, 'idle')
+  if (sessionChatId !== activeSessionId.value) {
+    delete sessions.value[sessionChatId]
   }
 
   // save
@@ -601,7 +703,6 @@ const onRunAgent = async (agentId?: string) => {
     agent.value = await picker.value.pick()
   }
 
-
   // required
   if (!agent.value) {
     return
@@ -609,8 +710,9 @@ const onRunAgent = async (agentId?: string) => {
 
   builder.value.show(agent.value, {}, async (values: Record<string, string>) => {
 
-    // we need a new chat
-    assistant.value.initChat()
+    // we need a new chat and session
+    const newChat = new Chat()
+    setActiveSession(newChat.uuid, newChat)
     updateChatEngineModel()
 
     // and run it
@@ -622,8 +724,14 @@ const onRunAgent = async (agentId?: string) => {
 
 const runAgent = async (agent: Agent, values: Record<string, string>, a2aContext?: A2APromptOpts) => {
 
-  // create abort controller for this agent run
-  abortController = new AbortController()
+  // capture the current session for this generation (allows parallel chats)
+  const session = activeSession.value
+  if (!session) return
+  const sessionChatId = session.assistant.chat.uuid
+
+  // create abort controller for this session
+  session.abortController = new AbortController()
+  setSessionStatus(sessionChatId, 'generating')
 
   // create executor for this agent
   const executor = createAgentExecutor(store.config, store.workspace.uuid, agent)
@@ -631,25 +739,27 @@ const runAgent = async (agent: Agent, values: Record<string, string>, a2aContext
   await executor.run('manual', values, {
     streaming: true,
     ephemeral: false,
-    model: assistant.value.chat.model,
-    chat: assistant.value.chat,
+    model: session.assistant.chat.model,
+    chat: session.assistant.chat,
     a2aContext: a2aContext,
-    abortSignal: abortController.signal,
+    abortSignal: session.abortController.signal,
   }, async (event: GenerationEvent) => {
 
     if (event === 'before_generation') {
 
-      // not very nice but gets the message list scrolling
-      emitEvent('new-llm-chunk', {
-        type: 'content',
-        text: '',
-        done: false,
-      } as LlmChunkContent)
+      // not very nice but gets the message list scrolling (only for active session)
+      if (sessionChatId === activeSessionId.value) {
+        emitEvent('new-llm-chunk', {
+          type: 'content',
+          text: '',
+          done: false,
+        } as LlmChunkContent)
+      }
 
       // make sure the chat is part of history
-      if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
-        assistant.value.chat.initTitle()
-        store.addChat(assistant.value.chat)
+      if (!session.assistant.chat.temporary && !store.history.chats.find((c) => c.uuid === session.assistant.chat.uuid)) {
+        session.assistant.chat.initTitle()
+        store.addChat(session.assistant.chat)
       }
 
     } else if (event === 'before_title') {
@@ -657,6 +767,12 @@ const runAgent = async (agent: Agent, values: Record<string, string>, a2aContext
     }
 
   })
+
+  // generation complete - update status and cleanup if not active
+  setSessionStatus(sessionChatId, 'idle')
+  if (sessionChatId !== activeSessionId.value) {
+    delete sessions.value[sessionChatId]
+  }
 
   // save
   store.saveHistory()
@@ -748,7 +864,7 @@ const onResendAfterEdit = async (payload: { message: Message, newContent: string
 }
 
 const onStopGeneration = async () => {
-  abortController?.abort()
+  activeSession.value?.abortController?.abort()
 }
 
 const onUpdateAvailable = () => {
