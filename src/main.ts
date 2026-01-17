@@ -19,7 +19,7 @@ import PromptAnywhere from './main/automations/anywhere';
 import Automator from './main/automations/automator';
 import Commander from './main/automations/commander';
 import ReadAloud from './main/automations/readaloud';
-import Transcriber from './main/automations/transcriber';
+import Dictation from './main/automations/dictation';
 import AutoUpdater from './main/autoupdate';
 import Mcp from './main/mcp';
 import MemoryManager from './main/memory';
@@ -47,12 +47,15 @@ import * as shortcuts from './main/shortcuts';
 import * as webview from './main/webview';
 import * as window from './main/window';
 import * as workspace from './main/workspace';
+import KeyMonitor from './main/keymonitor';
 
 let mcp: Mcp;
 let scheduler: Scheduler;
 let autoUpdater: AutoUpdater;
 let docMonitor: DocumentMonitor;
 let trayIconManager: TrayIconManager;
+let keyMonitor: KeyMonitor;
+let dictation: Dictation;
 
 // first-thing: single instance
 // on darwin this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -131,13 +134,14 @@ const registerShortcuts = () => {
     chat: () => window.openMainWindow({ queryParams: { view: 'chat' } }),
     command: () => Commander.initCommand(app),
     readaloud: () => ReadAloud.read(app),
-    dictation: Transcriber.initTranscription,
+    dictation: Dictation.initDictation,
     audioBooth: window.openAudioBooth,
     scratchpad: () => window.openMainWindow({ queryParams: { view: 'scratchpad' } }),
     realtime: window.openRealtimeChatWindow,
     studio: window.openDesignStudioWindow,
     forge: window.openAgentForgeWindow,
   });
+  keyMonitor?.reload();
 }
 
 // quit at all costs
@@ -243,6 +247,24 @@ app.whenReady().then(async () => {
 
   // register shortcuts
   registerShortcuts();
+
+  // start key monitor for native shortcuts (macOS/Windows only)
+  if (KeyMonitor.isPlatformSupported()) {
+    dictation = new Dictation(app)
+    keyMonitor = new KeyMonitor(app, {
+      prompt: { onDown: () => {}, onUp: PromptAnywhere.open },
+      chat: { onDown: () => {}, onUp: () => window.openMainWindow({ queryParams: { view: 'chat' } }) },
+      command: { onDown: () => {}, onUp: () => Commander.initCommand(app) },
+      readaloud: { onDown: () => {}, onUp: () => ReadAloud.read(app) },
+      dictation: { onDown: () => dictation.onShortcutDown(), onUp: () => dictation.onShortcutUp() },
+      audioBooth: { onDown: () => {}, onUp: window.openAudioBooth },
+      scratchpad: { onDown: () => {}, onUp: () => window.openMainWindow({ queryParams: { view: 'scratchpad' } }) },
+      realtime: { onDown: () => {}, onUp: window.openRealtimeChatWindow },
+      studio: { onDown: () => {}, onUp: window.openDesignStudioWindow },
+      forge: { onDown: () => {}, onUp: window.openAgentForgeWindow },
+    });
+    keyMonitor.start();
+  }
 
   // start mcp
   await fixPath()
@@ -384,6 +406,7 @@ app.on('will-quit', () => {
   try { Menu.setApplicationMenu(null)  } catch { /* empty */ }
   try { trayIconManager.destroy();  } catch { /* empty */ }
   try { shortcuts.unregisterShortcuts(); } catch { /* empty */ }
+  try { keyMonitor?.stop(); } catch { /* empty */ }
   try { docMonitor.stop(); } catch { /* empty */ }
   try { mcp?.shutdown(); } catch { /* empty */ }
 })

@@ -873,7 +873,8 @@
     }
   },
   "dictation": {
-    "hint": "Space to stop dictation - Esc to Cancel",
+    "hintHold": "Release to stop dictation",
+    "hintTap": "Space to stop dictation - Esc to Cancel",
     "noTargetError": "@:{'common.appName'} was not able to identify a target application for dictation"
   },
   "docRepo": {
@@ -3038,6 +3039,7 @@
       "clearAll": "Clear all shortcuts",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
+      "gotoVoice": "Go to Voice > Quick Dictation to configure",
       "mainWindow": "@:{'tray.menu.mainWindow'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
@@ -3090,12 +3092,20 @@
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
       "quickDictation": {
+        "shortcutKey": "Shortcut Key",
+        "nativeShortcutsHint": "In addition to regular shortcuts, you can use the following \"key-less\" shortcuts:<ul><li>{combos}</li><li>{single}</li></ul>",
+        "linuxPermissionWarning": "On Linux, native shortcuts require access to input devices. Run <code>sudo usermod -a -G input $USER</code> then log out and back in.",
+        "activation": "Activation",
+        "activationHelp": "Tap the shortcut again (or the Space key) to stop the recording and transcribe.<br/>Tap Escape to cancel.",
+        "activationTap": "Tap",
+        "activationDoubleTap": "Double Tap",
+        "activationHold": "Hold (Push-to-Talk)",
+        "options": "Options",
         "appearance": "Appearance",
         "appearanceBottom": "Bottom of screen",
         "appearanceNotch": "Notch",
         "appearanceTop": "Top of screen",
-        "copyToClipboard": "Automatically copy dictated text to clipboard",
-        "escapeHint": "Press Space or Escape to stop recording and transcribe.<br/>Double-press Escape to cancel."
+        "copyToClipboard": "Automatically copy dictated text to clipboard"
       },
       "selectModel": "Select a model",
       "silenceDetection": "Silence Detection",

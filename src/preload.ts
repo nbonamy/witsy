@@ -6,7 +6,7 @@ import { LlmChunk, LlmTool } from 'multi-llm-ts';
 import * as IPC from './ipc_consts';
 import { Size } from './main/computer';
 import Agent from './models/agent';
-import { Command, ComputerAction, Expert, ExpertCategory, ExternalApp, LocalSearchResponse, MainWindowMode, NetworkRequest, OpenSettingsPayload, anyDict, strDict } from './types';
+import { Command, ComputerAction, Expert, ExpertCategory, ExternalApp, LocalSearchResponse, MainWindowMode, NativeShortcut, NetworkRequest, OpenSettingsPayload, anyDict, strDict } from './types';
 import { AgentRun } from './types/agents';
 import { Application, RunCommandParams } from './types/automation';
 import { Configuration } from './types/config';
@@ -100,6 +100,8 @@ contextBridge.exposeInMainWorld(
       writeImage: (path: string): boolean => { return ipcRenderer.sendSync(IPC.CLIPBOARD.WRITE_IMAGE, path) },
     },
     shortcuts: {
+      areNativeShortcutsSupported: (): boolean => { return ipcRenderer.sendSync(IPC.SHORTCUTS.IS_NATIVE_SUPPORTED) },
+      isValidNativeShortcut: (shortcut: NativeShortcut): boolean => { return ipcRenderer.sendSync(IPC.SHORTCUTS.IS_VALID_NATIVE, shortcut) },
       register: (): void => { return ipcRenderer.send(IPC.SHORTCUTS.REGISTER) },
       unregister: (): void => { return ipcRenderer.send(IPC.SHORTCUTS.UNREGISTER) },
     },

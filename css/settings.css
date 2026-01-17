@@ -14,7 +14,7 @@
 
 }
 
-.settings, .settings ul, .settings ul li {
+.settings, .settings .sp-sidebar ul, .settings  .sp-sidebar ul li {
   margin: 0;
   padding: 0;
 }
@@ -23,7 +23,7 @@
   flex-basis: 16rem;
 }
 
-.settings ul {
+.settings .sp-sidebar ul {
   
   display: flex;
   flex-direction: column;

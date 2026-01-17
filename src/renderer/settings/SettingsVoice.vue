@@ -11,7 +11,7 @@
               <div v-if="item.type === 'header'" class="md-master-list-header">
                 {{ item.label }}
               </div>
-              <div v-else class="md-master-list-item" :class="{ selected: current == item.id }" @click="select(item)">
+              <div v-else class="md-master-list-item" :class="{ selected: current == item.id, [item.class]: item.class }" @click="select(item)">
                 <component :is="item.icon" class="logo" />
                 {{ item.label }}
               </div>
@@ -42,7 +42,7 @@ const available = computed(() => {
     { id: 'sttHeader', type: 'header', label: t('settings.voice.tabs.speechToText') },
     { id: 'sttModel', type: 'item', label: t('settings.voice.tabs.model'), icon: BoxIcon },
     { id: 'sttConfiguration', type: 'item', label: t('settings.voice.tabs.configuration'), icon: SettingsIcon },
-    { id: 'quickDictation', type: 'item', label: t('settings.voice.tabs.quickDictation'), icon: KeyboardIcon },
+    { id: 'quickDictation', type: 'item', label: t('settings.voice.tabs.quickDictation'), icon: KeyboardIcon, class: 'quick-dictation' },
     { id: 'ttsHeader', type: 'header', label: t('settings.voice.tabs.textToSpeech') },
     { id: 'ttsModel', type: 'item', label: t('settings.voice.tabs.model'), icon: BoxIcon },
   ]

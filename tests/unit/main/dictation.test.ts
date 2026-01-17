@@ -1,6 +1,6 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
-import Transcriber from '@main/automations/transcriber'
+import Dictation from '@main/automations/dictation'
 import Automator from '@main/automations/automator'
 import * as window from '@main/window'
 
@@ -22,12 +22,12 @@ beforeEach(() => {
 })
 
 test('Open dictation window', async () => {
-  await Transcriber.initTranscription()
+  await Dictation.initDictation()
   expect(window.openDictationWindow).toHaveBeenCalledWith({ sourceApp: expect.anything() })
 })
 
 test('Insert transcription', async () => {
-  await Transcriber.insertTranscription('Hello, World!')
+  await Dictation.insertTranscription('Hello, World!')
   expect(window.mainWindow.minimize).toHaveBeenCalled()
   expect(window.releaseFocus).toHaveBeenCalled()
   expect(Automator.prototype.pasteText).toHaveBeenLastCalledWith('Hello, World!')

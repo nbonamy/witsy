@@ -81,6 +81,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       apply: vi.fn(),
     },
     shortcuts: {
+      areNativeShortcutsSupported: vi.fn(() => true),
+      isValidNativeShortcut: vi.fn(() => true),
       register: vi.fn(),
       unregister: vi.fn(),
     },
@@ -577,6 +579,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       transcribe: vi.fn(async () => ({ text: 'transcribed' })),
     },
     transcribe: {
+      appleCli: vi.fn(async () => ({ text: 'apple_cli_transcribed' })),
       insert: vi.fn(),
     },
     memory: {

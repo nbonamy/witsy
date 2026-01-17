@@ -36,7 +36,7 @@
       </div>
       <div class="form-field">
         <label>{{ t('settings.shortcuts.dictation') }}</label>
-        <InputShortcut v-model="dictation" @change="save" />
+        <a href="#" class="link" @click.prevent="goToVoice">{{ t('settings.shortcuts.gotoVoice') }}</a>
       </div>
       <div class="form-field">
         <label>{{ t('settings.shortcuts.audioBooth') }}</label>
@@ -56,17 +56,19 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { store } from '@services/store'
 import { t } from '@services/i18n'
+import useEventBus from '@composables/event_bus'
 import InputShortcut from '@components/InputShortcut.vue'
+
+const { emitEvent } = useEventBus()
 
 const prompt = ref(null)
 const chat = ref(null)
 const scratchpad = ref(null)
 const command = ref(null)
 const readaloud = ref(null)
-const dictation = ref(null)
 const audioBooth = ref(null)
 const realtime = ref(null)
 const studio = ref(null)
@@ -77,10 +79,15 @@ const load = () => {
   scratchpad.value = store.config.shortcuts.scratchpad
   command.value = store.config.shortcuts.command
   readaloud.value = store.config.shortcuts.readaloud
-  dictation.value = store.config.shortcuts.dictation
   audioBooth.value = store.config.shortcuts.audioBooth
   realtime.value = store.config.shortcuts.realtime
   studio.value = store.config.shortcuts.studio
+}
+
+const goToVoice = async () => {
+  emitEvent('show-settings-tab', 'voice')
+  await nextTick()
+  document.querySelector<HTMLElement>(`.settings .quick-dictation`)?.click()
 }
 
 const clearAll = () => {
@@ -89,7 +96,6 @@ const clearAll = () => {
   scratchpad.value = null
   command.value = null
   readaloud.value = null
-  dictation.value = null
   audioBooth.value = null
   realtime.value = null
   studio.value = null
@@ -102,7 +108,6 @@ const save = () => {
   store.config.shortcuts.scratchpad = scratchpad.value
   store.config.shortcuts.command = command.value
   store.config.shortcuts.readaloud = readaloud.value
-  store.config.shortcuts.dictation = dictation.value
   store.config.shortcuts.audioBooth = audioBooth.value
   store.config.shortcuts.realtime = realtime.value
   store.config.shortcuts.studio = studio.value
@@ -113,7 +118,6 @@ const save = () => {
 defineExpose({ load })
 
 </script>
-
 
 <style scoped>
 
@@ -149,14 +153,18 @@ defineExpose({ load })
       gap: 0.5rem;
     }
 
-    button {
-      height: 32px;
-    }
-
     button.clear-all {
       width: auto !important;
       padding: 0.5rem 0.75rem;
       white-space: nowrap;
+    }
+
+    a.link {
+      color: var(--highlight-color);
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

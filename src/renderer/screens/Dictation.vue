@@ -23,7 +23,7 @@
       <CircleIcon v-if="state === 'recording'" class="recording" :size="16" color="red" fill="red" />
       <CircleIcon v-else-if="state === 'idle' || state === 'initializing'" class="idle" :size="16" :color="state === 'initializing' ? 'orange' : iconColor" :fill="state === 'initializing' ? 'orange' : 'transparent'" />
     </div>
-    <div class="hint">{{ t('dictation.hint') }}</div>
+    <div class="hint">{{ store.config.stt.quickDictation.activation === 'hold' ? t('dictation.hintHold') : t('dictation.hintTap') }}</div>
 
     <!-- Overlay with action buttons -->
     <div class="actions-overlay" v-if="state === 'recording'">

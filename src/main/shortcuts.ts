@@ -1,9 +1,12 @@
 
 import { App, globalShortcut } from 'electron';
 import { ShortcutCallbacks } from 'types/automation';
-import { Shortcut, disabledShortcutKey } from 'types/index';
+import { ElectronShortcut, Shortcut, disabledShortcutKey } from 'types/index';
 import { loadSettings } from './config';
 
+const isElectronShortcut = (shortcut: Shortcut): shortcut is ElectronShortcut => {
+  return shortcut.type !== 'native';
+}
 
 export const unregisterShortcuts = () => {
   console.info('Unregistering shortcuts')
@@ -51,7 +54,12 @@ const keyToAccelerator = (key: string): string => {
 export const shortcutAccelerator = (shortcut?: Shortcut|null): string => {
 
   // null check
-  if (!shortcut || shortcut.key === disabledShortcutKey) { 
+  if (!shortcut || shortcut.key === disabledShortcutKey) {
+    return null
+  }
+
+  // native shortcuts are handled by KeyMonitor, not Electron
+  if (!isElectronShortcut(shortcut)) {
     return null
   }
 

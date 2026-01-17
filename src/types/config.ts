@@ -224,6 +224,8 @@ export type STTVocabulary = {
 
 //export type SilenceAction = 'nothing' | 'stop_transcribe' | 'stop_execute' | 'execute_continue'
 
+export type ShortcutActivation = 'tap' | 'doubleTap' | 'hold'
+
 export type STTConfig = {
   locale: string
   vocabulary: STTVocabulary[]
@@ -255,6 +257,7 @@ export type STTConfig = {
   quickDictation: {
     appearance: 'bottom' | 'top' | 'notch'
     copyToClipboard: boolean
+    activation: ShortcutActivation
   }
   //silenceAction: SilenceAction
 }

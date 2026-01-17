@@ -8,7 +8,7 @@ import * as config from '@main/config'
 import PromptAnywhere from '@main/automations/anywhere'
 import Commander from '@main/automations/commander'
 import ReadAloud from '@main/automations/readaloud'
-import Transcriber from '@main/automations/transcriber'
+import Dictation from '@main/automations/dictation'
 
 // Mock window module
 vi.mock('@main/window', () => ({
@@ -49,9 +49,9 @@ vi.mock('@main/automations/readaloud', () => ({
   },
 }))
 
-vi.mock('@main/automations/transcriber', () => ({
+vi.mock('@main/automations/dictation', () => ({
   default: {
-    initTranscription: vi.fn().mockResolvedValue(undefined),
+    initDictation: vi.fn().mockResolvedValue(undefined),
   },
 }))
 
@@ -295,7 +295,7 @@ describe('HTTP Triggers', () => {
     expect(mockRes.end).toHaveBeenCalledWith(JSON.stringify({ success: true, action: 'command' }))
   })
 
-  test('transcribe endpoint should trigger Transcriber', async () => {
+  test('transcribe endpoint should trigger Dictation', async () => {
     installHttpTriggers(httpServer, mockApp)
 
     const handler = mockRegister.mock.calls.find(
@@ -310,7 +310,7 @@ describe('HTTP Triggers', () => {
 
     await handler(mockReq, mockRes, new URL('http://localhost:8090/api/transcribe'))
 
-    expect(Transcriber.initTranscription).toHaveBeenCalled()
+    expect(Dictation.initDictation).toHaveBeenCalled()
     expect(mockRes.end).toHaveBeenCalledWith(JSON.stringify({ success: true, action: 'transcribe' }))
   })
 
