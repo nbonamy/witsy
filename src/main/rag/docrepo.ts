@@ -584,7 +584,8 @@ export default class DocumentRepository {
 
     // Process modified documents
     for (const modifiedDoc of modified) {
-      console.log(`[rag] Reprocessing modified document: ${modifiedDoc.origin}`)
+      
+      //console.log(`[rag] Reprocessing modified document: ${modifiedDoc.origin}`)
       
       try {
         // Re-add the document to update its content in the database
@@ -617,7 +618,9 @@ export default class DocumentRepository {
           }
         }
       } catch (error) {
-        console.error(`[rag] Error reprocessing modified document ${modifiedDoc.origin}:`, error)
+        if (!fs.existsSync(modifiedDoc.origin)) {
+          console.error(`[rag] Error reprocessing modified document ${modifiedDoc.origin}:`, error)
+        }
       }
     }
 
