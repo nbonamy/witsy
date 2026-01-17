@@ -26,6 +26,10 @@
       <input type="checkbox" id="xai-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
       <label for="xai-disable-tools">{{  t('settings.engines.disableTools') }}</label>
     </div>
+    <div class="form-field">
+      <label>{{ t('settings.engines.requestCooldown') }}</label>
+      <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
+    </div>
   </div>
 </template>
 
@@ -43,6 +47,7 @@ import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 
 const apiKey = ref(null)
 const disableTools = ref(false)
+const requestCooldown = ref<number>(null)
 const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
 const chat_models = ref<ChatModel[]>([])
@@ -60,6 +65,7 @@ const load = () => {
   chat_model.value = store.config.engines.xai?.model?.chat || ''
   vision_model.value = store.config.engines.xai?.model?.vision || ''
   disableTools.value = store.config.engines.xai?.disableTools || false
+  requestCooldown.value = store.config.engines.xai?.requestCooldown || null
 }
 
 const getModels = async (): Promise<boolean> => {
@@ -93,6 +99,7 @@ const save = () => {
   store.config.engines.xai.model.chat = chat_model.value
   store.config.engines.xai.model.vision = vision_model.value
   store.config.engines.xai.disableTools = disableTools.value
+  store.config.engines.xai.requestCooldown = requestCooldown.value || undefined
   store.saveSettings()
 }
 

@@ -28,6 +28,10 @@
       <input type="checkbox" id="ollama-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
       <label for="ollama-disable-tools">{{ t('settings.engines.disableTools') }}</label>
     </div>
+    <div class="form-field">
+      <label>{{ t('settings.engines.requestCooldown') }}</label>
+      <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
+    </div>
   </div>
 </template>
 
@@ -49,6 +53,7 @@ import { store } from '@services/store'
 const baseURL = ref(null)
 const keepAlive = ref('')
 const disableTools = ref(false)
+const requestCooldown = ref<number>(null)
 const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
 const chat_models = ref<ChatModel[]>([])
@@ -68,6 +73,7 @@ const load = () => {
   vision_model.value = store.config.engines.ollama?.model?.vision || ''
   keepAlive.value = store.config.engines.ollama?.keepAlive || ''
   disableTools.value = store.config.engines.ollama?.disableTools || false
+  requestCooldown.value = store.config.engines.ollama?.requestCooldown || null
 }
 
 const onDelete = () => {
@@ -119,6 +125,7 @@ const save = () => {
   store.config.engines.ollama.model.vision = vision_model.value
   store.config.engines.ollama.keepAlive = keepAlive.value
   store.config.engines.ollama.disableTools = disableTools.value
+  store.config.engines.ollama.requestCooldown = requestCooldown.value || undefined
   store.saveSettings()
 }
 
