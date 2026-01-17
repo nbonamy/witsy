@@ -85,7 +85,7 @@ const load = () => {
 }
 
 const goToVoice = async () => {
-  emitEvent('show-settings-tab', 'voice')
+  window.api.settings.open({ initialTab: 'voice' })
   await nextTick()
   document.querySelector<HTMLElement>(`.settings .quick-dictation`)?.click()
 }
