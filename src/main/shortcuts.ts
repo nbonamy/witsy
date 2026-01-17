@@ -92,7 +92,7 @@ const registerShortcut = (name: string, shortcut: Shortcut, callback: () => void
   }
 
   // debug
-  console.debug('[scut] Registering shortcut', shortcut, accelerator)
+  console.debug('[scut] Registering shortcut', name, accelerator)
 
   // do it
   try {
