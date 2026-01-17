@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.4.1] - WIP
 
 ### Added
-- More Quick dictation options and shortcuts
+- More Quick dictation options and keyboard shortcuts
 - CLI port persistence (saves port when using -p or /port command)
 - macOS permission options in Settings Advanced
 
