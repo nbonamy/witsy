@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
 - N/A
 
 ### Fixed
-- N/A
+- Quick dictation CPU usage
 
 ### Removed
 - N/A
