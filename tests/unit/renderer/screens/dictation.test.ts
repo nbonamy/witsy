@@ -73,8 +73,16 @@ afterEach(() => {
   vi.useRealTimers()
 })
 
+// Helper to mount with isVisible = true (content is v-if="isVisible")
+const mountDictation = async (): Promise<VueWrapper<any>> => {
+  const wrapper = mount(Dictation)
+  wrapper.vm.isVisible = true
+  await wrapper.vm.$nextTick()
+  return wrapper
+}
+
 test('Renders correctly', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.dictation').exists()).toBe(true)
   expect(wrapper.find('.app-info').exists()).toBe(true)
@@ -84,13 +92,13 @@ test('Renders correctly', async () => {
 })
 
 test('Initial state is idle', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   expect(wrapper.vm.state).toBe('idle')
   expect(wrapper.find('.hint').exists()).toBe(true)
 })
 
 test('Shows hint when recording', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'recording'
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.hint').exists()).toBe(true)
@@ -98,14 +106,14 @@ test('Shows hint when recording', async () => {
 })
 
 test('Shows recording indicator when recording', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'recording'
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.status .recording').exists()).toBe(true)
 })
 
 test('Shows processing state', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'processing'
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.processing').exists()).toBe(true)
@@ -113,7 +121,7 @@ test('Shows processing state', async () => {
 })
 
 test('Space key stops and transcribes when recording', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'recording'
   await wrapper.vm.$nextTick()
 
@@ -125,7 +133,7 @@ test('Space key stops and transcribes when recording', async () => {
 })
 
 test('Space key does nothing when not recording', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'idle'
   await wrapper.vm.$nextTick()
 
@@ -136,7 +144,7 @@ test('Space key does nothing when not recording', async () => {
 })
 
 test('Escape key stops and transcribes when recording', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'recording'
   await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
@@ -148,7 +156,7 @@ test('Escape key stops and transcribes when recording', async () => {
 })
 
 test('Escape closes window when idle', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'idle'
   await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
@@ -156,7 +164,7 @@ test('Escape closes window when idle', async () => {
 })
 
 test('Escape closes window when initializing', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'initializing'
   await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
@@ -164,28 +172,28 @@ test('Escape closes window when initializing', async () => {
 })
 
 test('Notch appearance adds notch class', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.appearance = 'notch'
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.dictation.notch').exists()).toBe(true)
 })
 
 test('Bottom appearance does not add notch class', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.appearance = 'bottom'
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.dictation.notch').exists()).toBe(false)
 })
 
 test('Top appearance does not add notch class', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.appearance = 'top'
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.dictation.notch').exists()).toBe(false)
 })
 
 test('Copies to clipboard when enabled', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   store.config.stt.quickDictation = { appearance: 'bottom', copyToClipboard: true }
 
   await wrapper.vm.transcribeAndInsert(new Blob())
@@ -195,7 +203,7 @@ test('Copies to clipboard when enabled', async () => {
 })
 
 test('Does not copy to clipboard when disabled', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   store.config.stt.quickDictation = { appearance: 'bottom', copyToClipboard: false }
 
   await wrapper.vm.transcribeAndInsert(new Blob())
@@ -205,7 +213,7 @@ test('Does not copy to clipboard when disabled', async () => {
 })
 
 test('Closes window after transcription', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
 
   await wrapper.vm.transcribeAndInsert(new Blob())
 
@@ -213,7 +221,7 @@ test('Closes window after transcription', async () => {
 })
 
 test('Handles show event with sourceApp', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   const sourceApp = { name: 'TestApp', path: '/path/to/app' }
 
   await wrapper.vm.onShow({
@@ -225,7 +233,7 @@ test('Handles show event with sourceApp', async () => {
 })
 
 test('Handles show event with notch appearance', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
 
   await wrapper.vm.onShow({
     appearance: 'notch',
@@ -254,9 +262,8 @@ test('Adds visible class after show event in notch mode', async () => {
 })
 
 test('Adds closing class when closing in notch mode', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.appearance = 'notch'
-  wrapper.vm.isVisible = true
   await wrapper.vm.$nextTick()
 
   wrapper.vm.closeWindow('test text')
@@ -268,9 +275,8 @@ test('Adds closing class when closing in notch mode', async () => {
 })
 
 test('Calls close after animation ends in notch mode', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.appearance = 'notch'
-  wrapper.vm.isVisible = true
   wrapper.vm.sourceApp = { name: 'TestApp', path: '/test' }
   await wrapper.vm.$nextTick()
 
@@ -286,7 +292,7 @@ test('Calls close after animation ends in notch mode', async () => {
 })
 
 test('Closes immediately in panel mode without animation', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.appearance = 'bottom'
   await wrapper.vm.$nextTick()
 
@@ -298,7 +304,7 @@ test('Closes immediately in panel mode without animation', async () => {
 })
 
 test('Shows clipboard icon when no source app but clipboard enabled', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   store.config.stt.quickDictation = { appearance: 'bottom', copyToClipboard: true }
   wrapper.vm.sourceApp = null
   await wrapper.vm.$nextTick()
@@ -308,7 +314,7 @@ test('Shows clipboard icon when no source app but clipboard enabled', async () =
 })
 
 test('Shows app icon when source app is present', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.sourceApp = { name: 'TestApp', path: '/test' }
   wrapper.vm.appInfo = { icon: { mimeType: 'image/png', contents: 'base64data' } }
   await wrapper.vm.$nextTick()
@@ -318,7 +324,7 @@ test('Shows app icon when source app is present', async () => {
 })
 
 test('Shows no icon when no source app and clipboard disabled', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   store.config.stt.quickDictation = { appearance: 'bottom', copyToClipboard: false }
   wrapper.vm.sourceApp = null
   await wrapper.vm.$nextTick()
@@ -329,7 +335,7 @@ test('Shows no icon when no source app and clipboard disabled', async () => {
 })
 
 test('Shows actions overlay when recording', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'recording'
   await wrapper.vm.$nextTick()
 
@@ -339,7 +345,7 @@ test('Shows actions overlay when recording', async () => {
 })
 
 test('Hides actions overlay when not recording', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'idle'
   await wrapper.vm.$nextTick()
 
@@ -347,7 +353,7 @@ test('Hides actions overlay when not recording', async () => {
 })
 
 test('Finish button calls stopAndTranscribe', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'recording'
   await wrapper.vm.$nextTick()
 
@@ -360,7 +366,7 @@ test('Finish button calls stopAndTranscribe', async () => {
 })
 
 test('Cancel button calls cancelRecording', async () => {
-  const wrapper: VueWrapper<any> = mount(Dictation)
+  const wrapper = await mountDictation()
   wrapper.vm.state = 'recording'
   await wrapper.vm.$nextTick()
 
