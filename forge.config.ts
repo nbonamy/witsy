@@ -9,10 +9,9 @@ import { VitePlugin } from '@electron-forge/plugin-vite';
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
 import prePackage from './build/prepackage';
 import { purgeAutolib, purgeLibnut, purgeOnnxRuntime } from './build/purge_native';
+import { signDarwinBinaries } from './build/sign_binaries';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -86,46 +85,21 @@ const config: ForgeConfig = {
     ] as any,
     ...(process.env.TEST ? {} : osxPackagerConfig),
     afterCopy: [
-      (buildPath: string, electronVersion: string, platform: string, arch: string, callback: (error?: Error) => void) => {
+      (buildPath: string, _electronVersion: string, platform: string, arch: string, callback: (error?: Error) => void) => {
         try {
+          // Sign macOS native binaries
           if (platform === 'darwin') {
-            const binaries = [
-              'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node',
-              `node_modules/autolib/prebuilds/darwin-${arch}/autolib.node`,
-            ];
-
-            binaries.forEach((binary) => {
-              const binaryPath = path.join(buildPath, binary);
-              const identify = process.env.IDENTIFY_DARWIN_CODE;
-              if (fs.existsSync(binaryPath)) {
-                execSync(`codesign --deep --force --verbose --sign "${identify}" "${binaryPath}"`, {
-                  stdio: 'inherit',
-                });
-              } else {
-                throw new Error(`❌ Binary not found for signing: ${binaryPath}`);
-              }
-            });
-
-            // Sign extraResource binaries (they're in Resources/, not Resources/app/)
-            const extraBinaries = [
-              '../assets/apple-speechanalyzer-cli',
-            ];
-
-            extraBinaries.forEach((binary) => {
-              const binaryPath = path.join(buildPath, binary);
-              const identify = process.env.IDENTIFY_DARWIN_CODE;
-              if (fs.existsSync(binaryPath)) {
-                execSync(`codesign --deep --force --verbose --sign "${identify}" "${binaryPath}"`, {
-                  stdio: 'inherit',
-                });
-              } else {
-                console.warn(`⚠️  Extra binary not found for signing (will be signed later): ${binaryPath}`);
-              }
-            });
+            signDarwinBinaries(buildPath, arch);
           }
 
+          // Sign Windows binaries (for ZIP distribution)
+          // NOT STABLE YET
+          // if (platform === 'win32') {
+          //   signWindowsBinaries(buildPath, arch);
+          // }
+
           callback();
-        } catch (error) {
+        } catch (error: any) {
           callback(error);
         }
       },
@@ -182,7 +156,7 @@ const config: ForgeConfig = {
     }),
   ],
   hooks: {
-    prePackage: async (forgeConfig, platform, arch) => {
+    prePackage: async (_forgeConfig, platform, arch) => {
       // Build CLI before packaging
       execSync('npm run build:cli', { stdio: 'inherit' })
       prePackage(platform, arch)
@@ -232,7 +206,7 @@ const config: ForgeConfig = {
     /*
      * Remove non-matching architecture binaries from onnxruntime-node
      */
-    packageAfterPrune: async (forgeConfig, buildPath, electronVersion, platform, arch) => {
+    packageAfterPrune: async (_forgeConfig, buildPath, _electronVersion, platform, arch) => {
       console.log(`🧹 Cleaning up platform-specific binaries for ${platform}-${arch}`);
 
       purgeOnnxRuntime(buildPath, platform, arch);
