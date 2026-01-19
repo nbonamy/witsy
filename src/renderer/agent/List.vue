@@ -11,8 +11,26 @@
       </div>
     </header>
 
-    <main>
-      <table class="table-plain">
+    <main class="list-with-toolbar">
+
+      <div class="toolbar">
+        <div class="functional-controls"></div>
+        <div class="actions">
+          <ButtonIcon
+            v-if="viewMode === 'table'"
+            v-tooltip="{ text: t('agent.forge.viewCards'), position: 'top-left' }"
+            @click="setViewMode('cards')"
+          ><LayoutGridIcon /></ButtonIcon>
+          <ButtonIcon
+            v-else
+            v-tooltip="{ text: t('agent.forge.viewTable'), position: 'top-left' }"
+            @click="setViewMode('table')"
+          ><ListIcon /></ButtonIcon>
+        </div>
+      </div>
+
+      <!-- Table View -->
+      <table v-if="viewMode === 'table'" class="table-plain">
 
         <thead>
           <tr>
@@ -38,9 +56,9 @@
                 @click="onAgentRun(agent)"
               ><PlayIcon /></ButtonIcon>
               <ButtonIcon
-                class="view" 
-                v-tooltip="{ text: t('agent.help.view'), position: 'top-left' }" 
-                @click="$emit('view', agent)" 
+                class="view"
+                v-tooltip="{ text: t('agent.help.view'), position: 'top-left' }"
+                @click="$emit('view', agent)"
               ><EyeIcon /></ButtonIcon>
               <ContextMenuTrigger position="below-right">
                 <template #menu>
@@ -62,16 +80,33 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Card View -->
+      <div v-else class="agents-grid">
+        <AgentCard
+          v-for="agent in agents.sort((a: Agent, b: Agent) => a.name.localeCompare(b.name))"
+          :key="`${agent.uuid}-${agent.lastRunId}`"
+          :agent="agent"
+          :starting="startingAgents.includes(agent.uuid)"
+          @run="onAgentRun"
+          @view="$emit('view', $event)"
+          @edit="$emit('edit', $event)"
+          @export="$emit('export', $event)"
+          @duplicate="$emit('duplicate', $event)"
+          @delete="$emit('delete', $event)"
+        />
+      </div>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { EyeIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
+import { EyeIcon, LayoutGridIcon, ListIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
 import { Agent } from 'types/agents'
 import { onMounted, ref, watch } from 'vue'
 import LogoA2A from '@assets/a2a.svg?component'
+import AgentCard from './AgentCard.vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import ContextMenuTrigger from '@components/ContextMenuTrigger.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
@@ -79,10 +114,19 @@ import { useTimeAgo } from '@composables/ago'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 
+type ViewMode = 'table' | 'cards'
+const STORAGE_KEY = 'agentForgeViewMode'
+
 const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson'])
 
 const agents = ref<Agent[]>([])
 const startingAgents = ref<string[]>([])
+const viewMode = ref<ViewMode>((localStorage.getItem(STORAGE_KEY) as ViewMode) || 'table')
+
+const setViewMode = (mode: ViewMode) => {
+  viewMode.value = mode
+  localStorage.setItem(STORAGE_KEY, mode)
+}
 
 onMounted(() => {
   load()
@@ -114,6 +158,8 @@ const lastRun = (agent: Agent) => {
 
 <style scoped>
 
+@import '@css/list-with-toolbar.css';
+
 .agents-list {
 
   header {
@@ -125,7 +171,13 @@ const lastRun = (agent: Agent) => {
   }
 
   main {
-    padding: 4rem;
+    padding: 2rem 4rem 4rem 4rem;
+  }
+
+  .agents-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-12);
   }
 
 }
