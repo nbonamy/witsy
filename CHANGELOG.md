@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 - More Quick dictation options and keyboard shortcuts
 - CLI port persistence (saves port when using -p or /port command)
 - macOS permission options in Settings Advanced
-- Request cooldown time per provider
+- Request cooldown time per provider (https://github.com/nbonamy/witsy/issues/514)
 - Parallel chats support
 
 ### Changed
