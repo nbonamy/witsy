@@ -131,7 +131,11 @@ const config: ForgeConfig = {
       },
     ],
   },
-  rebuildConfig: {},
+  rebuildConfig: {
+    // Skip autolib - it has prebuilds for all platforms and cross-compilation
+    // from Linux fails because binding.gyp conditions use HOST OS, not target
+    ignoreModules: ['autolib'],
+  },
   makers: process.env.TEST ? [ new MakerZIP() ] : [
     /* xplat  */ new MakerZIP({}, ['linux', 'win32', 'darwin']),
     /* darwin */ new MakerDMG(dmgOptions, ['darwin']),
