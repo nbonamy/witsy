@@ -10,7 +10,7 @@ jobs:
       contents: write
     steps:
       - name: Install required packages
-        run: sudo apt-get install -y rpm
+        run: sudo apt-get install -y rpm libevdev-dev
       - name: Github checkout
         uses: actions/checkout@v4
       - name: Use Node.js
