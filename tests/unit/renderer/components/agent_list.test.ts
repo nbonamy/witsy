@@ -281,3 +281,107 @@ test('Event handlers prevent bubbling for action buttons', async () => {
   expect(wrapper.emitted('run')).toBeTruthy()
   expect(wrapper.emitted('view')).toBeFalsy()
 })
+
+test('Shows view toggle button', async () => {
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
+
+  const toolbar = wrapper.find('.toolbar')
+  expect(toolbar.exists()).toBe(true)
+
+  // Should show one toggle button at a time
+  const buttons = toolbar.findAllComponents({ name: 'ButtonIcon' })
+  expect(buttons).toHaveLength(1)
+})
+
+test('Defaults to table view', async () => {
+  localStorage.removeItem('agentForgeViewMode')
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.viewMode).toBe('table')
+  expect(wrapper.find('table').exists()).toBe(true)
+  expect(wrapper.find('.agents-grid').exists()).toBe(false)
+})
+
+test('Switches to cards view when toggle is clicked', async () => {
+  localStorage.removeItem('agentForgeViewMode')
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
+
+  // Click on the toggle button (shows grid icon when in table mode)
+  const toolbar = wrapper.find('.toolbar')
+  const toggleButton = toolbar.findComponent({ name: 'ButtonIcon' })
+  await toggleButton.trigger('click')
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.viewMode).toBe('cards')
+  expect(wrapper.find('table').exists()).toBe(false)
+  expect(wrapper.find('.agents-grid').exists()).toBe(true)
+})
+
+test('Persists view mode in localStorage', async () => {
+  localStorage.removeItem('agentForgeViewMode')
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
+
+  // Switch to cards view
+  const toolbar = wrapper.find('.toolbar')
+  let toggleButton = toolbar.findComponent({ name: 'ButtonIcon' })
+  await toggleButton.trigger('click')
+  await wrapper.vm.$nextTick()
+
+  expect(localStorage.getItem('agentForgeViewMode')).toBe('cards')
+
+  // Switch back to table view
+  toggleButton = toolbar.findComponent({ name: 'ButtonIcon' })
+  await toggleButton.trigger('click')
+
+  expect(localStorage.getItem('agentForgeViewMode')).toBe('table')
+})
+
+test('Restores view mode from localStorage', async () => {
+  localStorage.setItem('agentForgeViewMode', 'cards')
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.viewMode).toBe('cards')
+  expect(wrapper.find('.agents-grid').exists()).toBe(true)
+})
+
+test('Shows agent cards in card view', async () => {
+  localStorage.setItem('agentForgeViewMode', 'cards')
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
+
+  const cards = wrapper.findAllComponents({ name: 'AgentCard' })
+  expect(cards).toHaveLength(3) // 3 agents from the mock
+})
+
+test('Emits events from agent cards', async () => {
+  localStorage.setItem('agentForgeViewMode', 'cards')
+  const wrapper: VueWrapper<any> = mount(List)
+  await wrapper.vm.$nextTick()
+
+  const card = wrapper.findComponent({ name: 'AgentCard' })
+
+  // Test view event
+  card.vm.$emit('view', wrapper.vm.agents[0])
+  expect(wrapper.emitted('view')).toBeTruthy()
+
+  // Test edit event
+  card.vm.$emit('edit', wrapper.vm.agents[0])
+  expect(wrapper.emitted('edit')).toBeTruthy()
+
+  // Test delete event
+  card.vm.$emit('delete', wrapper.vm.agents[0])
+  expect(wrapper.emitted('delete')).toBeTruthy()
+
+  // Test export event
+  card.vm.$emit('export', wrapper.vm.agents[0])
+  expect(wrapper.emitted('export')).toBeTruthy()
+
+  // Test duplicate event
+  card.vm.$emit('duplicate', wrapper.vm.agents[0])
+  expect(wrapper.emitted('duplicate')).toBeTruthy()
+})

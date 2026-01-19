@@ -339,7 +339,11 @@
         "runnable": "User Initiated",
         "support": "Utility"
       },
-      "title": "Agent Forge"
+      "run": "Run",
+      "title": "Agent Forge",
+      "view": "View",
+      "viewCards": "Card view",
+      "viewTable": "Table view"
     },
     "goal": "Goal",
     "help": {

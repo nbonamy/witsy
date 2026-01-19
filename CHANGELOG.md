@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - macOS permission options in Settings Advanced
 - Request cooldown time per provider (https://github.com/nbonamy/witsy/issues/514)
 - Parallel chats support
+- Agent Forge card view with table/card toggle
 
 ### Changed
 - N/A
