@@ -14,6 +14,7 @@
         <template #menu>
           <div class="item" @click="onDownloadFormat('text')">Text</div>
           <div class="item" @click="onDownloadFormat('raw')">Markdown</div>
+          <div class="item" @click="onDownloadFormat('docx')">Word</div>
           <div class="item" @click="onDownloadFormat('pdf')">PDF</div>
         </template>
       </ContextMenuTrigger>
@@ -33,6 +34,7 @@ import { computed, ref } from 'vue'
 import { useArtifactCopy } from '@composables/artifact_copy'
 import { togglePanel } from '@renderer/utils/panel'
 import Message from '@models/message'
+import { exportToDocx, saveDocxBlob } from '@services/docx'
 import { addExtension, extractCodeBlockContent } from '@services/markdown'
 import { exportToPdf } from '@services/pdf'
 import ButtonIcon from './ButtonIcon.vue'
@@ -84,6 +86,18 @@ const onDownloadFormat = async (action: string) => {
       fileContent = content()
       filename = addExtension(filename, '.md')
       break
+
+    case 'docx':
+      try {
+        const blob = await exportToDocx({
+          title: props.title,
+          content: content(),
+        })
+        saveDocxBlob(blob, filename.replace(/\.[^.]+$/, ''))
+      } catch (error) {
+        console.error('Failed to generate DOCX:', error)
+      }
+      return
 
     case 'pdf':
       try {

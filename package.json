@@ -127,6 +127,7 @@
     "cron-parser": "^5.3.1",
     "cross-env": "^7.0.3",
     "csv-to-markdown-table": "^1.6.3",
+    "docx": "^9.5.1",
     "electron-log": "^5.4.3",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^8.2.0",
