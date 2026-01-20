@@ -49,3 +49,15 @@ export const download = (url: string) => {
 
 }
 
+/**
+ * Save a blob as a file via browser download
+ */
+export const saveBlobAsFile = (blob: Blob, filename: string, extension: string): void => {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename.endsWith(`.${extension}`) ? filename : `${filename}.${extension}`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
