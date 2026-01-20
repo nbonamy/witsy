@@ -49,15 +49,17 @@ export const listAgents = (source: App|string, workspaceId: string): Agent[] => 
 
 export const loadAgent = (source: App|string, workspaceId: string, agentId: string): Agent|null => {
 
-  // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
-  const filePath = path.join(agentsDir, agentId + '.json')
-
   try {
+
+    // init
+    const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
+    const filePath = path.join(agentsDir, agentId + '.json')
+
     const content = fs.readFileSync(filePath, 'utf-8')
     return Agent.fromJson(JSON.parse(content))
+
   } catch (error) {
-    console.log('Error reading agent file', filePath, error)
+    console.log('Error reading agent file', workspaceId, agentId, error)
     return null
   }
 }
@@ -93,60 +95,59 @@ export const saveAgent = (source: App|string, workspaceId: string, json: anyDict
 
 export const deleteAgent = (source: App|string, workspaceId: string, agentId: string): boolean => {
 
-  // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
-  const filePath = path.join(agentsDir, agentId + '.json')
-
-  // delete file
   try {
+
+    // init
+    const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
+    const filePath = path.join(agentsDir, agentId + '.json')
+
+    // delete file
     fs.unlinkSync(filePath)
-  } catch (error) {
-    console.log('Error deleting agent', filePath, error)
-    return false
-  }
 
-  // delete run directory
-  const runPath = path.join(agentsDir, agentId)
-  try {
+    // delete run directory
+    const runPath = path.join(agentsDir, agentId)
     if (fs.existsSync(runPath)) {
       fs.rmSync(runPath, { recursive: true, force: true })
     }
-  }
-  catch (error) {
-    console.log('Error deleting agent run directory', runPath, error)
+
+    // done
+    notifyBrowserWindows('agents-updated', { workspaceId })
+    return true
+
+  } catch (error) {
+    console.log('Error deleting agent', workspaceId, agentId, error)
     return false
   }
-  
-  // done
-  notifyBrowserWindows('agents-updated', { workspaceId })
-  return true
 
 }
 
 export const getAgentRun = (source: App|string, workspaceId: string, agentId: string, runId: string): AgentRun|null => {
 
-  // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
-  const runPath = path.join(agentsDir, agentId, runId + '.json')
-
   try {
+
+    // init
+    const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
+    const runPath = path.join(agentsDir, agentId, runId + '.json')
+
     const content = fs.readFileSync(runPath, 'utf-8')
     return JSON.parse(content)
+
   } catch (error) {
-    console.log('Error reading agent run file', runPath, error)
+    console.log('Error reading agent run file', workspaceId, agentId, runId, error)
     return null
   }
 }
 
-export const getAgentRuns = (source: App|string, workspaceId: string, agentId: string): AgentRun[]|null => {
+export const getAgentRuns = (source: App|string, workspaceId: string, agentId: string): AgentRun[] => {
 
-  // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
-  const runPath = path.join(agentsDir, agentId)
-
-  // iterate over all files
-  const runs: AgentRun[] = []
   try {
+
+    // init
+    const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
+    const runPath = path.join(agentsDir, agentId)
+
+    // iterate over all files
+    const runs: AgentRun[] = []
     const files = fs.readdirSync(runPath)
     for (const file of files) {
       if (!file.endsWith('.json')) continue
@@ -162,35 +163,39 @@ export const getAgentRuns = (source: App|string, workspaceId: string, agentId: s
         }
       }
     }
+
+    // done
+    return runs.sort((a, b) => a.createdAt - b.createdAt)
+
   } catch (error) {
     if (error.code !== 'ENOENT') {
-      console.log('Error retrieving agent runs', error)
+      console.log('Error retrieving agent runs', workspaceId, agentId, error)
     }
+    return []
   }
-
-  // done
-  return runs.sort((a, b) => a.createdAt - b.createdAt)
 
 }
 
 export const saveAgentRun = (source: App|string, workspaceId: string, run: AgentRun): boolean => {
 
-  // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
-  const runPath = path.join(agentsDir, run.agentId)
-  if (!fs.existsSync(runPath)) {
-    fs.mkdirSync(runPath, { recursive: true })
-  }
-
-  const filePath = path.join(runPath, run.uuid + '.json')
-
-  // write file
   try {
+
+    // init
+    const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
+    const runPath = path.join(agentsDir, run.agentId)
+    if (!fs.existsSync(runPath)) {
+      fs.mkdirSync(runPath, { recursive: true })
+    }
+
+    const filePath = path.join(runPath, run.uuid + '.json')
+
+    // write file
     fs.writeFileSync(filePath, JSON.stringify(run, null, 2))
     notifyBrowserWindows('agent-run-update', { agentId: run.agentId, runId: run.uuid })
     return true
+
   } catch (error) {
-    console.log('Error saving agent run', filePath, error)
+    console.log('Error saving agent run', workspaceId, run?.agentId, run?.uuid, error)
     return false
   }
 
@@ -198,41 +203,44 @@ export const saveAgentRun = (source: App|string, workspaceId: string, run: Agent
 
 export const deleteAgentRuns = (source: App|string, workspaceId: string, agentId: string): boolean => {
 
-  // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
-  const runPath = path.join(agentsDir, agentId)
-
-  // delete directory
   try {
+
+    // init
+    const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
+    const runPath = path.join(agentsDir, agentId)
+
+    // delete directory
     if (fs.existsSync(runPath)) {
       fs.rmSync(runPath, { recursive: true, force: true })
     }
-  }
-  catch (error) {
-    console.log('Error deleting agent run directory', runPath, error)
+
+    // done
+    return true
+
+  } catch (error) {
+    console.log('Error deleting agent run directory', workspaceId, agentId, error)
     return false
   }
-
-  // done
-  return true
 
 }
 
 export const deleteAgentRun = (source: App|string, workspaceId: string, agentId: string, runId: string): boolean => {
 
-  // init
-  const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
-  const runPath = path.join(agentsDir, agentId, runId + '.json')
-
-  // delete file
   try {
+
+    // init
+    const agentsDir = typeof source === 'string' ? source : agentsDirPath(source, workspaceId)
+    const runPath = path.join(agentsDir, agentId, runId + '.json')
+
+    // delete file
     fs.unlinkSync(runPath)
+
+    // done
+    return true
+
   } catch (error) {
-    console.log('Error deleting agent run', runPath, error)
+    console.log('Error deleting agent run', workspaceId, agentId, runId, error)
     return false
   }
-
-  // done
-  return true
 
 }
