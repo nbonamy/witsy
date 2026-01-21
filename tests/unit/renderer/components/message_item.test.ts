@@ -667,10 +667,11 @@ test('Artifact download context menu', async () => {
 
   // Check that all three download options are present
   const menuItems = contextMenu.findAll('.item')
-  expect(menuItems.length).toBe(3)
+  expect(menuItems.length).toBe(4)
   expect(menuItems[0].text()).toContain('Text')
   expect(menuItems[1].text()).toContain('Markdown')
-  expect(menuItems[2].text()).toContain('PDF')
+  expect(menuItems[2].text()).toContain('Word')
+  expect(menuItems[3].text()).toContain('PDF')
 
 })
 
