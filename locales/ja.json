@@ -339,7 +339,11 @@
         "runnable": "ユーザー起動型",
         "support": "ユーティリティ"
       },
-      "title": "エージェントフォージ"
+      "run": "実行",
+      "title": "エージェントフォージ",
+      "view": "表示",
+      "viewCards": "カード表示",
+      "viewTable": "テーブル表示"
     },
     "goal": "目標",
     "help": {
@@ -875,6 +879,8 @@
   },
   "dictation": {
     "hint": "スペースキーで音声入力を停止 — Escキーでキャンセル",
+    "hintHold": "放して音声入力を停止",
+    "hintTap": "スペースキーで音声入力を停止 - Escでキャンセル",
     "noTargetError": "@:{'common.appName'} はディクテーションのターゲットアプリケーションを特定できませんでした"
   },
   "docRepo": {
@@ -2790,6 +2796,8 @@
         "pricing": "OpenRouterの料金",
         "providerOrder": "プロバイダーの順序（1行に1つのプロバイダー）"
       },
+      "requestCooldown": "リクエストのクールダウン（ms）",
+      "requestCooldownHint": "ツールのループ中におけるAPIリクエスト開始間隔の最小時間（ms）",
       "sdwebui": {
         "baseURL": "APIベースURL",
         "ensureApiMode": "APIモードになっていることを確認してください"
@@ -3037,6 +3045,7 @@
       "clearAll": "すべてのショートカットをクリア",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
+      "gotoVoice": "音声 > クイック書き起こし に移動して設定してください",
       "mainWindow": "@:{'tray.menu.mainWindow'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
@@ -3089,12 +3098,19 @@
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "モデルペインにOpenAI APIキーを入力していることを確認してください。",
       "quickDictation": {
+        "activation": "起動",
+        "activationDoubleTap": "ダブルタップ",
+        "activationHelp": "ショートカットをもう一度（またはスペースキー）押すと録音を停止して文字起こしを行います。<br/>キャンセルするにはEscキーを押してください。",
+        "activationHold": "長押し（プッシュ・トゥ・トーク）",
+        "activationTap": "タップ",
         "appearance": "外観",
         "appearanceBottom": "画面下部",
         "appearanceNotch": "ノッチ",
         "appearanceTop": "画面上部",
         "copyToClipboard": "音声入力したテキストを自動的にクリップボードにコピーする",
-        "escapeHint": "録音を停止して文字起こしするにはスペースキーまたはEscキーを押してください。<br/>Escキーを2回押すとキャンセルします。"
+        "linuxPermissionWarning": "Linuxでは、ネイティブショートカットは入力デバイスへのアクセスを必要とします。<code>sudo usermod -a -G input $USER</code> を実行してからログアウトし、再度ログインしてください。",
+        "nativeShortcutsHint": "通常のショートカットに加えて、次の「キーなし」ショートカットが使用できます：<ul><li>{combos}</li><li>{single}</li></ul>",
+        "shortcutKey": "ショートカットキー"
       },
       "selectModel": "モデルを選択",
       "silenceDetection": "無音検出",
