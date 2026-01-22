@@ -602,19 +602,26 @@ async function translateCandidatesForTranslation(
     }
   });
 
-  // Process translations for each locale
-  for (const [locale, translationItems] of Object.entries(localeTranslationBatches)) {
-    if (translationItems.length > 0) {
+  // Process translations for all locales in parallel
+  const translationPromises = Object.entries(localeTranslationBatches)
+    .filter(([, translationItems]) => translationItems.length > 0)
+    .map(async ([locale, translationItems]) => {
       console.log(`\n🌐 Translating ${translationItems.length} keys for "${locale}"...`);
-      
+
       const translations = await translateText(translationItems, locale);
-      
-      // Apply translations
-      translations.forEach((translatedText, key) => {
-        setNestedValue(locales[locale], key, translatedText);
-        console.log(`  + Added "${key}" = "${translatedText}"`);
-      });
-    }
+
+      return { locale, translations };
+    });
+
+  // Wait for all translations to complete
+  const translationResults = await Promise.all(translationPromises);
+
+  // Apply all translations
+  for (const { locale, translations } of translationResults) {
+    translations.forEach((translatedText, key) => {
+      setNestedValue(locales[locale], key, translatedText);
+      console.log(`  + Added "${key}" = "${translatedText}"`);
+    });
   }
 
   if (fixesApplied) {
