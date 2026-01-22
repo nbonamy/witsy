@@ -339,7 +339,11 @@
         "runnable": "Iniciado pelo Usuário",
         "support": "Utilitário"
       },
-      "title": "Forja do Agente"
+      "run": "Executar",
+      "title": "Forja do Agente",
+      "view": "Visualizar",
+      "viewCards": "Visualização em cartões",
+      "viewTable": "Visualização em tabela"
     },
     "goal": "Objetivo",
     "help": {
@@ -875,6 +879,8 @@
   },
   "dictation": {
     "hint": "Espaço para parar o ditado - Esc para cancelar",
+    "hintHold": "Solte para parar o ditado",
+    "hintTap": "Espaço para parar o ditado - Esc para cancelar",
     "noTargetError": "@:{'common.appName'} não conseguiu identificar um aplicativo para ditado"
   },
   "docRepo": {
@@ -2790,6 +2796,8 @@
         "pricing": "Preços do OpenRouter",
         "providerOrder": "Ordem dos provedores (um provedor por linha)"
       },
+      "requestCooldown": "Tempo de espera entre requisições (ms)",
+      "requestCooldownHint": "Tempo mínimo em ms entre o início das solicitações à API durante os ciclos das ferramentas",
       "sdwebui": {
         "baseURL": "URL Base da API",
         "ensureApiMode": "Certifique-se de que está no modo API"
@@ -3031,6 +3039,7 @@
       "clearAll": "Limpar todos os atalhos",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
+      "gotoVoice": "Vá para Voz > Ditado Rápido para configurar",
       "mainWindow": "@:{'tray.menu.mainWindow'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
@@ -3083,12 +3092,19 @@
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Certifique-se de inserir sua chave de API OpenAI no painel Modelos.",
       "quickDictation": {
+        "activation": "Ativação",
+        "activationDoubleTap": "Toque duplo",
+        "activationHelp": "Toque no atalho novamente (ou na tecla Espaço) para parar a gravação e transcrever.<br/>Pressione Escape para cancelar.",
+        "activationHold": "Segurar (Pressione para falar)",
+        "activationTap": "Toque",
         "appearance": "Aparência",
         "appearanceBottom": "Parte inferior da tela",
         "appearanceNotch": "Entalhe",
         "appearanceTop": "Parte superior da tela",
         "copyToClipboard": "Copiar automaticamente o texto ditado para a área de transferência",
-        "escapeHint": "Pressione Espaço ou Esc para parar a gravação e transcrever.<br/>Pressione Esc duas vezes para cancelar."
+        "linuxPermissionWarning": "No Linux, atalhos nativos exigem acesso aos dispositivos de entrada. Execute <code>sudo usermod -a -G input $USER</code> e depois saia e entre novamente.",
+        "nativeShortcutsHint": "Além dos atalhos normais, você pode usar os seguintes atalhos \"sem tecla\":<ul><li>{combos}</li><li>{single}</li></ul>",
+        "shortcutKey": "Tecla de atalho"
       },
       "selectModel": "Selecionar um modelo",
       "silenceDetection": "Detecção de Silêncio",

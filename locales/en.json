@@ -2754,8 +2754,6 @@
         "pricing": "DeepSeek pricing"
       },
       "disableTools": "Disable plugins for all models",
-      "requestCooldown": "Request cooldown (ms)",
-      "requestCooldownHint": "Minimum time in ms between API request starts during tool loops",
       "getApiKey": "Get your API key",
       "google": {
         "aboutModels": "More about Google models",
@@ -2798,6 +2796,8 @@
         "pricing": "OpenRouter pricing",
         "providerOrder": "Provider order (one provider per line)"
       },
+      "requestCooldown": "Request cooldown (ms)",
+      "requestCooldownHint": "Minimum time in ms between API request starts during tool loops",
       "sdwebui": {
         "baseURL": "API Base URL",
         "ensureApiMode": "Make sure you are in API mode"
@@ -3098,20 +3098,19 @@
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
       "quickDictation": {
-        "shortcutKey": "Shortcut Key",
-        "nativeShortcutsHint": "In addition to regular shortcuts, you can use the following \"key-less\" shortcuts:<ul><li>{combos}</li><li>{single}</li></ul>",
-        "linuxPermissionWarning": "On Linux, native shortcuts require access to input devices. Run <code>sudo usermod -a -G input $USER</code> then log out and back in.",
         "activation": "Activation",
-        "activationHelp": "Tap the shortcut again (or the Space key) to stop the recording and transcribe.<br/>Tap Escape to cancel.",
-        "activationTap": "Tap",
         "activationDoubleTap": "Double Tap",
+        "activationHelp": "Tap the shortcut again (or the Space key) to stop the recording and transcribe.<br/>Tap Escape to cancel.",
         "activationHold": "Hold (Push-to-Talk)",
-        "options": "Options",
+        "activationTap": "Tap",
         "appearance": "Appearance",
         "appearanceBottom": "Bottom of screen",
         "appearanceNotch": "Notch",
         "appearanceTop": "Top of screen",
-        "copyToClipboard": "Automatically copy dictated text to clipboard"
+        "copyToClipboard": "Automatically copy dictated text to clipboard",
+        "linuxPermissionWarning": "On Linux, native shortcuts require access to input devices. Run <code>sudo usermod -a -G input $USER</code> then log out and back in.",
+        "nativeShortcutsHint": "In addition to regular shortcuts, you can use the following \"key-less\" shortcuts:<ul><li>{combos}</li><li>{single}</li></ul>",
+        "shortcutKey": "Shortcut Key"
       },
       "selectModel": "Select a model",
       "silenceDetection": "Silence Detection",
