@@ -60,22 +60,14 @@
                 v-tooltip="{ text: t('agent.help.view'), position: 'top-left' }"
                 @click="$emit('view', agent)"
               ><EyeIcon /></ButtonIcon>
-              <ContextMenuTrigger position="below-right">
-                <template #menu>
-                  <div class="item edit" @click="$emit('edit', agent)">
-                    {{ t('agent.help.edit') }}
-                  </div>
-                  <div class="item export" @click="$emit('export', agent)">
-                    {{ t('agent.help.export') }}
-                  </div>
-                  <div class="item duplicate" @click="$emit('duplicate', agent)">
-                    {{ t('agent.help.duplicate') }}
-                  </div>
-                  <div class="item delete" @click="$emit('delete', agent)">
-                    {{ t('agent.help.delete') }}
-                  </div>
-                </template>
-              </ContextMenuTrigger>
+              <AgentMenu
+                :agent="agent"
+                position="below-right"
+                @edit="$emit('edit', $event)"
+                @export="$emit('export', $event)"
+                @duplicate="$emit('duplicate', $event)"
+                @delete="$emit('delete', $event)"
+              />
             </div></td>
           </tr>
         </tbody>
@@ -107,8 +99,8 @@ import { Agent } from 'types/agents'
 import { onMounted, ref, watch } from 'vue'
 import LogoA2A from '@assets/a2a.svg?component'
 import AgentCard from './AgentCard.vue'
+import AgentMenu from './AgentMenu.vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
-import ContextMenuTrigger from '@components/ContextMenuTrigger.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
 import { useTimeAgo } from '@composables/ago'
 import { t } from '@services/i18n'
