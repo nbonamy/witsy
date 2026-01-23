@@ -174,6 +174,32 @@ const lastRun = (agent: Agent) => {
     padding: 2rem 4rem 4rem 4rem;
   }
 
+  table.table-plain {
+    display: table;
+    table-layout: fixed;
+    flex: none;
+
+    thead, tbody {
+      display: table-header-group;
+    }
+
+    tbody {
+      display: table-row-group;
+    }
+
+    th:nth-child(1), td:nth-child(1) { width: auto; }
+    th:nth-child(2), td:nth-child(2) { width: 300px; }
+    th:nth-child(3), td:nth-child(3) { width: 100px; }
+    th:nth-child(4), td:nth-child(4) { width: 120px; }
+    th:nth-child(5), td:nth-child(5) { width: 140px; }
+
+    td:nth-child(1),
+    td:nth-child(2) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
   .agents-grid {
     display: flex;
     flex-wrap: wrap;

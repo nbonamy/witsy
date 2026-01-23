@@ -291,12 +291,16 @@ const draw = () => {
     ctx.fill()
     ctx.stroke()
 
-    // Node label
+    // Node label (truncated)
     ctx.fillStyle = isSelected ? '#fff' : textColor
     ctx.font = 'bold 14px system-ui, -apple-system, sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText(node.label, 0, y + (node.description ? nodeHeight / 3 : nodeHeight / 2))
+    let label = node.label
+    if (label.length > 24) {
+      label = label.substring(0, 21) + '...'
+    }
+    ctx.fillText(label, 0, y + (node.description ? nodeHeight / 3 : nodeHeight / 2))
 
     // Node description (truncated)
     if (node.description) {
