@@ -847,7 +847,7 @@ defineExpose({ validate })
         background-color: var(--color-surface);
         color: var(--color-on-surface);
         svg {
-          stroke: var(--color-on-surface);
+          color: var(--color-on-surface);
         }
         
         &:disabled {
@@ -862,7 +862,7 @@ defineExpose({ validate })
         &.active {
           color: var(--color-primary);
           svg {
-            stroke: var(--color-primary);
+            color: var(--color-primary);
           }
         }
       }
