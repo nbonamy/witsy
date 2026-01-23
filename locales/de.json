@@ -342,17 +342,19 @@
       "confirmClear": "Sind Sie sicher, dass Sie den Verlauf dieses Agenten löschen möchten?",
       "confirmDeleteMultiple": "Sind Sie sicher, dass Sie diese Durchläufe löschen möchten?",
       "confirmDeleteSingle": "Sind Sie sicher, dass Sie diesen Durchlauf löschen möchten?",
-      "date": "Datum",
       "empty": "Noch keine Historie…",
       "lastRun": "Letzte Ausführung",
-      "log": "Protokoll",
       "neverRun": "Nie",
-      "running": "Wird ausgeführt…",
-      "status": "Status",
-      "trigger": "Auslöser"
+      "running": "Wird ausgeführt…"
+    },
+    "info": {
+      "failed": "fehlgeschlagen",
+      "nextRun": "Nächster Lauf",
+      "successful": "erfolgreich",
+      "successRate": "Erfolgsrate",
+      "totalRuns": "Gesamtdurchläufe"
     },
     "name": "@:{'common.name'}",
-    "nextRun": "Geplant für",
     "picker": {
       "noAgents": "Keine Agenten verfügbar",
       "noAgentsText": "Möchten Sie jetzt einen erstellen?",
@@ -361,39 +363,37 @@
     },
     "run": {
       "createdAt": "Startzeit",
+      "details": "Details",
       "duration": "Dauer",
       "error": "@:{'common.error'}",
-      "hidePrompt": "Eingabeaufforderung ausblenden",
-      "id": "Ausführungs-ID",
-      "metadata": "Ausführungsdetails",
-      "noOutputs": "Noch keine Ausgaben",
-      "notCompleted": "In Bearbeitung…",
       "output": "Ausgabe",
       "outputItem": "Schritt {index}",
-      "prompt": "@:{'common.prompt'}",
       "selectRun": "Wählen Sie einen Lauf zur Anzeige der Details aus",
-      "showPrompt": "Eingabeaufforderung anzeigen",
-      "status": "Status",
+      "stepRunning": "Schritt läuft…",
       "trigger": "Auslöser",
       "updatedAt": "Abschlusszeit"
     },
     "status": {
-      "canceled": "🚫 Abgebrochen",
-      "error": "❌ Fehler",
-      "running": "⏳ Läuft",
-      "success": "✅ Erfolg"
+      "canceled": "Abgebrochen",
+      "cancelled": "Abgebrochen",
+      "error": "Fehler",
+      "running": "Läuft",
+      "success": "Erfolgreich"
+    },
+    "step": {
+      "toolCalls": "Tool-Aufrufe"
     },
     "trigger": {
-      "manual": "🖐️ Manuell",
+      "manual": "Manuell",
       "manual_description": "Agenten können jederzeit manuell ausgelöst werden",
       "nextRuns": "Nächste Ausführungen",
-      "schedule": "⏰ Zeitplan",
-      "webhook": "🌐 Webhook",
+      "schedule": "Geplant",
+      "webhook": "Webhook",
       "webhook_copy": "URL kopieren",
       "webhook_description": "Diesen Agenten über eine HTTP-Anfrage auslösen",
       "webhook_regenerate": "Token neu generieren",
       "webhook_url": "Webhook-URL",
-      "workflow": "⚙️ Arbeitsablauf"
+      "workflow": "Workflow"
     },
     "type": {
       "runnable": "Vom Benutzer initiiert",
@@ -403,9 +403,7 @@
       "filter": {
         "all": "Alle Läufe",
         "exclude_workflow": "Workflows ausschließen"
-      },
-      "header": "Agentenübersicht",
-      "history": "Verlauf"
+      }
     }
   },
   "agentSelector": {

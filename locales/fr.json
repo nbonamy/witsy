@@ -342,17 +342,19 @@
       "confirmClear": "Êtes-vous sûr de vouloir effacer l'historique de cet agent ?",
       "confirmDeleteMultiple": "Êtes-vous sûr de vouloir supprimer ces exécutions ?",
       "confirmDeleteSingle": "Êtes-vous sûr de vouloir supprimer cette exécution ?",
-      "date": "Date",
       "empty": "Pas encore d'historique…",
       "lastRun": "Dernière Exécution",
-      "log": "Journal",
       "neverRun": "Jamais",
-      "running": "En cours…",
-      "status": "Statut",
-      "trigger": "Déclencheur"
+      "running": "En cours…"
+    },
+    "info": {
+      "failed": "échecs",
+      "nextRun": "Prochaine exécution",
+      "successful": "réussites",
+      "successRate": "Taux de réussite",
+      "totalRuns": "Nombre total d'exécutions"
     },
     "name": "@:{'common.name'}",
-    "nextRun": "Planifié pour le",
     "picker": {
       "noAgents": "Aucun agent disponible",
       "noAgentsText": "Voulez-vous en créer un maintenant ?",
@@ -361,39 +363,37 @@
     },
     "run": {
       "createdAt": "Heure de début",
+      "details": "Détails",
       "duration": "Durée",
       "error": "@:{'common.error'}",
-      "hidePrompt": "Masquer l'invite",
-      "id": "ID d'Exécution",
-      "metadata": "Détails de l'exécution",
-      "noOutputs": "Pas encore de sorties",
-      "notCompleted": "En cours…",
       "output": "Sortie",
       "outputItem": "Étape {index}",
-      "prompt": "@:{'common.prompt'}",
       "selectRun": "Sélectionnez une exécution pour voir les détails",
-      "showPrompt": "Afficher l'invite",
-      "status": "Statut",
+      "stepRunning": "Étape en cours…",
       "trigger": "Déclencheur",
       "updatedAt": "Heure de fin"
     },
     "status": {
-      "canceled": "🚫 Annulé",
-      "error": "❌ Erreur",
-      "running": "⏳ En cours",
-      "success": "✅ Succès"
+      "canceled": "Annulé",
+      "cancelled": "Annulé",
+      "error": "Erreur",
+      "running": "En cours",
+      "success": "Succès"
+    },
+    "step": {
+      "toolCalls": "Appels d'outils"
     },
     "trigger": {
-      "manual": "🖐️ Manuel",
+      "manual": "Manuel",
       "manual_description": "Les agents peuvent toujours être déclenchés manuellement",
       "nextRuns": "Prochaines exécutions",
-      "schedule": "⏰ Programmation",
-      "webhook": "🌐 Webhook",
+      "schedule": "Planification",
+      "webhook": "Webhook",
       "webhook_copy": "Copier l’URL",
       "webhook_description": "Déclenchez cet agent via une requête HTTP",
       "webhook_regenerate": "Régénérer le jeton",
       "webhook_url": "URL du Webhook",
-      "workflow": "⚙️ Flux de travail"
+      "workflow": "Flux de travail"
     },
     "type": {
       "runnable": "Initié par l'utilisateur",
@@ -403,9 +403,7 @@
       "filter": {
         "all": "Tous les lancements",
         "exclude_workflow": "Exclure les workflows"
-      },
-      "header": "Résumé de l'agent",
-      "history": "Historique"
+      }
     }
   },
   "agentSelector": {

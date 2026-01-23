@@ -361,17 +361,19 @@
       "confirmClear": "Are you sure you want to clear the history of this agent?",
       "confirmDeleteMultiple": "Are you sure you want to delete these runs?",
       "confirmDeleteSingle": "Are you sure you want to delete this run?",
-      "date": "Date",
       "empty": "No history yet…",
       "lastRun": "Last Run",
-      "log": "Log",
       "neverRun": "Never",
-      "running": "Running…",
-      "status": "Status",
-      "trigger": "Trigger"
+      "running": "Running…"
+    },
+    "info": {
+      "failed": "failed",
+      "nextRun": "Next Run",
+      "successful": "successful",
+      "successRate": "Success Rate",
+      "totalRuns": "Total Runs"
     },
     "name": "@:{'common.name'}",
-    "nextRun": "Next run on",
     "picker": {
       "noAgentsText": "Do you want to create one now?",
       "noAgentsTitle": "You haven't created any executable agents yet",
@@ -382,26 +384,12 @@
       "details": "Details",
       "duration": "Duration",
       "error": "@:{'common.error'}",
-      "hidePrompt": "Hide prompt",
-      "id": "Run ID",
-      "metadata": "Run Details",
-      "noOutputs": "No outputs yet",
-      "notCompleted": "In progress…",
       "output": "Output",
       "outputItem": "Step {index}",
-      "prompt": "@:{'common.prompt'}",
       "selectRun": "Select a run to view details",
-      "selectStep": "Select a step to view details",
-      "showPrompt": "Show prompt",
-      "status": "Status",
-      "stepPrompt": "Input",
-      "stepResponse": "Output",
       "stepRunning": "Step in progress…",
       "trigger": "Trigger",
       "updatedAt": "Completion time"
-    },
-    "step": {
-      "toolCalls": "Tool Calls"
     },
     "status": {
       "canceled": "Canceled",
@@ -409,6 +397,9 @@
       "error": "Error",
       "running": "Running",
       "success": "Success"
+    },
+    "step": {
+      "toolCalls": "Tool Calls"
     },
     "trigger": {
       "manual": "Manual",
@@ -426,21 +417,11 @@
       "runnable": "User Initiated",
       "support": "Utility"
     },
-    "info": {
-      "totalRuns": "Total Runs",
-      "nextRun": "Next Run",
-      "successRate": "Success Rate",
-      "successful": "successful",
-      "failed": "failed"
-    },
     "view": {
       "filter": {
         "all": "All runs",
         "exclude_workflow": "Exclude workflows"
-      },
-      "header": "Agent Summary",
-      "status": "Success Rate",
-      "history": "History"
+      }
     }
   },
   "agentSelector": {

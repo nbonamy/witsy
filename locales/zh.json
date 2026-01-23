@@ -361,17 +361,19 @@
       "confirmClear": "您确定要清除此代理的历史记录吗？",
       "confirmDeleteMultiple": "您确定要删除这些运行吗？",
       "confirmDeleteSingle": "您确定要删除此运行吗？",
-      "date": "日期",
       "empty": "暂无历史记录…",
       "lastRun": "上次运行",
-      "log": "日志",
       "neverRun": "从未",
-      "running": "运行中…",
-      "status": "状态",
-      "trigger": "触发器"
+      "running": "运行中…"
+    },
+    "info": {
+      "failed": "失败",
+      "nextRun": "下次运行",
+      "successful": "成功",
+      "successRate": "成功率",
+      "totalRuns": "总运行次数"
     },
     "name": "@:{'common.name'}",
-    "nextRun": "计划执行于",
     "picker": {
       "noAgents": "没有可用的代理",
       "noAgentsText": "您想现在创建一个吗？",
@@ -380,39 +382,37 @@
     },
     "run": {
       "createdAt": "开始时间",
+      "details": "详情",
       "duration": "持续时间",
       "error": "@:{'common.error'}",
-      "hidePrompt": "隐藏提示",
-      "id": "运行 ID",
-      "metadata": "运行详情",
-      "noOutputs": "尚无输出",
-      "notCompleted": "进行中…",
       "output": "输出",
       "outputItem": "步骤 {index}",
-      "prompt": "@:{'common.prompt'}",
       "selectRun": "选择运行以查看详细信息",
-      "showPrompt": "显示提示",
-      "status": "状态",
+      "stepRunning": "步骤进行中…",
       "trigger": "触发器",
       "updatedAt": "完成时间"
     },
     "status": {
-      "canceled": "🚫 已取消",
-      "error": "❌ 错误",
-      "running": "⏳ 运行中",
-      "success": "✅ 成功"
+      "canceled": "已取消",
+      "cancelled": "已取消",
+      "error": "错误",
+      "running": "运行中",
+      "success": "成功"
+    },
+    "step": {
+      "toolCalls": "工具调用"
     },
     "trigger": {
-      "manual": "🖐️ 手动",
+      "manual": "手动",
       "manual_description": "代理始终可手动触发",
       "nextRuns": "下一次运行",
-      "schedule": "⏰ 计划",
-      "webhook": "🌐 网页钩子",
+      "schedule": "定时",
+      "webhook": "Webhook",
       "webhook_copy": "复制URL",
       "webhook_description": "通过HTTP请求触发此代理",
       "webhook_regenerate": "重新生成令牌",
       "webhook_url": "网页钩子URL",
-      "workflow": "⚙️ 工作流"
+      "workflow": "工作流"
     },
     "type": {
       "runnable": "用户发起",
@@ -422,9 +422,7 @@
       "filter": {
         "all": "所有运行",
         "exclude_workflow": "排除工作流"
-      },
-      "header": "代理摘要",
-      "history": "历史"
+      }
     }
   },
   "agentSelector": {

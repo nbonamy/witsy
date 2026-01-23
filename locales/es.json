@@ -342,17 +342,19 @@
       "confirmClear": "¿Está seguro de que desea borrar el historial de este agente?",
       "confirmDeleteMultiple": "¿Está seguro de que desea eliminar estas ejecuciones?",
       "confirmDeleteSingle": "¿Está seguro de que desea eliminar esta ejecución?",
-      "date": "Fecha",
       "empty": "Aún sin historial…",
       "lastRun": "Última ejecución",
-      "log": "Registro",
       "neverRun": "Nunca",
-      "running": "Ejecutando…",
-      "status": "Estado",
-      "trigger": "Disparador"
+      "running": "Ejecutando…"
+    },
+    "info": {
+      "failed": "fallidas",
+      "nextRun": "Siguiente ejecución",
+      "successful": "exitosas",
+      "successRate": "Tasa de éxito",
+      "totalRuns": "Total de ejecuciones"
     },
     "name": "@:{'common.name'}",
-    "nextRun": "Programado para",
     "picker": {
       "noAgents": "No hay agentes disponibles",
       "noAgentsText": "¿Quieres crear uno ahora?",
@@ -361,39 +363,37 @@
     },
     "run": {
       "createdAt": "Hora de inicio",
+      "details": "Detalles",
       "duration": "Duración",
       "error": "@:{'common.error'}",
-      "hidePrompt": "Ocultar indicación",
-      "id": "ID de Ejecución",
-      "metadata": "Detalles de la ejecución",
-      "noOutputs": "Aún no hay salidas",
-      "notCompleted": "En progreso…",
       "output": "Salida",
       "outputItem": "Paso {index}",
-      "prompt": "@:{'common.prompt'}",
       "selectRun": "Seleccione una ejecución para ver detalles",
-      "showPrompt": "Mostrar indicación",
-      "status": "Estado",
+      "stepRunning": "Paso en curso…",
       "trigger": "Disparador",
       "updatedAt": "Hora de finalización"
     },
     "status": {
-      "canceled": "🚫 Cancelado",
-      "error": "❌ Error",
-      "running": "⏳ En ejecución",
-      "success": "✅ Éxito"
+      "canceled": "Cancelado",
+      "cancelled": "Cancelado",
+      "error": "Error",
+      "running": "En ejecución",
+      "success": "Éxito"
+    },
+    "step": {
+      "toolCalls": "Llamadas a herramientas"
     },
     "trigger": {
-      "manual": "🖐️ Manual",
+      "manual": "Manual",
       "manual_description": "Los agentes siempre pueden activarse manualmente",
       "nextRuns": "Próximas ejecuciones",
-      "schedule": "⏰ Programar",
-      "webhook": "🌐 Webhook",
+      "schedule": "Programación",
+      "webhook": "Webhook",
       "webhook_copy": "Copiar URL",
       "webhook_description": "Activar este agente mediante una solicitud HTTP",
       "webhook_regenerate": "Regenerar token",
       "webhook_url": "URL del Webhook",
-      "workflow": "⚙️ Flujo de trabajo"
+      "workflow": "Flujo de trabajo"
     },
     "type": {
       "runnable": "Iniciado por el usuario",
@@ -403,9 +403,7 @@
       "filter": {
         "all": "Todas las ejecuciones",
         "exclude_workflow": "Excluir flujos de trabajo"
-      },
-      "header": "Resumen del Agente",
-      "history": "Historial"
+      }
     }
   },
   "agentSelector": {

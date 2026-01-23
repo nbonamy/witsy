@@ -361,17 +361,19 @@
       "confirmClear": "このエージェントの履歴を削除してもよろしいですか？",
       "confirmDeleteMultiple": "これらの実行を削除してもよろしいですか？",
       "confirmDeleteSingle": "この実行を削除してもよろしいですか？",
-      "date": "日付",
       "empty": "履歴はまだありません…",
       "lastRun": "最終実行",
-      "log": "ログ",
       "neverRun": "未実行",
-      "running": "実行中…",
-      "status": "ステータス",
-      "trigger": "トリガー"
+      "running": "実行中…"
+    },
+    "info": {
+      "failed": "失敗",
+      "nextRun": "次の実行",
+      "successful": "成功",
+      "successRate": "成功率",
+      "totalRuns": "合計実行回数"
     },
     "name": "@:{'common.name'}",
-    "nextRun": "次回予定",
     "picker": {
       "noAgents": "利用可能なエージェントがありません",
       "noAgentsText": "今すぐ作成しますか？",
@@ -380,39 +382,37 @@
     },
     "run": {
       "createdAt": "開始時間",
+      "details": "詳細",
       "duration": "所要時間",
       "error": "@:{'common.error'}",
-      "hidePrompt": "プロンプトを非表示",
-      "id": "実行ID",
-      "metadata": "実行の詳細",
-      "noOutputs": "まだ出力はありません",
-      "notCompleted": "進行中…",
       "output": "出力",
       "outputItem": "ステップ {index}",
-      "prompt": "@:{'common.prompt'}",
       "selectRun": "実行を選択して詳細を表示",
-      "showPrompt": "プロンプトを表示",
-      "status": "ステータス",
+      "stepRunning": "ステップ実行中…",
       "trigger": "トリガー",
       "updatedAt": "完了時間"
     },
     "status": {
-      "canceled": "🚫 キャンセル済み",
-      "error": "❌ エラー",
-      "running": "⏳ 実行中",
-      "success": "✅ 成功"
+      "canceled": "キャンセル済み",
+      "cancelled": "キャンセル済み",
+      "error": "エラー",
+      "running": "実行中",
+      "success": "成功"
+    },
+    "step": {
+      "toolCalls": "ツール呼び出し"
     },
     "trigger": {
-      "manual": "🖐️ 手動",
+      "manual": "手動",
       "manual_description": "エージェントは常に手動でトリガーできます",
       "nextRuns": "次回実行予定",
-      "schedule": "⏰ スケジュール",
-      "webhook": "🌐 ウェブフック",
+      "schedule": "スケジュール",
+      "webhook": "ウェブフック",
       "webhook_copy": "URLをコピー",
       "webhook_description": "HTTPリクエストでこのエージェントをトリガーします",
       "webhook_regenerate": "トークンを再生成",
       "webhook_url": "ウェブフックURL",
-      "workflow": "⚙️ ワークフロー"
+      "workflow": "ワークフロー"
     },
     "type": {
       "runnable": "ユーザー起動型",
@@ -422,9 +422,7 @@
       "filter": {
         "all": "すべての実行",
         "exclude_workflow": "ワークフローを除外"
-      },
-      "header": "エージェント概要",
-      "history": "履歴"
+      }
     }
   },
   "agentSelector": {
