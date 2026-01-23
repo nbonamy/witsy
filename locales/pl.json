@@ -361,17 +361,19 @@
       "confirmClear": "Czy na pewno chcesz wyczyścić historię tego agenta?",
       "confirmDeleteMultiple": "Czy na pewno chcesz usunąć te przebiegi?",
       "confirmDeleteSingle": "Czy na pewno chcesz usunąć ten przebieg?",
-      "date": "Data",
       "empty": "Brak historii…",
       "lastRun": "Ostatnie uruchomienie",
-      "log": "Dziennik",
       "neverRun": "Nigdy",
-      "running": "Uruchamianie…",
-      "status": "Status",
-      "trigger": "Wyzwalacz"
+      "running": "Uruchamianie…"
+    },
+    "info": {
+      "failed": "nieudanych",
+      "nextRun": "Następne uruchomienie",
+      "successful": "pomyślnych",
+      "successRate": "Wskaźnik sukcesu",
+      "totalRuns": "Liczba uruchomień"
     },
     "name": "@:{'common.name'}",
-    "nextRun": "Zaplanowano na",
     "picker": {
       "noAgents": "Brak dostępnych agentów",
       "noAgentsText": "Czy chcesz utworzyć jeden teraz?",
@@ -380,39 +382,37 @@
     },
     "run": {
       "createdAt": "Czas rozpoczęcia",
+      "details": "Szczegóły",
       "duration": "Czas trwania",
       "error": "@:{'common.error'}",
-      "hidePrompt": "Ukryj monity",
-      "id": "ID wykonania",
-      "metadata": "Szczegóły uruchomienia",
-      "noOutputs": "Brak wyników",
-      "notCompleted": "W trakcie...",
       "output": "Wynik",
       "outputItem": "Krok {index}",
-      "prompt": "@:{'common.prompt'}",
       "selectRun": "Wybierz uruchomienie, aby zobaczyć szczegóły",
-      "showPrompt": "Pokaż monity",
-      "status": "Status",
+      "stepRunning": "Krok w toku…",
       "trigger": "Wyzwalacz",
       "updatedAt": "Czas zakończenia"
     },
     "status": {
-      "canceled": "🚫 Anulowano",
-      "error": "❌ Błąd",
-      "running": "⏳ Uruchomiono",
-      "success": "✅ Sukces"
+      "canceled": "Anulowano",
+      "cancelled": "Anulowano",
+      "error": "Błąd",
+      "running": "W toku",
+      "success": "Sukces"
+    },
+    "step": {
+      "toolCalls": "Wywołania narzędzi"
     },
     "trigger": {
-      "manual": "🖐️ Ręczny",
+      "manual": "Ręcznie",
       "manual_description": "Agenci mogą być zawsze wyzwalani ręcznie",
       "nextRuns": "Następne wykonania",
-      "schedule": "⏰ Harmonogram",
-      "webhook": "🌐 Webhook",
+      "schedule": "Harmonogram",
+      "webhook": "Webhook",
       "webhook_copy": "Kopiuj URL",
       "webhook_description": "Wywołaj tego agenta za pomocą żądania HTTP",
       "webhook_regenerate": "Odnów token",
       "webhook_url": "URL webhooka",
-      "workflow": "⚙️ Przepływ pracy"
+      "workflow": "Przepływ pracy"
     },
     "type": {
       "runnable": "Inicjowany przez użytkownika",
@@ -422,9 +422,7 @@
       "filter": {
         "all": "Wszystkie uruchomienia",
         "exclude_workflow": "Wyklucz przepływy pracy"
-      },
-      "header": "Podsumowanie agenta",
-      "history": "Historia"
+      }
     }
   },
   "agentSelector": {
