@@ -45,18 +45,28 @@
 
     <!-- Timeline -->
     <div class="timeline">
+      <!-- Start -->
       <div class="timeline-item">
-        <div class="timeline-dot"></div>
+        <div class="timeline-dot start"></div>
         <div class="timeline-content">
           <div class="timeline-label">{{ t('agent.run.createdAt') }}</div>
-          <div class="timeline-value">{{ formatDate(run.createdAt) }}</div>
+          <div class="timeline-value">{{ formatDateTime(run.createdAt) }}</div>
         </div>
       </div>
+      <!-- Steps -->
+      <div class="timeline-item" v-for="(step, index) in timelineSteps" :key="index">
+        <div class="timeline-dot step" :class="step.status"></div>
+        <div class="timeline-content">
+          <div class="timeline-label">{{ step.description || `Step ${index + 1}` }}</div>
+          <div class="timeline-value">{{ formatTimelinestamp(step.timestamp, index) }}</div>
+        </div>
+      </div>
+      <!-- End -->
       <div class="timeline-item" v-if="run.status !== 'running'">
-        <div class="timeline-dot"></div>
+        <div class="timeline-dot end" :class="run.status"></div>
         <div class="timeline-content">
           <div class="timeline-label">{{ t('agent.run.updatedAt') }}</div>
-          <div class="timeline-value">{{ formatDate(run.updatedAt) }}</div>
+          <div class="timeline-value">{{ formatTimeOnly(run.updatedAt) }}</div>
         </div>
       </div>
     </div>
@@ -193,9 +203,74 @@ const duration = computed(() => {
   return durationMs < 1000 ? `${durationMs} ms` : `${Math.round(durationMs / 1000)} s`
 })
 
-const formatDate = (date: number) => {
-  return new Date(date).toString().split(' ').slice(0, 5).join(' ')
+const formatDateTime = (timestamp: number) => {
+  const date = new Date(timestamp)
+  return date.toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
+
+const formatTimeOnly = (timestamp: number) => {
+  const date = new Date(timestamp)
+  return date.toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+const isSameDate = (ts1: number, ts2: number) => {
+  const d1 = new Date(ts1)
+  const d2 = new Date(ts2)
+  return d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate()
+}
+
+const formatTimelinestamp = (timestamp: number, stepIndex: number) => {
+  if (!timestamp) return '—'
+
+  // Compare with previous step or run start
+  const prevTimestamp = stepIndex === 0
+    ? props.run.createdAt
+    : timelineSteps.value[stepIndex - 1]?.timestamp || props.run.createdAt
+
+  if (isSameDate(timestamp, prevTimestamp)) {
+    return formatTimeOnly(timestamp)
+  }
+  return formatDateTime(timestamp)
+}
+
+// Get steps for timeline
+const timelineSteps = computed(() => {
+  const runModel = AgentRunModel.fromJson(props.run)
+  const messages = runModel.messages || []
+  const steps: Array<{ description: string; status: string; timestamp: number }> = []
+
+  // Skip system message, then pair user/assistant messages as steps
+  let stepIndex = 1
+  for (let i = 1; i < messages.length; i += 2) {
+    const promptMsg = messages[i]
+    const responseMsg = messages[i + 1]
+    const isLastStep = i + 2 >= messages.length
+    const stepInfo = props.agent.steps?.[stepIndex - 1]
+    const runStepInfo = props.run.agentInfo?.steps?.[stepIndex - 1]
+
+    const stepIsRunning = props.run.status === 'running' && isLastStep && !responseMsg
+    const status = stepIsRunning ? 'running' : (responseMsg ? 'success' : 'pending')
+
+    steps.push({
+      description: runStepInfo?.description || stepInfo?.description || '',
+      status,
+      timestamp: promptMsg?.createdAt || 0,
+    })
+    stepIndex++
+  }
+
+  return steps
+})
 
 // Get the last step output for successful runs
 const lastStepOutput = computed(() => {
@@ -347,23 +422,43 @@ const lastStepOutput = computed(() => {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background-color: var(--highlight-color);
+    background-color: var(--border-color);
     flex-shrink: 0;
     margin-top: 4px;
+
+    &.start {
+      background-color: var(--highlight-color);
+    }
+
+    &.step {
+      background-color: var(--border-color);
+      &.success { background-color: var(--color-success); }
+      &.running { background-color: var(--color-warning); }
+      &.pending { background-color: var(--border-color); }
+    }
+
+    &.end {
+      &.success { background-color: var(--color-success); }
+      &.error { background-color: var(--color-error); }
+      &.canceled { background-color: var(--color-warning); }
+    }
   }
 
   .timeline-content {
     flex: 1;
+    min-width: 0;
 
     .timeline-label {
-      font-size: 11px;
-      color: var(--faded-text-color);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 13px;
+      font-weight: var(--font-weight-medium);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .timeline-value {
-      font-size: 13px;
+      font-size: 12px;
+      color: var(--faded-text-color);
       margin-top: 2px;
     }
   }
