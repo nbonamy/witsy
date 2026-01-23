@@ -229,13 +229,21 @@ const clearHistory = () => {
 <style scoped>
 
 .agent-view {
-  
+
   background-color: var(--background-color);
   color: var(--text-color);
 
   .sp-sidebar {
     flex: 0 0 calc(var(--large-panel-width) * 1.1);
     min-height: 0;
+
+    header .title {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     main {
       min-height: 0;
