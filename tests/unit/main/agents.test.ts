@@ -129,9 +129,10 @@ test('Delete agent', () => {
 
 test('Get agent runs', () => {
   const runs1: AgentRun[]|null = main.getAgentRuns(app, 'test-workspace', 'agent1')
-  expect(runs1).toHaveLength(2)
+  expect(runs1).toHaveLength(3)
   expect(runs1![0].uuid).toBe('run2')
   expect(runs1![1].uuid).toBe('run1')
+  expect(runs1![2].uuid).toBe('run3')
 
   const runs2: AgentRun[]|null = main.getAgentRuns(app, 'test-workspace', 'agent2')
   expect(runs2).toHaveLength(0)
@@ -157,5 +158,95 @@ test('Delete agent run', () => {
   const result = main.deleteAgentRun(app, 'test-workspace', 'agent1', 'run1')
   expect(fs.unlinkSync).toHaveBeenCalledWith('tests/fixtures/workspaces/test-workspace/agents/agent1/run1.json')
   expect(result).toBe(true)
+})
+
+test('Cancel stale running runs', () => {
+  const count = main.cancelStaleRunningRuns(app)
+  expect(count).toBe(1)
+  expect(fs.writeFileSync).toHaveBeenCalledWith(
+    'tests/fixtures/workspaces/test-workspace/agents/agent1/run3.json',
+    expect.stringContaining('"status": "canceled"')
+  )
+})
+
+test('Load agent success', () => {
+  const agent = main.loadAgent(app, 'test-workspace', 'agent1')
+  expect(agent).not.toBeNull()
+  expect(agent!.uuid).toBe('agent1')
+  expect(agent!.name).toBe('Name1')
+})
+
+test('Load agent not found', () => {
+  const agent = main.loadAgent(app, 'test-workspace', 'nonexistent')
+  expect(agent).toBeNull()
+})
+
+test('Get agent run success', () => {
+  const run = main.getAgentRun(app, 'test-workspace', 'agent1', 'run1')
+  expect(run).not.toBeNull()
+  expect(run!.uuid).toBe('run1')
+  expect(run!.status).toBe('success')
+})
+
+test('Get agent run not found', () => {
+  const run = main.getAgentRun(app, 'test-workspace', 'agent1', 'nonexistent')
+  expect(run).toBeNull()
+})
+
+test('List agents from nonexistent workspace returns empty', () => {
+  const agents = main.listAgents(app, 'nonexistent-workspace')
+  expect(agents).toHaveLength(0)
+})
+
+test('Get agent runs from nonexistent agent returns empty', () => {
+  const runs = main.getAgentRuns(app, 'test-workspace', 'nonexistent-agent')
+  expect(runs).toHaveLength(0)
+})
+
+test('Save agent handles write error', () => {
+  vi.mocked(fs.writeFileSync).mockImplementationOnce(() => {
+    throw new Error('Write error')
+  })
+  const agent = {
+    uuid: 'agent-error',
+    name: 'Error Agent',
+    steps: [],
+  }
+  const result = main.saveAgent(app, 'test-workspace', agent as any)
+  expect(result).toBe(false)
+})
+
+test('Delete agent handles error', () => {
+  vi.mocked(fs.unlinkSync).mockImplementationOnce(() => {
+    throw new Error('Delete error')
+  })
+  const result = main.deleteAgent(app, 'test-workspace', 'agent-error')
+  expect(result).toBe(false)
+})
+
+test('Save agent run handles error', () => {
+  vi.mocked(fs.writeFileSync).mockImplementationOnce(() => {
+    throw new Error('Write error')
+  })
+  const run = { uuid: 'run-error', agentId: 'agent1' } as any
+  const result = main.saveAgentRun(app, 'test-workspace', run)
+  expect(result).toBe(false)
+})
+
+test('Delete agent runs handles error', () => {
+  vi.mocked(fs.rmSync).mockImplementationOnce(() => {
+    throw new Error('Delete error')
+  })
+  // Use existing agent path that will trigger rmSync
+  const result = main.deleteAgentRuns(app, 'test-workspace', 'agent1')
+  expect(result).toBe(false)
+})
+
+test('Delete agent run handles error', () => {
+  vi.mocked(fs.unlinkSync).mockImplementationOnce(() => {
+    throw new Error('Delete error')
+  })
+  const result = main.deleteAgentRun(app, 'test-workspace', 'agent1', 'run-error')
+  expect(result).toBe(false)
 })
 

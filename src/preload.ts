@@ -50,6 +50,7 @@ contextBridge.exposeInMainWorld(
       moveWindow: (deltaX: number, deltaY: number): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.MOVE_WINDOW, { deltaX, deltaY }) },
     },
     debug: {
+      isDebug: process.env.DEBUG === '1' || process.env.NODE_ENV === 'development',
       showConsole: (): void => { return ipcRenderer.send(IPC.DEBUG.SHOW_CONSOLE) },
       getNetworkHistory: (): NetworkRequest[] => { return ipcRenderer.sendSync(IPC.DEBUG.GET_NETWORK_HISTORY) },
       clearNetworkHistory: (): void => { return ipcRenderer.send(IPC.DEBUG.CLEAR_NETWORK_HISTORY) },

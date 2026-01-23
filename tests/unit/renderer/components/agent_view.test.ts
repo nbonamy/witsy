@@ -2,6 +2,7 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { createI18nMock } from '@tests/mocks/index'
 import { useWindowMock } from '@tests/mocks/window'
+import { stubTeleport } from '@tests/mocks/stubs'
 import { store } from '@services/store'
 import { kDefaultWorkspaceId } from '@/consts'
 import View from '@renderer/agent/View.vue'
@@ -34,9 +35,10 @@ test('Renders view component with agent', async () => {
   await nextTick()
 
   expect(wrapper.exists()).toBe(true)
-  expect(wrapper.find('.agent-view')).toBeTruthy()
-  expect(wrapper.find('.master-main')).toBeTruthy()
-  expect(wrapper.find('.master-detail')).toBeTruthy()
+  expect(wrapper.find('.agent-view').exists()).toBe(true)
+  expect(wrapper.find('.sp-sidebar').exists()).toBe(true)
+  // Run component contains the execution flow and details panes
+  expect(wrapper.findComponent({ name: 'Run' }).exists()).toBe(true)
 })
 
 test('Does not render when no agent provided', async () => {
@@ -47,42 +49,34 @@ test('Does not render when no agent provided', async () => {
   expect(wrapper.find('.agent-view').exists()).toBe(false)
 })
 
-test('Renders Info component with correct props', async () => {
+test('Renders header with agent name and action buttons', async () => {
   const agent = store.agents[0]
   const wrapper: VueWrapper<any> = mount(View, {
+    ...stubTeleport,
     props: { agent }
   })
   await nextTick()
 
-  const infoComponent = wrapper.findComponent({ name: 'Info' })
-  expect(infoComponent.exists()).toBe(true)
-  expect(infoComponent.props('agent')).toEqual(agent)
-  expect(infoComponent.props('runs')).toHaveLength(3) // Mock runs for agent1
-
-  // Check Info component renders correctly
-  expect(infoComponent.find('.agent-info').exists()).toBe(true)
-  expect(infoComponent.find('.run').exists()).toBe(true)
-  expect(infoComponent.find('.edit').exists()).toBe(true)
-  expect(infoComponent.find('.delete').exists()).toBe(true)
+  expect(wrapper.find('.sp-sidebar header .title').text()).toBe(agent.name)
+  expect(wrapper.find('.sp-sidebar .run').exists()).toBe(true)
+  // Edit and delete are in context menu - open it first
+  await wrapper.find('.context-menu-trigger .trigger').trigger('click')
+  await nextTick()
+  expect(wrapper.find('.item.edit').exists()).toBe(true)
+  expect(wrapper.find('.item.delete').exists()).toBe(true)
 })
 
-test('Renders History component with correct props', async () => {
+test('Renders runs list with history filter', async () => {
   const agent = store.agents[0]
   const wrapper: VueWrapper<any> = mount(View, {
     props: { agent }
   })
   await nextTick()
 
-  const historyComponent = wrapper.findComponent({ name: 'History' })
-  expect(historyComponent.exists()).toBe(true)
-  expect(historyComponent.props('agent')).toEqual(agent)
-  expect(historyComponent.props('runs')).toHaveLength(3)
-  expect(historyComponent.props('showWorkflows')).toBe('exclude')
-
-  // Check History component renders correctly
-  expect(historyComponent.find('.runs').exists()).toBe(true)
-  expect(historyComponent.find('.history-filter').exists()).toBe(true)
-  expect(historyComponent.find('.clear').exists()).toBe(true)
+  expect(wrapper.find('.history .header').exists()).toBe(true)
+  expect(wrapper.find('.history-filter').exists()).toBe(true)
+  expect(wrapper.find('.clear').exists()).toBe(true)
+  expect(wrapper.find('.history .items').exists()).toBe(true)
 })
 
 test('Loads runs on agent change', async () => {
@@ -92,19 +86,16 @@ test('Loads runs on agent change', async () => {
   })
   await nextTick()
 
-  // Initially no agent, so no History component should be rendered
+  // Initially no agent, so no view should be rendered
   expect(wrapper.find('.agent-view').exists()).toBe(false)
 
   await wrapper.setProps({ agent })
   await nextTick()
 
-  // After agent is set, History component should show runs
-  const historyComponent = wrapper.findComponent({ name: 'History' })
-  expect(historyComponent.exists()).toBe(true)
-  
-  // Check that History component has table rows (excluding spacer row)
-  const tableRows = historyComponent.findAll('tbody tr:not(.spacer)')
-  expect(tableRows.length).toBeGreaterThan(0) // Should have some runs
+  // After agent is set, runs list should show runs
+  expect(wrapper.find('.history .items').exists()).toBe(true)
+  const runItems = wrapper.findAll('.history .item')
+  expect(runItems.length).toBeGreaterThan(0)
 })
 
 test('Auto-selects latest run on load (excluding workflows)', async () => {
@@ -114,32 +105,26 @@ test('Auto-selects latest run on load (excluding workflows)', async () => {
   })
   await nextTick()
 
-  // Check that History component shows 'exclude' in filter
-  const historyComponent = wrapper.findComponent({ name: 'History' })
-  const filterSelect = historyComponent.find<HTMLSelectElement>('.history-filter')
+  // Check that filter shows 'exclude'
+  const filterSelect = wrapper.find<HTMLSelectElement>('.history-filter')
   expect(filterSelect.element.value).toBe('exclude')
-  
-  // Check that a Run component is displayed (meaning a run was auto-selected)
-  const runComponent = wrapper.findComponent({ name: 'Run' })
-  expect(runComponent.exists()).toBe(true)
-  expect(runComponent.props('agentId')).toBe(agent.uuid)
+
+  // Check that RunInfo component is displayed (stepIndex 0 shows RunInfo)
+  const runInfo = wrapper.findComponent({ name: 'RunInfo' })
+  expect(runInfo.exists()).toBe(true)
 })
 
-test('Shows Run component when run is selected', async () => {
+test('Shows RunInfo component when run is selected (stepIndex 0)', async () => {
   const agent = store.agents[0]
   const wrapper: VueWrapper<any> = mount(View, {
     props: { agent }
   })
   await nextTick()
 
-  const runComponent = wrapper.findComponent({ name: 'Run' })
-  expect(runComponent.exists()).toBe(true)
-  expect(runComponent.props('agentId')).toBe(agent.uuid)
-  expect(runComponent.props('runId')).toBe('run3')
-
-  // Check Run component renders correctly
-  expect(runComponent.find('.run').exists()).toBe(true)
-  expect(runComponent.find('.delete').exists()).toBe(true)
+  // At stepIndex 0, RunInfo is shown
+  const runInfo = wrapper.findComponent({ name: 'RunInfo' })
+  expect(runInfo.exists()).toBe(true)
+  expect(runInfo.props('run').uuid).toBe('run3')
 })
 
 test('Shows empty state when no run selected', async () => {
@@ -149,9 +134,9 @@ test('Shows empty state when no run selected', async () => {
   })
   await nextTick()
 
-  expect(wrapper.findComponent({ name: 'Run' }).exists()).toBe(false)
-  expect(wrapper.find('.no-run').exists()).toBe(true)
-  expect(wrapper.find('.empty-state').text()).toBe('agent.run.selectRun')
+  expect(wrapper.findComponent({ name: 'RunInfo' }).exists()).toBe(false)
+  expect(wrapper.findComponent({ name: 'StepDetail' }).exists()).toBe(false)
+  expect(wrapper.find('.run-placeholder.empty').exists()).toBe(true)
 })
 
 test('Adjusts showWorkflows when only workflow runs exist', async () => {
@@ -161,76 +146,81 @@ test('Adjusts showWorkflows when only workflow runs exist', async () => {
   })
   await nextTick()
 
-  // Check that History component shows 'all' in filter when only workflow runs exist
-  const historyComponent = wrapper.findComponent({ name: 'History' })
-  const filterSelect = historyComponent.find<HTMLSelectElement>('.history-filter')
+  // Check that filter shows 'all' when only workflow runs exist
+  const filterSelect = wrapper.find<HTMLSelectElement>('.history-filter')
   expect(filterSelect.element.value).toBe('all')
 })
 
-test('Emits run event from Info component', async () => {
+test('Emits run event when run button clicked', async () => {
   const agent = store.agents[0]
   const wrapper: VueWrapper<any> = mount(View, {
     props: { agent }
   })
   await nextTick()
 
-  const infoComponent = wrapper.findComponent({ name: 'Info' })
-  await infoComponent.find('.run').trigger('click')
+  await wrapper.find('.sp-sidebar .run').trigger('click')
 
   expect(wrapper.emitted('run')).toBeTruthy()
   expect(wrapper.emitted('run')![0]).toEqual([agent])
 })
 
-test('Emits edit event from Info component', async () => {
+test('Emits edit event when edit button clicked', async () => {
   const agent = store.agents[0]
   const wrapper: VueWrapper<any> = mount(View, {
+    ...stubTeleport,
     props: { agent }
   })
   await nextTick()
 
-  const infoComponent = wrapper.findComponent({ name: 'Info' })
-  await infoComponent.find('.edit').trigger('click')
+  // Open context menu first
+  await wrapper.find('.context-menu-trigger .trigger').trigger('click')
+  await nextTick()
+  await wrapper.find('.item.edit').trigger('click')
 
   expect(wrapper.emitted('edit')).toBeTruthy()
   expect(wrapper.emitted('edit')![0]).toEqual([agent])
 })
 
-test('Emits delete event from Info component', async () => {
+test('Emits delete event when delete button clicked', async () => {
   const agent = store.agents[0]
   const wrapper: VueWrapper<any> = mount(View, {
+    ...stubTeleport,
     props: { agent }
   })
   await nextTick()
 
-  const infoComponent = wrapper.findComponent({ name: 'Info' })
-  await infoComponent.find('.delete').trigger('click')
+  // Open context menu first
+  await wrapper.find('.context-menu-trigger .trigger').trigger('click')
+  await nextTick()
+  await wrapper.find('.item.delete').trigger('click')
 
   expect(wrapper.emitted('delete')).toBeTruthy()
   expect(wrapper.emitted('delete')![0]).toEqual([agent])
 })
 
-test('Selects run when clicked in History component', async () => {
+test('Selects run when clicked in runs list', async () => {
   const agent = store.agents[0]
   const wrapper: VueWrapper<any> = mount(View, {
     props: { agent }
   })
   await nextTick()
 
-  const historyComponent = wrapper.findComponent({ name: 'History' })
-  const runRows = historyComponent.findAll('tbody tr')
+  const runItems = wrapper.findAll('.history .item')
+  expect(runItems.length).toBeGreaterThan(0)
 
-  // Click on first run row (excluding spacer row)
-  if (runRows.length > 1) {
-    await runRows[1].trigger('click') // Skip spacer row at index 0
-    await nextTick()
+  // Click on first run item
+  await runItems[0].trigger('click')
+  await nextTick()
 
-    // Check that a Run component is now visible (meaning a run was selected)
-    const runComponent = wrapper.findComponent({ name: 'Run' })
-    expect(runComponent.exists()).toBe(true)
-  }
+  // Check that first item is selected
+  expect(runItems[0].classes()).toContain('selected')
+
+  // Check that RunInfo component is visible (stepIndex 0)
+  const runInfo = wrapper.findComponent({ name: 'RunInfo' })
+  expect(runInfo.exists()).toBe(true)
 })
 
-test('Updates showWorkflows when changed in History component', async () => {
+test('Updates showWorkflows when filter changed', async () => {
   const agent = store.agents[0]
   const wrapper = mount(View, {
     props: { agent }
@@ -238,52 +228,27 @@ test('Updates showWorkflows when changed in History component', async () => {
 
   await nextTick()
 
-  const historyComponent = wrapper.findComponent({ name: 'History' })
-  const filterSelect = historyComponent.find('.history-filter')
+  const filterSelect = wrapper.find('.history-filter')
+  const vm = wrapper.vm as any
 
-  // Get initial value from the History component props
-  const initialValue = historyComponent.props('showWorkflows')
+  // Get initial value
+  const initialValue = vm.showWorkflows
   const newValue = initialValue === 'all' ? 'exclude' : 'all'
 
   await filterSelect.setValue(newValue)
   await nextTick()
 
-  // Check that the History component received the updated prop
-  expect(historyComponent.props('showWorkflows')).toBe(newValue)
+  expect(vm.showWorkflows).toBe(newValue)
 })
 
-test('Closes run when close button clicked in Run component', async () => {
+test('Handles clear history', async () => {
   const agent = store.agents[0]
   const wrapper: VueWrapper<any> = mount(View, {
     props: { agent }
   })
   await nextTick()
 
-  // Initially a Run component should be visible (auto-selected)
-  let runComponent = wrapper.findComponent({ name: 'Run' })
-  expect(runComponent.exists()).toBe(true)
-
-  // Simulate clicking the close button - we need to trigger the close event
-  await runComponent.vm.$emit('close')
-  await nextTick()
-
-  // After closing, no Run component should be visible
-  runComponent = wrapper.findComponent({ name: 'Run' })
-  expect(runComponent.exists()).toBe(false)
-  
-  // And the empty state should be shown
-  expect(wrapper.find('.no-run').exists()).toBe(true)
-})
-
-test('Handles clear history from History component', async () => {
-  const agent = store.agents[0]
-  const wrapper: VueWrapper<any> = mount(View, {
-    props: { agent }
-  })
-  await nextTick()
-
-  const historyComponent = wrapper.findComponent({ name: 'History' })
-  await historyComponent.find('.clear').trigger('click')
+  await wrapper.find('.clear').trigger('click')
   await nextTick()
 
   // Dialog mock confirms by default, so API should be called
@@ -297,8 +262,9 @@ test('Handles delete run from Run component', async () => {
   })
   await nextTick()
 
+  // The delete button is now in the Run component's details pane
   const runComponent = wrapper.findComponent({ name: 'Run' })
-  await runComponent.find('.delete').trigger('click')
+  await runComponent.find('.details-pane .delete').trigger('click')
   await nextTick()
 
   // Dialog mock confirms by default, so API should be called
@@ -312,42 +278,33 @@ test('Filters runs based on showWorkflows setting', async () => {
   })
   await nextTick()
 
-  const historyComponent = wrapper.findComponent({ name: 'History' })
+  const vm = wrapper.vm as any
 
-  // Wait for runs to be loaded - accept any number of runs > 0
+  // Wait for runs to be loaded
   await vi.waitFor(() => {
-    const runs = historyComponent.props('runs')
-    expect(runs.length).toBeGreaterThan(0)
+    expect(vm.runs.length).toBeGreaterThan(0)
   })
 
-  const allRuns = historyComponent.props('runs')
+  const allRuns = vm.runs
   const nonWorkflowRuns = allRuns.filter((run: any) => run.trigger !== 'workflow')
-  const currentFilter = historyComponent.props('showWorkflows')
 
-  // Check current filter state and visible rows
-  let tableRows = historyComponent.findAll('tbody tr:not(.spacer)')
-
-  if (currentFilter === 'exclude') {
-    // Should show non-workflow runs
-    expect(tableRows.length).toBe(nonWorkflowRuns.length)
-  } else {
-    // Should show all runs
-    expect(tableRows.length).toBe(allRuns.length)
-  }
+  // Check initial filter state (exclude workflows)
+  let runItems = wrapper.findAll('.history .item')
+  expect(runItems.length).toBe(nonWorkflowRuns.length)
 
   // Change to show all
-  await historyComponent.find('.history-filter').setValue('all')
+  await wrapper.find('.history-filter').setValue('all')
   await nextTick()
 
-  tableRows = historyComponent.findAll('tbody tr:not(.spacer)')
-  expect(tableRows.length).toBe(allRuns.length)
+  runItems = wrapper.findAll('.history .item')
+  expect(runItems.length).toBe(allRuns.length)
 
   // Change back to exclude workflows
-  await historyComponent.find('.history-filter').setValue('exclude')
+  await wrapper.find('.history-filter').setValue('exclude')
   await nextTick()
 
-  tableRows = historyComponent.findAll('tbody tr:not(.spacer)')
-  expect(tableRows.length).toBe(nonWorkflowRuns.length)
+  runItems = wrapper.findAll('.history .item')
+  expect(runItems.length).toBe(nonWorkflowRuns.length)
 })
 
 test('Handles agent run update event', async () => {
@@ -393,14 +350,12 @@ test('Shows context menu when right-clicking on run', async () => {
   const vm = wrapper.vm as any
   expect(vm.showMenu).toBe(false)
 
-  const historyComponent = wrapper.findComponent({ name: 'History' })
-  
-  // Find first table row
-  const tableRow = historyComponent.find('tbody tr:not(.spacer)')
-  expect(tableRow.exists()).toBe(true)
-  
+  // Find first run item
+  const runItem = wrapper.find('.history .item')
+  expect(runItem.exists()).toBe(true)
+
   // Right-click to trigger context menu
-  await tableRow.trigger('contextmenu', { preventDefault: vi.fn() })
+  await runItem.trigger('contextmenu', { preventDefault: vi.fn() })
   await nextTick()
 
   // Check that showMenu is now true
@@ -408,7 +363,7 @@ test('Shows context menu when right-clicking on run', async () => {
 })
 
 test('Context menu action deletes runs', async () => {
-  
+
   const agent = store.agents[0]
   const wrapper: VueWrapper<any> = mount(View, {
     props: { agent }
@@ -423,4 +378,30 @@ test('Context menu action deletes runs', async () => {
   expect(window.api.agents.deleteRun).toHaveBeenCalledWith(kDefaultWorkspaceId, agent.uuid, 'run1')
   expect(window.api.agents.deleteRun).toHaveBeenCalledWith(kDefaultWorkspaceId, agent.uuid, 'run2')
   expect(window.api.agents.deleteRun).toHaveBeenCalledWith(kDefaultWorkspaceId, agent.uuid, 'run3')
+})
+
+test('Emits close event when back button clicked', async () => {
+  const agent = store.agents[0]
+  const wrapper: VueWrapper<any> = mount(View, {
+    props: { agent }
+  })
+  await nextTick()
+
+  await wrapper.find('.icon.back').trigger('click')
+
+  expect(wrapper.emitted('close')).toBeTruthy()
+})
+
+test('Shows execution flow canvas when run selected', async () => {
+  const agent = store.agents[0]
+  const wrapper: VueWrapper<any> = mount(View, {
+    props: { agent }
+  })
+  await nextTick()
+
+  // With a run selected, should show ExecutionFlow component (inside Run)
+  const executionFlow = wrapper.findComponent({ name: 'ExecutionFlow' })
+  expect(executionFlow.exists()).toBe(true)
+  expect(executionFlow.props('agent')).toEqual(agent)
+  expect(executionFlow.props('selectedIndex')).toBe(0)
 })

@@ -6,7 +6,7 @@ import { useWindowMock } from '@tests/mocks/window'
 import { store } from '@services/store'
 import Run from '@renderer/agent/Run.vue'
 import Message from '@models/message'
-import { AgentRun } from '@/types/agents'
+import { Agent, AgentRun } from '@/types/agents'
 import enMessages from '@root/locales/en.json'
 
 beforeAll(async () => {
@@ -21,6 +21,21 @@ beforeAll(async () => {
 
   store.load()
   store.config.workspaceId = 'test-workspace'
+})
+
+const createMockAgent = (overrides: Partial<Agent> = {}): Agent => ({
+  uuid: 'test-agent-456',
+  name: 'Test Agent',
+  description: 'A test agent',
+  prompt: 'You are a helpful assistant',
+  engine: 'anthropic',
+  model: 'claude-sonnet-4-20250514',
+  parameters: {},
+  steps: [
+    { description: 'Step 1', prompt: 'Do step 1' },
+    { description: 'Step 2', prompt: 'Do step 2' },
+  ],
+  ...overrides,
 })
 
 const createMockRun = (overrides: Partial<AgentRun> = {}): AgentRun => ({
@@ -38,7 +53,6 @@ const createMockRun = (overrides: Partial<AgentRun> = {}): AgentRun => ({
     new Message('user', 'User message 2'),
     new Message('assistant', 'Assistant response 2'),
   ],
-  toolCalls: [],
   ...overrides,
 })
 
@@ -48,492 +62,218 @@ beforeEach(() => {
 
 describe('Run.vue', () => {
   test('renders component with run data', async () => {
+    const mockAgent = createMockAgent()
     const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
 
     const wrapper = mount(Run, {
       props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
+        agent: mockAgent,
+        run: mockRun,
       },
     })
 
     await nextTick()
 
-    expect(wrapper.find('.run').exists()).toBe(true)
-    expect(wrapper.find('.panel-header label').exists()).toBe(true)
+    expect(wrapper.find('.run-view').exists()).toBe(true)
+    expect(wrapper.find('.execution-flow-pane').exists()).toBe(true)
+    expect(wrapper.find('.details-pane').exists()).toBe(true)
   })
 
-  test('displays metadata panel', async () => {
+  test('shows placeholder when no run provided', async () => {
+    const mockAgent = createMockAgent()
+
+    const wrapper = mount(Run, {
+      props: {
+        agent: mockAgent,
+        run: null,
+      },
+    })
+
+    await nextTick()
+
+    expect(wrapper.find('.run-view').exists()).toBe(false)
+    expect(wrapper.find('.run-placeholder').exists()).toBe(true)
+  })
+
+  test('renders ExecutionFlow component', async () => {
+    const mockAgent = createMockAgent()
     const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
 
     const wrapper = mount(Run, {
       props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
+        agent: mockAgent,
+        run: mockRun,
       },
     })
 
     await nextTick()
 
-    const metadataPanel = wrapper.find('.metadata-panel')
-    expect(metadataPanel.exists()).toBe(true)
-    expect(metadataPanel.classes()).toContain('panel')
+    const executionFlow = wrapper.findComponent({ name: 'ExecutionFlow' })
+    expect(executionFlow.exists()).toBe(true)
+    expect(executionFlow.props('agent')).toEqual(mockAgent)
+    expect(executionFlow.props('run')).toEqual(mockRun)
   })
 
-  test('toggles metadata panel on click', async () => {
+  test('renders details pane with header', async () => {
+    const mockAgent = createMockAgent()
     const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
 
     const wrapper = mount(Run, {
       props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
+        agent: mockAgent,
+        run: mockRun,
       },
     })
 
     await nextTick()
 
-    const metadataPanel = wrapper.find('.metadata-panel')
-    const metadataHeader = metadataPanel.find('.panel-header label')
-
-    // Initially no collapsed class
-    expect(metadataPanel.classes()).not.toContain('collapsed')
-
-    // Click to collapse
-    await metadataHeader.trigger('click')
-    await nextTick()
-
-    expect(metadataPanel.classes()).toContain('collapsed')
-
-    // Click to expand again
-    await metadataHeader.trigger('click')
-    await nextTick()
-
-    expect(metadataPanel.classes()).not.toContain('collapsed')
+    const detailsPane = wrapper.find('.details-pane')
+    expect(detailsPane.exists()).toBe(true)
+    expect(detailsPane.find('header').exists()).toBe(true)
+    expect(detailsPane.find('.title').exists()).toBe(true)
   })
 
-  test('displays all metadata fields', async () => {
+  test('shows RunInfo when step index is 0', async () => {
+    const mockAgent = createMockAgent()
     const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
 
     const wrapper = mount(Run, {
       props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
+        agent: mockAgent,
+        run: mockRun,
       },
     })
 
     await nextTick()
 
-    // Metadata panel is expanded by default
-    expect(wrapper.text()).toContain('test-run-123')
-    expect(wrapper.text()).toContain('manual')
-    expect(wrapper.text()).toContain('success')
-    // Prompt is in a textarea element
-    expect(wrapper.find('textarea.prompt').element.value).toContain('Test prompt for the agent')
+    // Initially step index is 0, so RunInfo should be shown
+    const runInfo = wrapper.findComponent({ name: 'RunInfo' })
+    expect(runInfo.exists()).toBe(true)
+
+    const stepDetail = wrapper.findComponent({ name: 'StepDetail' })
+    expect(stepDetail.exists()).toBe(false)
   })
 
-  test('renders output panels for each message', async () => {
+  test('shows StepDetail when step is selected', async () => {
+    const mockAgent = createMockAgent()
     const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
 
     const wrapper = mount(Run, {
       props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
+        agent: mockAgent,
+        run: mockRun,
       },
     })
 
     await nextTick()
 
-    // Should have 2 output panels (messages after the first 2)
-    const outputPanels = wrapper.findAll('.output-panel')
-    expect(outputPanels.length).toBe(2)
+    // Simulate selecting a step by emitting from ExecutionFlow
+    const executionFlow = wrapper.findComponent({ name: 'ExecutionFlow' })
+    await executionFlow.vm.$emit('select', 1)
+    await nextTick()
+
+    const runInfo = wrapper.findComponent({ name: 'RunInfo' })
+    expect(runInfo.exists()).toBe(false)
+
+    const stepDetail = wrapper.findComponent({ name: 'StepDetail' })
+    expect(stepDetail.exists()).toBe(true)
   })
 
-  test('output panels are collapsed by default', async () => {
-    const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
+  test('resets step index when run changes', async () => {
+    const mockAgent = createMockAgent()
+    const mockRun1 = createMockRun({ uuid: 'run-1' })
+    const mockRun2 = createMockRun({ uuid: 'run-2' })
 
     const wrapper = mount(Run, {
       props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
+        agent: mockAgent,
+        run: mockRun1,
       },
     })
 
     await nextTick()
 
-    const outputPanels = wrapper.findAll('.output-panel')
-    outputPanels.forEach(panel => {
-      expect(panel.classes()).toContain('collapsed')
-    })
-  })
-
-  test('toggles output panel on click', async () => {
-    const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
+    // Select a step
+    const executionFlow = wrapper.findComponent({ name: 'ExecutionFlow' })
+    await executionFlow.vm.$emit('select', 2)
     await nextTick()
 
-    const firstOutputPanel = wrapper.find('.output-panel')
-    const firstOutputHeader = firstOutputPanel.find('.panel-header')
+    // StepDetail should be shown
+    expect(wrapper.findComponent({ name: 'StepDetail' }).exists()).toBe(true)
 
-    // Initially collapsed
-    expect(firstOutputPanel.classes()).toContain('collapsed')
-
-    // Click to expand
-    await firstOutputHeader.trigger('click')
+    // Change run
+    await wrapper.setProps({ run: mockRun2 })
     await nextTick()
 
-    expect(firstOutputPanel.classes()).not.toContain('collapsed')
-  })
-
-  test('displays step titles for outputs', async () => {
-    const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    const outputHeaders = wrapper.findAll('.output-panel .panel-header label')
-    expect(outputHeaders.length).toBe(2)
-    // Just verify headers exist, translation testing is complex
-    expect(outputHeaders[0].exists()).toBe(true)
-    expect(outputHeaders[1].exists()).toBe(true)
-  })
-
-  test('displays step descriptions from agentInfo', async () => {
-    const mockRun = createMockRun({
-      agentInfo: {
-        name: 'Test Agent',
-        steps: [
-          { description: 'First step from agentInfo' },
-          { description: 'Second step from agentInfo' },
-        ],
-      },
-    })
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    const outputHeaders = wrapper.findAll('.output-panel .panel-header label')
-    expect(outputHeaders[0].text()).toContain('First step from agentInfo')
-    expect(outputHeaders[1].text()).toContain('Second step from agentInfo')
-  })
-
-  test('falls back to agent definition when agentInfo not available', async () => {
-    const mockRun = createMockRun()  // No agentInfo
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-    window.api.agents.list = vi.fn().mockReturnValue([{
-      uuid: 'test-agent-456',
-      name: 'Fallback Agent',
-      steps: [
-        { description: 'First step from agent def' },
-        { description: 'Second step from agent def' },
-      ],
-    }])
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    const outputHeaders = wrapper.findAll('.output-panel .panel-header label')
-    expect(outputHeaders[0].text()).toContain('First step from agent def')
-    expect(outputHeaders[1].text()).toContain('Second step from agent def')
-  })
-
-  test('shows no outputs message when no messages available', async () => {
-    const mockRun = createMockRun({
-      messages: [
-        new Message('system', 'System message'),
-        new Message('user', 'User message'),
-      ],
-    })
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    expect(wrapper.find('.no-outputs').exists()).toBe(true)
-    expect(wrapper.find('.no-outputs').text()).toBeTruthy()
-  })
-
-  test('displays error message when run has error', async () => {
-    const mockRun = createMockRun({
-      status: 'error',
-      error: 'Something went wrong',
-    })
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    // Expand metadata to see error
-    const metadataHeader = wrapper.find('.metadata-panel .panel-header')
-    await metadataHeader.trigger('click')
-    await nextTick()
-
-    expect(wrapper.find('.error-text').exists()).toBe(true)
-    expect(wrapper.find('.error-text').text()).toContain('Something went wrong')
-  })
-
-  test('shows in progress message for running status', async () => {
-    const mockRun = createMockRun({
-      status: 'running',
-      messages: [
-        new Message('system', 'System message'),
-        new Message('user', 'User message'),
-      ],
-    })
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    // Check status shows running
-    expect(wrapper.text()).toContain('running')
+    // Should reset to RunInfo (step index 0)
+    expect(wrapper.findComponent({ name: 'RunInfo' }).exists()).toBe(true)
+    expect(wrapper.findComponent({ name: 'StepDetail' }).exists()).toBe(false)
   })
 
   test('emits delete event when delete button clicked', async () => {
+    const mockAgent = createMockAgent()
     const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
 
     const wrapper = mount(Run, {
       props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
+        agent: mockAgent,
+        run: mockRun,
       },
     })
 
     await nextTick()
 
-    const deleteButton = wrapper.find('.delete')
+    const deleteButton = wrapper.find('.details-pane .delete')
     await deleteButton.trigger('click')
 
     expect(wrapper.emitted('delete')).toBeTruthy()
   })
 
-  test('renders MessageItemBody for each output', async () => {
+  test('passes correct props to StepDetail', async () => {
+    const mockAgent = createMockAgent()
     const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
 
     const wrapper = mount(Run, {
       props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
+        agent: mockAgent,
+        run: mockRun,
       },
     })
 
     await nextTick()
 
-    // everything is collapsed
-    expect(wrapper.findAll('.output-panel').length).toBe(2)
-    expect(wrapper.findAllComponents({ name: 'MessageItemBody' }).length).toBe(0)
+    // Select step 1
+    const executionFlow = wrapper.findComponent({ name: 'ExecutionFlow' })
+    await executionFlow.vm.$emit('select', 1)
+    await nextTick()
 
-    // Expand first panel
-    await wrapper.find('.output-panel .panel-header').trigger('click')
-    expect(wrapper.findAllComponents({ name: 'MessageItemBody' }).length).toBe(1)
-
-    // now expand prompt
-    const firstPromptToggle = wrapper.find('.prompt-toggle')
-    await firstPromptToggle.trigger('click')
-    expect(wrapper.findAllComponents({ name: 'MessageItemBody' }).length).toBe(2)
-
-    // hide prompt
-    await firstPromptToggle.trigger('click')
-    expect(wrapper.findAllComponents({ name: 'MessageItemBody' }).length).toBe(1)
-
-    // collapse
-    await wrapper.find('.output-panel .panel-header').trigger('click')
-    expect(wrapper.findAll('.output-panel').length).toBe(2)
-    expect(wrapper.findAllComponents({ name: 'MessageItemBody' }).length).toBe(0)
-
+    const stepDetail = wrapper.findComponent({ name: 'StepDetail' })
+    expect(stepDetail.props('agent')).toEqual(mockAgent)
+    expect(stepDetail.props('run')).toEqual(mockRun)
+    expect(stepDetail.props('stepIndex')).toBe(1)
   })
 
-  test('passes correct props to MessageItemBody', async () => {
+  test('passes correct selectedIndex to ExecutionFlow', async () => {
+    const mockAgent = createMockAgent()
     const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
 
     const wrapper = mount(Run, {
       props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
+        agent: mockAgent,
+        run: mockRun,
       },
     })
 
     await nextTick()
 
-    // Expand first panel
-    await wrapper.find('.output-panel .panel-header').trigger('click')
+    let executionFlow = wrapper.findComponent({ name: 'ExecutionFlow' })
+    expect(executionFlow.props('selectedIndex')).toBe(0)
+
+    // Select step 2
+    await executionFlow.vm.$emit('select', 2)
     await nextTick()
 
-    const messageItems = wrapper.findAllComponents({ name: 'MessageItemBody' })
-    expect(messageItems[0].props('showToolCalls')).toBe('always')
-  })
-
-  test('calculates duration correctly', async () => {
-    const now = Date.now()
-    const mockRun = createMockRun({
-      createdAt: now - 3000,
-      updatedAt: now,
-      status: 'success',
-    })
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    // Expand metadata to see duration
-    const metadataHeader = wrapper.find('.metadata-panel .panel-header')
-    await metadataHeader.trigger('click')
-    await nextTick()
-
-    expect(wrapper.text()).toContain('3 s')
-  })
-
-  test('formats dates correctly', async () => {
-    const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    // Expand metadata to see dates
-    const metadataHeader = wrapper.find('.metadata-panel .panel-header')
-    await metadataHeader.trigger('click')
-    await nextTick()
-
-    const text = wrapper.text()
-    // Check date format includes standard date components
-    expect(text).toMatch(/[A-Z][a-z]{2}\s+[A-Z][a-z]{2}\s+\d{2}\s+\d{4}/)
-  })
-
-  test('chevron icon rotates when prompt is expanded', async () => {
-    const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    // Expand first output panel to see prompt toggle
-    const firstOutputPanel = wrapper.find('.output-panel')
-    await firstOutputPanel.find('.panel-header').trigger('click')
-    await nextTick()
-
-    const firstPromptToggle = wrapper.find('.prompt-toggle')
-    const chevronIcon = firstPromptToggle.find('svg')
-
-    // Initially not expanded
-    expect(chevronIcon.classes()).not.toContain('expanded')
-
-    // Click to expand
-    await firstPromptToggle.trigger('click')
-    await nextTick()
-
-    expect(chevronIcon.classes()).toContain('expanded')
-  })
-
-  test('each output panel has independent prompt toggle state', async () => {
-    const mockRun = createMockRun()
-    window.api.agents.getRun = vi.fn().mockReturnValue(mockRun)
-
-    const wrapper = mount(Run, {
-      props: {
-        agentId: 'test-agent-456',
-        runId: 'test-run-123',
-      },
-    })
-
-    await nextTick()
-
-    // Expand both output panels to see prompt toggles
-    const outputPanels = wrapper.findAll('.output-panel')
-    await outputPanels[0].find('.panel-header').trigger('click')
-    await nextTick()
-    await outputPanels[1].find('.panel-header').trigger('click')
-    await nextTick()
-
-    const promptToggles = wrapper.findAll('.prompt-toggle')
-    expect(promptToggles.length).toBe(2)
-
-    // Toggle first prompt
-    await promptToggles[0].trigger('click')
-    await nextTick()
-
-    // Only first prompt should be visible - 3 MessageItemBody (1 prompt + 2 responses)
-    let messageItems = wrapper.findAllComponents({ name: 'MessageItemBody' })
-    expect(messageItems.length).toBe(3)
-
-    // Toggle second prompt
-    await promptToggles[1].trigger('click')
-    await nextTick()
-
-    // Both prompts should now be visible - 4 MessageItemBody (2 prompts + 2 responses)
-    messageItems = wrapper.findAllComponents({ name: 'MessageItemBody' })
-    expect(messageItems.length).toBe(4)
+    executionFlow = wrapper.findComponent({ name: 'ExecutionFlow' })
+    expect(executionFlow.props('selectedIndex')).toBe(2)
   })
 })

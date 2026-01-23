@@ -40,6 +40,7 @@ import { importMarkdown } from './main/import_md';
 import { importOpenAI } from './main/import_oai';
 import { installIpc } from './main/ipc';
 
+import * as agents from './main/agents';
 import * as backup from './main/backup';
 import * as config from './main/config';
 import * as menu from './main/menu';
@@ -343,6 +344,9 @@ app.whenReady().then(async () => {
   } catch (error) {
     console.error('Error installing agent webhook:', error);
   }
+
+  // cancel any stale running runs from previous crash
+  agents.cancelStaleRunningRuns(app);
 
   // and now scheduler
   scheduler = new Scheduler(app, mcp, docRepo);

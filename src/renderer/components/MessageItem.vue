@@ -123,6 +123,11 @@ const props = defineProps({
     type: Object as PropType<Message>,
     required: true,
   },
+  authorName: {
+    type: String,
+    required: false,
+    default: null,
+  },
   showRole: { type: Boolean, default: true },
   showToolCalls: { type: Boolean, default: true },
   showActions: { type: Boolean, default: true },
@@ -202,7 +207,7 @@ const agent = computed(() => {
 })
 
 const authorName = computed(() => {
-  return props.message.role === 'assistant' ? t('chat.role.assistant') : t('chat.role.user')
+  return props.authorName ?? (props.message.role === 'assistant' ? t('chat.role.assistant') : t('chat.role.user'))
 })
 
 const modelInfo = computed(() => {

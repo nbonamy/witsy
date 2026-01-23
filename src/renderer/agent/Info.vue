@@ -1,61 +1,65 @@
 
 <template>
 
-  <div class="agent-info panel">
-  
-    <div class="panel-header">
-      <label>{{ t('agent.view.header') }}</label>
-      <ButtonIcon 
-        class="run" 
-        v-tooltip="{ text: t('agent.help.run'), position: 'bottom-left' }" 
-        @click="onRun" 
-      ><PlayIcon /></ButtonIcon>
-      <ButtonIcon 
-        class="edit" 
-        v-tooltip="{ text: t('agent.help.edit'), position: 'bottom-left' }" 
-        @click="onEdit" 
-      ><PencilIcon /></ButtonIcon>
-      <ButtonIcon 
-        class="delete" 
-        v-tooltip="{ text: t('agent.help.delete'), position: 'bottom-left' }" 
-        @click="onDelete" 
-      ><Trash2Icon /></ButtonIcon>
+  <div class="agent-info">
+
+    <!-- Total Runs -->
+    <div class="stat-card">
+      <div class="stat-icon"><ActivityIcon /></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ completedRuns.length }}</div>
+        <div class="stat-label">{{ t('agent.info.totalRuns') }}</div>
+      </div>
     </div>
-    
-    <div class="panel-body form form-vertical form-large">
-      <div class="form-field">
-        <label>{{ t('agent.description') }}</label>
-        {{ agent.description }}
+
+    <!-- Success Rate -->
+    <div class="stat-card" v-if="completedRuns.length > 0">
+      <div class="stat-icon"><CheckCircle2Icon /></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ successPercentage.toFixed(0) }}%</div>
+        <div class="stat-label">{{ t('agent.info.successRate') }}</div>
       </div>
-      <div class="form-field">
-        <label>{{ t('agent.run.status') }}</label>
-        <div class="status-bar" v-if="completedRuns.length > 0">
-          <div class="status-bar-segment success" :style="{ width: successPercentage + '%' }">
-            {{ successPercentage ? `${successPercentage.toFixed(0)}%` : '' }}
-          </div>
-          <div class="status-bar-segment error" :style="{ width: errorPercentage + '%' }">
-            {{ errorPercentage ? `${errorPercentage.toFixed(0)}%` : '' }}
-          </div>
+      <div class="stat-bar">
+        <div class="bar-fill success" :style="{ width: successPercentage + '%' }"></div>
+        <div class="bar-fill error" :style="{ width: errorPercentage + '%' }"></div>
+      </div>
+      <div class="stat-legend">
+        <div class="legend-item">
+          <span class="legend-dot success"></span>
+          <span>{{ successCount }} {{ t('agent.info.successful') }}</span>
         </div>
-        <div class="status-text" v-else>{{ t('agent.history.neverRun') }}</div>
+        <div class="legend-item">
+          <span class="legend-dot error"></span>
+          <span>{{ errorCount }} {{ t('agent.info.failed') }}</span>
+        </div>
       </div>
-      <div class="form-field" v-if="agent.schedule">
-        <label>{{ t('agent.nextRun') }}</label>
-        {{ nextRun }}
+    </div>
+
+    <!-- Next Run (if scheduled) -->
+    <div class="stat-card" v-if="agent.schedule">
+      <div class="stat-icon"><CalendarClockIcon /></div>
+      <div class="stat-content">
+        <div class="stat-value">{{ nextRunShort }}</div>
+        <div class="stat-label">{{ t('agent.info.nextRun') }}</div>
       </div>
+    </div>
+
+    <!-- Debug Info -->
+    <div v-if="isDebug" class="debug-info">
+      <code>{{ agent.uuid }}</code>
     </div>
 
   </div>
 
 </template>
+
 <script setup lang="ts">
 
-import { CronExpressionParser } from 'cron-parser'
-import { PencilIcon, PlayIcon, Trash2Icon } from 'lucide-vue-next'
-import { PropType, computed } from 'vue'
-import ButtonIcon from '@components/ButtonIcon.vue'
 import { t } from '@services/i18n'
+import { ActivityIcon, CalendarClockIcon, CheckCircle2Icon } from 'lucide-vue-next'
+import { CronExpressionParser } from 'cron-parser'
 import { Agent, AgentRun } from 'types/agents'
+import { PropType, computed } from 'vue'
 
 const props = defineProps({
   agent: {
@@ -68,84 +72,59 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['run', 'edit', 'delete'])
+const isDebug = computed(() => {
+  return window.api.debug.isDebug
+})
 
-// const lastRun = computed(() => {
-//   if (runs.value.length === 0) return t('agent.history.neverRun')
-//   const lastRun = runs.value[runs.value.length - 1]
-//   return timeAgo.format(new Date(lastRun.createdAt))
-// })
-
-const nextRun = computed(() => {
+const nextRunShort = computed(() => {
   if (!props.agent.schedule) return ''
   const schedule = CronExpressionParser.parse(props.agent.schedule)
   const next = schedule.next().toDate()
-  return next.toLocaleString(Intl.DateTimeFormat().resolvedOptions().locale, { dateStyle: 'full', timeStyle: 'short' })
+  return next.toLocaleString(Intl.DateTimeFormat().resolvedOptions().locale, {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  })
 })
 
 const completedRuns = computed(() => {
   return props.runs.filter(run => run.status !== 'running')
 })
 
+const successCount = computed(() => {
+  return completedRuns.value.filter(run => run.status === 'success').length
+})
+
+const errorCount = computed(() => {
+  return completedRuns.value.filter(run => run.status === 'error').length
+})
+
 const successPercentage = computed(() => {
   if (completedRuns.value.length === 0) return 0
-  const successCount = completedRuns.value.filter(run => run.status === 'success').length
-  return (successCount / completedRuns.value.length) * 100
+  return (successCount.value / completedRuns.value.length) * 100
 })
 
 const errorPercentage = computed(() => {
   if (completedRuns.value.length === 0) return 0
-  const errorCount = completedRuns.value.filter(run => run.status === 'error').length
-  return (errorCount / completedRuns.value.length) * 100
+  return (errorCount.value / completedRuns.value.length) * 100
 })
-
-const onRun = () => {
-  emit('run', props.agent)
-}
-
-const onEdit = () => {
-  emit('edit', props.agent)
-}
-
-const onDelete = () => {
-  emit('delete', props.agent)
-}
 
 </script>
 
+<style src="@root/css/agent.css"></style>
+
 <style scoped>
 
-.status-bar {
-  margin-top: 0.5rem;
+.agent-info {
   display: flex;
-  height: 1.25rem;
-  border-radius: 0.5rem;
-  background-color: var(--color-border);
-  overflow: hidden;
-  width: 100%;
+  flex-direction: column;
+  padding: 0.5rem;
+  gap: 0.75rem;
 }
 
-.status-bar-segment {
-  height: 100%;
-  padding-top: 2px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 13.5px;
+.stat-card .stat-content .stat-value {
+  font-weight: var(--font-weight-semibold);
 }
 
-.status-bar-segment.success {
-  background-color: #10b981;
-  color: white;
-}
-
-.status-bar-segment.error {
-  background-color: #ef4444;
-  color: white;
-}
-
-.status-text {
-  color: var(--dimmed-text-color);
-  font-style: italic;
-  margin-top: 4px;
-}
 </style>

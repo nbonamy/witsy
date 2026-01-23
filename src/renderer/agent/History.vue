@@ -1,63 +1,58 @@
 
 <template>
 
-  <div class="runs panel">
+  <div class="history">
 
-    <div class="panel-header">
-      <label>{{ t('agent.view.history') }}</label>
+    <div class="header">
       <select v-model="showWorkflows" class="history-filter">
         <option value="all">{{ t('agent.view.filter.all') }}</option>
         <option value="exclude">{{ t('agent.view.filter.exclude_workflow') }}</option>
       </select>
-      <ButtonIcon 
+      <ButtonIcon
         class="clear"
         v-tooltip="{ text: t('agent.help.clearHistory'), position: 'bottom-left' }"
         @click="$emit('clear')"
       ><CalendarXIcon /></ButtonIcon>
     </div>
 
-    <div class="panel-body">
+    <div v-if="filteredRuns.length === 0" class="empty">
+      {{ t('agent.history.empty') }}
+    </div>
 
-      <div class="empty" v-if="filteredRuns.length === 0">
-        {{ t('agent.history.empty') }}
+    <div v-else class="items">
+      <div
+        v-for="run in filteredRuns"
+        :key="run.uuid"
+        class="item"
+        :class="{ selected: selection.includes(run.uuid) }"
+        @click="$emit('click', $event, run)"
+        @contextmenu.prevent="showContextMenu($event, run)"
+      >
+        <div class="icon">
+          <StatusIcon :status="run.status" />
+        </div>
+        <div class="info">
+          <div class="title">{{ timeAgo.format(new Date(run.createdAt)) }}</div>
+          <div class="subtitle">
+            <TriggerIcon :trigger="run.trigger" />
+            {{ t(`agent.trigger.${run.trigger}`) }}</div>
+        </div>
       </div>
-
-      <div class="sticky-table-container" v-else>
-        <table class="table-plain">
-          <thead>
-            <tr>
-              <th>{{ t('agent.history.date') }}</th>
-              <th>{{ t('agent.history.trigger') }}</th>
-              <th>{{ t('agent.history.status') }}</th>
-              <th>{{ t('agent.history.log') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="spacer"></tr>
-            <tr :class="{ selected: selection.includes(run.uuid) }" v-for="run in filteredRuns" :key="run.uuid" @click="$emit('click', $event, run)" @contextmenu.prevent="showContextMenu($event, run)">
-              <td class="date">{{ timeAgo.format(new Date(run.createdAt)) }}</td>
-              <td class="trigger">{{ t(`agent.trigger.${run.trigger}`) }}</td>
-              <td class="status">{{ t(`agent.status.${run.status}`) }}</td>
-              <td class="view"><EyeIcon /> </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
     </div>
 
   </div>
-
 </template>
 
 <script setup lang="ts">
 
-import { CalendarXIcon, EyeIcon } from 'lucide-vue-next';
-import { PropType, computed } from 'vue';
-import ButtonIcon from '@components/ButtonIcon.vue';
-import { useTimeAgo } from '@composables/ago';
-import { t } from '@services/i18n';
-import { Agent, AgentRun } from 'types/agents';
+import { CalendarXIcon } from 'lucide-vue-next'
+import StatusIcon from './StatusIcon.vue'
+import TriggerIcon from './TriggerIcon.vue'
+import { PropType, computed } from 'vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
+import { useTimeAgo } from '@composables/ago'
+import { t } from '@services/i18n'
+import { Agent, AgentRun } from 'types/agents'
 
 const timeAgo = useTimeAgo()
 
@@ -82,18 +77,15 @@ const props = defineProps({
 
 const emit = defineEmits(['clear', 'click', 'update:show-workflows', 'context-menu'])
 
-// Computed property for two-way binding with parent
 const showWorkflows = computed({
   get: () => props.showWorkflows,
   set: (value: 'all' | 'exclude') => emit('update:show-workflows', value)
 })
 
-// Computed property to filter runs
 const filteredRuns = computed(() => {
-  const runsToShow = props.showWorkflows === 'all' 
-    ? props.runs 
+  const runsToShow = props.showWorkflows === 'all'
+    ? props.runs
     : props.runs.filter(run => run.trigger !== 'workflow')
-  
   return [...runsToShow].reverse()
 })
 
@@ -105,45 +97,98 @@ const showContextMenu = (event: MouseEvent, run: AgentRun) => {
 
 <style scoped>
 
-.panel-header {
+.history {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.header {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 0.5rem;
 }
 
 .history-filter {
+  margin-right: var(--space-4);
   width: auto;
-  flex: 0 1 auto;
+  flex: 1;
 }
 
 .empty {
-  padding: 3rem;
-  text-align: center;
-  font-size: 24px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
   color: var(--faded-text-color);
   font-family: var(--font-family-serif);
 }
 
-.sticky-table-container {
-  
-  table {
-
-    tr {
-      cursor: pointer;
-    }
-
-    th, td {
-      padding: 0.375rem 0.5rem;
-    }
-
-    td.view {
-      svg {
-        position: relative;
-        top: 2px;
-      }
-    }
-
-  }
-
+.items {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
+
+.item {
+  cursor: pointer;
+  padding: 0.5rem 0.25rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  gap: 0.5rem;
+}
+
+.item .icon {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  flex-shrink: 0;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.item .info {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-right: var(--space-8);
+  gap: var(--space-2);
+}
+
+.item .info .title {
+  flex: 1;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item .info .subtitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-12);
+  color: var(--faded-text-color);
+  flex-shrink: 0;
+  white-space: nowrap;
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.item.selected {
+  background-color: var(--sidebar-selected-color);
+}
+
 </style>
