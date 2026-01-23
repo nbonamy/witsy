@@ -403,8 +403,8 @@ const lastStepOutput = computed(() => {
 
 .output-section {
   border-radius: var(--radius-sm);
-  background-color: var(--color-success-container);
-  border: 1px solid var(--color-success);
+  background-color: var(--sidebar-bg-color);
+  border: 1px solid var(--border-color);
   overflow: hidden;
 
   .output-header {
@@ -412,39 +412,25 @@ const lastStepOutput = computed(() => {
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1rem;
-    background-color: var(--color-success);
-    color: white;
+    border-bottom: 1px solid var(--border-color);
     font-weight: var(--font-weight-medium);
     font-size: 13px;
+    color: var(--faded-text-color);
 
     svg {
       width: 16px;
       height: 16px;
+      color: var(--color-success);
     }
   }
 
   .output-content {
     padding: 0.75rem 1rem;
     &:deep() .message {
-      margin:  0;
+      margin: 0;
       .body {
         margin: 0;
         padding: 0 1rem;
-      }
-    }
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .output-section {
-    .output-content {
-      &:deep() .message {
-        .body {
-          color: var(--color-surface-low);
-          .artifact {
-            color: var(--text-color);
-          }
-        }
       }
     }
   }
