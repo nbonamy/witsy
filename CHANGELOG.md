@@ -2,7 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.4.2] - WIP
+## [3.5.0] - WIP
+
+### Added
+- N/A
+
+### Changed
+- New agent view with step-by-step execution
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
+## [3.4.2] - 2026-01-22
 
 ### Added
 - More Quick dictation options and keyboard shortcuts
