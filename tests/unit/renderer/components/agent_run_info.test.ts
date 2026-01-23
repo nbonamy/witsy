@@ -146,7 +146,8 @@ describe('RunInfo.vue', () => {
 
     expect(wrapper.find('.timeline').exists()).toBe(true)
     const timelineItems = wrapper.findAll('.timeline-item')
-    expect(timelineItems.length).toBe(2) // created and updated
+    // start + 1 step + end = 3
+    expect(timelineItems.length).toBe(3)
   })
 
   test('hides updated time for running runs', async () => {
@@ -160,7 +161,8 @@ describe('RunInfo.vue', () => {
     await nextTick()
 
     const timelineItems = wrapper.findAll('.timeline-item')
-    expect(timelineItems.length).toBe(1) // only created
+    // start + 1 step (no end for running) = 2
+    expect(timelineItems.length).toBe(2)
   })
 
   test('displays model card when engine/model available', async () => {
