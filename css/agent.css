@@ -33,6 +33,7 @@
     .stat-value {
       font-size: 14px;
       font-weight: var(--font-weight-medium);
+      font-variant-numeric: tabular-nums;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

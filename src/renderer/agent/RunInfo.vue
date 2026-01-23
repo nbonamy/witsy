@@ -458,6 +458,7 @@ const lastStepOutput = computed(() => {
 
     .timeline-value {
       font-size: 12px;
+      font-variant-numeric: tabular-nums;
       color: var(--faded-text-color);
       margin-top: 2px;
     }
