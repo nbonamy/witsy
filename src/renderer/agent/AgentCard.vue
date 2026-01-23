@@ -21,22 +21,14 @@
         <EyeIcon />
         {{ t('agent.forge.view') }}
       </button>
-      <ContextMenuTrigger position="below-right">
-        <template #menu>
-          <div class="item edit" @click="emit('edit', agent)">
-            {{ t('agent.help.edit') }}
-          </div>
-          <div class="item export" @click="emit('export', agent)">
-            {{ t('agent.help.export') }}
-          </div>
-          <div class="item duplicate" @click="emit('duplicate', agent)">
-            {{ t('agent.help.duplicate') }}
-          </div>
-          <div class="item delete" @click="emit('delete', agent)">
-            {{ t('agent.help.delete') }}
-          </div>
-        </template>
-      </ContextMenuTrigger>
+      <AgentMenu
+        :agent="agent"
+        position="below-right"
+        @edit="emit('edit', $event)"
+        @export="emit('export', $event)"
+        @duplicate="emit('duplicate', $event)"
+        @delete="emit('delete', $event)"
+      />
     </div>
   </div>
 </template>
@@ -46,7 +38,7 @@
 import { EyeIcon, PlayIcon } from 'lucide-vue-next'
 import { Agent } from 'types/agents'
 import IconAgent from '@assets/agent.svg?component'
-import ContextMenuTrigger from '@components/ContextMenuTrigger.vue'
+import AgentMenu from './AgentMenu.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
 import { t } from '@services/i18n'
 
