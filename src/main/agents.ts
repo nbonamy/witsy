@@ -3,7 +3,7 @@ import { anyDict } from 'types/index'
 import { AgentRun } from 'types/agents'
 import { App } from 'electron'
 import { notifyBrowserWindows } from './windows'
-import { workspaceFolderPath } from './workspace'
+import { listWorkspaces, workspaceFolderPath } from './workspace'
 import Agent from '@models/agent'
 import path from 'path'
 import fs from 'fs'
@@ -243,4 +243,40 @@ export const deleteAgentRun = (source: App|string, workspaceId: string, agentId:
     return false
   }
 
+}
+
+// Cancel any runs that are still in 'running' status (crash recovery)
+export const cancelStaleRunningRuns = (app: App): number => {
+  let cancelledCount = 0
+
+  // Get all workspaces
+  const workspaces = listWorkspaces(app)
+
+  for (const workspace of workspaces) {
+    // Get all agents in this workspace
+    const agents = listAgents(app, workspace.uuid)
+
+    for (const agent of agents) {
+      // Get all runs for this agent
+      const runs = getAgentRuns(app, workspace.uuid, agent.uuid)
+
+      for (const run of runs) {
+        if (run.status === 'running') {
+          // Mark as canceled
+          run.status = 'canceled'
+          run.updatedAt = Date.now()
+          if (saveAgentRun(app, workspace.uuid, run)) {
+            cancelledCount++
+            console.log(`Cancelled stale running run: workspace=${workspace.uuid}, agent=${agent.uuid}, run=${run.uuid}`)
+          }
+        }
+      }
+    }
+  }
+
+  if (cancelledCount > 0) {
+    console.log(`Cancelled ${cancelledCount} stale running run(s)`)
+  }
+
+  return cancelledCount
 }

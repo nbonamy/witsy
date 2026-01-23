@@ -1,36 +1,51 @@
 
 <template>
 
-  <div class="agent-view" v-if="agent">
+  <div class="agent-view split-pane" v-if="agent">
 
-    <header>
-      <ChevronLeftIcon class="icon back" @click="emit('close')" />
-      <div class="title">{{ agent.name }}</div>
-    </header>
+    <!-- Left Pane: Runs List -->
+    <div class="sp-sidebar">
 
-    <main>
+      <header>
 
-      <div class="master-detail">
+        <ChevronLeftIcon class="icon back" @click="emit('close')" />
 
-        <div class="md-master">
-          <Info class="agent-info" :agent="agent" :runs="runs" @run="emit('run', $event)" @edit="emit('edit', $event)" @delete="emit('delete', $event)" />
-          <History class="agent-history" :agent="agent" :runs="runs" :selection="selection.map(r => r.uuid)" :show-workflows="showWorkflows" @click="onClickRun" @clear="clearHistory" @update:show-workflows="showWorkflows = $event" @context-menu="showContextMenu" />
+        <div class="title">{{ agent.name }}</div>
+
+        <div class="actions">
+
+          <ButtonIcon class="run" v-tooltip="{ text: t('agent.help.run'), position: 'bottom-left' }" @click="emit('run', agent)">
+            <PlayIcon />
+          </ButtonIcon>
+
+          <ContextMenuTrigger position="below-right">
+            <template #menu>
+              <div class="item edit" @click="emit('edit', agent)">
+                <PencilIcon /> {{ t('agent.help.edit') }}
+              </div>
+              <div class="item delete danger" @click="emit('delete', agent)">
+                <Trash2Icon /> {{ t('agent.help.delete') }}
+              </div>
+            </template>
+          </ContextMenuTrigger>
+
         </div>
+      
+      </header>
 
-        <div class="md-detail">
-          <Run v-if="selection.length === 1" :agent-id="agent.uuid" :run-id="selection[0].uuid" @close="selection = []" @delete="deleteRuns"/>
-          <div v-else class="panel no-run">
-            <div class="panel-header">
-            </div>
-            <div class="panel-body empty-state">
-              {{ t('agent.run.selectRun') }}
-            </div>
-          </div>
-        </div>
+      <main>
+        <Info :agent="agent" :runs="runs" />
+        <History :agent="agent" :runs="runs" :selection="selection.map(r => r.uuid)" :show-workflows="showWorkflows" @click="onClickRun" @clear="clearHistory" @update:show-workflows="showWorkflows = $event" @context-menu="showContextMenu" />
+      </main>
 
-      </div>
+    </div>
 
-    </main>
+    <!-- Run View: Execution Flow + Details -->
+    <Run
+      :agent="agent"
+      :run="selection.length === 1 ? selection[0] : null"
+      @delete="deleteRuns"
+    />
 
     <ContextMenuPlus v-if="showMenu" @close="closeContextMenu" :mouseX="menuX" :mouseY="menuY">
       <div class="item" :class="{ disabled: selection.length === 0 && !targetRun }" @click="(selection.length > 0 || targetRun) && handleActionClick('delete')">
@@ -42,16 +57,17 @@
 
 </template>
 
-
 <script setup lang="ts">
 
-import { ChevronLeftIcon } from 'lucide-vue-next'
-import { PropType, onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import ButtonIcon from '@components/ButtonIcon.vue'
 import ContextMenuPlus from '@components/ContextMenuPlus.vue'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+import { ChevronLeftIcon, PencilIcon, PlayIcon, Trash2Icon } from 'lucide-vue-next'
 import { Agent, AgentRun } from 'types/agents'
+import { PropType, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import History from './History.vue'
 import Info from './Info.vue'
 import Run from './Run.vue'
@@ -76,8 +92,8 @@ const props = defineProps({
 const emit = defineEmits(['close', 'run', 'edit', 'delete'])
 
 onMounted(() => {
-  watch(() => props.agent, reload, { immediate: true })
-  watch(() => showWorkflows.value, selectLatestRun)
+  watch(() => props.agent, () => reload(), { immediate: true })
+  watch(() => showWorkflows.value, () => selectLatestRun())
   window.api.on('agent-run-update', onAgentRunUpdate)
 })
 
@@ -87,14 +103,15 @@ onBeforeUnmount(() => {
 
 const onAgentRunUpdate = (data: { agentId: string, runId: string }) => {
   if (props.agent && props.agent.uuid === data.agentId) {
-    reload()
+    reload(data.runId)
   }
 }
 
-const reload = () => {
+const reload = (selectRunId?: string) => {
+
   if (!props.agent) return
   runs.value = window.api.agents.getRuns(store.config.workspaceId, props.agent.uuid)
-  
+
   // auto-adjust showWorkflows based on available runs
   const nonWorkflowRuns = runs.value.filter(run => run.trigger !== 'workflow')
   if (runs.value.length > 0 && nonWorkflowRuns.length === 0) {
@@ -102,18 +119,31 @@ const reload = () => {
   } else if (nonWorkflowRuns.length > 0) {
     showWorkflows.value = 'exclude'
   }
-  
-  selectLatestRun()
+
+  selectLatestRun(selectRunId)
 }
 
-const selectLatestRun = () => {
-  const filteredRuns = showWorkflows.value === 'all' 
-    ? runs.value 
+const selectLatestRun = (selectRunId?: string) => {
+
+  // If a specific run ID is provided, select it
+  if (selectRunId) {
+    const targetRun = runs.value.find(r => r.uuid === selectRunId)
+    if (targetRun) {
+      selection.value = [targetRun]
+      return
+    }
+  }
+
+  const filtered = showWorkflows.value === 'all'
+    ? runs.value
     : runs.value.filter(run => run.trigger !== 'workflow')
-  
-  if (filteredRuns.length > 0) {
-    const latestRun = filteredRuns[filteredRuns.length - 1]
+
+  if (filtered.length > 0) {
+    const latestRun = filtered[filtered.length - 1]
     if (selection.value.length === 0) {
+      selection.value = [latestRun]
+      return
+    } else if (selection.value.length === 1 && selection.value[0].uuid === latestRun.uuid) {
       selection.value = [latestRun]
       return
     }
@@ -196,81 +226,31 @@ const clearHistory = () => {
 
 </script>
 
-
 <style scoped>
 
 .agent-view {
-
-  --agent-font-size: 14.5px;
-
-  main {
-
-    padding: 2rem !important;
-    padding-top: 1rem !important;
-
-    .master-detail {
-      gap: 1rem;
-    }
   
-    .md-master {
-      flex: 1 0 calc(50% - 4rem);
-      max-width: min(calc(50% - 4rem), 450px);
-      padding: 0;
-    }
+  background-color: var(--background-color);
+  color: var(--text-color);
 
-    .md-detail {
-      flex: 1 1 auto;
-      min-width: 0;
-      padding: 0;
-    }
+  .sp-sidebar {
+    flex: 0 0 calc(var(--large-panel-width) * 1.1);
+    min-height: 0;
 
-    .md-master {
-
+    main {
+      min-height: 0;
+      padding: 0 1rem;
       display: flex;
       flex-direction: column;
-      gap: 2rem;
-
-      border: none;
-
-      .agent-info {
-        flex-shrink: 0;
-      }
-
-      .agent-history {
-        flex-grow: 1;
-      }
+      gap: var(--space-8);
     }
 
-    .panel {
-
-      &:deep() .panel-body {
-        gap: 0rem;
-        font-size: var(--agent-font-size);
-      }
-
-      &.no-run {
-        width: 100%;
-        .panel-body {
-          justify-content: center;
-          padding: 3rem;
-          text-align: center;
-          font-size: 24px;
-          color: var(--faded-text-color);
-          font-family: var(--font-family-serif);
-        }
-      }
-
+    :deep(.history) {
+      flex: 1;
+      min-height: 0;
     }
-
-    .md-detail .panel {
-      box-sizing: border-box;
-      height: 100%;
-    }
-
   }
 
 }
-
-
 
 </style>

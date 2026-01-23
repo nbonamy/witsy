@@ -350,6 +350,7 @@ declare global {
         moveWindow(deltaX: number, deltaY: number): void
       }
       debug: {
+        isDebug: boolean
         showConsole(): void
         getNetworkHistory(): NetworkRequest[]
         clearNetworkHistory(): void

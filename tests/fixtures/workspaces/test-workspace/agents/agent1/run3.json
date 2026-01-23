@@ -1,0 +1,19 @@
+{
+  "uuid": "run3",
+  "agentId": "agent1",
+  "createdAt": 3000000005000,
+  "updatedAt": 3000000015000,
+  "trigger": "manual",
+  "status": "running",
+  "prompt": "prompt",
+  "messages": [
+    {
+      "role": "system",
+      "content": "instructions1"
+    },
+    {
+      "role": "user",
+      "content": "prompt"
+    }
+  ]
+}

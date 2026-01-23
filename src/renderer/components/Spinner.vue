@@ -2,32 +2,39 @@
 <!-- https://codepen.io/jmak/pen/bGPzrQ -->
 
 <template>
-  <!-- macOS: native-style spinner blades -->
-  <div class="spinner macos" v-if="platform === 'darwin'">
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-    <div class="spinner-blade"></div>
-  </div>
-  <!-- Other platforms: simple rotating circle -->
-  <div class="spinner other" v-else>
+  <!-- Other platforms or forced circle: simple rotating circle -->
+  <div class="spinner other" :class="{ opaque }" v-if="useCircle">
     <LoaderCircleIcon />
+  </div>
+  <!-- macOS: native-style spinner blades -->
+  <div class="spinner macos" :class="{ opaque }" v-else>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 
+import { computed } from 'vue'
 import { LoaderCircleIcon } from 'lucide-vue-next'
 
+const props = defineProps<{
+  circle?: boolean
+  opaque?: boolean
+}>()
+
 const platform = window.api?.platform || 'darwin'
+const useCircle = computed(() => props.circle || platform !== 'darwin')
 
 </script>
 
@@ -148,9 +155,13 @@ const platform = window.api?.platform || 'darwin'
   svg {
     width: 1em;
     height: 1em;
-    color: var(--text-color);
+    stroke: var(--text-color);
     opacity: 0.5;
     animation: spin 1s linear infinite;
+  }
+
+  &.opaque svg {
+    opacity: 1;
   }
 }
 

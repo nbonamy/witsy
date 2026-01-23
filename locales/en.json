@@ -371,7 +371,7 @@
       "trigger": "Trigger"
     },
     "name": "@:{'common.name'}",
-    "nextRun": "Scheduled on",
+    "nextRun": "Next run on",
     "picker": {
       "noAgentsText": "Do you want to create one now?",
       "noAgentsTitle": "You haven't created any executable agents yet",
@@ -379,6 +379,7 @@
     },
     "run": {
       "createdAt": "Start time",
+      "details": "Details",
       "duration": "Duration",
       "error": "@:{'common.error'}",
       "hidePrompt": "Hide prompt",
@@ -390,32 +391,47 @@
       "outputItem": "Step {index}",
       "prompt": "@:{'common.prompt'}",
       "selectRun": "Select a run to view details",
+      "selectStep": "Select a step to view details",
       "showPrompt": "Show prompt",
       "status": "Status",
+      "stepPrompt": "Input",
+      "stepResponse": "Output",
+      "stepRunning": "Step in progress…",
       "trigger": "Trigger",
       "updatedAt": "Completion time"
     },
+    "step": {
+      "toolCalls": "Tool Calls"
+    },
     "status": {
-      "canceled": "🚫 Canceled",
-      "error": "❌ Error",
-      "running": "⏳ Running",
-      "success": "✅ Success"
+      "canceled": "Canceled",
+      "cancelled": "Cancelled",
+      "error": "Error",
+      "running": "Running",
+      "success": "Success"
     },
     "trigger": {
-      "manual": "🖐️ Manual",
+      "manual": "Manual",
       "manual_description": "Agents can always be manually triggered",
       "nextRuns": "Next Runs",
-      "schedule": "⏰ Schedule",
-      "webhook": "🌐 Webhook",
+      "schedule": "Schedule",
+      "webhook": "Webhook",
       "webhook_copy": "Copy URL",
       "webhook_description": "Trigger this agent via HTTP request",
       "webhook_regenerate": "Regenerate token",
       "webhook_url": "Webhook URL",
-      "workflow": "⚙️ Workflow"
+      "workflow": "Workflow"
     },
     "type": {
       "runnable": "User Initiated",
       "support": "Utility"
+    },
+    "info": {
+      "totalRuns": "Total Runs",
+      "nextRun": "Next Run",
+      "successRate": "Success Rate",
+      "successful": "successful",
+      "failed": "failed"
     },
     "view": {
       "filter": {
@@ -423,6 +439,7 @@
         "exclude_workflow": "Exclude workflows"
       },
       "header": "Agent Summary",
+      "status": "Success Rate",
       "history": "History"
     }
   },

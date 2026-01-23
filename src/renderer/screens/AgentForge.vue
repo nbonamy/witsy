@@ -1,30 +1,27 @@
 <template>
-  <div class="split-pane">
 
-    <template v-if="mode === 'list'">
+  <div class="split-pane" v-if="mode === 'list'">
     
-      <template v-if="store.agents.length === 0">
-        <Empty class="sp-main" @click="onCreate()" />
-      </template>
-
-      <template v-else>
-        <List class="sp-main" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @duplicate="duplicateAgent" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
-      </template>
-
+    <template v-if="store.agents.length === 0">
+      <Empty class="sp-main" @click="onCreate()" />
     </template>
 
-    <template v-else-if="mode === 'create' || mode === 'edit'">
-      <Editor class="sp-main" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
+    <template v-else>
+      <List class="sp-main" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @duplicate="duplicateAgent" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
     </template>
 
-    <template v-else-if="mode === 'view'">
-      <View class="sp-main" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)"/>
-    </template>
-
-    <CreateAgentRun :title="running?.name ?? ''" ref="builder" />
-  
   </div>
 
+  <div class="split-pane"v-else-if="mode === 'create' || mode === 'edit'">
+    <Editor class="sp-main" :mode="mode as 'create' | 'edit'" :agent="selected" @cancel="closeCreate" @save="onSaved" />
+  </div>
+
+  <template v-else-if="mode === 'view'">
+    <View class="sp-main" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)"/>
+  </template>
+
+  <CreateAgentRun :title="running?.name ?? ''" ref="builder" />
+  
 </template>
 
 <script setup lang="ts">
