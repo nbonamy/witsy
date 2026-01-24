@@ -89,7 +89,7 @@ const onSelect = (event: Event) => {
     bottom: 2px;
     background-color: transparent;
     border: none !important;
-    width: calc(100% - 32px);
+    width: calc(100% - 48px);
     margin: 0 !important;
     padding-left: 8px !important;
     padding-top: 5.5px !important;

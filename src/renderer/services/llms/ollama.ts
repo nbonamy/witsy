@@ -7,11 +7,13 @@ const getChatModels = (): ChatModel[] => {
   
   const ollama = new Ollama({});
   const models = [
-    { id: 'deepseek-r1:latest', name: 'DeepSeek Reasoner' },
-    { id: 'gemma3n:latest', name: 'Gemma 3n' },
+    { id: 'deepseek-r1:latest', name: 'DeepSeek R1' },
+    { id: 'llama3.3:latest', name: 'Llama 3.3' },
+    { id: 'gemma3:latest', name: 'Gemma 3' },
     { id: 'qwen3:latest', name: 'Qwen 3' },
-    { id: 'qwen2.5vl:latest', name: 'Qwen 2.5 Vision' },
-    { id: 'llama3.2:latest', name: 'Llama 3.2' }
+    { id: 'phi4:latest', name: 'Phi 4' },
+    { id: 'qwen2.5-coder:latest', name: 'Qwen 2.5 Coder' },
+    { id: 'llama3.2-vision:latest', name: 'Llama 3.2 Vision' },
   ].map((model) => ({
     id: model.id,
     name: model.name,
@@ -22,9 +24,12 @@ const getChatModels = (): ChatModel[] => {
 }
 
 const getEmbeddingModels = () => [
-  { id: 'all-minilm', name: 'all-minilm' },
-  { id: 'nomic-embed-text', name: 'nomic-embed-text' },
-  { id: 'mxbai-embed-large', name: 'mxbai-embed-large' },
+  { id: 'nomic-embed-text-v2-moe', name: 'Nomic Embed Text v2' },
+  { id: 'mxbai-embed-large', name: 'MxBai Embed Large' },
+  { id: 'bge-m3', name: 'BGE M3' },
+  { id: 'snowflake-arctic-embed2', name: 'Snowflake Arctic Embed 2' },
+  { id: 'qwen3-embedding', name: 'Qwen 3 Embedding' },
+  { id: 'all-minilm', name: 'All MiniLM' },
 ]
 
 export { getChatModels, getEmbeddingModels }
