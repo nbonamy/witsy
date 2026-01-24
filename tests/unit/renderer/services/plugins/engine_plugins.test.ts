@@ -54,6 +54,22 @@ global.fetch = vi.fn(async (url: string) => {
         ]
       })
     }
+  } else if (url.includes('googleapis.com/customsearch')) {
+    // Google Custom Search API response format
+    return {
+      url,
+      ok: true,
+      headers: {
+        // @ts-expect-error mock
+        get: () => 'application/json',
+      },
+      json: () => ({
+        items: [
+          { link: 'url1', title: 'title1', snippet: 'snippet1' },
+          { link: 'url2', title: 'title2', snippet: 'snippet2' }
+        ]
+      })
+    }
   } else {
     return {
       url,
@@ -363,6 +379,26 @@ test('Search Plugin Exa', async () => {
     ]
   })
   expect(Exa.prototype.searchAndContents).toHaveBeenLastCalledWith('test', { text: true, numResults: 5 })
+  expect(window.api.search.query).not.toHaveBeenCalled()
+})
+
+test('Search Plugin Google', async () => {
+  store.config.plugins.search.engine = 'google'
+  store.config.plugins.search.googleApiKey = 'test-api-key'
+  store.config.plugins.search.googleSearchEngineId = 'test-cx'
+  const search = new Search(store.config.plugins.search, 'test-workspace')
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { url: 'url1', title: 'title1', content: 'fetched_' },
+      { url: 'url2', title: 'title2', content: 'fetched_' }
+    ]
+  })
+  expect(fetch).toHaveBeenCalledWith('https://www.googleapis.com/customsearch/v1?key=test-api-key&cx=test-cx&q=test&num=5', {
+    headers: {
+      'Accept': 'application/json',
+    }
+  })
   expect(window.api.search.query).not.toHaveBeenCalled()
 })
 
