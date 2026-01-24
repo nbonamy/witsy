@@ -113,7 +113,7 @@ const onSelectStep = (index: number) => {
     overflow: auto;
     display: flex;
     flex-direction: column;
-    padding: 1.5rem 1rem;
+    padding: 1.25rem;
     gap: 1rem;
   }
 }
