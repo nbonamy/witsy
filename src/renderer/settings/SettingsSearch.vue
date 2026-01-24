@@ -14,10 +14,11 @@
       <label>{{ t('settings.plugins.search.engine') }}</label>
       <select v-model="engine" name="engine" @change="save">
         <option value="local">{{ t('settings.plugins.search.engines.local') }}</option>
-        <option value="exa">Exa</option>
         <option value="brave">Brave</option>
+        <option value="exa">Exa</option>
         <option value="perplexity">Perplexity</option>
         <option value="tavily">Tavily</option>
+        <!-- <option value="google">Google Search API</option> -->
         <option value="searxng">SearXNG</option>
       </select>
     </div>
@@ -43,6 +44,27 @@
       <div class="form-subgroup">
         <InputObfuscated v-model="exaApiKey" name="exaApiKey" @change="save" />
         <a href="https://dashboard.exa.ai/home" target="_blank">{{ t('settings.plugins.search.getApiKey') }}</a>
+      </div>
+    </div>
+
+    <div class="form-field" v-if="engine == 'google'">
+      <label>{{ t('settings.plugins.search.googleNoteLabel') }}</label>
+      <div v-html="t('settings.plugins.search.googleNote')"></div>
+    </div>
+
+    <div class="form-field" v-if="engine == 'google'">
+      <label>{{ t('settings.plugins.search.googleApiKey') }}</label>
+      <div class="form-subgroup">
+        <InputObfuscated v-model="googleApiKey" name="googleApiKey" @change="save" />
+        <a href="https://console.cloud.google.com/apis/credentials" target="_blank">{{ t('settings.plugins.search.getApiKey') }}</a>
+      </div>
+    </div>
+
+    <div class="form-field" v-if="engine == 'google'">
+      <label>{{ t('settings.plugins.search.googleSearchEngineId') }}</label>
+      <div class="form-subgroup">
+        <InputObfuscated v-model="googleSearchEngineId" name="googleSearchEngineId" @change="save" />
+        <a href="https://programmablesearchengine.google.com/controlpanel/all" target="_blank">{{ t('settings.plugins.search.getSearchEngineId') }}</a>
       </div>
     </div>
 
@@ -93,6 +115,8 @@ const engine = ref('local')
 const contentLength = ref(0)
 const braveApiKey = ref(null)
 const exaApiKey = ref(null)
+const googleApiKey = ref(null)
+const googleSearchEngineId = ref(null)
 const perplexityApiKey = ref(null)
 const tavilyApiKey = ref(null)
 const searxngUrl = ref('')
@@ -104,6 +128,8 @@ const load = () => {
   contentLength.value = store.config.plugins.search.contentLength ?? 4096
   braveApiKey.value = store.config.plugins.search.braveApiKey || ''
   exaApiKey.value = store.config.plugins.search.exaApiKey || ''
+  googleApiKey.value = store.config.plugins.search.googleApiKey || ''
+  googleSearchEngineId.value = store.config.plugins.search.googleSearchEngineId || ''
   perplexityApiKey.value = store.config.plugins.search.perplexityApiKey || ''
   tavilyApiKey.value = store.config.plugins.search.tavilyApiKey || ''
   searxngUrl.value = store.config.plugins.search.searxngUrl || ''
@@ -128,6 +154,8 @@ const save = () => {
   store.config.plugins.search.contentLength = parseInt(contentLength.value.toString()) ?? 4096
   store.config.plugins.search.braveApiKey = braveApiKey.value
   store.config.plugins.search.exaApiKey = exaApiKey.value
+  store.config.plugins.search.googleApiKey = googleApiKey.value
+  store.config.plugins.search.googleSearchEngineId = googleSearchEngineId.value
   store.config.plugins.search.perplexityApiKey = perplexityApiKey.value
   store.config.plugins.search.tavilyApiKey = tavilyApiKey.value
   store.config.plugins.search.searxngUrl = searxngUrl.value

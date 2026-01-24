@@ -43,6 +43,7 @@ export default class extends Plugin {
       (this.config.engine == 'local') ||
       (this.config.engine == 'brave' && this.config.braveApiKey?.trim().length > 0) ||
       (this.config.engine == 'exa' && this.config.exaApiKey?.trim().length > 0) ||
+      (this.config.engine == 'google' && this.config.googleApiKey?.trim().length > 0 && this.config.googleSearchEngineId?.trim().length > 0) ||
       (this.config.engine == 'perplexity' && this.config.perplexityApiKey?.trim().length > 0) ||
       (this.config.engine == 'tavily' && this.config.tavilyApiKey?.trim().length > 0) ||
       (this.config.engine == 'searxng' && this.config.searxngUrl?.trim().length > 0)
@@ -110,6 +111,8 @@ export default class extends Plugin {
       response = await this.brave(context, parameters, maxResults)
     } else if (this.config.engine === 'exa') {
       response = await this.exa(context, parameters, maxResults)
+    } else if (this.config.engine === 'google') {
+      response = await this.google(context, parameters, maxResults)
     } else if (this.config.engine === 'perplexity') {
       response = await this.perplexity(context, parameters, maxResults)
     } else if (this.config.engine === 'tavily') {
@@ -227,6 +230,54 @@ export default class extends Plugin {
       return { error: error.message }
     }
 
+  }
+
+  async google(context: PluginExecutionContext, parameters: anyDict, maxResults: number): Promise<SearchResponse> {
+
+    try {
+
+      const baseUrl = 'https://www.googleapis.com/customsearch/v1'
+      const params = new URLSearchParams({
+        key: this.config.googleApiKey,
+        cx: this.config.googleSearchEngineId,
+        q: parameters.query,
+        num: Math.min(maxResults, 10).toString() // Google API max is 10 per request
+      })
+
+      const response = await this.runWithAbort(
+        fetch(`${baseUrl}?${params}`, {
+          headers: {
+            'Accept': 'application/json',
+          },
+          signal: context.abortSignal
+        }),
+        context.abortSignal
+      )
+
+      const data = await response.json()
+
+      if (data.error) {
+        return { error: data.error.message || 'Google search failed' }
+      }
+
+      // Map to our result format
+      const results = (data.items || []).map((item: any) => ({
+        title: item.title,
+        url: item.link,
+        content: item.snippet
+      }))
+
+      // content returned by Google is very short (snippet)
+      await this.enrichResultsWithContent(results, context)
+
+      return {
+        query: parameters.query,
+        results
+      }
+
+    } catch (error) {
+      return { error: error.message }
+    }
   }
 
   async perplexity(context: PluginExecutionContext, parameters: anyDict, maxResults: number): Promise<SearchResponse> {
