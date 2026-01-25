@@ -1577,7 +1577,7 @@
   "prompt.menu.attach.title": "Add photos & files",
   "prompt.menu.deepResearch.title": "@:{'common.deepResearch'}",
   "prompt.menu.docRepos.manage": "Manage Knowledge Base",
-  "prompt.menu.docRepos.none": "No Knowledge Available",
+  "prompt.menu.docRepos.noDocRepos": "No Collection Available",
   "prompt.menu.docRepos.title": "Knowledge",
   "prompt.menu.experts.manage": "Manage Experts",
   "prompt.menu.experts.none": "No Expert",

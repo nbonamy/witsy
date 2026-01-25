@@ -2502,7 +2502,7 @@
       },
       "docRepos": {
         "manage": "Manage Knowledge Base",
-        "none": "No Knowledge Available",
+        "noDocRepos": "No Collection Available",
         "title": "Knowledge"
       },
       "experts": {

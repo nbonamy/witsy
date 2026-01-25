@@ -2501,7 +2501,7 @@
       },
       "docRepos": {
         "manage": "Gerenciar Base de Conhecimento",
-        "none": "Nenhum conhecimento disponível",
+        "noDocRepos": "Nenhuma coleção disponível",
         "title": "Conhecimento"
       },
       "experts": {

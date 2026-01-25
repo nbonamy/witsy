@@ -1,10 +1,10 @@
-import { SettingsIcon, XIcon } from 'lucide-vue-next'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
+import { LightbulbOffIcon, SettingsIcon, XIcon } from 'lucide-vue-next'
 import type { MenuItem } from 'types/menu'
 import type { DocumentBase } from 'types/rag'
 import { computed, onBeforeUnmount, onMounted, ref, Ref } from 'vue'
 import useIpcListener from './ipc_listener'
-import { t } from '@services/i18n'
-import { store } from '@services/store'
 
 export interface UseDocReposMenuOptions {
   emit: (event: any, ...args: any[]) => void
@@ -96,7 +96,20 @@ export function useDocReposMenu(options: UseDocReposMenuOptions) {
 
   // Generate menu items
   const menuItems = computed<MenuItem[]>(() => {
-    const items = docRepos.value.map(docRepo => {
+
+    if (docRepos.value.length === 0) {
+      return [
+        {
+          id: 'no-docrepos',
+          label: t('prompt.menu.docRepos.noDocRepos'),
+          icon: LightbulbOffIcon,
+          onClick: handleManageDocRepos,
+          disabled: true,
+        },
+      ]
+    }
+
+    return docRepos.value.map(docRepo => {
       const isSelected = currentSelection.value.includes(docRepo.uuid)
       return {
         id: `docrepo-${docRepo.uuid}`,
@@ -106,11 +119,6 @@ export function useDocReposMenu(options: UseDocReposMenuOptions) {
         onClick: () => handleDocRepoClick(docRepo.uuid),
       }
     })
-    return items.length > 0 ? items : [{
-      id: 'no-docrepos',
-      label: t('prompt.menu.docRepos.none'),
-      disabled: true,
-    }]
   })
 
   // Footer items for the docrepos menu

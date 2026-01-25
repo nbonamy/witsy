@@ -2501,7 +2501,7 @@
       },
       "docRepos": {
         "manage": "管理知识库",
-        "none": "暂无可用知识",
+        "noDocRepos": "暂无集合",
         "title": "知识库"
       },
       "experts": {
