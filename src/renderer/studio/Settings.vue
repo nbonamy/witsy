@@ -169,7 +169,6 @@ import ContextMenuPlus from '@components/ContextMenuPlus.vue'
 import RefreshButton from '@components/RefreshButton.vue'
 import VariableTable from '@components/VariableTable.vue'
 import Dialog from '@renderer/utils/dialog'
-import useEventBus from '@composables/event_bus'
 import VariableEditor from '@screens/VariableEditor.vue'
 import { t } from '@services/i18n'
 import ImageCreator from '@services/image'
@@ -178,8 +177,6 @@ import { baseURL as SDWebUIBaseURL } from '@services/sdwebui'
 import { kReferenceParamValue, store } from '@services/store'
 import VideoCreator from '@services/video'
 import promptsLibrary from './prompts.json'
-
-const { onEvent } = useEventBus()
 
 type Parameter = {
   label: string
@@ -487,12 +484,11 @@ const isFavorite = computed(() => {
   return store.config.studio.favorites.find((f) => f.engine === engine.value && f.model === model.value) != null
 })
 
-onMounted(() => {
+const setInputImageKey = (key: string) => {
+  params.value[key] = kReferenceParamValue
+}
 
-  // replicate image key can be prompted by DesignStudio.vue
-  onEvent('replicate-input-image-key', (key: string) => {
-    params.value[key] = kReferenceParamValue
-  })
+onMounted(() => {
 
   mediaType.value = store.config.studio.type || 'image'
   engine.value = store.config.studio.engines?.[modelType.value] || (mediaType.value === 'image' ? 'openai' : 'replicate')
@@ -698,6 +694,7 @@ defineExpose({
   },
   loadSettings,
   generateMedia,
+  setInputImageKey,
   setTransform: (value: boolean) => {
     transform.value = value
     onChangeMediaType()

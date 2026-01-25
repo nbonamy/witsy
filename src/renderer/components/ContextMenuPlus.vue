@@ -114,8 +114,11 @@
 import { ChevronRightIcon, MoveLeftIcon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, onBeforeUnmount, ref, useSlots, watch } from 'vue'
 import Overlay from '@components/Overlay.vue'
+import useEventListener from '@composables/event_listener'
 import { t } from '@services/i18n'
 import type { MenuItem } from 'types/menu'
+
+const { onDomEvent } = useEventListener()
 
 export type MenuPosition = 'below' | 'above' | 'right' | 'left' | 'above-right' | 'above-left' | 'below-right' | 'below-left'
 
@@ -368,13 +371,12 @@ onMounted(() => {
     requestAnimationFrame(initMenu)
   }
 
-  document.addEventListener('keydown', onKeyUp)
-  document.addEventListener('keyup', onKeyDown)
+  onDomEvent(document, 'keydown', onKeyUp)
+  onDomEvent(document, 'keyup', onKeyDown)
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', onKeyUp)
-  document.removeEventListener('keyup', onKeyDown)
+  // DOM listeners cleaned up by composable
 })
 
 // Watch for items changes and update currentDataItems if in a submenu

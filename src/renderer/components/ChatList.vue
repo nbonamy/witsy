@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 
-import { computed, onMounted, PropType, ref } from 'vue'
+import { computed, inject, onMounted, PropType, ref } from 'vue'
 import Chat from '@models/chat'
 import { t } from '@services/i18n'
 import { kMediaChatId, store } from '@services/store'
@@ -22,9 +22,11 @@ import { ChatListMode } from 'types/config'
 import ChatListFolder from './ChatListFolder.vue'
 import ChatListTimeline from './ChatListTimeline.vue'
 import ContextMenuPlus from './ContextMenuPlus.vue'
-import useEventBus from '@composables/event_bus'
+import useEventListener from '@composables/event_listener'
+import type { ChatCallbacks } from '@screens/Chat.vue'
 
-const { emitEvent } = useEventBus()
+const { onDomEvent } = useEventListener()
+const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
 
 const props = defineProps({
   displayMode: {
@@ -73,15 +75,20 @@ const menuY = ref(0)
 const targetRow = ref<Chat|null>(null)
 
 let scrollEndTimeout: NodeJS.Timeout|null = null
+
+const onScroll = (ev: Event) => {
+  const target = ev.target as HTMLElement
+  target.classList.add('scrolling')
+  clearTimeout(scrollEndTimeout!)
+  scrollEndTimeout = setTimeout(() => {
+    target.classList.remove('scrolling')
+  }, 500)
+}
+
 onMounted(() => {
-  divChats.value?.addEventListener('scroll', (ev: Event) => {
-    const target = ev.target as HTMLElement
-    target.classList.add('scrolling')
-    clearTimeout(scrollEndTimeout!)
-    scrollEndTimeout = setTimeout(() => {
-      target.classList.remove('scrolling')
-    }, 500)
-  })
+  if (divChats.value) {
+    onDomEvent(divChats.value, 'scroll', onScroll)
+  }
 })
 
 const onSelectChat = (chat: Chat) => {
@@ -92,7 +99,7 @@ const onSelectChat = (chat: Chat) => {
       selection.value = [...selection.value, chat.uuid]
     }
   } else {
-    emitEvent('select-chat', chat)
+    chatCallbacks?.onSelectChat(chat)
   }
 }
 
@@ -118,11 +125,11 @@ const handleActionClick = async (action: string) => {
 
   // process
   if (action === 'rename') {
-    emitEvent('rename-chat', chat)
+    chatCallbacks?.onRenameChat(chat)
   } else if (action === 'move') {
-    emitEvent('move-chat', chat.uuid)
+    chatCallbacks?.onMoveChat(chat.uuid)
   } else if (action === 'delete') {
-    emitEvent('delete-chat', chat.uuid)
+    chatCallbacks?.onDeleteChat(chat.uuid)
   }
 
 }

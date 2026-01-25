@@ -19,7 +19,7 @@
     </main>
 
     <footer>
-      <button class="cta" @click="emitEvent('action', 'clear')">
+      <button class="cta" @click="emit('action', 'clear')">
         <NotebookPenIcon />{{ t('scratchpad.new') }}
       </button>
     </footer>
@@ -32,11 +32,10 @@
 import { FileUpIcon, NotebookPenIcon, Settings2Icon } from 'lucide-vue-next'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import History from './History.vue'
-import useEventBus from '@composables/event_bus'
 import { t } from '@services/i18n'
 import { ScratchpadHeader } from 'types/index'
 
-const { emitEvent } = useEventBus()
+const emit = defineEmits(['action'])
 
 defineProps({
   fileUrl: String,
@@ -55,19 +54,19 @@ defineProps({
 })
 
 const onSettings = () => {
-  emitEvent('action', 'settings')
+  emit('action', 'settings')
 }
 
 const onImport = () => {
-  emitEvent('action', 'import')
+  emit('action', 'import')
 }
 
 const onSelectScratchpad = (scratchpad: ScratchpadHeader) => {
-  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  emit('action', { type: 'select-scratchpad', value: scratchpad })
 }
 
 const onContextMenu = ({ event, scratchpad }: { event: MouseEvent, scratchpad: ScratchpadHeader }) => {
-  emitEvent('action', { type: 'context-menu', value: { event, scratchpad } })
+  emit('action', { type: 'context-menu', value: { event, scratchpad } })
 }
 
 </script>

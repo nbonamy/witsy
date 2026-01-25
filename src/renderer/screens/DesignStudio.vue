@@ -54,6 +54,8 @@ import ContextMenuPlus from '@components/ContextMenuPlus.vue'
 import DrawingCanvas from '@components/DrawingCanvas.vue'
 import Dialog from '@renderer/utils/dialog'
 import useEventBus from '@composables/event_bus'
+import useEventListener from '@composables/event_listener'
+import useIpcListener from '@composables/ipc_listener'
 import Attachment from '@models/attachment'
 import Chat from '@models/chat'
 import Message from '@models/message'
@@ -68,7 +70,9 @@ import Settings from '../studio/Settings.vue'
 import { FileContents } from 'types/file'
 import { anyDict } from 'types/index'
 
-const { emitEvent } = useEventBus()
+const { emitBusEvent } = useEventBus()
+const { onDomEvent } = useEventListener()
+const { onIpcEvent } = useIpcListener()
 
 defineProps({
   extra: Object
@@ -110,25 +114,22 @@ const history = computed(() => {
 })
 
 onMounted(() => {
-  
+
   // we need the media chat
   initializeChat()
   store.addListener('workspaceSwitched', initializeChat)
 
   // events
-  window.api.on('delete-media', onDeleteMedia)
-  window.api.on('select-all-media', onSelectAll)
-  document.addEventListener('keydown', onKeyDown)
-  document.addEventListener('paste', onPaste)
+  onIpcEvent('delete-media', onDeleteMedia)
+  onIpcEvent('select-all-media', onSelectAll)
+  onDomEvent(document, 'keydown', onKeyDown)
+  onDomEvent(document, 'paste', onPaste)
 
 })
 
 onBeforeUnmount(() => {
   store.removeListener('workspaceSwitched', initializeChat)
-  document.removeEventListener('keydown', onKeyDown)
-  document.removeEventListener('paste', onPaste)
-  window.api.off('delete-media', onDeleteMedia)
-  window.api.off('select-all-media', onSelectAll)
+  // DOM and IPC listeners cleaned up by composables
 })
 
 const initializeChat = () => {
@@ -635,7 +636,7 @@ const onMediaGenerationRequest = async (data: {
       attachReference = false
 
       // ask Settings.vue to save the key
-      emitEvent('replicate-input-image-key', referenceKey)
+      settings.value?.setInputImageKey(referenceKey)
 
     } else if (referenceKey) {
 
@@ -778,7 +779,7 @@ const onMediaGenerationRequest = async (data: {
 }
 
 const onFullScreen = (url: string) => {
-  emitEvent('fullscreen', url)
+  emitBusEvent('fullscreen', url)
 }
 </script>
 

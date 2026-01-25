@@ -21,7 +21,7 @@ import mermaid, { RenderResult } from 'mermaid'
 import { onMounted, ref } from 'vue'
 
 import useEventBus from '@composables/event_bus'
-const { emitEvent } = useEventBus()
+const { emitBusEvent } = useEventBus()
 
 const props = defineProps({
   src: {
@@ -57,7 +57,7 @@ onMounted(async () => {
 const onFullscreen = () => {
   const blob = new Blob([render.value.svg], { type: 'image/svg+xml' });
   const url = URL.createObjectURL(blob);
-  emitEvent('fullscreen', { url, theme: theme.value });
+  emitBusEvent('fullscreen', { url, theme: theme.value });
   setTimeout(() => URL.revokeObjectURL(url), 500);  
 }
 

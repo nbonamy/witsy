@@ -44,8 +44,7 @@
 
 import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, StarIcon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, PropType, ref, watch } from 'vue'
-import { MenuBarMode } from '@components/MenuBar.vue'
-import useEventBus from '@composables/event_bus'
+import useIpcListener from '@composables/ipc_listener'
 import { installTabs, showActiveTab } from '@renderer/utils/tabs'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
@@ -65,9 +64,13 @@ import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
 import { OpenSettingsPayload } from 'types/index'
 
-const { onEvent } = useEventBus()
+const { onIpcEvent } = useIpcListener()
 
 const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false,
+  },
   extra: {
     type: Object as PropType<OpenSettingsPayload>,
     default: {
@@ -127,7 +130,7 @@ onMounted(async () => {
   }, { immediate: true })
 
   // reload
-  window.api.on('file-modified', (file: string) => {
+  onIpcEvent('file-modified', (file: string) => {
     if (file === 'settings') {
       for (const setting of settings) {
         setting.value?.load()
@@ -139,9 +142,9 @@ onMounted(async () => {
   installTabs(tabs.value)
   showActiveTab(tabs.value)
 
-  // events
-  onEvent('main-view-changed', (mode: MenuBarMode) => {
-    if (mode === 'settings') {
+  // watch visible prop
+  watch(() => props.visible, (visible) => {
+    if (visible) {
       onShow()
     }
   })

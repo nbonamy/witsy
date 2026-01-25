@@ -44,18 +44,48 @@ vi.mock('./src/renderer/utils/dialog', () => ({
 }))
 
 // Mock EventBus composable
-const onEventMock = vi.fn()
-const emitEventMock = vi.fn()
+const onBusEventMock = vi.fn()
+const emitBusEventMock = vi.fn()
 
 vi.mock('./src/renderer/composables/event_bus', () => ({
   default: () => ({
-    onEvent: onEventMock,
-    emitEvent: emitEventMock
+    onBusEvent: onBusEventMock,
+    emitBusEvent: emitBusEventMock
   })
 }))
 
 // Export mock functions for individual test access
-export { onEventMock, emitEventMock }
+export { onBusEventMock, emitBusEventMock }
+
+// Mock ChatCallbacks for provide/inject
+export const chatCallbacksMock = {
+  onDeleteChat: vi.fn(),
+  onDeleteFolder: vi.fn(),
+  onDeleteMessage: vi.fn(),
+  onForkChat: vi.fn(),
+  onMoveChat: vi.fn(),
+  onNewChat: vi.fn(),
+  onNewChatInFolder: vi.fn(),
+  onRenameChat: vi.fn(),
+  onRenameFolder: vi.fn(),
+  onResendAfterEdit: vi.fn(),
+  onRetryGeneration: vi.fn(),
+  onRunAgent: vi.fn(),
+  onSelectChat: vi.fn(),
+  onSetPrompt: vi.fn(),
+}
+
+// Helper to merge mount options with chat-callbacks provided
+export const withChatCallbacks = (options: any = {}) => ({
+  ...options,
+  global: {
+    ...options.global,
+    provide: {
+      ...options.global?.provide,
+      'chat-callbacks': chatCallbacksMock
+    }
+  }
+})
 
 // Mock Automator class
 vi.mock('./src/main/automations/automator', () => {

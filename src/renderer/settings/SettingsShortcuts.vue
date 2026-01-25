@@ -62,7 +62,7 @@ import { t } from '@services/i18n'
 import useEventBus from '@composables/event_bus'
 import InputShortcut from '@components/InputShortcut.vue'
 
-const { emitEvent } = useEventBus()
+const { emitBusEvent } = useEventBus()
 
 const prompt = ref(null)
 const chat = ref(null)

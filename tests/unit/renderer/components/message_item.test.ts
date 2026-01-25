@@ -4,7 +4,7 @@ import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-util
 import { nextTick } from 'vue'
 import { useWindowMock } from '@tests/mocks/window'
 import { createI18nMock } from '@tests/mocks'
-import { emitEventMock } from '@root/vitest.setup'
+import { chatCallbacksMock, withChatCallbacks } from '@root/vitest.setup'
 import { store } from '@services/store'
 import { stubTeleport } from '@tests/mocks/stubs'
 import MessageItem from '@components/MessageItem.vue'
@@ -82,7 +82,7 @@ beforeEach(() => {
 })
 
 const mount = async (message: Message, mouseenter = true): Promise<VueWrapper<any>> => {
-  const wrapper = vtumount(MessageItem, { ...stubTeleport, props: { chat: chat, message: message, readAloud: readAloudMock } })
+  const wrapper = vtumount(MessageItem, withChatCallbacks({ ...stubTeleport, props: { chat: chat, message: message, readAloud: readAloudMock } }))
   if (mouseenter) await wrapper.trigger('mouseenter')
   return wrapper
 }
@@ -490,14 +490,20 @@ test('Run user actions', async () => {
 
   const wrapper = await mount(userMessage)
 
+  // edit triggers startEditing directly via emit
   await wrapper.find('.actions .edit').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('edit-message', userMessage.uuid)
+  await nextTick()
+  expect(wrapper.find('.edit-container').exists()).toBe(true)
+
+  // cancel editing for next test
+  wrapper.vm.cancelEditing()
+  await nextTick()
 
   await wrapper.find('.actions .quote').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('set-prompt', userMessage)
+  expect(chatCallbacksMock.onSetPrompt).toHaveBeenLastCalledWith(userMessage)
 
   await wrapper.find('.actions .delete').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('delete-message', userMessage)
+  expect(chatCallbacksMock.onDeleteMessage).toHaveBeenLastCalledWith(userMessage)
 })
 
 test('Run assistant text actions', async () => {
@@ -534,7 +540,7 @@ test('Run assistant text actions', async () => {
   await wrapper.find('.actions .retry').trigger('click')
   expect(Dialog.show).toHaveBeenCalledTimes(2)
   expect(store.config.general.confirm.retryGeneration).toBe(true)
-  expect(emitEventMock).toHaveBeenLastCalledWith('retry-generation', botMessageText)
+  expect(chatCallbacksMock.onRetryGeneration).toHaveBeenLastCalledWith(botMessageText)
 
   // retry again
   await wrapper.find('.actions .retry').trigger('click')
@@ -547,7 +553,7 @@ test('Run assistant text actions', async () => {
 
   // fork
   await wrapper.find('.actions .fork').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('fork-chat', botMessageText)
+  expect(chatCallbacksMock.onForkChat).toHaveBeenLastCalledWith(botMessageText)
 
   // tools
   expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
@@ -776,12 +782,8 @@ test('Message editing - User message edit mode toggle', async () => {
   expect(wrapper.find('.edit-container').exists()).toBe(false)
   expect(wrapper.find('.message-content .edit-textarea').exists()).toBe(false)
 
-  // Trigger edit event
+  // Trigger edit - now directly calls startEditing via emit
   await wrapper.find('.actions .edit').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('edit-message', userMessage.uuid)
-
-  // Manually trigger the event handler since emitEvent is mocked
-  wrapper.vm.startEditing()
   await nextTick()
 
   // Now in edit mode
@@ -831,8 +833,8 @@ test('Message editing - Save user message edit triggers resend', async () => {
   await wrapper.find('.edit-actions button.primary').trigger('click')
   await nextTick()
 
-  // Should emit resend-after-edit event
-  expect(emitEventMock).toHaveBeenCalledWith('resend-after-edit', {
+  // Should call onResendAfterEdit callback
+  expect(chatCallbacksMock.onResendAfterEdit).toHaveBeenCalledWith({
     message: userMessage,
     newContent: 'Modified user message'
   })
@@ -933,7 +935,7 @@ test('Message editing - Keyboard shortcuts work', async () => {
   // Test Cmd+Enter for save (on Mac)
   await textarea.trigger('keydown', { key: 'Enter', metaKey: true })
   await nextTick()
-  expect(emitEventMock).toHaveBeenCalledWith('resend-after-edit', {
+  expect(chatCallbacksMock.onResendAfterEdit).toHaveBeenCalledWith({
     message: userMessage,
     newContent: 'Modified content again'
   })

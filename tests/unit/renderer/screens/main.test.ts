@@ -6,7 +6,7 @@ import Main from '@screens/Main.vue'
 
 vi.unmock('@renderer/composables/event_bus')
 import useEventBus from '@composables/event_bus'
-const { emitEvent } = useEventBus()
+const { emitBusEvent } = useEventBus()
 
 enableAutoUnmount(afterAll)
 
@@ -20,7 +20,7 @@ beforeEach(() => {
 
 test('Fullscreen image', async () => {
   const wrapper = mount(Main)
-  emitEvent('fullscreen', 'https://example.com/image.jpg')
+  emitBusEvent('fullscreen', 'https://example.com/image.jpg')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.fullscreen').exists()).toBe(true)
   expect(window.api.app.fullscreen).toHaveBeenLastCalledWith('main', true)

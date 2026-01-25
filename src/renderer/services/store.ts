@@ -14,6 +14,16 @@ import LlmManager from './llms/manager'
 export { kDefaultWorkspaceId, kMediaChatId } from '@/consts'
 export const kReferenceParamValue = '<media>'
 
+// Flags to ensure IPC listeners are only registered once
+let settingsListenerRegistered = false
+let historyListenerRegistered = false
+
+// Reset function for testing - allows re-registration of listeners
+export const resetStoreListeners = () => {
+  settingsListenerRegistered = false
+  historyListenerRegistered = false
+}
+
 export const store: Store = reactive({
 
   config: {} as Configuration,
@@ -83,7 +93,7 @@ export const store: Store = reactive({
   },
 
   loadSettings: (): void => {
-    
+
     // load settings
     loadSettings()
     loadWorkspace()
@@ -92,18 +102,21 @@ export const store: Store = reactive({
     const llmManager = LlmFactory.manager(store.config) as LlmManager
     llmManager.checkModelsCapabilities()
 
-    // subscribe to file changes
-    window.api.on('file-modified', (file) => {
-      if (file === 'settings') {
-        loadSettings()
-      } else if (file === 'commands') {
-        loadCommands()
-      } else if (file === 'experts') {
-        void store.loadExperts()
-      } else if (file === 'agents') {
-        loadAgents()
-      }
-    })
+    // subscribe to file changes (only once)
+    if (!settingsListenerRegistered) {
+      settingsListenerRegistered = true
+      window.api._on('file-modified', (file) => {
+        if (file === 'settings') {
+          loadSettings()
+        } else if (file === 'commands') {
+          loadCommands()
+        } else if (file === 'experts') {
+          void store.loadExperts()
+        } else if (file === 'agents') {
+          loadAgents()
+        }
+      })
+    }
 
   },
 
@@ -112,12 +125,15 @@ export const store: Store = reactive({
     // load history
     loadHistory()
 
-    // subscribe to file changes
-    window.api.on('file-modified', (file) => {
-      if (file === 'history') {
-        mergeHistory(window.api.history.load(store.config.workspaceId))
-      }
-    })
+    // subscribe to file changes (only once)
+    if (!historyListenerRegistered) {
+      historyListenerRegistered = true
+      window.api._on('file-modified', (file) => {
+        if (file === 'history') {
+          mergeHistory(window.api.history.load(store.config.workspaceId))
+        }
+      })
+    }
 
   },
 

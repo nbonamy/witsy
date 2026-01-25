@@ -14,13 +14,8 @@ import Sidebar from '@renderer/scratchpad/Sidebar.vue'
 import ActionBar from '@renderer/scratchpad/ActionBar.vue'
 import Attachment from '@models/attachment'
 
-vi.unmock('@renderer/composables/event_bus')
-import useEventBus  from '@composables/event_bus'
 import { defaultCapabilities } from 'multi-llm-ts'
 import LlmManager from '@services/llms/manager'
-const { emitEvent } = useEventBus()
-
-// Unmock EventBus for this test - scratchpad needs real event handling
 
 vi.mock('@services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
@@ -131,7 +126,7 @@ test('Clears chat', async () => {
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).not.toBe('')
   vi.mocked(Dialog.show).mockResolvedValueOnce({ isDismissed: true })
-  emitEvent('action', 'clear')
+  wrapper.vm.onAction( 'clear')
   await vi.waitUntil(async () => wrapper.vm.currentScratchpadId === null)
   expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder_en-US')
 })
@@ -177,7 +172,7 @@ test('Undo/redo', async () => {
 
   // Load a scratchpad to have baseline content
   const scratchpad = wrapper.vm.scratchpads[0]
-  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  wrapper.vm.onAction( { type: 'select-scratchpad', value: scratchpad })
   await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
 
   // Should have baseline in undo stack
@@ -195,14 +190,14 @@ test('Undo/redo', async () => {
   expect(wrapper.vm.redoStack).toHaveLength(0)
 
   // Undo should restore baseline
-  emitEvent('action', 'undo')
+  wrapper.vm.onAction( 'undo')
   await wrapper.vm.$nextTick()
   expect(wrapper.findComponent(EditableText).text()).toBe(baselineContent)
   expect(wrapper.vm.undoStack).toHaveLength(1) // Back to baseline only
   expect(wrapper.vm.redoStack.length).toBeGreaterThan(0)
 
   // Redo should restore edit
-  emitEvent('action', 'redo')
+  wrapper.vm.onAction( 'redo')
   await wrapper.vm.$nextTick()
   expect(wrapper.findComponent(EditableText).text()).toBe(editedContent)
   expect(wrapper.vm.redoStack).toHaveLength(0)
@@ -211,7 +206,7 @@ test('Undo/redo', async () => {
 test('Loads chat', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   const scratchpad = { uuid: 'scratchpad1', title: 'Test Scratchpad 1', lastModified: Date.now() }
-  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  wrapper.vm.onAction( { type: 'select-scratchpad', value: scratchpad })
   await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
   expect(wrapper.findComponent(EditableText).text()).toBe('Test content')
 })
@@ -222,14 +217,14 @@ test('Saves chat', async () => {
   await vi.waitUntil(async () => !wrapper.vm.processing)
   // Mock dialog to auto-confirm with a title
   vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'New Scratchpad', isDenied: false, isDismissed: false })
-  emitEvent('action', 'save')
+  wrapper.vm.onAction( 'save')
   await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
   expect(window.api.scratchpad.save).toHaveBeenCalled()
 })
 
 test('Sets engine', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('action', { type: 'llm', value: { engine: 'openai', model: 'chat' }})
+  wrapper.vm.onAction( { type: 'llm', value: { engine: 'openai', model: 'chat' }})
   expect(wrapper.vm.chat.engine).toBe('openai')
   expect(wrapper.vm.chat.model).toBe('chat')
   expect(wrapper.vm.chat.tools).toBeNull()
@@ -250,14 +245,14 @@ test('Replaces selection', async () => {
 test('Copies text', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   wrapper.vm.editor.setContent({ content: 'Hello LLM', start: -1, end: -1})
-  emitEvent('action', 'copy')
+  wrapper.vm.onAction( 'copy')
   expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('Hello LLM')
 })
 
 // test('Reads text', async () => {
 //   const wrapper: VueWrapper<any> = mount(ScratchPad)
 //   wrapper.vm.editor.setContent({ content: 'Hello LLM', start: -1, end: -1})
-//   emitEvent('action', 'read')
+//   wrapper.vm.onAction( 'read')
 // })
 
 for (const action of ['spellcheck', 'improve', 'takeaways', 'title', 'simplify', 'expand']) {
@@ -270,7 +265,7 @@ for (const action of ['spellcheck', 'improve', 'takeaways', 'title', 'simplify',
     }
     const wrapper: VueWrapper<any> = mount(ScratchPad)
     wrapper.vm.editor.setContent({ content: 'Hello LLM', start: -1, end: -1})
-    emitEvent('action', { type: 'magic', value: action } )
+    wrapper.vm.onAction( { type: 'magic', value: action } )
     await vi.waitUntil(async () => !wrapper.vm.processing)
     expect(wrapper.findComponent(EditableText).text()).toContain(`instructions.scratchpad.${action}_fr-FR`)
   })
@@ -316,14 +311,14 @@ test('Displays history in sidebar', async () => {
 test('Selects scratchpad from history', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   const scratchpad = wrapper.vm.scratchpads[0]
-  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  wrapper.vm.onAction( { type: 'select-scratchpad', value: scratchpad })
   await vi.waitUntil(async () => wrapper.vm.currentScratchpadId === scratchpad.uuid)
   expect(wrapper.vm.currentTitle).toBe('Test Scratchpad')
   expect(wrapper.vm.selectedScratchpad).toEqual(scratchpad)
 })
 
 test('Import prompts for title', async () => {
-  mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
 
   // @ts-expect-error mock
   window.api.file.pickFile = vi.fn(() => ({
@@ -333,7 +328,7 @@ test('Import prompts for title', async () => {
 
   vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'My Custom Title', isDenied: false, isDismissed: false })
 
-  emitEvent('action', 'import')
+  wrapper.vm.onAction('import')
   await vi.waitUntil(async () => (Dialog.show as Mock).mock.calls.length > 0)
 
   const dialogCall = vi.mocked(Dialog.show).mock.calls[0][0]
@@ -341,7 +336,7 @@ test('Import prompts for title', async () => {
 })
 
 test('Import creates new scratchpad', async () => {
-  mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
 
   vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'Imported', isDenied: false, isDismissed: false })
 
@@ -351,7 +346,7 @@ test('Import creates new scratchpad', async () => {
     contents: '{}'
   }))
 
-  emitEvent('action', 'import')
+  wrapper.vm.onAction('import')
   await vi.waitUntil(async () => (window.api.scratchpad.import as Mock).mock.calls.length > 0, { timeout: 2000 })
 
   // Check the actual call
@@ -405,7 +400,7 @@ test('Saves scratchpad successfully', async () => {
   expect(wrapper.vm.checkIfModified()).toBe(true)
 
   vi.spyOn(Dialog, 'show').mockResolvedValue({ isConfirmed: true, value: 'Test', isDenied: false, isDismissed: false })
-  emitEvent('action', 'save')
+  wrapper.vm.onAction( 'save')
   await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
 
   expect(window.api.scratchpad.save).toHaveBeenCalled()
@@ -417,7 +412,7 @@ test('Load initializes undo stack', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
 
   const scratchpad = wrapper.vm.scratchpads[0]
-  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  wrapper.vm.onAction( { type: 'select-scratchpad', value: scratchpad })
   await vi.waitUntil(async () => wrapper.vm.currentScratchpadId)
 
   expect(wrapper.vm.undoStack).toHaveLength(1)
@@ -437,7 +432,7 @@ test('Switching with unsaved changes prompts', async () => {
   vi.spyOn(Dialog, 'show').mockResolvedValue({ isDismissed: true, isConfirmed: false, isDenied: false })
 
   const scratchpad = wrapper.vm.scratchpads[1]
-  emitEvent('action', { type: 'select-scratchpad', value: scratchpad })
+  wrapper.vm.onAction( { type: 'select-scratchpad', value: scratchpad })
   await vi.waitUntil(async () => (Dialog.show as Mock).mock.calls.length > 0)
 
   expect(Dialog.show).toHaveBeenCalled()

@@ -2,6 +2,7 @@ import { SettingsIcon, XIcon } from 'lucide-vue-next'
 import type { MenuItem } from 'types/menu'
 import type { DocumentBase } from 'types/rag'
 import { computed, onBeforeUnmount, onMounted, ref, Ref } from 'vue'
+import useIpcListener from './ipc_listener'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 
@@ -14,6 +15,7 @@ export interface UseDocReposMenuOptions {
 
 export function useDocReposMenu(options: UseDocReposMenuOptions) {
   const { emit, footerMode = 'none', multiSelect = false, selectedDocRepos } = options
+  const { onIpcEvent } = useIpcListener()
 
   // Reactive data
   const docRepos = ref<DocumentBase[]>([])
@@ -35,12 +37,12 @@ export function useDocReposMenu(options: UseDocReposMenuOptions) {
   // Load on mount and listen for changes
   onMounted(() => {
     loadDocRepos()
-    window.api.on('docrepo-modified', loadDocRepos)
+    onIpcEvent('docrepo-modified', loadDocRepos)
   })
 
   // Clean up listener
   onBeforeUnmount(() => {
-    window.api.off('docrepo-modified', loadDocRepos)
+    // IPC listeners cleaned up by composable
   })
 
   // Toggle selection for multi-select mode
@@ -94,7 +96,7 @@ export function useDocReposMenu(options: UseDocReposMenuOptions) {
 
   // Generate menu items
   const menuItems = computed<MenuItem[]>(() => {
-    return docRepos.value.map(docRepo => {
+    const items = docRepos.value.map(docRepo => {
       const isSelected = currentSelection.value.includes(docRepo.uuid)
       return {
         id: `docrepo-${docRepo.uuid}`,
@@ -104,39 +106,49 @@ export function useDocReposMenu(options: UseDocReposMenuOptions) {
         onClick: () => handleDocRepoClick(docRepo.uuid),
       }
     })
+    return items.length > 0 ? items : [{
+      id: 'no-docrepos',
+      label: t('prompt.menu.docRepos.none'),
+      disabled: true,
+    }]
   })
 
   // Footer items for the docrepos menu
   const footerItems = computed<MenuItem[]>(() => {
-    if (multiSelect) {
-      // Multi-select mode: Select All / Clear All buttons
-      return [
-        {
-          id: 'docrepos-select-all',
-          label: t('common.selectAll'),
-          onClick: handleSelectAll,
-        },
-        {
-          id: 'docrepos-clear-all',
-          label: t('common.unselectAll'),
-          onClick: handleClearAll,
-        },
-      ]
-    }
 
-    if (footerMode === 'none') {
-      return []
-    }
+    if (docRepos.value.length > 0) {
+    
+      if (multiSelect) {
+        // Multi-select mode: Select All / Clear All buttons
+        return [
+          {
+            id: 'docrepos-select-all',
+            label: t('common.selectAll'),
+            onClick: handleSelectAll,
+          },
+          {
+            id: 'docrepos-clear-all',
+            label: t('common.unselectAll'),
+            onClick: handleClearAll,
+          },
+        ]
+      }
 
-    if (footerMode === 'clear') {
-      return [
-        {
-          id: 'docrepos-clear',
-          label: t('common.clear'),
-          icon: XIcon,
-          onClick: () => handleDocRepoClick(null as any), // null will be handled by parent
-        },
-      ]
+      if (footerMode === 'none') {
+        return []
+      }
+
+      if (footerMode === 'clear') {
+        return [
+          {
+            id: 'docrepos-clear',
+            label: t('common.clear'),
+            icon: XIcon,
+            onClick: () => handleDocRepoClick(null as any), // null will be handled by parent
+          },
+        ]
+      }
+
     }
 
     // Default: 'manage'

@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, expect, test, afterEach, Mock } from 'vitest
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
 import { createI18nMock } from '@tests/mocks'
-import { emitEventMock } from '@root/vitest.setup'
+import { emitBusEventMock } from '@root/vitest.setup'
 import { store } from '@services/store'
 import AudioBooth from '@screens/AudioBooth.vue'
 import Waveform from '@components/Waveform.vue'
@@ -200,7 +200,7 @@ test('Summarizes transcription', async () => {
   wrapper.vm.transcription = 'test'
   await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=summarize]').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('new-chat', {
+  expect(emitBusEventMock).toHaveBeenCalledWith('new-chat', {
     prompt: 'transcribe.summarizePrompt',
     attachments: [ expect.objectContaining({ content: 'test_encoded' } ) ],
     submit: true,
@@ -213,7 +213,7 @@ test('Translates transcription', async () => {
   await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=translate]').trigger('click')
   await wrapper.find('.context-menu .item:nth-child(2)').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('new-chat', {
+  expect(emitBusEventMock).toHaveBeenCalledWith('new-chat', {
     prompt: 'transcribe.translatePrompt_default_lang=English UK',
     attachments: [ expect.objectContaining({ content: 'test_encoded' } ) ],
     submit: true,
@@ -226,7 +226,7 @@ test('Commands transcription', async () => {
   await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=commands]').trigger('click')
   await wrapper.find('.context-menu .item:nth-child(3)').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('new-chat', {
+  expect(emitBusEventMock).toHaveBeenCalledWith('new-chat', {
     prompt: 'command_uuid3_template_test',
     submit: true,
   })

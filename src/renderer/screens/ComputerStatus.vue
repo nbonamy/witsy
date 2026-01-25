@@ -11,8 +11,11 @@
 import { CircleXIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
 import { onMounted, onBeforeUnmount, ref } from 'vue'
+import useIpcListener from '@composables/ipc_listener'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+
+const { onIpcEvent } = useIpcListener()
 
 // init stuff
 store.loadSettings()
@@ -22,11 +25,11 @@ const state = ref('')
 
 onMounted(() => {
   logo.value.src = document.querySelector<HTMLImageElement>('#logo').src
-  window.api.on('computer-status', onComputerStatus)
+  onIpcEvent('computer-status', onComputerStatus)
 })
 
 onBeforeUnmount(() => {
-  window.api.off('computer-status', onComputerStatus)
+  // IPC listeners cleaned up by composable
 })
 
 const onComputerStatus = (chunk: LlmChunk) => {

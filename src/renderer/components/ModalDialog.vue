@@ -25,9 +25,12 @@
 <script setup lang="ts">
 
 import { PropType, computed, nextTick, ref } from 'vue'
+import useEventListener from '@composables/event_listener'
 
 export type DialogType = 'alert' | 'window'
 export type DialogForm = 'horizontal' | 'vertical'
+
+const { onDomEvent, offDomEvent } = useEventListener()
 
 const visible = ref(false)
 const content = ref<HTMLElement|null>(null)
@@ -113,7 +116,7 @@ const show = async () => {
 
   // now we can show it
   visible.value = true
-  document.addEventListener('keydown', onKeyDown)
+  onDomEvent(document, 'keydown', onKeyDown)
 
   // wait render
   await nextTick()
@@ -133,7 +136,7 @@ const show = async () => {
 }
 
 const close = () => {
-  document.removeEventListener('keydown', onKeyDown)
+  offDomEvent(document, 'keydown', onKeyDown)
   visible.value = false
 }
 

@@ -38,12 +38,15 @@
 import { ChevronDownIcon, CircleAlertIcon } from 'lucide-vue-next'
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import EngineLogo from '@components/EngineLogo.vue'
+import useIpcListener from '@composables/ipc_listener'
 import { togglePanel } from '@renderer/utils/panel'
 import { t } from '@services/i18n'
 import { DocumentBase } from 'types/rag'
 import Files from './Files.vue'
 import Notes from './Notes.vue'
 import Web from './Web.vue'
+
+const { onIpcEvent } = useIpcListener()
 
 // props
 const props = defineProps<{
@@ -78,11 +81,11 @@ const onModelReady = () => {
 }
 
 onMounted(() => {
-  window.api.on('docrepo-model-downloaded', onModelReady)
+  onIpcEvent('docrepo-model-downloaded', onModelReady)
 })
 
 onBeforeUnmount(() => {
-  window.api.off('docrepo-model-downloaded', onModelReady)
+  // IPC listeners cleaned up by composable
 })
 
 // Watch for changes to selectedRepo to update modelReady and description

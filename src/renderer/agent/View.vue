@@ -61,6 +61,7 @@
 
 import ButtonIcon from '@components/ButtonIcon.vue'
 import ContextMenuPlus from '@components/ContextMenuPlus.vue'
+import useIpcListener from '@composables/ipc_listener'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
@@ -68,6 +69,8 @@ import { ChevronLeftIcon, PencilIcon, PlayIcon, Trash2Icon } from 'lucide-vue-ne
 import { Agent, AgentRun } from 'types/agents'
 import { PropType, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
+
+const { onIpcEvent } = useIpcListener()
 import History from './History.vue'
 import Info from './Info.vue'
 import Run from './Run.vue'
@@ -94,11 +97,11 @@ const emit = defineEmits(['close', 'run', 'edit', 'delete'])
 onMounted(() => {
   watch(() => props.agent, () => reload(), { immediate: true })
   watch(() => showWorkflows.value, () => selectLatestRun())
-  window.api.on('agent-run-update', onAgentRunUpdate)
+  onIpcEvent('agent-run-update', onAgentRunUpdate)
 })
 
 onBeforeUnmount(() => {
-  window.api.off('agent-run-update', onAgentRunUpdate)
+  // IPC listeners cleaned up by composable
 })
 
 const onAgentRunUpdate = (data: { agentId: string, runId: string }) => {
