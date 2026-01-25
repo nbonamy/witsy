@@ -11,7 +11,8 @@ All notable changes to this project will be documented in this file.
 - New agent view with step-by-step execution
 
 ### Fixed
-- N/A
+- Various memory leaks fixes
+- YouTube plugin fix (https://github.com/nbonamy/witsy/issues/516)
 
 ### Removed
 - N/A
