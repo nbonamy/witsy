@@ -10,9 +10,11 @@
 import { XIcon } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import useEventBus from '@composables/event_bus'
+import useEventListener from '@composables/event_listener'
 import { strDict } from 'types/index'
 
-const { onEvent } = useEventBus()
+const { onBusEvent } = useEventBus()
+const { onDomEvent, offDomEvent } = useEventListener()
 
 const props = defineProps({
   window: {
@@ -25,11 +27,11 @@ const fullScreenImageUrl = ref<string|null>(null)
 const fullScreenTheme = ref<string|null>(null)
 
 onMounted(() => {
-  onEvent('fullscreen', onFullscreen)
+  onBusEvent('fullscreen', onFullscreen)
 })
 
 const onFullscreen = (payload: string|strDict) => {
-  document.addEventListener('keydown', onCloseFullScreen)
+  onDomEvent(document, 'keydown', onCloseFullScreen)
   // @ts-expect-error yeah that's not super elegant
   fullScreenImageUrl.value = payload.url ?? payload
   // @ts-expect-error yeah that's not super elegant
@@ -38,7 +40,7 @@ const onFullscreen = (payload: string|strDict) => {
 }
 
 const onCloseFullScreen = () => {
-  document.removeEventListener('keydown', onCloseFullScreen)
+  offDomEvent(document, 'keydown', onCloseFullScreen)
   fullScreenImageUrl.value = null
   window.api.app.fullscreen(props.window, false)
 }

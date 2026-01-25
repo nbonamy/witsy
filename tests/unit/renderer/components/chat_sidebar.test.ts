@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { emitEventMock } from '@root/vitest.setup'
+import { chatCallbacksMock, withChatCallbacks } from '@root/vitest.setup'
 import { useWindowMock } from '@tests/mocks/window'
 import { store } from '@services/store'
 import ChatSidebar from '@components/ChatSidebar.vue'
@@ -45,17 +45,10 @@ test('No chat', async () => {
 })
 
 test('New Chat', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  const wrapper: VueWrapper<any> = mount(ChatSidebar, withChatCallbacks({}))
   await wrapper.find('.sp-sidebar footer .new-chat').trigger('click')
-  expect(wrapper.emitted('new-chat')).toBeTruthy()
+  expect(chatCallbacksMock.onNewChat).toHaveBeenCalled()
 })
-
-// test('Switch to Folder Mode', async () => {
-//   const wrapper: VueWrapper<any> = mount(Sidebar)
-//   emitEvent('chat-list-mode', 'folder')
-//   await wrapper.vm.$nextTick()
-//   expect(store.config.appearance.chatList.mode).toBe('folder')
-// })
 
 test('Start and Cancel Selection', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
@@ -68,11 +61,11 @@ test('Start and Cancel Selection', async () => {
 })
 
 test('Delete Chat', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  const wrapper: VueWrapper<any> = mount(ChatSidebar, withChatCallbacks({}))
   await wrapper.find('.sp-sidebar .chat-list-tools button[name=select]').trigger('click')
   await wrapper.findAll('.sp-sidebar .chats .chat')[0].trigger('click')
   await wrapper.find('.sp-sidebar footer.select-actions button[name=delete]').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', [store.history.chats[0].uuid])
+  expect(chatCallbacksMock.onDeleteChat).toHaveBeenLastCalledWith([store.history.chats[0].uuid])
   wrapper.vm.cancelSelectMode()
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.selectMode).toBe(false)
@@ -81,11 +74,11 @@ test('Delete Chat', async () => {
 
 test('Move Chat', async () => {
   store.config.appearance.chatList.mode = 'folder'
-  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  const wrapper: VueWrapper<any> = mount(ChatSidebar, withChatCallbacks({}))
   await wrapper.find('.sp-sidebar .chat-list-tools button[name=select]').trigger('click')
   await wrapper.findAll('.sp-sidebar .chats .chat')[0].trigger('click')
   await wrapper.find('.sp-sidebar footer.select-actions button[name=move]').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('move-chat', [store.history.chats[0].uuid])
+  expect(chatCallbacksMock.onMoveChat).toHaveBeenLastCalledWith([store.history.chats[0].uuid])
   wrapper.vm.cancelSelectMode()
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.selectMode).toBe(false)

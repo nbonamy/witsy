@@ -9,18 +9,18 @@
 
 <script setup lang="ts">
 
-import { CustomEngineConfig } from 'types/config'
-import { computed } from 'vue'
-import { store } from '@services/store'
-import LlmFactory, { favoriteMockEngine } from '@services/llms/llm'
-import LogoCustom from '@assets/custom.svg?component'
 import LogoAnthropic from '@assets/anthropic.svg?component'
 import LogoAzure from '@assets/azure.svg?component'
 import LogoCerberas from '@assets/cerebras.svg?component'
+import LogoCustom from '@assets/custom.svg?component'
 import LogoDeepSeek from '@assets/deepseek.svg?component'
 import LogoElevenLabs from '@assets/elevenlabs.svg?component'
 import LogoFalai from '@assets/falai.svg?component'
 import LogoFireworks from '@assets/fireworks.svg?component'
+import LlmFactory, { favoriteMockEngine } from '@services/llms/llm'
+import { store } from '@services/store'
+import { CustomEngineConfig } from 'types/config'
+import { computed } from 'vue'
 // PNG logos imported as URL strings
 import LogoGoogle from '@assets/google.svg?component'
 import LogoGroq from '@assets/groq.svg?component'

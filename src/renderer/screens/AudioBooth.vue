@@ -145,7 +145,11 @@ import { getSTTEngines, getSTTModels, StreamingChunk } from '../voice/stt'
 
 import { AudioWaveformIcon, CircleIcon, DiscIcon, GlobeIcon, MicIcon, MinimizeIcon, UploadIcon, WandIcon } from 'lucide-vue-next'
 import useEventBus from '@composables/event_bus'
-const { emitEvent } = useEventBus()
+import useEventListener from '@composables/event_listener'
+import useIpcListener from '@composables/ipc_listener'
+const { emitBusEvent } = useEventBus()
+const { onDomEvent } = useEventListener()
+const { onIpcEvent } = useIpcListener()
 
 // init stuff
 const { transcriber, processStreamingError } = useTranscriber(store.config)
@@ -188,9 +192,9 @@ const commandsMenuActions = computed(() => {
 onMounted(async () => {
 
   // events
-  document.addEventListener('keydown', onKeyDown)
-  document.addEventListener('keyup', onKeyUp)
-  window.api.on('file-modified', onFileModified)
+  onDomEvent(document, 'keydown', onKeyDown)
+  onDomEvent(document, 'keyup', onKeyUp)
+  onIpcEvent('file-modified', onFileModified)
 
   // init
   load()
@@ -227,10 +231,7 @@ onBeforeUnmount(() => {
   }
   audioRecorder.release()
 
-  // events
-  document.removeEventListener('keydown', onKeyDown)
-  document.removeEventListener('keyup', onKeyUp)
-  window.api.off('file-modified', onFileModified)
+  // DOM and IPC listeners cleaned up by composables
 })
 
 const onFileModified = (file: string) => {
@@ -654,7 +655,7 @@ const processAudioFile = async (file: File) => {
 }
 
 const onSummarize = async () => {
-  emitEvent('new-chat', {
+  emitBusEvent('new-chat', {
     prompt: t('transcribe.summarizePrompt'),
     attachments: [ new Attachment(window.api.base64.encode(transcription.value), 'text/plain','' ) ],
     submit: true,
@@ -669,7 +670,7 @@ const handleTranslateClick = async (action: string) => {
   showTranslateMenu.value = false
   if (!action) return
   const lang = action.split(' ').slice(1).join(' ')
-  emitEvent('new-chat', {
+  emitBusEvent('new-chat', {
     prompt: t('transcribe.translatePrompt', { lang }),
     attachments: [ new Attachment(window.api.base64.encode(transcription.value), 'text/plain','' ) ],
     submit: true,
@@ -685,7 +686,7 @@ const handleCommandClick = async (action: string) => {
   if (!action) return
   const command = store.commands.find(c => c.id === action)
   if (!command) return
-  emitEvent('new-chat', {
+  emitBusEvent('new-chat', {
     prompt: commandI18n(command, 'template').replace('{input}', transcription.value),
     submit: action !== window.api.commands.askMeAnythingId(),
   })

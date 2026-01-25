@@ -329,8 +329,12 @@ declare global {
       licensed: boolean
       platform: string
       userDataPath: string
-      on: (signal: string, callback: (value: any) => void) => void
-      off: (signal: string, callback: (value: any) => void) => void
+
+      // do not call these directly, use ipc_listener.ts
+      _on: (signal: string, callback: (value: any) => void) => string
+      _off: (signal: string, id: string) => void
+      //
+      
       app: {
         getVersion(): string
         setAppearanceTheme(theme: string): void
@@ -466,7 +470,7 @@ declare global {
         getApiBasePath(): string
       }
       docrepo: {
-        open(): void
+        open(create?: boolean): void
         list(workspaceId: string): DocumentBase[]
         connect(baseId: string): void
         disconnect(): void

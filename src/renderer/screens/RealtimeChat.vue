@@ -88,11 +88,11 @@
 
 <script setup lang="ts">
 
-import { BlocksIcon } from 'lucide-vue-next'
 import AnimatedBlob from '@components/AnimatedBlob.vue'
 import MessageList from '@components/MessageList.vue'
 import NumberFlip from '@components/NumberFlip.vue'
 import ToolsMenu from '@components/ToolsMenu.vue'
+import useEventListener from '@composables/event_listener'
 import Chat from '@models/chat'
 import Message from '@models/message'
 import useTipsManager from '@renderer/utils/tips_manager'
@@ -102,19 +102,22 @@ import {
   createRealtimeEngine,
   getAvailableModels,
   getAvailableVoices,
-  supportsTools,
   RealtimeCostInfo,
   RealtimeEngine,
   RealtimeMessage,
   RealtimeStatus,
   RealtimeToolCall,
   RealtimeUsage,
+  supportsTools,
   TRANSCRIPTION_UNAVAILABLE,
 } from '@services/realtime'
 import { store } from '@services/store'
+import { BlocksIcon } from 'lucide-vue-next'
 import { McpServerWithTools, McpToolUnique } from 'types/mcp'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import LlmUtils from '../services/llm_utils'
+
+const { onDomEvent } = useEventListener()
 
 const tipsManager = useTipsManager(store)
 
@@ -145,6 +148,11 @@ const state = ref<'idle'|'active'>('idle')
 const chat = ref<Chat>(new Chat())
 const toolSelection = ref<string[]>(store.config.realtime.tools || [])
 const toolsMenuVisible = ref(false)
+
+// provide chunk for MessageList (scoped to this component tree)
+provide('latestChunk', null)
+// provide null chat-callbacks for MessageItem (no actions available in realtime chat)
+provide('chat-callbacks', null)
 
 let realtimeEngine: RealtimeEngine | null = null
 
@@ -188,7 +196,7 @@ const toolsLabel = computed(() => {
 onMounted(() => {
 
   // cleanup on page unload
-  window.addEventListener('beforeunload', stopSession)
+  onDomEvent(window, 'beforeunload', stopSession)
 
   // blob animation
   blob.value.update()
@@ -556,6 +564,7 @@ defineExpose({
   }
 
   .sp-transcript {
+    
     display: flex;
     flex-direction: column;
     flex: 0 0 calc(var(--large-panel-width) * 1.5);

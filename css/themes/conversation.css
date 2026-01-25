@@ -30,7 +30,7 @@
 
 .messages.conversation .message.assistant .body {
   background-color: transparent;
-  color: black;
+  color: var(--text-color);
 }
 
 .messages.conversation .message .body .toggle-reasoning {

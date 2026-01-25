@@ -35,6 +35,9 @@
 import { ChevronDownIcon, ClipboardCheckIcon, ClipboardIcon, DownloadIcon, EyeOffIcon, ScanEyeIcon } from 'lucide-vue-next'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useArtifactCopy } from '@composables/artifact_copy'
+import useEventListener from '@composables/event_listener'
+
+const { onDomEvent } = useEventListener()
 import { togglePanel } from '@renderer/utils/panel'
 import Message from '@models/message'
 import { t } from '@services/i18n'
@@ -266,11 +269,11 @@ onMounted(() => {
   }
 
   // Adjust height on window resize (with debounce)
-  window.addEventListener('resize', handleResize)
+  onDomEvent(window, 'resize', handleResize)
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
+  // DOM listeners cleaned up by composable
   if (delayTimeout) clearTimeout(delayTimeout)
   if (resizeTimeout) clearTimeout(resizeTimeout)
 })

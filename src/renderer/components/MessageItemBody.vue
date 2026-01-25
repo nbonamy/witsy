@@ -31,18 +31,15 @@
 
 <script setup lang="ts">
 
-import { BrainIcon, ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
-import { computed, inject, onMounted, PropType, ref, watch } from 'vue'
-import useEventBus from '@composables/event_bus'
 import Message from '@models/message'
-import { kSearchPluginName } from '@services/plugins/search'
 import { t } from '@services/i18n'
 import { closeOpenMarkdownTags, getCodeBlocks, isHtmlContent } from '@services/markdown'
+import { kSearchPluginName } from '@services/plugins/search'
 import { store } from '@services/store'
+import { BrainIcon, ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { ChatToolMode } from 'types/config'
+import { computed, inject, onMounted, PropType, ref, watch } from 'vue'
 import MessageItemBodyBlock, { Block } from './MessageItemBodyBlock.vue'
-
-const { onEvent, emitEvent } = useEventBus()
 
 const showReasoning = inject('showReasoning', ref(store.config.appearance.chat.showReasoning))
 const userToggleReasoning = inject('onToggleReasoning', (value: boolean) => {
@@ -91,7 +88,6 @@ const contentBlocks = computed((): Block[] => {
 const onToggleReasoning = () => {
   showReasoning.value = !showReasoning.value
   userToggleReasoning(showReasoning.value)
-  emitEvent('toggle-reasoning', showReasoning.value)
 }
 
 const performComputation = async () => {
@@ -123,10 +119,6 @@ const performComputation = async () => {
 }
 
 onMounted(() => {
-
-  onEvent('toggle-reasoning', (value: boolean) => {
-    showReasoning.value = value
-  })
 
   watch(() => props.message, () => {
     performComputation()

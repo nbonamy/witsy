@@ -1,8 +1,11 @@
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { DocRepoAddDocResponse, DocumentQueueItem } from 'types/rag'
+import useIpcListener from './ipc_listener'
 import Dialog from '@renderer/utils/dialog'
 
 export function useDocRepoEvents(type: string) {
+
+  const { onIpcEvent } = useIpcListener()
 
   const loading = ref(false)
   const processingItems = ref<string[]>([])
@@ -38,11 +41,11 @@ export function useDocRepoEvents(type: string) {
   }
 
   onMounted(() => {
-    window.api.on('docrepo-process-item-start', onProcessItemStart)
-    window.api.on('docrepo-process-item-done', onProcessItemDone)
-    window.api.on('docrepo-add-document-done', onAddDocDone)
-    window.api.on('docrepo-add-document-error', onAddDocError)
-    window.api.on('docrepo-del-document-done', onDelDocDone)
+    onIpcEvent('docrepo-process-item-start', onProcessItemStart)
+    onIpcEvent('docrepo-process-item-done', onProcessItemDone)
+    onIpcEvent('docrepo-add-document-done', onAddDocDone)
+    onIpcEvent('docrepo-add-document-error', onAddDocError)
+    onIpcEvent('docrepo-del-document-done', onDelDocDone)
 
     window.api.docrepo.getCurrentQueueItem().then((item) => {
       if (item) {
@@ -52,11 +55,7 @@ export function useDocRepoEvents(type: string) {
   })
 
   onBeforeUnmount(() => {
-    window.api.off('docrepo-process-item-start', onProcessItemStart)
-    window.api.off('docrepo-process-item-done', onProcessItemDone)
-    window.api.off('docrepo-add-document-done', onAddDocDone)
-    window.api.off('docrepo-add-document-error', onAddDocError)
-    window.api.off('docrepo-del-document-done', onDelDocDone)
+    // IPC listeners cleaned up by composable
   })
 
   return {

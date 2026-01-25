@@ -82,7 +82,7 @@
           </div>
         </div>
         
-        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" ref="prompt" />
+        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" @conversation-mode="onConversationMode" ref="prompt" />
       
       </div>
       
@@ -95,7 +95,6 @@
 
 <script setup lang="ts">
 
-import useEventBus from '@composables/event_bus'
 import Chat from '@models/chat'
 import Dialog from '@renderer/utils/dialog'
 import useTipsManager from '@renderer/utils/tips_manager'
@@ -106,15 +105,16 @@ import { exportToPdf } from '@services/pdf'
 import { kMediaChatId, store } from '@services/store'
 import { MessageCirclePlusIcon, MoreVerticalIcon, PanelRightCloseIcon, PanelRightOpenIcon, SlidersHorizontalIcon, X } from 'lucide-vue-next'
 import { Expert, Message } from 'types/index'
-import { computed, onMounted, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import ButtonIcon from './ButtonIcon.vue'
 import { MenuPosition } from './ContextMenuPlus.vue'
 import ContextMenuTrigger from './ContextMenuTrigger.vue'
 import EmptyChat from './EmptyChat.vue'
 import MessageList from './MessageList.vue'
-import Prompt, { SendPromptParams } from './Prompt.vue'
-  
-const { emitEvent, onEvent } = useEventBus()
+import Prompt, { ConversationMode, SendPromptParams } from './Prompt.vue'
+import type { ChatCallbacks } from '@screens/Chat.vue'
+
+const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
 const tipsManager = useTipsManager(store)
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
@@ -170,14 +170,14 @@ const historyProvider = (): string[] => {
 }
 
 const prompt= ref<typeof Prompt>(null)
-const conversationMode= ref<string>('')
+const conversationMode = ref<ConversationMode>('off')
 const showModelSettings = ref(false)
 
-const emit = defineEmits(['prompt', 'run-agent', 'stop-generation'])
+const emit = defineEmits(['prompt', 'stop-generation', 'toggle-sidebar'])
 
-onMounted(() => {
-  onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
-})
+const onConversationMode = (mode: ConversationMode) => {
+  conversationMode.value = mode
+}
 
 const onSetEngineModel = (engine: string, model: string) => {
   llmManager.setChatModel(engine, model)
@@ -187,8 +187,8 @@ const onSendPrompt = (payload: SendPromptParams) => {
   emit('prompt', payload)
 }
 
-const onRunAgent = (...args: any[]) => {
-  emit('run-agent', ...args)
+const onRunAgent = (agentId?: string) => {
+  chatCallbacks?.onRunAgent(agentId)
 }
 
 const onStopGeneration = () => {
@@ -196,15 +196,15 @@ const onStopGeneration = () => {
 }
 
 const toggleSideBar = () => {
-  emitEvent('toggle-sidebar')
+  emit('toggle-sidebar')
 }
 
 const onNewChat = () => {
-  emitEvent('new-chat')
+  chatCallbacks?.onNewChat()
 }
 
 const onRenameChat = () => {
-  emitEvent('rename-chat', props.chat)
+  chatCallbacks?.onRenameChat(props.chat)
 }
 
 const handleActionClick = async (action: string) => {
@@ -213,9 +213,9 @@ const handleActionClick = async (action: string) => {
   if (action === 'toggle_temp') {
     onToggleTemporary()
   } else if (action === 'rename') {
-    emitEvent('rename-chat', props.chat)
+    chatCallbacks?.onRenameChat(props.chat)
   } else if (action === 'delete') {
-    emitEvent('delete-chat', props.chat.uuid)
+    chatCallbacks?.onDeleteChat(props.chat.uuid)
   } else if (action == 'exportMarkdown') {
     onExportMarkdown()
   } else if (action == 'exportPdf') {

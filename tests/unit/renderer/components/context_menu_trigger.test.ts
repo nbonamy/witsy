@@ -338,16 +338,16 @@ describe('ContextMenuTrigger', () => {
     it('cleans up event listeners on unmount', async () => {
       const addEventListenerSpy = vi.spyOn(document, 'addEventListener')
       const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener')
-      
+
       wrapper = mount(ContextMenuTrigger)
       await nextTick()
-      
-      expect(addEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function))
-      
+
+      expect(addEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function), undefined)
+
       wrapper.unmount()
-      
-      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function))
-      
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function), undefined)
+
       addEventListenerSpy.mockRestore()
       removeEventListenerSpy.mockRestore()
     })

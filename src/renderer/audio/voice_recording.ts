@@ -1,5 +1,6 @@
-import { computed, onBeforeUnmount, readonly, ref } from 'vue'
 import { store } from '@services/store'
+import { computed, onBeforeUnmount, readonly, ref } from 'vue'
+import { ConversationMode } from '../components/Prompt.vue'
 import { StreamingChunk } from '../voice/stt'
 import useAudioRecorder from './audio_recorder'
 import useTranscriber from './transcriber'
@@ -17,7 +18,7 @@ export interface VoiceRecordingOptions {
   autoStopOnSilence?: boolean
 
   // Conversation mode support (for Prompt component)
-  conversationMode?: 'auto' | 'ptt' | null
+  conversationMode?: ConversationMode
   autoRestartAfterTranscription?: boolean
 
   // Error handling

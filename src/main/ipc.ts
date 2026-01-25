@@ -586,8 +586,8 @@ export const installIpc = (
     return await sttApple.transcribeWithAppleCLI(buffer, options);
   });
 
-  ipcMain.on(IPC.DOCREPO.OPEN, () => {
-    window.openMainWindow({ queryParams: { view: 'docrepos' } });
+  ipcMain.on(IPC.DOCREPO.OPEN, (_, create?: boolean) => {
+    window.openMainWindow({ queryParams: { view: 'docrepos', create: create } });
   });
 
   ipcMain.on(IPC.DOCREPO.LIST, (event, workspaceId: string) => {

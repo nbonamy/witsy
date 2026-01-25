@@ -34,9 +34,8 @@
 <script setup lang="ts">
 
 import { EllipsisVertical, MessageCirclePlusIcon } from 'lucide-vue-next'
-import { computed, onMounted, ref } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import Dialog from '@renderer/utils/dialog'
-import useEventBus from '@composables/event_bus'
 import Chat from '@models/chat'
 import FolderSettings from '@screens/FolderSettings.vue'
 import { t } from '@services/i18n'
@@ -45,8 +44,9 @@ import { Folder } from 'types/index'
 import ButtonIcon from './ButtonIcon.vue'
 import ChatListItem from './ChatListItem.vue'
 import ContextMenuPlus from './ContextMenuPlus.vue'
+import type { ChatCallbacks } from '@screens/Chat.vue'
 
-const { emitEvent } = useEventBus()
+const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
 
 const props = defineProps({
   chats: {
@@ -154,7 +154,7 @@ const closeContextMenu = () => {
 
 const onNewChat = (folderId: string) => {
   expandFolder(folderId)
-  emitEvent('new-chat-in-folder', folderId)
+  chatCallbacks?.onNewChatInFolder(folderId)
 }
 
 const handleActionClick = async (action: string) => {
@@ -170,9 +170,9 @@ const handleActionClick = async (action: string) => {
   if (action === 'chat') {
     onNewChat(folderId)
   } else if (action === 'rename') {
-    emitEvent('rename-folder', folderId)
+    chatCallbacks?.onRenameFolder(folderId)
   } else if (action === 'delete') {
-    emitEvent('delete-folder', folderId)
+    chatCallbacks?.onDeleteFolder(folderId)
   } else if (action === 'editDefaults') {
 
     // get and check

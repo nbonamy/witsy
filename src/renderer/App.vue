@@ -4,23 +4,26 @@
 
 <script setup lang="ts">
 
-import { strDict } from '../types'
-import { ref, computed, onMounted, WritableComputedRef } from 'vue'
+import { computed, onMounted, provide, ref, watch, WritableComputedRef } from 'vue'
 import { Locale } from 'vue-i18n'
+import { strDict } from '../types'
 import useAppearanceTheme from './composables/appearance_theme'
-import Main from './screens/Main.vue'
+import useEventListener from './composables/event_listener'
+import useIpcListener from './composables/ipc_listener'
 import CommandPicker from './screens/CommandPicker.vue'
-import Dictation from './screens/Dictation.vue'
-import PromptAnywhere from './screens/PromptAnywhere.vue'
-import RealtimeChat from './screens/RealtimeChat.vue'
-import ReadAloud from './screens/ReadAloud.vue'
 import ComputerStatus from './screens/ComputerStatus.vue'
 import Debug from './screens/Debug.vue'
+import Dictation from './screens/Dictation.vue'
+import Main from './screens/Main.vue'
+import PromptAnywhere from './screens/PromptAnywhere.vue'
+import ReadAloud from './screens/ReadAloud.vue'
+import RealtimeChat from './screens/RealtimeChat.vue'
 import i18n, { i18nLlm, t } from './services/i18n'
+import { store } from './services/store'
 
 // events
-import useEventBus from './composables/event_bus'
-const { emitEvent, onEvent } = useEventBus()
+const { onDomEvent } = useEventListener()
+const { onIpcEvent } = useIpcListener()
 
 // init
 const appearanceTheme = useAppearanceTheme()
@@ -85,21 +88,23 @@ const setLocale = () => {
   body.classList.add(`colon-${t('common.colon')}`)
 }
 
+const onFileModified = (file: string) => {
+  if (file === 'settings') {
+    setTint()
+    setLocale()
+  }
+}
+
+const onThemeChange = (event: MediaQueryListEvent) => {
+  theme.value = event.matches ? 'dark' : 'light'
+  setTint()
+}
+
 // add platform name
 onMounted(() => {
 
-  // events
-  onEvent('appearance-tint-changed', () => {
-    setTint()
-  })
-
   // config change may lead to tint change
-  window.api.on('file-modified', (file) => {
-    if (file === 'settings') {
-      setTint()
-      setLocale()
-    }
-  })  
+  onIpcEvent('file-modified', onFileModified)
 
   // platform friendly name
   let platform = {
@@ -120,12 +125,11 @@ onMounted(() => {
 
   // watch for theme change
   if (window.matchMedia) {
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-      theme.value = event.matches ? 'dark' : 'light'
-      emitEvent('appearance-theme-change', theme.value)
-      setTint()
-    })
+    onDomEvent(window.matchMedia('(prefers-color-scheme: dark)'), 'change', onThemeChange as EventListener)
   }
+
+  // watch tint changes in store
+  watch(() => [store.config.appearance.lightTint, store.config.appearance.darkTint], setTint)
 
 })
 

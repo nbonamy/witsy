@@ -42,11 +42,13 @@ import MessageItem from '@components/MessageItem.vue'
 import MessageItemActionCopy from '@components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '@components/MessageItemActionRead.vue'
 import useEventBus from '@composables/event_bus'
+import useEventListener from '@composables/event_listener'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import Dialog from '@renderer/utils/dialog'
 
-const { onEvent } = useEventBus()
+const { onBusEvent } = useEventBus()
+const { onDomEvent } = useEventListener()
 
 // init stuff
 const audioPlayer = useAudioPlayer(store.config)
@@ -86,18 +88,18 @@ const emit = defineEmits([
 ])
 
 onMounted(() => {
-  
-  // shotcuts work better at document level
-  document.addEventListener('keydown', onKeyDown)  
+
+  // shortcuts work better at document level
+  onDomEvent(document, 'keydown', onKeyDown)
 
   // audio listener init
   audioPlayer.addListener(onAudioPlayerStatus)
-  onEvent('audio-noise-detected', () =>  audioPlayer.stop)
+  onBusEvent('audio-noise-detected', () =>  audioPlayer.stop)
 
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', onKeyDown)
+  // DOM listeners cleaned up by composable
   audioPlayer.removeListener(onAudioPlayerStatus)
 })
 

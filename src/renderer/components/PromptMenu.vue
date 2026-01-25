@@ -12,17 +12,16 @@
 </template>
 
 <script setup lang="ts">
-import { BrainIcon, FeatherIcon, HammerIcon, LightbulbIcon, PaperclipIcon, TelescopeIcon } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
 import { useDocReposMenu } from '@composables/useDocReposMenu'
 import { useExpertsMenu } from '@composables/useExpertsMenu'
 import { useInstructionsMenu } from '@composables/useInstructionsMenu'
 import { useToolsMenu } from '@composables/useToolsMenu'
 import { t } from '@services/i18n'
-import { store } from '@services/store'
-import type { MenuItem } from 'types/menu'
+import { BrainIcon, FeatherIcon, HammerIcon, LightbulbIcon, PaperclipIcon, TelescopeIcon } from 'lucide-vue-next'
 import { ToolSelection } from 'types/llm'
 import { McpServerWithTools, McpTool } from 'types/mcp'
+import type { MenuItem } from 'types/menu'
+import { computed, ref } from 'vue'
 import ContextMenuPlus from './ContextMenuPlus.vue'
 
 // Props
