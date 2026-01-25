@@ -63,7 +63,7 @@ import { CheckIcon, FolderPlusIcon, PencilIcon, SearchIcon, Settings2Icon, Trash
 import { nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import Dialog from '@renderer/utils/dialog'
-import useEventBus from '@composables/event_bus'
+import useIpcListener from '@composables/ipc_listener'
 import Config from '../docrepo/Config.vue'
 import Create from '../docrepo/Create.vue'
 import Empty from '../docrepo/Empty.vue'
@@ -73,7 +73,7 @@ import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { DocumentBase } from 'types/rag'
 
-const { onEvent } = useEventBus()
+const { onIpcEvent } = useIpcListener()
 
 type DocRepoMode = 'list' | 'view'
 
@@ -88,14 +88,22 @@ const isEditingTitle = ref(false)
 const editingTitle = ref('')
 const titleInput = ref<HTMLInputElement | null>(null)
 
+const props = defineProps({
+  extra: Object
+})
+
 onMounted(async () => {
-  window.api.on('docrepo-modified', loadDocRepos)
-  onEvent('create-docrepo', onCreate)
+  onIpcEvent('docrepo-modified', loadDocRepos)
   loadDocRepos()
+
+  // query params
+  if (props.extra && props.extra.create) {
+    onCreate()
+  }
 })
 
 onBeforeUnmount(() => {
-  window.api.off('docrepo-modified', loadDocRepos)
+  // IPC listeners cleaned up by composable
 })
 
 const loadDocRepos = () => {

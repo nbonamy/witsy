@@ -7,7 +7,7 @@
         <div class="name variable-font-size">{{ agent.name }}</div>
       </template>
       <template v-else>
-        <EngineLogo :engine="message.engine || chat.engine!" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
+        <EngineLogo :engine="message.engine || chat.engine!" class="avatar" v-if="message.role == 'assistant'" />
         <UserAvatar class="avatar" v-else />
         <div class="name variable-font-size">
           {{ authorName }}
@@ -77,25 +77,15 @@
       </div>
 
     </div>
-    <MessageItemActions :message="message" :read-aloud="onReadAloud" :audio-state="audioState" @show-tools="onShowTools" :class="{ visible: hovered }" v-if="!isEditing"/>
+    <MessageItemActions :message="message" :read-aloud="onReadAloud" :audio-state="audioState" @show-tools="onShowTools" @edit-message="startEditing" :class="{ visible: hovered }" v-if="!isEditing"/>
     <audio ref="audio" />
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { LoaderCircleIcon } from 'lucide-vue-next'
-import { computed, onMounted, onBeforeUnmount, PropType, ref, watch } from 'vue'
 import AgentIcon from '@assets/agent.svg?component'
 import UserAvatar from '@assets/person.crop.circle.svg?component'
-import useAppearanceTheme from '@composables/appearance_theme'
-import useAudioPlayer, { AudioStatus } from '@renderer/audio/audio_player'
-import Attachment from '@models/attachment'
-import Chat from '@models/chat'
-import Message from '@models/message'
-import { t } from '@services/i18n'
-import { store } from '@services/store'
-import { ChatToolMode } from 'types/config'
 import AttachmentView from '@components/Attachment.vue'
 import EngineLogo from '@components/EngineLogo.vue'
 import Loader from '@components/Loader.vue'
@@ -104,14 +94,25 @@ import MessageItemBody from '@components/MessageItemBody.vue'
 import MessageItemMediaBlock from '@components/MessageItemMediaBlock.vue'
 import MessageItemToolBlock from '@components/MessageItemToolBlock.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
+import Attachment from '@models/attachment'
+import Chat from '@models/chat'
+import Message from '@models/message'
+import useAudioPlayer, { AudioStatus } from '@renderer/audio/audio_player'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
+import { LoaderCircleIcon } from 'lucide-vue-next'
+import { ChatToolMode } from 'types/config'
+import { computed, inject, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue'
+import type { ChatCallbacks } from '@screens/Chat.vue'
 // import { getMarkdownSelection } from '@services/markdown'
 
 // events
 import useEventBus from '@composables/event_bus'
-const { emitEvent, onEvent } = useEventBus()
+const { emitBusEvent, onBusEvent } = useEventBus()
+
+const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
 
 // init stuff
-const appearanceTheme = useAppearanceTheme()
 const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({
@@ -136,7 +137,6 @@ const props = defineProps({
 const emits = defineEmits(['media-loaded'])
 
 const div = ref<HTMLElement|null>(null)
-const theme = ref('light')
 const hovered = ref(false)
 const audio = ref<HTMLAudioElement|null>(null)
 const showToolCalls = ref<ChatToolMode>('always')
@@ -172,22 +172,13 @@ onMounted(() => {
 
   // audio listener init
   audioPlayer.addListener(onAudioPlayerStatus)
-  onEvent('audio-noise-detected', () =>  audioPlayer.stop)
-
-  // dark mode stuff  
-  theme.value = appearanceTheme.getTheme()
-  onEvent('appearance-theme-change', (th: string) => {
-    theme.value = th
-  })
+  onBusEvent('audio-noise-detected', () =>  audioPlayer.stop)
 
   // settings change
   watch(() => store.config.appearance.chat.showToolCalls, (value) => {
     showToolCalls.value = value
   })
 
-  // selection related context menu stuff 
-  // window.api.on('copy-as-markdown', onCopyMarkdown)
-  
 })
 
 onBeforeUnmount(() => {
@@ -195,7 +186,6 @@ onBeforeUnmount(() => {
     clearInterval(updateLinkInterval)
   }
   audioPlayer.removeListener(onAudioPlayerStatus)
-  // window.api.off('copy-as-markdown', onCopyMarkdown)
 })
 
 const agent = computed(() => {
@@ -265,7 +255,7 @@ const onClickAttachment = (attachment: Attachment) => {
 }
 
 const onClickImageAttachment = (attachment: Attachment) => {
-  emitEvent('fullscreen', attachment.url)
+  emitBusEvent('fullscreen', attachment.url)
 }
 
 const onMediaLoaded = (message: Message) => {
@@ -319,8 +309,8 @@ const saveEdit = () => {
   }
 
   if (props.message.role === 'user') {
-    // Emit event for resending
-    emitEvent('resend-after-edit', {
+    // Call callback for resending
+    chatCallbacks?.onResendAfterEdit({
       message: props.message,
       newContent: editedContent.value
     })
@@ -334,12 +324,6 @@ const saveEdit = () => {
   editedContent.value = ''
 }
 
-// Listen for edit events from MessageItemActions
-onEvent('edit-message', (messageId: string) => {
-  if (messageId === props.message.uuid) {
-    startEditing()
-  }
-})
 
 defineExpose({
   message: props.message,

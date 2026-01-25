@@ -7,14 +7,14 @@
       
       <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" @import-markdown="onImportMarkdown" />
       
-      <Chat ref="chat" :style="{ display: mode === 'chat' ? undefined : 'none' }" :extra="viewParams" />
+      <Chat ref="chat" :mode="chatMode" :style="{ display: mode === 'chat' ? undefined : 'none' }" :extra="viewParams" />
       <DesignStudio :style="{ display: mode === 'studio' ? undefined : 'none' }" />
       <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
       <AudioBooth v-if="mode === 'booth'" ref="audioBooth" />
     
       <AgentForge v-if="mode === 'agents'" />
       <McpServers v-if="mode === 'mcp'" />
-      <DocRepos v-if="mode === 'docrepos'" />
+      <DocRepos v-if="mode === 'docrepos'" :extra="viewParams" />
 
       <!-- WebApp viewers - lazy loaded and kept mounted for session persistence -->
       <WebAppViewer
@@ -31,7 +31,7 @@
         pointerEvents: mode == 'scratchpad' ? undefined : 'none'
       }" :extra="viewParams" ref="scratchpad" />
 
-      <Settings :style="{
+      <Settings :visible="mode === 'settings'" :style="{
         display: mode === 'settings' ? undefined : 'none',
         pointerEvents: mode == 'settings' ? undefined : 'none'
       }" :extra="viewParams" ref="settings" />
@@ -59,6 +59,7 @@ import { kHistoryVersion } from '@/consts'
 import Fullscreen from '@components/Fullscreen.vue'
 import MenuBar, { MenuBarMode } from '@components/MenuBar.vue'
 import useEventBus from '@composables/event_bus'
+import useIpcListener from '@composables/ipc_listener'
 import useWebappManager from '@composables/webapp_manager'
 import Dialog from '@renderer/utils/dialog'
 import AgentForge from '@screens/AgentForge.vue'
@@ -78,7 +79,8 @@ import { ActivityIcon } from 'lucide-vue-next'
 import { anyDict } from 'types/index'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
-const { emitEvent, onEvent } = useEventBus()
+const { onBusEvent } = useEventBus()
+const { onIpcEvent } = useIpcListener()
 const { loadedWebapps, loadWebapp, updateLastUsed, onNavigate, setupEviction, cleanup } = useWebappManager()
 
 const chat = ref<typeof Chat>(null)
@@ -95,59 +97,54 @@ const props = defineProps({
 })
 
 const mode = ref<MenuBarMode>('chat')
+const chatMode = ref<'chat' | 'computer-use'>('chat')
 const viewParams = ref(null)
 
 const version = computed(() => {
   return window.api.app.getVersion()
 })
 
+const onWindowClosed = () => {
+  mode.value = 'none'
+}
+
+const onWindowOpened = () => {
+  // history version check
+  if (store.history.version != null && store.history.version > kHistoryVersion) {
+    Dialog.show({
+      title: t('main.historyVersionMismatch.title'),
+      text: t('main.historyVersionMismatch.text'),
+    })
+    return
+  }
+
+  // show onboarding when window opens
+  if (!store.config.general.onboardingDone) {
+    setTimeout(() => showOnboarding.value = true, 500)
+  }
+}
+
 onMounted(() => {
 
   console.log('[main] mounted')
 
-  // when close
-  window.api.on('window-closed', () => {
-    mode.value = 'none'
-  })
+  // IPC events
+  onIpcEvent('window-closed', onWindowClosed)
+  onIpcEvent('query-params', processQueryParams)
+  onIpcEvent('start-dictation', onDictate)
+  onIpcEvent('window-opened', onWindowOpened)
+  onIpcEvent('run-onboarding', onRunOnboarding)
 
-  // init
-  window.api.on('query-params', (params) => {
-    processQueryParams(params)
-  })
+  // init from props
   if (props.extra) {
     processQueryParams(props.extra)
   }
 
   // internal messages
-  onEvent('new-chat', () => onMode('chat'))
-  onEvent('set-main-window-mode', (next: MenuBarMode) => {
+  onBusEvent('new-chat', () => onMode('chat'))
+  onBusEvent('set-main-window-mode', (next: MenuBarMode) => {
     onMode(next)
   })
-
-  // dictation
-  window.api.on('start-dictation', onDictate)
-
-  // window open stuff
-  window.api.on('window-opened', () => {
-
-    // history version check
-    if (store.history.version != null && store.history.version > kHistoryVersion) {
-      Dialog.show({
-        title: t('main.historyVersionMismatch.title'),
-        text: t('main.historyVersionMismatch.text'),
-      })
-      return
-    }
-
-    // show onboarding when window opens
-    if (!store.config.general.onboardingDone) {
-      setTimeout(() => showOnboarding.value = true, 500)
-    }
-
-  })
-
-  // show it again
-  window.api.on('run-onboarding', onRunOnboarding)
 
   // Setup webapp eviction interval if feature is enabled
   if (store.isFeatureEnabled('webapps')) {
@@ -164,11 +161,6 @@ const processQueryParams = (params: anyDict) => {
     onMode(params.view)
     viewParams.value = params
 
-    // special
-    if (params.view === 'docrepos') {
-      emitEvent('create-docrepo')
-    }
-
   } else if (mode.value === 'none') {
     onMode('chat')
   }
@@ -179,7 +171,7 @@ onBeforeUnmount(() => {
   cleanup()
 })
 
-const onMode = async (next: MenuBarMode) => {
+const onMode = (next: MenuBarMode) => {
 
   //console.log('[main] onMode', next)
 
@@ -190,6 +182,7 @@ const onMode = async (next: MenuBarMode) => {
 
   if (next === 'computer-use') {
     mode.value = 'chat'
+    chatMode.value = 'computer-use'
   } else if (next === 'debug') {
     window.api.debug.showConsole()
   } else if (typeof next === 'string' && next.startsWith('webapp-')) {
@@ -199,11 +192,8 @@ const onMode = async (next: MenuBarMode) => {
     mode.value = next
   } else {
     mode.value = next
+    chatMode.value = 'chat'
   }
-
-  // notify those who care
-  await nextTick()
-  emitEvent('main-view-changed', next)
 
   // for menu update
   if (mode.value !== 'computer-use' && mode.value !== 'debug') {

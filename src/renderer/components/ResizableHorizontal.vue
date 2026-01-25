@@ -9,6 +9,9 @@
 <script setup lang="ts">
 
 import { ref, type Ref } from 'vue'
+import useEventListener from '@composables/event_listener'
+
+const { onDomEvent, offDomEvent } = useEventListener()
 
 const props = defineProps({
   minWidth: Number,
@@ -26,24 +29,25 @@ let lastX: number|null = null
 const emit = defineEmits(['resize'])
 
 const startResize = (ev: MouseEvent) => {
-  window.addEventListener('mousemove', onResizing)
-  window.addEventListener('mouseup', stopResizing)
+  onDomEvent(window, 'mousemove', onResizing)
+  onDomEvent(window, 'mouseup', stopResizing)
   child = container.value!.querySelector(':not(.handle)')
   lastX = ev.clientX
 }
 
-const onResizing = (ev: MouseEvent) => {
+const onResizing = (ev: Event) => {
   if (lastX === null) return
-  const deltaX = ev.clientX - lastX
+  const mouseEvent = ev as MouseEvent
+  const deltaX = mouseEvent.clientX - lastX
   if (adjustWidth(deltaX)) {
     emit('resize', deltaX)
-    lastX = ev.clientX
+    lastX = mouseEvent.clientX
   }
 }
 
 const stopResizing = () => {
-  document.removeEventListener('mousemove', onResizing)
-  document.removeEventListener('mouseup', stopResizing)
+  offDomEvent(window, 'mousemove', onResizing)
+  offDomEvent(window, 'mouseup', stopResizing)
   lastX = null
 }
 

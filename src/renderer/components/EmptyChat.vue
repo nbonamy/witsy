@@ -70,8 +70,11 @@
 import { ChevronDownIcon, ChevronUpIcon, LightbulbIcon, PlugIcon } from 'lucide-vue-next'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import useEventBus from '@composables/event_bus'
+import useIpcListener from '@composables/ipc_listener'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+
+const { onIpcEvent } = useIpcListener()
 import { Agent } from 'types/agents'
 import HomeShortcut from './HomeShortcut.vue'
 
@@ -88,13 +91,12 @@ const emit = defineEmits(['run-agent'])
 
 onMounted(() => {
   load()
-  window.api.on('agents-updated', load)
-  window.api.on('agent-run-updated', load)
+  onIpcEvent('agents-updated', load)
+  onIpcEvent('agent-run-updated', load)
 })
 
 onBeforeUnmount(() => {
-  window.api.off('agents-updated', load)
-  window.api.off('agent-run-updated', load)
+  // IPC listeners cleaned up by composable
 })
 
 const load = () => {
@@ -130,15 +132,15 @@ const load = () => {
 }
 
 const openAgentForge = () => {
-  useEventBus().emitEvent('set-main-window-mode', 'agents')
+  useEventBus().emitBusEvent('set-main-window-mode', 'agents')
 }
 
 const openMcpServers = () => {
-  useEventBus().emitEvent('set-main-window-mode', 'mcp')
+  useEventBus().emitBusEvent('set-main-window-mode', 'mcp')
 }
 
 const openDocRepo = () => {
-  useEventBus().emitEvent('set-main-window-mode', 'docrepos')
+  useEventBus().emitBusEvent('set-main-window-mode', 'docrepos')
 }
 
 </script>

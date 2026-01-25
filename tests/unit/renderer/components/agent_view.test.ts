@@ -9,7 +9,7 @@ import View from '@renderer/agent/View.vue'
 import { nextTick } from 'vue'
 import useEventBus from '@composables/event_bus'
 
-const { emitEvent } = useEventBus()
+const { emitBusEvent } = useEventBus()
 
 enableAutoUnmount(afterAll)
 
@@ -315,7 +315,7 @@ test('Handles agent run update event', async () => {
   await nextTick()
 
   // Simulate agent run update event via eventBus
-  emitEvent('agent:run:update', { agentId: agent.uuid, runId: 'new-run' })
+  emitBusEvent('agent:run:update', { agentId: agent.uuid, runId: 'new-run' })
   await nextTick()
 
   // Should have reloaded runs
@@ -332,7 +332,7 @@ test('Ignores agent run update for different agent', async () => {
   vi.clearAllMocks()
 
   // Simulate agent run update event for different agent
-  emitEvent('agent:run:update', { agentId: 'different-agent', runId: 'new-run' })
+  emitBusEvent('agent:run:update', { agentId: 'different-agent', runId: 'new-run' })
   await nextTick()
 
   // Should not have reloaded runs

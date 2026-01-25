@@ -18,7 +18,7 @@ import { ref } from 'vue'
 import Dialog from '@renderer/utils/dialog'
 import useEventBus from '@composables/event_bus'
 import Message from '@models/message'
-const { emitEvent } = useEventBus()
+const { emitBusEvent } = useEventBus()
 
 const props = defineProps({
   url: {
@@ -42,7 +42,7 @@ const onMediaLoaded = () => {
 }
 
 const onFullscreen = () => {
-  emitEvent('fullscreen', props.url)
+  emitBusEvent('fullscreen', props.url)
 }
 
 const onInfo = () => {

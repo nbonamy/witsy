@@ -2503,6 +2503,7 @@
       },
       "docRepos": {
         "manage": "Manage Knowledge Base",
+        "none": "No Knowledge Available",
         "title": "Knowledge"
       },
       "experts": {

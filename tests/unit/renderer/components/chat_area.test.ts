@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
 import { createI18nMock } from '@tests/mocks'
-import { emitEventMock } from '@root/vitest.setup'
+import { chatCallbacksMock, withChatCallbacks } from '@root/vitest.setup'
 import { stubTeleport } from '@tests/mocks/stubs'
 import { store } from '@services/store'
 import ChatArea from '@components/ChatArea.vue'
@@ -150,11 +150,11 @@ test('Context menu temporary 3', async () => {
 
 test('Context menu rename', async () => {
   addMessagesToChat()
-  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
+  const wrapper: VueWrapper<any> = mount(ChatArea, withChatCallbacks({ ...stubTeleport, props: { chat: chat! } }))
   await wrapper.find('.sp-main > header .menu .trigger').trigger('click')
   const items = wrapper.findAll('.context-menu .item')
   await items[1].trigger('click') // rename
-  expect(emitEventMock).toHaveBeenLastCalledWith('rename-chat', chat)
+  expect(chatCallbacksMock.onRenameChat).toHaveBeenLastCalledWith(chat)
 })
 
 test('Context menu export Markdown', async () => {
@@ -184,11 +184,11 @@ test('Context menu export Markdown', async () => {
 test('Context menu delete', async () => {
   addMessagesToChat()
   store.addChat(chat!)
-  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
+  const wrapper: VueWrapper<any> = mount(ChatArea, withChatCallbacks({ ...stubTeleport, props: { chat: chat! } }))
   await wrapper.find('.sp-main > header .menu .trigger').trigger('click')
   const items = wrapper.findAll('.context-menu .item')
   await items[5].trigger('click') // delete (shifted from 4 to 5 due to usage menu item)
-  expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', chat!.uuid)
+  expect(chatCallbacksMock.onDeleteChat).toHaveBeenLastCalledWith(chat!.uuid)
 })
 
 test('Model settings visibility', async () => {

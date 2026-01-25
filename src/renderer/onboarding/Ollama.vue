@@ -119,11 +119,14 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import * as IPC from '@/ipc_consts'
 import EngineLogo from '@components/EngineLogo.vue'
 import OllamaModelPull from '@components/OllamaModelPull.vue'
+import useIpcListener from '@composables/ipc_listener'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import LlmManager from '@services/llms/manager'
 import { getChatModels } from '@services/llms/ollama'
 import { store } from '@services/store'
+
+const { onIpcEvent } = useIpcListener()
 
 const state = ref<'hidden' | 'checking' | 'not-installed' | 'installed' | 'error'>('hidden')
 const downloading = ref(false)
@@ -182,15 +185,13 @@ const onDownloadError = (event: any) => {
 }
 
 const setupIpcListeners = () => {
-  window.api.on(IPC.OLLAMA.DOWNLOAD_PROGRESS, onDownloadProgress)
-  window.api.on(IPC.OLLAMA.DOWNLOAD_COMPLETE, onDownloadComplete)
-  window.api.on(IPC.OLLAMA.DOWNLOAD_ERROR, onDownloadError)
+  onIpcEvent(IPC.OLLAMA.DOWNLOAD_PROGRESS, onDownloadProgress)
+  onIpcEvent(IPC.OLLAMA.DOWNLOAD_COMPLETE, onDownloadComplete)
+  onIpcEvent(IPC.OLLAMA.DOWNLOAD_ERROR, onDownloadError)
 }
 
 const removeIpcListeners = () => {
-  window.api.off(IPC.OLLAMA.DOWNLOAD_PROGRESS, onDownloadProgress)
-  window.api.off(IPC.OLLAMA.DOWNLOAD_COMPLETE, onDownloadComplete)
-  window.api.off(IPC.OLLAMA.DOWNLOAD_ERROR, onDownloadError)
+  // IPC listeners are cleaned up automatically by composable
 }
 
 const checkOllamaStatus = () => {

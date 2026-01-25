@@ -30,7 +30,7 @@
       </div> -->
       <div class="form-field darkTint" v-if="store.isFeatureEnabled('appearance')">
         <label>{{ t('settings.general.darkTint') }}</label>
-        <select v-model="darkTint" @change="onTintChange">
+        <select v-model="darkTint" @change="save">
           <option value="black">{{ t('settings.general.tints.black') }}</option>
           <option value="blue">{{ t('settings.general.tints.blue') }}</option>
         </select>
@@ -67,10 +67,6 @@ import { t } from '@services/i18n'
 import useAppearanceTheme from '@composables/appearance_theme'
 import LangSelect from '@components/LangSelect.vue'
 
-// events
-import useEventBus from '@composables/event_bus'
-const { emitEvent } = useEventBus()
-
 // init
 const appearanceTheme = useAppearanceTheme()
 
@@ -87,11 +83,6 @@ const setAppearanceTheme = (value: string) => {
   appearance.value = value
   window.api.app.setAppearanceTheme(value)
   save()
-}
-
-const onTintChange = () => {
-  save()
-  emitEvent('appearance-tint-changed')
 }
 
 const load = () => {

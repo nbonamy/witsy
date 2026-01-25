@@ -37,7 +37,7 @@ import { store } from '@services/store'
 import { Agent } from 'types/agents'
 
 import useEventBus from '@composables/event_bus'
-const { emitEvent } = useEventBus()
+const { emitBusEvent } = useEventBus()
 
 const dialog = ref(null)
 let resolveCallback: ((agent: Agent | null) => void) | null = null
@@ -77,7 +77,7 @@ defineExpose({
         showCancelButton: true,
       }).then((result) => {
         if (result.isConfirmed) {
-          emitEvent('set-main-window-mode', 'agents')
+          emitBusEvent('set-main-window-mode', 'agents')
         }
       })
       return Promise.resolve(null)

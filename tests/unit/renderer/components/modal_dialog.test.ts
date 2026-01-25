@@ -243,7 +243,7 @@ test('Removes keydown listener on close', async () => {
   await wrapper.vm.show()
   wrapper.vm.close()
 
-  expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function))
+  expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function), undefined)
   removeEventListenerSpy.mockRestore()
 })
 

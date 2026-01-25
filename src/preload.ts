@@ -16,19 +16,40 @@ import { McpServer, McpStatus, McpTool } from './types/mcp';
 import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentQueueItem, SourceType } from './types/rag';
 import { Workspace, WorkspaceHeader } from './types/workspace';
 
+// Track IPC listener wrappers so we can properly remove them
+// Uses unique IDs because function references don't survive context bridge
+type IpcWrapper = (event: Electron.IpcRendererEvent, value: any) => void
+const ipcListenerRegistry = new Map<string, Map<string, IpcWrapper>>()
+let listenerId = 0
+
 contextBridge.exposeInMainWorld(
   'api', {
     licensed: true,
     platform: process.platform,
     userDataPath: ipcRenderer.sendSync(IPC.APP.GET_APP_PATH),
-    on: (signal: string, callback: (value: any) => void): void => {
-      ipcRenderer.on(signal, (_event, value) => callback(value))
+    _on: (signal: string, callback: (value: any) => void): string => {
+      const id = `listener_${++listenerId}`
+      const wrapper = (_event: Electron.IpcRendererEvent, value: any) => callback(value)
+
+      if (!ipcListenerRegistry.has(signal)) {
+        ipcListenerRegistry.set(signal, new Map())
+      }
+      ipcListenerRegistry.get(signal)!.set(id, wrapper)
+
+      ipcRenderer.on(signal, wrapper)
+      return id
     },
-    off: (signal: string, callback?: (value: any) => void): void => {
-      if (callback) {
-        ipcRenderer.removeListener(signal, (_event, value) => callback(value))
-      } else {
-        ipcRenderer.removeAllListeners(signal)
+    _off: (signal: string, id: string): void => {
+      const signalMap = ipcListenerRegistry.get(signal)
+      if (!signalMap) return
+
+      const wrapper = signalMap.get(id)
+      if (wrapper) {
+        ipcRenderer.removeListener(signal, wrapper as Parameters<typeof ipcRenderer.removeListener>[1])
+        signalMap.delete(id)
+        if (signalMap.size === 0) {
+          ipcListenerRegistry.delete(signal)
+        }
       }
     },
     app: {
@@ -169,7 +190,7 @@ contextBridge.exposeInMainWorld(
       getApiBasePath: (): string => ipcRenderer.sendSync(IPC.AGENTS.GET_API_BASE_PATH),
     },
     docrepo: {
-      open(): void { return ipcRenderer.send(IPC.DOCREPO.OPEN) },
+      open(create?: boolean): void { return ipcRenderer.send(IPC.DOCREPO.OPEN, create) },
       list(workspaceId: string): strDict[] { return JSON.parse(ipcRenderer.sendSync(IPC.DOCREPO.LIST, workspaceId)) },
       connect(baseId: string): void { return ipcRenderer.send(IPC.DOCREPO.CONNECT, baseId) },
       disconnect(): void { return ipcRenderer.send(IPC.DOCREPO.DISCONNECT) },

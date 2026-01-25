@@ -117,6 +117,9 @@ import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/vue3-json-viewer.css'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import Loader from '@components/Loader.vue'
+import useIpcListener from '@composables/ipc_listener'
+
+const { onIpcEvent } = useIpcListener()
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { NetworkRequest, WebSocketFrame } from 'types'
@@ -184,11 +187,11 @@ const copyable = computed(() => {
 
 onMounted(() => {
   requests.value = window.api.debug.getNetworkHistory()
-  window.api.on('network', onNetworkRequest)
+  onIpcEvent('network', onNetworkRequest)
 })
 
 onBeforeUnmount(() => {
-  window.api.off('network', onNetworkRequest)
+  // IPC listeners cleaned up by composable
 })
 
 const onNetworkRequest = (request: NetworkRequest) => {

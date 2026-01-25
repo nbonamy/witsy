@@ -46,12 +46,17 @@ import Message from '@models/message'
 import OutputPanel from '@components/OutputPanel.vue'
 import Prompt, { SendPromptParams } from '@components/Prompt.vue'
 import ResizableHorizontal from '@components/ResizableHorizontal.vue'
+import useEventListener from '@composables/event_listener'
+import useIpcListener from '@composables/ipc_listener'
 import Generator from '@services/generator'
 import { fullExpertI18n, i18nInstructions, t } from '@services/i18n'
 import LlmUtils from '@services/llm_utils'
 import LlmFactory, { ILlmManager } from '@services/llms/llm'
 import { availablePlugins } from '@services/plugins/plugins'
 import { store } from '@services/store'
+
+const { onDomEvent, offDomEvent } = useEventListener()
+const { onIpcEvent } = useIpcListener()
 
 const promptChatTimeout = 1000 * 60 * 5
 
@@ -108,14 +113,14 @@ onMounted(() => {
 
   // init chat
   initChat()
-  
+
   // shortcuts work better at document level
-  document.addEventListener('keyup', onKeyUp)
-  document.addEventListener('keydown', onKeyDown)  
+  onDomEvent(document, 'keyup', onKeyUp)
+  onDomEvent(document, 'keydown', onKeyDown)
 
   // events
-  window.api.on('start-dictation', onDictate)
-  window.api.on('show', onShow)
+  onIpcEvent('start-dictation', onDictate)
+  onIpcEvent('show', onShow)
 
   // query params
   if (props.extra) {
@@ -125,10 +130,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', onKeyDown)
-  document.removeEventListener('keyup', onKeyUp)
-  window.api.off('start-dictation', onDictate)
-  window.api.off('show', onShow)
+  // DOM and IPC listeners are cleaned up by composables
 })
 
 const onShow = (params?: anyDict) => {
@@ -243,26 +245,27 @@ const startDrag = (event: MouseEvent) => {
   
   // Prevent default behavior to avoid text selection during drag
   event.preventDefault()
-  
+
   isDragging = true
   dragStartX = event.clientX - containerLeft.value
   dragStartY = event.clientY - containerTop.value
-  
+
   // Add event listeners for dragging
-  document.addEventListener('mousemove', onDrag)
-  document.addEventListener('mouseup', stopDrag)
+  onDomEvent(document, 'mousemove', onDrag)
+  onDomEvent(document, 'mouseup', stopDrag)
 }
 
-const onDrag = (event: MouseEvent) => {
+const onDrag = (event: Event) => {
   if (!isDragging) return
-  containerLeft.value = event.clientX - dragStartX
-  containerTop.value = event.clientY - dragStartY
+  const mouseEvent = event as MouseEvent
+  containerLeft.value = mouseEvent.clientX - dragStartX
+  containerTop.value = mouseEvent.clientY - dragStartY
 }
 
 const stopDrag = () => {
   isDragging = false
-  document.removeEventListener('mousemove', onDrag)
-  document.removeEventListener('mouseup', stopDrag)
+  offDomEvent(document, 'mousemove', onDrag)
+  offDomEvent(document, 'mouseup', stopDrag)
 }
 
 const initChat = () => {

@@ -15,14 +15,20 @@
 
 import { ArrowDownIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
-import { computed, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef, PropType } from 'vue'
+import { computed, inject, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef, PropType, watch, Ref } from 'vue'
 import Chat from '@models/chat'
 import { store } from '@services/store'
 import MessageItem from './MessageItem.vue'
 
-import useEventBus from '@composables/event_bus'
+import useIpcListener from '@composables/ipc_listener'
 import { ChatTheme } from '@/types/config'
-const { onEvent } = useEventBus()
+const { onIpcEvent } = useIpcListener()
+
+// inject chunk from parent Chat component (scoped to component tree)
+const latestChunk = inject<Ref<LlmChunk | null>>('latestChunk')
+if (latestChunk === undefined) {
+  console.warn('[MessageList] latestChunk not provided - parent component must provide("latestChunk", ref<LlmChunk|null>)')
+}
 
 const divScroller = ref<HTMLElement|null>(null)
 const overflown = ref(false)
@@ -53,13 +59,19 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  onEvent('new-llm-chunk', onNewChunk)
-  window.api.on('read-aloud-selection', onReadAloudSelection)
+  onIpcEvent('read-aloud-selection', onReadAloudSelection)
   scrollDown()
 })
 
+// watch for chunk updates from parent
+if (latestChunk) {
+  watch(latestChunk, (chunk) => {
+    onNewChunk(chunk)
+  })
+}
+
 onBeforeUnmount(() => {
-  window.api.off('read-aloud-selection', onReadAloudSelection)
+  // IPC listeners cleaned up by composable
 })
 
 const onReadAloudSelection = (payload: { context: string, selection: string }) => {
@@ -123,7 +135,7 @@ const onNewChunk = async (chunk: LlmChunk) => {
   }
 
   // auto-read
-  if (chunk?.done && props.conversationMode && itemRefs.value?.length) {
+  if (chunk?.done && props.conversationMode !== 'off' && itemRefs.value?.length) {
     const last: any = itemRefs.value[itemRefs.value.length - 1]
     last.readAloud()
   }

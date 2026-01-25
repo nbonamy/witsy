@@ -1,6 +1,6 @@
 
 <template>
-  <div :class="[ 'container', theme ]">
+  <div class="container">
     <div class="placeholder" ref="pholder" v-if="showPlaceholder" v-html="placeholder" @click="onClickPlaceholder" />
     <div class="content" contenteditable="true" ref="text" @blur="onBlur" @focus="onFocus" @paste.prevent="onPaste" autofocus="true">
     </div>
@@ -37,14 +37,8 @@
 <script setup lang="ts">
 
 import { ref, onMounted } from 'vue'
-import useAppearanceTheme from '@composables/appearance_theme'
-
-// events
-import useEventBus from '@composables/event_bus'
-const { onEvent } = useEventBus()
-
-// init stuff
-const appearanceTheme = useAppearanceTheme()
+import useEventListener from '@composables/event_listener'
+const { onDomEvent, offDomEvent } = useEventListener()
 
 defineProps({
   placeholder: String,
@@ -65,40 +59,32 @@ type Content = {
   end: number,
 }
 
-const theme = ref('light')
 const text = ref(null)
 const pholder = ref(null)
 const showPlaceholder = ref(true)
 let textSelection: TextSelection = null
 
+const onMouseUp = () => {
+  offDomEvent(window, 'mouseup', onMouseUp)
+  checkSelection()
+}
+
+const onMouseDown = () => {
+  onDomEvent(window, 'mouseup', onMouseUp)
+}
+
 onMounted(() => {
 
-  text.value.addEventListener('keydown', checkPlaceholder)
-  text.value.addEventListener('keyup', checkPlaceholder)
-  text.value.addEventListener('keyup', checkSelection)
-  checkPlaceholder({ which: 0 })
+  onDomEvent(text.value, 'keydown', checkPlaceholder)
+  onDomEvent(text.value, 'keyup', checkPlaceholder)
+  onDomEvent(text.value, 'keyup', checkSelection)
+  checkPlaceholder()
 
-  // mouse stuff is ticky as mouseup could be outside of text
+  // mouse stuff is tricky as mouseup could be outside of text
   // but at the same time we don't want to get them all the time
-  const onMouseUp = () => {
-    window.removeEventListener('mouseup', onMouseUp)
-    checkSelection()
-  }
-  text.value.addEventListener('mousedown', () => {
-    window.addEventListener('mouseup', onMouseUp)
-  })
-
-  // dark mode stuff  
-  theme.value = appearanceTheme.getTheme()
-  onEvent('appearance-theme-change', (th: string) => {
-    theme.value = th
-  })
+  onDomEvent(text.value, 'mousedown', onMouseDown)
 
 })
-
-const hightlightColor = () => {
-  return theme.value == 'dark' ? 'rgb(91, 126, 165)' : 'rgb(180, 215, 255)'
-}
 
 const getContent = (): Content => {
 
@@ -252,7 +238,7 @@ const setContent = ({ content, start, end }: { content: string, start: number, e
       const div = document.createElement('div')
       const span = document.createElement('span')
       if (isSelected) {
-        span.style.backgroundColor = hightlightColor()
+        span.classList.add('selected')
       }
       span.appendChild(document.createTextNode('\u00A0'))
       div.appendChild(span)
@@ -304,7 +290,7 @@ const setContent = ({ content, start, end }: { content: string, start: number, e
       const isSelected = (textSelection.startIndex !== -1 && (isEnd || textSelection.endIndex === -1))
 
       const elem = document.createElement('span')
-      if (isSelected) elem.style.backgroundColor = hightlightColor()
+      if (isSelected) elem.classList.add('selected')
       elem.innerHTML = line
       nodes.middle = elem
 
@@ -329,12 +315,12 @@ const setContent = ({ content, start, end }: { content: string, start: number, e
   //console.log(textSelection)
 
   // done
-  checkPlaceholder({ which: 0 })
+  checkPlaceholder()
 
 }
 
-const checkPlaceholder = (ev: { which: number }) => {
-  showPlaceholder.value = (/*ev.which >= 32 || */!text.value.textContent.length)
+const checkPlaceholder = () => {
+  showPlaceholder.value = !text.value.textContent.length
   if (!showPlaceholder.value) {
     // do not wait for vue to hide this (too slow)
     hidePlaceholder()
@@ -468,7 +454,7 @@ const onBlur = () => {
     }
 
     // now we have everything
-    let updated = `<span>${left}</span><span style="background-color: ${hightlightColor()};">${middle}</span><span>${right}</span>`
+    let updated = `<span>${left}</span><span class="selected">${middle}</span><span>${right}</span>`
     updated = updated.replaceAll('<span></span>', '')
 
     // if we have a text node
@@ -618,6 +604,16 @@ defineExpose({ getContent, setContent })
 
 .content {
   flex: 1;
+}
+
+:deep() .selected {
+  background-color: rgb(180, 215, 255);
+}
+
+@media (prefers-color-scheme: dark) {
+  :deep() .selected {
+    background-color: rgb(91, 126, 165);
+  }  
 }
 
 </style>

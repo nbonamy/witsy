@@ -28,8 +28,13 @@
 
 import { InfoIcon } from 'lucide-vue-next'
 import { computed, nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
+import useEventListener from '@composables/event_listener'
+import useIpcListener from '@composables/ipc_listener'
 import { commandI18n, t } from '@services/i18n'
 import { store } from '@services/store'
+
+const { onDomEvent } = useEventListener()
+const { onIpcEvent } = useIpcListener()
 import { anyDict, Command, ExternalApp } from 'types'
 import { CommandAction } from 'types/automation'
 
@@ -71,16 +76,16 @@ const usageId = computed(() => {
 onMounted(() => {
 
   // shortcuts work better at document level
-  document.addEventListener('keydown', onKeyDown)
-  document.addEventListener('keyup', onKeyUp)
-  document.addEventListener('blur', onClose)
+  onDomEvent(document, 'keydown', onKeyDown)
+  onDomEvent(document, 'keyup', onKeyUp)
+  onDomEvent(document, 'blur', onClose)
 
   // events
-  window.api.on('show', onShow)
+  onIpcEvent('show', onShow)
+  onIpcEvent('file-modified', onFileModified)
 
   // load commands and make sure they are updated
   store.loadCommands()
-  window.api.on('file-modified', onFileModified)
 
   // query params
   if (props.extra) {
@@ -90,10 +95,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', onKeyDown)
-  document.removeEventListener('keyup', onKeyUp)
-  window.api.off('file-modified', onFileModified)
-  window.api.off('show', onShow)
+  // DOM and IPC listeners are cleaned up by composables
 })
 
 const onFileModified = (file: string) => {
