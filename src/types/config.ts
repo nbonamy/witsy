@@ -311,6 +311,7 @@ export type RagConfig = {
   chunkOverlap?: number
   searchResultCount?: number
   relevanceCutOff?: number
+  excludePatterns?: string
 }
 
 export type McpServerExtra = {

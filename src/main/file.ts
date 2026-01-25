@@ -178,7 +178,7 @@ export const pickDirectory = (app: App): string|null => {
 
 }
 
-export const listFilesRecursively = (directoryPath: string): string[] => {
+export const listFilesRecursively = (directoryPath: string, excludePatterns?: string[]): string[] => {
 
   let fileList: string[] = []
 
@@ -194,12 +194,17 @@ export const listFilesRecursively = (directoryPath: string): string[] => {
         continue
       }
 
+      // check exclude patterns
+      if (excludePatterns?.some(pattern => minimatch(file, pattern))) {
+        continue
+      }
+
       const filePath = path.join(directoryPath, file)
       const stat = fs.statSync(filePath);
 
       if (stat.isDirectory()) {
         // If it's a directory, recursively call the function
-        fileList = fileList.concat(listFilesRecursively(filePath));
+        fileList = fileList.concat(listFilesRecursively(filePath, excludePatterns));
       } else {
         // If it's a file, add it to the list
         fileList.push(filePath);

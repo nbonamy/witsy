@@ -148,7 +148,8 @@
     "chunkSize": 1000,
     "chunkOverlap": 200,
     "searchResultCount": 5,
-    "relevanceCutOff": 0.2
+    "relevanceCutOff": 0.2,
+    "excludePatterns": ".*,node_modules,__pycache__,venv"
   },
   "stt": {
     "engine": "openai", 
