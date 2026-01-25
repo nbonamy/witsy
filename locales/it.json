@@ -2479,7 +2479,7 @@
       },
       "docRepos": {
         "manage": "Gestisci Base di Conoscenza",
-        "none": "Nessuna conoscenza disponibile",
+        "noDocRepos": "Nessuna raccolta disponibile",
         "title": "Conoscenza"
       },
       "experts": {

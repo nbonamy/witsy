@@ -2479,7 +2479,7 @@
       },
       "docRepos": {
         "manage": "Wissensdatenbank verwalten",
-        "none": "Keine Informationen verfügbar",
+        "noDocRepos": "Keine Sammlung verfügbar",
         "title": "Wissen"
       },
       "experts": {
