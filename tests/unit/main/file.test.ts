@@ -156,6 +156,60 @@ test('List files recursively', async () => {
   ].map(f => process.platform == 'win32' ? f.replace(/\//g, '\\') : f))
 )})
 
+test('List files recursively with exclude patterns', async () => {
+
+  // create a temp directory structure
+  const tempDir = path.join(os.tmpdir(), `test-exclude-${Date.now()}`)
+  fs.mkdirSync(path.join(tempDir, '.git', 'objects'), { recursive: true })
+  fs.mkdirSync(path.join(tempDir, '.obsidian'), { recursive: true })
+  fs.mkdirSync(path.join(tempDir, 'node_modules', 'package'), { recursive: true })
+  fs.mkdirSync(path.join(tempDir, '__pycache__'), { recursive: true })
+  fs.mkdirSync(path.join(tempDir, 'src', 'components'), { recursive: true })
+  fs.mkdirSync(path.join(tempDir, 'docs'), { recursive: true })
+
+  // create files in each directory
+  fs.writeFileSync(path.join(tempDir, '.git', 'config'), 'git config')
+  fs.writeFileSync(path.join(tempDir, '.git', 'objects', 'abc123'), 'object')
+  fs.writeFileSync(path.join(tempDir, '.obsidian', 'config.json'), '{}')
+  fs.writeFileSync(path.join(tempDir, 'node_modules', 'package', 'index.js'), 'module.exports = {}')
+  fs.writeFileSync(path.join(tempDir, '__pycache__', 'module.pyc'), 'bytecode')
+  fs.writeFileSync(path.join(tempDir, 'src', 'index.ts'), 'export {}')
+  fs.writeFileSync(path.join(tempDir, 'src', 'components', 'App.vue'), '<template></template>')
+  fs.writeFileSync(path.join(tempDir, 'docs', 'readme.md'), '# README')
+  fs.writeFileSync(path.join(tempDir, 'package.json'), '{}')
+
+  try {
+    // without exclude patterns - should find all files
+    const allFiles = file.listFilesRecursively(tempDir)
+    expect(allFiles.length).toBe(9)
+    expect(allFiles.some(f => f.includes('.git'))).toBe(true)
+    expect(allFiles.some(f => f.includes('.obsidian'))).toBe(true)
+    expect(allFiles.some(f => f.includes('node_modules'))).toBe(true)
+
+    // with .* pattern - should exclude hidden folders
+    const noHidden = file.listFilesRecursively(tempDir, ['.*'])
+    expect(noHidden.some(f => f.includes('.git'))).toBe(false)
+    expect(noHidden.some(f => f.includes('.obsidian'))).toBe(false)
+    expect(noHidden.some(f => f.includes('node_modules'))).toBe(true)
+    expect(noHidden.some(f => f.includes('src'))).toBe(true)
+
+    // with multiple patterns
+    const filtered = file.listFilesRecursively(tempDir, ['.*', 'node_modules', '__pycache__'])
+    expect(filtered.some(f => f.includes('.git'))).toBe(false)
+    expect(filtered.some(f => f.includes('.obsidian'))).toBe(false)
+    expect(filtered.some(f => f.includes('node_modules'))).toBe(false)
+    expect(filtered.some(f => f.includes('__pycache__'))).toBe(false)
+    expect(filtered.some(f => f.includes('src'))).toBe(true)
+    expect(filtered.some(f => f.includes('docs'))).toBe(true)
+    expect(filtered.some(f => f.endsWith('package.json'))).toBe(true)
+    expect(filtered.length).toBe(4) // index.ts, App.vue, readme.md, package.json
+
+  } finally {
+    // cleanup
+    fs.rmSync(tempDir, { recursive: true, force: true })
+  }
+})
+
 test('Get icon contents', async () => {
   expect(file.getIconContents(app, './assets/icon.png')).toBeNull()
   const contents = file.getIconContents(app, './assets/icon.icns')

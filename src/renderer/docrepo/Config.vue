@@ -43,7 +43,12 @@
           <span class="suffix">&nbsp;</span>
         </div>
       </div>
-      
+
+      <div class="form-field">
+        <label>{{ t('docRepo.config.excludePatterns') }}</label>
+        <input name="excludePatterns" v-model="excludePatterns" :placeholder="t('docRepo.config.excludePatternsPlaceholder')" autocorrect="false" autocomplete="false" autocapitalize="false" />
+      </div>
+
     </template>
     <template #footer>
       <div class="buttons">
@@ -69,6 +74,7 @@ const chunkSize = ref(null)
 const chunkOverlap = ref(null)
 const searchResultCount = ref(null)
 const relevanceCutOff = ref(null)
+const excludePatterns = ref(null)
 
 onMounted(() => {
 })
@@ -88,6 +94,7 @@ const load = () => {
   chunkOverlap.value = store.config.rag.chunkOverlap
   searchResultCount.value = store.config.rag.searchResultCount
   relevanceCutOff.value = store.config.rag.relevanceCutOff
+  excludePatterns.value = store.config.rag.excludePatterns
 }
 
 const onReset = () => {
@@ -96,6 +103,7 @@ const onReset = () => {
   chunkOverlap.value = defaultSettings.rag.chunkOverlap
   searchResultCount.value = defaultSettings.rag.searchResultCount
   relevanceCutOff.value = defaultSettings.rag.relevanceCutOff
+  excludePatterns.value = defaultSettings.rag.excludePatterns
 }
 
 const onSave = () => {
@@ -104,6 +112,7 @@ const onSave = () => {
   store.config.rag.chunkOverlap = parseInt(chunkOverlap.value)
   store.config.rag.searchResultCount = parseInt(searchResultCount.value)
   store.config.rag.relevanceCutOff = parseFloat(relevanceCutOff.value)
+  store.config.rag.excludePatterns = excludePatterns.value?.trim() || ''
   store.saveSettings()
   close()
 }

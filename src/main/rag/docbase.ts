@@ -312,7 +312,9 @@ export default class DocumentBaseImpl {
   }
 
   async addFolder(source: DocumentSourceImpl, opts?: AddDocumentOptions): Promise<void> {
-    const files = file.listFilesRecursively(source.origin)
+    const config: Configuration = loadSettings(this.app)
+    const excludePatterns = this.getExcludePatterns(config)
+    const files = file.listFilesRecursively(source.origin, excludePatterns)
     const items = files.map(f => ({ type: 'file' as SourceType, origin: f }))
     await this.addChildDocuments(source, items, opts)
   }
@@ -506,8 +508,10 @@ export default class DocumentBaseImpl {
 
     try {
       // Get all files in the folder recursively
+      const config: Configuration = loadSettings(this.app)
+      const excludePatterns = this.getExcludePatterns(config)
       const existingPaths = new Set(folderDocument.items.map(item => item.origin))
-      const files = file.listFilesRecursively(folderDocument.origin)
+      const files = file.listFilesRecursively(folderDocument.origin, excludePatterns)
 
       for (const filePath of files) {
         if (!existingPaths.has(filePath)) {
@@ -523,6 +527,11 @@ export default class DocumentBaseImpl {
     } catch (error) {
       console.error(`[rag] Error scanning folder ${folderDocument.origin}:`, error)
     }
+  }
+
+  private getExcludePatterns(config: Configuration): string[] {
+    const excludePatterns = config.rag.excludePatterns ?? defaultSettings.rag.excludePatterns
+    return excludePatterns.split(',').map(p => p.trim()).filter(p => p.length > 0)
   }
 
 }

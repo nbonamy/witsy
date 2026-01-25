@@ -884,6 +884,8 @@
       "characters": "characters",
       "chunkOverlap": "Chunk overlap",
       "chunkSize": "Chunk size",
+      "excludePatterns": "Exclude patterns (comma separated)",
+      "excludePatternsPlaceholder": ".*,node_modules,__pycache__",
       "maxDocumentSize": "Max document size",
       "millionCharacters": "million characters",
       "relevanceCutOff": "Search relevance cut-off",

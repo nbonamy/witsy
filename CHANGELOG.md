@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.5.0] - WIP
 
 ### Added
-- N/A
+- Ability to Exclude Folders from RAG (https://github.com/nbonamy/witsy/issues/515)
 
 ### Changed
 - New agent view with step-by-step execution
