@@ -22,7 +22,6 @@
     "command": "Polecenie",
     "confirmation": {
       "cannotUndo": "Nie można cofnąć tej akcji.",
-      "closeAnyway": "Zamknij mimo to",
       "continue": "Kontynuuj",
       "continueQuestion": "Masz niezapisane zmiany. Jeśli będziesz kontynuować, stracisz swoją pracę.",
       "delete": "Czy na pewno chcesz usunąć ten element?",
@@ -30,14 +29,12 @@
       "deleteDocument": "Czy na pewno chcesz usunąć ten dokument?",
       "deleteMemory": "Czy na pewno chcesz usunąć tę pamięć?",
       "deleteRepository": "Are you sure you want to delete this collection?",
-      "doNotClose": "Nie zamykaj",
       "unsavedChanges": "Masz niezapisane zmiany. Zamknięcie tego okna spowoduje utratę pracy."
     },
     "content": "Content",
     "continue": "Kontynuuj",
     "copied": "Skopiowano",
     "copy": "Kopiuj",
-    "copyMd": "Kopiuj jako Markdown",
     "costsAsOf": "koszty według stanu na",
     "create": "Utwórz",
     "customize": "Dostosuj…",
@@ -886,6 +883,8 @@
       "characters": "znaki",
       "chunkOverlap": "Nakładanie się fragmentów",
       "chunkSize": "Rozmiar fragmentu",
+      "excludePatterns": "Wzorce do wykluczenia (oddzielone przecinkami)",
+      "excludePatternsPlaceholder": ".*,node_modules,__pycache__",
       "maxDocumentSize": "Maksymalny rozmiar dokumentu",
       "millionCharacters": "milion znaków",
       "relevanceCutOff": "Granica trafności wyszukiwania",
@@ -2502,6 +2501,7 @@
       },
       "docRepos": {
         "manage": "Zarządzaj Bazą Wiedzy",
+        "none": "Brak dostępnej wiedzy",
         "title": "Wiedza"
       },
       "experts": {
@@ -3000,6 +3000,11 @@
         },
         "exaApiKey": "Klucz API Exa",
         "getApiKey": "Uzyskaj klucz API",
+        "getSearchEngineId": "Pobierz identyfikator wyszukiwarki",
+        "googleApiKey": "Klucz API Google",
+        "googleNote": "Upewnij się, że <a href=\"https://console.cloud.google.com/apis/library/customsearch.googleapis.com\" target=\"_blank\">Custom Search API</a> jest włączone dla Twojego projektu.",
+        "googleNoteLabel": "Konfiguracja konsoli Google Cloud",
+        "googleSearchEngineId": "ID wyszukiwarki",
         "localWarning": "<strong style=\"color: red;\">Ważne:</strong> Google agresywnie ogranicza zautomatyzowane wyszukiwania. Zaleca się korzystanie z internetowych wyszukiwarek jednego z wymienionych dostawców zamiast opcji lokalnego wyszukiwania (Brave i Tavily oferują bezpłatne opcje). Możesz użyć poniższego przycisku testowego, aby tymczasowo autoryzować wyszukiwania Google. Do momentu, gdy znów przestanie działać.",
         "perplexityApiKey": "Klucz API Perplexity",
         "searxngNote": "Wprowadź adres URL swojej instancji SearXNG. W ustawieniach SearXNG musi być włączony format JSON.",

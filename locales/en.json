@@ -22,7 +22,6 @@
     "command": "Command",
     "confirmation": {
       "cannotUndo": "You can't undo this action.",
-      "closeAnyway": "Close anyway",
       "continue": "Continue",
       "continueQuestion": "You have unsaved changes. You will lose your work if you continue.",
       "delete": "Are you sure you want to delete this item?",
@@ -30,14 +29,12 @@
       "deleteDocument": "Are you sure you want to delete this document?",
       "deleteMemory": "Are you sure you want to delete this memory?",
       "deleteRepository": "Are you sure you want to delete this collection?",
-      "doNotClose": "Do not close",
       "unsavedChanges": "You have unsaved changes. You will lose your work if you close this window."
     },
     "content": "Content",
     "continue": "Continue",
     "copied": "Copied",
     "copy": "Copy",
-    "copyMd": "Copy as Markdown",
     "costsAsOf": "costs as of",
     "create": "Create",
     "customize": "Customize…",

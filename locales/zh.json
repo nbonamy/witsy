@@ -22,7 +22,6 @@
     "command": "命令",
     "confirmation": {
       "cannotUndo": "您无法撤销此操作。",
-      "closeAnyway": "无论如何关闭",
       "continue": "继续",
       "continueQuestion": "您有未保存的更改。如果您继续，您的工作将丢失。",
       "delete": "您确定要删除此项目吗？",
@@ -30,14 +29,12 @@
       "deleteDocument": "您确定要删除此文档吗？",
       "deleteMemory": "您确定要删除此记忆吗？",
       "deleteRepository": "Are you sure you want to delete this collection?",
-      "doNotClose": "不要关闭",
       "unsavedChanges": "您有未保存的更改。如果您关闭此窗口，您的工作将丢失。"
     },
     "content": "Content",
     "continue": "继续",
     "copied": "已复制",
     "copy": "复制",
-    "copyMd": "复制为 Markdown",
     "costsAsOf": "截至",
     "create": "创建",
     "customize": "自定义…",
@@ -886,6 +883,8 @@
       "characters": "字符",
       "chunkOverlap": "块重叠",
       "chunkSize": "块大小",
+      "excludePatterns": "排除模式（用逗号分隔）",
+      "excludePatternsPlaceholder": ".*,node_modules,__pycache__",
       "maxDocumentSize": "最大文档大小",
       "millionCharacters": "百万字符",
       "relevanceCutOff": "搜索相关性截止值",
@@ -2502,6 +2501,7 @@
       },
       "docRepos": {
         "manage": "管理知识库",
+        "none": "暂无可用知识",
         "title": "知识库"
       },
       "experts": {
@@ -2994,6 +2994,11 @@
         },
         "exaApiKey": "Exa API 密钥",
         "getApiKey": "获取你的 API 密钥",
+        "getSearchEngineId": "获取您的搜索引擎 ID",
+        "googleApiKey": "Google API 密钥",
+        "googleNote": "确保已为您的项目启用 <a href=\"https://console.cloud.google.com/apis/library/customsearch.googleapis.com\" target=\"_blank\">自定义搜索 API</a>。",
+        "googleNoteLabel": "Google Cloud 控制台配置",
+        "googleSearchEngineId": "搜索引擎 ID",
         "localWarning": "<strong style=\"color: red;\">重要：</strong> 谷歌强力限制自动化搜索。强烈建议使用下列提供商之一的在线搜索引擎，而非本地搜索选项（Brave 和 Tavily 提供免费选项）。您可以使用下面的测试按钮暂时授权谷歌搜索，直到再次失效为止。",
         "perplexityApiKey": "Perplexity API 密钥",
         "searxngNote": "输入您的 SearXNG 实例的 URL。必须在 SearXNG 设置中启用 JSON 格式。",
