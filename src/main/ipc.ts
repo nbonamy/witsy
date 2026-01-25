@@ -51,6 +51,7 @@ import * as webview from './webview';
 import * as window from './window';
 import * as sttApple from './stt_apple';
 import * as workspace from './workspace';
+import { getTranscript } from './youtube';
 
 import { AGENT_API_BASE_PATH } from './agent_webhook';
 import { HttpServer } from './http_server';
@@ -996,6 +997,11 @@ export const installIpc = (
   ipcMain.on(IPC.VOICE_MODE.START, () => {
     window.openRealtimeChatWindow();
   })
+
+  // YouTube transcript handler
+  ipcMain.handle(IPC.YOUTUBE.GET_TRANSCRIPT, (_, url: string) => {
+    return getTranscript(url);
+  });
 
   // Ollama download handlers
   ipcMain.handle(IPC.OLLAMA.DOWNLOAD_START, async (event, targetDirectory: string) => {

@@ -10,6 +10,7 @@ import { McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } f
 import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
 import { Workspace, WorkspaceHeader } from './workspace'
 import { A2APromptOpts, Agent, AgentRun } from './agents'
+import { YoutubeVideoInfo } from '../main/youtube'
 
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
@@ -593,6 +594,9 @@ declare global {
       }
       google: {
         downloadMedia(url: string, mimeType: string): Promise<string>
+      }
+      youtube: {
+        getTranscript(url: string): Promise<YoutubeVideoInfo>
       }
       workspace: {
         list(): WorkspaceHeader[]

@@ -15,6 +15,7 @@ import { ListDirectoryResponse } from './types/filesystem';
 import { McpServer, McpStatus, McpTool } from './types/mcp';
 import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentQueueItem, SourceType } from './types/rag';
 import { Workspace, WorkspaceHeader } from './types/workspace';
+import { YoutubeVideoInfo } from './main/youtube';
 
 // Track IPC listener wrappers so we can properly remove them
 // Uses unique IDs because function references don't survive context bridge
@@ -309,8 +310,13 @@ contextBridge.exposeInMainWorld(
       },
     },
     google: {
-      downloadMedia: (url: string, mimeType: string): Promise<string> => { 
-        return ipcRenderer.invoke(IPC.GOOGLE.DOWNLOAD_MEDIA, { url, mimeType }) 
+      downloadMedia: (url: string, mimeType: string): Promise<string> => {
+        return ipcRenderer.invoke(IPC.GOOGLE.DOWNLOAD_MEDIA, { url, mimeType })
+      },
+    },
+    youtube: {
+      getTranscript: (url: string): Promise<YoutubeVideoInfo> => {
+        return ipcRenderer.invoke(IPC.YOUTUBE.GET_TRANSCRIPT, url)
       },
     },
     workspace: {

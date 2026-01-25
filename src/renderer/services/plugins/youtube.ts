@@ -2,9 +2,6 @@
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import { anyDict } from 'types/index'
 import Plugin, { PluginConfig } from './plugin'
-// import { YoutubeTranscript } from 'youtube-transcript'
-import TranscriptAPI from 'youtube-transcript-api'
-import ytv from 'ytv'
 import { t } from '../i18n'
 
 export const kYoutubePluginName = 'get_youtube_transcript'
@@ -57,36 +54,17 @@ export default class extends Plugin {
   async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
 
     try {
-      const info = await ytv.get_info(parameters.url)
-
-      // const transcript = await YoutubeTranscript.fetchTranscript(parameters.url)
-
-      // const client = new TranscriptClient()
-      // await client.ready
-      const id = this.extractVideoId(parameters.url)
-      const transcripts = await TranscriptAPI.getTranscript(id)
-      const transcript = transcripts//.tracks[0].transcript
-
+      const result = await window.api.youtube.getTranscript(parameters.url)
       return {
-        title: info.title || transcripts.title,
-        channel: info.channel_name || transcripts.author,
-        content: transcript.map((line: any) => line.text).join(' ')
+        title: result.title,
+        channel: result.channel,
+        content: result.transcript
       }
-
     } catch (error) {
       console.error(error)
-      return { error: error }
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      return { error: message }
     }
 
-  }  
-
-  private extractVideoId(videoId: string) {
-    if (videoId.length === 11)  return videoId
-    const regex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i;
-    const matchId = videoId.match(regex)
-    if (matchId && matchId.length) {
-      return matchId[1]
-    }
-    return null
   }
 }

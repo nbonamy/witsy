@@ -281,6 +281,10 @@ export const GOOGLE = {
   DOWNLOAD_MEDIA: 'google-download-media',
 } as const;
 
+export const YOUTUBE = {
+  GET_TRANSCRIPT: 'youtube-get-transcript',
+} as const;
+
 export const WORKSPACE = {
   LIST: 'workspace-list',
   LOAD: 'workspace-load',

@@ -132,34 +132,7 @@ vi.mock('@/vendor/tavily', async () => {
   return { default: Tavily }
 })
 
-// youtube transcript
-vi.mock('youtube-transcript', async () => {
-  return { YoutubeTranscript: {
-    fetchTranscript: vi.fn(() => [ { text: 'line1' } ])
-  } }
-})
-
-// youtube transcript
-// vi.mock('youtube-transcript-api', async () => {
-//   const TranscriptClient = vi.fn()
-//   TranscriptClient.prototype.ready = true
-//   TranscriptClient.prototype.getTranscript = vi.fn(() => ({
-//     tracks: [ { transcript: [ { text: 'line1' } ] } ],
-//   }))
-//   return { default: TranscriptClient }
-// })
-vi.mock('youtube-transcript-api', async () => {
-  return { default: {
-    getTranscript: vi.fn(() => ([ { text: 'line1' } ]))
-  } }
-})
-
-// youtube info
-vi.mock('ytv', async () => {
-  return { default: {
-    get_info: vi.fn(() => ({ title: 'title', channel_name: 'channel' }))
-  } }
-})
+// youtube - now uses IPC, mocked via window.api.youtube in beforeAll
 
 // openai
 vi.mock('openai', async () => {
@@ -228,6 +201,13 @@ vi.mock('@fal-ai/client', async () => {
 
 beforeAll(() => {
   useWindowMock()
+  window.api.youtube = {
+    getTranscript: vi.fn().mockResolvedValue({
+      title: 'title',
+      channel: 'channel',
+      transcript: 'line1'
+    })
+  }
   store.loadSettings()
   store.config.llm.locale = 'fr-FR'
   store.config.llm.engine = 'mock'
@@ -638,11 +618,10 @@ test('YouTube Plugin', async () => {
   expect(youtube.getParameters()[0].type).toBe('string')
   expect(youtube.getParameters()[0].description).not.toBeFalsy()
   expect(youtube.getParameters()[0].required).toBe(true)
-  expect(await youtube.execute(context, { url: 'test' })).toStrictEqual({
-    title: 'title',
-    channel: 'channel',
-    content: 'line1'
-  })
+  const result = await youtube.execute(context, { url: 'test' })
+  expect(result.title).toBe('title')
+  expect(result.channel).toBe('channel')
+  expect(result.content).toBe('line1')
 })
 
 test('Memory Plugin', async () => {
