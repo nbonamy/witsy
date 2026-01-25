@@ -2,6 +2,7 @@
 import { expect, test, beforeAll, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
+import { store } from '@services/store'
 import App from '@renderer/App.vue'
 import Main from '@screens/Main.vue'
 import CommandPicker from '@screens/CommandPicker.vue'
@@ -15,6 +16,7 @@ enableAutoUnmount(afterAll)
 beforeAll(() => {
   useBrowserMock()
   useWindowMock()
+  store.loadSettings()
 })
 
 test('Renders correctly', () => {

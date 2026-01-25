@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock, listeners } from '@tests/mocks/window'
-import { store } from '@services/store'
+import { store, resetStoreListeners } from '@services/store'
 import { kDefaultWorkspaceId, kHistoryVersion } from '@/consts'
 import Chat from '@models/chat'
 import Message from '@models/message'
@@ -42,6 +42,7 @@ beforeAll(() => {
 beforeEach(() => {
   vi.clearAllMocks()
   listeners.length = 0
+  resetStoreListeners()
 })
 
 test('Check atributtes', async () => {

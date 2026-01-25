@@ -101,11 +101,6 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
         type: 'separator',
       }));
 
-      // menu.append(new MenuItem({
-      //   label: useI18n(app)('common.copyMd'),
-      //   click: () => mainWindow.webContents.send('copy-as-markdown', { context: contextMenuContext, selection: params.selectionText }),
-      // }));
-
       // Add a paste option
       menu.append(new MenuItem({
         label: useI18n(app)('tray.menu.readAloud'),

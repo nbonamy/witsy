@@ -51,8 +51,13 @@ import { Application } from 'types/automation'
 import { computed, onBeforeUnmount, onMounted, ref, toRaw } from 'vue'
 import useAudioRecorder from '../audio/audio_recorder'
 import useTranscriber from '../audio/transcriber'
+import useEventListener from '@composables/event_listener'
+import useIpcListener from '@composables/ipc_listener'
 
 import { CircleIcon, ClipboardIcon, CheckIcon, XIcon } from 'lucide-vue-next'
+
+const { onDomEvent } = useEventListener()
+const { onIpcEvent } = useIpcListener()
 
 // init stuff
 store.loadSettings()
@@ -199,16 +204,16 @@ onMounted(async () => {
   configHash = getConfigHash()
 
   // keyboard events
-  document.addEventListener('keydown', onKeyDown)
+  onDomEvent(document, 'keydown', onKeyDown)
 
   // listen for show event from main process (when window is shown)
-  window.api.on('show', onShow)
+  onIpcEvent('show', onShow)
 
   // listen for stop-and-transcribe from main process (when shortcut pressed again)
-  window.api.on('stop-and-transcribe', onStopAndTranscribe)
+  onIpcEvent('stop-and-transcribe', onStopAndTranscribe)
 
   // listen for settings changes
-  window.api.on('file-modified', onFileModified)
+  onIpcEvent('file-modified', onFileModified)
 
   // pre-initialize the transcriber only (no microphone access yet)
   // this loads the model so subsequent shows are faster
@@ -225,10 +230,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', onKeyDown)
-  window.api.off('show', onShow)
-  window.api.off('stop-and-transcribe', onStopAndTranscribe)
-  window.api.off('file-modified', onFileModified)
+  // DOM and IPC listeners cleaned up by composables
   if (state.value === 'recording') {
     audioRecorder.stop()
   }

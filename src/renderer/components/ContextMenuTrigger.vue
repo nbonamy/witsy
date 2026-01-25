@@ -31,8 +31,11 @@
 
 import { MoreVerticalIcon } from 'lucide-vue-next'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import useEventListener from '@composables/event_listener'
 import ButtonIcon from './ButtonIcon.vue'
 import ContextMenuPlus, { type MenuPosition } from './ContextMenuPlus.vue'
+
+const { onDomEvent } = useEventListener()
 
 const props = defineProps({
   position: {
@@ -63,11 +66,11 @@ const handleEscape = (event: KeyboardEvent) => {
 }
 
 onMounted(() => {
-  document.addEventListener('keydown', handleEscape)
+  onDomEvent(document, 'keydown', handleEscape)
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', handleEscape)
+  // DOM listeners cleaned up by composable
 })
 
 defineExpose({

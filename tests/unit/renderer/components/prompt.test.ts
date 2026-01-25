@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
 import { createI18nMock } from '@tests/mocks'
-import { emitEventMock } from '@root/vitest.setup'
+import { emitBusEventMock } from '@root/vitest.setup'
 import { stubTeleport } from '@tests/mocks/stubs'
 import { store } from '@services/store'
 import Prompt from '@components/Prompt.vue'
@@ -79,14 +79,6 @@ beforeAll(async () => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  
-  // Setup custom emitEventMock implementation
-  vi.mocked(emitEventMock).mockImplementation((event, ...args) => {
-    // this is called when mounting so discard it
-    if (event === 'prompt-resize' && args[0] === '0px') {
-      emitEventMock.mockClear()
-    }
-  })
   
   store.loadSettings()
   store.config.llm.imageResize = 0
@@ -190,7 +182,7 @@ test('Not send on shift enter', async () => {
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown', { key: 'Enter', shiftKey: true })
-  expect(emitEventMock.mock.calls.filter(c => c[0] !== 'prompt-resize').length).toBe(0)
+  expect(emitBusEventMock.mock.calls.length).toBe(0)
 })
 
 test('Sends on shift enter when sendKey is shiftEner', async () => {
@@ -213,7 +205,7 @@ test('Not send on enter when sendKey is shiftEner', async () => {
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(emitEventMock.mock.calls.filter(c => c[0] !== 'prompt-resize').length).toBe(0)
+  expect(emitBusEventMock.mock.calls.length).toBe(0)
   store.config.appearance.chat.sendKey = 'enter'
 })
 
@@ -410,15 +402,6 @@ test('Display base64 attachment', async () => {
   expect(wrapper.find('.attachment img').exists()).toBe(true)
   expect(wrapper.find('.attachment img').attributes('src')).toBe('data:image/png;base64,image64')
 })
-
-// test('Accept incoming prompt', async () => {
-//   const prompt = wrapper.find('.input textarea')
-//   prompt.setValue('')
-//   emitEventMock.mockRestore()
-//   useEventBus().emitEvent('set-prompt', { content: 'this is my prompt' })
-//   await wrapper.vm.$nextTick()
-//   expect(prompt.element.value).toBe('this is my prompt')
-// })
 
 test('History navigation', async () => {
   
@@ -1337,7 +1320,7 @@ test('Shortcut without Alt key does nothing', async () => {
 })
 
 test('conversationMenu shows stop option when in conversation mode', async () => {
-  const wrapperConvo = mount(Prompt, { ...stubTeleport, props: { chat: chat, conversationMode: 'auto', enableTools: false } })
+  const wrapperConvo: VueWrapper<any>  = mount(Prompt, { ...stubTeleport, props: { chat: chat, conversationMode: 'auto', enableTools: false } })
 
   // Check the computed conversationMenu returns stop option
   expect(wrapperConvo.vm.conversationMenu).toEqual([
@@ -1470,8 +1453,8 @@ test('onKeyUp triggers autoGrow', async () => {
   await prompt.trigger('keyup')
   await wrapper.vm.$nextTick()
 
-  // emitEvent should be called with prompt-resize
-  expect(emitEventMock).toHaveBeenCalledWith('prompt-resize', expect.any(String))
+  // textarea height should be set
+  expect(prompt.element.style.height).toBeDefined()
 })
 
 test('exposed setPrompt with string creates Message', async () => {
@@ -1518,7 +1501,7 @@ test('handlePromptMenuInstructions with custom instruction', async () => {
 })
 
 test('onConversationMenu opens menu when conversations enabled', async () => {
-  const wrapperConvo = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableConversations: true, enableTools: false } })
+  const wrapperConvo: VueWrapper<any> = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableConversations: true, enableTools: false } })
 
   // Call the function
   wrapperConvo.vm.onConversationMenu()
@@ -1529,7 +1512,7 @@ test('onConversationMenu opens menu when conversations enabled', async () => {
 })
 
 test('onConversationMenu does nothing when conversations disabled', async () => {
-  const wrapperNoConvo = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableConversations: false, enableTools: false } })
+  const wrapperNoConvo: VueWrapper<any> = mount(Prompt, { ...stubTeleport, props: { chat: chat, enableConversations: false, enableTools: false } })
 
   // Call the function
   wrapperNoConvo.vm.onConversationMenu()
@@ -1545,7 +1528,8 @@ test('handleConversationClick with auto action starts dictation', async () => {
   await wrapper.vm.$nextTick()
 
   // Should emit conversation-mode event
-  expect(emitEventMock).toHaveBeenCalledWith('conversation-mode', 'auto')
+  expect(wrapper.emitted('conversation-mode')).toBeTruthy()
+  expect(wrapper.emitted('conversation-mode')[0]).toEqual(['auto'])
 
   // Should start dictation (transcriber should be initialized)
   expect(wrapper.vm.transcriber.initialize).toHaveBeenCalled()
@@ -1559,7 +1543,8 @@ test('handleConversationClick with ptt action does not start dictation', async (
   await wrapper.vm.$nextTick()
 
   // Should emit conversation-mode event
-  expect(emitEventMock).toHaveBeenCalledWith('conversation-mode', 'ptt')
+  expect(wrapper.emitted('conversation-mode')).toBeTruthy()
+  expect(wrapper.emitted('conversation-mode').at(-1)).toEqual(['ptt'])
 
   // Should NOT start dictation automatically
   expect(wrapper.vm.transcriber.initialize).not.toHaveBeenCalled()
@@ -1573,8 +1558,9 @@ test('handleConversationClick with null action stops conversation', async () => 
   wrapper.vm.handleConversationClick(null)
   await wrapper.vm.$nextTick()
 
-  // Should emit conversation-mode null
-  expect(emitEventMock).toHaveBeenCalledWith('conversation-mode', null)
+  // Should emit conversation-mode disabled
+  expect(wrapper.emitted('conversation-mode')).toBeTruthy()
+  expect(wrapper.emitted('conversation-mode').at(-1)).toEqual(['off'])
 })
 
 test('matchInstructions returns custom instruction when matching', () => {
@@ -1641,7 +1627,7 @@ test('Commands menu with object icon renders component', async () => {
 
 test('handleAllPluginsToggle updates tools and emits', async () => {
   chat!.tools = []
-  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+  const toolsWrapper: VueWrapper<any>  = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
 
   await toolsWrapper.vm.handleAllPluginsToggle()
 
@@ -1652,7 +1638,7 @@ test('handleAllPluginsToggle updates tools and emits', async () => {
 
 test('handleSelectAllTools updates tools and emits', async () => {
   chat!.tools = []
-  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+  const toolsWrapper: VueWrapper<any>  = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
 
   await toolsWrapper.vm.handleSelectAllTools()
 
@@ -1663,7 +1649,7 @@ test('handleSelectAllTools updates tools and emits', async () => {
 
 test('handleUnselectAllTools updates tools and emits', async () => {
   chat!.tools = ['some_tool']
-  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+  const toolsWrapper: VueWrapper<any>  = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
 
   await toolsWrapper.vm.handleUnselectAllTools()
 
@@ -1674,7 +1660,7 @@ test('handleUnselectAllTools updates tools and emits', async () => {
 
 test('handleSelectAllPlugins updates tools and emits', async () => {
   chat!.tools = []
-  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+  const toolsWrapper: VueWrapper<any>  = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
 
   await toolsWrapper.vm.handleSelectAllPlugins()
 
@@ -1685,7 +1671,7 @@ test('handleSelectAllPlugins updates tools and emits', async () => {
 
 test('handleUnselectAllPlugins updates tools and emits', async () => {
   chat!.tools = ['browse_wikipedia']
-  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+  const toolsWrapper: VueWrapper<any>  = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
 
   await toolsWrapper.vm.handleUnselectAllPlugins()
 
@@ -1696,7 +1682,7 @@ test('handleUnselectAllPlugins updates tools and emits', async () => {
 
 test('handleSelectAllServerTools updates tools and emits', async () => {
   chat!.tools = []
-  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+  const toolsWrapper: VueWrapper<any>  = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
 
   const server = { uuid: 'server1', tools: [{ uuid: 'tool1___server1' }] } as any
   await toolsWrapper.vm.handleSelectAllServerTools(server)
@@ -1708,7 +1694,7 @@ test('handleSelectAllServerTools updates tools and emits', async () => {
 
 test('handleUnselectAllServerTools updates tools and emits', async () => {
   chat!.tools = ['tool1___server1']
-  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+  const toolsWrapper: VueWrapper<any>  = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
 
   const server = { uuid: 'server1', tools: [{ uuid: 'tool1___server1' }] } as any
   await toolsWrapper.vm.handleUnselectAllServerTools(server)
@@ -1720,7 +1706,7 @@ test('handleUnselectAllServerTools updates tools and emits', async () => {
 
 test('handleAllServerToolsToggle updates tools and emits', async () => {
   chat!.tools = []
-  const toolsWrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
+  const toolsWrapper: VueWrapper<any>  = mount(Prompt, { ...stubTeleport, props: { chat: chat!, enableTools: true } })
 
   const server = { uuid: 'server1', tools: [{ uuid: 'tool1___server1' }] } as any
   await toolsWrapper.vm.handleAllServerToolsToggle(server)

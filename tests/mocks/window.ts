@@ -43,8 +43,11 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     platform: 'darwin',
     isMasBuild: false,
     userDataPath: '/tmp',
-    on: vi.fn((signal, listener) => listeners.push(listener)),
-    off: vi.fn(),
+    _on: vi.fn((signal, listener) => {
+      listeners.push(listener)
+      return `listener_${listeners.length}`
+    }),
+    _off: vi.fn(),
     app: {
       getVersion: vi.fn(() => '0.1.0'),
       setAppearanceTheme: vi.fn(),
@@ -64,6 +67,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       moveWindow: vi.fn(),
     },
     debug: {
+      isDebug: false,
       showConsole: vi.fn(),
       getNetworkHistory: vi.fn(() => []),
       clearNetworkHistory: vi.fn(),

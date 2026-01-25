@@ -95,11 +95,14 @@
 <script setup lang="ts">
 
 import { ChatListLayout, ChatToolMode, SendKey, TextFormat } from 'types/config';
-import { ref, computed } from 'vue'
+import { ref, computed, provide } from 'vue'
 import { store } from '@services/store'
 import { t } from '@services/i18n'
 import Message from '@models/message'
 import MessageItem from '@components/MessageItem.vue'
+
+// provide null chat-callbacks for MessageItem (no actions available in settings preview)
+provide('chat-callbacks', null)
 
 const theme = ref(null)
 const fontSize = ref(null)

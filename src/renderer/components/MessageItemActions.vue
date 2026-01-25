@@ -9,7 +9,7 @@
       <div class="action retry" v-if="message.role == 'assistant'" @click="onRetry(message)">
         <RotateCcwIcon /> {{ t('common.retry') }}
       </div>
-      <div class="action edit" v-if="message.type == 'text'" @click="onEdit(message)">
+      <div class="action edit" v-if="message.type == 'text'" @click="onEdit">
         <PencilIcon /> {{ t('common.edit') }}
       </div>
       <div class="action quote" v-if="message.role == 'user' && message.type == 'text'" @click="onQuote(message)">
@@ -32,6 +32,7 @@
 <script setup lang="ts">
 
 import { ChartNoAxesColumnIncreasingIcon, GitBranchIcon, PencilIcon, QuoteIcon, RotateCcwIcon, Trash2Icon, WrenchIcon } from 'lucide-vue-next'
+import { inject } from 'vue'
 import Message from '@models/message'
 import MessageItemActionCopy from '@components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '@components/MessageItemActionRead.vue'
@@ -39,11 +40,11 @@ import MessageItemActionScratchpad from '@components/MessageItemActionScratchpad
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import Dialog from '@renderer/utils/dialog'
+import type { ChatCallbacks } from '@screens/Chat.vue'
 
-import useEventBus from '@composables/event_bus'
-const { emitEvent } = useEventBus()
+const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
 
-const emit = defineEmits(['show-tools'])
+const emit = defineEmits(['show-tools', 'edit-message'])
 
 const props = defineProps({
   message: {
@@ -67,7 +68,7 @@ const onReadAloud = async (message: Message) => {
 const onRetry = (message: Message) => {
   // if already confirmed
   if (!store.config.general.confirm.retryGeneration) {
-    emitEvent('retry-generation', message)
+    chatCallbacks?.onRetryGeneration(message)
     return
   }
 
@@ -80,7 +81,7 @@ const onRetry = (message: Message) => {
     showCancelButton: true,
     showDenyButton: true,
   }).then((result) => {
-    
+
     // don't ask again
     if (result.isDenied) {
       store.config.general.confirm.retryGeneration = false
@@ -89,21 +90,21 @@ const onRetry = (message: Message) => {
 
     // do it
     if (result.isConfirmed || result.isDenied) {
-      emitEvent('retry-generation', message)
+      chatCallbacks?.onRetryGeneration(message)
     }
   })
 }
 
-const onEdit = (message: Message) => {
-  emitEvent('edit-message', message.uuid)
+const onEdit = () => {
+  emit('edit-message')
 }
 
 const onQuote = (message: Message) => {
-  emitEvent('set-prompt', message)
+  chatCallbacks?.onSetPrompt(message)
 }
 
 const onDelete = (message: Message) => {
-  emitEvent('delete-message', message)
+  chatCallbacks?.onDeleteMessage(message)
 }
 
 const onUsage = (message: Message) => {
@@ -131,7 +132,7 @@ const onUsage = (message: Message) => {
 }
 
 const onFork = (message: Message) => {
-  emitEvent('fork-chat', message)
+  chatCallbacks?.onForkChat(message)
 }
 
 const onTools = (message: Message) => {

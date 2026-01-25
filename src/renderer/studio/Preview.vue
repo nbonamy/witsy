@@ -52,6 +52,9 @@
 import { ClipboardCheckIcon, ClipboardIcon, DownloadIcon, FullscreenIcon, InfoIcon, RedoIcon, Trash2Icon, UndoIcon } from 'lucide-vue-next'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
+import useEventListener from '@composables/event_listener'
+
+const { onDomEvent } = useEventListener()
 import Loader from '@components/Loader.vue'
 import Dialog from '@renderer/utils/dialog'
 import Message from '@models/message'
@@ -84,10 +87,10 @@ const mediaElement = ref(null)
 const overlayElement = ref(null)
 
 onMounted(() => {
-  window.addEventListener('resize', updateOverlay)
+  onDomEvent(window, 'resize', updateOverlay)
   watch(() => props.isGenerating, async () => {
     await nextTick()
-    updateOverlay() 
+    updateOverlay()
   }, { immediate: true })
 })
 

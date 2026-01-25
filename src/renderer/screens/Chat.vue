@@ -1,7 +1,7 @@
 <template>
   <div class="chat split-pane">
-    <ChatSidebar :chat="assistant.chat" :generating-chat-ids="generatingChatIds" @new-chat="onNewChat" @run-agent="onRunAgent" ref="sidebar" />
-    <ChatArea :chat="assistant.chat" :is-left-most="!isSidebarVisible" ref="chatArea" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop-generation="onStopGeneration" />
+    <ChatSidebar :chat="assistant.chat" :generating-chat-ids="generatingChatIds" ref="sidebar" />
+    <ChatArea :chat="assistant.chat" :is-left-most="!isSidebarVisible" ref="chatArea" @prompt="onSendPrompt" @stop-generation="onStopGeneration" @toggle-sidebar="onToggleSidebar" />
     <ChatEditor :chat="assistant.chat" :dialog-title="chatEditorTitle" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
     <CreateAgentRun :title="agent?.name ?? ''" ref="builder" />
     <AgentPicker ref="picker" />
@@ -10,27 +10,16 @@
 
 <script setup lang="ts">
 
-import { LlmChunkContent } from 'multi-llm-ts'
-import { A2APromptOpts, Agent } from 'types/agents'
-import { strDict } from 'types/index'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
-
-export type ChatSessionStatus = 'idle' | 'generating'
-
-export interface ChatSession {
-  assistant: Assistant
-  abortController: AbortController | null
-  status: ChatSessionStatus
-}
-import Chat from '@models/chat'
-import Message from '@models/message'
 import ChatArea from '@components/ChatArea.vue'
 import ChatSidebar from '@components/ChatSidebar.vue'
 import CreateAgentRun from '@components/CreateAgentRun.vue'
-import { MenuBarMode } from '@components/MenuBar.vue'
 import { SendPromptParams } from '@components/Prompt.vue'
-import Dialog from '@renderer/utils/dialog'
 import useEventBus from '@composables/event_bus'
+import useEventListener from '@composables/event_listener'
+import useIpcListener from '@composables/ipc_listener'
+import Chat from '@models/chat'
+import Message from '@models/message'
+import Dialog from '@renderer/utils/dialog'
 import useTipsManager from '@renderer/utils/tips_manager'
 import { createAgentExecutor, isAgentConversation } from '@services/agent_utils'
 import Assistant from '@services/assistant'
@@ -40,14 +29,67 @@ import { t } from '@services/i18n'
 import LlmUtils from '@services/llm_utils'
 import LlmFactory from '@services/llms/llm'
 import { store } from '@services/store'
+import { LlmChunk, LlmChunkContent } from 'multi-llm-ts'
+import { A2APromptOpts, Agent } from 'types/agents'
+import { strDict } from 'types/index'
+import { computed, nextTick, onMounted, PropType, provide, ref, watch } from 'vue'
 import AgentPicker from './AgentPicker.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 
-const { onEvent, emitEvent } = useEventBus()
+export type ChatSessionStatus = 'idle' | 'generating'
+
+export interface ChatSession {
+  assistant: Assistant
+  abortController: AbortController | null
+  status: ChatSessionStatus
+}
+
+const { onBusEvent, emitBusEvent } = useEventBus()
+const { onDomEvent } = useEventListener()
+const { onIpcEvent } = useIpcListener()
 
 // init stuff
 const tipsManager = useTipsManager(store)
 const llmManager = LlmFactory.manager(store.config)
+
+// provide chunk for MessageList (scoped to this component tree)
+const latestChunk = ref<LlmChunk | null>(null)
+provide('latestChunk', latestChunk)
+
+// provide callbacks for descendant components (scoped to this component tree)
+// handlers are defined later but called via these wrappers
+const chatCallbacks = {
+  onDeleteChat: (chatId: string | string[]) => onDeleteChat(chatId),
+  onDeleteFolder: (folderId: string) => onDeleteFolder(folderId),
+  onDeleteMessage: (message: Message) => onDeleteMessage(message),
+  onForkChat: (message: Message) => onForkChat(message),
+  onMoveChat: (chatId: string | string[]) => onMoveChat(chatId),
+  onNewChat: () => onNewChat(null),
+  onNewChatInFolder: (folderId: string) => onNewChatInFolder(folderId),
+  onRenameChat: (chat: Chat) => onRenameChat(chat),
+  onRenameFolder: (folderId: string) => onRenameFolder(folderId),
+  onResendAfterEdit: (payload: { message: Message, newContent: string }) => onResendAfterEdit(payload),
+  onRetryGeneration: (message: Message) => onRetryGeneration(message),
+  onRunAgent: (agentId?: string) => onRunAgent(agentId),
+  onSelectChat: (chat: Chat) => onSelectChat(chat),
+  onSetPrompt: (message: Message) => chatArea.value?.setPrompt(message),
+}
+provide('chat-callbacks', chatCallbacks)
+
+export type ChatCallbacks = typeof chatCallbacks
+
+export type ChatMode = 'chat' | 'computer-use'
+
+const props = defineProps({
+  mode: {
+    type: String as PropType<ChatMode>,
+    default: 'chat',
+  },
+  extra: {
+    type: Object as PropType<strDict>,
+    default: () => ({}),
+  },
+})
 
 // session management for parallel chats
 const sessions = ref<Record<string, ChatSession>>({})
@@ -134,69 +176,64 @@ const setSessionStatus = (chatId: string, status: ChatSessionStatus) => {
   }
 }
 
-const props = defineProps({
-  extra: Object
-})
+const onDeleteChatIpc = () => {
+  if (assistant.value.chat) {
+    onDeleteChat(assistant.value.chat.uuid)
+  }
+}
+
+const onLinkClick = (e: Event) => {
+  const target = (e.target || (e as any).srcElement) as HTMLElement
+  const href = target.getAttribute('href')
+  if (href?.startsWith('#settings')) {
+    const parts = href.split('_')
+    window.api.settings.open({ initialTab: parts[1], engine: parts.length > 2 ? parts[2] : '' })
+    e.preventDefault()
+    return false
+  } else if (href === '#retry_without_plugins') {
+    if (assistant.value.chat) {
+      assistant.value.chat.disableTools()
+      onRetryGeneration(assistant.value.chat.messages[assistant.value.chat.messages.length - 1])
+    } else {
+      console.log('No chat to retry')
+    }
+    e.preventDefault()
+    return false
+  } else if (href === '#retry_without_params') {
+    if (assistant.value.chat) {
+      assistant.value.chat.modelOpts = undefined
+      onRetryGeneration(assistant.value.chat.messages[assistant.value.chat.messages.length - 1])
+    } else {
+      console.log('No chat to retry')
+    }
+    e.preventDefault()
+    return false
+  }
+}
 
 onMounted(() => {
 
   // init a new chat
   onNewChat()
 
-  // events
-  onEvent('new-chat', onNewChat)
-  onEvent('new-chat-in-folder', onNewChatInFolder)
-  onEvent('rename-chat', onRenameChat)
-  onEvent('move-chat', onMoveChat)
-  onEvent('delete-chat', onDeleteChat)
-  onEvent('fork-chat', onForkChat)
-  onEvent('delete-message', onDeleteMessage)
-  onEvent('rename-folder', onRenameFolder)
-  onEvent('delete-folder', onDeleteFolder)
-  onEvent('select-chat', onSelectChat)
-  onEvent('retry-generation', onRetryGeneration)
-  onEvent('resend-after-edit', onResendAfterEdit)
-  onEvent('toggle-sidebar', onToggleSidebar)
-  onEvent('main-view-changed', onMainViewChanged)
+  // events (only global ones - others use chat-callbacks via provide/inject)
+  onBusEvent('new-chat', onNewChat)
 
-  // main events
-  window.api.on('new-chat', onNewChat)
-  window.api.on('delete-chat', () => {
-    if (assistant.value.chat) {
-      onDeleteChat(assistant.value.chat.uuid)
+  // watch mode prop for computer-use initialization
+  watch(() => props.mode, (mode) => {
+    if (mode === 'computer-use') {
+      onComputerUseMode()
     }
   })
-  window.api.on('computer-stop', onStopGeneration)
+
+  // IPC events
+  onIpcEvent('new-chat', onNewChat)
+  onIpcEvent('delete-chat', onDeleteChatIpc)
+  onIpcEvent('computer-stop', onStopGeneration)
+  onIpcEvent('update-available', onUpdateAvailable)
 
   // intercept links
-  document.addEventListener('click', (e) => {
-    const target = (e.target || e.srcElement) as HTMLElement
-    const href = target.getAttribute('href')
-    if (href?.startsWith('#settings')) {
-      const parts = href.split('_')
-      window.api.settings.open({ initialTab: parts[1], engine: parts.length > 2 ? parts[2] : '' })
-      e.preventDefault()
-      return false
-    } else if (href === '#retry_without_plugins') {
-      if (assistant.value.chat) {
-        assistant.value.chat.disableTools()
-        onRetryGeneration(assistant.value.chat.messages[assistant.value.chat.messages.length - 1])
-      } else {
-        console.log('No chat to retry')
-      }
-      e.preventDefault()
-      return false
-    } else if (href === '#retry_without_params') {
-      if (assistant.value.chat) {
-        assistant.value.chat.modelOpts = undefined
-        onRetryGeneration(assistant.value.chat.messages[assistant.value.chat.messages.length - 1])
-      } else {
-        console.log('No chat to retry')
-      }
-      e.preventDefault()
-      return false
-    }
-  })
+  onDomEvent(document, 'click', onLinkClick)
 
   // show tips
   setTimeout(() => {
@@ -204,7 +241,6 @@ onMounted(() => {
   }, 500)
 
   // check for updates
-  window.api.on('update-available', onUpdateAvailable)
   setTimeout(() => {
     if (typeof window !== 'undefined' && window.api.update.isAvailable()) {
       onUpdateAvailable()
@@ -252,7 +288,7 @@ const onNewChat = async (payload?: any) => {
   chatArea.value?.setExpert(null)
   chatArea.value?.setDeepResearch(false)
   await nextTick()
-  emitEvent('new-llm-chunk', null)
+  latestChunk.value = null
   if (submit) {
     chatArea.value?.sendPrompt()
   }
@@ -270,7 +306,7 @@ const importChat = (chatData: any) => {
   updateChatEngineModel()
 
   // Emit event
-  emitEvent('new-llm-chunk', null)
+  latestChunk.value = null
 }
 
 const onNewChatInFolder = (folderId: string) => {
@@ -327,7 +363,7 @@ const onSelectChat = (chat: Chat) => {
   // switch to session for this chat (creates if needed, cleans up old idle session)
   setActiveSession(chat.uuid, chat)
   nextTick(() => {
-    emitEvent('new-llm-chunk', null)
+    latestChunk.value = null
   })
 }
 
@@ -446,7 +482,7 @@ const deleteChats = (chatIds: string[]) => {
 
   // if current chat was deleted, create new chat
   if (chatIds.includes(activeSessionId.value)) {
-    emitEvent('new-chat', null)
+    onNewChat(null)
   }
 
 }
@@ -487,7 +523,7 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
 
   // now send prompt
   if (messageIsFromUser) {
-    //emitEvent('set-prompt', message)
+    //emitBusEvent('set-prompt', message)
     onSendPrompt({
       instructions: chat.instructions,
       prompt: message.content,
@@ -634,7 +670,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
     // only emit chunk events for the active session
     if (sessionChatId === activeSessionId.value) {
-      emitEvent('new-llm-chunk', chunk)
+      latestChunk.value = chunk
     }
 
     // computer use
@@ -648,11 +684,11 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
       // not very nice but gets the message list scrolling (only for active session)
       if (sessionChatId === activeSessionId.value) {
-        emitEvent('new-llm-chunk', {
+        latestChunk.value = {
           type: 'content',
           text: '',
           done: false,
-        } as LlmChunkContent)
+        } as LlmChunkContent
       }
 
       // for computer use
@@ -749,11 +785,11 @@ const runAgent = async (agent: Agent, values: Record<string, string>, a2aContext
 
       // not very nice but gets the message list scrolling (only for active session)
       if (sessionChatId === activeSessionId.value) {
-        emitEvent('new-llm-chunk', {
+        latestChunk.value = {
           type: 'content',
           text: '',
           done: false,
-        } as LlmChunkContent)
+        } as LlmChunkContent
       }
 
       // make sure the chat is part of history
@@ -890,12 +926,7 @@ const onToggleSidebar = () => {
   }
 }
 
-const onMainViewChanged = (mode: MenuBarMode) => {
-  
-  if (mode !== 'computer-use') {
-    return
-  }
-
+const onComputerUseMode = () => {
   assistant.value.initChat()
   assistant.value.chat.engine = 'anthropic'
   assistant.value.chat.model = 'computer-use'
@@ -909,9 +940,8 @@ const onMainViewChanged = (mode: MenuBarMode) => {
   assistant.value.chat.addMessage(message)
 
   nextTick(() => {
-    emitEvent('new-llm-chunk', null)
+    latestChunk.value = null
   })
-
 }
 
 defineExpose({

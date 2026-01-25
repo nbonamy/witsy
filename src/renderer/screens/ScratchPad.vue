@@ -1,16 +1,16 @@
 <template>
   <div class="scratchpad split-pane">
 
-    <ScratchpadSidebar :fileUrl="fileUrl" :scratchpads="scratchpads" :selectedScratchpad="selectedScratchpad" :contextMenuTarget="targetScratchpad" />
+    <ScratchpadSidebar :fileUrl="fileUrl" :scratchpads="scratchpads" :selectedScratchpad="selectedScratchpad" :contextMenuTarget="targetScratchpad" @action="onAction" />
 
     <div class="sp-main">
       <main>
         <div class="document" :class="[ fontFamily, `size-${fontSize}` ]">
           <EditableText ref="editor" :placeholder="placeholder"/>
         </div>
-        <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
+        <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" :processing="processing" @action="onAction" />
       </main>
-      <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @stop="onStopPrompting" ref="prompt" />
+      <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @stop="onStopPrompting" @conversation-mode="onConversationMode" ref="prompt" />
       <audio/>
     </div>
 
@@ -45,8 +45,9 @@ import Message from '@models/message'
 import useAudioPlayer, { AudioState, AudioStatus } from '../audio/audio_player'
 import ContextMenuPlus from '@components/ContextMenuPlus.vue'
 import EditableText from '@components/EditableText.vue'
-import Prompt, { SendPromptParams } from '@components/Prompt.vue'
-import useEventBus from '@composables/event_bus'
+import Prompt, { ConversationMode, SendPromptParams } from '@components/Prompt.vue'
+import useEventListener from '@composables/event_listener'
+import useIpcListener from '@composables/ipc_listener'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
 import ScratchpadSettings from '../scratchpad/Settings.vue'
 import ScratchpadSidebar from '../scratchpad/Sidebar.vue'
@@ -62,8 +63,9 @@ export interface ToolbarAction {
   value: any
 }
 
-// bus
-const { onEvent, emitEvent } = useEventBus()
+// events
+const { onDomEvent } = useEventListener()
+const { onIpcEvent } = useIpcListener()
 
 // load store
 store.load()
@@ -83,7 +85,7 @@ const undoStack = ref<Array<any>>([])
 const redoStack = ref<Array<any>>([])
 const audioState = ref<AudioState>('idle')
 const copyState = ref<string>('idle')
-const conversationMode = ref(null)
+const conversationMode = ref<ConversationMode>('off')
 const currentScratchpadId = ref<string>(null)
 const currentTitle = ref<string>(null)
 const lastSavedContent = ref<string | null>(null)
@@ -111,13 +113,42 @@ const undoStackCheckDelay = 1000
 let undoStackCheckTimeout: NodeJS.Timeout = null
 let fileUrl: string = null
 
+const onEditorKeyDown = (ev: Event) => {
+  const keyEv = ev as KeyboardEvent
+  const isCommand = !keyEv.shiftKey && !keyEv.altKey && (keyEv.metaKey || keyEv.ctrlKey)
+  const isShiftCommand = keyEv.shiftKey && !keyEv.altKey && (keyEv.metaKey || keyEv.ctrlKey)
+
+  if (isCommand && keyEv.key == 'n') {
+    keyEv.preventDefault()
+    onClear()
+  } else if (isCommand && keyEv.key == 's') {
+    keyEv.preventDefault()
+    onSave()
+  } else if (isCommand && keyEv.key == 'z') {
+    keyEv.preventDefault()
+    onUndo()
+  } else if ((isCommand && keyEv.key == 'y') || (isShiftCommand && keyEv.key.toLocaleLowerCase() == 'z')) {
+    keyEv.preventDefault()
+    onRedo()
+  } else if (isCommand && keyEv.key == 'r') {
+    keyEv.preventDefault()
+    onReadAloud()
+  }
+}
+
+const onDocumentKeyUp = () => {
+  resetUndoStackCheckTimeout()
+}
+
+const onConversationMode = (mode: ConversationMode) => {
+  conversationMode.value = mode
+}
+
 onMounted(() => {
 
   // events
-  onEvent('action', onAction)
-  onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
   audioPlayer.addListener(onAudioPlayerStatus)
-  window.api.on('start-dictation', onStartDictation)
+  onIpcEvent('start-dictation', onStartDictation)
 
   // load settings
   fontFamily.value = store.config.scratchpad.fontFamily || 'serif'
@@ -126,55 +157,11 @@ onMounted(() => {
   // load scratchpads list
   loadScratchpadsList()
 
-  // // handle mode switches with unsaved changes
-  // onEvent('main-view-changed', (newMode: string) => {
-  //   if (newMode !== 'scratchpad' && modified.value) {
-  //     // Mode is about to change away from scratchpad, check for unsaved changes
-  //     emitEvent('set-main-window-mode', 'scratchpad') // Revert to scratchpad
-  //     Dialog.show({
-  //       title: t('common.confirmation.unsavedChanges'),
-  //       showCancelButton: true,
-  //       confirmButtonText: t('common.confirmation.doNotClose'),
-  //       cancelButtonText: t('common.confirmation.closeAnyway'),
-  //       reverseButtons: true
-  //     }).then((result) => {
-  //       if (result.isDismissed) {
-  //         modified.value = false // Clear modified flag
-  //         emitEvent('set-main-window-mode', newMode) // Allow mode change
-  //       }
-  //     })
-  //   }
-  // })
-
   // override some system shortcuts
-  editor.value.$el.addEventListener('keydown', (ev: KeyboardEvent) => {
-
-    const isCommand = !ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
-    const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
-
-    if (isCommand && ev.key == 'n') {
-      ev.preventDefault()
-      onClear()
-    } else if (isCommand && ev.key == 's') {
-      ev.preventDefault()
-      onSave()
-    } else if (isCommand && ev.key == 'z') {
-      ev.preventDefault()
-      onUndo()
-    } else if ((isCommand && ev.key == 'y') || (isShiftCommand && ev.key.toLocaleLowerCase() == 'z')) {
-      ev.preventDefault()
-      onRedo()
-    } else if (isCommand && ev.key == 'r') {
-      ev.preventDefault()
-      onReadAloud()
-    }
-
-  })
+  onDomEvent(editor.value.$el, 'keydown', onEditorKeyDown)
 
   // for undo/redo stack building
-  document.addEventListener('keyup', (e) => {
-    resetUndoStackCheckTimeout()
-  })
+  onDomEvent(document, 'keyup', onDocumentKeyUp)
 
   // init
   resetState()
@@ -196,7 +183,7 @@ watch(() => props.extra, (newExtra) => {
 }, { deep: true })
 
 onBeforeUnmount(() => {
-  window.api.off('start-dictation', onStartDictation)
+  // IPC and DOM listeners are cleaned up by composables
   audioPlayer.removeListener(onAudioPlayerStatus)
   clearTimeout(undoStackCheckTimeout)
 })
@@ -359,8 +346,6 @@ const onAction = (action: string|ToolbarAction) => {
       if (contents.content.trim().length) {
         const prompt = i18nInstructions(store.config, `instructions.scratchpad.${toolbarAction.value}`)
         onSendPrompt({ prompt: prompt })
-      } else {
-        emitEvent('llm-done', null)
       }
       return
   }
@@ -785,7 +770,6 @@ const onSendPrompt = async (params: SendPromptParams) => {
   } finally {
 
     // done
-    emitEvent('llm-done', null)
     processing.value = false
 
   }

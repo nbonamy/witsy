@@ -52,21 +52,20 @@
 
 <script setup lang="ts">
 
-import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCirclePlusIcon, MessagesSquareIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
-import { v4 as uuidv4 } from 'uuid'
-import { nextTick, onMounted, ref } from 'vue'
-import Dialog from '@renderer/utils/dialog'
+import useEventListener from '@composables/event_listener'
 import Chat from '@models/chat'
+import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCirclePlusIcon, MessagesSquareIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
 import { ChatListMode } from 'types/config'
+import { v4 as uuidv4 } from 'uuid'
+import { inject, nextTick, onMounted, ref } from 'vue'
 import ChatList from './ChatList.vue'
+import type { ChatCallbacks } from '@screens/Chat.vue'
 
-import useTipsManager from '@renderer/utils/tips_manager'
-const tipsManager = useTipsManager(store)
-
-import useEventBus from '@composables/event_bus'
-const { emitEvent, onEvent } = useEventBus()
+const { onDomEvent, offDomEvent } = useEventListener()
+const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
 
 defineProps({
   chat: {
@@ -87,14 +86,12 @@ const selectMode = ref<boolean>(false)
 const filtering = ref(false)
 const filter = ref('')
 
-const emit = defineEmits(['new-chat', 'run-agent'])
 
 let panelOffset = 0
 
 onMounted(async () => {
   visible.value = window.api.store.get('sidebarVisible', true)
   width.value = window.api.store.get('sidebarWidth', 400)
-  onEvent('chat-list-mode', setChatListMode)
 
   // depends on feature activation
   if (store.isFeatureEnabled('chat.folders')) {
@@ -115,13 +112,6 @@ onMounted(async () => {
 
 })
 
-const setChatListMode = (mode: ChatListMode) => {
-  tipsManager.showTip('folderList')
-  displayMode.value = mode
-  store.config.appearance.chatList.mode = mode
-  store.saveSettings()
-}
-
 const onToggleFilter = () => {
   filter.value = ''
   store.chatState.filter = null
@@ -139,12 +129,12 @@ const onClearFilter = () => {
 
 const onNewChat = () => {
   onCancelSelect()
-  emit('new-chat')
+  chatCallbacks?.onNewChat()
 }
 
 const onRunAgent = () => {
   onCancelSelect()
-  emit('run-agent')
+  chatCallbacks?.onRunAgent()
 }
 
 const onNewFolder = async () => {
@@ -183,7 +173,7 @@ const onCancelSelect = () => {
 const onDelete = () => {
   const selection = chatList.value!.getSelection()
   if (selection.length) {
-    emitEvent('delete-chat', selection)
+    chatCallbacks?.onDeleteChat(selection)
   } else {
     selectMode.value = false
   }
@@ -192,7 +182,7 @@ const onDelete = () => {
 const onMove = () => {
   const selection = chatList.value!.getSelection()
   if (selection.length) {
-    emitEvent('move-chat', selection)
+    chatCallbacks?.onMoveChat(selection)
   } else {
     selectMode.value = false
   }
@@ -203,17 +193,18 @@ const onResizeSidebarStart = async (event: MouseEvent) => {
   await nextTick()
   // Calculate offset based on where user clicked vs current width
   panelOffset = event.clientX - width.value
-  window.addEventListener('mousemove', onResizeSidebarMove)
-  window.addEventListener('mouseup', onResizeSidebarEnd)
+  onDomEvent(window, 'mousemove', onResizeSidebarMove)
+  onDomEvent(window, 'mouseup', onResizeSidebarEnd)
 }
 
-const onResizeSidebarMove = (event: MouseEvent) => {
-  width.value = Math.max(300, Math.min(500, event.clientX - panelOffset))
+const onResizeSidebarMove = (event: Event) => {
+  const mouseEvent = event as MouseEvent
+  width.value = Math.max(300, Math.min(500, mouseEvent.clientX - panelOffset))
 }
 
 const onResizeSidebarEnd = () => {
-  window.removeEventListener('mousemove', onResizeSidebarMove)
-  window.removeEventListener('mouseup', onResizeSidebarEnd)
+  offDomEvent(window, 'mousemove', onResizeSidebarMove)
+  offDomEvent(window, 'mouseup', onResizeSidebarEnd)
   manualResize.value = false
   saveSidebarState()
 }

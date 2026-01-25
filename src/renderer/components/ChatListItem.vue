@@ -14,12 +14,13 @@
 
 <script setup lang="ts">
 
+import { inject } from 'vue'
 import Chat from '@models/chat'
 import Spinner from './Spinner.vue'
 import { store } from '@services/store'
+import type { ChatCallbacks } from '@screens/Chat.vue'
 
-import useEventBus from '@composables/event_bus'
-const { emitEvent } = useEventBus()
+const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
 
 const props = defineProps({
   chat: {
@@ -48,7 +49,7 @@ const emit = defineEmits(['select', 'menu']);
 
 const onRenameChat = () => {
   if (props.selectMode) return
-  emitEvent('rename-chat', props.chat)
+  chatCallbacks?.onRenameChat(props.chat)
 }
 
 </script>

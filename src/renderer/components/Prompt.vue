@@ -12,7 +12,7 @@
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
         <div v-if="command" class="icon left command" @click="onClickActiveCommand"><CommandIcon /></div>
-        <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" @paste="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
+        <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" @paste="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode !== 'off'" />
       </div>
     </div>
     <div class="actions">
@@ -188,6 +188,8 @@
 
 import Waveform from '@components/Waveform.vue'
 import useEventBus from '@composables/event_bus'
+import useEventListener from '@composables/event_listener'
+import useIpcListener from '@composables/ipc_listener'
 import Attachment from '@models/attachment'
 import Chat from '@models/chat'
 import Message from '@models/message'
@@ -228,9 +230,13 @@ export type RunAgentParams = {
   agentId: string,
 }
 
+export type ConversationMode = 'off' | 'auto' | 'ptt'
+
 export type HistoryProvider = (event: KeyboardEvent) => string[]
 
-const { onEvent, emitEvent } = useEventBus()
+const { emitBusEvent } = useEventBus()
+const { onDomEvent, offDomEvent } = useEventListener()
+const { onIpcEvent } = useIpcListener()
 
 const props = defineProps({
   chat: {
@@ -238,8 +244,9 @@ const props = defineProps({
     required: false
   },
   conversationMode: {
-    type: String,
-    required: false
+    type: String as PropType<ConversationMode>,
+    required: false,
+    default: 'off'
   },
   placeholder: {
     type: String,
@@ -329,7 +336,11 @@ const processing = ref(false)
 const isDragOver = ref(false)
 const commandsAnchor = ref('.prompt .textarea-wrapper')
 
-const emit = defineEmits(['set-engine-model', 'tools-updated', 'prompt', 'run-agent','stop'])
+const emit = defineEmits([
+  'set-engine-model', 'tools-updated',
+  'prompt', 'run-agent', 'stop',
+  'conversation-mode'
+])
 
 const engine = () => props.chat?.engine || llmManager.getChatEngineModel().engine
 const model = () => props.chat?.model || llmManager.getChatEngineModel().model
@@ -413,7 +424,7 @@ const commands = computed(() => {
 })
 
 const conversationMenu = computed(() => {
-  if (props.conversationMode) {
+  if (props.conversationMode !== 'off') {
     return [
       { label: t('prompt.conversation.stop'), action: null }
     ]
@@ -444,10 +455,9 @@ const onEscapeKey = (event: KeyboardEvent) => {
 onMounted(() => {
 
   // event
-  onEvent('set-prompt', onSetPrompt)
-  window.api.on('docrepo-modified', loadDocRepos)
-  document.addEventListener('keydown', onShortcutDown)
-  document.addEventListener('keydown', onEscapeKey)
+  onIpcEvent('docrepo-modified', loadDocRepos)
+  onDomEvent(document, 'keydown', onShortcutDown)
+  onDomEvent(document, 'keydown', onEscapeKey)
   autoGrow(input.value)
 
   // other stuff
@@ -463,9 +473,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  window.api.off('docrepo-modified', loadDocRepos)
-  document.removeEventListener('keydown', onShortcutDown)
-  document.removeEventListener('keydown', onEscapeKey)
+  // DOM and IPC listeners are cleaned up by composables
 })
 
 const onShortcutDown = (ev: KeyboardEvent) => {
@@ -541,26 +549,26 @@ const setDeepResearch = (active: boolean) => {
   deepResearchActive.value = active
 }
 
-const initDictation = async () => {
+const onKeyUpPTT = (event: Event) => {
+  if (hasDictation.value === false) return
+  //console.log('Stopping push-to-talk dictation')
+  offDomEvent(document, 'keyup', onKeyUpPTT)
+  stopDictation(false)
+}
 
-  // push-to-talk stuff
-
-  const onKeyUpPTT = () => {
-    if (hasDictation.value === false) return
-    //console.log('Stopping push-to-talk dictation')
-    document.removeEventListener('keyup', onKeyUpPTT)
-    stopDictation(false)
+const onKeyDownPTT = (event: Event) => {
+  const keyEvent = event as KeyboardEvent
+  if (hasDictation.value === false) return
+  if (props.conversationMode == 'ptt' && keyEvent.code === 'Space' && dictating.value === false) {
+    //console.log('Starting push-to-talk dictation')
+    onDomEvent(document, 'keyup', onKeyUpPTT)
+    startDictation()
   }
+}
 
-  document.addEventListener('keydown', (event) => {
-    if (hasDictation.value === false) return
-    if (props.conversationMode == 'ptt' && event.code === 'Space' && dictating.value === false) {
-      //console.log('Starting push-to-talk dictation')
-      document.addEventListener('keyup', onKeyUpPTT)
-      startDictation()
-    }
-  })
-
+const initDictation = async () => {
+  // push-to-talk stuff
+  onDomEvent(document, 'keydown', onKeyDownPTT)
 }
 
 const loadDocRepos = () => {
@@ -836,7 +844,7 @@ const startDictation = async () => {
     listener: {
 
       onNoiseDetected: () => {
-        emitEvent('audio-noise-detected', null)
+        emitBusEvent('audio-noise-detected')
       },
       
       onAudioChunk: async (chunk) => {
@@ -891,7 +899,7 @@ const startDictation = async () => {
           }
 
           // execute?
-          if (props.conversationMode/* || store.config.stt.silenceAction === 'stop_execute' || store.config.stt.silenceAction === 'execute_continue'*/) {
+          if (props.conversationMode !== 'off'/* || store.config.stt.silenceAction === 'stop_execute' || store.config.stt.silenceAction === 'execute_continue'*/) {
 
             // send prompt
             onSendPrompt()
@@ -963,7 +971,7 @@ const onConversationMenu = () => {
 
 const handleConversationClick = (action: string) => {
   closeContextMenu()
-  emitEvent('conversation-mode', action)
+  emit('conversation-mode', (action || 'off') as ConversationMode)
   prompt.value = defaultPrompt(action)
   if (action === 'auto') {
     startDictation()
@@ -976,8 +984,8 @@ const handleConversationClick = (action: string) => {
 }
 
 const stopConversation = () => {
-  emitEvent('audio-noise-detected', null)
-  emitEvent('conversation-mode', null)
+  emitBusEvent('audio-noise-detected')
+  emit('conversation-mode', 'off' as ConversationMode)
 }
 
 const isContextMenuOpen = () => {
@@ -1317,7 +1325,6 @@ const autoGrow = (element: HTMLElement) => {
     // reset before calculating
     element.style.height = '0px'
     element.style.height = Math.min(150, Math.max(24, element.scrollHeight + 4)) + 'px'
-    emitEvent('prompt-resize', element.style.height)
   }
 }
 

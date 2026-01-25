@@ -17,7 +17,7 @@ import Dialog from '@renderer/utils/dialog'
 vi.unmock('@renderer/composables/event_bus')
 import useEventBus  from '@composables/event_bus'
 import { kHistoryVersion } from '@/consts'
-const { emitEvent } = useEventBus()
+const { emitBusEvent } = useEventBus()
 
 enableAutoUnmount(afterEach)
 
@@ -104,7 +104,7 @@ test('Resets assistant', async () => {
 
   // load with defaults
   setLlmDefaults('mock', 'chat')
-  emitEvent('new-chat', null)
+  emitBusEvent('new-chat', null)
   // new-chat now creates a fresh Chat directly and uses setActiveSession
   expect(wrapper.vm.assistant.chat.title).toBeUndefined()
   expect(wrapper.vm.assistant.chat.engine).toBe('mock')
@@ -121,7 +121,7 @@ test('Resets assistant', async () => {
 
   // load without defaults
   setLlmDefaults('openai', 'gpt-5.2-mini')
-  emitEvent('new-chat', null)
+  emitBusEvent('new-chat', null)
   expect(wrapper.vm.assistant.chat.title).toBeUndefined()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
   expect(wrapper.vm.assistant.chat.model).toBe('gpt-5.2-mini')
@@ -247,7 +247,7 @@ test('Stop generation aborts controller', async () => {
 test('New chat in folder without defaults', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
   setLlmDefaults('mock', 'chat')
-  emitEvent('new-chat-in-folder', 'folder1')
+  wrapper.vm.onNewChatInFolder('folder1')
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[1].title).toBeTruthy()
   expect(store.history.chats[1].engine).toBeTruthy()
@@ -261,7 +261,7 @@ test('New chat in folder without defaults', async () => {
 test('New chat in folder with defaults', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
   setLlmDefaults('mock', 'chat')
-  emitEvent('new-chat-in-folder', 'folder2')
+  wrapper.vm.onNewChatInFolder('folder2')
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[1].title).toBeTruthy()
   expect(store.history.chats[1].engine).toBe('mock')
@@ -283,9 +283,9 @@ test('New chat in folder with defaults', async () => {
 })
 
 test('Rename chat', async () => {
-  mount(ChatView)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   vi.mocked(Dialog.show).mockResolvedValueOnce({ value: 'user-input' })
-  emitEvent('rename-chat', store.history.chats[0])
+  wrapper.vm.onRenameChat(store.history.chats[0])
   expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.chat.rename',
     showCancelButton: true,
@@ -298,9 +298,9 @@ test('Rename chat', async () => {
 
 test('Move chat', async () => {
   expect(store.history.folders[0].chats).not.toHaveLength(1)
-  mount(ChatView)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   vi.mocked(Dialog.show).mockResolvedValueOnce({ value: 'folder1' })
-  emitEvent('move-chat', 'chat')
+  wrapper.vm.onMoveChat('chat')
   expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.chat.moveToFolder',
     showCancelButton: true,
@@ -317,20 +317,20 @@ test('Move chat', async () => {
 })
 
 test('Delete chat', async () => {
-  mount(ChatView)
-  emitEvent('delete-chat', 'chat')
+  const wrapper: VueWrapper<any> = mount(ChatView)
+  wrapper.vm.onDeleteChat('chat')
   expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.chat.confirmDeleteSingle',
     text: 'common.confirmation.cannotUndo',
   }))
   await flushPromises()
-  expect(store.history.chats).toHaveLength(0) 
+  expect(store.history.chats).toHaveLength(0)
 })
 
 test('Rename folder', async () => {
-  mount(ChatView)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   vi.mocked(Dialog.show).mockResolvedValueOnce({ value: 'user-input' })
-  emitEvent('rename-folder', 'folder1')
+  wrapper.vm.onRenameFolder('folder1')
   expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.folder.rename',
     showCancelButton: true,
@@ -342,8 +342,8 @@ test('Rename folder', async () => {
 })
 
 test('Delete folder', async () => {
-  mount(ChatView)
-  emitEvent('delete-folder', 'folder1')
+  const wrapper: VueWrapper<any> = mount(ChatView)
+  wrapper.vm.onDeleteFolder('folder1')
   expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.folder.confirmDelete',
     text: 'common.confirmation.cannotUndo',
@@ -355,7 +355,7 @@ test('Delete folder', async () => {
 test('Select chat', async () => {
   store.config.llm.engine = 'mock'
   const wrapper: VueWrapper<any> = mount(ChatView)
-  emitEvent('select-chat', store.history.chats[0])
+  wrapper.vm.onSelectChat(store.history.chats[0])
   expect(Assistant.prototype.setChat).toHaveBeenLastCalledWith(store.history.chats[0])
   expect(wrapper.vm.assistant.chat.tools).toBeNull()
   expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
@@ -370,7 +370,7 @@ test('Select chat', async () => {
 
 test('Fork Chat on Assistant Message', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  emitEvent('select-chat', store.history.chats[0])
+  wrapper.vm.onSelectChat(store.history.chats[0])
   wrapper.vm.forkChat(store.history.chats[0], store.history.chats[0].messages[2], 'title2', 'engine2', 'model2')
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[1].title).toBe('title2')
@@ -384,7 +384,7 @@ test('Fork Chat on Assistant Message', async () => {
 test('Fork Chat on User Message', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
   expect(store.history.chats).toHaveLength(1)
-  emitEvent('select-chat', store.history.chats[0])
+  wrapper.vm.onSelectChat(store.history.chats[0])
   expect(store.history.chats).toHaveLength(1)
   wrapper.vm.forkChat(store.history.chats[0], store.history.chats[0].messages[3], 'title2', 'engine2', 'model2')
   expect(store.history.chats).toHaveLength(2)
@@ -407,7 +407,7 @@ test('Fork Chat on User Message', async () => {
 
 test('Delete Message', async () => {
   const wrapper: VueWrapper<any> = mount(ChatView)
-  emitEvent('select-chat', store.history.chats[0])
+  wrapper.vm.onSelectChat(store.history.chats[0])
   const chat = wrapper.vm.assistant.chat
   expect(chat.messages).toHaveLength(5)
   await wrapper.vm.onDeleteMessage(chat.messages[3])

@@ -39,11 +39,11 @@ describe('useDocRepoEvents', () => {
   test('onMounted - registers event listeners', async () => {
     const wrapper = mount(TestComponent)
 
-    expect(window.api.on).toHaveBeenCalledWith('docrepo-process-item-start', expect.any(Function))
-    expect(window.api.on).toHaveBeenCalledWith('docrepo-process-item-done', expect.any(Function))
-    expect(window.api.on).toHaveBeenCalledWith('docrepo-add-document-done', expect.any(Function))
-    expect(window.api.on).toHaveBeenCalledWith('docrepo-add-document-error', expect.any(Function))
-    expect(window.api.on).toHaveBeenCalledWith('docrepo-del-document-done', expect.any(Function))
+    expect(window.api._on).toHaveBeenCalledWith('docrepo-process-item-start', expect.any(Function))
+    expect(window.api._on).toHaveBeenCalledWith('docrepo-process-item-done', expect.any(Function))
+    expect(window.api._on).toHaveBeenCalledWith('docrepo-add-document-done', expect.any(Function))
+    expect(window.api._on).toHaveBeenCalledWith('docrepo-add-document-error', expect.any(Function))
+    expect(window.api._on).toHaveBeenCalledWith('docrepo-del-document-done', expect.any(Function))
     expect(window.api.docrepo.getCurrentQueueItem).toHaveBeenCalled()
 
     wrapper.unmount()
@@ -91,11 +91,11 @@ describe('useDocRepoEvents', () => {
 
     wrapper.unmount()
 
-    expect(window.api.off).toHaveBeenCalledWith('docrepo-process-item-start', expect.any(Function))
-    expect(window.api.off).toHaveBeenCalledWith('docrepo-process-item-done', expect.any(Function))
-    expect(window.api.off).toHaveBeenCalledWith('docrepo-add-document-done', expect.any(Function))
-    expect(window.api.off).toHaveBeenCalledWith('docrepo-add-document-error', expect.any(Function))
-    expect(window.api.off).toHaveBeenCalledWith('docrepo-del-document-done', expect.any(Function))
+    expect(window.api._off).toHaveBeenCalledWith('docrepo-process-item-start', expect.any(String))
+    expect(window.api._off).toHaveBeenCalledWith('docrepo-process-item-done', expect.any(String))
+    expect(window.api._off).toHaveBeenCalledWith('docrepo-add-document-done', expect.any(String))
+    expect(window.api._off).toHaveBeenCalledWith('docrepo-add-document-error', expect.any(String))
+    expect(window.api._off).toHaveBeenCalledWith('docrepo-del-document-done', expect.any(String))
   })
 
   // Note: Event handler tests would require triggering actual window.api events

@@ -15,7 +15,7 @@ vi.mock('@services/llms/manager.ts', async () => {
   LlmManager.prototype.isEngineReady = vi.fn(() => true)
   LlmManager.prototype.isEngineConfigured = vi.fn(() => true)
   LlmManager.prototype.getEngineName = () => 'mock'
-  LlmManager.prototype.getCustomEngines = () => []
+  LlmManager.prototype.getCustomEngines = () => [] as any[]
   LlmManager.prototype.getFavoriteId = () => 'favid'
   LlmManager.prototype.isFavoriteModel = vi.fn(() => false)
   LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
@@ -62,10 +62,10 @@ test('Registers window API event listeners', async () => {
   await wrapper.vm.$nextTick()
 
   // Verify event listeners were registered
-  expect(window.api.on).toHaveBeenCalledWith('new-chat', expect.any(Function))
-  expect(window.api.on).toHaveBeenCalledWith('delete-chat', expect.any(Function))
-  expect(window.api.on).toHaveBeenCalledWith('computer-stop', expect.any(Function))
-  expect(window.api.on).toHaveBeenCalledWith('update-available', expect.any(Function))
+  expect(window.api._on).toHaveBeenCalledWith('new-chat', expect.any(Function))
+  expect(window.api._on).toHaveBeenCalledWith('delete-chat', expect.any(Function))
+  expect(window.api._on).toHaveBeenCalledWith('computer-stop', expect.any(Function))
+  expect(window.api._on).toHaveBeenCalledWith('update-available', expect.any(Function))
 })
 
 test('Intercepts #settings link clicks', async () => {
@@ -372,7 +372,7 @@ test('onDeleteFolder denies and deletes conversations', async () => {
 
   // Setup folder in store with a chat
   store.history.folders = [{ id: 'folder1', name: 'Test Folder', chats: ['chat1'] }]
-  store.history.chats = [{ uuid: 'chat1', delete: vi.fn() }]
+  store.history.chats = [{ uuid: 'chat1', delete: vi.fn() } as any]
 
   // Mock Dialog.show to deny (delete conversations)
   const Dialog = (await import('@renderer/utils/dialog')).default
