@@ -312,6 +312,20 @@ export type OpenSettingsPayload = {
   engine?: string
 }
 
+// ViewParams for programmatic view navigation and actions
+export type ViewParams = {
+  mode?: MainWindowMode
+  action?: string
+  [key: string]: any
+}
+
+// Specific action payloads for each view
+export type DocReposViewParams = ViewParams & {
+  action?: 'create' | 'search' | 'select' | 'addDocument'
+  repoId?: string
+  query?: string
+}
+
 export type LocalSearchResponse = {
   error?: 'captcha' | 'unknown'
   results?: LocalSearchResult[]

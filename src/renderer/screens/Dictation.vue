@@ -44,17 +44,16 @@
 
 import Loader from '@components/Loader.vue'
 import Waveform from '@components/Waveform.vue'
+import useEventListener from '@composables/event_listener'
+import useIpcListener from '@composables/ipc_listener'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+import { CheckIcon, CircleIcon, ClipboardIcon, XIcon } from 'lucide-vue-next'
 import { ExternalApp } from 'types'
 import { Application } from 'types/automation'
 import { computed, onBeforeUnmount, onMounted, ref, toRaw } from 'vue'
 import useAudioRecorder from '../audio/audio_recorder'
 import useTranscriber from '../audio/transcriber'
-import useEventListener from '@composables/event_listener'
-import useIpcListener from '@composables/ipc_listener'
-
-import { CircleIcon, ClipboardIcon, CheckIcon, XIcon } from 'lucide-vue-next'
 
 const { onDomEvent } = useEventListener()
 const { onIpcEvent } = useIpcListener()
@@ -230,7 +229,6 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  // DOM and IPC listeners cleaned up by composables
   if (state.value === 'recording') {
     audioRecorder.stop()
   }

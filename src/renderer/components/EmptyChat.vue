@@ -67,16 +67,16 @@
 <script setup lang="ts">
 
 
-import { ChevronDownIcon, ChevronUpIcon, LightbulbIcon, PlugIcon } from 'lucide-vue-next'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import useEventBus from '@composables/event_bus'
 import useIpcListener from '@composables/ipc_listener'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+import { ChevronDownIcon, ChevronUpIcon, LightbulbIcon, PlugIcon } from 'lucide-vue-next'
+import { Agent } from 'types/agents'
+import { onMounted, ref } from 'vue'
+import HomeShortcut from './HomeShortcut.vue'
 
 const { onIpcEvent } = useIpcListener()
-import { Agent } from 'types/agents'
-import HomeShortcut from './HomeShortcut.vue'
 
 type Shortcut = {
   name: string
@@ -93,10 +93,6 @@ onMounted(() => {
   load()
   onIpcEvent('agents-updated', load)
   onIpcEvent('agent-run-updated', load)
-})
-
-onBeforeUnmount(() => {
-  // IPC listeners cleaned up by composable
 })
 
 const load = () => {

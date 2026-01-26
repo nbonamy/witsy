@@ -111,18 +111,18 @@
 
 <script setup lang="ts">
 
-import { Trash2Icon } from 'lucide-vue-next'
-import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
-import { JsonViewer } from 'vue3-json-viewer'
-import 'vue3-json-viewer/dist/vue3-json-viewer.css'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import Loader from '@components/Loader.vue'
 import useIpcListener from '@composables/ipc_listener'
-
-const { onIpcEvent } = useIpcListener()
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+import { Trash2Icon } from 'lucide-vue-next'
 import { NetworkRequest, WebSocketFrame } from 'types'
+import { computed, onMounted, ref } from 'vue'
+import { JsonViewer } from 'vue3-json-viewer'
+import 'vue3-json-viewer/dist/vue3-json-viewer.css'
+
+const { onIpcEvent } = useIpcListener()
 
 // load store
 store.loadSettings()
@@ -188,10 +188,6 @@ const copyable = computed(() => {
 onMounted(() => {
   requests.value = window.api.debug.getNetworkHistory()
   onIpcEvent('network', onNetworkRequest)
-})
-
-onBeforeUnmount(() => {
-  // IPC listeners cleaned up by composable
 })
 
 const onNetworkRequest = (request: NetworkRequest) => {

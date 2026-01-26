@@ -44,7 +44,7 @@ export interface ChatSession {
   status: ChatSessionStatus
 }
 
-const { onBusEvent, emitBusEvent } = useEventBus()
+const { onBusEvent } = useEventBus()
 const { onDomEvent } = useEventListener()
 const { onIpcEvent } = useIpcListener()
 

@@ -59,19 +59,20 @@
 
 <script setup lang="ts">
 
-import { CheckIcon, FolderPlusIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
-import { nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
+import { DocReposViewParams } from '@/types'
 import ButtonIcon from '@components/ButtonIcon.vue'
-import Dialog from '@renderer/utils/dialog'
 import useIpcListener from '@composables/ipc_listener'
+import Dialog from '@renderer/utils/dialog'
+import { t } from '@services/i18n'
+import { store } from '@services/store'
+import { CheckIcon, FolderPlusIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
+import { DocumentBase } from 'types/rag'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import Config from '../docrepo/Config.vue'
 import Create from '../docrepo/Create.vue'
 import Empty from '../docrepo/Empty.vue'
 import List from '../docrepo/List.vue'
 import View from '../docrepo/View.vue'
-import { t } from '@services/i18n'
-import { store } from '@services/store'
-import { DocumentBase } from 'types/rag'
 
 const { onIpcEvent } = useIpcListener()
 
@@ -89,21 +90,67 @@ const editingTitle = ref('')
 const titleInput = ref<HTMLInputElement | null>(null)
 
 const props = defineProps({
-  extra: Object
+  extra: Object as () => DocReposViewParams | undefined
 })
+
+const processAction = async (params: DocReposViewParams) => {
+  if (!params.action) return
+
+  switch (params.action) {
+    case 'create':
+      await nextTick()
+      onCreate()
+      break
+
+    case 'select':
+      if (params.repoId) {
+        await nextTick()
+        loadDocRepos()
+        const repo = docRepos.value?.find((r: DocumentBase) => r.uuid === params.repoId)
+        if (repo) {
+          selectRepo(repo)
+        }
+      }
+      break
+
+    case 'search':
+      if (params.repoId) {
+        await nextTick()
+        loadDocRepos()
+        const repo = docRepos.value?.find((r: DocumentBase) => r.uuid === params.repoId)
+        if (repo) {
+          selectRepo(repo)
+          await nextTick()
+          onSearch()
+        }
+      }
+      break
+
+    case 'addDocument':
+      if (params.repoId) {
+        await nextTick()
+        loadDocRepos()
+        const repo = docRepos.value?.find((r: DocumentBase) => r.uuid === params.repoId)
+        if (repo) {
+          selectRepo(repo)
+          // Add document functionality would be triggered here
+          // This depends on the View component's API
+        }
+      }
+      break
+  }
+}
 
 onMounted(async () => {
   onIpcEvent('docrepo-modified', loadDocRepos)
   loadDocRepos()
 
-  // query params
-  if (props.extra && props.extra.create) {
-    onCreate()
-  }
-})
-
-onBeforeUnmount(() => {
-  // IPC listeners cleaned up by composable
+  // Watch for viewParams actions
+  watch(() => props.extra, (params) => {
+    if (params?.action) {
+      processAction(params)
+    }
+  }, { immediate: true })
 })
 
 const loadDocRepos = () => {

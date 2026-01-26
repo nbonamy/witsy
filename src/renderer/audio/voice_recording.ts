@@ -1,6 +1,6 @@
+import { ConversationMode } from '@components/Prompt.vue'
 import { store } from '@services/store'
 import { computed, onBeforeUnmount, readonly, ref } from 'vue'
-import { ConversationMode } from '../components/Prompt.vue'
 import { StreamingChunk } from '../voice/stt'
 import useAudioRecorder from './audio_recorder'
 import useTranscriber from './transcriber'
@@ -184,7 +184,6 @@ export default function useVoiceRecording(options: VoiceRecordingOptions = {}) {
     // Do nothing if processing
   }
 
-  // === CLEANUP ===
   onBeforeUnmount(() => {
     if (isRecording.value) {
       stopRecording(true)

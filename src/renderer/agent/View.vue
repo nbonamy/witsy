@@ -67,13 +67,13 @@ import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { ChevronLeftIcon, PencilIcon, PlayIcon, Trash2Icon } from 'lucide-vue-next'
 import { Agent, AgentRun } from 'types/agents'
-import { PropType, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { PropType, onMounted, ref, watch } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
-
-const { onIpcEvent } = useIpcListener()
 import History from './History.vue'
 import Info from './Info.vue'
 import Run from './Run.vue'
+
+const { onIpcEvent } = useIpcListener()
 
 const runs = ref<AgentRun[]>([])
 const selection = ref<AgentRun[]>([])
@@ -98,10 +98,6 @@ onMounted(() => {
   watch(() => props.agent, () => reload(), { immediate: true })
   watch(() => showWorkflows.value, () => selectLatestRun())
   onIpcEvent('agent-run-update', onAgentRunUpdate)
-})
-
-onBeforeUnmount(() => {
-  // IPC listeners cleaned up by composable
 })
 
 const onAgentRunUpdate = (data: { agentId: string, runId: string }) => {

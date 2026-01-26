@@ -26,17 +26,17 @@
 
 <script setup lang="ts">
 
-import { InfoIcon } from 'lucide-vue-next'
-import { computed, nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
 import useEventListener from '@composables/event_listener'
 import useIpcListener from '@composables/ipc_listener'
 import { commandI18n, t } from '@services/i18n'
 import { store } from '@services/store'
+import { InfoIcon } from 'lucide-vue-next'
+import { anyDict, Command, ExternalApp } from 'types'
+import { CommandAction } from 'types/automation'
+import { computed, nextTick, onMounted, ref } from 'vue'
 
 const { onDomEvent } = useEventListener()
 const { onIpcEvent } = useIpcListener()
-import { anyDict, Command, ExternalApp } from 'types'
-import { CommandAction } from 'types/automation'
 
 // load store
 store.loadSettings()
@@ -92,10 +92,6 @@ onMounted(() => {
     onShow(props.extra)
   }
 
-})
-
-onBeforeUnmount(() => {
-  // DOM and IPC listeners are cleaned up by composables
 })
 
 const onFileModified = (file: string) => {

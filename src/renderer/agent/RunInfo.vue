@@ -106,16 +106,16 @@
 
 <script setup lang="ts">
 
-import AgentRunModel from '@models/agent_run'
+import EngineLogo from '@components/EngineLogo.vue'
 import { useTimeAgo } from '@composables/ago'
-import { store } from '@services/store'
+import AgentRunModel from '@models/agent_run'
 import { t } from '@services/i18n'
+import { engineNames } from '@services/llms/consts'
+import LlmFactory from '@services/llms/llm'
+import { store } from '@services/store'
 import { AlertTriangleIcon, CheckCircle2Icon, TimerIcon } from 'lucide-vue-next'
 import { Agent, AgentRun } from 'types/agents'
-import EngineLogo from '@components/EngineLogo.vue'
-import LlmFactory from '@services/llms/llm'
-import { engineNames } from '@services/llms/consts'
-import { PropType, computed, ref, watch, onUnmounted } from 'vue'
+import { PropType, computed, onBeforeUnmount, ref, watch } from 'vue'
 import MessageItemBody from '../components/MessageItemBody.vue'
 import StatusIcon from './StatusIcon.vue'
 import TriggerIcon from './TriggerIcon.vue'
@@ -191,7 +191,7 @@ watch(() => props.run?.status, (status) => {
   }
 }, { immediate: true })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   stopTimer()
 })
 

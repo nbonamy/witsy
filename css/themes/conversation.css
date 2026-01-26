@@ -24,8 +24,13 @@
 }
 
 .messages.conversation .message.user .body {
-  background-color: #D8F1FF;
-  color: black;
+  background-color: #e8edf2;
+  color: #27272a;
+  padding: 12px;
+  border-radius: 12px;
+  max-width: 66%;
+  font-size: 14px;
+  line-height: 20px;
 }
 
 .messages.conversation .message.assistant .body {

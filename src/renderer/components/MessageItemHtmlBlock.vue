@@ -11,7 +11,7 @@
         <ClipboardCheckIcon v-if="copying" />
         <ClipboardIcon @click="onCopy" v-else />
       </ButtonIcon>
-      <ContextMenuTrigger class="download" position="below-right" ref="downloadButton">
+      <ContextMenuTrigger class="download" position="below-right">
         <template #trigger>
           <DownloadIcon />
         </template>
@@ -32,28 +32,27 @@
 
 <script setup lang="ts">
 
-import { ChevronDownIcon, ClipboardCheckIcon, ClipboardIcon, DownloadIcon, EyeOffIcon, ScanEyeIcon } from 'lucide-vue-next'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useArtifactCopy } from '@composables/artifact_copy'
 import useEventListener from '@composables/event_listener'
-
-const { onDomEvent } = useEventListener()
-import { togglePanel } from '@renderer/utils/panel'
 import Message from '@models/message'
+import { togglePanel } from '@renderer/utils/panel'
 import { t } from '@services/i18n'
 import { addExtension, extractCodeBlockContent, extractHtmlContent as extractHtml } from '@services/markdown'
 import { exportToPdf } from '@services/pdf'
 import { store } from '@services/store'
+import { ChevronDownIcon, ClipboardCheckIcon, ClipboardIcon, DownloadIcon, EyeOffIcon, ScanEyeIcon } from 'lucide-vue-next'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ButtonIcon from './ButtonIcon.vue'
 import ContextMenuTrigger from './ContextMenuTrigger.vue'
 import MessageItemBody from './MessageItemBody.vue'
 
 const content = () => extractCodeBlockContent(props.content)
+
+const { onDomEvent } = useEventListener()
 const { copying, onCopy } = useArtifactCopy(content)
 
 const previewHtml = ref(false)
 const htmlRenderingDelayPassed = ref(false)
-const downloadButton = ref<HTMLElement>()
 const panelBody = ref<HTMLElement>()
 const htmlIframe = ref<HTMLIFrameElement>()
 const headComplete = ref(false)
@@ -273,7 +272,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  // DOM listeners cleaned up by composable
   if (delayTimeout) clearTimeout(delayTimeout)
   if (resizeTimeout) clearTimeout(resizeTimeout)
 })

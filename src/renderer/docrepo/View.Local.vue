@@ -35,13 +35,13 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronDownIcon, CircleAlertIcon } from 'lucide-vue-next'
-import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import EngineLogo from '@components/EngineLogo.vue'
 import useIpcListener from '@composables/ipc_listener'
 import { togglePanel } from '@renderer/utils/panel'
 import { t } from '@services/i18n'
+import { ChevronDownIcon, CircleAlertIcon } from 'lucide-vue-next'
 import { DocumentBase } from 'types/rag'
+import { onMounted, ref, watch } from 'vue'
 import Files from './Files.vue'
 import Notes from './Notes.vue'
 import Web from './Web.vue'
@@ -82,10 +82,6 @@ const onModelReady = () => {
 
 onMounted(() => {
   onIpcEvent('docrepo-model-downloaded', onModelReady)
-})
-
-onBeforeUnmount(() => {
-  // IPC listeners cleaned up by composable
 })
 
 // Watch for changes to selectedRepo to update modelReady and description

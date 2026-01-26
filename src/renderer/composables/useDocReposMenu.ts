@@ -3,7 +3,7 @@ import { store } from '@services/store'
 import { LightbulbOffIcon, SettingsIcon, XIcon } from 'lucide-vue-next'
 import type { MenuItem } from 'types/menu'
 import type { DocumentBase } from 'types/rag'
-import { computed, onBeforeUnmount, onMounted, ref, Ref } from 'vue'
+import { computed, onMounted, ref, Ref } from 'vue'
 import useIpcListener from './ipc_listener'
 
 export interface UseDocReposMenuOptions {
@@ -38,11 +38,6 @@ export function useDocReposMenu(options: UseDocReposMenuOptions) {
   onMounted(() => {
     loadDocRepos()
     onIpcEvent('docrepo-modified', loadDocRepos)
-  })
-
-  // Clean up listener
-  onBeforeUnmount(() => {
-    // IPC listeners cleaned up by composable
   })
 
   // Toggle selection for multi-select mode
