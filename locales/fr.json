@@ -333,6 +333,7 @@
       "export": "Exporter l'agent",
       "import": "Importer l'agent",
       "run": "Exécuter cet agent",
+      "stop": "Arrêter l'agent en cours",
       "view": "Voir les détails de l'agent"
     },
     "history": {

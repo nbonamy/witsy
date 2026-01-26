@@ -333,6 +333,7 @@
       "export": "Esporta agente",
       "import": "Importa agente",
       "run": "Esegui questo agente",
+      "stop": "Ferma agente in esecuzione",
       "view": "Visualizza i dettagli dell'agente"
     },
     "history": {

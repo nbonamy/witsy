@@ -352,6 +352,7 @@
       "export": "Eksportuj agenta",
       "import": "Importuj agenta",
       "run": "Uruchom tego agenta",
+      "stop": "Zatrzymaj uruchomionego agenta",
       "view": "Zobacz szczegóły agenta"
     },
     "history": {
