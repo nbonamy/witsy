@@ -4,9 +4,9 @@
 
 <script setup lang="ts">
 
-import { computed, onMounted, provide, ref, watch, WritableComputedRef } from 'vue'
+import { strDict } from 'types'
+import { computed, onMounted, ref, watch, WritableComputedRef } from 'vue'
 import { Locale } from 'vue-i18n'
-import { strDict } from '../types'
 import useAppearanceTheme from './composables/appearance_theme'
 import useEventListener from './composables/event_listener'
 import useIpcListener from './composables/ipc_listener'

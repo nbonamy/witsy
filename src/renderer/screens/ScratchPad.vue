@@ -36,27 +36,27 @@
 </template>
 
 <script setup lang="ts">
-import { LlmEngine } from 'multi-llm-ts'
-import { FileContents } from 'types/file'
-import { ScratchpadData, ScratchpadHeader } from 'types/index'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import Chat from '@models/chat'
-import Message from '@models/message'
-import useAudioPlayer, { AudioState, AudioStatus } from '../audio/audio_player'
 import ContextMenuPlus from '@components/ContextMenuPlus.vue'
 import EditableText from '@components/EditableText.vue'
 import Prompt, { ConversationMode, SendPromptParams } from '@components/Prompt.vue'
 import useEventListener from '@composables/event_listener'
 import useIpcListener from '@composables/ipc_listener'
-import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
-import ScratchpadSettings from '../scratchpad/Settings.vue'
-import ScratchpadSidebar from '../scratchpad/Sidebar.vue'
+import Chat from '@models/chat'
+import Message from '@models/message'
+import Dialog from '@renderer/utils/dialog'
 import Generator, { GenerationResult } from '@services/generator'
 import { fullExpertI18n, i18nInstructions, t } from '@services/i18n'
 import LlmFactory, { ILlmManager } from '@services/llms/llm'
 import { availablePlugins } from '@services/plugins/plugins'
 import { store } from '@services/store'
-import Dialog from '@renderer/utils/dialog'
+import { LlmEngine } from 'multi-llm-ts'
+import { FileContents } from 'types/file'
+import { ScratchpadData, ScratchpadHeader } from 'types/index'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import useAudioPlayer, { AudioState, AudioStatus } from '../audio/audio_player'
+import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
+import ScratchpadSettings from '../scratchpad/Settings.vue'
+import ScratchpadSidebar from '../scratchpad/Sidebar.vue'
 
 export interface ToolbarAction {
   type: string,
@@ -183,7 +183,6 @@ watch(() => props.extra, (newExtra) => {
 }, { deep: true })
 
 onBeforeUnmount(() => {
-  // IPC and DOM listeners are cleaned up by composables
   audioPlayer.removeListener(onAudioPlayerStatus)
   clearTimeout(undoStackCheckTimeout)
 })

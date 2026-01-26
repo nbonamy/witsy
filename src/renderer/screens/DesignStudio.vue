@@ -47,28 +47,28 @@
 </template>
 
 <script setup lang="ts">
-import { ImagePlusIcon, ListRestartIcon } from 'lucide-vue-next'
-import { computed, nextTick, onMounted, onBeforeUnmount, ref } from 'vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import ContextMenuPlus from '@components/ContextMenuPlus.vue'
 import DrawingCanvas from '@components/DrawingCanvas.vue'
-import Dialog from '@renderer/utils/dialog'
 import useEventBus from '@composables/event_bus'
 import useEventListener from '@composables/event_listener'
 import useIpcListener from '@composables/ipc_listener'
 import Attachment from '@models/attachment'
 import Chat from '@models/chat'
 import Message from '@models/message'
+import Dialog from '@renderer/utils/dialog'
 import { saveFileContents } from '@services/download'
 import { t } from '@services/i18n'
 import ImageCreator from '@services/image'
 import { kMediaChatId, kReferenceParamValue, store } from '@services/store'
 import VideoCreator from '@services/video'
+import { ImagePlusIcon, ListRestartIcon } from 'lucide-vue-next'
+import { FileContents } from 'types/file'
+import { anyDict } from 'types/index'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import History from '../studio/History.vue'
 import Preview from '../studio/Preview.vue'
 import Settings from '../studio/Settings.vue'
-import { FileContents } from 'types/file'
-import { anyDict } from 'types/index'
 
 const { emitBusEvent } = useEventBus()
 const { onDomEvent } = useEventListener()
@@ -129,7 +129,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   store.removeListener('workspaceSwitched', initializeChat)
-  // DOM and IPC listeners cleaned up by composables
 })
 
 const initializeChat = () => {

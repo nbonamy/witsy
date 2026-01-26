@@ -49,7 +49,7 @@ import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { TimerIcon, WrenchIcon } from 'lucide-vue-next'
 import { Agent, AgentRun } from 'types/agents'
-import { PropType, computed, ref, watchEffect, onMounted, onUnmounted } from 'vue'
+import { PropType, computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
 import MessageItem from '../components/MessageItem.vue'
 
 type StepMessages = {
@@ -153,7 +153,7 @@ onMounted(() => {
   })
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   stopTimer()
 })
 

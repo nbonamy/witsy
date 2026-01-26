@@ -205,7 +205,7 @@ import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
 import { Command, CustomInstruction, Expert, MessageExecutionMode } from 'types/index'
 import { McpServerWithTools, McpToolUnique } from 'types/mcp'
 import { DocumentBase } from 'types/rag'
-import { computed, nextTick, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, PropType, ref, watch } from 'vue'
 import useAudioRecorder from '../audio/audio_recorder'
 import useTranscriber from '../audio/transcriber'
 import { isSTTReady, StreamingChunk } from '../voice/stt'
@@ -470,10 +470,6 @@ onMounted(() => {
     instructions.value = matchInstructions(props.chat?.instructions)
   }, { immediate: true })
 
-})
-
-onBeforeUnmount(() => {
-  // DOM and IPC listeners are cleaned up by composables
 })
 
 const onShortcutDown = (ev: KeyboardEvent) => {

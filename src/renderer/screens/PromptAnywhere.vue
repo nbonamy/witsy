@@ -36,24 +36,24 @@
 </template>
 
 <script setup lang="ts">
-import { LlmEngine } from 'multi-llm-ts'
-import { anyDict, ExternalApp } from 'types'
-import { CodeExecutionMode } from 'types/config'
-import { ToolSelection } from 'types/llm'
-import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
-import Chat from '@models/chat'
-import Message from '@models/message'
 import OutputPanel from '@components/OutputPanel.vue'
 import Prompt, { SendPromptParams } from '@components/Prompt.vue'
 import ResizableHorizontal from '@components/ResizableHorizontal.vue'
 import useEventListener from '@composables/event_listener'
 import useIpcListener from '@composables/ipc_listener'
+import Chat from '@models/chat'
+import Message from '@models/message'
 import Generator from '@services/generator'
 import { fullExpertI18n, i18nInstructions, t } from '@services/i18n'
 import LlmUtils from '@services/llm_utils'
 import LlmFactory, { ILlmManager } from '@services/llms/llm'
 import { availablePlugins } from '@services/plugins/plugins'
 import { store } from '@services/store'
+import { LlmEngine } from 'multi-llm-ts'
+import { anyDict, ExternalApp } from 'types'
+import { CodeExecutionMode } from 'types/config'
+import { ToolSelection } from 'types/llm'
+import { computed, onMounted, provide, ref } from 'vue'
 
 const { onDomEvent, offDomEvent } = useEventListener()
 const { onIpcEvent } = useIpcListener()
@@ -127,10 +127,6 @@ onMounted(() => {
     processQueryParams(props.extra)
   }
 
-})
-
-onBeforeUnmount(() => {
-  // DOM and IPC listeners are cleaned up by composables
 })
 
 const onShow = (params?: anyDict) => {

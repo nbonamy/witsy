@@ -112,10 +112,6 @@
 
 <script setup lang="ts">
 
-import { CpuIcon, DownloadIcon, ImageIcon, WrenchIcon, ZapIcon } from 'lucide-vue-next'
-import type { ChatModel } from 'multi-llm-ts'
-import { Ollama, } from 'ollama/dist/browser.cjs'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
 import * as IPC from '@/ipc_consts'
 import EngineLogo from '@components/EngineLogo.vue'
 import OllamaModelPull from '@components/OllamaModelPull.vue'
@@ -125,6 +121,10 @@ import { t } from '@services/i18n'
 import LlmManager from '@services/llms/manager'
 import { getChatModels } from '@services/llms/ollama'
 import { store } from '@services/store'
+import { CpuIcon, DownloadIcon, ImageIcon, WrenchIcon, ZapIcon } from 'lucide-vue-next'
+import type { ChatModel } from 'multi-llm-ts'
+import { Ollama, } from 'ollama/dist/browser.cjs'
+import { onMounted, ref } from 'vue'
 
 const { onIpcEvent } = useIpcListener()
 
@@ -141,10 +141,6 @@ const llmManager = new LlmManager(store.config)
 
 onMounted(() => {
   setupIpcListeners()
-})
-
-onBeforeUnmount(() => {
-  removeIpcListeners()
 })
 
 // IPC event listeners
@@ -188,10 +184,6 @@ const setupIpcListeners = () => {
   onIpcEvent(IPC.OLLAMA.DOWNLOAD_PROGRESS, onDownloadProgress)
   onIpcEvent(IPC.OLLAMA.DOWNLOAD_COMPLETE, onDownloadComplete)
   onIpcEvent(IPC.OLLAMA.DOWNLOAD_ERROR, onDownloadError)
-}
-
-const removeIpcListeners = () => {
-  // IPC listeners are cleaned up automatically by composable
 }
 
 const checkOllamaStatus = () => {

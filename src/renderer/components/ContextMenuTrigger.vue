@@ -69,10 +69,6 @@ onMounted(() => {
   onDomEvent(document, 'keydown', handleEscape)
 })
 
-onBeforeUnmount(() => {
-  // DOM listeners cleaned up by composable
-})
-
 defineExpose({
   closeMenu,
   toggleMenu,

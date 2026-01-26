@@ -13,7 +13,7 @@ import { Configuration } from './types/config';
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams, FileStats } from './types/file';
 import { ListDirectoryResponse } from './types/filesystem';
 import { McpServer, McpStatus, McpTool } from './types/mcp';
-import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentQueueItem, SourceType } from './types/rag';
+import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './types/rag';
 import { Workspace, WorkspaceHeader } from './types/workspace';
 import { YoutubeVideoInfo } from './main/youtube';
 
@@ -192,7 +192,7 @@ contextBridge.exposeInMainWorld(
     },
     docrepo: {
       open(create?: boolean): void { return ipcRenderer.send(IPC.DOCREPO.OPEN, create) },
-      list(workspaceId: string): strDict[] { return JSON.parse(ipcRenderer.sendSync(IPC.DOCREPO.LIST, workspaceId)) },
+      list(workspaceId: string): DocumentBase[] { return JSON.parse(ipcRenderer.sendSync(IPC.DOCREPO.LIST, workspaceId)) },
       connect(baseId: string): void { return ipcRenderer.send(IPC.DOCREPO.CONNECT, baseId) },
       disconnect(): void { return ipcRenderer.send(IPC.DOCREPO.DISCONNECT) },
       create(workspaceId: string, title: string, embeddingEngine: string, embeddingModel: string): string { return ipcRenderer.sendSync(IPC.DOCREPO.CREATE, { workspaceId, title, embeddingEngine, embeddingModel }) },

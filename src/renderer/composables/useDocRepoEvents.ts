@@ -1,7 +1,7 @@
-import { onMounted, onBeforeUnmount, ref } from 'vue'
-import { DocRepoAddDocResponse, DocumentQueueItem } from 'types/rag'
-import useIpcListener from './ipc_listener'
 import Dialog from '@renderer/utils/dialog'
+import { DocRepoAddDocResponse, DocumentQueueItem } from 'types/rag'
+import { onMounted, ref } from 'vue'
+import useIpcListener from './ipc_listener'
 
 export function useDocRepoEvents(type: string) {
 
@@ -52,10 +52,6 @@ export function useDocRepoEvents(type: string) {
         onProcessItemStart(item)
       }
     })
-  })
-
-  onBeforeUnmount(() => {
-    // IPC listeners cleaned up by composable
   })
 
   return {

@@ -8,12 +8,12 @@
 
 <script setup lang="ts">
 
-import { CircleXIcon } from 'lucide-vue-next'
-import { LlmChunk } from 'multi-llm-ts'
-import { onMounted, onBeforeUnmount, ref } from 'vue'
 import useIpcListener from '@composables/ipc_listener'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+import { CircleXIcon } from 'lucide-vue-next'
+import { LlmChunk } from 'multi-llm-ts'
+import { onMounted, ref } from 'vue'
 
 const { onIpcEvent } = useIpcListener()
 
@@ -26,10 +26,6 @@ const state = ref('')
 onMounted(() => {
   logo.value.src = document.querySelector<HTMLImageElement>('#logo').src
   onIpcEvent('computer-status', onComputerStatus)
-})
-
-onBeforeUnmount(() => {
-  // IPC listeners cleaned up by composable
 })
 
 const onComputerStatus = (chunk: LlmChunk) => {

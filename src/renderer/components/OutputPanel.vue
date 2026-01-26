@@ -33,19 +33,19 @@
 
 <script setup lang="ts">
 
-import { ArrowLeftRightIcon, CornerDownLeftIcon, FileEditIcon, MessageSquareIcon, RotateCcwIcon, XCircleIcon } from 'lucide-vue-next'
-import { Application } from 'types/automation'
-import { onBeforeUnmount, onMounted, PropType, ref } from 'vue'
-import Message from '@models/message'
-import useAudioPlayer, { AudioStatus } from '../audio/audio_player'
 import MessageItem from '@components/MessageItem.vue'
 import MessageItemActionCopy from '@components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '@components/MessageItemActionRead.vue'
 import useEventBus from '@composables/event_bus'
 import useEventListener from '@composables/event_listener'
+import Message from '@models/message'
+import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import Dialog from '@renderer/utils/dialog'
+import { ArrowLeftRightIcon, CornerDownLeftIcon, FileEditIcon, MessageSquareIcon, RotateCcwIcon, XCircleIcon } from 'lucide-vue-next'
+import { Application } from 'types/automation'
+import { onBeforeUnmount, onMounted, PropType, ref } from 'vue'
+import useAudioPlayer, { AudioStatus } from '../audio/audio_player'
 
 const { onBusEvent } = useEventBus()
 const { onDomEvent } = useEventListener()
@@ -99,7 +99,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  // DOM listeners cleaned up by composable
   audioPlayer.removeListener(onAudioPlayerStatus)
 })
 

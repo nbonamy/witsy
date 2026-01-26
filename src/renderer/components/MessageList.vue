@@ -13,15 +13,15 @@
 
 <script setup lang="ts">
 
-import { ArrowDownIcon } from 'lucide-vue-next'
-import { LlmChunk } from 'multi-llm-ts'
-import { computed, inject, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef, PropType, watch, Ref } from 'vue'
+import { ChatTheme } from '@/types/config'
+import useIpcListener from '@composables/ipc_listener'
 import Chat from '@models/chat'
 import { store } from '@services/store'
+import { ArrowDownIcon } from 'lucide-vue-next'
+import { LlmChunk } from 'multi-llm-ts'
+import { computed, inject, nextTick, onMounted, PropType, ref, Ref, useTemplateRef, watch } from 'vue'
 import MessageItem from './MessageItem.vue'
 
-import useIpcListener from '@composables/ipc_listener'
-import { ChatTheme } from '@/types/config'
 const { onIpcEvent } = useIpcListener()
 
 // inject chunk from parent Chat component (scoped to component tree)
@@ -69,10 +69,6 @@ if (latestChunk) {
     onNewChunk(chunk)
   })
 }
-
-onBeforeUnmount(() => {
-  // IPC listeners cleaned up by composable
-})
 
 const onReadAloudSelection = (payload: { context: string, selection: string }) => {
   for (const index in itemRefs.value) {
