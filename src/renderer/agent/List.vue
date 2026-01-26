@@ -49,7 +49,12 @@
             <td>{{ t(`agent.forge.list.${agent.type}`) }}</td>
             <td>{{ lastRun(agent) }}</td>
             <td><div class="actions">
-              <SpinningIcon v-if="startingAgents.includes(agent.uuid)" :spinning="true" class="run" />
+              <ButtonIcon v-if="runningAgent?.uuid === agent.uuid"
+                class="stop"
+                v-tooltip="{ text: t('agent.help.stop'), position: 'top-left' }"
+                @click="$emit('stop')"
+              ><SquareIcon /></ButtonIcon>
+              <SpinningIcon v-else-if="startingAgents.includes(agent.uuid)" :spinning="true" class="run" />
               <ButtonIcon v-else
                 class="run"
                 v-tooltip="{ text: t('agent.help.run'), position: 'top-left' }"
@@ -80,12 +85,14 @@
           :key="`${agent.uuid}-${agent.lastRunId}`"
           :agent="agent"
           :starting="startingAgents.includes(agent.uuid)"
+          :running="runningAgent?.uuid === agent.uuid"
           @run="onAgentRun"
           @view="$emit('view', $event)"
           @edit="$emit('edit', $event)"
           @export="$emit('export', $event)"
           @duplicate="$emit('duplicate', $event)"
           @delete="$emit('delete', $event)"
+          @stop="$emit('stop')"
         />
       </div>
     </main>
@@ -94,7 +101,7 @@
 
 <script setup lang="ts">
 
-import { EyeIcon, LayoutGridIcon, ListIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
+import { EyeIcon, LayoutGridIcon, ListIcon, PlayIcon, PlusIcon, SquareIcon, UploadIcon } from 'lucide-vue-next'
 import { Agent } from 'types/agents'
 import { onMounted, ref, watch } from 'vue'
 import LogoA2A from '@assets/a2a.svg?component'
@@ -105,11 +112,19 @@ import SpinningIcon from '@components/SpinningIcon.vue'
 import { useTimeAgo } from '@composables/ago'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+import { PropType } from 'vue'
 
 type ViewMode = 'table' | 'cards'
 const STORAGE_KEY = 'agentForgeViewMode'
 
-const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson'])
+defineProps({
+  runningAgent: {
+    type: Object as PropType<Agent | null>,
+    default: null
+  }
+})
+
+const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson', 'stop'])
 
 const agents = ref<Agent[]>([])
 const startingAgents = ref<string[]>([])

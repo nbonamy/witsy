@@ -82,7 +82,7 @@
           </div>
         </div>
         
-        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" @conversation-mode="onConversationMode" ref="prompt" />
+        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" :is-generating="isGenerating" class="prompt" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" @conversation-mode="onConversationMode" ref="prompt" />
       
       </div>
       
@@ -105,7 +105,7 @@ import { exportToPdf } from '@services/pdf'
 import { kMediaChatId, store } from '@services/store'
 import { MessageCirclePlusIcon, MoreVerticalIcon, PanelRightCloseIcon, PanelRightOpenIcon, SlidersHorizontalIcon, X } from 'lucide-vue-next'
 import { Expert, Message } from 'types/index'
-import { computed, inject, ref } from 'vue'
+import { computed, ComputedRef, inject, ref } from 'vue'
 import ButtonIcon from './ButtonIcon.vue'
 import { MenuPosition } from './ContextMenuPlus.vue'
 import ContextMenuTrigger from './ContextMenuTrigger.vue'
@@ -115,6 +115,7 @@ import Prompt, { ConversationMode, SendPromptParams } from './Prompt.vue'
 import type { ChatCallbacks } from '@screens/Chat.vue'
 
 const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
+const isGenerating = inject<ComputedRef<boolean>>('isGenerating', computed(() => false))
 const tipsManager = useTipsManager(store)
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 

@@ -342,6 +342,36 @@ test('Escape key does nothing when idle', async () => {
   expect(wrapper.vm.promptingState).toBe('idle')
 })
 
+test('Stop button shows when isGenerating is true', async () => {
+  await wrapper.setProps({ isGenerating: true })
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.find('.send').exists()).toBe(false)
+  expect(wrapper.find('.stop').exists()).toBe(true)
+})
+
+test('Stop button click emits stop when isGenerating is true', async () => {
+  await wrapper.setProps({ isGenerating: true })
+  await wrapper.vm.$nextTick()
+
+  await wrapper.find('.send-stop').trigger('click')
+  expect(wrapper.emitted<any[]>().stop).toBeTruthy()
+})
+
+test('Escape key triggers stop when isGenerating is true', async () => {
+  await wrapper.setProps({ isGenerating: true })
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.vm.promptingState).toBe('idle')
+
+  // Simulate Escape key at document level
+  const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' })
+  document.dispatchEvent(escapeEvent)
+  await wrapper.vm.$nextTick()
+
+  expect(wrapper.emitted<any[]>().stop).toBeTruthy()
+})
+
 test('Stores attachment', async () => {
   await wrapper.find('.prompt-menu').trigger('click')
   const menu = wrapper.findComponent({ name: 'ContextMenuPlus' })

@@ -645,3 +645,40 @@ test('Import with warnings shows warning dialog', async () => {
   // Agent should be saved
   expect(window.api.agents.save).toHaveBeenCalled()
 })
+
+test('Running agent creates AbortController', () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  const agent = store.agents[0]
+
+  // Initially no abort controller
+  expect(wrapper.vm.abortController).toBeNull()
+
+  // Start running agent
+  wrapper.vm.runAgent(agent, {})
+
+  // AbortController should be created
+  expect(wrapper.vm.abortController).not.toBeNull()
+  expect(wrapper.vm.abortController).toBeInstanceOf(AbortController)
+})
+
+test('Stop agent calls abort and clears state', () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  const agent = store.agents[0]
+
+  // Start running agent
+  wrapper.vm.runAgent(agent, {})
+  expect(wrapper.vm.running).toBe(agent)
+  expect(wrapper.vm.abortController).not.toBeNull()
+
+  const abortSpy = vi.spyOn(wrapper.vm.abortController, 'abort')
+
+  // Stop agent
+  wrapper.vm.stopAgent()
+
+  // Should call abort
+  expect(abortSpy).toHaveBeenCalled()
+
+  // Should clear state
+  expect(wrapper.vm.running).toBeNull()
+  expect(wrapper.vm.abortController).toBeNull()
+})

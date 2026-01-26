@@ -85,8 +85,8 @@
 
       </template>
 
-      <ButtonIcon class="send-stop" @click="promptingState !== 'idle' ? onStopPrompting() : onSendPrompt()">
-        <XIcon class="icon stop" :class="{ canceling: promptingState === 'canceling' }" v-if="promptingState !== 'idle'" />
+      <ButtonIcon class="send-stop" @click="(promptingState !== 'idle' || isGenerating) ? onStopPrompting() : onSendPrompt()">
+        <XIcon class="icon stop" :class="{ canceling: promptingState === 'canceling' }" v-if="promptingState !== 'idle' || isGenerating" />
         <ArrowUpIcon class="icon send" :class="{ disabled: !prompt.length }" v-else />
       </ButtonIcon>
 
@@ -301,6 +301,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  isGenerating: {
+    type: Boolean,
+    default: false
+  },
   historyProvider: {
     type: Function as PropType<HistoryProvider>,
     default: (_: KeyboardEvent): string[] => []
@@ -445,7 +449,7 @@ const isFavoriteModel = computed(() => llmManager.isFavoriteModel(props.chat?.en
 
 // Escape key to abort generation (document-level)
 const onEscapeKey = (event: KeyboardEvent) => {
-  if (event.key === 'Escape' && promptingState.value === 'prompting') {
+  if (event.key === 'Escape' && (promptingState.value === 'prompting' || props.isGenerating)) {
     onStopPrompting()
     event.preventDefault()
     event.stopPropagation()
