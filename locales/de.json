@@ -333,6 +333,7 @@
       "export": "Agent exportieren",
       "import": "Agent importieren",
       "run": "Diesen Agenten ausführen",
+      "stop": "Laufenden Agenten stoppen",
       "view": "Agentendetails anzeigen"
     },
     "history": {

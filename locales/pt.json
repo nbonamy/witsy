@@ -352,6 +352,7 @@
       "export": "Exportar agente",
       "import": "Importar agente",
       "run": "Executar este agente",
+      "stop": "Parar agente em execução",
       "view": "Ver detalhes do agente"
     },
     "history": {

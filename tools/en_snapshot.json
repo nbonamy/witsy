@@ -276,6 +276,7 @@
   "agent.help.export": "Export agent",
   "agent.help.import": "Import agent",
   "agent.help.run": "Run this agent",
+  "agent.help.stop": "Stop running agent",
   "agent.help.view": "View agent details",
   "agent.history.confirmClear": "Are you sure you want to clear the history of this agent?",
   "agent.history.confirmDeleteMultiple": "Are you sure you want to delete these runs?",

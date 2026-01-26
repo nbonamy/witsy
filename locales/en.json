@@ -337,7 +337,6 @@
         "support": "Utility"
       },
       "run": "Run",
-      "running": "Agent running...",
       "title": "Agent Forge",
       "view": "View",
       "viewCards": "Card view",
