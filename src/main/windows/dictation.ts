@@ -2,7 +2,7 @@
 import { Application } from 'types/automation';
 import { anyDict } from 'types/index';
 import { app, BrowserWindow, Notification } from 'electron';
-import { createWindow, getCurrentScreen, releaseFocus } from './index';
+import { createWindow, emitIpcEvent, getCurrentScreen, releaseFocus } from './index';
 import { loadSettings } from '../config';
 import { useI18n } from '../i18n';
 import Automator from '../automations/automator';
@@ -178,10 +178,10 @@ export const openDictationWindow = (params: anyDict): void => {
 
   if (dictationWindow.webContents.isLoading()) {
     dictationWindow.webContents.once('did-finish-load', () => {
-      dictationWindow.webContents.send('show', showParams);
+      emitIpcEvent(dictationWindow, 'show', showParams);
     });
   } else {
-    dictationWindow.webContents.send('show', showParams);
+    emitIpcEvent(dictationWindow, 'show', showParams);
   }
 
 };

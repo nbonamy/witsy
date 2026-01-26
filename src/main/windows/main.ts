@@ -4,7 +4,7 @@ import { MainWindowMode } from 'types/index';
 import { CreateWindowOpts } from 'types/window';
 import { loadSettings, saveSettings } from '../config';
 import { useI18n } from '../i18n';
-import { createWindow, electronStore, ensureOnCurrentScreen, titleBarOptions, undockWindow } from './index';
+import { createWindow, electronStore, emitIpcEvent, ensureOnCurrentScreen, titleBarOptions, undockWindow } from './index';
 
 const storeBoundsId = 'main.bounds'
 
@@ -59,7 +59,7 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
 
   // notify
   mainWindow.webContents.once('did-finish-load', () => {
-    mainWindow.webContents.send('window-opened');
+    emitIpcEvent(mainWindow, 'window-opened');
   });
 
   mainWindow.webContents.on('context-menu', (event, params: ContextMenuParams) => {
@@ -104,7 +104,7 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
       // Add a paste option
       menu.append(new MenuItem({
         label: useI18n(app)('tray.menu.readAloud'),
-        click: () => mainWindow.webContents.send('read-aloud-selection', { context: contextMenuContext, selection: params.selectionText }),
+        click: () => emitIpcEvent(mainWindow, 'read-aloud-selection', { context: contextMenuContext, selection: params.selectionText }),
       }));
 
     }
@@ -178,7 +178,7 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
     event.preventDefault();
 
     // notify the app
-    mainWindow.webContents.send('window-closed');
+    emitIpcEvent(mainWindow, 'window-closed');
 
   })
 
@@ -199,7 +199,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   if (!mainWindow || mainWindow.isDestroyed()) {
     prepareMainWindow(opts);
   } else {
-    mainWindow.webContents.send('query-params', opts.queryParams);
+    emitIpcEvent(mainWindow, 'query-params', opts.queryParams);
   }
 
   // restore

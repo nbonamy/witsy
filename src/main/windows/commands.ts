@@ -2,7 +2,7 @@
 import { anyDict } from 'types/index';
 import { Application } from 'types/automation';
 import { app, BrowserWindow, screen } from 'electron';
-import { createWindow, ensureOnCurrentScreen, releaseFocus } from './index';
+import { createWindow, emitIpcEvent, ensureOnCurrentScreen, releaseFocus } from './index';
 //import MacosAutomator from '@main/automations/macos';
 //import WindowsAutomator from '@main/automations/windows';
 //import Computer from '@main/automations/computer_nut';
@@ -81,7 +81,7 @@ export const openCommandPicker = (params: anyDict): void => {
   if (!commandPicker || commandPicker.isDestroyed()) {
     prepareCommandPicker(params);
   } else {
-    commandPicker.webContents.send('show', params);
+    emitIpcEvent(commandPicker, 'show', params);
   }
 
   // check prompt is on the right screen

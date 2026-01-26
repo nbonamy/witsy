@@ -8,7 +8,7 @@ import { agentsDirPath } from './agents'
 import { kDefaultWorkspaceId } from '../consts'
 import { attachmentsFilePath, historyFilePath } from './history'
 import { docrepoFilePath } from './rag/utils'
-import { notifyBrowserWindows } from './windows'
+import { emitIpcEventToAll } from './windows'
 
 export const workspacesFolder = (app: App): string => {
   const userDataPath = app.getPath('userData')
@@ -81,7 +81,7 @@ export const saveWorkspace = (app: App, workspace: Workspace): boolean => {
   try {
     fs.mkdirSync(workspaceFolderPath, { recursive: true })
     fs.writeFileSync(workspaceJsonPath, JSON.stringify(workspace, null, 2))
-    notifyBrowserWindows('workspaces-updated')
+    emitIpcEventToAll('workspaces-updated')
     return true
   } catch {
     return false
@@ -94,7 +94,7 @@ export const deleteWorkspace = (app: App, workspaceId: string): boolean => {
   
   try {
     fs.rmSync(workspaceFolderPath, { recursive: true, force: true })
-    notifyBrowserWindows('workspaces-updated')
+    emitIpcEventToAll('workspaces-updated')
     return true
   } catch {
     return false

@@ -2,8 +2,8 @@ import { net } from 'electron';
 import { spawn } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
+import { emitIpcEvent } from './windows';
 import { mainWindow } from './windows/main';
-import * as IPC from '@/ipc_consts';
 
 interface DownloadState {
   downloadId: string;
@@ -87,12 +87,14 @@ export function startDownload(targetDirectory: string): string {
         ? (currentDownload!.downloadedBytes / currentDownload!.totalBytes) * 100 
         : 0;
       
-      mainWindow?.webContents.send(IPC.OLLAMA.DOWNLOAD_PROGRESS, {
-        downloadId: currentDownload!.downloadId,
-        progress: Math.round(progress),
-        downloadedBytes: currentDownload!.downloadedBytes,
-        totalBytes: currentDownload!.totalBytes
-      });
+      if (mainWindow) {
+        emitIpcEvent(mainWindow, 'ollama-download-progress', {
+          downloadId: currentDownload!.downloadId,
+          progress: Math.round(progress),
+          downloadedBytes: currentDownload!.downloadedBytes,
+          totalBytes: currentDownload!.totalBytes
+        });
+      }
     });
 
     response.on('end', () => {
@@ -110,10 +112,12 @@ export function startDownload(targetDirectory: string): string {
       }
 
       // Download completed successfully
-      mainWindow?.webContents.send(IPC.OLLAMA.DOWNLOAD_COMPLETE, {
-        downloadId: currentDownload?.downloadId,
-        filePath: currentDownload?.filePath
-      });
+      if (mainWindow) {
+        emitIpcEvent(mainWindow, 'ollama-download-complete', {
+          downloadId: currentDownload?.downloadId,
+          filePath: currentDownload?.filePath
+        });
+      }
 
       currentDownload = null;
     });
@@ -128,20 +132,24 @@ export function startDownload(targetDirectory: string): string {
         console.error('Error cleaning up failed download:', cleanupError);
       }
 
-      mainWindow?.webContents.send(IPC.OLLAMA.DOWNLOAD_ERROR, {
-        downloadId: currentDownload?.downloadId || downloadId,
-        error: error.message
-      });
+      if (mainWindow) {
+        emitIpcEvent(mainWindow, 'ollama-download-error', {
+          downloadId: currentDownload?.downloadId || downloadId,
+          error: error.message
+        });
+      }
 
       currentDownload = null;
     });
   });
 
   request.on('error', (error) => {
-    mainWindow?.webContents.send(IPC.OLLAMA.DOWNLOAD_ERROR, {
-      downloadId: downloadId,
-      error: error.message
-    });
+    if (mainWindow) {
+      emitIpcEvent(mainWindow, 'ollama-download-error', {
+        downloadId: downloadId,
+        error: error.message
+      });
+    }
 
     currentDownload = null;
   });

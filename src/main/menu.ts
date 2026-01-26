@@ -85,7 +85,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
               key: 'N'
             }),
             click: () => {
-              window.notifyFocusedWindow('new-chat')
+              window.emitIpcEventToFocused('new-chat')
               callbacks.openMain({ queryParams: { view: 'chat' } })
             },
           },
@@ -160,12 +160,12 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
             ...(focusedWindow === window.mainWindow && window.getMainWindowMode() === 'chat' ? [{
               label: t('menu.edit.deleteChat'),
               accelerator: shortcutAccelerator({ type: 'electron', key: 'Backspace', meta: true }),
-              click: () => window.notifyBrowserWindows('delete-chat')
+              click: () => window.emitIpcEventToAll('delete-chat')
             }] : []),
             ...(focusedWindow === window.mainWindow && window.getMainWindowMode() === 'studio' ? [{
               label: t('menu.edit.deleteMedia'),
               accelerator: shortcutAccelerator({ type: 'electron', key: 'Backspace', meta: true }),
-              click: () => window.notifyBrowserWindows('delete-media')
+              click: () => window.emitIpcEventToAll('delete-media')
             }] : []),
             { role: 'selectAll' },
             // ...(focusedWindow === window.mainWindow && window.getMainWindowMode() === 'studio' ? [{
@@ -189,7 +189,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
             {
               label: t('menu.edit.startDictation'),
               accelerator: shortcutAccelerator({ type: 'electron', key: 'T', meta: true }),
-              click: () => window.notifyFocusedWindow('start-dictation')
+              click: () => window.emitIpcEventToFocused('start-dictation')
             }]: []
           ),
       ]
@@ -221,7 +221,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
       submenu: [
         {
           label: t('menu.help.runOnboarding'),
-          click: () => window.notifyBrowserWindows('run-onboarding')
+          click: () => window.emitIpcEventToAll('run-onboarding')
         },
         { type: 'separator' },
         {

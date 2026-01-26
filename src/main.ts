@@ -229,7 +229,7 @@ app.whenReady().then(async () => {
       quitApp();
     },
     onUpdateAvailable: () => {
-      window.notifyBrowserWindows('update-available');
+      window.emitIpcEventToAll('update-available');
       trayIconManager.install();
     },
   });
@@ -291,7 +291,7 @@ app.whenReady().then(async () => {
     console.log('Settings changed');
 
     // notify browser windows
-    window.notifyBrowserWindows('file-modified', 'settings');
+    window.emitIpcEventToAll('file-modified', 'settings');
 
     // update tray icon
     trayIconManager.install();

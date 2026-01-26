@@ -847,7 +847,7 @@ export const installIpc = (
         scratchpadId: uuid
       };
 
-      window.mainWindow.webContents.send('query-params', params);
+      window.emitIpcEvent(window.mainWindow, 'query-params', params);
     }
   });
 
@@ -907,13 +907,17 @@ export const installIpc = (
 
   ipcMain.on(IPC.COMPUTER.STOP, async () => {
     try {
-      window.mainWindow?.webContents.send('computer-stop');
+      if (window.mainWindow) {
+        window.emitIpcEvent(window.mainWindow, 'computer-stop');
+      }
     } catch { /* empty */ }
   });
 
   ipcMain.on(IPC.COMPUTER.STATUS, async (_, payload) => {
     try {
-      window.computerStatusWindow?.webContents.send('computer-status', payload);
+      if (window.computerStatusWindow) {
+        window.emitIpcEvent(window.computerStatusWindow, 'computer-status', payload);
+      }
     } catch { /* empty */ }
   });
 

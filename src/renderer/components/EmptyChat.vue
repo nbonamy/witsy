@@ -92,7 +92,7 @@ const emit = defineEmits(['run-agent'])
 onMounted(() => {
   load()
   onIpcEvent('agents-updated', load)
-  onIpcEvent('agent-run-updated', load)
+  onIpcEvent('agent-run-update', load)
 })
 
 const load = () => {

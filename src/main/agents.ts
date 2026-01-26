@@ -2,7 +2,7 @@
 import { anyDict } from 'types/index'
 import { AgentRun } from 'types/agents'
 import { App } from 'electron'
-import { notifyBrowserWindows } from './windows'
+import { emitIpcEventToAll } from './windows'
 import { listWorkspaces, workspaceFolderPath } from './workspace'
 import Agent from '@models/agent'
 import path from 'path'
@@ -84,7 +84,7 @@ export const saveAgent = (source: App|string, workspaceId: string, json: anyDict
   // write file
   try {
     fs.writeFileSync(filePath, JSON.stringify(agent, null, 2))
-    notifyBrowserWindows('agents-updated', { workspaceId })
+    emitIpcEventToAll('agents-updated', { workspaceId })
     return true
   } catch (error) {
     console.log('Error saving agent', filePath, error)
@@ -111,7 +111,7 @@ export const deleteAgent = (source: App|string, workspaceId: string, agentId: st
     }
 
     // done
-    notifyBrowserWindows('agents-updated', { workspaceId })
+    emitIpcEventToAll('agents-updated', { workspaceId })
     return true
 
   } catch (error) {
@@ -191,7 +191,7 @@ export const saveAgentRun = (source: App|string, workspaceId: string, run: Agent
 
     // write file
     fs.writeFileSync(filePath, JSON.stringify(run, null, 2))
-    notifyBrowserWindows('agent-run-update', { agentId: run.agentId, runId: run.uuid })
+    emitIpcEventToAll('agent-run-update', { agentId: run.agentId, runId: run.uuid })
     return true
 
   } catch (error) {

@@ -12,7 +12,7 @@ import path from 'path'
 import fs from 'fs'
 
 const monitor: Monitor = new Monitor(() => {
-  window.notifyBrowserWindows('file-modified', 'experts');
+  window.emitIpcEventToAll('file-modified', 'experts');
 });
 
 export const expertsFilePath = (app: App, workspaceId: string): string => {

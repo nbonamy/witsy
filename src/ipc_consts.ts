@@ -300,3 +300,55 @@ export const CODE_EXECUTION = {
   LOAD: 'code-execution-load',
   SAVE: 'code-execution-save',
 } as const;
+
+/**
+ * IPC signals for main→renderer communication (push events).
+ * These are sent via webContents.send() and received via onIpcEvent().
+ *
+ * For renderer→main communication (request/response), use the namespaced
+ * constants above (APP, FILE, CONFIG, etc.) with ipcRenderer.invoke().
+ */
+export type IpcSignal =
+  // Window lifecycle
+  | 'show'                        // Window shown with params (Anywhere, Commands, Dictation)
+  | 'window-opened'               // Main window opened
+  | 'window-closed'               // Main window closed
+  | 'query-params'                // Query params passed to window
+  // Chat & conversations
+  | 'new-chat'                    // Create new chat (menu)
+  | 'delete-chat'                 // Delete current chat (menu)
+  // Media & design studio
+  | 'delete-media'                // Delete selected media (menu)
+  | 'select-all-media'            // Select all media (menu)
+  // Dictation & audio
+  | 'start-dictation'             // Start dictation mode
+  | 'stop-and-transcribe'         // Stop recording and transcribe
+  | 'read-aloud-selection'        // Read selected text aloud (context menu)
+  // Application state
+  | 'update-available'            // App update available
+  | 'run-onboarding'              // Run onboarding flow
+  | 'file-modified'               // Config/data file modified (settings, history, experts, commands)
+  // Computer use
+  | 'computer-stop'               // Stop computer use session
+  | 'computer-status'             // Computer use status update
+  // Document repositories
+  | 'docrepo-modified'            // Doc repo list modified
+  | 'docrepo-model-downloaded'    // Embedding model downloaded
+  | 'docrepo-process-item-start'  // Doc processing started
+  | 'docrepo-process-item-done'   // Doc processing completed
+  | 'docrepo-add-document-done'   // Document added successfully
+  | 'docrepo-add-document-error'  // Document add failed
+  | 'docrepo-del-document-done'   // Document deleted
+  | 'docrepo-del-document-error'  // Document delete failed
+  // Workspaces & agents
+  | 'workspaces-updated'          // Workspaces list changed
+  | 'agents-updated'              // Agents list changed
+  | 'agent-run-update'            // Agent run status update
+  // MCP
+  | 'mcp-servers-updated'         // MCP servers list changed
+  // Ollama
+  | 'ollama-download-progress'    // Ollama model download progress
+  | 'ollama-download-complete'    // Ollama model download complete
+  | 'ollama-download-error'       // Ollama model download error
+  // Debug
+  | 'network'                     // Network request logged (debug)

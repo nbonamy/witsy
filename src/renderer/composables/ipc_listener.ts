@@ -1,9 +1,10 @@
+import { IpcSignal } from '@/ipc_consts'
 import { onBeforeUnmount } from 'vue'
 
 type IpcCallback = (value: any) => void
 
 export default function useIpcListener() {
-  const handlers: Array<{ signal: string; id: string }> = []
+  const handlers: Array<{ signal: IpcSignal; id: string }> = []
 
   onBeforeUnmount(() => {
     handlers.forEach(({ signal, id }) => {
@@ -12,12 +13,12 @@ export default function useIpcListener() {
   })
 
   return {
-    onIpcEvent: (signal: string, callback: IpcCallback): string => {
+    onIpcEvent: (signal: IpcSignal, callback: IpcCallback): string => {
       const id = window.api._on(signal, callback)
       handlers.push({ signal, id })
       return id
     },
-    offIpcEvent: (signal: string, id: string) => {
+    offIpcEvent: (signal: IpcSignal, id: string) => {
       const idx = handlers.findIndex(h => h.signal === signal && h.id === id)
       if (idx !== -1) {
         handlers.splice(idx, 1)
