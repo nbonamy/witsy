@@ -12,7 +12,11 @@
       </div>
     </div>
     <div class="card-footer">
-      <button type="button" class="secondary" @click="emit('run', agent)">
+      <button v-if="running" type="button" class="secondary" @click="emit('stop')">
+        <SquareIcon />
+        {{ t('common.stop') }}
+      </button>
+      <button v-else type="button" class="secondary" @click="emit('run', agent)">
         <SpinningIcon v-if="starting" :spinning="true" />
         <PlayIcon v-else />
         {{ t('agent.forge.run') }}
@@ -35,7 +39,7 @@
 
 <script setup lang="ts">
 
-import { EyeIcon, PlayIcon } from 'lucide-vue-next'
+import { EyeIcon, PlayIcon, SquareIcon } from 'lucide-vue-next'
 import { Agent } from 'types/agents'
 import IconAgent from '@assets/agent.svg?component'
 import AgentMenu from './AgentMenu.vue'
@@ -45,6 +49,7 @@ import { t } from '@services/i18n'
 defineProps<{
   agent: Agent
   starting: boolean
+  running?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -54,6 +59,7 @@ const emit = defineEmits<{
   export: [agent: Agent]
   duplicate: [agent: Agent]
   delete: [agent: Agent]
+  stop: []
 }>()
 
 </script>

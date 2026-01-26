@@ -14,7 +14,10 @@
 
         <div class="actions">
 
-          <ButtonIcon class="run" v-tooltip="{ text: t('agent.help.run'), position: 'bottom-left' }" @click="emit('run', agent)">
+          <ButtonIcon v-if="runningAgent?.uuid === agent.uuid" class="stop" v-tooltip="{ text: t('agent.help.stop'), position: 'bottom-left' }" @click="emit('stop')">
+            <SquareIcon />
+          </ButtonIcon>
+          <ButtonIcon v-else class="run" v-tooltip="{ text: t('agent.help.run'), position: 'bottom-left' }" @click="emit('run', agent)">
             <PlayIcon />
           </ButtonIcon>
 
@@ -65,7 +68,7 @@ import useIpcListener from '@composables/ipc_listener'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import { ChevronLeftIcon, PencilIcon, PlayIcon, Trash2Icon } from 'lucide-vue-next'
+import { ChevronLeftIcon, PencilIcon, PlayIcon, SquareIcon, Trash2Icon } from 'lucide-vue-next'
 import { Agent, AgentRun } from 'types/agents'
 import { PropType, onMounted, ref, watch } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
@@ -90,9 +93,13 @@ const props = defineProps({
     type: Object as PropType<Agent>,
     default: null,
   },
+  runningAgent: {
+    type: Object as PropType<Agent | null>,
+    default: null,
+  },
 })
 
-const emit = defineEmits(['close', 'run', 'edit', 'delete'])
+const emit = defineEmits(['close', 'run', 'edit', 'delete', 'stop'])
 
 onMounted(() => {
   watch(() => props.agent, () => reload(), { immediate: true })

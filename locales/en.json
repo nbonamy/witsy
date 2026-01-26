@@ -337,6 +337,7 @@
         "support": "Utility"
       },
       "run": "Run",
+      "running": "Agent running...",
       "title": "Agent Forge",
       "view": "View",
       "viewCards": "Card view",
@@ -352,6 +353,7 @@
       "export": "Export agent",
       "import": "Import agent",
       "run": "Run this agent",
+      "stop": "Stop running agent",
       "view": "View agent details"
     },
     "history": {

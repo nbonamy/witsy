@@ -7,7 +7,7 @@
     </template>
 
     <template v-else>
-      <List class="sp-main" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @duplicate="duplicateAgent" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" />
+      <List class="sp-main" :running-agent="running" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @duplicate="duplicateAgent" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" @stop="stopAgent" />
     </template>
 
   </div>
@@ -17,7 +17,7 @@
   </div>
 
   <template v-else-if="mode === 'view'">
-    <View class="sp-main" :agent="selected" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)"/>
+    <View class="sp-main" :agent="selected" :running-agent="running" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)" @stop="stopAgent"/>
   </template>
 
   <CreateAgentRun :title="running?.name ?? ''" ref="builder" />
@@ -53,6 +53,7 @@ const prevMode = ref<AgentForgeMode>('list')
 const selected = ref<Agent|null>(null)
 const running = ref<Agent|null>(null)
 const builder = ref(null)
+const abortController = ref<AbortController | null>(null)
 
 const selectAgent = async (agent: Agent|null) => {
   if (!agent) {
@@ -146,11 +147,25 @@ const editAgent = (agent: Agent) => {
 
 const runAgent = (agent: Agent, opts?: Record<string, string>) => {
   running.value = agent
+  abortController.value = new AbortController()
+
   builder.value.show(agent, opts || {}, async (values: Record<string, string>) => {
     const executor = new AgentWorkflowExecutor(store.config, store.workspace.uuid, agent)
-    await executor.run('manual', values)
+    await executor.run('manual', values, {
+      streaming: true,
+      ephemeral: false,
+      model: agent.model,
+      abortSignal: abortController.value.signal,
+    })
     running.value = null
+    abortController.value = null
   })
+}
+
+const stopAgent = () => {
+  abortController.value?.abort()
+  running.value = null
+  abortController.value = null
 }
 
 const duplicateAgent = (data: any) => {
