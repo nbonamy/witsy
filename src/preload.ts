@@ -330,10 +330,10 @@ contextBridge.exposeInMainWorld(
     },
     webview: {
       setLinkBehavior: (webviewId: number, isExternal: boolean): Promise<void> => {
-        return ipcRenderer.invoke('webview-set-link-behavior', webviewId, isExternal)
+        return ipcRenderer.invoke(IPC.WEBVIEW.SET_LINK_BEHAVIOR, webviewId, isExternal)
       },
       setSpellCheckEnabled: (webviewId: number, enabled: boolean): Promise<void> => {
-        return ipcRenderer.invoke('webview-set-spell-check', webviewId, enabled)
+        return ipcRenderer.invoke(IPC.WEBVIEW.SET_SPELL_CHECK, webviewId, enabled)
       },
     }
   },

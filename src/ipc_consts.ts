@@ -296,6 +296,11 @@ export const CLI = {
   INSTALL: 'cli-install',
 } as const;
 
+export const WEBVIEW = {
+  SET_LINK_BEHAVIOR: 'webview-set-link-behavior',
+  SET_SPELL_CHECK: 'webview-set-spell-check',
+} as const;
+
 export const CODE_EXECUTION = {
   LOAD: 'code-execution-load',
   SAVE: 'code-execution-save',
