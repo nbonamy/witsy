@@ -1060,11 +1060,11 @@ export const installIpc = (
   })
 
   // webview
-  ipcMain.handle('webview-set-link-behavior', (_, webviewId: number, isExternal: boolean) => {
+  ipcMain.handle(IPC.WEBVIEW.SET_LINK_BEHAVIOR, (_, webviewId: number, isExternal: boolean) => {
     webview.setWebviewLinkBehavior(webviewId, isExternal);
   });
 
-  ipcMain.handle('webview-set-spell-check', (_, webviewId: number, enabled: boolean) => {
+  ipcMain.handle(IPC.WEBVIEW.SET_SPELL_CHECK, (_, webviewId: number, enabled: boolean) => {
     webview.setWebviewSpellCheck(webviewId, enabled);
   });
 
