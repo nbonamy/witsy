@@ -1,7 +1,7 @@
 
 import { App } from 'electron'
 import { SourceType, DocumentQueueItem, DocRepoQueryResponseItem, DocRepoListener, AddDocumentOptions } from 'types/rag'
-import { notifyBrowserWindows } from '../window'
+import { emitIpcEventToAll } from '../window'
 import { docrepoFilePath } from './utils'
 import DocumentBaseImpl from './docbase'
 import DocumentSourceImpl from './docsource'
@@ -138,7 +138,7 @@ export default class DocumentRepository {
       } as any)), null, 2))
 
       // notify
-      notifyBrowserWindows('docrepo-modified')
+      emitIpcEventToAll('docrepo-modified')
       
     } catch (error) {
       console.log('[rag] Error saving docrepo', error)
@@ -700,7 +700,7 @@ export default class DocumentRepository {
     try {
 
       // 1st notify
-      notifyBrowserWindows('docrepo-process-item-start', queueItem)
+      emitIpcEventToAll('docrepo-process-item-start', queueItem)
 
       // then process
       switch (queueItem.operation) {
@@ -720,7 +720,7 @@ export default class DocumentRepository {
       await this.handleOperationError(queueItem, base)
       return e as Error
     } finally {
-      notifyBrowserWindows('docrepo-process-item-done', queueItem)
+      emitIpcEventToAll('docrepo-process-item-done', queueItem)
     }
   }
 
@@ -832,21 +832,29 @@ export default class DocumentRepository {
     if (error) {
 
       if (queueItem.fromUserAction) {
-        const eventName = queueItem.operation === 'delete' ? 'docrepo-del-document-error' : 'docrepo-add-document-error'
-        notifyBrowserWindows(eventName, {
+        const payload = {
           queueItem,
           error: error.message,
           queueLength: this.queueLength()
-        })
+        }
+        if (queueItem.operation === 'delete') {
+          emitIpcEventToAll('docrepo-del-document-error', payload)
+        } else {
+          emitIpcEventToAll('docrepo-add-document-error', payload)
+        }
       }
 
     } else {
 
-      const eventName = queueItem.operation === 'delete' ? 'docrepo-del-document-done' : 'docrepo-add-document-done'
-      notifyBrowserWindows(eventName, {
+      const payload = {
         queueItem,
         queueLength: this.queueLength()
-      })
+      }
+      if (queueItem.operation === 'delete') {
+        emitIpcEventToAll('docrepo-del-document-done', payload)
+      } else {
+        emitIpcEventToAll('docrepo-add-document-done', payload)
+      }
 
       // Notify listeners about document changes
       if (queueItem.operation === 'delete') {

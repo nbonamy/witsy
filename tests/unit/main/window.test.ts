@@ -362,7 +362,7 @@ test('Utilities', async () => {
   expect(window.areAllWindowsClosed()).toBe(false)
 })
 
-test('Notify', async () => {
-  window.notifyBrowserWindows('event')
-  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('event')
+test('emitIpcEventToAll', async () => {
+  window.emitIpcEventToAll('update-available')
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('update-available')
 })

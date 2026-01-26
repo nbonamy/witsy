@@ -2,7 +2,7 @@
 import { anyDict } from 'types/index';
 import { Application } from 'types/automation';
 import { app, BrowserWindow } from 'electron';
-import { createWindow, getCurrentScreen, ensureOnCurrentScreen, releaseFocus, getWindowScreen, getFullscreenBounds } from './index';
+import { createWindow, emitIpcEvent, getCurrentScreen, ensureOnCurrentScreen, releaseFocus, getWindowScreen, getFullscreenBounds } from './index';
 import { useI18n } from '../i18n';
 
 export let promptAnywhereWindow: BrowserWindow = null;
@@ -82,7 +82,7 @@ export const openPromptAnywhere = (params: anyDict): void => {
   if (!promptAnywhereWindow || promptAnywhereWindow.isDestroyed()) {
     preparePromptAnywhere(params);
   } else {
-    promptAnywhereWindow.webContents.send('show', params);
+    emitIpcEvent(promptAnywhereWindow, 'show', params);
   }
 
   // check prompt is on the right screen

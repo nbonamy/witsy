@@ -1,5 +1,6 @@
 
 import { strDict } from 'types/index';
+import { IpcSignal } from '../../ipc_consts';
 import { CreateWindowOpts, ReleaseFocusOpts } from 'types/window';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, Display, screen, shell } from 'electron';
 import { promptAnywhereWindow } from './anywhere';
@@ -357,31 +358,35 @@ export const areAllWindowsClosed = () => {
   return windows.length === 0;
 };
 
-export const notifyBrowserWindows = (event: string, ...args: any[]) => {
+export const emitIpcEvent = (window: BrowserWindow, signal: IpcSignal, ...args: unknown[]) => {
   try {
-    const windows = BrowserWindow.getAllWindows();
-    for (const window of windows) {
-      try {
-        if (!window.isDestroyed()) {
-          window.webContents.send(event, ...args);
-        }
-      } catch (error) {
-        console.error('[window] Error while notifying browser windows', error)
-      }
+    if (!window.isDestroyed()) {
+      window.webContents.send(signal, ...args);
     }
   } catch (error) {
-    console.error('[window] Error while notifying browser windows', error)
+    console.error('[window] Error while emitting IPC event', error)
   }
 }
 
-export const notifyFocusedWindow = (event: string, ...args: any[]) => {
+export const emitIpcEventToAll = (signal: IpcSignal, ...args: unknown[]) => {
   try {
-    const focusedWindow = BrowserWindow.getFocusedWindow();
-    if (focusedWindow && !focusedWindow.isDestroyed()) {
-      focusedWindow.webContents.send(event, ...args);
+    const windows = BrowserWindow.getAllWindows();
+    for (const window of windows) {
+      emitIpcEvent(window, signal, ...args);
     }
   } catch (error) {
-    console.error('[window] Error while notifying focused window', error)
+    console.error('[window] Error while emitting IPC event to all windows', error)
+  }
+}
+
+export const emitIpcEventToFocused = (signal: IpcSignal, ...args: unknown[]) => {
+  try {
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    if (focusedWindow) {
+      emitIpcEvent(focusedWindow, signal, ...args);
+    }
+  } catch (error) {
+    console.error('[window] Error while emitting IPC event to focused window', error)
   }
 }
 

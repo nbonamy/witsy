@@ -10,7 +10,7 @@ import path from 'path'
 import fs from 'fs'
 
 const monitor: Monitor = new Monitor(() => {
-  window.notifyBrowserWindows('file-modified', 'commands');
+  window.emitIpcEventToAll('file-modified', 'commands');
 })
 
 export const commandsFilePath = (app: App): string => {

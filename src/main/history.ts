@@ -5,7 +5,7 @@ import { LlmModelOpts } from 'multi-llm-ts'
 import path from 'path'
 import { Chat, History } from 'types/index'
 import Monitor from './monitor'
-import { notifyBrowserWindows } from './windows'
+import { emitIpcEventToAll } from './windows'
 import { workspaceFolderPath } from './workspace'
 import { kHistoryVersion } from '../consts'
 
@@ -13,7 +13,7 @@ export const kUnusedDelay = 3600000
 
 const monitor: Monitor = new Monitor(() => {
   //console.log('History file modified')
-  notifyBrowserWindows('file-modified', 'history')
+  emitIpcEventToAll('file-modified', 'history')
 })
 
 export const historyFilePath = (app: App, workspaceId: string): string => {

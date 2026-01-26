@@ -58,7 +58,7 @@ export default class Dictation {
 
   static stopDictation(): void {
     if (Dictation.isDictationWindowOpen()) {
-      window.dictationWindow.webContents.send('stop-and-transcribe')
+      window.emitIpcEvent(window.dictationWindow, 'stop-and-transcribe')
     }
   }
 

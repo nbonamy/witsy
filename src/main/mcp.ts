@@ -15,7 +15,7 @@ import { useI18n } from './i18n'
 import McpOAuthManager from './mcp_auth'
 import Monitor from './monitor'
 import { wait } from './utils'
-import { notifyBrowserWindows } from './windows'
+import { emitIpcEventToAll } from './windows'
 
 type ToolsCacheEntry = {
   tools: any
@@ -519,7 +519,7 @@ export default class Mcp {
     this.toolsCache.delete(server.uuid)
 
     // Notify UI to show "starting" status
-    notifyBrowserWindows('mcp-servers-updated')
+    emitIpcEventToAll('mcp-servers-updated')
 
     // Step 2: Small delay to ensure UI updates (use existing wait utility)
     await wait(100)
@@ -597,7 +597,7 @@ export default class Mcp {
         tools: null,
         timestamp: 0,
       })
-      notifyBrowserWindows('mcp-servers-updated')
+      emitIpcEventToAll('mcp-servers-updated')
       return false
     }
 

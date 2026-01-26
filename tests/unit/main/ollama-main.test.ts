@@ -4,7 +4,7 @@ import { spawn } from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
 import { mainWindow } from '@main/windows/main'
-import * as IPC from '@/ipc_consts'
+import { emitIpcEvent } from '@main/windows'
 import { startDownload, cancelDownload, openInFileExplorer, getDownloadStatus } from '@main/ollama'
 import { EventEmitter } from 'events'
 
@@ -34,10 +34,16 @@ vi.mock('path', () => ({
 // Mock main window
 vi.mock('@main/windows/main', () => ({
   mainWindow: {
+    isDestroyed: vi.fn(() => false),
     webContents: {
       send: vi.fn()
     }
   }
+}))
+
+// Mock emitIpcEvent
+vi.mock('@main/windows', () => ({
+  emitIpcEvent: vi.fn()
 }))
 
 // Mock writable stream
@@ -118,8 +124,9 @@ test('startDownload should handle download progress', () => {
   mockResponse.emit('data', chunk)
   
   expect(mockWriteStream.write).toHaveBeenCalledWith(chunk)
-  expect(mainWindow?.webContents.send).toHaveBeenCalledWith(
-    IPC.OLLAMA.DOWNLOAD_PROGRESS,
+  expect(emitIpcEvent).toHaveBeenCalledWith(
+    mainWindow,
+    'ollama-download-progress',
     expect.objectContaining({
       progress: expect.any(Number),
       downloadedBytes: chunk.length,
@@ -145,8 +152,9 @@ test('startDownload should handle download completion', () => {
   mockResponse.emit('end')
   
   expect(mockWriteStream.close).toHaveBeenCalled()
-  expect(mainWindow?.webContents.send).toHaveBeenCalledWith(
-    IPC.OLLAMA.DOWNLOAD_COMPLETE,
+  expect(emitIpcEvent).toHaveBeenCalledWith(
+    mainWindow,
+    'ollama-download-complete',
     expect.objectContaining({
       filePath: '/test/Ollama.dmg'
     })
@@ -171,8 +179,9 @@ test('startDownload should handle download error', () => {
   mockResponse.emit('error', error)
   
   expect(fs.unlinkSync).toHaveBeenCalledWith('/test/Ollama.dmg')
-  expect(mainWindow?.webContents.send).toHaveBeenCalledWith(
-    IPC.OLLAMA.DOWNLOAD_ERROR,
+  expect(emitIpcEvent).toHaveBeenCalledWith(
+    mainWindow,
+    'ollama-download-error',
     expect.objectContaining({
       error: 'Network error'
     })

@@ -26,7 +26,7 @@ vi.mock('fs', async (importOriginal) => {
 
 vi.mock('@main/windows/index', async () => {
   return {
-    notifyBrowserWindows: vi.fn(),
+    emitIpcEventToAll: vi.fn(),
   }
 })
 
