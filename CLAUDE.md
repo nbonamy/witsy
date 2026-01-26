@@ -67,6 +67,27 @@ export const CHAT = {
 // Preload exposures in src/preload.ts
 ```
 
+### Event System
+
+**IPC Events (main→renderer):** Use `emitIpcEvent`/`emitIpcEventToAll`/`emitIpcEventToFocused` from main and the `useIpcListener` composable in renderer. Handlers are auto-cleaned on component unmount.
+```typescript
+import useIpcListener from '@composables/ipc_listener'
+const { onIpcEvent } = useIpcListener()
+onIpcEvent('docrepo-modified', (data) => { /* handle */ })
+```
+
+**Bus Events (renderer↔renderer):** Use `useEventBus` for cross-branch communication between Vue components. Prefer Vue emit/provide-inject for parent-child communication.
+```typescript
+import useEventBus from '@composables/event_bus'
+const { onBusEvent, emitBusEvent } = useEventBus()
+onBusEvent('fullscreen', (data) => { /* handle */ })
+emitBusEvent('new-chat', payload)
+```
+
+### Window API Types
+
+If you encounter `window.api.*` lint errors, add the method signature to `declare global { interface Window {` in `src/types/index.ts`.
+
 ### CSS classes
 
 The project includes a variety of CSS classes available globally:
