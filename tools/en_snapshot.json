@@ -2092,7 +2092,7 @@
   "webapps.add": "Add Web App",
   "webapps.delete": "Delete Web App",
   "webapps.deleteConfirm": "Are you sure you want to delete this web app?",
-  "webapps.description": "EXPERIMENTAL: Configure web applications to access them directly from the menu bar. Your login sessions and data will be preserved.",
+  "webapps.description": "Configure web applications to access them directly from the menu bar. Your login sessions and data will be preserved.",
   "webapps.edit": "Edit Web App",
   "webapps.enabled": "Enabled",
   "webapps.evictionDuration": "Evict inactive webapps after (minutes)",
