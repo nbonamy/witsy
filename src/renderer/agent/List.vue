@@ -55,6 +55,11 @@
                 v-tooltip="{ text: t('agent.help.run'), position: 'top-left' }"
                 @click="onAgentRun(agent)"
               ><PlayIcon /></ButtonIcon>
+              <AgentExecutionsMenu
+                v-if="getRunningExecutions(agent.uuid).length > 0"
+                :executions="getRunningExecutions(agent.uuid)"
+                @stop="$emit('stop', $event)"
+              />
               <ButtonIcon
                 class="view"
                 v-tooltip="{ text: t('agent.help.view'), position: 'top-left' }"
@@ -80,12 +85,15 @@
           :key="`${agent.uuid}-${agent.lastRunId}`"
           :agent="agent"
           :starting="startingAgents.includes(agent.uuid)"
+          :running-count="getRunningExecutions(agent.uuid).length"
+          :running-executions="getRunningExecutions(agent.uuid)"
           @run="onAgentRun"
           @view="$emit('view', $event)"
           @edit="$emit('edit', $event)"
           @export="$emit('export', $event)"
           @duplicate="$emit('duplicate', $event)"
           @delete="$emit('delete', $event)"
+          @stop="$emit('stop', $event)"
         />
       </div>
     </main>
@@ -96,10 +104,11 @@
 
 import { EyeIcon, LayoutGridIcon, ListIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
 import { Agent } from 'types/agents'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, PropType, ref, watch } from 'vue'
 import LogoA2A from '@assets/a2a.svg?component'
 import AgentCard from './AgentCard.vue'
 import AgentMenu from './AgentMenu.vue'
+import AgentExecutionsMenu from './AgentExecutionsMenu.vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
 import { useTimeAgo } from '@composables/ago'
@@ -109,7 +118,21 @@ import { store } from '@services/store'
 type ViewMode = 'table' | 'cards'
 const STORAGE_KEY = 'agentForgeViewMode'
 
-const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson'])
+interface AgentExecution {
+  agent: Agent
+  abortController: AbortController
+  runId?: string
+  startTime: number
+}
+
+const props = defineProps({
+  runningExecutions: {
+    type: Map as PropType<Map<string, AgentExecution>>,
+    default: () => new Map()
+  }
+})
+
+const emit = defineEmits(['create', 'view', 'edit', 'run', 'delete', 'duplicate', 'export', 'importA2A', 'importJson', 'stop'])
 
 const agents = ref<Agent[]>([])
 const startingAgents = ref<string[]>([])
@@ -144,6 +167,18 @@ const lastRun = (agent: Agent) => {
   if (!agentRun) return t('agent.history.neverRun')
   if (agentRun.status === 'running') return t('agent.history.running')
   return useTimeAgo().format(new Date(agentRun.createdAt))
+}
+
+const getRunningExecutions = (agentUuid: string): Array<{ id: string, agent: Agent, startTime: number }> => {
+  const executions: Array<{ id: string, agent: Agent, startTime: number }> = []
+
+  for (const [id, execution] of props.runningExecutions.entries()) {
+    if (execution.agent.uuid === agentUuid) {
+      executions.push({ id, agent: execution.agent, startTime: execution.startTime })
+    }
+  }
+
+  return executions
 }
 
 </script>

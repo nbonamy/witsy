@@ -16,7 +16,14 @@
 
           <ButtonIcon class="run" v-tooltip="{ text: t('agent.help.run'), position: 'bottom-left' }" @click="emit('run', agent)">
             <PlayIcon />
+            <span v-if="getRunningCount() > 0" class="running-badge">{{ getRunningCount() }}</span>
           </ButtonIcon>
+
+          <AgentExecutionsMenu
+            v-if="getRunningExecutions().length > 0"
+            :executions="getRunningExecutions()"
+            @stop="emit('stop', $event)"
+          />
 
           <ContextMenuTrigger position="below-right">
             <template #menu>
@@ -44,7 +51,9 @@
     <Run
       :agent="agent"
       :run="selection.length === 1 ? selection[0] : null"
+      :running-executions="runningExecutions"
       @delete="deleteRuns"
+      @stop="emit('stop', $event)"
     />
 
     <ContextMenuPlus v-if="showMenu" @close="closeContextMenu" :mouseX="menuX" :mouseY="menuY">
@@ -69,9 +78,17 @@ import { ChevronLeftIcon, PencilIcon, PlayIcon, Trash2Icon } from 'lucide-vue-ne
 import { Agent, AgentRun } from 'types/agents'
 import { PropType, onMounted, ref, watch } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
+import AgentExecutionsMenu from './AgentExecutionsMenu.vue'
 import History from './History.vue'
 import Info from './Info.vue'
 import Run from './Run.vue'
+
+interface AgentExecution {
+  agent: Agent
+  abortController: AbortController
+  runId?: string
+  startTime: number
+}
 
 const { onIpcEvent } = useIpcListener()
 
@@ -90,9 +107,13 @@ const props = defineProps({
     type: Object as PropType<Agent>,
     default: null,
   },
+  runningExecutions: {
+    type: Map as PropType<Map<string, AgentExecution>>,
+    default: () => new Map(),
+  },
 })
 
-const emit = defineEmits(['close', 'run', 'edit', 'delete'])
+const emit = defineEmits(['close', 'run', 'edit', 'delete', 'stop'])
 
 onMounted(() => {
   watch(() => props.agent, () => reload(), { immediate: true })
@@ -223,6 +244,22 @@ const clearHistory = () => {
   })
 }
 
+const getRunningExecutions = (): Array<{ id: string, agent: Agent, startTime: number }> => {
+  if (!props.agent) return []
+
+  const executions: Array<{ id: string, agent: Agent, startTime: number }> = []
+  for (const [id, execution] of props.runningExecutions.entries()) {
+    if (execution.agent.uuid === props.agent.uuid) {
+      executions.push({ id, agent: execution.agent, startTime: execution.startTime })
+    }
+  }
+  return executions
+}
+
+const getRunningCount = (): number => {
+  return getRunningExecutions().length
+}
+
 </script>
 
 <style scoped>
@@ -242,6 +279,32 @@ const clearHistory = () => {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    header .actions {
+      display: flex;
+      gap: var(--space-4);
+      align-items: center;
+
+      :deep(.button-icon) {
+        position: relative;
+      }
+
+      .running-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background-color: var(--color-primary);
+        color: var(--color-on-primary);
+        font-size: 10px;
+        font-weight: var(--font-weight-bold);
+        padding: 2px 5px;
+        border-radius: var(--radius-full);
+        min-width: 18px;
+        text-align: center;
+        line-height: 1.2;
+        border: 2px solid var(--color-background);
+      }
     }
 
     main {

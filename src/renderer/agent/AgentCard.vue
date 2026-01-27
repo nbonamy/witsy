@@ -16,7 +16,14 @@
         <SpinningIcon v-if="starting" :spinning="true" />
         <PlayIcon v-else />
         {{ t('agent.forge.run') }}
+        <span v-if="runningCount > 0" class="running-badge">{{ runningCount }}</span>
       </button>
+      <AgentExecutionsMenu
+        v-if="runningCount > 0"
+        variant="button"
+        :executions="runningExecutions"
+        @stop="emit('stop', $event)"
+      />
       <button type="button" class="secondary" @click="emit('view', agent)">
         <EyeIcon />
         {{ t('agent.forge.view') }}
@@ -38,13 +45,16 @@
 import { EyeIcon, PlayIcon } from 'lucide-vue-next'
 import { Agent } from 'types/agents'
 import IconAgent from '@assets/agent.svg?component'
+import AgentExecutionsMenu from './AgentExecutionsMenu.vue'
 import AgentMenu from './AgentMenu.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
 import { t } from '@services/i18n'
 
-defineProps<{
+const props = defineProps<{
   agent: Agent
   starting: boolean
+  runningCount: number
+  runningExecutions: Array<{ id: string, agent: Agent, startTime: number }>
 }>()
 
 const emit = defineEmits<{
@@ -54,6 +64,7 @@ const emit = defineEmits<{
   export: [agent: Agent]
   duplicate: [agent: Agent]
   delete: [agent: Agent]
+  stop: [executionId: string]
 }>()
 
 </script>
@@ -152,10 +163,27 @@ const emit = defineEmits<{
   color: var(--color-primary);
   cursor: pointer;
   transition: background-color 0.2s ease;
+  position: relative;
 }
 
 .card-footer button:hover {
   background-color: var(--color-primary-container);
+}
+
+.running-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  padding: 2px 5px;
+  border-radius: var(--radius-full);
+  min-width: 18px;
+  text-align: center;
+  line-height: 1.2;
+  border: 2px solid var(--color-surface);
 }
 
 .card-footer button svg {

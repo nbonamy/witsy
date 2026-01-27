@@ -56,6 +56,10 @@ const llmManager = LlmFactory.manager(store.config)
 const latestChunk = ref<LlmChunk | null>(null)
 provide('latestChunk', latestChunk)
 
+// provide generating state for Prompt component
+const isGenerating = computed(() => activeSession.value?.status === 'generating')
+provide('isGenerating', isGenerating)
+
 // provide callbacks for descendant components (scoped to this component tree)
 // handlers are defined later but called via these wrappers
 const chatCallbacks = {
