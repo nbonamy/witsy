@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Various memory leaks fixes
+- Context preservation on tool calls
 - YouTube plugin fix (https://github.com/nbonamy/witsy/issues/516)
 
 ### Removed
