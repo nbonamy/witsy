@@ -1,23 +1,7 @@
 <template>
-  <ContextMenuTrigger position="below-right" class="executions-menu">
+  <ContextMenuTrigger position="below-right" :bordered="false" class="executions-menu" v-if="executions.length > 0">
     <template #trigger>
-      <ButtonIcon
-        v-if="variant === 'icon'"
-        class="stop"
-        v-tooltip="{ text: stopTooltip, position: 'top-left' }"
-      >
-        <SquareIcon />
-        <span v-if="executions.length > 1" class="badge">{{ executions.length }}</span>
-      </ButtonIcon>
-      <button
-        v-else
-        type="button"
-        class="secondary stop-button"
-        v-tooltip="{ text: stopTooltip, position: 'top-left' }"
-      >
-        <SquareIcon />
-        {{ executions.length > 1 ? t('agent.help.stopMultiple', { count: executions.length }) : t('common.stop') }}
-      </button>
+      <slot name="trigger" :executions="executions" :tooltip="stopTooltip" />
     </template>
     <template #menu>
       <div
@@ -35,9 +19,8 @@
 
 <script setup lang="ts">
 
-import { computed, onMounted, onUnmounted, PropType, ref } from 'vue'
+import { computed, onMounted, onBeforeUnmount, PropType, ref } from 'vue'
 import { SquareIcon } from 'lucide-vue-next'
-import ButtonIcon from '@components/ButtonIcon.vue'
 import ContextMenuTrigger from '@components/ContextMenuTrigger.vue'
 import { useTimeAgo } from '@composables/ago'
 import { t } from '@services/i18n'
@@ -47,10 +30,6 @@ const props = defineProps({
   executions: {
     type: Array as PropType<Array<{ id: string, agent: Agent, startTime: number }>>,
     required: true
-  },
-  variant: {
-    type: String as PropType<'icon' | 'button'>,
-    default: 'icon'
   }
 })
 
@@ -68,7 +47,7 @@ onMounted(() => {
   }, 1000)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (intervalId) {
     clearInterval(intervalId)
   }
@@ -110,34 +89,8 @@ const stopTooltip = computed(() => {
   position: relative;
 }
 
-:deep(.button-icon) {
-  position: relative;
-}
-
-.badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background-color: var(--color-error);
-  color: var(--color-on-error);
-  font-size: 10px;
-  font-weight: var(--font-weight-semibold);
-  padding: 2px 4px;
-  border-radius: var(--radius-full);
-  min-width: 16px;
-  text-align: center;
-  line-height: 1;
-}
-
-button.stop-button {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  color: var(--color-error);
-}
-
-button.stop-button:hover {
-  background-color: var(--color-error-container);
+:deep() .button-icon.trigger {
+  padding: 0;
 }
 
 </style>
