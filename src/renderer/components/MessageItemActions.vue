@@ -1,28 +1,28 @@
 <template>
   <div class="actions" v-if="message">
-    <MessageItemActionCopy :message="message" />
-    <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
+    <MessageItemActionCopy v-if="isVisible('copy')" :message="message" />
+    <MessageItemActionRead v-if="isVisible('read')" :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
     <template v-if="!message.transient">
-      <div class="action usage" v-if="message.usage" @click="onUsage(message)">
+      <div class="action usage" v-if="message.usage && isVisible('usage')" @click="onUsage(message)">
         <ChartNoAxesColumnIncreasingIcon /> {{ t('common.usage') }}
       </div>
-      <div class="action retry" v-if="message.role == 'assistant'" @click="onRetry(message)">
+      <div class="action retry" v-if="message.role == 'assistant' && isVisible('retry')" @click="onRetry(message)">
         <RotateCcwIcon /> {{ t('common.retry') }}
       </div>
-      <div class="action edit" v-if="message.type == 'text'" @click="onEdit">
+      <div class="action edit" v-if="message.type == 'text' && isVisible('edit')" @click="onEdit">
         <PencilIcon /> {{ t('common.edit') }}
       </div>
-      <div class="action quote" v-if="message.role == 'user' && message.type == 'text'" @click="onQuote(message)">
+      <div class="action quote" v-if="message.role == 'user' && message.type == 'text' && isVisible('quote')" @click="onQuote(message)">
         <QuoteIcon /> {{ t('common.quote') }}
       </div>
-      <div class="action delete" v-if="message.role == 'user' && message.type == 'text'" @click="onDelete(message)">
+      <div class="action delete" v-if="message.role == 'user' && message.type == 'text' && isVisible('delete')" @click="onDelete(message)">
         <Trash2Icon /> {{ t('common.delete') }}
       </div>
-      <MessageItemActionScratchpad :message="message" />
-      <div class="action fork" @click="onFork(message)">
+      <MessageItemActionScratchpad v-if="isVisible('scratchpad')" :message="message" />
+      <div class="action fork" v-if="isVisible('fork')" @click="onFork(message)">
         <GitBranchIcon /> {{ t('common.fork') }}
       </div>
-      <div class="action tools" @click="onTools(message)" v-if="message.role == 'assistant' && store.config.appearance.chat.showToolCalls != 'always'">
+      <div class="action tools" @click="onTools(message)" v-if="message.role == 'assistant' && store.config.appearance.chat.showToolCalls != 'always' && isVisible('tools')">
         <WrenchIcon /> {{ t('common.tools') }}
       </div>
     </template>
@@ -42,7 +42,24 @@ import { store } from '@services/store'
 import Dialog from '@renderer/utils/dialog'
 import type { ChatCallbacks } from '@screens/Chat.vue'
 
+type ActionName = 'copy' | 'read' | 'usage' | 'retry' | 'edit' | 'quote' | 'delete' | 'scratchpad' | 'fork' | 'tools'
+
 const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
+const hiddenMessageActions = inject<ActionName[]>('hidden-message-actions', [])
+
+const callbackMap: Partial<Record<ActionName, keyof ChatCallbacks>> = {
+  retry: 'onRetryGeneration',
+  quote: 'onSetPrompt',
+  delete: 'onDeleteMessage',
+  fork: 'onForkChat',
+}
+
+const isVisible = (action: ActionName): boolean => {
+  if (hiddenMessageActions.includes(action)) return false
+  const callbackName = callbackMap[action]
+  if (!callbackName) return true
+  return !!chatCallbacks?.[callbackName]
+}
 
 const emit = defineEmits(['show-tools', 'edit-message'])
 
