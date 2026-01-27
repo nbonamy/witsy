@@ -1,5 +1,5 @@
 <template>
-  <ButtonIcon class="stop" v-tooltip="{ text: tooltip, position: tooltipPosition }">
+  <ButtonIcon class="stop">
     <SquareIcon />
     <span class="count">{{ executions.length > 9 ? '✱' : executions.length }}</span>
   </ButtonIcon>
@@ -16,14 +16,6 @@ defineProps({
   executions: {
     type: Array as PropType<Array<{ id: string, agent: Agent, startTime: number }>>,
     required: true
-  },
-  tooltip: {
-    type: String,
-    required: true
-  },
-  tooltipPosition: {
-    type: String,
-    default: 'top-left'
   }
 })
 

@@ -32,7 +32,7 @@ describe('AgentCard.vue', () => {
   test('renders agent name and description', () => {
     const agent = createMockAgent()
     const wrapper = mount(AgentCard, {
-      props: { agent, starting: false },
+      props: { agent, starting: false, runningCount: 0, runningExecutions: [] },
     })
 
     expect(wrapper.find('h3').text()).toBe('Test Agent')
@@ -42,7 +42,7 @@ describe('AgentCard.vue', () => {
   test('emits run event when run button clicked', async () => {
     const agent = createMockAgent()
     const wrapper = mount(AgentCard, {
-      props: { agent, starting: false },
+      props: { agent, starting: false, runningCount: 0, runningExecutions: [] },
     })
 
     const runButton = wrapper.findAll('button').find(b => b.text().includes('agent.forge.run'))
@@ -55,7 +55,7 @@ describe('AgentCard.vue', () => {
   test('emits view event when view button clicked', async () => {
     const agent = createMockAgent()
     const wrapper = mount(AgentCard, {
-      props: { agent, starting: false },
+      props: { agent, starting: false, runningCount: 0, runningExecutions: [] },
     })
 
     const viewButton = wrapper.findAll('button').find(b => b.text().includes('agent.forge.view'))
@@ -68,7 +68,7 @@ describe('AgentCard.vue', () => {
   test('renders context menu trigger', () => {
     const agent = createMockAgent()
     const wrapper = mount(AgentCard, {
-      props: { agent, starting: false },
+      props: { agent, starting: false, runningCount: 0, runningExecutions: [] },
     })
 
     expect(wrapper.findComponent({ name: 'ContextMenuTrigger' }).exists()).toBe(true)
@@ -77,7 +77,7 @@ describe('AgentCard.vue', () => {
   test('shows spinner icon when starting is true', () => {
     const agent = createMockAgent()
     const wrapper = mount(AgentCard, {
-      props: { agent, starting: true },
+      props: { agent, starting: true, runningCount: 0, runningExecutions: [] },
     })
 
     // SpinningIcon should be rendered when starting
@@ -87,7 +87,7 @@ describe('AgentCard.vue', () => {
   test('shows play icon svg when starting is false', () => {
     const agent = createMockAgent()
     const wrapper = mount(AgentCard, {
-      props: { agent, starting: false },
+      props: { agent, starting: false, runningCount: 0, runningExecutions: [] },
     })
 
     // PlayIcon should be rendered (it renders as SVG)
@@ -99,7 +99,7 @@ describe('AgentCard.vue', () => {
   test('renders footer with buttons', () => {
     const agent = createMockAgent()
     const wrapper = mount(AgentCard, {
-      props: { agent, starting: false },
+      props: { agent, starting: false, runningCount: 0, runningExecutions: [] },
     })
 
     const footer = wrapper.find('.card-footer')

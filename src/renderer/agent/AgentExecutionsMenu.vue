@@ -1,7 +1,7 @@
 <template>
   <ContextMenuTrigger position="below-right" :bordered="false" class="executions-menu" v-if="executions.length > 0">
     <template #trigger>
-      <slot name="trigger" :executions="executions" :tooltip="stopTooltip" />
+      <slot name="trigger" :executions="executions" />
     </template>
     <template #menu>
       <div
@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 
-import { computed, onMounted, onBeforeUnmount, PropType, ref } from 'vue'
+import { onMounted, onBeforeUnmount, PropType, ref } from 'vue'
 import { SquareIcon } from 'lucide-vue-next'
 import ContextMenuTrigger from '@components/ContextMenuTrigger.vue'
 import { useTimeAgo } from '@composables/ago'
@@ -74,12 +74,6 @@ const formatTime = (startTime: number): string => {
   return timeAgo.format(new Date(startTime))
 }
 
-const stopTooltip = computed(() => {
-  if (props.executions.length === 1) {
-    return t('agent.help.stop')
-  }
-  return t('agent.help.stopMultiple', { count: props.executions.length })
-})
 
 </script>
 
