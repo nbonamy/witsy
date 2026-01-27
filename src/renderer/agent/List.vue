@@ -49,17 +49,17 @@
             <td>{{ t(`agent.forge.list.${agent.type}`) }}</td>
             <td>{{ lastRun(agent) }}</td>
             <td><div class="actions">
-              <ButtonIcon v-if="runningAgent?.uuid === agent.uuid"
-                class="stop"
-                v-tooltip="{ text: t('agent.help.stop'), position: 'top-left' }"
-                @click="$emit('stop')"
-              ><SquareIcon /></ButtonIcon>
-              <SpinningIcon v-else-if="startingAgents.includes(agent.uuid)" :spinning="true" class="run" />
+              <SpinningIcon v-if="startingAgents.includes(agent.uuid)" :spinning="true" class="run" />
               <ButtonIcon v-else
                 class="run"
                 v-tooltip="{ text: t('agent.help.run'), position: 'top-left' }"
                 @click="onAgentRun(agent)"
               ><PlayIcon /></ButtonIcon>
+              <AgentExecutionsMenu
+                v-if="getRunningExecutions(agent.uuid).length > 0"
+                :executions="getRunningExecutions(agent.uuid)"
+                @stop="$emit('stop', $event)"
+              />
               <ButtonIcon
                 class="view"
                 v-tooltip="{ text: t('agent.help.view'), position: 'top-left' }"
@@ -85,14 +85,15 @@
           :key="`${agent.uuid}-${agent.lastRunId}`"
           :agent="agent"
           :starting="startingAgents.includes(agent.uuid)"
-          :running="runningAgent?.uuid === agent.uuid"
+          :running-count="getRunningExecutions(agent.uuid).length"
+          :running-executions="getRunningExecutions(agent.uuid)"
           @run="onAgentRun"
           @view="$emit('view', $event)"
           @edit="$emit('edit', $event)"
           @export="$emit('export', $event)"
           @duplicate="$emit('duplicate', $event)"
           @delete="$emit('delete', $event)"
-          @stop="$emit('stop')"
+          @stop="$emit('stop', $event)"
         />
       </div>
     </main>
@@ -101,26 +102,31 @@
 
 <script setup lang="ts">
 
-import { EyeIcon, LayoutGridIcon, ListIcon, PlayIcon, PlusIcon, SquareIcon, UploadIcon } from 'lucide-vue-next'
+import { EyeIcon, LayoutGridIcon, ListIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
 import { Agent } from 'types/agents'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, PropType, ref, watch } from 'vue'
 import LogoA2A from '@assets/a2a.svg?component'
 import AgentCard from './AgentCard.vue'
 import AgentMenu from './AgentMenu.vue'
+import AgentExecutionsMenu from './AgentExecutionsMenu.vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
 import { useTimeAgo } from '@composables/ago'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import { PropType } from 'vue'
 
 type ViewMode = 'table' | 'cards'
 const STORAGE_KEY = 'agentForgeViewMode'
 
-defineProps({
-  runningAgent: {
-    type: Object as PropType<Agent | null>,
-    default: null
+interface AgentExecution {
+  agent: Agent
+  abortController: AbortController
+}
+
+const props = defineProps({
+  runningExecutions: {
+    type: Map as PropType<Map<string, AgentExecution>>,
+    default: () => new Map()
   }
 })
 
@@ -159,6 +165,18 @@ const lastRun = (agent: Agent) => {
   if (!agentRun) return t('agent.history.neverRun')
   if (agentRun.status === 'running') return t('agent.history.running')
   return useTimeAgo().format(new Date(agentRun.createdAt))
+}
+
+const getRunningExecutions = (agentUuid: string): Array<{ id: string, agent: Agent }> => {
+  const executions: Array<{ id: string, agent: Agent }> = []
+
+  for (const [id, execution] of props.runningExecutions.entries()) {
+    if (execution.agent.uuid === agentUuid) {
+      executions.push({ id, agent: execution.agent })
+    }
+  }
+
+  return executions
 }
 
 </script>

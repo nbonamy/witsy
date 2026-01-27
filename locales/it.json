@@ -334,6 +334,9 @@
       "import": "Importa agente",
       "run": "Esegui questo agente",
       "stop": "Ferma agente in esecuzione",
+      "stopExecution": "Ferma istanza {index}",
+      "stopMultiple": "Ferma {count} istanze in esecuzione",
+      "stopThisRun": "Ferma questa esecuzione",
       "view": "Visualizza i dettagli dell'agente"
     },
     "history": {
