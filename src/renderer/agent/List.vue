@@ -121,6 +121,8 @@ const STORAGE_KEY = 'agentForgeViewMode'
 interface AgentExecution {
   agent: Agent
   abortController: AbortController
+  runId?: string
+  startTime: number
 }
 
 const props = defineProps({
@@ -167,12 +169,12 @@ const lastRun = (agent: Agent) => {
   return useTimeAgo().format(new Date(agentRun.createdAt))
 }
 
-const getRunningExecutions = (agentUuid: string): Array<{ id: string, agent: Agent }> => {
-  const executions: Array<{ id: string, agent: Agent }> = []
+const getRunningExecutions = (agentUuid: string): Array<{ id: string, agent: Agent, startTime: number }> => {
+  const executions: Array<{ id: string, agent: Agent, startTime: number }> = []
 
   for (const [id, execution] of props.runningExecutions.entries()) {
     if (execution.agent.uuid === agentUuid) {
-      executions.push({ id, agent: execution.agent })
+      executions.push({ id, agent: execution.agent, startTime: execution.startTime })
     }
   }
 

@@ -86,6 +86,8 @@ import Run from './Run.vue'
 interface AgentExecution {
   agent: Agent
   abortController: AbortController
+  runId?: string
+  startTime: number
 }
 
 const { onIpcEvent } = useIpcListener()
@@ -242,13 +244,13 @@ const clearHistory = () => {
   })
 }
 
-const getRunningExecutions = (): Array<{ id: string, agent: Agent }> => {
+const getRunningExecutions = (): Array<{ id: string, agent: Agent, startTime: number }> => {
   if (!props.agent) return []
 
-  const executions: Array<{ id: string, agent: Agent }> = []
+  const executions: Array<{ id: string, agent: Agent, startTime: number }> = []
   for (const [id, execution] of props.runningExecutions.entries()) {
     if (execution.agent.uuid === props.agent.uuid) {
-      executions.push({ id, agent: execution.agent })
+      executions.push({ id, agent: execution.agent, startTime: execution.startTime })
     }
   }
   return executions

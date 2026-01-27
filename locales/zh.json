@@ -352,8 +352,11 @@
       "export": "导出代理",
       "import": "导入代理",
       "run": "运行此代理",
+      "startedJustNow": "刚刚开始",
+      "startedSecondsAgo": "{seconds}秒前开始",
       "stop": "停止运行的代理",
       "stopExecution": "停止实例 {index}",
+      "stopExecutionTime": "开始于 {time}",
       "stopMultiple": "停止 {count} 个运行实例",
       "stopThisRun": "停止此执行",
       "view": "查看代理详情"

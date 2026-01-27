@@ -333,8 +333,11 @@
       "export": "Esporta agente",
       "import": "Importa agente",
       "run": "Esegui questo agente",
+      "startedJustNow": "Avviato ora",
+      "startedSecondsAgo": "Avviato {seconds}s fa",
       "stop": "Ferma agente in esecuzione",
       "stopExecution": "Ferma istanza {index}",
+      "stopExecutionTime": "Avviato {time}",
       "stopMultiple": "Ferma {count} istanze in esecuzione",
       "stopThisRun": "Ferma questa esecuzione",
       "view": "Visualizza i dettagli dell'agente"

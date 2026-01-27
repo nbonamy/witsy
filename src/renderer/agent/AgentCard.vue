@@ -54,7 +54,7 @@ const props = defineProps<{
   agent: Agent
   starting: boolean
   runningCount: number
-  runningExecutions: Array<{ id: string, agent: Agent }>
+  runningExecutions: Array<{ id: string, agent: Agent, startTime: number }>
 }>()
 
 const emit = defineEmits<{
