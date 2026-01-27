@@ -47,7 +47,8 @@ type ActionName = 'copy' | 'read' | 'usage' | 'retry' | 'edit' | 'quote' | 'dele
 const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
 const hiddenMessageActions = inject<ActionName[]>('hidden-message-actions', [])
 
-const callbackMap: Partial<Record<ActionName, keyof ChatCallbacks>> = {
+const callbackMap: Partial<Record<ActionName, keyof ChatCallbacks | 'readAloud'>> = {
+  read: 'readAloud',
   retry: 'onRetryGeneration',
   quote: 'onSetPrompt',
   delete: 'onDeleteMessage',
@@ -58,6 +59,7 @@ const isVisible = (action: ActionName): boolean => {
   if (hiddenMessageActions.includes(action)) return false
   const callbackName = callbackMap[action]
   if (!callbackName) return true
+  if (callbackName === 'readAloud') return !!props.readAloud
   return !!chatCallbacks?.[callbackName]
 }
 
@@ -70,11 +72,11 @@ const props = defineProps({
   },
   audioState: {
     type: Object,
-    required: true,
+    required: false,
   },
   readAloud: {
     type: Function,
-    required: true,
+    required: false,
   },
 })
 

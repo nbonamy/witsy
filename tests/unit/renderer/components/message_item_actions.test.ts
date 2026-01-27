@@ -228,6 +228,23 @@ describe('MessageItemActions hiddenMessageActions', () => {
     expect(wrapper.findComponent({ name: 'MessageItemActionRead' }).exists()).toBe(false)
   })
 
+  test('hides read when readAloud prop is not provided', () => {
+    const message = createMessage('assistant')
+    const wrapper = mount(MessageItemActions, {
+      props: {
+        message,
+        // no audioState or readAloud
+      },
+      global: {
+        provide: {
+          'chat-callbacks': {},
+          'hidden-message-actions': [],
+        },
+      },
+    })
+    expect(wrapper.findComponent({ name: 'MessageItemActionRead' }).exists()).toBe(false)
+  })
+
   test('hides scratchpad when in hiddenMessageActions', () => {
     const message = createMessage('assistant')
     const wrapper = mountWithHidden(message, ['scratchpad'], {})
