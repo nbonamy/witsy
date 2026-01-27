@@ -56,10 +56,13 @@
                 @click="onAgentRun(agent)"
               ><PlayIcon /></ButtonIcon>
               <AgentExecutionsMenu
-                v-if="getRunningExecutions(agent.uuid).length > 0"
                 :executions="getRunningExecutions(agent.uuid)"
                 @stop="$emit('stop', $event)"
-              />
+              >
+                <template #trigger="{ executions, tooltip }">
+                  <AgentStopButton :executions="executions" :tooltip="tooltip" />
+                </template>
+              </AgentExecutionsMenu>
               <ButtonIcon
                 class="view"
                 v-tooltip="{ text: t('agent.help.view'), position: 'top-left' }"
@@ -109,6 +112,7 @@ import LogoA2A from '@assets/a2a.svg?component'
 import AgentCard from './AgentCard.vue'
 import AgentMenu from './AgentMenu.vue'
 import AgentExecutionsMenu from './AgentExecutionsMenu.vue'
+import AgentStopButton from './AgentStopButton.vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
 import { useTimeAgo } from '@composables/ago'
@@ -170,7 +174,16 @@ const lastRun = (agent: Agent) => {
 }
 
 const getRunningExecutions = (agentUuid: string): Array<{ id: string, agent: Agent, startTime: number }> => {
-  const executions: Array<{ id: string, agent: Agent, startTime: number }> = []
+
+  const executions: Array<{ id: string, agent: Agent, startTime: number }> = [
+    // { id: '', agent: null, startTime: 0 },
+    // { id: '', agent: null, startTime: 0 },
+    // { id: '', agent: null, startTime: 0 },
+    // { id: '', agent: null, startTime: 0 },
+    // { id: '', agent: null, startTime: 0 },
+    // { id: '', agent: null, startTime: 0 },
+    // { id: '', agent: null, startTime: 0 },
+  ]
 
   for (const [id, execution] of props.runningExecutions.entries()) {
     if (execution.agent.uuid === agentUuid) {
@@ -225,6 +238,10 @@ const getRunningExecutions = (agentUuid: string): Array<{ id: string, agent: Age
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+    .run {
+      width: 36px;
+    };
   }
 
   .agents-grid {

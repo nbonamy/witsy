@@ -15,19 +15,24 @@
       <button type="button" class="secondary" @click="emit('run', agent)">
         <SpinningIcon v-if="starting" :spinning="true" />
         <PlayIcon v-else />
-        {{ t('agent.forge.run') }}
-        <span v-if="runningCount > 0" class="running-badge">{{ runningCount }}</span>
+        <span v-if="runningCount === 0">{{ t('agent.forge.run') }}</span>
       </button>
       <AgentExecutionsMenu
-        v-if="runningCount > 0"
-        variant="button"
         :executions="runningExecutions"
         @stop="emit('stop', $event)"
-      />
+      >
+        <template #trigger>
+          <button type="button" class="secondary stop-button">
+            <SquareIcon />
+            {{ t('common.stop') }}<span class="running-count">{{ runningCount }}</span>
+          </button>
+        </template>
+      </AgentExecutionsMenu>
       <button type="button" class="secondary" @click="emit('view', agent)">
         <EyeIcon />
-        {{ t('agent.forge.view') }}
+        <span v-if="runningCount === 0">{{ t('agent.forge.view') }}</span>
       </button>
+      <div class="flex-push"></div>
       <AgentMenu
         :agent="agent"
         position="below-right"
@@ -42,7 +47,7 @@
 
 <script setup lang="ts">
 
-import { EyeIcon, PlayIcon } from 'lucide-vue-next'
+import { EyeIcon, PlayIcon, SquareIcon } from 'lucide-vue-next'
 import { Agent } from 'types/agents'
 import IconAgent from '@assets/agent.svg?component'
 import AgentExecutionsMenu from './AgentExecutionsMenu.vue'
@@ -141,58 +146,59 @@ const emit = defineEmits<{
   height: 20px;
 }
 
-.card-footer {
-  background-color: var(--color-surface);
-  padding: var(--space-8) var(--space-12);
-  display: flex;
-  gap: var(--space-4);
-  align-items: center;
-}
-
-.card-footer button {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  height: 32px;
-  padding: var(--space-4) var(--space-8);
-  border: 1px solid var(--color-outline-variant);
-  border-radius: var(--radius-md);
-  background-color: transparent;
-  font: var(--text-button-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-primary);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  position: relative;
-}
-
-.card-footer button:hover {
-  background-color: var(--color-primary-container);
-}
-
-.running-badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
+.running-count {
+  margin-left: 2px;
+  font-size: 9px;
   background-color: var(--color-primary);
   color: var(--color-on-primary);
-  font-size: 10px;
-  font-weight: var(--font-weight-bold);
-  padding: 2px 5px;
-  border-radius: var(--radius-full);
-  min-width: 18px;
+  width: 18px;
+  height: 18px;
+  aspect-ratio: 1 / 1;
+  border-radius: 9px;
   text-align: center;
-  line-height: 1.2;
-  border: 2px solid var(--color-surface);
+  line-height: 18px;
+  opacity: 0.9;
 }
 
-.card-footer button svg {
-  width: 16px;
-  height: 16px;
-}
+.card-footer {
+  background-color: var(--color-surface);
+  padding: var(--space-8) var(--space-6);
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
 
-.card-footer :deep(.context-menu-trigger) {
-  margin-left: auto;
+  &:deep() {
+
+    button:not(.trigger) {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      height: 32px;
+      padding: var(--space-4) var(--space-8);
+      border: 1px solid var(--color-outline-variant);
+      border-radius: var(--radius-md);
+      background-color: transparent;
+      font: var(--text-button-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      position: relative;
+    }
+
+    button:hover {
+      background-color: transparent !important;
+    }
+
+    button svg {
+      width: 16px;
+      height: 16px;
+      color: var(--color-primary);
+    }
+
+  }
+
+
 }
 
 </style>

@@ -16,14 +16,17 @@
 
           <ButtonIcon class="run" v-tooltip="{ text: t('agent.help.run'), position: 'bottom-left' }" @click="emit('run', agent)">
             <PlayIcon />
-            <span v-if="getRunningCount() > 0" class="running-badge">{{ getRunningCount() }}</span>
           </ButtonIcon>
 
           <AgentExecutionsMenu
             v-if="getRunningExecutions().length > 0"
             :executions="getRunningExecutions()"
             @stop="emit('stop', $event)"
-          />
+          >
+            <template #trigger="{ executions, tooltip }">
+              <AgentStopButton :executions="executions" :tooltip="tooltip" tooltip-position="bottom-left" />
+            </template>
+          </AgentExecutionsMenu>
 
           <ContextMenuTrigger position="below-right">
             <template #menu>
@@ -79,6 +82,7 @@ import { Agent, AgentRun } from 'types/agents'
 import { PropType, onMounted, ref, watch } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import AgentExecutionsMenu from './AgentExecutionsMenu.vue'
+import AgentStopButton from './AgentStopButton.vue'
 import History from './History.vue'
 import Info from './Info.vue'
 import Run from './Run.vue'
@@ -283,28 +287,18 @@ const getRunningCount = (): number => {
 
     header .actions {
       display: flex;
-      gap: var(--space-4);
+      gap: var(--space-0);
       align-items: center;
 
-      :deep(.button-icon) {
+      &:deep() .button-icon {
         position: relative;
+        svg {
+          color: var(--text-color);
+          width: var(--icon-lg);
+          height: var(--icon-lg);
+        }
       }
 
-      .running-badge {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        background-color: var(--color-primary);
-        color: var(--color-on-primary);
-        font-size: 10px;
-        font-weight: var(--font-weight-bold);
-        padding: 2px 5px;
-        border-radius: var(--radius-full);
-        min-width: 18px;
-        text-align: center;
-        line-height: 1.2;
-        border: 2px solid var(--color-background);
-      }
     }
 
     main {
