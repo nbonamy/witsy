@@ -62,6 +62,22 @@ export interface Agent {
 export type AgentRunTrigger = 'manual' | 'schedule' | 'webhook' | 'workflow'
 export type AgentRunStatus = 'running' | 'success' | 'canceled' | 'error'
 
+// Info about a currently running agent run
+export interface RunningRunInfo {
+  runId: string
+  startTime: number
+}
+
+// Running runs grouped by agent
+export type RunningAgentRuns = Record<string, RunningRunInfo[]>
+
+// Execution info used in renderer components
+export interface AgentExecution {
+  agent: Agent
+  runId: string
+  startTime: number
+}
+
 export interface AgentInfo {
   name: string
   steps: { description?: string }[]

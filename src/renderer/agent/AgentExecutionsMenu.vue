@@ -8,7 +8,7 @@
         v-for="execution in executions"
         :key="execution.id"
         class="item stop"
-        @click="emit('stop', execution.id)"
+        @click="emit('stop', { agentId: execution.agent.uuid, runId: execution.id })"
       >
         <SquareIcon />
         {{ t('agent.help.stopExecutionTime', { time: formatTime(execution.startTime) }) }}
@@ -34,7 +34,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  stop: [executionId: string]
+  stop: [payload: { agentId: string, runId: string }]
 }>()
 
 const currentTime = ref(Date.now())

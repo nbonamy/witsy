@@ -105,6 +105,8 @@ export const AGENTS = {
   SAVE_RUN: 'agents-save-run',
   DELETE_RUN: 'agents-delete-run',
   DELETE_RUNS: 'agents-delete-runs',
+  GET_RUNNING_RUNS: 'agents-get-running-runs',
+  ABORT_RUN: 'agents-abort-run',
   GENERATE_WEBHOOK_TOKEN: 'agents-generate-webhook-token',
   GET_API_BASE_PATH: 'agents-get-api-base-path',
 } as const;

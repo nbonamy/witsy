@@ -7,7 +7,7 @@
     </template>
 
     <template v-else>
-      <List class="sp-main" :running-executions="runningExecutions" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @duplicate="duplicateAgent" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" @stop="stopExecution" />
+      <List class="sp-main" :running-executions="runningExecutions" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @duplicate="duplicateAgent" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" @stop="onStopExecution" />
     </template>
 
   </div>
@@ -17,7 +17,7 @@
   </div>
 
   <template v-else-if="mode === 'view'">
-    <View class="sp-main" :agent="selected" :running-executions="runningExecutions" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)" @stop="stopExecution"/>
+    <View class="sp-main" :agent="selected" :running-executions="runningExecutions" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)" @stop="onStopExecution"/>
   </template>
 
   <CreateAgentRun :title="startingAgent?.name ?? ''" ref="builder" />
@@ -26,9 +26,10 @@
 
 <script setup lang="ts">
 
-import { AgentType } from 'types/agents'
+import { AgentExecution, AgentType, RunningAgentRuns } from 'types/agents'
 import { FileContents } from 'types/file'
-import { onMounted, ref } from 'vue'
+import { v7 as uuidv7 } from 'uuid'
+import { computed, onMounted, ref } from 'vue'
 import Agent from '@models/agent'
 import Editor from '../agent/Editor.vue'
 import Empty from '../agent/Empty.vue'
@@ -39,6 +40,7 @@ import useIpcListener from '@composables/ipc_listener'
 import A2AClient from '@services/a2a-client'
 import AgentWorkflowExecutor from '@services/agent_executor_workflow'
 import { remapAgentMcpTools } from '@services/agent_utils'
+import { abortRun, registerAbortController, unregisterAbortController } from '@services/agents'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import Dialog from '@renderer/utils/dialog'
@@ -51,32 +53,41 @@ const { onIpcEvent } = useIpcListener()
 
 type AgentForgeMode = 'list' | 'create' | 'view' | 'edit'
 
-interface AgentExecution {
-  agent: Agent
-  abortController: AbortController
-  runId?: string
-  startTime: number
-}
-
 const mode = ref<AgentForgeMode>('list')
 const prevMode = ref<AgentForgeMode>('list')
 const selected = ref<Agent|null>(null)
-const runningExecutions = ref<Map<string, AgentExecution>>(new Map())
 const startingAgent = ref<Agent|null>(null)
 const builder = ref(null)
 
+// Running state from main process: agentId -> RunningRunInfo[]
+const runningAgentRuns = ref<RunningAgentRuns>({})
+
+// Computed Map for compatibility with child components
+// Key is runId, value contains agent info and startTime
+const runningExecutions = computed(() => {
+  const map = new Map<string, AgentExecution>()
+  for (const [agentId, runs] of Object.entries(runningAgentRuns.value)) {
+    const agent = store.agents.find(a => a.uuid === agentId)
+    if (!agent) continue
+    for (const run of runs) {
+      map.set(run.runId, {
+        agent,
+        runId: run.runId,
+        startTime: run.startTime,
+      })
+    }
+  }
+  return map
+})
+
 onMounted(() => {
+  // Initialize running state from main process
+  runningAgentRuns.value = window.api.agents.getRunningRuns()
   onIpcEvent('agent-run-update', onAgentRunUpdate)
 })
 
-const onAgentRunUpdate = (data: { agentId: string, runId: string }) => {
-  // Find the execution for this agent that doesn't have a runId yet
-  for (const [executionId, execution] of runningExecutions.value.entries()) {
-    if (execution.agent.uuid === data.agentId && !execution.runId) {
-      execution.runId = data.runId
-      break
-    }
-  }
+const onAgentRunUpdate = (data: { agentId: string, runId: string | null, runningAgentRuns: RunningAgentRuns }) => {
+  runningAgentRuns.value = data.runningAgentRuns
 }
 
 const selectAgent = async (agent: Agent|null) => {
@@ -170,44 +181,33 @@ const editAgent = (agent: Agent) => {
 }
 
 const runAgent = (agent: Agent, opts?: Record<string, string>) => {
-  const executionId = crypto.randomUUID()
-  const abortController = new AbortController()
-  const startTime = Date.now()
-
   startingAgent.value = agent
-  runningExecutions.value.set(executionId, { agent, abortController, startTime })
 
   builder.value.show(agent, opts || {}, async (values: Record<string, string>) => {
+
     startingAgent.value = null
+
+    const runId = uuidv7()
+    const abortController = new AbortController()
+    registerAbortController(agent.uuid, runId, abortController)
+
     try {
       const executor = new AgentWorkflowExecutor(store.config, store.workspace.uuid, agent)
       await executor.run('manual', values, {
+        runId,
         streaming: true,
         ephemeral: false,
         model: agent.model,
         abortSignal: abortController.signal,
       })
     } finally {
-      runningExecutions.value.delete(executionId)
+      unregisterAbortController(agent.uuid, runId)
     }
   })
 }
 
-const stopExecution = (executionId: string) => {
-  const execution = runningExecutions.value.get(executionId)
-  if (execution) {
-    execution.abortController.abort()
-    runningExecutions.value.delete(executionId)
-  }
-}
-
-const stopAllExecutionsForAgent = (agentUuid: string) => {
-  for (const [executionId, execution] of runningExecutions.value.entries()) {
-    if (execution.agent.uuid === agentUuid) {
-      execution.abortController.abort()
-      runningExecutions.value.delete(executionId)
-    }
-  }
+const onStopExecution = (payload: { agentId: string, runId: string }) => {
+  abortRun(payload.agentId, payload.runId)
 }
 
 const duplicateAgent = (data: any) => {

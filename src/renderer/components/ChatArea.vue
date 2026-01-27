@@ -82,7 +82,20 @@
           </div>
         </div>
         
-        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" :is-generating="isGenerating" class="prompt" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @run-agent="onRunAgent" @stop="onStopGeneration" @conversation-mode="onConversationMode" ref="prompt" />
+        <Prompt
+          ref="prompt"
+          class="prompt"
+          :chat="chat"
+          :enable-deep-research="true"
+          :conversation-mode="conversationMode"
+          :history-provider="historyProvider"
+          :is-generating="isGenerating"
+          @set-engine-model="onSetEngineModel"
+          @conversation-mode="onConversationMode"
+          @prompt="onSendPrompt"
+          @run-agent="onRunAgent"
+          @stop="onStopGeneration"
+        />
       
       </div>
       

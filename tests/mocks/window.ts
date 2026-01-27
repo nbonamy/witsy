@@ -356,6 +356,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       saveRun: vi.fn(),
       deleteRuns: vi.fn(),
       deleteRun: vi.fn(),
+      getRunningRuns: vi.fn(() => ({})),
+      abortRun: vi.fn(() => true),
       getApiBasePath: vi.fn(() => '/api/agent'),
       generateWebhookToken: vi.fn(async () => 'webhook-token'),
     },

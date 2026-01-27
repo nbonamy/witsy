@@ -228,7 +228,8 @@ test('AgentExecutor sets up mocks and calls AgentWorkflowExecutor', async () => 
   expect(AgentWorkflowExecutor).toHaveBeenCalledWith(mockConfig, 'workspace-1', mockAgent)
   expect(mockExecutor.run).toHaveBeenCalledWith('webhook', { prompt: 'Test prompt' }, expect.objectContaining({
     model: undefined,
-    runId: undefined
+    runId: expect.any(String),
+    abortSignal: expect.any(AbortSignal)
   }))
   expect(result).toEqual(mockRun)
 

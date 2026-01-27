@@ -78,7 +78,7 @@ import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { ChevronLeftIcon, PencilIcon, PlayIcon, Trash2Icon } from 'lucide-vue-next'
-import { Agent, AgentRun } from 'types/agents'
+import { Agent, AgentExecution, AgentRun } from 'types/agents'
 import { PropType, onMounted, ref, watch } from 'vue'
 import ContextMenuTrigger from '../components/ContextMenuTrigger.vue'
 import AgentExecutionsMenu from './AgentExecutionsMenu.vue'
@@ -86,13 +86,6 @@ import AgentStopButton from './AgentStopButton.vue'
 import History from './History.vue'
 import Info from './Info.vue'
 import Run from './Run.vue'
-
-interface AgentExecution {
-  agent: Agent
-  abortController: AbortController
-  runId?: string
-  startTime: number
-}
 
 const { onIpcEvent } = useIpcListener()
 
