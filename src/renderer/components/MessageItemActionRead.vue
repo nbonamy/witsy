@@ -19,20 +19,20 @@ const props = defineProps({
   },
   audioState: {
     type: Object,
-    required: true,
+    required: false,
   },
   readAloud: {
     type: Function,
-    required: true,
+    required: false,
   },
 })
 
 const mgsAudioState = (message: Message) => {
-  return message.uuid == props.audioState.messageId ? props.audioState.state : 'idle'
+  return message.uuid == props.audioState?.messageId ? props.audioState?.state : 'idle'
 }
 
 const onToggleRead = async (message: Message) => {
-  props.readAloud(message)
+  props.readAloud?.(message)
 }
 
 </script>
