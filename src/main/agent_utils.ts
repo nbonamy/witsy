@@ -2,6 +2,7 @@ import { App } from 'electron'
 import { Agent, AgentRun, AgentRunTrigger } from 'types/agents'
 import { createAgentExecutor } from '../renderer/services/agent_utils'
 import { listAgents } from './agents'
+import { registerAbortController } from './agent_tracker'
 import { LlmContext } from './llm_utils'
 import Mcp from './mcp'
 import DocumentRepository from './rag/docrepo'
@@ -85,9 +86,20 @@ export class AgentExecutor extends LlmContext {
     // Initialize LLM context (global mock + i18n)
     const config = this.initializeContext()
 
+    // Create abort controller for this run
+    const abortController = new AbortController()
+    const actualRunId = runId || crypto.randomUUID()
+
+    // Register abort controller so it can be aborted via IPC
+    registerAbortController(agent.uuid, actualRunId, abortController)
+
     // Create executor for this agent
     const executor = createAgentExecutor(config, workspaceId, agent)
-    return await executor.run(trigger, values, { runId, model: agent.model } )
+    return await executor.run(trigger, values, {
+      runId: actualRunId,
+      model: agent.model,
+      abortSignal: abortController.signal
+    })
   }
 
 }

@@ -7,7 +7,7 @@ import * as IPC from './ipc_consts';
 import { Size } from './main/computer';
 import Agent from './models/agent';
 import { Command, ComputerAction, Expert, ExpertCategory, ExternalApp, LocalSearchResponse, MainWindowMode, NativeShortcut, NetworkRequest, OpenSettingsPayload, anyDict, strDict } from './types';
-import { AgentRun } from './types/agents';
+import { AgentRun, RunningAgentRuns } from './types/agents';
 import { Application, RunCommandParams } from './types/automation';
 import { Configuration } from './types/config';
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams, FileStats } from './types/file';
@@ -187,6 +187,8 @@ contextBridge.exposeInMainWorld(
       saveRun(workspaceId: string, run: AgentRun): boolean { return ipcRenderer.sendSync(IPC.AGENTS.SAVE_RUN, JSON.stringify({ workspaceId, run })) },
       deleteRun(workspaceId: string, agentId: string, runId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUN, JSON.stringify({ workspaceId, agentId, runId })) },
       deleteRuns(workspaceId: string, agentId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.DELETE_RUNS, JSON.stringify({ workspaceId, agentId })); },
+      getRunningRuns(): RunningAgentRuns { return JSON.parse(ipcRenderer.sendSync(IPC.AGENTS.GET_RUNNING_RUNS)); },
+      abortRun(agentId: string, runId: string): boolean { return ipcRenderer.sendSync(IPC.AGENTS.ABORT_RUN, JSON.stringify({ agentId, runId })); },
       generateWebhookToken: (workspaceId: string, agentId: string): Promise<string> => ipcRenderer.invoke(IPC.AGENTS.GENERATE_WEBHOOK_TOKEN, workspaceId, agentId),
       getApiBasePath: (): string => ipcRenderer.sendSync(IPC.AGENTS.GET_API_BASE_PATH),
     },

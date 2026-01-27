@@ -29,6 +29,7 @@ import LocalSearch from './search';
 
 import * as IPC from '@/ipc_consts';
 import * as agents from './agents';
+import * as agentTracker from './agent_tracker';
 import * as pyodide from './pyodide';
 import * as backup from './backup';
 import * as cliInstaller from './cli_installer';
@@ -342,6 +343,15 @@ export const installIpc = (
   ipcMain.on(IPC.AGENTS.DELETE_RUNS, (event, payload) => {
     const { workspaceId, agentId } = JSON.parse(payload);
     event.returnValue = agents.deleteAgentRuns(app, workspaceId, agentId);
+  });
+
+  ipcMain.on(IPC.AGENTS.GET_RUNNING_RUNS, (event) => {
+    event.returnValue = JSON.stringify(agentTracker.getRunningAgentRuns());
+  });
+
+  ipcMain.on(IPC.AGENTS.ABORT_RUN, (event, payload) => {
+    const { agentId, runId } = JSON.parse(payload);
+    event.returnValue = agentTracker.abortRun(agentId, runId);
   });
 
   ipcMain.handle(IPC.AGENTS.GENERATE_WEBHOOK_TOKEN, async (_event, workspaceId: string, agentId: string) => {

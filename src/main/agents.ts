@@ -2,6 +2,7 @@
 import { anyDict } from 'types/index'
 import { AgentRun } from 'types/agents'
 import { App } from 'electron'
+import { addRunningRun, removeRunningRun, removeAllRunningRunsForAgent } from './agent_tracker'
 import { emitIpcEventToAll } from './windows'
 import { listWorkspaces, workspaceFolderPath } from './workspace'
 import Agent from '@models/agent'
@@ -191,7 +192,14 @@ export const saveAgentRun = (source: App|string, workspaceId: string, run: Agent
 
     // write file
     fs.writeFileSync(filePath, JSON.stringify(run, null, 2))
-    emitIpcEventToAll('agent-run-update', { agentId: run.agentId, runId: run.uuid })
+
+    // track running state (tracker emits IPC)
+    if (run.status === 'running') {
+      addRunningRun(run.agentId, run.uuid, run.createdAt)
+    } else {
+      removeRunningRun(run.agentId, run.uuid)
+    }
+
     return true
 
   } catch (error) {
@@ -214,6 +222,9 @@ export const deleteAgentRuns = (source: App|string, workspaceId: string, agentId
       fs.rmSync(runPath, { recursive: true, force: true })
     }
 
+    // update running state (tracker emits IPC)
+    removeAllRunningRunsForAgent(agentId)
+
     // done
     return true
 
@@ -234,6 +245,9 @@ export const deleteAgentRun = (source: App|string, workspaceId: string, agentId:
 
     // delete file
     fs.unlinkSync(runPath)
+
+    // update running state (tracker emits IPC)
+    removeRunningRun(agentId, runId)
 
     // done
     return true

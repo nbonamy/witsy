@@ -69,7 +69,7 @@ const emit = defineEmits<{
   export: [agent: Agent]
   duplicate: [agent: Agent]
   delete: [agent: Agent]
-  stop: [executionId: string]
+  stop: [payload: { agentId: string, runId: string }]
 }>()
 
 </script>

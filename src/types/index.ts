@@ -9,7 +9,7 @@ import { ToolSelection } from './llm'
 import { McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from './mcp'
 import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
 import { Workspace, WorkspaceHeader } from './workspace'
-import { A2APromptOpts, Agent, AgentRun } from './agents'
+import { A2APromptOpts, Agent, AgentRun, RunningAgentRuns } from './agents'
 import { YoutubeVideoInfo } from '../main/youtube'
 
 export type strDict = Record<string, string>
@@ -481,6 +481,8 @@ declare global {
         saveRun(workspaceId: string, run: AgentRun): boolean
         deleteRun(workspaceId: string, agentId: string, runId: string): boolean
         deleteRuns(workspaceId: string, agentId: string): boolean
+        getRunningRuns(): RunningAgentRuns
+        abortRun(agentId: string, runId: string): boolean
         generateWebhookToken(workspaceId: string, agentId: string): Promise<string>
         getApiBasePath(): string
       }

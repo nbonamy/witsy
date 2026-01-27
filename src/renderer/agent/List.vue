@@ -106,7 +106,7 @@
 <script setup lang="ts">
 
 import { EyeIcon, LayoutGridIcon, ListIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
-import { Agent } from 'types/agents'
+import { Agent, AgentExecution } from 'types/agents'
 import { onMounted, PropType, ref, watch } from 'vue'
 import LogoA2A from '@assets/a2a.svg?component'
 import AgentCard from './AgentCard.vue'
@@ -121,13 +121,6 @@ import { store } from '@services/store'
 
 type ViewMode = 'table' | 'cards'
 const STORAGE_KEY = 'agentForgeViewMode'
-
-interface AgentExecution {
-  agent: Agent
-  abortController: AbortController
-  runId?: string
-  startTime: number
-}
 
 const props = defineProps({
   runningExecutions: {

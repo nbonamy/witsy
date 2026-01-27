@@ -110,12 +110,12 @@ describe('Run component', () => {
     const agent = store.agents[0]
     const run = createTestRun()
 
-    // Create a running execution with the run's ID
+    // Create a running execution with the run's uuid as the key
     const runningExecutions = new Map()
-    runningExecutions.set('exec-1', {
+    runningExecutions.set(run.uuid, {
       agent,
-      abortController: new AbortController(),
-      runId: run.uuid
+      runId: run.uuid,
+      startTime: Date.now()
     })
 
     const wrapper = mount(Run, {
@@ -129,16 +129,15 @@ describe('Run component', () => {
     expect(wrapper.find('.button-icon.stop').exists()).toBe(true)
   })
 
-  test('Stop button emits stop event with correct execution ID', async () => {
+  test('Stop button emits stop event with agentId and runId payload', async () => {
     const agent = store.agents[0]
     const run = createTestRun()
 
-    const executionId = 'exec-123'
     const runningExecutions = new Map()
-    runningExecutions.set(executionId, {
+    runningExecutions.set(run.uuid, {
       agent,
-      abortController: new AbortController(),
-      runId: run.uuid
+      runId: run.uuid,
+      startTime: Date.now()
     })
 
     const wrapper = mount(Run, {
@@ -153,21 +152,21 @@ describe('Run component', () => {
     await wrapper.find('.button-icon.stop').trigger('click')
     await flushPromises()
 
-    // Should emit stop with execution ID
+    // Should emit stop with { agentId, runId } payload
     expect(wrapper.emitted('stop')).toBeTruthy()
-    expect(wrapper.emitted('stop')[0]).toEqual([executionId])
+    expect(wrapper.emitted('stop')[0]).toEqual([{ agentId: agent.uuid, runId: run.uuid }])
   })
 
   test('Does not show stop button for different run', () => {
     const agent = store.agents[0]
     const run = createTestRun()
 
-    // Create execution for a different run
+    // Create execution for a different run (key is different-run-id)
     const runningExecutions = new Map()
-    runningExecutions.set('exec-1', {
+    runningExecutions.set('different-run-id', {
       agent,
-      abortController: new AbortController(),
-      runId: 'different-run-id'
+      runId: 'different-run-id',
+      startTime: Date.now()
     })
 
     const wrapper = mount(Run, {
@@ -185,22 +184,22 @@ describe('Run component', () => {
     const agent = store.agents[0]
     const run = createTestRun()
 
-    // Create multiple executions
+    // Create multiple executions, one matches the run
     const runningExecutions = new Map()
-    runningExecutions.set('exec-1', {
+    runningExecutions.set('other-run-1', {
       agent,
-      abortController: new AbortController(),
-      runId: 'other-run-1'
+      runId: 'other-run-1',
+      startTime: Date.now()
     })
-    runningExecutions.set('exec-2', {
+    runningExecutions.set(run.uuid, {
       agent,
-      abortController: new AbortController(),
-      runId: run.uuid // This one matches
+      runId: run.uuid,
+      startTime: Date.now()
     })
-    runningExecutions.set('exec-3', {
+    runningExecutions.set('other-run-2', {
       agent,
-      abortController: new AbortController(),
-      runId: 'other-run-2'
+      runId: 'other-run-2',
+      startTime: Date.now()
     })
 
     const wrapper = mount(Run, {
@@ -234,7 +233,7 @@ describe('Run component', () => {
     expect(wrapper.emitted('delete')).toBeTruthy()
   })
 
-  test('getExecutionIdForRun returns null when no run', () => {
+  test('isRunning returns false when no run', () => {
     const agent = store.agents[0]
 
     const wrapper = mount(Run, {
@@ -245,18 +244,18 @@ describe('Run component', () => {
       }
     })
 
-    expect(wrapper.vm.getExecutionIdForRun()).toBeNull()
+    expect(wrapper.vm.isRunning()).toBe(false)
   })
 
-  test('getExecutionIdForRun returns null when no matching execution', () => {
+  test('isRunning returns false when no matching execution', () => {
     const agent = store.agents[0]
     const run = createTestRun()
 
     const runningExecutions = new Map()
-    runningExecutions.set('exec-1', {
+    runningExecutions.set('different-run-id', {
       agent,
-      abortController: new AbortController(),
-      runId: 'different-run-id'
+      runId: 'different-run-id',
+      startTime: Date.now()
     })
 
     const wrapper = mount(Run, {
@@ -267,24 +266,23 @@ describe('Run component', () => {
       }
     })
 
-    expect(wrapper.vm.getExecutionIdForRun()).toBeNull()
+    expect(wrapper.vm.isRunning()).toBe(false)
   })
 
-  test('getExecutionIdForRun returns correct execution ID', () => {
+  test('isRunning returns true when matching execution exists', () => {
     const agent = store.agents[0]
     const run = createTestRun()
 
-    const executionId = 'exec-match'
     const runningExecutions = new Map()
-    runningExecutions.set('exec-1', {
+    runningExecutions.set('other-run', {
       agent,
-      abortController: new AbortController(),
-      runId: 'other-run'
+      runId: 'other-run',
+      startTime: Date.now()
     })
-    runningExecutions.set(executionId, {
+    runningExecutions.set(run.uuid, {
       agent,
-      abortController: new AbortController(),
-      runId: run.uuid
+      runId: run.uuid,
+      startTime: Date.now()
     })
 
     const wrapper = mount(Run, {
@@ -295,7 +293,7 @@ describe('Run component', () => {
       }
     })
 
-    expect(wrapper.vm.getExecutionIdForRun()).toBe(executionId)
+    expect(wrapper.vm.isRunning()).toBe(true)
   })
 
   test('Stop button disappears when execution completes', async () => {
@@ -303,10 +301,10 @@ describe('Run component', () => {
     const run = createTestRun()
 
     const runningExecutions = new Map()
-    runningExecutions.set('exec-1', {
+    runningExecutions.set(run.uuid, {
       agent,
-      abortController: new AbortController(),
-      runId: run.uuid
+      runId: run.uuid,
+      startTime: Date.now()
     })
 
     const wrapper = mount(Run, {
