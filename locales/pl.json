@@ -357,7 +357,6 @@
       "stop": "Zatrzymaj uruchomionego agenta",
       "stopExecution": "Zatrzymaj instancję {index}",
       "stopExecutionTime": "Uruchomiono {time}",
-      "stopMultiple": "Zatrzymaj {count} działających instancji",
       "stopThisRun": "Zatrzymaj to wykonanie",
       "view": "Zobacz szczegóły agenta"
     },
