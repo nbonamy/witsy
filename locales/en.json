@@ -353,6 +353,9 @@
       "import": "Import agent",
       "run": "Run this agent",
       "stop": "Stop running agent",
+      "stopExecution": "Stop instance {index}",
+      "stopMultiple": "Stop {count} running instances",
+      "stopThisRun": "Stop this execution",
       "view": "View agent details"
     },
     "history": {

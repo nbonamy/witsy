@@ -7,7 +7,7 @@
     </template>
 
     <template v-else>
-      <List class="sp-main" :running-agent="running" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @duplicate="duplicateAgent" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" @stop="stopAgent" />
+      <List class="sp-main" :running-executions="runningExecutions" @create="onCreate" @import-a2-a="onImportA2A" @import-json="onImportJson" @export="onExport" @duplicate="duplicateAgent" @edit="editAgent" @run="runAgent" @view="viewAgent" @delete="deleteAgent" @stop="stopExecution" />
     </template>
 
   </div>
@@ -17,10 +17,10 @@
   </div>
 
   <template v-else-if="mode === 'view'">
-    <View class="sp-main" :agent="selected" :running-agent="running" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)" @stop="stopAgent"/>
+    <View class="sp-main" :agent="selected" :running-executions="runningExecutions" @run="runAgent" @edit="editAgent" @delete="deleteAgent" @close="selectAgent(null)" @stop="stopExecution"/>
   </template>
 
-  <CreateAgentRun :title="running?.name ?? ''" ref="builder" />
+  <CreateAgentRun :title="startingAgent?.name ?? ''" ref="builder" />
   
 </template>
 
@@ -28,13 +28,14 @@
 
 import { AgentType } from 'types/agents'
 import { FileContents } from 'types/file'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import Agent from '@models/agent'
 import Editor from '../agent/Editor.vue'
 import Empty from '../agent/Empty.vue'
 import List from '../agent/List.vue'
 import View from '../agent/View.vue'
 import CreateAgentRun from '@components/CreateAgentRun.vue'
+import useIpcListener from '@composables/ipc_listener'
 import A2AClient from '@services/a2a-client'
 import AgentWorkflowExecutor from '@services/agent_executor_workflow'
 import { remapAgentMcpTools } from '@services/agent_utils'
@@ -46,14 +47,36 @@ defineProps({
   extra: Object
 })
 
+const { onIpcEvent } = useIpcListener()
+
 type AgentForgeMode = 'list' | 'create' | 'view' | 'edit'
+
+interface AgentExecution {
+  agent: Agent
+  abortController: AbortController
+  runId?: string
+}
 
 const mode = ref<AgentForgeMode>('list')
 const prevMode = ref<AgentForgeMode>('list')
 const selected = ref<Agent|null>(null)
-const running = ref<Agent|null>(null)
+const runningExecutions = ref<Map<string, AgentExecution>>(new Map())
+const startingAgent = ref<Agent|null>(null)
 const builder = ref(null)
-const abortController = ref<AbortController | null>(null)
+
+onMounted(() => {
+  onIpcEvent('agent-run-update', onAgentRunUpdate)
+})
+
+const onAgentRunUpdate = (data: { agentId: string, runId: string }) => {
+  // Find the execution for this agent that doesn't have a runId yet
+  for (const [executionId, execution] of runningExecutions.value.entries()) {
+    if (execution.agent.uuid === data.agentId && !execution.runId) {
+      execution.runId = data.runId
+      break
+    }
+  }
+}
 
 const selectAgent = async (agent: Agent|null) => {
   if (!agent) {
@@ -146,26 +169,43 @@ const editAgent = (agent: Agent) => {
 }
 
 const runAgent = (agent: Agent, opts?: Record<string, string>) => {
-  running.value = agent
-  abortController.value = new AbortController()
+  const executionId = crypto.randomUUID()
+  const abortController = new AbortController()
+
+  startingAgent.value = agent
+  runningExecutions.value.set(executionId, { agent, abortController })
 
   builder.value.show(agent, opts || {}, async (values: Record<string, string>) => {
-    const executor = new AgentWorkflowExecutor(store.config, store.workspace.uuid, agent)
-    await executor.run('manual', values, {
-      streaming: true,
-      ephemeral: false,
-      model: agent.model,
-      abortSignal: abortController.value.signal,
-    })
-    running.value = null
-    abortController.value = null
+    startingAgent.value = null
+    try {
+      const executor = new AgentWorkflowExecutor(store.config, store.workspace.uuid, agent)
+      await executor.run('manual', values, {
+        streaming: true,
+        ephemeral: false,
+        model: agent.model,
+        abortSignal: abortController.signal,
+      })
+    } finally {
+      runningExecutions.value.delete(executionId)
+    }
   })
 }
 
-const stopAgent = () => {
-  abortController.value?.abort()
-  running.value = null
-  abortController.value = null
+const stopExecution = (executionId: string) => {
+  const execution = runningExecutions.value.get(executionId)
+  if (execution) {
+    execution.abortController.abort()
+    runningExecutions.value.delete(executionId)
+  }
+}
+
+const stopAllExecutionsForAgent = (agentUuid: string) => {
+  for (const [executionId, execution] of runningExecutions.value.entries()) {
+    if (execution.agent.uuid === agentUuid) {
+      execution.abortController.abort()
+      runningExecutions.value.delete(executionId)
+    }
+  }
 }
 
 const duplicateAgent = (data: any) => {
