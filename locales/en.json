@@ -357,7 +357,6 @@
       "stop": "Stop running agent",
       "stopExecution": "Stop instance {index}",
       "stopExecutionTime": "Started {time}",
-      "stopMultiple": "Stop {count} running instances",
       "stopThisRun": "Stop this execution",
       "view": "View agent details"
     },

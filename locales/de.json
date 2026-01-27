@@ -338,7 +338,6 @@
       "stop": "Laufenden Agenten stoppen",
       "stopExecution": "Instanz {index} stoppen",
       "stopExecutionTime": "Gestartet {time}",
-      "stopMultiple": "{count} laufende Instanzen stoppen",
       "stopThisRun": "Diese Ausführung stoppen",
       "view": "Agentendetails anzeigen"
     },

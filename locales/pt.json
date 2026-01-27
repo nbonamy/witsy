@@ -357,7 +357,6 @@
       "stop": "Parar agente em execução",
       "stopExecution": "Parar instância {index}",
       "stopExecutionTime": "Iniciado {time}",
-      "stopMultiple": "Parar {count} instâncias em execução",
       "stopThisRun": "Parar esta execução",
       "view": "Ver detalhes do agente"
     },
