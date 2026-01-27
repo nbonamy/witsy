@@ -352,6 +352,13 @@
       "export": "Export agent",
       "import": "Import agent",
       "run": "Run this agent",
+      "startedJustNow": "Started just now",
+      "startedSecondsAgo": "Started {seconds}s ago",
+      "stop": "Stop running agent",
+      "stopExecution": "Stop instance {index}",
+      "stopExecutionTime": "Started {time}",
+      "stopMultiple": "Stop {count} running instances",
+      "stopThisRun": "Stop this execution",
       "view": "View agent details"
     },
     "history": {

@@ -333,6 +333,13 @@
       "export": "Agent exportieren",
       "import": "Agent importieren",
       "run": "Diesen Agenten ausführen",
+      "startedJustNow": "Gerade gestartet",
+      "startedSecondsAgo": "Vor {seconds}s gestartet",
+      "stop": "Laufenden Agenten stoppen",
+      "stopExecution": "Instanz {index} stoppen",
+      "stopExecutionTime": "Gestartet {time}",
+      "stopMultiple": "{count} laufende Instanzen stoppen",
+      "stopThisRun": "Diese Ausführung stoppen",
       "view": "Agentendetails anzeigen"
     },
     "history": {

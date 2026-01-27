@@ -645,3 +645,153 @@ test('Import with warnings shows warning dialog', async () => {
   // Agent should be saved
   expect(window.api.agents.save).toHaveBeenCalled()
 })
+
+test('Running agent creates execution with AbortController', () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  const agent = store.agents[0]
+
+  // Initially no running executions
+  expect(wrapper.vm.runningExecutions.size).toBe(0)
+
+  // Start running agent
+  wrapper.vm.runAgent(agent, {})
+
+  // Execution should be created with AbortController
+  expect(wrapper.vm.runningExecutions.size).toBe(1)
+  const [executionId, execution] = Array.from(wrapper.vm.runningExecutions.entries())[0]
+  expect(execution.agent).toBe(agent)
+  expect(execution.abortController).toBeInstanceOf(AbortController)
+  expect(executionId).toBeDefined()
+})
+
+test('Stop execution calls abort and removes execution', () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  const agent = store.agents[0]
+
+  // Start running agent
+  wrapper.vm.runAgent(agent, {})
+  expect(wrapper.vm.runningExecutions.size).toBe(1)
+
+  const [executionId, execution] = Array.from(wrapper.vm.runningExecutions.entries())[0]
+  const abortSpy = vi.spyOn(execution.abortController, 'abort')
+
+  // Stop execution
+  wrapper.vm.stopExecution(executionId)
+
+  // Should call abort
+  expect(abortSpy).toHaveBeenCalled()
+
+  // Should remove execution
+  expect(wrapper.vm.runningExecutions.size).toBe(0)
+})
+
+test('Multiple agents can run simultaneously', () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  const agent1 = store.agents[0]
+  const agent2 = store.agents[1]
+
+  // Start first agent
+  wrapper.vm.runAgent(agent1, {})
+  expect(wrapper.vm.runningExecutions.size).toBe(1)
+
+  // Start second agent
+  wrapper.vm.runAgent(agent2, {})
+  expect(wrapper.vm.runningExecutions.size).toBe(2)
+
+  // Both should have different execution IDs
+  const executionIds = Array.from(wrapper.vm.runningExecutions.keys())
+  expect(executionIds[0]).not.toBe(executionIds[1])
+})
+
+test('Same agent can run multiple instances', () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  const agent = store.agents[0]
+
+  // Start first instance
+  wrapper.vm.runAgent(agent, {})
+  expect(wrapper.vm.runningExecutions.size).toBe(1)
+
+  // Start second instance of same agent
+  wrapper.vm.runAgent(agent, {})
+  expect(wrapper.vm.runningExecutions.size).toBe(2)
+
+  // Both should be the same agent
+  const executions = Array.from(wrapper.vm.runningExecutions.values())
+  expect(executions[0].agent.uuid).toBe(agent.uuid)
+  expect(executions[1].agent.uuid).toBe(agent.uuid)
+})
+
+test('Execution gets runId when agent-run-update event is received', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  const agent = store.agents[0]
+
+  // Start agent
+  wrapper.vm.runAgent(agent, {})
+  expect(wrapper.vm.runningExecutions.size).toBe(1)
+
+  const [, execution] = Array.from(wrapper.vm.runningExecutions.entries())[0]
+
+  // Initially no runId
+  expect(execution.runId).toBeUndefined()
+
+  // Simulate agent-run-update IPC event
+  const runId = 'test-run-id-123'
+  wrapper.vm.onAgentRunUpdate({ agentId: agent.uuid, runId })
+
+  // Now execution should have runId
+  expect(execution.runId).toBe(runId)
+})
+
+test('Agent-run-update only updates execution without runId', async () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  const agent = store.agents[0]
+
+  // Start two instances
+  wrapper.vm.runAgent(agent, {})
+  wrapper.vm.runAgent(agent, {})
+  expect(wrapper.vm.runningExecutions.size).toBe(2)
+
+  const executions = Array.from(wrapper.vm.runningExecutions.values())
+
+  // Simulate first run starting
+  const runId1 = 'run-1'
+  wrapper.vm.onAgentRunUpdate({ agentId: agent.uuid, runId: runId1 })
+
+  // First execution gets the runId
+  expect(executions[0].runId).toBe(runId1)
+  expect(executions[1].runId).toBeUndefined()
+
+  // Simulate second run starting
+  const runId2 = 'run-2'
+  wrapper.vm.onAgentRunUpdate({ agentId: agent.uuid, runId: runId2 })
+
+  // Second execution gets the runId, first remains unchanged
+  expect(executions[0].runId).toBe(runId1)
+  expect(executions[1].runId).toBe(runId2)
+})
+
+test('Stop execution by runId removes correct execution', () => {
+  const wrapper: VueWrapper<any> = mount(AgentForge)
+  const agent = store.agents[0]
+
+  // Start two instances
+  wrapper.vm.runAgent(agent, {})
+  wrapper.vm.runAgent(agent, {})
+  expect(wrapper.vm.runningExecutions.size).toBe(2)
+
+  // Assign runIds
+  const executions = Array.from(wrapper.vm.runningExecutions.entries())
+  const [executionId1] = executions[0]
+  const [executionId2] = executions[1]
+
+  wrapper.vm.onAgentRunUpdate({ agentId: agent.uuid, runId: 'run-1' })
+  wrapper.vm.onAgentRunUpdate({ agentId: agent.uuid, runId: 'run-2' })
+
+  // Stop first execution
+  wrapper.vm.stopExecution(executionId1)
+  expect(wrapper.vm.runningExecutions.size).toBe(1)
+
+  // Second execution should still be there
+  expect(wrapper.vm.runningExecutions.has(executionId2)).toBe(true)
+  expect(wrapper.vm.runningExecutions.get(executionId2).runId).toBe('run-2')
+})
