@@ -1,10 +1,11 @@
 import { App } from 'electron'
-import DocumentRepository from './rag/docrepo'
+import { v7 as uuidv7 } from 'uuid'
 import { AgentExecutor, findAgentByWebhookToken } from './agent_utils'
 import { getAgentRun } from './agents'
 import { HttpServer } from './http_server'
 import { isHttpEndpointsEnabled, parseParams, sendError, sendJson } from './http_utils'
 import Mcp from './mcp'
+import DocumentRepository from './rag/docrepo'
 
 /**
  * Base path for agent API endpoints
@@ -43,7 +44,7 @@ export function installAgentWebhook(httpServer: HttpServer, app: App, mcp: Mcp, 
       }
 
       // Run agent
-      const runId = crypto.randomUUID()
+      const runId = uuidv7()
       const executor = new AgentExecutor(app, mcp, docRepo)
       executor.runAgent(workspaceId, agent, 'webhook', values, runId)
 
