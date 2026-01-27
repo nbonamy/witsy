@@ -55,6 +55,7 @@ interface AgentExecution {
   agent: Agent
   abortController: AbortController
   runId?: string
+  startTime: number
 }
 
 const mode = ref<AgentForgeMode>('list')
@@ -171,9 +172,10 @@ const editAgent = (agent: Agent) => {
 const runAgent = (agent: Agent, opts?: Record<string, string>) => {
   const executionId = crypto.randomUUID()
   const abortController = new AbortController()
+  const startTime = Date.now()
 
   startingAgent.value = agent
-  runningExecutions.value.set(executionId, { agent, abortController })
+  runningExecutions.value.set(executionId, { agent, abortController, startTime })
 
   builder.value.show(agent, opts || {}, async (values: Record<string, string>) => {
     startingAgent.value = null

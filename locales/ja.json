@@ -352,8 +352,11 @@
       "export": "エージェントをエクスポート",
       "import": "エージェントをインポート",
       "run": "このエージェントを実行する",
+      "startedJustNow": "たった今開始",
+      "startedSecondsAgo": "{seconds}秒前に開始",
       "stop": "実行中のエージェントを停止",
       "stopExecution": "インスタンス{index}を停止",
+      "stopExecutionTime": "{time}に開始",
       "stopMultiple": "{count}個の実行中インスタンスを停止",
       "stopThisRun": "この実行を停止",
       "view": "エージェントの詳細を表示する"
