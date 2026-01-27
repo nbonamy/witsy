@@ -10,17 +10,20 @@
 
     <!-- Right: Step Details -->
     <div class="details-pane">
-    
+
       <header>
-    
+
         <div class="title">{{ t('agent.run.details') }}</div>
-        
+
         <div class="actions">
+          <ButtonIcon v-if="getExecutionIdForRun()" class="stop" v-tooltip="{ text: t('agent.help.stopThisRun'), position: 'bottom-left' }" @click="(event) => { event?.stopPropagation(); emit('stop', getExecutionIdForRun()) }">
+            <SquareIcon />
+          </ButtonIcon>
           <ButtonIcon class="delete" v-tooltip="{ text: t('agent.help.deleteRun'), position: 'bottom-left' }" @click="(event) => { event?.stopPropagation(); emit('delete') }">
             <Trash2Icon />
           </ButtonIcon>
         </div>
-    
+
       </header>
       
       <div class="step-detail">
@@ -42,12 +45,18 @@
 
 import ButtonIcon from '@components/ButtonIcon.vue'
 import { t } from '@services/i18n'
-import { Trash2Icon } from 'lucide-vue-next'
+import { SquareIcon, Trash2Icon } from 'lucide-vue-next'
 import { Agent, AgentRun } from 'types/agents'
 import { PropType, ref, watch } from 'vue'
 import ExecutionFlow from './ExecutionFlow.vue'
 import RunInfo from './RunInfo.vue'
 import StepDetail from './StepDetail.vue'
+
+interface AgentExecution {
+  agent: Agent
+  abortController: AbortController
+  runId?: string
+}
 
 const selectedStepIndex = ref(0)
 
@@ -59,10 +68,14 @@ const props = defineProps({
   run: {
     type: Object as PropType<AgentRun>,
     default: null
+  },
+  runningExecutions: {
+    type: Map as PropType<Map<string, AgentExecution>>,
+    default: () => new Map()
   }
 })
 
-const emit = defineEmits(['delete'])
+const emit = defineEmits(['delete', 'stop'])
 
 // Reset step index when run changes
 watch(() => props.run?.uuid, () => {
@@ -71,6 +84,18 @@ watch(() => props.run?.uuid, () => {
 
 const onSelectStep = (index: number) => {
   selectedStepIndex.value = index
+}
+
+const getExecutionIdForRun = (): string | null => {
+  if (!props.run) return null
+
+  for (const [executionId, execution] of props.runningExecutions.entries()) {
+    if (execution.runId === props.run.uuid) {
+      return executionId
+    }
+  }
+
+  return null
 }
 
 </script>

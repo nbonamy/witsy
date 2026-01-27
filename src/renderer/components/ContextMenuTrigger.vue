@@ -29,9 +29,9 @@
 
 <script setup lang="ts">
 
-import { MoreVerticalIcon } from 'lucide-vue-next'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
 import useEventListener from '@composables/event_listener'
+import { MoreVerticalIcon } from 'lucide-vue-next'
+import { onMounted, ref } from 'vue'
 import ButtonIcon from './ButtonIcon.vue'
 import ContextMenuPlus, { type MenuPosition } from './ContextMenuPlus.vue'
 
