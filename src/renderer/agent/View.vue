@@ -23,8 +23,8 @@
             :executions="getRunningExecutions()"
             @stop="emit('stop', $event)"
           >
-            <template #trigger="{ executions, tooltip }">
-              <AgentStopButton :executions="executions" :tooltip="tooltip" tooltip-position="bottom-left" />
+            <template #trigger="{ executions }">
+              <AgentStopButton :executions="executions" />
             </template>
           </AgentExecutionsMenu>
 
