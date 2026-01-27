@@ -1,10 +1,10 @@
 
 import { CronExpressionParser } from 'cron-parser'
 import { App } from 'electron'
-import DocumentRepository from './rag/docrepo'
 import { AgentExecutor } from './agent_utils'
 import { listAgents } from './agents'
 import Mcp from './mcp'
+import DocumentRepository from './rag/docrepo'
 import { listWorkspaces } from './workspace'
 
 export default class Scheduler extends AgentExecutor {

@@ -105,19 +105,19 @@
 
 <script setup lang="ts">
 
-import { EyeIcon, LayoutGridIcon, ListIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
-import { Agent, AgentExecution } from 'types/agents'
-import { onMounted, PropType, ref, watch } from 'vue'
 import LogoA2A from '@assets/a2a.svg?component'
-import AgentCard from './AgentCard.vue'
-import AgentMenu from './AgentMenu.vue'
-import AgentExecutionsMenu from './AgentExecutionsMenu.vue'
-import AgentStopButton from './AgentStopButton.vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
 import { useTimeAgo } from '@composables/ago'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+import { EyeIcon, LayoutGridIcon, ListIcon, PlayIcon, PlusIcon, UploadIcon } from 'lucide-vue-next'
+import { Agent, AgentExecution } from 'types/agents'
+import { onMounted, PropType, ref, watch } from 'vue'
+import AgentCard from './AgentCard.vue'
+import AgentExecutionsMenu from './AgentExecutionsMenu.vue'
+import AgentMenu from './AgentMenu.vue'
+import AgentStopButton from './AgentStopButton.vue'
 
 type ViewMode = 'table' | 'cards'
 const STORAGE_KEY = 'agentForgeViewMode'

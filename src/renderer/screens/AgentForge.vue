@@ -26,24 +26,24 @@
 
 <script setup lang="ts">
 
-import { AgentExecution, AgentType, RunningAgentRuns } from 'types/agents'
-import { FileContents } from 'types/file'
-import { v7 as uuidv7 } from 'uuid'
-import { computed, onMounted, ref } from 'vue'
-import Agent from '@models/agent'
-import Editor from '../agent/Editor.vue'
-import Empty from '../agent/Empty.vue'
-import List from '../agent/List.vue'
-import View from '../agent/View.vue'
 import CreateAgentRun from '@components/CreateAgentRun.vue'
 import useIpcListener from '@composables/ipc_listener'
+import Agent from '@models/agent'
+import Dialog from '@renderer/utils/dialog'
 import A2AClient from '@services/a2a-client'
 import AgentWorkflowExecutor from '@services/agent_executor_workflow'
 import { remapAgentMcpTools } from '@services/agent_utils'
 import { abortRun, registerAbortController, unregisterAbortController } from '@services/agents'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import Dialog from '@renderer/utils/dialog'
+import { AgentExecution, AgentType, RunningAgentRuns } from 'types/agents'
+import { FileContents } from 'types/file'
+import { v7 as uuidv7 } from 'uuid'
+import { computed, onMounted, ref } from 'vue'
+import Editor from '../agent/Editor.vue'
+import Empty from '../agent/Empty.vue'
+import List from '../agent/List.vue'
+import View from '../agent/View.vue'
 
 defineProps({
   extra: Object

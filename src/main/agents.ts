@@ -222,6 +222,14 @@ export const deleteAgentRuns = (source: App|string, workspaceId: string, agentId
       fs.rmSync(runPath, { recursive: true, force: true })
     }
 
+    // update agent lastRunId
+    const agent = loadAgent(source, workspaceId, agentId)
+    if (agent) {
+      agent.lastRunId = null
+      saveAgent(source, workspaceId, agent)
+      emitIpcEventToAll('agents-updated', { workspaceId })
+    }
+
     // update running state (tracker emits IPC)
     removeAllRunningRunsForAgent(agentId)
 
@@ -245,6 +253,17 @@ export const deleteAgentRun = (source: App|string, workspaceId: string, agentId:
 
     // delete file
     fs.unlinkSync(runPath)
+
+    // update lastRunId if needed
+    const agent = loadAgent(source, workspaceId, agentId)
+    if (agent && agent.lastRunId === runId) {
+      const remainingRuns = getAgentRuns(source, workspaceId, agentId)
+      agent.lastRunId = remainingRuns && remainingRuns.length > 0
+        ? remainingRuns[remainingRuns.length - 1].uuid
+        : null
+      saveAgent(source, workspaceId, agent)
+      emitIpcEventToAll('agents-updated', { workspaceId })
+    }
 
     // update running state (tracker emits IPC)
     removeRunningRun(agentId, runId)
