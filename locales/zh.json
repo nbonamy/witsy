@@ -3255,7 +3255,7 @@
     "add": "添加 Web 应用",
     "delete": "删除 Web 应用",
     "deleteConfirm": "您确定要删除此 Web 应用吗？",
-    "description": "实验性功能：配置 Web 应用程序以便直接从菜单栏访问。您的登录会话和数据将被保留。",
+    "description": "配置 Web 应用程序以便可从菜单栏直接访问。您的登录会话和数据将被保留。",
     "edit": "编辑 Web 应用",
     "enabled": "已启用",
     "evictionDuration": "清除非活动 Web 应用时间（分钟）",
