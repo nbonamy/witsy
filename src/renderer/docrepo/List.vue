@@ -2,7 +2,7 @@
   <div class="docrepo-list">
     <div class="list-body" v-if="docRepos.length">
       <template v-for="repo in docRepos" :key="repo.uuid">
-        <div class="list-item" :class="{ selected: props.selectedRepo?.uuid === repo.uuid }" @click="selectRepo(repo)">
+        <div class="list-item" :class="{ selected: props.selectedRepo?.uuid === repo.uuid }" @click="selectRepo(repo)" @contextmenu.prevent="showContextMenu($event, repo)">
           <div class="icon leading">
             <FolderOpenIcon v-if="selectedRepo?.uuid === repo.uuid" />
             <FolderIcon v-else />
@@ -17,20 +17,27 @@
         </div>
       </template>
     </div>
+    <ContextMenuPlus v-if="showMenu" @close="closeContextMenu" :mouseX="menuX" :mouseY="menuY">
+      <div class="item" @click="handleActionClick('rename')"><PencilIcon class="icon" />{{ t('common.rename') }}</div>
+      <div class="item danger" @click="handleActionClick('delete')"><Trash2Icon class="icon" />{{ t('common.delete') }}</div>
+    </ContextMenuPlus>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from 'lucide-vue-next'
-import { DocumentBase } from 'types/rag'
 import ButtonIcon from '@components/ButtonIcon.vue'
+import ContextMenuPlus from '@components/ContextMenuPlus.vue'
 import Spinner from '@components/Spinner.vue'
 import { useDocRepoEvents } from '@composables/useDocRepoEvents'
+import { t } from '@services/i18n'
+import { ChevronRightIcon, FolderIcon, FolderOpenIcon, PencilIcon, Trash2Icon } from 'lucide-vue-next'
+import { DocumentBase } from 'types/rag'
+import { ref } from 'vue'
 
 // use composable for IPC events
 const { processingBases } = useDocRepoEvents('base')
 
-// props  
+// props
 const props = defineProps<{
   docRepos: DocumentBase[]
   selectedRepo: DocumentBase | null
@@ -39,12 +46,44 @@ const props = defineProps<{
 // emits
 const emit = defineEmits<{
   selectRepo: [repo: DocumentBase]
+  rename: [repo: DocumentBase]
+  delete: [repo: DocumentBase]
   create: []
   config: []
 }>()
 
+// context menu state
+const showMenu = ref(false)
+const menuX = ref(0)
+const menuY = ref(0)
+const targetRepo = ref<DocumentBase | null>(null)
+
 const selectRepo = (repo: DocumentBase) => {
   emit('selectRepo', repo)
+}
+
+const showContextMenu = (event: MouseEvent, repo: DocumentBase) => {
+  showMenu.value = true
+  targetRepo.value = repo
+  menuX.value = event.clientX
+  menuY.value = event.clientY
+}
+
+const closeContextMenu = () => {
+  showMenu.value = false
+}
+
+const handleActionClick = (action: string) => {
+  closeContextMenu()
+
+  const repo = targetRepo.value
+  if (!repo) return
+
+  if (action === 'rename') {
+    emit('rename', repo)
+  } else if (action === 'delete') {
+    emit('delete', repo)
+  }
 }
 
 </script>

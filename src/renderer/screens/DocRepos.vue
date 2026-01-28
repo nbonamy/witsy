@@ -9,7 +9,7 @@
         </ButtonIcon>
       </header>
       <main>
-        <List :docRepos="docRepos || []" :selectedRepo="selectedRepo" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" />
+        <List :docRepos="docRepos || []" :selectedRepo="selectedRepo" @selectRepo="selectRepo" @rename="onRenameRepo" @delete="onDeleteRepo" @create="onCreate" @config="onConfig" />
       </main>
       <footer>
         <button class="new-collection cta" @click="onCreate"><FolderPlusIcon /> {{ t('docRepo.create.title') }}</button>
@@ -18,35 +18,17 @@
     <div class="sp-main">
       <header v-if="mode === 'view'">
         <div class="title-section">
-          <div v-if="!isEditingTitle" class="title-display">
+          <div class="title-display">
             <span class="title">{{ selectedRepo?.name }}</span>
-            <ButtonIcon class="edit-title" v-tooltip="{ text: t('common.edit'), position: 'bottom' }" @click="startEditingTitle">
+            <ButtonIcon class="edit-title" v-tooltip="{ text: t('common.rename'), position: 'bottom' }" @click="onRenameRepo(selectedRepo)">
               <PencilIcon />
             </ButtonIcon>
           </div>
-          <div v-else class="title-edit">
-            <input 
-              ref="titleInput"
-              type="text" 
-              v-model="editingTitle"
-              @keyup.enter="saveTitle"
-              @keyup.escape="cancelEditingTitle"
-              class="title-input"
-            />
-            <div class="actions">
-              <ButtonIcon class="save" v-tooltip="{ text: t('common.save'), position: 'bottom' }" @click="saveTitle" >
-                <CheckIcon />
-              </ButtonIcon>              
-              <ButtonIcon class="cancel" v-tooltip="{ text: t('common.cancel'), position: 'bottom' }" @click="cancelEditingTitle">
-                <XIcon />
-              </ButtonIcon>
-            </div>
-          </div>
         </div>
-        <ButtonIcon class="search" v-tooltip="{ text: t('docRepo.search.title'), position: 'bottom-left' }" v-if="!isEditingTitle" @click="onSearch">
+        <ButtonIcon class="search" v-tooltip="{ text: t('docRepo.search.title'), position: 'bottom-left' }" @click="onSearch">
           <SearchIcon />
         </ButtonIcon>
-        <ButtonIcon class="delete" v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }" v-if="!isEditingTitle" @click="onDeleteRepo(selectedRepo)">
+        <ButtonIcon class="delete" v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }" @click="onDeleteRepo(selectedRepo)">
           <Trash2 />
         </ButtonIcon>
       </header>
@@ -65,7 +47,7 @@ import useIpcListener from '@composables/ipc_listener'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import { CheckIcon, FolderPlusIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2, XIcon } from 'lucide-vue-next'
+import { FolderPlusIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2 } from 'lucide-vue-next'
 import { DocumentBase } from 'types/rag'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import Config from '../docrepo/Config.vue'
@@ -84,10 +66,6 @@ const selectedRepo = ref<DocumentBase | null>(null)
 const configDialog = ref(null)
 const createDialog = ref(null)
 
-// Title editing state
-const isEditingTitle = ref(false)
-const editingTitle = ref('')
-const titleInput = ref<HTMLInputElement | null>(null)
 
 const props = defineProps({
   extra: Object as () => DocReposViewParams | undefined
@@ -184,6 +162,19 @@ const onCreateSave = (id: string) => {
   loadDocRepos()
 }
 
+const onRenameRepo = async (docRepo: DocumentBase) => {
+  const { value: name } = await Dialog.show({
+    title: t('common.rename'),
+    input: 'text',
+    inputValue: docRepo.name,
+    confirmButtonText: t('common.rename'),
+    showCancelButton: true,
+  })
+  if (name) {
+    window.api.docrepo.update(docRepo.uuid, name.trim(), docRepo.description)
+  }
+}
+
 const onDeleteRepo = (docRepo: DocumentBase) => {
   Dialog.show({
     target: document.querySelector('.docrepos'),
@@ -200,26 +191,6 @@ const onDeleteRepo = (docRepo: DocumentBase) => {
 
 const onConfig = () => {
   configDialog.value.show()
-}
-
-const startEditingTitle = async () => {
-  if (!selectedRepo.value) return
-  editingTitle.value = selectedRepo.value.name
-  isEditingTitle.value = true
-  await nextTick()
-  titleInput.value?.focus()
-  titleInput.value?.select()
-}
-
-const saveTitle = () => {
-  if (!selectedRepo.value || !editingTitle.value.trim()) return
-  window.api.docrepo.update(selectedRepo.value.uuid, editingTitle.value.trim(), selectedRepo.value.description)
-  isEditingTitle.value = false
-}
-
-const cancelEditingTitle = () => {
-  isEditingTitle.value = false
-  editingTitle.value = ''
 }
 
 const escapeHtml = (text: string): string => {
@@ -320,7 +291,7 @@ const onSearch = async () => {
         display: flex;
         align-items: center;
         flex: 1;
-        
+
         .title-display {
           display: flex;
           align-items: center;
@@ -329,7 +300,7 @@ const onSearch = async () => {
           .title {
             flex: 1;
           }
-          
+
           .edit-title {
             opacity: 0;
             transition: opacity 0.2s;
@@ -341,13 +312,6 @@ const onSearch = async () => {
               opacity: 0.5;
             }
           }
-        }
-        
-        .title-edit {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          flex: 1;
         }
       }
     }
