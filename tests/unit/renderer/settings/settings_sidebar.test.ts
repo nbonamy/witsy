@@ -7,6 +7,16 @@ import { store } from '@services/store'
 import SettingsSidebar from '@renderer/settings/SettingsSidebar.vue'
 import Dialog from '@renderer/utils/dialog'
 
+// Mock IconPicker to avoid rendering 1500+ lucide icons
+vi.mock('@components/IconPicker.vue', () => ({
+  default: {
+    name: 'IconPicker',
+    template: '<div class="icon-picker-mock"></div>',
+    props: ['modelValue'],
+    emits: ['update:modelValue'],
+  }
+}))
+
 beforeAll(() => {
   useWindowMock()
   store.load()
