@@ -2959,7 +2959,7 @@
       },
       "knowledge": {
         "description": "This plugin exposes knowledge base collections with descriptions as searchable tools for LLM engines. When enabled, AI assistants can automatically search your knowledge base to ground their responses in your content.",
-        "noValidDocRepos": "No knowledge bases with descriptions found. Knowledge bases need a description to be exposed to models through the Knowledge plugin.",
+        "noValidDocRepos": "No knowledge collections with descriptions found. Knowledge collections need a description to be exposed to models through the Knowledge plugin.",
         "title": "Knowledge"
       },
       "memory": {
