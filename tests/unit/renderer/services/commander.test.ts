@@ -1,5 +1,5 @@
 
-import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
+import { vi, beforeAll, beforeEach, afterEach, expect, test, Mock } from 'vitest'
 import { app, Notification } from 'electron'
 import { Command } from '@/types/index'
 import { store } from '@services/store'
@@ -68,9 +68,16 @@ beforeEach(() => {
   // clear mocks
   vi.clearAllMocks()
 
+  // use fake timers for the 250ms wait in grabSelectedText
+  vi.useFakeTimers()
+
   // store some text
   cachedTextId = putCachedText('Grabbed text')
 
+})
+
+afterEach(() => {
+  vi.useRealTimers()
 })
 
 const buildCommand = (action: 'chat_window' | 'paste_below' | 'paste_in_place' | 'clipboard_copy', template?: string): Command => {
@@ -92,7 +99,11 @@ test('Prepare command', async () => {
 
   vi.mocked(Automator.prototype.getSelectedText).mockResolvedValue('Grabbed text')
 
-  await Commander.initCommand(app, 100)
+  const promise = Commander.initCommand(app, 100)
+  // Advance past the 250ms wait in grabSelectedText
+  await vi.advanceTimersByTimeAsync(300)
+  await promise
+
   expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
   expect(window.openCommandPicker).toHaveBeenCalledOnce()
 
@@ -112,7 +123,11 @@ test('Error while grabbing', async () => {
 
   vi.mocked(Automator.prototype.getSelectedText).mockResolvedValue(null as any)
 
-  await Commander.initCommand(app, 100)
+  const promise = Commander.initCommand(app, 100)
+  // Run all timers to completion (250ms wait + polling loop until 100ms timeout)
+  await vi.runAllTimersAsync()
+  await promise
+
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
   expect(Notification).toHaveBeenLastCalledWith({ title: 'common.appName', body: 'automation.grabError' })
 
@@ -122,7 +137,11 @@ test('No text to grab', async () => {
 
   vi.mocked(Automator.prototype.getSelectedText).mockResolvedValue('')
 
-  await Commander.initCommand(app, 100)
+  const promise = Commander.initCommand(app, 100)
+  // Run all timers to completion (250ms wait + polling loop until 100ms timeout)
+  await vi.runAllTimersAsync()
+  await promise
+
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
   expect(Notification).toHaveBeenLastCalledWith({ title: 'common.appName', body: 'automation.commander.emptyText' })
 

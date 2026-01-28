@@ -72,30 +72,24 @@ vi.mock('@services/llms/manager', async () => {
 })
 
 vi.mock('@services/assistant', async () => {
-  return { 
+  return {
     default: class {
       constructor() {}
       setChat() {}
-      prompt(prompt: string, options: any, callback?: (chunk: any) => void) { 
-        // Simulate different responses based on prompt
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            if (callback) {
-              if (prompt.includes('system prompt')) {
-                // Simulate system prompt response
-                callback({ type: 'content', text: 'SYSTEM PROMPT\n\nYou are a helpful assistant.' })
-              } else if (prompt.includes('error')) {
-                // Simulate error case
-                reject(new Error('Assistant error'))
-                return
-              } else {
-                // Regular response
-                callback({ type: 'content', text: 'This is a regular response.' })
-              }
-            }
-            resolve(undefined)
-          }, 100)
-        })
+      async prompt(prompt: string, options: any, callback?: (chunk: any) => void) {
+        // Simulate different responses based on prompt - resolve immediately for faster tests
+        if (callback) {
+          if (prompt.includes('system prompt')) {
+            // Simulate system prompt response
+            callback({ type: 'content', text: 'SYSTEM PROMPT\n\nYou are a helpful assistant.' })
+          } else if (prompt.includes('error')) {
+            // Simulate error case
+            throw new Error('Assistant error')
+          } else {
+            // Regular response
+            callback({ type: 'content', text: 'This is a regular response.' })
+          }
+        }
       }
       chat = { model: 'test', lastMessage: () => null }
     }
@@ -915,9 +909,10 @@ describe('Permissions Screen', () => {
     await wrapper.vm.$nextTick()
     
     // Wait for permissions check to complete
-    await new Promise(resolve => setTimeout(resolve, 100))
-    await wrapper.vm.$nextTick()
-    
+    await vi.waitFor(() => {
+      expect(wrapper.findAll('.permission-card.granted')).toHaveLength(2)
+    }, { timeout: 100 })
+
     // Both permissions should be granted
     const grantedCards = wrapper.findAll('.permission-card.granted')
     expect(grantedCards).toHaveLength(2)
@@ -930,10 +925,12 @@ describe('Permissions Screen', () => {
     const wrapper = await mount(Permissions)
     const component = wrapper.vm as any
     await component.onVisible()
-    
+
     // Wait for permissions check to complete
-    await new Promise(resolve => setTimeout(resolve, 100))
-    
+    await vi.waitFor(() => {
+      expect((window.api as any).permissions.checkAccessibility).toHaveBeenCalled()
+    }, { timeout: 100 })
+
     // Check that permission APIs were called
     expect((window.api as any).permissions.checkAccessibility).toHaveBeenCalled()
     expect((window.api as any).permissions.checkAutomation).toHaveBeenCalled()
@@ -972,22 +969,28 @@ describe('Permissions Screen', () => {
   })
 
   test('Polls permission status automatically', async () => {
+    // Enable fake timers before mounting
+    vi.useFakeTimers()
+
     const wrapper = await mount(Permissions)
     const component = wrapper.vm as any
-    await component.onVisible()
-    
-    // Clear previous calls
+
+    // Call onVisible which starts the polling
+    component.onVisible()
+
+    // Clear previous calls from onVisible
     vi.clearAllMocks()
-    
-    // Wait for initial check and first poll interval
-    await new Promise(resolve => setTimeout(resolve, 1100))
-    
-    // Check that permission APIs were called multiple times due to polling
+
+    // Advance timers to trigger polling (poll interval is typically 1000ms)
+    await vi.advanceTimersByTimeAsync(1100)
+
+    // Check that permission APIs were called due to polling
     expect((window.api as any).permissions.checkAccessibility).toHaveBeenCalled()
     expect((window.api as any).permissions.checkAutomation).toHaveBeenCalled()
-    
-    // Unmount to stop polling
+
+    // Unmount to stop polling and restore real timers
     wrapper.unmount()
+    vi.useRealTimers()
   })
 
 })
@@ -1097,16 +1100,17 @@ describe('Instructions Screen', () => {
     await vi.waitFor(() => {
       return wrapper.find('.loader').exists() === false || component.latestText !== null
     }, { timeout: 2000 })
-    
+
     // Find the Prompt component and trigger a prompt
     const promptComponent = wrapper.findComponent({ name: 'Prompt' })
     expect(promptComponent.exists()).toBe(true)
-    
-    // Trigger a prompt event
+
+    // Trigger a prompt event and wait for processing to complete
     await promptComponent.vm.$emit('prompt', { prompt: 'Test user prompt' })
-    
-    // Should show processing state
-    expect(component.isProcessing).toBe(true)
+    await wrapper.vm.$nextTick()
+
+    // Since mock resolves immediately, check that latestText was updated with response
+    expect(component.latestText).toBe('This is a regular response.')
   })
 
   test('CanLeave function returns true when completed', async () => {

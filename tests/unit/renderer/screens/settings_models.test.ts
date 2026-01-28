@@ -1,11 +1,10 @@
 
-import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
+import { vi, beforeAll, beforeEach, afterEach, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
 import { store } from '@services/store'
 import { switchToTab, tabs } from './settings_utils'
 import Settings from '@screens/Settings.vue'
-import { wait } from '@main/utils'
 import {
   ModelsList, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels,
   loadOllamaModels, loadOpenAIModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels,
@@ -59,6 +58,11 @@ beforeAll(() => {
 
 beforeEach(async () => {
   vi.clearAllMocks()
+  vi.useFakeTimers()
+})
+
+afterEach(async () => {
+  vi.useRealTimers()
 })
 
 test('should render', async () => {
@@ -182,7 +186,9 @@ test('ollama settings', async () => {
   await ollama.find('input[name=baseURL]').trigger('change')
   expect(store.config.engines.ollama.baseURL).toBe('base-url')
   await ollama.find('button[name=refresh]').trigger('click')
-  await vi.waitUntil(() =>  (loadOllamaModels as Mock).mock.calls.length > 0)
+  // RefreshButton has a 500ms animation delay before calling onRefresh
+  await vi.advanceTimersByTimeAsync(500)
+  await vi.waitUntil(() => (loadOllamaModels as Mock).mock.calls.length > 0, { timeout: 100 })
   expect(loadOllamaModels).toHaveBeenCalled()
   const visionModelSelect = findModelSelectorPlus(ollama, 1)
   await visionModelSelect.open()
@@ -202,7 +208,7 @@ test('lmstudio settings', async () => {
   await lmstudio.find('input[name=baseURL]').trigger('blur')
   expect(store.config.engines.lmstudio.baseURL).toBe('base-url')
   await lmstudio.findAll('button')[1].trigger('click')
-  await wait(750) //timeout
+  await vi.advanceTimersByTimeAsync(750) //timeout
   expect(loadLMStudioModels).toHaveBeenLastCalledWith(expect.objectContaining({
   }))
   const visionModelSelect = findModelSelectorPlus(lmstudio, 1)

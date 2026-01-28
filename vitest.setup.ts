@@ -103,6 +103,16 @@ vi.mock('./src/main/automations/automator', () => {
   return { default: Automator }
 })
 
+// Mock IconPicker to avoid rendering 1500+ lucide icons in tests
+vi.mock('./src/renderer/components/IconPicker.vue', () => ({
+  default: {
+    name: 'IconPicker',
+    template: '<div class="icon-picker-mock"></div>',
+    props: ['modelValue'],
+    emits: ['update:modelValue'],
+  }
+}))
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
