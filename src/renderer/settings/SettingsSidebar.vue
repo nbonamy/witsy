@@ -13,24 +13,22 @@
       <WebAppsList ref="list" @edit="onEdit" @create="onCreate" />
     </main>
     <main class="editor sliding-pane" :class="{ visible: edited }">
-      <WebAppEditor ref="editor" :webapp="edited" @webapp-modified="onWebappModified" />
+      <WebAppEditor :webapp="edited" @webapp-modified="onWebappModified" />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { v4 as uuidv4 } from 'uuid'
-import { ref } from 'vue'
 import SidebarFeatures from '@components/SidebarFeatures.vue'
 import WebAppEditor from '@components/WebAppEditor.vue'
 import WebAppsList from '@components/WebAppsList.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { WebApp } from 'types/workspace'
+import { ref } from 'vue'
 
 const list = ref(null)
-const editor = ref(null)
 const selected = ref<WebApp | null>(null)
 const edited = ref<WebApp | null>(null)
 
@@ -60,7 +58,7 @@ const onWebappModified = (payload: WebApp | null) => {
   let webapp = null
   if (payload.id == null) {
     webapp = {
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       name: payload.name,
       url: payload.url,
       icon: payload.icon,
