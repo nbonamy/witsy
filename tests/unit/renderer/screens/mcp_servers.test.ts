@@ -53,20 +53,32 @@ test('Initialization', async () => {
 })
 
 test('Actions', async () => {
-  
+  // The component has a 1000ms animation delay before setting loading=false
+  vi.useFakeTimers()
 
+  // Reload to start fresh with fake timers active
+  mcp.vm.load()
   const list = mcp.findComponent({ name: 'List' })
-  await vi.waitUntil(async () => !mcp.vm.loading, 2000)
+  // Fast-forward past the loading timeout
+  await vi.advanceTimersByTimeAsync(1000)
+  expect(mcp.vm.loading).toBe(false)
+
+  // Reset mocks after our setup
+  vi.mocked(window.api.mcp.getServers).mockClear()
+  vi.mocked(window.api.mcp.getStatus).mockClear()
+
   await list.find('button[name=reload]').trigger('click')
-  expect(window.api.mcp.getServers).toHaveBeenCalledTimes(2)
-  expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(2)
+  await vi.advanceTimersByTimeAsync(1000)
+  expect(window.api.mcp.getServers).toHaveBeenCalledTimes(1)
+  expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(1)
   expect(window.api.mcp.reload).toHaveBeenCalledTimes(0)
 
   // restart
-  await vi.waitUntil(async () => !mcp.vm.loading, 2000)
   await list.find('button[name=restart]').trigger('click')
+  await vi.advanceTimersByTimeAsync(1000)
   expect(window.api.mcp.reload).toHaveBeenCalledTimes(1)
 
+  vi.useRealTimers()
 })
 
 test('Server enablement', async () => {

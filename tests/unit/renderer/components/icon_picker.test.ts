@@ -1,8 +1,38 @@
 
-import { beforeAll, expect, test } from 'vitest'
+import { beforeAll, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { nextTick, h } from 'vue'
 import { useWindowMock } from '@tests/mocks/window'
+
+// Unmock IconPicker since this file tests the actual component
+vi.unmock('@components/IconPicker.vue')
+
+// Mock lucide-vue-next to only return a handful of icons for faster tests
+vi.mock('lucide-vue-next', () => {
+  // Create a simple icon component factory
+  const createIcon = (name: string) => ({
+    name,
+    render: () => h('svg', { class: 'lucide-icon', 'data-icon': name })
+  })
+
+  return {
+    icons: {
+      Globe: createIcon('Globe'),
+      GlobeIcon: createIcon('GlobeIcon'),
+      Globe2: createIcon('Globe2'),
+      Home: createIcon('Home'),
+      Settings: createIcon('Settings'),
+      User: createIcon('User'),
+      Search: createIcon('Search'),
+      Star: createIcon('Star'),
+      Heart: createIcon('Heart'),
+      Mail: createIcon('Mail'),
+    },
+    Globe: createIcon('Globe'),
+    GlobeIcon: createIcon('GlobeIcon'),
+  }
+})
+
 import IconPicker from '@components/IconPicker.vue'
 
 beforeAll(() => {

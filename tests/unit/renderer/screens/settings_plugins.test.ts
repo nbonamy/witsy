@@ -1,11 +1,10 @@
 
-import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
+import { vi, beforeAll, beforeEach, afterEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
 import { store } from '@services/store'
 import { switchToTab, tabs } from './settings_utils'
 import { ModelsList, loadOpenAIModels } from 'multi-llm-ts'
-import { wait } from '@main/utils'
 import Settings from '@screens/Settings.vue'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
@@ -76,6 +75,11 @@ beforeAll(() => {
 
 beforeEach(async () => {
   vi.clearAllMocks()
+  vi.useFakeTimers()
+})
+
+afterEach(async () => {
+  vi.useRealTimers()
 })
 
 test('should render', async () => {
@@ -96,7 +100,7 @@ test('image settings', async () => {
   expect(image.findAll('select')[0].element.value).toBe('openai')
   expect(image.find('input[type=text]').exists()).toBeFalsy()
   await image.find('button').trigger('click')
-  await wait(750)
+  await vi.advanceTimersByTimeAsync(750)
   expect(loadOpenAIModels).toHaveBeenCalled()
 
   // huggingface

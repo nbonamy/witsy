@@ -1,7 +1,6 @@
 
 import { vi, expect, test, beforeEach, afterEach, beforeAll, afterAll } from 'vitest'
 import Monitor from '@main/monitor'
-import { wait } from '@main/utils'
 import path from 'path'
 import fs from 'fs'
 import os from 'os'
@@ -46,17 +45,20 @@ test('Stop monitor', async () => {
 test('Notify monitor', async () => {
   monitor = new Monitor(callback)
   monitor.start(tempFile)
-  await wait(1000)
+  // Small delay to ensure watcher is ready
+  await new Promise(resolve => setTimeout(resolve, 100))
   fs.appendFileSync(tempFile, ' World')
-  await vi.waitUntil(() => callback.mock.calls.length > 0)
+  await vi.waitUntil(() => callback.mock.calls.length > 0, { timeout: 500 })
 })
 
 test('Notify after stop', async () => {
   monitor = new Monitor(callback)
   monitor.start(tempFile)
   monitor.stop()
-  await wait(1000)
+  // Small delay to ensure watcher is stopped
+  await new Promise(resolve => setTimeout(resolve, 100))
   fs.appendFileSync(tempFile, ' World')
-  await wait(1000)
+  // Wait a bit to verify no callback is triggered
+  await new Promise(resolve => setTimeout(resolve, 200))
   expect(callback).toHaveBeenCalledTimes(0)
 })
