@@ -2931,6 +2931,7 @@
       },
       "knowledge": {
         "description": "Dieses Plugin stellt Wissensdatenbanksammlungen mit Beschreibungen als durchsuchbare Werkzeuge für LLM-Engines bereit. Wenn aktiviert, können KI-Assistenten automatisch Ihre Wissensdatenbank durchsuchen, um ihre Antworten auf Ihren Inhalt zu stützen.",
+        "noValidDocRepos": "Keine Wissensdatenbanken mit Beschreibungen gefunden. Wissensdatenbanken benötigen eine Beschreibung, um Modellen über das Knowledge-Plugin zugänglich gemacht zu werden.",
         "title": "Wissen"
       },
       "memory": {

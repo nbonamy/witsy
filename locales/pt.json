@@ -2953,6 +2953,7 @@
       },
       "knowledge": {
         "description": "Este plugin expõe coleções da base de conhecimento com descrições como ferramentas pesquisáveis para motores LLM. Quando habilitado, assistentes de IA podem pesquisar automaticamente sua base de conhecimento para fundamentar suas respostas no seu conteúdo.",
+        "noValidDocRepos": "Nenhuma base de conhecimento com descrição foi encontrada. As bases de conhecimento precisam de uma descrição para serem expostas aos modelos por meio do plugin Knowledge.",
         "title": "Conhecimento"
       },
       "memory": {

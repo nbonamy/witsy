@@ -1884,6 +1884,7 @@
   "settings.plugins.image.replicate.aboutModels": "More about Replicate models",
   "settings.plugins.image.title": "Text-to-Image",
   "settings.plugins.knowledge.description": "This plugin exposes knowledge base collections with descriptions as searchable tools for LLM engines. When enabled, AI assistants can automatically search your knowledge base to ground their responses in your content.",
+  "settings.plugins.knowledge.noValidDocRepos": "No knowledge bases with descriptions found. Knowledge bases need a description to be exposed to models through the Knowledge plugin.",
   "settings.plugins.knowledge.title": "Knowledge",
   "settings.plugins.memory.contents": "Contents",
   "settings.plugins.memory.description": "This plugin allows LLM engines to store and retrieve information about you, making their answers more personalized.",
