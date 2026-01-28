@@ -413,7 +413,7 @@ export class RealtimeGemini extends RealtimeEngine {
     }
 
     // Get list of enabled plugin names
-    const enabled = enabledPlugins(this.config, true) // include MCP
+    const enabled = await enabledPlugins(this.config, true) // include MCP
 
     // Iterate through enabled plugins and convert each to Google format
     for (const pluginName of enabled) {

@@ -79,10 +79,14 @@ const load = () => {
   pluginSettings.value.load()
 }
 
+const onShow = () => {
+  pluginSettings.value.load()
+}
+
 const save = () => {
 }
 
-defineExpose({ load })
+defineExpose({ load, onShow })
 
 </script>
 

@@ -188,7 +188,7 @@ async function buildRealtimeTools(
   }
 
   // Get list of enabled plugin names
-  const enabled = enabledPlugins(config, true) // include MCP
+  const enabled = await enabledPlugins(config, true) // include MCP
 
   // Iterate through enabled plugins and convert each to Agent SDK format
   for (const pluginName of enabled) {
