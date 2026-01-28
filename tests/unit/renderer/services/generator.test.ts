@@ -1,4 +1,4 @@
-import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test, describe } from 'vitest'
 import { LlmChunk } from 'multi-llm-ts'
 import { useWindowMock } from '@tests/mocks/window'
 import Generator from '@services/generator'
@@ -927,4 +927,212 @@ test('Generator combines expert prompt with RAG context in contentForModel', asy
     'QUERY: What is the capital of France?' // original query
 
   expect(userMessageSentToLlm!.contentForModel).toBe(expectedPrompt)
+})
+
+// ============================================================================
+// Options Sanitization Tests
+// ============================================================================
+
+describe('Generator sanitizes numeric options', () => {
+
+  test('converts string values to numbers', async () => {
+    const generator = new Generator(store.config)
+    const messages = [
+      new Message('system', 'System'),
+      new Message('user', 'Hello'),
+      new Message('assistant', '')
+    ]
+
+    llmMock.generate.mockReturnValue((async function* () {
+      yield { type: 'content', text: 'Response', done: true } as LlmChunk
+    })())
+
+    let receivedOpts: any = null
+    llmMock.generate.mockImplementation((_model: any, _conv: any, opts: any) => {
+      receivedOpts = opts
+      return (async function* () {
+        yield { type: 'content', text: 'Response', done: true } as LlmChunk
+      })()
+    })
+
+    await generator.generate(llmMock, messages, {
+      model: 'chat',
+      streaming: true,
+      // @ts-expect-error Testing string values that could come from JSON deserialization
+      maxTokens: '1024',
+      // @ts-expect-error Testing string values
+      temperature: '0.7',
+      // @ts-expect-error Testing string values
+      top_p: '0.9',
+      // @ts-expect-error Testing string values
+      top_k: '40',
+    })
+
+    expect(receivedOpts.maxTokens).toBe(1024)
+    expect(typeof receivedOpts.maxTokens).toBe('number')
+    expect(receivedOpts.temperature).toBe(0.7)
+    expect(typeof receivedOpts.temperature).toBe('number')
+    expect(receivedOpts.top_p).toBe(0.9)
+    expect(typeof receivedOpts.top_p).toBe('number')
+    expect(receivedOpts.top_k).toBe(40)
+    expect(typeof receivedOpts.top_k).toBe('number')
+  })
+
+  test('handles empty string values as undefined', async () => {
+    const generator = new Generator(store.config)
+    const messages = [
+      new Message('system', 'System'),
+      new Message('user', 'Hello'),
+      new Message('assistant', '')
+    ]
+
+    let receivedOpts: any = null
+    llmMock.generate.mockImplementation((_model: any, _conv: any, opts: any) => {
+      receivedOpts = opts
+      return (async function* () {
+        yield { type: 'content', text: 'Response', done: true } as LlmChunk
+      })()
+    })
+
+    await generator.generate(llmMock, messages, {
+      model: 'chat',
+      streaming: true,
+      // @ts-expect-error Testing empty string values
+      maxTokens: '',
+      // @ts-expect-error Testing empty string values
+      temperature: '',
+    })
+
+    expect(receivedOpts.maxTokens).toBeUndefined()
+    expect(receivedOpts.temperature).toBeUndefined()
+  })
+
+  test('handles invalid string values as undefined', async () => {
+    const generator = new Generator(store.config)
+    const messages = [
+      new Message('system', 'System'),
+      new Message('user', 'Hello'),
+      new Message('assistant', '')
+    ]
+
+    let receivedOpts: any = null
+    llmMock.generate.mockImplementation((_model: any, _conv: any, opts: any) => {
+      receivedOpts = opts
+      return (async function* () {
+        yield { type: 'content', text: 'Response', done: true } as LlmChunk
+      })()
+    })
+
+    await generator.generate(llmMock, messages, {
+      model: 'chat',
+      streaming: true,
+      // @ts-expect-error Testing invalid string values
+      maxTokens: 'not-a-number',
+      // @ts-expect-error Testing invalid string values
+      temperature: 'abc',
+    })
+
+    expect(receivedOpts.maxTokens).toBeUndefined()
+    expect(receivedOpts.temperature).toBeUndefined()
+  })
+
+  test('preserves valid number values', async () => {
+    const generator = new Generator(store.config)
+    const messages = [
+      new Message('system', 'System'),
+      new Message('user', 'Hello'),
+      new Message('assistant', '')
+    ]
+
+    let receivedOpts: any = null
+    llmMock.generate.mockImplementation((_model: any, _conv: any, opts: any) => {
+      receivedOpts = opts
+      return (async function* () {
+        yield { type: 'content', text: 'Response', done: true } as LlmChunk
+      })()
+    })
+
+    await generator.generate(llmMock, messages, {
+      model: 'chat',
+      streaming: true,
+      maxTokens: 2048,
+      temperature: 0.5,
+      top_p: 0.95,
+      top_k: 50,
+    })
+
+    expect(receivedOpts.maxTokens).toBe(2048)
+    expect(receivedOpts.temperature).toBe(0.5)
+    expect(receivedOpts.top_p).toBe(0.95)
+    expect(receivedOpts.top_k).toBe(50)
+  })
+
+  test('truncates float values for integer fields', async () => {
+    const generator = new Generator(store.config)
+    const messages = [
+      new Message('system', 'System'),
+      new Message('user', 'Hello'),
+      new Message('assistant', '')
+    ]
+
+    let receivedOpts: any = null
+    llmMock.generate.mockImplementation((_model: any, _conv: any, opts: any) => {
+      receivedOpts = opts
+      return (async function* () {
+        yield { type: 'content', text: 'Response', done: true } as LlmChunk
+      })()
+    })
+
+    await generator.generate(llmMock, messages, {
+      model: 'chat',
+      streaming: true,
+      // @ts-expect-error Testing float string for integer field
+      maxTokens: '1024.7',
+      // @ts-expect-error Testing float string for integer field
+      top_k: '40.9',
+    })
+
+    expect(receivedOpts.maxTokens).toBe(1024)
+    expect(receivedOpts.top_k).toBe(40)
+  })
+
+  test('sanitizes reasoning and thinking budget fields', async () => {
+    const generator = new Generator(store.config)
+    const messages = [
+      new Message('system', 'System'),
+      new Message('user', 'Hello'),
+      new Message('assistant', '')
+    ]
+
+    let receivedOpts: any = null
+    llmMock.generate.mockImplementation((_model: any, _conv: any, opts: any) => {
+      receivedOpts = opts
+      return (async function* () {
+        yield { type: 'content', text: 'Response', done: true } as LlmChunk
+      })()
+    })
+
+    await generator.generate(llmMock, messages, {
+      model: 'chat',
+      streaming: true,
+      // @ts-expect-error Testing string values
+      reasoningBudget: '16384',
+      // @ts-expect-error Testing string values
+      thinkingBudget: '8192',
+      // @ts-expect-error Testing string values
+      timeout: '30000',
+      // @ts-expect-error Testing string values
+      contextWindowSize: '128000',
+    })
+
+    expect(receivedOpts.reasoningBudget).toBe(16384)
+    expect(typeof receivedOpts.reasoningBudget).toBe('number')
+    expect(receivedOpts.thinkingBudget).toBe(8192)
+    expect(typeof receivedOpts.thinkingBudget).toBe('number')
+    expect(receivedOpts.timeout).toBe(30000)
+    expect(typeof receivedOpts.timeout).toBe('number')
+    expect(receivedOpts.contextWindowSize).toBe(128000)
+    expect(typeof receivedOpts.contextWindowSize).toBe('number')
+  })
+
 })

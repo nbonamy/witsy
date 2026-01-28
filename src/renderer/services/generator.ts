@@ -45,6 +45,38 @@ export default class Generator {
     this.config = config
   }
 
+  /**
+   * Sanitizes generation options to ensure numeric values are properly typed.
+   * This prevents API errors like "expected an integer, but got a string instead".
+   */
+  private sanitizeOpts(opts: GenerationOpts): GenerationOpts {
+    const sanitized = { ...opts }
+
+    // Helper to convert string to number if needed
+    const toNumber = (value: any): number | undefined => {
+      if (value === undefined || value === null || value === '') return undefined
+      const num = typeof value === 'string' ? parseFloat(value) : value
+      return isNaN(num) ? undefined : num
+    }
+
+    const toInt = (value: any): number | undefined => {
+      const num = toNumber(value)
+      return num !== undefined ? Math.floor(num) : undefined
+    }
+
+    // Sanitize numeric fields
+    if (sanitized.timeout !== undefined) sanitized.timeout = toInt(sanitized.timeout)
+    if (sanitized.contextWindowSize !== undefined) sanitized.contextWindowSize = toInt(sanitized.contextWindowSize)
+    if (sanitized.maxTokens !== undefined) sanitized.maxTokens = toInt(sanitized.maxTokens)
+    if (sanitized.temperature !== undefined) sanitized.temperature = toNumber(sanitized.temperature)
+    if (sanitized.top_k !== undefined) sanitized.top_k = toInt(sanitized.top_k)
+    if (sanitized.top_p !== undefined) sanitized.top_p = toNumber(sanitized.top_p)
+    if (sanitized.reasoningBudget !== undefined) sanitized.reasoningBudget = toInt(sanitized.reasoningBudget)
+    if (sanitized.thinkingBudget !== undefined) sanitized.thinkingBudget = toInt(sanitized.thinkingBudget)
+
+    return sanitized
+  }
+
   async generate(llm: LlmEngine, messages: Message[], opts: GenerationOpts, llmCallback?: LlmChunkCallback): Promise<GenerationResult> {
 
     // return code
@@ -75,6 +107,9 @@ export default class Generator {
       response.setText(t('generator.errors.invalidModel'))
       return 'invalid_model'
     }
+
+    // sanitize options to ensure proper types
+    opts = this.sanitizeOpts(opts)
 
     // use tools always
     model.capabilities.tools = true
