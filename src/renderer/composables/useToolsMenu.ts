@@ -20,10 +20,12 @@ export function useToolsMenu(options: UseToolsMenuOptions) {
   const allPluginsTools = ref<ToolSelection>([])
   const mcpServersWithTools = ref<McpServerWithTools[]>([])
   const pluginsStatusComputed = ref<ts.ToolStatus>('all')
+  const enabledPluginsList = ref<string[]>([])
 
   onMounted(async () => {
     allPluginsTools.value = await ts.allPluginsTools()
     mcpServersWithTools.value = await window.api.mcp.getAllServersWithTools()
+    enabledPluginsList.value = await enabledPlugins(store.config)
 
     watch(() => toolSelection.value, async () => {
       pluginsStatusComputed.value = await ts.pluginsStatus(toolSelection.value)
@@ -99,7 +101,7 @@ export function useToolsMenu(options: UseToolsMenuOptions) {
     const items: MenuItem[] = []
 
     // Plugins submenu
-    const pluginsSubmenu: MenuItem[] = enabledPlugins(store.config).map(plugin => ({
+    const pluginsSubmenu: MenuItem[] = enabledPluginsList.value.map(plugin => ({
       id: plugin,
       label: t(`settings.plugins.${plugin}.title`),
       type: 'checkbox' as const,

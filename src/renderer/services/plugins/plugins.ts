@@ -33,14 +33,22 @@ export const availablePlugins: PluginsList = {
   filesystem: FilesystemPlugin,
 }
 
-export const enabledPlugins = (config: Configuration, includeMcp: boolean = false): string[] => {
+export const enabledPlugins = async (config: Configuration, includeMcp: boolean = false): Promise<string[]> => {
   const plugins: string[] = []
   for (const pluginName in availablePlugins) {
     if (pluginName === 'mcp' && !includeMcp) continue
     const pluginClass = availablePlugins[pluginName]
     const plugin: PluginInstance = new pluginClass(config.plugins[pluginName], config.workspaceId)
     if (plugin.isEnabled()) {
-      plugins.push(pluginName)
+      // For MultiToolPlugins, check if they have actual tools available
+      if ('getTools' in plugin) {
+        const tools = await plugin.getTools()
+        if (tools.length > 0) {
+          plugins.push(pluginName)
+        }
+      } else {
+        plugins.push(pluginName)
+      }
     }
   }
   return plugins
