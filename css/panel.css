@@ -179,9 +179,6 @@
       gap: 0.5rem;
       font-weight: var(--font-weight-medium);
       color: var(--color-primary);
-      svg {
-        stroke: var(--color-primary);
-      }
     }
 
   }
