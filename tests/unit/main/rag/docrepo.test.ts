@@ -1,5 +1,5 @@
 
-import { test, expect, vi, beforeEach, afterEach } from 'vitest'
+import { test, expect, vi, beforeAll, beforeEach, afterEach, afterAll } from 'vitest'
 import { RagConfig } from '@/types/config'
 import DocumentRepository from '@main/rag/docrepo'
 import DocumentSourceImpl from '@main/rag/docsource'
@@ -14,17 +14,16 @@ import fs from 'fs'
 import os from 'os'
 
 let ragConfig: RagConfig
+const testTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'docrepo-test-'))
 
-vi.mock('electron', async() => {
-  return {
-    BrowserWindow: {
-      getAllWindows: vi.fn(() => []),
-    },
-    app: {
-      getPath: vi.fn(() => os.tmpdir()),
-    },
-  }
-})
+vi.mock('electron', () => ({
+  BrowserWindow: {
+    getAllWindows: vi.fn(() => []),
+  },
+  app: {
+    getPath: vi.fn(),
+  },
+}))
 
 vi.mock('@main/config', async() => {
   return {
@@ -48,18 +47,26 @@ vi.mock('@main/rag/embedder', async() => {
 })
 
 const cleanup = () => {
-  fs.rmSync(path.join(os.tmpdir(), 'docrepo.json'), { force: true })
-  fs.rmSync(path.join(os.tmpdir(), 'docrepo'), { recursive: true, force: true })
+  fs.rmSync(path.join(testTmpDir, 'docrepo.json'), { force: true })
+  fs.rmSync(path.join(testTmpDir, 'docrepo'), { recursive: true, force: true })
 }
 
 const createTempDir = () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'docrepotest'))
-  fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo.json'))
-  fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo2.json'))
-  fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo.png'))
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'docrepotest-'))
+  fs.copyFileSync(path.join(testTmpDir, 'docrepo.json'), path.join(tempDir, 'docrepo.json'))
+  fs.copyFileSync(path.join(testTmpDir, 'docrepo.json'), path.join(tempDir, 'docrepo2.json'))
+  fs.copyFileSync(path.join(testTmpDir, 'docrepo.json'), path.join(tempDir, 'docrepo.png'))
   fs.copyFileSync('./tests/fixtures/empty.pdf', path.join(tempDir, 'empty.pdf'))
   return tempDir
 }
+
+beforeAll(() => {
+  vi.mocked(app.getPath).mockReturnValue(testTmpDir)
+})
+
+afterAll(() => {
+  fs.rmSync(testTmpDir, { recursive: true, force: true })
+})
 
 beforeEach(() => {
   cleanup()
@@ -89,10 +96,10 @@ test('Docrepo create', async () => {
   expect(list[0].embeddingEngine).toBe('openai')
   expect(list[0].embeddingModel).toBe('text-embedding-ada-002')
   expect(list[0].documents).toHaveLength(0)
-  expect(fs.existsSync(path.join(os.tmpdir(), 'docrepo', docbase))).toBe(true)
+  expect(fs.existsSync(path.join(testTmpDir, 'docrepo', docbase))).toBe(true)
 
   // check the database
-  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const db = new LocalIndex(path.join(testTmpDir, 'docrepo', docbase))
   expect(await db.isIndexCreated()).toBe(true)
   expect(await db.listItems()).toHaveLength(0)
 
@@ -116,7 +123,7 @@ test('Docrepo delete', async () => {
   await docrepo.deleteDocBase(docbase)
   const list = docrepo.list('workspace')
   expect(list.length).toBe(0)
-  expect(fs.existsSync(path.join(os.tmpdir(), 'docrepo', docbase))).toBe(false)
+  expect(fs.existsSync(path.join(testTmpDir, 'docrepo', docbase))).toBe(false)
 })
 
 test('Docrepo delete notifies listeners', async () => {
@@ -153,7 +160,7 @@ test('Docrepo add document', async () => {
   
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
-  const docid = await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'), true)
+  const docid = await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'docrepo.json'), true)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // check docrepo
@@ -161,11 +168,11 @@ test('Docrepo add document', async () => {
   expect(list[0].documents).toHaveLength(1)
   expect(list[0].documents[0].uuid).toBe(docid)
   expect(list[0].documents[0].type).toBe('file')
-  expect(list[0].documents[0].origin).toBe(path.join(os.tmpdir(), 'docrepo.json'))
-  expect(list[0].documents[0].url).toBe('file://' + path.join(os.tmpdir(), 'docrepo.json'))
+  expect(list[0].documents[0].origin).toBe(path.join(testTmpDir, 'docrepo.json'))
+  expect(list[0].documents[0].url).toBe('file://' + path.join(testTmpDir, 'docrepo.json'))
 
   // check the database
-  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const db = new LocalIndex(path.join(testTmpDir, 'docrepo', docbase))
   const items = await db.listItems()
   expect(items.length).toBeGreaterThan(0)
 
@@ -174,7 +181,7 @@ test('Docrepo add document', async () => {
   const metadata: DocumentMetadata = items[0].metadata.metadata as unknown as DocumentMetadata
   expect(metadata.type).toBe('file')
   expect(metadata.title).toBe('docrepo.json')
-  expect(metadata.url).toBe(`file://${path.join(os.tmpdir(), 'docrepo.json')}`)
+  expect(metadata.url).toBe(`file://${path.join(testTmpDir, 'docrepo.json')}`)
   
 })
 
@@ -191,11 +198,11 @@ test('Docrepo invalid documents', async () => {
   
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
-  await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'test.jpg'), true)
-  await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'test.png'), true)
-  await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'test.mov'), true)
-  await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'test.docx'), true)
-  await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'empty.pdf'), true)
+  await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'test.jpg'), true)
+  await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'test.png'), true)
+  await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'test.mov'), true)
+  await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'test.docx'), true)
+  await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'empty.pdf'), true)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // check docrepo
@@ -203,7 +210,7 @@ test('Docrepo invalid documents', async () => {
   expect(list[0].documents).toHaveLength(0)
 
   // check the database
-  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const db = new LocalIndex(path.join(testTmpDir, 'docrepo', docbase))
   const items = await db.listItems()
   expect(items).toHaveLength(0)
   
@@ -214,7 +221,7 @@ test('Docrepo large document', async () => {
   ragConfig.maxDocumentSizeMB = 0.0001
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
-  await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'), true)
+  await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'docrepo.json'), true)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // check docrepo
@@ -222,7 +229,7 @@ test('Docrepo large document', async () => {
   expect(list[0].documents).toHaveLength(0)
 
   // check the database
-  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const db = new LocalIndex(path.join(testTmpDir, 'docrepo', docbase))
   const items = await db.listItems()
   expect(items).toHaveLength(0)
   
@@ -233,7 +240,7 @@ test('Docrepo large document - skip file size check', async () => {
   ragConfig.maxDocumentSizeMB = 0.0001
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
-  await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'), true, { skipSizeCheck: true })
+  await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'docrepo.json'), true, { skipSizeCheck: true })
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // check docrepo
@@ -241,7 +248,7 @@ test('Docrepo large document - skip file size check', async () => {
   expect(list[0].documents).toHaveLength(1)
 
   // check the database
-  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const db = new LocalIndex(path.join(testTmpDir, 'docrepo', docbase))
   const items = await db.listItems()
   expect(items).toHaveLength(1)
   
@@ -253,9 +260,9 @@ test('Docrepo update document', async () => {
   ragConfig.chunkOverlap = 50
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
-  const docid1 = await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'), true)
+  const docid1 = await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'docrepo.json'), true)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
-  const docid2 = await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'), true)
+  const docid2 = await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'docrepo.json'), true)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   expect(docid1).toBe(docid2)
 
@@ -264,8 +271,8 @@ test('Docrepo update document', async () => {
   expect(list[0].documents).toHaveLength(1)
 
   // check the database
-  const fileSize = fs.statSync(path.join(os.tmpdir(), 'docrepo.json')).size
-  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const fileSize = fs.statSync(path.join(testTmpDir, 'docrepo.json')).size
+  const db = new LocalIndex(path.join(testTmpDir, 'docrepo', docbase))
   const items = await db.listItems()
   expect(items).toHaveLength(Math.ceil(fileSize * 1.1 / 500))
 
@@ -275,7 +282,7 @@ test('Docrepo delete document', async () => {
   
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
-  const docid = await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'), true)
+  const docid = await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'docrepo.json'), true)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   await docrepo.removeDocumentSource(docbase, docid)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
@@ -285,7 +292,7 @@ test('Docrepo delete document', async () => {
   expect(list[0].documents).toHaveLength(0)
 
   // check the database
-  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const db = new LocalIndex(path.join(testTmpDir, 'docrepo', docbase))
   const items = await db.listItems()
   expect(items).toHaveLength(0)
 
@@ -312,7 +319,7 @@ test('Docrepo add folder', async () => {
   expect(list[0].documents[0].items[1].filename).toBe('docrepo2.json')
 
   // check the database
-  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const db = new LocalIndex(path.join(testTmpDir, 'docrepo', docbase))
   const items = await db.listItems()
   expect(items).toHaveLength(2)
 
@@ -344,7 +351,7 @@ test('Docrepo update folder', async () => {
   expect(list[0].documents).toHaveLength(1)
 
   // check the database
-  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const db = new LocalIndex(path.join(testTmpDir, 'docrepo', docbase))
   const items = await db.listItems()
   expect(items).toHaveLength(2)
 
@@ -366,7 +373,7 @@ test('Docrepo delete folder', async () => {
   expect(list[0].documents).toHaveLength(0)
 
   // check the database
-  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const db = new LocalIndex(path.join(testTmpDir, 'docrepo', docbase))
   const items = await db.listItems()
   expect(items).toHaveLength(0)
 
@@ -375,7 +382,7 @@ test('Docrepo delete folder', async () => {
 test('Docrepo query', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
-  const docid = await docrepo.addDocumentSource(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'), true)
+  const docid = await docrepo.addDocumentSource(docbase, 'file', path.join(testTmpDir, 'docrepo.json'), true)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   const query = await docrepo.query(docbase, 'whatever')
   expect(query).toBeDefined()
@@ -386,7 +393,7 @@ test('Docrepo query', async () => {
   expect(query[0].metadata.uuid).toBe(docid)
   expect(query[0].metadata.type).toBe('file')
   expect(query[0].metadata.title).toBe('docrepo.json')
-  expect(query[0].metadata.url).toBe(`file://${path.join(os.tmpdir(), 'docrepo.json')}`)
+  expect(query[0].metadata.url).toBe(`file://${path.join(testTmpDir, 'docrepo.json')}`)
 })
 
 test('Docrepo query score', async () => {
@@ -560,7 +567,7 @@ test('Docrepo add child document success', async () => {
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   
   // Create a temp file to add as child
-  const tempFile = path.join(os.tmpdir(), 'docrepo_child.json')
+  const tempFile = path.join(testTmpDir, 'docrepo_child.json')
   fs.writeFileSync(tempFile, '{"test": "content"}')
   
   // Add child document to the folder
@@ -623,7 +630,7 @@ test('Docrepo add child document with missing parent', async () => {
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
   
   // Try to add child to non-existent parent
-  const tempFile = path.join(os.tmpdir(), 'docrepo_child.json')
+  const tempFile = path.join(testTmpDir, 'docrepo_child.json')
   fs.writeFileSync(tempFile, '{"test": "content"}')
   
   // This should throw an error for missing parent
@@ -740,7 +747,7 @@ test('Docrepo cancel task at queue position 0', async () => {
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
 
   // Add a document
-  const tempFile = path.join(os.tmpdir(), 'test_doc.json')
+  const tempFile = path.join(testTmpDir, 'test_doc.json')
   fs.writeFileSync(tempFile, '{"test": "data"}')
 
   const taskId = await docrepo.addDocumentSource(docbase, 'file', tempFile, true)
@@ -790,7 +797,7 @@ test('Docrepo listener notifications on add', async () => {
   docrepo.addListener(mockListener)
 
   // Add a document
-  const tempFile = path.join(os.tmpdir(), 'listener_test.json')
+  const tempFile = path.join(testTmpDir, 'listener_test.json')
   fs.writeFileSync(tempFile, '{"test": "data"}')
   await docrepo.addDocumentSource(docbase, 'file', tempFile, true)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
@@ -809,7 +816,7 @@ test('Docrepo getCurrentQueueItem returns item when queue not empty', async () =
   expect(docrepo.getCurrentQueueItem()).toBeNull()
 
   // Add document to queue
-  const tempFile = path.join(os.tmpdir(), 'queue_test.json')
+  const tempFile = path.join(testTmpDir, 'queue_test.json')
   fs.writeFileSync(tempFile, '{"test": "data"}')
   await docrepo.addDocumentSource(docbase, 'file', tempFile, true)
 
@@ -989,7 +996,7 @@ test('Docrepo updateDocumentSource', async () => {
   const docbase = await docrepo.createDocBase('workspace', 'name', 'openai', 'text-embedding-ada-002')
 
   // Add a document
-  const tempFile = path.join(os.tmpdir(), 'update_test.json')
+  const tempFile = path.join(testTmpDir, 'update_test.json')
   fs.writeFileSync(tempFile, '{"original": "content"}')
   const docId = await docrepo.addDocumentSource(docbase, 'file', tempFile, true)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
