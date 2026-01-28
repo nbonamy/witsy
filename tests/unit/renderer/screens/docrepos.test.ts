@@ -298,7 +298,7 @@ test('Opens rename dialog when pencil is clicked', async () => {
 
   // Should show rename dialog and update
   expect(Dialog.show).toHaveBeenCalled()
-  expect(window.api.docrepo.update).toHaveBeenLastCalledWith('uuid1', 'renamed-repo', undefined)
+  expect(window.api.docrepo.update).toHaveBeenLastCalledWith('uuid1', 'renamed-repo', 'A knowledge base for testing')
 })
 
 test('Shows spinner for processing repos', async () => {
