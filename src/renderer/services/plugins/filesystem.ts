@@ -25,7 +25,6 @@ type FileSystemArgs = {
 
 export default class extends Plugin {
 
-   
   constructor(config: FilesystemPluginConfig, workspaceId: string) {
     super(config, workspaceId)
     this.config = config
