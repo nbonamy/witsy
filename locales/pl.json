@@ -2959,6 +2959,7 @@
       },
       "knowledge": {
         "description": "Ten wtyczka udostępnia kolekcje bazy wiedzy z opisami jako narzędzia wyszukiwalne dla silników LLM. Po włączeniu asystenci AI mogą automatycznie przeszukiwać Twoją bazę wiedzy, aby opierać swoje odpowiedzi na Twojej zawartości.",
+        "noValidDocRepos": "Nie znaleziono żadnych baz wiedzy z opisami. Bazy wiedzy muszą mieć opis, aby mogły być udostępnione modelom przez wtyczkę Knowledge.",
         "title": "Wiedza"
       },
       "memory": {
