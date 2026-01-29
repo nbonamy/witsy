@@ -2923,6 +2923,9 @@
           "aboutModels": "A propos des modèles Hugging Face"
         },
         "imageModel": "Modèle d'image",
+        "ollama": {
+          "aboutImageGeneration": "À propos de la génération d'images par Ollama"
+        },
         "provider": "Fournisseur",
         "replicate": {
           "aboutModels": "A propos des modèles Replicate"

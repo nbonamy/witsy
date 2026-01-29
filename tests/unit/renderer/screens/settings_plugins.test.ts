@@ -4,7 +4,7 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '@tests/mocks/window'
 import { store } from '@services/store'
 import { switchToTab, tabs } from './settings_utils'
-import { ModelsList, loadOpenAIModels } from 'multi-llm-ts'
+import { ChatModel, ModelsList, loadOpenAIModels } from 'multi-llm-ts'
 import Settings from '@screens/Settings.vue'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
@@ -68,7 +68,15 @@ beforeAll(() => {
       { id: 'hf2', name: 'hf2' },
     ]
   }
-    
+
+  store.config.engines.ollama.models = {
+    chat: [
+      { id: 'ollama-model1', name: 'Ollama Model 1' } as ChatModel,
+      { id: 'ollama-model2', name: 'Ollama Model 2' } as ChatModel,
+    ],
+    image: []
+  }
+
   // wrapper
   wrapper = mount(Settings)
 })
@@ -130,13 +138,22 @@ test('image settings', async () => {
   expect(store.config.plugins.image.engine).toBe('falai')
   expect(store.config.plugins.image.model).toBe('falai-image2')
 
+  // ollama - uses chat models for image generation
+  await image.findAll('select')[0].setValue('ollama')
+  expect(store.config.plugins.image.engine).toBe('ollama')
+  expect(image.find<HTMLInputElement>('input[type=text]').exists()).toBeTruthy()
+  expect(image.findAll('select')[1].find('option').text()).toBe('Ollama Model 1')
+  await image.findAll('select')[1].setValue('ollama-model2')
+  expect(store.config.plugins.image.engine).toBe('ollama')
+  expect(store.config.plugins.image.model).toBe('ollama-model2')
+
 })
 
 test('image settings reload', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
   await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=image]').trigger('click')
   const image = tab.findComponent({ name: 'SettingsImage' })
-  expect(image.vm.model).toBe('falai-image2')
+  expect(image.vm.model).toBe('ollama-model2')
 })
 
 test('video settings', async () => {

@@ -33,6 +33,7 @@ export default class ImageCreator implements MediaCreator {
     if (!checkApiKey || store.config.engines.huggingface.apiKey) {
       engines.push({ id: 'huggingface', name: engineNames.huggingface })
     }
+    engines.push({ id: 'ollama', name: engineNames.ollama })
     engines.push({ id: 'sdwebui', name: engineNames.sdwebui })
     return engines
   }
@@ -56,6 +57,8 @@ export default class ImageCreator implements MediaCreator {
       return this.falai(model, parameters, reference)
     } else if (engine == 'xai') {
       return this.xai(model, parameters)
+    } else if (engine == 'ollama') {
+      return this.ollama(model, parameters)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -140,7 +143,7 @@ export default class ImageCreator implements MediaCreator {
 
     const client = new SDWebUI(store.config)
     const response = await client.generateImage(model, parameters.prompt, parameters)
- 
+
     // save the content on disk
     const fileUrl = saveFileContents('png', response.images[0])
     //console.log('[image] saved image to', fileUrl)
@@ -149,7 +152,55 @@ export default class ImageCreator implements MediaCreator {
     return {
       url: fileUrl,
     }
-    
+
+  }
+
+  async ollama(model: string, parameters: anyDict): Promise<anyDict> {
+
+    const baseURL = store.config.engines.ollama.baseURL || 'http://127.0.0.1:11434'
+
+    try {
+
+      // call
+      console.log(`[ollama] prompting model ${model}`)
+      const response = await fetch(`${baseURL}/api/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: model,
+          prompt: parameters.prompt,
+          stream: false,
+          ...(parameters.width ? { width: parameters.width } : {}),
+          ...(parameters.height ? { height: parameters.height } : {}),
+          ...(parameters.steps ? { steps: parameters.steps } : {}),
+        })
+      })
+
+      const json = await response.json()
+
+      // check for error
+      if (json.error) {
+        console.error('[ollama] Error generating image:', json.error)
+        return { error: json.error }
+      }
+
+      // check for image
+      if (!json.image) {
+        console.error('[ollama] No image returned')
+        return { error: 'No image returned from Ollama' }
+      }
+
+      // save the content on disk
+      const fileUrl = saveFileContents('png', json.image)
+      return { url: fileUrl }
+
+    } catch (error) {
+      console.error('[ollama] Error generating image:', error)
+      return { error: error.message }
+    }
+
   }
 
   async google(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {

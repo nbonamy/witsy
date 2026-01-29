@@ -2945,6 +2945,9 @@
           "aboutModels": "了解更多关于 Hugging Face 模型的信息"
         },
         "imageModel": "图像模型",
+        "ollama": {
+          "aboutImageGeneration": "关于 Ollama 图像生成"
+        },
         "provider": "提供者",
         "replicate": {
           "aboutModels": "了解更多关于 Replicate 模型的信息"
