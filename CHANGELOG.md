@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - New agent view with step-by-step execution
+- Improved arrow key history navigation in prompt (only triggers at start/end of text)
 
 ### Fixed
 - Various memory leaks fixes
