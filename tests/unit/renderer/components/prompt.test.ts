@@ -433,8 +433,8 @@ test('Display base64 attachment', async () => {
   expect(wrapper.find('.attachment img').attributes('src')).toBe('data:image/png;base64,image64')
 })
 
-test('History navigation', async () => {
-  
+test('History navigation with ArrowUp from position 0', async () => {
+
   await wrapper.setProps({ historyProvider: () => [ 'Hello', 'Bonjour' ] })
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   await prompt.setValue('Hola')
@@ -447,10 +447,159 @@ test('History navigation', async () => {
   expect(prompt.element.value).toBe('Hello')
   await prompt.trigger('keydown.ArrowUp')
   expect(prompt.element.value).toBe('Hello')
+
+  // ArrowDown requires cursor at end for single-line, so position there
+  await prompt.element.setSelectionRange(prompt.element.value.length, prompt.element.value.length)
   await prompt.trigger('keydown.ArrowDown')
   expect(prompt.element.value).toBe('Bonjour')
+
+  // Position at end again for next ArrowDown
+  await prompt.element.setSelectionRange(prompt.element.value.length, prompt.element.value.length)
   await prompt.trigger('keydown.ArrowDown')
   expect(prompt.element.value).toBe('Hola')
+
+})
+
+test('History navigation with ArrowDown from end of text', async () => {
+
+  await wrapper.setProps({ historyProvider: () => [ 'Hello', 'Bonjour' ] })
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('Hola')
+
+  // Position cursor at end of text (simulating normal typing)
+  const length = prompt.element.value.length
+  await prompt.element.setSelectionRange(length, length)
+
+  // ArrowDown at end of single-line text should navigate history
+  await prompt.trigger('keydown.ArrowDown')
+  // No change since 'Hola' is not in history
+  expect(prompt.element.value).toBe('Hola')
+
+})
+
+test('History navigation ArrowUp does not trigger when not at position 0', async () => {
+
+  await wrapper.setProps({ historyProvider: () => [ 'Hello', 'Bonjour' ] })
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('Hola')
+
+  // Position cursor in middle of text
+  await prompt.element.setSelectionRange(2, 2)
+
+  // ArrowUp should NOT navigate history (should do normal cursor movement)
+  await prompt.trigger('keydown.ArrowUp')
+  expect(prompt.element.value).toBe('Hola') // Value unchanged, no history navigation
+
+})
+
+test('History navigation ArrowDown does not trigger when not at end', async () => {
+
+  await wrapper.setProps({ historyProvider: () => [ 'Hello', 'Bonjour' ] })
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+
+  // First navigate to a history item
+  await prompt.setValue('')
+  await prompt.element.setSelectionRange(0, 0)
+  await prompt.trigger('keydown.ArrowUp')
+  expect(prompt.element.value).toBe('Bonjour')
+
+  // Position cursor in middle of text
+  await prompt.element.setSelectionRange(3, 3)
+
+  // ArrowDown should NOT navigate history when not at end
+  await prompt.trigger('keydown.ArrowDown')
+  expect(prompt.element.value).toBe('Bonjour') // Value unchanged
+
+})
+
+test('History navigation with multiline text ArrowUp on first line', async () => {
+
+  await wrapper.setProps({ historyProvider: () => [ 'Hello', 'Bonjour' ] })
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('Line1\nLine2')
+
+  // Position cursor at start of first line (position 0)
+  await prompt.element.setSelectionRange(0, 0)
+
+  // ArrowUp at position 0 should navigate history
+  await prompt.trigger('keydown.ArrowUp')
+  expect(prompt.element.value).toBe('Bonjour')
+
+})
+
+test('History navigation with multiline text ArrowUp not on first line', async () => {
+
+  await wrapper.setProps({ historyProvider: () => [ 'Hello', 'Bonjour' ] })
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('Line1\nLine2')
+
+  // Position cursor on second line
+  await prompt.element.setSelectionRange(7, 7) // Position after 'Line1\nL'
+
+  // ArrowUp should NOT navigate history (should move to previous line)
+  await prompt.trigger('keydown.ArrowUp')
+  expect(prompt.element.value).toBe('Line1\nLine2') // Value unchanged
+
+})
+
+test('History navigation with multiline text ArrowDown on last line at end', async () => {
+
+  await wrapper.setProps({ historyProvider: () => [ 'Hello', 'Bonjour' ] })
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+
+  // First navigate to a history item
+  await prompt.setValue('')
+  await prompt.element.setSelectionRange(0, 0)
+  await prompt.trigger('keydown.ArrowUp')
+  expect(prompt.element.value).toBe('Bonjour')
+
+  // Set multiline content that's in history and position at end
+  await prompt.setValue('Line1\nLine2')
+  const length = prompt.element.value.length
+  await prompt.element.setSelectionRange(length, length)
+
+  // ArrowDown at end of last line should try to navigate history
+  // (but 'Line1\nLine2' is not in history so nothing happens)
+  await prompt.trigger('keydown.ArrowDown')
+  expect(prompt.element.value).toBe('Line1\nLine2')
+
+})
+
+test('History navigation with multiline text ArrowDown not on last line', async () => {
+
+  await wrapper.setProps({ historyProvider: () => [ 'Hello', 'Bonjour' ] })
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+
+  // First navigate to a history item
+  await prompt.setValue('')
+  await prompt.element.setSelectionRange(0, 0)
+  await prompt.trigger('keydown.ArrowUp')
+  expect(prompt.element.value).toBe('Bonjour')
+
+  // Set multiline content
+  await prompt.setValue('Line1\nLine2')
+
+  // Position cursor on first line
+  await prompt.element.setSelectionRange(3, 3) // Middle of 'Line1'
+
+  // ArrowDown should NOT navigate history (should move to next line)
+  await prompt.trigger('keydown.ArrowDown')
+  expect(prompt.element.value).toBe('Line1\nLine2') // Value unchanged
+
+})
+
+test('History navigation with Shift forces navigation from anywhere', async () => {
+
+  await wrapper.setProps({ historyProvider: () => [ 'Hello', 'Bonjour' ] })
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.setValue('Hola')
+
+  // Position cursor in middle (normally would not trigger history)
+  await prompt.element.setSelectionRange(2, 2)
+
+  // Shift+ArrowUp should force history navigation
+  await prompt.trigger('keydown', { key: 'ArrowUp', shiftKey: true })
+  expect(prompt.element.value).toBe('Bonjour')
 
 })
 
