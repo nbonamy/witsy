@@ -1231,13 +1231,42 @@ const onKeyDown = (event: KeyboardEvent) => {
       return
     }
 
-    // get caret position
+    // get caret position and text info
     const caret = input.value.selectionStart
-    const atStart = (caret === 0)
-    const atEnd = (caret === prompt.value.length)
-    
-    // when in the middle, we need shift
-    if (!atStart /*&& !atEnd*/ && !event.shiftKey) {
+    const text = prompt.value
+    const textBeforeCaret = text.substring(0, caret)
+    const textAfterCaret = text.substring(caret)
+
+    // check if on first/last line
+    const onFirstLine = !textBeforeCaret.includes('\n')
+    const onLastLine = !textAfterCaret.includes('\n')
+
+    // Note: atLineStart and atLineEnd are not currently used but kept for future reference
+    // const atLineStart = caret === 0 || textBeforeCaret.endsWith('\n')
+    // const atLineEnd = caret === text.length || textAfterCaret.startsWith('\n')
+
+    // determine if we should navigate history
+    // ArrowUp: navigate if on first line AND at start of line (position 0)
+    // ArrowDown: navigate if on last line AND at end of text
+    let shouldNavigate = false
+    if (event.key === 'ArrowUp') {
+      // On first line: if at start, navigate history; otherwise go to start of line
+      if (onFirstLine && caret === 0) {
+        shouldNavigate = true
+      }
+    } else {
+      // ArrowDown: on last line, if at end navigate history; if not at end, go to end
+      if (onLastLine && caret === text.length) {
+        shouldNavigate = true
+      }
+    }
+
+    // shift key forces history navigation from anywhere
+    if (event.shiftKey) {
+      shouldNavigate = true
+    }
+
+    if (!shouldNavigate) {
       return
     }
 
