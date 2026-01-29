@@ -1,6 +1,6 @@
 <template>
 
-  <div v-if="message.type == 'text'">
+  <template v-if="message.type == 'text'">
 
     <!-- expert -->
       <div v-if="message.expert" class="expert text variable-font-size">
@@ -15,17 +15,17 @@
         <span class="thinking-ellipsis" v-if="isThinking"></span>
       </div>
       <div class="think" v-if="showReasoning">
-        <div v-for="block in reasoningBlocks">
+        <template v-for="block in reasoningBlocks">
           <MessageItemBodyBlock :block="block" :transient="message.transient" @media-loaded="onMediaLoaded(message)" />
-        </div>
+        </template>
       </div>
     </template>
 
-    <div v-for="block in contentBlocks">
+    <template v-for="block in contentBlocks">
       <MessageItemBodyBlock :block="block" :transient="message.transient" @media-loaded="onMediaLoaded(message)" />
-    </div>
+    </template>
 
-  </div>
+  </template>
 
 </template>
 
@@ -306,7 +306,7 @@ const closeOpenArtifactTags = (content: string) => {
 </script>
 
 <style>
-.message .body .katex-html {
+.message .message-body .katex-html {
   display: none;
 }
 </style>

@@ -3,19 +3,19 @@
   flex-direction: column;
 }
 
-.messages.conversation .message .body {
+.messages.conversation .message .message-body {
   max-width: 66%;
   border-radius: 12px;
   padding: 0px 16px;
 }
 
-.messages.conversation .message .body:has(.edit-container) {
+.messages.conversation .message .message-body:has(.edit-container) {
   padding: 1rem;
   padding-right: 2rem;
   width: 100%;
 }
 
-.messages.conversation .message .role {
+.messages.conversation .message .message-role {
   display: none;
 }
 
@@ -23,7 +23,7 @@
   align-items: flex-end;
 }
 
-.messages.conversation .message.user .body {
+.messages.conversation .message.user .message-body {
   background-color: #e8edf2;
   color: #27272a;
   padding: 12px;
@@ -33,21 +33,21 @@
   line-height: 20px;
 }
 
-.messages.conversation .message.assistant .body {
+.messages.conversation .message.assistant .message-body {
   background-color: transparent;
   color: var(--text-color);
 }
 
-.messages.conversation .message .body .toggle-reasoning {
+.messages.conversation .message .message-body .toggle-reasoning {
   margin-top: 1rem;
   margin-bottom: 0rem;
 }
 
-.messages.conversation .message .body:has(.media) {
+.messages.conversation .message .message-body:has(.media) {
   padding: 0px;
   background-color: transparent;
 }
 
-.message.assistant .actions {
+.message.assistant .message-actions {
   top: 0px;
 }

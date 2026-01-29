@@ -90,214 +90,214 @@ const mount = async (message: Message, mouseenter = true): Promise<VueWrapper<an
 test('Render', async () => {
   const wrapper = await mount(userMessage, false)
   expect(wrapper.exists()).toBe(true)
-  expect(wrapper.find('.role').exists()).toBe(true)
-  expect(wrapper.find('.body').exists()).toBe(true)
-  expect(wrapper.find('.actions').classes()).not.toContain('visible')
+  expect(wrapper.find('.message-role').exists()).toBe(true)
+  expect(wrapper.find('.message-body').exists()).toBe(true)
+  expect(wrapper.find('.message-actions').classes()).not.toContain('visible')
 })
 
 test('User message', async () => {
   const wrapper = await mount(userMessage)
   expect(wrapper.find('.message').classes()).toContain('user')
-  expect(wrapper.find('.role').classes()).toContain('user')
-  expect(wrapper.find('.role').text()).toBe('chat.role.user')
-  expect(wrapper.find('.avatar').exists()).toBe(true)
-  expect(wrapper.find('.logo').exists()).toBe(false)
-  expect(wrapper.find('.body').text()).toBe('Hello <img src="https://example.com/image.jpg" alt="description">')
-  expect(wrapper.find('.body .message-transient').exists()).toBe(false)
-  expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(false)
-  expect(wrapper.find('.body .think').exists()).toBe(false)
-  expect(wrapper.find('.actions .copy').exists()).toBe(true)
-  expect(wrapper.find('.actions .scratchpad').exists()).toBe(false)
-  expect(wrapper.find('.actions .read').exists()).toBe(false)
-  expect(wrapper.find('.actions .retry').exists()).toBe(false)
-  expect(wrapper.find('.actions .fork').exists()).toBe(true)
-  expect(wrapper.find('.actions .edit').exists()).toBe(true)
-  expect(wrapper.find('.actions .quote').exists()).toBe(true)
-  expect(wrapper.find('.actions .usage').exists()).toBe(false)
-  expect(wrapper.find('.actions .tools').exists()).toBe(false)
+  expect(wrapper.find('.message-role').classes()).toContain('user')
+  expect(wrapper.find('.message-role').text()).toBe('chat.role.user')
+  expect(wrapper.find('.message-role .avatar').exists()).toBe(true)
+  expect(wrapper.find('.message-role .logo').exists()).toBe(false)
+  expect(wrapper.find('.message-body').text()).toBe('Hello <img src="https://example.com/image.jpg" alt="description">')
+  expect(wrapper.find('.message-body .message-transient').exists()).toBe(false)
+  expect(wrapper.find('.message-body .toggle-reasoning').exists()).toBe(false)
+  expect(wrapper.find('.message-body .think').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .scratchpad').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .read').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .retry').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .fork').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .edit').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .quote').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .usage').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .tools').exists()).toBe(false)
 
 })
 
 test('Assistant text message', async () => {
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.message').classes()).toContain('assistant')
-  expect(wrapper.find('.role').classes()).toContain('assistant')
-  expect(wrapper.find('.role').text()).toBe('chat.role.assistant')
-  expect(wrapper.find('.role .avatar').exists()).toBe(true)
-  expect(wrapper.find('.role .logo').exists()).toBe(true)
-  expect(wrapper.find('.body').text()).toBe('Hi\n\n\nOne\n\n\nTwo')
-  expect(wrapper.find('.body .message-transient').exists()).toBe(false)
-  expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(false)
-  expect(wrapper.find('.body .think').exists()).toBe(false)
-  expect(wrapper.find('.actions .copy').exists()).toBe(true)
-  expect(wrapper.find('.actions .scratchpad').exists()).toBe(true)
-  expect(wrapper.find('.actions .read').exists()).toBe(true)
-  expect(wrapper.find('.actions .retry').exists()).toBe(true)
-  expect(wrapper.find('.actions .fork').exists()).toBe(true)
-  expect(wrapper.find('.actions .edit').exists()).toBe(true)
-  expect(wrapper.find('.actions .quote').exists()).toBe(false)
-  expect(wrapper.find('.actions .usage').exists()).toBe(true)
-  expect(wrapper.find('.actions .tools').exists()).toBe(false)
+  expect(wrapper.find('.message-role').classes()).toContain('assistant')
+  expect(wrapper.find('.message-role').text()).toBe('chat.role.assistant')
+  expect(wrapper.find('.message-role .avatar').exists()).toBe(true)
+  expect(wrapper.find('.message-role .logo').exists()).toBe(true)
+  expect(wrapper.find('.message-body').text()).toBe('Hi\n\n\nOne\n\n\nTwo')
+  expect(wrapper.find('.message-body .message-transient').exists()).toBe(false)
+  expect(wrapper.find('.message-body .toggle-reasoning').exists()).toBe(false)
+  expect(wrapper.find('.message-body .think').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .scratchpad').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .read').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .retry').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .fork').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .edit').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .quote').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .usage').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .tools').exists()).toBe(false)
 })
 
 test('Assistant legacy image message', async () => {
   const wrapper = await mount(botMessageImageLegacy)
   expect(wrapper.find('.message').classes()).toContain('assistant')
-  expect(wrapper.find('.role').classes()).toContain('assistant')
-  expect(wrapper.find('.role').text()).toBe('chat.role.assistant')
-  expect(wrapper.find('.role .avatar').exists()).toBe(true)
-  expect(wrapper.find('.role .logo').exists()).toBe(true)
-  expect(wrapper.find('.body').text()).toBe('')
-  expect(wrapper.find('.body .image').exists()).toBe(true)
-  expect(wrapper.find('.body .download').exists()).toBe(true)
-  expect(wrapper.find('.body .message-transient').exists()).toBe(false)
-  expect(wrapper.find('.body img').attributes('src')).toBe('https://example.com/image.jpg')
-  expect(wrapper.find('.actions .copy').exists()).toBe(true)
-  expect(wrapper.find('.actions .scratchpad').exists()).toBe(false)
-  expect(wrapper.find('.actions .read').exists()).toBe(false)
-  expect(wrapper.find('.actions .retry').exists()).toBe(true)
-  expect(wrapper.find('.actions .fork').exists()).toBe(true)
-  expect(wrapper.find('.actions .edit').exists()).toBe(false)
-  expect(wrapper.find('.actions .quote').exists()).toBe(false)
-  expect(wrapper.find('.actions .usage').exists()).toBe(false)
-  expect(wrapper.find('.actions .tools').exists()).toBe(false)
+  expect(wrapper.find('.message-role').classes()).toContain('assistant')
+  expect(wrapper.find('.message-role').text()).toBe('chat.role.assistant')
+  expect(wrapper.find('.message-role .avatar').exists()).toBe(true)
+  expect(wrapper.find('.message-role .logo').exists()).toBe(true)
+  expect(wrapper.find('.message-body').text()).toBe('')
+  expect(wrapper.find('.message-body .image').exists()).toBe(true)
+  expect(wrapper.find('.message-body .download').exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-transient').exists()).toBe(false)
+  expect(wrapper.find('.message-body img').attributes('src')).toBe('https://example.com/image.jpg')
+  expect(wrapper.find('.message-actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .scratchpad').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .read').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .retry').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .fork').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .quote').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .usage').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .tools').exists()).toBe(false)
 })
 
 test('Assistant image markdown message', async () => {
   const wrapper = await mount(botMessageImage)
   expect(wrapper.find('.message').classes()).toContain('assistant')
-  expect(wrapper.find('.role').classes()).toContain('assistant')
-  expect(wrapper.find('.role').text()).toBe('chat.role.assistant')
-  expect(wrapper.find('.role .avatar').exists()).toBe(true)
-  expect(wrapper.find('.role .logo').exists()).toBe(true)
-  expect(wrapper.find('.body').text()).toBe('')
-  expect(wrapper.find('.body .image').exists()).toBe(true)
-  expect(wrapper.find('.body .download').exists()).toBe(true)
-  expect(wrapper.find('.body .message-transient').exists()).toBe(false)
-  expect(wrapper.find('.body .media-container img').attributes('src')).toBe('https://example.com/image.jpg')
-  expect(wrapper.find('.actions .copy').exists()).toBe(true)
-  expect(wrapper.find('.actions .scratchpad').exists()).toBe(true)
-  expect(wrapper.find('.actions .read').exists()).toBe(true)
-  expect(wrapper.find('.actions .retry').exists()).toBe(true)
-  expect(wrapper.find('.actions .fork').exists()).toBe(true)
-  expect(wrapper.find('.actions .edit').exists()).toBe(true)
-  expect(wrapper.find('.actions .quote').exists()).toBe(false)
-  expect(wrapper.find('.actions .usage').exists()).toBe(false)
-  expect(wrapper.find('.actions .tools').exists()).toBe(false)
+  expect(wrapper.find('.message-role').classes()).toContain('assistant')
+  expect(wrapper.find('.message-role').text()).toBe('chat.role.assistant')
+  expect(wrapper.find('.message-role .avatar').exists()).toBe(true)
+  expect(wrapper.find('.message-role .logo').exists()).toBe(true)
+  expect(wrapper.find('.message-body').text()).toBe('')
+  expect(wrapper.find('.message-body .image').exists()).toBe(true)
+  expect(wrapper.find('.message-body .download').exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-transient').exists()).toBe(false)
+  expect(wrapper.find('.message-body .media-container img').attributes('src')).toBe('https://example.com/image.jpg')
+  expect(wrapper.find('.message-actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .scratchpad').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .read').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .retry').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .fork').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .edit').exists()).toBe(true)
+  expect(wrapper.find('.message-actions .quote').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .usage').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .tools').exists()).toBe(false)
 })
 
 test('Assistant image html message', async () => {
   const wrapper = await mount(botMessageImage2)
-  expect(wrapper.find('.body').text()).toBe('')
-  expect(wrapper.find('.body .image').exists()).toBe(true)
-  expect(wrapper.find('.body .download').exists()).toBe(true)
-  expect(wrapper.find('.body .message-transient').exists()).toBe(false)
-  expect(wrapper.find('.body img').attributes('src')).toBe('https://example.com/image.jpg')
+  expect(wrapper.find('.message-body').text()).toBe('')
+  expect(wrapper.find('.message-body .image').exists()).toBe(true)
+  expect(wrapper.find('.message-body .download').exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-transient').exists()).toBe(false)
+  expect(wrapper.find('.message-body img').attributes('src')).toBe('https://example.com/image.jpg')
 })
 
 test('Assistant image markdown link at beginning message', async () => {
   const wrapper = await mount(botMessageImageLink1)
-  expect(wrapper.find('.body').text()).toBe('')
-  expect(wrapper.find('.body .media-container').exists()).toBe(false)
-  expect(wrapper.find('.body .download').exists()).toBe(false)
-  expect(wrapper.find('.body .message-transient').exists()).toBe(false)
-  expect(wrapper.find('.body a').attributes('href')).toBe('url')
-  expect(wrapper.find('.body a img').attributes('src')).toBe('https://example.com/image.jpg')
+  expect(wrapper.find('.message-body').text()).toBe('')
+  expect(wrapper.find('.message-body .media-container').exists()).toBe(false)
+  expect(wrapper.find('.message-body .download').exists()).toBe(false)
+  expect(wrapper.find('.message-body .message-transient').exists()).toBe(false)
+  expect(wrapper.find('.message-body a').attributes('href')).toBe('url')
+  expect(wrapper.find('.message-body a img').attributes('src')).toBe('https://example.com/image.jpg')
 })
 
 test('Assistant image markdown link at middle message', async () => {
   const wrapper = await mount(botMessageImageLink2)
-  expect(wrapper.find('.body').text()).toBe('look: . neat?')
-  expect(wrapper.find('.body .media-container').exists()).toBe(false)
-  expect(wrapper.find('.body .download').exists()).toBe(false)
-  expect(wrapper.find('.body .message-transient').exists()).toBe(false)
-  expect(wrapper.find('.body a').attributes('href')).toBe('url')
-  expect(wrapper.find('.body a img').attributes('src')).toBe('https://example.com/image.jpg')
+  expect(wrapper.find('.message-body').text()).toBe('look: . neat?')
+  expect(wrapper.find('.message-body .media-container').exists()).toBe(false)
+  expect(wrapper.find('.message-body .download').exists()).toBe(false)
+  expect(wrapper.find('.message-body .message-transient').exists()).toBe(false)
+  expect(wrapper.find('.message-body a').attributes('href')).toBe('url')
+  expect(wrapper.find('.message-body a img').attributes('src')).toBe('https://example.com/image.jpg')
 })
 
 test('Assistant video markdown message', async () => {
   const wrapper = await mount(botMessageVideoMd)
-  expect(wrapper.find('.body').text()).toBe('')
-  expect(wrapper.find('.body .video').exists()).toBe(true)
-  expect(wrapper.find('.body .download').exists()).toBe(true)
-  expect(wrapper.find('.body .message-transient').exists()).toBe(false)
-  expect(wrapper.find('.body video').attributes('src')).toBe('file:///data/video.mp4')
+  expect(wrapper.find('.message-body').text()).toBe('')
+  expect(wrapper.find('.message-body .video').exists()).toBe(true)
+  expect(wrapper.find('.message-body .download').exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-transient').exists()).toBe(false)
+  expect(wrapper.find('.message-body video').attributes('src')).toBe('file:///data/video.mp4')
 })
 
 test('Assistant video html message', async () => {
   const wrapper = await mount(botMessageVideoHtml)
-  expect(wrapper.find('.body').text()).toBe('')
-  expect(wrapper.find('.body .video').exists()).toBe(true)
-  expect(wrapper.find('.body .download').exists()).toBe(true)
-  expect(wrapper.find('.body .message-transient').exists()).toBe(false)
-  expect(wrapper.find('.body video').attributes('src')).toBe('file:///data/video.mp4')
+  expect(wrapper.find('.message-body').text()).toBe('')
+  expect(wrapper.find('.message-body .video').exists()).toBe(true)
+  expect(wrapper.find('.message-body .download').exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-transient').exists()).toBe(false)
+  expect(wrapper.find('.message-body video').attributes('src')).toBe('file:///data/video.mp4')
 })
 
 test('Assistant image message formats', async () => {
   const wrapper1 = await mount(botMessageImageLegacy)
-  expect(wrapper1.find('.body img.image').attributes().src).toBe('https://example.com/image.jpg')
+  expect(wrapper1.find('.message-body img.image').attributes().src).toBe('https://example.com/image.jpg')
 
   botMessageImageLegacy.setImage('file://image.png')
   const wrapper2 = await mount(botMessageImageLegacy)
-  expect(wrapper2.find('.body img.image').attributes().src).toBe('file://image.png')
+  expect(wrapper2.find('.message-body img.image').attributes().src).toBe('file://image.png')
 
   botMessageImageLegacy.setImage('imageb64')
   const wrapper3 = await mount(botMessageImageLegacy)
-  expect(wrapper3.find('.body img.image').attributes().src).toBe('data:image/png;base64,imageb64')
+  expect(wrapper3.find('.message-body img.image').attributes().src).toBe('data:image/png;base64,imageb64')
 
   const wrappe4 = await mount(botMessageImage)
-  expect(wrappe4.find('.body img.image').attributes().src).toBe('https://example.com/image.jpg')
+  expect(wrappe4.find('.message-body img.image').attributes().src).toBe('https://example.com/image.jpg')
 
   const wrapper5 = await mount(botMessageImageCode1)
-  expect(wrapper5.find('.body').text()).toBe('image: <img src="https://example.com/image.jpg" alt="description">')
-  expect(wrapper5.find('.body img').exists()).toBe(false)
+  expect(wrapper5.find('.message-body').text()).toBe('image: <img src="https://example.com/image.jpg" alt="description">')
+  expect(wrapper5.find('.message-body img').exists()).toBe(false)
 
 })
 
 test('Assistant image message with HTML code', async () => {
 
   const wrapper6 = await mount(botMessageImageCode3)
-  expect(wrapper6.find('.body').text()).toBe('image:\n<img src="https://example.com/image.jpg" alt="description">')
-  expect(wrapper6.find('.body img').exists()).toBe(false)
+  expect(wrapper6.find('.message-body').text()).toBe('image:\n<img src="https://example.com/image.jpg" alt="description">')
+  expect(wrapper6.find('.message-body img').exists()).toBe(false)
 
   const wrapper7 = await mount(botMessageVideoCode1)
-  expect(wrapper7.find('.body').text()).toBe('video: <video controls src="file:///data/video.mp4" />')
-  expect(wrapper7.find('.body video').exists()).toBe(false)
+  expect(wrapper7.find('.message-body').text()).toBe('video: <video controls src="file:///data/video.mp4" />')
+  expect(wrapper7.find('.message-body video').exists()).toBe(false)
 
   const wrapper8 = await mount(botMessageVideoCode3)
-  expect(wrapper8.find('.body').text()).toBe('video:\n<video controls src="file:///data/video.mp4" />')
-  expect(wrapper8.find('.body video').exists()).toBe(false)
+  expect(wrapper8.find('.message-body').text()).toBe('video:\n<video controls src="file:///data/video.mp4" />')
+  expect(wrapper8.find('.message-body video').exists()).toBe(false)
 })
 
 test('Assistant image message with tool media', async () => {
 
   const wrapper1 = await mount(botMessageToolMedia1)
-  expect(wrapper1.find('.body').text()).toBe('Here:\nWelcome!')
-  expect(wrapper1.findAll('.body img').length).toBe(1)
+  expect(wrapper1.find('.message-body').text()).toBe('Here:\nWelcome!')
+  expect(wrapper1.findAll('.message-body img').length).toBe(1)
 
   const wrapper2 = await mount(botMessageToolMedia2)
-  expect(wrapper2.find('.body').text()).toBe('Sure!\nWelcome!')
-  expect(wrapper2.findAll('.body img').length).toBe(1)
+  expect(wrapper2.find('.message-body').text()).toBe('Sure!\nWelcome!')
+  expect(wrapper2.findAll('.message-body img').length).toBe(1)
 
 })
 
 test('Assistant image message with artifact', async () => {
 
   const wrapper1 = await mount(botMessageToolArtifact1)
-  expect(wrapper1.find('.body').text()).toBe('Here:\ntestTest\nWelcome!')
-  expect(wrapper1.findAll('.body .artifact').length).toBe(1)
+  expect(wrapper1.find('.message-body').text()).toBe('Here:\ntestTest\nWelcome!')
+  expect(wrapper1.findAll('.message-body .artifact').length).toBe(1)
 
   const wrapper2 = await mount(botMessageToolArtifact2)
-  expect(wrapper2.find('.body').text()).toBe('Here:\ntest1Test1\ntest2Test2\nWelcome!')
-  expect(wrapper2.findAll('.body .artifact').length).toBe(2)
+  expect(wrapper2.find('.message-body').text()).toBe('Here:\ntest1Test1\ntest2Test2\nWelcome!')
+  expect(wrapper2.findAll('.message-body .artifact').length).toBe(2)
 
   const wrapper3 = await mount(botMessageToolArtifact3)
-  expect(wrapper3.find('.body').text()).toBe('Here:\ntest1Test1\ntest2Te')
-  expect(wrapper3.findAll('.body .artifact').length).toBe(2)
+  expect(wrapper3.find('.message-body').text()).toBe('Here:\ntest1Test1\ntest2Te')
+  expect(wrapper3.findAll('.message-body .artifact').length).toBe(2)
 
   const wrapper4 = await mount(botMessageToolArtifact4)
-  expect(wrapper4.find('.body').text()).toBe('Here:\ntest1Test1')
-  expect(wrapper4.findAll('.body .artifact').length).toBe(1)
+  expect(wrapper4.find('.message-body').text()).toBe('Here:\ntest1Test1')
+  expect(wrapper4.findAll('.message-body .artifact').length).toBe(1)
 
 })
 
@@ -307,9 +307,9 @@ test('Assistant artifact with HTML preview', async () => {
   botMessageToolArtifactHtml1.transient = true
 
   const wrapper = await mount(botMessageToolArtifactHtml1)
-  expect(wrapper.findAll('.body .artifact').length).toBe(1)
+  expect(wrapper.findAll('.message-body .artifact').length).toBe(1)
 
-  const artifact = wrapper.find('.body .artifact')
+  const artifact = wrapper.find('.message-body .artifact')
   expect(artifact.exists()).toBe(true)
   expect(artifact.find('.panel-header label').text()).toBe('Simple HTML Page')
 
@@ -363,9 +363,9 @@ test('Assistant artifact with HTML preview (non-transient)', async () => {
 
   // Use a non-transient message - should show HTML immediately
   const wrapper = await mount(botMessageToolArtifactHtml2)
-  expect(wrapper.findAll('.body .artifact').length).toBe(1)
+  expect(wrapper.findAll('.message-body .artifact').length).toBe(1)
 
-  const artifact = wrapper.find('.body .artifact')
+  const artifact = wrapper.find('.message-body .artifact')
   expect(artifact.exists()).toBe(true)
   expect(artifact.find('.panel-header label').text()).toBe('HTML with DOCTYPE')
 
@@ -386,9 +386,9 @@ test('Assistant artifact with HTML preview (DOCTYPE)', async () => {
   store.config.appearance.chat.autoPreview.html = true
   
   const wrapper = await mount(botMessageToolArtifactHtml2)
-  expect(wrapper.findAll('.body .artifact').length).toBe(1)
+  expect(wrapper.findAll('.message-body .artifact').length).toBe(1)
   
-  const artifact = wrapper.find('.body .artifact')
+  const artifact = wrapper.find('.message-body .artifact')
   expect(artifact.exists()).toBe(true)
   expect(artifact.find('.panel-header label').text()).toBe('HTML with DOCTYPE')
   
@@ -407,9 +407,9 @@ test('Assistant artifact with HTML preview (HTML tag)', async () => {
   store.config.appearance.chat.autoPreview.html = true
   
   const wrapper = await mount(botMessageToolArtifactHtml3)
-  expect(wrapper.findAll('.body .artifact').length).toBe(1)
+  expect(wrapper.findAll('.message-body .artifact').length).toBe(1)
   
-  const artifact = wrapper.find('.body .artifact')
+  const artifact = wrapper.find('.message-body .artifact')
   expect(artifact.exists()).toBe(true)
   expect(artifact.find('.panel-header label').text()).toBe('HTML with tag')
   
@@ -424,70 +424,70 @@ test('Assistant artifact with HTML preview (HTML tag)', async () => {
 
 test('Transient message', async () => {
   const wrapper = await mount(botMessageTransient)
-  expect(wrapper.find('.body').text()).toBe('Hi')
-  expect(wrapper.find('.body .message-transient').exists()).toBe(true)
-  expect(wrapper.find('.body .message-transient .loader').exists()).toBe(true)
-  expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
-  expect(wrapper.find('.actions .copy').exists()).toBe(false)
-  expect(wrapper.find('.actions .read').exists()).toBe(false)
-  expect(wrapper.find('.actions .edit').exists()).toBe(false)
-  expect(wrapper.find('.actions .tools').exists()).toBe(false)
+  expect(wrapper.find('.message-body').text()).toBe('Hi')
+  expect(wrapper.find('.message-body .message-transient').exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-transient .loader').exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.message-actions .copy').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .read').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.message-actions .tools').exists()).toBe(false)
 })
 
 test('Tool call running calling', async () => {
   botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'running', status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
-  expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
-  expect(wrapper.find('.body .message-transient').text()).toBe('Calling a tool')
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.message-body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-transient').text()).toBe('Calling a tool')
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
 })
 
 test('Tool call running never', async () => {
   store.config.appearance.chat.showToolCalls = 'never'
   botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'running', status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
-  expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.message-body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
 })
 
 test('Tool call running always', async () => {
   store.config.appearance.chat.showToolCalls = 'always'
   botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'running',status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
-  expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.message-body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
 })
 
 test('Tool call done calling', async () => {
   store.config.appearance.chat.showToolCalls = 'calling'
   botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'completed', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
-  expect(wrapper.find('.actions .tools').exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.message-actions .tools').exists()).toBe(true)
 })
 
 test('Tool call done never', async () => {
   store.config.appearance.chat.showToolCalls = 'never'
   botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'completed', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
-  expect(wrapper.find('.actions .tools').exists()).toBe(true)
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.message-actions .tools').exists()).toBe(true)
 })
 
 test('Tool call done always', async () => {
   store.config.appearance.chat.showToolCalls = 'always'
   botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'completed', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
-  expect(wrapper.find('.actions .tools').exists()).toBe(false)
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
+  expect(wrapper.find('.message-actions .tools').exists()).toBe(false)
 })
 
 test('Toggle actions', async () => {
   const wrapper = await mount(userMessage, false)
   await wrapper.trigger('mouseenter')
-  expect(wrapper.find('.actions').classes()).toContain('visible')
+  expect(wrapper.find('.message-actions').classes()).toContain('visible')
   await wrapper.trigger('mouseleave')
-  expect(wrapper.find('.actions').classes()).not.toContain('visible')
+  expect(wrapper.find('.message-actions').classes()).not.toContain('visible')
 })
 
 test('Run user actions', async () => {
@@ -495,7 +495,7 @@ test('Run user actions', async () => {
   const wrapper = await mount(userMessage)
 
   // edit triggers startEditing directly via emit
-  await wrapper.find('.actions .edit').trigger('click')
+  await wrapper.find('.message-actions .edit').trigger('click')
   await nextTick()
   expect(wrapper.find('.edit-container').exists()).toBe(true)
 
@@ -503,10 +503,10 @@ test('Run user actions', async () => {
   wrapper.vm.cancelEditing()
   await nextTick()
 
-  await wrapper.find('.actions .quote').trigger('click')
+  await wrapper.find('.message-actions .quote').trigger('click')
   expect(chatCallbacksMock.onSetPrompt).toHaveBeenLastCalledWith(userMessage)
 
-  await wrapper.find('.actions .delete').trigger('click')
+  await wrapper.find('.message-actions .delete').trigger('click')
   expect(chatCallbacksMock.onDeleteMessage).toHaveBeenLastCalledWith(userMessage)
 })
 
@@ -517,77 +517,77 @@ test('Run assistant text actions', async () => {
   const wrapper = await mount(botMessageText)
   
   // copy as text
-  await wrapper.find('.actions .copy').trigger('click')
+  await wrapper.find('.message-actions .copy').trigger('click')
   expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('Hi\n\n1. One\n\n2. Two')
-  expect(wrapper.find('.actions .copy').text()).toBe('common.copied')
+  expect(wrapper.find('.message-actions .copy').text()).toBe('common.copied')
 
   // scratchpad
-  await wrapper.find('.actions .scratchpad').trigger('click')
+  await wrapper.find('.message-actions .scratchpad').trigger('click')
   expect(window.api.scratchpad.create).toHaveBeenLastCalledWith(store.config.workspaceId, '**Hi**\n\n1. One \n\n2. Two')
   expect(window.api.scratchpad.open).toHaveBeenLastCalledWith(store.config.workspaceId, 'test-uuid')
 
   // copy as markdown
   store.config.appearance.chat.copyFormat = 'markdown'
-  await wrapper.find('.actions .copy').trigger('click')
+  await wrapper.find('.message-actions .copy').trigger('click')
   expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('**Hi**\n\n1. One \n\n2. Two')
-  expect(wrapper.find('.actions .copy').text()).toBe('common.copied')
+  expect(wrapper.find('.message-actions .copy').text()).toBe('common.copied')
 
   // usage
-  await wrapper.find('.actions .usage').trigger('click')
+  await wrapper.find('.message-actions .usage').trigger('click')
   expect(Dialog.show).toHaveBeenCalledTimes(1)
 
   // read aloud
-  await wrapper.find('.actions .read').trigger('click')
+  await wrapper.find('.message-actions .read').trigger('click')
   expect(readAloudMock).toHaveBeenCalled()
 
   // retry
-  await wrapper.find('.actions .retry').trigger('click')
+  await wrapper.find('.message-actions .retry').trigger('click')
   expect(Dialog.show).toHaveBeenCalledTimes(2)
   expect(store.config.general.confirm.retryGeneration).toBe(true)
   expect(chatCallbacksMock.onRetryGeneration).toHaveBeenLastCalledWith(botMessageText)
 
   // retry again
-  await wrapper.find('.actions .retry').trigger('click')
+  await wrapper.find('.message-actions .retry').trigger('click')
   expect(Dialog.show).toHaveBeenCalledTimes(3)
 
   // retry one more time
   store.config.general.confirm.retryGeneration = false  
-  await wrapper.find('.actions .retry').trigger('click')
+  await wrapper.find('.message-actions .retry').trigger('click')
   expect(Dialog.show).toHaveBeenCalledTimes(3)
 
   // fork
-  await wrapper.find('.actions .fork').trigger('click')
+  await wrapper.find('.message-actions .fork').trigger('click')
   expect(chatCallbacksMock.onForkChat).toHaveBeenLastCalledWith(botMessageText)
 
   // tools
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
-  await wrapper.find('.actions .tools').trigger('click')
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
-  await wrapper.find('.actions .tools').trigger('click')
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  await wrapper.find('.message-actions .tools').trigger('click')
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
+  await wrapper.find('.message-actions .tools').trigger('click')
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
 
   // await wait(1500)
-  // expect(wrapper.find('.actions .copy').text()).not.toBe('common.copied')
+  // expect(wrapper.find('.message-actions .copy').text()).not.toBe('common.copied')
 })
 
 test('Run assistant tool action without tools', async () => {
 
   botMessageText.clearToolCalls()
   const wrapper = await mount(botMessageText)
-  await wrapper.find('.actions .tools').trigger('click')
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  await wrapper.find('.message-actions .tools').trigger('click')
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
 
 })
 
 test('Run assistant legacy image actions', async () => {
   const wrapper = await mount(botMessageImageLegacy)
-  await wrapper.find('.actions .copy').trigger('click')
+  await wrapper.find('.message-actions .copy').trigger('click')
   expect(window.api.clipboard.writeImage).toHaveBeenCalled()
-  expect(wrapper.find('.actions .copy').text()).toBe('common.copied')
+  expect(wrapper.find('.message-actions .copy').text()).toBe('common.copied')
   // await wait(1500)
-  // expect(wrapper.find('.actions .copy').text()).not.toBe('common.copied')
+  // expect(wrapper.find('.message-actions .copy').text()).not.toBe('common.copied')
 
-  await wrapper.find('.body .download').trigger('click')
+  await wrapper.find('.message-body .download').trigger('click')
   expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'https://example.com/image.jpg',
     properties: {
@@ -601,9 +601,9 @@ test('Run assistant legacy image actions', async () => {
 
 test('Run assistant image actions', async () => {
   const wrapper = await mount(botMessageImage)
-  await wrapper.find('.body .copy').trigger('click')
+  await wrapper.find('.message-body .copy').trigger('click')
   expect(window.api.clipboard.writeImage).toHaveBeenLastCalledWith('https://example.com/image.jpg')
-  await wrapper.find('.body .download').trigger('click')
+  await wrapper.find('.message-body .download').trigger('click')
   expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'https://example.com/image.jpg',
     properties: {
@@ -616,8 +616,8 @@ test('Run assistant image actions', async () => {
 
 test('Run assistant video actions', async () => {
   const wrapper = await mount(botMessageVideoMd)
-  expect(wrapper.find('.body .copy').exists()).toBe(false)
-  await wrapper.find('.body .download').trigger('click')
+  expect(wrapper.find('.message-body .copy').exists()).toBe(false)
+  await wrapper.find('.message-body .download').trigger('click')
   expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'file:///data/video.mp4',
     properties: {
@@ -632,30 +632,30 @@ test('Run assistant video actions', async () => {
 test('Format code', async () => {
   botMessageText.setText('```javascript\nconsole.log(variable)\n```')
   const wrapper = await mount(botMessageText)
-  expect(wrapper.find('.body pre[class=hljs] code[class="hljs variable-font-size"]').exists()).toBe(true)
-  expect(wrapper.find('.body .copy-code').exists()).toBe(true)
-  expect(wrapper.find('.body .copy-code').text()).toBe('Copy code')
+  expect(wrapper.find('.message-body pre[class=hljs] code[class="hljs variable-font-size"]').exists()).toBe(true)
+  expect(wrapper.find('.message-body .copy-code').exists()).toBe(true)
+  expect(wrapper.find('.message-body .copy-code').text()).toBe('Copy code')
 })
 
 test('Format math equations katex', async () => {
   botMessageText.setText('$$\n\\frac{1}{2}\n$$')
   const wrapper = await mount(botMessageText)
-  expect(wrapper.find('.body p[class=katex-block]').exists()).toBe(true)
+  expect(wrapper.find('.message-body p[class=katex-block]').exists()).toBe(true)
 })
 
 test('Format math equations OpenAI', async () => {
   botMessageText.setText('\\[\n\\frac{1}{2}\n\\]')
   const wrapper = await mount(botMessageText)
-  expect(wrapper.find('.body p[class=katex-block]').exists()).toBe(true)
+  expect(wrapper.find('.message-body p[class=katex-block]').exists()).toBe(true)
 })
 
 test('Format reasoning message', async () => {
   expect(store.config.appearance.chat.showReasoning).toBe(true)
   const wrapper = await mount(botMessageReasoning)
-  expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(true)
-  expect(wrapper.find('.body .think').exists()).toBe(true)
-  await (wrapper.find('.body .toggle-reasoning').trigger('click'))
-  expect(wrapper.find('.body .think').exists()).toBe(false)
+  expect(wrapper.find('.message-body .toggle-reasoning').exists()).toBe(true)
+  expect(wrapper.find('.message-body .think').exists()).toBe(true)
+  await (wrapper.find('.message-body .toggle-reasoning').trigger('click'))
+  expect(wrapper.find('.message-body .think').exists()).toBe(false)
   expect(store.config.appearance.chat.showReasoning).toBe(false)
 })
 
@@ -663,7 +663,7 @@ test('Artifact download context menu', async () => {
   const wrapper = await mount(botMessageToolArtifact1)
 
   // Check that the artifact has a download button
-  const artifact = wrapper.find('.body .artifact')
+  const artifact = wrapper.find('.message-body .artifact')
   const downloadButton = artifact.find('.panel-header .download .trigger')
   expect(downloadButton.exists()).toBe(true)
 
@@ -689,7 +689,7 @@ test('Artifact download text', async () => {
   const wrapper = await mount(botMessageToolArtifact1)
 
   // Check that the artifact has a download button
-  const artifact = wrapper.find('.body .artifact')
+  const artifact = wrapper.find('.message-body .artifact')
   const downloadButton = artifact.find('.panel-header .download .trigger')
   expect(downloadButton.exists()).toBe(true)
 
@@ -716,7 +716,7 @@ test('Artifact download markdown', async () => {
   const wrapper = await mount(botMessageToolArtifact1)
 
   // Check that the artifact has a download button
-  const artifact = wrapper.find('.body .artifact')
+  const artifact = wrapper.find('.message-body .artifact')
   const downloadButton = artifact.find('.panel-header .download .trigger')
   expect(downloadButton.exists()).toBe(true)
 
@@ -741,11 +741,11 @@ test('Artifact download markdown', async () => {
 
 test('Assistant message with table', async () => {
   const wrapper = await mount(botMessageTable)
-  expect(wrapper.find('.body').text()).toContain('Here is a table:')
-  expect(wrapper.find('.body').text()).toContain('That\'s it!')
-  expect(wrapper.findAll('.body .artifact').length).toBe(1)
+  expect(wrapper.find('.message-body').text()).toContain('Here is a table:')
+  expect(wrapper.find('.message-body').text()).toContain('That\'s it!')
+  expect(wrapper.findAll('.message-body .artifact').length).toBe(1)
 
-  const artifact = wrapper.find('.body .artifact')
+  const artifact = wrapper.find('.message-body .artifact')
   expect(artifact.exists()).toBe(true)
 
   // Check for table inside panel body
@@ -759,7 +759,7 @@ test('Assistant message with table', async () => {
 test('Table download context menu', async () => {
   const wrapper = await mount(botMessageTable)
 
-  const artifact = wrapper.find('.body .artifact')
+  const artifact = wrapper.find('.message-body .artifact')
   const downloadButton = artifact.find('.panel .download .trigger')
   expect(downloadButton.exists()).toBe(true)
 
@@ -787,7 +787,7 @@ test('Message editing - User message edit mode toggle', async () => {
   expect(wrapper.find('.message-content .edit-textarea').exists()).toBe(false)
 
   // Trigger edit - now directly calls startEditing via emit
-  await wrapper.find('.actions .edit').trigger('click')
+  await wrapper.find('.message-actions .edit').trigger('click')
   await nextTick()
 
   // Now in edit mode

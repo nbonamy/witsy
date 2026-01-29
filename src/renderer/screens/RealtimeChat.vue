@@ -599,7 +599,7 @@ defineExpose({
 
       margin-bottom: 0;
 
-      .body {
+      .message-body {
         max-width: unset;
         .message-content {
           p {
@@ -614,7 +614,7 @@ defineExpose({
       }
       
 
-      .actions {
+      .message-actions {
         height: 32px;
         .action:not(.copy) {
           display: none;
@@ -623,17 +623,17 @@ defineExpose({
 
       &.user {
         margin-top: 1rem;
-        .body, .actions {
+        .message-body, .message-actions {
           margin-right: 0px;
         }
       }
 
       &.assistant {
-        .body, .actions {
+        .message-body, .message-actions {
           margin-left: 0px;
           padding-left: 0px;
         }
-        .actions {
+        .message-actions {
           margin-top: -8px;
         }
       }

@@ -1,14 +1,12 @@
 <template>
-  <div ref="messageItemBodyBlock">
-    <div v-if="block.type == 'empty'" class="text empty variable-font-size"><p>{{ t('message.content.empty') }}</p></div>
-    <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
-    <MessageItemArtifactBlock v-else-if="block.type == 'artifact'" :title="block.title!" :content="block.content!" :transient="props.transient" />
-    <MessageItemHtmlBlock v-else-if="block.type == 'html'" :title="block.title!" :content="block.content!" :transient="props.transient" />
-    <MessageItemTableBlock v-else-if="block.type == 'table'" :content="block.content!" />
-    <MessageItemMediaBlock v-else-if="block.type == 'media'" :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" />
-    <MessageItemToolBlock v-else-if="block.type == 'tool'" :tool-call="block.toolCall!" />
-    <MessageItemSearchResultBlock v-else-if="block.type == 'search'" :tool-call="block.toolCall!" />
-  </div>
+  <div v-if="block.type == 'empty'" :ref="setRef" class="text empty variable-font-size"><p>{{ t('message.content.empty') }}</p></div>
+  <div v-if="block.type == 'text'" :ref="setRef" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
+  <MessageItemArtifactBlock v-else-if="block.type == 'artifact'" :ref="setRef" :title="block.title!" :content="block.content!" :transient="props.transient" />
+  <MessageItemHtmlBlock v-else-if="block.type == 'html'" :ref="setRef" :title="block.title!" :content="block.content!" :transient="props.transient" />
+  <MessageItemTableBlock v-else-if="block.type == 'table'" :ref="setRef" :content="block.content!" />
+  <MessageItemMediaBlock v-else-if="block.type == 'media'" :ref="setRef" :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" />
+  <MessageItemToolBlock v-else-if="block.type == 'tool'" :ref="setRef" :tool-call="block.toolCall!" />
+  <MessageItemSearchResultBlock v-else-if="block.type == 'search'" :ref="setRef" :tool-call="block.toolCall!" />
 </template>
 
 <script setup lang="ts">
@@ -89,9 +87,14 @@ const onMediaLoaded = () => {
   emits('media-loaded')
 }
 
-const messageItemBodyBlock= ref<HTMLElement>(null)
+const messageItemBodyBlock = ref<HTMLElement | null>(null)
 let customRenderTimeout: NodeJS.Timeout|null = null
 
+const setRef = (el: any) => {
+  // For Vue components, get the root element via $el
+  // For regular HTML elements, use them directly
+  messageItemBodyBlock.value = el?.$el || el
+}
 const mdRender = (content: string) => {
 
   // convert to html 

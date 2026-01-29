@@ -12,11 +12,11 @@
   margin-bottom: 12px;
 }
 
-.message .body, .message .actions {
+.message .message-body, .message .message-actions {
   margin: 0px 32px; 
 }
 
-.message .body {
+.message .message-body {
   overflow-wrap: anywhere;
 }
 
@@ -60,61 +60,61 @@
   font-size: 18.5px;
 }
 
-.message .body * {
+.message .message-body * {
   line-height: 1.3;
 }
 
-.message .body .variable-font-size h1 {
+.message .message-body .variable-font-size h1 {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
   font-size: 1.3em;
   border-top: 0.5px solid var(--control-list-border-color);
 }
 
-.message .body .variable-font-size h1 + h2 {
+.message .message-body .variable-font-size h1 + h2 {
   margin-top: 0;
   padding-top: 0.75rem;
 }
 
-.message .body .variable-font-size h2 {
+.message .message-body .variable-font-size h2 {
   margin-top: 1rem;
   padding-top: 1rem;
   font-size: 1.15em;
 }
 
-.message .body .variable-font-size h3 {
+.message .message-body .variable-font-size h3 {
   margin-top: 1rem;
   padding-top: 1rem;
   font-size: 1.075em;
 }
 
-.message .body .variable-font-size hr {
+.message .message-body .variable-font-size hr {
   margin-top: 2rem;
   margin-bottom: 2rem;
   border-top: 0.5px solid var(--control-list-border-color);
 }
 
-.message .body .variable-font-size hr:has(+ h1, + h2, + h3) {
+.message .message-body .variable-font-size hr:has(+ h1, + h2, + h3) {
   display: none;
 }
 
-.message .body .empty {
+.message .message-body .empty {
   font-style: italic;
   color: var(--faded-text-color);
 }
 
-.message .body strong {
+.message .message-body strong {
   font-weight: 550;
 }
 
-.message .body ul {
+.message .message-body ul {
   margin-bottom: 2rem;
   li {
     margin: 0.75rem 0px;
   }
 }
 
-.message .body .variable-font-size table {
+.message .message-body .variable-font-size table {
 
   border-collapse: collapse;
   margin: 2rem 0px;
@@ -137,11 +137,11 @@
 }
 
 
-.message .body pre.hljs {
+.message .message-body pre.hljs {
   line-height: 1.5;
 }
 
-.message .body .text pre {
+.message .message-body .text pre {
   white-space: pre-wrap !important;
 }
 
@@ -149,12 +149,12 @@
   user-select: text;
 }
 
-.message .body .text pre.hljs code.hljs {
+.message .message-body .text pre.hljs code.hljs {
   white-space: pre-wrap !important;
   word-break: break-all !important;
 }
 
-.message .body .text pre.hljs {
+.message .message-body .text pre.hljs {
   overflow-x: auto;
   padding: 12px;
   overflow: auto;
@@ -170,7 +170,7 @@
   font-size: 0.95em !important;
 }
 
-.message .body .toggle-reasoning {
+.message .message-body .toggle-reasoning {
   cursor: pointer;
   margin: 0.5rem 0px;
   margin-left: -0.25rem;
@@ -181,7 +181,7 @@
   gap: 4px;
 }
 
-.message .body .thinking-ellipsis:after {
+.message .message-body .thinking-ellipsis:after {
   overflow: hidden;
   display: inline-block;
   vertical-align: bottom;
@@ -197,12 +197,12 @@
   75% { clip-path: inset(0 0 0 0); }
 }
 
-.message .body .think {
+.message .message-body .think {
   font-style: italic;
   opacity: var(--message-reasoning-opacity);
 }
 
-.message .actions {
+.message .message-actions {
   height: 32px;
   display: flex;
   flex-direction: row;
@@ -219,20 +219,20 @@
   font-size: 12px;
 }
 
-.message .attachments {
+.message .message-attachments {
   display: flex;
   flex-direction: row;
   gap: 1rem;
 }
 
-.message .attachment, .message .media {
+.message .message-attachment, .message .media {
   width: 100%;
   max-width: 200px;
   margin-top: 16px;
   border-radius: 8px;
 }
 
-.message .attachment:has(svg) {
+.message .message-attachment:has(svg) {
   
   width: auto;
   max-width: fit-content;
@@ -250,7 +250,7 @@
   }
 }
 
-.message .attachment img {
+.message .message-attachment img {
   max-width: 200px;
 }
 
@@ -261,7 +261,7 @@
   max-width: 200px;
 }
 
-.message.assistant .attachment .icon {
+.message.assistant .message-attachment .icon {
   cursor: pointer;
 }
 
@@ -332,7 +332,7 @@
   display: flex;
 }
 
-.message.assistant .actions {
+.message.assistant .message-actions {
   position: relative;
   top: -16px;
 }
