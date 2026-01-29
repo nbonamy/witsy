@@ -1,7 +1,7 @@
 <template>
   <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false)" ref="div">
     
-    <div class="role" :class="message.role" v-if="showRole" v-tooltip="{ text: modelInfo, anchor: '.name', position: 'below' }">
+    <div class="message-role" :class="message.role" v-if="showRole" v-tooltip="{ text: modelInfo, anchor: '.name', position: 'below' }">
       <template v-if="agent">
         <AgentIcon class="avatar" />
         <div class="name variable-font-size">{{ agent.name }}</div>
@@ -16,7 +16,7 @@
       </template>
     </div>
     
-    <div class="body" @contextmenu="onContextMenu">
+    <div class="message-body" @contextmenu="onContextMenu">
 
       <!-- status -->
       <div class="status-container" v-if="message.status && message.transient">
@@ -27,9 +27,9 @@
 
 
       <!-- attachments -->
-      <div class="attachments">
+      <div class="message-attachments" v-if="message.attachments.some(a => a.isImage())">
         <template v-for="attachment in message.attachments">
-          <div class="attachment" v-if="attachment.isImage()">
+          <div class="message-attachment" v-if="attachment.isImage()">
             <AttachmentView
               :attachment="attachment" class="icon"
               @click="onClickAttachment(attachment)"
@@ -38,9 +38,9 @@
           </div>
         </template>
       </div>
-      <div class="attachments">
+      <div class="message-attachments" v-if="message.attachments.some(a => !a.isImage())">
         <template v-for="attachment in message.attachments">
-          <div class="attachment" v-if="!attachment.isImage()">
+          <div class="message-attachment" v-if="!attachment.isImage()">
             <AttachmentView :attachment="attachment" class="icon"/>
             <template v-if="attachment.filepath != attachment.url">
               {{  attachment.filenameShort  }}
@@ -48,6 +48,7 @@
           </div>
         </template>
       </div>
+      
       <!-- image for backwards compatibility -->
       <MessageItemMediaBlock :url="imageUrl" @media-loaded="onMediaLoaded(message)" v-if="message.type == 'image' && imageUrl" />
 
@@ -340,11 +341,11 @@ defineExpose({
 
 <style>
 
-.message .body .katex-mathml {
+.message .message-body .katex-mathml {
   font-family: 'STIX Two Math';
 }
 
-.message .body .katex-html {
+.message .message-body .katex-html {
   display: none;
 }
 
@@ -352,7 +353,7 @@ defineExpose({
 
 <style scoped>
 
-.role {
+.message-role {
   * {
     font-family: var(--font-family-base);
   }

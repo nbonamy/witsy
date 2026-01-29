@@ -1,5 +1,5 @@
 <template>
-  <div class="actions" v-if="message">
+  <div class="message-actions" v-if="message">
     <MessageItemActionCopy v-if="isVisible('copy')" :message="message" />
     <MessageItemActionRead v-if="isVisible('read')" :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
     <template v-if="!message.transient">
@@ -172,7 +172,7 @@ const onTools = (message: Message) => {
 
 <style scoped>
 
-.actions {
+.message-actions {
 
   &:deep() .action {
     display: flex;

@@ -4,7 +4,7 @@
   flex-direction: column;
 }
 
-.messages.openai .message .role {
+.messages.openai .message .message-role {
   font-weight: bold;
   display: flex;
   flex-direction: row;
@@ -12,7 +12,7 @@
   margin-bottom: 1rem;
 }
 
-.messages.openai .message .role .avatar {
+.messages.openai .message .message-role .avatar {
   flex: 0 0 32px;
   width: 16px;
   height: 16px;
@@ -20,11 +20,11 @@
   object-fit: contain;
 }
 
-.messages.openai .message .role.user .avatar {
+.messages.openai .message .message-role.user .avatar {
   fill: var(--text-color);
 }
 
-.messages.openai .message .body {
+.messages.openai .message .message-body {
   flex: 1;
 }
 
@@ -46,7 +46,7 @@
   border-radius: 8px;
 }
 
-.messages.openai .message .actions {
+.messages.openai .message .message-actions {
   position: relative;
   top: -16px;
 }
