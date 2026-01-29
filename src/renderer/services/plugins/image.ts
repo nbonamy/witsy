@@ -25,6 +25,7 @@ export default class extends Plugin {
       (this.config.engine == 'replicate' && store.config?.engines?.replicate?.apiKey?.trim().length > 0) ||
       (this.config.engine == 'falai' && store.config?.engines?.falai?.apiKey?.trim().length > 0) ||
       (this.config.engine == 'huggingface' && store.config?.engines?.huggingface?.apiKey?.trim().length > 0) ||
+      (this.config.engine == 'ollama') ||
       (this.config.engine == 'sdwebui')
     )
   }

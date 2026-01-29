@@ -28,7 +28,15 @@ const context: PluginExecutionContext = {
 
 // @ts-expect-error mocking
 global.fetch = vi.fn(async (url: string) => {
-  if (url.endsWith('.pdf')) {
+  if (url.includes('ollama') || url.includes('11434')) {
+    return {
+      url,
+      ok: true,
+      json: () => ({
+        image: 'base64encodedimage'
+      })
+    }
+  } else if (url.endsWith('.pdf')) {
     return {
       url,
       ok: true,
@@ -244,7 +252,8 @@ beforeAll(() => {
     google: { apiKey: 'test-api-key', models: { chat: [] }, model: {} },
     huggingface: { apiKey: 'test-api-key', models: { chat: [] }, model: {} },
     replicate: { apiKey: 'test-api-key', models: { chat: [] }, model: {} },
-    falai: { apiKey: 'test-api-key', models: { chat: [] }, model: {} }
+    falai: { apiKey: 'test-api-key', models: { chat: [] }, model: {} },
+    ollama: { baseURL: 'http://127.0.0.1:11434', models: { chat: [] }, model: {} },
   }
 })
 
@@ -527,6 +536,29 @@ test('Image Plugin google', async () => {
     model: 'image/model',
     prompt: 'test prompt',
     config: expect.any(Object),
+  })
+  expect(result).toStrictEqual({
+    url: 'file://file_saved',
+  })
+
+})
+
+test('Image Plugin Ollama', async () => {
+
+  store.config.plugins.image.engine = 'ollama'
+  store.config.plugins.image.model = 'x/flux2-klein'
+  const image = new Image(store.config.plugins.image, 'test-workspace')
+  const result = await image.execute({ model: 'x/flux2-klein' }, { prompt: 'test prompt' })
+  expect(fetch).toHaveBeenLastCalledWith('http://127.0.0.1:11434/api/generate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'x/flux2-klein',
+      prompt: 'test prompt',
+      stream: false,
+    })
   })
   expect(result).toStrictEqual({
     url: 'file://file_saved',

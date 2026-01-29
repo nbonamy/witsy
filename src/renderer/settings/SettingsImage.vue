@@ -12,9 +12,12 @@
 
     <div class="form-field">
       <label>{{ t('settings.plugins.image.provider') }}</label>
-      <select v-model="engine" @change="onChangeEngine">
-        <option v-for="engine in engines" :value="engine.id">{{ engine.name }}</option>
-      </select>
+      <div class="form-subgroup">
+        <select v-model="engine" @change="onChangeEngine">
+          <option v-for="engine in engines" :value="engine.id">{{ engine.name }}</option>
+        </select>
+        <a href="https://github.com/ollama/ollama/blob/main/docs/api.md#image-generation-experimental" target="_blank" v-if="engine === 'ollama'">{{ t('settings.plugins.image.ollama.aboutImageGeneration') }}</a>
+      </div>
     </div>
 
     <template v-if="['openai', 'google', 'xai'].includes(engine)">
@@ -53,6 +56,24 @@
       </div>
     </template>
 
+    <template v-else-if="engine == 'ollama'">
+      <div class="form-field">
+        <label>{{ t('settings.plugins.image.imageModel') }}</label>
+        <div class="control-group">
+          <select v-model="model" :disabled="models.length == 0" @change="save">
+            <option v-for="model in models" :key="model.id" :value="model.id">{{ model.name }}
+            </option>
+          </select>
+          <RefreshButton :on-refresh="getModels" />
+        </div>
+      </div>
+      <OllamaModelPull :pullable-models="ollamaImageModels" info-url="https://ollama.com/search?q=image" @done="getModels" />
+      <div class="form-field">
+        <label>{{ t('settings.engines.ollama.apiBaseURL') }}</label>
+        <input type="text" v-model="ollamaBaseURL" :placeholder="ollamaDefaultBaseURL" @blur="save" />
+      </div>
+    </template>
+
     <template v-else>
       <div class="form-field">
         <label>{{ t('settings.engines.apiKey') }}</label>
@@ -86,8 +107,17 @@ import ModelLoaderFactory from '@services/model_loader'
 import Dialog from '@renderer/utils/dialog'
 import ImageCreator from '@services/image'
 import InputObfuscated from '@components/InputObfuscated.vue'
+import OllamaModelPull from '@components/OllamaModelPull.vue'
 import RefreshButton from '@components/RefreshButton.vue'
 import Combobox from '@components/Combobox.vue'
+
+const ollamaDefaultBaseURL = 'http://127.0.0.1:11434'
+
+const ollamaImageModels = [
+  { id: 'x/flux2-klein', name: 'Flux 2 Klein' },
+  { id: 'x/z-image-turbo', name: 'Z Image Turbo' },
+  { id: 'jmorgan/z-image-turbo', name: 'Z Image Turbo (jmorgan)' },
+]
 
 const enabled = ref(false)
 const engine = ref(null)
@@ -96,9 +126,16 @@ const huggingAPIKey = ref(null)
 const replicateAPIKey = ref(null)
 const falaiAPIKey = ref(null)
 const sdwebuiBaseURL = ref('')
+const ollamaBaseURL = ref('')
 
 const engines = computed(() => ImageCreator.getEngines(false))
-const models = computed(() => store.config.engines[engine.value]?.models?.image || [])
+const models = computed(() => {
+  // for ollama, use chat models since image generation is experimental
+  if (engine.value === 'ollama') {
+    return store.config.engines.ollama?.models?.chat || []
+  }
+  return store.config.engines[engine.value]?.models?.image || []
+})
 
 const load = () => {
   enabled.value = store.config.plugins.image.enabled || false
@@ -108,6 +145,7 @@ const load = () => {
   replicateAPIKey.value = store.config.engines.replicate?.apiKey || ''
   falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
   sdwebuiBaseURL.value = store.config.engines.sdwebui?.baseURL || ''
+  ollamaBaseURL.value = store.config.engines.ollama?.baseURL || ''
 }
 
 const onChangeEngine = async () => {
@@ -142,6 +180,7 @@ const save = () => {
   store.config.engines.huggingface.apiKey = huggingAPIKey.value
   store.config.engines.replicate.apiKey = replicateAPIKey.value
   store.config.engines.sdwebui.baseURL = sdwebuiBaseURL.value
+  store.config.engines.ollama.baseURL = ollamaBaseURL.value
   store.saveSettings()
 }
 

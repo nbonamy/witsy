@@ -1880,6 +1880,7 @@
   "settings.plugins.image.falai.aboutModels": "More about fal.ai models",
   "settings.plugins.image.huggingface.aboutModels": "More about Hugging Face models",
   "settings.plugins.image.imageModel": "Image model",
+  "settings.plugins.image.ollama.aboutImageGeneration": "About Ollama image generation",
   "settings.plugins.image.provider": "Provider",
   "settings.plugins.image.replicate.aboutModels": "More about Replicate models",
   "settings.plugins.image.title": "Text-to-Image",
