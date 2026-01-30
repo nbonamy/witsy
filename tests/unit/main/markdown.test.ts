@@ -117,8 +117,11 @@ test('close open markdowntags', () => {
   expect(closeOpenMarkdownTags('This is **bold *nested* text**')).toBe('This is **bold *nested* text**')
   // expect(closeOpenMarkdownTags('This is **bold *nested* text*')).toBe('This is **bold *nested* text**')
   expect(closeOpenMarkdownTags('This is **bold *nested* text')).toBe('This is **bold *nested* text**')
-  expect(closeOpenMarkdownTags('This is **bold *nested*')).toBe('This is **bold *nested***')
-  expect(closeOpenMarkdownTags('This is **bold *nested')).toBe('This is **bold *nested***')
+  expect(closeOpenMarkdownTags('This is **bold *nested*')).toBe('This is **bold *nested**')
+  expect(closeOpenMarkdownTags('This is **bold *nested')).toBe('This is **bold *nested**')
+
+  // underscores in identifiers should not be treated as markdown
+  expect(closeOpenMarkdownTags('<artifact title="meditation_timer')).toBe('<artifact title="meditation_timer')
 
   // inline code cases
   expect(closeOpenMarkdownTags('This is `inline code')).toBe('This is `inline code`')

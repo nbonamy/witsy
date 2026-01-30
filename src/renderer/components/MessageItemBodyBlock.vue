@@ -15,8 +15,8 @@ import { h, nextTick, PropType, ref, render } from 'vue'
 import { InfoIcon } from 'lucide-vue-next'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
+import { Block } from '@services/message_block_parser'
 import { store } from '@services/store'
-import { ToolCall } from 'types/index'
 import MessageItemArtifactBlock from './MessageItemArtifactBlock.vue'
 import MessageItemHtmlBlock from './MessageItemHtmlBlock.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
@@ -24,51 +24,6 @@ import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemSearchResultBlock from './MessageItemSearchResultBlock.vue'
 import MessageItemTableBlock from './MessageItemTableBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
-
-type BlockEmpty = {
-  type: 'empty'
-}
-
-type BlockText = {
-  type: 'text'
-  content: string
-}
-
-type BlockMedia = {
-  type: 'media'
-  url: string
-  desc?: string
-  prompt?: string
-}
-
-type BlockArtifact = {
-  type: 'artifact'
-  title: string
-  content: string
-}
-
-type BlockHtml = {
-  type: 'html'
-  title: string
-  content: string
-}
-
-type BlockTool = {
-  type: 'tool'
-  toolCall: ToolCall
-}
-
-type BlockSearch = {
-  type: 'search'
-  toolCall: ToolCall
-}
-
-type BlockTable = {
-  type: 'table'
-  content: string
-}
-
-export type Block = BlockEmpty | BlockText | BlockMedia | BlockArtifact | BlockHtml | BlockTool | BlockSearch | BlockTable
 
 const props = defineProps({
   block: {
