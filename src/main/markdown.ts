@@ -79,6 +79,15 @@ const mdPreprocess = (markdown: string) => {
   let preprocessed = markdown.replaceAll('\\[', '$$$$').replaceAll('\\]', '$$$$')
   preprocessed = preprocessed.replaceAll('\\( ', '$').replaceAll(' \\)', '$')
   preprocessed = preprocessed.replaceAll('\\(', '$').replaceAll('\\)', '$')
+
+  // Normalize file:// URLs in markdown links:
+  // - Convert Windows backslashes to forward slashes
+  // - Encode spaces as %20 (markdown-it doesn't parse URLs with unencoded spaces)
+  preprocessed = preprocessed.replace(/\]\(file:\/\/([^)]+)\)/g, (match, path) => {
+    const normalized = path.replace(/\\/g, '/').replace(/ /g, '%20')
+    return `](file://${normalized})`
+  })
+
   return preprocessed
 }
 
