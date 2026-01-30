@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.5.0] - WIP
+## [3.5.1] - WIP
+
+### Added
+- N/A
+
+### Changed
+- Performance optimization for message rendering during streaming
+
+### Fixed
+- Bug fixes for markdown tag closing in streamed messages
+
+### Removed
+- N/A
+
+## [3.5.0] - 2026-01-29
 
 ### Added
 - Ability to Exclude Folders from RAG (https://github.com/nbonamy/witsy/issues/515)

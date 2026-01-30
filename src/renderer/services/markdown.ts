@@ -61,7 +61,7 @@ export const closeOpenMarkdownTags = (input: string): string => {
     '`'
   ]
 
-  const codeTags = ['```', '~~~', '`', '"']
+  const codeTags = ['```', '~~~', '`']
 
   // track active tags: remove tool call tags as id could contain anything...
   const processedInput = input.replace(/<tool[^>]*?><\/tool>/g, '')
@@ -77,12 +77,26 @@ export const closeOpenMarkdownTags = (input: string): string => {
 
       if (processedInput.startsWith(tag, i)) {
 
+        // Single _ or * should only be treated as markdown at word boundaries
+        // Skip if surrounded by word characters (e.g., "meditation_timer")
+        if ((tag === '_' || tag === '*') && tag.length === 1) {
+          const prevChar = i > 0 ? processedInput[i - 1] : ''
+          const nextChar = i + 1 < processedInput.length ? processedInput[i + 1] : ''
+          const isWordChar = (c: string) => /\w/.test(c)
+          if (isWordChar(prevChar) && isWordChar(nextChar)) {
+            // Skip this - it's inside a word like "some_variable"
+            i++
+            matched = true
+            break
+          }
+        }
+
         // we do not stack the tag if it is at the end of the input
         const stackCurrent = (i + tag.length < processedInput.length)
 
         // Handle code blocks specially
         if (codeTags.includes(tag)) {
-          
+
           // Check if top of stack has same tag (closing)
           const top = stack[stack.length - 1]
           if (top && top === tag) {
@@ -92,9 +106,9 @@ export const closeOpenMarkdownTags = (input: string): string => {
             stack.push(tag)
             inCodeBlock = true
           }
-        
+
         } else if (!inCodeBlock) {
-        
+
           // Only process other markdown tags if not in a code block
           const top = stack[stack.length - 1]
           if (top && top === tag) {
@@ -102,7 +116,7 @@ export const closeOpenMarkdownTags = (input: string): string => {
           } else if (stackCurrent){
             stack.push(tag)
           }
-        
+
         }
 
         // move to next character after the tag
@@ -122,20 +136,25 @@ export const closeOpenMarkdownTags = (input: string): string => {
     console.warn('Too many open markdown tags, closing all', input, stack)
   }
 
-  // Handle mismatched inline like **t* -> **t** (only if not in code block)
-  if (!inCodeBlock && input.match(/\*\*[^*]+?\*$/)) {
-    input += '*'
-    return input
-  }
-  if (!inCodeBlock && input.match(/__[^_]+?_$/)) {
-    input += '_'
-    return input
-  }
-
   // close any remaining tags
   while (stack.length > 0) {
     const tag = stack.pop()
-    input += tag
+    // Check if input already ends with part of this tag and only add what's missing
+    // e.g., if tag is "**" and input ends with "*", only add "*"
+    if (tag.length > 1) {
+      for (let i = tag.length - 1; i > 0; i--) {
+        const partial = tag.slice(0, i)
+        if (input.endsWith(partial)) {
+          input += tag.slice(i)
+          break
+        }
+      }
+      if (!input.endsWith(tag)) {
+        input += tag
+      }
+    } else {
+      input += tag
+    }
   }
 
   // Handle links and images (only if not in code block)
