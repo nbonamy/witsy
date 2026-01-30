@@ -26,6 +26,24 @@ test('renders local links', () => {
   expect(html).toBe('<p><a href="file://README.md">link</a></p>\n')
 })
 
+test('renders file:// links with spaces', () => {
+  const markdown = '[link](file:///Users/test/Application Support/file.md)'
+  const html = renderMarkdown(markdown)
+  expect(html).toBe('<p><a href="file:///Users/test/Application%20Support/file.md">link</a></p>\n')
+})
+
+test('renders Windows file:// links with backslashes', () => {
+  const markdown = '[link](file://C:\\Users\\name\\file.md)'
+  const html = renderMarkdown(markdown)
+  expect(html).toBe('<p><a href="file://C:/Users/name/file.md">link</a></p>\n')
+})
+
+test('renders file:// links with spaces and backslashes', () => {
+  const markdown = '[link](file://C:\\Users\\My Documents\\file.md)'
+  const html = renderMarkdown(markdown)
+  expect(html).toBe('<p><a href="file://C:/Users/My%20Documents/file.md">link</a></p>\n')
+})
+
 test('renders external links', () => {
   const markdown = '[link](https://example.com)'
   const html = renderMarkdown(markdown)
