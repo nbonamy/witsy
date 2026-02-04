@@ -49,6 +49,7 @@ import * as webview from './main/webview';
 import * as window from './main/window';
 import * as workspace from './main/workspace';
 import KeyMonitor from './main/keymonitor';
+import { migrateSettingsMcpToolNames } from './main/migrations/mcp_tool_names';
 
 let mcp: Mcp;
 let scheduler: Scheduler;
@@ -180,6 +181,9 @@ app.whenReady().then(async () => {
 
   // initialize current workspace
   workspace.initializeWorkspace(app, settings.workspaceId)
+
+  // run migrations for MCP tool names (one-time, strips old ___xxxx suffixes)
+  migrateSettingsMcpToolNames(app)
 
   // initialize webview session
   webview.initWebviewSession()

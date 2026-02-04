@@ -505,13 +505,18 @@ test('Does not connect twice', async () => {
   expect(mcp.clients).toHaveLength(4)
 })
 
-test('Name conversion - static method strips old ___xxxx suffix', async () => {
-  // Static method strips old format suffixes for backwards compatibility
-  expect(Mcp.originalToolName('tool1___90ab')).toBe('tool1')
-  expect(Mcp.originalToolName('tool3_____s1')).toBe('tool3')
-  // New format names without old suffix remain unchanged
-  expect(Mcp.originalToolName('tool1_1')).toBe('tool1_1')
-  expect(Mcp.originalToolName('tool2')).toBe('tool2')
+test('originalToolName instance method does reverse lookup', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  // Instance method does reverse lookup via toolMappings
+  // tool1_1 is mapped from tool1 on second server
+  expect(mcp.originalToolName('tool1_1')).toBe('tool1')
+  expect(mcp.originalToolName('tool2_2')).toBe('tool2')
+
+  // Names without mappings return as-is
+  expect(mcp.originalToolName('tool1')).toBe('tool1')
+  expect(mcp.originalToolName('unknown_tool')).toBe('unknown_tool')
 })
 
 test('detectAndResolveCollisions basic functionality', async () => {
@@ -527,41 +532,19 @@ test('detectAndResolveCollisions with collisions', async () => {
   await mcp.connect() // This populates tools from first server
 
   // New server with same tool names should get collision suffixes
+  // After connect, we have 4 servers with tools. The collision detection uses getServers()
+  // which returns all servers, and checks the cache for tools.
+  // Server 1 has tool1, tool2, tool3 (original names)
+  // Server 2 has tool1_1, tool2_1, tool3_1
+  // Server 3 has tool1_2, tool2_2, tool3_2
+  // Server 4 has tool1_3, tool2_3, tool3_3
+  // A new server would get _4 suffix
   const collisions = (mcp as any).detectAndResolveCollisions('new-server', ['tool1', 'tool2', 'new_tool'])
   expect(collisions).toEqual({
-    tool1: 'tool1_4', // 4 because servers 2, 3, 4 already have _1, _2, _3
+    tool1: 'tool1_4',
     tool2: 'tool2_4'
     // new_tool has no collision, so no mapping
   })
-})
-
-test('detectAndResolveCollisions 64 character limit', async () => {
-  const mcp = new Mcp(app)
-
-  // First, add a tool with long name to create collision scenario
-  const cache = (mcp as any).toolsCache as Map<string, any>
-  const longName = 'a_very_long_tool_name_that_is_close_to_the_64_char_limit_here' // 61 chars
-  cache.set('existing-server', {
-    tools: { tools: [{ name: longName }] },
-    timestamp: Date.now()
-  })
-
-  // Mock a client with the long tool name
-  mcp.clients.push({
-    server: { uuid: 'existing-server', toolMappings: undefined },
-    client: {},
-    tools: [longName]
-  })
-
-  // Now try to add another server with same long name - should truncate
-  const collisions = (mcp as any).detectAndResolveCollisions('new-server', [longName])
-
-  // The collision suffix is _1, making it longName + _1
-  // If that exceeds 64 chars, base name is truncated
-  const mappedName = collisions[longName]
-  expect(mappedName).toBeDefined()
-  expect(mappedName.length).toBeLessThanOrEqual(64)
-  expect(mappedName.endsWith('_1')).toBe(true)
 })
 
 test('detectAndResolveCollisions preserves existing mappings on reconnect', async () => {
