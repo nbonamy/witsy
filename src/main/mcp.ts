@@ -22,6 +22,11 @@ type ToolsCacheEntry = {
   timestamp: number
 }
 
+// Collision handling constants
+const COLLISION_SUFFIX_SEPARATOR = '_'
+const MAX_TOOL_NAME_LENGTH = 64
+const OLD_SUFFIX_PATTERN = /___....$/
+
 export default class Mcp {
 
   private readonly CACHE_TTL_MS = 10 * 60 * 1000 // 10 minutes
@@ -115,7 +120,7 @@ export default class Mcp {
         if (cached.tools !== undefined) {
           // We have tools (success) or null (error)
           const tools = Array.isArray(cached.tools?.tools) ? cached.tools.tools : []
-          const toolNames = tools.map((tool: any) => this.uniqueToolName(server, tool.name))
+          const toolNames = tools.map((tool: any) => this.getMappedToolName(server, tool.name))
           statusServers.push({
             ...server,
             tools: cached.tools === null ? null : toolNames
@@ -156,7 +161,7 @@ export default class Mcp {
         results.push({
           ...client.server,
           tools: mcpTools.map(t => ({
-            uuid: this.uniqueToolName(client.server, t.name),
+            uuid: this.getMappedToolName(client.server, t.name),
             ...t,
           }))
         })
@@ -215,7 +220,8 @@ export default class Mcp {
           cwd: config.mcpServers[key].cwd,
           env: config.mcpServers[key].env,
           oauth: config.mcp.mcpServersExtra[key]?.oauth || undefined,
-          toolSelection: config.mcp.mcpServersExtra[key]?.toolSelection || null
+          toolSelection: config.mcp.mcpServersExtra[key]?.toolSelection || null,
+          toolMappings: config.mcp.mcpServersExtra[key]?.toolMappings || undefined
         })
         return arr
       }, [])
@@ -608,13 +614,33 @@ export default class Mcp {
 
     // get tools
     const tools = await this.getCachedTools({ client, server, tools: [] } as McpClient)
-    const toolNames = tools.tools.map((tool: any) => this.uniqueToolName(server, tool.name))
+    const toolNames = tools.tools.map((tool: any) => tool.name)
+
+    // detect and resolve collisions
+    const mappings = this.detectAndResolveCollisions(
+      server.uuid,
+      toolNames,
+      server.toolMappings
+    )
+
+    // persist mappings if any collisions were detected
+    if (Object.keys(mappings).length > 0) {
+      server.toolMappings = mappings
+      this.persistServerMappings(server)
+    } else if (server.toolMappings && Object.keys(server.toolMappings).length > 0) {
+      // Clear old mappings if no collisions exist anymore
+      server.toolMappings = undefined
+      this.persistServerMappings(server)
+    }
+
+    // build final tool names using mappings
+    const finalToolNames = toolNames.map((name: string) => this.getMappedToolName(server, name))
 
     // store
     this.clients.push({
       client,
       server,
-      tools: toolNames
+      tools: finalToolNames
     })
 
     // done
@@ -903,7 +929,7 @@ export default class Mcp {
     const tools = await this.getCachedTools(client)
     return tools.tools.map((tool: any) => ({
       name: tool.name,
-      function: this.uniqueToolName(client.server, tool.name),
+      function: this.getMappedToolName(client.server, tool.name),
       description: tool.description,
       inputSchema: tool.inputSchema
     }))
@@ -943,8 +969,8 @@ export default class Mcp {
       throw new Error(`Tool ${name} not found`)
     }
 
-    // remove unique suffix
-    const tool = Mcp.originalToolName(name)
+    // resolve mapped name back to original for the MCP call
+    const tool = this.originalToolName(name)
     console.log(`[mcp] Calling MCP tool`, tool, args)
 
     return await client.client.callTool({
@@ -954,24 +980,155 @@ export default class Mcp {
 
   }
 
+  /**
+   * Check if a tool name is an MCP tool (exists in any connected server's tools)
+   */
   isMcpToolName = (name: string): boolean => {
-    return /___....$/.test(name)
+    for (const client of this.clients) {
+      if (client.tools.includes(name)) {
+        return true
+      }
+    }
+    return false
   }
 
+  /**
+   * Get the original tool name from a potentially mapped name.
+   * Performs reverse lookup via toolMappings.
+   */
+  originalToolName = (name: string): string => {
+    for (const client of this.clients) {
+      if (client.server.toolMappings) {
+        for (const [original, mapped] of Object.entries(client.server.toolMappings)) {
+          if (mapped === name) {
+            return original
+          }
+        }
+      }
+    }
+    return name
+  }
+
+  /**
+   * Static version for backwards compatibility - strips old ___xxxx suffix
+   */
   public static originalToolName(name: string): string {
-    return name.replace(/___....$/, '')
+    return name.replace(OLD_SUFFIX_PATTERN, '')
   }
 
-  protected uniqueToolName(server: McpServer, name: string): string {
-    const suffix = `___${server.uuid.padStart(4, '_').slice(-4)}`
-    const uniqueName = `${name}${suffix}`
+  /**
+   * Get the mapped tool name for a server's tool (applies collision suffix if needed)
+   */
+  protected getMappedToolName(server: McpServer, originalName: string): string {
+    return server.toolMappings?.[originalName] || originalName
+  }
 
-    // If the unique name exceeds 64 characters, fallback to original name
-    if (uniqueName.length > 64) {
-      return name
+  /**
+   * Detect and resolve tool name collisions when connecting a new server.
+   * Returns a mapping of original -> suffixed names for colliding tools only.
+   */
+  protected detectAndResolveCollisions(
+    newServerUuid: string,
+    newTools: string[],
+    existingMappings?: Record<string, string>
+  ): Record<string, string> {
+
+    const mappings: Record<string, string> = {}
+
+    // Build set of all currently used tool names from other servers
+    const existingToolNames = new Set<string>()
+    for (const client of this.clients) {
+      if (client.server.uuid === newServerUuid) continue
+
+      // Get tools for this client from cache
+      const cached = this.toolsCache.get(client.server.uuid)
+      if (cached?.tools?.tools) {
+        for (const tool of cached.tools.tools) {
+          const mappedName = this.getMappedToolName(client.server, tool.name)
+          existingToolNames.add(mappedName)
+        }
+      }
     }
 
-    return uniqueName
+    // Also add tools from the current server's existing mappings (the mapped values)
+    // This ensures we don't collide with ourselves on reconnect
+    if (existingMappings) {
+      for (const mappedName of Object.values(existingMappings)) {
+        existingToolNames.add(mappedName)
+      }
+    }
+
+    // Process each tool from the new server
+    for (const toolName of newTools) {
+
+      // Step A: Preserve existing mapping if server is reconnecting
+      if (existingMappings?.[toolName]) {
+        mappings[toolName] = existingMappings[toolName]
+        existingToolNames.add(existingMappings[toolName])
+        continue
+      }
+
+      // Step B: Check if tool name collides with existing tools
+      if (!existingToolNames.has(toolName)) {
+        // No collision - tool keeps original name, no mapping needed
+        existingToolNames.add(toolName)
+        continue
+      }
+
+      // Step C: Collision detected - find next available suffix
+      let suffix = 1
+      while (existingToolNames.has(`${toolName}${COLLISION_SUFFIX_SEPARATOR}${suffix}`)) {
+        suffix++
+      }
+
+      // Step D: Construct suffixed name with length constraint
+      const suffixStr = `${COLLISION_SUFFIX_SEPARATOR}${suffix}`
+      let mappedName = `${toolName}${suffixStr}`
+
+      if (mappedName.length > MAX_TOOL_NAME_LENGTH) {
+        // Truncate base name to fit within limit
+        const maxBaseLength = MAX_TOOL_NAME_LENGTH - suffixStr.length
+        mappedName = `${toolName.slice(0, maxBaseLength)}${suffixStr}`
+      }
+
+      mappings[toolName] = mappedName
+      existingToolNames.add(mappedName)
+    }
+
+    return mappings
+  }
+
+  /**
+   * Persist tool mappings for a server to config
+   */
+  protected persistServerMappings = (server: McpServer): void => {
+    const config = loadSettings(this.app)
+
+    // Find and update the server in config.mcp.servers
+    const configServer = config.mcp.servers.find((s: McpServer) => s.uuid === server.uuid)
+    if (configServer) {
+      if (Object.keys(server.toolMappings || {}).length > 0) {
+        configServer.toolMappings = server.toolMappings
+      } else {
+        delete configServer.toolMappings
+      }
+      this.monitor?.stop()
+      saveSettings(this.app, config)
+      this.startConfigMonitor()
+      return
+    }
+
+    // Check mcpServersExtra for registry servers
+    if (server.registryId && config.mcp.mcpServersExtra[server.registryId]) {
+      if (Object.keys(server.toolMappings || {}).length > 0) {
+        config.mcp.mcpServersExtra[server.registryId].toolMappings = server.toolMappings
+      } else {
+        delete config.mcp.mcpServersExtra[server.registryId].toolMappings
+      }
+      this.monitor?.stop()
+      saveSettings(this.app, config)
+      this.startConfigMonitor()
+    }
   }
 
   private translateError(errorMessage: string): string {
@@ -999,7 +1156,7 @@ export default class Mcp {
     return {
       type: 'function',
       function: {
-        name: this.uniqueToolName(server, tool.name),
+        name: this.getMappedToolName(server, tool.name),
         description: tool.description ? tool.description : tool.name,
         parameters: {
           type: 'object',

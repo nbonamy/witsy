@@ -319,6 +319,7 @@ export type McpServerExtra = {
   state?: McpServerState
   oauth?: McpOAuthConfig
   toolSelection?: ToolSelection
+  toolMappings?: Record<string, string>
 }
 
 export type McpConfig = {
