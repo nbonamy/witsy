@@ -23,6 +23,7 @@ export type McpServer = {
   headers?: strDict
   oauth?: McpOAuthConfig
   toolSelection: ToolSelection
+  toolMappings?: Record<string, string> // originalName -> mappedName (only for collisions)
 }
 
 export type McpOAuthConfig = {
