@@ -4,7 +4,7 @@
 
 import { Agent, FunctionTool, protocol, tool, UnknownContext } from '@openai/agents'
 import { RealtimeAgent, RealtimeContextData, RealtimeItem, RealtimeSession } from '@openai/agents/realtime'
-import { LlmTool, MultiToolPlugin, Plugin, PluginExecutionContext } from 'multi-llm-ts'
+import { LlmTool, LlmToolOpenAI, MultiToolPlugin, normalizeToToolDefinition, Plugin, PluginExecutionContext, toOpenAITool } from 'multi-llm-ts'
 import { z, ZodTypeAny } from 'zod'
 import { Configuration } from 'types/config'
 import { availablePlugins, enabledPlugins, PluginInstance } from '../plugins/plugins'
@@ -98,7 +98,8 @@ export function convertToolToAgentsFormat(
   modelId: string,
   abortSignal?: AbortSignal
 ) {
-  const func = llmTool.function
+  const openAITool: LlmToolOpenAI = toOpenAITool(llmTool)
+  const func = openAITool.function
   const zodSchema = jsonSchemaToZod(func.parameters)
 
   // Ensure zodSchema is a ZodObject as required by tool()
@@ -208,8 +209,9 @@ async function buildRealtimeTools(
       const toolsArray = Array.isArray(pluginTools) ? pluginTools : [pluginTools]
 
       for (const llmTool of toolsArray) {
+        const tool = normalizeToToolDefinition(llmTool)
         // Filter by tool selection (null = all tools allowed)
-        if (toolSelection !== null && !toolSelection.includes(llmTool.function.name)) {
+        if (toolSelection !== null && !toolSelection.includes(tool.name)) {
           continue
         }
         const agentTool = convertToolToAgentsFormat(llmTool, plugin, modelId, abortSignal)
@@ -218,8 +220,9 @@ async function buildRealtimeTools(
     } else {
       // For regular plugins, build the tool from parameters
       const llmTool = pluginToLlmTool(plugin as Plugin)
+      const tool = normalizeToToolDefinition(llmTool)
       // Filter by tool selection (null = all tools allowed)
-      if (toolSelection !== null && !toolSelection.includes(llmTool.function.name)) {
+      if (toolSelection !== null && !toolSelection.includes(tool.name)) {
         continue
       }
       const agentTool = convertToolToAgentsFormat(llmTool, plugin, modelId, abortSignal)

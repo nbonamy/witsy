@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron';
-import { LlmChunk, LlmTool } from 'multi-llm-ts';
+import { LlmChunk, PluginTool } from 'multi-llm-ts';
 import * as IPC from './ipc_consts';
 import { Size } from './main/computer';
 import Agent from './models/agent';
@@ -242,7 +242,7 @@ contextBridge.exposeInMainWorld(
       getStatus: (): McpStatus|null => { return ipcRenderer.sendSync(IPC.MCP.GET_STATUS) },
       getAllServersWithTools: (): Promise<Array<{ server: McpServer; tools: McpTool[] }>> => { return ipcRenderer.invoke(IPC.MCP.GET_ALL_SERVERS_WITH_TOOLS) },
       getServerTools: (uuid: string): Promise<McpTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_SERVER_TOOLS, uuid) },
-      getLlmTools: (): Promise<LlmTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_LLM_TOOLS) },
+      getLlmTools: (): Promise<PluginTool[]> => { return ipcRenderer.invoke(IPC.MCP.GET_LLM_TOOLS) },
       callTool: (name: string, parameters: anyDict, signalId?: string): Promise<any> => { return ipcRenderer.invoke(IPC.MCP.CALL_TOOL, { name, parameters, signalId }) },
       cancelTool: (signalId: string): void => { ipcRenderer.send(IPC.MCP.CANCEL_TOOL, signalId) },
       isMcpToolName: (name: string): boolean => { return ipcRenderer.sendSync(IPC.MCP.IS_MCP_TOOL_NAME, name) },

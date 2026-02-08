@@ -1,6 +1,6 @@
 
 import { Size } from 'electron'
-import { Attachment as IAttachmentBase, Message as IMessageBase, LlmChunk, LlmChunkTool, LlmModelOpts, LlmTool, LlmToolCall, LlmUsage } from 'multi-llm-ts'
+import { Attachment as IAttachmentBase, Message as IMessageBase, LlmChunk, LlmChunkTool, LlmModelOpts, LlmToolCall, LlmUsage, PluginTool } from 'multi-llm-ts'
 import { Application, RunCommandParams } from './automation'
 import { Configuration } from './config'
 import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams, FileStats } from './file'
@@ -543,7 +543,7 @@ declare global {
         getStatus(): McpStatus
         getAllServersWithTools(): Promise<McpServerWithTools[]>
         getServerTools(uuid: string): Promise<McpTool[]>
-        getLlmTools(): Promise<LlmTool[]>
+        getLlmTools(): Promise<PluginTool[]>
         callTool(name: string, parameters: anyDict, signalId?: string): any
         cancelTool(signalId: string): void
         isMcpToolName(name: string): boolean

@@ -1,6 +1,6 @@
 import { Configuration } from 'types/config'
 import { availablePlugins, PluginInstance } from '@services/plugins/plugins'
-import { Plugin } from 'multi-llm-ts'
+import { normalizeToToolDefinition, Plugin } from 'multi-llm-ts'
 import McpPlugin from '@services/plugins/mcp'
 
 export type Tool = {
@@ -33,16 +33,17 @@ export function useTools() {
         // Multi-tool plugin
         const pluginTools = await plugin.getTools()
         for (const pluginTool of pluginTools) {
+          const normalizedTool = normalizeToToolDefinition(pluginTool)
 
-          const id = pluginTool.function.name
+          const id = normalizedTool.name
           const name = plugin instanceof McpPlugin
             ? window.api.mcp.originalToolName(id)
             : id
 
           const tool: Tool = {
-            id, 
+            id,
             name,
-            description: pluginTool.function.description,
+            description: normalizedTool.description,
             plugin
           }
 

@@ -1,5 +1,5 @@
 
-import { LlmTool, MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
+import { MultiToolPlugin, PluginExecutionContext, PluginTool } from 'multi-llm-ts'
 import { anyDict } from 'types/index'
 import { t } from '../i18n'
 import { generateSimpleSchema } from '../schema'
@@ -69,42 +69,22 @@ export default class CodeExecutionProgramPlugin extends CodeExecutionBase implem
     }
   }
 
-  async getTools(): Promise<LlmTool[]> {
+  async getTools(): Promise<PluginTool[]> {
+    const toolsList = this.tools.map((t) => `- ${t.name}`).join('\n')
     return [
       {
-        type: 'function' as const,
-        function: {
-          name: `${kCodeExecutionPluginPrefix}get_tools_info`,
-          description: t('plugins.code_exec.getToolsInfo.description', { tools: this.tools.map((t) => `- ${t.function.name}`).join('\n') }),
-          parameters: {
-            type: 'object' as const,
-            properties: {
-              tools_names: {
-                type: 'array',
-                description: 'The name of the tools to get information about',
-                items: { type: 'string' },
-              }
-            },
-            required: ['tools_names']
-          }
-        }
+        name: `${kCodeExecutionPluginPrefix}get_tools_info`,
+        description: t('plugins.code_exec.getToolsInfo.description', { tools: toolsList }),
+        parameters: [
+          { name: 'tools_names', type: 'array', description: 'The name of the tools to get information about', required: true, items: { type: 'string' } },
+        ]
       },
       {
-        type: 'function' as const,
-        function: {
-          name: `${kCodeExecutionPluginPrefix}run_program`,
-          description: t('plugins.code_exec.runProgram.description'),
-          parameters: {
-            type: 'object',
-            properties: {
-              program: {
-                type: 'object',
-                description: 'The program to execute with a steps array. Each step has: id (string), tool (string), args (object with {{step_id.path}} for variable substitution)',
-              }
-            },
-            required: ['program']
-          }
-        }
+        name: `${kCodeExecutionPluginPrefix}run_program`,
+        description: t('plugins.code_exec.runProgram.description'),
+        parameters: [
+          { name: 'program', type: 'object', description: 'The program to execute with a steps array. Each step has: id (string), tool (string), args (object with {{step_id.path}} for variable substitution)', required: true },
+        ]
       }
     ]
   }

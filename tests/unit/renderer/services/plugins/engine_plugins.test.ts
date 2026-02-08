@@ -730,20 +730,20 @@ test('MCP Plugin', async () => {
   expect(mcp.getCompletedDescription('tool', {}, { error: 'error' })).toBe('plugins.mcp.error_default_tool=tool&error=error')
 
   expect(await mcp.getTools()).toStrictEqual([
-    { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },
-    { type: 'function', function: { name: 'tool2' , description: 'description2', parameters: { type: 'object', properties: {}, required: [] } } },
+    { name: 'tool1' , description: 'description1', parameters: [] },
+    { name: 'tool2' , description: 'description2', parameters: [] },
   ])
-  
+
   expect(mcp.handlesTool('tool1')).toBe(true)
   expect(mcp.handlesTool('tool2')).toBe(true)
   expect(mcp.handlesTool('tool3')).toBe(false)
-  
+
   expect(await mcp.execute(context, {
     tool: 'tool1',
     parameters: { param1: 'value1' }
   })).toStrictEqual({ result: 'result' })
   expect(window.api.mcp.callTool).toHaveBeenLastCalledWith('tool1', { param1: 'value1' }, expect.any(String))
-  
+
   expect(await mcp.execute(context, {
     tool: 'tool2',
     parameters: { param1: 'value1' }
@@ -751,7 +751,7 @@ test('MCP Plugin', async () => {
 
   mcp.enableTool('tool1')
   expect(await mcp.getTools()).toStrictEqual([
-    { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },
+    { name: 'tool1' , description: 'description1', parameters: [] },
   ])
 
   expect(mcp.handlesTool('tool1')).toBe(true)

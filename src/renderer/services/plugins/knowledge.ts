@@ -2,7 +2,7 @@
 import { anyDict } from 'types/index'
 import { DocumentBase, DocRepoQueryResponseItem } from 'types/rag'
 import { PluginConfig } from './plugin'
-import { MultiToolPlugin, LlmTool, PluginExecutionContext } from 'multi-llm-ts'
+import { MultiToolPlugin, PluginExecutionContext, PluginTool } from 'multi-llm-ts'
 import { t } from '../i18n'
 
 export const kKnowledgePluginPrefix = 'search_knowledge_'
@@ -53,8 +53,8 @@ export default class extends MultiToolPlugin {
     return t('plugins.knowledge.completed', { docrepo: repo.name, count })
   }
 
-  async getTools(): Promise<LlmTool[]> {
-    
+  async getTools(): Promise<PluginTool[]> {
+
     const allDocrepos = window.api.docrepo.list(this.workspaceId) as DocumentBase[]
     if (!allDocrepos?.length) {
       return []
@@ -67,28 +67,17 @@ export default class extends MultiToolPlugin {
              repo.description.trim().length > 0
     })
 
-    const tools: LlmTool[] = filteredDocrepos.map(repo => ({
-      type: 'function' as const,
-      function: {
-        name: `${kKnowledgePluginPrefix}${repo.uuid}`,
-        description: `Allows to search: ${repo.description}`,
-        parameters: {
-          type: 'object',
-          properties: {
-            query: {
-              name: 'query',
-              type: 'string',
-              description: 'The search query to find relevant information',
-            }
-          },
-          required: ['query']
-        }
-      }
+    const tools: PluginTool[] = filteredDocrepos.map(repo => ({
+      name: `${kKnowledgePluginPrefix}${repo.uuid}`,
+      description: `Allows to search: ${repo.description}`,
+      parameters: [
+        { name: 'query', type: 'string', description: 'The search query to find relevant information', required: true },
+      ]
     }))
 
     // Filter by toolsEnabled if set
     if (this.toolsEnabled) {
-      return tools.filter(tool => this.toolsEnabled.includes(tool.function.name))
+      return tools.filter(tool => this.toolsEnabled.includes(tool.name))
     }
 
     return tools

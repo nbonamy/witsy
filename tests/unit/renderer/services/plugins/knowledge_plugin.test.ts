@@ -71,10 +71,10 @@ test('getTools returns tools only for docrepos with descriptions in current work
   const tools = await plugin.getTools()
 
   expect(tools).toHaveLength(2) // Only repo1 and repo2 have valid descriptions
-  expect(tools[0].function.name).toBe('search_knowledge_repo1')
-  expect(tools[0].function.description).toBe('Allows to search: Contains all technical documentation and API references')
-  expect(tools[1].function.name).toBe('search_knowledge_repo2')
-  expect(tools[1].function.description).toBe('Allows to search: Marketing collateral, presentations, and case studies')
+  expect(tools[0].name).toBe('search_knowledge_repo1')
+  expect(tools[0].description).toBe('Allows to search: Contains all technical documentation and API references')
+  expect(tools[1].name).toBe('search_knowledge_repo2')
+  expect(tools[1].description).toBe('Allows to search: Marketing collateral, presentations, and case studies')
 })
 
 test('getTools excludes docrepos without descriptions', async () => {
@@ -83,7 +83,7 @@ test('getTools excludes docrepos without descriptions', async () => {
   const plugin = new KnowledgePlugin({ enabled: true }, 'workspace1')
   const tools = await plugin.getTools()
 
-  const toolNames = tools.map(t => t.function.name)
+  const toolNames = tools.map(t => t.name)
   expect(toolNames).not.toContain('search_knowledge_repo3') // No description
   expect(toolNames).not.toContain('search_knowledge_repo4') // Empty/whitespace description
 })
@@ -94,7 +94,7 @@ test('getTools excludes docrepos from other workspaces', async () => {
   const plugin = new KnowledgePlugin({ enabled: true }, 'workspace1')
   const tools = await plugin.getTools()
 
-  const toolNames = tools.map(t => t.function.name)
+  const toolNames = tools.map(t => t.name)
   expect(toolNames).not.toContain('search_knowledge_repo5') // Different workspace
 })
 
@@ -107,7 +107,7 @@ test('getTools respects toolsEnabled filter', async () => {
   const tools = await plugin.getTools()
 
   expect(tools).toHaveLength(1)
-  expect(tools[0].function.name).toBe('search_knowledge_repo1')
+  expect(tools[0].name).toBe('search_knowledge_repo1')
 })
 
 test('handlesTool returns true for valid knowledge tool', () => {

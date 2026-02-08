@@ -1,5 +1,5 @@
 
-import { IPlugin, LlmTool, MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
+import { IPlugin, MultiToolPlugin, PluginExecutionContext, PluginTool } from 'multi-llm-ts'
 import { anyDict } from 'types/index'
 import { t } from '../i18n'
 import CodeExecutionBase, { kCodeExecutionPluginPrefix } from './code_exec_base'
@@ -68,46 +68,23 @@ export default class CodeExecutionProxyPlugin extends CodeExecutionBase {
     }
   }
 
-  async getTools(): Promise<LlmTool[]> {
+  async getTools(): Promise<PluginTool[]> {
+    const toolsList = this.tools.map((t) => `- ${t.name}`).join('\n')
     return [
       {
-        type: 'function' as const,
-        function: {
-          name: `${kCodeExecutionPluginPrefix}call_tool`,
-          description: t('plugins.code_exec.callTool.description', { tools: this.tools.map((t) => `- ${t.function.name}`).join('\n') }),
-          parameters: {
-            type: 'object' as const,
-            properties: {
-              tool_name: {
-                type: 'string',
-                description: 'The name of the tool to execute',
-              },
-              args: {
-                type: 'object',
-                description: 'The arguments to pass to the tool',
-              }
-            },
-            required: ['tool_name', 'args']
-          }
-        }
+        name: `${kCodeExecutionPluginPrefix}call_tool`,
+        description: t('plugins.code_exec.callTool.description', { tools: toolsList }),
+        parameters: [
+          { name: 'tool_name', type: 'string', description: 'The name of the tool to execute', required: true },
+          { name: 'args', type: 'object', description: 'The arguments to pass to the tool', required: true },
+        ]
       },
       {
-        type: 'function' as const,
-        function: {
-          name: `${kCodeExecutionPluginPrefix}get_tools_info`,
-          description: t('plugins.code_exec.getToolsInfo.description', { tools: this.tools.map((t) => `- ${t.function.name}`).join('\n') }),
-          parameters: {
-            type: 'object' as const,
-            properties: {
-              tools_names: {
-                type: 'array',
-                description: 'The name of the tools to get information about',
-                items: { type: 'string' },
-              }
-            },
-            required: ['tools_names']
-          }
-        }
+        name: `${kCodeExecutionPluginPrefix}get_tools_info`,
+        description: t('plugins.code_exec.getToolsInfo.description', { tools: toolsList }),
+        parameters: [
+          { name: 'tools_names', type: 'array', description: 'The name of the tools to get information about', required: true, items: { type: 'string' } },
+        ]
       }
     ]
   }

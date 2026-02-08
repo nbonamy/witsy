@@ -83,12 +83,9 @@ describe('CodeExecutionProgramPlugin', () => {
       ]
       const mockTools = [
         {
-          type: 'function',
-          function: {
-            name: 'test_tool',
-            description: 'Test tool',
-            parameters: { type: 'object', properties: {}, required: [] }
-          }
+          name: 'test_tool',
+          description: 'Test tool',
+          parameters: []
         }
       ]
 
@@ -107,8 +104,8 @@ describe('CodeExecutionProgramPlugin', () => {
       const tools = await plugin.getTools()
 
       expect(tools).toHaveLength(2)
-      expect(tools[0].function.name).toBe(`${kCodeExecutionPluginPrefix}get_tools_info`)
-      expect(tools[1].function.name).toBe(`${kCodeExecutionPluginPrefix}run_program`)
+      expect(tools[0].name).toBe(`${kCodeExecutionPluginPrefix}get_tools_info`)
+      expect(tools[1].name).toBe(`${kCodeExecutionPluginPrefix}run_program`)
     })
   })
 
@@ -116,20 +113,14 @@ describe('CodeExecutionProgramPlugin', () => {
     beforeEach(async () => {
       const mockTools = [
         {
-          type: 'function',
-          function: {
-            name: 'test_tool_1',
-            description: 'Test tool 1',
-            parameters: { type: 'object', properties: { arg1: { type: 'string' } }, required: ['arg1'] }
-          }
+          name: 'test_tool_1',
+          description: 'Test tool 1',
+          parameters: [{ name: 'arg1', type: 'string', required: true }]
         },
         {
-          type: 'function',
-          function: {
-            name: 'test_tool_2',
-            description: 'Test tool 2',
-            parameters: { type: 'object', properties: {}, required: [] }
-          }
+          name: 'test_tool_2',
+          description: 'Test tool 2',
+          parameters: []
         }
       ]
       mockEngine.getAvailableTools.mockResolvedValue(mockTools)
@@ -148,7 +139,7 @@ describe('CodeExecutionProgramPlugin', () => {
       expect(result.tools_info[0]).toMatchObject({
         name: 'test_tool_1',
         description: 'Test tool 1',
-        parameters: { type: 'object', properties: { arg1: { type: 'string' } }, required: ['arg1'] }
+        parameters: [{ name: 'arg1', type: 'string', required: true }]
       })
       expect(result.tools_info[1]).toMatchObject({
         name: 'test_tool_2',

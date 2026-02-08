@@ -3,7 +3,7 @@
  */
 
 import { FunctionDeclaration, FunctionResponse, GoogleGenAI, Modality, Schema, Session, Type } from '@google/genai'
-import { LlmTool, MultiToolPlugin, Plugin, PluginExecutionContext } from 'multi-llm-ts'
+import { LlmTool, LlmToolOpenAI, MultiToolPlugin, normalizeToToolDefinition, Plugin, PluginExecutionContext, PluginTool, toOpenAITool } from 'multi-llm-ts'
 import { Configuration } from 'types/config'
 import { availablePlugins, enabledPlugins, PluginInstance } from '../plugins/plugins'
 import {
@@ -64,7 +64,8 @@ function typeToSchemaType(type: string, properties?: any): Type {
  * Convert LlmTool to Google FunctionDeclaration format
  */
 function llmToolToFunctionDeclaration(llmTool: LlmTool): FunctionDeclaration {
-  const func = llmTool.function
+  const openAITool: LlmToolOpenAI = toOpenAITool(llmTool)
+  const func = openAITool.function
   const googleProps: { [k: string]: Schema } = {}
 
   for (const name of Object.keys(func.parameters.properties || {})) {
@@ -111,7 +112,7 @@ function llmToolToFunctionDeclaration(llmTool: LlmTool): FunctionDeclaration {
 }
 
 type ToolEntry = {
-  llmTool: LlmTool
+  tool: PluginTool
   plugin: PluginInstance
   declaration: FunctionDeclaration
 }
@@ -433,24 +434,26 @@ export class RealtimeGemini extends RealtimeEngine {
         const toolsArray = Array.isArray(pluginTools) ? pluginTools : [pluginTools]
 
         for (const llmTool of toolsArray) {
+          const tool = normalizeToToolDefinition(llmTool)
           // Filter by tool selection (null = all tools allowed)
-          if (toolSelection !== null && !toolSelection.includes(llmTool.function.name)) {
+          if (toolSelection !== null && !toolSelection.includes(tool.name)) {
             continue
           }
           const declaration = llmToolToFunctionDeclaration(llmTool)
           declarations.push(declaration)
-          this.tools.set(llmTool.function.name, { llmTool, plugin, declaration })
+          this.tools.set(tool.name, { tool, plugin, declaration })
         }
       } else {
         // For regular plugins, build the tool from parameters
         const llmTool = pluginToLlmTool(plugin as Plugin)
+        const tool = normalizeToToolDefinition(llmTool)
         // Filter by tool selection (null = all tools allowed)
-        if (toolSelection !== null && !toolSelection.includes(llmTool.function.name)) {
+        if (toolSelection !== null && !toolSelection.includes(tool.name)) {
           continue
         }
         const declaration = llmToolToFunctionDeclaration(llmTool)
         declarations.push(declaration)
-        this.tools.set(llmTool.function.name, { llmTool, plugin, declaration })
+        this.tools.set(tool.name, { tool, plugin, declaration })
       }
     }
 

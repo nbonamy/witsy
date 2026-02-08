@@ -534,10 +534,9 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           ]
         }
       ] as unknown as McpServerWithTools[]),
-      //@ts-expect-error not sure about the type: 'function' complain
       getLlmTools: vi.fn(async () => [
-        { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },
-        { type: 'function', function: { name: 'tool2' , description: 'description2', parameters: { type: 'object', properties: {}, required: [] } } },
+        { name: 'tool1' , description: 'description1', parameters: [] },
+        { name: 'tool2' , description: 'description2', parameters: [] },
       ]),
       callTool: vi.fn(async (tool: string) => (tool === 'tool2' ? {
         content: [ { text: 'result2' } ],

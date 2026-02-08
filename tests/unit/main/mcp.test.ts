@@ -412,46 +412,16 @@ test('Connect', async () => {
     }
   })
   expect(await mcp.getLlmTools()).toStrictEqual([
-    {
-      type: 'function',
-      function: { name: 'tool1___90ab', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
-    },
-    {
-      type: 'function',
-      function: { name: 'tool2___90ab', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
-    },
-    {
-      type: 'function',
-      function: { name: 'tool3___90ab', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
-    },
-    {
-      type: 'function',
-      function: { name: 'tool1___0abc', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
-    },
-    {
-      type: 'function',
-      function: { name: 'tool2___0abc', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
-    },
-    {
-      type: 'function',
-      function: { name: 'tool3___0abc', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
-    },
-    {
-      type: 'function',
-      function: { name: 'tool2___bcde', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
-    },
-    {
-      type: 'function',
-      function: { name: 'tool1_____s1', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
-    },
-    {
-      type: 'function',
-      function: { name: 'tool2_____s1', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
-    },
-    {
-      type: 'function',
-      function: { name: 'tool3_____s1', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
-    },
+    { name: 'tool1___90ab', description: 'tool1 description', parameters: [{ name: 'arg', type: 'string', description: 'arg', required: false }] },
+    { name: 'tool2___90ab', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
+    { name: 'tool3___90ab', description: 'tool3 description', parameters: [] },
+    { name: 'tool1___0abc', description: 'tool1 description', parameters: [{ name: 'arg', type: 'string', description: 'arg', required: false }] },
+    { name: 'tool2___0abc', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
+    { name: 'tool3___0abc', description: 'tool3 description', parameters: [] },
+    { name: 'tool2___bcde', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
+    { name: 'tool1_____s1', description: 'tool1 description', parameters: [{ name: 'arg', type: 'string', description: 'arg', required: false }] },
+    { name: 'tool2_____s1', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
+    { name: 'tool3_____s1', description: 'tool3 description', parameters: [] },
   ])
 })
 
@@ -1053,9 +1023,9 @@ test('getInstallCommand without api key', () => {
   expect(result).toBe('npx -y @smithery/cli@latest install server --client witsy')
 })
 
-test('mcpToOpenAI handles array type properties', () => {
+test('mcpToPluginTool handles array type properties', () => {
   const mcp = new Mcp(app)
-  const mcpToOpenAI = (mcp as any).mcpToOpenAI.bind(mcp)
+  const mcpToPluginTool = (mcp as any).mcpToPluginTool.bind(mcp)
 
   const server: McpServer = {
     uuid: 'test-server',
@@ -1079,17 +1049,19 @@ test('mcpToOpenAI handles array type properties', () => {
     }
   }
 
-  const result = mcpToOpenAI(server, tool)
-  expect(result.function.parameters.properties.items).toEqual({
+  const result = mcpToPluginTool(server, tool)
+  expect(result.parameters[0]).toEqual({
+    name: 'items',
     type: 'array',
     description: 'List of items',
+    required: true,
     items: { type: 'string' }
   })
 })
 
-test('mcpToOpenAI handles tool without description', () => {
+test('mcpToPluginTool handles tool without description', () => {
   const mcp = new Mcp(app)
-  const mcpToOpenAI = (mcp as any).mcpToOpenAI.bind(mcp)
+  const mcpToPluginTool = (mcp as any).mcpToPluginTool.bind(mcp)
 
   const server: McpServer = {
     uuid: 'test-server',
@@ -1106,13 +1078,13 @@ test('mcpToOpenAI handles tool without description', () => {
     inputSchema: { type: 'object', properties: {}, required: [] as any[] }
   }
 
-  const result = mcpToOpenAI(server, tool)
-  expect(result.function.description).toBe('noDescTool')
+  const result = mcpToPluginTool(server, tool)
+  expect(result.description).toBe('noDescTool')
 })
 
-test('mcpToOpenAI handles tool without inputSchema', () => {
+test('mcpToPluginTool handles tool without inputSchema', () => {
   const mcp = new Mcp(app)
-  const mcpToOpenAI = (mcp as any).mcpToOpenAI.bind(mcp)
+  const mcpToPluginTool = (mcp as any).mcpToPluginTool.bind(mcp)
 
   const server: McpServer = {
     uuid: 'test-server',
@@ -1129,12 +1101,8 @@ test('mcpToOpenAI handles tool without inputSchema', () => {
     description: 'A simple tool'
   }
 
-  const result = mcpToOpenAI(server, tool)
-  expect(result.function.parameters).toEqual({
-    type: 'object',
-    properties: {},
-    required: []
-  })
+  const result = mcpToPluginTool(server, tool)
+  expect(result.parameters).toEqual([])
 })
 
 test('getLlmTools skips tools not in toolSelection', async () => {
@@ -1145,9 +1113,9 @@ test('getLlmTools skips tools not in toolSelection', async () => {
   const tools = await mcp.getLlmTools()
 
   // Check that only tool2 from server 4567-890a-bcde is included
-  const serverBcdeTools = tools.filter(t => t.function.name.endsWith('___bcde'))
+  const serverBcdeTools = tools.filter(t => t.name.endsWith('___bcde'))
   expect(serverBcdeTools).toHaveLength(1)
-  expect(serverBcdeTools[0].function.name).toBe('tool2___bcde')
+  expect(serverBcdeTools[0].name).toBe('tool2___bcde')
 })
 
 test('updateTokens for mcp server with extra config', async () => {

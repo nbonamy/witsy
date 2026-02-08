@@ -7,7 +7,7 @@ import { OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth'
 import { CompatibilityCallToolResultSchema } from '@modelcontextprotocol/sdk/types'
 import { exec } from 'child_process'
 import { app, App } from 'electron'
-import { LlmTool } from 'multi-llm-ts'
+import { PluginParameter, PluginTool } from 'multi-llm-ts'
 import { anyDict } from 'types/index'
 import { McpClient, McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from 'types/mcp'
 import { loadSettings, saveSettings, settingsFilePath } from './config'
@@ -910,8 +910,8 @@ export default class Mcp {
 
   }
 
-  getLlmTools = async (): Promise<LlmTool[]> => {
-    const allTools: LlmTool[] = []
+  getLlmTools = async (): Promise<PluginTool[]> => {
+    const allTools: PluginTool[] = []
     for (const client of this.clients) {
       try {
         const tools = await this.getCachedTools(client)
@@ -923,10 +923,10 @@ export default class Mcp {
           }
 
           try {
-            const functionTool = this.mcpToOpenAI(client.server, tool)
-            allTools.push(functionTool)
+            const toolDef = this.mcpToPluginTool(client.server, tool)
+            allTools.push(toolDef)
           } catch (e) {
-            console.error(`[mcp] Failed to convert MCP tool ${tool.name} from MCP server ${client.server.url} to OpenAI tool:`, e)
+            console.error(`[mcp] Failed to convert MCP tool ${tool.name} from MCP server ${client.server.url}:`, e)
           }
         }
       } catch (e) {
@@ -995,26 +995,24 @@ export default class Mcp {
     return errorMessage
   }
 
-  protected mcpToOpenAI = (server: McpServer, tool: any): LlmTool => {
-    return {
-      type: 'function',
-      function: {
-        name: this.uniqueToolName(server, tool.name),
-        description: tool.description ? tool.description : tool.name,
-        parameters: {
-          type: 'object',
-          properties: tool.inputSchema?.properties ? Object.keys(tool.inputSchema.properties).reduce((obj: anyDict, key: string) => {
-            const prop = tool.inputSchema.properties[key]
-            obj[key] = {
-              type: prop.type || 'string',
-              description: (prop.description || key),
-              ...(prop.type === 'array' ? { items: prop.items || 'string' } : {}),
-            }
-            return obj
-          }, {}) : {},
-          required: tool.inputSchema?.required ?? []
-        }
+  protected mcpToPluginTool = (server: McpServer, tool: any): PluginTool => {
+    const parameters: PluginParameter[] = []
+    const required = tool.inputSchema?.required ?? []
+    if (tool.inputSchema?.properties) {
+      for (const [key, prop] of Object.entries<any>(tool.inputSchema.properties)) {
+        parameters.push({
+          name: key,
+          type: prop.type || 'string',
+          description: prop.description || key,
+          required: required.includes(key),
+          ...(prop.type === 'array' ? { items: prop.items || { type: 'string' } } : {}),
+        })
       }
+    }
+    return {
+      name: this.uniqueToolName(server, tool.name),
+      description: tool.description ? tool.description : tool.name,
+      parameters,
     }
   }
 

@@ -1,5 +1,5 @@
 
-import { CustomToolPlugin, MultiToolPlugin } from 'multi-llm-ts'
+import { CustomToolPlugin, MultiToolPlugin, normalizeToToolDefinition } from 'multi-llm-ts'
 import { Configuration } from 'types/config'
 import { ToolSelection } from 'types/llm'
 import BrowsePlugin from './browse'
@@ -63,7 +63,8 @@ export const pluginTools = async (config: Configuration, pluginName: string): Pr
     if ('getTools' in plugin) {
       const pluginTools = await plugin.getTools()
       for (const pluginTool of pluginTools) {
-        plugins.push(pluginTool.function.name)
+        const tool = normalizeToToolDefinition(pluginTool)
+        plugins.push(tool.name)
       }
     } else {
       plugins.push(plugin.getName())
