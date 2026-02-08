@@ -23,6 +23,7 @@ default: increment-build-number mac-arm64
 watch-all:
 	@command -v tmux > /dev/null || (echo "Please install tmux: brew install tmux" && exit 1)
 	@tmux new-session \; \
+		set-option status off \; \
 		set-option -g mouse on \; \
 		send-keys 'npm run lint:watch' C-m \; \
 		split-window -v \; \
