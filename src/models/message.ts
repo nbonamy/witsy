@@ -117,7 +117,13 @@ export default class Message extends MessageBase implements IMessage {
       return null
     } else {
       const content = this.content.replaceAll(/<tool id="([^"]+)"><\/tool>/g, '')
-      return this.expert?.prompt ? `${this.expert.prompt}\n${content}` : content
+      if (this.expert?.prompt) {
+        if (this.expert.prompt.includes('$ARGUMENTS')) {
+          return this.expert.prompt.replaceAll('$ARGUMENTS', content)
+        }
+        return `${this.expert.prompt}\n${content}`
+      }
+      return content
     }
   }
 
