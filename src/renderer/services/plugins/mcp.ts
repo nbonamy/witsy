@@ -1,7 +1,7 @@
 
 import { anyDict } from 'types/index'
 import { PluginConfig } from './plugin'
-import { MultiToolPlugin, LlmTool, PluginExecutionContext } from 'multi-llm-ts'
+import { MultiToolPlugin, PluginExecutionContext, PluginTool } from 'multi-llm-ts'
 import { t } from '../i18n'
 import { executeIpcWithAbort } from './ipc_abort_helper'
 
@@ -9,7 +9,7 @@ export default class extends MultiToolPlugin {
 
   config: PluginConfig
   workspaceId: string
-  tools: LlmTool[]
+  tools: PluginTool[]
   
   constructor(config: PluginConfig, workspaceId: string) {
     super()
@@ -46,12 +46,12 @@ export default class extends MultiToolPlugin {
     }
   }
 
-  async getTools(): Promise<LlmTool[]> {
+  async getTools(): Promise<PluginTool[]> {
     try {
       this.tools = await window.api.mcp.getLlmTools()
       if (this.toolsEnabled) {
-        return this.tools.filter((tool: any) => {
-          return this.toolsEnabled.includes(tool.function.name)
+        return this.tools.filter((tool) => {
+          return this.toolsEnabled.includes(tool.name)
         })
       } else {
         return this.tools
@@ -64,7 +64,7 @@ export default class extends MultiToolPlugin {
   }
 
   handlesTool(name: string): boolean {
-    const handled = this.tools.find((tool: any) => tool.function.name === name) !== undefined
+    const handled = this.tools.find((tool) => tool.name === name) !== undefined
     return handled && (!this.toolsEnabled || this.toolsEnabled.includes(name))
   }
 

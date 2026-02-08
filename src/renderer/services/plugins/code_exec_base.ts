@@ -1,5 +1,5 @@
 
-import { IPlugin, LlmEngine, LlmTool, MultiToolPlugin } from 'multi-llm-ts'
+import { IPlugin, LlmEngine, MultiToolPlugin, PluginTool } from 'multi-llm-ts'
 import LlmUtils from '../llm_utils'
 
 export const kCodeExecutionPluginPrefix = 'code_exec_'
@@ -12,7 +12,7 @@ export const kCodeExecutionPluginPrefix = 'code_exec_'
 export default class CodeExecutionBase extends MultiToolPlugin {
 
   protected plugins: IPlugin[] = []
-  protected tools: LlmTool[] = []
+  protected tools: PluginTool[] = []
   protected toolResultSchemas: Record<string, any> = {}
 
   constructor() {
@@ -116,7 +116,7 @@ export default class CodeExecutionBase extends MultiToolPlugin {
   protected getToolsInfo(toolNames: string[]): any {
     return {
       tools_info: toolNames.map((name: string) => {
-        const foundTool = this.tools.find(t => t.function.name === name)
+        const foundTool = this.tools.find(t => t.name === name)
         if (!foundTool) {
           return {
             name,
@@ -124,9 +124,9 @@ export default class CodeExecutionBase extends MultiToolPlugin {
           }
         }
         const toolInfo: any = {
-          name: foundTool.function.name,
-          description: foundTool.function.description,
-          parameters: foundTool.function.parameters
+          name: foundTool.name,
+          description: foundTool.description,
+          parameters: foundTool.parameters
         }
         // Add result_schema if available
         if (this.toolResultSchemas[name]) {

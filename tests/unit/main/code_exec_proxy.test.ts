@@ -84,12 +84,9 @@ describe('CodeExecutionProxyPlugin', () => {
       ]
       const mockTools = [
         {
-          type: 'function',
-          function: {
-            name: 'test_tool',
-            description: 'Test tool',
-            parameters: { type: 'object', properties: {}, required: [] }
-          }
+          name: 'test_tool',
+          description: 'Test tool',
+          parameters: []
         }
       ]
 
@@ -105,8 +102,8 @@ describe('CodeExecutionProxyPlugin', () => {
     test('getTools returns call_tool and get_tools_info', async () => {
       const tools = await plugin.getTools()
       expect(tools).toHaveLength(2)
-      expect(tools[0].function.name).toBe(`${kCodeExecutionPluginPrefix}call_tool`)
-      expect(tools[1].function.name).toBe(`${kCodeExecutionPluginPrefix}get_tools_info`)
+      expect(tools[0].name).toBe(`${kCodeExecutionPluginPrefix}call_tool`)
+      expect(tools[1].name).toBe(`${kCodeExecutionPluginPrefix}get_tools_info`)
     })
   })
 
@@ -118,28 +115,18 @@ describe('CodeExecutionProxyPlugin', () => {
       ]
       const mockTools = [
         {
-          type: 'function' as const,
-          function: {
-            name: 'search',
-            description: 'Search the web',
-            parameters: {
-              type: 'object' as const,
-              properties: { query: { type: 'string' } },
-              required: ['query']
-            }
-          }
+          name: 'search',
+          description: 'Search the web',
+          parameters: [
+            { name: 'query', type: 'string', required: true }
+          ]
         },
         {
-          type: 'function' as const,
-          function: {
-            name: 'calculator',
-            description: 'Perform calculations',
-            parameters: {
-              type: 'object' as const,
-              properties: { expression: { type: 'string' } },
-              required: ['expression']
-            }
-          }
+          name: 'calculator',
+          description: 'Perform calculations',
+          parameters: [
+            { name: 'expression', type: 'string', required: true }
+          ]
         }
       ]
 
@@ -188,28 +175,14 @@ describe('CodeExecutionProxyPlugin', () => {
       ]
       const mockTools = [
         {
-          type: 'function' as const,
-          function: {
-            name: 'calculator',
-            description: 'Perform calculations',
-            parameters: {
-              type: 'object' as const,
-              properties: { expression: { type: 'string' } },
-              required: ['expression']
-            }
-          }
+          name: 'calculator',
+          description: 'Perform calculations',
+          parameters: [{ name: 'expression', type: 'string', required: true }]
         },
         {
-          type: 'function' as const,
-          function: {
-            name: 'echo',
-            description: 'Echo a message',
-            parameters: {
-              type: 'object' as const,
-              properties: { message: { type: 'string' } },
-              required: ['message']
-            }
-          }
+          name: 'echo',
+          description: 'Echo a message',
+          parameters: [{ name: 'message', type: 'string', required: true }]
         }
       ]
 
@@ -267,20 +240,14 @@ describe('CodeExecutionProxyPlugin', () => {
       ]
       const mockTools = [
         {
-          type: 'function' as const,
-          function: {
-            name: 'wrapper',
-            description: 'Returns wrapped data',
-            parameters: { type: 'object' as const, properties: {}, required: [] }
-          }
+          name: 'wrapper',
+          description: 'Returns wrapped data',
+          parameters: []
         },
         {
-          type: 'function' as const,
-          function: {
-            name: 'direct',
-            description: 'Returns direct result',
-            parameters: { type: 'object' as const, properties: {}, required: [] }
-          }
+          name: 'direct',
+          description: 'Returns direct result',
+          parameters: []
         }
       ]
 
@@ -346,19 +313,12 @@ describe('CodeExecutionProxyPlugin', () => {
       const mockPlugins = [multiToolPlugin]
       const mockTools = [
         {
-          type: 'function' as const,
-          function: {
-            name: 'multi_add',
-            description: 'Add two numbers',
-            parameters: {
-              type: 'object' as const,
-              properties: {
-                a: { type: 'number' },
-                b: { type: 'number' }
-              },
-              required: ['a', 'b']
-            }
-          }
+          name: 'multi_add',
+          description: 'Add two numbers',
+          parameters: [
+            { name: 'a', type: 'number', required: true },
+            { name: 'b', type: 'number', required: true }
+          ]
         }
       ]
 
