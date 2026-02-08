@@ -157,6 +157,30 @@ test('Build from JSON - tool calls backward compatibility', () => {
 
 })
 
+test('contentForModel with expert prompt appends by default', () => {
+  const message = new Message('user', 'Hello world')
+  message.setExpert({ id: '1', type: 'user', prompt: 'Translate this to spanish', state: 'enabled', triggerApps: [] })
+  expect(message.contentForModel).toBe('Translate this to spanish\nHello world')
+})
+
+test('contentForModel with expert prompt replaces $ARGUMENTS', () => {
+  const message = new Message('user', 'Hello world')
+  message.setExpert({ id: '1', type: 'user', prompt: 'Translate "$ARGUMENTS" to spanish', state: 'enabled', triggerApps: [] })
+  expect(message.contentForModel).toBe('Translate "Hello world" to spanish')
+})
+
+test('contentForModel with expert prompt replaces multiple $ARGUMENTS', () => {
+  const message = new Message('user', 'Hello world')
+  message.setExpert({ id: '1', type: 'user', prompt: 'First: $ARGUMENTS, Second: $ARGUMENTS', state: 'enabled', triggerApps: [] })
+  expect(message.contentForModel).toBe('First: Hello world, Second: Hello world')
+})
+
+test('contentForModel with expert prompt $ARGUMENTS and tool tags', () => {
+  const message = new Message('user', '<tool id="1"></tool>Hello world')
+  message.setExpert({ id: '1', type: 'user', prompt: 'Translate "$ARGUMENTS" to spanish', state: 'enabled', triggerApps: [] })
+  expect(message.contentForModel).toBe('Translate "Hello world" to spanish')
+})
+
 test('Text message', () => {
   const message = new Message('user')
   expect(message.transient).toBe(true)
