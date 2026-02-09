@@ -522,15 +522,15 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         {
           uuid: '1', registryId: '1', state: 'enabled' as const, type: 'stdio' as const, command: 'node', url: 'script.js', toolSelection: null,
           tools: [
-            { uuid: 'tool1_1', name: 'tool1', description: 'description1' },
-            { uuid: 'tool2_1', name: 'tool2', description: 'description2' }
+            { name: 'tool1', function: 'tool1', description: 'description1' },
+            { name: 'tool2', function: 'tool2', description: 'description2' }
           ]
         },
         {
           uuid: '2', registryId: '2', state: 'enabled' as const, type: 'sse' as const, url: 'http://localhost:3000', toolSelection: null,
           tools: [
-            { uuid: 'tool3_2', name: 'tool3', description: 'description3' },
-            { uuid: 'tool4_2', name: 'tool4', description: 'description4' }
+            { name: 'tool3', function: 'tool3', description: 'description3' },
+            { name: 'tool4', function: 'tool4', description: 'description4' }
           ]
         }
       ] as unknown as McpServerWithTools[]),
@@ -541,8 +541,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       callTool: vi.fn(async (tool: string) => (tool === 'tool2' ? {
         content: [ { text: 'result2' } ],
       } : { result: 'result' })),
-      isMcpToolName: vi.fn((name: string) => /___....$/.test(name)),
-      originalToolName: vi.fn((name: string) => name.replace(/___....$/, '')),
+      isMcpToolName: vi.fn((name: string) => /___....$/.test(name) || /_\d$/.test(name)),
+      originalToolName: vi.fn((name: string) => name.replace(/___....$/, '').replace(/_\d$/, '')),
       detectOAuth: vi.fn(async () => ({ requiresOAuth: false })),
       startOAuthFlow: vi.fn(async () => JSON.stringify({ tokens: {}, clientInformation: {}, clientMetadata: {} })),
     },

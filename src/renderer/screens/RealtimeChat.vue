@@ -113,7 +113,7 @@ import {
 } from '@services/realtime'
 import { store } from '@services/store'
 import { BlocksIcon } from 'lucide-vue-next'
-import { McpServerWithTools, McpToolUnique } from 'types/mcp'
+import { McpServerWithTools, McpTool } from 'types/mcp'
 import { computed, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import LlmUtils from '../services/llm_utils'
 
@@ -278,7 +278,7 @@ const handleAllServerToolsToggle = async (server: McpServerWithTools) => {
   toolSelection.value = await ts.handleAllServerToolsToggle(toolSelection.value, server)
 }
 
-const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolUnique) => {
+const handleServerToolToggle = async (server: McpServerWithTools, tool: McpTool) => {
   toolSelection.value = await ts.handleServerToolToggle(toolSelection.value, server, tool)
 }
 

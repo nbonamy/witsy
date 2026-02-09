@@ -27,6 +27,7 @@ export type Configuration = {
   mcp: McpConfig
   mcpServers: Record<string, McpClaudeServer>
   features?: Record<string, any>
+  migrations?: string[]
 }
 
 export type WitsyEngineCreateOpts = EngineCreateOpts & {
@@ -319,6 +320,7 @@ export type McpServerExtra = {
   state?: McpServerState
   oauth?: McpOAuthConfig
   toolSelection?: ToolSelection
+  toolMappings?: Record<string, string>
 }
 
 export type McpConfig = {

@@ -131,7 +131,7 @@ export class LlmContext {
         mcp: {
           isAvailable: () => true,
           getLlmTools: this.mcp?.getLlmTools,
-          originalToolName: Mcp.originalToolName,
+          originalToolName: (name: string) => this.mcp?.originalToolName(name) ?? name,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           callTool: (name: string, parameters: anyDict, signalId?: string) => {
             return this.mcp?.callTool(name, parameters)

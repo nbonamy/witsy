@@ -203,7 +203,7 @@ import { store } from '@services/store'
 import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, FolderIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
 import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
 import { Command, CustomInstruction, Expert, MessageExecutionMode } from 'types/index'
-import { McpServerWithTools, McpToolUnique } from 'types/mcp'
+import { McpServerWithTools, McpTool } from 'types/mcp'
 import { DocumentBase } from 'types/rag'
 import { computed, nextTick, onMounted, PropType, ref, watch } from 'vue'
 import useAudioRecorder from '../audio/audio_recorder'
@@ -1166,7 +1166,7 @@ const handleAllServerToolsToggle = async (server: McpServerWithTools) => {
   emit('tools-updated', props.chat.tools)
 }
 
-const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolUnique) => {
+const handleServerToolToggle = async (server: McpServerWithTools, tool: McpTool) => {
   props.chat.tools = await ts.handleServerToolToggle(props.chat.tools, server, tool)
   emit('tools-updated', props.chat.tools)
 }

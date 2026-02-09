@@ -168,7 +168,7 @@ import { computed, nextTick, PropType, ref, watch } from 'vue'
 import AgentIcon from '@assets/agent.svg?component'
 import Agent from '@models/agent'
 import { kAgentStepVarFacts, kAgentStepVarOutputPrefix } from 'types/agents'
-import { McpServerWithTools, McpToolUnique } from 'types/mcp'
+import { McpServerWithTools, McpTool } from 'types/mcp'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import ContextMenuPlus from '@components/ContextMenuPlus.vue'
 import DocReposMenu from '@components/DocReposMenu.vue'
@@ -399,7 +399,7 @@ const handleAllServerToolsToggle = async (server: McpServerWithTools) => {
   }
 }
 
-const handleServerToolToggle = async (server: McpServerWithTools, tool: McpToolUnique) => {
+const handleServerToolToggle = async (server: McpServerWithTools, tool: McpTool) => {
   if (toolsMenuStepIndex.value >= 0) {
     props.agent.steps[toolsMenuStepIndex.value].tools = await ts.handleServerToolToggle(props.agent.steps[toolsMenuStepIndex.value].tools, server, tool)
   }

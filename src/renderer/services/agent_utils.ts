@@ -1,7 +1,7 @@
 import { AgentRun, AgentRunTrigger } from 'types/agents'
 import { Configuration } from 'types/config'
 import { Chat } from 'types/index'
-import { McpToolUnique } from 'types/mcp'
+import { McpTool } from 'types/mcp'
 import Agent from '@models/agent'
 import AgentA2AExecutor from './agent_executor_a2a'
 import AgentWorkflowExecutor from './agent_executor_workflow'
@@ -61,7 +61,7 @@ export async function remapAgentMcpTools(agent: Agent): Promise<{ agent: Agent, 
 
   // Get all available MCP tools from local servers
   const serversWithTools = await window.api.mcp.getAllServersWithTools()
-  const allTools: McpToolUnique[] = serversWithTools.flatMap(({ tools }) => tools)
+  const allTools: McpTool[] = serversWithTools.flatMap(({ tools }) => tools)
 
   // Process each step in the agent
   agent.steps.forEach((step, stepIndex) => {
@@ -85,7 +85,7 @@ export async function remapAgentMcpTools(agent: Agent): Promise<{ agent: Agent, 
 
       if (matches.length === 1) {
         // Exactly one match - remap to local tool function name
-        remappedTools.push(matches[0].uuid)
+        remappedTools.push(matches[0].function)
       } else {
         // No match or multiple matches - add warning
         warnings.push(t('agent.forge.import.toolNotFound', { step: stepIndex + 1, tool: originalName }))

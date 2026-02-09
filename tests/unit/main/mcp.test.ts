@@ -149,8 +149,8 @@ test('Initialization', async () => {
     { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', oauth: null, toolSelection: null },
     { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py', oauth: null, toolSelection: null },
     { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', oauth: null, toolSelection: ['tool2'] },
-    { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined, toolSelection: null },
-    { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined, oauth: undefined, toolSelection: null }
+    { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined, toolSelection: null, toolMappings: undefined },
+    { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined, oauth: undefined, toolSelection: null, toolMappings: undefined }
   ])
 })
 
@@ -395,12 +395,13 @@ test('Connect', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.connect())
   expect(mcp.clients).toHaveLength(4)
+  // With new collision handling: first server keeps original names, subsequent servers get _N suffixes
   expect(await mcp.getStatus()).toStrictEqual({
     servers: [
-      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, oauth: null, toolSelection: null, tools: ['tool1___90ab', 'tool2___90ab', 'tool3___90ab'] },
-      { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', oauth: null, toolSelection: null, tools: ['tool1___0abc', 'tool2___0abc', 'tool3___0abc'] },
-      { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', oauth: null, toolSelection: ['tool2'], tools: ['tool1___bcde', 'tool2___bcde', 'tool3___bcde'] },
-      { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined, toolSelection: null, tools: ['tool1_____s1', 'tool2_____s1', 'tool3_____s1'] },
+      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, oauth: null, toolSelection: null, tools: ['tool1', 'tool2', 'tool3'] },
+      { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', oauth: null, toolSelection: null, toolMappings: { tool1: 'tool1_1', tool2: 'tool2_1', tool3: 'tool3_1' }, tools: ['tool1_1', 'tool2_1', 'tool3_1'] },
+      { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', oauth: null, toolSelection: ['tool2'], toolMappings: { tool1: 'tool1_2', tool2: 'tool2_2', tool3: 'tool3_2' }, tools: ['tool1_2', 'tool2_2', 'tool3_2'] },
+      { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, oauth: undefined, toolSelection: null, toolMappings: { tool1: 'tool1_3', tool2: 'tool2_3', tool3: 'tool3_3' }, tools: ['tool1_3', 'tool2_3', 'tool3_3'] },
     ],
     logs: {
       '1234-5678-90ab': [],
@@ -412,57 +413,57 @@ test('Connect', async () => {
     }
   })
   expect(await mcp.getLlmTools()).toStrictEqual([
-    { name: 'tool1___90ab', description: 'tool1 description', parameters: [{ name: 'arg', type: 'string', description: 'arg', required: false }] },
-    { name: 'tool2___90ab', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
-    { name: 'tool3___90ab', description: 'tool3 description', parameters: [] },
-    { name: 'tool1___0abc', description: 'tool1 description', parameters: [{ name: 'arg', type: 'string', description: 'arg', required: false }] },
-    { name: 'tool2___0abc', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
-    { name: 'tool3___0abc', description: 'tool3 description', parameters: [] },
-    { name: 'tool2___bcde', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
-    { name: 'tool1_____s1', description: 'tool1 description', parameters: [{ name: 'arg', type: 'string', description: 'arg', required: false }] },
-    { name: 'tool2_____s1', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
-    { name: 'tool3_____s1', description: 'tool3 description', parameters: [] },
+    { name: 'tool1', description: 'tool1 description', parameters: [{ name: 'arg', type: 'string', description: 'arg', required: false }] },
+    { name: 'tool2', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
+    { name: 'tool3', description: 'tool3 description', parameters: [] },
+    { name: 'tool1_1', description: 'tool1 description', parameters: [{ name: 'arg', type: 'string', description: 'arg', required: false }] },
+    { name: 'tool2_1', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
+    { name: 'tool3_1', description: 'tool3 description', parameters: [] },
+    { name: 'tool2_2', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
+    { name: 'tool1_3', description: 'tool1 description', parameters: [{ name: 'arg', type: 'string', description: 'arg', required: false }] },
+    { name: 'tool2_3', description: 'tool2', parameters: [{ name: 'arg', type: 'number', description: 'desc', required: false }] },
+    { name: 'tool3_3', description: 'tool3 description', parameters: [] },
   ])
 })
 
 test('getAllServersWithTools', async () => {
   const mcp = new Mcp(app)
   await mcp.connect()
-  
+
   const result = await mcp.getAllServersWithTools()
   expect(result).toHaveLength(4)
-  
+
   // Check the structure of each server with tools (flattened structure)
+  // First server keeps original names (no collisions yet)
   expect(result[0]).toEqual(expect.objectContaining({
     uuid: '1234-5678-90ab',
     type: 'stdio',
     command: 'node',
     url: 'script.js',
     tools: [
-      { uuid: 'tool1___90ab', name: 'tool1', description: 'tool1 description' },
-      { uuid: 'tool2___90ab', name: 'tool2', description: 'tool2' },
-      { uuid: 'tool3___90ab', name: 'tool3', description: 'tool3 description' }
+      { name: 'tool1', function: 'tool1', description: 'tool1 description' },
+      { name: 'tool2', function: 'tool2', description: 'tool2' },
+      { name: 'tool3', function: 'tool3', description: 'tool3 description' }
     ]
   }))
-  
+
+  // Second server gets _1 suffix due to collision
   expect(result[1]).toEqual(expect.objectContaining({
     uuid: '2345-6789-0abc',
     type: 'sse',
     url: 'http://localhost:3000',
     tools: [
-      { uuid: 'tool1___0abc', name: 'tool1', description: 'tool1 description' },
-      { uuid: 'tool2___0abc', name: 'tool2', description: 'tool2' },
-      { uuid: 'tool3___0abc', name: 'tool3', description: 'tool3 description' }
+      { name: 'tool1', function: 'tool1_1', description: 'tool1 description' },
+      { name: 'tool2', function: 'tool2_1', description: 'tool2' },
+      { name: 'tool3', function: 'tool3_1', description: 'tool3 description' }
     ]
   }))
-  
+
   // Verify that tools have the original names (not the unique suffixed ones)
-  // Plus tool1 is skipped in this server
+  // Plus tool1 and tool3 are skipped in this server (toolSelection: ['tool2'])
   expect(result[2].tools[0].name).toBe('tool2')
-  expect(result[2].tools[0].name).not.toContain('___')
-  
-  // Verify that tools have unique UUIDs with suffixes
-  expect(result[2].tools[0].uuid).toContain('___')
+  expect(result[2].tools[0].name).not.toMatch(/_.$/)
+
 })
 
 test('Does not connect twice', async () => {
@@ -472,62 +473,72 @@ test('Does not connect twice', async () => {
   expect(mcp.clients).toHaveLength(4)
 })
 
-test('Name conversion', async () => {
-  expect(Mcp.originalToolName('tool1___90ab')).toBe('tool1')
-  expect(Mcp.originalToolName('tool3_____s1')).toBe('tool3')
+test('originalToolName instance method does reverse lookup', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  // Instance method does reverse lookup via toolMappings
+  // tool1_1 is mapped from tool1 on second server
+  expect(mcp.originalToolName('tool1_1')).toBe('tool1')
+  expect(mcp.originalToolName('tool2_2')).toBe('tool2')
+
+  // Names without mappings return as-is
+  expect(mcp.originalToolName('tool1')).toBe('tool1')
+  expect(mcp.originalToolName('unknown_tool')).toBe('unknown_tool')
 })
 
-test('uniqueToolName 64 character limit', async () => {
+test('detectAndResolveCollisions basic functionality', async () => {
   const mcp = new Mcp(app)
-  const server: McpServer = {
-    uuid: '1234-5678-90ab-cdef',
-    registryId: 'test',
-    state: 'enabled',
-    type: 'stdio',
-    command: 'node',
-    url: 'script.js',
-    toolSelection: null
-  }
 
-  // Test normal case - short name gets suffix
-  const shortName = 'search_files'
-  const shortResult = (mcp as any).uniqueToolName(server, shortName)
-  expect(shortResult).toBe('search_files___cdef')
-  expect(shortResult.length).toBe(19)
+  // No collisions - returns empty mappings
+  const noCollisions = (mcp as any).detectAndResolveCollisions('server1', ['tool1', 'tool2'])
+  expect(noCollisions).toEqual({})
+})
 
-  // Test edge case - name that results in exactly 64 chars with suffix
-  const edgeName = 'a_tool_name_that_is_exactly_fifty_seven_chars_long_abcdef' // 57 chars + 7 suffix = 64
-  const edgeResult = (mcp as any).uniqueToolName(server, edgeName)
-  expect(edgeResult).toBe('a_tool_name_that_is_exactly_fifty_seven_chars_long_abcdef___cdef')
-  expect(edgeResult.length).toBe(64)
+test('detectAndResolveCollisions with collisions', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect() // This populates tools from first server
 
-  // Test name that would exceed 64 chars with suffix - should fallback to original
-  const overName = 'a_tool_name_that_is_exactly_fifty_eight_chars_long_abcdefg' // 58 chars + 7 suffix = 65
-  const overResult = (mcp as any).uniqueToolName(server, overName)
-  expect(overResult).toBe(overName) // Should return original name, no suffix
-  expect(overResult.length).toBe(58)
+  // New server with same tool names should get collision suffixes
+  // After connect, we have 4 servers with tools. The collision detection uses getServers()
+  // which returns all servers, and checks the cache for tools.
+  // Server 1 has tool1, tool2, tool3 (original names)
+  // Server 2 has tool1_1, tool2_1, tool3_1
+  // Server 3 has tool1_2, tool2_2, tool3_2
+  // Server 4 has tool1_3, tool2_3, tool3_3
+  // A new server would get _4 suffix
+  const collisions = (mcp as any).detectAndResolveCollisions('new-server', ['tool1', 'tool2', 'new_tool'])
+  expect(collisions).toEqual({
+    tool1: 'tool1_4',
+    tool2: 'tool2_4'
+    // new_tool has no collision, so no mapping
+  })
+})
 
-  // Test long name - exceeds 64 chars, should fallback to original
-  const longName = 'a_very_long_tool_name_that_exceeds_the_maximum_allowed_length_of_64_characters_when_combined_with_suffix'
-  const longResult = (mcp as any).uniqueToolName(server, longName)
-  expect(longResult).toBe(longName) // Should return original name
-  expect(longResult.length).toBe(104) // Original length preserved
+test('detectAndResolveCollisions preserves existing mappings on reconnect', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
 
-  // Verify originalToolName can handle both cases
-  expect(Mcp.originalToolName(shortResult)).toBe(shortName)
-  expect(Mcp.originalToolName(edgeResult)).toBe(edgeName)
-  expect(Mcp.originalToolName(overResult)).toBe(overName) // No suffix to remove
-  expect(Mcp.originalToolName(longResult)).toBe(longName) // No suffix to remove
+  // Simulate a server reconnecting with existing mappings
+  const existingMappings = { tool1: 'tool1_1', tool2: 'tool2_1' }
+  const collisions = (mcp as any).detectAndResolveCollisions('2345-6789-0abc', ['tool1', 'tool2', 'tool3'], existingMappings)
+
+  // Should preserve the existing mappings
+  expect(collisions.tool1).toBe('tool1_1')
+  expect(collisions.tool2).toBe('tool2_1')
 })
 
 test('Call tool', async () => {
   const mcp = new Mcp(app)
   await mcp.connect()
-  expect(await mcp.callTool('tool1___90ab', { arg: 'arg1' })).toStrictEqual({ toolResult: '1-tool1-arg1-result' })
-  expect(await mcp.callTool('tool2___90ab', { arg: 'arg2' })).toStrictEqual({ toolResult: '1-tool2-arg2-result' })
-  expect(await mcp.callTool('tool1___0abc', { arg: 'arg3' })).toStrictEqual({ content: [{ type: 'text', text: '2-tool1-arg3-result' }] })
-  expect(await mcp.callTool('tool2___0abc', { arg: 'arg4' })).toStrictEqual({ content: [{ type: 'text', text: '2-tool2-arg4-result' }] })
-  await expect(() => mcp.callTool('tool3___1', { arg: 'modern' })).rejects.toThrowError(/not found/)
+  // First server keeps original names
+  expect(await mcp.callTool('tool1', { arg: 'arg1' })).toStrictEqual({ toolResult: '1-tool1-arg1-result' })
+  expect(await mcp.callTool('tool2', { arg: 'arg2' })).toStrictEqual({ toolResult: '1-tool2-arg2-result' })
+  // Second server gets _1 suffix
+  expect(await mcp.callTool('tool1_1', { arg: 'arg3' })).toStrictEqual({ content: [{ type: 'text', text: '2-tool1-arg3-result' }] })
+  expect(await mcp.callTool('tool2_1', { arg: 'arg4' })).toStrictEqual({ content: [{ type: 'text', text: '2-tool2-arg4-result' }] })
+  // Non-existent tool
+  await expect(() => mcp.callTool('tool3_nonexistent', { arg: 'modern' })).rejects.toThrowError(/not found/)
 })
 
 test('Disconnect', async () => {
@@ -722,7 +733,7 @@ test('getCachedTools handles listTools error', async () => {
   }
 
   const result = await (mcp as any).getCachedTools(mockClient)
-  expect(result).toEqual([])
+  expect(result).toStrictEqual({ tools: [] })
 
   // Check that error was logged
   expect(mcp.logs['error-server']).toContain('[mcp] Failed to get tools')
@@ -745,10 +756,10 @@ test('getStatus with cached non-persistent server tools', async () => {
   // Don't connect - so we're testing the cached non-persistent server path
   const status = await mcp.getStatus()
 
-  // The server should show cached tools
+  // The server should show cached tools (no collision suffix since no mappings)
   const serverStatus = status.servers.find(s => s.uuid === '1234-5678-90ab')
   expect(serverStatus).toBeDefined()
-  expect(serverStatus!.tools).toContain('cachedTool___90ab')
+  expect(serverStatus!.tools).toContain('cachedTool')
 })
 
 test('getStatus with cached null tools (error state)', async () => {
@@ -775,9 +786,10 @@ test('getServerTools returns tools for connected server', async () => {
 
   const tools = await mcp.getServerTools('1234-5678-90ab')
   expect(tools).toHaveLength(3)
+  // First server keeps original names (no collisions)
   expect(tools[0]).toEqual({
     name: 'tool1',
-    function: 'tool1___90ab',
+    function: 'tool1',
     description: 'tool1 description',
     inputSchema: { type: 'object', properties: { arg: { type: 'string' }}, required: [] }
   })
@@ -791,16 +803,21 @@ test('getServerTools returns empty for unknown server', async () => {
   expect(tools).toEqual([])
 })
 
-test('isMcpToolName correctly identifies MCP tool names', () => {
+test('isMcpToolName correctly identifies MCP tool names', async () => {
   const mcp = new Mcp(app)
+  await mcp.connect()
 
+  // isMcpToolName now checks if tool exists in connected clients
+  expect(mcp.isMcpToolName('tool1')).toBe(true)  // First server's tool
+  expect(mcp.isMcpToolName('tool1_1')).toBe(true)  // Second server's tool (collision suffix)
+  expect(mcp.isMcpToolName('tool2_2')).toBe(true)  // Third server's tool
+
+  // Legacy ___xxxx format is recognized for import compatibility
   expect(mcp.isMcpToolName('tool1___90ab')).toBe(true)
-  expect(mcp.isMcpToolName('tool3_____s1')).toBe(true)
-  expect(mcp.isMcpToolName('search___abcd')).toBe(true)
+  expect(mcp.isMcpToolName('search_files___1234')).toBe(true)
 
-  expect(mcp.isMcpToolName('regular_tool')).toBe(false)
-  expect(mcp.isMcpToolName('no_suffix')).toBe(false)
-  expect(mcp.isMcpToolName('tool___ab')).toBe(false) // Only 2 chars after ___
+  expect(mcp.isMcpToolName('unknown_tool')).toBe(false)
+  expect(mcp.isMcpToolName('tool___ab')).toBe(false) // Only 2 chars after ___, not legacy
 })
 
 test('translateError translates connection errors', () => {
@@ -1105,6 +1122,145 @@ test('mcpToPluginTool handles tool without inputSchema', () => {
   expect(result.parameters).toEqual([])
 })
 
+test('mcpToPluginTool handles enum properties', () => {
+  const mcp = new Mcp(app)
+  const mcpToPluginTool = (mcp as any).mcpToPluginTool.bind(mcp)
+
+  const server: McpServer = {
+    uuid: 'test-server',
+    registryId: 'test',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  }
+
+  const tool = {
+    name: 'enumTool',
+    description: 'Tool with enum param',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        format: { type: 'string', description: 'Output format', enum: ['json', 'xml', 'csv'] }
+      },
+      required: ['format']
+    }
+  }
+
+  const result = mcpToPluginTool(server, tool)
+  expect(result.parameters[0]).toEqual({
+    name: 'format',
+    type: 'string',
+    description: 'Output format',
+    required: true,
+    enum: ['json', 'xml', 'csv']
+  })
+})
+
+test('mcpToPluginTool handles nested object properties', () => {
+  const mcp = new Mcp(app)
+  const mcpToPluginTool = (mcp as any).mcpToPluginTool.bind(mcp)
+
+  const server: McpServer = {
+    uuid: 'test-server',
+    registryId: 'test',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  }
+
+  const tool = {
+    name: 'nestedTool',
+    description: 'Tool with nested object',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        config: {
+          type: 'object',
+          description: 'Configuration object',
+          properties: {
+            host: { type: 'string', description: 'Hostname' },
+            port: { type: 'number', description: 'Port number' }
+          },
+          required: ['host']
+        }
+      },
+      required: ['config']
+    }
+  }
+
+  const result = mcpToPluginTool(server, tool)
+  expect(result.parameters[0]).toEqual({
+    name: 'config',
+    type: 'object',
+    description: 'Configuration object',
+    required: true,
+    items: {
+      type: 'object',
+      properties: [
+        { name: 'host', type: 'string', description: 'Hostname', required: true },
+        { name: 'port', type: 'number', description: 'Port number', required: false }
+      ]
+    }
+  })
+})
+
+test('mcpToPluginTool handles array of objects', () => {
+  const mcp = new Mcp(app)
+  const mcpToPluginTool = (mcp as any).mcpToPluginTool.bind(mcp)
+
+  const server: McpServer = {
+    uuid: 'test-server',
+    registryId: 'test',
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'test.js',
+    toolSelection: null
+  }
+
+  const tool = {
+    name: 'arrayObjTool',
+    description: 'Tool with array of objects',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        entries: {
+          type: 'array',
+          description: 'List of entries',
+          items: {
+            type: 'object',
+            properties: {
+              key: { type: 'string', description: 'Entry key' },
+              value: { type: 'string', description: 'Entry value' }
+            },
+            required: ['key']
+          }
+        }
+      },
+      required: [] as string[]
+    }
+  }
+
+  const result = mcpToPluginTool(server, tool)
+  expect(result.parameters[0]).toEqual({
+    name: 'entries',
+    type: 'array',
+    description: 'List of entries',
+    required: false,
+    items: {
+      type: 'object',
+      properties: [
+        { name: 'key', type: 'string', description: 'Entry key', required: true },
+        { name: 'value', type: 'string', description: 'Entry value', required: false }
+      ]
+    }
+  })
+})
+
 test('getLlmTools skips tools not in toolSelection', async () => {
   const mcp = new Mcp(app)
   await mcp.connect()
@@ -1113,9 +1269,10 @@ test('getLlmTools skips tools not in toolSelection', async () => {
   const tools = await mcp.getLlmTools()
 
   // Check that only tool2 from server 4567-890a-bcde is included
-  const serverBcdeTools = tools.filter(t => t.name.endsWith('___bcde'))
+  // comes 3rd so gets _2 suffix due to collisions with previous servers
+  const serverBcdeTools = tools.filter(t => t.name.endsWith('_2'))
   expect(serverBcdeTools).toHaveLength(1)
-  expect(serverBcdeTools[0].name).toBe('tool2___bcde')
+  expect(serverBcdeTools[0].name).toBe('tool2_2')
 })
 
 test('updateTokens for mcp server with extra config', async () => {

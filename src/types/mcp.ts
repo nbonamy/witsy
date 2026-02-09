@@ -23,6 +23,7 @@ export type McpServer = {
   headers?: strDict
   oauth?: McpOAuthConfig
   toolSelection: ToolSelection
+  toolMappings?: Record<string, string> // originalName -> mappedName (only for collisions)
 }
 
 export type McpOAuthConfig = {
@@ -49,12 +50,8 @@ export type McpTool = {
   }
 }
 
-export type McpToolUnique = {
-  uuid: string
-} & McpTool
-
 export type McpServerWithTools = McpServer & {
-  tools: McpToolUnique[]
+  tools: McpTool[]
 }
 
 export type McpClaudeServer = {
