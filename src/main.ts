@@ -39,6 +39,7 @@ import { installHttpTriggers } from './main/http_triggers';
 import { importMarkdown } from './main/import_md';
 import { importOpenAI } from './main/import_oai';
 import { installIpc } from './main/ipc';
+import { migrateMcpToolNames } from './main/migrations/mcp_tool_names';
 
 import * as agents from './main/agents';
 import * as backup from './main/backup';
@@ -180,6 +181,9 @@ app.whenReady().then(async () => {
 
   // initialize current workspace
   workspace.initializeWorkspace(app, settings.workspaceId)
+
+  // run migrations for MCP tool names (one-time, strips old ___xxxx suffixes)
+  migrateMcpToolNames(app)
 
   // initialize webview session
   webview.initWebviewSession()

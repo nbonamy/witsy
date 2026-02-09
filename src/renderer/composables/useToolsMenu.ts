@@ -1,5 +1,5 @@
 import type { ToolSelection } from 'types/llm'
-import type { McpServer, McpServerWithTools, McpTool, McpToolUnique } from 'types/mcp'
+import type { McpServer, McpServerWithTools, McpTool } from 'types/mcp'
 import type { MenuItem } from 'types/menu'
 import { computed, onMounted, ref, watch, type Ref } from 'vue'
 import { t } from '@services/i18n'
@@ -41,7 +41,7 @@ export function useToolsMenu(options: UseToolsMenuOptions) {
     return ts.serverToolsStatus(mcpServersWithTools.value, toolSelection.value, server)
   }
 
-  const serverToolStatus = (server: McpServerWithTools, tool: McpToolUnique): ts.ToolStatus => {
+  const serverToolStatus = (server: McpServerWithTools, tool: McpTool): ts.ToolStatus => {
     return ts.serverToolStatus(mcpServersWithTools.value, toolSelection.value, server, tool)
   }
 
@@ -138,7 +138,7 @@ export function useToolsMenu(options: UseToolsMenuOptions) {
       if (serverWithTools.tools.length === 0) return
 
       const serverToolsSubmenu: MenuItem[] = serverWithTools.tools.map(tool => ({
-        id: tool.uuid,
+        id: tool.function,
         label: tool.name,
         type: 'checkbox' as const,
         checked: serverToolStatus(serverWithTools, tool) === 'all',

@@ -1,0 +1,17 @@
+{
+  "llm": {
+    "defaults": [
+      {
+        "engine": "openai",
+        "model": "gpt-4",
+        "tools": ["search", "tool1___90ab", "tool2___0abc", "browse___cdef"]
+      }
+    ]
+  },
+  "prompt": {
+    "tools": ["search___1234", "execute___5678"]
+  },
+  "realtime": {
+    "tools": ["voice___abcd", "transcribe"]
+  }
+}

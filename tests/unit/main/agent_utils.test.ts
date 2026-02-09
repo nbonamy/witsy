@@ -1,5 +1,6 @@
 import { vi, expect, test, beforeEach } from 'vitest'
 import { App } from 'electron'
+import { Agent, AgentRun } from '@/types/agents'
 import { generateWebhookToken, findAgentByWebhookToken, AgentExecutor } from '@main/agent_utils'
 import * as workspaceModule from '@main/workspace'
 import * as agentsModule from '@main/agents'
@@ -194,13 +195,13 @@ test('AgentExecutor sets up mocks and calls AgentWorkflowExecutor', async () => 
   const mockAgent = {
     uuid: 'agent-1',
     name: 'Test Agent'
-  }
+  } as unknown as Agent
 
   const mockRun = {
     uuid: 'run-1',
     agentId: 'agent-1',
     status: 'success'
-  }
+  } as unknown as AgentRun
 
   const mockExecutor = {
     run: vi.fn().mockResolvedValue(mockRun)

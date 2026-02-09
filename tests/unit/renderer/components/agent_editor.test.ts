@@ -9,7 +9,6 @@ import Dialog from '@renderer/utils/dialog'
 import { stubTeleport } from '@tests/mocks/stubs'
 import { nextTick } from 'vue'
 
-
 enableAutoUnmount(afterAll)
 
 vi.mock('@services/i18n', async () => {
@@ -698,7 +697,7 @@ test('ToolsMenu opens and updates step tool selection', async () => {
 
   // Simulate saving tools from ToolsMenu
   await toolsMenu.vm.$emit('pluginToggle', 'search')
-  await toolsMenu.vm.$emit('serverToolToggle', {}, { uuid: 'tool1___server1' })
+  await toolsMenu.vm.$emit('serverToolToggle', {}, { function: 'tool1' })
   await toolsMenu.vm.$emit('close')
   await nextTick()
 
@@ -707,7 +706,7 @@ test('ToolsMenu opens and updates step tool selection', async () => {
   expect(toolsMenu.exists()).toBe(false)
 
   // Agent step should have updated tools
-  expect(agent.steps[0].tools).toEqual(['search_internet', 'tool1___server1'])
+  expect(agent.steps[0].tools).toEqual(['search_internet', 'tool1'])
 })
 
 test('Shows docrepo button in workflow steps', async () => {
@@ -841,14 +840,14 @@ test('Docrepo selection updates agent step', async () => {
     await nextTick()
   
     // Agent step should be updated with the selected docrepo
-    expect(agent.steps[0].docrepo).toBeTruthy()
+    expect(agent.steps[0].docrepos).toStrictEqual(['uuid1'])
   }
 })
 
 test('Docrepo selection can be cleared using footer clear button', async () => {
   const agent = new Agent()
   agent.steps = [
-    { prompt: 'Step 1', tools: null, agents: [], docrepo: 'uuid1' }
+    { prompt: 'Step 1', tools: null, agents: [], docrepos: ['uuid1'] }
   ]
 
   const wrapper: VueWrapper<any> = mount(Editor, {
@@ -867,7 +866,7 @@ test('Docrepo selection can be cleared using footer clear button', async () => {
   await nextTick()
 
   // Initially should have docrepo assigned
-  expect(agent.steps[0].docrepo).toBe('uuid1')
+  expect(agent.steps[0].docrepos).toStrictEqual(['uuid1'])
 
   // Click docrepo button to show menu
   const docrepoButton = wrapper.find('.step-actions .docrepo')
@@ -885,7 +884,7 @@ test('Docrepo selection can be cleared using footer clear button', async () => {
     await nextTick()
   
     // Agent step docrepo should be cleared
-    expect(agent.steps[0].docrepo).toBeUndefined()
+    expect(agent.steps[0].docrepos).toBeUndefined()
   }
 })
 

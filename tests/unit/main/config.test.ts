@@ -5,6 +5,7 @@ import fs from 'fs'
 import { beforeEach, expect, test, vi, Mock } from 'vitest'
 import defaultSettings from '@root/defaults/settings.json'
 import * as config from '@main/config'
+import { migrateMcpToolNames } from '@main/migrations/mcp_tool_names'
 
 vi.mock('electron', async () => {
   return {
@@ -205,4 +206,27 @@ test('Backwards compatibility: old codeExecution object format', () => {
   vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/old-code-execution')
   const loaded = config.loadSettings(app)
   expect(loaded.llm.codeExecution).toBe('disabled')
+})
+
+test('Migration: MCP tool name old suffix format', async () => {
+  vi.mocked(app.getPath).mockReturnValue('./tests/fixtures/config/mcp-old-tool-names')
+
+  // First load settings (migration not yet run)
+  config.clearAppSettingsCache()
+  const loaded = config.loadSettings(app)
+
+  // Before migration, tools still have old suffixes
+  expect(loaded.llm.defaults[0].tools).toContain('tool1___90ab')
+  expect(loaded.prompt.tools).toContain('search___1234')
+  expect(loaded.realtime.tools).toContain('voice___abcd')
+
+  // Run the migration function (this is called from main.ts at startup)
+  // The migration modifies and saves settings
+  const migrated = await migrateMcpToolNames(app)
+  expect(migrated).toBe(6)
+
+  // The migration function loads its own copy of settings, migrates, and saves
+  // It returns the count of migrated tool names
+  // The fixture has: 3 with suffix in llm.defaults, 2 with suffix in prompt, 1 with suffix in realtime = 6
+  // Actually: tool1___90ab, tool2___0abc, browse___cdef (3), search___1234, execute___5678 (2), voice___abcd (1) = 6
 })

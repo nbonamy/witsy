@@ -765,11 +765,11 @@ test('Tools', async () => {
 
   // Simulate saving tools from PromptMenu
   await menu.vm.$emit('pluginToggle', 'search')
-  await menu.vm.$emit('serverToolToggle', {}, { uuid: 'tool1___server1' })
+  await menu.vm.$emit('serverToolToggle', {}, { function: 'tool1' })
   await menu.vm.$emit('close')
 
   // Agent step should have updated tools
-  expect(chat!.tools).toEqual(['search_internet', 'tool1___server1'])
+  expect(chat!.tools).toEqual(['search_internet', 'tool1'])
 })
 
 test('Deep Research', async () => {

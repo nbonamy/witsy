@@ -1,5 +1,5 @@
 import { ToolSelection } from 'types/llm'
-import { McpServerWithTools, McpToolUnique } from 'types/mcp'
+import { McpServerWithTools, McpTool } from 'types/mcp'
 import { availablePlugins, pluginToolName, pluginTools } from '@services/plugins/plugins'
 import { store } from '@services/store'
 
@@ -33,17 +33,17 @@ export const pluginStatus = (toolSelection: ToolSelection, pluginName: string): 
 export const serverToolsStatus = (allServersWithTools: McpServerWithTools[], toolSelection: ToolSelection, server: McpServerWithTools): ToolStatus => {
   if (toolSelection === undefined || toolSelection === null) return 'all'
   if (toolSelection.length === 0) return 'none'
-  const toolUuids = allServersWithTools.find(item => item.uuid === server.uuid).tools.map(tool => tool.uuid)
-  const selectedToolNames = toolSelection.filter(selection => toolUuids.includes(selection) )
+  const toolFunctions = allServersWithTools.find(item => item.uuid === server.uuid).tools.map(tool => tool.function)
+  const selectedToolNames = toolSelection.filter(selection => toolFunctions.includes(selection) )
   if (selectedToolNames.length === 0) return 'none'
-  if (selectedToolNames.length === toolUuids.length) return 'all'
+  if (selectedToolNames.length === toolFunctions.length) return 'all'
   return 'some'
 }
 
-export const serverToolStatus = (allServersWithTools: McpServerWithTools[], toolSelection: ToolSelection, server: McpServerWithTools, tool: McpToolUnique): ToolStatus => {
+export const serverToolStatus = (allServersWithTools: McpServerWithTools[], toolSelection: ToolSelection, server: McpServerWithTools, tool: McpTool): ToolStatus => {
   if (toolSelection === undefined || toolSelection === null) return 'all'
   if (toolSelection.length === 0) return 'none'
-  return toolSelection.includes(tool.uuid) ? 'all' : 'none'
+  return toolSelection.includes(tool.function) ? 'all' : 'none'
 }
 
 export const allPluginsTools = async (includeMcp: boolean = false): Promise<ToolSelection> => {
@@ -67,7 +67,7 @@ export const initToolSelectionWithAllTools = async (): Promise<ToolSelection> =>
     const serversWithTools = await window.api.mcp.getAllServersWithTools()
     for (const server of serversWithTools) {
       for (const tool of server.tools) {
-        tools.push(tool.uuid)
+        tools.push(tool.function)
       }
     }
   } catch (error) {
@@ -148,10 +148,10 @@ export const handleAllServerToolsToggle = async (toolSelection: ToolSelection, s
     toolSelection = await initToolSelectionWithAllTools()
   }
 
-  const allActive = server.tools.every(t => toolSelection.includes(t.uuid))
-  toolSelection = toolSelection.filter(t => !server.tools.map(t => t.uuid).includes(t))
+  const allActive = server.tools.every(t => toolSelection.includes(t.function))
+  toolSelection = toolSelection.filter(t => !server.tools.map(t => t.function).includes(t))
   if (!allActive) {
-    toolSelection.push(...server.tools.map(t => t.uuid))
+    toolSelection.push(...server.tools.map(t => t.function))
   }
 
   // done
@@ -159,16 +159,16 @@ export const handleAllServerToolsToggle = async (toolSelection: ToolSelection, s
 
 }
 
-export const handleServerToolToggle = async (toolSelection: ToolSelection, server: McpServerWithTools, tool: McpToolUnique): Promise<ToolSelection> => {
+export const handleServerToolToggle = async (toolSelection: ToolSelection, server: McpServerWithTools, tool: McpTool): Promise<ToolSelection> => {
 
   if (toolSelection === undefined || toolSelection === null) {
     toolSelection = await initToolSelectionWithAllTools()
   }
 
-  if (toolSelection.includes(tool.uuid)) {
-    toolSelection = toolSelection.filter(t => t !== tool.uuid)
+  if (toolSelection.includes(tool.function)) {
+    toolSelection = toolSelection.filter(t => t !== tool.function)
   } else {
-    toolSelection.push(tool.uuid)
+    toolSelection.push(tool.function)
   }
 
   // done
@@ -269,14 +269,14 @@ export const handleSelectAllServerTools = async (toolSelection: ToolSelection, s
     toolSelection = await initToolSelectionWithAllTools()
   }
 
-  const serverToolUuids = server.tools.map(t => t.uuid)
+  const serverTools = server.tools.map(t => t.function)
   const toolsToAdd = visibleToolIds === null || !visibleToolIds 
-    ? serverToolUuids 
-    : serverToolUuids.filter(uuid => visibleToolIds.includes(uuid))
+    ? serverTools 
+    : serverTools.filter(func => visibleToolIds.includes(func))
   
-  for (const uuid of toolsToAdd) {
-    if (!toolSelection.includes(uuid)) {
-      toolSelection.push(uuid)
+  for (const func of toolsToAdd) {
+    if (!toolSelection.includes(func)) {
+      toolSelection.push(func)
     }
   }
 
@@ -290,10 +290,10 @@ export const handleUnselectAllServerTools = async (toolSelection: ToolSelection,
     toolSelection = await initToolSelectionWithAllTools()
   }
 
-  const serverToolUuids = server.tools.map(t => t.uuid)
+  const serverTools = server.tools.map(t => t.function)
   const toolsToRemove = visibleToolIds === null || !visibleToolIds 
-    ? serverToolUuids 
-    : serverToolUuids.filter(uuid => visibleToolIds.includes(uuid))
+    ? serverTools 
+    : serverTools.filter(func => visibleToolIds.includes(func))
   
   toolSelection = toolSelection.filter(t => !toolsToRemove.includes(t))
   

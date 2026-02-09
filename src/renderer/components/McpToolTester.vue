@@ -18,8 +18,8 @@
         <!-- Tool Selector -->
         <div class="form-field">
           <label for="tool-select">{{ t('mcp.toolTester.selectTool') }}</label>
-          <select id="tool-select" v-model="selectedToolName" @change="onToolChange">
-            <option v-for="tool in tools" :key="tool.function" :value="tool.function">
+          <select id="tool-select" v-model="selectedTool" @change="onToolChange">
+            <option v-for="tool in tools" :key="tool.function" :value="tool">
               {{ tool.name }}
             </option>
           </select>
@@ -123,10 +123,10 @@
     <template #footer>
 
       <template v-if="!hasResult">
-        <button class="primary" @click="onExecute" :disabled="!selectedToolName || executing">
+        <button class="primary" @click="onExecute" :disabled="!selectedTool || executing">
           {{ executing ? t('mcp.toolTester.executing') : t('mcp.toolTester.execute') }}
         </button>
-        <button class="secondary" @click="onClear" :disabled="!selectedToolName">
+        <button class="secondary" @click="onClear" :disabled="!selectedTool">
           {{ t('mcp.toolTester.clear') }}
         </button>
       </template>
@@ -156,16 +156,12 @@ import Loader from './Loader.vue'
 const dialog = ref<InstanceType<typeof ModalDialog>>()
 const server = ref<McpServer>()
 const tools = ref<McpTool[]>([])
-const selectedToolName = ref('')
+const selectedTool = ref<McpTool>()
 const parameters = ref<Record<string, any>>({})
 const executing = ref(false)
 const result = ref<any>(null)
 const error = ref<string | null>(null)
 const copyable = ref({ copyText: t('common.copy'), copiedText: t('common.copied'), timeout: 1000 })
-
-const selectedTool = computed(() => {
-  return tools.value.find(tool => tool.function === selectedToolName.value) || null
-})
 
 const sortedParameters = computed(() => {
   if (!selectedTool.value?.inputSchema?.properties) return []
@@ -222,7 +218,7 @@ const onTryAgain = () => {
 }
 
 const onExecute = async () => {
-  if (!selectedToolName.value) return
+  if (!selectedTool.value) return
   executing.value = true
   error.value = null
   result.value = null
@@ -236,7 +232,7 @@ const onExecute = async () => {
       }
     }
 
-    const toolResult = await window.api.mcp.callTool(selectedToolName.value, cleanParams)
+    const toolResult = await window.api.mcp.callTool(selectedTool.value.function, cleanParams)
     result.value = toolResult
 
   } catch (err: any) {
@@ -250,7 +246,7 @@ const show = async (srv: McpServer) => {
 
   server.value = srv
   tools.value = await window.api.mcp.getServerTools(server.value.uuid)
-  selectedToolName.value = tools.value[0]?.function || ''
+  selectedTool.value = tools.value[0] || null
   parameters.value = {}
   result.value = null
   error.value = null

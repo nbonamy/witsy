@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Performance optimization for message rendering during streaming
+- MCP collision rework (optimistic strategy vs previous pessimistic strategy)
 
 ### Fixed
 - Bug fixes for markdown tag closing in streamed messages

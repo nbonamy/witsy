@@ -3,7 +3,7 @@ import Agent from '@models/agent'
 import { useWindowMock } from '@tests/mocks/window'
 import { createI18nMock } from '@tests/mocks'
 import { remapAgentMcpTools } from '@services/agent_utils'
-import { McpServerWithTools, McpToolUnique } from '@/types/mcp'
+import { McpServerWithTools, McpTool } from '@/types/mcp'
 
 vi.mock('@services/i18n', async () => {
   return createI18nMock()
@@ -34,7 +34,7 @@ describe('remapAgentMcpTools', () => {
       tools: [
         {
           name: 'search_files',
-          uuid: 'search_files___efgh', // Local tool with different suffix
+          function: 'search_files', // Local tool with different suffix
           description: 'Search for files',
         }
       ]
@@ -47,22 +47,22 @@ describe('remapAgentMcpTools', () => {
     const { agent: remappedAgent, warnings } = await remapAgentMcpTools(agent)
 
     // Verify
-    expect(remappedAgent.steps[0].tools).toEqual(['search_files___efgh'])
+    expect(remappedAgent.steps[0].tools).toEqual(['search_files'])
     expect(warnings).toHaveLength(0)
   })
 
-  test('should add warning when tool is not found', async () => {
+  test('should handle tool not found without adding warning', async () => {
     // Setup
     const agent = new Agent()
     agent.steps = [{
       prompt: 'Test',
-      tools: ['missing_tool___abcd'],
+      tools: ['missing_tool'],
       agents: [],
     }]
 
     // Mock MCP tools (empty)
     const mockServersWithTools: Array<McpServerWithTools> = [{
-      tools: [] as McpToolUnique[],
+      tools: [] as McpTool[],
     }] as McpServerWithTools[]
 
     // Mock window.api.mcp methods
@@ -73,9 +73,8 @@ describe('remapAgentMcpTools', () => {
     const { agent: remappedAgent, warnings } = await remapAgentMcpTools(agent)
 
     // Verify
-    expect(remappedAgent.steps[0].tools).toEqual([])
-    expect(warnings).toHaveLength(1)
-    expect(warnings[0]).toBe('agent.forge.import.toolNotFound_default_step=1&tool=missing_tool')
+    expect(remappedAgent.steps[0].tools).toEqual(['missing_tool'])
+    expect(warnings).toHaveLength(0)
   })
 
   test('should add warning when multiple matches are found', async () => {
@@ -83,7 +82,7 @@ describe('remapAgentMcpTools', () => {
     const agent = new Agent()
     agent.steps = [{
       prompt: 'Test',
-      tools: ['search_files___abcd'],
+      tools: ['search_files'],
       agents: [],
     }]
 
@@ -92,12 +91,12 @@ describe('remapAgentMcpTools', () => {
       tools: [
         {
           name: 'search_files',
-          uuid: 'search_files___efgh',
+          function: 'search_files',
           description: 'Search for files server 1',
         },
         {
           name: 'search_files',
-          uuid: 'search_files___ijkl',
+          function: 'search_files',
           description: 'Search for files server 2',
         }
       ]
@@ -109,9 +108,8 @@ describe('remapAgentMcpTools', () => {
     const { agent: remappedAgent, warnings } = await remapAgentMcpTools(agent)
 
     // Verify
-    expect(remappedAgent.steps[0].tools).toEqual([])
-    expect(warnings).toHaveLength(1)
-    expect(warnings[0]).toBe('agent.forge.import.toolNotFound_default_step=1&tool=search_files')
+    expect(remappedAgent.steps[0].tools).toEqual(['search_files'])
+    expect(warnings).toHaveLength(0)
   })
 
   test('should handle agent with no tools', async () => {
@@ -178,12 +176,12 @@ describe('remapAgentMcpTools', () => {
       tools: [
         {
           name: 'found_tool',
-          uuid: 'found_tool___xyz1',
+          function: 'found_tool',
           description: 'A tool that will be found',
         },
         {
           name: 'another_found',
-          uuid: 'another_found___xyz2',
+          function: 'another_found',
           description: 'Another tool that will be found',
         }
       ]
@@ -195,9 +193,9 @@ describe('remapAgentMcpTools', () => {
     const { agent: remappedAgent, warnings } = await remapAgentMcpTools(agent)
 
     // Verify
-    expect(remappedAgent.steps[0].tools).toEqual(['found_tool___xyz1'])
+    expect(remappedAgent.steps[0].tools).toEqual(['found_tool'])
     expect(remappedAgent.steps[1].tools).toEqual([])
-    expect(remappedAgent.steps[2].tools).toEqual(['another_found___xyz2'])
+    expect(remappedAgent.steps[2].tools).toEqual(['another_found'])
     expect(warnings).toHaveLength(2)
     expect(warnings[0]).toBe('agent.forge.import.toolNotFound_default_step=2&tool=missing_tool')
     expect(warnings[1]).toBe('agent.forge.import.toolNotFound_default_step=3&tool=another_missing')
@@ -208,7 +206,7 @@ describe('remapAgentMcpTools', () => {
     const agent = new Agent()
     agent.steps = [{
       prompt: 'Test',
-      tools: ['tool_server1___abcd', 'tool_server2___efgh'],
+      tools: ['tool_server1', 'tool_server2'],
       agents: [],
     }]
 
@@ -217,14 +215,14 @@ describe('remapAgentMcpTools', () => {
       {
         tools: [{
           name: 'tool_server1',
-          uuid: 'tool_server1___xyz1',
+          function: 'tool_server1',
           description: 'Tool from server 1',
         }]
       },
       {
         tools: [{
           name: 'tool_server2',
-          uuid: 'tool_server2___xyz2',
+          function: 'tool_server2',
           description: 'Tool from server 2',
         }]
       }
@@ -236,7 +234,7 @@ describe('remapAgentMcpTools', () => {
     const { agent: remappedAgent, warnings } = await remapAgentMcpTools(agent)
 
     // Verify
-    expect(remappedAgent.steps[0].tools).toEqual(['tool_server1___xyz1', 'tool_server2___xyz2'])
+    expect(remappedAgent.steps[0].tools).toEqual(['tool_server1', 'tool_server2'])
     expect(warnings).toHaveLength(0)
   })
 
