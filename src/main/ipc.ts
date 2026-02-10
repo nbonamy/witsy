@@ -808,10 +808,6 @@ export const installIpc = (
     }
   });
 
-  ipcMain.on(IPC.MCP.IS_MCP_TOOL_NAME, (event, payload) => {
-    event.returnValue = mcp ? mcp.isMcpToolName(payload) : false;
-  });
-
   ipcMain.on(IPC.MCP.ORIGINAL_TOOL_NAME, (event, payload) => {
     event.returnValue = mcp ? mcp.originalToolName(payload) : payload;
   });

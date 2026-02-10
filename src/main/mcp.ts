@@ -17,6 +17,13 @@ import Monitor from './monitor'
 import { wait } from './utils'
 import { emitIpcEventToAll } from './windows'
 
+// need this
+export const LEGACY_SUFFIX_PATTERN = /___....$/
+
+// Collision handling constants
+const COLLISION_SUFFIX_SEPARATOR = '_'
+const MAX_TOOL_NAME_LENGTH = 64
+
 type McpSdkTool = {
   name: string
   description?: string | undefined
@@ -36,13 +43,6 @@ type ToolsCacheEntry = {
   tools: McpSdkTools
   timestamp: number
 }
-
-// need this
-export const LEGACY_SUFFIX_PATTERN = /___....$/
-
-// Collision handling constants
-const COLLISION_SUFFIX_SEPARATOR = '_'
-const MAX_TOOL_NAME_LENGTH = 64
 
 export default class Mcp {
 
@@ -72,7 +72,7 @@ export default class Mcp {
     const cached = this.toolsCache.get(uuid)
 
     if (cached && cached.tools === null) {
-      return { tools: [] } // Previous error, return empty tools
+      return { tools: [] }
     }
     
     if (cached && Date.now() - cached.timestamp < this.CACHE_TTL_MS) {
@@ -993,31 +993,6 @@ export default class Mcp {
       arguments: args
     }, CompatibilityCallToolResultSchema, { signal: abortSignal })
 
-  }
-
-  public isMcpToolName = (name: string): boolean => {
-
-    // handle legacy suffix format from old agent JSON files
-    if (LEGACY_SUFFIX_PATTERN.test(name)) {
-      return true
-    }
-
-    // Check if tool name exists in any connected server's tools (with mappings applied)
-    const servers = this.getServers()
-    for (const server of servers) {
-      if (server.state !== 'enabled') continue
-
-      const cached = this.toolsCache.get(server.uuid)
-      if (cached?.tools?.tools) {
-        for (const tool of cached.tools.tools) {
-          const mappedName = this.getMappedToolName(server, tool.name)
-          if (mappedName === name) {
-            return true
-          }
-        }
-      }
-    }
-    return false
   }
 
   public originalToolName = (name: string): string => {

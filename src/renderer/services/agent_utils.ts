@@ -8,6 +8,7 @@ import AgentWorkflowExecutor from './agent_executor_workflow'
 import { GenerationCallback } from './generator'
 import { t } from './i18n'
 import { store } from './store'
+import { allPluginsTools } from '../utils/tool_selection'
 
 export interface AgentExecutor {
   run(trigger: AgentRunTrigger, values: Record<string, string>, opts?: any, generationCallback?: GenerationCallback): Promise<AgentRun>
@@ -63,6 +64,9 @@ export async function remapAgentMcpTools(agent: Agent): Promise<{ agent: Agent, 
   const serversWithTools = await window.api.mcp.getAllServersWithTools()
   const allTools: McpTool[] = serversWithTools.flatMap(({ tools }) => tools)
 
+  // get all plugin tool names
+  const pluginTools = await allPluginsTools()
+
   // Process each step in the agent
   agent.steps.forEach((step, stepIndex) => {
     if (!step.tools || step.tools.length === 0) return
@@ -71,7 +75,7 @@ export async function remapAgentMcpTools(agent: Agent): Promise<{ agent: Agent, 
 
     step.tools.forEach((toolFunction) => {
 
-      if (!window.api.mcp.isMcpToolName(toolFunction)) {
+      if (pluginTools.includes(toolFunction)) {
         // Not an MCP tool reference, keep as is
         remappedTools.push(toolFunction)
         return
