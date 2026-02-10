@@ -541,7 +541,6 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       callTool: vi.fn(async (tool: string) => (tool === 'tool2' ? {
         content: [ { text: 'result2' } ],
       } : { result: 'result' })),
-      isMcpToolName: vi.fn((name: string) => /___....$/.test(name) || /_\d$/.test(name)),
       originalToolName: vi.fn((name: string) => name.replace(/___....$/, '').replace(/_\d$/, '')),
       detectOAuth: vi.fn(async () => ({ requiresOAuth: false })),
       startOAuthFlow: vi.fn(async () => JSON.stringify({ tokens: {}, clientInformation: {}, clientMetadata: {} })),

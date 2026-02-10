@@ -803,23 +803,6 @@ test('getServerTools returns empty for unknown server', async () => {
   expect(tools).toEqual([])
 })
 
-test('isMcpToolName correctly identifies MCP tool names', async () => {
-  const mcp = new Mcp(app)
-  await mcp.connect()
-
-  // isMcpToolName now checks if tool exists in connected clients
-  expect(mcp.isMcpToolName('tool1')).toBe(true)  // First server's tool
-  expect(mcp.isMcpToolName('tool1_1')).toBe(true)  // Second server's tool (collision suffix)
-  expect(mcp.isMcpToolName('tool2_2')).toBe(true)  // Third server's tool
-
-  // Legacy ___xxxx format is recognized for import compatibility
-  expect(mcp.isMcpToolName('tool1___90ab')).toBe(true)
-  expect(mcp.isMcpToolName('search_files___1234')).toBe(true)
-
-  expect(mcp.isMcpToolName('unknown_tool')).toBe(false)
-  expect(mcp.isMcpToolName('tool___ab')).toBe(false) // Only 2 chars after ___, not legacy
-})
-
 test('translateError translates connection errors', () => {
   const mcp = new Mcp(app)
   const translateError = (mcp as any).translateError.bind(mcp)
