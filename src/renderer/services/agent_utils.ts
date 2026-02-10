@@ -8,7 +8,7 @@ import AgentWorkflowExecutor from './agent_executor_workflow'
 import { GenerationCallback } from './generator'
 import { t } from './i18n'
 import { store } from './store'
-import { allPluginsTools } from '../utils/tool_selection'
+import { allPluginsTools } from '@renderer/utils/tool_selection'
 
 export interface AgentExecutor {
   run(trigger: AgentRunTrigger, values: Record<string, string>, opts?: any, generationCallback?: GenerationCallback): Promise<AgentRun>

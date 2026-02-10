@@ -9,6 +9,11 @@ vi.mock('@services/i18n', async () => {
   return createI18nMock()
 })
 
+vi.mock('@renderer/utils/tool_selection', () => {
+  return {
+    allPluginsTools: vi.fn(() => ['run_python_code', 'search_internet'])
+  }
+})
 
 beforeAll(() => {
  useWindowMock()
@@ -73,8 +78,8 @@ describe('remapAgentMcpTools', () => {
     const { agent: remappedAgent, warnings } = await remapAgentMcpTools(agent)
 
     // Verify
-    expect(remappedAgent.steps[0].tools).toEqual(['missing_tool'])
-    expect(warnings).toHaveLength(0)
+    expect(remappedAgent.steps[0].tools).toEqual([])
+    expect(warnings).toHaveLength(1)
   })
 
   test('should add warning when multiple matches are found', async () => {
@@ -108,8 +113,8 @@ describe('remapAgentMcpTools', () => {
     const { agent: remappedAgent, warnings } = await remapAgentMcpTools(agent)
 
     // Verify
-    expect(remappedAgent.steps[0].tools).toEqual(['search_files'])
-    expect(warnings).toHaveLength(0)
+    expect(remappedAgent.steps[0].tools).toEqual([])
+    expect(warnings).toHaveLength(1)
   })
 
   test('should handle agent with no tools', async () => {
