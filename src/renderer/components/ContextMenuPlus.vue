@@ -876,6 +876,15 @@ defineExpose({
   padding: 0.25rem 0rem;
 }
 
+.footer:has(.item) {
+  padding: var(--space-2) var(--space-8);
+  &:deep() .item {
+    padding-left: 0;
+    padding-right: 0;
+    gap: 0.5rem;
+  }
+}
+
 /* Hide footer border when actions has no visible items */
 .actions:not(:has(.item:not([style*="display: none"]))) + .footer {
   border-top: none;
