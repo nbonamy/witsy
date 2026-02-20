@@ -1151,6 +1151,8 @@ export default class Mcp {
         const items = prop.items || { type: 'string' }
         if (items.type === 'object' && items.properties) {
           param.items = { type: 'object', properties: this.mcpSchemaToParameters(items.properties, items.required ?? []) }
+        } else if (items.type === 'array' && items.items) {
+          param.items = { type: 'array', items: { type: items.items.type || 'string' } }
         } else {
           param.items = { type: items.type || 'string' }
         }
