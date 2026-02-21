@@ -43,9 +43,14 @@ export default class MemoryManager {
     this.db = null
   }
 
-  async store(contents: string[]): Promise<boolean> {
+  async store(contents: string | string[]): Promise<boolean> {
 
     try {
+
+      // normalize to array (LLMs may pass a single string)
+      if (typeof contents === 'string') {
+        contents = [contents]
+      }
 
       // we need a connection and embedder
       await this.connect()

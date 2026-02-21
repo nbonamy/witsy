@@ -60,6 +60,15 @@ test('MemoryManager store', async () => {
   ])
 })
 
+test('MemoryManager store string', async () => {
+  const memory = new MemoryManager(app)
+  await memory.store('I play squash' as unknown as string[])
+  expect(await memory.isNotEmpty()).toBe(true)
+  expect(await memory.list()).toEqual([
+    { uuid: expect.any(String), content: 'I play squash' },
+  ])
+})
+
 test('MemoryManager retrieve', async () => {
   const memory = new MemoryManager(app)
   await memory.store(['I play squash and tennis'])
