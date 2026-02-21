@@ -11,7 +11,6 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  store.chatState.filter = null
 })
 
 const defaultOptions: ComputeBlocksOptions = {
@@ -549,11 +548,10 @@ describe('computeBlocks - transient messages', () => {
 describe('computeBlocks - search highlighting', () => {
 
   test('highlights search term in table content', () => {
-    store.chatState.filter = 'test'
     const content = `| Header |
 |--------|
 | test value |`
-    const blocks = computeBlocks(content, defaultOptions)
+    const blocks = computeBlocks(content, { ...defaultOptions, filter: 'test' })
     expect(blocks).toHaveLength(1)
     expect(blocks[0].type).toBe('table')
     expect((blocks[0] as any).content).toContain('<mark>test</mark>')

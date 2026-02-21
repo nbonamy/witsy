@@ -41,11 +41,6 @@ export const store: Store = reactive({
     chats: null
   } as Folder,
 
-  chatState: {
-    filter: null,
-    navigateMatch: 0,
-  },
-
   transcribeState: {
     transcription: ''
   },

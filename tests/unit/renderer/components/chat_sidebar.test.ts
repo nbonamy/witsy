@@ -2,14 +2,29 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { chatCallbacksMock, withChatCallbacks } from '@root/vitest.setup'
+import { SearchState } from '@/renderer/screens/Chat.vue'
 import { useWindowMock } from '@tests/mocks/window'
 import { store } from '@services/store'
 import ChatSidebar from '@components/ChatSidebar.vue'
 import Chat from '@models/chat'
 import Message from '@models/message'
 import { kHistoryVersion } from '@/consts'
+import { ref } from 'vue'
 
 enableAutoUnmount(afterAll)
+
+const searchState: SearchState = { filter: ref<string | null>(null), navigate: ref(0) }
+
+const withSearchState = (opts: Record<string, any> = {}) => ({
+  ...opts,
+  global: {
+    ...opts.global,
+    provide: {
+      ...opts.global?.provide,
+      searchState,
+    },
+  },
+})
 
 beforeAll(() => {
   useWindowMock()
@@ -19,6 +34,8 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  searchState.filter.value = null
+  searchState.navigate.value = 0
   const now = new Date()
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 1).getTime();
   store.history = { version: kHistoryVersion, folders: [], chats: [], quickPrompts: [] }
@@ -94,11 +111,11 @@ test('Switches to folder mode', async () => {
 })
 
 test('Filter Textbox', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  const wrapper: VueWrapper<any> = mount(ChatSidebar, withSearchState())
   await wrapper.find('.sp-sidebar .chat-list-tools button[name=search]').trigger('click')
   await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').setValue('Test')
   await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').trigger('keyup')
-  expect(store.chatState.filter).toBe('Test')
+  expect(searchState.filter.value).toBe('Test')
 })
 
 test('Filter All', async () => {
@@ -117,19 +134,17 @@ test('Filter Single', async () => {
 })
 
 test('Enter navigates to next match', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  const wrapper: VueWrapper<any> = mount(ChatSidebar, withSearchState())
   await wrapper.find('.sp-sidebar .chat-list-tools button[name=search]').trigger('click')
   await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').setValue('Test')
   await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').trigger('keydown.enter')
-  expect(store.chatState.navigateMatch).toBe(1)
-  store.chatState.navigateMatch = 0
+  expect(searchState.navigate.value).toBe(1)
 })
 
 test('Shift+Enter navigates to previous match', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  const wrapper: VueWrapper<any> = mount(ChatSidebar, withSearchState())
   await wrapper.find('.sp-sidebar .chat-list-tools button[name=search]').trigger('click')
   await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').setValue('Test')
   await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').trigger('keydown.enter', { shiftKey: true })
-  expect(store.chatState.navigateMatch).toBe(-1)
-  store.chatState.navigateMatch = 0
+  expect(searchState.navigate.value).toBe(-1)
 })

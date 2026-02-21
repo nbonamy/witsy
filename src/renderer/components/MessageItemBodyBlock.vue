@@ -12,12 +12,12 @@
 
 <script setup lang="ts">
 
-import { h, nextTick, PropType, ref, render } from 'vue'
-import { InfoIcon } from 'lucide-vue-next'
 import Dialog from '@renderer/utils/dialog'
+import { SearchState } from '@screens/Chat.vue'
 import { t } from '@services/i18n'
 import { Block } from '@services/message_block_parser'
-import { store } from '@services/store'
+import { InfoIcon } from 'lucide-vue-next'
+import { h, inject, nextTick, PropType, ref, render } from 'vue'
 import MessageItemArtifactBlock from './MessageItemArtifactBlock.vue'
 import MessageItemHtmlBlock from './MessageItemHtmlBlock.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
@@ -25,6 +25,8 @@ import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemSearchResultBlock from './MessageItemSearchResultBlock.vue'
 import MessageItemTableBlock from './MessageItemTableBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
+
+const searchState = inject<SearchState>('searchState')
 
 const props = defineProps({
   block: {
@@ -80,9 +82,9 @@ const mdRender = (content: string) => {
     <span class="error-icon-placeholder" data-error="$1"></span>
   `)
 
-  // highlight code
-  if (store.chatState.filter) {
-    const regex = new RegExp(store.chatState.filter, 'gi')
+  // highlight search
+  if (searchState?.filter.value) {
+    const regex = new RegExp(searchState.filter.value, 'gi')
     html = html.replace(regex, (match) => `<mark>${match}</mark>`);
   }
 

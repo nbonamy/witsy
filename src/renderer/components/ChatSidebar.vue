@@ -55,7 +55,7 @@
 import useEventListener from '@composables/event_listener'
 import Chat from '@models/chat'
 import Dialog from '@renderer/utils/dialog'
-import type { ChatCallbacks } from '@screens/Chat.vue'
+import type { ChatCallbacks, SearchState } from '@screens/Chat.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCirclePlusIcon, MessagesSquareIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
@@ -66,6 +66,7 @@ import ChatList from './ChatList.vue'
 
 const { onDomEvent, offDomEvent } = useEventListener()
 const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
+const searchState = inject<SearchState>('searchState')
 
 defineProps({
   chat: {
@@ -113,35 +114,34 @@ onMounted(async () => {
 })
 
 const onToggleFilter = () => {
+  if (!searchState) return
   filter.value = ''
-  store.chatState.filter = null
+  searchState.filter.value = null
   filtering.value = !filtering.value
 }
 
 const onFilterChange = () => {
-  store.chatState.filter = filter.value.trim()
+  if (!searchState) return
+  searchState.filter.value = filter.value.trim() || null
 }
 
 const onFilterNavigate = async (event: KeyboardEvent) => {
-  store.chatState.navigateMatch = event.shiftKey ? -1 : 1
+  if (!searchState) return
+  searchState.navigate.value = event.shiftKey ? -1 : 1
   setTimeout(() => {
     (event.target as HTMLElement).focus()
   }, 100)
 }
 
 const onClearFilter = () => {
+  if (!searchState) return
   filter.value = ''
-  store.chatState.filter = null
+  searchState.filter.value = null
 }
 
 const onNewChat = () => {
   onCancelSelect()
   chatCallbacks?.onNewChat()
-}
-
-const onRunAgent = () => {
-  onCancelSelect()
-  chatCallbacks?.onRunAgent()
 }
 
 const onNewFolder = async () => {
@@ -156,10 +156,6 @@ const onNewFolder = async () => {
     store.history.folders.push({ id: uuidv4(), name, chats: [] })
     store.saveHistory()
   }
-}
-
-const onSelect = () => {
-  selectMode.value = true
 }
 
 const onSelectAll = () => {
