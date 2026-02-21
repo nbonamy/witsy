@@ -43,6 +43,7 @@ export const store: Store = reactive({
 
   chatState: {
     filter: null,
+    navigateMatch: 0,
   },
 
   transcribeState: {

@@ -524,6 +524,11 @@
       "system": "系统",
       "user": "你"
     },
+    "search": {
+      "matchCount": "{current} / {total}",
+      "nextMatch": "下一个匹配项",
+      "previousMatch": "上一个匹配项"
+    },
     "send": "发送",
     "startedAt": "开始于 {date}",
     "unknownModel": "未知模型"

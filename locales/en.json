@@ -523,6 +523,11 @@
       "system": "System",
       "user": "You"
     },
+    "search": {
+      "matchCount": "{current} of {total}",
+      "nextMatch": "Next match",
+      "previousMatch": "Previous match"
+    },
     "send": "Send",
     "startedAt": "Started {date}",
     "unknownModel": "Unknown Model"

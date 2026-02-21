@@ -524,6 +524,11 @@
       "system": "Sistema",
       "user": "Você"
     },
+    "search": {
+      "matchCount": "{current} de {total}",
+      "nextMatch": "Ocorrência seguinte",
+      "previousMatch": "Ocorrência anterior"
+    },
     "send": "Enviar",
     "startedAt": "Iniciado em {date}",
     "unknownModel": "Modelo Desconhecido"

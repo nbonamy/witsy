@@ -115,3 +115,21 @@ test('Filter Single', async () => {
   expect(wrapper.findAll('.chat')).toHaveLength(1)
   expect(wrapper.findAll('.chat').at(0)!.find('.title').text()).toBe('Chat 9')
 })
+
+test('Enter navigates to next match', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  await wrapper.find('.sp-sidebar .chat-list-tools button[name=search]').trigger('click')
+  await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').setValue('Test')
+  await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').trigger('keydown.enter')
+  expect(store.chatState.navigateMatch).toBe(1)
+  store.chatState.navigateMatch = 0
+})
+
+test('Shift+Enter navigates to previous match', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatSidebar)
+  await wrapper.find('.sp-sidebar .chat-list-tools button[name=search]').trigger('click')
+  await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').setValue('Test')
+  await wrapper.find('.sp-sidebar .chat-list-tools .search input[name=filter]').trigger('keydown.enter', { shiftKey: true })
+  expect(store.chatState.navigateMatch).toBe(-1)
+  store.chatState.navigateMatch = 0
+})

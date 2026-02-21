@@ -524,6 +524,11 @@
       "system": "System",
       "user": "Ty"
     },
+    "search": {
+      "matchCount": "{current} z {total}",
+      "nextMatch": "Następne dopasowanie",
+      "previousMatch": "Poprzednie dopasowanie"
+    },
     "send": "Wyślij",
     "startedAt": "Rozpoczęto {date}",
     "unknownModel": "Nieznany model"
