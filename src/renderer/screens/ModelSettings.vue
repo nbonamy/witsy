@@ -182,25 +182,25 @@ const onSaveDefaults = () => {
 
 const onClearDefaults = () => {
   clearDefaults()
-  loadDefaults()
+  loadDefaults(true)
   save()
 }
 
-const loadDefaults = () => {
+const loadDefaults = (clearAll: boolean = false) => {
   const defaults = store.config.llm.defaults.find(d => d.engine === engine.value && d.model === model.value)
   if (defaults) {
     disableStreaming.value = defaults.disableStreaming
     disableTools.value = areToolsDisabled(defaults.tools)
     tools.value = defaults.tools
-    locale.value = defaults.locale || ''
-    instructions.value = defaults.instructions || ''
+    locale.value = defaults.locale || (clearAll ? '' : locale.value)
+    instructions.value = defaults.instructions || (clearAll ? '' : instructions.value)
     props.chat.modelOpts = defaults.modelOpts
   } else {
     disableStreaming.value = false
     disableTools.value = false
     tools.value = null
-    locale.value = ''
-    instructions.value = ''
+    locale.value = clearAll ? '' : locale.value
+    instructions.value = clearAll ? '' : instructions.value
     props.chat.modelOpts = {}
   }
 }
