@@ -2781,7 +2781,8 @@
       },
       "hideDatedModels": "隐藏有明确发布日期的模型",
       "lmstudio": {
-        "apiBaseURL": "API 基础URL"
+        "apiBaseURL": "API 基础URL",
+        "apiKey": "API 密钥（可选）"
       },
       "meta": {
         "aboutModels": "更多关于 Meta Llama 模型的信息",

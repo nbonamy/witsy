@@ -12,6 +12,13 @@
       <ModelSelectPlus v-model="vision_model" :models="vision_models" :height="300" :disabled="vision_models.length == 0" @change="save" />
     </div>
     <div class="form-field">
+      <label>{{ t('settings.engines.lmstudio.apiKey') }}</label>
+      <div class="form-subgroup">
+        <InputObfuscated v-model="apiKey" @blur="save" />
+        <a href="https://lmstudio.ai/docs/developer/core/authentication" target="_blank">{{ t('common.learnMore') }}</a>
+      </div>
+    </div>
+    <div class="form-field">
       <label>{{ t('settings.engines.lmstudio.apiBaseURL') }}</label>
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.lmstudio.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
@@ -33,11 +40,13 @@ import { store } from '@services/store'
 import { t } from '@services/i18n'
 import { ChatModel, defaultCapabilities, } from 'multi-llm-ts'
 import Dialog from '@renderer/utils/dialog'
+import InputObfuscated from '@components/InputObfuscated.vue'
 import LlmFactory from '@services/llms/llm'
 import RefreshButton from '@components/RefreshButton.vue'
 import defaults from '@root/defaults/settings.json'
 import ModelSelectPlus from '@components/ModelSelectPlus.vue'
 
+const apiKey = ref(null)
 const baseURL = ref(null)
 const disableTools = ref(false)
 const requestCooldown = ref<number>(null)
@@ -53,6 +62,7 @@ const vision_models = computed(() => {
 })
 
 const load = () => {
+  apiKey.value = store.config.engines.lmstudio?.apiKey || ''
   baseURL.value = store.config.engines.lmstudio?.baseURL || ''
   chat_models.value = store.config.engines.lmstudio?.models?.chat || []
   chat_model.value = store.config.engines.lmstudio?.model?.chat || ''
@@ -81,6 +91,7 @@ const getModels = async (): Promise<boolean> => {
 }
 
 const save = () => {
+  store.config.engines.lmstudio.apiKey = apiKey.value
   store.config.engines.lmstudio.baseURL = baseURL.value
   store.config.engines.lmstudio.model.chat = chat_model.value
   store.config.engines.lmstudio.model.vision = vision_model.value

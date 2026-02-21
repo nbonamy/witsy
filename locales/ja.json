@@ -2781,7 +2781,8 @@
       },
       "hideDatedModels": "明確なリリース日があるモデルを非表示にする",
       "lmstudio": {
-        "apiBaseURL": "APIベースURL"
+        "apiBaseURL": "APIベースURL",
+        "apiKey": "APIキー（任意）"
       },
       "meta": {
         "aboutModels": "Meta Llamaモデルについてさらに詳しく",

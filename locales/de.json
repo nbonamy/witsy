@@ -2759,7 +2759,8 @@
       },
       "hideDatedModels": "Modelle mit expliziten Veröffentlichungsdaten ausblenden",
       "lmstudio": {
-        "apiBaseURL": "API-Basis-URL"
+        "apiBaseURL": "API-Basis-URL",
+        "apiKey": "API-Schlüssel (optional)"
       },
       "meta": {
         "aboutModels": "Mehr über Meta Llama-Modelle",
