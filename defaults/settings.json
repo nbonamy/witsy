@@ -345,7 +345,7 @@
       }
     },
     "lmstudio": {
-      "apiKey": "dummy",
+      "apiKey": "",
       "baseURL": "http://localhost:1234/v1",
       "models": {
         "chat": [],

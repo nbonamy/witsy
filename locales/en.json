@@ -2781,7 +2781,8 @@
       },
       "hideDatedModels": "Hide models with explicit release dates",
       "lmstudio": {
-        "apiBaseURL": "API Base URL"
+        "apiBaseURL": "API Base URL",
+        "apiKey": "API Key (optional)"
       },
       "meta": {
         "aboutModels": "More about Meta Llama models",

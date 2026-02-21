@@ -2781,7 +2781,8 @@
       },
       "hideDatedModels": "Ukryj modele z wyraźnymi datami wydania",
       "lmstudio": {
-        "apiBaseURL": "Podstawowy adres URL API"
+        "apiBaseURL": "Podstawowy adres URL API",
+        "apiKey": "Klucz API (opcjonalnie)"
       },
       "meta": {
         "aboutModels": "Więcej o modelach Meta Llama",

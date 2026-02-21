@@ -2759,7 +2759,8 @@
       },
       "hideDatedModels": "Ocultar modelos con fechas de lanzamiento explícitas",
       "lmstudio": {
-        "apiBaseURL": "URL base de la API"
+        "apiBaseURL": "URL base de la API",
+        "apiKey": "Clave API (opcional)"
       },
       "meta": {
         "aboutModels": "Más sobre los modelos Meta Llama",
