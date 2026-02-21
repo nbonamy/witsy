@@ -47,6 +47,10 @@
       <ModelSelectPlus v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
     </div>
     <div class="form-field">
+      <label>{{ t('settings.engines.apiBaseURL') }}</label>
+      <input name="baseURL" v-model="baseURL" placeholder="https://generativelanguage.googleapis.com" @keydown.enter.prevent="save" @change="save"/>
+    </div>
+    <div class="form-field">
       <label>{{ t('settings.engines.requestCooldown') }}</label>
       <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
     </div>
@@ -71,6 +75,7 @@ import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 
 const vertexai = ref(false)
 const apiKey = ref(null)
+const baseURL = ref(null)
 const project = ref('')
 const location = ref('')
 const disableTools = ref(false)
@@ -89,6 +94,7 @@ const vision_models = computed(() => {
 const load = () => {
   // vertexai.value = store.config.engines.google?.googleVertexAI || false
   apiKey.value = store.config.engines.google?.apiKey || ''
+  baseURL.value = store.config.engines.google?.baseURL || ''
   // project.value = store.config.engines.google?.googleVertexProject || ''
   // location.value = store.config.engines.google?.googleVertexLocation || ''
   chat_models.value = store.config.engines.google?.models?.chat || []
@@ -127,6 +133,7 @@ const onKeyChange = () => {
 const save = () => {
   // store.config.engines.google.googleVertexAI = vertexai.value
   store.config.engines.google.apiKey = apiKey.value
+  store.config.engines.google.baseURL = baseURL.value
   // store.config.engines.google.googleVertexProject = project.value
   // store.config.engines.google.googleVertexLocation = location.value
   store.config.engines.google.model.chat = chat_model.value
