@@ -415,6 +415,7 @@ export default class Mcp {
       original.env = server.env
       original.headers = server.headers
       original.oauth = server.oauth
+      original.timeout = server.timeout
       original.toolSelection = server.toolSelection ?? null
       edited = true
     }
@@ -988,10 +989,11 @@ export default class Mcp {
     const tool = this.originalToolName(name)
     console.log(`[mcp] Calling MCP tool`, tool, args)
 
+    const timeout = client.server.timeout ? client.server.timeout * 1000 : undefined
     return await client.client.callTool({
       name: tool,
       arguments: args
-    }, CompatibilityCallToolResultSchema, { signal: abortSignal })
+    }, CompatibilityCallToolResultSchema, { signal: abortSignal, ...(timeout ? { timeout } : {}) })
 
   }
 

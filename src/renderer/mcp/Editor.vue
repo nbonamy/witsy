@@ -129,6 +129,11 @@
         </div>
       </template>
       
+      <div class="form-field" v-if="type !== 'smithery'">
+        <label>{{ t('mcp.serverEditor.timeout') }}</label>
+        <input type="number" name="timeout" v-model.number="timeout" min="1" step="1" :placeholder="t('mcp.serverEditor.timeoutPlaceholder')" />
+      </div>
+
       <div class="buttons">
         <Spinner v-if="loading" />
         <template v-else>
@@ -180,6 +185,7 @@ const url = ref('')
 const cwd = ref('')
 const env = ref<strDict>({})
 const headers = ref<strDict>({})
+const timeout = ref<number>(null)
 const apiKey = ref('')
 const selectedVar = ref<McpServerVariable>(null)
 const oauthConfig = ref(null)
@@ -218,6 +224,7 @@ onMounted(async () => {
   cwd.value = props.server?.cwd || ''
   env.value = props.server?.env || {}
   headers.value = props.server?.headers || {}
+  timeout.value = props.server?.timeout || null
   oauthConfig.value = props.server?.oauth || null
   apiKey.value = props.apiKey || ''
 })
@@ -434,6 +441,7 @@ const onSave = async () => {
         env: JSON.parse(JSON.stringify(env.value)),
         headers: JSON.parse(JSON.stringify(headers.value)),
         oauth: JSON.parse(JSON.stringify(oauthConfig.value)),
+        timeout: timeout.value || undefined,
         toolSelection: props.server?.toolSelection || null,
       }
 

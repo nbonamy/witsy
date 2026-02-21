@@ -2087,6 +2087,8 @@
       "selectCommand": "コマンドを選択",
       "serverPackage": "サーバーパッケージ",
       "smitheryApiKey": "Smithery.ai APIキー",
+      "timeout": "タイムアウト（秒）",
+      "timeoutPlaceholder": "既定値: 60",
       "type": {
         "http": "ストリーム可能なHTTP",
         "smithery": "Smithery.ai",

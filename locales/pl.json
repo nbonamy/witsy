@@ -2087,6 +2087,8 @@
       "selectCommand": "Wybierz polecenie",
       "serverPackage": "Pakiet serwera",
       "smitheryApiKey": "Klucz API Smithery.ai",
+      "timeout": "Limit czasu (w sekundach)",
+      "timeoutPlaceholder": "Domyślnie: 60",
       "type": {
         "http": "Strumieniowe HTTP",
         "smithery": "Smithery.ai",

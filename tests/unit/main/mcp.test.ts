@@ -187,6 +187,7 @@ test('Create server - Stdio', async () => {
     env: { KEY: 'value' },
     headers: undefined,
     oauth: undefined,
+    timeout: undefined,
     toolSelection: ['tool1'],
   })
 })
@@ -220,6 +221,7 @@ test('Create server - SSE', async () => {
     env: undefined,
     headers: undefined,
     oauth: undefined,
+    timeout: undefined,
     toolSelection: null,
   })
 })
@@ -258,6 +260,7 @@ test('Create server - HTTP', async () => {
     env: undefined,
     headers: { key: 'value' },
     oauth: undefined,
+    timeout: undefined,
     toolSelection: null,
   })
 })
@@ -539,6 +542,36 @@ test('Call tool', async () => {
   expect(await mcp.callTool('tool2_1', { arg: 'arg4' })).toStrictEqual({ content: [{ type: 'text', text: '2-tool2-arg4-result' }] })
   // Non-existent tool
   await expect(() => mcp.callTool('tool3_nonexistent', { arg: 'modern' })).rejects.toThrowError(/not found/)
+})
+
+test('Call tool passes timeout when configured', async () => {
+  // Set a timeout on the first server
+  config.mcp.servers[0].timeout = 120
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  await mcp.callTool('tool1', { arg: 'arg1' })
+
+  // Should pass timeout in ms in options
+  expect(Client.prototype.callTool).toHaveBeenLastCalledWith(
+    { name: 'tool1', arguments: { arg: 'arg1' } },
+    expect.anything(),
+    { signal: undefined, timeout: 120000 }
+  )
+})
+
+test('Call tool does not pass timeout when not configured', async () => {
+  const mcp = new Mcp(app)
+  await mcp.connect()
+
+  await mcp.callTool('tool1', { arg: 'arg1' })
+
+  // Should not include timeout in options
+  expect(Client.prototype.callTool).toHaveBeenLastCalledWith(
+    { name: 'tool1', arguments: { arg: 'arg1' } },
+    expect.anything(),
+    { signal: undefined }
+  )
 })
 
 test('Disconnect', async () => {
