@@ -146,12 +146,17 @@ const props = defineProps({
 })
 
 const formatDate = (timestamp: number) => {
-  return new Date(timestamp).toLocaleString(undefined, {
+  const date = new Date(timestamp)
+  const options: Intl.DateTimeFormatOptions = {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  })
+  }
+  if (date.getFullYear() !== new Date().getFullYear()) {
+    options.year = 'numeric'
+  }
+  return date.toLocaleString(undefined, options)
 }
 
 const chatMenuPosition = computed((): MenuPosition => {
