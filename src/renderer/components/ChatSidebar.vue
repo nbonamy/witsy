@@ -10,10 +10,12 @@
       <div class="title">{{ t('chatList.title') }}</div>
     </header>
     <div class="chat-list-tools">
-      <div class="form search" v-if="filtering"><div class="form-field">
-        <input name="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" @keydown.enter.prevent="onFilterNavigate" />
-        <CircleXIcon class="clear-filter" @click="onClearFilter" v-if="filter" />
-      </div></div>
+      <div class="form search" v-if="filtering">
+        <div class="form-field">
+          <input ref="inputFilter" name="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" @keydown.enter.prevent="onFilterNavigate" @keydown.escape.prevent="onToggleFilter" />
+          <CircleXIcon class="clear-filter" @click="onClearFilter" v-if="filter" />
+        </div>
+      </div>
       <div class="display-mode button-group" v-if="!filtering && store.isFeatureEnabled('chat.folders')">
         <button name="timeline" :class="{active: displayMode == 'timeline'}" @click="displayMode = 'timeline'">
           <MessagesSquareIcon />
@@ -53,6 +55,7 @@
 <script setup lang="ts">
 
 import useEventListener from '@composables/event_listener'
+import useIpcListener from '@composables/ipc_listener'
 import Chat from '@models/chat'
 import Dialog from '@renderer/utils/dialog'
 import type { ChatCallbacks, SearchState } from '@screens/Chat.vue'
@@ -61,9 +64,10 @@ import { store } from '@services/store'
 import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCirclePlusIcon, MessagesSquareIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
 import { ChatListMode } from 'types/config'
 import { v4 as uuidv4 } from 'uuid'
-import { inject, nextTick, onMounted, ref } from 'vue'
+import { inject, nextTick, onMounted, ref, watch } from 'vue'
 import ChatList from './ChatList.vue'
 
+const { onIpcEvent } = useIpcListener()
 const { onDomEvent, offDomEvent } = useEventListener()
 const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
 const searchState = inject<SearchState>('searchState')
@@ -84,6 +88,7 @@ const manualResize = ref(true)
 const displayMode = ref<ChatListMode>('timeline')
 const chatList = ref<typeof ChatList|null>(null)
 const selectMode = ref<boolean>(false)
+const inputFilter = ref<HTMLInputElement|null>(null)
 const filtering = ref(false)
 const filter = ref('')
 
@@ -111,26 +116,42 @@ onMounted(async () => {
   await nextTick()
   manualResize.value = false
 
+  // search
+  onIpcEvent('search-chats', () => {
+    onToggleFilter()
+  })
+
 })
 
-const onToggleFilter = () => {
+if (searchState) {
+  watch(searchState.filter, (value) => {
+    if (value === null && filtering.value) {
+      filter.value = ''
+      filtering.value = false
+    }
+  })
+}
+
+const onToggleFilter = async () => {
   if (!searchState) return
   filter.value = ''
   searchState.filter.value = null
   filtering.value = !filtering.value
+  await nextTick()
+  if (filtering.value && inputFilter.value) {
+    inputFilter.value.focus()
+  }
 }
 
 const onFilterChange = () => {
   if (!searchState) return
-  searchState.filter.value = filter.value.trim() || null
+  searchState.localSearch.value = false
+  searchState.filter.value = filter.value.trim()
 }
 
-const onFilterNavigate = async (event: KeyboardEvent) => {
+const onFilterNavigate = (event: KeyboardEvent) => {
   if (!searchState) return
   searchState.navigate.value = event.shiftKey ? -1 : 1
-  setTimeout(() => {
-    (event.target as HTMLElement).focus()
-  }, 100)
 }
 
 const onClearFilter = () => {
@@ -217,11 +238,25 @@ const saveSidebarState = () => {
   window.api.store.set('sidebarWidth', width.value)
 }
 
+const startFilter = async () => {
+  filtering.value = true
+  await nextTick()
+  inputFilter.value?.focus()
+}
+
+const clearFilter = () => {
+  filter.value = ''
+  if (searchState) searchState.filter.value = null
+  filtering.value = false
+}
+
 defineExpose({
   cancelSelectMode: onCancelSelect,
   isVisible: () => visible.value,
   hide: () => { visible.value = false; saveSidebarState() },
   show: () => { visible.value = true; saveSidebarState() },
+  startFilter,
+  clearFilter,
 })
 
 </script>

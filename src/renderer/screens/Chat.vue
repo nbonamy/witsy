@@ -41,6 +41,7 @@ export type ChatSessionStatus = 'idle' | 'generating'
 export type SearchState = {
   filter: Ref<string|null>
   navigate: Ref<number>
+  localSearch: Ref<boolean>
 }
 
 export interface ChatSession {
@@ -66,7 +67,7 @@ const isGenerating = computed(() => activeSession.value?.status === 'generating'
 provide('isGenerating', isGenerating)
 
 // provide search state for sidebar, message list and message body
-const searchState: SearchState = { filter: ref<string | null>(null), navigate: ref(0) }
+const searchState: SearchState = { filter: ref<string | null>(null), navigate: ref(0), localSearch: ref(false) }
 provide('searchState', searchState)
 
 // provide callbacks for descendant components (scoped to this component tree)
@@ -224,6 +225,7 @@ const onLinkClick = (e: Event) => {
   }
 }
 
+
 onMounted(() => {
 
   // init a new chat
@@ -241,6 +243,7 @@ onMounted(() => {
 
   // IPC events
   onIpcEvent('new-chat', onNewChat)
+  onIpcEvent('search-chat', searchChat)
   onIpcEvent('delete-chat', onDeleteChatIpc)
   onIpcEvent('computer-stop', onStopGeneration)
   onIpcEvent('update-available', onUpdateAvailable)
@@ -304,6 +307,13 @@ const onNewChat = async (payload?: any) => {
   latestChunk.value = null
   if (submit) {
     chatArea.value?.sendPrompt()
+  }
+}
+
+const searchChat = () => {
+  sidebar.value?.clearFilter()
+  if (assistant.value?.chat?.hasMessages()) {
+    searchState.localSearch.value = true
   }
 }
 
