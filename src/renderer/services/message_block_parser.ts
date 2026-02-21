@@ -26,6 +26,11 @@ type BlockText = {
   content: string
 }
 
+type BlockUserText = {
+  type: 'user-text'
+  content: string
+}
+
 type BlockMedia = {
   type: 'media'
   url: string
@@ -60,7 +65,7 @@ type BlockTable = {
   content: string
 }
 
-type BlockContent = BlockEmpty | BlockText | BlockMedia | BlockArtifact | BlockHtml | BlockTool | BlockSearch | BlockTable
+type BlockContent = BlockEmpty | BlockText | BlockUserText | BlockMedia | BlockArtifact | BlockHtml | BlockTool | BlockSearch | BlockTable
 
 export type Block = BlockMeta & BlockContent
 
@@ -99,6 +104,74 @@ const closeOpenArtifactTags = (content: string): string => {
   return content
 }
 
+/**
+ * Parse user messages: plain text with fenced code blocks extracted and rendered.
+ * Text segments are marked as 'user-text' (rendered as escaped plain text with inline code),
+ * fenced code blocks are 'text' (rendered through markdown for syntax highlighting).
+ */
+const computeUserBlocks = (content: string): Block[] => {
+  // only extract fenced code blocks (``` or ~~~), not inline backticks
+  const codeBlocks = getCodeBlocks(content).filter(cb => {
+    const snippet = content.substring(cb.start, cb.start + 3)
+    return snippet === '```' || snippet === '~~~'
+  })
+
+  // no fenced code blocks: return as single user-text block
+  if (codeBlocks.length === 0) {
+    return [{
+      type: 'user-text',
+      content: content,
+      start: 0,
+      end: content.length,
+      stable: true
+    }]
+  }
+
+  const blocks: Block[] = []
+  let lastIndex = 0
+
+  for (const cb of codeBlocks) {
+    // text before this code block
+    if (cb.start > lastIndex) {
+      const text = content.substring(lastIndex, cb.start)
+      if (text.trim().length > 0) {
+        blocks.push({
+          type: 'user-text',
+          content: text,
+          start: lastIndex,
+          end: cb.start,
+          stable: true
+        })
+      }
+    }
+    // the fenced code block itself (rendered through markdown)
+    blocks.push({
+      type: 'text',
+      content: content.substring(cb.start, cb.end + 1),
+      start: cb.start,
+      end: cb.end + 1,
+      stable: true
+    })
+    lastIndex = cb.end + 1
+  }
+
+  // text after the last code block
+  if (lastIndex < content.length) {
+    const text = content.substring(lastIndex)
+    if (text.trim().length > 0) {
+      blocks.push({
+        type: 'user-text',
+        content: text,
+        start: lastIndex,
+        end: content.length,
+        stable: true
+      })
+    }
+  }
+
+  return blocks
+}
+
 export const computeBlocks = (content: string | null, options: ComputeBlocksOptions): Block[] => {
   // if no content, return empty
   if (!content || content.trim().length === 0 || content.replaceAll('\n', '').trim().length === 0) {
@@ -115,21 +188,9 @@ export const computeBlocks = (content: string | null, options: ComputeBlocksOpti
   // Store original content length for position tracking
   const originalLength = content.length
 
-  // user message does not have special block parsing
+  // user message: render as plain text but extract code blocks
   if (options.role !== 'assistant') {
-    let pos = 0
-    return content.split('\n').map(p => {
-      const block: Block = {
-        type: 'text',
-        content: p,
-        start: pos,
-        end: pos + p.length,
-        // User message text blocks are always stable (no streaming transforms)
-        stable: true
-      }
-      pos += p.length + 1 // +1 for the newline
-      return block
-    })
+    return computeUserBlocks(content)
   }
 
   // Check for unclosed artifact BEFORE transformation
