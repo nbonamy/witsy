@@ -2,10 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.5.1] - WIP
+## [3.5.1] - 2026-02-21
 
 ### Added
 - Google Base URL
+- Support LM Studio authentication (https://github.com/nbonamy/witsy/issues/525)
+- Show conversations date time creation (https://github.com/nbonamy/witsy/issues/522)
+- "Scan for Changes" button for Knowledge Base (https://github.com/nbonamy/witsy/issues/524)
 
 ### Changed
 - Performance optimization for message rendering during streaming
@@ -13,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Bug fixes for markdown tag closing in streamed messages
+- User messages with fenced code blocks render incorrectly in chat history (https://github.com/nbonamy/witsy/issues/526)
 
 ### Removed
 - N/A
