@@ -192,14 +192,14 @@ export const store: Store = reactive({
     if (defaults) {
       chat.disableStreaming = defaults.disableStreaming
       chat.tools = defaults.tools !== undefined ? defaults.tools : (defaults.disableTools ? [] : null)
-      chat.locale = defaults.locale
-      chat.instructions = defaults.instructions
+      chat.locale = defaults.locale || chat.locale
+      chat.instructions = defaults.instructions || chat.instructions
       chat.modelOpts = defaults.modelOpts
     } else {
       chat.disableStreaming = false
       chat.tools = store.config.engines[chat.engine]?.disableTools ? [] : null
-      chat.locale = null
-      chat.instructions = null
+      chat.locale = chat.locale || null
+      chat.instructions = chat.instructions || null
       chat.modelOpts = undefined
     }
   },

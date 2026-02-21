@@ -140,6 +140,88 @@ test('Merge history', async () => {
   expect(store.history.chats[1].messages).toHaveLength(3)
 })
 
+// initChatWithDefaults
+
+test('initChatWithDefaults applies defaults when they exist', () => {
+  store.load()
+  store.config.llm.defaults = [{
+    engine: 'openai',
+    model: 'gpt-4',
+    disableStreaming: true,
+    instructions: 'Default prompt',
+    locale: 'fr',
+    tools: ['tool1'],
+    modelOpts: { temperature: 0.5 },
+  }]
+  const chat = new Chat()
+  chat.setEngineModel('openai', 'gpt-4')
+  store.initChatWithDefaults(chat)
+  expect(chat.disableStreaming).toBe(true)
+  expect(chat.instructions).toBe('Default prompt')
+  expect(chat.locale).toBe('fr')
+  expect(chat.tools).toEqual(['tool1'])
+  expect(chat.modelOpts).toEqual({ temperature: 0.5 })
+})
+
+test('initChatWithDefaults resets when no defaults exist', () => {
+  store.load()
+  store.config.llm.defaults = []
+  const chat = new Chat()
+  chat.setEngineModel('openai', 'gpt-4')
+  chat.disableStreaming = true
+  store.initChatWithDefaults(chat)
+  expect(chat.disableStreaming).toBe(false)
+  expect(chat.tools).toBeNull()
+  expect(chat.modelOpts).toBeUndefined()
+})
+
+test('initChatWithDefaults preserves instructions when defaults have none', () => {
+  store.load()
+  store.config.llm.defaults = [{
+    engine: 'openai',
+    model: 'gpt-4',
+    disableStreaming: true,
+  }]
+  const chat = new Chat()
+  chat.setEngineModel('openai', 'gpt-4')
+  chat.instructions = 'My custom prompt'
+  chat.locale = 'de'
+  store.initChatWithDefaults(chat)
+  expect(chat.disableStreaming).toBe(true)
+  expect(chat.instructions).toBe('My custom prompt')
+  expect(chat.locale).toBe('de')
+})
+
+test('initChatWithDefaults preserves instructions when no defaults exist', () => {
+  store.load()
+  store.config.llm.defaults = []
+  const chat = new Chat()
+  chat.setEngineModel('openai', 'gpt-4')
+  chat.instructions = 'My custom prompt'
+  chat.locale = 'de'
+  store.initChatWithDefaults(chat)
+  expect(chat.instructions).toBe('My custom prompt')
+  expect(chat.locale).toBe('de')
+})
+
+test('initChatWithDefaults overrides instructions when defaults provide them', () => {
+  store.load()
+  store.config.llm.defaults = [{
+    engine: 'openai',
+    model: 'gpt-4',
+    disableStreaming: false,
+    instructions: 'Default instructions',
+    locale: 'es',
+  }]
+  const chat = new Chat()
+  chat.setEngineModel('openai', 'gpt-4')
+  chat.instructions = 'My custom prompt'
+  chat.locale = 'de'
+  store.initChatWithDefaults(chat)
+  expect(chat.instructions).toBe('Default instructions')
+  expect(chat.locale).toBe('es')
+})
+
 test('Add quick prompt', async () => {
   store.load()
   expect(store.history.quickPrompts).toHaveLength(0)
