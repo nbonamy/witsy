@@ -125,7 +125,8 @@ export const DOCREPO = {
   QUERY: 'docrepo-query',
   IS_EMBEDDING_AVAILABLE: 'docrepo-is-embedding-available',
   GET_CURRENT_QUEUE_ITEM: 'docrepo-get-current-queue-item',
-  IS_SOURCE_SUPPORTED: 'docrepo-is-source-supported'
+  IS_SOURCE_SUPPORTED: 'docrepo-is-source-supported',
+  SCAN_FOR_UPDATES: 'docrepo-scan-for-updates'
 } as const;
 
 export const AUTOMATION = {

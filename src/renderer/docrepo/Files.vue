@@ -251,4 +251,5 @@ const onCancelTask = async (doc: DocumentSource) => {
     }
   }
 }
+
 </script>

@@ -725,6 +725,11 @@ export const installIpc = (
     }
   });
 
+  ipcMain.handle(IPC.DOCREPO.SCAN_FOR_UPDATES, async (_, payload) => {
+    const { baseId, forceWebRescan } = payload;
+    await docRepo.doScanForUpdates(baseId, forceWebRescan);
+  });
+
   ipcMain.on(IPC.MCP.IS_AVAILABLE, (event) => {
     event.returnValue = mcp !== null;
   });

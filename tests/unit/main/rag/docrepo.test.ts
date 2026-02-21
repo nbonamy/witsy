@@ -505,17 +505,16 @@ test('DocumentRepository detects new files added offline', async () => {
   fs.writeFileSync(newFile, 'new file content')
   
   // scan for offline changes
-  await new Promise<void>((resolve) => {
-    docrepo.scanForUpdates(() => {
-      resolve()
-    })
-  })
-  
-  // should detect new file and add it
-  const list = docrepo.list('workspace')
-  const folderDoc = list[0].documents.find(d => d.uuid === docid)
-  expect(folderDoc?.items?.some(item => item.origin === newFile)).toBe(true)
-  
+  const base = docrepo.list('workspace')[0]
+  const baseImpl = await docrepo.connect(base.uuid)
+  const changes = await baseImpl.scanForUpdates()
+
+  // should detect the new file (among other temp files in the folder)
+  expect(changes.added.length).toBeGreaterThanOrEqual(1)
+  const newFileChange = changes.added.find(a => a.docSource.origin === newFile)
+  expect(newFileChange).toBeDefined()
+  expect(newFileChange?.parentFolder?.uuid).toBe(docid)
+
   fs.rmSync(tempdir, { recursive: true, force: true })
 })
 
@@ -543,16 +542,14 @@ test('DocumentRepository detects deleted files offline', async () => {
   fs.rmSync(tempFile)
   
   // scan for offline changes
-  await new Promise<void>((resolve) => {
-    docrepo.scanForUpdates(() => {
-      resolve()
-    })
-  })
-  
-  // should detect deletion and remove document
-  const list = docrepo.list('workspace')
-  expect(list[0].documents.find(d => d.uuid === docid)).toBeUndefined()
-  
+  const base = docrepo.list('workspace')[0]
+  const baseImpl = await docrepo.connect(base.uuid)
+  const changes = await baseImpl.scanForUpdates()
+
+  // should detect the deleted file
+  expect(changes.deleted.length).toBe(1)
+  expect(changes.deleted[0].uuid).toBe(docid)
+
   fs.rmSync(tempdir, { recursive: true, force: true })
 })
 

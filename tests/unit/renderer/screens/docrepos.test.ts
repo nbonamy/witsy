@@ -373,3 +373,11 @@ test('Deletes repo via context menu', async () => {
   expect(Dialog.show).toHaveBeenCalled()
   expect(window.api.docrepo.delete).toHaveBeenLastCalledWith('uuid2')
 })
+
+test('Scan for changes button calls scanForUpdates', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepos)
+  await vi.waitUntil(async () => wrapper.vm.docRepos != null)
+  await wrapper.find('.split-pane .list-item:nth-child(2)').trigger('click')
+  await wrapper.find('.split-pane .sp-main header .scan').trigger('click')
+  expect(window.api.docrepo.scanForUpdates).toHaveBeenCalledWith('uuid2', false)
+})

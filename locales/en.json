@@ -942,6 +942,11 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "scan": {
+      "filesOnly": "Files only",
+      "text": "This will re-scan all files and re-fetch all websites and sitemaps in this collection.",
+      "title": "Scan for changes"
+    },
     "search": {
       "error": "An error occurred while searching. Please try again.",
       "noResults": "No results found for your query.",
@@ -962,6 +967,7 @@
         "addFolder": "Add folder",
         "embeddingNotReady": "Embedding model not available",
         "openInExplorer": "Open in Finder",
+        "scanForChanges": "Scan for changes",
         "viewContents": "View folder contents"
       }
     },
