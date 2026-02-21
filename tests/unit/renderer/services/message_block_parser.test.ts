@@ -52,24 +52,45 @@ describe('computeBlocks - empty/null content', () => {
 
 describe('computeBlocks - user messages', () => {
 
-  test('splits user content by newlines', () => {
+  test('returns user-text block for plain content', () => {
     const blocks = computeBlocks('Hello\nWorld', userOptions)
-    expect(blocks).toHaveLength(2)
-    expect(blocks[0]).toMatchObject({ type: 'text', content: 'Hello' })
-    expect(blocks[1]).toMatchObject({ type: 'text', content: 'World' })
+    expect(blocks).toHaveLength(1)
+    expect(blocks[0]).toMatchObject({ type: 'user-text', content: 'Hello\nWorld' })
   })
 
   test('does not parse special blocks for user messages', () => {
     const content = 'Check this ![image](http://example.com/img.png)'
     const blocks = computeBlocks(content, userOptions)
     expect(blocks).toHaveLength(1)
-    expect(blocks[0]).toMatchObject({ type: 'text', content })
+    expect(blocks[0]).toMatchObject({ type: 'user-text', content })
   })
 
-  test('user blocks have correct positions', () => {
+  test('user block has correct positions', () => {
     const blocks = computeBlocks('Hello\nWorld', userOptions)
-    expect(blocks[0]).toMatchObject({ start: 0, end: 5, stable: true })
-    expect(blocks[1]).toMatchObject({ start: 6, end: 11, stable: true })
+    expect(blocks[0]).toMatchObject({ start: 0, end: 11, stable: true })
+  })
+
+  test('extracts fenced code blocks from user content', () => {
+    const content = 'before\n```js\nconsole.log("hi")\n```\nafter'
+    const blocks = computeBlocks(content, userOptions)
+    expect(blocks).toHaveLength(3)
+    expect(blocks[0]).toMatchObject({ type: 'user-text', content: 'before\n' })
+    expect(blocks[1]).toMatchObject({ type: 'text', content: '```js\nconsole.log("hi")\n```' })
+    expect(blocks[2]).toMatchObject({ type: 'user-text', content: '\nafter' })
+  })
+
+  test('keeps inline code within user-text block', () => {
+    const content = 'use `console.log` for debugging'
+    const blocks = computeBlocks(content, userOptions)
+    expect(blocks).toHaveLength(1)
+    expect(blocks[0]).toMatchObject({ type: 'user-text', content })
+  })
+
+  test('user content with only code block', () => {
+    const content = '```\ncode\n```'
+    const blocks = computeBlocks(content, userOptions)
+    expect(blocks).toHaveLength(1)
+    expect(blocks[0]).toMatchObject({ type: 'text', content: '```\ncode\n```' })
   })
 
 })

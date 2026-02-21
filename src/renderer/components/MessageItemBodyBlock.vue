@@ -1,6 +1,7 @@
 <template>
   <div v-if="block.type == 'empty'" :ref="setRef" class="text empty variable-font-size"><p>{{ t('message.content.empty') }}</p></div>
-  <div v-if="block.type == 'text'" :ref="setRef" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
+  <div v-if="block.type == 'user-text'" :ref="setRef" class="text variable-font-size" v-html="userTextRender(block.content!)"></div>
+  <div v-else-if="block.type == 'text'" :ref="setRef" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
   <MessageItemArtifactBlock v-else-if="block.type == 'artifact'" :ref="setRef" :title="block.title!" :content="block.content!" :transient="props.transient" />
   <MessageItemHtmlBlock v-else-if="block.type == 'html'" :ref="setRef" :title="block.title!" :content="block.content!" :transient="props.transient" />
   <MessageItemTableBlock v-else-if="block.type == 'table'" :ref="setRef" :content="block.content!" />
@@ -50,6 +51,16 @@ const setRef = (el: any) => {
   // For regular HTML elements, use them directly
   messageItemBodyBlock.value = el?.$el || el
 }
+const userTextRender = (content: string) => {
+  // escape HTML, then render inline code and convert newlines to <br>
+  const escaped = content
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+  return `<p>${escaped.replace(/\n/g, '<br>')}</p>`
+}
+
 const mdRender = (content: string) => {
 
   // convert to html 
