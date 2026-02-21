@@ -501,6 +501,7 @@ declare global {
         removeDocument(id: string, docId: string): Promise<boolean>
         query(id: string, text: string): Promise<DocRepoQueryResponseItem[]>
         getCurrentQueueItem(): Promise<DocumentQueueItem|null>
+        scanForUpdates(baseId: string, forceWebRescan?: boolean): Promise<void>
       },
       readaloud: {
         closePalette(sourceApp: Application): void

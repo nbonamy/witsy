@@ -28,6 +28,12 @@
         <ButtonIcon class="search" v-tooltip="{ text: t('docRepo.search.title'), position: 'bottom-left' }" @click="onSearch">
           <SearchIcon />
         </ButtonIcon>
+        <ButtonIcon v-if="scanning">
+          <SpinningIcon :spinning="true" />
+        </ButtonIcon>
+        <ButtonIcon class="scan" v-tooltip="{ text: t('docRepo.view.tooltips.scanForChanges'), position: 'bottom-left' }" @click="onScanForChanges" v-else>
+          <FolderSyncIcon />
+        </ButtonIcon>
         <ButtonIcon class="delete" v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'bottom-left' }" @click="onDeleteRepo(selectedRepo)">
           <Trash2 />
         </ButtonIcon>
@@ -47,7 +53,8 @@ import useIpcListener from '@composables/ipc_listener'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import { FolderPlusIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2 } from 'lucide-vue-next'
+import SpinningIcon from '@components/SpinningIcon.vue'
+import { FolderPlusIcon, FolderSyncIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2 } from 'lucide-vue-next'
 import { DocumentBase } from 'types/rag'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import Config from '../docrepo/Config.vue'
@@ -65,6 +72,7 @@ const docRepos = ref(null)
 const selectedRepo = ref<DocumentBase | null>(null)
 const configDialog = ref(null)
 const createDialog = ref(null)
+const scanning = ref(false)
 
 
 const props = defineProps({
@@ -187,6 +195,39 @@ const onDeleteRepo = (docRepo: DocumentBase) => {
       window.api.docrepo.delete(docRepo.uuid)
     }
   })
+}
+
+const onScanForChanges = async () => {
+  if (!selectedRepo.value || scanning.value) return
+
+  const hasWebSources = selectedRepo.value.documents.some(
+    doc => doc.type === 'url' || doc.type === 'sitemap'
+  )
+
+  let forceWebRescan = false
+
+  if (hasWebSources) {
+    const result = await Dialog.show({
+      target: document.querySelector('.docrepos'),
+      title: t('docRepo.scan.title'),
+      text: t('docRepo.scan.text'),
+      confirmButtonText: t('common.continue'),
+      showDenyButton: true,
+      denyButtonText: t('docRepo.scan.filesOnly'),
+      showCancelButton: true,
+    })
+    if (result.isDismissed) return
+    forceWebRescan = result.isConfirmed
+  }
+
+  scanning.value = true
+  try {
+    await window.api.docrepo.scanForUpdates(selectedRepo.value.uuid, forceWebRescan)
+  } catch (error) {
+    console.error('Error scanning for changes:', error)
+  } finally {
+    scanning.value = false
+  }
 }
 
 const onConfig = () => {

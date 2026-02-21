@@ -475,6 +475,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       getCurrentQueueItem: vi.fn(async () => null),
       isSourceSupported: vi.fn((type: string, origin: string) => origin.startsWith('file')),
       cancelTask: vi.fn(),
+      scanForUpdates: vi.fn(),
     },
     scratchpad: {
       open: vi.fn(),

@@ -289,7 +289,7 @@ export default class DocumentRepository {
 
   }
 
-  async removeDocumentSource(baseId: string, sourceId: string): Promise<void> {
+  async removeDocumentSource(baseId: string, sourceId: string, fromUserAction = true): Promise<void> {
 
     // get the base
     const base = await this.connect(baseId)
@@ -317,14 +317,14 @@ export default class DocumentRepository {
     }
 
     // add to queue for deletion
-    this.queue.push({ 
-      uuid: sourceId, 
-      baseId, 
-      type: docSource.type, 
-      origin: docSource.origin, 
+    this.queue.push({
+      uuid: sourceId,
+      baseId,
+      type: docSource.type,
+      origin: docSource.origin,
       parentDocId,
-      operation: 'delete', 
-      fromUserAction: true 
+      operation: 'delete',
+      fromUserAction
     })
 
     // process
@@ -332,7 +332,7 @@ export default class DocumentRepository {
 
   }
 
-  async removeChildDocumentSource(baseId: string, sourceId: string): Promise<void> {
+  async removeChildDocumentSource(baseId: string, sourceId: string, fromUserAction = true): Promise<void> {
 
     // get the base
     const base = await this.connect(baseId)
@@ -356,14 +356,14 @@ export default class DocumentRepository {
     }
 
     // add to queue for deletion
-    this.queue.push({ 
-      uuid: sourceId, 
-      baseId, 
-      type: docSource.type, 
-      origin: docSource.origin, 
+    this.queue.push({
+      uuid: sourceId,
+      baseId,
+      type: docSource.type,
+      origin: docSource.origin,
       parentDocId,
-      operation: 'delete', 
-      fromUserAction: true 
+      operation: 'delete',
+      fromUserAction
     })
 
     // process
@@ -371,7 +371,7 @@ export default class DocumentRepository {
 
   }
 
-  async updateDocumentSource(baseId: string, sourceId: string): Promise<void> {
+  async updateDocumentSource(baseId: string, sourceId: string, fromUserAction = true): Promise<void> {
 
     // get the base
     const base = await this.connect(baseId)
@@ -384,13 +384,13 @@ export default class DocumentRepository {
     }
 
     // add to queue for update
-    this.queue.push({ 
-      uuid: sourceId, 
-      baseId, 
-      type: docSource.type, 
-      origin: docSource.origin, 
-      operation: 'update', 
-      fromUserAction: true 
+    this.queue.push({
+      uuid: sourceId,
+      baseId,
+      type: docSource.type,
+      origin: docSource.origin,
+      operation: 'update',
+      fromUserAction
     })
 
     // process
@@ -398,7 +398,7 @@ export default class DocumentRepository {
 
   }
 
-  async updateChildDocumentSource(baseId: string, sourceId: string): Promise<void> {
+  async updateChildDocumentSource(baseId: string, sourceId: string, fromUserAction = true): Promise<void> {
 
     // get the base
     const base = await this.connect(baseId)
@@ -422,14 +422,14 @@ export default class DocumentRepository {
     }
 
     // add to queue for update
-    this.queue.push({ 
-      uuid: sourceId, 
-      baseId, 
-      type: docSource.type, 
-      origin: docSource.origin, 
+    this.queue.push({
+      uuid: sourceId,
+      baseId,
+      type: docSource.type,
+      origin: docSource.origin,
       parentDocId,
-      operation: 'update', 
-      fromUserAction: true 
+      operation: 'update',
+      fromUserAction
     })
 
     // process
@@ -511,36 +511,34 @@ export default class DocumentRepository {
   async scanForUpdates(callback?: () => void): Promise<void> {
 
     console.log('[rag] Starting offline change detection scan...')
-    
+
     // Run asynchronously to avoid blocking app startup
-    setImmediate(async () => {
-      try {
-        for (const base of this.contents) {
-          try {
-
-            // detect and process
-            const changes = await base.scanForUpdates()
-            await this.processUpdates(base, changes)
-
-            // save if we had updates
-            if (changes.added.length > 0 || changes.modified.length > 0 || changes.deleted.length > 0) {
-              this.save()
-            }
-
-          } catch (error) {
-            console.error(`[rag] Error scanning database ${base.name} for offline changes:`, error)
-          }
-        }
-      } catch (error) {
-        console.error('[rag] Error during offline change detection:', error)
-      } finally {
-        callback?.()
-      }
+    setImmediate(() => {
+      this.doScanForUpdates().finally(() => callback?.())
     })
   }
 
+  async doScanForUpdates(baseId?: string, forceWebRescan = false): Promise<void> {
+    try {
+      const bases = baseId ? this.contents.filter(b => b.uuid === baseId) : this.contents
+      for (const base of bases) {
+        try {
+
+          // detect changes and enqueue for processing
+          const changes = await base.scanForUpdates(forceWebRescan)
+          await this.processUpdates(base, changes)
+
+        } catch (error) {
+          console.error(`[rag] Error scanning database ${base.name} for offline changes:`, error)
+        }
+      }
+    } catch (error) {
+      console.error('[rag] Error during offline change detection:', error)
+    }
+  }
+
   private async processUpdates(
-    base: DocumentBaseImpl, 
+    base: DocumentBaseImpl,
     changes: {
       added: Array<{docSource: DocumentSourceImpl, parentFolder?: DocumentSourceImpl}>,
       modified: DocumentSourceImpl[],
@@ -549,101 +547,35 @@ export default class DocumentRepository {
   ): Promise<void> {
     const { added, modified, deleted } = changes
 
-    // Process deleted documents first
+    // Queue deleted documents
     for (const deletedDoc of deleted) {
-      console.log(`[rag] Removing deleted document: ${deletedDoc.origin}`)
-      
-      try {
-        if (deletedDoc.items && deletedDoc.items.length > 0) {
-          // It's a folder, remove from root documents
-          await base.deleteDocumentSource(deletedDoc.uuid)
-        } else {
-          // Check if it's a child item in a folder
-          let isChildItem = false
-          for (const rootDoc of base.documents) {
-            if (rootDoc.type === 'folder' && rootDoc.items) {
-              const itemIndex = rootDoc.items.findIndex(item => item.uuid === deletedDoc.uuid)
-              if (itemIndex !== -1) {
-                // Remove from folder items and database
-                await base.deleteChildDocumentSource(deletedDoc.uuid)
-                isChildItem = true
-                break
-              }
-            }
-          }
-          
-          if (!isChildItem) {
-            // It's a root document
-            await base.deleteDocumentSource(deletedDoc.uuid)
-          }
-        }
-      } catch (error) {
-        console.error(`[rag] Error removing deleted document ${deletedDoc.origin}:`, error)
-      }
+      await this.removeDocumentSource(base.uuid, deletedDoc.uuid, false)
     }
 
-    // Process modified documents
+    // Queue modified documents for re-indexing
     for (const modifiedDoc of modified) {
-      
-      //console.log(`[rag] Reprocessing modified document: ${modifiedDoc.origin}`)
-      
-      try {
-        // Re-add the document to update its content in the database
-        if (modifiedDoc.items && modifiedDoc.items.length > 0) {
-          // It's a folder
-          await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, {
-            callback: () => this.save()
-          })
-        } else {
-          // Check if it's a child item
-          let isChildItem = false
-          for (const rootDoc of base.documents) {
-            if (rootDoc.type === 'folder' && rootDoc.items) {
-              const childExists = rootDoc.items.some(item => item.uuid === modifiedDoc.uuid)
-              if (childExists) {
-                await base.processChildDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, {
-                  callback: () => this.save()
-                })
-                isChildItem = true
-                break
-              }
-            }
-          }
-          
-          if (!isChildItem) {
-            // It's a root document
-            await base.addDocumentSource(modifiedDoc.uuid, modifiedDoc.type, modifiedDoc.origin, {
-              callback: () => this.save()
-            })
+      // Check if it's a child item in a folder
+      let isChildItem = false
+      for (const rootDoc of base.documents) {
+        if (rootDoc.type === 'folder' && rootDoc.items) {
+          if (rootDoc.items.some(item => item.uuid === modifiedDoc.uuid)) {
+            await this.updateChildDocumentSource(base.uuid, modifiedDoc.uuid, false)
+            isChildItem = true
+            break
           }
         }
-      } catch (error) {
-        if (!fs.existsSync(modifiedDoc.origin)) {
-          console.error(`[rag] Error reprocessing modified document ${modifiedDoc.origin}:`, error)
-        }
+      }
+      if (!isChildItem) {
+        await this.updateDocumentSource(base.uuid, modifiedDoc.uuid, false)
       }
     }
 
-    // Process added documents
+    // Queue added documents
     for (const { docSource: addedDoc, parentFolder } of added) {
-      console.log(`[rag] Adding new document: ${addedDoc.origin}`)
-      
-      try {
-        if (parentFolder) {
-          // Add as child to folder
-          parentFolder.items.push(addedDoc)
-          await base.processChildDocumentSource(addedDoc.uuid, addedDoc.type, addedDoc.origin, {
-            callback: () => this.save()
-          })
-        } else {
-          // Add as root document
-          base.documents.push(addedDoc)
-          await base.addDocumentSource(addedDoc.uuid, addedDoc.type, addedDoc.origin, {
-            callback: () => this.save()
-          })
-        }
-      } catch (error) {
-        console.error(`[rag] Error adding new document ${addedDoc.origin}:`, error)
+      if (parentFolder) {
+        await this.addChildDocumentSource(base.uuid, parentFolder.uuid, addedDoc.type, addedDoc.origin, false)
+      } else {
+        await this.addDocumentSource(base.uuid, addedDoc.type, addedDoc.origin, false)
       }
     }
   }

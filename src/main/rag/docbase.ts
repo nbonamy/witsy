@@ -453,36 +453,45 @@ export default class DocumentBaseImpl {
    * Scan all documents for changes that occurred while the app was offline
    * Returns arrays of documents that were added, modified, or deleted
    */
-  async scanForUpdates(): Promise<{
+  async scanForUpdates(forceWebRescan = false): Promise<{
     added: Array<{docSource: DocumentSourceImpl, parentFolder?: DocumentSourceImpl}>,
     modified: DocumentSourceImpl[],
     deleted: DocumentSourceImpl[]
   }> {
     // console.log(`[rag] Scanning for offline changes in database "${this.name}"`)
-    
+
     const added: Array<{docSource: DocumentSourceImpl, parentFolder?: DocumentSourceImpl}> = []
     const modified: DocumentSourceImpl[] = []
     const deleted: DocumentSourceImpl[] = []
 
     // Scan root documents and their items
     for (const document of this.documents) {
-      await this.scanDocumentForChanges(document, added, modified, deleted)
+      await this.scanDocumentForChanges(document, added, modified, deleted, forceWebRescan)
     }
 
     if (added.length > 0 || modified.length > 0 || deleted.length > 0) {
       console.log(`[rag] Offline scan complete: ${added.length} added, ${modified.length} modified, ${deleted.length} deleted`)
     }
-    
+
     return { added, modified, deleted }
+  }
+
+  // Yield the event loop to avoid blocking the UI during heavy I/O scans
+  private yieldEventLoop(): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, 0))
   }
 
   private async scanDocumentForChanges(
     document: DocumentSourceImpl,
     added: Array<{docSource: DocumentSourceImpl, parentFolder?: DocumentSourceImpl}>,
     modified: DocumentSourceImpl[],
-    deleted: DocumentSourceImpl[]
+    deleted: DocumentSourceImpl[],
+    forceWebRescan: boolean
   ): Promise<void> {
-    
+
+    // yield before each fs check to keep the app responsive
+    await this.yieldEventLoop()
+
     if (!document.exists()) {
       deleted.push(document)
       return
@@ -495,8 +504,10 @@ export default class DocumentBaseImpl {
     } else if (document.type === 'folder') {
       await this.scanFolderForNewFiles(document, added)
       for (const item of document.items) {
-        await this.scanDocumentForChanges(item, added, modified, deleted)
+        await this.scanDocumentForChanges(item, added, modified, deleted, forceWebRescan)
       }
+    } else if ((document.type === 'url' || document.type === 'sitemap') && forceWebRescan) {
+      modified.push(document)
     }
   }
 
@@ -517,7 +528,7 @@ export default class DocumentBaseImpl {
         if (!existingPaths.has(filePath)) {
           // Found a new file that wasn't tracked before
           const newDocSource = new DocumentSourceImpl(crypto.randomUUID(), 'file', filePath)
-          
+
           added.push({
             docSource: newDocSource,
             parentFolder: folderDocument
