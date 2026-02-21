@@ -506,6 +506,7 @@
       "user": "Du"
     },
     "send": "Senden",
+    "startedAt": "Gestartet {date}",
     "unknownModel": "Unbekanntes Modell"
   },
   "chatList": {
@@ -924,6 +925,11 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "scan": {
+      "filesOnly": "Nur Dateien",
+      "text": "Dadurch werden alle Dateien erneut gescannt und alle Websites sowie Sitemaps in dieser Sammlung erneut abgerufen.",
+      "title": "Auf Änderungen prüfen"
+    },
     "search": {
       "error": "Beim Suchen ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
       "noResults": "Für Ihre Anfrage wurden keine Ergebnisse gefunden.",
@@ -944,6 +950,7 @@
         "addFolder": "Ordner hinzufügen",
         "embeddingNotReady": "Einbettungsmodell nicht verfügbar",
         "openInExplorer": "Im Finder öffnen",
+        "scanForChanges": "Auf Änderungen prüfen",
         "viewContents": "Inhalt des Ordners anzeigen"
       }
     },

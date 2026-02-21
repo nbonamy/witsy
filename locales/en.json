@@ -467,7 +467,6 @@
     }
   },
   "chat": {
-    "startedAt": "Started {date}",
     "actions": {
       "exportMarkdown": "Export as Markdown",
       "exportPdf": "Export as PDF",
@@ -525,6 +524,7 @@
       "user": "You"
     },
     "send": "Send",
+    "startedAt": "Started {date}",
     "unknownModel": "Unknown Model"
   },
   "chatList": {

@@ -506,6 +506,7 @@
       "user": "Tú"
     },
     "send": "Enviar",
+    "startedAt": "Iniciado {date}",
     "unknownModel": "Modelo desconocido"
   },
   "chatList": {
@@ -924,6 +925,11 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "scan": {
+      "filesOnly": "Solo archivos",
+      "text": "Esto volverá a escanear todos los archivos y volverá a recuperar todos los sitios web y mapas del sitio de esta colección.",
+      "title": "Buscar cambios"
+    },
     "search": {
       "error": "Ocurrió un error durante la búsqueda. Por favor, inténtelo de nuevo.",
       "noResults": "No se encontraron resultados para su consulta.",
@@ -944,6 +950,7 @@
         "addFolder": "Agregar carpeta",
         "embeddingNotReady": "Modelo de incrustación no disponible",
         "openInExplorer": "Abrir en Finder",
+        "scanForChanges": "Buscar cambios",
         "viewContents": "Ver contenido de la carpeta"
       }
     },
