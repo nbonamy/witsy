@@ -340,3 +340,13 @@
 .message a.copy {
   cursor: pointer;
 }
+
+mark:not(.active) {
+  background-color: color-mix(in srgb, mark, transparent 70%);
+  color: var(--text-color);
+  border-radius: 2px;
+}
+
+mark.active {
+  border-radius: 2px;
+}

@@ -524,6 +524,11 @@
       "system": "システム",
       "user": "あなた"
     },
+    "search": {
+      "matchCount": "{total} 件中 {current} 件目",
+      "nextMatch": "次の一致",
+      "previousMatch": "前の一致"
+    },
     "send": "送信",
     "startedAt": "開始: {date}",
     "unknownModel": "不明なモデル"

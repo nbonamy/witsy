@@ -11,7 +11,7 @@
     </header>
     <div class="chat-list-tools">
       <div class="form search" v-if="filtering"><div class="form-field">
-        <input name="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" />
+        <input name="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" @keydown.enter.prevent="onFilterNavigate" />
         <CircleXIcon class="clear-filter" @click="onClearFilter" v-if="filter" />
       </div></div>
       <div class="display-mode button-group" v-if="!filtering && store.isFeatureEnabled('chat.folders')">
@@ -55,6 +55,7 @@
 import useEventListener from '@composables/event_listener'
 import Chat from '@models/chat'
 import Dialog from '@renderer/utils/dialog'
+import type { ChatCallbacks } from '@screens/Chat.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCirclePlusIcon, MessagesSquareIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
@@ -62,7 +63,6 @@ import { ChatListMode } from 'types/config'
 import { v4 as uuidv4 } from 'uuid'
 import { inject, nextTick, onMounted, ref } from 'vue'
 import ChatList from './ChatList.vue'
-import type { ChatCallbacks } from '@screens/Chat.vue'
 
 const { onDomEvent, offDomEvent } = useEventListener()
 const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
@@ -120,6 +120,13 @@ const onToggleFilter = () => {
 
 const onFilterChange = () => {
   store.chatState.filter = filter.value.trim()
+}
+
+const onFilterNavigate = async (event: KeyboardEvent) => {
+  store.chatState.navigateMatch = event.shiftKey ? -1 : 1
+  setTimeout(() => {
+    (event.target as HTMLElement).focus()
+  }, 100)
 }
 
 const onClearFilter = () => {

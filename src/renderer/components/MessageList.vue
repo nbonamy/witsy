@@ -8,6 +8,15 @@
     <div v-if="overflown" class="overflow" @click="scrollDown">
       <ArrowDownIcon />
     </div>
+    <div v-if="searchMatchCount > 0" class="search-nav">
+      <span class="match-count">{{ t('chat.search.matchCount', { current: searchCurrentIndex + 1, total: searchMatchCount }) }}</span>
+      <ButtonIcon class="nav-prev" @click="navigateMatch(-1)" v-tooltip="{ text: t('chat.search.previousMatch') }">
+        <ChevronUpIcon />
+      </ButtonIcon>
+      <ButtonIcon class="nav-next" @click="navigateMatch(1)" v-tooltip="{ text: t('chat.search.nextMatch') }">
+        <ChevronDownIcon />
+      </ButtonIcon>
+    </div>
   </div>
 </template>
 
@@ -16,10 +25,12 @@
 import { ChatTheme } from '@/types/config'
 import useIpcListener from '@composables/ipc_listener'
 import Chat from '@models/chat'
+import { t } from '@services/i18n'
 import { store } from '@services/store'
-import { ArrowDownIcon } from 'lucide-vue-next'
+import { ArrowDownIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-vue-next'
 import { LlmChunk } from 'multi-llm-ts'
 import { computed, inject, nextTick, onMounted, PropType, ref, Ref, useTemplateRef, watch } from 'vue'
+import ButtonIcon from './ButtonIcon.vue'
 import MessageItem from './MessageItem.vue'
 
 const { onIpcEvent } = useIpcListener()
@@ -150,6 +161,82 @@ const onScroll = () => {
   divScroller.value?.focus()
 }
 
+// search navigation
+const searchCurrentIndex = ref(-1)
+const searchMatchCount = ref(0)
+const searchMarks = ref<HTMLElement[]>([])
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
+
+const updateSearchMarks = () => {
+  if (!divScroller.value) return
+  searchMarks.value = Array.from(divScroller.value.querySelectorAll('mark'))
+  searchMatchCount.value = searchMarks.value.length
+}
+
+const getOffsetTop = (element: HTMLElement, container: HTMLElement): number => {
+  let top = 0
+  let el: HTMLElement | null = element
+  while (el && el !== container) {
+    top += el.offsetTop
+    el = el.offsetParent as HTMLElement | null
+  }
+  return top
+}
+
+const scrollToCurrentMatch = () => {
+  searchMarks.value.forEach(m => m.classList.remove('active'))
+  if (searchCurrentIndex.value >= 0 && searchCurrentIndex.value < searchMarks.value.length) {
+    const mark = searchMarks.value[searchCurrentIndex.value]
+    mark.classList.add('active')
+    if (divScroller.value) {
+      const markTop = getOffsetTop(mark, divScroller.value)
+      const scrollTarget = markTop - divScroller.value.clientHeight / 2
+      divScroller.value.scrollTo?.({ top: scrollTarget, behavior: 'auto' })
+    }
+  }
+}
+
+const navigateMatch = (direction: number) => {
+  if (searchMatchCount.value === 0) return
+  searchCurrentIndex.value = (searchCurrentIndex.value + direction + searchMatchCount.value) % searchMatchCount.value
+  scrollToCurrentMatch()
+}
+
+const resetAndScanMarks = async () => {
+  if (searchTimeout) clearTimeout(searchTimeout)
+  searchCurrentIndex.value = -1
+  searchMatchCount.value = 0
+  searchMarks.value = []
+  if (store.chatState.filter) {
+    await nextTick()
+    searchTimeout = setTimeout(() => {
+      updateSearchMarks()
+      if (searchMatchCount.value > 0) {
+        searchCurrentIndex.value = 0
+        scrollToCurrentMatch()
+      }
+    }, 200)
+  }
+}
+
+watch(() => store.chatState.filter, (filter) => {
+  if (!filter) {
+    searchMarks.value.forEach(m => m.classList.remove('active'))
+  }
+  resetAndScanMarks()
+})
+
+watch(() => props.chat, () => {
+  resetAndScanMarks()
+})
+
+watch(() => store.chatState.navigateMatch, (direction) => {
+  if (direction !== 0) {
+    navigateMatch(direction)
+    store.chatState.navigateMatch = 0
+  }
+})
+
 </script>
 
 <style scoped>
@@ -163,6 +250,7 @@ const onScroll = () => {
 }
 
 .messages {
+  position: relative;
   width: 100%;
   padding: 16px;
   overflow-y: auto;
@@ -187,6 +275,29 @@ const onScroll = () => {
   font-size: 18.5px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.search-nav {
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0rem;
+  padding: 0.25rem 0.5rem;
+  padding-left: 1rem;
+  background-color: var(--message-list-overflow-bg-color);
+  border: 1px solid var(--message-list-overflow-border-color);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-12);
+  color: var(--text-color);
+  z-index: 1;
+
+  .match-count {
+    margin-right: 0.5rem;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 </style>

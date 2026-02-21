@@ -194,6 +194,7 @@ export type Shortcut = ElectronShortcut | NativeShortcut
 
 export type ChatState = {
   filter: string|null
+  navigateMatch: number
 }
 
 export type TranscribeState = {

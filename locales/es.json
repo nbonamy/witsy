@@ -505,6 +505,11 @@
       "system": "Sistema",
       "user": "Tú"
     },
+    "search": {
+      "matchCount": "{current} de {total}",
+      "nextMatch": "Siguiente coincidencia",
+      "previousMatch": "Coincidencia anterior"
+    },
     "send": "Enviar",
     "startedAt": "Iniciado {date}",
     "unknownModel": "Modelo desconocido"
