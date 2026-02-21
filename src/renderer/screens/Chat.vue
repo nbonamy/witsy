@@ -32,11 +32,16 @@ import { store } from '@services/store'
 import { LlmChunk, LlmChunkContent } from 'multi-llm-ts'
 import { A2APromptOpts, Agent } from 'types/agents'
 import { strDict } from 'types/index'
-import { computed, nextTick, onMounted, PropType, provide, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, PropType, provide, Ref, ref, watch } from 'vue'
 import AgentPicker from './AgentPicker.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 
 export type ChatSessionStatus = 'idle' | 'generating'
+
+export type SearchState = {
+  filter: Ref<string|null>
+  navigate: Ref<number>
+}
 
 export interface ChatSession {
   assistant: Assistant
@@ -59,6 +64,10 @@ provide('latestChunk', latestChunk)
 // provide generating state for Prompt component
 const isGenerating = computed(() => activeSession.value?.status === 'generating')
 provide('isGenerating', isGenerating)
+
+// provide search state for sidebar, message list and message body
+const searchState: SearchState = { filter: ref<string | null>(null), navigate: ref(0) }
+provide('searchState', searchState)
 
 // provide callbacks for descendant components (scoped to this component tree)
 // handlers are defined later but called via these wrappers

@@ -6,6 +6,7 @@ import { kDefaultWorkspaceId, kHistoryVersion } from '@/consts'
 import Chat from '@models/chat'
 import Message from '@models/message'
 import defaultSettings from '@root/defaults/settings.json'
+import { ModelDefaults } from '@/types/config'
 
 const chats = [
   new Chat(),
@@ -50,7 +51,6 @@ test('Check atributtes', async () => {
   expect(store.commands).toEqual([])
   expect(store.experts).toEqual([])
   expect(store.history).toBeNull()
-  expect(store.chatState.filter).toBeNull()
   expect(store.transcribeState.transcription).toBe('')
 })
 
@@ -181,7 +181,7 @@ test('initChatWithDefaults preserves instructions when defaults have none', () =
     engine: 'openai',
     model: 'gpt-4',
     disableStreaming: true,
-  }]
+  } as ModelDefaults]
   const chat = new Chat()
   chat.setEngineModel('openai', 'gpt-4')
   chat.instructions = 'My custom prompt'
@@ -212,7 +212,7 @@ test('initChatWithDefaults overrides instructions when defaults provide them', (
     disableStreaming: false,
     instructions: 'Default instructions',
     locale: 'es',
-  }]
+  } as ModelDefaults]
   const chat = new Chat()
   chat.setEngineModel('openai', 'gpt-4')
   chat.instructions = 'My custom prompt'

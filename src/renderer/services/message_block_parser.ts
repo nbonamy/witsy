@@ -1,7 +1,6 @@
 import { ToolCall } from 'types/index'
 import { closeOpenMarkdownTags, getCodeBlocks, isHtmlContent } from './markdown'
 import { kSearchPluginName } from './plugins/search'
-import { store } from './store'
 
 // Debug flag for block parser logging
 const DEBUG_BLOCK_PARSER = false
@@ -74,11 +73,12 @@ export interface ComputeBlocksOptions {
   transient: boolean
   toolCalls: ToolCall[]
   showToolCalls: 'always' | 'never' | 'calling'
+  filter?: string | null
 }
 
-const highlightSearch = (html: string): string => {
-  if (store.chatState.filter) {
-    const regex = new RegExp(store.chatState.filter, 'gi')
+const highlightSearch = (html: string, filter?: string | null): string => {
+  if (filter) {
+    const regex = new RegExp(filter, 'gi')
     html = html.replace(regex, (match) => `<mark>${match}</mark>`)
   }
   return html
@@ -387,7 +387,7 @@ export const computeBlocks = (content: string | null, options: ComputeBlocksOpti
       const tableHtml = window.api.markdown.render(tableMarkdown)
       blocks.push({
         type: 'table',
-        content: highlightSearch(tableHtml),
+        content: highlightSearch(tableHtml, options.filter),
         start: matchStart,
         end: matchEnd,
         // Table blocks are immediately stable - fully matched regex

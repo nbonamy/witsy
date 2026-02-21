@@ -1,9 +1,10 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { nextTick, ref } from 'vue'
 import { useWindowMock } from '@tests/mocks/window'
 import { createI18nMock } from '@tests/mocks'
+import { SearchState } from '@/renderer/screens/Chat.vue'
 import { chatCallbacksMock, withChatCallbacks } from '@root/vitest.setup'
 import { store } from '@services/store'
 import { stubTeleport } from '@tests/mocks/stubs'
@@ -77,12 +78,17 @@ beforeEach(() => {
   // reset some stuff
   botMessageImageLegacy.setImage('https://example.com/image.jpg')
   botMessageTransient.transient = true
-  store.chatState.filter = null
+  searchState.filter.value = null
 
 })
 
+const searchState: SearchState = { filter: ref<string | null>(null), navigate: ref(0) }
+
 const mount = async (message: Message, mouseenter = true): Promise<VueWrapper<any>> => {
-  const wrapper = vtumount(MessageItem, withChatCallbacks({ ...stubTeleport, props: { chat: chat, message: message, readAloud: readAloudMock } }))
+  const opts = withChatCallbacks({ ...stubTeleport, props: { chat: chat, message: message, readAloud: readAloudMock } })
+  opts.global = opts.global || {}
+  opts.global.provide = { ...opts.global.provide, searchState }
+  const wrapper = vtumount(MessageItem, opts)
   if (mouseenter) await wrapper.trigger('mouseenter')
   return wrapper
 }
@@ -947,7 +953,7 @@ test('Message editing - Keyboard shortcuts work', async () => {
 
 test('Search highlight in text block', async () => {
   const botMessageText: Message = new Message('assistant', '**Hi**\n\n1. One \n\n2. Two')
-  store.chatState.filter = 'One'
+  searchState.filter.value = 'One'
   const wrapper = await mount(botMessageText)
   const marks = wrapper.findAll('mark')
   expect(marks.length).toBe(1)
@@ -956,7 +962,7 @@ test('Search highlight in text block', async () => {
 
 test('Search highlight is case-insensitive', async () => {
   const botMessageText: Message = new Message('assistant', '**Hi**\n\n1. One \n\n2. Two')
-  store.chatState.filter = 'one'
+  searchState.filter.value = 'one'
   const wrapper = await mount(botMessageText)
   const marks = wrapper.findAll('mark')
   expect(marks.length).toBe(1)
@@ -965,14 +971,14 @@ test('Search highlight is case-insensitive', async () => {
 
 test('Search highlight multiple matches', async () => {
   const botMessageText = new Message('assistant', 'Hello hello HELLO world')
-  store.chatState.filter = 'hello'
+  searchState.filter.value = 'hello'
   const wrapper = await mount(botMessageText)
   const marks = wrapper.findAll('mark')
   expect(marks.length).toBe(3)
 })
 
 test('Search highlight in table block', async () => {
-  store.chatState.filter = 'Alice'
+  searchState.filter.value = 'Alice'
   const wrapper = await mount(botMessageTable)
   const tableBlock = wrapper.find('.artifact')
   expect(tableBlock.exists()).toBe(true)

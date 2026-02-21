@@ -1,20 +1,28 @@
 
 import { vi, beforeAll, beforeEach, afterAll, afterEach, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { SearchState } from '@/renderer/screens/Chat.vue'
 import { useWindowMock } from '@tests/mocks/window'
 import { store } from '@services/store'
 import MessageList from '@components/MessageList.vue'
 import Message from '@models/message'
 import Chat from '@models/chat'
+import { ref } from 'vue'
 
 enableAutoUnmount(afterAll)
+
+const searchState: SearchState = { filter: ref<string | null>(null), navigate: ref(0) }
+
+const mountOptions = {
+  global: { provide: { searchState } },
+}
 
 let wrapper: VueWrapper<any>
 
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
-  wrapper = mount(MessageList, { props: { chat: new Chat('MessageList test'), conversationMode: '' } })
+  wrapper = mount(MessageList, { props: { chat: new Chat('MessageList test'), conversationMode: '' }, ...mountOptions })
 })
 
 beforeEach(() => {
@@ -22,8 +30,8 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  store.chatState.filter = null
-  store.chatState.navigateMatch = 0
+  searchState.filter.value = null
+  searchState.navigate.value = 0
 })
 
 test('Render', () => {
@@ -75,20 +83,18 @@ test('Search nav not shown when no filter', () => {
 })
 
 test('Search nav not shown when filter set but no matches', async () => {
-  store.chatState.filter = 'zzzznotfound'
+  searchState.filter.value = 'zzzznotfound'
   await wrapper.vm.$nextTick()
-  // wait for the 200ms timeout
   await vi.waitFor(() => {
     expect(wrapper.find('.search-nav').exists()).toBe(false)
   }, { timeout: 500 })
 })
 
 test('Search nav shown when marks exist', async () => {
-  // manually inject mark elements to simulate highlights
   const scroller = wrapper.find('.messages').element
   scroller.innerHTML = '<mark>test</mark> some text <mark>test</mark> more <mark>test</mark>'
 
-  store.chatState.filter = 'test'
+  searchState.filter.value = 'test'
   await wrapper.vm.$nextTick()
   await vi.waitFor(() => {
     expect(wrapper.find('.search-nav').exists()).toBe(true)
@@ -100,7 +106,7 @@ test('Navigate to next match', async () => {
   const scroller = wrapper.find('.messages').element
   scroller.innerHTML = '<mark>test</mark> some text <mark>test</mark>'
 
-  store.chatState.filter = 'test'
+  searchState.filter.value = 'test'
   await wrapper.vm.$nextTick()
   await vi.waitFor(() => {
     expect(wrapper.find('.search-nav').exists()).toBe(true)
@@ -119,7 +125,7 @@ test('Navigate wraps around', async () => {
   const scroller = wrapper.find('.messages').element
   scroller.innerHTML = '<mark>test</mark> some text <mark>test</mark>'
 
-  store.chatState.filter = 'test'
+  searchState.filter.value = 'test'
   await wrapper.vm.$nextTick()
   await vi.waitFor(() => {
     expect(wrapper.find('.search-nav').exists()).toBe(true)
@@ -142,13 +148,13 @@ test('Search nav disappears when filter cleared', async () => {
   const scroller = wrapper.find('.messages').element
   scroller.innerHTML = '<mark>test</mark>'
 
-  store.chatState.filter = 'test'
+  searchState.filter.value = 'test'
   await wrapper.vm.$nextTick()
   await vi.waitFor(() => {
     expect(wrapper.find('.search-nav').exists()).toBe(true)
   }, { timeout: 500 })
 
-  store.chatState.filter = null
+  searchState.filter.value = null
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.search-nav').exists()).toBe(false)
 })
@@ -158,8 +164,8 @@ test('Search nav re-appears on chat switch while filter active', async () => {
   chat1.addMessage(new Message('user', 'hello'))
   chat1.addMessage(new Message('assistant', 'world keyword here'))
 
-  const w = mount(MessageList, { props: { chat: chat1, conversationMode: '' } })
-  store.chatState.filter = 'keyword'
+  const w = mount(MessageList, { props: { chat: chat1, conversationMode: '' }, ...mountOptions })
+  searchState.filter.value = 'keyword'
   await w.vm.$nextTick()
   await vi.waitFor(() => {
     expect(w.find('.search-nav').exists()).toBe(true)
@@ -182,8 +188,8 @@ test('Search nav hidden on chat switch when no marks', async () => {
   chat1.addMessage(new Message('user', 'hello'))
   chat1.addMessage(new Message('assistant', 'world keyword here'))
 
-  const w = mount(MessageList, { props: { chat: chat1, conversationMode: '' } })
-  store.chatState.filter = 'keyword'
+  const w = mount(MessageList, { props: { chat: chat1, conversationMode: '' }, ...mountOptions })
+  searchState.filter.value = 'keyword'
   await w.vm.$nextTick()
   await vi.waitFor(() => {
     expect(w.find('.search-nav').exists()).toBe(true)
@@ -201,11 +207,11 @@ test('Search nav hidden on chat switch when no marks', async () => {
   w.unmount()
 })
 
-test('Store navigateMatch triggers navigation', async () => {
+test('Navigate triggers via searchState.navigate', async () => {
   const scroller = wrapper.find('.messages').element
   scroller.innerHTML = '<mark>test</mark> text <mark>test</mark> text <mark>test</mark>'
 
-  store.chatState.filter = 'test'
+  searchState.filter.value = 'test'
   await wrapper.vm.$nextTick()
   await vi.waitFor(() => {
     expect(wrapper.find('.search-nav').exists()).toBe(true)
@@ -214,15 +220,15 @@ test('Store navigateMatch triggers navigation', async () => {
   // first match is active
   expect(scroller.querySelectorAll('mark')[0].classList.contains('active')).toBe(true)
 
-  // trigger navigate via store
-  store.chatState.navigateMatch = 1
+  // trigger navigate forward
+  searchState.navigate.value = 1
   await wrapper.vm.$nextTick()
   expect(scroller.querySelectorAll('mark')[1].classList.contains('active')).toBe(true)
-  expect(store.chatState.navigateMatch).toBe(0)
+  expect(searchState.navigate.value).toBe(0)
 
-  // trigger navigate backward via store
-  store.chatState.navigateMatch = -1
+  // trigger navigate backward
+  searchState.navigate.value = -1
   await wrapper.vm.$nextTick()
   expect(scroller.querySelectorAll('mark')[0].classList.contains('active')).toBe(true)
-  expect(store.chatState.navigateMatch).toBe(0)
+  expect(searchState.navigate.value).toBe(0)
 })

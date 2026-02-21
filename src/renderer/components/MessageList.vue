@@ -25,6 +25,7 @@
 import { ChatTheme } from '@/types/config'
 import useIpcListener from '@composables/ipc_listener'
 import Chat from '@models/chat'
+import { SearchState } from '@screens/Chat.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { ArrowDownIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-vue-next'
@@ -34,6 +35,9 @@ import ButtonIcon from './ButtonIcon.vue'
 import MessageItem from './MessageItem.vue'
 
 const { onIpcEvent } = useIpcListener()
+
+// inject search state from parent Chat component
+const searchState = inject<SearchState>('searchState')
 
 // inject chunk from parent Chat component (scoped to component tree)
 const latestChunk = inject<Ref<LlmChunk | null>>('latestChunk')
@@ -207,7 +211,7 @@ const resetAndScanMarks = async () => {
   searchCurrentIndex.value = -1
   searchMatchCount.value = 0
   searchMarks.value = []
-  if (store.chatState.filter) {
+  if (searchState?.filter.value) {
     await nextTick()
     searchTimeout = setTimeout(() => {
       updateSearchMarks()
@@ -219,22 +223,24 @@ const resetAndScanMarks = async () => {
   }
 }
 
-watch(() => store.chatState.filter, (filter) => {
-  if (!filter) {
-    searchMarks.value.forEach(m => m.classList.remove('active'))
-  }
-  resetAndScanMarks()
-})
+if (searchState) {
+  watch(searchState.filter, (filter) => {
+    if (!filter) {
+      searchMarks.value.forEach(m => m.classList.remove('active'))
+    }
+    resetAndScanMarks()
+  })
+
+  watch(searchState.navigate, (direction) => {
+    if (direction !== 0) {
+      navigateMatch(direction)
+      searchState.navigate.value = 0
+    }
+  })
+}
 
 watch(() => props.chat, () => {
   resetAndScanMarks()
-})
-
-watch(() => store.chatState.navigateMatch, (direction) => {
-  if (direction !== 0) {
-    navigateMatch(direction)
-    store.chatState.navigateMatch = 0
-  }
 })
 
 </script>

@@ -32,14 +32,16 @@
 <script setup lang="ts">
 
 import Message from '@models/message'
+import { SearchState } from '@screens/Chat.vue'
 import { t } from '@services/i18n'
-import { computeBlocks, computeBlocksIncremental, Block } from '@services/message_block_parser'
+import { Block, computeBlocks, computeBlocksIncremental } from '@services/message_block_parser'
 import { store } from '@services/store'
 import { BrainIcon, ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { ChatToolMode } from 'types/config'
 import { computed, inject, PropType, ref, watch } from 'vue'
 import MessageItemBodyBlock from './MessageItemBodyBlock.vue'
 
+const searchState = inject<SearchState>('searchState')
 const showReasoning = inject('showReasoning', ref(store.config.appearance.chat.showReasoning))
 const userToggleReasoning = inject('onToggleReasoning', (value: boolean) => {
   store.config.appearance.chat.showReasoning = value
@@ -70,7 +72,8 @@ const computeBlocksOptions = () => ({
   role: props.message.role as 'user' | 'assistant' | 'system',
   transient: props.message.transient ?? false,
   toolCalls: props.message.toolCalls ?? [],
-  showToolCalls: props.showToolCalls
+  showToolCalls: props.showToolCalls,
+  filter: searchState?.filter.value,
 })
 
 const emptyBlock = (): Block => ({

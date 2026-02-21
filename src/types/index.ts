@@ -192,11 +192,6 @@ export type NativeShortcut = {
 
 export type Shortcut = ElectronShortcut | NativeShortcut
 
-export type ChatState = {
-  filter: string|null
-  navigateMatch: number
-}
-
 export type TranscribeState = {
   transcription: string
 }
@@ -215,7 +210,6 @@ export interface Store {
   history: History
   rootFolder: Folder
 
-  chatState: ChatState
   transcribeState: TranscribeState
 
   listeners: Record<string, CallableFunction[]>
