@@ -292,10 +292,17 @@ const models = computed(() => {
     return models
 
   } else {
+
+    // for ollama fallback to chat models if no models are found for the media type
+    let models = store.config.engines[engine.value]?.models?.[mediaType.value] || []
+    if (!models.length && ['ollama'].includes(engine.value)) {
+      models = store.config.engines[engine.value]?.models?.chat || []
+    }
+
     return addCurrentModel([
       ...store.config.studio.favorites.filter((f) => f.engine === engine.value).map((f) => ({ id: f.model, name: f.model })),
       ...store.config.studio.defaults.filter((d) => d.engine === engine.value).map((d) => ({ id: d.model, name: d.model })),
-      ...store.config.engines[engine.value]?.models?.[mediaType.value] || []
+      ...models
     ])
   }
 })
