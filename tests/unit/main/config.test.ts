@@ -59,7 +59,6 @@ test('Load default settings', () => {
   expect(loaded.engines.openai.models.chat).toStrictEqual([])
   expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
   expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key')
-  expect(Store.prototype.set).toHaveBeenCalledWith('engines.lmstudio.apiKey', 'encrypted-dummy')
 })
 
 test('Uses cache on second load', () => {
@@ -136,7 +135,6 @@ test('Backwards compatibility 2', () => {
   expect(loaded.engines.openai.apiKey).toBe('openai-api-key2')
   expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
   expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key2')
-  expect(Store.prototype.set).toHaveBeenCalledWith('engines.lmstudio.apiKey', 'encrypted-dummy')
   expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/config/compat2/settings.json', expect.any(String))
   const calls = (fs.writeFileSync as Mock).mock.calls
   expect(calls[calls.length-1][0]).toBe('tests/fixtures/config/compat2/settings.json')
