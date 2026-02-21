@@ -467,6 +467,7 @@
     }
   },
   "chat": {
+    "startedAt": "Started {date}",
     "actions": {
       "exportMarkdown": "Export as Markdown",
       "exportPdf": "Export as PDF",

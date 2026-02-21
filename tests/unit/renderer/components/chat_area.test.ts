@@ -70,6 +70,7 @@ test('With chat', async () => {
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.sp-main > header').exists()).toBe(true)
   expect(wrapper.find('.sp-main > header .title').text()).toBe('New Chat')
+  expect(wrapper.find('.sp-main > header .created-at').exists()).toBe(true)
   expect(wrapper.find('.sp-main > header .menu').exists()).toBe(true)
   expect(wrapper.find('.model-settings').exists()).toBe(true)
   expect(wrapper.find('.sp-main .model-settings').classes()).not.toContain('visible')
