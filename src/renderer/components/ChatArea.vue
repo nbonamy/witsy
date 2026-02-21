@@ -16,7 +16,9 @@
       </div> -->
 
       <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
-      <div class="spacer"></div>
+      <span class="separator" v-if="chat?.title && chat?.createdAt">&bull;</span>
+      <div class="created-at" v-if="chat?.title && chat?.createdAt">{{ t('chat.startedAt', { date: formatDate(chat.createdAt) }) }}</div>
+      <div class="flex-push"></div>
 
       <ButtonIcon class="settings" @click="showModelSettings = !showModelSettings" v-if="store.isFeatureEnabled('chat.settings')">
         <SlidersHorizontalIcon />
@@ -142,6 +144,15 @@ const props = defineProps({
     default: false,
   }
 })
+
+const formatDate = (timestamp: number) => {
+  return new Date(timestamp).toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
 
 const chatMenuPosition = computed((): MenuPosition => {
   return /*window.api.platform == 'win32' ? 'left' :*/ 'below-right'
@@ -418,14 +429,26 @@ defineExpose({
       display: flex;
       flex-direction: row;
       align-items: center;
-
-      .spacer {
-        flex: 1;
-        height: 100%;
-      }
+      gap: 0.5rem;
+      container-type: inline-size;
 
       .title {
         flex: 0 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .separator {
+        flex-shrink: 0;
+        color: var(--faded-text-color);
+      }
+
+      .created-at {
+        flex-shrink: 0;
+        font-size: var(--font-size-12);
+        color: var(--faded-text-color);
+        white-space: nowrap;
       }
 
       .icon {
@@ -442,6 +465,12 @@ defineExpose({
       .new-chat {
         position: relative;
         top: -2px;
+      }
+
+      @container (max-width: 600px) {
+        .separator, .created-at {
+          display: none;
+        }
       }
 
     }
