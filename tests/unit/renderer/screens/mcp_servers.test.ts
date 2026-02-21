@@ -284,6 +284,9 @@ test('Normal server add - HTTP', async () => {
   await editor.find<HTMLTableRowElement>('.sticky-table-container tbody tr:nth-child(1)').trigger('click')
   await editor.find<HTMLButtonElement>('button.remove').trigger('click')
 
+  // set timeout
+  await editor.find<HTMLInputElement>('input[name=timeout]').setValue(120)
+
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: undefined,
@@ -297,6 +300,7 @@ test('Normal server add - HTTP', async () => {
     env: {},
     headers: { key3: 'value3' },
     oauth: null,
+    timeout: 120,
     toolSelection: null,
   })
 

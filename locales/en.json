@@ -2084,6 +2084,8 @@
       "selectCommand": "Select command",
       "serverPackage": "Server Package",
       "smitheryApiKey": "Smithery.ai API Key",
+      "timeout": "Timeout (seconds)",
+      "timeoutPlaceholder": "Default: 60",
       "type": {
         "http": "Streamable HTTP",
         "smithery": "Smithery.ai",

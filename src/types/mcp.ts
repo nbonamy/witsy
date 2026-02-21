@@ -22,6 +22,7 @@ export type McpServer = {
   env?: strDict
   headers?: strDict
   oauth?: McpOAuthConfig
+  timeout?: number
   toolSelection: ToolSelection
   toolMappings?: Record<string, string> // originalName -> mappedName (only for collisions)
 }

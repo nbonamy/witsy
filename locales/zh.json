@@ -2087,6 +2087,8 @@
       "selectCommand": "选择命令",
       "serverPackage": "服务器包",
       "smitheryApiKey": "Smithery.ai API 密钥",
+      "timeout": "超时（秒）",
+      "timeoutPlaceholder": "默认：60",
       "type": {
         "http": "可流式传输的 HTTP",
         "smithery": "Smithery.ai",
