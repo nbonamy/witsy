@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.5.2] - WIP
 
 ### Added
+- Search text inside chat (Cmd+F/Ctrl+F)
 - Navigation inside the chat duirng searches (https://github.com/nbonamy/witsy/issues/531)
 
 ### Changed

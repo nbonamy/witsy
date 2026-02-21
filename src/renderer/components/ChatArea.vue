@@ -1,5 +1,6 @@
 <template>
   <div class="chat-area sp-main">
+    
     <header :class="{ 'is-left-most': isLeftMost }">
       
       <ButtonIcon class="toggle-sidebar" v-tooltip="{ text: t('main.toggleSidebar'), position: 'bottom-right' }" @click="toggleSideBar">
@@ -62,18 +63,21 @@
         </template>
       </ContextMenuTrigger>
 
-  </header>
+    </header>
+    
+    <SearchNav :chat="chat" :scroller="messageList?.scroller" />
+
     <main>
       <div class="chat-content">
-        
+
         <!-- <div class="chat-content-title">
           <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
           <div class="spacer"></div> -->
           <!-- <SlidersHorizontalIcon class="icon settings" @click="showModelSettings = !showModelSettings" /> -->
           <!-- <MoreVerticalIcon class="icon" @click="onMenu" />
         </div> -->
-        
-        <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
+
+        <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()" ref="messageList" />
         
         <EmptyChat class="chat-content-main" @run-agent="onRunAgent" v-else />
         
@@ -126,6 +130,7 @@ import { MenuPosition } from './ContextMenuPlus.vue'
 import ContextMenuTrigger from './ContextMenuTrigger.vue'
 import EmptyChat from './EmptyChat.vue'
 import MessageList from './MessageList.vue'
+import SearchNav from './SearchNav.vue'
 import Prompt, { ConversationMode, SendPromptParams } from './Prompt.vue'
 import type { ChatCallbacks } from '@screens/Chat.vue'
 
@@ -199,6 +204,7 @@ const historyProvider = (): string[] => {
 
 }
 
+const messageList = ref<InstanceType<typeof MessageList>|null>(null)
 const prompt= ref<typeof Prompt>(null)
 const conversationMode = ref<ConversationMode>('off')
 const showModelSettings = ref(false)
@@ -427,6 +433,7 @@ defineExpose({
   
   .sp-main {
 
+    position: relative;
     background-color: var(--message-list-bg-color);
 
     header {
@@ -436,6 +443,7 @@ defineExpose({
       align-items: center;
       gap: 0.5rem;
       container-type: inline-size;
+      border-bottom: 1px solid transparent;
 
       .title {
         flex: 0 1 auto;
@@ -478,6 +486,12 @@ defineExpose({
         }
       }
 
+    }
+
+    &:has(.search-nav) {
+      header {
+        border-bottom: 1px solid var(--sidebar-border-color);
+      }
     }
 
     main {

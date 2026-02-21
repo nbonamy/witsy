@@ -184,6 +184,17 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
             //   click: () => window.notifyBrowserWindows('select-all-media')
             // }] : []),
           ]),
+          { type: 'separator' },
+          {
+            label: t('menu.edit.find'),
+            accelerator: shortcutAccelerator({ type: 'electron', key: 'F', meta: true }),
+            click: () => window.emitIpcEventToFocused('search-chat')
+          },
+          {
+            label: t('menu.edit.findAll'),
+            accelerator: shortcutAccelerator({ type: 'electron', key: 'F', meta: true, shift: true }),
+            click: () => window.emitIpcEventToFocused('search-chats')
+          },
           ...(hasDictation ? [
             { type: 'separator' },
             {

@@ -82,7 +82,7 @@ beforeEach(() => {
 
 })
 
-const searchState: SearchState = { filter: ref<string | null>(null), navigate: ref(0) }
+const searchState: SearchState = { filter: ref<string | null>(null), navigate: ref(0), localSearch: ref(false) }
 
 const mount = async (message: Message, mouseenter = true): Promise<VueWrapper<any>> => {
   const opts = withChatCallbacks({ ...stubTeleport, props: { chat: chat, message: message, readAloud: readAloudMock } })

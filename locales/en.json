@@ -525,6 +525,7 @@
     },
     "search": {
       "matchCount": "{current} of {total}",
+      "noMatches": "No results",
       "nextMatch": "Next match",
       "previousMatch": "Previous match"
     },
@@ -2155,6 +2156,8 @@
     "edit": {
       "deleteChat": "Delete Chat",
       "deleteMedia": "Delete Media",
+      "find": "Find…",
+      "findAll": "Find All…",
       "selectAll": "Select All",
       "startDictation": "Start Dictation",
       "title": "Edit"

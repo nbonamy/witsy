@@ -18,7 +18,8 @@
       {
         "importFrom": [
           "css/variables.css",
-          "css/index.css"
+          "css/index.css",
+          "css/split-pane.css"
         ]
       }
     ],

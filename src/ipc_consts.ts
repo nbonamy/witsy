@@ -324,6 +324,8 @@ export type IpcSignal =
   // Chat & conversations
   | 'new-chat'                    // Create new chat (menu)
   | 'delete-chat'                 // Delete current chat (menu)
+  | 'search-chat'                 // Toggle chat search (menu)
+  | 'search-chats'                // Search chats (menu)
   // Media & design studio
   | 'delete-media'                // Delete selected media (menu)
   | 'select-all-media'            // Select all media (menu)
