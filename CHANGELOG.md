@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.5.2] - WIP
+
+### Added
+- Navigation inside the chat duirng searches (https://github.com/nbonamy/witsy/issues/531)
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
 ## [3.5.1] - 2026-02-21
 
 ### Added
@@ -24,6 +39,7 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 - N/A
+
 
 ## [3.5.0] - 2026-01-29
 
