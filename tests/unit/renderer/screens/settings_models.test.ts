@@ -122,11 +122,15 @@ test('google settings', async () => {
   await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(4)').trigger('click')
   await tab.vm.$nextTick()
   const google = tab.findComponent({ name: 'SettingsGoogle' })
+  await google.find('input[name=baseURL]').setValue('base-url')
+  await google.find('input[name=baseURL]').trigger('change')
+  expect(store.config.engines.google.baseURL).toBe('base-url')
   await google.find('input').setValue('api-key')
   await google.find('input').trigger('blur')
   expect(store.config.engines.google.apiKey).toBe('api-key')
   expect(loadGoogleModels).toHaveBeenLastCalledWith(expect.objectContaining({
-    apiKey: 'api-key'
+    apiKey: 'api-key',
+    baseURL: 'base-url'
   }))
   const visionModelSelect = findModelSelectorPlus(google, 1)
   await visionModelSelect.open()

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [3.5.1] - WIP
 
 ### Added
-- N/A
+- Google Base URL
 
 ### Changed
 - Performance optimization for message rendering during streaming
