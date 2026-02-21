@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes for markdown tag closing in streamed messages
 - User messages with fenced code blocks render incorrectly in chat history (https://github.com/nbonamy/witsy/issues/526)
+- Design Studio Ollama model not showing (https://github.com/nbonamy/witsy/issues/527)
 
 ### Removed
 - N/A

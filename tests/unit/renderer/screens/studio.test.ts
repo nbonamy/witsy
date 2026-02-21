@@ -58,6 +58,12 @@ beforeAll(() => {
         { id: 'replicate2', name: 'replicate2' }
       ] }, model: { chat: '', image: 'replicate1', video: 'facehugging1'}
     }
+    settings.engines.ollama = {
+      models: { chat: [
+        { id: 'llama3', name: 'llama3' },
+        { id: 'gemma', name: 'gemma' }
+      ], image: [] }, model: { chat: 'llama3', image: '' }
+    }
     return settings
   }
   
@@ -139,6 +145,16 @@ test('Settings', async () => {
   expect(settings.find<HTMLSelectElement>('[name=engine]').element.value).toBe('replicate')
   expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('facehugging1')
   expect(settings.find('.expander').exists()).toBe(true)
+})
+
+test('Ollama falls back to chat models', async () => {
+  const wrapper = mount(DesignStudio)
+  const settings = wrapper.findComponent({ name: 'Settings' })
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('ollama')
+  const options = settings.findAll<HTMLOptionElement>('[name=model] option')
+  const optionValues = options.map(o => o.element.value)
+  expect(optionValues).toContain('llama3')
+  expect(optionValues).toContain('gemma')
 })
 
 test('Favorites', async () => {
