@@ -525,6 +525,7 @@
       "user": "Ty"
     },
     "send": "Wyślij",
+    "startedAt": "Rozpoczęto {date}",
     "unknownModel": "Nieznany model"
   },
   "chatList": {
@@ -943,6 +944,11 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "scan": {
+      "filesOnly": "Tylko pliki",
+      "text": "Spowoduje to ponowne przeskanowanie wszystkich plików oraz ponowne pobranie wszystkich stron internetowych i map witryn w tej kolekcji.",
+      "title": "Skanowanie zmian"
+    },
     "search": {
       "error": "Wystąpił błąd podczas wyszukiwania. Spróbuj ponownie.",
       "noResults": "Nie znaleziono wyników dla Twojego zapytania.",
@@ -963,6 +969,7 @@
         "addFolder": "Dodaj folder",
         "embeddingNotReady": "Model osadzania niedostępny",
         "openInExplorer": "Otwórz w Finderze",
+        "scanForChanges": "Skanuj w poszukiwaniu zmian",
         "viewContents": "Pokaż zawartość folderu"
       }
     },

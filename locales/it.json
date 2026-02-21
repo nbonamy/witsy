@@ -506,6 +506,7 @@
       "user": "Tu"
     },
     "send": "Invia",
+    "startedAt": "Iniziato {date}",
     "unknownModel": "Modello sconosciuto"
   },
   "chatList": {
@@ -924,6 +925,11 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "scan": {
+      "filesOnly": "Solo file",
+      "text": "Eseguirà una nuova scansione di tutti i file e recupererà nuovamente tutti i siti web e le sitemap in questa raccolta.",
+      "title": "Cerca modifiche"
+    },
     "search": {
       "error": "Si è verificato un errore durante la ricerca. Per favore riprova.",
       "noResults": "Nessun risultato trovato per la tua query.",
@@ -944,6 +950,7 @@
         "addFolder": "Aggiungi cartella",
         "embeddingNotReady": "Modello di embedding non disponibile",
         "openInExplorer": "Apri in Finder",
+        "scanForChanges": "Cerca modifiche",
         "viewContents": "Visualizza contenuti della cartella"
       }
     },

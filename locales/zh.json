@@ -525,6 +525,7 @@
       "user": "你"
     },
     "send": "发送",
+    "startedAt": "开始于 {date}",
     "unknownModel": "未知模型"
   },
   "chatList": {
@@ -943,6 +944,11 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "scan": {
+      "filesOnly": "仅文件",
+      "text": "这将重新扫描此集合中的所有文件，并重新获取所有网站和站点地图。",
+      "title": "扫描更改"
+    },
     "search": {
       "error": "搜索时发生错误。请再试一次。",
       "noResults": "未找到与您的查询相关的结果。",
@@ -963,6 +969,7 @@
         "addFolder": "添加文件夹",
         "embeddingNotReady": "嵌入模型不可用",
         "openInExplorer": "在访达中打开",
+        "scanForChanges": "扫描更改",
         "viewContents": "查看文件夹内容"
       }
     },

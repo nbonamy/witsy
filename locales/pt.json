@@ -525,6 +525,7 @@
       "user": "Você"
     },
     "send": "Enviar",
+    "startedAt": "Iniciado em {date}",
     "unknownModel": "Modelo Desconhecido"
   },
   "chatList": {
@@ -943,6 +944,11 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "scan": {
+      "filesOnly": "Apenas arquivos",
+      "text": "Isso irá reexaminar todos os arquivos e buscar novamente todos os sites e sitemaps desta coleção.",
+      "title": "Procurar alterações"
+    },
     "search": {
       "error": "Ocorreu um erro durante a pesquisa. Por favor, tente novamente.",
       "noResults": "Nenhum resultado encontrado para sua consulta.",
@@ -963,6 +969,7 @@
         "addFolder": "Adicionar pasta",
         "embeddingNotReady": "Modelo de embedding não disponível",
         "openInExplorer": "Abrir no Finder",
+        "scanForChanges": "Procurar alterações",
         "viewContents": "Ver conteúdo da pasta"
       }
     },

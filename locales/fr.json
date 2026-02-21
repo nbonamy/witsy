@@ -506,6 +506,7 @@
       "user": "Vous"
     },
     "send": "Envoyer",
+    "startedAt": "Démarré {date}",
     "unknownModel": "Modèle inconnu"
   },
   "chatList": {
@@ -924,6 +925,11 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "scan": {
+      "filesOnly": "Uniquement les fichiers",
+      "text": "Cela réanalysera tous les fichiers et récupérera à nouveau tous les sites web et plans de site de cette collection.",
+      "title": "Rechercher les modifications"
+    },
     "search": {
       "error": "Une erreur est survenue pendant la recherche. Veuillez réessayer.",
       "noResults": "Aucun résultat trouvé pour votre requête.",
@@ -944,6 +950,7 @@
         "addFolder": "Ajouter un dossier",
         "embeddingNotReady": "Modèle d'intégration non disponible",
         "openInExplorer": "Ouvrir dans le Finder",
+        "scanForChanges": "Rechercher les modifications",
         "viewContents": "Afficher le contenu du dossier"
       }
     },

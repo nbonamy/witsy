@@ -525,6 +525,7 @@
       "user": "あなた"
     },
     "send": "送信",
+    "startedAt": "開始: {date}",
     "unknownModel": "不明なモデル"
   },
   "chatList": {
@@ -943,6 +944,11 @@
       },
       "noNotes": "You don't have any notes yet. Click on the button below to add your first note."
     },
+    "scan": {
+      "filesOnly": "ファイルのみ",
+      "text": "これにより、このコレクション内のすべてのファイルを再スキャンし、すべてのウェブサイトとサイトマップを再取得します。",
+      "title": "変更をスキャン"
+    },
     "search": {
       "error": "検索中にエラーが発生しました。もう一度お試しください。",
       "noResults": "クエリに対する結果が見つかりませんでした。",
@@ -963,6 +969,7 @@
         "addFolder": "フォルダーを追加",
         "embeddingNotReady": "埋め込みモデルは利用できません",
         "openInExplorer": "Finderで開く",
+        "scanForChanges": "変更をスキャン",
         "viewContents": "フォルダの内容を表示"
       }
     },
