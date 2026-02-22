@@ -669,6 +669,20 @@ const onAttach = async () => {
 
 const onPaste = (event: ClipboardEvent) => {
   for (let item of event.clipboardData.items) {
+
+    if (item.kind === 'string' && item.type === 'text/plain') {
+      item.getAsString((str) => {
+        if (str) {
+          prompt.value += str
+          nextTick(() => {
+            autoGrow(input.value)
+            input.value.focus()
+          })
+        }
+      })
+      return
+    }
+
     if (item.kind === 'file') {
       let blob = item.getAsFile();
       let reader = new FileReader();

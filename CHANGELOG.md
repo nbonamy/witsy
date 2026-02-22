@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 - N/A
 
 ### Fixed
-- N/A
+- Text pasted as image fix
 
 ### Removed
 - N/A
