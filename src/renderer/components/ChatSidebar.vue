@@ -64,13 +64,14 @@ import { store } from '@services/store'
 import { CircleXIcon, FolderIcon, FolderInputIcon, FolderPlusIcon, MessageCirclePlusIcon, MessagesSquareIcon, SearchIcon, Trash2Icon } from 'lucide-vue-next'
 import { ChatListMode } from 'types/config'
 import { v4 as uuidv4 } from 'uuid'
-import { inject, nextTick, onMounted, ref, watch } from 'vue'
+import { inject, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import ChatList from './ChatList.vue'
 
 const { onIpcEvent } = useIpcListener()
 const { onDomEvent, offDomEvent } = useEventListener()
 const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
 const searchState = inject<SearchState>('searchState')
+const chatActive = inject<Ref<boolean>>('chatActive')
 
 defineProps({
   chat: {
@@ -118,6 +119,7 @@ onMounted(async () => {
 
   // search
   onIpcEvent('search-chats', () => {
+    if (!chatActive?.value) return
     onToggleFilter()
   })
 

@@ -99,11 +99,19 @@ const props = defineProps({
     type: String as PropType<ChatMode>,
     default: 'chat',
   },
+  active: {
+    type: Boolean,
+    default: true,
+  },
   extra: {
     type: Object as PropType<strDict>,
     default: () => ({}),
   },
 })
+
+// provide active state so any descendant can check visibility
+const chatActive = computed(() => props.active)
+provide('chatActive', chatActive)
 
 // session management for parallel chats
 const sessions = ref<Record<string, ChatSession>>({})
@@ -311,6 +319,7 @@ const onNewChat = async (payload?: any) => {
 }
 
 const searchChat = () => {
+  if (!props.active) return
   sidebar.value?.clearFilter()
   if (assistant.value?.chat?.hasMessages()) {
     searchState.localSearch.value = true

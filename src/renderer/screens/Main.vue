@@ -7,7 +7,7 @@
       
       <MenuBar :mode="mode" @change="onMode" @new-chat="onNewChat" @run-onboarding="onRunOnboarding" @import-markdown="onImportMarkdown" />
       
-      <Chat ref="chat" :mode="chatMode" :style="{ display: mode === 'chat' ? undefined : 'none' }" :extra="viewParams" />
+      <Chat ref="chat" :mode="chatMode" :active="mode === 'chat'" :style="{ display: mode === 'chat' ? undefined : 'none' }" :extra="viewParams" />
       <DesignStudio :style="{ display: mode === 'studio' ? undefined : 'none' }" />
       <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
       <AudioBooth v-if="mode === 'booth'" ref="audioBooth" />
