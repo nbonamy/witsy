@@ -13,7 +13,7 @@
       <div class="form search" v-if="filtering">
         <div class="form-field">
           <input ref="inputFilter" name="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" @keydown.enter.prevent="onFilterNavigate" @keydown.escape.prevent="onToggleFilter" />
-          <CircleXIcon class="clear-filter" @click="onClearFilter" v-if="filter" />
+          <CircleXIcon class="clear-filter" @click="onClearFilter" v-if="filtering" />
         </div>
       </div>
       <div class="display-mode button-group" v-if="!filtering && store.isFeatureEnabled('chat.folders')">
@@ -156,8 +156,13 @@ const onFilterNavigate = (event: KeyboardEvent) => {
 
 const onClearFilter = () => {
   if (!searchState) return
-  filter.value = ''
-  searchState.filter.value = null
+  if (filter.value === '') {
+    searchState.filter.value = null
+    filtering.value = false
+  } else {
+    filter.value = ''
+    searchState.filter.value = ''
+  }
 }
 
 const onNewChat = () => {
