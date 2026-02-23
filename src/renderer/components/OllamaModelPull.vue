@@ -32,7 +32,7 @@ import Dialog from '@renderer/utils/dialog'
 import Combobox from './Combobox.vue'
 import ModelSelectPlus from './ModelSelectPlus.vue'
 import { ProgressResponse } from 'ollama'
-import type { A as AbortableAsyncIterator } from 'ollama/dist/shared/ollama.27169772.cjs'
+import type { A as AbortableAsyncIterator } from 'ollama/dist/shared/ollama.1bfa89da.cjs'
 
 type Model = {
   id: string,
