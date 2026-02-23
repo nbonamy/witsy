@@ -19,7 +19,8 @@ vi.mock('@services/llms/manager.ts', async () => {
   LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
   LlmManager.prototype.getChatModel = vi.fn((engine: string, model: string) => {
     if (model === 'chat') return { id: 'chat', name: 'chat', ...defaultCapabilities }
-    if (model === 'gpt-4.1-mini') return { id: 'gpt-4.1-mini', name: 'GPT-4.1 Mini', ...defaultCapabilities }
+    if (model === 'gpt-5-nano') return { id: 'gpt-5-nano', name: 'GPT-5 nano', ...defaultCapabilities }
+    if (model === 'claude-haiku-4-5') return { id: 'claude-haiku-4-5', name: 'Claude Haiku 4.5', ...defaultCapabilities }
     return null
   })
   LlmManager.prototype.getDefaultChatModel = vi.fn(() => 'chat')
@@ -67,7 +68,8 @@ beforeEach(() => {
   vi.mocked(LlmManager).prototype.isEngineReady = vi.fn(() => true)
   vi.mocked(LlmManager).prototype.getChatModel = vi.fn((engine: string, model: string) => {
     if (model === 'chat') return { id: 'chat', name: 'chat', ...defaultCapabilities }
-    if (model === 'gpt-4.1-mini') return { id: 'gpt-4.1-mini', name: 'GPT-4.1 Mini', ...defaultCapabilities }
+    if (model === 'gpt-5-nano') return { id: 'gpt-5-nano', name: 'GPT-5 nano', ...defaultCapabilities }
+    if (model === 'claude-haiku-4-5') return { id: 'claude-haiku-4-5', name: 'Claude Haiku 4.5', ...defaultCapabilities }
     return null
   })
 
@@ -285,11 +287,11 @@ test('getEngineModelForTask with simple complexity and preferred engine', () => 
   expect(result).toEqual({ engine: 'mock', model: 'chat' })
 })
 
-test('getEngineModelForTask with simple complexity finds gpt-4.1-mini', () => {
+test('getEngineModelForTask with simple complexity finds gpt-5-nano', () => {
   // Configure openai engine as ready
   vi.mocked(LlmManager).prototype.isEngineReady = vi.fn((engine: string) => engine === 'openai')
   const result = llmUtils.getEngineModelForTask('simple', 'openai')
-  expect(result).toEqual({ engine: 'openai', model: 'gpt-4.1-mini' })
+  expect(result).toEqual({ engine: 'openai', model: 'gpt-5-nano' })
 })
 
 test('getEngineModelForTask with normal complexity', () => {
@@ -317,7 +319,7 @@ test('getEngineModelForTask with preferred model not available but has default',
   // When the hierarchy model isn't available, but engine has a default model
   vi.mocked(LlmManager).prototype.getChatModel = vi.fn((engine: string, model: string) => {
     // Return null for hierarchy model, triggering fallback to default
-    if (model === 'gpt-4.1-mini') return null
+    if (model === 'gpt-5-nano') return null
     if (model === 'chat') return { id: 'chat', name: 'chat', ...defaultCapabilities }
     return null
   })
@@ -339,9 +341,9 @@ test('getEngineModelForTask uses fallback model when model not found', () => {
 
 test('getEngineModelForTask without preferred engine', () => {
   const result = llmUtils.getEngineModelForTask('simple')
-  // Should check engines in hierarchy order - openai is first for 'simple'
-  // and it's ready in our mock, so it returns gpt-4.1-mini
-  expect(result).toEqual({ engine: 'openai', model: 'gpt-4.1-mini' })
+  // Should check engines in hierarchy order - anthropic is first for 'simple'
+  // and it's ready in our mock, so it returns claude-haiku-4-5
+  expect(result).toEqual({ engine: 'anthropic', model: 'claude-haiku-4-5' })
 })
 
 test('getEngineModelForTask fallback to configured engine', () => {
