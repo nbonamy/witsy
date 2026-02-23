@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Text pasted as image fix
+- Crash when attaching large files (256MB arbitrary limit)
 
 ### Removed
 - N/A

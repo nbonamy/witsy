@@ -13,6 +13,8 @@ import { FileContents, FileDownloadParams, FilePickParams, FileProperties, FileS
 import { DirectoryItem } from 'types/filesystem';
 import { ExternalApp } from 'types/index';
 
+const FILE_SIZE_LIMIT = 256 * 1024 * 1024; // 256MB
+
 export const extensionToMimeType = (ext: string): string => {
   if (ext === '.mp4') return 'video/mp4'
   if (ext === '.avi') return 'video/x-msvideo'
@@ -36,14 +38,27 @@ export const getFileContents = (app: App, filepath: string): FileContents|null =
     if (filepath.startsWith('file://')) {
       filepath = filepath.slice(7);
     }
+
+    // load and check
     const fileContents = fs.readFileSync(filepath);
-    if (fileContents) {
-      return {
-        url: `file://${filepath}`,
-        mimeType: extensionToMimeType(path.extname(filepath)),
-        contents: fileContents.toString('base64')
-      };
+    if (!fileContents) {
+      console.error('File is empty or cannot be read', filepath);
+      return null;
     }
+
+    // check size
+    if (fileContents.length > FILE_SIZE_LIMIT) {
+      console.error('File too large to read', filepath);
+      return null;
+    }
+
+    // good
+    return {
+      url: `file://${filepath}`,
+      mimeType: extensionToMimeType(path.extname(filepath)),
+      contents: fileContents.toString('base64')
+    };
+
   } catch (error) {
     console.error('Error while reading file', error);
   }

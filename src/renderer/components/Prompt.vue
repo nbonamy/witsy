@@ -653,15 +653,25 @@ const onAttach = async () => {
   ]*/ })
   if (Array.isArray(files)) {
     for (const filepath of files) {
-      const fileContents = window.api.file.read(filepath)
-      const format = fileContents.url.split('.').pop()
-      if (llmManager.canProcessFormat(engine(), model(), format)) {
+      
+      // check format
+      const format = filepath.split('.').pop()
+      if (!llmManager.canProcessFormat(engine(), model(), format)) {
+        console.error('Cannot attach format', format)
+        Dialog.alert(`${filepath.split('/').pop()}: ${t('prompt.attachment.formatError.title')}`, t('prompt.attachment.formatError.text'))
+        return
+      }
+
+      try {
+        // load
+        const fileContents = window.api.file.read(filepath)
         const mimeType = extensionToMimeType(format)
         attach(fileContents.contents, mimeType, fileContents.url)
-      } else {
-        console.error('Cannot attach format', format)
-        Dialog.alert(`${fileContents.url.split('/').pop()}: ${t('prompt.attachment.formatError.title')}`, t('prompt.attachment.formatError.text'))
+      } catch (err) {
+        console.error('Error reading file', err)
+        Dialog.alert(`${filepath.split('/').pop()}: Error reading file`)
       }
+
     }
   }
 }
