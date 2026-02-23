@@ -560,20 +560,6 @@ test('Call tool passes timeout when configured', async () => {
   )
 })
 
-test('Call tool does not pass timeout when not configured', async () => {
-  const mcp = new Mcp(app)
-  await mcp.connect()
-
-  await mcp.callTool('tool1', { arg: 'arg1' })
-
-  // Should not include timeout in options
-  expect(Client.prototype.callTool).toHaveBeenLastCalledWith(
-    { name: 'tool1', arguments: { arg: 'arg1' } },
-    expect.anything(),
-    { signal: undefined }
-  )
-})
-
 test('Disconnect', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.connect())

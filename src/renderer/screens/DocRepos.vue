@@ -49,11 +49,11 @@
 
 import { DocReposViewParams } from '@/types'
 import ButtonIcon from '@components/ButtonIcon.vue'
+import SpinningIcon from '@components/SpinningIcon.vue'
 import useIpcListener from '@composables/ipc_listener'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import SpinningIcon from '@components/SpinningIcon.vue'
 import { FolderPlusIcon, FolderSyncIcon, PencilIcon, SearchIcon, Settings2Icon, Trash2 } from 'lucide-vue-next'
 import { DocumentBase } from 'types/rag'
 import { nextTick, onMounted, ref, watch } from 'vue'

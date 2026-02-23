@@ -146,7 +146,6 @@ const onModelSelected = (engine: string | null, model: string | null) => {
 .content span {
   margin: 0 !important;
   padding: 0 !important;
-  height: var(--icon-lg)
 }
 
 .engine-logo {

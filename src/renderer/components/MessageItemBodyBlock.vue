@@ -1,6 +1,6 @@
 <template>
   <div v-if="block.type == 'empty'" :ref="setRef" class="text empty variable-font-size"><p>{{ t('message.content.empty') }}</p></div>
-  <div v-if="block.type == 'user-text'" :ref="setRef" class="text variable-font-size" v-html="userTextRender(block.content!)"></div>
+  <div v-else-if="block.type == 'user-text'" :ref="setRef" class="text variable-font-size" v-html="userTextRender(block.content!)"></div>
   <div v-else-if="block.type == 'text'" :ref="setRef" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
   <MessageItemArtifactBlock v-else-if="block.type == 'artifact'" :ref="setRef" :title="block.title!" :content="block.content!" :transient="props.transient" />
   <MessageItemHtmlBlock v-else-if="block.type == 'html'" :ref="setRef" :title="block.title!" :content="block.content!" :transient="props.transient" />
