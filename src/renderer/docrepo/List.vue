@@ -128,6 +128,12 @@ const handleActionClick = (action: string) => {
 .list-item .info .text {
   font-weight: var(--font-weight-regular);
   margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  line-clamp: 1;
 }
 
 .list-empty {

@@ -332,14 +332,20 @@ const onSearch = async () => {
         display: flex;
         align-items: center;
         flex: 1;
+        min-width: 0;
 
         .title-display {
           display: flex;
           align-items: center;
           gap: 1rem;
+          min-width: 0;
 
           .title {
             flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
 
           .edit-title {
