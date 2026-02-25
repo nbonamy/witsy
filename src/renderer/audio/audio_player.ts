@@ -1,5 +1,3 @@
-
-
 import { type Configuration } from 'types/config'
 import { SynthesisResponse } from '../voice/tts-engine'
 import getTTSEngine, { textMaxLength as importedTextMaxLength } from '../voice/tts'
@@ -16,6 +14,7 @@ class AudioPlayer {
   player: SpeechPlayer|null
   state: AudioState
   uuid: string|null
+  objectUrl: string|null
 
   constructor(config: Configuration) {
     this.config = config
@@ -23,6 +22,7 @@ class AudioPlayer {
     this.player = null
     this.state = 'idle'
     this.uuid = null
+    this.objectUrl = null
   }
 
   addListener(listener: AudioStatusListener) {
@@ -77,21 +77,64 @@ class AudioPlayer {
         onChunkEnd: () => {
           this.stop()
         },
-        mimeType: 'audio/mpeg',
+        mimeType: response.mimeType ?? 'audio/mpeg',
       })
       await this.player.init()
 
       if (typeof response.content === 'string') {
 
-        // SpeechPlayer cannot play wav files
-        // but it is connected to the audio element
-        // so commands and events can be used
-        audioEl.src = response.content as string
-        audioEl.play()
+        // If the string is already a data URL, use it directly.
+        if (response.content.startsWith('data:audio')) {
+          audioEl.src = response.content
+        } else {
+          // Convert binary-like string (e.g. "RIFF....") into a Blob and object URL.
+          const binary = response.content
+          const bytes = new Uint8Array(binary.length)
+          for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i) & 0xff
+          }
+          const mimeType = response.mimeType ?? 'audio/wav'
+          const blob = new Blob([bytes], { type: mimeType })
+          if (this.objectUrl) {
+            URL.revokeObjectURL(this.objectUrl)
+          }
+          this.objectUrl = URL.createObjectURL(blob)
+          audioEl.src = this.objectUrl
+        }
 
-      } else if (response.content instanceof Response) {
-        this.player.feedWithResponse(response.content)
-      } else if (response.content instanceof ReadableStream) {
+        audioEl.play().catch((err) => {
+          // Ignore AbortError caused by rapid play/pause races.
+          if (!err || err.name !== 'AbortError') {
+            console.error(err)
+          }
+        })
+
+      } else if (typeof Response !== 'undefined' && response.content instanceof Response) {
+
+        const contentType = response.content.headers.get('content-type') || response.mimeType || ''
+
+        // If this is a direct audio response (e.g. from /v1/audio/speech), play it via the audio element.
+        if (contentType.startsWith('audio/')) {
+          const blob = await response.content.blob()
+
+          if (this.objectUrl) {
+            URL.revokeObjectURL(this.objectUrl)
+          }
+          this.objectUrl = URL.createObjectURL(blob)
+          audioEl.src = this.objectUrl
+
+          await audioEl.play().catch((err) => {
+            if (!err || err.name !== 'AbortError') {
+              console.error(err)
+            }
+          })
+        } else {
+          // Fallback to streaming via SpeechPlayer when not a direct audio payload.
+          this.player.feedWithResponse(response.content)
+        }
+
+      } else if (typeof ReadableStream !== 'undefined' && response.content instanceof ReadableStream) {
+
         const reader = response.content.getReader();
         while (true) {
           const { done, value } = await reader.read();
@@ -99,11 +142,15 @@ class AudioPlayer {
           if (!this.player) break;
           this.player.feed(value);
         }
-      } else if ('read' in response.content) {
-        for await (const chunk of response.content as AsyncIterable<Uint8Array>) {
+
+      } else if ((response.content as any) && 'read' in (response.content as any)) {
+
+        const iterable = response.content as unknown as AsyncIterable<Uint8Array>
+        for await (const chunk of iterable) {
           if (!this.player) break;
           this.player.feed(chunk);
         }
+
       } else {
         throw new Error('Invalid response format')
       }
@@ -133,6 +180,11 @@ class AudioPlayer {
       this.player?.destroy()
     } catch {
       //console.error(e)
+    }
+
+    if (this.objectUrl) {
+      URL.revokeObjectURL(this.objectUrl)
+      this.objectUrl = null
     }
 
     // reset
