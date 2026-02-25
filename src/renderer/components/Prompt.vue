@@ -690,6 +690,7 @@ const onPaste = (event: ClipboardEvent) => {
           })
         }
       })
+      event.preventDefault()
       return
     }
 
