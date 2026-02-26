@@ -121,18 +121,24 @@ export default class LlmUtils {
         new Message('user', i18nInstructions(this.config, 'instructions.utils.titlingUser'))
       ]
 
-      // now get it
+      // now stream it (anthropic requires streaming)
       const llmManager = LlmFactory.manager(this.config)
       const llm = llmManager.igniteEngine(selectedEngine)
       const model = llmManager.getChatModel(selectedEngine, titlingModel)
-      const response = await llm.complete(model, messages, {
+      let title = ''
+      const stream = llm.generate(model, messages, {
         tools: false,
         toolCallsInThread: false,
         reasoningEffort: 'low',
         thinkingBudget: 0,
         reasoning: false,
       })
-      let title = response.content.trim()
+      for await (const chunk of stream) {
+        if (chunk.type === 'content' && chunk.text) {
+          title += chunk.text
+        }
+      }
+      title = title.trim()
       if (title === '') {
         return thread[1].content
       }
@@ -155,7 +161,7 @@ export default class LlmUtils {
       if (title.startsWith('"') && title.endsWith('"')) {
         title = title.substring(1, title.length - 1)
       }
-      
+
       // done
       return title
 
@@ -163,7 +169,7 @@ export default class LlmUtils {
       console.error('Error while trying to get title', error)
       return null
     }
-  
+
   }
 
   async generateStatusUpdate(engine: string, model: string, prompt: string): Promise<string> {
@@ -200,7 +206,7 @@ Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Statu
     const actualChatModel: ChatModel = llmManager.getChatModel(selectedEngine, actualModel)
     await generator.generate(llm, messages, {
       model: actualChatModel.id,
-      streaming: complexity === 'simple' ? false : true,
+      streaming: true,
       tools: false,
       reasoningEffort: 'low',
       thinkingBudget: 0,
