@@ -16,6 +16,7 @@ class AudioPlayer {
   uuid: string|null
   objectUrl: string|null
   audioEl: HTMLAudioElement|null
+  playRequestId: number
 
   constructor(config: Configuration) {
     this.config = config
@@ -25,6 +26,7 @@ class AudioPlayer {
     this.uuid = null
     this.objectUrl = null
     this.audioEl = null
+    this.playRequestId = 0
   }
 
   addListener(listener: AudioStatusListener) {
@@ -47,6 +49,9 @@ class AudioPlayer {
     if (this.state != 'idle' && uuid != this.uuid) {
       this.stop()
     }
+
+    // track this play request
+    const currentRequestId = ++this.playRequestId
 
     // set status
     this.uuid = uuid
@@ -92,6 +97,11 @@ class AudioPlayer {
       })
       await this.player.init()
 
+      // ensure this play request is still current after player init
+      if (this.uuid !== uuid || this.playRequestId !== currentRequestId) {
+        return true
+      }
+
       if (typeof response.content === 'string') {
 
         // If the string is already a data URL, use it directly.
@@ -130,8 +140,8 @@ class AudioPlayer {
         }
 
         const handleEnded = () => {
-          if (this.uuid !== uuid) return
           audioEl.removeEventListener('ended', handleEnded)
+          if (this.uuid !== uuid) return
           this.stop()
         }
         audioEl.addEventListener('ended', handleEnded)
@@ -153,7 +163,7 @@ class AudioPlayer {
           const blob = await response.content.blob()
 
           // Ensure this play request is still current after the async blob read.
-          if (this.uuid !== uuid) {
+          if (this.uuid !== uuid || this.playRequestId !== currentRequestId) {
             return true
           }
 
@@ -164,8 +174,8 @@ class AudioPlayer {
           audioEl.src = this.objectUrl
 
           const handleEnded = () => {
-            if (this.uuid !== uuid) return
             audioEl.removeEventListener('ended', handleEnded)
+            if (this.uuid !== uuid) return
             this.stop()
           }
           audioEl.addEventListener('ended', handleEnded)
@@ -183,19 +193,21 @@ class AudioPlayer {
       } else if (typeof ReadableStream !== 'undefined' && response.content instanceof ReadableStream) {
 
         const reader = response.content.getReader();
+        const currentPlayer = this.player
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          if (!this.player) break;
-          this.player.feed(value);
+          if (!currentPlayer || this.player !== currentPlayer) break;
+          currentPlayer.feed(value);
         }
 
       } else if ((response.content as any) && 'read' in (response.content as any)) {
 
         const iterable = response.content as unknown as AsyncIterable<Uint8Array>
+        const currentPlayer = this.player
         for await (const chunk of iterable) {
-          if (!this.player) break;
-          this.player.feed(chunk);
+          if (!currentPlayer || this.player !== currentPlayer) break;
+          currentPlayer.feed(chunk);
         }
 
       } else {
@@ -206,7 +218,10 @@ class AudioPlayer {
 
     } catch (e) {
       console.error(e)
-      this.stop()
+      // Only stop if this error belongs to the currently active play request.
+      if (this.playRequestId === currentRequestId && this.uuid === uuid) {
+        this.stop()
+      }
       return false
     }
 
