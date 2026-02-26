@@ -105,7 +105,7 @@ class AudioPlayer {
       if (typeof response.content === 'string') {
 
         // If the string is already a data URL, use it directly.
-        if (response.content.startsWith('data:audio')) {
+        if (/^data:audio\//i.test(response.content)) {
           if (this.objectUrl) {
             URL.revokeObjectURL(this.objectUrl)
             this.objectUrl = null
@@ -117,14 +117,18 @@ class AudioPlayer {
           const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/
           let binary: string
 
-          if (typeof atob === 'function' && base64Regex.test(trimmed.replace(/\s+/g, ''))) {
-            const base64 = trimmed.replace(/\s+/g, '')
-            const decoded = atob(base64)
-            binary = decoded
+          const base64 = trimmed.replace(/\s+/g, '')
+          if (typeof atob === 'function' && base64Regex.test(base64)) {
+            try {
+              binary = atob(base64)
+            } catch {
+              // Fallback: treat payload as binary-like string.
+              binary = response.content
+            }
           } else {
-            // Treat as binary-like string (e.g. "RIFF....").
-            binary = response.content
-          }
+             // Treat as binary-like string (e.g. "RIFF....").
+             binary = response.content
+           }
 
           const bytes = new Uint8Array(binary.length)
           for (let i = 0; i < binary.length; i++) {
@@ -192,18 +196,27 @@ class AudioPlayer {
 
       } else if (typeof ReadableStream !== 'undefined' && response.content instanceof ReadableStream) {
 
-        const reader = response.content.getReader();
+        const reader = response.content.getReader()
         const currentPlayer = this.player
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          if (!currentPlayer || this.player !== currentPlayer) break;
-          currentPlayer.feed(value);
+        try {
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
+            if (!currentPlayer || this.player !== currentPlayer) {
+              await reader.cancel()
+              break
+            }
+            currentPlayer.feed(value)
+          }
+        } finally {
+          reader.releaseLock()
         }
 
-      } else if ((response.content as any) && 'read' in (response.content as any)) {
-
-        const iterable = response.content as unknown as AsyncIterable<Uint8Array>
+      } else if (
+        response.content &&
+        typeof (response.content as any)[Symbol.asyncIterator] === 'function'
+      ) {
+        const iterable = response.content as AsyncIterable<Uint8Array>
         const currentPlayer = this.player
         for await (const chunk of iterable) {
           if (!currentPlayer || this.player !== currentPlayer) break;
@@ -252,6 +265,7 @@ class AudioPlayer {
         // ignore if not supported
       }
     }
+    this.audioEl = null
 
     if (this.objectUrl) {
       URL.revokeObjectURL(this.objectUrl)
