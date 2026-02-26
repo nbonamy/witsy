@@ -85,10 +85,26 @@ class AudioPlayer {
 
         // If the string is already a data URL, use it directly.
         if (response.content.startsWith('data:audio')) {
+          if (this.objectUrl) {
+            URL.revokeObjectURL(this.objectUrl)
+            this.objectUrl = null
+          }
           audioEl.src = response.content
         } else {
-          // Convert binary-like string (e.g. "RIFF....") into a Blob and object URL.
-          const binary = response.content
+          // Detect likely base64 payload (no data URL prefix).
+          const trimmed = response.content.trim()
+          const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/
+          let binary: string
+
+          if (typeof atob === 'function' && base64Regex.test(trimmed.replace(/\s+/g, ''))) {
+            const base64 = trimmed.replace(/\s+/g, '')
+            const decoded = atob(base64)
+            binary = decoded
+          } else {
+            // Treat as binary-like string (e.g. "RIFF....").
+            binary = response.content
+          }
+
           const bytes = new Uint8Array(binary.length)
           for (let i = 0; i < binary.length; i++) {
             bytes[i] = binary.charCodeAt(i) & 0xff
@@ -111,11 +127,17 @@ class AudioPlayer {
 
       } else if (typeof Response !== 'undefined' && response.content instanceof Response) {
 
-        const contentType = response.content.headers.get('content-type') || response.mimeType || ''
+        const rawContentType = response.content.headers.get('content-type') || response.mimeType || ''
+        const contentType = rawContentType.toLowerCase()
 
         // If this is a direct audio response (e.g. from /v1/audio/speech), play it via the audio element.
         if (contentType.startsWith('audio/')) {
           const blob = await response.content.blob()
+
+          // Ensure this play request is still current after the async blob read.
+          if (this.uuid !== uuid) {
+            return true
+          }
 
           if (this.objectUrl) {
             URL.revokeObjectURL(this.objectUrl)
