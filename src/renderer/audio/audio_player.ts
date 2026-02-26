@@ -15,6 +15,7 @@ class AudioPlayer {
   state: AudioState
   uuid: string|null
   objectUrl: string|null
+  audioEl: HTMLAudioElement|null
 
   constructor(config: Configuration) {
     this.config = config
@@ -23,6 +24,7 @@ class AudioPlayer {
     this.state = 'idle'
     this.uuid = null
     this.objectUrl = null
+    this.audioEl = null
   }
 
   addListener(listener: AudioStatusListener) {
@@ -49,6 +51,7 @@ class AudioPlayer {
     // set status
     this.uuid = uuid
     this.state = 'loading'
+    this.audioEl = audioEl
     this.emitStatus()
 
     try {
@@ -66,15 +69,23 @@ class AudioPlayer {
       this.player = new SpeechPlayer({
         audio: audioEl,
         onPlaying: () => {
-          this.uuid = uuid
+          if (this.uuid !== uuid) {
+            return
+          }
           this.state = 'playing'
           this.emitStatus()
         },
         onPause: () => {
+          if (this.uuid !== uuid) {
+            return
+          }
           this.state = 'paused'
           this.emitStatus()
         },
         onChunkEnd: () => {
+          if (this.uuid !== uuid) {
+            return
+          }
           this.stop()
         },
         mimeType: response.mimeType ?? 'audio/mpeg',
@@ -118,6 +129,13 @@ class AudioPlayer {
           audioEl.src = this.objectUrl
         }
 
+        const handleEnded = () => {
+          if (this.uuid !== uuid) return
+          audioEl.removeEventListener('ended', handleEnded)
+          this.stop()
+        }
+        audioEl.addEventListener('ended', handleEnded)
+
         audioEl.play().catch((err) => {
           // Ignore AbortError caused by rapid play/pause races.
           if (!err || err.name !== 'AbortError') {
@@ -144,6 +162,13 @@ class AudioPlayer {
           }
           this.objectUrl = URL.createObjectURL(blob)
           audioEl.src = this.objectUrl
+
+          const handleEnded = () => {
+            if (this.uuid !== uuid) return
+            audioEl.removeEventListener('ended', handleEnded)
+            this.stop()
+          }
+          audioEl.addEventListener('ended', handleEnded)
 
           await audioEl.play().catch((err) => {
             if (!err || err.name !== 'AbortError') {
@@ -202,6 +227,15 @@ class AudioPlayer {
       this.player?.destroy()
     } catch {
       //console.error(e)
+    }
+
+    if (this.audioEl) {
+      this.audioEl.pause()
+      try {
+        this.audioEl.currentTime = 0
+      } catch {
+        // ignore if not supported
+      }
     }
 
     if (this.objectUrl) {
