@@ -1,9 +1,0 @@
-{
-  "version": "1",
-  "name": "tts",
-  "type": "collection",
-  "ignore": [
-    "node_modules",
-    ".git"
-  ]
-}
