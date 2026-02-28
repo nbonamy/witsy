@@ -7,6 +7,7 @@ import LlmUtils from '@services/llm_utils'
 import Message from '@models/message'
 import LlmMock, { installMockModels } from '@tests/mocks/llm'
 import LlmManager from '@services/llms/manager'
+import { RandomChunkStream } from '@tests/mocks/streams'
 
 vi.mock('@services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
@@ -359,12 +360,15 @@ test('getEngineModelForTask fallback to configured engine', () => {
 // getTitle Tests
 // ============================================================================
 
-test('getTitle returns cleaned title', async () => {
-  // Mock the chat method to return a simple title
-  vi.spyOn(LlmMock.prototype, 'chat').mockResolvedValue({
-    type: 'text',
-    content: 'Test Title',
+const mockStream = (text: string) => {
+  vi.spyOn(LlmMock.prototype, 'stream').mockResolvedValue({
+    stream: new RandomChunkStream(text),
+    context: {}
   })
+}
+
+test('getTitle returns cleaned title', async () => {
+  mockStream('Test Title')
   const messages = [
     new Message('system', 'System'),
     new Message('user', 'Hello'),
@@ -375,10 +379,7 @@ test('getTitle returns cleaned title', async () => {
 })
 
 test('getTitle removes HTML tags', async () => {
-  vi.spyOn(LlmMock.prototype, 'chat').mockResolvedValue({
-    type: 'text',
-    content: '<b>Bold Title</b>',
-  })
+  mockStream('<b>Bold Title</b>')
   const messages = [
     new Message('system', 'System'),
     new Message('user', 'Hello'),
@@ -389,10 +390,7 @@ test('getTitle removes HTML tags', async () => {
 })
 
 test('getTitle removes markdown', async () => {
-  vi.spyOn(LlmMock.prototype, 'chat').mockResolvedValue({
-    type: 'text',
-    content: '# Heading Title',
-  })
+  mockStream('# Heading Title')
   const messages = [
     new Message('system', 'System'),
     new Message('user', 'Hello'),
@@ -403,10 +401,7 @@ test('getTitle removes markdown', async () => {
 })
 
 test('getTitle removes Title: prefix', async () => {
-  vi.spyOn(LlmMock.prototype, 'chat').mockResolvedValue({
-    type: 'text',
-    content: 'Title: The Real Title',
-  })
+  mockStream('Title: The Real Title')
   const messages = [
     new Message('system', 'System'),
     new Message('user', 'Hello'),
@@ -417,10 +412,7 @@ test('getTitle removes Title: prefix', async () => {
 })
 
 test('getTitle removes surrounding quotes', async () => {
-  vi.spyOn(LlmMock.prototype, 'chat').mockResolvedValue({
-    type: 'text',
-    content: '"Quoted Title"',
-  })
+  mockStream('"Quoted Title"')
   const messages = [
     new Message('system', 'System'),
     new Message('user', 'Hello'),
@@ -431,10 +423,7 @@ test('getTitle removes surrounding quotes', async () => {
 })
 
 test('getTitle removes thinking tags', async () => {
-  vi.spyOn(LlmMock.prototype, 'chat').mockResolvedValue({
-    type: 'text',
-    content: '<think>reasoning...</think>Clean Title',
-  })
+  mockStream('<think>reasoning...</think>Clean Title')
   const messages = [
     new Message('system', 'System'),
     new Message('user', 'Hello'),
@@ -445,10 +434,7 @@ test('getTitle removes thinking tags', async () => {
 })
 
 test('getTitle handles empty response', async () => {
-  vi.spyOn(LlmMock.prototype, 'chat').mockResolvedValue({
-    type: 'text',
-    content: '',
-  })
+  mockStream('')
   const messages = [
     new Message('system', 'System'),
     new Message('user', 'User message'),
@@ -459,7 +445,7 @@ test('getTitle handles empty response', async () => {
 })
 
 test('getTitle handles error and returns null', async () => {
-  vi.spyOn(LlmMock.prototype, 'chat').mockRejectedValue(new Error('API error'))
+  vi.spyOn(LlmMock.prototype, 'stream').mockRejectedValue(new Error('API error'))
   const messages = [
     new Message('system', 'System'),
     new Message('user', 'Hello'),
@@ -480,11 +466,11 @@ test('generateStatusUpdate returns status text', async () => {
   expect(status.length).toBeGreaterThan(0)
 })
 
-test('generateStatusUpdate calls chat method', async () => {
-  const chatSpy = vi.spyOn(LlmMock.prototype, 'chat')
+test('generateStatusUpdate calls stream method', async () => {
+  const streamSpy = vi.spyOn(LlmMock.prototype, 'stream')
   await llmUtils.generateStatusUpdate('mock', 'chat', 'Progress update')
-  expect(chatSpy).toHaveBeenCalled()
-  const [, messages] = chatSpy.mock.calls[0]
+  expect(streamSpy).toHaveBeenCalled()
+  const [, messages] = streamSpy.mock.calls[0]
   expect(messages[0].role).toBe('system')
   // Message content can be string or array depending on contentForModel
   const systemContent = Array.isArray(messages[0].content) ? messages[0].content[0].text : messages[0].content

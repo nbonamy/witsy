@@ -7,6 +7,7 @@ import { store } from '@services/store'
 import Assistant, { AssistantCompletionOpts } from '@services/assistant'
 import Attachment from '@models/attachment'
 import LlmMock, { installMockModels } from '@tests/mocks/llm'
+import LlmUtils from '@services/llm_utils'
 
 vi.mock('@services/llms/manager.ts', async () => {
   const LlmManager = vi.fn()
@@ -86,6 +87,9 @@ beforeEach(() => {
     // @ts-expect-error partial mock
     store.config.llm.additionalInstructions[key] = false
   }
+
+  // spy on getTitle
+  vi.spyOn(LlmUtils.prototype, 'getTitle').mockResolvedValue('Mock Title')
 
   // init assistant
   assistant = new Assistant(store.config)
@@ -182,7 +186,7 @@ test('User-defined instructions', async () => {
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
   expect(instructions).toBe('You are a standard assistant\n\ninstructions.utils.setLang_fr-FR')
-  expect(assistant!.chat.title).toBe('You are a titling assistant:\n"Title"')
+  expect(assistant!.chat.title).toBe('Mock Title')
 })
 
 test('NoMarkdown modifier', async () => {
@@ -206,7 +210,7 @@ test('Assistant Chat Streaming', async () => {
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.utils.titling_fr-FR:\n"Title"')
+  expect(assistant!.chat.title).toBe('Mock Title')
 })
 
 test('Assistant Chat No Streaming 1', async () => {
@@ -215,7 +219,7 @@ test('Assistant Chat No Streaming 1', async () => {
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.utils.titling_fr-FR:\n"Title"')
+  expect(assistant!.chat.title).toBe('Mock Title')
 })
 
 test('Assistant Chat No Streaming 2', async () => {
@@ -226,7 +230,7 @@ test('Assistant Chat No Streaming 2', async () => {
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.utils.titling_fr-FR:\n"Title"')
+  expect(assistant!.chat.title).toBe('Mock Title')
 })
 
 test('Assistant Attachment', async () => {
