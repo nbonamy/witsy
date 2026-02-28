@@ -317,17 +317,19 @@ export default class VideoCreator implements MediaCreator {
       if (parameters?.resolution) body.resolution = parameters.resolution
 
       // reference for image-to-video or video editing
-      const isEdit = reference?.length > 0
+      let isVideoEdit = false
       if (reference?.[0]) {
         if (reference[0].mimeType.startsWith('video')) {
           body.video = { url: `data:${reference[0].mimeType};base64,${reference[0].contents}` }
+          isVideoEdit = true
         } else {
-          body.image_url = `data:${reference[0].mimeType};base64,${reference[0].contents}`
+          body.image = { url: `data:${reference[0].mimeType};base64,${reference[0].contents}` }
         }
       }
 
       // Step 1: Submit generation/edit request
-      const endpoint = isEdit ? 'videos/edits' : 'videos/generations'
+      // image-to-video uses /generations, video editing uses /edits
+      const endpoint = isVideoEdit ? 'videos/edits' : 'videos/generations'
       const createResponse = await fetch(`${xAIBaseURL}/${endpoint}`, {
         method: 'POST',
         headers: {
