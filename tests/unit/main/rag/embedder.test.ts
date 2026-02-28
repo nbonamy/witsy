@@ -83,6 +83,22 @@ test('Embed Ollama', async () => {
   expect(embeddings).toStrictEqual([[111, 108, 108, 101, 104]])
 })
 
+test('Create LM Studio', async () => {
+  const embedder = await Embedder.init(app, defaultSettings, 'lmstudio', 'jina-embeddings-v5-text-small-retrieval')
+  expect(embedder).toBeTruthy()
+  expect(embedder.openai).toBeTruthy()
+  expect(embedder.ollama).toBeFalsy()
+  expect(embedder.google).toBeFalsy()
+})
+
+test('Embed LM Studio', async () => {
+  const embedder = await Embedder.init(app, defaultSettings, 'lmstudio', 'jina-embeddings-v5-text-small-retrieval')
+  const embeddings = await embedder.embed(['hello'])
+  expect(OpenAI.prototype.embeddings.create).toHaveBeenCalled()
+  expect(Ollama.prototype.embed).not.toHaveBeenCalled()
+  expect(embeddings).toStrictEqual([[111, 108, 108, 101, 104]])
+})
+
 test('Create Google', async () => {
   const embedder = await Embedder.init(app, defaultSettings, 'google', 'text-embedding-004')
   expect(embedder).toBeTruthy()

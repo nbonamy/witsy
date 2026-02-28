@@ -65,6 +65,15 @@ export default class Embedder {
       this.google = new GoogleGenAI({ apiKey: this.config.engines.google.apiKey })
       return
 
+    } else if (this.engine === 'lmstudio') {
+
+      this.openai = new OpenAI({
+        apiKey: this.config.engines.lmstudio.apiKey || 'lm-studio',
+        baseURL: this.config.engines.lmstudio.baseURL || defaults.engines.lmstudio.baseURL,
+        dangerouslyAllowBrowser: true
+      })
+      return
+
     } else if (this.engine === 'ollama') {
 
       this.ollama = new Ollama({

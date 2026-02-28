@@ -10,9 +10,9 @@
   <div class="form-field" v-if="llmManager.isCustomEngine(engine)">
     <label>{{ t('embedding.model') }}</label>
     <div class="form-subgroup">
-      <Combobox v-model="model" :items="models"@change="onChangeModel" required :disabled="disabled" />
+      <Combobox v-model="model" :items="models" @change="onChangeModel" required :disabled="disabled" />
     </div>
-    <RefreshButton :on-refresh="getModels" v-if="canRefresh"/>
+      <RefreshButton :on-refresh="getModels" v-if="canRefresh"/>
   </div>
   
   <div class="form-field" v-else>
@@ -25,7 +25,7 @@
     </div>
   </div>
   
-  <div class="form-field" style="margin-top: -8px" v-if="engine !== 'ollama'">
+  <div class="form-field" style="margin-top: -8px" v-if="!['ollama', 'lmstudio'].includes(engine)">
     <label></label>
     <span>{{ t('embedding.apiKeyReminder') }}</span>
   </div>
@@ -76,6 +76,7 @@ const engines = computed(() => {
     { id: 'openai', name: 'OpenAI' },
     { id: 'google', name: 'Google' },
     { id: 'ollama', name: 'Ollama' },
+    { id: 'lmstudio', name: 'LM Studio' },
     //{ id: 'fastembed', name: 'FastEmbed-js' },
   ]
 
@@ -93,10 +94,14 @@ const engines = computed(() => {
 })
 
 const models = computed(() => {
-  return store.config?.engines?.[engine.value]?.models?.embedding?.map((m: Model) => ({ id: m.id, name: m.name }))
+  if (['lmstudio'].includes(engine.value)) {
+    return store.config?.engines?.[engine.value]?.models?.chat?.map((m: Model) => ({ id: m.id, name: m.name })) 
+  } else {
+    return store.config?.engines?.[engine.value]?.models?.embedding?.map((m: Model) => ({ id: m.id, name: m.name }))
+  }
 })
 
-const canRefresh = computed(() => ['ollama', 'google'].includes(engine.value))
+const canRefresh = computed(() => ['ollama', 'google', 'lmstudio'].includes(engine.value))
 
 const onChangeEngine = () => {
   model.value = models.value?.[0]?.id || null
