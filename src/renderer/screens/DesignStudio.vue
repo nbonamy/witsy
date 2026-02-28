@@ -34,13 +34,13 @@
   </div>
   <ContextMenuPlus v-if="showMenu" @close="closeContextMenu" :mouseX="menuX" :mouseY="menuY">
     <div v-if="selection.length == 1" class="item" @click="handleActionClick('load')">
-      {{ t('designStudio.loadMediaSettings') }}
+      <SettingsIcon class="icon" />{{ t('designStudio.loadMediaSettings') }}
     </div>
     <div v-if="selection.length == 1" class="item" @click="handleActionClick('rename')">
-      {{ t('common.rename') }}
+      <PencilIcon class="icon" />{{ t('common.rename') }}
     </div>
-    <div class="item" @click="handleActionClick('delete')">
-      {{ t('common.delete') }}
+    <div class="item danger" @click="handleActionClick('delete')">
+      <Trash2Icon class="icon" />{{ t('common.delete') }}
     </div>
   </ContextMenuPlus>
   <DrawingCanvas v-if="showDrawingCanvas" :backgroundImage="currentMediaUrl" @close="onDrawingClose" @save="onDrawingSave" />
@@ -62,7 +62,7 @@ import { t } from '@services/i18n'
 import ImageCreator from '@services/image'
 import { kMediaChatId, kReferenceParamValue, store } from '@services/store'
 import VideoCreator from '@services/video'
-import { ImagePlusIcon, ListRestartIcon } from 'lucide-vue-next'
+import { ImagePlusIcon, ListRestartIcon, PencilIcon, SettingsIcon, Trash2Icon } from 'lucide-vue-next'
 import { FileContents } from 'types/file'
 import { anyDict } from 'types/index'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
