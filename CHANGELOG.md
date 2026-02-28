@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Search text inside chat (Cmd+F/Ctrl+F)
 - Navigation inside the chat during searches (https://github.com/nbonamy/witsy/issues/531)
+- Support new Grok Image/Video generation capabilities (https://github.com/nbonamy/witsy/issues/537)
 
 ### Changed
 - N/A
