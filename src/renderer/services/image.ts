@@ -56,7 +56,7 @@ export default class ImageCreator implements MediaCreator {
     } else if (engine == 'falai') {
       return this.falai(model, parameters, reference)
     } else if (engine == 'xai') {
-      return this.xai(model, parameters)
+      return this.xai(model, parameters, reference)
     } else if (engine == 'ollama') {
       return this.ollama(model, parameters)
     } else {
@@ -68,8 +68,63 @@ export default class ImageCreator implements MediaCreator {
     return this._openai('openai', store.config.engines.openai.apiKey, store.config.engines.openai.baseURL, model, parameters, reference)
   }
 
-  async xai(model: string, parameters: anyDict): Promise<anyDict> {
-    return this._openai('xai', store.config.engines.xai.apiKey, xAIBaseURL, model, parameters)
+  async xai(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
+
+    const apiKey = store.config.engines.xai.apiKey
+
+    try {
+
+      // build body
+      console.log(`[xai] prompting model ${model}`)
+      const isEdit = reference?.length > 0
+      const body: anyDict = {
+        model: model,
+        prompt: parameters?.prompt,
+        n: parameters?.n || 1,
+      }
+
+      // reference images for editing
+      if (reference?.length === 1) {
+        body.image = { url: `data:${reference[0].mimeType};base64,${reference[0].contents}`, type: 'image_url' }
+      } else if (reference?.length > 1) {
+        body.images = reference.map(r => ({ url: `data:${r.mimeType};base64,${r.contents}`, type: 'image_url' }))
+      }
+
+      // call - edits use a different endpoint
+      const endpoint = isEdit ? 'images/edits' : 'images/generations'
+      const response = await fetch(`${xAIBaseURL}/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('[xai] Image generation failed:', errorText)
+        throw new Error(`Image generation failed: ${response.status} ${response.statusText}`)
+      }
+
+      const result = await response.json()
+
+      // save the content on disk
+      if (result.data?.[0]?.b64_json) {
+        const fileUrl = saveFileContents('png', result.data[0].b64_json)
+        return { url: fileUrl }
+      } else if (result.data?.[0]?.url) {
+        const fileUrl = download(result.data[0].url)
+        return { url: fileUrl }
+      } else {
+        console.error('[xai] No image returned', result)
+        return { error: 'No image returned from xAI API' }
+      }
+
+    } catch (error) {
+      console.error('[xai] Image generation error:', error)
+      return { error: error.message || 'Image generation failed with xAI API' }
+    }
   }
 
   async huggingface(model: string, parameters: anyDict): Promise<anyDict> {

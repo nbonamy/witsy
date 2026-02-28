@@ -35,7 +35,7 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
       ]
     })),
     loadOpenRouterModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadXAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
+    loadXAIModels: vi.fn((): ModelsList => ({ chat: [], image: [], video: [] })),
   }
 })
 

@@ -271,11 +271,13 @@
     "xai": {
       "models": {
         "chat": [],
-        "image": []
+        "image": [],
+        "video": []
       },
       "model": {
-        "chat": "grok-4-0709",
-        "image": "",
+        "chat": "grok-4-1-fast-reasoning",
+        "image": "grok-imagine-image",
+        "video": "grok-imagine-video",
         "vision": "grok-2-vision-1212"
       }
     },
@@ -349,7 +351,8 @@
       "baseURL": "http://localhost:1234/v1",
       "models": {
         "chat": [],
-        "image": []
+        "image": [],
+        "embedding": []
       },
       "model": {
         "chat": "",

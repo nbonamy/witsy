@@ -1,6 +1,7 @@
 
 import { fal } from '@fal-ai/client'
 import { GoogleGenAI, PersonGeneration } from '@google/genai'
+import { xAIBaseURL } from 'multi-llm-ts'
 import Replicate, { FileOutput } from 'replicate'
 import { anyDict, MediaCreationEngine, MediaCreator, MediaReference } from 'types/index'
 import { download, saveFileContents } from './download'
@@ -35,6 +36,9 @@ export default class VideoCreator implements MediaCreator {
     if (!checkApiKey || store.config.engines.google.apiKey) {
       engines.push({ id: 'google', name: engineNames.google })
     }
+    if (!checkApiKey || store.config.engines.xai.apiKey) {
+      engines.push({ id: 'xai', name: engineNames.xai })
+    }
     if (!checkApiKey || store.config.engines.replicate.apiKey) {
       engines.push({ id: 'replicate', name: engineNames.replicate })
     }
@@ -57,6 +61,8 @@ export default class VideoCreator implements MediaCreator {
       return this.google(model, parameters, reference)
     } else if (engine == 'openai') {
       return this.openai(model, parameters, reference)
+    } else if (engine == 'xai') {
+      return this.xai(model, parameters, reference)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -290,6 +296,101 @@ export default class VideoCreator implements MediaCreator {
       return { error: error.message || `Video generation failed with ${name} API` }
     }
 
+  }
+
+  async xai(model: string, parameters: anyDict, reference?: MediaReference[]): Promise<anyDict> {
+
+    const apiKey = store.config.engines.xai.apiKey
+
+    try {
+
+      // build body
+      console.log(`[xai] creating video with model ${model}`)
+      const body: anyDict = {
+        model: model,
+        prompt: parameters?.prompt,
+      }
+
+      // optional parameters
+      if (parameters?.duration) body.duration = parameters.duration
+      if (parameters?.aspect_ratio) body.aspect_ratio = parameters.aspect_ratio
+      if (parameters?.resolution) body.resolution = parameters.resolution
+
+      // reference for image-to-video or video editing
+      const isEdit = reference?.length > 0
+      if (reference?.[0]) {
+        if (reference[0].mimeType.startsWith('video')) {
+          body.video = { url: `data:${reference[0].mimeType};base64,${reference[0].contents}` }
+        } else {
+          body.image_url = `data:${reference[0].mimeType};base64,${reference[0].contents}`
+        }
+      }
+
+      // Step 1: Submit generation/edit request
+      const endpoint = isEdit ? 'videos/edits' : 'videos/generations'
+      const createResponse = await fetch(`${xAIBaseURL}/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+
+      if (!createResponse.ok) {
+        const errorText = await createResponse.text()
+        console.error('[xai] Video creation failed:', errorText)
+        throw new Error(`Video creation failed: ${createResponse.status} ${createResponse.statusText}`)
+      }
+
+      const createResult = await createResponse.json()
+      const requestId = createResult.request_id
+
+      if (!requestId) {
+        throw new Error('xAI Video API response missing request_id')
+      }
+
+      // Step 2: Poll for completion
+      console.log(`[xai] polling video status for ${requestId}`)
+      const maxAttempts = 180
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+
+        await new Promise(resolve => setTimeout(resolve, 10000))
+
+        const statusResponse = await fetch(`${xAIBaseURL}/videos/${requestId}`, {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+          }
+        })
+
+        if (!statusResponse.ok) {
+          throw new Error(`Status check failed: ${statusResponse.status} ${statusResponse.statusText}`)
+        }
+
+        const statusResult = await statusResponse.json()
+
+        // completed: video object is present with url
+        if (statusResult.video?.url) {
+          const fileUrl = download(statusResult.video.url)
+          return { url: fileUrl }
+        }
+
+        // still pending
+        if (statusResult.status === 'pending') {
+          console.log(`[xai] video generation status: pending`)
+          continue
+        }
+
+        // unexpected status
+        console.log(`[xai] video generation status:`, JSON.stringify(statusResult))
+      }
+
+      throw new Error('Video generation timed out')
+
+    } catch (error) {
+      console.error('[xai] Video generation error:', error)
+      return { error: error.message || 'Video generation failed with xAI API' }
+    }
   }
 
   // SDK-BASED IMPLEMENTATION (commented out - kept for reference)
