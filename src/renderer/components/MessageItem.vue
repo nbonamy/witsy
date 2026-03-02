@@ -340,15 +340,7 @@ defineExpose({
 </script>
 
 <style>
-
-.message .message-body .katex-mathml {
-  font-family: 'STIX Two Math';
-}
-
-.message .message-body .katex-html {
-  display: none;
-}
-
+@import 'katex/dist/katex.min.css';
 </style>
 
 <style scoped>

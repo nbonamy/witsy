@@ -173,8 +173,3 @@ const onMediaLoaded = (message: Message) => {
 
 </script>
 
-<style>
-.message .message-body .katex-html {
-  display: none;
-}
-</style>

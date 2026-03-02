@@ -20,7 +20,7 @@
   overflow-wrap: anywhere;
 }
 
-.messages.size1 .variable-font-size, .messages.size1 .variable-font-size * {
+.messages.size1 .variable-font-size, .messages.size1 .variable-font-size *:not(.katex *) {
   font-size: 13.5px;
 }
 
@@ -28,7 +28,7 @@
   font-size: 12.5px;
 }
 
-.messages.size2 .variable-font-size, .messages.size2 .variable-font-size * {
+.messages.size2 .variable-font-size, .messages.size2 .variable-font-size *:not(.katex *) {
   font-size: 14.5px;
 }
 
@@ -36,7 +36,7 @@
   font-size: 13.5px;
 }
 
-.messages.size3 .variable-font-size, .messages.size3 .variable-font-size *{
+.messages.size3 .variable-font-size, .messages.size3 .variable-font-size *:not(.katex *) {
   font-size: 16px;
 }
 
@@ -44,7 +44,7 @@
   font-size: 14.5px;
 }
 
-.messages.size4 .variable-font-size, .messages.size4 .variable-font-size * {
+.messages.size4 .variable-font-size, .messages.size4 .variable-font-size *:not(.katex *) {
   font-size: 18px;
 }
 
@@ -52,7 +52,7 @@
   font-size: 12.5px;
 }
 
-.messages.size5 .variable-font-size, .messages.size5 .variable-font-size * {
+.messages.size5 .variable-font-size, .messages.size5 .variable-font-size *:not(.katex *) {
   font-size: 20px;
 }
 
@@ -60,7 +60,7 @@
   font-size: 18.5px;
 }
 
-.message .message-body * {
+.message .message-body *:not(.katex *) {
   line-height: 1.3;
 }
 
