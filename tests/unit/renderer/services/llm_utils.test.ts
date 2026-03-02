@@ -1,4 +1,4 @@
-import { LlmChunkTool } from 'multi-llm-ts'
+import { LlmChunkContent, LlmChunkTool, LlmChunkUsage, LlmEngine } from 'multi-llm-ts'
 import { beforeAll, beforeEach, expect, test, vi } from 'vitest'
 import { useWindowMock } from '@tests/mocks/window'
 import defaults from '@root/defaults/settings.json'
@@ -36,6 +36,64 @@ beforeEach(() => {
       return Promise.resolve([])
     }),
   } as any
+})
+
+// helper to create a mock LlmEngine with a generate method yielding chunks
+const mockLlmEngine = (chunks: (LlmChunkContent | LlmChunkUsage | LlmChunkTool)[]): LlmEngine => {
+  return {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async *generate(_model: any, _messages: any, _opts?: any) {
+      for (const chunk of chunks) {
+        yield chunk
+      }
+    }
+  } as unknown as LlmEngine
+}
+
+test('complete collects content chunks into a string', async () => {
+  const llm = mockLlmEngine([
+    { type: 'content', text: 'Hello', done: false },
+    { type: 'content', text: ' World', done: true },
+  ])
+  const result = await LlmUtils.complete(llm, { id: 'test' } as any, [])
+  expect(result).toBe('Hello World')
+})
+
+test('complete ignores non-content chunks', async () => {
+  const llm = mockLlmEngine([
+    { type: 'content', text: 'Hello', done: false },
+    { type: 'usage', usage: { prompt_tokens: 10, completion_tokens: 5 } },
+    { type: 'tool', id: '1', name: 'test', state: 'completed', done: true },
+    { type: 'content', text: ' World', done: true },
+  ])
+  const result = await LlmUtils.complete(llm, { id: 'test' } as any, [])
+  expect(result).toBe('Hello World')
+})
+
+test('complete returns empty string for no content', async () => {
+  const llm = mockLlmEngine([
+    { type: 'usage', usage: { prompt_tokens: 10, completion_tokens: 0 } },
+  ])
+  const result = await LlmUtils.complete(llm, { id: 'test' } as any, [])
+  expect(result).toBe('')
+})
+
+test('complete trims whitespace', async () => {
+  const llm = mockLlmEngine([
+    { type: 'content', text: '  Hello World  ', done: true },
+  ])
+  const result = await LlmUtils.complete(llm, { id: 'test' } as any, [])
+  expect(result).toBe('Hello World')
+})
+
+test('complete skips chunks with empty text', async () => {
+  const llm = mockLlmEngine([
+    { type: 'content', text: 'Hello', done: false },
+    { type: 'content', text: '', done: false },
+    { type: 'content', text: ' World', done: true },
+  ])
+  const result = await LlmUtils.complete(llm, { id: 'test' } as any, [])
+  expect(result).toBe('Hello World')
 })
 
 test('queryDocRepos returns empty for no docrepos', async () => {

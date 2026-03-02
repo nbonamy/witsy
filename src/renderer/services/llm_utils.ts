@@ -1,11 +1,10 @@
 
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
-import { ChatModel, LlmChunkTool } from 'multi-llm-ts'
+import { ChatModel, LlmChunkTool, LlmCompletionOpts, LlmEngine } from 'multi-llm-ts'
 import { CodeExecutionMode, Configuration } from 'types/config'
 import { DocRepoQueryResponseItem } from 'types/rag'
 import { z } from 'zod'
 import Message from '@models/message'
-import Generator from './generator'
 import { getLlmLocale, i18nInstructions, localeToLangName, t } from './i18n'
 import LlmFactory from './llms/llm'
 
@@ -22,6 +21,22 @@ export default class LlmUtils {
 
   constructor(config: Configuration) {
     this.config = config
+  }
+
+  static async complete(
+    llm: LlmEngine,
+    model: ChatModel,
+    messages: Message[],
+    opts?: LlmCompletionOpts
+  ): Promise<string> {
+    let result = ''
+    const stream = llm.generate(model, messages, opts)
+    for await (const chunk of stream) {
+      if (chunk.type === 'content' && chunk.text) {
+        result += chunk.text
+      }
+    }
+    return result.trim()
   }
 
   getEngineModelForTask(
@@ -121,24 +136,17 @@ export default class LlmUtils {
         new Message('user', i18nInstructions(this.config, 'instructions.utils.titlingUser'))
       ]
 
-      // now stream it (anthropic requires streaming)
+      // get the title
       const llmManager = LlmFactory.manager(this.config)
       const llm = llmManager.igniteEngine(selectedEngine)
       const model = llmManager.getChatModel(selectedEngine, titlingModel)
-      let title = ''
-      const stream = llm.generate(model, messages, {
+      let title = await LlmUtils.complete(llm, model, messages, {
         tools: false,
         toolCallsInThread: false,
         reasoningEffort: 'low',
         thinkingBudget: 0,
         reasoning: false,
       })
-      for await (const chunk of stream) {
-        if (chunk.type === 'content' && chunk.text) {
-          title += chunk.text
-        }
-      }
-      title = title.trim()
       if (title === '') {
         return thread[1].content
       }
@@ -188,34 +196,27 @@ Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Statu
     return this.run(engine, model, 'simple', statusInstructions, prompt)
   }
 
-  private async run(engine: string, model: string, complexity: TaskComplexity, system: string, prompt: string, opts?: any): Promise<any> {
+  private async run(engine: string, model: string, complexity: TaskComplexity, system: string, prompt: string, opts?: LlmCompletionOpts): Promise<any> {
 
-    // Get optimal model for simple task (titling is simple)
+    // Get optimal model for task complexity
     const { engine: selectedEngine, model: actualModel } = this.getEngineModelForTask(complexity, engine, model)
 
     const messages = [
       new Message('system', system),
       new Message('user', prompt),
-      new Message('assistant', '')
     ]
 
     // now get it
-    const generator = new Generator(this.config)
     const llmManager = LlmFactory.manager(this.config)
     const llm = llmManager.igniteEngine(selectedEngine)
     const actualChatModel: ChatModel = llmManager.getChatModel(selectedEngine, actualModel)
-    await generator.generate(llm, messages, {
-      model: actualChatModel.id,
-      streaming: true,
+    return await LlmUtils.complete(llm, actualChatModel, messages, {
       tools: false,
       reasoningEffort: 'low',
       thinkingBudget: 0,
       reasoning: false,
       ...opts
     })
-
-    // Return content - if structured output was used, it may be an object
-    return messages[2].content.trim()
 
   }
   
