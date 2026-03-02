@@ -26,7 +26,7 @@ import MessageItemSearchResultBlock from './MessageItemSearchResultBlock.vue'
 import MessageItemTableBlock from './MessageItemTableBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
 
-const searchState = inject<SearchState>('searchState')
+const searchState = inject<SearchState>('searchState', undefined)
 
 const props = defineProps({
   block: {

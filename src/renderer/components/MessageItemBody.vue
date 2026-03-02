@@ -41,7 +41,7 @@ import { ChatToolMode } from 'types/config'
 import { computed, inject, PropType, ref, watch } from 'vue'
 import MessageItemBodyBlock from './MessageItemBodyBlock.vue'
 
-const searchState = inject<SearchState>('searchState')
+const searchState = inject<SearchState>('searchState', undefined)
 const showReasoning = inject('showReasoning', ref(store.config.appearance.chat.showReasoning))
 const userToggleReasoning = inject('onToggleReasoning', (value: boolean) => {
   store.config.appearance.chat.showReasoning = value
