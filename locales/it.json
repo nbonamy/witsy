@@ -60,6 +60,7 @@
     "esc": "Esc",
     "estimatedCost": "Costo stimato:",
     "experts": "Esperti",
+    "export": "Esporta",
     "favorites": {
       "add": "Aggiungi ai preferiti",
       "name": "Preferiti",
@@ -109,7 +110,6 @@
     "read": "Leggi",
     "recommended": "Consigliato",
     "record": "Registra",
-    "redo": "Ripristina",
     "rename": "Rinomina",
     "replace": "Sostituisci",
     "required": {
@@ -161,7 +161,6 @@
     "tools": "Strumenti",
     "tryAgain": "Per favore riprova.",
     "type": "Tipo",
-    "undo": "Annulla",
     "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "Nessuno",
     "upload": "Carica",
@@ -508,6 +507,7 @@
     "search": {
       "matchCount": "{current} di {total}",
       "nextMatch": "Risultato successivo",
+      "noMatches": "Nessun risultato",
       "previousMatch": "Risultato precedente"
     },
     "send": "Invia",
@@ -1970,7 +1970,8 @@
       "prompt": "ESTRAZIONE:\n{'{'}document{'}'}\n\nDOMANDA: {'{'}ask{'}'}",
       "simplify": "Semplifica e comprimi la scrittura dell'ESTRAZIONE. Rimuovi qualsiasi informazione non necessaria. Non spiegare le modifiche effettuate.",
       "spellcheck": "Correggi l'ESTRAZIONE risolvendo gli errori di ortografia e grammatica. Non modificare l'ESTRAZIONE oltre all'ortografia e alla grammatica. Non elencare le correzioni effettuate.",
-      "system": "Stai aiutando qualcuno a scrivere un DOCUMENTO. Devi rispondere alla richiesta qui sotto sull'ESTRAZIONE qui sotto. Non utilizzare versioni precedenti del DOCUMENTO o dell'ESTRAZIONE nella nostra conversazione. Rispondi solo con l'ESTRAZIONE aggiornata in base alla richiesta. Preserva le righe vuote. Non incorniciare le risposte tra virgolette. Non includere la versione iniziale o precedente del DOCUMENTO o dell'ESTRAZIONE. Non includere la parola ESTRAZIONE. Non utilizzare la sintassi Markdown come '## Titolo ##' o '** Testo **'. Non includere nient'altro nella risposta, comprese cose come 'ecco il…'",
+      "system": "Stai aiutando qualcuno a scrivere un DOCUMENTO. DEVI usare gli strumenti forniti per modificare il documento. Non restituire mai il documento modificato come testo — usa sempre uno strumento. Scegli lo strumento più efficiente per il compito: usa edit_document per modifiche mirate (errori di battitura, riformulazioni, piccole correzioni) e insert_content per aggiungere nuovo contenuto in una posizione specifica. Se l'utente ha selezionato del testo, usa replace_selection per sostituirlo. Non spiegare le modifiche che hai fatto. Non includere nient'altro nella risposta, incluse cose come 'ecco il…'",
+      "systemSelection": "Stai aiutando qualcuno a scrivere un DOCUMENTO. L'utente ha selezionato una parte del documento. DEVI usare lo strumento replace_selection per modificare il testo selezionato. Non restituire mai il testo modificato direttamente — usa sempre lo strumento. Non spiegare le modifiche che hai fatto. Non includere nient'altro nella risposta, incluse cose come 'ecco il…'",
       "takeaways": "Scrivi un elenco (utilizzando trattini) dei punti chiave dell'ESTRAZIONE. Mantieni tra 3 e 5 punti chiave per un'ESTRAZIONE breve, fino a 10 per un'ESTRAZIONE più lunga.",
       "title": "Suggerisci un titolo per l'ESTRAZIONE. Restituisci il titolo seguito dal testo completo dell'ESTRAZIONE."
     },
@@ -2139,6 +2140,8 @@
     "edit": {
       "deleteChat": "Elimina chat",
       "deleteMedia": "Elimina Media",
+      "find": "Trova…",
+      "findAll": "Trova tutto…",
       "selectAll": "Seleziona tutto",
       "startDictation": "Inizia dettatura",
       "title": "Modifica"
@@ -2348,6 +2351,17 @@
       "title": "Benvenuto in @:{'common.appName'}!"
     }
   },
+  "playbooks": {
+    "editor": {
+      "exportError": "Impossibile esportare il file. Riprova."
+    },
+    "marp": {
+      "viewSlideshow": "Visualizza la presentazione"
+    },
+    "outline": {
+      "empty": "Nessuna intestazione trovata. Aggiungi intestazioni per vedere la struttura."
+    }
+  },
   "plugins": {
     "agent": {
       "completed": "Agente {agent} eseguito con successo",
@@ -2548,6 +2562,7 @@
       "suggestTitle": "Suggerisci un titolo",
       "writingAssistant": "Assistente di scrittura"
     },
+    "createEmpty": "Crea vuoto",
     "delete": {
       "confirm": "Sei sicuro di voler eliminare \"{title}\"?",
       "title": "Elimina Documento"
@@ -2577,6 +2592,7 @@
       "prompt": "Inserisci un titolo per questo documento",
       "title": "Importa Documento"
     },
+    "importDocument": "Importa documento",
     "importError": "Errore durante l'importazione del file documento",
     "loadingError": "Errore durante il caricamento del file documento",
     "new": "Nuovo Documento",

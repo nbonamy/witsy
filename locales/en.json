@@ -129,7 +129,6 @@
     "read": "Read",
     "recommended": "Recommended",
     "record": "Record",
-    "redo": "Redo",
     "rename": "Rename",
     "replace": "Replace",
     "required": {
@@ -181,7 +180,6 @@
     "tools": "Tools",
     "tryAgain": "Please try again.",
     "type": "Type",
-    "undo": "Undo",
     "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "None",
     "upload": "Upload",
@@ -526,8 +524,8 @@
     },
     "search": {
       "matchCount": "{current} of {total}",
-      "noMatches": "No results",
       "nextMatch": "Next match",
+      "noMatches": "No results",
       "previousMatch": "Previous match"
     },
     "send": "Send",
@@ -2369,6 +2367,17 @@
       "title": "Welcome to @:{'common.appName'}!"
     }
   },
+  "playbooks": {
+    "editor": {
+      "exportError": "Failed to export file. Please try again."
+    },
+    "marp": {
+      "viewSlideshow": "View slideshow"
+    },
+    "outline": {
+      "empty": "No headings found. Add headings to see outline."
+    }
+  },
   "plugins": {
     "agent": {
       "completed": "Agent {agent} executed successfully",
@@ -2494,17 +2503,6 @@
       "running": "Downloading transcript…"
     }
   },
-  "playbooks": {
-    "editor": {
-      "exportError": "Failed to export file. Please try again."
-    },
-    "marp": {
-      "viewSlideshow": "View slideshow"
-    },
-    "outline": {
-      "empty": "No headings found. Add headings to see outline."
-    }
-  },
   "prompt": {
     "attachment": {
       "emptyError": {
@@ -2587,6 +2585,7 @@
       "suggestTitle": "Suggest a title",
       "writingAssistant": "Writing assistant"
     },
+    "createEmpty": "Create Empty",
     "delete": {
       "confirm": "Are you sure you want to delete \"{title}\"?",
       "title": "Delete Document"
@@ -2616,6 +2615,7 @@
       "prompt": "Enter a title for this document",
       "title": "Import Document"
     },
+    "importDocument": "Import Document",
     "importError": "Error importing document file",
     "loadingError": "Error while loading document file",
     "new": "New Document",
@@ -2629,8 +2629,6 @@
       "prompt": "Enter a title for this document",
       "title": "Save Document"
     },
-    "createEmpty": "Create Empty",
-    "importDocument": "Import Document",
     "saveError": "Error saving document",
     "title": "Scratchpad",
     "unsavedPrompt": "Do you want to save your changes?"

@@ -60,6 +60,7 @@
     "esc": "Esc",
     "estimatedCost": "Geschätzte Kosten:",
     "experts": "Experten",
+    "export": "Exportieren",
     "favorites": {
       "add": "Zu Favoriten hinzufügen",
       "name": "Favoriten",
@@ -109,7 +110,6 @@
     "read": "Lesen",
     "recommended": "Empfohlen",
     "record": "Aufzeichnen",
-    "redo": "Wiederherstellen",
     "rename": "Umbenennen",
     "replace": "Ersetzen",
     "required": {
@@ -161,7 +161,6 @@
     "tools": "Werkzeuge",
     "tryAgain": "Bitte versuche es erneut.",
     "type": "Typ",
-    "undo": "Rückgängig",
     "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "Keine",
     "upload": "Hochladen",
@@ -508,6 +507,7 @@
     "search": {
       "matchCount": "{current} von {total}",
       "nextMatch": "Nächster Treffer",
+      "noMatches": "Keine Ergebnisse",
       "previousMatch": "Vorheriger Treffer"
     },
     "send": "Senden",
@@ -1970,7 +1970,8 @@
       "prompt": "AUSZUG:\n{'{'}document{'}'}\n\nFRAGE: {'{'}ask{'}'}",
       "simplify": "Vereinfachen und verkürzen Sie das Schreiben des AUSZUGS. Entfernen Sie alle unnötigen Informationen. Erklären Sie nicht die Änderungen, die Sie vorgenommen haben.",
       "spellcheck": "Korrigieren Sie den AUSZUG, indem Sie Rechtschreibfehler und Grammatikfehler beheben. Ändern Sie den AUSZUG nicht über Rechtschreibung und Grammatik hinaus. Listen Sie die Korrekturen, die Sie vorgenommen haben, nicht auf.",
-      "system": "Sie helfen jemandem, ein DOKUMENT zu schreiben. Sie müssen auf die untenstehende Anfrage im AUSZUG unten antworten. Verwenden Sie keine vorherigen Versionen des DOKUMENTS oder des AUSZUGS in unserem Gespräch. Antworten Sie nur mit dem aktualisierten AUSZUG basierend auf der Anfrage. Behalte leere Zeilen. Wickeln Sie Antworten nicht in Anführungszeichen. Fügen Sie weder die ursprüngliche noch die vorherige Version des DOKUMENTS oder des AUSZUGS ein. Verwenden Sie nicht das Wort AUSZUG. Verwenden Sie keine Markdown-Syntax wie '## Titel ##' oder '** Text **'. Fügen Sie in der Antwort nichts anderes ein, einschließlich Dinge wie 'hier ist das…'",
+      "system": "Du hilfst jemandem, ein DOKUMENT zu schreiben. Du MUSST die bereitgestellten Werkzeuge verwenden, um das Dokument zu ändern. Gib das veränderte Dokument niemals direkt als Text aus — verwende immer ein Werkzeug. Wähle das effizienteste Werkzeug für die Aufgabe: Verwende edit_document für gezielte Änderungen (Tippfehler, Umformulierungen, kleine Korrekturen) und insert_content, um neuen Inhalt an einer bestimmten Stelle hinzuzufügen. Wenn der Benutzer Text ausgewählt hat, verwende replace_selection, um ihn zu ersetzen. Erkläre die vorgenommenen Änderungen nicht. Füge sonst nichts in die Antwort ein, auch nicht Formulierungen wie 'hier ist das…'",
+      "systemSelection": "Du hilfst jemandem, ein DOKUMENT zu schreiben. Der Benutzer hat einen Teil des Dokuments ausgewählt. Du MUSST das Tool replace_selection verwenden, um den ausgewählten Text zu ändern. Gib den geänderten Text niemals direkt als Text aus — verwende immer das Tool. Erkläre die vorgenommenen Änderungen nicht. Füge sonst nichts in die Antwort ein, auch nicht Formulierungen wie 'hier ist das…'",
       "takeaways": "Schreiben Sie eine Liste (mit Bindestrichen) der wichtigsten Erkenntnisse aus dem AUSZUG. Halten Sie zwischen 3 und 5 Erkenntnissen für einen kurzen AUSZUG, bis zu 10 für einen längeren AUSZUG.",
       "title": "Schlagen Sie einen Titel für den AUSZUG vor. Geben Sie den Titel gefolgt vom vollständigen Text des AUSZUGS zurück."
     },
@@ -2139,6 +2140,8 @@
     "edit": {
       "deleteChat": "Chat löschen",
       "deleteMedia": "Medium löschen",
+      "find": "Suchen…",
+      "findAll": "Alle finden…",
       "selectAll": "Alles auswählen",
       "startDictation": "Diktat starten",
       "title": "Bearbeiten"
@@ -2348,6 +2351,17 @@
       "title": "Willkommen bei @:{'common.appName'}!"
     }
   },
+  "playbooks": {
+    "editor": {
+      "exportError": "Datei konnte nicht exportiert werden. Bitte versuche es erneut."
+    },
+    "marp": {
+      "viewSlideshow": "Diashow anzeigen"
+    },
+    "outline": {
+      "empty": "Keine Überschriften gefunden. Füge Überschriften hinzu, um die Gliederung anzuzeigen."
+    }
+  },
   "plugins": {
     "agent": {
       "completed": "Agent {agent} erfolgreich ausgeführt",
@@ -2548,6 +2562,7 @@
       "suggestTitle": "Einen Titel vorschlagen",
       "writingAssistant": "Schreibassistent"
     },
+    "createEmpty": "Leeres Dokument erstellen",
     "delete": {
       "confirm": "Möchten Sie \"{title}\" wirklich löschen?",
       "title": "Dokument löschen"
@@ -2577,6 +2592,7 @@
       "prompt": "Geben Sie einen Titel für dieses Dokument ein",
       "title": "Dokument importieren"
     },
+    "importDocument": "Dokument importieren",
     "importError": "Fehler beim Importieren der Dokumentdatei",
     "loadingError": "Fehler beim Laden der Dokumentdatei",
     "new": "Neues Dokument",

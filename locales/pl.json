@@ -60,6 +60,7 @@
     "esc": "Esc",
     "estimatedCost": "Szacowany koszt:",
     "experts": "Eksperci",
+    "export": "Eksportuj",
     "favorites": {
       "add": "Dodaj do ulubionych",
       "name": "Ulubione",
@@ -128,7 +129,6 @@
     "read": "Czytaj",
     "recommended": "Polecane",
     "record": "Nagrywaj",
-    "redo": "Ponów",
     "rename": "Zmień nazwę",
     "replace": "Zastąp",
     "required": {
@@ -180,7 +180,6 @@
     "tools": "Narzędzia",
     "tryAgain": "Proszę spróbować ponownie.",
     "type": "Typ",
-    "undo": "Cofnij",
     "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "Brak",
     "upload": "Prześlij",
@@ -527,6 +526,7 @@
     "search": {
       "matchCount": "{current} z {total}",
       "nextMatch": "Następne dopasowanie",
+      "noMatches": "Brak wyników",
       "previousMatch": "Poprzednie dopasowanie"
     },
     "send": "Wyślij",
@@ -1989,7 +1989,8 @@
       "prompt": "EKSTRA:\n{'{'}document{'}'}\n\nASK: {'{'}ask{'}'}",
       "simplify": "Uprość i skondensuj zapis EKSTRAKTU. Usuń wszelkie niepotrzebne informacje. Nie wyjaśniaj wprowadzonych zmian.",
       "spellcheck": "Popraw EKSTRAKT, usuwając błędy ortograficzne i gramatyczne. Nie modyfikuj EKSTRAKTU poza pisownią i gramatyką. Nie wymieniaj wprowadzonych poprawek.",
-      "system": "Pomagasz komuś napisać DOKUMENT. Musisz odpowiedzieć na poniższe pytanie dotyczące poniższego EKSTRAKTU. Nie używaj poprzednich wersji DOKUMENTU lub EKSTRAKTU w naszej rozmowie. Po prostu odpowiedz zaktualizowanym EKSTRAKTEM opartym na pytaniu. Zachowaj puste linie. Nie umieszczaj odpowiedzi w cudzysłowach. Nie dołączaj początkowej ani poprzedniej wersji DOKUMENTU lub WYCIĄGU. Nie dołączaj słowa EXTRACT. Nie używaj składni Markdown, takiej jak \"## Tytuł ##\" lub \"** Tekst **\". Nie dołączaj do odpowiedzi żadnych innych elementów, w tym takich jak \"oto...\".",
+      "system": "Pomagasz komuś pisać DOKUMENT. MUSISZ używać udostępnionych narzędzi, aby modyfikować dokument. Nigdy nie wypisuj zmodyfikowanego dokumentu jako tekstu — zawsze używaj narzędzia. Wybierz najwydajniejsze narzędzie do zadania: użyj edit_document do ukierunkowanych zmian (literówki, parafrazowania, drobne poprawki) i insert_content, aby dodać nową treść w określonym miejscu. Jeśli użytkownik zaznaczył fragment tekstu, użyj replace_selection, aby go zastąpić. Nie tłumacz wprowadzonych zmian. Nie dołączaj niczego więcej do odpowiedzi, w tym sformułowań typu 'oto…'",
+      "systemSelection": "Pomagasz komuś pisać DOKUMENT. Użytkownik zaznaczył część dokumentu. MUSISZ użyć narzędzia replace_selection, aby zmodyfikować zaznaczony tekst. Nigdy nie wypisuj zmodyfikowanego tekstu bezpośrednio — zawsze używaj narzędzia. Nie tłumacz wprowadzonych zmian. Nie dołączaj niczego więcej do odpowiedzi, w tym sformułowań typu 'oto…'",
       "takeaways": "Napisz listę (używając myślników) kluczowych wniosków z EKSTRAKTU. Zachowaj od 3 do 5 wniosków dla krótkiego EKSTRAKTU, do 10 dla dłuższego EKSTRAKTU.",
       "title": "Zaproponuj tytuł dla EKSTRAKTU. Zwróć tytuł, a następnie pełny tekst EKSTRAKTU."
     },
@@ -2158,6 +2159,8 @@
     "edit": {
       "deleteChat": "Usuń czat",
       "deleteMedia": "Usuń nośnik",
+      "find": "Znajdź…",
+      "findAll": "Znajdź wszystko…",
       "selectAll": "Zaznacz wszystko",
       "startDictation": "Rozpocznij dyktowanie",
       "title": "Edytuj"
@@ -2367,6 +2370,17 @@
       "title": "Witamy w @:{'common.appName'}!"
     }
   },
+  "playbooks": {
+    "editor": {
+      "exportError": "Nie udało się wyeksportować pliku. Spróbuj ponownie."
+    },
+    "marp": {
+      "viewSlideshow": "Wyświetl pokaz slajdów"
+    },
+    "outline": {
+      "empty": "Nie znaleziono nagłówków. Dodaj nagłówki, aby zobaczyć konspekt."
+    }
+  },
   "plugins": {
     "agent": {
       "completed": "Agent {agent} wykonany pomyślnie",
@@ -2570,6 +2584,7 @@
       "suggestTitle": "Zaproponuj tytuł",
       "writingAssistant": "Asystent pisania"
     },
+    "createEmpty": "Utwórz pusty",
     "delete": {
       "confirm": "Czy na pewno chcesz usunąć \"{title}\"?",
       "title": "Usuń dokument"
@@ -2599,6 +2614,7 @@
       "prompt": "Wprowadź tytuł tego dokumentu",
       "title": "Importuj dokument"
     },
+    "importDocument": "Importuj dokument",
     "importError": "Błąd podczas importowania pliku dokumentu",
     "loadingError": "Błąd podczas ładowania pliku dokumentu",
     "new": "Nowy dokument",
