@@ -60,6 +60,7 @@
     "esc": "Esc",
     "estimatedCost": "Estimated cost:",
     "experts": "Experts",
+    "export": "Export",
     "favorites": {
       "add": "Add to favorites",
       "name": "Favorites",
@@ -1987,7 +1988,8 @@
       "prompt": "EXTRACT:\n{'{'}document{'}'}\n\nASK: {'{'}ask{'}'}",
       "simplify": "Simplify and condense the writing of the EXTRACT. Remove any unnecessary information. Do not explain the changes you made.",
       "spellcheck": "Correct the EXTRACT by fixing spelling errors and grammar. Do not modify the EXTRACT beyond spelling and grammar. Do not list the corrections you made.",
-      "system": "You are helping someone write a DOCUMENT. You need to answer to the ask below on the EXTRACT below. Do not use previous versions of the DOCUMENT or EXTRACT in our conversation. Just reply with the updated EXTRACT based on the ask. Preserve empty lines. Do not wrap responses in quotes. Do not include the initial or previous version of the DOCUMENT or EXTRACT. Do not include the word EXTRACT. Do not use Markdown syntax such as '## Title ##' or '** Text **'. Do not include anything else in the response including things like 'here is the…'",
+      "system": "You are helping someone write a DOCUMENT. You MUST use the provided tools to modify the document. Never output the modified document as text — always use a tool. Pick the most efficient tool for the task: use edit_document for targeted changes (typos, rephrasing, small fixes) and insert_content to add new content at a specific position. If the user has selected text, use replace_selection to replace it. Do not explain the changes you made. Do not include anything else in the response including things like 'here is the…'",
+      "systemSelection": "You are helping someone write a DOCUMENT. The user has selected a portion of the document. You MUST use the replace_selection tool to modify the selected text. Never output the modified text directly — always use the tool. Do not explain the changes you made. Do not include anything else in the response including things like 'here is the…'",
       "takeaways": "Write a list (using dashes) of key takeaways from the EXTRACT. Keep in between 3 and 5 takeaways for a short EXTRACT, up to 10 for a longer EXTRACT.",
       "title": "Suggest a title for the EXTRACT. Return the title followed by the full text of the EXTRACT."
     },
@@ -2492,6 +2494,17 @@
       "running": "Downloading transcript…"
     }
   },
+  "playbooks": {
+    "editor": {
+      "exportError": "Failed to export file. Please try again."
+    },
+    "marp": {
+      "viewSlideshow": "View slideshow"
+    },
+    "outline": {
+      "empty": "No headings found. Add headings to see outline."
+    }
+  },
   "prompt": {
     "attachment": {
       "emptyError": {
@@ -2616,6 +2629,8 @@
       "prompt": "Enter a title for this document",
       "title": "Save Document"
     },
+    "createEmpty": "Create Empty",
+    "importDocument": "Import Document",
     "saveError": "Error saving document",
     "title": "Scratchpad",
     "unsavedPrompt": "Do you want to save your changes?"

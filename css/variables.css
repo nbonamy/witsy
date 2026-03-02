@@ -54,7 +54,7 @@
   /* Border & Outline Colors */
   --color-outline: #A1A1AA;
   --color-outline-variant: #D9D9DD;
-  --color-outline-subtle: rgba(255, 0, 0, 0.7);
+  --color-outline-subtle: rgba(217, 217, 221, 0.7);
 
   /* Utility Colors */
   --color-scrim: #000000;
@@ -72,10 +72,12 @@
   --font-size-12: 12px;
   --font-size-13: 13px;
   --font-size-14: 14px;
+  --font-size-15: 15px;
   --font-size-16: 16px;
   --font-size-18: 18px;
   --font-size-20: 20px;
   --font-size-24: 24px;
+  --font-size-28: 28px;
   --font-size-32: 32px;
   --font-size-40: 40px;
   --font-size-48: 48px;
@@ -99,6 +101,7 @@
 
   /* Line Heights */
   --line-height-16: 16px;
+  --line-height-18: 18px;
   --line-height-20: 20px;
   --line-height-24: 24px;
   --line-height-28: 28px;
@@ -173,6 +176,9 @@
   --space-12: 24px;
   --space-16: 32px;
   --space-20: 40px;
+  --space-24: 48px;
+  --space-28: 56px;
+  --space-32: 64px;
 
   --icon-md: 16px;
   --icon-lg: 20px;

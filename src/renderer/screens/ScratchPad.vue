@@ -1,16 +1,42 @@
 <template>
   <div class="scratchpad split-pane">
 
-    <ScratchpadSidebar :fileUrl="fileUrl" :scratchpads="scratchpads" :selectedScratchpad="selectedScratchpad" :contextMenuTarget="targetScratchpad" @action="onAction" />
+    <ScratchpadSidebar 
+      fileUrl="fileUrl"
+      :scratchpads="scratchpads"
+      :selectedScratchpad="selectedScratchpad"
+      :contextMenuTarget="targetScratchpad"
+      @action="onAction" />
 
     <div class="sp-main">
       <main>
-        <div class="document" :class="[ fontFamily, `size-${fontSize}` ]">
-          <EditableText ref="editor" :placeholder="placeholder"/>
+        <div class="document" :style="documentStyle">
+          <TiptapEditor
+            ref="editorRef"
+            v-model="content"
+            :placeholder="placeholder"
+            :file-path="currentTitle"
+            show-outline
+            show-source-toggle
+            :export-formats="['md', 'docx']"
+          />
+          <div v-if="processing" class="generating-overlay">
+            <Loader /><Loader /><Loader />
+          </div>
         </div>
-        <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" :processing="processing" @action="onAction" />
+        <ScratchpadActionBar :saveState="saveState" :copyState="copyState" :audioState="audioState" :processing="processing" @action="onAction" />
       </main>
-      <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @set-engine-model="onSetEngineModel" @prompt="onSendPrompt" @stop="onStopPrompting" @conversation-mode="onConversationMode" ref="prompt" />
+      <Prompt
+        :chat="chat"
+        :is-generating="processing"
+        :enable-instructions="false"
+        :enable-commands="false"
+        :conversation-mode="conversationMode"
+        @set-engine-model="onSetEngineModel"
+        @conversation-mode="onConversationMode"
+        @prompt="onSendPrompt"
+        @stop="onStopPrompting"
+        ref="prompt" />
       <audio/>
     </div>
 
@@ -23,12 +49,8 @@
       @close="closeContextMenu"
     >
       <template #default>
-        <div @click="onRenameScratchpad">
-          <span>{{ t('common.rename') }}</span>
-        </div>
-        <div @click="onDeleteScratchpad">
-          <span>{{ t('common.delete') }}</span>
-        </div>
+        <div @click="onRenameScratchpad"><PencilIcon /> {{ t('common.rename') }}</div>
+        <div class="danger" @click="onDeleteScratchpad"><Trash2Icon /> {{ t('common.delete') }}</div>
       </template>
     </ContextMenuPlus>
 
@@ -36,27 +58,33 @@
 </template>
 
 <script setup lang="ts">
+
+import { CodeExecutionMode } from '@/types/config'
 import ContextMenuPlus from '@components/ContextMenuPlus.vue'
-import EditableText from '@components/EditableText.vue'
+import TiptapEditor from '@components/editor/TiptapEditor.vue'
+import Loader from '@components/Loader.vue'
 import Prompt, { ConversationMode, SendPromptParams } from '@components/Prompt.vue'
+import useEventBus from '@composables/event_bus'
 import useEventListener from '@composables/event_listener'
 import useIpcListener from '@composables/ipc_listener'
 import Chat from '@models/chat'
 import Message from '@models/message'
+import useAudioPlayer, { AudioState, AudioStatus } from '@renderer/audio/audio_player'
 import Dialog from '@renderer/utils/dialog'
 import Generator, { GenerationResult } from '@services/generator'
 import { fullExpertI18n, i18nInstructions, t } from '@services/i18n'
 import LlmFactory, { ILlmManager } from '@services/llms/llm'
 import { availablePlugins } from '@services/plugins/plugins'
 import { store } from '@services/store'
+import { PencilIcon, Trash2Icon } from 'lucide-vue-next'
 import { LlmEngine } from 'multi-llm-ts'
 import { FileContents } from 'types/file'
 import { ScratchpadData, ScratchpadHeader } from 'types/index'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import useAudioPlayer, { AudioState, AudioStatus } from '../audio/audio_player'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
 import ScratchpadSettings from '../scratchpad/Settings.vue'
 import ScratchpadSidebar from '../scratchpad/Sidebar.vue'
+import { buildScratchpadToolDelegate } from '../scratchpad/toolDelegate'
 
 export interface ToolbarAction {
   type: string,
@@ -64,27 +92,52 @@ export interface ToolbarAction {
 }
 
 // events
+const { onBusEvent } = useEventBus()
 const { onDomEvent } = useEventListener()
 const { onIpcEvent } = useIpcListener()
 
 // load store
 store.load()
 
-const placeholder = ref(t('scratchpad.placeholder').replaceAll('\n', '<br/>'))
+const placeholder = t('scratchpad.placeholder')
 
 const chat = ref<Chat>(null)
 const prompt = ref<typeof Prompt>(null)
-const editor = ref<typeof EditableText>(null)
+const editorRef = ref<InstanceType<typeof TiptapEditor>>(null)
 const settingsDialog = ref(null)
 const processing = ref(false)
 const engine = ref<string>(null)
 const model = ref<string>(null)
 const fontFamily = ref<string>(null)
 const fontSize = ref<string>(null)
-const undoStack = ref<Array<any>>([])
-const redoStack = ref<Array<any>>([])
+
+const fontSizeMap: Record<string, { size: string, spacing: string }> = {
+  '1': { size: '14px', spacing: '2px' },
+  '2': { size: '15px', spacing: '4px' },
+  '3': { size: '16px', spacing: '6px' },
+  '4': { size: '17px', spacing: '8px' },
+  '5': { size: '18px', spacing: '10px' },
+}
+
+const fontFamilyMap: Record<string, string> = {
+  'serif': 'var(--font-family-serif)',
+  'sans-serif': 'var(--font-family-base)',
+  'monospace': 'monospace',
+}
+
+const documentStyle = computed(() => {
+  const sizeEntry = fontSizeMap[fontSize.value] || fontSizeMap['3']
+  return {
+    '--sp-font-family': fontFamilyMap[fontFamily.value] || 'var(--font-family-base)',
+    '--sp-font-size': sizeEntry.size,
+    '--sp-spacing': sizeEntry.spacing,
+  }
+})
+
+const content = ref<string>('')
 const audioState = ref<AudioState>('idle')
 const copyState = ref<string>('idle')
+const saveFlash = ref<'idle'|'saving'|'saved'>('idle')
 const conversationMode = ref<ConversationMode>('off')
 const currentScratchpadId = ref<string>(null)
 const currentTitle = ref<string>(null)
@@ -109,14 +162,11 @@ let abortController: AbortController | null = null
 // init stuff
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 let llm: LlmEngine = null
-const undoStackCheckDelay = 1000
-let undoStackCheckTimeout: NodeJS.Timeout = null
 let fileUrl: string = null
 
 const onEditorKeyDown = (ev: Event) => {
   const keyEv = ev as KeyboardEvent
   const isCommand = !keyEv.shiftKey && !keyEv.altKey && (keyEv.metaKey || keyEv.ctrlKey)
-  const isShiftCommand = keyEv.shiftKey && !keyEv.altKey && (keyEv.metaKey || keyEv.ctrlKey)
 
   if (isCommand && keyEv.key == 'n') {
     keyEv.preventDefault()
@@ -124,20 +174,10 @@ const onEditorKeyDown = (ev: Event) => {
   } else if (isCommand && keyEv.key == 's') {
     keyEv.preventDefault()
     onSave()
-  } else if (isCommand && keyEv.key == 'z') {
-    keyEv.preventDefault()
-    onUndo()
-  } else if ((isCommand && keyEv.key == 'y') || (isShiftCommand && keyEv.key.toLocaleLowerCase() == 'z')) {
-    keyEv.preventDefault()
-    onRedo()
   } else if (isCommand && keyEv.key == 'r') {
     keyEv.preventDefault()
     onReadAloud()
   }
-}
-
-const onDocumentKeyUp = () => {
-  resetUndoStackCheckTimeout()
 }
 
 const onConversationMode = (mode: ConversationMode) => {
@@ -158,10 +198,7 @@ onMounted(() => {
   loadScratchpadsList()
 
   // override some system shortcuts
-  onDomEvent(editor.value.$el, 'keydown', onEditorKeyDown)
-
-  // for undo/redo stack building
-  onDomEvent(document, 'keyup', onDocumentKeyUp)
+  onDomEvent(editorRef.value?.$el, 'keydown', onEditorKeyDown)
 
   // init
   resetState()
@@ -184,8 +221,13 @@ watch(() => props.extra, (newExtra) => {
 
 onBeforeUnmount(() => {
   audioPlayer.removeListener(onAudioPlayerStatus)
-  clearTimeout(undoStackCheckTimeout)
 })
+
+const onWorkspaceChanged = () => {
+  selectedScratchpad.value = null
+  resetState()
+  loadScratchpadsList()
+}
 
 const onStartDictation = () => {
   prompt.value?.startDictation()
@@ -195,14 +237,22 @@ const loadScratchpadsList = () => {
   scratchpads.value = window.api.scratchpad.list(store.config.workspaceId)
 }
 
+/**
+ * Helper to extract markdown string from ScratchpadData.contents
+ * Handles both old format ({ content, start, end }) and new format (string)
+ */
+const extractContent = (contents: any): string => {
+  if (typeof contents === 'string') return contents
+  if (contents && typeof contents.content === 'string') return contents.content
+  return ''
+}
+
 const resetState = () => {
 
   // easy reset
-  editor.value.setContent({ content: '' })
+  content.value = ''
   processing.value = false
-
-  // Initialize with empty baseline so first edit is undoable
-  initializeUndoStack({ content: '', start: null, end: null })
+  lastSavedContent.value = ''
 
   currentScratchpadId.value = null
   currentTitle.value = null
@@ -236,64 +286,21 @@ const initLlm = () => {
 
 }
 
-const initializeUndoStack = (contents: { content: string, start?: number | null, end?: number | null }) => {
-  undoStack.value = [{
-    before: contents,
-    after: contents,
-    messages: []
-  }]
-  redoStack.value = []
-  lastSavedContent.value = contents.content
-}
-
-const resetUndoStackCheckTimeout = () => {
-  clearTimeout(undoStackCheckTimeout)
-  undoStackCheckTimeout = setTimeout(() => {
-    updateUndoStack()
-  }, undoStackCheckDelay)
-}
-
-const updateUndoStack = () => {
-  const contents = editor.value?.getContent()
-  if (!contents) return
-
-  if (!undoStack.value.length) {
-    // if no undo then only if there is content
-    if (contents.content.trim().length) {
-      undoStack.value.push({
-        before: { content: '', start: null, end: null },
-        after: contents,
-        messages: chat.value.messages.slice(-2)
-      })
-      redoStack.value = []
-    }
-  } else {
-    // check if the last action is different
-    const lastState = undoStack.value[undoStack.value.length - 1]
-    const lastContent = lastState.after.content
-    if (contents.content !== lastContent) {
-      undoStack.value.push({
-        before: lastState.after,
-        after: contents,
-        messages: chat.value.messages.slice(-2)
-      })
-      redoStack.value = []
-    }
-  }
-}
-
 const checkIfModified = (): boolean => {
-  const contents = editor.value?.getContent()
-  if (!contents) return false
-
   // New scratchpad: modified if content is not empty
   if (!currentScratchpadId.value) {
-    return contents.content.trim().length > 0
+    return content.value.trim().length > 0
   }
 
   // Existing scratchpad: compare with cached saved content
-  return contents.content !== lastSavedContent.value
+  return content.value !== lastSavedContent.value
 }
+
+const saveState = computed(() => {
+  if (saveFlash.value !== 'idle') return saveFlash.value
+  if (checkIfModified()) return 'dirty'
+  return 'idle'
+})
 
 const onAction = (action: string|ToolbarAction) => {
 
@@ -301,8 +308,6 @@ const onAction = (action: string|ToolbarAction) => {
   const actions: { [key: string]: CallableFunction} = {
     'clear': onClear,
     'save': onSave,
-    'undo': onUndo,
-    'redo': onRedo,
     'copy': onCopy,
     'read': onReadAloud,
     'settings': onSettings,
@@ -341,8 +346,7 @@ const onAction = (action: string|ToolbarAction) => {
       return
 
     case 'magic':
-      const contents = editor.value.getContent()
-      if (contents.content.trim().length) {
+      if (content.value.trim().length) {
         const prompt = i18nInstructions(store.config, `instructions.scratchpad.${toolbarAction.value}`)
         onSendPrompt({ prompt: prompt })
       }
@@ -407,23 +411,20 @@ const onSelectScratchpad = async (scratchpad: ScratchpadHeader) => {
       return
     }
 
-    // clear current state (don't call resetState as it creates new chat)
-    editor.value.setContent({ content: '' })
-    processing.value = false
-
     // update state
+    processing.value = false
     currentScratchpadId.value = data.uuid
     currentTitle.value = data.title
     selectedScratchpad.value = scratchpad
-    editor.value.setContent(data.contents)
 
-    // Initialize undo stack with loaded content as baseline
-    // This ensures undo won't erase the loaded content
-    initializeUndoStack(data.contents)
+    // load content (handles both old and new format)
+    const loadedContent = extractContent(data.contents)
+    content.value = loadedContent
+    lastSavedContent.value = loadedContent
 
     // chat - restore from data or create new
     if (data.chat) {
-      chat.value = new Chat(data.chat)
+      chat.value = Chat.fromJson(data.chat)
     } else {
       chat.value = new Chat()
       chat.value.addMessage(new Message('system', i18nInstructions(store.config, 'instructions.scratchpad.system')))
@@ -438,21 +439,48 @@ const onSelectScratchpad = async (scratchpad: ScratchpadHeader) => {
   }
 }
 
+const extractFileExtension = (url: string): string => {
+  const filename = url.split(/[/\\]/).pop() || ''
+  const ext = filename.split('.').pop()?.toLowerCase() || ''
+  return ext
+}
+
+const extractDefaultTitle = (url: string): string => {
+  const filename = url.split(/[/\\]/).pop() || 'Document'
+  const name = filename.replace(/\.[^.]+$/, '')
+  return name
+}
+
+const convertDocxToMarkdown = async (base64Contents: string): Promise<string> => {
+  const mammoth = await import('mammoth')
+  const buffer = Uint8Array.from(atob(base64Contents), c => c.charCodeAt(0))
+  const result = await mammoth.convertToHtml({ arrayBuffer: buffer.buffer })
+  // let TipTap parse the HTML by setting it on the editor, then read back as markdown
+  const tiptapEditor = editorRef.value?.editor
+  if (tiptapEditor) {
+    tiptapEditor.commands.setContent(result.value)
+    return tiptapEditor.getMarkdown()
+  }
+  return result.value
+}
+
 const onImport = () => {
   confirmOverwrite(async () => {
     try {
       // pick file
       const file = window.api.file.pickFile({
-        filters: [ { name: 'Scratchpad', extensions: ['json'] }]
+        filters: [
+          { name: 'Documents', extensions: ['txt', 'md', 'docx', 'pdf'] },
+          { name: 'Text', extensions: ['txt', 'md'] },
+          { name: 'Word', extensions: ['docx'] },
+          { name: 'PDF', extensions: ['pdf'] },
+        ]
       })
       if (!file) return
 
-      // get filename without extension and format as title
       const fileContents = file as FileContents
-      const filename = fileContents.url.split(/[/\\]/).pop()?.replace(/\.json$/i, '') || 'Scratchpad'
-      const defaultTitle = filename.split(/[-_\s]/).map(word =>
-        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-      ).join(' ')
+      const ext = extractFileExtension(fileContents.url)
+      const defaultTitle = extractDefaultTitle(fileContents.url)
 
       // prompt for title
       const result = await Dialog.show({
@@ -464,19 +492,26 @@ const onImport = () => {
       })
       if (!result.isConfirmed || !result.value) return
 
-      // import (file.url is already a proper path or file:// URI)
-      const uuid = window.api.scratchpad.import(store.config.workspaceId, fileContents.url, result.value)
-
-      if (uuid) {
-        loadScratchpadsList()
-        // Load the imported scratchpad
-        const scratchpad = scratchpads.value.find(s => s.uuid === uuid)
-        if (scratchpad) {
-          onSelectScratchpad(scratchpad)
-        }
+      // convert file contents to markdown based on format
+      let markdown = ''
+      if (ext === 'docx') {
+        markdown = await convertDocxToMarkdown(fileContents.contents)
+      } else if (ext === 'pdf') {
+        markdown = await window.api.file.extractText(fileContents.contents, 'pdf')
       } else {
-        Dialog.alert(t('scratchpad.importError'))
+        // txt, md — decode base64 to string (supports unicode)
+        markdown = window.api.base64.decode(fileContents.contents)
       }
+
+      // set as new scratchpad
+      resetState()
+      content.value = markdown
+      currentTitle.value = result.value
+      currentScratchpadId.value = crypto.randomUUID()
+      lastSavedContent.value = null
+
+      // auto-save
+      await onSave()
 
     } catch (err) {
       console.error(err)
@@ -502,11 +537,11 @@ const onSave = async () => {
       currentTitle.value = result.value
     }
 
-    // Build scratchpad data (exclude undo/redo stacks - session only)
+    // Build scratchpad data — contents is now a markdown string
     const data: ScratchpadData = {
       uuid: currentScratchpadId.value,
       title: currentTitle.value,
-      contents: editor.value.getContent(),
+      contents: content.value,
       chat: chat.value,
       createdAt: Date.now(),
       lastModified: Date.now()
@@ -515,11 +550,14 @@ const onSave = async () => {
     // Save (serialize to avoid cloning errors with complex objects)
     const success = window.api.scratchpad.save(store.config.workspaceId, JSON.parse(JSON.stringify(data)))
     if (success) {
-      // Initialize undo stack with saved content as baseline
-      initializeUndoStack(data.contents)
+      lastSavedContent.value = content.value
       loadScratchpadsList()
       // Update selected scratchpad
       selectedScratchpad.value = scratchpads.value.find(s => s.uuid === currentScratchpadId.value)
+      // Flash save icon: blue (saving) → green (saved) → idle
+      saveFlash.value = 'saving'
+      setTimeout(() => saveFlash.value = 'saved', 1000)
+      setTimeout(() => saveFlash.value = 'idle', 1750)
     } else {
       Dialog.alert(t('scratchpad.saveError'))
     }
@@ -530,36 +568,16 @@ const onSave = async () => {
   }
 }
 
-const onUndo = () => {
-  // Only allow undo if we have more than the baseline entry
-  if (undoStack.value.length > 1) {
-    const action = undoStack.value.pop()
-    redoStack.value.push(action)
-    editor.value.setContent(action.before)
-    chat.value.messages?.splice(-2, 2)
-  }
-}
-
-const onRedo = () => {
-  if (redoStack.value.length > 0) {
-    const action = redoStack.value.pop()
-    undoStack.value.push(action)
-    editor.value.setContent(action.after)
-    chat.value.messages?.push(...action.messages)
-  }
-}
-
 const onCopy = () => {
-  window.api.clipboard.writeText(editor.value.getContent().content)
+  window.api.clipboard.writeText(content.value)
   copyState.value = 'copied'
   setTimeout(() => copyState.value = 'idle', 1000)
 }
 
 const onReadAloud = async () => {
-  const text = editor.value.getContent().content
-  if (text.trim().length) {
+  if (content.value.trim().length) {
     audioState.value = 'loading'
-    await audioPlayer.play(document.querySelector('.scratchpad audio'), 'scratchpad', text)
+    await audioPlayer.play(document.querySelector('.scratchpad audio'), 'scratchpad', content.value)
   }
 }
 
@@ -674,22 +692,26 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   // deconstruct params
   const { prompt, attachments, expert } = params
-  
+
   // we need a prompt
   if (!prompt) {
     return
   }
-  
+
   // set
   processing.value = true
-  
-  // get text and selection
-  const contents = editor.value.getContent()
+
+  // check for selection (use saved selection from blur, or live selection)
+  // if selection covers the entire document, treat as no selection
+  const selection = editorRef.value?.getSelectedMarkdown()
+  const hasSelection = !!selection && selection.markdown.trim() !== content.value.trim()
 
   // what are we working with?
-  let selection = contents.selection != null
-  let subject = contents.selection || contents.content
-  subject = subject.trim()
+  const subject = (hasSelection ? selection.markdown : content.value).trim()
+
+  // update system prompt based on selection state
+  const systemKey = hasSelection ? 'instructions.scratchpad.systemSelection' : 'instructions.scratchpad.system'
+  chat.value.messages[0].setText(i18nInstructions(store.config, systemKey))
 
   // now build the prompt
   let finalPrompt = prompt
@@ -698,10 +720,16 @@ const onSendPrompt = async (params: SendPromptParams) => {
     finalPrompt = template.replace('{ask}', prompt).replace('{document}', subject)
   }
 
-  // log
-  //console.log(finalPrompt)
+  // build the tool delegate
+  const toolDelegate = buildScratchpadToolDelegate(hasSelection, {
+    getContent: () => content.value,
+    setContent: (c: string) => { content.value = c },
+    replaceSelection: (markdown: string) => {
+      editorRef.value?.replaceSelection(markdown)
+    },
+  })
 
-  // add to thead
+  // add to thread
   const userMessage = new Message('user', finalPrompt)
   userMessage.setExpert(fullExpertI18n(expert))
   for (const attachment of attachments ?? []) {
@@ -716,8 +744,11 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   try {
 
+    // code execution mode from config
+    const codeExecutionMode: CodeExecutionMode = store.config.llm.codeExecution
+
     // load tools as configured per prompt
-    llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools)
+    llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools, { codeExecutionMode })
 
     // create abort controller
     abortController = new AbortController()
@@ -729,50 +760,27 @@ const onSendPrompt = async (params: SendPromptParams) => {
       docrepos: chat.value.docrepos,
       sources: false,
       abortSignal: abortController.signal,
+      toolExecutionDelegate: toolDelegate,
     })
+
+    // user cancelled — discard partial result
+    if (rc === 'stopped') return
 
     if (rc !== 'success') {
       throw new Error(response.content)
     }
 
-    // default to all response
-    const action = {
-      content: response.content,
-      start: 0,
-      end: 0
-    }
-
-    // if we have a selection, replace it
-    if (selection) {
-      action.content = contents.content.substring(0, contents.start) + response.content + contents.content.substring(contents.end)
-      action.start = contents.start
-      action.end = contents.start + response.content.length
-    }
-
-    // add to undo stack
-    undoStack.value.push({
-      before: contents,
-      after: action,
-      messages: chat.value.messages.slice(-2)
-    })
-
-    // empty redo
-    redoStack.value = []
-
-    // now do it
-    editor.value.setContent(action)
-
   } catch (err) {
     console.error(err)
     Dialog.alert(t('scratchpad.generationError'))
-  
+
   } finally {
 
     // done
     processing.value = false
 
   }
-      
+
 }
 
 const onStopPrompting = async () => {
@@ -800,51 +808,39 @@ const onStopPrompting = async () => {
       overflow-y: scroll;
       display: flex;
       flex-direction: column;
+      position: relative;
       scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
+    }
+
+    .generating-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-16);
+      background-color: var(--color-surface);
+      opacity: 0.7;
+      z-index: 10;
+
+      &:deep(.loader) {
+        width: var(--icon-xl);
+        height: var(--icon-xl);
+      }
     }
 
   }
 
-  .document :deep(.container) {
+  .document :deep(.tiptap-editor-wrapper) {
     flex: 1;
   }
 
-  .document :deep(.content) {
-    padding: 32px;
+  .document :deep(.tiptap-content) {
     padding-right: 100px;
   }
 
   .document, .document * {
     outline: none;
-    color: var(--scratchpad-text-color);
-  }
-
-  .document.serif, .document.serif * {
-    font-family: var(--font-family-serif);
-  }
-
-  .document.monospace, .document.monospace * {
-    font-family: monospace;
-  }
-
-  .document.size-1, .document.size-1 * {
-    font-size: 16px;
-  }
-
-  .document.size-2, .document.size-2 * {
-    font-size: 18px;
-  }
-
-  .document.size-3, .document.size-3 * {
-    font-size: 20px;
-  }
-
-  .document.size-4, .document.size-4 * {
-    font-size: 22px;
-  }
-
-  .document.size-5, .document.size-5 * {
-    font-size: 24px;
   }
 
   :deep(.prompt) {
@@ -854,4 +850,3 @@ const onStopPrompting = async () => {
 }
 
 </style>
-

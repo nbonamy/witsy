@@ -645,12 +645,15 @@ const useBrowserMock = () => {
         autoGainControl: true,
       })),
     },
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X) Vitest',
+    platform: 'MacIntel',
   }
 
   // eslint-disable-next-line no-global-assign
   MutationObserver = vi.fn().mockImplementation(() => ({
     observe: vi.fn(),
     disconnect: vi.fn(),
+    takeRecords: vi.fn(() => []),
   }))
 
   // @ts-expect-error mock 

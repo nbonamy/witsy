@@ -3,9 +3,6 @@
 
     <header>
       <div class="title">{{ t('scratchpad.title') }}</div>
-      <ButtonIcon class="import" v-tooltip="{ text: t('common.import'), position: 'bottom' }" @click="onImport">
-        <FileUpIcon />
-      </ButtonIcon>
       <ButtonIcon class="config" v-tooltip="{ text: t('common.settings'), position: 'bottom' }" @click="onSettings">
         <Settings2Icon />
       </ButtonIcon>
@@ -19,9 +16,25 @@
     </main>
 
     <footer>
-      <button class="cta" @click="emit('action', 'clear')">
-        <NotebookPenIcon />{{ t('scratchpad.new') }}
+      <button id="new-scratchpad-btn" class="cta" @click="toggleNewMenu">
+        <PlusIcon />{{ t('scratchpad.new') }}
       </button>
+      <ContextMenuPlus
+        v-if="showNewMenu"
+        anchor="#new-scratchpad-btn"
+        position="above"
+        :auto-close="true"
+        @close="showNewMenu = false"
+      >
+        <div class="item" @click="onCreateEmpty">
+          <NotebookPenIcon class="icon" />
+          <span>{{ t('scratchpad.createEmpty') }}</span>
+        </div>
+        <div class="item" @click="onImport">
+          <FileUpIcon class="icon" />
+          <span>{{ t('scratchpad.importDocument') }}</span>
+        </div>
+      </ContextMenuPlus>
     </footer>
 
   </div>
@@ -29,11 +42,13 @@
 
 <script setup lang="ts">
 
-import { FileUpIcon, NotebookPenIcon, Settings2Icon } from 'lucide-vue-next'
+import { FileUpIcon, NotebookPenIcon, PlusIcon, Settings2Icon } from 'lucide-vue-next'
+import ContextMenuPlus from '@components/ContextMenuPlus.vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
 import History from './History.vue'
 import { t } from '@services/i18n'
 import { ScratchpadHeader } from 'types/index'
+import { ref } from 'vue'
 
 const emit = defineEmits(['action'])
 
@@ -53,11 +68,23 @@ defineProps({
   }
 })
 
+const showNewMenu = ref(false)
+
+const toggleNewMenu = () => {
+  showNewMenu.value = !showNewMenu.value
+}
+
 const onSettings = () => {
   emit('action', 'settings')
 }
 
+const onCreateEmpty = () => {
+  showNewMenu.value = false
+  emit('action', 'clear')
+}
+
 const onImport = () => {
+  showNewMenu.value = false
   emit('action', 'import')
 }
 

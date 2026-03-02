@@ -27,7 +27,7 @@ import MessageItem from './MessageItem.vue'
 const { onIpcEvent } = useIpcListener()
 
 // inject search state from parent Chat component
-const searchState = inject<SearchState>('searchState')
+const searchState = inject<SearchState>('searchState', undefined)
 
 // inject chunk from parent Chat component (scoped to component tree)
 const latestChunk = inject<Ref<LlmChunk | null>>('latestChunk')
