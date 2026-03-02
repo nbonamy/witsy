@@ -60,6 +60,7 @@
     "esc": "Esc",
     "estimatedCost": "Costo estimado:",
     "experts": "Expertos",
+    "export": "Exportar",
     "favorites": {
       "add": "Agregar a favoritos",
       "name": "Favoritos",
@@ -109,7 +110,6 @@
     "read": "Leer",
     "recommended": "Recomendado",
     "record": "Grabar",
-    "redo": "Rehacer",
     "rename": "Renombrar",
     "replace": "Reemplazar",
     "required": {
@@ -161,7 +161,6 @@
     "tools": "Herramientas",
     "tryAgain": "Por favor, intenta de nuevo.",
     "type": "Tipo",
-    "undo": "Deshacer",
     "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "Ninguno",
     "upload": "Subir",
@@ -508,6 +507,7 @@
     "search": {
       "matchCount": "{current} de {total}",
       "nextMatch": "Siguiente coincidencia",
+      "noMatches": "No hay resultados",
       "previousMatch": "Coincidencia anterior"
     },
     "send": "Enviar",
@@ -1970,7 +1970,8 @@
       "prompt": "EXTRACTO:\n{'{'}document{'}'}\n\nPREGUNTA: {'{'}ask{'}'}",
       "simplify": "Simplifica y condensa la redacción del EXTRACTO. Elimina cualquier información innecesaria. No expliques los cambios que hiciste.",
       "spellcheck": "Corrige el EXTRACTO corrigiendo errores ortográficos y gramaticales. No modifiques el EXTRACTO más allá de la ortografía y la gramática. No enumeres las correcciones que hiciste.",
-      "system": "Estás ayudando a alguien a escribir un DOCUMENTO. Debes responder a la solicitud a continuación sobre el EXTRACTO a continuación. No uses versiones anteriores del DOCUMENTO o EXTRACTO en nuestra conversación. Simplemente responde con el EXTRACTO actualizado según la solicitud. Preserva las líneas vacías. No rodees las respuestas con comillas. No incluyas la versión inicial o anterior del DOCUMENTO o EXTRACTO. No incluyas la palabra EXTRACTO. No uses sintaxis Markdown como '## Título ##' o '** Texto **'. No incluyas nada más en la respuesta, incluyendo cosas como 'aquí está el…'",
+      "system": "Estás ayudando a alguien a escribir un DOCUMENTO. DEBES usar las herramientas proporcionadas para modificar el documento. Nunca muestres el documento modificado como texto — siempre usa una herramienta. Elige la herramienta más eficiente para la tarea: usa edit_document para cambios puntuales (errores tipográficos, reformulaciones, pequeñas correcciones) e insert_content para agregar contenido nuevo en una posición específica. Si el usuario ha seleccionado texto, usa replace_selection para reemplazarlo. No expliques los cambios que hiciste. No incluyas nada más en la respuesta, incluyendo cosas como 'aquí está el…'.",
+      "systemSelection": "Estás ayudando a alguien a escribir un DOCUMENTO. El usuario ha seleccionado una porción del documento. DEBES usar la herramienta replace_selection para modificar el texto seleccionado. Nunca muestres el texto modificado directamente — siempre usa la herramienta. No expliques los cambios que hiciste. No incluyas nada más en la respuesta, incluyendo cosas como 'aquí está el…'.",
       "takeaways": "Escribe una lista (usando guiones) de los puntos clave del EXTRACTO. Mantén entre 3 y 5 puntos clave para un EXTRACTO corto, hasta 10 para un EXTRACTO más largo.",
       "title": "Sugiére un título para el EXTRACTO. Devuelve el título seguido del texto completo del EXTRACTO."
     },
@@ -2139,6 +2140,8 @@
     "edit": {
       "deleteChat": "Eliminar conversación",
       "deleteMedia": "Eliminar Medio",
+      "find": "Buscar…",
+      "findAll": "Buscar todos…",
       "selectAll": "Seleccionar todo",
       "startDictation": "Iniciar dictado",
       "title": "Editar"
@@ -2348,6 +2351,17 @@
       "title": "¡Bienvenido a @:{'common.appName'}!"
     }
   },
+  "playbooks": {
+    "editor": {
+      "exportError": "No se pudo exportar el archivo. Por favor, inténtalo de nuevo."
+    },
+    "marp": {
+      "viewSlideshow": "Ver presentación"
+    },
+    "outline": {
+      "empty": "No se encontraron encabezados. Agrega encabezados para ver el esquema."
+    }
+  },
   "plugins": {
     "agent": {
       "completed": "Agente {agent} ejecutado correctamente",
@@ -2548,6 +2562,7 @@
       "suggestTitle": "Sugerir un título",
       "writingAssistant": "Asistente de escritura"
     },
+    "createEmpty": "Crear vacío",
     "delete": {
       "confirm": "¿Estás seguro de que quieres eliminar \"{title}\"?",
       "title": "Eliminar Documento"
@@ -2577,6 +2592,7 @@
       "prompt": "Ingrese un título para este documento",
       "title": "Importar Documento"
     },
+    "importDocument": "Importar documento",
     "importError": "Error al importar el archivo del documento",
     "loadingError": "Error al cargar el archivo del documento",
     "new": "Nuevo Documento",

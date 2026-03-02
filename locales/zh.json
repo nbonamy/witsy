@@ -60,6 +60,7 @@
     "esc": "Esc",
     "estimatedCost": "预估成本：",
     "experts": "专家",
+    "export": "导出",
     "favorites": {
       "add": "添加到收藏夹",
       "name": "收藏夹",
@@ -128,7 +129,6 @@
     "read": "读取",
     "recommended": "推荐",
     "record": "记录",
-    "redo": "重做",
     "rename": "重命名",
     "replace": "替换",
     "required": {
@@ -180,7 +180,6 @@
     "tools": "工具",
     "tryAgain": "请再试一次。",
     "type": "类型",
-    "undo": "撤销",
     "unselectAll": "@:{'common.selectNone'}",
     "unselectAllShort": "无",
     "upload": "上传",
@@ -527,6 +526,7 @@
     "search": {
       "matchCount": "{current} / {total}",
       "nextMatch": "下一个匹配项",
+      "noMatches": "未找到结果",
       "previousMatch": "上一个匹配项"
     },
     "send": "发送",
@@ -1989,7 +1989,8 @@
       "prompt": "EXTRACT:\n{'{'}document{'}'}\n\nASK: {'{'}ask{'}'}",
       "simplify": "简化并压缩 EXTRACT 的内容。删除任何不必要的信息。不要解释你所做的更改。",
       "spellcheck": "通过修正拼写错误和语法来修正 EXTRACT。不要对 EXTRACT 进行超出拼写和语法的修改。不要列出你所做的修正。",
-      "system": "你正在帮助某人撰写一份 DOCUMENT。你需要根据以下 ASK 回答以下 EXTRACT。在我们的对话中，不要使用 DOCUMENT 或 EXTRACT 的早期版本。只需回复更新后的 EXTRACT，保留空行。在回答中不要使用引号，也不要包含 DOCUMENT 或 EXTRACT 的初始或早期版本。不要在回答中包含“EXTRACT”一词。不要使用 Markdown 语法，如“## 标题 ##”或“**文本**”。不要在回答中包含任何其他内容，包括“这里是……”之类的表述。",
+      "system": "你正在帮助某人撰写一份文档。你必须使用提供的工具来修改文档。切勿以文本形式直接输出已修改的文档——始终使用工具。为任务选择最有效的工具：对有针对性的修改（拼写错误、改写、小幅修正）使用 edit_document；在特定位置添加新内容使用 insert_content。如果用户已选中部分文本，使用 replace_selection 来替换它。不要解释你所做的更改。不要在响应中包含任何其他内容，包括类似“这是……”的表述。",
+      "systemSelection": "你正在帮助某人撰写一份文档。用户已选中文档的一部分。你必须使用 replace_selection 工具来修改所选文本。切勿直接以文本形式输出已修改的文本——始终使用该工具。不要解释你所做的更改。不要在响应中包含任何其他内容，包括类似“这是……”的表述。",
       "takeaways": "列出 EXTRACT 的关键要点（使用破折号）。对于较短的 EXTRACT，保持在 3 到 5 个要点之间；对于较长的 EXTRACT，最多可列出 10 个要点。",
       "title": "为 EXTRACT 提建议一个标题。返回标题后跟上 EXTRACT 的完整文本。"
     },
@@ -2158,6 +2159,8 @@
     "edit": {
       "deleteChat": "删除聊天",
       "deleteMedia": "删除媒体",
+      "find": "查找…",
+      "findAll": "全部查找…",
       "selectAll": "全选",
       "startDictation": "开始听写",
       "title": "编辑"
@@ -2367,6 +2370,17 @@
       "title": "欢迎使用 @:{'common.appName'}！"
     }
   },
+  "playbooks": {
+    "editor": {
+      "exportError": "导出文件失败。请重试。"
+    },
+    "marp": {
+      "viewSlideshow": "查看幻灯片演示"
+    },
+    "outline": {
+      "empty": "未找到标题。添加标题以查看大纲。"
+    }
+  },
   "plugins": {
     "agent": {
       "completed": "代理 {agent} 执行成功",
@@ -2570,6 +2584,7 @@
       "suggestTitle": "建议标题",
       "writingAssistant": "写作助手"
     },
+    "createEmpty": "创建空白",
     "delete": {
       "confirm": "您确定要删除“{title}”吗？",
       "title": "删除文档"
@@ -2599,6 +2614,7 @@
       "prompt": "请输入此文档的标题",
       "title": "导入文档"
     },
+    "importDocument": "导入文档",
     "importError": "导入文档文件时出错",
     "loadingError": "加载文档文件时出错",
     "new": "新建文档",
