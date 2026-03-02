@@ -156,7 +156,7 @@ const showError = (errorContent: string) => {
 
 <style scoped>
 
-.text, .text * {
+.text, .text *:not(.katex *) {
   font-family: var(--font-family-base);
 }
 
