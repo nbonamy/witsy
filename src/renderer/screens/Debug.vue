@@ -16,7 +16,7 @@
           </div>
           <div v-else class="requests">
             <div v-for="(request, index) in requests" :key="index" class="item" :class="{ selected: selected === request }" @click="selectRequest(request)"> <span class="url">{{ request.url.split('/').slice(0, 3).join('/') }}</span>
-              <span v-if="request.statusCode" class="status" :class="{ 'error': request.statusCode >= 400 }">
+              <span v-if="request.statusCode !== undefined && request.statusCode !== null" class="status" :class="{ 'error': request.statusCode >= 400 || request.statusCode === 0 }">
                 {{ request.statusCode }}
               </span>
               <span v-else class="status pending" >
@@ -46,8 +46,12 @@
                 <JsonViewer :value="info" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
               </div>
             </div>
-            <div v-if="activeTab === 'response' && !selected.statusCode">
+            <div v-if="activeTab === 'response' && selected.statusCode == null">
               <pre>Waiting for response...</pre>
+            </div>
+            <div v-else-if="activeTab === 'response' && selected.statusCode === 0 && selected.errorMessage" class="section">
+              <h3>Error</h3>
+              <pre>{{ selected.errorMessage }}</pre>
             </div>
             <template v-else>
               <div class="section" v-if="activeTab === 'request' && parameters">
