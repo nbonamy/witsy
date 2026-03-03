@@ -261,28 +261,35 @@ export default (window: BrowserWindow) => {
     const request = requests.get(requestId)
     if (!request) return
 
-    // Get response body for HTTP requests
-    try {
-      const { body, base64Encoded } = await window.webContents.debugger.sendCommand(
-        'Network.getResponseBody', { requestId }
-      )
-      if (body.length < 256 * 1024) {
-        request.responseBody = base64Encoded ? Buffer.from(body, 'base64').toString() : body
-      } else {
-        request.responseBody = 'Response body too large to display'
-      }
-    } catch (error) {
-      request.responseBody = `Unable to get response body. ${error.message}`
-      console.log(`Couldn't get response body for request ${requestId} ${request.url}: ${error.message}`)
-    }
-
+    // For failed requests (e.g. net::ERR_CONNECTION_REFUSED), set error and end time immediately
+    // so the Debug Console updates without waiting for getResponseBody (which can hang or fail).
     if (method === 'Network.loadingFailed') {
       request.errorMessage = params.errorText
+      request.endTime = Date.now()
+      if (request.statusCode == null) {
+        request.statusCode = 0
+      }
+      debugWindow?.webContents?.send('network', request)
     }
 
-    request.endTime = Date.now()
-
-    debugWindow?.webContents?.send('network', request)
+    // Get response body only for successful loads; skip for loadingFailed to avoid hang/failure.
+    if (method === 'Network.loadingFinished') {
+      try {
+        const { body, base64Encoded } = await window.webContents.debugger.sendCommand(
+          'Network.getResponseBody', { requestId }
+        )
+        if (body.length < 256 * 1024) {
+          request.responseBody = base64Encoded ? Buffer.from(body, 'base64').toString() : body
+        } else {
+          request.responseBody = 'Response body too large to display'
+        }
+      } catch (error) {
+        request.responseBody = `Unable to get response body. ${error.message}`
+        console.log(`Couldn't get response body for request ${requestId} ${request.url}: ${error.message}`)
+      }
+      request.endTime = Date.now()
+      debugWindow?.webContents?.send('network', request)
+    }
 
     // Cleanup after TTL
     setTimeout(() => {
