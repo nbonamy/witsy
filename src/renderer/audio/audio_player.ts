@@ -104,59 +104,29 @@ class AudioPlayer {
 
       if (typeof response.content === 'string') {
 
-        // If the string is already a data URL, use it directly.
+        // Only data URLs are supported for string content.
         if (/^data:audio\//i.test(response.content)) {
           if (this.objectUrl) {
             URL.revokeObjectURL(this.objectUrl)
             this.objectUrl = null
           }
           audioEl.src = response.content
-        } else {
-          // Detect likely base64 payload (no data URL prefix).
-          const trimmed = response.content.trim()
-          const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/
-          let binary: string
-
-          const base64 = trimmed.replace(/\s+/g, '')
-          if (typeof atob === 'function' && base64Regex.test(base64)) {
-            try {
-              binary = atob(base64)
-            } catch {
-              // Fallback: treat payload as binary-like string.
-              binary = response.content
+          const handleEnded = () => {
+            audioEl.removeEventListener('ended', handleEnded)
+            if (this.uuid !== uuid) return
+            this.stop()
+          }
+          audioEl.addEventListener('ended', handleEnded)
+  
+          audioEl.play().catch((err) => {
+            // Ignore AbortError caused by rapid play/pause races.
+            if (!err || err.name !== 'AbortError') {
+              console.error(err)
             }
-          } else {
-             // Treat as binary-like string (e.g. "RIFF....").
-             binary = response.content
-           }
-
-          const bytes = new Uint8Array(binary.length)
-          for (let i = 0; i < binary.length; i++) {
-            bytes[i] = binary.charCodeAt(i) & 0xff
-          }
-          const mimeType = response.mimeType ?? 'audio/wav'
-          const blob = new Blob([bytes], { type: mimeType })
-          if (this.objectUrl) {
-            URL.revokeObjectURL(this.objectUrl)
-          }
-          this.objectUrl = URL.createObjectURL(blob)
-          audioEl.src = this.objectUrl
+          })
+        } else {
+          throw new Error('Unsupported string format for audio content: expected data URL')
         }
-
-        const handleEnded = () => {
-          audioEl.removeEventListener('ended', handleEnded)
-          if (this.uuid !== uuid) return
-          this.stop()
-        }
-        audioEl.addEventListener('ended', handleEnded)
-
-        audioEl.play().catch((err) => {
-          // Ignore AbortError caused by rapid play/pause races.
-          if (!err || err.name !== 'AbortError') {
-            console.error(err)
-          }
-        })
-
       } else if (typeof Response !== 'undefined' && response.content instanceof Response) {
 
         const rawContentType = response.content.headers.get('content-type') || response.mimeType || ''
@@ -210,17 +180,6 @@ class AudioPlayer {
           }
         } finally {
           reader.releaseLock()
-        }
-
-      } else if (
-        response.content &&
-        typeof (response.content as any)[Symbol.asyncIterator] === 'function'
-      ) {
-        const iterable = response.content as AsyncIterable<Uint8Array>
-        const currentPlayer = this.player
-        for await (const chunk of iterable) {
-          if (!currentPlayer || this.player !== currentPlayer) break;
-          currentPlayer.feed(chunk);
         }
 
       } else {
