@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.5.2] - WIP
+## [3.5.2] - 2026-03-04
 
 ### Added
 - Search text inside chat (Cmd+F/Ctrl+F)
