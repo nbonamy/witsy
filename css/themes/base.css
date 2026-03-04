@@ -20,7 +20,7 @@
   overflow-wrap: anywhere;
 }
 
-.messages.size1 .variable-font-size, .messages.size1 .variable-font-size *:not(.katex *) {
+.messages.size1 .variable-font-size, .messages.size1 .variable-font-size *:not(.katex *):not(code) {
   font-size: 13.5px;
 }
 
@@ -28,7 +28,7 @@
   font-size: 12.5px;
 }
 
-.messages.size2 .variable-font-size, .messages.size2 .variable-font-size *:not(.katex *) {
+.messages.size2 .variable-font-size, .messages.size2 .variable-font-size *:not(.katex *):not(code) {
   font-size: 14.5px;
 }
 
@@ -36,31 +36,31 @@
   font-size: 13.5px;
 }
 
-.messages.size3 .variable-font-size, .messages.size3 .variable-font-size *:not(.katex *) {
+.messages.size3 .variable-font-size, .messages.size3 .variable-font-size *:not(.katex *):not(code) {
   font-size: 16px;
 }
 
 .messages.size3 pre.hljs, .messages.size3 code.variable-font-size, .messages.size3 .variable-font-size code, .messages.size3 code.variable-font-size * {
-  font-size: 14.5px;
+  font-size: 14px;
 }
 
-.messages.size4 .variable-font-size, .messages.size4 .variable-font-size *:not(.katex *) {
+.messages.size4 .variable-font-size, .messages.size4 .variable-font-size *:not(.katex *):not(code) {
   font-size: 18px;
 }
 
 .messages.size4 pre.hljs, .messages.size4 code.variable-font-size, .messages.size4 .variable-font-size code, .messages.size4 code.variable-font-size * {
-  font-size: 12.5px;
+  font-size: 15.5px;
 }
 
-.messages.size5 .variable-font-size, .messages.size5 .variable-font-size *:not(.katex *) {
+.messages.size5 .variable-font-size, .messages.size5 .variable-font-size *:not(.katex *):not(code) {
   font-size: 20px;
 }
 
-.messages.size5 pre.hljs, messages.size5 code.variable-font-size, .messages.size5 .variable-font-size code, .messages.size5 code.variable-font-size * {
-  font-size: 18.5px;
+.messages.size5 pre.hljs, .messages.size5 code.variable-font-size, .messages.size5 .variable-font-size code, .messages.size5 code.variable-font-size * {
+  font-size: 18px;
 }
 
-.message .message-body *:not(.katex *) {
+.message .message-body *:not(.katex *):not(code) {
   line-height: 1.3;
 }
 
