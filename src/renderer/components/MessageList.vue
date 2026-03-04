@@ -152,9 +152,6 @@ const onNewChunk = async (chunk: LlmChunk) => {
 const onScroll = () => {
   overflown.value = divScroller.value!.scrollTop + divScroller.value!.clientHeight < divScroller.value!.scrollHeight - 1
   scrollOnChunk = !overflown.value
-  if (!searchState?.filter.value) {
-    divScroller.value?.focus()
-  }
 }
 
 defineExpose({
