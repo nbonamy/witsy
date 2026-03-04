@@ -8,7 +8,7 @@ const simulation = false;
 const refreshDelay = simulation ? 1000* 1 : 1000*10;
 
 // get github last commit hash
-const lastCommitHash = execSync('git rev-parse HEAD').toString().trim();
+const lastCommitHash = process.argv[2] || execSync('git rev-parse HEAD').toString().trim();
 console.log(`${chalk.blue('[#]')} Checking jobs for commit hash: ${lastCommitHash}`);
 
 // now monitor the jobs
