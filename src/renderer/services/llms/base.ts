@@ -549,10 +549,15 @@ export default class LlmManagerBase implements ILlmManager {
         continue
       }
 
-      // multi-tool plugins are more complex
+      // custom/multi-tool plugins are more complex
       const pluginTools = await plugin.getTools()
       for (const pluginTool of pluginTools) {
-        if (toolSelection.includes(pluginTool.function.name)) {
+
+        // this is painful for backwards compatibility
+        // legacy: return { function: {...} }[]
+        // modern: return { name, description, parameters }
+        const name = 'function' in pluginTool ? pluginTool.function.name : pluginTool.name
+        if (toolSelection.includes(name)) {
 
           let instance: PluginInstance = customPluginsAdded[pluginName]
           if (!instance) {
@@ -563,7 +568,7 @@ export default class LlmManagerBase implements ILlmManager {
 
           // multi-tool: enable this tool
           if (instance instanceof llm.MultiToolPlugin) {
-            instance.enableTool(pluginTool.function.name)
+            instance.enableTool(name)
           }
         }
 
