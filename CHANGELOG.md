@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Text pasted as image fix
 - Crash when attaching large files (256MB arbitrary limit)
+- DeepResearch planning failing (https://github.com/nbonamy/witsy/issues/543)
 - Fix--infinite-waiting-on-request-body-on-failed-network-requests (https://github.com/nbonamy/witsy/pull/536)
 
 ### Removed
