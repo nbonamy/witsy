@@ -87,19 +87,51 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
         throw new AbortError()
       }
 
-      // parse
+      // parse - try multiple parsing strategies for robustness
       let sections: ResearchSection[] = []
+      let parseError: Error | null = null
 
+      // Strategy 1: Standard parseJson approach
       try {
         const plan = LlmUtils.parseJson(planMessage.content)
         sections = plan.sections
       } catch (e) {
+        parseError = e as Error
+
+        // Strategy 2: Try extracting JSON from markdown code blocks
+        const codeBlockMatch = planMessage.content.match(/```(?:json)?\s*([\s\S]*?)```/i)
+        if (codeBlockMatch) {
+          try {
+            const plan = LlmUtils.parseJson(codeBlockMatch[1])
+            sections = plan.sections
+            parseError = null
+          } catch {
+            // Keep original error
+          }
+        }
+
+        // Strategy 3: Try direct JSON.parse as fallback
+        if (sections.length === 0) {
+          try {
+            const parsed = JSON.parse(planMessage.content)
+            if (parsed.sections) {
+              sections = parsed.sections
+              parseError = null
+            }
+          } catch {
+            // Keep original error
+          }
+        }
+      }
+
+      // If all parsing strategies failed, show error
+      if (parseError || sections.length === 0) {
         response.appendText({
           type: 'content',
           text: `This model was not able to provide a research plan in the expected format. You can try again with this model or with another model.`,
           done: true,
         })
-        console.error('Error parsing research plan:', planMessage.content, e)
+        console.error('Error parsing research plan:', planMessage.content, parseError)
         return 'error'
       }
 
