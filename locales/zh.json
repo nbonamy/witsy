@@ -1966,7 +1966,7 @@
       "codeExecutionProxy": "为完成任务，您可以使用 code_exec_get_tools_info 和 code_exec_call_tool 工具。code_exec_get_tools_info 提供可用工具列表，您可以用它获取所选工具的调用说明。\n\n**使用说明：**\n- 始终使用 `code_exec_call_tool` 来调用工具。工具仅能通过 `code_exec_call_tool` 访问。\n- 调用工具前：使用 `code_exec_get_tools_info` 理解调用工具所需参数。\n\n**调用 `code_exec_call_tool` 的参数：**\n- `tool_name`：工具的准确名称（例如 \"search_internet\"，\"filesystem_read\"）\n- `parameters`：一个包含工具参数的键值对对象\n\n**示例：**\n```json\n{\n  \"tool_name\": \"search_internet\",\n  \"parameters\": {\n    \"query\": \"关于AI的最新新闻\"\n  }\n}\n```",
       "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
       "noMarkdown": "在您的回复中不要使用Markdown格式。仅使用纯文本。不要使用**加粗**、*斜体*、`代码`、```代码块```或任何其他Markdown语法。如果使用表格，仅使用带有适当间距以对齐列的纯文本表格。",
-      "skills": "您可以使用可重用的技能。每当用户请求与某个技能名称、领域或描述相匹配时，优先使用相应技能。\n\n技能使用协议：\n1. 如果任何技能看起来相关，先调用 skills_load_skill（不要仅凭目录条目回答）。\n2. 仔细阅读 SKILL.md 中的说明。\n3. 如果 SKILL.md 引用了文件（或清单提示有相关文件），在最终回答前调用 skills_get_skill_file 获取这些文件。\n4. 在已加载的技能内容基础上给出回答，并在技能上下文不完整时说明假设。\n\n可用技能：\n{skills}\n\n注意：在此环境中，技能为只读且无法执行代码。",
+      "skills": "您可以使用可重用的技能。当请求与技能的名称、领域或描述匹配时，应优先使用这些技能。\n\n技能使用协议：\n1. 识别所有相关技能（可能一个或多个）。\n2. 对每个相关技能，首先调用 skills_load_skill（不要仅凭目录条目直接回答）。\n3. 仔细阅读每个加载的 SKILL.md。\n4. 如果某个 SKILL.md 引用了文件，或清单显示有相关文件，则在给出最终答案前，调用 skills_get_skill_file 获取这些文件（在多个技能之间按需重复）。\n5. 综合所有已加载技能的指导；若存在冲突，解释权衡并为用户请求选出最合适的方案。\n6. 以已加载技能的内容为基础给出最终答案；当某项技能的上下文不完整时，清晰地说明假设。\n\n可用技能：\n{skills}\n\n注意：在此环境中技能为只读，且无法执行代码。",
       "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
     },
     "chat": {
@@ -2495,6 +2495,8 @@
     "skills": {
       "completed": "技能加载成功",
       "completedFile": "技能文件加载成功",
+      "completedFileWithPath": "技能文件 \"{path}\" 已成功加载",
+      "completedWithName": "技能 \"{name}\" 已成功加载",
       "error": "访问技能时出错：{error}",
       "preparing": "正在准备技能访问…",
       "preparingFile": "正在准备技能文件访问…",
