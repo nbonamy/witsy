@@ -523,6 +523,13 @@ export default class LlmManagerBase implements ILlmManager {
     // clear
     engine.clearPlugins()
 
+    // add skills
+    if (this.config.plugins.skills.enabled) {
+      const { default: SkillsPlugin } = await import('../plugins/skills')
+      const skillsPlugin = new SkillsPlugin(this.config.plugins.skills, workspaceId)
+      engine.addPlugin(skillsPlugin)
+    }
+
     // tools disabled?
     if (areToolsDisabled(toolSelection)) {
       return

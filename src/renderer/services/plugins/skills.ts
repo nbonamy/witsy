@@ -8,17 +8,12 @@ export const kSkillsPluginPrefix = 'skills_'
 export const kSkillsLoadToolName = `${kSkillsPluginPrefix}load_skill`
 export const kSkillsGetFileToolName = `${kSkillsPluginPrefix}get_skill_file`
 
-export interface SkillsPluginConfig extends PluginConfig {
-  enabled: boolean
-  locations: string[]
-}
-
 export default class extends MultiToolPlugin {
 
-  config: SkillsPluginConfig
+  config: PluginConfig
   workspaceId: string
 
-  constructor(config: SkillsPluginConfig, workspaceId: string) {
+  constructor(config: PluginConfig, workspaceId: string) {
     super()
     this.config = config
     this.workspaceId = workspaceId
@@ -58,8 +53,17 @@ export default class extends MultiToolPlugin {
     if (results?.error) {
       return t('plugins.skills.error', { error: results.error })
     }
+    const args = _args || {}
     if (tool === kSkillsGetFileToolName) {
+      const filePath = args?.path || results?.path
+      if (filePath) {
+        return t('plugins.skills.completedFileWithPath', { path: filePath })
+      }
       return t('plugins.skills.completedFile')
+    }
+    const skillName = results?.name || args?.skillName
+    if (skillName) {
+      return t('plugins.skills.completedWithName', { name: skillName })
     }
     return t('plugins.skills.completed')
   }
