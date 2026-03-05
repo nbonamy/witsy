@@ -282,6 +282,37 @@ test('Assistant User Expert', async () => {
   expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":"prompt3\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
+test('Assistant selected skill loads full skill payload and injects it', async () => {
+  vi.mocked(window.api.skills.load).mockReturnValue({
+    id: 'skill-electron',
+    name: 'electron',
+    description: 'Electron skill',
+    rootPath: '/skills/electron',
+    skillMdPath: '/skills/electron/SKILL.md',
+    instructions: 'Use this skill for Electron apps.',
+    available_files: [
+      { path: 'examples/main-process.md', size: 10, isText: true },
+      { path: 'examples/ipc.md', size: 20, isText: true },
+    ],
+  })
+
+  const content = await prompt('Help me build app', {
+    skill: {
+      id: 'skill-electron',
+      name: 'electron',
+      description: 'Electron skill',
+      rootPath: '/skills/electron',
+      skillMdPath: '/skills/electron/SKILL.md',
+    },
+  } as AssistantCompletionOpts)
+
+  expect(window.api.skills.load).toHaveBeenCalledWith(store.config.workspaceId, 'skill-electron')
+  expect(content).toContain('skill-electron')
+  expect(content).toContain('name: electron')
+  expect(content).toContain('instructions:\\nUse this skill for Electron apps.')
+  expect(content).toContain('additional_files:\\n- examples/main-process.md\\n- examples/ipc.md')
+})
+
 test('Assistant DocRepo', async () => {
   const content = await prompt('Hello LLM', { docrepos: ['docrepo'] } as AssistantCompletionOpts)
   expect(window.api.docrepo?.query).toHaveBeenLastCalledWith('docrepo', 'Hello LLM')
@@ -463,4 +494,3 @@ test('Assistant instructions with capabilities', async () => {
   const instructions1 = await assistant!.chat.messages[0].content
   expect(instructions1.toLowerCase()).toContain('mermaid')
 })
-

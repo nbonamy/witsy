@@ -5,6 +5,7 @@ import Chat from '@models/chat'
 import Message from '@models/message'
 import { LlmEngine } from 'multi-llm-ts'
 import { CodeExecutionMode, Configuration } from 'types/config'
+import { Skill } from 'types/skills'
 import { markRaw } from 'vue'
 import { DeepResearch } from './deepresearch'
 import DeepResearchAL from './deepresearch_al'
@@ -105,6 +106,7 @@ export default class {
       attachments: [],
       docrepos: null,
       expert: null,
+      skill: null,
       sources: true,
       citations: true,
       caching: true,
@@ -172,6 +174,18 @@ export default class {
     userMessage.model = opts.model
     userMessage.execMode = opts?.execMode || 'prompt'
     opts.attachments.map(a => userMessage.attach(a))
+
+    // skill
+    let skill: Skill|null = opts.skill || null
+    if (skill?.id) {
+      const loadedSkill = window.api.skills.load(this.workspaceId, skill.id)
+      if (loadedSkill) {
+        skill = loadedSkill
+      }
+    }
+    userMessage.setSkill(skill)
+
+    // done
     this.chat.addMessage(userMessage)
 
     // // track expert usage

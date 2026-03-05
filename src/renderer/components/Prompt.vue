@@ -34,6 +34,13 @@
         :label="expert.name || expertI18n(expert, 'name')"
         @clear="clearExpert"
       />
+
+      <PromptFeature
+        v-if="skill"
+        :icon="ZapIcon"
+        :label="skill.name"
+        @clear="clearSkill"
+      />
       
       <PromptFeature
         v-for="uuid in docrepos"
@@ -147,6 +154,7 @@
       :position="menusPosition"
       :enable-tools="enableTools"
       :enable-experts="enableExperts"
+      :enable-skills="true"
       :enable-doc-repo="enableDocRepo"
       :enable-instructions="enableInstructions"
       :enable-attachments="enableAttachments"
@@ -156,6 +164,8 @@
       @close="closePromptMenu"
       @expert-selected="handleExpertClick"
       @manage-experts="handleManageExperts"
+      @skill-selected="handleSkillClick"
+      @manage-skills="handleManageSkills"
       @doc-repos-changed="handleDocReposChanged"
       @manage-doc-repo="handleManageDocRepo"
       @instructions-selected="handlePromptMenuInstructions"
@@ -200,11 +210,12 @@ import * as ts from '@renderer/utils/tool_selection'
 import { categoryI18n, commandI18n, expertI18n, getLlmLocale, i18nInstructions, setLlmLocale, t } from '@services/i18n'
 import LlmFactory, { favoriteMockEngine, ILlmManager } from '@services/llms/llm'
 import { store } from '@services/store'
-import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, FolderIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon } from 'lucide-vue-next'
+import { ArrowUpIcon, BoxIcon, BrainIcon, ChevronDownIcon, CommandIcon, FeatherIcon, FolderIcon, HeartMinusIcon, HeartPlusIcon, LightbulbIcon, MicIcon, PlusIcon, TelescopeIcon, XIcon, ZapIcon } from 'lucide-vue-next'
 import { extensionToMimeType, mimeTypeToExtension } from 'multi-llm-ts'
 import { Command, CustomInstruction, Expert, MessageExecutionMode } from 'types/index'
 import { McpServerWithTools, McpTool } from 'types/mcp'
 import { DocumentBase } from 'types/rag'
+import { Skill } from 'types/skills'
 import { computed, nextTick, onMounted, PropType, ref, watch } from 'vue'
 import useAudioRecorder from '../audio/audio_recorder'
 import useTranscriber from '../audio/transcriber'
@@ -223,6 +234,7 @@ export type SendPromptParams = {
   attachments?: Attachment[]
   docrepos?: string[],
   expert?: Expert,
+  skill?: Skill,
   execMode?: MessageExecutionMode
 }
 
@@ -324,6 +336,7 @@ const uniqueId = ref(crypto.randomUUID())
 const prompt = ref('')
 const instructions = ref<CustomInstruction>(undefined)
 const expert = ref<Expert>(undefined)
+const skill = ref<Skill>(undefined)
 const command = ref<Command>(undefined)
 const attachments = ref<Attachment[]>([])
 const docrepos = ref<string[]>([])
@@ -582,6 +595,7 @@ const onSetPrompt = (message: Message) => {
   prompt.value = message.content
   attachments.value = message.attachments
   expert.value = message.expert
+  skill.value = message.skill
   nextTick(() => {
     autoGrow(input.value)
     input.value.focus()
@@ -632,6 +646,7 @@ const onSendPrompt = () => {
       attachments: attachments.value,
       docrepos: docrepos.value,
       expert: store.experts.find((e) => e.id === expert.value?.id),
+      skill: skill.value,
       execMode: deepResearchActive.value ? 'deepresearch' : 'prompt',
     }
     emit('prompt', sendPromptParams)
@@ -1064,6 +1079,11 @@ const handleManageExperts = () => {
   closePromptMenu()
 }
 
+const handleManageSkills = () => {
+  window.api.settings.open({ initialTab: 'skills' })
+  closePromptMenu()
+}
+
 const handleModelSelected = (engine: string, model: string) => {
   props.chat?.setEngineModel(engine, model)
   emit('set-engine-model', engine, model)
@@ -1206,8 +1226,24 @@ const handleExpertClick = (action: string) => {
   }
 }
 
+const handleSkillClick = (action: string) => {
+  closeContextMenu()
+  if (action === 'clear' || action === 'none') {
+    disableSkill()
+    return
+  }
+  const fullSkill = window.api.skills.load(store.config.workspaceId, action)
+  if (fullSkill) {
+    skill.value = fullSkill
+  }
+}
+
 const disableExpert = () => {
   expert.value = null
+}
+
+const disableSkill = () => {
+  skill.value = null
 }
 
 const disableCommand = () => {
@@ -1399,6 +1435,10 @@ const clearExpert = () => {
   expert.value = null
 }
 
+const clearSkill = () => {
+  skill.value = null
+}
+
 const clearDocRepos = () => {
   setDocRepos([])
 }
@@ -1422,6 +1462,9 @@ defineExpose({
   focus: () => input.value.focus(),
 
   setExpert,
+  setSkill: (fullSkill: Skill|null) => {
+    skill.value = fullSkill
+  },
   setDeepResearch,
   isContextMenuOpen,
   startDictation: onDictate,

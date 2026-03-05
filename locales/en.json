@@ -170,6 +170,7 @@
     "shortcut": "Shortcut",
     "showLess": "Show Less",
     "showMore": "Show More",
+    "skills": "Skills",
     "sortBy": "Sort By",
     "spellcheck": {
       "add": "Add to dictionary"
@@ -2554,6 +2555,11 @@
         "manage": "Manage Experts",
         "none": "No Expert",
         "title": "@:{'common.experts'}"
+      },
+      "skills": {
+        "manage": "Manage Skills",
+        "none": "No Skill",
+        "title": "@:{'common.skills'}"
       },
       "instructions": {
         "title": "Writing Style"

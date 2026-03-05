@@ -1,11 +1,11 @@
 
+import { SkillHeader } from '@/types/skills'
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
+import Message from '@models/message'
 import { ChatModel, LlmChunkTool, LlmCompletionOpts, LlmEngine } from 'multi-llm-ts'
 import { CodeExecutionMode, Configuration } from 'types/config'
 import { DocRepoQueryResponseItem } from 'types/rag'
-import { SkillSummary } from 'types/skills'
 import { z } from 'zod'
-import Message from '@models/message'
 import { getLlmLocale, i18nInstructions, localeToLangName, t } from './i18n'
 import LlmFactory from './llms/llm'
 
@@ -32,7 +32,7 @@ export default class LlmUtils {
       return null
     }
 
-    let skills: SkillSummary[] = []
+    let skills: SkillHeader[] = []
     try {
       skills = window.api.skills.list(this.config.workspaceId)
     } catch (error) {

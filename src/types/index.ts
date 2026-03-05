@@ -8,7 +8,7 @@ import { ListDirectoryResponse } from './filesystem'
 import { ToolSelection } from './llm'
 import { McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from './mcp'
 import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
-import { SkillFileReadResult, SkillInstallResult, SkillLoadResult, SkillSaveResult, SkillSummary, SkillUninstallResult } from './skills'
+import { Skill, SkillFileReadResult, SkillInstallResult, SkillSaveResult, SkillHeader, SkillUninstallResult } from './skills'
 import { Workspace, WorkspaceHeader } from './workspace'
 import { A2APromptOpts, Agent, AgentRun, RunningAgentRuns } from './agents'
 import { YoutubeVideoInfo } from '../main/youtube'
@@ -69,6 +69,7 @@ export interface Message extends IMessageBase {
   engine: string
   model: string
   expert?: Expert
+  skill?: Skill
   agentId?: string
   agentRunId?: string
   a2aContext?: A2APromptOpts
@@ -80,6 +81,7 @@ export interface Message extends IMessageBase {
   attachments: Attachment[]
   setStatus(status: string|null): void
   setExpert(expert: Expert): void
+  setSkill(skill: Skill|null): void
   setText(text: string): void
   setImage(url: string): void
   addToolCall(toolCall: LlmChunkTool): void
@@ -588,8 +590,8 @@ declare global {
       }
       skills: {
         defaultLocations(workspaceId: string): string[]
-        list(workspaceId: string): SkillSummary[]
-        load(workspaceId: string, skillId: string): SkillLoadResult | null
+        list(workspaceId: string): SkillHeader[]
+        load(workspaceId: string, skillId: string): Skill | null
         getFile(workspaceId: string, skillId: string, relativePath: string, startLine?: number, endLine?: number): SkillFileReadResult
         installFromUrl(url: string, installPath: string): Promise<SkillInstallResult>
         uninstall(workspaceId: string, skillId: string): SkillUninstallResult

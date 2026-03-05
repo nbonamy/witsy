@@ -378,7 +378,7 @@ defineExpose({
   margin: 0;
 }
 
-.expert {
+.expert, .skill {
   margin-top: 0px;
   margin-bottom: -12px;
   p {

@@ -562,6 +562,7 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
       attachments: message.attachments,
       docrepos: fork.docrepos,
       expert: message.expert,
+      skill: message.skill,
       execMode: message.execMode || 'prompt',
     })
   }
@@ -636,7 +637,7 @@ const onDeleteFolder = async (folderId: string) => {
 const onSendPrompt = async (params: SendPromptParams) => {
 
   // deconstruct params
-  const { instructions, prompt, attachments, docrepos, expert, execMode } = params
+  const { instructions, prompt, attachments, docrepos, expert, skill, execMode } = params
 
   // capture the current session for this generation (allows parallel chats)
   const session = activeSession.value
@@ -696,6 +697,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     attachments: attachments || [],
     docrepos: docrepos || null,
     expert: expert || null,
+    skill: skill || null,
     execMode: execMode || 'prompt',
     abortSignal: session.abortController.signal,
   }, (chunk) => {
@@ -884,6 +886,7 @@ const onRetryGeneration = async (message: Message) => {
       attachments: lastMessage.attachments,
       docrepos: assistant.value.chat.docrepos,
       expert: lastMessage.expert,
+      skill: lastMessage.skill,
       execMode: lastMessage.execMode,
     })
 
@@ -924,6 +927,7 @@ const onResendAfterEdit = async (payload: { message: Message, newContent: string
       attachments: payload.message.attachments,
       docrepos: assistant.value.chat.docrepos,
       expert: payload.message.expert,
+      skill: payload.message.skill,
       execMode: payload.message.execMode,
     })
 

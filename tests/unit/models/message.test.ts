@@ -1,6 +1,7 @@
 import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '@tests/mocks/window'
 import Message from '@models/message'
+import { Skill } from '@/types/skills'
 
 beforeAll(() => {
   useWindowMock()
@@ -115,6 +116,29 @@ test('Build from JSON', () => {
     { id: '2', function: 'tool2', args: ['arg2'], result: 'result2' }
   ])
 
+  const message6 = Message.fromJson({
+    uuid: 'uuid',
+    type: 'text',
+    createdAt: 1,
+    role: 'role',
+    content: 'content',
+    skill: {
+      id: 'skill-1',
+      name: 'Skill 1',
+      description: 'desc',
+      rootPath: '/skills/skill-1',
+      skillMdPath: '/skills/skill-1/SKILL.md',
+    },
+    transient: true,
+  })
+  expect(message6.skill).toStrictEqual({
+    id: 'skill-1',
+    name: 'Skill 1',
+    description: 'desc',
+    rootPath: '/skills/skill-1',
+    skillMdPath: '/skills/skill-1/SKILL.md',
+  })
+
 })
 
 test('Build from JSON - tool calls backward compatibility', () => {
@@ -179,6 +203,57 @@ test('contentForModel with expert prompt $ARGUMENTS and tool tags', () => {
   const message = new Message('user', '<tool id="1"></tool>Hello world')
   message.setExpert({ id: '1', type: 'user', prompt: 'Translate "$ARGUMENTS" to spanish', state: 'enabled', triggerApps: [] })
   expect(message.contentForModel).toBe('Translate "Hello world" to spanish')
+})
+
+test('contentForModel with selected skill prefixes content', () => {
+  const message = new Message('user', 'Hello world')
+  message.setSkill({
+    id: 'skill-1',
+    name: 'Skill 1',
+    description: 'desc',
+    rootPath: '/skills/skill-1',
+    skillMdPath: '/skills/skill-1/SKILL.md',
+    instructions: '',
+    available_files: [],
+  })
+  expect(message.contentForModel).toBe('The following skill has been activated. Do not use skills_load_skill to load it.\n\nname: Skill 1\nid: skill-1\ninstructions:\n(not available)\nadditional_files:\n- none\n\nUser request:\nHello world')
+})
+
+test('contentForModel with selected skill injects instructions and additional files', () => {
+  const message = new Message('user', 'Hello world')
+  message.setSkill({
+    id: 'skill-1',
+    name: 'Skill 1',
+    description: 'desc',
+    rootPath: '/skills/skill-1',
+    skillMdPath: '/skills/skill-1/SKILL.md',
+    instructions: 'Do this first.\nThen do that.',
+    available_files: [
+      { path: 'examples/a.md', size: 10, isText: true },
+      { path: 'templates/b.txt', size: 20, isText: true },
+    ],
+  })
+  expect(message.contentForModel).toBe('The following skill has been activated. Do not use skills_load_skill to load it.\n\nname: Skill 1\nid: skill-1\ninstructions:\nDo this first.\nThen do that.\nadditional_files:\n- examples/a.md\n- templates/b.txt\n\nUser request:\nHello world')
+})
+
+test('setSkill deep copies and clears selected skill', () => {
+  const message = new Message('user', 'Hello world')
+  const skill: Skill = {
+    id: 'skill-1',
+    name: 'Skill 1',
+    description: 'desc',
+    rootPath: '/skills/skill-1',
+    skillMdPath: '/skills/skill-1/SKILL.md',
+    instructions: '',
+    available_files: [],
+  }
+
+  message.setSkill(skill)
+  skill.name = 'Updated skill'
+  expect(message.skill?.name).toBe('Skill 1')
+
+  message.setSkill(null)
+  expect(message.skill).toBeUndefined()
 })
 
 test('Text message', () => {

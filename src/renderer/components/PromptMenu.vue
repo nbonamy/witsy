@@ -15,9 +15,10 @@
 import { useDocReposMenu } from '@composables/useDocReposMenu'
 import { useExpertsMenu } from '@composables/useExpertsMenu'
 import { useInstructionsMenu } from '@composables/useInstructionsMenu'
+import { useSkillsMenu } from '@composables/useSkillsMenu'
 import { useToolsMenu } from '@composables/useToolsMenu'
 import { t } from '@services/i18n'
-import { BrainIcon, FeatherIcon, HammerIcon, LightbulbIcon, PaperclipIcon, TelescopeIcon } from 'lucide-vue-next'
+import { BrainIcon, FeatherIcon, HammerIcon, LightbulbIcon, PaperclipIcon, TelescopeIcon, ZapIcon } from 'lucide-vue-next'
 import { ToolSelection } from 'types/llm'
 import { McpServerWithTools, McpTool } from 'types/mcp'
 import type { MenuItem } from 'types/menu'
@@ -30,6 +31,7 @@ interface Props {
   position?: 'below' | 'above' | 'right' | 'left' | 'above-right' | 'above-left' | 'below-right' | 'below-left'
   teleport?: boolean
   enableExperts?: boolean
+  enableSkills?: boolean
   enableDocRepo?: boolean
   enableInstructions?: boolean
   enableTools?: boolean
@@ -43,6 +45,7 @@ const props = withDefaults(defineProps<Props>(), {
   position: 'below',
   teleport: true,
   enableExperts: true,
+  enableSkills: true,
   enableDocRepo: true,
   enableInstructions: true,
   enableTools: true,
@@ -56,6 +59,8 @@ interface Emits {
   close: []
   expertSelected: [expertId: string]
   manageExperts: []
+  skillSelected: [skillId: string]
+  manageSkills: []
   docRepoSelected: [docRepoUuid: string]
   docReposChanged: [docRepoUuids: string[]]
   manageDocRepo: []
@@ -88,6 +93,12 @@ const toolsLogic = props.enableTools ? useToolsMenu({
 
 // Use experts menu composable (only if experts enabled)
 const expertsLogic = props.enableExperts ? useExpertsMenu({
+  emit,
+  footerMode: 'manage',
+}) : null
+
+// Use skills menu composable (only if skills enabled)
+const skillsLogic = props.enableSkills ? useSkillsMenu({
   emit,
   footerMode: 'manage',
 }) : null
@@ -161,6 +172,19 @@ const composedMenuItems = computed<MenuItem[]>(() => {
     })
   }
 
+  // Skills submenu (from composable)
+  if (props.enableSkills && skillsLogic && skillsLogic.menuItems.value.length > 0) {
+    items.push({
+      id: 'skills',
+      label: t('prompt.menu.skills.title'),
+      icon: ZapIcon,
+      submenu: skillsLogic.menuItems.value,
+      footer: skillsLogic.footerItems.value,
+      showFilter: skillsLogic.showFilter,
+      cssClass: 'skills',
+    })
+  }
+
   // Deep Research (simple item, no submenu)
   if (props.enableDeepResearch) {
     items.push({
@@ -176,7 +200,7 @@ const composedMenuItems = computed<MenuItem[]>(() => {
   }
 
   // Separator before attachments
-  if (props.enableAttachments && (props.enableExperts || props.enableDocRepo || props.enableInstructions || props.enableDeepResearch)) {
+  if (props.enableAttachments && (props.enableExperts || props.enableSkills || props.enableDocRepo || props.enableInstructions || props.enableDeepResearch)) {
     items.push({
       id: 'separator',
       type: 'separator',

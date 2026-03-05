@@ -5,7 +5,7 @@ import { Application, RunCommandParams } from 'types/automation';
 import { Configuration } from 'types/config';
 import { Command, History } from 'types/index';
 import { McpInstallStatus, McpServerWithTools, McpTool } from 'types/mcp';
-import { SkillFileReadResult, SkillInstallResult, SkillLoadResult, SkillSaveResult, SkillSummary, SkillUninstallResult } from 'types/skills';
+import { Skill, SkillFileReadResult, SkillInstallResult, SkillSaveResult, SkillHeader, SkillUninstallResult } from 'types/skills';
 
 import { app, clipboard, ipcMain, nativeImage, nativeTheme, shell } from 'electron';
 import Store from 'electron-store';
@@ -1012,12 +1012,12 @@ export const installIpc = (
   })
 
   ipcMain.on(IPC.SKILLS.LIST, (event, workspaceId: string) => {
-    const list: SkillSummary[] = skills.listSkills(app, workspaceId)
+    const list: SkillHeader[] = skills.listSkills(app, workspaceId)
     event.returnValue = list
   })
 
   ipcMain.on(IPC.SKILLS.LOAD, (event, payload: { workspaceId: string, skillId: string }) => {
-    const loaded: SkillLoadResult | null = skills.loadSkill(app, payload.workspaceId, payload.skillId)
+    const loaded: Skill | null = skills.loadSkill(app, payload.workspaceId, payload.skillId)
     event.returnValue = loaded
   })
 
