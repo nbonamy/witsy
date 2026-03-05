@@ -24,6 +24,24 @@ test('skills plugin metadata', () => {
   expect(plugin.getDescription()).toBe('plugins.skills.description')
 })
 
+test('skills plugin completed description includes skill name or file path', () => {
+  const plugin = new SkillsPlugin({ enabled: true, locations: [] }, workspaceId)
+
+  const skillLoaded = plugin.getCompletedDescription(
+    kSkillsLoadToolName,
+    { skillId: 'skill_123' },
+    { name: 'My skill' }
+  )
+  expect(skillLoaded).toContain('plugins.skills.completedWithName')
+
+  const fileLoaded = plugin.getCompletedDescription(
+    kSkillsGetFileToolName,
+    { skillId: 'skill_123', path: 'scripts/helper.py' },
+    { success: true }
+  )
+  expect(fileLoaded).toContain('plugins.skills.completedFileWithPath')
+})
+
 test('skills plugin getTools', async () => {
   const plugin = new SkillsPlugin({ enabled: true, locations: [] }, workspaceId)
   const tools = await plugin.getTools()
