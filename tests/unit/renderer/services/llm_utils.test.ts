@@ -210,3 +210,17 @@ test('queryDocRepos uses fallback name for unknown docrepo', async () => {
   // Should use fallback name in params
   expect(statusCalls[0].call.params.docRepoName).toBe('Knowledge Base')
 })
+
+test('getSystemInstructions injects skills catalog when skills plugin is enabled', () => {
+  config.plugins.skills.enabled = true
+  window.api.skills.list = vi.fn(() => [
+    { id: 'skill_111111111111', name: 'Alpha', description: 'First skill', rootPath: '/tmp/alpha', skillMdPath: '/tmp/alpha/SKILL.md' },
+    { id: 'skill_222222222222', name: 'Beta', description: 'Second skill', rootPath: '/tmp/beta', skillMdPath: '/tmp/beta/SKILL.md' },
+  ])
+
+  const llmUtils = new LlmUtils(config)
+  const instructions = llmUtils.getSystemInstructions('Base instructions')
+
+  expect(window.api.skills.list).toHaveBeenCalledWith(config.workspaceId)
+  expect(instructions).toContain('instructions.capabilities.skills')
+})
