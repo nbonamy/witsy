@@ -221,13 +221,36 @@ Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Statu
   }
   
   static parseJson(content: string): any {
-    let idx = content.indexOf('{')
-    if (idx === -1) throw new Error('No JSON object found in content')
-    content = content.slice(idx)
-    idx = content.lastIndexOf('}')
-    if (idx === -1) throw new Error('No JSON object found in content')
-    content = content.slice(0, idx + 1).trim()
-    return JSON.parse(content)
+    // If it's already an object
+    if (typeof content === 'object') {
+      return content
+    }
+
+    // Try parsing as-is first
+    try {
+      return JSON.parse(content)
+    } catch { /* empty */ }
+
+    // Extract JSON from verbose response (backward search from last })
+    const endPos = content.lastIndexOf('}')
+    if (endPos === -1) {
+      throw new Error(`No JSON object found in content: ${content}`)
+    }
+
+    // Search backwards for matching {
+    let startPos = content.lastIndexOf('{', endPos - 1)
+    while (startPos !== -1) {
+      const jsonStr = content.substring(startPos, endPos + 1)
+      try {
+        const parsed = JSON.parse(jsonStr)
+        return parsed  // Success!
+      } catch {
+        // Not valid JSON, try next { before this one
+        startPos = content.lastIndexOf('{', startPos - 1)
+      }
+    }
+
+    throw new Error(`No valid JSON object found in content: ${content}`)
   }
 
   getSystemInstructions(instructions?: string, modifiers?: InstructionsModifiers): string {
