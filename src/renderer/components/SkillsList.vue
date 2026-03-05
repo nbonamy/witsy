@@ -51,12 +51,13 @@
               <span>{{ t('settings.plugins.skills.skillsCount', { count: skills.length }) }}</span>
             </div>
             <div class="actions">
-              <button type="button" class="secondary" name="new" @click="emit('create')"><PlusIcon />{{ t('common.new') }}</button>
               <button type="button" class="primary" name="install" @click="installFromUrl" :disabled="installing">
                 <SpinningIcon v-if="installing" :spinning="true" />
                 <PlusIcon v-else />
                 {{ installing ? t('settings.plugins.skills.installing') : t('settings.plugins.skills.installButton') }}
               </button>
+              <button type="button" class="secondary" name="browse" @click="onBrowse"><GlobeIcon />{{ t('common.browse') }}</button>
+              <button type="button" class="secondary" name="new" @click="emit('create')"><PlusIcon />{{ t('common.new') }}</button>
             </div>
           </div>
 
@@ -100,11 +101,6 @@
 
         <div class="empty-state" v-else>
           <p>{{ t('settings.plugins.skills.empty') }}</p>
-          <button type="button" class="primary" @click="installFromUrl" :disabled="installing">
-            <SpinningIcon v-if="installing" :spinning="true" />
-            <PlusIcon v-else />
-            {{ installing ? t('settings.plugins.skills.installing') : t('settings.plugins.skills.installButton') }}
-          </button>
         </div>
       </div>
       </template>
@@ -119,8 +115,8 @@ import SpinningIcon from '@components/SpinningIcon.vue'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import { EyeIcon, FolderPlusIcon, PencilIcon, PlusIcon, Trash2Icon, ZapIcon } from 'lucide-vue-next'
-import { Skill, SkillHeader } from 'types/skills'
+import { EyeIcon, FolderPlusIcon, GlobeIcon, PencilIcon, PlusIcon, Trash2Icon, ZapIcon } from 'lucide-vue-next'
+import { SkillHeader } from 'types/skills'
 import { computed, ref } from 'vue'
 
 type LocationScope = 'claude' | 'global' | 'workspace' | 'custom'
@@ -148,6 +144,7 @@ const installing = ref(false)
 const emit = defineEmits<{
   'create': []
   'edit': [SkillDraft]
+  'browse': []
 }>()
 
 const inferScope = (location: string): Exclude<LocationScope, 'custom'> => {
@@ -361,6 +358,10 @@ const viewSkill = async (skill: SkillHeader) => {
     rootPath: skill.rootPath,
     readonly: true,
   })
+}
+
+const onBrowse = () => {
+  window.open('https://skills.sh', '_blank')
 }
 
 defineExpose({ load })
