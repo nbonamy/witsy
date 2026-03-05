@@ -120,7 +120,7 @@ import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { EyeIcon, FolderPlusIcon, PencilIcon, PlusIcon, Trash2Icon, ZapIcon } from 'lucide-vue-next'
-import { SkillSummary } from 'types/skills'
+import { Skill, SkillHeader } from 'types/skills'
 import { computed, ref } from 'vue'
 
 type LocationScope = 'claude' | 'global' | 'workspace' | 'custom'
@@ -140,7 +140,7 @@ type SkillDraft = {
 }
 
 const enabled = ref(false)
-const skills = ref<SkillSummary[]>([])
+const skills = ref<SkillHeader[]>([])
 const showLocationManager = ref(false)
 const defaultLocations = ref<string[]>([])
 const locations = ref<string[]>([])
@@ -246,9 +246,9 @@ const resolveGlobalSkillLocation = (): string => {
   return ''
 }
 
-const canEditSkill = (skill: SkillSummary): boolean => isSystemSkillLocation(skill)
+const canEditSkill = (skill: SkillHeader): boolean => isSystemSkillLocation(skill)
 
-const isSystemSkillLocation = (skill: SkillSummary): boolean => {
+const isSystemSkillLocation = (skill: SkillHeader): boolean => {
   const normalizedRoot = skill.rootPath.replace(/[\\/]+$/, '')
   return defaultLocations.value.some((location) => {
     const normalizedSystem = location.replace(/[\\/]+$/, '')
@@ -312,7 +312,7 @@ const installFromUrl = async () => {
   }
 }
 
-const uninstallSkill = async (skill: SkillSummary) => {
+const uninstallSkill = async (skill: SkillHeader) => {
   const isSystemSkill = isSystemSkillLocation(skill)
   const rc = await Dialog.show({
     target: document.querySelector('.main'),
@@ -339,7 +339,7 @@ const uninstallSkill = async (skill: SkillSummary) => {
   refreshSkills()
 }
 
-const editSkill = async (skill: SkillSummary) => {
+const editSkill = async (skill: SkillHeader) => {
   const loaded = window.api.skills.load(store.config.workspaceId, skill.id)
   emit('edit', {
     id: skill.id,
@@ -351,7 +351,7 @@ const editSkill = async (skill: SkillSummary) => {
   })
 }
 
-const viewSkill = async (skill: SkillSummary) => {
+const viewSkill = async (skill: SkillHeader) => {
   const loaded = window.api.skills.load(store.config.workspaceId, skill.id)
   emit('edit', {
     id: skill.id,

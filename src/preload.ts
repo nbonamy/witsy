@@ -14,7 +14,7 @@ import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams, FileS
 import { ListDirectoryResponse } from './types/filesystem';
 import { McpServer, McpStatus, McpTool } from './types/mcp';
 import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './types/rag';
-import { SkillFileReadResult, SkillInstallResult, SkillLoadResult, SkillSaveResult, SkillSummary, SkillUninstallResult } from './types/skills';
+import { SkillFileReadResult, SkillInstallResult, SkillSaveResult, Skill, SkillUninstallResult } from './types/skills';
 import { Workspace, WorkspaceHeader } from './types/workspace';
 import { YoutubeVideoInfo } from './main/youtube';
 
@@ -292,8 +292,8 @@ contextBridge.exposeInMainWorld(
     },
     skills: {
       defaultLocations: (workspaceId: string): string[] => { return ipcRenderer.sendSync(IPC.SKILLS.DEFAULT_LOCATIONS, workspaceId) },
-      list: (workspaceId: string): SkillSummary[] => { return ipcRenderer.sendSync(IPC.SKILLS.LIST, workspaceId) },
-      load: (workspaceId: string, skillId: string): SkillLoadResult | null => { return ipcRenderer.sendSync(IPC.SKILLS.LOAD, { workspaceId, skillId }) },
+      list: (workspaceId: string): Skill[] => { return ipcRenderer.sendSync(IPC.SKILLS.LIST, workspaceId) },
+      load: (workspaceId: string, skillId: string): Skill | null => { return ipcRenderer.sendSync(IPC.SKILLS.LOAD, { workspaceId, skillId }) },
       getFile: (workspaceId: string, skillId: string, relativePath: string, startLine?: number, endLine?: number): SkillFileReadResult => {
         return ipcRenderer.sendSync(IPC.SKILLS.GET_FILE, { workspaceId, skillId, relativePath, startLine, endLine })
       },

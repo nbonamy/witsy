@@ -132,10 +132,8 @@
     padding: 1rem 4rem;
 
     &.sliding-pane {
-     &.editor {
-        .form {
-          max-width: var(--settings-max-width);
-        }
+      &.editor {
+        max-width: calc(var(--settings-max-width) * 1.15);
       }
     }
 

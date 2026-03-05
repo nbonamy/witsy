@@ -1,4 +1,4 @@
-export type SkillSummary = {
+export type SkillHeader = {
   id: string
   name: string
   description: string
@@ -12,7 +12,7 @@ export type SkillFileManifestItem = {
   isText: boolean
 }
 
-export type SkillLoadResult = SkillSummary & {
+export type Skill = SkillHeader & {
   instructions: string
   available_files: SkillFileManifestItem[]
 }

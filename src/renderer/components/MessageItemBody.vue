@@ -3,8 +3,13 @@
   <template v-if="message.type == 'text'">
 
     <!-- expert -->
-      <div v-if="message.expert" class="expert text variable-font-size">
+    <div v-if="message.expert" class="expert text variable-font-size">
       <p><BrainIcon /> {{ message.expert.name }}</p>
+    </div>
+
+    <!-- skill -->
+    <div v-if="message.skill" class="skill text variable-font-size">
+      <p><ZapIcon /> {{ message.skill.name }}</p>
     </div>
 
     <template v-if="reasoningBlocks.length">
@@ -36,7 +41,7 @@ import { SearchState } from '@screens/Chat.vue'
 import { t } from '@services/i18n'
 import { Block, computeBlocks, computeBlocksIncremental } from '@services/message_block_parser'
 import { store } from '@services/store'
-import { BrainIcon, ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
+import { BrainIcon, ChevronDownIcon, ChevronRightIcon, ZapIcon } from 'lucide-vue-next'
 import { ChatToolMode } from 'types/config'
 import { computed, inject, PropType, ref, watch } from 'vue'
 import MessageItemBodyBlock from './MessageItemBodyBlock.vue'
@@ -173,3 +178,15 @@ const onMediaLoaded = (message: Message) => {
 
 </script>
 
+<style scoped>
+
+.expert, .skill {
+  p {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+
+</style>

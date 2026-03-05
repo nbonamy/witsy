@@ -1,11 +1,11 @@
 import { App } from 'electron'
+import extractZip from 'extract-zip'
 import crypto from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { Configuration } from 'types/config'
-import { SkillFileManifestItem, SkillFileReadResult, SkillInstallResult, SkillLoadResult, SkillSaveResult, SkillSummary, SkillUninstallResult } from 'types/skills'
-import extractZip from 'extract-zip'
+import { Skill, SkillFileManifestItem, SkillFileReadResult, SkillInstallResult, SkillSaveResult, SkillHeader, SkillUninstallResult } from 'types/skills'
 import { loadSettings } from './config'
 
 const kMaxSkillFileCount = 300
@@ -162,7 +162,7 @@ const findSkillFolders = (skillsRoot: string): string[] => {
   return folders
 }
 
-const readSkillSummary = (skillRoot: string): SkillSummary | null => {
+const readSkillSummary = (skillRoot: string): SkillHeader | null => {
   const skillMdPath = path.join(skillRoot, 'SKILL.md')
   if (!fs.existsSync(skillMdPath)) {
     return null
@@ -247,7 +247,7 @@ const collectSkillFiles = (skillRoot: string): SkillFileManifestItem[] => {
   return files.sort((a, b) => a.path.localeCompare(b.path))
 }
 
-const findSkillById = (app: App, workspaceId: string, skillId: string): SkillSummary | null => {
+const findSkillById = (app: App, workspaceId: string, skillId: string): SkillHeader | null => {
   const skills = listSkills(app, workspaceId)
   return skills.find(skill => skill.id === skillId) || null
 }
@@ -263,10 +263,10 @@ export const defaultSkillLocations = (app: App, workspaceId: string): string[] =
   ]
 }
 
-export const listSkills = (app: App, workspaceId: string): SkillSummary[] => {
+export const listSkills = (app: App, workspaceId: string): SkillHeader[] => {
   const config = loadSettings(app)
   const configuredLocations = resolveSkillLocations(app, workspaceId, config)
-  const map = new Map<string, SkillSummary>()
+  const map = new Map<string, SkillHeader>()
 
   for (const location of configuredLocations) {
     const candidates = candidateRootsForLocation(location)
@@ -284,7 +284,7 @@ export const listSkills = (app: App, workspaceId: string): SkillSummary[] => {
   return [...map.values()].sort((a, b) => a.name.localeCompare(b.name))
 }
 
-export const loadSkill = (app: App, workspaceId: string, skillId: string): SkillLoadResult | null => {
+export const loadSkill = (app: App, workspaceId: string, skillId: string): Skill | null => {
   const skill = findSkillById(app, workspaceId, skillId)
   if (!skill) return null
 

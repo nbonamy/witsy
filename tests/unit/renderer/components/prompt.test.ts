@@ -212,6 +212,13 @@ test('Not send on enter when sendKey is shiftEner', async () => {
 test('Sends with right parameters', async () => {
   wrapper.vm.attachments = [ new Attachment('image64', 'image/png', 'file://image.png') ]
   wrapper.vm.expert = store.experts[2]
+  wrapper.vm.skill = {
+    id: 'skill-electron',
+    name: 'Electron',
+    description: 'Electron skill',
+    rootPath: '/skills/electron',
+    skillMdPath: '/skills/electron/SKILL.md',
+  }
   wrapper.vm.docrepos = ['docrepo']
   wrapper.vm.deepResearchActive = true
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
@@ -224,6 +231,7 @@ test('Sends with right parameters', async () => {
       expect.objectContaining({ content: 'image64', mimeType: 'image/png', url: 'file://image.png' })
     ]),
     expert: expect.objectContaining({ id: 'uuid3', name: 'actor3', prompt: 'prompt3' }),
+    skill: expect.objectContaining({ id: 'skill-electron', name: 'Electron' }),
     docrepos: ['docrepo'],
     execMode: 'deepresearch',
   }])
@@ -986,6 +994,16 @@ test('handleManageExperts opens experts settings', async () => {
   expect(wrapper.vm.showPromptMenu).toBe(false)
 })
 
+test('handleManageSkills opens skills settings', async () => {
+  await wrapper.find('.prompt-menu').trigger('click')
+  await wrapper.vm.$nextTick()
+
+  wrapper.vm.handleManageSkills()
+
+  expect(window.api.settings.open).toHaveBeenCalledWith({ initialTab: 'skills' })
+  expect(wrapper.vm.showPromptMenu).toBe(false)
+})
+
 test('onNoEngineAvailable shows dialog and opens settings on confirm', async () => {
   // Mock Dialog.show to return confirmed
   vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false, value: undefined })
@@ -1577,6 +1595,24 @@ test('handleExpertClick with none action disables expert', async () => {
   await wrapper.vm.$nextTick()
 
   expect(wrapper.vm.expert).toBeNull()
+})
+
+test('handleSkillClick selects and clears skill', async () => {
+  vi.mocked(window.api.skills.load).mockReturnValue({
+    id: 'skill-electron',
+    name: 'Electron',
+    description: 'Electron skill',
+    rootPath: '/skills/electron',
+    skillMdPath: '/skills/electron/SKILL.md',
+    instructions: '',
+    available_files: []
+  })
+
+  wrapper.vm.handleSkillClick('skill-electron')
+  expect(wrapper.vm.skill).toMatchObject({ id: 'skill-electron', name: 'Electron' })
+
+  wrapper.vm.handleSkillClick('clear')
+  expect(wrapper.vm.skill).toBeNull()
 })
 
 test('onKeyDown Backspace clears expert when prompt is empty', async () => {

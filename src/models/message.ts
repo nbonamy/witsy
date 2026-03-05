@@ -2,6 +2,7 @@
 import { LlmChunkContent, LlmChunkTool, LlmRole, LlmUsage, Message as MessageBase } from 'multi-llm-ts'
 import { Message as IMessage, MessageExecutionMode, MessageType, ToolCall } from 'types'
 import { A2APromptOpts } from 'types/agents'
+import { Skill, SkillFileManifestItem } from 'types/skills'
 import Attachment from './attachment'
 import Expert from './expert'
 
@@ -15,6 +16,7 @@ export default class Message extends MessageBase implements IMessage {
   engine: string
   model: string
   expert?: Expert
+  skill?: Skill
   agentId?: string
   agentRunId?: string
   a2aContext?: A2APromptOpts
@@ -63,6 +65,7 @@ export default class Message extends MessageBase implements IMessage {
     message.reasoningDetails = obj.reasoningDetails || undefined
     message.transient = false
     message.expert = obj.expert ? Expert.fromJson(obj.expert) : undefined
+    message.skill = obj.skill || undefined
     message.agentId = obj.agentId || undefined
     message.agentRunId = obj.agentRunId || undefined
     message.a2aContext = obj.a2aContext || undefined
@@ -116,12 +119,18 @@ export default class Message extends MessageBase implements IMessage {
     if (this.uiOnly) {
       return null
     } else {
-      const content = this.content.replaceAll(/<tool id="([^"]+)"><\/tool>/g, '')
+      let content = this.content.replaceAll(/<tool id="([^"]+)"><\/tool>/g, '')
+      if (this.skill?.id && this.skill?.name) {
+        const additionalFiles = this.skill.available_files?.map((file: SkillFileManifestItem) => `- ${file.path}`).join('\n') || '- none'
+        const instructions = this.skill.instructions?.trim() || '(not available)'
+        content = `The following skill has been activated. Do not use skills_load_skill to load it.\n\nname: ${this.skill.name}\nid: ${this.skill.id}\ninstructions:\n${instructions}\nadditional_files:\n${additionalFiles}\n\nUser request:\n${content}`
+      }
       if (this.expert?.prompt) {
         if (this.expert.prompt.includes('$ARGUMENTS')) {
-          return this.expert.prompt.replaceAll('$ARGUMENTS', content)
+          content = this.expert.prompt.replaceAll('$ARGUMENTS', content)
+        } else {
+          content = `${this.expert.prompt}\n${content}`
         }
-        return `${this.expert.prompt}\n${content}`
       }
       return content
     }
@@ -150,6 +159,14 @@ export default class Message extends MessageBase implements IMessage {
       return
     }
     this.expert = JSON.parse(JSON.stringify(expert))
+  }
+
+  setSkill(skill: Skill|null): void {
+    if (!skill) {
+      this.skill = undefined
+      return
+    }
+    this.skill = JSON.parse(JSON.stringify(skill))
   }
 
   setText(text: string): void {

@@ -1,11 +1,12 @@
+import { Expert } from '@/types'
+import { Skill } from '@/types/skills'
+import Message from '@models/message'
 import { LlmChunk, LlmChunkTool, LlmCompletionOpts, LlmEngine, LlmResponse, Model } from 'multi-llm-ts'
 import { Configuration, EngineConfig } from 'types/config'
 import { DocRepoQueryResponseItem } from 'types/rag'
-import Message from '@models/message'
 import { i18nInstructions, t } from './i18n'
-import LlmFactory from './llms/llm'
 import LlmUtils from './llm_utils'
-import { Expert } from '@/types'
+import LlmFactory from './llms/llm'
 
 export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title' | 'generation_done'
 
@@ -17,6 +18,7 @@ export interface GenerationOpts extends LlmCompletionOpts {
   docrepos?: string[]
   sources?: boolean
   expert?: Expert
+  skill?: Skill
   noToolsInContent?: boolean
 }
 
