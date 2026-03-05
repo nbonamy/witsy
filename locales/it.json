@@ -151,6 +151,7 @@
     "shortcut": "Scorciatoia",
     "showLess": "Mostra meno",
     "showMore": "Mostra di più",
+    "skills": "Skills",
     "sortBy": "Ordina per",
     "spellcheck": {
       "add": "Aggiungi al dizionario"
@@ -1946,6 +1947,7 @@
       "codeExecutionProxy": "Per completare le attività, puoi usare gli strumenti code_exec_get_tools_info e code_exec_call_tool. code_exec_get_tools_info fornisce una lista di altri strumenti che puoi usare e puoi utilizzarlo per ottenere le istruzioni di chiamata per gli strumenti che decidi di usare.\n\n**ISTRUZIONI:**\n- USA SEMPRE `code_exec_call_tool` per usare gli strumenti. Gli strumenti non sono accessibili se non tramite `code_exec_call_tool`\n- PRIMA di chiamare uno strumento: usa `code_exec_get_tools_info` per capire i parametri necessari per chiamare lo strumento.\n\n**Parametri per chiamare `code_exec_call_tool`:**\n- `tool_name`: il nome esatto dello strumento (es. \"search_internet\", \"filesystem_read\")\n- `parameters`: un oggetto con coppie chiave-valore per i parametri dello strumento\n\n**Esempio:**\n```json\n{\n  \"tool_name\": \"search_internet\",\n  \"parameters\": {\n    \"query\": \"ultime notizie sull'IA\"\n  }\n}\n```",
       "mermaid": "Se ti viene chiesto di generare un diagramma Mermaid, il suo codice sarà reso come diagramma all'utente.",
       "noMarkdown": "Non utilizzare la formattazione markdown nelle tue risposte. Usa solo testo semplice. Non utilizzare **grassetto**, *corsivo*, `codice`, blocchi di codice ``` ``` o qualsiasi altra sintassi markdown. Se usi tabelle, usa solo tabelle in testo semplice con spaziatura adeguata per allineare le colonne.",
+      "skills": "Hai accesso a skills riutilizzabili. Preferisci usarle ogni volta che la richiesta dell'utente corrisponde a un nome, dominio o descrizione di una skill.\n\nProtocollo di utilizzo delle skill:\n1. Se una skill sembra pertinente, richiama prima skills_load_skill (non rispondere basandoti soltanto sulla voce del catalogo).\n2. Leggi attentamente le istruzioni in SKILL.md.\n3. Se SKILL.md fa riferimento a file (o se il manifest suggerisce file rilevanti), richiama skills_get_skill_file per recuperarli prima di finalizzare la risposta.\n4. Basa la tua risposta sul contenuto della skill caricata e cita le assunzioni quando il contesto della skill è incompleto.\n\nSkills disponibili:\n{skills}\n\nNota: le skills sono in sola lettura in questo ambiente e l'esecuzione di codice non è disponibile.",
       "toolRetry": "Quando si chiamano gli strumenti, se si riceve un errore di input, analizzare l'errore e cercare di correggerlo, quindi riprovare a chiamare lo strumento."
     },
     "chat": {
@@ -2469,6 +2471,15 @@
       "error": "Errore durante la ricerca su internet",
       "running": "Ricerca su internet…"
     },
+    "skills": {
+      "completed": "Skill caricata con successo",
+      "completedFile": "File della skill caricato con successo",
+      "error": "Errore durante l'accesso alle skill: {error}",
+      "preparing": "Preparazione dell'accesso alle skill…",
+      "preparingFile": "Preparazione accesso file della skill…",
+      "running": "Caricamento della skill…",
+      "runningFile": "Caricamento file della skill…"
+    },
     "video": {
       "completed": "Video generato con successo",
       "error": "Errore durante la generazione del video",
@@ -2526,6 +2537,10 @@
       },
       "models": {
         "reload": "Ricarica modelli"
+      },
+      "skills": {
+        "manage": "Gestisci Skills",
+        "title": "@:{'common.skills'}"
       },
       "tools": {
         "plugins": "Plugin di @:{'common.appName'}",
@@ -2841,6 +2856,11 @@
       "confirmDeleteAll": "Sei sicuro di voler eliminare tutti gli esperti?",
       "copy": "Copia",
       "deleteAll": "Elimina tutto",
+      "deprecation": {
+        "body": "Le Skills sono il nuovo modo, più potente, per guidare la tua IA. Sono riutilizzabili, facili da condividere e progettate per flussi di lavoro reali. Installa skill create dalla community o crea le tue per standardizzare il modo in cui i tuoi assistenti pensano e agiscono.",
+        "openSkills": "Apri Skills",
+        "title": "Prova invece le Skills"
+      },
       "descriptionPlaceholder": "Breve descrizione di ciò che fa questo esperto",
       "disableAll": "Disabilita tutto",
       "empty": "Nessun esperto definito",
@@ -3033,6 +3053,28 @@
         "truncateTo": "Tronca a",
         "truncationWarning": "ATTENZIONE: La lunghezza del troncamento influirà sul numero di token di input e quindi sui costi delle richieste"
       },
+      "skills": {
+        "addLocation": "Aggiungi posizione",
+        "confirmUninstallSharedText": "Questa skill è condivisa con altre applicazioni. Eliminando \"{skill}\" la rimuoverai anche dalle altre app (Claude, Codex, Antigravity, ecc.).",
+        "confirmUninstallTitle": "Elimina \"{skill}\"",
+        "description": "Questo plugin consente ai modelli di scoprire e caricare skills in stile Claude da cartelle configurate. Le skills sono in sola lettura in questa versione (nessuna esecuzione di codice).",
+        "empty": "Nessuna skill trovata nelle posizioni configurate.",
+        "installButton": "Installa",
+        "installDialogTitle": "Installa nuova skill",
+        "installFailed": "Installazione della skill non riuscita.",
+        "installing": "Installazione in corso…",
+        "installInvalidUrl": "Inserisci un URL GitHub o un comando di installazione di skills.sh.",
+        "installNote": "Incolla un URL GitHub o un comando di installazione di skills.sh come quello presente nella parte superiore della pagina di una skill su skills.sh.",
+        "installPathUnavailable": "La cartella globale delle skills non è disponibile.",
+        "installSuccess": "Installata {count} abilità | Installate {count} abilità",
+        "manageLocations": "Gestisci posizioni",
+        "refresh": "Aggiorna",
+        "removeEcosystemWarning": "Questa posizione fa parte dell'ecosistema open agent skills (skills.sh) ed è condivisa con altri agenti di programmazione. Rimuoverla potrebbe impedire che le skills installate tramite la CLI vengano scoperte. Continuare?",
+        "saveFailed": "Impossibile salvare le modifiche alla skill.",
+        "skillsCount": "{count} abilità | {count} abilità",
+        "title": "Skills",
+        "uninstallFailed": "Disinstallazione della skill non riuscita."
+      },
       "vega": {
         "description": "Questo plugin consente ai motori LLM di creare immagini di grafici basate su dati utilizzando la libreria di visualizzazione Vega.",
         "title": "Vega"
@@ -3082,6 +3124,7 @@
       "plugins": "Plugin",
       "shortcuts": "Scorciatoie",
       "sidebar": "Barra laterale",
+      "skills": "Skills",
       "voice": "@:{'common.voice'}"
     },
     "voice": {

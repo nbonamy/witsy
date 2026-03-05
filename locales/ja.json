@@ -170,6 +170,7 @@
     "shortcut": "ショートカット",
     "showLess": "折りたたむ",
     "showMore": "もっと見る",
+    "skills": "スキル",
     "sortBy": "並べ替え",
     "spellcheck": {
       "add": "辞書に追加"
@@ -1965,6 +1966,7 @@
       "codeExecutionProxy": "タスクを完了するには、code_exec_get_tools_info と code_exec_call_tool ツールを使用できます。code_exec_get_tools_info は使用可能な他のツールのリストを提供し、使用するツールの呼び出し方法を取得できます。\n\n**指示:**\n- ツールを使うときは必ず `code_exec_call_tool` を使用してください。ツールは `code_exec_call_tool` を通じてのみアクセス可能です。\n- ツールを呼び出す前に、`code_exec_get_tools_info` を使って呼び出しに必要なパラメーターを理解してください。\n\n**code_exec_call_tool 呼び出しのパラメーター:**\n- `tool_name`: ツールの正確な名前（例: \"search_internet\", \"filesystem_read\"）\n- `parameters`: ツールのパラメーターのキーと値のペアを持つオブジェクト\n\n**例:**\n```json\n{\n  \"tool_name\": \"search_internet\",\n  \"parameters\": {\n    \"query\": \"最新のAIニュース\"\n  }\n}\n```",
       "mermaid": "Mermaidチャートの出力を求められた場合、そのコードはユーザーに図として表示されます。",
       "noMarkdown": "回答にマークダウン形式を使わないでください。プレーンテキストのみを使用してください。**太字**、*斜体*、`コード`、```コードブロック```やその他のマークダウン構文は使用しないでください。表を使う場合は、カラムが揃うように適切な間隔を空けたプレーンテキストの表のみを使用してください。",
+      "skills": "再利用可能なスキルにアクセスできます。ユーザーの要求がスキル名、ドメイン、または説明に一致する場合は、可能な限りそれらを使用してください。\n\nスキル利用プロトコル:\n1. いずれかのスキルが関連ありそうな場合は、まず skills_load_skill を呼び出してください（カタログ項目だけで回答しないでください）。\n2. SKILL.md の指示を注意深く読みます。\n3. SKILL.md がファイルを参照している場合（またはマニフェストが関連ファイルを示唆している場合）は、最終回答を出す前に skills_get_skill_file を呼び出してそれらを取得してください。\n4. ロードしたスキルの内容に基づいて回答し、スキルのコンテキストが不完全な場合は仮定を明記してください。\n\n利用可能なスキル:\n{skills}\n\n注意: この環境ではスキルは読み取り専用で、コード実行は利用できません。",
       "toolRetry": "ツールを呼び出す際に入力エラーが発生した場合は、エラーを分析して修正を試み、その後ツールの呼び出しを再試行してください。"
     },
     "chat": {
@@ -2490,6 +2492,15 @@
       "error": "インターネットの検索中にエラーが発生しました",
       "running": "インターネットを検索中…"
     },
+    "skills": {
+      "completed": "スキルが正常に読み込まれました",
+      "completedFile": "スキルファイルが正常に読み込まれました",
+      "error": "スキルへのアクセス中にエラーが発生しました: {error}",
+      "preparing": "スキルアクセスを準備しています…",
+      "preparingFile": "スキルファイルへのアクセスを準備しています…",
+      "running": "スキルを読み込み中…",
+      "runningFile": "スキルファイルを読み込み中…"
+    },
     "video": {
       "completed": "ビデオが正常に生成されました",
       "description": "プロンプトに基づいてビデオを生成します。\"file://\" スキームで始まるビデオのURLを返します。これは問題ありません。明示的に要求されない限り、一度に1つのビデオのみを作成します。常に最終応答で \"![title](url)\" マークダウン構文を使用してビデオを可視的に埋め込みます。ビデオに短いタイトルを付けてください。",
@@ -2548,6 +2559,10 @@
       },
       "models": {
         "reload": "モデルを再読み込み"
+      },
+      "skills": {
+        "manage": "スキルを管理",
+        "title": "@:{'common.skills'}"
       },
       "tools": {
         "plugins": "@:{'common.appName'} プラグイン",
@@ -2863,6 +2878,11 @@
       "confirmDeleteAll": "本当にすべてのエキスパートを削除しますか？",
       "copy": "コピー",
       "deleteAll": "すべて削除する",
+      "deprecation": {
+        "body": "Skills は AI を導く新しく、より強力な方法です。再利用可能で共有が簡単、実際のワークフロー向けに作られています。コミュニティ作成のスキルをインストールするか、自分で作成してアシスタントの思考や動作を標準化してください。",
+        "openSkills": "Skills を開く",
+        "title": "代わりに Skills を試す"
+      },
       "descriptionPlaceholder": "このエキスパートの簡単な説明",
       "disableAll": "すべて無効にする",
       "empty": "まだエキスパートが定義されていません",
@@ -3061,6 +3081,28 @@
         "truncateTo": "切り捨てて",
         "truncationWarning": "警告：切り捨て長は入力トークン数、ひいてはリクエストコストに影響します"
       },
+      "skills": {
+        "addLocation": "場所を追加",
+        "confirmUninstallSharedText": "このスキルは他のアプリケーションと共有されています。「{skill}」を削除すると、他のアプリ（Claude、Codex、Antigravity など）からも削除されます。",
+        "confirmUninstallTitle": "「{skill}」を削除",
+        "description": "このプラグインにより、モデルは設定されたフォルダから Claude 形式のスキルを検出して読み込むことができます。このバージョンではスキルは読み取り専用（コード実行は不可）です。",
+        "empty": "設定された場所にスキルが見つかりません。",
+        "installButton": "インストール",
+        "installDialogTitle": "新しいスキルをインストール",
+        "installFailed": "スキルのインストールに失敗しました。",
+        "installing": "インストール中…",
+        "installInvalidUrl": "GitHub の URL または skills.sh のインストールコマンドを入力してください。",
+        "installNote": "GitHub の URL または skills.sh のインストールコマンドを貼り付けてください（skills.sh のスキルページ上部に記載されています）。",
+        "installPathUnavailable": "グローバルスキルフォルダは利用できません。",
+        "installSuccess": "{count} 件のスキルをインストールしました | {count} 件のスキルをインストールしました",
+        "manageLocations": "場所を管理",
+        "refresh": "更新",
+        "removeEcosystemWarning": "この場所はオープンエージェントスキルのエコシステム（skills.sh）の一部で、他のコーディングエージェントと共有されています。これを削除すると、CLI 経由でインストールされたスキルが検出されなくなる可能性があります。続行しますか？",
+        "saveFailed": "スキルの変更を保存できませんでした。",
+        "skillsCount": "{count} 件のスキル | {count} 件のスキル",
+        "title": "スキル",
+        "uninstallFailed": "スキルのアンインストールに失敗しました。"
+      },
       "vega": {
         "description": "このプラグインを使用すると、LLMエンジンはVega視覚化ライブラリを使用してデータに基づいてチャート画像を生成できます。",
         "title": "Vega"
@@ -3110,6 +3152,7 @@
       "plugins": "プラグイン",
       "shortcuts": "ショートカット",
       "sidebar": "サイドバー",
+      "skills": "スキル",
       "voice": "@:{'common.voice'}"
     },
     "voice": {
