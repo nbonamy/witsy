@@ -147,8 +147,8 @@
     width: 100%;
   }
 
-  table th:last-child,
-  table td:last-child {
+  table th:last-child:not(:only-child),
+  table td:last-child:not(:only-child) {
     text-align: right;
     justify-content: flex-end;
   }

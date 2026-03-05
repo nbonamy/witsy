@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.6.0] - WIP
+
+### Added
+- Skill support with easy install from GitHub and skills.sh
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
 ## [3.5.2] - 2026-03-04
 
 ### Added

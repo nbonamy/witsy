@@ -18,6 +18,7 @@ export type Configuration = {
   studio: DesignStudioConfig
   shortcuts: ShortcutsConfig
   scratchpad: ScratchpadConfig
+  skills: SkillsConfig
   engines: Record<string, EngineConfig|CustomEngineConfig>
   plugins: Record<string, PluginConfig>
   stt: STTConfig
@@ -217,6 +218,10 @@ export type ScratchpadConfig = {
   model: string
   fontFamily: string
   fontSize: string
+}
+
+export type SkillsConfig = {
+  locations: string[]
 }
 
 export type STTVocabulary = {

@@ -8,6 +8,7 @@ import { ListDirectoryResponse } from './filesystem'
 import { ToolSelection } from './llm'
 import { McpInstallStatus, McpServer, McpServerWithTools, McpStatus, McpTool } from './mcp'
 import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './rag'
+import { SkillFileReadResult, SkillInstallResult, SkillLoadResult, SkillSaveResult, SkillSummary, SkillUninstallResult } from './skills'
 import { Workspace, WorkspaceHeader } from './workspace'
 import { A2APromptOpts, Agent, AgentRun, RunningAgentRuns } from './agents'
 import { YoutubeVideoInfo } from '../main/youtube'
@@ -584,6 +585,16 @@ declare global {
         query(query: string, num: number, signalId?: string): Promise<LocalSearchResponse>
         cancel(signalId: string): void
         test(): Promise<boolean>
+      }
+      skills: {
+        defaultLocations(workspaceId: string): string[]
+        list(workspaceId: string): SkillSummary[]
+        load(workspaceId: string, skillId: string): SkillLoadResult | null
+        getFile(workspaceId: string, skillId: string, relativePath: string, startLine?: number, endLine?: number): SkillFileReadResult
+        installFromUrl(url: string, installPath: string): Promise<SkillInstallResult>
+        uninstall(workspaceId: string, skillId: string): SkillUninstallResult
+        create(workspaceId: string, payload: { name: string, description?: string, instructions: string }): SkillSaveResult
+        update(workspaceId: string, skillId: string, payload: { name: string, description?: string, instructions: string }): SkillSaveResult
       }
       studio: {
         start(): void

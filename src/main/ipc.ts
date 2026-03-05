@@ -5,6 +5,7 @@ import { Application, RunCommandParams } from 'types/automation';
 import { Configuration } from 'types/config';
 import { Command, History } from 'types/index';
 import { McpInstallStatus, McpServerWithTools, McpTool } from 'types/mcp';
+import { SkillFileReadResult, SkillInstallResult, SkillLoadResult, SkillSaveResult, SkillSummary, SkillUninstallResult } from 'types/skills';
 
 import { app, clipboard, ipcMain, nativeImage, nativeTheme, shell } from 'electron';
 import Store from 'electron-store';
@@ -47,6 +48,7 @@ import * as debug from './network';
 import * as ollama from './ollama';
 import * as scratchpadManager from './scratchpad';
 import * as shortcuts from './shortcuts';
+import * as skills from './skills';
 import * as text from './text';
 import * as webview from './webview';
 import * as window from './window';
@@ -1005,6 +1007,65 @@ export const installIpc = (
     return result;
   });
 
+  ipcMain.on(IPC.SKILLS.DEFAULT_LOCATIONS, (event, workspaceId: string) => {
+    event.returnValue = skills.defaultSkillLocations(app, workspaceId)
+  })
+
+  ipcMain.on(IPC.SKILLS.LIST, (event, workspaceId: string) => {
+    const list: SkillSummary[] = skills.listSkills(app, workspaceId)
+    event.returnValue = list
+  })
+
+  ipcMain.on(IPC.SKILLS.LOAD, (event, payload: { workspaceId: string, skillId: string }) => {
+    const loaded: SkillLoadResult | null = skills.loadSkill(app, payload.workspaceId, payload.skillId)
+    event.returnValue = loaded
+  })
+
+  ipcMain.on(IPC.SKILLS.GET_FILE, (event, payload: {
+    workspaceId: string
+    skillId: string
+    relativePath: string
+    startLine?: number
+    endLine?: number
+  }) => {
+    const result: SkillFileReadResult = skills.getSkillFile(
+      app,
+      payload.workspaceId,
+      payload.skillId,
+      payload.relativePath,
+      payload.startLine,
+      payload.endLine,
+    )
+    event.returnValue = result
+  })
+
+  ipcMain.handle(IPC.SKILLS.INSTALL_FROM_URL, async (_event, payload: { url: string, installPath: string }) => {
+    const result: SkillInstallResult = await skills.installSkillFromUrl(app, payload.url, payload.installPath)
+    return result
+  })
+
+  ipcMain.on(IPC.SKILLS.UNINSTALL, (event, payload: { workspaceId: string, skillId: string }) => {
+    const result: SkillUninstallResult = skills.uninstallSkill(app, payload.workspaceId, payload.skillId)
+    event.returnValue = result
+  })
+
+  ipcMain.on(IPC.SKILLS.CREATE, (event, payload: {
+    workspaceId: string
+    payload: { name: string, description?: string, instructions: string }
+  }) => {
+    const result: SkillSaveResult = skills.createSkill(app, payload.workspaceId, payload.payload)
+    event.returnValue = result
+  })
+
+  ipcMain.on(IPC.SKILLS.UPDATE, (event, payload: {
+    workspaceId: string
+    skillId: string
+    payload: { name: string, description?: string, instructions: string }
+  }) => {
+    const result: SkillSaveResult = skills.updateSkill(app, payload.workspaceId, payload.skillId, payload.payload)
+    event.returnValue = result
+  })
+
   ipcMain.on(IPC.STUDIO.START, () => {
     window.openDesignStudioWindow();
   })
@@ -1080,4 +1141,3 @@ export const installIpc = (
   });
 
 }
-

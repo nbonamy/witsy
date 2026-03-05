@@ -1960,6 +1960,7 @@
       "artifacts": "When the user asks you to create some content (document, summary, code…), use the following syntax:\n<artifact title=\"TITLE\">\nCONTENT\n</artifact>. HTML artifacts MUST start with <html> or <!DOCTYPE html>. Example: <artifact title=\"Report\">\n<html style=\"font-family: system-ui;\"><head>…</head><body>Report Content formatted in HTML</body></html>\n</artifact>. You can use that capability to create HTML based data visualization using Chart.js or D3.js. Do NOT use artifacts for simple data tables. For code artifacts, use <artifact title=\"FILENAME.EXT\">\nCODE\n</artifact>.",
       "codeExecutionProgram": "To accomplish tasks, you can use the code_exec_get_tools_info and code_exec_run_program tools. code_exec_get_tools_info provides a list of other tools you can use and you can use it to get calling instructions for the tools you decide to use. \n\n**INSTRUCTIONS:**\n- ALWAYS use code_exec_run_program to use tools. Tools are not accessible except through code_exec_run_program\n- Before writing a program: Use `code_exec_get_tools_info` to understand the exact tool names, required parameters, and argument structure for unfamiliar tools. You can call `code_exec_get_tools_info` repeatedly if you realize you need more tools than initially planned.\n- Once you understand the required tools, write a complete program and call code_exec_run_program.\n\nDo not write single-step programs to retrieve intermediate data: the goal is to streamline execution of complete workflows.\n\n**Workflow for Using code_exec_run_program:**\n1. Identify which tools you need for the task\n2. Use `code_exec_get_tools_info` with `tools_names` parameter to get details about each tool you're unfamiliar with\n3. Review the tool's parameters, required fields, and structure\n4. Write a complete multi-step program with proper tool names and arguments\n5. Execute with `code_exec_run_program`\n\n**Program Structure**\nThe program must contain a `steps` array:\n\n```json\n{'{'}\n  \"steps\": [...]\n{'}'}\n```\n\n**Step Definition**\nEach step object must include:\n- `id`: A unique string identifier for this step (used for output references in later steps).\n- `description`: An optional user-friendly status update to display to the user\n- `tool`: The exact name of the tool to call (e.g., \"search_internet\", \"asana_get_tasks___c9c8\"). Use the complete tool name including any suffixes.\n- `args`: An object with key-value pairs representing the inputs for this tool as described in its specification.\n- `on_error`: optionally controls workflow behavior if this step fails. Acceptable values are `\"continue\"` (ignore the error and proceed) or `\"abort\"` (stop execution). Default should be `\"abort\"` if not specified.\n\n**References Between Steps**\n- When a step's argument value should be populated with the output of a previous step, use the reference syntax: `{'{'}{'{'}step_id.result{'}'}{'}'}`\n- You CAN access nested fields and array indices: `{'{'}{'{'}step_id.result.field_name{'}'}{'}'}` or `{'{'}{'{'}step_id.result.0.field_name{'}'}{'}'}`\n  - Example: `{'{'}{'{'}get_workspaces.result.0.gid{'}'}{'}'}` to access the `gid` field of the first workspace\n  - Example: `{'{'}{'{'}get_user.result.gid{'}'}{'}'}` to access the `gid` field directly\n- You can reference fields at any depth: `{'{'}{'{'}step_id.result.data.items.0.id{'}'}{'}'}`\n- When uncertain about structure, reference the whole result: `{'{'}{'{'}step_id.result{'}'}{'}'}`\n\n**General Style & Validity**\n- The JSON must be valid (no comments, trailing commas, or extra fields).\n- Remember the root object contains only a `steps` array\n- Use clear and direct names for step IDs.\n- Use only tools and parameters exactly as specified.\n- For each tool, provide only the arguments that are required or documented.\n- Programs should be minimal, containing only as many steps as needed to accomplish the described objective.\n\n**Error Handling**\n- If not specified, treat `on_error` as `\"abort\"`.\n- When instructed, apply `\"on_error\": \"continue\"` to relevant steps to skip on failure.\n\n**Key Points:**\n- Use `code_exec_get_tools_info` first to understand unfamiliar tools\n- Start with `{'{'}\"steps\": [...]{'}'}` (no `program` wrapper)\n- You can access nested fields in step results (e.g., `.gid`, `.0.gid`)\n- Use complete tool names including suffixes\n- Plan the full workflow before executing",
       "codeExecutionProxy": "To accomplish tasks, you can use the code_exec_get_tools_info and code_exec_call_tool tools. code_exec_get_tools_info provides a list of other tools you can use and you can use it to get calling instructions for the tools you decide to use. \n\n**INSTRUCTIONS:**\n- ALWAYS use `code_exec_call_tool` to use tools. Tools are not accessible except through `code_exec_call_tool`\n- BEFORE calling a tool: use `code_exec_get_tools_info` to understand the parameters needed to call the tool.\n\n**Parameters to call `code_exec_call_tool`:**\n- `tool_name`: The exact name of the tool (e.g., \"search_internet\", \"filesystem_read\")\n- `parameters`: An object with key-value pairs for the tool's parameters\n\n**Example:**\n```json\n{'{'}\n  \"tool_name\": \"search_internet\",\n  \"parameters\": {'{'}\n    \"query\": \"latest news about AI\"\n  {'}'}\n{'}'}\n````",
+      "skills": "You have access to reusable skills. Prefer using them whenever the user request matches a skill name, domain, or description.\n\nSkill usage protocol:\n1. If any skill seems relevant, call skills_load_skill first (do not answer from the catalog entry alone).\n2. Read SKILL.md instructions carefully.\n3. If SKILL.md references files (or if the manifest suggests relevant files), call skills_get_skill_file to fetch them before finalizing your answer.\n4. Base your answer on loaded skill content and cite assumptions when skill context is incomplete.\n\nAvailable skills:\n{skills}\n\nNote: skills are read-only in this environment and code execution is not available.",
       "mermaid": "If you are asked to output a Mermaid chart, its code will be rendered as a diagram to the user.",
       "noMarkdown": "Do not use markdown formatting in your responses. Use plain text only. Do not use **bold**, *italic*, `code`, ```code blocks``` or any other markdown syntax. If you use table, use plain text tables only with proper spacing to align columns.",
       "toolRetry": "When calling tools, if you get an input error, analyze the error and try to fix it and then retry calling the tool."
@@ -2491,6 +2492,16 @@
       "error": "Error while searching the internet",
       "running": "Searching the internet…"
     },
+    "skills": {
+      "completed": "Skill loaded successfully",
+      "completedFile": "Skill file loaded successfully",
+      "description": "Use this plugin to access Claude-style skills (SKILL.md + files). The model should load a skill first, then fetch related files as needed.",
+      "error": "Error while accessing skills: {error}",
+      "preparing": "Preparing skill access…",
+      "preparingFile": "Preparing skill file access…",
+      "running": "Loading skill…",
+      "runningFile": "Loading skill file…"
+    },
     "video": {
       "completed": "Video generated successfully",
       "description": "Generate a video based on a prompt. Returns the url of the video starting with the \"file://\" scheme which is OK. Create only one video at a time unless explicitely asked to do otherwise. Always embed the video visible in the final response using \"![title](url)\" markdown syntax. Come up with a short title for the video.",
@@ -2863,6 +2874,11 @@
       "confirmDeleteAll": "Are you sure you want to delete all experts?",
       "copy": "Copy",
       "deleteAll": "Delete all",
+      "deprecation": {
+        "body": "Skills are the new, more powerful way to guide your AI. They are reusable, easy to share, and built for real workflows. Install community-created skills or create your own to standardize how your assistants think and act.",
+        "openSkills": "Open Skills",
+        "title": "Try Skills Instead"
+      },
       "descriptionPlaceholder": "Brief description of what this expert does",
       "disableAll": "Disable all",
       "empty": "No experts defined yet",
@@ -3061,6 +3077,43 @@
         "truncateTo": "Truncate to",
         "truncationWarning": "WARNING: Truncation length will impact input tokens count and therefore request costs"
       },
+      "skills": {
+        "addLocation": "Add Location",
+        "confirmUninstallText": "Delete \"{skill}\"?",
+        "confirmUninstallSharedText": "This skill is shared with other applications. Deleting \"{skill}\" will remove it from other apps too (Claude, Codex, Antigravity, etc.).",
+        "confirmUninstallTitle": "Delete \"{skill}\"",
+        "customLocations": "Custom Skill Locations",
+        "defaultLocations": "Default Skill Locations",
+        "description": "This plugin lets models discover and load Claude-style skills from configured folders. Skills are read-only in this version (no code execution).",
+        "itemCount": "{count} location | {count} locations",
+        "itemsSelected": "{count} selected",
+        "installButton": "Install",
+        "installDialogTitle": "Install new skill",
+        "installFailed": "Skill installation failed.",
+        "installFromUrl": "Install from GitHub URL",
+        "installInvalidUrl": "Please enter a GitHub URL or a skills.sh install command.",
+        "installNote": "Paste a GitHub URL or skills.sh install command as found at the top of a skills.sh skill page.",
+        "installPathUnavailable": "Global skills folder is unavailable.",
+        "installSuccess": "Installed {count} skill | Installed {count} skills",
+        "installing": "Installing…",
+        "locationColumn": "Location",
+        "manageLocations": "Manage locations",
+        "pathsNote": "Add folders that contain skill directories (each skill folder should contain a SKILL.md file).",
+        "refresh": "Refresh",
+        "removeEcosystemWarning": "This location is part of the open agent skills ecosystem (skills.sh) and is shared with other coding agents. Removing it may prevent skills installed via the CLI from being discovered. Continue?",
+        "scopeColumn": "Scope",
+        "scope": {
+          "claude": "Claude Default",
+          "custom": "Custom",
+          "global": "Witsy Global",
+          "workspace": "Workspace"
+        },
+        "saveFailed": "Could not save skill changes.",
+        "skillsCount": "{count} skill | {count} skills",
+        "uninstallFailed": "Skill uninstall failed.",
+        "empty": "No skills found in configured locations.",
+        "title": "Skills"
+      },
       "vega": {
         "description": "This plugin allows LLM engines to create charts image based on data using the Vega visualisation library.",
         "title": "Vega"
@@ -3108,6 +3161,7 @@
       "llm": "LLM",
       "models": "Models",
       "plugins": "Plugins",
+      "skills": "Skills",
       "shortcuts": "Shortcuts",
       "sidebar": "Sidebar",
       "voice": "@:{'common.voice'}"

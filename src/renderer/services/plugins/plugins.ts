@@ -11,6 +11,7 @@ import MemoryPlugin from './memory'
 import Plugin from './plugin'
 import PythonPlugin from './python'
 import SearchPlugin from './search'
+import SkillsPlugin from './skills'
 import VideoPlugin from './video'
 import YouTubePlugin from './youtube'
 
@@ -29,6 +30,7 @@ export const availablePlugins: PluginsList = {
   mcp: McpPlugin,
   youtube: YouTubePlugin,
   python:  PythonPlugin,
+  skills: SkillsPlugin,
   memory: MemoryPlugin,
   filesystem: FilesystemPlugin,
 }
@@ -89,4 +91,3 @@ export const pluginToolName = (config: Configuration, pluginName: string): { nam
   }
   return { name: plugin.getName(), multi: false }
 }
-

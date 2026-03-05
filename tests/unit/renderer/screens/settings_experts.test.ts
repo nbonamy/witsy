@@ -56,7 +56,13 @@ test('Renders', async () => {
   expect(wrapper.findAll('.table-plain')).toHaveLength(1)
   expect(wrapper.findAll('.table-plain tr.expert')).toHaveLength(4)
   expect(wrapper.findAll('.table-plain tr.expert button')).toHaveLength(8)
+  expect(wrapper.find('.alert-block').exists()).toBe(true)
 
+})
+
+test('Deprecation notice opens skills settings', async () => {
+  await wrapper.find('.alert-block button').trigger('click')
+  expect(window.api.settings.open).toHaveBeenCalledWith({ initialTab: 'skills' })
 })
 
 test('Disable items', async () => {

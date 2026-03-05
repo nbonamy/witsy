@@ -480,6 +480,12 @@
       }
     }
   },
+  "skills": {
+    "locations": [
+      "~/.claude/skills",
+      "~/.agents/skills"
+    ]
+  },
   "plugins": {
     "browse": {
       "enabled": true
@@ -521,6 +527,9 @@
       "allowedPaths": [],
       "allowWrite": false,
       "skipConfirmation": false
+    },
+    "skills": {
+      "enabled": false
     },
     "knowledge": {
       "enabled": true

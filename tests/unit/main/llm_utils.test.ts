@@ -93,6 +93,20 @@ test('LlmUtils.parseJson with extra content before and after', () => {
   expect(result).toEqual({ sections: [{ title: 'Test' }] })
 })
 
+test('LlmUtils.parseJson with nested objects in verbose response', () => {
+  const nested = 'Here is my decision:\n{"status": "continue", "data": {"nested": "value", "count": 5}}\nExplanation follows...'
+  const result = LlmUtils.parseJson(nested)
+  expect(result.status).toBe('continue')
+  expect(result.data.nested).toBe('value')
+  expect(result.data.count).toBe(5)
+})
+
+test('LlmUtils.parseJson with two objects in verbose response', () => {
+  const double = 'I could have said:\n{"status": "continue"}\nBut finally {"status": "done"}.'
+  const result = LlmUtils.parseJson(double)
+  expect(result.status).toBe('done')
+})
+
 test('LlmUtils.parseJson with invalid content', () => {
   const invalidJson = 'No JSON here'
   expect(() => LlmUtils.parseJson(invalidJson)).toThrow('No JSON object found in content')
@@ -100,18 +114,12 @@ test('LlmUtils.parseJson with invalid content', () => {
 
 test('LlmUtils.parseJson with no opening brace', () => {
   const noOpening = 'some text without opening brace }'
-  expect(() => LlmUtils.parseJson(noOpening)).toThrow('No JSON object found in content')
+  expect(() => LlmUtils.parseJson(noOpening)).toThrow('No valid JSON object found in content')
 })
 
 test('LlmUtils.parseJson with no closing brace', () => {
   const noClosing = '{ "key": "value" without closing'
   expect(() => LlmUtils.parseJson(noClosing)).toThrow('No JSON object found in content')
-})
-
-test('LlmUtils.parseJson with nested objects', () => {
-  const nested = 'prefix {"outer": {"inner": {"value": 42}}} suffix'
-  const result = LlmUtils.parseJson(nested)
-  expect(result).toEqual({ outer: { inner: { value: 42 } } })
 })
 
 // ============================================================================

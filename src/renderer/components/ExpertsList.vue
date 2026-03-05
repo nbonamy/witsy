@@ -9,6 +9,19 @@
 
   <div class="list-with-toolbar" v-else>
 
+    <AlertBlock
+      variant="info"
+      :title="t('settings.experts.deprecation.title')"
+    >
+      <template #icon>
+        <ZapIcon />
+      </template>
+      <p>{{ t('settings.experts.deprecation.body') }}</p>
+      <button type="button" class="secondary" @click="openSkillsSettings">
+        {{ t('settings.experts.deprecation.openSkills') }}
+      </button>
+    </AlertBlock>
+
     <div class="list-filters form form-large">
       <input
         v-model="searchQuery"
@@ -119,7 +132,7 @@
 
 <script setup lang="ts">
 
-import { BrainIcon, ChevronDownIcon, ListTodoIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next'
+import { BrainIcon, ChevronDownIcon, ListTodoIcon, PencilIcon, PlusIcon, SparklesIcon, Trash2Icon, ZapIcon } from 'lucide-vue-next'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, ref, watch } from 'vue'
 import ButtonIcon from '@components/ButtonIcon.vue'
@@ -132,6 +145,7 @@ import { categoryI18n, expertI18n, t } from '@services/i18n'
 import { Expert, ExpertCategory } from 'types/index'
 import { Workspace } from 'types/workspace'
 import ButtonSwitch from './ButtonSwitch.vue'
+import AlertBlock from './AlertBlock.vue'
 
 const props = defineProps<{
   workspace: Workspace
@@ -482,6 +496,10 @@ const closeCategoryManager = () => {
   showCategoryManager.value = false
 }
 
+const openSkillsSettings = () => {
+  window.api.settings.open({ initialTab: 'skills' })
+}
+
 defineExpose({ load })
 
 </script>
@@ -489,7 +507,9 @@ defineExpose({ load })
 
 <style scoped>
 
-/* Component-specific styles - common styles in css/list-with-toolbar.css */
+.alert-block {
+  margin-bottom: 2rem;
+}
 
 .list-filters {
   display: flex;
