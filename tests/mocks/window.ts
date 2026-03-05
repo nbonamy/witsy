@@ -607,6 +607,16 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       cancel: vi.fn(),
       test: vi.fn(),
     },
+    skills: {
+      defaultLocations: vi.fn(() => ['/home/user/.witsy/skills']),
+      list: vi.fn(() => []),
+      load: vi.fn(() => null),
+      getFile: vi.fn(() => ({ success: false, error: 'Skill file not found' })),
+      installFromUrl: vi.fn(async () => ({ success: true, installed: ['example-skill'], location: '/home/user/.witsy/skills' })),
+      uninstall: vi.fn(() => ({ success: true, removedPath: '/home/user/.witsy/skills/example-skill' })),
+      create: vi.fn(() => ({ success: true, skillId: 'skill_new', rootPath: '/home/user/.witsy/skills/new' })),
+      update: vi.fn(() => ({ success: true, skillId: 'skill_existing', rootPath: '/home/user/.witsy/skills/existing' })),
+    },
     backup: {
       export: vi.fn(() => true),
       import: vi.fn(() => true),
@@ -698,4 +708,3 @@ const useBrowserMock = () => {
 }
 
 export { listeners, useBrowserMock, useWindowMock }
-

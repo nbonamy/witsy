@@ -8,6 +8,7 @@
   <IdCardIcon v-else-if="name === 'memory' || name === kMemoryPluginName"/>
   <SquarePlayIcon v-else-if="name === 'youtube' || name === kYoutubePluginName"/>
   <FolderIcon v-else-if="name === 'filesystem' || name === kFilesystemPluginName"/>
+  <ZapIcon v-else-if="name === 'skills' || name.startsWith(kSkillsPluginPrefix)"/>
   <WorkflowIcon v-else-if="name.startsWith(kCodeExecutionPluginPrefix)"/>
   <VegaIcon v-else-if="name === 'vega' || name === kVegaPluginName"/>
   <McpIcon v-else-if="name === 'mcp'" />
@@ -16,12 +17,9 @@
 
 <script setup lang="ts">
 
-import { CloudDownloadIcon, FolderIcon, GlobeIcon, IdCardIcon, LightbulbIcon, PaletteIcon, Plug2Icon, SquarePlayIcon, VideoIcon, WorkflowIcon } from 'lucide-vue-next'
-import { computed } from 'vue'
 import McpIcon from '@assets/mcp.svg?component'
 import PythonIcon from '@assets/python.svg?component'
 import VegaIcon from '@assets/vega.svg?component'
-import { ToolCall } from 'types/index'
 import { kBrowsePluginName } from '@services/plugins/browse'
 import { kCodeExecutionPluginPrefix } from '@services/plugins/code_exec_base'
 import { kCodeExecutionProxyPluginToolName } from '@services/plugins/code_exec_proxy'
@@ -31,9 +29,13 @@ import { kKnowledgePluginPrefix } from '@services/plugins/knowledge'
 import { kMemoryPluginName } from '@services/plugins/memory'
 import { kPythonPluginName } from '@services/plugins/python'
 import { kSearchPluginName } from '@services/plugins/search'
+import { kSkillsPluginPrefix } from '@services/plugins/skills'
 import { kVegaPluginName } from '@services/plugins/vega'
 import { kVideoPluginName } from '@services/plugins/video'
 import { kYoutubePluginName } from '@services/plugins/youtube'
+import { CloudDownloadIcon, FolderIcon, GlobeIcon, IdCardIcon, LightbulbIcon, PaletteIcon, Plug2Icon, SquarePlayIcon, VideoIcon, WorkflowIcon, ZapIcon } from 'lucide-vue-next'
+import { ToolCall } from 'types/index'
+import { computed } from 'vue'
 
 const props = defineProps({
   tool: {

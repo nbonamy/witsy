@@ -13,7 +13,8 @@
           <SettingsTab class="chat" :title="t('settings.tabs.chat')" @change="load(settingsChat)"><AppWindowIcon class="icon" /></SettingsTab>
           <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" @change="load(settingsDeepResearch)" :checked="initialTab == 'deepresearch'"><TelescopeIcon class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" @change="load(settingsModels)" :checked="initialTab == 'models'"><BoxIcon class="icon" /></SettingsTab>
-          <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" @change="load(settingsPlugins)" :checked="initialTab == 'plugins'"><Plug2Icon class="icon" /></SettingsTab>
+          <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" @change="load(settingsPlugins)" :checked="initialTab == 'plugins'"><BlocksIcon class="icon" /></SettingsTab>
+          <SettingsTab class="skills" :title="t('settings.tabs.skills')" @change="load(settingsSkills)" :checked="initialTab == 'skills'"><ZapIcon class="icon" /></SettingsTab>
           <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><WandIcon class="icon" /></SettingsTab>
           <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><BrainIcon class="icon" /></SettingsTab>
           <SettingsTab class="voice" :title="t('settings.tabs.voice')" @change="load(settingsVoice)" :checked="initialTab == 'voice'"><MicIcon class="icon" /></SettingsTab>
@@ -31,6 +32,7 @@
       <SettingsDeepResearch ref="settingsDeepResearch" />
       <SettingsModels ref="settingsModels" />
       <SettingsPlugins ref="settingsPlugins" />
+      <SettingsSkills ref="settingsSkills" />
       <SettingsCommands ref="settingsCommands" />
       <SettingsExperts ref="settingsExperts" />
       <SettingsVoice ref="settingsVoice" />
@@ -42,12 +44,13 @@
 
 <script setup lang="ts">
 
-import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, Plug2Icon, StarIcon, TelescopeIcon, WandIcon } from 'lucide-vue-next'
-import { nextTick, onMounted, PropType, ref, watch } from 'vue'
 import useIpcListener from '@composables/ipc_listener'
 import { installTabs, showActiveTab } from '@renderer/utils/tabs'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
+import { AppWindowIcon, AppWindowMacIcon, BadgePlusIcon, BlocksIcon, BoxIcon, BrainIcon, CommandIcon, MicIcon, PanelsTopLeftIcon, StarIcon, TelescopeIcon, WandIcon, ZapIcon } from 'lucide-vue-next'
+import { OpenSettingsPayload } from 'types/index'
+import { nextTick, onMounted, PropType, ref, watch } from 'vue'
 import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
 import SettingsChat from '../settings/SettingsChat.vue'
 import SettingsCommands from '../settings/SettingsCommands.vue'
@@ -58,11 +61,11 @@ import SettingsGeneral from '../settings/SettingsGeneral.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
 import SettingsModels from '../settings/SettingsModels.vue'
 import SettingsPlugins from '../settings/SettingsPlugins.vue'
+import SettingsSkills from '../settings/SettingsSkills.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
 import SettingsSidebar from '../settings/SettingsSidebar.vue'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
-import { OpenSettingsPayload } from 'types/index'
 
 const { onIpcEvent } = useIpcListener()
 
@@ -88,6 +91,7 @@ const settingsChat = ref(null)
 const settingsDeepResearch = ref(null)
 const settingsModels = ref(null)
 const settingsPlugins = ref(null)
+const settingsSkills = ref(null)
 const settingsMcp = ref(null)
 const settingsCommands = ref(null)
 const settingsExperts = ref(null)
@@ -105,6 +109,7 @@ const settings = [
   settingsDeepResearch,
   settingsModels,
   settingsPlugins,
+  settingsSkills,
   settingsMcp,
   settingsCommands,
   settingsExperts,

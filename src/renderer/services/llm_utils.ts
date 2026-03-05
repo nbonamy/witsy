@@ -3,6 +3,7 @@ import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { ChatModel, LlmChunkTool, LlmCompletionOpts, LlmEngine } from 'multi-llm-ts'
 import { CodeExecutionMode, Configuration } from 'types/config'
 import { DocRepoQueryResponseItem } from 'types/rag'
+import { SkillSummary } from 'types/skills'
 import { z } from 'zod'
 import Message from '@models/message'
 import { getLlmLocale, i18nInstructions, localeToLangName, t } from './i18n'
@@ -21,6 +22,47 @@ export default class LlmUtils {
 
   constructor(config: Configuration) {
     this.config = config
+  }
+
+  private getSkillsSystemInstructions(): string | null {
+    if (!this.config.plugins?.skills?.enabled) {
+      return null
+    }
+    if (!window.api?.skills?.list) {
+      return null
+    }
+
+    let skills: SkillSummary[] = []
+    try {
+      skills = window.api.skills.list(this.config.workspaceId)
+    } catch (error) {
+      console.warn('Error while listing skills for system instructions', error)
+      return null
+    }
+
+    if (!skills.length) {
+      return null
+    }
+
+    const maxLines = 40
+    const maxChars = 5000
+    const lines: string[] = []
+    let length = 0
+
+    for (const skill of skills.sort((a, b) => a.name.localeCompare(b.name))) {
+      const line = `- ${skill.name} (id: ${skill.id}) - ${skill.description || 'No description'}`
+      if (lines.length >= maxLines || length + line.length > maxChars) {
+        break
+      }
+      lines.push(line)
+      length += line.length
+    }
+
+    if (!lines.length) {
+      return null
+    }
+
+    return i18nInstructions(this.config, 'instructions.capabilities.skills', { skills: lines.join('\n') })
   }
 
   static async complete(
@@ -291,6 +333,12 @@ Keep it concise, natural, and user-friendly. Do NOT include prefixes like "Statu
     // retry tools
     if (this.config.llm.additionalInstructions?.toolRetry) {
       instr += '\n\n' + i18nInstructions(this.config, 'instructions.capabilities.toolRetry')
+    }
+
+    // capabilities: skills
+    const skillsInstructions = this.getSkillsSystemInstructions()
+    if (skillsInstructions) {
+      instr += '\n\n' + skillsInstructions
     }
 
     // capabilities: mermaid

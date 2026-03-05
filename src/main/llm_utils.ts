@@ -14,6 +14,7 @@ import Mcp from './mcp'
 import * as pyodide from './pyodide'
 import DocumentRepository from './rag/docrepo'
 import LocalSearch from './search'
+import * as skills from './skills'
 import * as text from './text'
 
 /**
@@ -125,6 +126,20 @@ export class LlmContext {
           },
           cancel: () => {},
           test: async () => true,
+        },
+
+        skills: {
+          defaultLocations: (workspaceId: string) => skills.defaultSkillLocations(this.app, workspaceId),
+          list: (workspaceId: string) => skills.listSkills(this.app, workspaceId),
+          load: (workspaceId: string, skillId: string) => skills.loadSkill(this.app, workspaceId, skillId),
+          getFile: (workspaceId: string, skillId: string, relativePath: string, startLine?: number, endLine?: number) =>
+            skills.getSkillFile(this.app, workspaceId, skillId, relativePath, startLine, endLine),
+          installFromUrl: async (url: string, installPath: string) => skills.installSkillFromUrl(this.app, url, installPath),
+          uninstall: (workspaceId: string, skillId: string) => skills.uninstallSkill(this.app, workspaceId, skillId),
+          create: (workspaceId: string, payload: { name: string, description?: string, instructions: string }) =>
+            skills.createSkill(this.app, workspaceId, payload),
+          update: (workspaceId: string, skillId: string, payload: { name: string, description?: string, instructions: string }) =>
+            skills.updateSkill(this.app, workspaceId, skillId, payload),
         },
 
         // @ts-expect-error partial mock

@@ -249,6 +249,17 @@ export const SEARCH = {
   CANCEL: 'search-cancel',
 } as const;
 
+export const SKILLS = {
+  DEFAULT_LOCATIONS: 'skills-default-locations',
+  LIST: 'skills-list',
+  LOAD: 'skills-load',
+  GET_FILE: 'skills-get-file',
+  INSTALL_FROM_URL: 'skills-install-from-url',
+  UNINSTALL: 'skills-uninstall',
+  CREATE: 'skills-create',
+  UPDATE: 'skills-update',
+} as const;
+
 export const STUDIO = {
   START: 'studio-start',
 } as const;

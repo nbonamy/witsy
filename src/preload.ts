@@ -14,6 +14,7 @@ import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams, FileS
 import { ListDirectoryResponse } from './types/filesystem';
 import { McpServer, McpStatus, McpTool } from './types/mcp';
 import { AddDocumentOptions, DocRepoQueryResponseItem, DocumentBase, DocumentQueueItem, SourceType } from './types/rag';
+import { SkillFileReadResult, SkillInstallResult, SkillLoadResult, SkillSaveResult, SkillSummary, SkillUninstallResult } from './types/skills';
 import { Workspace, WorkspaceHeader } from './types/workspace';
 import { YoutubeVideoInfo } from './main/youtube';
 
@@ -288,6 +289,22 @@ contextBridge.exposeInMainWorld(
       query: (query: string, num: number = 5, signalId?: string): Promise<LocalSearchResponse> => { return ipcRenderer.invoke(IPC.SEARCH.QUERY, { query, num, signalId }) },
       cancel: (signalId: string): void => { ipcRenderer.send(IPC.SEARCH.CANCEL, signalId) },
       test: (): Promise<boolean> => { return ipcRenderer.invoke(IPC.SEARCH.TEST) },
+    },
+    skills: {
+      defaultLocations: (workspaceId: string): string[] => { return ipcRenderer.sendSync(IPC.SKILLS.DEFAULT_LOCATIONS, workspaceId) },
+      list: (workspaceId: string): SkillSummary[] => { return ipcRenderer.sendSync(IPC.SKILLS.LIST, workspaceId) },
+      load: (workspaceId: string, skillId: string): SkillLoadResult | null => { return ipcRenderer.sendSync(IPC.SKILLS.LOAD, { workspaceId, skillId }) },
+      getFile: (workspaceId: string, skillId: string, relativePath: string, startLine?: number, endLine?: number): SkillFileReadResult => {
+        return ipcRenderer.sendSync(IPC.SKILLS.GET_FILE, { workspaceId, skillId, relativePath, startLine, endLine })
+      },
+      installFromUrl: (url: string, installPath: string): Promise<SkillInstallResult> => {
+        return ipcRenderer.invoke(IPC.SKILLS.INSTALL_FROM_URL, { url, installPath })
+      },
+      uninstall: (workspaceId: string, skillId: string): SkillUninstallResult => { return ipcRenderer.sendSync(IPC.SKILLS.UNINSTALL, { workspaceId, skillId }) },
+      create: (workspaceId: string, payload: { name: string, description?: string, instructions: string }): SkillSaveResult => { return ipcRenderer.sendSync(IPC.SKILLS.CREATE, { workspaceId, payload }) },
+      update: (workspaceId: string, skillId: string, payload: { name: string, description?: string, instructions: string }): SkillSaveResult => {
+        return ipcRenderer.sendSync(IPC.SKILLS.UPDATE, { workspaceId, skillId, payload })
+      },
     },
     studio: {
       start: (): void => { return ipcRenderer.send(IPC.STUDIO.START) },

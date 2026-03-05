@@ -300,3 +300,8 @@ test('filesystem settings', async () => {
   // Test remove button is initially disabled (no selection)
   expect(filesystem.find('.actions .button.remove').attributes('disabled')).toBeDefined()
 })
+
+test('skills settings is not in plugins tab', async () => {
+  const tab = await switchToTab(wrapper, pluginIndex)
+  expect(tab.find('.master-detail .md-master-list .md-master-list-item[data-id=skills]').exists()).toBe(false)
+})
