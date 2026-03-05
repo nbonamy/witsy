@@ -170,6 +170,7 @@
     "shortcut": "Atalho",
     "showLess": "Mostrar Menos",
     "showMore": "Mostrar Mais",
+    "skills": "Habilidades",
     "sortBy": "Ordenar por",
     "spellcheck": {
       "add": "Adicionar ao dicionário"
@@ -1965,6 +1966,7 @@
       "codeExecutionProxy": "Para realizar tarefas, você pode usar as ferramentas code_exec_get_tools_info e code_exec_call_tool. code_exec_get_tools_info fornece uma lista de outras ferramentas que você pode usar e você pode usá-la para obter instruções de chamada para as ferramentas que decidir usar.\n\n**INSTRUÇÕES:**\n- SEMPRE use `code_exec_call_tool` para usar ferramentas. As ferramentas não são acessíveis exceto através de `code_exec_call_tool`\n- ANTES de chamar uma ferramenta: use `code_exec_get_tools_info` para entender os parâmetros necessários para chamar a ferramenta.\n\n**Parâmetros para chamar `code_exec_call_tool`:**\n- `tool_name`: O nome exato da ferramenta (ex.: \"search_internet\", \"filesystem_read\")\n- `parameters`: Um objeto com pares chave-valor para os parâmetros da ferramenta\n\n**Exemplo:**\n```json\n{\n  \"tool_name\": \"search_internet\",\n  \"parameters\": {\n    \"query\": \"últimas notícias sobre IA\"\n  }\n}\n```",
       "mermaid": "Se for solicitado que você produza um diagrama Mermaid, seu código será exibido como um diagrama para o usuário.",
       "noMarkdown": "Não use formatação markdown em suas respostas. Use apenas texto simples. Não use **negrito**, *itálico*, `código`, ```blocos de código``` ou qualquer outra sintaxe markdown. Se usar tabela, use apenas tabelas de texto simples com espaçamento adequado para alinhar as colunas.",
+      "skills": "Você tem acesso a habilidades reutilizáveis. Prefira usá-las sempre que a solicitação do usuário corresponder ao nome, domínio ou descrição de uma habilidade.\n\nProtocolo de uso de habilidades:\n1. Se alguma habilidade parecer relevante, chame skills_load_skill primeiro (não responda apenas com a entrada do catálogo).\n2. Leia atentamente as instruções em SKILL.md.\n3. Se SKILL.md fizer referência a arquivos (ou se o manifesto sugerir arquivos relevantes), chame skills_get_skill_file para buscá-los antes de finalizar sua resposta.\n4. Baseie sua resposta no conteúdo da habilidade carregada e cite suposições quando o contexto da habilidade estiver incompleto.\n\nHabilidades disponíveis:\n{skills}\n\nObservação: as habilidades são somente leitura neste ambiente e a execução de código não está disponível.",
       "toolRetry": "Ao chamar ferramentas, se você receber um erro de entrada, analise o erro e tente corrigi-lo e então tente chamar a ferramenta novamente."
     },
     "chat": {
@@ -2490,6 +2492,15 @@
       "error": "Erro ao buscar na internet",
       "running": "Buscando na internet…"
     },
+    "skills": {
+      "completed": "Habilidade carregada com sucesso",
+      "completedFile": "Arquivo da habilidade carregado com sucesso",
+      "error": "Erro ao acessar habilidades: {error}",
+      "preparing": "Preparando acesso à habilidade…",
+      "preparingFile": "Preparando acesso ao arquivo da habilidade…",
+      "running": "Carregando habilidade…",
+      "runningFile": "Carregando arquivo da habilidade…"
+    },
     "video": {
       "completed": "Vídeo gerado com sucesso",
       "description": "Gere um vídeo com base em um prompt. Retorna a url do vídeo começando com o esquema \"file://\" que está OK. Crie apenas um vídeo por vez, a menos que seja explicitamente solicitado a fazer o contrário. Sempre incorpore o vídeo visível na resposta final usando a sintaxe markdown \"![título](url)\". Crie um título curto para o vídeo.",
@@ -2548,6 +2559,10 @@
       },
       "models": {
         "reload": "Recarregar modelos"
+      },
+      "skills": {
+        "manage": "Gerenciar habilidades",
+        "title": "@:{'common.skills'}"
       },
       "tools": {
         "plugins": "Plugins do @:{'common.appName'}",
@@ -2863,6 +2878,11 @@
       "confirmDeleteAll": "Tem certeza de que deseja excluir todos os especialistas?",
       "copy": "Copiar",
       "deleteAll": "Excluir tudo",
+      "deprecation": {
+        "body": "Habilidades são a nova forma mais poderosa de orientar sua IA. Elas são reutilizáveis, fáceis de compartilhar e feitas para fluxos de trabalho reais. Instale habilidades criadas pela comunidade ou crie as suas para padronizar como seus assistentes pensam e agem.",
+        "openSkills": "Abrir Habilidades",
+        "title": "Experimente as Habilidades"
+      },
       "descriptionPlaceholder": "Breve descrição do que este especialista faz",
       "disableAll": "Desativar tudo",
       "empty": "Nenhum especialista definido ainda",
@@ -3055,6 +3075,28 @@
         "truncateTo": "Truncar para",
         "truncationWarning": "AVISO: O comprimento do truncamento impactará a contagem de tokens de entrada e, portanto, os custos da solicitação"
       },
+      "skills": {
+        "addLocation": "Adicionar local",
+        "confirmUninstallSharedText": "Esta habilidade é compartilhada com outras aplicações. Excluir \"{skill}\" vai removê-la também de outros aplicativos (Claude, Codex, Antigravity, etc.).",
+        "confirmUninstallTitle": "Excluir \"{skill}\"",
+        "description": "Este plugin permite que os modelos descubram e carreguem habilidades no estilo Claude a partir de pastas configuradas. As habilidades são somente leitura nesta versão (não há execução de código).",
+        "empty": "Nenhuma habilidade encontrada nas localizações configuradas.",
+        "installButton": "Instalar",
+        "installDialogTitle": "Instalar nova habilidade",
+        "installFailed": "Falha na instalação da habilidade.",
+        "installing": "Instalando…",
+        "installInvalidUrl": "Por favor, insira uma URL do GitHub ou um comando de instalação do skills.sh.",
+        "installNote": "Cole uma URL do GitHub ou um comando de instalação do skills.sh, conforme encontrado no topo da página de uma skill do skills.sh.",
+        "installPathUnavailable": "A pasta global de habilidades não está disponível.",
+        "installSuccess": "Instalada {count} habilidade | Instaladas {count} habilidades",
+        "manageLocations": "Gerenciar locais",
+        "refresh": "Atualizar",
+        "removeEcosystemWarning": "Esta localização faz parte do ecossistema de skills do open agent (skills.sh) e é compartilhada com outros agentes de código. Removê-la pode impedir que habilidades instaladas via CLI sejam descobertas. Deseja continuar?",
+        "saveFailed": "Não foi possível salvar as alterações da habilidade.",
+        "skillsCount": "{count} habilidade | {count} habilidades",
+        "title": "Habilidades",
+        "uninstallFailed": "Falha ao desinstalar a habilidade."
+      },
       "vega": {
         "description": "Este plugin permite que os mecanismos LLM criem imagens de gráficos com base em dados usando a biblioteca de visualização Vega.",
         "title": "Vega"
@@ -3104,6 +3146,7 @@
       "plugins": "Plugins",
       "shortcuts": "Atalhos",
       "sidebar": "Barra Lateral",
+      "skills": "Habilidades",
       "voice": "@:{'common.voice'}"
     },
     "voice": {

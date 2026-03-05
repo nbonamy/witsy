@@ -170,6 +170,7 @@
     "shortcut": "快捷键",
     "showLess": "显示更少",
     "showMore": "显示更多",
+    "skills": "技能",
     "sortBy": "排序依据",
     "spellcheck": {
       "add": "添加到字典"
@@ -1965,6 +1966,7 @@
       "codeExecutionProxy": "为完成任务，您可以使用 code_exec_get_tools_info 和 code_exec_call_tool 工具。code_exec_get_tools_info 提供可用工具列表，您可以用它获取所选工具的调用说明。\n\n**使用说明：**\n- 始终使用 `code_exec_call_tool` 来调用工具。工具仅能通过 `code_exec_call_tool` 访问。\n- 调用工具前：使用 `code_exec_get_tools_info` 理解调用工具所需参数。\n\n**调用 `code_exec_call_tool` 的参数：**\n- `tool_name`：工具的准确名称（例如 \"search_internet\"，\"filesystem_read\"）\n- `parameters`：一个包含工具参数的键值对对象\n\n**示例：**\n```json\n{\n  \"tool_name\": \"search_internet\",\n  \"parameters\": {\n    \"query\": \"关于AI的最新新闻\"\n  }\n}\n```",
       "mermaid": "如果要求输出Mermaid图表，其代码将被渲染为图形展示给用户。",
       "noMarkdown": "在您的回复中不要使用Markdown格式。仅使用纯文本。不要使用**加粗**、*斜体*、`代码`、```代码块```或任何其他Markdown语法。如果使用表格，仅使用带有适当间距以对齐列的纯文本表格。",
+      "skills": "您可以使用可重用的技能。每当用户请求与某个技能名称、领域或描述相匹配时，优先使用相应技能。\n\n技能使用协议：\n1. 如果任何技能看起来相关，先调用 skills_load_skill（不要仅凭目录条目回答）。\n2. 仔细阅读 SKILL.md 中的说明。\n3. 如果 SKILL.md 引用了文件（或清单提示有相关文件），在最终回答前调用 skills_get_skill_file 获取这些文件。\n4. 在已加载的技能内容基础上给出回答，并在技能上下文不完整时说明假设。\n\n可用技能：\n{skills}\n\n注意：在此环境中，技能为只读且无法执行代码。",
       "toolRetry": "调用工具时，如果遇到输入错误，请分析错误并尝试修复，然后重试调用该工具。"
     },
     "chat": {
@@ -2490,6 +2492,15 @@
       "error": "搜索互联网时出错",
       "running": "正在搜索互联网…"
     },
+    "skills": {
+      "completed": "技能加载成功",
+      "completedFile": "技能文件加载成功",
+      "error": "访问技能时出错：{error}",
+      "preparing": "正在准备技能访问…",
+      "preparingFile": "正在准备技能文件访问…",
+      "running": "正在加载技能…",
+      "runningFile": "正在加载技能文件…"
+    },
     "video": {
       "completed": "视频生成成功",
       "description": "根据提示生成视频。返回的视频 URL 以“file://”开头是可以的。除非明确要求生成多个视频，否则每次只生成一个视频。始终使用“![title](url)” Markdown 语法在最终回答中嵌入视频，并为视频起一个简短的标题。",
@@ -2548,6 +2559,10 @@
       },
       "models": {
         "reload": "重新加载模型"
+      },
+      "skills": {
+        "manage": "管理技能",
+        "title": "@:{'common.skills'}"
       },
       "tools": {
         "plugins": "@:{'common.appName'} 插件",
@@ -2863,6 +2878,11 @@
       "confirmDeleteAll": "您确定要删除所有专家吗？",
       "copy": "复制",
       "deleteAll": "全部删除",
+      "deprecation": {
+        "body": "技能是引导您的 AI 的新型且更强大的方式。它们可重用、易于共享，并为真实工作流而设计。安装社区创建的技能或创建您自己的技能，以规范助理的思维和行为。",
+        "openSkills": "打开技能",
+        "title": "改用技能"
+      },
       "descriptionPlaceholder": "简要描述该专家的工作内容",
       "disableAll": "全部禁用",
       "empty": "尚未定义任何专家",
@@ -3055,6 +3075,28 @@
         "truncateTo": "截断至",
         "truncationWarning": "警告：截断长度将影响输入令牌数量，从而影响请求成本"
       },
+      "skills": {
+        "addLocation": "添加位置",
+        "confirmUninstallSharedText": "此技能与其他应用共享。删除 “{skill}” 也会将其从其他应用（如 Claude、Codex、Antigravity 等）中移除。",
+        "confirmUninstallTitle": "删除 “{skill}”",
+        "description": "此插件允许模型从已配置的文件夹中发现并加载 Claude 风格的技能。在此版本中，技能为只读（不执行代码）。",
+        "empty": "在已配置的位置未找到技能。",
+        "installButton": "安装",
+        "installDialogTitle": "安装新技能",
+        "installFailed": "技能安装失败。",
+        "installing": "正在安装…",
+        "installInvalidUrl": "请输入 GitHub URL 或 skills.sh 安装命令。",
+        "installNote": "粘贴 GitHub URL 或 skills.sh 安装命令（可在 skills.sh 技能页面顶部找到）。",
+        "installPathUnavailable": "全局技能文件夹不可用。",
+        "installSuccess": "已安装 {count} 个技能 | 已安装 {count} 个技能",
+        "manageLocations": "管理位置",
+        "refresh": "刷新",
+        "removeEcosystemWarning": "此位置属于开源 agent 技能生态（skills.sh），并与其他编码代理共享。移除它可能会导致通过 CLI 安装的技能无法被发现。是否继续？",
+        "saveFailed": "无法保存技能更改。",
+        "skillsCount": "{count} 个技能 | {count} 个技能",
+        "title": "技能",
+        "uninstallFailed": "技能卸载失败。"
+      },
       "vega": {
         "description": "此插件允许 LLM 引擎使用 Vega 可视化库根据数据创建图表图像。",
         "title": "Vega"
@@ -3104,6 +3146,7 @@
       "plugins": "插件",
       "shortcuts": "快捷键",
       "sidebar": "侧边栏",
+      "skills": "技能",
       "voice": "@:{'common.voice'}"
     },
     "voice": {

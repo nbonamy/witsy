@@ -170,6 +170,7 @@
     "shortcut": "Skrót klawiaturowy",
     "showLess": "Pokaż mniej",
     "showMore": "Pokaż więcej",
+    "skills": "Umiejętności",
     "sortBy": "Sortuj według",
     "spellcheck": {
       "add": "Dodaj do słownika"
@@ -1965,6 +1966,7 @@
       "codeExecutionProxy": "Aby wykonywać zadania, możesz używać narzędzi code_exec_get_tools_info i code_exec_call_tool. code_exec_get_tools_info dostarcza listę innych narzędzi, których możesz użyć, oraz instrukcje wywołań dla wybranych narzędzi.\n\n**INSTRUKCJE:**\n- ZAWSZE używaj `code_exec_call_tool` do korzystania z narzędzi. Narzędzia nie są dostępne poza `code_exec_call_tool`\n- PRZED wywołaniem narzędzia: użyj `code_exec_get_tools_info`, aby poznać wymagane parametry wywołania narzędzia.\n\n**Parametry wywołania `code_exec_call_tool`:**\n- `tool_name`: Dokładna nazwa narzędzia (np. \"search_internet\", \"filesystem_read\")\n- `parameters`: Obiekt par klucz-wartość z parametrami narzędzia\n\n**Przykład:**\n```json\n{\n  \"tool_name\": \"search_internet\",\n  \"parameters\": {\n    \"query\": \"latest news about AI\"\n  }\n}\n```",
       "mermaid": "Jeśli zostaniesz poproszony o wygenerowanie wykresu Mermaid, jego kod zostanie wyświetlony użytkownikowi jako diagram.",
       "noMarkdown": "Nie używaj formatowania markdown w swoich odpowiedziach. Używaj tylko zwykłego tekstu. Nie używaj **pogrubienia**, *kursywy*, `kodu`, ```bloków kodu``` ani żadnej innej składni markdown. Jeśli używasz tabeli, korzystaj wyłącznie z tabel w zwykłym tekście z odpowiednimi odstępami do wyrównania kolumn.",
+      "skills": "Masz dostęp do wielokrotnego użytku umiejętności. Preferuj ich użycie zawsze, gdy żądanie użytkownika pasuje do nazwy, domeny lub opisu umiejętności.\n\nProtokół używania umiejętności:\n1. Jeśli któraś umiejętność wydaje się istotna, najpierw wywołaj skills_load_skill (nie odpowiadaj wyłącznie na podstawie wpisu w katalogu).\n2. Dokładnie przeczytaj instrukcje w SKILL.md.\n3. Jeśli SKILL.md odwołuje się do plików (lub manifest sugeruje istnienie odpowiednich plików), wywołaj skills_get_skill_file, aby je pobrać przed sfinalizowaniem odpowiedzi.\n4. Oprzyj swoją odpowiedź na załadowanej zawartości umiejętności i wskaż założenia, gdy kontekst umiejętności jest niekompletny.\n\nDostępne umiejętności:\n{skills}\n\nUwaga: umiejętności są tylko do odczytu w tym środowisku i wykonywanie kodu nie jest dostępne.",
       "toolRetry": "Podczas wywoływania narzędzi, jeśli otrzymasz błąd wejścia, przeanalizuj błąd i spróbuj go naprawić, a następnie ponownie wywołaj narzędzie."
     },
     "chat": {
@@ -2490,6 +2492,15 @@
       "error": "Błąd podczas przeszukiwania internetu",
       "running": "Przeszukiwanie internetu…"
     },
+    "skills": {
+      "completed": "Umiejętność załadowano pomyślnie",
+      "completedFile": "Plik umiejętności załadowano pomyślnie",
+      "error": "Błąd podczas dostępu do umiejętności: {error}",
+      "preparing": "Przygotowywanie dostępu do umiejętności…",
+      "preparingFile": "Przygotowywanie dostępu do pliku umiejętności…",
+      "running": "Ładowanie umiejętności…",
+      "runningFile": "Ładowanie pliku umiejętności…"
+    },
     "video": {
       "completed": "Wideo zostało pomyślnie wygenerowane",
       "description": "Generuje wideo przy użyciu modeli uczenia maszynowego",
@@ -2548,6 +2559,10 @@
       },
       "models": {
         "reload": "Przeładuj modele"
+      },
+      "skills": {
+        "manage": "Zarządzaj umiejętnościami",
+        "title": "@:{'common.skills'}"
       },
       "tools": {
         "plugins": "wtyczki @:{'common.appName'}",
@@ -2863,6 +2878,11 @@
       "confirmDeleteAll": "Czy na pewno chcesz usunąć wszystkich ekspertów?",
       "copy": "Kopia",
       "deleteAll": "Usuń wszystko",
+      "deprecation": {
+        "body": "Umiejętności to nowy, bardziej potężny sposób kierowania Twoją sztuczną inteligencją. Są wielokrotnego użytku, łatwe do udostępniania i stworzone z myślą o rzeczywistych przepływach pracy. Zainstaluj umiejętności tworzone przez społeczność lub stwórz własne, aby ustandaryzować, jak Twoi asystenci myślą i działają.",
+        "openSkills": "Otwórz Umiejętności",
+        "title": "Wypróbuj Umiejętności"
+      },
       "descriptionPlaceholder": "Krótki opis tego, czym zajmuje się ten ekspert",
       "disableAll": "Wyłącz wszystko",
       "empty": "Nie zdefiniowano jeszcze ekspertów",
@@ -3061,6 +3081,28 @@
         "truncateTo": "Skróć do",
         "truncationWarning": "OSTRZEŻENIE: Długość skrócenia wpłynie na liczbę tokenów wejściowych, a tym samym na koszty żądania."
       },
+      "skills": {
+        "addLocation": "Dodaj lokalizację",
+        "confirmUninstallSharedText": "Ta umiejętność jest współdzielona z innymi aplikacjami. Usunięcie \"{skill}\" spowoduje usunięcie jej również z innych aplikacji (Claude, Codex, Antigravity itp.).",
+        "confirmUninstallTitle": "Usuń \"{skill}\"",
+        "description": "Ta wtyczka pozwala modelom odkrywać i ładować umiejętności w stylu Claude'a z skonfigurowanych folderów. W tej wersji umiejętności są tylko do odczytu (brak wykonywania kodu).",
+        "empty": "Brak umiejętności w skonfigurowanych lokalizacjach.",
+        "installButton": "Zainstaluj",
+        "installDialogTitle": "Zainstaluj nową umiejętność",
+        "installFailed": "Instalacja umiejętności nie powiodła się.",
+        "installing": "Instalowanie…",
+        "installInvalidUrl": "Wpisz adres URL GitHub lub polecenie instalacyjne skills.sh.",
+        "installNote": "Wklej adres URL GitHub lub polecenie instalacyjne skills.sh, jak podane na stronie umiejętności w skills.sh.",
+        "installPathUnavailable": "Globalny folder umiejętności jest niedostępny.",
+        "installSuccess": "Zainstalowano {count} umiejętność | Zainstalowano {count} umiejętności",
+        "manageLocations": "Zarządzaj lokalizacjami",
+        "refresh": "Odśwież",
+        "removeEcosystemWarning": "Ta lokalizacja jest częścią ekosystemu otwartych umiejętności dla agentów (skills.sh) i jest współdzielona z innymi agentami programistycznymi. Usunięcie jej może uniemożliwić wykrycie umiejętności zainstalowanych przez CLI. Kontynuować?",
+        "saveFailed": "Nie udało się zapisać zmian w umiejętności.",
+        "skillsCount": "{count} umiejętność | {count} umiejętności",
+        "title": "Umiejętności",
+        "uninstallFailed": "Odinstalowanie umiejętności nie powiodło się."
+      },
       "vega": {
         "description": "Ta wtyczka umożliwia silnikom LLM tworzenie wykresów na podstawie danych przy użyciu biblioteki wizualizacji Vega.",
         "title": "Vega"
@@ -3110,6 +3152,7 @@
       "plugins": "Wtyczki",
       "shortcuts": "Skróty",
       "sidebar": "Pasek boczny",
+      "skills": "Umiejętności",
       "voice": "@:{'common.voice'}"
     },
     "voice": {
