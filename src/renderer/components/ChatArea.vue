@@ -541,8 +541,8 @@ defineExpose({
 .model-settings {
 
   position: absolute;
-  top: var(--window-toolbar-height);
-  bottom: var(--window-footer-height);
+  top: -1px;
+  bottom: 0;
   right: -1px;
   
   width: 0px;
