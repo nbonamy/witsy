@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - N/A
 
 ### Fixed
-- N/A
+- Paste in the edit box inserts text in the end, not at the cursor position (https://github.com/nbonamy/witsy/issues/547)
 
 ### Removed
 - N/A

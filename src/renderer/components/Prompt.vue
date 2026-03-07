@@ -8,11 +8,11 @@
         <XIcon class="delete" @click="onDetach(attachment)" />
       </div>
     </div>
-    <div class="input" @paste="onPaste">
+    <div class="input">
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
         <div v-if="command" class="icon left command" @click="onClickActiveCommand"><CommandIcon /></div>
-        <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" @paste="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode !== 'off'" />
+        <textarea v-model="prompt" :placeholder="placeholder" @paste="onPaste" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode !== 'off'" />
       </div>
     </div>
     <div class="actions">
@@ -696,17 +696,19 @@ const onPaste = (event: ClipboardEvent) => {
   for (let item of event.clipboardData.items) {
 
     if (item.kind === 'string' && item.type === 'text/plain') {
+      const textarea = input.value
+      const start = textarea.selectionStart
+      const end = textarea.selectionEnd
       item.getAsString((str) => {
-        if (str) {
-          prompt.value += str
-          nextTick(() => {
-            autoGrow(input.value)
-            input.value.focus()
-          })
-        }
+        prompt.value = prompt.value.substring(0, start) + str + prompt.value.substring(end)
+        autoGrow(textarea)
+        nextTick(() => {
+          const newPos = start + str.length
+          textarea.selectionStart = newPos
+          textarea.selectionEnd = newPos
+        })
       })
-      event.preventDefault()
-      return
+      return false
     }
 
     if (item.kind === 'file') {
