@@ -9,6 +9,10 @@
         <SaveIcon v-else />
       </div>
 
+      <div class="action archive-action" @click="emit('action', 'archive')" v-tooltip="t('scratchpad.versions.title')">
+        <ArchiveIcon />
+      </div>
+
       <div class="action" @click="emit('action', 'copy')" v-tooltip="t('scratchpad.actions.copyToClipboard')">
         <ClipboardIcon v-if="copyState == 'idle'"/>
         <ClipboardCheckIcon style="color: var(--scratchpad-actionbar-active-icon-color)" v-else/>
@@ -68,7 +72,7 @@
 <script setup lang="ts">
 
 import FloatingVue, { vTooltip } from 'floating-vue'
-import { CircleCheckIcon, CircleXIcon, ClipboardCheckIcon, ClipboardIcon, FoldVerticalIcon, GraduationCapIcon, ListIcon, MoveLeftIcon, PencilLineIcon, SaveIcon, SparklesIcon, SpellCheckIcon, StopCircleIcon, TypeOutlineIcon, UnfoldVerticalIcon, Volume2Icon } from 'lucide-vue-next'
+import { ArchiveIcon, CircleCheckIcon, CircleXIcon, ClipboardCheckIcon, ClipboardIcon, FoldVerticalIcon, GraduationCapIcon, ListIcon, MoveLeftIcon, PencilLineIcon, SaveIcon, SparklesIcon, SpellCheckIcon, StopCircleIcon, TypeOutlineIcon, UnfoldVerticalIcon, Volume2Icon } from 'lucide-vue-next'
 import SpinningIcon from '@components/SpinningIcon.vue'
 import { ref, watch } from 'vue'
 import { t } from '@services/i18n'
