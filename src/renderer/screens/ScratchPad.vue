@@ -10,7 +10,7 @@
 
     <div class="sp-main">
       <main>
-        <div class="document" :style="documentStyle">
+        <div class="document" :style="documentStyle" @click="onDocumentClick">
           <TiptapEditor
             ref="editorRef"
             v-model="content"
@@ -26,12 +26,17 @@
         </div>
         <ScratchpadActionBar :saveState="saveState" :copyState="copyState" :audioState="audioState" :processing="processing" @action="onAction" />
       </main>
+      <div v-if="hasResponseContent" class="response-popover">
+        <div class="response-close" @click="responseMessage = null"><XIcon /></div>
+        <MessageItem :message="responseMessage" :chat="chat" :showRole="false" :showActions="false" />
+      </div>
       <Prompt
         :chat="chat"
         :is-generating="processing"
         :enable-instructions="false"
         :enable-commands="false"
         :conversation-mode="conversationMode"
+        :history-provider="historyProvider"
         @set-engine-model="onSetEngineModel"
         @conversation-mode="onConversationMode"
         @prompt="onSendPrompt"
@@ -76,7 +81,8 @@ import { fullExpertI18n, i18nInstructions, t } from '@services/i18n'
 import LlmFactory, { ILlmManager } from '@services/llms/llm'
 import { availablePlugins } from '@services/plugins/plugins'
 import { store } from '@services/store'
-import { PencilIcon, Trash2Icon } from 'lucide-vue-next'
+import MessageItem from '@components/MessageItem.vue'
+import { PencilIcon, Trash2Icon, XIcon } from 'lucide-vue-next'
 import { LlmEngine } from 'multi-llm-ts'
 import { FileContents } from 'types/file'
 import { ScratchpadData, ScratchpadHeader } from 'types/index'
@@ -110,6 +116,7 @@ const engine = ref<string>(null)
 const model = ref<string>(null)
 const fontFamily = ref<string>(null)
 const fontSize = ref<string>(null)
+const autoSave = ref<boolean>(false)
 
 const fontSizeMap: Record<string, { size: string, spacing: string }> = {
   '1': { size: '14px', spacing: '2px' },
@@ -134,11 +141,18 @@ const documentStyle = computed(() => {
   }
 })
 
+const hasResponseContent = computed(() => {
+  if (!responseMessage.value) return false
+  let content = responseMessage.value.content.replaceAll(/<tool id="([^"]+)"><\/tool>/g, '')
+  return content.trim().length > 0
+})
+
 const content = ref<string>('')
 const audioState = ref<AudioState>('idle')
 const copyState = ref<string>('idle')
 const saveFlash = ref<'idle'|'saving'|'saved'>('idle')
 const conversationMode = ref<ConversationMode>('off')
+const responseMessage = ref<Message>(null)
 const currentScratchpadId = ref<string>(null)
 const currentTitle = ref<string>(null)
 const lastSavedContent = ref<string | null>(null)
@@ -158,6 +172,7 @@ store.loadSettings()
 const audioPlayer = useAudioPlayer(store.config)
 const generator = new Generator(store.config)
 let abortController: AbortController | null = null
+let autoSaveTimer: ReturnType<typeof setTimeout> | null = null
 
 // init stuff
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
@@ -193,12 +208,16 @@ onMounted(() => {
   // load settings
   fontFamily.value = store.config.scratchpad.fontFamily || 'serif'
   fontSize.value = store.config.scratchpad.fontSize || '3'
+  autoSave.value = store.config.scratchpad.autoSave ?? false
 
   // load scratchpads list
   loadScratchpadsList()
 
   // override some system shortcuts
   onDomEvent(editorRef.value?.$el, 'keydown', onEditorKeyDown)
+
+  // focus editor by default
+  editorRef.value?.editor?.commands.focus()
 
   // init
   resetState()
@@ -219,7 +238,34 @@ watch(() => props.extra, (newExtra) => {
   }
 }, { deep: true })
 
+const onDocumentClick = () => {
+  if (!editorRef.value?.editor?.isFocused) {
+    editorRef.value?.editor?.commands.focus()
+  }
+}
+
+const historyProvider = (): string[] => {
+  const messages = chat.value?.messages.filter(m => m.role === 'user') || []
+  const history = messages.map(m => {
+    const askMatch = m.content.match(/\nASK:\s*(.+)$/s)
+    return askMatch ? askMatch[1].trim() : m.content
+  }).filter(m => m.trim() !== '')
+  return Array.from(new Set(history))
+}
+
+// autosave: debounce content changes
+watch(content, () => {
+  if (!autoSave.value) return
+  if (autoSaveTimer) clearTimeout(autoSaveTimer)
+  autoSaveTimer = setTimeout(() => {
+    if (checkIfModified()) {
+      onSave({ autoSave: true })
+    }
+  }, 2000)
+})
+
 onBeforeUnmount(() => {
+  if (autoSaveTimer) clearTimeout(autoSaveTimer)
   audioPlayer.removeListener(onAudioPlayerStatus)
 })
 
@@ -298,7 +344,7 @@ const checkIfModified = (): boolean => {
 
 const saveState = computed(() => {
   if (saveFlash.value !== 'idle') return saveFlash.value
-  if (checkIfModified()) return 'dirty'
+  if (checkIfModified()) return autoSave.value ? 'pending' : 'dirty'
   return 'idle'
 })
 
@@ -520,21 +566,26 @@ const onImport = () => {
   })
 }
 
-const onSave = async () => {
+const onSave = async (opts?: { autoSave?: boolean }) => {
   try {
-    // If no current scratchpad, prompt for title
+    // If no current scratchpad, prompt for title (or use default for autosave)
     if (!currentScratchpadId.value) {
-      const result = await Dialog.show({
-        title: t('scratchpad.save.title'),
-        text: t('scratchpad.save.prompt'),
-        input: 'text',
-        inputValue: '',
-        showCancelButton: true
-      })
-      if (!result.isConfirmed || !result.value) return
+      if (opts?.autoSave) {
+        currentScratchpadId.value = crypto.randomUUID()
+        currentTitle.value = t('scratchpad.untitled')
+      } else {
+        const result = await Dialog.show({
+          title: t('scratchpad.save.title'),
+          text: t('scratchpad.save.prompt'),
+          input: 'text',
+          inputValue: '',
+          showCancelButton: true
+        })
+        if (!result.isConfirmed || !result.value) return
 
-      currentScratchpadId.value = crypto.randomUUID()
-      currentTitle.value = result.value
+        currentScratchpadId.value = crypto.randomUUID()
+        currentTitle.value = result.value
+      }
     }
 
     // Build scratchpad data — contents is now a markdown string
@@ -585,11 +636,13 @@ const onSettings = () => {
   settingsDialog.value?.show()
 }
 
-const onSaveSettings = (settings: { fontFamily: string, fontSize: string }) => {
+const onSaveSettings = (settings: { fontFamily: string, fontSize: string, autoSave: boolean }) => {
   fontFamily.value = settings.fontFamily
   fontSize.value = settings.fontSize
+  autoSave.value = settings.autoSave
   store.config.scratchpad.fontFamily = fontFamily.value
   store.config.scratchpad.fontSize = fontSize.value
+  store.config.scratchpad.autoSave = autoSave.value
   store.saveSettings()
 }
 
@@ -700,6 +753,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   // set
   processing.value = true
+  responseMessage.value = null
 
   // check for selection (use saved selection from blur, or live selection)
   // if selection covers the entire document, treat as no selection
@@ -748,7 +802,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     const codeExecutionMode: CodeExecutionMode = store.config.llm.codeExecution
 
     // load tools as configured per prompt
-    llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools, { codeExecutionMode })
+    await llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools, { codeExecutionMode })
 
     // create abort controller
     abortController = new AbortController()
@@ -769,6 +823,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
     if (rc !== 'success') {
       throw new Error(response.content)
     }
+
+    // show response in popover
+    responseMessage.value = response
 
   } catch (err) {
     console.error(err)
@@ -841,6 +898,71 @@ const onStopPrompting = async () => {
 
   .document, .document * {
     outline: none;
+  }
+
+  .response-popover {
+    position: relative;
+    margin: 0 1rem;
+    padding: var(--space-8);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-menu);
+    max-height: 200px;
+    overflow-y: auto;
+
+    .response-close {
+      position: absolute;
+      top: var(--space-8);
+      right: var(--space-8);
+      cursor: pointer;
+      color: var(--color-text-muted);
+      z-index: 1;
+
+      &:hover {
+        color: var(--color-text);
+      }
+
+      svg {
+        width: var(--icon-md);
+        height: var(--icon-md);
+      }
+    }
+
+    &:deep() {
+
+      .message {
+        margin: 0;
+        padding: 0;
+      }
+
+      .message-body {
+        margin: 0;
+        padding: 0 0.5rem;
+      }
+
+      .message-content {
+        font-size: 0.9em;
+        .tool-container {
+          display: none;
+        }
+        p {
+          margin: 0;
+        }
+        ul {
+          margin-top: 0;
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      .message-actions {
+        visibility: visible;
+        font-size: 0.8em;
+        margin: 0 0.5rem;
+      }
+
+    }
+
   }
 
   :deep(.prompt) {

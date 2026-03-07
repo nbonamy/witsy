@@ -2624,6 +2624,7 @@
       "smaller": "Smaller",
       "title": "Font Size"
     },
+    "autoSave": "Auto-save",
     "generationError": "Error while generating text",
     "history": {
       "documents": "Documents",
@@ -2649,7 +2650,8 @@
     },
     "saveError": "Error saving document",
     "title": "Scratchpad",
-    "unsavedPrompt": "Do you want to save your changes?"
+    "unsavedPrompt": "Do you want to save your changes?",
+    "untitled": "Untitled Document"
   },
   "settings": {
     "advanced": {

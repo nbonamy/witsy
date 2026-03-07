@@ -708,7 +708,8 @@ const onPaste = (event: ClipboardEvent) => {
           textarea.selectionEnd = newPos
         })
       })
-      return false
+      event.preventDefault()
+      return
     }
 
     if (item.kind === 'file') {

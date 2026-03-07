@@ -172,6 +172,10 @@ const onMagicAction = (event: Event, action: string) => {
       color: var(--color-error);
     }
 
+    &.save.pending {
+      color: var(--color-warning);
+    }
+
     &.save.saving {
       color: var(--color-primary);
     }
