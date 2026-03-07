@@ -23,6 +23,11 @@
           <option value="5">{{ t('scratchpad.fontSize.larger') }}</option>
         </select>
       </div>
+
+      <div class="form-field horizontal">
+        <input type="checkbox" v-model="autoSave" />
+        <label>{{ t('scratchpad.autoSave') }}</label>
+      </div>
     </template>
     <template #footer>
       <div class="buttons">
@@ -43,6 +48,7 @@ import ModalDialog from '@components/ModalDialog.vue'
 const dialog = ref(null)
 const fontFamily = ref(null)
 const fontSize = ref(null)
+const autoSave = ref(false)
 
 const emit = defineEmits(['save'])
 
@@ -58,12 +64,14 @@ const close = () => {
 const load = () => {
   fontFamily.value = store.config.scratchpad.fontFamily || 'serif'
   fontSize.value = store.config.scratchpad.fontSize || '3'
+  autoSave.value = store.config.scratchpad.autoSave ?? false
 }
 
 const onSave = () => {
   emit('save', {
     fontFamily: fontFamily.value,
-    fontSize: fontSize.value
+    fontSize: fontSize.value,
+    autoSave: autoSave.value
   })
   close()
 }

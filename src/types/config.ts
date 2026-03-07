@@ -218,6 +218,7 @@ export type ScratchpadConfig = {
   model: string
   fontFamily: string
   fontSize: string
+  autoSave: boolean
 }
 
 export type SkillsConfig = {

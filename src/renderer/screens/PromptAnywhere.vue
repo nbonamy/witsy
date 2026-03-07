@@ -436,7 +436,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
     // load tools as configured per prompt
     const codeExecutionMode: CodeExecutionMode = store.config.llm.codeExecution
-    llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools, { codeExecutionMode })
+    await llmManager.loadTools(llm, store.config.workspaceId, availablePlugins, chat.value.tools, { codeExecutionMode })
 
     // system instructions
     const llmUtils = new LlmUtils(store.config)

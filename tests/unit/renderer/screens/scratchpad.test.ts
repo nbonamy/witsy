@@ -10,6 +10,7 @@ import defaultSettings from '@root/defaults/settings.json'
 import ScratchPad from '@screens/ScratchPad.vue'
 import Prompt, { SendPromptParams } from '@components/Prompt.vue'
 import TiptapEditor from '@components/editor/TiptapEditor.vue'
+import MessageItem from '@components/MessageItem.vue'
 import Sidebar from '@renderer/scratchpad/Sidebar.vue'
 import ActionBar from '@renderer/scratchpad/ActionBar.vue'
 import Attachment from '@models/attachment'
@@ -372,4 +373,218 @@ test('Switching with unsaved changes prompts', async () => {
 
   expect(Dialog.show).toHaveBeenCalled()
   expect(wrapper.vm.currentScratchpadId).toBeNull() // Should not have switched
+})
+
+// Auto-save Tests
+
+test('Save state is dirty when modified and autoSave is off', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  store.config.scratchpad.autoSave = false
+  wrapper.vm.content = 'Some content'
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.saveState).toBe('dirty')
+})
+
+test('Save state is pending when modified and autoSave is on', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  store.config.scratchpad.autoSave = true
+  wrapper.vm.autoSave = true
+  wrapper.vm.content = 'Some content'
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.saveState).toBe('pending')
+})
+
+test('Auto-save triggers save after debounce on existing scratchpad', async () => {
+  vi.useFakeTimers()
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // Simulate an existing loaded scratchpad
+  wrapper.vm.currentScratchpadId = 'scratchpad1'
+  wrapper.vm.currentTitle = 'Test'
+  wrapper.vm.lastSavedContent = 'Original'
+  wrapper.vm.autoSave = true
+  vi.mocked(window.api.scratchpad.save).mockClear()
+
+  // Modify content
+  wrapper.vm.content = 'Auto-saved content'
+  await wrapper.vm.$nextTick()
+
+  // Before debounce: no save yet
+  expect(window.api.scratchpad.save).not.toHaveBeenCalled()
+
+  // After debounce
+  vi.advanceTimersByTime(2500)
+  await vi.advanceTimersByTimeAsync(0)
+  expect(window.api.scratchpad.save).toHaveBeenCalled()
+
+  vi.useRealTimers()
+})
+
+test('Auto-save creates untitled scratchpad when no id exists', async () => {
+  vi.useFakeTimers()
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  wrapper.vm.autoSave = true
+
+  // Modify content without loading/saving a scratchpad first
+  wrapper.vm.content = 'Brand new content'
+  await wrapper.vm.$nextTick()
+
+  vi.advanceTimersByTime(2500)
+  await vi.advanceTimersByTimeAsync(0)
+
+  expect(wrapper.vm.currentScratchpadId).toBeDefined()
+  expect(wrapper.vm.currentTitle).toContain('scratchpad.untitled')
+  expect(window.api.scratchpad.save).toHaveBeenCalled()
+
+  vi.useRealTimers()
+})
+
+test('Auto-save does not trigger when autoSave is off', async () => {
+  vi.useFakeTimers()
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // Simulate an existing loaded scratchpad
+  wrapper.vm.currentScratchpadId = 'scratchpad1'
+  wrapper.vm.currentTitle = 'Test'
+  wrapper.vm.lastSavedContent = 'Original'
+  wrapper.vm.autoSave = false
+  vi.mocked(window.api.scratchpad.save).mockClear()
+
+  wrapper.vm.content = 'Modified but no autosave'
+  await wrapper.vm.$nextTick()
+
+  vi.advanceTimersByTime(3000)
+  await vi.advanceTimersByTimeAsync(0)
+  expect(window.api.scratchpad.save).not.toHaveBeenCalled()
+
+  vi.useRealTimers()
+})
+
+test('Auto-save does not trigger when content is not modified', async () => {
+  vi.useFakeTimers()
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // Simulate an existing loaded scratchpad
+  wrapper.vm.currentScratchpadId = 'scratchpad1'
+  wrapper.vm.currentTitle = 'Test'
+  wrapper.vm.lastSavedContent = 'Original'
+  wrapper.vm.content = 'Original'
+  wrapper.vm.autoSave = true
+  await wrapper.vm.$nextTick()
+  vi.mocked(window.api.scratchpad.save).mockClear()
+
+  // Set content to same value as saved (trigger the watcher)
+  wrapper.vm.content = 'Original'
+  await wrapper.vm.$nextTick()
+
+  vi.advanceTimersByTime(3000)
+  await vi.advanceTimersByTimeAsync(0)
+  expect(window.api.scratchpad.save).not.toHaveBeenCalled()
+
+  vi.useRealTimers()
+})
+
+// Response Popover Tests
+
+test('Response popover shown after generation', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  expect(wrapper.find('.response-popover').exists()).toBe(false)
+
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(() => !wrapper.vm.processing)
+
+  expect(wrapper.vm.responseMessage).not.toBeNull()
+  expect(wrapper.vm.responseMessage.content).toBe('Be kind')
+  expect(wrapper.find('.response-popover').exists()).toBe(true)
+  expect(wrapper.findComponent(MessageItem).exists()).toBe(true)
+})
+
+test('Response popover hides role and shows close button', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(() => !wrapper.vm.processing)
+
+  const messageItem = wrapper.findComponent(MessageItem)
+  expect(messageItem.props('showRole')).toBe(false)
+  expect(wrapper.find('.response-close').exists()).toBe(true)
+})
+
+test('Response popover closes on click', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(() => !wrapper.vm.processing)
+  expect(wrapper.find('.response-popover').exists()).toBe(true)
+
+  await wrapper.find('.response-close').trigger('click')
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.responseMessage).toBeNull()
+  expect(wrapper.find('.response-popover').exists()).toBe(false)
+})
+
+test('Response popover cleared when sending new prompt', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(() => !wrapper.vm.processing)
+  expect(wrapper.vm.responseMessage).not.toBeNull()
+
+  // Send another prompt — response should be cleared during generation
+  const processingCheck = vi.fn()
+  mockGeneratorGenerate.mockImplementationOnce(async (_llm: any, messages: any[]) => {
+    // During generation, responseMessage should be null
+    processingCheck(wrapper.vm.responseMessage)
+    const response = messages[messages.length - 1]
+    if (response?.setText) response.setText('New response')
+    return 'success'
+  })
+
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Second prompt' })
+  await vi.waitUntil(() => !wrapper.vm.processing)
+  expect(processingCheck).toHaveBeenCalledWith(null)
+})
+
+// History Provider Tests
+
+test('History provider extracts ASK part from user messages', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // @ts-expect-error mocking
+  store.config.instructions = {
+    scratchpad: {
+      prompt: 'EXTRACT:\n{document}\n\nASK: {ask}'
+    }
+  }
+
+  wrapper.vm.content = 'Hello LLM'
+  await wrapper.vm.$nextTick()
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'make it better' })
+  await vi.waitUntil(() => !wrapper.vm.processing)
+
+  const history = wrapper.vm.historyProvider()
+  expect(history).toContain('make it better')
+  // Should not contain the full prompt with EXTRACT/document
+  expect(history.every((h: string) => !h.includes('EXTRACT:'))).toBe(true)
+})
+
+test('History provider returns raw content for non-template messages', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // With empty content, no template wrapping happens
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(() => !wrapper.vm.processing)
+
+  const history = wrapper.vm.historyProvider()
+  expect(history).toContain('Hello LLM')
+})
+
+test('History provider deduplicates entries', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(() => !wrapper.vm.processing)
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(() => !wrapper.vm.processing)
+
+  const history = wrapper.vm.historyProvider()
+  const helloCount = history.filter((h: string) => h === 'Hello LLM').length
+  expect(helloCount).toBe(1)
 })
