@@ -59,6 +59,23 @@
       </template>
     </ContextMenuPlus>
 
+    <ContextMenuPlus
+      v-if="showArchiveMenu"
+      anchor=".archive-action"
+      position="left"
+      @close="showArchiveMenu = false"
+    >
+      <template #default>
+        <div @click="onArchiveVersion">{{ t('scratchpad.versions.archive') }}</div>
+        <template v-if="versions.length > 0">
+          <div class="separator"><hr></div>
+          <div v-for="version in versions" :key="version.name" @click="onRecallVersion(version)">
+            {{ version.name }}
+          </div>
+        </template>
+      </template>
+    </ContextMenuPlus>
+
   </div>
 </template>
 
@@ -85,7 +102,7 @@ import MessageItem from '@components/MessageItem.vue'
 import { PencilIcon, Trash2Icon, XIcon } from 'lucide-vue-next'
 import { LlmEngine } from 'multi-llm-ts'
 import { FileContents } from 'types/file'
-import { ScratchpadData, ScratchpadHeader } from 'types/index'
+import { ScratchpadData, ScratchpadHeader, ScratchpadVersion } from 'types/index'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
 import ScratchpadSettings from '../scratchpad/Settings.vue'
@@ -162,6 +179,8 @@ const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const targetScratchpad = ref<ScratchpadHeader>(null)
+const versions = ref<ScratchpadVersion[]>([])
+const showArchiveMenu = ref(false)
 
 const props = defineProps({
   extra: Object
@@ -303,6 +322,7 @@ const resetState = () => {
   currentScratchpadId.value = null
   currentTitle.value = null
   selectedScratchpad.value = null
+  versions.value = []
   fileUrl = null
 
   // init new chat
@@ -357,7 +377,8 @@ const onAction = (action: string|ToolbarAction) => {
     'copy': onCopy,
     'read': onReadAloud,
     'settings': onSettings,
-    'import': onImport
+    'import': onImport,
+    'archive': onShowArchiveMenu
   }
 
   // find
@@ -467,6 +488,7 @@ const onSelectScratchpad = async (scratchpad: ScratchpadHeader) => {
     const loadedContent = extractContent(data.contents)
     content.value = loadedContent
     lastSavedContent.value = loadedContent
+    versions.value = data.versions || []
 
     // chat - restore from data or create new
     if (data.chat) {
@@ -595,7 +617,8 @@ const onSave = async (opts?: { autoSave?: boolean }) => {
       contents: content.value,
       chat: chat.value,
       createdAt: Date.now(),
-      lastModified: Date.now()
+      lastModified: Date.now(),
+      versions: versions.value.length > 0 ? versions.value : undefined
     }
 
     // Save (serialize to avoid cloning errors with complex objects)
@@ -634,6 +657,53 @@ const onReadAloud = async () => {
 
 const onSettings = () => {
   settingsDialog.value?.show()
+}
+
+const onShowArchiveMenu = () => {
+  showArchiveMenu.value = true
+}
+
+const onArchiveVersion = async () => {
+  showArchiveMenu.value = false
+  const result = await Dialog.show({
+    title: t('scratchpad.versions.archive'),
+    input: 'text',
+    inputValue: '',
+    showCancelButton: true
+  })
+  if (!result.isConfirmed || !result.value) return
+
+  versions.value.push({
+    name: result.value,
+    content: content.value
+  })
+
+  // persist if scratchpad is already saved
+  if (currentScratchpadId.value) {
+    await onSave()
+  }
+}
+
+const onRecallVersion = async (version: ScratchpadVersion) => {
+  showArchiveMenu.value = false
+  const result = await Dialog.show({
+    title: t('scratchpad.versions.recallTitle', { name: version.name }),
+    text: t('scratchpad.versions.recallConfirm'),
+    showCancelButton: true,
+    showDenyButton: true,
+    confirmButtonText: t('scratchpad.versions.recall'),
+    denyButtonText: t('scratchpad.versions.delete'),
+    cancelButtonText: t('common.cancel')
+  })
+
+  if (result.isConfirmed) {
+    content.value = version.content
+  } else if (result.isDenied) {
+    versions.value = versions.value.filter(v => v !== version)
+    if (currentScratchpadId.value) {
+      await onSave()
+    }
+  }
 }
 
 const onSaveSettings = (settings: { fontFamily: string, fontSize: string, autoSave: boolean }) => {
@@ -934,6 +1004,7 @@ const onStopPrompting = async () => {
       .message {
         margin: 0;
         padding: 0;
+        flex-direction: column;
       }
 
       .message-body {

@@ -576,6 +576,123 @@ test('History provider returns raw content for non-template messages', async () 
   expect(history).toContain('Hello LLM')
 })
 
+// Version Archive Tests
+
+test('Archive menu shows', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  expect(wrapper.vm.showArchiveMenu).toBe(false)
+  wrapper.vm.onAction('archive')
+  expect(wrapper.vm.showArchiveMenu).toBe(true)
+})
+
+test('Archive current version', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // Load a scratchpad
+  const scratchpad = wrapper.vm.scratchpads[0]
+  wrapper.vm.onAction({ type: 'select-scratchpad', value: scratchpad })
+  await vi.waitUntil(() => wrapper.vm.currentScratchpadId)
+
+  wrapper.vm.content = 'Version 1 content'
+  await wrapper.vm.$nextTick()
+
+  vi.spyOn(Dialog, 'show').mockResolvedValueOnce({ isConfirmed: true, value: 'v1', isDenied: false, isDismissed: false })
+  await wrapper.vm.onArchiveVersion()
+
+  expect(wrapper.vm.versions).toHaveLength(1)
+  expect(wrapper.vm.versions[0].name).toBe('v1')
+  expect(wrapper.vm.versions[0].content).toBe('Version 1 content')
+  expect(window.api.scratchpad.save).toHaveBeenCalled()
+})
+
+test('Archive cancelled does nothing', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  wrapper.vm.content = 'Some content'
+
+  vi.spyOn(Dialog, 'show').mockResolvedValueOnce({ isConfirmed: false, isDenied: false, isDismissed: true })
+  await wrapper.vm.onArchiveVersion()
+
+  expect(wrapper.vm.versions).toHaveLength(0)
+})
+
+test('Recall version replaces content', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  wrapper.vm.content = 'Current content'
+  wrapper.vm.versions = [{ name: 'v1', content: 'Old content' }]
+
+  vi.spyOn(Dialog, 'show').mockResolvedValueOnce({ isConfirmed: true, isDenied: false, isDismissed: false })
+  await wrapper.vm.onRecallVersion(wrapper.vm.versions[0])
+
+  expect(wrapper.vm.content).toBe('Old content')
+  expect(wrapper.vm.versions).toHaveLength(1)
+})
+
+test('Delete version removes it and saves', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+
+  // Load a scratchpad so save works
+  const scratchpad = wrapper.vm.scratchpads[0]
+  wrapper.vm.onAction({ type: 'select-scratchpad', value: scratchpad })
+  await vi.waitUntil(() => wrapper.vm.currentScratchpadId)
+
+  wrapper.vm.versions = [
+    { name: 'v1', content: 'content 1' },
+    { name: 'v2', content: 'content 2' }
+  ]
+  vi.mocked(window.api.scratchpad.save).mockClear()
+
+  vi.spyOn(Dialog, 'show').mockResolvedValueOnce({ isConfirmed: false, isDenied: true, isDismissed: false })
+  await wrapper.vm.onRecallVersion(wrapper.vm.versions[0])
+
+  expect(wrapper.vm.versions).toHaveLength(1)
+  expect(wrapper.vm.versions[0].name).toBe('v2')
+  expect(window.api.scratchpad.save).toHaveBeenCalled()
+})
+
+test('Cancel recall does nothing', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  wrapper.vm.content = 'Current content'
+  wrapper.vm.versions = [{ name: 'v1', content: 'Old content' }]
+
+  vi.spyOn(Dialog, 'show').mockResolvedValueOnce({ isConfirmed: false, isDenied: false, isDismissed: true })
+  await wrapper.vm.onRecallVersion(wrapper.vm.versions[0])
+
+  expect(wrapper.vm.content).toBe('Current content')
+  expect(wrapper.vm.versions).toHaveLength(1)
+})
+
+test('Versions loaded from scratchpad data', async () => {
+  const savedVersions = [{ name: 'v1', content: 'archived' }]
+  vi.mocked(window.api.scratchpad.load).mockReturnValueOnce({
+    uuid: 'scratchpad1',
+    title: 'Test',
+    contents: 'Current',
+    chat: null,
+    createdAt: Date.now(),
+    lastModified: Date.now(),
+    versions: savedVersions
+  })
+
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  wrapper.vm.onAction({ type: 'select-scratchpad', value: { uuid: 'scratchpad1', title: 'Test', lastModified: Date.now() } })
+  await vi.waitUntil(() => wrapper.vm.currentScratchpadId)
+
+  expect(wrapper.vm.versions).toHaveLength(1)
+  expect(wrapper.vm.versions[0].name).toBe('v1')
+})
+
+test('Versions cleared on reset', async () => {
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
+  wrapper.vm.versions = [{ name: 'v1', content: 'archived' }]
+  expect(wrapper.vm.versions).toHaveLength(1)
+
+  vi.mocked(Dialog.show).mockResolvedValueOnce({ isDismissed: true })
+  wrapper.vm.onAction('clear')
+  await vi.waitUntil(() => wrapper.vm.versions.length === 0)
+
+  expect(wrapper.vm.versions).toHaveLength(0)
+})
+
 test('History provider deduplicates entries', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
 

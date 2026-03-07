@@ -2651,7 +2651,15 @@
     "saveError": "Error saving document",
     "title": "Scratchpad",
     "unsavedPrompt": "Do you want to save your changes?",
-    "untitled": "Untitled Document"
+    "untitled": "Untitled Document",
+    "versions": {
+      "archive": "Archive current version",
+      "delete": "Delete",
+      "recall": "Recall",
+      "recallConfirm": "Recalling this version will replace the current content. Any unsaved changes will be lost.",
+      "recallTitle": "Recall version \"{name}\"?",
+      "title": "Versions"
+    }
   },
   "settings": {
     "advanced": {
