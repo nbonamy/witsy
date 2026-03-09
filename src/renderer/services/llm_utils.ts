@@ -97,7 +97,7 @@ export default class LlmUtils {
         'groq': 'meta-llama/llama-4-scout-17b-16e-instruct',
         'meta': 'Llama-3.3-8B-Instruct',
         'mistralai': 'mistral-small-latest',
-        'openai': 'gpt-5-nano',
+        'openai': 'gpt-5-mini',
         'xai': 'grok-3-mini',
       },
       normal: {
@@ -108,7 +108,7 @@ export default class LlmUtils {
         'groq': 'llama-3.3-70b-versatile',
         'meta': 'Llama-3.3-70B-Instruct',
         'mistralai': 'mistral-medium-latest',
-        'openai': 'gpt-5-mini',
+        'openai': 'gpt-5.2',
         'xai': 'grok-3',
       },
       complex: {
@@ -119,7 +119,7 @@ export default class LlmUtils {
         'groq': 'moonshotai/kimi-k2-instruct-0905',
         'meta': 'Llama-4-Maverick-17B-128E-Instruct-FP8',
         'mistralai': 'mistral-large-latest',
-        'openai': 'gpt-5.2',
+        'openai': 'gpt-5.4',
         'xai': 'grok-4-0709',
       }
     }
