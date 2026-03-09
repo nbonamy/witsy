@@ -18,12 +18,7 @@ vi.mock('@services/llms/manager.ts', async () => {
   LlmManager.prototype.getCustomEngines = () => []
   LlmManager.prototype.getFavoriteId = () => 'favid'
   LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
-  LlmManager.prototype.getChatModel = vi.fn((engine: string, model: string) => {
-    if (model === 'chat') return { id: 'chat', name: 'chat', ...defaultCapabilities }
-    if (model === 'gpt-5-nano') return { id: 'gpt-5-nano', name: 'GPT-5 nano', ...defaultCapabilities }
-    if (model === 'claude-haiku-4-5') return { id: 'claude-haiku-4-5', name: 'Claude Haiku 4.5', ...defaultCapabilities }
-    return null
-  })
+  LlmManager.prototype.getChatModel = vi.fn(() => [])
   LlmManager.prototype.getDefaultChatModel = vi.fn(() => 'chat')
   LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
   LlmManager.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
@@ -69,7 +64,7 @@ beforeEach(() => {
   vi.mocked(LlmManager).prototype.isEngineReady = vi.fn(() => true)
   vi.mocked(LlmManager).prototype.getChatModel = vi.fn((engine: string, model: string) => {
     if (model === 'chat') return { id: 'chat', name: 'chat', ...defaultCapabilities }
-    if (model === 'gpt-5-nano') return { id: 'gpt-5-nano', name: 'GPT-5 nano', ...defaultCapabilities }
+    if (model === 'gpt-5-mini') return { id: 'gpt-5-mini', name: 'GPT-5 mini', ...defaultCapabilities }
     if (model === 'claude-haiku-4-5') return { id: 'claude-haiku-4-5', name: 'Claude Haiku 4.5', ...defaultCapabilities }
     return null
   })
@@ -300,7 +295,7 @@ test('getEngineModelForTask with simple complexity finds gpt-5-nano', () => {
   // Configure openai engine as ready
   vi.mocked(LlmManager).prototype.isEngineReady = vi.fn((engine: string) => engine === 'openai')
   const result = llmUtils.getEngineModelForTask('simple', 'openai')
-  expect(result).toEqual({ engine: 'openai', model: 'gpt-5-nano' })
+  expect(result).toEqual({ engine: 'openai', model: 'gpt-5-mini' })
 })
 
 test('getEngineModelForTask with normal complexity', () => {
