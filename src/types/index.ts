@@ -24,6 +24,11 @@ export type ScratchpadHeader = {
   lastModified: number
 }
 
+export type ScratchpadVersion = {
+  name: string
+  content: string
+}
+
 export type ScratchpadData = {
   uuid: string
   title: string
@@ -31,6 +36,7 @@ export type ScratchpadData = {
   chat: any
   createdAt: number
   lastModified: number
+  versions?: ScratchpadVersion[]
 }
 
 export interface Attachment extends IAttachmentBase {

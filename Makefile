@@ -25,6 +25,7 @@ watch-all:
 	@tmux new-session \; \
 		set-option status off \; \
 		set-option -g mouse on \; \
+		bind -n C-x kill-session \; \
 		send-keys 'npm run lint:watch' C-m \; \
 		split-window -v \; \
 		send-keys 'npm run test:watch' C-m \; \

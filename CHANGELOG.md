@@ -6,12 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Skill support with easy install from GitHub and skills.sh
+- Scratchpad enhancements: auto-save, model response view, version history
 
 ### Changed
 - N/A
 
 ### Fixed
-- N/A
+- Paste in the edit box inserts text in the end, not at the cursor position (https://github.com/nbonamy/witsy/issues/547)
 
 ### Removed
 - N/A

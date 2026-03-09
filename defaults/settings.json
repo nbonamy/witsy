@@ -68,7 +68,8 @@
     "engine": "",
     "model": "",
     "fontSize": "3",
-    "fontFamily": "serif"
+    "fontFamily": "serif",
+    "autoSave": false
   },
   "prompt": {
     "engine": "",
