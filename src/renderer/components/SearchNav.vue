@@ -1,18 +1,15 @@
 <template>
   <div v-if="visible" class="search-nav">
-    <input v-if="searchState?.localSearch.value" ref="searchInput" class="search-input" type="text" :placeholder="t('common.search')"
-      :value="searchState?.filter.value ?? ''" @input="onLocalSearchInput" @keydown="onLocalSearchKeyDown" />
-    <span v-if="searchMatchCount > 0" class="match-count">{{ t('chat.search.matchCount', { current: searchCurrentIndex + 1, total: searchMatchCount }) }}</span>
-    <span v-else class="match-count">{{ t('chat.search.noMatches') }}</span>
-    <ButtonIcon class="nav-prev" @click="navigateMatch(-1)" v-tooltip="{ text: t('chat.search.previousMatch'), position: 'left' }">
-      <ArrowUpIcon />
-    </ButtonIcon>
-    <ButtonIcon class="nav-next" @click="navigateMatch(1)" v-tooltip="{ text: t('chat.search.nextMatch'), position: 'right' }">
-      <ArrowDownIcon />
-    </ButtonIcon>
-    <ButtonIcon class="nav-close" @click="closeSearch">
-      <XIcon />
-    </ButtonIcon>
+    <SearchBar
+      ref="searchBarRef"
+      :show-input="searchState?.localSearch.value ?? false"
+      :query="searchState?.filter.value ?? ''"
+      :match-count="searchMatchCount"
+      :current-index="searchCurrentIndex"
+      @update:query="onQueryChange"
+      @navigate="navigateMatch"
+      @close="closeSearch"
+    />
   </div>
 </template>
 
@@ -20,10 +17,8 @@
 
 import Chat from '@models/chat'
 import { SearchState } from '@screens/Chat.vue'
-import { t } from '@services/i18n'
-import { ArrowDownIcon, ArrowUpIcon, XIcon } from 'lucide-vue-next'
 import { computed, inject, nextTick, ref, watch } from 'vue'
-import ButtonIcon from './ButtonIcon.vue'
+import SearchBar from './SearchBar.vue'
 
 const props = defineProps({
   chat: {
@@ -39,11 +34,11 @@ const props = defineProps({
 const searchState = inject<SearchState>('searchState')
 
 // search navigation
-const searchInput = ref<HTMLInputElement | null>(null)
-const visible = computed(() => searchState?.localSearch.value || searchMatchCount.value > 0)
+const searchBarRef = ref<InstanceType<typeof SearchBar> | null>(null)
 const searchCurrentIndex = ref(-1)
 const searchMatchCount = ref(0)
 const searchMarks = ref<HTMLElement[]>([])
+const visible = computed(() => searchState?.localSearch.value || searchMatchCount.value > 0)
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const updateSearchMarks = () => {
@@ -75,19 +70,9 @@ const scrollToCurrentMatch = () => {
   }
 }
 
-const onLocalSearchInput = (e: Event) => {
+const onQueryChange = (value: string) => {
   if (!searchState) return
-  const value = (e.target as HTMLInputElement).value.trim()
-  searchState.filter.value = value || null
-}
-
-const onLocalSearchKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter') {
-    e.preventDefault()
-    navigateMatch(e.shiftKey ? -1 : 1)
-  } else if (e.key === 'Escape') {
-    closeSearch()
-  }
+  searchState.filter.value = value.trim() || null
 }
 
 const closeSearch = () => {
@@ -137,7 +122,7 @@ if (searchState) {
   watch(searchState.localSearch, async (active) => {
     if (active) {
       await nextTick()
-      searchInput.value?.focus()
+      searchBarRef.value?.focus()
     }
   })
 }
@@ -171,26 +156,8 @@ watch(() => props.chat, () => {
     padding-left: 0.75rem;
   }
 
-  .search-input {
-    outline: none;
-    border: 0.75px solid var(--control-border-color);
-    border-radius: 0px;
-    background: transparent;
-    color: var(--text-color);
-    font-size: var(--font-size-12);
-    width: 8rem;
-    padding: 0.25rem 0.5rem;
-    margin-right: 0.5rem;
-  }
-
-  .match-count {
-    margin-right: 0.5rem;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
-
   &:has(.search-input) {
-    .match-count {
+    :deep(.match-count) {
       min-width: 64px;
     }
   }
