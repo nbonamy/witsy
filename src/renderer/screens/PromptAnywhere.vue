@@ -302,7 +302,8 @@ const initLlm = (engine?: string, model?: string) => {
   chat.value.tools = store.config.prompt.tools
 
   // apply prompt-specific thinking budget (overrides per-model defaults)
-  if (typeof store.config.prompt.thinkingBudget !== 'undefined') {
+  // only apply positive custom budgets; thinking is enabled by default
+  if (typeof store.config.prompt.thinkingBudget === 'number' && store.config.prompt.thinkingBudget > 0) {
     chat.value.modelOpts = { ...(chat.value.modelOpts || {}), thinkingBudget: store.config.prompt.thinkingBudget }
   }
 
@@ -332,7 +333,10 @@ const onToolsUpdated = (tools: ToolSelection) => {
 }
 
 const onThinkingChanged = (enabled: boolean) => {
-  store.config.prompt.thinkingBudget = enabled ? undefined : 0
+  // Don't persist the disabled state; thinking is enabled by default on each new session.
+  // Only persist a positive custom budget if set via model settings.
+  if (!enabled) return
+  store.config.prompt.thinkingBudget = undefined
   store.saveSettings()
 }
 
