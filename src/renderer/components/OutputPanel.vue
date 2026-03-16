@@ -21,7 +21,7 @@
       </div>
       <div class="action spacer" />
       <div class="action clear" @click="onClear" v-if="showClear">
-        <PlusIcon /> <span class="narrow">⌘N</span> {{ t('common.new') }}
+        <PlusIcon /> {{ t('common.new') }}
       </div>
       <div class="action close" @click="onClose">
         <span class="narrow">{{ t('common.esc') }}</span> {{ t('common.close') }}
