@@ -1813,4 +1813,17 @@ defineExpose({
   border-radius: 9999px;
 }
 
+.thinking-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-13);
+  color: var(--prompt-icon-color);
+  cursor: default;
+  user-select: none;
+
+  span {
+    font-size: var(--font-size-13);
+  }
+}
 </style>
