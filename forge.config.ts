@@ -31,7 +31,7 @@ const dmgOptions: MakerDMGConfig = {
   }
 }
 
-if (isDarwin) {
+if (isDarwin && process.env.IDENTIFY_DARWIN_CODE) {
   osxPackagerConfig = {
     osxSign: {
       identity: process.env.IDENTIFY_DARWIN_CODE,
