@@ -143,6 +143,7 @@ export type PromptConfig = {
   disableStreaming: boolean
   tools: ToolSelection
   autosave: boolean
+  thinkingBudget?: number
 }
 
 export type DesignStudioModel = {
@@ -164,6 +165,7 @@ export type DesignStudioConfig = {
 export type CommandsConfig = {
   engine: string
   model: string
+  thinkingBudget?: number
 }
 
 export type AutomationConfig = {

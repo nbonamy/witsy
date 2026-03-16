@@ -62,11 +62,12 @@ const onChange = (event: Event) => {
   display: none;
 }
 
-.switch-track {
+.button-switch .switch-track {
   position: relative;
   display: inline-block;
   width: 40px;
   height: 24px;
+  margin-top: 0;
   background-color: var(--color-surface-high);
   border-radius: 12px;
   transition: background-color 0.2s ease;
@@ -76,10 +77,11 @@ const onChange = (event: Event) => {
   background-color: var(--color-primary);
 }
 
-.switch-thumb {
+.button-switch .switch-thumb {
   position: absolute;
   top: 4px;
   left: 4px;
+  margin-top: 0;
   width: 16px;
   height: 16px;
   background-color: #FFFFFF;

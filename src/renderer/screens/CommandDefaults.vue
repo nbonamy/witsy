@@ -12,6 +12,10 @@
         <label>{{ t('common.llmModel') }}</label>
         <ModelSelect id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.defaults.lastOneUsed') : ''" />
       </div>
+      <div class="form-field" v-if="showThinkingToggle">
+        <label>{{ t('commands.defaults.enableThinking') }}</label>
+        <ButtonSwitch v-model="thinkingEnabled" />
+      </div>
       <div class="form-field" v-if="isWindows">
         <label for="alt-win-copy-paste">{{ t('commands.defaults.altWinCopyPaste') }}</label>
         <input type="checkbox" id="alt-win-copy-paste" v-model="altWinCopyPaste" />
@@ -34,11 +38,15 @@ import { t } from '@services/i18n'
 import ModalDialog from '@components/ModalDialog.vue'
 import EngineSelect from '@components/EngineSelect.vue'
 import ModelSelect from '@components/ModelSelect.vue'
+import ButtonSwitch from '@components/ButtonSwitch.vue'
 
 const dialog = ref(null)
 const engine = ref(null)
 const model = ref(null)
 const altWinCopyPaste = ref(false)
+const thinkingEnabled = ref(true)
+
+const showThinkingToggle = computed(() => engine.value === 'google')
 
 const isWindows = computed(() => window.api.platform == 'win32')
 
@@ -51,6 +59,7 @@ const load = () => {
   engine.value = store.config.commands?.engine || ''
   model.value = store.config.commands?.model || ''
   altWinCopyPaste.value = store.config.automation?.altWinCopyPaste || false
+  thinkingEnabled.value = store.config.commands?.thinkingBudget !== 0
 }
 
 const onChangeEngine = () => {
@@ -66,6 +75,13 @@ const onSave = () => {
   store.config.commands.engine = engine.value
   store.config.commands.model = model.value
   store.config.automation.altWinCopyPaste = altWinCopyPaste.value
+  if (showThinkingToggle.value) {
+    if (thinkingEnabled.value) {
+      delete store.config.commands.thinkingBudget
+    } else {
+      store.config.commands.thinkingBudget = 0
+    }
+  }
   store.saveSettings()
   close()
 }

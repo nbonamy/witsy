@@ -169,6 +169,7 @@ export type Command = {
   state: 'enabled' | 'disabled' | 'deleted',
   engine: string,
   model: string,
+  thinkingBudget?: number,
 }
 
 export const disabledShortcutKey: string = 'none'

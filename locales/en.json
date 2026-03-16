@@ -735,12 +735,14 @@
     },
     "defaults": {
       "altWinCopyPaste": "Alternate Copy/Paste Method",
+      "enableThinking": "Enable thinking",
       "lastOneUsed": "Last one used",
       "title": "Commands defaults"
     },
     "editor": {
       "inputPlaceholder": "{'{'}input{'}'} will be subsituted with highlighted text",
       "notEditable": "This command is not editable. The content captured will be available in the prompt for you to ask anything about it!",
+      "enableThinking": "Enable thinking",
       "prompt": "Prompt",
       "resetToDefault": "Reset name and prompt to default values",
       "shortcutDescription": "Hit this key when the command palette is active to run this command.",
@@ -2579,6 +2581,9 @@
     },
     "placeholders": {
       "default": "Type your message here…"
+    },
+    "thinking": {
+      "enable": "Think"
     }
   },
   "realtimeChat": {

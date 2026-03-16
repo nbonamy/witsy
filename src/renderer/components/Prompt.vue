@@ -74,6 +74,11 @@
         />
       </ButtonIcon>
       
+      <div class="thinking-toggle" v-if="showThinkingToggle">
+        <span>{{ t('prompt.thinking.enable') }}</span>
+        <ButtonSwitch :model-value="isThinkingEnabled" @change="onToggleThinking" />
+      </div>
+
       <div class="model-menu-button" :id="`model-menu-button-${uniqueId}`" @click="onModelMenu">
         <BoxIcon />
         <div class="model-name">{{ modelName }}</div>
@@ -222,6 +227,7 @@ import useTranscriber from '../audio/transcriber'
 import { isSTTReady, StreamingChunk } from '../voice/stt'
 import AttachmentView from './Attachment.vue'
 import ButtonIcon from './ButtonIcon.vue'
+import ButtonSwitch from './ButtonSwitch.vue'
 import ContextMenuPlus, { MenuPosition } from './ContextMenuPlus.vue'
 import EngineModelMenu from './EngineModelMenu.vue'
 import Loader from './Loader.vue'
@@ -356,7 +362,7 @@ const commandsAnchor = ref('.prompt .textarea-wrapper')
 const emit = defineEmits([
   'set-engine-model', 'tools-updated',
   'prompt', 'run-agent', 'stop',
-  'conversation-mode'
+  'conversation-mode', 'thinking-changed'
 ])
 
 const engine = () => props.chat?.engine || llmManager.getChatEngineModel().engine
@@ -459,6 +465,23 @@ const modelName = computed(() => {
 })
 
 const isFavoriteModel = computed(() => llmManager.isFavoriteModel(props.chat?.engine, props.chat?.model))
+
+const currentEngine = computed(() => props.chat?.engine || llmManager.getChatEngineModel().engine)
+const showThinkingToggle = computed(() => currentEngine.value === 'google' && !!props.chat)
+const isThinkingEnabled = computed(() => props.chat?.modelOpts?.thinkingBudget !== 0)
+
+const onToggleThinking = (enabled: boolean) => {
+  if (!props.chat) return
+  if (enabled) {
+    if (props.chat.modelOpts) {
+      delete props.chat.modelOpts.thinkingBudget
+    }
+  } else {
+    if (!props.chat.modelOpts) props.chat.modelOpts = {}
+    props.chat.modelOpts.thinkingBudget = 0
+  }
+  emit('thinking-changed', enabled)
+}
 
 // Escape key to abort generation (document-level)
 const onEscapeKey = (event: KeyboardEvent) => {
@@ -1811,6 +1834,16 @@ defineExpose({
 ::-webkit-scrollbar-track {
   background-color: transparent;
   border-radius: 9999px;
+}
+
+.thinking-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-13);
+  color: var(--prompt-icon-color);
+  cursor: default;
+  user-select: none;
 }
 
 </style>

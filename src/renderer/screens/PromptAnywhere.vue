@@ -17,6 +17,7 @@
           @mousedown.stop="onMouseDownPrompt"
           @set-engine-model="onUpdateEngineModel"
           @tools-updated="onToolsUpdated"
+          @thinking-changed="onThinkingChanged"
           @prompt="onSendPrompt"
           @stop="onStopGeneration"
         >
@@ -149,6 +150,7 @@ const processQueryParams = (params?: anyDict) => {
   let userPrompt = null
   let userEngine = null
   let userModel = null
+  let userThinkingBudget: number | undefined = undefined
   let userExpert = null
 
   // replace is easy
@@ -161,6 +163,7 @@ const processQueryParams = (params?: anyDict) => {
       console.log(`[anywr] Triggered with prompt: ${userPrompt.replaceAll('\n', '').substring(0, 50)}...`)
       userEngine = params.engine
       userModel = params.model
+      userThinkingBudget = params.thinkingBudget
     } else {
       console.error(`[anywr] Prompt with id ${params.promptId} not found`)
     }
@@ -212,6 +215,11 @@ const processQueryParams = (params?: anyDict) => {
 
   // init llm
   initLlm(userEngine, userModel)
+
+  // apply command-specific thinking budget if provided
+  if (typeof userThinkingBudget !== 'undefined') {
+    chat.value.modelOpts = { ...(chat.value.modelOpts || {}), thinkingBudget: userThinkingBudget }
+  }
 
   // execute
   if (params?.execute) {
@@ -293,6 +301,11 @@ const initLlm = (engine?: string, model?: string) => {
   chat.value.disableStreaming = store.config.prompt.disableStreaming
   chat.value.tools = store.config.prompt.tools
 
+  // apply prompt-specific thinking budget (overrides per-model defaults)
+  if (typeof store.config.prompt.thinkingBudget !== 'undefined') {
+    chat.value.modelOpts = { ...(chat.value.modelOpts || {}), thinkingBudget: store.config.prompt.thinkingBudget }
+  }
+
   // log
   console.log(`[anywr] Initialize prompt window llm: ${engine} ${model}`)
 
@@ -315,6 +328,11 @@ const onUpdateEngineModel = (engine: string, model: string) => {
 
 const onToolsUpdated = (tools: ToolSelection) => {
   store.config.prompt.tools = tools
+  store.saveSettings()
+}
+
+const onThinkingChanged = (enabled: boolean) => {
+  store.config.prompt.thinkingBudget = enabled ? undefined : 0
   store.saveSettings()
 }
 

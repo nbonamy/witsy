@@ -110,6 +110,7 @@ export default class Commander {
         execute: command.id != askMeAnythingId,
         action: params.action || 'default',
         replace: true,
+        thinkingBudget: command.thinkingBudget ?? config.commands.thinkingBudget,
       };
       
       // and open the window

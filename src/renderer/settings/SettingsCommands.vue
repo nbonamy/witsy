@@ -89,6 +89,11 @@ const onCommandModified = (payload: Command) => {
     command.shortcut = payload.shortcut
     command.engine = payload.engine
     command.model = payload.model
+    if (payload.thinkingBudget !== undefined) {
+      command.thinkingBudget = payload.thinkingBudget
+    } else {
+      delete command.thinkingBudget
+    }
   }
 
   // done

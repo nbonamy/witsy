@@ -37,6 +37,10 @@
         {{ t('commands.editor.shortcutDescription') }}
       </div>
     </div>
+    <div class="form-field horizontal">
+      <input type="checkbox" id="enable-thinking" name="enableThinking" v-model="enableThinking" />
+      <label for="enable-thinking">{{ t('commands.editor.enableThinking') }}</label>
+    </div>
     <div class="buttons">
       <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
@@ -68,6 +72,7 @@ const action = ref(null)
 const shortcut = ref(null)
 const engine = ref(null)
 const model = ref(null)
+const enableThinking = ref(true)
 const diffLang = ref(false)
 const isEdited = ref(false)
 
@@ -96,6 +101,7 @@ onMounted(async () => {
     shortcut.value = props.command?.shortcut
     engine.value = props.command?.engine
     model.value = props.command?.model
+    enableThinking.value = props.command?.thinkingBudget !== 0
     diffLang.value = window.api.config.localeUI() !== window.api.config.localeLLM()
     onChangeText()
 
@@ -180,7 +186,8 @@ const onSave = (event: Event) => {
     action: action.value,
     shortcut: shortcut.value?.toUpperCase() || '',
     engine: engine.value,
-    model: model.value
+    model: model.value,
+    thinkingBudget: enableThinking.value ? undefined : 0,
   })
 }
 
