@@ -21,7 +21,7 @@
       </div>
       <div class="action spacer" />
       <div class="action clear" @click="onClear" v-if="showClear">
-        <XCircleIcon /> {{ t('common.clear') }}
+        <PlusIcon /> <span class="narrow">⌘N</span> {{ t('common.new') }}
       </div>
       <div class="action close" @click="onClose">
         <span class="narrow">{{ t('common.esc') }}</span> {{ t('common.close') }}
@@ -42,7 +42,7 @@ import Message from '@models/message'
 import Dialog from '@renderer/utils/dialog'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import { ArrowLeftRightIcon, CornerDownLeftIcon, FileEditIcon, MessageSquareIcon, RotateCcwIcon, XCircleIcon } from 'lucide-vue-next'
+  import { ArrowLeftRightIcon, CornerDownLeftIcon, FileEditIcon, MessageSquareIcon, PlusIcon, RotateCcwIcon } from 'lucide-vue-next'
 import { Application } from 'types/automation'
 import { onBeforeUnmount, onMounted, PropType, ref } from 'vue'
 import useAudioPlayer, { AudioStatus } from '../audio/audio_player'
@@ -133,7 +133,7 @@ const onKeyDown = (ev: KeyboardEvent) => {
   } else if (isCommand && ev.key == 't') {
     ev.preventDefault()
     onReadAloud(props.message)
-  } else if ((isCommand && ev.key == 'x') || (isCommand && ev.key == 'Escape')) {
+  } else if (isCommand && ev.key == 'n') {
     ev.preventDefault()
     onClear()
   } else if (isCommand && ev.key == 'w') {
