@@ -416,7 +416,12 @@ export const loadApiKeys = (): ApiKeyEntry[] => {
           const apiKey = safeStorage.decryptString(Buffer.from(value, 'latin1'))
           return [...apiKeys, { name, apiKey }]
         } catch {
-          // Not safeStorage-encrypted; fall through and treat as plaintext
+          // Decryption failed (e.g. different code-signing identity).
+          // If the value has non-printable chars it is old binary-encrypted data
+          // that can't be recovered — skip it to avoid displaying garbled text.
+          if (!/^[\x20-\x7E]+$/.test(value)) {
+            return apiKeys
+          }
         }
       }
       // Plaintext (new format)
