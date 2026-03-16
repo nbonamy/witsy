@@ -300,6 +300,12 @@ test('openrouter settings', async () => {
   expect(store.config.engines.openrouter.providerDataCollection).toBe('deny')
   await openrouter.find('[name=providerAllowFallbacks]').setValue(false)
   expect(store.config.engines.openrouter.providerAllowFallbacks).toBe(false)
+  await openrouter.find('[name=reasoningEffort]').setValue('high')
+  expect(store.config.engines.openrouter.reasoningEffort).toBe('high')
+  await openrouter.find('[name=reasoningMaxTokens]').setValue(2000)
+  expect(store.config.engines.openrouter.reasoningMaxTokens).toBe(2000)
+  await openrouter.find('[name=reasoningExclude]').setValue(true)
+  expect(store.config.engines.openrouter.reasoningExclude).toBe(true)
 })
 
 test('groq settings', async () => {

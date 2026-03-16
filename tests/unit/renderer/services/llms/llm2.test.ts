@@ -255,4 +255,29 @@ test('OpenRouter getCompletionOpts', () => {
   // @ts-expect-error openai api
   expect(opts5.provider.allow_fallbacks).toBe(false)
 
+  // reasoning effort
+  store.config.engines.openrouter.providerAllowFallbacks = undefined
+  store.config.engines.openrouter.reasoningEffort = 'high'
+  const opts6 = openrouter.getCompletionOpts({ id: 'model', name: 'model', capabilities: defaultCapabilities.capabilities })
+  // @ts-expect-error openai api
+  expect(opts6.reasoning.effort).toBe('high')
+  // @ts-expect-error openai api
+  expect(opts6.reasoning.max_tokens).toBeUndefined()
+
+  // reasoning max tokens overrides effort
+  store.config.engines.openrouter.reasoningMaxTokens = 3000
+  const opts7 = openrouter.getCompletionOpts({ id: 'model', name: 'model', capabilities: defaultCapabilities.capabilities })
+  // @ts-expect-error openai api
+  expect(opts7.reasoning.max_tokens).toBe(3000)
+  // @ts-expect-error openai api
+  expect(opts7.reasoning.effort).toBeUndefined()
+
+  // reasoning exclude
+  store.config.engines.openrouter.reasoningEffort = undefined
+  store.config.engines.openrouter.reasoningMaxTokens = undefined
+  store.config.engines.openrouter.reasoningExclude = true
+  const opts8 = openrouter.getCompletionOpts({ id: 'model', name: 'model', capabilities: defaultCapabilities.capabilities })
+  // @ts-expect-error openai api
+  expect(opts8.reasoning.exclude).toBe(true)
+
 })

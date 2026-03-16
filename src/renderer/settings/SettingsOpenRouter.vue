@@ -57,6 +57,26 @@
       <input type="checkbox" id="openrouter-allow-fallbacks" name="providerAllowFallbacks" v-model="providerAllowFallbacks" @change="save" />
       <label for="openrouter-allow-fallbacks">{{ t('settings.engines.openrouter.allowFallbacks') }}</label>
     </div>
+    <div class="form-field">
+      <label>{{ t('settings.engines.openrouter.reasoningEffort') }}</label>
+      <select name="reasoningEffort" v-model="reasoningEffort" @change="save">
+        <option value="">{{ t('settings.engines.openrouter.reasoningEffortDefault') }}</option>
+        <option value="none">{{ t('settings.engines.openrouter.reasoningEffortNone') }}</option>
+        <option value="minimal">{{ t('settings.engines.openrouter.reasoningEffortMinimal') }}</option>
+        <option value="low">{{ t('settings.engines.openrouter.reasoningEffortLow') }}</option>
+        <option value="medium">{{ t('settings.engines.openrouter.reasoningEffortMedium') }}</option>
+        <option value="high">{{ t('settings.engines.openrouter.reasoningEffortHigh') }}</option>
+        <option value="xhigh">{{ t('settings.engines.openrouter.reasoningEffortXHigh') }}</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>{{ t('settings.engines.openrouter.reasoningMaxTokens') }}</label>
+      <input type="number" name="reasoningMaxTokens" v-model.number="reasoningMaxTokens" min="0" step="100" :placeholder="t('settings.engines.openrouter.reasoningMaxTokensHint')" @change="save"/>
+    </div>
+    <div class="form-field horizontal">
+      <input type="checkbox" id="openrouter-reasoning-exclude" name="reasoningExclude" v-model="reasoningExclude" @change="save" />
+      <label for="openrouter-reasoning-exclude">{{ t('settings.engines.openrouter.reasoningExclude') }}</label>
+    </div>
     <div class="form-field horizontal">
       <input type="checkbox" id="openrouter-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
       <label for="openrouter-disable-tools">{{  t('settings.engines.disableTools') }}</label>
@@ -87,6 +107,9 @@ const providerOrder = ref<string>('')
 const providerSort = ref<string>('')
 const providerDataCollection = ref<string>('')
 const providerAllowFallbacks = ref<boolean>(true)
+const reasoningEffort = ref<string>('')
+const reasoningMaxTokens = ref<number>(null)
+const reasoningExclude = ref<boolean>(false)
 
 const vision_models = computed(() => {
   return [
@@ -107,6 +130,9 @@ const load = () => {
   providerSort.value = store.config.engines.openrouter?.providerSort || ''
   providerDataCollection.value = store.config.engines.openrouter?.providerDataCollection || ''
   providerAllowFallbacks.value = store.config.engines.openrouter?.providerAllowFallbacks ?? true
+  reasoningEffort.value = store.config.engines.openrouter?.reasoningEffort || ''
+  reasoningMaxTokens.value = store.config.engines.openrouter?.reasoningMaxTokens || null
+  reasoningExclude.value = store.config.engines.openrouter?.reasoningExclude || false
 }
 
 const getModels = async (): Promise<boolean> => {
@@ -146,6 +172,9 @@ const save = () => {
   store.config.engines.openrouter.providerSort = (providerSort.value as 'price' | 'throughput' | 'latency') || undefined
   store.config.engines.openrouter.providerDataCollection = (providerDataCollection.value as 'allow' | 'deny') || undefined
   store.config.engines.openrouter.providerAllowFallbacks = providerAllowFallbacks.value
+  store.config.engines.openrouter.reasoningEffort = (reasoningEffort.value as 'xhigh' | 'high' | 'medium' | 'low' | 'minimal' | 'none') || undefined
+  store.config.engines.openrouter.reasoningMaxTokens = reasoningMaxTokens.value || undefined
+  store.config.engines.openrouter.reasoningExclude = reasoningExclude.value || undefined
   store.saveSettings()
 }
 

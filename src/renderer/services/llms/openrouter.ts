@@ -32,6 +32,21 @@ export default class OpenRouterEngine extends OpenRouter {
       opts.customOpts.provider = provider
     }
 
+    // build reasoning config
+    const reasoningEffort = this.config.reasoningEffort
+    const reasoningMaxTokens = this.config.reasoningMaxTokens
+    const reasoningExclude = this.config.reasoningExclude
+
+    if (reasoningEffort || reasoningMaxTokens || reasoningExclude) {
+      const reasoning: Record<string, unknown> = {}
+      if (reasoningMaxTokens) reasoning.max_tokens = reasoningMaxTokens
+      else if (reasoningEffort) reasoning.effort = reasoningEffort
+      if (reasoningExclude) reasoning.exclude = true
+      if (!opts) opts = { customOpts: {} }
+      if (!opts.customOpts) opts.customOpts = {}
+      opts.customOpts.reasoning = reasoning
+    }
+
     // done
     return super.getCompletionOpts(model, opts)
 

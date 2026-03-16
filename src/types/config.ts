@@ -37,6 +37,9 @@ export type WitsyEngineCreateOpts = EngineCreateOpts & {
   providerSort?: 'price' | 'throughput' | 'latency'
   providerDataCollection?: 'allow' | 'deny'
   providerAllowFallbacks?: boolean
+  reasoningEffort?: 'xhigh' | 'high' | 'medium' | 'low' | 'minimal' | 'none'
+  reasoningMaxTokens?: number
+  reasoningExclude?: boolean
 }
 
 export type EngineConfig = WitsyEngineCreateOpts & {
