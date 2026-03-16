@@ -144,6 +144,8 @@ test('google settings', async () => {
   await google.find('[name=defaultThinkingBudget]').setValue('1024')
   await google.find('[name=defaultThinkingBudget]').trigger('change')
   expect((store.config.engines.google as any).defaultThinkingBudget).toBe(1024)
+  await google.find('[name=groundingWithGoogleSearch]').setValue(true)
+  expect((store.config.engines.google as any).groundingWithGoogleSearch).toBe(true)
 })
 
 test('xai settings', async () => {

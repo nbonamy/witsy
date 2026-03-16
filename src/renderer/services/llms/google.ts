@@ -1,4 +1,4 @@
-import { GenerateContentConfig, HarmBlockThreshold, HarmCategory } from '@google/genai'
+import { GenerateContentConfig, GoogleSearch, HarmBlockThreshold, HarmCategory, Tool } from '@google/genai'
 import { ChatModel, Google, LlmCompletionOpts } from 'multi-llm-ts'
 import { GoogleEngineConfig } from 'types/config'
 
@@ -31,6 +31,13 @@ export default class GoogleEngine extends Google {
           { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold },
           { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold },
         ]
+      }
+
+      // add google search grounding tool
+      if (googleConfig.groundingWithGoogleSearch) {
+        const groundingTool: Tool = { googleSearch: {} as GoogleSearch }
+        if (!config.tools) config.tools = []
+        config.tools.push(groundingTool)
       }
     }
 

@@ -73,6 +73,10 @@
       <input type="number" name="defaultThinkingBudget" v-model.number="defaultThinkingBudget" min="-1" step="1" :placeholder="t('settings.engines.google.defaultThinkingBudgetHint')" @change="save"/>
     </div>
     <div class="form-field horizontal">
+      <input type="checkbox" id="google-grounding" name="groundingWithGoogleSearch" v-model="groundingWithGoogleSearch" @change="save" />
+      <label for="google-grounding">{{ t('settings.engines.google.groundingWithGoogleSearch') }}</label>
+    </div>
+    <div class="form-field horizontal">
       <input type="checkbox" id="google-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
       <label for="google-disable-tools">{{  t('settings.engines.disableTools') }}</label>
     </div>
@@ -101,6 +105,7 @@ const disableTools = ref(false)
 const requestCooldown = ref<number>(null)
 const safetySettings = ref<string>('')
 const defaultThinkingBudget = ref<number>(null)
+const groundingWithGoogleSearch = ref<boolean>(false)
 const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
 const chat_models = ref<ChatModel[]>([])
@@ -125,6 +130,7 @@ const load = () => {
   requestCooldown.value = store.config.engines.google?.requestCooldown || null
   safetySettings.value = (store.config.engines.google as GoogleEngineConfig)?.safetySettings || ''
   defaultThinkingBudget.value = (store.config.engines.google as GoogleEngineConfig)?.defaultThinkingBudget ?? null
+  groundingWithGoogleSearch.value = (store.config.engines.google as GoogleEngineConfig)?.groundingWithGoogleSearch || false
 }
 
 const getModels = async (): Promise<boolean> => {
@@ -165,6 +171,7 @@ const save = () => {
   store.config.engines.google.requestCooldown = requestCooldown.value || undefined
   ;(store.config.engines.google as GoogleEngineConfig).safetySettings = safetySettings.value || undefined
   ;(store.config.engines.google as GoogleEngineConfig).defaultThinkingBudget = defaultThinkingBudget.value ?? undefined
+  ;(store.config.engines.google as GoogleEngineConfig).groundingWithGoogleSearch = groundingWithGoogleSearch.value || undefined
   store.saveSettings()
 }
 
