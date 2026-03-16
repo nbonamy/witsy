@@ -58,7 +58,7 @@ test('Load default settings', () => {
   expect(loaded.general.locale).toBe('')
   expect(loaded.engines.openai.models.chat).toStrictEqual([])
   expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
-  expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key')
+  expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'openai-api-key')
 })
 
 test('Uses cache on second load', () => {
@@ -134,7 +134,7 @@ test('Backwards compatibility 2', () => {
   const loaded = config.loadSettings(app)
   expect(loaded.engines.openai.apiKey).toBe('openai-api-key2')
   expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
-  expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key2')
+  expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'openai-api-key2')
   expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/config/compat2/settings.json', expect.any(String))
   const calls = (fs.writeFileSync as Mock).mock.calls
   expect(calls[calls.length-1][0]).toBe('tests/fixtures/config/compat2/settings.json')
@@ -162,7 +162,7 @@ test('Save apiKeys settings', () => {
   config.saveSettings(app, loaded, true)
   expect(fs.writeFileSync).toHaveBeenLastCalledWith('tests/fixtures/config/unknown/settings.json', expect.any(String))
   expect(Store.prototype.delete).toHaveBeenCalledWith('engines.openai.apiKey')
-  expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'encrypted-openai-api-key')
+  expect(Store.prototype.set).toHaveBeenCalledWith('engines.openai.apiKey', 'openai-api-key')
 })
 
 test('Save apiKeys settings with safeKeys disabled', () => {

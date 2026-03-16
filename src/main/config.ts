@@ -407,23 +407,21 @@ const nullifyDefaults = (settings: anyDict) => {
 
 export const loadApiKeys = (): ApiKeyEntry[] => {
 
-  // check
-  if (!safeStorage.isEncryptionAvailable()) {
-    return []
-  }
-
   try {
     const credentials = Object.entries(safeStore.store)
-    return credentials.reduce((apiKeys, [name, buffer]) => {
-      try {
-        const apiKey = safeStorage.decryptString(Buffer.from(buffer, 'latin1'))
-        return [...apiKeys, { name, apiKey }]
-      } catch (error) {
-        console.log(`Error decrypting API key for ${name}:`, error)
-        safeStore.delete(name)
-        return apiKeys
+    return credentials.reduce((apiKeys, [name, value]) => {
+      // Try safeStorage decryption first to migrate from old encrypted format
+      if (safeStorage.isEncryptionAvailable()) {
+        try {
+          const apiKey = safeStorage.decryptString(Buffer.from(value, 'latin1'))
+          return [...apiKeys, { name, apiKey }]
+        } catch {
+          // Not safeStorage-encrypted; fall through and treat as plaintext
+        }
       }
-    }, [] as ApiKeyEntry[]);
+      // Plaintext (new format)
+      return value ? [...apiKeys, { name, apiKey: value }] : apiKeys
+    }, [] as ApiKeyEntry[])
   } catch (error) {
     console.log('Error loading API keys:', error)
     return []
@@ -433,29 +431,13 @@ export const loadApiKeys = (): ApiKeyEntry[] => {
 export const deleteApiKeys = (): boolean => {
 
   try {
-
-    // check
-    if (!safeStorage.isEncryptionAvailable()) {
-      return false
+    const keys = Object.keys(safeStore.store)
+    for (const key of keys) {
+      safeStore.delete(key)
     }
-
-    // First, delete all existing apiKey entries
-    try {
-      const credentials = loadApiKeys()
-      for (const credential of credentials) {
-        safeStore.delete(credential.name)
-      }
-    } catch (error) {
-      console.log('Error clearing existing API keys:', error)
-      return false
-    }
-
-    // done
     return true
-    
-
   } catch (error) {
-    console.log('Error saving API keys:', error)
+    console.log('Error deleting API keys:', error)
     return false
   }
 
@@ -465,25 +447,15 @@ export const saveApiKeys = (apiKeys: ApiKeyEntry[]): boolean => {
 
   try {
 
-    // check
-    if (!safeStorage.isEncryptionAvailable()) {
-      return false
-    }
-
     // First, delete all existing apiKey entries
     if (!deleteApiKeys()) {
       return false
     }
-    
-    // Save new entries
+
+    // Save new entries as plaintext within the AES-encrypted electron-store file
     for (const entry of apiKeys) {
       if (entry.apiKey.length > 0) {
-        try {
-          const buffer = safeStorage.encryptString(entry.apiKey);
-          safeStore.set(entry.name, buffer.toString('latin1'));
-        } catch (error) {
-          console.log(`Error saving API key for ${entry.name}:`, error)
-        }
+        safeStore.set(entry.name, entry.apiKey)
       }
     }
 

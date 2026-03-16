@@ -623,6 +623,14 @@ const onKeyDown = (event: KeyboardEvent) => {
     const currentItem = selected.value
     if (currentItem) {
       currentItem.click()
+    } else if (filter.value && list.value) {
+      // When filtering with text, select and click the first visible item
+      const firstVisible = list.value.querySelector<HTMLElement>(
+        '.item:not(.separator):not(.disabled):not([style*="display: none"])'
+      )
+      if (firstVisible) {
+        firstVisible.click()
+      }
     }
   }
 }
