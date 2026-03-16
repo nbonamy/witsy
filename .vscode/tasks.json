@@ -20,6 +20,12 @@
       "type": "shell",
       "command": "cp ~/Library/Application\\ Support/Witsy/settings.json.bak ~/Library/Application\\ Support/Witsy/settings.json",
       "problemMatcher": []
+    },
+    {
+      "label": "make mac-arm64",
+      "type": "shell",
+      "command": "make mac-arm64",
+      "problemMatcher": []
     }
   ]
 }
