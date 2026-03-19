@@ -79,8 +79,8 @@ vi.mock('electron', async () => {
     getCursorScreenPoint: vi.fn(() => ({ x: 0, y: 0 })),
     getDisplayNearestPoint: vi.fn(() => ({
       bounds: { x: 0, y: 0, width: 1024, height: 768 },
-      workArea: { x: 0, y: 25 },
-      workAreaSize: { width: 0, height: 0 }
+      workArea: { x: 0, y: 25, width: 1024, height: 743 },
+      workAreaSize: { width: 1024, height: 743 }
     })),
   }
   const nativeTheme = {
@@ -365,4 +365,30 @@ test('Utilities', async () => {
 test('emitIpcEventToAll', async () => {
   window.emitIpcEventToAll('update-available')
   expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('update-available')
+})
+
+test('getFullscreenBounds on primary screen', () => {
+  const display = {
+    bounds: { x: 0, y: 0, width: 1440, height: 900 },
+    workArea: { x: 0, y: 25, width: 1440, height: 875 },
+    workAreaSize: { width: 1440, height: 875 }
+  } as Electron.Display
+  const bounds = window.getFullscreenBounds(display)
+  expect(bounds.x).toBe(0)
+  expect(bounds.y).toBe(24)
+  expect(bounds.width).toBe(1440)
+  expect(bounds.height).toBe(876)
+})
+
+test('getFullscreenBounds on secondary screen (iPad to the right)', () => {
+  const display = {
+    bounds: { x: 1440, y: 0, width: 1024, height: 1366 },
+    workArea: { x: 1440, y: 0, width: 1024, height: 1366 },
+    workAreaSize: { width: 1024, height: 1366 }
+  } as Electron.Display
+  const bounds = window.getFullscreenBounds(display)
+  expect(bounds.x).toBe(1440)
+  expect(bounds.y).toBe(-1)
+  expect(bounds.width).toBe(1024)
+  expect(bounds.height).toBe(1367)
 })

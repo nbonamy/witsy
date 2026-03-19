@@ -91,13 +91,65 @@ const isDarkMode = () => {
   return window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
+const resolveCSSVar = (varName: string): string => {
+  const el = document.createElement('div')
+  document.body.appendChild(el)
+  el.style.color = `var(${varName})`
+  const resolved = getComputedStyle(el).color
+  document.body.removeChild(el)
+  return resolved
+}
+
 const getDarkModeCSS = () => {
+  const bgColor = resolveCSSVar('--background-color')
+  const textColor = resolveCSSVar('--color-text')
   return `
     <style>
-      *:not([style*="color"]) {
-        color: ${getComputedStyle(document.documentElement).getPropertyValue('--color-on-surface').trim()};
+      html, body {
+        background-color: ${bgColor};
+        color: ${textColor};
       }
     </style>
+    <script>
+      (function() {
+        function lum(r, g, b) {
+          return [r/255, g/255, b/255].reduce(function(s, c, i) {
+            c = c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4);
+            return s + c * [0.2126, 0.7152, 0.0722][i];
+          }, 0);
+        }
+        function parseRgb(s) {
+          var m = s.match(/[\\d.]+/g);
+          if (!m || m.length < 3) return null;
+          var nums = m.map(Number);
+          if (nums.length >= 4 && nums[3] < 1) return null;
+          return nums.slice(0, 3);
+        }
+        function fixEl(el) {
+          var cs = window.getComputedStyle(el);
+          var bg = parseRgb(cs.backgroundColor);
+          if (!bg) return;
+          var textRgb = parseRgb(cs.color);
+          if (!textRgb) return;
+          var bgLum = lum(bg[0], bg[1], bg[2]);
+          var textLum = lum(textRgb[0], textRgb[1], textRgb[2]);
+          var brighter = Math.max(bgLum, textLum);
+          var darker = Math.min(bgLum, textLum);
+          if ((brighter + 0.05) / (darker + 0.05) < 3) {
+            el.style.setProperty('color', bgLum > 0.4 ? '#1a1a1a' : '#f0f0f0', 'important');
+          }
+        }
+        window.fixContrast = function() {
+          document.querySelectorAll('*').forEach(fixEl);
+        };
+        document.addEventListener('DOMContentLoaded', function() {
+          window.fixContrast();
+          document.addEventListener('mouseover', function(e) {
+            if (e.target && e.target.nodeType === 1) fixEl(e.target);
+          });
+        });
+      })();
+    <\/script>
   `
 }
 
@@ -159,6 +211,7 @@ const updateIframeContent = () => {
     window.addEventListener('message', (event) => {
       if (event.data.type === 'update') {
         document.body.innerHTML = event.data.body;
+        if (window.fixContrast) window.fixContrast();
       }
     });
   <\/script>

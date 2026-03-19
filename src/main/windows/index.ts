@@ -88,12 +88,11 @@ export const getWindowScreen = (window: BrowserWindow): Display => {
 }
 
 export const getFullscreenBounds = (screen: Display): { x: number, y: number, width: number, height: number } => {
-  const x = screen.workArea.x;
-  const y = screen.workArea.y - 1;
   return {
-    x, y,
-    width: screen.bounds.width - x,
-    height: screen.bounds.height - y,
+    x: screen.workArea.x,
+    y: screen.workArea.y - 1,
+    width: screen.workArea.width,
+    height: screen.workArea.height + 1,
   }
 }
 

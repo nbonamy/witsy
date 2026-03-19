@@ -27,6 +27,7 @@ const emit = defineEmits(['click'])
   align-items: center;
   gap: 2rem;
   text-align: center;
+  background-color: var(--background-color);
       
   .icon {
     margin-bottom: 3rem;
