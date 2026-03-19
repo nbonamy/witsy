@@ -51,6 +51,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     app: {
       getVersion: vi.fn(() => '0.1.0'),
       setAppearanceTheme: vi.fn(),
+      printToPdf: vi.fn(async () => 'JVBERi0xLjQK'),
       showAbout: vi.fn(),
       // showDialog: vi.fn(async () => { return { response: opts.dialogResponse || 0, checkboxChecked: false }}),
       getAssetPath: vi.fn(() => ''),

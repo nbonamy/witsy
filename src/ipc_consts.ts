@@ -5,6 +5,7 @@ export const APP = {
   GET_ASSET_PATH: 'get-asset-path',
   GET_VERSION: 'get-version',
   GET_HTTP_PORT: 'app-get-http-port',
+  PRINT_TO_PDF: 'app-print-to-pdf',
   SET_APPEARANCE_THEME: 'set-appearance-theme',
   SHOW_ABOUT: 'show-about',
   // SHOW_DIALOG: 'show-dialog',

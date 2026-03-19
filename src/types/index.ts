@@ -357,6 +357,7 @@ declare global {
       app: {
         getVersion(): string
         setAppearanceTheme(theme: string): void
+        printToPdf(html: string, landscape?: boolean): Promise<string>
         showAbout(): void
         getAssetPath(assetPath: string): string
         // showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>

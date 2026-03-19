@@ -71,6 +71,7 @@ import Dialog from '@renderer/utils/dialog'
 import { exportToDocx, saveDocxBlob } from '@services/docx'
 import { saveBlobAsFile } from '@services/download'
 import { t } from '@services/i18n'
+import { exportToPdf, stripLeadingBodyTitle } from '@services/pdf'
 import { exportToPptx, savePptxBlob } from '@services/pptx'
 import { Extension } from '@tiptap/core'
 import Highlight from '@tiptap/extension-highlight'
@@ -284,6 +285,15 @@ const exportDocument = async (format: string) => {
       case 'md': {
         const blob = new Blob([content], { type: 'text/markdown' })
         saveBlobAsFile(blob, filename, 'md')
+        break
+      }
+      case 'pdf': {
+        const container = document.createElement('div')
+        container.classList.add('text')
+        container.setAttribute('data-pdf-profile', 'editor')
+        container.innerHTML = window.api.markdown.render(content)
+        stripLeadingBodyTitle(container, filename)
+        await exportToPdf({ title: filename, element: container })
         break
       }
       case 'pptx': {

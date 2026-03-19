@@ -18,7 +18,7 @@
             :file-path="currentTitle"
             show-outline
             show-source-toggle
-            :export-formats="['md', 'docx']"
+            :export-formats="['md', 'pdf', 'docx']"
           />
           <div v-if="processing" class="generating-overlay">
             <Loader /><Loader /><Loader />

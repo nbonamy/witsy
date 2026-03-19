@@ -36,7 +36,7 @@ import { togglePanel } from '@renderer/utils/panel'
 import Message from '@models/message'
 import { exportToDocx, saveDocxBlob } from '@services/docx'
 import { addExtension, extractCodeBlockContent } from '@services/markdown'
-import { exportToPdf } from '@services/pdf'
+import { exportToPdf, stripLeadingBodyTitle } from '@services/pdf'
 import ButtonIcon from './ButtonIcon.vue'
 import ContextMenuTrigger from './ContextMenuTrigger.vue'
 import MessageItemBody from './MessageItemBody.vue'
@@ -101,8 +101,11 @@ const onDownloadFormat = async (action: string) => {
 
     case 'pdf':
       try {
+        if (!panelBody.value) return
+
         // For markdown content, create proper message structure
         const message = panelBody.value.closest('.message') as HTMLElement
+        if (!message) return
         const classList = Array.from(message.classList)
 
         // dummy message
@@ -110,11 +113,12 @@ const onDownloadFormat = async (action: string) => {
         classList.forEach(cls => msg.classList.add(cls))
         const body = msg.appendChild(document.createElement('div'))
         body.classList.add('body')
-        const content = body.appendChild(document.createElement('div'))
-        content.classList.add('message-content')
-        content.innerHTML =
-          (props.title.length ? `<div class="text variable-font-size"><h1>${props.title}</h1></div>` : '')
-          + panelBody.value.outerHTML
+        const messageContent = body.appendChild(document.createElement('div'))
+        messageContent.classList.add('message-content')
+
+        const bodyClone = panelBody.value.cloneNode(true) as HTMLElement
+        stripLeadingBodyTitle(bodyClone, props.title)
+        messageContent.appendChild(bodyClone)
 
         await exportToPdf({
           title: filename.replace(/\.[^.]+$/, ''),

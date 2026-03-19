@@ -340,6 +340,7 @@ const showExportMenu = ref(false)
 
 const exportFormatLabels: Record<string, string> = {
   md: 'Markdown (.md)',
+  pdf: 'PDF (.pdf)',
   docx: 'Word (.docx)',
   pptx: 'PowerPoint (.pptx)',
 }

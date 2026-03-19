@@ -57,6 +57,7 @@ contextBridge.exposeInMainWorld(
     app: {
       getVersion: (): string => { return ipcRenderer.sendSync(IPC.APP.GET_VERSION) },
       setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync(IPC.APP.SET_APPEARANCE_THEME, theme) },
+      printToPdf: (html: string, landscape: boolean = false): Promise<string> => { return ipcRenderer.invoke(IPC.APP.PRINT_TO_PDF, { html, landscape }) },
       // showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke(IPC.APP.SHOW_DIALOG, opts) },
       listFonts: (): string[] => { return ipcRenderer.sendSync(IPC.APP.FONTS_LIST) },
       showAbout: (): void => { return ipcRenderer.send(IPC.APP.SHOW_ABOUT) },
