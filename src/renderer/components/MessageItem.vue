@@ -95,25 +95,22 @@ import MessageItemBody from '@components/MessageItemBody.vue'
 import MessageItemMediaBlock from '@components/MessageItemMediaBlock.vue'
 import MessageItemToolBlock from '@components/MessageItemToolBlock.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
+import useEventBus from '@composables/event_bus'
 import Attachment from '@models/attachment'
 import Chat from '@models/chat'
 import Message from '@models/message'
 import useAudioPlayer, { AudioStatus } from '@renderer/audio/audio_player'
+import type { ChatCallbacks } from '@screens/Chat.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { LoaderCircleIcon } from 'lucide-vue-next'
 import { ChatToolMode } from 'types/config'
 import { computed, inject, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue'
-import type { ChatCallbacks } from '@screens/Chat.vue'
 // import { getMarkdownSelection } from '@services/markdown'
 
-// events
-import useEventBus from '@composables/event_bus'
+// const llmManager = LlmFactory.manager(store.config)
 const { emitBusEvent, onBusEvent } = useEventBus()
-
 const chatCallbacks = inject<ChatCallbacks>('chat-callbacks')
-
-// init stuff
 const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({
@@ -198,7 +195,16 @@ const agent = computed(() => {
 })
 
 const authorName = computed(() => {
-  return props.authorName ?? (props.message.role === 'assistant' ? t('chat.role.assistant') : t('chat.role.user'))
+  if (props.authorName) return props.authorName
+  // if (props.message.role === 'assistant') {
+  //   if (props.message.engine && props.message.model) {
+  //     const model = llmManager.getChatModel(props.message.engine, props.message.model)
+  //     if (model?.name) {
+  //       return model.name
+  //     }
+  //   }
+  // }
+  return (props.message.role === 'assistant' ? t('chat.role.assistant') : t('chat.role.user'))
 })
 
 const modelInfo = computed(() => {
