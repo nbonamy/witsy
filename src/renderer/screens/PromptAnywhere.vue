@@ -433,6 +433,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
     if (llm === null) {
       initLlm()
     }
+    if (llm === null) {
+      throw new Error('Could not initialize LLM engine. Please check your engine configuration.')
+    }
 
     // load tools as configured per prompt
     const codeExecutionMode: CodeExecutionMode = store.config.llm.codeExecution
@@ -499,6 +502,10 @@ const onSendPrompt = async (params: SendPromptParams) => {
   } catch (err) {
 
     console.error(err)
+    if (response.value === null) {
+      response.value = new Message('assistant')
+      chat.value?.addMessage(response.value)
+    }
     response.value.setText('An error occurred while generating the response.')
   
   } finally {
