@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 - Scratchpad enhancements: auto-save, model response view, version history
 
 ### Changed
-- N/A
+- Faster and nicer PDF Export
 
 ### Fixed
 - Paste in the edit box inserts text in the end, not at the cursor position (https://github.com/nbonamy/witsy/issues/547)

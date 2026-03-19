@@ -309,11 +309,13 @@ const onExportPdf = async () => {
 
     // Clone and clean up the content
     const content = chatArea.cloneNode(true) as HTMLElement
-    content.querySelectorAll('header .icon')?.forEach(icon => icon.remove())
+    content.querySelector('.chat-area header').remove()
+    content.querySelector('.search-nav')?.remove()
     content.querySelectorAll('.message .tool-container')?.forEach(tool => tool.remove())
     content.querySelector('.model-settings')?.remove()
     content.querySelector('.message .actions')?.remove()
     content.querySelector('.overflow')?.remove()
+    content.querySelector('.deep-research-usage')?.remove()
     content.querySelector('.prompt')?.remove()
 
     // Remove scroll styling

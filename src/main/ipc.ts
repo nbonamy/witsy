@@ -46,6 +46,7 @@ import * as interpreter from './interpreter';
 import * as markdown from './markdown';
 import * as debug from './network';
 import * as ollama from './ollama';
+import * as pdf from './pdf';
 import * as scratchpadManager from './scratchpad';
 import * as shortcuts from './shortcuts';
 import * as skills from './skills';
@@ -129,6 +130,11 @@ export const installIpc = (
 
   ipcMain.on(IPC.APP.GET_HTTP_PORT, async (event) => {
     event.returnValue = HttpServer.getInstance().getPort();
+  });
+
+  ipcMain.handle(IPC.APP.PRINT_TO_PDF, async (_event, payload: { html: string, landscape?: boolean }) => {
+    const data = await pdf.printPdfFromHtml(payload);
+    return data.toString('base64');
   });
 
   // ipcMain.handle(IPC.APP.SHOW_DIALOG, (event, payload): Promise<Electron.MessageBoxReturnValue> => {
