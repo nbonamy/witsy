@@ -150,7 +150,9 @@ body {
   padding-right: 0rem !important;
 }
 
-.witsy-pdf-content .messages .message-body .toggle-reasoning {
+.witsy-pdf-content .messages .message-body .toggle-reasoning,
+.witsy-pdf-content .messages .message-body .tool-container,
+.witsy-pdf-content .messages .message-body .follow-ups {
   display: none !important;
 }
 

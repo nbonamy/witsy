@@ -302,35 +302,18 @@ const onExportPdf = async () => {
   try {
     
     // Prepare the chat area element for PDF export
-    const chatArea = document.querySelector<HTMLElement>('.chat-area')
-    if (!chatArea) {
+    const messageList = document.querySelector<HTMLElement>('.chat-area .messages-list')
+    if (!messageList) {
       throw new Error('Chat area not found')
     }
 
-    // Clone and clean up the content
-    const content = chatArea.cloneNode(true) as HTMLElement
-    content.querySelector('.chat-area header').remove()
-    content.querySelector('.search-nav')?.remove()
-    content.querySelectorAll('.message .tool-container')?.forEach(tool => tool.remove())
-    content.querySelector('.model-settings')?.remove()
-    content.querySelector('.message .actions')?.remove()
-    content.querySelector('.overflow')?.remove()
-    content.querySelector('.deep-research-usage')?.remove()
-    content.querySelector('.prompt')?.remove()
-
-    // Remove scroll styling
+    // Clone and style
+    const content = messageList.cloneNode(true) as HTMLElement
     content.style.height = 'auto'
     const mainElement = content.querySelector<HTMLElement>('main')
     if (mainElement) {
       mainElement.style.height = 'auto'
       mainElement.style.overflow = 'visible'
-    }
-
-    // Adjust header margins
-    const headerElement = content.querySelector<HTMLElement>('header')
-    if (headerElement) {
-      headerElement.style.marginLeft = '12px'
-      headerElement.style.marginRight = '12px'
     }
 
     // Export to PDF using the service
