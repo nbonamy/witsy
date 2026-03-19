@@ -37,6 +37,26 @@
       <label>{{ t('settings.engines.requestCooldown') }}</label>
       <input type="number" name="requestCooldown" v-model.number="requestCooldown" min="0" step="100" :placeholder="t('settings.engines.requestCooldownHint')" @change="save"/>
     </div>
+    <div class="form-field">
+      <label>{{ t('settings.engines.openrouter.providerSort') }}</label>
+      <select name="providerSort" v-model="providerSort" @change="save">
+        <option value="">{{ t('settings.engines.openrouter.providerSortDefault') }}</option>
+        <option value="price">{{ t('settings.engines.openrouter.providerSortPrice') }}</option>
+        <option value="throughput">{{ t('settings.engines.openrouter.providerSortThroughput') }}</option>
+        <option value="latency">{{ t('settings.engines.openrouter.providerSortLatency') }}</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>{{ t('settings.engines.openrouter.dataCollection') }}</label>
+      <select name="providerDataCollection" v-model="providerDataCollection" @change="save">
+        <option value="">{{ t('settings.engines.openrouter.dataCollectionAllow') }}</option>
+        <option value="deny">{{ t('settings.engines.openrouter.dataCollectionDeny') }}</option>
+      </select>
+    </div>
+    <div class="form-field horizontal">
+      <input type="checkbox" id="openrouter-allow-fallbacks" name="providerAllowFallbacks" v-model="providerAllowFallbacks" @change="save" />
+      <label for="openrouter-allow-fallbacks">{{ t('settings.engines.openrouter.allowFallbacks') }}</label>
+    </div>
     <div class="form-field horizontal">
       <input type="checkbox" id="openrouter-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
       <label for="openrouter-disable-tools">{{  t('settings.engines.disableTools') }}</label>
@@ -64,6 +84,9 @@ const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
 const chat_models = ref<ChatModel[]>([])
 const providerOrder = ref<string>('')
+const providerSort = ref<string>('')
+const providerDataCollection = ref<string>('')
+const providerAllowFallbacks = ref<boolean>(true)
 
 const vision_models = computed(() => {
   return [
@@ -81,6 +104,9 @@ const load = () => {
   disableTools.value = store.config.engines.openrouter?.disableTools || false
   requestCooldown.value = store.config.engines.openrouter?.requestCooldown || null
   providerOrder.value = store.config.engines.openrouter?.providerOrder || ''
+  providerSort.value = store.config.engines.openrouter?.providerSort || ''
+  providerDataCollection.value = store.config.engines.openrouter?.providerDataCollection || ''
+  providerAllowFallbacks.value = store.config.engines.openrouter?.providerAllowFallbacks ?? true
 }
 
 const getModels = async (): Promise<boolean> => {
@@ -117,6 +143,9 @@ const save = () => {
   store.config.engines.openrouter.disableTools = disableTools.value
   store.config.engines.openrouter.requestCooldown = requestCooldown.value || undefined
   store.config.engines.openrouter.providerOrder = providerOrder.value
+  store.config.engines.openrouter.providerSort = (providerSort.value as 'price' | 'throughput' | 'latency') || undefined
+  store.config.engines.openrouter.providerDataCollection = (providerDataCollection.value as 'allow' | 'deny') || undefined
+  store.config.engines.openrouter.providerAllowFallbacks = providerAllowFallbacks.value
   store.saveSettings()
 }
 

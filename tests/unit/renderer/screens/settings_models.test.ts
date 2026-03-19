@@ -294,6 +294,12 @@ test('openrouter settings', async () => {
   expect(store.config.engines.openrouter.disableTools).toBeFalsy()
   await openrouter.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.openrouter.disableTools).toBeTruthy()
+  await openrouter.find('[name=providerSort]').setValue('throughput')
+  expect(store.config.engines.openrouter.providerSort).toBe('throughput')
+  await openrouter.find('[name=providerDataCollection]').setValue('deny')
+  expect(store.config.engines.openrouter.providerDataCollection).toBe('deny')
+  await openrouter.find('[name=providerAllowFallbacks]').setValue(false)
+  expect(store.config.engines.openrouter.providerAllowFallbacks).toBe(false)
 })
 
 test('groq settings', async () => {

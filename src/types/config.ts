@@ -34,6 +34,9 @@ export type Configuration = {
 export type WitsyEngineCreateOpts = EngineCreateOpts & {
   keepAlive?: string
   providerOrder?: string
+  providerSort?: 'price' | 'throughput' | 'latency'
+  providerDataCollection?: 'allow' | 'deny'
+  providerAllowFallbacks?: boolean
 }
 
 export type EngineConfig = WitsyEngineCreateOpts & {

@@ -8,19 +8,28 @@ export default class OpenRouterEngine extends OpenRouter {
   declare config: WitsyEngineCreateOpts
 
   getCompletionOpts(model: ChatModel, opts?: LlmCompletionOpts): Omit<ChatCompletionCreateParamsBase, 'model' | 'messages' | 'stream'> {
-    
-    // check providerOrder
+
+    // build provider preferences
     const providerOrder = this.config.providerOrder?.trim()
-    if (providerOrder?.length) {
-      const providers = providerOrder.split('\n').map(p => p.trim()).filter(p => p.length)
-      if (providers.length) {
-        if (!opts) opts = { customOpts: {} }
-        if (!opts.customOpts) opts.customOpts = {}
-        opts.customOpts.provider = {
-          allow_fallbacks: true,
-          order: providers
-        }
+    const providers = providerOrder?.length
+      ? providerOrder.split('\n').map(p => p.trim()).filter(p => p.length)
+      : []
+    const sort = this.config.providerSort
+    const dataCollection = this.config.providerDataCollection
+    const allowFallbacks = this.config.providerAllowFallbacks
+
+    const hasCustomProvider = providers.length > 0 || sort || dataCollection || allowFallbacks === false
+
+    if (hasCustomProvider) {
+      const provider: Record<string, unknown> = {
+        allow_fallbacks: allowFallbacks ?? true,
       }
+      if (providers.length) provider.order = providers
+      if (sort) provider.sort = sort
+      if (dataCollection) provider.data_collection = dataCollection
+      if (!opts) opts = { customOpts: {} }
+      if (!opts.customOpts) opts.customOpts = {}
+      opts.customOpts.provider = provider
     }
 
     // done

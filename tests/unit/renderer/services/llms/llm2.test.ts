@@ -234,4 +234,25 @@ test('OpenRouter getCompletionOpts', () => {
   // @ts-expect-error openai api
   expect(opts2.provider.order).toStrictEqual(['provider1', 'provider2'])
 
+  // sort
+  store.config.engines.openrouter.providerOrder = ''
+  store.config.engines.openrouter.providerSort = 'throughput'
+  const opts3 = openrouter.getCompletionOpts({ id: 'model', name: 'model', capabilities: defaultCapabilities.capabilities })
+  // @ts-expect-error openai api
+  expect(opts3.provider.sort).toBe('throughput')
+
+  // data collection
+  store.config.engines.openrouter.providerSort = undefined
+  store.config.engines.openrouter.providerDataCollection = 'deny'
+  const opts4 = openrouter.getCompletionOpts({ id: 'model', name: 'model', capabilities: defaultCapabilities.capabilities })
+  // @ts-expect-error openai api
+  expect(opts4.provider.data_collection).toBe('deny')
+
+  // disable fallbacks
+  store.config.engines.openrouter.providerDataCollection = undefined
+  store.config.engines.openrouter.providerAllowFallbacks = false
+  const opts5 = openrouter.getCompletionOpts({ id: 'model', name: 'model', capabilities: defaultCapabilities.capabilities })
+  // @ts-expect-error openai api
+  expect(opts5.provider.allow_fallbacks).toBe(false)
+
 })
