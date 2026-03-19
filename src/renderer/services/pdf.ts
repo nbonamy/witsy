@@ -98,7 +98,7 @@ const getPrintStyle = (): string => {
   return `
 @page {
   size: A4;
-  margin: 14mm;
+  margin: 14mm 16mm;
 }
 
 html, body {
