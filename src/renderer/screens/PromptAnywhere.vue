@@ -121,6 +121,7 @@ onMounted(() => {
   // events
   onIpcEvent('start-dictation', onDictate)
   onIpcEvent('show', onShow)
+  onIpcEvent('prepare-close', onPrepareClose)
 
   // query params
   if (props.extra) {
@@ -129,8 +130,18 @@ onMounted(() => {
 
 })
 
-const onShow = (params?: anyDict) => {
-  processQueryParams(params)
+const onPrepareClose = () => {
+  // save last seen chat (in case window is closed from main without onClose being called)
+  if (chat.value !== null) {
+    lastSeenChat = { uuid: chat.value.uuid, when: Date.now() }
+  } else {
+    lastSeenChat = null
+  }
+  cleanUp()
+}
+
+const onShow = async (params?: anyDict) => {
+  await processQueryParams(params)
 }
 
 const onDictate = () => {

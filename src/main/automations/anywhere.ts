@@ -7,6 +7,12 @@ export default class PromptAnywhere {
 
   static open = async (): Promise<void> => {
 
+    // if prompt is already open, toggle it closed before doing any extra work
+    if (window.isPromptAnywhereOpen()) {
+      await window.closePromptAnywhere();
+      return;
+    }
+
     // get foremost app
     let sourceApp = null;
     if (process.platform !== 'linux') {

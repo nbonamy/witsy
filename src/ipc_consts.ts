@@ -330,6 +330,7 @@ export const CODE_EXECUTION = {
 export type IpcSignal =
   // Window lifecycle
   | 'show'                        // Window shown with params (Anywhere, Commands, Dictation)
+  | 'prepare-close'               // Window about to be hidden (cleanup before next show)
   | 'window-opened'               // Main window opened
   | 'window-closed'               // Main window closed
   | 'query-params'                // Query params passed to window

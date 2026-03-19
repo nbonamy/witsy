@@ -25,6 +25,7 @@ vi.mock('@main/config.ts', async () => {
 vi.mock('@main/window.ts', async () => {
   return {
     promptAnywhereWindow: null,
+    isPromptAnywhereOpen: vi.fn(() => false),
     openPromptAnywhere: vi.fn(),
     closePromptAnywhere: vi.fn(),
     releaseFocus: vi.fn(),
@@ -53,6 +54,15 @@ beforeEach(() => {
 test('Prepare prompt', async () => {
   await PromptAnywhere.open()
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
+})
+
+test('Close prompt when already open', async () => {
+  vi.mocked(window.isPromptAnywhereOpen).mockReturnValue(true)
+
+  await PromptAnywhere.open()
+
+  expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
+  expect(window.openPromptAnywhere).not.toHaveBeenCalled()
 })
 
 test('Close prompt', async () => {

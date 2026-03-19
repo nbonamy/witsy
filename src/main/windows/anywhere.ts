@@ -6,6 +6,16 @@ import { createWindow, emitIpcEvent, getCurrentScreen, ensureOnCurrentScreen, re
 import { useI18n } from '../i18n';
 
 export let promptAnywhereWindow: BrowserWindow = null;
+let promptAnywhereOpen = false
+
+export const isPromptAnywhereOpen = (): boolean => {
+  if (!promptAnywhereWindow || promptAnywhereWindow.isDestroyed()) {
+    promptAnywhereOpen = false
+    return false
+  }
+
+  return promptAnywhereOpen
+}
 
 export const preparePromptAnywhere = (queryParams?: anyDict): void => {
 
@@ -41,6 +51,7 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
   // get focus
   // opacity trick is to avoid flickering on Windows
   promptAnywhereWindow.on('show', () => {
+    promptAnywhereOpen = true
 
     // macos can use app.focus
     if (process.platform === 'darwin') {
@@ -61,6 +72,8 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
 
   // opacity trick is to avoid flickering on Windows
   promptAnywhereWindow.on('hide', () => {
+    promptAnywhereOpen = false
+
     if (process.platform === 'win32') {
       promptAnywhereWindow.setOpacity(0);
     } else {
@@ -76,11 +89,17 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
 
 }
 
-export const openPromptAnywhere = (params: anyDict): void => {
+export const openPromptAnywhere = (params?: anyDict): void => {
+
+  const hasParams = !!params && Object.keys(params).length > 0
+  const isOpen = isPromptAnywhereOpen()
 
   // if we don't have a window, create one
   if (!promptAnywhereWindow || promptAnywhereWindow.isDestroyed()) {
     preparePromptAnywhere(params);
+  } else if (isOpen && !hasParams) {
+    void closePromptAnywhere();
+    return;
   } else {
     emitIpcEvent(promptAnywhereWindow, 'show', params);
   }
@@ -93,18 +112,22 @@ export const openPromptAnywhere = (params: anyDict): void => {
   promptAnywhereWindow.setBounds(getFullscreenBounds(windowScreen));
 
   // done
+  promptAnywhereOpen = true
   promptAnywhereWindow.show();
 
 };
 
 export const closePromptAnywhere = async (sourceApp?: Application): Promise<void> => {
-
   // check
-  if (promptAnywhereWindow === null || promptAnywhereWindow.isDestroyed() || promptAnywhereWindow.isVisible() === false) {
+  if (!isPromptAnywhereOpen()) {
     return;
   }
 
   try {
+    promptAnywhereOpen = false
+
+    // notify renderer to clean up before window is shown again
+    emitIpcEvent(promptAnywhereWindow, 'prepare-close', null);
 
     // hide from user as early as possible
     promptAnywhereWindow.setOpacity(0);
@@ -117,6 +140,7 @@ export const closePromptAnywhere = async (sourceApp?: Application): Promise<void
 
   } catch (error) {
     console.error('Error while hiding prompt anywhere', error);
+    promptAnywhereOpen = false
     promptAnywhereWindow = null;
   }
 

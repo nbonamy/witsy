@@ -14,18 +14,20 @@ global.MAIN_WINDOW_VITE_NAME = 'vite'
 vi.mock('electron', async () => {
   const BrowserWindow = vi.fn(function() {
     this.visible = true
+    this.focused = false
     this.minimized = false
     this.destroyed = false
     return this
   })
-  BrowserWindow.prototype.show = vi.fn()
-  BrowserWindow.prototype.hide = vi.fn(function() { this.visible = false })
-  BrowserWindow.prototype.close = vi.fn(function() { this.destroyed = true })
-  BrowserWindow.prototype.focus = vi.fn()
+  BrowserWindow.prototype.show = vi.fn(function() { this.visible = true })
+  BrowserWindow.prototype.hide = vi.fn(function() { this.visible = false; this.focused = false })
+  BrowserWindow.prototype.close = vi.fn(function() { this.destroyed = true; this.focused = false })
+  BrowserWindow.prototype.focus = vi.fn(function() { this.focused = true })
   BrowserWindow.prototype.restore = vi.fn(function() { this.minimized = false })
   BrowserWindow.prototype.minimize = vi.fn(function() { this.minimized = true })
   BrowserWindow.prototype.isMinimized = vi.fn(function() { return this.minimized })
   BrowserWindow.prototype.isVisible = vi.fn(function() { return this.visible })
+  BrowserWindow.prototype.isFocused = vi.fn(function() { return this.focused })
   BrowserWindow.prototype.isDestroyed = vi.fn(function() { return false })
   BrowserWindow.prototype.loadFile = vi.fn()
   BrowserWindow.prototype.loadURL = vi.fn()
@@ -279,6 +281,46 @@ test('Close prompt anywhere window', async () => {
   window.openPromptAnywhere({})
   await window.closePromptAnywhere()
   expect(window.promptAnywhereWindow).not.toBeNull()
+})
+
+test('Toggle prompt anywhere window closed when reopened without params', async () => {
+  window.openPromptAnywhere({})
+  expect(window.promptAnywhereWindow?.isVisible()).toBe(true)
+
+  vi.clearAllMocks()
+
+  window.openPromptAnywhere()
+
+  await vi.waitUntil(() => window.promptAnywhereWindow?.isVisible() === false)
+  expect(BrowserWindow.prototype.webContents.send).not.toHaveBeenCalledWith('show', expect.anything())
+  expect(BrowserWindow.prototype.hide).toHaveBeenCalledOnce()
+})
+
+test('Toggle prompt anywhere window closed when reopened while focused', async () => {
+  window.openPromptAnywhere({})
+  window.promptAnywhereWindow?.focus()
+  window.promptAnywhereWindow!.visible = false
+  expect(window.promptAnywhereWindow?.isFocused()).toBe(true)
+
+  vi.clearAllMocks()
+
+  window.openPromptAnywhere()
+
+  await vi.waitUntil(() => BrowserWindow.prototype.hide.mock.calls.length === 1)
+  expect(BrowserWindow.prototype.webContents.send).not.toHaveBeenCalledWith('show', expect.anything())
+})
+
+test('Toggle prompt anywhere window closed when Electron reports hidden and unfocused', async () => {
+  window.openPromptAnywhere({})
+  window.promptAnywhereWindow!.visible = false
+  window.promptAnywhereWindow!.focused = false
+
+  vi.clearAllMocks()
+
+  window.openPromptAnywhere()
+
+  await vi.waitUntil(() => BrowserWindow.prototype.hide.mock.calls.length === 1)
+  expect(BrowserWindow.prototype.webContents.send).not.toHaveBeenCalledWith('show', expect.anything())
 })
 
 test('Open Readaloud window', async () => {
