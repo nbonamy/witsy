@@ -20,7 +20,7 @@ export default class LlmManagerBase implements ILlmManager {
     this.config = config
   }
 
-  getStandardEngines = (): string[] => {
+  getStandardEngines(): string[] {
     throw new Error('getStandardEngines not implemented')
   }
 
@@ -28,11 +28,11 @@ export default class LlmManagerBase implements ILlmManager {
     throw new Error('getPriorityEngines not implemented')
   }
 
-  getNonChatEngines = (): string[] => {
+  getNonChatEngines(): string[] {
     throw new Error('getNonChatEngines not implemented')
   }
 
-  getChatEngines = (opts?: GetChatEnginesOpts): string[] => {
+  getChatEngines(opts?: GetChatEnginesOpts): string[] {
     opts = { favorites: true, ...opts }
     return [
       ...(opts.favorites && this.config.llm.favorites.length ? [favoriteMockEngine] : []),
@@ -41,7 +41,7 @@ export default class LlmManagerBase implements ILlmManager {
     ]
   }
 
-  getEngineName = (engine: string): string => {
+  getEngineName(engine: string): string {
     if (this.isFavoriteEngine(engine)) {
       return 'favorite'
     } else if (!this.config.engines[engine]) {
@@ -53,41 +53,41 @@ export default class LlmManagerBase implements ILlmManager {
     }
   }
 
-  getCustomEngines = (): string[] => {
+  getCustomEngines(): string[] {
     return Object.keys(this.config.engines).filter(e => this.isCustomEngine(e))
   }
 
-  isCustomEngine = (engine: string): boolean => {
+  isCustomEngine(engine: string): boolean {
     return this.config.engines[engine] !== undefined && engine != favoriteMockEngine && !this.getStandardEngines().includes(engine) && !this.getNonChatEngines().includes(engine)
   }
   
-  isSpecializedModel = (engine: string, model: string): boolean => {
+  isSpecializedModel(engine: string, model: string): boolean {
     if (engine === 'anthropic') return isSpecialAnthropicModel(model)
     return false
   }
 
-  isFavoriteEngine = (engine: string): boolean => {
+  isFavoriteEngine(engine: string): boolean {
     return engine === favoriteMockEngine
   }
 
-  getFavoriteId = (engine: string, model: string): string => {
+  getFavoriteId(engine: string, model: string): string {
     return `${engine}-${model}`
   }
 
-  isFavoriteId = (id: string): boolean => {
+  isFavoriteId(id: string): boolean {
     return this.config.llm.favorites.some(f => f.id === id)
   }
 
-  isFavoriteModel = (engine: string, model: string): boolean => {
+  isFavoriteModel(engine: string, model: string): boolean {
     return this.isFavoriteEngine(engine) || this.isFavoriteId(this.getFavoriteId(engine, model))
   }
 
-  getFavoriteModel = (id: string): { engine: string, model: string }|null => {
+  getFavoriteModel(id: string): { engine: string, model: string }|null {
     const favorite = this.config.llm.favorites.find(f => f.id === id)
     return favorite ? { engine: favorite.engine, model: favorite.model } : null
   }
 
-  addFavoriteModel = (engine: string, model: string) => {
+  addFavoriteModel(engine: string, model: string) {
     const id = this.getFavoriteId(engine, model)
     this.config.llm.favorites.push({
       id: id,
@@ -97,11 +97,11 @@ export default class LlmManagerBase implements ILlmManager {
     store.saveSettings()
   }
 
-  isComputerUseModel = (engine: string, model: string): boolean => {
+  isComputerUseModel(engine: string, model: string): boolean {
     return (engine === 'anthropic' && model === 'computer-use')
   }
 
-  removeFavoriteModel = (engine: string, model: string) => {
+  removeFavoriteModel(engine: string, model: string) {
 
     // 1st remove
     let id = model
@@ -122,7 +122,7 @@ export default class LlmManagerBase implements ILlmManager {
     store.saveSettings()
   }
 
-  reorderFavorites = (index: number, direction: 'up' | 'down') => {
+  reorderFavorites(index: number, direction: 'up' | 'down') {
     if (index < 0 || index >= this.config.llm.favorites.length) {
       return
     }
@@ -141,12 +141,12 @@ export default class LlmManagerBase implements ILlmManager {
     store.saveSettings()
   }
 
-  getFallbackModel = (engine: string): string => {
+  getFallbackModel(engine: string): string {
     if (engine === 'anthropic') return getAnthropicFallbackModel()
     return null
   }
   
-  getChatEngineModel = (acceptSpecializedModels: boolean = true): { engine: string, model: string } => {
+  getChatEngineModel(acceptSpecializedModels: boolean = true): { engine: string, model: string } {
     
     let engine = this.config.llm.engine
     let model = this.getDefaultChatModel(engine, acceptSpecializedModels)
@@ -177,7 +177,7 @@ export default class LlmManagerBase implements ILlmManager {
     }
   }
 
-  getChatModels = (engine: string): llm.ChatModel[] => {
+  getChatModels(engine: string): llm.ChatModel[] {
     if (this.isFavoriteEngine(engine)) {
       return this.config.llm.favorites.map(f => {
         const model = this.getChatModel(f.engine, f.model)
@@ -193,7 +193,7 @@ export default class LlmManagerBase implements ILlmManager {
     }
   }
 
-  getChatModel = (engine: string, model: string): llm.ChatModel => {
+  getChatModel(engine: string, model: string): llm.ChatModel {
     if (this.isFavoriteEngine(engine)) {
       const favorite = this.config.llm.favorites.find(f => f.id === model)
       return this.getChatModel(favorite.engine, favorite.model)
@@ -203,7 +203,7 @@ export default class LlmManagerBase implements ILlmManager {
     }
   }
   
-  getDefaultChatModel = (engine: string, acceptSpecializedModels: boolean = true): string => {
+  getDefaultChatModel(engine: string, acceptSpecializedModels: boolean = true): string {
   
     // get from config
     const model = this.config.engines[engine]?.model?.chat
@@ -224,7 +224,7 @@ export default class LlmManagerBase implements ILlmManager {
   
   }
 
-  setChatModel = (engine: string, model: string): void => {
+  setChatModel(engine: string, model: string): void {
     console.log('Setting chat model', engine, model)
     this.config.llm.engine = engine
     this.config.engines[engine].model.chat = model
@@ -232,12 +232,12 @@ export default class LlmManagerBase implements ILlmManager {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isEngineConfigured = (engine: string): boolean => {
+  isEngineConfigured(engine: string): boolean {
     throw new Error('isEngineConfigured not implemented')
   }  
   
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isEngineReady = (engine: string): boolean => {
+  isEngineReady(engine: string): boolean {
     throw new Error('isEngineReady not implemented')
   }
 
@@ -246,7 +246,7 @@ export default class LlmManagerBase implements ILlmManager {
     throw new Error('igniteEngine not implemented')
   }
   
-  igniteFavoriteEngine = (engine: string): llm.LlmEngine => {
+  igniteFavoriteEngine(engine: string): llm.LlmEngine {
     
     const modelId = this.config.engines[favoriteMockEngine].model.chat
     const favorite = this.config.llm.favorites.find(f => f.id === modelId)
@@ -259,7 +259,7 @@ export default class LlmManagerBase implements ILlmManager {
 
   }
 
-  igniteCustomEngine = (engineId: string): llm.LlmEngine => {
+  igniteCustomEngine(engineId: string): llm.LlmEngine {
     
     const engineConfig = this.config.engines[engineId] as CustomEngineConfig
     if (engineConfig.api === 'openai') {
@@ -287,12 +287,12 @@ export default class LlmManagerBase implements ILlmManager {
 
   }
   
-  hasChatModels = (engine: string): boolean => {
+  hasChatModels(engine: string): boolean {
     if (this.isFavoriteEngine(engine)) return this.config.llm.favorites.length > 0
     else return this.config.engines[engine].models?.chat?.length > 0
   }
   
-  canProcessFormat = (engine: string, model: string, format: string) => {
+  canProcessFormat(engine: string, model: string, format: string) {
     if (imageFormats.includes(format.toLowerCase())) {
       const m = this.getChatModel(engine, model)
       if (m.capabilities.vision) return true
@@ -302,7 +302,7 @@ export default class LlmManagerBase implements ILlmManager {
     }
   }
 
-  initModels = async (): Promise<void> => {
+  async initModels(): Promise<void> {
     for (const engine of llm.staticModelsListEngines) {
       if (this.isEngineConfigured(engine)) {
         await this.loadModels(engine)
@@ -311,11 +311,11 @@ export default class LlmManagerBase implements ILlmManager {
   }
   
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadModels = async (engine: string): Promise<boolean> => {
+  async loadModels(engine: string): Promise<boolean> {
     throw new Error('loadModels not implemented')
   }
 
-  loadModelsCustom = async (engine: string): Promise<boolean> => {
+  async loadModelsCustom(engine: string): Promise<boolean> {
 
     const engineConfig = store.config.engines[engine] as CustomEngineConfig
     if (!engineConfig) return false
@@ -380,7 +380,7 @@ export default class LlmManagerBase implements ILlmManager {
 
   }
 
-  saveModels = (engine: string, models: llm.ModelsList): boolean => {
+  saveModels(engine: string, models: llm.ModelsList): boolean {
 
     // error?
     if (!models) {
@@ -491,7 +491,7 @@ export default class LlmManagerBase implements ILlmManager {
   
   }  
   
-  selectValidModel = (engine: string, engineConfig: EngineConfig, type: 'chat'|'image'): void => {
+  selectValidModel(engine: string, engineConfig: EngineConfig, type: 'chat'|'image'): void {
 
     // get models
     const models: llm.Model[] = engineConfig?.models?.[type]
@@ -516,9 +516,9 @@ export default class LlmManagerBase implements ILlmManager {
 
    
    
-  loadTools = async (engine: llm.LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection, opts?: {
+  async loadTools(engine: llm.LlmEngine, workspaceId: string, availablePlugins: PluginsList, toolSelection: ToolSelection, opts?: {
     codeExecutionMode?: CodeExecutionMode
-  }): Promise<void> => {
+  }): Promise<void> {
 
     // clear
     engine.clearPlugins()

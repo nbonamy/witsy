@@ -13,27 +13,27 @@ export default class LlmManager extends LlmManagerBase {
     super(config)
   }
 
-  getStandardEngines = (): string[] => {
+  getStandardEngines(): string[] {
     return [ 'openai', 'anthropic', 'google', 'xai', 'meta', 'ollama', 'lmstudio', 'mistralai', 'deepseek', 'openrouter', 'groq', 'cerebras' ]
   }
 
-  getPriorityEngines = (): string[] => {
+  getPriorityEngines(): string[] {
     return [ 'openai', 'anthropic', 'google', 'ollama' ]
   }
 
-  getNonChatEngines = (): string[] => {
+  getNonChatEngines(): string[] {
     return [ 'huggingface', 'replicate', 'elevenlabs', 'sdwebui', 'falai', 'gladia', 'nvidia', 'fireworks', 'speechmatics', 'soniox', 'minimax' ]
   }
 
-  isEngineLocal = (engine: string): boolean => {
+  isEngineLocal(engine: string): boolean {
     return engine === 'ollama' || engine === 'lmstudio'
   }
 
-  isEngineOnline = (engine: string): boolean => {
+  isEngineOnline(engine: string): boolean {
     return !this.isEngineLocal(engine)
   }
 
-  isEngineConfigured = (engine: string): boolean => {
+  isEngineConfigured(engine: string): boolean {
     if (engine === 'anthropic') return Anthropic.isConfigured(this.config.engines.anthropic)
     if (engine === 'cerebras') return llm.Cerebras.isConfigured(this.config.engines.cerebras)
     if (engine === 'deepseek') return llm.DeepSeek.isConfigured(this.config.engines.deepseek)
@@ -51,7 +51,7 @@ export default class LlmManager extends LlmManagerBase {
     return false
   }  
   
-  isEngineReady = (engine: string): boolean => {
+  isEngineReady(engine: string): boolean {
     if (engine === 'anthropic') return Anthropic.isReady(this.config.engines.anthropic, this.config.engines.anthropic?.models)
     if (engine === 'cerebras') return llm.Cerebras.isReady(this.config.engines.cerebras, this.config.engines.cerebras?.models)
     if (engine === 'deepseek') return llm.DeepSeek.isReady(this.config.engines.deepseek, this.config.engines.deepseek?.models)
@@ -69,7 +69,7 @@ export default class LlmManager extends LlmManagerBase {
     return false
   }
   
-  igniteEngine = (engine: string): llm.LlmEngine => {
+  igniteEngine(engine: string): llm.LlmEngine {
 
     try {
 
@@ -109,7 +109,7 @@ export default class LlmManager extends LlmManagerBase {
 
   }
   
-  loadModels = async (engine: string): Promise<boolean> => {
+  async loadModels(engine: string): Promise<boolean> {
 
     if (this.isCustomEngine(engine)) {
       return this.loadModelsCustom(engine)
