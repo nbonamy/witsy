@@ -1,7 +1,12 @@
 <template>
   <div class="main-window window">
 
-    <header />
+    <header>
+      <div v-if="updateAvailable" class="update-badge" @click="applyUpdate">
+        <CloudDownloadIcon :size="14" />
+        {{ t('main.update.available') }}
+      </div>
+    </header>
 
     <main>
       
@@ -63,6 +68,7 @@ import useIpcListener from '@composables/ipc_listener'
 import useWebappManager from '@composables/webapp_manager'
 import Dialog from '@renderer/utils/dialog'
 import AgentForge from '@screens/AgentForge.vue'
+import AudioBooth from '@screens/AudioBooth.vue'
 import Chat from '@screens/Chat.vue'
 import DesignStudio from '@screens/DesignStudio.vue'
 import DocRepos from '@screens/DocRepos.vue'
@@ -71,13 +77,12 @@ import Onboarding from '@screens/Onboarding.vue'
 import RealtimeChat from '@screens/RealtimeChat.vue'
 import ScratchPad from '@screens/ScratchPad.vue'
 import Settings from '@screens/Settings.vue'
-import AudioBooth from '@screens/AudioBooth.vue'
 import WebAppViewer from '@screens/WebAppViewer.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
-import { ActivityIcon } from 'lucide-vue-next'
+import { ActivityIcon, CloudDownloadIcon } from 'lucide-vue-next'
 import { anyDict } from 'types/index'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 const { onBusEvent } = useEventBus()
 const { onIpcEvent } = useIpcListener()
@@ -88,6 +93,7 @@ const audioBooth = ref<typeof AudioBooth>(null)
 const realtime = ref<typeof RealtimeChat>(null)
 const settings = ref<typeof Settings>(null)
 const showOnboarding = ref(false)
+const updateAvailable = ref(false)
 
 // init stuff
 store.load()
@@ -134,6 +140,14 @@ onMounted(() => {
   onIpcEvent('start-dictation', onDictate)
   onIpcEvent('window-opened', onWindowOpened)
   onIpcEvent('run-onboarding', onRunOnboarding)
+  onIpcEvent('update-available', () => updateAvailable.value = true)
+
+  // check if update was already available
+  setTimeout(() => {
+    if (window.api.update.isAvailable()) {
+      updateAvailable.value = true
+    }
+  }, 500)
 
   // init from props
   if (props.extra) {
@@ -228,6 +242,10 @@ const onRunOnboarding = () => {
   store.saveSettings()
 }
 
+const applyUpdate = () => {
+  window.api.update.apply()
+}
+
 const onOnboardingDone = () => {
   showOnboarding.value = false
   store.config.general.onboardingDone = true
@@ -242,6 +260,35 @@ const onOnboardingDone = () => {
 </style>
 
 <style>
+
+.main-window > header {
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+
+  .update-badge {
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    font-size: var(--font-size-12);
+    border-radius: 16rem;
+    font-weight: var(--font-weight-medium);
+    background-color: var(--color-success);
+    color: var(--color-on-success);
+  }
+}
+
+.macos .main-window > header {
+  justify-content: flex-end;
+}
+
+.windows .main-window > header,
+.linux .main-window > header {
+  justify-content: flex-start;
+}
 
 /* hack! */
 .main-window:has(~ .fullscreen-drawer.visible) {

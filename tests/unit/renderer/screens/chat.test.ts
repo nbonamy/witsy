@@ -65,7 +65,6 @@ test('Registers window API event listeners', async () => {
   expect(window.api._on).toHaveBeenCalledWith('new-chat', expect.any(Function))
   expect(window.api._on).toHaveBeenCalledWith('delete-chat', expect.any(Function))
   expect(window.api._on).toHaveBeenCalledWith('computer-stop', expect.any(Function))
-  expect(window.api._on).toHaveBeenCalledWith('update-available', expect.any(Function))
 })
 
 test('Intercepts #settings link clicks', async () => {
@@ -277,38 +276,6 @@ test('onDeleteChat shows confirmation dialog', async () => {
   expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
     showCancelButton: true
   }))
-})
-
-test('onUpdateAvailable shows dialog', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
-  await wrapper.vm.$nextTick()
-
-  // Mock Dialog.show
-  const Dialog = (await import('@renderer/utils/dialog')).default
-  vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: false, isDenied: false, isDismissed: true, value: null })
-
-  wrapper.vm.onUpdateAvailable()
-
-  expect(Dialog.show).toHaveBeenCalledWith(expect.objectContaining({
-    showCancelButton: true
-  }))
-})
-
-test('onUpdateAvailable applies update when confirmed', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatScreen, { ...stubTeleport })
-  await wrapper.vm.$nextTick()
-
-  // Mock Dialog.show to confirm
-  const Dialog = (await import('@renderer/utils/dialog')).default
-  vi.mocked(Dialog.show).mockResolvedValue({ isConfirmed: true, isDenied: false, isDismissed: false, value: null })
-
-  wrapper.vm.onUpdateAvailable()
-  await wrapper.vm.$nextTick()
-
-  // Wait for the promise chain
-  await new Promise(resolve => setTimeout(resolve, 10))
-
-  expect(window.api.update.apply).toHaveBeenCalled()
 })
 
 test('onRenameFolder shows dialog and updates name', async () => {

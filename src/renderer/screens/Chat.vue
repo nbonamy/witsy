@@ -254,7 +254,6 @@ onMounted(() => {
   onIpcEvent('search-chat', searchChat)
   onIpcEvent('delete-chat', onDeleteChatIpc)
   onIpcEvent('computer-stop', onStopGeneration)
-  onIpcEvent('update-available', onUpdateAvailable)
 
   // intercept links
   onDomEvent(document, 'click', onLinkClick)
@@ -262,13 +261,6 @@ onMounted(() => {
   // show tips
   setTimeout(() => {
     tipsManager.showNextTip()
-  }, 500)
-
-  // check for updates
-  setTimeout(() => {
-    if (typeof window !== 'undefined' && window.api.update.isAvailable()) {
-      onUpdateAvailable()
-    }
   }, 500)
 
   // make sure engine and model are always up-to-date
@@ -937,21 +929,6 @@ const onResendAfterEdit = async (payload: { message: Message, newContent: string
 
 const onStopGeneration = async () => {
   activeSession.value?.abortController?.abort()
-}
-
-const onUpdateAvailable = () => {
-
-  Dialog.show({
-    title: t('main.update.available'),
-    text: t('main.update.restart'),
-    showCancelButton: true,
-    confirmButtonText: t('main.update.restartNow'),
-    cancelButtonText: t('main.update.later'),
-  }).then((result) => {
-    if (result.isConfirmed) {
-      window.api.update.apply()
-    }
-  })
 }
 
 const onToggleSidebar = () => {
