@@ -70,7 +70,10 @@
     </div>
     <div class="form-field">
       <label>{{ t('settings.engines.google.defaultThinkingBudget') }}</label>
-      <input type="number" name="defaultThinkingBudget" v-model.number="defaultThinkingBudget" min="-1" step="1" :placeholder="t('settings.engines.google.defaultThinkingBudgetHint')" @change="save"/>
+      <div class="form-subgroup">
+        <input type="number" name="defaultThinkingBudget" v-model.number="defaultThinkingBudget" min="-1" step="1" :placeholder="t('settings.engines.google.defaultThinkingBudgetHint')" @change="save"/>
+        <span class="hint">{{ t('settings.engines.google.defaultThinkingBudgetExplain') }}</span>
+      </div>
     </div>
     <div class="form-field horizontal">
       <input type="checkbox" id="google-disable-tools" name="disableTools" v-model="disableTools" @change="save" />
