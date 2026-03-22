@@ -53,7 +53,6 @@ export type CustomEngineConfig = EngineConfig & {
 export type GoogleEngineConfig = EngineConfig & {
   safetySettings?: string
   defaultThinkingBudget?: number
-  groundingWithGoogleSearch?: boolean
 }
 
 export type ProxyMode = 'default' | 'bypass' | 'custom'

@@ -2823,7 +2823,6 @@
         "defaultThinkingBudget": "Default thinking budget",
         "defaultThinkingBudgetHint": "Empty = automatic, 0 = disabled",
         "gemini": "Gemini",
-        "groundingWithGoogleSearch": "Enable grounding with Google Search",
         "location": "Location",
         "pricing": "Google pricing",
         "project": "Project ID",

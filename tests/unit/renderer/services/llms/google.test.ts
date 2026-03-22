@@ -94,39 +94,11 @@ describe('GoogleEngine', () => {
     })
   })
 
-  test('adds a grounding tool when google search grounding is enabled', async () => {
-    const superGetGenerationConfig = vi.spyOn(Google.prototype as any, 'getGenerationConfig').mockResolvedValue({})
-
-    const config = await getGenerationConfig(createEngine({ groundingWithGoogleSearch: true }))
-
-    expect(superGetGenerationConfig).toHaveBeenCalledTimes(1)
-    expect(config).toMatchObject({
-      tools: [
-        { googleSearch: {} },
-      ],
-    })
-  })
-
-  test('appends a grounding tool to existing tools', async () => {
-    const existingTool = { functionDeclarations: [{ name: 'lookup', description: 'Existing tool' }] }
-    vi.spyOn(Google.prototype as any, 'getGenerationConfig').mockResolvedValue({
-      tools: [existingTool],
-    })
-
-    const config = await getGenerationConfig(createEngine({ groundingWithGoogleSearch: true }))
-
-    expect(config?.tools).toEqual([
-      existingTool,
-      { googleSearch: {} },
-    ])
-  })
-
   test('returns undefined when the base engine returns no config', async () => {
     vi.spyOn(Google.prototype as any, 'getGenerationConfig').mockResolvedValue(undefined)
 
     await expect(getGenerationConfig(createEngine({
       safetySettings: 'BLOCK_NONE',
-      groundingWithGoogleSearch: true,
     }))).resolves.toBeUndefined()
   })
 })
