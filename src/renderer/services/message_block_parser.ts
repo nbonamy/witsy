@@ -1,3 +1,5 @@
+import { LlmRole } from 'multi-llm-ts'
+import { ToolCallsDisplay } from 'types/config'
 import { ToolCall } from 'types/index'
 import { closeOpenMarkdownTags, getCodeBlocks, isHtmlContent } from './markdown'
 import { kSearchPluginName } from './plugins/search'
@@ -74,10 +76,10 @@ type BlockContent = BlockEmpty | BlockText | BlockUserText | BlockMedia | BlockA
 export type Block = BlockMeta & BlockContent
 
 export interface ComputeBlocksOptions {
-  role: 'user' | 'assistant' | 'system'
+  role: Omit<LlmRole, 'developer'>
   transient: boolean
   toolCalls: ToolCall[]
-  toolCallsDisplay: 'none' | 'summary' | 'details'
+  toolCallsDisplay: ToolCallsDisplay
   filter?: string | null
 }
 
