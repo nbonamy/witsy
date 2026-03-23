@@ -72,9 +72,8 @@
       </div>
 
       <!-- transient information -->
-      <div v-if="message.transient" class="message-transient">
-        <MessageItemToolBlock v-for="runningTool in runningTools" :tool-call="runningTool" v-if="runningTools" />
-        <Loader v-if="!message.status" />
+      <div v-if="message.transient && !message.status" class="message-transient">
+        <Loader />
       </div>
 
     </div>
@@ -93,7 +92,6 @@ import Loader from '@components/Loader.vue'
 import MessageItemActions from '@components/MessageItemActions.vue'
 import MessageItemBody from '@components/MessageItemBody.vue'
 import MessageItemMediaBlock from '@components/MessageItemMediaBlock.vue'
-import MessageItemToolBlock from '@components/MessageItemToolBlock.vue'
 import SpinningIcon from '@components/SpinningIcon.vue'
 import useEventBus from '@composables/event_bus'
 import Attachment from '@models/attachment'
@@ -233,11 +231,6 @@ const imageUrl = computed(() => {
 
 })
 
-const runningTools = computed(() => {
-  if (store.config.appearance.chat.toolCallsDisplay === 'none') return null
-  const runningTools = props.message.toolCalls.filter(toolCall => !toolCall.done)
-  return runningTools.length ? runningTools : null
-})
 
 // using simple css :hover
 // was not working from a testing perspective

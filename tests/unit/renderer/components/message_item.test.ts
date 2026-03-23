@@ -440,11 +440,10 @@ test('Transient message', async () => {
   expect(wrapper.find('.message-actions .tools').exists()).toBe(false)
 })
 
-test('Tool call running calling', async () => {
+test('Tool call running summary', async () => {
   botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'running', status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
-  expect(wrapper.find('.message-body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
-  expect(wrapper.find('.message-body .message-transient').text()).toBe('Calling a tool')
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolGroupBlock' }).exists()).toBe(true)
   expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
 })
 
@@ -452,16 +451,14 @@ test('Tool call running none', async () => {
   store.config.appearance.chat.toolCallsDisplay = 'none'
   botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'running', status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
-  expect(wrapper.find('.message-body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
   expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
 })
 
 test('Tool call running details', async () => {
   store.config.appearance.chat.toolCallsDisplay = 'details'
-  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'running',status: 'Calling a tool', done: false })
+  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', state: 'running', status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
-  expect(wrapper.find('.message-body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
-  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.message-body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
 })
 
 test('Tool call done summary', async () => {

@@ -104,7 +104,7 @@ const contentBlocks = computed((): Block[] => {
   if (blocks.length === 0 && !props.message.transient) {
     return [emptyBlock()]
   }
-  if (props.toolCallsDisplay === 'summary' && !props.message.transient) {
+  if (props.toolCallsDisplay === 'summary') {
     blocks = groupToolBlocks(blocks)
   }
   return blocks
@@ -137,7 +137,7 @@ const performComputation = async () => {
   if (blocks.length === 0 && !props.message.transient) {
     cachedContentBlocks.value = [emptyBlock()]
   } else {
-    if (props.toolCallsDisplay === 'summary' && !props.message.transient) {
+    if (props.toolCallsDisplay === 'summary') {
       blocks = groupToolBlocks(blocks)
     }
     cachedContentBlocks.value = blocks

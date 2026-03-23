@@ -428,7 +428,7 @@ describe('computeBlocks - tool calls', () => {
     expect(blocks[0]).toMatchObject({ type: 'tool', stable: true })
   })
 
-  test('does not render tool block if tool not done', () => {
+  test('renders running tool block as unstable', () => {
     const toolCalls: ToolCall[] = [{
       id: 'tool-1',
       function: 'calculator',
@@ -437,6 +437,20 @@ describe('computeBlocks - tool calls', () => {
       result: null
     }]
     const options = { ...defaultOptions, toolCalls, toolCallsDisplay: 'details' as const }
+    const blocks = computeBlocks('<tool id="tool-1"></tool>', options)
+    expect(blocks).toHaveLength(1)
+    expect(blocks[0]).toMatchObject({ type: 'tool', stable: false })
+  })
+
+  test('does not render running tool block when none', () => {
+    const toolCalls: ToolCall[] = [{
+      id: 'tool-1',
+      function: 'calculator',
+      done: false,
+      args: {},
+      result: null
+    }]
+    const options = { ...defaultOptions, toolCalls, toolCallsDisplay: 'none' as const }
     const blocks = computeBlocks('<tool id="tool-1"></tool>', options)
     expect(blocks).toHaveLength(0)
   })

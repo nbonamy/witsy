@@ -306,17 +306,17 @@ export const computeBlocks = (content: string | null, options: ComputeBlocksOpti
         const toolCall =
           match[1] === 'id' ? options.toolCalls.find(call => call.id === match[2]) :
             match[1] === 'index' ? options.toolCalls[parseInt(match[2])] : null
-        if (toolCall && toolCall.done) {
+        if (toolCall) {
           if (options.toolCallsDisplay !== 'none') {
             blocks.push({
               type: 'tool',
               toolCall: toolCall,
               start: matchStart,
               end: matchEnd,
-              // Tool blocks are immediately stable - fully matched
-              stable: true
+              // Tool blocks are stable only when done
+              stable: toolCall.done,
             })
-          } else if (toolCall.function === kSearchPluginName) {
+          } else if (toolCall.done && toolCall.function === kSearchPluginName) {
             blocks.push({
               type: 'search',
               toolCall: toolCall,
