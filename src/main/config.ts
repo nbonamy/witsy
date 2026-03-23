@@ -287,6 +287,14 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
     delete config.appearance.tint
   }
 
+  // backwards compatibility: showToolCalls renamed to toolCallsDisplay
+  if ('showToolCalls' in config.appearance.chat) {
+    const mapping: Record<string, string> = { 'never': 'none', 'calling': 'summary', 'always': 'details' }
+    const chat = config.appearance.chat as Record<string, unknown>
+    config.appearance.chat.toolCallsDisplay = (mapping[chat.showToolCalls as string] || 'summary') as typeof config.appearance.chat.toolCallsDisplay
+    delete chat.showToolCalls
+  }
+
   // backwards compatibility
   if ('servers' in config.plugins.mcp) {
     config.mcp.servers = config.plugins.mcp.servers

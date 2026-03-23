@@ -22,7 +22,7 @@
       <div class="action fork" v-if="isVisible('fork')" @click="onFork(message)">
         <GitBranchIcon /> {{ t('common.fork') }}
       </div>
-      <div class="action tools" @click="onTools(message)" v-if="message.role == 'assistant' && store.config.appearance.chat.showToolCalls != 'always' && isVisible('tools')">
+      <div class="action tools" @click="onTools(message)" v-if="message.role == 'assistant' && store.config.appearance.chat.toolCallsDisplay != 'details' && isVisible('tools')">
         <WrenchIcon /> {{ t('common.tools') }}
       </div>
     </template>

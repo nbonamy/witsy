@@ -41,11 +41,11 @@
         <div class="help">{{ t('settings.chat.copyFormat.help') }}</div>
       </div>
       <div class="form-field tools">
-        <label>{{ t('settings.chat.showToolCalls.title') }}</label>
-        <select v-model="showToolCalls" @change="save">
-          <option value="never">{{ t('settings.chat.showToolCalls.never') }}</option>
-          <option value="calling">{{ t('settings.chat.showToolCalls.calling') }}</option>
-          <option value="always">{{ t('settings.chat.showToolCalls.always') }}</option>
+        <label>{{ t('settings.chat.toolCallsDisplay.title') }}</label>
+        <select v-model="toolCallsDisplay" @change="save">
+          <option value="none">{{ t('settings.chat.toolCallsDisplay.none') }}</option>
+          <option value="summary">{{ t('settings.chat.toolCallsDisplay.summary') }}</option>
+          <option value="details">{{ t('settings.chat.toolCallsDisplay.details') }}</option>
         </select>
       </div>
       <div class="form-field font-family">
@@ -94,7 +94,7 @@
 
 <script setup lang="ts">
 
-import { ChatListLayout, ChatToolMode, SendKey, TextFormat } from 'types/config';
+import { ChatListLayout, ToolCallsDisplay, SendKey, TextFormat } from 'types/config';
 import { ref, computed, provide } from 'vue'
 import { store } from '@services/store'
 import { t } from '@services/i18n'
@@ -110,7 +110,7 @@ const fontFamily = ref('')
 const previewHtml = ref(true)
 const copyFormat = ref<TextFormat>('text')
 const sendKey = ref<SendKey>('enter')
-const showToolCalls = ref<ChatToolMode>('calling')
+const toolCallsDisplay = ref<ToolCallsDisplay>('summary')
 const layout = ref<ChatListLayout>('normal')
 const fonts = ref(window.api.app.listFonts())
 
@@ -127,7 +127,7 @@ const load = () => {
   copyFormat.value = store.config.appearance.chat.copyFormat || 'text'
   sendKey.value = store.config.appearance.chat.sendKey || 'enter'
   previewHtml.value = store.config.appearance.chat.autoPreview.html ?? true
-  showToolCalls.value = store.config.appearance.chat.showToolCalls || 'calling'
+  toolCallsDisplay.value = store.config.appearance.chat.toolCallsDisplay || 'summary'
   fontFamily.value = store.config.appearance.chat.fontFamily || ''
   fontSize.value = store.config.appearance.chat.fontSize || 3
 }
@@ -139,7 +139,7 @@ const save = () => {
   store.config.appearance.chat.sendKey = sendKey.value
   store.config.appearance.chatList.layout = layout.value
   store.config.appearance.chat.autoPreview.html = previewHtml.value
-  store.config.appearance.chat.showToolCalls = showToolCalls.value
+  store.config.appearance.chat.toolCallsDisplay = toolCallsDisplay.value
   store.config.appearance.chat.copyFormat = copyFormat.value
   store.saveSettings()
 }

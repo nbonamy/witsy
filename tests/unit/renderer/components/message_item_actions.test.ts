@@ -253,7 +253,7 @@ describe('MessageItemActions hiddenMessageActions', () => {
 
   test('hides tools when in hiddenMessageActions', () => {
     const message = createMessage('assistant')
-    store.config.appearance.chat.showToolCalls = 'never'
+    store.config.appearance.chat.toolCallsDisplay = 'none'
     const wrapper = mountWithHidden(message, ['tools'], {})
     expect(wrapper.find('.action.tools').exists()).toBe(false)
   })

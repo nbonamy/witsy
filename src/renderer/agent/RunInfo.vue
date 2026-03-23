@@ -89,7 +89,7 @@
       <div class="output-content messages openai" :class="'size' + store.config.appearance.chat.fontSize">
         <div class="message assistant">
           <div class="body">
-            <MessageItemBody :message="lastStepOutput" show-tool-calls="never" />
+            <MessageItemBody :message="lastStepOutput" tool-calls-display="none" />
           </div>
         </div>
       </div>

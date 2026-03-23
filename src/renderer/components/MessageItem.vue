@@ -68,7 +68,7 @@
             <button @click="cancelEditing" class="tertiary">{{ t('chat.cancel') }}</button>
           </div>
         </div>
-        <MessageItemBody v-else :message="message" :show-tool-calls="showToolCalls" @media-loaded="onMediaLoaded" />
+        <MessageItemBody v-else :message="message" :tool-calls-display="toolCallsDisplay" @media-loaded="onMediaLoaded" />
       </div>
 
       <!-- transient information -->
@@ -104,7 +104,7 @@ import type { ChatCallbacks } from '@screens/Chat.vue'
 import { t } from '@services/i18n'
 import { store } from '@services/store'
 import { LoaderCircleIcon } from 'lucide-vue-next'
-import { ChatToolMode } from 'types/config'
+import { ToolCallsDisplay } from 'types/config'
 import { computed, inject, onBeforeUnmount, onMounted, PropType, ref, watch } from 'vue'
 // import { getMarkdownSelection } from '@services/markdown'
 
@@ -137,7 +137,7 @@ const emits = defineEmits(['media-loaded'])
 const div = ref<HTMLElement|null>(null)
 const hovered = ref(false)
 const audio = ref<HTMLAudioElement|null>(null)
-const showToolCalls = ref<ChatToolMode>('always')
+const toolCallsDisplay = ref<ToolCallsDisplay>('summary')
 const audioState = ref<{state: string, messageId: string|null}>({
   state: 'idle',
   messageId: null,
@@ -152,9 +152,9 @@ onMounted(() => {
 
   // show tool calls
   if (props.showToolCalls) {
-    showToolCalls.value = store.config.appearance.chat.showToolCalls
+    toolCallsDisplay.value = store.config.appearance.chat.toolCallsDisplay
   } else {
-    showToolCalls.value = 'never'
+    toolCallsDisplay.value = 'none'
   }
 
   // make sure links are going outside
@@ -173,8 +173,8 @@ onMounted(() => {
   onBusEvent('audio-noise-detected', () =>  audioPlayer.stop)
 
   // settings change
-  watch(() => store.config.appearance.chat.showToolCalls, (value) => {
-    showToolCalls.value = value
+  watch(() => store.config.appearance.chat.toolCallsDisplay, (value) => {
+    toolCallsDisplay.value = value
   })
 
 })
@@ -234,7 +234,7 @@ const imageUrl = computed(() => {
 })
 
 const runningTools = computed(() => {
-  if (store.config.appearance.chat.showToolCalls === 'never') return null
+  if (store.config.appearance.chat.toolCallsDisplay === 'none') return null
   const runningTools = props.message.toolCalls.filter(toolCall => !toolCall.done)
   return runningTools.length ? runningTools : null
 })
@@ -289,10 +289,10 @@ const readAloudText = async (text: string) => {
 }
 
 const onShowTools = () => {
-  if (showToolCalls.value !== 'always') {
-    showToolCalls.value = 'always'
+  if (toolCallsDisplay.value !== 'details') {
+    toolCallsDisplay.value = 'details'
   } else {
-    showToolCalls.value = 'never'
+    toolCallsDisplay.value = 'none'
   }
 }
 

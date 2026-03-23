@@ -2006,10 +2006,7 @@
     },
     "toggleSidebar": "Alternar barra lateral",
     "update": {
-      "available": "Actualización disponible",
-      "later": "Más tarde",
-      "restart": "Hay una actualización disponible. Reinicia para aplicarla.",
-      "restartNow": "Reiniciar ahora"
+      "available": "Actualización disponible"
     }
   },
   "mcp": {
@@ -2211,6 +2208,9 @@
       "call": "Llamada a la herramienta: {name}",
       "params": "Parámetros",
       "results": "Resultados"
+    },
+    "toolGroup": {
+      "summary": "1 llamada a herramienta|{count} llamadas a herramientas"
     }
   },
   "modelPull": {
@@ -2579,6 +2579,7 @@
       "suggestTitle": "Sugerir un título",
       "writingAssistant": "Asistente de escritura"
     },
+    "autoSave": "Guardado automático",
     "createEmpty": "Crear vacío",
     "delete": {
       "confirm": "¿Estás seguro de que quieres eliminar \"{title}\"?",
@@ -2625,7 +2626,16 @@
     },
     "saveError": "Error al guardar el documento",
     "title": "Scratchpad",
-    "unsavedPrompt": "¿Quieres guardar tus cambios?"
+    "unsavedPrompt": "¿Quieres guardar tus cambios?",
+    "untitled": "Documento sin título",
+    "versions": {
+      "archive": "Archivar la versión actual",
+      "delete": "Eliminar",
+      "recall": "Restaurar",
+      "recallConfirm": "Restaurar esta versión reemplazará el contenido actual. Cualquier cambio no guardado se perderá.",
+      "recallTitle": "¿Restaurar la versión \"{name}\"?",
+      "title": "Versiones"
+    }
   },
   "settings": {
     "advanced": {
@@ -2707,16 +2717,16 @@
         "shiftEnter": "Enter para nueva línea, Shift+Enter envía",
         "title": "Acceso directo para enviar mensaje"
       },
-      "showToolCalls": {
-        "always": "Siempre",
-        "calling": "Durante la ejecución de la herramienta solamente",
-        "never": "Nunca",
-        "title": "Mostrar llamadas a la herramienta"
-      },
       "theme": "Tema del chat",
       "themes": {
         "conversation": "Burbujas",
         "openai": "Clásico"
+      },
+      "toolCallsDisplay": {
+        "details": "Completo",
+        "none": "Oculto",
+        "summary": "Resumen",
+        "title": "Visualización de llamadas a herramientas"
       }
     },
     "commands": {

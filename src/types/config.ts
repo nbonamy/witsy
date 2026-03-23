@@ -172,7 +172,7 @@ export type AutomationConfig = {
 
 export type ChatTheme = 'openai' | 'conversation'
 
-export type ChatToolMode = 'never' | 'calling' | 'always'
+export type ToolCallsDisplay = 'none' | 'summary' | 'details'
 
 export type TextFormat = 'text' | 'markdown'
 
@@ -187,7 +187,7 @@ export type ChatAppearance = {
   autoPreview: {
     html: boolean
   }
-  showToolCalls: ChatToolMode
+  toolCallsDisplay: ToolCallsDisplay
   copyFormat: TextFormat
 }
 

@@ -2025,10 +2025,7 @@
     },
     "toggleSidebar": "切换侧边栏",
     "update": {
-      "available": "有可用更新",
-      "later": "稍后",
-      "restart": "有可用更新。重启以应用。",
-      "restartNow": "立即重启"
+      "available": "有可用更新"
     }
   },
   "mcp": {
@@ -2230,6 +2227,9 @@
       "call": "工具调用: {name}",
       "params": "参数",
       "results": "结果"
+    },
+    "toolGroup": {
+      "summary": "1 次工具调用|{count} 次工具调用"
     }
   },
   "modelPull": {
@@ -2601,6 +2601,7 @@
       "suggestTitle": "建议标题",
       "writingAssistant": "写作助手"
     },
+    "autoSave": "自动保存",
     "createEmpty": "创建空白",
     "delete": {
       "confirm": "您确定要删除“{title}”吗？",
@@ -2647,7 +2648,16 @@
     },
     "saveError": "保存文档时出错",
     "title": "Scratchpad",
-    "unsavedPrompt": "您想保存更改吗？"
+    "unsavedPrompt": "您想保存更改吗？",
+    "untitled": "未命名文档",
+    "versions": {
+      "archive": "归档当前版本",
+      "delete": "删除",
+      "recall": "恢复",
+      "recallConfirm": "恢复此版本将替换当前内容。任何未保存的更改将丢失。",
+      "recallTitle": "是否要恢复版本 \"{name}\"？",
+      "title": "版本"
+    }
   },
   "settings": {
     "advanced": {
@@ -2729,16 +2739,16 @@
         "shiftEnter": "按 Enter 换行，Shift+Enter 发送",
         "title": "发送消息快捷键"
       },
-      "showToolCalls": {
-        "always": "总是",
-        "calling": "仅在工具执行期间",
-        "never": "从不",
-        "title": "显示工具调用"
-      },
       "theme": "聊天主题",
       "themes": {
         "conversation": "气泡",
         "openai": "经典"
+      },
+      "toolCallsDisplay": {
+        "details": "详细",
+        "none": "隐藏",
+        "summary": "摘要",
+        "title": "工具调用显示"
       }
     },
     "commands": {

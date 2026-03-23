@@ -2022,10 +2022,7 @@
     },
     "toggleSidebar": "Toggle sidebar",
     "update": {
-      "available": "Update available",
-      "later": "Later",
-      "restart": "An update is available. Restart to apply it.",
-      "restartNow": "Restart now"
+      "available": "Update available"
     }
   },
   "mcp": {
@@ -2227,6 +2224,9 @@
       "call": "Tool call: {name}",
       "params": "Parameters",
       "results": "Results"
+    },
+    "toolGroup": {
+      "summary": "1 tool call|{count} tool calls"
     }
   },
   "modelPull": {
@@ -2603,6 +2603,7 @@
       "suggestTitle": "Suggest a title",
       "writingAssistant": "Writing assistant"
     },
+    "autoSave": "Auto-save",
     "createEmpty": "Create Empty",
     "delete": {
       "confirm": "Are you sure you want to delete \"{title}\"?",
@@ -2624,7 +2625,6 @@
       "smaller": "Smaller",
       "title": "Font Size"
     },
-    "autoSave": "Auto-save",
     "generationError": "Error while generating text",
     "history": {
       "documents": "Documents",
@@ -2741,16 +2741,16 @@
         "shiftEnter": "Enter for new line, Shift+Enter sends",
         "title": "Send message shortcut"
       },
-      "showToolCalls": {
-        "always": "Always",
-        "calling": "During tool execution only",
-        "never": "Never",
-        "title": "Show tool calls"
-      },
       "theme": "Chat theme",
       "themes": {
         "conversation": "Bubbles",
         "openai": "Classic"
+      },
+      "toolCallsDisplay": {
+        "details": "Full",
+        "none": "Hidden",
+        "summary": "Summary",
+        "title": "Tool calls display"
       }
     },
     "commands": {

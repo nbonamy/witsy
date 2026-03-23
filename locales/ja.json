@@ -2025,10 +2025,7 @@
     },
     "toggleSidebar": "サイドバーの切り替え",
     "update": {
-      "available": "アップデートがあります",
-      "later": "後で",
-      "restart": "アップデートがあります。再起動して適用してください。",
-      "restartNow": "今すぐ再起動"
+      "available": "アップデートがあります"
     }
   },
   "mcp": {
@@ -2230,6 +2227,9 @@
       "call": "ツール呼び出し: {name}",
       "params": "パラメーター",
       "results": "結果"
+    },
+    "toolGroup": {
+      "summary": "1件のツール呼び出し|{count}件のツール呼び出し"
     }
   },
   "modelPull": {
@@ -2601,6 +2601,7 @@
       "suggestTitle": "タイトルを提案する",
       "writingAssistant": "ライティングアシスタント"
     },
+    "autoSave": "自動保存",
     "createEmpty": "空のドキュメントを作成",
     "delete": {
       "confirm": "「{title}」を本当に削除してもよろしいですか？",
@@ -2647,7 +2648,16 @@
     },
     "saveError": "ドキュメントの保存中にエラーが発生しました",
     "title": "スクラッチパッド",
-    "unsavedPrompt": "変更を保存しますか？"
+    "unsavedPrompt": "変更を保存しますか？",
+    "untitled": "無題のドキュメント",
+    "versions": {
+      "archive": "現在のバージョンをアーカイブ",
+      "delete": "削除",
+      "recall": "復元",
+      "recallConfirm": "このバージョンを復元すると現在の内容が置き換えられ、保存されていない変更は失われます。",
+      "recallTitle": "バージョン「{name}」を復元しますか？",
+      "title": "バージョン"
+    }
   },
   "settings": {
     "advanced": {
@@ -2729,16 +2739,16 @@
         "shiftEnter": "Enterで改行、Shift+Enterで送信",
         "title": "メッセージ送信ショートカット"
       },
-      "showToolCalls": {
-        "always": "常に",
-        "calling": "ツール実行中のみ",
-        "never": "しない",
-        "title": "ツール呼び出しを表示"
-      },
       "theme": "チャットテーマ",
       "themes": {
         "conversation": "吹き出し",
         "openai": "クラシック"
+      },
+      "toolCallsDisplay": {
+        "details": "詳細",
+        "none": "非表示",
+        "summary": "要約",
+        "title": "ツール呼び出しの表示"
       }
     },
     "commands": {

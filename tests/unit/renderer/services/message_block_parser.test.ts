@@ -1,7 +1,7 @@
 import { vi, beforeAll, beforeEach, expect, test, describe } from 'vitest'
 import { useWindowMock } from '@tests/mocks/window'
 import { store } from '@services/store'
-import { computeBlocks, computeBlocksIncremental, ComputeBlocksOptions } from '@services/message_block_parser'
+import { computeBlocks, computeBlocksIncremental, ComputeBlocksOptions, groupToolBlocks } from '@services/message_block_parser'
 import { ToolCall } from 'types/index'
 
 beforeAll(() => {
@@ -17,7 +17,7 @@ const defaultOptions: ComputeBlocksOptions = {
   role: 'assistant',
   transient: false,
   toolCalls: [],
-  showToolCalls: 'never'
+  toolCallsDisplay: 'none'
 }
 
 const userOptions: ComputeBlocksOptions = {
@@ -360,7 +360,7 @@ More text`
 
 describe('computeBlocks - tool calls', () => {
 
-  test('does not render tool block when showToolCalls is default', () => {
+  test('does not render tool block when toolCallsDisplay is none', () => {
     const toolCalls: ToolCall[] = [{
       id: 'tool-1',
       function: 'calculator',
@@ -368,12 +368,12 @@ describe('computeBlocks - tool calls', () => {
       args: {},
       result: { value: 42 }
     }]
-    const options = { ...defaultOptions, toolCalls, showToolCalls: 'never' as const }
+    const options = { ...defaultOptions, toolCalls, toolCallsDisplay: 'none' as const }
     const blocks = computeBlocks('<tool id="tool-1"></tool>', options)
     expect(blocks).toHaveLength(0)
   })
 
-  test('renders tool block when showToolCalls is always', () => {
+  test('renders tool block when toolCallsDisplay is details', () => {
     const toolCalls: ToolCall[] = [{
       id: 'tool-1',
       function: 'calculator',
@@ -381,7 +381,7 @@ describe('computeBlocks - tool calls', () => {
       args: {},
       result: { value: 42 }
     }]
-    const options = { ...defaultOptions, toolCalls, showToolCalls: 'always' as const }
+    const options = { ...defaultOptions, toolCalls, toolCallsDisplay: 'details' as const }
     const blocks = computeBlocks('<tool id="tool-1"></tool>', options)
     expect(blocks).toHaveLength(1)
     expect(blocks[0]).toMatchObject({ type: 'tool', toolCall: toolCalls[0] })
@@ -409,7 +409,7 @@ describe('computeBlocks - tool calls', () => {
       args: {},
       result: {}
     }]
-    const options = { ...defaultOptions, toolCalls, showToolCalls: 'always' as const }
+    const options = { ...defaultOptions, toolCalls, toolCallsDisplay: 'details' as const }
     const blocks = computeBlocks('<tool index="0"></tool>', options)
     expect(blocks).toHaveLength(1)
     expect(blocks[0]).toMatchObject({ type: 'tool', toolCall: toolCalls[0] })
@@ -423,7 +423,7 @@ describe('computeBlocks - tool calls', () => {
       args: {},
       result: { value: 42 }
     }]
-    const options = { ...defaultOptions, toolCalls, showToolCalls: 'always' as const, transient: true }
+    const options = { ...defaultOptions, toolCalls, toolCallsDisplay: 'details' as const, transient: true }
     const blocks = computeBlocks('<tool id="tool-1"></tool>', options)
     expect(blocks[0]).toMatchObject({ type: 'tool', stable: true })
   })
@@ -436,9 +436,23 @@ describe('computeBlocks - tool calls', () => {
       args: {},
       result: null
     }]
-    const options = { ...defaultOptions, toolCalls, showToolCalls: 'always' as const }
+    const options = { ...defaultOptions, toolCalls, toolCallsDisplay: 'details' as const }
     const blocks = computeBlocks('<tool id="tool-1"></tool>', options)
     expect(blocks).toHaveLength(0)
+  })
+
+  test('renders tool block when toolCallsDisplay is summary', () => {
+    const toolCalls: ToolCall[] = [{
+      id: 'tool-1',
+      function: 'calculator',
+      done: true,
+      args: {},
+      result: { value: 42 }
+    }]
+    const options = { ...defaultOptions, toolCalls, toolCallsDisplay: 'summary' as const }
+    const blocks = computeBlocks('<tool id="tool-1"></tool>', options)
+    expect(blocks).toHaveLength(1)
+    expect(blocks[0]).toMatchObject({ type: 'tool', toolCall: toolCalls[0] })
   })
 
 })
@@ -711,6 +725,107 @@ describe('computeBlocksIncremental', () => {
 
     // Unstable block should be recomputed
     expect(blocks2[0]).not.toBe(blocks1[0])
+  })
+
+})
+
+describe('groupToolBlocks', () => {
+
+  const makeTool = (id: string): ToolCall => ({
+    id, function: `tool_${id}`, done: true, args: {}, result: {}
+  })
+
+  test('returns empty array for empty input', () => {
+    expect(groupToolBlocks([])).toEqual([])
+  })
+
+  test('passes through non-tool blocks unchanged', () => {
+    const blocks = [
+      { type: 'text' as const, content: 'hello', start: 0, end: 5, stable: true },
+      { type: 'text' as const, content: 'world', start: 5, end: 10, stable: true },
+    ]
+    const result = groupToolBlocks(blocks)
+    expect(result).toHaveLength(2)
+    expect(result[0]).toBe(blocks[0])
+    expect(result[1]).toBe(blocks[1])
+  })
+
+  test('groups consecutive tool blocks into a tool-group', () => {
+    const tc1 = makeTool('1')
+    const tc2 = makeTool('2')
+    const tc3 = makeTool('3')
+    const blocks = [
+      { type: 'tool' as const, toolCall: tc1, start: 0, end: 10, stable: true },
+      { type: 'tool' as const, toolCall: tc2, start: 10, end: 20, stable: true },
+      { type: 'tool' as const, toolCall: tc3, start: 20, end: 30, stable: true },
+    ]
+    const result = groupToolBlocks(blocks)
+    expect(result).toHaveLength(1)
+    expect(result[0].type).toBe('tool-group')
+    expect((result[0] as any).toolCalls).toEqual([tc1, tc2, tc3])
+    expect(result[0].start).toBe(0)
+    expect(result[0].end).toBe(30)
+  })
+
+  test('does not group non-consecutive tool blocks', () => {
+    const tc1 = makeTool('1')
+    const tc2 = makeTool('2')
+    const blocks = [
+      { type: 'tool' as const, toolCall: tc1, start: 0, end: 10, stable: true },
+      { type: 'text' as const, content: 'between', start: 10, end: 17, stable: true },
+      { type: 'tool' as const, toolCall: tc2, start: 17, end: 27, stable: true },
+    ]
+    const result = groupToolBlocks(blocks)
+    expect(result).toHaveLength(3)
+    expect(result[0].type).toBe('tool-group')
+    expect((result[0] as any).toolCalls).toEqual([tc1])
+    expect(result[1].type).toBe('text')
+    expect(result[2].type).toBe('tool-group')
+    expect((result[2] as any).toolCalls).toEqual([tc2])
+  })
+
+  test('does not group search blocks', () => {
+    const tc1 = makeTool('1')
+    const searchTc: ToolCall = { id: 's1', function: 'search_internet', done: true, args: {}, result: {} }
+    const blocks = [
+      { type: 'tool' as const, toolCall: tc1, start: 0, end: 10, stable: true },
+      { type: 'search' as const, toolCall: searchTc, start: 10, end: 20, stable: true },
+    ]
+    const result = groupToolBlocks(blocks)
+    expect(result).toHaveLength(2)
+    expect(result[0].type).toBe('tool-group')
+    expect((result[0] as any).toolCalls).toEqual([tc1])
+    expect(result[1].type).toBe('search')
+  })
+
+  test('handles single tool block', () => {
+    const tc = makeTool('1')
+    const blocks = [
+      { type: 'tool' as const, toolCall: tc, start: 0, end: 10, stable: true },
+    ]
+    const result = groupToolBlocks(blocks)
+    expect(result).toHaveLength(1)
+    expect(result[0].type).toBe('tool-group')
+    expect((result[0] as any).toolCalls).toEqual([tc])
+  })
+
+  test('mixed blocks with tools at start and end', () => {
+    const tc1 = makeTool('1')
+    const tc2 = makeTool('2')
+    const tc3 = makeTool('3')
+    const blocks = [
+      { type: 'tool' as const, toolCall: tc1, start: 0, end: 10, stable: true },
+      { type: 'tool' as const, toolCall: tc2, start: 10, end: 20, stable: true },
+      { type: 'text' as const, content: 'middle', start: 20, end: 26, stable: true },
+      { type: 'tool' as const, toolCall: tc3, start: 26, end: 36, stable: true },
+    ]
+    const result = groupToolBlocks(blocks)
+    expect(result).toHaveLength(3)
+    expect(result[0].type).toBe('tool-group')
+    expect((result[0] as any).toolCalls).toEqual([tc1, tc2])
+    expect(result[1].type).toBe('text')
+    expect(result[2].type).toBe('tool-group')
+    expect((result[2] as any).toolCalls).toEqual([tc3])
   })
 
 })

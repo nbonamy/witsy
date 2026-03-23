@@ -2006,10 +2006,7 @@
     },
     "toggleSidebar": "Commutare la barra laterale",
     "update": {
-      "available": "Aggiornamento disponibile",
-      "later": "Più tardi",
-      "restart": "È disponibile un aggiornamento. Riavvia per applicarlo.",
-      "restartNow": "Riavvia ora"
+      "available": "Aggiornamento disponibile"
     }
   },
   "mcp": {
@@ -2211,6 +2208,9 @@
       "call": "Chiamata allo strumento: {name}",
       "params": "Parametri",
       "results": "Risultati"
+    },
+    "toolGroup": {
+      "summary": "1 chiamata allo strumento|{count} chiamate agli strumenti"
     }
   },
   "modelPull": {
@@ -2579,6 +2579,7 @@
       "suggestTitle": "Suggerisci un titolo",
       "writingAssistant": "Assistente di scrittura"
     },
+    "autoSave": "Salvataggio automatico",
     "createEmpty": "Crea vuoto",
     "delete": {
       "confirm": "Sei sicuro di voler eliminare \"{title}\"?",
@@ -2625,7 +2626,16 @@
     },
     "saveError": "Errore durante il salvataggio del documento",
     "title": "Scratchpad",
-    "unsavedPrompt": "Vuoi salvare le modifiche?"
+    "unsavedPrompt": "Vuoi salvare le modifiche?",
+    "untitled": "Documento senza titolo",
+    "versions": {
+      "archive": "Archivia la versione corrente",
+      "delete": "Elimina",
+      "recall": "Ripristina",
+      "recallConfirm": "Ripristinare questa versione sostituirà il contenuto corrente. Eventuali modifiche non salvate andranno perse.",
+      "recallTitle": "Ripristinare la versione \"{name}\"?",
+      "title": "Versioni"
+    }
   },
   "settings": {
     "advanced": {
@@ -2707,16 +2717,16 @@
         "shiftEnter": "Invio per nuova riga, Shift+Invio per inviare",
         "title": "Scorciatoia invio messaggio"
       },
-      "showToolCalls": {
-        "always": "Sempre",
-        "calling": "Solo durante l'esecuzione dello strumento",
-        "never": "Mai",
-        "title": "Mostra chiamate agli strumenti"
-      },
       "theme": "Tema chat",
       "themes": {
         "conversation": "Bolle",
         "openai": "Classico"
+      },
+      "toolCallsDisplay": {
+        "details": "Completo",
+        "none": "Nascosto",
+        "summary": "Riepilogo",
+        "title": "Visualizzazione delle chiamate agli strumenti"
       }
     },
     "commands": {

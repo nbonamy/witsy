@@ -2006,10 +2006,7 @@
     },
     "toggleSidebar": "Seitenleiste umschalten",
     "update": {
-      "available": "Update verfügbar",
-      "later": "Später",
-      "restart": "Ein Update ist verfügbar. Neustart zur Anwendung.",
-      "restartNow": "Jetzt neu starten"
+      "available": "Update verfügbar"
     }
   },
   "mcp": {
@@ -2211,6 +2208,9 @@
       "call": "Tool-Aufruf: {name}",
       "params": "Parameter",
       "results": "Ergebnisse"
+    },
+    "toolGroup": {
+      "summary": "1 Tool-Aufruf|{count} Tool-Aufrufe"
     }
   },
   "modelPull": {
@@ -2579,6 +2579,7 @@
       "suggestTitle": "Einen Titel vorschlagen",
       "writingAssistant": "Schreibassistent"
     },
+    "autoSave": "Automatisches Speichern",
     "createEmpty": "Leeres Dokument erstellen",
     "delete": {
       "confirm": "Möchten Sie \"{title}\" wirklich löschen?",
@@ -2625,7 +2626,16 @@
     },
     "saveError": "Fehler beim Speichern des Dokuments",
     "title": "Scratchpad",
-    "unsavedPrompt": "Möchten Sie Ihre Änderungen speichern?"
+    "unsavedPrompt": "Möchten Sie Ihre Änderungen speichern?",
+    "untitled": "Unbenanntes Dokument",
+    "versions": {
+      "archive": "Aktuelle Version archivieren",
+      "delete": "Löschen",
+      "recall": "Wiederherstellen",
+      "recallConfirm": "Das Wiederherstellen dieser Version ersetzt den aktuellen Inhalt. Nicht gespeicherte Änderungen gehen verloren.",
+      "recallTitle": "Version „{name}“ wiederherstellen?",
+      "title": "Versionen"
+    }
   },
   "settings": {
     "advanced": {
@@ -2707,16 +2717,16 @@
         "shiftEnter": "Enter für neue Zeile, Shift+Enter sendet",
         "title": "Nachrichten-Schnellzugriff"
       },
-      "showToolCalls": {
-        "always": "Immer",
-        "calling": "Nur während der Tool-Ausführung",
-        "never": "Nie",
-        "title": "Tool-Aufrufe anzeigen"
-      },
       "theme": "Chat-Theme",
       "themes": {
         "conversation": "Sprechblasen",
         "openai": "Klassisch"
+      },
+      "toolCallsDisplay": {
+        "details": "Vollständig",
+        "none": "Ausgeblendet",
+        "summary": "Zusammenfassung",
+        "title": "Anzeige von Tool-Aufrufen"
       }
     },
     "commands": {

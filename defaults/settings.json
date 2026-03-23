@@ -58,7 +58,7 @@
       "copyFormat": "text",
       "sendKey": "enter",
       "showReasoning": true,
-      "showToolCalls": "always",
+      "toolCallsDisplay": "summary",
       "theme": "openai",
       "fontFamily": "",
       "fontSize": 3

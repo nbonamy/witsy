@@ -2025,10 +2025,7 @@
     },
     "toggleSidebar": "Alternar barra lateral",
     "update": {
-      "available": "Atualização Disponível",
-      "later": "Mais tarde",
-      "restart": "Uma atualização está disponível. Reinicie para aplicá-la.",
-      "restartNow": "Reiniciar agora"
+      "available": "Atualização Disponível"
     }
   },
   "mcp": {
@@ -2230,6 +2227,9 @@
       "call": "Chamada da ferramenta: {name}",
       "params": "Parâmetros",
       "results": "Resultados"
+    },
+    "toolGroup": {
+      "summary": "1 chamada de ferramenta|{count} chamadas de ferramenta"
     }
   },
   "modelPull": {
@@ -2601,6 +2601,7 @@
       "suggestTitle": "Sugerir um título",
       "writingAssistant": "Assistente de escrita"
     },
+    "autoSave": "Salvamento automático",
     "createEmpty": "Criar em branco",
     "delete": {
       "confirm": "Tem certeza de que deseja excluir \"{title}\"?",
@@ -2647,7 +2648,16 @@
     },
     "saveError": "Erro ao salvar o documento",
     "title": "Scratchpad",
-    "unsavedPrompt": "Você deseja salvar suas alterações?"
+    "unsavedPrompt": "Você deseja salvar suas alterações?",
+    "untitled": "Documento sem título",
+    "versions": {
+      "archive": "Arquivar versão atual",
+      "delete": "Excluir",
+      "recall": "Recuperar",
+      "recallConfirm": "Recuperar esta versão substituirá o conteúdo atual. Quaisquer alterações não salvas serão perdidas.",
+      "recallTitle": "Recuperar versão \"{name}\"?",
+      "title": "Versões"
+    }
   },
   "settings": {
     "advanced": {
@@ -2729,16 +2739,16 @@
         "shiftEnter": "Enter para nova linha, Shift+Enter envia",
         "title": "Atalho para enviar mensagem"
       },
-      "showToolCalls": {
-        "always": "Sempre",
-        "calling": "Durante a execução da ferramenta apenas",
-        "never": "Nunca",
-        "title": "Mostrar chamadas de ferramentas"
-      },
       "theme": "Tema do chat",
       "themes": {
         "conversation": "Bolhas",
         "openai": "Clássico"
+      },
+      "toolCallsDisplay": {
+        "details": "Completo",
+        "none": "Oculto",
+        "summary": "Resumo",
+        "title": "Exibição das chamadas de ferramenta"
       }
     },
     "commands": {

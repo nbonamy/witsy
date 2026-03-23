@@ -22,7 +22,7 @@
       </ContextMenuTrigger>
     </div>
     <div class="panel-body variable-font-size" ref="panelBody">
-      <MessageItemBody v-if="!previewHtml" :message="message" show-tool-calls="never" />
+      <MessageItemBody v-if="!previewHtml" :message="message" tool-calls-display="none" />
       <iframe ref="htmlIframe" sandbox="allow-scripts allow-same-origin allow-forms" v-else-if="!transient || headComplete" :srcdoc="html" style="width: 100%; border: none;" />
       <div v-else class="html-loading">{{ t('common.htmlGeneration') }}</div>
     </div>

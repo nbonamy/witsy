@@ -7,6 +7,7 @@
   <MessageItemTableBlock v-else-if="block.type == 'table'" :ref="setRef" :content="block.content!" />
   <MessageItemMediaBlock v-else-if="block.type == 'media'" :ref="setRef" :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" />
   <MessageItemToolBlock v-else-if="block.type == 'tool'" :ref="setRef" :tool-call="block.toolCall!" />
+  <MessageItemToolGroupBlock v-else-if="block.type == 'tool-group'" :ref="setRef" :tool-calls="block.toolCalls!" />
   <MessageItemSearchResultBlock v-else-if="block.type == 'search'" :ref="setRef" :tool-call="block.toolCall!" />
 </template>
 
@@ -25,6 +26,7 @@ import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemSearchResultBlock from './MessageItemSearchResultBlock.vue'
 import MessageItemTableBlock from './MessageItemTableBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
+import MessageItemToolGroupBlock from './MessageItemToolGroupBlock.vue'
 
 const searchState = inject<SearchState>('searchState', undefined)
 

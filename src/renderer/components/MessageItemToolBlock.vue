@@ -153,7 +153,7 @@ const onMouseUp = () => {
     
     .tool-name {
       flex: 1;
-      font-weight: var(--font-weight-semibold);
+      font-weight: var(--font-weight-medium);
     }
     
     .tool-loader {

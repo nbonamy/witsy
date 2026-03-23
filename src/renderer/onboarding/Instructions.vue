@@ -48,7 +48,7 @@
           <div class="assistant-message" v-if="latestText">
             <MessageItemBody 
               :message="new Message('assistant', latestText)"
-              :show-tool-calls="'never'"
+              tool-calls-display="none"
             />
           </div>
 

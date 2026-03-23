@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Faster and nicer PDF Export
+- Tool calls display in chat
 
 ### Fixed
 - Paste in the edit box inserts text in the end, not at the cursor position (https://github.com/nbonamy/witsy/issues/547)

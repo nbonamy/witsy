@@ -2006,10 +2006,7 @@
     },
     "toggleSidebar": "Basculer la barre latérale",
     "update": {
-      "available": "Mise à jour disponible",
-      "later": "Plus tard",
-      "restart": "Une mise à jour est disponible. Redémarrez pour l'appliquer.",
-      "restartNow": "Redémarrer maintenant"
+      "available": "Mise à jour disponible"
     }
   },
   "mcp": {
@@ -2211,6 +2208,9 @@
       "call": "Appel d'outil : {name}",
       "params": "Paramètres",
       "results": "Résultats"
+    },
+    "toolGroup": {
+      "summary": "1 appel d'outil|{count} appels d'outil"
     }
   },
   "modelPull": {
@@ -2579,6 +2579,7 @@
       "suggestTitle": "Suggérer un titre",
       "writingAssistant": "Assistant d'écriture"
     },
+    "autoSave": "Sauvegarde automatique",
     "createEmpty": "Créer un document vide",
     "delete": {
       "confirm": "Êtes-vous sûr de vouloir supprimer « {title} » ?",
@@ -2625,7 +2626,16 @@
     },
     "saveError": "Erreur lors de l'enregistrement du document",
     "title": "Scratchpad",
-    "unsavedPrompt": "Voulez-vous enregistrer vos modifications ?"
+    "unsavedPrompt": "Voulez-vous enregistrer vos modifications ?",
+    "untitled": "Document sans titre",
+    "versions": {
+      "archive": "Archiver la version actuelle",
+      "delete": "Supprimer",
+      "recall": "Restaurer",
+      "recallConfirm": "Restaurer cette version remplacera le contenu actuel. Toutes les modifications non enregistrées seront perdues.",
+      "recallTitle": "Restaurer la version «{name}» ?",
+      "title": "Versions"
+    }
   },
   "settings": {
     "advanced": {
@@ -2707,16 +2717,16 @@
         "shiftEnter": "Entrée nouvelle ligne, Shift+Entrée envoie",
         "title": "Raccourci pour envoyer un message"
       },
-      "showToolCalls": {
-        "always": "Toujours",
-        "calling": "Seulement pendant l'exécution de l'outil",
-        "never": "Jamais",
-        "title": "Afficher les appels d'outils"
-      },
       "theme": "Thème de chat",
       "themes": {
         "conversation": "Bulles",
         "openai": "Classique"
+      },
+      "toolCallsDisplay": {
+        "details": "Complet",
+        "none": "Masqué",
+        "summary": "Résumé",
+        "title": "Affichage des appels d'outils"
       }
     },
     "commands": {

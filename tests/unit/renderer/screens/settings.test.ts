@@ -159,12 +159,12 @@ test('Settings Chat', async () => {
   expect(store.saveSettings).toHaveBeenCalledTimes(2)
   vi.clearAllMocks()
 
-  expect(store.config.appearance.chat.showToolCalls).toBe('always')
-  tab.find('.form-field.tools select').setValue('never')
-  expect(store.config.appearance.chat.showToolCalls).toBe('never')
+  expect(store.config.appearance.chat.toolCallsDisplay).toBe('summary')
+  tab.find('.form-field.tools select').setValue('none')
+  expect(store.config.appearance.chat.toolCallsDisplay).toBe('none')
   expect(store.saveSettings).toHaveBeenCalledOnce()
-  tab.find('.form-field.tools select').setValue('always')
-  expect(store.config.appearance.chat.showToolCalls).toBe('always')
+  tab.find('.form-field.tools select').setValue('summary')
+  expect(store.config.appearance.chat.toolCallsDisplay).toBe('summary')
   expect(store.saveSettings).toHaveBeenCalledTimes(2)
   vi.clearAllMocks()
 

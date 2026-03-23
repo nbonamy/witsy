@@ -37,7 +37,7 @@ This includes:
 
 - [ ] No hardcoded user-facing strings
 - [ ] New strings added to `locales/en.json`
-- [ ] Run: `./tools/i18n_check.ts`
+- [ ] Run: `./tools/i18n_check.ts --en`
 
 ## 4. CSS Variables
 
@@ -55,4 +55,3 @@ This includes:
 - **Never** run E2E tests during your process
 - **Never** try to build the application
 - **Never** try to run the application directly
-- Use the StationOne MCP server tools to verify UI rendering if needed

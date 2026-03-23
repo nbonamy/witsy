@@ -39,10 +39,10 @@
 import Message from '@models/message'
 import { SearchState } from '@screens/Chat.vue'
 import { t } from '@services/i18n'
-import { Block, computeBlocks, computeBlocksIncremental } from '@services/message_block_parser'
+import { Block, computeBlocks, computeBlocksIncremental, groupToolBlocks } from '@services/message_block_parser'
 import { store } from '@services/store'
 import { BrainIcon, ChevronDownIcon, ChevronRightIcon, ZapIcon } from 'lucide-vue-next'
-import { ChatToolMode } from 'types/config'
+import { ToolCallsDisplay } from 'types/config'
 import { computed, inject, PropType, ref, watch } from 'vue'
 import MessageItemBodyBlock from './MessageItemBodyBlock.vue'
 
@@ -63,8 +63,8 @@ const props = defineProps({
     type: Object as PropType<Message>,
     required: true,
   },
-  showToolCalls: {
-    type: String as PropType<ChatToolMode>,
+  toolCallsDisplay: {
+    type: String as PropType<ToolCallsDisplay>,
     required: true,
   },
 })
@@ -77,7 +77,7 @@ const computeBlocksOptions = () => ({
   role: props.message.role as 'user' | 'assistant' | 'system',
   transient: props.message.transient ?? false,
   toolCalls: props.message.toolCalls ?? [],
-  showToolCalls: props.showToolCalls,
+  toolCallsDisplay: props.toolCallsDisplay,
   filter: searchState?.filter.value,
 })
 
@@ -100,9 +100,12 @@ const contentBlocks = computed((): Block[] => {
   }
 
   // Immediate computation for initial render
-  const blocks = computeBlocks(props.message.content, computeBlocksOptions())
+  let blocks = computeBlocks(props.message.content, computeBlocksOptions())
   if (blocks.length === 0 && !props.message.transient) {
     return [emptyBlock()]
+  }
+  if (props.toolCallsDisplay === 'summary' && !props.message.transient) {
+    blocks = groupToolBlocks(blocks)
   }
   return blocks
 })
@@ -127,13 +130,16 @@ const performComputation = async () => {
 
   // Use incremental computation for transient messages to reuse stable blocks
   const options = computeBlocksOptions()
-  const blocks = options.transient
+  let blocks = options.transient
     ? computeBlocksIncremental(props.message.content, options, cachedContentBlocks.value)
     : computeBlocks(props.message.content, options)
 
   if (blocks.length === 0 && !props.message.transient) {
     cachedContentBlocks.value = [emptyBlock()]
   } else {
+    if (props.toolCallsDisplay === 'summary' && !props.message.transient) {
+      blocks = groupToolBlocks(blocks)
+    }
     cachedContentBlocks.value = blocks
   }
 

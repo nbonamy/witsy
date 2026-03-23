@@ -2025,10 +2025,7 @@
     },
     "toggleSidebar": "Przełącz pasek boczny",
     "update": {
-      "available": "Dostępna aktualizacja",
-      "later": "Później",
-      "restart": "Dostępna jest aktualizacja. Uruchom ponownie, aby ją zastosować.",
-      "restartNow": "Uruchom ponownie teraz"
+      "available": "Dostępna aktualizacja"
     }
   },
   "mcp": {
@@ -2230,6 +2227,9 @@
       "call": "Wywołanie narzędzia: {name}",
       "params": "Parametry",
       "results": "Wyniki"
+    },
+    "toolGroup": {
+      "summary": "1 wywołanie narzędzia|{count} wywołań narzędzi"
     }
   },
   "modelPull": {
@@ -2601,6 +2601,7 @@
       "suggestTitle": "Zaproponuj tytuł",
       "writingAssistant": "Asystent pisania"
     },
+    "autoSave": "Automatyczne zapisywanie",
     "createEmpty": "Utwórz pusty",
     "delete": {
       "confirm": "Czy na pewno chcesz usunąć \"{title}\"?",
@@ -2647,7 +2648,16 @@
     },
     "saveError": "Błąd podczas zapisywania dokumentu",
     "title": "Scratchpad",
-    "unsavedPrompt": "Czy chcesz zapisać zmiany?"
+    "unsavedPrompt": "Czy chcesz zapisać zmiany?",
+    "untitled": "Dokument bez tytułu",
+    "versions": {
+      "archive": "Zarchiwizuj bieżącą wersję",
+      "delete": "Usuń",
+      "recall": "Przywróć",
+      "recallConfirm": "Przywrócenie tej wersji zastąpi bieżącą zawartość. Wszelkie niezapisane zmiany zostaną utracone.",
+      "recallTitle": "Przywrócić wersję \"{name}\"?",
+      "title": "Wersje"
+    }
   },
   "settings": {
     "advanced": {
@@ -2729,16 +2739,16 @@
         "shiftEnter": "Enter nowa linia, Shift+Enter wysyła",
         "title": "Skrót do wysyłania wiadomości"
       },
-      "showToolCalls": {
-        "always": "Zawsze",
-        "calling": "Tylko podczas wykonywania narzędzi",
-        "never": "Nigdy",
-        "title": "Pokaż wywołania narzędzi"
-      },
       "theme": "Motyw czatu",
       "themes": {
         "conversation": "Dymki",
         "openai": "Klasyczny"
+      },
+      "toolCallsDisplay": {
+        "details": "Pełne",
+        "none": "Ukryte",
+        "summary": "Podsumowanie",
+        "title": "Wyświetlanie wywołań narzędzi"
       }
     },
     "commands": {

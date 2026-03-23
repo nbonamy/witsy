@@ -20,7 +20,7 @@
       </ContextMenuTrigger>
     </div>
     <div class="panel-body variable-font-size" ref="panelBody">
-      <MessageItemBody :message="message" show-tool-calls="never" />
+      <MessageItemBody :message="message" tool-calls-display="none" />
     </div>
 
   </div>
