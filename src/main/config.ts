@@ -289,7 +289,7 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
 
   // backwards compatibility: showToolCalls renamed to toolCallsDisplay
   if ('showToolCalls' in config.appearance.chat) {
-    const mapping: Record<string, string> = { 'never': 'none', 'calling': 'summary', 'always': 'details' }
+    const mapping: Record<string, string> = { 'never': 'none', 'calling': 'summary', 'always': 'summary' }
     const chat = config.appearance.chat as Record<string, unknown>
     config.appearance.chat.toolCallsDisplay = (mapping[chat.showToolCalls as string] || 'summary') as typeof config.appearance.chat.toolCallsDisplay
     delete chat.showToolCalls
