@@ -216,13 +216,6 @@
     THEME OVERRIDES
 ======================================== */
 
-.windows {
-  --radius-sm: 2px;
-  --radius-md: 2px;
-  --radius-lg: 2px;
-  --radius-xl: 2px;
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     /* Surface Colors - Dark Theme */
